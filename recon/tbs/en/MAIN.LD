@@ -325,7 +325,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE15_INVERTED.o"(.text)
         "*/recon/tbs/raw/0801edea.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW15.o"(.text)
-        "*/recon/tbs/raw/0801f200.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE3.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/PALETTE/GLOW_UPDATE_SINE.o"(.text)

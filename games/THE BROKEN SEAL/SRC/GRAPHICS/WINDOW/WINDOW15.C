@@ -4,6 +4,8 @@
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
 #include "IO_REG.H"
+#include "BATTLE_TYPES.H"
+#include "PARTY_STATE.H"
 
 /* The eight-pixel row `up` rows above the bottom row of a background tile
    in the first character block. */
@@ -240,4 +242,150 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
         }
         value -= 8;
     }
+}
+
+/* The render work bytes this window reads: whether a battle is running,
+   the busy mark while the window is redrawn, and the text palette. */
+struct StatusRenderWork {
+    u8 unknown_000[RENDER_MENU_STATE_OFS];
+    u8 battle;
+    u8 busy;
+    u8 palette;
+};
+
+struct StatusParty {
+    u8 unknown_00[0x58];
+    u16 owners[4];
+};
+
+void UiWindow_EraseBorderRect(s32, s32, u32, u32);
+void RenderOutput_RedrawSavedRect(struct RenderInput *);
+void UiWindow_DrawFrame(s32, s32, u32, u32);
+struct BattleUnit *Owner_GetStateFar(s32);
+void UiWork_SetParamNibble(s32);
+void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
+s32 BattlePlacement_CountValidEntriesFar(s32, u8 *);
+s32 __divsi3(s32, s32);
+void UiWindow_SetTilemapEntry(struct RenderInput *, s32, s32, s32, u32);
+/* Both are called as functions returning int, and the glyph call passes
+   four arguments: the game's code had no prototype for either in scope. */
+s32 UiText_DrawPrefixedNumberAtOffset();
+s32 UiWindow_PutGlyph();
+
+/* Draws the party status window: each active member's name, HP and its
+   bar, PP and its bar on the tall layout, and the four Djinn counts in the
+   wide battle layout. Flags of -1 keep the window's current layout; when
+   the layout changes the window is erased, resized and framed again. */
+void UiWindow_DrawPartyStatusContents(s32 flags)
+{
+    void **slot = (void **)Data_03001e90;
+    struct UiWindowBounds *layout = slot[0];
+    struct StatusParty *party = slot[-7];
+    struct RenderInput *window = (struct RenderInput *)layout->handle;
+    struct StatusRenderWork *work = slot[-1];
+    s32 x = 0;
+    u32 count;
+    s32 y = 0;
+    u32 i;
+    u16 owners[5];
+    u8 djinn[4];
+
+    if (work->battle != 0) {
+        count = BattleParty_PrepareActiveOwnersFar(0);
+        y = -1;
+        for (i = 0; i < count; i++) {
+            owners[i] = party->owners[i];
+            if (owners[i] == 255)
+                break;
+        }
+    } else {
+        count = Party_CountActiveOwnersFar();
+        for (i = 0; i < count; i++)
+            owners[i] = gGameState.active_owners[i];
+        owners[i] = 255;
+    }
+    count = i;
+    if (flags == -1)
+        flags = layout->flags;
+    if (!(flags & 1))
+        flags &= ~2;
+    if (work->battle == 0 || BattlePlacement_CountValidEntriesFar(0, 0) == 0)
+        flags &= ~2;
+    if (flags == 9) {
+        UiWindow_EraseBorderRect(layout->left, layout->top, layout->right, layout->height);
+        return;
+    }
+    work->busy = 1;
+    if (layout->flags == flags) {
+        RenderOutput_RedrawSavedRect(window);
+        UiWindow_DrawColumnBorders(window, flags);
+    } else {
+        UiWindow_EraseBorderRect(layout->left, layout->top, layout->right, layout->height);
+        UiWindow_BuildLayoutBounds(flags);
+        window->width = layout->right;
+        window->height = layout->height;
+        window->x = layout->left;
+        UiWindow_DrawFrame(layout->left, layout->top, layout->right, layout->height);
+        UiWindow_DrawColumnBorders(window, flags);
+    }
+    if (flags & 2)
+        x = 5;
+    for (i = 0; i != count; i++) {
+        struct BattleUnit *unit = Owner_GetStateFar(owners[i]);
+        s32 hp = unit->hp;
+        s32 maximum = unit->max_hp;
+        s32 value;
+        s32 current;
+
+        if (hp == 0)
+            UiWork_SetParamNibble(2);
+        else if (hp <= maximum / 4)
+            UiWork_SetParamNibble(4);
+        else
+            UiWork_SetParamNibble(15);
+        work->palette = 14;
+        if (work->battle != 0)
+            work->palette = 5;
+        UiText_DrawPrefixedNumberAtOffset(hp, window, (x + i * 6) * 8, y * 8 + 8, 0);
+        work->palette = 15;
+        UiText_DrawStringAtOffset(unit->name, window, (x + i * 6) * 8, y * 8);
+        UiWork_SetParamNibble(15);
+        if (unit->max_hp != 0) {
+            current = unit->hp;
+            value = __divsi3(current * 40, unit->max_hp);
+            if (value == 0 && current != 0)
+                value = 1;
+            UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 2, value);
+        }
+        if (flags & 1) {
+            work->palette = 14;
+            if (work->battle != 0)
+                work->palette = 5;
+            UiText_DrawPrefixedNumberAtOffset(unit->pp, window, (x + i * 6) * 8, y * 8 + 16, 1);
+            if (unit->max_pp != 0) {
+                current = unit->pp;
+                value = __divsi3(current * 40, unit->max_pp);
+                if (value == 0 && current != 0)
+                    value = 1;
+                UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 3, value);
+            }
+        }
+    }
+    work->palette = 15;
+    if (work->battle != 0 && (flags & 2)) {
+        s32 row = y;
+
+        if (flags & 1)
+            row++;
+        BattlePlacement_CountValidEntriesFar(0, djinn);
+        UiWindow_SetTilemapEntry(window, 0x5001, 0, row, 0);
+        UiWindow_SetTilemapEntry(window, 0x5002, 2, row, 0);
+        UiWindow_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
+        UiWindow_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
+        UiWindow_PutGlyph(window, djinn[0] + '0', 1, row);
+        UiWindow_PutGlyph(window, djinn[1] + '0', 3, row);
+        UiWindow_PutGlyph(window, djinn[2] + '0', 1, row + 1);
+        UiWindow_PutGlyph(window, djinn[3] + '0', 3, row + 1);
+    }
+    work->busy = 0;
 }

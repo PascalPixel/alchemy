@@ -48,26 +48,34 @@ void RamakanSabaku_ReturnToSafePoint(void)
         points = RamakanSabaku_SafePoints1;
         left = 3;
     } else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2) {
-        points = RamakanSabaku_SafePoints2;
         left = 5;
+        points = RamakanSabaku_SafePoints2;
     } else {
-        points = RamakanSabaku_SafePointsOther;
         left = 2;
+        points = RamakanSabaku_SafePointsOther;
     }
     count = left;
     point = points;
-    for (i = 0; left != 0; left--) {
-        distance = RamakanSabaku_CalculatePlanarDistance(&Actor_Get(0)->x.fixed, point);
-        if (distance <= best) {
-            best = distance;
-            nearest = count - left;
-        }
-        i += 8;
-        point = (const s32 *)((const u8 *)points + i);
+    if (left != 0) {
+        i = 0;
+        do {
+            distance = RamakanSabaku_CalculatePlanarDistance(&Actor_Get(0)->x.fixed, point);
+            if (distance <= best) {
+                best = distance;
+                nearest = count - left;
+            }
+            i += 8;
+            point = (const s32 *)((const u8 *)points + i);
+        } while (--left != 0);
     }
     nearest *= 2;
     Actor_SetSpeed(0, 0x20000, 0x10000);
-    Engine_ObjectSetPosition(Actor_Get(0), points[nearest], 0, points[nearest + 1]);
+    {
+        struct FieldActor *self = Actor_Get(0);
+        s32 z = points[nearest + 1];
+
+        Engine_ObjectSetPosition(self, points[nearest], 0, z);
+    }
     Actor_Get(0)->velocity_y = 0x60000;
     Audio_PlayCue(152);
     OverlayObject_WaitUntilField12BelowLimit(Actor_Get(0), Actor_Get(0)->y.fixed);

@@ -1,317 +1,162 @@
-/* Draft, not exact (2026-09-24): candidate=1132 reference=1132 differing_halfwords=477. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft, not exact: 1106 bytes against 1100, 44 bytes of stack against 40.
+   The setup, the crystal seeding loop and the camera scroll block match.
+   In the frame loop the reference keeps the crystal pointer in r8, the
+   shard pointer in r7 and the blitter choice in ip, and loads each shard
+   width and height once; this draft keeps the crystal pointer in r7, the
+   shard pointer in r10 and reloads both sizes for the stack arguments.
+   Crystal_Counts is Data_080ee1f5, Crystal_ShardStarts Data_080ee1d3,
+   Crystal_ShardWidths Data_080ee1fb, Crystal_ShardHeights Data_080ee207
+   and Crystal_ShardOffsets Data_080ee214. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
-extern u8 Value_00007828;
-extern u8 Value_00001010;
-extern u8 Value_00007780;
-extern u8 Value_00007784;
-extern u8 Value_00000480;
-extern u8 Value_00007080;
-extern u8 Value_000009c0;
-extern u8 Value_000001c0;
-extern u8 Value_00000800;
-extern u8 Value_00002000;
-extern u8 Value_000077a8;
-extern u8 Value_00007824;
 #include "BATTLE_EFX.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "EFFECT_STEP.H"
+#include "BATTLE_EFFECT_WORK.H"
 
-/*
- * Draft for the battle-presentation sub-effect at 0x080d3c80.
- *
- * The family matcher assigned games/THE BROKEN SEAL/src/battle/effects/member_orbit/
- * run.c (owner 080ce85c) as the closest structural template, but this owner
- * shares only the 0x03001eec "battle work" prologue and callback-teardown
- * shape with it -- there is no palette/tile upload, no BattleEffect_LoadWork, and no
- * sine/cosine orbit math at all.  The real callee set and constants instead
- * match the same subsystem already recovered across recon/tbs/en/
- * main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and 080e01e4.c: a
- * single Scheduler_AddOrUpdateCallback(0x080CD261,0x480) callback, Random16() as the
- * RNG, and (per recon/tbs/en/dossiers.json#main:080e01e4's already-resolved
- * derivation) _call_via_r4 is not a real callee -- it is the r4 slot of
- * the _call_via_rN trampoline at recon/tbs/raw/080072e4.s, so every call
- * through it below is modeled as a genuine indirect call through a
- * DrawRectangleFn value read out of the `callbacks` pair BattleFx_FetchRectangleBlitters
- * fills in.
- *
- * This owner grows an up-to-8-slot ring of particles at work + 0x7080
- * (matching 080e01e4's `ring`), one slot per listed table entry.  Each
- * slot accumulates until its threshold (record + 0x18) is reached, is
- * promoted (record + 8 set to 1), and from then on drives its own private
- * 16-entry sub-burst array at 0x02010000 + slot * 0x1C0, animated from a
- * handful of small byte/word tables at 0x080ee1d3/0x080ee1f5/0x080ee1fb/
- * 0x080ee207/0x080ee214 whose contents are not independently recoverable
- * from this owner alone.  The per-member_count slot count and total frame
- * count are direct table lookups (Data_080ee1f5[member_count*2] and
- * [member_count*2+1]), unlike the member_orbit template's `member_count *
- * 16 + 48` formula.
- */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
+struct CameraWork {
+    u8 unknown_00[0x36];
+    u16 scroll;
+};
 
+extern u8 gWorkSlot[];
+extern u8 gMapCellBuffer[];
+extern u8 Crystal_Counts[];
+extern u8 Crystal_ShardStarts[];
+extern u8 Crystal_ShardWidths[];
+extern u8 Crystal_ShardHeights[];
+extern s32 Crystal_ShardOffsets[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
-void Runtime_ReleaseHeapBlock(s32 id);
-s32 BattleFx_EndCanvasLayer(void);
-u32 Random16(void);
-void Audio_PlayCue(s32 id);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
-s32 __modsi3(s32 a, s32 b);
-s32 __divsi3(s32 a, s32 b);
-void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 a, s32 b);
+void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleEventRuntime_BeginPhaseFar(s32 value);
+void AudioCommand_PlayFar(s32 value);
+void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+s32 BattleFx_EndCanvasLayer(void);
 
-extern const u8 Data_080ee1f5[];
-extern const u8 Data_080ee1d3[];
-extern const u8 Data_080ee1fb[];
-extern const u8 Data_080ee207[];
-extern const s32 Data_080ee214[];
-
-void Unnamed_080d3c80(void *object)
+void Unnamed_080d3c80(struct BattleEffectArgument *effect)
 {
+    DrawRectangle draw[2];
     void **cursor;
-    void *work;
-    void *draw_destination;
-    DrawRectangleFn callbacks[2];
-    DrawRectangleFn *callback_ptr;
-    u8 *record;
-    s32 i;
-    s32 x_base;
-    s32 x_rand;
-    s32 slot;
-    void **object_slot;
-    void *screen_ptr;
-    s32 amount;
+    struct BattleEffectWork *work;
+    void *canvas;
     s32 frame;
+    struct EffectStep *seed;
+    struct EffectStep *point;
+    struct EffectStep *sparks;
+    struct EffectStep *spark;
+    s32 x;
+    s32 cell;
+    s32 i;
+    s32 j;
 
-    cursor = (void **)0x03001EEC;
+    sparks = (struct EffectStep *)gMapCellBuffer;
+    cursor = (void **)(gWorkSlot + 39 * 4);
     work = *cursor++;
-    draw_destination = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = object;
+    canvas = *cursor;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
-    Resource_LoadAndDecompress((s32) &ResourceId_CrystalSheet, work, 1, 1);
-    callback_ptr = callbacks;
-    BattleFx_FetchRectangleBlitters(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), callback_ptr);
-
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Scheduler_AddOrUpdateCallback((void *) 0x080CD261, 0x480);
-
-    if (Data_080ee1f5[
-            M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 0x18) * 2]
-            != 0) {
-        record = (u8 *) work + 0x7080;
-        i = 0;
-        do {
-            Random16();
-            M2C_FIELD(record, s32 *, 4) = (s32) 0xFFC00000;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4)
-                    == 1) {
-                x_base = ((Random16() & 0x1F) + 0x50) << 16;
-                x_rand = 0x3F & Random16();
-            } else {
-                x_base = ((Random16() & 0x1F) + 8) << 16;
-                x_rand = -(0x3F & Random16());
-            }
-            M2C_FIELD(record, s32 *, 0xC) = x_rand << 12;
-            M2C_FIELD(record, s32 *, 0) =
-                x_base - (M2C_FIELD(record, s32 *, 0xC) * 18);
-            M2C_FIELD(record, s32 *, 0x10) = 0;
-            M2C_FIELD(record, s32 *, 8) = 0;
-            M2C_FIELD(record, s32 *, 0x18) = i * 8;
-            i++;
-            record += 28;
-        } while (i != Data_080ee1f5[
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)
-                    * 2]);
+    *(u16 *)0x04000052 = 0x1010;
+    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work, 1, 1);
+    BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+    work->transfer_mode = 2;
+    work->transfer_value = 50;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    for (j = 0; j != Crystal_Counts[work->effect->variant * 2]; j++) {
+        seed = &work->particles[j];
+        x = Random16() & 31;
+        seed->y = -0x400000;
+        if (work->effect->side == 1) {
+            x = ((Random16() & 31) + 80) << 16;
+            seed->velocity_x = (Random16() & 63) << 12;
+        } else {
+            x = ((Random16() & 31) + 8) << 16;
+            seed->velocity_x = -(s32)(Random16() & 63) << 12;
+        }
+        seed->x = x - seed->velocity_x * 18;
+        seed->velocity_y = 0;
+        seed->z = 0;
+        seed->variant = j * 8;
     }
 
-    frame = 0;
-    if (Data_080ee1f5[
-            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18) * 2
-                + 1] != 0) {
-        object_slot = (void **) ((u8 *) work + 0x7828);
-        do {
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)
-                        == 2
-                    && frame <= 103) {
-                screen_ptr = *(void **) 0x03001E80;
-                amount = 0xC0;
-                if (frame > 95) {
-                    amount = 0x9C0 - frame * 24;
-                }
-                if (M2C_FIELD(*object_slot, s32 *, 4) == 0) {
-                    M2C_FIELD(screen_ptr, u16 *, 54) =
-                        (u16) (M2C_FIELD(screen_ptr, u16 *, 54) - amount);
-                } else {
-                    M2C_FIELD(screen_ptr, u16 *, 54) =
-                        (u16) (M2C_FIELD(screen_ptr, u16 *, 54) + amount);
-                }
-            }
-            if (frame == Data_080ee1f5[
-                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *,
-                        0x18) * 2 + 1] - 80) {
-                BattleEventRuntime_BeginPhaseFar(0x86);
-            }
-            if (frame == Data_080ee1f5[
-                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *,
-                        0x18) * 2 + 1] - 8) {
-                M2C_FIELD(work, s32 *, 0x7780) = 3;
-                M2C_FIELD(work, s32 *, 0x7784) = (s32) 0x06060606;
-            }
-            if (frame <= Data_080ee1f5[
-                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *,
-                        0x18) * 2 + 1] - 8) {
-                if (Data_080ee1f5[
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                            s32 *, 0x18) * 2] != 0) {
-                    slot = 0;
-                    record = (u8 *) work + 0x7080;
-                    do {
-                        if (M2C_FIELD(record, s32 *, 8) == 1) {
-                            u8 *sub;
-                            s32 j;
+    for (frame = 0; frame != Crystal_Counts[work->effect->variant * 2 + 1]; frame++) {
+        if (work->effect->variant == 2 && frame <= 103) {
+            struct CameraWork *camera = *(struct CameraWork **)(gWorkSlot + 12 * 4);
+            s32 speed;
 
-                            sub = (u8 *) 0x02010000 + slot * 0x1C0;
-                            j = 0;
-                            do {
-                                s32 idx;
-                                s32 w;
-                                s32 h;
-                                s32 x;
-                                s32 y;
-                                s32 delta;
-
-                                idx = __modsi3(j, 5) * 3
-                                    + __modsi3(
-                                        __divsi3(
-                                            M2C_FIELD(sub, s32 *, 0x18),
-                                            0x60),
-                                        3);
-                                w = Data_080ee1fb[idx];
-                                h = Data_080ee207[idx];
-                                x = M2C_FIELD(sub, s16 *, 2) - (w >> 1);
-                                y = M2C_FIELD(sub, s16 *, 6) - (h >> 1);
-                                callback_ptr[(j <= 2) ? 1 : 0](
-                                    draw_destination,
-                                    (u8 *) work + Data_080ee214[idx]
-                                        + 0x800,
-                                    x, y, w, h);
-                                EffectStep_AdvanceWithGravity2D(sub, 64, 0x2000);
-                                delta = M2C_FIELD(sub, s32 *, 8);
-                                M2C_FIELD(sub, s32 *, 0x18) =
-                                    M2C_FIELD(sub, s32 *, 0x18) + delta;
-                                if (delta > 1 && (frame & 1)) {
-                                    M2C_FIELD(sub, s32 *, 8) = delta - 1;
-                                }
-                                j++;
-                                sub += 28;
-                            } while (j != 16);
-                        } else if (frame
-                                >= M2C_FIELD(record, s32 *, 0x18)) {
-                            s32 odd;
-
-                            odd = slot & 1;
-                            callback_ptr[odd](
-                                draw_destination, work,
-                                M2C_FIELD(record, s16 *, 2) - 16,
-                                M2C_FIELD(record, s16 *, 6), 32, 64);
-                            EffectStep_AdvanceWithGravity2D(record, 64, 0x10000);
-                            if (M2C_FIELD(record, s32 *, 4) > 0x380000) {
-                                const u8 *tbl;
-                                u8 *sub;
-                                s32 k;
-
-                                M2C_FIELD(record, s32 *, 8) = 1;
-                                M2C_FIELD(record, s32 *, 4) = 0x380000;
-                                tbl = Data_080ee1d3;
-                                sub = (u8 *) 0x02010000 + slot * (s32)&Value_000001c0;
-                                k = 0;
-                                do {
-                                    M2C_FIELD(sub, s32 *, 0) =
-                                        (s32) ((tbl[0] - 40) << 16)
-                                        + M2C_FIELD(record, s32 *, 0);
-                                    M2C_FIELD(sub, s32 *, 4) =
-                                        (s32) (tbl[1] << 16);
-                                    M2C_FIELD(sub, s32 *, 0xC) =
-                                        ((Random16() & 0x7F) - 64)
-                                            << 11;
-                                    M2C_FIELD(sub, s32 *, 0x10) =
-                                        -(s32) (Random16() & 0x7F)
-                                            << 11;
-                                    if (odd) {
-                                        M2C_FIELD(sub, s32 *, 0xC) =
-                                            M2C_FIELD(sub, s32 *, 0xC)
-                                                * 2;
-                                        M2C_FIELD(sub, s32 *, 0x10) =
-                                            -(s32) (Random16()
-                                                & 0x7F)
-                                                << 12;
-                                    }
-                                    M2C_FIELD(sub, s32 *, 8) = 32;
-                                    M2C_FIELD(sub, s32 *, 0x18) = 0;
-                                    k++;
-                                    tbl += 2;
-                                    sub += 28;
-                                } while (k != 16);
-                                M2C_FIELD(work, s32 *, 0x77A8) = 8;
-                                Audio_PlayCue(144);
-                                if (M2C_FIELD(
-                                        M2C_FIELD(work, void **, 0x7828),
-                                        s32 *, 0x14) != 0) {
-                                    s32 m;
-
-                                    m = 0;
-                                    do {
-                                        ObjectGroup_UpdateMembers(
-                                            M2C_FIELD(
-                                                M2C_FIELD(work,
-                                                    void **, 0x7828),
-                                                s16 *, 36 + m * 2),
-                                            7, 5, m, 4);
-                                        m++;
-                                    } while (m != M2C_FIELD(
-                                            M2C_FIELD(work, void **,
-                                                (s32)&Value_00007828),
-                                            s32 *, 0x14));
-                                }
+            if (frame <= 95)
+                speed = 192;
+            else
+                speed = 0x9c0 - frame * 24;
+            if (work->effect->side == 0)
+                camera->scroll -= speed;
+            else
+                camera->scroll += speed;
+        }
+        if (frame == Crystal_Counts[work->effect->variant * 2 + 1] - 80)
+            BattleEventRuntime_BeginPhaseFar(134);
+        if (frame == Crystal_Counts[work->effect->variant * 2 + 1] - 8) {
+            work->transfer_mode = 3;
+            work->transfer_value = 0x06060606;
+        }
+        if (frame <= Crystal_Counts[work->effect->variant * 2 + 1] - 8) {
+            for (i = 0; i != Crystal_Counts[work->effect->variant * 2]; i++) {
+                point = &work->particles[i];
+                if (point->z == 1) {
+                    for (j = 0; j != 16; j++) {
+                        spark = &sparks[i * 16 + j];
+                        cell = (j % 5) * 3 + (spark->variant / 96) % 3;
+                        draw[j <= 2](canvas,
+                            (u8 *)work + Crystal_ShardOffsets[cell] + 0x800,
+                            ((s16 *)&spark->x)[1] - (Crystal_ShardWidths[cell] >> 1),
+                            ((s16 *)&spark->y)[1] - (Crystal_ShardHeights[cell] >> 1),
+                            Crystal_ShardWidths[cell], Crystal_ShardHeights[cell]);
+                        EffectStep_AdvanceWithGravity2D(spark, 64, 0x2000);
+                        spark->variant += spark->z;
+                        if (spark->z > 1 && (frame & 1))
+                            spark->z--;
+                    }
+                } else if (frame >= point->variant) {
+                    draw[i & 1](canvas, work, ((s16 *)&point->x)[1] - 16, ((s16 *)&point->y)[1], 32, 64);
+                    EffectStep_AdvanceWithGravity2D(point, 64, 0x10000);
+                    if (point->y > 0x380000) {
+                        point->z = 1;
+                        point->y = 0x380000;
+                        for (j = 0; j != 16; j++) {
+                            spark = &sparks[i * 16 + j];
+                            spark->x = ((Crystal_ShardStarts[j * 2] - 40) << 16) + point->x;
+                            spark->y = Crystal_ShardStarts[j * 2 + 1] << 16;
+                            spark->velocity_x = ((s32)(Random16() & 127) - 64) << 11;
+                            spark->velocity_y = -(s32)(Random16() & 127) << 11;
+                            if (i & 1) {
+                                spark->velocity_x *= 2;
+                                spark->velocity_y *= 2;
                             }
+                            spark->z = 32;
+                            spark->variant = 0;
                         }
-                        slot++;
-                        record += 28;
-                    } while (slot != Data_080ee1f5[
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                                s32 *, 0x18) * 2]);
+                        work->shake_frames = 8;
+                        AudioCommand_PlayFar(144);
+                        for (j = 0; j != work->effect->count; j++)
+                            ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 4);
+                    }
                 }
             }
-
-            Camera_ApplyShake(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)
-                        * 2
-                    + 4,
-                M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 0x18)
-                        * 4
-                    + 8);
-            ObjectGroup_TickMemberTimers();
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
-            WaitFrames(1);
-
-            frame++;
-        } while (frame != Data_080ee1f5[
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)
-                    * 2 + 1]);
+        }
+        Camera_ApplyShake(work->effect->variant * 2 + 4, work->effect->variant * 4 + 8);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *) 0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

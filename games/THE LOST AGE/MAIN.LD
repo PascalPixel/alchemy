@@ -1407,6 +1407,7 @@ SECTIONS
         "*/recon/tla/raw/080d36f4.o"(.text)
         "*/recon/tla/raw/080d3744.o"(.text)
         "*/recon/tla/raw/080d3780.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/STEP_ANGLE.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/VISUAL_ATTRIBUTES.o"(.text)
         "*/recon/tla/raw/080d390c.o"(.text)
         "*/recon/tla/raw/080d3928.o"(.text)

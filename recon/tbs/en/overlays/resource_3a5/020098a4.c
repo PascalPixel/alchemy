@@ -4,10 +4,12 @@
  * and SAND_SETUP of games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU and links
  * as disassembly (section .text.x020098a4 of the overlay listing).
  *
- * Names it still needs where its bytes are: the halfwords at 0x0200a6bc
- * and 0x0200a6c0 beside RamakanSabaku_SandCounter, the 16-colour palette at
- * 0x02009f80 after RamakanSabaku_SafePointsOther, and the import veneers at
- * 0x02009cac, 0x02009cb4, 0x02009cc4, 0x02009cdc and 0x02009ce4.
+ * 2026-10-01 (matcher 2, later): every name now resolves where its bytes
+ * are: the listing labels the storm level and flash halfwords on either side
+ * of RamakanSabaku_SandCounter and the palette after the safe points, and
+ * IMPORT.S names the five import veneers it calls. 6156 with the overlay
+ * ELF; 19 of its operand rows are the scorer adding the Thumb bit to
+ * the listing's data labels (0x200a6d0 against 0x200a6d1), not differences.
  *
  * 2026-10-01 (matcher 2): first draft, 6296 against the listing with the
  * overlay ELF (the names above still unresolved). Every call, store and

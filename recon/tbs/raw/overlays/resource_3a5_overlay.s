@@ -750,6 +750,8 @@ RamakanSabaku_SafePointsOther:
 	.4byte 0x00e00000
 	.4byte 0x00c00000
 	.4byte 0x01600000
+	.global RamakanSabaku_SandPalette
+RamakanSabaku_SandPalette:
 	.4byte 0x377f10a0
 	.4byte 0x121722bb
 	.4byte 0x0ccc1172
@@ -1674,10 +1676,14 @@ RamakanSabaku_Events:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global RamakanSabaku_SandLevel
+RamakanSabaku_SandLevel:
 	.2byte 0x0000
 	.global RamakanSabaku_SandCounter
 RamakanSabaku_SandCounter:
 	.2byte 0x0000
+	.global RamakanSabaku_SandFlash
+RamakanSabaku_SandFlash:
 	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.global RamakanSabaku_SandVramSlot

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_TYPES.H"
 #include "SCENE.H"
@@ -107,8 +108,6 @@ void Runtime_BumpFree(void *buffer);
 s32 GameFlag_TestFar(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 mode);
-void Scheduler_EnableOverlayCallbacksWithFlags(void);
-void Scheduler_DisableOverlayCallbacksWithFlags(void);
 void Func_080153e0(s32 value);
 void Func_080152a8(void);
 void Link_DrawShiftedTilePairFar(void *tiles);

@@ -1,0 +1,1696 @@
+/* NONMATCHING: 2026-10-01 brief Wave2 direct-call adapter attempt.
+ * Source: games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ARASHI.C; edition DE; function HaidiaArashi_RunRiverSearch.
+ * Removing FIELD_EVENT.H Actor_Get changes add	r5, r5, #100 to mov	r3, r5
+ * (443/446 assembly lines).
+ * Unrelated function bodies are declarations; original admission comments
+ * and approved Dma/Iwram header ownership are preserved where used.
+ * Production retains the measured adapter; no compiler options changed.
+ */
+#define ALCHEMY_TYPES_H
+
+
+
+
+
+
+
+typedef signed char s8;
+typedef unsigned char u8;
+typedef signed short s16;
+typedef unsigned short u16;
+typedef signed int s32;
+typedef unsigned int u32;
+typedef signed long long s64;
+typedef unsigned long long u64;
+
+
+
+typedef int bool;
+
+
+struct SchedulerTask {
+    u32 callback;
+    u16 state;
+    u8 mask;
+    u8 reserved;
+};
+
+
+
+extern volatile u8 gSchedulerStatus;
+extern u8 gSchedulerTaskCount;
+extern struct SchedulerTask gSchedulerTaskTable[];
+
+void Scheduler_ResetTaskTable(void);
+void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count);
+void Scheduler_SortTasks(void);
+s32 Scheduler_FindCallback(u32 callback);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
+void Scheduler_Idle(void);
+void Scheduler_EmptyCallback(void);
+s32 Scheduler_RemoveCallback(u32 callback);
+s32 Scheduler_EnableCallbacks(u32 callback);
+s32 Scheduler_EnableUnmaskedOverlayCallbacks(void);
+s32 Scheduler_SetCallbackMask(u32 callback, u32 mask);
+s32 Scheduler_DisableCallbacks(u32 callback);
+s32 Scheduler_DisableOverlayCallbacks(void);
+s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
+s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
+
+
+struct GameState {
+    u8 unknown_000[0x10];
+
+    s32 coins;
+    u8 unknown_014[0x118];
+
+    s8 won_prizes[0x10];
+    u8 unknown_13c[0x84];
+    s16 scene;
+    s16 entrance;
+    s16 saved_scene;
+    s16 saved_entrance;
+    u8 unknown_1c8[0x0e];
+
+    s16 special;
+    u8 unknown_1d8[4];
+
+    s32 x;
+    s32 y;
+    s32 z;
+
+    u32 heading;
+    u16 turn;
+
+    s16 scene_cue;
+    u8 unknown_1f0[2];
+
+    u8 movement_mode;
+    u8 unknown_1f3;
+
+    s32 selected_actor;
+
+    u8 active_owners[8];
+    u8 unknown_200[0x2c];
+    u16 unknown_22c;
+    u16 unknown_22e;
+    u16 unknown_230;
+    s16 unknown_232;
+    u8 unknown_234[0x0a];
+    s16 unknown_23e;
+
+    s16 retreat_scene;
+    s16 retreat_entrance;
+    u8 unknown_244[8];
+
+    s16 cloaked;
+    u8 unknown_24e[0x56];
+
+
+    u16 link_tallies[8];
+};
+
+typedef char GameState_Coins[(u32)&(((struct GameState *)0)->coins) == (0x10) ? 1 : -1];
+typedef char GameState_WonPrizes[(u32)&(((struct GameState *)0)->won_prizes) == (0x12c) ? 1 : -1];
+typedef char GameState_Entrance[(u32)&(((struct GameState *)0)->entrance) == (0x1c2) ? 1 : -1];
+typedef char GameState_Special[(u32)&(((struct GameState *)0)->special) == (0x1d6) ? 1 : -1];
+typedef char GameState_X[(u32)&(((struct GameState *)0)->x) == (0x1dc) ? 1 : -1];
+typedef char GameState_MovementMode[(u32)&(((struct GameState *)0)->movement_mode) == (0x1f2) ? 1 : -1];
+typedef char GameState_SelectedActor[(u32)&(((struct GameState *)0)->selected_actor) == (0x1f4) ? 1 : -1];
+typedef char GameState_ActiveOwners[(u32)&(((struct GameState *)0)->active_owners) == (0x1f8) ? 1 : -1];
+typedef char GameState_RetreatEntrance[(u32)&(((struct GameState *)0)->retreat_entrance) == (0x242) ? 1 : -1];
+typedef char GameState_Cloaked[(u32)&(((struct GameState *)0)->cloaked) == (0x24c) ? 1 : -1];
+typedef char GameState_LinkTallies[(u32)&(((struct GameState *)0)->link_tallies) == (0x2a4) ? 1 : -1];
+
+extern struct GameState gGameState;
+
+
+
+
+extern u8 gSceneState[];
+
+
+extern u8 *gKorosseoWork;
+
+
+extern u32 gFrameCount;
+
+
+struct EventWork {
+    u8 unknown_000[0x34];
+
+    struct FieldActor *placed_actors[58];
+    u8 unknown_11c[0x50];
+
+    s16 touched_trigger;
+    u8 unknown_16e[4];
+    u16 unknown_172;
+    u8 unknown_174[0xa];
+
+    s16 psynergy_request;
+    u8 unknown_180[2];
+
+    s16 raised_trigger;
+    u8 unknown_184[0x3c];
+
+    s32 start_transition;
+    u8 unknown_1c4[4];
+
+    s32 transition_frames;
+    u8 unknown_1cc[0x0c];
+
+    u16 message;
+    u8 unknown_1da[6];
+
+    struct FieldActor *view_center;
+};
+
+typedef char EventWork_PlacedActors[(u32)&(((struct EventWork *)0)->placed_actors) == (0x34) ? 1 : -1];
+typedef char EventWork_TouchedTrigger[(u32)&(((struct EventWork *)0)->touched_trigger) == (0x16c) ? 1 : -1];
+typedef char EventWork_PsynergyRequest[(u32)&(((struct EventWork *)0)->psynergy_request) == (0x17e) ? 1 : -1];
+typedef char EventWork_RaisedTrigger[(u32)&(((struct EventWork *)0)->raised_trigger) == (0x182) ? 1 : -1];
+typedef char EventWork_StartTransition[(u32)&(((struct EventWork *)0)->start_transition) == (0x1c0) ? 1 : -1];
+typedef char EventWork_TransitionFrames[(u32)&(((struct EventWork *)0)->transition_frames) == (0x1c8) ? 1 : -1];
+typedef char EventWork_Message[(u32)&(((struct EventWork *)0)->message) == (0x1d8) ? 1 : -1];
+typedef char EventWork_ViewCenter[(u32)&(((struct EventWork *)0)->view_center) == (0x1e0) ? 1 : -1];
+
+extern struct EventWork *gEventWork;
+
+
+enum SceneTransitionStyle {
+    TRANSITION_FADE = 0,
+
+    TRANSITION_BACKDROP_FADE = 1,
+    TRANSITION_WINDOW = 2
+};
+
+
+
+
+union FieldCoordinate {
+    s32 fixed;
+    struct {
+        u16 fraction;
+        s16 pixel;
+    } part;
+};
+
+
+
+
+
+struct FieldSprite {
+    u8 unknown_00[4];
+    u16 y : 8;
+    u16 affine : 2;
+    u16 blend_mode : 2;
+    u16 mosaic : 1;
+    u16 full_color : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 flip_x : 1;
+    u16 flip_y : 1;
+    u16 tile : 10;
+
+    u16 priority : 2;
+    u16 palette : 4;
+    u8 unknown_0a[0x0a];
+
+    u16 second_tile : 10;
+    u16 second_priority : 2;
+    u16 second_palette : 4;
+    u8 unknown_16[2];
+
+    s32 scale;
+
+    u8 vram_block;
+    u8 unknown_1d;
+    u16 rotation;
+    u8 unknown_20[6];
+    u8 flags;
+    u8 part_count;
+};
+
+typedef char FieldSprite_Scale[(u32)&(((struct FieldSprite *)0)->scale) == (0x18) ? 1 : -1];
+typedef char FieldSprite_VramBlock[(u32)&(((struct FieldSprite *)0)->vram_block) == (0x1c) ? 1 : -1];
+typedef char FieldSprite_Rotation[(u32)&(((struct FieldSprite *)0)->rotation) == (0x1e) ? 1 : -1];
+typedef char FieldSprite_PartCount[(u32)&(((struct FieldSprite *)0)->part_count) == (0x27) ? 1 : -1];
+
+
+
+
+
+union FieldObject;
+
+
+struct FieldActor {
+    u8 unknown_00[6];
+    u16 facing;
+    union FieldCoordinate x;
+    union FieldCoordinate y;
+    union FieldCoordinate z;
+    u8 unknown_14[4];
+
+    s32 scale_x;
+    s32 scale_y;
+
+    u16 radius;
+    u8 unknown_22;
+    u8 priority_flags;
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    s32 speed;
+    s32 acceleration;
+
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+    u8 unknown_44[0x0c];
+    struct FieldSprite *sprite;
+
+    u8 active;
+    u8 motion_flags;
+    u8 unknown_56[3];
+    u8 collision_flags;
+    u8 unknown_5a;
+    u8 unknown_5b;
+    u8 unknown_5c;
+    u8 unknown_5d[5];
+
+    u8 rise_counter;
+    u8 rise_enabled;
+    u16 unknown_64;
+    u16 unknown_66;
+    u8 unknown_68[4];
+
+    void (*update)(union FieldObject *object);
+};
+
+typedef char FieldActor_Facing[(u32)&(((struct FieldActor *)0)->facing) == (0x06) ? 1 : -1];
+typedef char FieldActor_X[(u32)&(((struct FieldActor *)0)->x) == (0x08) ? 1 : -1];
+typedef char FieldActor_Z[(u32)&(((struct FieldActor *)0)->z) == (0x10) ? 1 : -1];
+typedef char FieldActor_ScaleY[(u32)&(((struct FieldActor *)0)->scale_y) == (0x1c) ? 1 : -1];
+typedef char FieldActor_PriorityFlags[(u32)&(((struct FieldActor *)0)->priority_flags) == (0x23) ? 1 : -1];
+typedef char FieldActor_MotionFlags[(u32)&(((struct FieldActor *)0)->motion_flags) == (0x55) ? 1 : -1];
+typedef char FieldActor_CollisionFlags[(u32)&(((struct FieldActor *)0)->collision_flags) == (0x59) ? 1 : -1];
+typedef char FieldActor_RiseEnabled[(u32)&(((struct FieldActor *)0)->rise_enabled) == (0x63) ? 1 : -1];
+typedef char FieldActor_VelocityY[(u32)&(((struct FieldActor *)0)->velocity_y) == (0x28) ? 1 : -1];
+typedef char FieldActor_Speed[(u32)&(((struct FieldActor *)0)->speed) == (0x30) ? 1 : -1];
+typedef char FieldActor_TargetX[(u32)&(((struct FieldActor *)0)->target_x) == (0x38) ? 1 : -1];
+typedef char FieldActor_Sprite[(u32)&(((struct FieldActor *)0)->sprite) == (0x50) ? 1 : -1];
+typedef char FieldActor_Update[(u32)&(((struct FieldActor *)0)->update) == (0x6c) ? 1 : -1];
+
+
+
+
+
+enum ActorPriorityFlag {
+
+    ACTOR_PRIORITY_AUTOMATIC = 0x01,
+
+
+
+
+    ACTOR_PRIORITY_UNDERFOOT = 0x02
+};
+
+
+enum ActorMotionFlag {
+
+    ACTOR_FOLLOWS_TERRAIN = 0x01,
+
+    ACTOR_FALLS = 0x02
+};
+
+
+enum {
+    TASK_PRIORITY_SCENE = 3200
+};
+
+
+
+
+
+enum ActorAnimation {
+    ANIM_STAND = 1,
+    ANIM_WALK = 2,
+    ANIM_NOD = 3,
+    ANIM_SHAKE_HEAD = 4
+};
+
+
+void Engine_EventBegin(void);
+void Engine_EventEnd(void);
+void Engine_EventWait(s32 frames);
+void Engine_TaskWait(s32 frames);
+void Engine_EventSetMessage(s32 message);
+void Engine_EventShowMessage(s32 speaker, s32 flags);
+s32 Engine_EventOpenMessage(s32 speaker, s32 flags);
+s32 Engine_EventAskYesNo(s32 speaker, s32 flags);
+s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
+void Engine_MessageShowCentered(s32 message, s32 flags);
+void Engine_EventRequestExit(s32 exit);
+void Engine_EventOpenScreen(void);
+void Engine_EventCloseScreen(void);
+void Engine_EventWaitForScreen(void);
+void Engine_BlendSetDarkenTarget16(s32 target);
+u8 *Engine_ResourceGetTableEntry(s32 resource);
+void Engine_ResourceDecodeType01(const u8 *source, void *destination);
+struct FieldActor *Object_GetById(s32 actor);
+void Engine_ActorSetPosition(s32 actor, s32 fixed_x, s32 fixed_z);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
+void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ActorWalkTo(s32 actor, s32 x, s32 z);
+void Engine_ActorWalkBy(s32 actor, s32 dx, s32 dz);
+void Engine_ActorWaitForMove(s32 actor);
+void Engine_ActorFaceDirection(s32 actor, s32 facing, s32 frames);
+void Engine_ActorTurnToAngle(s32 actor, s32 angle, s32 frames);
+void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
+void Engine_ActorFaceEachOther(s32 actor, s32 other, s32 frames);
+void Engine_ActorSetAnimation(s32 actor, s32 animation);
+void Engine_ActorSetAnimationAndWait(s32 actor, s32 animation);
+void Engine_ActorStartRepeatedMotion(s32 actor, s32 repeats);
+void Engine_ActorRunRepeatedMotion(s32 actor, s32 repeats);
+void Engine_ActorShowEmote(s32 actor, s32 emote, s32 frames);
+void Engine_ActorSetAttachedEffect(s32 actor, s32 effect);
+void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
+void Engine_ActorSetSpriteFlags(struct FieldActor *actor, s32 flags);
+void Engine_CameraFollowActor(s32 actor, s32 keep_position);
+void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
+void Engine_CameraMoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan);
+void Engine_CameraMoveToActor(s32 actor, s32 pan);
+void Engine_CameraWaitForMove(void);
+void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
+                                  s32 dest_y);
+void Engine_MapRedraw(void);
+void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
+s32 Engine_GameFlagIsSet(s32 flag);
+s32 Engine_GameFlagSet(s32 flag);
+void Engine_GameFlagClear(s32 flag);
+void Engine_AudioPlayCue(s32 cue);
+void Engine_ShopOpen(s32 shop, s32 keeper);
+void Engine_InnOpen(s32 inn, s32 keeper);
+void Engine_SanctumOpen(s32 priest);
+s32 Engine_TaskAddCallback(void (*callback)(void), s32 priority);
+s32 Engine_TaskRemoveCallback(void (*callback)(void));
+s32 Engine_RandomNext(void);
+s32 Engine_MathSin(s32 angle);
+s32 Engine_MathCos(s32 angle);
+s32 __divsi3(s32 dividend, s32 divisor);
+void *Engine_HeapAllocate(s32 slot, s32 size);
+void Engine_HeapRelease(s32 slot);
+s32 Engine_VramLoad(s32 block, s32 size, const void *data);
+struct FieldActor *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+void Object_SetMode(struct FieldActor *object, s32 animation);
+void Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
+void Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
+void ObjectGroup_SetChildValue(struct FieldActor *object, s32 palette);
+void Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
+void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+void Engine_MapAnimateCells(const u16 *steps, s32 dest_x, s32 dest_y);
+void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
+void Engine_ItemLoadIcon(s32 item);
+void Engine_ItemShowFound(s32 item, s32 height);
+s32 Engine_PartyGiveItem(s32 item, s32 flags);
+void Engine_ActorStop(s32 actor);
+void Engine_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
+void Engine_ActorWalkByAndWait(s32 actor, s32 dx, s32 dz);
+s32 Engine_LeaderCheckAhead(void);
+void Engine_PsynergyBegin(s32 ability, s32 flags);
+void Engine_PsynergySetTarget(s32 caster, s32 target);
+void Engine_PsynergyRaiseHands(void);
+void Engine_PsynergyPlayEffect(s32 effect);
+void Engine_PsynergyLowerHands(void);
+void Engine_PsynergyCancel(void);
+void Engine_EventShowMessageAndWait(s32 speaker, s32 flags, s32 frames);
+struct FieldActor *Engine_EventGetViewCenter(void);
+struct FieldActor *Engine_ActorLookup(s32 actor);
+void Engine_ActorDestroy(s32 actor);
+void Engine_ActorSetChildValue(s32 actor, s32 value);
+void Engine_ActorEnableActionCallback(s32 actor, const u8 *table);
+void Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
+void Engine_ActorsRefresh(void);
+void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Engine_MapRenderSetValues(s32 value0, s32 value1, s32 value2);
+void Engine_ColorBufferApplySource(s32 value, s32 mode);
+void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
+void Engine_ColorBufferInterpolate(s32 frames);
+void Engine_ActorMoveToAndWait(s32 actor, s32 x, s32 z);
+void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
+void Engine_ActorJump(s32 actor, s32 height, s32 frames);
+void Engine_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
+                                        s32 other_speaker, s32 other_x, s32 other_y,
+                                        s32 other_arg, s32 other_extra, s32 flags);
+void Engine_PartyAddMembers(s32 first, s32 second);
+void Engine_MapRenderWaitForValues(void);
+
+
+s32 Engine_UiWorkWaitThenFinalizeCapacity(s32 first, s32 second);
+void Engine_ObjectMotionArmCallback(s32 actor, s32 angle, s32 frames);
+void Engine_ObjectMotionSetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Engine_ObjectMotionSetPositionAndReset(s32 actor, s32 x, s32 z);
+
+void Engine_ObjectMotionLaunch(s32 actor, s32 speed, s32 frames);
+void Engine_ObjectDispatchRelease(struct FieldActor *object);
+void Engine_MapWaitWorkValuesBelow256(void);
+void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
+
+
+
+
+
+
+
+
+
+
+static inline void Event_ShowMessage(s32 speaker, s32 flags)
+{
+    Engine_EventShowMessage(speaker, flags);
+}
+
+static inline s32 Event_OpenMessage(s32 speaker, s32 flags)
+{
+    return Engine_EventOpenMessage(speaker, flags);
+}
+static inline s32 Event_AskYesNo(s32 speaker, s32 flags);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
+{
+    Engine_ActorSetPosition(actor, fixed_x, fixed_z);
+}
+
+
+static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
+{
+    Engine_ActorSetSpeed(actor, speed, acceleration);
+}
+
+
+
+
+
+
+
+static inline void Actor_SetDestination(s32 actor, s32 x, s32 z)
+{
+    Engine_ActorSetDestination(actor, x, z);
+}
+static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz);
+
+static inline void Actor_WalkTo(s32 actor, s32 x, s32 z);
+
+static inline void Actor_WalkBy(s32 actor, s32 dx, s32 dz);
+
+
+
+
+static inline void Actor_WaitForMove(s32 actor)
+{
+    Engine_ActorWaitForMove(actor);
+}
+
+
+
+
+
+
+
+static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames)
+{
+    Engine_ActorFaceDirection(actor, facing, frames);
+}
+static inline void Actor_TurnToAngle(s32 actor, s32 angle, s32 frames);
+
+static inline void Actor_FaceActor(s32 actor, s32 target, s32 frames);
+
+
+static inline void Actor_FaceEachOther(s32 actor, s32 other, s32 frames)
+{
+    Engine_ActorFaceEachOther(actor, other, frames);
+}
+
+
+static inline void Actor_SetAnimation(s32 actor, s32 animation)
+{
+    Engine_ActorSetAnimation(actor, animation);
+}
+
+
+
+
+
+
+
+static inline void Actor_SetAnimationAndWait(s32 actor, s32 animation)
+{
+    Engine_ActorSetAnimationAndWait(actor, animation);
+}
+static inline void Actor_StartRepeatedMotion(s32 actor, s32 repeats);
+
+
+static inline void Actor_RunRepeatedMotion(s32 actor, s32 repeats)
+{
+    Engine_ActorRunRepeatedMotion(actor, repeats);
+}
+
+
+static inline void Actor_ShowEmote(s32 actor, s32 emote, s32 frames)
+{
+    Engine_ActorShowEmote(actor, emote, frames);
+}
+static inline void Actor_SetAttachedEffect(s32 actor, s32 effect);
+
+static inline void Actor_SetSpritePriority(s32 actor, s32 priority);
+
+static inline void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags);
+
+static inline void Camera_FollowActor(s32 actor, s32 keep_position);
+
+
+static inline void Camera_SetSpeed(s32 speed, s32 acceleration)
+{
+    Engine_CameraSetSpeed(speed, acceleration);
+}
+
+static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan)
+{
+    Engine_CameraMoveTo(fixed_x, fixed_y, fixed_z, pan);
+}
+static inline void Camera_MoveToActor(s32 actor, s32 pan);
+
+static inline void Camera_WaitForMove(void);
+
+static inline void Map_CopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
+                                 s32 dest_y);
+
+static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
+                                          s32 dest_x, s32 dest_y);
+
+static inline void Map_Redraw(void);
+
+static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third);
+
+
+
+
+
+
+enum {
+    FLAG_ARRIVAL_EVENT_PENDING = 0x12f
+};
+static inline s32 GameFlag_IsSet(s32 flag);
+
+static inline s32 GameFlag_Set(s32 flag);
+
+static inline void GameFlag_Clear(s32 flag);
+
+
+
+static inline void Audio_PlayCue(s32 cue)
+{
+    Engine_AudioPlayCue(cue);
+}
+static inline void Shop_Open(s32 shop, s32 keeper);
+
+static inline void Inn_Open(s32 inn, s32 keeper);
+
+static inline void Sanctum_Open(s32 priest);
+
+static inline s32 Task_AddCallback(void (*callback)(void), s32 priority);
+
+static inline s32 Task_RemoveCallback(void (*callback)(void));
+
+static inline s32 Random_Next(void);
+
+static inline s32 Math_Sin(s32 angle);
+
+static inline s32 Math_Cos(s32 angle);
+
+static inline s32 Math_Divide(s32 dividend, s32 divisor);
+
+static inline void *Heap_Allocate(s32 slot, s32 size);
+
+static inline void Heap_Release(s32 slot);
+
+static inline s32 Vram_Load(s32 block, s32 size, const void *data);
+
+static inline struct FieldActor *Object_Create(s32 type, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+
+static inline void Object_SetAnimation(struct FieldActor *object, s32 animation);
+
+static inline void Object_SetScript(struct FieldActor *object, const s32 *script);
+
+
+
+enum ObjectBlendMode {
+    OBJECT_BLEND_NORMAL = 0,
+    OBJECT_BLEND_TRANSLUCENT = 1
+};
+static inline void Object_SetBlendMode(struct FieldActor *object, s32 mode);
+
+static inline void Object_SetPalette(struct FieldActor *object, s32 palette);
+
+static inline void Object_SetPartPalettes(struct FieldActor *object, s32 palette);
+
+
+static inline void Map_AnimateCells(const u16 *steps, s32 dest_x, s32 dest_y)
+{
+    Engine_MapAnimateCells(steps, dest_x, dest_y);
+}
+static inline void MapObject_SetPosition(s32 object, s32 fixed_x, s32 fixed_z);
+
+static inline void Item_LoadIcon(s32 item);
+
+static inline void Item_ShowFound(s32 item, s32 height);
+
+static inline s32 Party_GiveItem(s32 item, s32 flags);
+
+static inline void Actor_Stop(s32 actor);
+
+static inline void Actor_CenterAndWalk(s32 actor, s32 priority, s32 dz);
+
+static inline void Actor_WalkByAndWait(s32 actor, s32 dx, s32 dz);
+
+static inline s32 Leader_CheckAhead(void);
+
+static inline void Psynergy_Begin(s32 ability, s32 flags);
+
+static inline void Psynergy_SetTarget(s32 caster, s32 target);
+
+static inline void Psynergy_RaiseHands(void);
+
+static inline void Psynergy_PlayEffect(s32 effect);
+
+static inline void Psynergy_LowerHands(void);
+
+static inline void Psynergy_Cancel(void);
+
+
+
+static inline void Event_ShowMessageAndWait(s32 speaker, s32 flags, s32 frames)
+{
+    Engine_EventShowMessageAndWait(speaker, flags, frames);
+}
+static inline struct FieldActor *Event_GetViewCenter(void);
+
+static inline struct FieldActor *Actor_Lookup(s32 actor);
+
+static inline void Actor_Destroy(s32 actor);
+
+static inline void Actor_SetChildValue(s32 actor, s32 value);
+
+
+
+
+
+
+
+
+static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
+{
+    Engine_ActorEnableActionCallback(actor, table);
+}
+static inline void Actor_SetActionCallback(struct FieldActor *actor, s32 value);
+
+static inline void Actors_Refresh(void);
+
+static inline void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width,
+                                   s32 height);
+
+static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2);
+
+static inline void ColorBuffer_ApplySource(s32 value, s32 mode);
+
+static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode);
+
+static inline void ColorBuffer_Interpolate(s32 frames);
+
+static inline void Actor_MoveToAndWait(s32 actor, s32 x, s32 z);
+
+
+static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
+{
+    Engine_ActorWalkToAndWait(actor, x, z);
+}
+static inline void Actor_Jump(s32 actor, s32 height, s32 frames);
+
+static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
+                                                s32 other_speaker, s32 other_x, s32 other_y,
+                                                s32 other_arg, s32 other_extra, s32 flags);
+
+static inline void Party_AddMembers(s32 first, s32 second);
+
+static inline void MapRender_WaitForValues(void);
+
+
+
+extern char SceneId_Clear;
+extern char SceneId_Title;
+
+
+extern char SceneId_WorldMap;
+extern char SceneId_HaidiaMura;
+extern char SceneId_HaidiaIe;
+extern char SceneId_SoruIriguchi1;
+extern char SceneId_SoruIriguchi2;
+extern char SceneId_KuupuappuHeya;
+extern char SceneId_GomaSuiro1;
+extern char SceneId_GomaSuiro2;
+extern char SceneId_BiribinoMura1;
+extern char SceneId_BiribinoMura2;
+extern char SceneId_BiribinoKyuden;
+extern char SceneId_BiribinoNiwa;
+extern char SceneId_BiribinoMura3;
+extern char SceneId_KorimaMura1;
+extern char SceneId_KorimaMura2;
+extern char SceneId_KorimaMura3;
+extern char SceneId_KorimaHashi;
+extern char SceneId_ToretoHeya;
+extern char SceneId_BiribinoDou1;
+extern char SceneId_BiribinoDou2;
+extern char SceneId_BiribinoDou3;
+extern char SceneId_ImiruMura1;
+extern char SceneId_ImiruMura2;
+extern char SceneId_ImiruFuchin1;
+extern char SceneId_MakyuriIriguchi;
+extern char SceneId_MakyuriHeya1;
+extern char SceneId_MakyuriHeya2;
+extern char SceneId_MakyuriHeya3;
+extern char SceneId_MakyuriHeya4;
+extern char SceneId_MakyuriChojo1;
+extern char SceneId_ShianJiin1;
+extern char SceneId_ShianJiin2;
+extern char SceneId_ImiruFuchin2;
+extern char SceneId_ImiruFuchin3;
+extern char SceneId_ImiruFuchin4;
+extern char SceneId_ImiruFuchin5;
+extern char SceneId_ImiruFuchin6;
+extern char SceneId_ImiruFuchin7;
+extern char SceneId_MogoruMori1;
+extern char SceneId_MogoruMori2;
+extern char SceneId_MogoruMori3;
+extern char SceneId_YamaRama1;
+extern char SceneId_ArutinMura1;
+extern char SceneId_ArutinMura2;
+extern char SceneId_ArutinYama1;
+extern char SceneId_ArutinYama2;
+extern char SceneId_ArutinYama3;
+extern char SceneId_ArutinYama4;
+extern char SceneId_ArutinYama5;
+extern char SceneId_ArutinYama6;
+extern char SceneId_ArutinYama7;
+extern char SceneId_ArutinYama8;
+extern char SceneId_ArutinYama9;
+extern char SceneId_ArutinYama10;
+extern char SceneId_ArutinYama11;
+extern char SceneId_YamaRama2;
+extern char SceneId_RamakanSabaku1;
+extern char SceneId_RamakanSabaku2;
+extern char SceneId_RamakanSabaku3;
+extern char SceneId_RamakanSabaku4;
+extern char SceneId_HaidiaDou1;
+extern char SceneId_HaidiaDou2;
+extern char SceneId_HaidiaDou3;
+extern char SceneId_KuupuappuDou1;
+extern char SceneId_KuupuappuDou2;
+extern char SceneId_KuupuappuDou3;
+extern char SceneId_KareiMachi1;
+extern char SceneId_KareiHeya1;
+extern char SceneId_KareiHeya2;
+extern char SceneId_KareiMachi2;
+extern char SceneId_KareiKyuden;
+extern char SceneId_RunpaMura1;
+extern char SceneId_RunpaSuhara;
+extern char SceneId_RunpaDou;
+extern char SceneId_KareiTorebi1;
+extern char SceneId_KareiTorebi2;
+extern char SceneId_FuneKanpan;
+extern char SceneId_FuneHeya;
+extern char SceneId_KareiTorebi3;
+extern char SceneId_TakaraHashira1;
+extern char SceneId_TakaraHashira2;
+extern char SceneId_TakaraHashira3;
+extern char SceneId_TakaraHashira4;
+extern char SceneId_TakaraHashira5;
+extern char SceneId_KorosseoKawa;
+extern char SceneId_KorosseoKabe;
+extern char SceneId_TakaraAshiba1;
+extern char SceneId_TakaraAshiba2;
+extern char SceneId_TakaraAshiba3;
+extern char SceneId_TorebiKyuden1;
+extern char SceneId_TorebiKyuden2;
+extern char SceneId_KorosseoMaruta;
+
+extern char SceneId_KorashiamuIriguchi1;
+extern char SceneId_KorashiamuIriguchi2;
+extern char SceneId_KorashiamuIriguchi3;
+
+extern char SceneId_TakaraShima1;
+extern char SceneId_TakaraShima2;
+extern char SceneId_TakaraShima3;
+extern char SceneId_TakaraShima4;
+extern char SceneId_TakaraShima5;
+extern char SceneId_TakaraShima6;
+extern char SceneId_TakaraShima14;
+extern char SceneId_TorebiHeya;
+extern char SceneId_TorebiIzumi1;
+
+extern char SceneId_ArutamiraDou1;
+extern char SceneId_ArutamiraDou2;
+extern char SceneId_ArutamiraDou3;
+extern char SceneId_ArutamiraDou4;
+extern char SceneId_ArutamiraDou5;
+extern char SceneId_ArutamiraDou6;
+extern char SceneId_KaragoruDou1;
+extern char SceneId_KareiMachi3;
+extern char SceneId_KareiMachi4;
+extern char SceneId_KareiMachi5;
+extern char SceneId_KareiMachi6;
+extern char SceneId_RunpaMura2;
+extern char SceneId_RunpaJo1;
+extern char SceneId_RunpaJo2;
+extern char SceneId_RunpaJo3;
+extern char SceneId_RunpaJo4;
+extern char SceneId_SuharaGate1;
+extern char SceneId_SuharaGate2;
+extern char SceneId_SuharaGate3;
+extern char SceneId_SuharaSabaku1;
+extern char SceneId_SuharaSabaku2;
+extern char SceneId_SuharaSabaku3;
+
+extern char SceneId_KaragoruDou2;
+extern char SceneId_KaragoruDou3;
+
+extern char SceneId_BabiChika1;
+extern char SceneId_BabiChika2;
+extern char SceneId_BabiIriguchi1;
+extern char SceneId_BabiIriguchi2;
+extern char SceneId_BabiIriguchi3;
+extern char SceneId_RariberoHeya1;
+extern char SceneId_RariberoHeya2;
+extern char SceneId_VinasuHeya1;
+extern char SceneId_VinasuHeya2;
+extern char SceneId_VinasuHeya3;
+extern char SceneId_VinasuHeya4;
+extern char SceneId_VinasuHeya5;
+extern char SceneId_VinasuHeya6;
+extern char SceneId_TorebiIzumi2;
+extern char SceneId_LinkLobby;
+extern char SceneId_VinasuChojo;
+
+
+enum SceneId {
+    SCENE_WORLD_MAP = 2,
+    SCENE_KUUPUAPPU_MURA = 20,
+    SCENE_KUUPUAPPU_RUNPA = 22,
+    SCENE_KUUPUAPPU_MURA_SAI = 23,
+    SCENE_RUNPA_MURA = 104,
+    SCENE_RUNPA_SUHARA = 105,
+    SCENE_RUNPA_DOU = 106,
+    SCENE_RUNPA_JO_GATE = 159,
+    SCENE_RUNPA_JO = 160,
+    SCENE_SUHARA_GATE = 169
+};
+
+
+enum Facing {
+    FACING_EAST = 0x0000,
+    FACING_SOUTHEAST = 0x2000,
+    FACING_SOUTH = 0x4000,
+    FACING_SOUTHWEST = 0x6000,
+    FACING_WEST = 0x8000,
+    FACING_NORTHWEST = 0xa000,
+    FACING_NORTH = 0xc000,
+    FACING_NORTHEAST = 0xe000
+};
+
+
+enum {
+    FACING_STEP = 0x1000
+};
+
+
+
+
+
+enum {
+
+    SCENE_TABLE_END = -1,
+
+    CONDITION_ALWAYS = -1,
+
+    CONDITION_FLAG_SET = 0x1000
+};
+
+
+
+
+
+
+
+
+enum {
+    FLAG_PARTY_LEFT_VALE = 0x815
+};
+
+
+struct SceneEntrance {
+    s16 entrance;
+    s16 required_flag;
+    s16 x;
+    s16 y;
+    s16 z;
+    u16 facing;
+    s16 unused1;
+
+    s16 camera_left;
+    s16 camera_top;
+    s16 camera_right;
+    s16 camera_bottom;
+    s16 unused2;
+};
+
+typedef char SceneEntrance_Size[sizeof(struct SceneEntrance) == (24) ? 1 : -1];
+typedef char SceneEntrance_CameraLeft[(u32)&(((struct SceneEntrance *)0)->camera_left) == (14) ? 1 : -1];
+
+
+
+
+
+
+struct ScenePlacement {
+    s16 sprite;
+    s16 condition;
+    s32 behavior;
+    s32 x;
+    s32 y;
+    s32 z;
+    u16 facing;
+    u8 talk_facing;
+    u8 flags;
+};
+
+typedef char ScenePlacement_Size[sizeof(struct ScenePlacement) == (24) ? 1 : -1];
+typedef char ScenePlacement_TalkFacing[(u32)&(((struct ScenePlacement *)0)->talk_facing) == (22) ? 1 : -1];
+
+enum ActorBehavior {
+    ACTOR_STAND = 1,
+    ACTOR_WANDER = 2
+};
+
+
+enum ActorTalkFacing {
+    TALK_FACE_PARTY = 0,
+    TALK_FACE_PARTY_AND_BACK = 1,
+    TALK_KEEP_FACING = 2
+};
+
+
+enum {
+    ACTOR_PARTY_LEADER = 0,
+    ACTOR_GERALD = 1,
+    ACTOR_IVAN = 2,
+    ACTOR_MIA = 3,
+    ACTOR_JASMINE = 5,
+    ACTOR_FIRST_PLACED = 8
+};
+
+
+
+
+struct SceneEvent {
+    u32 control;
+    s16 trigger;
+    s16 condition;
+    u32 value;
+};
+
+typedef char SceneEvent_Size[sizeof(struct SceneEvent) == (12) ? 1 : -1];
+
+
+enum SceneEventKind {
+
+    EVENT_TALK = 0,
+
+    EVENT_EXIT = 1,
+
+    EVENT_TOUCH = 2,
+
+    EVENT_SEARCH = 3,
+
+    EVENT_PSYNERGY = 5,
+
+    EVENT_RAISED = 6
+};
+
+
+
+
+
+enum SearchTarget {
+
+    SEARCH_UNNAMED = 0,
+    SEARCH_CHEST = 1,
+    SEARCH_JAR,
+    SEARCH_BARREL,
+    SEARCH_WALL,
+    SEARCH_GROUND,
+    SEARCH_ROCK,
+    SEARCH_HOLE,
+    SEARCH_GRAVE,
+    SEARCH_TREE,
+    SEARCH_UNDERBRUSH,
+    SEARCH_DOOR,
+    SEARCH_CHIMNEY,
+    SEARCH_WOODEN_BOX,
+    SEARCH_BED,
+    SEARCH_BOOKCASE,
+    SEARCH_STONE_COFFIN,
+    SEARCH_FIREPLACE,
+    SEARCH_WATER,
+    SEARCH_STONE_PILLAR,
+    SEARCH_STALACTITE,
+    SEARCH_BOARDS,
+    SEARCH_FOUNTAIN,
+    SEARCH_OVEN,
+    SEARCH_TABLE,
+    SEARCH_STONE_STATUE,
+    SEARCH_STONE_TABLET,
+    SEARCH_SHELF,
+    SEARCH_WARDROBE,
+    SEARCH_FIREWOOD,
+    SEARCH_BOOKS,
+    SEARCH_WELL
+};
+
+
+struct SceneRegion;
+
+
+s32 Scene_Initialize(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+const struct SceneRegion *Scene_GetRegions(void);
+
+
+
+enum {
+    FLAG_BOULDER_FELL = 0x838
+};
+
+
+
+
+
+enum StormNightActor {
+    ACTOR_DORA = ACTOR_FIRST_PLACED + 1,
+    ACTOR_KYLE
+};
+
+
+
+struct Object {
+    u8 filler00[6];
+    u16 x;
+    u8 filler08[92];
+    s16 counter;
+};
+
+typedef struct Obj {
+    u8 pad00[8];
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+    u8 pad14[4];
+    s32 f18;
+    s32 f1c;
+    u8 pad20[0x44];
+    u16 f64;
+    u8 pad66[2];
+    struct Obj *f68;
+} Obj;
+
+typedef struct Ent {
+    u8 pad00[9];
+    u8 b01:2;
+    u8 f:2;
+    u8 b45:4;
+} Ent;
+
+typedef struct Rec {
+    u8 pad00[0x50];
+    Ent *f50;
+} Rec;
+
+struct FixedPointCountdown {
+    u8 pad_00[0x18];
+    s32 fixed_point_18;
+    s32 fixed_point_1c;
+    u8 pad_20[0x44];
+    s16 countdown;
+};
+
+typedef struct {
+    u8 filler0[8];
+    s32 unk8;
+    u8 fillerC[4];
+    s32 unk10;
+} Thing1;
+
+typedef struct {
+    u8 filler0[10];
+    s16 unkA;
+    u8 fillerC[6];
+    s16 unk12;
+} Thing2;
+
+struct Actor {
+    u8 reserved_00[80];
+    u8 *presentation;
+};
+
+extern u8 HaidiaArashi_FrameModes[];
+
+extern u8 HaidiaArashi_SceneTable0[];
+
+extern u8 HaidiaArashi_SceneTable1[];
+
+extern u8 HaidiaArashi_SceneTable2[];
+
+extern u8 HaidiaArashi_SceneTable3[];
+
+extern u8 HaidiaArashi_CellSteps0[];
+
+extern u8 HaidiaArashi_CellSteps1[];
+
+extern u8 HaidiaArashi_ActorNineteenScript[];
+
+extern u8 HaidiaArashi_ActorEightScript[];
+
+
+void ObjectMotion_SetActionVariant(s32 actor, s32 priority);
+
+extern s32 HaidiaArashi_ShakeDone;
+extern s32 HaidiaArashi_ShakeShift;
+
+extern u8 HaidiaArashi_CellSteps2[];
+extern u8 HaidiaArashi_CellSteps3[];
+extern u8 HaidiaArashi_LastObjectCall[];
+extern u8 HaidiaArashi_LeaderScript[];
+extern u8 HaidiaArashi_ActorTwentyScript[];
+extern u8 HaidiaArashi_ActorTwentyTwoScript[];
+
+s32 Math_RemainderUnsigned(s32, s32);
+
+union PairObject;
+void HaidiaArashi_SpawnEffectPair(union PairObject *parent);
+
+void BattleFx_SetQueuedSoundAndPlay(s32);
+
+void Effect_SoundAndFlash(void);
+
+void BattleFx_StartTwelveFrameBlend(void);
+
+void BattleFx_SetBlock30Values128One(void);
+
+void HaidiaArashi_RunCallOutSequence(void);
+
+void BattleFx_SetBlock30ValuesMaxZero(void);
+
+s32 BattleFx_SetWeightedResult(s32, s32);
+
+void OverlayObject_ApplyIwramWord1e40(s32 o);
+
+void BattleFx_PlayQueuedSound();
+
+void Event_CallWithLastActiveObjectId();
+
+void Object_RefreshSelectorById();
+
+void Object_SetActionCallbackAndRefreshById();
+
+
+
+void Map_SetLayerEntryFlag();
+
+void Map_ClearLayerEntryFlag();
+
+void OverlayObject_UpdateRandomSlotByFrame(s32 obj);
+
+void BattleEffect_CleanupSceneObjects(void);
+
+void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
+
+s32 OverlayObject_SetField6OnCountdown(struct Object *object);
+s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
+u8 *SceneData_GetTableD0E4(void);
+s32 SceneData_ReturnZero(void);
+u8 *SceneData_GetTableD27c(void);
+u8 *SceneData_GetTableD2B8(void);
+u8 *SceneData_GetTableD558(void);
+void SceneState_SetFlag210AndConfigureRegion40_84(void);
+void SceneState_SetFlag210AndConfigureRegion40_89(void);
+void SceneState_SetWork1c0AndRunObject(u8 *o);
+void FieldScene_SetupDescriptorD774(void);
+void SceneState_SetValue123Mode1(void);
+void SceneState_ApplyValues123And3(void);
+void SceneState_SetValue123Mode4(void);
+void FieldScene_RunStep7BAndCheckFlags841And842(void);
+void FieldScene_SetupDescriptorD78a(void);
+void FieldScene_RunScene372_02000278(void);
+void FieldScene_SetupDescriptorD78aIfFlag205Clear(void);
+void FieldScene_SetupWithDescriptorD7A0(void);
+void FieldScene_SetupDescriptorD7b6(void);
+void FieldScene_RunScene372_02000398(void);
+void FieldScene_RunScene372_020003cc(void);
+void FieldScene_RunScene372_02000400(void);
+s32 FieldScene_RunFlagGatedActorSetup(void);
+void Scene_DoraSendsRobinToThePlaza(void);
+void HaidiaArashi_SetStormCellAttributes(void);
+void ActorPresentation_SetEightSceneCells(void);
+void FieldScene_RunOpeningAuxiliarySequence(void);
+void SceneState_ApplyFourRects(void);
+void FieldScene_DrawFiveTileBlocks(void);
+void FieldScene_RunScene372SequenceA(void);
+void FieldScene_RunScene372SequenceB(void);
+void FieldScene_RunActor22SceneWhenFlag836Only(void);
+void FieldScene_RunScene372SequenceD(void);
+void Scene_BoulderFalls(void);
+void OverlayObject_SetChildByte5AndMark(u8 *o, s32 n);
+void ActorPresentation_SetFourActorsModeByBit(void);
+void SceneDialogue_RunActorTenFlag30dDialogue(void);
+void HaidiaArashi_FlashLightning(void);
+void ActorPresentation_SelectActorTwentySevenState(void);
+void FieldScene_RunScene372_02003e48(void);
+void FieldScene_ConfigureActorTwentyTwoScene(void);
+void FieldScene_BuildPlacementGrid(void);
+void SceneState_SetWords1c0And1c8AndRun(void);
+void SceneState_SetWorkWordsAndFlag87f(void);
+void SceneActor_SetModeByFrameBit1(s32 o);
+void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
+void OverlayObject_UpdateArcFromParent(union FieldObject *object);
+void SceneState_SetValue140Mode0(void);
+void FieldScene_RunSingleStep(void);
+void FieldScene_RunFourPairedSteps(void);
+void SceneState_SetValue19ThenCall(void);
+void OverlayObject_CopyRecordField1ToSlots22And8(void);
+void SceneState_SetValueEe4(void);
+static __inline__ void Call1(void (*f)(), s32 a0);
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1);
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2);
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3);
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
+
+static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
+
+static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10);
+
+static __inline__ s32 Value0(s32 (*f)());
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0);
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1);
+
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2);
+
+static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3);
+
+static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
+
+static __inline__ s32 Value7(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
+
+
+
+extern u8 MsgHaidiaBigBoyWhy[];
+extern u8 MsgHaidiaKnowWayGo[];
+extern u8 MsgHaidiaKyleAbleStop[];
+void BattleFx_SetBlock30Values12Zero(void);
+s32 Engine_GameFlagIsSet();
+void Engine_EventBegin();
+void Engine_WorkSetValuesIfNonNegative();
+void Engine_AudioPlayCue();
+void Engine_TaskWait();
+void Engine_ActorSetPosition();
+void Engine_ActorWalkToAndWait();
+void Engine_EventWait();
+void Engine_MapWaitWorkValuesBelow256();
+void BattleFx_PlayQueuedSound();
+void HaidiaArashi_SetStormCellAttributes();
+void SceneActor_RunActor22PlacementSequence();
+void Engine_EventEnd();
+
+struct Flags35 {
+    u8 pad[35];
+    u8 flags;
+};
+
+struct Flags9 {
+    u8 pad[9];
+    u8 low : 2;
+    u8 mode : 2;
+};
+
+void ActorPresentation_SetEightSceneCells();
+void ObjectMotion_SetActionVariant();
+void FieldScene_DrawFiveTileBlocks();
+extern u8 MsgHaidiaHuh[];
+extern u8 MsgHaidiaDontLeaveMeHere[];
+extern u8 MsgHaidiaUghHrnghhh[];
+extern u8 MsgHaidiaBoulderNeedGet[];
+extern u8 MsgHaidiaWantDumpStuff[];
+extern u8 MsgHaidiaKnowRightOk[];
+extern u8 MsgHaidiaRightDitchStuff[];
+extern u8 MsgHaidiaRockHitsLose[];
+extern u8 MsgHaidiaThinkForgetThings[];
+s32 Engine_EventOpenMessage();
+void Engine_ActorFaceEachOther();
+s32 Engine_EventChooseYesNo();
+void Engine_EventSetMessage();
+void Engine_EventShowMessageAndWait();
+void Engine_ActorSetAttachedEffect();
+void Engine_ActorSetAnimation();
+void Engine_ActorFaceActor();
+void Engine_ActorSetAnimationAndWait();
+void Engine_EventShowMessage();
+void Engine_ActorSetDestination();
+void Engine_ActorWaitForMove();
+void Event_PrepareObjectAndApplyValue();
+extern u8 MsgHaidiaHey[];
+extern u8 HaidiaArashi_ActorTwentyTwoScriptA[];
+extern u8 HaidiaArashi_ActorTwentyTwoScriptB[];
+
+extern u8 MsgHaidiaCantGetAroundThisRock[];
+extern u8 MsgHaidiaNorthLeadsToMtAleph[];
+extern u8 MsgHaidiaTheBoulderIsFalling[];
+
+
+
+
+
+s32 HaidiaArashi_ShakeDone;
+s32 HaidiaArashi_ShakeShift;
+
+extern u8 MsgHaidiaNoBrother[];
+void HaidiaArashi_RunRiverSearch(void);
+extern u8 MsgHaidiaDontSupposeTwo[];
+extern u8 MsgHaidiaGoLookNorth[];
+extern u8 HaidiaArashi_ActorNineScriptA[];
+extern u8 HaidiaArashi_ActorNineScriptB[];
+extern u8 HaidiaArashi_ActorNineScriptC[];
+extern u8 HaidiaArashi_ActorNineScriptD[];
+extern u8 HaidiaArashi_ActorTwentySixScriptA[];
+extern u8 HaidiaArashi_ActorTwentySixScriptB[];
+extern u8 HaidiaArashi_ActorTwentySixScriptC[];
+extern u8 HaidiaArashi_CellSteps4[];
+extern u8 HaidiaArashi_CellSteps5[];
+extern u8 MsgHaidiaOh[];
+extern u8 MsgHaidiaTwoDontEnough[];
+extern u8 MsgHaidiaMomDadBack[];
+void Engine_ActorFaceDirection();
+void Engine_ActorRunRepeatedMotion();
+void Engine_CameraSetSpeed();
+void Engine_CameraMoveTo();
+void Engine_ActorEnableActionCallback();
+
+
+extern u8 HaidiaArashi_StormRunActions[];
+void Engine_CameraWaitForMove();
+void Scene_RunActorGroupDepartureSequence();
+s32 OverlayObject_SetField6OnCountdown(struct Object *object);
+
+s32 UpdateFixedPointCountdown(struct FixedPointCountdown *state);
+
+u8 *SceneData_GetTableD0E4(void);
+
+s32 SceneData_ReturnZero(void);
+
+u8 *SceneData_GetTableD27c(void);
+
+u8 *SceneData_GetTableD2B8(void);
+
+u8 *SceneData_GetTableD558(void);
+
+void SceneState_SetFlag210AndConfigureRegion40_84(void);
+
+void SceneState_SetFlag210AndConfigureRegion40_89(void);
+
+void SceneState_SetWork1c0AndRunObject(u8 *o);
+
+void FieldScene_SetupDescriptorD774(void);
+
+void SceneState_SetValue123Mode1(void);
+
+void SceneState_ApplyValues123And3(void);
+
+void SceneState_SetValue123Mode4(void);
+
+void FieldScene_RunStep7BAndCheckFlags841And842(void);
+
+void FieldScene_SetupDescriptorD78a(void);
+
+void FieldScene_RunScene372_02000278(void);
+
+void FieldScene_SetupDescriptorD78aIfFlag205Clear(void);
+
+void FieldScene_SetupWithDescriptorD7A0(void);
+
+void FieldScene_SetupDescriptorD7b6(void);
+
+void FieldScene_RunScene372_02000398(void);
+
+void FieldScene_RunScene372_020003cc(void);
+
+void FieldScene_RunScene372_02000400(void);
+
+s32 FieldScene_RunFlagGatedActorSetup(void);
+
+void Scene_DoraSendsRobinToThePlaza(void);
+
+void HaidiaArashi_RunScene00D5C(void);
+
+void HaidiaArashi_SetStormCellAttributes(void);
+
+void HaidiaArashi_RunEventSequence(void);
+
+void ActorPresentation_SetEightSceneCells(void);
+
+void FieldScene_RunOpeningAuxiliarySequence(void);
+
+void SceneState_ApplyFourRects(void);
+
+void HaidiaArashi_RunSecondEventSequence(void);
+
+void FieldScene_DrawFiveTileBlocks(void);
+
+void FieldScene_RunScene372SequenceA(void);
+
+void FieldScene_RunScene372SequenceB(void);
+
+void FieldScene_RunActor22SceneWhenFlag836Only(void);
+
+void FieldScene_RunScene372SequenceC(void);
+
+void HaidiaArashi_RunCallOutSequence(void);
+
+void FieldScene_RunScene372SequenceE(void);
+
+void FieldScene_RunScene372SequenceD(void);
+
+void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
+
+void Scene_BoulderFalls(void);
+
+void OverlayObject_SetChildByte5AndMark(u8 *o, s32 n);
+
+void ActorPresentation_SetFourActorsModeByBit(void);
+
+void FieldScene_RunFlagGatedActorSequence(void);
+
+
+
+
+
+
+
+void HaidiaArashi_RunRiverSearch(void)
+{
+    s32 entry;
+    s32 record;
+    s32 script;
+    s32 north;
+    s32 suppose;
+
+    Actor_FaceDirection(26, 0x3000, 0);
+    Actor_FaceDirection(24, 0xd000, 0);
+    Actor_FaceDirection(25, 0xb000, 0);
+    Actor_FaceDirection(9, 0x3000, 0);
+    Actor_FaceDirection(10, 0xd000, 20);
+    Actor_SetAnimation(26, 3);
+    Actor_SetAnimation(24, 3);
+    Actor_SetAnimation(25, 3);
+    Actor_SetAnimation(9, 3);
+    Actor_SetAnimationAndWait(25, 3);
+    Engine_EventWait(20);
+    Camera_SetSpeed(0x10000, 0x2000);
+    Camera_MoveTo(0x860000, -1, 0x4ab0000, 1);
+    Actor_SetSpeed(26, 0x19999, 0xcccc);
+    Actor_SetSpeed(9, 0x19999, 0xcccc);
+    Actor_EnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptA);
+    Object_SetActionCallbackAndRefreshById(9, (s32)HaidiaArashi_ActorNineScriptA);
+    Audio_PlayCue(158);
+    Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps2, 38, 72);
+    Engine_EventWait(10);
+    Actor_WalkToAndWait(9, 149, 0x497);
+    Actor_SetPosition(9, 0, 0);
+    Actor_WalkToAndWait(25, 250, 0x4be);
+    BattleFx_PlayQueuedSound();
+    Actor_FaceDirection(10, 0x3000, 0);
+    Actor_FaceDirection(24, 0x3000, 0);
+    Actor_FaceDirection(25, 0x3000, 0);
+    Actor_SetAnimation(10, 5);
+    Actor_SetAnimation(24, 6);
+    Actor_SetAnimation(25, 6);
+
+
+
+    entry = (s32)Object_GetById(10);
+    record = Engine_RandomNext();
+    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
+    entry = (s32)Object_GetById(24);
+    record = Engine_RandomNext();
+    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
+    entry = (s32)Object_GetById(25);
+    record = Engine_RandomNext();
+    *(u16 *)(entry + 100) = (Math_RemainderUnsigned(record, 90) + 60);
+    script = (s32)HaidiaArashi_ActorEightScript;
+    Actor_EnableActionCallback(10, (const u8 *)script);
+    Actor_EnableActionCallback(24, (const u8 *)script);
+    Actor_EnableActionCallback(25, (const u8 *)script);
+    Object_RefreshSelectorById(26);
+    Engine_EventWait(10);
+    Audio_PlayCue(159);
+    Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps5, 38, 72);
+    Engine_EventWait(30);
+    BattleFx_PlayQueuedSound();
+    Camera_MoveTo(0x700000, -1, 0x4c90000, 1);
+    Audio_PlayCue(158);
+    Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps1, 35, 73);
+    Engine_EventWait(20);
+    BattleFx_PlayQueuedSound();
+    Actor_EnableActionCallback(9, HaidiaArashi_ActorNineScriptB);
+    Engine_EventWait(20);
+    Actor_EnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptB);
+    Engine_EventWait(40);
+    Audio_PlayCue(159);
+    Map_AnimateCells((const u16 *)HaidiaArashi_CellSteps4, 35, 73);
+    Object_RefreshSelectorById(26);
+    BattleFx_PlayQueuedSound();
+    Engine_EventWait(40);
+    north = (s32)MsgHaidiaGoLookNorth;
+    Engine_EventSetMessage(north);
+    Event_ShowMessageAndWait(9, 0, 20);
+    Actor_SetAnimationAndWait(26, 3);
+    Event_ShowMessageAndWait(0x201a, 0, 40);
+    Actor_SetAnimation(9, 3);
+    Actor_SetAnimationAndWait(26, 3);
+    Engine_EventWait(30);
+    Actor_EnableActionCallback(9, HaidiaArashi_ActorNineScriptC);
+    Actor_EnableActionCallback(26, HaidiaArashi_ActorTwentySixScriptC);
+    Engine_EventWait(40);
+    Camera_SetSpeed(0x20000, 0x4000);
+    Camera_MoveTo(0x690000, -1, 0x43e0000, 1);
+    Object_RefreshSelectorById(9);
+    Actor_FaceDirection(9, 0, 0);
+    Actor_ShowEmote(9, 0x100, 40);
+    Event_ShowMessageAndWait(9, 0, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+    Actor_FaceDirection(22, 0x8000, 10);
+    Actor_WalkToAndWait(9, 105, 0x43e);
+    Actor_RunRepeatedMotion(9, 2);
+    Event_OpenMessage(0x8009, 0);
+    Actor_FaceDirection(22, 0, 0);
+
+
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Actor_SetAnimationAndWait(9, 3);
+        Engine_EventSetMessage((north + 4));
+    } else {
+        Actor_RunRepeatedMotion(9, 2);
+        Engine_EventSetMessage((north + 5));
+    }
+    Event_ShowMessage(0x8009, 0);
+    Actor_FaceDirection(22, 0x8000, 40);
+    Actor_ShowEmote(9, 0x100, 30);
+    suppose = (s32)MsgHaidiaDontSupposeTwo;
+    Engine_EventSetMessage(suppose);
+    Event_OpenMessage(0x8009, 0);
+
+
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Actor_SetAnimationAndWait(9, 3);
+        Engine_EventSetMessage((suppose + 1));
+        Event_ShowMessageAndWait(0x8009, 0, 30);
+        Actor_FaceDirection(22, 0x8000, 20);
+        Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+        Actor_SetAnimation(22, 3);
+        Actor_SetAnimationAndWait(9, 3);
+        Engine_EventWait(40);
+    } else {
+        Actor_ShowEmote(9, 0x105, 90);
+        Actor_ShowEmote(9, 0x103, 40);
+        Actor_SetAnimation(9, 4);
+        Engine_EventSetMessage((suppose + 2));
+        Event_ShowMessage(0x8009, 0);
+    }
+    Actor_EnableActionCallback(9, HaidiaArashi_ActorNineScriptD);
+    Engine_EventWait(90);
+    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
+    Engine_EventWait(40);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimationAndWait(22, 3);
+    Engine_EventWait(20);
+    Actor_SetAnimation(22, 2);
+
+
+    record = (s32)Object_GetById(0);
+    if (record != 0) {
+        Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    }
+    Actor_WaitForMove(22);
+    Actor_SetPosition(22, 0, 0);
+}
+void SceneDialogue_RunActorTenFlag30dDialogue(void);
+
+void HaidiaArashi_RunScene02DEC(void);
+

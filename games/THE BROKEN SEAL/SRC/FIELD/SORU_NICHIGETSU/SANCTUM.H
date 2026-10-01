@@ -241,19 +241,3 @@ void UpdateStatueLight4(void);
 
 void SetSolShindenActorStep();
 void SetSolShindenActorStep();
-/* One import, four call sites, four distinct veneer addresses. */
-
-static __inline__ void SetInitialScale(s32 actor, s32 scale, s32 duration)
-{
-    Actor_FaceDirection(actor, scale, duration);
-}
-
-static __inline__ void SetInitialDirection(s32 actor, s32 direction, s32 duration)
-{
-    Actor_ShowEmote(actor, direction, duration);
-}
-
-static __inline__ void SetFinalScale(s32 actor, s32 horizontal, s32 vertical)
-{
-    Actor_SetSpeed(actor, horizontal, vertical);
-}

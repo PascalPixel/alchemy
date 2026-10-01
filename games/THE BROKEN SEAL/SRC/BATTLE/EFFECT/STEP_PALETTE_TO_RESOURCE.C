@@ -4,6 +4,7 @@
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
+    /* FAKEMATCH: a direct call changes BattleFx_StepPaletteToResource from mov r6, r8 to mov r6, r9 (111/114 assembly lines). */
     Iwram_CopyWords(destination, source, size);
 }
 

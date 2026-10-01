@@ -56,35 +56,35 @@ void ColossoLogRollingStage_RunScriptedTransition(s32 mode)
     extern void Audio_PlayCueFromEventWork(void);
 
     if (mode == 0) {
-        Event_Begin();
-        Event_OpenScreen();
-        Event_WaitForScreen();
-        Event_Wait(30);
+        Engine_EventBegin();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        Engine_EventWait(30);
         Audio_PlayCue(0x59);
         Korosseo_LoadPortrait(0);
         ColossoLogRollingStage_InitializeModeTask(1, 0);
-        Event_Wait(120);
-        Event_End();
+        Engine_EventWait(120);
+        Engine_EventEnd();
         return;
     }
 
     Audio_PlayCue(0xf7);
-    Event_Begin();
-    Event_OpenScreen();
-    Event_WaitForScreen();
+    Engine_EventBegin();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     {
         s16 *base = (s16 *)&gColossoModeScriptDefault;
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
-    Event_Wait(30);
+    Engine_EventWait(30);
     Audio_PlayCue(mode + 0x5a);
     Korosseo_LoadPortrait(mode);
     ColossoLogRollingStage_InitializeModeTask(1, 0);
-    Event_Wait(120);
+    Engine_EventWait(120);
 
     goto check_transition;
 wait_transition:
-    Task_Wait(1);
+    Engine_TaskWait(1);
 check_transition:
     if (AudioCommand_GetStateByte() != 0)
         goto wait_transition;
@@ -93,19 +93,19 @@ check_transition:
     Korosseo_LoadPortrait(5);
     ColossoLogRollingStage_InitializeModeTask(2, 0);
     Audio_PlayCue(0xec);
-    Event_Wait(60);
+    Engine_EventWait(60);
     ColossoLogRollingStage_InitializeModeTask(2, 1);
     Audio_PlayCue(0xec);
-    Event_Wait(60);
+    Engine_EventWait(60);
     Korosseo_LoadPortrait(6);
     ColossoLogRollingStage_InitializeModeTask(2, 0);
     Audio_PlayCue(0xec);
-    Event_Wait(60);
+    Engine_EventWait(60);
     Korosseo_LoadPortrait(7);
     ColossoLogRollingStage_InitializeModeTask(4, 0);
     Audio_PlayCue(0xed);
     Audio_PlayCueFromEventWork();
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(0x123);
 }
 
@@ -117,34 +117,34 @@ void FieldScene_RunScene3bcSequenceA(s32 a0)
     s32 kind;
 
     Audio_PlayCue(247);
-    Event_OpenScreen();
-    Event_WaitForScreen();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     gColossoModeScript3A.span = a0 * 60;
     gColossoModeScript3B.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        Event_Wait(30);
+        Engine_EventWait(30);
         Audio_PlayCue(86);
         Korosseo_LoadPortrait(8);
         /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(ColossoLogRollingStage_InitializeModeTask, 3, 1);
-        Event_Wait(-a0 * 60 + 60);
+        Engine_EventWait(-a0 * 60 + 60);
         kind = 0;
     } else {
-        Event_Wait(30);
+        Engine_EventWait(30);
         Audio_PlayCue(a0 + 90);
         Korosseo_LoadPortrait(4);
         /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(ColossoLogRollingStage_InitializeModeTask, 3, 0);
-        Event_Wait(a0 * 60 + 60);
+        Engine_EventWait(a0 * 60 + 60);
         kind = 8;
     }
     Actor_ShowEmote(kind, 0x105, 0);
     while (AudioCommand_GetStateByte()!= 0) {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
     Audio_PlayCue(19);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Audio_PlayCue(0x121);
-    Event_CloseScreen();
-    Event_WaitForScreen();
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
 }

@@ -169,7 +169,7 @@ extern u8 KorimaMura_RegionScript[];
 s32 SceneState_FlushPendingWordB698(s32 arg0)
 {
     if (KorimaMura_PendingPose != 0) {
-        Object_SetAnimation(arg0, 2);
+        Object_SetMode(arg0, 2);
         KorimaMura_PendingPose = 0;
     }
     return 1;
@@ -182,9 +182,9 @@ s32 SceneEffect_AdvanceCounterAndSwitchMode(struct Obj *p)
     s32 h = p->f64 + ((u32)t >> 16);
     p->f64 = h;
     if ((s16)h > 1000) {
-        Object_SetPalette(p, 7);
+        ObjectGroup_SetChildValue(p, 7);
     } else {
-        Object_SetPalette(p, 10);
+        ObjectGroup_SetChildValue(p, 10);
     }
     if ((s16)p->f64 > 1200) {
         p->f64 = 0;
@@ -317,12 +317,12 @@ void FieldScene_RunActor16MessageBranch(void)
     s32 v = q->f06;
     Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {
-        Sanctum_Open(16);
+        Engine_SanctumOpen(16);
     } else {
-        Event_SetMessage((s32)MsgKorimaToldHolyTrees);
+        Engine_EventSetMessage((s32)MsgKorimaToldHolyTrees);
         Event_AskYesNo(16, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor27Step(void)
@@ -349,10 +349,10 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
 
     *((u8 *)Object_GetById(0) + 85) = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
     gEventWork->transition_frames = 16;
-    Event_RequestExit(a0);
+    Engine_EventRequestExit(a0);
 }
 
 /* Animate the map cells for the chosen switch, or leave the area. */
@@ -506,20 +506,20 @@ s32 Scene_Initialize(void)
         return 0;
     }
 
-    Actor_SetSpriteFlags(Object_GetById(23), 0);
-    Actor_SetSpriteFlags(Object_GetById(24), 0);
-    Actor_SetSpriteFlags(Object_GetById(25), 0);
-    Actor_SetSpriteFlags(Object_GetById(26), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(25), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(26), 0);
 
     tbl = KorimaMura_EntryActions;
-    Actor_EnableActionCallback(23, tbl);
-    Actor_EnableActionCallback(24, tbl);
-    Actor_EnableActionCallback(25, tbl);
-    Actor_EnableActionCallback(26, tbl);
+    Engine_ActorEnableActionCallback(23, tbl);
+    Engine_ActorEnableActionCallback(24, tbl);
+    Engine_ActorEnableActionCallback(25, tbl);
+    Engine_ActorEnableActionCallback(26, tbl);
 
     if (GameFlag_IsSet(0x845) == 0) {
         for (actor = 8; actor <= 16; actor++) {
-            Actor_SetSpriteFlags(Object_GetById(actor), 0);
+            Engine_ActorSetSpriteFlags(Object_GetById(actor), 0);
         }
         Map_CopyCellAttributes(13, 9, 1, 1, 13, 8);
         Map_CopyCellAttributes(13, 9, 1, 1, 15, 8);
@@ -535,15 +535,15 @@ s32 Scene_Initialize(void)
     }
 
     if (GameFlag_IsSet(0x843) != 0) {
-        Actor_Destroy(ACTOR_GERALD);
-        Actor_Destroy(ACTOR_IVAN);
-        Actor_Destroy(ACTOR_MIA);
-        Actor_Destroy(17);
-        Actor_Destroy(18);
-        Actor_Destroy(19);
-        Actor_Destroy(20);
-        Actor_Destroy(21);
-        Actor_Destroy(22);
+        Engine_ActorDestroy(ACTOR_GERALD);
+        Engine_ActorDestroy(ACTOR_IVAN);
+        Engine_ActorDestroy(ACTOR_MIA);
+        Engine_ActorDestroy(17);
+        Engine_ActorDestroy(18);
+        Engine_ActorDestroy(19);
+        Engine_ActorDestroy(20);
+        Engine_ActorDestroy(21);
+        Engine_ActorDestroy(22);
         Event_CallWithLastActiveObjectId(KorimaMura_EntryScript);
     }
 
@@ -600,17 +600,17 @@ void SceneActor_SetActors19To22HeightByFrameParity(void)
 
 void FieldScene_StartEffect141Sequence(s32 arg0, s32 arg1)
 {
-    Psynergy_Begin(141, 1);
-    Psynergy_SetTarget(arg0, arg1);
-    Psynergy_RaiseHands();
-    Psynergy_PlayEffect(1);
-    Task_Wait(1);
+    Engine_PsynergyBegin(141, 1);
+    Engine_PsynergySetTarget(arg0, arg1);
+    Engine_PsynergyRaiseHands();
+    Engine_PsynergyPlayEffect(1);
+    Engine_TaskWait(1);
 }
 
 void FieldScene_RunSequenceA(void)
 {
-    Psynergy_PlayEffect(2);
-    Psynergy_LowerHands();
+    Engine_PsynergyPlayEffect(2);
+    Engine_PsynergyLowerHands();
     BattleEffect_CleanupSceneObjects();
 }
 
@@ -628,23 +628,23 @@ void FieldScene_RunExtendedActorSequence(void)
     s32 action_d;
     s32 step_next;
 
-    Event_Begin();
+    Engine_EventBegin();
     flag_addr = (s32)&KorimaMura_LayoutFlag;
     *(s32 *)flag_addr = GameFlag_IsSet(3);
     record = Object_GetById(19);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Object_GetById(20);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Object_GetById(21);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Object_GetById(22);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     Camera_MoveTo(0x680000, -1, 0x1000000, 0);
-    Map_Redraw();
+    Engine_MapRedraw();
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x170000, 0xf70000);
-    Task_Wait(1);
-    Event_OpenScreen();
-    Event_WaitForScreen();
+    Engine_TaskWait(1);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 121, 238);
     Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
@@ -657,15 +657,15 @@ void FieldScene_RunExtendedActorSequence(void)
     if ((s32)record != 0) {
         Actor_SetPosition(ACTOR_IVAN, record->x, record->z);
     }
-    Actor_EnableActionCallback(ACTOR_GERALD, (s32)KorimaMura_ActionTable1);
-    Actor_EnableActionCallback(ACTOR_IVAN, (s32)KorimaMura_ActionTable2);
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, (s32)KorimaMura_ActionTable1);
+    Engine_ActorEnableActionCallback(ACTOR_IVAN, (s32)KorimaMura_ActionTable2);
     if (*(s32 *)flag_addr != 0) {
         Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
         record = ((struct ObjectRuntime *(*)())Object_GetById)(0);
         if ((s32)record != 0) {
             Actor_SetPosition(ACTOR_MIA, record->x, record->z);
         }
-        Actor_EnableActionCallback(ACTOR_MIA, (s32)KorimaMura_ActionTable3);
+        Engine_ActorEnableActionCallback(ACTOR_MIA, (s32)KorimaMura_ActionTable3);
     }
     Object_RefreshSelectorById(2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 20);
@@ -687,44 +687,44 @@ void FieldScene_RunExtendedActorSequence(void)
     if (*(s32 *)flag_addr != 0) {
         Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
     }
-    Event_Wait(40);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
-    Event_SetMessage((s32)MsgKorimaQuiet);
+    Engine_EventWait(40);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_EventSetMessage((s32)MsgKorimaQuiet);
     FieldScene_RunPairedStepA(1, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Event_Wait(30);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(30);
     Actor_WalkToAndWait(ACTOR_IVAN, 72, 0x11e);
     Actor_WalkToAndWait(ACTOR_IVAN, 72, 0x12e);
     Actor_WalkToAndWait(ACTOR_IVAN, 88, 0x136);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
     if (*(s32 *)flag_addr != 0) {
         Actor_FaceActor(ACTOR_MIA, ACTOR_IVAN, 0);
     }
-    Event_Wait(30);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
+    Engine_EventWait(30);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     if (*(s32 *)flag_addr != 0) {
-        Actor_SetAnimation(ACTOR_MIA, 3);
+        Engine_ActorSetAnimation(ACTOR_MIA, 3);
     }
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_Wait(30);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_IVAN, 0, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     FieldScene_StartEffect141Sequence(2, 9);
-    Event_Wait(40);
+    Engine_EventWait(40);
     FieldScene_RunSequenceA();
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 40);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
     ((struct ObjectRuntime *)Object_GetById(2))->action_flags &= 254;
     Actor_WalkToAndWait(ACTOR_IVAN, 80, 0x136);
     mask = 1;
-    Event_Wait(1);
+    Engine_EventWait(1);
     ((struct ObjectRuntime *)Object_GetById(2))->action_flags |= mask;
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 40);
     FieldScene_RunPairedStepA(1, 20);
@@ -733,43 +733,43 @@ void FieldScene_RunExtendedActorSequence(void)
     if (*(s32 *)flag_addr != 0) {
         Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
     }
-    Actor_FaceEachOther(ACTOR_IVAN, ACTOR_GERALD, 60);
+    Engine_ActorFaceEachOther(ACTOR_IVAN, ACTOR_GERALD, 60);
     if (*(s32 *)flag_addr != 0) {
         Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     }
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
     FieldScene_RunPairedStepA(1, 20);
     Actor_SetSpeed(ACTOR_IVAN, 0x8000, 0x4000);
     ((struct ObjectRuntime *)Object_GetById(2))->action_flags &= 254;
     Actor_WalkToAndWait(ACTOR_IVAN, 72, 0x11e);
-    Event_Wait(1);
+    Engine_EventWait(1);
     ((struct ObjectRuntime *)Object_GetById(2))->action_flags |= mask;
-    Actor_EnableActionCallback(ACTOR_IVAN, (s32)KorimaMura_ActionTable2);
+    Engine_ActorEnableActionCallback(ACTOR_IVAN, (s32)KorimaMura_ActionTable2);
     if (*(s32 *)flag_addr != 0) {
         Actor_ShowEmote(ACTOR_MIA, 0x105, 0);
-        Event_Wait(60);
+        Engine_EventWait(60);
         FieldScene_RunPairedStepA(3, 20);
-        Actor_SetAnimation(ACTOR_MIA, 3);
+        Engine_ActorSetAnimation(ACTOR_MIA, 3);
     } else {
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_EventWait(20);
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Event_Wait(10);
+    Engine_EventWait(10);
     FieldScene_RunPairedStepB(1, 0x2000, 10);
     FieldScene_RunPairedStepB(0, 0xa000, 10);
     Event_OpenMessage(ACTOR_GERALD, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(20);
-        Actor_SetAnimation(ACTOR_GERALD, 3);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(20);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 3);
     } else {
-        Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
+        Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
     FieldScene_RunPairedStepA(1, 40);
@@ -777,7 +777,7 @@ void FieldScene_RunExtendedActorSequence(void)
     FieldScene_RunPairedStepB(2, 0x8000, 20);
     FieldScene_RunPairedStepB(2, 0x4000, 40);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
-    Event_Wait(60);
+    Engine_EventWait(60);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     FieldScene_RunPairedStepB(0, 0x6000, 60);
     value = 160;
@@ -786,14 +786,14 @@ void FieldScene_RunExtendedActorSequence(void)
     FieldScene_RunPairedStepB(0, (value << 8), 10);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     FieldScene_RunPairedStepB(0, 0x6000, 10);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_SetMessage((s32)MsgKorimaWhatIsIt);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_EventSetMessage((s32)MsgKorimaWhatIsIt);
     FieldScene_RunPairedStepA(1, 10);
     FieldScene_RunPairedStepB(2, 0xc000, 20);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(2, 20);
     FieldScene_RunPairedStepB(1, 0, 20);
     FieldScene_RunPairedStepB(0, (value << 8), 40);
@@ -801,94 +801,94 @@ void FieldScene_RunExtendedActorSequence(void)
     FieldScene_RunPairedStepB(0, 0x6000, 30);
     FieldScene_RunPairedStepB(1, 0x6000, 20);
     FieldScene_RunPairedStepB(0, 0xe000, 30);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     FieldScene_RunPairedStepB(0, 0x6000, 20);
     FieldScene_RunPairedStepB(2, 0xc000, 10);
     Audio_PlayCue(17);
     Audio_PlayCue(206);
     ColorBuffer_ApplyTarget(0x7fff, 0);
-    ColorBuffer_Interpolate(1);
-    Task_Wait(1);
+    Engine_ColorBufferInterpolate(1);
+    Engine_TaskWait(1);
     KorimaMura_EffectActive = 1;
     Engine_TaskAddCallback((s32)SceneEffect_SpawnObject26EveryEightFrames, 0xc80);
-    Task_Wait(20);
+    Engine_TaskWait(20);
     ColorBuffer_ApplyTarget(0x405210, 1);
     ColorBuffer_ApplyTarget(0x10000, 2);
-    ColorBuffer_Interpolate(120);
-    Task_Wait(60);
+    Engine_ColorBufferInterpolate(120);
+    Engine_TaskWait(60);
     action_a = (s32)KorimaMura_ActionTable4;
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, action_a);
-    Actor_EnableActionCallback(ACTOR_GERALD, action_a);
-    Actor_EnableActionCallback(ACTOR_IVAN, action_a);
-    Actor_EnableActionCallback(ACTOR_MIA, action_a);
-    Event_Wait(100);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, action_a);
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, action_a);
+    Engine_ActorEnableActionCallback(ACTOR_IVAN, action_a);
+    Engine_ActorEnableActionCallback(ACTOR_MIA, action_a);
+    Engine_EventWait(100);
     FieldScene_RunPairedStepA(1, 20);
     FieldScene_RunPairedStepA(2, 40);
     if (KorimaMura_LayoutFlag != 0) {
-        Event_Wait(40);
+        Engine_EventWait(40);
         Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
-        Event_Wait(40);
+        Engine_EventWait(40);
         FieldScene_RunPairedStepA(3, 40);
     } else {
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
-    Event_Wait(20);
+    Engine_EventWait(20);
     if (KorimaMura_LayoutFlag != 0) {
         value = 128;
         record = Object_GetById(3);
         record->velocity_y = (value << 10);
-        Event_Wait(10);
+        Engine_EventWait(10);
         Actor_SetSpeed(ACTOR_MIA, (value << 10), (value << 10));
         Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
-        Actor_EnableActionCallback(ACTOR_MIA, (s32)KorimaMura_ActionTable5);
+        Engine_ActorEnableActionCallback(ACTOR_MIA, (s32)KorimaMura_ActionTable5);
         record = Object_GetById(3);
-        Actor_SetSpriteFlags((s32)record, 0);
-        Actor_SetAnimation(ACTOR_MIA, 19);
-        Event_Wait(10);
+        Engine_ActorSetSpriteFlags((s32)record, 0);
+        Engine_ActorSetAnimation(ACTOR_MIA, 19);
+        Engine_EventWait(10);
     }
     value = 128;
     record = Object_GetById(0);
     record->velocity_y = (value << 10);
-    Event_Wait(10);
+    Engine_EventWait(10);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, (value << 10), (value << 10));
     action_b = (s32)KorimaMura_ActionTable5;
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, action_b);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, action_b);
     record = Object_GetById(0);
-    Actor_SetSpriteFlags((s32)record, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
-    Event_Wait(20);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+    Engine_EventWait(20);
     record = ((struct ObjectRuntime *(*)())Object_GetById)(1);
     record->velocity_y = (value << 10);
-    Event_Wait(10);
+    Engine_EventWait(10);
     Actor_SetSpeed(ACTOR_GERALD, (value << 10), (value << 10));
-    Actor_EnableActionCallback(ACTOR_GERALD, action_b);
+    Engine_ActorEnableActionCallback(ACTOR_GERALD, action_b);
     record = Object_GetById(1);
-    Actor_SetSpriteFlags((s32)record, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 19);
-    Event_Wait(40);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 19);
+    Engine_EventWait(40);
     record = ((struct ObjectRuntime *(*)())Object_GetById)(2);
     record->velocity_y = (value << 10);
-    Event_Wait(10);
-    Actor_EnableActionCallback(ACTOR_IVAN, action_b);
+    Engine_EventWait(10);
+    Engine_ActorEnableActionCallback(ACTOR_IVAN, action_b);
     record = Object_GetById(2);
-    Actor_SetSpriteFlags((s32)record, 0);
-    Actor_SetAnimation(ACTOR_IVAN, 19);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 19);
     KorimaMura_EffectActive = 0;
-    Event_Wait(160);
+    Engine_EventWait(160);
     Engine_TaskRemoveCallback((s32)SceneEffect_SpawnObject26EveryEightFrames);
-    Event_Wait(120);
+    Engine_EventWait(120);
     ColorBuffer_ApplyTarget(0x406218, 1);
-    ColorBuffer_Interpolate(60);
-    Task_Wait(60);
+    Engine_ColorBufferInterpolate(60);
+    Engine_TaskWait(60);
     gFallingEffectWidth = 0;
     step_addr = (s32)&gFallingEffectState;
     gFallingEffectOffset = 0x800000;
     *(s32 *)step_addr = 1;
     Engine_TaskAddCallback((s32)FieldScene_UpdateFallingEffect, 0xc80);
-    Event_Wait(180);
+    Engine_EventWait(180);
     Audio_PlayCue(21);
     FieldScene_RunPairedStepA(1, 80);
     FieldScene_RunPairedStepA(2, 40);
@@ -896,23 +896,23 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
     Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
-    Event_Wait(60);
+    Engine_EventWait(60);
     FieldScene_RunPairedStepA(2, 20);
     *(s32 *)step_addr = 2;
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
-    Event_Wait(20);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
-    Event_Wait(40);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 1);
-    Event_Wait(20);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 3);
-    Event_Wait(40);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Event_Wait(20);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Event_Wait(20);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_EventWait(40);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 1);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 3);
+    Engine_EventWait(40);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     FieldScene_RunPairedStepA(1, 20);
     if (KorimaMura_LayoutFlag != 0) {
@@ -927,267 +927,267 @@ void FieldScene_RunExtendedActorSequence(void)
     ((struct ObjectRuntime *)Object_GetById(1))->unknown_23 &= 254;
     ((struct ObjectRuntime *)Object_GetById(2))->unknown_23 &= 254;
     ((struct ObjectRuntime *)Object_GetById(3))->unknown_23 &= 254;
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-    Actor_SetSpritePriority(ACTOR_GERALD, 3);
-    Actor_SetSpritePriority(ACTOR_IVAN, 3);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetSpritePriority(ACTOR_GERALD, 3);
+    Engine_ActorSetSpritePriority(ACTOR_IVAN, 3);
     value = 0;
-    Actor_SetSpritePriority(ACTOR_MIA, 3);
+    Engine_ActorSetSpritePriority(ACTOR_MIA, 3);
     KorimaMura_PendingPose = value;
     Engine_TaskAddCallback((s32)SceneActor_SetActors19To22HeightByFrameParity, 0xc80);
     Audio_PlayCue(220);
     ((struct ObjectRuntime *)Object_GetById(19))->unknown_23 &= 254;
-    Actor_SetSpritePriority(19, 2);
+    Engine_ActorSetSpritePriority(19, 2);
     Actor_SetPosition(19, 0x780000, 0xf80000);
     action_c = (s32)KorimaMura_ActionTable6;
-    Actor_EnableActionCallback(19, action_c);
+    Engine_ActorEnableActionCallback(19, action_c);
     ((struct ObjectRuntime *)Object_GetById(20))->unknown_23 &= 254;
-    Actor_SetSpritePriority(20, 2);
+    Engine_ActorSetSpritePriority(20, 2);
     Actor_SetPosition(20, 0x640000, 0x1120000);
-    Actor_EnableActionCallback(20, action_c);
+    Engine_ActorEnableActionCallback(20, action_c);
     if (KorimaMura_LayoutFlag != 0) {
         ((struct ObjectRuntime *)Object_GetById(21))->unknown_23 &= 254;
-        Actor_SetSpritePriority(21, 2);
+        Engine_ActorSetSpritePriority(21, 2);
         Actor_SetPosition(21, 0x4a0000, 0xfe0000);
-        Actor_EnableActionCallback(21, action_c);
+        Engine_ActorEnableActionCallback(21, action_c);
     }
     ((struct ObjectRuntime *)Object_GetById(22))->unknown_23 &= 254;
-    Actor_SetSpritePriority(22, 2);
+    Engine_ActorSetSpritePriority(22, 2);
     Actor_SetPosition(22, 0x5e0000, 0xe10000);
-    Actor_EnableActionCallback(22, action_c);
+    Engine_ActorEnableActionCallback(22, action_c);
     if (*(s32 *)work_addr != 0) {
         do {
-            Task_Wait(1);
+            Engine_TaskWait(1);
         } while (gFallingEffectState != 0);
     }
-    Event_Wait(0x12c);
+    Engine_EventWait(0x12c);
     Engine_TaskRemoveCallback((s32)FieldScene_UpdateFallingEffect);
-    Event_Wait(120);
+    Engine_EventWait(120);
     Audio_PlayCue(17);
     ColorBuffer_ApplyTarget(0x10000, 1);
-    ColorBuffer_Interpolate(60);
-    Task_Wait(60);
-    Actor_Stop(19);
-    Actor_Stop(20);
+    Engine_ColorBufferInterpolate(60);
+    Engine_TaskWait(60);
+    Engine_ActorStop(19);
+    Engine_ActorStop(20);
     if (KorimaMura_LayoutFlag != 0) {
-        Actor_Stop(21);
+        Engine_ActorStop(21);
     }
     (Engine_ActorStop)(22);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     action_d = (s32)KorimaMura_ActionTable7;
     (Engine_ActorEnableActionCallback)(19, action_d);
-    Actor_EnableActionCallback(20, action_d);
+    Engine_ActorEnableActionCallback(20, action_d);
     if (KorimaMura_LayoutFlag != 0) {
-        Actor_EnableActionCallback(21, action_d);
+        Engine_ActorEnableActionCallback(21, action_d);
     }
     Object_SetActionCallbackAndRefreshById(22, action_d);
-    Event_Wait(80);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_Wait(40);
+    Engine_EventWait(80);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_EventWait(40);
     Event_OpenMessage(ACTOR_GERALD, 0);
     Actor_SetPosition(17, 0x570000, 0x8b0000);
     Actor_SetPosition(18, 0x570000, 0x8b0000);
-    Task_Wait(1);
-    if (Event_ChooseYesNo(17, 0) == 1) {
+    Engine_TaskWait(1);
+    if (Engine_EventChooseYesNo(17, 0) == 1) {
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
-    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Event_Wait(20);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     FieldScene_RunPairedStepA(2, 20);
     if (KorimaMura_LayoutFlag != 0) {
-        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-        Event_Wait(10);
-        Event_SetMessage((s32)MsgKorimaKnowThoseFieldsWere);
+        Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
+        Engine_EventWait(10);
+        Engine_EventSetMessage((s32)MsgKorimaKnowThoseFieldsWere);
         FieldScene_RunPairedStepA(3, 40);
     }
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 1);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
-    Event_Wait(80);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_SetMessage((s32)MsgKorimaWasOurPsynergy);
+    Engine_EventWait(80);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_EventSetMessage((s32)MsgKorimaWasOurPsynergy);
     FieldScene_RunPairedStepA(2, 40);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
-    Event_Wait(40);
-    Actor_SetSpritePriority(ACTOR_GERALD, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 3);
+    Engine_EventWait(40);
+    Engine_ActorSetSpritePriority(ACTOR_GERALD, 2);
     ((struct ObjectRuntime *)Object_GetById(1))->unknown_23 |= 1;
     record = Object_GetById(1);
-    Actor_SetSpriteFlags((s32)record, 1);
-    Actor_Jump(ACTOR_GERALD, 6, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 1);
+    Engine_ActorSetSpriteFlags((s32)record, 1);
+    Engine_ActorJump(ACTOR_GERALD, 6, 0);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     FieldScene_RunPairedStepB(1, 0x4000, 60);
     FieldScene_RunPairedStepA(1, 20);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     (FieldScene_RunPairedStepA)(1, 10);
-    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
     FieldScene_RunPairedStepB(1, 0x2000, 20);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     FieldScene_RunPairedStepB(1, 0x6000, 40);
     FieldScene_RunPairedStepB(1, 0x2000, 20);
     FieldScene_RunPairedStepB(1, 0x6000, 20);
     FieldScene_RunPairedStepB(1, 0x2000, 10);
-    Actor_Jump(ACTOR_GERALD, 2, 0);
-    Event_Wait(40);
-    Actor_Jump(ACTOR_GERALD, 2, 0);
-    Event_Wait(10);
-    Actor_Jump(ACTOR_GERALD, 4, 0);
-    Event_Wait(20);
+    Engine_ActorJump(ACTOR_GERALD, 2, 0);
+    Engine_EventWait(40);
+    Engine_ActorJump(ACTOR_GERALD, 2, 0);
+    Engine_EventWait(10);
+    Engine_ActorJump(ACTOR_GERALD, 4, 0);
+    Engine_EventWait(20);
     FieldScene_RunPairedStepA(1, 20);
     if (KorimaMura_LayoutFlag != 0) {
         Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
-        Event_Wait(60);
-        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-        Event_Wait(80);
-        Actor_SetSpritePriority(ACTOR_MIA, 2);
+        Engine_EventWait(60);
+        Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
+        Engine_EventWait(80);
+        Engine_ActorSetSpritePriority(ACTOR_MIA, 2);
         ((struct ObjectRuntime *)Object_GetById(3))->unknown_23 |= 1;
         record = Object_GetById(3);
-        Actor_SetSpriteFlags((s32)record, 1);
-        Actor_Jump(ACTOR_MIA, 4, 0);
+        Engine_ActorSetSpriteFlags((s32)record, 1);
+        Engine_ActorJump(ACTOR_MIA, 4, 0);
         Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
-        Actor_SetAnimation(ACTOR_MIA, 1);
+        Engine_ActorSetAnimation(ACTOR_MIA, 1);
         FieldScene_RunPairedStepB(3, 0xe000, 60);
-        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-        Event_Wait(20);
+        Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
+        Engine_EventWait(20);
         FieldScene_RunPairedStepA(3, 20);
     } else {
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
-    Actor_Jump(ACTOR_GERALD, 2, 0);
+    Engine_ActorJump(ACTOR_GERALD, 2, 0);
     FieldScene_RunPairedStepB(1, 0x4000, 20);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     FieldScene_RunPairedStepB(1, 0x2000, 10);
     FieldScene_RunPairedStepA(1, 20);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    Event_Wait(40);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_Wait(20);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
+    Engine_EventWait(40);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_EventWait(20);
     value = 1;
-    Actor_SetSpritePriority(ACTOR_IVAN, 2);
+    Engine_ActorSetSpritePriority(ACTOR_IVAN, 2);
     ((struct ObjectRuntime *)Object_GetById(2))->unknown_23 |= value;
     record = Object_GetById(2);
-    Actor_SetSpriteFlags((s32)record, 1);
-    Actor_Jump(ACTOR_IVAN, 4, 0);
-    Actor_SetAnimation(ACTOR_IVAN, 1);
+    Engine_ActorSetSpriteFlags((s32)record, 1);
+    Engine_ActorJump(ACTOR_IVAN, 4, 0);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 1);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Event_Wait(10);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_EventWait(10);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     ((struct ObjectRuntime *)Object_GetById(0))->unknown_23 |= value;
     record = Object_GetById(0);
-    Actor_SetSpriteFlags((s32)record, 1);
-    Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorSetSpriteFlags((s32)record, 1);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     FieldScene_RunPairedStepB(0, 0x6000, 60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
-    Event_Wait(60);
+    Engine_EventWait(60);
     FieldScene_RunPairedStepB(0, 0xa000, 20);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     FieldScene_RunPairedStepB(0, 0x6000, 10);
     FieldScene_RunPairedStepB(1, 0x4000, 10);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(2, 20);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-    Event_Wait(20);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-    Event_Wait(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 1);
+    Engine_EventWait(20);
     Event_OpenMessage(ACTOR_IVAN, 0);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
     Actor_FaceDirection(ACTOR_IVAN, 0xe000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_SetAnimation(ACTOR_IVAN, 3);
-        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_ActorSetAnimation(ACTOR_IVAN, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     } else {
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
         FieldScene_RunPairedStepB(1, 0x2000, 10);
-        Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
         Event_ShowMessage(ACTOR_GERALD, 0);
     }
     FieldScene_RunPairedStepB(1, 0x4000, 10);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
     FieldScene_RunPairedStepA(1, 20);
     FieldScene_RunPairedStepB(2, 0xc000, 10);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(2, 10);
     if (KorimaMura_LayoutFlag != 0) {
-        Actor_RunRepeatedMotion(ACTOR_MIA, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
         FieldScene_RunPairedStepB(3, 0, 20);
         FieldScene_RunPairedStepB(3, 0x2000, 10);
-        Actor_SetAnimation(ACTOR_MIA, 4);
+        Engine_ActorSetAnimation(ACTOR_MIA, 4);
         FieldScene_RunPairedStepA(3, 10);
     } else {
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     FieldScene_RunPairedStepB(0, 0xa000, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     value = 128;
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     FieldScene_RunPairedStepB(1, (value << 7), 10);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
-    Event_Wait(20);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
+    Engine_EventWait(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 80);
     FieldScene_RunPairedStepB(2, 0xe000, 10);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
     FieldScene_RunPairedStepA(2, 20);
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     FieldScene_RunPairedStepB(0, 0xa000, 40);
     Actor_FaceDirection(ACTOR_GERALD, (value << 7), 0);
     FieldScene_RunPairedStepB(0, 0x6000, 10);
     FieldScene_RunPairedStepB(2, 0xc000, 10);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(2, 10);
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Event_Wait(40);
+    Engine_EventWait(40);
     FieldScene_RunPairedStepA(1, 20);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_EventWait(20);
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Event_Wait(40);
+    Engine_EventWait(40);
     FieldScene_RunPairedStepA(1, 20);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(2, 10);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     FieldScene_RunPairedStepB(1, 0x2000, 10);
     Event_OpenMessage(ACTOR_GERALD, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     } else {
-        Event_Wait(20);
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-        Event_Wait(40);
+        Engine_EventWait(20);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_EventWait(40);
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
     Event_ShowMessage(ACTOR_GERALD, 0);
     Audio_PlayCue(21);
     ColorBuffer_ApplyTarget(0x406218, 1);
-    ColorBuffer_Interpolate(60);
-    Task_Wait(60);
+    Engine_ColorBufferInterpolate(60);
+    Engine_TaskWait(60);
     gFallingEffectWidth = 0;
     gFallingEffectOffset = 0x800000;
     step_next = (s32)&gFallingEffectState;
     *(s32 *)step_next = 1;
     Engine_TaskAddCallback((s32)FieldScene_UpdateFallingEffect, 0xc80);
-    Event_Wait(80);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_Wait(60);
+    Engine_EventWait(80);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_EventWait(60);
     FieldScene_RunPairedStepB(2, 0xc000, 10);
-    Event_SetMessage((s32)MsgKorimaWatchOutItsHappeningAgain);
+    Engine_EventSetMessage((s32)MsgKorimaWatchOutItsHappeningAgain);
     FieldScene_RunPairedStepA(2, 10);
     FieldScene_RunPairedStepB(1, 0xc000, 10);
     FieldScene_RunPairedStepB(0, 0xc000, 10);
@@ -1198,27 +1198,27 @@ void FieldScene_RunExtendedActorSequence(void)
     ((struct ObjectRuntime *)Object_GetById(1))->unknown_23 &= 254;
     ((struct ObjectRuntime *)Object_GetById(2))->unknown_23 &= 254;
     ((struct ObjectRuntime *)Object_GetById(3))->unknown_23 &= 254;
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
-    Actor_SetSpritePriority(ACTOR_GERALD, 3);
-    Actor_SetSpritePriority(ACTOR_IVAN, 3);
-    Actor_SetSpritePriority(ACTOR_MIA, 3);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetSpritePriority(ACTOR_GERALD, 3);
+    Engine_ActorSetSpritePriority(ACTOR_IVAN, 3);
+    Engine_ActorSetSpritePriority(ACTOR_MIA, 3);
     *(s32 *)step_next = 2;
     Audio_PlayCue(220);
     Actor_SetPosition(19, 0x780000, 0xf80000);
     action_c = (s32)KorimaMura_ActionTable6;
-    Actor_EnableActionCallback(19, action_c);
+    Engine_ActorEnableActionCallback(19, action_c);
     Actor_SetPosition(20, 0x640000, 0x1120000);
-    Actor_EnableActionCallback(20, action_c);
+    Engine_ActorEnableActionCallback(20, action_c);
     if (KorimaMura_LayoutFlag != 0) {
         Actor_SetPosition(21, 0x4a0000, 0xfe0000);
-        Actor_EnableActionCallback(21, action_c);
+        Engine_ActorEnableActionCallback(21, action_c);
     }
     Actor_SetPosition(22, 0x5e0000, 0xe10000);
-    Actor_EnableActionCallback(22, action_c);
-    Event_Wait(120);
+    Engine_ActorEnableActionCallback(22, action_c);
+    Engine_EventWait(120);
     *(s32 *)step_next = 3;
     do {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     } while (gFallingEffectState != 0);
     FieldScene_RunPairedStepA(17, 80);
     FieldScene_RunPairedStepA(18, 20);
@@ -1226,23 +1226,23 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
-    Event_Wait(60);
+    Engine_EventWait(60);
     FieldScene_RunPairedStepA(18, 20);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(18, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(18, 10);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
     FieldScene_RunPairedStepA(17, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
@@ -1267,26 +1267,26 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     FieldScene_RunPairedStepB(3, 0xc000, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 4);
-    Actor_SetAnimation(ACTOR_GERALD, 4);
-    Actor_SetAnimation(ACTOR_MIA, 4);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
-    Event_Wait(60);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 4);
+    Engine_ActorSetAnimation(ACTOR_MIA, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
+    Engine_EventWait(60);
     FieldScene_RunPairedStepA(18, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     FieldScene_RunPairedStepA(18, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     FieldScene_RunPairedStepB(3, 0, 20);
     FieldScene_RunPairedStepA(18, 10);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_StartRepeatedMotion(ACTOR_MIA, 2);
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
@@ -1301,68 +1301,68 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     Actor_SetAttachedEffect(ACTOR_MIA, 0x102);
     Actor_SetAttachedEffect(ACTOR_IVAN, 0x102);
-    Event_Wait(40);
+    Engine_EventWait(40);
     FieldScene_RunPairedStepA(18, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
     FieldScene_RunPairedStepB(3, 0xc000, 10);
     FieldScene_RunPairedStepA(18, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_Wait(60);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_EventWait(60);
     Event_ShowMessage(18, 0);
     Event_ShowMessage(17, 0);
     Engine_TaskRemoveCallback((s32)FieldScene_UpdateFallingEffect);
-    Event_Wait(80);
+    Engine_EventWait(80);
     ColorBuffer_ApplyTarget(0x10000, 1);
-    ColorBuffer_Interpolate(60);
-    Task_Wait(80);
-    Actor_Stop(19);
-    Actor_Stop(20);
+    Engine_ColorBufferInterpolate(60);
+    Engine_TaskWait(80);
+    Engine_ActorStop(19);
+    Engine_ActorStop(20);
     work_addr = (s32)&KorimaMura_LayoutFlag;
-    Actor_Stop(21);
-    Actor_Stop(22);
-    Task_Wait(1);
+    Engine_ActorStop(21);
+    Engine_ActorStop(22);
+    Engine_TaskWait(1);
     action_d = (s32)KorimaMura_ActionTable7;
-    Actor_EnableActionCallback(19, action_d);
-    Actor_EnableActionCallback(20, action_d);
+    Engine_ActorEnableActionCallback(19, action_d);
+    Engine_ActorEnableActionCallback(20, action_d);
     if (*(s32 *)work_addr != 0) {
-        Actor_EnableActionCallback(21, action_d);
+        Engine_ActorEnableActionCallback(21, action_d);
     }
     Object_SetActionCallbackAndRefreshById(22, action_d);
-    Event_Wait(20);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    Actor_SetSpritePriority(ACTOR_GERALD, 2);
-    Actor_SetSpritePriority(ACTOR_IVAN, 2);
+    Engine_EventWait(20);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorSetSpritePriority(ACTOR_GERALD, 2);
+    Engine_ActorSetSpritePriority(ACTOR_IVAN, 2);
     value = 1;
-    Actor_SetSpritePriority(ACTOR_MIA, 2);
+    Engine_ActorSetSpritePriority(ACTOR_MIA, 2);
     ((struct ObjectRuntime *)Object_GetById(0))->unknown_23 |= value;
     ((struct ObjectRuntime *)Object_GetById(1))->unknown_23 |= value;
     ((struct ObjectRuntime *)Object_GetById(2))->unknown_23 |= value;
     ((struct ObjectRuntime *)Object_GetById(3))->unknown_23 |= value;
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     FieldScene_RunPairedStepB(2, 0xe000, 10);
     Event_OpenMessage(ACTOR_IVAN, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-        Event_Wait(10);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_EventWait(10);
         Event_OpenMessage(ACTOR_GERALD, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             FieldScene_RunPairedStepB(3, 0, 20);
             Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
             Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
             Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
-            Event_Wait(40);
+            Engine_EventWait(40);
             FieldScene_RunPairedStepB(1, 0x4000, 20);
             FieldScene_RunPairedStepA(1, 10);
             FieldScene_RunPairedStepB(2, 0xc000, 20);
             FieldScene_RunPairedStepB(2, 0xe000, 20);
-            Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+            Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
             FieldScene_RunPairedStepA(2, 20);
             FieldScene_RunPairedStepB(1, 0x2000, 20);
         } else {
@@ -1371,154 +1371,154 @@ void FieldScene_RunExtendedActorSequence(void)
             Actor_ShowEmote(ACTOR_IVAN, 0x102, 0);
             Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
             FieldScene_RunPairedStepB(1, 0x4000, 20);
-            Event_SetMessage((s32)MsgKorimaHesAsStumpedAsWe);
+            Engine_EventSetMessage((s32)MsgKorimaHesAsStumpedAsWe);
             FieldScene_RunPairedStepA(1, 20);
-            Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+            Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
             FieldScene_RunPairedStepA(2, 20);
         }
-        Actor_SetAnimation(ACTOR_MIA, 3);
-        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
+        Engine_ActorSetAnimation(ACTOR_MIA, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
     } else {
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-        Event_Wait(10);
-        Event_SetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+        Engine_EventWait(10);
+        Engine_EventSetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
         FieldScene_RunPairedStepA(1, 10);
         Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
         FieldScene_RunPairedStepB(0, 0x6000, 20);
-        Actor_SetAnimation(ACTOR_GERALD, 3);
-        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(ACTOR_IVAN, 4);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        Engine_EventWait(10);
+        Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 4);
         Event_OpenMessage(ACTOR_IVAN, 0);
-        if (Event_ChooseYesNo(0, 0) != 0) {
+        if (Engine_EventChooseYesNo(0, 0) != 0) {
             goto L_0200239c;
         }
-        Event_Wait(20);
+        Engine_EventWait(20);
         Actor_ShowEmote(ACTOR_IVAN, 0x103, 0);
-        Event_Wait(40);
+        Engine_EventWait(40);
         FieldScene_RunPairedStepB(2, 0xe000, 10);
         FieldScene_RunPairedStepA(2, 10);
         if (KorimaMura_LayoutFlag != 0) {
             FieldScene_RunPairedStepB(3, 0, 10);
-            Actor_StartRepeatedMotion(ACTOR_MIA, 3);
+            Engine_ActorStartRepeatedMotion(ACTOR_MIA, 3);
             FieldScene_RunPairedStepA(3, 20);
         } else {
             *(u16 *)(((s32)gWork + 0x1d8)) += 1;
         }
         Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
         Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-        Event_Wait(40);
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_EventWait(40);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
         FieldScene_RunPairedStepA(1, 20);
         Actor_ShowEmote(ACTOR_GERALD, 0x105, 0);
-        Event_Wait(120);
+        Engine_EventWait(120);
         FieldScene_RunPairedStepA(2, 40);
         if (KorimaMura_LayoutFlag != 0) {
             FieldScene_RunPairedStepB(3, 0x2000, 10);
-            Actor_SetAnimationAndWait(ACTOR_MIA, 4);
+            Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
             FieldScene_RunPairedStepA(3, 10);
         } else {
             *(u16 *)(((s32)gWork + 0x1d8)) += 1;
         }
-        Event_Wait(60);
-        Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
+        Engine_EventWait(60);
+        Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
         if (KorimaMura_LayoutFlag != 0) {
             FieldScene_RunPairedStepB(2, 0xa000, 40);
             FieldScene_RunPairedStepB(2, 0xe000, 20);
         }
         FieldScene_RunPairedStepA(2, 10);
-        Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-        Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-        Event_Wait(40);
+        Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+        Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_EventWait(40);
         FieldScene_RunPairedStepA(2, 20);
-        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-        Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-        Event_Wait(20);
-        Actor_SetAnimation(ACTOR_MIA, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimation(ACTOR_MIA, 3);
     }
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     goto L_020024a0;
     L_0200239c:;
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
-    Event_Wait(40);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_SetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
+    Engine_EventWait(40);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_EventSetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
     FieldScene_RunPairedStepA(2, 20);
     if (KorimaMura_LayoutFlag != 0) {
         FieldScene_RunPairedStepB(3, 0, 10);
-        Actor_StartRepeatedMotion(ACTOR_MIA, 1);
+        Engine_ActorStartRepeatedMotion(ACTOR_MIA, 1);
         FieldScene_RunPairedStepA(3, 20);
     } else {
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Event_Wait(40);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_EventWait(40);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     FieldScene_RunPairedStepA(1, 20);
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
-    Event_Wait(80);
+    Engine_EventWait(80);
     FieldScene_RunPairedStepA(2, 40);
     if (KorimaMura_LayoutFlag != 0) {
         FieldScene_RunPairedStepB(3, 0x2000, 20);
-        Actor_SetAnimation(ACTOR_MIA, 4);
+        Engine_ActorSetAnimation(ACTOR_MIA, 4);
         FieldScene_RunPairedStepA(3, 40);
     } else {
         *(u16 *)(((s32)gWork + 0x1d8)) += 1;
     }
-    Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
+    Engine_EventWait(20);
     FieldScene_RunPairedStepA(2, 20);
-    Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Event_Wait(40);
+    Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Engine_EventWait(40);
     FieldScene_RunPairedStepA(2, 20);
     L_020024a0:;
     Audio_PlayCue(17);
     Actor_SetSpeed(ACTOR_GERALD, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
-    Actor_SetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = ((struct ObjectRuntime *(*)())Object_GetById)(0);
     if ((s32)record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
     }
-    Actor_WaitForMove(ACTOR_GERALD);
+    Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Actor_SetAnimation(ACTOR_IVAN, 2);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
     record = ((struct ObjectRuntime *(*)())Object_GetById)(0);
     if ((s32)record != 0) {
         Actor_SetDestination(ACTOR_IVAN, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
     }
-    Actor_WaitForMove(ACTOR_IVAN);
+    Engine_ActorWaitForMove(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Actor_SetPosition(17, 0, 0);
     Actor_SetPosition(18, 0, 0);
     if (KorimaMura_LayoutFlag != 0) {
-        Actor_SetAnimation(ACTOR_MIA, 2);
+        Engine_ActorSetAnimation(ACTOR_MIA, 2);
         record = ((struct ObjectRuntime *(*)())Object_GetById)(0);
         if ((s32)record != 0) {
             Actor_SetDestination(ACTOR_MIA, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
         }
-        Actor_WaitForMove(ACTOR_MIA);
+        Engine_ActorWaitForMove(ACTOR_MIA);
         Actor_SetPosition(ACTOR_MIA, 0, 0);
     }
     GameFlag_Set(0x843);
     Audio_PlayCueFromEventWork();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunPairedStepA(s32 arg0, s32 arg1)
 {
     Event_ShowMessage(arg0, 0);
-    Event_Wait(arg1);
+    Engine_EventWait(arg1);
 }
 
 void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 {
     Actor_FaceDirection(arg0, arg1, 0);
-    Event_Wait(arg2);
+    Engine_EventWait(arg2);
 }
 
 s32 SceneEffect_AdvanceAngleUntilIdle(struct Obj_020025d8 *p)
@@ -1566,7 +1566,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
     p->f30 = 0x80000;
     p->f34 = 0x80000;
     p->f55 = f;
-    Object_SetAnimation(p, 2);
+    Object_SetMode(p, 2);
     Engine_ObjectSetPosition(p, c3, 0, c4);
     Object_SetScript(p, KorimaMura_Object26Script);
 }
@@ -1574,9 +1574,9 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
 s32 SceneEffect_SetModeByFrameBit1(s32 arg0)
 {
     if ((gFrameCount >> 1) & 1) {
-        Object_SetPalette(arg0, 10);
+        ObjectGroup_SetChildValue(arg0, 10);
     } else {
-        Object_SetPalette(arg0, 7);
+        ObjectGroup_SetChildValue(arg0, 7);
     }
     return 0;
 }

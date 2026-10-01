@@ -66,8 +66,8 @@ void SceneState_InitFourActorRecordsAndInstallTask(void)
     ride->frames = 0;
 
     /* r0 carries each lookup's result straight into the retag call. */
-    Object_SetAnimation(Object_GetById(20), 2);
-    Object_SetAnimation(Object_GetById(21), 2);
+    Object_SetMode(Object_GetById(20), 2);
+    Object_SetMode(Object_GetById(21), 2);
 
     /* The locals keep the task and its rate built rather than folded. */
     {

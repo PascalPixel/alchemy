@@ -431,6 +431,7 @@ void AdvanceEffectMotion(struct Effect *effect)
     s32 velocity_x;
 
     /* Macro-shaped block keeps the following Z load after the Y store. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do {
         velocity_x = effect->velocity[0];
         effect->position[0] += velocity_x;
@@ -463,9 +464,9 @@ void SpawnRadialEffectBurst(void)
     params.callback = (s32)AdvanceEffectMotion;
     for (angle_step = 0; angle_step <= 16; angle_step += 2) {
         angle = angle_step << 12;
-        vec.x = Math_Cos(angle);
+        vec.x = Engine_MathCos(angle);
         vec.y = 0;
-        z = Math_Sin(angle);
+        z = Engine_MathSin(angle);
         x = vec.x;
         vec.z = z;
         x = x + Math_Divide(x, 3);
@@ -480,12 +481,12 @@ void InitializePrologueSceneState(void)
 
     u8 *base;
 
-    Event_Begin();
+    Engine_EventBegin();
     base = Data_02000240;
     Party_SetFields1ceAnd1d0(*(s16 *)(base + 448), 5);
     base[555] = 3;
     BattleFx_SetWeightedResult(84, 5);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* What the island answers, chosen as its entrances are. */
@@ -516,9 +517,9 @@ void StartScriptedSceneMessage(s32 message_id)
     Battle_Reset(message_id);
     Actor_SetPosition(8, 0, 0);
     GameFlag_Set(4055);
-    Item_ShowFound(ITEM_NUT, 3);
-    Party_GiveItem(ITEM_NUT, 0);
-    Event_End();
+    Engine_ItemShowFound(ITEM_NUT, 3);
+    Engine_PartyGiveItem(ITEM_NUT, 0);
+    Engine_EventEnd();
 }
 
 /* The island's scene start. The screen opens through a window. The escape
@@ -568,8 +569,8 @@ s32 Scene_Initialize(void)
             actor = Actor_Get(11);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
-                Object_SetAnimation(actor, 4);
-                Actor_SetSpriteFlags(actor, 0);
+                Object_SetMode(actor, 4);
+                Engine_ActorSetSpriteFlags(actor, 0);
             }
             Call4(SetMapCellCollision, 0, 0x1300000, 0x1700000, 253);
         }
@@ -577,8 +578,8 @@ s32 Scene_Initialize(void)
             actor = Actor_Get(12);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
-                Object_SetAnimation(actor, 4);
-                Actor_SetSpriteFlags(actor, 0);
+                Object_SetMode(actor, 4);
+                Engine_ActorSetSpriteFlags(actor, 0);
             }
             Call4(SetMapCellCollision, 0, 0x500000, 0x1700000, 253);
         }
@@ -586,8 +587,8 @@ s32 Scene_Initialize(void)
             actor = Actor_Get(13);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
-                Object_SetAnimation(actor, 4);
-                Actor_SetSpriteFlags(actor, 0);
+                Object_SetMode(actor, 4);
+                Engine_ActorSetSpriteFlags(actor, 0);
             }
             Call4(SetMapCellCollision, 0, 0x600000, 0x1500000, 253);
         }
@@ -595,8 +596,8 @@ s32 Scene_Initialize(void)
             actor = Actor_Get(14);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
-                Object_SetAnimation(actor, 4);
-                Actor_SetSpriteFlags(actor, 0);
+                Object_SetMode(actor, 4);
+                Engine_ActorSetSpriteFlags(actor, 0);
             }
             Call4(SetMapCellCollision, 0, 0x900000, 0x1400000, 253);
             Call4(SetMapCellCollision, 0, 0x2f00000, 0x1400000, 253);
@@ -639,8 +640,8 @@ void FieldScene_RunScene3b2SequenceA(void)
         Actor_SetPosition(8, 0x28a0000, 0xa80000);
         *(volatile s32 *)((s32)rec8 + 12) = -0x200000;
         record = Actor_Get(8);
-        Actor_SetSpriteFlags(record, 0);
-        Actor_SetSpritePriority(8, 3);
+        Engine_ActorSetSpriteFlags(record, 0);
+        Engine_ActorSetSpritePriority(8, 3);
         rec8[85] = 0;
         {
             u8 value = *(volatile u8 *)&rec8[35];
@@ -699,9 +700,9 @@ void FieldScene_HandleEscapeColumn(void)
 
 void RunPrologueSceneSetup(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     StagedActor_AdvancePair();
-    Event_End();
+    Engine_EventEnd();
     FieldScene_HandleEscapeColumn();
 }
 
@@ -709,7 +710,7 @@ void StartSceneScript37(void)
 {
     Map_AnimateCells(TakaraShima_EntranceCells, 37, 7);
     Audio_PlayCue(183);
-    Event_RequestExit(4);
+    Engine_EventRequestExit(4);
 }
 
 /* Crossbone Isle: on the first visit to an area (flag 0x8c8 + area) show its
@@ -793,16 +794,16 @@ void FieldScene_RunScene3b2_02001494(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-    Event_OpenScreen();
-    Event_WaitForScreen();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8c8 - (s32)&SceneId_TakaraShima6)));
-    Event_Wait(30);
+    Engine_EventWait(30);
     Map_AnimateCells(((const u16 *)TakaraShima_EntranceCells), 44, 7);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
-    Event_RequestExit(3);
-    Event_End();
+    Engine_EventRequestExit(3);
+    Engine_EventEnd();
 }
 
 void ConfigureSceneActor11(s32 actor_id)
@@ -814,7 +815,7 @@ void ConfigureSceneActor11(s32 actor_id)
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
     GameFlag_Set(576);
 }
@@ -828,7 +829,7 @@ void ConfigureSceneActor12(s32 actor_id)
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
     GameFlag_Set(577);
 }
@@ -842,7 +843,7 @@ void ConfigureSceneActor13(s32 actor_id)
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
     GameFlag_Set(578);
 }
@@ -858,7 +859,7 @@ void ConfigureSceneActor14(s32 actor_id)
     if (p != 0) {
         p[89] = 0;
     }
-    Actor_SetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
     SetMapCellCollision(0, c, d, 253);
     GameFlag_Set(579);
@@ -924,11 +925,11 @@ void RunSceneVectorTransition(void)
 {
     struct V6 transition;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (StagedActor_FindClearPosition(&transition) != 0) {
         ((void (*)(struct V6))SceneActor_MoveAndRedraw)(transition);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
@@ -940,7 +941,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
     p = Actor_Get(gGameState.selected_actor);
     q = Actor_Get(actor_id);
-    Event_Begin();
+    Engine_EventBegin();
     {
         x = ((p->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
         y = ((p->f10 + (z_offset << 16)) & 0xFFF00000) + 0x80000;
@@ -949,7 +950,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
         p->f34 = 0x8000;
         Object_SetPosition(p, x, p->f0c, y);
     }
-    Object_SetAnimation(p, 27);
+    Object_SetMode(p, 27);
     {
         x = ((q->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
         y = ((q->f10 + (z_offset << 16)) & 0xFFF00000) + 0x80000;
@@ -959,14 +960,14 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
         Object_SetPosition(q, x, q->f0c, y);
     }
     if (x_offset < 0 || z_offset < 0) {
-        Object_SetAnimation(q, 4);
+        Object_SetMode(q, 4);
     } else {
-        Object_SetAnimation(q, 3);
+        Object_SetMode(q, 3);
     }
     Audio_PlayCue(226);
     Object_CommitPosition(p);
     Audio_PlayCue(288);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute, s32 unused)
@@ -976,7 +977,7 @@ void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute
     if (p != 0) {
         s32 v;
 
-        Actor_SetSpritePriority(actor_mode, 3);
+        Engine_ActorSetSpritePriority(actor_mode, 3);
         v = 2;
         v |= p->f23;
         p->f23 = (u8)v;
@@ -996,7 +997,7 @@ void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute,
     if (p != 0) {
         s32 v;
 
-        Actor_SetSpritePriority(actor_mode, 3);
+        Engine_ActorSetSpritePriority(actor_mode, 3);
         v = 2;
         v |= p->f23;
         p->f23 = (u8)v;
@@ -1011,8 +1012,8 @@ void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute,
 
 void SetSceneActorModes(int actor_id)
 {
-    Actor_SetAnimation(actor_id, 1);
-    Actor_SetAnimation(actor_id, 2);
+    Engine_ActorSetAnimation(actor_id, 1);
+    Engine_ActorSetAnimation(actor_id, 2);
 }
 
 void InitializeEscapeSceneActors(void)
@@ -1108,27 +1109,27 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
     if (Object_CheckMovementCollision(actor, &destination) == 0) {
         s32 t;
 
-        Event_Begin();
-        Object_SetAnimation(actor, 6);
-        Task_Wait(6);
+        Engine_EventBegin();
+        Object_SetMode(actor, 6);
+        Engine_TaskWait(6);
         Audio_PlayCue(152);
-        Object_SetAnimation(actor, 7);
+        Object_SetMode(actor, 7);
         actor->f30 = 0x30000;
         actor->f34 = 0x20000;
         actor->f28 = 0x40000;
         t = 126;
         t &= *state;
         *state = (u8)t;
-        Actor_SetSpriteFlags(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
         {
             s16 *coordinates = (s16 *)&destination;
 
             Actor_MoveToAndWait(ACTOR_PARTY_LEADER, coordinates[1], coordinates[5]);
         }
-        Object_SetAnimation(actor, 6);
-        Actor_SetSpriteFlags(actor, 1);
+        Object_SetMode(actor, 6);
+        Engine_ActorSetSpriteFlags(actor, 1);
         *state = (u8)saved_state;
-        Event_End();
+        Engine_EventEnd();
         return 1;
     }
     return 0;
@@ -1213,7 +1214,7 @@ void UpdateEscapeRouteForActorPositions(void)
         CheckActorPathSouth();
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 route_end_z = ((Obj *)Object_GetByIdFar(8))->f10 >> 20;
         s32 route_x = actor_x - 1;
@@ -1246,7 +1247,7 @@ void UpdateActor8ReturnRoute(void)
     } else {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(8))->f10 >> 20;
         s32 m = x - 1;
@@ -1283,7 +1284,7 @@ void UpdateActor10RetreatRoute(void)
     } else if (y == 7) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(10))->f10 >> 20;
         s32 m = x - 1;
@@ -1305,7 +1306,7 @@ void UpdateActor10AdvanceRoute(void)
             PositionSceneActorPair(10, 0, 112);
             PositionSceneActorPair(10, 0, 64);
         }
-        Task_Wait(2);
+        Engine_TaskWait(2);
         {
             s32 k = ((Obj *)Object_GetByIdFar(10))->f10 >> 20;
             s32 m = x - 1;
@@ -1334,7 +1335,7 @@ void UpdateActor11WestRoute(void)
                 PositionSceneActorPair(11, -96, 0);
             }
         }
-        Task_Wait(2);
+        Engine_TaskWait(2);
         {
             s32 k = ((Obj *)Object_GetByIdFar(11))->f08 >> 20;
             s32 m = y - 1;
@@ -1359,7 +1360,7 @@ void UpdateActor11EastRoute(void)
         } else if (x == 34) {
             PositionSceneActorPair(11, 32, 0);
         }
-        Task_Wait(2);
+        Engine_TaskWait(2);
         {
             s32 k = ((Obj *)Object_GetByIdFar(11))->f08 >> 20;
             s32 m = y - 1;
@@ -1384,7 +1385,7 @@ void UpdateActor12WestRoute(void)
     } else if (x == 24) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(12))->f08 >> 20;
         s32 m = y - 1;
@@ -1407,7 +1408,7 @@ void UpdateActor12EastRoute(void)
     } else if (x == 36) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(12))->f08 >> 20;
         s32 m = y - 1;
@@ -1463,7 +1464,7 @@ void UpdateActor13WestRoute(void)
     } else if (x == 25) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(13))->f08 >> 20;
         s32 m = y - 1;
@@ -1491,7 +1492,7 @@ void UpdateActor13EastRoute(void)
     } else if (x == 36) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(13))->f08 >> 20;
         s32 m = y - 1;
@@ -1532,7 +1533,7 @@ void UpdateActor15WestRoute(void)
     } else if (x == 24) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(15))->f08 >> 20;
         s32 m = y - 1;
@@ -1587,7 +1588,7 @@ void UpdateActor15EastRoute(void)
     } else if (x == 35) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(15))->f08 >> 20;
         s32 m = y - 1;
@@ -1617,7 +1618,7 @@ void UpdateActor17SouthRoute(void)
     } else if (y == 15) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(17))->f10 >> 20;
         s32 m = x - 1;
@@ -1639,7 +1640,7 @@ void UpdateActor17NorthRoute(void)
     } else if (y == 19) {
         return;
     }
-    Task_Wait(2);
+    Engine_TaskWait(2);
     {
         s32 k = ((Obj *)Object_GetByIdFar(17))->f10 >> 20;
 
@@ -1780,7 +1781,7 @@ transition80:
         return;
     }
 
-    Task_Wait(2);
+    Engine_TaskWait(2);
 
     column -= 1;
     Map_CopyCellAttributes(column, row, 3, 1,
@@ -1923,7 +1924,7 @@ transition48:
         PositionSceneActorPair(9, 0, 16);
     }
 
-    Task_Wait(2);
+    Engine_TaskWait(2);
 
     column -= 1;
     Map_CopyCellAttributes(column, row, 3, 1,
@@ -2098,7 +2099,7 @@ void RetreatActor14AlongEscapeRoute(void)
         return;
     }
 
-    Task_Wait(2);
+    Engine_TaskWait(2);
 
     rowM1 = row - 1;
     Map_CopyCellAttributes(column, rowM1, 1, 3,
@@ -2145,7 +2146,7 @@ void AdvanceActor14AlongEscapeRoute(void)
         return;
     }
 
-    Task_Wait(2);
+    Engine_TaskWait(2);
 
     rowM1 = row - 1;
     Map_CopyCellAttributes(column, rowM1, 1, 3,
@@ -2196,7 +2197,7 @@ void RetreatActor16AlongEscapeRoute(void)
         return;
     }
 
-    Task_Wait(2);
+    Engine_TaskWait(2);
 
     rowM1 = row - 1;
     Map_CopyCellAttributes(column, rowM1, 1, 3,
@@ -2235,7 +2236,7 @@ void AdvanceActor16AlongEscapeRoute(void)
         return;
     }
 
-    Task_Wait(2);
+    Engine_TaskWait(2);
 
     row -= 1;
     Map_CopyCellAttributes(column, row, 1, 3,
@@ -2247,16 +2248,16 @@ s32 UpdateSwayingSceneObject(struct S *object)
 {
 
     struct T *sprite = object->f50;
-    s32 vertical_offset = Math_Sin(object->f30) * 2;
+    s32 vertical_offset = Engine_MathSin(object->f30) * 2;
     s32 random_b;
     s32 random_a;
 
     if (vertical_offset > 0) {
         vertical_offset = -vertical_offset;
     }
-    object->f08 = object->f38 + Math_Cos(object->f30) * 2;
+    object->f08 = object->f38 + Engine_MathCos(object->f30) * 2;
     object->f0c = object->f3c + vertical_offset;
-    sprite->f1e = (u16)(Math_Cos(object->f30 + 0x8000) / 8);
+    sprite->f1e = (u16)(Engine_MathCos(object->f30 + 0x8000) / 8);
     random_a = Random_Next();
     random_b = Random_Next();
     object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 0x400;
@@ -2278,7 +2279,7 @@ void InitializeSwayingSceneObject(void)
 
     zero = 0;
     sprite->state = zero;
-    Actor_SetSpriteFlags(actor, zero);
+    Engine_ActorSetSpriteFlags(actor, zero);
     actor->active = zero;
     actor->mode = zero;
 
@@ -2289,10 +2290,10 @@ void InitializeSwayingSceneObject(void)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(ITEM_NUT);
+    Engine_ItemLoadIcon(ITEM_NUT);
     transfer += 0x400;
-    Vram_Load(sprite->palette, 128, transfer);
-    Heap_Release(17);
+    Engine_VramLoad(sprite->palette, 128, transfer);
+    Engine_HeapRelease(17);
 
     actor->orbit_center_x = actor->x;
     actor->orbit_angle = zero;

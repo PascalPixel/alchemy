@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -74,7 +75,6 @@ typedef void(*SceneTask)(void);
 void Scene_RunScene3baSequenceA(void);
 s32 Resource_GetTableEntryFar(void);
 void Resource_DecodeType01(s32, s32);
-void Scheduler_AddOrUpdateCallback(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -140,7 +140,6 @@ void Resource_DecodeType01();           /* upload image data to a handle */
 
 s32 Resource_FindFreeEntry();            /* next palette slot index */
 
-void Scheduler_AddOrUpdateCallback();           /* install a per-frame task (callback, rate) */
 
 void Runtime_BumpFree();           /* release a graphics handle */
 
@@ -244,8 +243,8 @@ void StagedActor_PushActorAhead(void)
         return;
     }
 
-    Object_SetAnimation(subject, 8);
-    Task_Wait(15);
+    Object_SetMode(subject, 8);
+    Engine_TaskWait(15);
 
     target->speed = 0x3333;
     target->acceleration = 0x3333;
@@ -265,7 +264,7 @@ void StagedActor_PushActorAhead(void)
     target->velocity_x = zero;
     target->velocity_z = zero;
 
-    Object_SetAnimation(subject, 1);
+    Object_SetMode(subject, 1);
 }
 
 /* Import veneers, named by the main-image function each one reaches.

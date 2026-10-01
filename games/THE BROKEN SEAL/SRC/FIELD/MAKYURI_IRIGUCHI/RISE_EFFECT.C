@@ -29,7 +29,7 @@ s32 SceneEffect_AdvanceAnchoredRiseFrame(struct Work_39c *work)
         return 0;
     }
 
-    seed = Math_Sin(step << 10);
+    seed = Engine_MathSin(step << 10);
     work->f24 = seed;
     work->f28 = seed;
     work->f8 = source->f8;

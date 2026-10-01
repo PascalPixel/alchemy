@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
@@ -17,7 +18,6 @@ void Func_08006868(void);
 void Func_08006870(void);
 extern u32 gSavedStackSize;
 extern u8 gSavedStack[];
-extern u8 gSchedulerStatus;
 extern u8 Data_03001e44;
 extern u8 Data_03001f58;
 extern u16 Data_03001ccc;
@@ -46,7 +46,9 @@ extern u16 gSleepActive;
    ROM keeps each value in a register (movs, not a pooled halfword) and
    zero-extends the saved signed ones */
 #define Io_Write16(v, reg)                                                     \
-    do {                                                                       \
+    do { \
+        /* FAKEMATCH: the halfword-to-word register temporary preserves measured value allocation. */ \
+        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
         u32 value_ = (u16)(v);                                                 \
         *(reg) = value_;                                                       \
     } while (0)

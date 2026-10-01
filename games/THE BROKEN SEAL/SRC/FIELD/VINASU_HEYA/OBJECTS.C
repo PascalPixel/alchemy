@@ -4,8 +4,8 @@ void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter)
 {
     object->unknown_55 = 0;
     object->unknown_59 = 8;
-    Actor_SetSpriteFlags(object, 0);
-    Object_SetPalette(object, parameter);
+    Engine_ActorSetSpriteFlags(object, 0);
+    ObjectGroup_SetChildValue(object, parameter);
 }
 
 void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
@@ -24,7 +24,7 @@ void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         mask &= flag;
         p[9] = mask;
         ConfigureOverlayObject(obj, 0xE);
-        Object_SetBlendMode(obj, 1);
+        Engine_ObjectSetBlendMode(obj, 1);
         return obj;
     }
     return 0;

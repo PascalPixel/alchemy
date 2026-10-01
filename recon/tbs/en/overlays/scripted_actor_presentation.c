@@ -35,6 +35,13 @@
 #include "TYPES.H"
 #include "VINASU.H"
 #include "FIELD_EVENT.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline s32 Event_ChooseYesNo(s32 actor, s32 flags)
+{
+    return Engine_EventChooseYesNo(actor, flags);
+}
+
 extern u8 MsgVinasuLongLastTime[];
 
 void Scene_SetPresentationActorState(s32 actor, s32 active);

@@ -95,16 +95,16 @@ void FieldScene_RunActor16MessageBranch(void)
      */
     u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Shop_Open(13, 16);
+        Engine_ShopOpen(13, 16);
     } else {
-        Event_SetMessage((s32)MsgKorimaFuchinTempleOnOtherSide);
+        Engine_EventSetMessage((s32)MsgKorimaFuchinTempleOnOtherSide);
         Event_ShowMessage(16, 0);
     }
 
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor17MessageBranch(void)
@@ -115,16 +115,16 @@ void FieldScene_RunActor17MessageBranch(void)
      */
     u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Shop_Open(14, 17);
+        Engine_ShopOpen(14, 17);
     } else {
-        Event_SetMessage((s32)MsgKorimaGrandBridgeAcrossRiverPride);
+        Engine_EventSetMessage((s32)MsgKorimaGrandBridgeAcrossRiverPride);
         Event_ShowMessage(17, 0);
     }
 
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor18MessageBranch(void)
@@ -135,21 +135,21 @@ void FieldScene_RunActor18MessageBranch(void)
      */
     u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Shop_Open(15, 18);
+        Engine_ShopOpen(15, 18);
     } else {
-        Event_SetMessage((s32)MsgKorimaWhenWasTreeLearnedAppreciate);
+        Engine_EventSetMessage((s32)MsgKorimaWhenWasTreeLearnedAppreciate);
         Event_ShowMessage(18, 0);
     }
 
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor19MessageBranch(void)
 {
-    void Inn_Open(s32, s32);
+    void Engine_InnOpen(s32, s32);
     void Event_ShowMessage(s32, s32);
 
     /*
@@ -158,16 +158,16 @@ void FieldScene_RunActor19MessageBranch(void)
      */
     u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
-        Inn_Open(3, 19);
+        Engine_InnOpen(3, 19);
     } else {
-        Event_SetMessage((s32)MsgKorimaTheySayMccoyHaltedConstruction);
+        Engine_EventSetMessage((s32)MsgKorimaTheySayMccoyHaltedConstruction);
         Event_ShowMessage(19, 0);
     }
 
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
@@ -206,7 +206,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
             struct FieldActor *record = Actor_Get(id);
 
             id++;
-            Actor_SetSpriteFlags(record, 0);
+            Engine_ActorSetSpriteFlags(record, 0);
         } while ((u32)id <= 22);
     }
 

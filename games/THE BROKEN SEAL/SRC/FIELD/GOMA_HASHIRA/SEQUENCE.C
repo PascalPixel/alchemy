@@ -33,35 +33,18 @@ void GomaHashira_DriveActor13Idle(void);
  * The event services under the names the staged-actor module gives their
  * imports, spelled as FIELD_EVENT.H spells its own.
  */
-static __inline__ void Goma_Wait(s32 frames)
-{
-    Battle_WaitMode0(frames);
-}
 
 static __inline__ void Goma_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: a direct call changes FieldScene_RunActor13Departure from mov r0, #13 to lsl r2, r2, #9 (82/82 assembly lines). */
     ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static __inline__ void Goma_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                                s32 dest_x, s32 dest_y)
 {
+    /* FAKEMATCH: a direct call changes FieldScene_SetupPillarsOnEntry from mov r2, #6 to str r3, [sp] (183/185 assembly lines). */
     Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
-}
-
-static __inline__ void ConfigureFirst(s32 actor, s32 angle, s32 zero)
-{
-    Actor_ShowEmote(actor, angle, zero);
-}
-
-static __inline__ void ConfigureSecond(s32 actor, s32 mode, s32 zero)
-{
-    Actor_Jump(actor, mode, zero);
-}
-
-static __inline__ void ConfigureThird(s32 actor, s32 value)
-{
-    BattleFx_SetPhaseRequest(actor, value);
 }
 
 #include "TYPES.H"
@@ -77,14 +60,14 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 void FieldScene_RunActor13Departure(void)
 {
     Engine_TaskRemoveCallback((s32)GomaHashira_DriveActor13Idle);
-    Event_Begin();
+    Engine_EventBegin();
     Actor_ShowEmote(13, 0x100, 30);
-    Actor_RunRepeatedMotion(13, 2);
+    Engine_ActorRunRepeatedMotion(13, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-    Event_SetMessage((s32)MsgGomaGotWowThatsPrettyImpressive);
+    Engine_EventSetMessage((s32)MsgGomaGotWowThatsPrettyImpressive);
     Event_ShowMessage(13, 0);
-    Actor_SetAnimationAndWait(13, 3);
-    Goma_Wait(30);
+    Engine_ActorSetAnimationAndWait(13, 3);
+    Battle_WaitMode0(30);
     *(u8 *)((u8 *)Object_GetById(10) + 35) &= 253;
     Goma_SetSpeed(13, 0x20000, 0x10000);
     Actor_WalkToAndWait(13, 0x258, 216);
@@ -93,7 +76,7 @@ void FieldScene_RunActor13Departure(void)
     Actor_SetPosition(13, 0, 0);
     SetFlagBits((u8 *)Object_GetById(10) + 35, 2);
     GameFlag_Set(0x869);
-    Event_End();
+    Engine_EventEnd();
 }
 
 s32 FieldScene_SetupPillarsOnEntry(void)
@@ -133,10 +116,10 @@ s32 FieldScene_SetupPillarsOnEntry(void)
     }
 L_0200131c:
     if (Data_02000240[225] == 99) {
-        Event_OpenScreen();
-        Event_WaitForScreen();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
         Actor_SetPosition(9, 0x1800000, 0xc00000);
-        Goma_Wait(60);
+        Battle_WaitMode0(60);
         *(u8 *)((u8 *)Object_GetById(9) + 34) = 2;
         Actor_MoveToAndWait(9, 0x198, 192);
         Battle_WaitMode0(60);

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -42,8 +43,6 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
 struct B5Context *GetBattleObjectSlotFar(s32 id);
 void *Resource_GetTableEntry(s32 resource);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
-void Scheduler_RemoveCallback(void (*callback)(void));
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
@@ -147,7 +146,7 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(palette), 128);
     work->phase = 2;
     work->timer = 75;
-    Scheduler_AddOrUpdateCallback(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)(BattlePresentation_ProcessPendingGraphicsTransfer), 0x480);
     BattleFx_SetApproachMotion(work->target->object_id, work->target->target_id, 10);
     actor = GetBattleObjectSlotFar(work->target->target_id)->object;
     for (cnt = 0; cnt != 64; cnt++) {
@@ -202,7 +201,7 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
         work->dirty = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback((u32)(BattlePresentation_ProcessPendingGraphicsTransfer));
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

@@ -152,8 +152,8 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
 
 /// Whether inline assembly on this line is admitted: a `/* CAMELOT_ASM: proof */`
 /// tag for assembly Camelot very likely wrote in their own C, or a
-/// `/* FAKEMATCH: reason */` tag for a temporary workaround until ☀️ is at 100%,
-/// on the same line or the line above (Pascal, 2026-09-29).
+/// `/* FAKEMATCH: reason */` tag for a temporary workaround until both games
+/// reach 100% (S2), on the same line or the line above.
 pub fn camelot_admitted(text: &str, line: usize) -> bool {
     static TAG: OnceLock<Regex> = OnceLock::new();
     let tag = regex(&TAG, r"/\*\s*(?:CAMELOT_ASM|FAKEMATCH):\s*[^\s*]");

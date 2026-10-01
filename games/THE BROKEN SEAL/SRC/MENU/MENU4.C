@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "INN.H"
 
@@ -38,13 +39,11 @@ struct RuntimeObject {
 extern struct PlacementState *Data_03001f2c_a;
 struct RuntimeObject *GetBattleEffectObject(s32);
 void Object_InitializeMode(struct RuntimeObject *, s32);
-void Scheduler_AddOrUpdateCallback(s32, s32);
 void Menu_UpdateFirstObjectRowPositions(void);
 
 extern struct InnState *Data_03001f2c;
 
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
-void Scheduler_RemoveCallback(s32);
 void ResourceObject_ReleaseFar(void *);
 
 /* menu/update_first_object_row_positions.c */
@@ -112,7 +111,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
     s32 zero;
     s32 count;
 
-    Scheduler_RemoveCallback((s32)Menu_UpdateFirstObjectRowPositions);
+    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateFirstObjectRowPositions));
     zero = 0;
     offset *= 2;
     count = 3;
@@ -187,7 +186,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
     s32 zero;
     s32 count;
 
-    Scheduler_RemoveCallback((s32)Menu_UpdateSecondObjectRowPositions);
+    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateSecondObjectRowPositions));
     zero = 0;
     offset *= 4;
     count = 3;

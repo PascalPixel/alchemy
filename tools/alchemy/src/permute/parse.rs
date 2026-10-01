@@ -972,7 +972,7 @@ pub fn locate(source: &str, name: Option<&str>, typedefs: &BTreeSet<String>) -> 
 /// Every top-level function definition: name, the token index where its
 /// declaration starts, its name, its parameter list's close and its body's
 /// open brace.
-fn scan_definitions(tokens: &[Token]) -> Vec<(String, usize, usize, usize, usize)> {
+pub(crate) fn scan_definitions(tokens: &[Token]) -> Vec<(String, usize, usize, usize, usize)> {
     let mut depth = 0usize;
     let mut boundary = 0usize;
     let mut found = Vec::new();
@@ -1049,7 +1049,7 @@ fn locate_at(
     })
 }
 
-fn parameters(tokens: &[Token], typedefs: &mut BTreeSet<String>) -> Result<Vec<Decl>> {
+pub(crate) fn parameters(tokens: &[Token], typedefs: &mut BTreeSet<String>) -> Result<Vec<Decl>> {
     let tokens: Vec<Token> = tokens
         .iter()
         .filter(|token| !matches!(token.tok, Tok::Comment(_)))
@@ -1079,7 +1079,7 @@ fn parameters(tokens: &[Token], typedefs: &mut BTreeSet<String>) -> Result<Vec<D
     Ok(params)
 }
 
-fn matching(tokens: &[Token], open: usize) -> Option<usize> {
+pub(crate) fn matching(tokens: &[Token], open: usize) -> Option<usize> {
     let (opening, closing) = match tokens[open].tok {
         Tok::Punct("(") => ("(", ")"),
         Tok::Punct("{") => ("{", "}"),

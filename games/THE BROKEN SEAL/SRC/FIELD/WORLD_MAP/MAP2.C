@@ -27,39 +27,39 @@ void FieldScene_RunScene371_02002274(void)
     struct FieldActor *actor;
 
     actor = (struct FieldActor *)Object_GetById(10);
-    Event_Begin();
+    Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     actor->scale_x = 0x18000;
     actor->scale_y = 0x18000;
     actor->facing = 0x4000;
-    Event_OpenScreen();
-    Event_WaitForScreen();
-    Event_Wait(20);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(20);
     Actor_SetPosition(10, 0x15680000, 0x8380000);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Audio_PlayCue(141);
     Actor_SetSpeed(10, 0x19999, 0x6666);
-    Actor_SetAnimation(10, 2);
+    Engine_ActorSetAnimation(10, 2);
     Actor_MoveToAndWait(10, 0x156d, 0x858);
     Camera_SetSpeed(0x6666, 0xccc);
     Camera_MoveTo(0x15b80000, -1, 0x8580000, 1);
     Actor_MoveToAndWait(10, 0x159e, 0x858);
     Actor_MoveToAndWait(10, 0x15a8, 0x86e);
     Actor_MoveToAndWait(10, 0x15e8, 0x878);
-    Actor_SetAnimation(10, 1);
+    Engine_ActorSetAnimation(10, 1);
     Audio_PlayCue(0x121);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x15d80000, 0x8780000);
-    Task_Wait(1);
-    Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
+    Engine_TaskWait(1);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x15c8, 0x878);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
     Audio_PlayCue(141);
-    Actor_SetAnimation(10, 2);
+    Engine_ActorSetAnimation(10, 2);
     Actor_MoveToAndWait(10, 0x15f8, 0x878);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
     Actor_MoveToAndWait(10, 0x15f8, 0x838);
@@ -71,14 +71,14 @@ void FieldScene_RunScene371_02002274(void)
     Actor_MoveToAndWait(10, 0x1568, 0x838);
     Actor_SetPosition(10, 0, 0);
     Audio_PlayCue(0x121);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Camera_MoveTo(0x15d80000, -1, 0x8580000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x15d8, 0x858);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_RequestExit(20);
-    Event_End();
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(20);
+    Engine_EventEnd();
 }
 
 /* World-map Black Orb scene: the trigger actor walks up, the camera shows the site, and the party receives the Black Orb before the map is sent to the world map's entrance 78. */
@@ -202,24 +202,24 @@ void WorldMap_RestoreExitTrigger(void)
 
 void FieldScene_RunScene371_0200281c(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage((s32)MsgWorldMapNowUseOnShip);
+    Engine_EventSetMessage((s32)MsgWorldMapNowUseOnShip);
     Engine_EventShowMessage(gWorldMapTriggerActor, 0);
     Actor_FaceDirection(55, 0x3000, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene371_02002858(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Battle_SetObjectFlag5bWhenMode3();
-    Event_SetMessage((s32)MsgWorldMapRobinWhereGoingSaidUse);
+    Engine_EventSetMessage((s32)MsgWorldMapRobinWhereGoingSaidUse);
     Engine_EventShowMessage(gWorldMapTriggerActor, 0);
     Battle_ClearObjectFlag5bWhenMode3();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1778, 0xd48);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Runs dialogue 0x264c and publishes the story result when flag 0x234 is
@@ -227,12 +227,12 @@ void FieldScene_RunScene371_02002858(void)
 void StoryScene_ShowRewardDialogue(void)
 {
 
-    Event_Begin();
+    Engine_EventBegin();
     Battle_SetObjectFlag5bWhenMode3();
-    Message_ShowCentered((s32)MsgWorldMapWreckageShipScuttledOffCoast, 1);
+    Engine_MessageShowCentered((s32)MsgWorldMapWreckageShipScuttledOffCoast, 1);
     if (GameFlag_IsSet(0x234) != 0) {
         ((struct StoryDialogueWork *)gEventWork)->story_result = 1;
     }
     Battle_ClearObjectFlag5bWhenMode3();
-    Event_End();
+    Engine_EventEnd();
 }

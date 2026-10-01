@@ -230,18 +230,6 @@ void Engine_ObjectCommitPosition();
 /* Scripted dialogue step for resource_399.  The imports name loader-relocated
  * call words and stay old-style because their arity varies between sites. */
 
-/* Typed wrappers around the two angle calls.  Their parameters are what force
- * the 0x3000 argument to be built from an immediate and a shift at each call. */
-static __inline__ void Call_02002630(s32 channel, s32 angle, s32 frames)
-{
-    Actor_FaceDirection(channel, angle, frames);
-}
-
-static __inline__ void Call_02002684(s32 channel, s32 angle, s32 frames)
-{
-    Actor_FaceDirection(channel, angle, frames);
-}
-
 /* Byte offset of a flags field on the actor 8 record touched below; bit 1
  * of that byte is toggled at the end of the third branch. */
 
@@ -257,8 +245,7 @@ static __inline__ void Call_02002684(s32 channel, s32 angle, s32 frames)
  * other sites pass three or four. */
 static __inline__ void AdvanceProbe_02001fa4(s32 heading, s32 *probe)
 {
-    /* Keep this call behind an inline boundary: the third argument's address is
-     * then rematerialized before the split 0x100000 constant is completed. */
+    /* FAKEMATCH: a direct call reuses r5 after the shift; this boundary rebuilds sp+8 before completing 0x100000. */
     Vector_AddPolarOffset((s32)0x100000, heading, probe);
 }
 

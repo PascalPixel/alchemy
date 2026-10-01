@@ -10,10 +10,10 @@ void MakyuriHeya_WalkLeaderIn(void)
     u8 *work;
 
     work = (u8 *)gEventWork;
-    Event_Begin();
+    Engine_EventBegin();
     Engine_TaskAddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
     Actor_SetSpeed(0, 0x28000, 0x14000);
-    Actor_SetAnimation(0, 1);
+    Object_SetModeById(0, 1);
     Object_GetById(0)->unknown_5a &= 254;
     Audio_PlayCue(228);
     if (*(s16 *)(work + 0x16c) == 2) {
@@ -25,19 +25,19 @@ void MakyuriHeya_WalkLeaderIn(void)
     } else {
         Call3(Engine_ActorMoveToAndWait, 0, 696, 592);
         Actor_SetDestination(0, 696, 600);
-        Event_Wait(30);
+        Battle_WaitMode0(30);
     }
-    Actor_WaitForMove(0);
+    ObjectMotion_CommitCurrentPositionAndActivate(0);
     SetFlagBits(&Object_GetById(0)->unknown_5a, 1);
     Engine_TaskRemoveCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunFourCallSequence(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     StagedActor_AdvancePair();
-    Event_End();
+    Engine_EventEnd();
     FieldScene_RunActorElevenAtTile5And13();
 }
 
@@ -49,7 +49,7 @@ void FieldScene_RunActorElevenAtTile5And13(void)
 
     x = FIELD_AT_OFFSET(Actor_Get(11), s32, 8) / 0x100000;
     y = FIELD_AT_OFFSET(Actor_Get(11), s32, 16) / 0x100000;
-    Event_Begin();
+    Engine_EventBegin();
     if (x == 5 && y == 13) {
         FIELD_AT_OFFSET(Actor_Get(11), s32, 12) += 0xfffe0000;
         p = Actor_Get(11);
@@ -64,7 +64,7 @@ void FieldScene_RunActorElevenAtTile5And13(void)
         }
         GameFlag_Set(0x874);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void MakyuriHeya_TriggerSmallFloorSwitch(void)
@@ -77,16 +77,16 @@ void MakyuriHeya_TriggerSmallFloorSwitch(void)
         x = Object_GetById(0)->x.part.pixel;
         z = Object_GetById(0)->z.part.pixel;
         if ((u32)(x - 84) <= 7 && z > 211 && z <= 219) {
-            Event_Begin();
+            Engine_EventBegin();
             Engine_GameFlagSet(0x256);
-            Event_Wait(5);
+            Battle_WaitMode0(5);
             Object_GetById(0)->y.fixed += -0x20000;
             actor = Object_GetById(0);
             FIELD_AT_OFFSET(actor, s32, 0x3c) = Object_GetById(0)->y.fixed;
             Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
             Audio_PlayCue(217);
             Engine_MapAnimateCells((s32)MakyuriHeya_GateCells, 9, 7);
-            Event_End();
+            Engine_EventEnd();
         }
     }
 }
@@ -96,16 +96,16 @@ void MakyuriHeya_CloseFloorSwitch(void)
     struct FieldActor *actor;
 
     if (GameFlag_IsSet(0x256) != 0) {
-        Event_Begin();
+        Engine_EventBegin();
         GameFlag_Clear(0x256);
         Actor_Get(0)->y.fixed += 0x20000;
         actor = Actor_Get(0);
         FIELD_AT_OFFSET(actor, s32, 0x3c) = Actor_Get(0)->y.fixed;
-        Event_Wait(5);
+        Battle_WaitMode0(5);
         Map_CopyCellsTo(7, 2, 5, 11, 1, 1);
         Audio_PlayCue(217);
         Map_AnimateCells(MakyuriHeya_GateCloseCells, 9, 7);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -128,7 +128,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0, s32 a1, s32 a2)
             if (a0 != 0) {
                 Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
                 Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-                Event_Wait(a0);
+                Battle_WaitMode0(a0);
             }
             i = i + 1;
         } while (i < (u32)a2);
@@ -160,7 +160,7 @@ void MakyuriHeya_RunSequenceG(s32 a0)
         if (a0 != 0) {
             Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Event_Wait(a0);
+            Battle_WaitMode0(a0);
         }
         i = i + 1;
         x = x + 2;
@@ -168,7 +168,7 @@ void MakyuriHeya_RunSequenceG(s32 a0)
     } while (i <= 2);
     Audio_PlayCue(0x120);
     Map_CopyCellAttributes(106, 33, 4, 5, 42, 33);
-    MapRender_WaitForValues();
+    Engine_MapRenderWaitForValues();
 }
 
 void MakyuriHeya_SprayAtFountain(void)
@@ -212,7 +212,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
                 vb0 = Random_Next();
                 vb = (((((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) + (((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) << 4)) + ((((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) + (((((u32)(vb0 << 3) >> 16) << 1) + ((u32)(vb0 << 3) >> 16)) << 4)) << 8)) + -0xcccc);
                 Effect_Spawn(v8, 0, 0x2480000, va, 0, vb, 0x90000, (s32)rec);
-                Event_Wait(1);
+                Battle_WaitMode0(1);
             } else {
                 neg = -inner;
             }
@@ -225,7 +225,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
         FieldScene_RunOpeningAuxiliarySequence(a0, outer, next);
         outer = next;
     } while ((u32)next <= 1);
-    Event_Wait(a0);
+    Battle_WaitMode0(a0);
     FieldScene_RunOpeningAuxiliarySequence(0, next, (next + 1));
     Audio_PlayCue(211);
     Engine_TaskAddCallback((s32)MakyuriHeya_SprayAtFountain, 0xc80);
@@ -258,7 +258,7 @@ void MakyuriHeya_RunSequenceF(void)
                 shown = ((0x248 - (s32)((u32)((raw << 2) + raw) >> 16)) & 0xffff) << 16;
                 pos = (base - (outer << 19)) + 0x2d80000;
                 Effect_Spawn(pos, 0, shown, -0x4000, 0, 0, 0x90000, (s32)rec);
-                Event_Wait(1);
+                Battle_WaitMode0(1);
             }
             inner = inner + 1;
             base = base + -0x20000;
@@ -276,14 +276,14 @@ void MakyuriHeya_RunSequenceE(void)
     s32 shape;
     s32 three;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (StagedActor_FindClearPosition(&ev) != 0) {
         kind = ev.f1;
         if (kind == 8) {
             shape = ev.f2;
             if ((shape >> 20) == 11) {
                 SceneActor_MoveAndRedraw(ev);
-                Event_Wait(30);
+                Battle_WaitMode0(30);
                 Audio_PlayCue(211);
                 SceneEffect_SpawnParticleRowsAndDrawTiles();
                 three = 3;
@@ -313,10 +313,10 @@ void MakyuriHeya_RunSequenceE(void)
                 if (GameFlag_IsSet(0x307) == 0) {
                     Camera_SetSpeed(0x18000, 0x3000);
                     Camera_MoveTo(0x2ca0000, -1, 0x2500000, 1);
-                    Camera_WaitForMove();
+                    Engine_CameraWaitForMove();
                     GameFlag_Set(0x307);
                     FieldScene_RunSupplementalSequenceOne(5);
-                    Event_Wait(50);
+                    Battle_WaitMode0(50);
                 } else {
                     FieldScene_RunSupplementalSequenceOne(5);
                 }
@@ -329,14 +329,14 @@ void MakyuriHeya_RunSequenceE(void)
             }
         }
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunFourSteps(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     StagedActor_AdvancePair();
-    Event_End();
+    Engine_EventEnd();
     SceneState_RunWhenActor8AtTile10x23();
 }
 
@@ -345,7 +345,7 @@ void SceneState_RunWhenActor8AtTile10x23(void)
     s32 x = Object_GetById(8)->x.fixed / 0x100000;
     s32 y = Object_GetById(8)->z.fixed / 0x100000;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (x == 10 && y == 23) {
         s32 *p;
         Object_GetById(8)->y.fixed += 0xfffe0000;
@@ -357,7 +357,7 @@ void SceneState_RunWhenActor8AtTile10x23(void)
         Map_CopyCellAttributes(10, 16, 1, 1, x, 19);
         GameFlag_Set(0x878);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Once, when the leader stands in the cell block at x 164-171 and z
@@ -393,15 +393,15 @@ void FieldScene_RunScene39cSequenceA(void)
     struct FieldActor *actor;
 
     if (GameFlag_IsSet(0x256) != 0) {
-        Event_Begin();
+        Engine_EventBegin();
         GameFlag_Clear(0x256);
         Actor_Get(0)->y.fixed += 0x20000;
         actor = Actor_Get(0);
         FIELD_AT_OFFSET(actor, s32, 0x3c) = Actor_Get(0)->y.fixed;
-        Event_Wait(5);
+        Battle_WaitMode0(5);
         Map_CopyCellsTo(8, 29, 10, 23, 1, 1);
         Audio_PlayCue(217);
         Map_AnimateCells(MakyuriHeya_FloorSwitchCloseCells, 10, 18);
-        Event_End();
+        Engine_EventEnd();
     }
 }

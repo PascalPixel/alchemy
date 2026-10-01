@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "SYSTEM.H"
@@ -10,11 +11,13 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {
+    /* FAKEMATCH: direct calls change saved-pointer allocation and argument scheduling during menu setup. */
     return copy(dst, src, size);
 }
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 {
+    /* FAKEMATCH: a direct call loads the fill value before the routine, reversing their pool words. */
     return fill(dst, size, value);
 }
 
@@ -58,8 +61,6 @@ void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *block);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
-s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 void UiWindow_InitializeWork(s32);
 s32 Party_ListActiveOwnersFar(const u16 *);
 void Menu_InitSelectorCursorAndEntries(s32, s32, s32, s32);

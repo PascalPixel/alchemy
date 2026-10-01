@@ -33,7 +33,7 @@ void Object_CommitPosition();
 /* Hides an actor by clearing its sprite flags. */
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
-    Actor_SetSpriteFlags(no, 0);
+    Engine_ActorSetSpriteFlags(no, 0);
     return 0;
 }
 
@@ -152,61 +152,61 @@ void FieldScene_RunTwoLayoutSteps(void)
 
 void FieldScene_RunActor9Flag882Scene(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(9, 0, 0);
     GameFlag_Set(0x882);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene398SequenceA(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(8, 0, 0);
     GameFlag_Set(0x883);
-    Event_Wait(40);
-    Actor_SetAnimationAndWait(15, 2);
+    Engine_EventWait(40);
+    Engine_ActorSetAnimationAndWait(15, 2);
     Actor_Get(15)->motion_flags = 0;
     Actor_Get(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-    Actor_SetSpritePriority(15, 2);
+    Engine_ActorSetSpritePriority(15, 2);
     Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorFifteenScene(void)
 {
     void Audio_PlayCue(s32);
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetChildValue(0xF, 0);
-    Event_Wait(0x28);
+    Engine_EventWait(0x28);
     Audio_PlayCue(0xD2);
-    Actor_SetAnimationAndWait(0xF, 6);
-    Event_End();
+    Engine_ActorSetAnimationAndWait(0xF, 6);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorSixteenScene(void)
 {
-    void Event_End(void);
+    void Engine_EventEnd(void);
     void Audio_PlayCue(s32);
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetChildValue(0x10, 0);
-    Event_Wait(0x28);
+    Engine_EventWait(0x28);
     Audio_PlayCue(0xD2);
-    Actor_SetAnimationAndWait(0x10, 6);
-    Event_End();
+    Engine_ActorSetAnimationAndWait(0x10, 6);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor17Steps28AndD2(void)
 {
-    void Event_End(void);
+    void Engine_EventEnd(void);
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetChildValue(0x11, 0);
-    Event_Wait(0x28);
+    Engine_EventWait(0x28);
     Audio_PlayCue(0xD2);
-    Actor_SetAnimationAndWait(0x11, 6);
-    Event_End();
+    Engine_ActorSetAnimationAndWait(0x11, 6);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene398SequenceB(void)
@@ -244,27 +244,27 @@ void FieldScene_RunScene398SequenceB(void)
         }
     }
     if (GameFlag_IsSet(0x302) == 0) {
-        Event_Begin();
-        Event_Wait(40);
+        Engine_EventBegin();
+        Engine_EventWait(40);
         Audio_PlayCue(210);
         v5 = 36;
-        Actor_SetAnimationAndWait(17, 6);
+        Engine_ActorSetAnimationAndWait(17, 6);
         Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
         Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
-        Event_End();
+        Engine_EventEnd();
     }
     GameFlag_Set(0x302);
     goto L_02000414;
     L_020003c2:;
     if (GameFlag_IsSet(0x302) != 0) {
-        Event_Begin();
-        Event_Wait(40);
+        Engine_EventBegin();
+        Engine_EventWait(40);
         Audio_PlayCue(220);
         v5 = 36;
-        Actor_SetAnimationAndWait(17, 2);
+        Engine_ActorSetAnimationAndWait(17, 2);
         Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
         Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
-        Event_End();
+        Engine_EventEnd();
     }
     GameFlag_Clear(0x302);
     L_02000414:;
@@ -313,7 +313,7 @@ void RunGuardedSceneSetup(void)
         s32 height = 13;
 
         Map_CopyCellAttributes(31, 0, 1, 1, width, height);
-        Actor_SetAnimation(8, 0);
+        Engine_ActorSetAnimation(8, 0);
     }
 }
 
@@ -323,13 +323,13 @@ void SceneState_SetRuntimeWord448To516(void)
      * 68; the two are not one running offset. */
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
-    Actor_SetAnimation(8, 1);
-    Actor_SetAnimation(10, 2);
+    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(10, 2);
 
     if (GameFlag_IsSet(0x882) != 0) {
         Actor_SetPosition(9, 0, 0);
     } else {
-        Actor_SetSpriteFlags(Actor_Get(9), 0);
+        Engine_ActorSetSpriteFlags(Actor_Get(9), 0);
     }
 }
 
@@ -341,38 +341,38 @@ void FieldScene_RunScene398SequenceC(void)
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     record = Actor_Get(18);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(19);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(20);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(21);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(22);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(23);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(24);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(25);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
     record = Actor_Get(26);
-    Actor_SetSpriteFlags((s32)record, 0);
-    Actor_SetAnimation(18, 5);
-    Actor_SetAnimation(19, 5);
-    Actor_SetAnimation(20, 5);
-    Actor_SetAnimation(21, 5);
-    Actor_SetAnimation(22, 5);
-    Actor_SetAnimation(23, 3);
-    Actor_SetAnimation(24, 3);
-    Actor_SetAnimation(25, 3);
-    Actor_SetAnimation(26, 3);
-    Actor_SetAnimation(9, 2);
-    Actor_SetAnimation(10, 2);
-    Actor_SetAnimation(11, 2);
-    Actor_SetAnimation(12, 2);
-    Actor_SetAnimation(13, 2);
-    Actor_SetAnimation(14, 2);
+    Engine_ActorSetSpriteFlags((s32)record, 0);
+    Engine_ActorSetAnimation(18, 5);
+    Engine_ActorSetAnimation(19, 5);
+    Engine_ActorSetAnimation(20, 5);
+    Engine_ActorSetAnimation(21, 5);
+    Engine_ActorSetAnimation(22, 5);
+    Engine_ActorSetAnimation(23, 3);
+    Engine_ActorSetAnimation(24, 3);
+    Engine_ActorSetAnimation(25, 3);
+    Engine_ActorSetAnimation(26, 3);
+    Engine_ActorSetAnimation(9, 2);
+    Engine_ActorSetAnimation(10, 2);
+    Engine_ActorSetAnimation(11, 2);
+    Engine_ActorSetAnimation(12, 2);
+    Engine_ActorSetAnimation(13, 2);
+    Engine_ActorSetAnimation(14, 2);
     Resource398_ImportBankNoOp(18);
     Resource398_ImportBankNoOp(19);
     Resource398_ImportBankNoOp(20);
@@ -390,27 +390,27 @@ void FieldScene_RunScene398SequenceC(void)
     Resource398_ImportBankNoOp(14);
     if (GameFlag_IsSet(0x883) != 0) {
         Actor_SetPosition(8, 0, 0);
-        Actor_SetAnimation(15, 5);
+        Engine_ActorSetAnimation(15, 5);
         Actor_Get(15)->motion_flags = 0;
         Actor_Get(15)->y.fixed = -0x40000;
         Actor_Get(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetSpritePriority(15, 2);
+        Engine_ActorSetSpritePriority(15, 2);
         Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
     } else {
-        Actor_SetAnimation(8, 2);
+        Engine_ActorSetAnimation(8, 2);
         record = Actor_Get(8);
-        Actor_SetSpriteFlags((s32)record, 0);
-        Actor_SetAnimation(15, 1);
+        Engine_ActorSetSpriteFlags((s32)record, 0);
+        Engine_ActorSetAnimation(15, 1);
     }
-    Actor_SetAnimation(16, 1);
+    Engine_ActorSetAnimation(16, 1);
     if (GameFlag_IsSet(0x302) != 0) {
         v5 = 36;
-        Actor_SetAnimation(17, 1);
+        Engine_ActorSetAnimation(17, 1);
         Map_CopyCellAttributes(0, 1, 1, 1, v5, 22);
         Map_CopyCellAttributes(0, 2, 1, 1, v5, 24);
     } else {
         v5 = 36;
-        Actor_SetAnimation(17, 5);
+        Engine_ActorSetAnimation(17, 5);
         Map_CopyCellAttributes(1, 1, 1, 1, v5, 22);
         Map_CopyCellAttributes(1, 2, 1, 1, v5, 24);
     }
@@ -473,8 +473,8 @@ void StagedActor_PushActorAhead(void)
 
     if (Object_CheckMovementCollision(target, pos) > 0) return;
 
-    Object_SetAnimation(player, 8);
-    Task_Wait(15);
+    Object_SetMode(player, 8);
+    Engine_TaskWait(15);
     Audio_PlayCue(185);
 
     *(s32 *)(target + 48) = 0x3333;
@@ -492,7 +492,7 @@ void StagedActor_PushActorAhead(void)
     *(s32 *)(target + 36) = (s32)blocker;
     *(s32 *)(target + 44) = (s32)blocker;
 
-    Object_SetAnimation(player, 1);
+    Object_SetMode(player, 1);
     FieldScene_RunScene398SequenceB();
 }
 

@@ -32,11 +32,13 @@ struct MenuWork {
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {
+    /* FAKEMATCH: direct calls add r9, sl and fp saves and change the backdrop stack layout. */
     return copy(dst, src, size);
 }
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 {
+    /* FAKEMATCH: a direct call loads the fill value before constructing the size. */
     return fill(dst, size, value);
 }
 

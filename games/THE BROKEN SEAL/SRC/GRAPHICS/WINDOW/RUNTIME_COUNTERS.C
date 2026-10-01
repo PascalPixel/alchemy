@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 extern u8 Data_03001ee4[];
@@ -22,7 +23,6 @@ extern void *gWindowWork;
 void UiWork_ProcessAll(void);
 
 s32 VramBlock_LoadCached(s32, s32, s32);
-void Scheduler_AddOrUpdateCallback(void *, s32);
 void UiWork_Finalize(struct Work *, s32);
 
 s32 UiWork_IsIdle(void *arg0)
@@ -63,7 +63,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
     state->second_zero = 0;
     size = 200;
     size <<= 4;
-    Scheduler_AddOrUpdateCallback((void *)UiWork_ProcessAll, size);
+    Scheduler_AddOrUpdateCallback((s32)((void *)UiWork_ProcessAll), size);
 }
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
@@ -80,7 +80,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
     state->second_zero = 0;
     size = 200;
     size <<= 4;
-    Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, size);
+    Scheduler_AddOrUpdateCallback((s32)(UiWork_ProcessAll), size);
 }
 
 void UiWork_FinalizeSharedSlot(void)

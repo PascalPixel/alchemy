@@ -6,6 +6,13 @@
  * those differences; IE.C keeps tagged immediates pending a matching form.
  */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline s32 Party_GiveItem(s32 item, s32 flags)
+{
+    return Engine_PartyGiveItem(item, flags);
+}
+
 #include "CALL.H"
 
 extern u8 MsgHaidiaWhysEveryoneHanging[];

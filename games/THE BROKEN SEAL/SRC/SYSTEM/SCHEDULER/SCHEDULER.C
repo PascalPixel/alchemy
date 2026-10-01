@@ -44,10 +44,6 @@ struct ResourceTableEntry {
 
 extern struct ResourceTableEntry ResourceTableEntries[];
 
-#define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
-extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerTaskCount;
-extern struct SchedulerTask gSchedulerTaskTable[20];
 typedef s32 (*KeyCallbackFn)(void);
 
 extern u8 Data_03001cb4[];

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -16,7 +17,6 @@ extern u16 Korosseo_MarkerStartY;
 extern u16 Korosseo_MarkerStep;
 void Korosseo_UpdateMarker(void);
 void SceneState_InitHalfwordC6a6Once(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -121,7 +121,7 @@ void SceneState_StoreParamsAndInitTable(u32 x, u32 y, u32 style)
     Korosseo_MarkerBlink = 0;
     Korosseo_MarkerSteps = 0;
 
-    Scheduler_AddOrUpdateCallback(Korosseo_UpdateMarker, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
 }
 
 /* Move the marker from where it is to x, y over the given steps. */
@@ -134,7 +134,7 @@ void SceneState_InitTableWordsAndLoad3200(u32 x, u32 y, u32 duration)
     Korosseo_MarkerSteps = (u16)duration;
     Korosseo_MarkerStep = 0;
 
-    Scheduler_AddOrUpdateCallback(Korosseo_UpdateMarker, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateMarker), 0xc80);
 }
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
@@ -185,7 +185,7 @@ void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
         o->acceleration = v >> 1;
         o->unknown_5b = z;
         ObjectDispatch_InitFromTable6(o);
-        Object_SetAnimation(o, 5);
+        Object_SetMode(o, 5);
         Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
     }
 }
@@ -202,9 +202,9 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
         o->acceleration = v >> 1;
         o->unknown_5b = z;
         ObjectDispatch_InitFromTable6(o);
-        Object_SetAnimation(o, 5);
+        Object_SetMode(o, 5);
         Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
         Script_WaitForEventTimeout(o);
-        Object_SetAnimation(o, 1);
+        Object_SetMode(o, 1);
     }
 }

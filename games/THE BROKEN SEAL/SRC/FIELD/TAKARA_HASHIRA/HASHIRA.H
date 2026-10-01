@@ -33,15 +33,6 @@ s32 TakaraHashira_UpdateActorPriority();
 void WaitFrames(s32 frames);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 
-static inline void Stage_Wait(s32 frames)
-{
-    WaitFrames(frames);
-}
-
-static inline void Stage_SetMode(struct FieldActor *object, s32 mode)
-{
-    Object_SetMode(object, mode);
-}
 extern u8 TakaraHashira_ShakenScroll[];
 extern u8 gEffectWork[];
 
@@ -119,4 +110,3 @@ void battle_owner_69();
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin);
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
-

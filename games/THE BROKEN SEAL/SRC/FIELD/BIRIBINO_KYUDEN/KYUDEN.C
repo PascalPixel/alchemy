@@ -151,10 +151,10 @@ const struct SceneEvent *Scene_GetEvents(void)
 /* Actor 10 in the palace asks whether the party will go to Kolima Forest. */
 void Kyuden_AskAboutKolima(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgBiribinoYouWillingGoKolimaForest);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgBiribinoYouWillingGoKolimaForest);
     Event_AskYesNo(10, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunStartledGuard(void)
@@ -162,17 +162,17 @@ void FieldScene_RunStartledGuard(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_ShowEmote(14, 0x102, 0);
-    Actor_RunRepeatedMotion(14, 2);
-    Event_Wait(40);
-    Event_SetMessage((s32)MsgBiribinoAaaah);
+    Engine_ActorRunRepeatedMotion(14, 2);
+    Engine_EventWait(40);
+    Engine_EventSetMessage((s32)MsgBiribinoAaaah);
     Event_ShowMessageAndWait(14, 0, 20);
     Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(14, 0, 10);
     Actor_FaceDirection(14, 0xb000, 10);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene38dSequenceA(void)
@@ -180,41 +180,41 @@ void FieldScene_RunScene38dSequenceA(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
-    Event_SetMessage((s32)MsgBiribinoFineWarrior);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgBiribinoFineWarrior);
     if (GameFlag_IsSet(0x302) != 0) {
-        Event_SetMessage((s32)MsgBiribinoItsVeryRecklessForSuch);
+        Engine_EventSetMessage((s32)MsgBiribinoItsVeryRecklessForSuch);
     }
     Event_ShowMessage(15, 0);
     GameFlag_Set(0x302);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor16Message1769(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgBiribinoWasWatchingFromHereAfter);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgBiribinoWasWatchingFromHereAfter);
     Event_AskYesNo(16, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorSeventeenFlaggedDialogue(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
 
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage((s32)MsgBiribinoMayChooseOnlyOneItem);
+        Engine_EventSetMessage((s32)MsgBiribinoMayChooseOnlyOneItem);
     } else if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
-        Event_SetMessage((s32)MsgBiribinoRewardReceivedWasIndeedGreatest);
+        Engine_EventSetMessage((s32)MsgBiribinoRewardReceivedWasIndeedGreatest);
     } else {
-        Event_SetMessage((s32)MsgBiribinoDoThinkTheseBilibinsGreat);
+        Engine_EventSetMessage((s32)MsgBiribinoDoThinkTheseBilibinsGreat);
         if (GameFlag_IsSet(0x84d) != 0) {
             gEventWork->message++;
         }
     }
 
     Event_ShowMessage(17, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor15Flag303Scene(void)
@@ -222,33 +222,33 @@ void SceneDialogue_RunActor15Flag303Scene(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
-    Event_SetMessage((s32)MsgBiribinoSometimesWeNeedChildrenRemind);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgBiribinoSometimesWeNeedChildrenRemind);
     if (GameFlag_IsSet(0x303) != 0) {
-        Event_SetMessage((s32)MsgBiribinoLookedVeryCourageousWalkingToward);
+        Engine_EventSetMessage((s32)MsgBiribinoLookedVeryCourageousWalkingToward);
     }
     Event_ShowMessage(15, 0);
     GameFlag_Set(0x303);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorSeventeenFlagDialogue(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
 
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage((s32)MsgBiribinoNonethelessIfYourLuckSour);
+        Engine_EventSetMessage((s32)MsgBiribinoNonethelessIfYourLuckSour);
     } else if (GameFlag_IsSet(0x845) == 0) {
-        Event_SetMessage((s32)MsgBiribinoGoodTreasureIfGetTurned);
+        Engine_EventSetMessage((s32)MsgBiribinoGoodTreasureIfGetTurned);
     } else {
-        Event_SetMessage((s32)MsgBiribinoWeReallyGivingOurTreasure);
+        Engine_EventSetMessage((s32)MsgBiribinoWeReallyGivingOurTreasure);
         if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
-            Event_SetMessage((s32)MsgBiribinoGotPrettyNiceRewardBut);
+            Engine_EventSetMessage((s32)MsgBiribinoGotPrettyNiceRewardBut);
         }
     }
 
     Event_ShowMessage(17, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void BiribinoKyuden_RunDoorExitScene(void)
@@ -288,16 +288,16 @@ void BiribinoKyuden_RunDoorExitScene(void)
 
 void FieldScene_ShowChestEmpty(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgBiribinoRobinCheckedChestButWas, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgBiribinoRobinCheckedChestButWas, 1);
+    Engine_EventEnd();
 }
 
 void FieldScene_ShowChestLocked(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgBiribinoTreasureChestLocked, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgBiribinoTreasureChestLocked, 1);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunChestStep(s32 flag)
@@ -349,23 +349,23 @@ void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag)
 {
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     record = BattleFx_PlayCueAndStartEmitterOnTarget(0, actor, item);
 
-    if (Party_GiveItem(item, 0) != -1) {
-        Actor_SetAnimation(actor, 2);
+    if (Engine_PartyGiveItem(item, 0) != -1) {
+        Engine_ActorSetAnimation(actor, 2);
         GameFlag_Set(FLAG_REWARD_TAKEN);
         GameFlag_Set(flag);
         GameFlag_Clear(0x322);
         GameFlag_Clear(0x202);
     } else {
         Audio_PlayCue(125);
-        Actor_SetAnimation(actor, 5);
+        Engine_ActorSetAnimation(actor, 5);
     }
 
     Engine_ObjectDispatchRelease(record);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunRewardReminder(void)
@@ -375,17 +375,17 @@ void FieldScene_RunRewardReminder(void)
 
     if (GameFlag_IsSet(FLAG_REWARD_TAKEN) == 0) {
         if (Engine_GameFlagIsSet(0x322) != 0) {
-            Event_Begin();
+            Engine_EventBegin();
             Actor_ShowEmote(19, 0x100, 0);
             Actor_FaceDirection(19, 0x7000, 10);
-            Actor_RunRepeatedMotion(19, 2);
-            Event_Wait(20);
-            Event_SetMessage((s32)MsgBiribinoPleaseTakeYourRewardBefore);
+            Engine_ActorRunRepeatedMotion(19, 2);
+            Engine_EventWait(20);
+            Engine_EventSetMessage((s32)MsgBiribinoPleaseTakeYourRewardBefore);
             Event_ShowMessage(19, 0);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x268, 0x2fa);
             Actor_FaceDirection(19, 0xd000, 10);
-            Event_End();
+            Engine_EventEnd();
         }
     }
 }
@@ -396,18 +396,18 @@ void FieldScene_RunPalaceFarewell(void)
     s32 record;
 
     if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
-        Event_Begin();
+        Engine_EventBegin();
         Actor_FaceActor(ACTOR_PARTY_LEADER, 19, 0);
         Actor_SetSpeed(19, 0x9999, 0x4ccc);
         Actor_WalkToAndWait(19, 0x26e, 0x2fc);
         Actor_FaceDirection(19, 0xf000, 20);
-        Actor_SetAnimationAndWait(19, 3);
-        Actor_SetAnimationAndWait(17, 3);
-        Event_Wait(20);
+        Engine_ActorSetAnimationAndWait(19, 3);
+        Engine_ActorSetAnimationAndWait(17, 3);
+        Engine_EventWait(20);
         Actor_FaceActor(19, ACTOR_PARTY_LEADER, 0);
-        Event_Wait(20);
-        Actor_SetAnimationAndWait(19, 3);
-        Event_SetMessage((s32)MsgBiribinoAlwaysWelcomeInPalaceLord);
+        Engine_EventWait(20);
+        Engine_ActorSetAnimationAndWait(19, 3);
+        Engine_EventSetMessage((s32)MsgBiribinoAlwaysWelcomeInPalaceLord);
         Event_ShowMessageAndWait(19, 0, 10);
         Actor_SetSpeed(19, 0xcccc, 0x6666);
         Actor_WalkToAndWait(19, 0x23a, 0x2f6);
@@ -415,7 +415,7 @@ void FieldScene_RunPalaceFarewell(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         GameFlag_Set(0x85e);
         GameFlag_Set(0x333);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -547,18 +547,18 @@ void Kyuden_RunKolimaRequest(void)
         Actor_WalkTo(19, 0x37e, 0x2b8);
         Engine_EventWait(80);
         Call4(Engine_CameraMoveTo, 0x37e0000, -1, 0x2980000, 1);
-        Actor_WaitForMove(19);
+        Engine_ActorWaitForMove(19);
         Call3(Engine_ActorWalkToAndWait, 19, 0x34a, 0x2b8);
         Actor_WalkToAndWait(19, 0x34a, 0x27c);
         Actor_FaceDirection(18, 0x7000, 20);
         Call3(Engine_ActorWalkToAndWait, 19, 0x36c, 0x27a);
         Engine_ActorSetAnimationAndWait(19, 3);
         Engine_EventWait(20);
-        Actor_SetAnimationAndWait(18, 3);
-        Event_Wait(10);
+        Engine_ActorSetAnimationAndWait(18, 3);
+        Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgBiribinoMatter);
         Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
-        Actor_RunRepeatedMotion(19, 2);
+        Engine_ActorRunRepeatedMotion(19, 2);
         Engine_EventShowMessageAndWait(19, 0, 20);
         Engine_ActorRunRepeatedMotion(18, 1);
         Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
@@ -611,7 +611,7 @@ void Kyuden_RunKolimaRequest(void)
         Engine_ActorWaitForMove(2);
         Engine_ActorSetAnimation(1, 1);
         Engine_ActorSetAnimation(2, 1);
-        Actor_SetAnimation(ACTOR_MIA, 1);
+        Engine_ActorSetAnimation(ACTOR_MIA, 1);
         Engine_EventWait(10);
         Call3(Engine_ActorFaceDirection, 3, 0xc000, 0);
         Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
@@ -620,19 +620,19 @@ void Kyuden_RunKolimaRequest(void)
         Call3(Engine_ActorFaceDirection, 18, 0x7000, 10);
         Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
         Call3(Engine_ActorFaceDirection, 19, 0x1000, 10);
-        Actor_SetAnimationAndWait(19, 3);
+        Engine_ActorSetAnimationAndWait(19, 3);
         Call3(Engine_ActorFaceDirection, 18, 0x5000, 40);
         Call3(Engine_ActorFaceDirection, 18, 0x7000, 10);
         Engine_ActorSetAnimationAndWait(18, 4);
         Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
         Engine_ActorSetAttachedEffect(19, 0x102);
-        Event_Wait(40);
+        Engine_EventWait(40);
         Call3(Engine_ActorFaceDirection, 18, 0x5000, 20);
         Call3(Engine_ActorShowEmote, 18, 0x105, 40);
         Engine_EventOpenMessage(0x2012, 0);
         Call3(Engine_ActorFaceDirection, 1, 0xe000, 0);
         Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             /* FAKEMATCH: the first offer and the change of heart share one
              * refusal and one acceptance by jumping into each other's
              * blocks, which keeps the reference's single copy of each in
@@ -647,8 +647,8 @@ void Kyuden_RunKolimaRequest(void)
         Engine_EventShowMessageAndWait(0x2012, 0, 10);
         Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
         Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
-        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-        Actor_SetAnimation(ACTOR_GERALD, 2);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 2);
         record = ((s32 (*)())Object_GetById)(0);
         if (record != 0) {
             Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
@@ -718,7 +718,7 @@ void Kyuden_RunKolimaRequest(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 20);
     Engine_ActorShowEmote(18, 0x101, 60);
-    Event_SetMessage((s32)MsgBiribinoYehveChangeHeart);
+    Engine_EventSetMessage((s32)MsgBiribinoYehveChangeHeart);
     Engine_EventOpenMessage(0x2012, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         /* FAKEMATCH: into the first offer's refusal, as above. */
@@ -749,7 +749,7 @@ accepted:
     Engine_ActorJump(20, 6, 0);
     Call3(Engine_ActorSetSpeed, 20, 0x20000, 0x10000);
     Actor_MoveToAndWait(20, 0x37e, 0x29c);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
     Call3(Engine_ActorShowEmote, 3, 0x101, 0);
     Call3(Engine_ActorShowEmote, 0, 0x101, 0);
@@ -788,7 +788,7 @@ accepted:
     Call3(Engine_ActorShowEmote, 18, 0x101, 60);
     Call3(Engine_ActorShowEmote, 1, 0x101, 40);
     Engine_ActorFaceDirection(1, 0, 20);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
     Call3(Engine_EventShowMessageAndWait, 0x4001, 0, 10);
     Call3(Engine_ActorFaceDirection, 3, 0x8000, 0);
     Call3(Engine_ActorFaceDirection, 0, 0x2000, 20);
@@ -805,7 +805,7 @@ accepted:
     Call3(Engine_ActorFaceDirection, 3, 0xa000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
     Call3(Engine_ActorFaceDirection, 0, 0x6000, 0);
-    while (Event_ChooseYesNo(0, 0) != 0) {
+    while (Engine_EventChooseYesNo(0, 0) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoComeSaidYoud);
         Engine_EventOpenMessage(0x4001, 0);
     }
@@ -843,8 +843,8 @@ accepted:
     Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
     Engine_ActorSetAnimationAndWait(19, 3);
     Engine_EventWait(20);
-    Actor_SetAnimationAndWait(18, 4);
-    Actor_SetAnimation(18, 4);
+    Engine_ActorSetAnimationAndWait(18, 4);
+    Engine_ActorSetAnimation(18, 4);
     Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
     Engine_ActorJump(20, 6, 0);
     record = ((s32 (*)())Object_GetById)(18);
@@ -903,7 +903,7 @@ accepted:
     Call3(Engine_ActorWalkToAndWait, 19, 0x360, 0x2a0);
     Call3(Engine_ActorFaceDirection, 19, 0x1000, 10);
     Event_ShowMessageAndWait(0x4013, 0, 20);
-    Actor_Stop(ACTOR_PARTY_LEADER);
+    Engine_ActorStop(ACTOR_PARTY_LEADER);
     Engine_ActorStop(1);
     Engine_ActorStop(2);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
@@ -911,7 +911,7 @@ accepted:
     Call3(Engine_ActorShowEmote, 2, 0x105, 60);
     Engine_ActorSetAnimation(0, 3);
     Engine_ActorSetAnimation(1, 3);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Call3(Object_SetTargetAndCallback, 19, 0x10000, (s32)Kyuden_FacingActions);
     Engine_ActorSetAnimation(1, 2);
     record = ((s32 (*)())Object_GetById)(0);
@@ -937,11 +937,11 @@ accepted:
     Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
     Engine_ActorWalkToAndWait(0, 0x37e, 0x2f0);
     gEventWork->transition_frames = 16;
-    Event_CloseScreen();
+    Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_GameFlagSet(0x321);
 leave:
-    Event_RequestExit(29);
+    Engine_EventRequestExit(29);
     Engine_EventEnd();
 }
 
@@ -968,8 +968,8 @@ void FieldScene_RunPalaceGreeting(void)
     Call3(Engine_ActorWalkToAndWait, 19, 0x100, 0x284);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
-    Event_Wait(20);
-    Actor_RunRepeatedMotion(19, 2);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(19, 2);
     Engine_EventSetMessage((s32)MsgBiribinoNameSorryRejected);
     Engine_EventShowMessageAndWait(19, 0, 10);
     Call3(Engine_ActorShowEmote, 0, 0x100, 40);
@@ -981,11 +981,11 @@ void FieldScene_RunPalaceGreeting(void)
     Engine_EventShowMessage(19, 0);
     Engine_ActorSetAnimationAndWait(19, 3);
     Engine_EventAskYesNo(19, 0);
-    Actor_RunRepeatedMotion(19, 2);
+    Engine_ActorRunRepeatedMotion(19, 2);
     Engine_EventShowMessageAndWait(19, 0, 10);
     Call3(Engine_ActorShowEmote, 0, 0x101, 60);
     Actor_SetAttachedEffect(19, 0x102);
-    Event_Wait(60);
+    Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(19, 1);
     Engine_EventShowMessageAndWait(19, 0, 10);
     Engine_ActorSetAnimationAndWait(19, 3);
@@ -1000,16 +1000,16 @@ void FieldScene_RunPalaceGreeting(void)
 
 void ConfigurePrimarySceneChannels(void)
 {
-    FaceActor(1, 0xe000, 0);
-    FaceActor(2, 0xa000, 0);
-    FaceActor(3, 0x8000, 0);
+    Actor_FaceDirection(1, 0xe000, 0);
+    Actor_FaceDirection(2, 0xa000, 0);
+    Actor_FaceDirection(3, 0x8000, 0);
 }
 
 void ConfigureSecondarySceneChannels(void)
 {
-    FaceActor(1, 0xc000, 0);
-    FaceActor(2, 0xc000, 0);
-    FaceActor(3, 0xa000, 0);
+    Actor_FaceDirection(1, 0xc000, 0);
+    Actor_FaceDirection(2, 0xc000, 0);
+    Actor_FaceDirection(3, 0xa000, 0);
 }
 
 /* FAKEMATCH: The cleared motion byte keeps its own zero local so the
@@ -1021,23 +1021,23 @@ void RunEventScript02(void)
     s32 flag;
     u8 clear = 0;
 
-    Event_Begin();
+    Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     buf = (u8 *)Engine_EventGetViewCenter();
     buf[85] = clear;
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 0);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Map_Redraw();
-    Task_Wait(1);
+    Engine_MapRedraw();
+    Engine_TaskWait(1);
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     gEventWork->transition_frames = 16;
 
-    Event_OpenScreen();
-    Event_WaitForScreen();
-    Event_Wait(40);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(40);
     Actor_SetPosition(19, 0x03780000, 0x031e0000);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x03880000, 0x031e0000);
     Camera_SetSpeed(0x9999, 0x1333);
@@ -1046,14 +1046,14 @@ void RunEventScript02(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Actor_WalkTo(19, 888, 720);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 904, 736);
-    Event_Wait(60);
-    Actor_WaitForMove(19);
-    Actor_SetAnimation(19, 1);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Event_Wait(20);
-    Actor_RunRepeatedMotion(19, 2);
-    Event_SetMessage((s32)MsgBiribinoWeveBroughtWarriorsMilord);
+    Engine_EventWait(60);
+    Engine_ActorWaitForMove(19);
+    Engine_ActorSetAnimation(19, 1);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(19, 2);
+    Engine_EventSetMessage((s32)MsgBiribinoWeveBroughtWarriorsMilord);
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
@@ -1066,7 +1066,7 @@ void RunEventScript02(void)
     }
 
     Camera_MoveTo(0x037e0000, -1, 0x02980000, 1);
-    Actor_EnableActionCallback(19, Kyuden_PacingActions);
+    Engine_ActorEnableActionCallback(19, Kyuden_PacingActions);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
     actor = (struct FieldActor *)Object_GetById(0);
@@ -1085,30 +1085,30 @@ void RunEventScript02(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_IVAN, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
-    Actor_SetAnimation(ACTOR_GERALD, 2);
-    Actor_SetAnimation(ACTOR_IVAN, 2);
-    Actor_SetAnimation(ACTOR_MIA, 2);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
+    Engine_ActorSetAnimation(ACTOR_MIA, 2);
     Actor_SetDestinationOffset(ACTOR_GERALD, -16, 16);
     Actor_SetDestinationOffset(ACTOR_IVAN, 16, 16);
     Actor_SetDestinationOffset(ACTOR_MIA, 32, 16);
-    Actor_WaitForMove(ACTOR_IVAN);
-    Actor_SetAnimation(ACTOR_GERALD, 1);
-    Actor_SetAnimation(ACTOR_IVAN, 1);
-    Actor_SetAnimation(ACTOR_MIA, 1);
-    Event_Wait(10);
+    Engine_ActorWaitForMove(ACTOR_IVAN);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 1);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 1);
+    Engine_ActorSetAnimation(ACTOR_MIA, 1);
+    Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_WaitForMove(ACTOR_MIA);
+    Engine_ActorWaitForMove(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
     Object_RefreshSelectorById(19);
-    Event_Wait(20);
+    Engine_EventWait(20);
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
         AdvanceMessage(1);
         flag = 0;
     }
-    Actor_RunRepeatedMotion(18, 3);
+    Engine_ActorRunRepeatedMotion(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 20);
     if (flag != 0) {
         AdvanceMessage(1);
@@ -1119,48 +1119,48 @@ void RunEventScript02(void)
         AdvanceMessage(1);
         flag = 0;
     }
-    Actor_RunRepeatedMotion(18, 1);
+    Engine_ActorRunRepeatedMotion(18, 1);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     if (flag != 0) {
         AdvanceMessage(1);
     }
 
     ConfigurePrimarySceneChannels();
-    Event_Wait(20);
+    Engine_EventWait(20);
     if (GameFlag_IsSet(0x84f) != 0) {
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
         Actor_ShowEmote(ACTOR_GERALD, 261, 40);
     } else {
-        Event_Wait(40);
+        Engine_EventWait(40);
     }
 
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 10);
     Event_ShowMessageAndWait(0x4001, 0, 10);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 10);
-    Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Event_ShowMessage(0x4002, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 10);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Event_ShowMessageAndWait(0x4003, 0, 20);
-    Actor_SetAnimationAndWait(18, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimationAndWait(18, 3);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(0x2012, 0, 20);
     Actor_ShowEmote(ACTOR_GERALD, 259, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
 
     if (GameFlag_IsSet(0x84f) != 0) {
-        Actor_RunRepeatedMotion(18, 1);
-        Actor_SetAnimationAndWait(18, 4);
+        Engine_ActorRunRepeatedMotion(18, 1);
+        Engine_ActorSetAnimationAndWait(18, 4);
         Event_OpenMessage(0x2012, 0);
         ConfigurePrimarySceneChannels();
         flag = 1;
-        if (Event_ChooseYesNo(0, 0) != 0) {
+        if (Engine_EventChooseYesNo(0, 0) != 0) {
             AdvanceMessage(1);
             flag = 0;
         }
         Actor_FaceDirection(18, 0x5000, 0);
         ConfigureSecondarySceneChannels();
-        Event_Wait(10);
+        Engine_EventWait(10);
         Event_ShowMessageAndWait(0x2012, 0, 10);
         if (flag != 0) {
             AdvanceMessage(1);
@@ -1172,45 +1172,45 @@ void RunEventScript02(void)
 
     Event_OpenMessage(0x2012, 0);
     ConfigurePrimarySceneChannels();
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage((s32)MsgBiribinoHumblyThank);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventSetMessage((s32)MsgBiribinoHumblyThank);
     } else {
-        Event_SetMessage((s32)MsgBiribinoNaeYehDinnaeNeedTae);
+        Engine_EventSetMessage((s32)MsgBiribinoNaeYehDinnaeNeedTae);
     }
 
     ConfigureSecondarySceneChannels();
     Event_ShowMessageAndWait(0x2012, 0, 20);
-    Actor_RunRepeatedMotion(19, 1);
-    Event_SetMessage((s32)MsgBiribinoWasButWorriedYehMight);
+    Engine_ActorRunRepeatedMotion(19, 1);
+    Engine_EventSetMessage((s32)MsgBiribinoWasButWorriedYehMight);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0, 0);
     Actor_FaceDirection(ACTOR_MIA, 0x8000, 40);
-    Actor_RunRepeatedMotion(18, 2);
+    Engine_ActorRunRepeatedMotion(18, 2);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     ConfigureSecondarySceneChannels();
-    Event_Wait(10);
+    Engine_EventWait(10);
     Actor_ShowEmote(18, 261, 60);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(18, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     Actor_ShowEmote(18, 264, 60);
     Event_ShowMessageAndWait(0x2012, 0, 10);
     Actor_FaceDirection(18, 0x3000, 10);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_SetAnimationAndWait(18, 3);
+    Engine_ActorSetAnimationAndWait(18, 3);
     Event_OpenMessage(0x2012, 0);
 
     ConfigurePrimarySceneChannels();
     flag = 1;
-    if (Event_ChooseYesNo(0, 0) == 1) {
+    if (Engine_EventChooseYesNo(0, 0) == 1) {
         AdvanceMessage(1);
         flag = 0;
     }
@@ -1221,67 +1221,67 @@ void RunEventScript02(void)
     }
 
     Actor_FaceDirection(18, 0x7000, 10);
-    Actor_RunRepeatedMotion(19, 1);
+    Engine_ActorRunRepeatedMotion(19, 1);
     Actor_FaceDirection(19, 0x1000, 20);
-    Actor_SetAnimationAndWait(18, 3);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(19, 3);
+    Engine_ActorSetAnimationAndWait(18, 3);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(19, 3);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(19, 0x3000, 10);
     Actor_FaceDirection(18, 0x3000, 20);
-    Actor_RunRepeatedMotion(18, 1);
+    Engine_ActorRunRepeatedMotion(18, 1);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_SetAnimationAndWait(18, 3);
+    Engine_ActorSetAnimationAndWait(18, 3);
     Event_ShowMessageAndWait(0x2012, 0, 10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 3);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_EventWait(20);
 
-    Actor_SetAnimation(ACTOR_GERALD, 2);
+    Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Actor_SetAnimation(ACTOR_IVAN, 2);
+    Engine_ActorSetAnimation(ACTOR_IVAN, 2);
     actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Actor_SetAnimation(ACTOR_MIA, 2);
+    Engine_ActorSetAnimation(ACTOR_MIA, 2);
     actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
         Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }
 
-    Actor_WaitForMove(ACTOR_GERALD);
+    Engine_ActorWaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    Actor_WaitForMove(ACTOR_MIA);
+    Engine_ActorWaitForMove(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_FaceDirection(18, 0x5000, 0);
     Call3(Object_SetTargetAndCallback, 0, 0x10013, (s32)Kyuden_FacingActions);
     Actor_WalkToAndWait(19, 852, 646);
     Actor_WalkToAndWait(19, 852, 666);
     Actor_WalkToAndWait(19, 864, 672);
     Actor_FaceDirection(19, 0x1000, 10);
-    Actor_RunRepeatedMotion(19, 1);
-    Event_Wait(10);
+    Engine_ActorRunRepeatedMotion(19, 1);
+    Engine_EventWait(10);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_WalkToAndWait(19, 886, 708);
     Actor_WalkTo(19, 894, 764);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 764);
-    Event_CloseScreen();
-    Event_WaitForScreen();
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
     GameFlag_Set(802);
     if (GameFlag_IsSet(0x84f) == 0) {
         GameFlag_Set(0x84f);
         GameFlag_Set(0x84a);
     }
-    Event_RequestExit(6);
-    Event_End();
+    Engine_EventRequestExit(6);
+    Engine_EventEnd();
 }
 
 /* Pans the camera over the palace, lines up four actors in a row and runs their scripted beat. */

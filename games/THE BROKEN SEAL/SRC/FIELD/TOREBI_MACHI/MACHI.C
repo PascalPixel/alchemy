@@ -358,7 +358,7 @@ void FieldScene_RunScene3b5_020005dc(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (Value1(Engine_GameFlagIsSet, 0x8bf) == 0) {
         GameFlag_Set(0x8bf);
         Engine_EventSetMessage((s32)MsgTorebiLeftovers);
@@ -429,14 +429,14 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Call3(Engine_ActorSetPosition, 16, 0x1600000, 0x1600000);
-    Actor_EnableActionCallback(16, gTorebiMachiActor16Action);
+    Engine_ActorEnableActionCallback(16, gTorebiMachiActor16Action);
     record = Object_GetById(16);
     handler = (s32)SceneActor_UpdatePartnerProximity;
     ((struct SceneActor *)record)->proximity_flags = 1;
     *(s32 *)(record + 108) = handler;
     hidden = 0;
     Engine_ActorSetPosition(17, 0x1700000, 0x1400000);
-    Actor_EnableActionCallback(17, gTorebiMachiActor17Action);
+    Engine_ActorEnableActionCallback(17, gTorebiMachiActor17Action);
     record = Object_GetById(17);
     ((struct SceneActor *)record)->proximity_flags = hidden;
     *(s32 *)(record + 108) = handler;
@@ -540,7 +540,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_SetAttachedEffect(29, 0x102);
     Call2(Engine_ActorSetAttachedEffect, 30, 0x102);
     Engine_ActorStartRepeatedMotion(29, 2);
-    Actor_RunRepeatedMotion(30, 2);
+    Engine_ActorRunRepeatedMotion(30, 2);
     Engine_EventWait(20);
     Event_OpenMessage(29, 0);
     Engine_EventWait(25);
@@ -552,10 +552,10 @@ void FieldScene_RunPrimarySequence(void)
         Engine_ActorRunRepeatedMotion(30, 2);
         Engine_EventWait(30);
         Engine_ActorFaceDirection(30, 0, 0);
-        Event_Wait(30);
+        Engine_EventWait(30);
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(29, 3);
-        Event_Wait(20);
+        Engine_EventWait(20);
         Engine_ActorFaceDirection(29, 0, 0);
         Engine_EventWait(30);
         Engine_EventShowMessage(29, 0);
@@ -577,9 +577,9 @@ void FieldScene_RunPrimarySequence(void)
     } else {
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(30, 2);
-        Event_Wait(30);
+        Engine_EventWait(30);
         Engine_ActorFaceDirection(30, 0, 0);
-        Event_Wait(30);
+        Engine_EventWait(30);
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(29, 4);
         Engine_EventWait(20);

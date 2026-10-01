@@ -12,6 +12,7 @@ void Graphics_FadeAlphaOut(void)
   alpha_step = 1;
   do
   {
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do
     {
       *((s16 *)alpha) = 0x1010 - alpha_step;

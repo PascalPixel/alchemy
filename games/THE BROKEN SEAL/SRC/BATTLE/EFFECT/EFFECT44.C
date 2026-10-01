@@ -13,11 +13,13 @@ extern u8 gBattleFxWork[];
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
+    /* FAKEMATCH: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from push {r5, r6, lr} to push {r5, r6, r7, lr} (122/122 assembly lines). */
     Iwram_CopyWords(destination, source, size);
 }
 
 static __inline__ void FillWords(void *destination, s32 size, s32 value)
 {
+    /* FAKEMATCH: a direct call changes BattlePresentation_ProcessPendingGraphicsTransfer from mov r0, r5 to lsl r1, r1, #7 (122/122 assembly lines). */
     Iwram_FillWords(destination, size, value);
 }
 

@@ -1,5 +1,6 @@
 #include "FOUR_OBJECT_MOTION.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 
 extern struct FourObjectMotionState *gMenuWork;
@@ -8,8 +9,6 @@ void ResourceObject_ReleaseFar(void *);
 void *ResourceObject_CreateFar(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void FourObjectMotion_UpdateBottomRow(void);
-s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
-void Scheduler_RemoveCallback(void (*)(void));
 
 /*
  * This owner's view of gMenuWork. 62 owners reach that global and declare
@@ -48,7 +47,7 @@ void FourObjectMotion_InitializeBottomRow(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0xc8;
     }
-    Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateBottomRow, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(FourObjectMotion_UpdateBottomRow), 0xc80);
 }
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
@@ -100,7 +99,7 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
         }
         index++;
     } while (index < 4);
-    Scheduler_RemoveCallback(FourObjectMotion_UpdateBottomRow);
+    Scheduler_RemoveCallback((u32)(FourObjectMotion_UpdateBottomRow));
 }
 
 void Menu_EnableAllItemObjects(void)

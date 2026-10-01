@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -74,7 +75,6 @@ typedef void(*SceneTask)(void);
 void Scene_RunScene3baSequenceA(void);
 s32 Resource_GetTableEntryFar(void);
 void Resource_DecodeType01(s32, s32);
-void Scheduler_AddOrUpdateCallback(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -212,7 +212,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
 
     pal = Resource_FindFreeEntry();
     *(u16 *)(desc + 216) = (u16)pal;
-    Vram_Load((s16)pal, 512, handle);
+    Engine_VramLoad((s16)pal, 512, handle);
 
     Scheduler_AddOrUpdateCallback((s32)Scene_RunScene3baSequenceA + 1, 0xc76);
 

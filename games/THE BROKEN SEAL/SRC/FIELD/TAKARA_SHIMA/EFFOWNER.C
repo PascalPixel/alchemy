@@ -322,9 +322,9 @@ u8 *SpawnMode14Effect(s32 x, s32 y, s32 z, s32 kind)
         owner[9] = mask;
         object[85] = 0;
         object[89] = 8;
-        Actor_SetSpriteFlags(object, 0);
-        Object_SetPalette(object, 14);
-        Object_SetBlendMode(object, 1);
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 14);
+        Engine_ObjectSetBlendMode(object, 1);
         return object;
     }
     return 0;
@@ -342,8 +342,8 @@ u8 *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
         owner[9] = mask;
         object[85] = 0;
         object[89] = 8;
-        Actor_SetSpriteFlags(object, 0);
-        Object_SetPalette(object, 15);
+        Engine_ActorSetSpriteFlags(object, 0);
+        ObjectGroup_SetChildValue(object, 15);
         {
             s32 mask2 = 254;
             mask2 &= object[35];

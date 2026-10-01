@@ -109,23 +109,23 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
     if (r == 0) {
         s32 m;
 
-        Event_Begin();
-        Object_SetAnimation(p, 6);
-        Task_Wait(6);
+        Engine_EventBegin();
+        Object_SetMode(p, 6);
+        WaitFrames(6);
         Audio_PlayCue(152);
-        Object_SetAnimation(p, 7);
+        Object_SetMode(p, 7);
         p[12] = 0x30000;
         p[13] = 0x20000;
         p[10] = 0x40000;
         m = 0x7e;
         m &= *f;
         *f = m;
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpriteFlags(p, 0);
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, arg[1], arg[5]);
-        Object_SetAnimation(p, 6);
-        Actor_SetSpriteFlags(p, 1);
+        Object_SetMode(p, 6);
+        Engine_ActorSetSpriteFlags(p, 1);
         *f = saved;
-        Event_End();
+        Engine_EventEnd();
         return 1;
     }
     return 0;
@@ -133,13 +133,13 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
 
 s32 OverlayObject_ApplyField100(s32 a)
 {
-    Object_SetPalette(a, *(s16 *)(a + 100));
+    ObjectGroup_SetChildValue(a, *(s16 *)(a + 100));
     return 0;
 }
 
 s32 OverlayObject_ApplyZero(s32 a)
 {
-    Actor_SetSpriteFlags(a, 0);
+    Engine_ActorSetSpriteFlags(a, 0);
     return 0;
 }
 
@@ -150,16 +150,16 @@ void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
     s32 rec7;
 
     rec7 = (s32)Object_GetById(a0);
-    Actor_SetSpritePriority(a0, 1);
+    Engine_ActorSetSpritePriority(a0, 1);
     Actor_SetSpeed(a0, 0x30000, 0x18000);
     Audio_PlayCue(152);
     *(s32 *)(rec7 + 40) = a3;
     *(s32 *)(rec7 + 72) = 0x8000;
     *(s32 *)(rec7 + 68) = 0;
-    Actor_SetSpriteFlags(rec7, 0);
+    Engine_ActorSetSpriteFlags(rec7, 0);
     Actor_MoveToAndWait(a0, a1, a2);
     Actor_SetPosition(a0, a1 << 16, a2 << 16);
-    Actor_SetSpriteFlags(rec7, 1);
+    Engine_ActorSetSpriteFlags(rec7, 1);
     *(s32 *)(rec7 + 72) = 0x10000;
 }
 
@@ -198,8 +198,8 @@ void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
     s32 v1 = 0x4000;
 
     Camera_SetSpeed(v0, v1);
-    Camera_MoveToActor(no, 1);
-    Camera_WaitForMove();
+    Engine_CameraMoveToActor(no, 1);
+    Engine_CameraWaitForMove();
     Battle_WaitMode0(30);
     MogoruMori_SpawnPuffRing(no);
     Actor_SetChildValue(no, val);
@@ -305,7 +305,7 @@ void SceneActor_BobActorZeroWhenAheadClear(void)
     pos[1] = actor[3];
     pos[2] = (actor[4] & 0xfff00000) + 0x280000;
     if (SceneActor_TryRunSlotZeroMoveStep(pos)!= 0) {
-        Event_Begin();
+        Engine_EventBegin();
         *fp = 0;
         Object_SetModeById(9, 7);
         actor[3] += -0x10000;
@@ -320,16 +320,16 @@ void SceneActor_BobActorZeroWhenAheadClear(void)
         actor[3] += 0x10000;
         actor[5] += 0x10000;
         *fp = saved;
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
 void FieldScene_RunScriptedSteps0And17E6(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered(MSG_BROKEN_SIGN_READS_NORTH_FUCHIN, 1);
-    Event_End();
+    Engine_MessageShowCentered(MSG_BROKEN_SIGN_READS_NORTH_FUCHIN, 1);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor10WaypointSequence(void)
@@ -339,7 +339,7 @@ void FieldScene_RunActor10WaypointSequence(void)
     slot = Actor_Get(10);
 
     /* r0 still holds the record returned above. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(10, 1);
     FieldScene_RunScene39f_02000d90(10, 88, 120, 0x60000);        /* 192 << 11 */
@@ -348,10 +348,10 @@ void FieldScene_RunActor10WaypointSequence(void)
                   *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(10, 1);
-    Actor_FaceEachOther(10, ACTOR_PARTY_LEADER, 0);
+    Engine_CameraFollowActor(10, 1);
+    Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(20);
-    Actor_StartRepeatedMotion(10, 2);
+    Engine_ActorStartRepeatedMotion(10, 2);
     Actor_SetAttachedEffect(10, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
@@ -373,7 +373,7 @@ void FieldScene_RunActor10WaypointSequence(void)
     Actor_SetPosition(10, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Mogall Forest: actor 11 hops out of the trees, greets the party and
@@ -394,7 +394,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 
     /* Reads the record left in r0 by the call above; it must not be respelled
      * as a fresh fetch. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(11, 0);
     FieldScene_RunScene39f_02000d90(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
@@ -403,13 +403,13 @@ void FieldScene_RunActorElevenPresentationBeat(void)
                   *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(11, 1);
-    Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(30);
-    Actor_StartRepeatedMotion(11, 2);
+    Engine_CameraFollowActor(11, 1);
+    Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(30);
+    Engine_ActorStartRepeatedMotion(11, 2);
     Actor_ShowEmote(11, 0x103, 0);
     Audio_PlayCue(147);
-    Event_Wait(60);
+    Battle_WaitMode0(60);
 
     /* Two signed halfwords of slot 0, each read after its own fetch of the
      * record. */
@@ -418,7 +418,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
                   *(s16 *)((u8 *)Object_GetById(0) + 18),
                   0x40000);                          /* 128 << 11 */
 
-    Event_Wait(10);
+    Battle_WaitMode0(10);
     GameFlag_Set(0x301);
     Actor_SetPosition(14, 0, 0);
 
@@ -430,7 +430,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     BattleFx_SetWeightedResult(53, 0);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_RunActorTwelveThreeWaypointMotion(void)
@@ -440,7 +440,7 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     slot = Actor_Get(12);
 
     /* r0 still holds the record returned above. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(12, 1);
     FieldScene_RunScene39f_02000d90(12, 536, 344, 0x70000);       /* 134 << 2, 172 << 1, 224 << 11 */
@@ -449,10 +449,10 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
                   *(s32 *)(slot + 16) + 0x100000,   /* 128 << 13 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(12, 1);
-    Actor_FaceEachOther(12, ACTOR_PARTY_LEADER, 0);
+    Engine_CameraFollowActor(12, 1);
+    Engine_ActorFaceEachOther(12, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(20);
-    Actor_StartRepeatedMotion(12, 2);
+    Engine_ActorStartRepeatedMotion(12, 2);
     Actor_SetAttachedEffect(12, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
@@ -474,17 +474,17 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     Actor_SetPosition(15, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunStepFD4WithActor181(s32 a)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(16, 0, 0);
     GameFlag_Set(4052);
-    Item_ShowFound(ITEM_NUT, 3);
-    Party_GiveItem(ITEM_NUT, 0);
-    Event_End();
+    Engine_ItemShowFound(ITEM_NUT, 3);
+    Engine_PartyGiveItem(ITEM_NUT, 0);
+    Engine_EventEnd();
 }
 
 /* Mogall Forest: after the probe moves actor 8 or actor 10, copy the cells
@@ -498,7 +498,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
     s32 value;
 
     /* No argument register is written before this branch. */
-    Event_Begin();
+    Engine_EventBegin();
 
     if (StagedActor_FindClearPosition(&probe) != 0) {
         SceneActor_MoveAndRedraw(probe);
@@ -512,10 +512,10 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
              * callee-saved register across the whole sequence. */
             value = 0;
             GameFlag_Set(0x311);
-            Actor_SetAnimation(10, 3);
-            Actor_SetDestinationOffset(10, -16, 6);
-            Event_Wait(30);
-            Actor_SetAnimation(10, 8);
+            Object_SetModeById(10, 3);
+            ObjectMotion_OffsetPositionAndResetMotion(10, -16, 6);
+            Battle_WaitMode0(30);
+            Object_SetModeById(10, 8);
             Audio_PlayCue(240);
 
             Object_GetById(10)->priority_flags = 2;
@@ -529,7 +529,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneState_ApplyCrossRectsAroundActor11(void)
@@ -538,7 +538,7 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     s32 z;
 
     /* No argument register is written before this branch. */
-    Event_Begin();
+    Engine_EventBegin();
 
     /* Both coordinates are 16.16 fixed point reduced to whole tiles with
      * `asrs #20`, i.e. 16 fractional bits plus a 16-unit tile pitch. */
@@ -560,7 +560,7 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Mogoru Forest: actor 12 hops up on the branch in four steps, with the
@@ -606,7 +606,7 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     slot = Actor_Get(13);
 
     /* r0 still holds the record returned above. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(13, 1);
     FieldScene_RunScene39f_02000d90(13, 456, 104, 0x70000);       /* 228 << 1, 224 << 11 */
@@ -616,10 +616,10 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(13, 1);
-    Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 0);
+    Engine_CameraFollowActor(13, 1);
+    Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(20);
-    Actor_StartRepeatedMotion(13, 2);
+    Engine_ActorStartRepeatedMotion(13, 2);
     Actor_SetAttachedEffect(13, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
@@ -644,7 +644,7 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     Actor_SetPosition(16, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene39f_02001818(void)
@@ -652,18 +652,18 @@ void FieldScene_RunScene39f_02001818(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(14, 1);
     FieldScene_RunScene39f_02000d90(14, 0x1a8, 0x1e0, 0x79999);
     Battle_WaitMode0(2);
     MogoruMori_SpawnPuffRing(14);
     Actor_SetChildValue(14, 15);
     record = Actor_Get(14);
-    Actor_SetSpriteFlags(record, 0);
+    Engine_ActorSetSpriteFlags(record, 0);
     Battle_WaitMode0(30);
     GameFlag_Set(0x305);
     Actor_SetPosition(17, 0x1a80000, 0x1e00000);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_RunActorFourteenFourWaypointMotion(void)
@@ -673,7 +673,7 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     slot = Actor_Get(14);
 
     /* r0 still holds the record returned above. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(14, 1);
     FieldScene_RunScene39f_02000d90(14, 392, 504, 0x60000);       /* 196 << 1, 252 << 1, 192 << 11 */
@@ -683,10 +683,10 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(14, 1);
-    Actor_FaceEachOther(14, ACTOR_PARTY_LEADER, 0);
+    Engine_CameraFollowActor(14, 1);
+    Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(20);
-    Actor_StartRepeatedMotion(14, 2);
+    Engine_ActorStartRepeatedMotion(14, 2);
     Actor_SetAttachedEffect(14, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
@@ -707,14 +707,14 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
     Battle_WaitMode0(6);
 
-    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(14, 0, 0);
     Battle_WaitMode0(30);
     GameFlag_Set(0x306);
     Actor_SetPosition(17, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Mogall Forest: after the probe moves an actor, copy the cells it opened;
@@ -728,7 +728,7 @@ void MogoruMori_RunProbedLandingScene(void)
     struct StagedActorProbe probe;
     s32 landed;
 
-    Event_Begin();
+    Engine_EventBegin();
     landed = 0;
     if (StagedActor_FindClearPosition(&probe) != 0) {
         SceneActor_MoveAndRedraw(probe);
@@ -741,7 +741,7 @@ void MogoruMori_RunProbedLandingScene(void)
         Map_CopyCellAttributes(38, 68, 1, 4, probe.position_x >> 20, 68);
         if (probe.position_x >> 20 == 42) {
             Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 23);
-            Actor_SetSpritePriority(9, 1);
+            Engine_ActorSetSpritePriority(9, 1);
             landed = 1;
             GameFlag_Set(0x312);
         }
@@ -749,19 +749,19 @@ void MogoruMori_RunProbedLandingScene(void)
     eleven:
         if (probe.position_x >> 20 == 40) {
             Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 32);
-            Actor_SetSpritePriority(11, 1);
+            Engine_ActorSetSpritePriority(11, 1);
             landed = 1;
             GameFlag_Set(0x313);
         }
     join:
         if (landed == 0) {
-            Event_End();
+            Engine_EventEnd();
             return;
         }
-        Actor_SetAnimation(probe.actor_slot, 3);
-        Actor_SetDestinationOffset(probe.actor_slot, 18, 6);
-        Event_Wait(30);
-        Actor_SetAnimation(probe.actor_slot, 8);
+        Object_SetModeById(probe.actor_slot, 3);
+        ObjectMotion_OffsetPositionAndResetMotion(probe.actor_slot, 18, 6);
+        Battle_WaitMode0(30);
+        Object_SetModeById(probe.actor_slot, 8);
         Audio_PlayCue(240);
         Actor_Get(probe.actor_slot)->priority_flags = 2;
         goto end;
@@ -770,7 +770,7 @@ void MogoruMori_RunProbedLandingScene(void)
             Map_CopyCellAttributes(42, 49, 1, 4, probe.position_x >> 20, 49);
     }
 end:
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_BobActorZeroWhenTargetClear(void)
@@ -790,7 +790,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
 
     if (SceneActor_TryRunSlotZeroMoveStep(target)!= 0) {
         /* r0 still holds the nonzero result of the test above. */
-        Event_Begin();
+        Engine_EventBegin();
 
         *mode = 0;
         Object_SetModeById(11, 7);
@@ -811,7 +811,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
         *(s32 *)(record + 20) += 0x10000;
 
         *mode = saved;
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -830,7 +830,7 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
     s32 z;
 
     /* No argument register is written before this branch. */
-    Event_Begin();
+    Engine_EventBegin();
 
     x = ((s32 *)Object_GetById(13))[2] >> 20;
     z = ((s32 *)Object_GetById(13))[4] >> 20;
@@ -850,7 +850,7 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunSupplementalSequenceOne(void)
@@ -860,7 +860,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 y;
     u8 *record;
 
-    Event_Begin();
+    Engine_EventBegin();
     record = Object_GetById(14);
     x = *(s32 *)(record + 8);
     record = Object_GetById(14);
@@ -881,7 +881,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         GameFlag_Set(0x214);
         StagedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, 255);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Mogall Forest: actor 15 hops out of the trees, greets the party and
@@ -902,18 +902,18 @@ void FieldScene_RunScene39fSequenceA(void)
 
     rec7 = Actor_Get(15);
     big = 0x80000;
-    Event_Begin();
+    Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(15, 0);
     FieldScene_RunScene39f_02000d90(15, 0x1d8, 104, big);
-    Event_Wait(10);
+    Battle_WaitMode0(10);
     Effect_Spawn(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + big), 0, 0, 0, 1, 0);
-    Camera_FollowActor(15, 1);
-    Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(30);
-    Actor_StartRepeatedMotion(15, 2);
+    Engine_CameraFollowActor(15, 1);
+    Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(30);
+    Engine_ActorStartRepeatedMotion(15, 2);
     Actor_ShowEmote(15, 0x103, 0);
     Audio_PlayCue(147);
-    Event_Wait(60);
+    Battle_WaitMode0(60);
     first = Actor_Get(ACTOR_PARTY_LEADER);
     shown = *(s16 *)(first + 10);
     second = Actor_Get(ACTOR_PARTY_LEADER);
@@ -927,7 +927,7 @@ void FieldScene_RunScene39fSequenceA(void)
     base3_2000240 = (s32)&gGameState;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     BattleFx_SetWeightedResult(53, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunSlot16WaypointSequence(void)
@@ -937,7 +937,7 @@ void FieldScene_RunSlot16WaypointSequence(void)
     slot = Actor_Get(16);
 
     /* r0 still holds the record returned above. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(16, 1);
     FieldScene_RunScene39f_02000d90(16, 456, 152, 0x60000);       /* 228 << 1, 192 << 11 */
@@ -947,10 +947,10 @@ void FieldScene_RunSlot16WaypointSequence(void)
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(16, 1);
-    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 0);
+    Engine_CameraFollowActor(16, 1);
+    Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(20);
-    Actor_StartRepeatedMotion(16, 2);
+    Engine_ActorStartRepeatedMotion(16, 2);
     Actor_SetAttachedEffect(16, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
@@ -967,14 +967,14 @@ void FieldScene_RunSlot16WaypointSequence(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 16, 0);
     Battle_WaitMode0(6);
 
-    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(16, 0, 0);
     Battle_WaitMode0(30);
     GameFlag_Set(776);                         /* 194 << 2 */
     Actor_SetPosition(20, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor17CameraSequence(void)
@@ -984,7 +984,7 @@ void FieldScene_RunActor17CameraSequence(void)
     slot = Actor_Get(17);
 
     /* r0 still holds the record returned above. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(17, 1);
     FieldScene_RunScene39f_02000d90(17, 392, 104, 0x60000);       /* 196 << 1, 192 << 11 */
@@ -994,10 +994,10 @@ void FieldScene_RunActor17CameraSequence(void)
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(17, 1);
-    Actor_FaceEachOther(17, ACTOR_PARTY_LEADER, 0);
+    Engine_CameraFollowActor(17, 1);
+    Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(20);
-    Actor_StartRepeatedMotion(17, 2);
+    Engine_ActorStartRepeatedMotion(17, 2);
     Actor_SetAttachedEffect(17, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
@@ -1013,14 +1013,14 @@ void FieldScene_RunActor17CameraSequence(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 17, 0);
     Battle_WaitMode0(6);
 
-    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(17, 0, 0);
     Battle_WaitMode0(30);
     GameFlag_Set(0x309);
     Actor_SetPosition(21, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene39f_02002004(void)
@@ -1028,18 +1028,18 @@ void FieldScene_RunScene39f_02002004(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(18, 1);
     Camera_MoveTo(0x2e80000, -1, 0x1f80000, 1);
     FieldScene_RunScene39f_02000d90(18, 0x2e8, 0x1f8, 0x90000);
     MogoruMori_SpawnPuffRing(18);
     Actor_SetChildValue(18, 15);
     record = Actor_Get(18);
-    Actor_SetSpriteFlags(record, 0);
+    Engine_ActorSetSpriteFlags(record, 0);
     Battle_WaitMode0(30);
     GameFlag_Set(0x30a);
     Actor_SetPosition(22, 0x2e80000, 0x1f80000);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorEighteenEffectSequence(void)
@@ -1049,7 +1049,7 @@ void FieldScene_RunActorEighteenEffectSequence(void)
     slot = Actor_Get(18);
 
     /* r0 still holds the record returned above. */
-    Event_Begin();
+    Engine_EventBegin();
 
     FieldScene_RunSixCallSetupSequence(18, 1);
     FieldScene_RunScene39f_02000d90(18, 712, 536, 0x60000);       /* 178 << 2, 134 << 2, 192 << 11 */
@@ -1059,10 +1059,10 @@ void FieldScene_RunActorEighteenEffectSequence(void)
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Camera_FollowActor(18, 1);
-    Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
+    Engine_CameraFollowActor(18, 1);
+    Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
     Battle_WaitMode0(20);
-    Actor_StartRepeatedMotion(18, 2);
+    Engine_ActorStartRepeatedMotion(18, 2);
     Actor_SetAttachedEffect(18, 258);                     /* 129 << 1 */
     Battle_WaitMode0(60);
 
@@ -1082,13 +1082,13 @@ void FieldScene_RunActorEighteenEffectSequence(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
 
-    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(18, 0, 0);
     Battle_WaitMode0(30);
     GameFlag_Set(0x30b);
 
     /* Common exit; no argument registers are set. */
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene39f_020021b0(void)
@@ -1096,7 +1096,7 @@ void FieldScene_RunScene39f_020021b0(void)
     s32 rec7;
 
     rec7 = Object_GetById(18);
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(18, 0x880000, 0x1680000);
     FieldScene_RunSixCallSetupSequence(18, 1);
     FieldScene_RunScene39f_02000d90(18, 136, 0x198, 0x80000);
@@ -1104,8 +1104,8 @@ void FieldScene_RunScene39f_020021b0(void)
     Effect_Spawn(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + 0x40000), 0, 0, 0, 1, 0);
     Actor_FaceDirection(18, 0xc000, 40);
     Actor_SetAttachedEffect(18, 0x102);
-    Actor_RunRepeatedMotion(18, 2);
-    Camera_FollowActor(18, 1);
+    Engine_ActorRunRepeatedMotion(18, 2);
+    Engine_CameraFollowActor(18, 1);
     FieldScene_RunScene39f_02000d90(18, 136, 0x1b8, 0x60000);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(10);
@@ -1115,11 +1115,11 @@ void FieldScene_RunScene39f_020021b0(void)
     FieldScene_RunScene39f_02000d90(18, 136, 0x1f8, 0x30000);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
-    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_SetPosition(18, 0, 0);
     Battle_WaitMode0(60);
     GameFlag_Set(0x89d);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Run the closing choreography of the room's scene. */
@@ -1492,12 +1492,12 @@ s32 UpdateOrbitingSceneObject(s32 *p)
 {
     s16 *q = (s16 *)p[20];
     s32 a, b;
-    s32 d = Math_Sin(p[12]) * 2;
+    s32 d = Engine_MathSin(p[12]) * 2;
     if (d > 0)
         d = -d;
-    p[2] = p[14] + Math_Cos(p[12]) * 2;
+    p[2] = p[14] + Engine_MathCos(p[12]) * 2;
     p[3] = p[15] + d;
-    q[15] = Math_Cos(p[12] + 0x8000) / 8;
+    q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
     a = Random_Next();
     b = Random_Next();
     p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
@@ -1519,7 +1519,7 @@ void InitializeOrbitingEffect(s32 id)
 
     zero = 0;
     sprite->state = zero;
-    Actor_SetSpriteFlags(actor, zero);
+    Engine_ActorSetSpriteFlags(actor, zero);
     actor->active = zero;
     actor->mode = zero;
 
@@ -1530,10 +1530,10 @@ void InitializeOrbitingEffect(s32 id)
     actor->visible = 1;
 
     transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(ITEM_NUT);
+    Engine_ItemLoadIcon(ITEM_NUT);
     transfer += 0x400;
-    Vram_Load(sprite->palette, 128, transfer);
-    Heap_Release(17);
+    Engine_VramLoad(sprite->palette, 128, transfer);
+    Engine_HeapRelease(17);
 
     actor->orbit_center_x = actor->x;
     actor->orbit_angle = zero;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
@@ -16,7 +17,6 @@ extern struct State_080935b0 *gCam;
 extern u8 Data_03001af4[];
 extern u8 *gMapWork;
 u8 *Runtime_AllocateBlock(s32 kind, s32 size);
-void Scheduler_RemoveCallback(s32 (*callback)(void));
 s32 BattleFx_StepRatioTransition(void);
 
 struct Work_080936a0 {
@@ -27,7 +27,6 @@ struct Work_080936a0 {
     u16 flags;
 };
 
-void Scheduler_AddOrUpdateCallback(const void *arg0, s32 arg1);
 
 s32 WaitFrames(s32 frames);
 s16 *BattleAction_FindDescriptor(s16 action);
@@ -112,7 +111,7 @@ s32 BattleFx_StepRatioTransition(void)
     *(u32 *)Data_03001af4 = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {
         *duration = 0;
-        Scheduler_RemoveCallback(BattleFx_StepRatioTransition);
+        Scheduler_RemoveCallback((u32)(BattleFx_StepRatioTransition));
     }
 }
 
@@ -139,7 +138,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     state->current = result;
     state->kind = arg1;
     state->flags = 0;
-    Scheduler_AddOrUpdateCallback(BattleFx_StepRatioTransition, 0xc94);
+    Scheduler_AddOrUpdateCallback((s32)(BattleFx_StepRatioTransition), 0xc94);
 }
 
 /* Wait (at most 300 frames) for the display work's pending flag at +0x358 to clear. */

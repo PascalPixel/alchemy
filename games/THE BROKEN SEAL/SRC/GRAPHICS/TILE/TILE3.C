@@ -1,5 +1,6 @@
 #include "DMA.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
 
@@ -92,6 +93,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
         s32 count;
 
         q = &gIoWriteQueue;
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             ime = &REG_IME;
             saved = *ime;
@@ -155,8 +157,6 @@ extern u8 Data_03001ac4;
 extern u8 gOptionMirror;
 extern const u32 DisplayScroll_SlideResources[];
 
-void Scheduler_ResetTaskTable(void);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
 void DisplayScroll_InitObjectTable(void);
 void Ui_LoadWindowGraphics(void);
 void Bg0_ClearTilemap(void);
@@ -167,6 +167,8 @@ void WaitFrames(s32 frames);
    they give the reference's register order and single literal pool. */
 #define Io_Write16(reg, value) \
     do { \
+        /* FAKEMATCH: the one-pass register-write boundary preserves measured instruction scheduling. */ \
+        /* FAKEMATCH: the register-write word temporary preserves measured value allocation. */ \
         s32 value_ = (value); \
         (reg) = value_; \
     } while (0)

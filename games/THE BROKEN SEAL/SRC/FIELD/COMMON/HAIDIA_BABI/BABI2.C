@@ -324,59 +324,59 @@ void HaidiaBabi_RunInnkeeperTalk(void)
 
     record = (s32)Object_GetById(0);
     if ((u32)(*(u16 *)(record + 6) + -0x2000) > 0x9000) {
-        Inn_Open(0, 13);
+        Engine_InnOpen(0, 13);
     } else {
-        Event_Begin();
+        Engine_EventBegin();
         if (GameFlag_IsSet(0x87a) != 0) {
-            Actor_RunRepeatedMotion(13, 2);
+            Engine_ActorRunRepeatedMotion(13, 2);
             Actor_FaceActor(13, ACTOR_PARTY_LEADER, 10);
             if (GameFlag_IsSet(0x300) == 0) {
-                Event_SetMessage((s32)MsgHaidiaCameBack2);
+                Engine_EventSetMessage((s32)MsgHaidiaCameBack2);
                 Event_ShowMessage(13, 0);
                 GameFlag_Set(0x300);
             }
-            Event_SetMessage((s32)MsgHaidiaHomeJustToStay);
+            Engine_EventSetMessage((s32)MsgHaidiaHomeJustToStay);
             Event_AskYesNo(13, 0);
             Actor_FaceDirection(13, 0x9000, 10);
         } else {
             if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-                Event_SetMessage((s32)MsgHaidiaTheVisitorsCausedTheEruption);
+                Engine_EventSetMessage((s32)MsgHaidiaTheVisitorsCausedTheEruption);
             } else {
-                Event_SetMessage((s32)MsgHaidiaTheThreeTravelersSeemOdd);
+                Engine_EventSetMessage((s32)MsgHaidiaTheThreeTravelersSeemOdd);
             }
             Event_ShowMessage(13, 0);
         }
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
 void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_FaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
-    Event_SetMessage((s32)MsgHaidiaYouveGrownSoMuch);
+    Engine_EventSetMessage((s32)MsgHaidiaYouveGrownSoMuch);
     Event_ShowMessage(0x10, 0);
     Actor_FaceDirection(0x10, 0xB000, 0xA);
     GameFlag_Set(0x301);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActorThirteenDialogue(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
     Event_ShowMessage(0xD, 0);
     GameFlag_Set(0x81C);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor16LineAndFlag81c(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
     Event_ShowMessage(0x10, 0);
     GameFlag_Set(0x81C);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void HaidiaBabi_RunSickbedVisit(void)
@@ -547,13 +547,13 @@ void FieldScene_RunSupplementalSequenceOne(void)
     struct FieldSprite *sprite;
     s32 rec7;
 
-    Event_Begin();
+    Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Actor_SetPosition(18, 0x1e00000, 0xca0000);
-    Task_Wait(1);
-    Camera_FollowActor(18, 1);
+    Engine_TaskWait(1);
+    Engine_CameraFollowActor(18, 1);
     rec7 = 0;
     actor = (struct FieldActor *)Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
     actor->motion_flags = rec7;
@@ -563,11 +563,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
     sprite->full_color = 0;
     sprite->palette = 0;
     rec7 = Value2(Engine_HeapAllocate, 17, 0x608);
-    Item_LoadIcon(ITEM_MYTHRIL_BAG);
-    Vram_Load(sprite->vram_block, 128, rec7 + 0x400);
-    Heap_Release(17);
+    Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
+    Engine_VramLoad(sprite->vram_block, 128, rec7 + 0x400);
+    Engine_HeapRelease(17);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
-    Event_OpenScreen();
+    Engine_EventOpenScreen();
     Actor_SetSpeed(18, 0x10000, 0x8000);
     Actor_WalkToAndWait(18, 0x1e0, 176);
     Actor_WalkToAndWait(18, 0x1a4, 164);
@@ -577,21 +577,21 @@ void FieldScene_RunSupplementalSequenceOne(void)
     ObjectDispatch_WaitForValue16(actor);
     Object_SetScript(actor, gHaidiaBabiBagShowScript);
     ObjectDispatch_WaitForValue16(actor);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Engine_ObjectDispatchRelease(actor);
-    Actor_Jump(18, 2, 20);
+    Engine_ActorJump(18, 2, 20);
     Actor_FaceDirection(18, 0, 40);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_RequestExit(22);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(22);
 }
 
 void SceneEffect_UpdateObjectByFrameParity(u8 *obj)
 {
     if ((gFrameCount & 2) != 0) {
-        Object_SetPartPalettes(obj, 7);
+        Engine_ObjectSetPartPalettes(obj, 7);
     } else {
-        Object_SetPartPalettes(obj, 0);
+        Engine_ObjectSetPartPalettes(obj, 0);
     }
     if ((gFrameCount & 15) == 0) {
         HaidiaBabi_SpawnEffectPair(obj);
@@ -603,7 +603,7 @@ void OverlayObject_UpdateOnFrameParity(u8 *obj)
     volatile s32 *frames = (volatile s32 *)&gFrameCount;
 
     if ((*frames & 1) != 0) {
-        Object_SetPartPalettes(obj, __umodsi3((s32)((u32)*frames >> 1), 6));
+        Engine_ObjectSetPartPalettes(obj, __umodsi3((s32)((u32)*frames >> 1), 6));
     }
     if ((*frames & 15) == 0) {
         HaidiaBabi_SpawnEffectPair(obj);
@@ -617,7 +617,7 @@ void OverlayObject_ApplyRandomSlotOnOddFrames(s32 obj)
     if ((*frames & 1) != 0) {
         s32 slot = ((u32)*frames >> 1) % 6;
 
-        Object_SetPartPalettes(obj, slot);
+        Engine_ObjectSetPartPalettes(obj, slot);
     }
 }
 
@@ -636,7 +636,7 @@ void SceneEffect_UpdateAnchoredRiseFrame(struct Sparkle *self)
         return;
     }
 
-    amplitude = Math_Sin(frame << 10);
+    amplitude = Engine_MathSin(frame << 10);
     self->amplitude_x = amplitude;
     self->amplitude_y = amplitude;
     self->x = anchor->x;
@@ -659,7 +659,7 @@ void OverlayObject_UpdateArcFromAnchor(struct Sparkle *obj)
         return;
     }
 
-    amp = Math_Sin(frame << 10);
+    amp = Engine_MathSin(frame << 10);
     obj->amplitude_x = amp;
     obj->amplitude_y = -amp;
     obj->x = anchor->x;
@@ -726,7 +726,7 @@ void HaidiaBabi_SpawnEffectPair(union PairObject *parent)
 /* The Psynergy steps the scene's events run. */
 void SceneState_SetValue140Mode0(void)
 {
-    Psynergy_Begin(0x8C, 0);
+    Engine_PsynergyBegin(0x8C, 0);
 }
 
 void FieldScene_RunSingleStep(void)
@@ -746,10 +746,10 @@ void FieldScene_RunStep17(void)
 
 void FieldScene_RunSixStepSequence17e4(void)
 {
-    Psynergy_Begin(0x94, 1);
-    Psynergy_SetTarget(8, 0x11);
-    Psynergy_RaiseHands();
-    Psynergy_PlayEffect(1);
-    Psynergy_LowerHands();
+    Engine_PsynergyBegin(0x94, 1);
+    Engine_PsynergySetTarget(8, 0x11);
+    Engine_PsynergyRaiseHands();
+    Engine_PsynergyPlayEffect(1);
+    Engine_PsynergyLowerHands();
     BattleEffect_CleanupSceneObjects();
 }

@@ -46,6 +46,7 @@ struct PushState {
 /* FAKEMATCH: the inline boundary rematerializes pos for the collision call. */
 static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate *pos)
 {
+    /* FAKEMATCH: a direct call changes Makyuri_RunActorMove from add r1, sp, #16 to mov r1, fp (403/403 assembly lines). */
     return Object_CheckMovementCollision(actor, pos);
 }
 

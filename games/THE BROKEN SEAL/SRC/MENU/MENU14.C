@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "DMA.H"
@@ -11,7 +12,6 @@ s32 VramBlock_LoadCached(s32, s32, s32);
 void Ui_ApplyTableScaleToObject(void *);
 
 u8 *Runtime_AllocateBlock(s32 slot, u32 size);
-void Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
 
 /* The saved option bytes the option menu edits. */
@@ -36,7 +36,6 @@ struct OptionWork {
 extern struct Options Data_02000240;
 
 s32 Runtime_ReleaseHeapBlock(s32);
-s32 Scheduler_RemoveCallback(s32);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {
@@ -107,11 +106,11 @@ void OptionMenu_InitializeWork(void)
     work->choices[3] = 2;
     work->value[4] = Data_02000240.e;
     work->choices[4] = 2;
-    Scheduler_AddOrUpdateCallback(GraphicsPalette_LoadSelectionResourcesAndAdvance, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(GraphicsPalette_LoadSelectionResourcesAndAdvance), 0xc80);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock20B(void)
 {
-    Scheduler_RemoveCallback((s32)GraphicsPalette_LoadSelectionResourcesAndAdvance);
+    Scheduler_RemoveCallback((u32)((s32)GraphicsPalette_LoadSelectionResourcesAndAdvance));
     Runtime_ReleaseHeapBlock(0x14);
 }

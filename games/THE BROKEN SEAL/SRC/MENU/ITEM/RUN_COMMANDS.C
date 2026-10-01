@@ -70,6 +70,7 @@ typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {
+    /* FAKEMATCH: direct calls share the 332-byte size in r5 and move the copy routine to r6. */
     return copy(dst, src, size);
 }
 

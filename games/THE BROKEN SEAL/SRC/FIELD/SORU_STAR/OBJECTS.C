@@ -20,9 +20,9 @@ void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
         FIELD_AT_OFFSET(rec, u8, 9) = (u8)(mask & FIELD_AT_OFFSET(rec, u8, 9));
         FIELD_AT_OFFSET(obj, u8, 0x55) = 0;
         FIELD_AT_OFFSET(obj, u8, 0x59) = 8;
-        Actor_SetSpriteFlags(obj, 0);
-        Object_SetPalette(obj, 0xE);
-        Object_SetBlendMode(obj, 1);
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 0xE);
+        Engine_ObjectSetBlendMode(obj, 1);
         return obj;
     }
     return NULL;

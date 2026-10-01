@@ -37,6 +37,23 @@
  * same complete binary. Keep the original typed initializer. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline void *Heap_Allocate(s32 slot, s32 size)
+{
+    return Engine_HeapAllocate(slot, size);
+}
+
+static inline void Heap_Release(s32 slot)
+{
+    Engine_HeapRelease(slot);
+}
+
+static inline s32 Vram_Load(s32 block, s32 size, const void *data)
+{
+    return Engine_VramLoad(block, size, data);
+}
+
 extern u8 MsgWorldMapMatter[];
 
 /* Absolute dialogue ID shared by the prompt and its completion flag. */

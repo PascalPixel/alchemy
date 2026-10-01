@@ -87,15 +87,15 @@ s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
     s32 tilt;
     s32 jitter;
 
-    lift = Math_Sin(record->angle) * 2;
+    lift = Engine_MathSin(record->angle) * 2;
     if (lift > 0)
         lift = -lift;
 
-    record->x = record->base_x + Math_Cos(record->angle) * 2;
+    record->x = record->base_x + Engine_MathCos(record->angle) * 2;
     record->y = record->base_y + lift;
 
     /* Signed divide by 8, spelled `if (v < 0) v += 7; v >>= 3`. */
-    tilt = Math_Cos(record->angle + 0x8000);
+    tilt = Engine_MathCos(record->angle + 0x8000);
     if (tilt < 0)
         tilt += 7;
     sprite[15] = (u16)(tilt >> 3);          /* +0x1e */
@@ -122,7 +122,7 @@ void SceneEffect_InitOrbitingParticle(s32 id)
 
     zero = 0;
     sprite->state = zero;
-    Actor_SetSpriteFlags(actor, zero);
+    Engine_ActorSetSpriteFlags(actor, zero);
     actor->active = zero;
     actor->mode = zero;
 
@@ -132,11 +132,11 @@ void SceneEffect_InitOrbitingParticle(s32 id)
     actor->flags_23 &= 0xfe;
     actor->visible = 1;
 
-    transfer = Heap_Allocate(17, 0x608);
-    Item_LoadIcon(ITEM_NUT);
+    transfer = Engine_HeapAllocate(17, 0x608);
+    Engine_ItemLoadIcon(ITEM_NUT);
     transfer += 0x400;
-    Vram_Load(sprite->pal, 128, transfer);
-    Heap_Release(17);
+    Engine_VramLoad(sprite->pal, 128, transfer);
+    Engine_HeapRelease(17);
 
     actor->orbit_center_x = actor->x;
     actor->orbit_angle = zero;

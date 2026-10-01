@@ -59,6 +59,7 @@ void Runtime_ScheduleCallbackAndReleaseBlock20B(void);
    Caption ids come from the literal pool as link-time values. */
 struct RenderInput *Menu_OpenWorkspaceOptions(void)
 {
+    /* FAKEMATCH: the shared cursor union keeps pointer stores before window reads; an equal-size struct reorders these moves in all six editions. */
     struct WorkspaceWork *work;
     struct RenderInput *win;
     struct RenderOutput *out;

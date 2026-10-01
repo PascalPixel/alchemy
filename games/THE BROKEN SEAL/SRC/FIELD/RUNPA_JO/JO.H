@@ -200,260 +200,94 @@ void Engine_PsynergyCancel(void);
 s32 Engine_RandomNext(void);
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 
-static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
-{
-    Engine_ActorEnableActionCallback(actor, table);
-}
-
-static inline void Actor_FaceActor(s32 actor, s32 target, s32 frames)
-{
-    Engine_ActorFaceActor(actor, target, frames);
-}
-
 static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_ActorFaceDirection(actor, facing, frames);
-}
-
-static inline void Actor_FaceEachOther(s32 actor, s32 other, s32 frames)
-{
-    Engine_ActorFaceEachOther(actor, other, frames);
-}
-
-static inline void Actor_Jump(s32 actor, s32 height, s32 frames)
-{
-    Engine_ActorJump(actor, height, frames);
-}
-
-static inline void Actor_RunRepeatedMotion(s32 actor, s32 repeats)
-{
-    Engine_ActorRunRepeatedMotion(actor, repeats);
-}
-
-static inline void Actor_SetAnimation(s32 actor, s32 animation)
-{
-    Object_SetModeById(actor, animation);
-}
-
-static inline void Actor_SetAnimationAndWait(s32 actor, s32 animation)
-{
-    Engine_ActorSetAnimationAndWait(actor, animation);
 }
 
 static inline void Actor_SetAttachedEffect(s32 actor, s32 effect)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_ActorSetAttachedEffect(actor, effect);
-}
-
-static inline void Actor_SetChildValue(s32 actor, s32 value)
-{
-    Engine_ActorSetChildValue(actor, value);
 }
 
 static inline void Actor_SetDestination(s32 actor, s32 x, s32 z)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_ActorSetDestination(actor, x, z);
 }
 
 static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
 }
 
 static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_ActorSetPosition(actor, fixed_x, fixed_z);
 }
 
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags)
-{
-    Engine_ActorSetSpriteFlags(actor, flags);
-}
-
-static inline void Actor_SetSpritePriority(s32 actor, s32 priority)
-{
-    Engine_ActorSetSpritePriority(actor, priority);
 }
 
 static inline void Actor_ShowEmote(s32 actor, s32 emote, s32 frames)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_ActorShowEmote(actor, emote, frames);
-}
-
-static inline void Actor_StartRepeatedMotion(s32 actor, s32 repeats)
-{
-    Engine_ActorStartRepeatedMotion(actor, repeats);
-}
-
-static inline void Actor_Stop(s32 actor)
-{
-    Engine_ActorStop(actor);
-}
-
-static inline void Actor_WaitForMove(s32 actor)
-{
-    ObjectMotion_CommitCurrentPositionAndActivate(actor);
 }
 
 static inline void Actor_WalkTo(s32 actor, s32 x, s32 z)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_ActorWalkTo(actor, x, z);
 }
 
 static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_ActorWalkToAndWait(actor, x, z);
-}
-
-static inline void Camera_FollowActor(s32 actor, s32 keep_position)
-{
-    Engine_CameraFollowActor(actor, keep_position);
 }
 
 static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_CameraMoveTo(fixed_x, fixed_y, fixed_z, pan);
-}
-
-static inline void Camera_MoveToActor(s32 actor, s32 pan)
-{
-    Engine_CameraMoveToActor(actor, pan);
 }
 
 static inline void Camera_SetSpeed(s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_CameraSetSpeed(speed, acceleration);
-}
-
-static inline void Camera_WaitForMove(void)
-{
-    Engine_CameraWaitForMove();
-}
-
-static inline s32 Event_AskYesNo(s32 speaker, s32 flags)
-{
-    return Engine_EventAskYesNo(speaker, flags);
-}
-
-static inline void Event_Begin(void)
-{
-    Engine_EventBegin();
-}
-
-static inline s32 Event_ChooseYesNo(s32 actor, s32 flags)
-{
-    return Engine_EventChooseYesNo(actor, flags);
-}
-
-static inline void Event_CloseScreen(void)
-{
-    Engine_EventCloseScreen();
-}
-
-static inline void Event_End(void)
-{
-    Engine_EventEnd();
-}
-
-static inline s32 Event_OpenMessage(s32 speaker, s32 flags)
-{
-    return Engine_EventOpenMessage(speaker, flags);
-}
-
-static inline void Event_OpenScreen(void)
-{
-    Engine_EventOpenScreen();
-}
-
-static inline void Event_RequestExit(s32 exit)
-{
-    Engine_EventRequestExit(exit);
-}
-
-static inline void Event_SetMessage(s32 message)
-{
-    Engine_EventSetMessage(message);
-}
-
-static inline void Event_ShowMessage(s32 speaker, s32 flags)
-{
-    Engine_EventShowMessage(speaker, flags);
-}
-
-static inline void Event_Wait(s32 frames)
-{
-    Battle_WaitMode0(frames);
-}
-
-static inline void GameFlag_Clear(s32 flag)
-{
-    Engine_GameFlagClear(flag);
 }
 
 static inline s32 GameFlag_IsSet(s32 flag)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     return Engine_GameFlagIsSet(flag);
 }
 
 static inline s32 GameFlag_Set(s32 flag)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     return Engine_GameFlagSet(flag);
-}
-
-static inline void Item_ShowFound(s32 item, s32 height)
-{
-    Engine_ItemShowFound(item, height);
-}
-
-static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
-                                          s32 dest_x, s32 dest_y)
-{
-    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
 }
 
 static inline void Map_CopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
                                  s32 dest_y)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_MapCopyCells(src_x, src_y, width, height, dest_x, dest_y);
-}
-
-static inline void Map_Redraw(void)
-{
-    Engine_MapRedraw();
-}
-
-static inline void Message_ShowCentered(s32 message, s32 flags)
-{
-    Engine_MessageShowCentered(message, flags);
-}
-
-static inline s32 Party_GiveItem(s32 item, s32 flags)
-{
-    return Engine_PartyGiveItem(item, flags);
-}
-
-static inline void Psynergy_Cancel(void)
-{
-    Engine_PsynergyCancel();
-}
-
-static inline s32 Random_Next(void)
-{
-    return Engine_RandomNext();
-}
-
-static inline void Task_Wait(s32 frames)
-{
-    WaitFrames(frames);
 }
 
 static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
 {
+    /* FAKEMATCH: forwarding through this helper preserves measured instruction order in its callers; see the retained direct-call draft. */
     Engine_WorkSetValuesIfNonNegative(first, second, third);
 }
 

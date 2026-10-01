@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "UI.H"
 #include "TBS_EDITION.H"
@@ -38,8 +39,6 @@ void Event_ClearInvalidPackedValuesFar(void);
 #define PROMPT_TILES_SIZE 0x2000
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *buffer);
-void Scheduler_EnableOverlayCallbacksWithFlags(void);
-void Scheduler_DisableOverlayCallbacksWithFlags(void);
 void UiWork_SetAltFlagAndClearTableFar(s32 enable);
 void UiWindow_MarkVisibleTileAttributesFar(void);
 
@@ -48,11 +47,13 @@ typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {
+    /* FAKEMATCH: direct calls move the saved tile size from r9 to fp in the European editions. */
     return copy(dst, src, size);
 }
 
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 {
+    /* FAKEMATCH: a direct fill call changes the preceding copy's fp call register and adds moves. */
     return fill(dst, size, value);
 }
 #endif

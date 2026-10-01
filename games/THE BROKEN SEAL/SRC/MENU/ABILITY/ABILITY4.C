@@ -2,6 +2,7 @@
  * A advances to Item and B returns to character selection. The row coordinates
  * are signed because this view hides the four owner slots above the screen. */
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -52,8 +53,6 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
 void Menu_UpdateEntryObjectTransforms(void);
-void Scheduler_RemoveCallback(void (*callback)(void));
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Menu_SpawnIconEntries(struct PsynergyStatusMenu *, s32);
 s32 GameFlag_TestFar(s32 flag);
 void ItemMenu_PosCategory(void);
@@ -96,7 +95,7 @@ s32 PsynergyMenu_SelectAction(void)
                 icon->field_0f = priority;
         }
     }
-    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
     Menu_SpawnIconEntries(menu, menu->icon_window);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->window, SWITCH_HELP_X, -24);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 2, menu->window, 0, -24);
@@ -148,7 +147,7 @@ s32 PsynergyMenu_SelectAction(void)
                 Audio_PlayCue(113);
                 result = -1;
                 done = 1;
-                Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+                Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
                 break;
             }
             if ((gKeysRepeat & 0x100) || (gKeysRepeat & 0x200)) {

@@ -49,7 +49,8 @@ extern u8 TransferCommandExecutor_Size[];
         s32 count;                                                          \
                                                                             \
         q = &gIoWriteQueue;                                                 \
-        do {                                                                \
+        do { \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \

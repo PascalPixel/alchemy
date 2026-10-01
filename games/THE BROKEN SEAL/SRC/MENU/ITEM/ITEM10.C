@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "MENU_RESULT.H"
@@ -53,8 +54,6 @@ struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 GameFlag_TestFar(s32 flag);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void ItemMenu_PosCategory(void);
-void Scheduler_RemoveCallback(void (*callback)(void));
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Menu_UpdateEntryObjectTransforms(void);
 void Menu_SpawnIconEntries(struct ItemListWork *menu, s32 list);
 u8 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
@@ -107,7 +106,7 @@ s32 ItemMenu_SelectItem(void)
             icon->field_0f = 240;
     }
 
-    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->field_024, 64, -24);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 3, menu->field_024, 0, -24);
     ItemMenu_PosCategory();
@@ -196,7 +195,7 @@ s32 ItemMenu_SelectItem(void)
         s32 delay = 200;
 
         delay <<= 4;
-        Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay);
+        Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), delay);
     }
     return result;
 }

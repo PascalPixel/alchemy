@@ -2360,7 +2360,7 @@ Func_080af4b8:
 	.type Func_080af794, %function
 	.thumb_func
 Func_080af794:
-	.incbin "baserom.gba", 0x000bc794, 0x00000018
+	.incbin "baserom.gba", 0x000bc794, 0x00000008
 	.section .rom.000bc7ac, "ax"
 	.global Func_080af7ac
 	.type Func_080af7ac, %function
@@ -2520,13 +2520,19 @@ Trade_RemoveOffer:
 	.thumb_func
 Func_080af0e4:
 	.section .rom.000be002, "ax"
-	.incbin "baserom.gba", 0x000be002, 0x00001362
+	.incbin "baserom.gba", 0x000be002, 0x000002c6
+	.global Owner_ExperienceThresholds
+Owner_ExperienceThresholds:
+	.incbin "baserom.gba", 0x000be2c8, 0x0000109c
 	.global Item_DefinitionTable
 Item_DefinitionTable:
 	.incbin "baserom.gba", 0x000bf364, 0x000058b0
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
-	.incbin "baserom.gba", 0x000c4c14, 0x000098f8
+	.incbin "baserom.gba", 0x000c4c14, 0x00009338
+	.global Owner_GrowthRecords
+Owner_GrowthRecords:
+	.incbin "baserom.gba", 0x000cdf4c, 0x000005c0
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000ce50c, 0x000000e8
@@ -3921,7 +3927,7 @@ Func_080dca84:
 Func_080dcadc:
 	.incbin "baserom.gba", 0x000e9adc, 0x00000478
 	.section .rom.000e9f70, "ax"
-	.incbin "baserom.gba", 0x000e9f70, 0x000000e4
+	.incbin "baserom.gba", 0x000e9f70, 0x0000001c
 	.section .rom.000ea054, "ax"
 	.global Func_080dd054
 	.type Func_080dd054, %function

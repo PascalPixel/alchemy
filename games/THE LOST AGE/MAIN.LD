@@ -1818,7 +1818,7 @@ SECTIONS
         "*/recon/tla/raw/080ebc30.o"(.text)
         "*/recon/tla/raw/080ebc94.o"(.text)
         "*/recon/tla/raw/080ebd24.o"(.text)
-        "*/recon/tla/raw/080ebe70.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/HAS_REACHED_TARGET.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SLOT_SET_POSITION.o"(.text)
         "*/recon/tla/raw/080ebea6.o"(.text)
         "*/recon/tla/raw/080ebea8.o"(.text)

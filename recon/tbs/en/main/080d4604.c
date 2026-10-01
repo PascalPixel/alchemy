@@ -1,396 +1,243 @@
+/* Draft, not exact: 160 instructions off, 1730 bytes against 1726, 76 bytes
+   of stack against 80. The whole difference is one decision of the loop
+   pass: the reference computes the address of work->effect once before the
+   frame loop, keeps it in a stack slot, and reads the five frame-loop uses
+   (the variant 3 test, both ends of the group loop, the flash draw and the
+   ring loop) through it; this draft builds the address again at each use,
+   and every later register choice shifts with that. Reading those five uses
+   through an explicit pointer local gives the reference frame and matches
+   all but three places: the store of that pointer sits before the loop entry
+   test instead of after it, the ring y product has its operands the other
+   way round, and the spark address adds index then base.
+   SparkGroups_Shapes is Data_080ee262 and SparkGroups_FlashCells is
+   Data_080ee294. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-/*
- * Draft for the battle-presentation sub-effect at 0x080d4604 (1764 bytes).
- *
- * Same 0x03001eec "battle work" subsystem family as
- * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (BattleFx_RunMemberOrbit, exact) and
- * the measured drafts recon/tbs/en/main/080dfe2c.c and 080d4ce8.c: the
- * heap_cache/cursor prologue, the M2C_FIELD field-offset idiom, the
- * DrawRectangleFn typedef, the work+0x7828 effect-state republication, the
- * work+0x7780 / 0x7784 / 0x7824 / 0x77a8 stores, the Scheduler_AddOrUpdateCallback /
- * Scheduler_RemoveCallback 0x080CD261 callback pair and the Camera_ApplyShake /
- * ObjectGroup_TickMemberTimers / WaitFrames frame tail are all shared with them.  Every
- * constant, offset and branch below was read from this owner's own reference
- * disassembly (recon/tbs/raw/080d4604.s), not carried over from a template.
- *
- * Behaviour: the owner takes the effect-state object plus a small `kind`
- * selector.  kind 0 and 1 use fixed anchor coordinates; any other kind
- * projects the state's field_08 through EffectPosition_ApplyStepAndYOffset and derives them.  It
- * then sets a BG control word, prepares the two generated rectangle-blit
- * routines (heap kinds 46 and 47), loads two resources, optionally copies a
- * kind-specific palette, and seeds a per-group ring of sixteen 28-byte
- * records at work + 0x7080 + group * 0x1c0 plus one burst of the shared
- * 28-byte particle pool at 0x02010000.  The number of groups and the number
- * of particles per group come from a 10-byte-stride table at 0x080ee262
- * indexed by the state's field_18; that same table row supplies a per-group
- * horizontal offset.  The frame loop then runs groups * 8 + 56 frames,
- * drawing the ring records, ageing them, and advancing and drawing the
- * particles with EffectStep_AdvanceWithGravity2D gravity.
- *
- * Uncertain / unresolved:
- *   - Names of the 0x080ee262 row fields are behavioural, not recovered.
- *   - Data_080ee294 (u8) and ParticleStreams_CellOffsets (u16) are indexed lookup tables
- *     whose contents were not decoded here; only their access widths and
- *     index expressions are evidenced.
- *   - Spark fields 8 and 20 are never touched by this owner; they are named
- *     unk08 / unk14 and only reserve the 28-byte stride the reference proves.
- *   - The unsigned range tests ((u32)x <= 0x7effff, (u32)timer <= 17) are
- *     written in the form the reference's `bhi` proves; whether the original
- *     spelled a two-sided signed range is not decidable from the bytes.
- */
+struct CameraWork {
+    u8 unknown_00[0x36];
+    u16 scroll;
+};
 
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+typedef s32 (*WordCopy)(void *, const void *, s32);
 
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef s32 (*FillWordsFn)(void *dest, s32 bytes, s32 value);
-
-/* Small absolute link-time constants: every retained Resource_GetTableEntry /
-   Resource_LoadAndDecompress call site loads its resource id from a literal pool rather
-   than an immediate, which an ordinary integer literal cannot produce. */
-
-/* Heap-block address cache; gWorkSlot[kind] holds that kind's block. */
 extern void *gWorkSlot[];
-
-extern const u16 ParticleStreams_CellOffsets[];
-extern const u8 Data_080ee294[];
-
-/* Five-halfword rows at 0x080ee262, indexed by the effect state's field_18.
-   A C struct array is rounded to a 12-byte stride by this compiler ABI. */
-extern const u16 Data_080ee262[];
-
-#define SPARK_PATTERN_COUNT(variant) (Data_080ee262[(variant) * 5])
-#define SPARK_PATTERN_GROUPS(variant) (Data_080ee262[(variant) * 5 + 1])
-#define SPARK_PATTERN_OFFSET(variant, group) \
-    (Data_080ee262[(variant) * 5 + 2 + (group)])
-
-/* 28-byte record, shared by the work + 0x7080 rings and the 0x02010000
-   particle pool.  Fields 0/4 are 16.16 fixed-point position, 12/16 are the
-   matching velocity, 24 is a countdown. */
-typedef struct Spark {
-    s32 x;
-    s32 y;
-    s32 unk08;
-    s32 vx;
-    s32 vy;
-    s32 unk14;
-    s32 timer;
-} Spark;
-
-extern Spark gMapCellBuffer[];
-
-#define WORK_EFX (*(struct BattleEffectArgument **)((s8 *)work + 0x7828))
+extern u8 gMapCellBuffer[];
+extern u16 ParticleStreams_CellOffsets[];
+/* Five words by variant: sparks per group, groups, and each group's column. */
+extern u16 SparkGroups_Shapes[];
+/* By a ring flash's age in threes: which cell of the sheet it shows. */
+extern u8 SparkGroups_FlashCells[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
-s32 Random16(void);
-s32 Trig_Sin(s32 angle);
-s32 Trig_Cos(s32 angle);
-s32 __divsi3(s32 numerator, s32 denominator);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
-void Audio_PlayCue(s32 id);
-void EffectStep_AdvanceWithGravity2D(void *particle, s32 step, s32 gravity);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
-void Camera_ApplyShake(s32 a, s32 b);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleEventRuntime_BeginPhaseFar(s32 value);
+void AudioCommand_PlayFar(s32 value);
+void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 id);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 s32 BattleFx_EndCanvasLayer(void);
 
-void BattleFx_RunSparkGroups(void *object, s32 kind)
+void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 {
+    struct EffectPosition pos;
+    DrawRectangle draw[2];
     void **heap_cache;
     void **cursor;
-    void *work;
+    struct BattleEffectWork *work;
     void *canvas;
-    void *extra;
-    void *palette;
-    s32 status;
-    s32 pos[3];
-    s32 base_x;
-    s32 base_y;
-    DrawRectangleFn rectangle[2];
-    DrawRectangleFn *rectangle_slot;
-    DrawRectangleFn second;
-    s8 *ring_base;
-    s32 group;
     s32 i;
     s32 frame;
+    u8 *graphics;
+    s32 origin_x;
+    s32 origin_y;
+    s32 j;
+    s32 start;
+    struct EffectStep *point;
+    struct EffectStep *spark;
+    struct EffectStep *sparks;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = gWorkSlot + 39;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    extra = heap_cache[2];
-    WORK_EFX = (struct BattleEffectArgument *)object;
-
+    graphics = heap_cache[2];
+    work->effect = effect;
     if (kind == 0) {
         BattleFx_BeginCanvasLayer(1);
-        base_x = 60;
-        base_y = 48;
+        origin_x = 60;
+        origin_y = 48;
     } else if (kind == 1) {
         BattleFx_BeginCanvasLayer(0);
-        base_x = 60;
-        base_y = 64;
+        origin_x = 60;
+        origin_y = 64;
     } else {
         BattleFx_BeginCanvasLayer(0);
-        EffectPosition_ApplyStepAndYOffset(WORK_EFX->actor, pos);
-        base_x = pos[0] / 2;
-        base_y = pos[1] + 48;
+        EffectPosition_ApplyStepAndYOffset(work->effect->actor, &pos);
+        origin_x = pos.x / 2;
+        origin_y = pos.y + 48;
     }
-
-    M2C_FIELD((void *)0x04000052, u16 *, 0) = 0x1010;
-    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    rectangle[0] = (DrawRectangleFn)gWorkSlot[46];
-    status = BattleEffect_LoadWork(47, 7, 7, 3, 3);
-    second = (DrawRectangleFn)gWorkSlot[47];
-    rectangle_slot = rectangle;
-    rectangle_slot[1] = second;
-
+    *(u16 *)0x04000052 = 0x1010;
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw[0] = (DrawRectangle)gWorkSlot[46];
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    draw[1] = (DrawRectangle)gWorkSlot[47];
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra, 0, 0);
-
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
     if (kind == 1) {
-        palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-        status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+        void *palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+        WordCopy copy = Iwram_CopyWords;
+
+        copy((void *)0x05000000, palette, 128);
     } else if (kind == 2) {
-        palette = Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
-        status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+        void *palette = Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
+        WordCopy copy = Iwram_CopyWords;
+
+        copy((void *)0x05000000, palette, 128);
     }
-    (void)status;
+    sparks = (struct EffectStep *)gMapCellBuffer;
 
-    group = 0;
-    if (SPARK_PATTERN_GROUPS(WORK_EFX->variant) != 0) {
-        ring_base = (s8 *)work;
-        do {
-            Spark *ring;
+    for (i = 0; i != SparkGroups_Shapes[work->effect->variant * 5 + 1]; i++) {
+        for (j = 0; j != 16; j++) {
+            s32 radius;
+            s32 angle;
 
-            ring = (Spark *)(ring_base + 0x7080);
-            for (i = 0; i != 16; i++) {
-                s32 angle;
-                s32 radius;
+            point = &work->particles[i * 16 + j];
+            radius = j * 2;
+            angle = Random16() & 0xffff;
+            point->x = radius * Trig_Sin(angle);
+            point->y = -(Trig_Cos(angle) * radius);
+            point->variant = j / 2 + 25;
+        }
+        for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++) {
+            s32 speed;
+            s32 angle;
+            s32 x;
 
-                radius = i * 2;
-                angle = Random16() & 0xFFFF;
-                ring->x = radius * Trig_Sin(angle);
-                ring->y = -(radius * Trig_Cos(angle));
-                ring->timer = (i / 2) + 25;
-                ring++;
-            }
-
-            i = 0;
-            if (SPARK_PATTERN_COUNT(WORK_EFX->variant) != 0) {
-                s32 y_fixed;
-
-                y_fixed = base_y << 16;
-                do {
-                    struct BattleEffectArgument *efx;
-                    Spark *spark;
-                    s32 magnitude;
-                    s32 angle;
-                    s32 offset;
-                    s32 x;
-
-                    efx = WORK_EFX;
-                    spark = &gMapCellBuffer[
-                        SPARK_PATTERN_COUNT(efx->variant) * group + i];
-                    magnitude = (Random16() & 0x3FF) + 32;
-                    angle = Random16() & 0xFFFF;
-                    efx = WORK_EFX;
-                    offset = SPARK_PATTERN_OFFSET(efx->variant, group);
-                    if (efx->side == 1) {
-                        x = (base_x - offset) + 28;
-                    } else {
-                        x = (base_x + offset) - 28;
-                    }
-                    spark->x = x << 16;
-                    spark->y = y_fixed;
-                    spark->vx = (magnitude * Trig_Sin(angle)) >> 6;
-                    spark->vy = -((magnitude * Trig_Cos(angle)) << 1) >> 6;
-                    i++;
-                    spark->timer = (Random16() & 7) + 32;
-                } while (i != SPARK_PATTERN_COUNT(WORK_EFX->variant));
-            }
-
-            ring_base += 0x1C0;
-            group++;
-        } while (group != SPARK_PATTERN_GROUPS(WORK_EFX->variant));
+            spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5] + j];
+            speed = (Random16() & 0x3ff) + 32;
+            angle = Random16() & 0xffff;
+            if (work->effect->side == 1)
+                x = origin_x - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28;
+            else
+                x = origin_x + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28;
+            spark->x = x << 16;
+            spark->y = origin_y << 16;
+            spark->velocity_x = (Trig_Sin(angle) * speed) >> 6;
+            spark->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 6;
+            spark->variant = (Random16() & 7) + 32;
+        }
     }
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    for (frame = 0; frame != SparkGroups_Shapes[work->effect->variant * 5 + 1] * 8 + 56; frame++) {
+        struct CameraWork *camera = *(struct CameraWork **)(gWorkSlot + 12);
 
-    for (frame = 0;
-            frame != (SPARK_PATTERN_GROUPS(WORK_EFX->variant) << 3) + 56;
-            frame++) {
-        void *screen;
-        struct BattleEffectArgument *efx;
-
-        screen = *(void **)0x03001E80;
-        efx = WORK_EFX;
-        if (efx->variant == 2 && frame <= 51) {
-            if (efx->side == 0) {
-                M2C_FIELD(screen, u16 *, 54) += 256;
-            } else {
-                M2C_FIELD(screen, u16 *, 54) -= 256;
-            }
+        if (work->effect->variant == 2 && frame <= 51) {
+            if (work->effect->side == 0)
+                camera->scroll += 256;
+            else
+                camera->scroll -= 256;
         }
-
-        if (WORK_EFX->variant == 3 && frame == 4) {
-            status = ((FillWordsFn)0x03000168)(canvas, 0x4000, 0x3F3F3F3F);
-        }
-
+        if (work->effect->variant == 3 && frame == 4)
+            Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         if (kind == 1 || kind == 2) {
-            if (frame == 2) {
+            if (frame == 2)
                 BattleEventRuntime_BeginPhaseFar(145);
-            }
         } else {
-            if (frame == 2) {
-                Audio_PlayCue(145);
-            }
-            if (frame == 24) {
+            if (frame == 2)
+                AudioCommand_PlayFar(145);
+            if (frame == 24)
                 BattleEventRuntime_BeginPhaseFar(134);
+        }
+        for (i = 0; i != SparkGroups_Shapes[work->effect->variant * 5 + 1]; i++) {
+            start = i * 8;
+            if (frame == start)
+                work->shake_frames = 12;
+            if (frame >= start && frame < start + 2) {
+                if (work->effect->side == 1)
+                    draw[0](canvas, work,
+                        origin_x - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 12,
+                        origin_y - 32, 32, 64);
+                else
+                    draw[0](canvas, work,
+                        origin_x + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 44,
+                        origin_y - 32, 32, 64);
+            }
+            if (frame >= start) {
+                for (j = 0; j != 12; j++) {
+                    s32 x;
+                    s32 y;
+
+                    point = &work->particles[i * 16 + j];
+                    y = ((s16 *)&point->y)[1] + origin_y;
+                    if (work->effect->side == 1)
+                        x = ((s16 *)&point->x)[1] + origin_x
+                            - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28;
+                    else
+                        x = ((s16 *)&point->x)[1] + origin_x
+                            + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28;
+                    if (point->variant >= 0 && point->variant < 18)
+                        draw[0](canvas,
+                            (u8 *)work + (SparkGroups_FlashCells[point->variant / 3] << 11),
+                            x - 16, y - 32, 32, 64);
+                    if (point->variant > 0)
+                        point->variant--;
+                    else
+                        point->variant = -1;
+                }
+            }
+            if (frame > start + 5) {
+                s32 gravity;
+
+                if (kind == 2)
+                    gravity = -0x1000;
+                else
+                    gravity = 0x1000;
+                for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++) {
+                    spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5] + j];
+                    if (spark->variant > 0) {
+                        EffectStep_AdvanceWithGravity2D(spark, 60, gravity);
+                        spark->variant--;
+                        if (spark->y > 0x6c0000) {
+                            spark->velocity_y = -spark->velocity_y / 2;
+                        } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
+                            s32 y = spark->y >> 16;
+                            s32 x = spark->x >> 16;
+                            s32 size = spark->variant / 5 + 1;
+
+                            draw[j & 1](canvas, graphics + ParticleStreams_CellOffsets[size - 1],
+                                x - size / 2, y - size, size, size * 2);
+                        }
+                    }
+                }
+            }
+            for (j = 0; j != work->effect->count; j++) {
+                if (frame == start + 6) {
+                    ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 10);
+                    BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 4);
+                }
             }
         }
-
-        group = 0;
-        if (SPARK_PATTERN_GROUPS(WORK_EFX->variant) != 0) {
-            ring_base = (s8 *)work;
-            do {
-                s32 start;
-
-                start = group << 3;
-                if (frame == start) {
-                    M2C_FIELD(work, s32 *, 0x77A8) = 12;
-                }
-
-                if (frame >= start && frame < start + 2) {
-                    s32 offset;
-
-                    efx = WORK_EFX;
-                    offset = SPARK_PATTERN_OFFSET(efx->variant, group);
-                    if (efx->side == 1) {
-                        rectangle[0](canvas, work, (base_x - offset) + 12,
-                            base_y - 32, 32, 64);
-                    } else {
-                        rectangle[0](canvas, work, (base_x + offset) - 44,
-                            base_y - 32, 32, 64);
-                    }
-                }
-
-                if (frame >= start) {
-                    Spark *ring;
-
-                    ring = (Spark *)(ring_base + 0x7080);
-                    for (i = 0; i != 12; i++) {
-                        s32 x;
-                        s32 y;
-                        s32 offset;
-                        s32 timer;
-
-                        y = M2C_FIELD(ring, s16 *, 6) + base_y;
-                        efx = WORK_EFX;
-                        offset = SPARK_PATTERN_OFFSET(efx->variant, group);
-                        if (efx->side == 1) {
-                            x = ((M2C_FIELD(ring, s16 *, 2) + base_x)
-                                - offset) + 28;
-                        } else {
-                            x = ((M2C_FIELD(ring, s16 *, 2) + base_x)
-                                + offset) - 28;
-                        }
-                        timer = ring->timer;
-                        if ((u32)timer <= 17) {
-                            rectangle[0](canvas,
-                                (s8 *)work
-                                    + (Data_080ee294[__divsi3(timer, 3)]
-                                        << 11),
-                                x - 16, y - 32, 32, 64);
-                            timer = ring->timer;
-                        }
-                        if (timer > 0) {
-                            ring->timer = timer - 1;
-                        } else {
-                            ring->timer = -1;
-                        }
-                        ring++;
-                    }
-                }
-
-                if (frame > start + 5) {
-                    s32 gravity;
-
-                    gravity = 0x1000;
-                    if (kind == 2) {
-                        gravity = -0x1000;
-                    }
-                    i = 0;
-                    if (SPARK_PATTERN_COUNT(WORK_EFX->variant) != 0) {
-                        do {
-                            Spark *spark;
-
-                            spark = &gMapCellBuffer[
-                                SPARK_PATTERN_COUNT(WORK_EFX->variant) * group + i];
-                            if (spark->timer > 0) {
-                                s32 timer;
-                                s32 x;
-                                s32 y;
-
-                                EffectStep_AdvanceWithGravity2D(spark, 60, gravity);
-                                timer = spark->timer - 1;
-                                y = spark->y;
-                                spark->timer = timer;
-                                if (y > 0x6C0000) {
-                                    spark->vy = -spark->vy / 2;
-                                } else {
-                                    x = spark->x;
-                                    if ((u32)x <= 0x7EFFFF && y >= 0) {
-                                        s32 size;
-
-                                        size = __divsi3(timer, 5) + 1;
-                                        rectangle_slot[i & 1](canvas,
-                                            (s8 *)extra
-                                                + ParticleStreams_CellOffsets[size - 1],
-                                            (x >> 16) - (size / 2),
-                                            (y >> 16) - size,
-                                            size, size * 2);
-                                    }
-                                }
-                            }
-                            i++;
-                        } while (i != SPARK_PATTERN_COUNT(WORK_EFX->variant));
-                    }
-                }
-
-                i = 0;
-                if (WORK_EFX->count != 0) {
-                    do {
-                        if (frame == start + 6) {
-                            ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 10);
-                            BattleMotion_ApplyVariantMotionFar(WORK_EFX->actors[i], 4);
-                        }
-                        i++;
-                    } while (i != WORK_EFX->count);
-                }
-
-                ring_base += 0x1C0;
-                group++;
-            } while (group != SPARK_PATTERN_GROUPS(WORK_EFX->variant));
-        }
-
         Camera_ApplyShake(16, 16);
         ObjectGroup_TickMemberTimers();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

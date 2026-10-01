@@ -3,12 +3,7 @@
 
 void VramBlock_LoadCached(void *, s32, void *);
 
-/* FAKEMATCH: the reference keeps one literal-pool entry per case for the one
-   pair source table, so each case names it through its own alias (MAIN.LD). */
 extern u8 RenderResource_PairSourceTable;
-extern u8 RenderResource_PairSourceTable2;
-extern u8 RenderResource_PairSourceTable3;
-extern u8 RenderResource_PairSourceTable4;
 
 void UiGlyph_DecodeWithHeapRoutines(struct State_0801a4c0 *, u32);
 
@@ -30,22 +25,34 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
     void *source;
     switch (value) {
     case 1:
-        source = &RenderResource_PairSourceTable;
+        /* FAKEMATCH: plain C folds the switch; retain each case's literal load. */
+        asm volatile("ldr %0, .LPairSourceFirst" : "=r"(source));
         break;
     case 2:
-        source = &RenderResource_PairSourceTable2;
+        /* FAKEMATCH: retain the second case's separate literal load. */
+        asm volatile("ldr %0, .LPairSourceSecond" : "=r"(source));
         break;
     case 3:
-        source = &RenderResource_PairSourceTable3;
+        /* FAKEMATCH: retain the third case's separate literal load. */
+        asm volatile("ldr %0, .LPairSourceThird" : "=r"(source));
         break;
     case 0:
     default:
-        source = &RenderResource_PairSourceTable4;
+        /* FAKEMATCH: retain the default case's separate literal load. */
+        asm volatile("ldr %0, .LPairSourceDefault" : "=r"(source));
         break;
     }
     VramBlock_LoadCached(destination, 32, source);
     return 1;
 }
+
+/* FAKEMATCH: four literal slots for the sole table name; include them in the function extent. */
+asm(".align 2\n"
+    ".LPairSourceFirst:\n.word RenderResource_PairSourceTable\n"
+    ".LPairSourceSecond:\n.word RenderResource_PairSourceTable\n"
+    ".LPairSourceThird:\n.word RenderResource_PairSourceTable\n"
+    ".LPairSourceDefault:\n.word RenderResource_PairSourceTable\n"
+    ".size RenderResource_LoadTableEntry, .-RenderResource_LoadTableEntry");
 
 void Ui_PrepareTransferForItem(s32 arg0)
 {

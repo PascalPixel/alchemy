@@ -163,7 +163,7 @@ void ArutinYama_ApplyEntryState(void)
         {
             u8 *script = ArutinYama_ActorScript;
 
-            Value3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)script);
+            Call3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)script);
         }
     } else {
         p5 = *(s32 *)&gMapWork;

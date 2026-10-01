@@ -123,7 +123,10 @@ Data_02003a74:
 	.space 0x0000001c
 	.global Data_02003a90
 Data_02003a90:
-	.space 0x000018c0
+	.space 0x00000ce8
+	.global gModelTransformWork
+gModelTransformWork:
+	.space 0x00000bd8
 	.global Data_02005350
 Data_02005350:
 	.space 0x00000004

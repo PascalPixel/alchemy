@@ -4,8 +4,8 @@
  * code sits in 49 ⚓️ overlays (the first at resource_653 0x02008080).
  * Remaining difference: one reordered load. ⚓️ loads the sprite pointer
  * third, before the first store; with the build's flags, sched2 places it
- * after the scale_y loads. Compiled with -mtune=arm9tdmi (or strongarm,
- * arm8, arm920t) added, it matches exactly; no C rewrite tried moves it.
+ * after the scale_y loads. No C rewrite tried moves it with the approved
+ * game flags.
  */
 #include "TYPES.H"
 

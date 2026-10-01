@@ -99,7 +99,7 @@ void FieldScene_RunPrimarySequence(void)
     p6 = p6 + 0x16c;
     n = *(s16 *)p6 - 14;
     Audio_PlayCue(158);
-    Value3(Engine_MapAnimateCells, Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
+    Call3(Engine_MapAnimateCells, Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(u8 *)((s32)Object_GetById(0) + 85) = 0;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);

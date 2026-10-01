@@ -14,10 +14,10 @@ __divsi3:
 	.thumb_func
 __modsi3:
 	overlay_veneer IwramSignedRemainder
-	.global IwramUnsignedDivide
+	.global Math_DivideUnsigned
 	.thumb_func
-IwramUnsignedDivide:
-	overlay_veneer IwramUnsignedDivideArm
+Math_DivideUnsigned:
+	overlay_veneer IwramUnsignedDivide
 	.global WaitFrames
 	.thumb_func
 WaitFrames:

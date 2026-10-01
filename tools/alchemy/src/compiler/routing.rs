@@ -584,14 +584,20 @@ mod target_tests {
                 assert_eq!(family_for_source(target, &path), CompilerFamily::AgbccFlash);
             }
         }
-        assert_eq!(
-            family_for_source(
-                CompilerTarget::Tbs,
-                "games/THE LOST AGE/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C"
-            ),
-            CompilerFamily::Game
-        );
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+            assert_eq!(
+                family_for_source(
+                    target,
+                    "games/COMMON/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C"
+                ),
+                CompilerFamily::AgbccFlash
+            );
+            for source in [
+                "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
+                "games/THE LOST AGE/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
+            ] {
+                assert_eq!(family_for_source(target, source), CompilerFamily::Game);
+            }
             assert_eq!(
                 family_for_source(target, "games/COMMON/SRC/SOUND/SOUND2.C"),
                 CompilerFamily::Agbcc

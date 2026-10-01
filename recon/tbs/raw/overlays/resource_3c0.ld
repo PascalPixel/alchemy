@@ -8,11 +8,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SELECTED_PRESENTATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SABAKU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/IMPORT.o"(.text)
         "*/resource_3c0_overlay.o"(.rodata.x0200937c)
     }
     .bss (NOLOAD) : { "*/resource_3c0_overlay.o"(.bss) }
-    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /DISCARD/ : { "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident) *(.ARM.attributes) *(.comment) *(.note*) }
 }

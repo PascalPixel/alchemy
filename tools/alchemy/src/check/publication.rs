@@ -28,7 +28,7 @@ const DOCUMENT_EXTENSIONS: &[&str] = &[
 const OWNED_DOCUMENTS: &[&str] = &["README.md", "AGENTS.md"];
 /// Native editable inputs; formats are validated independently of file names.
 const NATIVE_INPUT_EXTENSIONS: &[&str] = &[
-    "c", "h", "inc", "s", "ld", "mk", "gitkeep", "png", "wav", "mid", "pcm4", "po", "tsv", "bin",
+    "c", "h", "inc", "s", "ld", "mk", "gitkeep", "png", "wav", "mid", "pcm4", "po", "tsv",
 ];
 /// Tooling metadata areas the former layout kept under `games/<game>/`; every
 /// other directory there is an asset root. Reconstruction metadata now lives
@@ -156,6 +156,9 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
     if normalized.starts_with('/') || components.contains(&"..") {
         return Some("invalid repository path");
     }
+    if json_path(&normalized) {
+        return Some(JSON_REASON);
+    }
     if directories.iter().any(|directory| {
         listed(directory, BLOCKED_DIRECTORIES)
             || directory.to_ascii_lowercase().starts_with(".cmatch")
@@ -193,12 +196,7 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
     {
         return Some("compiler or runtime-library source: keep it in its licensed repository");
     }
-    // Game data and tilemaps under a game's source tree are editable build
-    // inputs, tracked as pret tracks its .bin files.
-    let game_data = suffix.eq_ignore_ascii_case("bin")
-        && normalized.starts_with("games/")
-        && directories.iter().any(|directory| *directory == "SRC");
-    if listed(suffix, BLOCKED_EXTENSIONS) && !game_data {
+    if listed(suffix, BLOCKED_EXTENSIONS) {
         return Some("private or generated file type");
     }
     if listed(suffix, PRESENTATION_EXTENSIONS) {
@@ -383,7 +381,7 @@ fn check_documents(root: &Path) -> Result<(), String> {
 /// `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"` from `WAVE_00.PCM8.WAV`, as
 /// pret's data files read the `.bin` files wav2agb makes. In a game's asset
 /// sources under `SRC`: a file the build makes from the like-named indexed
-/// PNG, table or identified BIN, named by its recipe,
+/// PNG or TSV table, named by its recipe,
 /// `.incbin "GRAPHICS/FX/STAR.bitmap.lz"` from `SRC/GRAPHICS/FX/STAR.PNG` or
 /// `.incbin "MAP/M/METATILES.delta1.lz"` from `SRC/MAP/M/METATILES.TSV`, as pret's
 /// data files read the `.4bpp.lz` files gbagfx makes.
@@ -1219,7 +1217,419 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| runtime_definition_reason(path, text))
         .or_else(|| address_equate_reason(path, text))
         .or_else(|| edition_equate_reason(path, text))
+        .or_else(|| linker_assignment_reason(path, text))
+        .or_else(|| raw_address_reason(path, text))
         .or_else(|| raw_encoding_reason(path, text))
+}
+/// Comments and quoted strings carry no linker or assembler statements.
+fn unquoted_source(text: &str) -> String {
+    static NON_CODE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    NON_CODE
+        .get_or_init(|| {
+            regex::Regex::new(r#"(?s)/\*.*?\*/|//[^\r\n]*|@[^\r\n]*|"(?:\\.|[^"\\])*""#)
+                .expect("source comments and strings pattern")
+        })
+        .replace_all(text, " ")
+        .into_owned()
+}
+const LINKER_ASSIGNMENT_REASON: &str = "linker alias or stored number (O2): define the name where its bytes are; layout and sizes come from sections and symbol differences";
+/// Section addresses combined with sums and differences. The entire
+/// expression must be arithmetic, so an unrelated ADDR cannot admit an alias.
+fn linker_section_expression(text: &str) -> bool {
+    static TOKEN: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let token = TOKEN.get_or_init(|| {
+        regex::Regex::new(r"[A-Za-z_.$][\w.$]*|0[xX][0-9a-fA-F]+|[0-9]+|[()+-]")
+            .expect("linker arithmetic token pattern")
+    });
+    let mut tokens = Vec::new();
+    let mut end = 0;
+    for found in token.find_iter(text) {
+        if !text[end..found.start()].trim().is_empty() {
+            return false;
+        }
+        tokens.push(found.as_str());
+        end = found.end();
+    }
+    if !text[end..].trim().is_empty() {
+        return false;
+    }
+    fn take(tokens: &[&str], index: &mut usize, wanted: &str) -> bool {
+        if tokens.get(*index) != Some(&wanted) {
+            return false;
+        }
+        *index += 1;
+        true
+    }
+    fn atom(tokens: &[&str], index: &mut usize, section: &mut bool) -> bool {
+        let Some(&word) = tokens.get(*index) else {
+            return false;
+        };
+        *index += 1;
+        match word {
+            "+" | "-" => atom(tokens, index, section),
+            "(" | "ABSOLUTE" => {
+                (word == "(" || take(tokens, index, "("))
+                    && expression(tokens, index, section)
+                    && take(tokens, index, ")")
+            }
+            "LOADADDR" | "ADDR" => {
+                if !take(tokens, index, "(") {
+                    return false;
+                }
+                let Some(&name) = tokens.get(*index) else {
+                    return false;
+                };
+                if !name
+                    .starts_with(|c: char| c.is_ascii_alphabetic() || matches!(c, '_' | '.' | '$'))
+                {
+                    return false;
+                }
+                *index += 1;
+                *section = true;
+                take(tokens, index, ")")
+            }
+            ")" => false,
+            _ => tokens.get(*index) != Some(&"("),
+        }
+    }
+    fn expression(tokens: &[&str], index: &mut usize, section: &mut bool) -> bool {
+        if !atom(tokens, index, section) {
+            return false;
+        }
+        while matches!(tokens.get(*index), Some(&"+" | &"-")) {
+            *index += 1;
+            if !atom(tokens, index, section) {
+                return false;
+            }
+        }
+        true
+    }
+    let (mut index, mut section) = (0, false);
+    expression(&tokens, &mut index, &mut section) && index == tokens.len() && section
+}
+fn linker_assignment_reason(path: &str, text: &str) -> Option<&'static str> {
+    let parts = path.split('/').collect::<Vec<_>>();
+    if !matches!(parts.as_slice(), ["games", _, leaf] if extension(leaf).eq_ignore_ascii_case("ld"))
+    {
+        return None;
+    }
+    static ASSIGNMENT: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    static DIFFERENCE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let assignment = ASSIGNMENT.get_or_init(|| {
+        regex::Regex::new(r"([A-Za-z_.$][\w.$]*)\s*=\s*([^;{}]+);")
+            .expect("linker assignment pattern")
+    });
+    let difference = DIFFERENCE.get_or_init(|| {
+        regex::Regex::new(
+            r"^\s*(?:[A-Za-z_.$][\w.$]*\s*-\s*[A-Za-z_.$][\w.$]*|ABSOLUTE\s*\(\s*[A-Za-z_.$][\w.$]*\s*-\s*[A-Za-z_.$][\w.$]*\s*\))\s*$",
+        )
+        .expect("linker symbol difference pattern")
+    });
+    let code = unquoted_source(text);
+    assignment
+        .captures_iter(&code)
+        .any(|capture| {
+            &capture[1] != "."
+                && !difference.is_match(&capture[2])
+                && !linker_section_expression(&capture[2])
+        })
+        .then_some(LINKER_ASSIGNMENT_REASON)
+}
+const RAW_ADDRESS_REASON: &str = "numeric call target or ROM/RAM literal-pool address in raw disassembly (O2): reference a label where its bytes are";
+fn numeric_word(text: &str) -> Option<u32> {
+    let text = text.trim();
+    text.strip_prefix("0x")
+        .or_else(|| text.strip_prefix("0X"))
+        .map_or_else(
+            || text.parse().ok(),
+            |hex| u32::from_str_radix(hex, 16).ok(),
+        )
+}
+fn memory_address(word: u32) -> bool {
+    // GBA address-space regions, including the Game Pak ROM's bus mirrors.
+    (0x0200_0000..0x0204_0000).contains(&word)
+        || (0x0300_0000..0x0300_8000).contains(&word)
+        || (0x0800_0000..0x0e00_0000).contains(&word)
+}
+fn register_name(word: &str) -> Option<&str> {
+    match word {
+        "ip" => Some("r12"),
+        "sp" => Some("r13"),
+        "lr" => Some("r14"),
+        "pc" => Some("r15"),
+        _ => word
+            .strip_prefix('r')
+            .and_then(|digits| digits.parse::<u8>().ok())
+            .filter(|&number| number < 16)
+            .map(|_| word),
+    }
+}
+/// A loaded register is an address only when this local instruction stream
+/// dereferences or calls it before overwriting it. Pointer-only arguments and
+/// standalone tables need semantic review; coordinates can look like addresses.
+fn loaded_pointer(lines: &[&str], register: &str) -> bool {
+    let Some(register) = register_name(register) else {
+        return false;
+    };
+    let mut aliases = BTreeSet::from([register.to_string()]);
+    for line in lines {
+        let line = line.split_once(':').map_or(*line, |(_, rest)| rest).trim();
+        let Some((word, operands)) = line.split_once(char::is_whitespace) else {
+            continue;
+        };
+        let word = word.to_ascii_lowercase();
+        if matches!(
+            word.as_str(),
+            ".section"
+                | ".text"
+                | ".data"
+                | ".bss"
+                | ".thumb_func"
+                | ".4byte"
+                | ".word"
+                | ".long"
+                | ".int"
+        ) {
+            break;
+        }
+        let registers = operands
+            .split(|c: char| !c.is_ascii_alphanumeric())
+            .filter_map(register_name)
+            .collect::<Vec<_>>();
+        if word.starts_with("ldr") || word.starts_with("str") {
+            let base = operands.split_once('[').and_then(|(_, rest)| {
+                rest.split(|c: char| !c.is_ascii_alphanumeric())
+                    .find_map(register_name)
+            });
+            if base.is_some_and(|base| aliases.contains(base)) {
+                return true;
+            }
+        }
+        if (word.starts_with("ldm") || word.starts_with("stm"))
+            && registers
+                .first()
+                .is_some_and(|base| aliases.contains(*base))
+        {
+            return true;
+        }
+        if matches!(word.as_str(), "bx" | "blx")
+            && registers
+                .first()
+                .is_some_and(|target| aliases.contains(*target))
+        {
+            return true;
+        }
+        if word == "bl"
+            && operands
+                .trim()
+                .strip_prefix("_call_via_")
+                .and_then(register_name)
+                .is_some_and(|target| aliases.contains(target))
+        {
+            return true;
+        }
+        if word.starts_with("mov") && registers.len() == 2 {
+            if registers[0] == "r15" && aliases.contains(registers[1]) {
+                return true;
+            }
+            let copied = aliases.contains(registers[1]);
+            aliases.remove(registers[0]);
+            if copied {
+                aliases.insert(registers[0].to_string());
+            }
+        } else if word == "bl" || word == "blx" || (word.starts_with("bl") && word.len() > 3) {
+            for register in ["r0", "r1", "r2", "r3", "r4", "r12", "r14"] {
+                aliases.remove(register);
+            }
+        } else if word == "pop" {
+            for register in &registers {
+                aliases.remove(*register);
+            }
+            if registers.contains(&"r15") {
+                break;
+            }
+        } else if matches!(word.as_str(), "b" | "bal" | "bx") {
+            break;
+        } else if assembly_instruction(&word)
+            && !word.starts_with('b')
+            && !word.starts_with("str")
+            && !word.starts_with("stm")
+            && !matches!(word.as_str(), "cmp" | "cmn" | "tst" | "teq" | "push")
+        {
+            if let Some(register) = registers.first() {
+                aliases.remove(*register);
+            }
+        }
+        if aliases.is_empty() {
+            break;
+        }
+    }
+    false
+}
+/// The same local pointer-use proof for ARM instructions that recon still
+/// spells as words. Unknown encodings end the proof instead of guessing.
+fn loaded_pointer_words(words: &[Option<u32>], register: u32) -> bool {
+    let mut aliases = 1_u16 << register;
+    for word in words {
+        let Some(word) = word else { break };
+        let base = (word >> 16) & 15;
+        let destination = (word >> 12) & 15;
+        let memory = word & 0x0c00_0000 == 0x0400_0000;
+        let multiple = word & 0x0e00_0000 == 0x0800_0000;
+        if (memory || multiple) && aliases & (1 << base) != 0 {
+            return true;
+        }
+        if word & 0x0fff_fff0 == 0x012f_ff10 {
+            return aliases & (1 << (word & 15)) != 0;
+        }
+        if word & 0x0fff_0ff0 == 0x01a0_0000 {
+            let copied = aliases & (1 << (word & 15)) != 0;
+            if destination == 15 {
+                return copied;
+            }
+            aliases &= !(1 << destination);
+            if copied {
+                aliases |= 1 << destination;
+            }
+        } else if memory {
+            if word & (1 << 20) != 0 {
+                aliases &= !(1 << destination);
+            }
+        } else if multiple {
+            if word & (1 << 20) != 0 {
+                aliases &= !(*word as u16);
+            }
+        } else if word & 0x0e00_0000 == 0x0a00_0000 {
+            if word & (1 << 24) == 0 {
+                break;
+            }
+            aliases &= !0x501f;
+        } else if word & 0x0c00_0000 == 0 {
+            if !matches!((word >> 21) & 15, 8..=11) {
+                if destination == 15 {
+                    break;
+                }
+                aliases &= !(1 << destination);
+            }
+        } else {
+            break;
+        }
+        if aliases == 0 {
+            break;
+        }
+    }
+    false
+}
+fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
+    let parts = path.split('/').collect::<Vec<_>>();
+    if !matches!(parts.as_slice(), ["recon", _, "raw", .., leaf] if extension(leaf).eq_ignore_ascii_case("s"))
+    {
+        return None;
+    }
+    static CALL: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    static LOAD: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let call = CALL.get_or_init(|| {
+        regex::Regex::new(r"(?im)^\s*bl(?:x|eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)?(?:\.[nw])?\s+#?(?:0x[0-9a-f]+|[0-9]+)\b")
+            .expect("numeric assembly call pattern")
+    });
+    let load = LOAD.get_or_init(|| {
+        regex::Regex::new(r"(?im)^\s*ldr(?:eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)?(?:\.[nw])?\s+(r(?:1[0-5]|[0-9])|ip|lr|sp),\s*(=?[A-Za-z_.$][\w.$]*|=0x[0-9a-f]+|=[0-9]+)\s*$")
+            .expect("assembly literal pool load pattern")
+    });
+    let code = unquoted_source(text).to_ascii_lowercase();
+    if call.is_match(&code) {
+        return Some(RAW_ADDRESS_REASON);
+    }
+    let mut pools = BTreeSet::new();
+    let lines = code.lines().collect::<Vec<_>>();
+    for (index, line) in lines.iter().enumerate() {
+        let Some(capture) = load.captures(line) else {
+            continue;
+        };
+        if !loaded_pointer(&lines[index + 1..], &capture[1]) {
+            continue;
+        }
+        let operand = capture.get(2).expect("literal pool operand").as_str();
+        if operand
+            .strip_prefix('=')
+            .and_then(numeric_word)
+            .is_some_and(memory_address)
+        {
+            return Some(RAW_ADDRESS_REASON);
+        }
+        pools.insert(operand.trim_start_matches('='));
+    }
+    let mut pool = false;
+    let mut encoded = Vec::new();
+    let inspect_encoded = |words: &[Option<u32>]| {
+        words.iter().enumerate().any(|(index, word)| {
+            let Some(word) = word else { return false };
+            // An ARM word load from pc: its target is pc (+8), plus or
+            // minus the 12-bit byte offset. Only its literal is an address.
+            if word & 0x0f7f_0000 != 0x051f_0000 || word & 3 != 0 {
+                return false;
+            }
+            if !loaded_pointer_words(&words[index + 1..], (word >> 12) & 15) {
+                return false;
+            }
+            let displacement = (word & 0xfff) as isize / 4;
+            let target = index as isize
+                + 2
+                + if word & (1 << 23) != 0 {
+                    displacement
+                } else {
+                    -displacement
+                };
+            target >= 0
+                && words
+                    .get(target as usize)
+                    .copied()
+                    .flatten()
+                    .is_some_and(memory_address)
+        })
+    };
+    for line in code.lines() {
+        let mut line = line.trim();
+        if let Some((label, rest)) = line.split_once(':') {
+            pool = pools.contains(label.trim());
+            line = rest.trim();
+        }
+        if line.is_empty() || line.starts_with(".align") {
+            continue;
+        }
+        let Some((directive, operands)) = line.split_once(char::is_whitespace) else {
+            continue;
+        };
+        if matches!(
+            directive,
+            ".section" | ".text" | ".data" | ".bss" | ".pushsection" | ".popsection" | ".previous"
+        ) {
+            if inspect_encoded(&encoded) {
+                return Some(RAW_ADDRESS_REASON);
+            }
+            encoded.clear();
+            pool = false;
+            continue;
+        }
+        if matches!(directive, ".4byte" | ".word" | ".long" | ".int") {
+            for operand in operands.split(',') {
+                let word = numeric_word(operand);
+                if pool && word.is_some_and(memory_address) {
+                    return Some(RAW_ADDRESS_REASON);
+                }
+                encoded.push(word);
+            }
+        } else if !directive.starts_with('.')
+            || matches!(directive, ".2byte" | ".hword" | ".byte" | ".short")
+        {
+            if inspect_encoded(&encoded) {
+                return Some(RAW_ADDRESS_REASON);
+            }
+            encoded.clear();
+            pool = false;
+        }
+    }
+    inspect_encoded(&encoded).then_some(RAW_ADDRESS_REASON)
 }
 const EDITION_EQUATE_REASON: &str = "equate in an edition scaffold: it brings in base-ROM bytes and labels where they are, never a number the linked code reads";
 /// Any equate or symbol assignment in an edition's scaffold,
@@ -1470,7 +1880,7 @@ fn asset_game(path: &str) -> Option<&str> {
 }
 /// The shared root holds only what every game builds byte-exact from the
 /// same text: nested C source, interface headers, asset sources with the
-/// PNG, TSV and BIN inputs they are built from, and sequences, as MIDI or
+/// PNG and TSV inputs they are built from, and sequences, as MIDI or
 /// assembly, under SOUND/SEQUENCE and samples, WAV or PCM4, under
 /// SOUND/SAMPLE, as in each game.
 fn shared_root_reason(path: &str) -> Option<&'static str> {
@@ -1482,7 +1892,7 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
         return None;
     }
     let source = matches!(rest, ["SRC", _, .., leaf]
-        if listed(extension(leaf), &["C", "S", "PNG", "TSV", "BIN"]));
+        if listed(extension(leaf), &["C", "S", "PNG", "TSV"]));
     let interface = matches!(rest, ["INCLUDE", _, .., leaf] if extension(leaf) == "H");
     let sequence = matches!(rest, ["SOUND", "SEQUENCE", leaf]
         if listed(extension(leaf), &["MID", "S"]));
@@ -1822,10 +2232,11 @@ fn check_staged(root: &Path) -> Result<(), String> {
     scan(root, entries, true)
 }
 fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, String> {
-    let excluded = format!("^{remote}");
-    let mut args = vec!["rev-list", local];
+    // A new branch still shares already-published history. The advertised
+    // destination also excludes commits when local remote-tracking refs lag.
+    let mut args = vec!["rev-list", local, "--not", "--remotes"];
     if !remote.bytes().all(|byte| byte == b'0') {
-        args.push(&excluded);
+        args.push(remote);
     }
     git(root, &args, &format!("outgoing revision scan {local}")).map(|output| {
         String::from_utf8_lossy(&output)
@@ -2001,7 +2412,7 @@ fn history_message_reason(message: &str) -> Option<&'static str> {
 }
 /// Scan every commit reachable from any ref, or from `revision`: each message, and each file
 /// version any commit introduced, against today's publication rules. Writes
-/// `out/history-audit.json` with every finding the history rewrite removes.
+/// `out/history-audit.tsv` with every finding.
 fn check_history(root: &Path, revision: Option<&str>) -> Result<(), String> {
     let listing = git(
         root,
@@ -2448,7 +2859,7 @@ fn binary_fixtures() -> Vec<Fixture> {
             unregistered,
         ),
         (
-            "games/THE BROKEN SEAL/SRC/SYSTEM/HEADER.BIN",
+            "tools/alchemy/tests/header.dat",
             fragment,
             Some("ROM header fragment"),
         ),
@@ -2747,7 +3158,7 @@ fn text_fixtures() -> Vec<Fixture> {
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/BLOB.JSON",
             json_base64,
-            encoded,
+            Some(JSON_REASON),
         ),
         (
             "tools/alchemy/src/dashboard/font.css",
@@ -2761,7 +3172,7 @@ fn text_fixtures() -> Vec<Fixture> {
         ),
         ("tools/alchemy/src/assets.rs", quoted, encoded),
         ("tools/alchemy/src/key.rs", base32_key, encoded),
-        ("tools/alchemy/src/blob.json", hex_blob, encoded),
+        ("tools/alchemy/src/blob.json", hex_blob, Some(JSON_REASON)),
         (
             "tools/alchemy/src/words.rs",
             text(digests(17_000)),
@@ -2778,20 +3189,20 @@ fn text_fixtures() -> Vec<Fixture> {
         (
             "games/THE BROKEN SEAL/SRC/BATTLE/DATA/TABLE.JSON",
             json_table,
-            Some("byte dump in JSON"),
+            Some(JSON_REASON),
         ),
         (
-            "games/THE LOST AGE/DATA/TABLE.JSON",
+            "games/THE LOST AGE/DATA/TABLE.TSV",
             empty(),
             native,
         ),
         (
-            "games/THE LOST AGE/src/battle/table.json",
+            "games/THE LOST AGE/src/battle/table.tsv",
             empty(),
             native,
         ),
         (
-            "Games/THE BROKEN SEAL/SRC/TABLE.JSON",
+            "Games/THE BROKEN SEAL/SRC/TABLE.TSV",
             empty(),
             native,
         ),
@@ -2865,12 +3276,12 @@ fn text_fixtures() -> Vec<Fixture> {
             Some("games/COMMON holds only"),
         ),
         (
-            "games/COMMON/SRC/SOUND/TABLE.JSON",
+            "games/COMMON/SRC/SOUND/TABLE.dat",
             empty(),
             Some("games/COMMON holds only"),
         ),
         (
-            "games/COMMON/recon/translation-units.json",
+            "games/COMMON/recon/translation-units.tsv",
             empty(),
             Some("games/COMMON holds only"),
         ),
@@ -2888,7 +3299,7 @@ fn text_fixtures() -> Vec<Fixture> {
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON",
             text(rows),
-            None,
+            Some(JSON_REASON),
         ),
         (
             "tools/alchemy/src/dashboard/style.css",
@@ -2917,7 +3328,7 @@ fn text_fixtures() -> Vec<Fixture> {
             license,
         ),
         (
-            "tools/alchemy/notes.json",
+            "tools/alchemy/notes.rs",
             text(unified),
             patch,
         ),
@@ -3013,6 +3424,10 @@ fn self_test(root: &Path) -> Result<(), String> {
         "tbs-en.gba.lz",
         ".cmatch-fresh/result.s",
         "games/THE BROKEN SEAL/PREVIEW/title.png",
+        "games/THE BROKEN SEAL/SRC/X.BIN",
+        "games/THE LOST AGE/SRC/X.BIN",
+        "games/COMMON/SRC/M/X.BIN",
+        "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON",
         "recon/tbs/raw/080000c0.s~",
         "recon/tbs/assets.json",
         "docs/README.md",
@@ -3086,7 +3501,6 @@ fn self_test(root: &Path) -> Result<(), String> {
         "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_rom.rs",
-        "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON",
         "rom.sha1",
     ] {
         if let Some(reason) = publication_path_reason(path) {
@@ -3154,7 +3568,7 @@ fn self_test(root: &Path) -> Result<(), String> {
     }
     Ok(())
 }
-const USAGE: &str = "usage: check publication [--documents | --staged | --pre-push | --tree [REV] | --history [REV] | --self-test]\n\nModes:\n  --documents    Check owned documentation, including ignored output.\n  --history [REV] Check every commit message and file version in history, or reachable from REV; writes out/history-audit.json.\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history and each pushed tree using update lines on stdin.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
+const USAGE: &str = "usage: check publication [--documents | --staged | --pre-push | --tree [REV] | --history [REV] | --self-test]\n\nModes:\n  --documents    Check owned documentation, including ignored output.\n  --history [REV] Check every commit message and file version in history, or reachable from REV; writes out/history-audit.tsv.\n  --staged       Check staged files before committing.\n  --pre-push     Check commits absent from remotes and each pushed tree using update lines on stdin.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
 fn fail(message: &str) -> ExitCode {
     eprintln!("error: {message}");
     ExitCode::FAILURE
@@ -3312,6 +3726,128 @@ mod tests {
     use super::*;
 
     #[test]
+    fn publication_self_test_fixtures_follow_the_current_policy() {
+        let root = tempfile::tempdir().unwrap();
+        self_test(root.path()).unwrap();
+    }
+
+    #[test]
+    fn raw_bin_inputs_are_refused_by_path_in_game_and_shared_sources() {
+        for path in [
+            "games/THE BROKEN SEAL/SRC/X.BIN",
+            "games/THE LOST AGE/SRC/X.BIN",
+            "games/COMMON/SRC/M/X.BIN",
+            "games/THE BROKEN SEAL/SRC/X.bin",
+        ] {
+            assert_eq!(
+                publication_path_reason(path),
+                Some("private or generated file type"),
+                "{path}"
+            );
+            assert!(native_path_reason(path).is_some(), "{path}");
+        }
+    }
+
+    #[test]
+    fn linker_names_come_from_bytes_sections_or_symbol_differences() {
+        for path in [
+            "games/THE BROKEN SEAL/MAIN.LD",
+            "games/THE LOST AGE/CONSTANTS.LD",
+        ] {
+            for source in [
+                "Alias = Defined;\n",
+                "Place = 0x08000100;\n",
+                "Count = 8;\n",
+                "SECTIONS { .text : { Alias = Defined; } }\n",
+                "Length = End - Start; Alias = Defined;\n",
+                "PROVIDE(Alias = Defined);\n",
+                "Alias = Defined + ADDR(.text) * 0;\n",
+                "Alias = ADDR(.text) ? Defined : Other;\n",
+                "Alias = Defined /* ADDR(.text) */;\n",
+            ] {
+                assert_eq!(
+                    linker_assignment_reason(path, source),
+                    Some(LINKER_ASSIGNMENT_REASON),
+                    "{path}: {source}"
+                );
+                assert_eq!(
+                    publication_data_reason(path, source.as_bytes(), None),
+                    Some(LINKER_ASSIGNMENT_REASON)
+                );
+            }
+            for source in [
+                "MEMORY { ROM (rx) : ORIGIN = 0x08000000, LENGTH = 32M }\n",
+                "Length = End - Start;\n",
+                "Length = ABSOLUTE(End - Start);\n",
+                "Length = . - Start;\n",
+                "Start = ADDR(.text);\n",
+                "Start = LOADADDR(.text) + 1;\n",
+                "Entry = LOADADDR(.runtime) + (Routine - ADDR(.runtime));\n",
+                ". = ALIGN(4);\n",
+                "/* Place = 0x08000100; */\n",
+            ] {
+                assert!(
+                    linker_assignment_reason(path, source).is_none(),
+                    "{path}: {source}"
+                );
+            }
+        }
+        assert!(linker_assignment_reason("tools/linker.ld", "Alias = Defined;").is_none());
+    }
+
+    #[test]
+    fn raw_calls_and_literal_pools_use_labels_without_rejecting_instruction_encodings() {
+        let path = "recon/tla/raw/ROUTINE.s";
+        for source in [
+            "bl 0x08000101\n",
+            "blx 50331648\n",
+            "blne 0x03000100\n",
+            "ldr r0, =0x02000000\nldr r1, [r0]\n",
+            "LDR R0, .L_POOL\nLDR R1, [R0]\nBX LR\n.L_POOL:\n.WORD 0x03000100\n",
+            "ldr r0, .L_pool\nldr r1, [r0]\nbx lr\n.L_pool:\n.4byte 0x03000100\n",
+            "ldr r0, .L_pool\nbx r0\n.L_pool:\n.word 0x08000101\n",
+            "ldr r0, .L_pool\nmov r5, r0\nmovs r0, #0\nstr r1, [r5]\nbx lr\n.L_pool:\n.4byte 0x02000100\n",
+            ".4byte 0xe59f0004\n.4byte 0xe5901000\n.4byte 0xe12fff1e\n.4byte 0x02004778\n",
+            ".4byte 0x03000100\n.4byte 0xe51f000c\n.4byte 0xe5901000\n.4byte 0xe12fff1e\n",
+            ".4byte 0xe59f0004\n.4byte 0xe1a05000\n.4byte 0xe5951000\n.4byte 0x02004778\n",
+        ] {
+            assert_eq!(
+                raw_address_reason(path, source),
+                Some(RAW_ADDRESS_REASON),
+                "{source}"
+            );
+            assert_eq!(
+                publication_data_reason(path, source.as_bytes(), None),
+                Some(RAW_ADDRESS_REASON)
+            );
+        }
+        for source in [
+            "bl Routine\n",
+            "bl Routine + 4\n",
+            "ble .L_again\n",
+            "ldr r0, .L_pool\nbx lr\n.L_pool:\n.4byte Buffer + 4\n",
+            "ldr r0, .L_pool\nbx lr\n.L_pool:\n.4byte 0x04000100\n",
+            "ldr r0, .L_pool\nbx lr\n.L_pool:\n.4byte 0x03010000\n",
+            ".4byte 0xe59f0000\n.4byte 0xe12fff1e\n.4byte Buffer\n",
+            ".4byte 0x03a00001\n.4byte 0x0a000044\n",
+            ".4byte 0xe59f0000\n.4byte 0xe12fff1e\n.4byte 0x00004778\n",
+            "@ bl 0x08000100\n/* .4byte 0x02000000 */\n",
+            ".ascii \"bl 0x08000100\"\n",
+            "ldr r0, .L_pool\nmovs r0, #0\nldr r1, [r0]\n.L_pool:\n.4byte 0x02000100\n",
+            "ldr r0, .L_pool\nbl Motion_CamBounds\nbx lr\n.L_pool:\n.4byte 0x08040000\n",
+            "ldr r0, .L_pool\nbl CallRoutine\nldr r1, [r0]\n.L_pool:\n.4byte 0x02000100\n",
+            "ldr r0, .L_pool\nldr r1, [r0]\nbx lr\n.L_pool:\n.4byte 4\n.section .rodata\n.4byte 0x0200001a\n",
+            ".4byte 0xe59f0004\n.4byte 0xe1a01000\n.4byte 0xeb000001\n.4byte 0x08040000\n",
+            ".4byte 0xe59f0004\n.4byte 0xe3a00000\n.4byte 0xe5901000\n.4byte 0x02000100\n",
+        ] {
+            assert!(raw_address_reason(path, source).is_none(), "{source}");
+        }
+        assert!(
+            raw_address_reason("games/THE LOST AGE/SRC/ROUTINE.S", "bl 0x08000100\n").is_none()
+        );
+    }
+
+    #[test]
     fn message_archives_are_built_assembly_included_by_a_tracked_source() {
         // Each game's TEXT/MESSAGES.S includes the assembly build rom writes
         // from the edition's catalog, whose address words are relocations;
@@ -3344,7 +3880,7 @@ mod tests {
             ),
             (
                 "games/THE LOST AGE/MAIN.LD",
-                b"MEMORY { ROM (rx) : ORIGIN = 0x08000000, LENGTH = 32M }\nSoundMixer = 0x081c0000;\n"
+                b"MEMORY { ROM (rx) : ORIGIN = 0x08000000, LENGTH = 32M }\nSoundMixer = LOADADDR(.iwram_mixer) + 1;\n"
                     .to_vec(),
             ),
             (
@@ -3937,6 +4473,133 @@ mod tests {
             .to_string()
     }
     #[test]
+    fn new_branch_push_excludes_published_history_but_full_history_still_audits_it() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
+        commit(root, &[("private.DUMP", b"fixture\n".to_vec())]);
+        git(root, &["rm", "private.DUMP"], "fixture git").unwrap();
+        let published = commit(root, &[("README.md", b"Project\n".to_vec())]);
+        git(
+            root,
+            &["update-ref", "refs/remotes/origin/main", &published],
+            "fixture remote",
+        )
+        .unwrap();
+        let tip = commit(
+            root,
+            &[("games/X/SRC/START.C", b"void Start(void) {}\n".to_vec())],
+        );
+        let zero = "0".repeat(40);
+        assert_eq!(revisions(root, &tip, &zero).unwrap(), [tip.clone()]);
+        let update = format!("refs/heads/topic {tip} refs/heads/topic {zero}\n");
+        assert!(check_push(root, &update).is_ok());
+        assert!(check_history(root, Some(&tip)).is_err());
+        let report = std::fs::read_to_string(root.join("out/history-audit.tsv")).unwrap();
+        assert!(report.contains("private.DUMP"), "{report}");
+    }
+
+    #[test]
+    fn advertised_remote_tip_is_excluded_even_without_a_remote_tracking_ref() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
+        let published = commit(root, &[("README.md", b"Project\n".to_vec())]);
+        let tip = commit(
+            root,
+            &[("games/X/SRC/START.C", b"void Start(void) {}\n".to_vec())],
+        );
+        assert_eq!(revisions(root, &tip, &published).unwrap(), [tip]);
+    }
+
+    #[test]
+    fn push_refuses_forbidden_outgoing_versions_even_when_the_tip_deleted_them() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
+        let published = commit(root, &[("README.md", b"Project\n".to_vec())]);
+        git(
+            root,
+            &["update-ref", "refs/remotes/origin/main", &published],
+            "fixture remote",
+        )
+        .unwrap();
+        commit(root, &[("private.DUMP", b"fixture\n".to_vec())]);
+        git(root, &["rm", "private.DUMP"], "fixture git").unwrap();
+        let tip = commit(root, &[]);
+        assert!(check_tree(root, Some(&tip)).is_ok());
+        let update = format!(
+            "refs/heads/topic {tip} refs/heads/topic {}\n",
+            "0".repeat(40)
+        );
+        assert!(check_push(root, &update)
+            .unwrap_err()
+            .contains("private.DUMP"));
+    }
+
+    #[test]
+    fn push_still_scans_the_whole_tip_when_no_commit_is_outgoing() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
+        let published = commit(root, &[("private.DUMP", b"fixture\n".to_vec())]);
+        git(
+            root,
+            &["update-ref", "refs/remotes/origin/main", &published],
+            "fixture remote",
+        )
+        .unwrap();
+        let zero = "0".repeat(40);
+        assert!(revisions(root, &published, &zero).unwrap().is_empty());
+        let update = format!("refs/heads/topic {published} refs/heads/topic {zero}\n");
+        assert!(check_push(root, &update)
+            .unwrap_err()
+            .contains("private.DUMP"));
+    }
+
+    #[test]
+    fn push_still_refuses_outgoing_commit_messages_with_byte_dumps() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
+        let published = commit(root, &[("README.md", b"Project\n".to_vec())]);
+        git(
+            root,
+            &["update-ref", "refs/remotes/origin/main", &published],
+            "fixture remote",
+        )
+        .unwrap();
+        let bytes = (0..32)
+            .map(|value| format!("{value:02x} "))
+            .collect::<String>();
+        git(
+            root,
+            &[
+                "-c",
+                "user.name=fixture",
+                "-c",
+                "user.email=fixture@example.invalid",
+                "commit",
+                "--quiet",
+                "--allow-empty",
+                "--message",
+                &format!("Fixture\n\n{bytes}"),
+            ],
+            "fixture message",
+        )
+        .unwrap();
+        let tip =
+            String::from_utf8(git(root, &["rev-parse", "HEAD"], "fixture tip").unwrap()).unwrap();
+        let update = format!(
+            "refs/heads/topic {} refs/heads/topic {}\n",
+            tip.trim(),
+            "0".repeat(40)
+        );
+        assert!(check_push(root, &update)
+            .unwrap_err()
+            .contains("raw byte dump"));
+    }
+    #[test]
     fn tree_mode_passes_pret_style_inputs_and_reports_only_presentation_material() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
@@ -3984,7 +4647,7 @@ mod tests {
         );
         let error = check_tree(root, Some(&native_and_misplaced)).unwrap_err();
         assert!(!error.contains("games/Y/SOUND/SEQUENCE/A.MID:"));
-        assert!(error.contains("games/Y/Data/TABLE.JSON: game material must be an editable native"));
+        assert!(error.contains("games/Y/Data/TABLE.JSON: JSON is banned"));
         assert!(!error.contains("games/X/SOUND"), "{error}");
     }
     #[test]

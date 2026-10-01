@@ -1241,6 +1241,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             Event_Wait(60);
             Event_ShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x2e0, 200);
+            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -1257,6 +1258,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
                 Event_ShowMessage(a0, 0);
             }
         }
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(FieldScene_RunMiddleSequence, rec8, a0, 3);
         Event_End();
     }
@@ -1279,6 +1281,7 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Camera_MoveTo(71303168, -1, 11010048, 1);
         Camera_WaitForMove();
         Event_ShowMessage(scene, 0);
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
         Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
@@ -1293,6 +1296,7 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         OverlayObject_PlaceWithScale14000(0, 1000, 176);
         OverlayObject_PlaceWithScale14000(0, 1016, 168);
         Event_Wait(15);
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
         Camera_MoveTo(71303168, -1, 11010048, 1);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1311,6 +1315,7 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Event_SetMessage((s32)MsgKorosseoLogsKeyClearingStage);
         Event_ShowMessage(scene, 0);
     }
+    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(FieldScene_RunMiddleSequence, path, scene, 4);
     Event_End();
 }

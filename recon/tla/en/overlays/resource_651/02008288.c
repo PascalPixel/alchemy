@@ -3,7 +3,8 @@
  *
  * Remaining difference: one instruction's place in each. The ROM loads the
  * leader's facing before the 0x2000 it adds (ldrh r3, [r0, #6]; movs r2,
- * #128); stock agscc sets the constant first. alchemy permute found no
+ * #128); approved agscc with TLA's build flags sets the constant first.
+ * alchemy permute found no
  * rewrite that moves it in 74,224 candidates. Every other byte matches.
  */
 

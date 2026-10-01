@@ -1,7 +1,9 @@
 //! The build implementation signature: one digest of the tool sources that
 //! can change what a build stage writes into its caches. Object, assembly,
 //! overlay, score and asset caches key on it instead of on the whole
-//! executable, so a change to reports, checks, or coverage no longer
+//! executable. Alchemy's build stages, every Psynergy and ags source and the
+//! workspace lockfile contribute; reports, checks and coverage do not. A
+//! change to those readers no longer
 //! recompiles every C file, as pret's Makefile rebuilds only what a
 //! changed tool produces. The byte-identical ROM comparison stays the proof;
 //! the signature decides only what may be reused.

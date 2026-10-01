@@ -1024,12 +1024,14 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3d80000, -1, 0xe80000, 1);
             Camera_WaitForMove();
+            /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
             Value2(Engine_EventShowMessage, a0, 0);
             SceneState_ApplyTable8715AndValue104();
             Event_ShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x438, 0x108);
             Event_Wait(15);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(SceneActor_PlaceWithScale14000, 0, 0x438, 216);
             SceneActor_PlaceWithScale14000(0, 0x428, 216);
             SceneState_WaitForStatusWords();
@@ -1045,6 +1047,7 @@ void FieldScene_RunSecondActorInteraction(s32 a0)
                 Event_ShowMessage(a0, 0);
             }
         }
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(FieldScene_RunMiddleSequence, rec, a0, 2);
         Engine_EventEnd();
     }
@@ -1075,11 +1078,14 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Korosseo_FadeInCompetitor(0, 0x358, 0x108);
             Event_Wait(10);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(SceneActor_PlaceWithScale14000, 0, 0x358, 0x108);
+            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(SceneActor_PlaceWithScale14000, 0, 0x358, 232);
             Event_ShowMessage(a0, 0);
             SceneActor_PlaceWithScale14000(0, 0x348, 232);
             Event_Wait(10);
+            /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(SceneActor_MovePairByTileOffset, 33, -64, 0);
             Camera_MoveTo(0x2f00000, -1, 0xd80000, 1);
             Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
@@ -1100,6 +1106,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
             Event_ShowMessage(a0, 0);
         }
         L_020016b0:;
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(FieldScene_RunMiddleSequence, rec2, a0, 3);
         Event_End();
     }
@@ -1133,6 +1140,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Korosseo_FadeInCompetitor(0, 632, 264);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
         Call3(Engine_ActorWalkToAndWait, 0, 616, 264);
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(Engine_ActorFaceDirection, 0, 49152, 20);
         battle_owner_69();
         Call2(Engine_CameraSetSpeed, 16384, 2048);
@@ -1148,6 +1156,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
         Event_ShowMessage(scene, 0);
         Call3(Engine_ActorSetSpeed, 0, 98304, 49152);
+        /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(SceneActor_PlaceWithScale14000, 0, 488, 248);
         Call3(Engine_ActorFaceDirection, 0, 16384, 20);
         BattleFx_RunRisingObjectSequence(0, 6, 0);
@@ -1160,6 +1169,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Engine_EventSetMessage((s32)MsgKorosseoScalingWallQuickly);
         Engine_EventShowMessage(scene, 0);
     }
+    /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(FieldScene_RunMiddleSequence, path, scene, 4);
     Engine_EventEnd();
 }

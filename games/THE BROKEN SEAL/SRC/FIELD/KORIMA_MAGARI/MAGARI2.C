@@ -26,7 +26,7 @@ extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
 u32 Random16Far(void);
-s32 IwramSignedDivide();
+s32 Math_DivideSigned();
 
 /* The board's records and its layout in the scene state, where the board
    setup points; the layout is 0 or 1. */
@@ -718,12 +718,12 @@ u16 Effect_AdjustColorChannels(u16 color, s32 adj)
     s16 blue = (s16)((color >> 10) & 31);
     u32 packed;
 
-    red = (s16)(red + IwramSignedDivide(
+    red = (s16)(red + Math_DivideSigned(
         red,
         (s32)((u32)adj << 2)
     ));
-    green = (s16)(green - IwramSignedDivide(green, adj));
-    blue = (s16)(blue - IwramSignedDivide(blue, adj));
+    green = (s16)(green - Math_DivideSigned(green, adj));
+    blue = (s16)(blue - Math_DivideSigned(blue, adj));
 
     /* Only the increasing channel is explicitly saturated by this owner. */
     if (red > 31)

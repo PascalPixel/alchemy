@@ -158,7 +158,7 @@ void TakaraHashira_RunActorAction(s32 a0)
     s32 rec7;
     s32 record;
 
-    rec7 = Value0(Object_GetById);
+    rec7 = Value1(Object_GetById, a0);
     Event_Begin();
     *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
     Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));

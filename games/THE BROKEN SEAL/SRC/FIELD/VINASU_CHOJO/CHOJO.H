@@ -113,7 +113,7 @@ extern unsigned char Data_0200e478[];
 extern unsigned char Data_0200e6ec[];
 extern Spr *Data_0200e6e8;
 
-s32 IwramUnsignedRemainder(s32, s32);
+s32 Math_RemainderUnsigned(s32, s32);
 void OverlayObject_SetValue1(void *, s32);
 void SceneActor_ParkRecord(u8 *record);
 s32 Object_CheckMovementCollision();

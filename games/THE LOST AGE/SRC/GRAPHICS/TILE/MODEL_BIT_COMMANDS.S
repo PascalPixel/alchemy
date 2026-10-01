@@ -16,6 +16,8 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+	.global Model_AddShortDelta
+Model_AddShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -26,6 +28,8 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+	.global Model_SubtractShortDelta
+Model_SubtractShortDelta:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -36,6 +40,8 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+	.global Model_AddLongDelta
+Model_AddLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -46,6 +52,8 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+	.global Model_SubtractLongDelta
+Model_SubtractLongDelta:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -56,6 +64,8 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+	.global Model_AddSignedDelta
+Model_AddSignedDelta:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -68,6 +78,8 @@ Model_BitCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
+	.global Model_SetBitValue
+Model_SetBitValue:
 	ror	r5, r3, #10
 	and	r5, r5, #0xfe000000
 	lsr	r3, r3, #10

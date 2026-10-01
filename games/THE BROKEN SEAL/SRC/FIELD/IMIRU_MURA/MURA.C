@@ -249,12 +249,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
 {
 
     void *actor9_record;
-    void *unused_actor9_record;
     void *actor8_record;
 
     if (GameFlag_IsSet(2177) != 0) {
         Event_Begin();
-        unused_actor9_record = Value3(Engine_ActorFaceActor, 9, 0, 0);
+        Call3(Engine_ActorFaceActor, 9, 0, 0);
         Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgMakyuriReallySayDie);
         Event_AskYesNo(9, 0);

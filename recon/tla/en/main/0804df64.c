@@ -2,7 +2,7 @@
    here after it). ⚓️ reads the buttons from gInput and calls the flag
    routines directly. It copies cursor into r5 between loading gInput's
    address and reading the repeat mask; this draft reads the mask first.
-   With -mtune=arm9tdmi this draft compiles exactly. */
+   The remaining load scheduling differs with the approved game flags. */
 #include "TYPES.H"
 
 /* The controller state the engine refreshes each frame. */

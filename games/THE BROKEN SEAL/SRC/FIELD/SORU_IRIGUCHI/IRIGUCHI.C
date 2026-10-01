@@ -286,10 +286,10 @@ void SoruIriguchi_SetSmallGem(void)
         Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
         Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
         Engine_MapRedraw();
-        Value3(Engine_WorkSetValuesIfNonNegative, 65536, 65536, 65536);
+        Call3(Engine_WorkSetValuesIfNonNegative, 65536, 65536, 65536);
         Engine_EventWait(20);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
-        Value3(Engine_WorkSetValuesIfNonNegative, 131072, 131072, 65536);
+        Call3(Engine_WorkSetValuesIfNonNegative, 131072, 131072, 65536);
         Engine_EventWait(20);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 40);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 32768, 20);
@@ -297,7 +297,7 @@ void SoruIriguchi_SetSmallGem(void)
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 10);
         Actor_Jump(ACTOR_PARTY_LEADER, 4, 20);
         Actor_Jump(ACTOR_PARTY_LEADER, 6, 40);
-        Value3(Engine_WorkSetValuesIfNonNegative, -1, -1, 58982);
+        Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 58982);
         Engine_EventWait(40);
         Engine_MessageShowCentered(message + 1, 1);
         GameFlag_Set(0x143);
@@ -773,7 +773,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Actor_SetAnimation(ACTOR_SUKURETA, 2);
     Actor_SetDestinationOffset(ACTOR_GERALD, -16, 0);
     Actor_SetDestinationOffset(ACTOR_JASMINE, 16, 0);
-    Value3(Engine_ActorSetDestinationOffset, 8, 0, -16);
+    Call3(Engine_ActorSetDestinationOffset, 8, 0, -16);
     Engine_ActorWaitForMove(8);
     Actor_SetAnimation(ACTOR_SUKURETA, 1);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -821,7 +821,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Camera_MoveTo(0x06b60000, -1, 0x00640000, 1);
     Camera_WaitForMove();
     Actor_SetAnimation(ACTOR_SUKURETA, 1);
-    Value4(Engine_CameraMoveTo, 0x06d80000, -1, 0x00960000, 1);
+    Call4(Engine_CameraMoveTo, 0x06d80000, -1, 0x00960000, 1);
     Camera_WaitForMove();
     Engine_EventWait(40);
     Camera_SetSpeed(0x26666, 0x4ccc);
@@ -843,7 +843,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Actor_StartRepeatedMotion(ACTOR_JASMINE, 2);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
-    Value2(Engine_ActorSetAttachedEffect, 5, 0x102);
+    Call2(Engine_ActorSetAttachedEffect, 5, 0x102);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);

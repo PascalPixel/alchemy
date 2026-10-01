@@ -2,7 +2,7 @@
  * words), ShindenHeya_ChooseRestartOption, between SPAWN_EFFECT.C and
  * RUN_PAIRED.C in FIELD/COMMON/SHINDEN_HEYA, stays listing.
  *
- * Remaining differences, measured 2026-09-29 with the stock agscc after its
+ * Remaining differences, measured 2026-09-29 with the approved agscc with the game build flags after its
  * messages were named: 320 bytes against 312.
  *
  * 1. Message numbers. The reference loads MsgShindenGreatHealer (the restart

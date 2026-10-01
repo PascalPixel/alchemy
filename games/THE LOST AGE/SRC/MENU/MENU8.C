@@ -1,19 +1,19 @@
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
-struct State_080a847c {
-    u8 padding[36];
+extern u8 CharacterMenu_CursorWidths[];
+void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
+
+/* ⚓️ keeps the cursor's tilemap object at 0x28; ☀️ at 0x24. */
+struct CursorMenuState {
+    u8 padding[40];
     u8 *object;
 };
-
-extern struct State_080a847c *volatile gMenuWork;
-extern u8 CharacterMenu_CursorWidths[];
-
-void Render_SetTilemapFlagRect(const u8 *, s32, s32, s32, s32, u32);
 
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected,
     u8 *entries, s32 invert)
 {
-    struct State_080a847c *state = gMenuWork;
+    struct CursorMenuState *state = Ram_HeapSlots->menu_runtime;
     u32 different;
     s32 count;
     s32 index;

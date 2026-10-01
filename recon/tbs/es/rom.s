@@ -344,16 +344,6 @@ MenuSelection_DrawFrame:
 	.thumb_func
 Menu_ConfirmSelection:
 	.incbin "baserom.gba", 0x0001ae60, 0x00000244
-	.section .rom.0001b4ac, "ax"
-	.global Debug_SelectAbilityPair
-	.type Debug_SelectAbilityPair, %function
-	.thumb_func
-Debug_SelectAbilityPair:
-	.global Menu_Check
-	.type Menu_Check, %function
-	.thumb_func
-Menu_Check:
-	.incbin "baserom.gba", 0x0001b4ac, 0x00000360
 	.section .rom.0001cd38, "ax"
 	.incbin "baserom.gba", 0x0001cd38, 0x00000134
 	.section .rom.0001ce6c, "ax"

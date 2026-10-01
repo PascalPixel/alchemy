@@ -300,7 +300,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_CLOSE_AND_RELEASE.o"(.text)
         "*/recon/tbs/raw/0801c2ee.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW6.o"(.text)
-        "*/recon/tbs/raw/0801c49c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SELECT_ABILITY_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT2.o"(.text)
         "*/recon/tbs/raw/0801c92e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW11.o"(.text)

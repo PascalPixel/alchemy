@@ -1420,12 +1420,6 @@ Unnamed_080d1714:
 	.thumb_func
 BattleEffect_RunPaletteParticles:
 	.incbin "baserom.gba", 0x000d2464, 0x00000934
-	.section .rom.000d2d98, "ax"
-	.global BattleEffect_RunEmberColumns
-	.type BattleEffect_RunEmberColumns, %function
-	.thumb_func
-BattleEffect_RunEmberColumns:
-	.incbin "baserom.gba", 0x000d2d98, 0x00000628
 	.section .rom.000d4ce8, "ax"
 	.incbin "baserom.gba", 0x000d4ce8, 0x00000570
 	.section .rom.000d52c8, "ax"
@@ -1533,6 +1527,10 @@ BattleFx_RunCastingImpact:
 	.section .rom.000e698c, "ax"
 	.incbin "baserom.gba", 0x000e698c, 0x000003b0
 	.section .rom.000e6eac, "ax"
+	.global BattleEffect_RunImpactBurst
+	.type BattleEffect_RunImpactBurst, %function
+	.thumb_func
+BattleEffect_RunImpactBurst:
 	.incbin "baserom.gba", 0x000e6eac, 0x000003d0
 	.section .rom.000e7338, "ax"
 	.incbin "baserom.gba", 0x000e7338, 0x000000cc
@@ -1658,7 +1656,13 @@ RingBolts_Points:
 	.global SpinningStars_Radii
 SpinningStars_Radii:
 	.incbin "baserom.gba", 0x000ee158, 0x00000002
-	.incbin "baserom.gba", 0x000ee15a, 0x0000006a
+	.incbin "baserom.gba", 0x000ee15a, 0x00000052
+	.global EmberColumns_Columns
+EmberColumns_Columns:
+	.incbin "baserom.gba", 0x000ee1ac, 0x00000008
+	.global EmberColumns_Gravity
+EmberColumns_Gravity:
+	.incbin "baserom.gba", 0x000ee1b4, 0x00000010
 	.global VortexMotes_Counts
 VortexMotes_Counts:
 	.incbin "baserom.gba", 0x000ee1c4, 0x00000006

@@ -1083,11 +1083,11 @@ Data_080ee17a:
 	.global Data_080ee17e
 Data_080ee17e:
 	.incbin "baserom.gba", 0x000ee17e, 0x0000002e
-	.global Data_080ee1ac
-Data_080ee1ac:
+	.global EmberColumns_Columns
+EmberColumns_Columns:
 	.incbin "baserom.gba", 0x000ee1ac, 0x00000008
-	.global Data_080ee1b4
-Data_080ee1b4:
+	.global EmberColumns_Gravity
+EmberColumns_Gravity:
 	.incbin "baserom.gba", 0x000ee1b4, 0x00000010
 	.global VortexMotes_Counts
 VortexMotes_Counts:

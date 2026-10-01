@@ -738,6 +738,8 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000d2464)
     "*/recon/tbs/it/rom.o"(.rom.000d2d98)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VORTEX.o"(.text)
+    "*/recon/tbs/it/rom.o"(.rom.000d3854)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/UPDATE_PHASE.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000d41a4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_TWO_MODE_B_MODE0.o"(.text)

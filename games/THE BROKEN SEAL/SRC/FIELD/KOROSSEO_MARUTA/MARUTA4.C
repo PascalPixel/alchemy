@@ -13,7 +13,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     extern void Resource_DecodeType01();
     extern s32 Resource_FindFreeEntry();
     extern void Runtime_BumpFree();
-    extern void FieldScene_RunScene3bcSequenceB(void);
+    extern void Korosseo_DrawGauge(void);
 
     u8 *descriptor;
     u8 *first_record;
@@ -44,13 +44,13 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     *(u16 *)(descriptor + 218) = 0;
     *(u16 *)(descriptor + 220) = 0;
 
-    Resource_DecodeType01(gColossoSceneDescriptor, handle);
+    Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     extent = Resource_FindFreeEntry();
     *(u16 *)(descriptor + 216) = (u16)extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
-    Engine_TaskAddCallback((s32)FieldScene_RunScene3bcSequenceB + 1, 0xc76);
+    Engine_TaskAddCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
 
     Runtime_BumpFree(handle);
 }

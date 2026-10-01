@@ -275,3 +275,43 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     sprite = effect->sprite;
     sprite->angle += effect->step64;
 }
+
+/* The leader is thrown up out of the water: it leaps, hangs for six frames,
+ * then sinks back over eight while every other frame throws a drop of spray
+ * to one side. */
+void BabiChika_RunLeaderSpray(void)
+{
+    struct FieldActor *leader = Object_GetById(0);
+    struct EffectOptions options;
+    u32 i;
+
+    Engine_EventBegin();
+    Object_SetMode(leader, 6);
+    ObjectMotion_WaitForAnimationChange(0);
+    Object_SetMode(leader, 1);
+    Engine_ActorSetSpriteFlags(leader, 0);
+    leader->motion_flags |= 2;
+    Audio_PlayCue(152);
+    leader->velocity_y = 0x40000;
+    Object_SetPosition(leader, leader->x.fixed, leader->y.fixed, leader->z.fixed + 0xc0000);
+    WaitFrames(6);
+    leader->motion_flags = 0;
+    options.update = (void (*)(union FieldObject *))Effect_AdvanceMotion;
+    Audio_PlayCue(127);
+    for (i = 0; i < 8; i++) {
+        leader->y.fixed -= 0x20000;
+        leader->target_y = leader->y.fixed;
+        WaitFrames(1);
+        if (i & 1) {
+            s32 m = (u32)Engine_RandomNext() % 10 - 5;
+            s32 vx = m * 0x3332;
+            s32 vz;
+
+            vz = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
+            Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, vx, 0, vz, 0x1000001, &options);
+        }
+    }
+    Engine_ActorSetSpriteFlags(leader, 1);
+    leader->motion_flags = 3;
+    Engine_EventEnd();
+}

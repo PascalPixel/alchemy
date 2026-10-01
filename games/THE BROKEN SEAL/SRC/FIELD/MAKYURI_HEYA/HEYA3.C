@@ -412,3 +412,64 @@ void FieldScene_RunScene39cSequenceA(void)
         Engine_EventEnd();
     }
 }
+
+/* A random drift of about -0.8 to +0.8 in steps of 0.2. */
+static __inline__ s32 Door_DriftStep(void)
+{
+    u32 drift = (u32)Engine_RandomNext();
+
+    return ((drift << 3) >> 16) * 0x3333;
+}
+
+/* Slides one of the three stone doors two cells open, a cell at a time, with
+ * dust drifting off its moving edge. */
+void MakyuriHeya_OpenStoneDoor(s32 side)
+{
+    struct EffectOptions params;
+    u32 j;
+    struct EffectOptions *p;
+    u32 i;
+
+    Audio_PlayCue(211);
+    if (side == 0) {
+        Engine_MapCopyCellsTo(111, 57, 113, 42, 1, 1);
+        Engine_MapCopyCellsTo(111, 59, 113, 43, 1, 1);
+    } else if (side == 1) {
+        Engine_MapCopyCellsTo(113, 58, 112, 46, side, side);
+        Engine_MapCopyCellsTo(115, 58, 113, 46, side, side);
+    } else {
+        Engine_MapCopyCellsTo(115, 57, 116, 44, 1, 1);
+        Engine_MapCopyCellsTo(113, 57, 115, 44, 1, 1);
+    }
+    p = &params;
+    p->palette = 7;
+    p->start_scale_x = 0x8000;
+    p->start_scale_y = 0x8000;
+    for (i = 0; i <= 1; i++) {
+        for (j = 0; j <= 7; j++) {
+            if (j & 1) {
+                if (side == 0) {
+                    Effect_Spawn(0x3180000, 0, 0x2c00000 + (i * 16 + j) * 0x10000, Door_DriftStep() + -0xcccc, 0,
+                                 Door_DriftStep() + -0xcccc, 0x90000, p);
+                } else if (side == 1) {
+                    Effect_Spawn(0x3200000 + (i * 16 + j) * 0x10000, 0, 0x2ea0000, Door_DriftStep() + -0xcccc, 0,
+                                 Door_DriftStep() + -0xcccc, 0x90000, p);
+                } else {
+                    Effect_Spawn(0x32c0000 + (i * 16 + j) * -0x10000, 0, 0x2ca0000, Door_DriftStep() + -0xcccc, 0,
+                                 Door_DriftStep() + -0xcccc, 0x90000, p);
+                }
+                Battle_WaitMode0(1);
+            }
+        }
+        if (side == 0) {
+            Engine_MapCopyCellsTo(111, 58, 113, i + 43, 1, 1);
+            Engine_MapCopyCellsTo(111, 59, 113, i + 44, 1, 1);
+        } else if (side == 1) {
+            Engine_MapCopyCellsTo(114, 58, i + 113, 46, side, side);
+            Engine_MapCopyCellsTo(115, 58, i + 114, 46, side, side);
+        } else {
+            Engine_MapCopyCellsTo(114, 57, 115 - i, 44, 1, 1);
+            Engine_MapCopyCellsTo(113, 57, 114 - i, 44, 1, 1);
+        }
+    }
+}

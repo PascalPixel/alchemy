@@ -493,3 +493,106 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Engine_GameFlagSet(0x904);
     Engine_EventEnd();
 }
+
+/* One object record, seen as the actor or as the leap it is making. */
+union TimedActor {
+    struct FieldActor actor;
+    struct SceneMotion motion;
+};
+
+extern s32 gKeyState;
+
+/* Actor 10 comes down the mountain in three leaps, landing with a shake
+ * each time, then waits up to a second for a key before the camera
+ * returns to the leader. */
+void ArutinYama_RunLeapSequence(void)
+{
+    union TimedActor *actor;
+    struct FieldActor *record;
+    u32 n;
+
+    actor = (union TimedActor *)Actor_Get(10);
+    Engine_EventBegin();
+    ObjectMotion_EnableActionAndResetMotion(10);
+    Call2(Engine_CameraSetSpeed, 0x26666, 0x4ccc);
+    Call4(Engine_CameraMoveTo, 0x1170000, 0x400000, 0xd80000, 1);
+    Engine_CameraWaitForMove();
+    Engine_AudioPlayCue(147);
+    Engine_ActorRunRepeatedMotion(10, 2);
+    Engine_EventWait(40);
+    Call3(Engine_ActorFaceDirection, 10, 0x3000, 20);
+    Call3(Engine_ActorFaceDirection, 10, 0x5000, 20);
+    Call3(Engine_ActorFaceDirection, 10, 0x8000, 40);
+    Call2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
+    Call4(Engine_CameraMoveTo, 0x800000, 0x400000, 0xca0000, 1);
+    actor->motion.active = 0;
+    actor->motion.timer = 0;
+    actor->motion.delay = 0;
+    *(s32 *)&actor->actor.unknown_44[4] = 0x6666;
+    actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+    Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
+    Call3(Engine_ActorMoveToAndWait, 10, 212, 200);
+    Call3(Engine_ActorMoveToAndWait, 10, 103, 200);
+    actor->actor.update = NULL;
+    actor->motion.state = 0;
+    Engine_EventWait(10);
+    Engine_ActorSetAnimation(10, 1);
+    Engine_AudioPlayCue(229);
+    Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0, 0x10000);
+    Engine_EventWait(4);
+    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Engine_EventWait(20);
+    Call3(Engine_ActorFaceDirection, 10, 0x5000, 40);
+    Object_GetById(10)->unknown_5a &= 254;
+    Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
+    record = Object_GetById(10);
+    Engine_ActorSetSpriteFlags(record, 0);
+    Engine_AudioPlayCue(153);
+    record = Object_GetById(10);
+    record->velocity_y = 0x40000;
+    Call2((void (*)())Engine_ActorSetAnimation, 10, 3);
+    Engine_ActorMoveToAndWait(10, 86, 214);
+    Engine_ActorSetAnimation(10, 1);
+    record = Object_GetById(10);
+    Engine_ActorSetSpriteFlags(record, 1);
+    Engine_EventWait(10);
+    Engine_AudioPlayCue(229);
+    Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0, 0x10000);
+    Engine_EventWait(8);
+    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Engine_EventWait(40);
+    Object_GetById(10)->unknown_5a |= 1;
+    Call3(Engine_ActorFaceDirection, 10, 0x3000, 20);
+    Engine_ActorFaceDirection(10, 0, 40);
+    actor->motion.active = 0;
+    actor->motion.timer = 0;
+    actor->motion.delay = 0;
+    actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+    Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
+    Call3(Engine_ActorMoveToAndWait, 10, 120, 215);
+    actor->actor.update = NULL;
+    actor->motion.state = 0;
+    Engine_ActorSetAnimation(10, 1);
+    Engine_EventWait(16);
+    Engine_AudioPlayCue(229);
+    Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0, 0x10000);
+    Engine_EventWait(4);
+    Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+    Engine_EventWait(40);
+    Engine_ActorFaceDirection(10, 0, 10);
+    Engine_AudioPlayCue(147);
+    Engine_ActorRunRepeatedMotion(10, 2);
+    Engine_EventWait(80);
+    Engine_ActorSetAnimation(10, 3);
+    Call4(SceneState_StoreParamsAndInstallTask, 0x820000, 0, 0xa80000, 0);
+    Engine_EventWait(60);
+    for (n = 0; n < 60 && gKeyState == 0; n++) {
+        Engine_EventWait(1);
+    }
+    actor = (union TimedActor *)Object_GetById(0);
+    Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);
+    Engine_CameraMoveTo(actor->actor.x.fixed, actor->actor.y.fixed, actor->actor.z.fixed, 1);
+    Engine_CameraWaitForMove();
+    Call1((void (*)())Engine_GameFlagSet, 0x905);
+    Engine_EventEnd();
+}

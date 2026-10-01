@@ -252,3 +252,111 @@ s32 TorebiIzumi_OpenScene(void)
     }
     return 0;
 }
+
+/* The spring gives up a prize: the leader turns to it, the water parts cell
+ * by cell along both rows, the item is shown and given, and the water closes
+ * again the way it opened. */
+void TorebiIzumi_RevealPrize(s32 item)
+{
+    Engine_EventBegin();
+    Engine_EventWait(30);
+    Engine_AudioPlayCue(148);
+    Engine_EventWait(100);
+    Actor_FaceDirection(0, 0xc000, 0);
+    Engine_EventWait(40);
+
+    Map_CopyCellsTo(82, 20, 70, 0, 3, 8);
+    Engine_EventWait(3);
+    Map_CopyCellsTo(85, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(88, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(91, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(94, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(97, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(100, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+
+    Map_CopyCellsTo(79, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(82, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(85, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(88, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(91, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(94, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(97, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(100, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+
+    Engine_EventWait(70);
+    Engine_AudioPlayCue(126);
+    Engine_ItemShowFound(item, 3);
+    Engine_PartyGiveItem(item, 0);
+    Engine_EventWait(20);
+
+    Map_CopyCellsTo(97, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(94, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(91, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(88, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(85, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(82, 29, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(100, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(97, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(94, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(91, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(88, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(85, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(82, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Map_CopyCellsTo(79, 20, 70, 0, 3, 8);
+    Engine_AudioPlayCue(154);
+    Engine_EventWait(8);
+    Engine_EventEnd();
+}

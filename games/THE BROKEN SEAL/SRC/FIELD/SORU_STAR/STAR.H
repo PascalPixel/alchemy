@@ -84,7 +84,7 @@ void Scene_UnmaskGarcia(void);
 void Scene_BagJupiterStar(void);
 void UiWork_PushValueSlotFar();
 s32 Scene_PresentItem();
-void Func_0200227c(void);
+void SoruStar_LineUpFollowers(void);
 void Party_RemoveOwnerRestored();
 void PartyInventory_Discard();
 void Object_SetMoveTarget();

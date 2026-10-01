@@ -1504,12 +1504,6 @@ BattleEffect_RunStagedParticles:
 	.incbin "baserom.gba", 0x000de768, 0x00000944
 	.section .rom.000dfbe0, "ax"
 	.incbin "baserom.gba", 0x000dfbe0, 0x00000518
-	.section .rom.000e00f8, "ax"
-	.global BattleFx_PrepareCanvasEffect
-	.type BattleFx_PrepareCanvasEffect, %function
-	.thumb_func
-BattleFx_PrepareCanvasEffect:
-	.incbin "baserom.gba", 0x000e00f8, 0x0000067c
 	.section .rom.000e086e, "ax"
 	.incbin "baserom.gba", 0x000e086e, 0x00000002
 	.section .rom.000e0870, "ax"

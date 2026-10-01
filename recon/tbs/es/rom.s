@@ -1242,8 +1242,6 @@ BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000c3bbc, 0x00000414
 	.section .rom.000c42bc, "ax"
 	.incbin "baserom.gba", 0x000c42bc, 0x0000045c
-	.section .rom.000c5488, "ax"
-	.incbin "baserom.gba", 0x000c5488, 0x00000260
 	.section .rom.000c57ae, "ax"
 	.incbin "baserom.gba", 0x000c57ae, 0x00000002
 	.section .rom.000c57b0, "ax"

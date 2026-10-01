@@ -823,7 +823,6 @@
         "*/recon/tbs/raw/080c1012.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/BATTLE/PRESENTATION/PRESENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT3.o"(.text)
-        "*/recon/tbs/raw/080c1470.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE6.o"(.text)
         "*/recon/tbs/raw/080c1796.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080c1798.o"(.text .rodata .data .padding)

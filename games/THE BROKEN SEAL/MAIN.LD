@@ -543,7 +543,6 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.0009cb94)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/CLASSIFY_SELECTED_PSYNERGY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0009d4ec)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ENTRY_GRID.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/COLLECT_ACTIONS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/BUILD_PAGE_RESULT.o"(.text)

@@ -1,6 +1,5 @@
 pub(crate) mod boxtree;
 pub(crate) mod calcrom;
-pub(crate) mod editions;
 pub(crate) mod figure;
 pub(crate) mod history;
 pub(crate) mod jsnum;

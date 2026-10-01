@@ -61,137 +61,6 @@ pub fn run(args: &[String]) -> Result<(), String> {
     Ok(())
 }
 
-/// Compile candidate overlays through the ordinary pipeline without changing
-/// the ROM's selected stream composition or consulting reference bytes.
-pub fn run_overlays(args: &[String]) -> Result<(), String> {
-    const USAGE: &str = "usage: alchemy build overlays --target GAME-EDITION --id HEX [--id HEX ...] --output DIR\nBuild source-owned candidate streams against fresh same-edition main symbols in an isolated directory.";
-    let mut target = None;
-    let mut ids = Vec::new();
-    let mut output = None;
-    let mut args = args.iter();
-    while let Some(arg) = args.next() {
-        match arg.as_str() {
-            "-h" | "--help" => {
-                println!("{USAGE}");
-                return Ok(());
-            }
-            "--target" => target = Some(decomp_target(Some(args.next().ok_or(USAGE)?))?),
-            "--id" => ids.push(args.next().ok_or(USAGE)?.clone()),
-            "--output" => output = Some(PathBuf::from(args.next().ok_or(USAGE)?)),
-            _ => return Err(USAGE.into()),
-        }
-    }
-    let target = target.ok_or(USAGE)?;
-    let output = output.ok_or(USAGE)?;
-    if ids.is_empty() {
-        return Err(USAGE.into());
-    }
-    let root = crate::compiler::routing::root();
-    let ids = candidate_overlay_ids(root, target, &ids)?;
-    let output = candidate_output(root, &output)?;
-    // Replaying the normal source composition binds these symbols to this
-    // edition and current dependencies; no external symbol table is admitted.
-    let main = output.join("main");
-    let script = crate::edition::script(root, target, &main)?;
-    link(root, target, &script, &main, target.id.as_str(), false)?;
-    let symbols = main.join("symbols").join(format!("{}.elf", target.id));
-    base_rom(root, target, &output)?;
-    crate::build_text::build(root, target, &output)?;
-    let objects = build_overlays(root, target, &ids, &output, &symbols)?;
-    crate::gate::ids::check(Path::new(target.game_dir()), &objects)?;
-    println!(
-        "overlays={} objects={} output={}",
-        ids.len(),
-        objects.len(),
-        output.display()
-    );
-    Ok(())
-}
-
-fn candidate_output(root: &Path, output: &Path) -> Result<PathBuf, String> {
-    let resolved = resolved_directory(&root.join(output))?;
-    let root = fs::canonicalize(root).map_err(|error| error.to_string())?;
-    let out = resolved_directory(&root.join("out"))?;
-    if resolved == out || resolved.starts_with(&root) && !resolved.starts_with(&out) {
-        return Err(
-            "candidate output must be an isolated directory under out/ or outside the repository"
-                .into(),
-        );
-    }
-    for id in crate::targets::TARGET_IDS {
-        let live = resolved_directory(&root.join(crate::targets::target_for(id).output_dir))?;
-        if resolved.starts_with(&live) || live.starts_with(&resolved) {
-            return Err(format!("candidate output overlaps live {} products", id));
-        }
-    }
-    Ok(resolved)
-}
-
-fn resolved_directory(path: &Path) -> Result<PathBuf, String> {
-    use std::path::Component;
-    let mut resolved = PathBuf::new();
-    for component in path.components() {
-        match component {
-            Component::CurDir => {}
-            Component::ParentDir => {
-                resolved.pop();
-            }
-            other => resolved.push(other.as_os_str()),
-        }
-    }
-    // Resolve existing ancestors too: a symlink must not turn an isolated
-    // candidate directory into any live ROM build's product directory.
-    let mut parent = resolved.as_path();
-    let mut suffix = Vec::new();
-    while !parent.exists() {
-        suffix.push(
-            parent
-                .file_name()
-                .ok_or("invalid candidate output directory")?
-                .to_owned(),
-        );
-        parent = parent
-            .parent()
-            .ok_or("invalid candidate output directory")?;
-    }
-    let mut resolved = fs::canonicalize(parent).map_err(|error| error.to_string())?;
-    for name in suffix.into_iter().rev() {
-        resolved.push(name);
-    }
-    Ok(resolved)
-}
-
-fn candidate_overlay_ids(
-    root: &Path,
-    target: DecompTarget,
-    ids: &[String],
-) -> Result<Vec<String>, String> {
-    let listings = overlay_listings(target);
-    let mut seen = BTreeSet::new();
-    let mut selected = Vec::new();
-    for id in ids {
-        if id.is_empty() || !id.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-            return Err(format!("invalid overlay id: {id}"));
-        }
-        let id = id.to_ascii_lowercase();
-        for source in [
-            overlay_script(&listings, &id),
-            listings.join(format!("resource_{id}_overlay.s")),
-        ] {
-            if !root.join(&source).is_file() {
-                return Err(format!(
-                    "{}: no maintained overlay source",
-                    source.display()
-                ));
-            }
-        }
-        if seen.insert(id.clone()) {
-            selected.push(id);
-        }
-    }
-    Ok(selected)
-}
-
 pub(crate) struct Linked {
     pub objects: Vec<PathBuf>,
     pub map: PathBuf,
@@ -860,84 +729,6 @@ fn assembly_inputs(
     Ok(hasher)
 }
 
-/// Diagnostic provenance: recompute the ordinary compiler/assembler input key
-/// without writing an intermediate, compiling, linking, or consulting a report.
-pub(crate) fn current_object_key(
-    root: &Path,
-    target: DecompTarget,
-    source: &Path,
-    object: &Path,
-) -> Result<String, String> {
-    let mut hasher = if matches!(
-        source.extension().and_then(|ext| ext.to_str()),
-        Some("C" | "c")
-    ) {
-        let steps = c_steps(target, source, object)?;
-        let mut preprocess = preprocessor_only(
-            &steps,
-            &source.to_string_lossy(),
-            &object.with_extension("i"),
-        )?;
-        let imports = crate::build_text::fresh_c_imports(root, target)?;
-        if let Some(directory) = &imports {
-            preprocess.insert(1, format!("-I{}", directory.path().display()));
-        }
-        // The direct old-agbcc cpp0 plan names its output positionally; the
-        // driver names it with -o. Both diagnostic runs must stay in memory.
-        if preprocess
-            .first()
-            .is_some_and(|program| program.ends_with("cpp0"))
-            && preprocess.last() == Some(&object.with_extension("i").to_string_lossy().into_owned())
-        {
-            preprocess.pop();
-        }
-        let mut at = 0;
-        while at < preprocess.len() {
-            if preprocess[at] == "-o" {
-                preprocess.drain(at..at + 2);
-            } else {
-                at += 1;
-            }
-        }
-        let mut hash = Sha256::new();
-        hash.update(crate::compiler::bundle::toolchain_signature().as_bytes());
-        let mut expanded = command(&preprocess, root)?;
-        if let Some(directory) = &imports {
-            // Normalize only diagnostic include provenance for the input hash.
-            // The compiler's input and its output remain untouched.
-            expanded = expanded.replace(
-                &directory
-                    .path()
-                    .join(crate::build_text::C_INCLUDE)
-                    .to_string_lossy()
-                    .into_owned(),
-                &c_import_directory(object)?
-                    .join(crate::build_text::C_INCLUDE)
-                    .to_string_lossy(),
-            );
-        }
-        hash.update(expanded.as_bytes());
-        for step in steps {
-            hash.update(step.join("\0").as_bytes());
-        }
-        hash
-    } else {
-        let output = root.join(target.output_dir);
-        let mut hash = assembly_inputs(root, target, source, &output)?;
-        hash.update(
-            target_assembly_command(
-                target,
-                &source.to_string_lossy(),
-                &object.to_string_lossy(),
-                &output,
-            )
-            .join("\0"),
-        );
-        hash
-    };
-    Ok(format!("{:x}", hasher.finalize_reset()))
-}
-
 /// Convert a sequence MIDI to assembly beside its object and assemble it,
 /// reusing the object while the converted text and command are unchanged.
 fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), String> {
@@ -1241,17 +1032,7 @@ fn build_overlay_streams(
     output: &Path,
     symbols: &Path,
 ) -> Result<Vec<(PathBuf, PathBuf)>, String> {
-    let ids = stream_ids(root, target, source)?;
-    build_overlays(root, target, &ids, output, symbols)
-}
-
-fn build_overlays(
-    root: &Path,
-    target: DecompTarget,
-    ids: &[String],
-    output: &Path,
-    symbols: &Path,
-) -> Result<Vec<(PathBuf, PathBuf)>, String> {
+    let ids = &stream_ids(root, target, source)?;
     let listings = overlay_listings(target);
     let directory = output.join("overlays");
     // The sources each overlay's own script links beside its listing, compiled
@@ -1715,74 +1496,6 @@ mod tests {
     }
 
     #[test]
-    fn candidate_ids_require_current_same_game_listing_and_script() {
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaDe);
-        let listing = root.join(overlay_listings(target));
-        fs::create_dir_all(&listing).unwrap();
-        fs::write(listing.join("resource_66c.ld"), "SECTIONS {}\n").unwrap();
-        fs::write(listing.join("resource_66c_overlay.s"), ".text\n").unwrap();
-        assert_eq!(
-            candidate_overlay_ids(root, target, &["66C".into(), "66c".into()]).unwrap(),
-            ["66c"]
-        );
-        for id in ["", "../66c", "resource_66c", "66d"] {
-            assert!(
-                candidate_overlay_ids(root, target, &[id.into()]).is_err(),
-                "{id}"
-            );
-        }
-        let tbs = crate::targets::target_for(crate::targets::DecompTargetId::TbsDe);
-        assert!(candidate_overlay_ids(root, tbs, &["66c".into()]).is_err());
-        fs::remove_file(listing.join("resource_66c_overlay.s")).unwrap();
-        assert!(candidate_overlay_ids(root, target, &["66c".into()]).is_err());
-    }
-
-    #[test]
-    fn candidate_products_cannot_overlap_live_output_through_parent_or_symlink() {
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        fs::create_dir_all(root.join("out/tla-de")).unwrap();
-        assert_eq!(
-            candidate_output(root, Path::new("out/candidates/de")).unwrap(),
-            fs::canonicalize(root).unwrap().join("out/candidates/de")
-        );
-        for path in [
-            ".",
-            "games/probe",
-            "out",
-            "out/tla-de",
-            "out/tla-de/probe",
-            "out/candidates/../tla-de",
-        ] {
-            assert!(candidate_output(root, Path::new(path)).is_err(), "{path}");
-        }
-        #[cfg(unix)]
-        {
-            std::os::unix::fs::symlink(root.join("out/tla-de"), root.join("out/redirect")).unwrap();
-            assert!(candidate_output(root, Path::new("out/redirect/probe")).is_err());
-            let external = tempfile::tempdir().unwrap();
-            std::os::unix::fs::symlink(external.path(), root.join("out/tla-fr")).unwrap();
-            assert!(candidate_output(root, &external.path().join("probe")).is_err());
-        }
-    }
-
-    #[test]
-    fn candidate_lane_refuses_external_symbol_tables_and_live_output_before_building() {
-        for option in ["--symbols", "--main-output"] {
-            let error = run_overlays(&[option.into(), "stale.elf".into()]).unwrap_err();
-            assert!(error.starts_with("usage:"), "{option}: {error}");
-        }
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaDe);
-        assert!(candidate_output(
-            crate::compiler::routing::root(),
-            Path::new(target.output_dir)
-        )
-        .is_err());
-    }
-
-    #[test]
     fn edition_streams_use_the_games_common_listing_root_and_active_composition() {
         let work = tempfile::tempdir().unwrap();
         let root = work.path();
@@ -1863,34 +1576,6 @@ mod tests {
         fs::write(output.join("values.inc"), ".set Pick, 9\n").unwrap();
         assert_ne!(before, key(ja));
         assert_eq!(assemble(ja), [9]);
-    }
-
-    #[test]
-    fn diagnostic_current_c_key_matches_the_compiled_object_without_rewriting_inputs() {
-        prefer_installed_binutils();
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
-        for owner in ["OWNER.C", "games/COMMON/SRC/SYSTEM/SAVE/READ_FLASH_ID.C"] {
-            let source = Path::new(owner);
-            fs::create_dir_all(root.join(source).parent().unwrap()).unwrap();
-            fs::write(root.join(source), "int Owner(int x) { return x + 1; }\n").unwrap();
-            let object = root.join("obj").join(source).with_extension("o");
-            compile(root, target, source, &object).unwrap();
-            let stale = "stale intermediate must not be read or rewritten";
-            fs::write(object.with_extension("i"), stale).unwrap();
-            let key = current_object_key(root, target, source, &object).unwrap();
-            assert_eq!(
-                fs::read_to_string(object.with_extension("o.key")).unwrap(),
-                key,
-                "{owner}"
-            );
-            assert_eq!(
-                fs::read_to_string(object.with_extension("i")).unwrap(),
-                stale,
-                "{owner}"
-            );
-        }
     }
 
     #[test]
@@ -2275,47 +1960,4 @@ fn every_c_plan_searches_its_build_message_metadata() {
             "{plan:?}"
         );
     }
-}
-
-#[test]
-fn message_provenance_reads_current_catalog_without_repairing_cached_inputs() {
-    let work = tempfile::tempdir().unwrap();
-    let root = work.path();
-    let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
-    let catalog = root.join("games/THE BROKEN SEAL/TEXT/EN.PO");
-    fs::create_dir_all(catalog.parent().unwrap()).unwrap();
-    let write_catalog = |number| {
-        fs::write(&catalog, format!("msgid \"\"\nmsgstr \"\"\n\"X-Alchemy-Target: tbs-en\\n\"\n\nmsgctxt \"MsgFixture\"\nmsgid \"{number:05}\"\nmsgstr \"one\"\n")).unwrap()
-    };
-    write_catalog(7);
-    let output = root.join("out");
-    crate::build_text::write_c_imports(
-        &output,
-        &crate::build_text::current_c_imports(root, target).unwrap(),
-    )
-    .unwrap();
-    let source = Path::new("OWNER.C");
-    fs::write(root.join(source), "#include \"text/MSG_IDS.H\"\nTEXT_MESSAGE_ENUM(MsgFixture);\nint Owner(void) { return MsgFixture; }\n").unwrap();
-    let object = output.join("obj/OWNER.o");
-    compile(root, target, source, &object).unwrap();
-    let key = fs::read_to_string(object.with_extension("o.key")).unwrap();
-    assert_eq!(
-        current_object_key(root, target, source, &object).unwrap(),
-        key
-    );
-    let header = output.join(crate::build_text::C_INCLUDE);
-    fs::write(&header, "#error stale generated header\n").unwrap();
-    assert_eq!(
-        current_object_key(root, target, source, &object).unwrap(),
-        key
-    );
-    write_catalog(8);
-    assert_ne!(
-        current_object_key(root, target, source, &object).unwrap(),
-        key
-    );
-    assert_eq!(
-        fs::read_to_string(header).unwrap(),
-        "#error stale generated header\n"
-    );
 }

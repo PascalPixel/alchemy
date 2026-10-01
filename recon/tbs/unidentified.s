@@ -1252,39 +1252,39 @@ HomingEmbers_FlareBiasY:
 	.global HomingEmbers_FlareCells
 HomingEmbers_FlareCells:
 	.incbin "baserom.gba", 0x000eea56, 0x0000000c
-	.global Data_080eea62
-Data_080eea62:
+	.global RisingMotes_ColumnSpots
+RisingMotes_ColumnSpots:
 	.incbin "baserom.gba", 0x000eea62, 0x00000026
-	.global Data_080eea88
-Data_080eea88:
+	.global RisingMotes_Timings
+RisingMotes_Timings:
 	.incbin "baserom.gba", 0x000eea88, 0x00000008
 	.incbin "baserom.gba", 0x000eea90, 0x00000001
-	.global Data_080eea91
-Data_080eea91:
+	.global RisingMotes_MoteWidths
+RisingMotes_MoteWidths:
 	.incbin "baserom.gba", 0x000eea91, 0x00000007
 	.incbin "baserom.gba", 0x000eea98, 0x00000001
-	.global Data_080eea99
-Data_080eea99:
+	.global RisingMotes_MoteHeights
+RisingMotes_MoteHeights:
 	.incbin "baserom.gba", 0x000eea99, 0x00000009
-	.global Data_080eeaa2
-Data_080eeaa2:
+	.global RisingMotes_MoteCells
+RisingMotes_MoteCells:
 	.incbin "baserom.gba", 0x000eeaa2, 0x00000010
-	.global Data_080eeab2
-Data_080eeab2:
+	.global RisingMotes_ColumnCells
+RisingMotes_ColumnCells:
 	.incbin "baserom.gba", 0x000eeab2, 0x00000006
-	.global Data_080eeab8
-Data_080eeab8:
+	.global RisingMotes_ColumnHeights
+RisingMotes_ColumnHeights:
 	.incbin "baserom.gba", 0x000eeab8, 0x00000002
 	.incbin "baserom.gba", 0x000eeaba, 0x00000001
-	.global Data_080eeabb
-Data_080eeabb:
+	.global RisingMotes_EmberWidths
+RisingMotes_EmberWidths:
 	.incbin "baserom.gba", 0x000eeabb, 0x00000007
 	.incbin "baserom.gba", 0x000eeac2, 0x00000001
-	.global Data_080eeac3
-Data_080eeac3:
+	.global RisingMotes_EmberHeights
+RisingMotes_EmberHeights:
 	.incbin "baserom.gba", 0x000eeac3, 0x00000009
-	.global Data_080eeacc
-Data_080eeacc:
+	.global RisingMotes_EmberCells
+RisingMotes_EmberCells:
 	.incbin "baserom.gba", 0x000eeacc, 0x00000010
 	.global LightningBolts_Sparks
 LightningBolts_Sparks:

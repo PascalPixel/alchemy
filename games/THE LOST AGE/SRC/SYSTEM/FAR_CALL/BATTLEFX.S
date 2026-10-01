@@ -40,11 +40,11 @@ Func_080c8558:
 	.global Func_080c8560
 	.thumb_func
 Func_080c8560:
-	overlay_veneer Func_080ca18c
+	overlay_veneer BattleFx_GetWeightedResult
 	.global Func_080c8568
 	.thumb_func
 Func_080c8568:
-	overlay_veneer Func_080ca1a4
+	overlay_veneer BattleFx_GetPhaseResult
 	.global Func_080c8570
 	.thumb_func
 Func_080c8570:

@@ -2203,16 +2203,16 @@ Game_ResetForNewGame:
 Func_080c9dc8:
 	.incbin "baserom.gba", 0x000cedc8, 0x000003c4
 	.section .rom.000cf18c, "ax"
-	.global Func_080ca18c
-	.type Func_080ca18c, %function
+	.global BattleFx_GetWeightedResult
+	.type BattleFx_GetWeightedResult, %function
 	.thumb_func
-Func_080ca18c:
+BattleFx_GetWeightedResult:
 	.incbin "baserom.gba", 0x000cf18c, 0x00000018
 	.section .rom.000cf1a4, "ax"
-	.global Func_080ca1a4
-	.type Func_080ca1a4, %function
+	.global BattleFx_GetPhaseResult
+	.type BattleFx_GetPhaseResult, %function
 	.thumb_func
-Func_080ca1a4:
+BattleFx_GetPhaseResult:
 	.incbin "baserom.gba", 0x000cf1a4, 0x00000018
 	.section .rom.000cf1bc, "ax"
 	.global Func_080ca1bc

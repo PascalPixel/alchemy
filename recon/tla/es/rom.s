@@ -2197,10 +2197,10 @@ Resource_FarCall006:
 	.section .rom.000d2934, "ax"
 	.incbin "baserom.gba", 0x000d2934, 0x00000494
 	.section .rom.000d2dc8, "ax"
-	.global Func_080ca18c
-	.type Func_080ca18c, %function
+	.global BattleFx_GetWeightedResult
+	.type BattleFx_GetWeightedResult, %function
 	.thumb_func
-Func_080ca18c:
+BattleFx_GetWeightedResult:
 	.incbin "baserom.gba", 0x000d2dc8, 0x000003c4
 	.section .rom.000d318c, "ax"
 	.global Func_080dc0b8
@@ -2215,10 +2215,10 @@ Func_080dc0b8:
 Func_080d295c:
 	.incbin "baserom.gba", 0x000d31a4, 0x00000018
 	.section .rom.000d31bc, "ax"
-	.global Func_080ca1a4
-	.type Func_080ca1a4, %function
+	.global BattleFx_GetPhaseResult
+	.type BattleFx_GetPhaseResult, %function
 	.thumb_func
-Func_080ca1a4:
+BattleFx_GetPhaseResult:
 	.incbin "baserom.gba", 0x000d31bc, 0x000000c4
 	.section .rom.000d3280, "ax"
 	.global Func_080d46a4

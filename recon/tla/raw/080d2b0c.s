@@ -9,7 +9,7 @@ Func_080d2b0c:
 	ldr r5, [r3, #108]
 	adds r6, r0, #0
 	adds r7, r1, #0
-	bl Func_080ca18c
+	bl BattleFx_GetWeightedResult
 	movs r2, #178
 	lsls r2, r2, #1
 	adds r3, r5, r2
@@ -24,7 +24,7 @@ Func_080d2b0c:
 	bl Func_080cdf5c
 	bl ObjectTable_Get
 	adds r0, #8
-	bl Func_080c9f2c
+	bl BattleFx_LookupResult
 .L_080d2b40:
 	adds r0, r6, #0
 	adds r1, r7, #0

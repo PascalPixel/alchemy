@@ -300,7 +300,7 @@ Func_080ccec8:
 	adds r1, r7, #0
 	subs r1, #8
 	movs r0, #105
-	bl Func_080ca18c
+	bl BattleFx_GetWeightedResult
 	movs r1, #178
 	lsls r1, r1, #1
 	adds r3, r5, r1
@@ -333,7 +333,7 @@ Func_080ccec8:
 .L_080cd17c:
 	movs r0, #104
 	adds r1, r7, #0
-	bl Func_080ca18c
+	bl BattleFx_GetWeightedResult
 	movs r2, #178
 	lsls r2, r2, #1
 	adds r3, r5, r2

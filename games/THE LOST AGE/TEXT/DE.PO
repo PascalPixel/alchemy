@@ -11667,7 +11667,7 @@ msgctxt "message"
 msgid "02914"
 msgstr "?"
 
-msgctxt "MsgClassName"
+msgctxt "message"
 msgid "02915"
 msgstr "?"
 
@@ -12647,7 +12647,7 @@ msgctxt "message"
 msgid "03159"
 msgstr "?"
 
-msgctxt "MsgEnemyLabel"
+msgctxt "message"
 msgid "03160"
 msgstr "?"
 
@@ -12687,7 +12687,7 @@ msgctxt "message"
 msgid "03169"
 msgstr "?"
 
-msgctxt "MsgActorDefends"
+msgctxt "message"
 msgid "03170"
 msgstr "?"
 
@@ -12715,11 +12715,11 @@ msgctxt "message"
 msgid "03176"
 msgstr "?"
 
-msgctxt "MsgHpRecover"
+msgctxt "message"
 msgid "03177"
 msgstr "?"
 
-msgctxt "MsgPpRecover"
+msgctxt "message"
 msgid "03178"
 msgstr "?"
 
@@ -12727,35 +12727,35 @@ msgctxt "message"
 msgid "03179"
 msgstr "?"
 
-msgctxt "MsgHpFull"
+msgctxt "message"
 msgid "03180"
 msgstr "?"
 
-msgctxt "MsgPpFull"
+msgctxt "message"
 msgid "03181"
 msgstr "?"
 
-msgctxt "MsgCritical"
+msgctxt "message"
 msgid "03182"
 msgstr "?"
 
-msgctxt "MsgBitterBlow"
+msgctxt "message"
 msgid "03183"
 msgstr "?"
 
-msgctxt "MsgFelled"
+msgctxt "message"
 msgid "03184"
 msgstr "?"
 
-msgctxt "MsgGoesDown"
+msgctxt "message"
 msgid "03185"
 msgstr "?"
 
-msgctxt "MsgDmgE"
+msgctxt "message"
 msgid "03186"
 msgstr "?"
 
-msgctxt "MsgDmgP"
+msgctxt "message"
 msgid "03187"
 msgstr "?"
 
@@ -12763,11 +12763,11 @@ msgctxt "message"
 msgid "03188"
 msgstr "?"
 
-msgctxt "MsgPpLossE"
+msgctxt "message"
 msgid "03189"
 msgstr "?"
 
-msgctxt "MsgPpLossP"
+msgctxt "message"
 msgid "03190"
 msgstr "?"
 
@@ -12795,7 +12795,7 @@ msgctxt "message"
 msgid "03196"
 msgstr "?"
 
-msgctxt "MsgDmgEmphE"
+msgctxt "message"
 msgid "03197"
 msgstr "?"
 
@@ -12807,7 +12807,7 @@ msgctxt "message"
 msgid "03199"
 msgstr "?"
 
-msgctxt "MsgDmgEmphP"
+msgctxt "message"
 msgid "03200"
 msgstr "?"
 
@@ -12823,7 +12823,7 @@ msgctxt "message"
 msgid "03203"
 msgstr "?"
 
-msgctxt "MsgDowned"
+msgctxt "message"
 msgid "03204"
 msgstr "?"
 
@@ -12867,7 +12867,7 @@ msgctxt "message"
 msgid "03214"
 msgstr "?"
 
-msgctxt "MsgAllResting"
+msgctxt "message"
 msgid "03215"
 msgstr "?"
 
@@ -13087,7 +13087,7 @@ msgctxt "MsgConfused"
 msgid "03269"
 msgstr "Belebt Freund durch Phönixfeuer wieder."
 
-msgctxt "MsgCharmed"
+msgctxt "message"
 msgid "03270"
 msgstr "?"
 
@@ -13123,27 +13123,27 @@ msgctxt "MsgEvilSpirit"
 msgid "03278"
 msgstr "Bändigt die Gegner durch Furcht."
 
-msgctxt "MsgDeathCurse"
+msgctxt "message"
 msgid "03279"
 msgstr "?"
 
-msgctxt "MsgVenom"
+msgctxt "message"
 msgid "03280"
 msgstr "?"
 
-msgctxt "MsgDeathCount"
+msgctxt "message"
 msgid "03281"
 msgstr "?"
 
-msgctxt "MsgPsySeal"
+msgctxt "message"
 msgid "03282"
 msgstr "?"
 
-msgctxt "MsgAgiUp"
+msgctxt "message"
 msgid "03283"
 msgstr "?"
 
-msgctxt "MsgAgiDown"
+msgctxt "message"
 msgid "03284"
 msgstr "?"
 
@@ -13163,15 +13163,15 @@ msgctxt "message"
 msgid "03288"
 msgstr "?"
 
-msgctxt "MsgReadies"
+msgctxt "message"
 msgid "03289"
 msgstr "?"
 
-msgctxt "MsgChallenge"
+msgctxt "message"
 msgid "03290"
 msgstr "?"
 
-msgctxt "MsgImmobile"
+msgctxt "message"
 msgid "03291"
 msgstr "?"
 
@@ -13179,19 +13179,19 @@ msgctxt "message"
 msgid "03292"
 msgstr "?"
 
-msgctxt "MsgAura"
+msgctxt "message"
 msgid "03293"
 msgstr "?"
 
-msgctxt "MsgAura2"
+msgctxt "message"
 msgid "03294"
 msgstr "?"
 
-msgctxt "MsgVanished"
+msgctxt "message"
 msgid "03295"
 msgstr "?"
 
-msgctxt "MsgCounterReady"
+msgctxt "message"
 msgid "03296"
 msgstr "?"
 
@@ -13203,11 +13203,11 @@ msgctxt "message"
 msgid "03298"
 msgstr "?"
 
-msgctxt "MsgWakes"
+msgctxt "message"
 msgid "03299"
 msgstr "?"
 
-msgctxt "MsgCurePoison"
+msgctxt "message"
 msgid "03300"
 msgstr "?"
 
@@ -13235,15 +13235,15 @@ msgctxt "message"
 msgid "03306"
 msgstr "?"
 
-msgctxt "MsgCureDelusion"
+msgctxt "message"
 msgid "03307"
 msgstr "?"
 
-msgctxt "MsgCureSeal"
+msgctxt "message"
 msgid "03308"
 msgstr "?"
 
-msgctxt "MsgCureStun"
+msgctxt "message"
 msgid "03309"
 msgstr "?"
 
@@ -13251,7 +13251,7 @@ msgctxt "message"
 msgid "03310"
 msgstr "?"
 
-msgctxt "MsgCureSpirit"
+msgctxt "message"
 msgid "03311"
 msgstr "?"
 
@@ -13271,7 +13271,7 @@ msgctxt "message"
 msgid "03315"
 msgstr "?"
 
-msgctxt "MsgCureCurse"
+msgctxt "message"
 msgid "03316"
 msgstr "?"
 
@@ -13279,7 +13279,7 @@ msgctxt "message"
 msgid "03317"
 msgstr "?"
 
-msgctxt "MsgBuffsReset"
+msgctxt "message"
 msgid "03318"
 msgstr "?"
 
@@ -13511,7 +13511,7 @@ msgctxt "message"
 msgid "03375"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "03376"
 msgstr "NPC"
 
@@ -13655,19 +13655,19 @@ msgctxt "message"
 msgid "03411"
 msgstr "?"
 
-msgctxt "MsgSplitOff"
+msgctxt "message"
 msgid "03412"
 msgstr "?"
 
-msgctxt "MsgSplitFailed"
+msgctxt "message"
 msgid "03413"
 msgstr "?"
 
-msgctxt "MsgAppears"
+msgctxt "message"
 msgid "03414"
 msgstr "?"
 
-msgctxt "MsgNoOneCame"
+msgctxt "message"
 msgid "03415"
 msgstr "?"
 
@@ -14491,7 +14491,7 @@ msgctxt "message"
 msgid "03620"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgEnemyLabel"
 msgid "03621"
 msgstr "Gegner"
 
@@ -14531,7 +14531,7 @@ msgctxt "message"
 msgid "03630"
 msgstr "{argument_class_name:1}"
 
-msgctxt "message"
+msgctxt "MsgActorDefends"
 msgid "03631"
 msgstr "{argument_actor_name:1} schützt sich!"
 
@@ -14559,11 +14559,11 @@ msgctxt "message"
 msgid "03637"
 msgstr "{plural_suffix} {argument_item_name:1} zerbrach!"
 
-msgctxt "message"
+msgctxt "MsgHpRecover"
 msgid "03638"
 msgstr "{argument_actor_name:1} erhält {argument_signed_number} KP!"
 
-msgctxt "message"
+msgctxt "MsgPpRecover"
 msgid "03639"
 msgstr "{argument_actor_name:1} erhält {argument_signed_number} PP!"
 
@@ -14571,35 +14571,35 @@ msgctxt "message"
 msgid "03640"
 msgstr "{argument_actor_name:1} ist wieder kampfbereit!"
 
-msgctxt "message"
+msgctxt "MsgHpFull"
 msgid "03641"
 msgstr "{argument_actor_name:1}{possessive_suffix} KP sind wiederhergestellt!"
 
-msgctxt "message"
+msgctxt "MsgPpFull"
 msgid "03642"
 msgstr "{argument_actor_name:1}{possessive_suffix} PP sind wiederhergestellt!"
 
-msgctxt "message"
+msgctxt "MsgCritical"
 msgid "03643"
 msgstr "Volltreffer!"
 
-msgctxt "message"
+msgctxt "MsgBitterBlow"
 msgid "03644"
 msgstr "Schwerer Schlag!"
 
-msgctxt "message"
+msgctxt "MsgFelled"
 msgid "03645"
 msgstr "{argument_actor_name:1} wurde besiegt!"
 
-msgctxt "message"
+msgctxt "MsgGoesDown"
 msgid "03646"
 msgstr "{argument_actor_name:1} geht in die Knie..."
 
-msgctxt "message"
+msgctxt "MsgDmgE"
 msgid "03647"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden!"
 
-msgctxt "message"
+msgctxt "MsgDmgP"
 msgid "03648"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden!"
 
@@ -14607,11 +14607,11 @@ msgctxt "message"
 msgid "03649"
 msgstr "Der Sensenmann ruft nach {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgPpLossE"
 msgid "03650"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgPpLossP"
 msgid "03651"
 msgstr "{argument_actor_name:1} verliert {argument_signed_number} PP!"
 
@@ -14639,7 +14639,7 @@ msgctxt "message"
 msgid "03657"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden."
 
-msgctxt "message"
+msgctxt "MsgDmgEmphE"
 msgid "03658"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden!"
 
@@ -14651,7 +14651,7 @@ msgctxt "message"
 msgid "03660"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden."
 
-msgctxt "message"
+msgctxt "MsgDmgEmphP"
 msgid "03661"
 msgstr "{argument_actor_name:1} nimmt {argument_signed_number} Schaden!"
 
@@ -14667,7 +14667,7 @@ msgctxt "message"
 msgid "03664"
 msgstr "Team von {protagonist_name} wurde besiegt!"
 
-msgctxt "message"
+msgctxt "MsgDowned"
 msgid "03665"
 msgstr "{argument_actor_name:1} wurde geschlagen!"
 
@@ -14711,7 +14711,7 @@ msgctxt "message"
 msgid "03675"
 msgstr "{argument_actor_name:1}, du verletzt dich doch selbst!"
 
-msgctxt "message"
+msgctxt "MsgAllResting"
 msgid "03676"
 msgstr "Alle ruhen sich aus!"
 
@@ -14931,7 +14931,7 @@ msgctxt "message"
 msgid "03730"
 msgstr "{argument_actor_name:1} wurde verwirrt!"
 
-msgctxt "message"
+msgctxt "MsgCharmed"
 msgid "03731"
 msgstr "{argument_actor_name:1}{possessive_suffix} Herz wurde gestohlen!"
 
@@ -14967,27 +14967,27 @@ msgctxt "message"
 msgid "03739"
 msgstr "Ein Geist nimmt Besitz von {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgDeathCurse"
 msgid "03740"
 msgstr "Der Geist des Todes umarmt {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgVenom"
 msgid "03741"
 msgstr "{argument_actor_name:1} wurde mit tödlichem Gift{line_break}verseucht!"
 
-msgctxt "message"
+msgctxt "MsgDeathCount"
 msgid "03742"
 msgstr "Der Sensenmann ruft nach {argument_actor_name:1}!{line_break}{argument_signed_number}..."
 
-msgctxt "message"
+msgctxt "MsgPsySeal"
 msgid "03743"
 msgstr "{argument_actor_name:1}{possessive_suffix} Psyn. wurde versiegelt!"
 
-msgctxt "message"
+msgctxt "MsgAgiUp"
 msgid "03744"
 msgstr "{argument_actor_name:1}{possessive_suffix} Geschwindigkeit steigt um{line_break}{argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAgiDown"
 msgid "03745"
 msgstr "{argument_actor_name:1}{possessive_suffix} Geschwindigkeit fällt um{line_break}{argument_signed_number}!"
 
@@ -15007,15 +15007,15 @@ msgctxt "message"
 msgid "03749"
 msgstr "{argument_actor_name:1}{possessive_suffix} Wind-Kraft steigt um{line_break}{argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgReadies"
 msgid "03750"
 msgstr "{argument_actor_name:1} bereitet sich vor!"
 
-msgctxt "message"
+msgctxt "MsgChallenge"
 msgid "03751"
 msgstr "{argument_actor_name:1} stellt sich der Heraus-{line_break}forderung!"
 
-msgctxt "message"
+msgctxt "MsgImmobile"
 msgid "03752"
 msgstr "{argument_actor_name:1} wurde bewegungsunfähig!"
 
@@ -15023,19 +15023,19 @@ msgctxt "message"
 msgid "03753"
 msgstr "{argument_actor_name:1} ist bewegungsunfähig!"
 
-msgctxt "message"
+msgctxt "MsgAura"
 msgid "03754"
 msgstr "Eine Schutzaura umgibt {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgAura2"
 msgid "03755"
 msgstr "Eine Schutzaura umgibt {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgVanished"
 msgid "03756"
 msgstr "{argument_actor_name:1} löste sich in Luft auf!"
 
-msgctxt "message"
+msgctxt "MsgCounterReady"
 msgid "03757"
 msgstr "{argument_actor_name:1} ist zum Gegenangriff bereit!"
 
@@ -15047,11 +15047,11 @@ msgctxt "message"
 msgid "03759"
 msgstr "Es erholt sich gerade kein Dschinn!"
 
-msgctxt "message"
+msgctxt "MsgWakes"
 msgid "03760"
 msgstr "{argument_actor_name:1} wacht auf!"
 
-msgctxt "message"
+msgctxt "MsgCurePoison"
 msgid "03761"
 msgstr "{argument_actor_name:1}{possessive_suffix} Körper wurde vom Gift{line_break}befreit!"
 
@@ -15079,15 +15079,15 @@ msgctxt "message"
 msgid "03767"
 msgstr "{argument_actor_name:1} kommt wieder zu Bewusst-{line_break}sein!"
 
-msgctxt "message"
+msgctxt "MsgCureDelusion"
 msgid "03768"
 msgstr "{argument_actor_name:1} kann wieder klar sehen!"
 
-msgctxt "message"
+msgctxt "MsgCureSeal"
 msgid "03769"
 msgstr "{argument_actor_name:1}{possessive_suffix} Psynergy-Siegel ist{line_break}gebrochen!"
 
-msgctxt "message"
+msgctxt "MsgCureStun"
 msgid "03770"
 msgstr "{argument_actor_name:1} ist nicht mehr gelähmt!"
 
@@ -15095,7 +15095,7 @@ msgctxt "message"
 msgid "03771"
 msgstr "{argument_actor_name:1} kommt wieder zu Bewusst-{line_break}sein!"
 
-msgctxt "message"
+msgctxt "MsgCureSpirit"
 msgid "03772"
 msgstr "Der Geist des Todes verlässt{line_break}{argument_actor_name:1}!"
 
@@ -15115,7 +15115,7 @@ msgctxt "message"
 msgid "03776"
 msgstr "{argument_actor_name:1} kommt wieder zu{line_break}Bewusstsein!"
 
-msgctxt "message"
+msgctxt "MsgCureCurse"
 msgid "03777"
 msgstr "{argument_actor_name:1} entkommt dem Tod!"
 
@@ -15123,7 +15123,7 @@ msgctxt "message"
 msgid "03778"
 msgstr "{argument_actor_name:1} wird wieder normal!"
 
-msgctxt "message"
+msgctxt "MsgBuffsReset"
 msgid "03779"
 msgstr "{argument_actor_name:1}{possessive_suffix} Stärke normalisiert sich!"
 
@@ -15499,19 +15499,19 @@ msgctxt "message"
 msgid "03872"
 msgstr "{argument_actor_name:1} sendet Ultraschall aus!"
 
-msgctxt "message"
+msgctxt "MsgSplitOff"
 msgid "03873"
 msgstr "Es hat sich in {argument_actor_name:1} geteilt!"
 
-msgctxt "message"
+msgctxt "MsgSplitFailed"
 msgid "03874"
 msgstr "Es konnte sich nicht teilen!"
 
-msgctxt "message"
+msgctxt "MsgAppears"
 msgid "03875"
 msgstr "{argument_actor_name:1} erscheint!"
 
-msgctxt "message"
+msgctxt "MsgNoOneCame"
 msgid "03876"
 msgstr "Aber niemand erschien!"
 
@@ -18535,11 +18535,11 @@ msgctxt "message"
 msgid "04631"
 msgstr "Verfügbare Anzahl"
 
-msgctxt "message"
+msgctxt "MsgPanelStatLabel"
 msgid "04632"
 msgstr "Attacke"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "04633"
 msgstr "Vert."
 
@@ -18551,7 +18551,7 @@ msgctxt "message"
 msgid "04635"
 msgstr "Glück"
 
-msgctxt "message"
+msgctxt "MsgAgilityLabel"
 msgid "04636"
 msgstr "Geschw."
 

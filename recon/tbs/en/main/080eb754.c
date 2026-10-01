@@ -320,16 +320,20 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
 
     {
     s32 row_x;
+    u8 *hit;
+    u8 *jitter;
 
+    hit = hit_row;
     row_x = 224;
     i = 0;
     do {
-        hit_row[i] = 0;
+        hit[i] = 0;
         i++;
     } while (i != 14);
+    jitter = jitter_row;
     i = 0;
     do {
-        jitter_row[i] = Random16() & 31;
+        jitter[i] = Random16() & 31;
         i++;
     } while (i != 16);
     i = 0;
@@ -390,12 +394,12 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
 
         /* Each unit bursts once, when the rising row has passed it. */
         for (i = 0; i != work->effect->count; i++) {
-            if (hit_row[i] == 0) {
+            if (hit[i] == 0) {
                 EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i], &unit);
                 if (unit.x > row_x) {
                     s32 k;
 
-                    hit_row[i] = 1;
+                    hit[i] = 1;
                     k = 0;
                     do {
                         struct EffectStep *burst = &BURST[i * 32 + k];
@@ -422,8 +426,10 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             struct EffectStep *burst = &BURST[i];
 
             if (burst->variant > 0) {
-                blit(canvas, sheet + ParticleStreams_CellOffsets[2],
-                    HI(burst->x) - 1, HI(burst->y) - 3, 3, 6);
+                s32 size = 3;
+
+                blit(canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                    HI(burst->x) - size / 2, HI(burst->y) - size, size, size * 2);
                 burst->x += burst->velocity_x;
                 burst->y += burst->velocity_y;
                 burst->variant--;
@@ -444,7 +450,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             y = -8;
             do {
                 blit(canvas, (u8 *)work + (Random16() & 3) * 0x600,
-                    jitter_row[i] - slide + 120, y, 48, 32);
+                    jitter[i] - slide + 120, y, 48, 32);
                 i++;
                 y += 8;
             } while (i != 16);

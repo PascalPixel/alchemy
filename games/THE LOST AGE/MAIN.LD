@@ -1967,7 +1967,7 @@ SECTIONS
         "*/recon/tla/raw/080fee04.o"(.text)
         "*/recon/tla/raw/080fee40.o"(.text)
         "*/recon/tla/raw/080feec0.o"(.text)
-        "*/recon/tla/raw/080ff1f4.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/MENU8.o"(.text)
         "*/recon/tla/raw/080ff27c.o"(.text)
         "*/recon/tla/raw/080ff2e8.o"(.text)
         "*/recon/tla/raw/080ff370.o"(.text)

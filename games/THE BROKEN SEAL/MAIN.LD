@@ -761,7 +761,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT12.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000cd970)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/INITIALIZE_MODE10.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000cf5d0)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/GATHER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000cf9ac)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)

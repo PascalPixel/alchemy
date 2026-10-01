@@ -1456,8 +1456,6 @@ BattleFx_RenderMode:
 	.thumb_func
 BattleEffect_RunDitherDissolveScene:
 	.incbin "baserom.gba", 0x000d6970, 0x00000cec
-	.section .rom.000d85d0, "ax"
-	.incbin "baserom.gba", 0x000d85d0, 0x00000378
 	.section .rom.000d89ac, "ax"
 	.global BattleEffectA
 	.type BattleEffectA, %function

@@ -34,7 +34,7 @@ extern u16 ParticleStreams_CellOffsets[];
 /* Battle effect: 128 motes leave every affected unit in random directions,
    one unit every twenty frames, and the first 32 of each unit are drawn
    while they are pulled towards the acting unit, where they vanish. */
-void Unnamed_080d85d0(struct BattleEffectArgument *effect)
+void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
     void **cursor;
@@ -71,15 +71,14 @@ void Unnamed_080d85d0(struct BattleEffectArgument *effect)
 
     for (member = 0; member != work->effect->count; member++) {
         s32 *object;
-        s32 offset;
         s32 height;
-        struct EffectStep *mote;
 
-        offset = member * MOTES_PER_MEMBER * sizeof(struct EffectStep);
         object = *GetBattleObjectSlotFar(work->effect->actors[member]);
         height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
-        for (i = 0, mote = (struct EffectStep *)(Ram_MapCellBuffer + offset);
-             i != MOTES_PER_MEMBER; i++) {
+        for (i = 0; i != MOTES_PER_MEMBER; i++) {
+            struct EffectStep *mote =
+                &((struct EffectStep *)Ram_MapCellBuffer)[member * MOTES_PER_MEMBER + i];
+
             mote->x = object[2];
             mote->y = object[3] + height;
             mote->z = object[4];
@@ -87,7 +86,6 @@ void Unnamed_080d85d0(struct BattleEffectArgument *effect)
             mote->velocity_y = ((Random16() & 0xff) - 128) << 10;
             mote->velocity_z = ((Random16() & 0xff) - 128) << 10;
             mote->variant = 0;
-            mote++;
         }
     }
 
@@ -113,21 +111,21 @@ void Unnamed_080d85d0(struct BattleEffectArgument *effect)
         if (frame == work->effect->count * 20 + 52)
             ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
         for (member = 0; member != work->effect->count; member++) {
-            s32 offset;
-
-            offset = member * MOTES_PER_MEMBER * sizeof(struct EffectStep);
             if (frame == member * 20)
                 ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 42);
             if (frame > member * 20) {
-                struct EffectStep *mote;
+                for (i = 0; i != 32; i++) {
+                    struct EffectStep *mote =
+                        &((struct EffectStep *)Ram_MapCellBuffer)[member * MOTES_PER_MEMBER + i];
 
-                for (i = 0, mote = (struct EffectStep *)(Ram_MapCellBuffer + offset);
-                     i != 32; i++) {
                     if (mote->variant >= 0) {
+                        s32 size;
+
                         EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
                         screen.x >>= 1;
-                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[5],
-                            screen.x - 3, screen.y - 6, 6, 12);
+                        size = 6;
+                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                            screen.x - size / 2, screen.y - size, size, size * 2);
                         EffectStep_AdvanceWithGravity3D(mote, 62, 0);
                         if (frame > member * 20 + i + 10) {
                             s32 dx;
@@ -144,7 +142,6 @@ void Unnamed_080d85d0(struct BattleEffectArgument *effect)
                                 mote->variant = -1;
                         }
                     }
-                    mote++;
                 }
             }
         }

@@ -1,6 +1,6 @@
 # Published progress; '-' means no value was recorded.
 # began	2026-07-16
-# current	2026-10-01	verified	verified
+# current	2026-10-02	verified	verified
 date	tbs_done	tbs_executable	tbs_percent	tla_done	tla_executable	tla_percent	models	overhaul
 2026-07-16	-	-	1.0	-	-	-	Sol 5.6=56	-
 2026-07-17	-	-	1.0	-	-	-	Fable 5=44;Sol 5.6=12	-
@@ -79,3 +79,4 @@ date	tbs_done	tbs_executable	tbs_percent	tla_done	tla_executable	tla_percent	mod
 2026-09-29	1045378	1373042	-	105684	1972422	-	Opus 5.5=753;Untagged=22	-
 2026-09-30	1077286	1373266	-	129448	1978912	-	Opus 5.5=718;Untagged=95	-
 2026-10-01	1085098	1373276	-	141908	1978904	-	Opus 5.5=263;Untagged=27	-
+2026-10-02	6494188	8239656	-	548146	11873424	-	Opus 5.5=14	Meter change: DONE now counts all six editions of each game together

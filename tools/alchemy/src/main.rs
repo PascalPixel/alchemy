@@ -65,7 +65,7 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         if target == "coverage" {
             println!(
-                "usage: alchemy coverage\nPublishes README progress and both figures from each game's verified build."
+                "usage: alchemy coverage\nPublishes README progress and both figures from each game's six verified builds."
             );
         } else {
             println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");

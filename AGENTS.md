@@ -16,10 +16,11 @@ as it still refuses everything it refused before.
 ## Goal
 
 **DONE = matching C + proven library, handwritten or veneer assembly**, over
-each game's executable bytes. `make progress` prints the exact counts, shows
-⚓️ in its parts (C, assembly and 8-byte stubs) and shows the bytes of
-FAKEMATCH-steered code as their own number. ☀️ has the priority; the target is
-☀️ 100% and ⚓️ 100%, sharing as much code between the games as possible.
+each game's executable bytes in all six of its editions together.
+`make progress` prints the exact counts, shows ⚓️ in its parts (C, assembly and
+8-byte stubs) and shows the bytes of FAKEMATCH-steered code as their own
+number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%, sharing as much
+code between the games as possible.
 
 ## Rules
 
@@ -36,15 +37,16 @@ FAKEMATCH-steered code as their own number. ☀️ has the priority; the target 
 ### Counting
 
 - **C1** A function counts only when its complete extent, literal pool
-  included, compiles exactly and every edition stays byte-identical. Until the
-  other ten editions build their code from C, their byte-identical builds
-  prove pictures, sound and text only.
+  included, compiles exactly and every edition stays byte-identical. A
+  function counts in an edition only when that edition's build links its C.
   _Check: compare, compare-tla, compare-other-editions._
 - **C2** DONE is pret's calcrom over the linker maps of byte-identical builds:
-  the code the linker places from `games/`. Uncredited disassembly is
-  `not-yet-c` in `recon/<game>/raw`; only proven library, handwritten and veneer
-  assembly counts as assembly. Whole aligned 8-byte far-call stubs count as
-  veneers. Padding a source marks as carrying no credit does not count.
+  the code the linker places from `games/`, counted once for each of the
+  game's six editions whose build links it, out of six; sizes are the English
+  build's. Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only
+  proven library, handwritten and veneer assembly counts as assembly. Whole
+  aligned 8-byte far-call stubs count as veneers. Padding a source marks as
+  carrying no credit does not count.
   _Check: coverage-check._
 - **C3** Main commits carry the verified percentage, README and both progress
   figures, written by `make land`. _Check: commit-msg hook, coverage-check._

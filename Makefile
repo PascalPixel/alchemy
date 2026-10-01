@@ -47,7 +47,7 @@ help:
 	  'make test            Rust tests, formatting and source policy' \
 	  'make verify          verify source, publication and both ROM compositions' \
 	  'make coverage        update README and both published figures' \
-	  'make progress        report DONE from the linker maps of verified builds' \
+	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
 	  'make raw             generate private disassembly under out/' \
 	  'make drafts         compile and score every draft against its listing' \
 	  'make similar         rank not-yet-C functions against C into out/reports/similar.tsv' \
@@ -215,8 +215,9 @@ test:
 coverage:
 	$(CHECK) coverage --write --publication
 
-# Source and build defaults are Japanese. Published coverage/progress keep
-# their existing verified English counting inputs and calculation.
+# Source and build defaults are Japanese. Published coverage/progress count
+# each game's six editions together: the English build gives the bytes, and
+# an edition earns those of the objects its own verified build links.
 coverage-check:
 	$(CHECK) coverage --check
 
@@ -233,13 +234,15 @@ progress-report:
 drafts:
 	$(ALCHEMY) drafts
 
+# The listings under recon/<game>/raw are the English builds' disassembly, so
+# both reports read the English builds: the Japanese ones link few of them.
 similar:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-ja --build out/tla-ja \
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
 	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
 
 # A report for people only: the build and the count never read it.
 deps:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- deps --build out/tbs-ja --build out/tla-ja \
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
 	    --out-dir out/reports $(DEPS_FLAGS)
 
 progress-check:

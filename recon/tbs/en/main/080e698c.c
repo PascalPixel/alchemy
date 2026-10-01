@@ -37,8 +37,6 @@
  * passed directly to GetBattleObjectSlotFar earlier in this owner -- so it is
  * modeled as taking a member id rather than a position-record pointer.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -47,7 +45,7 @@ void **GetBattleObjectSlotFar(s32 member_id);
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 _call_via_r2(s32 a, s32 b, s32 target);
 void Object_ResetMotion(void *object);
-void Object_SetPosition(void *object, s32 x, s32 y, s32 z);
+void Object_SetMoveTargetFar(void *object, s32 x, s32 y, s32 z);
 void Object_SetMode(void *object, s32 mode);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
@@ -98,17 +96,17 @@ s32 Unnamed_080e698c(void *object)
     work = *cursor++;
     draw_destination = *cursor;
     extra_target = heap_cache[2];
-    M2C_FIELD(work, void **, 0x7828) = object;
+    (*(void **)((u8 *)work + 0x7828)) = object;
     BattleFx_BeginCanvasLayer(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
+    (*(s16 *)((u8 *)((void *)0x04000020) + 0)) = 0x100;
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra_target, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet, (u8 *)work + 0x3E80, 1, 0);
     BattleFx_FetchRectangleBlitters(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), draw_pair);
+        (*(s32 *)((u8 *)((*(void **)((u8 *)work + 0x7828))) + 4)), draw_pair);
 
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
+    (*(s32 *)((u8 *)work + 0x7780)) = 2;
+    (*(s32 *)((u8 *)work + 0x7784)) = 50;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     {
@@ -125,16 +123,16 @@ s32 Unnamed_080e698c(void *object)
     }
 
     member_a = *GetBattleObjectSlotFar(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
+        (*(s32 *)((u8 *)((*(void **)((u8 *)work + 0x7828))) + 8)));
     member_b = *GetBattleObjectSlotFar(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
-    new_x = M2C_FIELD(member_a, s32 *, 8);
-    dx = M2C_FIELD(member_b, s32 *, 8) - new_x;
+        (*(s16 *)((u8 *)((*(void **)((u8 *)work + 0x7828))) + 36)));
+    new_x = (*(s32 *)((u8 *)member_a + 8));
+    dx = (*(s32 *)((u8 *)member_b + 8)) - new_x;
     dx_scaled = __divsi3(dx * 80, 100);
-    dz = M2C_FIELD(member_b, s32 *, 16) - M2C_FIELD(member_a, s32 *, 16);
+    dz = (*(s32 *)((u8 *)member_b + 16)) - (*(s32 *)((u8 *)member_a + 16));
     dz_scaled = __divsi3(dz * 80, 100);
     new_x = new_x + dx_scaled;
-    new_z = M2C_FIELD(member_a, s32 *, 16) + dz_scaled;
+    new_z = (*(s32 *)((u8 *)member_a + 16)) + dz_scaled;
     speed = __divsi3(
         _call_via_r2(
             ((dx_scaled >> 8) * (dx_scaled >> 8))
@@ -142,21 +140,21 @@ s32 Unnamed_080e698c(void *object)
             leftover, 0x030001D8)
             << 8,
         20);
-    M2C_FIELD(member_a, s32 *, 0x34) = speed;
-    M2C_FIELD(member_a, s32 *, 0x30) = speed;
-    M2C_FIELD(member_a, s8 *, 0x58) = 1;
-    M2C_FIELD(member_a, s32 *, 0x28) = 0x70000;
-    M2C_FIELD(member_a, s32 *, 0x48) = 0xDEB8;
-    M2C_FIELD(member_a, s32 *, 0x44) = 0;
-    M2C_FIELD(member_a, s8 *, 0x5A) = 1;
+    (*(s32 *)((u8 *)member_a + 0x34)) = speed;
+    (*(s32 *)((u8 *)member_a + 0x30)) = speed;
+    (*(s8 *)((u8 *)member_a + 0x58)) = 1;
+    (*(s32 *)((u8 *)member_a + 0x28)) = 0x70000;
+    (*(s32 *)((u8 *)member_a + 0x48)) = 0xDEB8;
+    (*(s32 *)((u8 *)member_a + 0x44)) = 0;
+    (*(s8 *)((u8 *)member_a + 0x5A)) = 1;
     Object_ResetMotion(member_a);
-    Object_SetPosition(member_a, new_x, 0, new_z);
+    Object_SetMoveTargetFar(member_a, new_x, 0, new_z);
     Object_SetMode(member_a, 2);
 
     for (frame = 0; frame != 70; frame++) {
         EffectPosition_ApplyAlternateStepAndYOffset(
-            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8), screen);
-        M2C_FIELD((void *)0x04000028, s32 *, 0) = (0x50 - screen[0]) << 8;
+            (*(s32 *)((u8 *)((*(void **)((u8 *)work + 0x7828))) + 8)), screen);
+        (*(s32 *)((u8 *)((void *)0x04000028) + 0)) = (0x50 - screen[0]) << 8;
 
         if ((u32)(frame - 8) <= 15) {
             s32 index;
@@ -165,7 +163,7 @@ s32 Unnamed_080e698c(void *object)
             if (index > 6) {
                 index = 6;
             }
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)work + 0x7828))) + 4)) == 0) {
                 draw_pair[0](
                     draw_destination,
                     (u8 *)work + Data_080eee02[index],
@@ -191,11 +189,11 @@ s32 Unnamed_080e698c(void *object)
 
             BattleEventRuntime_BeginPhaseFar(134);
             ObjectGroup_UpdateMembers(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
+                (*(s16 *)((u8 *)((*(void **)((u8 *)work + 0x7828))) + 36)),
                 7, 5, 0, 8);
             BattleMotion_ApplyVariantMotionFar(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36), 6);
-            M2C_FIELD(work, s32 *, 0x77A8) = 4;
+                (*(s16 *)((u8 *)((*(void **)((u8 *)work + 0x7828))) + 36)), 6);
+            (*(s32 *)((u8 *)work + 0x77A8)) = 4;
 
             particle = (u8 *)0x02010000;
             for (i = 0; i != 16; i++) {
@@ -204,13 +202,13 @@ s32 Unnamed_080e698c(void *object)
 
                 magnitude = (Random16() & 63) + 256;
                 angle = Random16() & 0xFFFF;
-                M2C_FIELD(particle, s32 *, 0) = 0x400000;
-                M2C_FIELD(particle, s32 *, 4) = 0x500000;
-                M2C_FIELD(particle, s32 *, 12) =
+                (*(s32 *)((u8 *)particle + 0)) = 0x400000;
+                (*(s32 *)((u8 *)particle + 4)) = 0x500000;
+                (*(s32 *)((u8 *)particle + 12)) =
                     (magnitude * Trig_Sin((s32)angle)) >> 7;
-                M2C_FIELD(particle, s32 *, 16) =
+                (*(s32 *)((u8 *)particle + 16)) =
                     -(magnitude * Trig_Cos((s32)angle)) >> 6;
-                M2C_FIELD(particle, s32 *, 24) = (Random16() & 15) + 16;
+                (*(s32 *)((u8 *)particle + 24)) = (Random16() & 15) + 16;
                 particle += 28;
             }
         }
@@ -223,19 +221,19 @@ s32 Unnamed_080e698c(void *object)
             for (i = 0; i != 128; i++) {
                 s32 lifetime;
 
-                lifetime = M2C_FIELD(particle, s32 *, 24);
+                lifetime = (*(s32 *)((u8 *)particle + 24));
                 if (lifetime > 0) {
-                    M2C_FIELD(particle, s32 *, 24) = lifetime - 1;
+                    (*(s32 *)((u8 *)particle + 24)) = lifetime - 1;
                     EffectStep_AdvanceWithGravity2D(particle, 60, 0);
-                    if (M2C_FIELD(particle, s32 *, 4) > 0x680000) {
-                        M2C_FIELD(particle, s32 *, 16) =
-                            -M2C_FIELD(particle, s32 *, 16) / 2;
+                    if ((*(s32 *)((u8 *)particle + 4)) > 0x680000) {
+                        (*(s32 *)((u8 *)particle + 16)) =
+                            -(*(s32 *)((u8 *)particle + 16)) / 2;
                     } else {
                         s32 x;
                         s32 y;
 
-                        x = M2C_FIELD(particle, s32 *, 0);
-                        y = M2C_FIELD(particle, s32 *, 4);
+                        x = (*(s32 *)((u8 *)particle + 0));
+                        y = (*(s32 *)((u8 *)particle + 4));
                         if ((u32)x <= 0x7EFFFFU && y >= 0) {
                             s32 rx;
                             s32 ry;
@@ -261,7 +259,7 @@ s32 Unnamed_080e698c(void *object)
 
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((u8 *)work + 0x7824)) = 1;
         WaitFrames(1);
     }
 

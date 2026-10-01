@@ -50,8 +50,6 @@
  * through the whole body and shifts every frame offset.  The axis was searched
  * twice without a new structural fact and is reported rather than reopened.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 
 /* 28-byte record shared by work + 0x7080, work + 0x7128 and the 0x02010000
@@ -172,13 +170,13 @@ void BattleEffect_RunCirclingFallingScene(void *object)
     handle_off = 0x77FC;
     for (i = 0; i != 6; i++) {
         drawable = ResourceObject_CreateFar(390);
-        M2C_FIELD(work, void **, handle_off) = drawable;
+        (*(void **)((u8 *)work + (handle_off))) = drawable;
         if (drawable != NULL) {
-            M2C_FIELD(drawable, s8 *, 0x26) = 0;
+            (*(s8 *)((u8 *)drawable + 0x26)) = 0;
             AnimationObjects_SelectAnimationFar(drawable, __modsi3(i, 3));
-            drawable = M2C_FIELD(work, void **, handle_off);
-            M2C_FIELD(drawable, u8 *, 9) =
-                (u8)((M2C_FIELD(drawable, u8 *, 9) & ~0xC) | 4);
+            drawable = (*(void **)((u8 *)work + (handle_off)));
+            (*(u8 *)((u8 *)drawable + 9)) =
+                (u8)(((*(u8 *)((u8 *)drawable + 9)) & ~0xC) | 4);
         }
         handle_off += 4;
     }
@@ -239,8 +237,8 @@ void BattleEffect_RunCirclingFallingScene(void *object)
         entry++;
     }
 
-    M2C_FIELD(work, s32 *, 0x77B4) = 24;
-    M2C_FIELD(work, s32 *, 0x77B8) = 0;
+    (*(s32 *)((u8 *)work + 0x77B4)) = 24;
+    (*(s32 *)((u8 *)work + 0x77B8)) = 0;
 
     frame = 0;
     if ((*(s32 *)0x03001B04 & 3) == 0) {
@@ -262,9 +260,9 @@ void BattleEffect_RunCirclingFallingScene(void *object)
             clip[0] = Data_080edac8[0];
             clip[1] = Data_080edac8[1];
             if ((u32)(frame - 96) <= 155U) {
-                M2C_FIELD(work, s32 *, 0x77A8) = 1;
+                (*(s32 *)((u8 *)work + 0x77A8)) = 1;
             } else if ((u32)(frame - 260) <= 3U) {
-                M2C_FIELD(work, s32 *, 0x77A8) = 1;
+                (*(s32 *)((u8 *)work + 0x77A8)) = 1;
             }
 
             /* Seven fixed background objects from the byte-offset tables. */
@@ -326,10 +324,10 @@ void BattleEffect_RunCirclingFallingScene(void *object)
                 pos[2] = org.y + (s32)0xFF000000;
                 pos[0] = org.x;
                 Object_ApplyProjectedPlacementFar(
-                    M2C_FIELD(work, s32 *, 0x77F4), pos, clip_ptr, 0);
+                    (*(s32 *)((u8 *)work + 0x77F4)), pos, clip_ptr, 0);
                 pos[0] = org.x + 0x200000;
                 Object_ApplyProjectedPlacementFar(
-                    M2C_FIELD(work, s32 *, 0x77F8), pos, clip_ptr, 0);
+                    (*(s32 *)((u8 *)work + 0x77F8)), pos, clip_ptr, 0);
             }
 
             /* Advance and redraw the six falling objects. */
@@ -388,8 +386,8 @@ void BattleEffect_RunCirclingFallingScene(void *object)
                         ((DrawRectangleFn)rectangle[0])(
                             canvas,
                             (u8 *)work + offset,
-                            M2C_FIELD(entry, s16 *, 2) - (size >> 1),
-                            M2C_FIELD(entry, s16 *, 6) - (size >> 1),
+                            (*(s16 *)((u8 *)entry + 2)) - (size >> 1),
+                            (*(s16 *)((u8 *)entry + 6)) - (size >> 1),
                             size, size);
                     }
                     EffectStep_AdvanceWithGravity2D(entry, 60, (s32)0xFFFFC000);
@@ -421,7 +419,7 @@ void BattleEffect_RunCirclingFallingScene(void *object)
                         ((struct BattleEffectArgument *)
                             ((struct BattleEffectWork *)work)->effect)->count);
                 }
-                M2C_FIELD(work, s32 *, 0x77A8) = 8;
+                (*(s32 *)((u8 *)work + 0x77A8)) = 8;
                 if (frame == 260) {
                     entry = (SceneParticle *)0x02010000;
                     for (n = 0; n != 512; n++) {
@@ -449,8 +447,8 @@ void BattleEffect_RunCirclingFallingScene(void *object)
                     ((DrawRectangleFn)rectangle_slot[i & 1])(
                         canvas,
                         (u8 *)sprite_sheet + ParticleStreams_CellOffsets[half - 1],
-                        M2C_FIELD(entry, s16 *, 2) - (half / 2),
-                        M2C_FIELD(entry, s16 *, 6) - half,
+                        (*(s16 *)((u8 *)entry + 2)) - (half / 2),
+                        (*(s16 *)((u8 *)entry + 6)) - half,
                         half, full);
                     EffectStep_AdvanceWithGravity2D(entry, 62, 0x1000);
                     entry->timer -= 1;

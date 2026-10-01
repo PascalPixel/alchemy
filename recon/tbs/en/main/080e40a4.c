@@ -120,7 +120,6 @@ extern u8 Value_00000648;
  * would need a compiler-level fact, not another source spelling.
  */
 
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 /* The state pointer this owner parks in, and reloads from, work + 0x7828. */
 #define STATE (*(void **)(work + 0x7828))
@@ -240,18 +239,18 @@ void BattlePres_RunRingAndSparkScene(void *object)
     xfer = heap[-27];
 
     big = 1;
-    if (M2C_FIELD(object, s32 *, 0) <= 199) {
+    if ((*(s32 *)((s8 *)object + 0)) <= 199) {
         big = 0;
     }
 
     STATE = object;
     BattlePres_SetupTransitionAtPairMidpointFar(
-        M2C_FIELD(object, s32 *, 8), M2C_FIELD(object, s32 *, 12), 130);
+        (*(s32 *)((s8 *)object + 8)), (*(s32 *)((s8 *)object + 12)), 130);
     WaitFrames(1);
     BattleFx_SetupCanvasTileMap();
     *(u16 *)0x0400000A = (s32)&Value_00001f80;
 
-    if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+    if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
         BattleEffect_LoadWork(46, 7, 7, 3, 3);
         BattleEffect_LoadWork(47, 7, 7, 3, 2);
     } else {
@@ -262,35 +261,35 @@ void BattlePres_RunRingAndSparkScene(void *object)
     blit[1] = (BlitFn)gWorkSlot[47];
 
     BattlePres_SetupTransitionAtPairMidpointFar(
-        M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
+        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet, work, 1, 0);
 
     BattlePres_SetupTransitionAtPairMidpointFar(
-        M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
+        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, (void *)0x02010000, 1, 1);
 
-    if (M2C_FIELD(STATE, s32 *, 8) > 7) {
+    if ((*(s32 *)((s8 *)STATE + 8)) > 7) {
         _call_via_r3((void *)0x05000000,
             Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128, (CopyFn)0x03001388);
     }
 
     BattlePres_SetupTransitionAtPairMidpointFar(
-        M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
+        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprite_src, 0, 0);
 
     BattlePres_SetupTransitionAtPairMidpointFar(
-        M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
+        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
     WaitFrames(1);
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = 0;
+    (*(s32 *)((s8 *)work + 0x7780)) = 1;
+    (*(s32 *)((s8 *)work + 0x7784)) = 0;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     if (big == 1) {
         /* Seed the ring: a shrinking radius and three random angles. */
-        member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
+        member = *GetBattleObjectSlotFar((*(s32 *)((s8 *)STATE + 8)));
         p = (struct Particle *)(work + 0x7080);
         i = 0;
         do {
@@ -305,31 +304,31 @@ void BattlePres_RunRingAndSparkScene(void *object)
         } while (i != 64);
 
         ObjectDispatch_ApplyValueToChildrenFar(member, 0);
-        saved24 = M2C_FIELD(member, s32 *, 0x24);
-        saved28 = M2C_FIELD(member, s32 *, 0x28);
-        saved2c = M2C_FIELD(member, s32 *, 0x2C);
-        saved48 = M2C_FIELD(member, s32 *, 0x48);
-        saved34 = M2C_FIELD(member, s32 *, 0x34);
-        M2C_FIELD(member, s32 *, 0x24) = 0;
-        M2C_FIELD(member, s32 *, 0x28) = 0;
-        M2C_FIELD(member, s32 *, 0x2C) = 0;
-        M2C_FIELD(member, s32 *, 0x34) = 0;
-        M2C_FIELD(member, s32 *, 0x48) = 0;
+        saved24 = (*(s32 *)((s8 *)member + 0x24));
+        saved28 = (*(s32 *)((s8 *)member + 0x28));
+        saved2c = (*(s32 *)((s8 *)member + 0x2C));
+        saved48 = (*(s32 *)((s8 *)member + 0x48));
+        saved34 = (*(s32 *)((s8 *)member + 0x34));
+        (*(s32 *)((s8 *)member + 0x24)) = 0;
+        (*(s32 *)((s8 *)member + 0x28)) = 0;
+        (*(s32 *)((s8 *)member + 0x2C)) = 0;
+        (*(s32 *)((s8 *)member + 0x34)) = 0;
+        (*(s32 *)((s8 *)member + 0x48)) = 0;
 
-        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
+        EffectPosition_ApplyStepAndYOffset((*(s32 *)((s8 *)STATE + 8)), pos);
         shake = 64 - pos[0];
         SHAKE.offset = (u16)shake;
         val = 80;
         SHAKE.duration = val;
-        M2C_FIELD(work, s32 *, 0x77B4) = 24;
-        M2C_FIELD(work, s32 *, 0x77B8) = 0;
+        (*(s32 *)((s8 *)work + 0x77B4)) = 24;
+        (*(s32 *)((s8 *)work + 0x77B8)) = 0;
         Scheduler_AddOrUpdateCallback((void *)0x080CD4B5, 0xC80);
         Audio_PlayCue(212);
 
         frame = 0;
         do {
-            BattlePres_SetupTransitionAtPairMidpointFar(M2C_FIELD(STATE, s32 *, 8),
-                M2C_FIELD(STATE, s32 *, 12), 130);
+            BattlePres_SetupTransitionAtPairMidpointFar((*(s32 *)((s8 *)STATE + 8)),
+                (*(s32 *)((s8 *)STATE + 12)), 130);
             p = (struct Particle *)(work + 0x7080);
             i = 0;
             do {
@@ -357,29 +356,29 @@ void BattlePres_RunRingAndSparkScene(void *object)
                 i++;
                 p++;
             } while (i != 64);
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            (*(s32 *)((s8 *)work + 0x7824)) = 1;
             WaitFrames(1);
             frame++;
         } while (frame != 32);
 
         Scheduler_RemoveCallback((void *)0x080CD4B5);
         ObjectDispatch_ApplyValueToChildrenFar(member, 16);
-        M2C_FIELD(member, s32 *, 0x24) = saved24;
-        M2C_FIELD(member, s32 *, 0x28) = saved28;
-        M2C_FIELD(member, s32 *, 0x2C) = saved2c;
-        M2C_FIELD(member, s32 *, 0x34) = saved34;
-        M2C_FIELD(member, s32 *, 0x48) = saved48;
+        (*(s32 *)((s8 *)member + 0x24)) = saved24;
+        (*(s32 *)((s8 *)member + 0x28)) = saved28;
+        (*(s32 *)((s8 *)member + 0x2C)) = saved2c;
+        (*(s32 *)((s8 *)member + 0x34)) = saved34;
+        (*(s32 *)((s8 *)member + 0x48)) = saved48;
     }
 
     ((ClearFn)0x03000164)(draw_target, 0x4000);
     ((ClearFn)0x03000164)((void *)0x06004000, 0x4000);
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 75;
+    (*(s32 *)((s8 *)work + 0x7780)) = 2;
+    (*(s32 *)((s8 *)work + 0x7784)) = 75;
     val = 0x1F81;
     *(u16 *)0x0400000A = val;
 
-    EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s16 *, 0x24), anchor);
-    if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+    EffectPosition_ApplyStepAndYOffset((*(s16 *)((s8 *)STATE + 0x24)), anchor);
+    if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
         shake = 32 - anchor[0];
     } else {
         shake = 96 - anchor[0];
@@ -396,8 +395,8 @@ void BattlePres_RunRingAndSparkScene(void *object)
     SHAKE.offset = (u16)shake;
 
     /* Reseed the same records as sparks at the actor's world position. */
-    member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 0x24));
-    half = Battle_GetObjectTableValueFar(M2C_FIELD(STATE, s16 *, 0x24)) / 2;
+    member = *GetBattleObjectSlotFar((*(s16 *)((s8 *)STATE + 0x24)));
+    half = Battle_GetObjectTableValueFar((*(s16 *)((s8 *)STATE + 0x24))) / 2;
     p = (struct Particle *)(work + (s32)&Value_00007080);
     i = 0;
     do {
@@ -421,9 +420,9 @@ void BattlePres_RunRingAndSparkScene(void *object)
             BattleEventRuntime_BeginPhaseFar(134);
         }
         if (frame == 4) {
-            BattleMotion_ApplyVariantMotionFar(M2C_FIELD(STATE, s16 *, 0x24), 0);
+            BattleMotion_ApplyVariantMotionFar((*(s16 *)((s8 *)STATE + 0x24)), 0);
         }
-        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
+        EffectPosition_ApplyStepAndYOffset((*(s32 *)((s8 *)STATE + 8)), pos);
         pos[1] = pos[1] + 16;
 
         if (frame <= 1) {
@@ -460,7 +459,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
             } while (i != 64);
         }
 
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((s8 *)work + 0x7824)) = 1;
         WaitFrames(1);
         frame++;
     } while (frame != 32);

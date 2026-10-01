@@ -10,12 +10,6 @@ Rom_Start:
 	.thumb_func
 Graphics_PrepareTransfer:
 	.incbin "baserom.gba", 0x00004fe4, 0x000001f4
-	.section .rom.000056cc, "ax"
-	.global SaveState_InitializeWorkspace
-	.type SaveState_InitializeWorkspace, %function
-	.thumb_func
-SaveState_InitializeWorkspace:
-	.incbin "baserom.gba", 0x000056cc, 0x00000144
 	.section .rom.0000615c, "ax"
 	.global SerialRuntime_CollectReceivedPayloads
 	.type SerialRuntime_CollectReceivedPayloads, %function
@@ -50,6 +44,8 @@ RomBytes_0800795c:
 Text_PowersOfTen:
 	.incbin "baserom.gba", 0x00007970, 0x00000024
 	.section .rom.000079b0, "ax"
+	.global Save_Signature
+Save_Signature:
 	.incbin "baserom.gba", 0x000079b0, 0x00000008
 	.global Save_HeaderTemplate
 Save_HeaderTemplate:

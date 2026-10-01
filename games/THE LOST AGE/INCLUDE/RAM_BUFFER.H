@@ -54,7 +54,11 @@ struct HeapSlots {
     void *menu_runtime;
     /* The battle effects' work, which The Broken Seal keeps as gEffectWork. */
     void *effect_work;
-    void *unknown_e4[7];
+    void *unknown_e4[1];
+    /* The resource selection menu's work, which The Broken Seal keeps as
+       gMenuSelectWork. */
+    void *menu_select_work;
+    void *unknown_ec[5];
 };
 
 #define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */

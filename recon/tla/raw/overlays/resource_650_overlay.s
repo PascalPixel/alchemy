@@ -5550,8 +5550,8 @@ gIdejimaEventsWake:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global gIdejimaSpawnScript
-gIdejimaSpawnScript:
+	.global DriftScene_SpawnScript
+DriftScene_SpawnScript:
 	.4byte 0x00000000
 	.4byte 0x0000002e
 	.4byte 0x00000026

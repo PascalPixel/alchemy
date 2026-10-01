@@ -80,7 +80,7 @@ Func_020000b8:
 	adds r1, r5, #0
 .L_02008108:
 	mov r3, r10
-	bl Func_02004814
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_02008116
@@ -93,7 +93,7 @@ Func_020000b8:
 	ands r1, r5
 	adds r0, r6, #0
 	str r3, [sp, #0]
-	bl Func_02004804
+	bl Engine_ObjectSetMode
 	ldr r2, .L_02008274
 	mov r3, r8
 	ands r3, r5
@@ -101,7 +101,7 @@ Func_020000b8:
 	ldr r1, [r2, r3]
 	adds r0, r6, #0
 	mov r10, r3
-	bl Func_0200480c
+	bl Engine_ObjectSetScript
 	adds r3, r6, #0
 	movs r5, #0
 	adds r3, #85
@@ -217,10 +217,10 @@ Func_020000b8:
 	beq .L_0200822e
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_02004804
+	bl Engine_ObjectSetMode
 	ldr r1, [r7, #28]
 	adds r0, r6, #0
-	bl Func_0200480c
+	bl Engine_ObjectSetScript
 .L_0200822e:
 	movs r3, #128
 	lsls r3, r3, #15
@@ -847,7 +847,7 @@ Func_0200057c:
 	adds r0, r5, #0
 	bl Sys_Free
 	movs r0, #246
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Object_GetById
 	movs r3, #9
@@ -886,7 +886,7 @@ Func_0200057c:
 	ldr r2, [r5, #12]
 	ldr r1, [r6, #8]
 	lsls r0, r0, #2
-	bl Func_02004814
+	bl Engine_ObjectCreate
 	adds r5, r0, #0
 	movs r0, #14
 	bl Object_GetById
@@ -927,10 +927,10 @@ Func_0200057c:
 	str r3, [r5, #48]
 	adds r0, r5, #0
 	movs r1, #7
-	bl Func_02004804
+	bl Engine_ObjectSetMode
 	adds r0, r5, #0
 	ldr r1, .L_0200883c
-	bl Func_0200480c
+	bl Engine_ObjectSetScript
 	adds r0, r5, #0
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26
@@ -972,7 +972,7 @@ Func_0200057c:
 	ldr r0, .L_02008848
 	bl Scheduler_AddOrUpdateCallback
 	movs r0, #207
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	ldr r3, .L_02008824
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1399,7 +1399,7 @@ Func_0200057c:
 	bl Func_02004864
 	movs r0, #195
 	lsls r0, r0, #1
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #14
 	bl Object_GetById
 	movs r3, #6
@@ -2204,7 +2204,7 @@ Func_020011f8:
 	movs r0, #17
 	bl ObjectMotion_Launch
 	movs r0, #229
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #2
 	bl WaitFrames
 	ldr r1, .L_02009228
@@ -2247,7 +2247,7 @@ Func_0200122c:
 	b .L_02009364
 .L_0200926c:
 	movs r0, #0
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #160
 	lsls r0, r0, #4
 	adds r0, #33
@@ -2291,7 +2291,7 @@ Func_0200122c:
 	movs r0, #17
 	bl Func_020049a4
 	movs r0, #11
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #17
 	movs r1, #5
 	bl Object_SetModeById
@@ -2374,7 +2374,7 @@ Func_02001380:
 	b .L_02009518
 .L_02009396:
 	movs r0, #78
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	bl Func_020048c4
 	movs r0, #0
 	bl Func_02004a24
@@ -2411,7 +2411,7 @@ Func_02001380:
 	ldr r0, [r5]
 	bl ObjectMotion_ArmCallback
 	movs r0, #76
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r1, #128
 	movs r0, #15
 	lsls r1, r1, #8
@@ -2878,7 +2878,7 @@ Func_02001764:
 	cmp r0, #0
 	bne .L_0200985a
 	movs r0, #76
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #15
@@ -3399,7 +3399,7 @@ Func_02001cc8:
 	cmp r6, #0
 	bne .L_02009cf6
 	movs r0, #188
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #10
 	bl WaitFrames
 	movs r3, #32
@@ -3435,7 +3435,7 @@ Func_02001d3c:
 	movs r0, #0
 	bl Func_02004a24
 	movs r0, #158
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r3, #1
 	movs r2, #2
 	str r3, [sp, #0]
@@ -3682,45 +3682,6 @@ Func_02001d3c:
 	.4byte 0x00002939
 .L_02009f9c:
 	.4byte 0x00019999
-	.section .text.x02009fa0,"ax",%progbits
-	.global Func_02001fa0
-	.thumb_func
-Func_02001fa0:
-	push {r5, r6, r7, lr}
-	adds r4, r0, #0
-	adds r6, r2, #0
-	adds r5, r1, #0
-	lsls r3, r3, #16
-	movs r0, #244
-	asrs r7, r3, #16
-	lsls r0, r0, #1
-	adds r3, r6, #0
-	adds r1, r4, #0
-	adds r2, r5, #0
-	bl Func_02004814
-	adds r6, r0, #0
-	cmp r6, #0
-	beq .L_02009fe4
-	movs r0, #151
-	ldr r5, [r6, #80]
-	bl Func_02004a9c
-	adds r0, r6, #0
-	movs r1, #1
-	bl Func_02004804
-	ldr r1, .L_02009fe8
-	adds r0, r6, #0
-	bl Func_0200480c
-	adds r2, r6, #0
-	movs r3, #0
-	adds r2, #85
-	strb r3, [r2]
-	strb r3, [r5, #26]
-	strh r7, [r5, #18]
-.L_02009fe4:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02009fe8:
-	.4byte Data_02006340
 	.section .text.x02009fec,"ax",%progbits
 	.global Func_02001fec
 	.thumb_func
@@ -3734,7 +3695,7 @@ Func_02001fec:
 	lsls r1, r1, #15
 	lsls r2, r2, #15
 	lsls r3, r3, #17
-	bl Func_02004814
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	movs r7, #0
 	movs r0, #0
@@ -3794,7 +3755,7 @@ Func_02002068:
 	movs r0, #0
 	bl Func_02004a24
 	movs r0, #78
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	ldr r3, .L_0200a0d0
 	movs r2, #133
 	lsls r2, r2, #2
@@ -3863,7 +3824,7 @@ Func_02002068:
 	movs r0, #15
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #29
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	ldr r0, .L_0200a4d8
 	bl Func_0200498c
 	movs r0, #15
@@ -4238,7 +4199,7 @@ Func_02002068:
 	lsls r3, r3, #8
 	adds r2, r6, #0
 	lsls r0, r0, #15
-	bl Func_02001fa0
+	bl DriftScene_SpawnObject
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r0, #248
@@ -4265,7 +4226,7 @@ Func_02002068:
 	adds r1, r5, #0
 	adds r2, r6, #0
 	lsls r0, r0, #15
-	bl Func_02001fa0
+	bl DriftScene_SpawnObject
 	movs r0, #30
 	bl Battle_WaitMode0
 	movs r1, #131
@@ -4382,7 +4343,7 @@ Func_02002068:
 	ldr r1, .L_0200a78c
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #78
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 .L_0200a622:
 	movs r0, #1
 	bl WaitFrames
@@ -4599,7 +4560,7 @@ Func_02002808:
 	cmp r0, #0
 	beq .L_0200a86c
 	movs r0, #0
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	bl Func_020048c4
 	movs r0, #0
 	bl Func_02004a24
@@ -5677,21 +5638,21 @@ Func_02003040:
 	movs r0, #30
 	bl Battle_WaitMode0
 	movs r0, #78
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #5
 	bl Func_02002fb0
 	movs r1, #0
 	movs r0, #2
 	bl Func_02002f20
 	movs r0, #236
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r1, #1
 	movs r0, #2
 	bl Func_02002f20
 	movs r0, #236
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #6
@@ -5700,7 +5661,7 @@ Func_02003040:
 	movs r0, #2
 	bl Func_02002f20
 	movs r0, #236
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #60
 	bl Battle_WaitMode0
 	movs r0, #7
@@ -5709,9 +5670,9 @@ Func_02003040:
 	movs r0, #4
 	bl Func_02002f20
 	movs r0, #237
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #76
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	pop {pc}
 .L_0200b0b8:
 	.4byte Data_0200515a
@@ -5738,7 +5699,7 @@ Func_020030bc:
 	movs r0, #0
 	bl Func_02004a24
 	movs r0, #0
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #1
 	movs r1, #1
 	movs r2, #1
@@ -5902,7 +5863,7 @@ Func_020030bc:
 	bl Func_020049e4
 	bl Func_02003b24
 	movs r0, #29
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r1, #153
 	lsls r1, r1, #8
 	ldr r0, .L_0200b538
@@ -6635,7 +6596,7 @@ Func_020030bc:
 	adds r1, r5, #0
 	bl ObjectMotion_EnableActionAndSetCallback
 	movs r0, #78
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 .L_0200b99a:
 	movs r0, #1
 	bl WaitFrames
@@ -6802,7 +6763,7 @@ Func_02003b24:
 	movs r0, #6
 	bl ObjectMotion_SetActionVariant
 	movs r0, #131
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	bl Func_02004a54
 	movs r0, #6
 	bl Object_GetById
@@ -6846,11 +6807,11 @@ Func_02003b6c:
 	cmp r6, #2
 	bne .L_0200bba0
 	movs r0, #188
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	b .L_0200bba6
 .L_0200bba0:
 	movs r0, #158
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 .L_0200bba6:
 	ldr r3, [sp, #40]
 	adds r0, r5, #0
@@ -6911,7 +6872,7 @@ Func_02003b6c:
 	movs r0, #12
 	bl WaitFrames
 	movs r0, #123
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	bl Event_ClearStatus1c6
 	bl Event_WaitValue1c8Frames
 	movs r3, #170
@@ -7032,7 +6993,7 @@ Func_02003ce4:
 	movs r0, #0
 	bl Func_02004a24
 	movs r0, #123
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	bl Event_ClearStatus1c6
 	bl Event_WaitValue1c8Frames
 	movs r0, #13
@@ -7220,7 +7181,7 @@ Func_02003d30:
 	movs r0, #15
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #76
-	bl Func_02004a9c
+	bl Engine_AudioPlayCue
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #15
@@ -7735,7 +7696,7 @@ Func_0200430c:
 	adds r0, #255
 	adds r1, r4, #0
 	adds r2, r5, #0
-	bl Func_02004814
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_0200c38c
@@ -7782,7 +7743,7 @@ Func_0200430c:
 	adds r0, r6, #0
 	movs r1, #5
 	str r3, [r6, #108]
-	bl Func_02004804
+	bl Engine_ObjectSetMode
 	adds r0, r6, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -9905,8 +9866,8 @@ Data_020062d4:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_02006340
-Data_02006340:
+	.global DriftScene_SpawnScript
+DriftScene_SpawnScript:
 	.4byte 0x00000000
 	.4byte 0x0000002e
 	.4byte 0x00000026

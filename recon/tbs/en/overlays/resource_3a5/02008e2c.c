@@ -28,6 +28,23 @@
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline void Event_Wait(s32 frames)
+{
+    Engine_EventWait(frames);
+}
+
+static inline void Task_Wait(s32 frames)
+{
+    Engine_TaskWait(frames);
+}
+
+static inline void Actor_SetAnimation(s32 actor, s32 animation)
+{
+    Engine_ActorSetAnimation(actor, animation);
+}
+
 #include "FIELD_EFFECT.H"
 #include "GAME_STATE.H"
 #include "SCENE_IDS.H"

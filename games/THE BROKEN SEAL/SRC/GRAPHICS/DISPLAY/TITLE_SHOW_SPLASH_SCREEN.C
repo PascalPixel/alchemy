@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
@@ -14,7 +15,6 @@ extern struct BgScroll gBgScroll[4];
 extern volatile u32 gKeyState;
 
 void Audio_PlayCue(s32 cue);
-void Scheduler_ResetTaskTable(void);
 void Blend_SetDarkenTarget16(s32 frames);
 void Blend_SetDarkenTarget0(s32 frames);
 void Blend_WaitForTransition(void);

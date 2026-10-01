@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
@@ -14,14 +15,12 @@ extern struct InventoryMenuState *gMenuWork;
 extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
-void Scheduler_RemoveCallback(void (*callback)(void));
 void Palette_CopyObjectBankToBackground14(void);
 s32 GameFlag_TestFar(s32);
 void ItemMenu_DrawItemDetails(s32, s32);
 s32 RenderOutput_RedrawSavedRectFar(s32);
 void UiWork_FinalizeFar(s32, s32);
 void Palette_LightenBankHighlight(s32);
-void Scheduler_AddOrUpdateCallback(const void *, s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
 extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[], MsgEquipEffectName[];
@@ -56,7 +55,7 @@ s32 Menu_SelectQuantity(s32 value)
     confirmState[5] = 13;
     window = UiWindow_CreateFar(0, 0, 30, 10, 2);
 #endif
-    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
@@ -113,7 +112,7 @@ done:
     {
         s32 delay = 0xc80;
 
-        Scheduler_AddOrUpdateCallback((const void *)Menu_UpdateEntryObjectTransforms, delay);
+        Scheduler_AddOrUpdateCallback((s32)((const void *)Menu_UpdateEntryObjectTransforms), delay);
     }
 
     {

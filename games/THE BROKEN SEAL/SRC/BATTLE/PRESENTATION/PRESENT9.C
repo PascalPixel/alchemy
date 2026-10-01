@@ -6,6 +6,7 @@
    list; the u32 restore temporary loads the saved word before the IME
    address. */
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "BATTLE_WORK.H"
 #include "IO_WRITE_QUEUE.H"
@@ -18,7 +19,6 @@ struct Half {
     u16 v;
 };
 
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void BattlePres_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *);
 void BattlePresentation_BuildTilemap(void *);
@@ -29,10 +29,12 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
     u16 *palette = screen->palette;
     volatile u32 ime;
 
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do {
         volatile u32 *slot = &ime;
         u16 *ime_reg = (u16 *)0x04000208;
 
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             *slot = *ime_reg;
             *ime_reg = (u32)ime_reg;
@@ -64,7 +66,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
     s32 *transition = *(s32 **)gTransitionWork;
 
     if (transition[2] == 0) {
-        Scheduler_AddOrUpdateCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
+        Scheduler_AddOrUpdateCallback((s32)(BattlePres_UpdateHBlankScroll), 0x4ff);
     }
     transition[2] = mode;
 
@@ -75,7 +77,8 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         s32 count;
 
         q = &gIoWriteQueue;
-        do {
+        {
+            /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
             do {
                 ime = (volatile u16 *)0x04000208;
                 saved = *ime;
@@ -90,7 +93,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
                 *destination = 0x20000;
             }
             *ime = saved;
-        } while (0);
+        }
     }
 
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (volatile u32 *)0x040000d4);

@@ -8,6 +8,13 @@
  * permute from this text found nothing; a for-loop over i is far worse;
  * local declaration order has no effect. */
 #include "RAMAKAN.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline void Event_Wait(s32 frames)
+{
+    Engine_EventWait(frames);
+}
+
 #include "FIELD_EFFECT.H"
 
 /* Where the sand leaves the party in each area, as x and z pairs. */

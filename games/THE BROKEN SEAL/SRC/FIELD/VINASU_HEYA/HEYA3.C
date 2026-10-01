@@ -57,13 +57,13 @@ struct DustParams {
 void FieldScene_DrawTilesWhenCheckClear(void)
 {
 
-    Event_Begin();
+    Engine_EventBegin();
     if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
         { s32 k5 = 5, k6 = 48; Map_CopyCellAttributes(69, 48, 4, 2, k5, k6); }
         { s32 j5 = 9, j6 = 37; Map_CopyCellAttributes(73, 37, 9, 13, j5, j6); }
         RunStagedActorTransition();
     }
-    Event_End();
+    Engine_EventEnd();
     Scene_RunScene3c8SequenceA();
 }
 
@@ -71,15 +71,15 @@ void FieldScene_DrawTilesWhenCheckClear(void)
  * a leading 0 argument. */
 void FieldScene_RunApproachAndSpawnEffect(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
     (void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
     BattleFx_RunRisingObjectSequence(0, 6, 0);
-    Event_Wait(60);
-    Event_RequestExit(20); /* main:0808a248 */
-    Event_End();
+    Engine_EventWait(60);
+    Engine_EventRequestExit(20); /* main:0808a248 */
+    Engine_EventEnd();
 }
 
 /* What each room answers; other scenes take the second room's events. */
@@ -118,9 +118,9 @@ void SceneActor_ClearActorModeAndSetState5(s32 no)
     mask = 252;
     mask &= p[0x59];
     p[0x59] = mask;
-    Actor_SetSpriteFlags(p, 0);
-    Object_SetAnimation(p, 5);
-    Actor_SetSpritePriority(no, 3);
+    Engine_ActorSetSpriteFlags(p, 0);
+    Object_SetMode(p, 5);
+    Engine_ActorSetSpritePriority(no, 3);
     {
         s32 v = 2;
         v |= p[0x23];

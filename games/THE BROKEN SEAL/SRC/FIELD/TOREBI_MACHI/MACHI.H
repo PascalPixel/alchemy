@@ -77,11 +77,13 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
+    /* FAKEMATCH: a direct call changes ConfigureAndPlaceActorOneHundredTwo from mov r0, #102 to lsl r1, r1, #14 (24/24 assembly lines). */
     Engine_MapObjectSetPosition(actor, x, y);
 }
 
 static __inline__ void PlaceActor_02001104(s32 actor, s32 x, s32 y)
 {
+    /* FAKEMATCH: a direct call changes HideActorOneHundredTwo from mov r1, #1 to mov r2, #1 (24/23 assembly lines). */
     Engine_MapObjectSetPosition(actor, x, y);
 }
 

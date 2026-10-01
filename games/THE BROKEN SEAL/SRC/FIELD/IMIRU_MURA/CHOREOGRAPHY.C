@@ -7,7 +7,7 @@ void ActorPresentation_ApplyTableA5ecToActorNine(void)
 {
     extern s32 ImiruMura_TurnScript[];
 
-    Actor_EnableActionCallback(9, (s32)ImiruMura_TurnScript);
+    Engine_ActorEnableActionCallback(9, (s32)ImiruMura_TurnScript);
     Event_ShowMessage(9, 0);
 }
 
@@ -15,13 +15,13 @@ void SceneState_StoreTable96adToWork(void)
 {
     u8 *work;
 
-    Psynergy_Begin(93, 1);
+    Engine_PsynergyBegin(93, 1);
     work = *(u8 **)gEffectWork;
-    Psynergy_SetTarget(3, 9);
+    Engine_PsynergySetTarget(3, 9);
     *(s32 *)(work + 36) = (s32)ActorPresentation_ApplyTableA5ecToActorNine;
-    Psynergy_RaiseHands();
-    Psynergy_PlayEffect(1);
-    Psynergy_LowerHands();
+    Engine_PsynergyRaiseHands();
+    Engine_PsynergyPlayEffect(1);
+    Engine_PsynergyLowerHands();
     BattleEffect_CleanupSceneObjects();
 }
 
@@ -36,8 +36,8 @@ void SceneActor_ResetActorAndCenterOffsets(struct Work_399 *work)
     rec = work->f80;
     rec->mode = 1;
 
-    Object_SetPalette(work, 9);
-    Actor_SetSpriteFlags(work, 0);
+    ObjectGroup_SetChildValue(work, 9);
+    Engine_ActorSetSpriteFlags(work, 0);
 
     work->f24 = 0x8000;
     work->f28 = 0x8000;
@@ -68,7 +68,7 @@ void FieldScene_RunScene399SequenceA(void)
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
-            Object_SetAnimation(object, 5);
+            Object_SetMode(object, 5);
         }
     }
     if (__umodsi3(*frame + 30, 60) == 0) {
@@ -77,7 +77,7 @@ void FieldScene_RunScene399SequenceA(void)
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
-            Object_SetAnimation(object, 5);
+            Object_SetMode(object, 5);
         }
     }
     if (__umodsi3(*frame + 10, 60) == 0) {
@@ -86,7 +86,7 @@ void FieldScene_RunScene399SequenceA(void)
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
-            Object_SetAnimation(object, 5);
+            Object_SetMode(object, 5);
         }
     }
     if (__umodsi3(*frame + 50, 60) == 0) {
@@ -95,7 +95,7 @@ void FieldScene_RunScene399SequenceA(void)
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
-            Object_SetAnimation(object, 5);
+            Object_SetMode(object, 5);
         }
     }
     if (__umodsi3(*frame + 80, 60) == 0) {
@@ -104,7 +104,7 @@ void FieldScene_RunScene399SequenceA(void)
             SceneActor_ResetActorAndCenterOffsets(object);
             object->effect.countdown = 60;
             object->effect.update = FieldScene_RunSupplementalSequenceTwo;
-            Object_SetAnimation(object, 5);
+            Object_SetMode(object, 5);
         }
     }
 }
@@ -164,7 +164,7 @@ void SceneState_UpdateActor11WithFlag203(void)
     s32 b;
 
     GameFlag_Set(0x203);
-    Actor_SetSpritePriority(11, 3);
+    Engine_ActorSetSpritePriority(11, 3);
     a = 15;
     b = 7;
     Map_CopyCellAttributes(15, 6, 1, 1, a, b);
@@ -174,13 +174,13 @@ void SceneActor_SetActorZeroFacingC000AndRun(void)
 {
     struct SceneService_02001990 *work;
 
-    Event_Begin();
+    Engine_EventBegin();
     work = ((struct SceneService_02001990 *)Object_GetById(0));
     work->value06 = 0xc000;
     Audio_PlayCue(123);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_RequestExit(8);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(8);
 }
 
 /* Runs a short fixed sequence of two calls, one 3-argument call passing a
@@ -191,11 +191,11 @@ void RunEventScript02(void)
     u32 i;
     u8 *record;
 
-    Event_Begin();
-    Event_OpenScreen(); /* main:0808a360 */
+    Engine_EventBegin();
+    Engine_EventOpenScreen(); /* main:0808a360 */
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 232, 204);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Runs a long scripted sequence of position, animation, and timing calls
@@ -208,7 +208,7 @@ void FieldScene_RunThreeActorChoreography(void)
     struct FieldActor *leader;
     struct EventWork *work;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Engine_ActorWalkTo(0, 0x2b2, 200);
@@ -219,9 +219,9 @@ void FieldScene_RunThreeActorChoreography(void)
     work = *(struct EventWork **)Data_03001ebc;
     work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transition_frames = 48;
-    Event_OpenScreen();
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_EventOpenScreen();
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x9999, 0x4ccc);
     leader = (struct FieldActor *)Object_GetById(0);
     if (leader != NULL) {
@@ -229,40 +229,40 @@ void FieldScene_RunThreeActorChoreography(void)
     }
     Actor_WalkToAndWait(ACTOR_MIA, 0x2a1, 183);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Actor_StartRepeatedMotion(19, 2);
-    Actor_RunRepeatedMotion(20, 2);
-    Event_Wait(40);
-    Event_SetMessage(MSG_MIA);
+    Engine_ActorStartRepeatedMotion(19, 2);
+    Engine_ActorRunRepeatedMotion(20, 2);
+    Engine_EventWait(40);
+    Engine_EventSetMessage(MSG_MIA);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xe000, 40);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Actor_SetAttachedEffect(20, 0x102);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4014, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 40);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
     Event_ShowMessageAndWait(0x2003, 0, 10);
-    Actor_SetAnimationAndWait(20, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimationAndWait(20, 3);
+    Engine_EventWait(20);
     Actor_SetAttachedEffect(19, 0x102);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xf000, 10);
     Actor_FaceDirection(ACTOR_MIA, 0x2000, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 40);
-    Actor_RunRepeatedMotion(20, 2);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(20, 2);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4014, 0, 20);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 20);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
-    Event_Wait(60);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_EventWait(60);
     Actor_ShowEmote(ACTOR_MIA, 0x105, 60);
     Actor_ShowEmote(19, 0x101, 0);
     Actor_ShowEmote(20, 0x101, 60);
-    Actor_RunRepeatedMotion(19, 1);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(19, 1);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xe000, 40);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 40);
@@ -276,72 +276,72 @@ void FieldScene_RunThreeActorChoreography(void)
     Actor_SetSpeed(20, 0x10000, 0x8000);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
     Actor_WalkToAndWait(20, 0x290, 166);
-    Event_Wait(1);
+    Engine_EventWait(1);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
-    Event_Wait(20);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(0x4014, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-    Event_Wait(40);
+    Engine_ActorRunRepeatedMotion(ACTOR_MIA, 2);
+    Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 10);
     Event_ShowMessageAndWait(0x2003, 0, 40);
     Actor_FaceDirection(ACTOR_MIA, 0x2000, 20);
     Event_ShowMessageAndWait(0x4003, 0, 10);
     Actor_SetAttachedEffect(19, 0x102);
     Actor_SetAttachedEffect(20, 0x102);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 20);
-    Actor_SetAnimation(ACTOR_MIA, 4);
+    Engine_ActorSetAnimation(ACTOR_MIA, 4);
     Event_ShowMessageAndWait(0x2003, 0, 20);
-    Actor_RunRepeatedMotion(19, 1);
+    Engine_ActorRunRepeatedMotion(19, 1);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0x2000, 40);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 20);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
-    Event_Wait(20);
-    Actor_RunRepeatedMotion(20, 1);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_EventWait(20);
+    Engine_ActorRunRepeatedMotion(20, 1);
     Event_ShowMessageAndWait(0x4014, 0, 20);
-    Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(ACTOR_MIA, 1);
+    Engine_EventWait(20);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 20);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Event_ShowMessageAndWait(0x2003, 0, 80);
     Actor_ShowEmote(19, 0x105, 0);
     Actor_ShowEmote(20, 0x105, 60);
-    Actor_SetAnimationAndWait(19, 4);
+    Engine_ActorSetAnimationAndWait(19, 4);
     Event_ShowMessageAndWait(19, 0, 10);
-    Actor_SetAnimation(20, 4);
+    Engine_ActorSetAnimation(20, 4);
     Event_ShowMessageAndWait(0x4014, 0, 20);
     Actor_ShowEmote(ACTOR_MIA, 0x102, 60);
     Event_ShowMessageAndWait(0x2003, 0, 40);
-    Actor_SetAnimationAndWait(19, 3);
+    Engine_ActorSetAnimationAndWait(19, 3);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xe000, 20);
-    Actor_SetAnimationAndWait(20, 3);
+    Engine_ActorSetAnimationAndWait(20, 3);
     Event_ShowMessageAndWait(0x4014, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 60);
     Actor_FaceDirection(ACTOR_MIA, 0xe000, 20);
     Actor_FaceDirection(ACTOR_MIA, 0xa000, 20);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 40);
-    Actor_SetAnimationAndWait(ACTOR_MIA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
     Event_ShowMessageAndWait(0x2003, 0, 10);
-    Actor_SetAnimation(19, 3);
-    Actor_SetAnimationAndWait(20, 3);
-    Event_Wait(40);
+    Engine_ActorSetAnimation(19, 3);
+    Engine_ActorSetAnimationAndWait(20, 3);
+    Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_MIA, 0x2000, 20);
     Event_ShowMessageAndWait(0x4003, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 20);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Event_Wait(20);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Engine_EventWait(20);
     Actor_WalkToAndWait(ACTOR_MIA, 0x2b0, 200);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) &= 254;
     Actor_WalkToAndWait(20, 0x284, 166);
-    Event_Wait(1);
+    Engine_EventWait(1);
     *(u8 *)(((s32)Object_GetById(20)) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
     (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Set(0x82e);
     GameFlag_Clear(0x82d);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_TurnTowardTableAngle(s32 z)
@@ -365,7 +365,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     d = ImiruMura_KeyHeadings[(*(u32 *)gKeysHeld >> 4) & 0xF];
     z = -z;
     if (d == z) {
-        Object_SetAnimation(o, 9);
+        Object_SetMode(o, 9);
         return;
     }
     prev = o->unk6;
@@ -375,7 +375,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     if (d < -0x1000)
         d = -0x1000;
     o->unk6 = prev + d;
-    Object_SetAnimation(o, 2);
+    Object_SetMode(o, 2);
     ObjectDispatch_ApplyValueToChildren(o, 0x30);
 }
 
@@ -402,7 +402,7 @@ void StagedActor_RunHeadingProbeStep(void)
             return;
         }
         /* Nothing is placed in an argument register before this call. */
-        Event_Begin();
+        Engine_EventBegin();
 
         /* The 0x80000 bias is built from an immediate and a shift. */
         probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
@@ -433,7 +433,7 @@ void StagedActor_RunHeadingProbeStep(void)
         subject->state_100 = 0;
         Engine_ObjectSetPosition(subject, x, subject->y, z);
         /* Same import as the probe above, two arguments here. */
-        Object_SetAnimation(subject, 2);
+        Object_SetMode(subject, 2);
         ObjectDispatch_ApplyValueToChildren(subject, 48);
         Engine_ObjectCommitPosition(subject);
         subject->callback = (void *)SceneActor_TurnTowardTableAngle;
@@ -466,7 +466,7 @@ finishProbe:
         subject->state_052 = 0x10000;
         Engine_ObjectSetPosition(subject, x, subject->y, z);
         Engine_ObjectCommitPosition(subject);
-        Task_Wait(2);
+        Engine_TaskWait(2);
         /* The back edge re-reads the heading table and starts again. */
     }
 
@@ -477,6 +477,6 @@ blocked:
     subject->state_052 = 0x4000;
 
 tail:
-    Task_Wait(10);
-    Event_End();
+    Engine_TaskWait(10);
+    Engine_EventEnd();
 }

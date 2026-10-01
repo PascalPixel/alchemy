@@ -31,9 +31,5 @@ void FieldScene_RunSecondaryScript();
 void FieldScene_RunPrimaryScript(void);
 
 /* The pose is the attached effect the actor carries. */
-static __inline__ void ConfigureActorPose(s32 actor, s32 pose)
-{
-    Actor_SetAttachedEffect(actor, pose);
-}
 
 #endif

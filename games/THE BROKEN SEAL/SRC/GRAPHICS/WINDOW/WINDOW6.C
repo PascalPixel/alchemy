@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "FIELD_EVENT.H"
 #include "GLOBAL_CELLS.H"
@@ -27,9 +28,7 @@ s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 void UiTimedNotice_Tick(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 extern u8 Data_03001ebc[];
-s32 Scheduler_RemoveCallback(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 PartyInventory_RemoveFar(s32);
@@ -86,7 +85,7 @@ void UiTimedNotice_Create(void)
     timer = (u16 *)(work + 0x234);
     frames = 90; /* FAKEMATCH: a word temporary keeps 90 out of the HImode pool. */
     *timer = frames;
-    Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(UiTimedNotice_Tick), 0xc80);
 }
 
 void UiTimedNotice_Tick(void)
@@ -103,7 +102,7 @@ void UiTimedNotice_Tick(void)
   if ((cnt << 0x10) == zero)
   {
     UiWork_Finalize(*(slot = (s32 *)(((u8 *)work) + 0x230)), 2);
-    Scheduler_RemoveCallback((s32)UiTimedNotice_Tick);
+    Scheduler_RemoveCallback((u32)((s32)UiTimedNotice_Tick));
   }
 }
 
@@ -114,7 +113,7 @@ void UiTimedNotice_CloseIfActive(void)
     work = FIELD_AT_OFFSET(*(void **)((u32)&Data_03001ebc), void **, 0x230);
     if ((work != NULL) && (FIELD_AT_OFFSET(work, u16 *, 0x16) != 0)) {
         UiWork_Finalize(work, 2);
-        Scheduler_RemoveCallback((s32)UiTimedNotice_Tick);
+        Scheduler_RemoveCallback((u32)((s32)UiTimedNotice_Tick));
     }
 }
 

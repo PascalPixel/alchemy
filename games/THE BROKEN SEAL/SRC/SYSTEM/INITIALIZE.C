@@ -17,7 +17,6 @@ void Runtime_InstallIwramAndIrqs(void);
 void Runtime_SetIrqHandler(s32, s32, void (*)(void));
 void WaitFrames(s32 frames);
 void Resource_InitializeTable(void);
-void Scheduler_ResetTaskTable(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
 void Runtime_InitializeHeap(void);

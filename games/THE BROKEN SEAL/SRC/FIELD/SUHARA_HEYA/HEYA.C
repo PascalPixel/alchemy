@@ -49,17 +49,17 @@ void Dialogue_HandleFacingChoice(s32 no)
         Engine_ShopOpen(31, no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
         s32 msg = (s32)MsgSuharaArentSurprisedFind;
-        Event_SetMessage(msg);
+        Engine_EventSetMessage(msg);
         Event_OpenMessage(no, 0);
-        if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-            Event_Wait(10);
-            Event_SetMessage(msg + 1);
+        if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+            Engine_EventWait(10);
+            Engine_EventSetMessage(msg + 1);
         } else {
-            Event_SetMessage(msg + 2);
+            Engine_EventSetMessage(msg + 2);
         }
         Event_ShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaOursOnlyStore);
+        Engine_EventSetMessage((s32)MsgSuharaOursOnlyStore);
         Event_ShowMessage(no, 0);
     }
 }
@@ -87,7 +87,7 @@ void Dialogue_HandleFacingAction(s32 no)
         Engine_EventSetMessage((s32)MsgSuharaWonderWhySandstorms);
         Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
+        Engine_EventSetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
         Engine_EventShowMessage(no, 0);
     }
 }
@@ -97,13 +97,13 @@ void Dialogue_HandleFacingAction(s32 no)
 void SuharaHeya_AskBlownHere(s32 obj)
 {
     s32 msg = (s32)MsgSuharaSupposeFolkBlown;
-    Event_SetMessage(msg);
+    Engine_EventSetMessage(msg);
     Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(msg + 1);
+    if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(msg + 1);
     } else {
-        Event_SetMessage(msg + 2);
+        Engine_EventSetMessage(msg + 2);
     }
     Event_ShowMessage(obj, 0);
 }

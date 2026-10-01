@@ -75,6 +75,7 @@ void Party_ApplyStatePreset(void)
         s32 slot;
 
         /* Keep both halfwords live through both stores for GCC's copy shape. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             *(u16 *)((u8 *)unit + 0x38) = *(u16 *)((u8 *)unit + 0x34);
             *(u16 *)((u8 *)unit + 0x3a) = *(u16 *)((u8 *)unit + 0x36);
@@ -144,6 +145,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
     for (n = 0; n < count; n++) {
         obj = Owner_GetState(gGameState.active_owners[n]);
 
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);
             *(u16 *)(obj + 0x3A) = *(u16 *)(obj + 0x36);
@@ -222,6 +224,7 @@ void Owner_RefreshRatiosOnFlag(void)
         }
 
         obj = Owner_GetState(ownerId);
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             *(u16 *)(obj + 0x3A) = *(u16 *)(obj + 0x36);
         } while (0);

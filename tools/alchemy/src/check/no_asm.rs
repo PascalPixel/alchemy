@@ -4,9 +4,7 @@ use crate::compiler::no_asm::{
     find_forbidden, find_named_source_tool_leaks, find_preprocessed, self_test, source_files,
     Finding,
 };
-use crate::compiler::routing::{
-    cflags_for_target_source, root as compiler_root, uses_agbcc_compiler, CompilerTarget,
-};
+use crate::compiler::routing::root as compiler_root;
 use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::collections::BTreeMap;
 use std::fs;
@@ -26,29 +24,7 @@ fn sibling(root: &Path, source: &str) -> Option<std::path::PathBuf> {
 }
 
 fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
-    let compiler = target.compiler;
-    let mut flags = cflags_for_target_source(compiler, source);
-    if uses_agbcc_compiler(compiler, source) {
-        let include = compiler_root().join(target.source_dir);
-        flags.extend([
-            "-nostdinc".into(),
-            "-mthumb".into(),
-            format!(
-                "-I{}",
-                include
-                    .with_file_name(if compiler == CompilerTarget::Tbs {
-                        "INCLUDE"
-                    } else {
-                        "include"
-                    })
-                    .display()
-            ),
-            "-D__GNUC_MINOR__=9".into(),
-        ]);
-    }
-    flags.push(format!("-D{}=1", target.edition_define));
-    flags.extend(["-w".into(), "-E".into(), "-x".into(), "c".into()]);
-    crate::compiler::bundle::compiler_command_for_target(compiler, &flags)
+    crate::compiler::preprocess::command(target, source, false)
 }
 
 fn groups(root: &Path, target_ids: &[DecompTargetId]) -> Result<Vec<Group>, String> {
@@ -100,7 +76,7 @@ fn clean_key(root: &Path, label: &str, prefix: &[String], source: &str) -> Optio
     let identity = format!(
         "{:?}",
         (
-            "no-asm-clean-v1",
+            "no-asm-clean-v2-forwarders",
             crate::compiler::bundle::executable_signature().ok()?,
             crate::compiler::bundle::compiler_bundle_signature(),
             label,
@@ -180,7 +156,59 @@ fn run(root: &Path, job: &Job) -> Result<Vec<Finding>, String> {
         return Err(format!("{} preprocessing failed: {}", job.0, detail.trim()));
     }
     let text = String::from_utf8_lossy(&output.stdout);
-    Ok(find_preprocessed(&job.0, &text))
+    let mut findings = find_preprocessed(&job.0, &text);
+    // GCC 2.96 -C preserves macro-body tags but its logical line spacing can
+    // drift through multiline comments. Keep the existing plain expansion
+    // for assembly admission and use the comment expansion for helper bodies.
+    let mut command = job.1.clone();
+    command.push("-C".into());
+    let output = Command::new(&command[0])
+        .args(&command[1..])
+        .current_dir(root)
+        .output()
+        .map_err(|error| error.to_string())?;
+    if !output.status.success() {
+        return Err(format!(
+            "{} comment preprocessing failed: {}",
+            job.0,
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+    let comments = String::from_utf8_lossy(&output.stdout);
+    let mut raw_definitions = BTreeMap::new();
+    findings.extend(
+        crate::compiler::steering::forwarding_findings(&comments, &job.0)?
+            .into_iter()
+            .map(|mut item| {
+                let lines = raw_definitions.entry(item.file.clone()).or_insert_with(|| {
+                    fs::read_to_string(root.join(&item.file))
+                        .ok()
+                        .and_then(|source| {
+                            let tokens = crate::permute::lex::lex(&source).ok()?;
+                            Some(
+                                crate::permute::parse::scan_definitions(&tokens)
+                                    .into_iter()
+                                    .map(|(name, _, at, _, _)| (name, tokens[at].line))
+                                    .collect::<BTreeMap<_, _>>(),
+                            )
+                        })
+                        .unwrap_or_default()
+                });
+                // Diagnostic mapping never admits a helper or suppresses a finding.
+                if let Some(line) = lines.get(&item.name) {
+                    item.line = *line;
+                }
+                Finding {
+                    file: item.file,
+                    line: item.line,
+                    token: format!(
+                        "forwarding static inline {} needs FAKEMATCH inside its body",
+                        item.name
+                    ),
+                }
+            }),
+    );
+    Ok(findings)
 }
 
 fn scan_preprocessed(
@@ -298,6 +326,19 @@ fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
         let name = path.strip_prefix(root).unwrap_or(path).to_string_lossy();
         findings.extend(find_forbidden(&name, &text));
         findings.extend(find_named_source_tool_leaks(&name, &text));
+        if name.starts_with("games/") {
+            match crate::compiler::steering::forwarding_findings(&text, &name) {
+                Ok(items) => findings.extend(items.into_iter().map(|item| Finding {
+                    file: item.file,
+                    line: item.line,
+                    token: format!(
+                        "forwarding static inline {} needs FAKEMATCH inside its body",
+                        item.name
+                    ),
+                })),
+                Err(error) => return fail(error),
+            }
+        }
     }
     let (expanded, jobs, mut more) = match scan_preprocessed(root, target_ids) {
         Ok(result) => result,
@@ -307,6 +348,8 @@ fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
         }
     };
     findings.append(&mut more);
+    findings.sort();
+    findings.dedup();
     for item in &findings {
         eprintln!("{}:{}: forbidden {}", item.file, item.line, item.token);
     }
@@ -326,4 +369,36 @@ fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
 fn production_macro_escape_hatches() {
     self_test().unwrap();
     macro_self_test().unwrap();
+}
+
+#[test]
+fn expanded_typed_forwarders_cannot_be_suppressed_by_raw_definitions() {
+    let directory = tempfile::tempdir().unwrap();
+    let source = directory.path().join("fixture.c");
+    let target = target_for(DecompTargetId::TbsEn);
+    let text = "typedef int s32;\n#define MAKE(Name) static inline void Name(s32 v) { Target(v); }\nMAKE(Expanded)\nstatic inline void Raw(s32 v) { Target(v); }\n";
+    fs::write(&source, text).unwrap();
+    let mut command = prefix(target, source.to_str().unwrap()).unwrap();
+    command.push(source.to_string_lossy().into_owned());
+    let found = run(
+        compiler_root(),
+        &("forwarder-regression".into(), command.clone()),
+    )
+    .unwrap();
+    assert_eq!(found.len(), 2);
+    assert!(found.iter().any(|item| item.token.contains("Expanded")));
+    assert!(found.iter().any(|item| item.token.contains("Raw")));
+    fs::write(
+        &source,
+        text.replace(
+            "{ Target(v); }",
+            "{ /* FAKEMATCH: measured adapter. */ Target(v); }",
+        ),
+    )
+    .unwrap();
+    assert!(
+        run(compiler_root(), &("forwarder-regression".into(), command))
+            .unwrap()
+            .is_empty()
+    );
 }

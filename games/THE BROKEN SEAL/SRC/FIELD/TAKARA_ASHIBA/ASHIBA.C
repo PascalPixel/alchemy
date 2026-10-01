@@ -39,11 +39,6 @@ void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
 s32 ArcTan2();
 void ObjectDispatch_ApplyValueToChildren();
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
-{
-    Actor_SetPosition(actor, x, y);
-}
-
 s32 *Engine_GetTriggerActor(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
@@ -255,21 +250,21 @@ void FieldScene_RunScene3b4_02000ad0(void)
 
     if (GameFlag_IsSet(0x9c8) == 0) {
         GameFlag_Set(0x9c8);
-        Event_Begin();
+        Engine_EventBegin();
         Camera_SetSpeed(0x20000, 0x4000);
-        Camera_MoveToActor(15, 1);
-        Camera_WaitForMove();
+        Engine_CameraMoveToActor(15, 1);
+        Engine_CameraWaitForMove();
         Actor_FaceDirection(15, 0, 20);
         Actor_SetAttachedEffect(15, 0x102);
-        Actor_RunRepeatedMotion(15, 2);
-        Event_Wait(20);
+        Engine_ActorRunRepeatedMotion(15, 2);
+        Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
         record = Engine_GetTriggerActor(15);
         *(s32 *)(record + 40) = 0x80000;
         Actor_WalkToAndWait(15, 0x248, 0x2a8);
         Actor_FaceDirection(15, 0x4000, 20);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -283,14 +278,14 @@ void FieldScene_RunScene3b4_02000b68(void)
         rec8 = GameFlag_IsSet(0x9c9);
         if (rec8 == 0) {
             GameFlag_Set(0x9c9);
-            Event_Begin();
+            Engine_EventBegin();
             Camera_SetSpeed(0x20000, 0x4000);
-            Camera_MoveToActor(15, 1);
-            Camera_WaitForMove();
+            Engine_CameraMoveToActor(15, 1);
+            Engine_CameraWaitForMove();
             Actor_FaceDirection(15, 0x4000, 20);
             Actor_SetAttachedEffect(15, 0x102);
-            Actor_RunRepeatedMotion(15, 2);
-            Event_Wait(20);
+            Engine_ActorRunRepeatedMotion(15, 2);
+            Engine_EventWait(20);
             Actor_SetSpeed(15, 0x10000, 0x8000);
             Audio_PlayCue(152);
             record = Engine_GetTriggerActor(15);
@@ -298,17 +293,17 @@ void FieldScene_RunScene3b4_02000b68(void)
             Actor_WalkToAndWait(15, 0x248, 0x298);
             Actor_FaceDirection(15, 0x4000, 20);
             Actor_SetAttachedEffect(15, 0x102);
-            Event_Wait(30);
+            Engine_EventWait(30);
             Actor_SetSpeed(15, 0x80000, 0x4000);
             Actor_WalkToAndWait(15, 0x298, 0x298);
             Actor_WalkToAndWait(15, 0x2e8, 0x298);
             Actor_WalkToAndWait(15, 0x338, 0x298);
-            Event_Wait(10);
+            Engine_EventWait(10);
             Audio_PlayCue(208);
             Work_SetValuesIfNonNegative(0x40000, 0x20000, 0x10000);
-            Event_Wait(20);
+            Engine_EventWait(20);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Event_Wait(30);
+            Engine_EventWait(30);
             Actor_SetPosition(15, 0x3780000, 0x2980000);
             rec7 = Engine_GetTriggerActor(15);
             {
@@ -320,7 +315,7 @@ void FieldScene_RunScene3b4_02000b68(void)
             *(u16 *)(rec7 + 6) = 0;
             ObjectDispatch_ApplyValueToChildren(rec7, 0);
             Engine_ObjectSetScript(rec7, 0x200a6fc);
-            Event_End();
+            Engine_EventEnd();
         }
     }
 }
@@ -331,7 +326,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
 
     if (GameFlag_IsSet(0x9c9) != 0 && GameFlag_IsSet(0x9ca) == 0) {
         GameFlag_Set(0x9ca);
-        Event_Begin();
+        Engine_EventBegin();
         record = (s32)Object_GetById(15);
         *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
         ObjectDispatch_ApplyValueToChildren(record, 16);
@@ -340,14 +335,14 @@ void FieldScene_RunScene3b4_02000ccc(void)
         *(s32 *)(record + 40) = 0x80000;
         Actor_FaceDirection(15, 0x8000, 30);
         Actor_SetAttachedEffect(15, 0x102);
-        Actor_RunRepeatedMotion(15, 2);
-        Event_Wait(20);
+        Engine_ActorRunRepeatedMotion(15, 2);
+        Engine_EventWait(20);
         Actor_SetSpeed(15, 0x10000, 0x8000);
         Audio_PlayCue(152);
         record = Engine_GetTriggerActor(15);
         *(s32 *)(record + 40) = 0x40000;
         Actor_WalkToAndWait(15, 0x370, 0x2a8);
-        Event_Wait(10);
+        Engine_EventWait(10);
         Actor_SetAttachedEffect(15, 0x101);
         Actor_SetSpeed(15, 0x20000, 0x10000);
         Actor_WalkToAndWait(15, 0x370, 0x2b8);
@@ -360,12 +355,12 @@ void FieldScene_RunScene3b4_02000ccc(void)
         Actor_WalkToAndWait(15, 0x36e, 0x2f0);
         Actor_WalkToAndWait(15, 0x370, 0x2f8);
         Actor_SetPosition(15, 0x3580000, 0x3380000);
-        Event_Wait(10);
+        Engine_EventWait(10);
         Actor_FaceDirection(15, 0xc000, 20);
         Actor_SetAttachedEffect(15, 0x100);
         record = Engine_GetTriggerActor(15);
         *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -400,9 +395,9 @@ void FieldScene_CopyActorPosition(void)
 /* Contiguous unnamed leaf-owner run for resource_3b4. */
 void FieldScene_RunActor15ZeroStep(void)
 {
-    Event_Begin();
-    Actor_SetAnimation(15, 0);
-    Event_End();
+    Engine_EventBegin();
+    Engine_ActorSetAnimation(15, 0);
+    Engine_EventEnd();
 }
 
 /* What each of the island's three platforms answers. */
@@ -434,7 +429,7 @@ const struct SceneEvent *Scene_GetEvents(void)
  */
 void FieldScene_CallHelper3500(void)
 {
-    Leader_CheckAhead();
+    Engine_LeaderCheckAhead();
 }
 
 /* Passage n (low byte of arg, four cells apart): with bit 8 set, play cue 157, set the work values and show the 1x3 tiles from (79, 29) for 40 frames first; then draw the tiles from (80, 29) and copy the row-40 cell attributes down to rows 41 and 42. */
@@ -476,7 +471,7 @@ void FieldScene_RunScene3b4_02000fdc(s32 a0)
         Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Map_CopyCells(84, 29, 1, 3, 70, 49);
-        Task_Wait(60);
+        Engine_TaskWait(60);
     }
     Map_CopyCells(85, 29, 1, 3, 70, 49);
     Map_CopyCellAttributes(6, 49, 1, 1, 6, 50);
@@ -544,7 +539,7 @@ void SceneState_ResetCounter412OnHeading4000B(void)
     if (*(u16 *)(slot + 6) == 0x4000) {
         cnt = (s16 *)(Data_03001ebc + 412);
         if (*cnt > 12) {
-            Leader_CheckAhead();
+            Engine_LeaderCheckAhead();
             reset = 0;
             *cnt = reset;
         }
@@ -564,7 +559,7 @@ void SceneState_ResetCounter412OnHeading4000(void)
     if (*(u16 *)(p + 6) == 0x4000) {
         cnt = (s16 *)(Data_03001ebc + 412);
         if (*cnt > 12) {
-            Leader_CheckAhead();
+            Engine_LeaderCheckAhead();
             zero = 0;
             *cnt = zero;
         }
@@ -582,57 +577,57 @@ void SceneState_ApplyRectAndPlaceSlot12(void)
     Map_CopyCells(25, 45, 1, 2, a, b);
     if (GameFlag_IsSet(0xeeb) == 0)
         Actor_SetPosition(slot, x, z);
-    Event_Wait(1);
+    Engine_EventWait(1);
 }
 
 void ConfigureAndPlaceActorTwelve(void)
 {
     s32 a = 25, b = 48;
     Map_CopyCells(24, 48, 1, 2, a, b);
-    PlaceActor(12, 0x00080000, 0x00080000);
+    Actor_SetPosition(12, 0x00080000, 0x00080000);
 }
 
 void FieldScene_RunStep8ValueEe7(void)
 {
-    Item_ShowFound(ITEM_BLUE_KEY, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(ITEM_BLUE_KEY, 0);
+    Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(8, 0, 0);
     GameFlag_Set(0xEE7);
 }
 
 void FieldScene_RunStep9ValueEe8(void)
 {
-    Item_ShowFound(ITEM_BLUE_KEY, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(ITEM_BLUE_KEY, 0);
+    Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(9, 0, 0);
     GameFlag_Set(0xEE8);
 }
 
 void FieldScene_RunStep10ValueEe9(void)
 {
-    Item_ShowFound(ITEM_BLUE_KEY, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(ITEM_BLUE_KEY, 0);
+    Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(0xA, 0, 0);
     GameFlag_Set(0xEE9);
 }
 
 void FieldScene_RunStep11ValueEea(void)
 {
-    Item_ShowFound(ITEM_BLUE_KEY, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(ITEM_BLUE_KEY, 0);
+    Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
     Actor_SetPosition(0xB, 0, 0);
     GameFlag_Set(0xEEA);
 }
 
 void FieldScene_RunStep12ValueEeb(void)
 {
-    Item_ShowFound(ITEM_RED_KEY, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(ITEM_RED_KEY, 0);
+    Engine_ItemShowFound(ITEM_RED_KEY, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_PartyGiveItem(ITEM_RED_KEY, 0);
     Actor_SetPosition(0xC, 0, 0);
     GameFlag_Set(0xEEB);
 }
@@ -670,7 +665,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1e666, 0xf333);
     Actor_SetSpeed(8, 0x1e666, 0xf333);
     Audio_PlayCue(188);
@@ -678,15 +673,15 @@ void FieldScene_RunSupplementalSequenceOne(void)
     if (record != 0) {
         Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(8);
+    Engine_ActorWaitForMove(8);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
-    Event_Wait(4);
+    Engine_EventWait(4);
     Audio_PlayCue(188);
     Actor_SetDestinationOffset(8, 0, 16);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(8, 0x168, 152);
-    Actor_WaitForMove(8);
-    Event_End();
+    Engine_ActorWaitForMove(8);
+    Engine_EventEnd();
     GameFlag_Clear(0x220);
 }
 
@@ -711,7 +706,7 @@ void FieldScene_RunScene3b4SequenceA(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(9, 0x1b333, 0xd999);
     Audio_PlayCue(188);
@@ -719,15 +714,15 @@ void FieldScene_RunScene3b4SequenceA(void)
     if (record != 0) {
         Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(9);
+    Engine_ActorWaitForMove(9);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
     Audio_PlayCue(188);
-    Event_Wait(4);
+    Engine_EventWait(4);
     Actor_SetDestinationOffset(9, 0, 16);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(9, 168, 0x108);
-    Actor_WaitForMove(9);
-    Event_End();
+    Engine_ActorWaitForMove(9);
+    Engine_EventEnd();
     GameFlag_Clear(0x220);
 }
 
@@ -751,7 +746,7 @@ void SceneActor_TrackOriginColumnForSlot(s32 no)
     if (row <= 22) {
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
     }
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
 
 void FieldScene_RunLateIndexedStep0(void)
@@ -777,7 +772,7 @@ void FieldScene_RunPrimarySequence(void)
 
     base3_2000240 = (s32)Data_02000240;
     if (*(s16 *)((base3_2000240 + 0x24a)) != 10) {
-        Event_Begin();
+        Engine_EventBegin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
         Actor_SetSpeed(10, 0x1b333, 0xd999);
         Audio_PlayCue(188);
@@ -785,16 +780,16 @@ void FieldScene_RunPrimarySequence(void)
         if (record != 0) {
             Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        Actor_WaitForMove(10);
+        Engine_ActorWaitForMove(10);
         Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
-        Event_Wait(4);
+        Engine_EventWait(4);
         Audio_PlayCue(188);
         Actor_SetDestinationOffset(10, 0, 16);
-        Actor_WaitForMove(ACTOR_PARTY_LEADER);
+        Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         Actor_SetDestination(10, 0x108, 0x168);
-        Actor_WaitForMove(10);
-        Event_Wait(10);
-        Event_End();
+        Engine_ActorWaitForMove(10);
+        Engine_EventWait(10);
+        Engine_EventEnd();
     }
 }
 
@@ -870,7 +865,7 @@ void FieldScene_RunScene3b4SequenceB(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1b333, 0xd999);
     Actor_SetSpeed(12, 0x1b333, 0xd999);
     Audio_PlayCue(188);
@@ -878,14 +873,14 @@ void FieldScene_RunScene3b4SequenceB(void)
     if (record != 0) {
         Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(12);
+    Engine_ActorWaitForMove(12);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
     Audio_PlayCue(188);
     Actor_SetDestinationOffset(12, 0, 16);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(12, 0x138, 232);
-    Actor_WaitForMove(12);
-    Event_End();
+    Engine_ActorWaitForMove(12);
+    Engine_EventEnd();
     GameFlag_Clear(0x220);
 }
 
@@ -943,12 +938,12 @@ void FieldScene_DispatchBySlotZeroFacing(void)
             { s32 fifth = 45; s32 last = 43; Map_CopyCellAttributes(58, 36, 1, 1, fifth, last); }
         }
         GameFlag_Set(0x207);
-        Leader_CheckAhead();
+        Engine_LeaderCheckAhead();
     } else if (facing == 0x8000) {
         if (slot[3] == 0) {          /* +12 */
             SceneActor_BranchOnSlotZeroAtTile38();
         } else {
-            Leader_CheckAhead();
+            Engine_LeaderCheckAhead();
         }
     }
 }
@@ -989,7 +984,7 @@ void SceneState_BranchOnActorZeroFacing(void)
     struct Slot *slot = Engine_GetTriggerActor(0);
 
     if (slot->f06 == 0) {
-        Leader_CheckAhead();
+        Engine_LeaderCheckAhead();
     } else {
         SceneActor_BranchOnSlotZeroAtTile38();
     }
@@ -1331,9 +1326,9 @@ void SceneActor_PublishMarkerBySlotZeroHeight(void)
     } else {
         if (Engine_GetTriggerActor(10)[3] == 0 &&
             Engine_GetTriggerActor(0)[4] / 0x100000 > 56) {   /* +16 */
-            Actor_SetSpritePriority(10, 3);
+            Engine_ActorSetSpritePriority(10, 3);
         } else {
-            Actor_SetSpritePriority(10, 1);
+            Engine_ActorSetSpritePriority(10, 1);
             ((u8 *)Engine_GetTriggerActor(10))[35] = 1;
         }
         marker = 0;

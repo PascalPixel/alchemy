@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -20,7 +21,6 @@ struct DisplayTransitionState {
 
 void *DisplayTransition_AllocateAndClearState(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void WaitFrames(s32 frames);
 void Runtime_SetIrqHandler(s32, s32, void (*)(void));
 void Blend_SetDarkenTarget0(s32 duration);
@@ -52,7 +52,6 @@ struct DisplayTransitionRegisters {
     u16 secondary_value;
 };
 
-extern s32 Scheduler_RemoveCallback(void (*)(void));
 
 struct DisplayTransitionState3 {
     u8 reserved_000[0x52a];
@@ -71,7 +70,6 @@ struct DisplayTransitionWindow {
 };
 
 extern volatile u32 gFrameCount;
-s32 Scheduler_RemoveCallback(void (*callback)(void));
 
 /* Ends a screen transition. The high byte of mode picks the effect (darken
    blend, palette fade, window wipe, tile fill, scanline split); the low byte
@@ -98,8 +96,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
         state->timer = 32;
         state->level = 63;
         state->step = 1;
-        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-        Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
+        Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateScanlineTable), 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)(BattleFx_StartWindowHBlankDma), 0x480);
         WaitFrames(1);
         state->start = 32;
         state->end = 64;
@@ -113,7 +111,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
         state->timer = 32;
         DisplayTransition_FillTilemapAndSolidTile(0);
         WaitFrames(1);
-        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
         state->start = 32;
         state->end = 64;
         state->frames = frames;
@@ -123,14 +121,14 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
     case 4: {
         struct DisplayTransitionState *state = DisplayTransition_AllocateAndClearState();
         if (value == 0) {
-            Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
+            Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_Update), 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 0;
             state->end = 80;
             state->frames = frames;
             state->phase = 0;
         } else {
-            Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0xc80);
+            Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFromCentre), 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 0;
             state->end = 80;
@@ -177,7 +175,7 @@ void DisplayTransition_Update(void)
 
         if (*step >= *duration) {
             *duration = 0;
-            Scheduler_RemoveCallback(DisplayTransition_Update);
+            Scheduler_RemoveCallback((u32)(DisplayTransition_Update));
             Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {
@@ -219,7 +217,7 @@ void DisplayTransition_UpdateFromCentre(void)
 
         if (*step >= *duration) {
             *duration = 0;
-            Scheduler_RemoveCallback(DisplayTransition_UpdateFromCentre);
+            Scheduler_RemoveCallback((u32)(DisplayTransition_UpdateFromCentre));
             Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {

@@ -85,6 +85,38 @@
  * Budget: complete typed model and at most two structural follow-ups. */
 #include "FIELD_EVENT.H"
 
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline void Event_Begin(void)
+{
+    Engine_EventBegin();
+}
+
+static inline void Event_End(void)
+{
+    Engine_EventEnd();
+}
+
+static inline void Event_Wait(s32 frames)
+{
+    Engine_EventWait(frames);
+}
+
+static inline void Task_Wait(s32 frames)
+{
+    Engine_TaskWait(frames);
+}
+
+static inline s32 Math_Sin(s32 angle)
+{
+    return Engine_MathSin(angle);
+}
+
+static inline s32 Math_Cos(s32 angle)
+{
+    return Engine_MathCos(angle);
+}
+
+
 void FieldScene_RunSharedSetPiece(s32 delay);
 
 union SwingAngle {

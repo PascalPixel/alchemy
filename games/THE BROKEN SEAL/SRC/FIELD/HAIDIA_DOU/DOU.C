@@ -197,9 +197,9 @@ void HaidiaDou_SinkPillarColumn27(void)
 
 void FieldScene_RunInitBracketThenSequence(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     StagedActor_AdvancePair();
-    Event_End();
+    Engine_EventEnd();
     HaidiaDou_SinkPillarColumn27();
 }
 
@@ -220,19 +220,19 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
     *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
     *(s32 *)(slot + 8) = (*(s32 *)(rec + 16) & -0x100000) + 0x280000;
     if (Object_CheckMovementCollision((s32)rec, (s32)slot) == 0) {
-        Event_Begin();
-        Object_SetAnimation((s32)rec, 6);
+        Engine_EventBegin();
+        Object_SetMode((s32)rec, 6);
         WaitFrames(6);
         Audio_PlayCue(152);
-        Object_SetAnimation((s32)rec, 7);
+        Object_SetMode((s32)rec, 7);
         *(s32 *)(rec + 48) = 0x30000;
         *(s32 *)(rec + 52) = 0x20000;
         *(s32 *)(rec + 40) = 0x40000;
         *flag = *flag & 126;
-        Actor_SetSpriteFlags((s32)rec, 0);
+        Engine_ActorSetSpriteFlags((s32)rec, 0);
         Engine_ActorMoveToAndWait(0, *(s16 *)(slot + 2), *(s16 *)(slot + 10));
-        Object_SetAnimation((s32)rec, 6);
-        Actor_SetSpriteFlags((s32)rec, 1);
+        Object_SetMode((s32)rec, 6);
+        Engine_ActorSetSpriteFlags((s32)rec, 1);
         *flag = (u8)saved;
         Engine_EventEnd();
         return 1;
@@ -248,14 +248,14 @@ void FieldScene_RunScene3a6SequenceA(void)
 
     if (GameFlag_IsSet(0x200) == 0) {
         GameFlag_Set(0x200);
-        Event_Begin();
+        Engine_EventBegin();
         Camera_SetSpeed(0x10000, 0x2000);
-        Camera_FollowActor(8, 1);
-        Camera_WaitForMove();
+        Engine_CameraFollowActor(8, 1);
+        Engine_CameraWaitForMove();
         Battle_WaitMode0(60);
         Actor_FaceDirection(8, 0xc000, 20);
         Actor_SetAttachedEffect(8, 0x102);
-        Actor_RunRepeatedMotion(8, 2);
+        Engine_ActorRunRepeatedMotion(8, 2);
         Battle_WaitMode0(20);
         Actor_SetMotionSpeed(8, 0x10000, 0x8000);
         Actor_WalkToAndWait(8, 0x318, 248);
@@ -266,7 +266,7 @@ void FieldScene_RunScene3a6SequenceA(void)
         Battle_WaitMode0(20);
         Actor_FaceDirection(8, 0xc000, 20);
         Battle_WaitMode0(30);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -280,9 +280,9 @@ void FieldScene_RunScene3a6SequenceB(void)
         if (GameFlag_IsSet(0x201) == 0) {
             GameFlag_Set(0x201);
             GameFlag_Set(0x302);
-            Event_Begin();
+            Engine_EventBegin();
             Actor_SetAttachedEffect(8, 0x102);
-            Actor_RunRepeatedMotion(8, 2);
+            Engine_ActorRunRepeatedMotion(8, 2);
             Battle_WaitMode0(20);
             Actor_SetMotionSpeed(8, 0x20000, 0x10000);
             Actor_WalkToAndWait(8, 0x2f8, 0x118);
@@ -330,7 +330,7 @@ void FieldScene_RunScene3a6SequenceC(void)
 
 void FieldScene_RunActor8ZeroStep(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Object_SetModeById(8, 0);
-    Event_End();
+    Engine_EventEnd();
 }

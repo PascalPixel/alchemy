@@ -45,7 +45,7 @@ void ColossoLogRollingStage_WaitForBalanceState(void)
     s16 *state = (s16 *)gSceneState;
 
     while (*state != 9) {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
 }
 
@@ -81,10 +81,10 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
         }
         if (effect != 0) {
             effect->state = 0;
-            Actor_SetSpriteFlags(effect, 0);
+            Engine_ActorSetSpriteFlags(effect, 0);
             Object_SetScript(effect, (s32)gColossoRandomEffect);
-            Object_SetAnimation(effect, 1);
-            Object_SetAnimation(effect, 0);
+            Object_SetMode(effect, 1);
+            Object_SetMode(effect, 0);
         }
     }
 }
@@ -138,7 +138,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     GameFlag_Set(0x211);
     Engine_ObjectSetScript(actor, KorosseoMaruta_PlaceScript);
     while (*wait != 0) {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
     if (flag == 0) {
         ((s32 (*)())ColossoLogRollingStage_ApplyItemToMatchingSlots)(0, first_handle);

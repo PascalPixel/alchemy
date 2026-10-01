@@ -39,9 +39,9 @@ void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         obj[9] = mask;
         ret[0x55] = 0;
         ret[0x59] = 8;
-        Actor_SetSpriteFlags(ret, 0);
-        Object_SetPalette(ret, 14);
-        Object_SetBlendMode(ret, 1);
+        Engine_ActorSetSpriteFlags(ret, 0);
+        ObjectGroup_SetChildValue(ret, 14);
+        Engine_ObjectSetBlendMode(ret, 1);
         return ret;
     }
     return NULL;
@@ -63,8 +63,8 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         obj[9] = mask;
         ret[0x55] = 0;
         ret[0x59] = 8;
-        Actor_SetSpriteFlags(ret, 0);
-        Object_SetPalette(ret, 15);
+        Engine_ActorSetSpriteFlags(ret, 0);
+        ObjectGroup_SetChildValue(ret, 15);
         ret[0x23] = (ret[0x23] & 0xfe) | 2;
         return ret;
     }

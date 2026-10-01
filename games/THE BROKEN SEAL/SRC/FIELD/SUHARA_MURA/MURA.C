@@ -15,11 +15,6 @@ extern const u16 SuharaMura_CellSteps1[];
 extern u8 SuharaMura_Extras[];
 extern u8 SuharaMura_ExtrasFlag96f[];
 
-static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
-{
-    Actor_WalkBy(actor, axis, offset);
-}
-
 /*
  * Suhara village's scene tables: the script and message tables and the
  * actor table the event flag 0x96f selects.
@@ -54,13 +49,13 @@ s32 SceneData_SelectActorTableByFlag96f(void)
 void SuharaMura_TalkLalivero(s32 obj)
 {
     s32 cue = (s32)MsgSuharaTryingGetLalivero;
-    Event_SetMessage(cue);
+    Engine_EventSetMessage(cue);
     Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(cue + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(cue + 1);
     } else {
-        Event_SetMessage(cue + 2);
+        Engine_EventSetMessage(cue + 2);
     }
     Event_ShowMessage(obj, 0);
 }
@@ -68,13 +63,13 @@ void SuharaMura_TalkLalivero(s32 obj)
 void SuharaMura_TalkSandstorm(s32 obj)
 {
     s32 cue = (s32)MsgSuharaBroughtSuhallaSandstorm;
-    Event_SetMessage(cue);
+    Engine_EventSetMessage(cue);
     Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(cue + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(cue + 1);
     } else {
-        Event_SetMessage(cue + 2);
+        Engine_EventSetMessage(cue + 2);
     }
     Event_ShowMessage(obj, 0);
 }
@@ -101,9 +96,9 @@ void SuharaMura_AnimateCells0(void)
 
     Audio_PlayCue(158);
     Map_AnimateCells(SuharaMura_CellSteps0, x, y);
-    SetOffset(0, 0, -16);
+    Actor_WalkBy(0, 0, -16);
     *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
-    Event_RequestExit(no);
+    Engine_EventRequestExit(no);
 }
 
 void SuharaMura_AnimateCells1(void)
@@ -115,9 +110,9 @@ void SuharaMura_AnimateCells1(void)
 
     Audio_PlayCue(158);
     Map_AnimateCells(SuharaMura_CellSteps1, x, y);
-    SetOffset(0, 0, -16);
+    Actor_WalkBy(0, 0, -16);
     *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
-    Event_RequestExit(no);
+    Engine_EventRequestExit(no);
 }
 
 s32 SceneData_SelectExtraTableByFlag96f(void)
@@ -144,7 +139,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
     /* The dressing sequence and cue are unlocked by the shared event flag. */
     if (GameFlag_IsSet(0x201) != 0) {
         FieldScene_RunLayoutStepThenSet201();
-        Actor_SetAnimation(16, 4);
+        Engine_ActorSetAnimation(16, 4);
     }
     return 0;
 }

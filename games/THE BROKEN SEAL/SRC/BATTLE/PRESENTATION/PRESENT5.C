@@ -36,6 +36,7 @@ s32 Func_080771e8(s32 group, s32 index);
 static __inline__ void CopyWords(
     void *destination, const void *source, s32 size)
 {
+    /* FAKEMATCH: a direct call changes BattleQueue_SortByPriority from mov r7, r1 to sub sp, sp, #20 (123/126 assembly lines). */
     Iwram_CopyWords(destination, source, size);
 }
 

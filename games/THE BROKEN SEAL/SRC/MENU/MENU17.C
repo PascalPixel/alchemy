@@ -1,14 +1,13 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "GLOBAL_CELLS.H"
 
-s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void AffineEffect_UpdateFrame(void);
 
 extern u8 Data_03001f38[];
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void Scheduler_RemoveCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
 
@@ -19,7 +18,7 @@ void *AffineEffect_InitializeWork(void)
     work = Runtime_AllocateBlock(58, 152);
     zero = 0;
     Dma_Set(&zero, work, 0x85000026, (volatile u32 *)0x040000d4);
-    Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 0xc76);
+    Scheduler_AddOrUpdateCallback((s32)(AffineEffect_UpdateFrame), 0xc76);
     return work;
 }
 
@@ -31,7 +30,7 @@ void Menu_EndResourceSelection(void)
     void *work;
 
     work = *(void **)((u32)&Data_03001f38);
-    Scheduler_RemoveCallback(AffineEffect_UpdateFrame);
+    Scheduler_RemoveCallback((u32)(AffineEffect_UpdateFrame));
     child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
     if (child != 0) {
         UiWork_Finalize(child, 2);

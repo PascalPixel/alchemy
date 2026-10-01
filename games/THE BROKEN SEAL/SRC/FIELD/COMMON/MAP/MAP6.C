@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "MAP.H"
 #include "RAM_BUFFER.H"
@@ -75,7 +76,6 @@ void Graphics_PrepareTransferInIwramWork(s32, s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void WorldMap_BuildScanlineTable(s32, s32 *, void *);
-s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void MapAnimation_ApplyAffineFrame(void);
 void WorldMap_UpdateView(void);
 
@@ -91,14 +91,6 @@ static __inline__ void Io_Put16(u16 *reg, s32 value)
 
 typedef s32 (*RatioFn)(s32, s32);
 typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
-
-static __inline__ void Transform(struct PerspectiveVector *vector,
-                                struct PerspectiveCamera *camera,
-                                s32 (*routine)(struct PerspectiveVector *,
-                                                struct PerspectiveCamera *))
-{
-    routine(vector, camera);
-}
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -239,8 +231,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = far_plane;
-    Transform(&vector, camera,
-              (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
+    ((s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250)(&vector, camera);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
     /* FAKEMATCH: loop note orders the transform call's r1, routine, r0 */
@@ -268,8 +259,7 @@ s32 Map_InitializePerspectiveScene(void)
     vector.x = 0;
     vector.y = 0;
     vector.z = *distance + 0x10000;
-    Transform(&vector, camera,
-              (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
+    ((s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250)(&vector, camera);
     *(volatile u16 *)0x0400004c = 0;
     /* FAKEMATCH: loop notes keep the display writes in source order */
     do {

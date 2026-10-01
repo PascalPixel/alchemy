@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
@@ -152,8 +153,6 @@ struct CharacterCommandMenu {
 extern u8 MsgSwitchCharacterHelp;
 s32 Party_SumDjinnCountsFar(s32 side);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-s32 Scheduler_RemoveCallback(void (*callback)(void));
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Menu_UpdateEntryObjectTransforms(void);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void CharacterMenu_DrawStatusAilments(s32 window, s32 owner, s32 mode);
@@ -481,7 +480,7 @@ s32 CharacterMenu_SelectCommand(void)
     /* FAKEMATCH: retain the family's neg/orr/lsr boolean conversion. */
     has_djinn = (u32)(-total | total) >> 31;
     UiWindow_UpdateOrCreate(&menu->help_window, 0, 0, 30, 5, 2);
-    Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+    Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
     for (i = 3; i >= 0; i--)
         menu->slot_y[i] = 104;
     done = 0;
@@ -590,7 +589,7 @@ s32 CharacterMenu_SelectCommand(void)
     RenderOutput_ClearListFar(menu->help_window);
     RenderOutput_RedrawSavedRectFar(menu->help_window);
     UiWindow_ClearInteriorTilesFar(menu->window, 64, 56, 224, 96);
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
     for (i = 3; i >= 0; i--)
         menu->slot_y[i] = 128;
     ItemMenu_ResetCategory();

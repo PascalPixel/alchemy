@@ -31,9 +31,9 @@ u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
         rec[9] = (u8)mask;
         obj[85] = 0;
         obj[89] = 8;
-        Actor_SetSpriteFlags(obj, 0);
-        Object_SetPalette(obj, 14);
-        Object_SetBlendMode(obj, 1);
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 14);
+        Engine_ObjectSetBlendMode(obj, 1);
         ret = obj;
     } else {
         ret = 0;
@@ -54,8 +54,8 @@ u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind)
         rec[9] = (u8)(mask | 4);
         obj[85] = 0;
         obj[89] = 8;
-        Actor_SetSpriteFlags(obj, 0);
-        Object_SetPalette(obj, 15);
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 15);
         m = 0xfe;
         m = m & obj[35];
         obj[35] = (u8)(m | 2);

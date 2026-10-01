@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -10,11 +11,9 @@ void Audio_PlayCue(s32 cue);
 extern u8 Data_03001c94[];
 
 /* menu/input/cancel_sound_tick.c */
-s32 Scheduler_RemoveCallback(s32);
 s32 GameFlag_SetBitFar(s32);
 
 /* menu/input/reset_cancel_sound.c */
-s32 Scheduler_AddOrUpdateCallback(s32, s32);
 s32 GameFlag_ClearBitFar(s32);
 void Menu_CancelSoundTick(void);
 
@@ -52,7 +51,7 @@ void Menu_CancelSoundTick(void)
     if (*(s32 *)((u32)&Data_03001c94) & 8) {
         Audio_PlayCue(SOUND_MENU_CANCEL);
         GameFlag_SetBitFar(0x150);
-        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
+        Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
     }
 }
 
@@ -65,7 +64,7 @@ void Menu_CancelSoundReset(void)
 void Menu_EnsureCancelSound(void)
 {
     if (GameFlag_TestFar(0x150) == 0) {
-        Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);
+        Scheduler_RemoveCallback((u32)((s32)Menu_CancelSoundTick));
     }
 }
 

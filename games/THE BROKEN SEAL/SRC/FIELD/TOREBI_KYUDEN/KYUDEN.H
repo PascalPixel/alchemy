@@ -54,15 +54,6 @@ static __inline__ void AdvanceMessageCursor(s32 amount)
     AdvanceMessageAt((u8 **)gWork, amount);
 }
 
-/* Three identical tails: an optional record whose signed halfwords at +10 and
- * +18 are forwarded to a per-channel import. */
-static __inline__ void follow_record(
-    s16 *record, s32 channel, void (*apply)())
-{
-    if (record != 0)
-        apply(channel, record[5], record[9]);
-}
-
 /* Supplemental scene sequence of the resource_3b8 overlay. */
 
 extern u8 TorebiKyuden_EmptyTable[];
@@ -80,10 +71,5 @@ enum {
     /* Message 0x182 + 205. */
     ITEM_CLOAK_BALL = 205
 };
-
-static __inline__ void SetSceneEffectOffset(s32 actor, s32 axis, s32 offset)
-{
-    Actor_CenterAndWalk(actor, axis, offset);
-}
 
 #endif

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -59,7 +60,6 @@ void Audio_PlayCue(s32 cue);
 s32 Resource_ResetEntry(u32 resource);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Menu_UpdateEntryObjectTransforms(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 
 s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
@@ -235,6 +235,6 @@ s32 DjinnMenu_ShowHelp(void)
         UiWindow_Clear(menu->owner_window);
         gWindowWork->menu_busy = 0;
     }
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
     return result;
 }

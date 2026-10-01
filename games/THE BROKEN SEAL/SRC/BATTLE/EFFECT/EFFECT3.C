@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
@@ -15,12 +16,10 @@ struct State080c1084 {
 extern s8 Data_080c5c10[];
 
 void Graphics_AdvancePaletteCycle(void);
-void Scheduler_RemoveCallback(u32);
 void BattlePres_ClearAllActorRecordModes(void);
 void QueueIoWriteDelay2(u32, u32);
 u32 BattleParty_ListActorIds(s32, s16 *);
 void BattlePres_SetActorRecordMode(s32, s32);
-s32 Scheduler_AddOrUpdateCallback(u32, s32);
 extern u8 *gBattleWork;
 
 struct Spark {
@@ -107,7 +106,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
     volatile u16 *blend_y;
 
     if (mode == 0) {
-        Scheduler_RemoveCallback((s32)Graphics_AdvancePaletteCycle);
+        Scheduler_RemoveCallback((u32)((s32)Graphics_AdvancePaletteCycle));
         *(volatile u16 *)0x04000054 = mode;
         BattlePres_ClearAllActorRecordModes();
         WaitFrames(1);
@@ -123,6 +122,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         *blend_y = zero;
         sixteen = 16;
         /* Preserve the volatile register-store scheduling used by agbcc. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             blend_y[-1] = sixteen;
         } while (0);

@@ -21,9 +21,9 @@ void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
         FIELD_AT_OFFSET(object_record, u8, 9) = (u8)(flags_mask & FIELD_AT_OFFSET(object_record, u8, 9));
         FIELD_AT_OFFSET(overlay_object, u8, 0x55) = 0;
         FIELD_AT_OFFSET(overlay_object, u8, 0x59) = 8;
-        Actor_SetSpriteFlags(overlay_object, 0);
-        Object_SetPalette(overlay_object, 0xE);
-        Object_SetBlendMode(overlay_object, 1);
+        Engine_ActorSetSpriteFlags(overlay_object, 0);
+        ObjectGroup_SetChildValue(overlay_object, 0xE);
+        Engine_ObjectSetBlendMode(overlay_object, 1);
         return overlay_object;
     }
     return NULL;
@@ -45,8 +45,8 @@ void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         object[9] = mask;
         result[0x55] = 0;
         result[0x59] = 8;
-        Actor_SetSpriteFlags(result, 0);
-        Object_SetPalette(result, 15);
+        Engine_ActorSetSpriteFlags(result, 0);
+        ObjectGroup_SetChildValue(result, 15);
         result[0x23] = (result[0x23] & 0xfe) | 2;
         return result;
     }

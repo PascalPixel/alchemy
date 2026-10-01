@@ -97,6 +97,13 @@
  * both cached-HI sharing and the late forward-arm merge. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
+{
+    Engine_ActorEnableActionCallback(actor, table);
+}
+
 extern u8 MsgKuupuappuNoLeaveAlone[];
 
 extern const u8 Data_0200d8bc[];

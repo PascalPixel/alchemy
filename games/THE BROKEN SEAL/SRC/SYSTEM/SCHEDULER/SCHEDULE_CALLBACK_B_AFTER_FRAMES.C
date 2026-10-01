@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
-s32 Scheduler_AddOrUpdateCallback(s32, s32);
 extern u8 Func_08011bf4;
 
 void Scheduler_ScheduleCallbackBAfterFrames(void)

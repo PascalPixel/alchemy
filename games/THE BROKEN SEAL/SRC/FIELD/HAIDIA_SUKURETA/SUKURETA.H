@@ -48,9 +48,4 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void Scene_SetActorDirection(s32 actor, s32 angle, s32 frames)
-{
-    Actor_FaceDirection(actor, angle, frames);
-}
-
 #endif

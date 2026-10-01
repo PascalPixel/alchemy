@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
 extern u8 IwramClearWords[];
@@ -9,7 +10,6 @@ extern u8 IwramClearWords[];
  * 0x03000164. Its argument count is not established.
  */
 void _call_via_r3(u32, s32, s32, u32);
-s32 Scheduler_RemoveCallback(u32);
 extern u8 Graphics_UploadVramBlock;
 extern u8 BattleFx_UpdateStarField;
 

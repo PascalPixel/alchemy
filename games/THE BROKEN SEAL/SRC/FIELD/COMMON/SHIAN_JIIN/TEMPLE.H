@@ -141,16 +141,6 @@ void FieldScene_RunForwardArcBurst(void);
 
 void FieldScene_RunDescentBurst(void);
 
-static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
-{
-    Actor_SetSpeed(actor, horizontal, vertical);
-}
-
-static __inline__ void SetPosition(s32 actor, s32 horizontal, s32 vertical)
-{
-    Actor_WalkToAndWait(actor, horizontal, vertical);
-}
-
 /* Field cleared to 0 on each actor record below. */
 
 /* Moves the next dialogue line on by amount messages. */

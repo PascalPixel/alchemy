@@ -25,9 +25,9 @@ void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         rec[9] = mask;
         obj[0x55] = 0;
         obj[0x59] = 8;
-        Actor_SetSpriteFlags(obj, 0);
-        Object_SetPalette(obj, 14);
-        Object_SetBlendMode(obj, 1);
+        Engine_ActorSetSpriteFlags(obj, 0);
+        ObjectGroup_SetChildValue(obj, 14);
+        Engine_ObjectSetBlendMode(obj, 1);
         return obj;
     }
     return NULL;
@@ -52,8 +52,8 @@ void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
         sprite[9] = mask;
         effect[0x55] = 0;
         effect[0x59] = 8;
-        Actor_SetSpriteFlags((struct FieldActor *)effect, 0);
-        Object_SetPalette((struct FieldActor *)effect, 15);
+        Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
+        ObjectGroup_SetChildValue((struct FieldActor *)effect, 15);
         effect[0x23] = (effect[0x23] & 0xfe) | 2;
         return effect;
     }

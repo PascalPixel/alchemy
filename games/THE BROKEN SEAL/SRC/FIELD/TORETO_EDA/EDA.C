@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "RESOURCE_397.H"
 
@@ -52,7 +53,6 @@ void ToretoEda_StartBg3Split(void);
 void Effect_UpdateBg3HofsByVcount(void);
 void Effect_SetBg3HofsSplit(void);
 void Runtime_SetIrqHandler(s32 slot, s32 mode, void (*handler)(void));
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 /*
  * Overlay resource_397: a field scene that shifts its two tracked objects by
@@ -307,5 +307,5 @@ void Effect_SetBg3HofsSplit(void)
 void ToretoEda_StartBg3Split(void)
 {
     Runtime_SetIrqHandler(1, 0, Effect_UpdateBg3HofsByVcount);
-    Scheduler_AddOrUpdateCallback(Effect_SetBg3HofsSplit, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Effect_SetBg3HofsSplit), 0xc80);
 }

@@ -168,7 +168,7 @@ void SceneEffect_SetupBlendByFlag201(void)
         *(s32 *)(tmp + 0x1c0) = 0x100;
         *(s32 *)(tmp + 0x1c8) = 24;
     }
-    Task_Wait(1);
+    Engine_TaskWait(1);
     DisplayTransition_InitializeBattleEffectState(0x4d);
     state = base[4];
     {
@@ -376,11 +376,11 @@ void FieldScene_RunGuardedSixWordStep(void)
 {
     struct StagedActorProbe s;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (StagedActor_FindClearPosition(&s) != 0) {
         SceneActor_MoveAndRedraw(s);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void ArutamiraDou_UpdateScalePulse(struct Obj *obj)

@@ -1,6 +1,7 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "IO_WRITE_QUEUE.H"
@@ -15,7 +16,6 @@ struct DisplayTransitionState {
 };
 
 void DisplayTransition_FillTilemapAndSolidTile(s32);
-void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void DisplayTransition_UpdateFrame(void);
 
 s32 GameFlag_IsSet(s32 flag);
@@ -29,7 +29,8 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
-        do {                                                                \
+        do { \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
@@ -72,7 +73,7 @@ void DisplayTransition_InitializeState(s32 value)
     DisplayTransition_FillTilemapAndSolidTile(0);
     state->value = value;
     state->timer = 0;
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
     WaitFrames(0x78);
 }
 

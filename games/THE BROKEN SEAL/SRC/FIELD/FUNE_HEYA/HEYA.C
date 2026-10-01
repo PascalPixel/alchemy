@@ -156,7 +156,7 @@ void UpdateActorNineEffectMode(struct EffectRecord *record)
         actor->mode = 0;
     } else if (actor->mode == 2) {
         if (record->active != 0)
-            Object_SetAnimation(record, 3);
+            Object_SetMode(record, 3);
         record->active = 0;
         actor->mode = 0;
     } else if (actor->mode == 3) {
@@ -171,11 +171,11 @@ s32 StagedActor_SetReadyState(struct FieldActor *work)
     struct FieldSprite *rec = work->sprite;
 
     work->collision_flags = 8;
-    Actor_SetSpriteFlags(work, 0);
+    Engine_ActorSetSpriteFlags(work, 0);
     rec->priority = 1;
     rec->second_priority = 1;
     work->priority_flags = (work->priority_flags & ~1) | 2;
-    Object_SetPalette(work, 15);
+    ObjectGroup_SetChildValue(work, 15);
     return 1;
 }
 
@@ -361,63 +361,63 @@ void FieldScene_RunScene3b1_02000670(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Battle_ResetEffectCounterFar();
     if (GameFlag_IsSet(0x921) != 0) {
-        Event_SetMessage((s32)MsgFuneIfShipFromTolbiHad);
+        Engine_EventSetMessage((s32)MsgFuneIfShipFromTolbiHad);
         Event_ShowMessage(10, 0);
     } else {
         if (GameFlag_IsSet(0x922) != 0) {
-            Event_SetMessage((s32)MsgFuneNowWantSeeCaptainToo);
+            Engine_EventSetMessage((s32)MsgFuneNowWantSeeCaptainToo);
             Event_OpenMessage(10, 0);
-            if (Event_ChooseYesNo(0, 0) == 0) {
+            if (Engine_EventChooseYesNo(0, 0) == 0) {
                 FieldScene_RunExtendedActorChoreography();
                 goto L_020006ea;
             }
-            Actor_StartRepeatedMotion(10, 2);
+            Engine_ActorStartRepeatedMotion(10, 2);
             Event_ShowMessage(10, 0);
             Actor_FaceDirection(10, 0xd000, 0);
         } else {
-            Event_SetMessage((s32)MsgFuneButWeCantSendShip);
+            Engine_EventSetMessage((s32)MsgFuneButWeCantSendShip);
             Event_ShowMessage(10, 0);
         }
     }
     L_020006ea:;
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor12Line(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgFuneYouCameAskCaptainSet);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgFuneYouCameAskCaptainSet);
     Event_AskYesNo(12, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene3b1_02000728(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x928) != 0) {
-        Event_SetMessage((s32)MsgFuneOarsmanWasInjured);
+        Engine_EventSetMessage((s32)MsgFuneOarsmanWasInjured);
         FieldScene_RunStepThen10(8);
         Actor_FaceDirection(8, 0xd000, 60);
-        Actor_SetAnimationAndWait(8, 4);
+        Engine_ActorSetAnimationAndWait(8, 4);
         FieldScene_RunStepThen10(8);
-        Actor_SetAnimationAndWait(8, 3);
+        Engine_ActorSetAnimationAndWait(8, 3);
     } else if (GameFlag_IsSet(0x925) != 0) {
-        Event_SetMessage((s32)MsgFuneWeDontKnowMightHappen);
+        Engine_EventSetMessage((s32)MsgFuneWeDontKnowMightHappen);
         Event_ShowMessage(8, 0);
     } else if (GameFlag_IsSet(0x921) != 0) {
-        Event_SetMessage((s32)MsgFuneBadLuckLosingMyLucky);
+        Engine_EventSetMessage((s32)MsgFuneBadLuckLosingMyLucky);
         Event_ShowMessage(8, 0);
         if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(0x924) != 0) {
             gEventWork->unknown_172 = 1;
         }
     } else {
-        Event_SetMessage((s32)MsgFuneItsTooLateHireMercenaries);
+        Engine_EventSetMessage((s32)MsgFuneItsTooLateHireMercenaries);
         Event_ShowMessage(8, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene3b1_020007f8(void)
@@ -425,15 +425,15 @@ void FieldScene_RunScene3b1_020007f8(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x925) != 0) {
-        Actor_StartRepeatedMotion(8, 2);
-        Event_SetMessage((s32)MsgFuneTheseProudWarriorsNotGoing);
+        Engine_ActorStartRepeatedMotion(8, 2);
+        Engine_EventSetMessage((s32)MsgFuneTheseProudWarriorsNotGoing);
         FieldScene_RunStepThen10(8);
         Actor_FaceActor(8, ACTOR_PARTY_LEADER, 10);
         Event_OpenMessage(8, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_Wait(40);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventWait(40);
             FieldScene_RunStepThen10(8);
             FieldScene_CallPairWith10(8, 0x3000);
             Event_ShowMessage(8, 0);
@@ -443,24 +443,24 @@ void FieldScene_RunScene3b1_020007f8(void)
         Event_ShowMessage(8, 0);
         Actor_FaceDirection(8, 0x3000, 0);
     } else {
-        Event_SetMessage((s32)MsgFuneLongerWeSitHereMore);
+        Engine_EventSetMessage((s32)MsgFuneLongerWeSitHereMore);
         Event_ShowMessage(8, 0);
     }
     L_0200088e:;
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine1E19Or1D50(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x925) != 0) {
-        Event_SetMessage((s32)MsgFuneYouGoingRow);
+        Engine_EventSetMessage((s32)MsgFuneYouGoingRow);
         Event_AskYesNo(10, 0);
     } else {
-        Event_SetMessage((s32)MsgFuneTheresWholeBunchReallyMuscular);
+        Engine_EventSetMessage((s32)MsgFuneTheresWholeBunchReallyMuscular);
         Event_ShowMessage(10, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Scene setup for resource_3b1: installs actors 10 through 17. */
@@ -478,18 +478,18 @@ void SceneState_RunFlagBranchedActor8Setup(void)
         u8 *obj = SceneState_ApplyLevelFromFlags();
         u8 *p;
 
-        Event_Begin();
+        Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(obj);
-        Event_SetMessage((s32)MsgFuneLooksLikeYouveBeenChosen);
+        Engine_EventSetMessage((s32)MsgFuneLooksLikeYouveBeenChosen);
         FieldScene_RunStepThen10(8);
-        Actor_SetAnimation(obj, 2);
+        Engine_ActorSetAnimation(obj, 2);
         p = (u8 *)Object_GetByIdFar(0);
         if (p != 0) {
             Actor_SetDestination(obj, *(s16 *)(p + 10), *(s16 *)(p + 18));
         }
-        Actor_WaitForMove(obj);
+        Engine_ActorWaitForMove(obj);
         Actor_SetPosition(obj, 0, 0);
-        Event_End();
+        Engine_EventEnd();
     } else if (GameFlag_IsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x990);
     } else if (GameFlag_IsSet(0x92a) != 0) {
@@ -507,18 +507,18 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
         u8 *o = SceneState_ApplyLevelFromFlags();
         u8 *p;
 
-        Event_Begin();
+        Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
-        Event_SetMessage((s32)MsgFuneHaHaHaChosenOarsman);
+        Engine_EventSetMessage((s32)MsgFuneHaHaHaChosenOarsman);
         FieldScene_RunStepThen10(10);
-        Actor_SetAnimation(o, 2);
+        Engine_ActorSetAnimation(o, 2);
         p = (u8 *)Object_GetByIdFar(0);
         if (p != 0) {
             Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
         }
-        Actor_WaitForMove(o);
+        Engine_ActorWaitForMove(o);
         Actor_SetPosition(o, 0, 0);
-        Event_End();
+        Engine_EventEnd();
     } else if (GameFlag_IsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x992);
     } else if (GameFlag_IsSet(0x92a) != 0) {
@@ -539,28 +539,28 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
 void FieldScene_RunActor11FlagDialogue(void)
 {
     if (GameFlag_IsSet(0x8A0) != 0) {
-        Event_Begin();
+        Engine_EventBegin();
         Actor_SetAttachedEffect(11, 0x102);
-        Event_Wait(40);
-        Event_SetMessage((s32)MsgFuneDontFeelDontTalkMe);
+        Engine_EventWait(40);
+        Engine_EventSetMessage((s32)MsgFuneDontFeelDontTalkMe);
         Event_ShowMessage(11, 0);
-        Event_End();
+        Engine_EventEnd();
     } else if (GameFlag_IsSet(0x300) != 0) {
         s32 actor = SceneState_ApplyLevelFromFlags();
         u8 *leader;
 
-        Event_Begin();
+        Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(actor);
-        Event_SetMessage((s32)MsgFuneYouFinallyPickedSomeoneDidnt);
+        Engine_EventSetMessage((s32)MsgFuneYouFinallyPickedSomeoneDidnt);
         FieldScene_RunStepThen10(11);
-        Actor_SetAnimation(actor, 2);
+        Engine_ActorSetAnimation(actor, 2);
         leader = (u8 *)Object_GetById(0);
         if (leader != 0) {
             Actor_SetDestination(actor, *(s16 *)(leader + 10), *(s16 *)(leader + 18));
         }
-        Actor_WaitForMove(actor);
+        Engine_ActorWaitForMove(actor);
         Actor_SetPosition(actor, 0, 0);
-        Event_End();
+        Engine_EventEnd();
     } else if (GameFlag_IsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(11, (s32)MsgFuneDontTellGoing, 0x993);
     } else if (GameFlag_IsSet(0x92a) != 0) {
@@ -579,32 +579,32 @@ void FieldScene_RunScene3b1SequenceA(void)
     s32 rec7;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x300) != 0) {
         rec7 = SceneState_ApplyLevelFromFlags();
         ((s32 (*)())FuneHeya_TurnActorToOpenSide)();
-        Event_SetMessage((s32)MsgFuneGivesMeChillsThinkCould);
+        Engine_EventSetMessage((s32)MsgFuneGivesMeChillsThinkCould);
         FieldScene_RunStepThen10(12);
-        Actor_SetAnimation(rec7, 2);
+        Engine_ActorSetAnimation(rec7, 2);
         record = (s32)Object_GetByIdFar(0);
         if (record != 0) {
             Actor_SetDestination(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        Actor_WaitForMove(rec7);
+        Engine_ActorWaitForMove(rec7);
         Actor_SetPosition(rec7, 0, 0);
     } else {
-        Actor_RunRepeatedMotion(12, 2);
-        Event_Wait(20);
-        Event_SetMessage((s32)MsgFuneOhhhhNooooGoingMakeMe);
+        Engine_ActorRunRepeatedMotion(12, 2);
+        Engine_EventWait(20);
+        Engine_EventSetMessage((s32)MsgFuneOhhhhNooooGoingMakeMe);
         Event_OpenMessage(12, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(12);
-            Actor_SetAnimation(12, 2);
+            Engine_ActorSetAnimation(12, 2);
             record = (s32)Object_GetByIdFar(0);
             if (record != 0) {
                 Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
-            Actor_WaitForMove(12);
+            Engine_ActorWaitForMove(12);
             Actor_SetPosition(12, 0, 0);
             GameFlag_Set(0x300);
             if (GameFlag_IsSet(0x92b) != 0) {
@@ -626,7 +626,7 @@ void FieldScene_RunScene3b1SequenceA(void)
         }
     }
     L_02000c9a:;
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene3b1SequenceB(void)
@@ -635,13 +635,13 @@ void FieldScene_RunScene3b1SequenceB(void)
     s32 rec7;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x300) != 0) {
         rec7 = SceneState_ApplyLevelFromFlags();
         ((s32 (*)())FuneHeya_TurnActorToOpenSide)();
-        Event_SetMessage((s32)MsgFuneRobinYouveGotGoodEye);
+        Engine_EventSetMessage((s32)MsgFuneRobinYouveGotGoodEye);
         FieldScene_RunStepThen10(9);
-        Actor_SetAnimation(rec7, 2);
+        Engine_ActorSetAnimation(rec7, 2);
         record = (s32)Object_GetByIdFar(0);
         if (record != 0) {
             Actor_SetDestination(rec7, *(s16 *)(record + 10), *(s16 *)(record + 18));
@@ -649,18 +649,18 @@ void FieldScene_RunScene3b1SequenceB(void)
         Engine_ActorWaitForMove(rec7);
         Actor_SetPosition(rec7, 0, 0);
     } else {
-        Event_SetMessage((s32)MsgFuneHaHaHaRowingFeel);
+        Engine_EventSetMessage((s32)MsgFuneHaHaHaRowingFeel);
         Engine_EventShowMessageAndWait(9, 0, 60);
-        Actor_RunRepeatedMotion(9, 1);
+        Engine_ActorRunRepeatedMotion(9, 1);
         Event_OpenMessage(9, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             FieldScene_RunStepThen10(9);
-            Actor_SetAnimation(9, 2);
+            Engine_ActorSetAnimation(9, 2);
             record = (s32)Object_GetByIdFar(0);
             if (record != 0) {
                 Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
-            Actor_WaitForMove(9);
+            Engine_ActorWaitForMove(9);
             Actor_SetPosition(9, 0, 0);
             GameFlag_Set(0x300);
             if (GameFlag_IsSet(0x92b) != 0) {
@@ -682,7 +682,7 @@ void FieldScene_RunScene3b1SequenceB(void)
         }
     }
     L_02000de0:;
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActorThirteenFlag300Branch(void)
@@ -691,18 +691,18 @@ void SceneDialogue_RunActorThirteenFlag300Branch(void)
         u8 *o = SceneState_ApplyLevelFromFlags();
         u8 *p;
 
-        Event_Begin();
+        Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
-        Event_SetMessage((s32)MsgFuneThatsWhoYouPickedOarsman);
+        Engine_EventSetMessage((s32)MsgFuneThatsWhoYouPickedOarsman);
         FieldScene_RunStepThen10(13);
-        Actor_SetAnimation(o, 2);
+        Engine_ActorSetAnimation(o, 2);
         p = (s32)Object_GetByIdFar(0);
         if (p != 0) {
             Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
         }
-        Actor_WaitForMove(o);
+        Engine_ActorWaitForMove(o);
         Actor_SetPosition(o, 0, 0);
-        Event_End();
+        Engine_EventEnd();
     } else if (GameFlag_IsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(13, (s32)MsgFuneNotThinkingMaking, 0x995);
     } else if (GameFlag_IsSet(0x92a) != 0) {
@@ -720,18 +720,18 @@ void FieldScene_RunFlag300BranchDialogue(void)
         u8 *o = SceneState_ApplyLevelFromFlags();
         u8 *p;
 
-        Event_Begin();
+        Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
-        Event_SetMessage((s32)MsgFuneIfYouveChosenOarsmanLets);
+        Engine_EventSetMessage((s32)MsgFuneIfYouveChosenOarsmanLets);
         FieldScene_RunStepThen10(14);
-        Actor_SetAnimation(o, 2);
+        Engine_ActorSetAnimation(o, 2);
         p = (s32)Object_GetByIdFar(0);
         if (p != 0) {
             Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
         }
-        Actor_WaitForMove(o);
+        Engine_ActorWaitForMove(o);
         Actor_SetPosition(o, 0, 0);
-        Event_End();
+        Engine_EventEnd();
     } else if (GameFlag_IsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(14, (s32)MsgFuneOarsmanGiveBreak, 0x996);
     } else if (GameFlag_IsSet(0x92a) != 0) {
@@ -749,18 +749,18 @@ void FieldScene_RunActor15FlagDialogue(void)
         u8 *o = SceneState_ApplyLevelFromFlags();
         u8 *p;
 
-        Event_Begin();
+        Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(o);
-        Event_SetMessage((s32)MsgFuneYouveBeenChosenAsOarsman);
+        Engine_EventSetMessage((s32)MsgFuneYouveBeenChosenAsOarsman);
         FieldScene_RunStepThen10(15);
-        Actor_SetAnimation(o, 2);
+        Engine_ActorSetAnimation(o, 2);
         p = (s32)Object_GetByIdFar(0);
         if (p != 0) {
             Actor_SetDestination(o, *(s16 *)(p + 10), *(s16 *)(p + 18));
         }
-        Actor_WaitForMove(o);
+        Engine_ActorWaitForMove(o);
         Actor_SetPosition(o, 0, 0);
-        Event_End();
+        Engine_EventEnd();
     } else if (GameFlag_IsSet(0x92b) != 0) {
         FieldScene_RunPrimarySequence(15, (s32)MsgFunePoorOarsmanFeel, 0x997);
     } else if (GameFlag_IsSet(0x92a) != 0) {
@@ -779,11 +779,11 @@ void FieldScene_RunActor16FlagDialogue(void)
 
     if (GameFlag_IsSet(0x300) != 0) {
         obj = SceneState_ApplyLevelFromFlags();
-        Event_Begin();
+        Engine_EventBegin();
         FuneHeya_TurnActorToOpenSide(obj);
-        Event_SetMessage((s32)MsgFuneHoHoPersonGoingGet);
+        Engine_EventSetMessage((s32)MsgFuneHoHoPersonGoingGet);
         FieldScene_RunStepThen10(16);
-        Actor_SetAnimation(obj, 2);
+        Engine_ActorSetAnimation(obj, 2);
 
         actor = (s32)Object_GetByIdFar(0);
         if (actor != 0) {
@@ -791,9 +791,9 @@ void FieldScene_RunActor16FlagDialogue(void)
                           *(s16 *)(actor + 18));
         }
 
-        Actor_WaitForMove(obj);
+        Engine_ActorWaitForMove(obj);
         Actor_SetPosition(obj, 0, 0);
-        Event_End();
+        Engine_EventEnd();
     } else {
         if (GameFlag_IsSet(0x92b) != 0) {
             FieldScene_RunPrimarySequence(16, (s32)MsgFunePeopleAskingFrail, 0x998);

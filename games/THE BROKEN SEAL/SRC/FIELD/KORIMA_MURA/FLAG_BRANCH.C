@@ -93,15 +93,15 @@ void FieldScene_RunFlag845And847Branches(void)
     if (GameFlag_IsSet(0x845) == 0) {
         Actor_SetPosition(8, 0, 0);
         { s32 k5 = 9, k6 = 18; Map_CopyCellAttributes(9, 17, 5, 1, k5, k6); }
-        Map_Redraw();
-        Task_Wait(1);
+        Engine_MapRedraw();
+        Engine_TaskWait(1);
     } else {
         Actor_SetPosition(9, 0, 0);
     }
     if (GameFlag_IsSet(0x847) != 0) {
         { s32 k5 = 5, k6 = 7; Map_CopyCellsTo(91, 19, 72, 9, k5, k6); }
         { s32 k5 = 8, k6 = 11; Map_CopyCellAttributes(23, 11, 5, 7, k5, k6); }
-        Map_Redraw();
-        Task_Wait(1);
+        Engine_MapRedraw();
+        Engine_TaskWait(1);
     }
 }

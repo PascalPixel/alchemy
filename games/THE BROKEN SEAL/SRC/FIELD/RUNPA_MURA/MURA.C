@@ -82,12 +82,12 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FloatingNut_Catch(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(ACTOR_FLOATING_NUT, 0, 0);
     GameFlag_Set(FLAG_LUNPA_NUT_CAUGHT);
-    Item_ShowFound(ITEM_NUT, 3);
-    Party_GiveItem(ITEM_NUT, 0);
-    Event_End();
+    Engine_ItemShowFound(ITEM_NUT, 3);
+    Engine_PartyGiveItem(ITEM_NUT, 0);
+    Engine_EventEnd();
 }
 
 /* The frozen puddle stands as a pillar of ice the party can climb. */
@@ -101,7 +101,7 @@ void HiddenPuddle_Freeze(void)
     Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
     Map_CopyCellAttributes(15, 3, 1, 1, 13, 4);
     if (pillar != NULL) {
-        Actor_SetSpriteFlags(pillar, 0);
+        Engine_ActorSetSpriteFlags(pillar, 0);
         pillar->motion_flags = ACTOR_FALLS;
         pillar->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
     }
@@ -144,7 +144,7 @@ void Reveal_ShowSecrets(void)
         Map_CopyCells(47, 49, 3, 4, 1, 46);
     } else {
         Actor_SetPosition(ACTOR_SWITCH_GLINT, PIXELS(56), PIXELS(268));
-        Actor_SetSpriteFlags(Actor_Get(ACTOR_SWITCH_GLINT), 0);
+        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SWITCH_GLINT), 0);
         actor = Actor_Get(ACTOR_SWITCH_GLINT);
         if (actor != NULL) {
             actor->motion_flags = GLINT_MOTION_FLAGS;
@@ -154,7 +154,7 @@ void Reveal_ShowSecrets(void)
             actor->scale_y = GLINT_SCALE_Y;
         }
     }
-    Task_AddCallback(IcePillar_UpdateDrawOrder, TASK_PRIORITY_SCENE);
+    Engine_TaskAddCallback(IcePillar_UpdateDrawOrder, TASK_PRIORITY_SCENE);
     GameFlag_Clear(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
@@ -172,20 +172,20 @@ void Reveal_HideSecrets(void)
     MapObject_SetPosition(MAP_OBJECT_PSYNERGY_STONE, 0, 0);
     Map_CopyCells(32, 42, 3, 2, 1, 15);
     GameFlag_Clear(FLAG_LUNPA_PUDDLE_FROZEN);
-    Actor_SetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
     puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
     puddle->update = NULL;
-    Object_SetPartPalettes(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
-    Task_RemoveCallback(IcePillar_UpdateDrawOrder);
+    Engine_ObjectSetPartPalettes(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
+    Engine_TaskRemoveCallback(IcePillar_UpdateDrawOrder);
     GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
 }
 
 void Well_Search(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
-    Message_ShowCentered((s32)MsgRunpaWellFrogs, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
+    Engine_MessageShowCentered((s32)MsgRunpaWellFrogs, 1);
+    Engine_EventEnd();
 }
 
 /* What the village answers before and after Lunpa trades again, and what
@@ -207,11 +207,11 @@ const struct SceneEvent *Scene_GetEvents(void)
 
 void WestGuard_Talk(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
-    Event_SetMessage((s32)MsgRunpaWestGuardAsksAboutEntering);
+    Engine_EventSetMessage((s32)MsgRunpaWestGuardAsksAboutEntering);
     Event_AskYesNo(ACTOR_WEST_GUARD, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /*
@@ -220,23 +220,23 @@ void WestGuard_Talk(void)
  */
 void EastGuard_Talk(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
-        Event_SetMessage((s32)MsgRunpaEastGuardDemandsAuthorization);
+        Engine_EventSetMessage((s32)MsgRunpaEastGuardDemandsAuthorization);
         Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaEastGuardAsksIfFrom);
+        Engine_EventSetMessage((s32)MsgRunpaEastGuardAsksIfFrom);
         Event_OpenMessage(ACTOR_EAST_GUARD, 0);
-        if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+        if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
             gEventWork->message++;
             Event_OpenMessage(ACTOR_EAST_GUARD, 0);
-            if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
+            if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 1) {
                 gEventWork->message++;
             }
         }
         Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void EastGuard_MindRead(void)
@@ -250,53 +250,53 @@ void EastGuard_MindRead(void)
         } else {
             thoughts = (s32)MsgRunpaEastGuardTrustsCaveGate;
         }
-        Event_SetMessage(thoughts);
+        Engine_EventSetMessage(thoughts);
         Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaEastGuardThinksMerchantHarmless);
+        Engine_EventSetMessage((s32)MsgRunpaEastGuardThinksMerchantHarmless);
         Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     }
 }
 
 void VillagerA_Talk(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgRunpaVillagerAAsksHowLong);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgRunpaVillagerAAsksHowLong);
     Event_AskYesNo(ACTOR_VILLAGER_A, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void VillagerC_Talk(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgRunpaVillagerCAsksAboutKidnapping);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgRunpaVillagerCAsksAboutKidnapping);
     Event_AskYesNo(ACTOR_VILLAGER_C, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void VillagerG_Talk(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgRunpaVillagerGAsksAboutDonpa);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgRunpaVillagerGAsksAboutDonpa);
     Event_AskYesNo(ACTOR_VILLAGER_G, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void VillagerB_Shivers(void)
 {
-    Event_Begin();
-    Actor_RunRepeatedMotion(ACTOR_VILLAGER_B, 3);
-    Event_SetMessage((s32)MsgRunpaVillagerBShivers);
+    Engine_EventBegin();
+    Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
+    Engine_EventSetMessage((s32)MsgRunpaVillagerBShivers);
     Event_ShowMessage(ACTOR_VILLAGER_B, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void VillagerD_Talk(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgRunpaVillagerDAsksAboutCommotion);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgRunpaVillagerDAsksAboutCommotion);
     Event_AskYesNo(ACTOR_VILLAGER_D, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void LeftGuard_Talk(void)
@@ -304,18 +304,18 @@ void LeftGuard_Talk(void)
     s32 recognition;
 
     if (gGameState.cloaked != 0) {
-        Event_SetMessage((s32)MsgRunpaLeftGuardHearsSomeone);
+        Engine_EventSetMessage((s32)MsgRunpaLeftGuardHearsSomeone);
     } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0
                && GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
         Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
         recognition = (s32)MsgRunpaLeftGuardRecognizesHammet;
-        Event_SetMessage(recognition + RECOGNITION_SEEN_THAT_MAN);
+        Engine_EventSetMessage(recognition + RECOGNITION_SEEN_THAT_MAN);
         Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-        Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
-        Event_SetMessage(recognition + RECOGNITION_IMPOSSIBLE);
+        Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
+        Engine_EventSetMessage(recognition + RECOGNITION_IMPOSSIBLE);
         GameFlag_Set(FLAG_GATE_GUARD_SAW_HAMMET);
     } else {
-        Event_SetMessage((s32)MsgRunpaLeftGuardResentsDodonpa);
+        Engine_EventSetMessage((s32)MsgRunpaLeftGuardResentsDodonpa);
     }
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
@@ -323,11 +323,11 @@ void LeftGuard_Talk(void)
 void RightGuard_Talk(void)
 {
     if (gGameState.cloaked != 0) {
-        Event_SetMessage((s32)MsgRunpaRightGuardFeelsCreepy);
+        Engine_EventSetMessage((s32)MsgRunpaRightGuardFeelsCreepy);
     } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_SetMessage((s32)MsgRunpaRightGuardWondersHow);
+        Engine_EventSetMessage((s32)MsgRunpaRightGuardWondersHow);
     } else {
-        Event_SetMessage((s32)MsgRunpaRightGuardBoasts);
+        Engine_EventSetMessage((s32)MsgRunpaRightGuardBoasts);
     }
     Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
@@ -342,19 +342,19 @@ void LeftGuard_MindRead(void)
         seen = GameFlag_IsSet(FLAG_GATE_GUARD_SAW_HAMMET);
         if (seen == 0) {
             gEventWork->psynergy_request = seen;
-            Psynergy_Cancel();
+            Engine_PsynergyCancel();
             Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
             Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
-            Event_SetMessage((s32)MsgRunpaLeftGuardRecognizesHammet);
+            Engine_EventSetMessage((s32)MsgRunpaLeftGuardRecognizesHammet);
             GameFlag_Set(FLAG_GATE_GUARD_SAW_HAMMET);
         } else {
-            Event_SetMessage((s32)MsgRunpaLeftGuardGlimpsedMerchant);
+            Engine_EventSetMessage((s32)MsgRunpaLeftGuardGlimpsedMerchant);
         }
         Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-        Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
-        Event_SetMessage((s32)MsgRunpaLeftGuardDismissesThought);
+        Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
+        Engine_EventSetMessage((s32)MsgRunpaLeftGuardDismissesThought);
     } else {
-        Event_SetMessage((s32)MsgRunpaLeftGuardThoughts);
+        Engine_EventSetMessage((s32)MsgRunpaLeftGuardThoughts);
     }
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
@@ -362,9 +362,9 @@ void LeftGuard_MindRead(void)
 void RightGuard_MindRead(void)
 {
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_SetMessage((s32)MsgRunpaRightGuardReopenedThoughts);
+        Engine_EventSetMessage((s32)MsgRunpaRightGuardReopenedThoughts);
     } else {
-        Event_SetMessage((s32)MsgRunpaYoudShadowSneak);
+        Engine_EventSetMessage((s32)MsgRunpaYoudShadowSneak);
     }
     Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
@@ -382,17 +382,17 @@ void Party_WatchForFortress(void)
 
 void Gerald_RefusesToReturn(void)
 {
-    Event_Begin();
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Event_SetMessage((s32)MsgRunpaGeraldRefusesToReturn);
+    Engine_EventBegin();
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Engine_EventSetMessage((s32)MsgRunpaGeraldRefusesToReturn);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 12);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     GameFlag_Clear(FLAG_GATE_TURNING_BACK);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The door opens, the leader steps through, and the scene changes. */
@@ -404,7 +404,7 @@ void Door_Enter(void)
     s32 index;
 
     work = gEventWork;
-    Event_Begin();
+    Engine_EventBegin();
     for (id = ACTOR_FIRST_PLACED; id <= ACTOR_LAST_PLACED; id++) {
         actor = Actor_Get(id);
         if (actor != NULL) {
@@ -416,15 +416,15 @@ void Door_Enter(void)
     Map_AnimateCells(gLunpaDoors[index].steps, gLunpaDoors[index].x, gLunpaDoors[index].y);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_Get(ACTOR_PARTY_LEADER)->motion_flags = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     if (index != DOOR_TEMPLE) {
         Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
-        Event_Wait(10);
+        Engine_EventWait(10);
     }
-    Event_RequestExit(work->touched_trigger);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    Engine_EventRequestExit(work->touched_trigger);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventEnd();
 }
 
 /* The opened passage can be walked into only while Reveal lasts. */
@@ -434,10 +434,10 @@ void HiddenPassage_Enter(void)
         if (GameFlag_IsSet(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
             Actor_Get(ACTOR_PARTY_LEADER)->motion_flags = 0;
-            Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+            Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
             Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
-            Event_Wait(13);
-            Event_RequestExit(LUNPA_EXIT_TO_JAIL);
+            Engine_EventWait(13);
+            Engine_EventRequestExit(LUNPA_EXIT_TO_JAIL);
         }
     }
 }
@@ -445,25 +445,25 @@ void HiddenPassage_Enter(void)
 void FortressGate_Enter(void)
 {
     GameFlag_Set(FLAG_GATE_FORTRESS_ENTERED);
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     Actor_Get(ACTOR_PARTY_LEADER)->motion_flags = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
     Audio_PlayCue(SOUND_DOOR_OPEN);
     Map_CopyCells(53, 4, 2, 2, 41, 4);
-    Event_Wait(10);
+    Engine_EventWait(10);
     Map_CopyCells(53, 6, 2, 2, 41, 4);
-    Event_Wait(10);
-    Event_RequestExit(GATE_EXIT_TO_FORTRESS);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    Engine_EventWait(10);
+    Engine_EventRequestExit(GATE_EXIT_TO_FORTRESS);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventEnd();
 }
 
 void Party_CheckAhead(void)
 {
-    Leader_CheckAhead();
+    Engine_LeaderCheckAhead();
 }
 
 void Reveal_PlayTreasureCue(void)
@@ -484,27 +484,27 @@ void HiddenSwitch_Pull(void)
     }
     Actor_SetPosition(ACTOR_SWITCH_GLINT, 0, 0);
     Audio_PlayCue(SOUND_HIDDEN_PASSAGE_OPEN);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Map_CopyCells(32, 45, 3, 4, 1, 14);
     Map_CopyCells(35, 45, 3, 4, 33, 14);
     Map_CopyCells(38, 45, 3, 4, 1, 46);
-    Task_Wait(10);
+    Engine_TaskWait(10);
     Map_CopyCells(41, 45, 3, 4, 1, 14);
     Map_CopyCells(44, 45, 3, 4, 33, 14);
     Map_CopyCells(47, 45, 3, 4, 1, 46);
-    Task_Wait(10);
+    Engine_TaskWait(10);
     Map_CopyCells(50, 45, 3, 4, 1, 14);
     Map_CopyCells(53, 45, 3, 4, 33, 14);
     Map_CopyCells(56, 45, 3, 4, 1, 46);
-    Task_Wait(10);
+    Engine_TaskWait(10);
     Map_CopyCells(32, 49, 3, 4, 1, 14);
     Map_CopyCells(35, 49, 3, 4, 33, 14);
     Map_CopyCells(38, 49, 3, 4, 1, 46);
-    Task_Wait(10);
+    Engine_TaskWait(10);
     Map_CopyCells(41, 49, 3, 4, 1, 14);
     Map_CopyCells(44, 49, 3, 4, 33, 14);
     Map_CopyCells(47, 49, 3, 4, 1, 46);
-    Task_Wait(10);
+    Engine_TaskWait(10);
     GameFlag_Set(FLAG_LUNPA_PASSAGE_OPEN);
 }
 
@@ -512,27 +512,27 @@ void HiddenSwitch_Pull(void)
 void Guards_BlockGate(void)
 {
     if (gGameState.cloaked == 0) {
-        Event_Begin();
+        Engine_EventBegin();
         Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 0, 2);
         Actor_ShowEmote(ACTOR_RIGHT_GUARD, EMOTE_IN_FRONT | 0, 15);
-        Event_Wait(30);
+        Engine_EventWait(30);
         Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 168);
         Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 168);
-        Actor_WaitForMove(ACTOR_LEFT_GUARD);
-        Actor_WaitForMove(ACTOR_RIGHT_GUARD);
-        Actor_Stop(ACTOR_LEFT_GUARD);
-        Actor_SetAnimation(ACTOR_LEFT_GUARD, 0);
+        Engine_ActorWaitForMove(ACTOR_LEFT_GUARD);
+        Engine_ActorWaitForMove(ACTOR_RIGHT_GUARD);
+        Engine_ActorStop(ACTOR_LEFT_GUARD);
+        Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, 0);
         Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
-        Actor_Stop(ACTOR_RIGHT_GUARD);
-        Actor_SetAnimation(ACTOR_RIGHT_GUARD, 0);
+        Engine_ActorStop(ACTOR_RIGHT_GUARD);
+        Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, 0);
         Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
-        Event_SetMessage((s32)MsgRunpaGuardsWarnPartyAway);
+        Engine_EventSetMessage((s32)MsgRunpaGuardsWarnPartyAway);
         Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
         GameFlag_Set(FLAG_GATE_GUARDS_BLOCKING);
         Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
         Map_CopyCellAttributes(6, 11, 1, 1, 8, 11);
         Map_CopyCellAttributes(6, 11, 1, 1, 9, 11);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -558,50 +558,50 @@ void Guards_CatchParty(void)
         return;
     }
     GameFlag_Set(FLAG_GATE_PARTY_CAUGHT);
-    Event_Begin();
+    Engine_EventBegin();
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
-    Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
-    Actor_StartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
-    Event_Wait(20);
+    Engine_ActorStartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
+    Engine_ActorStartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
+    Engine_EventWait(20);
     Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 2, 60);
     warning = (s32)MsgRunpaGuardsCatchParty;
-    Event_SetMessage(warning + CATCH_LEFT_GUARD_CHALLENGES);
+    Engine_EventSetMessage(warning + CATCH_LEFT_GUARD_CHALLENGES);
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_SetSpeed(ACTOR_LEFT_GUARD, 0x20000, 0x10000);
     Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x20000, 0x10000);
-    Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
-    Event_Wait(35);
-    Event_SetMessage(warning + CATCH_RIGHT_GUARD_WONDERS);
+    Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
+    Engine_EventWait(35);
+    Engine_EventSetMessage(warning + CATCH_RIGHT_GUARD_WONDERS);
     Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
     Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 3, 30);
-    Event_SetMessage(warning + CATCH_LEFT_GUARD_REFUSES_ENTRY);
+    Engine_EventSetMessage(warning + CATCH_LEFT_GUARD_REFUSES_ENTRY);
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-    Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
-    Event_Wait(25);
-    Event_SetMessage(warning + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
+    Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
+    Engine_EventWait(25);
+    Engine_EventSetMessage(warning + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
     Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
     Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part.pixel - 1, leader->z.part.pixel);
-    Actor_WaitForMove(ACTOR_LEFT_GUARD);
+    Engine_ActorWaitForMove(ACTOR_LEFT_GUARD);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 216);
     Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 200);
     Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 200);
-    Actor_WaitForMove(ACTOR_LEFT_GUARD);
-    Actor_WaitForMove(ACTOR_RIGHT_GUARD);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_LEFT_GUARD);
+    Engine_ActorWaitForMove(ACTOR_RIGHT_GUARD);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(12);
+    Engine_EventWait(12);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 272);
     Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 256);
     Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 256);
-    Actor_WaitForMove(ACTOR_LEFT_GUARD);
-    Actor_WaitForMove(ACTOR_RIGHT_GUARD);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Event_End();
-    Task_AddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
+    Engine_ActorWaitForMove(ACTOR_LEFT_GUARD);
+    Engine_ActorWaitForMove(ACTOR_RIGHT_GUARD);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_EventEnd();
+    Engine_TaskAddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
 }
 
 void Gateway_Reopen(void)
@@ -623,7 +623,7 @@ void Cloak_End(void)
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240)
         && leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
-        Task_RemoveCallback(Guards_Watch);
+        Engine_TaskRemoveCallback(Guards_Watch);
         work->raised_trigger = TRIGGER_PARTY_SPOTTED;
     }
     Gateway_Reopen();
@@ -640,7 +640,7 @@ void Guards_Watch(void)
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (gGameState.cloaked == 0 && (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32)
         && leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
-        Task_RemoveCallback(Guards_Watch);
+        Engine_TaskRemoveCallback(Guards_Watch);
         work->raised_trigger = TRIGGER_PARTY_SPOTTED;
     }
 }
@@ -655,9 +655,9 @@ void Leader_KickUpDust(void)
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if ((gFrameCount & 15) == 0) {
         angle = (((u32)Random_Next() * 52) >> 16) * 64 + 230;
-        velocity[0] = Math_Cos(angle) / 4;
+        velocity[0] = Engine_MathCos(angle) / 4;
         velocity[1] = 0;
-        velocity[2] = Math_Sin(angle) / 2;
+        velocity[2] = Engine_MathSin(angle) / 2;
         Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocity[0], velocity[1],
                      velocity[2], 0, NULL);
     }
@@ -669,7 +669,7 @@ void Leader_KickUpDust(void)
  */
 void Party_ThrownOut(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(160), PIXELS(128));
     Actor_SetPosition(ACTOR_LEFT_GUARD, PIXELS(152), PIXELS(112));
     Actor_SetPosition(ACTOR_RIGHT_GUARD, PIXELS(168), PIXELS(112));
@@ -677,56 +677,56 @@ void Party_ThrownOut(void)
     /* The script also turns the village guards, whom the gate does not place. */
     Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 0);
-    Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
-    Event_OpenScreen();
-    Event_Wait(30);
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
+    Engine_EventOpenScreen();
+    Engine_EventWait(30);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1cccc, 0xe666);
     Actor_SetSpeed(ACTOR_LEFT_GUARD, 0x1cccc, 0xe666);
     Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x1cccc, 0xe666);
     Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 288);
     Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 288);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 160, 296);
-    Task_AddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
-    Event_Wait(1);
+    Engine_TaskAddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
+    Engine_EventWait(1);
     Audio_PlayCue(SOUND_SCUFFLE);
-    Event_Wait(20);
-    Actor_SetSpritePriority(ACTOR_LEFT_GUARD, 3);
-    Actor_SetSpritePriority(ACTOR_RIGHT_GUARD, 3);
+    Engine_EventWait(20);
+    Engine_ActorSetSpritePriority(ACTOR_LEFT_GUARD, 3);
+    Engine_ActorSetSpritePriority(ACTOR_RIGHT_GUARD, 3);
     Audio_PlayCue(SOUND_SCUFFLE);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
     Audio_PlayCue(SOUND_SCUFFLE);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
-    Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
-    Task_RemoveCallback(Leader_KickUpDust);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
+    Engine_TaskRemoveCallback(Leader_KickUpDust);
     Actor_Get(ACTOR_PARTY_LEADER)->motion_flags |= ACTOR_FALLS;
     Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = PIXELS(6);
     Actor_Get(ACTOR_PARTY_LEADER)->velocity_z = PIXELS(6);
-    Event_Wait(1);
+    Engine_EventWait(1);
     while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
-        Event_Wait(1);
+        Engine_EventWait(1);
     }
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
     Audio_PlayCue(SOUND_LANDING_THUD);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
-    Task_AddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
-    Event_Wait(2);
+    Engine_TaskAddCallback(Leader_KickUpDust, TASK_PRIORITY_SCENE);
+    Engine_EventWait(2);
     Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = PIXELS(3);
-    Event_Wait(1);
+    Engine_EventWait(1);
     while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
-        Event_Wait(1);
+        Engine_EventWait(1);
     }
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
-    Event_Wait(10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Task_RemoveCallback(Leader_KickUpDust);
-    Event_Wait(50);
-    Event_SetMessage((s32)MsgRunpaGuardForbidsReturn);
+    Engine_EventWait(10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Engine_TaskRemoveCallback(Leader_KickUpDust);
+    Engine_EventWait(50);
+    Engine_EventSetMessage((s32)MsgRunpaGuardForbidsReturn);
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
     Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -734,42 +734,42 @@ void Party_ThrownOut(void)
     Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x10000, 0x8000);
     Actor_WalkTo(ACTOR_LEFT_GUARD, 144, 200);
     Actor_WalkTo(ACTOR_RIGHT_GUARD, 176, 200);
-    Actor_WaitForMove(ACTOR_LEFT_GUARD);
-    Actor_WaitForMove(ACTOR_RIGHT_GUARD);
-    Actor_SetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
-    Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
-    Event_Wait(30);
+    Engine_ActorWaitForMove(ACTOR_LEFT_GUARD);
+    Engine_ActorWaitForMove(ACTOR_RIGHT_GUARD);
+    Engine_ActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
+    Engine_ActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
+    Engine_EventWait(30);
     Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The leader leaving the fortress casts Cloak and slips around the guards. */
 void Leader_SneaksOut(void)
 {
-    Event_Begin();
-    Event_OpenScreen();
+    Engine_EventBegin();
+    Engine_EventOpenScreen();
     Actor_WalkTo(ACTOR_PARTY_LEADER, 152, 168);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Event_Wait(20);
-    Psynergy_Begin(ABILITY_CLOAK, 1);
-    Psynergy_SetTarget(ACTOR_PARTY_LEADER, 0);
-    Psynergy_RaiseHands();
-    Psynergy_PlayEffect(1);
-    Psynergy_LowerHands();
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_EventWait(20);
+    Engine_PsynergyBegin(ABILITY_CLOAK, 1);
+    Engine_PsynergySetTarget(ACTOR_PARTY_LEADER, 0);
+    Engine_PsynergyRaiseHands();
+    Engine_PsynergyPlayEffect(1);
+    Engine_PsynergyLowerHands();
     Actor_WalkTo(ACTOR_PARTY_LEADER, 144, 184);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 88, 184);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 88, 200);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 72, 200);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 72, 288);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 88, 288);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Event_End();
+    Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+    Engine_EventEnd();
 }
 
 /* The village hides its secrets and floats its Nut; the gate sets where a
@@ -787,7 +787,7 @@ s32 Scene_Initialize(void)
         }
         puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
         if (puddle != NULL) {
-            Actor_SetSpriteFlags(puddle, 0);
+            Engine_ActorSetSpriteFlags(puddle, 0);
         }
         GameFlag_Set(FLAG_LUNPA_SECRETS_HIDDEN);
     }
@@ -804,9 +804,9 @@ s32 Scene_Initialize(void)
         }
         if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0
             && GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-            Task_AddCallback(Party_WatchForFortress, TASK_PRIORITY_SCENE);
+            Engine_TaskAddCallback(Party_WatchForFortress, TASK_PRIORITY_SCENE);
         }
-        Task_AddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
+        Engine_TaskAddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
         GameFlag_Clear(FLAG_FORTRESS_VISIT + 1);
         GameFlag_Clear(FLAG_FORTRESS_VISIT + 2);
         GameFlag_Clear(FLAG_FORTRESS_VISIT + 3);
@@ -830,13 +830,13 @@ s32 FloatingNut_Update(union FieldObject *object)
     s32 first;
     s32 second;
 
-    bob = Math_Sin(nut->angle) * 2;
+    bob = Engine_MathSin(nut->angle) * 2;
     if (bob > 0) {
         bob = -bob;
     }
-    nut->x = nut->rest_x + Math_Cos(nut->angle) * 2;
+    nut->x = nut->rest_x + Engine_MathCos(nut->angle) * 2;
     nut->y = nut->rest_y + bob;
-    sprite->rotation = Math_Cos(nut->angle + 0x8000) / 8;
+    sprite->rotation = Engine_MathCos(nut->angle + 0x8000) / 8;
     first = Random_Next();
     second = Random_Next();
     nut->angle = nut->angle + (((u32)first << 9 >> 16) + ((u32)second << 9 >> 16)) + 0x400;
@@ -856,7 +856,7 @@ void FloatingNut_Initialize(s32 actor)
     sprite->full_color = 0;
     sprite->palette = 0;
     sprite->part_count = 0;
-    Actor_SetSpriteFlags((struct FieldActor *)nut, 0);
+    Engine_ActorSetSpriteFlags((struct FieldActor *)nut, 0);
     nut->ready = 0;
     nut->motion_flags = 0;
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -864,10 +864,10 @@ void FloatingNut_Initialize(s32 actor)
     }
     nut->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
     nut->free_motion = 1;
-    icon = Heap_Allocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
-    Item_LoadIcon(ITEM_NUT);
-    Vram_Load(sprite->vram_block, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
-    Heap_Release(HEAP_ITEM_ICON);
+    icon = Engine_HeapAllocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
+    Engine_ItemLoadIcon(ITEM_NUT);
+    Engine_VramLoad(sprite->vram_block, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
+    Engine_HeapRelease(HEAP_ITEM_ICON);
     nut->rest_x = nut->x;
     nut->angle = 0;
     nut->rest_y = nut->y;

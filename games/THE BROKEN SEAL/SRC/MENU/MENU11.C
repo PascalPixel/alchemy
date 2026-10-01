@@ -1,9 +1,9 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 
-s32 Scheduler_AddOrUpdateCallback(s32, s32);
 
 s32 BattleFx_FindConditionResourceFar(s16, s16);
 void Event_SetPairWork1c0Far(s16 primary, s16 secondary);

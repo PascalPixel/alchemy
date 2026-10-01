@@ -146,7 +146,7 @@ void StagedActor_StepDownUntilClamp(s32 index)
     cnt = 0;
     for (;;) {
         if (cnt > 31) return;
-        Stage_Wait(1);
+        WaitFrames(1);
         *(s32 *)(obj + 28) += -0x1999;
         *(s32 *)(obj + 12) += -0xcccc;
         cnt++;
@@ -228,21 +228,21 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     if (Object_CheckMovementCollision((s32)rec, (s32)p) != 0) {
         goto reject;
     }
-    Event_Begin();
-    Stage_SetMode((s32)rec, 6);
-    Stage_Wait(6);
+    Engine_EventBegin();
+    Object_SetMode((s32)rec, 6);
+    WaitFrames(6);
     Audio_PlayCue(152);
-    Stage_SetMode((s32)rec, 7);
+    Object_SetMode((s32)rec, 7);
     *(s32 *)(rec + 48) = 0x30000;
     *(s32 *)(rec + 52) = 0x20000;
     *(s32 *)(rec + 40) = 0x40000;
     *pflag &= 126;
-    Actor_SetSpriteFlags((s32)rec, 0);
+    Engine_ActorSetSpriteFlags((s32)rec, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
-    Stage_SetMode((s32)rec, 6);
-    Actor_SetSpriteFlags((s32)rec, 1);
+    Object_SetMode((s32)rec, 6);
+    Engine_ActorSetSpriteFlags((s32)rec, 1);
     *pflag = saved;
-    Event_End();
+    Engine_EventEnd();
     return 1;
 reject:
     return 0;
@@ -270,7 +270,7 @@ void FieldScene_RunScene3b3SequenceE(union FieldObject *object)
 
 s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)
 {
-    Object_SetPalette(actor, *(u16 *)(actor + 100) & 15);
+    ObjectGroup_SetChildValue(actor, *(u16 *)(actor + 100) & 15);
     return 0;
 }
 
@@ -329,10 +329,10 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FieldScene_RunTransitionOrFallback(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (FieldScene_RunScene3b3SequenceD() == 0)
         StagedActor_AdvancePair();
-    Event_End();
+    Engine_EventEnd();
 }
 
 /*
@@ -343,10 +343,10 @@ void SceneState_ApplyPlacementResult(void)
 {
     struct StagedActorProbe out;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (StagedActor_FindClearPosition(&out) != 0)
         SceneActor_MoveAndRedraw(out);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Copy the background scroll offsets for this frame, occasionally from the

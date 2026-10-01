@@ -134,19 +134,19 @@ const struct SceneEvent *Scene_GetEvents(void)
 /* In-image placement table, four entries. */
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
     Event_ShowMessage(0xC, 0);
     GameFlag_Set(0x910);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor16Dialogue(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
     Event_AskYesNo(16, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor8FlaggedDialogue(void)
@@ -156,38 +156,38 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
     /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
     if ((u16)(*(u16 *)(p + 6) - 0x6001) <= 0x3FFE) {
-        Inn_Open(7, 8);
+        Engine_InnOpen(7, 8);
     } else {
-        Event_Begin();
+        Engine_EventBegin();
 
         if (GameFlag_IsSet(0x911) != 0) {
-            Event_SetMessage((s32)MsgKareiOurInnFeelsEmptyNow);
+            Engine_EventSetMessage((s32)MsgKareiOurInnFeelsEmptyNow);
             Event_ShowMessage(8, 0);
         } else {
-            Event_SetMessage((s32)MsgKareiGoingTolbiAlso);
+            Engine_EventSetMessage((s32)MsgKareiGoingTolbiAlso);
             Event_AskYesNo(8, 0);
             GameFlag_Set(0x910);           /* 145 << 4 */
         }
 
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
 void SceneDialogue_RunActor8FacingDialogue(void)
 {
-    void Event_SetMessage(int);
+    void Engine_EventSetMessage(int);
 
     u8 *p = (u8 *)Object_GetById(0);
 
     /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
     if ((u16)(*(u16 *)(p + 6) + 0x5FFF) <= 0x3FFE) {
-        Sanctum_Open(8);
+        Engine_SanctumOpen(8);
     } else {
-        Event_Begin();
-        Event_SetMessage((s32)MsgKareiCanLiveInPeaceIn);
+        Engine_EventBegin();
+        Engine_EventSetMessage((s32)MsgKareiCanLiveInPeaceIn);
         Event_ShowMessage(8, 0);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -207,7 +207,7 @@ void FieldScene_RunArrivalPlacement(void)
     s32 idx;
     u8 *p;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     for (slot = 8; slot <= 65; slot++) {
         u8 *rec = (u8 *)Object_GetById(slot);
@@ -241,14 +241,14 @@ void FieldScene_RunArrivalPlacement(void)
     p = (u8 *)Object_GetById(0);
     p[85] = 0;
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
-    Event_Wait(10);
+    Engine_EventWait(10);
 
-    Event_RequestExit(*(s16 *)(work + 364));
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    Engine_EventRequestExit(*(s16 *)(work + 364));
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventEnd();
 }
 
 /* The Kalay houses' scene start: open with the window transition; the first
@@ -299,15 +299,15 @@ void SceneState_ClearSlotsBySubState(void)
     if (GameFlag_IsSet(0x911) != 0) {
         /* Nine distinct call sites, not a loop; the trailing 15 is out of
          * order and is kept that way. */
-        Actor_Destroy(10);
-        Actor_Destroy(11);
-        Actor_Destroy(12);
-        Actor_Destroy(13);
-        Actor_Destroy(14);
-        Actor_Destroy(17);
-        Actor_Destroy(18);
-        Actor_Destroy(19);
-        Actor_Destroy(15);
+        Engine_ActorDestroy(10);
+        Engine_ActorDestroy(11);
+        Engine_ActorDestroy(12);
+        Engine_ActorDestroy(13);
+        Engine_ActorDestroy(14);
+        Engine_ActorDestroy(17);
+        Engine_ActorDestroy(18);
+        Engine_ActorDestroy(19);
+        Engine_ActorDestroy(15);
     } else {
         Actor_SetChildValue(13, 2);
     }
@@ -315,7 +315,7 @@ void SceneState_ClearSlotsBySubState(void)
 
 other:
     if (GameFlag_IsSet(0x911) != 0) {
-        Actor_Destroy(16);
-        Actor_Destroy(17);
+        Engine_ActorDestroy(16);
+        Engine_ActorDestroy(17);
     }
 }

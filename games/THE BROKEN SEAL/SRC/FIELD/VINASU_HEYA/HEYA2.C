@@ -16,9 +16,9 @@ struct MapWork {
 void FieldScene_RunThreeCallSequence(void)
 {
 
-    Event_Begin();
+    Engine_EventBegin();
     RunStagedActorTransition();
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The far end of the bridge: the first time the leader steps on it, the

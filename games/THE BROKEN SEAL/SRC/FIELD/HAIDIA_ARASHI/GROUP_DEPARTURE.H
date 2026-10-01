@@ -2,6 +2,7 @@
 #define ALCHEMY_FIELD_HAIDIA_ARASHI_GROUP_DEPARTURE_H
 
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
@@ -141,9 +142,7 @@ void Object_RefreshSelectorById();
 
 void Object_SetActionCallbackAndRefreshById();
 
-s32 Scheduler_AddOrUpdateCallback();
 
-void Scheduler_RemoveCallback();
 
 void Map_SetLayerEntryFlag();
 

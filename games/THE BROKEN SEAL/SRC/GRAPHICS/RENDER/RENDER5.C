@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
@@ -12,7 +13,6 @@ struct UiWorkCounter {
 
 extern u8 *Runtime_AllocateBlock(s32, u32);
 extern void UiWork_InitFreeList(void);
-extern s32 Scheduler_AddOrUpdateCallback(void *, s32);
 extern void UiWork_SetTwoEntriesTo999(void);
 extern void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
 extern void UiWork_UploadDirtyBlocks(void);
@@ -22,11 +22,9 @@ extern void UiWork_InitCountersAndScheduleRefresh(s32);
 #if defined(TBS_EDITION_JA)
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
-/* FAKEMATCH: passing the routine through an inline wrapper loads its fixed
-   address before the fill value, the order of the Japanese literal pool; a
-   plain call loads the value first. */
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 {
+    /* FAKEMATCH: in Japanese, a direct call loads the fill value before the routine and reverses pool order. */
     return fill(dst, size, value);
 }
 #endif
@@ -61,7 +59,7 @@ void UiWork_InitializeWithResourceCounters(void)
 #endif
     UiWork_InitFreeList();
     UiWork_SetTwoEntriesTo999();
-    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)(UiWork_UploadDirtyBlocks), 0x480);
     UiWork_InitCountersWithResourceAndScheduleRefresh();
 }
 
@@ -107,7 +105,7 @@ void UiWork_Initialize(s32 kind)
     Dma_Set(&fill, work, 0x85000140, (volatile u32 *)0x040000d4);
 #endif
     UiWork_InitFreeList();
-    Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)(UiWork_UploadDirtyBlocks), 0x480);
     UiWork_InitCountersAndScheduleRefresh(kind);
     UiWork_CopyTileTail(0xf013, 128);
     UiWork_CopyTileTail(0xf014, 129);

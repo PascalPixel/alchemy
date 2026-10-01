@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "ITEM_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -36,7 +37,6 @@ void SceneActor_SetModeZeroAndValue();
 void SceneEffect_ApplyThreeValuesAndFinish();
 void SceneActor_SetPairZeroAndValue();
 void Audio_PlayCueFromEventWork();
-void Scheduler_AddOrUpdateCallback();
 void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
 s32 ArcTan2();
@@ -259,13 +259,13 @@ void ActorPresentation_SetSceneCellByAngle(void)
 
     if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0xa000
         && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0xe000) {
-        Leader_CheckAhead();
+        Engine_LeaderCheckAhead();
         x = 42;
         z = 85;
         Map_CopyCellAttributes(41, 85, 1, 1, x, z);
     } else if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0x2000
                && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0x6000) {
-        Leader_CheckAhead();
+        Engine_LeaderCheckAhead();
         x = 42;
         z = 85;
         Map_CopyCellAttributes(43, 85, 1, 1, x, z);
@@ -278,7 +278,7 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
     s32 x;
     s32 z;
 
-    Event_Begin();
+    Engine_EventBegin();
     obj = Object_GetById(26);
     if ((obj->x.fixed >> 20) == 42) {
         x = 41;
@@ -286,7 +286,7 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
         Map_CopyCellAttributes(101, 24, 3, 4, x, z);
         GameFlag_Set(0x859);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Actor 19 serves the shop when the leader faces it across the counter and
@@ -295,18 +295,18 @@ void FieldScene_RunActorNineteenAngleDialogue(void)
 {
     s32 v = *(u16 *)((u8 *)Object_GetById(0) + 6);
 
-    Event_Begin();
+    Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {
-        Shop_Open(4, 19);
+        Engine_ShopOpen(4, 19);
     } else {
         if (GameFlag_IsSet(0x855) == 0) {
-            Event_SetMessage((s32)MsgKuupuappuMasterHammetIsntOnlyOne);
+            Engine_EventSetMessage((s32)MsgKuupuappuMasterHammetIsntOnlyOne);
         } else {
-            Event_SetMessage((s32)MsgKuupuappuWeFoundOurStolenWeapons);
+            Engine_EventSetMessage((s32)MsgKuupuappuWeFoundOurStolenWeapons);
         }
         Event_ShowMessage(19, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /*
@@ -335,74 +335,74 @@ void FieldScene_RunActorTwentyAngleDialogue(void)
 {
     s32 v = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
 
-    Event_Begin();
+    Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {
-        Shop_Open(5, 20);
+        Engine_ShopOpen(5, 20);
     } else {
         if (GameFlag_IsSet(0x855) == 0) {
-            Event_SetMessage((s32)MsgKuupuappuThievesDidntHitOurHouse);
+            Engine_EventSetMessage((s32)MsgKuupuappuThievesDidntHitOurHouse);
         } else {
-            Event_SetMessage((s32)MsgKuupuappuIfYoureGonnaHeadInto);
+            Engine_EventSetMessage((s32)MsgKuupuappuIfYoureGonnaHeadInto);
         }
         Event_ShowMessage(20, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorTwentyThreeAngleDialogue(void)
 {
     s32 v = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
 
-    Event_Begin();
+    Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {
-        Inn_Open(1, 23);
+        Engine_InnOpen(1, 23);
     } else {
         if (GameFlag_IsSet(0x855) == 0) {
-            Event_SetMessage((s32)MsgKuupuappuEveryoneThinksOurGuestsThieves);
+            Engine_EventSetMessage((s32)MsgKuupuappuEveryoneThinksOurGuestsThieves);
         } else {
-            Event_SetMessage((s32)MsgKuupuappuTheyHidThoseStolenGoods);
+            Engine_EventSetMessage((s32)MsgKuupuappuTheyHidThoseStolenGoods);
         }
         Event_ShowMessage(23, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorEighteenConditionalScene(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (PartyInventory_HasSpace() == 0) {
-        Actor_SetAnimationAndWait(18, 4);
-        Event_Wait(20);
-        Event_SetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
+        Engine_ActorSetAnimationAndWait(18, 4);
+        Engine_EventWait(20);
+        Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
         Event_ShowMessage(18, 0);
     } else {
-        Item_ShowFound(ITEM_BONE, 3);
-        Party_GiveItem(ITEM_BONE, 0);
+        Engine_ItemShowFound(ITEM_BONE, 3);
+        Engine_PartyGiveItem(ITEM_BONE, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine12BB(void)
 {
     Battle_InitializeRenderObject();
-    Event_SetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);
+    Engine_EventSetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);
     Event_ShowMessage(ACTOR_GERALD, 0);
 }
 
 void SceneDialogue_ShowEmptyBarrel(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgKuupuappuRobinCheckedBarrel, 1);
-    Message_ShowCentered((s32)MsgKuupuappuButDidntFindAnything, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgKuupuappuRobinCheckedBarrel, 1);
+    Engine_MessageShowCentered((s32)MsgKuupuappuButDidntFindAnything, 1);
+    Engine_EventEnd();
 }
 
 void SceneDialogue_ShowEmptyChest(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgKuupuappuRobinCheckedChest, 1);
-    Message_ShowCentered((s32)MsgKuupuappuButChestWasEmpty, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgKuupuappuRobinCheckedChest, 1);
+    Engine_MessageShowCentered((s32)MsgKuupuappuButChestWasEmpty, 1);
+    Engine_EventEnd();
 }
 
 /* What the Vault houses answer: entrances 15 to 17 have their own events,
@@ -448,7 +448,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 {
-    Actor_SetAnimation(x, 1);
+    Engine_ActorSetAnimation(x, 1);
     SceneActor_SetPairZeroAndValue(x, 0, 2);
     Event_ShowMessage(x, 0);
 }
@@ -459,11 +459,11 @@ void SceneState_RunGuardedActorStep(s32 x)
     s32 zero = 0;
 
     *flag = 1;
-    Event_Begin();
-    Actor_SetAnimation(x, 1);
-    Event_Wait(2);
+    Engine_EventBegin();
+    Engine_ActorSetAnimation(x, 1);
+    Engine_EventWait(2);
     Event_ShowMessage(x, 0);
-    Event_End();
+    Engine_EventEnd();
     *flag = zero;
 }
 
@@ -471,7 +471,7 @@ void SceneDialogue_PromptAndCountSkip(s32 x)
 {
     SceneActor_SetPairZeroAndValue(x, 0, 2);
     Event_OpenMessage(x, 0);
-    if (Event_ChooseYesNo(0, 0) != 0) {
+    if (Engine_EventChooseYesNo(0, 0) != 0) {
         gEventWork->message += 1;
     }
     Event_ShowMessage(x, 0);
@@ -479,11 +479,11 @@ void SceneDialogue_PromptAndCountSkip(s32 x)
 
 void SceneDialogue_RunActorElevenDialogue(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuMisterFunSeeStrangeNew);
-    Actor_SetAnimation(11, 1);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuMisterFunSeeStrangeNew);
+    Engine_ActorSetAnimation(11, 1);
     SceneDialogue_PromptAndCountSkip(11);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene383_02000428(void)
@@ -491,82 +491,82 @@ void FieldScene_RunScene383_02000428(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuIvanHasGreatPowersWouldnt);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuIvanHasGreatPowersWouldnt);
     SceneDialogue_PromptAndCountSkip(15);
     Actor_FaceDirection(15, 0x8000, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
 {
     s32 value = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
 
-    Event_Begin();
+    Engine_EventBegin();
     if (value >= 0xa001 && value <= 0xdfff) {
-        Shop_Open(6, 21);
+        Engine_ShopOpen(6, 21);
     } else if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage((s32)MsgKuupuappuDidJustArriveInTown);
+        Engine_EventSetMessage((s32)MsgKuupuappuDidJustArriveInTown);
         SceneDialogue_PromptAndCountSkip(21);
     } else {
-        Event_SetMessage((s32)MsgKuupuappuWithBridgeOutWillQuite);
+        Engine_EventSetMessage((s32)MsgKuupuappuWithBridgeOutWillQuite);
         Event_ShowMessage(21, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor9FlaggedLine(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage((s32)MsgKuupuappuIfOnlyTheseRocksWere);
+        Engine_EventSetMessage((s32)MsgKuupuappuIfOnlyTheseRocksWere);
     } else {
-        Event_SetMessage((s32)MsgKuupuappuThankGoodnessThoseThievesWere);
+        Engine_EventSetMessage((s32)MsgKuupuappuThankGoodnessThoseThievesWere);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(9);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x855) != 0) {
-        Event_SetMessage((s32)MsgKuupuappuThievesHidStolenTreasureIn);
+        Engine_EventSetMessage((s32)MsgKuupuappuThievesHidStolenTreasureIn);
     } else {
-        Event_SetMessage((s32)MsgKuupuappuJustMeOrAmMissing);
+        Engine_EventSetMessage((s32)MsgKuupuappuJustMeOrAmMissing);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(12);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunFlag856DialogueBranch(void)
 {
     s32 g;
     g = 0x851;
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x856) != 0) {
         if (GameFlag_IsSet(g) == 0) {
-            Event_SetMessage((s32)MsgKuupuappuYoureGoingHelpIvan);
+            Engine_EventSetMessage((s32)MsgKuupuappuYoureGoingHelpIvan);
             ActorPresentation_RunActorModeOneThenZeroWithStep(16);
-            Event_Wait(10);
+            Engine_EventWait(10);
             SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
             GameFlag_Set(g);
         } else {
-            Event_SetMessage((s32)MsgKuupuappuPleaseLookAfterIvan);
+            Engine_EventSetMessage((s32)MsgKuupuappuPleaseLookAfterIvan);
         }
     } else {
-        Event_SetMessage((s32)MsgKuupuappuCouldSomeonePleaseHelpIvan);
+        Engine_EventSetMessage((s32)MsgKuupuappuCouldSomeonePleaseHelpIvan);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(16);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine128E(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuThoseThreeStrangersSureHave);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuThoseThreeStrangersSureHave);
     ActorPresentation_RunActorModeOneThenZeroWithStep(18);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_StepActor24AnimationByFacing(void)
@@ -577,16 +577,16 @@ void SceneActor_StepActor24AnimationByFacing(void)
     s32 n;
 
     p = Object_GetById(24);
-    Event_Begin();
-    Actor_RunRepeatedMotion(24, 2);
-    Event_SetMessage((s32)MsgKuupuappuOwStop);
+    Engine_EventBegin();
+    Engine_ActorRunRepeatedMotion(24, 2);
+    Engine_EventSetMessage((s32)MsgKuupuappuOwStop);
     Event_ShowMessage(24, 0);
     Actor_SetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
         q = (s16 *)((u8 *)p + 100);
         v = *q;
         if (v <= 2) {
-            Actor_EnableActionCallback(24, KuupuappuHeya_StepActions[v]);
+            Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
             *(u16 *)q = *(u16 *)q + 1;
             goto clamp;
         }
@@ -594,12 +594,12 @@ void SceneActor_StepActor24AnimationByFacing(void)
         q = (s16 *)((u8 *)p + 100);
         v = *q;
         if (v > 2) {
-            Actor_EnableActionCallback(24, KuupuappuHeya_StepActions[v]);
+            Engine_ActorEnableActionCallback(24, KuupuappuHeya_StepActions[v]);
             *(u16 *)q = *(u16 *)q + 1;
             goto clamp;
         }
     }
-    Actor_EnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+    Engine_ActorEnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
     n = *(u16 *)q - 1;
     *(u16 *)q = n;
 clamp:
@@ -612,5 +612,5 @@ clamp:
         *(u16 *)q = n;
     }
     Object_RefreshSelectorById(24);
-    Event_End();
+    Engine_EventEnd();
 }

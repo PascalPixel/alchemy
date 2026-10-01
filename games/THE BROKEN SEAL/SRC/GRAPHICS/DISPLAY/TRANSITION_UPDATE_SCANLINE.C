@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
@@ -67,7 +68,6 @@ again:
  * is read inside the loop so that loop.c hoists its address on its first
  * pass and the 63 mask on its second. */
 
-s32 Scheduler_RemoveCallback(void *);
 extern const u8 DisplayTransition_DitherTable[];
 
 struct DisplayTransitionState {
@@ -93,7 +93,7 @@ void DisplayTransition_UpdateFrame(void)
         if (state->transition_step >= state->transition_duration) {
             volatile u16 *dma0;
             state->transition_duration = 0;
-            Scheduler_RemoveCallback((void *)DisplayTransition_UpdateFrame);
+            Scheduler_RemoveCallback((u32)((void *)DisplayTransition_UpdateFrame));
             dma0 = REG_DMA0;
             dma0[5] &= 0xc5ff;
             dma0[5] &= 0x7fff;

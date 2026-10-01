@@ -39,11 +39,6 @@ s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id);
 
 s32 IsActorInteractionAvailable(s32 actor_id);
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
-{
-    Actor_SetPosition(actor, x, y);
-}
-
 static __inline__ void SetSceneValue(s16 *field, s32 value)
 {
 

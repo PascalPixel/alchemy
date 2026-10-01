@@ -147,11 +147,6 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
-{
-    Actor_SetSpeed(actor, horizontal, vertical);
-}
-
 extern u8 MsgKuupuappuWarriorGuy[];
 
 extern u8 MsgKuupuappuGreatEverythingSolved[];
@@ -198,12 +193,12 @@ s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneAc
 
         if (forward == facing || right == facing || left == facing || force != 0) {
             actor->active = 1;
-            Object_SetAnimation(actor, 1);
+            Object_SetMode(actor, 1);
             result = 1;
         }
     } else {
         actor->active = 0;
-        Object_SetAnimation(actor, 2);
+        Object_SetMode(actor, 2);
     }
     return result;
 }
@@ -264,47 +259,47 @@ const void *SceneData_GetActorTable(void)
 
 void ActorPresentation_RunActorModeOneThenZero(s32 actor)
 {
-    Event_Begin();
-    Actor_SetAnimation(actor, 1);
+    Engine_EventBegin();
+    Engine_ActorSetAnimation(actor, 1);
     Event_ShowMessage(actor, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor8FlagScene(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 2);
     GameFlag_Set(0x305);
-    Event_SetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
+    Engine_EventSetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
     Event_ShowMessage(8, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor11Line(void)
 {
 
-    Event_SetMessage((s32)MsgKuupuappuRumorsThievesLunpa);
-    Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 2);
+    Engine_EventSetMessage((s32)MsgKuupuappuRumorsThievesLunpa);
+    Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
     ActorPresentation_RunActorModeOneThenZero(11);
 }
 
 void SceneDialogue_RunActor12TwoFlagScene(void)
 {
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 2);
     GameFlag_Set(0x306);
     GameFlag_Set(0x868);
-    Event_SetMessage((s32)MsgKuupuappuTalkingMayorStrong);
+    Engine_EventSetMessage((s32)MsgKuupuappuTalkingMayorStrong);
     Event_ShowMessage(12, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine1CB0ForActor13(void)
 {
 
-    Event_SetMessage((s32)MsgKuupuappuVolcanoStaysCalm);
-    Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 2);
+    Engine_EventSetMessage((s32)MsgKuupuappuVolcanoStaysCalm);
+    Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 2);
     ActorPresentation_RunActorModeOneThenZero(13);
 }
 
@@ -317,22 +312,22 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
     s32 text;
 
     actor->state_flags |= 2;
-    Event_Begin();
+    Engine_EventBegin();
     text = (s32)MsgKuupuappuWarriorGuy;
-    Event_SetMessage(text);
-    Actor_SetAnimation(14, 0);
-    Actor_FaceEachOther(14, ACTOR_PARTY_LEADER, 2);
+    Engine_EventSetMessage(text);
+    Engine_ActorSetAnimation(14, 0);
+    Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 2);
     if (GameFlag_IsSet(0x300) == 0) {
         Actor_ShowEmote(14, 256, 60);
         Event_ShowMessageAndWait(14, 0, 10);
         Event_ShowMessageAndWait(14, 0, 10);
         GameFlag_Set(0x300);
     }
-    Event_SetMessage(text + 2);
+    Engine_EventSetMessage(text + 2);
     Event_ShowMessageAndWait(14, 0, 10);
     actor->facing = facing;
-    Task_Wait(1);
-    Event_End();
+    Engine_TaskWait(1);
+    Engine_EventEnd();
     actor->state_flags = 1;
     GameFlag_Set(0x307);
 }
@@ -349,46 +344,46 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
     actor = Actor_Get(15);
     facing0 = (s16)actor->facing;
     actor->state_flags |= 2;
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuWishVaultsElders);
-    Actor_SetAnimation(15, 0);
-    Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 2);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuWishVaultsElders);
+    Engine_ActorSetAnimation(15, 0);
+    Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
     Event_ShowMessageAndWait(15, 0, 10);
     actor->facing = (u16)facing0;
-    Task_Wait(1);
-    Event_End();
+    Engine_TaskWait(1);
+    Engine_EventEnd();
     actor->state_flags = 0;
 }
 
 void SceneDialogue_RunActor16CountedDialogue(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuGuysCheckJail);
-    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 2);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuGuysCheckJail);
+    Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     Event_OpenMessage(16, 0);
-    if (Event_ChooseYesNo(0, 0) != 0) {
+    if (Engine_EventChooseYesNo(0, 0) != 0) {
         ((struct SceneWork_020006b4 *)gWork)->branch_counter += 1;
     }
     Event_ShowMessage(16, 0);
     GameFlag_Set(0x308);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActorEightTimedDialogue(void)
 {
-    Event_Begin();
-    Actor_RunRepeatedMotion(8, 1);
-    Event_Wait(20);
+    Engine_EventBegin();
+    Engine_ActorRunRepeatedMotion(8, 1);
+    Engine_EventWait(20);
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x305);
-    Event_SetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
+    Engine_EventSetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
     Event_ShowMessageAndWait(8, 0, 20);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor11AcceptanceDialogue(void)
 {
-    Event_SetMessage((s32)MsgKuupuappuOnceDodonpaTook);
+    Engine_EventSetMessage((s32)MsgKuupuappuOnceDodonpaTook);
     ((struct Actor_02000754 *)Actor_Get(11))->accepted = 1;
     ActorPresentation_RunActorModeOneThenZero(11);
     ((struct Actor_02000754 *)Actor_Get(11))->accepted = 0;
@@ -396,20 +391,20 @@ void SceneDialogue_RunActor11AcceptanceDialogue(void)
 
 void SceneDialogue_RunActor12TimedTwoFlagScene(void)
 {
-    Event_Begin();
-    Actor_RunRepeatedMotion(12, 1);
-    Event_Wait(20);
+    Engine_EventBegin();
+    Engine_ActorRunRepeatedMotion(12, 1);
+    Engine_EventWait(20);
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x306);
     GameFlag_Set(0x868);
-    Event_SetMessage((s32)MsgKuupuappuTalkingMayorStrong);
+    Engine_EventSetMessage((s32)MsgKuupuappuTalkingMayorStrong);
     Event_ShowMessageAndWait(12, 0, 20);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void ActorPresentation_RunActor13AcceptanceDialogue(void)
 {
-    Event_SetMessage((s32)MsgKuupuappuGreatEverythingSolved);
+    Engine_EventSetMessage((s32)MsgKuupuappuGreatEverythingSolved);
     ((struct Actor_020007d4 *)Actor_Get(13))->accepted = 1;
     ActorPresentation_RunActorModeOneThenZero(13);
     ((struct Actor_020007d4 *)Actor_Get(13))->accepted = 0;
@@ -420,15 +415,15 @@ void ActorPresentation_RunActor13AcceptanceDialogue(void)
 void KuupuappuMuraSai_RunActor14Talk(void)
 {
     ((struct SceneActor *)Actor_Get(14))->state_flags |= 2;
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x307) != 0) {
-        Event_SetMessage((s32)MsgKuupuappuWatchingGuysMakes);
+        Engine_EventSetMessage((s32)MsgKuupuappuWatchingGuysMakes);
         ActorPresentation_RunActorModeOneThenZero(14);
     } else {
         SceneDialogue_RunActorFourteenFlagDialogue();
         GameFlag_Set(0x307);
     }
-    Event_End();
+    Engine_EventEnd();
     ((struct SceneActor *)Actor_Get(14))->state_flags = 1;
 }
 
@@ -442,10 +437,10 @@ void SceneDialogue_RunActorFifteenDialogue(void)
         struct SceneActor *actor = Actor_Get(15);
         actor->state_flags |= 2;
     }
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuGrownUpsAlways);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuGrownUpsAlways);
     ActorPresentation_RunActorModeOneThenZero(15);
-    Event_End();
+    Engine_EventEnd();
     {
         s32 clear = 0;
         struct SceneActor *actor = Actor_Get(15);
@@ -462,24 +457,24 @@ void FieldScene_RunScene385SequenceA(void)
 
     rec7 = GameFlag_IsSet(0x308);
     if (rec7 == 0) {
-        Event_Begin();
+        Engine_EventBegin();
         *((u8 *)Actor_Get(16) + 91) = 1;
-        Actor_SetAnimation(16, 1);
+        Engine_ActorSetAnimation(16, 1);
         Engine_ActorRunRepeatedMotion(16, 1);
-        Event_Wait(20);
-        Event_SetMessage((s32)MsgKuupuappuGuysCheckJail);
+        Engine_EventWait(20);
+        Engine_EventSetMessage((s32)MsgKuupuappuGuysCheckJail);
         Engine_ActorFaceEachOther(16, 0, 2);
         Event_OpenMessage(16, 0);
-        if (Event_ChooseYesNo(0, 0) != 0) {
+        if (Engine_EventChooseYesNo(0, 0) != 0) {
             bump_step(1);
         }
         Event_ShowMessage(16, 0);
         *((u8 *)Actor_Get(16) + 91) = rec7;
-        Actor_EnableActionCallback(16, 2);
-        Event_End();
+        Engine_ActorEnableActionCallback(16, 2);
+        Engine_EventEnd();
         GameFlag_Set(0x308);
     } else {
-        Event_SetMessage((s32)MsgKuupuappuNotLikeEasy);
+        Engine_EventSetMessage((s32)MsgKuupuappuNotLikeEasy);
         *((u8 *)Actor_Get(16) + 91) = 1;
         ActorPresentation_RunActorModeOneThenZero(16);
         v5 = 0;
@@ -491,10 +486,10 @@ void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int f
 {
     u8 *record = Actor_Get(actor); int frames;
     Actor_SetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
-    *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Actor_SetSpriteFlags(record, 0);
+    *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Engine_ActorSetSpriteFlags(record, 0);
     Actor_MoveToAndWait(actor, x, z); Actor_SetPosition(actor, x << 16, z << 16);
-    for (frames = 60; frames != 0; --frames) { Task_Wait(1); if (*(s16 *)(record + 42) == 0) break; }
-    Actor_SetSpriteFlags(record, 1); *(s32 *)(record + 72) = 0x10000;
+    for (frames = 60; frames != 0; --frames) { Engine_TaskWait(1); if (*(s16 *)(record + 42) == 0) break; }
+    Engine_ActorSetSpriteFlags(record, 1); *(s32 *)(record + 72) = 0x10000;
 }
 
 void FieldScene_RunActor21SequenceOnce(void)
@@ -502,32 +497,32 @@ void FieldScene_RunActor21SequenceOnce(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Audio_PlayCue(100);
-    Event_Wait(40);
+    Engine_EventWait(40);
     if (GameFlag_IsSet(0x867) == 0) {
         Actor_SetAttachedEffect(21, 0x102);
-        Actor_Jump(21, 4, 0);
-        Event_Wait(12);
-        Actor_Jump(21, 4, 0);
-        Event_Wait(20);
+        Engine_ActorJump(21, 4, 0);
+        Engine_EventWait(12);
+        Engine_ActorJump(21, 4, 0);
+        Engine_EventWait(20);
         ActorPresentation_MoveActorToPositionAndWait(21, 0x188, 104, 0x70000);
-        Event_Wait(20);
+        Engine_EventWait(20);
         Actor_WalkToAndWait(21, 0x198, 104);
         Actor_WalkToAndWait(21, 0x198, 120);
         GameFlag_Set(0x867);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay)
 {
     s32 zero = 0;
 
-    SetScale(zero, 0x8000, 0x4000);
+    Actor_SetSpeed(zero, 0x8000, 0x4000);
     Actor_WalkTo(zero, x, y);
     gEventWork->transition_frames = 16;
-    Event_RequestExit(delay);
+    Engine_EventRequestExit(delay);
 }
 
 void FieldScene_SetupScene5(void)

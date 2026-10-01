@@ -88,21 +88,21 @@ u8 *SceneData_GetActorTable(void) { return KorimaHiroba_Actors; }
 void SceneActor_RunPlacementQuery(void)
 {
     struct StagedActorProbe result;
-    Event_Begin();
+    Engine_EventBegin();
     if (StagedActor_FindClearPosition(&result))
         SceneActor_MoveAndRedraw(result);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Scene setup for slot 11 and effect 181. */
 void FieldScene_SetupActor11Effect181(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(11, 0, 0);
     GameFlag_Set(0xfd3);
-    Item_ShowFound(ITEM_NUT, 3);
-    Party_GiveItem(ITEM_NUT, 0);
-    Event_End();
+    Engine_ItemShowFound(ITEM_NUT, 3);
+    Engine_PartyGiveItem(ITEM_NUT, 0);
+    Engine_EventEnd();
 }
 
 u8 *SceneData_GetExtraTable(void) { return KorimaHiroba_Extras; }

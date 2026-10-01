@@ -538,7 +538,6 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000a8b3c)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/CLASSIFY_SELECTED_PSYNERGY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000a9490)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ENTRY_GRID.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/COLLECT_ACTIONS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/BUILD_PAGE_RESULT.o"(.text)

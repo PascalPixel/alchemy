@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811f030
+	.global BattleMotion_SetRecordChildValues
 	.thumb_func
-Func_0811f030:
+BattleMotion_SetRecordChildValues:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

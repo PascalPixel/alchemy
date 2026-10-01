@@ -3484,10 +3484,10 @@ Func_0811a39c:
 	.section .rom.0011a49a, "ax"
 	.incbin "baserom.gba", 0x0011a49a, 0x00000002
 	.section .rom.0011a49c, "ax"
-	.global Func_0811a484
-	.type Func_0811a484, %function
+	.global BattleMotion_GetSlotField14
+	.type BattleMotion_GetSlotField14, %function
 	.thumb_func
-Func_0811a484:
+BattleMotion_GetSlotField14:
 	.incbin "baserom.gba", 0x0011a49c, 0x0000000c
 	.section .rom.0011a4f6, "ax"
 	.incbin "baserom.gba", 0x0011a4f6, 0x00000c8e

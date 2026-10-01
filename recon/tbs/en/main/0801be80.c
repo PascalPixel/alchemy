@@ -1,17 +1,22 @@
-/* Draft, not exact (2026-10-01, slice-2): 580 of 580 bytes, score 2470,
-   176 instructions differ, every one a register. The listing carries two
-   labels at one address (Menu_ConfirmSelection, Menu_PushSelectedNode); one
-   has to go at adoption. Rewritten plainly: the screen holds its sixteen
-   52-byte records itself (the four zero stores are records 0, 1 and 14),
-   zeros are literal, and the other pointer starts null, which is the
-   register the reference stores those zeros from. The statements, stores,
-   loops and pool now line up.
-   Remaining: the reference gives state r5, node r6, other r7, the count
-   r8, the cursor address sl and the index r9; here node, other and state
-   take r5, r6, r7 because the allocator ranks node (51 references over 151
-   instructions) and other (66 over 268) above state (22 over 171). No
-   spelling tried moves state first; the earlier draft (141 instructions,
-   score 2885) stored the zeros through the count and had the same order. */
+/* Draft, not exact (2026-10-01, slice-2): 580 of 580 bytes, score 1865,
+   153 instructions differ and every one is a register name: the
+   instructions, their order, the stores and the pool all line up. The
+   listing carries two labels at one address (Menu_ConfirmSelection,
+   Menu_PushSelectedNode); one has to go at adoption.
+   What the plain form needed: the screen holds its sixteen 52-byte records
+   itself (the four zero stores are records 0, 1 and 14); zeros are literal
+   and the other pointer starts null, which is the register the reference
+   stores them from; size is set before shape in the sprite bits; the new
+   entry's targets are copied from its own position; both branches of the
+   path append end with the next pointer cleared.
+   Remaining: the reference has state r5, node r6, other r7, the count r8
+   and the cursor address sl. Here node, other, state take r5, r6, r7 and
+   the cursor address r8, the count sl: the allocator ranks node (51
+   references over 151 instructions) and other (66 over 268) above state
+   (22 over 171). The reference's order is exactly the order the variables
+   are numbered in (state, node, other, count), which is what a second
+   allocation after reload has taken r5-r7 would give; nothing tried so far
+   makes reload do that here. */
 #include "TYPES.H"
 
 struct PushSprite {
@@ -133,8 +138,10 @@ u32 Menu_PushSelectedNode(struct PushMenu *state)
     other->base = node->base;
     other->slot = node->slot;
     other->tile = node->tile;
-    other->target_y = other->y = node->y;
-    other->target_z = other->z = node->z;
+    other->y = node->y;
+    other->z = node->z;
+    other->target_y = other->y;
+    other->target_z = other->z;
     other->home_y = node->home_y;
     other->home_z = node->home_z;
     other->speed = 0;
@@ -145,8 +152,8 @@ u32 Menu_PushSelectedNode(struct PushMenu *state)
     sprite->blend_mode = 0;
     sprite->full_color = 0;
     sprite->mosaic = 0;
-    sprite->shape = 0;
     sprite->size = 1;
+    sprite->shape = 0;
     sprite->palette = 0;
     sprite->tile = other->tile;
     node->kind = 0;
@@ -157,10 +164,11 @@ u32 Menu_PushSelectedNode(struct PushMenu *state)
             node = node->next;
         node->next = other;
         other->prev = node;
+        other->next = NULL;
     } else {
         state->path = other;
         other->prev = NULL;
+        other->next = NULL;
     }
-    other->next = NULL;
     return index;
 }

@@ -89,13 +89,13 @@ Func_080f94a4:
 	.2byte 0xf800
 	movs r0, #1
 	bl Func_080383c0
-	bl Func_080f9448
+	bl Menu_CancelSoundReset
 	add r1, sp, #8
 	add r0, sp, #12
 	add r2, sp, #4
 	bl Func_080f9644
 	mov r8, r0
-	bl Func_080f9464
+	bl Menu_EnsureCancelSound
 	mov r1, r8
 	cmp r1, #1
 	bne .L_080f95a4

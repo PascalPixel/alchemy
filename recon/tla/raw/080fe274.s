@@ -148,13 +148,13 @@ Func_080fe274:
 	ldr r0, .L_080fe408
 	bl Link_DrawShiftedTilePairFar
 	bl Func_081053a8
-	bl Func_080f9448
+	bl Menu_CancelSoundReset
 	ldr r2, .L_080fe3f4
 	mov r3, r9
 	strh r2, [r3]
 	bl Func_080fe49c
 	str r0, [sp, #8]
-	bl Func_080f9464
+	bl Menu_EnsureCancelSound
 	bl Func_08105468
 	ldr r0, [r6, #40]
 	bl RenderOutput_ClearListFar

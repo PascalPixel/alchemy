@@ -879,7 +879,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VORTEX.o"(.text)
         "*/recon/tbs/raw/080d3c80.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/UPDATE_PHASE.o"(.text)
-        "*/recon/tbs/raw/080d41a4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/LIGHTNING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_TWO_MODE_B_MODE0.o"(.text)
         "*/recon/tbs/raw/080d4604.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080d4ce8.o"(.text .rodata .data .padding)

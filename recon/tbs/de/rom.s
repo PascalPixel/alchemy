@@ -1440,8 +1440,6 @@ BattleEffect_RunEmberColumns:
 	.incbin "baserom.gba", 0x000d4b98, 0x00000628
 	.section .rom.000d5a80, "ax"
 	.incbin "baserom.gba", 0x000d5a80, 0x0000046c
-	.section .rom.000d5fa4, "ax"
-	.incbin "baserom.gba", 0x000d5fa4, 0x00000448
 	.section .rom.000d6404, "ax"
 	.global BattleFx_RunSparkGroups
 	.type BattleFx_RunSparkGroups, %function
@@ -1685,7 +1683,17 @@ VortexMotes_Counts:
 	.global Tornado_Shapes
 Tornado_Shapes:
 	.incbin "baserom.gba", 0x000effca, 0x00000009
-	.incbin "baserom.gba", 0x000effd3, 0x000000e1
+	.incbin "baserom.gba", 0x000effd3, 0x00000071
+	.global LightningPillar_Sparks
+LightningPillar_Sparks:
+	.incbin "baserom.gba", 0x000f0044, 0x0000000c
+	.global LightningPillar_Columns
+LightningPillar_Columns:
+	.incbin "baserom.gba", 0x000f0050, 0x0000000e
+	.global LightningPillar_Counts
+LightningPillar_Counts:
+	.incbin "baserom.gba", 0x000f005e, 0x00000004
+	.incbin "baserom.gba", 0x000f0062, 0x00000052
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000f00b4, 0x000006c0

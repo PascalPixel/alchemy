@@ -1489,7 +1489,7 @@ void PlayStoryScene(void)
         FieldScene_RunScene3bf_0200269c();
         SHARED_RECORD_FIELD_448 = 512;
         Battle_WaitMode0(1);
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             gGameState.unknown_200[0x22b - 0x200] = 3;
         } while (0);
@@ -1689,7 +1689,7 @@ void PlayStoryScene(void)
         GameFlag_Set(2370);
         SHARED_RECORD_FIELD_448 = 512;
         Battle_WaitMode0(1);
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             gGameState.unknown_200[0x22b - 0x200] = 3;
         } while (0);

@@ -898,7 +898,7 @@ void ToretoHeya_AdvanceEffectMotion(struct Effect *effect)
     s32 velocity_x;
 
     /* This block orders the Z load after the Y store; do not flatten it. */
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity_x;
         effect->position[0] += velocity_x;

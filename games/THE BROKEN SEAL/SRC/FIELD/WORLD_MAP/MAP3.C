@@ -84,7 +84,7 @@ void FieldScene_RunLateSequence(void);
     u32 saved; \
     u32 *p; \
     s32 n; \
-    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ saved = *ime; } while (0); \
+    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ saved = *ime; } while (0); \
     *ime = (u16)(u32)ime; \
     n = *(u16 *)&gIoWriteQueue; \
     if (n < 32) { \
@@ -94,7 +94,7 @@ void FieldScene_RunLateSequence(void);
         *p++ = (u32)(destination); \
         *p = (control); \
     } \
-    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ *ime = saved; } while (0); \
+    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ *ime = saved; } while (0); \
 }
 
 #define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)

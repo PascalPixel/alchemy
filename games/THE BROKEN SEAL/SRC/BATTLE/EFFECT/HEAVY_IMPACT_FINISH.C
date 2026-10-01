@@ -28,7 +28,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     id = arg;
     ctx = Object_GetById();
     /* The single-pass block preserves the first call's argument schedule. */
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do
     {
         if (ctx == ((void *)0))
@@ -45,7 +45,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     Audio_PlayCue(0xAE);
     Motion_SetVarCbAndRefresh(id, 1);
     /* A second boundary gives the third repeated call its observed order. */
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do
     {
         Audio_PlayCue(0xAF);
@@ -69,7 +69,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
             EffectSlot_SetCallback(work, (s32)BattleFx_RunAngledApproachPhases);
             /* This boundary keeps the work pointer ahead of the constant. */
-            /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+            /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
             do
             {
             EffectSlot_SetObjectMode(work, 7);

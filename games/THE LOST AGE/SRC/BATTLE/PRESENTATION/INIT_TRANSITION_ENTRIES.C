@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TRANSFORM.H"
 
 struct BattleTransitionEntry {
     u32 value;

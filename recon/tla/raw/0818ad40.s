@@ -24,17 +24,17 @@ Func_0818ad40:
 	mov r10, r0
 	adds r0, r5, #0
 	ldr r6, [r3, #100]
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 	ldr r2, [sp, #48]
 	ldr r3, [r2, #4]
 	cmp r3, #0
 	bne .L_0818ad7e
 	adds r0, r5, #0
-	bl BattleFx_BeginTiledCanvas
+	bl BattleFx_BeginTiledCanvasFilled
 	b .L_0818ad84
 .L_0818ad7e:
 	adds r0, r5, #0
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 .L_0818ad84:
 	ldr r3, .L_0818adb0
 	movs r2, #128

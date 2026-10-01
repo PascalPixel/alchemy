@@ -85,7 +85,7 @@ Func_02003fec:
 	.global Func_02003ff4
 	.thumb_func
 Func_02003ff4:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02003ffc
 	.thumb_func
 Func_02003ffc:

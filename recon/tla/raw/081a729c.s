@@ -141,7 +141,7 @@ Func_081a729c:
 	adds r6, r0, #0
 	adds r1, r6, #0
 	ldr r0, .L_081a7438
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	mov r5, r11
 	adds r5, #16
 	movs r7, #0

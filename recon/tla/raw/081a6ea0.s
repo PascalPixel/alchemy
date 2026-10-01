@@ -38,7 +38,7 @@ Func_081a6ea0:
 	adds r6, #32
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	b .L_081a6f04
 	.2byte 0x0000
@@ -84,7 +84,7 @@ Func_081a6ea0:
 	adds r6, r6, r0
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	movs r1, #192

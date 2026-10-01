@@ -957,8 +957,8 @@ Data_0810c148:
 	.global Data_0810c248
 Data_0810c248:
 	.incbin "baserom.gba", 0x0010c248, 0x00000100
-	.global Data_0810c348
-Data_0810c348:
+	.global Shop_SelectorOffsets
+Shop_SelectorOffsets:
 	.incbin "baserom.gba", 0x0010c348, 0x0000003c
 	.global Shop_GlyphRowOffsets
 Shop_GlyphRowOffsets:

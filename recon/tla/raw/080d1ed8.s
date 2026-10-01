@@ -4,7 +4,7 @@
 	.thumb_func
 BattleFx_GetFlags:
 	push {lr}
-	bl Func_080d1e84
+	bl BattleFx_GetAnimationValue
 	bl Func_080d1e60
 	ldrb r0, [r0, #3]
 	pop {pc}

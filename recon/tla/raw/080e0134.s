@@ -184,7 +184,7 @@ Func_080e0134:
 	str r3, [r2, #8]
 	bl WaitFrames
 	adds r0, r6, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	movs r0, #4
 	bl WaitFrames
 	movs r0, #30

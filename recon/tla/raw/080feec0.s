@@ -190,7 +190,7 @@ Func_080feec0:
 	mov r2, r9
 	movs r3, #0
 	mov r0, r8
-	bl Func_080ff1f4
+	bl CharacterMenu_DrawSelectionCursor
 	mov r0, r11
 	bl RenderOutput_ClearListFar
 	movs r0, #1
@@ -244,7 +244,7 @@ Func_080feec0:
 	adds r1, r7, #0
 	mov r2, r9
 	movs r3, #1
-	bl Func_080ff1f4
+	bl CharacterMenu_DrawSelectionCursor
 .L_080ff0b2:
 	ldr r2, [r5, #4]
 	movs r3, #1

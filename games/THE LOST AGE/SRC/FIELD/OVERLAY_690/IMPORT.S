@@ -85,7 +85,7 @@ Func_02001ff8:
 	.global Func_02002000
 	.thumb_func
 Func_02002000:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02002008
 	.thumb_func
 Func_02002008:

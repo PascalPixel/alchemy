@@ -20,6 +20,7 @@ SECTIONS
         "*/resource_650_overlay.o"(.text.x020095a0)
         "*/resource_650_overlay.o"(.text.x0200961c)
         "*/games/THE LOST AGE/SRC/FIELD/IDEJIMA/DRIFT.o"(.text)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/DRIFT_SPAWN.o"(.text)
         "*/resource_650_overlay.o"(.text.x020096d8)
         "*/resource_650_overlay.o"(.text.x02009ee0)
         "*/resource_650_overlay.o"(.text.x0200a304)

@@ -48,7 +48,7 @@ UiWork_FinalizePendingCoreFar:
 	.global Func_08038148
 	.thumb_func
 Func_08038148:
-	overlay_veneer Func_0803cb1c
+	overlay_veneer UiWork_DrainPending
 	.global Func_08038150
 	.thumb_func
 Func_08038150:

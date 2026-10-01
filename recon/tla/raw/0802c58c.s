@@ -209,7 +209,7 @@ Func_0802c58c:
 	ldrsh r6, [r5, r3]
 	bl Resource_GetTableEntry
 	mov r1, r8
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	movs r2, #132
 	mov r0, r8

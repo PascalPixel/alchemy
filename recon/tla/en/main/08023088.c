@@ -1,20 +1,24 @@
+/*
+ * Draft: Map_GetScreenRelativePosition, ported from its ☀️ twin with the map
+ * work from its heap slot. Score 60: the listing loads the 0xffff0000 mask
+ * right after the map work, before adding the origin offset; this C loads
+ * it after.
+ */
 #include "TYPES.H"
-#include "SCENE.H"
-#include "SYSTEM.H"
-extern u8 ResourceTableEntries[];
-extern u8 gCam[];
+#include "RAM_BUFFER.H"
 
-/* map/shared/Map_RenderAnimatedTileFrame.c */
-struct MapBase {
-    u16 unused;
-    u16 offset;
+struct Thing {
+    u8 filler0[8];
+    s32 field8;
+    u8 filler12[4];
+    s32 field16;
 };
 
-extern u8 Map_TileDissolveOrder[];
-
+/* Where an object stands on screen, relative to the camera's origin in the
+   map work; -1 and zeroes when it is off screen. */
 s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out)
 {
-    u8 *state = *(u8 **)((u32)&gCam);
+    u8 *state = (u8 *)Ram_HeapSlots->map_work;
     s32 *org = (s32 *)(state + 228);
     s32 a;
     s32 b;

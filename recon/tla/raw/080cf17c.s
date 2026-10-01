@@ -72,14 +72,14 @@ BattleFx_StartRandomParticleEmitter:
 	cmp r2, r3
 	bne .L_080cf20a
 	adds r0, r5, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	ldr r1, [r5]
 .L_080cf20a:
 	ldr r3, .L_080cf2ec
 	cmp r1, r3
 	bne .L_080cf216
 	adds r0, r5, #0
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080cf216:
 	subs r6, #1
 	adds r5, #128
@@ -181,7 +181,7 @@ BattleFx_StartRandomParticleEmitter:
 .L_080cf2e4:
 	.4byte 0xfff00000
 .L_080cf2e8:
-	.4byte Func_080cf4e0
+	.4byte BattleFx_SpawnRandomParticleAtPosition
 .L_080cf2ec:
 	.4byte BattleFx_ParticleScript
 .L_080cf2f0:
@@ -189,7 +189,7 @@ BattleFx_StartRandomParticleEmitter:
 .L_080cf2f4:
 	.4byte 0xfffffc00
 .L_080cf2f8:
-	.4byte Func_080cf0d0
+	.4byte BattleFx_EmitRandomParticleFromEmitter
 .L_080cf2fc:
 	adds r1, #1
 	adds r0, #128
@@ -214,7 +214,7 @@ BattleFx_StartRandomParticleEmitter:
 	asrs r3, r3, #20
 	cmp r2, r3
 	bne .L_080cf2fc
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080cf32c:
 	adds r0, r7, #0
 .L_080cf32e:

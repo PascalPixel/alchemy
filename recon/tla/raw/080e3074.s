@@ -747,7 +747,7 @@ Func_080e3074:
 	movs r0, #136
 	bl Audio_PlayCue
 	mov r0, r11
-	bl Func_080200c8
+	bl Object_Destroy
 	mov r0, r10
 	movs r3, #0
 	str r3, [r0, #108]

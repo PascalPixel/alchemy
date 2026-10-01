@@ -9,7 +9,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA.o"(.text)
         "*/resource_3a4_overlay.o"(.text.x02008d2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA2.o"(.text)
-        "*/resource_3a4_overlay.o"(.text.x02009d0c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/IMPORT.o"(.text)
         "*/resource_3a4_overlay.o"(.rodata.x0200bd28)

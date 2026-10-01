@@ -86,7 +86,6 @@ void Resource_ResetEntry(s16);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
-struct FieldActor *ObjectTable_GetFar(s32);
 void ObjectDispatch_InitFromTable6(struct FieldActor *);
 void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
@@ -175,7 +174,7 @@ void SceneState_ReleaseTableAndResetC6a6(void)
 
 void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 {
-    struct FieldActor *o = ObjectTable_GetFar(a);
+    struct FieldActor *o = Engine_ActorLookup(a);
 
     if (o != 0) {
         s32 v = 0x20000;
@@ -192,7 +191,7 @@ void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
 
 void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
 {
-    struct FieldActor *o = ObjectTable_GetFar(a);
+    struct FieldActor *o = Engine_ActorLookup(a);
 
     if (o != 0) {
         s32 v = 0x14000;

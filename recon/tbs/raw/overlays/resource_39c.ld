@@ -16,7 +16,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA3.o"(.text)
-        "*/resource_39c_overlay.o"(.text.x02009db4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/HEYA4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/LIGHTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RISE_EFFECT.o"(.text)

@@ -40,14 +40,14 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(u16 *)(descriptor + 218) = 0;
     *(u16 *)(descriptor + 220) = 0;
 
-    Resource_DecodeType01(KorosseoKabe_MarkerGraphics, handle);
+    Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     extent = Resource_FindFreeEntry();
     *(u16 *)(descriptor + 216) = (u16)extent;
     Engine_VramLoad((s16)extent, 512, handle);
 
     /* The stage task runs every frame. */
-    Engine_TaskAddCallback(FieldScene_RunExtendedActorSequence, 0xc76);
+    Engine_TaskAddCallback(Korosseo_DrawGauge, 0xc76);
 
     Runtime_BumpFree(handle);
 }

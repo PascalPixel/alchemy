@@ -46,11 +46,10 @@ void ColossoLogRollingStage_StopPaletteTask(void)
 
 void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
 {
-    extern ScaledStageObject *ObjectTable_Get();
     extern void ObjectDispatch_InitFromTable6();
     extern void Object_SetPosition();
 
-    ScaledStageObject *object = ObjectTable_Get(id);
+    ScaledStageObject *object = (ScaledStageObject *)Engine_ActorLookup(id);
     s32 scale;
 
     if (object != 0) {
@@ -66,12 +65,11 @@ void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
 
 void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
 {
-    extern u8 *ObjectTable_Get(s32 object_id);
     extern void ObjectDispatch_InitFromTable6(void);
     extern void Object_SetPosition(u8 *object, s32 x, s32 y, s32 z);
     extern void Object_CommitPosition(u8 *object);
 
-    u8 *object = ObjectTable_Get(object_id);
+    u8 *object = (u8 *)Engine_ActorLookup(object_id);
 
     if (object == 0) {
         return;

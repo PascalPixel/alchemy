@@ -745,7 +745,7 @@ Func_0818f620:
 	str r3, [r6, #16]
 	mov r0, r8
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r1, #1
 	adds r0, #17
 	add r8, r1
@@ -814,7 +814,7 @@ Func_0818f620:
 .L_0818fc78:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #1
 	add r8, r3
 	adds r0, #17
@@ -850,7 +850,7 @@ Func_0818f620:
 	cmp r0, #17
 	bhi .L_0818fcf0
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	mov r2, r10
 	ldrb r1, [r2, r0]
 	ldr r3, [sp, #52]

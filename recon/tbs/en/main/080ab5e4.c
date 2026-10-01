@@ -151,8 +151,8 @@ void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
 s32 FourObjectMotion_ReplaceSlot(s32 slot, s32 element, s32 kind);
 void BattlePlacement_UpdateTimedEntriesFar(void);
 
-u32 Math_ModU(u32, u32);
-u32 Math_DivU(u32, u32);
+u32 __umodsi3(u32, u32);
+u32 __udivsi3(u32, u32);
 
 s32 DjinnMenu_SelectDjinn(s32 mode)
 {
@@ -188,8 +188,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     lists = state->lists;
     redraw = 1;
     cursor = state->cursor[mode];
-    x = (u16)Math_ModU(cursor, 10);
-    y = (u16)Math_DivU(cursor, 10);
+    x = (u16)__umodsi3(cursor, 10);
+    y = (u16)__udivsi3(cursor, 10);
     status = buf;
     savedY = 0;
     djinn = 0;
@@ -233,8 +233,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         u16 source_cursor;
 
         source_cursor = state->cursor[0];
-        fromX = (u16)Math_ModU(source_cursor, 10);
-        fromY = Math_DivU(source_cursor, 10);
+        fromX = (u16)__umodsi3(source_cursor, 10);
+        fromY = __udivsi3(source_cursor, 10);
         Menu_DrawAtWindowOffset(state->djinn_window, fromX * 7 + 1, fromY + 2, 6, 1, 14);
         UiWindow_ApplyRectAtObjectOrigin(state->djinn_window, fromX * 7 + 1, 2, 6, 7, 6);
         for (i = 0; i < state->party_count; i++) {

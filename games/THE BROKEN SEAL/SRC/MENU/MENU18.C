@@ -50,8 +50,8 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
     if (count == 0)
         goto done;
     Link_DrawShiftedTilePairFar(0x06002500);
-    pages = Math_Div(count, per_page);
-    if (Math_Mod(count, per_page) != 0)
+    pages = count / per_page;
+    if (count % per_page != 0)
         pages++;
     if (horizontal) {
         next = gKeysRepeat & 16;
@@ -162,8 +162,8 @@ void Menu_DrawPageIndicator(
 
     x = right_edge;
     tile = PAGE_LABEL_FIRST;
-    page_count = Math_Div(item_count, page_size);
-    if (Math_Mod(item_count, page_size) != 0)
+    page_count = item_count / page_size;
+    if (item_count % page_size != 0)
         page_count++;
 
     x -= page_count;

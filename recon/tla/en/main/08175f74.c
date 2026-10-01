@@ -236,7 +236,7 @@ s32 Func_0800206c(s32, s32);
 void Render_ApplyProjectedPlacementFar(struct SpriteObject *, s32 *, s32 *, s32);
 s32 Func_08002096(s32);
 s32 Func_08002090(s32);
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 void ResourceObject_ReleaseFar(struct SpriteObject *);
 void *Runtime_BumpAllocateAlternatePool(s32);
 struct Model *Func_081969f8(s32);

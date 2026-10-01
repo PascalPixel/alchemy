@@ -31,7 +31,7 @@ Func_080dc978:
 	ldr r0, [r3]
 	lsls r1, r1, #1
 	lsls r0, r0, #1
-	bl Math_ModU
+	bl __umodsi3
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #142

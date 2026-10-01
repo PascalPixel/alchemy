@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_MathDivide
+	.global __divsi3
 	.thumb_func
-Engine_MathDivide:
+__divsi3:
 	overlay_veneer IwramSignedDivide
 	.global WaitFrames
 	.thumb_func

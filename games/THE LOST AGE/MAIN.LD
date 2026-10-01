@@ -5930,10 +5930,5 @@ SECTIONS
     /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
-    /* The compiler calls its division helpers by their ABI names; here they are
-       the veneers into the resident IWRAM divider, as in ☀️. */
-    __divsi3 = Math_Div;
-    __udivsi3 = Math_DivU;
-    __modsi3 = Math_Mod;
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

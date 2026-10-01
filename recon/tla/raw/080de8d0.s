@@ -63,7 +63,7 @@ Func_080de8d0:
 	ldr r3, .L_080de9e0
 	movs r1, #3
 	ldr r0, [r3]
-	bl Math_ModU
+	bl __umodsi3
 	cmp r0, #0
 	bne .L_080de9d4
 	ldr r3, [r7, #8]

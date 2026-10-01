@@ -30,7 +30,7 @@ Party_SetReturnPoint:
 	movs r0, #52
 	ldrsh r1, [r6, r0]
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #128
 	lsls r1, r1, #7
 	cmp r0, r1
@@ -56,7 +56,7 @@ Party_SetReturnPoint:
 	movs r4, #54
 	ldrsh r1, [r6, r4]
 	lsls r0, r0, #14
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -93,7 +93,7 @@ Party_SetReturnPoint:
 	lsls r1, r1, #16
 	asrs r1, r1, #16
 	lsls r0, r1, #14
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -119,7 +119,7 @@ Party_SetReturnPoint:
 	movs r2, #54
 	ldrsh r1, [r6, r2]
 	lsls r0, r0, #14
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3

@@ -101,7 +101,7 @@ extern u8 Value_000000cd;
 
 /* Callees the project has not named yet keep their address spelling; the
    names in comments are the ones `alchemy inspect` resolves. */
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 /* Runtime_ReleaseHeapBlock */
@@ -392,11 +392,11 @@ void BattleFx_RenderMode(void *object, u32 kind)
                                     if (kind <= 1 || kind == 4 || kind == 5
                                         || kind == 6) {
                                         v = p->x;
-                                        p->x = v - Math_Div(v, distance);
+                                        p->x = v - __divsi3(v, distance);
                                         v = p->y;
-                                        p->y = v - Math_Div(v, distance);
+                                        p->y = v - __divsi3(v, distance);
                                         v = p->z;
-                                        p->z = v - Math_Div(v, distance);
+                                        p->z = v - __divsi3(v, distance);
                                     } else {
                                         p->y += 128 << 9;
                                     }

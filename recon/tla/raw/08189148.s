@@ -393,7 +393,7 @@ Func_08189148:
 	bgt .L_081894c2
 	adds r0, r5, #0
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, .L_081896fc
 	adds r5, r0, #0
 	ldr r0, .L_08189700

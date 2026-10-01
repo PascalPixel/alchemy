@@ -70,7 +70,7 @@ void UiTimedNotice_CloseIfActiveFar();
 void Menu_RunSelectionFar();
 void Menu_RunSelectionWithCursorObjectFar();
 void Menu_RunWorkspaceResultLoopFar();
-s32 Math_Div();
+s32 __divsi3();
 void *Owner_GetStateFar();
 s32 GameFlag_TestFar();
 void GameFlag_SetBitFar();
@@ -308,7 +308,7 @@ s32 Func_0808c4f8(void)
                         UiText_DrawMessage(0x91B, 1);
                         obj = Runtime_GetObject(Data_02000434);
                         FIELD_AT_OFFSET(obj, u16 *, 56) = 1;
-                        v = FixedPoint_Ratio(
+                        v = __divsi3(
                             FIELD_AT_OFFSET(obj, s16 *, 56) << 14,
                             FIELD_AT_OFFSET(obj, s16 *, 52));
                         if (v > 0x4000) {
@@ -321,7 +321,7 @@ s32 Func_0808c4f8(void)
                             && FIELD_AT_OFFSET(obj, s16 *, 56) != 0) {
                             FIELD_AT_OFFSET(obj, s16 *, 20) = 1;
                         }
-                        v = FixedPoint_Ratio(
+                        v = __divsi3(
                             FIELD_AT_OFFSET(obj, s16 *, 58) << 14,
                             FIELD_AT_OFFSET(obj, s16 *, 54));
                         if (v > 0x4000) {

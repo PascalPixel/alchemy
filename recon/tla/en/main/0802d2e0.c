@@ -18,12 +18,12 @@ s32 Curve_LerpThreeSamplesByRatio(const s8 *samples, s32 start, s32 end)
     if ((u32)start == CURVE_FULL_STEPS - 1) {
         result = middle;
     } else if ((u32)start < CURVE_FULL_STEPS - 1) {
-        result = first + Math_Div(
+        result = first + __divsi3(
             (middle - first) * start,
             CURVE_FULL_STEPS - 1);
     } else {
         start = start - (CURVE_FULL_STEPS - 1);
-        result = middle + Math_Div(
+        result = middle + __divsi3(
             (last - middle) * start,
             CURVE_FULL_STEPS - 1);
     }

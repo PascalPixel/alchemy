@@ -271,7 +271,7 @@ BattleFx_BuildBuffer:
 	movs r1, #3
 	adds r0, r7, #0
 	subs r6, r6, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r6, #10
 	subs r7, r7, r0
 	adds r0, r6, #0
@@ -421,7 +421,7 @@ BattleFx_BuildBuffer:
 	movs r3, #2
 	adds r0, r0, r5
 	add r10, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	bl BattleFx_ClampRgb555Channel
 	asrs r3, r6, #1
 	adds r6, r3, r0
@@ -490,11 +490,11 @@ BattleFx_BuildBuffer:
 	movs r1, #3
 	adds r6, r0, #0
 	adds r0, r7, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #3
 	subs r7, r7, r0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, .L_08090e60
 	subs r5, r5, r0
 	lsls r3, r5, #1
@@ -559,7 +559,7 @@ BattleFx_BuildBuffer:
 	movs r1, #3
 	ands r5, r2
 	subs r6, r6, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r6, #6
 	subs r7, r7, r0
 	adds r0, r6, #0

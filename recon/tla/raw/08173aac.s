@@ -1040,7 +1040,7 @@ Func_08173aac:
 .L_081742c2:
 	adds r0, r5, #0
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r6, #4]
 	movs r4, #216
 	subs r3, #20
@@ -1473,7 +1473,7 @@ Func_08173aac:
 	ldr r0, [r6, #8]
 	movs r1, #40
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r7, #12]
 	movs r1, #40
 	adds r3, r3, r0
@@ -1482,7 +1482,7 @@ Func_08173aac:
 	ldr r3, [r5, #4]
 	lsls r0, r0, #14
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r7, #16]
 	movs r1, #40
 	adds r3, r3, r0
@@ -1490,7 +1490,7 @@ Func_08173aac:
 	ldr r3, [r5, #8]
 	ldr r0, [r6, #16]
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r7, #20]
 	adds r3, r3, r0
 	str r3, [r7, #20]
@@ -1945,7 +1945,7 @@ Func_08173aac:
 .L_081749e4:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #48]
 	lsls r0, r0, #10
 	movs r2, #224
@@ -3024,7 +3024,7 @@ Func_08173aac:
 	str r3, [r0, #20]
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #48]
 	lsls r0, r0, #10
 	movs r2, #224
@@ -3202,7 +3202,7 @@ Func_08173aac:
 	str r3, [r1, #20]
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [sp, #48]
 	lsls r0, r0, #10
 	movs r3, #224
@@ -3581,7 +3581,7 @@ Func_08173aac:
 	adds r0, r5, #0
 	muls r0, r3
 	movs r1, #80
-	bl Math_Div
+	bl __divsi3
 	ldr r2, [sp, #56]
 	movs r1, #192
 	ldr r3, [r2, #4]
@@ -4107,7 +4107,7 @@ Func_08173aac:
 	str r6, [r5]
 	adds r0, r7, #0
 	movs r1, #48
-	bl Math_Div
+	bl __divsi3
 	str r0, [r5, #12]
 	bl Random16
 	movs r4, #1
@@ -4534,7 +4534,7 @@ Func_08173aac:
 	bl SceneTransform_ApplyPitch
 	adds r0, r6, #0
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	adds r1, r6, #0
 	adds r2, r6, #0
 	bl Func_080151e4

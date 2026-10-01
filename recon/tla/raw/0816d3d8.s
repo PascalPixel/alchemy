@@ -120,7 +120,7 @@ Func_0816d3d8:
 	bne .L_0816d4da
 	bl Random16
 	movs r1, #40
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #8
 	lsls r0, r0, #16
 	str r0, [r5]
@@ -128,7 +128,7 @@ Func_0816d3d8:
 .L_0816d4da:
 	bl Random16
 	movs r1, #40
-	bl Math_ModU
+	bl __umodsi3
 	movs r3, #120
 	subs r3, r3, r0
 	lsls r3, r3, #16
@@ -219,14 +219,14 @@ Func_0816d3d8:
 .L_0816d58c:
 	movs r1, #5
 	adds r0, r7, #0
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r6, #20]
-	bl Math_Div
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_0816d714
 	adds r5, r5, r0
 	ldrb r4, [r3, r5]

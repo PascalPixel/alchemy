@@ -287,7 +287,7 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
 
     if (index <= 3) {
         Owner_GetDigitValues(state->record, state->source, values);
-        result = Math_Div(values[index], 10);
+        result = values[index] / 10;
     }
     return result;
 }
@@ -337,8 +337,8 @@ copied:
 
         result = (u32)Element_PowerResistByLevel;
         value = values[i];
-        ones = Math_Mod(value, 10);
-        tens = Math_Div(value, 10);
+        ones = value % 10;
+        tens = value / 10;
 
         if (tens > 15)
             tens = 15;

@@ -32,11 +32,11 @@ Func_0810bf98:
 .L_0810bfd0:
 	adds r0, r6, #0
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #5
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl Math_Div
+	bl __divsi3
 	lsls r5, r5, #4
 	adds r2, r0, #0
 	add r5, r10

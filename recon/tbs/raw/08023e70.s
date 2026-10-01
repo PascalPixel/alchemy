@@ -554,7 +554,7 @@ Battle_SelectAbility:
 	mov r0, r11
 	movs r1, #5
 	adds r6, r7, r2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	bne .L_080242d0
 	ldr r3, .L_080244f0
@@ -575,7 +575,7 @@ Battle_SelectAbility:
 .L_080242ea:
 	mov r0, r8
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r7, r5
 	blt .L_080242bc
@@ -630,7 +630,7 @@ Battle_SelectAbility:
 .L_08024354:
 	mov r0, r11
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	bne .L_08024364
 	ldr r2, .L_080244f0
@@ -640,7 +640,7 @@ Battle_SelectAbility:
 	movs r1, #5
 	mov r0, r8
 	ldrh r5, [r3, #8]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	adds r5, r5, r7
 	movs r1, #0
@@ -656,7 +656,7 @@ Battle_SelectAbility:
 .L_0802438a:
 	mov r0, r8
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	blt .L_08024336
 	ldr r3, .L_080244f4
@@ -898,7 +898,7 @@ Battle_SelectAbility:
 	ldr r0, [sp, #52]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	cmp r11, r3
@@ -1096,7 +1096,7 @@ Battle_SelectAbility:
 	subs r0, #1
 	movs r1, #5
 	mov r10, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	cmp r11, r3
@@ -1142,7 +1142,7 @@ Battle_SelectAbility:
 	ldr r0, [sp, #52]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	ldr r1, [sp, #36]
 	adds r3, r3, r0

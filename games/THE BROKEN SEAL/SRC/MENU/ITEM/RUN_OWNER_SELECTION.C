@@ -49,7 +49,6 @@ extern u8 ItemMenu_ArrangeKeysString[];
 extern u8 ItemMenu_EquipmentKeyString[];
 void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
 #endif
-s32 Math_Mod(s32 numerator, s32 denominator);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
 void ItemMenu_OpenCategory(s32 owner);
@@ -102,7 +101,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
 #endif
     menu->cursor->state = pending;
     while (!GameFlag_TestFar(0x150)) {
-        selection = Math_Mod(selection + count, count);
+        selection = (selection + count) % count;
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         if (pending) {
             sort_mode = 0;

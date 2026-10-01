@@ -5,7 +5,6 @@
 #include "RUNTIME_INTERFACES.H"
 extern struct SaveWorkspace *gSaveWorkspace;
 extern u8 Flash_Handler0[];
-s32 Math_ModU(s32, s32);
 extern u8 Data_03001f1c[];
 
 /* save/state/select_write_slot.c */
@@ -37,7 +36,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
                 index = 0x10;
             }
         } else {
-            index = Math_ModU(Random16(), count);
+            index = Random16() % count;
             index = empty[index];
         }
     }

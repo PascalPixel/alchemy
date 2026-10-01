@@ -264,12 +264,12 @@ Func_08190b74:
 .L_08190d80:
 	bl Random16
 	movs r1, #216
-	bl Math_ModU
+	bl __umodsi3
 	subs r0, #96
 	str r0, [r5]
 	bl Random16
 	movs r1, #216
-	bl Math_ModU
+	bl __umodsi3
 	movs r3, #1
 	add r8, r3
 	mov r6, r8

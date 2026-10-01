@@ -213,7 +213,6 @@ struct PsynergyTargetMenu {
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern char MsgAbilityDescription;
-s32 Math_Mod(s32 numerator, s32 denominator);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
@@ -281,7 +280,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
             pending = 0;
-            selection = Math_Mod(selection + count, count);
+            selection = (selection + count) % count;
             Owner_GetStateFar(menu->owner_ids[selection]);
             marker = menu->marker;
             marker->attributes.x = marker->x =

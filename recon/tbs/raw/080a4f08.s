@@ -126,7 +126,7 @@ ItemMenu_SelectGiveQuantity:
 	movs r2, #0
 	add r0, r8
 	str r2, [sp, #12]
-	bl Math_Mod
+	bl __modsi3
 	mov r8, r0
 	adds r0, r7, #0
 	bl RenderOutput_RedrawSavedRectFar

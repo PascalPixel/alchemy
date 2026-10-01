@@ -37,7 +37,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
         if (!scaled) {
             value = amount;
         } else {
-            value = Math_Div(unit->max_hp * amount, 100);
+            value = unit->max_hp * amount / 100;
             if (value == 0) {
                 value = amount;
                 if (value < 0)
@@ -71,14 +71,14 @@ s32 BattleParty_ApplyStatusDamage(void)
 
             switch ((s8)object[0x131]) {
             case 1:
-                amount = -Math_Div(*(s16 *)(object + 0x34) + 10, 20);
+                amount = -((*(s16 *)(object + 0x34) + 10) / 20);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 0)
                     result = 1;
                 break;
             case 2:
-                amount = -Math_Div(*(s16 *)(object + 0x34) + 5, 10);
+                amount = -((*(s16 *)(object + 0x34) + 5) / 10);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 1)

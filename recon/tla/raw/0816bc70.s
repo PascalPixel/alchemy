@@ -398,14 +398,14 @@ Func_0816bc70:
 	bhi .L_0816c010
 	movs r1, #5
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	adds r0, r6, #0
-	bl Math_Div
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0816c1e8
 	adds r5, r5, r0
 	lsls r3, r5, #2

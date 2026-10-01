@@ -45,7 +45,7 @@ struct Effect05State {
 };
 
 extern struct Effect05State *gEffectWork;
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 void WaitFrames(s32);
 s32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct Vec3 *);
@@ -60,7 +60,7 @@ void Audio_PlayCue(s32);
 
 static inline s32 Interpolate(s32 start, s32 end, s32 step)
 {
-    return start + Math_Div(step * (end - start), 10);
+    return start + __divsi3(step * (end - start), 10);
 }
 
 void RunBattleEffect05(void)
@@ -101,7 +101,7 @@ void RunBattleEffect05(void)
         main->x = Interpolate(start.x, end.x, i);
         main->y = Interpolate(start.y, end.y, i);
         main->z = Interpolate(start.z, end.z, i);
-        scale = Math_Div(i * 0xc000, 10) + 0x4000;
+        scale = __divsi3(i * 0xc000, 10) + 0x4000;
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);
@@ -158,7 +158,7 @@ void RunBattleEffect05(void)
         main->x = Interpolate(end.x, start.x, i);
         main->y = Interpolate(end.y, start.y, i);
         main->z = Interpolate(end.z, start.z, i);
-        scale = Math_Div(i * (s32)&Value_ffff4000, 10) + 0x10000;
+        scale = __divsi3(i * (s32)&Value_ffff4000, 10) + 0x10000;
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);

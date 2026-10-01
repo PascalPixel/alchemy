@@ -748,7 +748,7 @@ Func_0815cde8:
 	movs r1, #15
 	adds r0, r6, #0
 	str r4, [sp, #8]
-	bl Math_Div
+	bl __divsi3
 	mov r1, r10
 	negs r0, r0
 	subs r0, r0, r1
@@ -768,7 +768,7 @@ Func_0815cde8:
 	movs r1, #17
 	adds r5, r3, #0
 	str r4, [sp, #8]
-	bl Math_Div
+	bl __divsi3
 	mov r3, r10
 	negs r0, r0
 	subs r0, r0, r3
@@ -2005,7 +2005,7 @@ Func_0815cde8:
 .L_0815dd30:
 	adds r0, r6, #0
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #76]
 	adds r5, r0, #0
 	movs r2, #216

@@ -179,9 +179,9 @@ Func_0814b160:
 	subs r0, r4, r6
 	adds r0, r0, r3
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	movs r1, #9
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #1
 	ldr r2, [sp, #20]
 	adds r1, r1, r0

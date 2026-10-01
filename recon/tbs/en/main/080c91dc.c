@@ -71,7 +71,7 @@ s32 Random16(void);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 interval);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void Audio_PlayCue(s32 value);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
@@ -264,7 +264,7 @@ void BattleEffect_RunFallingParticles(struct EffectArgument *argument)
 
                             draw_index = runtime->argument->variant == 2;
                             image = (u8 *)runtime + 0x400
-                                + (Math_Div(particle->frame, 3) << 10);
+                                + (__divsi3(particle->frame, 3) << 10);
                             draw = draw_functions[draw_index];
                             draw(
                                 draw_destination,

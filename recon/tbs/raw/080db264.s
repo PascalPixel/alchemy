@@ -191,7 +191,7 @@ Unnamed_080db264:
 .L_080db3da:
 	adds r0, r1, #0
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #2
 	bne .L_080db3f4
 	movs r1, #128

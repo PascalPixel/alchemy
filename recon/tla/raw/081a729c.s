@@ -242,7 +242,7 @@ Func_081a729c:
 	bls .L_081a745c
 	movs r1, #60
 	adds r0, r7, #0
-	bl Math_ModU
+	bl __umodsi3
 	ldr r2, .L_081a749c
 	b .L_081a74a0
 	.2byte 0x0000

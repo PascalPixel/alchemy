@@ -568,7 +568,7 @@ Func_0815e3ac:
 	bgt .L_0815e8ca
 	mov r0, r9
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	ldr r2, [sp, #52]
 	adds r6, r0, #0
 	ldr r3, [r2, #4]

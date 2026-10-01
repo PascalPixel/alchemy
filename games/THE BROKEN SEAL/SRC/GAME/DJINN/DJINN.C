@@ -68,10 +68,8 @@ u16 RollWeaponUnleash(void *owner)
     if (FIELD_AT_OFFSET(item, u16, 0xE) == 0) {
         return 1;
     }
-    rate = Math_Div(
-        (Equipment_GetUnleashRateBonus((s32)owner) +
-         (FIELD_AT_OFFSET(item, u8, 0xB) * 5)) << 0x10,
-        100);
+    rate = ((Equipment_GetUnleashRateBonus((s32)owner) +
+         (FIELD_AT_OFFSET(item, u8, 0xB) * 5)) << 0x10) / 100;
     if (rate > (s32)(BattleRandom16() & 0xFFFF)) {
         return FIELD_AT_OFFSET(item, u16, 0xE);
     }
@@ -270,7 +268,7 @@ action4_done:
     }
 
     for (attempt = 0; attempt < attempts; attempt++) {
-        if (Math_Div(score *success_scale, 100) >= BattleRandomPercent()) {
+        if (score *success_scale / 100 >= BattleRandomPercent()) {
             return 1;
         }
     }

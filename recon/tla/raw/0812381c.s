@@ -1507,7 +1507,7 @@ Func_0812381c:
 	bl Equipment_GetUnleashRateBonusFar
 	movs r1, #200
 	lsls r0, r0, #16
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	bl BattleRandom16Far
 	movs r3, #255

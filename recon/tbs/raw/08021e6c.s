@@ -982,7 +982,7 @@ Ui_RunSelectionScreen:
 	ldr r0, [r4]
 	ldr r1, [r5]
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	ldr r6, [sp, #24]
 	str r0, [r6]
 	b .L_080225f0
@@ -999,7 +999,7 @@ Ui_RunSelectionScreen:
 	ldr r1, [r2]
 	adds r0, r0, r1
 	subs r0, #1
-	bl Math_Mod
+	bl __modsi3
 	str r0, [r7]
 	b .L_080225f0
 .L_080225e4:

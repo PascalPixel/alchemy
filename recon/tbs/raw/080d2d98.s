@@ -416,7 +416,7 @@ BattleEffect_RunEmberColumns:
 .L_080d30e6:
 	adds r0, r7, #0
 	movs r1, #104
-	bl Math_Mod
+	bl __modsi3
 	ldrb r3, [r6, #1]
 	ldrb r2, [r6]
 	adds r5, r0, #0
@@ -495,7 +495,7 @@ BattleEffect_RunEmberColumns:
 .L_080d3180:
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [r5, #16]
 	adds r4, r0, #2
 	cmp r3, #0
@@ -680,7 +680,7 @@ BattleEffect_RunEmberColumns:
 	ble .L_080d332e
 	movs r1, #12
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	adds r6, r0, #0
 	ldr r4, [sp, #8]
 	cmp r6, #0

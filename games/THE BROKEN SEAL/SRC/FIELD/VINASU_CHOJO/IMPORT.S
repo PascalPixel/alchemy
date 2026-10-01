@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global IwramSignedDivideEntry
+	.global __divsi3
 	.thumb_func
-IwramSignedDivideEntry:
+__divsi3:
 	overlay_veneer IwramSignedDivide
 	.global IwramUnsignedRemainder
 	.thumb_func

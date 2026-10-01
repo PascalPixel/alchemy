@@ -377,12 +377,12 @@ DisplayTransition_UpdateScanlineTable:
 	str r2, [sp, #8]
 	str r3, [sp, #4]
 	str r4, [sp, #0]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, [sp, #8]
 	adds r5, r0, #0
 	adds r1, r7, #0
 	adds r0, r2, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r5, r11
 	adds r0, r6, r0
 	ldr r4, [sp, #0]

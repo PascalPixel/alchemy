@@ -6,7 +6,7 @@
  * Whole listing, switch table, pools, caller 080aa56c and menu-family
  * callees audited. Transfer the Djinn list/owner/cursor record boundaries
  * from 080ab5e4 and exact CORE_COMPUTE_ENTRY_VALUES.C. The cursor column
- * is Math_ModU(cursor,10), not division; packed IDs have a low-byte view.
+ * is __umodsi3(cursor,10), not division; packed IDs have a low-byte view.
  * Prediction: all 16 states, shared tails and call arguments are present,
  * with the reference eight-byte outgoing/local frame. Gate: exact whole
  * extent plus compare/test/coverage/verify. Read full normalized diff.
@@ -92,7 +92,7 @@ struct DjinnCommandMenu {
 
 extern struct DjinnCommandMenu *gMenuWork;
 void WaitFrames(s32);
-u32 Math_ModU(u32, u32);
+u32 __umodsi3(u32, u32);
 void Audio_PlayCue(s32);
 void RenderOutput_ClearListFar(s32);
 void Owner_RecalculateStatsFar(s32);
@@ -121,7 +121,7 @@ static __inline__ void RestoreDjinnCursor(struct DjinnCommandMenu *menu)
     s32 i;
     u8 selected;
 
-    row = Math_ModU(menu->cursor[1], 10);
+    row = __umodsi3(menu->cursor[1], 10);
     found = 0;
     selected = *(u8 *)&menu->selected[0];
     i = 0;

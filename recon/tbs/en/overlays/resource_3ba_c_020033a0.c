@@ -166,8 +166,8 @@ void Scene_RunScene3baSequenceA(void)
     {
         struct FieldActor *actor = Engine_ObjectTableGet(state->marker_a);
         if (actor != 0) {
-            x = Engine_MathDivide(actor->x.fixed - state->origin_x, 0xe0000) + 112;
-            y = (Engine_MathDivide(actor->z.fixed - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
+            x = __divsi3(actor->x.fixed - state->origin_x, 0xe0000) + 112;
+            y = (__divsi3(actor->z.fixed - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
             *p++ = 0;
             *p++ = (x << 16) | y | shape;
             *p++ = (tile + 12) | 0xe400;
@@ -177,8 +177,8 @@ void Scene_RunScene3baSequenceA(void)
     {
         struct FieldActor *actor = Engine_ObjectTableGet(state->marker_b);
         if (actor != 0) {
-            x = Engine_MathDivide(actor->x.fixed - state->origin_x, 0xe0000) + 112;
-            y = (Engine_MathDivide(actor->z.fixed - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
+            x = __divsi3(actor->x.fixed - state->origin_x, 0xe0000) + 112;
+            y = (__divsi3(actor->z.fixed - state->origin_z, 0xe0000) + state->rise * 6 - 4) & 0xff;
             *p++ = 0;
             *p++ = (x << 16) | y | shape;
             *p = (tile + 8) | 0xe400;

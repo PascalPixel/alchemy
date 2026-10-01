@@ -361,7 +361,7 @@ Unnamed_080aa768:
 	adds r3, r7, r2
 	ldrh r0, [r3]
 	movs r1, #10
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	movs r1, #188
 	movs r3, #0
 	lsls r1, r1, #1
@@ -513,7 +513,7 @@ Unnamed_080aa768:
 	adds r3, r7, r2
 	ldrh r0, [r3]
 	movs r1, #10
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	movs r1, #188
 	movs r3, #0
 	lsls r1, r1, #1

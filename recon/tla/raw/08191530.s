@@ -260,12 +260,12 @@ Func_08191530:
 	str r4, [sp, #8]
 	bl Trig_Sin
 	adds r1, r6, #0
-	bl Math_Div
+	bl __divsi3
 	mov r9, r0
 	adds r0, r5, #0
 	bl Trig_Cos
 	adds r1, r6, #0
-	bl Math_Div
+	bl __divsi3
 	ldr r7, .L_08191948
 	mov r10, r0
 	ldr r4, [sp, #8]

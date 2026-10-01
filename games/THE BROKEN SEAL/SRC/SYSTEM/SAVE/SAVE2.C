@@ -9,8 +9,6 @@ s32 Runtime_ReleaseHeapBlock(s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 extern u8 Data_03001e8c[];
 
-u32 Math_DivU(s32, s32);
-s32 Math_ModU(s32, s32);
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 
 extern u8 Data_03001f1c[];
@@ -145,12 +143,12 @@ void *Text_FormatPlayTime(s32 value, u8 *out)
     u8 *s;
     u8 *p;
 
-    time = Math_DivU(value, 0xe10);
+    time = (u32)value / 0xe10;
     if (time > 0xea5f)
         time = 0xea5f;
 
-    minutes = Math_DivU(time, 60);
-    seconds = Math_ModU(time, 60);
+    minutes = time / 60;
+    seconds = time % 60;
 
     s = UiText_FormatNumber(buf, minutes, 3);
     *out = *s;

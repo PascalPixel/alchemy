@@ -110,7 +110,7 @@ Unnamed_080e698c:
 	movs r1, #100
 	lsls r0, r0, #4
 	mov r10, r2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r4, r8
 	ldr r3, [r4, #16]
 	adds r5, r0, #0
@@ -121,7 +121,7 @@ Unnamed_080e698c:
 	adds r0, r0, r3
 	movs r1, #100
 	lsls r0, r0, #4
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r10, r5
 	add r8, r0
 	asrs r5, r5, #8
@@ -136,7 +136,7 @@ Unnamed_080e698c:
 	bl _call_via_r2
 	movs r1, #20
 	lsls r0, r0, #8
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r3, r6, #0
 	movs r2, #1
 	adds r3, #88
@@ -360,7 +360,7 @@ Unnamed_080e698c:
 .L_080e6c72:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	lsls r1, r1, #8
 	movs r2, #250

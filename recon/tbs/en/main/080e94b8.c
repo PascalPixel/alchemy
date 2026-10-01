@@ -8,7 +8,7 @@ extern u8 Data_00000055[];
 extern u8 ResourceId_ParticleSpritesA[];
 extern u8 ResourceId_FlashBurstSheet[];
 extern u8 ResourceId_BlastSheet[];
-s32 Math_Div();
+s32 __divsi3();
 s32 Trig_Cos();
 s32 Trig_Sin();
 void Runtime_ReleaseHeapBlock();
@@ -234,7 +234,7 @@ void Unnamed_080e94b8(s32 a0)
         v10 = none;
         do {
             if ((u32)*(s32 *)(v5 + 24) <= 17) {
-                record = Math_Div(*(s32 *)(v5 + 24), 3);
+                record = __divsi3(*(s32 *)(v5 + 24), 3);
                 Call6(_call_via_r4, slot40, ((s32)((*(u8 *)(0x080eef0c + record) << 11) + p11) + 0x2000), ((*(s16 *)(v5 + 2) + *(u8 *)(0x080eef06 + (s32)(slot36 + (s32)((s32)(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4) << 1) + *(s32 *)(*(s32 *)((0x7828 + p11)) + 4))))) - 16), (*(s16 *)(v5 + 6) + 56), 32, 64);
             }
             if (*(s32 *)(v5 + 24) > 0) {
@@ -263,8 +263,8 @@ void Unnamed_080e94b8(s32 a0)
                         if (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) >= 0) {
                             p8 = (s32)*(u8 **)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) >> 16;
                             p4 = *(s32 *)(((1 & v10) << 2) + slot24);
-                            p8b = ((s32)p8 - (Value2(Math_Div, v3, 5) + 1));
-                            _call_via_r4(slot40, (slot32 + *(u16 *)(0x080ede48 + (((Value2(Math_Div, v3, 5) + 1) << 1) - 2))), ((*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000)) >> 16) - (((Value2(Math_Div, v3, 5) + 1) + ((u32)(Value2(Math_Div, v3, 5) + 1) >> 31)) >> 1)), (Value2(Math_Div, v3, 5) + 1), ((Value2(Math_Div, v3, 5) + 1) << 1));
+                            p8b = ((s32)p8 - (Value2(__divsi3, v3, 5) + 1));
+                            _call_via_r4(slot40, (slot32 + *(u16 *)(0x080ede48 + (((Value2(__divsi3, v3, 5) + 1) << 1) - 2))), ((*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000)) >> 16) - (((Value2(__divsi3, v3, 5) + 1) + ((u32)(Value2(__divsi3, v3, 5) + 1) >> 31)) >> 1)), (Value2(__divsi3, v3, 5) + 1), ((Value2(__divsi3, v3, 5) + 1) << 1));
                         }
                     }
                 }

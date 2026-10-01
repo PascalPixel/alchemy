@@ -258,7 +258,7 @@ UiText_MeasureEntryDimensions:
 	lsls r0, r0, #8
 	subs r1, #1
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	movs r2, #192
 	lsls r2, r2, #4
 	ldr r4, [sp, #0]

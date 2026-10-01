@@ -9,7 +9,7 @@
    programmer would write them, so they stay tagged until a natural
    spelling replaces them. */
 /* Not-yet-C: complete 160-byte curve interpolation owner and pool.
- * Callee corrected to Math_Div (080022ec), not a fixed-point ratio routine.
+ * Callee corrected to __divsi3 (080022ec), not a fixed-point ratio routine.
  * Bounded ordinary-loop reconstruction: record array 164 bytes / 60 edits;
  * flat halfword table 168 / 60; volatile search read 172 / 63. The last
  * changes signed ldrsh into ldrh/sign-extension and does not reproduce the
@@ -17,7 +17,7 @@
  * FAKEMATCH: the one-pass offset assignment preserves the loop exit shape. */
 #include "TYPES.H"
 
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 
 struct CurvePoint {
     s16 input;
@@ -76,7 +76,7 @@ s32 Curve_LookupScaledValue(s32 input, s32 halve)
         s32 current_value = *(s16 *)((u8 *)table + offset + 2);
         s32 tmp2;
         tmp2 = previous_x - current_x;
-        value = Math_Div((clamped - current_x) * (previous_value - current_value), tmp2);
+        value = __divsi3((clamped - current_x) * (previous_value - current_value), tmp2);
         value += current_value;
     }
     switch (halve) {

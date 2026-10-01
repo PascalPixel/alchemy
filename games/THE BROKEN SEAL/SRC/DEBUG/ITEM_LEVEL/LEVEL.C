@@ -29,7 +29,6 @@ void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s
 void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
 void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
-s32 Engine_DebugRemainder(s32 value, s32 divisor);
 #define ITEM_COUNT 270
 extern u8 MsgAbilityName[];
 extern u8 MsgAbilityDescription[];
@@ -196,7 +195,7 @@ void ItemLevel_SelectItem(void)
     for (;;) {
         if (redraw) {
             redraw = 0;
-            item = Engine_DebugRemainder(item + ITEM_COUNT, count);
+            item = (item + ITEM_COUNT) % count;
             RenderOutput_RedrawSavedRect(window);
             Engine_DebugClearWindow(window);
             UiText_DrawStringInWindow(gItemLevelItemPrompt, window, 0, 0);
@@ -261,19 +260,19 @@ void ItemLevel_SelectItem(void)
             Engine_AudioPlayCue(111);
         }
         if (step == -1) {
-            item = Engine_DebugRemainder(item + ITEM_COUNT, count);
+            item = (item + ITEM_COUNT) % count;
             goto check_back;
         back:
-            item = Engine_DebugRemainder(item + ITEM_COUNT - 1, count);
+            item = (item + ITEM_COUNT - 1) % count;
         check_back:
             if (Engine_DebugGetItem(item & 0x1ff)->icon == 0)
                 goto back;
         }
         if (step == 1) {
-            item = Engine_DebugRemainder(item + ITEM_COUNT, count);
+            item = (item + ITEM_COUNT) % count;
             goto check_ahead;
         ahead:
-            item = Engine_DebugRemainder(item + ITEM_COUNT + 1, count);
+            item = (item + ITEM_COUNT + 1) % count;
         check_ahead:
             if (Engine_DebugGetItem(item & 0x1ff)->icon == 0)
                 goto ahead;
@@ -316,7 +315,7 @@ void ItemLevel_SelectAbility(void)
     for (;;) {
         if (redraw) {
             redraw = 0;
-            ability = Engine_DebugRemainder(ability + ABILITY_COUNT, count);
+            ability = (ability + ABILITY_COUNT) % count;
             RenderOutput_RedrawSavedRect(window);
             Engine_DebugClearWindow(window);
             UiText_DrawStringInWindow(gItemLevelPsyPrompt, window, 0, 0);
@@ -369,19 +368,19 @@ void ItemLevel_SelectAbility(void)
             Engine_AudioPlayCue(111);
         }
         if (step == -1) {
-            ability = Engine_DebugRemainder(ability + ABILITY_COUNT, count);
+            ability = (ability + ABILITY_COUNT) % count;
             goto check_back;
         back:
-            ability = Engine_DebugRemainder(ability + ABILITY_COUNT - 1, count);
+            ability = (ability + ABILITY_COUNT - 1) % count;
         check_back:
             if (Engine_DebugGetAbility(ability & 0x3fff)[4] == 0)
                 goto back;
         }
         if (step == 1) {
-            ability = Engine_DebugRemainder(ability + ABILITY_COUNT, count);
+            ability = (ability + ABILITY_COUNT) % count;
             goto check_ahead;
         ahead:
-            ability = Engine_DebugRemainder(ability + ABILITY_COUNT + 1, count);
+            ability = (ability + ABILITY_COUNT + 1) % count;
         check_ahead:
             if (Engine_DebugGetAbility(ability & 0x3fff)[4] == 0)
                 goto ahead;

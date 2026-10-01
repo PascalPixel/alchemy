@@ -304,7 +304,7 @@ UiWindow_DrawPartyStatusContents:
 	lsls r0, r6, #2
 	adds r0, r0, r6
 	lsls r0, r0, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_0801f460
@@ -353,7 +353,7 @@ UiWindow_DrawPartyStatusContents:
 	lsls r0, r6, #2
 	adds r0, r0, r6
 	lsls r0, r0, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_0801f4c2

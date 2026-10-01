@@ -101,7 +101,7 @@ Func_080d7f80:
 	bl Animation_ApplyChildValuesToRecordFar
 	bl Random16
 	movs r1, #3
-	bl Math_DivU
+	bl __udivsi3
 	movs r3, #128
 	lsls r3, r3, #9
 	adds r0, r0, r3

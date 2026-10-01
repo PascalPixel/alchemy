@@ -48,7 +48,7 @@ Func_080dcb44:
 	adds r0, r0, r3
 	movs r1, #160
 	lsls r0, r0, #16
-	bl Math_Div
+	bl __divsi3
 	bl Trig_Sin
 	adds r5, #1
 	asrs r0, r0, #14

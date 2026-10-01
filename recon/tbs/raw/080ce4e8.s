@@ -297,7 +297,7 @@ Unnamed_080ce4e8:
 	adds r0, r4, #0
 	str r5, [r2]
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r2, r8
 	lsls r1, r0, #3
 	ldr r3, [r2, #4]
@@ -316,19 +316,19 @@ Unnamed_080ce4e8:
 	ldr r5, [r6]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [r6, #24]
 	subs r5, r5, r0
 	adds r3, #1

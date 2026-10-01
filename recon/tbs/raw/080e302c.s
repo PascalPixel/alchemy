@@ -573,7 +573,7 @@ Unnamed_080e302c:
 	mov r0, r11
 	subs r0, #64
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #0
 	bge .L_080e3494
@@ -641,7 +641,7 @@ Unnamed_080e302c:
 	cmp r0, #23
 	bhi .L_080e358c
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #7
 	subs r5, r3, r0
 	cmp r5, #0
@@ -892,7 +892,7 @@ Unnamed_080e302c:
 	str r3, [r6, #4]
 	add r0, r8
 	movs r1, #11
-	bl Math_Mod
+	bl __modsi3
 	movs r4, #1
 	negs r4, r4
 	cmp r0, r4
@@ -949,7 +949,7 @@ Unnamed_080e302c:
 	bne .L_080e3770
 	bl Random16
 	movs r1, #96
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	adds r0, #42
 	b .L_080e378e
 .L_080e3770:
@@ -957,13 +957,13 @@ Unnamed_080e302c:
 	bne .L_080e3782
 	bl Random16
 	movs r1, #112
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	adds r0, #34
 	b .L_080e378e
 .L_080e3782:
 	bl Random16
 	movs r1, #160
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	adds r0, #10
 .L_080e378e:
 	str r0, [r5]
@@ -1027,7 +1027,7 @@ Unnamed_080e302c:
 	cmp r0, #85
 	ble .L_080e3826
 	movs r1, #12
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	bne .L_080e3816
 	ldr r3, [r5]

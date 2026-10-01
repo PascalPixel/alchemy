@@ -77,7 +77,7 @@ BattleEffectB:
 	ldr r0, [sp, #80]
 	movs r1, #5
 	lsls r0, r0, #2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [sp, #80]
 .L_080d9272:
 	ldr r2, .L_080d92b0
@@ -244,19 +244,19 @@ BattleEffectB:
 .L_080d93a6:
 	bl Random16
 	movs r1, #200
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	subs r0, #100
 	lsls r0, r0, #14
 	str r0, [r5]
 	bl Random16
 	movs r1, #200
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	subs r0, #100
 	lsls r0, r0, #15
 	str r0, [r5, #4]
 	bl Random16
 	movs r1, #200
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	movs r1, #1
 	subs r0, #100
 	movs r2, #128
@@ -285,7 +285,7 @@ BattleEffectB:
 	negs r0, r0
 	lsls r0, r0, #2
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, #64
 	str r0, [sp, #48]
 	b .L_080d9424
@@ -488,7 +488,7 @@ BattleEffectB:
 	bl Battle_GetObjectTableValueFar
 	movs r1, #3
 	lsls r0, r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [sp, #16]
 	adds r3, #80
 	adds r7, r0, #0
@@ -654,7 +654,7 @@ BattleEffectB:
 	ldr r0, [r5]
 	movs r1, #5
 	lsls r0, r0, #2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, [sp, #48]
 	ldr r2, [r5, #8]
 	ldr r3, .L_080d99b0
@@ -703,19 +703,19 @@ BattleEffectB:
 	ldr r5, [r6]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #8]
 .L_080d9784:
@@ -742,7 +742,7 @@ BattleEffectB:
 	ldr r0, [sp, #96]
 	movs r1, #5
 	lsls r0, r0, #2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [sp, #48]
 	adds r0, r0, r3
 	ldr r3, [sp, #16]
@@ -762,7 +762,7 @@ BattleEffectB:
 .L_080d97da:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	movs r4, #2
 	adds r5, r0, #0
 	ldr r3, [sp, #44]
@@ -819,7 +819,7 @@ BattleEffectB:
 .L_080d984c:
 	asrs r0, r3, #2
 	movs r1, #7
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #2
 	adds r5, r0, #0
 	str r1, [sp, #0]
@@ -876,7 +876,7 @@ BattleEffectB:
 .L_080d98ba:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #2
 	str r1, [sp, #0]
 	ldr r3, [sp, #44]
@@ -927,7 +927,7 @@ BattleEffectB:
 	adds r0, r0, r3
 	movs r1, #6
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	movs r2, #2
 	str r2, [sp, #0]
 	ldr r3, [sp, #44]
@@ -1024,7 +1024,7 @@ BattleEffectB:
 .L_080d99ea:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #3
 	adds r5, r0, #0
 	str r3, [sp, #0]

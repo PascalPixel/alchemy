@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_MathRemainder
+	.global __modsi3
 	.thumb_func
-Engine_MathRemainder:
+__modsi3:
 	overlay_veneer IwramSignedRemainder
 	.global IwramUnsignedRemainder
 	.thumb_func
@@ -113,9 +113,6 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

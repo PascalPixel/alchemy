@@ -25,10 +25,10 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
     if ((s32)(selected_index + 1) > entry_count) {
         selected_index = entry_count - 1;
     }
-    page = Math_Div(selected_index, 5);
-    row = Math_Mod(selected_index, 5);
-    page_count = Math_Div(entry_count, 5);
-    if (Math_Mod(entry_count, 5) != 0) {
+    page = selected_index / 5;
+    row = selected_index % 5;
+    page_count = entry_count / 5;
+    if (entry_count % 5 != 0) {
         page_count++;
     }
     result->owner_state = owner_state;

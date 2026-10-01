@@ -63,7 +63,7 @@ BattleEffect_RunFallbackObjectTransition:
 	adds r0, r7, #0
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r6, #8]
 	mov r2, r8
@@ -74,7 +74,7 @@ BattleEffect_RunFallbackObjectTransition:
 	adds r0, r7, #0
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r6, #12]
 	mov r2, r8
@@ -85,7 +85,7 @@ BattleEffect_RunFallbackObjectTransition:
 	adds r0, r7, #0
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #192
 	lsls r3, r3, #8
 	adds r5, r5, r0
@@ -93,7 +93,7 @@ BattleEffect_RunFallbackObjectTransition:
 	adds r0, r7, #0
 	muls r0, r3
 	str r5, [r6, #16]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r2, #128
 	lsls r2, r2, #7
 	adds r0, r0, r2

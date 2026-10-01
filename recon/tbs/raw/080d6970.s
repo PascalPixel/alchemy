@@ -361,9 +361,9 @@ BattleEffect_RunDitherDissolveScene:
 	cmp r0, #48
 	bhi .L_080d6c76
 	movs r1, #24
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_080d6d9c
 	ldr r6, .L_080d6da0
 	adds r5, r0, #0
@@ -406,7 +406,7 @@ BattleEffect_RunDitherDissolveScene:
 .L_080d6ca4:
 	movs r1, #5
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, .L_080d6dac
 	lsls r1, r0, #1
 	ldrh r1, [r4, r1]
@@ -451,7 +451,7 @@ BattleEffect_RunDitherDissolveScene:
 .L_080d6cfe:
 	bl Random16
 	movs r1, #96
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	lsls r0, r0, #16
 	str r0, [r5]
 	bl Random16
@@ -666,7 +666,7 @@ BattleEffect_RunDitherDissolveScene:
 	movs r1, #3
 	mov r0, r10
 	mov r8, r3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_080d6fec
 	adds r1, r0, #0
 	ldrb r4, [r3, r1]
@@ -719,7 +719,7 @@ BattleEffect_RunDitherDissolveScene:
 	blt .L_080d6f8e
 	movs r1, #5
 	mov r0, r10
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_080d6ff4
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -758,7 +758,7 @@ BattleEffect_RunDitherDissolveScene:
 	bgt .L_080d6f8c
 	bl Random16
 	movs r1, #96
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	lsls r0, r0, #16
 	str r0, [r5]
 	bl Random16
@@ -818,7 +818,7 @@ BattleEffect_RunDitherDissolveScene:
 	adds r0, r0, r5
 	movs r1, #3
 	str r4, [sp, #8]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r4, [sp, #8]
 	cmp r7, r0
 	ble .L_080d7000

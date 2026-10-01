@@ -422,7 +422,7 @@ void BattleEvent_Playback(void)
                     step = state->timer - 0x400;
                     if (step < 0)
                         step = state->timer - 0x3f9;
-                    frame = Math_Mod(step >> 3, 5) + 1;
+                    frame = __modsi3(step >> 3, 5) + 1;
                 }
 
                 if (frame == 6 || (state->timer & 7) == 0) {

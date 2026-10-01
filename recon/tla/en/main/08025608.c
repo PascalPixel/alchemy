@@ -54,8 +54,8 @@ s32 Object_ApproachLinkedObject(void *arg0)
   {
     dx2 = dx;
     n = len - 0x10;
-    mx = Math_Div(dx2 *n, len);
-    mz = Math_Div(dz *n, len);
+    mx = __divsi3(dx2 *n, len);
+    mz = __divsi3(dz *n, len);
     Object_SetMoveTarget(arg0, (*((s32 *)(p + 8))) + mx, *((s32 *)(p + 0xC)), (*((s32 *)(p + 0x10))) + mz);
     ObjectDispatch_ApplyArgumentToChildren(arg0, 2);
     *((u16 *)(p + 4)) = (u16)((*((u16 *)(p + 4))) + 1);

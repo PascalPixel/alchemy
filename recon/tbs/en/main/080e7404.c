@@ -774,7 +774,7 @@ loop_121:
     var_r7_1551 = (u8 *)0x02010000;
     var_r8_1552 = 0;
     do {
-        if ((Math_Div(var_r8_1552, 3) < sp24) && ((s32) (*(s32 *)((u8 *)(var_r7_1551) + (4))) >= 0)) {
+        if ((__divsi3(var_r8_1552, 3) < sp24) && ((s32) (*(s32 *)((u8 *)(var_r7_1551) + (4))) >= 0)) {
             EffectPosition_ApplyBaseAndYOffset(var_r7_1551, sp60);
             temp_r6_1570 = (s32) sp60[0] >> 1;
             sp60[0] = temp_r6_1570;

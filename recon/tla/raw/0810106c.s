@@ -372,7 +372,7 @@ Func_0810106c:
 	adds r3, r7, r2
 	ldrh r0, [r3]
 	movs r1, #10
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #182
 	movs r3, #0
 	lsls r1, r1, #1
@@ -549,7 +549,7 @@ Func_0810106c:
 	adds r3, r7, r2
 	ldrh r0, [r3]
 	movs r1, #10
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #182
 	movs r3, #0
 	lsls r1, r1, #1

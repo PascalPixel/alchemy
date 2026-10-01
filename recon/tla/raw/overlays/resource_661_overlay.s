@@ -189,7 +189,7 @@ Func_020000b8:
 	beq .L_020081fa
 	ldr r0, [r6, #24]
 	subs r0, r3, r0
-	bl Engine_MathDivide
+	bl __divsi3
 	str r0, [r6, #48]
 	ldr r0, [r7, #20]
 	ldr r3, [r6, #28]
@@ -199,14 +199,14 @@ Func_020000b8:
 .L_020081fa:
 	ldr r2, .L_0200827c
 	adds r0, r3, r2
-	bl Engine_MathDivide
+	bl __divsi3
 	str r0, [r6, #48]
 	ldr r0, [r7, #20]
 	ldr r3, .L_0200827c
 	ldr r1, [r5, #12]
 	adds r0, r0, r3
 .L_0200820c:
-	bl Engine_MathDivide
+	bl __divsi3
 	str r0, [r6, #52]
 .L_02008212:
 	movs r3, #128
@@ -1442,7 +1442,7 @@ Func_02000b04:
 	adds r3, r3, r7
 	movs r1, #18
 	str r3, [r6, #16]
-	bl Engine_MathDivide
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #68]
 	adds r3, r7, #0
@@ -4138,7 +4138,7 @@ Func_02002180:
 	ldr r3, .L_0200a1c8
 	movs r1, #5
 	ldr r0, [r3]
-	bl Engine_MathModulo
+	bl __umodsi3
 	cmp r0, #0
 	bne .L_0200a1c4
 	ldr r3, .L_0200a1cc
@@ -7391,9 +7391,9 @@ Func_02003b80:
 	movs r1, #12
 	mov r10, r0
 	ldr r0, [r3]
-	bl Engine_MathModulo
+	bl __umodsi3
 	movs r1, #3
-	bl IwramUnsignedDivideEntry
+	bl __udivsi3
 	lsls r0, r0, #3
 	adds r0, #32
 	str r0, [sp, #20]

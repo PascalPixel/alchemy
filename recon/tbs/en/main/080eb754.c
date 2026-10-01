@@ -189,7 +189,7 @@ void Unnamed_080eb754(s32 arg0) {
         sp[k].x = (s32) ((Random16() & 0x1F) + 0x10);
         sp[k].y = (s32) (((Random16() & 0x1F) + 0x30) << 0x10);
         sp[k].vy = (s32) (((Random16() & 0x1F) - 0x10) << 0x10);
-        sp[k].life = (s32) (Math_ModU(Random16(), 0x30) + 2);
+        sp[k].life = (s32) (__umodsi3(Random16(), 0x30) + 2);
     }
 
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 3);
@@ -297,7 +297,7 @@ void Unnamed_080eb754(s32 arg0) {
             sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);
             for (k = 0; k != 0x30; k++) {
                 if (sp->life == 0) {
-                    lo = Math_Mod(k, 3) + 1;
+                    lo = __modsi3(k, 3) + 1;
                     hi = lo * 2;
                     blit(dest,
                          (void *) (sheet + *(u16 *)(0x080EDE48 + (hi - 2))),

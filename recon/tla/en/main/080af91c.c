@@ -64,8 +64,8 @@ struct OwnerGrowth *Owner_GetRecordStride180(s32 owner);
 s32 Owner_RefreshClassActions(s32 owner);
 void Owner_RecalculateStats(s32 owner);
 u32 Random16(void);
-s32 Math_Div(s32 numerator, s32 denominator);
-u32 Math_DivU(u32 numerator, u32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
+u32 __udivsi3(u32 numerator, u32 denominator);
 
 /* Raises a party member one level: the gain of each statistic is the
    growth between the two surrounding twenty-level marks, spread over twenty
@@ -107,23 +107,23 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
             res->agility += work->growth->agility[0];
             res->luck += work->growth->luck[0];
         }
-        band = Math_Div(res->level, 20);
+        band = __divsi3(res->level, 20);
         if (band < 0)
             band = 0;
         if (band > 4)
             band = 4;
         diff = work->growth->hp[band + 1] - work->growth->hp[band];
-        res->hp += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->hp += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->pp[band + 1] - work->growth->pp[band];
-        res->pp += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->pp += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->attack[band + 1] - work->growth->attack[band];
-        res->attack += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->attack += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->defense[band + 1] - work->growth->defense[band];
-        res->defense += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->defense += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->agility[band + 1] - work->growth->agility[band];
-        res->agility += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->agility += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         diff = work->growth->luck[band + 1] - work->growth->luck[band];
-        res->luck += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->luck += __udivsi3((Random16() * 20 >> 16) + diff, 20);
         st->base_hp += res->hp;
         st->base_pp += res->pp;
         st->base_attack += res->attack;

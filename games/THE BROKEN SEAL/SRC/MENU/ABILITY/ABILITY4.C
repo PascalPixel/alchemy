@@ -62,7 +62,6 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *)
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-s32 Math_Mod(s32 value, s32 divisor);
 void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
 void ItemMenu_HideAllIcons(void);
 
@@ -160,7 +159,7 @@ s32 PsynergyMenu_SelectAction(void)
                     tab++;
                 else
                     tab--;
-                tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
+                tab = (tab + menu->owner_count) % menu->owner_count;
                 menu->owner = menu->owners[tab];
                 menu->owner_id = menu->owners[tab];
                 menu->tab = tab;

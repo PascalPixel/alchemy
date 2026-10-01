@@ -112,7 +112,7 @@ Owner_LevelUp:
 	lsls r0, r0, #16
 	asrs r0, r0, #16
 	movs r1, #20
-	bl Math_Div
+	bl __divsi3
 	lsls r0, r0, #16
 	asrs r5, r0, #16
 	cmp r5, #0
@@ -141,7 +141,7 @@ Owner_LevelUp:
 	lsrs r0, r0, #16
 	adds r0, r0, r7
 	movs r1, #20
-	bl Math_DivU
+	bl __udivsi3
 	ldrh r3, [r6, #4]
 	adds r3, r3, r0
 	strh r3, [r6, #4]
@@ -161,7 +161,7 @@ Owner_LevelUp:
 	lsrs r0, r0, #16
 	adds r0, r0, r7
 	movs r1, #20
-	bl Math_DivU
+	bl __udivsi3
 	ldrh r3, [r6, #6]
 	adds r3, r3, r0
 	strh r3, [r6, #6]
@@ -181,7 +181,7 @@ Owner_LevelUp:
 	lsrs r0, r0, #16
 	adds r0, r0, r7
 	movs r1, #20
-	bl Math_DivU
+	bl __udivsi3
 	ldrh r3, [r6, #8]
 	adds r3, r3, r0
 	mov r0, r9
@@ -201,7 +201,7 @@ Owner_LevelUp:
 	lsrs r0, r0, #16
 	adds r0, r0, r7
 	movs r1, #20
-	bl Math_DivU
+	bl __udivsi3
 	ldrh r3, [r6, #10]
 	adds r3, r3, r0
 	strh r3, [r6, #10]
@@ -221,7 +221,7 @@ Owner_LevelUp:
 	lsrs r0, r0, #16
 	adds r0, r0, r7
 	movs r1, #20
-	bl Math_DivU
+	bl __udivsi3
 	ldrh r3, [r6, #12]
 	adds r3, r3, r0
 	mov r0, r9
@@ -241,7 +241,7 @@ Owner_LevelUp:
 	lsrs r0, r0, #16
 	movs r1, #20
 	adds r0, r0, r7
-	bl Math_DivU
+	bl __udivsi3
 	mov r2, r10
 	ldrh r3, [r2, #16]
 	ldrh r1, [r6, #14]

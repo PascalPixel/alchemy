@@ -36,7 +36,7 @@ Func_0812786c:
 	movs r1, #10
 	add r0, r10
 	mov r11, r3
-	bl Math_Div
+	bl __divsi3
 	adds r5, r5, r0
 	mov r0, r9
 	movs r2, #0
@@ -44,7 +44,7 @@ Func_0812786c:
 	movs r1, #10
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	cmp r5, r0
 	bge .L_081278ce
 	adds r5, r0, #0
@@ -65,7 +65,7 @@ Func_0812786c:
 	subs r0, r2, r3
 	movs r1, #10
 	str r2, [sp, #4]
-	bl Math_Div
+	bl __divsi3
 	mov r1, r9
 	adds r5, r5, r0
 	movs r0, #2
@@ -73,7 +73,7 @@ Func_0812786c:
 	movs r1, #10
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	cmp r5, r0
 	bge .L_08127908
 	adds r5, r0, #0
@@ -94,7 +94,7 @@ Func_0812786c:
 	subs r0, r0, r3
 	movs r1, #10
 	mov r8, r2
-	bl Math_Div
+	bl __divsi3
 	ldrh r5, [r7, #24]
 	movs r1, #10
 	adds r5, r5, r0
@@ -102,7 +102,7 @@ Func_0812786c:
 	ldrh r3, [r0, #8]
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	cmp r5, r0
 	bge .L_08127942
 	adds r5, r0, #0
@@ -118,7 +118,7 @@ Func_0812786c:
 	strh r5, [r7, #24]
 	movs r1, #10
 	add r0, r10
-	bl Math_Div
+	bl __divsi3
 	mov r1, r9
 	ldrh r3, [r1, #10]
 	ldrh r5, [r7, #26]
@@ -126,7 +126,7 @@ Func_0812786c:
 	adds r5, r5, r0
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	cmp r5, r0
 	bge .L_08127972
 	adds r5, r0, #0
@@ -140,7 +140,7 @@ Func_0812786c:
 	strh r5, [r7, #26]
 	movs r1, #10
 	add r0, r11
-	bl Math_Div
+	bl __divsi3
 	ldrh r5, [r7, #28]
 	movs r1, #10
 	adds r5, r5, r0
@@ -148,7 +148,7 @@ Func_0812786c:
 	ldrh r3, [r0, #12]
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	cmp r5, r0
 	bge .L_0812799e
 	adds r5, r0, #0
@@ -175,7 +175,7 @@ Func_0812786c:
 	lsls r0, r3, #3
 	subs r0, r0, r3
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	ldr r4, [sp, #0]
 	cmp r5, r0
 	bge .L_081279d2

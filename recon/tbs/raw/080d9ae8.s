@@ -373,7 +373,7 @@ RunPaletteRampEffect:
 .L_080d9dbe:
 	movs r1, #7
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #4
 	subs r1, r1, r0
 	ldr r2, [sp, #48]
@@ -435,7 +435,7 @@ RunPaletteRampEffect:
 .L_080d9e3a:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #1
 	adds r1, r1, r0
 	lsls r1, r1, #3
@@ -511,7 +511,7 @@ RunPaletteRampEffect:
 .L_080d9eca:
 	movs r1, #3
 	asrs r0, r0, #3
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r11
 	adds r5, r0, #0
 	adds r0, r7, #0

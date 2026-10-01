@@ -57,7 +57,7 @@ void Audio_PlayCue(s32 cue);
 void EffectPosition_ApplyStepAndYOffset(
     s32 actor, struct EffectPosition *position);
 u32 Random16(void);
-s32 Math_ModU(u32 value, s32 modulus);
+s32 __umodsi3(u32 value, s32 modulus);
 void ObjectGroup_UpdateMembers(s32 a, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, u32 b);
 void ObjectGroup_TickMemberTimers(void);
@@ -130,7 +130,7 @@ void Unnamed_080cb4ec(struct BattleEffectArgument *efx)
         p = (Particle *)(work + 0x7080);
         while (1) {
             s32 v;
-            v = Math_ModU(Random16(), 0x60) + 16;
+            v = __umodsi3(Random16(), 0x60) + 16;
             p->pos_x = v;
             p->pos_y = (24 - i / 4) << 16;
             if (v <= 0x2B) {

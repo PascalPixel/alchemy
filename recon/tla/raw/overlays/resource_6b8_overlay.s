@@ -1385,7 +1385,7 @@ Func_02000ad0:
 	ldrb r0, [r6]
 	movs r1, #6
 	lsrs r0, r0, #1
-	bl Engine_MathModulo
+	bl __umodsi3
 	adds r1, r0, #0
 	lsls r1, r1, #24
 	lsrs r1, r1, #24

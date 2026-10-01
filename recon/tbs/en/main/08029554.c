@@ -32,7 +32,7 @@ extern u8 Data_08037440[], Data_08037448[], Data_08037450[];
 extern u8 Data_08037458[], Data_08037460[];
 
 void WaitFrames(s32);
-s32 Math_Mod(s32, s32);
+s32 __modsi3(s32, s32);
 void UiWork_Finalize(struct RenderInput *, s32);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
@@ -87,7 +87,7 @@ next_frame:
     if (redraw != 0) {
         redraw = 0;
         page = (page + 8) % 8;
-        mode = Math_Mod(mode + 3, 3);
+        mode = __modsi3(mode + 3, 3);
         UiWork_Finalize(window, 2);
         window = UiWindow_Create(10, 0, 18, 12, 2);
         if (mode == 0)

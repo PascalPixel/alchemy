@@ -114,12 +114,12 @@ Debug_SelectAbilityPair:
 	mov r1, r10
 	add r0, r10
 	mov r11, r3
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	str r0, [sp, #16]
 	ldr r0, [sp, #12]
 	mov r1, r10
 	add r0, r10
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	mov r2, r8
 	adds r2, #2
 	lsrs r3, r2, #31

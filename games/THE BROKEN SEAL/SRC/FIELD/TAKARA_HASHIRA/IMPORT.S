@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_MathDivide
+	.global __divsi3
 	.thumb_func
-Engine_MathDivide:
+__divsi3:
 	overlay_veneer IwramSignedDivide
 	.global WaitFrames
 	.thumb_func
@@ -34,9 +34,6 @@ Vector_AddPolarOffset:
 	.thumb_func
 Runtime_SetIrqHandler:
 	overlay_veneer Runtime_SetIrqHandlerFar
-	.global Object_SetMode
-	.thumb_func
-Object_SetMode:
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
@@ -138,9 +135,6 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Object_GetById
-	.thumb_func
-Object_GetById:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:

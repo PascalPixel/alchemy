@@ -89,7 +89,7 @@ Func_0816f080:
 .L_0816f12c:
 	adds r0, r6, #0
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	adds r6, #1
 	adds r0, #8
 	strh r0, [r5]
@@ -419,7 +419,7 @@ Func_0816f080:
 	movs r1, #206
 	lsls r0, r5, #13
 	lsls r1, r1, #2
-	bl Math_Div
+	bl __divsi3
 	mov r8, r0
 	ldr r0, [sp, #28]
 	cmp r0, #63

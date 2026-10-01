@@ -458,7 +458,7 @@ Func_0816729c:
 	adds r0, #60
 	str r0, [r5, #8]
 	movs r1, #20
-	bl Math_Div
+	bl __divsi3
 	ldr r2, [r5]
 	ldr r3, [r5, #4]
 	adds r0, #2
@@ -795,7 +795,7 @@ Func_0816729c:
 	bhi .L_08167956
 	adds r0, r6, #0
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	adds r0, #16
 	mov r8, r0
 	cmp r0, #32
@@ -1178,7 +1178,7 @@ Func_0816729c:
 	strb r3, [r5, #26]
 	movs r1, #3
 	adds r0, r7, #0
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Animation_ApplyChildArgumentFar

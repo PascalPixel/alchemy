@@ -53,7 +53,7 @@ Func_081848ec:
 	adds r1, #255
 	mov r0, r11
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r1, .L_081849f0
 	lsls r0, r0, #16
 	adds r1, r0, r1
@@ -132,7 +132,7 @@ Func_081848ec:
 	mov r0, r11
 	muls r0, r3
 	adds r1, #255
-	bl Math_Div
+	bl __divsi3
 	ldr r3, .L_081849ec
 	ldr r5, .L_08184a10
 	subs r3, r3, r0
@@ -359,7 +359,7 @@ Func_081848ec:
 	lsls r0, r2, #5
 	ldrh r1, [r3, r5]
 	subs r0, r0, r2
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [sp, #120]
 	movs r4, #1
 	subs r3, #1
@@ -589,7 +589,7 @@ Func_081848ec:
 	adds r0, r5, #0
 	movs r1, #6
 	mov r8, r2
-	bl Math_Div
+	bl __divsi3
 	mov r12, r0
 	adds r0, r5, #0
 	cmp r0, #0
@@ -1730,7 +1730,7 @@ Func_081848ec:
 	str r3, [r5, #4]
 	bl Random16
 	movs r1, #3
-	bl Math_ModU
+	bl __umodsi3
 	movs r6, #128
 	lsls r0, r0, #12
 	lsls r6, r6, #6
@@ -1797,7 +1797,7 @@ Func_081848ec:
 	str r5, [sp, #96]
 	bl Random16
 	movs r1, #3
-	bl Math_ModU
+	bl __umodsi3
 	movs r7, #178
 	movs r6, #160
 	lsls r7, r7, #1
@@ -1884,7 +1884,7 @@ Func_081848ec:
 .L_08185714:
 	bl Random16
 	movs r1, #8
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #4
 	subs r0, r0, r1
 	lsls r0, r0, #16
@@ -1897,7 +1897,7 @@ Func_081848ec:
 	ldr r0, [sp, #92]
 	movs r1, #3
 	add r0, r9
-	bl Math_Mod
+	bl __modsi3
 	movs r1, #128
 	lsls r1, r1, #6
 	lsls r0, r0, #12
@@ -4060,7 +4060,7 @@ Func_08185b9c:
 	str r3, [r7]
 	bl Random16
 	movs r1, #112
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #4
 	lsls r0, r0, #16
 	str r0, [r7, #4]

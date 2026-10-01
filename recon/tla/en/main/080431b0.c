@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
-u32 Math_DivU(s32, s32);
-s32 Math_ModU(s32, s32);
+u32 __udivsi3(s32, s32);
+s32 __umodsi3(s32, s32);
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 
 void *Text_FormatPlayTime(s32 value, u8 *out)
@@ -13,12 +13,12 @@ void *Text_FormatPlayTime(s32 value, u8 *out)
     u8 *s;
     u8 *p;
 
-    time = Math_DivU(value, 0xe10);
+    time = __udivsi3(value, 0xe10);
     if (time > 0xea5f)
         time = 0xea5f;
 
-    minutes = Math_DivU(time, 60);
-    seconds = Math_ModU(time, 60);
+    minutes = __udivsi3(time, 60);
+    seconds = __umodsi3(time, 60);
 
     s = UiText_FormatNumber(buf, minutes, 3);
     *out = *s;

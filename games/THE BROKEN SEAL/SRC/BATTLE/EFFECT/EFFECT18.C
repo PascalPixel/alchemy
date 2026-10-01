@@ -233,7 +233,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         }
     }
     if (mode == 5) {
-        pos[0] = Math_Div(pos[0], 3);
+        pos[0] = pos[0] / 3;
         *(s16 *)0x04000020 = 85;
     }
 
@@ -245,7 +245,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 
     frame = 0;
     do {
-        pick = Math_Mod(frame, WORK_EFX->count);
+        pick = frame % WORK_EFX->count;
         if (frame == 4) {
             Audio_PlayCue(0x88);
         }
@@ -265,13 +265,13 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             if (WORK_EFX->side == 1) {
                 ((DrawRectangle)blit[0])(dst,
                     SHEET
-                        + ((Math_Mod(Math_Div(frame, 3), 3) * 9)
+                        + ((frame / 3 % 3 * 9)
                             << 9),
                     pos[0] - 2, pos[1] - 32, 72, 62);
             } else {
                 ((DrawRectangle)blit[0])(dst,
                     SHEET
-                        + ((Math_Mod(Math_Div(frame, 3), 3) * 9)
+                        + ((frame / 3 % 3 * 9)
                             << 9),
                     pos[0] - 70, pos[1] - 32, 72, 62);
             }

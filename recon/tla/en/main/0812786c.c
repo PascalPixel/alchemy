@@ -27,7 +27,7 @@ struct OwnerState {
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct OwnerState *Owner_GetStateFar(s32 owner);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void Owner_RecalculateStatsFar(s32 owner);
 void Runtime_BumpFree(void *block);
 
@@ -50,8 +50,8 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
 
     value = stats->max_hp;
-    value += Math_Div(levels * 97, 10);
-    floor = Math_Div(base->max_hp * 7, 10);
+    value += __divsi3(levels * 97, 10);
+    floor = __divsi3(base->max_hp * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 9999)
@@ -59,38 +59,38 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     stats->max_hp = value;
 
     value = state->stats.max_pp;
-    value += Math_Div(levels * 15, 10);
-    floor = Math_Div(base->max_pp * 7, 10);
+    value += __divsi3(levels * 15, 10);
+    floor = __divsi3(base->max_pp * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
     state->stats.max_pp = value;
 
-    floor = Math_Div(levels * 123, 10);
+    floor = __divsi3(levels * 123, 10);
     value = state->stats.attack;
     value += floor;
-    floor = Math_Div(base->attack * 7, 10);
+    floor = __divsi3(base->attack * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
     state->stats.attack = value;
 
-    floor = Math_Div(levels * 33, 10);
+    floor = __divsi3(levels * 33, 10);
     value = state->stats.defense;
     value += floor;
-    floor = Math_Div(base->defense * 7, 10);
+    floor = __divsi3(base->defense * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
     state->stats.defense = value;
 
-    floor = Math_Div(levels * 51, 10);
+    floor = __divsi3(levels * 51, 10);
     value = state->stats.agility;
     value += floor;
-    floor = Math_Div(base->agility * 7, 10);
+    floor = __divsi3(base->agility * 7, 10);
     if (value < floor)
         value = floor;
     if (value > 999)
@@ -99,7 +99,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 
     for (i = 0; i < 4; i++) {
         value = state->stats.elements[i].power + levels * 15;
-        floor = Math_Div(base->elements[i].power * 7, 10);
+        floor = __divsi3(base->elements[i].power * 7, 10);
         if (value < floor)
             value = floor;
         if (value > 200)

@@ -49,7 +49,6 @@ extern u8 MsgPackFull[];
 extern u8 MsgCannotCarryItem[];
 extern u8 MsgHereYouGo[];
 extern u8 MsgDontWantIt[];
-s32 Math_Mod(s32 value, s32 divisor);
 void UiMessage_ShowAndWait(s32 message);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
@@ -110,8 +109,8 @@ s32 Shop_SelRepair(s32 unit_id)
                     selection = item_count - 1;
                 item_id = 0x1ff & unit->inventory[selection];
                 window = (void *)shop->item_window;
-                x = Math_Mod(selection, 5) * 16;
-                y = Math_Div(selection, 5) * 16 + 8;
+                x = selection % 5 * 16;
+                y = selection / 5 * 16 + 8;
                 Shop_PlaceCursor(window, x, y);
                 shop->mode = 3;
                 price = Shop_RepairPrice(unit->inventory[selection]);
@@ -132,13 +131,13 @@ s32 Shop_SelRepair(s32 unit_id)
             if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
-                selection = Math_Mod(selection + item_count, item_count);
+                selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
             if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
-                selection = Math_Mod(selection + item_count, item_count);
+                selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
             if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x40) != 0) {
@@ -281,9 +280,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            selected_index = Math_Mod(
-                selected_index + shop->party_member_count,
-                shop->party_member_count);
+            selected_index = (selected_index + shop->party_member_count) % shop->party_member_count;
             unit_id = shop->party_member_ids[selected_index];
             Shop_PlaceCursor(window, selected_index * 24 - 12, 0);
             shop->mode = 3;

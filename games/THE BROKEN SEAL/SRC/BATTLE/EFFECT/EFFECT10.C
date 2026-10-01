@@ -427,7 +427,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             for (i = 0; i != 1024; i++) {
                 s32 m = 3;
                 if (PARTICLES[i].variant >= 0) {
-                    s32 k = Math_Mod(i, 3) + 2;
+                    s32 k = i % 3 + 2;
                     draw(dst, aux + ParticleStreams_CellOffsets[k - 1],
                         HI(PARTICLES[i].x) - k / 2, HI(PARTICLES[i].y) - k, k, k * 2);
                     EffectStep_AdvanceWithGravity2D(&PARTICLES[i], 62, BattleFx6_Gravity[i & m]);
@@ -481,7 +481,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                 Audio_PlayCue(154);
             }
             if (frame >= i * 16 && q4->variant <= 31) {
-                s32 wobble = Math_Mod(frame * 16, 104);
+                s32 wobble = frame * 16 % 104;
                 blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 216, 17, 104);
                 blit[1](dst, work->sheet, q4->x - 8, q4->y + wobble - 112, 17, 104 - wobble);
                 blit[1](dst, work->sheet + 0x6e8, q4->x - 17, q4->y - 65, 34, 65);

@@ -125,10 +125,10 @@ void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot,
     start = start_slot->object;
     end = end_slot->object;
     start_x = start->x;
-    x = start_x + Math_Div(progress * (end->x - start_x), 100);
+    x = start_x + progress * (end->x - start_x) / 100;
     end_z = end->z;
     start_z = start->z;
-    z_step = Math_Div(progress * (end_z - start_z), 100);
+    z_step = progress * (end_z - start_z) / 100;
     *(s16 *)0x04000050 = 0;
     start->acceleration = 0x20000;
     start->speed_limit = 0x80000;
@@ -217,7 +217,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
         Object_ResetMotion(object);
         scale = slot->anchor_x;
         table = BattleMotion_VariantDistancePercent;
-        x = Math_Div(scale * *(s32 *)((u8 *)table + offset), 100);
+        x = (scale * *(s32 *)((u8 *)table + offset)) / 100;
         Object_SetPosition(object, x, 0, slot->anchor_z);
     }
     Object_SetMode(object, 5);
@@ -237,10 +237,10 @@ void BattleMotion_ApproachTarget(
     s32 scale = 75;
     s32 dx = target->x - object->x;
     s32 start_x = object->x;
-    s32 step_x = Math_Div(scale * dx, 100);
+    s32 step_x = scale * dx / 100;
     s32 dz = target->z - object->z;
     s32 start_z = object->z;
-    s32 step_z = Math_Div(scale * dz, 100);
+    s32 step_z = scale * dz / 100;
     s32 x = start_x + step_x;
     s32 z = start_z + step_z;
     s32 cell_x = step_x >> 8;
@@ -249,7 +249,7 @@ void BattleMotion_ApproachTarget(
 
     dist = Iwram_Sqrt(
         cell_x * cell_x + cell_z * cell_z);
-    dist = Math_Div(dist << 8, travel_divisor);
+    dist = (dist << 8) / travel_divisor;
     object->acceleration = dist;
     object->speed_limit = dist;
     object->snap_to_target = 1;

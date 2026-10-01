@@ -57,7 +57,7 @@ Func_080ae220:
 	movs r3, #52
 	ldrsh r1, [r5, r3]
 	lsls r0, r0, #14
-	bl Math_Div
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -83,7 +83,7 @@ Func_080ae220:
 	movs r3, #54
 	ldrsh r1, [r5, r3]
 	lsls r0, r0, #14
-	bl Math_Div
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3

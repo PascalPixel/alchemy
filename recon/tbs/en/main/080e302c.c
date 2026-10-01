@@ -144,9 +144,9 @@ void ResourceObject_ReleaseFar(void *object);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 u32 Random16(void);
-s32 Math_ModU(s32 value, s32 range);
-s32 Math_Div(s32 value, s32 shift);
-s32 Math_Mod(s32 value, s32 divisor);
+s32 __umodsi3(s32 value, s32 range);
+s32 __divsi3(s32 value, s32 shift);
+s32 __modsi3(s32 value, s32 divisor);
 void Audio_PlayCue(s32 id);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void BattleMotion_ApplyVariantMotionFar(s32 member, s32 kind);
@@ -465,7 +465,7 @@ void Unnamed_080e302c(void *object)
 
         /* Four band rows scrolling in, then the same rows scrolling out. */
         if ((u32)(fp - 0xC) <= 0x4BU) {
-            idx = Math_Div(fp - 0x40, 3);
+            idx = __divsi3(fp - 0x40, 3);
             if (idx < 0) {
                 idx = 0;
             }
@@ -486,7 +486,7 @@ void Unnamed_080e302c(void *object)
         }
 
         if ((u32)(fp - 0xA0) <= 0x17U) {
-            idx = 7 - Math_Div(fp - 0xA0, 3);
+            idx = 7 - __divsi3(fp - 0xA0, 3);
             if (idx < 0) {
                 idx = 0;
             }
@@ -588,7 +588,7 @@ void Unnamed_080e302c(void *object)
                             (s32)(0x02000000 - (spark->height << 0x10));
                         transform.field_0008 = 0x02000000;
 
-                        idx = Math_Mod((fp / 2) + i, 0xB);
+                        idx = __modsi3((fp / 2) + i, 0xB);
                         timer = -1;
                         if (idx != -1) {
                             Object_ApplyProjectedPlacementFar(
@@ -611,13 +611,13 @@ void Unnamed_080e302c(void *object)
                                         (s32)((7 & Random16()) + 8);
                                     spread = M2C_FIELD(STATE, s32 *, 0x18);
                                     if (spread == 0) {
-                                        pos = Math_ModU(
+                                        pos = __umodsi3(
                                             Random16(), 0x60) + 0x2A;
                                     } else if (spread == 1) {
-                                        pos = Math_ModU(
+                                        pos = __umodsi3(
                                             Random16(), 0x70) + 0x22;
                                     } else {
-                                        pos = Math_ModU(
+                                        pos = __umodsi3(
                                             Random16(), 0xA0) + 0xA;
                                     }
                                     spark->pos = pos;
@@ -640,7 +640,7 @@ void Unnamed_080e302c(void *object)
                 off = 0x24;
                 do {
                     if (fp > 0x55) {
-                        if (Math_Mod(fp, 0xC) == 0) {
+                        if (__modsi3(fp, 0xC) == 0) {
                             ObjectGroup_UpdateMembers(
                                 M2C_FIELD(STATE, s16 *, off), 7, 5, j, 6);
                         }

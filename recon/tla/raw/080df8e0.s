@@ -163,7 +163,7 @@ Func_080df8e0:
 	ldr r3, [r6, #24]
 	ldr r1, [r5, #12]
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #48]
 	ldr r0, [r7, #20]
 	ldr r3, [r6, #28]
@@ -175,14 +175,14 @@ Func_080df8e0:
 	ldr r2, .L_080dfab0
 	ldr r1, [r5, #12]
 	adds r0, r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #48]
 	ldr r0, [r7, #20]
 	ldr r3, .L_080dfab0
 	ldr r1, [r5, #12]
 	adds r0, r0, r3
 .L_080dfa44:
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #52]
 .L_080dfa4a:
 	movs r3, #128

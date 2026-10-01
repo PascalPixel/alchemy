@@ -53,14 +53,12 @@ struct BattleAction *BattleAction_Get(s32);
 void Owner_RecalculateRatiosFar(s32);
 s32 Battle_CalcRestore(s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
-s32 Math_Div(s32, s32);
 s32 Audio_PlayCueReturnOne(s32 cue);
 
 /* ability/play_use_animation.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 /* menu/core/get_modulo_of_sum.c */
-s32 Math_Mod(s32);
 void Ability_PlayUseAnimation(void);
 
 struct ItemMenuModeState {
@@ -398,8 +396,7 @@ s32 BattleEffect_ApplyToTargets(
 
         case EFX_REVIVE_80:
             if (target->hp == 0) {
-                target->hp = Math_Div(
-                    target->max_hp * 7, 10);
+                target->hp = target->max_hp * 7 / 10;
                 Owner_RecalculateRatiosFar(target_id);
                 if (later_target == 0)
                     result_code = 0xc;
@@ -513,7 +510,7 @@ s32 Menu_ReservedStatusZero(void)
 
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1)
 {
-    return Math_Mod(arg0 + arg1);
+    return (arg0 + arg1) % arg1;
 }
 
 s32 Menu_SetFirstObjectRowCoordinates(s32 arg0)

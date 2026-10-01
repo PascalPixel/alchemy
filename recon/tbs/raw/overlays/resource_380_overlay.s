@@ -322,7 +322,7 @@ Soru_UpdateRing:
 	movs r1, #250
 	lsls r0, r6, #16
 	lsls r1, r1, #2
-	bl IwramUnsignedDivideEntry
+	bl __udivsi3
 	adds r6, r0, #0
 	b .L_0200c5ca
 .L_0200c5c8:
@@ -333,7 +333,7 @@ Soru_UpdateRing:
 	movs r1, #250
 	lsls r0, r7, #16
 	lsls r1, r1, #2
-	bl IwramUnsignedDivideEntry
+	bl __udivsi3
 	mov r9, r0
 	b .L_0200c5e0
 .L_0200c5dc:
@@ -346,7 +346,7 @@ Soru_UpdateRing:
 	movs r1, #250
 	lsls r0, r3, #16
 	lsls r1, r1, #2
-	bl IwramUnsignedDivideEntry
+	bl __udivsi3
 	b .L_0200c5f4
 .L_0200c5f2:
 	movs r0, #0

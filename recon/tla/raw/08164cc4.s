@@ -1528,7 +1528,7 @@ Func_08164cc4:
 .L_081658a2:
 	movs r1, #3
 	mov r0, r8
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [sp, #36]
 	cmp r0, r1
 	bge .L_08165940

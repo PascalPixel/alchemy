@@ -234,19 +234,19 @@ Func_08171430:
 	str r1, [r6, #16]
 	subs r0, r0, r3
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #12]
 	ldr r0, [r6, #4]
 	mov r2, r8
 	subs r0, r2, r0
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r6, #8]
 	str r0, [r6, #16]
 	subs r5, r5, r3
 	adds r0, r5, #0
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #20]
 	ldr r4, [sp, #52]
 	negs r3, r4

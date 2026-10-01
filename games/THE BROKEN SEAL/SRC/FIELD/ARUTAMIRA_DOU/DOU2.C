@@ -1344,7 +1344,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
             Call6(Engine_MapCopyCellAttributes, 42, 8, 1, 1, 31, 8);
         }
         if (state[0] == 2) {
-            SceneActor_PlaceFiveActorsInRow(Engine_MathDivide(state[1] << 16, 5) + 0x4000);
+            SceneActor_PlaceFiveActorsInRow((state[1] << 16) / 5 + 0x4000);
         }
         for (i = 0; i < 5; i++) {
             actor = Object_GetById(i + 11);

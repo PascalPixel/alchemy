@@ -185,13 +185,13 @@ Func_0814ea58:
 	adds r6, #1
 	movs r1, #3
 	adds r0, r6, #0
-	bl Math_Div
+	bl __divsi3
 	mov r4, r9
 	adds r5, r0, #0
 	movs r1, #3
 	mov r0, r8
 	subs r5, r4, r5
-	bl Math_Div
+	bl __divsi3
 	mov r1, r9
 	subs r0, r1, r0
 	lsls r0, r0, #10

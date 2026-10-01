@@ -268,7 +268,7 @@ Graphics_TransformPaletteBuffer:
 	lsrs r3, r7, #1
 	subs r7, r7, r3
 	add r10, r2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r7, #6
 	subs r6, r6, r0
 	adds r0, r7, #0
@@ -412,7 +412,7 @@ Graphics_TransformPaletteBuffer:
 	movs r3, #2
 	adds r0, r0, r5
 	add r10, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	bl Graphics_ClampRgb555Channel
 	asrs r3, r7, #1
 	adds r7, r3, r0
@@ -481,11 +481,11 @@ Graphics_TransformPaletteBuffer:
 	movs r1, #3
 	adds r7, r0, #0
 	adds r0, r6, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #3
 	subs r6, r6, r0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, .L_080f3468
 	subs r5, r5, r0
 	lsls r3, r5, #1
@@ -550,7 +550,7 @@ Graphics_TransformPaletteBuffer:
 	movs r1, #3
 	ands r5, r2
 	subs r7, r7, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r7, #6
 	subs r6, r6, r0
 	adds r0, r7, #0

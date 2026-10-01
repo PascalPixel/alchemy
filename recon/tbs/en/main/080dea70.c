@@ -96,8 +96,8 @@ void Audio_PlayCue(s32 id);
 void **GetBattleObjectSlotFar(s32 member_id);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 u32 Random16(void);
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_Mod(s32 value, s32 divisor);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __modsi3(s32 value, s32 divisor);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Render_ResetTransformState(void);
@@ -299,30 +299,30 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                             M2C_FIELD(launcher, s32 *, 12) + launch_half;
                     }
                     projectile[2] = M2C_FIELD(launcher, s32 *, 16);
-                    projectile[3] = Math_Div(
+                    projectile[3] = __divsi3(
                         M2C_FIELD(target, s32 *, 8) - projectile[0],
                         aim_divisor);
 
                     if (kind == 7) {
-                        projectile[4] = Math_Div(
+                        projectile[4] = __divsi3(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((s32)(Random16() & 63) << 16))
                                 - projectile[1] - (12 << 16),
                             aim_divisor);
                     } else if (kind == 8) {
-                        projectile[4] = Math_Div(
+                        projectile[4] = __divsi3(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((s32)(Random16() & 7) << 16))
                                 - projectile[1] + (176 << 13),
                             aim_divisor);
                     } else if (kind == 9) {
-                        projectile[4] = Math_Div(
+                        projectile[4] = __divsi3(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((64 - (s32)(Random16() & 63)) << 16))
                                 - projectile[1],
                             aim_divisor);
                     } else if (kind == 10) {
-                        projectile[4] = Math_Div(
+                        projectile[4] = __divsi3(
                             (M2C_FIELD(target, s32 *, 12)
                                 + ((s32)(Random16() & 31) << 16))
                                 - projectile[1] + (128 << 11),
@@ -334,7 +334,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                         s32 spread;
 
                         spread = (s32)(Random16() & 15);
-                        projectile[4] = Math_Div(
+                        projectile[4] = __divsi3(
                             (M2C_FIELD(target, s32 *, 12) + target_half / 2
                                 + (spread << 16))
                                 - projectile[1],
@@ -343,14 +343,14 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                         s32 spread;
 
                         spread = (s32)(Random16() & 15);
-                        projectile[4] = Math_Div(
+                        projectile[4] = __divsi3(
                             (M2C_FIELD(target, s32 *, 12) + target_half
                                 - (spread << 16))
                                 - projectile[1],
                             aim_divisor);
                     }
 
-                    projectile[5] = Math_Div(
+                    projectile[5] = __divsi3(
                         M2C_FIELD(target, s32 *, 16) - projectile[2],
                         aim_divisor);
                     projectile[6] = 0;
@@ -658,7 +658,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                     if (travelled <= reach) {
                                         s32 cell;
 
-                                        cell = Math_Mod(frame, 6);
+                                        cell = __modsi3(frame, 6);
                                         draw_cb(draw_destination,
                                             (s8 *)work + cell * 768,
                                             pos[0] - 16, pos[1] - 12, 32, 24);
@@ -672,7 +672,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                 } else if (kind == 2) {
                                     s32 cell;
 
-                                    cell = Math_Mod(shot, 6);
+                                    cell = __modsi3(shot, 6);
                                     draw_cb(draw_destination,
                                         (s8 *)work + (cell << 7),
                                         pos[0] - 4, pos[1] - 8, 8, 16);

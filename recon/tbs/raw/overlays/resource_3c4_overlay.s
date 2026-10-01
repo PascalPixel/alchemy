@@ -73,14 +73,14 @@ Func_020010c4:
 	beq .L_020091a6
 	bl Engine_RandomNext
 	movs r1, #10
-	bl Engine_MathModulo
+	bl __umodsi3
 	ldr r3, .L_020091d4
 	subs r0, #5
 	adds r5, r0, #0
 	muls r5, r3
 	bl Engine_RandomNext
 	movs r1, #10
-	bl Engine_MathModulo
+	bl __umodsi3
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	lsls r3, r3, #2

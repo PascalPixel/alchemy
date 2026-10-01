@@ -224,7 +224,7 @@ UiText_MeasureEntryDimensions:
 	lsls r0, r0, #8
 	subs r1, #1
 	str r2, [sp, #4]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #192
 	lsls r1, r1, #4
 	ldr r2, [sp, #4]

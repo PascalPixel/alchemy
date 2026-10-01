@@ -130,7 +130,7 @@ Func_081823a8:
 	ldr r0, [r0, #8]
 	movs r1, #40
 	negs r0, r0
-	bl Math_Div
+	bl __divsi3
 	movs r3, #192
 	lsls r3, r3, #10
 	str r0, [r5, #12]

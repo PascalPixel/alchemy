@@ -267,7 +267,7 @@ Func_0813cb34:
 .L_0813cd48:
 	mov r0, r8
 	movs r1, #32
-	bl Math_Div
+	bl __divsi3
 	lsls r0, r0, #3
 	cmp r11, r0
 	blt .L_0813ce30

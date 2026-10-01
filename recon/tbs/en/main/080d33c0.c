@@ -156,7 +156,7 @@ loop_15:
                 M2C_FIELD(var_r6_260, s32 *, 8) = (s32) (M2C_FIELD(var_r6_260, s32 *, 8) + M2C_FIELD(var_r6_260, s32 *, 0x14));
             }
             if ((var_fp_203 > (s32) (var_r9_259 + 0x30)) && ((s8) ((u8 *)0x02010000)[var_r8_251] == 0)) {
-                temp_r1_333 = temp_r7_17 + (Math_Mod(var_r8_251, M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x14)) * 0x1C);
+                temp_r1_333 = temp_r7_17 + (__modsi3(var_r8_251, M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x14)) * 0x1C);
                 temp_r0_340 = M2C_FIELD(var_r6_260, s32 *, 0xC) + ((s32) (M2C_FIELD(temp_r1_333, s32 *, 0x7400) - M2C_FIELD(var_r6_260, s32 *, 0)) >> 9);
                 M2C_FIELD(var_r6_260, s32 *, 0xC) = temp_r0_340;
                 temp_r4_347 = M2C_FIELD(var_r6_260, s32 *, 0x10) + ((s32) (M2C_FIELD(temp_r1_333, s32 *, 0x7404) - M2C_FIELD(var_r6_260, s32 *, 4)) >> 9);
@@ -188,19 +188,19 @@ loop_15:
                     M2C_FIELD(var_r6_260, s32 *, 0) = (s32) M2C_FIELD(&sp18, s32 *, 0);
                     M2C_FIELD(var_r6_260, s32 *, 4) = (s32) ((M2C_FIELD(&sp18, s32 *, 4) + (0x1F & Random16())) - 0x10);
                     temp_r5_407 = M2C_FIELD(temp_r7_17, void **, 0x7828);
-                    member_offset = (Math_Mod(var_r8_251, M2C_FIELD(temp_r5_407, s32 *, 0x14)) * 2) + 0x24;
+                    member_offset = (__modsi3(var_r8_251, M2C_FIELD(temp_r5_407, s32 *, 0x14)) * 2) + 0x24;
                     ObjectGroup_UpdateMembers(*(s16 *)((u8 *)temp_r5_407 + member_offset), 7, 5, member_offset, 4);
                     temp_r5_422 = M2C_FIELD(temp_r7_17, void **, 0x7828);
-                    BattleMotion_ApplyVariantMotionFar(*(s16 *)((u8 *)temp_r5_422 + ((Math_Mod(var_r8_251, M2C_FIELD(temp_r5_422, s32 *, 0x14)) * 2) + 0x24)), 0);
+                    BattleMotion_ApplyVariantMotionFar(*(s16 *)((u8 *)temp_r5_422 + ((__modsi3(var_r8_251, M2C_FIELD(temp_r5_422, s32 *, 0x14)) * 2) + 0x24)), 0);
                     M2C_FIELD(temp_r7_17, s32 *, 0x77A8) = 4;
                     Audio_PlayCue(0x84);
                 }
             }
             temp_r3_438 = M2C_FIELD(var_r6_260, u32 *, 0x18);
             if (temp_r3_438 <= 0xFU) {
-                rectangle[0](canvas, temp_r7_17 + (Math_Mod((s32) (temp_r3_438 + (temp_r3_438 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0) - 0x10, M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
+                rectangle[0](canvas, temp_r7_17 + (__modsi3((s32) (temp_r3_438 + (temp_r3_438 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0) - 0x10, M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
                 temp_r0_460 = M2C_FIELD(var_r6_260, u32 *, 0x18);
-                rectangle[1](canvas, temp_r7_17 + (Math_Mod((s32) (temp_r0_460 + (temp_r0_460 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0), M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
+                rectangle[1](canvas, temp_r7_17 + (__modsi3((s32) (temp_r0_460 + (temp_r0_460 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0), M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
                 M2C_FIELD(var_r6_260, u32 *, 0x18) = (u32) (M2C_FIELD(var_r6_260, u32 *, 0x18) + 1);
             }
             var_r8_251 += 1;

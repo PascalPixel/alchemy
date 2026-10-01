@@ -23,7 +23,7 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 format, struct TextRenderWork *
 void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
 void Engine_DebugDrawTextResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
 void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
-s32 Engine_DebugRemainder(s32 value, s32 divisor);
+s32 __modsi3(s32 value, s32 divisor);
 
 void DebugMenu_SelectItem(void)
 {
@@ -46,7 +46,7 @@ void DebugMenu_SelectItem(void)
         Engine_TaskWait(1);
         if (redraw) {
             redraw = 0;
-            item = Engine_DebugRemainder(item + 270, 270);
+            item = __modsi3(item + 270, 270);
             Engine_DebugRedrawWindow(window);
             Engine_DebugClearWindow(window);
             UiText_DrawStringInWindowFar(gDebugItemPrompt, window, 0, 0);

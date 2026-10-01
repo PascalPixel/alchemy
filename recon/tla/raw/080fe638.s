@@ -139,7 +139,7 @@ Func_080fe638:
 	adds r0, r7, r0
 	movs r1, #18
 	adds r0, #7
-	bl Math_Mod
+	bl __modsi3
 	mov r3, r11
 	adds r6, r3, r0
 	adds r0, r6, #0
@@ -234,7 +234,7 @@ Func_080fe638:
 	ldr r0, [sp, #28]
 	movs r1, #2
 	adds r0, #2
-	bl Math_Mod
+	bl __modsi3
 	str r0, [sp, #28]
 	movs r0, #111
 	bl Audio_PlayCue

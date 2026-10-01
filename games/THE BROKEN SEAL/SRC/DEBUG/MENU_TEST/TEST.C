@@ -33,7 +33,6 @@ void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *win
 void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
 void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
 void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
-s32 Engine_DebugRemainder(s32 value, s32 divisor);
 
 extern u8 MsgDebugGotTreasure[];
 
@@ -564,7 +563,7 @@ void DebugMenu_SelectItem(void)
     for (;;) {
         if (redraw) {
             redraw = 0;
-            item = Engine_DebugRemainder(item + 270, count);
+            item = (item + 270) % count;
             Engine_DebugRedrawWindow(window);
             Engine_DebugClearWindow(window);
             UiText_DrawStringInWindow(gDebugItemPrompt, window, 0, 0);

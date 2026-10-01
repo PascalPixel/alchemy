@@ -439,7 +439,7 @@ Func_0813bbd8:
 .L_0813bf12:
 	movs r1, #3
 	str r2, [sp, #12]
-	bl Math_Div
+	bl __divsi3
 	adds r1, r0, #0
 	lsls r1, r1, #10
 	movs r3, #176

@@ -28,10 +28,10 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
     if (limit == 0) {
         value = 0;
     }
-    quotient = Math_Div(value, GROUP_LEN);
-    remainder = Math_Mod(value, GROUP_LEN);
-    groups = Math_Div(limit, GROUP_LEN);
-    if (Math_Mod(limit, GROUP_LEN) != 0) {
+    quotient = __divsi3(value, GROUP_LEN);
+    remainder = __modsi3(value, GROUP_LEN);
+    groups = __divsi3(limit, GROUP_LEN);
+    if (__modsi3(limit, GROUP_LEN) != 0) {
         groups++;
     }
     result->owner_state = encoded;

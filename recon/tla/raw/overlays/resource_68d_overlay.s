@@ -80,7 +80,7 @@ Func_020000f4:
 	ldr r3, .L_02008140
 	movs r1, #6
 	ldr r0, [r3]
-	bl Engine_MathModulo
+	bl __umodsi3
 	cmp r0, #0
 	bne .L_02008126
 	ldr r3, .L_02008144
@@ -107,7 +107,7 @@ Func_020000f4:
 	ldr r0, [r3]
 	ldr r5, .L_02008150
 	lsrs r0, r0, #2
-	bl Engine_MathModulo
+	bl __umodsi3
 	lsls r0, r0, #1
 	ldrsh r1, [r5, r0]
 	ldr r3, .L_02008154
@@ -326,7 +326,7 @@ Func_020002b4:
 	movs r1, #28
 	ldr r0, [r6]
 	asrs r0, r0, #2
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r2, .L_0200838c
 	adds r5, r0, #0
 	lsls r3, r5, #1
@@ -1729,7 +1729,7 @@ Func_0200058c:
 	movs r1, #14
 	ldr r0, [r3]
 	asrs r0, r0, #2
-	bl Engine_MathRemainder
+	bl __modsi3
 	cmp r0, #0
 	bne .L_02008ff0
 .L_0200900c:

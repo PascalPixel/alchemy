@@ -85,7 +85,7 @@ Func_08104540:
 	ldr r0, [sp, #72]
 	movs r1, #6
 	subs r0, #1
-	bl Math_Div
+	bl __divsi3
 	adds r0, #1
 	str r0, [sp, #72]
 	cmp r0, #0
@@ -96,7 +96,7 @@ Func_08104540:
 	movs r1, #6
 	ldr r0, [r2, #4]
 	subs r0, #1
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [sp, #28]
 	adds r0, #1
 	str r0, [r3, #4]
@@ -304,7 +304,7 @@ Func_08104540:
 	str r1, [sp, #56]
 	adds r0, r1, #0
 	movs r1, #60
-	bl Math_Mod
+	bl __modsi3
 	subs r0, #5
 	movs r2, #200
 	movs r0, #0

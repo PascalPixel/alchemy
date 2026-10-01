@@ -68,7 +68,7 @@ void Audio_PlayCue(s32 id);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
-s32 Math_Mod(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 mode);
 void Camera_ApplyShake(s32 a, s32 b);
@@ -188,7 +188,7 @@ void Unnamed_080d3854(void *object)
                 cos_val = Trig_Cos(angle);
                 x_delta = (cos_val << 1) >> 16;
 
-                layer = Math_Mod(frame / 2, 3);
+                layer = __modsi3(frame / 2, 3);
                 layer5 = layer * 5;
                 layer_base = (u8 *)work + layer * 0xA00;
                 ((DrawRectangleFn)rectangle[0])(canvas,

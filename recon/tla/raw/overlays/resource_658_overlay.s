@@ -816,7 +816,7 @@ Func_020006ac:
 	ldrh r0, [r0, #32]
 	movs r1, #3
 	lsls r0, r0, #2
-	bl Engine_MathDivide
+	bl __divsi3
 	strh r0, [r6, #32]
 	movs r0, #26
 	bl Object_GetById

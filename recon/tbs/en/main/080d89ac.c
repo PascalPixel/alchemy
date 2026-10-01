@@ -436,7 +436,7 @@ loop_90:
                             var_r4_848 = 3 - (var_r2_839 >> 7);
                             switch (arg1) {         /* switch 3; irregular */
                             case 0:                 /* switch 3 */
-                                var_r4_848 = Math_Mod((var_r8_743 * 4) + var_fp_449, 9);
+                                var_r4_848 = __modsi3((var_r8_743 * 4) + var_fp_449, 9);
                                 /* fallthrough */
                             case 3:                 /* switch 3 */
                             case 4:                 /* switch 3 */
@@ -456,11 +456,11 @@ loop_90:
                             }
                             if ((arg1 <= 2U) || (arg1 == 6)) {
                                 temp_r5_913 = M2C_FIELD(var_r6_753, s32 *, 0);
-                                M2C_FIELD(var_r6_753, s32 *, 0) = (s32) (temp_r5_913 - Math_Div(temp_r5_913, temp_r7_802));
+                                M2C_FIELD(var_r6_753, s32 *, 0) = (s32) (temp_r5_913 - __divsi3(temp_r5_913, temp_r7_802));
                                 temp_r5_919 = M2C_FIELD(var_r6_753, s32 *, 4);
-                                M2C_FIELD(var_r6_753, s32 *, 4) = (s32) (temp_r5_919 - Math_Div(temp_r5_919, temp_r7_802));
+                                M2C_FIELD(var_r6_753, s32 *, 4) = (s32) (temp_r5_919 - __divsi3(temp_r5_919, temp_r7_802));
                                 temp_r5_925 = M2C_FIELD(var_r6_753, s32 *, 8);
-                                M2C_FIELD(var_r6_753, s32 *, 8) = (s32) (temp_r5_925 - Math_Div(temp_r5_925, temp_r7_802));
+                                M2C_FIELD(var_r6_753, s32 *, 8) = (s32) (temp_r5_925 - __divsi3(temp_r5_925, temp_r7_802));
                             }
                         }
                     }

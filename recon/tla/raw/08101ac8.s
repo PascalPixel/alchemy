@@ -35,7 +35,7 @@ Func_08101ac8:
 	beq .L_08101b32
 	subs r0, #1
 	adds r1, r5, #0
-	bl Math_Div
+	bl __divsi3
 	cmp r0, #6
 	bgt .L_08101b32
 	ldr r0, .L_08101c08

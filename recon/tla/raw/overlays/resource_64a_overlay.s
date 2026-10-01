@@ -1866,7 +1866,7 @@ Func_02000e44:
 .L_02008ef4:
 	ldr r0, [sp, #44]
 	movs r1, #50
-	bl Engine_MathDivide
+	bl __divsi3
 	adds r0, #1
 	str r0, [sp, #40]
 	movs r5, #2
@@ -1962,7 +1962,7 @@ Func_02000e44:
 .L_02008fc4:
 	movs r1, #10
 	adds r0, r6, #0
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r5, r0, #0
 	lsls r3, r5, #1
 	adds r3, r3, r5
@@ -1972,7 +1972,7 @@ Func_02000e44:
 	adds r0, r6, #0
 	movs r1, #10
 	mov r8, r4
-	bl Engine_MathDivide
+	bl __divsi3
 	lsls r0, r0, #4
 	adds r3, r0, #2
 	cmp r5, #4
@@ -2133,7 +2133,7 @@ Func_02000e44:
 	b .L_0200912c
 .L_02009126:
 	movs r1, #17
-	bl Engine_MathRemainder
+	bl __modsi3
 .L_0200912c:
 	str r0, [sp, #52]
 .L_0200912e:
@@ -2182,7 +2182,7 @@ Func_02000e44:
 	ldr r0, [sp, #52]
 	movs r1, #17
 	adds r0, #16
-	bl Engine_MathRemainder
+	bl __modsi3
 	str r0, [sp, #52]
 .L_0200918c:
 	ldr r3, .L_02009400
@@ -2351,10 +2351,10 @@ Func_02000e44:
 	bl Func_020023f0
 	movs r1, #50
 	ldr r0, [sp, #60]
-	bl Engine_MathRemainder
+	bl __modsi3
 	movs r1, #10
 	adds r5, r0, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r4, [sp, #56]
 	lsls r0, r0, #1
 	movs r2, #14
@@ -2370,7 +2370,7 @@ Func_02000e44:
 	mov r8, r0
 	ands r6, r0
 	adds r0, r5, #0
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r4, [sp, #56]
 	lsls r2, r0, #1
 	movs r1, #12
@@ -2491,7 +2491,7 @@ Func_02000e44:
 	strb r5, [r3, r1]
 	ldr r0, [sp, #60]
 	movs r1, #10
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r3, [sp, #44]
 	ldr r2, [sp, #60]
 	subs r3, #1
@@ -2499,7 +2499,7 @@ Func_02000e44:
 	bge .L_02009414
 	adds r0, r2, #0
 	movs r1, #50
-	bl Engine_MathRemainder
+	bl __modsi3
 	cmp r0, #49
 	bne .L_020093f8
 	movs r3, #1
@@ -2811,7 +2811,7 @@ Func_02000e44:
 .L_02009692:
 	ldr r0, [sp, #60]
 	movs r1, #50
-	bl Engine_MathDivide
+	bl __divsi3
 	mov r11, r0
 	ldr r0, [sp, #56]
 	bl RenderOutput_RedrawSavedRect
@@ -2869,7 +2869,7 @@ Func_02000e44:
 	bne .L_02009712
 	ldr r0, [sp, #44]
 	movs r1, #50
-	bl Engine_MathRemainder
+	bl __modsi3
 	mov r10, r0
 	b .L_02009716
 .L_02009712:
@@ -3350,11 +3350,11 @@ Func_020018e0:
 .L_02009a9c:
 	adds r0, r7, #0
 	movs r1, #7
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r1, #7
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r3, r0, #0
 	lsls r0, r5, #2
 	adds r0, r0, r5
@@ -3375,11 +3375,11 @@ Func_020018e0:
 	beq .L_02009aec
 	movs r1, #7
 	adds r0, r7, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r1, #7
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Djinn_AddToLeastLoadedOwner
@@ -4231,7 +4231,7 @@ Func_02002068:
 	adds r0, r6, #0
 	movs r1, #10
 	str r4, [sp, #0]
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r4, [sp, #0]
 	cmp r0, #8
 	bgt .L_0200a0f6

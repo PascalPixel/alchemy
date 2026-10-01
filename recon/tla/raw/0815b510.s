@@ -38,7 +38,7 @@ Func_0815b510:
 	mov r10, r1
 	lsls r0, r5, #14
 	mov r1, r9
-	bl Math_Div
+	bl __divsi3
 	bl Trig_Cos
 	lsls r3, r0, #6
 	ldr r2, [sp, #4]

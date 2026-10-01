@@ -53,14 +53,14 @@ Func_080d3378:
 	strb r5, [r3]
 	bl Random16
 	movs r1, #10
-	bl Math_ModU
+	bl __umodsi3
 	ldr r3, .L_080d3450
 	adds r0, #5
 	muls r3, r0
 	str r3, [r6, #52]
 	bl Random16
 	movs r1, #15
-	bl Math_ModU
+	bl __umodsi3
 	movs r3, #200
 	subs r0, #7
 	lsls r3, r3, #5

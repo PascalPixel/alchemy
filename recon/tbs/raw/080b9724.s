@@ -28,7 +28,7 @@ BattlePresentation_AppendLinkedActions:
 	movs r1, #20
 	adds r0, #19
 	mov r11, r2
-	bl Math_DivU
+	bl __udivsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #2

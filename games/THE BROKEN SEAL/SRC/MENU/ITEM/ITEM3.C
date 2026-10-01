@@ -12,7 +12,7 @@ extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;
 extern u8 MsgConfirmDrop[];
 extern u8 MsgYes[];
-s32 Math_Mod(s32, s32);
+s32 __modsi3(s32, s32);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
@@ -88,7 +88,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         asm("mov %0, %1" : "=l"(c) : "h"(changed)); /* FAKEMATCH: tests the flag through r2 */
         if (c) {
             changed = 0;
-            sel = Math_Mod(sel + 2, 2);
+            sel = __modsi3(sel + 2, 2);
         }}
         if (gKeyState & 1) {
             Audio_PlayCue(112);

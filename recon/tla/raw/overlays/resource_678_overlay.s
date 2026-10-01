@@ -4136,7 +4136,7 @@ Func_02002144:
 	asrs r0, r3, #1
 .L_0200a19e:
 	movs r1, #96
-	bl Engine_MathDivide
+	bl __divsi3
 	mov r1, r9
 	ldrh r3, [r1, #2]
 	mov r2, r9
@@ -4484,7 +4484,7 @@ Func_02002400:
 	movs r1, #18
 	str r3, [r6, #16]
 	str r4, [sp, #0]
-	bl Engine_MathDivide
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #68]
 	adds r3, r7, #0

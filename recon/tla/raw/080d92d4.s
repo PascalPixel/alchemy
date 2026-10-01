@@ -97,7 +97,7 @@ Func_080d92d4:
 	mov lr, r3
 	.2byte 0xf800
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #1
 	ldr r0, [sp, #32]
 	movs r4, #4
@@ -112,7 +112,7 @@ Func_080d92d4:
 	muls r0, r3
 	adds r1, r5, #0
 	mov r8, r2
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [sp, #36]
 	ldr r4, [r7, #16]
 	mov r9, r3
@@ -123,7 +123,7 @@ Func_080d92d4:
 	adds r0, r6, #0
 	muls r0, r3
 	mov r10, r4
-	bl Math_Div
+	bl __divsi3
 	ldr r5, .L_080d9494
 	add r0, r10
 	mov r11, r0

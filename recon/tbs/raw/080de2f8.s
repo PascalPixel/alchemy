@@ -314,7 +314,7 @@ BattleFx_PrepareCanvasEffect:
 	ldr r0, [r5]
 	movs r1, #40
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r7, [sp, #12]
 	str r0, [r7]
 	mov r1, r11
@@ -322,14 +322,14 @@ BattleFx_PrepareCanvasEffect:
 	ldr r0, [r5, #4]
 	movs r1, #40
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r7, #4]
 	mov r2, r11
 	ldr r3, [r2, #8]
 	ldr r0, [r5, #8]
 	movs r1, #40
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r7, #8]
 	ldr r4, [sp, #20]
 	movs r3, #0

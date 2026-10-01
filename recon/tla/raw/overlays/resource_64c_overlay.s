@@ -159,7 +159,7 @@ Func_02000138:
 	mov r1, r9
 	lsls r0, r7, #14
 	mov r10, r3
-	bl Engine_MathDivide
+	bl __divsi3
 	bl Math_Cosine
 	lsls r3, r0, #4
 	ldr r2, [sp, #0]
@@ -1276,7 +1276,7 @@ Func_0200020c:
 	bgt .L_02008a18
 	adds r0, r7, #0
 	movs r1, #6
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r5, .L_02008a14
 	lsls r0, r0, #1
 	ldrh r3, [r5, r0]
@@ -2536,7 +2536,7 @@ Func_02001364:
 	ldrsh r6, [r0, r2]
 	movs r1, #3
 	ldr r0, [r3]
-	bl Engine_MathModulo
+	bl __umodsi3
 	cmp r0, #0
 	bne .L_020093f0
 	bl Random16Far
@@ -3342,7 +3342,7 @@ Func_020019d4:
 	beq .L_020099f4
 	movs r1, #6
 	lsrs r0, r0, #1
-	bl Engine_MathModulo
+	bl __umodsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Animation_ApplyChildValues
@@ -3373,7 +3373,7 @@ Func_02001a0c:
 	beq .L_02009a2c
 	movs r1, #6
 	lsrs r0, r0, #1
-	bl Engine_MathModulo
+	bl __umodsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Animation_ApplyChildValues

@@ -36,7 +36,7 @@ struct ReturnPointState {
 
 extern struct ReturnPointState gGameState;
 
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 struct BattleUnit *Owner_GetStateFar(s32);
 s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
@@ -50,7 +50,7 @@ static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
     s32 ratio2;
     s32 gauge2;
 
-    ratio = Math_Div(unit->hp << 14, unit->max_hp);
+    ratio = __divsi3(unit->hp << 14, unit->max_hp);
     gauge = GAUGE_ONE;
     if (ratio <= GAUGE_ONE) {
         gauge = 0;
@@ -60,7 +60,7 @@ static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
     unit->hp_gauge = gauge;
     if ((s16)gauge == 0 && unit->hp != 0)
         unit->hp_gauge = 1;
-    ratio2 = Math_Div(unit->pp << 14, unit->max_pp);
+    ratio2 = __divsi3(unit->pp << 14, unit->max_pp);
     gauge2 = GAUGE_ONE;
     if (ratio2 <= GAUGE_ONE) {
         gauge2 = 0;

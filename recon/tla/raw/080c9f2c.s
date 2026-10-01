@@ -29,7 +29,7 @@ BattleFx_LookupResult:
 	movs r1, #20
 	adds r6, r0, #0
 	ldr r0, [sp, #0]
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #0
 	ldrsh r3, [r5, r1]
 	ldr r1, .L_080c9fd4

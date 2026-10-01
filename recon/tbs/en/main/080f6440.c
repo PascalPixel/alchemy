@@ -1,112 +1,97 @@
-/* 2026-09-29: five minutes of permutation reached 45598 from 48704 through
- * 170 rewrites; not kept, since the owner is far from exact. */
-/* 2026-09-29: callees carry the build's names; alchemy permute scores
- * 48704, from 49424. */
-/* NONMATCHING: 1816 differing halfwords; 1169 halfword edits.
- * Compiles to 3648 bytes against the complete 3804-byte owner.
- * WALL: branch structure and local lifetimes differ; narrowing pad and sharing
- * the initial zero did not improve the full-owner score.
- */
+/* NONMATCHING: alchemy drafts scores 11572, 528 differing instructions of
+ * 1731 (was 48534 and 1088). Control flow, the 44-byte frame against 40 and
+ * most registers now agree; work is r7, the pressed-keys pointer r6.
+ * Found: the object buffer words are volatile (their addresses stay
+ * work + index, never a walking pointer); a row stop count is a signed 8-bit
+ * bitfield written as -1; the fill loops count with !=; three counters
+ * (rows, lines, and a third for the coin, held-row, 14 and 8 loops); the
+ * prizes live in a struct whose label is 12 bytes into gCell, written here
+ * as gReelSave, which needs that label in recon/tbs/sym_ewram.s on adoption.
+ * Remaining: one spill too many; the second gKeysHeld read comes before the
+ * pressed store in the listing; the line-check loop keeps the match symbol
+ * in r4 and reads pos as work + row offset; the build_objects join stubs
+ * differ in temporaries. Messages other than MsgSlotsBet still need names. */
 #include "TYPES.H"
 #include "DMA.H"
+#include "FIXED_MATH.H"
+#include "SYSTEM.H"
+#include "IO_REG.H"
+#include "UI.H"
+#include "EFFECT_STEP.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 /* Per-frame driver for the five-reel symbol minigame.
  *
  * One call advances the whole screen: it samples the pad, runs the small
  * state machine that owns betting, spinning, holding and paying out, then
- * rebuilds the complete 128-entry object buffer at work + 200 and hands it
- * to DMA3 for the next vblank.  Each reel is a 21-symbol ring scrolled
- * sixteen units per cell; the seven "lines" tested once every reel has
- * settled are the five columns plus the two diagonals, and how many of them
- * count is gated by the current bet.
- *
- * Uncertain and left neutral: the meaning of item 228 (only its count is
- * read and consumed), the roles of the heap cells at 0x7780, 0x7784 and
- * 0x778c, and everything in the work block this function does not touch.
- * The duplicated "state = 20" in both arms of the coin test at the end of
- * the payout branch is reproduced as the reference emits it.
- *
- * Residual: the compiler reports different branch shapes throughout this
- * draft, so the remaining mismatch is structural rather than a bare register
- * allocation problem. The opening globals are linked through Data_03001f04:
- * the heap-cache pointer is the word 24 bytes before it, matching the reference
- * base reuse. Separate display and DMA register lifetimes also improve the
- * result. Reopen only with a new control-flow, type or lifetime fact. */
+ * rebuilds the complete 128-entry object buffer and hands it to DMA3 for the
+ * next vblank.  Each reel is a 21-symbol ring scrolled sixteen units per
+ * cell; the seven "lines" tested once every reel has settled are the five
+ * columns plus the two diagonals, and how many of them count is gated by the
+ * current bet. */
 
-u32 Random16(void);
-s32 __modsi3(s32 value, s32 modulus);
-s32 Trig_Sin(s32 angle);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 w, s32 h, s32 flags);
-void UiWork_FinalizeFar(s32 window, s32 flags);
-void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
+void UiWork_FinalizeFar(s32 window, s32 style);
+void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
 s32 PartyInventory_RemoveFar(s32 item);
 s32 PartyInventory_CountItemFar(s32 item);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 command);
 
-extern u8 Data_0200024c[];
-extern u8 Data_080f870c[];
-extern u8 Data_080f8712[];
-extern u8 Data_080f871a[];
-extern u8 Data_080f8728[];
+struct ReelRow {
+    s32 pos;      /* ring position, sixteen units per symbol, wraps at 336 */
+    u8 cell[21];  /* symbol ring */
+    u8 held;      /* row is held by the player */
+    s32 stop : 8; /* frames left before the row settles, -1 while free */
+};
 
-typedef struct {
-    s32 pos;      /* +0   ring position, sixteen units per symbol, wraps at 336 */
-    u8 cell[21];  /* +4   symbol ring */
-    u8 held;      /* +25  row is held by the player */
-    u8 stop;      /* +26  frames left before the row settles, 0xff while free */
-    u8 unk_1b;    /* +27 */
-} ReelRow;
+struct ReelObject {
+    volatile u32 attr01;
+    volatile u32 attr2;
+};
 
-typedef struct {
-    ReelRow row[5];   /* +0    */
-    s32 state;        /* +140  */
-    s32 cursor;       /* +144  0..4 pick a row, 5 picks the confirm slot */
-    s32 spins;        /* +148  */
-    s32 bet;          /* +152  */
-    u16 keys;         /* +156  pad seen last frame */
-    u16 dir;          /* +158  direction bits, cleared while the repeat runs */
-    u16 pressed;      /* +160  newly pressed bits */
-    u16 repeat;       /* +162  */
-    u8 unk_a4[4];     /* +164  */
-    s32 timer;        /* +168  */
-    s32 line[7];      /* +172  per-line win flags */
-    u32 obj[128][2];  /* +200  object attribute buffer */
-    s32 win;          /* +1224 */
-    s32 sub_win;      /* +1228 */
-    u8 unk_4d0[8];    /* +1232 */
-    u32 fade[80];     /* +1240 per-scanline source for the HBlank transfer */
-    s32 phase;        /* +1560 which prompt the window currently shows */
-} ReelWork;
+struct ReelWork {
+    struct ReelRow row[5];
+    s32 state;
+    s32 cursor;       /* 0..4 pick a row, 5 picks the lever */
+    s32 spins;
+    s32 bet;
+    u16 keys;         /* pad seen last frame */
+    u16 dir;          /* direction bits, cleared while the repeat runs */
+    u16 pressed;      /* newly pressed bits */
+    u16 repeat;
+    u8 unknown_0a4[4];
+    s32 timer;
+    s32 line[7];      /* per-line win flags */
+    struct ReelObject obj[128];
+    s32 window;
+    s32 sub_window;
+    u8 unknown_4d0[8];
+    u16 scanline_offsets[160];
+    s32 phase;        /* which prompt the window currently shows */
+};
 
-typedef union {
-    s32 v;
-    struct {
-        u16 frac;
-        s16 whole;
-    } h;
-} ReelFixed;
+struct ReelSave {
+    u8 unknown_000[0x120];
+    s8 won_prizes[16];
+};
 
-typedef struct {
-    ReelFixed x;   /* +0  */
-    ReelFixed y;   /* +4  */
-    s32 unk_08;
-    s32 unk_0c;
-    s32 vel;       /* +16 */
-    s32 unk_14;
-    s32 bounce;    /* +24 */
-} ReelSpark;
-
-extern ReelWork *Data_03001f04;
+extern u8 gBattleFxWork[];
+extern volatile u32 gKeysHeld;
+extern u8 gDebugPaused;
+extern char MsgSlotsBet;
+extern struct ReelSave gReelSave;
+extern const u8 Data_080f870c[];
+extern const u8 Data_080f8712[];
+extern const u8 Data_080f871a[];
+extern const u8 Data_080f8728[];
 
 void ReelGame_RunFrame(void)
 {
-    ReelWork *work;
-    u8 *heap;
-    volatile u16 *reg;
-    u32 pad;
+    struct ReelWork *work;
+    struct BattleEffectWork *fx;
+    volatile u16 *dma;
+    s32 n;
     s32 blend;
-    s32 oam;
+    u16 pad;
     s32 coins;
     s32 all;
     s32 cnt;
@@ -117,341 +102,313 @@ void ReelGame_RunFrame(void)
     s32 v;
     s32 x;
     s32 y;
-    u32 i;
-    u32 j;
+    s32 k;
+    s32 i;
 
-    work = Data_03001f04;
-    heap = *(u8 **)((u8 *)&Data_03001f04 - 24);
+    work = ((struct ReelWork **)gBattleFxWork)[6];
+    fx = ((struct BattleEffectWork **)gBattleFxWork)[0];
     blend = 0x400;
-    oam = 0;
+    n = 0;
 
     Random16();
 
-    reg = (volatile u16 *)0x040000b0;
-    reg[5] &= 0xc5ff;
-    reg[5] &= 0x7fff;
-    reg[5];
+    dma = REG_DMA0;
+    dma[5] &= 0xc5ff;
+    dma[5] &= 0x7fff;
+    dma[5];
+    Dma_Set(work->scanline_offsets, (void *)0x04000054, 0xa2600001,
+            (volatile u32 *)dma);
 
-    Dma_Set(work->fade, (void *)0x04000054, 0xa2600001,
-            (volatile u32 *)0x040000b0);
-
-    pad = *(volatile u32 *)0x03001ae8;
-    work->pressed = (u16)pad & ~work->keys;
-    work->dir = (u16)(*(volatile u32 *)0x03001ae8 & 0xf0);
+    pad = gKeysHeld;
+    work->pressed = pad & ~work->keys;
+    work->dir = gKeysHeld & 0xf0;
     if ((work->keys & 0xf0) == work->dir) {
         if (work->repeat > 12)
             work->repeat = 12;
         if (work->repeat == 0) {
             work->repeat = 4;
         } else {
-            work->repeat -= 1;
-            work->dir = 0;
+            work->repeat--;
+            work->dir = n;
         }
     } else {
         work->repeat = 12;
     }
-    work->keys = (u16)pad;
+    work->keys = pad;
 
-    if (*(u8 *)0x03001d20 != 0)
+    if (gDebugPaused != 0)
         goto build_objects;
 
     if (work->state == 0) {
         coins = PartyInventory_CountItemFar(228);
-        UiText_DrawNumberInWindowFar(coins - work->bet, 2, work->sub_win, 64, 0);
-        UiText_DrawNumberInWindowFar(work->bet, 2, work->sub_win, 64, 8);
-        if ((work->pressed & 2) != 0) {
+        UiNumber_DrawAt(coins - work->bet, 2, work->sub_window, 64, 0);
+        UiNumber_DrawAt(work->bet, 2, work->sub_window, 64, 8);
+        if (work->pressed & 2) {
             work->state = 10;
-            Data_0200024c[0x120] = 254;
-            UiWork_FinalizeFar(work->win, 1);
+            gReelSave.won_prizes[0] = 254;
+            UiWork_FinalizeFar(work->window, 1);
             goto build_objects;
         }
-        if ((work->pressed & 0x40) != 0) {
+        if (work->pressed & 0x40) {
             if (work->bet <= 3 && coins > work->bet) {
-                work->bet += 1;
-                Audio_PlayCue(111);
+                work->bet++;
+                AudioCommand_PlayFar(111);
             } else {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
             }
         }
-        if ((work->pressed & 0x80) != 0) {
+        if (work->pressed & 0x80) {
             if (work->bet > 1) {
-                work->bet -= 1;
-                Audio_PlayCue(111);
+                work->bet--;
+                AudioCommand_PlayFar(111);
             } else {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
             }
         }
-{
-            volatile u16 *blendReg = (volatile u16 *)0x04000050;
-            blendReg[0] = 0x3fd0;
-            blendReg[1] = 0x0010;
+        REG_BLDCNT = 0x3fd0;
+        REG_BLDALPHA = 0x10;
+        if (work->pressed & 1) {
+            work->state = 1;
+            fx->reel_stop_frames = 0;
+            UiWork_FinalizeFar(work->window, 1);
+            for (k = 0; k != work->bet; k++)
+                PartyInventory_RemoveFar(228);
+            UiWork_FinalizeFar(work->sub_window, 1);
+            AudioCommand_PlayFar(0x130);
         }
-        if ((work->pressed & 1) == 0)
-            goto build_objects;
-        work->state = 1;
-        *(s32 *)(heap + 0x778c) = 0;
-        UiWork_FinalizeFar(work->win, 1);
-        for (i = 0; i < (u32)work->bet; i++)
-            PartyInventory_RemoveFar(228);
-        UiWork_FinalizeFar(work->sub_win, 1);
-        Audio_PlayCue(0x130);
-        goto build_objects;
-    }
-
-    if (work->state == 5) {
-        work->timer += 1;
+    } else if (work->state == 5) {
         all = 0;
-        for (i = 0; i < 5; i++) {
-            if (work->row[i].held == 0)
-                break;
-        }
-        if (i == 5)
+        work->timer++;
+        for (k = 0; k != 5 && work->row[k].held != 0; k++)
+            ;
+        if (k == 5)
             all = 1;
-        if ((work->pressed & 1) != 0) {
+        if (work->pressed & 1) {
             work->timer = 0;
-            *(s32 *)(heap + 0x778c) = 0;
+            fx->reel_stop_frames = 0;
             if (work->spins == 4) {
                 work->spins = 0;
                 work->cursor = 0;
                 work->state = 0;
-                for (i = 0; i < 5; i++) {
+                for (i = 0; i != 5; i++) {
                     work->row[i].held = 0;
-                    work->row[i].stop |= 255;
+                    work->row[i].stop = -1;
                 }
             } else if (work->cursor <= 4) {
-                Audio_PlayCue(0x131);
+                AudioCommand_PlayFar(0x131);
                 work->row[work->cursor].held ^= 1;
             } else if (all == 0) {
-                Audio_PlayCue(0x130);
+                AudioCommand_PlayFar(0x130);
                 work->state = 1;
                 work->cursor = 0;
-                for (i = 0; i < 5; i++)
-                    work->row[i].stop |= 255;
-                work->spins += 1;
+                for (i = 0; i != 5; i++)
+                    work->row[i].stop = -1;
+                work->spins++;
             } else {
-                Audio_PlayCue(113);
+                AudioCommand_PlayFar(113);
             }
         } else {
-            if ((work->dir & 16) != 0) {
-                work->cursor = __modsi3(work->cursor + 1, 6);
-                Audio_PlayCue(111);
+            if (work->dir & 0x10) {
+                work->cursor = (work->cursor + 1) % 6;
+                AudioCommand_PlayFar(111);
             }
-            if ((work->dir & 32) != 0) {
-                work->cursor = __modsi3(work->cursor + 5, 6);
-                Audio_PlayCue(111);
+            if (work->dir & 0x20) {
+                work->cursor = (work->cursor + 5) % 6;
+                AudioCommand_PlayFar(111);
             }
         }
 
         if (work->state == 5) {
             if (work->cursor == 5) {
                 if (all != 0) {
-                    if ((u32)(work->phase - 1) > 1) {
-                        UiWork_FinalizeFar(work->win, 1);
-                        work->win = UiWindow_CreateFar(11, 0, 19, 4, 6);
-                        UiText_DrawCharacterAtOffsetFar(0x912, work->win, 0, 0);
+                    if (work->phase != 1 && work->phase != 2) {
+                        UiWork_FinalizeFar(work->window, 1);
+                        work->window = UiWindow_CreateFar(11, 0, 19, 4, 6);
+                        UiText_DrawCharacterAtOffsetFar(0x912, work->window, 0, 0);
                         work->phase = 1;
                     } else if (work->phase == 1) {
-                        UiText_DrawCharacterAtOffsetFar(0x913, work->win, 0, 8);
+                        UiText_DrawCharacterAtOffsetFar(0x913, work->window, 0, 8);
                         work->phase = 2;
                     }
                 } else {
                     if (work->phase != 3) {
-                        UiWork_FinalizeFar(work->win, 1);
-                        work->win = UiWindow_CreateFar(16, 0, 14, 3, 6);
-                        UiText_DrawCharacterAtOffsetFar(0x90f, work->win, 0, 0);
+                        UiWork_FinalizeFar(work->window, 1);
+                        work->window = UiWindow_CreateFar(16, 0, 14, 3, 6);
+                        UiText_DrawCharacterAtOffsetFar(0x90f, work->window, 0, 0);
                     }
                     work->phase = 3;
                 }
             } else if (work->row[work->cursor].held == 0) {
                 if (work->phase != 4) {
-                    UiWork_FinalizeFar(work->win, 1);
-                    work->win = UiWindow_CreateFar(23, 0, 7, 3, 6);
-                    UiText_DrawCharacterAtOffsetFar(0x90d, work->win, 0, 0);
+                    UiWork_FinalizeFar(work->window, 1);
+                    work->window = UiWindow_CreateFar(23, 0, 7, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar(0x90d, work->window, 0, 0);
                 }
                 work->phase = 4;
             } else {
                 if (work->phase != 5) {
-                    UiWork_FinalizeFar(work->win, 1);
-                    work->win = UiWindow_CreateFar(23, 0, 7, 3, 6);
-                    UiText_DrawCharacterAtOffsetFar(0x90e, work->win, 0, 0);
+                    UiWork_FinalizeFar(work->window, 1);
+                    work->window = UiWindow_CreateFar(23, 0, 7, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar(0x90e, work->window, 0, 0);
                 }
                 work->phase = 5;
             }
         } else {
-            UiWork_FinalizeFar(work->win, 1);
+            UiWork_FinalizeFar(work->window, 1);
         }
-        goto build_objects;
-    }
-
-    if (work->state == 2) {
-        work->timer += 1;
+    } else if (work->state == 2) {
+        work->timer++;
         blend = 0;
-        if (work->timer != 60)
-            goto build_objects;
-        work->state = 3;
-        Audio_PlayCue(93);
-        work->timer = 0;
-{
-            volatile u16 *blendReg = (volatile u16 *)0x04000050;
-            blendReg[0] = 0x3f44;
-            blendReg[1] = 0x1010;
+        if (work->timer == 60) {
+            work->state = 3;
+            AudioCommand_PlayFar(93);
+            work->timer = 0;
+            REG_BLDCNT = 0x3f44;
+            REG_BLDALPHA = 0x1010;
+            fx->transfer_mode = 2;
+            fx->transfer_value = 75;
         }
-        *(s32 *)(heap + 0x7780) = 2;
-        *(s32 *)(heap + 0x7784) = 75;
-        goto build_objects;
-    }
-
-    if (work->state == 3) {
-        work->timer += 1;
+    } else if (work->state == 3) {
+        work->timer++;
         blend = 0;
-        if ((work->pressed & 1) == 0)
-            goto build_objects;
-        work->state = 10;
-        Audio_PlayCue(112);
-        goto build_objects;
-    }
-
-    if (work->state == 11) {
+        if (work->pressed & 1) {
+            work->state = 10;
+            AudioCommand_PlayFar(112);
+        }
+    } else if (work->state == 11) {
         if (work->phase == 0) {
             work->phase = 1;
-            UiText_DrawCharacterAtOffsetFar(0x90c, work->win, 0, 8);
+            UiText_DrawCharacterAtOffsetFar(0x90c, work->window, 0, 8);
         }
-        if ((work->pressed & 1) == 0)
-            goto build_objects;
-        work->state = 5;
-        work->phase = 0;
-        Audio_PlayCue(112);
-        UiWork_FinalizeFar(work->win, 1);
-        goto build_objects;
-    }
-
-    if (work->state == 20) {
-        work->timer += 1;
-        if (work->timer != 45)
-            goto build_objects;
-        work->state = 10;
-        goto build_objects;
-    }
-
-    if (work->state == 10)
-        goto build_objects;
-
-    /* Reels are turning. */
-    if (work->timer == 4) {
-        work->win = UiWindow_CreateFar(18, 17, 12, 3, 6);
-        UiText_DrawCharacterAtOffsetFar(0x90a, work->win, 0, 0);
-    }
-    if (work->timer == 16)
-        Audio_PlayCue(0x132);
-    if (work->timer > 56) {
-        if (*(s32 *)(heap + 0x778c) > 31 || (work->pressed & 0x100) != 0) {
-            *(s32 *)(heap + 0x778c) = 0;
-            for (i = 0; i < 5; i++) {
-                if (work->row[i].held == 0 && (s8)work->row[i].stop == -1) {
-                    work->row[i].stop = (Random16() & 3) + 4;
-                    Audio_PlayCue(0x133);
-                    break;
-                }
-            }
+        if (work->pressed & 1) {
+            work->state = 5;
+            work->phase = 0;
+            AudioCommand_PlayFar(112);
+            UiWork_FinalizeFar(work->window, 1);
         }
-    }
-
-    for (i = 0; i < 5; i++) {
-        if ((s8)work->row[i].stop > 0)
-            work->row[i].stop -= 1;
-    }
-
-    cnt = 0;
-    for (i = 0; i < 5; i++) {
-        if (work->row[i].held == 1 ||
-            ((s8)work->row[i].stop == 0 && (work->row[i].pos & 15) == 8))
-            cnt += 1;
-    }
-
-    if (cnt == 5) {
-        hits = 0;
-        for (col = 0; col < 7; col++) {
-            work->line[col] = 0;
-            mixed = 0;
-            found = -1;
-            if (col > 3 - work->bet && col < work->bet + 3) {
-                for (i = 0; i < 5; i++) {
-                    if (col == 0)
-                        v = i - (work->row[i].pos / 16) + 22;
-                    else if (col == 6)
-                        v = -i - (work->row[i].pos / 16) + 26;
-                    else
-                        v = col - (work->row[i].pos / 16) + 21;
-                    v = work->row[i].cell[__modsi3(v, 21)];
-                    if (v != 5) {
-                        if (found == -1)
-                            found = v;
-                        else if (found != v)
-                            mixed = 1;
+    } else if (work->state == 20) {
+        work->timer++;
+        if (work->timer == 45)
+            work->state = 10;
+    } else if (work->state != 10) {
+        /* Reels are turning. */
+        if (work->timer == 4) {
+            work->window = UiWindow_CreateFar(18, 17, 12, 3, 6);
+            UiText_DrawCharacterAtOffsetFar(0x90a, work->window, 0, 0);
+        }
+        if (work->timer == 16)
+            AudioCommand_PlayFar(0x132);
+        if (work->timer > 56) {
+            if (fx->reel_stop_frames > 31 || (work->pressed & 0x100)) {
+                fx->reel_stop_frames = 0;
+                for (i = 0; i != 5; i++) {
+                    if (work->row[i].held == 0 && work->row[i].stop == -1) {
+                        work->row[i].stop = (Random16() & 3) + 4;
+                        AudioCommand_PlayFar(0x133);
+                        break;
                     }
                 }
-                if (mixed == 0) {
-                    work->line[col] = 1;
-                    Data_0200024c[0x120 + hits] = Data_080f870c[found];
-                    hits += 1;
-                }
             }
         }
-        work->timer = 0;
-        if (hits != 0) {
-            Data_0200024c[0x120 + hits] = 0xff;
-            work->state = 2;
-            Audio_PlayCue(171);
-            *(s32 *)(heap + 0x7780) = 1;
-            *(s32 *)(heap + 0x7784) = 0;
-            *(u16 *)0x04000050 = 0;
-            UiWork_FinalizeFar(work->win, 1);
-        } else {
-            work->state = 11;
-            work->phase = 0;
-            UiWork_FinalizeFar(work->win, 1);
-            work->win = UiWindow_CreateFar(3, 16, 24, 4, 6);
-            UiText_DrawCharacterAtOffsetFar(0x90b, work->win, 0, 0);
-            if (work->spins == 4) {
-                coins = PartyInventory_CountItemFar(228);
-                if (coins > 0)
-                    work->state = 20;
-                else
-                    work->state = 20;
-                if (work->bet > coins)
-                    work->bet = coins;
-                work->spins = 0;
-                work->cursor = 0;
-                for (i = 0; i < 5; i++) {
-                    work->row[i].held = 0;
-                    work->row[i].stop |= 255;
-                }
-                *(s32 *)(heap + 0x7780) = 1;
-                *(s32 *)(heap + 0x7784) = 0;
-                *(u16 *)0x04000050 = 0;
-                work->sub_win = UiWindow_CreateFar(18, 0, 12, 4, 6);
-                UiText_DrawCharacterAtOffsetFar(0x905, work->sub_win, 0, 8);
-                UiText_DrawCharacterAtOffsetFar(0x904, work->sub_win, 0, 0);
-            }
-        }
-    }
 
-    if (work->state == 1) {
-        for (i = 0; i < 5; i++) {
-            if (work->row[i].held == 0) {
-                if ((s8)work->row[i].stop != 0 || (work->row[i].pos & 15) != 8) {
-                    v = work->row[i].pos + 8;
-                    work->row[i].pos = v;
-                } else {
-                    v = work->row[i].pos;
+        for (i = 0; i != 5; i++) {
+            if (work->row[i].stop > 0)
+                work->row[i].stop--;
+        }
+
+        cnt = 0;
+        for (i = 0; i != 5; i++) {
+            if (work->row[i].held == 1 ||
+                (work->row[i].stop == 0 && (work->row[i].pos & 15) == 8))
+                cnt++;
+        }
+
+        if (cnt == 5) {
+            hits = 0;
+            for (col = 0; col != 7; col++) {
+                work->line[col] = 0;
+                mixed = 0;
+                found = -1;
+                if (col > 3 - work->bet && col < work->bet + 3) {
+                    for (i = 0; i != 5; i++) {
+                        if (col == 0)
+                            v = i - work->row[i].pos / 16 + 22;
+                        else if (col == 6)
+                            v = -i - work->row[i].pos / 16 + 26;
+                        else
+                            v = col - work->row[i].pos / 16 + 21;
+                        v = work->row[i].cell[v % 21];
+                        if (v != 5) {
+                            if (found == -1)
+                                found = v;
+                            else if (found != v)
+                                mixed = 1;
+                        }
+                    }
+                    if (mixed == 0) {
+                        work->line[col] = 1;
+                        gReelSave.won_prizes[0 + hits] = Data_080f870c[found];
+                        hits++;
+                    }
                 }
-                if (v == 336)
-                    work->row[i].pos = 0;
+            }
+            work->timer = 0;
+            if (hits != 0) {
+                gReelSave.won_prizes[0 + hits] = -1;
+                work->state = 2;
+                AudioCommand_PlayFar(171);
+                fx->transfer_mode = 1;
+                fx->transfer_value = 0;
+                REG_BLDCNT = 0;
+                UiWork_FinalizeFar(work->window, 1);
+            } else {
+                work->state = 11;
+                work->phase = 0;
+                UiWork_FinalizeFar(work->window, 1);
+                work->window = UiWindow_CreateFar(3, 16, 24, 4, 6);
+                UiText_DrawCharacterAtOffsetFar(0x90b, work->window, 0, 0);
+                if (work->spins == 4) {
+                    s32 left = PartyInventory_CountItemFar(228);
+                    s32 window;
+                    s32 message;
+
+                    if (left > 0)
+                        work->state = 20;
+                    else
+                        work->state = 20;
+                    if (work->bet > left)
+                        work->bet = left;
+                    work->spins = 0;
+                    work->cursor = 0;
+                    for (i = 0; i != 5; i++) {
+                        work->row[i].held = 0;
+                        work->row[i].stop = -1;
+                    }
+                    fx->transfer_mode = 1;
+                    fx->transfer_value = 0;
+                    REG_BLDCNT = 0;
+                    window = UiWindow_CreateFar(18, 0, 12, 4, 6);
+                    work->sub_window = window;
+                    message = (s32)&MsgSlotsBet;
+                    UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar(message - 1, work->sub_window, 0, 0);
+                }
             }
         }
+
+        if (work->state == 1) {
+            for (i = 0; i != 5; i++) {
+                if (work->row[i].held == 0) {
+                    if (work->row[i].stop != 0 || (work->row[i].pos & 15) != 8)
+                        work->row[i].pos += 8;
+                    if (work->row[i].pos == 336)
+                        work->row[i].pos = 0;
+                }
+            }
+        }
+        (fx->reel_stop_frames)++;
+        work->timer++;
     }
-    *(s32 *)(heap + 0x778c) += 1;
-    work->timer += 1;
 
 build_objects:
     if (work->state == 5) {
@@ -464,90 +421,87 @@ build_objects:
             x = 208;
             y = 32;
         }
-        work->obj[0][0] = (((x - 12) << 16) | blend | (y + 8)) | 0x80006000;
-        work->obj[0][1] = (v << 4) + 0x2b0;
-        work->obj[1][0] = (((x + 12) << 16) | blend | (y + 8)) | 0x90006000;
-        work->obj[1][1] = (v << 4) + 0x2b0;
-        work->obj[2][0] = ((x << 16) | blend | y) | 0x80002000;
-        work->obj[2][1] = 0x1f0;
-        oam = 3;
+        work->obj[n].attr01 = ((x - 12) << 16) | blend | (y + 8) | 0x80006000;
+        work->obj[n].attr2 = (v << 4) + 0x2b0;
+        n++;
+        work->obj[n].attr01 = ((x + 12) << 16) | blend | (y + 8) | 0x90006000;
+        work->obj[n].attr2 = (v << 4) + 0x2b0;
+        n++;
+        work->obj[n].attr01 = (x << 16) | blend | y | 0x80002000;
+        work->obj[n].attr2 = 0x1f0;
+        n++;
     }
 
     if (work->state == 3) {
-        for (i = 0; i < 8; i++) {
-            ReelSpark *p = (ReelSpark *)(heap + 0x7080) + i;
+        for (i = 0; i != 8; i++) {
+            struct EffectStep *p = &fx->particles[i];
 
-            work->obj[oam][0] = (((p->x.h.whole << 16) | blend) |
-                                 ((p->y.h.whole + 256) & 255)) | 0x80000000;
-            work->obj[oam][1] = ((Data_080f8712[i] << 4) + 0x370) | 0xf000;
-            p->y.v += p->vel;
-            p->vel += 0x4000;
-            if (work->timer % 256 == (s32)(i * 4 + 200)) {
-                p->vel = 0x60000;
-                p->bounce = 0;
+            work->obj[n].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | blend |
+                                  ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
+            work->obj[n].attr2 = ((Data_080f8712[i] << 4) + 0x370) | 0xf000;
+            p->y += p->velocity_y;
+            p->velocity_y += 0x4000;
+            if (work->timer % 256 == i * 4 + 200) {
+                p->velocity_y = 0x60000;
+                p->variant = 0;
             }
-            if (p->y.v > 0x400000) {
-                p->y.v = 0x400000;
-                if (p->bounce <= 1)
-                    p->vel = -p->vel / 2;
-                p->bounce += 1;
+            if (p->y > 0x400000) {
+                p->y = 0x400000;
+                if (p->variant <= 1)
+                    p->velocity_y = -p->velocity_y / 2;
+                p->variant++;
             }
-            oam += 1;
+            n++;
         }
     }
 
-    for (i = 0; i < 14; i++) {
-        work->obj[oam][0] =
-            ((Data_080f871a[i] << 16) | blend | Data_080f8728[i]) | 0x80006000;
-        if (i <= 3)
-            work->obj[oam][1] = 0x4e0;
+    for (k = 0; k != 14; k++) {
+        work->obj[n].attr01 = (Data_080f871a[k] << 16) | blend | Data_080f8728[k] | 0x80006000;
+        if (k <= 3)
+            work->obj[n].attr2 = 0x4e0;
         else
-            work->obj[oam][1] = 0x4e8;
-        oam += 1;
+            work->obj[n].attr2 = 0x4e8;
+        n++;
     }
 
-    x = 0x200000;
-    for (i = 0; i < 5; i++) {
-        work->obj[oam][0] = (blend | x) | 0x8000207c;
-        if (work->row[i].held == 0)
-            work->obj[oam][1] = 0x460;
-        else
-            work->obj[oam][1] = 0x480;
-        oam += 1;
-        x += 0x240000;
-    }
-
-    x = 0x200000;
-    for (i = 0; i < 5; i++) {
-        work->obj[oam][0] = (blend | x) | 0x80006003;
-        if (i == (u32)work->spins)
-            work->obj[oam][1] = (i * 32 + 0x210) | 0x400;
-        else
-            work->obj[oam][1] = (i * 32 + 0x220) | 0x400;
-        oam += 1;
-        x += 0x100000;
-    }
-
-    for (i = 0; i < 7; i++) {
-        work->obj[oam][0] = (((((0x204 - ((i & 1) << 3)) & 0x1ff) << 16) |
-                              blend) | (i * 16 + 5)) | 0x80002000;
-        if ((s32)i > 3 - work->bet && (s32)i < work->bet + 3)
-            work->obj[oam][1] = 0x5d0;
-        else
-            work->obj[oam][1] = 0x510;
-        oam += 1;
-    }
-
-    x = 0x280000;
-    for (i = 0; i < 5; i++) {
-        for (j = 0; j < 7; j++) {
-            work->obj[oam][0] =
-                ((j * 16 + (work->row[i].pos % 16) + 4) | x) | 0x80006000;
-            v = __modsi3(j - (work->row[i].pos / 16) + 21, 21);
-            work->obj[oam][1] = (work->row[i].cell[v] << 4) | 0x800;
-            oam += 1;
+    for (i = 0; i != 5; i++) {
+        if (work->row[i].held == 0) {
+            work->obj[n].attr01 = blend | ((i * 36 + 32) << 16) | 0x8000207c;
+            work->obj[n].attr2 = 0x460;
+        } else {
+            work->obj[n].attr01 = blend | ((i * 36 + 32) << 16) | 0x8000207c;
+            work->obj[n].attr2 = 0x480;
         }
-        x += 0x200000;
+        n++;
+    }
+
+    for (i = 0; i != 5; i++) {
+        work->obj[n].attr01 = blend | ((i * 16 + 32) << 16) | 0x80006003;
+        if (i == work->spins)
+            work->obj[n].attr2 = (i * 32 + 0x210) | 0x400;
+        else
+            work->obj[n].attr2 = (i * 32 + 0x220) | 0x400;
+        n++;
+    }
+
+    for (col = 0; col != 7; col++) {
+        work->obj[n].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
+                              blend | (col * 16 + 5) | 0x80002000;
+        if (col > 3 - work->bet && col < work->bet + 3)
+            work->obj[n].attr2 = 0x5d0;
+        else
+            work->obj[n].attr2 = 0x510;
+        n++;
+    }
+
+    for (i = 0; i != 5; i++) {
+        for (col = 0; col != 7; col++) {
+            work->obj[n].attr01 = (col * 16 + work->row[i].pos % 16 + 4) |
+                                  ((i * 32 + 40) << 16) | 0x80006000;
+            work->obj[n].attr2 =
+                (work->row[i].cell[(col - work->row[i].pos / 16 + 21) % 21] << 4) | 0x800;
+            n++;
+        }
     }
 
     y = 40;
@@ -557,31 +511,30 @@ build_objects:
         else if (work->timer <= 55)
             y = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
     }
-    work->obj[oam][0] = (y | blend) | 0x80d06000;
-    work->obj[oam][1] = 0x500;
-    oam += 1;
+    work->obj[n].attr01 = y | blend | 0x80d06000;
+    work->obj[n].attr2 = 0x500;
+    n++;
 
-    for (i = 0; i < 8; i++) {
-        work->obj[oam][0] = (blend | (i * 16 + 12)) | 0x80ce6000;
-        if (i == 0)
-            work->obj[oam][1] = 0x540;
-        else if (i == 1)
-            work->obj[oam][1] = 0x550;
-        else if (i == 6)
-            work->obj[oam][1] = 0x570;
-        else if (i == 7)
-            work->obj[oam][1] = 0x580;
+    for (k = 0; k != 8; k++) {
+        work->obj[n].attr01 = blend | (k * 16 + 12) | 0x80ce6000;
+        if (k == 0)
+            work->obj[n].attr2 = 0x540;
+        else if (k == 1)
+            work->obj[n].attr2 = 0x550;
+        else if (k == 6)
+            work->obj[n].attr2 = 0x570;
+        else if (k == 7)
+            work->obj[n].attr2 = 0x580;
         else
-            work->obj[oam][1] = 0x560;
-        oam += 1;
+            work->obj[n].attr2 = 0x560;
+        n++;
     }
 
-    while (oam != 128) {
-        work->obj[oam][0] = 0x40f02000;
-        work->obj[oam][1] = 0;
-        oam += 1;
+    while (n != 128) {
+        work->obj[n].attr01 = 0x40f02000;
+        work->obj[n].attr2 = 0;
+        n++;
     }
 
-    Dma_Set(work->obj, (void *)0x07000000, (oam * 2) | 0x84000000,
-            (volatile u32 *)0x040000d4);
+    Dma_Set(work->obj, (void *)0x07000000, (n * 2) | 0x84000000, REG_DMA3);
 }

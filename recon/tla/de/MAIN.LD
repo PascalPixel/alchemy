@@ -1435,7 +1435,7 @@
 {
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/CLEAR_BUFFER.o"(.text .rodata .data .padding)
     "*/recon/tla/de/rom.o"(.rom.001c16ca)
-    "*/recon/tla/de/rom.o"(.rom.001c171c)
+    "*/games/THE LOST AGE/SRC/SOUND/DRIVER/SEQUENCE_COMMANDS.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/UPDATE.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/TRACK_STOP.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/CALCULATE_STEREO_VOLUME.o"(.text .rodata .data .padding)

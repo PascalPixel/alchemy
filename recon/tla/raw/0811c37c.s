@@ -10,7 +10,7 @@ Func_0811c37c:
 	lsls r2, r2, #1
 	adds r3, r0, r2
 	ldrh r0, [r3]
-	bl Func_08128194
+	bl Summon_GetEntryByte4
 	lsls r0, r0, #24
 	lsrs r3, r0, #8
 	cmp r3, #0

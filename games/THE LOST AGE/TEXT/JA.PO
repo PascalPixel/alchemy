@@ -25399,7 +25399,7 @@ msgctxt "message"
 msgid "06347"
 msgstr "{actor_name:5}よ みごとじゃ これからも{line_break}あやしいばしょでは エナジーを使い{line_break}目の前のナゾをときあかすのじゃぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldRopeThrownAgain"
 msgid "06348"
 msgstr "いーかい それじゃ{line_break}もう いっかい{line_break}ロープをなげるよ!{end_wait}"
 
@@ -25431,7 +25431,7 @@ msgctxt "message"
 msgid "06355"
 msgstr "わかったから けっして{line_break}ムリに 下りちゃダメだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStartledCompanion"
 msgid "06356"
 msgstr "わっ ビックリした。{end_wait}"
 
@@ -25447,7 +25447,7 @@ msgctxt "MsgFieldICantFindAnythingAroundHere"
 msgid "06359"
 msgstr "なにか さがしてこいって{line_break}ペチャロは いってたけど{line_break}なんにも 見つからないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPraiseRopeWork"
 msgid "06360"
 msgstr "せいこうじゃぞ {actor_name:5}。{end_wait}"
 
@@ -25555,7 +25555,7 @@ msgctxt "message"
 msgid "06386"
 msgstr "さっ ワシらも出発じゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStatueLikeDeriShrine"
 msgid "06387"
 msgstr "デリィ村の神殿の像と{line_break}よくにた 像がある。{end_wait}"
 
@@ -26135,11 +26135,11 @@ msgctxt "message"
 msgid "06531"
 msgstr "このアナ・・・じつは{line_break}チャンパが ほっただけの{line_break}アナじゃなかったんだよね{page_break}チャンパがアナをほったから{line_break}町の下にある どうくつが{line_break}見つかっちゃったんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCaveFoundByChampa"
 msgid "06532"
 msgstr "どうやら このどうくつを{line_break}チャンパが ぐうぜん・・・{line_break}ほりあてたらしいんですよ{page_break}こういうぐうぜんを・・・{line_break}ひょうたんからコマって{line_break}いうんでしょうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoDugCave"
 msgid "06533"
 msgstr "だれが いつごろ・・・{line_break}どういうもくてきで{line_break}ほったアナなのかなあ。{end_wait}"
 
@@ -26811,11 +26811,11 @@ msgctxt "MsgMadoraPirateAttackParties"
 msgid "06700"
 msgstr "これだけ戦士をうしないながら{line_break}それでも地下にアナをほって{line_break}マドラをしゅうげきしたのね{page_break}2手に わけるだけの人が{line_break}よく のこってたわ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEyesOfTruth"
 msgid "06701"
 msgstr "しんじつの目でわれを見よ{line_break}さすれば門は開かれる{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorWontBudge"
 msgid "06702"
 msgstr "とびらはかたくとざされている{line_break}カギが かかっているようだ{end_wait}"
 
@@ -40903,7 +40903,7 @@ msgctxt "message"
 msgid "10223"
 msgstr "うずしおは こえられん・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaRecognizePsynergy"
 msgid "10224"
 msgstr "なんと エナジーではないか?{end_wait}"
 
@@ -41171,11 +41171,11 @@ msgctxt "message"
 msgid "10290"
 msgstr "みんなが 見たがっていた{line_break}レムリアの町ですよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploring"
 msgid "10291"
 msgstr "どうしたんじゃ {actor_name:5}よ{line_break}そっちは船のドックじゃが・・・{line_break}かえるつもりでは なかろうの{page_break}まだ レムリアにきたばかりじゃ{line_break}かえるなんて とんでもないぞ{line_break}もっとレムリアをたんけんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploringAlternate"
 msgid "10292"
 msgstr "どうしたんじゃ {actor_name:5}よ{line_break}そっちは船のドックじゃが・・・{line_break}かえるつもりでは なかろうの{page_break}まだ レムリアにきたばかりじゃ{line_break}かえるなんて とんでもないぞ{line_break}もっとレムリアをたんけんじゃ。{end_wait}"
 
@@ -44711,7 +44711,7 @@ msgctxt "message"
 msgid "11175"
 msgstr "いまなら まだ まにあう・・・{line_break}{actor_name:1}たちをたすけに行こうぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWaitingForCompanion"
 msgid "11176"
 msgstr "まっていましたよ {actor_name:5}。{end_wait}"
 
@@ -44751,11 +44751,11 @@ msgctxt "message"
 msgid "11185"
 msgstr "これで いいでしょう{line_break}いまなら まにあいます{line_break}さあ 行きなさい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFollowTrueFeelings"
 msgid "11186"
 msgstr "あなたは じぶんの気もちに{line_break}しょうじきになるべきです{line_break}さあ たすけに行きなさい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartWithAgatio"
 msgid "11187"
 msgstr "こんな ばめんになって・・・{line_break}{actor_name:4}をすくいたくなるとは{line_break}わたしも あまい男です・・・{page_break}これで アガティオたちとも{line_break}わかれるしかなくなりました。{end_wait}"
 
@@ -45539,7 +45539,7 @@ msgctxt "MsgFieldDoorLocked"
 msgid "11382"
 msgstr "カギがかかっている。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldShowAnemosPower"
 msgid "11383"
 msgstr "星をもつ者 その台に立ち{line_break}アネモスの力をしめせ!{end_wait}"
 
@@ -49539,7 +49539,7 @@ msgctxt "message"
 msgid "12382"
 msgstr "よし 出発じゃ{line_break}{actor_name:1}よ {actor_name:5}よ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallFirstApproach"
 msgid "12383"
 msgstr "スクレータ 見てよこれ 海が{line_break}氷のカベでふさがれてるわ。{end_wait}"
 
@@ -49547,7 +49547,7 @@ msgctxt "message"
 msgid "12384"
 msgstr "うーむ {actor_name:5}よ どうやら{line_break}氷のカベを なんとかせぬと{line_break}先にすすむのは むりのようじゃぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallCrewReposition"
 msgid "12385"
 msgstr "スクレータ 見てよこれ 海が{line_break}氷のカベでふさがれてるわ。{end_wait}"
 
@@ -49563,7 +49563,7 @@ msgctxt "message"
 msgid "12388"
 msgstr "{actor_name:5}よ 海にうかぶふたつの{line_break}氷のあいだに かくれたら{line_break}たいほうを 使うとしようぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipSafeFiringDistance"
 msgid "12389"
 msgstr "ここからなら たいほうを{line_break}うっても あんぜんですね。{end_wait}"
 
@@ -49591,7 +49591,7 @@ msgctxt "message"
 msgid "12395"
 msgstr "レッツ ゴー!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunFormation"
 msgid "12396"
 msgstr "黄金の太陽と よばれた・・・{line_break}錬金じゅつ きゅうきょくの{line_break}げんしょうが はじまる・・・。{end_wait}"
 
@@ -49599,7 +49599,7 @@ msgctxt "message"
 msgid "12397"
 msgstr "まって下さい まって・・・{line_break}わたしが アルファ山の{line_break}ちょうじょうにつくまで!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunEternalLifeAndPower"
 msgid "12398"
 msgstr "ついに・・・わたしは・・・{line_break}えいえんのいのちと・・・{line_break}すべての力を手に入れました。{end_wait}"
 

@@ -26111,7 +26111,7 @@ msgctxt "message"
 msgid "06525"
 msgstr "Bon travail, {actor_name:5}!{line_break}Gardons un ¾il sur toutes{line_break}les zones louches!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldRopeThrownAgain"
 msgid "06526"
 msgstr "C'est bon! Je vais{line_break}relancer la corde!{end_wait}"
 
@@ -26143,7 +26143,7 @@ msgctxt "message"
 msgid "06533"
 msgstr "J'y travaille! Mais ne fais{line_break}pas de bêtise, reste où tu{line_break}es, d'accord?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStartledCompanion"
 msgid "06534"
 msgstr "Aaah! Tu m'as fait peur!{end_wait}"
 
@@ -26159,7 +26159,7 @@ msgctxt "MsgFieldICantFindAnythingAroundHere"
 msgid "06537"
 msgstr "Il n'y a rien ici qui{line_break}pourrait m'aider à le{line_break}faire descendre!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPraiseRopeWork"
 msgid "06538"
 msgstr "Excellent travail, {actor_name:5}!{end_wait}"
 
@@ -26267,7 +26267,7 @@ msgctxt "message"
 msgid "06564"
 msgstr "Nous devrions partir nous aussi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStatueLikeDeriShrine"
 msgid "06565"
 msgstr "Cette statue ressemble beaucoup{line_break}à celle du sanctuaire de Daïla.{end_wait}"
 
@@ -26847,11 +26847,11 @@ msgctxt "message"
 msgid "06709"
 msgstr "Des hommes de Champa ont{line_break}creusé ce trou pour piller notre{line_break}village. Mais ce n'est pas tout...{page_break}Ce trou a révélé une galerie{line_break}qui s'étend sous le village.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCaveFoundByChampa"
 msgid "06710"
 msgstr "C'est quand même incroyable{line_break}que ces Champas aient trouvé{line_break}cette galerie par hasard...{page_break}C'est comme gagner à la loterie!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoDugCave"
 msgid "06711"
 msgstr "Qui a creusé cette galerie?{pause_20_skippable}{line_break}Et pourquoi?{end_wait}"
 
@@ -27523,11 +27523,11 @@ msgctxt "MsgMadoraPirateAttackParties"
 msgid "06878"
 msgstr "Ils étaient suffisamment{line_break}nombreux pour creuser ce{line_break}trou et attaquer Madra.{page_break}Et aussi pour former{line_break}deux commandos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEyesOfTruth"
 msgid "06879"
 msgstr "Regardez-moi, si votre{line_break}c¾ur est pur et sincère...{line_break}La porte s'ouvrira...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorWontBudge"
 msgid "06880"
 msgstr "La porte ne s'ouvre pas...{line_break}Elle doit être verrouillée.{end_wait}"
 
@@ -41503,7 +41503,7 @@ msgctxt "message"
 msgid "10373"
 msgstr "Jamais nous ne verrons Lémuria.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaRecognizePsynergy"
 msgid "10374"
 msgstr "C'était de la Psynergie,{line_break}n'est-ce pas?{end_wait}"
 
@@ -41771,11 +41771,11 @@ msgctxt "message"
 msgid "10440"
 msgstr "Vers Lémuria... La ville que{line_break}vous rêvez tous de voir...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploring"
 msgid "10441"
 msgstr "Déjà égaré, {actor_name:5}? Cette{line_break}route mène au port! Il est{line_break}trop tôt pour s'en aller!{page_break}Nous venons d'arriver à{line_break}Lémuria. Et nous n'avons{line_break}encore presque rien visité!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploringAlternate"
 msgid "10442"
 msgstr "Déjà égaré, {actor_name:5}? Cette{line_break}route mène au port! Il est{line_break}trop tôt pour s'en aller!{page_break}Nous venons d'arriver à{line_break}Lémuria. Et nous n'avons{line_break}encore presque rien visité!{end_wait}"
 
@@ -45307,7 +45307,7 @@ msgctxt "message"
 msgid "11324"
 msgstr "Il est encore temps de{line_break}venir en aide à {actor_name:1}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWaitingForCompanion"
 msgid "11325"
 msgstr "Ah, {actor_name:5}...{line_break}Je t'attendais.{end_wait}"
 
@@ -45347,11 +45347,11 @@ msgctxt "message"
 msgid "11334"
 msgstr "Considère ce geste comme{line_break}un cadeau. Tu peux les{line_break}secourir. Alors, vas-y...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFollowTrueFeelings"
 msgid "11335"
 msgstr "Ecoute ton c¾ur et{line_break}sauve tes amis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartWithAgatio"
 msgid "11336"
 msgstr "Je ressens moi aussi le{line_break}besoin d'aller aider {actor_name:4}...{line_break}Ma sensibilité me surprend...{page_break}Il est grand temps que je me{line_break}sépare d'Agatio et de Karstine.{end_wait}"
 
@@ -46135,7 +46135,7 @@ msgctxt "MsgFieldDoorLocked"
 msgid "11531"
 msgstr "La porte est verrouillée.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldShowAnemosPower"
 msgid "11532"
 msgstr "Détenteur de l'étoile...{line_break}Montrez-moi le{line_break}pouvoir d'Anémos!{end_wait}"
 
@@ -50135,7 +50135,7 @@ msgctxt "message"
 msgid "12531"
 msgstr "{actor_name:1}! {actor_name:5}!{line_break}Nous partons!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallFirstApproach"
 msgid "12532"
 msgstr "Thélos, viens voir...{line_break}Un gros bloc de glace{line_break}bloque le passage...{end_wait}"
 
@@ -50143,7 +50143,7 @@ msgctxt "message"
 msgid "12533"
 msgstr "Hum... Si nous ne faisons{line_break}rien, nous n'irons pas plus{line_break}loin, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallCrewReposition"
 msgid "12534"
 msgstr "Thélos, viens voir...{line_break}Un gros bloc de glace{line_break}bloque le passage...{end_wait}"
 
@@ -50159,7 +50159,7 @@ msgctxt "message"
 msgid "12537"
 msgstr "{actor_name:5}, emmène-nous entre{line_break}ces deux blocs de glace pour{line_break}nous protéger du coup de canon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipSafeFiringDistance"
 msgid "12538"
 msgstr "Si nous tirons d'ici, rien{line_break}ne peut nous arriver.{end_wait}"
 
@@ -50187,7 +50187,7 @@ msgctxt "message"
 msgid "12544"
 msgstr "En avant!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunFormation"
 msgid "12545"
 msgstr "Le Soleil d'Or... La quintessence{line_break}du pouvoir de l'Alchimie!{line_break}Il est en train de se former!{end_wait}"
 
@@ -50195,7 +50195,7 @@ msgctxt "message"
 msgid "12546"
 msgstr "Attends-moi! Je t'en supplie!{line_break}Attends que j'atteigne le{line_break}sommet du Mont Alpha!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunEternalLifeAndPower"
 msgid "12547"
 msgstr "Enfin! Je l'ai! La vie{line_break}éternelle... et une{line_break}force infinie!{end_wait}"
 

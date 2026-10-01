@@ -23,18 +23,22 @@ Engine_DebugCreateWindow:
 	.thumb_func
 Engine_DebugFinalizeWindow:
 	overlay_veneer UiWork_FinalizeFar
+	.if EDITION_INTERNATIONAL
 	.global UiText_OpenMessageWindow
 	.thumb_func
 UiText_OpenMessageWindow:
 	overlay_veneer UiText_OpenMessageWindowFar
+	.endif
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.if EDITION_INTERNATIONAL
 	.global UiWork_IsComplete
 	.thumb_func
 UiWork_IsComplete:
 	overlay_veneer UiWork_IsCompleteFar
+	.endif
 	.global UiText_DrawResource
 	.thumb_func
 UiText_DrawResource:
@@ -51,6 +55,7 @@ UiText_DrawStringInWindow:
 	.thumb_func
 UiText_DrawNumberAtOffset:
 	overlay_veneer UiText_DrawNumberAtOffsetFar
+	.if EDITION_INTERNATIONAL
 	.global UiWindow_CreateWithSideObject
 	.thumb_func
 UiWindow_CreateWithSideObject:
@@ -63,6 +68,7 @@ UiWork_PushValueSlot:
 	.thumb_func
 UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
+	.endif
 	.global Engine_DebugRedrawWindow
 	.thumb_func
 Engine_DebugRedrawWindow:
@@ -156,6 +162,12 @@ Event_SetValue1d8:
 BattleEv_RunWait:
 	overlay_veneer BattleEv_RunWaitFar
 	.endif
+	.endif
+	.ifeq EDITION_INTERNATIONAL
+	.global Menu_OpenCharacterSelector
+	.thumb_func
+Menu_OpenCharacterSelector:
+	overlay_veneer Menu_OpenCharacterSelectorFar
 	.endif
 	.global Engine_DebugDrawItemDetails
 	.thumb_func

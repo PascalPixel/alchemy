@@ -596,7 +596,7 @@ Func_020004b0:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020084dc:
-	.4byte 0x000017e2
+	.4byte MsgFieldStatueLikeDeriShrine
 	.section .text.x020084e0,"ax",%progbits
 	.global Func_020004e0
 	.thumb_func
@@ -644,7 +644,7 @@ Func_020004e0:
 .L_02008548:
 	.4byte gPartyState
 .L_0200854c:
-	.4byte 0x000017c3
+	.4byte MsgFieldStartledCompanion
 .L_02008550:
 	.4byte Data_02003c10
 	.section .text.x02008554,"ax",%progbits
@@ -3509,7 +3509,7 @@ Func_02001a3c:
 	bl Func_020039e0
 	pop {r5, pc}
 .L_02009d10:
-	.4byte 0x000017bb
+	.4byte MsgFieldRopeThrownAgain
 .L_02009d14:
 	.4byte gPartyState
 .L_02009d18:
@@ -3978,7 +3978,7 @@ Func_02001d24:
 .L_0200a160:
 	.4byte gPartyState
 .L_0200a164:
-	.4byte 0x000017c7
+	.4byte MsgFieldPraiseRopeWork
 .L_0200a168:
 	.4byte 0x0004cccc
 .L_0200a16c:

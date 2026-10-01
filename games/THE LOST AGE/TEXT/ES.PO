@@ -26139,7 +26139,7 @@ msgctxt "message"
 msgid "06532"
 msgstr "¡Buen trabajo, {actor_name:5}! ¡Ten{line_break}los ojos bien abiertos, nunca{line_break}sabes lo que puedes encontrar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldRopeThrownAgain"
 msgid "06533"
 msgstr "¡Prepárate! ¡Voy a tirarte{line_break}la cuerda una vez más!{end_wait}"
 
@@ -26171,7 +26171,7 @@ msgctxt "message"
 msgid "06540"
 msgstr "¡Bien! Pero ni se te ocurra tirarte{line_break}ni hacer algo de lo que te puedas{line_break}lamentar más tarde, ¿vale?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStartledCompanion"
 msgid "06541"
 msgstr "¡Ahí va! ¡Qué susto!{end_wait}"
 
@@ -26187,7 +26187,7 @@ msgctxt "MsgFieldICantFindAnythingAroundHere"
 msgid "06544"
 msgstr "¡No encuentro nada que me{line_break}sirva para ayudarlo a bajar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPraiseRopeWork"
 msgid "06545"
 msgstr "¡Excelente trabajo, {actor_name:5}!{end_wait}"
 
@@ -26295,7 +26295,7 @@ msgctxt "message"
 msgid "06571"
 msgstr "Nosotros también{line_break}deberíamos irnos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStatueLikeDeriShrine"
 msgid "06572"
 msgstr "Esta estatua se parece{line_break}mucho a la que hay en{line_break}el templo de Daila.{end_wait}"
 
@@ -26875,11 +26875,11 @@ msgctxt "message"
 msgid "06716"
 msgstr "Los champas cavaron este túnel{line_break}cuando asaltaron nuestro pueblo,{line_break}pero hay más...{page_break}¡El túnel descubrió una sima{line_break}subterránea que recorre todo{line_break}el pueblo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCaveFoundByChampa"
 msgid "06717"
 msgstr "Dudo que los champas{line_break}se toparan con esta{line_break}cueva por casualidad...{page_break}¡Es como si les hubiera{line_break}tocado la lotería!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoDugCave"
 msgid "06718"
 msgstr "¿Quién habrá excavado{line_break}esta cueva?{pause_20_skippable} ¿Y por qué?{end_wait}"
 
@@ -27551,11 +27551,11 @@ msgctxt "MsgMadoraPirateAttackParties"
 msgid "06885"
 msgstr "Tuvieron hombres suficientes{line_break}para cavar ese hoyo y atacar{line_break}Madra.{page_break}Y suficientes también para{line_break}formar dos grupos de ataque...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEyesOfTruth"
 msgid "06886"
 msgstr "Mírame con los ojos de{line_break}la verdad... y la puerta{line_break}se abrirá...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorWontBudge"
 msgid "06887"
 msgstr "La puerta no se mueve.{line_break}Estará cerrada.{end_wait}"
 
@@ -41531,7 +41531,7 @@ msgctxt "message"
 msgid "10380"
 msgstr "no llegaremos a Lemuria.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaRecognizePsynergy"
 msgid "10381"
 msgstr "Eh, eso fue Psinergía, ¿verdad?{end_wait}"
 
@@ -41799,11 +41799,11 @@ msgctxt "message"
 msgid "10447"
 msgstr "A Lemuria... La ciudad que{line_break}tanto habéis esperado ver...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploring"
 msgid "10448"
 msgstr "¿Sigues perdido, {actor_name:5}? ¡Ese{line_break}camino lleva al muelle! ¡No{line_break}querrás regresar ahora...!{page_break}Acabamos de llegar a Lemuria.{line_break}¡No podemos partir todavía!{line_break}¡Queda mucho por ver!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploringAlternate"
 msgid "10449"
 msgstr "¿Sigues perdido, {actor_name:5}? ¡Ese{line_break}camino lleva al muelle! ¡No{line_break}querrás regresar ahora...!{page_break}Acabamos de llegar a Lemuria.{line_break}¡No podemos partir todavía!{line_break}¡Queda mucho por ver!{end_wait}"
 
@@ -45335,7 +45335,7 @@ msgctxt "message"
 msgid "11331"
 msgstr "¡Todavía hay tiempo! ¡Tenemos{line_break}que ayudar a {actor_name:1}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWaitingForCompanion"
 msgid "11332"
 msgstr "Ah, {actor_name:5}... Te{line_break}estaba esperando.{end_wait}"
 
@@ -45375,11 +45375,11 @@ msgctxt "message"
 msgid "11341"
 msgstr "¡Aquí tienes! Considéralo{line_break}un regalo. Todavía puedes{line_break}hacerlo. Adelante...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFollowTrueFeelings"
 msgid "11342"
 msgstr "Es hora de que sigas tus{line_break}verdaderos sentimientos.{line_break}Salva a tus amigos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartWithAgatio"
 msgid "11343"
 msgstr "Hasta yo quiero ayudar a{line_break}{actor_name:4}..., pero estoy demasiado{line_break}débil para hacerlo...{page_break}Supongo que no tengo otra{line_break}alternativa que separarme{line_break}de Agatio y Karst.{end_wait}"
 
@@ -46163,7 +46163,7 @@ msgctxt "MsgFieldDoorLocked"
 msgid "11538"
 msgstr "Está cerrada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldShowAnemosPower"
 msgid "11539"
 msgstr "Portador de la estrella...{line_break}¡Muestra el poder de Anemos!{end_wait}"
 
@@ -50163,7 +50163,7 @@ msgctxt "message"
 msgid "12538"
 msgstr "¡{actor_name:1}! ¡{actor_name:5}!{line_break}¡En marcha!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallFirstApproach"
 msgid "12539"
 msgstr "Kraden, ven a ver esto... Hay{line_break}un gigantesco muro de hielo{line_break}bloqueando el camino...{end_wait}"
 
@@ -50171,7 +50171,7 @@ msgctxt "message"
 msgid "12540"
 msgstr "Mm... Si no hacemos algo, no{line_break}podremos avanzar, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallCrewReposition"
 msgid "12541"
 msgstr "Kraden, ven a ver esto... Hay{line_break}un gigantesco muro de hielo{line_break}bloqueando el camino...{end_wait}"
 
@@ -50187,7 +50187,7 @@ msgctxt "message"
 msgid "12544"
 msgstr "{actor_name:5}, llévanos hasta la{line_break}unión de los dos bloques de{line_break}hielo para disparar el cañón.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipSafeFiringDistance"
 msgid "12545"
 msgstr "Desde esta distancia{line_break}estaremos a salvo.{end_wait}"
 
@@ -50215,7 +50215,7 @@ msgctxt "message"
 msgid "12551"
 msgstr "¡Adelante!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunFormation"
 msgid "12552"
 msgstr "El Sol Dorado... ¡La quinta{line_break}esencia del poder de la{line_break}Alquimia! ¡Se está formando!{end_wait}"
 
@@ -50223,7 +50223,7 @@ msgctxt "message"
 msgid "12553"
 msgstr "¡Espérame! ¡Por favor!{line_break}¡Espera hasta que llegue a{line_break}la cima del Monte Aleph!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunEternalLifeAndPower"
 msgid "12554"
 msgstr "¡Al fin! ¡Ya es mía!{line_break}¡La vida eterna... y{line_break}un poder sin límites!{end_wait}"
 

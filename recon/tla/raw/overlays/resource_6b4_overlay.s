@@ -964,7 +964,7 @@ Func_02000564:
 	ldr r0, .L_020087f8
 	bl .L_02009370
 .L_020087f0:
-	.4byte 0x00002f3e
+	.4byte MsgGoldenSunFormation
 .L_020087f4:
 	.4byte 0xfffe0000
 .L_020087f8:
@@ -1663,7 +1663,7 @@ Func_02000564:
 .L_02008dec:
 	.4byte Func_02000394
 .L_02008df0:
-	.4byte 0x00002f40
+	.4byte MsgGoldenSunEternalLifeAndPower
 .L_02008df4:
 	bl Object_SetModeById
 	movs r2, #5

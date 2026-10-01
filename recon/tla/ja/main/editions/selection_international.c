@@ -2,6 +2,8 @@
  * approved Japanese TLA flags, but no complete Japanese instruction extent
  * matches it. The Japanese raw owner remains; this local width records the
  * measured international attempt without claiming Japanese behavior. */
+#include "TLA_EDITION.H"
+#undef SELECT_MENU_WIDTH
 #define SELECT_MENU_WIDTH 7
 #include "TYPES.H"
 #include "RAM_BUFFER.H"

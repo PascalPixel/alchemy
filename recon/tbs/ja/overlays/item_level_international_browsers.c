@@ -1,5 +1,8 @@
 /* Draft: Japanese debug-room source.
- * 2026-10-01: The current international source builds 2,768 bytes for Japanese; its own scene is 1,868 bytes. Japanese omits the two actor-emote callbacks, the Psynergy browser and some caption data/event rows. Complete local layout remains unresolved.
+ * 2026-10-01: This international model produced a 2,768-byte Japanese scene,
+ * 900 bytes longer than its own image. The Japanese scene omits the Psynergy
+ * browser and emote callbacks, and substitutes a motion test for the caption
+ * window. This attempt retains the earlier international behavior.
  * Compiles with ordinary TBS flags; no source selection or credit is claimed.
  */
 /* The item and level debug room: its scene tables, actor 13's steps and the

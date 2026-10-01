@@ -631,7 +631,18 @@ GetBattleEffectObject:
 ResourceObject_ReleaseFar:
 	.incbin "baserom.gba", 0x00020078, 0x00000008
 	.section .rom.00020180, "ax"
-	.incbin "baserom.gba", 0x00020180, 0x00000030
+	.incbin "baserom.gba", 0x00020180, 0x00000018
+	.global MapLayer_ClearField22Far
+	.type MapLayer_ClearField22Far, %function
+	.thumb_func
+MapLayer_ClearField22Far:
+	.incbin "baserom.gba", 0x00020198, 0x00000008
+	.incbin "baserom.gba", 0x000201a0, 0x00000008
+	.global Map_DisableBlendScriptFar
+	.type Map_DisableBlendScriptFar, %function
+	.thumb_func
+Map_DisableBlendScriptFar:
+	.incbin "baserom.gba", 0x000201a8, 0x00000008
 	.section .rom.000201f0, "ax"
 	.global Map_GetTerrainHeightFar
 	.type Map_GetTerrainHeightFar, %function
@@ -1207,8 +1218,8 @@ Data_0802ec48:
 	.global Data_0802eec4
 Data_0802eec4:
 	.incbin "baserom.gba", 0x0002eec4, 0x00000100
-	.global Data_0802efc4
-Data_0802efc4:
+	.global Map_TerrainHeightHandlers
+Map_TerrainHeightHandlers:
 	.incbin "baserom.gba", 0x0002efc4, 0x00000040
 	.incbin "baserom.gba", 0x0002f004, 0x000001cc
 	.global ObjectDispatch_Table4
@@ -4831,37 +4842,8 @@ Shop_GlyphRowOffsets:
 	.global Resource_FarCall009
 Resource_FarCall009:
 	.incbin "baserom.gba", 0x00118000, 0x00000010
-	.section .rom.00118028, "ax"
-	.global BattlePres_SetupTransitionSceneFar
-	.type BattlePres_SetupTransitionSceneFar, %function
-	.thumb_func
-BattlePres_SetupTransitionSceneFar:
-	.incbin "baserom.gba", 0x00118028, 0x00000008
-	.global BattlePres_SetupTransitionAtPairMidpointFar
-	.type BattlePres_SetupTransitionAtPairMidpointFar, %function
-	.thumb_func
-BattlePres_SetupTransitionAtPairMidpointFar:
-	.incbin "baserom.gba", 0x00118030, 0x00000008
-	.global Func_08118038
-	.type Func_08118038, %function
-	.thumb_func
-Func_08118038:
-	.incbin "baserom.gba", 0x00118038, 0x00000008
-	.global Func_08118040
-	.type Func_08118040, %function
-	.thumb_func
-Func_08118040:
-	.incbin "baserom.gba", 0x00118040, 0x00000008
-	.global Func_08118048
-	.type Func_08118048, %function
-	.thumb_func
-Func_08118048:
-	.incbin "baserom.gba", 0x00118048, 0x00000008
-	.global Func_08118050
-	.type Func_08118050, %function
-	.thumb_func
-Func_08118050:
-	.incbin "baserom.gba", 0x00118050, 0x00000010
+	.section .rom.00118058, "ax"
+	.incbin "baserom.gba", 0x00118058, 0x00000008
 	.section .rom.00118078, "ax"
 	.global BattleMotion_ApproachTargetFar
 	.type BattleMotion_ApproachTargetFar, %function
@@ -5170,7 +5152,12 @@ Summon_IsEntryFlagged:
 	.type Func_08128174, %function
 	.thumb_func
 Func_08128174:
-	.incbin "baserom.gba", 0x00128164, 0x00000064
+	.incbin "baserom.gba", 0x00128164, 0x00000048
+	.global Summon_GetEntryByte4
+	.type Summon_GetEntryByte4, %function
+	.thumb_func
+Summon_GetEntryByte4:
+	.incbin "baserom.gba", 0x001281ac, 0x0000001c
 	.section .rom.00128202, "ax"
 	.incbin "baserom.gba", 0x00128202, 0x0000065a
 	.global Data_08128844
@@ -5539,13 +5526,12 @@ Func_081c11ac:
 Func_081c11cc:
 	.incbin "baserom.gba", 0x001c11cc, 0x000000b0
 	.section .rom.001c16ca, "ax"
-	.incbin "baserom.gba", 0x001c16ca, 0x00000052
-	.section .rom.001c171c, "ax"
-	.global Sound_LoadCommandTable
-	.type Sound_LoadCommandTable, %function
+	.incbin "baserom.gba", 0x001c16ca, 0x00000022
+	.global MusicTrack_FinishSequence
+	.type MusicTrack_FinishSequence, %function
 	.thumb_func
-Sound_LoadCommandTable:
-	.incbin "baserom.gba", 0x001c171c, 0x000001c4
+MusicTrack_FinishSequence:
+	.incbin "baserom.gba", 0x001c16ec, 0x00000030
 	.section .rom.001c1e48, "ax"
 	.global Func_081c1e48
 	.type Func_081c1e48, %function

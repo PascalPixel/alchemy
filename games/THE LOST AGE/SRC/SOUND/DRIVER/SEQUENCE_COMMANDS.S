@@ -83,7 +83,7 @@ AlchemyUncreditedEnd_081c175a:
 	strb	r2, [r1, #2]
 	b.n	.L_081c175c
 .L_081c1794:
-	b.n	Func_081c16ec
+	b.n	MusicTrack_FinishSequence
 AlchemyUncredited_081c1796:
 	.2byte	0x0000
 AlchemyUncreditedEnd_081c1796:

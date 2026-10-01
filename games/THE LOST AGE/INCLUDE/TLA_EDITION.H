@@ -10,10 +10,15 @@
 #define RENDER_DIRECT_OFS  0x508
 #define WINDOW_COUNT       12
 
-/* Reconstructed international selection/debug layouts. Their Japanese
-   routines remain in their raw owners until their complete extents match. */
+/* Japanese menu rows are narrower than the international layout. */
 #if EDITION_INTERNATIONAL
 #define SELECT_MENU_WIDTH 7
+#else
+#define SELECT_MENU_WIDTH 5
+#endif
+
+/* Reconstructed international debug layout; Japanese remains raw. */
+#if EDITION_INTERNATIONAL
 #define MENU_TEXT_X 74
 #define MENU_TEXT_Y 60
 #endif

@@ -137,7 +137,25 @@ Func_02002848:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
+	@ The localized scaffold exports this same complete resident routine
+	@ under its own source label.
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020190
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020190
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020190
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020190
+	.else
 	overlay_veneer Map_GetTerrainHeightFar
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02002858
 	.thumb_func
 Func_02002858:
@@ -200,10 +218,18 @@ Func_02002888:
 	.ifdef TLA_EDITION_DE
 	overlay_veneer Func_08020330
 	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020330
+	.else
 	.ifdef TLA_EDITION_FR
 	overlay_veneer Func_08020330
 	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020330
+	.else
 	overlay_veneer Func_08020360
+	.endif
+	.endif
 	.endif
 	.endif
 	.global UiText_ShowPositionedMessageAndWait
@@ -325,31 +351,71 @@ Func_02002970:
 	.global Func_02002978
 	.thumb_func
 Func_02002978:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8368
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8368
+	.else
 	overlay_veneer Func_080c8378
+	.endif
+	.endif
 	.global Func_02002980
 	.thumb_func
 Func_02002980:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8370
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8370
+	.else
 	overlay_veneer Func_080c8380
+	.endif
+	.endif
 	.global Func_02002988
 	.thumb_func
 Func_02002988:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8380
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8380
+	.else
 	overlay_veneer Func_080c8390
+	.endif
+	.endif
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8398
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8398
+	.else
 	overlay_veneer Event_SetStatus1c6Far
+	.endif
+	.endif
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c83a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c83a0
+	.else
 	overlay_veneer Event_ClearStatus1c6Far
+	.endif
+	.endif
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.endif
@@ -357,11 +423,27 @@ Event_WaitValue1c8Frames:
 	.global Func_020029a8
 	.thumb_func
 Func_020029a8:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer Func_080c84e0
+	.endif
+	.endif
 	.global Func_020029b0
 	.thumb_func
 Func_020029b0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Camera_WorldToScreenFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Camera_WorldToScreenFar
+	.else
 	overlay_veneer Func_080c85c0
+	.endif
+	.endif
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -369,23 +451,63 @@ ObjectMotion_CommitPositionAndActivate:
 	.global Object_SetActionCallback
 	.thumb_func
 Object_SetActionCallback:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8670
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8670
+	.else
 	overlay_veneer Object_SetActionCallbackFar
+	.endif
+	.endif
 	.global Func_020029c8
 	.thumb_func
 Func_020029c8:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8708
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8708
+	.else
 	overlay_veneer Func_080c8718
+	.endif
+	.endif
 	.global Func_020029d0
 	.thumb_func
 Func_020029d0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8710
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8710
+	.else
 	overlay_veneer Func_080c8720
+	.endif
+	.endif
 	.global Func_020029d8
 	.thumb_func
 Func_020029d8:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8718
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8718
+	.else
 	overlay_veneer Func_080c8728
+	.endif
+	.endif
 	.global Func_020029e0
 	.thumb_func
 Func_020029e0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87b0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87b0
+	.else
 	overlay_veneer Func_080c87c0
+	.endif
+	.endif
 	.global Func_020029e8
 	.thumb_func
 Func_020029e8:
@@ -425,11 +547,27 @@ Func_020029f8:
 	.global Func_02002a00
 	.thumb_func
 Func_02002a00:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87f8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87f8
+	.else
 	overlay_veneer Func_080c8808
+	.endif
+	.endif
 	.global Func_02002a08
 	.thumb_func
 Func_02002a08:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Field_BeginPaletteTransitionFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Field_BeginPaletteTransitionFar
+	.else
 	overlay_veneer Func_080c8810
+	.endif
+	.endif
 	.global Func_02002a10
 	.thumb_func
 Func_02002a10:
@@ -445,19 +583,51 @@ Func_02002a10:
 	.global Func_02002a18
 	.thumb_func
 Func_02002a18:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8810
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8810
+	.else
 	overlay_veneer Func_080c8820
+	.endif
+	.endif
 	.global Func_02002a20
 	.thumb_func
 Func_02002a20:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8820
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8820
+	.else
 	overlay_veneer Func_080c8830
+	.endif
+	.endif
 	.global Func_02002a28
 	.thumb_func
 Func_02002a28:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8830
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8830
+	.else
 	overlay_veneer Func_080c8840
+	.endif
+	.endif
 	.global Func_02002a30
 	.thumb_func
 Func_02002a30:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8838
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8838
+	.else
 	overlay_veneer Func_080c8848
+	.endif
+	.endif
 	.global AudioCommand_WaitForStateByteClear
 	.thumb_func
 AudioCommand_WaitForStateByteClear:

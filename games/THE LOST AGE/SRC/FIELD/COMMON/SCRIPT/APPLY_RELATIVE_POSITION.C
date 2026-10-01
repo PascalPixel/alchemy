@@ -1,11 +1,8 @@
-/*
- * Draft: Script_ApplyRelativePosition does not yet match; 3 halfwords differ from ☀️'s C, first at +0x2a (movs r0, #1).
- * Links as recon/tla/raw/08025038.s.
- */
 #include "SCRIPT_OBJECT_RUNTIME.H"
 
 void Object_SetMoveTarget(void *, s32, s32, s32);
 
+/* Moves the object by the three offsets the command carries. */
 s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
 {
     u8 *entry = (u8 *)(object->script + (s16)object->script_cursor);
@@ -13,9 +10,14 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
     s32 first = *cursor++;
     s32 second = *cursor++;
     s32 third = *cursor;
+    s32 step;
+    s32 done;
 
     Object_SetMoveTarget(object, object->x + first,
         object->y + second, object->z + third);
-    object->script_cursor += 4;
-    return 1;
+    step = (u16)object->script_cursor;
+    done = 1;
+    asm volatile("" : "+l"(done)); /* FAKEMATCH: ⚓️ sets the result between the cursor load and store */
+    object->script_cursor = step + 4;
+    return done;
 }

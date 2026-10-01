@@ -948,8 +948,8 @@ Data_08105a40:
 Data_08105a50:
 	.incbin "baserom.gba", 0x00105a50, 0x000025b0
 	.section .unidentified.0810c008,"a"
-	.global Data_0810c008
-Data_0810c008:
+	.global Shop_GlyphBytes
+Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x0010c008, 0x00000140
 	.global Data_0810c148
 Data_0810c148:
@@ -960,8 +960,8 @@ Data_0810c248:
 	.global Data_0810c348
 Data_0810c348:
 	.incbin "baserom.gba", 0x0010c348, 0x0000003c
-	.global Data_0810c384
-Data_0810c384:
+	.global Shop_GlyphRowOffsets
+Shop_GlyphRowOffsets:
 	.incbin "baserom.gba", 0x0010c384, 0x0000000a
 	.global Data_0810c38e
 Data_0810c38e:

@@ -246,7 +246,7 @@ void Func_081504b4(struct SummonAction *);
 void Func_081504c0(struct SummonAction *);
 void Func_081504cc(struct SummonAction *);
 void Func_08152475(void);
-void Func_08156140(struct SummonAction *, s32);
+void BattleFx_RunProjectileVolley(struct SummonAction *, s32);
 s32 Func_08157cf4(s32, void *, s32, s32);
 void Func_08158ce0(s32, s32);
 void Func_0815b434(void *, s32, s32);
@@ -643,11 +643,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         Func_0801314c(104);
         Func_08020090(object, 3);
         if (kind == 45)
-            Func_08156140(action, 9);
+            BattleFx_RunProjectileVolley(action, 9);
         if (kind == 54)
             Func_0814a7f0(action);
         if (kind == 56)
-            Func_08156140(action, 8);
+            BattleFx_RunProjectileVolley(action, 8);
         return;
     }
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);

@@ -17,8 +17,8 @@ use std::path::Path;
 const USAGE: &str =
     "usage: alchemy check coverage [--write [--publication]|--check|--models|--self-test]\n\
 Publishes README's progress line, today's progress history row and both figures from each game's\n\
-verified build (make compare); a game without one stays pending. --publication preserves approved\n\
-model attribution; --check fails when any published value is stale.";
+six verified builds together (make compare-editions); a game without all six stays pending.\n\
+--publication preserves approved model attribution; --check fails when any published value is stale.";
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read(path)
         .map(|b| String::from_utf8_lossy(&b).into_owned())
@@ -55,8 +55,9 @@ fn parse(argv: &[String]) -> Result<Options, String> {
     Ok(o)
 }
 /// The README status line under "## Progress": ☀️ The Broken Seal and
-/// ⚓️ The Lost Age, each pending until a byte-identical build measures it.
-/// ⚓️ is always shown in its parts: C, assembly and 8-byte stubs.
+/// ⚓️ The Lost Age, each DONE in all six of its editions together and
+/// pending until six byte-identical builds measure it. ⚓️ is always shown
+/// in its parts: C, assembly and 8-byte stubs.
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))

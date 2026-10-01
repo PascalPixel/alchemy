@@ -1,10 +1,14 @@
-//! DONE from each game's verified build, measured by [`super::calcrom`].
-use crate::coverage::calcrom::{measure, Measurement};
+//! DONE from each game's six verified builds together, measured by
+//! [`super::calcrom`]: the English build gives the bytes, and every edition
+//! earns those of the credited objects its own build links.
+use crate::coverage::calcrom::{measure_game, Game};
 use crate::coverage::jsnum::{commas, floor_percent};
 use crate::coverage::tree::root;
 use std::path::Path;
 
-const USAGE: &str = "usage: alchemy check progress [--target tbs-en|tla-en] [--check|--subject|--write-report|--self-test]";
+const USAGE: &str = "usage: alchemy check progress [--target tbs-en|tla-en] [--check|--subject|--write-report|--self-test]\n\
+Reports each game's DONE in all six of its editions together, then each edition's share.\n\
+--target names a game by its English build, which gives every byte count.";
 
 /// The progress report as TSV rows of field and value.
 fn report_rows(report: &GameDone, target: &str) -> Vec<(&'static str, String)> {
@@ -33,6 +37,26 @@ fn report_rows(report: &GameDone, target: &str) -> Vec<(&'static str, String)> {
     ]
 }
 
+/// Each edition's own DONE bytes, after the game's rows.
+fn edition_rows(game: &Game) -> Vec<(&'static str, String)> {
+    let mut rows = vec![(
+        "english_executable_bytes",
+        game.english.done.executable.to_string(),
+    )];
+    for (language, edition) in &game.editions {
+        let field = match *language {
+            "ja" => "ja_done_bytes",
+            "en" => "en_done_bytes",
+            "de" => "de_done_bytes",
+            "es" => "es_done_bytes",
+            "fr" => "fr_done_bytes",
+            _ => "it_done_bytes",
+        };
+        rows.push((field, edition.done.bytes().to_string()));
+    }
+    rows
+}
+
 fn pending_rows(target: &str, reason: &str) -> Vec<(&'static str, String)> {
     vec![
         ("target", target.to_string()),
@@ -47,10 +71,12 @@ fn table(rows: &[(&'static str, String)]) -> String {
         .collect()
 }
 
-/// One game's DONE: shared permanent assembly, shared exact C, the game's own
+/// DONE bytes: shared permanent assembly, shared exact C, the game's own
 /// permanent assembly (with the compiler library) and the game's own exact C,
-/// over every executable byte its verified build links. The Broken Seal is
-/// ☀️ and The Lost Age ⚓️.
+/// out of executable bytes. A game's published DONE adds up its six editions:
+/// each edition's bytes are the English build's bytes of the credited objects
+/// that edition links, and `executable` is six times the English build's
+/// executable bytes. The Broken Seal is ☀️ and The Lost Age ⚓️.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct GameDone {
     pub common_asm: i64,
@@ -81,21 +107,31 @@ impl GameDone {
         floor_percent(self.bytes(), self.executable)
     }
 }
+impl std::ops::AddAssign for GameDone {
+    fn add_assign(&mut self, other: GameDone) {
+        self.common_asm += other.common_asm;
+        self.common_c += other.common_c;
+        self.game_asm += other.game_asm;
+        self.game_c += other.game_c;
+        self.executable += other.executable;
+        self.veneers += other.veneers;
+    }
+}
 
-/// A game's DONE, or `None` while its build is not byte-identical.
+/// A game's DONE in all six editions together, or `None` while any of its
+/// six builds is not byte-identical and current. `target` is the game's
+/// English build.
 pub fn measured(root: &Path, target: &str) -> Result<Option<GameDone>, String> {
-    Ok(status(root, target)?
-        .ok()
-        .map(|measurement| measurement.done))
+    Ok(status(root, target)?.ok().map(|game| game.combined().done))
 }
 
 /// A game's measurement, or why it is pending.
-fn status(root: &Path, target: &str) -> Result<Result<Measurement, String>, String> {
-    measure(root, crate::targets::decomp_target(Some(target))?)
+fn status(root: &Path, target: &str) -> Result<Result<Game, String>, String> {
+    measure_game(root, crate::targets::decomp_target(Some(target))?)
 }
 
 /// The commit prefix: both games' DONE percentages, `pending` for a game
-/// without a verified build.
+/// without six verified builds.
 pub(crate) fn subject(root: &Path) -> Result<String, String> {
     let percent = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
@@ -107,20 +143,22 @@ pub(crate) fn subject(root: &Path) -> Result<String, String> {
     ))
 }
 
-/// One game's DONE with its parts and what is not yet C, or why it is pending.
-fn done_line(mark: &str, game: &str, status: Result<Measurement, String>) -> String {
+/// One game's DONE in all six editions with its parts and what the English
+/// build has not yet in C, or why it is pending.
+fn done_line(mark: &str, game: &str, status: &Result<Game, String>) -> String {
     match status {
-        Ok(m) => {
-            let d = m.done;
+        Ok(measured) => {
+            let all = measured.combined();
+            let (d, english) = (all.done, &measured.english);
             let (c, assembly, stubs) = d.parts();
             let mut line = format!(
-                "{mark} {game} DONE: {} / {} executable bytes ({:.2}%) = C {} ({c:.2} points) + assembly {} ({assembly:.2}, compiler library {} of it) + 8-byte stubs {} ({stubs:.2}); FAKEMATCH-steered C {} ({:.2} points, removed last); uncredited padding {} not counted; not yet C: disassembly {} + overlay listings {}",
+                "{mark} {game} DONE: {} / {} executable bytes in six editions ({:.2}%) = C {} ({c:.2} points) + assembly {} ({assembly:.2}, compiler library {} of it) + 8-byte stubs {} ({stubs:.2}); FAKEMATCH-steered C {} ({:.2} points, removed last); uncredited padding {} not counted; not yet C in the English build: disassembly {} + overlay listings {}",
                 commas(d.bytes()), commas(d.executable), d.percent(),
-                commas(d.common_c + d.game_c), commas(d.common_asm + d.game_asm - d.veneers), commas(m.library), commas(d.veneers),
-                commas(m.steered), floor_percent(m.steered, d.executable), commas(m.uncredited),
-                commas(m.raw), commas(m.listings)
+                commas(d.common_c + d.game_c), commas(d.common_asm + d.game_asm - d.veneers), commas(all.library), commas(d.veneers),
+                commas(all.steered), floor_percent(all.steered, d.executable), commas(all.uncredited),
+                commas(english.raw), commas(english.listings)
             );
-            for (object, bytes) in &m.other {
+            for (object, bytes) in &english.other {
                 line.push_str(&format!(" + unclassified {} ({object})", commas(*bytes)));
             }
             line
@@ -129,9 +167,30 @@ fn done_line(mark: &str, game: &str, status: Result<Measurement, String>) -> Str
     }
 }
 
-/// One game's data and name coverage, as pret's calcrom reports beside code.
-fn data_line(mark: &str, game: &str, status: &Result<Measurement, String>) -> Option<String> {
-    let m = status.as_ref().ok()?;
+/// One short line per edition: its own share of the English build's
+/// executable bytes, so a lagging edition shows.
+fn edition_lines(mark: &str, status: &Result<Game, String>) -> Vec<String> {
+    let Ok(game) = status else {
+        return Vec::new();
+    };
+    game.editions
+        .iter()
+        .map(|(language, edition)| {
+            let d = edition.done;
+            format!(
+                "{mark}   {language} {:.2}% ({} / {})",
+                d.percent(),
+                commas(d.bytes()),
+                commas(d.executable)
+            )
+        })
+        .collect()
+}
+
+/// One game's data and name coverage in its English build, as pret's calcrom
+/// reports beside code.
+fn data_line(mark: &str, game: &str, status: &Result<Game, String>) -> Option<String> {
+    let m = &status.as_ref().ok()?.english;
     let data = m.data_source + m.data_scaffold;
     let n = m.names;
     let share = |part: i64, whole: i64| {
@@ -151,7 +210,7 @@ fn data_line(mark: &str, game: &str, status: &Result<Measurement, String>) -> Op
 
 fn display(report: &GameDone) -> String {
     format!(
-        "DONE: {} / {} executable bytes ({:.2}%)\nExact C: {:.2}%",
+        "DONE: {} / {} executable bytes in six editions ({:.2}%)\nExact C: {:.2}%",
         commas(report.bytes()),
         commas(report.executable),
         report.percent(),
@@ -200,7 +259,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         return Ok(USAGE.into());
     };
     if action == "--self-test" {
-        return Ok("self-test=ok metric=done-executable-byte-share".into());
+        return Ok("self-test=ok metric=done-executable-byte-share-in-six-editions".into());
     }
     let root = root();
     if action == "--subject" {
@@ -213,22 +272,26 @@ fn run(argv: &[String]) -> Result<String, String> {
             ("⚓️", "The Lost Age", "tla-en"),
         ] {
             let state = status(&root, target)?;
-            let data = data_line(mark, game, &state);
-            lines.push(done_line(mark, game, state));
-            lines.extend(data);
+            lines.push(done_line(mark, game, &state));
+            lines.extend(edition_lines(mark, &state));
+            lines.extend(data_line(mark, game, &state));
         }
         return Ok(lines.join("\n"));
     }
-    let report = match status(&root, &target)? {
-        Ok(measurement) => Ok(measurement.done),
-        Err(reason) => Err(reason),
-    };
-    let rows = match &report {
-        Ok(report) => report_rows(report, &target),
+    let state = status(&root, &target)?;
+    let report = state.as_ref().map(|game| game.combined().done);
+    let rows = match &state {
+        Ok(game) => {
+            let mut rows = report_rows(&game.combined().done, &target);
+            rows.extend(edition_rows(game));
+            rows
+        }
         Err(reason) => pending_rows(&target, reason),
     };
     match action {
-        "--check" => report.map(|report| display(&report)),
+        "--check" => report
+            .map(|report| display(&report))
+            .map_err(|reason| reason.clone()),
         "--write-report" => {
             let path = root.join("out").join(&target).join("reports/progress.tsv");
             std::fs::create_dir_all(path.parent().unwrap()).map_err(|error| error.to_string())?;
@@ -259,6 +322,7 @@ pub fn entry(arguments: &[String]) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::coverage::calcrom::{Counted, Measurement};
 
     #[test]
     fn reports_state_done_and_exact_c_shares() {
@@ -289,10 +353,72 @@ mod tests {
         )
         .unwrap();
         assert_eq!(subject(root).unwrap(), "☀️ pending ⚓️ pending –");
-        let line = done_line("⚓️", "The Lost Age", status(root, "tla-en").unwrap());
+        let state = status(root, "tla-en").unwrap();
         assert_eq!(
-            line,
+            done_line("⚓️", "The Lost Age", &state),
             "⚓️ The Lost Age DONE: pending a build of out/tla-en/tla-en.gba"
         );
+        assert!(edition_lines("⚓️", &state).is_empty());
+    }
+
+    #[test]
+    fn the_report_shows_the_six_editions_together_and_each_edition_alone() {
+        // English credits 600 of 1,000 bytes; the other five link half of it.
+        let edition = |c, steered| Counted {
+            done: GameDone {
+                game_c: c,
+                executable: 1000,
+                ..GameDone::default()
+            },
+            steered,
+            ..Counted::default()
+        };
+        let game = Game {
+            english: Measurement {
+                raw: 300,
+                listings: 100,
+                ..Measurement::default()
+            },
+            editions: ["ja", "en", "de", "es", "fr", "it"]
+                .into_iter()
+                .map(|language| {
+                    if language == "en" {
+                        (language, edition(600, 60))
+                    } else {
+                        (language, edition(300, 30))
+                    }
+                })
+                .collect(),
+        };
+        let all = game.combined();
+        assert_eq!((all.done.bytes(), all.done.executable), (2100, 6000));
+        assert_eq!((all.done.percent(), all.steered), (35.0, 210));
+        let state = Ok(game);
+        let line = done_line("☀️", "The Broken Seal", &state);
+        assert!(
+            line.starts_with(
+                "☀️ The Broken Seal DONE: 2,100 / 6,000 executable bytes in six editions (35.00%) = C 2,100 (35.00 points)"
+            ),
+            "{line}"
+        );
+        assert!(
+            line.ends_with(
+                "not yet C in the English build: disassembly 300 + overlay listings 100"
+            ),
+            "{line}"
+        );
+        assert_eq!(
+            edition_lines("☀️", &state),
+            [
+                "☀️   ja 30.00% (300 / 1,000)",
+                "☀️   en 60.00% (600 / 1,000)",
+                "☀️   de 30.00% (300 / 1,000)",
+                "☀️   es 30.00% (300 / 1,000)",
+                "☀️   fr 30.00% (300 / 1,000)",
+                "☀️   it 30.00% (300 / 1,000)",
+            ]
+        );
+        let rows = table(&edition_rows(state.as_ref().unwrap()));
+        assert!(rows.contains("ja_done_bytes\t300\n") && rows.contains("en_done_bytes\t600\n"));
     }
 }

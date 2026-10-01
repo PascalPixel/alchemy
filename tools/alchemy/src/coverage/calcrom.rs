@@ -3,11 +3,88 @@
 //! supplied it says whether it is maintained source under `games/`, a proven
 //! compiler-library member, or disassembly not yet in C. Nothing else is read:
 //! no catalog, no receipt and no guess at what is code.
+//!
+//! DONE counts a game's six editions together, so 100% means every language
+//! builds all its code from source. The English build gives each credited
+//! object's bytes and the executable total E. An edition earns an object's
+//! English bytes only when its own verified build links that object from
+//! source in the same image: the main image, or the same code overlay built
+//! from source in that edition. DONE is the sum over the six editions out of
+//! 6 × E, and a game is published only while all six builds are verified.
+//!
+//! Known limit: sizes are the English build's, and code that exists only in
+//! another edition is not in the total.
 use super::progress::GameDone;
 use crate::targets::DecompTarget;
 use object::{Object, ObjectSection, ObjectSymbol, SymbolKind};
 use sha1::{Digest, Sha1};
-use std::path::Path;
+use std::collections::{BTreeMap, BTreeSet};
+use std::path::{Path, PathBuf};
+
+/// One object in one image of a build: the image (`main`, or a code
+/// overlay's resource id such as `36f`) and the object's path under `obj/`
+/// or its compiler-library member, the same in every edition's build.
+pub(crate) type Unit = (String, String);
+
+/// The image every build links first; the others are its code overlays.
+pub(crate) const MAIN_IMAGE: &str = "main";
+
+/// DONE bytes with the parts shown beside them: one object's in the English
+/// build, an edition's, or a game's in all six editions together.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) struct Counted {
+    pub done: GameDone,
+    /// Compiler-library members, counted within `done.game_asm`.
+    pub library: i64,
+    /// Text of the C functions a FAKEMATCH tag steers, counted within DONE.
+    pub steered: i64,
+    /// Padding a source marks as carrying no credit, left out of DONE.
+    pub uncredited: i64,
+}
+impl std::ops::AddAssign for Counted {
+    fn add_assign(&mut self, other: Counted) {
+        self.done += other.done;
+        self.library += other.library;
+        self.steered += other.steered;
+        self.uncredited += other.uncredited;
+    }
+}
+
+/// A game's DONE in all six of its editions together.
+#[derive(Clone, Debug)]
+pub(crate) struct Game {
+    /// The English build: every credited object's bytes and the executable
+    /// total.
+    pub english: Measurement,
+    /// Each edition by its language, Japanese first: the English bytes of
+    /// the credited objects its own build links, out of the English total.
+    pub editions: Vec<(&'static str, Counted)>,
+}
+impl Game {
+    /// The six editions added up: DONE out of six times the English total.
+    pub fn combined(&self) -> Counted {
+        let mut combined = Counted::default();
+        for (_, edition) in &self.editions {
+            combined += *edition;
+        }
+        combined
+    }
+}
+
+/// What an edition earns: the English bytes of every credited unit its own
+/// build links, less the stray padding, out of the English executable total.
+pub(crate) fn share(english: &Measurement, linked: &BTreeSet<Unit>) -> Counted {
+    let mut counted = Counted::default();
+    for (unit, credit) in &english.credits {
+        if linked.contains(unit) {
+            counted += *credit;
+        }
+    }
+    counted.done.game_asm -= english.stray.min(counted.done.game_asm);
+    counted.uncredited += english.stray;
+    counted.done.executable = english.done.executable;
+    counted
+}
 
 /// One game's executable bytes by the object that supplied them.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -36,6 +113,12 @@ pub(crate) struct Measurement {
     /// `AlchemyUncredited_X` and `AlchemyUncreditedEnd_X` labels: placed,
     /// but not counted in DONE (C2).
     pub uncredited: i64,
+    /// The part of `uncredited` that sits in no credited unit. It is taken
+    /// from the game's own assembly as a whole, in every edition alike.
+    pub stray: i64,
+    /// DONE by the unit that supplied it, without its own uncredited padding:
+    /// what an edition earns when its own build links the unit.
+    pub credits: BTreeMap<Unit, Counted>,
 }
 
 /// What a `games/` source says about its object's bytes.
@@ -163,11 +246,12 @@ fn function_spans(
         .sum()
 }
 
-/// The bytes between each `AlchemyUncredited_X` label and its
-/// `AlchemyUncreditedEnd_X` in one image's `nm` output.
-pub(crate) fn uncredited_bytes(nm: &str) -> i64 {
-    let mut starts = std::collections::HashMap::new();
-    let mut ends = std::collections::HashMap::new();
+/// The span between each `AlchemyUncredited_X` label and its
+/// `AlchemyUncreditedEnd_X` in one image's `nm` output: where it starts and
+/// its bytes, in address order.
+pub(crate) fn uncredited_spans(nm: &str) -> Vec<(i64, i64)> {
+    let mut starts = BTreeMap::new();
+    let mut ends = BTreeMap::new();
     for line in nm.lines() {
         let mut fields = line.split_whitespace();
         let (Some(address), Some(_), Some(name)) = (fields.next(), fields.next(), fields.next())
@@ -183,10 +267,44 @@ pub(crate) fn uncredited_bytes(nm: &str) -> i64 {
             starts.insert(key.to_string(), address);
         }
     }
-    starts
+    let mut spans = starts
         .iter()
-        .filter_map(|(key, start)| ends.get(key).map(|end| (end - start).max(0)))
-        .sum()
+        .filter_map(|(key, start)| ends.get(key).map(|end| (*start, (end - start).max(0))))
+        .collect::<Vec<_>>();
+    spans.sort();
+    spans
+}
+
+/// Take one image's uncredited padding out of DONE: each span leaves the
+/// credit of the unit whose placed text holds it, assembly first. A span in
+/// no credited unit (a listing marks its padding before it is adopted) is
+/// stray: it leaves the game's own assembly as a whole, as it always has.
+fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: &[(i64, i64)]) {
+    for (start, bytes) in spans {
+        measurement.uncredited += bytes;
+        let Some(credit) = placed
+            .iter()
+            .find(|(address, size, _)| (*address..address + size).contains(start))
+            .and_then(|(_, _, unit)| measurement.credits.get_mut(unit))
+        else {
+            measurement.stray += bytes;
+            continue;
+        };
+        credit.uncredited += bytes;
+        let mut left = *bytes;
+        let done = &mut measurement.done;
+        for (unit, total) in [
+            (&mut credit.done.game_asm, &mut done.game_asm),
+            (&mut credit.done.common_asm, &mut done.common_asm),
+            (&mut credit.done.game_c, &mut done.game_c),
+            (&mut credit.done.common_c, &mut done.common_c),
+        ] {
+            let taken = left.min(*unit);
+            *unit -= taken;
+            *total -= taken;
+            left -= taken;
+        }
+    }
 }
 
 /// Symbol names by how much they say, after pret's calcrom: a placeholder
@@ -258,9 +376,18 @@ pub(crate) enum Language {
     Assembly,
 }
 
-/// Every input section the map places: name, size and object path. The
-/// discarded sections listed before the memory map are skipped.
-pub(crate) fn sections(map: &str) -> Vec<(&str, i64, &str)> {
+/// An input section a map places.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct Placed<'a> {
+    pub name: &'a str,
+    pub address: i64,
+    pub size: i64,
+    pub object: &'a str,
+}
+
+/// Every input section the map places. The discarded sections listed before
+/// the memory map are skipped.
+pub(crate) fn sections(map: &str) -> Vec<Placed<'_>> {
     let mut found = Vec::new();
     let mut discarded = false;
     let mut lines = map.lines().peekable();
@@ -291,14 +418,19 @@ pub(crate) fn sections(map: &str) -> Vec<(&str, i64, &str)> {
             }
         };
         if !discarded {
-            found.push((name, placed.0, placed.1));
+            found.push(Placed {
+                name,
+                address: placed.0,
+                size: placed.1,
+                object: placed.2,
+            });
         }
     }
     found
 }
 
 /// `  0xADDRESS  0xSIZE  object`, as the map places an input section.
-fn placement(text: &str) -> Option<(i64, &str)> {
+fn placement(text: &str) -> Option<(i64, i64, &str)> {
     let hex = |field: &str| {
         field
             .strip_prefix("0x")
@@ -306,12 +438,12 @@ fn placement(text: &str) -> Option<(i64, &str)> {
     };
     let text = text.trim_start();
     let (address, rest) = text.split_once(char::is_whitespace)?;
-    hex(address)?;
+    let address = hex(address)?;
     let rest = rest.trim_start();
     let (size, object) = rest.split_once(char::is_whitespace)?;
     let object = object.trim();
     (!object.is_empty()).then_some(())?;
-    Some((hex(size)?, object))
+    Some((address, hex(size)?, object))
 }
 
 /// An object's path under its build directory's `obj/` (or, in an overlay
@@ -384,16 +516,36 @@ fn is_listing(name: &str) -> bool {
         .is_some_and(|id| !id.is_empty() && id.bytes().all(|byte| byte.is_ascii_hexdigit()))
 }
 
-/// Add one map's text sections to `measurement`.
+/// Whether a placed section is executable bytes.
+fn is_text(placed: &Placed) -> bool {
+    placed.size > 0 && !is_data(placed.name) && placed.name.contains("text")
+}
+
+/// The name a credited object keeps in every edition's build: its path under
+/// `obj/`, or its compiler-library member.
+fn unit_object(object: &str, output: &str, overlay: bool) -> Option<String> {
+    match object.rfind("libgcc.a(") {
+        Some(member) => Some(object[member..].to_owned()),
+        None => relative_object(object, output, overlay).map(|(path, _)| path.to_owned()),
+    }
+}
+
+/// Add one map's text sections to `measurement`, and return where the map
+/// places each credited unit's text. `image` names the map's image.
 fn tally(
     measurement: &mut Measurement,
     map: &str,
     output: &str,
-    overlay: bool,
+    image: &str,
     source: &dyn Fn(&str) -> Option<Language>,
     mark: &dyn Fn(&str) -> Result<Mark, String>,
-) -> Result<(), String> {
-    for (name, size, object) in sections(map) {
+) -> Result<Vec<(i64, i64, Unit)>, String> {
+    let overlay = image != MAIN_IMAGE;
+    let mut credited = Vec::new();
+    for placed in sections(map) {
+        let Placed {
+            name, size, object, ..
+        } = placed;
         if size > 0 && is_data(name) {
             match origin(object, output, overlay, source)? {
                 Origin::CommonC | Origin::CommonAsm | Origin::GameC | Origin::GameAsm => {
@@ -403,7 +555,7 @@ fn tally(
             }
             continue;
         }
-        if size <= 0 || !name.contains("text") {
+        if !is_text(&placed) {
             continue;
         }
         let marked = || {
@@ -411,14 +563,16 @@ fn tally(
                 .and_then(|(path, _)| path.strip_suffix(".o"))
                 .map_or_else(|| Ok(Mark::default()), mark)
         };
+        measurement.done.executable += size;
+        let mut credit = Counted::default();
         match origin(object, output, overlay, source)? {
             origin @ (Origin::CommonC | Origin::GameC) => {
                 if origin == Origin::CommonC {
-                    measurement.done.common_c += size;
+                    credit.done.common_c = size;
                 } else {
-                    measurement.done.game_c += size;
+                    credit.done.game_c = size;
                 }
-                measurement.steered += match marked()?.steered {
+                credit.steered = match marked()?.steered {
                     Steered::None => 0,
                     Steered::Whole => size,
                     Steered::Functions(names) => function_bytes(object, name, &names, size)?,
@@ -426,32 +580,74 @@ fn tally(
             }
             origin @ (Origin::CommonAsm | Origin::GameAsm) => {
                 if origin == Origin::CommonAsm {
-                    measurement.done.common_asm += size;
+                    credit.done.common_asm = size;
                 } else {
-                    measurement.done.game_asm += size;
+                    credit.done.game_asm = size;
                 }
                 if marked()?.veneer {
-                    measurement.done.veneers += size;
+                    credit.done.veneers = size;
                 }
             }
             Origin::Library => {
-                measurement.done.game_asm += size;
-                measurement.library += size;
+                credit.done.game_asm = size;
+                credit.library = size;
             }
-            Origin::Raw => measurement.raw += size,
-            Origin::Listing => measurement.listings += size,
-            Origin::Other => match measurement
-                .other
-                .iter_mut()
-                .find(|(path, _)| path == object)
-            {
-                Some((_, bytes)) => *bytes += size,
-                None => measurement.other.push((object.to_owned(), size)),
-            },
+            Origin::Raw => {
+                measurement.raw += size;
+                continue;
+            }
+            Origin::Listing => {
+                measurement.listings += size;
+                continue;
+            }
+            Origin::Other => {
+                match measurement
+                    .other
+                    .iter_mut()
+                    .find(|(path, _)| path == object)
+                {
+                    Some((_, bytes)) => *bytes += size,
+                    None => measurement.other.push((object.to_owned(), size)),
+                }
+                continue;
+            }
         }
-        measurement.done.executable += size;
+        let unit = (
+            image.to_owned(),
+            unit_object(object, output, overlay)
+                .ok_or_else(|| format!("{object}: credited outside the build directory"))?,
+        );
+        measurement.done += credit.done;
+        measurement.library += credit.library;
+        measurement.steered += credit.steered;
+        *measurement.credits.entry(unit.clone()).or_default() += credit;
+        credited.push((placed.address, size, unit));
     }
-    Ok(())
+    Ok(credited)
+}
+
+/// The units one map links from source: every object under `games/` and
+/// every compiler-library member that supplies text to its image.
+fn links(
+    map: &str,
+    output: &str,
+    image: &str,
+    source: &dyn Fn(&str) -> Option<Language>,
+) -> Result<BTreeSet<Unit>, String> {
+    let overlay = image != MAIN_IMAGE;
+    let mut units = BTreeSet::new();
+    for placed in sections(map).into_iter().filter(is_text) {
+        if matches!(
+            origin(placed.object, output, overlay, source)?,
+            Origin::Raw | Origin::Listing | Origin::Other
+        ) {
+            continue;
+        }
+        if let Some(object) = unit_object(placed.object, output, overlay) {
+            units.insert((image.to_owned(), object));
+        }
+    }
+    Ok(units)
 }
 
 /// The language `build rom` compiled a `games/` object from.
@@ -504,34 +700,108 @@ pub(crate) fn verified(root: &Path, target: DecompTarget) -> Result<Result<(), S
     })
 }
 
-/// A game's measurement from its verified build, or why it is pending.
-pub(crate) fn measure(
-    root: &Path,
-    target: DecompTarget,
-) -> Result<Result<Measurement, String>, String> {
+/// The resource ids of the code overlays a main image builds from source:
+/// each object its map places in `.overlays` is assembled from a source that
+/// reads the built stream `overlays/resource_XXX.lz` of every such overlay,
+/// found as `build rom` finds them. An overlay an edition still copies from
+/// its scaffold has no stream.
+fn streamed(root: &Path, target: DecompTarget, map: &str) -> Result<Vec<String>, String> {
+    let mut ids = BTreeSet::new();
+    for placed in sections(map) {
+        if placed.name != ".overlays" || placed.size <= 0 {
+            continue;
+        }
+        let Some(stem) = relative_object(placed.object, target.output_dir, false)
+            .and_then(|(path, _)| path.strip_suffix(".o"))
+        else {
+            continue;
+        };
+        let source = ["S", "s"]
+            .iter()
+            .map(|extension| PathBuf::from(format!("{stem}.{extension}")))
+            .find(|path| root.join(path).is_file())
+            .ok_or_else(|| format!("{stem}.o: no overlay stream source; rebuild"))?;
+        ids.extend(crate::build_rom::stream_ids(root, target, &source)?);
+    }
+    Ok(ids.into_iter().collect())
+}
+
+/// One image of a build with its linker map.
+struct ImageMap {
+    /// `main`, or the overlay's resource id.
+    image: String,
+    path: PathBuf,
+    text: String,
+}
+
+/// The linker maps of a target's verified build, or why it is pending: its
+/// main image's, then the map of every code overlay the main image builds
+/// from source. A map an older build left beside an overlay the edition no
+/// longer builds is not read.
+fn maps(root: &Path, target: DecompTarget) -> Result<Result<Vec<ImageMap>, String>, String> {
     if let Err(reason) = verified(root, target)? {
         return Ok(Err(reason));
     }
     let output = target.output_dir;
-    let image = root.join(image(target));
     let written = |path: &Path| {
         std::fs::metadata(path)
             .and_then(|metadata| metadata.modified())
             .map_err(|error| format!("{}: {error}", path.display()))
     };
-    let linked = written(&image)?;
-    let mut maps = vec![(root.join(format!("{output}/{}.map", target.id)), false)];
+    let read = |path: &Path| {
+        std::fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))
+    };
+    let shown = |path: &Path| {
+        path.strip_prefix(root)
+            .unwrap_or(path)
+            .display()
+            .to_string()
+    };
+    let linked = written(&root.join(image(target)))?;
+    let main = root.join(format!("{output}/{}.map", target.id));
+    let mut found = vec![ImageMap {
+        image: MAIN_IMAGE.to_owned(),
+        text: read(&main)?,
+        path: main,
+    }];
     let overlays = root.join(output).join("overlays");
-    if overlays.is_dir() {
-        let mut names = std::fs::read_dir(&overlays)
-            .map_err(|error| format!("{}: {error}", overlays.display()))?
-            .filter_map(|entry| entry.ok())
-            .map(|entry| entry.file_name().to_string_lossy().into_owned())
-            .filter(|name| name.starts_with("resource_") && name.ends_with(".map"))
-            .collect::<Vec<_>>();
-        names.sort();
-        maps.extend(names.into_iter().map(|name| (overlays.join(name), true)));
+    for id in streamed(root, target, &found[0].text)? {
+        let path = overlays.join(format!("resource_{id}.map"));
+        if !path.is_file() || !overlays.join(format!("resource_{id}.lz")).is_file() {
+            return Ok(Err(format!(
+                "pending: {} is not built beside the image that reads it; rebuild",
+                shown(&path)
+            )));
+        }
+        found.push(ImageMap {
+            image: id,
+            text: read(&path)?,
+            path,
+        });
     }
+    for map in &found {
+        // A link that failed after writing its map leaves an older image.
+        if written(&map.path)? > linked {
+            return Ok(Err(format!(
+                "pending: {} is newer than its verified image; rebuild",
+                shown(&map.path)
+            )));
+        }
+    }
+    Ok(Ok(found))
+}
+
+/// The English build's measurement from its verified image, or why it is
+/// pending.
+pub(crate) fn measure(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<Result<Measurement, String>, String> {
+    let maps = match maps(root, target)? {
+        Ok(maps) => maps,
+        Err(reason) => return Ok(Err(reason)),
+    };
+    let output = target.output_dir;
     let source = |stem: &str| maintained_source(root, stem);
     let marks = std::cell::RefCell::new(std::collections::HashMap::new());
     let mark = |stem: &str| {
@@ -542,27 +812,24 @@ pub(crate) fn measure(
             .clone()
     };
     let mut measurement = Measurement::default();
-    let mut images = vec![root.join(format!("{output}/{}.elf", target.id))];
-    for (path, overlay) in maps {
-        if overlay {
-            images.push(path.with_extension("elf"));
-        }
-        // A link that failed after writing its map leaves an older image.
-        if written(&path)? > linked {
-            return Ok(Err(format!(
-                "pending: {} is newer than its verified image; rebuild",
-                path.strip_prefix(root).unwrap_or(&path).display()
-            )));
-        }
-        let text = std::fs::read_to_string(&path)
-            .map_err(|error| format!("{}: {error}", path.display()))?;
-        tally(&mut measurement, &text, output, overlay, &source, &mark)?;
-    }
-    // The main image names its symbols; every image may place padding its
-    // source marks as uncredited, which leaves DONE (C2).
-    for (index, image) in images.iter().enumerate() {
+    for map in &maps {
+        let placed = tally(
+            &mut measurement,
+            &map.text,
+            output,
+            &map.image,
+            &source,
+            &mark,
+        )?;
+        // The main image names its symbols; every image may place padding its
+        // source marks as uncredited, which leaves DONE (C2).
+        let elf = if map.image == MAIN_IMAGE {
+            root.join(format!("{output}/{}.elf", target.id))
+        } else {
+            map.path.with_extension("elf")
+        };
         let Ok(nm) = std::process::Command::new("arm-none-eabi-nm")
-            .arg(image)
+            .arg(elf)
             .output()
         else {
             continue;
@@ -571,12 +838,12 @@ pub(crate) fn measure(
             continue;
         }
         let listed = String::from_utf8_lossy(&nm.stdout);
-        if index == 0 {
+        if map.image == MAIN_IMAGE {
             measurement.names = names(&listed);
         }
-        measurement.uncredited += uncredited_bytes(&listed);
+        discredit(&mut measurement, &placed, &uncredited_spans(&listed));
     }
-    measurement.done.game_asm -= measurement.uncredited.min(measurement.done.game_asm);
+    measurement.done.game_asm -= measurement.stray.min(measurement.done.game_asm);
     for (object, bytes) in &measurement.other {
         eprintln!(
             "{}: {bytes} text bytes from unclassified {object}",
@@ -584,6 +851,60 @@ pub(crate) fn measure(
         );
     }
     Ok(Ok(measurement))
+}
+
+/// The units an edition's verified build links from source, in its main
+/// image and in every code overlay it builds from source, or why it is
+/// pending.
+pub(crate) fn linked(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<Result<BTreeSet<Unit>, String>, String> {
+    let maps = match maps(root, target)? {
+        Ok(maps) => maps,
+        Err(reason) => return Ok(Err(reason)),
+    };
+    let source = |stem: &str| maintained_source(root, stem);
+    let mut units = BTreeSet::new();
+    for map in &maps {
+        units.extend(links(&map.text, target.output_dir, &map.image, &source)?);
+    }
+    Ok(Ok(units))
+}
+
+/// A game's DONE in all six editions together, measured on its English
+/// build `target`, or why it is pending: every edition's build must be
+/// verified and current.
+pub(crate) fn measure_game(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<Result<Game, String>, String> {
+    let english = match measure(root, target)? {
+        Ok(measurement) => measurement,
+        Err(reason) => return Ok(Err(reason)),
+    };
+    let mut editions = Vec::with_capacity(6);
+    for edition in target.editions() {
+        let units = if edition.id == target.id {
+            english.credits.keys().cloned().collect()
+        } else {
+            match linked(root, edition)? {
+                Ok(units) => units,
+                Err(reason) => return Ok(Err(reason)),
+            }
+        };
+        let earned = share(&english, &units);
+        // The English build links every unit it credits: its share is its
+        // own measurement, byte for byte.
+        if edition.id == target.id && earned.done != english.done {
+            return Err(format!(
+                "{}: its credited units do not add up to its DONE",
+                target.id
+            ));
+        }
+        editions.push((edition.language(), earned));
+    }
+    Ok(Ok(Game { english, editions }))
 }
 
 #[cfg(test)]
@@ -661,24 +982,76 @@ Linker script and memory map
                 veneer: stem == "games/COMMON/SRC/D",
             })
         };
-        tally(
+        let placed = tally(
             &mut measurement,
             MAIN,
             "out/tbs-en",
-            false,
+            MAIN_IMAGE,
             &language,
             &mark,
         )
         .unwrap();
+        // Each credited unit's text, where the map places it.
+        let unit = |image: &str, object: &str| (image.to_string(), object.to_string());
+        assert_eq!(
+            placed,
+            [
+                (0x0800_0000, 0x100, unit("main", "games/G/SRC/A.o")),
+                (0x0800_0180, 0x20, unit("main", "games/G/SRC/B.o")),
+                (0x0800_01a0, 0x10, unit("main", "games/COMMON/SRC/C.o")),
+                (0x0800_01b0, 0x8, unit("main", "games/COMMON/SRC/D.o")),
+                (0x0800_0400, 0x3c, unit("main", "libgcc.a(_call_via_rX.o)")),
+            ]
+        );
         tally(
             &mut measurement,
             OVERLAY,
             "out/tbs-en",
-            true,
+            "36f",
             &language,
             &mark,
         )
         .unwrap();
+        // DONE is exactly the credits, unit by unit.
+        let credits = std::mem::take(&mut measurement.credits);
+        let mut sum = Counted::default();
+        for credit in credits.values() {
+            sum += *credit;
+        }
+        assert_eq!(
+            (sum.done, sum.library, sum.steered),
+            (
+                GameDone {
+                    executable: 0,
+                    ..measurement.done
+                },
+                measurement.library,
+                measurement.steered
+            )
+        );
+        assert_eq!(
+            credits.keys().cloned().collect::<Vec<_>>(),
+            [
+                unit("36f", "games/G/SRC/FIELD/F.o"),
+                unit("36f", "libgcc.a(_lshrdi3.o)"),
+                unit("main", "games/COMMON/SRC/C.o"),
+                unit("main", "games/COMMON/SRC/D.o"),
+                unit("main", "games/G/SRC/A.o"),
+                unit("main", "games/G/SRC/B.o"),
+                unit("main", "libgcc.a(_call_via_rX.o)"),
+            ]
+        );
+        assert_eq!(
+            credits[&unit("main", "games/G/SRC/A.o")],
+            Counted {
+                done: GameDone {
+                    game_c: 0x100,
+                    ..GameDone::default()
+                },
+                steered: 0x100,
+                ..Counted::default()
+            }
+        );
         assert_eq!(
             measurement,
             Measurement {
@@ -711,6 +1084,8 @@ Linker script and memory map
                 names: Names::default(),
                 steered: 0x100,
                 uncredited: 0,
+                stray: 0,
+                credits: BTreeMap::new(),
             }
         );
     }
@@ -725,8 +1100,138 @@ Linker script and memory map
 08001000 t AlchemyUncredited_08001000
 08000000 T Battle_Start
 ";
-        // Two closed spans of 4 and 6 bytes; a start with no end counts nothing.
-        assert_eq!(uncredited_bytes(nm), 10);
+        // Two closed spans of 6 and 4 bytes; a start with no end counts nothing.
+        let spans = uncredited_spans(nm);
+        assert_eq!(spans, [(0x0800_9bd4, 6), (0x080f_0100, 4)]);
+        // Each span leaves the credit of the unit whose text holds it, so an
+        // edition that links the unit earns it without the padding.
+        let unit = |object: &str| (MAIN_IMAGE.to_string(), object.to_string());
+        let assembly = |bytes| Counted {
+            done: GameDone {
+                game_asm: bytes,
+                ..GameDone::default()
+            },
+            ..Counted::default()
+        };
+        let mut measurement = Measurement {
+            done: GameDone {
+                game_asm: 0x60,
+                executable: 0x100,
+                ..GameDone::default()
+            },
+            credits: BTreeMap::from([(unit("A.o"), assembly(0x40)), (unit("B.o"), assembly(0x20))]),
+            ..Measurement::default()
+        };
+        let placed = [
+            (0x0800_9bc0, 0x40, unit("A.o")),
+            (0x080f_0000, 0x20, unit("B.o")),
+        ];
+        discredit(&mut measurement, &placed, &spans);
+        // The second span starts past B's text, in no credited unit: stray.
+        assert_eq!((measurement.uncredited, measurement.stray), (10, 4));
+        assert_eq!(measurement.done.game_asm, 0x5a);
+        assert_eq!(
+            measurement.credits[&unit("A.o")],
+            Counted {
+                uncredited: 6,
+                ..assembly(0x3a)
+            }
+        );
+        assert_eq!(measurement.credits[&unit("B.o")], assembly(0x20));
+        // Stray padding leaves the game's assembly in every edition alike,
+        // whichever units the edition links.
+        let only_b = BTreeSet::from([unit("B.o")]);
+        let earned = share(&measurement, &only_b);
+        assert_eq!((earned.done.game_asm, earned.uncredited), (0x1c, 4));
+        let both = measurement.credits.keys().cloned().collect();
+        let earned = share(&measurement, &both);
+        assert_eq!((earned.done.game_asm, earned.uncredited), (0x56, 10));
+    }
+
+    #[test]
+    fn an_object_linked_in_four_of_six_editions_earns_four_sixths() {
+        let unit = |image: &str, object: &str| (image.to_string(), object.to_string());
+        let c = |bytes, steered| Counted {
+            done: GameDone {
+                game_c: bytes,
+                ..GameDone::default()
+            },
+            steered,
+            ..Counted::default()
+        };
+        let stub = Counted {
+            done: GameDone {
+                common_asm: 8,
+                veneers: 8,
+                ..GameDone::default()
+            },
+            ..Counted::default()
+        };
+        let english = Measurement {
+            done: GameDone {
+                game_c: 600,
+                common_asm: 8,
+                veneers: 8,
+                executable: 1000,
+                ..GameDone::default()
+            },
+            steered: 60,
+            raw: 392,
+            credits: BTreeMap::from([
+                (unit("main", "games/G/SRC/A.o"), c(300, 0)),
+                (unit("main", "games/G/SRC/B.o"), c(240, 60)),
+                (unit("36f", "games/G/SRC/B.o"), c(60, 0)),
+                (unit("main", "games/COMMON/SRC/D.o"), stub),
+            ]),
+            ..Measurement::default()
+        };
+        let everything = english.credits.keys().cloned().collect::<BTreeSet<_>>();
+        // Two editions still take A from their scaffold; one of them links B
+        // in its main image but copies overlay 36f, and so earns nothing for
+        // B there. A unit only another edition links is not in the total.
+        let without_a = everything
+            .iter()
+            .filter(|unit| unit.1 != "games/G/SRC/A.o")
+            .cloned()
+            .collect::<BTreeSet<_>>();
+        let mut without_a_or_overlay = without_a.clone();
+        without_a_or_overlay.remove(&unit("36f", "games/G/SRC/B.o"));
+        without_a_or_overlay.insert(unit("main", "games/G/SRC/ONLY_HERE.o"));
+        let linked = [
+            ("ja", &without_a_or_overlay),
+            ("en", &everything),
+            ("de", &everything),
+            ("es", &everything),
+            ("fr", &without_a),
+            ("it", &everything),
+        ];
+        let game = Game {
+            editions: linked
+                .iter()
+                .map(|(language, units)| (*language, share(&english, units)))
+                .collect(),
+            english,
+        };
+        let bytes = |language: &str| {
+            let edition = game.editions.iter().find(|(name, _)| *name == language);
+            edition.unwrap().1.done.bytes()
+        };
+        assert_eq!((bytes("en"), bytes("fr"), bytes("ja")), (608, 308, 248));
+        assert!(game
+            .editions
+            .iter()
+            .all(|(_, edition)| edition.done.executable == 1000));
+        let all = game.combined();
+        // A earns four sixths of its 300 bytes; overlay B five sixths of 60.
+        assert_eq!(all.done.game_c, 4 * 300 + 6 * 240 + 5 * 60);
+        assert_eq!((all.done.common_asm, all.done.veneers), (48, 48));
+        assert_eq!(all.done.executable, 6 * 1000);
+        assert_eq!(all.steered, 6 * 60);
+        assert_eq!(all.done.bytes(), 4 * 608 + 308 + 248);
+        // The published parts still add up to the published whole.
+        let (c, assembly, stubs) = all.done.parts();
+        assert_eq!((c, assembly, stubs), (49.0, 0.0, 0.8));
+        assert_eq!(all.done.percent(), 49.8);
     }
 
     #[test]
@@ -899,14 +1404,25 @@ void After(void) { }
         let output = root.join("out/tla-en");
         std::fs::create_dir_all(output.join("overlays")).unwrap();
         std::fs::create_dir_all(root.join("games/G/SRC")).unwrap();
+        std::fs::create_dir_all(root.join("recon/tla")).unwrap();
         std::fs::write(root.join("games/G/SRC/A.C"), "void A(void) {}\n").unwrap();
+        // The main image reads overlay 001 as a built stream.
+        std::fs::write(
+            root.join("recon/tla/overlays.s"),
+            ".section .overlays,\"a\"\n.incbin \"overlays/resource_001.lz\"\n",
+        )
+        .unwrap();
         let main = "Linker script and memory map\n \
              .text 0x08000000 0x30 /x/out/tla-en/obj/games/G/SRC/A.o\n \
-             .text 0x08000030 0x10 /x/out/tla-en/obj/recon/tla/raw/08000030.o\n";
+             .text 0x08000030 0x10 /x/out/tla-en/obj/recon/tla/raw/08000030.o\n \
+             .overlays 0x08000040 0x20 /x/out/tla-en/obj/recon/tla/overlays.o\n";
         let overlay = "Linker script and memory map\n \
              .text 0x02000000 0x40 /x/out/tla-en/overlays/resource_001_overlay.o\n";
         std::fs::write(output.join("tla-en.map"), main).unwrap();
         std::fs::write(output.join("overlays/resource_001.map"), overlay).unwrap();
+        std::fs::write(output.join("overlays/resource_001.lz"), b"stream").unwrap();
+        // A map an older build left beside an overlay no stream reads.
+        std::fs::write(output.join("overlays/resource_002.map"), overlay).unwrap();
         std::fs::write(output.join("tla-en.gba"), b"another image").unwrap();
         assert_eq!(
             measure(root, target).unwrap().unwrap_err(),
@@ -931,5 +1447,138 @@ void After(void) { }
             .unwrap()
             .unwrap_err()
             .contains("newer than its verified image"));
+    }
+
+    /// Write a verified build of `id` under `root` and return its `rom.sha1`
+    /// line: its main map, the map and stream of each overlay, and last its
+    /// image. `OUT` in a map stands for the build's own directory.
+    fn write_build(root: &Path, id: &str, main: &str, overlays: &[(&str, &str)]) -> String {
+        let output = root.join(format!("out/{id}"));
+        let own = |map: &str| map.replace("OUT", &format!("/x/out/{id}"));
+        std::fs::create_dir_all(output.join("overlays")).unwrap();
+        std::fs::write(output.join(format!("{id}.map")), own(main)).unwrap();
+        for (overlay, map) in overlays {
+            let path = output.join(format!("overlays/resource_{overlay}"));
+            std::fs::write(path.with_extension("map"), own(map)).unwrap();
+            std::fs::write(path.with_extension("lz"), b"stream").unwrap();
+        }
+        let image = format!("linked image of {id}");
+        std::fs::write(output.join(format!("{id}.gba")), &image).unwrap();
+        let digest = Sha1::digest(image.as_bytes())
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>();
+        format!("{digest}  out/{id}/{id}.gba\n")
+    }
+
+    #[test]
+    fn a_game_counts_its_six_editions_and_is_pending_while_any_is_stale() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        std::fs::create_dir_all(root.join("games/G/SRC")).unwrap();
+        for source in ["A", "B", "F"] {
+            let text = format!("void {source}(void) {{}}\n");
+            std::fs::write(root.join(format!("games/G/SRC/{source}.C")), text).unwrap();
+        }
+        // Every edition but German reads overlay 001 as a built stream;
+        // German still copies it from its scaffold.
+        let stream = ".section .overlays,\"a\"\n.incbin \"overlays/resource_001.lz\"\n";
+        let copied = ".section .overlays,\"a\"\n.incbin \"baserom.gba\", 0x60, 0x20\n";
+        std::fs::create_dir_all(root.join("recon/tla")).unwrap();
+        std::fs::write(root.join("recon/tla/overlays.s"), stream).unwrap();
+        for language in ["ja", "de", "es", "fr", "it"] {
+            let directory = root.join(format!("recon/tla/{language}"));
+            std::fs::create_dir_all(&directory).unwrap();
+            let text = if language == "de" { copied } else { stream };
+            std::fs::write(directory.join("overlays.s"), text).unwrap();
+        }
+        let main = |b: &str, streams: &str| {
+            format!(
+                "Linker script and memory map\n \
+                 .text 0x08000000 0x30 OUT/obj/games/G/SRC/A.o\n \
+                 {b}\n \
+                 .text 0x08000050 0x10 OUT/obj/recon/tla/raw/08000050.o\n \
+                 .overlays 0x08000060 0x20 OUT/obj/recon/tla/{streams}.o\n"
+            )
+        };
+        let from_source = ".text 0x08000030 0x20 OUT/obj/games/G/SRC/B.o";
+        let overlay = "Linker script and memory map\n \
+             .text 0x02000000 0x20 OUT/overlays/resource_001_overlay.o\n \
+             .text 0x02000020 0x40 OUT/obj/games/G/SRC/F.o\n";
+        let built = [("001", overlay)];
+        // Japanese still takes B from its scaffold.
+        let japanese = main(
+            ".rom.08000030 0x08000030 0x20 OUT/obj/recon/tla/ja/rom.o",
+            "ja/overlays",
+        );
+        let mut digests =
+            String::from("0000000000000000000000000000000000000000  out/tbs-en/tbs-en.gba\n");
+        digests += &write_build(root, "tla-ja", &japanese, &built);
+        digests += &write_build(root, "tla-en", &main(from_source, "overlays"), &built);
+        // German's overlay map is what an older build left: nothing reads it.
+        digests += &write_build(root, "tla-de", &main(from_source, "de/overlays"), &built);
+        for language in ["es", "fr", "it"] {
+            let streams = format!("{language}/overlays");
+            let id = format!("tla-{language}");
+            digests += &write_build(root, &id, &main(from_source, &streams), &built);
+        }
+        std::fs::write(root.join("rom.sha1"), &digests).unwrap();
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        let game = measure_game(root, target).unwrap().unwrap();
+        assert_eq!(game.english.done.executable, 0xc0);
+        assert_eq!(
+            game.editions
+                .iter()
+                .map(|(language, edition)| (*language, edition.done.bytes()))
+                .collect::<Vec<_>>(),
+            [
+                ("ja", 0x30 + 0x40),
+                ("en", 0x30 + 0x20 + 0x40),
+                ("de", 0x30 + 0x20),
+                ("es", 0x90),
+                ("fr", 0x90),
+                ("it", 0x90)
+            ]
+        );
+        let all = game.combined().done;
+        assert_eq!((all.bytes(), all.executable), (768, 6 * 0xc0));
+        assert_eq!(all.percent(), 66.66);
+        let subject = || crate::coverage::progress::subject(root).unwrap();
+        assert_eq!(subject(), "☀️ pending ⚓️ 66.66% –");
+        let pending = || measure_game(root, target).unwrap().unwrap_err();
+        // One edition whose image is not its reference leaves the game unpublished.
+        let italian = root.join("out/tla-it/tla-it.gba");
+        std::fs::write(&italian, "another image").unwrap();
+        assert_eq!(
+            pending(),
+            "pending: out/tla-it/tla-it.gba differs from rom.sha1"
+        );
+        assert_eq!(subject(), "☀️ pending ⚓️ pending –");
+        std::fs::write(&italian, "linked image of tla-it").unwrap();
+        assert_eq!(subject(), "☀️ pending ⚓️ 66.66% –");
+        // So does a map newer than its image, a stream without its map, or
+        // an edition that was never built.
+        std::thread::sleep(std::time::Duration::from_millis(20));
+        let french = root.join("out/tla-fr/tla-fr.map");
+        std::fs::write(&french, std::fs::read(&french).unwrap()).unwrap();
+        assert_eq!(
+            pending(),
+            "pending: out/tla-fr/tla-fr.map is newer than its verified image; rebuild"
+        );
+        std::fs::write(root.join("out/tla-fr/tla-fr.gba"), "linked image of tla-fr").unwrap();
+        std::fs::remove_file(root.join("out/tla-es/overlays/resource_001.map")).unwrap();
+        assert_eq!(
+            pending(),
+            "pending: out/tla-es/overlays/resource_001.map is not built beside the image that reads it; rebuild"
+        );
+        std::fs::remove_file(root.join("out/tla-ja/tla-ja.gba")).unwrap();
+        assert_eq!(pending(), "pending a build of out/tla-ja/tla-ja.gba");
+        // An edition rom.sha1 does not name is an error, never a number.
+        std::fs::write(
+            root.join("rom.sha1"),
+            digests.replace("out/tla-ja/", "out/tla-xx/"),
+        )
+        .unwrap();
+        assert!(measure_game(root, target).is_err());
     }
 }

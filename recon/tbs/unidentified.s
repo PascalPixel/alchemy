@@ -270,8 +270,8 @@ SideObject_ActorKindIdMap:
 	.global Data_080368d4
 Data_080368d4:
 	.incbin "baserom.gba", 0x000368d4, 0x000008f0
-	.global Data_080371c4
-Data_080371c4:
+	.global UiWindow_PartyColumnOffsets
+UiWindow_PartyColumnOffsets:
 	.incbin "baserom.gba", 0x000371c4, 0x0000001c
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:

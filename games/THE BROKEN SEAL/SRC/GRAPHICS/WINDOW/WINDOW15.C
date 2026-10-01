@@ -2,8 +2,10 @@
 #include "DMA.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+#include "RENDER_INPUT.H"
 
 extern const u8 Tile_BuildMetatiles[];
+extern const s8 UiWindow_PartyColumnOffsets[];
 extern u8 Tile_BuildMetatilesCodeSize[];
 extern void *Data_03001e8c;
 void *Runtime_BumpAllocate(u32 size);
@@ -121,4 +123,55 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
         window->left, window->top, window->right, window->height, 6);
     UiWindow_DrawPartyStatusContents(flags);
     *busy = zero;
+}
+
+/* Draws the dividers between the party columns of a status window: a
+   joint on the top row, a foot on the bottom row and a bar between. The
+   wide layout shifts every divider five tiles and adds the leftmost one.
+   In the menu the bottom edge is then redrawn as a plain border. */
+void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
+{
+    u8 *base = Data_03001e8c;
+    s32 first = 1;
+    s32 bias = 0;
+    u32 max = window->width - 1;
+    s32 i;
+    u32 rows = window->height;
+    u32 col;
+    u32 row;
+    u16 *dest;
+
+    if ((flags & 1) == 0)
+        flags &= ~2;
+    if (flags & 2) {
+        bias = 5;
+        first = 0;
+    }
+    i = first;
+    while (UiWindow_PartyColumnOffsets[i] >= 0) {
+        col = UiWindow_PartyColumnOffsets[i] + bias;
+        if (col < max) {
+            for (row = 0; row != rows; row++) {
+                dest = (u16 *)(((window->y + row) * 32 + (window->x + col)) * 2 + (u32)base);
+                if (row == 0)
+                    *dest = 0xf018;
+                else if (row == rows - 1)
+                    *dest = 0xf019;
+                else
+                    *dest = 0xf00f;
+            }
+        }
+        i++;
+    }
+    if (base[RENDER_MENU_STATE_OFS]) {
+        dest = (u16 *)base + (window->y + window->height - 1) * 32 + window->x;
+        col = 1;
+        *dest++ = 0xf080;
+        while (col < max) {
+            col++;
+            *dest++ = 0xf081;
+        }
+        *dest = 0xf082;
+    }
+    base[RENDER_DIRTY_OFS] = 1;
 }

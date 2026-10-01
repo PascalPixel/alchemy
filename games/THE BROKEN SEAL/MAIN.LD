@@ -299,7 +299,7 @@ SECTIONS
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE5_AND_RESET_HALFWORD_C.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE15_INVERTED.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW15.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0001ef60)
+    "*/recon/tbs/ja/rom.o"(.rom.0001f080)
     "*/recon/tbs/ja/rom.o"(.rom.0001f1f8)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE3.o"(.text)

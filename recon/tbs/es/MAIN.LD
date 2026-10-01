@@ -288,7 +288,7 @@
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE5_AND_RESET_HALFWORD_C.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_SET_BYTE15_INVERTED.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW15.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.0001df84)
+    "*/recon/tbs/es/rom.o"(.rom.0001e0a4)
     "*/recon/tbs/es/rom.o"(.rom.0001e21c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SAVE3.o"(.text)

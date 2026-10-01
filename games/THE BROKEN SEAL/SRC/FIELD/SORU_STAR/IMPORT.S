@@ -30,13 +30,13 @@ Engine_RandomNext:
 	.thumb_func
 CalculateAngleFromCoordinateDelta:
 	overlay_veneer ArcTan2Far
-	.global Trig_Sin
+	.global Engine_MathSin
 	.thumb_func
-Trig_Sin:
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
-	.global Trig_Cos
+	.global Engine_MathCos
 	.thumb_func
-Trig_Cos:
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Engine_HeapAllocate
 	.thumb_func

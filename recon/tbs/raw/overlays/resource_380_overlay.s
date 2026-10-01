@@ -417,21 +417,21 @@ Soru_UpdateRing:
 	ldrb r3, [r4]
 	adds r0, r3, #0
 	muls r0, r1
-	bl Trig_Sin
+	bl Engine_MathSin
 	ldr r2, [sp, #0]
 	ldr r4, [sp, #48]
 	ldrb r3, [r2, #1]
 	lsls r6, r0, #1
 	adds r0, r3, #0
 	muls r0, r4
-	bl Trig_Sin
+	bl Engine_MathSin
 	lsls r7, r0, #1
 	ldr r0, [sp, #0]
 	ldr r1, [sp, #44]
 	ldrb r3, [r0, #2]
 	adds r0, r3, #0
 	muls r0, r1
-	bl Trig_Cos
+	bl Engine_MathCos
 	mov r2, r11
 	lsls r0, r0, #1
 	cmp r2, #0
@@ -552,9 +552,9 @@ Soru_UpdateRing:
 	pop {r0}
 	bx r0
 .L_0200c774:
-	.4byte Data_020050e4
+	.4byte Soru_RingDrift
 .L_0200c778:
-	.4byte Data_02005102
+	.4byte Soru_RingSwing
 .L_0200c77c:
 	.4byte Soru_RingOffsetX
 .L_0200c780:
@@ -562,7 +562,7 @@ Soru_UpdateRing:
 .L_0200c784:
 	.4byte 0x00001999
 .L_0200c788:
-	.4byte Data_02005120
+	.4byte Soru_RingDirection
 	.section .rodata.x0200cb1c,"a",%progbits
 .L_0200cb1c:
 	.4byte 0x00000000
@@ -953,8 +953,8 @@ SoruStar_StarCells:
 	.4byte 0x00280053
 	.4byte 0x00040003
 	.4byte 0xffff0000
-	.global Data_020050e4
-Data_020050e4:
+	.global Soru_RingDrift
+Soru_RingDrift:
 	.4byte 0x04040404
 	.4byte 0x00040300
 	.4byte 0x04000404
@@ -963,8 +963,8 @@ Data_020050e4:
 	.4byte 0x03000404
 	.4byte 0x02010002
 	.2byte 0x0200
-	.global Data_02005102
-Data_02005102:
+	.global Soru_RingSwing
+Soru_RingSwing:
 	.2byte 0x0101
 	.4byte 0x02000102
 	.4byte 0x01020001
@@ -973,8 +973,8 @@ Data_02005102:
 	.4byte 0x01020001
 	.4byte 0x00010200
 	.4byte 0x02000102
-	.global Data_02005120
-Data_02005120:
+	.global Soru_RingDirection
+Soru_RingDirection:
 	.4byte 0x01010101
 	.4byte 0x00010100
 	.4byte 0x0100ff01

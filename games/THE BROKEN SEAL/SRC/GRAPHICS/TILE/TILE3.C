@@ -148,3 +148,75 @@ void DisplayScroll_StepPositionEveryFourFrames(void)
         state->second += decrement;
     }
 }
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep this function in their scaffolds for now. */
+
+extern u8 gOamCopyEnabled;
+extern u8 Data_03001f58;
+extern u8 Data_03001ac4;
+extern u8 gOptionMirror;
+extern const u32 DisplayScroll_SlideResources[];
+
+void Scheduler_ResetTaskTable(void);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
+void DisplayScroll_InitObjectTable(void);
+void Ui_LoadWindowGraphics(void);
+void Bg0_ClearTilemap(void);
+void WaitFrames(s32 frames);
+
+/* FAKEMATCH: the write goes through its own int, which loads each value as a
+   word, and the do/while (0) ends a scheduling region after it; together
+   they give the reference's register order and single literal pool. */
+#define Io_Write16(reg, value) \
+    do { \
+        s32 value_ = (value); \
+        (reg) = value_; \
+    } while (0)
+
+/* Shows the 33 slides, crossfading each into the other background over 16
+   steps of four frames and holding it 267 frames, then restores the menu
+   display. */
+s32 DisplayScroll_RunSlideshow(void)
+{
+    u32 slide;
+    s32 alpha;
+
+    gOamCopyEnabled = 0;
+    Data_03001f58 = 0;
+    Data_03001ac4 = 0;
+    gOptionMirror = 0;
+    Scheduler_ResetTaskTable();
+    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_StepPositionEveryFourFrames, 0x480);
+    Io_Write16(REG_DISPCNT, 0x40);
+    DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
+    DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
+    Graphics_ClearCharacterBlockAndPalette(0);
+    Graphics_ClearCharacterBlockAndPalette(1);
+    Io_Write16(REG_BG2CNT, 0x1f8a);
+    Io_Write16(*(volatile u16 *)0x0400000e, 0x0f83);
+    Io_Write16(REG_DISPCNT, 0x1c40);
+    Io_Write16(REG_BLDCNT, 0x2844);
+    DisplayScroll_InitObjectTable();
+    WaitFrames(300);
+    for (slide = 0; slide <= 32; slide++) {
+        Graphics_LoadCharacterBlockAndPalette(DisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
+        for (alpha = 1; alpha <= 16; alpha++) {
+            if (slide & 1)
+                Io_Write16(REG_BLDALPHA, (alpha << 8) | (16 - alpha));
+            else
+                Io_Write16(REG_BLDALPHA, ((16 - alpha) << 8) | alpha);
+            WaitFrames(4);
+        }
+        WaitFrames(267);
+    }
+    Io_Write16(REG_BLDCNT, 0);
+    Io_Write16(REG_DISPCNT, 0x1040);
+    Ui_LoadWindowGraphics();
+    Bg0_ClearTilemap();
+    gOamCopyEnabled = 1;
+    return 0;
+}
+
+#undef Io_Write16
+#endif

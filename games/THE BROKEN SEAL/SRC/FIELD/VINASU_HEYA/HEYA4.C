@@ -14,6 +14,42 @@ extern const s32 gVinasuSprayScript[];
 struct FieldActor;
 s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor);
 
+/* Rubble falling from the ceiling: on every fourth frame a coin toss drops
+ * either a sinking piece near (x, z) or a slower one over x's own band, both
+ * shrunk to 0.7 and given a random spin. */
+void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
+{
+    struct EffectOptions options;
+    struct EffectOptions *p = &options;
+    register struct EffectOptions *opts asm("r8"); /* FAKEMATCH: the options pointer is held in r8 once both scales are stored through p */
+    s32 phase;
+    u32 coin;
+
+    p->start_scale_x = 0xb333;
+    p->start_scale_y = 0xb333;
+    opts = p;
+    {
+        s32 spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+        u32 *frame = &gFrameCount; /* FAKEMATCH: the counter's address is loaded before the spin is stored */
+
+        opts->spin = spin;
+        phase = *frame & 3;
+    }
+    if (phase == 0) {
+        coin = (u32)(Engine_RandomNext() << 1) >> 16;
+        if (coin != 0) {
+            s32 r = Engine_RandomNext();
+            s32 vz = Engine_MathDivide((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000, 10);
+
+            Effect_Spawn((x + (((u32)(r << 1) >> 16) << 4)) << 16, 0, z << 19, 0, phase, vz, 0x880000, opts);
+        } else {
+            s32 r = Engine_RandomNext();
+
+            Effect_Spawn((x + ((u32)(r * 17) >> 16)) << 16, 0, (x << 19) - 0x40000, 0, coin, coin, 0x880000, opts);
+        }
+    }
+}
+
 /*
  * Two rubble-fall task callbacks: each spawns the random particles over its
  * own band.  The 16-byte owners load no literal, so they carry no pool word

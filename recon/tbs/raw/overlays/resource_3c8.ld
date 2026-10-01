@@ -18,7 +18,6 @@ SECTIONS
         "*/resource_3c8_overlay.o"(.text.x0200ab14)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA3.o"(.text)
         "*/resource_3c8_overlay.o"(.text.x0200c2bc)
-        "*/resource_3c8_overlay.o"(.text.x0200c520)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA4.o"(.text)
         "*/resource_3c8_overlay.o"(.text.x0200cbd8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.o"(.text)

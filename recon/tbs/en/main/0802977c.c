@@ -1,19 +1,18 @@
-/* Complete owner [0802977c, 08029910), 404 bytes including pool.
- * Corrects the old lift's missing Math_Mod divisor, swapped glyph argument,
- * cached key reads and missing zero return. Tables are signed entry pairs.
- * Candidate 404/404 bytes, 141 differing halfwords / 74 aligned edits.
- * Three bounded hypotheses: typed recovery; explicit frame-loop goto; joined
- * A/B exit test. Goto preserves the reference block order; natural loops
- * rotate the key tests. Remaining: 16-byte frame instead of 24, redraw and
- * portrait kept in registers, no hoisted B mask, and pair-field address adds.
- * FAKEMATCH: explicit frame-loop labels preserve the reference block layout. */
+/* NONMATCHING: main [0802977c,08029910), 404 bytes with its pool.
+ * 2026-10-01 (☀️ matcher 1): 404 of 404 bytes, permuter score 975 (the
+ * goto-loop draft scored 2678). The frame loop is a while (1) with the A
+ * and B exits as breaks, which keeps the reference's block order and lets
+ * loop.c hoist &gKeysRepeat; the wrap is the % operator (__modsi3), and the
+ * two id tables are s16 pairs read as [index][1], which gives the
+ * reference's index * 4 + 2 offset with a register base.
+ * Remaining: the reference also hoists the B mask 2 into r9, which pushes
+ * work into fp and spills redraw and the portrait window (24-byte frame);
+ * here 2 stays a movs inside the loop (loop.c: "not desirable"), so work
+ * takes r9, the portrait fp, and the frame is 16 + 4. or-ing the A/B tests,
+ * while (!0) and a (u16) mask do not change it. */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
-struct DebugEntry {
-    s16 type;
-    s16 glyph;
-};
 
 struct GlyphWork {
     u8 unknown_00[0x12f2];
@@ -22,12 +21,11 @@ struct GlyphWork {
 
 extern struct GlyphWork *gWindowWork;
 extern volatile u32 gKeysRepeat;
-extern struct DebugEntry SideObject_CharacterIdMap[], SideObject_ActorKindIdMap[];
+extern s16 SideObject_CharacterIdMap[][2], SideObject_ActorKindIdMap[][2];
 extern u8 Value_00000dd2[];
 
 struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
-s32 Math_Mod(s32, s32);
 void RenderOutput_PrepareForRedraw(struct RenderInput *);
 void UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
@@ -54,12 +52,12 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
     window = UiWindow_Create(10, 10, 14, 3, 2);
     index = 0;
-    for (i = 0; SideObject_CharacterIdMap[i].type != -1; i++) {}
+    for (i = 0; SideObject_CharacterIdMap[i][0] != -1; i++) {}
     count = i;
-    for (i = 0; SideObject_ActorKindIdMap[i].type != -1; i++) {}
+    for (i = 0; SideObject_ActorKindIdMap[i][0] != -1; i++) {}
     total = count + i;
 
-next_frame:
+    while (1) {
         if (gKeysRepeat & 0x20) {
             redraw = 1;
             index--;
@@ -77,25 +75,24 @@ next_frame:
             index += 10;
         }
         if (gKeysRepeat & 1)
-            goto close;
+            break;
         if (gKeysRepeat & 2)
-            goto close;
+            break;
         if (redraw) {
             redraw = 0;
-            index = Math_Mod(index + total, total);
+            index = (index + total) % total;
             RenderOutput_PrepareForRedraw(window);
             if (index < count)
-                glyph = SideObject_CharacterIdMap[index].glyph;
+                glyph = SideObject_CharacterIdMap[index][1];
             else
-                glyph = SideObject_ActorKindIdMap[index - count].glyph + 128;
+                glyph = SideObject_ActorKindIdMap[index - count][1] + 128;
             slot = work->slot;
             UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, 15, 1);
             UiText_DrawNumberInWindow(index, 2, window, 0, 0);
             UiText_DrawCharacterAtOffset(index + (s32)Value_00000dd2, window, 24, 0);
         }
         WaitFrames(1);
-        goto next_frame;
-close:
+    }
     UiWork_Finalize(window, 2);
     UiWork_Finalize(portrait, 2);
     WaitFrames(1);

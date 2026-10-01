@@ -282,7 +282,6 @@
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/METADATA_SUM_COMMAND_LENGTHS.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00022f22)
     "*/recon/tla/it/rom.o"(.rom.00022f24)
-    "*/recon/tla/it/rom.o"(.rom.00022f64)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/MAP/RENDER_ANIMATED_TILE_FRAME.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0002301c)
     "*/recon/tla/it/rom.o"(.rom.00023088)

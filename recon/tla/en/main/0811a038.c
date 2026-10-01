@@ -2,13 +2,12 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"
 #include "PARTY_STATE.H"
-extern u8 *Data_03001e74;
+#include "RAM_BUFFER.H"
 
 
-extern struct PartyState gGameState;
 
 s32 Party_CountActiveOwnersFar(void);
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
+struct BattleUnit *Owner_GetState(s32 unit_id);
 
 /* Caps the active party at four owners, or three in the alternate battle mode,
  * optionally writes their identifiers with a 0xff terminator, marks each
@@ -21,7 +20,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     s32 index;
 
     limit = 4;
-    if (((u8 *)Data_03001e74)[68] != 0)
+    if (((u8 *)Ram_HeapSlots->battle_work)[68] != 0)
         limit = 3;
 
     count = Party_CountActiveOwnersFar();
@@ -29,11 +28,11 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
         count = limit;
 
     for (index = 0; index < count; index++) {
-        s32 owner = gGameState.active_owners[index];
+        s32 owner = gPartyState.active_owners[index];
 
         if (owners != 0)
             *owners++ = owner;
-        Owner_GetStateFar(owner)->status_12a = 2;
+        Owner_GetState(owner)->status_12a = 2;
     }
 
     if (owners != 0)

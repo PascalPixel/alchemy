@@ -26,7 +26,7 @@ Func_080fae2c:
 	ldr r0, [r7, #36]
 	bl RenderOutput_RedrawSavedRectFar
 	mov r0, r8
-	bl Func_080f8c94
+	bl ItemMenu_RefreshEntry
 	adds r0, r5, #0
 	movs r1, #0
 	bl Func_080fadd0

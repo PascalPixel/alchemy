@@ -767,12 +767,6 @@ Func_08022318:
 	.thumb_func
 Func_0802d7b0:
 	.incbin "baserom.gba", 0x00022f24, 0x00000040
-	.section .rom.00022f64, "ax"
-	.global Map_RenderAnimatedTileFrame
-	.type Map_RenderAnimatedTileFrame, %function
-	.thumb_func
-Map_RenderAnimatedTileFrame:
-	.incbin "baserom.gba", 0x00022f64, 0x00000084
 	.section .rom.0002301c, "ax"
 	.global Func_0802301c
 	.type Func_0802301c, %function
@@ -1141,7 +1135,10 @@ Func_0802dc48:
 	.type Func_0802a650, %function
 	.thumb_func
 Func_0802a650:
-	.incbin "baserom.gba", 0x0002de8c, 0x00000dbc
+	.incbin "baserom.gba", 0x0002de8c, 0x00000cc0
+	.global Map_TileDissolveOrder
+Map_TileDissolveOrder:
+	.incbin "baserom.gba", 0x0002eb4c, 0x000000fc
 	.global Data_0802ec48
 Data_0802ec48:
 	.incbin "baserom.gba", 0x0002ec48, 0x0000027c

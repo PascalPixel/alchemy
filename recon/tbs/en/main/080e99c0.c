@@ -87,12 +87,14 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     /* Sixteen drawn billboards (the table holds more) at work + 0x7080. */
     i = 0;
     do {
-        s32 ang;
+        struct EffectStep *flash = &work->particles[i];
 
-        ang = Random16() & 0xFFFF;
-        work->particles[i].x = (i * 2) * Trig_Sin(ang);
-        work->particles[i].y = -((i * 2) * Trig_Cos(ang));
-        work->particles[i].variant = i / 2 + 25;
+        s32 scale = i * 2;
+        s32 ang = Random16() & 0xFFFF;
+
+        flash->x = scale * Trig_Sin(ang);
+        flash->y = -(scale * Trig_Cos(ang));
+        flash->variant = i / 2 + 25;
         i++;
     } while (i != 32);
 
@@ -106,17 +108,19 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     origin = half << 16;
     i = 0;
     do {
+        struct EffectStep *spark = &SPARK[i];
+
         s32 mag;
         s32 ang;
 
         mag = Random16() & 0x1FF;
         ang = Random16() & 0xFFFF;
-        SPARK[i].x = origin;
-        SPARK[i].y = 176 << 15;
+        spark->x = origin;
+        spark->y = 176 << 15;
         mag += 32;
-        SPARK[i].velocity_x = (mag * Trig_Sin(ang)) >> 5;
-        SPARK[i].velocity_y = -(mag * Trig_Cos(ang)) >> 6;
-        SPARK[i].variant = (Random16() & 7) + 32;
+        spark->velocity_x = (mag * Trig_Sin(ang)) >> 5;
+        spark->velocity_y = -(mag * Trig_Cos(ang)) >> 6;
+        spark->variant = (Random16() & 7) + 32;
         i++;
     } while (i != 170 << 1);
 
@@ -155,13 +159,15 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                register across the whole loop rather than reloading it. */
             i = 0;
             do {
+                struct EffectStep *flash = &work->particles[i];
+
                 s32 x;
                 s32 life;
                 s32 y;
 
-                x = HI(work->particles[i].x) + half;
-                life = work->particles[i].variant;
-                y = HI(work->particles[i].y);
+                x = HI(flash->x) + half;
+                life = flash->variant;
+                y = HI(flash->y);
                 if ((u32)life <= 17) {
                     draw(canvas,
                         (u8 *)work
@@ -169,8 +175,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                             + (221 << 4),
                         x - 16, y + 48, 32, 64);
                 }
-                life = work->particles[i].variant;
-                work->particles[i].variant = life > 0 ? life - 1 : -1;
+                life = flash->variant;
+                flash->variant = life > 0 ? life - 1 : -1;
                 i++;
             } while (i != 16);
         }
@@ -179,18 +185,20 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         if (frame == 28) {
             i = 0;
             do {
-                if (DUST[i].variant == -1) {
+                struct EffectStep *dust = &DUST[i];
+
+                if (dust->variant == -1) {
                     s32 mag;
                     s32 ang;
 
                     mag = Random16() & 63;
                     ang = Random16() & 0xFFFF;
-                    DUST[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
-                    DUST[i].y =
+                    dust->x = ((mag * Trig_Sin(ang)) >> 3) + origin;
+                    dust->y =
                         ((mag * Trig_Cos(ang)) >> 2) + (192 << 15);
-                    DUST[i].velocity_x = ((Random16() & 63) - 32) << 14;
-                    DUST[i].velocity_y = (-(Random16() & 63) - 8) << 13;
-                    DUST[i].variant = 0;
+                    dust->velocity_x = ((Random16() & 63) - 32) << 14;
+                    dust->velocity_y = (-(Random16() & 63) - 8) << 13;
+                    dust->variant = 0;
                 }
                 i++;
             } while (i != 128 << 1);
@@ -204,19 +212,21 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
             cnt = 0;
             i = 0;
             do {
-                if (DUST[i].variant == -1) {
+                struct EffectStep *dust = &DUST[i];
+
+                if (dust->variant == -1) {
                     s32 mag;
                     s32 ang;
 
                     mag = Random16() & 63;
                     ang = Random16() & 0xFFFF;
-                    DUST[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
-                    DUST[i].y =
+                    dust->x = ((mag * Trig_Sin(ang)) >> 3) + origin;
+                    dust->y =
                         ((mag * Trig_Cos(ang)) >> 2) + (192 << 15);
-                    DUST[i].velocity_x = ((Random16() & 63) - 32) << 14;
+                    dust->velocity_x = ((Random16() & 63) - 32) << 14;
                     cnt++;
-                    DUST[i].velocity_y = (-(Random16() & 63) - 8) << 13;
-                    DUST[i].variant = 0;
+                    dust->velocity_y = (-(Random16() & 63) - 8) << 13;
+                    dust->variant = 0;
                     if (cnt == 16) {
                         break;
                     }
@@ -237,11 +247,13 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         if (frame <= 71) {
             i = 0;
             do {
-                if (DUST[i].variant >= 0) {
+                struct EffectStep *dust = &DUST[i];
+
+                if (dust->variant >= 0) {
                     s32 size;
 
                     size = i % 3 + 2;
-                    if (DUST[i].velocity_y > 0) {
+                    if (dust->velocity_y > 0) {
                         size += 2;
                     }
                     if (frame > 68 && size <= 5) {
@@ -260,25 +272,25 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                         size = 10;
                     }
                     draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
-                        HI(DUST[i].x) - size / 2,
-                        HI(DUST[i].y) - size,
+                        HI(dust->x) - size / 2,
+                        HI(dust->y) - size,
                         size, size * 2);
 
                     /* EffectStep_AdvanceWithGravity2D open-coded with a
                        per-lane gravity and damping 62. */
-                    DUST[i].x += DUST[i].velocity_x;
-                    DUST[i].y += DUST[i].velocity_y;
+                    dust->x += dust->velocity_x;
+                    dust->y += dust->velocity_y;
                     if (frame > 80) {
-                        DUST[i].velocity_y += -32768;
+                        dust->velocity_y += -32768;
                     } else {
-                        DUST[i].velocity_y += Data_080eef18[i & 3];
+                        dust->velocity_y += Data_080eef18[i & 3];
                     }
-                    DUST[i].velocity_x = DUST[i].velocity_x * 62 / 64;
-                    DUST[i].velocity_y = DUST[i].velocity_y * 62 / 64;
-                    DUST[i].variant++;
-                    if (DUST[i].velocity_y > 0
-                        && HI(DUST[i].y) > 108) {
-                        DUST[i].variant = -1;
+                    dust->velocity_x = dust->velocity_x * 62 / 64;
+                    dust->velocity_y = dust->velocity_y * 62 / 64;
+                    dust->variant++;
+                    if (dust->velocity_y > 0
+                        && HI(dust->y) > 108) {
+                        dust->variant = -1;
                     }
                 }
                 i++;
@@ -312,20 +324,22 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         if (frame > 59) {
             i = 0;
             do {
-                if (SPARK[i].variant > 0) {
+                struct EffectStep *spark = &SPARK[i];
+
+                if (spark->variant > 0) {
                     s32 x;
                     s32 y;
                     s32 size;
 
-                    EffectStep_AdvanceWithGravity2D(&SPARK[i], 64, 128 << 6);
-                    y = SPARK[i].y;
-                    SPARK[i].variant--;
+                    EffectStep_AdvanceWithGravity2D(spark, 64, 128 << 6);
+                    y = spark->y;
+                    spark->variant--;
                     if (y > (216 << 15)) {
-                        SPARK[i].velocity_y = -SPARK[i].velocity_y / 2;
+                        spark->velocity_y = -spark->velocity_y / 2;
                     } else {
-                        x = SPARK[i].x;
+                        x = spark->x;
                         if ((u32)x <= 0x007EFFFF && y >= 0) {
-                            size = SPARK[i].variant / 5 + 1;
+                            size = spark->variant / 5 + 1;
                             draw(canvas,
                                 (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                                 (x >> 16) - size / 2, (y >> 16) - size,

@@ -90,6 +90,6 @@ Func_0803d9bc:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_0803da70:
-	.4byte Data_0804e684
+	.4byte UiIcon_BaseGlyphPointers
 .L_0803da74:
-	.4byte Data_08054a14
+	.4byte UiIcon_PsynergyIconPointers

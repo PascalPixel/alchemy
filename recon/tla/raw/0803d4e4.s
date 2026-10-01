@@ -83,6 +83,6 @@ Ui_BuildPairedPatternsToSlot:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0803d58c:
-	.4byte Data_0804e684
+	.4byte UiIcon_BaseGlyphPointers
 .L_0803d590:
 	.4byte UiIcon_OverlayPointerTable

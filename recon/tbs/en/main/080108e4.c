@@ -1,4 +1,18 @@
-/* Draft, not exact: Map_WriteLayerCellTile, main:080108e4, complete
+/* 2026-10-01 (matcher 2): 290 (8 register-only, 4 reordered), every
+   instruction in place. The pair loop is two goto loops, so loop.c hoists
+   nothing: the top half reads through a cells local set from the label
+   before the loops (the reference's r5), and the bottom half adds RAM_BUFFER.H's
+   Ram_MapCellBuffer + 2 to the scaled id inside the loop, loaded there as
+   the reference loads it. With goto loops and the label read in the loop
+   (no local) the prologue matches too and only that load's placement
+   differs (220: gMapCellBuffer loaded per tile instead of once into r5).
+   What remains here is reload's register rotation: the prologue's
+   column & 1 and the force reload take r7 where the reference takes r1
+   (and r3 for the second force test), and the loop's 0x02010002 takes r7
+   where the reference takes r2 after the top store. Moving the local's
+   declaration or assignment, other bottom spellings, and for loops around
+   either level all stay at 290 or get worse (350-751).
+   Draft, not exact: Map_WriteLayerCellTile, main:080108e4, complete
    260-byte owner [080108e4, 080109e8).
    2026-09-29: the buffers are named now. 0x02020000 is gMapBlocks and
    0x02010000 is gMapCellBuffer, read as top/bottom halfword pairs, and the
@@ -17,6 +31,7 @@
    merges the two table constants (260 bytes / 53 halfwords, 22 edits);
    separate named table symbols hoist both bases (264 / 58, 30 edits). */
 #include "DMA.H"
+#include "RAM_BUFFER.H"
 
 struct MapLayerWork {
     u8 unknown_000[0x110];
@@ -50,6 +65,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 column, s32 row, u32 tile, s32 force)
     u32 i;
     u32 j;
     u32 id;
+    struct Halves *cells;
 
     column &= 1;
     row &= 1;
@@ -71,16 +87,21 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 column, s32 row, u32 tile, s32 force)
     if (force != 0) {
         output = (u16 *)(0x06004000 + ((((layer * 2 + row) << 6) + column) << 5));
         source = buffer;
-        for (i = 0; i < 16; i++) {
-            for (j = 0; j < 16; j++) {
-                id = *source;
-                output[0] = gMapCellBuffer[id].top;
-                output[32] = gMapCellBuffer[id].bottom;
-                output++;
-                source += 2;
-            }
-            output += 48;
-        }
+        cells = gMapCellBuffer;
+        i = 0;
+    row:
+        j = 0;
+    tile:
+        id = *source;
+        output[0] = cells[id].top;
+        output[32] = *(u16 *)(Ram_MapCellBuffer + 2 + id * 4);
+        output++;
+        source += 2;
+        if (++j < 16)
+            goto tile;
+        output += 48;
+        if (++i < 16)
+            goto row;
     }
     Runtime_ReleaseHeapBlock(14);
     return 1;

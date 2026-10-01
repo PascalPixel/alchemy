@@ -86,9 +86,9 @@ Engine_MapCopyCellAttributes:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	.global Runtime_SetWorkTripleIfNonNegative
+	.global Engine_MapRenderSetValues
 	.thumb_func
-Runtime_SetWorkTripleIfNonNegative:
+Engine_MapRenderSetValues:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Graphics_EnableObjLayerAndCallbacks
 	.thumb_func
@@ -174,9 +174,9 @@ Object_SetActionCallbackAndRefreshById:
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	.global Engine_ObjectMotionSetPositionAndCommit
+	.global Engine_ActorMoveToAndWait
 	.thumb_func
-Engine_ObjectMotionSetPositionAndCommit:
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -218,9 +218,9 @@ Engine_ActorFaceActor:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
-	.global ObjectGroup_ConfigureChildValue
+	.global Engine_ActorSetChildValue
 	.thumb_func
-ObjectGroup_ConfigureChildValue:
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Object_SetTargetAndCallback
 	.thumb_func

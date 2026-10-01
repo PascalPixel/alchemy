@@ -82,7 +82,6 @@ s32 Engine_EventChooseYesNo();
 s32 Engine_GameFlagIsSet();
 void Engine_EventShowMessage();
 void Engine_TaskWait();
-void Engine_ObjectMotionSetPositionAndCommit();
 void Engine_ActorJump();
 void Engine_EventEnd();
 
@@ -469,7 +468,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Call3(Engine_ActorSetDestination, 0, 0x22e, 0x184);
     Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);
-    Engine_ObjectMotionSetPositionAndCommit(8, 0x24a, 0x190);
+    Engine_ActorMoveToAndWait(8, 0x24a, 0x190);
     Engine_EventWait(40);
     Call3(Engine_ActorWalkToAndWait, 8, 0x244, 0x17e);
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 40);

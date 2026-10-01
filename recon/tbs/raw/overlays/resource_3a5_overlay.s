@@ -357,7 +357,7 @@ Func_020018a4:
 .L_0200994c:
 	.4byte 0x040000d4
 .L_02009950:
-	.4byte Data_02001f80
+	.4byte RamakanSabaku_SandPalette
 .L_02009954:
 	.4byte 0x050003c0
 .L_02009958:
@@ -441,11 +441,11 @@ Func_020018a4:
 .L_020099f0:
 	.4byte 0x040000d4
 .L_020099f4:
-	.4byte Data_02001f80
+	.4byte RamakanSabaku_SandPalette
 .L_020099f8:
 	.4byte 0x80000010
 .L_020099fc:
-	.4byte Data_020026bc
+	.4byte RamakanSabaku_SandLevel
 .L_02009a00:
 	adds r0, r6, #0
 	bl IwramSignedDivideEntry
@@ -572,9 +572,9 @@ Func_020018a4:
 .L_02009af4:
 	.4byte 0x00000232
 .L_02009af8:
-	.4byte Data_020026bc
+	.4byte RamakanSabaku_SandLevel
 .L_02009afc:
-	.4byte Data_020026c0
+	.4byte RamakanSabaku_SandFlash
 .L_02009b00:
 	.4byte 0x040000d4
 .L_02009b04:
@@ -707,9 +707,9 @@ Func_020018a4:
 	bx r0
 	.2byte 0x0000
 .L_02009bf8:
-	.4byte Data_020026c0
+	.4byte RamakanSabaku_SandFlash
 .L_02009bfc:
-	.4byte Data_020026bc
+	.4byte RamakanSabaku_SandLevel
 .L_02009c00:
 	.4byte 0xeeeeeeee
 .L_02009c04:
@@ -796,8 +796,8 @@ RamakanSabaku_SafePointsOther:
 	.4byte 0x00e00000
 	.4byte 0x00c00000
 	.4byte 0x01600000
-	.global Data_02001f80
-Data_02001f80:
+	.global RamakanSabaku_SandPalette
+RamakanSabaku_SandPalette:
 	.4byte 0x377f10a0
 	.4byte 0x121722bb
 	.4byte 0x0ccc1172
@@ -1287,14 +1287,14 @@ RamakanSabaku_Events:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_020026bc
-Data_020026bc:
+	.global RamakanSabaku_SandLevel
+RamakanSabaku_SandLevel:
 	.2byte 0x0000
 	.global RamakanSabaku_SandCounter
 RamakanSabaku_SandCounter:
 	.2byte 0x0000
-	.global Data_020026c0
-Data_020026c0:
+	.global RamakanSabaku_SandFlash
+RamakanSabaku_SandFlash:
 	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.global RamakanSabaku_SandVramSlot

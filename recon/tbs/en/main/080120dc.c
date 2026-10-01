@@ -1,3 +1,14 @@
+/* 2026-10-01 (matcher 2): 585 (20 register-only, 2 operand, 4 reordered,
+ * 2 deleted). The buffers are RAM_BUFFER.H's constants now, as in
+ * Map_GetTerrainHeight (08011f54): the collision byte and the height bytes
+ * come from Ram_MapCollision and Ram_MapCollision + 1 scaled by the same
+ * metatile * 4, which gives the two pool words. The difference is that
+ * draft's too: the reference keeps metatile * 4 in r1 (and so runs short
+ * of low registers and parks the scaled kind in ip), where here it takes r0
+ * and the height address reuses it; the cell pointer also lands in r1, not
+ * r2. A kind local, a function-pointer local, masking x and z first, a
+ * height-address local, defaulting the cells first or inverting the layer
+ * test all score 635-1300. */
 /* Not-yet-C: whole 192-byte terrain-height comparison and literal pool.
  * Corrected the old call-via pseudo-call to its three-argument callback.
  * Direct signed /16 division preserves rounding toward zero and improves
@@ -8,6 +19,7 @@
 #include "TYPES.H"
 #include "MAP.H"
 #include "GLOBAL_CELLS.H"
+#include "RAM_BUFFER.H"
 extern u8 gMapWork[];
 
 /* Same object-field shape check_object_tile.c already established (x@8,
@@ -68,7 +80,7 @@ s32 Func_080120dc(struct MapObject *object, struct MapPosition *position)
     if (object->map_layer <= 2)
         cells = (u8 *)state->layers[object->map_layer].cells;
     else
-        cells = (u8 *)0x02010000;
+        cells = Ram_MapCellBuffer;
 
     tile_x = x / 16;
     tile_z = z / 16;
@@ -77,10 +89,8 @@ s32 Func_080120dc(struct MapObject *object, struct MapPosition *position)
     if (cell[2] == 0xff)
         return 2;
 
-    idx = cell[3] << 2;
-    kind = gMapCollision[idx];
-
-    height = Func_080134fc[kind & 15](&Data_0202c001[idx], x & 15, z & 15);
+    idx = cell[3];
+    height = Func_080134fc[Ram_MapCollision[idx * 4] & 15](Ram_MapCollision + 1 + idx * 4, x & 15, z & 15);
 
     delta = height - object->height;
     if (delta > 0x80000)

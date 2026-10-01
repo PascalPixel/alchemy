@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+#include "BATTLE_WORK.H"
 
 extern u8 *Data_03001e8c;
 
@@ -53,3 +54,38 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt)
         } while (height != 0);
     }
 }
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep their code here in their scaffolds for now. */
+
+s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
+
+/* Clears the highlight over the whole party panel strip, then highlights
+   the panel of every unit in the 0xff-terminated id list (at most four)
+   that stands in one of the battle's first four party places. */
+s32 BattleLayout_HighlightPartyPanels(u16 *ids)
+{
+    struct BattleSession *battle = gBattleWork;
+    s32 count;
+    s32 i;
+    s32 j;
+
+    count = BattleParty_ListActorIdsFar(1, 0);
+    Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
+    i = 0;
+    if (ids[0] != 0xff) {
+    next_id:
+        for (j = 0; j < 4 && battle->party_units[j] != ids[i]; j++) {
+            if (battle->party_units[j] == 0xff) {
+                j = 4;
+                break;
+            }
+        }
+        if (j != 4)
+            Ui_SetRectHighlight(29 - (count - j) * 6, 0, 7, 5, 14);
+        if (++i < 4 && ids[i] != 0xff)
+            goto next_id;
+    }
+    return 0;
+}
+#endif

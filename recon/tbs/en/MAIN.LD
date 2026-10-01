@@ -625,7 +625,6 @@
         "*/recon/tbs/raw/080a5cc0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/CLASSIFY_SELECTED_PSYNERGY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY.o"(.text)
-        "*/recon/tbs/raw/080a6614.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ENTRY_GRID.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/COLLECT_ACTIONS.o"(.text)
         "*/recon/tbs/raw/080a69fe.o"(.text .rodata .data .padding)

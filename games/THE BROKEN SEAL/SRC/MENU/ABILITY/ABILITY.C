@@ -358,3 +358,76 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
     }
     return 1;
 }
+
+#if EDITION_INTERNATIONAL
+extern char MsgShortcutLabel;
+extern char MsgShortcutChangeHelp;
+extern char MsgShortcutEmptyL;
+extern char MsgShortcutEmptyR;
+extern char MsgShortcutNameL;
+extern char MsgShortcutNameR;
+extern char MsgAbilityName;
+
+s32 UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
+void UiWork_PushValueSlotFar(s32 value, s32 slot);
+void UiText_DrawStringAtOffsetFar(void *text, s32 *window, s32 x, s32 y);
+void UiWork_SetParamNibbleFar(s32 value);
+
+/* Fill the shortcut window: its heading, then a row for L and a row for R.
+   A set shortcut shows its Psynergy name, and its owner's name beside it
+   when the Psynergy name is short enough to leave room. The row messages
+   take the Psynergy name as their argument. The Japanese edition draws the
+   rows another way and still takes its routine from the scaffold. */
+s32 Func_080a6614(s32 window, s32 owner)
+{
+    s32 left;
+    s32 top;
+    s32 width;
+    s32 height;
+    s32 wide;
+
+    if (Data_02000240.psynergy_shortcuts[0] != 0 &&
+        Data_02000240.psynergy_shortcuts[1] != 0)
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutChangeHelp,(s32 *)window, 0, -8);
+    else
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutLabel, (s32 *)window, 0, -8);
+
+    UiText_GetResourceDimensionsFar(
+        (Data_02000240.psynergy_shortcuts[0] & 0x3ff) + (s32)&MsgAbilityName,
+        &left, &top, &width, &height);
+    if ((u32)width > 10)
+        wide = 1;
+    else
+        wide = 0;
+    if (Data_02000240.psynergy_shortcuts[0] != 0) {
+        UiWork_PushValueSlotFar(Data_02000240.psynergy_shortcuts[0] & 0x3ff, 4);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutNameL,(s32 *)window, 0, 0);
+        if (wide == 0)
+            UiText_DrawStringAtOffsetFar(
+                Owner_GetStateFar(Data_02000240.psynergy_shortcuts[0] >> 10),
+                (s32 *)window, 80, 0);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyL,(s32 *)window, 0, 0);
+    }
+
+    UiText_GetResourceDimensionsFar(
+        (Data_02000240.psynergy_shortcuts[1] & 0x3ff) + (s32)&MsgAbilityName,
+        &left, &top, &width, &height);
+    if ((u32)width > 10)
+        wide = 1;
+    else
+        wide = 0;
+    if (Data_02000240.psynergy_shortcuts[1] != 0) {
+        UiWork_PushValueSlotFar(Data_02000240.psynergy_shortcuts[1] & 0x3ff, 4);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutNameR,(s32 *)window, 0, 8);
+        if (wide == 0)
+            UiText_DrawStringAtOffsetFar(
+                Owner_GetStateFar(Data_02000240.psynergy_shortcuts[1] >> 10),
+                (s32 *)window, 80, 8);
+        UiWork_SetParamNibbleFar(15);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyR,(s32 *)window, 0, 8);
+    }
+    return 1;
+}
+#endif

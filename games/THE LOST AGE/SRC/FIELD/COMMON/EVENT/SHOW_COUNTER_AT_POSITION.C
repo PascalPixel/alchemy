@@ -1,19 +1,23 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "RAM_BUFFER.H"
 
-struct State_08093168 {
-    u8 padding[472];
+/* The event work's message counter: ☀️ keeps it at 0x1d8 and names its
+   twin Event_ShowValue1d8AtPosition. */
+struct EventCounterWork {
+    u8 unknown_000[0x1c4];
     s16 counter;
 };
 
-extern struct State_08093168 *gEventWork;
 extern s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 extern s32 UiWork_IsIdleFar(s32);
 
-void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
+/* Open the counter's message window near a point, kept on screen, and wait
+   for it before counting on. */
+void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
     s32 x0 = x;
-    struct State_08093168 *state = gEventWork;
+    struct EventCounterWork *state = Ram_HeapSlots->event_work;
     s32 py = y;
     s32 px = x0;
     s32 min_x = 8;

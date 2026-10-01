@@ -4,5 +4,5 @@
 	.thumb_func
 Func_080d4178:
 	push {lr}
-	bl Func_080d4180
+	bl Event_ShowCounterAtPosition
 	pop {pc}

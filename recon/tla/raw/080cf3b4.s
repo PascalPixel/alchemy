@@ -55,4 +55,4 @@ Func_080cf3b4:
 .L_080cf41c:
 	.4byte Data_080effd8
 .L_080cf420:
-	.4byte Func_080cf0d0
+	.4byte BattleFx_EmitRandomParticleFromEmitter

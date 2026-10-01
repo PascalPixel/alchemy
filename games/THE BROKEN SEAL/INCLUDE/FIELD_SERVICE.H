@@ -154,6 +154,12 @@ static inline void Psynergy_Cancel(void)
     Engine_PsynergyCancel();
 }
 
+static inline void Shop_Open(s32 shop, s32 keeper)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_ShopOpen(shop, keeper);
+}
+
 static inline void Task_Wait(s32 frames)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */

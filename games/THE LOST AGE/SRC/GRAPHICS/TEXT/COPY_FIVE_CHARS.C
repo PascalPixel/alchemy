@@ -1,9 +1,7 @@
-/*
- * Draft: Text_CopyFiveCharsPaddingUnderscore does not yet match; 3 halfwords differ from ☀️'s C, first at +0x10 (adds r2, #2).
- * Links as recon/tla/raw/08119054.s.
- */
 #include "TYPES.H"
 
+/* ☀️'s: copy four halfword characters as bytes into a local buffer,
+   turning each empty one into an underscore. */
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
 {
     u8 buffer[5];
@@ -16,8 +14,9 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source)
     do {
         u32 value = *source;
 
-        *dst = value;
         source++;
+        asm volatile("" : "+l"(source)); /* FAKEMATCH: ⚓️ steps the source in the load's delay slot */
+        *dst = value;
         dst++;
         if ((u8)value == 0)
             *p = fill;

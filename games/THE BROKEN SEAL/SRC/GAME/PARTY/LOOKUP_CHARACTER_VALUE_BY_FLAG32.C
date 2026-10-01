@@ -97,3 +97,43 @@ s32 Party_LookupCharacterValueByFlag32(u32 index)
     }
     return Party_CharacterValuesFlag32[index];
 }
+
+extern u8 MsgJoinedParty[];
+void AudioCommand_PlayFar(s32);
+
+/* Announce a character joining: a window with the character's portrait
+   glyph and the joining line, then wait for the jingle or a key. */
+void Party_ShowJoinedMessage(s32 member)
+{
+    u8 *work = gWindowWork;
+    struct MessageWindow *window = NULL;
+    s32 sprite[3];
+    s32 *entry = sprite;
+    s32 palette, handle;
+    s32 *p;
+
+    window = UiWindow_Create(2, 1, 26, 5, 0);
+    if (window != NULL) {
+        UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
+        work[RENDER_DIRTY_OFS] = 1;
+        UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(member)),
+            0, &handle, &palette, 14, 0);
+        p = entry;
+        *p++ = 0;
+        /* the portrait sits half a tile into the window, 12 lines down */
+        *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
+        *p = palette | 0xe000;
+        *(u16 *)(work + RENDER_RESULT_OFS) = 0;
+        *(u16 *)(work + RENDER_RESULT_OFS + 2) = 0;
+        UiWork_PushValueSlot(member, 1);
+        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
+        AudioCommand_PlayFar(81);
+        do {
+            Runtime_PushSlotEntry(entry, 250);
+            WaitFrames(1);
+        } while (Audio_Check() != 0 && (gKeyState & 0x303) == 0);
+        UiWork_Finalize(window, 2);
+        WaitFrames(1);
+        Resource_ResetEntry(handle);
+    }
+}

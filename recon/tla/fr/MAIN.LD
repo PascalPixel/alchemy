@@ -1176,7 +1176,8 @@
     "*/recon/tla/fr/rom.o"(.rom.0010c388)
     "*/recon/tla/fr/rom.o"(.rom.00118000)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_43.o"(.text .rodata .data .padding)
-    "*/recon/tla/fr/rom.o"(.rom.00118028)
+    "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_44.o"(.text .rodata .data .padding)
+    "*/recon/tla/fr/rom.o"(.rom.00118058)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_45.o"(.text .rodata .data .padding)
     "*/recon/tla/fr/rom.o"(.rom.00118078)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/BATTLEPL.o"(.text .rodata .data .padding)
@@ -1442,7 +1443,7 @@
 {
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/CLEAR_BUFFER.o"(.text .rodata .data .padding)
     "*/recon/tla/fr/rom.o"(.rom.001c16ca)
-    "*/recon/tla/fr/rom.o"(.rom.001c171c)
+    "*/games/THE LOST AGE/SRC/SOUND/DRIVER/SEQUENCE_COMMANDS.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/UPDATE.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/TRACK_STOP.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SOUND/DRIVER/CALCULATE_STEREO_VOLUME.o"(.text .rodata .data .padding)

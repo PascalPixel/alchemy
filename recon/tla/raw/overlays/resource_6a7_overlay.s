@@ -87,7 +87,7 @@ Func_020000a8:
 	pop {pc}
 	.2byte 0x0000
 .L_02008104:
-	.4byte 0x00002f31
+	.4byte MsgShipIceWallFirstApproach
 	.section .text.x02008108,"ax",%progbits
 	.global Func_02000108
 	.thumb_func
@@ -174,7 +174,7 @@ Func_02000108:
 .L_020081d2:
 	pop {pc}
 .L_020081d4:
-	.4byte 0x00002f33
+	.4byte MsgShipIceWallCrewReposition
 	.section .text.x020081d8,"ax",%progbits
 	.global Func_020001d8
 	.thumb_func
@@ -314,7 +314,7 @@ Func_020001d8:
 	bl Battle_WaitMode0
 	b .L_020085c6
 .L_02008328:
-	.4byte 0x00002f37
+	.4byte MsgShipSafeFiringDistance
 .L_0200832c:
 	movs r3, #192
 	lsls r3, r3, #18

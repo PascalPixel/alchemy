@@ -811,7 +811,7 @@ Func_020006ac:
 .L_0200871e:
 	pop {pc}
 .L_02008720:
-	.4byte 0x00002b49
+	.4byte MsgFieldShowAnemosPower
 	.section .text.x02008724,"ax",%progbits
 	.global Func_02000724
 	.thumb_func
@@ -1228,7 +1228,7 @@ Func_020008a4:
 .L_02008ada:
 	pop {pc}
 .L_02008adc:
-	.4byte 0x00002a7a
+	.4byte MsgFieldWaitingForCompanion
 	.section .text.x02008ae8,"ax",%progbits
 	.global Func_02000ae8
 	.thumb_func
@@ -5397,10 +5397,10 @@ gSceneEvents:
 	.4byte Func_020008a4
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00002a84
+	.4byte MsgFieldFollowTrueFeelings
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00002a85
+	.4byte MsgFieldPartWithAgatio
 	.4byte 0x00000008
 	.4byte 0xffffffff
 	.4byte Func_02000054

@@ -8,6 +8,7 @@
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
 #include "ITEM.H"
+#include "EDITION.H"
 
 extern u8 MsgDebugWontStopYou[];
 extern u8 MsgDebugRaiseEveryonesLevel[];
@@ -58,6 +59,7 @@ u8 *ItemLevel_GetPlacements(void)
     return gItemLevelPlacements;
 }
 
+#if EDITION_INTERNATIONAL
 void FieldScene_RunActor13Mode102Step(void)
 {
     Engine_EventSetMessage((s32)MsgDebugWontStopYou);
@@ -71,6 +73,7 @@ void FieldScene_RunActor13Mode105Step(void)
     Engine_EventSetMessage((s32)MsgDebugWontStopYou);
     Engine_EventShowMessage(13, 0);
 }
+#endif
 
 u8 *ItemLevel_GetEvents(void)
 {
@@ -186,7 +189,11 @@ void ItemLevel_SelectItem(void)
     Engine_AudioPlayCue(112);
     redraw = 1;
     window = UiWindow_Create(0, 0, 30, 7, 2);
+#if EDITION_INTERNATIONAL
     details = UiWindow_Create(0, 8, 28, 10, 2);
+#else
+    details = UiWindow_Create(0, 8, 13, 10, 2);
+#endif
     Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
             (volatile u32 *)0x040000d4);
     Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
@@ -205,7 +212,11 @@ void ItemLevel_SelectItem(void)
                 index = item & 0x1ff;
                 Engine_DebugGetItem(index);
                 UiText_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
+#if EDITION_INTERNATIONAL
                 UiText_DrawCharacterAtOffset(index + (s32)MsgItemPlainName, window, 0, 16);
+#else
+                UiText_DrawResource(index + (s32)MsgItemPlainName, window, 0, 16);
+#endif
                 RenderOutput_RedrawSavedRect(details);
                 Engine_DebugDrawItemDetails(details, item);
             } else {
@@ -291,6 +302,7 @@ done:
  * and see its name and description. Stepping skips the numbers whose
  * ability has no target range. It closes a details window it never opened,
  * as the item browser it was copied from does open one. */
+#if EDITION_INTERNATIONAL
 void ItemLevel_SelectAbility(void)
 {
     struct TextRenderWork *window;
@@ -394,6 +406,7 @@ done:
     UiWork_Finalize(window, 1);
     UiWork_Finalize(details, 1);
 }
+#endif
 
 /* The item and level debug room: its entry setup, the glyph caption window
  * and the far debug browsers. */
@@ -411,13 +424,19 @@ s32 FieldScene_RunEntrySetup(void)
 {
     *(s32 *)((*(u8 **)&gEventWork) + 448) = 516;
     *(s32 *)((*(u8 **)&gEventWork) + 456) = 24;
+#if EDITION_INTERNATIONAL
     *(s32 *)(Object_GetById(11) + 28) = 0x19999;
     *(s32 *)(Object_GetById(11) + 24) = 0x19999;
     Engine_ActorSetAnimation(13, 5);
     Engine_ActorSetAnimation(14, 2);
+#else
+    *(s32 *)(Object_GetById(11) + 28) = 0x1b333;
+    *(s32 *)(Object_GetById(11) + 24) = 0x1b333;
+#endif
     return 0;
 }
 
+#if EDITION_INTERNATIONAL
 void FieldScene_DrawThreeCaptionWindow(void)
 {
     /*
@@ -432,6 +451,19 @@ void FieldScene_DrawThreeCaptionWindow(void)
     UiText_DrawStringInWindow(gItemLevelGlyphsLower, handle, 0, 8);
     UiText_DrawStringInWindow(gItemLevelGlyphsMarks, handle, 0, 16);
 }
+#else
+void ItemLevel_RunMotionTest(void)
+{
+    /* FAKEMATCH: Call3 places the actor argument before the coordinate shifts;
+     * the ordinary direct call schedules it after both shifts. */
+    Battle_Reset();
+    Engine_ActorSetAnimation(10, 2);
+    Engine_ActorSetAnimation(11, 4);
+    ObjectMotion_WaitForAnimationChange(10);
+    Call3(ObjectMotion_SetHorizontalPositionWithTerrain, 11, 312 << 16, 416 << 16);
+    BattleFx_FinishAction();
+}
+#endif
 
 /* Set the flag byte at +53 of the record the effect work pointer holds. */
 void SceneState_SetRecordFlag53(void)

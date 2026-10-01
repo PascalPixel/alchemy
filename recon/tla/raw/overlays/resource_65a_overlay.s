@@ -593,7 +593,7 @@ Func_02000474:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020084a0:
-	.4byte 0x0000191d
+	.4byte MsgFieldDoorWontBudge
 	.section .text.x020084a4,"ax",%progbits
 	.global Func_020004a4
 	.thumb_func
@@ -1040,7 +1040,7 @@ Func_020007a0:
 	add sp, #8
 	pop {r5, pc}
 .L_02008870:
-	.4byte 0x0000191c
+	.4byte MsgFieldEyesOfTruth
 	.section .text.x02008874,"ax",%progbits
 	.global Func_02000874
 	.thumb_func
@@ -2629,10 +2629,10 @@ Data_02001a1c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001873
+	.4byte MsgFieldCaveFoundByChampa
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001874
+	.4byte MsgFieldWhoDugCave
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

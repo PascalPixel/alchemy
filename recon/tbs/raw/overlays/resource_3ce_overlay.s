@@ -241,6 +241,7 @@ MenuTest_SlotValues:
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte SceneState_GetFarResult2384
+	.if EDITION_INTERNATIONAL
 	.4byte 0x0000c400
 	.4byte 0xffff0010
 	.4byte SceneState_ApplyBlockC9b
@@ -262,6 +263,14 @@ MenuTest_SlotValues:
 	.4byte 0x00000400
 	.4byte 0xffff0011
 	.4byte SceneState_ApplyBlockDa2
+	.else
+	.4byte 0
+	.4byte 0xffff0010
+	.4byte DebugMenu_SelectCharacter
+	.4byte 0
+	.4byte 0xffff0011
+	.4byte SceneState_RunCall1c00
+	.endif
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
 	.4byte 0x00004400
@@ -287,4 +296,6 @@ MenuTest_SlotValues:
 	.global MenuTest_SlotOffsets
 MenuTest_SlotOffsets:
 	.4byte 0x0000000a
+	.global MenuTest_BenchmarkCharacter
+MenuTest_BenchmarkCharacter:
 	.4byte 0x00000041

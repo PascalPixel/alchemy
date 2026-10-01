@@ -860,84 +860,6 @@ fn assembly_inputs(
     Ok(hasher)
 }
 
-/// Diagnostic provenance: recompute the ordinary compiler/assembler input key
-/// without writing an intermediate, compiling, linking, or consulting a report.
-pub(crate) fn current_object_key(
-    root: &Path,
-    target: DecompTarget,
-    source: &Path,
-    object: &Path,
-) -> Result<String, String> {
-    let mut hasher = if matches!(
-        source.extension().and_then(|ext| ext.to_str()),
-        Some("C" | "c")
-    ) {
-        let steps = c_steps(target, source, object)?;
-        let mut preprocess = preprocessor_only(
-            &steps,
-            &source.to_string_lossy(),
-            &object.with_extension("i"),
-        )?;
-        let imports = crate::build_text::fresh_c_imports(root, target)?;
-        if let Some(directory) = &imports {
-            preprocess.insert(1, format!("-I{}", directory.path().display()));
-        }
-        // The direct old-agbcc cpp0 plan names its output positionally; the
-        // driver names it with -o. Both diagnostic runs must stay in memory.
-        if preprocess
-            .first()
-            .is_some_and(|program| program.ends_with("cpp0"))
-            && preprocess.last() == Some(&object.with_extension("i").to_string_lossy().into_owned())
-        {
-            preprocess.pop();
-        }
-        let mut at = 0;
-        while at < preprocess.len() {
-            if preprocess[at] == "-o" {
-                preprocess.drain(at..at + 2);
-            } else {
-                at += 1;
-            }
-        }
-        let mut hash = Sha256::new();
-        hash.update(crate::compiler::bundle::toolchain_signature().as_bytes());
-        let mut expanded = command(&preprocess, root)?;
-        if let Some(directory) = &imports {
-            // Normalize only diagnostic include provenance for the input hash.
-            // The compiler's input and its output remain untouched.
-            expanded = expanded.replace(
-                &directory
-                    .path()
-                    .join(crate::build_text::C_INCLUDE)
-                    .to_string_lossy()
-                    .into_owned(),
-                &c_import_directory(object)?
-                    .join(crate::build_text::C_INCLUDE)
-                    .to_string_lossy(),
-            );
-        }
-        hash.update(expanded.as_bytes());
-        for step in steps {
-            hash.update(step.join("\0").as_bytes());
-        }
-        hash
-    } else {
-        let output = root.join(target.output_dir);
-        let mut hash = assembly_inputs(root, target, source, &output)?;
-        hash.update(
-            target_assembly_command(
-                target,
-                &source.to_string_lossy(),
-                &object.to_string_lossy(),
-                &output,
-            )
-            .join("\0"),
-        );
-        hash
-    };
-    Ok(format!("{:x}", hasher.finalize_reset()))
-}
-
 /// Convert a sequence MIDI to assembly beside its object and assemble it,
 /// reusing the object while the converted text and command are unchanged.
 fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), String> {
@@ -1866,34 +1788,6 @@ mod tests {
     }
 
     #[test]
-    fn diagnostic_current_c_key_matches_the_compiled_object_without_rewriting_inputs() {
-        prefer_installed_binutils();
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
-        for owner in ["OWNER.C", "games/COMMON/SRC/SYSTEM/SAVE/READ_FLASH_ID.C"] {
-            let source = Path::new(owner);
-            fs::create_dir_all(root.join(source).parent().unwrap()).unwrap();
-            fs::write(root.join(source), "int Owner(int x) { return x + 1; }\n").unwrap();
-            let object = root.join("obj").join(source).with_extension("o");
-            compile(root, target, source, &object).unwrap();
-            let stale = "stale intermediate must not be read or rewritten";
-            fs::write(object.with_extension("i"), stale).unwrap();
-            let key = current_object_key(root, target, source, &object).unwrap();
-            assert_eq!(
-                fs::read_to_string(object.with_extension("o.key")).unwrap(),
-                key,
-                "{owner}"
-            );
-            assert_eq!(
-                fs::read_to_string(object.with_extension("i")).unwrap(),
-                stale,
-                "{owner}"
-            );
-        }
-    }
-
-    #[test]
     fn replay_compiles_current_dependencies_and_rejects_an_overwritten_cached_object() {
         prefer_installed_binutils();
         let work = tempfile::tempdir().unwrap();
@@ -2275,47 +2169,4 @@ fn every_c_plan_searches_its_build_message_metadata() {
             "{plan:?}"
         );
     }
-}
-
-#[test]
-fn message_provenance_reads_current_catalog_without_repairing_cached_inputs() {
-    let work = tempfile::tempdir().unwrap();
-    let root = work.path();
-    let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
-    let catalog = root.join("games/THE BROKEN SEAL/TEXT/EN.PO");
-    fs::create_dir_all(catalog.parent().unwrap()).unwrap();
-    let write_catalog = |number| {
-        fs::write(&catalog, format!("msgid \"\"\nmsgstr \"\"\n\"X-Alchemy-Target: tbs-en\\n\"\n\nmsgctxt \"MsgFixture\"\nmsgid \"{number:05}\"\nmsgstr \"one\"\n")).unwrap()
-    };
-    write_catalog(7);
-    let output = root.join("out");
-    crate::build_text::write_c_imports(
-        &output,
-        &crate::build_text::current_c_imports(root, target).unwrap(),
-    )
-    .unwrap();
-    let source = Path::new("OWNER.C");
-    fs::write(root.join(source), "#include \"text/MSG_IDS.H\"\nTEXT_MESSAGE_ENUM(MsgFixture);\nint Owner(void) { return MsgFixture; }\n").unwrap();
-    let object = output.join("obj/OWNER.o");
-    compile(root, target, source, &object).unwrap();
-    let key = fs::read_to_string(object.with_extension("o.key")).unwrap();
-    assert_eq!(
-        current_object_key(root, target, source, &object).unwrap(),
-        key
-    );
-    let header = output.join(crate::build_text::C_INCLUDE);
-    fs::write(&header, "#error stale generated header\n").unwrap();
-    assert_eq!(
-        current_object_key(root, target, source, &object).unwrap(),
-        key
-    );
-    write_catalog(8);
-    assert_ne!(
-        current_object_key(root, target, source, &object).unwrap(),
-        key
-    );
-    assert_eq!(
-        fs::read_to_string(header).unwrap(),
-        "#error stale generated header\n"
-    );
 }

@@ -226,10 +226,6 @@ coverage-check:
 progress:
 	$(CHECK) progress
 
-.PHONY: edition-c-report
-edition-c-report:
-	$(CHECK) editions --write-report
-
 progress-subject:
 	$(CHECK) progress --subject
 

@@ -1,3 +1,13 @@
+/* 2026-10-02 (slice 4): not exact, 1430 on the permuter scorer (was 1570).
+ * The busy flag is now stored through a short pointer, which drops the
+ * half-word zero mask the field store made and with it the zero held in
+ * fp: every saved register but r6 now agrees. Remaining: r6 holds the
+ * half-word 1 and then 0 here (ldr r6 from the pool, strh and strb from
+ * r6) where the reference keeps the process-state field address in r6
+ * (mov r6, r8; adds r6, #36), builds the busy values with movs and pools
+ * only the 1 of the first byte store. A field pointer local gets r6 from
+ * local allocation, but with a globals pointer variable the half-word
+ * constant is left over and the global allocator takes r6 back from it. */
 /* 2026-09-29: psynergy editions: the pooled 1 is the same in all five
  * matching editions, a plain constant, so it is written as 1 (score 1570,
  * was 820 with an invented symbol). The reference also keeps
@@ -129,7 +139,7 @@ s32 RunAssetSelectionScreen(void)
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
     screen = Runtime_AllocateHeapBlock(0x37, 0xa70);
-    (&gMenuCtrlWork)->display_state->busy = 1;
+    ((s16 *)(&gMenuCtrlWork)->display_state)[2] = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
@@ -161,7 +171,7 @@ s32 RunAssetSelectionScreen(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Menu_ResetTwoResourceEntries();
     Runtime_ReleaseHeapBlock(0x37);
-    (&gMenuCtrlWork)->display_state->busy = 0;
+    ((s16 *)(&gMenuCtrlWork)->display_state)[2] = 0;
     UiWindow_MarkVisibleTileAttributesFar();
     UiWork_SetAltFlagAndClearTableFar(0);
     CopyWords(copy, (void *)0x06004000, backup, size);

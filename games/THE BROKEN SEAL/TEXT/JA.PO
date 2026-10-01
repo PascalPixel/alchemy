@@ -12755,15 +12755,15 @@ msgctxt "MsgShortcutSetR"
 msgid "03186"
 msgstr "Rボタンにセットしました"
 
-msgctxt "message"
+msgctxt "MsgShortcutChangeHelp"
 msgid "03187"
 msgstr "LRでショートカットへんこう"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyL"
 msgid "03188"
 msgstr "Lボタンにせってい"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyR"
 msgid "03189"
 msgstr "Rボタンにせってい"
 

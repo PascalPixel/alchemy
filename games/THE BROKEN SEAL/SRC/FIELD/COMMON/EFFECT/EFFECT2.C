@@ -155,6 +155,74 @@ struct EffectBlockState {
     u16 field_1f82;
 };
 
+/* Each frame, draws the motes that are on screen, rising as they age and
+   shrinking through three sizes, and sets up to eight spent ones down again
+   at random spots on the ground around the leader. Flag 0x166 holds every
+   mote on its frame. */
+void Unnamed_08094bbc(void)
+{
+    struct SparkleWork *work = gParticleWork;
+    struct MapWork *map = SparkleMap;
+    u32 spawned = 0;
+    u32 i;
+    struct Sparkle *mote = work->sparkles;
+
+    for (i = 0; i < 32; i++, mote++) {
+        s32 x;
+        s32 y;
+
+        if (--mote->timer != 0xffff) {
+            s32 *camera = &map->camera_x;
+            s32 camera_x = camera[0];
+            s32 camera_z = camera[1];
+            u16 age = mote->timer;
+            u32 a;
+            u32 b;
+
+            if (GameFlag_TestFar(0x166)) {
+                mote->timer++;
+                mote->delay--;
+            }
+            a = Random16();
+            b = Random16();
+            x = ((mote->pos_x - camera_x) >> 16) + (((a & 1) + (b & 1)) >> 1) - 1;
+            y = ((mote->pos_z - mote->height - camera_z) >> 16) - age;
+            if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
+                if (mote->timer < 60) {
+                    mote->tile = work->tile_base + 16;
+                    mote->delay += 3;
+                } else if (mote->timer < 90) {
+                    mote->tile = work->tile_base + 8;
+                    mote->delay++;
+                } else {
+                    mote->tile = work->tile_base;
+                }
+                if ((Data_03001e40 >> 3) & 1)
+                    mote->tile += 4;
+                mote->x = x;
+                mote->y = y - (mote->delay >> 2);
+                mote->shape = 0;
+                mote->size = 1;
+                Runtime_PushSlotEntry(mote, 240);
+            } else {
+                mote->timer = 0;
+            }
+        }
+        if (spawned < 8 && mote->timer == 0) {
+            struct MapPosition *leader = map->leader;
+
+            x = leader->x + (Random16() << 8) - 0x800000;
+            y = leader->z + (Random16() << 8) - 0x800000;
+            mote->pos_z = y;
+            mote->pos_x = x;
+            mote->height = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
+            mote->timer = 120;
+            mote->delay = 0;
+            spawned++;
+        }
+    }
+}
+
 void FieldMotes_Start(void)
 {
     struct MoteWork *work;

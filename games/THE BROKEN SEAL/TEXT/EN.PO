@@ -11159,23 +11159,23 @@ msgctxt "MsgShortcutSetR"
 msgid "02787"
 msgstr "A shortcut was set to {button_icon:4}."
 
-msgctxt "message"
+msgctxt "MsgShortcutChangeHelp"
 msgid "02788"
 msgstr "{button_icon:3}{button_icon:4}:Change shortcut"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyL"
 msgid "02789"
 msgstr "{button_icon:3}:Set to {button_icon:3}"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyR"
 msgid "02790"
 msgstr "{button_icon:4}:Set to {button_icon:4}"
 
-msgctxt "message"
+msgctxt "MsgShortcutNameL"
 msgid "02791"
 msgstr "{button_icon:3}:{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgShortcutNameR"
 msgid "02792"
 msgstr "{button_icon:4}:{argument_ability_name}"
 

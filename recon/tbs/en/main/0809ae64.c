@@ -1,25 +1,12 @@
-/* 2026-09-29 alchemy permute: score 3735 to 2690 on the permuter's scorer
-   (0 is exact); remaining 47 register-only, 27 operand, 10 reordered, 5
-   inserted, 8 deleted. Kept rewrites: 15x swap commutative operands, 10x
-   reorder independent statements, 6x reorder local declarations, 6x change
-   loop form, 5x introduce a temporary, 5x pointer arithmetic or indexing,
-   5x test truth or compare with zero, 4x toggle register, 3x split or join
-   a compound assignment, 2x invert an if/else, 1x remove a temporary, 1x
-   add a same-width cast, 1x drop a same-width cast, 1x move an assignment
-   into or out of a condition. FAKEMATCH: the permuter's temporaries,
-   register hints and swapped operand orders below only steer allocation
-   and scheduling; no programmer would write them, so they stay tagged
-   until a natural spelling replaces them. */
-/* Draft, not exact (2026-09-26): 588 bytes, 273 differing halfwords.
-   One typed frame establishes the observed 40-byte layout: secondary
-   object at +0, target at +4, origin at +16, scene target at +28.
-   Remaining: direct sp-relative position stores instead of cursor stores,
-   pointer/counter allocation, scale-loop strength reduction, and pools.
-   The original raw-offset draft was 588 bytes / 282 halfwords.
- */
+/* Not exact: 1595 on the permuter scorer (was 2590), written the way the
+   exact fallback transition in FALLBACK.C is: step counts declared in the
+   loop bodies, the scale through a helper, the two waits counting up for
+   the loop pass to reverse, and the mode cleared through a byte local,
+   which pools its zero as the reference does. Remaining: every reload here
+   takes r2 or r3 where the reference cycles r1, r2 and r0, so the origin
+   and target pointers are copied from fp and r9 at each store instead of
+   staying in the low register that built them. */
 #include "TYPES.H"
-extern u8 Value_00000000;
-extern u8 Value_ffff4000;
 
 struct EffectVector { s32 x, y, z; };
 
@@ -45,16 +32,8 @@ struct MotionScene {
     s8 offset_target;
 };
 
-struct MotionFrame {
-    struct MotionObject *secondary_object;
-    struct EffectVector target;
-    struct EffectVector origin;
-    struct EffectVector scene_target;
-};
-
 extern struct MotionScene *gEffectWork;
 
-s32 __divsi3(s32, s32);
 void WaitFrames(s32);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void Object_SetMode(void *, s32);
@@ -66,112 +45,101 @@ void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
 void Audio_PlayCue(s32);
 
+static __inline__ s32 Interpolate(s32 to, s32 from, s32 step)
+{
+    return from + (to - from) * step / 10;
+}
+
 void RunBattleEffect13(void)
 {
     struct MotionScene *scene = gEffectWork;
-    struct MotionFrame frame;
+    struct MotionObject *secondary = scene->secondary_object;
     struct MotionObject *main_object = scene->main_object;
-    register struct EffectVector *origin_cursor;
     struct MotionObject *object;
-    struct EffectVector *target_cursor;
+    struct EffectVector spawn;
+    struct EffectVector origin;
+    struct EffectVector target;
     s32 step;
-    s32 tmp3;
+    s32 index;
+    u8 zero;
 
-    frame.secondary_object = scene->secondary_object;
-    frame.origin.x = (*main_object).pos.x;
-    frame.origin.y = 0x100000 + main_object->pos.y;
-    frame.origin.z = main_object->pos.z;
+    origin.x = main_object->pos.x;
+    origin.y = main_object->pos.y + 0x100000;
+    origin.z = main_object->pos.z;
     if (scene->offset_target) {
-        struct EffectVector *tmp;
-        frame.target.x = main_object->pos.x;
-        frame.target.y = main_object->pos.y + 0x200000;
-        frame.target.z = main_object->pos.z;
-        tmp = &frame.target;
-        Vector_AddPolarOffset(0x200000, scene->angle, tmp);
+        target.x = main_object->pos.x;
+        target.y = main_object->pos.y + 0x200000;
+        target.z = main_object->pos.z;
+        Vector_AddPolarOffset(0x200000, scene->angle, &target);
     } else {
-        frame.target.x = scene->pos.x;
-        frame.target.y = scene->pos.y + 0x200000;
-        frame.target.z = scene->pos.z;
+        target.x = scene->pos.x;
+        target.y = scene->pos.y + 0x200000;
+        target.z = scene->pos.z;
     }
-    target_cursor = &frame.target;
-    frame.scene_target.x = scene->pos.x;
-    origin_cursor = &frame.origin;
-    frame.scene_target.y = scene->pos.y + 0x200000;
-    frame.scene_target.z = scene->pos.z;
-    if (!(object = Object_Spawn(0xd7, frame.scene_target.x, frame.scene_target.y, frame.scene_target.z)))
+    spawn.x = scene->pos.x;
+    spawn.y = scene->pos.y + 0x200000;
+    spawn.z = scene->pos.z;
+    object = Object_Spawn(0xd7, spawn.x, spawn.y, spawn.z);
+    if (object == 0)
         return;
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(0x8a);
     object->angle = main_object->angle;
-    tmp3 = (s32)&Value_00000000;
     object->speed = 0x14ccc;
-    object->mode = (u16)tmp3;
-    step = 0;
+    zero = 0;
+    object->mode = zero;
     Object_SetMode(object, 5);
     Animation_ApplyChildValuesFar(object, 1);
-    do {
-        s32 value;
-        s32 tmp4;
-        s32 tmp5;
-        value = origin_cursor->x;
-        value += __divsi3((target_cursor->x - value) * step, 10);
-        object->pos.x = value;
-        tmp5 = origin_cursor->y;
-        value = tmp5;
-        value = value + __divsi3((target_cursor->y - value) * step, 10);
-        object->pos.y = value;
-        value = origin_cursor->z;
-        value += __divsi3((target_cursor->z - value) * step, 10);
-        object->pos.z = value;
-        tmp4 = __divsi3(step * 0xc000, 10) + 0x4000;
-        value = tmp4;
-        object->scale_x = value;
-        object->scale_y = value;
-        step++;
+    step = 0;
+    for (;;) {
+        s32 steps = 11;
+        s32 scale;
+
+        object->pos.x = origin.x + (target.x - origin.x) * step / 10;
+        object->pos.y = origin.y + (target.y - origin.y) * step / 10;
+        object->pos.z = origin.z + (target.z - origin.z) * step / 10;
+        scale = Interpolate(0x10000, 0x4000, step);
+        object->scale_x = scale;
+        object->scale_y = scale;
         WaitFrames(1);
-    } while (!(step >= 11 != 0));
+        step++;
+        if (step >= steps)
+            break;
+    }
     WaitFrames(10);
     Object_SetMode(object, 6);
     WaitFrames(15);
-    step = 9;
-    do {
+    for (index = 0; index < 10; index++) {
         object->pos.y -= 0x20000;
         WaitFrames(1);
-        step--;
-    } while (step >= 0);
+    }
     Object_SetMode(object, 5);
     Audio_PlayCue(0x84);
-    if (frame.secondary_object != 0)
-        Object_SetPositionAndResetMotionFar(frame.secondary_object, -0x90000, frame.secondary_object->pos.y);
+    if (secondary != 0)
+        Object_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->pos.y);
     WaitFrames(20);
-    step = 12;
-    do {
-        object->pos.y = object->pos.y + 0x18000;
+    for (index = 0; index < 13; index++) {
+        object->pos.y += 0x18000;
         WaitFrames(1);
-        step--;
-    } while (step >= 0);
+    }
     WaitFrames(10);
     Audio_PlayCue(0x72);
     step = 0;
-    do {
-        register s32 value;
-        s32 tmp2;
-        value = target_cursor->x;
-        value += __divsi3((origin_cursor->x - value) * step, 10);
-        object->pos.x = value;
-        value = target_cursor->y;
-        value += __divsi3((origin_cursor->y - value) * step, 10);
-        object->pos.y = value;
-        value = target_cursor->z;
-        value += __divsi3((origin_cursor->z - value) * step, 10);
-        object->pos.z = value;
-        tmp2 = __divsi3(step * (s32)&Value_ffff4000, 10) + 0x10000;
-        value = tmp2;
-        object->scale_x = value;
-        object->scale_y = value;
+    for (;;) {
+        s32 steps = 11;
+        s32 scale;
+
+        object->pos.x = target.x + (origin.x - target.x) * step / 10;
+        object->pos.y = target.y + (origin.y - target.y) * step / 10;
+        object->pos.z = target.z + (origin.z - target.z) * step / 10;
+        scale = Interpolate(0x4000, 0x10000, step);
+        object->scale_x = scale;
+        object->scale_y = scale;
         WaitFrames(1);
-        ++step;
-    } while (step < 11);
+        step++;
+        if (step >= steps)
+            break;
+    }
     Object_Destroy(object);
     BattleFx_PrepareBufferInterpolation();
 }

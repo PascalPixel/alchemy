@@ -1,20 +1,3 @@
-/* Draft, complete main:080e2538 [080e2538,080e28f4), 956 bytes.
-   2026-09-29, written fresh from the listing under approved agscc with the game build flags (it replaces
-   an unmeasured m2c draft): BattleFx_RunShatteringRocks, 960 of 956 bytes,
-   323 differing lines, 151 aligned edits. The prologue, the camera pan,
-   the transfer setup and the rock seeding loop match; the tables need
-   labels inside the unidentified block (ShatterRocks_ShardOffsets 080eecb2,
-   _RockX 080eecf2, _DropFrames 080eecf7, _RockCounts 080eecfc,
-   _ShardWidths 080eecff, _ShardHeights 080eed0e, _ShardCells 080eed1e,
-   all mutable: the reference rereads them across calls) and resource 0x8a
-   in CONSTANTS.LD. Each loop indexes its record at the top of the body so
-   its pointer is a reduced giv set after the entry test, as in the ROM.
-   Blocker: the shard pool is the EWRAM buffer at 0x02010000. Through the
-   name gMapCellBuffer, GCC keeps the symbol out of the shard loop's giv and
-   adds it every iteration; with the literal address (a probe, not a
-   candidate) the seeding loop takes the reference's shape (pool plus
-   i * 140 plus a 448-step giv). Other residuals: the item loop's and the
-   main loop's register choices and the frame bound reload. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
@@ -23,9 +6,9 @@
 #include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "B5_CONTEXT.H"
+#include "RAM_BUFFER.H"
 
 extern u8 gBattleFxWork[];
-extern struct EffectStep gMapCellBuffer[];
 extern u8 ShatterRocks_ShardOffsets[];
 extern s8 ShatterRocks_RockX[];
 extern u8 ShatterRocks_DropFrames[];
@@ -58,7 +41,6 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     void *canvas;
     DrawRectangleFn blit;
     s32 rows;
-    s32 last;
     struct EffectPosition first;
     struct EffectPosition final;
     struct EffectStep *rock;
@@ -96,18 +78,18 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
     }
     for (i = 0; i != rows; i++) {
         for (j = 0; j != 21; j++) {
-            shard = &gMapCellBuffer[i * 21 + j];
-            shard->x = (ShatterRocks_ShardOffsets[j * 2] + ShatterRocks_RockX[i]) << 16;
-            shard->y = ShatterRocks_ShardOffsets[j * 2 + 1] << 16;
-            shard->velocity_x = ((Random16() % 96) - 48) << 10;
-            shard->velocity_y = -((Random16() & 127) + 32) << 11;
-            shard->z = 32;
-            shard->variant = 0;
+            struct EffectStep *seed = &((struct EffectStep *)Ram_MapCellBuffer)[i * 21 + j];
+
+            seed->x = (ShatterRocks_ShardOffsets[j * 2] + ShatterRocks_RockX[i]) << 16;
+            seed->y = ShatterRocks_ShardOffsets[j * 2 + 1] << 16;
+            seed->velocity_x = ((Random16() % 96) - 48) << 10;
+            seed->velocity_y = -((Random16() & 127) + 32) << 11;
+            seed->z = 32;
+            seed->variant = 0;
         }
     }
-    last = rows - 1;
-    for (frame = 0; frame != ShatterRocks_DropFrames[last] + 80; frame++) {
-        if (frame == ShatterRocks_DropFrames[last] + 48)
+    for (frame = 0; frame != ShatterRocks_DropFrames[rows - 1] + 80; frame++) {
+        if (frame == ShatterRocks_DropFrames[rows - 1] + 48)
             BattleEventRuntime_BeginPhaseFar(132);
         for (i = 0; i != rows; i++) {
             rock = &work->particles[i];
@@ -117,12 +99,12 @@ void BattleFx_RunShatteringRocks(struct BattleEffectArgument *object)
             }
             if (frame >= ShatterRocks_DropFrames[i] + 18) {
                 for (j = 0; j != 21; j++) {
-                    shard = &gMapCellBuffer[i * 21 + j];
+                    shard = &((struct EffectStep *)Ram_MapCellBuffer)[i * 21 + j];
                     cell = (j % 5) * 3 + shard->variant / 96 % 3;
-                    width = ShatterRocks_ShardWidths[cell];
-                    height = ShatterRocks_ShardHeights[cell];
                     blit(canvas, (u8 *)work + ShatterRocks_ShardCells[cell] + 0x83c,
-                        HI(shard->x) - width / 2, HI(shard->y) - height / 2, width, height);
+                        HI(shard->x) - ((width = ShatterRocks_ShardWidths[cell]) >> 1),
+                        HI(shard->y) - ((height = ShatterRocks_ShardHeights[cell]) >> 1),
+                        width, height);
                     EffectStep_AdvanceWithGravity2D(shard, 64, 0x4000);
                     shard->variant += shard->z;
                     if (shard->z > 1 && (frame & 1))

@@ -20,7 +20,7 @@ Map_RenderAnimatedTileFramesForObjectFar:
 	.global Map_RenderAllAnimatedTileFramesFar
 	.thumb_func
 Map_RenderAllAnimatedTileFramesFar:
-	overlay_veneer Func_0802301c
+	overlay_veneer Map_RenderAllAnimatedTileFrames
 	.global Func_08020108
 	.thumb_func
 Func_08020108:

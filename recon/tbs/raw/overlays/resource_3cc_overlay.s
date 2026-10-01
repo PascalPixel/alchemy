@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020080c8,"a",%progbits
 	.4byte 0x00500050
 	.4byte 0x00000000
 	.4byte 0x00000050
@@ -106,16 +106,16 @@
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200804d
+	.4byte State_ApplyValues8And0And0Then30
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008065
+	.4byte State_ApplyValues9And1And0Then44
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0200807d
+	.4byte State_ApplyValues10And2And0Then58
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008095
+	.4byte State_ApplyValues11And3And0Then6c
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

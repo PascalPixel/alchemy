@@ -20,7 +20,7 @@ Func_081811d4:
 	ldr r3, [r3, #96]
 	movs r5, #7
 	mov r8, r3
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 	ldr r3, .L_08181218
 	movs r2, #128
 	lsls r2, r2, #19
@@ -142,7 +142,7 @@ Func_081811d4:
 .L_081812d8:
 	movs r2, #1
 	ldr r0, .L_081813a4
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
 	bl Func_081963ec
@@ -408,7 +408,7 @@ Func_081811d4:
 	ble .L_081814e2
 	subs r0, #22
 	movs r1, #12
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #3
 	ble .L_081814e2
 	movs r1, #1

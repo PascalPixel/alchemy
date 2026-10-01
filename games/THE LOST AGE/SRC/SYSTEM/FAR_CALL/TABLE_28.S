@@ -8,7 +8,7 @@
 	.global Func_080c8390
 	.thumb_func
 Func_080c8390:
-	overlay_veneer Func_080d17ac
+	overlay_veneer BattleFx_StartBufferInterpolation
 	.global Func_080c8398
 	.thumb_func
 Func_080c8398:

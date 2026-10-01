@@ -28,7 +28,9 @@ struct GameState {
     /* The party's heading and turn, which a restored view sets. */
     u32 heading;
     u16 turn;
-    u8 unknown_1ee[4];
+    /* The cue a scene fading in from white plays first. */
+    s16 scene_cue;
+    u8 unknown_1f0[2];
     /* How the leader moves: 1 on a ladder, 2 in the Suhara desert's sand. */
     u8 movement_mode;
     u8 unknown_1f3;

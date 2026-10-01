@@ -15,10 +15,10 @@ Func_08100d58:
 	b .L_08100d7c
 .L_08100d6e:
 	movs r0, #126
-	bl Func_080f93b8
+	bl Audio_PlayCueReturnOne
 .L_08100d74:
 	movs r0, #126
-	bl Func_080f93b8
+	bl Audio_PlayCueReturnOne
 	b .L_08100e22
 .L_08100d7c:
 	ldrb r3, [r0, #3]
@@ -64,15 +64,15 @@ Func_08100d58:
 	.4byte .L_08100e22
 .L_08100e0c:
 	movs r0, #82
-	bl Func_080f93b8
+	bl Audio_PlayCueReturnOne
 	b .L_08100e22
 .L_08100e14:
 	movs r0, #84
-	bl Func_080f93b8
+	bl Audio_PlayCueReturnOne
 	b .L_08100e22
 .L_08100e1c:
 	movs r0, #91
-	bl Func_080f93b8
+	bl Audio_PlayCueReturnOne
 .L_08100e22:
 	pop {pc}
 .L_08100e24:

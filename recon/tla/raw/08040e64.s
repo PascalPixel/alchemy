@@ -12,7 +12,7 @@ Func_08040e64:
 	bl Inventory_AddItemFar
 	ldr r0, .L_08040e80
 	movs r1, #4
-	bl Func_080c8268
+	bl Event_SetPairWork1c0Far
 	pop {pc}
 .L_08040e80:
 	.4byte 0x00000101

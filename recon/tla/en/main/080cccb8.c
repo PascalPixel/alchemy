@@ -1,4 +1,11 @@
+/*
+ * Draft: BattleAction_FindDescriptor, ported from its ☀️ twin with the event
+ * work from its heap slot; it goes before SRC/GAME/FLAGS/IS_CONDITION_ACTIVE.C.
+ * The listing loads the first table (ldr r7, [r3, #108]) before setting
+ * up its two constants, where this C sets them first.
+ */
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 /* One 24-byte descriptor; a sprite of -1 ends each table. */
 struct ActionDescriptor {
@@ -17,23 +24,15 @@ struct ActionDescriptorTables {
     struct ActionDescriptor *tables[4];
 };
 
-extern struct ActionDescriptorTables *gEventWork;
-
-/*
- * Finds the descriptor for a battle action across the event work's four
- * tables. Ids up to 7 name a descriptor by its sprite; larger ids count,
- * from 8, the descriptors whose sprite is above 7. Returns NULL when the
- * id is not found.
- */
-
 struct ActionDescriptor *BattleAction_FindDescriptor(s32 id)
 {
+    struct ActionDescriptorTables *work = Ram_HeapSlots->event_work;
     struct ActionDescriptor *entry;
     s32 i;
     s32 group = 8;
 
     for (i = 0; i < 4; i++) {
-        entry = gEventWork->tables[i];
+        entry = work->tables[i];
         if (entry == NULL)
             continue;
         if (id <= 7) {

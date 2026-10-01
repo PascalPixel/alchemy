@@ -193,7 +193,7 @@ Func_08127068:
 	.2byte 0xf800
 	mov r1, r9
 	adds r0, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r1, [sp, #4]
 	cmp r1, #1
 	beq .L_08127214

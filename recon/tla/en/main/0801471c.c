@@ -1,4 +1,9 @@
-#include "CALLBACK_SCHEDULER.H"
+/* Near miss: score 60. ☀️'s, for ⚓️'s 24 tasks. ⚓️ loads the task table
+   (ldr r1) straight after copying mask into r6; this draft sets the -1
+   result first. Declaration orders, a byte mask and 40 s of permuting did
+   not fix it; its neighbours matched once the table load came first. */
+#include "TYPES.H"
+#include "IO_REG.H"
 
 struct SchedulerTask {
     u32 callback;
@@ -8,15 +13,9 @@ struct SchedulerTask {
 };
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
-
 extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerTaskCount;
-extern struct SchedulerTask gSchedulerTaskTable[20];
-
-/*
- * Each table update masks interrupts by writing IME the low half of its own
- * address (0x208, bit 0 clear) and restores the saved value afterwards.
- */
+extern struct SchedulerTask gSchedulerTaskTable[24];
 
 s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
 {
@@ -26,8 +25,8 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
     s32 returned_result;
     s32 i;
 
-    result = -1;
     task = gSchedulerTaskTable;
+    result = -1;
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -36,7 +35,7 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i <= 23; i++, task++) {
                 if (task->callback == callback) {
                     task->mask = mask;
                     result = i;

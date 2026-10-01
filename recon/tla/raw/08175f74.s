@@ -175,7 +175,7 @@ Func_08175f74:
 	adds r5, r3, r4
 	adds r1, r5, #0
 	adds r0, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r6, #0
 	movs r1, #128
 	mov r9, r6
@@ -247,7 +247,7 @@ Func_08175f74:
 	.2byte 0xf800
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r2, #146
 	lsls r2, r2, #1
 	add r2, sp
@@ -322,7 +322,7 @@ Func_08175f74:
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r2, [sp, #92]
 	movs r6, #224
 	lsls r6, r6, #3
@@ -330,7 +330,7 @@ Func_08175f74:
 	adds r1, r2, r6
 	movs r3, #0
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, .L_08176308
 	movs r3, #0
 	str r3, [sp, #84]
@@ -381,14 +381,14 @@ Func_08175f74:
 	ldr r0, .L_0817630c
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #184
 	lsls r2, r2, #5
 	adds r1, r6, r2
 	movs r3, #1
 	movs r2, #1
 	ldr r0, .L_08176310
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08176314
 	bl Resource_GetTableEntry
 	adds r7, r0, #0
@@ -1310,7 +1310,7 @@ Func_08175f74:
 	movs r7, #172
 	lsls r7, r7, #6
 	adds r1, r6, r7
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r1, .L_08176b9c
 	ldr r6, [sp, #92]
 	movs r2, #172
@@ -1374,7 +1374,7 @@ Func_08175f74:
 	adds r7, #32
 	adds r1, r5, #0
 	adds r0, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r2, #192
 	movs r3, #224
 	movs r1, #64
@@ -1451,7 +1451,7 @@ Func_08175f74:
 	movs r3, #0
 	ldr r0, .L_08176bbc
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #192
 	lsls r2, r2, #2
 	adds r1, r5, #0
@@ -1467,7 +1467,7 @@ Func_08175f74:
 	adds r1, r5, r6
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r7, #144
 	movs r0, #224
 	lsls r7, r7, #15
@@ -1490,7 +1490,7 @@ Func_08175f74:
 	.2byte 0xf800
 	ldr r1, .L_08176bcc
 	adds r0, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r1, .L_08176bcc
 	movs r4, #0
 	movs r0, #128
@@ -2146,7 +2146,7 @@ Func_08175f74:
 	ldr r0, .L_08177050
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	bl Func_0815b410
 .L_08177008:
 	ldr r3, [sp, #80]
@@ -2905,7 +2905,7 @@ Func_08175f74:
 	lsls r2, r2, #6
 	adds r0, r7, #0
 	adds r1, r5, r2
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #7
 	movs r4, #0
 	movs r7, #0
@@ -3601,12 +3601,12 @@ Func_08175f74:
 	ldr r0, .L_08177e5c
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #0
 	ldr r0, .L_08177e60
 	ldr r1, [sp, #72]
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #192
 	movs r5, #0
 	lsls r3, r3, #2
@@ -3956,7 +3956,7 @@ Func_08175f74:
 	movs r2, #1
 	movs r3, #0
 	ldr r0, .L_08177e84
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #144
 	bl Audio_PlayCue
 	movs r1, #240
@@ -4006,7 +4006,7 @@ Func_08175f74:
 .L_08177e60:
 	.4byte 0x00000134
 .L_08177e64:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08177e68:
 	.4byte 0x04000208
 .L_08177e6c:

@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200ad3c,"a",%progbits
 	.global KorashiamuIriguchi_ActionTable1
 KorashiamuIriguchi_ActionTable1:
 	.4byte 0x0000001c
@@ -1192,7 +1192,7 @@ gKorashiamuIriguchiEvents1:
 	.4byte 0x0000206c
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x020091c5
+	.4byte FieldScene_RunConditionalSceneSetup
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte 0x00002070
@@ -1242,7 +1242,7 @@ gKorashiamuIriguchiEvents3:
 	.4byte 0x000023c8
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020082a1
+	.4byte SceneDialogue_RunActor10MessageByFlag962
 	.4byte 0x00000000
 	.4byte 0x0962000b
 	.4byte 0x0000205a
@@ -1257,13 +1257,13 @@ gKorashiamuIriguchiEvents3:
 	.4byte 0x00002253
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x020082e5
+	.4byte SceneDialogue_RunActor13MessageByFlag962
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008335
+	.4byte FieldScene_RunScene3b9_02000334
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0200839d
+	.4byte FieldScene_RunScene3b9_0200039c
 	.4byte 0x00008d15
 	.4byte 0x09620008
 	.4byte 0x00002061
@@ -1320,7 +1320,7 @@ gKorashiamuIriguchiEvents3:
 	.4byte 0x00002266
 	.4byte 0x00000002
 	.4byte 0x0950000a
-	.4byte 0x02008711
+	.4byte Scene_RunBranchingActorPresentation
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1331,25 +1331,25 @@ gKorashiamuIriguchiEvents1Entrance12:
 	.4byte 0x00002113
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x02008469
+	.4byte FieldScene_RunScene3b9_02000468
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x020084c9
+	.4byte FieldScene_RunScene3b9_020004c8
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0200850d
+	.4byte SceneDialogue_ShowLine2118WithActor15Steps
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0200855d
+	.4byte FieldScene_RunScene3b9_0200055c
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x020085f1
+	.4byte FieldScene_RunActorSeventeenDialogueSteps
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x02008649
+	.4byte FieldScene_RunScene3b9_02000648
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020086bd
+	.4byte FieldScene_RunScene3b9_020006bc
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00002128
@@ -1361,10 +1361,10 @@ gKorashiamuIriguchiEvents1Entrance12:
 	.4byte 0x0000212a
 	.4byte 0x00000002
 	.4byte 0x0235000c
-	.4byte 0x02008dcd
+	.4byte KorashiamuIriguchi_RunGatherScene
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x020091ad
+	.4byte SceneState_ApplyFlags565And564
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

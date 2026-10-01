@@ -7,9 +7,6 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 extern u8 gWorkSlot[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -117,7 +114,6 @@ void BattleFx_RunOrbitingSparks(void)
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }
-#endif
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
 

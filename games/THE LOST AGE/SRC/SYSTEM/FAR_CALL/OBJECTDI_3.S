@@ -9,9 +9,9 @@
 	.thumb_func
 Func_080200c0:
 	overlay_veneer Func_08023220
-	.global Func_080200c8
+	.global Object_Destroy
 	.thumb_func
-Func_080200c8:
+Object_Destroy:
 	overlay_veneer Func_080231c8
 	.global ObjectDispatch_SetChildField12Far
 	.thumb_func

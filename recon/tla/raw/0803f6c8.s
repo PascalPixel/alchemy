@@ -40,7 +40,7 @@ Menu_LoadSelectedResource:
 	ldrh r3, [r3, r0]
 	adds r0, r0, r3
 	str r0, [r2]
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	ldrh r3, [r5, #10]
 	cmp r3, #0
 	bne .L_0803f726

@@ -339,9 +339,9 @@ Func_020002a4:
 .L_020082c0:
 	.4byte 0x00000000
 	.section .text.x020082c4,"ax",%progbits
-	.global Func_020002c4
+	.global WorldMap_UpdateBobbingMarker
 	.thumb_func
-Func_020002c4:
+WorldMap_UpdateBobbingMarker:
 	push {r5, r6, lr}
 	ldr r3, .L_0200833c
 	movs r2, #2
@@ -409,39 +409,6 @@ Func_020002c4:
 	.4byte IwramMulQ16
 .L_02008348:
 	.4byte 0x20a40000
-	.section .text.x0200834c,"ax",%progbits
-	.global Func_0200034c
-	.thumb_func
-Func_0200034c:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #55
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008380
-	movs r0, #183
-	lsls r0, r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008380
-	ldr r3, .L_02008384
-	str r3, [r5, #108]
-	adds r3, r5, #0
-	adds r3, #85
-	strb r0, [r3]
-	adds r3, #15
-	strh r0, [r3]
-	adds r3, #2
-	strh r0, [r3]
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-.L_02008380:
-	movs r0, #0
-	pop {r5, pc}
-.L_02008384:
-	.4byte Func_020002c4
 	.section .text.x02008388,"ax",%progbits
 	.global Func_02000388
 	.thumb_func
@@ -5723,7 +5690,7 @@ Func_02003144:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_0200b410:
-	.4byte gOverlayArea + 0x6be8
+	.4byte Data_02006be8
 .L_0200b414:
 	.4byte 0x00002c61
 	.section .text.x0200b418,"ax",%progbits
@@ -5996,7 +5963,7 @@ Func_02003600:
 .L_0200b648:
 	.4byte 0xfffffe70
 .L_0200b64c:
-	.4byte gOverlayArea + 0x6c08
+	.4byte Data_02006c08
 .L_0200b650:
 	.4byte gPartyState
 	.section .text.x0200b654,"ax",%progbits
@@ -6042,7 +6009,7 @@ Func_02003654:
 .L_0200b69c:
 	.4byte 0xfffffe70
 .L_0200b6a0:
-	.4byte gOverlayArea + 0x6c08
+	.4byte Data_02006c08
 .L_0200b6a4:
 	.4byte gPartyState
 	.section .text.x0200b6a8,"ax",%progbits
@@ -6328,7 +6295,7 @@ Func_020036a8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200b8c4:
-	.4byte gOverlayArea + 0x6c08
+	.4byte Data_02006c08
 .L_0200b8c8:
 	.4byte 0xff600000
 .L_0200b8cc:
@@ -6409,7 +6376,7 @@ Func_020038e4:
 .L_0200b956:
 	pop {pc}
 .L_0200b958:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200b95c:
 	.4byte 0x04000208
 	.section .text.x0200b960,"ax",%progbits
@@ -6432,7 +6399,7 @@ Func_02003960:
 .L_0200b97c:
 	.4byte IwramClearWords
 .L_0200b980:
-	.4byte gOverlayArea + 0x6c08
+	.4byte Data_02006c08
 .L_0200b984:
 	.4byte Func_020036a8
 	.section .text.x0200b988,"ax",%progbits
@@ -6847,7 +6814,7 @@ Func_02003c50:
 .L_0200bc88:
 	.4byte Data_0300122c
 .L_0200bc8c:
-	.4byte gOverlayArea + 0x6e08
+	.4byte Data_02006e08
 .L_0200bc90:
 	ldrh r3, [r2]
 	ldr r1, .L_0200bca4
@@ -7105,7 +7072,7 @@ Func_02003d44:
 .L_0200be90:
 	.4byte Data_02005058
 .L_0200be94:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200be98:
 	.4byte 0x04000208
 .L_0200be9c:
@@ -7119,7 +7086,7 @@ Func_02003d44:
 .L_0200beac:
 	.4byte Func_02003c50
 .L_0200beb0:
-	.4byte gOverlayArea + 0x6e08
+	.4byte Data_02006e08
 .L_0200beb4:
 	.4byte 0x06002000
 .L_0200beb8:
@@ -7883,7 +7850,7 @@ Func_020042e0:
 .L_0200c4d8:
 	.4byte Data_0200556e
 .L_0200c4dc:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200c4e0:
 	.4byte 0x04000208
 .L_0200c4e4:
@@ -8421,37 +8388,37 @@ Func_02004744:
 .L_0200c8b0:
 	.4byte Data_0300122c
 .L_0200c8b4:
-	.4byte gOverlayArea + 0x6e0c
+	.4byte Data_02006e0c
 .L_0200c8b8:
-	.4byte gOverlayArea + 0x6e20
+	.4byte Data_02006e20
 .L_0200c8bc:
 	.4byte IwramClearWords
 .L_0200c8c0:
 	.4byte IwramCopyWords
 .L_0200c8c4:
-	.4byte gOverlayArea + 0x7020
+	.4byte Data_02007020
 .L_0200c8c8:
-	.4byte gOverlayArea + 0x6fa0
+	.4byte Data_02006fa0
 .L_0200c8cc:
-	.4byte gOverlayArea + 0x6f20
+	.4byte Data_02006f20
 .L_0200c8d0:
-	.4byte gOverlayArea + 0x6e40
+	.4byte Data_02006e40
 .L_0200c8d4:
-	.4byte gOverlayArea + 0x6f40
+	.4byte Data_02006f40
 .L_0200c8d8:
-	.4byte gOverlayArea + 0x6e60
+	.4byte Data_02006e60
 .L_0200c8dc:
-	.4byte gOverlayArea + 0x6f60
+	.4byte Data_02006f60
 .L_0200c8e0:
-	.4byte gOverlayArea + 0x6e80
+	.4byte Data_02006e80
 .L_0200c8e4:
-	.4byte gOverlayArea + 0x6f80
+	.4byte Data_02006f80
 .L_0200c8e8:
-	.4byte gOverlayArea + 0x6f24
+	.4byte Data_02006f24
 .L_0200c8ec:
-	.4byte gOverlayArea + 0x6e24
+	.4byte Data_02006e24
 .L_0200c8f0:
-	.4byte gOverlayArea + 0x6e0e
+	.4byte Data_02006e0e
 	.section .text.x0200c8f4,"ax",%progbits
 	.global Func_020048f4
 	.thumb_func
@@ -8529,15 +8496,15 @@ Func_020048f4:
 .L_0200c98c:
 	.4byte 0x0000000a
 .L_0200c990:
-	.4byte gOverlayArea + 0x6e14
+	.4byte Data_02006e14
 .L_0200c994:
-	.4byte gOverlayArea + 0x6e0e
+	.4byte Data_02006e0e
 .L_0200c998:
 	.4byte ResourceTableEntries
 .L_0200c99c:
 	.4byte gInput
 .L_0200c9a0:
-	.4byte gOverlayArea + 0x6e10
+	.4byte Data_02006e10
 .L_0200c9a4:
 	.4byte 0x80004000
 .L_0200c9a8:
@@ -8549,7 +8516,7 @@ Func_020048f4:
 	add sp, #16
 	pop {r5, r6, r7, pc}
 .L_0200c9b8:
-	.4byte gOverlayArea + 0x6e14
+	.4byte Data_02006e14
 	.section .text.x0200c9bc,"ax",%progbits
 	.global Func_020049bc
 	.thumb_func
@@ -8585,15 +8552,15 @@ Func_020049bc:
 .L_0200c9fc:
 	.4byte 0x0000000a
 .L_0200ca00:
-	.4byte gOverlayArea + 0x6f20
+	.4byte Data_02006f20
 .L_0200ca04:
 	.4byte Data_02005920
 .L_0200ca08:
-	.4byte gOverlayArea + 0x6e0e
+	.4byte Data_02006e0e
 .L_0200ca0c:
-	.4byte gOverlayArea + 0x6e0c
+	.4byte Data_02006e0c
 .L_0200ca10:
-	.4byte gOverlayArea + 0x6e10
+	.4byte Data_02006e10
 .L_0200ca14:
 	.4byte Func_020048f4
 .L_0200ca18:
@@ -8621,13 +8588,13 @@ Func_02004a1c:
 .L_0200ca40:
 	.4byte 0xffffffff
 .L_0200ca44:
-	.4byte gOverlayArea + 0x6f20
+	.4byte Data_02006f20
 .L_0200ca48:
 	.4byte Data_02005920
 .L_0200ca4c:
-	.4byte gOverlayArea + 0x6e0e
+	.4byte Data_02006e0e
 .L_0200ca50:
-	.4byte gOverlayArea + 0x6e0c
+	.4byte Data_02006e0c
 .L_0200ca54:
 	.4byte Func_020048f4
 	.section .rodata.x0200ce38,"a",%progbits
@@ -8810,17 +8777,17 @@ Data_02005058:
 	.4byte 0xa0e4a108
 	.4byte 0x234000e4
 	.4byte 0x21b1e0b0
-	.4byte Data_02019600 + 0x1ce0
+	.4byte 0x0201b2e0
 	.4byte 0xb0e4b1e4
 	.4byte 0x09254000
 	.4byte 0xb2e8b1e8
 	.4byte 0xb1ec0201
 	.4byte 0x00840a01
 	.4byte 0xa1e825c0
-	.4byte Data_02019600 + 0xce8
+	.4byte 0x0201a2e8
 	.4byte 0x01cfa1ec
 	.4byte 0x2740100a
-	.4byte Data_02018000 + 0x12e8
+	.4byte 0x020192e8
 	.4byte 0x40200601
 	.4byte 0x020e202c
 	.4byte 0xff4000f7
@@ -8842,7 +8809,7 @@ Data_02005058:
 	.4byte 0xbce40201
 	.4byte 0x4000bbe4
 	.4byte 0xbce80925
-	.4byte Data_02019600 + 0x27e8
+	.4byte 0x0201bde8
 	.4byte 0x0a01bcec
 	.4byte 0x25c00084
 	.4byte 0xade8ace8
@@ -8871,7 +8838,7 @@ Data_02005058:
 	.4byte 0x018de829
 	.4byte 0xec060102
 	.4byte 0xe828c000
-	.4byte Data_02018000 + 0xf7f
+	.4byte 0x02018f7f
 	.4byte 0x00300601
 	.4byte 0xff400030
 	.4byte 0xb0ce4000
@@ -8886,7 +8853,7 @@ Data_02005058:
 	.4byte 0xaae0b927
 	.4byte 0xe4020193
 	.4byte 0x294000b9
-	.4byte Data_02019600 + 0x14e8
+	.4byte 0x0201aae8
 	.4byte 0xec4f0601
 	.4byte 0xe828c000
 	.4byte 0x0102019a
@@ -8910,7 +8877,7 @@ Data_02005058:
 	.4byte 0x83244000
 	.4byte 0x00e483e0
 	.4byte 0x85112940
-	.4byte Data_02018000 + 0x13e0
+	.4byte 0x020193e0
 	.4byte 0x00e485e4
 	.4byte 0xe8392840
 	.4byte 0x01020193
@@ -8928,7 +8895,7 @@ Data_02005058:
 	.4byte 0x0060a7e0
 	.4byte 0x00be082a
 	.4byte 0xbe082640
-	.4byte Sound_Wave55 + 0x39fc
+	.4byte 0x08264000
 	.4byte 0x4000febe
 	.4byte 0x003e0a24
 	.4byte 0xfc0a2240
@@ -8947,7 +8914,7 @@ Data_02005058:
 	.4byte 0xbe082c40
 	.4byte 0x00298000
 	.4byte 0xbe082c40
-	.4byte Sound_Wave56 + 0x2664
+	.4byte 0x08268050
 	.4byte 0x8000b0be
 	.4byte 0x8000ec27
 	.4byte 0x22c05038
@@ -8960,7 +8927,7 @@ Data_02005058:
 	.4byte 0xff0200df
 	.4byte 0xb77a0200
 	.4byte 0x00ff1210
-	.4byte gOverlayArea + 0x7f02
+	.4byte 0x0200ff02
 	.4byte 0xff0200ff
 	.4byte 0x80100200
 	.2byte 0x0000
@@ -9113,7 +9080,7 @@ Data_02005312:
 	.global Data_0200554e
 Data_0200554e:
 	.2byte 0x01a0
-	.4byte Resource_Data012 + 0x120000
+	.4byte 0x08420000
 	.4byte 0x18c61084
 	.4byte 0x294a2108
 	.4byte 0x3def318c
@@ -9220,7 +9187,7 @@ Data_0200556e:
 	.4byte 0x40004407
 	.4byte 0xff02002b
 	.4byte 0x00ff0200
-	.4byte gOverlayArea + 0x7f02
+	.4byte 0x0200ff02
 	.4byte Data_020046fe + 0x1
 	.4byte 0xe30200ff
 	.4byte 0x8009e008
@@ -9316,7 +9283,7 @@ Data_020057d0:
 	.4byte 0x809154c7
 	.4byte 0xc2c07605
 	.4byte 0x0977bacc
-	.4byte Monster_OrcLordSprites + 0xebe
+	.4byte 0x08a1daaa
 	.4byte 0xe220ec05
 	.4byte 0x580b1120
 	.4byte 0x733183a0
@@ -9967,7 +9934,7 @@ gSceneExits:
 	.4byte 0x01d01084
 	.4byte 0x01e01085
 	.4byte 0x01f0a086
-	.4byte Data_02001024 + 0x63
+	.4byte 0x02001087
 	.4byte 0x0210a08b
 	.4byte 0x0220b08b
 	.4byte 0x0230108f
@@ -10015,7 +9982,7 @@ gSceneExits:
 	.global Data_0200632c
 Data_0200632c:
 	.4byte 0x0000002e
-	.4byte Func_0200034c
+	.4byte StoryActor_Initialize
 	.4byte 0x00000011
 	.global Data_02006338
 Data_02006338:
@@ -10370,7 +10337,7 @@ gSceneEvents:
 	.4byte 0xffff0068
 	.4byte 0x00000007
 	.4byte 0x00000001
-	.4byte Tileset_Set96TilesA + 0x62d
+	.4byte 0x08de0069
 	.4byte 0x00000008
 	.4byte 0x00000001
 	.4byte 0xffff006a
@@ -10593,3 +10560,60 @@ Data_02006bd4:
 	.global Data_02006be4
 Data_02006be4:
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_02006be8
+Data_02006be8:
+	.space 0x00000020
+	.global Data_02006c08
+Data_02006c08:
+	.space 0x00000200
+	.global Data_02006e08
+Data_02006e08:
+	.space 0x00000004
+	.global Data_02006e0c
+Data_02006e0c:
+	.space 0x00000002
+	.global Data_02006e0e
+Data_02006e0e:
+	.space 0x00000002
+	.global Data_02006e10
+Data_02006e10:
+	.space 0x00000004
+	.global Data_02006e14
+Data_02006e14:
+	.space 0x0000000c
+	.global Data_02006e20
+Data_02006e20:
+	.space 0x00000004
+	.global Data_02006e24
+Data_02006e24:
+	.space 0x0000001c
+	.global Data_02006e40
+Data_02006e40:
+	.space 0x00000020
+	.global Data_02006e60
+Data_02006e60:
+	.space 0x00000020
+	.global Data_02006e80
+Data_02006e80:
+	.space 0x000000a0
+	.global Data_02006f20
+Data_02006f20:
+	.space 0x00000004
+	.global Data_02006f24
+Data_02006f24:
+	.space 0x0000001c
+	.global Data_02006f40
+Data_02006f40:
+	.space 0x00000020
+	.global Data_02006f60
+Data_02006f60:
+	.space 0x00000020
+	.global Data_02006f80
+Data_02006f80:
+	.space 0x00000020
+	.global Data_02006fa0
+Data_02006fa0:
+	.space 0x00000080
+	.global Data_02007020
+Data_02007020:

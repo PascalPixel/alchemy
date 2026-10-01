@@ -22,7 +22,7 @@ Func_081a729c:
 	movs r0, #172
 	bl Runtime_AllocateBlock
 	mov r11, r0
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	movs r0, #1
 	bl Func_08013ef8
 	bl Func_08014b70
@@ -71,7 +71,7 @@ Func_081a729c:
 	adds r4, r4, r3
 	adds r1, r5, #0
 	adds r0, r4, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -141,7 +141,7 @@ Func_081a729c:
 	adds r6, r0, #0
 	adds r1, r6, #0
 	ldr r0, .L_081a7438
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	mov r5, r11
 	adds r5, #16
 	movs r7, #0

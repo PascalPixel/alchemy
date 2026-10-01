@@ -65,7 +65,7 @@ Func_080dc6d8:
 	movs r2, #0
 	adds r0, r6, #0
 	movs r1, #1
-	bl Func_080dc164
+	bl ObjectGroup_SetActionForOthers
 	mov r0, r9
 	movs r1, #4
 	bl UiText_DrawQuantity
@@ -80,7 +80,7 @@ Func_080dc6d8:
 	adds r0, r6, #0
 	movs r1, #0
 	movs r2, #16
-	bl Func_080dc164
+	bl ObjectGroup_SetActionForOthers
 	mov r3, r8
 	strb r3, [r5]
 .L_080dc784:

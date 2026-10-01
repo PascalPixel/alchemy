@@ -1,3 +1,14 @@
+/* 2026-10-01 (matcher 3): a seven-minute permute (seed 1034, 2 jobs)
+   reached 630 (6 register-only, 2 operand, 1 reordered, 2 inserted, 3
+   deleted) from 1130 with: rows = 1 before first = 2; the divider loop as
+   while (1) { ...; if (--n == 0) break; }; `if (95 >= (slot =
+   Resource_FindFreeEntry()))`; the cursor y read into a u16 temporary and
+   assigned inside the ShopCursor call's argument (y = tmp * 8 + 16); and
+   entry declared after n. Written plainly (slot assigned first, y set
+   before the call) the same changes score 1080, so the assignment inside
+   the condition and the argument carry it. Not kept: the remaining gap is
+   the icon-frame loop's r5/r6 roles and its ldrsb. Before adoption the
+   0x080310a4 cursor tiles need a label where their bytes are (O1/O2). */
 /* 2026-09-26: complete 412-byte owner; 57 differing halfwords, 33 aligned
    edits (previous draft: 420 bytes, 137 halfwords, 87 edits). Corrected the
    RenderOutput_Create call to five arguments and CreateFrame to five, reused

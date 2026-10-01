@@ -29,7 +29,7 @@ Func_080f8f9c:
 	adds r1, r7, #0
 	mov r9, r0
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	beq .L_080f8fde
 	movs r3, #1

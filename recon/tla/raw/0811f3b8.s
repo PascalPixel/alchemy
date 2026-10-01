@@ -57,7 +57,7 @@ BattleActor_RemoveFromLists:
 	strh r3, [r5, r2]
 .L_0811f418:
 	adds r0, r6, #0
-	bl Func_08127ba0
+	bl Summon_ReleaseCharge
 	movs r2, #187
 	movs r1, #0
 	movs r0, #255

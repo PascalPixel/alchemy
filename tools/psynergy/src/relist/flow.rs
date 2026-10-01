@@ -2,7 +2,7 @@
 //! words its loads read, which switch tables it jumps through, and what it
 //! calls and branches to.
 
-use crate::decode::{decode_one, Ins, Kind};
+use crate::decode::{decode_one, Cond, Ins, Kind, Shift};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// A bounded view of the image by address.
@@ -29,6 +29,10 @@ impl Image<'_> {
         decode_one(self.bytes, self.base, address)
     }
 }
+
+/// `mov ip, pc`: the link of a call through `bx` to a routine that returns
+/// through ip.
+const MOV_IP_PC: u16 = 0x46fc;
 
 /// The word a `ldr rd, [pc, #k]` at `pc` reads.
 pub fn pool_address(pc: u32, half: u16) -> u32 {
@@ -203,6 +207,12 @@ fn walk_once(
                         function.calls.insert(target);
                     }
                 }
+                // `mov ip, pc` then `bx rN` calls a routine that returns
+                // through ip, to the instruction after the bx.
+                Kind::Bx(_)
+                    if pc >= start + 2
+                        && function.instructions.contains_key(&(pc - 2))
+                        && image.half(pc - 2) == MOV_IP_PC => {}
                 Kind::Bx(_) | Kind::Pop { pc: true, .. } => {
                     function.returns = true;
                     next = false;
@@ -261,16 +271,46 @@ fn jump_table(
         .take(16)
         .map(|(_, ins)| ins)
         .collect();
-    let Some(table) = before.iter().take(8).find_map(|ins| match ins.kind {
+    // GCC places the table on the word boundary after the jump, and loads
+    // its address just before the jump, or once before a loop around it.
+    let after = (pc + 2).next_multiple_of(4);
+    let hoisted = function
+        .instructions
+        .range(..pc)
+        .any(|(_, ins)| matches!(ins.kind, Kind::LdrPool { word, .. } if word == after));
+    let near = before.iter().take(8).find_map(|ins| match ins.kind {
         Kind::LdrPool { word, .. } if word % 4 == 0 && word > pc && word < limit => Some(word),
         _ => None,
-    }) else {
+    });
+    let Some(table) = near.or(hoisted.then_some(after)) else {
         return Vec::new();
     };
-    let bound = before.iter().find_map(|ins| match ins.kind {
-        Kind::CmpImm { imm, .. } => Some(imm + 1),
-        _ => None,
-    });
+    // The nearest compare bounds the index: `cmp rN, #n`, or `cmp rN, rM`
+    // against a constant built just before it, whose branch past the
+    // table says whether the bound itself is a case.
+    let bound = before
+        .iter()
+        .enumerate()
+        .find_map(|(at, ins)| match ins.kind {
+            Kind::CmpImm { imm, .. } => Some(Some(imm + 1)),
+            Kind::CmpReg { rm, .. } => {
+                let limit = constant(&before[at + 1..], rm);
+                let branch = at.checked_sub(1).map(|next| &before[next].kind);
+                Some(match branch {
+                    Some(Kind::Bcond {
+                        cond: Cond::Cc | Cond::Cs,
+                        ..
+                    }) => limit,
+                    Some(Kind::Bcond {
+                        cond: Cond::Hi | Cond::Ls,
+                        ..
+                    }) => limit.map(|n| n + 1),
+                    _ => None,
+                })
+            }
+            _ => None,
+        })
+        .flatten();
     let mut cases = Vec::new();
     let mut first_case = limit;
     let mut word = table;
@@ -278,15 +318,79 @@ fn jump_table(
         if bound.is_some_and(|n| cases.len() as u32 >= n) {
             break;
         }
+        // A bounded switch may send a case back to code before the jump,
+        // such as the head of the loop around it; the table still ends
+        // before the first case that follows it.
         let case = image.word(word);
-        if case % 2 != 0 || case < start || case >= limit || case <= pc {
+        let back = bound.is_some() && case < pc;
+        if case % 2 != 0 || case < start || case >= limit || (case <= pc && !back) {
             break;
         }
-        first_case = first_case.min(case);
+        if case > table {
+            first_case = first_case.min(case);
+        }
         cases.push((word, case));
         word += 4;
     }
     cases
+}
+
+/// The register an instruction writes, if it writes one.
+fn written(kind: &Kind) -> Option<u8> {
+    match *kind {
+        Kind::MovImm { rd, .. }
+        | Kind::MovHi { rd, .. }
+        | Kind::Movs { rd, .. }
+        | Kind::AddImm3 { rd, .. }
+        | Kind::AddImm8 { rd, .. }
+        | Kind::AddReg { rd, .. }
+        | Kind::AddHi { rd, .. }
+        | Kind::AddSp { rd, .. }
+        | Kind::AddPc { rd, .. }
+        | Kind::SubImm3 { rd, .. }
+        | Kind::SubImm8 { rd, .. }
+        | Kind::SubReg { rd, .. }
+        | Kind::ShiftImm { rd, .. }
+        | Kind::Alu { rd, .. }
+        | Kind::LdrPool { rd, .. }
+        | Kind::LdrSp { rd, .. }
+        | Kind::Load { rd, .. } => Some(rd),
+        _ => None,
+    }
+}
+
+/// The constant `register` holds, built by the instructions before a use,
+/// nearest first: a `movs` of an immediate, then shifts left and adds.
+fn constant(before: &[&Ins], register: u8) -> Option<u32> {
+    let mut steps = Vec::new();
+    for ins in before {
+        if written(&ins.kind) != Some(register) {
+            if matches!(
+                ins.kind,
+                Kind::Bl { .. } | Kind::B { .. } | Kind::Bcond { .. }
+            ) {
+                return None;
+            }
+            continue;
+        }
+        match ins.kind {
+            Kind::MovImm { imm, .. } => {
+                return steps.iter().rev().try_fold(imm, |value, step| match step {
+                    Ok(shift) => value.checked_shl(*shift),
+                    Err(add) => value.checked_add(*add),
+                });
+            }
+            Kind::ShiftImm {
+                shift: Shift::Lsl,
+                rd,
+                rm,
+                imm,
+            } if rd == rm => steps.push(Ok(imm)),
+            Kind::AddImm8 { imm, .. } => steps.push(Err(imm)),
+            _ => return None,
+        }
+    }
+    None
 }
 
 /// What a part of an area holds: a listing of code, a listing of data words,
@@ -538,6 +642,99 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn a_bounded_switch_reads_a_case_that_leads_back_before_the_jump() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0x2801, // cmp r0, #1
+            0xd80f, // bhi 0x08000024
+            0x0080, // lsls r0, r0, #2
+            0x4902, // ldr r1, [pc, #8]: the word at 0x10
+            0x1840, // adds r0, r0, r1
+            0x6800, // ldr r0, [r0]
+            0x4687, // mov pc, r0
+            0x0000, // padding
+        ]);
+        bytes.extend(0x0800_0014u32.to_le_bytes()); // 0x10: the table's address
+        bytes.extend(0x0800_001cu32.to_le_bytes()); // 0x14: case 0
+        bytes.extend(0x0800_0000u32.to_le_bytes()); // 0x18: case 1, back to the cmp
+        bytes.extend(halves(&[0x2001, 0x4770, 0x2002, 0x4770, 0x2000, 0x4770]));
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert_eq!(
+            function.tables,
+            BTreeMap::from([(base + 0x14, base + 0x1c), (base + 0x18, base)])
+        );
+    }
+
+    #[test]
+    fn a_switch_bounded_by_a_built_constant_reads_that_many_cases() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0x2800, // cmp r0, #0: an earlier compare that bounds nothing
+            0xd100, // bne 0x08000006
+            0x2000, // movs r0, #0
+            0x2201, // movs r2, #1
+            0x0052, // lsls r2, r2, #1: two cases
+            0x4290, // cmp r0, r2
+            0xd301, // bcc 0x08000012
+            0x2000, // movs r0, #0
+            0x4770, // bx lr
+            0x0080, // lsls r0, r0, #2
+            0x4902, // ldr r1, [pc, #8]: the word at 0x20
+            0x1840, // adds r0, r0, r1
+            0x6800, // ldr r0, [r0]
+            0x4687, // mov pc, r0
+            0x0000, 0x0000,
+        ]);
+        bytes.extend(0x0800_0024u32.to_le_bytes()); // 0x20: the table's address
+        bytes.extend(0x0800_0034u32.to_le_bytes()); // 0x24: case 0
+        bytes.extend(0x0800_0038u32.to_le_bytes()); // 0x28: case 1
+        bytes.extend(0x0800_0038u32.to_le_bytes()); // 0x2c: data that looks like a case
+        bytes.extend(0u32.to_le_bytes());
+        bytes.extend(halves(&[0x2001, 0x4770, 0x2002, 0x4770]));
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert_eq!(
+            function.tables,
+            BTreeMap::from([(base + 0x24, base + 0x34), (base + 0x28, base + 0x38)])
+        );
+    }
+
+    #[test]
+    fn a_switch_whose_table_address_was_loaded_before_a_loop_is_read() {
+        let base = 0x0800_0000;
+        let mut bytes = halves(&[
+            0x4b05, // ldr r3, [pc, #20]: the word at 0x18
+            0x469e, // mov lr, r3
+            0x2801, // cmp r0, #1
+            0xd80d, // bhi 0x08000024
+            0x0083, // lsls r3, r0, #2
+            0x4672, // mov r2, lr
+            0x589b, // ldr r3, [r3, r2]
+            0x469f, // mov pc, r3
+        ]);
+        bytes.extend(0x0800_001cu32.to_le_bytes()); // 0x10: case 0
+        bytes.extend(0x0800_0020u32.to_le_bytes()); // 0x14: case 1
+        bytes.extend(0x0800_0010u32.to_le_bytes()); // 0x18: the table's address
+        bytes.extend(halves(&[0x2001, 0x4770, 0x2002, 0x4770, 0x2000, 0x4770]));
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert_eq!(
+            function.tables,
+            BTreeMap::from([(base + 0x10, base + 0x1c), (base + 0x14, base + 0x20)])
+        );
+    }
+
+    #[test]
     fn a_far_jump_is_a_branch_that_ends_its_block() {
         let base = 0x0800_0000;
         let bytes = halves(&[
@@ -590,6 +787,33 @@ pub(crate) mod tests {
         };
         let segments = partition(image, &area, &entries);
         assert!(matches!(&segments[1], Segment::Function(f) if f.start == base + 8));
+    }
+
+    #[test]
+    fn a_bx_after_mov_ip_pc_is_a_call_that_returns_after_it() {
+        let base = 0x0800_0000;
+        let bytes = halves(&[
+            0xb500, // push {lr}
+            0x46fc, // mov ip, pc
+            0x4750, // bx r10: returns through ip to 0x06
+            0x2001, // movs r0, #1
+            0xbd00, // pop {pc}
+        ]);
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + bytes.len() as u32, &Entries::default()).unwrap();
+        assert!(function.instructions.contains_key(&(base + 6)));
+        assert_eq!(function.end, base + 10);
+        // A bx that nothing links is a return.
+        let bytes = halves(&[0x4750, 0x2001]);
+        let image = Image {
+            bytes: &bytes,
+            base,
+        };
+        let function = walk(image, base, base + 4, &Entries::default()).unwrap();
+        assert_eq!(function.end, base + 2);
     }
 
     #[test]

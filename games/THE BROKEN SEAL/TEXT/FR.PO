@@ -11431,7 +11431,7 @@ msgctxt "message"
 msgid "02855"
 msgstr "c'est inutilisable"
 
-msgctxt "message"
+msgctxt "MsgEffectRateSuffix"
 msgid "02856"
 msgstr "="
 
@@ -12951,7 +12951,7 @@ msgctxt "MsgCoins"
 msgid "03235"
 msgstr "Pièces"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "03236"
 msgstr "Pièce"
 
@@ -41527,7 +41527,7 @@ msgctxt "message"
 msgid "10379"
 msgstr "Nous avons donné notre{line_break}parole à Babi et nous{line_break}n'échouerons pas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotBlackOrb"
 msgid "10380"
 msgstr "{actor_name:1} a l'Orbe noir.{end_wait}"
 

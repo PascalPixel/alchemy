@@ -10,7 +10,7 @@ Resource_LoadCode:
 	mov r8, r1
 	bl Resource_GetTableEntry
 	mov r1, r8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	mov r10, r0
 	ldr r5, .L_080133b8
 	adds r0, r5, #0

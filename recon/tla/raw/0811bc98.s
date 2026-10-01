@@ -39,7 +39,7 @@ Func_0811bc98:
 	cmp r3, #0
 	beq .L_0811bce2
 	ldr r0, [r5]
-	bl Func_080200c8
+	bl Object_Destroy
 	movs r3, #0
 	str r3, [r5]
 	strh r3, [r5, #40]

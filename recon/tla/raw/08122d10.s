@@ -231,7 +231,7 @@ Func_08122d10:
 	lsls r3, r6, #2
 	adds r3, #64
 	ldr r0, [r7, r3]
-	bl Func_08120178
+	bl BattleActor_DestroyTemporaryObject
 	b .L_08122ff0
 .L_08122ee4:
 	movs r0, #180
@@ -279,7 +279,7 @@ Func_08122d10:
 	ldr r1, [r3]
 	bl Func_0812824c
 	ldr r0, [r5]
-	bl Func_0811fe3c
+	bl BattleActor_ResetRuntimeFields
 	ldr r0, [r5]
 	bl Owner_GetState
 	movs r5, #0
@@ -347,10 +347,10 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r7, r5]
-	bl Func_0811a484
+	bl BattleMotion_GetSlotField14
 	adds r1, r0, #0
 	ldr r0, [r6]
-	bl Func_0811f030
+	bl BattleMotion_SetRecordChildValues
 	ldr r0, [r7, r5]
 	bl BattlePres_SetActorModeAndAction
 	b .L_08122ff0
@@ -645,10 +645,10 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r5]
-	bl Func_0811a484
+	bl BattleMotion_GetSlotField14
 	adds r1, r0, #0
 	ldr r0, [r6]
-	bl Func_0811f030
+	bl BattleMotion_SetRecordChildValues
 	b .L_0812324e
 .L_0812322a:
 	movs r3, #28
@@ -666,10 +666,10 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	movs r1, #7
 	ldr r0, [r0]
-	bl Func_0811f030
+	bl BattleMotion_SetRecordChildValues
 .L_0812324e:
 	mov r0, r9
-	bl Func_080382a0
+	bl BattleLayout_HighlightPartyPanelsFar
 .L_08123254:
 	movs r3, #168
 	lsls r3, r3, #1
@@ -788,7 +788,7 @@ Func_08122d10:
 .L_08123332:
 	asrs r0, r0, #3
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	adds r0, #1
 	mov r10, r0
 .L_0812333e:

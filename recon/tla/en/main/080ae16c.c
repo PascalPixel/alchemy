@@ -1,3 +1,6 @@
+/* Near miss: score 80. The owners come from gPartyState. ⚓️ loads
+   gPartyState's address before forming the owner's offset (134 << 2); this
+   draft forms the offset first, and -mtune=arm9tdmi does not change that. */
 #include "SCENE.H"
 #include "GAME_FLAGS.H"
 #include "INVENTORY.H"
@@ -23,7 +26,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        obj = Owner_GetState(gGameState.active_owners[n]);
+        obj = Owner_GetState(gPartyState.active_owners[n]);
 
         do {
             *(u16 *)(obj + 0x38) = *(u16 *)(obj + 0x34);

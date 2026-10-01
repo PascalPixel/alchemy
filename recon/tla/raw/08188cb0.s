@@ -42,7 +42,7 @@ Func_08188cb0:
 	ldr r0, .L_08188d10
 	adds r1, r5, #0
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, r10
 	ldr r3, [r4, #24]
 	b .L_08188d14
@@ -61,7 +61,7 @@ Func_08188cb0:
 	movs r3, #0
 	ldr r0, .L_0818908c
 	add r1, r11
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #238
 	lsls r2, r2, #7
 	adds r2, #132
@@ -100,7 +100,7 @@ Func_08188cb0:
 	movs r2, #1
 	movs r3, #1
 	ldr r0, .L_08189090
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08189094
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -483,7 +483,7 @@ Func_08188cb0:
 .L_08189060:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r0, #0
 	lsls r1, r1, #8
 	movs r2, #139
@@ -527,7 +527,7 @@ Func_08188cb0:
 .L_081890b8:
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	lsls r1, r0, #3
 	adds r1, r1, r0
 	lsls r1, r1, #6

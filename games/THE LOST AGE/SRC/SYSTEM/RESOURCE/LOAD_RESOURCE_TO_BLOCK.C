@@ -2,7 +2,7 @@
 
 void *Resource_GetTableEntry(s32 resource_id);
 void *Runtime_BumpAllocate(s32 size);
-void Func_0801591c(void *source, void *destination);
+void Resource_DecodeByteLzInRam(void *source, void *destination);
 s32 VramBlock_LoadCached(s32 entry_no, s32 mode, void *data);
 void Sys_Free(void *block);
 
@@ -17,7 +17,7 @@ void VramBlock_LoadResource(s32 entry_no, s32 mode, s32 resource_id)
         return;
     source = Resource_GetTableEntry(resource_id);
     buffer = Runtime_BumpAllocate(mode);
-    Func_0801591c(source, buffer);
+    Resource_DecodeByteLzInRam(source, buffer);
     VramBlock_LoadCached(entry_no, mode, buffer);
     Sys_Free(buffer);
 }

@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02008764,"a",%progbits
+.L_02008764:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200879c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_020087d4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -45,9 +48,9 @@
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x02008764
-	.4byte 0x0200879c
-	.4byte 0x020087d4
+	.4byte .L_02008764
+	.4byte .L_0200879c
+	.4byte .L_020087d4
 	.global gGomaSuiroEntrancesOther
 gGomaSuiroEntrancesOther:
 	.4byte 0xffff0000

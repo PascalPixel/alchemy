@@ -13319,7 +13319,7 @@ msgctxt "message"
 msgid "03327"
 msgstr "つかえません"
 
-msgctxt "message"
+msgctxt "MsgEffectRateSuffix"
 msgid "03328"
 msgstr "ばい"
 
@@ -14411,7 +14411,7 @@ msgctxt "MsgCoins"
 msgid "03600"
 msgstr "コイン"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "03601"
 msgstr "コ"
 
@@ -43219,7 +43219,7 @@ msgctxt "message"
 msgid "10802"
 msgstr "レムリアをさがすのは{line_break}バビ様との やくそくです{line_break}あんしんして下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotBlackOrb"
 msgid "10803"
 msgstr "ブラックオーブを{line_break}うけとった。{end_wait}"
 

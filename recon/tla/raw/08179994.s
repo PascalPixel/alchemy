@@ -33,12 +33,12 @@ Func_08179994:
 	add r1, r8
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_081799fc
 	ldr r1, [sp, #52]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r2, r11
 	ldr r3, [r2, #24]
 	cmp r3, #2

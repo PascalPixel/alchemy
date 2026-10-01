@@ -1939,15 +1939,15 @@ Func_02000f00:
 .L_02008f8c:
 	.4byte IwramCopyWords
 .L_02008f90:
-	.4byte gOverlayArea + 0x646c
+	.4byte Data_0200646c
 .L_02008f94:
-	.4byte gOverlayArea + 0x64f8
+	.4byte Data_020064f8
 .L_02008f98:
-	.4byte gOverlayArea + 0x64f4
+	.4byte Data_020064f4
 .L_02008f9c:
-	.4byte gOverlayArea + 0x64ec
+	.4byte Data_020064ec
 .L_02008fa0:
-	.4byte gOverlayArea + 0x64f0
+	.4byte Data_020064f0
 .L_02008fa4:
 	.4byte Data_020055c0
 .L_02008fa8:
@@ -2016,21 +2016,21 @@ Func_02000fac:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009028:
-	.4byte gOverlayArea + 0x64ec
+	.4byte Data_020064ec
 .L_0200902c:
-	.4byte gOverlayArea + 0x64f0
+	.4byte Data_020064f0
 .L_02009030:
 	.4byte Data_020055c0
 .L_02009034:
 	.4byte Data_0200559c
 .L_02009038:
-	.4byte gOverlayArea + 0x646c
+	.4byte Data_0200646c
 .L_0200903c:
 	.4byte IwramCopyWords
 .L_02009040:
-	.4byte gOverlayArea + 0x64f4
+	.4byte Data_020064f4
 .L_02009044:
-	.4byte gOverlayArea + 0x64f8
+	.4byte Data_020064f8
 	.section .text.x02009048,"ax",%progbits
 	.global Func_02001048
 	.thumb_func
@@ -2191,11 +2191,11 @@ Func_02001048:
 .L_020091b8:
 	.4byte Data_02005728
 .L_020091bc:
-	.4byte gOverlayArea + 0x646c
+	.4byte Data_0200646c
 .L_020091c0:
-	.4byte gOverlayArea + 0x64ec
+	.4byte Data_020064ec
 .L_020091c4:
-	.4byte gOverlayArea + 0x64f0
+	.4byte Data_020064f0
 	.section .text.x020091c8,"ax",%progbits
 	.global Func_020011c8
 	.thumb_func
@@ -10053,7 +10053,7 @@ Data_02005728:
 	.4byte 0x0000000f
 	.4byte 0x00020000
 	.4byte 0x00000004
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000000
 	.4byte 0x01800000
 	.4byte 0x00000016
@@ -10579,7 +10579,7 @@ Data_02005ee8:
 	.4byte 0xffff0004
 	.4byte Func_0200485c
 	.4byte 0x00000c15
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000af8
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -10935,3 +10935,18 @@ Data_020062d4:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000011
+	.section .bss,"aw",%nobits
+	.global Data_0200646c
+Data_0200646c:
+	.space 0x00000080
+	.global Data_020064ec
+Data_020064ec:
+	.space 0x00000004
+	.global Data_020064f0
+Data_020064f0:
+	.space 0x00000004
+	.global Data_020064f4
+Data_020064f4:
+	.space 0x00000004
+	.global Data_020064f8
+Data_020064f8:

@@ -122,7 +122,7 @@ Func_080e92b4:
 	adds r2, #32
 	adds r1, r2, #0
 	str r2, [sp, #20]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	lsls r1, r1, #3
@@ -470,7 +470,7 @@ Func_080e92b4:
 	adds r5, r0, r1
 	ldr r0, [sp, #56]
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_080e966e
 	mov r2, r11

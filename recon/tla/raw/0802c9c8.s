@@ -27,7 +27,7 @@ Func_0802c9c8:
 	mov r10, r3
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	mov r2, r10
 	mov r3, r9
 	strh r2, [r3]
@@ -44,27 +44,27 @@ Func_0802c9c8:
 	ldr r0, [r5, #12]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cad0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #16]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cad4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #20]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cad8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #24]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cadc
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #28]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cae0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r5, #32]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cae4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r2, .L_0802cae8
 	ldr r3, .L_0802caec
 	movs r0, #1
@@ -83,7 +83,7 @@ Func_0802c9c8:
 	ldr r0, .L_0802caf0
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r5, .L_0802cac8
 	bl Func_0802c4d8
 	movs r2, #128
@@ -91,7 +91,7 @@ Func_0802c9c8:
 	adds r3, r6, r2
 	strb r5, [r3]
 	ldr r0, .L_0802caf4
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 	movs r2, #144
 	lsls r2, r2, #4
 	adds r2, #114

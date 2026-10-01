@@ -56,7 +56,7 @@ Func_0813c5f4:
 	ldr r0, .L_0813c698
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #68]
 	cmp r4, #4
 	bhi .L_0813c6b0
@@ -372,7 +372,7 @@ Func_0813c5f4:
 	lsls r5, r5, #3
 	asrs r0, r0, #1
 	adds r5, r5, r2
-	bl __modsi3
+	bl Math_Mod
 	lsls r2, r0, #2
 	adds r2, r2, r0
 	lsls r3, r2, #4

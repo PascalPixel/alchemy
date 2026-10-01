@@ -31,7 +31,7 @@ DebugParty_LoadPreset:
 	movs r0, #7
 	bl Party_RemoveActiveOwnerFar
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	movs r2, #148
 	ldr r3, [sp, #16]
 	lsls r2, r2, #1
@@ -150,7 +150,7 @@ DebugParty_LoadPreset:
 	movs r1, #18
 	adds r0, #7
 	str r4, [sp, #0]
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r7, #0
 	adds r2, r0, #0
 	mov r0, r8
@@ -158,7 +158,7 @@ DebugParty_LoadPreset:
 	ldr r0, [r6, r5]
 	movs r1, #18
 	adds r0, #7
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r7, #0
 	adds r2, r0, #0
 	mov r0, r8

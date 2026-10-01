@@ -199,7 +199,7 @@ Func_0813fd84:
 	movs r2, #0
 	movs r3, #0
 	lsls r5, r5, #3
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	add r5, r11
 	ldr r0, .L_0813ff54
 	ldr r1, .L_0813ff58
@@ -230,12 +230,12 @@ Func_0813fd84:
 .L_0813ff58:
 	.4byte gMapCellBuffer
 .L_0813ff5c:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r1, r5, #0
 	ldr r0, .L_08140018
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r0, r5, #0
 	ldr r1, .L_0814001c
 	movs r2, #64
@@ -248,7 +248,7 @@ Func_0813fd84:
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #244
 	lsls r1, r1, #6
 	adds r1, #72
@@ -256,7 +256,7 @@ Func_0813fd84:
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #244
 	lsls r1, r1, #6
 	adds r1, #136
@@ -264,7 +264,7 @@ Func_0813fd84:
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r7, .L_0814002c
 	movs r5, #0
 	mov r10, r5
@@ -1442,7 +1442,7 @@ Func_0813fd84:
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #244
 	lsls r1, r1, #6
 	adds r1, #200
@@ -1472,7 +1472,7 @@ Func_0813fd84:
 .L_08140920:
 	movs r2, #0
 	ldr r0, .L_08140aac
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	bl Func_0815b410
 	ldr r0, .L_08140ab0
 	bl Resource_GetTableEntry
@@ -1489,7 +1489,7 @@ Func_0813fd84:
 	add r1, r11
 	adds r0, r5, #0
 	lsls r6, r6, #7
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	adds r6, #220
 	movs r0, #0
 	movs r7, #0
@@ -2585,7 +2585,7 @@ Func_0813fd84:
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #128
 	ldr r3, .L_081411dc
 	lsls r2, r2, #19

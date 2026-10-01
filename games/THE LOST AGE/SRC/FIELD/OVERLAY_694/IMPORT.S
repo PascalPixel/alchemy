@@ -85,7 +85,7 @@ Func_02003fec:
 	.global Func_02003ff4
 	.thumb_func
 Func_02003ff4:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02003ffc
 	.thumb_func
 Func_02003ffc:
@@ -305,7 +305,7 @@ Func_020041a4:
 	.global Func_020041ac
 	.thumb_func
 Func_020041ac:
-	overlay_veneer Func_080c8268
+	overlay_veneer Event_SetPairWork1c0Far
 	.global Func_020041b4
 	.thumb_func
 Func_020041b4:

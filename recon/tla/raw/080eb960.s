@@ -28,7 +28,7 @@ Func_080eb960:
 	str r1, [sp, #8]
 	bl Resource_GetTableEntry
 	ldr r1, [sp, #32]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #3

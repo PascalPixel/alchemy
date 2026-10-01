@@ -153,13 +153,13 @@ Func_080d8740:
 	cmp r7, #0
 	bge .L_080d887a
 	adds r0, r6, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	mov r5, r11
 	movs r7, #7
 .L_080d889a:
 	ldmia r5!, {r0}
 	subs r7, #1
-	bl Func_080200c8
+	bl Object_Destroy
 	cmp r7, #0
 	bge .L_080d889a
 	mov r2, r8

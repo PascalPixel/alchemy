@@ -301,7 +301,7 @@ Func_02000258:
 	movs r0, #0
 	pop {pc}
 .L_02008278:
-	.4byte gOverlayArea + 0x1be0
+	.4byte Data_02001be0
 	.section .text.x0200827c,"ax",%progbits
 	.global Func_0200027c
 	.thumb_func
@@ -876,7 +876,7 @@ Func_0200051c:
 .L_02008790:
 	.4byte gPartyState
 .L_02008794:
-	.4byte gOverlayArea + 0x1be0
+	.4byte Data_02001be0
 .L_02008798:
 	.4byte Func_02000258
 .L_0200879c:
@@ -1953,7 +1953,7 @@ Func_02000818:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009210:
-	.4byte gOverlayArea + 0x1c08
+	.4byte Data_02001c08
 .L_02009214:
 	.4byte Data_02000814 + 0x1
 .L_02009218:
@@ -2193,7 +2193,7 @@ Func_02001320:
 	.section .rodata.x02009608,"a",%progbits
 	.global Data_02001608
 Data_02001608:
-	.4byte Data_02030000 + 0x10
+	.4byte 0x02030010
 	.4byte 0x0000ffff
 	.global Data_02001610
 Data_02001610:
@@ -2491,7 +2491,7 @@ Data_02001a18:
 	.4byte 0xffff0015
 	.4byte Func_020000fc
 	.4byte 0x00001815
-	.4byte Data_02030000 + 0x10
+	.4byte 0x02030010
 	.4byte Func_020000ec
 	.4byte 0x00008b85
 	.4byte 0xffff0000
@@ -2517,13 +2517,13 @@ Data_02001a90:
 	.4byte 0xffff000a
 	.4byte 0x0000000a
 	.4byte 0x00000002
-	.4byte Field_Map081 + 0xdc0
+	.4byte 0x08bd0014
 	.4byte Func_02000818
 	.4byte 0x00000000
-	.4byte Monster_PurpleBeastSprites + 0xdf
+	.4byte 0x08a70017
 	.4byte 0x00001b42
 	.4byte 0x00008d15
-	.4byte Monster_PurpleBeastSprites + 0xdf
+	.4byte 0x08a70017
 	.4byte 0x00001b43
 	.4byte 0x00000000
 	.4byte 0xffff0017
@@ -2568,13 +2568,13 @@ Data_02001a90:
 	.4byte 0xffff0014
 	.4byte 0x00001c9e
 	.4byte 0x00008515
-	.4byte Data_02000000 + 0xa
+	.4byte 0x0200000a
 	.4byte 0x00000000
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000084
 	.4byte 0x00001815
-	.4byte Data_02030000 + 0x10
+	.4byte 0x02030010
 	.4byte Func_020000ec
 	.4byte 0x10008c15
 	.4byte 0xffff0008
@@ -2585,3 +2585,9 @@ Data_02001a90:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_02001be0
+Data_02001be0:
+	.space 0x00000028
+	.global Data_02001c08
+Data_02001c08:

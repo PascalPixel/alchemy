@@ -612,7 +612,7 @@ Func_02000480:
 .L_0200851c:
 	.4byte 0x00019999
 	.section .rodata.x020085fc,"a",%progbits
-	.4byte Data_02000000 + 0x1a
+	.4byte 0x0200001a
 	.4byte 0x0000ffff
 .L_02008604:
 	.4byte 0x00000027
@@ -1064,10 +1064,10 @@ Data_02000b4c:
 	.4byte 0xffff0008
 	.4byte Func_02000088
 	.4byte 0x00004e15
-	.4byte Data_02010002 + 0x15
+	.4byte 0x02010017
 	.4byte Func_02000400
 	.4byte 0x00008515
-	.4byte Data_02020004 + 0x14
+	.4byte 0x02020018
 	.4byte 0x00000000
 	.4byte 0x50009085
 	.4byte 0xffff0000
@@ -1174,10 +1174,10 @@ Data_02000cfc:
 	.4byte 0xffff0008
 	.4byte Func_02000088
 	.4byte 0x00004e15
-	.4byte Data_02010002 + 0x15
+	.4byte 0x02010017
 	.4byte Func_02000400
 	.4byte 0x00008515
-	.4byte Data_02020004 + 0x14
+	.4byte 0x02020018
 	.4byte 0x00000000
 	.4byte 0x50009085
 	.4byte 0xffff0000

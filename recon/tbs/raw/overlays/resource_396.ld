@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/HEYA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/IMPORT.o"(.text)
-        "*/resource_396_overlay.o"(.rodata)
+        "*/resource_396_overlay.o"(.rodata.x02009c00)
     }
     .bss : { "*/resource_396_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

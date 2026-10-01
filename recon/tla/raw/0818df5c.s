@@ -80,7 +80,7 @@ Func_0818df5c:
 	ldr r0, .L_0818e0c0
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #96]
 	movs r2, #156
 	lsls r2, r2, #6
@@ -88,7 +88,7 @@ Func_0818df5c:
 	ldr r0, .L_0818e0c4
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r4, #128
 	ldr r3, [sp, #96]
 	lsls r4, r4, #4
@@ -389,7 +389,7 @@ Func_0818df5c:
 .L_0818e280:
 	asrs r0, r0, #5
 	movs r1, #7
-	bl __modsi3
+	bl Math_Mod
 	mov r6, r10
 	str r0, [r6]
 	b .L_0818e2a2
@@ -650,7 +650,7 @@ Func_0818df5c:
 .L_0818e470:
 	.4byte Func_08143000
 .L_0818e474:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0818e478:
 	.4byte 0x04000208
 .L_0818e47c:
@@ -926,7 +926,7 @@ Func_0818df5c:
 	bne .L_0818e6b4
 	movs r1, #30
 	adds r0, r7, #0
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [sp, #84]
 	mov r4, r8
 	adds r1, r0, #0
@@ -1251,28 +1251,28 @@ Func_0818df5c:
 	ldr r1, [sp, #84]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #224
 	lsls r2, r2, #3
 	adds r1, r6, r2
 	ldr r0, .L_0818ebb4
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #142
 	lsls r3, r3, #7
 	adds r1, r6, r3
 	ldr r0, .L_0818ebb8
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r4, #174
 	lsls r4, r4, #7
 	adds r1, r6, r4
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_0818ebbc
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0818ebc0
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

@@ -19,7 +19,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/HASHIRA3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3b3_overlay.o"(.rodata.part1)
+        "*/resource_3b3_overlay.o"(.rodata.x0200abf8)
     }
     .bss : { "*/resource_3b3_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

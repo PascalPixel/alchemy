@@ -105,7 +105,7 @@ Func_081a6b50:
 	ldr r0, .L_081a6c6c
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -373,7 +373,7 @@ Func_081a6b50:
 	strh r0, [r6, #4]
 	lsls r0, r0, #16
 	asrs r0, r0, #16
-	bl __modsi3
+	bl Math_Mod
 	lsls r0, r0, #16
 	cmp r0, #0
 	bne .L_081a6e38
@@ -415,7 +415,7 @@ Func_081a6b50:
 .L_081a6e68:
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

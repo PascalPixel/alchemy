@@ -67,7 +67,7 @@ Func_081b8180:
 .L_081b81f8:
 	movs r1, #10
 	str r4, [sp, #0]
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #0]
 	cmp r0, #0
 	beq .L_081b820c

@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/PARK_RECORD.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02008090)
         "*/resource_6a5_overlay.o"(.text.x020080ec)
-        "*/resource_6a5_overlay.o"(.text.x02008158)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/STEP_ANGLE.o"(.text)
         "*/resource_6a5_overlay.o"(.text.x02008198)
         "*/resource_6a5_overlay.o"(.text.x0200845c)
         "*/resource_6a5_overlay.o"(.text.x020084c8)
@@ -64,5 +64,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_6A5/IMPORT.o"(.text)
         "*/resource_6a5_overlay.o"(.rodata.x0200d9fc)
     }
+    .bss : { "*/resource_6a5_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

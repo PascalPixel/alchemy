@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/FALLING_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/FLAG_BRANCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/IMPORT.o"(.text)
-        "*/resource_38f_overlay.o"(.rodata)
+        "*/resource_38f_overlay.o"(.rodata.x0200abd4)
     }
     /* The overlay's own work, past its loaded image. */
     .bss (NOLOAD) :

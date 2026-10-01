@@ -330,3 +330,23 @@ void Script_SetOrCompareByte56(struct ScriptOperands *state, s32 operation, s32 
         state->comparison_result = result;
     }
 }
+
+void Script_SetOrCompareComparisonResult(struct ScriptOperands *state, s32 operation, s32 value)
+{
+    s32 result;
+
+    if (operation == 0) {
+        state->comparison_result = value;
+    } else if (operation == 1) {
+        state->comparison_result =
+            (u8)((u32)state->comparison_result + (u32)value);
+    } else {
+        u8 current = state->comparison_result;
+
+        asm volatile("" : "+l"(current)); /* FAKEMATCH: ⚓️ loads the byte before narrowing the value */
+        result = 0;
+        if (current == (u8)value)
+            result = 1;
+        state->comparison_result = result;
+    }
+}

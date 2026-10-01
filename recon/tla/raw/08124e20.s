@@ -31,7 +31,7 @@ Func_08124e20:
 	b .L_08124f9a
 .L_08124e54:
 	mov r0, r9
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	movs r2, #148
 	adds r3, r0, #0
 	movs r5, #8
@@ -230,7 +230,7 @@ Func_08124e20:
 	bne .L_08125004
 	lsls r0, r0, #1
 	add r0, r11
-	bl Func_0811a0b0
+	bl BattleParty_PrepareReserveOwners
 	add r8, r0
 .L_08125004:
 	movs r3, #0
@@ -346,7 +346,7 @@ Func_08124e20:
 .L_081250e0:
 	adds r1, r5, #0
 	adds r0, r6, #0
-	bl Func_080ad0c8
+	bl Owner_AdjustSecondValueFar
 	adds r0, r6, #0
 	movs r1, #1
 	bl UiText_DrawQuantity

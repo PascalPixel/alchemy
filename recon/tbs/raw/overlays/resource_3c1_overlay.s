@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020082f0,"a",%progbits
 	.global SuharaMura_Scripts
 SuharaMura_Scripts:
 	.4byte 0xffff0000
@@ -221,19 +221,19 @@ SuharaMura_CellSteps1:
 SuharaMura_Extras:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008195
+	.4byte SuharaMura_AnimateCells1
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x00000001
 	.4byte 0xffff000a
 	.4byte 0x0000000a
@@ -248,7 +248,7 @@ SuharaMura_Extras:
 	.4byte 0x000025b7
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008069
+	.4byte SuharaMura_TalkLalivero
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x000025bb
@@ -296,7 +296,7 @@ SuharaMura_Extras:
 	.4byte 0x00200005
 	.4byte 0x00000c15
 	.4byte 0x02010010
-	.4byte 0x020080f9
+	.4byte FieldScene_RunLayoutStepThenSet201
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -304,19 +304,19 @@ SuharaMura_Extras:
 SuharaMura_ExtrasFlag96f:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008195
+	.4byte SuharaMura_AnimateCells1
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008121
+	.4byte SuharaMura_AnimateCells0
 	.4byte 0x00000001
 	.4byte 0xffff000a
 	.4byte 0x0000000a
@@ -343,7 +343,7 @@ SuharaMura_ExtrasFlag96f:
 	.4byte 0x000025db
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x020080b1
+	.4byte SuharaMura_TalkSandstorm
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x000025df
@@ -385,7 +385,7 @@ SuharaMura_ExtrasFlag96f:
 	.4byte 0x00200005
 	.4byte 0x00000c15
 	.4byte 0x02010010
-	.4byte 0x020080f9
+	.4byte FieldScene_RunLayoutStepThenSet201
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

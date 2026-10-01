@@ -25,7 +25,7 @@ BattleFx_UpdateDescendingParticleNegativeArc:
 	ldr r5, [r0, #12]
 	cmp r5, r4
 	bgt .L_080e0fe0
-	bl Func_080200c8
+	bl Object_Destroy
 	b .L_080e1014
 .L_080e0fe0:
 	ldr r3, [r0, #24]

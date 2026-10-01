@@ -30,7 +30,13 @@ Engine_RandomNext:
 	.thumb_func
 ArcTan2:
 	overlay_veneer ArcTan2Far
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Vector_AddPolarOffset
 	.thumb_func
@@ -160,6 +166,9 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global ObjectMotion_EnableActionAndResetMotion
+	.thumb_func
+ObjectMotion_EnableActionAndResetMotion:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
 	.global Object_SetActionCallbackAndRefreshById
 	.thumb_func

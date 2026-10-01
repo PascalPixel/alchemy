@@ -39,7 +39,7 @@ Func_081a6030:
 .L_081a6074:
 	.4byte gMapCellBuffer
 .L_081a6078:
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	movs r1, #192

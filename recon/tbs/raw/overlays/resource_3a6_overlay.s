@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02009da0,"a",%progbits
+.L_02009da0:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009dd8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009e10:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -123,9 +126,9 @@ HaidiaDou_WalkTargets:
 	.4byte 0x00000138
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x02009da0
-	.4byte 0x02009dd8
-	.4byte 0x02009e10
+	.4byte .L_02009da0
+	.4byte .L_02009dd8
+	.4byte .L_02009e10
 	.global gHaidiaDouEntrancesOther
 gHaidiaDouEntrancesOther:
 	.4byte 0xffff0000

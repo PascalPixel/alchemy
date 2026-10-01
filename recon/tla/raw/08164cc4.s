@@ -158,7 +158,7 @@ Func_08164cc4:
 	ldr r0, .L_08164e78
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #76]
 	cmp r4, #1
 	bne .L_08164e1e
@@ -1182,7 +1182,7 @@ Func_08164cc4:
 	ldr r0, .L_08165960
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r4, #0
 	mov r8, r4
 	movs r7, #127

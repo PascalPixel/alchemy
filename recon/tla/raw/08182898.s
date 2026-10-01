@@ -53,7 +53,7 @@ Func_08182898:
 	ldr r0, .L_08182a90
 	add r1, r11
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	str r2, [sp, #8]
 .L_0818290a:

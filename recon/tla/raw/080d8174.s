@@ -53,7 +53,7 @@ Func_080d8174:
 	cmp r2, r3
 	bge .L_080d81e0
 	adds r0, r7, #0
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080d81e0:
 	add sp, #12
 	pop {r5, r6, r7, pc}

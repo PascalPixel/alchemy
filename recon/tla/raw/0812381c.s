@@ -1199,7 +1199,7 @@ Func_0812381c:
 	beq .L_08124256
 	movs r0, #1
 .L_08124256:
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	adds r0, #8
 	str r0, [sp, #4]
 	mov r3, r8

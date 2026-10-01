@@ -1,636 +1,483 @@
 .syntax unified
 	.thumb
-	.section .text.x0200804c,"ax",%progbits
-	.balign 4
-	.global ColossoLogRollingStage_SceneTask
-	.thumb_func
-ColossoLogRollingStage_SceneTask:
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r9
-	mov	r5, r8
-	push	{r5, r6, r7}
-	ldr	r3, [pc, #276]
-	movs	r2, #250
-	ldr	r5, [r3, #0]
-	ldr	r3, [pc, #272]
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	ldr	r0, [r3, #0]
-	sub	sp, #8
-	bl 0x0200ca18
-	ldr	r3, [r0, #16]
-	asrs	r4, r3, #20
-	ldr	r3, [pc, #260]
-	ldr	r3, [r3, #0]
-	cmp	r3, #0
-	bne.n	.L_020000fc
-	ldr	r3, [pc, #256]
-	ldr	r2, [r3, #0]
-	movs	r1, #3
-	adds	r2, #1
-	ands	r2, r1
-	str	r2, [r3, #0]
-	ldr	r3, [pc, #248]
-	movs	r2, #11
-	movs	r6, #18
-	mov	r9, r3
-	mov	sl, r2
-	movs	r7, #33
-.L_0200008e:
-	ldr	r3, [pc, #232]
-	ldr	r2, [r3, #0]
-	mov	r8, r3
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #1
-	adds	r3, r6, r3
-	subs	r3, #18
-	mov	r2, r9
-	ldrsb	r5, [r2, r3]
-	adds	r0, r6, #0
-	adds	r1, r5, #0
-	bl 0x0200ca70
-	adds	r1, r5, #0
-	adds	r0, r6, #5
-	adds	r1, #8
-	bl 0x0200ca70
-	mov	r3, sl
-	str	r3, [sp, #4]
-	movs	r0, #32
-	movs	r1, #11
-	movs	r2, #1
-	movs	r3, #2
-	str	r7, [sp, #0]
-	bl 0x0200c940
-	cmp	r5, #7
-	beq.n	.L_020000dc
-	mov	r2, sl
-	str	r2, [sp, #4]
-	movs	r0, #74
-	movs	r1, #12
-	movs	r2, #1
-	movs	r3, #1
-	str	r7, [sp, #0]
-	bl 0x0200c940
-.L_020000dc:
-	adds	r6, #1
-	adds	r7, #2
-	cmp	r6, #22
-	ble.n	.L_0200008e
-	mov	r3, r8
-	ldr	r2, [r3, #0]
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	ldr	r1, [pc, #140]
-	lsls	r3, r3, #1
-	adds	r3, #5
-	ldrsb	r1, [r1, r3]
-	movs	r0, #28
-	bl 0x0200ca70
-	b.n	.L_0200014c
-.L_020000fc:
-	ldr	r3, [pc, #120]
-	ldr	r2, [r3, #0]
-	movs	r3, #193
-	lsls	r3, r3, #1
-	adds	r3, r3, r5
-	mov	ip, r3
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	ldr	r1, [pc, #108]
-	ldr	r2, [pc, #112]
-	lsls	r3, r3, #1
-	ldr	r7, [pc, #112]
-	movs	r6, #18
-	adds	r1, r3, r1
-	mov	lr, r2
-.L_0200011a:
-	ldrb	r3, [r1, #0]
-	lsls	r3, r3, #24
-	asrs	r5, r3, #24
-	ldr	r3, [r0, #8]
-	lsls	r2, r6, #21
-	subs	r3, r3, r2
-	add	r3, lr
-	adds	r1, #1
-	cmp	r3, r7
-	bhi.n	.L_02000146
-	cmp	r4, #11
-	bne.n	.L_0200013a
-	cmp	r5, #4
-	bne.n	.L_0200013a
-	mov	r3, ip
-	strh	r5, [r3, #0]
-.L_0200013a:
-	cmp	r4, #12
-	bne.n	.L_02000146
-	cmp	r5, #5
-	bne.n	.L_02000146
-	mov	r2, ip
-	strh	r5, [r2, #0]
-.L_02000146:
-	adds	r6, #1
-	cmp	r6, #22
-	ble.n	.L_0200011a
-.L_0200014c:
-	ldr	r2, [pc, #36]
-	ldr	r3, [r2, #0]
-	adds	r3, #1
-	str	r3, [r2, #0]
-	cmp	r3, #17
-	bls.n	.L_0200015c
-	movs	r3, #0
-	str	r3, [r2, #0]
-.L_0200015c:
-	add	sp, #8
-	pop	{r3, r5, r6}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x0200d484
-	.4byte 0x0200d480
-	.4byte 0x0200cc20
-	.4byte 0x0031ffff
-	.2byte 0xfffe
-	.2byte 0x0013
 	.section .text.x0200c0d0,"ax",%progbits
 	.global FieldScene_RunScene3bcSequenceB
 	.thumb_func
 FieldScene_RunScene3bcSequenceB:
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r3, [pc, #916]
-	ldr	r3, [r3, #0]
-	adds	r1, r3, #0
-	sub	sp, #20
-	mov	r8, r1
-	str	r3, [sp, #12]
-	str	r3, [sp, #16]
-	mov	r7, r8
-	adds	r7, #216
-	movs	r1, #0
-	ldrsh	r3, [r7, r1]
-	ldr	r2, [pc, #896]
-	lsls	r3, r3, #2
-	adds	r3, r3, r2
-	ldrh	r3, [r3, #2]
-	lsrs	r3, r3, #5
-	str	r3, [sp, #8]
-	mov	r3, r8
-	adds	r3, #230
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	subs	r3, #10
-	mov	fp, r2
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #0
-	beq.n	.L_0200411e
-	mov	r6, r8
-	adds	r6, #218
-	movs	r3, #2
-	strh	r3, [r6, #0]
-	b.n	.L_0200418c
-.L_0200411e:
-	movs	r0, #131
-	lsls	r0, r0, #1
-	bl 0x0200c9b0
-	cmp	r0, #0
-	beq.n	.L_0200413e
-	mov	r6, r8
-	adds	r6, #218
-	movs	r1, #0
-	ldrsh	r3, [r6, r1]
-	ldrh	r2, [r6, #0]
-	cmp	r3, #0
-	ble.n	.L_0200418c
-	subs	r3, r2, #1
-	strh	r3, [r6, #0]
-	b.n	.L_0200418c
-.L_0200413e:
-	mov	r6, r8
-	adds	r6, #218
-	movs	r1, #0
-	ldrsh	r3, [r6, r1]
-	ldrh	r2, [r6, #0]
-	cmp	r3, #1
-	bgt.n	.L_0200418c
-	adds	r3, r2, #1
-	movs	r2, #128
-	strh	r3, [r6, #0]
-	lsls	r2, r2, #9
-	lsls	r3, r3, #16
-	cmp	r3, r2
-	bne.n	.L_0200418c
-	ldr	r3, [pc, #800]
-	ldr	r0, [pc, #800]
-	ldr	r1, [pc, #804]
-	ldr	r2, [pc, #804]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r0, #128
-	lsls	r0, r0, #2
-	bl 0x0200c888
-	adds	r5, r0, #0
-	adds	r1, r5, #0
-	ldr	r0, [pc, #792]
-	bl 0x0200c898
-	movs	r1, #128
-	movs	r3, #0
-	ldrsh	r0, [r7, r3]
-	lsls	r1, r1, #2
-	adds	r2, r5, #0
-	bl 0x0200c8b0
-	adds	r0, r5, #0
-	bl 0x0200c890
-.L_0200418c:
-	movs	r1, #0
-	ldrsh	r2, [r6, r1]
-	cmp	r2, #0
-	bne.n	.L_020041a2
-	ldr	r3, [sp, #12]
-	adds	r3, #216
-	movs	r2, #0
-	ldrsh	r0, [r3, r2]
-	bl 0x0200c8a8
-	b.n	.L_02004462
-.L_020041a2:
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #1
-	adds	r7, r3, #0
-	subs	r7, #8
-	movs	r3, #255
-	ands	r7, r3
-	mov	r3, fp
-	lsls	r3, r3, #4
-	str	r3, [sp, #4]
-	movs	r2, #128
-	ldr	r1, [sp, #4]
-	lsls	r2, r2, #8
-	movs	r3, #104
-	mov	r9, r2
-	ldr	r2, [sp, #12]
-	subs	r4, r3, r1
-	movs	r3, #0
-	stmia	r2!, {r3}
-	lsls	r3, r4, #16
-	adds	r1, r2, #0
-	str	r1, [sp, #12]
-	orrs	r3, r7
-	mov	r1, r9
-	orrs	r3, r1
-	stmia	r2!, {r3}
-	ldr	r3, [sp, #8]
-	movs	r5, #228
-	lsls	r5, r5, #8
-	adds	r1, r2, #0
-	orrs	r3, r5
-	str	r1, [sp, #12]
-	stmia	r2!, {r3}
-	adds	r1, r2, #0
-	str	r1, [sp, #12]
-	mov	r0, r8
-	movs	r2, #12
-	movs	r1, #255
-	movs	r6, #0
-	add	r8, r2
-	bl 0x0200c8c8
-	cmp	r6, fp
-	bcs.n	.L_0200423c
-	ldr	r3, [sp, #8]
-	movs	r1, #128
-	adds	r3, #2
-	orrs	r3, r5
-	lsls	r1, r1, #23
-	ldr	r5, [sp, #12]
-	mov	r9, r1
-	mov	sl, r3
-.L_0200420a:
-	lsls	r2, r6, #4
-	movs	r3, #96
-	subs	r4, r3, r2
-	movs	r3, #0
-	str	r3, [r5, #0]
-	lsls	r3, r4, #16
-	mov	r2, r9
-	orrs	r3, r7
-	orrs	r3, r2
-	str	r3, [r5, #4]
-	mov	r3, sl
-	str	r3, [r5, #8]
-	ldr	r1, [sp, #12]
-	adds	r1, #12
-	str	r1, [sp, #12]
-	mov	r0, r8
-	movs	r2, #12
-	movs	r1, #255
-	adds	r6, #1
-	add	r8, r2
-	adds	r5, #12
-	bl 0x0200c8c8
-	cmp	r6, fp
-	bcc.n	.L_0200420a
-.L_0200423c:
-	ldr	r2, [sp, #12]
-	movs	r6, #0
-	movs	r3, #128
-	stmia	r2!, {r6}
-	lsls	r3, r3, #8
-	mov	r9, r3
-	movs	r3, #224
-	adds	r1, r2, #0
-	lsls	r3, r3, #15
-	str	r1, [sp, #12]
-	orrs	r3, r7
-	mov	r1, r9
-	orrs	r3, r1
-	stmia	r2!, {r3}
-	ldr	r5, [sp, #8]
-	adds	r1, r2, #0
-	movs	r2, #228
-	lsls	r2, r2, #8
-	adds	r5, #6
-	orrs	r5, r2
-	stmia	r1!, {r5}
-	mov	r0, r8
-	adds	r3, r1, #0
-	mov	sl, r2
-	movs	r1, #255
-	movs	r2, #12
-	add	r8, r2
-	str	r3, [sp, #12]
-	bl 0x0200c8c8
-	ldr	r1, [sp, #12]
-	stmia	r1!, {r6}
-	adds	r3, r1, #0
-	str	r3, [sp, #12]
-	movs	r3, #240
-	lsls	r3, r3, #15
-	mov	r2, r9
-	orrs	r3, r7
-	orrs	r3, r2
-	movs	r2, #128
-	lsls	r2, r2, #21
-	orrs	r3, r2
-	stmia	r1!, {r3}
-	adds	r2, r1, #0
-	str	r2, [sp, #12]
-	stmia	r1!, {r5}
-	adds	r3, r1, #0
-	movs	r1, #12
-	mov	r0, r8
-	add	r8, r1
-	movs	r1, #255
-	str	r3, [sp, #12]
-	bl 0x0200c8c8
-	cmp	r6, fp
-	bcs.n	.L_020042fe
-	ldr	r4, [sp, #8]
-	movs	r2, #128
-	movs	r1, #128
-	mov	r3, sl
-	adds	r4, #2
-	lsls	r2, r2, #23
-	lsls	r1, r1, #16
-	ldr	r5, [sp, #12]
-	mov	r9, r2
-	orrs	r4, r3
-	mov	sl, r1
-.L_020042c2:
-	movs	r3, #0
-	str	r3, [r5, #0]
-	mov	r2, sl
-	adds	r3, r7, #0
-	orrs	r3, r2
-	mov	r1, r9
-	movs	r2, #128
-	orrs	r3, r1
-	lsls	r2, r2, #21
-	orrs	r3, r2
-	str	r3, [r5, #4]
-	str	r4, [r5, #8]
-	ldr	r2, [sp, #12]
-	mov	r0, r8
-	adds	r2, #12
-	movs	r3, #12
-	movs	r1, #255
-	str	r4, [sp, #0]
-	str	r2, [sp, #12]
-	add	r8, r3
-	bl 0x0200c8c8
-	movs	r1, #128
-	lsls	r1, r1, #13
-	adds	r6, #1
-	adds	r5, #12
-	add	sl, r1
-	ldr	r4, [sp, #0]
-	cmp	r6, fp
-	bcc.n	.L_020042c2
-.L_020042fe:
-	movs	r2, #128
-	ldr	r4, [sp, #4]
-	lsls	r2, r2, #8
-	mov	r9, r2
-	ldr	r2, [sp, #12]
-	movs	r3, #0
-	adds	r4, #128
-	stmia	r2!, {r3}
-	mov	fp, r3
-	lsls	r3, r4, #16
-	orrs	r7, r3
-	mov	r3, r9
-	orrs	r7, r3
-	movs	r3, #128
-	lsls	r3, r3, #21
-	adds	r1, r2, #0
-	orrs	r7, r3
-	str	r1, [sp, #12]
-	stmia	r2!, {r7}
-	ldr	r3, [sp, #8]
-	adds	r1, r2, #0
-	movs	r2, #228
-	lsls	r2, r2, #8
-	orrs	r3, r2
-	mov	sl, r2
-	adds	r2, r1, #0
-	stmia	r2!, {r3}
-	adds	r1, r2, #0
-	movs	r3, #12
-	str	r1, [sp, #12]
-	mov	r0, r8
-	movs	r1, #255
-	add	r8, r3
-	bl 0x0200c8c8
-	ldr	r3, [pc, #328]
-	ldr	r3, [r3, #0]
-	movs	r2, #15
-	ands	r3, r2
-	cmp	r3, #4
-	bhi.n	.L_02004352
-	b.n	.L_02004462
-.L_02004352:
-	ldr	r3, [sp, #16]
-	movs	r1, #128
-	adds	r3, #224
-	lsls	r1, r1, #23
-	movs	r2, #0
-	ldrsh	r0, [r3, r2]
-	mov	r9, r1
-	bl 0x0200cb68
-	adds	r6, r0, #0
-	cmp	r6, #0
-	beq.n	.L_020043e0
-	ldr	r3, [sp, #16]
-	adds	r3, #232
-	ldr	r3, [r3, #0]
-	ldr	r0, [r6, #8]
-	movs	r5, #224
-	lsls	r5, r5, #12
-	subs	r0, r0, r3
-	adds	r1, r5, #0
-	bl 0x0200c830
-	ldr	r3, [sp, #16]
-	adds	r3, #236
-	ldr	r3, [r3, #0]
-	adds	r4, r0, #0
-	ldr	r0, [r6, #16]
-	adds	r4, #112
-	adds	r1, r5, #0
-	subs	r0, r0, r3
-	str	r4, [sp, #0]
-	bl 0x0200c830
-	ldr	r3, [sp, #16]
-	adds	r3, #218
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #1
-	adds	r0, r0, r3
-	ldr	r1, [sp, #12]
-	subs	r7, r0, #4
-	movs	r3, #255
-	ands	r7, r3
-	mov	r3, fp
-	stmia	r1!, {r3}
-	ldr	r4, [sp, #0]
-	adds	r2, r1, #0
-	lsls	r3, r4, #16
-	str	r2, [sp, #12]
-	orrs	r7, r3
-	mov	r2, r9
-	orrs	r7, r2
-	stmia	r1!, {r7}
-	adds	r3, r1, #0
-	str	r3, [sp, #12]
-	ldr	r3, [sp, #8]
-	mov	r1, sl
-	adds	r3, #12
-	orrs	r3, r1
-	ldr	r1, [sp, #12]
-	stmia	r1!, {r3}
-	adds	r2, r1, #0
-	str	r2, [sp, #12]
-	mov	r0, r8
-	movs	r2, #12
-	movs	r1, #255
-	add	r8, r2
-	bl 0x0200c8c8
-.L_020043e0:
-	ldr	r3, [sp, #16]
-	adds	r3, #222
-	movs	r1, #0
-	ldrsh	r0, [r3, r1]
-	bl 0x0200cb68
-	adds	r6, r0, #0
-	cmp	r6, #0
-	beq.n	.L_02004462
-	ldr	r3, [sp, #16]
-	adds	r3, #232
-	ldr	r3, [r3, #0]
-	ldr	r0, [r6, #8]
-	movs	r5, #224
-	lsls	r5, r5, #12
-	subs	r0, r0, r3
-	adds	r1, r5, #0
-	bl 0x0200c830
-	ldr	r3, [sp, #16]
-	adds	r3, #236
-	ldr	r3, [r3, #0]
-	adds	r4, r0, #0
-	ldr	r0, [r6, #16]
-	adds	r4, #112
-	adds	r1, r5, #0
-	subs	r0, r0, r3
-	str	r4, [sp, #0]
-	bl 0x0200c830
-	ldr	r3, [sp, #16]
-	adds	r3, #218
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #1
-	adds	r0, r0, r3
-	ldr	r1, [sp, #12]
-	subs	r7, r0, #4
-	movs	r3, #255
-	ands	r7, r3
-	mov	r3, fp
-	stmia	r1!, {r3}
-	ldr	r4, [sp, #0]
-	adds	r2, r1, #0
-	lsls	r3, r4, #16
-	str	r2, [sp, #12]
-	orrs	r7, r3
-	mov	r2, r9
-	orrs	r7, r2
-	stmia	r1!, {r7}
-	adds	r3, r1, #0
-	str	r3, [sp, #12]
-	ldr	r3, [sp, #8]
-	mov	r1, sl
-	adds	r3, #8
-	ldr	r2, [sp, #12]
-	orrs	r3, r1
-	str	r3, [r2, #0]
-	mov	r3, r8
-	adds	r0, r3, #0
-	movs	r1, #255
-	bl 0x0200c8c8
-.L_02004462:
-	add	sp, #20
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001f3c
-	.4byte 0x03001b10
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldr r3, .L_0200c474
+	ldr r3, [r3]
+	adds r1, r3, #0
+	sub sp, #20
+	mov r8, r1
+	str r3, [sp, #12]
+	str r3, [sp, #16]
+	mov r7, r8
+	adds r7, #216
+	movs r1, #0
+	ldrsh r3, [r7, r1]
+	ldr r2, .L_0200c478
+	lsls r3, r3, #2
+	adds r3, r3, r2
+	ldrh r3, [r3, #2]
+	lsrs r3, r3, #5
+	str r3, [sp, #8]
+	mov r3, r8
+	adds r3, #230
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	subs r3, #10
+	mov r11, r2
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_0200c11e
+	mov r6, r8
+	adds r6, #218
+	movs r3, #2
+	strh r3, [r6]
+	b .L_0200c18c
+.L_0200c11e:
+	movs r0, #131
+	lsls r0, r0, #1
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	beq .L_0200c13e
+	mov r6, r8
+	adds r6, #218
+	movs r1, #0
+	ldrsh r3, [r6, r1]
+	ldrh r2, [r6]
+	cmp r3, #0
+	ble .L_0200c18c
+	subs r3, r2, #1
+	strh r3, [r6]
+	b .L_0200c18c
+.L_0200c13e:
+	mov r6, r8
+	adds r6, #218
+	movs r1, #0
+	ldrsh r3, [r6, r1]
+	ldrh r2, [r6]
+	cmp r3, #1
+	bgt .L_0200c18c
+	adds r3, r2, #1
+	movs r2, #128
+	strh r3, [r6]
+	lsls r2, r2, #9
+	lsls r3, r3, #16
+	cmp r3, r2
+	bne .L_0200c18c
+	ldr r3, .L_0200c47c
+	ldr r0, .L_0200c480
+	ldr r1, .L_0200c484
+	ldr r2, .L_0200c488
+	stmia r3!, {r0, r1, r2}
+	subs r3, #12
+	movs r0, #128
+	lsls r0, r0, #2
+	bl Runtime_BumpAllocateAlternatePool
+	adds r5, r0, #0
+	adds r1, r5, #0
+	ldr r0, .L_0200c48c
+	bl Resource_DecodeType01
+	movs r1, #128
+	movs r3, #0
+	ldrsh r0, [r7, r3]
+	lsls r1, r1, #2
+	adds r2, r5, #0
+	bl VramBlock_LoadCached
+	adds r0, r5, #0
+	bl Runtime_BumpFree
+.L_0200c18c:
+	movs r1, #0
+	ldrsh r2, [r6, r1]
+	cmp r2, #0
+	bne .L_0200c1a2
+	ldr r3, [sp, #12]
+	adds r3, #216
+	movs r2, #0
+	ldrsh r0, [r3, r2]
+	bl Resource_ActivateEntry
+	b .L_0200c462
+.L_0200c1a2:
+	lsls r3, r2, #1
+	adds r3, r3, r2
+	lsls r3, r3, #1
+	adds r7, r3, #0
+	subs r7, #8
+	movs r3, #255
+	ands r7, r3
+	mov r3, r11
+	lsls r3, r3, #4
+	str r3, [sp, #4]
+	movs r2, #128
+	ldr r1, [sp, #4]
+	lsls r2, r2, #8
+	movs r3, #104
+	mov r9, r2
+	ldr r2, [sp, #12]
+	subs r4, r3, r1
+	movs r3, #0
+	stmia r2!, {r3}
+	lsls r3, r4, #16
+	adds r1, r2, #0
+	str r1, [sp, #12]
+	orrs r3, r7
+	mov r1, r9
+	orrs r3, r1
+	stmia r2!, {r3}
+	ldr r3, [sp, #8]
+	movs r5, #228
+	lsls r5, r5, #8
+	adds r1, r2, #0
+	orrs r3, r5
+	str r1, [sp, #12]
+	stmia r2!, {r3}
+	adds r1, r2, #0
+	str r1, [sp, #12]
+	mov r0, r8
+	movs r2, #12
+	movs r1, #255
+	movs r6, #0
+	add r8, r2
+	bl Runtime_PushSlotEntry
+	cmp r6, r11
+	bcs .L_0200c23c
+	ldr r3, [sp, #8]
+	movs r1, #128
+	adds r3, #2
+	orrs r3, r5
+	lsls r1, r1, #23
+	ldr r5, [sp, #12]
+	mov r9, r1
+	mov r10, r3
+.L_0200c20a:
+	lsls r2, r6, #4
+	movs r3, #96
+	subs r4, r3, r2
+	movs r3, #0
+	str r3, [r5]
+	lsls r3, r4, #16
+	mov r2, r9
+	orrs r3, r7
+	orrs r3, r2
+	str r3, [r5, #4]
+	mov r3, r10
+	str r3, [r5, #8]
+	ldr r1, [sp, #12]
+	adds r1, #12
+	str r1, [sp, #12]
+	mov r0, r8
+	movs r2, #12
+	movs r1, #255
+	adds r6, #1
+	add r8, r2
+	adds r5, #12
+	bl Runtime_PushSlotEntry
+	cmp r6, r11
+	bcc .L_0200c20a
+.L_0200c23c:
+	ldr r2, [sp, #12]
+	movs r6, #0
+	movs r3, #128
+	stmia r2!, {r6}
+	lsls r3, r3, #8
+	mov r9, r3
+	movs r3, #224
+	adds r1, r2, #0
+	lsls r3, r3, #15
+	str r1, [sp, #12]
+	orrs r3, r7
+	mov r1, r9
+	orrs r3, r1
+	stmia r2!, {r3}
+	ldr r5, [sp, #8]
+	adds r1, r2, #0
+	movs r2, #228
+	lsls r2, r2, #8
+	adds r5, #6
+	orrs r5, r2
+	stmia r1!, {r5}
+	mov r0, r8
+	adds r3, r1, #0
+	mov r10, r2
+	movs r1, #255
+	movs r2, #12
+	add r8, r2
+	str r3, [sp, #12]
+	bl Runtime_PushSlotEntry
+	ldr r1, [sp, #12]
+	stmia r1!, {r6}
+	adds r3, r1, #0
+	str r3, [sp, #12]
+	movs r3, #240
+	lsls r3, r3, #15
+	mov r2, r9
+	orrs r3, r7
+	orrs r3, r2
+	movs r2, #128
+	lsls r2, r2, #21
+	orrs r3, r2
+	stmia r1!, {r3}
+	adds r2, r1, #0
+	str r2, [sp, #12]
+	stmia r1!, {r5}
+	adds r3, r1, #0
+	movs r1, #12
+	mov r0, r8
+	add r8, r1
+	movs r1, #255
+	str r3, [sp, #12]
+	bl Runtime_PushSlotEntry
+	cmp r6, r11
+	bcs .L_0200c2fe
+	ldr r4, [sp, #8]
+	movs r2, #128
+	movs r1, #128
+	mov r3, r10
+	adds r4, #2
+	lsls r2, r2, #23
+	lsls r1, r1, #16
+	ldr r5, [sp, #12]
+	mov r9, r2
+	orrs r4, r3
+	mov r10, r1
+.L_0200c2c2:
+	movs r3, #0
+	str r3, [r5]
+	mov r2, r10
+	adds r3, r7, #0
+	orrs r3, r2
+	mov r1, r9
+	movs r2, #128
+	orrs r3, r1
+	lsls r2, r2, #21
+	orrs r3, r2
+	str r3, [r5, #4]
+	str r4, [r5, #8]
+	ldr r2, [sp, #12]
+	mov r0, r8
+	adds r2, #12
+	movs r3, #12
+	movs r1, #255
+	str r4, [sp, #0]
+	str r2, [sp, #12]
+	add r8, r3
+	bl Runtime_PushSlotEntry
+	movs r1, #128
+	lsls r1, r1, #13
+	adds r6, #1
+	adds r5, #12
+	add r10, r1
+	ldr r4, [sp, #0]
+	cmp r6, r11
+	bcc .L_0200c2c2
+.L_0200c2fe:
+	movs r2, #128
+	ldr r4, [sp, #4]
+	lsls r2, r2, #8
+	mov r9, r2
+	ldr r2, [sp, #12]
+	movs r3, #0
+	adds r4, #128
+	stmia r2!, {r3}
+	mov r11, r3
+	lsls r3, r4, #16
+	orrs r7, r3
+	mov r3, r9
+	orrs r7, r3
+	movs r3, #128
+	lsls r3, r3, #21
+	adds r1, r2, #0
+	orrs r7, r3
+	str r1, [sp, #12]
+	stmia r2!, {r7}
+	ldr r3, [sp, #8]
+	adds r1, r2, #0
+	movs r2, #228
+	lsls r2, r2, #8
+	orrs r3, r2
+	mov r10, r2
+	adds r2, r1, #0
+	stmia r2!, {r3}
+	adds r1, r2, #0
+	movs r3, #12
+	str r1, [sp, #12]
+	mov r0, r8
+	movs r1, #255
+	add r8, r3
+	bl Runtime_PushSlotEntry
+	ldr r3, .L_0200c490
+	ldr r3, [r3]
+	movs r2, #15
+	ands r3, r2
+	cmp r3, #4
+	bhi .L_0200c352
+	b .L_0200c462
+.L_0200c352:
+	ldr r3, [sp, #16]
+	movs r1, #128
+	adds r3, #224
+	lsls r1, r1, #23
+	movs r2, #0
+	ldrsh r0, [r3, r2]
+	mov r9, r1
+	bl ObjectTable_Get
+	adds r6, r0, #0
+	cmp r6, #0
+	beq .L_0200c3e0
+	ldr r3, [sp, #16]
+	adds r3, #232
+	ldr r3, [r3]
+	ldr r0, [r6, #8]
+	movs r5, #224
+	lsls r5, r5, #12
+	subs r0, r0, r3
+	adds r1, r5, #0
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #236
+	ldr r3, [r3]
+	adds r4, r0, #0
+	ldr r0, [r6, #16]
+	adds r4, #112
+	adds r1, r5, #0
+	subs r0, r0, r3
+	str r4, [sp, #0]
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #218
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	lsls r3, r2, #1
+	adds r3, r3, r2
+	lsls r3, r3, #1
+	adds r0, r0, r3
+	ldr r1, [sp, #12]
+	subs r7, r0, #4
+	movs r3, #255
+	ands r7, r3
+	mov r3, r11
+	stmia r1!, {r3}
+	ldr r4, [sp, #0]
+	adds r2, r1, #0
+	lsls r3, r4, #16
+	str r2, [sp, #12]
+	orrs r7, r3
+	mov r2, r9
+	orrs r7, r2
+	stmia r1!, {r7}
+	adds r3, r1, #0
+	str r3, [sp, #12]
+	ldr r3, [sp, #8]
+	mov r1, r10
+	adds r3, #12
+	orrs r3, r1
+	ldr r1, [sp, #12]
+	stmia r1!, {r3}
+	adds r2, r1, #0
+	str r2, [sp, #12]
+	mov r0, r8
+	movs r2, #12
+	movs r1, #255
+	add r8, r2
+	bl Runtime_PushSlotEntry
+.L_0200c3e0:
+	ldr r3, [sp, #16]
+	adds r3, #222
+	movs r1, #0
+	ldrsh r0, [r3, r1]
+	bl ObjectTable_Get
+	adds r6, r0, #0
+	cmp r6, #0
+	beq .L_0200c462
+	ldr r3, [sp, #16]
+	adds r3, #232
+	ldr r3, [r3]
+	ldr r0, [r6, #8]
+	movs r5, #224
+	lsls r5, r5, #12
+	subs r0, r0, r3
+	adds r1, r5, #0
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #236
+	ldr r3, [r3]
+	adds r4, r0, #0
+	ldr r0, [r6, #16]
+	adds r4, #112
+	adds r1, r5, #0
+	subs r0, r0, r3
+	str r4, [sp, #0]
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #218
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	lsls r3, r2, #1
+	adds r3, r3, r2
+	lsls r3, r3, #1
+	adds r0, r0, r3
+	ldr r1, [sp, #12]
+	subs r7, r0, #4
+	movs r3, #255
+	ands r7, r3
+	mov r3, r11
+	stmia r1!, {r3}
+	ldr r4, [sp, #0]
+	adds r2, r1, #0
+	lsls r3, r4, #16
+	str r2, [sp, #12]
+	orrs r7, r3
+	mov r2, r9
+	orrs r7, r2
+	stmia r1!, {r7}
+	adds r3, r1, #0
+	str r3, [sp, #12]
+	ldr r3, [sp, #8]
+	mov r1, r10
+	adds r3, #8
+	ldr r2, [sp, #12]
+	orrs r3, r1
+	str r3, [r2]
+	mov r3, r8
+	adds r0, r3, #0
+	movs r1, #255
+	bl Runtime_PushSlotEntry
+.L_0200c462:
+	add sp, #20
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+.L_0200c474:
+	.4byte gKorosseoWork
+.L_0200c478:
+	.4byte ResourceTableEntries
+.L_0200c47c:
 	.4byte 0x040000d4
-	.4byte 0x0200cd60
+.L_0200c480:
+	.4byte Data_02004d60
+.L_0200c484:
 	.4byte 0x050003c0
+.L_0200c488:
 	.4byte 0x80000010
-	.4byte 0x0200cd80
-	.2byte 0x1e40
-	.2byte 0x0300
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+.L_0200c48c:
+	.4byte gColossoSceneDescriptor
+.L_0200c490:
+	.4byte gFrameCount
+	.section .rodata.x0200cbec,"a",%progbits
 	.global KorosseoMaruta_Record30Script
 KorosseoMaruta_Record30Script:
 	.4byte 0x00000015
@@ -673,7 +520,7 @@ gColossoSceneEventEffect:
 	.4byte 0x00b80000
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte 0x02008a21
+	.4byte ColossoLogRollingStage_SetSceneEventValues
 	.4byte 0x80010000
 	.4byte 0x00000015
 	.4byte 0x00000006
@@ -740,6 +587,8 @@ gColossoModeScript3B:
 	.4byte 0x01401000
 	.4byte 0x7fff0006
 	.4byte 0xffff0006
+	.global Data_02004d60
+Data_02004d60:
 	.4byte 0x377f10a0
 	.4byte 0x121722bb
 	.4byte 0x0ccc1172
@@ -819,7 +668,7 @@ gColossoRandomEffect:
 gColossoLinkedEffect:
 	.4byte 0x00000015
 	.4byte 0x00000026
-	.4byte 0x0200bcf5
+	.4byte ColossoLogRollingStage_SpawnRandomSceneEffect
 	.4byte 0x80010000
 	.4byte 0x00000000
 	.4byte 0x0000000a
@@ -1222,49 +1071,49 @@ gColossoSceneTaskState:
 gKorosseoMarutaEvents:
 	.4byte 0x00000202
 	.4byte 0xffff005a
-	.4byte 0x02008d71
+	.4byte ColossoLogRollingStage_RunSceneEventIfReady
 	.4byte 0x00000202
 	.4byte 0xffff005b
-	.4byte 0x02008d85
+	.4byte ColossoLogRollingStage_FinishOrContinueSceneEvent
 	.4byte 0x00000002
 	.4byte 0x0363000b
-	.4byte 0x02008205
+	.4byte ColossoLogRollingStage_NudgeActorsLeft
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x0200857d
+	.4byte ColossoLogRollingStage_RunSetupCompletionHooks
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x020084a5
+	.4byte FieldScene_RunFinalAuxiliarySequence
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte 0x0200858d
+	.4byte ColossoLogRollingStage_ConfigureActorThirteen
 	.4byte 0x00000202
 	.4byte 0xffff0016
-	.4byte 0x020085d5
+	.4byte ColossoLogRollingStage_RunSetupHook
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x020085d1
+	.4byte ColossoLogRollingStage_NoopSetupHook
 	.4byte 0x00000202
 	.4byte 0xffff0017
-	.4byte 0x0200876d
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x00008c15
 	.4byte 0x0214000f
-	.4byte 0x020085e1
+	.4byte ColossoLogRollingStage_ActivateClearObstacleActors
 	.4byte 0x00008c15
 	.4byte 0x02150010
-	.4byte 0x020085e1
+	.4byte ColossoLogRollingStage_ActivateClearObstacleActors
 	.4byte 0x00008c15
 	.4byte 0x02160011
-	.4byte 0x020085e1
+	.4byte ColossoLogRollingStage_ActivateClearObstacleActors
 	.4byte 0x00000002
 	.4byte 0x0367000f
-	.4byte 0x020082f9
+	.4byte FieldScene_RunClosingAuxiliarySequence
 	.4byte 0x00000002
 	.4byte 0x13670010
-	.4byte 0x02008405
+	.4byte ColossoLogRollingStage_ConfigureSecondaryObjects
 	.4byte 0x00000002
 	.4byte 0x02100032
-	.4byte 0x02008c5d
+	.4byte KorosseoMaruta_RunStageStart
 	.4byte 0x00000013
 	.4byte 0x036a0065
 	.4byte 0x001000e2
@@ -1276,43 +1125,43 @@ gKorosseoMarutaEvents:
 	.4byte 0x001000e3
 	.4byte 0x50001815
 	.4byte 0x03620009
-	.4byte 0x02008275
+	.4byte ColossoLogRollingStage_ConfigurePrimaryObjects
 	.4byte 0x00000c15
 	.4byte 0x0360001d
-	.4byte 0x0200824d
+	.4byte ColossoLogRollingStage_ConfigureGridRegion
 	.4byte 0x00009115
 	.4byte 0x0361001c
-	.4byte 0x02008a85
+	.4byte ColossoLogRollingStage_WaitForSceneEventTask
 	.4byte 0x50008e15
 	.4byte 0x0363001e
-	.4byte 0x02008a45
+	.4byte ColossoLogRollingStage_ConfigureSceneEventEffect
 	.4byte 0x00000006
 	.4byte 0xffff0004
-	.4byte 0x02008ad5
+	.4byte ColossoLogRollingStage_OffsetActiveActor
 	.4byte 0x00000006
 	.4byte 0xffff0005
-	.4byte 0x02008b31
+	.4byte ColossoLogRollingStage_ClampAndOffsetActiveActor
 	.4byte 0x00000000
 	.4byte 0xffff0020
-	.4byte 0x0200a9ad
+	.4byte RunPartyCountInteractionCopyB
 	.4byte 0x00000000
 	.4byte 0xffff0021
-	.4byte 0x02009c21
+	.4byte FieldScene_RunDualArrivalSequence
 	.4byte 0x00000000
 	.4byte 0xffff0022
-	.4byte 0x02009df9
+	.4byte FieldScene_RunSecondArrivalSequence
 	.4byte 0x00000000
 	.4byte 0xffff0023
-	.4byte 0x02009f91
+	.4byte KorosseoMaruta_RunStageIntro
 	.4byte 0x00000000
 	.4byte 0xffff0024
-	.4byte 0x0200a0f1
+	.4byte FieldScene_RunFourStepActorMotion
 	.4byte 0x00000000
 	.4byte 0xffff0025
-	.4byte 0x0200a331
+	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000000
 	.4byte 0xffff0026
-	.4byte 0x0200a4d1
+	.4byte ColossoLogRollingStage_RunLogRollingInteraction
 	.4byte 0x00008d15
 	.4byte 0xffff0020
 	.4byte 0x0000213c
@@ -1336,7 +1185,7 @@ gKorosseoMarutaEvents:
 	.4byte 0x0000214b
 	.4byte 0x00000006
 	.4byte 0xffff0063
-	.4byte 0x0200a759
+	.4byte ColossoLogRollingStage_SelectNearestObstacle
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1546,7 +1395,7 @@ gColossoMultiPhaseData:
 	.global gColossoParticleKinds
 gColossoParticleKinds:
 	.4byte 0x00000022
-	.4byte 0x0200937d
+	.4byte ColossoLogRollingStage_AdvanceParticleMotion
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -1657,7 +1506,7 @@ Korosseo_RivalFinishScript:
 	.4byte 0x00000000
 	.4byte 0x00000006
 	.4byte 0x00000022
-	.4byte 0x0200bd89
+	.4byte ColossoLogRollingStage_RaiseLinkedSceneEffect
 	.4byte 0x00000000
 	.4byte 0x00000003
 	.4byte 0x0000001c
@@ -1680,7 +1529,7 @@ KorosseoMaruta_PlaceScript:
 	.4byte 0x00000000
 	.4byte 0x00000006
 	.4byte 0x00000022
-	.4byte 0x0200bd89
+	.4byte ColossoLogRollingStage_RaiseLinkedSceneEffect
 	.4byte 0x00000000
 	.4byte 0x00000003
 	.4byte 0x0000001c

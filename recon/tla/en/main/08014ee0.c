@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TRANSFORM.H"
 
 void SceneTransform_ResetMatrix(void)
 {

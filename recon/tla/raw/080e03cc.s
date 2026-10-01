@@ -261,7 +261,7 @@ Func_080e03cc:
 	cmp r7, #11
 	blt .L_080e058a
 	adds r0, r6, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	bl BattleFx_PrepareBufferInterpolation
 .L_080e05fe:
 	add sp, #40

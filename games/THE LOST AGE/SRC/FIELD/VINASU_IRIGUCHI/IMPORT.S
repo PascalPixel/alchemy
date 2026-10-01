@@ -85,7 +85,7 @@ Func_0200286c:
 	.global Func_02002874
 	.thumb_func
 Func_02002874:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Object_SetPositionAndResetMotion
 	.thumb_func
 Object_SetPositionAndResetMotion:
@@ -233,7 +233,7 @@ Func_02002994:
 	.global Func_0200299c
 	.thumb_func
 Func_0200299c:
-	overlay_veneer Func_080c8268
+	overlay_veneer Event_SetPairWork1c0Far
 	.global Func_020029a4
 	.thumb_func
 Func_020029a4:

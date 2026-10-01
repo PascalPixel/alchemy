@@ -11,7 +11,7 @@ Func_080caa2c:
 	bl ObjectTable_Get
 	cmp r0, #0
 	beq .L_080caa4a
-	bl Func_080200c8
+	bl Object_Destroy
 	lsls r3, r5, #2
 	adds r3, #20
 	movs r2, #0

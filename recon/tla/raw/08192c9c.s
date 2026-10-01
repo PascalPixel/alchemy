@@ -234,12 +234,12 @@ Func_08192c9c:
 	ldr r1, .L_08192ee8
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r0, r5, #0
 	ldr r1, [sp, #204]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #192
 	ldr r2, [sp, #204]
 	movs r0, #0
@@ -1052,7 +1052,7 @@ Func_08192c9c:
 	adds r5, r5, r1
 	adds r0, r5, #0
 	ldr r1, .L_08193654
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r5, #238
 	movs r3, #13
 	ldr r4, .L_08193658
@@ -1118,7 +1118,7 @@ Func_08192c9c:
 	lsls r6, r6, #3
 	adds r1, r1, r6
 	adds r0, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r6, .L_08193658
 	movs r0, #0
 	mov r10, r0
@@ -1385,7 +1385,7 @@ Func_08192c9c:
 	ldr r0, .L_081938a4
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r6, [sp, #64]
 	movs r4, #0
 	mov r10, r4
@@ -2165,7 +2165,7 @@ Func_08192c9c:
 	ldr r1, [sp, #204]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, .L_08193d88
 	movs r0, #0
 	movs r4, #254

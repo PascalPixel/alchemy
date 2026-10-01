@@ -8092,17 +8092,17 @@ Func_02003fc0:
 .L_0200c1fc:
 	.4byte IwramClearWords
 .L_0200c200:
-	.4byte gOverlayArea + 0x6fc8
+	.4byte Data_02006fc8
 .L_0200c204:
-	.4byte gOverlayArea + 0x6fe8
+	.4byte Data_02006fe8
 .L_0200c208:
-	.4byte gOverlayArea + 0x7008
+	.4byte Data_02007008
 .L_0200c20c:
-	.4byte gOverlayArea + 0x7028
+	.4byte Data_02007028
 .L_0200c210:
-	.4byte gOverlayArea + 0x7048
+	.4byte Data_02007048
 .L_0200c214:
-	.4byte gOverlayArea + 0x7068
+	.4byte Data_02007068
 .L_0200c218:
 	.4byte gSceneState
 .L_0200c21c:
@@ -10786,7 +10786,7 @@ Data_02005944:
 	.global Data_02005948
 Data_02005948:
 	.4byte 0x06345d01
-	.4byte Runtime_ReciprocalTable + 0x1259
+	.4byte 0x08003b01
 	.4byte 0x2f010026
 	.4byte 0x5f1f7000
 	.4byte 0x667b0906
@@ -10797,17 +10797,17 @@ Data_02005948:
 	.4byte 0x08100800
 	.4byte 0xa1076601
 	.4byte 0x001d0800
-	.4byte Text_MessageContexts + 0x10b38
+	.4byte 0x08071768
 	.4byte 0x660015bb
 	.4byte 0x0e020016
 	.4byte 0x66177000
 	.4byte 0x3b02080d
-	.4byte Data_02001024 + 0xbb
+	.4byte 0x020010df
 	.4byte 0x66128010
 	.4byte 0x01037a01
 	.4byte 0x04277910
 	.4byte 0xfb44013d
-	.4byte Data_0200752c + 0x2d4
+	.4byte 0x02007800
 	.4byte 0x20590414
 	.4byte 0x57052700
 	.4byte 0x50002066
@@ -10832,7 +10832,7 @@ Data_02005948:
 	.4byte 0xf8063b58
 	.4byte 0x3b5704af
 	.4byte 0x163bb406
-	.4byte Resource_DecodeHalfwordLzCode + 0x12
+	.4byte 0x0800200e
 	.4byte 0x283ea00f
 	.4byte 0x070820ff
 	.4byte 0x2e050010
@@ -10844,7 +10844,7 @@ Data_02005948:
 	.4byte 0x33481706
 	.4byte 0x00603b58
 	.4byte 0x783ffe78
-	.4byte Text_MessageContexts + 0x15ce8
+	.4byte 0x08076918
 	.4byte 0x1f017900
 	.4byte 0x0a782700
 	.4byte 0x2aff5f11
@@ -11088,7 +11088,7 @@ Data_02005d24:
 Data_02005d7c:
 	.4byte 0x0002000c
 	.4byte 0x000d08ce
-	.4byte Field_Map155 + 0x786
+	.4byte 0x08cf0002
 	.4byte 0x0000ffff
 	.global Data_02005d8c
 Data_02005d8c:
@@ -12032,19 +12032,19 @@ Data_02006b6c:
 	.4byte 0xffff000b
 	.4byte Func_02001820
 	.4byte 0x00008515
-	.4byte Data_02010002 + 0x6
+	.4byte 0x02010008
 	.4byte Func_02000550
 	.4byte 0x00008515
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte 0x00000000
 	.4byte 0x50008615
-	.4byte Field_Map149 + 0x1e28
+	.4byte 0x08ce000c
 	.4byte Func_02001990
 	.4byte 0x50008615
-	.4byte Field_Map155 + 0x791
+	.4byte 0x08cf000d
 	.4byte Func_02001990
 	.4byte 0x00000006
-	.4byte Tileset_Set69TilesD + 0x20c
+	.4byte 0x08cd00c8
 	.4byte Func_020019d0
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -12085,7 +12085,7 @@ Data_02006bd8:
 	.4byte 0xffff0054
 	.4byte Func_02000c8c
 	.4byte 0x00008515
-	.4byte Data_02010018 + 0x7
+	.4byte 0x0201001f
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x12040021
@@ -12243,11 +12243,11 @@ Data_02006e9c:
 	.4byte 0x00000000
 	.global Data_02006ea8
 Data_02006ea8:
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0x03030101
 	.4byte 0x06040507
 	.4byte 0x04060705
-	.4byte Text_MessageContexts + 0x1fcd9
+	.4byte 0x08080909
 	.4byte 0x0b0b0a0a
 	.global Data_02006ec0
 Data_02006ec0:
@@ -12319,3 +12319,21 @@ Data_02006f38:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
+	.section .bss,"aw",%nobits
+	.global Data_02006fc8
+Data_02006fc8:
+	.space 0x00000020
+	.global Data_02006fe8
+Data_02006fe8:
+	.space 0x00000020
+	.global Data_02007008
+Data_02007008:
+	.space 0x00000020
+	.global Data_02007028
+Data_02007028:
+	.space 0x00000020
+	.global Data_02007048
+Data_02007048:
+	.space 0x00000020
+	.global Data_02007068
+Data_02007068:

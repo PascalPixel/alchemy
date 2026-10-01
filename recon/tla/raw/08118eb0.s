@@ -36,7 +36,7 @@ Func_08118eb0:
 	bls .L_08118eee
 	movs r0, #1
 .L_08118eee:
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	movs r2, #148
 	adds r3, r0, #0
 	lsls r2, r2, #1

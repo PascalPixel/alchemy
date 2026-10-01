@@ -56,7 +56,7 @@ Func_0813e114:
 	.4byte 0x00000139
 .L_0813e180:
 	mov r11, r4
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r9

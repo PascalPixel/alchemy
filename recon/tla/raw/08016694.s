@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08016694
+	.global SerialRuntime_HandleTransferInterrupt
 	.thumb_func
-Func_08016694:
+SerialRuntime_HandleTransferInterrupt:
 	push {r5, r6, r7, lr}
 	ldr r3, .L_08016710
 	sub sp, #8

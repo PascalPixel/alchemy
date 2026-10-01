@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200aafc,"a",%progbits
 	.global gSoruNichigetsuEntrances
 gSoruNichigetsuEntrances:
 	.4byte 0xffff0000
@@ -153,28 +153,28 @@ gSoruNichigetsuPlacements:
 gSoruNichigetsuEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0200a925
+	.4byte Sukureta_Talk
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008151
+	.4byte FieldScene_RunScene37aSequenceC
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x02008055
+	.4byte FieldScene_RunScene37aSequenceA
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008109
+	.4byte FieldScene_RunScene37aSequenceB
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x020081ed
+	.4byte FieldScene_RunScene37aSequenceD
 	.4byte 0x00000002
 	.4byte 0xffff0013
-	.4byte 0x0200822d
+	.4byte ClearSolShindenBackdrop
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x02009ca9
+	.4byte FieldScene_RunSanctumRiseAndShrink
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x02009a59
+	.4byte Scene_ChangeLunaPictureToSol
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -183,10 +183,10 @@ gSoruNichigetsuEvents:
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008489
+	.4byte FieldScene_RunScene37aSequenceF
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte 0x02008c01
+	.4byte UpdateStatueTrapActor
 	.4byte 0x00000013
 	.4byte 0x0f400064
 	.4byte 0x001000b4

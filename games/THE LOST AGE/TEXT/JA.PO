@@ -12647,7 +12647,7 @@ msgctxt "message"
 msgid "03159"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgEnemyLabel"
 msgid "03160"
 msgstr "てき"
 
@@ -12687,7 +12687,7 @@ msgctxt "message"
 msgid "03169"
 msgstr "{argument_class_name}"
 
-msgctxt "message"
+msgctxt "MsgActorDefends"
 msgid "03170"
 msgstr "{argument_actor_name:234} みをまもっている!"
 
@@ -12739,7 +12739,7 @@ msgctxt "MsgCritical"
 msgid "03182"
 msgstr "かいしんの いちげき!"
 
-msgctxt "message"
+msgctxt "MsgBitterBlow"
 msgid "03183"
 msgstr "つうこんの いちげき!"
 
@@ -12823,7 +12823,7 @@ msgctxt "message"
 msgid "03203"
 msgstr "{protagonist_name}たちは 戦いに やぶれた・・・"
 
-msgctxt "message"
+msgctxt "MsgDowned"
 msgid "03204"
 msgstr "{argument_actor_name:134} たおした!"
 
@@ -16679,11 +16679,11 @@ msgctxt "message"
 msgid "04167"
 msgstr "もってるかず"
 
-msgctxt "message"
+msgctxt "MsgPanelStatLabel"
 msgid "04168"
 msgstr "こうげき"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "04169"
 msgstr "ぼうぎょ"
 
@@ -16695,7 +16695,7 @@ msgctxt "message"
 msgid "04171"
 msgstr "うんのよさ"
 
-msgctxt "message"
+msgctxt "MsgAgilityLabel"
 msgid "04172"
 msgstr "すばやさ"
 
@@ -16711,7 +16711,7 @@ msgctxt "message"
 msgid "04175"
 msgstr "しゅうとくずみ"
 
-msgctxt "message"
+msgctxt "MsgEquipSlotLabels"
 msgid "04176"
 msgstr "ぶき"
 
@@ -18655,7 +18655,7 @@ msgctxt "MsgCoins"
 msgid "04661"
 msgstr "すてられません!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "04662"
 msgstr "はずせません!{end_wait}"
 

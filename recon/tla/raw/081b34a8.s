@@ -51,7 +51,7 @@ Func_081b34a8:
 	adds r1, #152
 	str r1, [sp, #32]
 	str r3, [r1]
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r5, .L_081b3530
 	ldr r3, .L_081b3544
 	ldr r1, .L_081b3548
@@ -121,7 +121,7 @@ Func_081b34a8:
 	ldr r0, .L_081b3650
 	bl Resource_GetTableEntry
 	ldr r1, [sp, #48]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_081b3654
 	bl Resource_GetTableEntry
 	movs r3, #128
@@ -137,7 +137,7 @@ Func_081b34a8:
 	adds r4, #32
 	adds r0, r4, #0
 	ldr r1, .L_081b365c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_081b365c
 	ldr r7, .L_081b3660
 	movs r3, #0
@@ -420,7 +420,7 @@ Func_081b34a8:
 .L_081b37dc:
 	.4byte gMapCellBuffer
 .L_081b37e0:
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -444,7 +444,7 @@ Func_081b34a8:
 	adds r4, #32
 	adds r0, r4, #0
 	ldr r1, .L_081b38a0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -453,7 +453,7 @@ Func_081b34a8:
 	ldr r2, .L_081b38b8
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
-	bl Resource_FarCall004
+	bl UiWork_InitializeWithResourceCountersFar
 	bl Func_081b336c
 	movs r7, #0
 	mov r10, r7
@@ -573,7 +573,7 @@ Func_081b34a8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #104
-	bl Func_08138000
+	bl Resource_FarCall00C
 	movs r5, #192
 	lsls r5, r5, #18
 	ldr r3, [r5, #104]
@@ -584,7 +584,7 @@ Func_081b34a8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #188
-	bl Func_08138000
+	bl Resource_FarCall00C
 	adds r5, #188
 	ldr r3, [r5]
 	mov r7, sp
@@ -627,13 +627,13 @@ Func_081b34a8:
 	ldr r0, [sp, #24]
 	movs r2, #0
 	adds r3, r5, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r1, #160
 	movs r2, #0
 	adds r3, r5, #0
 	lsls r1, r1, #19
 	ldr r0, [sp, #28]
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	ldr r3, .L_081b39d0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -737,13 +737,13 @@ Func_081b34a8:
 	adds r2, r5, #0
 	adds r3, r6, #0
 	ldr r0, [sp, #24]
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r1, #160
 	ldr r0, [sp, #28]
 	lsls r1, r1, #19
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 .L_081b3a80:
 	ldr r1, [sp, #20]
 	ldr r3, [r1]
@@ -753,7 +753,7 @@ Func_081b34a8:
 .L_081b3a8a:
 	mov r0, r11
 	movs r1, #80
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #15
 	bgt .L_081b3a9e
 	ldr r0, .L_081b3c7c
@@ -1170,13 +1170,13 @@ Func_081b34a8:
 	ldr r1, .L_081b3e24
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r1, #160
 	lsls r1, r1, #19
 	ldr r0, [sp, #28]
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_081b203c
+	bl Graphics_ScaleRgb555
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #1

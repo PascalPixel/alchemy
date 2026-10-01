@@ -48,7 +48,7 @@ UiWork_FinalizePendingCoreFar:
 	.global Func_08038148
 	.thumb_func
 Func_08038148:
-	overlay_veneer Func_0803cb1c
+	overlay_veneer UiWork_DrainPending
 	.global Func_08038150
 	.thumb_func
 Func_08038150:
@@ -76,7 +76,7 @@ Menu_OpenSelectionWindowFar:
 	.global Func_08038180
 	.thumb_func
 Func_08038180:
-	overlay_veneer Func_0803e6d8
+	overlay_veneer Resource_ResetOwnerEntries
 	.global Func_08038188
 	.thumb_func
 Func_08038188:

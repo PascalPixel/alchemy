@@ -69,7 +69,7 @@ Func_0801319c:
 	strh r2, [r3]
 	bl Func_081c0008
 	bl Func_08014368
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r3, .L_08013268
 	ldr r2, .L_0801326c
 	str r5, [r3]
@@ -82,7 +82,7 @@ Func_0801319c:
 .L_08013248:
 	.4byte 0x85001e00
 .L_0801324c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08013250:
 	.4byte Data_03001110
 .L_08013254:

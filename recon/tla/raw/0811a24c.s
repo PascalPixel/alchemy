@@ -34,7 +34,7 @@ Func_0811a24c:
 	adds r5, r0, #0
 	lsls r0, r5, #1
 	adds r0, r6, r0
-	bl Func_0811a0b0
+	bl BattleParty_PrepareReserveOwners
 	adds r5, r5, r0
 	cmp r8, r5
 	bge .L_0811a2c0

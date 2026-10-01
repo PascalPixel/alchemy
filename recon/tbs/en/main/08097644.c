@@ -8,7 +8,17 @@
    candidates; adding the target's height after its metadata offset for the
    second vector, kept here, gives 615 (32 register-only, 4 reordered, 1
    inserted, 1 deleted). The reference's r4 constants and its pooled 0x28b
-   remain. */
+   remain.
+   2026-10-01 (☀️ matcher 1): all seven of the reference's r4 uses are
+   reload registers (the 0x28a, 0x290 and 0x292 work offsets and the
+   copies of sl, r9 and r8 for the vector stores and loads); r4 is never a
+   pseudo's home. So r4 is in the reference's spill set and reload's
+   round-robin lands on it, while here every reload takes r0-r3 and r4
+   never enters the set. The pooled 0x28b follows: with 0x28d's reload in
+   r0 and r0 reused, postreload's move2add has no register still holding
+   0x28d to derive 0x28b from. Compiling the draft after its neighbour
+   BattleFx_FinishSceneAndReleaseHeapBlock changes nothing (reload state is
+   per function). */
 #include "TYPES.H"
 
 struct FxVector {

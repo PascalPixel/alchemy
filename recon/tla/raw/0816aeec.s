@@ -80,7 +80,7 @@ Func_0816aeec:
 	ldr r0, .L_0816b284
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #176
 	lsls r2, r2, #4
 	adds r1, r7, r2
@@ -94,7 +94,7 @@ Func_0816aeec:
 	ldr r0, .L_0816b288
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, [sp, #92]
 	cmp r5, #1
 	bne .L_0816b000
@@ -105,7 +105,7 @@ Func_0816aeec:
 	adds r1, r5, #0
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #216
 	movs r4, #0
 	movs r0, #63

@@ -217,7 +217,7 @@ ItemIcon_Compose:
 	bgt .L_0803d888
 	movs r1, #10
 	mov r0, r10
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, .L_0803d8a8
 	lsls r0, r0, #2
 	movs r2, #192
@@ -273,7 +273,7 @@ ItemIcon_Compose:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0803d89c:
-	.4byte Data_0804e684
+	.4byte UiIcon_BaseGlyphPointers
 .L_0803d8a0:
 	.4byte Data_0804eb58
 .L_0803d8a4:

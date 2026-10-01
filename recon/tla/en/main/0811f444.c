@@ -1,10 +1,13 @@
+/* Near miss: score 80. ⚓️ loads the record's child pointer (ldr r2, [r0,
+   #40]) before scaling the index for items[] in the second loop, and one
+   bne differs. 45 s of permuting found nothing. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 
-u8 *Owner_GetStateFar(s32);
+u8 *Owner_GetState(s32);
 s32 *GetBattleObjectSlot(s32);
 u8 *GetMotionRecord(s32, s32);
-void AnimationObjects_SelectAnimationFar(void *, s32);
+void Animation_ApplyChildArgumentFar(void *, s32);
 void BattleActor_RemoveFromLists(s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void ActivateBattleObjectSlot(s32);
@@ -17,13 +20,13 @@ void BattleMotion_InitializeActorRecords(s32 id)
     u8 *child;
     s32 index;
 
-    state = Owner_GetStateFar(id);
+    state = Owner_GetState(id);
     index = 0;
     while ((item = GetMotionRecord(*GetBattleObjectSlot(id), index)) != 0) {
         if (state[0x12a] != 1)
-            AnimationObjects_SelectAnimationFar(item, 4);
+            Animation_ApplyChildArgumentFar(item, 4);
         else
-            AnimationObjects_SelectAnimationFar(item, 5);
+            Animation_ApplyChildArgumentFar(item, 5);
         index++;
     }
 

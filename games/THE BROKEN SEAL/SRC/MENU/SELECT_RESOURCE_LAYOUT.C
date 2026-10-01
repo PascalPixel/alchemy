@@ -42,10 +42,17 @@ s32 Menu_SelectResourceLayout(s32 mode)
         Menu_AppendResourceEntry(46);
         Menu_AppendResourceEntry(47);
         Menu_AppendResourceEntry(48);
+#if defined(TBS_EDITION_ES)
+        /* Only the Spanish password list is centred; its transfer list keeps
+           its place. */
+        Menu_CenterResourceEntries(17, 5, 0);
+#endif
     }
 #if defined(TBS_EDITION_FR)
     Menu_CenterResourceEntries(17, 9, 0);
-#else
+#elif defined(TBS_EDITION_JA)
+    Menu_CenterResourceEntries(17, 5, 0);
+#elif !defined(TBS_EDITION_ES)
     Menu_CenterResourceEntries(17, 7, 0);
 #endif
     if (mode != 0) {
@@ -53,6 +60,10 @@ s32 Menu_SelectResourceLayout(s32 mode)
         work->selection = 0xffff;
 #if defined(TBS_EDITION_FR)
         window = UiWindow_Create(5, 0, 22, 4, 2);
+#elif defined(TBS_EDITION_ES)
+        window = UiWindow_Create(5, 0, 21, 4, 2);
+#elif defined(TBS_EDITION_JA)
+        window = UiWindow_Create(9, 0, 13, 4, 2);
 #else
         window = UiWindow_Create(7, 0, 17, 4, 2);
 #endif
@@ -60,6 +71,14 @@ s32 Menu_SelectResourceLayout(s32 mode)
         upper = &work->upper_window;
         *upper = window;
         UiText_DrawResource(msg, window, 0, 4);
+#if defined(TBS_EDITION_JA)
+        /* The Japanese password help takes two lines. */
+        window = UiWindow_Create(5, 4, 21, 12, 2);
+        work->lower_window = window;
+        UiText_DrawResource(msg + 1, window, 0, 4);
+        msg += 2;
+        UiText_DrawResource(msg, work->lower_window, 0, 16);
+#else
 #if defined(TBS_EDITION_DE)
         window = UiWindow_Create(1, 4, 28, 12, 2);
 #else
@@ -70,19 +89,30 @@ s32 Menu_SelectResourceLayout(s32 mode)
         UiText_DrawResource(msg + 2, work->lower_window, 8, 11);
         msg += 3;
         UiText_DrawResource(msg, work->lower_window, 8, 22);
+#endif
     } else {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
         work->selection = 0xffff;
 #if defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
         window = UiWindow_Create(5, 0, 20, 4, 2);
+#elif defined(TBS_EDITION_ES)
+        window = UiWindow_Create(4, 0, 21, 4, 2);
+#elif defined(TBS_EDITION_JA)
+        window = UiWindow_Create(9, 0, 13, 4, 2);
 #else
         window = UiWindow_Create(6, 0, 18, 4, 2);
 #endif
         upper = &work->upper_window;
         *upper = window;
+#if defined(TBS_EDITION_JA)
+        UiText_DrawResource((s32)MsgTransferMethod, window, 0, 4);
+#else
         UiText_DrawResource((s32)MsgTransferMethod, window, 2, 4);
+#endif
 #if defined(TBS_EDITION_DE)
         work->lower_window = UiWindow_Create(0, 5, 30, 7, 2);
+#elif defined(TBS_EDITION_JA)
+        work->lower_window = UiWindow_Create(5, 5, 21, 7, 2);
 #else
         work->lower_window = UiWindow_Create(1, 5, 28, 7, 2);
 #endif

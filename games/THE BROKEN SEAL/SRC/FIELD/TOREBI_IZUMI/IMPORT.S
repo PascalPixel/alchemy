@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathDivide
+	.thumb_func
+Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
 	.global Engine_MathRemainder
 	.thumb_func
@@ -23,7 +26,13 @@ Engine_TaskAddCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Object_SetMode
 	.thumb_func
@@ -33,17 +42,41 @@ Object_SetMode:
 	.thumb_func
 ObjectDispatch_ApplyValueToChildren:
 	overlay_veneer ObjectDispatch_ApplyValueToChildrenFar
+	.global Map_CopyMetatileIndicesRect
+	.thumb_func
+Map_CopyMetatileIndicesRect:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
+	.global UiWindow_Create
+	.thumb_func
+UiWindow_Create:
 	overlay_veneer UiWindow_CreateFar
+	.global UiWork_Finalize
+	.thumb_func
+UiWork_Finalize:
 	overlay_veneer UiWork_FinalizeFar
+	.global UiText_DrawCharacterAtOffset
+	.thumb_func
+UiText_DrawCharacterAtOffset:
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	.global UiText_DrawNumberInWindow
+	.thumb_func
+UiText_DrawNumberInWindow:
 	overlay_veneer UiText_DrawNumberInWindowFar
 	.global UiWork_PushValueSlot
 	.thumb_func
 UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
+	.global UiWork_FinalizePendingCore
+	.thumb_func
+UiWork_FinalizePendingCore:
 	overlay_veneer UiWork_FinalizePendingCoreFar
+	.global Menu_SelectEntry20To21
+	.thumb_func
+Menu_SelectEntry20To21:
 	overlay_veneer Menu_SelectEntry20To21Far
+	.global PartyInventory_Remove
+	.thumb_func
+PartyInventory_Remove:
 	overlay_veneer PartyInventory_RemoveFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -53,6 +86,9 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Party_AdjustSixDigitCounterA
+	.thumb_func
+Party_AdjustSixDigitCounterA:
 	overlay_veneer Party_AdjustSixDigitCounterAFar
 	.global Party_GetAverageLevel
 	.thumb_func
@@ -142,6 +178,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
 	overlay_veneer Battle_ResetEffectCounterFar
 	.global ObjectTable_Snapshot
 	.thumb_func

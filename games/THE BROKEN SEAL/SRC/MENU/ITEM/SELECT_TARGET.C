@@ -129,13 +129,22 @@ s8 ItemMenu_SelectTarget(s32 mode)
                 UiWindow_ClearInteriorTilesFar(window, 0, 72, 120, 80);
                 if (selection != menu->item_selection) {
                     quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_item & 0x1ff);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
+    defined(TBS_EDITION_IT)
+                    /* Here a full bag asks what to trade instead of saying
+                       none are in stock. */
+                    if (ItemMenu_Count(menu->owner_ids[selection]) == 15 && quantity == 0)
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
+                    else if (quantity != 0) {
+                        UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, STOCK_LABEL_X, 72);
+                    } else {
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgNoneInStock, window, 16, 72);
+                    }
+#else
                     if (quantity != 0) {
                         UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
-#if defined(TBS_EDITION_DE)
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, 32, 72);
-#else
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, 24, 72);
-#endif
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgInStock, window, STOCK_LABEL_X, 72);
                     } else {
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgNoneInStock, window, 16, 72);
                     }
@@ -144,6 +153,7 @@ s8 ItemMenu_SelectTarget(s32 mode)
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 16, 72);
 #else
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
+#endif
 #endif
                 }
                 ItemMenu_DrawEquipPreview(menu->item_owner, menu->selected_slot, 0, menu->owner_ids[selection]);

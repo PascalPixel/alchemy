@@ -26,7 +26,7 @@ Func_0811b37c:
 	adds r5, r0, #0
 	lsls r0, r5, #1
 	adds r0, r3, r0
-	bl Func_0811a0b0
+	bl BattleParty_PrepareReserveOwners
 	mov r3, r10
 	adds r5, r5, r0
 	movs r2, #255

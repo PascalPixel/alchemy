@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009638,"a",%progbits
 	.global RariberoMachi_LamentActions
 RariberoMachi_LamentActions:
+.L_02009638:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -200,7 +201,7 @@ Placement_Actors:
 	.4byte 0x01880000
 	.4byte 0x00024000
 	.4byte 0xffff006c
-	.4byte 0x02009638
+	.4byte .L_02009638
 	.4byte 0x00f80000
 	.4byte 0x00000000
 	.4byte 0x00600000
@@ -463,37 +464,37 @@ Placement_Effects:
 	.4byte 0x00000015
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x020081f1
+	.4byte SceneState_SetWord1c8To16AndForward16c
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x020081f1
+	.4byte SceneState_SetWord1c8To16AndForward16c
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000026ad
@@ -502,7 +503,7 @@ Placement_Effects:
 	.4byte 0x000026ae
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008079
+	.4byte SceneActor_StartLament
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte 0x000026b0
@@ -562,7 +563,7 @@ Placement_Effects:
 	.4byte 0x000026f9
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x02008031
+	.4byte SceneActor_SetActor23Params2And6
 	.4byte 0x00000023
 	.4byte 0x0fb60064
 	.4byte 0x001000bd
@@ -579,49 +580,49 @@ Placement_Effects:
 Placement_Effects9a7:
 	.4byte 0x00000002
 	.4byte 0x09ba0032
-	.4byte 0x020087c5
+	.4byte FieldScene_RunSecondarySequence
 	.4byte 0x00000002
 	.4byte 0xffff0033
-	.4byte 0x020091bd
+	.4byte FieldScene_RunSequenceB
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x020081f1
+	.4byte SceneState_SetWord1c8To16AndForward16c
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x02008159
+	.4byte Scene_RunTableTransition
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x020081f1
+	.4byte SceneState_SetWord1c8To16AndForward16c
 	.4byte 0x00000000
 	.4byte 0x09bb0012
-	.4byte 0x0200810d
+	.4byte SceneActor_SetupActor18Event
 	.4byte 0x00008d15
 	.4byte 0x09bb0412
-	.4byte 0x0200810d
+	.4byte SceneActor_SetupActor18Event
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000028bb
@@ -633,7 +634,7 @@ Placement_Effects9a7:
 	.4byte 0x000028bd
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020080c5
+	.4byte RariberoMachi_AskLeaving
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x000028c1
@@ -693,7 +694,7 @@ Placement_Effects9a7:
 	.4byte 0x000028ba
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x02008031
+	.4byte SceneActor_SetActor23Params2And6
 	.4byte 0x00000023
 	.4byte 0x0fb60064
 	.4byte 0x001000bd

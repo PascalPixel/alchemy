@@ -28,13 +28,13 @@ Func_08151b48:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl Func_08143b20
+	bl BattleFx_BeginTiledCanvasFilled
 	b .L_08151b8a
 .L_08151b80:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 .L_08151b8a:
 	ldr r1, [sp, #40]
 	ldr r3, [r1, #24]
@@ -82,12 +82,12 @@ Func_08151b48:
 .L_08151be0:
 	.4byte 0x00000188
 .L_08151be4:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #0
 	ldr r1, [sp, #24]
 	ldr r0, .L_08151ec8
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r1, [sp, #40]
 	ldr r3, [r1, #24]
 	cmp r3, #2
@@ -225,7 +225,7 @@ Func_08151b48:
 .L_08151cfe:
 	adds r0, r3, #0
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #2
 	bne .L_08151d18
 	movs r1, #128

@@ -1,7 +1,6 @@
 .syntax unified
 	.thumb
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02008f10,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -122,10 +121,10 @@ Data_02009098:
 	.4byte 0x00000002
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x020089f9
+	.4byte FieldScene_RunActorTenPlacementScene
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte 0x02008ba5
+	.4byte SceneActor_ApplyOffsetObjectPosition
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

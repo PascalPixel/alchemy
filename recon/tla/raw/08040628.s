@@ -156,7 +156,7 @@ Func_08040628:
 	movs r3, #12
 	str r7, [sp, #0]
 	str r4, [sp, #4]
-	bl Func_080450ac
+	bl RenderResource_CreateFrame
 	ldr r4, [sp, #4]
 	subs r5, #1
 	adds r6, #1

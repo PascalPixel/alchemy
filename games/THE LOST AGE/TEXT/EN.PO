@@ -12647,7 +12647,7 @@ msgctxt "message"
 msgid "03159"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgEnemyLabel"
 msgid "03160"
 msgstr "Enemy"
 
@@ -12687,7 +12687,7 @@ msgctxt "message"
 msgid "03169"
 msgstr "{argument_class_name:1}"
 
-msgctxt "message"
+msgctxt "MsgActorDefends"
 msgid "03170"
 msgstr "{argument_actor_name:1} is defending!"
 
@@ -12739,7 +12739,7 @@ msgctxt "MsgCritical"
 msgid "03182"
 msgstr "A critical hit!"
 
-msgctxt "message"
+msgctxt "MsgBitterBlow"
 msgid "03183"
 msgstr "A bitter blow!"
 
@@ -12823,7 +12823,7 @@ msgctxt "message"
 msgid "03203"
 msgstr "{protagonist_name}'s party has been defeated!"
 
-msgctxt "message"
+msgctxt "MsgDowned"
 msgid "03204"
 msgstr "{argument_actor_name:1} has been downed!"
 
@@ -16691,11 +16691,11 @@ msgctxt "message"
 msgid "04170"
 msgstr "Total number available"
 
-msgctxt "message"
+msgctxt "MsgPanelStatLabel"
 msgid "04171"
 msgstr "Attack"
 
-msgctxt "message"
+msgctxt "MsgPanelDefenseLabel"
 msgid "04172"
 msgstr "Defense"
 
@@ -16707,7 +16707,7 @@ msgctxt "message"
 msgid "04174"
 msgstr "Luck"
 
-msgctxt "message"
+msgctxt "MsgAgilityLabel"
 msgid "04175"
 msgstr "Agility"
 
@@ -16723,7 +16723,7 @@ msgctxt "message"
 msgid "04178"
 msgstr "Learned"
 
-msgctxt "message"
+msgctxt "MsgEquipSlotLabels"
 msgid "04179"
 msgstr "Weapon"
 
@@ -18655,7 +18655,7 @@ msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Coins"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "04662"
 msgstr "="
 

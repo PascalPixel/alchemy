@@ -68,7 +68,7 @@ BattlePlacement_UpdateTimedEntriesFar:
 	.global Func_08118100
 	.thumb_func
 Func_08118100:
-	overlay_veneer Func_0811a484
+	overlay_veneer BattleMotion_GetSlotField14
 	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	.thumb_func
 BattlePlacement_UpdateTimedEntriesTwentyTimesFar:

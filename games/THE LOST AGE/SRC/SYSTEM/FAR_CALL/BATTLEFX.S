@@ -8,7 +8,7 @@
 	.global Func_080c8520
 	.thumb_func
 Func_080c8520:
-	overlay_veneer Func_080ca494
+	overlay_veneer Event_GetSpecialValue
 	.global BattleFx_StartItemBreakFar
 	.thumb_func
 BattleFx_StartItemBreakFar:
@@ -28,7 +28,7 @@ Func_080c8540:
 	.global Func_080c8548
 	.thumb_func
 Func_080c8548:
-	overlay_veneer Func_080cb6f4
+	overlay_veneer BattleParty_ApplyHealthDelta
 	.global Func_080c8550
 	.thumb_func
 Func_080c8550:
@@ -40,11 +40,11 @@ Func_080c8558:
 	.global Func_080c8560
 	.thumb_func
 Func_080c8560:
-	overlay_veneer Func_080ca18c
+	overlay_veneer BattleFx_GetWeightedResult
 	.global Func_080c8568
 	.thumb_func
 Func_080c8568:
-	overlay_veneer Func_080ca1a4
+	overlay_veneer BattleFx_GetPhaseResult
 	.global Func_080c8570
 	.thumb_func
 Func_080c8570:

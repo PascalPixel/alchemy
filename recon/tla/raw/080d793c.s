@@ -103,7 +103,7 @@ Func_080d793c:
 	movs r1, #20
 	mov r8, r0
 	adds r0, r5, #0
-	bl __modsi3
+	bl Math_Mod
 	movs r5, #8
 	adds r7, r0, #0
 	b .L_080d7a10

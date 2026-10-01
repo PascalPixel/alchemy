@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200835c,"a",%progbits
 	.global ToretoEda_SceneTable0
 ToretoEda_SceneTable0:
 	.4byte 0xffff0000
@@ -93,52 +93,52 @@ ToretoEda_SceneTable2:
 ToretoEda_SceneTable3:
 	.4byte 0x00000a02
 	.4byte 0xffff0001
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000a02
 	.4byte 0xffff0002
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000a02
 	.4byte 0xffff0003
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000a02
 	.4byte 0xffff0004
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000a02
 	.4byte 0xffff0005
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000a02
 	.4byte 0xffff0006
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000a02
 	.4byte 0xffff0007
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000a02
 	.4byte 0xffff0008
-	.4byte 0x02008139
+	.4byte State_SetValue123ThenCounter16c
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x020080d9
+	.4byte Scene_ApplyOffset0Pos5
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x020080e9
+	.4byte Scene_ApplyOffset0Neg5
 	.4byte 0x00000002
 	.4byte 0xffff000c
-	.4byte 0x020080f9
+	.4byte Scene_ApplyOffset0Pos5Second
 	.4byte 0x00000002
 	.4byte 0xffff000d
-	.4byte 0x02008109
+	.4byte Scene_ApplyOffset0Neg5Second
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008119
+	.4byte Scene_ApplyOffset0Pos6
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008129
+	.4byte Scene_ApplyOffset0Neg6
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008031
+	.4byte State_SetActorEightValue3d
 	.4byte 0x20009085
 	.4byte 0xffff0000
-	.4byte 0x0200815d
+	.4byte Effect_SetAlphaBlendForScene9
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

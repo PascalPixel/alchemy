@@ -46,7 +46,7 @@ Func_081197f0:
 	ldr r3, .L_08119ab0
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r1, [sp, #36]
 	movs r3, #128
 	lsls r3, r3, #6
@@ -245,7 +245,7 @@ Func_081197f0:
 	bl Func_08118eb0
 	bl Func_08118f6c
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	ldrh r3, [r0]
 	cmp r3, #0
 	beq .L_08119a18
@@ -399,7 +399,7 @@ Func_081197f0:
 	bl Func_0811d7e4
 	bl Func_08118f6c
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	ldrh r3, [r0]
 	cmp r3, #0
 	beq .L_08119b5e
@@ -900,7 +900,7 @@ Func_081197f0:
 .L_08119f4c:
 	bl Func_081195d4
 	movs r0, #0
-	bl Func_08014694
+	bl Scheduler_EnableCallbacks
 	ldr r3, .L_08119f70
 	movs r2, #128
 	lsls r2, r2, #19
@@ -972,7 +972,7 @@ Func_081197f0:
 	bhi .L_08119ff2
 	bl Func_0811843c
 .L_08119ff2:
-	bl Func_08118d70
+	bl BattleParty_ResetActiveRuntimeFields
 	bl Func_08124cc0
 	bl BattlePlacement_UpdateTimedEntries
 	ldr r3, .L_0811a030

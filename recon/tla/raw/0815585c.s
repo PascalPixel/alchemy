@@ -142,12 +142,12 @@ Func_0815585c:
 	lsls r4, r4, #3
 	adds r1, r3, r4
 	adds r0, r2, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_08155b60
 	ldr r1, [sp, #28]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	cmp r6, #1
 	bne .L_0815597c
 	movs r1, #7

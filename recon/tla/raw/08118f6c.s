@@ -18,7 +18,7 @@ Func_08118f6c:
 	bl BattleParty_PrepareActiveOwners
 	mov r11, r0
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	ldr r0, [r0]
 	ldr r3, .L_0811904c
 	mov r9, r0
@@ -106,7 +106,7 @@ Func_08118f6c:
 	cmp r1, #15
 	ble .L_08118fec
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	mov r2, r9
 	str r2, [r0]
 	add sp, #32

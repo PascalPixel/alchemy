@@ -406,7 +406,7 @@ Func_080f8170:
 	mov r0, r10
 	mov r1, r8
 	adds r2, r7, #0
-	bl Func_080f8708
+	bl UiText_DrawStatComparison
 .L_080f84c6:
 	movs r2, #166
 	ldr r3, .L_080f8564

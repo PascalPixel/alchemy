@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/JIIN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/IMPORT.o"(.text)
-        "*/resource_39e_overlay.o"(.rodata)
+        "*/resource_39e_overlay.o"(.rodata.x0200c584)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

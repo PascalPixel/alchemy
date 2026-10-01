@@ -25,10 +25,10 @@ Func_0802cb08:
 	ldr r0, .L_0802cb58
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802cb5c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Func_0802c4d8
 	ldr r0, .L_0802cb60
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 	movs r0, #1
 	bl WaitFrames
 	pop {pc}

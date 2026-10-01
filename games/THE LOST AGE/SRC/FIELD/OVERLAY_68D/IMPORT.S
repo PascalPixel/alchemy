@@ -61,7 +61,7 @@ GameFlag_SetBit:
 	.global Func_02001f9c
 	.thumb_func
 Func_02001f9c:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02001fa4
 	.thumb_func
 Func_02001fa4:

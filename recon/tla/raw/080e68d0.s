@@ -415,7 +415,7 @@ Func_080e68d0:
 	ldr r0, .L_080e6f94
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #4
@@ -534,7 +534,7 @@ Func_080e68d0:
 	bl Resource_GetTableEntry
 .L_080e6d08:
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #4
@@ -639,7 +639,7 @@ Func_080e68d0:
 	ldr r0, .L_080e6fa0
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	mov r2, r9
@@ -749,7 +749,7 @@ Func_080e68d0:
 	ldr r0, .L_080e6fa4
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	lsls r1, r1, #3
@@ -992,9 +992,9 @@ Func_080e68d0:
 	bl Resource_ResetEntry
 .L_080e70ce:
 	mov r0, r11
-	bl Func_080200c8
+	bl Object_Destroy
 	ldr r0, [sp, #24]
-	bl Func_080200c8
+	bl Object_Destroy
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

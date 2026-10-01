@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008318,"a",%progbits
 	.global EntryLayout_PrimaryTable
 EntryLayout_PrimaryTable:
 	.4byte 0xffff0000
@@ -285,16 +285,16 @@ EntryLayout_FourthTable:
 	.4byte 0x000016a9
 	.4byte 0x00000000
 	.4byte 0x18450010
-	.4byte 0x0200809d
+	.4byte FieldScene_RunActor16MessageBranch
 	.4byte 0x00000000
 	.4byte 0x18450011
-	.4byte 0x020080e5
+	.4byte FieldScene_RunActor17MessageBranch
 	.4byte 0x00000000
 	.4byte 0x18450012
-	.4byte 0x0200812d
+	.4byte FieldScene_RunActor18MessageBranch
 	.4byte 0x00000000
 	.4byte 0x18450013
-	.4byte 0x02008175
+	.4byte FieldScene_RunActor19MessageBranch
 	.4byte 0x00000000
 	.4byte 0x18450014
 	.4byte 0x000016b8

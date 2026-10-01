@@ -146,10 +146,10 @@ Func_0800a0f8:
 	add	r3, r3, r2, asr #1
 	str	r3, [r6, #12]
 	b	.L_0800a344
-	.4byte 0x080000c0
-	.4byte 0x03001f60
-	.4byte 0x03001cec
-	.4byte 0x03001e40
+	.4byte Rom_Start + 0xc0
+	.4byte Data_03001f60
+	.4byte gProjection + 0xc
+	.4byte gFrameCount
 .L_0800a31c:
 	ldr	r3, [r7, #8]
 	ldr	r1, [sp, #4]

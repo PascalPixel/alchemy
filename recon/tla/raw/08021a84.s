@@ -98,42 +98,31 @@ Func_08021a84:
 	.4byte .L_08021b8c
 	.4byte .L_08021b9e
 	.4byte .L_08021b9a
-	.2byte 0x1afe
-	.2byte 0x0802
-	.2byte 0x1ba6
-	.2byte 0x0802
-	.2byte 0x1afe
-	.2byte 0x0802
-	.2byte 0x1afe
-	.2byte 0x0802
-	.2byte 0x1afe
-	.2byte 0x0802
-	.2byte 0x1afe
-	.2byte 0x0802
-	.2byte 0x1afe
-	.2byte 0x0802
-	.2byte 0x1bc2
-	.2byte 0x0802
-	.2byte 0x1b84
-	.2byte 0x0802
-	.2byte 0x1b80
-	.2byte 0x0802
-	.2byte 0x1b74
-	.2byte 0x0802
-	.2byte 0x1ba2
-	.2byte 0x0802
-	.2byte 0x1c30
-	.2byte 0x1c29
-	.2byte 0xf000
-	.2byte 0xffa8
-	.2byte 0x763d
-	.2byte 0xe7be
-	.2byte 0x7535
-	.2byte 0xe7bc
-	.2byte 0x1c28
-	.2byte 0xf19e
-	.2byte 0xfa43
-	.2byte 0xe7b8
+	.4byte .L_08021afe
+	.4byte .L_08021ba6
+	.4byte .L_08021afe
+	.4byte .L_08021afe
+	.4byte .L_08021afe
+	.4byte .L_08021afe
+	.4byte .L_08021afe
+	.4byte .L_08021bc2
+	.4byte .L_08021b84
+	.4byte .L_08021b80
+	.4byte .L_08021b74
+	.4byte .L_08021ba2
+.L_08021b74:
+	adds r0, r6, #0
+	adds r1, r5, #0
+	bl Func_08022acc
+	strb r5, [r7, #24]
+	b .L_08021afe
+.L_08021b80:
+	strb r5, [r6, #20]
+	b .L_08021afe
+.L_08021b84:
+	adds r0, r5, #0
+	bl Audio_PlayCue
+	b .L_08021afe
 .L_08021b8c:
 	ldrb r3, [r6, #20]
 	ldrb r0, [r6, #23]
@@ -149,13 +138,15 @@ Func_08021a84:
 .L_08021b9e:
 	strb r5, [r7, #23]
 	b .L_08021afe
-	.2byte 0x23ff
-	.2byte 0x75f3
-	.2byte 0x8873
-	.2byte 0x012a
-	.2byte 0x189b
-	.2byte 0x8073
-	.2byte 0xe7a6
+.L_08021ba2:
+	movs r3, #255
+	strb r3, [r6, #23]
+.L_08021ba6:
+	ldrh r3, [r6, #2]
+	lsls r2, r5, #4
+	adds r3, r3, r2
+	strh r3, [r6, #2]
+	b .L_08021afe
 .L_08021bb0:
 	movs r3, #255
 	strb r3, [r6, #23]
@@ -431,7 +422,7 @@ Func_08021a84:
 	lsls r3, r3, #2
 	ldr r0, [r3, r2]
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	b .L_08021e62
 .L_08021dcc:
 	cmp r3, #3

@@ -866,8 +866,6 @@ Func_08024f80:
 	.incbin "baserom.gba", 0x00025bb4, 0x00000030
 	.section .rom.00025c5c, "ax"
 	.incbin "baserom.gba", 0x00025c5c, 0x00000030
-	.section .rom.00025f9a, "ax"
-	.incbin "baserom.gba", 0x00025f9a, 0x00000036
 	.section .rom.00026320, "ax"
 	.incbin "baserom.gba", 0x00026320, 0x00000c60
 	.section .rom.00026f80, "ax"

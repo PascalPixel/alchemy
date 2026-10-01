@@ -450,8 +450,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_2.o"(.text)
         "*/recon/tla/raw/08025c5c.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_3.o"(.text)
-        "*/recon/tla/raw/08025f9a.o"(.text .rodata .data .padding)
-        "*/recon/tla/raw/08025f9c.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_4.o"(.text)
         "*/recon/tla/raw/08026320.o"(.text)
         "*/recon/tla/raw/0802632c.o"(.text)

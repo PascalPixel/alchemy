@@ -965,7 +965,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLAME_BLADE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)
         "*/recon/tbs/raw/080ea0d8.o"(.text)
-        "*/recon/tbs/raw/080eb754.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_ROW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT10.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.o"(.text)

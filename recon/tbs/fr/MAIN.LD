@@ -803,7 +803,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLAME_BLADE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000ed8d8)
-    "*/recon/tbs/fr/rom.o"(.rom.000eef54)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_ROW.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT10.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.o"(.text)

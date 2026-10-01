@@ -1586,12 +1586,6 @@ BattleEffect_RunCirclingFallingScene:
 	.thumb_func
 Unnamed_080ea0d8:
 	.incbin "baserom.gba", 0x000ed8d8, 0x0000167c
-	.section .rom.000eef54, "ax"
-	.global Unnamed_080eb754
-	.type Unnamed_080eb754, %function
-	.thumb_func
-Unnamed_080eb754:
-	.incbin "baserom.gba", 0x000eef54, 0x0000098c
 	.section .rom.000f0c08, "ax"
 	.global Unnamed_080ed408
 	.type Unnamed_080ed408, %function
@@ -1608,7 +1602,13 @@ Data_080edab8:
 	.incbin "baserom.gba", 0x000f12b8, 0x00000008
 	.global Data_080edac0
 Data_080edac0:
-	.incbin "baserom.gba", 0x000f12c0, 0x00000028
+	.incbin "baserom.gba", 0x000f12c0, 0x00000018
+	.global ObjectRow_SweepPair
+ObjectRow_SweepPair:
+	.incbin "baserom.gba", 0x000f12d8, 0x00000008
+	.global ObjectRow_RisePair
+ObjectRow_RisePair:
+	.incbin "baserom.gba", 0x000f12e0, 0x00000008
 	.global BattleFx6_UnitScale
 BattleFx6_UnitScale:
 	.incbin "baserom.gba", 0x000f12e8, 0x00000008
@@ -1830,7 +1830,13 @@ FallingSword_FlashCells:
 	.incbin "baserom.gba", 0x000f2712, 0x00000006
 	.global FallingSword_DustGravity
 FallingSword_DustGravity:
-	.incbin "baserom.gba", 0x000f2718, 0x00000050
+	.incbin "baserom.gba", 0x000f2718, 0x0000003e
+	.global ObjectRow_Columns
+ObjectRow_Columns:
+	.incbin "baserom.gba", 0x000f2756, 0x00000009
+	.global ObjectRow_Rows
+ObjectRow_Rows:
+	.incbin "baserom.gba", 0x000f275f, 0x00000009
 	.global BattleFx6_ObjectX
 BattleFx6_ObjectX:
 	.incbin "baserom.gba", 0x000f2768, 0x00000008

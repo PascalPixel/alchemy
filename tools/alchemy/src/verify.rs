@@ -29,7 +29,7 @@ pub const WAVES: &[&[&str]] = &[
         "prepare-inputs",
     ],
     &["compare", "compare-tla", "compare-other-editions"],
-    &["edition-c-report", "coverage-check"],
+    &["coverage-check"],
 ];
 
 const USAGE: &str = "usage: alchemy verify\n\
@@ -511,8 +511,6 @@ mod tests {
         assert!(builds < publication);
         assert!(main[builds].contains(&"compare-tla"));
         assert!(main[builds].contains(&"compare-other-editions"));
-        assert!(main[publication].contains(&"edition-c-report"));
-        assert!(!STAGED.contains(&"edition-c-report"));
     }
 
     #[test]

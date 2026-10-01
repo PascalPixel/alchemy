@@ -138,25 +138,6 @@ fn section_function_symbols<'a>(
     Ok(symbols)
 }
 
-/// Diagnostic names and complete section-local extents, including pools.
-pub(crate) fn placed_functions(
-    object: &str,
-    section: &str,
-    size: i64,
-) -> Result<Vec<(String, i64)>, String> {
-    let bytes = std::fs::read(object).map_err(|error| format!("{object}: {error}"))?;
-    let symbols = section_function_symbols(&bytes, section, size)
-        .map_err(|error| format!("{object}: {error}"))?;
-    Ok(symbols
-        .iter()
-        .filter_map(|(_, name)| {
-            let names = [name.to_string()].into_iter().collect();
-            let extent = function_spans(&symbols, &names, size);
-            (extent > 0).then(|| (name.to_string(), extent))
-        })
-        .collect())
-}
-
 /// Sum the spans of `names` among `symbols`, sorted by offset in a section
 /// of `size` bytes.
 fn function_spans(

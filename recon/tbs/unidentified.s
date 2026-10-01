@@ -1541,16 +1541,16 @@ Data_080f1770:
 Func_080f2b6c:
 	.incbin "baserom.gba", 0x000f2b6c, 0x00000004
 	.section .unidentified.080f38bc,"a"
-	.global Data_080f38bc
-Data_080f38bc:
+	.global Title_PromptTiles
+Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f38bc, 0x000000ee
 	.incbin "baserom.gba", 0x000f39aa, 0x00000001
 	.global Data_080f39ab
 Data_080f39ab:
 	.incbin "baserom.gba", 0x000f39ab, 0x00000005
 	.incbin "baserom.gba", 0x000f39b0, 0x00000001
-	.global Data_080f39b1
-Data_080f39b1:
+	.global Title_PromptBlendLevels
+Title_PromptBlendLevels:
 	.incbin "baserom.gba", 0x000f39b1, 0x0000003d
 	.global Data_080f39ee
 Data_080f39ee:

@@ -1,19 +1,20 @@
-/* Draft, not exact (2026-09-25): 280 of 280 bytes, 77 differing halfwords.
-   Written from the listing after splitting it from ObjectTable_Snapshot.
-   Every call, store and loop is in place; the bank byte is read once for
-   both bitfields. Remaining: global allocation puts count on the stack and
-   the frame cursor in sl where the ROM keeps count in r9, the bank cursor
-   in fp and the two frame cursors on the stack; declaration order was
-   swept (77 is the best of 120 orders).
-   2026-09-29 alchemy permute (8 minutes): 1760 -> 1496, minimized to two
-   natural changes: count is declared after copy, and the cursors advance
-   next_frames, frames, copy, banks. The selected actor is now
-   gGameState.selected_actor and the callee and cells carry the build's
-   names; that costs one more moved instruction (1521: 39 register-only,
-   1 stack-only, 1 operand, 16 reordered, 2 inserted, 1 deleted). The
-   allocation above is unchanged in kind. The index and frame tables are
-   still reached relative to Data_02001124 (32 bytes before it, and past
-   its 32 objects), which needs one named snapshot record before adoption. */
+/* Draft of ObjectTable_Restore, the reverse of ObjectTable_Snapshot in
+   games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT5.C; it belongs after
+   it in that file.
+   Remaining difference (54 instructions, all register choice and order):
+   the listing reaches gEventWork, gMapWork and the selected actor through an
+   address register of their own (ldr r2, =gEventWork; ldr r3, [r2]) and
+   takes its reload registers in turn from r1, r2 and r3. That is what agscc
+   gives when its loop pass moves the three address loads out of the loop:
+   compiling this draft with the diagnostic -fmove-all-movables leaves only
+   the order of a few moves. Here each address is loaded one insn before its
+   use, so the pass counts its life as 1 and leaves it (10 * 1 * 1 against 60
+   insns); the listing's source must put about six insns or notes between an
+   address and its use, as an inlined helper taking the address would. An
+   accessor taking the cell's address reaches a life of 2 only.
+   What already agrees: count, the index cursor and the bank cursor in r9,
+   sl and fp with the two frame cursors on the stack, the frame byte read
+   once into r1, and the loop's shape. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "PARTY_STATE.H"
@@ -78,27 +79,30 @@ void Object_ResetMotion(struct RestoreObject *object);
 void ObjectTable_Restore(void)
 {
     struct RestoreObject *copy = Data_02001124;
-    s32 count = 0;
     u8 *indices = (u8 *)Data_02001124 - 32;
     u8 *frames = (u8 *)&Data_02001124[32];
     u8 *next_frames = frames + 32;
     u8 *banks = frames + 64;
+    s32 count;
     struct RestoreObject *object;
     struct RestoreSprite *sprite;
     struct RestoreCamera *camera;
     struct RestoreView *view;
-    u32 index;
+    s32 index;
+    s32 frame;
+    s32 bank;
     s32 y;
-    u32 bank;
 
     index = *indices++;
+    count = 0;
     while (index != 255) {
         object = ObjectTable_Get(index);
         if (object != NULL) {
             sprite = object->sprite;
             Dma_Set(copy, object, 0x84000000 | (sizeof(struct RestoreObject) / 4), (volatile u32 *)0x040000d4);
-            if (*frames != 0)
-                Object_SetMode(object, *frames);
+            frame = *frames;
+            if (frame != 0)
+                Object_SetMode(object, frame);
             ObjectDispatch_SetSingleChildField26Far(object, *next_frames);
             bank = *banks;
             sprite->bank = bank;
@@ -114,11 +118,12 @@ void ObjectTable_Restore(void)
                 Object_ResetMotion(object);
             }
         }
-        next_frames++;
-        frames++;
         copy++;
+        frames++;
+        next_frames++;
         banks++;
-        if (++count > 31)
+        count++;
+        if (count > 31)
             break;
         index = *indices++;
     }

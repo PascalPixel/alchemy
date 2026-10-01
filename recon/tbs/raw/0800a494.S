@@ -267,10 +267,10 @@ Data_0800a494:
 	mov	r3, #1
 	str	r3, [sp, #8]
 	b	.L_0800a87c
-	.4byte 0x03001e64
-	.4byte 0x08013624
-	.4byte 0x030001d8
-	.4byte 0x0300013c
+	.4byte gObjectSlots
+	.4byte Data_08013624
+	.4byte IwramSqrt
+	.4byte IwramRatioMulQ14
 .L_0800a854:
 	ldr	r2, [r5, #64]
 	cmp	sl, r2
@@ -352,8 +352,8 @@ Data_0800a494:
 .L_0800a968:
 	ldr	r4, [pc, #8]
 	bx	r4
-	.4byte 0x080044d1
-	.4byte 0x030001d8
-	.4byte 0x0300013c
+	.4byte ArcTan2
+	.4byte IwramSqrt
+	.4byte IwramRatioMulQ14
 	.global Object_UpdateAllEnd
 Object_UpdateAllEnd:

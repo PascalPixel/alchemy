@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008fc8,"a",%progbits
+.L_02008fc8:
 	.4byte 0x00000016
 	.4byte 0x0000001e
 	.4byte 0x00000080
@@ -469,7 +470,7 @@ gArutinMuraPlacements2:
 	.4byte 0x02f40000
 	.4byte 0x00007000
 	.4byte 0x0000007b
-	.4byte 0x02008fc8
+	.4byte .L_02008fc8
 	.4byte 0x015e0000
 	.4byte 0x00000000
 	.4byte 0x02ea0000
@@ -666,7 +667,7 @@ gArutinMuraEvents1:
 	.4byte SceneState_SetFlag906ByActorNineteenX
 	.4byte 0x00000002
 	.4byte 0x08ff0014
-	.4byte 0x02008d59
+	.4byte ArutinMura_RunDriftEndScene
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -915,6 +916,7 @@ gArutinMuraEvents2:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+.L_02009dc0:
 	.4byte 0x0021002a
 	.4byte 0x00020002
 	.4byte 0x002a0000
@@ -925,34 +927,43 @@ gArutinMuraEvents2:
 	.4byte 0x00280000
 	.4byte 0x00020023
 	.4byte 0x00050002
-	.4byte 0x0023ffff
+	.2byte 0xffff
+.L_02009dea:
+	.2byte 0x0023
 	.4byte 0x00020030
 	.4byte 0x00050002
 	.4byte 0x00300021
 	.4byte 0x00020002
 	.4byte 0xffff0005
+.L_02009e00:
 	.4byte 0x00230023
 	.4byte 0x00020002
 	.4byte 0x00210005
 	.4byte 0x00020023
 	.4byte 0x00050002
-	.4byte 0x0023ffff
+	.2byte 0xffff
+.L_02009e16:
+	.2byte 0x0023
 	.4byte 0x0002002e
 	.4byte 0x00050002
 	.4byte 0x002e0021
 	.4byte 0x00020002
 	.4byte 0xffff0005
+.L_02009e2c:
 	.4byte 0x00320023
 	.4byte 0x00020002
 	.4byte 0x00210005
 	.4byte 0x00020032
 	.4byte 0x00050002
-	.4byte 0x0023ffff
+	.2byte 0xffff
+.L_02009e42:
+	.2byte 0x0023
 	.4byte 0x00020021
 	.4byte 0x00050002
 	.4byte 0x00210021
 	.4byte 0x00020002
 	.4byte 0xffff0005
+.L_02009e58:
 	.4byte 0x00340023
 	.4byte 0x00020002
 	.4byte 0x00210005
@@ -961,19 +972,19 @@ gArutinMuraEvents2:
 	.4byte 0x0000ffff
 	.global ArutinMura_TriggerTable
 ArutinMura_TriggerTable:
-	.4byte 0x02009dea
+	.4byte .L_02009dea
 	.4byte 0x00050029
-	.4byte 0x02009dc0
+	.4byte .L_02009dc0
 	.4byte 0x00060033
-	.4byte 0x02009e2c
+	.4byte .L_02009e2c
 	.4byte 0x00110039
-	.4byte 0x02009e42
+	.4byte .L_02009e42
 	.4byte 0x00110027
-	.4byte 0x02009e58
+	.4byte .L_02009e58
 	.4byte 0x00190030
-	.4byte 0x02009e00
+	.4byte .L_02009e00
 	.4byte 0x0009003b
-	.4byte 0x02009e16
+	.4byte .L_02009e16
 	.4byte 0x0017002a
-	.4byte 0x02009e42
+	.4byte .L_02009e42
 	.4byte 0x001b0029

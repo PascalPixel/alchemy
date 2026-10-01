@@ -225,7 +225,7 @@ Func_08151b48:
 .L_08151cfe:
 	adds r0, r3, #0
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #2
 	bne .L_08151d18
 	movs r1, #128

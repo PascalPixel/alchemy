@@ -72,25 +72,25 @@ gSceneExits:
 	.4byte 0x000001ff
 	.global gScenePlacements
 gScenePlacements:
-	.4byte Tileset_Set114TilesD + 0x4e3
+	.4byte 0x08e90133
 	.4byte .L_02008090
 	.4byte 0x00780000
 	.4byte 0x00000000
 	.4byte 0x02600000
 	.4byte 0x0002c000
-	.4byte Tileset_Set116TilesD + 0x693
+	.4byte 0x08ea0133
 	.4byte .L_02008090
 	.4byte 0x00b80000
 	.4byte 0x00000000
 	.4byte 0x02500000
 	.4byte 0x0002c000
-	.4byte Field_Map290 + 0x577
+	.4byte 0x08eb0133
 	.4byte .L_02008090
 	.4byte 0x00d80000
 	.4byte 0x00000000
 	.4byte 0x02500000
 	.4byte 0x0002c000
-	.4byte Field_Map295 + 0x31b
+	.4byte 0x08ec0133
 	.4byte .L_02008090
 	.4byte 0x01180000
 	.4byte 0x00000000
@@ -120,16 +120,16 @@ gSceneEvents:
 	.4byte 0xffff0005
 	.4byte 0x00000005
 	.4byte 0x00004e15
-	.4byte Tileset_Set114TilesD + 0x3b8
+	.4byte 0x08e90008
 	.4byte Func_02000054
 	.4byte 0x00004e15
-	.4byte Tileset_Set116TilesD + 0x569
+	.4byte 0x08ea0009
 	.4byte Func_02000054
 	.4byte 0x00004e15
-	.4byte Field_Map290 + 0x44e
+	.4byte 0x08eb000a
 	.4byte Func_02000054
 	.4byte 0x00004e15
-	.4byte Field_Map295 + 0x1f3
+	.4byte 0x08ec000b
 	.4byte Func_02000054
 	.4byte 0xffffffff
 	.4byte 0x00000000

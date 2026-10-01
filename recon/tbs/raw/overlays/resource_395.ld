@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/KI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/IMPORT.o"(.text)
-        "*/resource_395_overlay.o"(.rodata)
+        "*/resource_395_overlay.o"(.rodata.x02009ab8)
     }
     .bss ALIGN(16) (NOLOAD) :
     {

@@ -10,6 +10,9 @@
 	.thumb_func
 Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
+	.global Engine_MathModulo
+	.thumb_func
+Engine_MathModulo:
 	overlay_veneer IwramUnsignedRemainder
 	.global WaitFrames
 	.thumb_func
@@ -165,6 +168,9 @@ Engine_ActorSetPosition:
 	.thumb_func
 Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
+	.global ObjectMotion_WaitForAnimationChange
+	.thumb_func
+ObjectMotion_WaitForAnimationChange:
 	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
 	.global BattleFx_RunRisingObjectSequence
 	.thumb_func

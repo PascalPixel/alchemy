@@ -4,480 +4,480 @@
 	.global FieldScene_RunExtendedActorSequence
 	.thumb_func
 FieldScene_RunExtendedActorSequence:
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r3, [pc, #916]
-	ldr	r3, [r3, #0]
-	adds	r1, r3, #0
-	sub	sp, #20
-	mov	r8, r1
-	str	r3, [sp, #12]
-	str	r3, [sp, #16]
-	mov	r7, r8
-	adds	r7, #216
-	movs	r1, #0
-	ldrsh	r3, [r7, r1]
-	ldr	r2, [pc, #896]
-	lsls	r3, r3, #2
-	adds	r3, r3, r2
-	ldrh	r3, [r3, #2]
-	lsrs	r3, r3, #5
-	str	r3, [sp, #8]
-	mov	r3, r8
-	adds	r3, #230
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	subs	r3, #10
-	mov	fp, r2
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #0
-	beq.n	.L_02003686
-	mov	r6, r8
-	adds	r6, #218
-	movs	r3, #2
-	strh	r3, [r6, #0]
-	b.n	.L_020036f4
-.L_02003686:
-	movs	r0, #131
-	lsls	r0, r0, #1
-	bl 0x0200bee8
-	cmp	r0, #0
-	beq.n	.L_020036a6
-	mov	r6, r8
-	adds	r6, #218
-	movs	r1, #0
-	ldrsh	r3, [r6, r1]
-	ldrh	r2, [r6, #0]
-	cmp	r3, #0
-	ble.n	.L_020036f4
-	subs	r3, r2, #1
-.L_020036a2:
-	strh	r3, [r6, #0]
-	b.n	.L_020036f4
-.L_020036a6:
-	mov	r6, r8
-	adds	r6, #218
-	movs	r1, #0
-	ldrsh	r3, [r6, r1]
-	ldrh	r2, [r6, #0]
-	cmp	r3, #1
-	bgt.n	.L_020036f4
-	adds	r3, r2, #1
-	movs	r2, #128
-	strh	r3, [r6, #0]
-	lsls	r2, r2, #9
-	lsls	r3, r3, #16
-	cmp	r3, r2
-	bne.n	.L_020036f4
-	ldr	r3, [pc, #800]
-	ldr	r0, [pc, #800]
-	ldr	r1, [pc, #804]
-	ldr	r2, [pc, #804]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r0, #128
-	lsls	r0, r0, #2
-	bl 0x0200bde8
-	adds	r5, r0, #0
-	adds	r1, r5, #0
-	ldr	r0, [pc, #792]
-	bl 0x0200bdf8
-	movs	r1, #128
-	movs	r3, #0
-	ldrsh	r0, [r7, r3]
-	lsls	r1, r1, #2
-	adds	r2, r5, #0
-	bl 0x0200be10
-	adds	r0, r5, #0
-	bl 0x0200bdf0
-.L_020036f4:
-	movs	r1, #0
-	ldrsh	r2, [r6, r1]
-	cmp	r2, #0
-	bne.n	.L_0200370a
-	ldr	r3, [sp, #12]
-	adds	r3, #216
-	movs	r2, #0
-	ldrsh	r0, [r3, r2]
-	bl 0x0200be08
-	b.n	.L_020039ca
-.L_0200370a:
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #1
-	adds	r7, r3, #0
-	subs	r7, #8
-	movs	r3, #255
-	ands	r7, r3
-	mov	r3, fp
-	lsls	r3, r3, #4
-	str	r3, [sp, #4]
-	movs	r2, #128
-	ldr	r1, [sp, #4]
-	lsls	r2, r2, #8
-	movs	r3, #104
-	mov	r9, r2
-	ldr	r2, [sp, #12]
-	subs	r4, r3, r1
-	movs	r3, #0
-	stmia	r2!, {r3}
-	lsls	r3, r4, #16
-	adds	r1, r2, #0
-	str	r1, [sp, #12]
-	orrs	r3, r7
-	mov	r1, r9
-	orrs	r3, r1
-	stmia	r2!, {r3}
-	ldr	r3, [sp, #8]
-	movs	r5, #228
-	lsls	r5, r5, #8
-	adds	r1, r2, #0
-	orrs	r3, r5
-	str	r1, [sp, #12]
-	stmia	r2!, {r3}
-	adds	r1, r2, #0
-	str	r1, [sp, #12]
-.L_02003750:
-	mov	r0, r8
-	movs	r2, #12
-	movs	r1, #255
-	movs	r6, #0
-	add	r8, r2
-	bl 0x0200be28
-	cmp	r6, fp
-	bcs.n	.L_020037a4
-	ldr	r3, [sp, #8]
-	movs	r1, #128
-	adds	r3, #2
-	orrs	r3, r5
-	lsls	r1, r1, #23
-	ldr	r5, [sp, #12]
-	mov	r9, r1
-	mov	sl, r3
-.L_02003772:
-	lsls	r2, r6, #4
-	movs	r3, #96
-	subs	r4, r3, r2
-	movs	r3, #0
-	str	r3, [r5, #0]
-	lsls	r3, r4, #16
-	mov	r2, r9
-	orrs	r3, r7
-	orrs	r3, r2
-	str	r3, [r5, #4]
-	mov	r3, sl
-	str	r3, [r5, #8]
-	ldr	r1, [sp, #12]
-	adds	r1, #12
-	str	r1, [sp, #12]
-	mov	r0, r8
-	movs	r2, #12
-	movs	r1, #255
-	adds	r6, #1
-	add	r8, r2
-	adds	r5, #12
-	bl 0x0200be28
-	cmp	r6, fp
-	bcc.n	.L_02003772
-.L_020037a4:
-	ldr	r2, [sp, #12]
-	movs	r6, #0
-	movs	r3, #128
-	stmia	r2!, {r6}
-	lsls	r3, r3, #8
-	mov	r9, r3
-	movs	r3, #224
-	adds	r1, r2, #0
-	lsls	r3, r3, #15
-	str	r1, [sp, #12]
-	orrs	r3, r7
-	mov	r1, r9
-	orrs	r3, r1
-	stmia	r2!, {r3}
-	ldr	r5, [sp, #8]
-	adds	r1, r2, #0
-	movs	r2, #228
-	lsls	r2, r2, #8
-	adds	r5, #6
-.L_020037ca:
-	orrs	r5, r2
-.L_020037cc:
-	stmia	r1!, {r5}
-	mov	r0, r8
-	adds	r3, r1, #0
-	mov	sl, r2
-	movs	r1, #255
-	movs	r2, #12
-	add	r8, r2
-	str	r3, [sp, #12]
-	bl 0x0200be28
-	ldr	r1, [sp, #12]
-	stmia	r1!, {r6}
-	adds	r3, r1, #0
-	str	r3, [sp, #12]
-	movs	r3, #240
-	lsls	r3, r3, #15
-	mov	r2, r9
-	orrs	r3, r7
-	orrs	r3, r2
-	movs	r2, #128
-	lsls	r2, r2, #21
-	orrs	r3, r2
-	stmia	r1!, {r3}
-	adds	r2, r1, #0
-	str	r2, [sp, #12]
-	stmia	r1!, {r5}
-	adds	r3, r1, #0
-	movs	r1, #12
-	mov	r0, r8
-	add	r8, r1
-	movs	r1, #255
-	str	r3, [sp, #12]
-	bl 0x0200be28
-	cmp	r6, fp
-	bcs.n	.L_02003866
-	ldr	r4, [sp, #8]
-	movs	r2, #128
-	movs	r1, #128
-	mov	r3, sl
-	adds	r4, #2
-	lsls	r2, r2, #23
-	lsls	r1, r1, #16
-	ldr	r5, [sp, #12]
-	mov	r9, r2
-	orrs	r4, r3
-	mov	sl, r1
-.L_0200382a:
-	movs	r3, #0
-	str	r3, [r5, #0]
-	mov	r2, sl
-	adds	r3, r7, #0
-	orrs	r3, r2
-	mov	r1, r9
-	movs	r2, #128
-	orrs	r3, r1
-	lsls	r2, r2, #21
-	orrs	r3, r2
-	str	r3, [r5, #4]
-	str	r4, [r5, #8]
-	ldr	r2, [sp, #12]
-	mov	r0, r8
-	adds	r2, #12
-	movs	r3, #12
-	movs	r1, #255
-	str	r4, [sp, #0]
-	str	r2, [sp, #12]
-	add	r8, r3
-	bl 0x0200be28
-	movs	r1, #128
-	lsls	r1, r1, #13
-	adds	r6, #1
-	adds	r5, #12
-	add	sl, r1
-	ldr	r4, [sp, #0]
-	cmp	r6, fp
-	bcc.n	.L_0200382a
-.L_02003866:
-	movs	r2, #128
-	ldr	r4, [sp, #4]
-	lsls	r2, r2, #8
-	mov	r9, r2
-	ldr	r2, [sp, #12]
-	movs	r3, #0
-	adds	r4, #128
-	stmia	r2!, {r3}
-	mov	fp, r3
-	lsls	r3, r4, #16
-	orrs	r7, r3
-	mov	r3, r9
-	orrs	r7, r3
-	movs	r3, #128
-	lsls	r3, r3, #21
-	adds	r1, r2, #0
-	orrs	r7, r3
-	str	r1, [sp, #12]
-	stmia	r2!, {r7}
-	ldr	r3, [sp, #8]
-	adds	r1, r2, #0
-	movs	r2, #228
-	lsls	r2, r2, #8
-	orrs	r3, r2
-	mov	sl, r2
-	adds	r2, r1, #0
-	stmia	r2!, {r3}
-	adds	r1, r2, #0
-	movs	r3, #12
-	str	r1, [sp, #12]
-	mov	r0, r8
-	movs	r1, #255
-	add	r8, r3
-	bl 0x0200be28
-	ldr	r3, [pc, #328]
-	ldr	r3, [r3, #0]
-	movs	r2, #15
-	ands	r3, r2
-	cmp	r3, #4
-	bhi.n	.L_020038ba
-	b.n	.L_020039ca
-.L_020038ba:
-	ldr	r3, [sp, #16]
-	movs	r1, #128
-	adds	r3, #224
-	lsls	r1, r1, #23
-	movs	r2, #0
-	ldrsh	r0, [r3, r2]
-	mov	r9, r1
-	bl 0x0200c078
-	adds	r6, r0, #0
-	cmp	r6, #0
-	beq.n	.L_02003948
-	ldr	r3, [sp, #16]
-	adds	r3, #232
-	ldr	r3, [r3, #0]
-	ldr	r0, [r6, #8]
-	movs	r5, #224
-	lsls	r5, r5, #12
-	subs	r0, r0, r3
-	adds	r1, r5, #0
-	bl 0x0200bd98
-	ldr	r3, [sp, #16]
-	adds	r3, #236
-	ldr	r3, [r3, #0]
-	adds	r4, r0, #0
-	ldr	r0, [r6, #16]
-	adds	r4, #112
-	adds	r1, r5, #0
-	subs	r0, r0, r3
-	str	r4, [sp, #0]
-	bl 0x0200bd98
-	ldr	r3, [sp, #16]
-	adds	r3, #218
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #1
-	adds	r0, r0, r3
-	ldr	r1, [sp, #12]
-	subs	r7, r0, #4
-	movs	r3, #255
-	ands	r7, r3
-	mov	r3, fp
-	stmia	r1!, {r3}
-.L_02003918:
-	ldr	r4, [sp, #0]
-	adds	r2, r1, #0
-	lsls	r3, r4, #16
-	str	r2, [sp, #12]
-	orrs	r7, r3
-	mov	r2, r9
-	orrs	r7, r2
-	stmia	r1!, {r7}
-	adds	r3, r1, #0
-	str	r3, [sp, #12]
-	ldr	r3, [sp, #8]
-	mov	r1, sl
-	adds	r3, #12
-	orrs	r3, r1
-	ldr	r1, [sp, #12]
-	stmia	r1!, {r3}
-	adds	r2, r1, #0
-	str	r2, [sp, #12]
-	mov	r0, r8
-	movs	r2, #12
-	movs	r1, #255
-	add	r8, r2
-	bl 0x0200be28
-.L_02003948:
-	ldr	r3, [sp, #16]
-	adds	r3, #222
-	movs	r1, #0
-	ldrsh	r0, [r3, r1]
-	bl 0x0200c078
-	adds	r6, r0, #0
-	cmp	r6, #0
-	beq.n	.L_020039ca
-	ldr	r3, [sp, #16]
-	adds	r3, #232
-	ldr	r3, [r3, #0]
-	ldr	r0, [r6, #8]
-	movs	r5, #224
-	lsls	r5, r5, #12
-	subs	r0, r0, r3
-	adds	r1, r5, #0
-.L_0200396a:
-	bl 0x0200bd98
-	ldr	r3, [sp, #16]
-	adds	r3, #236
-	ldr	r3, [r3, #0]
-	adds	r4, r0, #0
-	ldr	r0, [r6, #16]
-	adds	r4, #112
-	adds	r1, r5, #0
-	subs	r0, r0, r3
-	str	r4, [sp, #0]
-	bl 0x0200bd98
-	ldr	r3, [sp, #16]
-	adds	r3, #218
-	movs	r1, #0
-	ldrsh	r2, [r3, r1]
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #1
-.L_02003992:
-	adds	r0, r0, r3
-	ldr	r1, [sp, #12]
-	subs	r7, r0, #4
-	movs	r3, #255
-	ands	r7, r3
-	mov	r3, fp
-	stmia	r1!, {r3}
-	ldr	r4, [sp, #0]
-	adds	r2, r1, #0
-	lsls	r3, r4, #16
-	str	r2, [sp, #12]
-	orrs	r7, r3
-	mov	r2, r9
-	orrs	r7, r2
-	stmia	r1!, {r7}
-	adds	r3, r1, #0
-	str	r3, [sp, #12]
-	ldr	r3, [sp, #8]
-	mov	r1, sl
-	adds	r3, #8
-	ldr	r2, [sp, #12]
-	orrs	r3, r1
-	str	r3, [r2, #0]
-	mov	r3, r8
-	adds	r0, r3, #0
-	movs	r1, #255
-	bl 0x0200be28
-.L_020039ca:
-	add	sp, #20
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001f3c
-	.4byte 0x03001b10
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldr r3, .L_0200b9dc
+	ldr r3, [r3]
+	adds r1, r3, #0
+	sub sp, #20
+	mov r8, r1
+	str r3, [sp, #12]
+	str r3, [sp, #16]
+	mov r7, r8
+	adds r7, #216
+	movs r1, #0
+	ldrsh r3, [r7, r1]
+	ldr r2, .L_0200b9e0
+	lsls r3, r3, #2
+	adds r3, r3, r2
+	ldrh r3, [r3, #2]
+	lsrs r3, r3, #5
+	str r3, [sp, #8]
+	mov r3, r8
+	adds r3, #230
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	subs r3, #10
+	mov r11, r2
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #0
+	beq .L_0200b686
+	mov r6, r8
+	adds r6, #218
+	movs r3, #2
+	strh r3, [r6]
+	b .L_0200b6f4
+.L_0200b686:
+	movs r0, #131
+	lsls r0, r0, #1
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	beq .L_0200b6a6
+	mov r6, r8
+	adds r6, #218
+	movs r1, #0
+	ldrsh r3, [r6, r1]
+	ldrh r2, [r6]
+	cmp r3, #0
+	ble .L_0200b6f4
+	subs r3, r2, #1
+	strh r3, [r6]
+	b .L_0200b6f4
+.L_0200b6a6:
+	mov r6, r8
+	adds r6, #218
+	movs r1, #0
+	ldrsh r3, [r6, r1]
+	ldrh r2, [r6]
+	cmp r3, #1
+	bgt .L_0200b6f4
+	adds r3, r2, #1
+	movs r2, #128
+	strh r3, [r6]
+	lsls r2, r2, #9
+	lsls r3, r3, #16
+	cmp r3, r2
+	bne .L_0200b6f4
+	ldr r3, .L_0200b9e4
+	ldr r0, .L_0200b9e8
+	ldr r1, .L_0200b9ec
+	ldr r2, .L_0200b9f0
+	stmia r3!, {r0, r1, r2}
+	subs r3, #12
+	movs r0, #128
+	lsls r0, r0, #2
+	bl Runtime_BumpAllocateAlternatePool
+	adds r5, r0, #0
+	adds r1, r5, #0
+	ldr r0, .L_0200b9f4
+	bl Resource_DecodeType01
+	movs r1, #128
+	movs r3, #0
+	ldrsh r0, [r7, r3]
+	lsls r1, r1, #2
+	adds r2, r5, #0
+	bl VramBlock_LoadCached
+	adds r0, r5, #0
+	bl Runtime_BumpFree
+.L_0200b6f4:
+	movs r1, #0
+	ldrsh r2, [r6, r1]
+	cmp r2, #0
+	bne .L_0200b70a
+	ldr r3, [sp, #12]
+	adds r3, #216
+	movs r2, #0
+	ldrsh r0, [r3, r2]
+	bl Resource_ActivateEntry
+	b .L_0200b9ca
+.L_0200b70a:
+	lsls r3, r2, #1
+	adds r3, r3, r2
+	lsls r3, r3, #1
+	adds r7, r3, #0
+	subs r7, #8
+	movs r3, #255
+	ands r7, r3
+	mov r3, r11
+	lsls r3, r3, #4
+	str r3, [sp, #4]
+	movs r2, #128
+	ldr r1, [sp, #4]
+	lsls r2, r2, #8
+	movs r3, #104
+	mov r9, r2
+	ldr r2, [sp, #12]
+	subs r4, r3, r1
+	movs r3, #0
+	stmia r2!, {r3}
+	lsls r3, r4, #16
+	adds r1, r2, #0
+	str r1, [sp, #12]
+	orrs r3, r7
+	mov r1, r9
+	orrs r3, r1
+	stmia r2!, {r3}
+	ldr r3, [sp, #8]
+	movs r5, #228
+	lsls r5, r5, #8
+	adds r1, r2, #0
+	orrs r3, r5
+	str r1, [sp, #12]
+	stmia r2!, {r3}
+	adds r1, r2, #0
+	str r1, [sp, #12]
+	mov r0, r8
+	movs r2, #12
+	movs r1, #255
+	movs r6, #0
+	add r8, r2
+	bl Runtime_PushSlotEntry
+	cmp r6, r11
+	bcs .L_0200b7a4
+	ldr r3, [sp, #8]
+	movs r1, #128
+	adds r3, #2
+	orrs r3, r5
+	lsls r1, r1, #23
+	ldr r5, [sp, #12]
+	mov r9, r1
+	mov r10, r3
+.L_0200b772:
+	lsls r2, r6, #4
+	movs r3, #96
+	subs r4, r3, r2
+	movs r3, #0
+	str r3, [r5]
+	lsls r3, r4, #16
+	mov r2, r9
+	orrs r3, r7
+	orrs r3, r2
+	str r3, [r5, #4]
+	mov r3, r10
+	str r3, [r5, #8]
+	ldr r1, [sp, #12]
+	adds r1, #12
+	str r1, [sp, #12]
+	mov r0, r8
+	movs r2, #12
+	movs r1, #255
+	adds r6, #1
+	add r8, r2
+	adds r5, #12
+	bl Runtime_PushSlotEntry
+	cmp r6, r11
+	bcc .L_0200b772
+.L_0200b7a4:
+	ldr r2, [sp, #12]
+	movs r6, #0
+	movs r3, #128
+	stmia r2!, {r6}
+	lsls r3, r3, #8
+	mov r9, r3
+	movs r3, #224
+	adds r1, r2, #0
+	lsls r3, r3, #15
+	str r1, [sp, #12]
+	orrs r3, r7
+	mov r1, r9
+	orrs r3, r1
+	stmia r2!, {r3}
+	ldr r5, [sp, #8]
+	adds r1, r2, #0
+	movs r2, #228
+	lsls r2, r2, #8
+	adds r5, #6
+	orrs r5, r2
+	stmia r1!, {r5}
+	mov r0, r8
+	adds r3, r1, #0
+	mov r10, r2
+	movs r1, #255
+	movs r2, #12
+	add r8, r2
+	str r3, [sp, #12]
+	bl Runtime_PushSlotEntry
+	ldr r1, [sp, #12]
+	stmia r1!, {r6}
+	adds r3, r1, #0
+	str r3, [sp, #12]
+	movs r3, #240
+	lsls r3, r3, #15
+	mov r2, r9
+	orrs r3, r7
+	orrs r3, r2
+	movs r2, #128
+	lsls r2, r2, #21
+	orrs r3, r2
+	stmia r1!, {r3}
+	adds r2, r1, #0
+	str r2, [sp, #12]
+	stmia r1!, {r5}
+	adds r3, r1, #0
+	movs r1, #12
+	mov r0, r8
+	add r8, r1
+	movs r1, #255
+	str r3, [sp, #12]
+	bl Runtime_PushSlotEntry
+	cmp r6, r11
+	bcs .L_0200b866
+	ldr r4, [sp, #8]
+	movs r2, #128
+	movs r1, #128
+	mov r3, r10
+	adds r4, #2
+	lsls r2, r2, #23
+	lsls r1, r1, #16
+	ldr r5, [sp, #12]
+	mov r9, r2
+	orrs r4, r3
+	mov r10, r1
+.L_0200b82a:
+	movs r3, #0
+	str r3, [r5]
+	mov r2, r10
+	adds r3, r7, #0
+	orrs r3, r2
+	mov r1, r9
+	movs r2, #128
+	orrs r3, r1
+	lsls r2, r2, #21
+	orrs r3, r2
+	str r3, [r5, #4]
+	str r4, [r5, #8]
+	ldr r2, [sp, #12]
+	mov r0, r8
+	adds r2, #12
+	movs r3, #12
+	movs r1, #255
+	str r4, [sp, #0]
+	str r2, [sp, #12]
+	add r8, r3
+	bl Runtime_PushSlotEntry
+	movs r1, #128
+	lsls r1, r1, #13
+	adds r6, #1
+	adds r5, #12
+	add r10, r1
+	ldr r4, [sp, #0]
+	cmp r6, r11
+	bcc .L_0200b82a
+.L_0200b866:
+	movs r2, #128
+	ldr r4, [sp, #4]
+	lsls r2, r2, #8
+	mov r9, r2
+	ldr r2, [sp, #12]
+	movs r3, #0
+	adds r4, #128
+	stmia r2!, {r3}
+	mov r11, r3
+	lsls r3, r4, #16
+	orrs r7, r3
+	mov r3, r9
+	orrs r7, r3
+	movs r3, #128
+	lsls r3, r3, #21
+	adds r1, r2, #0
+	orrs r7, r3
+	str r1, [sp, #12]
+	stmia r2!, {r7}
+	ldr r3, [sp, #8]
+	adds r1, r2, #0
+	movs r2, #228
+	lsls r2, r2, #8
+	orrs r3, r2
+	mov r10, r2
+	adds r2, r1, #0
+	stmia r2!, {r3}
+	adds r1, r2, #0
+	movs r3, #12
+	str r1, [sp, #12]
+	mov r0, r8
+	movs r1, #255
+	add r8, r3
+	bl Runtime_PushSlotEntry
+	ldr r3, .L_0200b9f8
+	ldr r3, [r3]
+	movs r2, #15
+	ands r3, r2
+	cmp r3, #4
+	bhi .L_0200b8ba
+	b .L_0200b9ca
+.L_0200b8ba:
+	ldr r3, [sp, #16]
+	movs r1, #128
+	adds r3, #224
+	lsls r1, r1, #23
+	movs r2, #0
+	ldrsh r0, [r3, r2]
+	mov r9, r1
+	bl Engine_ActorLookup
+	adds r6, r0, #0
+	cmp r6, #0
+	beq .L_0200b948
+	ldr r3, [sp, #16]
+	adds r3, #232
+	ldr r3, [r3]
+	ldr r0, [r6, #8]
+	movs r5, #224
+	lsls r5, r5, #12
+	subs r0, r0, r3
+	adds r1, r5, #0
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #236
+	ldr r3, [r3]
+	adds r4, r0, #0
+	ldr r0, [r6, #16]
+	adds r4, #112
+	adds r1, r5, #0
+	subs r0, r0, r3
+	str r4, [sp, #0]
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #218
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	lsls r3, r2, #1
+	adds r3, r3, r2
+	lsls r3, r3, #1
+	adds r0, r0, r3
+	ldr r1, [sp, #12]
+	subs r7, r0, #4
+	movs r3, #255
+	ands r7, r3
+	mov r3, r11
+	stmia r1!, {r3}
+	ldr r4, [sp, #0]
+	adds r2, r1, #0
+	lsls r3, r4, #16
+	str r2, [sp, #12]
+	orrs r7, r3
+	mov r2, r9
+	orrs r7, r2
+	stmia r1!, {r7}
+	adds r3, r1, #0
+	str r3, [sp, #12]
+	ldr r3, [sp, #8]
+	mov r1, r10
+	adds r3, #12
+	orrs r3, r1
+	ldr r1, [sp, #12]
+	stmia r1!, {r3}
+	adds r2, r1, #0
+	str r2, [sp, #12]
+	mov r0, r8
+	movs r2, #12
+	movs r1, #255
+	add r8, r2
+	bl Runtime_PushSlotEntry
+.L_0200b948:
+	ldr r3, [sp, #16]
+	adds r3, #222
+	movs r1, #0
+	ldrsh r0, [r3, r1]
+	bl Engine_ActorLookup
+	adds r6, r0, #0
+	cmp r6, #0
+	beq .L_0200b9ca
+	ldr r3, [sp, #16]
+	adds r3, #232
+	ldr r3, [r3]
+	ldr r0, [r6, #8]
+	movs r5, #224
+	lsls r5, r5, #12
+	subs r0, r0, r3
+	adds r1, r5, #0
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #236
+	ldr r3, [r3]
+	adds r4, r0, #0
+	ldr r0, [r6, #16]
+	adds r4, #112
+	adds r1, r5, #0
+	subs r0, r0, r3
+	str r4, [sp, #0]
+	bl Engine_MathDivide
+	ldr r3, [sp, #16]
+	adds r3, #218
+	movs r1, #0
+	ldrsh r2, [r3, r1]
+	lsls r3, r2, #1
+	adds r3, r3, r2
+	lsls r3, r3, #1
+	adds r0, r0, r3
+	ldr r1, [sp, #12]
+	subs r7, r0, #4
+	movs r3, #255
+	ands r7, r3
+	mov r3, r11
+	stmia r1!, {r3}
+	ldr r4, [sp, #0]
+	adds r2, r1, #0
+	lsls r3, r4, #16
+	str r2, [sp, #12]
+	orrs r7, r3
+	mov r2, r9
+	orrs r7, r2
+	stmia r1!, {r7}
+	adds r3, r1, #0
+	str r3, [sp, #12]
+	ldr r3, [sp, #8]
+	mov r1, r10
+	adds r3, #8
+	ldr r2, [sp, #12]
+	orrs r3, r1
+	str r3, [r2]
+	mov r3, r8
+	adds r0, r3, #0
+	movs r1, #255
+	bl Runtime_PushSlotEntry
+.L_0200b9ca:
+	add sp, #20
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+.L_0200b9dc:
+	.4byte gKorosseoWork
+.L_0200b9e0:
+	.4byte ResourceTableEntries
+.L_0200b9e4:
 	.4byte 0x040000d4
-	.4byte 0x0200c174
+.L_0200b9e8:
+	.4byte Data_02004174
+.L_0200b9ec:
 	.4byte 0x050003c0
+.L_0200b9f0:
 	.4byte 0x80000010
-	.4byte 0x0200c194
-	.2byte 0x1e40
-	.2byte 0x0300
-	.section .rodata,"a",%progbits
+.L_0200b9f4:
+	.4byte KorosseoKabe_MarkerGraphics
+.L_0200b9f8:
+	.4byte gFrameCount
+	.section .rodata.x0200c0c0,"a",%progbits
 	.global KorosseoKabe_RollLogScript
 KorosseoKabe_RollLogScript:
 	.4byte 0x03030202
@@ -533,6 +533,8 @@ KorosseoKabe_ModeRecordThreeAlt:
 	.4byte 0x01401000
 	.4byte 0x7fff0006
 	.4byte 0xffff0006
+	.global Data_02004174
+Data_02004174:
 	.4byte 0x377f10a0
 	.4byte 0x121722bb
 	.4byte 0x0ccc1172
@@ -612,7 +614,7 @@ KorosseoKabe_SparkScript:
 KorosseoKabe_RaiseScript:
 	.4byte 0x00000015
 	.4byte 0x00000026
-	.4byte 0x0200b25d
+	.4byte KorosseoKabe_SpawnRandomSceneEffect
 	.4byte 0x80010000
 	.4byte 0x00000000
 	.4byte 0x0000000a
@@ -991,37 +993,37 @@ KorosseoKabe_SpectatorTimer:
 gKorosseoKabeEvents:
 	.4byte 0x00004602
 	.4byte 0xffff001e
-	.4byte 0x020082e9
+	.4byte SceneState_SendWord250With6
 	.4byte 0x00008602
 	.4byte 0xffff001e
-	.4byte 0x02008305
+	.4byte FieldScene_Forward4358
 	.4byte 0x00008602
 	.4byte 0xffff001c
-	.4byte 0x020086c5
+	.4byte FieldScene_RunStep16At45By26
 	.4byte 0x00000602
 	.4byte 0xffff001b
-	.4byte 0x020086d9
+	.4byte FieldScene_RunStep16At49By26
 	.4byte 0x00008602
 	.4byte 0xffff0018
-	.4byte 0x0200869d
+	.4byte FieldScene_RunStep15At29By26
 	.4byte 0x00000602
 	.4byte 0xffff0019
-	.4byte 0x020086b1
+	.4byte FieldScene_RunStep15At33By26
 	.4byte 0x00000202
 	.4byte 0xffff0016
-	.4byte 0x02008401
+	.4byte KorosseoKabe_PushAlignedWall
 	.4byte 0x00000202
 	.4byte 0xffff0015
-	.4byte 0x02008051
+	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x020080b1
+	.4byte FieldScene_RunTwoStepSequence
 	.4byte 0x00000202
 	.4byte 0xffff001a
-	.4byte 0x020080b1
+	.4byte FieldScene_RunTwoStepSequence
 	.4byte 0x00000002
 	.4byte 0x02100032
-	.4byte 0x02008a1d
+	.4byte KorosseoKabe_RunStageStart
 	.4byte 0x00000013
 	.4byte 0x03380065
 	.4byte 0x001000b5
@@ -1033,58 +1035,58 @@ gKorosseoKabeEvents:
 	.4byte 0x001000b5
 	.4byte 0x50001815
 	.4byte 0x03310014
-	.4byte 0x02008259
+	.4byte SceneState_SetFlag331AndConfigureRegion46_17
 	.4byte 0x50001815
 	.4byte 0x03320015
-	.4byte 0x0200828d
+	.4byte FieldScene_SetFlag332AndDrawTiles
 	.4byte 0x10008e15
 	.4byte 0x03300012
-	.4byte 0x02008151
+	.4byte SceneState_SetWorkByte35
 	.4byte 0x00008e15
 	.4byte 0x03300012
-	.4byte 0x02008161
+	.4byte KorosseoKabe_SpinActorAway
 	.4byte 0x00000c15
 	.4byte 0x03330013
-	.4byte 0x020082c1
+	.4byte FieldScene_SetFlag333AndDrawTiles
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x0200804d
+	.4byte SceneData_NoOpHandler
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x0200804d
+	.4byte SceneData_NoOpHandler
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x0200805d
+	.4byte SceneState_ConfigureRegionByActorElevenColumn
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x020080c1
+	.4byte SceneState_StoreSlotTileXToWork832To848
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte 0x020080c1
+	.4byte SceneState_StoreSlotTileXToWork832To848
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x020080c1
+	.4byte SceneState_StoreSlotTileXToWork832To848
 	.4byte 0x00009115
 	.4byte 0x0334001f
-	.4byte 0x020089b1
+	.4byte SceneState_InstallTask8714AndApplyTwoRects
 	.4byte 0x00000000
 	.4byte 0xffff0022
-	.4byte 0x02009f15
+	.4byte RunPartyCountInteractionCopyA
 	.4byte 0x00000000
 	.4byte 0xffff0023
-	.4byte 0x020092f1
+	.4byte KorosseoKabe_RunStageIntro
 	.4byte 0x00000000
 	.4byte 0xffff0024
-	.4byte 0x02009425
+	.4byte FieldScene_RunSecondActorInteraction
 	.4byte 0x00000000
 	.4byte 0xffff0025
-	.4byte 0x02009539
+	.4byte FieldScene_RunSceneThreeCoordinator
 	.4byte 0x00000000
 	.4byte 0xffff0026
-	.4byte 0x020096d5
+	.4byte FieldScene_RunLiftedActorCoordinator
 	.4byte 0x00000000
 	.4byte 0xffff0027
-	.4byte 0x020099bd
+	.4byte KorosseoKabe_RunGuideTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0022
 	.4byte 0x0000213c
@@ -1105,7 +1107,7 @@ gKorosseoKabeEvents:
 	.4byte 0x00002145
 	.4byte 0x00000006
 	.4byte 0xffff0063
-	.4byte 0x02009cc1
+	.4byte KorosseoKabe_SelectNearestActor
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1207,7 +1209,7 @@ Korosseo_RivalFinishScript:
 	.4byte 0x00000000
 	.4byte 0x00000006
 	.4byte 0x00000022
-	.4byte 0x0200b2f1
+	.4byte KorosseoKabe_RaiseLinkedSceneEffect
 	.4byte 0x00000000
 	.4byte 0x00000003
 	.4byte 0x0000001c
@@ -1230,7 +1232,7 @@ KorosseoKabe_ApproachScript:
 	.4byte 0x00000000
 	.4byte 0x00000006
 	.4byte 0x00000022
-	.4byte 0x0200b2f1
+	.4byte KorosseoKabe_RaiseLinkedSceneEffect
 	.4byte 0x00000000
 	.4byte 0x00000003
 	.4byte 0x0000001c

@@ -920,7 +920,7 @@ Func_02000738:
 .L_02008760:
 	.4byte Data_0300122c
 .L_02008764:
-	.4byte gOverlayArea + 0x1ae0
+	.4byte Data_02001ae0
 	.section .text.x02008768,"ax",%progbits
 	.global Func_02000768
 	.thumb_func
@@ -975,7 +975,7 @@ Func_02000768:
 .L_020087cc:
 	.4byte IwramCopyWords
 .L_020087d0:
-	.4byte gOverlayArea + 0x1ae0
+	.4byte Data_02001ae0
 .L_020087d4:
 	.4byte Func_02000738
 	.section .text.x020087d8,"ax",%progbits
@@ -1409,7 +1409,7 @@ Func_02000988:
 .L_02008ba8:
 	.4byte IwramCopyWords
 .L_02008bac:
-	.4byte gOverlayArea + 0x1ae0
+	.4byte Data_02001ae0
 .L_02008bb0:
 	.4byte Func_02000738
 	.section .text.x02008bb4,"ax",%progbits
@@ -2237,7 +2237,7 @@ Data_020013d8:
 	.4byte 0x17a9ad75
 	.4byte 0x586f8f25
 	.4byte 0x75fcd4d3
-	.4byte Text_MessageContexts + 0x7d28
+	.4byte 0x08068958
 	.4byte 0x9c9a2b93
 	.4byte 0xfbcfa216
 	.4byte 0x7e458240
@@ -2376,26 +2376,26 @@ Data_02001698:
 	.4byte 0xffff0001
 	.4byte 0x00000218
 	.4byte 0x000001e8
-	.4byte Data_02000000
-	.4byte Resource_Data000
+	.4byte 0x02000000
+	.4byte 0x08000000
 	.4byte 0x00000360
 	.4byte 0xffff0002
 	.4byte 0x000007e8
 	.4byte 0x80000318
-	.4byte Data_02000000
-	.4byte Resource_Data000
+	.4byte 0x02000000
+	.4byte 0x08000000
 	.4byte 0x00000360
 	.4byte 0xffff0003
 	.4byte 0x00000628
 	.4byte 0x400002a8
-	.4byte Data_02000000
-	.4byte Resource_Data000
+	.4byte 0x02000000
+	.4byte 0x08000000
 	.4byte 0x00000360
 	.4byte 0xffff0063
 	.4byte 0x000004f8
 	.4byte 0x40000228
-	.4byte Data_02000000
-	.4byte Resource_Data000
+	.4byte 0x02000000
+	.4byte 0x08000000
 	.4byte 0x00000360
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2494,19 +2494,19 @@ Data_0200178c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00004000
-	.4byte Field_Map008 + 0x253f
+	.4byte 0x08ab0053
 	.4byte 0x00000001
 	.4byte 0x03780000
 	.4byte 0x00000000
 	.4byte 0x00c80000
 	.4byte 0x00018000
-	.4byte Field_Map008 + 0x253f
+	.4byte 0x08ab0053
 	.4byte 0x00000001
 	.4byte 0x03780000
 	.4byte 0x00000000
 	.4byte 0x00e80000
 	.4byte 0x00018000
-	.4byte Tileset_Set109TilesC + 0x1540
+	.4byte 0x08e601a8
 	.4byte 0x00000001
 	.4byte 0x03300000
 	.4byte 0x00000000
@@ -2562,7 +2562,7 @@ Data_0200193c:
 	.4byte 0x00000000
 	.4byte 0x00e80000
 	.4byte 0x0002c000
-	.4byte Tileset_Set109TilesC + 0x1540
+	.4byte 0x08e601a8
 	.4byte 0x00000001
 	.4byte 0x01300000
 	.4byte 0x00000000
@@ -2608,7 +2608,7 @@ Data_020019f0:
 	.4byte 0xffff0010
 	.4byte Func_02000660
 	.4byte 0x00008d15
-	.4byte Summon_CrimsonBeastTiles + 0x15c4
+	.4byte 0x08860010
 	.4byte 0x00001d80
 	.4byte 0x00008d15
 	.4byte 0xffff0010
@@ -2629,31 +2629,34 @@ Data_020019f0:
 	.4byte 0xffff0015
 	.4byte Func_02000058
 	.4byte 0x00008515
-	.4byte Data_02000000 + 0xa
+	.4byte 0x0200000a
 	.4byte 0x00000000
 	.4byte 0x00001815
-	.4byte Data_02010002 + 0xa
+	.4byte 0x0201000c
 	.4byte Func_02000584
 	.4byte 0x00001815
-	.4byte Data_02020004 + 0x9
+	.4byte 0x0202000d
 	.4byte Func_020005bc
 	.4byte 0x00004e15
 	.4byte 0xffff000e
 	.4byte Func_02000600
 	.4byte 0x00008c15
-	.4byte Ending_SunsetPlainPicture + 0x417
+	.4byte 0x0884000f
 	.4byte Func_020003f8
 	.4byte 0x50008805
-	.4byte Summon_CrimsonBeastTiles + 0x15be
+	.4byte 0x0886000a
 	.4byte Func_02000610
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.global Data_02001ac8
 Data_02001ac8:
-	.4byte GameFlagBytes + 0x1c0
+	.4byte 0x02000200
 	.4byte 0x03600400
 	.4byte 0x00000600
 	.4byte 0x01601000
 	.4byte 0xffffffff
 	.4byte 0xffffffff
+	.section .bss,"aw",%nobits
+	.global Data_02001ae0
+Data_02001ae0:

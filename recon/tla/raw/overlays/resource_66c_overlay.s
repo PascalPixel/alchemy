@@ -201,19 +201,19 @@ Data_02000270:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gOverlayArea + 0x4000
+	.4byte 0x0200c000
 	.4byte 0xffff0053
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02003a90 + 0x570
+	.4byte 0x02004000
 	.4byte 0xffff0053
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020088d0,"a",%progbits
 	.global gItemLevelLvLabel
 gItemLevelLvLabel:
 	.4byte 0x0000764c
@@ -127,31 +127,31 @@ gItemLevelPlacements:
 gItemLevelEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008215
+	.4byte ItemLevel_SelectItem
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020087c9
+	.4byte SceneState_GetFarResult100c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020087d5
+	.4byte SceneState_GetFarResult1020
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020080ed
+	.4byte FieldScene_RunCountAdjustPanel
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020084b1
+	.4byte ItemLevel_SelectAbility
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200804d
+	.4byte FieldScene_RunActor13Mode102Step
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008071
+	.4byte FieldScene_RunActor13Mode105Step
 	.4byte 0x00008e15
 	.4byte 0xffff000a
-	.4byte 0x02008769
+	.4byte FieldScene_DrawThreeCaptionWindow
 	.4byte 0x10008e15
 	.4byte 0xffff000a
-	.4byte 0x020087b9
+	.4byte SceneState_SetRecordFlag53
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

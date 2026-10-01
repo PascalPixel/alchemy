@@ -270,7 +270,7 @@ Func_08144044:
 	asrs r5, r5, #1
 	str r5, [r2]
 	mov r0, r10
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [sp, #36]
 	lsls r1, r0, #3
 	adds r1, r1, r0

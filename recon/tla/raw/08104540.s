@@ -304,7 +304,7 @@ Func_08104540:
 	str r1, [sp, #56]
 	adds r0, r1, #0
 	movs r1, #60
-	bl __modsi3
+	bl Math_Mod
 	subs r0, #5
 	movs r2, #200
 	movs r0, #0

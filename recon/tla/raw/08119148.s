@@ -112,7 +112,7 @@ Func_08119148:
 	bl Runtime_BumpAllocateAlternatePool
 	adds r6, r0, #0
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	ldr r3, .L_0811929c
 	adds r1, r0, #0
 	adds r2, r5, #0

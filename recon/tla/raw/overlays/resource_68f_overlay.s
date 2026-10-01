@@ -2916,7 +2916,7 @@ Func_020013b8:
 .L_02009764:
 	.4byte Data_02003264
 .L_02009768:
-	.4byte gOverlayArea + 0x3ccc
+	.4byte Data_02003ccc
 .L_0200976c:
 	.4byte Func_020010d4
 .L_02009770:
@@ -3462,7 +3462,7 @@ Func_02001b48:
 .L_02009ba8:
 	.4byte gPartyState
 .L_02009bac:
-	.4byte gOverlayArea + 0x3cd0
+	.4byte Data_02003cd0
 .L_02009bb0:
 	.4byte 0xfff00000
 .L_02009bb4:
@@ -3798,7 +3798,7 @@ Func_02001b48:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009e54:
-	.4byte gOverlayArea + 0x3cd0
+	.4byte Data_02003cd0
 .L_02009e58:
 	.4byte Func_020017dc
 	.section .text.x02009e5c,"ax",%progbits
@@ -3810,7 +3810,7 @@ Func_02001e5c:
 	bx lr
 	.2byte 0x0000
 .L_02009e64:
-	.4byte gOverlayArea + 0x3cd0
+	.4byte Data_02003cd0
 	.section .text.x02009e68,"ax",%progbits
 	.global Func_02001e68
 	.thumb_func
@@ -5963,18 +5963,18 @@ Data_02003334:
 Data_02003340:
 	.4byte 0x00070008
 	.4byte 0x00090200
-	.4byte Data_02010002 + 0x5
+	.4byte 0x02010007
 	.4byte 0x0007000a
 	.4byte 0x000b0202
-	.4byte Data_02030000 + 0x7
+	.4byte 0x02030007
 	.2byte 0xffff
 	.global Data_0200335a
 Data_0200335a:
 	.2byte 0x0008
-	.4byte Data_02000000 + 0x7
+	.4byte 0x02000007
 	.4byte 0x00070009
 	.4byte 0x000a0201
-	.4byte Data_02020004 + 0x3
+	.4byte 0x02020007
 	.4byte 0x0000ffff
 	.global Data_02003370
 Data_02003370:
@@ -6163,7 +6163,7 @@ Data_02003618:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6199,25 +6199,25 @@ Data_02003690:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6231,43 +6231,43 @@ Data_02003708:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6281,7 +6281,7 @@ Data_020037c8:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -6441,7 +6441,7 @@ Data_020039e4:
 	.4byte 0xffff0032
 	.4byte Func_0200095c
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x33
+	.4byte 0x02000033
 	.4byte Func_02000964
 	.4byte 0x00000000
 	.4byte 0xffff0008
@@ -6488,16 +6488,16 @@ Data_02003a5c:
 	.4byte 0xffff0032
 	.4byte Func_0200095c
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02030000 + 0xb
+	.4byte 0x0203000b
 	.4byte Func_02000b34
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -6535,13 +6535,13 @@ Data_02003b28:
 	.4byte 0xffff001f
 	.4byte Func_02000f00
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000b34
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000b34
 	.4byte 0x00000008
 	.4byte 0xffff0000
@@ -6611,3 +6611,9 @@ Data_02003c90:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_02003ccc
+Data_02003ccc:
+	.space 0x00000004
+	.global Data_02003cd0
+Data_02003cd0:

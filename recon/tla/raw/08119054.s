@@ -102,7 +102,7 @@ Func_08119054:
 	bl Runtime_BumpAllocateAlternatePool
 	mov r8, r0
 	movs r0, #1
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	bl Party_Check
 	movs r3, #1
 	negs r3, r3

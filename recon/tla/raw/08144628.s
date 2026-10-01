@@ -364,7 +364,7 @@ Func_08144628:
 	asrs r5, r5, #1
 	str r5, [r1]
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #64]
 	lsls r1, r0, #2
 	adds r1, r1, r0

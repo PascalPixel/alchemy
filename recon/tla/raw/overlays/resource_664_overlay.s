@@ -4973,13 +4973,13 @@ Func_020026c0:
 .L_0200a754:
 	.4byte Data_02006c0c
 .L_0200a758:
-	.4byte gOverlayArea + 0x73e4
+	.4byte Data_020073e4
 .L_0200a75c:
-	.4byte gOverlayArea + 0x73e8
+	.4byte Data_020073e8
 .L_0200a760:
-	.4byte gOverlayArea + 0x73dc
+	.4byte Data_020073dc
 .L_0200a764:
-	.4byte gOverlayArea + 0x73e0
+	.4byte Data_020073e0
 .L_0200a768:
 	.4byte gPartyState
 .L_0200a76c:
@@ -5118,21 +5118,21 @@ Func_02002790:
 .L_0200a864:
 	.4byte Data_02006c0c
 .L_0200a868:
-	.4byte gOverlayArea + 0x73dc
+	.4byte Data_020073dc
 .L_0200a86c:
-	.4byte gOverlayArea + 0x73e0
+	.4byte Data_020073e0
 .L_0200a870:
 	.4byte gPartyState
 .L_0200a874:
 	.4byte 0x00000055
 .L_0200a878:
-	.4byte gOverlayArea + 0x73e4
+	.4byte Data_020073e4
 .L_0200a87c:
 	.4byte 0x00000056
 .L_0200a880:
 	.4byte 0x00000057
 .L_0200a884:
-	.4byte gOverlayArea + 0x73e8
+	.4byte Data_020073e8
 .L_0200a888:
 	.4byte 0x00000059
 .L_0200a88c:
@@ -5246,19 +5246,19 @@ Func_02002898:
 .L_0200a958:
 	.4byte Data_02006c0c
 .L_0200a95c:
-	.4byte gOverlayArea + 0x73dc
+	.4byte Data_020073dc
 .L_0200a960:
-	.4byte gOverlayArea + 0x73e0
+	.4byte Data_020073e0
 .L_0200a964:
 	.4byte gPartyState
 .L_0200a968:
 	.4byte 0x00000055
 .L_0200a96c:
-	.4byte gOverlayArea + 0x73e4
+	.4byte Data_020073e4
 .L_0200a970:
 	.4byte 0x00000056
 .L_0200a974:
-	.4byte gOverlayArea + 0x73e8
+	.4byte Data_020073e8
 .L_0200a978:
 	.4byte 0x00000059
 .L_0200a97c:
@@ -5331,13 +5331,13 @@ Func_02002980:
 .L_0200aa00:
 	.4byte Data_02006c0c
 .L_0200aa04:
-	.4byte gOverlayArea + 0x73dc
+	.4byte Data_020073dc
 .L_0200aa08:
-	.4byte gOverlayArea + 0x73e0
+	.4byte Data_020073e0
 .L_0200aa0c:
-	.4byte gOverlayArea + 0x73e4
+	.4byte Data_020073e4
 .L_0200aa10:
-	.4byte gOverlayArea + 0x73e8
+	.4byte Data_020073e8
 	.section .text.x0200aa14,"ax",%progbits
 	.global Func_02002a14
 	.thumb_func
@@ -5406,13 +5406,13 @@ Func_02002a14:
 .L_0200aa94:
 	.4byte Data_02006c0c
 .L_0200aa98:
-	.4byte gOverlayArea + 0x73dc
+	.4byte Data_020073dc
 .L_0200aa9c:
-	.4byte gOverlayArea + 0x73e0
+	.4byte Data_020073e0
 .L_0200aaa0:
-	.4byte gOverlayArea + 0x73e4
+	.4byte Data_020073e4
 .L_0200aaa4:
-	.4byte gOverlayArea + 0x73e8
+	.4byte Data_020073e8
 	.section .text.x0200aaa8,"ax",%progbits
 	.global Func_02002aa8
 	.thumb_func
@@ -7704,13 +7704,13 @@ Func_02003d40:
 .L_0200bdc0:
 	.4byte Data_02006c0c
 .L_0200bdc4:
-	.4byte gOverlayArea + 0x73dc
+	.4byte Data_020073dc
 .L_0200bdc8:
-	.4byte gOverlayArea + 0x73e0
+	.4byte Data_020073e0
 .L_0200bdcc:
-	.4byte gOverlayArea + 0x73e4
+	.4byte Data_020073e4
 .L_0200bdd0:
-	.4byte gOverlayArea + 0x73e8
+	.4byte Data_020073e8
 	.section .text.x0200bdd4,"ax",%progbits
 	.global Func_02003dd4
 	.thumb_func
@@ -11612,10 +11612,10 @@ Data_020061cc:
 Data_0200621c:
 	.4byte 0x0001000c
 	.4byte 0x000d0200
-	.4byte Data_02010001
+	.4byte 0x02010001
 	.4byte 0x0001000e
 	.4byte 0x000f0202
-	.4byte Data_02030000 + 0x1
+	.4byte 0x02030001
 	.4byte 0x0000ffff
 	.global Data_02006238
 Data_02006238:
@@ -11835,19 +11835,19 @@ Data_02006564:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff0179
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff017e
 	.4byte 0x00000007
 	.4byte 0x01380000
@@ -11859,7 +11859,7 @@ Data_02006564:
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0118
 	.4byte 0x00000007
 	.4byte 0x00080000
@@ -11891,25 +11891,25 @@ Data_0200663c:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff017e
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -11923,37 +11923,37 @@ Data_020066b4:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -11967,25 +11967,25 @@ Data_0200675c:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0145
 	.4byte .L_0200e1f8
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0197
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0197
 	.4byte 0x00000001
 	.4byte 0x00000005
@@ -12053,7 +12053,7 @@ Data_020068ac:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0006
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -12073,25 +12073,25 @@ Data_020068f4:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0145
 	.4byte .L_0200e1f8
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0145
 	.4byte .L_0200e1f8
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0197
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0197
 	.4byte 0x00000001
 	.4byte 0x00000005
@@ -12135,61 +12135,61 @@ Data_020069e4:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0196
 	.4byte 0x00000001
 	.4byte 0x00000008
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0145
 	.4byte .L_0200e1f8
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0145
 	.4byte .L_0200e1f8
 	.4byte 0x0000000a
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -12203,43 +12203,43 @@ Data_02006aec:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0145
 	.4byte .L_0200e1f8
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -12253,19 +12253,19 @@ Data_02006bac:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0110
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0179
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -12338,13 +12338,13 @@ Data_02006c10:
 	.4byte 0xffff0053
 	.4byte Func_02002a14
 	.4byte 0x80004e15
-	.4byte Monster_WhiteKnightSprites + 0xc9f
+	.4byte 0x089a000b
 	.4byte Func_02000610
 	.4byte 0x10004e15
-	.4byte Monster_WhiteKnightSprites + 0xc9f
+	.4byte 0x089a000b
 	.4byte Func_0200061c
 	.4byte 0x00004e15
-	.4byte Monster_WhiteKnightSprites + 0xc9f
+	.4byte 0x089a000b
 	.4byte Func_02002cf0
 	.4byte 0x00000008
 	.4byte 0xffff0000
@@ -12388,25 +12388,25 @@ Data_02006d6c:
 	.4byte 0xffff0000
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Monster_BlueDevilSprites + 0x4b19
+	.4byte 0x08970009
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Monster_BlueDevilSprites + 0x4b19
+	.4byte 0x08970009
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Monster_ApeSprites + 0x158b
+	.4byte 0x0898000b
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Monster_ApeSprites + 0x158b
+	.4byte 0x0898000b
 	.4byte Func_0200332c
 	.4byte 0x80004e15
-	.4byte Monster_SkullMageSprites + 0x70e
+	.4byte 0x0899000a
 	.4byte Func_02000610
 	.4byte 0x10004e15
-	.4byte Monster_SkullMageSprites + 0x70e
+	.4byte 0x0899000a
 	.4byte Func_0200061c
 	.4byte 0x00004e15
-	.4byte Monster_SkullMageSprites + 0x70e
+	.4byte 0x0899000a
 	.4byte Func_02003654
 	.4byte 0x00000006
 	.4byte 0xffff00c8
@@ -12432,22 +12432,22 @@ Data_02006e2c:
 	.4byte 0xffff0000
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Monster_PinkOgreSprites + 0x954
+	.4byte 0x089b0008
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Monster_PinkOgreSprites + 0x954
+	.4byte 0x089b0008
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Resource_Data21F + 0x3023
+	.4byte 0x089c000b
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Resource_Data21F + 0x3023
+	.4byte 0x089c000b
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Monster_DragonLeftSprites + 0x226c
+	.4byte 0x089d000c
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Monster_DragonLeftSprites + 0x226c
+	.4byte 0x089d000c
 	.4byte Func_0200332c
 	.4byte 0x10008c15
 	.4byte 0xffff000a
@@ -12485,10 +12485,10 @@ Data_02006eec:
 	.4byte 0xffff0000
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Monster_VultureSprites + 0x95d
+	.4byte 0x089e0009
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Monster_VultureSprites + 0x95d
+	.4byte 0x089e0009
 	.4byte Func_0200332c
 	.4byte 0x80004e15
 	.4byte 0xffff0008
@@ -12579,7 +12579,7 @@ Data_0200706c:
 	.4byte 0xffff0051
 	.4byte Func_02002898
 	.4byte 0x00008c15
-	.4byte Monster_ScorpionSprites + 0x142c
+	.4byte 0x089f0008
 	.4byte Func_02004884
 	.4byte 0x80004e15
 	.4byte 0xffff0009
@@ -12623,10 +12623,10 @@ Data_020070fc:
 	.4byte 0xffff0000
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Tileset_Set73TilesD + 0x1228
+	.4byte 0x08d00008
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Tileset_Set73TilesD + 0x1228
+	.4byte 0x08d00008
 	.4byte Func_0200332c
 	.4byte 0x10008c15
 	.4byte 0xffff0009
@@ -12647,16 +12647,16 @@ Data_020070fc:
 	.4byte 0xffff000b
 	.4byte Func_0200332c
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0xc
+	.4byte 0x0200000c
 	.4byte Func_020048bc
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0xb
+	.4byte 0x0201000d
 	.4byte Func_020048bc
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0xa
+	.4byte 0x0202000e
 	.4byte Func_020048bc
 	.4byte 0x50008615
-	.4byte Data_02030000 + 0xf
+	.4byte 0x0203000f
 	.4byte Func_020048bc
 	.4byte 0x80004e15
 	.4byte 0xffff0010
@@ -12706,16 +12706,16 @@ Data_02007228:
 	.4byte 0x0a8f000c
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Field_Map165 + 0x8e8
+	.4byte 0x08d10008
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Field_Map165 + 0x8e8
+	.4byte 0x08d10008
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Field_Map172 + 0x769
+	.4byte 0x08d20009
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Field_Map172 + 0x769
+	.4byte 0x08d20009
 	.4byte Func_0200332c
 	.4byte 0x10008c15
 	.4byte 0xffff000d
@@ -12762,10 +12762,10 @@ Data_02007318:
 	.4byte 0xffff0000
 	.4byte Func_0200332c
 	.4byte 0x10008c15
-	.4byte Field_Map176 + 0x15f9
+	.4byte 0x08d30009
 	.4byte Func_02003254
 	.4byte 0x00008c15
-	.4byte Field_Map176 + 0x15f9
+	.4byte 0x08d30009
 	.4byte Func_0200332c
 	.4byte 0x80004e15
 	.4byte 0xffff0008
@@ -12796,3 +12796,15 @@ Data_020073a8:
 	.global Data_020073d8
 Data_020073d8:
 	.4byte 0xffffffff
+	.section .bss,"aw",%nobits
+	.global Data_020073dc
+Data_020073dc:
+	.space 0x00000004
+	.global Data_020073e0
+Data_020073e0:
+	.space 0x00000004
+	.global Data_020073e4
+Data_020073e4:
+	.space 0x00000004
+	.global Data_020073e8
+Data_020073e8:

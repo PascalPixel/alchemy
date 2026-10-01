@@ -84,5 +84,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/WORLD_MAP/IMPORT.o"(.text)
         "*/resource_64b_overlay.o"(.rodata.x0200ce38)
     }
+    .bss : { "*/resource_64b_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

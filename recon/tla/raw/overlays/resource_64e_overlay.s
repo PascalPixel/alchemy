@@ -2857,25 +2857,25 @@ gSceneEntrances:
 	.4byte 0x00000158
 	.4byte 0xc00000e8
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0004
 	.4byte 0x000001d8
 	.4byte 0x400000b8
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0005
 	.4byte 0x00000178
 	.4byte 0x400000b8
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0006
 	.4byte 0x00000158
 	.4byte 0x40000068
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0007
 	.4byte 0x00000348
@@ -2953,13 +2953,13 @@ gSceneEntrances:
 	.4byte 0x00000188
 	.4byte 0x400003b8
 	.4byte 0x01100000
-	.4byte Data_0200024c + 0xdc
+	.4byte 0x02000328
 	.4byte 0x000003d8
 	.4byte 0xffff0019
 	.4byte 0x00000188
 	.4byte 0x40000358
 	.4byte 0x01100000
-	.4byte Data_0200024c + 0xdc
+	.4byte 0x02000328
 	.4byte 0x000003d8
 	.4byte 0xffff001a
 	.4byte 0x000002f8
@@ -3282,7 +3282,7 @@ gSceneEvents:
 	.4byte 0xffff0020
 	.4byte 0x00000020
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2d
+	.4byte 0x0200002d
 	.4byte Func_020006ac
 	.4byte 0x00000002
 	.4byte 0xffff002e

@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020080c0,"a",%progbits
 	.global SoruMeiro_SceneTable0
 SoruMeiro_SceneTable0:
 	.4byte 0xffff0000

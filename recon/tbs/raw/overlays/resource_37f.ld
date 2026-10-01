@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IRIGUCHI.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IMPORT.o"(.text)
-        "*/resource_37f_overlay.o"(.rodata.part1)
+        "*/resource_37f_overlay.o"(.rodata.x02009cd4)
     }
     /* The overlay's own work, past its loaded image. */
     .bss (NOLOAD) :

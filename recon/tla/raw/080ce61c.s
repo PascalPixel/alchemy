@@ -361,7 +361,7 @@ Func_080ce61c:
 .L_080ce918:
 	negs r1, r1
 	adds r0, r7, #0
-	bl Func_080ad0c8
+	bl Owner_AdjustSecondValueFar
 .L_080ce920:
 	ldr r2, [sp, #4]
 	cmp r2, #23

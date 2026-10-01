@@ -1,7 +1,6 @@
 .syntax unified
 	.thumb
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02008ec8,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -128,10 +127,10 @@ KorimaHiroba_Extras:
 	.4byte 0x00000002
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x020089f9
+	.4byte SceneActor_RunPlacementQuery
 	.4byte 0x00009415
 	.4byte 0x0fd3000b
-	.4byte 0x02008a2d
+	.4byte FieldScene_SetupActor11Effect181
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

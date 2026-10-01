@@ -788,7 +788,7 @@ Func_08122d10:
 .L_08123332:
 	asrs r0, r0, #3
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	adds r0, #1
 	mov r10, r0
 .L_0812333e:

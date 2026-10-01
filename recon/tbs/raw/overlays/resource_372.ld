@@ -10,7 +10,7 @@ SECTIONS
         "*/resource_372_overlay.o"(.text.x0200b1ac)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ARASHI2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/IMPORT.o"(.text)
-        "*/resource_372_overlay.o"(.rodata)
+        "*/resource_372_overlay.o"(.rodata.x0200c8bc)
     }
     .bss (NOLOAD) :
     {

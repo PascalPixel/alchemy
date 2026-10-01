@@ -254,14 +254,14 @@ Func_08159cac:
 	adds r7, r2, r1
 	mov r0, r8
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
 	bl Math_Div
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0815a038
 	adds r5, r5, r0
 	lsls r3, r5, #1

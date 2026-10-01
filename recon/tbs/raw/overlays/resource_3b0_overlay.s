@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009314,"a",%progbits
 	.global FuneHobashira_FollowCameraActions
 FuneHobashira_FollowCameraActions:
 	.4byte 0x00000016
@@ -10,7 +10,7 @@ FuneHobashira_FollowCameraActions:
 	.4byte 0x0000000a
 	.4byte 0x00000800
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte Object_PlaceFromCameraOffset
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -24,7 +24,7 @@ FuneHobashira_FollowCameraActions:
 	.4byte 0x0000000a
 	.4byte 0xfffff800
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte Object_PlaceFromCameraOffset
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -40,11 +40,11 @@ FuneHobashira_FollowCameraActions:
 	.global FuneHobashira_LookoutActions
 FuneHobashira_LookoutActions:
 	.4byte 0x00000022
-	.4byte 0x0200807d
+	.4byte SceneActor_SetFacingFromSample
 	.global FuneHobashira_DriftActions
 FuneHobashira_DriftActions:
 	.4byte 0x00000022
-	.4byte 0x020080c1
+	.4byte FuneHobashira_SwayActor
 	.global FuneHobashira_WaveActions
 FuneHobashira_WaveActions:
 	.4byte 0x00000015
@@ -100,7 +100,7 @@ FuneHobashira_EnsembleWalk9:
 	.4byte 0x00000000
 	.4byte 0x00c40000
 	.4byte 0x00000022
-	.4byte 0x02008181
+	.4byte OverlayObject_ShrinkScaleThenStop
 	.4byte 0x00000010
 	.global FuneHobashira_EnsembleWalk10
 FuneHobashira_EnsembleWalk10:
@@ -114,7 +114,7 @@ FuneHobashira_EnsembleWalk10:
 	.4byte 0x00000000
 	.4byte 0x00c40000
 	.4byte 0x00000022
-	.4byte 0x02008181
+	.4byte OverlayObject_ShrinkScaleThenStop
 	.4byte 0x00000010
 	.global FuneHobashira_EnsembleWalk11
 FuneHobashira_EnsembleWalk11:
@@ -128,7 +128,7 @@ FuneHobashira_EnsembleWalk11:
 	.4byte 0x00000000
 	.4byte 0x00c40000
 	.4byte 0x00000022
-	.4byte 0x02008181
+	.4byte OverlayObject_ShrinkScaleThenStop
 	.4byte 0x00000010
 	.global FuneHobashira_EnsembleWalk12
 FuneHobashira_EnsembleWalk12:
@@ -142,7 +142,7 @@ FuneHobashira_EnsembleWalk12:
 	.4byte 0x00000000
 	.4byte 0x00c40000
 	.4byte 0x00000022
-	.4byte 0x02008181
+	.4byte OverlayObject_ShrinkScaleThenStop
 	.4byte 0x00000010
 	.global FuneHobashira_EnsembleWalk13
 FuneHobashira_EnsembleWalk13:
@@ -156,7 +156,7 @@ FuneHobashira_EnsembleWalk13:
 	.4byte 0x00000000
 	.4byte 0x00c40000
 	.4byte 0x00000022
-	.4byte 0x02008181
+	.4byte OverlayObject_ShrinkScaleThenStop
 	.4byte 0x00000010
 	.global FuneHobashira_EnsembleWalk14
 FuneHobashira_EnsembleWalk14:
@@ -170,7 +170,7 @@ FuneHobashira_EnsembleWalk14:
 	.4byte 0x00000000
 	.4byte 0x00c40000
 	.4byte 0x00000022
-	.4byte 0x02008181
+	.4byte OverlayObject_ShrinkScaleThenStop
 	.4byte 0x00000010
 	.global FuneHobashira_EnsembleWalk15
 FuneHobashira_EnsembleWalk15:
@@ -184,7 +184,7 @@ FuneHobashira_EnsembleWalk15:
 	.4byte 0x00000000
 	.4byte 0x00c40000
 	.4byte 0x00000022
-	.4byte 0x02008181
+	.4byte OverlayObject_ShrinkScaleThenStop
 	.4byte 0x00000010
 	.4byte 0x09090000
 	.4byte 0x0d70090d
@@ -391,7 +391,7 @@ FuneHobashira_LandingObjects:
 FuneHobashira_SceneTableE:
 	.4byte 0x00004602
 	.4byte 0xffff000a
-	.4byte 0x020081f1
+	.4byte FieldScene_CallHelper14d0
 	.4byte 0x00000000
 	.4byte 0x09280008
 	.4byte 0x00001e23
@@ -412,7 +412,7 @@ FuneHobashira_SceneTableE:
 	.4byte 0x00001f64
 	.4byte 0x00000003
 	.4byte 0x0924000b
-	.4byte 0x020081fd
+	.4byte FieldScene_RunActor232SceneWhenFlag923Or922
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

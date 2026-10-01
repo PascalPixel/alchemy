@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200aef8,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -53,6 +53,7 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
+.L_0200afb0:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -67,6 +68,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200afe8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -81,6 +83,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b020:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -97,9 +100,10 @@ StagedActor_FootprintBounds:
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200afb0
-	.4byte 0x0200afe8
-	.4byte 0x0200b020
+	.4byte .L_0200afb0
+	.4byte .L_0200afe8
+	.4byte .L_0200b020
+.L_0200b064:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -110,6 +114,7 @@ gEffectScripts:
 	.4byte 0x00000010
 	.global MogoruMori_ActorScript
 MogoruMori_ActorScript:
+.L_0200b084:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x0000cccc
@@ -124,6 +129,7 @@ MogoruMori_ActorScript:
 	.4byte 0x00000022
 	.4byte OverlayObject_ApplyZero
 	.4byte 0x00000010
+.L_0200b0bc:
 	.4byte 0x00000015
 	.4byte 0x0000001a
 	.4byte 0x00000000
@@ -526,37 +532,37 @@ gMogoruMoriPlacements1:
 	.4byte 0x01f80000
 	.4byte 0x00024000
 	.4byte 0x030000bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x00880000
 	.4byte 0x00000000
 	.4byte 0x00780000
 	.4byte 0x00024000
 	.4byte 0x030100bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01780000
 	.4byte 0x00000000
 	.4byte 0x01b00000
 	.4byte 0x00024000
 	.4byte 0x030200bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01f80000
 	.4byte 0x00000000
 	.4byte 0x01380000
 	.4byte 0x00024000
 	.4byte 0x03000016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x00880000
 	.4byte 0x00000000
 	.4byte 0x00780000
 	.4byte 0x00024000
 	.4byte 0x03010016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01780000
 	.4byte 0x00000000
 	.4byte 0x01b00000
 	.4byte 0x01024000
 	.4byte 0x03020016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01f80000
 	.4byte 0x00000000
 	.4byte 0x01380000
@@ -594,43 +600,43 @@ gMogoruMoriPlacements2:
 	.4byte 0x02000000
 	.4byte 0x00024000
 	.4byte 0xffff0125
-	.4byte 0x0200b064
+	.4byte .L_0200b064
 	.4byte 0x02480000
 	.4byte 0x00000000
 	.4byte 0x01780000
 	.4byte 0x00024000
 	.4byte 0x030300bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01680000
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x00024000
 	.4byte 0x030400bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01e80000
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x00024000
 	.4byte 0x030600bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01f80000
 	.4byte 0x00000000
 	.4byte 0x01e00000
 	.4byte 0x00024000
 	.4byte 0x03030016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01680000
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x00024000
 	.4byte 0x03040016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01e80000
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x01024000
 	.4byte 0x03060016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01f80000
 	.4byte 0x00000000
 	.4byte 0x01e00000
@@ -680,61 +686,61 @@ gMogoruMoriPlacements3:
 	.4byte 0x02180000
 	.4byte 0x00024000
 	.4byte 0xffff0125
-	.4byte 0x0200b064
+	.4byte .L_0200b064
 	.4byte 0x02b80000
 	.4byte 0x00000000
 	.4byte 0x00780000
 	.4byte 0x00024000
 	.4byte 0xffff0125
-	.4byte 0x0200b064
+	.4byte .L_0200b064
 	.4byte 0x02780000
 	.4byte 0x00000000
 	.4byte 0x01980000
 	.4byte 0x01024000
 	.4byte 0x030700bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01e80000
 	.4byte 0x00000000
 	.4byte 0x00580000
 	.4byte 0x00024000
 	.4byte 0x030800bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01a80000
 	.4byte 0x00000000
 	.4byte 0x00780000
 	.4byte 0x00024000
 	.4byte 0x030900bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x01680000
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x00024000
 	.4byte 0x030b00bf
-	.4byte 0x0200b084
+	.4byte .L_0200b084
 	.4byte 0x02e80000
 	.4byte 0x00000000
 	.4byte 0x01900000
 	.4byte 0x00024000
 	.4byte 0x03070016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01e80000
 	.4byte 0x00000000
 	.4byte 0x00580000
 	.4byte 0x00024000
 	.4byte 0x03080016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01a80000
 	.4byte 0x00000000
 	.4byte 0x00780000
 	.4byte 0x01024000
 	.4byte 0x03090016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x01680000
 	.4byte 0x00000000
 	.4byte 0x00500000
 	.4byte 0x01024000
 	.4byte 0x030b0016
-	.4byte 0x0200b0bc
+	.4byte .L_0200b0bc
 	.4byte 0x02e80000
 	.4byte 0x00000000
 	.4byte 0x01900000
@@ -799,7 +805,7 @@ gMogoruMoriEvents1:
 	.4byte FieldScene_RunActor10WaypointSequence
 	.4byte 0x00008e15
 	.4byte 0x0301000e
-	.4byte 0x02009245
+	.4byte FieldScene_RunActorElevenPresentationBeat
 	.4byte 0x00008e15
 	.4byte 0x0302000f
 	.4byte SceneActor_RunActorTwelveThreeWaypointMotion
@@ -849,7 +855,7 @@ gMogoruMoriEvents2:
 	.4byte 0x0000000c
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x02009455
+	.4byte FieldScene_RunProbedActorEightOrTenScene
 	.4byte 0x00008c15
 	.4byte 0xffff000b
 	.4byte SceneState_ApplyCrossRectsAroundActor11
@@ -917,7 +923,7 @@ gMogoruMoriEvents3:
 	.4byte 0x0000000d
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x020099b9
+	.4byte MogoruMori_RunProbedLandingScene
 	.4byte 0x00008602
 	.4byte 0xffff0019
 	.4byte SceneActor_BobActorZeroWhenTargetClear
@@ -935,7 +941,7 @@ gMogoruMoriEvents3:
 	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00008e15
 	.4byte 0x03070013
-	.4byte 0x02009d05
+	.4byte FieldScene_RunScene39fSequenceA
 	.4byte 0x00008e15
 	.4byte 0x03080014
 	.4byte FieldScene_RunSlot16WaypointSequence

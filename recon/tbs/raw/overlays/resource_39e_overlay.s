@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200c584,"a",%progbits
+.L_0200c584:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200c5bc:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200c5f4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -45,11 +48,12 @@
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200c584
-	.4byte 0x0200c5bc
-	.4byte 0x0200c5f4
+	.4byte .L_0200c584
+	.4byte .L_0200c5bc
+	.4byte .L_0200c5f4
 	.global ShianJiin_ActorTwelveScript
 ShianJiin_ActorTwelveScript:
+.L_0200c638:
 	.4byte 0x0000001c
 	.4byte 0x00000000
 	.4byte 0x00000015
@@ -120,6 +124,7 @@ ShianJiin_ActorTwelveScript:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000010
+.L_0200c750:
 	.4byte 0x00000022
 	.4byte StopXianActor
 	.4byte 0x00000000
@@ -308,7 +313,7 @@ gShianJiinPlacements:
 	.4byte 0x00980000
 	.4byte 0x00018000
 	.4byte 0x00000083
-	.4byte 0x0200c638
+	.4byte .L_0200c638
 	.4byte 0x00780000
 	.4byte 0x00000000
 	.4byte 0x00f80000
@@ -356,7 +361,7 @@ gShianJiinPlacements:
 	.4byte 0x00a80000
 	.4byte 0x00008000
 	.4byte 0xffff0016
-	.4byte 0x0200c750
+	.4byte .L_0200c750
 	.4byte 0x00e80000
 	.4byte 0x00000000
 	.4byte 0x00a80000

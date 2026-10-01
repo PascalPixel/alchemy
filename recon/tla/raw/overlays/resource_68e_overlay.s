@@ -1258,15 +1258,15 @@ Func_02000904:
 	b .L_02008b1e
 	.2byte 0x0000
 .L_02008b08:
-	.4byte gOverlayArea + 0x1760
+	.4byte Data_02001760
 .L_02008b0c:
-	.4byte gOverlayArea + 0x17b0
+	.4byte Data_020017b0
 .L_02008b10:
 	.4byte IwramFillWords + 0x74
 .L_02008b14:
-	.4byte gOverlayArea + 0x1824
+	.4byte Data_02001824
 .L_02008b18:
-	.4byte gOverlayArea + 0x1828
+	.4byte Data_02001828
 .L_02008b1c:
 	movs r3, #4
 .L_02008b1e:
@@ -1675,7 +1675,7 @@ Func_02000904:
 .L_02008e18:
 	.4byte 0xffffc000
 .L_02008e1c:
-	.4byte gOverlayArea + 0x17c0
+	.4byte Data_020017c0
 .L_02008e20:
 	.4byte 0x00afffff
 .L_02008e24:
@@ -2025,7 +2025,7 @@ Func_02000904:
 .L_020090ec:
 	.4byte Data_02001748 + 0x1
 .L_020090f0:
-	.4byte gOverlayArea + 0x17b0
+	.4byte Data_020017b0
 	.section .text.x020090f4,"ax",%progbits
 	.global Func_020010f4
 	.thumb_func
@@ -2085,7 +2085,7 @@ Func_020010f4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009168:
-	.4byte gOverlayArea + 0x1760
+	.4byte Data_02001760
 .L_0200916c:
 	.4byte Data_02001754
 .L_02009170:
@@ -2093,7 +2093,7 @@ Func_020010f4:
 .L_02009174:
 	.4byte Data_0200174c
 .L_02009178:
-	.4byte gOverlayArea + 0x17c0
+	.4byte Data_020017c0
 .L_0200917c:
 	.4byte 0xffe20000
 .L_02009180:
@@ -2219,19 +2219,19 @@ Func_02001184:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009284:
-	.4byte gOverlayArea + 0x1760
+	.4byte Data_02001760
 .L_02009288:
-	.4byte gOverlayArea + 0x17b0
+	.4byte Data_020017b0
 .L_0200928c:
-	.4byte gOverlayArea + 0x1824
+	.4byte Data_02001824
 .L_02009290:
-	.4byte gOverlayArea + 0x1820
+	.4byte Data_02001820
 .L_02009294:
 	.4byte gPartyState
 .L_02009298:
 	.4byte 0xfffe0000
 .L_0200929c:
-	.4byte gOverlayArea + 0x1828
+	.4byte Data_02001828
 	.section .rodata.x02009410,"a",%progbits
 	.global gSceneEntrances
 gSceneEntrances:
@@ -2423,7 +2423,7 @@ gSceneEvents:
 	.4byte 0xffff001c
 	.4byte 0x000028a8
 	.4byte 0x00000003
-	.4byte Data_02000000 + 0x19
+	.4byte 0x02000019
 	.4byte Func_02000054
 	.4byte 0x00000003
 	.4byte 0xffff0050
@@ -2469,3 +2469,22 @@ Data_02001750:
 Data_02001754:
 	.4byte 0x00010000
 	.4byte 0x80000000
+	.section .bss,"aw",%nobits
+	.space 0x00000004
+	.global Data_02001760
+Data_02001760:
+	.space 0x00000050
+	.global Data_020017b0
+Data_020017b0:
+	.space 0x00000010
+	.global Data_020017c0
+Data_020017c0:
+	.space 0x00000060
+	.global Data_02001820
+Data_02001820:
+	.space 0x00000004
+	.global Data_02001824
+Data_02001824:
+	.space 0x00000004
+	.global Data_02001828
+Data_02001828:

@@ -5196,7 +5196,7 @@ Data_02002c6c:
 	.4byte 0x00000000
 	.4byte 0x01100000
 	.4byte 0x0002c000
-	.4byte Tileset_Set107TilesC + 0x24a9
+	.4byte 0x08e50111
 	.4byte 0x00000001
 	.4byte 0x00d80000
 	.4byte 0x00000000
@@ -5507,7 +5507,7 @@ Data_02003128:
 	.4byte 0x03010033
 	.4byte Func_020002f4
 	.4byte 0x50008805
-	.4byte gHeapSlots + 0x32
+	.4byte 0x03000032
 	.4byte Func_02000304
 	.4byte 0xffffffff
 	.4byte 0x00000000

@@ -12,7 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LINKED_EFFECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_373_overlay.o"(.rodata.part1)
+        "*/resource_373_overlay.o"(.rodata.x0200e190)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its remainder helper by its ABI name; here it is the

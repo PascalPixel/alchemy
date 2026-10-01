@@ -775,7 +775,7 @@ Func_08046b08:
 	blt .L_0804715a
 	adds r0, r6, #0
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	adds r6, r0, #0
 	b .L_08047152
 	.2byte 0x0000
@@ -806,7 +806,7 @@ Func_08046b08:
 	adds r5, r5, r0
 	movs r1, #3
 	adds r0, r6, #3
-	bl __modsi3
+	bl Math_Mod
 	adds r6, r5, r0
 .L_08047152:
 	ldr r3, [sp, #456]
@@ -983,7 +983,7 @@ Func_08046b08:
 	ldrsb r6, [r3, r6]
 	movs r1, #3
 	adds r0, r6, #0
-	bl __modsi3
+	bl Math_Mod
 	adds r5, r0, #0
 	lsls r5, r5, #24
 	asrs r5, r5, #23
@@ -2122,7 +2122,7 @@ Func_08046b08:
 	bls .L_08047b66
 	movs r0, #1
 .L_08047b66:
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	movs r2, #148
 	adds r3, r0, #0
 	lsls r2, r2, #1
@@ -2376,7 +2376,7 @@ Func_08046b08:
 	subs r6, r3, r0
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #128
 	lsls r0, r0, #1
 	adds r5, r0, #0

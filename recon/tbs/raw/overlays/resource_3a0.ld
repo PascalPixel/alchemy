@@ -13,7 +13,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/MURA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3a0_overlay.o"(.rodata.part1)
+        "*/resource_3a0_overlay.o"(.rodata.x020094fc)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

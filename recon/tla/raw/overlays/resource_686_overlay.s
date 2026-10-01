@@ -2469,7 +2469,7 @@ Func_020012c4:
 .L_02009408:
 	.4byte 0xffff0000
 .L_0200940c:
-	.4byte gOverlayArea + 0x4030
+	.4byte Data_02004030
 .L_02009410:
 	.4byte ResourceTableEntries
 .L_02009414:
@@ -2569,7 +2569,7 @@ Func_02001420:
 .L_020094d0:
 	.4byte 0x00008000
 .L_020094d4:
-	.4byte gOverlayArea + 0x4030
+	.4byte Data_02004030
 .L_020094d8:
 	.4byte IwramClearWords
 .L_020094dc:
@@ -3166,7 +3166,7 @@ Func_0200160c:
 .L_02009980:
 	.4byte gPartyState
 .L_02009984:
-	.4byte gOverlayArea + 0x4030
+	.4byte Data_02004030
 .L_02009988:
 	.4byte Data_02003780
 .L_0200998c:
@@ -3613,7 +3613,7 @@ Func_020019a0:
 .L_02009d14:
 	.4byte gPartyState
 .L_02009d18:
-	.4byte gOverlayArea + 0x4030
+	.4byte Data_02004030
 .L_02009d1c:
 	.4byte Data_02003780
 .L_02009d20:
@@ -5581,7 +5581,7 @@ Func_02002438:
 .L_0200ad40:
 	.4byte 0x000000c2
 .L_0200ad44:
-	.4byte gOverlayArea + 0x4030
+	.4byte Data_02004030
 .L_0200ad48:
 	.4byte 0x000000c4
 .L_0200ad4c:
@@ -5750,7 +5750,7 @@ gSceneExits:
 	.4byte 0x01d1f0bd
 	.4byte 0x01e1b0bd
 	.4byte 0x01f1d0bd
-	.4byte gOamBuckets + 0xae
+	.4byte 0x020030be
 	.4byte 0x021020be
 	.4byte 0x000000be
 	.4byte 0x001070bd
@@ -6713,13 +6713,13 @@ Data_02003f4c:
 	.4byte 0xffff001c
 	.4byte 0x0000001c
 	.4byte 0x00000002
-	.4byte Data_02020004 + 0x24
+	.4byte 0x02020028
 	.4byte Func_02001d34
 	.4byte 0x00000002
 	.4byte 0xffff0029
 	.4byte Func_02001ddc
 	.4byte 0x00000002
-	.4byte Data_02030000 + 0x2a
+	.4byte 0x0203002a
 	.4byte Func_02001e54
 	.4byte 0x00000002
 	.4byte 0xffff002b
@@ -6750,3 +6750,7 @@ Data_02004018:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 0x0000000c
+	.global Data_02004030
+Data_02004030:

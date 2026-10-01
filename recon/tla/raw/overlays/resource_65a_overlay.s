@@ -2163,7 +2163,7 @@ Data_020013c0:
 	.4byte 0xffff000c
 	.global Data_020013c4
 Data_020013c4:
-	.4byte Data_02020004 + 0x9
+	.4byte 0x0202000d
 	.2byte 0xffff
 	.global Data_020013ca
 Data_020013ca:
@@ -2549,19 +2549,19 @@ Data_02001920:
 	.4byte 0xffff0005
 	.4byte 0x00000005
 	.4byte 0x00008515
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte 0x00000000
 	.4byte 0x00000009
-	.4byte Tileset_Set61TilesB + 0x125e
+	.4byte 0x08c8000a
 	.4byte Func_020004cc
 	.4byte 0x00008c15
-	.4byte Tileset_Set61TilesB + 0x125f
+	.4byte 0x08c8000b
 	.4byte Func_020004cc
 	.4byte 0x10008c15
-	.4byte Tileset_Set64TilesB + 0x79c
+	.4byte 0x08ca000c
 	.4byte Func_0200051c
 	.4byte 0x00008c15
-	.4byte Tileset_Set64TilesB + 0x79c
+	.4byte 0x08ca000c
 	.4byte Func_0200052c
 	.4byte 0x00000602
 	.4byte 0x09ef000b
@@ -2573,7 +2573,7 @@ Data_02001920:
 	.4byte 0x09ef0008
 	.4byte Func_0200093c
 	.4byte 0x00001815
-	.4byte Data_02020004 + 0x9
+	.4byte 0x0202000d
 	.4byte Func_02000558
 	.4byte 0x50009085
 	.4byte 0xffff0000
@@ -2625,7 +2625,7 @@ Data_02001a1c:
 	.4byte 0xffff0008
 	.4byte 0x00000008
 	.4byte 0x00008515
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0xffff000a
@@ -2730,7 +2730,7 @@ Data_02001bcc:
 	.4byte 0xffff000a
 	.4byte Func_02000568
 	.4byte 0x00000003
-	.4byte Field_Map130 + 0x312
+	.4byte 0x08c9000a
 	.4byte Func_02000474
 	.4byte 0xffffffff
 	.4byte 0x00000000

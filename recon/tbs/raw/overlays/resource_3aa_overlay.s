@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009b94,"a",%progbits
 	.global KareiKyuden_PartyActions
 KareiKyuden_PartyActions:
 	.4byte 0x0000001c

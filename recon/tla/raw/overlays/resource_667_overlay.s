@@ -2476,10 +2476,10 @@ gSceneEvents:
 	.4byte 0xffff0011
 	.4byte 0x00001cc0
 	.4byte 0x00000000
-	.4byte Field_Map064 + 0xb22
+	.4byte 0x08ba0012
 	.4byte Func_0200019c
 	.4byte 0x00008d15
-	.4byte Field_Map064 + 0xf22
+	.4byte 0x08ba0412
 	.4byte Func_0200019c
 	.4byte 0x00000000
 	.4byte 0xffff0012
@@ -2494,16 +2494,16 @@ gSceneEvents:
 	.4byte 0xffff0013
 	.4byte 0x00001cc6
 	.4byte 0x00000000
-	.4byte Tileset_Set37TilesA + 0xdc8
+	.4byte 0x08bb0008
 	.4byte Func_02000238
 	.4byte 0x00008d15
-	.4byte Tileset_Set37TilesA + 0x11c8
+	.4byte 0x08bb0408
 	.4byte Func_02000238
 	.4byte 0x00000000
-	.4byte Field_Map076 + 0x271
+	.4byte 0x08bc0009
 	.4byte Func_02000370
 	.4byte 0x00008d15
-	.4byte Field_Map076 + 0x671
+	.4byte 0x08bc0409
 	.4byte Func_02000370
 	.4byte 0x00000000
 	.4byte 0xffff0009

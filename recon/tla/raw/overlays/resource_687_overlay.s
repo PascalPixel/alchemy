@@ -1816,7 +1816,7 @@ Func_02000da0:
 .L_02008e28:
 	.4byte Data_020022cc
 .L_02008e2c:
-	.4byte gOverlayArea + 0x26c0
+	.4byte Data_020026c0
 .L_02008e30:
 	lsls r3, r5, #16
 	lsrs r3, r3, #16
@@ -2312,7 +2312,7 @@ Func_02001108:
 .L_02009214:
 	.4byte 0x0000001f
 .L_02009218:
-	.4byte gOverlayArea + 0x26c0
+	.4byte Data_020026c0
 .L_0200921c:
 	lsls r3, r5, #16
 	lsrs r3, r3, #16
@@ -3007,7 +3007,7 @@ Func_02001650:
 .L_02009794:
 	.4byte 0x0000001f
 .L_02009798:
-	.4byte gOverlayArea + 0x2580
+	.4byte Data_02002580
 .L_0200979c:
 	.4byte Data_0300122c
 .L_020097a0:
@@ -3015,7 +3015,7 @@ Func_02001650:
 .L_020097a4:
 	.4byte Data_020022cc
 .L_020097a8:
-	.4byte gOverlayArea + 0x26c0
+	.4byte Data_020026c0
 .L_020097ac:
 	.4byte Data_0200257c
 .L_020097b0:
@@ -3145,7 +3145,7 @@ Func_02001650:
 .L_0200989c:
 	.4byte Data_0300122c
 .L_020098a0:
-	.4byte gOverlayArea + 0x2580
+	.4byte Data_02002580
 .L_020098a4:
 	.4byte 0xa2600001
 	.section .text.x020098a8,"ax",%progbits
@@ -3744,7 +3744,7 @@ Func_02001cdc:
 .L_02009d78:
 	.4byte Data_020022cc
 .L_02009d7c:
-	.4byte gOverlayArea + 0x26c0
+	.4byte Data_020026c0
 .L_02009d80:
 	.4byte gSceneState
 .L_02009d84:
@@ -3899,7 +3899,7 @@ Func_02001cdc:
 .L_02009eb8:
 	.4byte Data_020022cc
 .L_02009ebc:
-	.4byte gOverlayArea + 0x26c0
+	.4byte Data_020026c0
 .L_02009ec0:
 	.4byte gPartyState
 .L_02009ec4:
@@ -3992,7 +3992,7 @@ Data_02002118:
 	.4byte 0x02c00000
 	.4byte 0x03800000
 	.4byte 0x01400000
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00c00000
 	.4byte 0x01400000
 	.4byte 0x01a00000
@@ -4167,40 +4167,40 @@ Data_020022d0:
 	.4byte 0xffff002c
 	.4byte Func_02000ef0
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2d
+	.4byte 0x0200002d
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2e
+	.4byte 0x0200002e
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2f
+	.4byte 0x0200002f
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte Func_02000818
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x32
+	.4byte 0x02000032
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x33
+	.4byte 0x02000033
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x34
+	.4byte 0x02000034
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x35
+	.4byte 0x02000035
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x36
+	.4byte 0x02000036
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x37
+	.4byte 0x02000037
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x38
+	.4byte 0x02000038
 	.4byte Func_02000a80
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x39
+	.4byte 0x02000039
 	.4byte Func_02000a80
 	.4byte 0x00000006
 	.4byte 0xffff00c8
@@ -4302,3 +4302,10 @@ Data_0200251c:
 	.global Data_0200257c
 Data_0200257c:
 	.2byte 0x0001
+	.section .bss,"aw",%nobits
+	.space 0x00000002
+	.global Data_02002580
+Data_02002580:
+	.space 0x00000140
+	.global Data_020026c0
+Data_020026c0:

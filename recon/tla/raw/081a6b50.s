@@ -373,7 +373,7 @@ Func_081a6b50:
 	strh r0, [r6, #4]
 	lsls r0, r0, #16
 	asrs r0, r0, #16
-	bl __modsi3
+	bl Math_Mod
 	lsls r0, r0, #16
 	cmp r0, #0
 	bne .L_081a6e38

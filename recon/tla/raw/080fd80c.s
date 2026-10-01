@@ -44,7 +44,7 @@ Func_080fd80c:
 	movs r1, #5
 	mov r10, r0
 	adds r0, r6, #0
-	bl __modsi3
+	bl Math_Mod
 	movs r1, #5
 	mov r8, r0
 	adds r0, r7, #0
@@ -52,7 +52,7 @@ Func_080fd80c:
 	movs r1, #5
 	adds r5, r0, #0
 	adds r0, r7, #0
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	beq .L_080fd87e
 	adds r5, #1

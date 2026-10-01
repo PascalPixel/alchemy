@@ -1,1001 +1,1038 @@
 .syntax unified
 	.thumb
 	.section .text.x02009ca4,"ax",%progbits
-	.balign 4
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	movs	r0, #8
-	bl 0x0200c2fc
-	adds	r6, r0, #0
-	movs	r0, #0
-	bl 0x0200c2fc
-	ldr	r1, [pc, #360]
-	ldr	r3, [r0, #8]
-	adds	r3, r3, r1
-	lsrs	r2, r3, #31
-	adds	r3, r3, r2
-	ldr	r2, [pc, #356]
-	asrs	r3, r3, #1
-	mov	fp, r2
-	add	r3, fp
-	mov	r9, r3
-	ldr	r1, [pc, #348]
-	ldr	r3, [r0, #16]
-	adds	r3, r3, r1
-	lsrs	r2, r3, #31
-	adds	r3, r3, r2
-	movs	r7, #166
-	asrs	r3, r3, #1
-	lsls	r7, r7, #19
-	movs	r0, #183
-	adds	r3, r3, r7
-	lsls	r0, r0, #1
-	movs	r5, #0
-	mov	sl, r3
-	bl 0x0200c28c
-	cmp	r0, #0
-	beq.n	.L_02001cf8
-	b.n	.L_02002080
-.L_02001cf8:
-	movs	r0, #1
-	bl 0x0200c2c4
-	movs	r0, #183
-	lsls	r0, r0, #1
-	bl 0x0200c294
-	bl 0x0200c2dc
-	movs	r0, #0
-	bl 0x0200c2fc
-	cmp	r0, #0
-	beq.n	.L_02001d1e
-	ldr	r1, [r0, #8]
-	ldr	r2, [r0, #16]
-	movs	r0, #8
-	bl 0x0200c35c
-.L_02001d1e:
-	movs	r1, #0
-	movs	r2, #0
-	movs	r0, #0
-	bl 0x0200c2b4
-	movs	r1, #0
-	movs	r2, #0
-	movs	r0, #0
-	bl 0x0200c2bc
-	bl 0x0200c45c
-	movs	r1, #8
-	movs	r2, #0
-	movs	r0, #0
-	bl 0x0200c38c
-	movs	r0, #10
-	bl 0x0200c2d4
-	movs	r0, #0
-	ldr	r1, [pc, #236]
-	movs	r2, #60
-	bl 0x0200c3d4
-	adds	r2, r6, #0
-	movs	r3, #1
-	adds	r2, #102
-	strh	r3, [r2, #0]
-	movs	r1, #0
-	movs	r2, #0
-	movs	r0, #8
-	bl 0x0200c38c
-	movs	r0, #16
-	bl 0x0200c184
-	ldr	r0, [pc, #208]
-	bl 0x0200c3a4
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	bl 0x0200c464
-	ldr	r0, [pc, #196]
-	movs	r1, #6
-	bl 0x0200c48c
-	bl 0x0200c494
-	bl 0x0200c45c
-	movs	r2, #85
-	adds	r2, r2, r6
-	movs	r3, #2
-	strb	r3, [r2, #0]
-	movs	r3, #128
-	lsls	r3, r3, #7
-	str	r3, [r6, #72]
-	movs	r3, #128
-	lsls	r3, r3, #9
-	str	r3, [r6, #48]
-	str	r3, [r6, #52]
-	str	r5, [r6, #40]
-	str	r5, [r6, #20]
-	adds	r3, r7, #0
-	mov	r8, r2
-	adds	r0, r6, #0
-	mov	r1, fp
-	movs	r2, #0
-	bl 0x0200c224
-	movs	r7, #128
-	lsls	r7, r7, #4
-	movs	r5, #15
-.L_02001db8:
-	ldr	r3, [r6, #24]
-	adds	r3, r3, r7
-	str	r3, [r6, #24]
-	ldr	r3, [r6, #28]
-	adds	r3, r3, r7
-	str	r3, [r6, #28]
-	movs	r0, #1
-	subs	r5, #1
-	bl 0x0200c184
-	cmp	r5, #0
-	bge.n	.L_02001db8
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200c38c
-	movs	r2, #0
-	movs	r1, #8
-	movs	r0, #0
-	bl 0x0200c38c
-	movs	r0, #16
-	bl 0x0200c184
-	movs	r3, #0
-	str	r3, [r6, #108]
-	adds	r0, r6, #0
-	movs	r1, #0
-	bl 0x0200c25c
-	movs	r3, #128
-	lsls	r3, r3, #9
-	str	r3, [r6, #72]
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200c3b4
-	movs	r0, #131
-	bl 0x0200c4a4
-	movs	r0, #140
-	movs	r1, #0
-	bl 0x0200c474
-	ldr	r7, [pc, #48]
-	movs	r5, #59
-.L_02001e16:
-	ldr	r3, [r7, #0]
-	movs	r2, #2
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_02001e48
-	adds	r0, r6, #0
-	movs	r1, #7
-	bl 0x0200c25c
-	b.n	.L_02001e50
+	.global Func_02001ca4
+	.thumb_func
+Func_02001ca4:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	movs r0, #8
+	bl Object_GetById
+	adds r6, r0, #0
+	movs r0, #0
+	bl Object_GetById
+	ldr r1, .L_02009e2c
+	ldr r3, [r0, #8]
+	adds r3, r3, r1
+	lsrs r2, r3, #31
+	adds r3, r3, r2
+	ldr r2, .L_02009e30
+	asrs r3, r3, #1
+	mov r11, r2
+	add r3, r11
+	mov r9, r3
+	ldr r1, .L_02009e34
+	ldr r3, [r0, #16]
+	adds r3, r3, r1
+	lsrs r2, r3, #31
+	adds r3, r3, r2
+	movs r7, #166
+	asrs r3, r3, #1
+	lsls r7, r7, #19
+	movs r0, #183
+	adds r3, r3, r7
+	lsls r0, r0, #1
+	movs r5, #0
+	mov r10, r3
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	beq .L_02009cf8
+	b .L_0200a080
+.L_02009cf8:
+	movs r0, #1
+	bl Owner_RefreshActiveRatios
+	movs r0, #183
+	lsls r0, r0, #1
+	bl Engine_GameFlagSet
+	bl Engine_EventBegin
+	movs r0, #0
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_02009d1e
+	ldr r1, [r0, #8]
+	ldr r2, [r0, #16]
+	movs r0, #8
+	bl Engine_ActorSetPosition
+.L_02009d1e:
+	movs r1, #0
+	movs r2, #0
+	movs r0, #0
+	bl Djinn_AddToOwner
+	movs r1, #0
+	movs r2, #0
+	movs r0, #0
+	bl Trade_AddOffer
+	bl Battle_SetObjectFlag5bWhenMode3
+	movs r1, #8
+	movs r2, #0
+	movs r0, #0
+	bl Engine_ActorFaceActor
+	movs r0, #10
+	bl Engine_EventWait
+	movs r0, #0
+	ldr r1, .L_02009e38
+	movs r2, #60
+	bl Engine_ActorShowEmote
+	adds r2, r6, #0
+	movs r3, #1
+	adds r2, #102
+	strh r3, [r2]
+	movs r1, #0
+	movs r2, #0
+	movs r0, #8
+	bl Engine_ActorFaceActor
+	movs r0, #16
+	bl Engine_TaskWait
+	ldr r0, .L_02009e3c
+	bl Engine_EventSetMessage
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	bl Battle_ClearObjectFlag5bWhenMode3
+	ldr r0, .L_02009e40
+	movs r1, #6
+	bl BattleFx_ScheduleRatioTransition
+	bl Event_WaitForDisplayField358Clear
+	bl Battle_SetObjectFlag5bWhenMode3
+	movs r2, #85
+	adds r2, r2, r6
+	movs r3, #2
+	strb r3, [r2]
+	movs r3, #128
+	lsls r3, r3, #7
+	str r3, [r6, #72]
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r6, #48]
+	str r3, [r6, #52]
+	str r5, [r6, #40]
+	str r5, [r6, #20]
+	adds r3, r7, #0
+	mov r8, r2
+	adds r0, r6, #0
+	mov r1, r11
+	movs r2, #0
+	bl Engine_ObjectSetPosition
+	movs r7, #128
+	lsls r7, r7, #4
+	movs r5, #15
+.L_02009db8:
+	ldr r3, [r6, #24]
+	adds r3, r3, r7
+	str r3, [r6, #24]
+	ldr r3, [r6, #28]
+	adds r3, r3, r7
+	str r3, [r6, #28]
+	movs r0, #1
+	subs r5, #1
+	bl Engine_TaskWait
+	cmp r5, #0
+	bge .L_02009db8
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorFaceActor
+	movs r2, #0
+	movs r1, #8
+	movs r0, #0
+	bl Engine_ActorFaceActor
+	movs r0, #16
+	bl Engine_TaskWait
+	movs r3, #0
+	str r3, [r6, #108]
+	adds r0, r6, #0
+	movs r1, #0
+	bl Engine_ObjectSetPartPalettes
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r6, #72]
+	movs r1, #0
+	movs r0, #8
+	bl Engine_EventShowMessage
+	movs r0, #131
+	bl Engine_AudioPlayCue
+	movs r0, #140
+	movs r1, #0
+	bl Engine_PsynergyBegin
+	ldr r7, .L_02009e44
+	movs r5, #59
+.L_02009e16:
+	ldr r3, [r7]
+	movs r2, #2
+	ands r3, r2
+	cmp r3, #0
+	beq .L_02009e48
+	adds r0, r6, #0
+	movs r1, #7
+	bl Engine_ObjectSetPartPalettes
+	b .L_02009e50
 	.2byte 0x0000
+.L_02009e2c:
 	.4byte 0xea300000
+.L_02009e30:
 	.4byte 0x15d00000
+.L_02009e34:
 	.4byte 0xfad00000
+.L_02009e38:
 	.4byte 0x00000101
+.L_02009e3c:
 	.4byte 0x00000c4f
+.L_02009e40:
 	.4byte 0x00013333
-	.2byte 0x1e40
-	.2byte 0x0300
-.L_02001e48:
-	adds	r0, r6, #0
-	movs	r1, #0
-	bl 0x0200c25c
-.L_02001e50:
-	ldr	r3, [r7, #0]
-	movs	r2, #15
-	ands	r3, r2
-	cmp	r3, #0
-	bne.n	.L_02001e60
-	adds	r0, r6, #0
-	bl 0x0200c058
-.L_02001e60:
-	movs	r0, #1
-	subs	r5, #1
-	bl 0x0200c184
-	cmp	r5, #0
-	bge.n	.L_02001e16
-	bl 0x0200c47c
-	adds	r0, r6, #0
-	movs	r1, #0
-	bl 0x0200c25c
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c384
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r1, #129
-	movs	r2, #30
-	movs	r0, #0
-	lsls	r1, r1, #1
-	bl 0x0200c3d4
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r0, #0
-	ldr	r1, [pc, #208]
-	movs	r2, #30
-	bl 0x0200c3d4
-	mov	r3, r9
-	asrs	r1, r3, #16
-	mov	r3, sl
-	asrs	r2, r3, #16
-	movs	r0, #8
-	bl 0x0200c344
-	movs	r0, #0
-	movs	r1, #22
-	bl 0x0200c364
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r0, #0
-	ldr	r1, [pc, #168]
-	movs	r2, #40
-	bl 0x0200c3d4
-	movs	r2, #30
-	movs	r0, #8
-	movs	r1, #4
-	bl 0x0200c374
-	movs	r0, #150
-	lsls	r0, r0, #1
-	movs	r1, #4
-	bl 0x0200c26c
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r1, #128
-	movs	r2, #30
-	movs	r0, #0
-	lsls	r1, r1, #1
-	bl 0x0200c3d4
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r0, #0
-	movs	r1, #2
-	bl 0x0200c384
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r2, #30
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c374
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r5, #0
-	mov	r1, r8
-	movs	r2, #128
-	strb	r5, [r1, #0]
-	adds	r0, r6, #0
-	mov	r1, r9
-	lsls	r2, r2, #13
-	mov	r3, sl
-	bl 0x0200c224
-	ldr	r7, [pc, #52]
-	movs	r5, #15
-.L_02001f38:
-	ldrh	r3, [r6, #6]
-	adds	r3, r3, r7
-	strh	r3, [r6, #6]
-	movs	r0, #1
-	subs	r5, #1
-	bl 0x0200c184
-	cmp	r5, #0
-	bge.n	.L_02001f38
-	movs	r0, #0
-	movs	r1, #1
-	bl 0x0200c364
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200c3b4
-	movs	r2, #0
-	movs	r3, #2
-	mov	r1, r8
-	strb	r3, [r1, #0]
-	ldr	r7, [pc, #8]
-	str	r2, [r6, #40]
-	str	r2, [r6, #20]
-	b.n	.L_02001f74
+.L_02009e44:
+	.4byte gFrameCount
+.L_02009e48:
+	adds r0, r6, #0
+	movs r1, #0
+	bl Engine_ObjectSetPartPalettes
+.L_02009e50:
+	ldr r3, [r7]
+	movs r2, #15
+	ands r3, r2
+	cmp r3, #0
+	bne .L_02009e60
+	adds r0, r6, #0
+	bl WorldMap_CreateLinkedEffects
+.L_02009e60:
+	movs r0, #1
+	subs r5, #1
+	bl Engine_TaskWait
+	cmp r5, #0
+	bge .L_02009e16
+	bl BattleEffect_CleanupSceneObjects
+	adds r0, r6, #0
+	movs r1, #0
+	bl Engine_ObjectSetPartPalettes
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorRunRepeatedMotion
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r1, #129
+	movs r2, #30
+	movs r0, #0
+	lsls r1, r1, #1
+	bl Engine_ActorShowEmote
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r0, #0
+	ldr r1, .L_02009f70
+	movs r2, #30
+	bl Engine_ActorShowEmote
+	mov r3, r9
+	asrs r1, r3, #16
+	mov r3, r10
+	asrs r2, r3, #16
+	movs r0, #8
+	bl Engine_ActorWalkToAndWait
+	movs r0, #0
+	movs r1, #22
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r0, #0
+	ldr r1, .L_02009f70
+	movs r2, #40
+	bl Engine_ActorShowEmote
+	movs r2, #30
+	movs r0, #8
+	movs r1, #4
+	bl Engine_ActorJump
+	movs r0, #150
+	lsls r0, r0, #1
+	movs r1, #4
+	bl UiWork_PushValueSlot
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r1, #128
+	movs r2, #30
+	movs r0, #0
+	lsls r1, r1, #1
+	bl Engine_ActorShowEmote
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r0, #0
+	movs r1, #2
+	bl Engine_ActorRunRepeatedMotion
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r2, #30
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorJump
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r5, #0
+	mov r1, r8
+	movs r2, #128
+	strb r5, [r1]
+	adds r0, r6, #0
+	mov r1, r9
+	lsls r2, r2, #13
+	mov r3, r10
+	bl Engine_ObjectSetPosition
+	ldr r7, .L_02009f6c
+	movs r5, #15
+.L_02009f38:
+	ldrh r3, [r6, #6]
+	adds r3, r3, r7
+	strh r3, [r6, #6]
+	movs r0, #1
+	subs r5, #1
+	bl Engine_TaskWait
+	cmp r5, #0
+	bge .L_02009f38
+	movs r0, #0
+	movs r1, #1
+	bl Engine_ActorSetAnimation
+	movs r1, #0
+	movs r0, #8
+	bl Engine_EventShowMessage
+	movs r2, #0
+	movs r3, #2
+	mov r1, r8
+	strb r3, [r1]
+	ldr r7, .L_02009f6c
+	str r2, [r6, #40]
+	str r2, [r6, #20]
+	b .L_02009f74
 	.2byte 0x0000
+.L_02009f6c:
 	.4byte 0x00001000
-	.2byte 0x0101
-	.2byte 0x0000
-.L_02001f74:
-	movs	r5, #7
-.L_02001f76:
-	ldrh	r3, [r6, #6]
-	adds	r3, r3, r7
-	strh	r3, [r6, #6]
-	movs	r0, #1
-	subs	r5, #1
-	bl 0x0200c184
-	cmp	r5, #0
-	bge.n	.L_02001f76
-	movs	r0, #0
-	movs	r1, #22
-	bl 0x0200c364
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r1, #129
-	movs	r0, #8
-	lsls	r1, r1, #1
-	movs	r2, #30
-	bl 0x0200c3d4
-	movs	r2, #0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c38c
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c384
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r0, #8
-	movs	r1, #2
-	movs	r2, #30
-	bl 0x0200c374
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3ac
-	movs	r5, #0
-.L_02001fd2:
-	movs	r0, #0
-	movs	r1, #0
-	bl 0x0200c2f4
-	cmp	r0, #1
-	bne.n	.L_0200201a
-	movs	r0, #8
-	movs	r1, #2
-	movs	r2, #20
-	bl 0x0200c374
-	movs	r0, #8
-	movs	r1, #2
-	movs	r2, #20
-	bl 0x0200c374
-	cmp	r5, #6
-	bne.n	.L_02002006
-	ldr	r0, [pc, #596]
-	bl 0x0200c3a4
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	b.n	.L_02002044
-.L_02002006:
-	ldr	r0, [pc, #584]
-	adds	r0, r5, r0
-	bl 0x0200c3a4
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3ac
-	adds	r5, #1
-	b.n	.L_02001fd2
-.L_0200201a:
-	movs	r0, #0
-	movs	r1, #22
-	bl 0x0200c364
-	movs	r0, #8
-	movs	r1, #2
-	movs	r2, #20
-	bl 0x0200c374
-	movs	r1, #4
-	movs	r0, #8
-	movs	r2, #20
-	bl 0x0200c374
-	ldr	r0, [pc, #540]
-	bl 0x0200c3a4
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-.L_02002044:
-	movs	r0, #150
-	movs	r1, #4
-	lsls	r0, r0, #1
-	bl 0x0200c26c
-	movs	r0, #81
-	bl 0x0200c4a4
-	ldr	r5, [pc, #512]
-	movs	r1, #3
-	adds	r0, r5, #0
-	adds	r5, #1
-	bl 0x0200c264
-	adds	r0, r5, #0
-	bl 0x0200c3a4
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c374
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200c3b4
-	movs	r0, #9
-	bl 0x0200c4a4
-	b.n	.L_020021a6
-.L_02002080:
-	bl 0x0200c2dc
-	movs	r0, #0
-	bl 0x0200c2fc
-	cmp	r0, #0
-	beq.n	.L_02002098
-	ldr	r1, [r0, #8]
-	ldr	r2, [r0, #16]
-	movs	r0, #8
-	bl 0x0200c35c
-.L_02002098:
-	movs	r3, #160
-	lsls	r3, r3, #12
-	mov	r1, r9
-	movs	r2, #0
-	str	r3, [r6, #40]
-	adds	r0, r6, #0
-	mov	r3, sl
-	bl 0x0200c224
-	movs	r0, #30
-	bl 0x0200c2d4
-	bl 0x0200c45c
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200c38c
-	movs	r2, #0
-	movs	r0, #0
-	movs	r1, #8
-	bl 0x0200c38c
-	movs	r1, #22
-	movs	r0, #0
-	bl 0x0200c364
-	ldr	r0, [pc, #392]
-	bl 0x0200c3a4
-	movs	r0, #8
-	movs	r1, #2
-	movs	r2, #20
-	bl 0x0200c374
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c374
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c384
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200c3b4
-	movs	r0, #111
-	bl 0x0200c4a4
-	movs	r1, #2
-	movs	r0, #0
-	bl 0x0200c284
-	ldr	r0, [pc, #332]
-	bl 0x0200c294
-	ldr	r0, [pc, #332]
-	bl 0x0200c29c
-	bl 0x0200c49c
-	ldr	r0, [pc, #324]
-	bl 0x0200c3a4
-	adds	r3, r7, #0
-	movs	r2, #0
-	mov	r1, fp
-	adds	r0, r6, #0
-	bl 0x0200c224
-	movs	r0, #30
-	bl 0x0200c2d4
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r2, #0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c38c
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200c3ac
-	movs	r0, #0
-	movs	r1, #0
-	bl 0x0200c2f4
-	cmp	r0, #1
-	bne.n	.L_020021b0
-	movs	r0, #0
-	movs	r1, #22
-	bl 0x0200c364
-	movs	r1, #2
-	movs	r0, #8
-	bl 0x0200c384
-	ldr	r0, [pc, #244]
-	bl 0x0200c3a4
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200c3ac
-	movs	r0, #0
-	movs	r1, #0
-	bl 0x0200c2f4
-	cmp	r0, #1
-	beq.n	.L_020021b0
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	mov	r3, sl
-	mov	r2, r9
-	asrs	r1, r2, #16
-	movs	r0, #8
-	asrs	r2, r3, #16
-	bl 0x0200c344
-.L_020021a6:
-	bl 0x02009c08
-	bl 0x0200c464
-	b.n	.L_0200223c
-.L_020021b0:
-	movs	r1, #22
-	movs	r0, #0
-	bl 0x0200c364
-	ldr	r0, [pc, #180]
-	bl 0x0200c3a4
-	movs	r0, #8
-	movs	r1, #2
-	movs	r2, #20
-	bl 0x0200c374
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c374
-	movs	r0, #0
-	movs	r1, #3
-	bl 0x0200c36c
-	movs	r1, #128
-	movs	r2, #30
-	movs	r0, #8
-	lsls	r1, r1, #1
-	bl 0x0200c3d4
-	movs	r1, #0
-	movs	r0, #8
-	bl 0x0200c3b4
-	ldr	r0, [pc, #112]
-	bl 0x0200c294
-	ldr	r0, [pc, #108]
-	bl 0x0200c294
-	bl 0x0200c49c
-	movs	r2, #20
-	movs	r0, #8
-	movs	r1, #2
-	bl 0x0200c374
-	movs	r0, #8
-	movs	r1, #0
-	bl 0x0200c3b4
-	bl 0x0200c464
-	movs	r1, #0
-	movs	r2, #0
-	movs	r0, #8
-	bl 0x0200c484
-	movs	r0, #42
-	bl 0x0200c4a4
-	bl 0x0200c2e4
-	movs	r0, #183
-	lsls	r0, r0, #1
-	bl 0x0200c29c
-	ldr	r0, [pc, #44]
-	bl 0x0200c29c
-	ldr	r0, [pc, #44]
-	bl 0x0200c29c
-.L_0200223c:
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+.L_02009f70:
+	.4byte 0x00000101
+.L_02009f74:
+	movs r5, #7
+.L_02009f76:
+	ldrh r3, [r6, #6]
+	adds r3, r3, r7
+	strh r3, [r6, #6]
+	movs r0, #1
+	subs r5, #1
+	bl Engine_TaskWait
+	cmp r5, #0
+	bge .L_02009f76
+	movs r0, #0
+	movs r1, #22
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r1, #129
+	movs r0, #8
+	lsls r1, r1, #1
+	movs r2, #30
+	bl Engine_ActorShowEmote
+	movs r2, #0
+	movs r0, #8
+	movs r1, #0
+	bl Engine_ActorFaceActor
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorRunRepeatedMotion
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r0, #8
+	movs r1, #2
+	movs r2, #30
+	bl Engine_ActorJump
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventOpenMessage
+	movs r5, #0
+.L_02009fd2:
+	movs r0, #0
+	movs r1, #0
+	bl Engine_EventChooseYesNo
+	cmp r0, #1
+	bne .L_0200a01a
+	movs r0, #8
+	movs r1, #2
+	movs r2, #20
+	bl Engine_ActorJump
+	movs r0, #8
+	movs r1, #2
+	movs r2, #20
+	bl Engine_ActorJump
+	cmp r5, #6
+	bne .L_0200a006
+	ldr r0, .L_0200a24c
+	bl Engine_EventSetMessage
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	b .L_0200a044
+.L_0200a006:
+	ldr r0, .L_0200a250
+	adds r0, r5, r0
+	bl Engine_EventSetMessage
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventOpenMessage
+	adds r5, #1
+	b .L_02009fd2
+.L_0200a01a:
+	movs r0, #0
+	movs r1, #22
+	bl Engine_ActorSetAnimation
+	movs r0, #8
+	movs r1, #2
+	movs r2, #20
+	bl Engine_ActorJump
+	movs r1, #4
+	movs r0, #8
+	movs r2, #20
+	bl Engine_ActorJump
+	ldr r0, .L_0200a254
+	bl Engine_EventSetMessage
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+.L_0200a044:
+	movs r0, #150
+	movs r1, #4
+	lsls r0, r0, #1
+	bl UiWork_PushValueSlot
+	movs r0, #81
+	bl Engine_AudioPlayCue
+	ldr r5, .L_0200a258
+	movs r1, #3
+	adds r0, r5, #0
+	adds r5, #1
+	bl Engine_MessageShowCentered
+	adds r0, r5, #0
+	bl Engine_EventSetMessage
+	movs r2, #20
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorJump
+	movs r1, #0
+	movs r0, #8
+	bl Engine_EventShowMessage
+	movs r0, #9
+	bl Engine_AudioPlayCue
+	b .L_0200a1a6
+.L_0200a080:
+	bl Engine_EventBegin
+	movs r0, #0
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_0200a098
+	ldr r1, [r0, #8]
+	ldr r2, [r0, #16]
+	movs r0, #8
+	bl Engine_ActorSetPosition
+.L_0200a098:
+	movs r3, #160
+	lsls r3, r3, #12
+	mov r1, r9
+	movs r2, #0
+	str r3, [r6, #40]
+	adds r0, r6, #0
+	mov r3, r10
+	bl Engine_ObjectSetPosition
+	movs r0, #30
+	bl Engine_EventWait
+	bl Battle_SetObjectFlag5bWhenMode3
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorFaceActor
+	movs r2, #0
+	movs r0, #0
+	movs r1, #8
+	bl Engine_ActorFaceActor
+	movs r1, #22
+	movs r0, #0
+	bl Engine_ActorSetAnimation
+	ldr r0, .L_0200a25c
+	bl Engine_EventSetMessage
+	movs r0, #8
+	movs r1, #2
+	movs r2, #20
+	bl Engine_ActorJump
+	movs r2, #20
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorJump
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorRunRepeatedMotion
+	movs r1, #0
+	movs r0, #8
+	bl Engine_EventShowMessage
+	movs r0, #111
+	bl Engine_AudioPlayCue
+	movs r1, #2
+	movs r0, #0
+	bl Menu_AnimateSelectionToEntry
+	ldr r0, .L_0200a260
+	bl Engine_GameFlagSet
+	ldr r0, .L_0200a264
+	bl Engine_GameFlagClear
+	bl ItemMenu_Open
+	ldr r0, .L_0200a268
+	bl Engine_EventSetMessage
+	adds r3, r7, #0
+	movs r2, #0
+	mov r1, r11
+	adds r0, r6, #0
+	bl Engine_ObjectSetPosition
+	movs r0, #30
+	bl Engine_EventWait
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r2, #0
+	movs r0, #8
+	movs r1, #0
+	bl Engine_ActorFaceActor
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	movs r1, #0
+	movs r0, #8
+	bl Engine_EventOpenMessage
+	movs r0, #0
+	movs r1, #0
+	bl Engine_EventChooseYesNo
+	cmp r0, #1
+	bne .L_0200a1b0
+	movs r0, #0
+	movs r1, #22
+	bl Engine_ActorSetAnimation
+	movs r1, #2
+	movs r0, #8
+	bl Engine_ActorRunRepeatedMotion
+	ldr r0, .L_0200a26c
+	bl Engine_EventSetMessage
+	movs r1, #0
+	movs r0, #8
+	bl Engine_EventOpenMessage
+	movs r0, #0
+	movs r1, #0
+	bl Engine_EventChooseYesNo
+	cmp r0, #1
+	beq .L_0200a1b0
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	mov r3, r10
+	mov r2, r9
+	asrs r1, r2, #16
+	movs r0, #8
+	asrs r2, r3, #16
+	bl Engine_ActorWalkToAndWait
+.L_0200a1a6:
+	bl FieldScene_RunScene371_02001c08
+	bl Battle_ClearObjectFlag5bWhenMode3
+	b .L_0200a23c
+.L_0200a1b0:
+	movs r1, #22
+	movs r0, #0
+	bl Engine_ActorSetAnimation
+	ldr r0, .L_0200a270
+	bl Engine_EventSetMessage
+	movs r0, #8
+	movs r1, #2
+	movs r2, #20
+	bl Engine_ActorJump
+	movs r2, #20
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorJump
+	movs r0, #0
+	movs r1, #3
+	bl Engine_ActorSetAnimationAndWait
+	movs r1, #128
+	movs r2, #30
+	movs r0, #8
+	lsls r1, r1, #1
+	bl Engine_ActorShowEmote
+	movs r1, #0
+	movs r0, #8
+	bl Engine_EventShowMessage
+	ldr r0, .L_0200a260
+	bl Engine_GameFlagSet
+	ldr r0, .L_0200a264
+	bl Engine_GameFlagSet
+	bl ItemMenu_Open
+	movs r2, #20
+	movs r0, #8
+	movs r1, #2
+	bl Engine_ActorJump
+	movs r0, #8
+	movs r1, #0
+	bl Engine_EventShowMessage
+	bl Battle_ClearObjectFlag5bWhenMode3
+	movs r1, #0
+	movs r2, #0
+	movs r0, #8
+	bl BattleFx_RunPageEffectForSlot
+	movs r0, #42
+	bl Engine_AudioPlayCue
+	bl Engine_EventEnd
+	movs r0, #183
+	lsls r0, r0, #1
+	bl Engine_GameFlagClear
+	ldr r0, .L_0200a260
+	bl Engine_GameFlagClear
+	ldr r0, .L_0200a264
+	bl Engine_GameFlagClear
+.L_0200a23c:
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+.L_0200a24c:
 	.4byte 0x00000c62
+.L_0200a250:
 	.4byte 0x00000c5c
+.L_0200a254:
 	.4byte 0x00000c63
+.L_0200a258:
 	.4byte 0x00000c64
+.L_0200a25c:
 	.4byte 0x00000c68
+.L_0200a260:
 	.4byte 0x0000016f
+.L_0200a264:
 	.4byte 0x00000171
+.L_0200a268:
 	.4byte 0x00000c6a
+.L_0200a26c:
 	.4byte 0x00000c6d
-	.2byte 0x0c6f
-	.2byte 0x0000
+.L_0200a270:
+	.4byte 0x00000c6f
 	.section .text.x0200a8e8,"ax",%progbits
-	.balign 4
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	movs	r0, #0
-	bl 0x0200c2fc
-	adds	r5, r0, #0
-	bl 0x0200c2dc
-	bl 0x0200c464
-	ldr	r0, [pc, #872]
-	movs	r1, #6
-	bl 0x0200c48c
-	movs	r0, #192
-	movs	r1, #192
-	lsls	r0, r0, #10
-	lsls	r1, r1, #7
-	bl 0x0200c3ec
-	movs	r1, #1
-	movs	r3, #1
-	ldr	r0, [pc, #852]
-	negs	r1, r1
-	ldr	r2, [pc, #852]
-	bl 0x0200c3f4
-	ldr	r2, [pc, #852]
-	movs	r0, #0
-	ldr	r1, [pc, #852]
-	bl 0x0200c30c
-	movs	r0, #0
-	movs	r1, #2
-	bl 0x0200c364
-	adds	r3, r5, #0
-	adds	r3, #91
-	movs	r7, #0
-	strb	r7, [r3, #0]
-	adds	r0, r5, #0
-	bl 0x0200c21c
-	ldr	r3, [r5, #16]
-	ldr	r2, [pc, #812]
-	cmp	r3, r2
-	ble.n	.L_02002964
-	ldr	r3, [r5, #8]
-	ldr	r1, [pc, #816]
-	cmp	r3, r1
-	ble.n	.L_0200297c
-	adds	r0, r5, #0
-	ldr	r2, [r5, #12]
-	ldr	r3, [pc, #812]
-	bl 0x0200c224
-	adds	r0, r5, #0
-	bl 0x0200c22c
-	b.n	.L_0200297c
-.L_02002964:
-	ldr	r3, [r5, #8]
-	ldr	r1, [pc, #800]
-	cmp	r3, r1
-	ble.n	.L_0200297c
-	adds	r0, r5, #0
-	ldr	r2, [r7, #12]
-	ldr	r3, [pc, #792]
-	bl 0x0200c224
-	adds	r0, r5, #0
-	bl 0x0200c22c
-.L_0200297c:
-	ldr	r3, [pc, #756]
-	movs	r2, #0
-	ldr	r1, [pc, #780]
-	adds	r0, r5, #0
-	bl 0x0200c224
-	adds	r0, r5, #0
-	bl 0x0200c22c
-	movs	r0, #0
-	movs	r1, #1
-	bl 0x0200c364
-	movs	r2, #40
-	movs	r0, #0
-	movs	r1, #0
-	bl 0x0200c3c4
-	bl 0x0200c45c
-	movs	r1, #2
-	movs	r0, #0
-	bl 0x0200c384
-	movs	r0, #20
-	bl 0x0200c2d4
-	movs	r0, #0
-	movs	r1, #28
-	bl 0x0200c364
-	ldr	r1, [r5, #8]
-	movs	r3, #128
-	lsls	r3, r3, #10
-	movs	r2, #152
-	adds	r1, r1, r3
-	movs	r0, #22
-	ldr	r3, [r5, #16]
-	lsls	r2, r2, #14
-	bl 0x0200c20c
-	adds	r7, r0, #0
-	cmp	r7, #0
-	beq.n	.L_02002a30
-	movs	r1, #0
-	adds	r0, #85
-	strb	r1, [r0, #0]
-	ldr	r6, [r7, #80]
-	adds	r3, r6, #0
-	adds	r3, #38
-	strb	r1, [r3, #0]
-	adds	r3, #1
-	strb	r1, [r3, #0]
-	movs	r3, #33
-	ldrb	r2, [r6, #5]
-	negs	r3, r3
-	ands	r3, r2
-	ldrb	r2, [r6, #9]
-	strb	r3, [r6, #5]
-	movs	r3, #15
-	ands	r3, r2
-	movs	r1, #193
-	strb	r3, [r6, #9]
-	lsls	r1, r1, #3
-	movs	r0, #17
-	bl 0x0200c1b4
-	adds	r5, r0, #0
-	movs	r0, #242
-	bl 0x0200c274
-	movs	r2, #128
-	lsls	r2, r2, #3
-	adds	r5, r5, r2
-	movs	r1, #128
-	adds	r2, r5, #0
-	ldrb	r0, [r6, #28]
-	bl 0x0200c1e4
-	movs	r0, #17
-	bl 0x0200c1bc
-	movs	r0, #20
-	bl 0x0200c2d4
-	ldr	r3, [pc, #620]
-	movs	r0, #80
-	str	r3, [r7, #108]
-	bl 0x0200c2d4
-.L_02002a30:
-	ldr	r6, [pc, #612]
-	ldr	r0, [r6, #0]
-	bl 0x0200c2fc
-	movs	r3, #192
-	lsls	r3, r3, #6
-	mov	r8, r3
-	mov	r2, r8
-	strh	r2, [r0, #6]
-	movs	r1, #128
-	movs	r2, #0
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #1
-	bl 0x0200c3d4
-	movs	r1, #2
-	ldr	r0, [r6, #0]
-	bl 0x0200c384
-	ldr	r3, [pc, #580]
-	mov	sl, r3
-	mov	r0, sl
-	bl 0x0200c3a4
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	movs	r2, #80
-	bl 0x0200c3bc
-	cmp	r7, #0
-	beq.n	.L_02002a74
-	adds	r0, r7, #0
-	bl 0x0200c214
-.L_02002a74:
-	movs	r1, #1
-	movs	r0, #0
-	bl 0x0200c364
-	movs	r0, #40
-	bl 0x0200c2d4
-	ldr	r0, [r6, #0]
-	movs	r1, #6
-	movs	r2, #40
-	bl 0x0200c374
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200c3bc
-	movs	r1, #224
-	movs	r0, #0
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200c3c4
-	movs	r1, #208
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #8
-	movs	r2, #20
-	bl 0x0200c3c4
-	movs	r5, #144
-	ldr	r0, [r6, #0]
-	lsls	r5, r5, #8
-	movs	r2, #40
-	orrs	r0, r5
-	movs	r1, #0
-	bl 0x0200c3bc
-	ldr	r0, [r6, #0]
-	movs	r1, #4
-	bl 0x0200c36c
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	orrs	r0, r5
-	movs	r2, #20
-	bl 0x0200c3bc
-	ldr	r0, [r6, #0]
-	mov	r1, r8
-	movs	r2, #20
-	bl 0x0200c3c4
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	movs	r2, #10
-	bl 0x0200c3bc
-	ldr	r2, [pc, #400]
-	ldr	r0, [r6, #0]
-	ldr	r1, [pc, #400]
-	bl 0x0200c30c
-	movs	r1, #2
-	ldr	r0, [r6, #0]
-	bl 0x0200c364
-	movs	r0, #55
-	bl 0x0200c2fc
-	adds	r7, r0, #0
-	ldr	r2, [r7, #12]
-	ldr	r1, [pc, #388]
-	ldr	r3, [pc, #388]
-	bl 0x0200c224
-	adds	r0, r7, #0
-	bl 0x0200c22c
-	ldr	r3, [pc, #396]
-	movs	r2, #0
-	ldr	r1, [pc, #396]
-	adds	r0, r7, #0
-	bl 0x0200c224
-	adds	r0, r7, #0
-	bl 0x0200c22c
-	movs	r0, #55
-	movs	r1, #1
-	bl 0x0200c364
-	movs	r1, #160
-	movs	r2, #10
-	ldr	r0, [r6, #0]
-	lsls	r1, r1, #7
-	bl 0x0200c3c4
-	ldr	r0, [r6, #0]
-	movs	r1, #1
-	bl 0x0200c384
-	ldr	r0, [r6, #0]
-	movs	r3, #128
-	lsls	r3, r3, #5
-	orrs	r0, r3
-	movs	r1, #0
-	movs	r2, #20
-	bl 0x0200c3bc
-	movs	r1, #128
-	movs	r2, #128
-	lsls	r1, r1, #9
-	lsls	r2, r2, #8
-	ldr	r0, [r6, #0]
-	bl 0x0200c30c
-	movs	r0, #55
-	bl 0x0200c2fc
-	adds	r0, #90
-	ldrb	r2, [r0, #0]
-	movs	r3, #254
-	ands	r3, r2
-	strb	r3, [r0, #0]
-	movs	r1, #2
-	movs	r0, #55
-	bl 0x0200c364
-	movs	r3, #214
-	movs	r2, #0
-	lsls	r3, r3, #20
-	ldr	r1, [pc, #300]
-	adds	r0, r7, #0
-	bl 0x0200c224
-	adds	r0, r7, #0
-	bl 0x0200c22c
-	movs	r1, #1
-	movs	r0, #55
-	bl 0x0200c364
-	movs	r0, #10
-	bl 0x0200c2d4
-	movs	r0, #55
-	movs	r1, #2
-	bl 0x0200c364
-	movs	r2, #0
-	ldr	r3, [pc, #252]
-	ldr	r1, [pc, #256]
-	adds	r0, r7, #0
-	bl 0x0200c224
-	adds	r0, r7, #0
-	bl 0x0200c22c
-	movs	r0, #55
-	movs	r1, #1
-	bl 0x0200c364
-	mov	r0, sl
-	movs	r1, #1
-	adds	r0, #6
-	bl 0x0200c264
-	ldr	r3, [pc, #232]
-	ldr	r2, [r3, #0]
-	movs	r3, #236
-	lsls	r3, r3, #1
-	adds	r2, r2, r3
-	ldrh	r3, [r2, #0]
-	adds	r3, #1
-	strh	r3, [r2, #0]
-	movs	r0, #242
-	bl 0x0200c2cc
-	movs	r0, #20
-	bl 0x0200c2d4
-	ldr	r0, [r6, #0]
-	movs	r1, #4
-	bl 0x0200c364
-	movs	r2, #10
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	bl 0x0200c3bc
-	movs	r0, #0
-	movs	r1, #3
-	bl 0x0200c36c
-	ldr	r0, [r6, #0]
-	movs	r1, #3
-	bl 0x0200c36c
-	ldr	r0, [r6, #0]
-	movs	r1, #2
-	bl 0x0200c364
-	movs	r0, #0
-	bl 0x0200c2fc
-	cmp	r0, #0
-	beq.n	.L_02002c20
-	movs	r2, #10
-	ldrsh	r1, [r0, r2]
-	movs	r3, #18
-	ldrsh	r2, [r0, r3]
-	ldr	r0, [r6, #0]
-	bl 0x0200c32c
-.L_02002c20:
-	ldr	r0, [r6, #0]
-	bl 0x0200c354
-	movs	r2, #0
-	ldr	r0, [r6, #0]
-	movs	r1, #0
-	bl 0x0200c35c
-	bl 0x0200c464
-	movs	r0, #128
-	movs	r1, #6
-	lsls	r0, r0, #9
-	bl 0x0200c48c
-	movs	r0, #20
-	bl 0x0200c2d4
-	bl 0x0200a7dc
-	ldr	r0, [r6, #0]
-	bl 0x0200c304
-	movs	r0, #141
-	lsls	r0, r0, #2
-	bl 0x0200c29c
-	ldr	r0, [pc, #88]
-	bl 0x0200c294
-	bl 0x0200c2e4
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+	.global Func_020028e8
+	.thumb_func
+Func_020028e8:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	movs r0, #0
+	bl Object_GetById
+	adds r5, r0, #0
+	bl Engine_EventBegin
+	bl Battle_ClearObjectFlag5bWhenMode3
+	ldr r0, .L_0200ac6c
+	movs r1, #6
+	bl BattleFx_ScheduleRatioTransition
+	movs r0, #192
+	movs r1, #192
+	lsls r0, r0, #10
+	lsls r1, r1, #7
+	bl Engine_CameraSetSpeed
+	movs r1, #1
+	movs r3, #1
+	ldr r0, .L_0200ac70
+	negs r1, r1
+	ldr r2, .L_0200ac74
+	bl Engine_CameraMoveTo
+	ldr r2, .L_0200ac78
+	movs r0, #0
+	ldr r1, .L_0200ac7c
+	bl Engine_ActorSetSpeed
+	movs r0, #0
+	movs r1, #2
+	bl Engine_ActorSetAnimation
+	adds r3, r5, #0
+	adds r3, #91
+	movs r7, #0
+	strb r7, [r3]
+	adds r0, r5, #0
+	bl ObjectDispatch_InitFromTable6
+	ldr r3, [r5, #16]
+	ldr r2, .L_0200ac74
+	cmp r3, r2
+	ble .L_0200a964
+	ldr r3, [r5, #8]
+	ldr r1, .L_0200ac80
+	cmp r3, r1
+	ble .L_0200a97c
+	adds r0, r5, #0
+	ldr r2, [r5, #12]
+	ldr r3, .L_0200ac84
+	bl Engine_ObjectSetPosition
+	adds r0, r5, #0
+	bl Engine_ObjectCommitPosition
+	b .L_0200a97c
+.L_0200a964:
+	ldr r3, [r5, #8]
+	ldr r1, .L_0200ac88
+	cmp r3, r1
+	ble .L_0200a97c
+	adds r0, r5, #0
+	ldr r2, [r7, #12]
+	ldr r3, .L_0200ac8c
+	bl Engine_ObjectSetPosition
+	adds r0, r5, #0
+	bl Engine_ObjectCommitPosition
+.L_0200a97c:
+	ldr r3, .L_0200ac74
+	movs r2, #0
+	ldr r1, .L_0200ac90
+	adds r0, r5, #0
+	bl Engine_ObjectSetPosition
+	adds r0, r5, #0
+	bl Engine_ObjectCommitPosition
+	movs r0, #0
+	movs r1, #1
+	bl Engine_ActorSetAnimation
+	movs r2, #40
+	movs r0, #0
+	movs r1, #0
+	bl Engine_ActorFaceDirection
+	bl Battle_SetObjectFlag5bWhenMode3
+	movs r1, #2
+	movs r0, #0
+	bl Engine_ActorRunRepeatedMotion
+	movs r0, #20
+	bl Engine_EventWait
+	movs r0, #0
+	movs r1, #28
+	bl Engine_ActorSetAnimation
+	ldr r1, [r5, #8]
+	movs r3, #128
+	lsls r3, r3, #10
+	movs r2, #152
+	adds r1, r1, r3
+	movs r0, #22
+	ldr r3, [r5, #16]
+	lsls r2, r2, #14
+	bl Engine_ObjectCreate
+	adds r7, r0, #0
+	cmp r7, #0
+	beq .L_0200aa30
+	movs r1, #0
+	adds r0, #85
+	strb r1, [r0]
+	ldr r6, [r7, #80]
+	adds r3, r6, #0
+	adds r3, #38
+	strb r1, [r3]
+	adds r3, #1
+	strb r1, [r3]
+	movs r3, #33
+	ldrb r2, [r6, #5]
+	negs r3, r3
+	ands r3, r2
+	ldrb r2, [r6, #9]
+	strb r3, [r6, #5]
+	movs r3, #15
+	ands r3, r2
+	movs r1, #193
+	strb r3, [r6, #9]
+	lsls r1, r1, #3
+	movs r0, #17
+	bl Engine_HeapAllocate
+	adds r5, r0, #0
+	movs r0, #242
+	bl Engine_ItemLoadIcon
+	movs r2, #128
+	lsls r2, r2, #3
+	adds r5, r5, r2
+	movs r1, #128
+	adds r2, r5, #0
+	ldrb r0, [r6, #28]
+	bl Engine_VramLoad
+	movs r0, #17
+	bl Engine_HeapRelease
+	movs r0, #20
+	bl Engine_EventWait
+	ldr r3, .L_0200ac94
+	movs r0, #80
+	str r3, [r7, #108]
+	bl Engine_EventWait
+.L_0200aa30:
+	ldr r6, .L_0200ac98
+	ldr r0, [r6]
+	bl Object_GetById
+	movs r3, #192
+	lsls r3, r3, #6
+	mov r8, r3
+	mov r2, r8
+	strh r2, [r0, #6]
+	movs r1, #128
+	movs r2, #0
+	ldr r0, [r6]
+	lsls r1, r1, #1
+	bl Engine_ActorShowEmote
+	movs r1, #2
+	ldr r0, [r6]
+	bl Engine_ActorRunRepeatedMotion
+	ldr r3, .L_0200ac9c
+	mov r10, r3
+	mov r0, r10
+	bl Engine_EventSetMessage
+	ldr r0, [r6]
+	movs r1, #0
+	movs r2, #80
+	bl Engine_EventShowMessageAndWait
+	cmp r7, #0
+	beq .L_0200aa74
+	adds r0, r7, #0
+	bl Engine_ObjectDispatchRelease
+.L_0200aa74:
+	movs r1, #1
+	movs r0, #0
+	bl Engine_ActorSetAnimation
+	movs r0, #40
+	bl Engine_EventWait
+	ldr r0, [r6]
+	movs r1, #6
+	movs r2, #40
+	bl Engine_ActorJump
+	ldr r0, [r6]
+	movs r1, #0
+	movs r2, #20
+	bl Engine_EventShowMessageAndWait
+	movs r1, #224
+	movs r0, #0
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #208
+	ldr r0, [r6]
+	lsls r1, r1, #8
+	movs r2, #20
+	bl Engine_ActorFaceDirection
+	movs r5, #144
+	ldr r0, [r6]
+	lsls r5, r5, #8
+	movs r2, #40
+	orrs r0, r5
+	movs r1, #0
+	bl Engine_EventShowMessageAndWait
+	ldr r0, [r6]
+	movs r1, #4
+	bl Engine_ActorSetAnimationAndWait
+	ldr r0, [r6]
+	movs r1, #0
+	orrs r0, r5
+	movs r2, #20
+	bl Engine_EventShowMessageAndWait
+	ldr r0, [r6]
+	mov r1, r8
+	movs r2, #20
+	bl Engine_ActorFaceDirection
+	ldr r0, [r6]
+	movs r1, #0
+	movs r2, #10
+	bl Engine_EventShowMessageAndWait
+	ldr r2, .L_0200ac78
+	ldr r0, [r6]
+	ldr r1, .L_0200ac7c
+	bl Engine_ActorSetSpeed
+	movs r1, #2
+	ldr r0, [r6]
+	bl Engine_ActorSetAnimation
+	movs r0, #55
+	bl Object_GetById
+	adds r7, r0, #0
+	ldr r2, [r7, #12]
+	ldr r1, .L_0200ac88
+	ldr r3, .L_0200ac8c
+	bl Engine_ObjectSetPosition
+	adds r0, r7, #0
+	bl Engine_ObjectCommitPosition
+	ldr r3, .L_0200aca0
+	movs r2, #0
+	ldr r1, .L_0200aca4
+	adds r0, r7, #0
+	bl Engine_ObjectSetPosition
+	adds r0, r7, #0
+	bl Engine_ObjectCommitPosition
+	movs r0, #55
+	movs r1, #1
+	bl Engine_ActorSetAnimation
+	movs r1, #160
+	movs r2, #10
+	ldr r0, [r6]
+	lsls r1, r1, #7
+	bl Engine_ActorFaceDirection
+	ldr r0, [r6]
+	movs r1, #1
+	bl Engine_ActorRunRepeatedMotion
+	ldr r0, [r6]
+	movs r3, #128
+	lsls r3, r3, #5
+	orrs r0, r3
+	movs r1, #0
+	movs r2, #20
+	bl Engine_EventShowMessageAndWait
+	movs r1, #128
+	movs r2, #128
+	lsls r1, r1, #9
+	lsls r2, r2, #8
+	ldr r0, [r6]
+	bl Engine_ActorSetSpeed
+	movs r0, #55
+	bl Object_GetById
+	adds r0, #90
+	ldrb r2, [r0]
+	movs r3, #254
+	ands r3, r2
+	strb r3, [r0]
+	movs r1, #2
+	movs r0, #55
+	bl Engine_ActorSetAnimation
+	movs r3, #214
+	movs r2, #0
+	lsls r3, r3, #20
+	ldr r1, .L_0200aca8
+	adds r0, r7, #0
+	bl Engine_ObjectSetPosition
+	adds r0, r7, #0
+	bl Engine_ObjectCommitPosition
+	movs r1, #1
+	movs r0, #55
+	bl Engine_ActorSetAnimation
+	movs r0, #10
+	bl Engine_EventWait
+	movs r0, #55
+	movs r1, #2
+	bl Engine_ActorSetAnimation
+	movs r2, #0
+	ldr r3, .L_0200aca0
+	ldr r1, .L_0200aca4
+	adds r0, r7, #0
+	bl Engine_ObjectSetPosition
+	adds r0, r7, #0
+	bl Engine_ObjectCommitPosition
+	movs r0, #55
+	movs r1, #1
+	bl Engine_ActorSetAnimation
+	mov r0, r10
+	movs r1, #1
+	adds r0, #6
+	bl Engine_MessageShowCentered
+	ldr r3, .L_0200acac
+	ldr r2, [r3]
+	movs r3, #236
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	movs r0, #242
+	bl PartyInventory_Discard
+	movs r0, #20
+	bl Engine_EventWait
+	ldr r0, [r6]
+	movs r1, #4
+	bl Engine_ActorSetAnimation
+	movs r2, #10
+	ldr r0, [r6]
+	movs r1, #0
+	bl Engine_EventShowMessageAndWait
+	movs r0, #0
+	movs r1, #3
+	bl Engine_ActorSetAnimationAndWait
+	ldr r0, [r6]
+	movs r1, #3
+	bl Engine_ActorSetAnimationAndWait
+	ldr r0, [r6]
+	movs r1, #2
+	bl Engine_ActorSetAnimation
+	movs r0, #0
+	bl Object_GetById
+	cmp r0, #0
+	beq .L_0200ac20
+	movs r2, #10
+	ldrsh r1, [r0, r2]
+	movs r3, #18
+	ldrsh r2, [r0, r3]
+	ldr r0, [r6]
+	bl Engine_ActorSetDestination
+.L_0200ac20:
+	ldr r0, [r6]
+	bl Engine_ActorWaitForMove
+	movs r2, #0
+	ldr r0, [r6]
+	movs r1, #0
+	bl Engine_ActorSetPosition
+	bl Battle_ClearObjectFlag5bWhenMode3
+	movs r0, #128
+	movs r1, #6
+	lsls r0, r0, #9
+	bl BattleFx_ScheduleRatioTransition
+	movs r0, #20
+	bl Engine_EventWait
+	bl WorldMap_RestoreExitTrigger
+	ldr r0, [r6]
+	bl Engine_ActorDestroy
+	movs r0, #141
+	lsls r0, r0, #2
+	bl Engine_GameFlagClear
+	ldr r0, .L_0200acb0
+	bl Engine_GameFlagSet
+	bl Engine_EventEnd
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+.L_0200ac6c:
 	.4byte 0x00016666
+.L_0200ac70:
 	.4byte 0x17880000
+.L_0200ac74:
 	.4byte 0x0d680000
+.L_0200ac78:
 	.4byte 0x00006666
+.L_0200ac7c:
 	.4byte 0x0000cccc
+.L_0200ac80:
 	.4byte 0x176e0000
+.L_0200ac84:
 	.4byte 0x0d7d0000
+.L_0200ac88:
 	.4byte 0x177a0000
+.L_0200ac8c:
 	.4byte 0x0d480000
+.L_0200ac90:
 	.4byte 0x17690000
-	.4byte 0x0200813d
-	.4byte 0x0200e79c
+.L_0200ac94:
+	.4byte StoryActor_ConfigureSpawnedObject
+.L_0200ac98:
+	.4byte gWorldMapTriggerActor
+.L_0200ac9c:
 	.4byte 0x00002644
+.L_0200aca0:
 	.4byte 0x0d580000
+.L_0200aca4:
 	.4byte 0x17710000
+.L_0200aca8:
 	.4byte 0x176d0000
-	.4byte 0x03001ebc
-	.2byte 0x085d
-	.2byte 0x0000
-	.section .rodata,"a",%progbits
+.L_0200acac:
+	.4byte gEventWork
+.L_0200acb0:
+	.4byte 0x0000085d
+	.section .rodata.x0200c4ac,"a",%progbits
 	.global gWorldMapPalettes
 gWorldMapPalettes:
 	.4byte 0x7c1f7c1f
@@ -1169,27 +1206,16 @@ gWorldMapPackedFrames:
 	.4byte 0x00ff0200
 	.4byte 0x0060ff02
 	.4byte 0x80709820
-	.2byte 0x972e
-.L_02004752:
-	ands	r0, r0
-	ldrb	r4, [r5, #28]
-	sub	sp, #92
-	cmp	r4, #64
-	.2byte 0xbe08
-	strh	r0, [r0, #0]
-	movs	r1, r5
-	cmp	r4, #64
-	.2byte 0xbe08
-	strh	r0, [r2, #2]
-	lsrs	r6, r4, #32
-	sub	sp, #248
-	strh	r0, [r0, #0]
-	.2byte 0xec27
-	.2byte 0x8000
-	str	r0, [r7, r0]
-	movs	r2, #192
-	.2byte 0xe081
-	.2byte 0xe481
+	.4byte 0x4000972e
+	.4byte 0xb0977f2c
+	.4byte 0xbe082c40
+	.4byte 0x00298000
+	.4byte 0xbe082c40
+	.4byte 0x08268050
+	.4byte 0x8000b0be
+	.4byte 0x8000ec27
+	.4byte 0x22c05038
+	.4byte 0xe481e081
 	.4byte 0x2c40009f
 	.4byte 0x006081e8
 	.4byte 0xff0200ff
@@ -1208,36 +1234,21 @@ gWorldMapPackedTiles:
 	.4byte 0x1141387d
 	.4byte 0x7ffe6715
 	.4byte 0xe6889329
-	.2byte 0xaad0
-	.2byte 0x65ff
-	push	{r1, r4, r6, lr}
-	strb	r3, [r7, #11]
-	.2byte 0xd968
-	ldrh	r3, [r1, #50]
-	adds	r3, #117
-	.2byte 0xfbff
-	.2byte 0x82bc
-	ldr	r0, [sp, #188]
-	strh	r1, [r4, #46]
-	ldr	r7, [pc, #612]
-	stmia	r5!, {r0, r3}
-	str	r4, [sp, #492]
-	lsrs	r1, r6, #7
-	subs	r6, #28
-	stmia	r0!, {r0, r1, r2, r3, r4, r5, r6, r7}
-	asrs	r7, r4, #21
-	subs	r1, #148
-	.2byte 0xea94
-	.2byte 0x99cb
-	add	r3, sp, #272
-	rors	r4, r3
-	ldr	r4, [pc, #724]
-	adds	r5, r3, #6
-	str	r0, [sp, #820]
-	str	r5, [sp, #464]
-	adds	r3, r7, r0
-	pop	{r1, r3, r4, r6, r7, pc}
-	.2byte 0x465b
+	.4byte 0x65ffaad0
+	.4byte 0x72fbb552
+	.4byte 0x8e4bd968
+	.4byte 0xfbff3375
+	.4byte 0x982f82bc
+	.4byte 0x4f9985e1
+	.4byte 0x947bc509
+	.4byte 0x3e1c09f1
+	.4byte 0x1567c0ff
+	.4byte 0xea943994
+	.4byte 0xab4499cb
+	.4byte 0x4cb541dc
+	.4byte 0x90cd1d9d
+	.4byte 0x183b9574
+	.4byte 0x465bbdda
 	.4byte 0x4519b111
 	.4byte 0x630f76cc
 	.4byte 0x71176d4e
@@ -1271,82 +1282,41 @@ gWorldMapPackedTiles:
 	.4byte 0x52c78d30
 	.4byte 0x06a7ca38
 	.4byte 0x8f9b3306
-	.2byte 0xc682
-	tst	r0, r7
-	adds	r3, #96
-.L_0200487a:
-	.2byte 0xf847
-	.2byte 0x7104
-	asrs	r2, r4, #15
-	.2byte 0xb370
-	bne.n	.L_020048b8
-	.2byte 0xf139
-	.2byte 0x9890
-	ldr	r0, [pc, #608]
-	str	r4, [r1, #68]
-	str	r1, [sp, #376]
-	ldmia	r5!, {r1, r3, r6}
-.L_02004890:
-	adds	r5, #42
-	asrs	r0, r7, #3
-	adds	r2, #205
-	ldmia	r5, {r0, r2, r4, r5}
-	strb	r4, [r2, #3]
-	cmp	r3, #56
-	lsls	r2, r6
-	lsls	r6, r3, #17
-	ldr	r7, [r2, r4]
-	ldr	r6, [pc, #960]
-	.2byte 0xf524
-	.2byte 0x854e
-	strh	r2, [r0, #60]
-	ldrb	r1, [r2, #20]
-	.2byte 0xf4fe
-	.2byte 0xd3e2
-.L_020048b0:
-	ldmia	r4!, {r2, r3}
-	add	r0, pc, #224
-	ldr	r4, [pc, #172]
-	.2byte 0xdb03
-.L_020048b8:
-	adds	r2, #192
-	.2byte 0xb870
-	adds	r3, #152
-	cmp	r4, #33
-.L_020048c0:
-	add	r2, sp, #944
-	.2byte 0xfc99
-	.2byte 0x0a8d
-	.2byte 0xb37b
-	str	r3, [r0, #124]
-	str	r3, [r4, #84]
-	ldrh	r6, [r3, #56]
-	ldr	r3, [r0, #44]
-	stmia	r2!, {r2, r3, r6, r7}
-	strh	r0, [r5, r1]
-	stmia	r1!, {r0, r3, r5, r7}
-	lsls	r3, r0, #19
-	movs	r2, #39
-	.2byte 0x1d3f
-	.2byte 0xf02e
-	.2byte 0x1c9a
-	lsls	r0, r3
-	add	r0, pc, #4
-	add	r3, pc, #608
-	lsrs	r0, r0, #9
-	ldrh	r0, [r1, #16]
-	ldrh	r1, [r7, #16]
-	lsrs	r7, r1, #26
-	strb	r0, [r3, #20]
-	lsrs	r0, r4, #13
-	lsrs	r6, r4, #15
-	strh	r6, [r7, #60]
-	ldr	r0, [pc, #880]
-	str	r0, [r5, #112]
-	ldrh	r7, [r0, #4]
-	ldr	r5, [sp, #708]
-.L_020048fe:
-	b.n	.L_02004752
+	.4byte 0x4238c682
+	.4byte 0xf8473360
+	.4byte 0x13e27104
+	.4byte 0xd119b370
+	.4byte 0x9890f139
+	.4byte 0x644c4898
+	.4byte 0xcd4a915e
+	.4byte 0x10f8352a
+	.4byte 0xcd3532cd
+	.4byte 0x2b3870d4
+	.4byte 0x045e40b2
+	.4byte 0x4ef05917
+	.4byte 0x854ef524
+	.4byte 0x7d118782
+	.4byte 0xd3e2f4fe
+	.4byte 0xa038cc0c
+	.4byte 0xdb034c2b
+	.4byte 0xb87032c0
+	.4byte 0x2c213398
+	.4byte 0xfc99aaec
+	.4byte 0xb37b0a8d
+	.4byte 0x656367c3
+	.4byte 0x6ac38f1e
+	.4byte 0x5268c2cc
+	.4byte 0x04c3c1a9
+	.4byte 0x1d3f2227
+	.4byte 0x1c9af02e
+	.4byte 0xa0014098
+	.4byte 0x0a40a398
+	.4byte 0x8a398a08
+	.4byte 0x75180e8f
+	.4byte 0x0be60b60
+	.4byte 0x48dc87be
+	.4byte 0x88876728
+	.4byte 0xe7289db1
 	.4byte 0x02e81d9d
 	.4byte 0xc10ee0a0
 	.4byte 0x7687ba82
@@ -1995,8 +1965,9 @@ gOpeningLeaderRise:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+.L_0200d270:
 	.4byte 0x00000022
-	.4byte 0x02008251
+	.4byte StoryActor_Initialize
 	.4byte 0x00000010
 	.global gWorldMapEntrances
 gWorldMapEntrances:
@@ -2566,24 +2537,28 @@ gWorldMapExits:
 	.4byte 0x06f50002
 	.4byte 0x0700a069
 	.4byte 0x000001ff
+.L_0200db4c:
 	.4byte 0x00000022
-	.4byte 0x020082a5
+	.4byte StoryActor_ApplyFlaggedMode
 	.4byte 0x00000010
+.L_0200db58:
 	.4byte 0x00000022
-	.4byte 0x020082cd
+	.4byte StoryActor_ApplyMapRotation
 	.4byte 0x00000010
+.L_0200db64:
 	.4byte 0x00000022
-	.4byte 0x020082f1
+	.4byte StoryActor_ApplyMapRotationWithCollision
 	.4byte 0x00000010
+.L_0200db70:
 	.4byte 0x00000022
-	.4byte 0x02008315
+	.4byte StoryActor_ResetPosition
 	.4byte 0x00000022
-	.4byte 0x02008351
+	.4byte StoryActor_ClearActiveFlag
 	.4byte 0x00000010
 	.global gWorldMapPlacements
 gWorldMapPlacements:
 	.4byte 0x0033005a
-	.4byte 0x0200d270
+	.4byte .L_0200d270
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2601,271 +2576,271 @@ gWorldMapPlacements:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0xffff0105
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x162e0000
 	.4byte 0x00000000
 	.4byte 0x04b00000
 	.4byte 0x00024000
 	.4byte 0xffff0105
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x16d80000
 	.4byte 0x00000000
 	.4byte 0x06280000
 	.4byte 0x00024000
 	.4byte 0xffff0105
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1b400000
 	.4byte 0x00000000
 	.4byte 0x06580000
 	.4byte 0x00024000
 	.4byte 0xffff0105
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15280000
 	.4byte 0x00000000
 	.4byte 0x0b180000
 	.4byte 0x00024000
 	.4byte 0xffff0105
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17040000
 	.4byte 0x00000000
 	.4byte 0x04680000
 	.4byte 0x00024000
 	.4byte 0xffff0115
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x152e0000
 	.4byte 0x00000000
 	.4byte 0x08b80000
 	.4byte 0x00020000
 	.4byte 0xffff0115
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x13ac0000
 	.4byte 0x00000000
 	.4byte 0x09180000
 	.4byte 0x00028000
 	.4byte 0xffff0109
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17280000
 	.4byte 0x00000000
 	.4byte 0x010e0000
 	.4byte 0x00024000
 	.4byte 0xffff0108
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1cb80000
 	.4byte 0x00000000
 	.4byte 0x04d80000
 	.4byte 0x00024000
 	.4byte 0xffff010a
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1d780000
 	.4byte 0x00000000
 	.4byte 0x07b80000
 	.4byte 0x00024000
 	.4byte 0xffff010b
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1ae80000
 	.4byte 0x00000000
 	.4byte 0x06b00000
 	.4byte 0x00024000
 	.4byte 0xffff010b
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1ec80000
 	.4byte 0x00000000
 	.4byte 0x06180000
 	.4byte 0x00024000
 	.4byte 0xffff0107
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x19b80000
 	.4byte 0x00000000
 	.4byte 0x04a80000
 	.4byte 0x00024000
 	.4byte 0xffff0107
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15d80000
 	.4byte 0x00000000
 	.4byte 0x08580000
 	.4byte 0x00024000
 	.4byte 0xffff0107
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x176c0000
 	.4byte 0x00000000
 	.4byte 0x0b4e0000
 	.4byte 0x00024000
 	.4byte 0xffff0107
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x13280000
 	.4byte 0x00000000
 	.4byte 0x08e80000
 	.4byte 0x00024000
 	.4byte 0xffff010d
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17880000
 	.4byte 0x00000000
 	.4byte 0x00a80000
 	.4byte 0x00024000
 	.4byte 0xffff010f
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x16180000
 	.4byte 0x00000000
 	.4byte 0x04580000
 	.4byte 0x00024000
 	.4byte 0xffff0114
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17c80000
 	.4byte 0x00000000
 	.4byte 0x0c680000
 	.4byte 0x00024000
 	.4byte 0xffff010e
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1b280000
 	.4byte 0x00000000
 	.4byte 0x05520000
 	.4byte 0x00024000
 	.4byte 0xffff0110
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x176c0000
 	.4byte 0x00000000
 	.4byte 0x0af80000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x19180000
 	.4byte 0x00000000
 	.4byte 0x05160000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x19540000
 	.4byte 0x00000000
 	.4byte 0x04a00000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x12e80000
 	.4byte 0x00000000
 	.4byte 0x07a80000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x16180000
 	.4byte 0x00000000
 	.4byte 0x09580000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15680000
 	.4byte 0x00000000
 	.4byte 0x0a280000
 	.4byte 0x00024000
 	.4byte 0xffff0113
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1e6e0000
 	.4byte 0x00000000
 	.4byte 0x08200000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17580000
 	.4byte 0x00000000
 	.4byte 0x0d480000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17640000
 	.4byte 0x00000000
 	.4byte 0x03060000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x18500000
 	.4byte 0x00000000
 	.4byte 0x02080000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x16e00000
 	.4byte 0x00000000
 	.4byte 0x04960000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1b080000
 	.4byte 0x00000000
 	.4byte 0x06800000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17cc0000
 	.4byte 0x00000000
 	.4byte 0x08980000
 	.4byte 0x00024000
 	.4byte 0xffff0113
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1bfe0000
 	.4byte 0x00000000
 	.4byte 0x041e0000
 	.4byte 0x00024000
 	.4byte 0xffff0113
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1eb00000
 	.4byte 0x00000000
 	.4byte 0x06c80000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15680000
 	.4byte 0x00000000
 	.4byte 0x08280000
 	.4byte 0x00024000
 	.4byte 0xffff0112
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00024000
 	.4byte 0xffff0112
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x01024000
 	.4byte 0xffff0112
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x01024000
 	.4byte 0xffff0116
-	.4byte 0x0200db4c
+	.4byte .L_0200db4c
 	.4byte 0x1d900000
 	.4byte 0x00000000
 	.4byte 0x05680000
 	.4byte 0x00024000
 	.4byte 0xffff0117
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x134e0000
 	.4byte 0x00000000
 	.4byte 0x0a820000
 	.4byte 0x00024000
 	.4byte 0xffff01f5
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17940000
 	.4byte 0x00000000
 	.4byte 0x0d820000
 	.4byte 0x00028000
 	.4byte 0x18a000a1
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x12980000
 	.4byte 0x00000000
 	.4byte 0x01b80000
 	.4byte 0x0002c000
 	.4byte 0x02f10121
-	.4byte 0x0200db70
+	.4byte .L_0200db70
 	.4byte 0x11280000
 	.4byte 0x00000000
 	.4byte 0x01280000
 	.4byte 0x00024000
 	.4byte 0xffff0039
-	.4byte 0x0200db64
+	.4byte .L_0200db64
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2877,7 +2852,7 @@ gWorldMapPlacements:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0xffff0001
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2909,25 +2884,25 @@ gWorldMapPlacements64:
 	.4byte 0x00000000
 	.4byte 0x00024000
 	.4byte 0xffff009a
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x0002c000
 	.4byte 0xffff009a
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x0002c000
 	.4byte 0xffff009a
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x0002c000
 	.4byte 0xffff009a
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2945,7 +2920,7 @@ gWorldMapPlacements64:
 	.4byte 0x00000000
 	.4byte 0x00024000
 	.4byte 0xffff0105
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x16d80000
 	.4byte 0x00000000
 	.4byte 0x06280000
@@ -2959,19 +2934,19 @@ gWorldMapPlacements64:
 	.global gWorldMapPlacements49
 gWorldMapPlacements49:
 	.4byte 0xffff009a
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x0002c000
 	.4byte 0xffff0105
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17040000
 	.4byte 0x00000000
 	.4byte 0x04680000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x16e00000
 	.4byte 0x00000000
 	.4byte 0x04960000
@@ -2997,25 +2972,25 @@ gWorldMapPlacements49:
 	.global gWorldMapPlacements65
 gWorldMapPlacements65:
 	.4byte 0xffff00a1
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15080000
 	.4byte 0x00000000
 	.4byte 0x08c80000
 	.4byte 0x00028000
 	.4byte 0xffff0107
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15d80000
 	.4byte 0x00000000
 	.4byte 0x08580000
 	.4byte 0x00024000
 	.4byte 0xffff0115
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x152e0000
 	.4byte 0x00000000
 	.4byte 0x08b80000
 	.4byte 0x00020000
 	.4byte 0xffff0115
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x13a40000
 	.4byte 0x00000000
 	.4byte 0x09180000
@@ -3029,7 +3004,7 @@ gWorldMapPlacements65:
 	.global gWorldMapPlacements66
 gWorldMapPlacements66:
 	.4byte 0xffff00a1
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15380000
 	.4byte 0x00000000
 	.4byte 0x09080000
@@ -3043,19 +3018,19 @@ gWorldMapPlacements66:
 	.global gWorldMapPlacements71
 gWorldMapPlacements71:
 	.4byte 0xffff0107
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15d80000
 	.4byte 0x00000000
 	.4byte 0x08580000
 	.4byte 0x00024000
 	.4byte 0xffff010c
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x15680000
 	.4byte 0x00000000
 	.4byte 0x08280000
 	.4byte 0x00024000
 	.4byte 0xffff009a
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -3069,37 +3044,37 @@ gWorldMapPlacements71:
 	.global gWorldMapPlacements80
 gWorldMapPlacements80:
 	.4byte 0xffff0005
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1d880000
 	.4byte 0x00000000
 	.4byte 0x0db80000
 	.4byte 0x00015000
 	.4byte 0xffff0006
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1e880000
 	.4byte 0x00000000
 	.4byte 0x0dc80000
 	.4byte 0x00010000
 	.4byte 0xffff001e
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1d780000
 	.4byte 0x00000000
 	.4byte 0x0da80000
 	.4byte 0x0001d000
 	.4byte 0xffff002b
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1e1c0000
 	.4byte 0x00000000
 	.4byte 0x0d800000
 	.4byte 0x00015000
 	.4byte 0xffff0023
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1e780000
 	.4byte 0x00000000
 	.4byte 0x0dd80000
 	.4byte 0x0001b000
 	.4byte 0xffff01f5
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1db40000
 	.4byte 0x00000000
 	.4byte 0x0dc20000
@@ -3113,7 +3088,7 @@ gWorldMapPlacements80:
 	.global gWorldMapPlacements72
 gWorldMapPlacements72:
 	.4byte 0xffff01f8
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x1d280000
 	.4byte 0x00000000
 	.4byte 0x00c80000
@@ -3127,7 +3102,7 @@ gWorldMapPlacements72:
 	.global gWorldMapPlacements73
 gWorldMapPlacements73:
 	.4byte 0xffff0114
-	.4byte 0x0200db58
+	.4byte .L_0200db58
 	.4byte 0x17c00000
 	.4byte 0x00000000
 	.4byte 0x0c600000
@@ -3142,43 +3117,43 @@ gWorldMapPlacements73:
 gWorldMapEvents:
 	.4byte 0x00000002
 	.4byte 0x0030005a
-	.4byte 0x02009ca5
+	.4byte Func_02001ca4
 	.4byte 0x00000002
 	.4byte 0x02f1005f
-	.4byte 0x0200b7bd
+	.4byte StoryScene_SetReferenceActor
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008031
+	.4byte StoryProgress_TriggerEvent0808
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0200808d
+	.4byte StoryProgress_TriggerEvent0809
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020080d5
+	.4byte StoryProgress_TriggerEvent080A
 	.4byte 0x00000002
 	.4byte 0x0033005c
-	.4byte 0x02008031
+	.4byte StoryProgress_TriggerEvent0808
 	.4byte 0x00000002
 	.4byte 0x005a005b
-	.4byte 0x0200808d
+	.4byte StoryProgress_TriggerEvent0809
 	.4byte 0x00000002
 	.4byte 0x0048005d
-	.4byte 0x020080d5
+	.4byte StoryProgress_TriggerEvent080A
 	.4byte 0x00000003
 	.4byte 0xffff0060
-	.4byte 0x0200a8a9
+	.4byte StoryScene_ShowRewardDialogue
 	.4byte 0x0000f204
 	.4byte 0x085d0060
-	.4byte 0x0200a8e9
+	.4byte Func_020028e8
 	.4byte 0x00000053
 	.4byte 0x0fcf0064
 	.4byte 0x00100103
 	.4byte 0x00000000
 	.4byte 0xffff0037
-	.4byte 0x0200a81d
+	.4byte FieldScene_RunScene371_0200281c
 	.4byte 0x00008d15
 	.4byte 0xffff0437
-	.4byte 0x0200a81d
+	.4byte FieldScene_RunScene371_0200281c
 	.4byte 0x00000001
 	.4byte 0xffff000d
 	.4byte 0x0000000d
@@ -3220,7 +3195,7 @@ gWorldMapEvents:
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0xffff0070
-	.4byte 0x020086b5
+	.4byte SceneState_ApplyFlag85aBranch
 	.4byte 0x00000001
 	.4byte 0xffff0084
 	.4byte 0x00000004
@@ -3232,13 +3207,13 @@ gWorldMapEvents:
 	.4byte 0x00000005
 	.4byte 0x00000002
 	.4byte 0xffff0082
-	.4byte 0x02008541
+	.4byte SceneState_SetValues130_6_47
 	.4byte 0x00000001
 	.4byte 0xffff0077
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0xffff0096
-	.4byte 0x02008551
+	.4byte SceneState_ApplyValues150And46And11
 	.4byte 0x00000001
 	.4byte 0xffff0090
 	.4byte 0x00000008
@@ -3289,7 +3264,7 @@ gWorldMapEvents:
 	.4byte 0x00000031
 	.4byte 0x00000002
 	.4byte 0xffff0074
-	.4byte 0x02008561
+	.4byte SceneState_ApplyValues116And56And21
 	.4byte 0x00000001
 	.4byte 0xffff0075
 	.4byte 0x00000016
@@ -3301,7 +3276,7 @@ gWorldMapEvents:
 	.4byte 0x00000018
 	.4byte 0x00000002
 	.4byte 0xffff0097
-	.4byte 0x02008571
+	.4byte SceneState_ApplyValues151And25And54
 	.4byte 0x00000001
 	.4byte 0xffff0092
 	.4byte 0x0000003c
@@ -3322,22 +3297,22 @@ gWorldMapEvents:
 	.4byte 0x0000001f
 	.4byte 0x00000002
 	.4byte 0xffff007d
-	.4byte 0x02008581
+	.4byte FieldScene_RunStep7D3B1E
 	.4byte 0x00000602
 	.4byte 0x18a0004a
-	.4byte 0x020086dd
+	.4byte FieldScene_RunStep74
 	.4byte 0x0000c401
 	.4byte 0xffff004b
 	.4byte 0x0000004b
 	.4byte 0x10002115
 	.4byte 0x12f00036
-	.4byte 0x0200b7c9
+	.4byte StoryScene_ActivateSharedState
 	.4byte 0x00002115
 	.4byte 0x12f00036
-	.4byte 0x0200b7d9
+	.4byte StoryScene_CompleteActor98
 	.4byte 0x00000006
 	.4byte 0xffff0063
-	.4byte 0x0200b84d
+	.4byte WorldMap_RaiseActors
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

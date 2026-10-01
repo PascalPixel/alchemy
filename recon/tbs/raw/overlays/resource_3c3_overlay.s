@@ -1,9 +1,11 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008974,"a",%progbits
+.L_02008974:
 	.4byte 0x0000001c
 	.4byte 0x00000005
 	.4byte 0x00000010
+.L_02008980:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0xffff0000
@@ -219,19 +221,19 @@ gSuharaGatePlacements1:
 	.global gSuharaGatePlacements1Flagged
 gSuharaGatePlacements1Flagged:
 	.4byte 0xffff0098
-	.4byte 0x02008980
+	.4byte .L_02008980
 	.4byte 0x00880000
 	.4byte 0x00000000
 	.4byte 0x01980000
 	.4byte 0x00004000
 	.4byte 0xffff0098
-	.4byte 0x02008974
+	.4byte .L_02008974
 	.4byte 0x00a80000
 	.4byte 0x00000000
 	.4byte 0x01a80000
 	.4byte 0x00004000
 	.4byte 0xffff0098
-	.4byte 0x02008974
+	.4byte .L_02008974
 	.4byte 0x01d80000
 	.4byte 0x00000000
 	.4byte 0x01300000
@@ -252,7 +254,7 @@ gSuharaGatePlacements1Flagged:
 gSuharaGateEventsOther:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x020082f9
+	.4byte Dialogue_ShowMessages8fbAnd8fc
 	.4byte 0x00000001
 	.4byte 0xffff0002
 	.4byte 0x00000002
@@ -261,16 +263,16 @@ gSuharaGateEventsOther:
 	.4byte 0x00000004
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x020082f9
+	.4byte Dialogue_ShowMessages8fbAnd8fc
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008289
+	.4byte Scene_RunScene3c3SequenceC
 	.4byte 0x00000002
 	.4byte 0x096f000a
-	.4byte 0x02008335
+	.4byte Scene_RunPrimarySequence
 	.4byte 0x00000002
 	.4byte 0x089f000a
-	.4byte 0x020083c5
+	.4byte Scene_RunScene3c3SequenceA
 	.4byte 0x00000000
 	.4byte 0x089f0008
 	.4byte 0x0000264d
@@ -279,7 +281,7 @@ gSuharaGateEventsOther:
 	.4byte 0x00002667
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008731
+	.4byte Scene_RunActorNinePromptDialogue
 	.4byte 0x00008d15
 	.4byte 0x089f0008
 	.4byte 0x00002652
@@ -294,10 +296,10 @@ gSuharaGateEventsOther:
 	.4byte 0x0000266a
 	.4byte 0x00000000
 	.4byte 0x0897000a
-	.4byte 0x020087ad
+	.4byte Scene_RunActorTenRepeatedMotion
 	.4byte 0x00008d15
 	.4byte 0x0897040a
-	.4byte 0x020087ad
+	.4byte Scene_RunActorTenRepeatedMotion
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -320,7 +322,7 @@ gSuharaGateEvents2:
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x02008031
+	.4byte Scene_SetActor13Value1A
 	.4byte 0x0000c413
 	.4byte 0x0fb40064
 	.4byte 0x001000c3

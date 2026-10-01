@@ -1137,7 +1137,7 @@ Func_0817ea58:
 	str r0, [r5]
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	movs r1, #1
@@ -1171,7 +1171,7 @@ Func_0817ea58:
 	str r0, [r5]
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	movs r7, #164
@@ -1451,7 +1451,7 @@ Func_0817ea58:
 .L_0817f576:
 	movs r1, #12
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	ldrb r1, [r6, r0]
 	movs r2, #247
 	lsls r1, r1, #8

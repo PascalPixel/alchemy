@@ -578,7 +578,7 @@ Func_080fdad4:
 	adds r0, r6, r2
 	mov r1, r11
 	str r4, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	adds r6, r0, #0
 	movs r0, #129
 	lsls r3, r6, #1

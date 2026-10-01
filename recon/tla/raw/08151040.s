@@ -337,7 +337,7 @@ Func_08151040:
 	mov r3, r10
 	ldr r1, [r3, #20]
 	mov r0, r9
-	bl __modsi3
+	bl Math_Mod
 	lsls r0, r0, #1
 	mov r4, r10
 	adds r0, #36
@@ -422,7 +422,7 @@ Func_08151040:
 	mov r5, r10
 	ldr r1, [r5, #20]
 	mov r0, r9
-	bl __modsi3
+	bl Math_Mod
 	adds r3, r0, #0
 	lsls r2, r3, #1
 	adds r2, #36

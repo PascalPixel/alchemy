@@ -327,9 +327,9 @@ Func_02000278:
 .L_0200830c:
 	.4byte ResourceTableEntries
 .L_02008310:
-	.4byte gOverlayArea + 0x6f0
+	.4byte Data_020006f0
 .L_02008314:
-	.4byte gOverlayArea + 0x6dc
+	.4byte Data_020006dc
 .L_02008318:
 	.4byte Data_0300122c
 	.section .text.x0200831c,"ax",%progbits
@@ -361,7 +361,7 @@ Func_0200031c:
 .L_02008350:
 	.4byte 0x00000000
 .L_02008354:
-	.4byte gOverlayArea + 0x6dc
+	.4byte Data_020006dc
 .L_02008358:
 	.4byte Func_02000278
 .L_0200835c:
@@ -674,3 +674,10 @@ gSceneEvents:
 	.global Data_020006a4
 Data_020006a4:
 	.2byte 0xffff
+	.section .bss,"aw",%nobits
+	.space 0x00000036
+	.global Data_020006dc
+Data_020006dc:
+	.space 0x00000014
+	.global Data_020006f0
+Data_020006f0:

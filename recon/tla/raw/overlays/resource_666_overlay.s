@@ -625,7 +625,7 @@ Func_02000578:
 	pop {pc}
 	.2byte 0x0000
 .L_02008594:
-	.4byte gOverlayArea + 0x1c90
+	.4byte Data_02001c90
 	.section .text.x02008598,"ax",%progbits
 	.global Func_02000598
 	.thumb_func
@@ -644,7 +644,7 @@ Func_02000598:
 	pop {pc}
 	.2byte 0x0000
 .L_020085b4:
-	.4byte gOverlayArea + 0x1c60
+	.4byte Data_02001c60
 	.section .text.x020085b8,"ax",%progbits
 	.global Func_020005b8
 	.thumb_func
@@ -809,9 +809,9 @@ Func_020005b8:
 	movs r0, #0
 	pop {r5, pc}
 .L_02008720:
-	.4byte gOverlayArea + 0x1c90
+	.4byte Data_02001c90
 .L_02008724:
-	.4byte gOverlayArea + 0x1c60
+	.4byte Data_02001c60
 .L_02008728:
 	.4byte Func_02000578
 .L_0200872c:
@@ -1490,7 +1490,7 @@ Data_02000f14:
 	.4byte 0x00014000
 	.4byte 0xffff0070
 	.4byte 0x00000001
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000000
 	.4byte 0x02180000
 	.4byte 0x00005000
@@ -1642,7 +1642,7 @@ Data_0200116c:
 	.4byte 0x00014000
 	.4byte 0xffff0070
 	.4byte 0x00000001
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000000
 	.4byte 0x02180000
 	.4byte 0x00005000
@@ -1730,7 +1730,7 @@ Data_020013dc:
 	.4byte 0xffff00c8
 	.4byte 0x00403055
 	.4byte 0x00000002
-	.4byte Tileset_Set20TilesA + 0xf0a
+	.4byte 0x08b2001e
 	.4byte Func_02000084
 	.4byte 0x00000000
 	.4byte 0xffff000a
@@ -1745,10 +1745,10 @@ Data_020013dc:
 	.4byte 0xffff000b
 	.4byte 0x00001b06
 	.4byte 0x00000000
-	.4byte Field_Map034 + 0x2a8e
+	.4byte 0x08b1000e
 	.4byte Func_020002bc
 	.4byte 0x00008d15
-	.4byte Field_Map034 + 0x2e8e
+	.4byte 0x08b1040e
 	.4byte Func_020002bc
 	.4byte 0x00000000
 	.4byte 0xffff000c
@@ -1963,7 +1963,7 @@ Data_02001730:
 	.4byte 0xffff000b
 	.4byte 0x00001c32
 	.4byte 0x00000000
-	.4byte Tileset_Set33TilesB + 0xfb0
+	.4byte 0x08b8000c
 	.4byte Func_020004b8
 	.4byte 0x00000000
 	.4byte 0xffff000c
@@ -2219,3 +2219,10 @@ Data_020019dc:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 0x00000008
+	.global Data_02001c60
+Data_02001c60:
+	.space 0x00000030
+	.global Data_02001c90
+Data_02001c90:

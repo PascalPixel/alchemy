@@ -1,527 +1,581 @@
 .syntax unified
 	.thumb
 	.section .text.x0200a8a0,"ax",%progbits
-	.balign 4
 	.global BabiIriguchi_SetupScene
 	.thumb_func
 BabiIriguchi_SetupScene:
-	push	{r5, r6, lr}
-	mov	r6, r8
-	push	{r6}
-	movs	r0, #1
-	sub	sp, #8
-	bl 0x0200ad80
-	ldr	r3, [pc, #84]
-	movs	r2, #224
-	ldr	r1, [r3, #0]
-	movs	r3, #129
-	lsls	r2, r2, #1
-	lsls	r3, r3, #2
-	str	r3, [r1, r2]
-	ldr	r6, [pc, #72]
-	ldr	r3, [pc, #76]
-	ldrsh	r1, [r6, r2]
-	cmp	r1, r3
-	beq.n	.L_020028dc
-	adds	r2, #130
-	adds	r3, r6, r2
-	movs	r0, #144
-	movs	r2, #1
-	strh	r2, [r3, #0]
-	lsls	r0, r0, #2
-	ldr	r2, [pc, #60]
-	adds	r3, r6, r0
-	strh	r2, [r3, #0]
-	mov	ip, r1
-	b.n	.L_02002914
-.L_020028dc:
-	movs	r0, #12
-	bl 0x0200ae50
-	adds	r1, r0, #0
-	ldr	r3, [r1, #8]
-	asrs	r2, r3, #20
-	cmp	r2, #20
-	beq.n	.L_020028ee
-	b.n	.L_02002d3c
-.L_020028ee:
-	ldr	r3, [r1, #16]
-	asrs	r0, r3, #20
-	cmp	r0, #12
-	beq.n	.L_020028f8
-	b.n	.L_02002d3c
-.L_020028f8:
-	str	r2, [sp, #0]
-	str	r0, [sp, #4]
-	movs	r1, #12
-	movs	r0, #38
-	b.n	.L_02002af2
+	push {r5, r6, lr}
+	mov r6, r8
+	push {r6}
+	movs r0, #1
+	sub sp, #8
+	bl WaitFrames
+	ldr r3, .L_0200a904
+	movs r2, #224
+	ldr r1, [r3]
+	movs r3, #129
+	lsls r2, r2, #1
+	lsls r3, r3, #2
+	str r3, [r1, r2]
+	ldr r6, .L_0200a908
+	ldr r3, .L_0200a90c
+	ldrsh r1, [r6, r2]
+	cmp r1, r3
+	beq .L_0200a8dc
+	adds r2, #130
+	adds r3, r6, r2
+	movs r0, #144
+	movs r2, #1
+	strh r2, [r3]
+	lsls r0, r0, #2
+	ldr r2, .L_0200a910
+	adds r3, r6, r0
+	strh r2, [r3]
+	mov r12, r1
+	b .L_0200a914
+.L_0200a8dc:
+	movs r0, #12
+	bl Object_GetById
+	adds r1, r0, #0
+	ldr r3, [r1, #8]
+	asrs r2, r3, #20
+	cmp r2, #20
+	beq .L_0200a8ee
+	b .L_0200ad3c
+.L_0200a8ee:
+	ldr r3, [r1, #16]
+	asrs r0, r3, #20
+	cmp r0, #12
+	beq .L_0200a8f8
+	b .L_0200ad3c
+.L_0200a8f8:
+	str r2, [sp, #0]
+	str r0, [sp, #4]
+	movs r1, #12
+	movs r0, #38
+	b .L_0200aaf2
 	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x02000240
+.L_0200a904:
+	.4byte gEventWork
+.L_0200a908:
+	.4byte gCell
+.L_0200a90c:
 	.4byte 0x000000b1
-	.2byte 0x00b0
-	.2byte 0x0000
-.L_02002914:
-	cmp	ip, r2
-	beq.n	.L_0200291a
-	b.n	.L_02002a7a
-.L_0200291a:
-	movs	r0, #8
-	movs	r1, #6
-	bl 0x0200aec8
-	movs	r0, #9
-	movs	r1, #6
-	bl 0x0200aec8
-	movs	r2, #225
-	lsls	r2, r2, #1
-	adds	r3, r6, r2
-	movs	r0, #0
-	ldrsh	r3, [r3, r0]
-	cmp	r3, #5
-	bne.n	.L_02002950
-	ldr	r0, [pc, #180]
-	bl 0x0200ae18
-	cmp	r0, #0
-	bne.n	.L_02002950
-	movs	r1, #156
-	movs	r2, #164
-	movs	r0, #9
-	lsls	r1, r1, #17
-	lsls	r2, r2, #17
-	bl 0x0200ae88
-.L_02002950:
-	bl 0x0200a820
-	movs	r0, #9
-	bl 0x0200ae50
-	adds	r5, r0, #0
-	movs	r0, #9
-	bl 0x0200ae50
-	ldr	r3, [r0, #20]
-	movs	r0, #192
-	str	r3, [r5, #12]
-	lsls	r0, r0, #2
-	bl 0x0200ae18
-	cmp	r0, #0
-	beq.n	.L_0200298a
-	movs	r0, #10
-	movs	r1, #4
-	bl 0x0200ae90
-	movs	r0, #10
-	bl 0x0200ae50
-	movs	r3, #254
-	adds	r0, #89
-	strb	r3, [r0, #0]
-	bl 0x0200a7f4
-.L_0200298a:
-	movs	r0, #11
-	bl 0x0200ae50
-	adds	r1, r0, #0
-	adds	r2, r1, #0
-	movs	r3, #0
-	adds	r2, #89
-	strb	r3, [r2, #0]
-	subs	r2, #54
-	strb	r3, [r2, #0]
-	adds	r2, #59
-	strh	r3, [r2, #0]
-	ldr	r2, [r1, #80]
-	ldrb	r3, [r2, #9]
-	movs	r6, #12
-	orrs	r3, r6
-	strb	r3, [r2, #9]
-	ldr	r3, [r1, #80]
-	ldr	r5, [pc, #60]
-	adds	r3, #38
-	strb	r5, [r3, #0]
-	movs	r3, #192
-	ldr	r2, [r1, #80]
-	lsls	r3, r3, #8
-	strh	r3, [r2, #30]
-	movs	r1, #0
-	movs	r0, #11
-	bl 0x0200ae90
-	movs	r0, #12
-	bl 0x0200ae50
-	adds	r1, r0, #0
-	adds	r3, r1, #0
-	adds	r3, #89
-	strb	r5, [r3, #0]
-	adds	r2, r1, #0
-	subs	r3, #54
-	strb	r5, [r3, #0]
-	adds	r2, #94
-	movs	r3, #30
-	strh	r3, [r2, #0]
-	ldr	r2, [r1, #80]
-	ldrb	r3, [r2, #9]
-	orrs	r3, r6
-	strb	r3, [r2, #9]
-	ldr	r3, [r1, #80]
-	adds	r3, #38
-	b.n	.L_020029f4
+.L_0200a910:
+	.4byte 0x000000b0
+.L_0200a914:
+	cmp r12, r2
+	beq .L_0200a91a
+	b .L_0200aa7a
+.L_0200a91a:
+	movs r0, #8
+	movs r1, #6
+	bl Engine_ActorSetChildValue
+	movs r0, #9
+	movs r1, #6
+	bl Engine_ActorSetChildValue
+	movs r2, #225
+	lsls r2, r2, #1
+	adds r3, r6, r2
+	movs r0, #0
+	ldrsh r3, [r3, r0]
+	cmp r3, #5
+	bne .L_0200a950
+	ldr r0, .L_0200a9f0
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	bne .L_0200a950
+	movs r1, #156
+	movs r2, #164
+	movs r0, #9
+	lsls r1, r1, #17
+	lsls r2, r2, #17
+	bl Engine_ActorSetPosition
+.L_0200a950:
+	bl SceneState_ApplyRectsAtActors8And9
+	movs r0, #9
+	bl Object_GetById
+	adds r5, r0, #0
+	movs r0, #9
+	bl Object_GetById
+	ldr r3, [r0, #20]
+	movs r0, #192
+	str r3, [r5, #12]
+	lsls r0, r0, #2
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	beq .L_0200a98a
+	movs r0, #10
+	movs r1, #4
+	bl Object_SetModeById
+	movs r0, #10
+	bl Object_GetById
+	movs r3, #254
+	adds r0, #89
+	strb r3, [r0]
+	bl SceneState_ConfigureRegion82_7AndApply768
+.L_0200a98a:
+	movs r0, #11
+	bl Object_GetById
+	adds r1, r0, #0
+	adds r2, r1, #0
+	movs r3, #0
+	adds r2, #89
+	strb r3, [r2]
+	subs r2, #54
+	strb r3, [r2]
+	adds r2, #59
+	strh r3, [r2]
+	ldr r2, [r1, #80]
+	ldrb r3, [r2, #9]
+	movs r6, #12
+	orrs r3, r6
+	strb r3, [r2, #9]
+	ldr r3, [r1, #80]
+	ldr r5, .L_0200a9ec
+	adds r3, #38
+	strb r5, [r3]
+	movs r3, #192
+	ldr r2, [r1, #80]
+	lsls r3, r3, #8
+	strh r3, [r2, #30]
+	movs r1, #0
+	movs r0, #11
+	bl Object_SetModeById
+	movs r0, #12
+	bl Object_GetById
+	adds r1, r0, #0
+	adds r3, r1, #0
+	adds r3, #89
+	strb r5, [r3]
+	adds r2, r1, #0
+	subs r3, #54
+	strb r5, [r3]
+	adds r2, #94
+	movs r3, #30
+	strh r3, [r2]
+	ldr r2, [r1, #80]
+	ldrb r3, [r2, #9]
+	orrs r3, r6
+	strb r3, [r2, #9]
+	ldr r3, [r1, #80]
+	adds r3, #38
+	b .L_0200a9f4
+.L_0200a9ec:
 	.4byte 0x00000000
-	.2byte 0x0109
-	.2byte 0x0000
-.L_020029f4:
-	strb	r5, [r3, #0]
-	movs	r3, #128
-	ldr	r2, [r1, #80]
-	lsls	r3, r3, #7
-	strh	r3, [r2, #30]
-	movs	r1, #0
-	movs	r0, #12
-	bl 0x0200ae90
-	movs	r0, #13
-	bl 0x0200ae50
-	adds	r1, r0, #0
-	adds	r3, r1, #0
-	adds	r3, #89
-	strb	r5, [r3, #0]
-	adds	r2, r1, #0
-	subs	r3, #54
-	strb	r5, [r3, #0]
-	adds	r2, #94
-	movs	r3, #60
-	strh	r3, [r2, #0]
-	ldr	r2, [r1, #80]
-	ldrb	r3, [r2, #9]
-	orrs	r3, r6
-	strb	r3, [r2, #9]
-	ldr	r3, [r1, #80]
-	adds	r3, #38
-	strb	r5, [r3, #0]
-	movs	r2, #128
-	lsls	r2, r2, #8
-	ldr	r3, [r1, #80]
-	mov	r8, r2
-	mov	r0, r8
-	strh	r0, [r3, #30]
-	movs	r1, #0
-	movs	r0, #13
-	bl 0x0200ae90
-	movs	r0, #14
-	bl 0x0200ae50
-	adds	r1, r0, #0
-	adds	r3, r1, #0
-	adds	r3, #89
-	strb	r5, [r3, #0]
-	adds	r2, r1, #0
-	subs	r3, #54
-	strb	r5, [r3, #0]
-	adds	r2, #94
-	movs	r3, #90
-	strh	r3, [r2, #0]
-	ldr	r2, [r1, #80]
-	ldrb	r3, [r2, #9]
-	orrs	r3, r6
-	strb	r3, [r2, #9]
-	ldr	r3, [r1, #80]
-	adds	r3, #38
-	strb	r5, [r3, #0]
-	ldr	r3, [r1, #80]
-	mov	r2, r8
-	strh	r2, [r3, #30]
-	movs	r0, #14
-	movs	r1, #0
-	bl 0x0200ae90
-	b.n	.L_02002d3c
-.L_02002a7a:
-	ldr	r3, [pc, #720]
-	cmp	ip, r3
-	bne.n	.L_02002b7e
-	movs	r0, #225
-	lsls	r0, r0, #1
-	adds	r3, r6, r0
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	subs	r3, #10
-	cmp	r3, #7
-	bls.n	.L_02002a92
-	b.n	.L_02002d3c
-.L_02002a92:
-	ldr	r2, [pc, #700]
-	lsls	r3, r3, #2
-	ldr	r3, [r3, r2]
-	mov	pc, r3
-	.2byte 0x0000
-	.4byte 0x0200aabc
-	.4byte 0x0200aac4
-	.4byte 0x0200ad24
-	.4byte 0x0200ad24
-	.4byte 0x0200aafc
-	.4byte 0x0200ad24
-	.4byte 0x0200ab28
-	.4byte 0x0200ab54
-	.4byte 0x01002098
-	.4byte 0xf9aef000
-	.4byte 0x01002098
-	.4byte 0xf9a6f000
-	.4byte 0xd1002800
-	.4byte 0x2301e134
-	.4byte 0x93002203
-	.4byte 0x20789201
-	.4byte 0x226d2107
-	.4byte 0xf0002307
-	.4byte 0x232df971
-	.4byte 0x93002209
-	.4byte 0x202d9201
-	.2byte 0x2108
-.L_02002af2:
-	movs	r2, #1
-	movs	r3, #1
-	bl 0x0200add8
-	b.n	.L_02002d3c
-	.4byte 0x229120dc
-	.4byte 0x21000452
-	.4byte 0x044023df
-	.4byte 0xff74f7fd
-	.4byte 0x220d231b
-	.4byte 0x92019300
-	.4byte 0x210d2016
-	.4byte 0x23012201
-	.4byte 0xf95cf000
-	.4byte 0xf7fe200e
-	.4byte 0xe109f9c3
-	.4byte 0x229120e0
-	.4byte 0x21000452
-	.4byte 0x044023df
-	.4byte 0xff5ef7fd
-	.4byte 0x220a231c
-	.4byte 0x92019300
-	.4byte 0x210c2016
-	.4byte 0x23012201
-	.4byte 0xf946f000
-	.4byte 0xf7fe2010
-	.4byte 0xe0f3f9ad
-	.4byte 0x4a7f20e8
-	.4byte 0x23df2100
-	.4byte 0xf7fd0400
-	.4byte 0x230eff49
-	.4byte 0x93002221
-	.4byte 0x20169201
-	.4byte 0x2201210c
-	.4byte 0xf0002301
-	.4byte 0x2011f931
-	.4byte 0xf998f7fe
-	.2byte 0xe0de
-.L_02002b7e:
-	ldr	r3, [pc, #472]
-	cmp	r1, r3
-	beq.n	.L_02002b86
-	b.n	.L_02002d34
-.L_02002b86:
-	movs	r0, #8
-	bl 0x0200ae50
-	adds	r0, #90
-	ldrb	r2, [r0, #0]
-	movs	r5, #254
-	adds	r3, r5, #0
-	ands	r3, r2
-	strb	r3, [r0, #0]
-	movs	r0, #9
-	bl 0x0200ae50
-	adds	r0, #90
-	ldrb	r3, [r0, #0]
-	movs	r1, #128
-	ands	r5, r3
-	movs	r2, #128
-	strb	r5, [r0, #0]
-	lsls	r1, r1, #9
-	movs	r0, #8
-	lsls	r2, r2, #8
-	bl 0x0200ae58
-	movs	r1, #128
-	movs	r2, #128
-	movs	r0, #9
-	lsls	r1, r1, #9
-	lsls	r2, r2, #8
-	bl 0x0200ae58
-	ldr	r0, [pc, #408]
-	bl 0x0200ae18
-	cmp	r0, #0
-	bne.n	.L_02002be8
-	movs	r0, #225
-	lsls	r0, r0, #1
-	adds	r3, r6, r0
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #1
-	bne.n	.L_02002be2
-	ldr	r0, [pc, #388]
-	bl 0x0200ae20
-	b.n	.L_02002be8
-.L_02002be2:
-	ldr	r0, [pc, #380]
-	bl 0x0200ae28
-.L_02002be8:
-	ldr	r0, [pc, #376]
-	bl 0x0200ae18
-	cmp	r0, #0
-	bne.n	.L_02002c6a
-	movs	r0, #10
-	ldr	r1, [pc, #368]
-	ldr	r2, [pc, #368]
-	bl 0x0200ae88
-	movs	r1, #140
-	movs	r2, #148
-	movs	r0, #11
-	lsls	r1, r1, #17
-	lsls	r2, r2, #17
-	bl 0x0200ae88
-	movs	r1, #156
-	movs	r2, #248
-	movs	r0, #12
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	bl 0x0200ae88
-	movs	r1, #148
-	movs	r2, #248
-	movs	r0, #13
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	bl 0x0200ae88
-	movs	r1, #160
-	movs	r2, #148
-	movs	r0, #14
-	lsls	r1, r1, #17
-	lsls	r2, r2, #17
-	bl 0x0200ae88
-	movs	r0, #11
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r1, #192
-	movs	r0, #12
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r1, #192
-	movs	r0, #13
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r1, #128
-	movs	r0, #14
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r0, #5
-	bl 0x0200ae30
-	b.n	.L_02002cc4
-.L_02002c6a:
-	ldr	r0, [pc, #256]
-	bl 0x0200ae18
-	cmp	r0, #0
-	beq.n	.L_02002cc4
-	movs	r1, #156
-	movs	r2, #156
-	movs	r0, #10
-	lsls	r1, r1, #17
-	lsls	r2, r2, #17
-	bl 0x0200ae88
-	movs	r1, #176
-	movs	r0, #10
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r1, #176
-	movs	r0, #11
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r1, #176
-	movs	r0, #12
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r1, #176
-	movs	r0, #13
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r1, #176
-	movs	r0, #14
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r0, #5
-	bl 0x0200ae30
-.L_02002cc4:
-	ldr	r0, [pc, #168]
-	bl 0x0200ae18
-	cmp	r0, #0
-	beq.n	.L_02002d14
-	movs	r1, #140
-	movs	r2, #240
-	movs	r0, #8
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	bl 0x0200ae88
-	movs	r1, #164
-	movs	r2, #240
-	movs	r0, #9
-	lsls	r1, r1, #17
-	lsls	r2, r2, #16
-	bl 0x0200ae88
-	movs	r1, #128
-	movs	r0, #8
-	lsls	r1, r1, #8
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r0, #9
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200aef0
-	movs	r3, #17
-	movs	r2, #14
-	str	r3, [sp, #0]
-	str	r2, [sp, #4]
-	movs	r0, #81
-	movs	r1, #14
-	movs	r2, #4
-	movs	r3, #1
-	bl 0x0200add8
-.L_02002d14:
-	ldr	r3, [pc, #92]
-	movs	r0, #225
-	lsls	r0, r0, #1
-	adds	r3, r3, r0
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #3
-	bne.n	.L_02002d3c
-	ldr	r0, [pc, #52]
-	bl 0x0200ae18
-	cmp	r0, #0
-	bne.n	.L_02002d3c
-	bl 0x02008d4c
-	b.n	.L_02002d3c
-.L_02002d34:
-	movs	r0, #12
-	movs	r1, #2
-	bl 0x0200ae90
-.L_02002d3c:
-	movs	r0, #0
-	add	sp, #8
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6}
-	pop	{r1}
-	bx	r1
-	.2byte 0x0000
-	.4byte 0x000000af
-	.4byte 0x0200aa9c
-	.4byte 0x02520000
-	.4byte 0x000000ae
+.L_0200a9f0:
 	.4byte 0x00000109
+.L_0200a9f4:
+	strb r5, [r3]
+	movs r3, #128
+	ldr r2, [r1, #80]
+	lsls r3, r3, #7
+	strh r3, [r2, #30]
+	movs r1, #0
+	movs r0, #12
+	bl Object_SetModeById
+	movs r0, #13
+	bl Object_GetById
+	adds r1, r0, #0
+	adds r3, r1, #0
+	adds r3, #89
+	strb r5, [r3]
+	adds r2, r1, #0
+	subs r3, #54
+	strb r5, [r3]
+	adds r2, #94
+	movs r3, #60
+	strh r3, [r2]
+	ldr r2, [r1, #80]
+	ldrb r3, [r2, #9]
+	orrs r3, r6
+	strb r3, [r2, #9]
+	ldr r3, [r1, #80]
+	adds r3, #38
+	strb r5, [r3]
+	movs r2, #128
+	lsls r2, r2, #8
+	ldr r3, [r1, #80]
+	mov r8, r2
+	mov r0, r8
+	strh r0, [r3, #30]
+	movs r1, #0
+	movs r0, #13
+	bl Object_SetModeById
+	movs r0, #14
+	bl Object_GetById
+	adds r1, r0, #0
+	adds r3, r1, #0
+	adds r3, #89
+	strb r5, [r3]
+	adds r2, r1, #0
+	subs r3, #54
+	strb r5, [r3]
+	adds r2, #94
+	movs r3, #90
+	strh r3, [r2]
+	ldr r2, [r1, #80]
+	ldrb r3, [r2, #9]
+	orrs r3, r6
+	strb r3, [r2, #9]
+	ldr r3, [r1, #80]
+	adds r3, #38
+	strb r5, [r3]
+	ldr r3, [r1, #80]
+	mov r2, r8
+	strh r2, [r3, #30]
+	movs r0, #14
+	movs r1, #0
+	bl Object_SetModeById
+	b .L_0200ad3c
+.L_0200aa7a:
+	ldr r3, .L_0200ad4c
+	cmp r12, r3
+	bne .L_0200ab7e
+	movs r0, #225
+	lsls r0, r0, #1
+	adds r3, r6, r0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	subs r3, #10
+	cmp r3, #7
+	bls .L_0200aa92
+	b .L_0200ad3c
+.L_0200aa92:
+	ldr r2, .L_0200ad50
+	lsls r3, r3, #2
+	ldr r3, [r3, r2]
+	mov pc, r3
+	.2byte 0x0000
+.L_0200aa9c:
+	.4byte .L_0200aabc
+	.4byte .L_0200aac4
+	.4byte .L_0200ad24
+	.4byte .L_0200ad24
+	.4byte .L_0200aafc
+	.4byte .L_0200ad24
+	.4byte .L_0200ab28
+	.4byte .L_0200ab54
+.L_0200aabc:
+	movs r0, #152
+	lsls r0, r0, #4
+	bl Engine_GameFlagSet
+.L_0200aac4:
+	movs r0, #152
+	lsls r0, r0, #4
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	bne .L_0200aad2
+	b .L_0200ad3c
+.L_0200aad2:
+	movs r3, #1
+	movs r2, #3
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #120
+	movs r1, #7
+	movs r2, #109
+	movs r3, #7
+	bl Map_CopyMetatileIndicesRect
+	movs r3, #45
+	movs r2, #9
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #45
+	movs r1, #8
+.L_0200aaf2:
+	movs r2, #1
+	movs r3, #1
+	bl Map_CopyCellAttributeRect
+	b .L_0200ad3c
+.L_0200aafc:
+	movs r0, #220
+	movs r2, #145
+	lsls r2, r2, #17
+	movs r1, #0
+	movs r3, #223
+	lsls r0, r0, #17
+	bl OverlayObject_SpawnConfiguredObject
+	movs r3, #27
+	movs r2, #13
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #22
+	movs r1, #13
+	movs r2, #1
+	movs r3, #1
+	bl Map_CopyCellAttributeRect
+	movs r0, #14
+	bl FieldScene_RunScene3c5SequenceA
+	b .L_0200ad3c
+.L_0200ab28:
+	movs r0, #224
+	movs r2, #145
+	lsls r2, r2, #17
+	movs r1, #0
+	movs r3, #223
+	lsls r0, r0, #17
+	bl OverlayObject_SpawnConfiguredObject
+	movs r3, #28
+	movs r2, #10
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #22
+	movs r1, #12
+	movs r2, #1
+	movs r3, #1
+	bl Map_CopyCellAttributeRect
+	movs r0, #16
+	bl FieldScene_RunScene3c5SequenceA
+	b .L_0200ad3c
+.L_0200ab54:
+	movs r0, #232
+	ldr r2, .L_0200ad54
+	movs r1, #0
+	movs r3, #223
+	lsls r0, r0, #16
+	bl OverlayObject_SpawnConfiguredObject
+	movs r3, #14
+	movs r2, #33
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #22
+	movs r1, #12
+	movs r2, #1
+	movs r3, #1
+	bl Map_CopyCellAttributeRect
+	movs r0, #17
+	bl FieldScene_RunScene3c5SequenceA
+	b .L_0200ad3c
+.L_0200ab7e:
+	ldr r3, .L_0200ad58
+	cmp r1, r3
+	beq .L_0200ab86
+	b .L_0200ad34
+.L_0200ab86:
+	movs r0, #8
+	bl Object_GetById
+	adds r0, #90
+	ldrb r2, [r0]
+	movs r5, #254
+	adds r3, r5, #0
+	ands r3, r2
+	strb r3, [r0]
+	movs r0, #9
+	bl Object_GetById
+	adds r0, #90
+	ldrb r3, [r0]
+	movs r1, #128
+	ands r5, r3
+	movs r2, #128
+	strb r5, [r0]
+	lsls r1, r1, #9
+	movs r0, #8
+	lsls r2, r2, #8
+	bl ObjectMotion_SetSpeedParameters
+	movs r1, #128
+	movs r2, #128
+	movs r0, #9
+	lsls r1, r1, #9
+	lsls r2, r2, #8
+	bl ObjectMotion_SetSpeedParameters
+	ldr r0, .L_0200ad5c
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	bne .L_0200abe8
+	movs r0, #225
+	lsls r0, r0, #1
+	adds r3, r6, r0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #1
+	bne .L_0200abe2
+	ldr r0, .L_0200ad60
+	bl Engine_GameFlagSet
+	b .L_0200abe8
+.L_0200abe2:
+	ldr r0, .L_0200ad60
+	bl Engine_GameFlagClear
+.L_0200abe8:
+	ldr r0, .L_0200ad64
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	bne .L_0200ac6a
+	movs r0, #10
+	ldr r1, .L_0200ad68
+	ldr r2, .L_0200ad68
+	bl Engine_ActorSetPosition
+	movs r1, #140
+	movs r2, #148
+	movs r0, #11
+	lsls r1, r1, #17
+	lsls r2, r2, #17
+	bl Engine_ActorSetPosition
+	movs r1, #156
+	movs r2, #248
+	movs r0, #12
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	bl Engine_ActorSetPosition
+	movs r1, #148
+	movs r2, #248
+	movs r0, #13
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	bl Engine_ActorSetPosition
+	movs r1, #160
+	movs r2, #148
+	movs r0, #14
+	lsls r1, r1, #17
+	lsls r2, r2, #17
+	bl Engine_ActorSetPosition
+	movs r0, #11
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #192
+	movs r0, #12
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #192
+	movs r0, #13
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #128
+	movs r0, #14
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r0, #5
+	bl Battle_WaitMode0
+	b .L_0200acc4
+.L_0200ac6a:
+	ldr r0, .L_0200ad6c
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	beq .L_0200acc4
+	movs r1, #156
+	movs r2, #156
+	movs r0, #10
+	lsls r1, r1, #17
+	lsls r2, r2, #17
+	bl Engine_ActorSetPosition
+	movs r1, #176
+	movs r0, #10
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #176
+	movs r0, #11
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #176
+	movs r0, #12
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #176
+	movs r0, #13
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r1, #176
+	movs r0, #14
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r0, #5
+	bl Battle_WaitMode0
+.L_0200acc4:
+	ldr r0, .L_0200ad70
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	beq .L_0200ad14
+	movs r1, #140
+	movs r2, #240
+	movs r0, #8
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	bl Engine_ActorSetPosition
+	movs r1, #164
+	movs r2, #240
+	movs r0, #9
+	lsls r1, r1, #17
+	lsls r2, r2, #16
+	bl Engine_ActorSetPosition
+	movs r1, #128
+	movs r0, #8
+	lsls r1, r1, #8
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r0, #9
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorFaceDirection
+	movs r3, #17
+	movs r2, #14
+	str r3, [sp, #0]
+	str r2, [sp, #4]
+	movs r0, #81
+	movs r1, #14
+	movs r2, #4
+	movs r3, #1
+	bl Map_CopyCellAttributeRect
+.L_0200ad14:
+	ldr r3, .L_0200ad74
+	movs r0, #225
+	lsls r0, r0, #1
+	adds r3, r3, r0
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	cmp r3, #3
+	bne .L_0200ad3c
+.L_0200ad24:
+	ldr r0, .L_0200ad5c
+	bl Engine_GameFlagIsSet
+	cmp r0, #0
+	bne .L_0200ad3c
+	bl FieldScene_RunSupplementalSequenceOne
+	b .L_0200ad3c
+.L_0200ad34:
+	movs r0, #12
+	movs r1, #2
+	bl Object_SetModeById
+.L_0200ad3c:
+	movs r0, #0
+	add sp, #8
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6}
+	pop {r1}
+	bx r1
+	.2byte 0x0000
+.L_0200ad4c:
+	.4byte 0x000000af
+.L_0200ad50:
+	.4byte .L_0200aa9c
+.L_0200ad54:
+	.4byte 0x02520000
+.L_0200ad58:
+	.4byte 0x000000ae
+.L_0200ad5c:
+	.4byte 0x00000109
+.L_0200ad60:
 	.4byte 0x00000301
+.L_0200ad64:
 	.4byte 0x00000988
+.L_0200ad68:
 	.4byte 0xffc00000
+.L_0200ad6c:
 	.4byte 0x00000989
+.L_0200ad70:
 	.4byte 0x00000985
-	.4byte 0x02000240
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+.L_0200ad74:
+	.4byte gCell
+	.section .rodata.x0200afd4,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -574,6 +628,7 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
+.L_0200b08c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -588,6 +643,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b0c4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -602,6 +658,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b0fc:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -618,9 +675,10 @@ StagedActor_FootprintBounds:
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200b08c
-	.4byte 0x0200b0c4
-	.4byte 0x0200b0fc
+	.4byte .L_0200b08c
+	.4byte .L_0200b0c4
+	.4byte .L_0200b0fc
+.L_0200b140:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -995,25 +1053,25 @@ gBabiIriguchiPlacements3:
 	.4byte 0x00820000
 	.4byte 0x00004000
 	.4byte 0xffff0098
-	.4byte 0x0200b140
+	.4byte .L_0200b140
 	.4byte 0x00b00000
 	.4byte 0x00000000
 	.4byte 0x01680000
 	.4byte 0x00024000
 	.4byte 0xffff0074
-	.4byte 0x0200b140
+	.4byte .L_0200b140
 	.4byte 0x00f00000
 	.4byte 0x00000000
 	.4byte 0x00f00000
 	.4byte 0x00024000
 	.4byte 0xffff0098
-	.4byte 0x0200b140
+	.4byte .L_0200b140
 	.4byte 0x00d80000
 	.4byte 0x00000000
 	.4byte 0x01180000
 	.4byte 0x00024000
 	.4byte 0xffff0072
-	.4byte 0x0200b140
+	.4byte .L_0200b140
 	.4byte 0x00b80000
 	.4byte 0x00000000
 	.4byte 0x00f80000
@@ -1157,10 +1215,10 @@ gBabiIriguchiEvents3:
 	.4byte 0x00000003
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x020090f5
+	.4byte FieldScene_RunFourCallSequence
 	.4byte 0x00004602
 	.4byte 0xffff000b
-	.4byte 0x0200910d
+	.4byte SceneState_BranchOnActorEightOrNineTile
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte 0x000026fa
@@ -1187,13 +1245,13 @@ gBabiIriguchiEvents3:
 	.4byte 0x00002701
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x02009031
+	.4byte BabiIriguchi_JumpFromLedge
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x02009031
+	.4byte BabiIriguchi_JumpFromLedge
 	.4byte 0x00000c15
 	.4byte 0x0300000a
-	.4byte 0x0200a7f5
+	.4byte SceneState_ConfigureRegion82_7AndApply768
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1234,22 +1292,22 @@ gBabiIriguchiEvents2:
 	.4byte 0x00000012
 	.4byte 0x00004602
 	.4byte 0xffff0019
-	.4byte 0x02009185
+	.4byte FieldScene_RunStep11
 	.4byte 0x00004602
 	.4byte 0xffff001a
-	.4byte 0x0200919d
+	.4byte FieldScene_RunStep12WithPosition
 	.4byte 0x00004602
 	.4byte 0xffff001b
-	.4byte 0x020091c5
+	.4byte FieldScene_RunStep13WithTwoPositions
 	.4byte 0x00004602
 	.4byte 0xffff001c
-	.4byte 0x020091fd
+	.4byte FieldScene_RunStep15
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008cc1
+	.4byte SceneState_SetValue8Mode66
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x02009215
+	.4byte FieldScene_RunStepWithValue2693
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1263,16 +1321,16 @@ gBabiIriguchiEvents1:
 	.4byte 0x00000002
 	.4byte 0x00000002
 	.4byte 0x0988000a
-	.4byte 0x02009239
+	.4byte FieldScene_RunBranchingActorSequence
 	.4byte 0x00000002
 	.4byte 0x13010014
-	.4byte 0x0200a549
+	.4byte BabiIriguchi_CloseTruthDoor
 	.4byte 0x00000002
 	.4byte 0x03010015
-	.4byte 0x0200a549
+	.4byte BabiIriguchi_CloseTruthDoor
 	.4byte 0x00000002
 	.4byte 0xffff0016
-	.4byte 0x0200a4d1
+	.4byte BabiIriguchi_OpenTruthDoor
 	.4byte 0x00000000
 	.4byte 0x0989000a
 	.4byte 0x00002725
@@ -1335,13 +1393,13 @@ gBabiIriguchiEvents1:
 	.4byte 0x00002755
 	.4byte 0x00000003
 	.4byte 0xffff003c
-	.4byte 0x0200a5c9
+	.4byte BabiIriguchi_FlipTruthDoorSwitch
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x0200a46d
+	.4byte ActorPresentation_SetSceneCellByFlag985
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x0200a4b1
+	.4byte SceneState_ApplyRectAt32x78
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1349,19 +1407,19 @@ gBabiIriguchiEvents1:
 gBabiIriguchiEventsOther:
 	.4byte 0x00000202
 	.4byte 0xffff0032
-	.4byte 0x0200a6fd
+	.4byte SceneActor_PushObjectAheadIfLevel
 	.4byte 0x00000202
 	.4byte 0xffff0033
-	.4byte 0x0200a739
+	.4byte SceneActor_RunSlotZeroFacingCheck
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x0200a6b9
+	.4byte ActorPresentation_PlaceActorTwelveAtTile20And12
 	.4byte 0x10009315
 	.4byte 0xffff000c
-	.4byte 0x0200a6a9
+	.4byte SceneState_SetRuntimeByte34
 	.4byte 0x00009315
 	.4byte 0xffff000c
-	.4byte 0x0200a6b9
+	.4byte ActorPresentation_PlaceActorTwelveAtTile20And12
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

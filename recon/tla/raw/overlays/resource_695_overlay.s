@@ -1997,16 +1997,16 @@ gSceneEvents:
 	.4byte 0x02050032
 	.4byte Func_02000184
 	.4byte 0x00000602
-	.4byte Data_02010020 + 0x9
+	.4byte 0x02010029
 	.4byte Func_02001038
 	.4byte 0x00008602
-	.4byte Data_02010020 + 0xa
+	.4byte 0x0201002a
 	.4byte Func_02001038
 	.4byte 0x00000602
-	.4byte Data_02020004 + 0x27
+	.4byte 0x0202002b
 	.4byte Func_02001038
 	.4byte 0x00008602
-	.4byte Data_02020004 + 0x28
+	.4byte 0x0202002c
 	.4byte Func_02001038
 	.4byte 0x00000002
 	.4byte 0x0a700064
@@ -2033,16 +2033,16 @@ gSceneEvents:
 	.4byte 0xffff000a
 	.4byte Func_0200004c
 	.4byte 0x00008f15
-	.4byte Data_02000000 + 0xb
+	.4byte 0x0200000b
 	.4byte Func_02000358
 	.4byte 0x00008f15
-	.4byte Data_02010002 + 0xa
+	.4byte 0x0201000c
 	.4byte Func_02000364
 	.4byte 0x00008f15
-	.4byte Data_02020004 + 0x9
+	.4byte 0x0202000d
 	.4byte Func_02000374
 	.4byte 0x00008f15
-	.4byte Data_02030000 + 0xe
+	.4byte 0x0203000e
 	.4byte Func_02000384
 	.4byte 0x00001815
 	.4byte 0x03020010

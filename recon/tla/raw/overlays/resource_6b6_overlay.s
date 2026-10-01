@@ -101,7 +101,7 @@ gSceneEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte GameFlagBytes + 0x1c0
+	.4byte 0x02000200
 	.4byte 0x03600400
 	.4byte 0xffffffff
 	.4byte 0xffffffff

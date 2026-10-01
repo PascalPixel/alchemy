@@ -28,12 +28,12 @@ Func_08041350:
 	beq .L_080413e0
 	adds r0, r7, #4
 	movs r1, #4
-	bl __modsi3
+	bl Math_Mod
 	adds r7, r0, #0
 	mov r0, r8
 	movs r1, #9
 	adds r0, #9
-	bl __modsi3
+	bl Math_Mod
 	mov r3, r10
 	movs r1, #12
 	ldrsh r2, [r3, r1]

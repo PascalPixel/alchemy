@@ -897,7 +897,7 @@ Func_0815a9e4:
 	asrs r0, r0, #1
 	add r0, r8
 	movs r1, #11
-	bl __modsi3
+	bl Math_Mod
 	movs r4, #1
 	negs r4, r4
 	cmp r0, r4
@@ -1022,7 +1022,7 @@ Func_0815a9e4:
 	ble .L_0815b1c4
 	adds r0, r2, #0
 	movs r1, #12
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_0815b1ac
 	ldr r3, [sp, #52]

@@ -108,7 +108,7 @@ Func_080e9940:
 	asrs r0, r0, #18
 	movs r1, #24
 	adds r0, r0, r3
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r5, #0
 	cmp r5, #15
 	bne .L_080e9a18

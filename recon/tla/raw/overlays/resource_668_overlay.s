@@ -1240,7 +1240,7 @@ Func_02000a44:
 .L_02008a8c:
 	.4byte Data_020054f0
 .L_02008a90:
-	.4byte gOverlayArea + 0x56e0
+	.4byte Data_020056e0
 .L_02008a94:
 	.4byte 0xa2600001
 	.section .text.x02008a98,"ax",%progbits
@@ -1292,7 +1292,7 @@ Func_02000a98:
 .L_02008aec:
 	.4byte Data_020054f0
 .L_02008af0:
-	.4byte gOverlayArea + 0x56e0
+	.4byte Data_020056e0
 .L_02008af4:
 	.4byte Data_0300122c
 	.section .text.x02008af8,"ax",%progbits
@@ -8176,11 +8176,11 @@ Data_02004ca4:
 	.4byte 0x014b014c
 	.global Data_02004cb0
 Data_02004cb0:
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.4byte 0x0020f0e0
 	.4byte 0x2008e0f8
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.global Data_02004cc8
 Data_02004cc8:
@@ -8581,7 +8581,7 @@ gSceneEvents:
 	.4byte 0xffff0016
 	.4byte Func_02000730
 	.4byte 0x00008d15
-	.4byte Resource_Data276 + 0x2162
+	.4byte 0x08a80416
 	.4byte Func_02000730
 	.4byte 0x00000000
 	.4byte 0xffff0017
@@ -8623,37 +8623,37 @@ gSceneEvents:
 	.4byte 0xffff001c
 	.4byte 0x0000253a
 	.4byte 0x50009705
-	.4byte Monster_PurpleBeastSprites + 0xd2
+	.4byte 0x08a7000a
 	.4byte Func_0200006c
 	.4byte 0x00008515
-	.4byte Monster_SirenSprites + 0x2070
+	.4byte 0x08a30008
 	.4byte 0x00000000
 	.4byte 0x50008615
-	.4byte Monster_OrcLordSprites + 0x3422
+	.4byte 0x08a2000e
 	.4byte Func_020000c8
 	.4byte 0x10008c15
-	.4byte Monster_SpearWarriorSprites + 0xcd6
+	.4byte 0x08a0000a
 	.4byte Func_02000190
 	.4byte 0x00008c15
-	.4byte Monster_SpearWarriorSprites + 0xcd6
+	.4byte 0x08a0000a
 	.4byte Func_02000200
 	.4byte 0x10008c15
-	.4byte Monster_ShieldKnightSprites + 0x2ff
+	.4byte 0x08a1000b
 	.4byte Func_02000190
 	.4byte 0x00008c15
-	.4byte Monster_ShieldKnightSprites + 0x2ff
+	.4byte 0x08a1000b
 	.4byte Func_02000200
 	.4byte 0x10008c15
-	.4byte Monster_WingedDragonSprites + 0xf48
+	.4byte 0x08a40010
 	.4byte Func_02000394
 	.4byte 0x00008c15
-	.4byte Monster_WingedDragonSprites + 0xf48
+	.4byte 0x08a40010
 	.4byte Func_0200042c
 	.4byte 0x10008c15
-	.4byte Monster_MimicSprites + 0x1bd
+	.4byte 0x08a50011
 	.4byte Func_02000190
 	.4byte 0x00008c15
-	.4byte Monster_MimicSprites + 0x1bd
+	.4byte 0x08a50011
 	.4byte Func_02000200
 	.4byte 0x00000008
 	.4byte 0xffff0000
@@ -8710,13 +8710,13 @@ gSceneEvents:
 	.4byte 0x090f0016
 	.4byte Func_02002a08
 	.4byte 0x00000002
-	.4byte Tileset_Set07TilesB + 0x2ab
+	.4byte 0x08ac0017
 	.4byte Func_02001574
 	.4byte 0x00000002
-	.4byte Tileset_Set44TilesB + 0xef8
+	.4byte 0x08bf0018
 	.4byte Func_02000968
 	.4byte 0x00000002
-	.4byte Tileset_Set42TilesA + 0x15a1
+	.4byte 0x08be0019
 	.4byte Func_02000958
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -8857,3 +8857,7 @@ Data_02005670:
 	.global Data_020056d4
 Data_020056d4:
 	.4byte 0x00000026
+	.section .bss,"aw",%nobits
+	.space 0x00000008
+	.global Data_020056e0
+Data_020056e0:

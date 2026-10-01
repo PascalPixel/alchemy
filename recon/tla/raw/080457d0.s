@@ -200,7 +200,7 @@ Func_080457d0:
 	movs r5, #1
 	str r5, [r0, r3]
 	movs r0, #0
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	ldr r3, [r0]
 	movs r5, #2
 	cmp r3, #0
@@ -1047,7 +1047,7 @@ Func_080457d0:
 	ldr r0, [r5]
 	ldr r1, [r6]
 	adds r0, #1
-	bl __modsi3
+	bl Math_Mod
 	str r0, [r5]
 	b .L_08045fdc
 .L_08045faa:
@@ -1063,7 +1063,7 @@ Func_080457d0:
 	ldr r1, [r2]
 	adds r0, r0, r1
 	subs r0, #1
-	bl __modsi3
+	bl Math_Mod
 	str r0, [r7]
 	b .L_08045fdc
 .L_08045fcc:

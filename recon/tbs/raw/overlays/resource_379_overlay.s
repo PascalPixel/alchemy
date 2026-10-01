@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008c00,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

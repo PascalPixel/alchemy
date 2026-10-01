@@ -1,36 +1,25 @@
-/* Draft, not exact (2026-09-28): 120 of 124 bytes, 14 aligned edits (was
-   124 bytes / 26 edits with the enemy scan nested in the party scan).
-   Sequential scans: the party scan as a for loop that breaks at the end of
-   its list now matches the reference exactly (rotated, strength-reduced
-   offset from 88, 0xfe hoisted). The enemy scan must stay unreduced, as
-   the reference indexes (battle + 2) + (i * 2 + 100) each pass and loads
-   0xfe inside the loop; every for-loop spelling tried here is reduced and
-   hoists 0xfe, while do/while, while and goto spellings keep it unreduced
-   but stop the party scan's rotation (duplicated exit test instead of the
-   entry jump). Removal outside the enemy loop keeps 0xfe unhoisted but is
-   still reduced.
-   2026-09-29 (alchemy permute scorer): the draft scored 575; a local
-   enemies pointer inside the enemy loop scores 445 (3 register-only,
-   5 operand, 2 reordered, 2 deleted) and matches the frame (push r5, r6).
-   The enemy scan is still reduced (base + 102 walked by 2) where the ROM
-   keeps i and rebuilds (i * 2 + 100) from base + 2 every pass. A goto
-   enemy loop gives exactly the ROM's unreduced indexing, but every goto,
-   while and do/while spelling tried (with break, goto or a label after the
-   party scan) peels or unrotates the party scan (660 to 2515). About
-   160,000 searched candidates found nothing below 445. */
-/* 2026-09-29 (Mercury): the lists and action queue are now BattleSession
-   fields (BATTLE_WORK.H); the enemy scan indexes 50 entries past a base
-   two bytes into the work, as Battle_ResolveTargetAction's summon insert
-   does. Still 445: the ROM keeps the enemy scan unreduced. */
-/* 2026-09-30 (Mercury, asm): 118 of 124 bytes. A FAKEMATCH "+r" asm on i
-   at the top of the enemy scan stops strength reduction, and indexing
-   base + (i * 2 + 100) gives the ROM's lsls/adds/adds/ldrsh [base, offset]
-   shape with the party scan unchanged. Left: the removed mark. Stored as
-   a plain 0xfe, loop hoists it into r4 (push r7 frame); behind a volatile
-   "+r" asm it stays in the loop but as movs #254, where the ROM reloads it
-   from a pool entry after the branch (the hoisted value spilled back to
-   its constant), and i and offset take r2 and r1 where the ROM has r1
-   and r2. */
+/* EXACT (score 0, 2026-10-01, wave 1 slice 5) but not adopted: the enemy
+ * scan is a goto loop inside a block that runs once, and that block is not a
+ * steering device the rules admit here, because without it the difference is
+ * more than instruction order or register choice. Pascal's call.
+ *
+ * What the reference shows, measured with the loop pass dump:
+ * - The party scan is a for (i = 0; ; i++) whose match block stays in the
+ *   loop. find_and_verify_loops moves such a block next to any BARRIER at the
+ *   depth of its target; it stays only while no unconditional jump lies
+ *   outside a loop. So the enemy scan's return and back jump are inside loop
+ *   notes.
+ * - The enemy scan is not strength-reduced and its 0xfe is not hoisted:
+ *   scan_loop skipped it. A noted region that begins with an insn instead of
+ *   a label is "phony", which is what j = 0 before the scan's label gives;
+ *   gcse still lifts work + 2 out.
+ * - The scan counts in j, the u32 the action loop uses afterwards: with a
+ *   separate s32 the counter and the base trade r0 and r1 (score 30).
+ * Plain spellings of the scan (for, while (1), do/while (1), nested in the
+ * party scan) are reduced and hoist 0xfe (575 to 765); a bare goto loop
+ * leaves its jumps at depth 0 and the party scan is peeled (1195).
+ * while (1) { j = 0; again: ...; goto again; } is exact as well. The earlier
+ * draft pinned the index and the mark with empty asm (445). */
 #include "TYPES.H"
 #include "BATTLE_WORK.H"
 
@@ -48,7 +37,6 @@ void BattleActor_RemoveFromLists(s32 actor)
     s32 i;
     u32 j;
     s32 unit;
-    u8 *base;
 
     work = gBattleWork;
     Owner_GetStateFar(actor)->in_battle = 0;
@@ -60,26 +48,19 @@ void BattleActor_RemoveFromLists(s32 actor)
         if (work->party_units[i] == 0xff)
             break;
     }
-    base = (u8 *)work + 2;
-    for (i = 0; ; ) {
-        s32 offset;
-
-        /* FAKEMATCH: an opaque index keeps loop from strength-reducing the enemy scan */
-        asm("" : "+r"(i));
-        offset = i * 2 + 100;
-        unit = *(s16 *)(base + offset);
+    do {
+        j = 0;
+again:
+        unit = work->enemy_units[j];
         if (unit == actor) {
-            s16 removed_mark = 0xfe;
-
-            /* FAKEMATCH: keeps loop from hoisting the removed mark out of the enemy scan */
-            asm volatile("" : "+r"(removed_mark));
-            *(s16 *)(base + offset) = removed_mark;
+            work->enemy_units[j] = 0xfe;
             goto removed;
         }
-        i++;
+        j++;
         if (unit == 0xff)
             return;
-    }
+        goto again;
+    } while (0);
 removed:
     Summon_ReleaseCharge(actor);
     for (j = 0; j < 20; j++) {

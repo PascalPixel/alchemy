@@ -1,35 +1,50 @@
-/* Draft, not exact (2026-09-25): 784 of 784 bytes, 182 halfwords differ, all register choice.
-   Battle canvas effect: a 128x128 radial distance map (IWRAM square root), a 63-entry
-   palette ramp, then 96 frames of a sine-wobbled scanline table while the palette rotates
-   through DMA and the next-frame I/O queue. Shape, pools and literal placement match; the
-   frame loop is a goto loop so the 0x04000052 stores keep their per-use literal, and pal
-   is a variable so its store rematerialises 0x02010000 + 2. Residuals: the reference
-   still passes the DMA destination as mov r1, r9 (here the constant reloads), prefers r5
-   for its short-lived temporaries, and loads -128 fresh after the distance loop where
-   this build derives it from the inner -1. */
+/* Draft, not exact: 235 (3 register-only, 2 operand, 3 reordered), all in the
+ * last loop. The reference loads the last ramp entry before the interrupt
+ * mask register ahead of the loop (here the mask pointer is assigned first
+ * and the ramp address hoisted after it), and loads the write queue before
+ * reading the mask. What settled the rest: the palette entry is stored
+ * through a chained assignment, so its address is live across the colour and
+ * the 0x05000000 reload takes r5, which puts r5 in the reload rotation; the
+ * ramp is one pointer variable; the two loops are plain for loops.
+ * Tried for the order: an explicit pointer to the last entry before the
+ * mask pointer (it loses r9 to the hoisted blend register address), and
+ * the mask pointer assigned inside the loop with or without a direct
+ * restore (the loop pass then leaves it in r0). The reference hoists both,
+ * the ramp address first, and leaves the blend address without a register. */
 #include "TYPES.H"
+#include "DMA.H"
+#include "IO_REG.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
+#include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_PRESENTATION.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
-#include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 RegIme;
+extern u8 gBattleFxWork[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
+void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangleFn *output);
+void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattleFx_EndCanvasLayer(void);
 
-void Func_080e6638(void *object)
+/*
+ * Battle effect: a rippling disc. A 128 x 128 map of distances from a point
+ * just below the centre is drawn once with a 63-colour ramp; for 96 frames
+ * a sine wave bends the scanlines while the ramp rotates one colour a frame.
+ */
+void Func_080e6638(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
-    u8 *work;
+    struct BattleEffectWork *work;
     void *canvas;
     s32 screen_y;
     s32 screen_x;
-    DrawRectangleFn routine[2];
+    DrawRectangleFn draw[2];
     s32 x;
     s32 y;
     s32 dx;
@@ -41,50 +56,47 @@ void Func_080e6638(void *object)
     s32 r;
     s32 g;
     s32 b;
-    s32 color;
-    u16 *shadow;
     s32 frame;
     s32 wave;
     s32 level;
-    u16 *last;
     u16 *pal;
     volatile u16 *ime;
     s32 angle;
     s32 *line;
 
-    heap_cache = (void **)0x03001eec;
+    heap_cache = (void **)gBattleFxWork;
     work = *heap_cache++;
     canvas = *heap_cache;
-    *(void **)(work + 0x7828) = object;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2000);
-    BattleFx_PrepareCanvasEffect(object, 6, *(s32 *)(*(u8 **)(work + 0x7828) + 4), 2, &screen_x, &screen_y);
-    *(u16 *)0x0400000c = 0x2784;
-    *(u16 *)0x04000052 = 0x1000;
-    *(u16 *)0x04000020 = 0xaa;
-    BattleFx_FetchRectangleBlitters(*(s32 *)(*(u8 **)(work + 0x7828) + 4), routine);
-    *(s32 *)(work + 0x7780) = 2;
-    *(s32 *)(work + 0x7784) = 75;
-    Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
+    BattleFx_PrepareCanvasEffect(effect, 6, work->effect->side, 2, &screen_x, &screen_y);
+    REG_BG2CNT = 0x2784;
+    REG_BLDALPHA = 0x1000;
+    REG_BG2PA = 0xaa;
+    BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (y = 0; y != 64; y++) {
         for (x = 0; x != 64; x++) {
             cy = y / 8 + 64;
             dy = y - cy;
             dx = x - 64;
-            d = ((s32 (*)(s32))0x030001d8)(dx * dx + dy * dy);
+            d = Iwram_Sqrt(dx * dx + dy * dy);
             d /= 2;
             if (d == 0)
                 d = 1;
             if (d > 63)
                 d = 63;
-            work[y * 128 + x] = d;
-            work[y * 128 + 127 - x] = d;
-            work[(127 - y) * 128 + x] = d;
-            work[(127 - y) * 128 + 127 - x] = d;
+            ((u8 *)work)[y * 128 + x] = d;
+            ((u8 *)work)[y * 128 + 127 - x] = d;
+            ((u8 *)work)[(127 - y) * 128 + x] = d;
+            ((u8 *)work)[(127 - y) * 128 + 127 - x] = d;
         }
     }
 
-    shadow = (u16 *)0x02010002;
+    pal = (u16 *)Ram_MapCellBuffer;
     for (i = 1; i != 64; i++) {
         if (i > 31)
             t = 64 - i;
@@ -105,43 +117,38 @@ void Func_080e6638(void *object)
             g = 255;
         if (b > 250)
             b = 250;
-        color = (b >> 3) << 10 | (g >> 3) << 5 | r >> 3;
-        ((u16 *)0x05000000)[i] = color;
-        *shadow++ = color;
+        r >>= 3;
+        g >>= 3;
+        b >>= 3;
+        pal[i] = ((u16 *)BG_PLTT)[i] = b << 10 | g << 5 | r;
     }
 
-    routine[0](canvas, work, 0, 0, 128, 128);
-    *(s32 *)(work + 0x7824) = 1;
-    Scheduler_AddOrUpdateCallback(0x080dbb9d, 0x480);
+    draw[0](canvas, work, 0, 0, 128, 128);
+    work->transfer_pending = 1;
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
 
-    pal = (u16 *)0x02010000;
-    last = (u16 *)0x0201007e;
-    ime = &RegIme;
-    frame = 0;
-    level = 0;
-loop:
-    {
+    ime = &REG_IME;
+    for (frame = 0, level = 0; frame != 96; frame++, level += 2) {
         if (frame <= 8) {
             wave = level;
-            *(u16 *)0x04000052 = level | 0x1000;
+            REG_BLDALPHA = level | 0x1000;
         } else {
             wave = frame * 2;
         }
         if (frame > 88)
-            *(u16 *)0x04000052 = (0xc0 - level) | 0x1000;
+            REG_BLDALPHA = (0xc0 - level) | 0x1000;
 
-        line = (s32 *)(work + 0x6980);
-        angle = -(wave << 9);
-        for (i = 0; i != 160; i++) {
+        line = work->bg2_x;
+        for (i = 0, angle = -(wave << 9); i != 160; i++) {
             *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
             angle += 0x200;
         }
 
         if (frame > 127) {
-            *(s32 *)(work + 0x7824) = 1;
+            work->transfer_pending = 1;
         } else {
-            pal[1] = *last;
-            Dma_Set((void *)0x0201007c, last, 0x80a0003e, (volatile u32 *)0x040000d4);
+            pal[1] = pal[63];
+            Dma_Set(pal + 62, pal + 63, 0x80a0003e, REG_DMA3);
             {
                 struct IoWriteQueue *q;
                 u32 saved;
@@ -154,7 +161,7 @@ loop:
                 if (count <= 31) {
                     u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
                     q->count = count + 1;
-                    *destination++ = 0x02010002;
+                    *destination++ = (u32)(pal + 1);
                     *destination++ = 0x05000002;
                     *destination = 0x8000003f;
                 }
@@ -162,14 +169,10 @@ loop:
             }
         }
         WaitFrames(1);
-        frame++;
-        level += 2;
-        if (frame != 96)
-            goto loop;
     }
 
-    Scheduler_RemoveCallback(0x080dbb9d);
-    Scheduler_RemoveCallback(0x080cd261);
+    Scheduler_RemoveCallback((s32)BattleFx_ArmBg2AffineHBlankDma);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

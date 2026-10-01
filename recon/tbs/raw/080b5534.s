@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Unnamed_080b5534
+	.global DebugBattle_ViewMessages
 	.thumb_func
-Unnamed_080b5534:
+DebugBattle_ViewMessages:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

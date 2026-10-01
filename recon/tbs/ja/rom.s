@@ -644,14 +644,6 @@ Enemy_ElementPresetTable:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0007f26c, 0x00001d94
-	.section .rom.000816e4, "ax"
-	.incbin "baserom.gba", 0x000816e4, 0x000001ec
-	.section .rom.000818e4, "ax"
-	.global Game_ResetForNewGame
-	.type Game_ResetForNewGame, %function
-	.thumb_func
-Game_ResetForNewGame:
-	.incbin "baserom.gba", 0x000818e4, 0x00000264
 	.section .rom.000823ea, "ax"
 	.incbin "baserom.gba", 0x000823ea, 0x00000002
 	.section .rom.000823ec, "ax"
@@ -1147,15 +1139,11 @@ Inn_PriceMultipliers:
 	.section .rom.000ac218, "ax"
 	.incbin "baserom.gba", 0x000ac218, 0x00000040
 	.section .rom.000ac534, "ax"
-	.incbin "baserom.gba", 0x000ac534, 0x000001ac
-	.section .rom.000ac6e0, "ax"
-	.global Unnamed_080b56e0
-	.type Unnamed_080b56e0, %function
+	.global DebugBattle_ViewMessages
+	.type DebugBattle_ViewMessages, %function
 	.thumb_func
-Unnamed_080b56e0:
-	.incbin "baserom.gba", 0x000ac6e0, 0x00000184
-	.section .rom.000acf0c, "ax"
-	.incbin "baserom.gba", 0x000acf0c, 0x00000160
+DebugBattle_ViewMessages:
+	.incbin "baserom.gba", 0x000ac534, 0x000001ac
 	.section .rom.000ad3c8, "ax"
 	.global Battle_RunEncounter
 	.type Battle_RunEncounter, %function
@@ -1180,14 +1168,6 @@ BattleActor_SpawnObjectsForList:
 	.thumb_func
 BattlePres_RunUnitAction:
 	.incbin "baserom.gba", 0x000afc1c, 0x0000019c
-	.section .rom.000b0554, "ax"
-	.incbin "baserom.gba", 0x000b0554, 0x000001d0
-	.section .rom.000b0724, "ax"
-	.global BattlePresentation_AppendLinkedActions
-	.type BattlePresentation_AppendLinkedActions, %function
-	.thumb_func
-BattlePresentation_AppendLinkedActions:
-	.incbin "baserom.gba", 0x000b0724, 0x00000190
 	.section .rom.000b0b2e, "ax"
 	.incbin "baserom.gba", 0x000b0b2e, 0x00000206
 	.section .rom.000b0ec0, "ax"
@@ -1202,12 +1182,6 @@ BattlePresentation_AppendLinkedActions:
 	.thumb_func
 BattleActor_RemoveFromLists:
 	.incbin "baserom.gba", 0x000b1c6c, 0x0000007c
-	.section .rom.000b27c0, "ax"
-	.global Unnamed_080bb7c0
-	.type Unnamed_080bb7c0, %function
-	.thumb_func
-Unnamed_080bb7c0:
-	.incbin "baserom.gba", 0x000b27c0, 0x00000118
 	.section .rom.000b4422, "ax"
 	.incbin "baserom.gba", 0x000b4422, 0x00000002
 	.section .rom.000b4424, "ax"

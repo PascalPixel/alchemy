@@ -1050,7 +1050,10 @@ CounterReveal_PanelY:
 	.incbin "baserom.gba", 0x000ee11a, 0x0000000e
 	.global Data_080ee128
 Data_080ee128:
-	.incbin "baserom.gba", 0x000ee128, 0x00000030
+	.incbin "baserom.gba", 0x000ee128, 0x00000018
+	.global RingBolts_Points
+RingBolts_Points:
+	.incbin "baserom.gba", 0x000ee140, 0x00000018
 	.global SpinningStars_Radii
 SpinningStars_Radii:
 	.incbin "baserom.gba", 0x000ee158, 0x00000002

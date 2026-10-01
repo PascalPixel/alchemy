@@ -94,13 +94,11 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
 
             s32 mag;
             s32 ang;
-            s32 at;
 
             mag = 0x1FF;
             mag &= Random16();
             ang = Random16() & 0xFFFF;
-            at = n + work->effect->side * 3;
-            spark->x = FlameBlade_StrikeColumns[at] << 16;
+            spark->x = FlameBlade_StrikeColumns[n + work->effect->side * 3] << 16;
             spark->y = 176 << 15;
             mag += 32;
             spark->velocity_x = (Trig_Sin(ang) * mag) >> 6;
@@ -181,10 +179,8 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
             }
             if (frame >= start) {
                 if (frame < start + 2) {
-                    s32 at = n + work->effect->side * 3;
-
                     routine[0](canvas, (u8 *)work + (128 << 6),
-                        FlameBlade_StrikeColumns[at] - 16, 56, 32, 64);
+                        FlameBlade_StrikeColumns[n + work->effect->side * 3] - 16, 56, 32, 64);
                 }
                 i = 0;
                 do {
@@ -193,11 +189,9 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
                     s32 x;
                     s32 life;
                     s32 y;
-                    s32 at;
 
                     y = HI(flash->y);
-                    at = n + work->effect->side * 3;
-                    x = HI(flash->x) + FlameBlade_StrikeColumns[at];
+                    x = HI(flash->x) + FlameBlade_StrikeColumns[n + work->effect->side * 3];
                     life = flash->variant;
                     if ((u32)life <= 17) {
                         routine[0](canvas,

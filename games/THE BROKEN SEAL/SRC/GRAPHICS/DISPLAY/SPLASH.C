@@ -122,3 +122,57 @@ row:
     Blend_WaitForTransition();
     return result;
 }
+
+extern u32 gFrameCount;
+void Blend_SetBrightenTarget0(s32 frames);
+
+/* Title: show the animated splash picture. Its four 1KB tile frames cycle
+   every eight frames for up to two seconds, or until A or START. */
+s32 Title_ShowAnimatedSplash(void)
+{
+    s32 result;
+    u32 i;
+    /* FAKEMATCH: separate the post-decode buffer carrier from the resource-number carrier. */
+    register u8 *buffer __asm__("r6");
+    /* FAKEMATCH: keep the decode destination carrier distinct until the buffer copy. */
+    register u8 *decode __asm__("r5");
+    s32 resource;
+
+    gOamCopyEnabled = 1;
+    result = 0;
+    resource = (s32)&ResourceId_CamelotLogo;
+    Scheduler_ResetTaskTable();
+    Blend_SetDarkenTarget16(1);
+    Bg0_ClearTilemap();
+    WaitFrames(1);
+    *(volatile u16 *)0x0400000c = 0x685;
+    *(volatile u16 *)0x04000000 = 0x1440;
+    gBgScroll[2].y = result;
+    decode = Ram_MapCellBuffer;
+    Resource_DecodeType01(Resource_GetTableEntry(resource), decode);
+    buffer = decode;
+    Dma_Set(buffer, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
+    buffer += 0x1c0;
+    Dma_Set(buffer, (void *)0x06003000, 0x84000200, (volatile u32 *)0x040000d4);
+    buffer += 0x800;
+    Dma_Set(buffer, (void *)0x06004000, 0x84001000, (volatile u32 *)0x040000d4);
+    buffer += 0x4000;
+    for (i = 0; i < 4; i++) {
+        gBgScroll[i].y = 0;
+        gBgScroll[i].x = 0;
+    }
+    Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
+    Ui_LoadWindowGraphics();
+    Bg0_ClearTilemap();
+    Blend_SetBrightenTarget0(1);
+    Blend_WaitForTransition();
+    *(volatile u16 *)0x04000000 = 0x1540;
+    for (i = 0; i < 120; i++) {
+        /* FAKEMATCH: the unsigned address sum retains the DMA source operand order. */
+        Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer), (void *)0x06004100, 0x840000d0, (volatile u32 *)0x040000d4);
+        if (gKeyState & 9)
+            break;
+        WaitFrames(1);
+    }
+    return result;
+}

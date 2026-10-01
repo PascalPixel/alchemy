@@ -97,7 +97,7 @@ Title_ShowSplashScreen:
 	.global PaletteFar_Entry20
 	.thumb_func
 PaletteFar_Entry20:
-	overlay_veneer Func_080f2020
+	overlay_veneer Title_ShowAnimatedSplashFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

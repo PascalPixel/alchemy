@@ -1295,7 +1295,10 @@ Data_080eeaec:
 	.incbin "baserom.gba", 0x000eeaec, 0x0000000e
 	.global Data_080eeafa
 Data_080eeafa:
-	.incbin "baserom.gba", 0x000eeafa, 0x0000004e
+	.incbin "baserom.gba", 0x000eeafa, 0x00000046
+	.global StagedParticles_UnitScale
+StagedParticles_UnitScale:
+	.incbin "baserom.gba", 0x000eeb40, 0x00000008
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000eeb48, 0x00000003

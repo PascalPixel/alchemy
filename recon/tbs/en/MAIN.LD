@@ -920,7 +920,7 @@
         "*/recon/tbs/raw/080dbb9a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT18.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)
-        "*/recon/tbs/raw/080dc968.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STAGED_PARTICLES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT19.o"(.text)
         "*/recon/tbs/raw/080ddde0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PREPARE_CANVAS_EFFECT.o"(.text)

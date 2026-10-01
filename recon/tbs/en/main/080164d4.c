@@ -1,10 +1,13 @@
-/* 2026-09-30 (Mercury): 49 differing halfwords, 150 of 152 bytes, plain C
-   (the permuter's version was 60). The edges are shifted first and the
-   window offset added in separate statements: written as one expression,
-   CSE cancels window->x out of right - x, where the reference subtracts the
-   two offset edges. Left: register roles (the reference copies top to r7
-   and left to r5 first and gives x0/y0 r4/r2, the interior origin r5/r7 and
-   width/height r6/r4) and the tile pointer formed after the call. */
+/* Draft, not exact: UiWindow_ClearInteriorTiles, 152 bytes. 2026-10-01
+   (wave 1, slice 1): 795 (27 register-only, 4 operand, 6 reordered, 1
+   inserted, 1 deleted), was 1490. The interior origin is the left and top
+   parameters reused (left = x + 1; top = y + 1), as the reference's entry
+   copies of them to r5 and r7 show, and that gives the reference's code
+   after the call. Remaining: allocation before the call. The reference
+   keeps right and bottom in r3 and r1 and gives width r6 and height r4
+   (saved round the call); here right and bottom move to r5 and r7 and
+   left takes r4. A 100-second permute from here reaches 145 (9
+   register-only, 1 deleted) with temporaries no one would write. */
 #include "RENDER_INPUT.H"
 
 extern u8 *gWindowWork;
@@ -26,16 +29,16 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     y = top >> 3;
     right = (right + 7) >> 3;
     bottom = (bottom + 7) >> 3;
-    x += window->x;
     y += window->y;
+    x += window->x;
     right += window->x;
     bottom += window->y;
+    left = x + 1;
+    top = y + 1;
     width = right - x;
     height = bottom - y;
-    x++;
-    y++;
-    UiWindow_ClearTileAttributesInRect(x, y, width, height);
-    tiles = (u16 *)work + y * 32 + x;
+    UiWindow_ClearTileAttributesInRect(left, top, width, height);
+    tiles = (u16 *)work + top * 32 + left;
     for (row = 0; row < height; row++) {
         for (column = 0; column < width; column++)
             *tiles++ = 0xf020;

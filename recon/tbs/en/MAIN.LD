@@ -292,7 +292,7 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE2.o"(.text)
-        "*/recon/tbs/raw/0801be80.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/PUSH_SELECTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)
         "*/recon/tbs/raw/0801c186.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU13.o"(.text)

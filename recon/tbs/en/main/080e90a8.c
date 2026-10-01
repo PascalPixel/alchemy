@@ -172,8 +172,9 @@ void Unnamed_080e90a8(struct ShardEffect *object)
             if (step > 2) {
                 step = 2;
             }
-            base = 0;
-            if (work->effect->cue != 0) {
+            if (work->effect->cue == 0) {
+                base = 0;
+            } else {
                 base = 0x2580;
             }
             routine[0](canvas, (u8 *)0x02010000 + base + step * 0xc80, origin[0] / 2 - 20, origin[1] - 48, 40, 80);

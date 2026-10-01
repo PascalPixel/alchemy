@@ -11,12 +11,10 @@
  * wipe read from a per-variant 3-byte table at 0x080eea38 (iteration
  * count, threshold extra, and a trailing id), not an orbiting-sprite
  * animation.  Field offsets (work+0x7780/0x7784/0x7824/0x7828), the
- * M2C_FIELD(expr,type_ptr,offset) macro, the DrawRectangleFn/WordCopyFn
+ * (*(type_ptr)((u8 *)(expr) + (offset))) macro, the DrawRectangleFn/WordCopyFn
  * typedefs, and the heap_cache/cursor prologue idiom are all established
  * by that family.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, void *src, s32 size);
 
@@ -75,10 +73,10 @@ void Func_080da2ac(void *object)
     work = *cursor++;
     draw_destination = *cursor;
     facing = *(s32 *)((u8 *)heap_cache - 108);
-    M2C_FIELD(work, void **, 0x7828) = object;
+    (*(void **)((u8 *)(work) + 0x7828)) = object;
     BattleFx_BeginCanvasLayer(1);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
-    M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0;
+    (*(s16 *)((u8 *)((void *)0x04000020) + 0)) = 0x100;
+    (*(s16 *)((u8 *)((void *)0x04000020) + 0x30)) = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet, (u8 *)work + 0x1E00, 1, 1);
     _call_via_r3(
         (void *)0x02010000, (void *)0x06008000, 0x8000,
@@ -99,7 +97,7 @@ void Func_080da2ac(void *object)
         }
     }
 
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
+    if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 4)) == 1) {
         *(s32 *)0x04000028 = 0xFFFF9000;
         y_offset = -112;
     } else {
@@ -109,7 +107,7 @@ void Func_080da2ac(void *object)
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw_rectangle_fn = *(DrawRectangleFn *)((u8 *)heap_cache + 28);
 
-    count = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x14);
+    count = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x14));
     if (count != 0) {
         s32 *record;
         
@@ -123,16 +121,16 @@ void Func_080da2ac(void *object)
         } while (i != count);
     }
 
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = 0;
+    (*(s32 *)((u8 *)(work) + 0x7780)) = 1;
+    (*(s32 *)((u8 *)(work) + 0x7784)) = 0;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     *(Bounds4 *)bounds = Data_080eda88;
     bounds_ptr = bounds;
-    M2C_FIELD(work, s32 *, 0x77A8) = 0x80;
+    (*(s32 *)((u8 *)(work) + 0x77A8)) = 0x80;
     Audio_PlayCue(141);
 
-    variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
+    variant = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18));
     count = Data_080eea38[variant * 3];
     frame = 0;
     if (count != 0) {
@@ -142,7 +140,7 @@ void Func_080da2ac(void *object)
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, b_arg);
 
-            variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
+            variant = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18));
             if (frame == Data_080eea38[variant * 3] - 16) {
                 BattleEventRuntime_BeginPhaseFar(133);
             }
@@ -158,8 +156,7 @@ void Func_080da2ac(void *object)
                 }
 
                 if (frame >= limit) {
-                    variant = M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
+                    variant = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18));
                     if (frame
                             < limit
                                 + Data_080eea38[variant * 3 + 1]) {
@@ -179,8 +176,7 @@ void Func_080da2ac(void *object)
                             draw_destination, work, upper_x_base,
                             0x60 - half_size, 40, 16);
 
-                        count = M2C_FIELD(
-                            M2C_FIELD(work, void **, 0x7828), s32 *, 0x14);
+                        count = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x14));
                         if (count != 0) {
                             s32 member_id_offset;
                             s32 lower_bound;
@@ -195,37 +191,26 @@ void Func_080da2ac(void *object)
                                 void *member_object;
                                 s32 member_id;
 
-                                member_id = M2C_FIELD(
-                                    M2C_FIELD(work, void **, 0x7828),
-                                    s16 *, member_id_offset);
+                                member_id = (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (member_id_offset)));
                                 member_object = *GetBattleObjectSlotFar(member_id);
-                                position[0] = M2C_FIELD(
-                                    member_object, s32 *, 8);
-                                position[1] = M2C_FIELD(
-                                    member_object, s32 *, 12);
-                                position[2] = M2C_FIELD(
-                                    member_object, s32 *, 16);
+                                position[0] = (*(s32 *)((u8 *)(member_object) + 8));
+                                position[1] = (*(s32 *)((u8 *)(member_object) + 12));
+                                position[2] = (*(s32 *)((u8 *)(member_object) + 16));
                                 EffectPosition_ApplyBaseAndYOffset(position, screen);
                                 screen[0] += y_offset;
                                 if (screen[0] >= lower_bound + 8
                                         && screen[0] <= upper_bound
                                         && screen[1] >= min_y) {
-                                    M2C_FIELD(
-                                        member_object, s32 *, 0x28) = 0xC0000;
-                                    M2C_FIELD(
-                                        member_object, s32 *, 0x48) = 0xAB85;
+                                    (*(s32 *)((u8 *)(member_object) + 0x28)) = 0xC0000;
+                                    (*(s32 *)((u8 *)(member_object) + 0x48)) = 0xAB85;
                                 }
-                                if (M2C_FIELD(member_object, s32 *, 12) < 0) {
-                                    member_id = M2C_FIELD(
-                                        M2C_FIELD(work, void **, 0x7828),
-                                        s16 *, member_id_offset);
+                                if ((*(s32 *)((u8 *)(member_object) + 12)) < 0) {
+                                    member_id = (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (member_id_offset)));
                                     ObjectGroup_UpdateMembers(member_id, 0, 5, -1, 0);
                                 }
                                 member_id_offset += 2;
                                 i++;
-                                count = M2C_FIELD(
-                                    M2C_FIELD(work, void **, 0x7828), s32 *,
-                                    0x14);
+                                count = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x14));
                             } while (i != count);
                         }
                     }
@@ -238,7 +223,7 @@ void Func_080da2ac(void *object)
                 pass++;
             } while (pass != 3);
 
-            count = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x14);
+            count = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x14));
             if (count != 0) {
                 s32 *record;
                 s32 member_id_offset;
@@ -251,36 +236,31 @@ void Func_080da2ac(void *object)
                     void *member_object;
                     s32 member_id;
 
-                    member_id = M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s16 *,
-                        member_id_offset);
+                    member_id = (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (member_id_offset)));
                     member_object = *GetBattleObjectSlotFar(member_id);
-                    if (record[6] == 0 && M2C_FIELD(member_object, s32 *, 12) <= 0
-                            && M2C_FIELD(member_object, s32 *, 0x28) < 0) {
+                    if (record[6] == 0 && (*(s32 *)((u8 *)(member_object) + 12)) <= 0
+                            && (*(s32 *)((u8 *)(member_object) + 0x28)) < 0) {
                         record[6] = 1;
-                        member_id = M2C_FIELD(
-                            M2C_FIELD(work, void **, 0x7828), s16 *,
-                            member_id_offset);
+                        member_id = (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (member_id_offset)));
                         ObjectGroup_UpdateMembers(member_id, 7, 5, i, 5);
                     }
                     member_id_offset += 2;
                     record += 7;
                     i++;
-                    count = M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x14);
+                    count = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x14));
                 } while (i != count);
             }
 
-            variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
+            variant = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18));
             Camera_ApplyShake(
                 Data_080eea38[variant * 3 + 2],
                 Data_080eea38[variant * 3 + 2]);
             ObjectGroup_TickMemberTimers();
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
             WaitFrames(1);
             frame++;
 
-            variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
+            variant = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18));
         } while (frame != Data_080eea38[variant * 3]);
     }
 

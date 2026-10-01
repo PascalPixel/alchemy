@@ -42,8 +42,6 @@
  * 38,392 with 38 symbols the linked build does not define, too far for a
  * 10-minute search, so none was run.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*FillFn)(void *dest, s32 size, s32 value);
 
@@ -121,7 +119,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
         work = *cursor++;
         canvas = *cursor;
     }
-    M2C_FIELD(work, void **, 0x7828) = object;
+    (*(void **)((u8 *)(work) + 0x7828)) = object;
     BattleFx_SpawnObjects(8, (s32) &Value_00000177, 1);
 
     {
@@ -166,8 +164,8 @@ void BattleEffect_RunDitherDissolveScene(void *object)
     }
 
     BattleFx_BeginCanvasLayer(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = (s16)(s32) &Value_00000100;
-    M2C_FIELD((void *)0x04000020, s16 *, 0x30) = (s16)(s32) &Value_00000000;
+    (*(s16 *)((u8 *)((void *)0x04000020) + 0)) = (s16)(s32) &Value_00000100;
+    (*(s16 *)((u8 *)((void *)0x04000020) + 0x30)) = (s16)(s32) &Value_00000000;
 
     Resource_LoadAndDecompress((s32) &Value_000000b2, work, 1, 1);
     {
@@ -180,10 +178,10 @@ void BattleEffect_RunDitherDissolveScene(void *object)
         rect_ptr[1] = (DrawRectangleFn)((void **)0x03001E50)[47];
     }
 
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = 0;
+    (*(s32 *)((u8 *)(work) + 0x7780)) = 1;
+    (*(s32 *)((u8 *)(work) + 0x7784)) = 0;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
-    M2C_FIELD((void *)0x04000028, s32 *, 0) = -0x2000;
+    (*(s32 *)((u8 *)((void *)0x04000028) + 0)) = -0x2000;
 
     {
         s32 *ring;
@@ -247,7 +245,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
         } while (i != 16);
     }
 
-    BattleFx_SelectLivingTargets(M2C_FIELD(work, void **, 0x7828));
+    BattleFx_SelectLivingTargets((*(void **)((u8 *)(work) + 0x7828)));
 
     fade = -0x400000;
     fade_step = 0;
@@ -261,7 +259,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             t = 286;
         }
         if (t == 224) {
-            M2C_FIELD(work, s32 *, 0x7780) = 0;
+            (*(s32 *)((u8 *)(work) + 0x7780)) = 0;
         }
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
@@ -269,21 +267,20 @@ void BattleEffect_RunDitherDissolveScene(void *object)
         if (t == 31) {
             s32 member;
 
-            M2C_FIELD(work, s32 *, 0x77A8) = 8;
+            (*(s32 *)((u8 *)(work) + 0x77A8)) = 8;
             Audio_PlayCue(157);
             member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)) != 0) {
                 s32 id_ofs;
 
                 id_ofs = 36;
                 do {
                     BattleMotion_ApplyVariantMotionFar(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                            id_ofs), 6);
+                        (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (id_ofs))), 6);
                     member++;
                     id_ofs += 2;
                 } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)));
             }
         }
         if (t == 72) {
@@ -304,9 +301,9 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             s32 cell;
 
             cell = __modsi3(__divsi3(t - 48, 24), 3);
-            AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E4),
+            AnimationObjects_SelectAnimationFar((*(void **)((u8 *)(work) + 0x77E4)),
                 Data_080ee910[cell * 2]);
-            AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E8),
+            AnimationObjects_SelectAnimationFar((*(void **)((u8 *)(work) + 0x77E8)),
                 Data_080ee910[cell * 2 + 1]);
         }
 
@@ -331,7 +328,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                         h = Data_080ee925[cell];
                         rect[0](canvas,
                             (u8 *)work + Data_080ee916[cell],
-                            M2C_FIELD(spark, s16 *, 2) - (w >> 1),
+                            (*(s16 *)((u8 *)(spark) + 2)) - (w >> 1),
                             (y >> 16) - (h >> 1), w, h);
                     }
                     EffectStep_AdvanceWithGravity2D(spark, 64, 0x1000);
@@ -356,7 +353,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                 i++;
                 drop += 7;
             } while (i != 48);
-            M2C_FIELD((void *)0x04000028, s32 *, 0) = 0;
+            (*(s32 *)((u8 *)((void *)0x04000028) + 0)) = 0;
         }
 
         phase = t - 128;
@@ -368,7 +365,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             if (phase > 80) {
                 limit = 80;
             } else {
-                M2C_FIELD(work, s32 *, 0x77A8) = 2;
+                (*(s32 *)((u8 *)(work) + 0x77A8)) = 2;
             }
             ring = (s32 *)((u8 *)work + 0x7080);
             k = 0;
@@ -456,8 +453,8 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     w = Data_080ee93e[cell];
                     h = Data_080ee943[cell];
                     rect[0](canvas, (u8 *)work + Data_080ee934[cell],
-                        M2C_FIELD(spark, s16 *, 2),
-                        M2C_FIELD(spark, s16 *, 6), w, h);
+                        (*(s16 *)((u8 *)(spark) + 2)),
+                        (*(s16 *)((u8 *)(spark) + 6)), w, h);
                     spark[0] = spark[0] + spark[3];
                     y = spark[1] + spark[4];
                     spark[1] = y;
@@ -521,7 +518,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             s32 member;
 
             member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)) != 0) {
                 s32 *screen_ptr;
                 s32 *record_ptr;
                 s32 slot;
@@ -537,11 +534,10 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     s32 i;
 
                     mp = *GetBattleObjectSlotFar(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                            id_ofs));
-                    record_ptr[0] = M2C_FIELD(mp, s32 *, 8);
-                    record_ptr[1] = M2C_FIELD(mp, s32 *, 12);
-                    record_ptr[2] = M2C_FIELD(mp, s32 *, 16);
+                        (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (id_ofs))));
+                    record_ptr[0] = (*(s32 *)((u8 *)(mp) + 8));
+                    record_ptr[1] = (*(s32 *)((u8 *)(mp) + 12));
+                    record_ptr[2] = (*(s32 *)((u8 *)(mp) + 16));
                     EffectPosition_ApplyBaseAndYOffset(record_ptr, screen_ptr);
                     drop = (s32 *)((u8 *)work + 0x7240 + slot * 28);
                     i = 0;
@@ -577,7 +573,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     id_ofs += 2;
                     slot += 6;
                 } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)));
             }
         }
 
@@ -600,9 +596,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
 
                         lo = x & 7;
                         v = ((u8 *)0x02010000)[(((lo << 5) + row) << 2) + j];
-                        M2C_FIELD(canvas, u8 *,
-                            (((((x / 8) << 4) + (v / 8)) << 3) + lo) * 8
-                                + (v & 7)) = (u8)0;
+                        (*(u8 *)((u8 *)(canvas) + ((((((x / 8) << 4) + (v / 8)) << 3) + lo) * 8 + (v & 7)))) = (u8)0;
                     }
                     j++;
                 } while (j != 4);
@@ -623,9 +617,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
 
                         lo = x & 7;
                         v = ((u8 *)0x02010000)[(((lo << 5) + row) << 2) + j];
-                        M2C_FIELD(canvas, u8 *,
-                            (((((x / 8) << 4) + (v / 8)) << 3) + lo) * 8
-                                + (v & 7)) = (u8)0;
+                        (*(u8 *)((u8 *)(canvas) + ((((((x / 8) << 4) + (v / 8)) << 3) + lo) * 8 + (v & 7)))) = (u8)0;
                     }
                     j++;
                 } while (j != 4);
@@ -638,7 +630,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             s32 member;
 
             member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)) != 0) {
                 do {
                     if (t > member * 8 + 160) {
                         void **holder;
@@ -647,15 +639,14 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                         s32 i;
 
                         holder = GetBattleObjectSlotFar(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                36 + member * 2));
+                            (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (36 + member * 2))));
                         body = holder[0];
-                        M2C_FIELD(body, s32 *, 12) =
-                            M2C_FIELD(body, s32 *, 12) + 0x80000;
-                        if (M2C_FIELD(body, s32 *, 12) > 0x800000) {
-                            M2C_FIELD(body, s32 *, 12) = 0x800000;
+                        (*(s32 *)((u8 *)(body) + 12)) =
+                            (*(s32 *)((u8 *)(body) + 12)) + 0x80000;
+                        if ((*(s32 *)((u8 *)(body) + 12)) > 0x800000) {
+                            (*(s32 *)((u8 *)(body) + 12)) = 0x800000;
                         }
-                        M2C_FIELD(body, s32 *, 72) = 0;
+                        (*(s32 *)((u8 *)(body) + 72)) = 0;
                         i = 0;
                         while ((sub = GetMotionRecordFar(holder[0], i)) != 0) {
                             AnimationObjects_SelectAnimationFar(sub, 5);
@@ -664,7 +655,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     }
                     member++;
                 } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)));
             }
         }
 
@@ -672,7 +663,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             s32 member;
 
             member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)) != 0) {
                 s32 cnt;
                 s32 id_ofs;
 
@@ -683,23 +674,21 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                         void *mp;
 
                         mp = *GetBattleObjectSlotFar(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                id_ofs));
-                        M2C_FIELD(mp, s32 *, 12) = 0x600000;
-                        M2C_FIELD(mp, s32 *, 72) = 0xAB85;
+                            (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (id_ofs))));
+                        (*(s32 *)((u8 *)(mp) + 12)) = 0x600000;
+                        (*(s32 *)((u8 *)(mp) + 72)) = 0xAB85;
                     }
                     if (t == cnt + 16) {
                         ObjectGroup_UpdateMembers(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                id_ofs), 7, -1, member, 8);
+                            (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (id_ofs))), 7, -1, member, 8);
                         Audio_PlayCue(134);
-                        M2C_FIELD(work, s32 *, 0x77A8) = 8;
+                        (*(s32 *)((u8 *)(work) + 0x77A8)) = 8;
                     }
                     member++;
                     id_ofs += 2;
                     cnt += 5;
                 } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)));
             }
         }
 
@@ -715,30 +704,29 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             rect[0] = (DrawRectangleFn)((void **)0x03001E50)[46];
             status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
             rect_ptr[1] = (DrawRectangleFn)((void **)0x03001E50)[47];
-            M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F46;
-            M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x80;
-            M2C_FIELD((void *)0x04000028, s32 *, 0) = 0;
-            M2C_FIELD(work, s32 *, 0x7780) = 2;
-            M2C_FIELD(work, s32 *, 0x7784) = 75;
+            (*(s16 *)((u8 *)((void *)0x04000050) + 0)) = 0x3F46;
+            (*(s16 *)((u8 *)((void *)0x04000020) + 0)) = 0x80;
+            (*(s32 *)((u8 *)((void *)0x04000028) + 0)) = 0;
+            (*(s32 *)((u8 *)(work) + 0x7780)) = 2;
+            (*(s32 *)((u8 *)(work) + 0x7784)) = 75;
             Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
             member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)) != 0) {
                 do {
                     void *mp;
                     s32 *ring;
                     s32 i;
 
                     mp = *GetBattleObjectSlotFar(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                            36 + member * 2));
+                        (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (36 + member * 2))));
                     ring = (s32 *)((u8 *)work + 0x7080 + member * 280);
                     i = 0;
                     do {
                         s32 angle;
 
-                        ring[0] = M2C_FIELD(mp, s32 *, 8);
+                        ring[0] = (*(s32 *)((u8 *)(mp) + 8));
                         ring[1] = 0x140000;
-                        ring[2] = M2C_FIELD(mp, s32 *, 16);
+                        ring[2] = (*(s32 *)((u8 *)(mp) + 16));
                         angle = i * 13108;
                         ring[3] = Trig_Sin(angle) << 2;
                         ring[4] = (s32)(Random16() & 0x7FFF) + 0x10000;
@@ -749,7 +737,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     } while (i != 10);
                     member++;
                 } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)));
             }
         }
 
@@ -757,7 +745,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             s32 member;
 
             member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)) != 0) {
                 s32 *record_ptr;
                 s32 *screen_ptr;
                 s32 span;
@@ -776,11 +764,10 @@ void BattleEffect_RunDitherDissolveScene(void *object)
 
                         frame = span / 2;
                         mp = *GetBattleObjectSlotFar(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
-                                36 + member * 2));
-                        record_ptr[0] = M2C_FIELD(mp, s32 *, 8);
+                            (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (36 + member * 2))));
+                        record_ptr[0] = (*(s32 *)((u8 *)(mp) + 8));
                         record_ptr[1] = 0;
-                        record_ptr[2] = M2C_FIELD(mp, s32 *, 16);
+                        record_ptr[2] = (*(s32 *)((u8 *)(mp) + 16));
                         EffectPosition_ApplyBaseAndYOffset(record_ptr, screen_ptr);
                         screen_ptr[0] = screen_ptr[0] >> 1;
                         rect[0](canvas, (u8 *)work + frame * 480,
@@ -818,7 +805,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     age += 4;
                     member++;
                 } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20));
+                    != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)));
             }
         }
 
@@ -830,7 +817,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             Camera_ApplyShake(4, 8);
         }
         ObjectGroup_TickMemberTimers();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
         WaitFrames(1);
         t++;
     } while (t != 366);

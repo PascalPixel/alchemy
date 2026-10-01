@@ -187,9 +187,9 @@ s32 BattleEffect_RunSparkTravel(void *object)
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32) &ResourceId_MercuryDjinnSmallSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32) &ResourceId_ParticleSpritesA, graphics, 0, 0);
-    BattleFx_FetchRectangleBlitters(M2C_FIELD(STATE, s32 *, 4) ^ 1, blit);
-    actor = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
-    goal = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 36));
+    BattleFx_FetchRectangleBlitters((*(s32 *)((u8 *)(STATE) + 4)) ^ 1, blit);
+    actor = *GetBattleObjectSlotFar((*(s32 *)((u8 *)(STATE) + 8)));
+    goal = *GetBattleObjectSlotFar((*(s16 *)((u8 *)(STATE) + 36)));
 
     step = (struct EffectStep *)0x02010000;
     i = 0;
@@ -209,14 +209,14 @@ s32 BattleEffect_RunSparkTravel(void *object)
         step++;
     } while (i != 64);
 
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 75;
+    (*(s32 *)((u8 *)(work) + 0x7780)) = 2;
+    (*(s32 *)((u8 *)(work) + 0x7784)) = 75;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
-    pos[0] = M2C_FIELD(actor, s32 *, 8);
+    pos[0] = (*(s32 *)((u8 *)(actor) + 8));
     pos[1] = 0;
-    pos[2] = M2C_FIELD(actor, s32 *, 16);
-    target[0] = M2C_FIELD(goal, s32 *, 8);
+    pos[2] = (*(s32 *)((u8 *)(actor) + 16));
+    target[0] = (*(s32 *)((u8 *)(goal) + 8));
     target[1] = 0x5A0000;
     target[2] = 0;
     delta[0] = __divsi3(target[0] - pos[0], 40);
@@ -241,10 +241,10 @@ s32 BattleEffect_RunSparkTravel(void *object)
         }
         SceneTransform_ApplyPosition(pos);
         if (frame == 0) {
-            ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s32 *, 8), 7, -1, -1, 0);
+            ObjectGroup_UpdateMembers((*(s32 *)((u8 *)(STATE) + 8)), 7, -1, -1, 0);
         }
         if (frame == 24) {
-            ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s32 *, 8), 0, -1, -1, 0);
+            ObjectGroup_UpdateMembers((*(s32 *)((u8 *)(STATE) + 8)), 0, -1, -1, 0);
         }
 
         spin = frame << 8;
@@ -310,7 +310,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                 screen[0] - 10, screen[1] - 17, 20, 34);
         }
 
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
         WaitFrames(1);
         frame++;
     } while (frame != 98);
@@ -328,13 +328,13 @@ s32 BattleEffect_RunSparkTravel(void *object)
 
     Resource_LoadAndDecompress((s32) &ResourceId_SparkleDots, graphics, 0, 0);
 
-    if (M2C_FIELD(STATE, s32 *, 20) * 8 + 72 != 0) {
+    if ((*(s32 *)((u8 *)(STATE) + 20)) * 8 + 72 != 0) {
         frame = 0;
         do {
             facing = *(s32 *)0x03001E80;
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing + 12);
-            if (frame >= M2C_FIELD(STATE, s32 *, 20) * 8 + 40) {
+            if (frame >= (*(s32 *)((u8 *)(STATE) + 20)) * 8 + 40) {
                 target[1] += 0x40000;
             }
             record[0] = target[0];
@@ -347,7 +347,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                 view[0] - 10, view[1] - 17, 20, 34);
 
             member = 0;
-            if (M2C_FIELD(STATE, s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)(STATE) + 20)) != 0) {
                 id_offset = 36;
                 pool_offset = 0;
                 do {
@@ -355,23 +355,23 @@ s32 BattleEffect_RunSparkTravel(void *object)
                     s32 stagger;
 
                     member_object = *GetBattleObjectSlotFar(
-                        M2C_FIELD(STATE, s16 *, id_offset));
+                        (*(s16 *)((u8 *)(STATE) + (id_offset))));
                     stagger = member * 8;
                     Render_ResetTransformState();
                     Graphics_PrepareTransferInIwramWork(facing, facing + 12);
-                    pos[0] = M2C_FIELD(member_object, s32 *, 8);
+                    pos[0] = (*(s32 *)((u8 *)(member_object) + 8));
                     pos[1] = 0x280000;
-                    pos[2] = M2C_FIELD(member_object, s32 *, 16);
+                    pos[2] = (*(s32 *)((u8 *)(member_object) + 16));
                     SceneTransform_ApplyPosition(pos);
                     if (frame == stagger + 30) {
                         Audio_PlayCue(126);
                     }
                     if (frame == stagger + 40) {
-                        ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s16 *, id_offset),
+                        ObjectGroup_UpdateMembers((*(s16 *)((u8 *)(STATE) + (id_offset))),
                             7, -1, -1, 0);
                     }
                     if (frame == stagger + 64) {
-                        ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s16 *, id_offset),
+                        ObjectGroup_UpdateMembers((*(s16 *)((u8 *)(STATE) + (id_offset))),
                             0, -1, -1, 0);
                     }
                     if (frame > stagger) {
@@ -429,13 +429,13 @@ s32 BattleEffect_RunSparkTravel(void *object)
                     id_offset += 2;
                     pool_offset += 0x700;
                     member++;
-                } while (member != M2C_FIELD(STATE, s32 *, 20));
+                } while (member != (*(s32 *)((u8 *)(STATE) + 20)));
             }
 
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
             WaitFrames(1);
             frame++;
-        } while (frame != M2C_FIELD(STATE, s32 *, 20) * 8 + 72);
+        } while (frame != (*(s32 *)((u8 *)(STATE) + 20)) * 8 + 72);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

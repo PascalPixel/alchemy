@@ -241,7 +241,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                         record[2] = mote->radius * Trig_Cos(mote->angle);
                         EffectPosition_ApplyBaseAndYOffset(record, screen);
                         screen[0] = (screen[0] >> 17) + 64;
-                        screen[1] = M2C_FIELD(screen, s16 *, 6) + 60;
+                        screen[1] = (*(s16 *)((u8 *)(screen) + 6)) + 60;
                         width = Data_080eea91[slot];
                         height = Data_080eea99[slot];
                         ((DrawRectangleFn)rectangle_slot[1])(
@@ -339,8 +339,8 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                     ((DrawRectangleFn)rectangle_slot[1])(
                         canvas,
                         (u8 *)work + Data_080eeacc[slot],
-                        M2C_FIELD(ember, s16 *, 2),
-                        M2C_FIELD(ember, s16 *, 6),
+                        (*(s16 *)((u8 *)(ember) + 2)),
+                        (*(s16 *)((u8 *)(ember) + 6)),
                         Data_080eeabb[slot],
                         Data_080eeac3[slot]);
                     ember->x += ember->vx;
@@ -394,8 +394,8 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                     ((DrawRectangleFn)rectangle_slot[1])(
                         canvas,
                         graphics + BattleFx_PuffCells[image],
-                        M2C_FIELD(mote, s16 *, 14) - half,
-                        (M2C_FIELD(mote, s16 *, 18) - half) - drop,
+                        (*(s16 *)((u8 *)(mote) + 14)) - half,
+                        ((*(s16 *)((u8 *)(mote) + 18)) - half) - drop,
                         size,
                         size);
                 }

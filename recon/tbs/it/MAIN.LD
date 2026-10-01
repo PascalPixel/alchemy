@@ -535,7 +535,6 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/WINDOW.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000a4f08)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM3.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000a5388)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/OPEN_CONFIRM_PROMPT.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000a5d3c)

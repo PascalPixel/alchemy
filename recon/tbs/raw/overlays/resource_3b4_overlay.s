@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x0200a644,"a",%progbits
@@ -53,6 +54,8 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
+	.global TakaraAshiba_ActorFifteenMotionScript
+TakaraAshiba_ActorFifteenMotionScript:
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0xffffc000
@@ -120,6 +123,8 @@ StagedActor_FootprintBounds:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global TakaraAshiba_ActorFifteenWalkTargets
+TakaraAshiba_ActorFifteenWalkTargets:
 	.4byte 0x00000378
 	.4byte 0x00000358
 	.4byte 0x00000368
@@ -218,6 +223,8 @@ gTakaraAshibaEntrances3:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global TakaraAshiba_SceneTable
+TakaraAshiba_SceneTable:
 	.4byte 0x00000075
 	.4byte 0x00103080
 	.4byte 0x00204080
@@ -523,9 +530,11 @@ gTakaraAshibaEvents3:
 	.4byte 0x00000202
 	.4byte 0xffff0035
 	.4byte FieldScene_RunThreeCallSequence
+	.if EDITION_INTERNATIONAL
 	.4byte 0x00000202
 	.4byte 0xffff003d
 	.4byte SceneActor_BranchOnSlotZeroAtTile38
+	.endif
 	.4byte 0x00000202
 	.4byte 0xffff0036
 	.4byte FieldScene_DispatchByActorZeroFacing

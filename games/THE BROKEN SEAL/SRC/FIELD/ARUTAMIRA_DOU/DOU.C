@@ -1,5 +1,6 @@
 #include "ARUTAMIRA.H"
 #include "TYPES.H"
+#include "EDITION.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "SCENE_IDS.H"
@@ -9,6 +10,9 @@ extern const struct ScenePlacement gArutamiraDouPlacements2[];
 extern const struct ScenePlacement gArutamiraDouPlacements4[];
 extern const struct ScenePlacement gArutamiraDouPlacements6[];
 extern const struct ScenePlacement gArutamiraDouPlacementsOther[];
+
+/* Three DMA words hold the six actor-wheel halfwords. */
+u16 gArutamiraActorWheelWork[6] __attribute__((nocommon, aligned(4)));
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -288,7 +292,9 @@ void ArutamiraDou_SettleActorOnCell(void)
         *(s32 *)actor->unknown_14 = 0;
         actor->priority_flags = 2;
         Engine_MapCopyCellAttributes(30, 20, 1, 1, 32, 20);
+#if EDITION_INTERNATIONAL
         Engine_GameFlagSet(0x212);
+#endif
     }
 }
 

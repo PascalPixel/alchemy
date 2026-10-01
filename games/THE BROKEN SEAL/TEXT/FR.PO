@@ -14519,11 +14519,11 @@ msgctxt "MsgTorebiCoins"
 msgid "03627"
 msgstr "Pièces"
 
-msgctxt "message"
+msgctxt "MsgTorebiLuckyMedals"
 msgid "03628"
 msgstr "Porte-bonheur"
 
-msgctxt "message"
+msgctxt "MsgTorebiCounterMarker"
 msgid "03629"
 msgstr "="
 

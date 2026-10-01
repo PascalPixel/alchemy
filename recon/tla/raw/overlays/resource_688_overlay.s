@@ -539,7 +539,7 @@ Func_020003cc:
 .L_020084f4:
 	.4byte Data_020005e4
 .L_020084f8:
-	.4byte 0x00002881
+	.4byte MsgFieldAddressCompanion
 	.section .rodata.x020085e4,"a",%progbits
 	.global Data_020005e4
 Data_020005e4:

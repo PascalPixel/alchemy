@@ -26731,7 +26731,7 @@ msgctxt "message"
 msgid "06680"
 msgstr "町のしゅうげきでケガするのは{line_break}きっと ふだんの行いに・・・{line_break}もんだいが あるんですよ{page_break}日ごろから 行いがいい者は{line_break}こうしてピンピンしてますよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraNeedEldersPermission"
 msgid "06681"
 msgstr "この道をとおりたくば{line_break}町長のいえにでも行って{line_break}きょかをもらうことだな。{end_wait}"
 
@@ -26739,7 +26739,7 @@ msgctxt "message"
 msgid "06682"
 msgstr "つうこうきょかの ないものは{line_break}だれであろうと とおさない{line_break}あきらめて もどってくれ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraGoingToOsenia"
 msgid "06683"
 msgstr "お前 オセニアに行きたいのか?{end_now}"
 
@@ -26751,19 +26751,19 @@ msgctxt "message"
 msgid "06685"
 msgstr "だったら この先はキケンだから{line_break}どうか あっちに行ってくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCanCrossWithPermission"
 msgid "06686"
 msgstr "きょかさえ もらってくれば{line_break}いつでも ここをとおすぜ{page_break}ムリに とおろうとするヤツは{line_break}つかまった船の男と同じように{line_break}ろうやに入れられるとおもいな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraForTheirSafety"
 msgid "06687"
 msgstr "だれも ここをとおさないように{line_break}オレたちが 見はっているのは{line_break}みんなの あんぜんのためなんだ{page_break}わたれるようになったからって{line_break}いきなり知らない大陸へ行ったら{line_break}なにがまってるか わからないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraElderReturn"
 msgid "06688"
 msgstr "大陸にわたった町長たち・・・{line_break}はやく もどってこないかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraHeardAboutYou"
 msgid "06689"
 msgstr "あんたのことは きいてるよ{line_break}オセニア大陸へ行きたいなら{line_break}ここをとおって行くがいいぜ。{end_wait}"
 
@@ -26771,43 +26771,43 @@ msgctxt "message"
 msgid "06690"
 msgstr "オセニア大陸のアラフラの町なら{line_break}大陸を北東にむかって行ったら{line_break}やがて見えてくるだろうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraMikasaraVillage"
 msgid "06691"
 msgstr "オセニア大陸を南東にむかうと{line_break}ミーカサラという村があるらしい{page_break}ホントにちいさな村らしいから{line_break}あんたみたいな たびの戦士は{line_break}あんまり きょうみないだろうな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraAvoidYanpiSabaku"
 msgid "06692"
 msgstr "オセニア大陸の まん中から{line_break}アラフラをめざして行くと{line_break}さばくが あるらしいぜ{page_break}そのヤンピってさばくは{line_break}さけた方がいいらしいから{line_break}海ぞいから行くことだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWouldNeedBoat"
 msgid "06693"
 msgstr "オレ 船で行くんじゃなければ{line_break}たとえ きょかがおりたって{line_break}オセニア大陸に行きたくないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraRatherStayHome"
 msgid "06694"
 msgstr "どうも たびの戦士ってヤツは{line_break}ぼうけんが スキらしいけど{line_break}オレには わからないな・・・{page_break}オレだったら マドラの町で{line_break}あんぜんに くらしたいぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraChampaBoat"
 msgid "06695"
 msgstr "これはチャンパの船さ・・・{line_break}だってチャンパのマークの{line_break}フラッグが ついてるもんな{page_break}きっと 大つなみにまきこまれ{line_break}ここに うち上げられたんだぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraSailorNotChampa"
 msgid "06696"
 msgstr "これがチャンパぞくの船だから{line_break}やっぱり あの{actor_name:8}は・・・{line_break}チャンパぞくの者じゃないなあ{page_break}しかし 長ろうはどうしても{line_break}パヤヤームから{actor_name:8}が{line_break}むじつだと いわせるつもりさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWaveDamage"
 msgid "06697"
 msgstr "船がバラバラになるほどだから{line_break}大つなみの すごさがわかるわ{page_break}ずいぶん チャンパの人たちは{line_break}いのちをおとしたんでしょうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCannotEscapeBySea"
 msgid "06698"
 msgstr "これで チャンパぞくは{line_break}パヤヤームをたすけても{line_break}海には にげられないな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPayayamuNewShip"
 msgid "06699"
 msgstr "パヤヤームたちは どうやら{line_break}アラフラで あたらしい船を{line_break}手にいれるつもりらしい・・・{page_break}長ろうは パヤヤームたちが{line_break}船を手に入れてしまう前に{line_break}おいつけるかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPirateAttackParties"
 msgid "06700"
 msgstr "これだけ戦士をうしないながら{line_break}それでも地下にアナをほって{line_break}マドラをしゅうげきしたのね{page_break}2手に わけるだけの人が{line_break}よく のこってたわ・・・。{end_wait}"
 
@@ -28319,7 +28319,7 @@ msgctxt "message"
 msgid "07077"
 msgstr "みんなのEPがまんたん!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWindStoneWarning"
 msgid "07078"
 msgstr "つむじ風の石にちゅうい{page_break}風の力をぞうふくする石あり{line_break}エアーズロックへちかづく時は{line_break}じゅうぶん ちゅういすること。{end_wait}"
 
@@ -42687,7 +42687,7 @@ msgctxt "message"
 msgid "10669"
 msgstr "ドアはカギがかかっている・・・{line_break}どうやら かいぎをしているらしい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAddressCompanion"
 msgid "10670"
 msgstr "ねえ {actor_name:8}・・・。{end_now}"
 
@@ -45535,7 +45535,7 @@ msgctxt "message"
 msgid "11381"
 msgstr "オレたちは 先に行ってるけど{line_break}ぜったいに にげるなよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorLocked"
 msgid "11382"
 msgstr "カギがかかっている。{end_wait}"
 
@@ -51075,11 +51075,11 @@ msgctxt "message"
 msgid "12766"
 msgstr "われ 炎の力をまもりし者なり{line_break}さらなる力を ほっするならば{line_break}お前の力を 見せてみよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonGuardianOfWind"
 msgid "12767"
 msgstr "われ 風の力をまもりし者なり{line_break}さらなる力を ほっするならば{line_break}お前の力を 見せてみよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonInheritedEarthDarkness"
 msgid "12768"
 msgstr "われ 地の力をうけつぎ{line_break}やみをつくりだす者なり{pause_60}{page_break}大いなる力を ほっするならば{line_break}このせきばんに ふれてみよ。{end_wait}"
 

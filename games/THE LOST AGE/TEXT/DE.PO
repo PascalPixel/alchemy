@@ -27615,7 +27615,7 @@ msgctxt "message"
 msgid "06901"
 msgstr "Uns ist nichts passiert, weil{line_break}unser Karma unbefleckt ist.{page_break}Nur Leute mit schlechtem{line_break}Karma wurden verletzt.{line_break}Darauf gehe ich jede Wette ein!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraNeedEldersPermission"
 msgid "06902"
 msgstr "Wenn ihr hier passieren wollt,{line_break}braucht ihr die Erlaubnis des{line_break}Ältesten!{end_wait}"
 
@@ -27623,7 +27623,7 @@ msgctxt "message"
 msgid "06903"
 msgstr "Ohne Genehmigung darf niemand{line_break}diese Brücke passieren! Da{line_break}kann kommen was will!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraGoingToOsenia"
 msgid "06904"
 msgstr "Wollt ihr nach Osenia?{end_now}"
 
@@ -27635,19 +27635,19 @@ msgctxt "message"
 msgid "06906"
 msgstr "Dann verschwindet von hier!{line_break}Die Gegend hier kann recht{line_break}gefährlich sein!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCanCrossWithPermission"
 msgid "06907"
 msgstr "Wenn ihr eine Genehmigung habt,{line_break}könnt ihr jederzeit passieren.{page_break}Aber wenn ihr versucht, euch{line_break}reinzuschleichen, landet ihr{line_break}im Knast bei Meister Blauhaar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraForTheirSafety"
 msgid "06908"
 msgstr "Ich würde ihnen ja gerne sagen,{line_break}dass sie es nicht persönlich{line_break}nehmen sollen...{end_wait}Wer weiß, was in Osenia alles{line_break}darauf lauert, die vier zu{line_break}verspachteln!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraElderReturn"
 msgid "06909"
 msgstr "Langsam frage ich mich, wann{line_break}der Älteste und die anderen aus{line_break}Osenia zurückkommen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraHeardAboutYou"
 msgid "06910"
 msgstr "Ja, wir haben schon von euch{line_break}gehört.{page_break}Wenn ihr nach Osenia wollt,{line_break}dann solltet ihr euch besser{line_break}auf den Weg machen.{end_wait}"
 
@@ -27655,43 +27655,43 @@ msgctxt "message"
 msgid "06911"
 msgstr "Alhafra befindet sich im{line_break}Norden von Osenia. Ihr könnt{line_break}es nicht verfehlen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraMikasaraVillage"
 msgid "06912"
 msgstr "Geht in Richtung Südwesten und{line_break}ihr gelangt nach Mikasalla.{page_break}Aber es ist nur ein sehr kleines{line_break}Dorf. Sicher nicht von Interesse{line_break}für euch.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraAvoidYanpiSabaku"
 msgid "06913"
 msgstr "Wenn ihr Osenia durchqueren{line_break}wollt, um nach Alhafra zu{line_break}gelangen,{page_break}stoßt ihr auf die Yampi-Wüste.{page_break}Aber die solltet ihr tunlichst{line_break}meiden! Folgt stattdessen{line_break}besser der Küste nach Alhafra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWouldNeedBoat"
 msgid "06914"
 msgstr "Ohne ein Boot würde ich nicht{line_break}nach Osenia aufbrechen.{line_break}Erlaubnis hin oder her.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraRatherStayHome"
 msgid "06915"
 msgstr "Diese Leute suchen bestimmt{line_break}nach Ärger. Ich ziehe es vor,{line_break}zu Hause zu bleiben und mich{page_break}zu entspannen! Dort ist es{line_break}angenehm, gemütlich und{pause_20_skippable}{line_break}völlig sicher!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraChampaBoat"
 msgid "06916"
 msgstr "Das ist ein Champa-Boot.{line_break}Man kann ihr Wappen auf der{line_break}Flagge erkennen.{page_break}Die Flutwelle hat sie sicher{line_break}hier auf Grund laufen lassen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraSailorNotChampa"
 msgid "06917"
 msgstr "Moment mal! Wenn das ein Champa-{line_break}Schiff ist, dann heißt das ja, dass{line_break}{actor_name:8} kein Champa ist!{page_break}Warum also muss der Älteste{line_break}Briggs finden, um seinen Namen{line_break}rein zu waschen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWaveDamage"
 msgid "06918"
 msgstr "Seht euch nur den Schaden an!{line_break}Die Welle muss von gigantischem{line_break}Ausmaß gewesen sein.{page_break}Wie viele der Champa wohl in{line_break}dem Wrack ihr Leben lassen{line_break}mussten?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCannotEscapeBySea"
 msgid "06919"
 msgstr "Selbst wenn sie Briggs befreit{line_break}hätten,{page_break}wären sie nicht in der Lage{line_break}gewesen, wieder in See zu{line_break}stechen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPayayamuNewShip"
 msgid "06920"
 msgstr "Briggs versucht sicher, in{line_break}Alhafra ein neues Schiff{line_break}aufzutreiben.{page_break}Hoffentlich findet der{line_break}Älteste ihn rechtzeitig.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPirateAttackParties"
 msgid "06921"
 msgstr "Sie hatten genügend Leute, um{line_break}dieses Loch zu graben und{line_break}Madra anzugreifen.{page_break}Und offensichtlich auch genug,{line_break}um zwei Angriffstrupps zu{line_break}bilden.{end_wait}"
 
@@ -29199,7 +29199,7 @@ msgctxt "message"
 msgid "07297"
 msgstr "Die PP der Gruppe wurden{line_break}vollständig aufgefüllt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWindStoneWarning"
 msgid "07298"
 msgstr "Hütet euch vor den Wind-Steinen!{page_break}Die Steine verstärken die Macht{line_break}des Windes. Seid vorsichtig, wenn{line_break}ihr euch dem Bora-Felsen nähert!{end_wait}"
 
@@ -43459,7 +43459,7 @@ msgctxt "message"
 msgid "10862"
 msgstr "Die Tür ist versperrt. Es klingt,{line_break}als würde dahinter eine laute{line_break}Debatte stattfinden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAddressCompanion"
 msgid "10863"
 msgstr "Ähm... {actor_name:8}?{end_now}"
 
@@ -46303,7 +46303,7 @@ msgctxt "message"
 msgid "11573"
 msgstr "Wir erwarten dich. Glaub nicht,{line_break}dass du dich vor all dem drücken{line_break}kannst!{page_break}Du bist uns eine Erklärung{line_break}schuldig!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorLocked"
 msgid "11574"
 msgstr "Die Tür ist versperrt.{end_wait}"
 
@@ -51839,11 +51839,11 @@ msgctxt "message"
 msgid "12957"
 msgstr "Ich bin der Hüter des Feuers.{line_break}Wenn ihr nach meiner Macht{line_break}verlangt,{page_break}behauptet euch in meiner{line_break}Höllenglut!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonGuardianOfWind"
 msgid "12958"
 msgstr "Ich bin der Hüter des Windes.{line_break}Wenn ihr nach meiner Macht{line_break}verlangt,{page_break}widersteht meinem Zorn!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonInheritedEarthDarkness"
 msgid "12959"
 msgstr "Wir erbten die Kraft der Welt,{line_break}um eine große Dunkelheit zu{line_break}erschaffen.{pause_60}{page_break}Wenn ihr euch nach jener Kraft{line_break}sehnt, dann berührt diese Platte!{end_wait}"
 

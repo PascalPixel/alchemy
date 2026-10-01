@@ -259,7 +259,7 @@ Func_0200021c:
 	bl UiText_ShowPositionedMessageAndWait
 	pop {pc}
 .L_02008238:
-	.4byte 0x00002b48
+	.4byte MsgFieldDoorLocked
 	.section .text.x02008244,"ax",%progbits
 	.global Func_02000244
 	.thumb_func

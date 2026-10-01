@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "EDITION.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -77,6 +78,9 @@ s32 PartyInventory_FindOwnerFar(s32);
 void TakaraAshiba_OpenPassage(s32);
 
 extern s32 TakaraAshiba_SlotColumns[];
+extern u8 TakaraAshiba_SceneTable[];
+extern const s32 TakaraAshiba_ActorFifteenMotionScript[];
+extern const s32 TakaraAshiba_ActorFifteenWalkTargets[];
 
 void Battle_Reset();
 void ObjectMotion_SetSpeedParameters();
@@ -193,9 +197,9 @@ s32 SceneData_ReturnZero(void)
 }
 
 /* Complete eight-byte literal-address getter, including its sole pool word. */
-u8 *SceneData_GetTablea970(void)
+u8 *SceneData_GetSceneTable(void)
 {
-    return (u8 *)0x0200a970;
+    return TakaraAshiba_SceneTable;
 }
 
 /* The actors placed on each of the island's three platforms. */
@@ -314,7 +318,7 @@ void FieldScene_RunScene3b4_02000b68(void)
             }
             *(u16 *)(rec7 + 6) = 0;
             ObjectDispatch_ApplyValueToChildren(rec7, 0);
-            Engine_ObjectSetScript(rec7, 0x200a6fc);
+            Engine_ObjectSetScript(rec7, (s32)TakaraAshiba_ActorFifteenMotionScript);
             Engine_EventEnd();
         }
     }
@@ -384,7 +388,7 @@ void FieldScene_CopyActorPosition(void)
             src = (s32)Object_GetById(0);
             *(s32 *)(dst + 52) = *(s32 *)(src + 48);
             idx -= 30;
-            tbl = 0x0200a808;
+            tbl = (s32)TakaraAshiba_ActorFifteenWalkTargets;
             idx <<= 3;
             idx4 = idx + 4;
             Actor_WalkTo(15, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
@@ -677,7 +681,11 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
     Engine_EventWait(4);
     Audio_PlayCue(188);
+#if EDITION_INTERNATIONAL
     Actor_SetDestinationOffset(8, 0, 16);
+#else
+    Actor_SetDestinationOffset(8, 0, 24);
+#endif
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Actor_SetDestination(8, 0x168, 152);
     Engine_ActorWaitForMove(8);
@@ -715,7 +723,11 @@ void FieldScene_RunScene3b4SequenceA(void)
         Actor_SetDestination(9, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(9);
+#if EDITION_INTERNATIONAL
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
+#else
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
+#endif
     Audio_PlayCue(188);
     Engine_EventWait(4);
     Actor_SetDestinationOffset(9, 0, 16);
@@ -781,7 +793,11 @@ void FieldScene_RunPrimarySequence(void)
             Actor_SetDestination(10, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(10);
-        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
+    #if EDITION_INTERNATIONAL
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
+#else
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
+#endif
         Engine_EventWait(4);
         Audio_PlayCue(188);
         Actor_SetDestinationOffset(10, 0, 16);
@@ -822,7 +838,11 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
             ObjectMotion_ResetAndSetPosition(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         ObjectMotion_CommitCurrentPositionAndActivate(11);
+#if EDITION_INTERNATIONAL
         ObjectMotion_OffsetPositionAndResetMotion(0, 0, 24);
+#else
+        ObjectMotion_OffsetPositionAndResetMotion(0, 0, 16);
+#endif
         Battle_WaitMode0(4);
         AudioCommand_Play(188);
         ObjectMotion_OffsetPositionAndResetMotion(11, 0, 16);
@@ -874,7 +894,11 @@ void FieldScene_RunScene3b4SequenceB(void)
         Actor_SetDestination(12, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(12);
+#if EDITION_INTERNATIONAL
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
+#else
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
+#endif
     Audio_PlayCue(188);
     Actor_SetDestinationOffset(12, 0, 16);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);

@@ -189,7 +189,7 @@ BattleFx_Run:
 	adds r0, r5, #0
 	bl Func_080e011c
 	adds r0, r5, #0
-	bl Func_080e0308
+	bl BattleEffect_PauseObject
 	strh r5, [r7]
 	b .L_080db668
 .L_080db63e:

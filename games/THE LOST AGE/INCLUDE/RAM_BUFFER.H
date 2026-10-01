@@ -48,7 +48,10 @@ struct HeapSlots {
     void *unknown_70[23];
     /* The serial link runtime's work. */
     void *serial_work;
-    void *unknown_d0[12];
+    void *unknown_d0[4];
+    /* The battle effects' work, which The Broken Seal keeps as gEffectWork. */
+    void *effect_work;
+    void *unknown_e4[7];
 };
 
 #define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */

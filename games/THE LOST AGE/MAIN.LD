@@ -1682,7 +1682,6 @@ SECTIONS
         "*/recon/tla/raw/080e011c.o"(.text)
         "*/recon/tla/raw/080e0134.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/OBJECT_PAUSE.o"(.text)
-        "*/recon/tla/raw/080e0308.o"(.text)
         "*/recon/tla/raw/080e035c.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/FILTER_OBJECT_ID.o"(.text)
         "*/recon/tla/raw/080e03c2.o"(.text)

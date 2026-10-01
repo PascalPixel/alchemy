@@ -1022,7 +1022,6 @@
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/SHRINK_OBJECT_SCALE_UNTIL_HALF.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000eccf8)
     "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/OBJECT_PAUSE.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.000ed308)
     "*/recon/tla/de/rom.o"(.rom.000ed35c)
     "*/games/COMMON/SRC/BATTLE/EFFECT/FILTER_OBJECT_ID.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000ed3c2)

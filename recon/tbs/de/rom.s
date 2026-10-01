@@ -714,14 +714,6 @@ UiText_OpenMessageAtObject:
 	.thumb_func
 DisplayScroll_BuildAndSwapHBlankPage:
 	.incbin "baserom.gba", 0x00097be0, 0x000001ec
-	.section .rom.00098256, "ax"
-	.incbin "baserom.gba", 0x00098256, 0x00000002
-	.section .rom.00098258, "ax"
-	.global Unnamed_08094bbc
-	.type Unnamed_08094bbc, %function
-	.thumb_func
-Unnamed_08094bbc:
-	.incbin "baserom.gba", 0x00098258, 0x000001e4
 	.section .rom.0009ace0, "ax"
 	.global Func_08097644
 	.type Func_08097644, %function

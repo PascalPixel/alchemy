@@ -57,7 +57,7 @@ Func_02000d2c:
 	ldrh r0, [r6, #30]
 	lsls r2, r2, #7
 	adds r0, r0, r2
-	bl Trig_Cos
+	bl Engine_MathCos
 	adds r5, r0, #0
 	lsls r3, r5, #4
 	add r3, r9
@@ -85,7 +85,7 @@ Func_02000d2c:
 	ldrh r0, [r6, #30]
 	lsls r3, r3, #7
 	adds r0, r0, r3
-	bl Trig_Cos
+	bl Engine_MathCos
 	adds r5, r0, #0
 	lsls r3, r5, #4
 	add r3, r9
@@ -118,11 +118,11 @@ Func_02000d2c:
 	lsls r3, r3, #7
 	adds r0, r0, r3
 	mov r8, r2
-	bl Trig_Cos
+	bl Engine_MathCos
 	adds r5, r0, #0
 	ldrh r0, [r6, #30]
 	add r0, r11
-	bl Trig_Sin
+	bl Engine_MathSin
 	lsls r3, r5, #4
 	add r3, r9
 	mov r2, r10

@@ -26,9 +26,9 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
-	.global Trig_Sin
+	.global Engine_MathSin
 	.thumb_func
-Trig_Sin:
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
 	.global Runtime_AllocateBlock
 	.thumb_func

@@ -1464,20 +1464,6 @@ RunPaletteRampEffect:
 	.thumb_func
 RunParticleFieldEffect:
 	.incbin "baserom.gba", 0x000deee0, 0x00000444
-	.section .rom.000e0168, "ax"
-	.global BattleEffect_RunStagedParticles
-	.type BattleEffect_RunStagedParticles, %function
-	.thumb_func
-BattleEffect_RunStagedParticles:
-	.incbin "baserom.gba", 0x000e0168, 0x00000944
-	.section .rom.000e15e0, "ax"
-	.incbin "baserom.gba", 0x000e15e0, 0x00000518
-	.section .rom.000e1af8, "ax"
-	.global BattleFx_PrepareCanvasEffect
-	.type BattleFx_PrepareCanvasEffect, %function
-	.thumb_func
-BattleFx_PrepareCanvasEffect:
-	.incbin "baserom.gba", 0x000e1af8, 0x0000067c
 	.section .rom.000e226e, "ax"
 	.incbin "baserom.gba", 0x000e226e, 0x00000002
 	.section .rom.000e2270, "ax"
@@ -1487,25 +1473,17 @@ BattleFx_PrepareCanvasEffect:
 BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x000e2270, 0x00000e48
 	.section .rom.000e362a, "ax"
-	.incbin "baserom.gba", 0x000e362a, 0x000006fa
-	.section .rom.000e3d64, "ax"
-	.incbin "baserom.gba", 0x000e3d64, 0x0000035c
-	.section .rom.000e4840, "ax"
-	.incbin "baserom.gba", 0x000e4840, 0x0000051c
+	.incbin "baserom.gba", 0x000e362a, 0x00000002
 	.section .rom.000e4de8, "ax"
 	.global BattleFx_InitializeMode12
 	.type BattleFx_InitializeMode12, %function
 	.thumb_func
 BattleFx_InitializeMode12:
-	.incbin "baserom.gba", 0x000e4de8, 0x0000130c
+	.incbin "baserom.gba", 0x000e4de8, 0x00000f50
 	.section .rom.000e6172, "ax"
 	.incbin "baserom.gba", 0x000e6172, 0x00000002
-	.section .rom.000e6174, "ax"
-	.global BattlePres_RunBurstScene
-	.type BattlePres_RunBurstScene, %function
-	.thumb_func
-BattlePres_RunBurstScene:
-	.incbin "baserom.gba", 0x000e6174, 0x00000f44
+	.section .rom.000e682c, "ax"
+	.incbin "baserom.gba", 0x000e682c, 0x0000088c
 	.section .rom.000e72a0, "ax"
 	.global BattlePres_RunBeamSequence
 	.type BattlePres_RunBeamSequence, %function
@@ -1695,7 +1673,10 @@ BattleFx10_FallHeights:
 	.incbin "baserom.gba", 0x000f21ef, 0x00000003
 	.global BattleFx10_FallCells
 BattleFx10_FallCells:
-	.incbin "baserom.gba", 0x000f21f2, 0x00000156
+	.incbin "baserom.gba", 0x000f21f2, 0x0000014e
+	.global StagedParticles_UnitScale
+StagedParticles_UnitScale:
+	.incbin "baserom.gba", 0x000f2340, 0x00000008
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000f2348, 0x00000003
@@ -1749,7 +1730,20 @@ BattleFxPillar_PuffHeights:
 	.incbin "baserom.gba", 0x000f23c0, 0x00000008
 	.global BattleFxPillar_PuffCells
 BattleFxPillar_PuffCells:
-	.incbin "baserom.gba", 0x000f23c8, 0x00000097
+	.incbin "baserom.gba", 0x000f23c8, 0x0000000e
+	.global LightningBolts_Counts
+LightningBolts_Counts:
+	.incbin "baserom.gba", 0x000f23d6, 0x0000000c
+	.global LightningBolts_GlintPalettes
+LightningBolts_GlintPalettes:
+	.incbin "baserom.gba", 0x000f23e2, 0x00000004
+	.global LightningBolts_GlintModes
+LightningBolts_GlintModes:
+	.incbin "baserom.gba", 0x000f23e6, 0x00000002
+	.incbin "baserom.gba", 0x000f23e8, 0x00000072
+	.global MercuryDjinnFlames_LaunchFrames
+MercuryDjinnFlames_LaunchFrames:
+	.incbin "baserom.gba", 0x000f245a, 0x00000005
 	.global ParticleReveal_CellWidths
 ParticleReveal_CellWidths:
 	.incbin "baserom.gba", 0x000f245f, 0x00000004
@@ -1758,7 +1752,53 @@ ParticleReveal_CellHeights:
 	.incbin "baserom.gba", 0x000f2463, 0x00000005
 	.global ParticleReveal_CellSourceOffsets
 ParticleReveal_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000f2468, 0x00000168
+	.incbin "baserom.gba", 0x000f2468, 0x00000008
+	.global RockToss_ChipFlips
+RockToss_ChipFlips:
+	.incbin "baserom.gba", 0x000f2470, 0x00000004
+	.global RockToss_ChipWidths
+RockToss_ChipWidths:
+	.incbin "baserom.gba", 0x000f2474, 0x00000009
+	.global RockToss_ChipHeights
+RockToss_ChipHeights:
+	.incbin "baserom.gba", 0x000f247d, 0x00000009
+	.global RockToss_ChipCells
+RockToss_ChipCells:
+	.incbin "baserom.gba", 0x000f2486, 0x00000012
+	.global RockToss_ChipX
+RockToss_ChipX:
+	.incbin "baserom.gba", 0x000f2498, 0x00000009
+	.global RockToss_ChipY
+RockToss_ChipY:
+	.incbin "baserom.gba", 0x000f24a1, 0x00000009
+	.incbin "baserom.gba", 0x000f24aa, 0x00000008
+	.global ShatterRocks_ShardOffsets
+ShatterRocks_ShardOffsets:
+	.incbin "baserom.gba", 0x000f24b2, 0x0000002a
+	.incbin "baserom.gba", 0x000f24dc, 0x00000016
+	.global ShatterRocks_RockX
+ShatterRocks_RockX:
+	.incbin "baserom.gba", 0x000f24f2, 0x00000005
+	.global ShatterRocks_DropFrames
+ShatterRocks_DropFrames:
+	.incbin "baserom.gba", 0x000f24f7, 0x00000005
+	.global ShatterRocks_RockCounts
+ShatterRocks_RockCounts:
+	.incbin "baserom.gba", 0x000f24fc, 0x00000003
+	.global ShatterRocks_ShardWidths
+ShatterRocks_ShardWidths:
+	.incbin "baserom.gba", 0x000f24ff, 0x0000000f
+	.global ShatterRocks_ShardHeights
+ShatterRocks_ShardHeights:
+	.incbin "baserom.gba", 0x000f250e, 0x00000010
+	.global ShatterRocks_ShardCells
+ShatterRocks_ShardCells:
+	.incbin "baserom.gba", 0x000f251e, 0x0000001e
+	.incbin "baserom.gba", 0x000f253c, 0x00000002
+	.global BurstScene_Records
+BurstScene_Records:
+	.incbin "baserom.gba", 0x000f253e, 0x00000040
+	.incbin "baserom.gba", 0x000f257e, 0x00000052
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000f25d0, 0x00000004

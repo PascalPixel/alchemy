@@ -1295,7 +1295,10 @@ Data_080eeaec:
 	.incbin "baserom.gba", 0x000eeaec, 0x0000000e
 	.global Data_080eeafa
 Data_080eeafa:
-	.incbin "baserom.gba", 0x000eeafa, 0x0000004e
+	.incbin "baserom.gba", 0x000eeafa, 0x00000046
+	.global StagedParticles_UnitScale
+StagedParticles_UnitScale:
+	.incbin "baserom.gba", 0x000eeb40, 0x00000008
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000eeb48, 0x00000003
@@ -1350,14 +1353,14 @@ BattleFxPillar_PuffHeights:
 	.global BattleFxPillar_PuffCells
 BattleFxPillar_PuffCells:
 	.incbin "baserom.gba", 0x000eebc8, 0x0000000e
-	.global Data_080eebd6
-Data_080eebd6:
+	.global LightningBolts_Counts
+LightningBolts_Counts:
 	.incbin "baserom.gba", 0x000eebd6, 0x0000000c
-	.global Data_080eebe2
-Data_080eebe2:
+	.global LightningBolts_GlintPalettes
+LightningBolts_GlintPalettes:
 	.incbin "baserom.gba", 0x000eebe2, 0x00000004
-	.global Data_080eebe6
-Data_080eebe6:
+	.global LightningBolts_GlintModes
+LightningBolts_GlintModes:
 	.incbin "baserom.gba", 0x000eebe6, 0x00000002
 	.incbin "baserom.gba", 0x000eebe8, 0x00000001
 	.global Data_080eebe9
@@ -1386,8 +1389,8 @@ Data_080eec44:
 	.global Data_080eec52
 Data_080eec52:
 	.incbin "baserom.gba", 0x000eec52, 0x00000008
-	.global Data_080eec5a
-Data_080eec5a:
+	.global MercuryDjinnFlames_LaunchFrames
+MercuryDjinnFlames_LaunchFrames:
 	.incbin "baserom.gba", 0x000eec5a, 0x00000005
 	.global ParticleReveal_CellWidths
 ParticleReveal_CellWidths:
@@ -1397,9 +1400,51 @@ ParticleReveal_CellHeights:
 	.incbin "baserom.gba", 0x000eec63, 0x00000005
 	.global ParticleReveal_CellSourceOffsets
 ParticleReveal_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eec68, 0x000000d6
-	.global Data_080eed3e
-Data_080eed3e:
+	.incbin "baserom.gba", 0x000eec68, 0x00000008
+	.global RockToss_ChipFlips
+RockToss_ChipFlips:
+	.incbin "baserom.gba", 0x000eec70, 0x00000004
+	.global RockToss_ChipWidths
+RockToss_ChipWidths:
+	.incbin "baserom.gba", 0x000eec74, 0x00000009
+	.global RockToss_ChipHeights
+RockToss_ChipHeights:
+	.incbin "baserom.gba", 0x000eec7d, 0x00000009
+	.global RockToss_ChipCells
+RockToss_ChipCells:
+	.incbin "baserom.gba", 0x000eec86, 0x00000012
+	.global RockToss_ChipX
+RockToss_ChipX:
+	.incbin "baserom.gba", 0x000eec98, 0x00000009
+	.global RockToss_ChipY
+RockToss_ChipY:
+	.incbin "baserom.gba", 0x000eeca1, 0x00000009
+	.incbin "baserom.gba", 0x000eecaa, 0x00000008
+	.global ShatterRocks_ShardOffsets
+ShatterRocks_ShardOffsets:
+	.incbin "baserom.gba", 0x000eecb2, 0x0000002a
+	.incbin "baserom.gba", 0x000eecdc, 0x00000016
+	.global ShatterRocks_RockX
+ShatterRocks_RockX:
+	.incbin "baserom.gba", 0x000eecf2, 0x00000005
+	.global ShatterRocks_DropFrames
+ShatterRocks_DropFrames:
+	.incbin "baserom.gba", 0x000eecf7, 0x00000005
+	.global ShatterRocks_RockCounts
+ShatterRocks_RockCounts:
+	.incbin "baserom.gba", 0x000eecfc, 0x00000003
+	.global ShatterRocks_ShardWidths
+ShatterRocks_ShardWidths:
+	.incbin "baserom.gba", 0x000eecff, 0x0000000f
+	.global ShatterRocks_ShardHeights
+ShatterRocks_ShardHeights:
+	.incbin "baserom.gba", 0x000eed0e, 0x00000010
+	.global ShatterRocks_ShardCells
+ShatterRocks_ShardCells:
+	.incbin "baserom.gba", 0x000eed1e, 0x0000001e
+	.incbin "baserom.gba", 0x000eed3c, 0x00000002
+	.global BurstScene_Records
+BurstScene_Records:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040
 	.global Data_080eed7e
 Data_080eed7e:

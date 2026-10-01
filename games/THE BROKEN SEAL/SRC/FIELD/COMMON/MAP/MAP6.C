@@ -19,14 +19,17 @@ struct PerspectiveWork {
     u8 unknown_0fc[4];
     u16 window_top;                 /* 0x100 */
     u16 window_bottom;              /* 0x102 */
-    u8 unknown_104[0xc];
+    u16 shown_top;                  /* 0x104: the window the frame shows */
+    u16 shown_bottom;               /* 0x106 */
+    u16 window_pending;             /* 0x108 */
+    u8 unknown_10a[6];
     void *tiles;                    /* 0x110 */
     u8 unknown_114[4];
     u16 pitch;                      /* 0x118 */
     u16 yaw;                        /* 0x11a */
     u8 unknown_11c[0x1c];
     u16 lines[256];                 /* 0x138 */
-    u8 unknown_338[0x10];
+    u16 quarter_tiles[8];           /* 0x338: the tile in each layer quarter */
     s32 far_plane;                  /* 0x348 */
     s32 distance;                   /* 0x34c */
     u8 unknown_350[4];
@@ -127,6 +130,70 @@ struct WorldMapState {
     u8 unk_152[0x1a];
     u16 animated_b[3];
 };
+
+void Runtime_ReleaseHeapBlock(s32 slot);
+
+/* The world map's screen entries on its two layers: each of the four
+ * quarters of a layer is 32 by 32 entries at this base. */
+#define WORLD_SCREEN_ENTRIES 0x06004000
+
+/*
+ * Put one world map tile, 16 by 16 cells, in a quarter of a layer: decode
+ * the tile's cell ids, copy them into the block grid and, when asked, draw
+ * each cell's top and bottom screen entries. Nothing happens when the
+ * quarter already holds the tile, unless the draw is forced.
+ */
+s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
+{
+    struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork;
+    u32 *graphics = work->tiles;
+    u16 *shown;
+    u16 *buffer;
+    u16 *source;
+    u8 *blocks;
+    u16 *screen;
+    u32 i;
+    u32 j;
+    u32 id;
+
+    x &= 1;
+    y &= 1;
+    shown = &work->quarter_tiles[(layer * 2 + y) * 2 + x];
+    if (update == 0 && tile == *shown)
+        return 0;
+    *shown = tile;
+    buffer = (u16 *)Runtime_AllocateHeapBlock(14, 0x400);
+    Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
+
+    source = buffer;
+    blocks = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
+    for (i = 0; i < 16; i++) {
+        Dma_Set(source, blocks, 0x84000010, (volatile u32 *)0x040000d4);
+        source += 32;
+        blocks += 128;
+    }
+
+    if (update != 0) {
+        screen = (u16 *)(WORLD_SCREEN_ENTRIES + ((((layer * 2 + y) << 6) + x) << 5));
+        source = buffer;
+        for (i = 0; i < 16; i++) {
+            for (j = 0; j < 16; j++) {
+                u16 *bottom;
+
+                id = *source;
+                screen[0] = *(u16 *)(Ram_MapCellBuffer + id * 4);
+                bottom = (u16 *)(Ram_MapCellBuffer + 2);
+                bottom = (u16 *)((u8 *)bottom + id * 4);
+                screen[32] = *bottom;
+                screen++;
+                source += 2;
+            }
+            screen += 48;
+        }
+    }
+    Runtime_ReleaseHeapBlock(14);
+    return 1;
+}
 
 /* Exact (2026-09-30): complete 864-byte extent, 0 differing halfwords.
  * The ROM keeps several statement groups in source order where sched2
@@ -371,4 +438,56 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
         Map_UpdateCurrentTileBlock();
     }
     Runtime_BumpFree(buffer);
+}
+
+/* Each frame: stops the HBlank DMA, loads this frame's BG2 and BG3 affine
+   parameters from the double-buffered line table and restarts the DMA to
+   stream the rest, latches the window the scene asked for, and puts the
+   display in the affine mode only while that window is on screen. */
+void MapAnimation_ApplyAffineFrame(void)
+{
+    u8 **pointers = &gMapAnimationPages;
+    u8 *lines = *pointers++ + 0xc80;
+    s32 dispcnt = (s16)(*(volatile u16 *)0x04000000 & 0xfff8);
+    u32 *dst = (u32 *)0x04000020;
+    struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers++;
+    volatile u16 *channel = (volatile u16 *)0x040000b0;
+    u32 *src;
+    u32 mode;
+    u32 top;
+    u32 control;
+
+    channel[5] &= 0xc5ff;
+    channel[5] &= 0x7fff;
+    (void)channel[5];
+    if (lines != NULL) {
+        src = (u32 *)(lines + (gFrameCount & 1) * 0x1400);
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst++ = *src++;
+        *dst = *src++;
+        Dma_Set(src, (void *)0x04000020, 0xa6600008, (volatile u32 *)channel);
+    }
+    work->shown_top = work->window_top;
+    work->shown_bottom = work->window_bottom;
+    top = work->shown_top;
+    mode = 0;
+    if (top < 200) {
+        u16 bottom = work->shown_bottom;
+
+        mode = (bottom != 0) << 1;
+        if (top <= bottom) {
+            mode = 0;
+            if (top == 0)
+                mode = 2;
+        }
+    }
+    dispcnt |= mode;
+    control = (u16)dispcnt;
+    *(volatile u16 *)0x04000000 = control;
+    work->window_pending = 0;
 }

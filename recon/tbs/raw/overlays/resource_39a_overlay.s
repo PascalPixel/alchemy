@@ -1,11 +1,11 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200a418,"a",%progbits
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200b268
-	.4byte 0x0200b2a8
-	.4byte 0x0200b2e8
+	.4byte .L_0200b268
+	.4byte .L_0200b2a8
+	.4byte .L_0200b2e8
 	.global gImiruFuchinKeyHeadings
 gImiruFuchinKeyHeadings:
 	.4byte 0x0000ffff
@@ -973,6 +973,7 @@ gImiruFuchinEvents7:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+.L_0200b268:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -989,6 +990,7 @@ gImiruFuchinEvents7:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b2a8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -1005,6 +1007,7 @@ gImiruFuchinEvents7:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b2e8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

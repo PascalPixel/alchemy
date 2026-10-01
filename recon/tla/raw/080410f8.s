@@ -26,7 +26,7 @@ Func_080410f8:
 	adds r0, r5, #0
 	movs r1, #9
 	adds r0, #9
-	bl __modsi3
+	bl Math_Mod
 	mov r1, r8
 	adds r5, r0, #0
 	movs r0, #12

@@ -25,7 +25,7 @@ Func_08108690:
 	beq .L_081086c2
 	subs r6, #1
 	adds r0, r6, r1
-	bl __modsi3
+	bl Math_Mod
 	adds r6, r0, #0
 .L_081086c2:
 	ldr r3, [r5, #12]
@@ -37,7 +37,7 @@ Func_08108690:
 	mov r3, r8
 	adds r0, r6, r3
 	mov r1, r8
-	bl __modsi3
+	bl Math_Mod
 	adds r6, r0, #0
 .L_081086da:
 	ldr r3, [r5, #12]

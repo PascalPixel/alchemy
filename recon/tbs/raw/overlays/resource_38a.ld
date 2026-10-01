@@ -12,7 +12,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/SUIRO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/BURST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/IMPORT.o"(.text)
-        "*/resource_38a_overlay.o"(.rodata.part1)
+        "*/resource_38a_overlay.o"(.rodata.x02008764)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

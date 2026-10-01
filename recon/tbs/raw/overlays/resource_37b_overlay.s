@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200a56c,"a",%progbits
 	.global SoruSekizo_SpriteRowsGfx
 SoruSekizo_SpriteRowsGfx:
 	.4byte 0x01020041
@@ -187,85 +187,85 @@ SceneEventRuntime_EffectData:
 	.4byte 0x00000002
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x02008fe5
+	.4byte SceneState_RunWhenSlotZeroFacingC000
 	.4byte 0x00000202
 	.4byte 0xffff000b
-	.4byte 0x02009001
+	.4byte SceneState_RunWhenActorZeroFacing4000
 	.4byte 0x00008c15
 	.4byte 0x080b0009
-	.4byte 0x02009575
+	.4byte FieldScene_CallWhenCheck9_31_9
 	.4byte 0x00008c15
 	.4byte 0x080c000b
-	.4byte 0x0200958d
+	.4byte FieldScene_RunGuardedStep11
 	.4byte 0x00008c15
 	.4byte 0x080d000d
-	.4byte 0x020095a5
+	.4byte FieldScene_RunGuardedStep13
 	.4byte 0x00008c15
 	.4byte 0x080e000f
-	.4byte 0x020095bd
+	.4byte FieldScene_RunGuardedStep15
 	.4byte 0x00000602
 	.4byte 0x080b0005
-	.4byte 0x020099e5
+	.4byte FieldScene_RunFiveValueStep9
 	.4byte 0x00008602
 	.4byte 0x080c0006
-	.4byte 0x02009a05
+	.4byte FieldScene_RunFiveValueStep11
 	.4byte 0x00000602
 	.4byte 0x080d0007
-	.4byte 0x02009a25
+	.4byte FieldScene_ApplyRect13_31_12_30_12
 	.4byte 0x00008602
 	.4byte 0x080e0008
-	.4byte 0x02009a45
+	.4byte FieldScene_RunFiveValueStep15
 	.4byte 0x10008c15
 	.4byte 0x0816000a
-	.4byte 0x0200966d
+	.4byte SoruSekizo_CheckTileTrigger0166C
 	.4byte 0x00008c15
 	.4byte 0x0816000a
-	.4byte 0x020095d5
+	.4byte ConfigureSceneAndCheckActors
 	.4byte 0x10008c15
 	.4byte 0x0817000c
-	.4byte 0x020096a5
+	.4byte SoruSekizo_CheckTileTrigger016A4
 	.4byte 0x00008c15
 	.4byte 0x0817000c
-	.4byte 0x020095fd
+	.4byte ConfigureAlternateSceneAndCheckActors
 	.4byte 0x00000602
 	.4byte 0x08160014
-	.4byte 0x02009a65
+	.4byte FieldScene_ApplyRect10_14_7_13_7
 	.4byte 0x00000602
 	.4byte 0x08160015
-	.4byte 0x02009a65
+	.4byte FieldScene_ApplyRect10_14_7_13_7
 	.4byte 0x00004602
 	.4byte 0x08160015
-	.4byte 0x02009a85
+	.4byte SceneActor_UseActorTenCellAndNext
 	.4byte 0x0000c602
 	.4byte 0x08160017
-	.4byte 0x02009aad
+	.4byte SceneActor_MoveActor10ByRow
 	.4byte 0x0000c602
 	.4byte 0x08160018
-	.4byte 0x02009aad
+	.4byte SceneActor_MoveActor10ByRow
 	.4byte 0x00008602
 	.4byte 0x08170019
-	.4byte 0x02009ad5
+	.4byte FieldScene_ApplyRect12_21_7_22_7
 	.4byte 0x00008602
 	.4byte 0x0817001a
-	.4byte 0x02009ad5
+	.4byte FieldScene_ApplyRect12_21_7_22_7
 	.4byte 0x00004602
 	.4byte 0x0817001a
-	.4byte 0x02009af5
+	.4byte SceneActor_ApplyActorTwelveZCellPair
 	.4byte 0x0000c602
 	.4byte 0x0817001c
-	.4byte 0x02009b1d
+	.4byte SceneActor_RunSlot12ColumnStep
 	.4byte 0x0000c602
 	.4byte 0x0817001d
-	.4byte 0x02009b1d
+	.4byte SceneActor_RunSlot12ColumnStep
 	.4byte 0x10008c15
 	.4byte 0x08180011
-	.4byte 0x02009625
+	.4byte FieldScene_RunClosingSequence
 	.4byte 0x00008c15
 	.4byte 0x08180011
-	.4byte 0x020096dd
+	.4byte SoruSekizo_RunStatueDropScene
 	.4byte 0x0000c602
 	.4byte 0x08180020
-	.4byte 0x0200995d
+	.4byte FieldScene_RunScene37bSequenceA
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

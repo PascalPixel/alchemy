@@ -2214,13 +2214,13 @@ Data_020013b8:
 	.4byte 0x00000001
 	.4byte 0x01e80000
 	.4byte 0x00000000
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x0002c000
 	.4byte 0xffff0182
 	.4byte 0x00000001
 	.4byte 0x02080000
 	.4byte 0x00000000
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x0002c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2266,7 +2266,7 @@ Data_0200149c:
 	.4byte 0xffff000a
 	.4byte Func_02000cdc
 	.4byte 0x00008515
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte 0x00000000
 	.4byte 0x00008c15
 	.4byte 0xffff000a

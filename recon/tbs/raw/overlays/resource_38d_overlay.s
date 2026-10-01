@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200a5c0,"a",%progbits
 	.global Kyuden_FacingActions
 Kyuden_FacingActions:
 	.4byte 0x00000022
@@ -560,7 +560,7 @@ gBiribinoKyudenEvents:
 	.4byte 0x0000175a
 	.4byte 0x00000000
 	.4byte 0x084e000a
-	.4byte 0x02008131
+	.4byte Kyuden_AskAboutKolima
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x0000175b

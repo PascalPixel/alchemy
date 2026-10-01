@@ -64,20 +64,41 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global UiWindow_Create
+	.thumb_func
+UiWindow_Create:
 	overlay_veneer UiWindow_CreateFar
+	.global UiWork_Finalize
+	.thumb_func
+UiWork_Finalize:
 	overlay_veneer UiWork_FinalizeFar
+	.global UiText_DrawResource
+	.thumb_func
+UiText_DrawResource:
 	overlay_veneer UiText_DrawResourceFar
 	.global UiText_ShowCenteredMessage
 	.thumb_func
 UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
+	.global UiTextResource_Initialize
+	.thumb_func
+UiTextResource_Initialize:
 	overlay_veneer UiTextResource_InitializeFar
+	.global UiTextResource_SetPosition
+	.thumb_func
+UiTextResource_SetPosition:
 	overlay_veneer UiTextResource_SetPositionFar
+	.global UiTextResource_Release
+	.thumb_func
+UiTextResource_Release:
 	overlay_veneer UiTextResource_ReleaseFar
 	.global Ui_PrepareTransferForItem
 	.thumb_func
 Ui_PrepareTransferForItem:
 	overlay_veneer ItemIcon_LoadTilesFar
+	.global SaveState_CountRecordsExcludingFlagged
+	.thumb_func
+SaveState_CountRecordsExcludingFlagged:
 	overlay_veneer SaveState_CountRecordsExcludingFlaggedFar
 	.global Engine_GameFlagIsSet
 	.thumb_func

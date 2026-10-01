@@ -544,7 +544,7 @@ Func_081b83c4:
 	adds r6, #28
 	cmp r0, #4
 	bne .L_081b879c
-	bl Resource_FarCall004
+	bl UiWork_InitializeWithResourceCountersFar
 	movs r1, #6
 	str r1, [sp, #0]
 	mov r8, r1
@@ -1388,7 +1388,7 @@ Func_081b83c4:
 .L_081b8eec:
 	asrs r0, r0, #10
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #1
 	bne .L_081b8f02
 	movs r2, #128

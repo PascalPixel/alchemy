@@ -75,7 +75,7 @@ Func_08153c30:
 	mov r0, r10
 	movs r1, #6
 	ands r6, r3
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #5
 	bne .L_08153cde
 	mov r2, r8

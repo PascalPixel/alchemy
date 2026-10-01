@@ -340,7 +340,7 @@ LuckyDice_Run:
 	str r3, [r0, #28]
 	str r1, [r0, #32]
 	str r2, [r0, #36]
-	bl Resource_FarCall004
+	bl UiWork_InitializeWithResourceCountersFar
 	movs r1, #6
 	str r1, [sp, #0]
 	mov r8, r1
@@ -1776,7 +1776,7 @@ LuckyDice_Run:
 	asrs r0, r0, #10
 	movs r1, #3
 	str r4, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #8]
 	cmp r0, #1
 	bne .L_081acf4e

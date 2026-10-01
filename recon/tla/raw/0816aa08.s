@@ -423,7 +423,7 @@ Func_0816aa08:
 	lsls r0, r3, #3
 	movs r1, #104
 	mov r8, r4
-	bl __modsi3
+	bl Math_Mod
 	mov r10, r0
 	ldr r0, [sp, #8]
 	ldr r1, [sp, #16]

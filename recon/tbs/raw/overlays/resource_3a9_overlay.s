@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020084a0,"a",%progbits
 	.global gKareiHeyaEntrancesOther
 gKareiHeyaEntrancesOther:
 	.4byte 0xffff0000
@@ -409,13 +409,13 @@ gKareiHeyaEvents1:
 	.4byte 0x00000008
 	.4byte 0x0000c602
 	.4byte 0xffff0010
-	.4byte 0x02008241
+	.4byte FieldScene_RunArrivalPlacement
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
 	.4byte 0x0000c602
 	.4byte 0xffff0013
-	.4byte 0x02008241
+	.4byte FieldScene_RunArrivalPlacement
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001abf
@@ -442,7 +442,7 @@ gKareiHeyaEvents1:
 	.4byte 0x00001acc
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x0200816d
+	.4byte SceneDialogue_RunActor16Dialogue
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte 0x00001ae6
@@ -540,10 +540,10 @@ gKareiHeyaEvents1Entrance9:
 	.4byte 0x0000000b
 	.4byte 0x0000c602
 	.4byte 0xffff000c
-	.4byte 0x02008241
+	.4byte FieldScene_RunArrivalPlacement
 	.4byte 0x0000c602
 	.4byte 0xffff000d
-	.4byte 0x02008241
+	.4byte FieldScene_RunArrivalPlacement
 	.4byte 0x00000001
 	.4byte 0xffff000e
 	.4byte 0x0000000e
@@ -555,7 +555,7 @@ gKareiHeyaEvents1Entrance9:
 	.4byte 0x00000011
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200818d
+	.4byte SceneDialogue_RunActor8FlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x09110009
 	.4byte 0x00001ada
@@ -570,7 +570,7 @@ gKareiHeyaEvents1Entrance9:
 	.4byte 0x00001adc
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008145
+	.4byte SceneDialogue_RunActor12DialogueAndSetFlag910
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte 0x00001ade
@@ -674,13 +674,14 @@ gKareiHeyaEvents2:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020081fd
+	.4byte SceneDialogue_RunActor8FacingDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001a90
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+.L_02008ee0:
 	.4byte 0x007d0007
 	.4byte 0x00020001
 	.4byte 0x00080005
@@ -689,11 +690,11 @@ gKareiHeyaEvents2:
 	.4byte 0x0000ffff
 	.global KareiHeya_ArrivalPlacements
 KareiHeya_ArrivalPlacements:
-	.4byte 0x02008ee0
+	.4byte .L_02008ee0
 	.4byte 0x00620022
-	.4byte 0x02008ee0
+	.4byte .L_02008ee0
 	.4byte 0x00620027
-	.4byte 0x02008ee0
+	.4byte .L_02008ee0
 	.4byte 0x00600032
-	.4byte 0x02008ee0
+	.4byte .L_02008ee0
 	.4byte 0x006b0034

@@ -392,7 +392,7 @@ Func_08145df8:
 	movs r1, #3
 	str r3, [sp, #44]
 	str r7, [sp, #32]
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #40]
 	ldr r1, [sp, #72]
 	adds r0, r0, r2

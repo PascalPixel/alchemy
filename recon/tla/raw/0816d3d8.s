@@ -219,14 +219,14 @@ Func_0816d3d8:
 .L_0816d58c:
 	movs r1, #5
 	adds r0, r7, #0
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r6, #20]
 	bl Math_Div
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, .L_0816d714
 	adds r5, r5, r0
 	ldrb r4, [r3, r5]

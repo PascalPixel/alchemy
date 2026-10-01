@@ -4750,7 +4750,7 @@ Data_02002d38:
 	.4byte 0x00000000
 	.4byte 0x00080000
 	.4byte 0x0001c000
-	.4byte Field_Map008 + 0x25a6
+	.4byte 0x08ab00ba
 	.4byte 0x00000001
 	.4byte 0x01180000
 	.4byte 0x00000000
@@ -5127,7 +5127,7 @@ Data_02003358:
 	.4byte 0xffff000d
 	.4byte 0x0000188c
 	.4byte 0x00008d15
-	.4byte IwramTransformMatrix + 0x46
+	.4byte 0x0300040e
 	.4byte Func_02000968
 	.4byte 0x00008d15
 	.4byte 0xffff000e

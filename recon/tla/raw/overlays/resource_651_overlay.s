@@ -1997,7 +1997,7 @@ Data_02001664:
 	.4byte 0x021b001d
 	.4byte Func_02000a9c
 	.4byte 0x50008805
-	.4byte gHeapSlots + 0x64
+	.4byte 0x03000064
 	.4byte Func_02000118
 	.4byte 0x000001f3
 	.4byte 0xffff00c8

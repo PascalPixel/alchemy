@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008a90,"a",%progbits
+.L_02008a90:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -488,7 +489,7 @@ Data_02009040:
 	.4byte 0x02500000
 	.4byte 0x0001d000
 	.4byte 0xffff0094
-	.4byte 0x02008a90
+	.4byte .L_02008a90
 	.4byte 0x00e60000
 	.4byte 0x00000000
 	.4byte 0x02880000
@@ -596,16 +597,16 @@ Data_02009310:
 	.4byte 0x0000000d
 	.4byte 0x0000c602
 	.4byte 0xffff000e
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff000f
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0010
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -617,7 +618,7 @@ Data_02009310:
 	.4byte 0x00001fba
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008761
+	.4byte SceneDialogue_AskStay
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x00001fbe
@@ -647,13 +648,13 @@ Data_02009310:
 	.4byte 0x00001fcf
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020085a9
+	.4byte SceneDialogue_RunFacingActionPrompt
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008501
+	.4byte SceneDialogue_RunFacingPrompt
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0200866d
+	.4byte SceneDialogue_RunFacingAction
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte 0x00001fdb
@@ -746,7 +747,7 @@ Data_02009310:
 	.4byte 0x00001fea
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x0200891d
+	.4byte SceneDialogue_RunFacingMessage
 	.4byte 0x00008d15
 	.4byte 0xffff001e
 	.4byte 0x00001fec
@@ -814,16 +815,16 @@ Data_02009670:
 	.4byte 0x0000000d
 	.4byte 0x0000c602
 	.4byte 0xffff000e
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff000f
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0010
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -865,13 +866,13 @@ Data_02009670:
 	.4byte 0x00002216
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020085a9
+	.4byte SceneDialogue_RunFacingActionPrompt
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008501
+	.4byte SceneDialogue_RunFacingPrompt
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0200866d
+	.4byte SceneDialogue_RunFacingAction
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte 0x0000221f
@@ -964,7 +965,7 @@ Data_02009670:
 	.4byte 0x00002230
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x0200891d
+	.4byte SceneDialogue_RunFacingMessage
 	.4byte 0x00008d15
 	.4byte 0xffff001e
 	.4byte 0x00002232
@@ -1032,16 +1033,16 @@ Data_020099d0:
 	.4byte 0x0000000d
 	.4byte 0x0000c602
 	.4byte 0xffff000e
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff000f
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0010
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x020080c1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -1080,13 +1081,13 @@ Data_020099d0:
 	.4byte 0x00002386
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020085a9
+	.4byte SceneDialogue_RunFacingActionPrompt
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008501
+	.4byte SceneDialogue_RunFacingPrompt
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0200866d
+	.4byte SceneDialogue_RunFacingAction
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte 0x00002391
@@ -1098,13 +1099,13 @@ Data_020099d0:
 	.4byte 0x00002393
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x020087b1
+	.4byte SceneDialogue_RunExcitedLines
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x020086ed
+	.4byte SceneDialogue_AskWatchingColosso
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x0200873d
+	.4byte SceneDialogue_RunActorLine23a1
 	.4byte 0x00000000
 	.4byte 0xffff001c
 	.4byte 0x000023a2
@@ -1161,7 +1162,7 @@ Data_020099d0:
 	.4byte 0x000023b2
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0200885d
+	.4byte SceneDialogue_RunActor25FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff001a
 	.4byte 0x000023b5
@@ -1176,13 +1177,13 @@ Data_020099d0:
 	.4byte 0x000023b8
 	.4byte 0x00000000
 	.4byte 0xffff001e
-	.4byte 0x0200891d
+	.4byte SceneDialogue_RunFacingMessage
 	.4byte 0x00008d15
 	.4byte 0xffff001e
 	.4byte 0x000023c0
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte 0x02008899
+	.4byte FieldScene_RunScene3b6_02000898
 	.4byte 0x00000000
 	.4byte 0xffff0020
 	.4byte 0x000023a9
@@ -1206,7 +1207,7 @@ Data_020099d0:
 	.4byte 0x000023bc
 	.4byte 0x00000000
 	.4byte 0xffff0023
-	.4byte 0x020088cd
+	.4byte SceneDialogue_AskRememberWarrior
 	.4byte 0x00000000
 	.4byte 0xffff0024
 	.4byte 0x000023af
@@ -1240,6 +1241,7 @@ Data_020099d0:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+.L_02009db4:
 	.4byte 0x007b0002
 	.4byte 0x00020001
 	.4byte 0x00040006
@@ -1248,11 +1250,11 @@ Data_020099d0:
 	.4byte 0x0000ffff
 	.global Data_02009dcc
 Data_02009dcc:
-	.4byte 0x02009db4
+	.4byte .L_02009db4
 	.4byte 0x00640018
-	.4byte 0x02009db4
+	.4byte .L_02009db4
 	.4byte 0x00640021
-	.4byte 0x02009db4
+	.4byte .L_02009db4
 	.4byte 0x00630032
-	.4byte 0x02009db4
+	.4byte .L_02009db4
 	.4byte 0x006d0034

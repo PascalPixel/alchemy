@@ -1757,11 +1757,11 @@ Func_02000d14:
 .L_02008dec:
 	.4byte Data_02002c5c
 .L_02008df0:
-	.4byte gOverlayArea + 0x2c60
+	.4byte Data_02002c60
 .L_02008df4:
 	.4byte IwramCopyWords
 .L_02008df8:
-	.4byte gOverlayArea + 0x2c80
+	.4byte Data_02002c80
 .L_02008dfc:
 	.4byte Data_020038e0
 .L_02008e00:
@@ -1816,9 +1816,9 @@ Func_02000e30:
 .L_02008e58:
 	.4byte 0x00000000
 .L_02008e5c:
-	.4byte gOverlayArea + 0x2ce0
+	.4byte Data_02002ce0
 .L_02008e60:
-	.4byte gOverlayArea + 0x2ce4
+	.4byte Data_02002ce4
 .L_02008e64:
 	ldr r3, .L_02008e8c
 	ldrh r2, [r3]
@@ -1842,7 +1842,7 @@ Func_02000e30:
 .L_02008e88:
 	.4byte 0x00003f42
 .L_02008e8c:
-	.4byte gOverlayArea + 0x2ce6
+	.4byte Data_02002ce6
 	.section .text.x02008e90,"ax",%progbits
 	.global Func_02000e90
 	.thumb_func
@@ -1872,11 +1872,11 @@ Func_02000e90:
 	strh r2, [r1]
 	bx lr
 .L_02008ec0:
-	.4byte gOverlayArea + 0x2ce0
+	.4byte Data_02002ce0
 .L_02008ec4:
-	.4byte gOverlayArea + 0x2ce4
+	.4byte Data_02002ce4
 .L_02008ec8:
-	.4byte gOverlayArea + 0x2ce6
+	.4byte Data_02002ce6
 .L_02008ecc:
 	.4byte Data_0300122c
 	.section .text.x02008ed0,"ax",%progbits
@@ -3358,7 +3358,7 @@ Func_02001a1c:
 .L_02009a7c:
 	.4byte gPartyState
 .L_02009a80:
-	.4byte gOverlayArea + 0x2ce8
+	.4byte Data_02002ce8
 .L_02009a84:
 	.4byte 0xfff00000
 .L_02009a88:
@@ -3694,7 +3694,7 @@ Func_02001a1c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009d28:
-	.4byte gOverlayArea + 0x2ce8
+	.4byte Data_02002ce8
 .L_02009d2c:
 	.4byte Func_020016b0
 	.section .text.x02009d30,"ax",%progbits
@@ -3706,7 +3706,7 @@ Func_02001d30:
 	bx lr
 	.2byte 0x0000
 .L_02009d38:
-	.4byte gOverlayArea + 0x2ce8
+	.4byte Data_02002ce8
 	.section .text.x02009d3c,"ax",%progbits
 	.global Func_02001d3c
 	.thumb_func
@@ -4636,10 +4636,10 @@ Data_02002ad0:
 	.4byte 0xffff000b
 	.4byte Func_02000c2c
 	.4byte 0x00000002
-	.4byte Data_02010002 + 0x12
+	.4byte 0x02010014
 	.4byte Func_02000c3c
 	.4byte 0x00008515
-	.4byte Data_02030000 + 0x8
+	.4byte 0x02030008
 	.4byte Func_02000cfc
 	.4byte 0x00000000
 	.4byte 0xffff000a
@@ -4731,3 +4731,21 @@ Data_02002c2c:
 	.global Data_02002c5c
 Data_02002c5c:
 	.4byte 0xffffffff
+	.section .bss,"aw",%nobits
+	.global Data_02002c60
+Data_02002c60:
+	.space 0x00000020
+	.global Data_02002c80
+Data_02002c80:
+	.space 0x00000060
+	.global Data_02002ce0
+Data_02002ce0:
+	.space 0x00000004
+	.global Data_02002ce4
+Data_02002ce4:
+	.space 0x00000002
+	.global Data_02002ce6
+Data_02002ce6:
+	.space 0x00000002
+	.global Data_02002ce8
+Data_02002ce8:

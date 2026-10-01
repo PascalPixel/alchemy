@@ -3864,7 +3864,7 @@ Func_0815f16c:
 	movs r1, #3
 	asrs r0, r0, #1
 	adds r6, r6, r3
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r0, #2
 	adds r5, r5, r0
 	ldr r0, .L_081610b4
@@ -6165,7 +6165,7 @@ Func_0815f16c:
 .L_0816221a:
 	movs r1, #5
 	mov r0, r11
-	bl __modsi3
+	bl Math_Mod
 	mov r6, r8
 	lsls r5, r0, #1
 	adds r5, r5, r0
@@ -6173,7 +6173,7 @@ Func_0815f16c:
 	ldr r0, [r6, #24]
 	bl Math_Div
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	mov r2, r11
 	adds r4, r5, r0
 	movs r7, #4
@@ -6417,14 +6417,14 @@ Func_0815f16c:
 .L_0816241c:
 	movs r1, #5
 	mov r0, r11
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r6, #8]
 	bl Math_Div
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, .L_08162714
 	adds r5, r5, r0
 	ldrb r4, [r3, r5]
@@ -7836,7 +7836,7 @@ Func_0815f16c:
 	ble .L_08163012
 	movs r1, #3
 	mov r0, r11
-	bl __modsi3
+	bl Math_Mod
 	adds r5, r0, #0
 	ldr r0, [r6]
 	bl Trig_Sin
@@ -8157,7 +8157,7 @@ Func_0815f16c:
 .L_08163208:
 	mov r0, r11
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r6, #0
 	adds r5, r0, #0
 	adds r0, r7, #0

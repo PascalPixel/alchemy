@@ -16,7 +16,7 @@ SECTIONS
         "*/resource_3ca_overlay.o"(.text.x020091c4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCHEDULE_FADE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.o"(.text)
-        "*/resource_3ca_overlay.o"(.rodata.part1)
+        "*/resource_3ca_overlay.o"(.rodata.x020094ac)
     }
     .bss : { "*/resource_3ca_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

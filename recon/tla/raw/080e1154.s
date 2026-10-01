@@ -26,7 +26,7 @@ Func_080e1154:
 	cmp r2, r3
 	bne .L_080e1192
 	movs r1, #7
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_080e11a2
 	adds r0, r5, #0
@@ -34,7 +34,7 @@ Func_080e1154:
 	b .L_080e11a2
 .L_080e1192:
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	cmp r0, #0
 	bne .L_080e11a2
 	adds r0, r5, #0

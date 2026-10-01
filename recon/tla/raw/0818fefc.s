@@ -884,7 +884,7 @@ Func_0818fefc:
 	lsrs r0, r2, #31
 	adds r0, r2, r0
 	asrs r0, r0, #1
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [sp, #92]
 	lsls r0, r0, #10
 	movs r4, #184

@@ -2532,14 +2532,14 @@ Data_02001668:
 Data_02001674:
 	.4byte 0x00000008
 	.4byte 0x00090200
-	.4byte gMapCellBuffer
+	.4byte 0x02010000
 	.4byte 0x0000000c
 	.4byte 0xffff0202
 	.global Data_02001688
 Data_02001688:
 	.4byte 0x00000008
 	.4byte 0x00090200
-	.4byte gMapCellBuffer
+	.4byte 0x02010000
 	.2byte 0xffff
 	.global Data_02001696
 Data_02001696:
@@ -2564,7 +2564,7 @@ gSceneEntrances:
 Data_020016d0:
 	.4byte 0x002c00d0
 	.4byte 0x00e002f0
-	.4byte gHeapSlots + 0x3c
+	.4byte 0x0300003c
 	.4byte 0x0001ffff
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2722,16 +2722,16 @@ Data_020018ec:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_020010f0
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_020010f0
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x8
+	.4byte 0x0202000c
 	.4byte Func_020010f0
 	.4byte 0x00001815
-	.4byte Data_02030000 + 0xa
+	.4byte 0x0203000a
 	.4byte Func_02001148
 	.4byte 0x00001815
 	.4byte 0x0204000b
@@ -2769,10 +2769,10 @@ Data_020019ac:
 	.4byte 0xffff0003
 	.4byte 0x00000003
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_020010f0
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_020010f0
 	.4byte 0x50008a05
 	.4byte 0xffff0032

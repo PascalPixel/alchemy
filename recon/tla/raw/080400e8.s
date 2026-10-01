@@ -60,7 +60,7 @@ Func_080400e8:
 	mov r11, r1
 	adds r0, #5
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	movs r5, #160
 	lsls r5, r5, #3
 	movs r2, #179
@@ -73,7 +73,7 @@ Func_080400e8:
 	ldrsb r1, [r3, r2]
 	ldrsb r0, [r7, r5]
 	adds r0, r0, r1
-	bl __modsi3
+	bl Math_Mod
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #116

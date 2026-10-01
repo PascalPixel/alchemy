@@ -1,147 +1,152 @@
 .syntax unified
 	.thumb
+	.section .text.x0200a7d2,"ax",%progbits
+	.2byte 0x0000
 	.section .text.x0200a7d4,"ax",%progbits
-	.p2align 2
 	.global ShindenHeya_ChooseRestartOption
 	.thumb_func
 ShindenHeya_ChooseRestartOption:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	movs	r0, #8
-	movs	r1, #0
-	movs	r2, #0
-	sub	sp, #20
-	bl 0x0200b658
-	movs	r0, #9
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b658
-	movs	r0, #10
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b658
-	movs	r0, #1
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b658
-	movs	r0, #11
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b658
-	movs	r0, #12
-	movs	r1, #0
-	movs	r2, #0
-	bl 0x0200b658
-	movs	r2, #0
-	movs	r0, #0
-	movs	r1, #0
-	bl 0x0200b658
-	movs	r0, #128
-	movs	r1, #2
-	lsls	r0, r0, #9
-	bl 0x0200b708
-	movs	r0, #1
-	bl 0x0200b710
-	movs	r0, #1
-	bl 0x0200b5e8
-	movs	r3, #1
-	str	r3, [sp, #0]
-	movs	r1, #7
-	movs	r2, #25
-	movs	r3, #5
-	movs	r0, #2
-	bl 0x0200b588
-	ldr	r5, [pc, #172]
-	adds	r7, r0, #0
-	adds	r1, r7, #0
-	adds	r0, r5, #0
-	movs	r2, #16
-	movs	r3, #0
-	bl 0x0200b598
-	movs	r0, #1
-	bl 0x0200b5c8
-	cmp	r0, #0
-	bne.n	.L_02002870
-	adds	r0, r5, #2
-	adds	r1, r7, #0
-	movs	r2, #16
-	movs	r3, #16
-	bl 0x0200b598
-	b.n	.L_0200287c
-.L_02002870:
-	adds	r0, r5, #1
-	adds	r1, r7, #0
-	movs	r2, #16
-	movs	r3, #16
-	bl 0x0200b598
-.L_0200287c:
-	add	r1, sp, #4
-	add	r0, sp, #8
-	bl 0x0200b5a8
-	movs	r2, #60
-	add	r0, sp, #8
-	movs	r1, #72
-	bl 0x0200b5b0
-	ldr	r3, [pc, #108]
-	ldr	r3, [r3, #0]
-	movs	r2, #1
-	ands	r3, r2
-	movs	r5, #0
-	cmp	r3, #0
-	bne.n	.L_020028dc
-	ldr	r2, [pc, #96]
-	movs	r6, #1
-	mov	r8, r2
-.L_020028a2:
-	ldr	r3, [pc, #96]
-	ldr	r3, [r3, #0]
-	movs	r2, #192
-	ands	r3, r2
-	cmp	r3, #0
-	beq.n	.L_020028b0
-	eors	r5, r6
-.L_020028b0:
-	ldr	r3, [pc, #84]
-	ldr	r3, [r3, #0]
-	movs	r2, #15
-	lsrs	r3, r3, #1
-	ands	r3, r2
-	lsls	r3, r3, #2
-	mov	r2, r8
-	ldr	r1, [r2, r3]
-	lsls	r2, r5, #4
-	add	r0, sp, #8
-	adds	r1, #24
-	adds	r2, #60
-	bl 0x0200b5b0
-	movs	r0, #1
-	bl 0x0200b5e8
-	ldr	r3, [pc, #40]
-	ldr	r3, [r3, #0]
-	ands	r3, r6
-	cmp	r3, #0
-	beq.n	.L_020028a2
-.L_020028dc:
-	ldr	r0, [sp, #4]
-	bl 0x0200b5b8
-	adds	r0, r7, #0
-	movs	r1, #1
-	bl 0x0200b590
-	adds	r0, r5, #0
-	add	sp, #20
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7}
-	pop	{r1}
-	bx	r1
+	push {r5, r6, r7, lr}
+	mov r7, r8
+	push {r7}
+	movs r0, #8
+	movs r1, #0
+	movs r2, #0
+	sub sp, #20
+	bl Engine_ActorSetPosition
+	movs r0, #9
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorSetPosition
+	movs r0, #10
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorSetPosition
+	movs r0, #1
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorSetPosition
+	movs r0, #11
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorSetPosition
+	movs r0, #12
+	movs r1, #0
+	movs r2, #0
+	bl Engine_ActorSetPosition
+	movs r2, #0
+	movs r0, #0
+	movs r1, #0
+	bl Engine_ActorSetPosition
+	movs r0, #128
+	movs r1, #2
+	lsls r0, r0, #9
+	bl Engine_ColorBufferApplyTarget
+	movs r0, #1
+	bl Engine_ColorBufferInterpolate
+	movs r0, #1
+	bl Engine_EventWait
+	movs r3, #1
+	str r3, [sp, #0]
+	movs r1, #7
+	movs r2, #25
+	movs r3, #5
+	movs r0, #2
+	bl UiWindow_Create
+	ldr r5, .L_0200a8f8
+	adds r7, r0, #0
+	adds r1, r7, #0
+	adds r0, r5, #0
+	movs r2, #16
+	movs r3, #0
+	bl UiText_DrawResource
+	movs r0, #1
+	bl SaveState_CountRecordsExcludingFlagged
+	cmp r0, #0
+	bne .L_0200a870
+	adds r0, r5, #2
+	adds r1, r7, #0
+	movs r2, #16
+	movs r3, #16
+	bl UiText_DrawResource
+	b .L_0200a87c
+.L_0200a870:
+	adds r0, r5, #1
+	adds r1, r7, #0
+	movs r2, #16
+	movs r3, #16
+	bl UiText_DrawResource
+.L_0200a87c:
+	add r1, sp, #4
+	add r0, sp, #8
+	bl UiTextResource_Initialize
+	movs r2, #60
+	add r0, sp, #8
+	movs r1, #72
+	bl UiTextResource_SetPosition
+	ldr r3, .L_0200a8fc
+	ldr r3, [r3]
+	movs r2, #1
+	ands r3, r2
+	movs r5, #0
+	cmp r3, #0
+	bne .L_0200a8dc
+	ldr r2, .L_0200a900
+	movs r6, #1
+	mov r8, r2
+.L_0200a8a2:
+	ldr r3, .L_0200a904
+	ldr r3, [r3]
+	movs r2, #192
+	ands r3, r2
+	cmp r3, #0
+	beq .L_0200a8b0
+	eors r5, r6
+.L_0200a8b0:
+	ldr r3, .L_0200a908
+	ldr r3, [r3]
+	movs r2, #15
+	lsrs r3, r3, #1
+	ands r3, r2
+	lsls r3, r3, #2
+	mov r2, r8
+	ldr r1, [r2, r3]
+	lsls r2, r5, #4
+	add r0, sp, #8
+	adds r1, #24
+	adds r2, #60
+	bl UiTextResource_SetPosition
+	movs r0, #1
+	bl Engine_EventWait
+	ldr r3, .L_0200a8fc
+	ldr r3, [r3]
+	ands r3, r6
+	cmp r3, #0
+	beq .L_0200a8a2
+.L_0200a8dc:
+	ldr r0, [sp, #4]
+	bl UiTextResource_Release
+	adds r0, r7, #0
+	movs r1, #1
+	bl UiWork_Finalize
+	adds r0, r5, #0
+	add sp, #20
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6, r7}
+	pop {r1}
+	bx r1
+.L_0200a8f8:
 	.4byte 0x0000116e
-	.4byte 0x03001c94
-	.4byte 0x0200c11c
-	.4byte 0x03001b04
-	.2byte 0x1800
-	.2byte 0x0300
-	.section .rodata,"a",%progbits
+.L_0200a8fc:
+	.4byte gKeyState
+.L_0200a900:
+	.4byte Data_0200411c
+.L_0200a904:
+	.4byte gKeysRepeat
+.L_0200a908:
+	.4byte gFrameTick
+	.section .rodata.x0200b740,"a",%progbits
 	.global ShindenHeya_LeaderCircleScript
 ShindenHeya_LeaderCircleScript:
 	.4byte 0x0000001c
@@ -615,7 +620,7 @@ ShindenHeya_PlacementE:
 ShindenHeya_SceneTableA:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b2d1
+	.4byte FieldScene_RunActorEightFacingDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001036
@@ -632,19 +637,19 @@ ShindenHeya_SceneTableA:
 ShindenHeya_SceneTableB:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b335
+	.4byte FieldScene_DispatchBySceneId
 	.4byte 0x00000000
 	.4byte 0x08550009
-	.4byte 0x0200827d
+	.4byte FieldScene_RunActorNineFlagDialogueA
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0200827d
+	.4byte FieldScene_RunActorNineFlagDialogueA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001378
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x020082ed
+	.4byte FieldScene_RunActorNineFlagDialogueB
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x0000000a
@@ -658,16 +663,16 @@ ShindenHeya_SceneTableC:
 	.4byte 0x0000000b
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b335
+	.4byte FieldScene_DispatchBySceneId
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0200827d
+	.4byte FieldScene_RunActorNineFlagDialogueA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001cea
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x020082ed
+	.4byte FieldScene_RunActorNineFlagDialogueB
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -675,7 +680,7 @@ ShindenHeya_SceneTableC:
 ShindenHeya_SceneTableD:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008361
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0xffff0001
 	.4byte 0x00001168
@@ -693,10 +698,10 @@ ShindenHeya_SceneTableD:
 	.4byte 0x0000116b
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x0200874d
+	.4byte ShindenHeya_RunAltarScene
 	.4byte 0x00000002
 	.4byte 0x02000002
-	.4byte 0x020086e9
+	.4byte FieldScene_RunActorEightResetSequence
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -707,13 +712,13 @@ ShindenHeya_SceneTableE:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b2d1
+	.4byte FieldScene_RunActorEightFacingDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x0000119e
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008575
+	.4byte FieldScene_RunActorTenCountStep
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x000011d8
@@ -733,10 +738,10 @@ ShindenHeya_SceneTableF:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b2d1
+	.4byte FieldScene_RunActorEightFacingDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020084e9
+	.4byte FieldScene_RunScene378SequenceB
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x00001c02
@@ -759,10 +764,10 @@ ShindenHeya_SceneTableG:
 	.4byte 0x00000028
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b4a9
+	.4byte SceneDialogue_RunActorEightFollowupDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b4a9
+	.4byte SceneDialogue_RunActorEightFollowupDialogue
 	.4byte 0x00008d15
 	.4byte 0x09090008
 	.4byte 0x0000190b
@@ -776,7 +781,7 @@ ShindenHeya_SceneTableG:
 ShindenHeya_SceneTableH:
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b45d
+	.4byte SceneDialogue_RunActorEightFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x08450009
 	.4byte 0x00001409
@@ -808,13 +813,15 @@ ShindenHeya_SceneTableI:
 	.4byte 0x0000002a
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0200b4f1
+	.4byte SceneDialogue_RunActorEightDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001824
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Data_0200411c
+Data_0200411c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000

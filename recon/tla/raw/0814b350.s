@@ -694,7 +694,7 @@ Func_0814b350:
 	lsls r0, r3, #2
 	movs r1, #9
 	add r0, r9
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0814b9ac
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]

@@ -181,7 +181,7 @@ Func_0814b160:
 	movs r1, #6
 	bl Math_Div
 	movs r1, #9
-	bl __modsi3
+	bl Math_Mod
 	lsls r1, r0, #1
 	ldr r2, [sp, #20]
 	adds r1, r1, r0

@@ -14,7 +14,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/DOU.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3be_overlay.o"(.rodata.part1)
+        "*/resource_3be_overlay.o"(.rodata.x02009618)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

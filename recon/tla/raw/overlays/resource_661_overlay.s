@@ -7904,7 +7904,7 @@ Data_02004314:
 	.4byte 0x17a9ad75
 	.4byte 0x586f8f25
 	.4byte 0x75fcd4d3
-	.4byte Text_MessageContexts + 0x7d28
+	.4byte 0x08068958
 	.4byte 0x9c9a2b93
 	.4byte 0xfbcfa216
 	.4byte 0x7e458240
@@ -8146,10 +8146,10 @@ Data_02004718:
 Data_02004768:
 	.4byte 0x00000008
 	.4byte 0x00090200
-	.4byte gMapCellBuffer
+	.4byte 0x02010000
 	.4byte 0x0000000a
 	.4byte 0x000b0202
-	.4byte Data_02030000
+	.4byte 0x02030000
 	.4byte 0x0000000c
 	.4byte 0x000d0204
 	.4byte 0x02050000
@@ -8157,10 +8157,10 @@ Data_02004768:
 	.global Data_0200478e
 Data_0200478e:
 	.2byte 0x0008
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000009
 	.4byte 0x000a0201
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0x0000000b
 	.4byte 0x000c0203
 	.4byte 0x02040000
@@ -8177,17 +8177,17 @@ Data_0200478e:
 	.global Data_020047d2
 Data_020047d2:
 	.2byte 0x0008
-	.4byte Data_02000000
+	.4byte 0x02000000
 	.4byte 0x00000009
 	.4byte 0x000a0201
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0x0000000b
 	.4byte 0xffff0203
 	.global Data_020047ec
 Data_020047ec:
 	.4byte 0x00000008
 	.4byte 0x00090200
-	.4byte gMapCellBuffer
+	.4byte 0x02010000
 	.4byte 0x0000000a
 	.4byte 0xffff0202
 	.global Data_02004800
@@ -8739,7 +8739,7 @@ Data_02004fdc:
 	.4byte 0x01024000
 	.4byte 0xffff01c2
 	.4byte 0x00000001
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000000
 	.4byte 0x02680000
 	.4byte 0x00024000
@@ -8851,16 +8851,16 @@ Data_02005198:
 	.4byte 0xffff0002
 	.4byte 0x00000002
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000620
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000620
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000620
 	.4byte 0x50008615
-	.4byte Data_02030000 + 0xb
+	.4byte 0x0203000b
 	.4byte Func_02000620
 	.4byte 0x50008615
 	.4byte 0x0204000c
@@ -8901,7 +8901,7 @@ Data_0200521c:
 	.4byte 0xffff0000
 	.4byte Func_02000a10
 	.4byte 0x50008805
-	.4byte BattleFx_JupiterDjinnSmallSheet + 0x62
+	.4byte 0x088d000a
 	.4byte Func_020015d4
 	.4byte 0x00000000
 	.4byte 0x08f00008
@@ -8958,7 +8958,7 @@ Data_0200521c:
 	.4byte 0xffff000c
 	.4byte 0x00001ab4
 	.4byte 0x00008d15
-	.4byte Resource_Data193 + 0xfb8
+	.4byte 0x088f040c
 	.4byte Func_02000550
 	.4byte 0x00008d15
 	.4byte 0x08f0000c
@@ -8973,7 +8973,7 @@ Data_0200521c:
 	.4byte 0xffff000d
 	.4byte 0x00001ab5
 	.4byte 0x00008d15
-	.4byte Resource_Data193 + 0xfb9
+	.4byte 0x088f040d
 	.4byte Func_020005a8
 	.4byte 0x00008d15
 	.4byte 0x08f0000d
@@ -9008,16 +9008,16 @@ Data_020053fc:
 	.4byte 0xffff0002
 	.4byte 0x00000002
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000634
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000634
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000634
 	.4byte 0x50008615
-	.4byte Data_02030000 + 0xb
+	.4byte 0x0203000b
 	.4byte Func_02000634
 	.4byte 0x50008615
 	.4byte 0x0204000c
@@ -9073,16 +9073,16 @@ Data_020054e0:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000648
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000648
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000648
 	.4byte 0x50008615
-	.4byte Data_02030000 + 0xb
+	.4byte 0x0203000b
 	.4byte Func_02000648
 	.4byte 0x00000002
 	.4byte 0x020b000b
@@ -9117,13 +9117,13 @@ Data_02005594:
 	.4byte 0xffff0003
 	.4byte 0x00000003
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000684
 	.4byte 0x50008615
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000684
 	.4byte 0x50008615
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000684
 	.4byte 0x00008b85
 	.4byte 0xffff0000
@@ -9132,7 +9132,7 @@ Data_02005594:
 	.4byte 0xffff0000
 	.4byte Func_02000a10
 	.4byte 0x00000006
-	.4byte BattleFx_RevealMaskD + 0x366
+	.4byte 0x088b00d2
 	.4byte Func_02000a8c
 	.4byte 0x00000006
 	.4byte 0xffff00c9
@@ -9141,7 +9141,7 @@ Data_02005594:
 	.4byte 0xffff00ca
 	.4byte Func_02000e78
 	.4byte 0x00000002
-	.4byte Resource_Data12D + 0x68e
+	.4byte 0x088c000a
 	.4byte Func_02000fc8
 	.4byte 0xffffffff
 	.4byte 0x00000000
@@ -9275,7 +9275,7 @@ Data_020057e0:
 	.4byte 0xffff0002
 	.4byte 0x00000002
 	.4byte 0x50008615
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000670
 	.4byte 0x00008b85
 	.4byte 0xffff0000

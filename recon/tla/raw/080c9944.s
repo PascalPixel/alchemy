@@ -233,7 +233,7 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r6, #0
-	bl Func_081b2000
+	bl Resource_FarCall00E
 .L_080c9b1e:
 	movs r3, #128
 	movs r2, #132

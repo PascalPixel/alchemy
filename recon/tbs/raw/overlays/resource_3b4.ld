@@ -13,7 +13,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/RUN_2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3b4_overlay.o"(.rodata.part1)
+        "*/resource_3b4_overlay.o"(.rodata.x0200a644)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

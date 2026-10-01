@@ -2215,9 +2215,9 @@ Func_0200153c:
 .L_0200954c:
 	.4byte 0x00000000
 .L_02009550:
-	.4byte gOverlayArea + 0x3c14
+	.4byte Data_02003c14
 .L_02009554:
-	.4byte gOverlayArea + 0x3c10
+	.4byte Data_02003c10
 	.section .text.x02009558,"ax",%progbits
 	.global Func_02001558
 	.thumb_func
@@ -2251,9 +2251,9 @@ Func_02001558:
 .L_0200958c:
 	.4byte 0x00000001
 .L_02009590:
-	.4byte gOverlayArea + 0x3c14
+	.4byte Data_02003c14
 .L_02009594:
-	.4byte gOverlayArea + 0x3990
+	.4byte Data_02003990
 .L_02009598:
 	.4byte 0xa2600001
 .L_0200959c:
@@ -2320,11 +2320,11 @@ Func_020015a0:
 .L_0200960c:
 	.4byte 0x00000001
 .L_02009610:
-	.4byte gOverlayArea + 0x3c14
+	.4byte Data_02003c14
 .L_02009614:
-	.4byte gOverlayArea + 0x3990
+	.4byte Data_02003990
 .L_02009618:
-	.4byte gOverlayArea + 0x3c10
+	.4byte Data_02003c10
 	.section .text.x0200961c,"ax",%progbits
 	.global Func_0200161c
 	.thumb_func
@@ -5527,7 +5527,7 @@ gIdejimaEventsWake:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00000003
-	.4byte Resource_Data012 + 0x33000a
+	.4byte 0x0863000a
 	.4byte Func_020000f0
 	.4byte 0x00000003
 	.4byte 0x0864000b
@@ -5555,3 +5555,13 @@ gIdejimaSpawnScript:
 	.4byte 0x00000000
 	.4byte 0x0000002e
 	.4byte 0x00000026
+	.section .bss,"aw",%nobits
+	.space 0x00000008
+	.global Data_02003990
+Data_02003990:
+	.space 0x00000280
+	.global Data_02003c10
+Data_02003c10:
+	.space 0x00000004
+	.global Data_02003c14
+Data_02003c14:

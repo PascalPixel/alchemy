@@ -4632,13 +4632,13 @@ Func_020024ac:
 .L_0200a540:
 	.4byte Data_02006710
 .L_0200a544:
-	.4byte gOverlayArea + 0x67f4
+	.4byte Data_020067f4
 .L_0200a548:
-	.4byte gOverlayArea + 0x67f8
+	.4byte Data_020067f8
 .L_0200a54c:
-	.4byte gOverlayArea + 0x67ec
+	.4byte Data_020067ec
 .L_0200a550:
-	.4byte gOverlayArea + 0x67f0
+	.4byte Data_020067f0
 .L_0200a554:
 	.4byte gPartyState
 .L_0200a558:
@@ -4730,13 +4730,13 @@ Func_0200257c:
 .L_0200a5fc:
 	.4byte Data_02006710
 .L_0200a600:
-	.4byte gOverlayArea + 0x67ec
+	.4byte Data_020067ec
 .L_0200a604:
-	.4byte gOverlayArea + 0x67f0
+	.4byte Data_020067f0
 .L_0200a608:
-	.4byte gOverlayArea + 0x67f4
+	.4byte Data_020067f4
 .L_0200a60c:
-	.4byte gOverlayArea + 0x67f8
+	.4byte Data_020067f8
 	.section .text.x0200a610,"ax",%progbits
 	.global Func_02002610
 	.thumb_func
@@ -4805,13 +4805,13 @@ Func_02002610:
 .L_0200a690:
 	.4byte Data_02006710
 .L_0200a694:
-	.4byte gOverlayArea + 0x67ec
+	.4byte Data_020067ec
 .L_0200a698:
-	.4byte gOverlayArea + 0x67f0
+	.4byte Data_020067f0
 .L_0200a69c:
-	.4byte gOverlayArea + 0x67f4
+	.4byte Data_020067f4
 .L_0200a6a0:
-	.4byte gOverlayArea + 0x67f8
+	.4byte Data_020067f8
 	.section .text.x0200a6a4,"ax",%progbits
 	.global Func_020026a4
 	.thumb_func
@@ -9950,7 +9950,7 @@ Data_02005840:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9964,13 +9964,13 @@ Data_02005870:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff014e
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff014e
 	.4byte 0x00000007
 	.4byte 0x00000003
@@ -10006,13 +10006,13 @@ Data_02005870:
 	.4byte 0x00000008
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01e9
 	.4byte 0x00000007
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x006b00f5
 	.4byte 0x00000001
 	.4byte 0x01280000
@@ -10032,37 +10032,37 @@ Data_02005978:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff01e9
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0197
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0197
 	.4byte 0x00000001
 	.4byte 0x00000007
@@ -10088,49 +10088,49 @@ Data_02005a50:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0x03500194
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x03510194
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0179
 	.4byte 0x00000007
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapBlocks
+	.4byte 0x02020000
 	.4byte 0xffff0179
 	.4byte 0x00000007
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02028000
+	.4byte 0x02028000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000008
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000009
@@ -10178,25 +10178,25 @@ Data_02005a50:
 	.4byte 0x00000010
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000011
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000012
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff014e
 	.4byte 0x00000007
 	.4byte 0x00000013
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -10210,13 +10210,13 @@ Data_02005c30:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff01e9
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0175
 	.4byte 0x00000001
 	.4byte 0x00e80000
@@ -10242,31 +10242,31 @@ Data_02005ca8:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff013f
 	.4byte 0x00000007
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -10280,7 +10280,7 @@ Data_02005d38:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000002
@@ -10298,19 +10298,19 @@ Data_02005d38:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0124
 	.4byte 0x00000001
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0145
 	.4byte 0x00000001
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0145
 	.4byte 0x00000001
 	.4byte 0x00000007
@@ -10334,7 +10334,7 @@ Data_02005d38:
 	.4byte 0x0000000a
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff016c
 	.4byte 0x00000001
 	.4byte 0x0000000b
@@ -10358,19 +10358,19 @@ Data_02005d38:
 	.4byte 0x0000000e
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff016d
 	.4byte 0x00000001
 	.4byte 0x0000000f
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000010
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -10384,25 +10384,25 @@ Data_02005ed0:
 	.4byte 0x00000001
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte Data_02024000
+	.4byte 0x02024000
 	.4byte 0xffff0138
 	.4byte 0x00000007
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff016d
 	.4byte 0x00000001
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff016d
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.4byte gMapCollision
+	.4byte 0x0202c000
 	.4byte 0xffff0005
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -10980,3 +10980,15 @@ Data_02006714:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_020067ec
+Data_020067ec:
+	.space 0x00000004
+	.global Data_020067f0
+Data_020067f0:
+	.space 0x00000004
+	.global Data_020067f4
+Data_020067f4:
+	.space 0x00000004
+	.global Data_020067f8
+Data_020067f8:

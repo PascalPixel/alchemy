@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009620,"a",%progbits
+.L_02009620:
 	.4byte 0x00000022
 	.4byte EventScript_PrepareActorRenderFlags
 	.4byte 0x00000010
@@ -75,6 +76,7 @@ YamaRama_LeaderAction:
 	.4byte 0x00000010
 	.global YamaRama_ActorNineAction
 YamaRama_ActorNineAction:
+.L_02009730:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x0000001c
@@ -291,7 +293,7 @@ YamaRama_TemplePlacements:
 	.4byte 0x00000000
 	.4byte 0x0001c000
 	.4byte 0xffff0029
-	.4byte 0x02009730
+	.4byte .L_02009730
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -309,7 +311,7 @@ YamaRama_TemplePlacements:
 	.4byte 0x01140000
 	.4byte 0x00008000
 	.4byte 0x18950082
-	.4byte 0x02009620
+	.4byte .L_02009620
 	.4byte 0x01c80000
 	.4byte 0x00000000
 	.4byte 0x00c80000

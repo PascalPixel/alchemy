@@ -1,7 +1,7 @@
 .syntax unified
 	.thumb
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x020091f4,"a",%progbits
+.L_020091f4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -16,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200922c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -30,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009264:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -46,9 +48,10 @@
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x020091f4
-	.4byte 0x0200922c
-	.4byte 0x02009264
+	.4byte .L_020091f4
+	.4byte .L_0200922c
+	.4byte .L_02009264
+.L_020092a8:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -102,6 +105,7 @@ gEffectScripts:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000010
+.L_0200937c:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -296,13 +300,13 @@ KuupuappuMuraSai_Actors:
 	.4byte 0x012c0000
 	.4byte 0x0000b000
 	.4byte 0xffff006b
-	.4byte 0x020092a8
+	.4byte .L_020092a8
 	.4byte 0x00840000
 	.4byte 0x00000000
 	.4byte 0x017c0000
 	.4byte 0x00028000
 	.4byte 0xffff0066
-	.4byte 0x0200937c
+	.4byte .L_0200937c
 	.4byte 0x00840000
 	.4byte 0x00000000
 	.4byte 0x01a40000
@@ -421,37 +425,37 @@ KuupuappuMuraSai_Extras:
 	.4byte 0x0000000e
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02008d25
+	.4byte SceneState_SetFlag200AndConfigureRegion55_26
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008d4d
+	.4byte ActorPresentation_SetFlag200AndSceneCell23
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008ac9
+	.4byte FieldScene_SetupScene5
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008af1
+	.4byte ActorPresentation_SetupActorEighteenAt312_304
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008b19
+	.4byte FieldScene_SetupScene7
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008b41
+	.4byte ActorPresentation_SetupActorZeroForSceneEight
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008b9d
+	.4byte ActorPresentation_SetupActorZeroForSceneNine
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x02008bf9
+	.4byte FieldScene_SetupScene10
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte 0x02008c1d
+	.4byte ActorDraw_SetupActorSceneCells
 	.4byte 0x0000c602
 	.4byte 0xffff000c
-	.4byte 0x02008cc9
+	.4byte ActorPresentation_SetupActorZeroForSceneTwelve
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020084d9
+	.4byte SceneDialogue_RunActor8FlagScene
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001cac
@@ -460,40 +464,40 @@ KuupuappuMuraSai_Extras:
 	.4byte 0x00001cad
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0200850d
+	.4byte SceneDialogue_RunActor11Line
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0200852d
+	.4byte SceneDialogue_RunActor12TwoFlagScene
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200856d
+	.4byte SceneDialogue_ShowLine1CB0ForActor13
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0200858d
+	.4byte SceneDialogue_RunActorFourteenFlagDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02008641
+	.4byte SceneDialogue_RunActorFifteenFacingPreservedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020086b5
+	.4byte SceneDialogue_RunActor16CountedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte 0x00001cb8
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x02008e91
+	.4byte FieldScene_RunActorEighteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte 0x00001cf1
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008d75
+	.4byte FieldScene_SetActor21Values0And4
 	.4byte 0x00000003
 	.4byte 0xffff001e
-	.4byte 0x020089f9
+	.4byte FieldScene_RunActor21SequenceOnce
 	.4byte 0x00008d15
 	.4byte 0x03050408
-	.4byte 0x02008711
+	.4byte SceneDialogue_RunActorEightTimedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001cba
@@ -505,31 +509,31 @@ KuupuappuMuraSai_Extras:
 	.4byte 0x00001cbc
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x02008755
+	.4byte SceneDialogue_RunActor11AcceptanceDialogue
 	.4byte 0x00008d15
 	.4byte 0x0306040c
-	.4byte 0x02008785
+	.4byte SceneDialogue_RunActor12TimedTwoFlagScene
 	.4byte 0x00008d15
 	.4byte 0xffff000c
 	.4byte 0x00001cbe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x020087d5
+	.4byte ActorPresentation_RunActor13AcceptanceDialogue
 	.4byte 0x00008d15
 	.4byte 0x0307040e
-	.4byte 0x02008805
+	.4byte KuupuappuMuraSai_RunActor14Talk
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x02008805
+	.4byte KuupuappuMuraSai_RunActor14Talk
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x02008865
+	.4byte SceneDialogue_RunActorFifteenDialogue
 	.4byte 0x00008d15
 	.4byte 0x03080410
-	.4byte 0x020088a9
+	.4byte FieldScene_RunScene385SequenceA
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x020088a9
+	.4byte FieldScene_RunScene385SequenceA
 	.4byte 0x00008d15
 	.4byte 0xffff0011
 	.4byte 0x00001cc3
@@ -544,19 +548,19 @@ KuupuappuMuraSai_Extras:
 	.4byte 0x00001cf5
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x02008f01
+	.4byte SceneState_SetFlag947AndValue29dc
 	.4byte 0x000000d3
 	.4byte 0x0f4a0065
 	.4byte 0x001000b5
 	.4byte 0x0000e714
 	.4byte 0x08580012
-	.4byte 0x02008d85
+	.4byte FieldScene_RunActor18MotionSequence
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008e61
+	.4byte ActorPresentation_SetAlternatePairedSceneCells
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02008e31
+	.4byte ActorPresentation_SetPairedSceneCells
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

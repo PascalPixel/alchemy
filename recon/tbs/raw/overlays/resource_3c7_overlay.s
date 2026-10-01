@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009314,"a",%progbits
 	.global gRariberoPoseAction
 gRariberoPoseAction:
 	.4byte 0x00000015
@@ -56,7 +56,7 @@ gRariberoPoseAction:
 	.4byte 0x00000000
 	.4byte 0x00000014
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte SceneActor_SetActor14Pose258
 	.4byte 0x00000000
 	.4byte 0x0000001e
 	.4byte 0x0000001c
@@ -501,34 +501,34 @@ gRariberoHeyaPlacements9a7:
 gRariberoEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000026c9
@@ -591,16 +591,16 @@ gRariberoEvents:
 	.4byte 0x000026df
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x020080c9
+	.4byte RariberoHeya_RunItemShop
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x0200815d
+	.4byte Dialogue_HandleFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020081c9
+	.4byte Dialogue_HandleAlternateFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008235
+	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x000026e6
@@ -635,34 +635,34 @@ gRariberoEvents:
 gRariberoEvents9a7:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0006
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0007
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000028d2
@@ -725,16 +725,16 @@ gRariberoEvents9a7:
 	.4byte 0x000028e5
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x020080c9
+	.4byte RariberoHeya_RunItemShop
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x0200815d
+	.4byte Dialogue_HandleFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020081c9
+	.4byte Dialogue_HandleAlternateFacingBranch
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008235
+	.4byte Dialogue_HandleFacingAction
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x000028f1
@@ -769,34 +769,34 @@ gRariberoEvents9a7:
 gRariberoHeyaEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0017
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0018
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0019
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001a
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001b
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001c
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001d
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001e
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000026d3
@@ -817,13 +817,13 @@ gRariberoHeyaEvents:
 	.4byte 0x000026e2
 	.4byte 0x00000000
 	.4byte 0x0300000e
-	.4byte 0x02008309
+	.4byte RariberoScene_PlayPoseSequence
 	.4byte 0x00008d15
 	.4byte 0x0300040e
-	.4byte 0x02008309
+	.4byte RariberoScene_PlayPoseSequence
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200829d
+	.4byte Dialogue_HandleFacingCueBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x000026f0
@@ -858,40 +858,40 @@ gRariberoHeyaEvents:
 gRariberoHeyaEvents9a7:
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0017
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0018
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff0019
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001a
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001b
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001c
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001d
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001e
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte 0x0200848d
+	.4byte SceneState_ForwardWord16cAndApply7b
 	.4byte 0x00000002
 	.4byte 0x09bc0033
-	.4byte 0x020083f5
+	.4byte FieldScene_RunSequenceA
 	.4byte 0x00000000
 	.4byte 0x09ba000c
-	.4byte 0x02008469
+	.4byte FieldScene_RunThreeCallSequence
 	.4byte 0x00008d15
 	.4byte 0x09ba000c
 	.4byte 0x0000288d
@@ -927,7 +927,7 @@ gRariberoHeyaEvents9a7:
 	.4byte 0x000028ef
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200829d
+	.4byte Dialogue_HandleFacingCueBranch
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x000028f7

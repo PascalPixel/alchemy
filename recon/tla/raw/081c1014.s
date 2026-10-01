@@ -56,7 +56,7 @@ Func_081c1014:
 	mov r0, r11
 	adds r0, #1
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	mov r11, r0
 	bl Sound_LoadPresetParameters
 .L_081c1082:

@@ -3290,9 +3290,9 @@ Func_02001cac:
 	subs r3, #12
 	bx lr
 .L_02009cf0:
-	.4byte gOverlayArea + 0x4f04
+	.4byte Data_02004f04
 .L_02009cf4:
-	.4byte gOverlayArea + 0x4f10
+	.4byte Data_02004f10
 .L_02009cf8:
 	.4byte 0xa2600001
 	.section .text.x02009cfc,"ax",%progbits
@@ -3367,9 +3367,9 @@ Func_02001cfc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009d84:
-	.4byte gOverlayArea + 0x4f04
+	.4byte Data_02004f04
 .L_02009d88:
-	.4byte gOverlayArea + 0x4f10
+	.4byte Data_02004f10
 .L_02009d8c:
 	.4byte Data_0300122c
 	.section .text.x02009d90,"ax",%progbits
@@ -3882,13 +3882,13 @@ Func_02002144:
 .L_0200a1be:
 	pop {r5, r6, pc}
 .L_0200a1c0:
-	.4byte gOverlayArea + 0x519c
+	.4byte Data_0200519c
 .L_0200a1c4:
-	.4byte gOverlayArea + 0x5194
+	.4byte Data_02005194
 .L_0200a1c8:
-	.4byte gOverlayArea + 0x5198
+	.4byte Data_02005198
 .L_0200a1cc:
-	.4byte gOverlayArea + 0x5190
+	.4byte Data_02005190
 	.section .text.x0200a1d0,"ax",%progbits
 	.global Func_020021d0
 	.thumb_func
@@ -4164,13 +4164,13 @@ Func_020021d0:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0200a420:
-	.4byte gOverlayArea + 0x519c
+	.4byte Data_0200519c
 .L_0200a424:
-	.4byte gOverlayArea + 0x5194
+	.4byte Data_02005194
 .L_0200a428:
-	.4byte gOverlayArea + 0x5198
+	.4byte Data_02005198
 .L_0200a42c:
-	.4byte gOverlayArea + 0x5190
+	.4byte Data_02005190
 	.section .text.x0200a430,"ax",%progbits
 	.global Func_02002430
 	.thumb_func
@@ -4237,13 +4237,13 @@ Func_02002430:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a4b8:
-	.4byte gOverlayArea + 0x519c
+	.4byte Data_0200519c
 .L_0200a4bc:
-	.4byte gOverlayArea + 0x5194
+	.4byte Data_02005194
 .L_0200a4c0:
-	.4byte gOverlayArea + 0x5198
+	.4byte Data_02005198
 .L_0200a4c4:
-	.4byte gOverlayArea + 0x5190
+	.4byte Data_02005190
 	.section .text.x0200a4c8,"ax",%progbits
 	.global Func_020024c8
 	.thumb_func
@@ -7408,11 +7408,11 @@ Data_02004070:
 	.4byte 0x014b014c
 	.global Data_0200407c
 Data_0200407c:
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.4byte 0x0020f0e0
 	.4byte 0x2008e0f8
-	.4byte Sound_Wave29 + 0x134c
+	.4byte 0x0820f8e0
 	.4byte 0x2008e0f8
 	.global Data_02004094
 Data_02004094:
@@ -7721,12 +7721,12 @@ Data_02004508:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00980000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000016
 	.4byte 0x00000028
@@ -7744,7 +7744,7 @@ Data_02004554:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00b00000
@@ -7759,7 +7759,7 @@ Data_020045a4:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00f80000
@@ -7782,7 +7782,7 @@ Data_020045f0:
 	.4byte 0x00000004
 	.4byte 0x00f80000
 	.4byte 0x00000000
-	.4byte gHeapSlots
+	.4byte 0x03000000
 	.4byte 0x00000001
 	.4byte 0x00000004
 	.4byte 0x00f80000
@@ -8392,3 +8392,21 @@ Data_02004e5c:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.global Data_02004f04
+Data_02004f04:
+	.space 0x0000000c
+	.global Data_02004f10
+Data_02004f10:
+	.space 0x00000280
+	.global Data_02005190
+Data_02005190:
+	.space 0x00000004
+	.global Data_02005194
+Data_02005194:
+	.space 0x00000004
+	.global Data_02005198
+Data_02005198:
+	.space 0x00000004
+	.global Data_0200519c
+Data_0200519c:

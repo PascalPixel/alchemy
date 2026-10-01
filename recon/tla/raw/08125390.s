@@ -155,7 +155,7 @@ Battle_ApplyActionExtras:
 	bls .L_081254b8
 	movs r0, #1
 .L_081254b8:
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	movs r4, #148
 	adds r3, r0, #0
 	lsls r4, r4, #1
@@ -194,7 +194,7 @@ Battle_ApplyActionExtras:
 	bls .L_08125500
 	movs r0, #1
 .L_08125500:
-	bl Resource_FarCall005
+	bl Trade_GetOfferStateFar
 	movs r4, #148
 	adds r3, r0, #0
 	lsls r4, r4, #1

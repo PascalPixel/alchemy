@@ -2130,7 +2130,7 @@ Data_020014b8:
 	.4byte 0xffff0004
 	.4byte 0x00000004
 	.4byte 0x00000002
-	.4byte gHeapSlots + 0x14
+	.4byte 0x03000014
 	.4byte Func_020000d0
 	.4byte 0x00000002
 	.4byte 0x03010015

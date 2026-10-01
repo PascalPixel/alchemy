@@ -301,7 +301,7 @@ Func_0814627c:
 	adds r0, r7, #0
 	str r3, [sp, #40]
 	str r7, [sp, #32]
-	bl __modsi3
+	bl Math_Mod
 	ldr r1, [sp, #36]
 	mov r2, r9
 	adds r0, r0, r1

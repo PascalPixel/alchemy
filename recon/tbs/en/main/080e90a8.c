@@ -66,7 +66,7 @@ void BattleMotion_ApproachTargetFar(s32 position, s32 target, s32 speed, s32 mod
 struct SlotObject **GetBattleObjectSlotFar(s32 target);
 s32 Random16(void);
 void EffectPosition_ApplyStepAndYOffset(s32 position, s32 *out);
-void EffectPosition_ApplyBaseAndYOffset(void *shard, s32 *out);
+s32 EffectPosition_ApplyBaseAndYOffset(void *shard, s32 *out);
 void EffectStep_AdvanceWithGravity3D(void *shard, s32 a, s32 b);
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
 s32 Scheduler_RemoveCallback(u32 callback);
@@ -92,6 +92,7 @@ void Unnamed_080e90a8(struct ShardEffect *object)
     u8 *cells;
     u8 *transfer;
     struct SlotObject *slot;
+    struct Shard *seed;
     struct Shard *shard;
     s32 position[3];
     s32 origin[3];
@@ -120,19 +121,19 @@ void Unnamed_080e90a8(struct ShardEffect *object)
     slot = *GetBattleObjectSlotFar(work->effect->target);
 
     i = 0;
-    shard = work->shards;
+    seed = work->shards;
     do {
-        shard->x = slot->x;
-        shard->y = slot->y;
-        shard->z = slot->z;
-        shard->vx = (Random16() & 255) << 11;
-        shard->vy = ((Random16() & 255) - 127) << 12;
-        shard->vz = ((Random16() & 255) - 127) << 12;
-        if (shard->x > 0) {
-            shard->vx = -shard->vx;
+        seed->x = slot->x;
+        seed->y = slot->y;
+        seed->z = slot->z;
+        seed->vx = (Random16() & 255) << 11;
+        seed->vy = ((Random16() & 255) - 127) << 12;
+        seed->vz = ((Random16() & 255) - 127) << 12;
+        if (seed->x > 0) {
+            seed->vx = -seed->vx;
         }
-        shard->life = i / 4 * 2 + 16;
-        shard++;
+        seed->life = i / 4 * 2 + 16;
+        seed++;
         i++;
     } while (i != 64);
 

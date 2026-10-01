@@ -165,10 +165,10 @@ Func_080c81b8:
 	.thumb_func
 Func_080c81c0:
 	overlay_veneer Func_080d4178
-	.global Func_080c81c8
+	.global Event_ShowCounterAtPositionFar
 	.thumb_func
-Func_080c81c8:
-	overlay_veneer Func_080d4180
+Event_ShowCounterAtPositionFar:
+	overlay_veneer Event_ShowCounterAtPosition
 	.global ObjectMotion_ArmCallbackFar
 	.thumb_func
 ObjectMotion_ArmCallbackFar:

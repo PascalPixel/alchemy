@@ -3105,10 +3105,10 @@ Func_080d40dc:
 Func_080d4178:
 	.incbin "baserom.gba", 0x000d916c, 0x00000008
 	.section .rom.000d9174, "ax"
-	.global Func_080d4180
-	.type Func_080d4180, %function
+	.global Event_ShowCounterAtPosition
+	.type Event_ShowCounterAtPosition, %function
 	.thumb_func
-Func_080d4180:
+Event_ShowCounterAtPosition:
 	.incbin "baserom.gba", 0x000d9174, 0x00000068
 	.section .rom.000d91f0, "ax"
 	.global Func_080d41fc

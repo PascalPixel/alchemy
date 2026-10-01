@@ -37,7 +37,7 @@ Resource_DirectoryTable:
 	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
 	resource IntroGraphicsA, Title_IntroGraphicsA
-	resource , Title_IntroGraphicsB
+	resource IntroGraphicsB, Title_IntroGraphicsB
 	resource IntroGraphicsC, Title_IntroGraphicsC
 	resource NintendoLogo, Title_NintendoLogo
 	resource CamelotLogo, Title_CamelotLogo

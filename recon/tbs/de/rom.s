@@ -1845,10 +1845,10 @@ DisplayScroll_LineTable:
 	.section .rom.000f3cea, "ax"
 	.incbin "baserom.gba", 0x000f3cea, 0x00000002
 	.section .rom.000f3cec, "ax"
-	.global Func_080f26ec
-	.type Func_080f26ec, %function
+	.global Title_ShowIntro
+	.type Title_ShowIntro, %function
 	.thumb_func
-Func_080f26ec:
+Title_ShowIntro:
 	.incbin "baserom.gba", 0x000f3cec, 0x00000494
 	.section .rom.000f4180, "ax"
 	.global Func_080f2b6c

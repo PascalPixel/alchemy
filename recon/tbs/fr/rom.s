@@ -1839,15 +1839,11 @@ DisplayScroll_SlideResources:
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f42a4, 0x00000d5c
 	.section .rom.000f5028, "ax"
-	.incbin "baserom.gba", 0x000f5028, 0x00000478
-	.section .rom.000f56ea, "ax"
-	.incbin "baserom.gba", 0x000f56ea, 0x00000002
-	.section .rom.000f56ec, "ax"
-	.global Func_080f26ec
-	.type Func_080f26ec, %function
+	.global Func_080f2028
+	.type Func_080f2028, %function
 	.thumb_func
-Func_080f26ec:
-	.incbin "baserom.gba", 0x000f56ec, 0x00000480
+Func_080f2028:
+	.incbin "baserom.gba", 0x000f5028, 0x00000478
 	.section .rom.000f5b6c, "ax"
 	.global Func_080f2b6c
 	.type Func_080f2b6c, %function
@@ -1861,7 +1857,12 @@ Func_080f2b6c:
 Unnamed_080f3078:
 	.incbin "baserom.gba", 0x000f6078, 0x00000704
 	.section .rom.000f68bc, "ax"
-	.incbin "baserom.gba", 0x000f68bc, 0x00000744
+	.global Title_PromptTiles
+Title_PromptTiles:
+	.incbin "baserom.gba", 0x000f68bc, 0x000000ec
+	.global Title_PromptBlendLevels
+Title_PromptBlendLevels:
+	.incbin "baserom.gba", 0x000f69a8, 0x00000658
 	.section .rom.000f7168, "ax"
 	.global LuckyDice_Run
 	.type LuckyDice_Run, %function

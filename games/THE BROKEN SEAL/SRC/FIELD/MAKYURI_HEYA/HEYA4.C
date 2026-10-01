@@ -31,7 +31,7 @@ s32 StagedActor_FindClearPosition(struct ColumnProbe *probe);
 void SceneActor_MoveAndRedraw(struct ColumnProbe probe);
 s32 MakyuriHeya_StartPillarPush(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
-void FieldScene_RunPrimarySequence(s32 mode);
+void MakyuriHeya_OpenStoneDoor(s32 mode);
 s32 SceneData_ApplyTableA2c5AndReturnZero(void);
 void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 fourth);
 void Engine_ActorStartAction(s32 actor);
@@ -219,7 +219,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 SceneEffect_SpawnParticleRowsByMode(0);
             else if (start == 48)
                 SceneEffect_SpawnParticleRowsByMode(1);
-            FieldScene_RunPrimarySequence(2);
+            MakyuriHeya_OpenStoneDoor(2);
             goto wait;
         } else if (column == 48) {
             GameFlag_Set(0x31a);
@@ -231,7 +231,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 SceneEffect_SpawnParticleRowsByMode(2);
                 x = 210 << 18;
                 SceneData_ApplyTableA2c5AndReturnZero();
-                FieldScene_RunPrimarySequence(1);
+                MakyuriHeya_OpenStoneDoor(1);
                 Engine_ActorStartAction(9);
                 OverlayObject_PrepareSpawnedObject(x, 0, 0x3120000, 223);
                 OverlayObject_PrepareSpawnedObject(x, 0, 0x3320000, 223);
@@ -250,7 +250,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
             }
             SceneEffect_SpawnParticleRowsByMode(2);
             SceneData_ApplyTableA2c5AndReturnZero();
-            FieldScene_RunPrimarySequence(1);
+            MakyuriHeya_OpenStoneDoor(1);
             goto wait;
         } else if (column == 53) {
             GameFlag_Set(0x31b);
@@ -269,7 +269,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 SceneEffect_SpawnParticleRowsByMode(2);
             else if (start == 48)
                 SceneEffect_SpawnParticleRowsByMode(1);
-            FieldScene_RunPrimarySequence(0);
+            MakyuriHeya_OpenStoneDoor(0);
             Battle_WaitMode0(60);
         }
         break;
@@ -1401,16 +1401,16 @@ s32 Scene_Initialize(void)
             SceneEffect_SpawnParticleRowsByMode(0);
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
             if (Engine_GameFlagIsSet(0x319)) {
-                FieldScene_RunPrimarySequence(2);
+                MakyuriHeya_OpenStoneDoor(2);
                 if (Object_GetById(9)->z.fixed >> 20 == 44)
                     Engine_TaskAddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
             } else if (Engine_GameFlagIsSet(0x31a)) {
-                FieldScene_RunPrimarySequence(1);
+                MakyuriHeya_OpenStoneDoor(1);
             } else if (!Engine_GameFlagIsSet(0x31b)) {
-                FieldScene_RunPrimarySequence(0);
+                MakyuriHeya_OpenStoneDoor(0);
             }
 #else
-            FieldScene_RunPrimarySequence(1);
+            MakyuriHeya_OpenStoneDoor(1);
 #endif
         case 14:
             if (gGameState.entrance == 14)
@@ -1435,13 +1435,13 @@ s32 Scene_Initialize(void)
             }
             SceneEffect_SpawnParticleRowsByMode(0);
             if (Engine_GameFlagIsSet(0x319)) {
-                FieldScene_RunPrimarySequence(2);
+                MakyuriHeya_OpenStoneDoor(2);
                 if (Object_GetById(9)->z.fixed >> 20 == 44)
                     Engine_TaskAddCallback(SceneActor_UseActorNinePositionWithYOffset, 0xc80);
             } else if (Engine_GameFlagIsSet(0x31a)) {
-                FieldScene_RunPrimarySequence(1);
+                MakyuriHeya_OpenStoneDoor(1);
             } else if (!Engine_GameFlagIsSet(0x31b)) {
-                FieldScene_RunPrimarySequence(0);
+                MakyuriHeya_OpenStoneDoor(0);
             }
             break;
         case 15:

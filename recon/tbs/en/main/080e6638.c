@@ -5,7 +5,12 @@
  * reading the mask. What settled the rest: the palette entry is stored
  * through a chained assignment, so its address is live across the colour and
  * the 0x05000000 reload takes r5, which puts r5 in the reload rotation; the
- * ramp is one pointer variable; the two loops are plain for loops. */
+ * ramp is one pointer variable; the two loops are plain for loops.
+ * Tried for the order: an explicit pointer to the last entry before the
+ * mask pointer (it loses r9 to the hoisted blend register address), and
+ * the mask pointer assigned inside the loop with or without a direct
+ * restore (the loop pass then leaves it in r0). The reference hoists both,
+ * the ramp address first, and leaves the blend address without a register. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"

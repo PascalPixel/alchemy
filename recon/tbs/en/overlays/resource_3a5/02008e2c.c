@@ -41,16 +41,17 @@ void RamakanSabaku_ReturnToSafePoint(void)
     SceneState_SetHalfwordB030(1);
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {
         points = RamakanSabaku_SafePoints1;
-        count = 3;
+        left = 3;
     } else if (gGameState.scene == (s32)&SceneId_RamakanSabaku2) {
         points = RamakanSabaku_SafePoints2;
-        count = 5;
+        left = 5;
     } else {
         points = RamakanSabaku_SafePointsOther;
-        count = 2;
+        left = 2;
     }
+    count = left;
     point = points;
-    for (i = 0, left = count; left != 0; left--) {
+    for (i = 0; left != 0; left--) {
         distance = RamakanSabaku_CalculatePlanarDistance(&Actor_Get(0)->x.fixed, point);
         if (distance <= best) {
             best = distance;
@@ -59,8 +60,9 @@ void RamakanSabaku_ReturnToSafePoint(void)
         i += 8;
         point = (const s32 *)((const u8 *)points + i);
     }
+    nearest *= 2;
     Actor_SetSpeed(0, 0x20000, 0x10000);
-    Engine_ObjectSetPosition(Actor_Get(0), points[nearest * 2], 0, points[nearest * 2 + 1]);
+    Engine_ObjectSetPosition(Actor_Get(0), points[nearest], 0, points[nearest + 1]);
     Actor_Get(0)->velocity_y = 0x60000;
     Audio_PlayCue(152);
     OverlayObject_WaitUntilField12BelowLimit(Actor_Get(0), Actor_Get(0)->y.fixed);

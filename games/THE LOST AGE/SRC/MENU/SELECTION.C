@@ -1,18 +1,15 @@
 #include "TYPES.H"
-extern u8 gTitleExtraOptionEnabled[];
-
-struct MenuModeLabelState;
-extern struct MenuModeLabelState *gMenuSelectWork;
-extern u8 MsgPasswordLevel[];
+#include "RAM_BUFFER.H"
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
+/* ☀️'s, reaching the selection work through ⚓️'s heap slot. */
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
 {
     u8 *state;
     s32 i;
 
-    state = (u8 *)gMenuSelectWork;
+    state = Ram_HeapSlots->menu_select_work;
 
     *(u16 *)(state + 144) = (u16)((u32)w + 2);
     *(u16 *)(state + 146) = (u16)h;

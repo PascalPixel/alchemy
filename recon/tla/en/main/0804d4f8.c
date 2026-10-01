@@ -1,11 +1,25 @@
+/* Near miss: score 60. The tables take ☀️'s names in ⚓️'s listings. ⚓️
+   loads the command table's address before forming the index (ldr r2 ahead
+   of adds r3, r5, r7); this draft forms the index first. A table pointer,
+   TblGet and asm barriers (which change the addressing) did not fix it, nor
+   45 s of permuting. */
 #include "TYPES.H"
-extern u8 gTitleExtraOptionEnabled[];
+#include "TLA_EDITION.H"
 
-struct MenuModeLabelState;
-extern struct MenuModeLabelState *gMenuSelectWork;
-extern u8 MsgPasswordLevel[];
+extern s8 Menu_TopEntryPositionByCommand[];
+extern s8 Menu_TopEntryCommandByPosition[];
 
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
+s32 Party_SumDjinnCountsFar(s32);
+void *AffineEffect_InitializeWork(void);
+void Menu_AppendResourceEntry(s32 arg0);
+void Menu_CenterResourceEntries(s32, s32, s32);
+s32 Menu_RunResourceSelectionLoop(s32);
+void Menu_EndResourceSelection(void);
+
+static __inline__ s32 TblGet(s8 *tbl, s32 index)
+{
+    return tbl[index];
+}
 
 s32 Menu_SelectTopEntry(s32 sel)
 {

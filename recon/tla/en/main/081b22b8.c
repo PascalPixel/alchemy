@@ -1,6 +1,11 @@
+/* Near miss: score 60. The canvas is ⚓️'s heap slot battle_fx_work[1].
+   Before the first line loop ⚓️ loads the ~0x100 mask from the pool ahead
+   of building 0x100 inline (ldr r7, =0xfffffeff before movs r3, #128); this
+   draft builds 0x100 first. Clearing the bit first and 90 s of permuting
+   did not fix it. */
 #include "TYPES.H"
 
-extern u8 gBattleFxWork[];
+#include "RAM_BUFFER.H"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -13,7 +18,7 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
     s32 dx = x1 - x0;
     s32 dy = y1 - y0;
     s32 frac = 0x80;
-    u8 *canvas = ((u8 **)gBattleFxWork)[1];
+    u8 *canvas = Ram_HeapSlots->battle_fx_work[1];
     s32 step;
     s32 i;
     s32 x;

@@ -86,13 +86,13 @@ Func_020031a8:
 	.thumb_func
 Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
-	.global Func_020031b8
+	.global Engine_EventBegin
 	.thumb_func
-Func_020031b8:
+Engine_EventBegin:
 	overlay_veneer Func_080c8018
-	.global Func_020031c0
+	.global Engine_EventEnd
 	.thumb_func
-Func_020031c0:
+Engine_EventEnd:
 	overlay_veneer Func_080c8020
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
@@ -190,9 +190,9 @@ Object_LinkPair:
 	.thumb_func
 Object_SetPartAttribute:
 	overlay_veneer Object_SetPartAttributeFar
-	.global Func_02003288
+	.global Engine_EventSetMessage
 	.thumb_func
-Func_02003288:
+Engine_EventSetMessage:
 	overlay_veneer Func_080c8180
 	.global UiText_OpenMessageAtObject
 	.thumb_func
@@ -202,13 +202,13 @@ UiText_OpenMessageAtObject:
 	.thumb_func
 Func_02003298:
 	overlay_veneer Func_080c8198
-	.global Func_020032a0
+	.global Engine_EventShowMessage
 	.thumb_func
-Func_020032a0:
+Engine_EventShowMessage:
 	overlay_veneer Func_080c81a0
-	.global Func_020032a8
+	.global Engine_EventChooseYesNo
 	.thumb_func
-Func_020032a8:
+Engine_EventChooseYesNo:
 	overlay_veneer Func_080c81a8
 	.global ObjectMotion_ArmCallback
 	.thumb_func
@@ -245,23 +245,47 @@ Func_020032e8:
 	.global Func_020032f0
 	.thumb_func
 Func_020032f0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8368
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8368
+	.else
 	overlay_veneer Func_080c8378
+	.endif
+	.endif
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8398
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8398
+	.else
 	overlay_veneer Event_SetStatus1c6Far
+	.endif
+	.endif
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c83a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c83a0
+	.else
 	overlay_veneer Event_ClearStatus1c6Far
+	.endif
+	.endif
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.endif
@@ -269,7 +293,15 @@ Event_WaitValue1c8Frames:
 	.global Func_02003310
 	.thumb_func
 Func_02003310:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer Func_080c84e0
+	.endif
+	.endif
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:

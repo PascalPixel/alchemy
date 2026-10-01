@@ -22635,7 +22635,7 @@ msgctxt "MsgVinasuChojoTrueHeart"
 msgid "05656"
 msgstr "The true road can only{line_break}be known by he who bears{line_break}a true heart.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaIsThisThePlace"
 msgid "05657"
 msgstr "This is the place,{line_break}isn't it?{end_now}"
 
@@ -22811,7 +22811,7 @@ msgctxt "message"
 msgid "05700"
 msgstr "But...what will{line_break}happen to us?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHowLongWillWeDrift"
 msgid "05701"
 msgstr "Oh, Kraden... How long{line_break}will this island{line_break}continue to drift?{end_wait}"
 
@@ -22891,7 +22891,7 @@ msgctxt "message"
 msgid "05720"
 msgstr "What is this?{line_break}Alex, what happened?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaThoughtTheyWereInsideLighthouse"
 msgid "05721"
 msgstr "I thought {actor_name:5} and{line_break}{actor_name:7} were still{line_break}inside the lighthouse.{end_wait}"
 
@@ -23167,7 +23167,7 @@ msgctxt "message"
 msgid "05789"
 msgstr "Help!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCheckForInjuries"
 msgid "05790"
 msgstr "Do you want to check{line_break}yourself for injuries?{end_now}"
 
@@ -23183,7 +23183,7 @@ msgctxt "message"
 msgid "05793"
 msgstr "You walk around a bit,{line_break}and everything seems fine.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaGroan"
 msgid "05794"
 msgstr "Oooog...{end_wait}"
 
@@ -23219,7 +23219,7 @@ msgctxt "message"
 msgid "05802"
 msgstr "Kraden has joined{line_break}your party.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaAwakeningExclamation"
 msgid "05803"
 msgstr "What...{end_wait}"
 
@@ -23259,7 +23259,7 @@ msgctxt "message"
 msgid "05812"
 msgstr "{actor_name:6} has{line_break}joined your party.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaSecondGroan"
 msgid "05813"
 msgstr "Ohhh...{end_wait}"
 
@@ -23299,7 +23299,7 @@ msgctxt "message"
 msgid "05822"
 msgstr "{actor_name:7} has{line_break}joined your party.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHeyGarcia"
 msgid "05823"
 msgstr "Hey, {actor_name:5}!{end_wait}"
 
@@ -23335,7 +23335,7 @@ msgctxt "message"
 msgid "05831"
 msgstr "Kraden has{line_break}joined your party.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCantBelieveYouTwo"
 msgid "05832"
 msgstr "I can't believe you two!{end_wait}"
 
@@ -23371,7 +23371,7 @@ msgctxt "message"
 msgid "05840"
 msgstr "{actor_name:6} has{line_break}joined your party.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWaitForMe"
 msgid "05841"
 msgstr "Wa-Wait!{end_wait}"
 
@@ -23423,7 +23423,7 @@ msgctxt "message"
 msgid "05853"
 msgstr "{actor_name:7} has{line_break}joined your party.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWhereHasAlexGone"
 msgid "05854"
 msgstr "By the way...{line_break}Where has Alex gone?{end_wait}"
 

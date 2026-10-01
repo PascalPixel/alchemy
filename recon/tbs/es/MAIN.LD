@@ -263,7 +263,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE2.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.0001ae60)
+    "*/games/THE BROKEN SEAL/SRC/MENU/PUSH_SELECTION.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU13.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_CLOSE_AND_RELEASE.o"(.text)

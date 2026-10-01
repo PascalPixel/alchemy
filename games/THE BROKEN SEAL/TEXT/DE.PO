@@ -10867,23 +10867,23 @@ msgctxt "MsgShortcutSetR"
 msgid "02714"
 msgstr "{button_icon:4} wurde mit Abk. belegt."
 
-msgctxt "message"
+msgctxt "MsgShortcutChangeHelp"
 msgid "02715"
 msgstr "{button_icon:3}{button_icon:4}:Abkürz. ändern"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyL"
 msgid "02716"
 msgstr "{button_icon:3}:Auf {button_icon:3} legen"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyR"
 msgid "02717"
 msgstr "{button_icon:4}:Auf {button_icon:4} legen"
 
-msgctxt "message"
+msgctxt "MsgShortcutNameL"
 msgid "02718"
 msgstr "{button_icon:3}:{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgShortcutNameR"
 msgid "02719"
 msgstr "{button_icon:4}:{argument_ability_name}"
 

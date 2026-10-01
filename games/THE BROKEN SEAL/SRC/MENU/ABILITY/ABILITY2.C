@@ -76,7 +76,12 @@ struct MenuCursorWork {
     u8 reserved_00[16];
     struct MenuCursorWindow *window;
     struct MenuCursorSprite *cursor;
+    u8 reserved_18[0x20a];
+    /* Set to place the cursor at once: the next slide is skipped. */
+    u16 skip_slide;
 };
+
+void WaitFrames(s32 frames);
 
 extern u8 UiMenu_CursorBobX[];
 extern u8 UiMenu_CursorBobY[];
@@ -221,4 +226,60 @@ void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
     work->cursor->attributes.y = work->cursor->y =
         UiMenu_CursorBobY[(gFrameCount >> 1) & 7] + y_offset
         + work->window->y * 8 + 8;
+}
+
+/* Slides the menu cursor to the given pixel offset in two steps, a frame
+ * apart, from where its sprite stands, pulled eight pixels back on each
+ * axis. A set skip flag is cleared instead and the cursor stays. */
+void UiMenu_SlideCursor(s32 x, s32 y)
+{
+    struct MenuCursorWork *work = (struct MenuCursorWork *)gMenuWork;
+    struct MenuCursorSprite *cursor;
+    s32 steps;
+    s32 start_x;
+    s32 start_y;
+    s32 px;
+    s32 py;
+    s32 dx;
+    s32 dy;
+
+    steps = 2;
+    if (work->skip_slide != 0) {
+        work->skip_slide = 0;
+        return;
+    }
+    cursor = work->cursor;
+    {
+        s32 sprite_x = cursor->attributes.x + 64;
+        s32 sprite_y = cursor->attributes.y + 64;
+
+        cursor->x = sprite_x;
+        cursor->y = sprite_y;
+    }
+    x += 64;
+    y += 64;
+    if (cursor->x - 8 > 0)
+        cursor->x -= 8;
+    py = cursor->y;
+    if (py - 8 > 0) {
+        cursor->y -= 8;
+        py = cursor->y;
+    }
+    start_x = cursor->x << 4;
+    dx = ((x << 4) - start_x + 1) / steps;
+    start_y = py << 4;
+    dy = ((y << 4) - start_y + 1) / steps;
+    px = start_x;
+    py = start_y;
+    do {
+        px += dx;
+        cursor->attributes.x = cursor->x =
+            (px >> 4) + (work->window->x << 3) - 56;
+        py += dy;
+        cursor->attributes.y = cursor->y =
+            (py >> 4) + (work->window->y << 3) - 56;
+        steps--;
+        if (steps != 0)
+            WaitFrames(1);
+    } while (steps != 0);
 }

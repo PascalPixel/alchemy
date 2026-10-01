@@ -589,44 +589,18 @@ DisplayTransition_Start:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00090ac8, 0x00000718
-	.section .rom.00091324, "ax"
-	.global Object_EffectSpawnCallback
-	.type Object_EffectSpawnCallback, %function
-	.thumb_func
-Object_EffectSpawnCallback:
-	.incbin "baserom.gba", 0x00091324, 0x000001dc
 	.section .rom.00092ccc, "ax"
 	.global UiText_OpenMessageAtObject
 	.type UiText_OpenMessageAtObject, %function
 	.thumb_func
 UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x00092ccc, 0x00000344
-	.section .rom.0009402c, "ax"
-	.global battle_owner_69
-	.type battle_owner_69, %function
-	.thumb_func
-battle_owner_69:
-	.incbin "baserom.gba", 0x0009402c, 0x000001b4
 	.section .rom.000945d0, "ax"
 	.global DisplayScroll_BuildAndSwapHBlankPage
 	.type DisplayScroll_BuildAndSwapHBlankPage, %function
 	.thumb_func
 DisplayScroll_BuildAndSwapHBlankPage:
 	.incbin "baserom.gba", 0x000945d0, 0x000001ec
-	.section .rom.000948ac, "ax"
-	.incbin "baserom.gba", 0x000948ac, 0x00000188
-	.section .rom.00094b54, "ax"
-	.global Unnamed_08094ac8
-	.type Unnamed_08094ac8, %function
-	.thumb_func
-Unnamed_08094ac8:
-	.incbin "baserom.gba", 0x00094b54, 0x000000f4
-	.section .rom.00094c48, "ax"
-	.global Unnamed_08094bbc
-	.type Unnamed_08094bbc, %function
-	.thumb_func
-Unnamed_08094bbc:
-	.incbin "baserom.gba", 0x00094c48, 0x000001e4
 	.section .rom.000976d0, "ax"
 	.global Func_08097644
 	.type Func_08097644, %function
@@ -653,12 +627,6 @@ RunBattleEffect05:
 	.thumb_func
 Battle_unk3_2:
 	.incbin "baserom.gba", 0x00099e3c, 0x000004f0
-	.section .rom.0009ac4c, "ax"
-	.global BattleEffect_RunFallbackObjectTransition
-	.type BattleEffect_RunFallbackObjectTransition, %function
-	.thumb_func
-BattleEffect_RunFallbackObjectTransition:
-	.incbin "baserom.gba", 0x0009ac4c, 0x000001bc
 	.section .rom.0009aefa, "ax"
 	.incbin "baserom.gba", 0x0009aefa, 0x00000002
 	.section .rom.0009aefc, "ax"
@@ -739,7 +707,10 @@ ObjectMotion_VariantScripts:
 	.incbin "baserom.gba", 0x0009ed54, 0x00000184
 	.global ObjectGroup_BlinkChildValues
 ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x0009eed8, 0x000002a4
+	.incbin "baserom.gba", 0x0009eed8, 0x00000204
+	.global FieldFx_GroundParticleFrames
+FieldFx_GroundParticleFrames:
+	.incbin "baserom.gba", 0x0009f0dc, 0x000000a0
 	.global Data_0809f024
 Data_0809f024:
 	.incbin "baserom.gba", 0x0009f17c, 0x00000080
@@ -810,7 +781,10 @@ ObjectMotion_TurnTowardLinkedScript:
 	.incbin "baserom.gba", 0x000a0084, 0x00000014
 	.global ObjectMotion_LinkedActionScript
 ObjectMotion_LinkedActionScript:
-	.incbin "baserom.gba", 0x000a0098, 0x000000de
+	.incbin "baserom.gba", 0x000a0098, 0x00000018
+	.global FieldFx_GroundParticleTiles
+FieldFx_GroundParticleTiles:
+	.incbin "baserom.gba", 0x000a00b0, 0x000000c6
 	.global FieldFx_MoteTiles
 FieldFx_MoteTiles:
 	.incbin "baserom.gba", 0x000a0176, 0x0000009a
@@ -826,14 +800,6 @@ BattleFx_UntargetedObjectScript:
 	.global gEffectScripts
 gEffectScripts:
 	.incbin "baserom.gba", 0x000a0284, 0x00000d7c
-	.section .rom.000a1abe, "ax"
-	.incbin "baserom.gba", 0x000a1abe, 0x00000002
-	.section .rom.000a1ac0, "ax"
-	.global UiMenu_SlideCursor
-	.type UiMenu_SlideCursor, %function
-	.thumb_func
-UiMenu_SlideCursor:
-	.incbin "baserom.gba", 0x000a1ac0, 0x00000108
 	.section .rom.000a24d0, "ax"
 	.global RunAssetSelectionScreen
 	.type RunAssetSelectionScreen, %function
@@ -852,24 +818,12 @@ Func_080a414c:
 	.global Func_080a4f08
 Func_080a4f08:
 	.incbin "baserom.gba", 0x000a4f08, 0x000002c8
-	.section .rom.000a5388, "ax"
-	.global Unnamed_080a5388
-	.type Unnamed_080a5388, %function
-	.thumb_func
-Unnamed_080a5388:
-	.incbin "baserom.gba", 0x000a5388, 0x000001ac
 	.section .rom.000a5d3c, "ax"
 	.global Menu_ResolveSelectedAction
 	.type Menu_ResolveSelectedAction, %function
 	.thumb_func
 Menu_ResolveSelectedAction:
 	.incbin "baserom.gba", 0x000a5d3c, 0x00000320
-	.section .rom.000a6690, "ax"
-	.global Func_080a6614
-	.type Func_080a6614, %function
-	.thumb_func
-Func_080a6614:
-	.incbin "baserom.gba", 0x000a6690, 0x00000180
 	.section .rom.000a8680, "ax"
 	.global CharacterMenu_DrawStatusAilments
 	.type CharacterMenu_DrawStatusAilments, %function

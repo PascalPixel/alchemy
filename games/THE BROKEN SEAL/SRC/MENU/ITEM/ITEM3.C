@@ -2,6 +2,7 @@
 #include "INVENTORY_MENU.H"
 /* Item menu: ask whether to drop the item and return the chosen row (1 when cancelled). */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 extern u8 MsgItemName;
 extern void UiIcon_PrepareObject(void *icon);
@@ -122,5 +123,110 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
         sel = 1;
     }
     UiWork_FinalizeFar(win, 1);
+    return sel;
+}
+
+extern u8 MsgEquipThisItem[];
+void ItemMenu_DrawEquipPreview(s32 owner, s32 item, s32 mode, s32 target);
+void *Runtime_BumpAllocate(s32 size);
+void Runtime_BumpFree(void *block);
+s32 Inventory_EquipFar(s32 owner, s32 item);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
+void Owner_RecalculateStatsFar(s32 owner);
+void Owner_RefreshClassActionsFar(s32 owner);
+
+typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
+
+static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
+{
+    /* FAKEMATCH: a direct call loads the size before the copy routine and
+       the two blocks, where the reference loads it last. */
+    return copy(dst, src, size);
+}
+
+/* Item menu: equip the item on its target for a preview, ask whether to
+   keep it, and put the target's saved state back unless the answer is yes.
+   Returns the chosen row, 1 when declined, cancelled or not equippable. */
+s32 Unnamed_080a5388(void)
+{
+    s32 sel = 0;
+    s32 changed = 1;
+    struct InventoryMenuState *menu = gMenuWork;
+    void *state = (void *)Owner_GetStateFar(menu->target_owner);
+    void *saved;
+    s32 win;
+    s32 item;
+    s32 owner;
+
+    item = menu->equip_item;
+    owner = menu->target_owner;
+    ItemMenu_DrawEquipPreview(owner, item, 0, owner);
+    saved = Runtime_BumpAllocate(0x14c);
+    CopyWords((WordCopyFn)Iwram_CopyWords, saved, state, 0x14c);
+    win = menu->message_window;
+    if ((u32)(Inventory_EquipFar(menu->target_owner, menu->equip_item) + 2) <= 1) {
+        sel = 1;
+    } else {
+        /* The Japanese menu stacks the two answers at the right; the
+           international menus set them side by side under the question. */
+#if EDITION_INTERNATIONAL
+        UiText_DrawCharacterAtOffsetFar((s32)MsgYes, (void *)win, 24, 24);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgYes + 1, (void *)win, 72, 24);
+        UiWindow_ClearInteriorTilesFar(win, 16, 16, 96, 24);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgEquipThisItem, (void *)win, 0, 16);
+        UiMenu_SlideCursor(110, 32);
+#else
+        UiText_DrawCharacterAtOffsetFar((s32)MsgYes, (void *)win, 96, 0);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgYes + 1, (void *)win, 96, 16);
+        UiWindow_ClearInteriorTilesFar(win, 16, 16, 96, 24);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgEquipThisItem, (void *)win, 8, 16);
+        UiMenu_SlideCursor(184, 5);
+#endif
+        for (;;) {
+            if (GameFlag_IsSet(0x150))
+                break;
+            if (changed) {
+                changed = 0;
+                sel = __modsi3(sel + 2, 2);
+            }
+            if (gKeyState & 1) {
+                Audio_PlayCue(175);
+                break;
+            }
+            if (gKeyState & 2) {
+                Audio_PlayCue(113);
+                sel = 1;
+                break;
+            }
+#if EDITION_INTERNATIONAL
+            UiMenu_PositionCursor(sel * 48 + 110, 32);
+            if (gKeysRepeat & 32) {
+#else
+            UiMenu_PositionCursor(184, (sel << 4) + 5);
+            if (gKeysRepeat & 64) {
+#endif
+                sel--;
+                changed = 1;
+                Audio_PlayCue(111);
+            }
+#if EDITION_INTERNATIONAL
+            if (gKeysRepeat & 16) {
+#else
+            if (gKeysRepeat & 128) {
+#endif
+                sel++;
+                changed = 1;
+                Audio_PlayCue(111);
+            }
+            WaitFrames(1);
+        }
+    }
+    if (GameFlag_IsSet(0x150))
+        sel = 1;
+    if (sel == 1)
+        CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, 0x14c);
+    Runtime_BumpFree(saved);
+    Owner_RecalculateStatsFar(menu->target_owner);
+    Owner_RefreshClassActionsFar(menu->target_owner);
     return sel;
 }

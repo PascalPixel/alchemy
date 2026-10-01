@@ -18,7 +18,13 @@
    r0 and r0 reused, postreload's move2add has no register still holding
    0x28d to derive 0x28b from. Compiling the draft after its neighbour
    BattleFx_FinishSceneAndReleaseHeapBlock changes nothing (reload state is
-   per function). */
+   per function).
+   2026-10-02 (slice 4): here r0 enters the spill set at one instruction,
+   the third vector load before the last call (r1 and r2 hold the first two
+   loads, r3 is the destination, r0 is free). The reference takes r4 at an
+   instruction like it, so r0 holds a value there: the angle returned by
+   ArcTan2 is the candidate, still unstored. Keeping the angle in a local
+   and storing it last moves it to a saved register instead (score 4020). */
 #include "TYPES.H"
 
 struct FxVector {

@@ -515,8 +515,8 @@ ObjectMotion_VariantScripts:
 	.global ObjectGroup_BlinkChildValues
 ObjectGroup_BlinkChildValues:
 	.incbin "baserom.gba", 0x0009ed80, 0x00000204
-	.global Data_0809ef84
-Data_0809ef84:
+	.global FieldFx_GroundParticleFrames
+FieldFx_GroundParticleFrames:
 	.incbin "baserom.gba", 0x0009ef84, 0x000000a0
 	.global Data_0809f024
 Data_0809f024:

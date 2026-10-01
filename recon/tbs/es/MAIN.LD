@@ -791,7 +791,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000ea18c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000ea6ac)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE7.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000eab38)
     "*/recon/tbs/es/rom.o"(.rom.000eac04)

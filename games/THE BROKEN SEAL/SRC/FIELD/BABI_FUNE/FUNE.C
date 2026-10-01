@@ -65,7 +65,7 @@ u8 *SceneData_GetTable971c(void)
 void PlayWorkspaceCueAndClearPaletteZero(void)
 {
     Engine_EventRequestExit(gEventWork->touched_trigger);
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         u16 color = PALETTE == 0;
         register volatile u16 *palette = PALETTE;

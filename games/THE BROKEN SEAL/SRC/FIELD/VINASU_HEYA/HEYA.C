@@ -454,7 +454,7 @@ void Effect_AdvanceMotion(struct Effect_0200096c *effect)
     s32 velocity_x;
 
     /* The block keeps the Z load after the Y store. */
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];
         effect->position[0] += velocity_x;

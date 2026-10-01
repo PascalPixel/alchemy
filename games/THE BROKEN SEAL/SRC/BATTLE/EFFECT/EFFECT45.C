@@ -56,12 +56,12 @@ extern struct Cells03001ce0 gProjection;
 void QueueIoWriteDelay2(u32 first, u32 second);
 
 #define QUEUE_DISPLAY_CONTROL(control) do { \
-    /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+    /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \
@@ -148,12 +148,12 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 
 #undef QUEUE_DISPLAY_CONTROL
 #define QUEUE_DISPLAY_CONTROL(control) do { \
-    /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+    /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
         u32 saved;                                                          \
         s32 count;                                                          \
                                                                             \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \
@@ -285,9 +285,9 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             do { \
-                /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+                /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
                 ime = &REG_IME;                                             \
                 saved = *ime;                                               \
             } while (0);                                                    \

@@ -29,12 +29,12 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
     u16 *palette = screen->palette;
     volatile u32 ime;
 
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         volatile u32 *slot = &ime;
         u16 *ime_reg = (u16 *)0x04000208;
 
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             *slot = *ime_reg;
             *ime_reg = (u32)ime_reg;
@@ -78,7 +78,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 
         q = &gIoWriteQueue;
         {
-            /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+            /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
             do {
                 ime = (volatile u16 *)0x04000208;
                 saved = *ime;

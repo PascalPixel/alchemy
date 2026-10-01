@@ -16,7 +16,7 @@ extern s32 Korosseo_CompetitorStartAngle;
  * the count store's cast preserves the queue entry scheduling. */
 #define QUEUE_IO_WRITE(address, value, delay)                                \
     do { \
-        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
         volatile u16 *ime;                                                   \
         struct IoWriteQueue *q;                                              \
         u32 saved;                                                           \
@@ -24,7 +24,7 @@ extern s32 Korosseo_CompetitorStartAngle;
                                                                              \
         q = &gIoWriteQueue;                                                  \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                  \
             saved = *ime;                                                    \
         } while (0);                                                         \

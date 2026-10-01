@@ -24903,7 +24903,7 @@ msgctxt "message"
 msgid "06223"
 msgstr "Let's go see about{line_break}finding ourselves a{line_break}ship we can use.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsFound"
 msgid "06224"
 msgstr "We've been found!{end_wait}"
 
@@ -24923,35 +24923,35 @@ msgctxt "message"
 msgid "06228"
 msgstr "And if you think we{line_break}did, then prove it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorIntroducesHimself"
 msgid "06229"
 msgstr "I'm, uh, from Kibombo...{line_break}It's, er...nice to meet you.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsBlameContinentsCollision"
 msgid "06230"
 msgstr "Hey, we're just here to{line_break}finish what you guys{line_break}started, OK?{page_break}You guys are the ones who{line_break}rammed into our continent,{line_break}and don't you forget it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsClaimCamping"
 msgid "06231"
 msgstr "Hey, we're just out here, uh...{line_break}camping... Yup. If you want{line_break}good camping, go to Indra.{page_break}We're just here to, you know,{line_break}see the sights and stuff.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsFriendsComing"
 msgid "06232"
 msgstr "Our friends from Kibombo{line_break}are coming soon.{page_break}When they get here,{line_break}we'll all come say hello.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsRegretMadraRaid"
 msgid "06233"
 msgstr "Oh, tense... We're busted!{line_break}They're on to us, I know it!{page_break}We never should have{line_break}launched that raid on{line_break}Madra without the others!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsLostFood"
 msgid "06234"
 msgstr "My family lost its entire{line_break}store of food°months'{line_break}worth, gone in a flash!{page_break}Well, we'll show those{line_break}foreigners what happens{line_break}when they mess with us!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsThreatenTown"
 msgid "06235"
 msgstr "And once our Kibombo warriors{line_break}swarm over your town, we'll{line_break}all be real good friends...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKibonboWarriorsWonderAboutPrisoners"
 msgid "06236"
 msgstr "It was a good raid, but{line_break}after all that work, we{line_break}didn't find a thing...{page_break}I wonder what happened{line_break}to those people who fled{line_break}from the jail we broke into.{end_wait}"
 
@@ -37099,11 +37099,11 @@ msgctxt "message"
 msgid "09272"
 msgstr "Watching our catches dwindle{line_break}with every day... It's a nightmare!{line_break}Where have all the fish gone?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaCaptainLastHope"
 msgid "09273"
 msgstr "Briggs bears the weight{line_break}of hope for our struggling,{line_break}impoverished village.{page_break}He must return home soon,{line_break}before all the villagers lose hope{line_break}and fall into despair.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaNeedsCaptainTreasure"
 msgid "09274"
 msgstr "I hope Briggs brings something{line_break}home for us... If not, it might{line_break}be the end of Champa...{end_wait}"
 
@@ -39623,11 +39623,11 @@ msgctxt "message"
 msgid "09903"
 msgstr "The only way to find your{line_break}special purpose in life{line_break}is to work hard.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaTreasureEncouragesLaziness"
 msgid "09904"
 msgstr "Briggs's jewels have turned{line_break}this poor town into a wealthy{line_break}place, but he brought too many.{page_break}Now, the hardworking people of{line_break}Champa have learned to be{line_break}lazy louts.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChanpaVillagersStoppedWorking"
 msgid "09905"
 msgstr "All the people in town think{line_break}they can live without ever{line_break}having to work again.{page_break}They've quit their jobs,{line_break}and they rely too heavily{line_break}on Briggs's find.{end_wait}"
 
@@ -47299,7 +47299,7 @@ msgctxt "message"
 msgid "11822"
 msgstr "You... You can't be!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgImiruVoicesDisbeliefReply"
 msgid "11823"
 msgstr "You... You can't be!{end_wait}"
 

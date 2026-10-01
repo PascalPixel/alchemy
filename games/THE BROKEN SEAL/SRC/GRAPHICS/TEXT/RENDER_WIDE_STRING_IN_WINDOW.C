@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -49,7 +50,7 @@ void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
             case 11:
             case 12:
             case 17:
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
             /* Code 29 carries an operand outside the Japanese edition. */
             case 29:
 #endif

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "STORY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -229,14 +230,16 @@ void StoryScene_ShowRewardDialogue(void)
 {
 
     Engine_EventBegin();
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA) || defined(TBS_EDITION_DE)
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#else
     Battle_SetObjectFlag5bWhenMode3();
 #endif
     Engine_MessageShowCentered((s32)MsgWorldMapWreckageShipScuttledOffCoast, 1);
     if (GameFlag_IsSet(0x234) != 0) {
         ((struct StoryDialogueWork *)gEventWork)->story_result = 1;
     }
-#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA) || defined(TBS_EDITION_DE)
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+#else
     Battle_ClearObjectFlag5bWhenMode3();
 #endif
     Engine_EventEnd();

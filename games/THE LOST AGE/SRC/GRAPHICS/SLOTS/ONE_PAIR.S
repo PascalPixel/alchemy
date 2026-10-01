@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Slots_OnePairBanner: its 16-colour palette, then 128 tiles of 4-bit colour packed
 @ by the resource packer.
 	.section .rodata
 	.global Slots_OnePairBanner
 Slots_OnePairBanner:
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.incbin "GRAPHICS/SLOTS/ONE_PAIR_JA.gbapal"
 	.incbin "GRAPHICS/SLOTS/ONE_PAIR_JA.4bpp.lz"
 	.else

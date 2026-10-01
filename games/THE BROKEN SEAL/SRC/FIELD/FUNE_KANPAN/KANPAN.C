@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -647,7 +648,7 @@ void FuneKanpan_RunDeckStateEvent(void)
     Event_SetValue170(*(s16 *)(((s32)p6 + 0x16c)));
 }
 
-#if !defined(TBS_EDITION_EN) && !defined(TBS_EDITION_JA)
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 /* The localized deck entrance aligns a leader approaching from this sector
  * before running the requested deck state event. */
 void FuneKanpan_RunDeckStateEventFromEntry(void)

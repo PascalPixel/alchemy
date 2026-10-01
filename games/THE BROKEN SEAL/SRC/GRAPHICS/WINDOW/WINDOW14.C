@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
@@ -34,7 +35,15 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void)
     return slot;
 }
 
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+/* A routine that only reports success, after the fixed resource block
+   loader; nothing in the image calls it by name. The Japanese edition checks
+   the name entry's voiced marks here instead. */
+s32 Resource_ReturnTrue(void)
+{
+    return 1;
+}
+#else
 /* The letters that take the voiced and the semi-voiced mark, as pairs of
    first and last codes ending at zero. */
 extern const u8 NameEntry_DakutenRanges[];
@@ -71,14 +80,6 @@ s32 NameEntry_CountLetters(const u8 *name)
             count++;
     }
     return count;
-}
-#else
-/* A routine that only reports success, after the fixed resource block
-   loader; nothing in the image calls it by name. The Japanese edition checks
-   the name entry's voiced marks here instead. */
-s32 Resource_ReturnTrue(void)
-{
-    return 1;
 }
 #endif
 
@@ -167,7 +168,7 @@ void Resource_CopyFixedBlockA(s32 arg0)
 }
 
 /* The Japanese edition has neither of the two text helpers that follow. */
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 /* ui/text/text_set_render_string.c */
 /* ui/text/misc/set_render_string.c */
 s32 UiText_SetRenderString(const u8 *str)

@@ -1,7 +1,8 @@
+#include "EDITION.H"
 #include "TYPES.H"
 
 /* The column that centres the pair: each edition's words set its width. */
-#if defined(TBS_EDITION_JA) || defined(TLA_EDITION_JA)
+#if !EDITION_INTERNATIONAL
 #define PAIR_COLUMN 7
 #elif defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 #define PAIR_COLUMN 10

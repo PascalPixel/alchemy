@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Import veneers after the GOMA_HASHIRA overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -170,7 +171,7 @@ Engine_ActorShowEmote:
 	.thumb_func
 BattleFx_SetPhaseRequest:
 	overlay_veneer BattleFx_SetPhaseRequestFar
-.ifndef TBS_EDITION_JA
+.if EDITION_INTERNATIONAL
 	.global Field_TryJumpForward
 	.thumb_func
 Field_TryJumpForward:

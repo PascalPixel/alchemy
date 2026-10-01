@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Word clearing and filling, integer square root and bit-run expansion of
 @ the resident runtime. IwramClearWords sets the fill value to zero and
 @ falls into the fill, which jumps into its unrolled stmia run with
@@ -69,7 +70,7 @@ IwramSqrt:
 
 	.global IwramExpandBitRuns
 IwramExpandBitRuns:
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	add	ip, r0, #24
 	.else
 	add	ip, r0, #28

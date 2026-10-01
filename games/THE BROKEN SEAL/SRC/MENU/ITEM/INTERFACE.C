@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "INVENTORY_MENU.H"
 #include "A8_STATE.H"
 #include "OBJECT_FACTORY.H"
@@ -87,7 +88,7 @@ void ItemMenu_HideAllIcons(void)
     }
 }
 
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 /* Only the localised item menus hide the first icon of each page; the
    Japanese edition has no such routine. */
 void ItemMenu_HidePageIcons(void)

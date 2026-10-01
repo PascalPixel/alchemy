@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "ITEM_IDS.H"
@@ -257,7 +258,7 @@ prepare:
 /* The "shown" half word at +100 of an actor record. */
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
 s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
 {
     struct FieldActor *obj;
@@ -294,7 +295,7 @@ void ActorPresentation_SetSceneCellByAngle(void)
 {
     s32 x;
     s32 z;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     struct FixedPointPosition target;
     struct FixedPointPosition *pos;
     struct FieldActor *obj;
@@ -302,30 +303,30 @@ void ActorPresentation_SetSceneCellByAngle(void)
 
     if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0xa000
         && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0xe000) {
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+        Engine_LeaderCheckAhead();
+#else
         obj = ((struct FieldActor *(*)())Object_GetById)(0);
         pos = &target;
         pos->x = obj->x.fixed;
         pos->y = ((struct FieldActor *(*)())Object_GetById)(0)->y.fixed;
         pos->z = ((struct FieldActor *(*)())Object_GetById)(0)->z.fixed - 0x1e0000;
         KuupuappuHeya_TryJumpTo(pos);
-#else
-        Engine_LeaderCheckAhead();
 #endif
         x = 42;
         z = 85;
         Map_CopyCellAttributes(41, 85, 1, 1, x, z);
     } else if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0x2000
                && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0x6000) {
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+        Engine_LeaderCheckAhead();
+#else
         obj = ((struct FieldActor *(*)())Object_GetById)(0);
         pos = &target;
         pos->x = obj->x.fixed;
         pos->y = ((struct FieldActor *(*)())Object_GetById)(0)->y.fixed;
         pos->z = ((struct FieldActor *(*)())Object_GetById)(0)->z.fixed + 0x1e0000;
         KuupuappuHeya_TryJumpTo(pos);
-#else
-        Engine_LeaderCheckAhead();
 #endif
         x = 42;
         z = 85;
@@ -445,7 +446,7 @@ void FieldScene_RunActorEighteenConditionalScene(void)
 
 void SceneDialogue_ShowLine12BB(void)
 {
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     Battle_InitializeRenderObject();
 #endif
     Engine_EventSetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "ITEM.H"
@@ -52,12 +53,12 @@ struct ItemCommandWork {
 
 /* Where the shorter modal lines start: the Japanese ones a column or three
    further right. */
-#if defined(TBS_EDITION_JA)
-#define MODAL_SHORT_X   15
-#define MODAL_REMOVED_X 17
-#else
+#if EDITION_INTERNATIONAL
 #define MODAL_SHORT_X   14
 #define MODAL_REMOVED_X 14
+#else
+#define MODAL_SHORT_X   15
+#define MODAL_REMOVED_X 17
 #endif
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
@@ -156,7 +157,7 @@ s32 UiIcon_PrepareObject();
 s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 {
     s32 done;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     s32 owner;
     s32 chosen;
 #endif
@@ -181,7 +182,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
     s8 stack;
 
     done = 0;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     owner = 0;
     chosen = 0;
 #endif
@@ -198,22 +199,22 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
             ItemMenu_DrawMsg(0, (s32)&MsgWhoseItem);
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+            RenderOutput_RedrawSavedRectFar(menu->info_window);
+            UiText_DrawWorkValueWithLabel(menu->info_window);
+            command = ItemMenu_PrepOwner(0);
+            if (command == -1) {
+                sel = command = 0;
+                ret = -1;
+                done = 1;
+            }
+#else
             /* The Japanese loop keeps the owner, item and target it chose
                and hands those out. */
             UiText_DrawWorkValueWithLabel(menu->info_window);
             owner = ItemMenu_PrepOwner(0);
             if (owner == -1) {
                 chosen = sel = owner = 0;
-                ret = -1;
-                done = 1;
-            }
-#else
-            RenderOutput_RedrawSavedRectFar(menu->info_window);
-            UiText_DrawWorkValueWithLabel(menu->info_window);
-            command = ItemMenu_PrepOwner(0);
-            if (command == -1) {
-                sel = command = 0;
                 ret = -1;
                 done = 1;
             }
@@ -251,14 +252,14 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             if (command == 0) {
                 if (BattleFx_HasTriggerFar(menu->selected_item & 0x1ff) != 0) {
                     done = 1;
-#if defined(TBS_EDITION_JA)
-                    *owner_out = owner;
-                    *target_out = chosen;
-                    *item_out = sel;
-#else
+#if EDITION_INTERNATIONAL
                     *owner_out = menu->item_owner;
                     *target_out = command;
                     *item_out = menu->selected_item & 0x1ff;
+#else
+                    *owner_out = owner;
+                    *target_out = chosen;
+                    *item_out = sel;
 #endif
                     ret = 1;
                     break;
@@ -273,7 +274,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
                         menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
                     menu->list.icon->state = 13;
@@ -315,11 +316,11 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
                 (s32)&MsgUseOnWhom, menu->message_window, 16, 16);
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+            if (ItemMenu_SelectTarget(0) != -1) {
+#else
             chosen = ItemMenu_SelectTarget(0);
             if (chosen != -1) {
-#else
-            if (ItemMenu_SelectTarget(0) != -1) {
 #endif
                 command = 0;
                 if (ItemMenu_IsSpecial(
@@ -333,7 +334,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     RenderOutput_ClearListFar(menu->info_window);
                     InventoryMenu_ShowModalMessage(
                         menu->message_offset + (s32)&MsgItemUseResult, 0, -1);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
                     menu->list.icon->state = 13;
@@ -356,14 +357,14 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
                 (s32)&MsgGiveToWhom, menu->message_window, 16, 16);
-#if defined(TBS_EDITION_JA)
-            chosen = ItemMenu_SelectTarget(1);
-            state = 4;
-            if (chosen == -1) {
-#else
+#if EDITION_INTERNATIONAL
             n = ItemMenu_SelectTarget(1);
             state = 4;
             if (n == -1) {
+#else
+            chosen = ItemMenu_SelectTarget(1);
+            state = 4;
+            if (chosen == -1) {
 #endif
                 ItemMenu_DrawEquipPreview(
                     menu->item_owner, menu->selected_slot, 0, menu->item_owner);
@@ -399,15 +400,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             UiWindow_ClearInteriorTilesFar(menu->preview_window, 0, 72, 120, 96);
             RenderOutput_RedrawSavedRectFar(menu->message_window);
             if (ItemMenu_ConfirmDrop(sel) == 0) {
-#if defined(TBS_EDITION_JA)
-                owner = menu->item_owner;
-                Owner_GetStateFar(owner);
-                for (work = 0; work < result + 1; work++) {
-                    Inventory_RemoveFar(owner, menu->selected_slot);
-                    Func_08077240(menu->selected_item & 0x1ff, 1);
-                }
-                Owner_RecalculateStatsFar(owner);
-#else
+#if EDITION_INTERNATIONAL
                 command = menu->item_owner;
                 Owner_GetStateFar(command);
                 for (work = 0; work < result + 1; work++) {
@@ -415,6 +408,14 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     Func_08077240(menu->selected_item & 0x1ff, 1);
                 }
                 Owner_RecalculateStatsFar(command);
+#else
+                owner = menu->item_owner;
+                Owner_GetStateFar(owner);
+                for (work = 0; work < result + 1; work++) {
+                    Inventory_RemoveFar(owner, menu->selected_slot);
+                    Func_08077240(menu->selected_item & 0x1ff, 1);
+                }
+                Owner_RecalculateStatsFar(owner);
 #endif
                 ItemMenu_SetItemWin3();
                 ItemMenu_RefreshOwner(menu->item_owner, 0);
@@ -499,7 +500,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             if (aborted == 0) {
                 menu->item_owner = menu->target_owner;
                 menu->selected_item &= 0x1ff;
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
                 ItemMenu_SetMsgWin6();
 #endif
                 RenderOutput_RedrawSavedRectFar(menu->message_window);
@@ -632,7 +633,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 Func_080772c0(menu->item_owner);
                 Func_080772c0(menu->target_owner);
                 ItemMenu_SetMsgWin5();
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
                 ItemMenu_SetMsgWin6();
                 ItemMenu_HidePageIcons();
 #endif
@@ -684,7 +685,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             if (result == -2) {
                 RenderOutput_ClearListFar(menu->info_window);
                 InventoryMenu_ShowModalMessage((s32)&MsgCannotRemoveItem, 0, -1);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
                 RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
                 state = 1;

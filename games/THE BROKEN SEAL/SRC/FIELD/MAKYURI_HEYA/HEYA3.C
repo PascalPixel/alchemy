@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "PROBE.H"
 #include "CALL.H"
 #include "TYPES.H"
@@ -23,12 +24,12 @@ void MakyuriHeya_WalkLeaderIn(void)
     } else if (*(s16 *)(work + 0x16c) == 4) {
         Actor_SetDestination(0, 248, 792);
     } else {
-#if defined(TBS_EDITION_JA)
-        Call3(Engine_ActorSetDestination, 0, 696, 592);
-#else
+#if EDITION_INTERNATIONAL
         Call3(Engine_ActorMoveToAndWait, 0, 696, 592);
+#else
+        Call3(Engine_ActorSetDestination, 0, 696, 592);
 #endif
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
         Actor_SetDestination(0, 696, 600);
         Battle_WaitMode0(30);
 #endif

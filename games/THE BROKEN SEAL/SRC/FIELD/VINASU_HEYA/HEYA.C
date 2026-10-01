@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "ENTRY_SETUP.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"
@@ -612,39 +613,39 @@ s32 SceneActor_TryMoveActorZeroTwoTilesAhead(void)
     u8 *state;
     u8 old;
     s32 m;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     u32 step;
 #endif
 
     obj = Actor_Get(ACTOR_PARTY_LEADER);
     state = &obj->state;
     old = *state;
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+    vec.x = (obj->x & 0xfff00000) + 0x80000;
+    vec.y = obj->y;
+    vec.z = (obj->z & 0xfff00000) + 0x80000;
+    m = (obj->angle + 0x2000) & 0xc000;
+    Vector_AddPolarOffset(0x100000, m, &vec);
+#else
     m = obj->angle >> 12;
     step = StagedActor_DirectionSteps[m];
     vec.x = obj->x + (step & 0xffff0000);
     vec.y = obj->y;
     step <<= 16;
     vec.z = obj->z + step;
-#else
-    vec.x = (obj->x & 0xfff00000) + 0x80000;
-    vec.y = obj->y;
-    vec.z = (obj->z & 0xfff00000) + 0x80000;
-    m = (obj->angle + 0x2000) & 0xc000;
-    Vector_AddPolarOffset(0x100000, m, &vec);
 #endif
     if (Object_CheckMovementCollision(obj, &vec) != 1 && SceneData_FindSlotAtPosition(&vec, obj) == 0) {
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+        vec.x = (obj->x & 0xfff00000) + 0x80000;
+        vec.y = obj->y;
+        vec.z = (obj->z & 0xfff00000) + 0x80000;
+        Vector_AddPolarOffset(0x200000, (obj->angle + 0x2000) & 0xc000, &vec);
+#else
         step = StagedActor_DirectionSteps[m];
         vec.x = obj->x + ((step & 0xffff0000) << 1);
         vec.y = obj->y;
         step <<= 17;
         vec.z = obj->z + step;
-#else
-        vec.x = (obj->x & 0xfff00000) + 0x80000;
-        vec.y = obj->y;
-        vec.z = (obj->z & 0xfff00000) + 0x80000;
-        Vector_AddPolarOffset(0x200000, (obj->angle + 0x2000) & 0xc000, &vec);
 #endif
         if (SceneData_FindSlotAtPosition(&vec, obj) == 0 && Object_CheckMovementCollision(obj, &vec) == 0) {
             Engine_EventBegin();
@@ -818,7 +819,7 @@ void SceneState_ApplySixRectsAfter161(void)
     s32 a;
     s32 b;
 
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     GameFlag_Clear(0x161);
 #endif
     x = 23;
@@ -842,7 +843,7 @@ void SceneState_ApplySixRectsAfterFlag161(void)
     s32 a;
     s32 b;
 
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
     GameFlag_Set(0x161);
 #endif
     x = 23;

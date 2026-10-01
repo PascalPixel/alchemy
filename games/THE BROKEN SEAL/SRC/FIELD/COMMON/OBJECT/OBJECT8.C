@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
@@ -5,12 +6,12 @@
 #include "RUNTIME_INTERFACES.H"
 
 struct SideObjectRegistry {
-#if defined(TBS_EDITION_JA)
-    u8 pad_0000[0x117c];
+#if EDITION_INTERNATIONAL
+    u8 pad_0000[0x12ec];
     u16 state_ids[2];
     u16 state_values[2];
 #else
-    u8 pad_0000[0x12ec];
+    u8 pad_0000[0x117c];
     u16 state_ids[2];
     u16 state_values[2];
 #endif

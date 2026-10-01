@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "ITEM_MENU.H"
 #include "BATTLE_TYPES.H"
@@ -27,12 +28,12 @@ void WaitFrames(s32 frames);
 
 /* The Japanese panel gives its four battle stats a fourth digit, a column
    further left. */
-#if defined(TBS_EDITION_JA)
-#define STAT_DIGITS 4
-#define STAT_X      192
-#else
+#if EDITION_INTERNATIONAL
 #define STAT_DIGITS 3
 #define STAT_X      200
+#else
+#define STAT_DIGITS 4
+#define STAT_X      192
 #endif
 
 
@@ -53,25 +54,25 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
     UiText_DrawCharacterAtOffsetFar(unit->class_index + (s32)&MsgClassName, window, 0, 32);
-#if defined(TBS_EDITION_JA)
-    UiText_DrawStringInWindowFar(Menu_LvString, window, 104, 0);
-#else
+#if EDITION_INTERNATIONAL
     UiText_DrawStringAtOffsetFar(Menu_LvString, window, 104, 0);
+#else
+    UiText_DrawStringInWindowFar(Menu_LvString, window, 104, 0);
 #endif
     UiWork_SetParamNibbleFar(15);
     UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
-#if defined(TBS_EDITION_JA)
-    UiText_DrawStringInWindowFar(Data_080af234, window, 40, 16);
-#else
+#if EDITION_INTERNATIONAL
     UiText_DrawStringAtOffsetFar(Data_080af234, window, 40, 16);
+#else
+    UiText_DrawStringInWindowFar(Data_080af234, window, 40, 16);
 #endif
     UiText_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
     UiText_DrawNumberInWindowFar(unit->max_hp, 4, window, 112, 16);
     UiText_DrawStringInWindowFar(Data_080af230, window, 104, 16);
-#if defined(TBS_EDITION_JA)
-    UiText_DrawStringInWindowFar(Data_080af238, window, 40, 24);
-#else
+#if EDITION_INTERNATIONAL
     UiText_DrawStringAtOffsetFar(Data_080af238, window, 40, 24);
+#else
+    UiText_DrawStringInWindowFar(Data_080af238, window, 40, 24);
 #endif
     UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
     UiText_DrawNumberInWindowFar(unit->max_pp, 4, window, 112, 24);

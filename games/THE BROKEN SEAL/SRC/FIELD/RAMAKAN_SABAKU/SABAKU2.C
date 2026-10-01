@@ -128,6 +128,9 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku3) {
         if (gGameState.entrance == 5) {
             GameFlag_Set(0x90a);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            GameFlag_Set(0x87a);
+#endif
         }
     }
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {

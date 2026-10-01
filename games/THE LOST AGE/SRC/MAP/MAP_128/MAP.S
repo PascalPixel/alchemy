@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Field_Map128: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map128
 Field_Map128:
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	map_header 0, 0, 120, 120, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff

@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Title_ScreenPicture: its 224-colour palette, then 600 tiles of 8-bit colour packed
 @ by the resource packer.
 	.section .rodata
 	.global Title_ScreenPicture
 Title_ScreenPicture:
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.incbin "GRAPHICS/TITLE/TITLE_SCREEN_JA.gbapal"
 	.incbin "GRAPHICS/TITLE/TITLE_SCREEN_JA.8bpp.lz"
 	.else

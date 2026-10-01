@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x02008690,"ax",%progbits
@@ -158,7 +159,7 @@ Func_02000690:
 	.global KuupuappuHeya_UpdateActorStops
 	.thumb_func
 KuupuappuHeya_UpdateActorStops:
-.ifdef TBS_EDITION_JA
+.ifeq EDITION_INTERNATIONAL
 @ Japanese actor stops always use the actor facing when the leader is outside
 @ the forward cone; localized editions additionally keep the near-point angle.
 	push {r5, r6, r7, lr}

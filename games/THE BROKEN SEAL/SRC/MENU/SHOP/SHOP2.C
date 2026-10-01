@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -239,10 +240,10 @@ done:
     return 0;
 }
 
-#if defined(TBS_EDITION_JA)
-#define FINAL_ARG 2
-#else
+#if EDITION_INTERNATIONAL
 #define FINAL_ARG 1
+#else
+#define FINAL_ARG 2
 #endif
 
 /* 固定値を設定し、3つの項目フラグを1にする。 */

@@ -16,9 +16,10 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 
-const USAGE: &str = "usage: alchemy build rom [--target tbs-en|tla-en] [--script FILE] [--output DIR] [--keep-going]\n\
+const USAGE: &str = "usage: alchemy build rom [--target GAME-EDITION] [--script FILE] [--output DIR] [--keep-going]\n\
 Compile and assemble every object the linker script lists, link them in its\n\
-order and write the ROM image beside the linker map. --keep-going writes the\n\
+order and write the ROM image beside the linker map. Japanese TBS is the default.\n\
+--keep-going writes the\n\
 image despite link errors, for locating differences; it never passes a compare.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
@@ -58,6 +59,137 @@ pub fn run(args: &[String]) -> Result<(), String> {
     println!("map={}", linked.map.display());
     println!("rom={}", linked.image.display());
     Ok(())
+}
+
+/// Compile candidate overlays through the ordinary pipeline without changing
+/// the ROM's selected stream composition or consulting reference bytes.
+pub fn run_overlays(args: &[String]) -> Result<(), String> {
+    const USAGE: &str = "usage: alchemy build overlays --target GAME-EDITION --id HEX [--id HEX ...] --output DIR\nBuild source-owned candidate streams against fresh same-edition main symbols in an isolated directory.";
+    let mut target = None;
+    let mut ids = Vec::new();
+    let mut output = None;
+    let mut args = args.iter();
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "-h" | "--help" => {
+                println!("{USAGE}");
+                return Ok(());
+            }
+            "--target" => target = Some(decomp_target(Some(args.next().ok_or(USAGE)?))?),
+            "--id" => ids.push(args.next().ok_or(USAGE)?.clone()),
+            "--output" => output = Some(PathBuf::from(args.next().ok_or(USAGE)?)),
+            _ => return Err(USAGE.into()),
+        }
+    }
+    let target = target.ok_or(USAGE)?;
+    let output = output.ok_or(USAGE)?;
+    if ids.is_empty() {
+        return Err(USAGE.into());
+    }
+    let root = crate::compiler::routing::root();
+    let ids = candidate_overlay_ids(root, target, &ids)?;
+    let output = candidate_output(root, &output)?;
+    // Replaying the normal source composition binds these symbols to this
+    // edition and current dependencies; no external symbol table is admitted.
+    let main = output.join("main");
+    let script = crate::edition::script(root, target, &main)?;
+    link(root, target, &script, &main, target.id.as_str(), false)?;
+    let symbols = main.join("symbols").join(format!("{}.elf", target.id));
+    base_rom(root, target, &output)?;
+    crate::build_text::build(root, target, &output)?;
+    let objects = build_overlays(root, target, &ids, &output, &symbols)?;
+    crate::gate::ids::check(Path::new(target.game_dir()), &objects)?;
+    println!(
+        "overlays={} objects={} output={}",
+        ids.len(),
+        objects.len(),
+        output.display()
+    );
+    Ok(())
+}
+
+fn candidate_output(root: &Path, output: &Path) -> Result<PathBuf, String> {
+    let resolved = resolved_directory(&root.join(output))?;
+    let root = fs::canonicalize(root).map_err(|error| error.to_string())?;
+    let out = resolved_directory(&root.join("out"))?;
+    if resolved == out || resolved.starts_with(&root) && !resolved.starts_with(&out) {
+        return Err(
+            "candidate output must be an isolated directory under out/ or outside the repository"
+                .into(),
+        );
+    }
+    for id in crate::targets::TARGET_IDS {
+        let live = resolved_directory(&root.join(crate::targets::target_for(id).output_dir))?;
+        if resolved.starts_with(&live) || live.starts_with(&resolved) {
+            return Err(format!("candidate output overlaps live {} products", id));
+        }
+    }
+    Ok(resolved)
+}
+
+fn resolved_directory(path: &Path) -> Result<PathBuf, String> {
+    use std::path::Component;
+    let mut resolved = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::CurDir => {}
+            Component::ParentDir => {
+                resolved.pop();
+            }
+            other => resolved.push(other.as_os_str()),
+        }
+    }
+    // Resolve existing ancestors too: a symlink must not turn an isolated
+    // candidate directory into any live ROM build's product directory.
+    let mut parent = resolved.as_path();
+    let mut suffix = Vec::new();
+    while !parent.exists() {
+        suffix.push(
+            parent
+                .file_name()
+                .ok_or("invalid candidate output directory")?
+                .to_owned(),
+        );
+        parent = parent
+            .parent()
+            .ok_or("invalid candidate output directory")?;
+    }
+    let mut resolved = fs::canonicalize(parent).map_err(|error| error.to_string())?;
+    for name in suffix.into_iter().rev() {
+        resolved.push(name);
+    }
+    Ok(resolved)
+}
+
+fn candidate_overlay_ids(
+    root: &Path,
+    target: DecompTarget,
+    ids: &[String],
+) -> Result<Vec<String>, String> {
+    let listings = overlay_listings(target);
+    let mut seen = BTreeSet::new();
+    let mut selected = Vec::new();
+    for id in ids {
+        if id.is_empty() || !id.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return Err(format!("invalid overlay id: {id}"));
+        }
+        let id = id.to_ascii_lowercase();
+        for source in [
+            overlay_script(&listings, &id),
+            listings.join(format!("resource_{id}_overlay.s")),
+        ] {
+            if !root.join(&source).is_file() {
+                return Err(format!(
+                    "{}: no maintained overlay source",
+                    source.display()
+                ));
+            }
+        }
+        if seen.insert(id.clone()) {
+            selected.push(id);
+        }
+    }
+    Ok(selected)
 }
 
 pub(crate) struct Linked {
@@ -645,14 +777,32 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
         hasher.update(step.join("\0").as_bytes());
         (format!("{:x}", hasher.finalize()), vec![step])
     };
-    if object.is_file() && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
+    if compiled_cache(object, &stamp, &key) {
         return Ok(());
     }
     let _ = fs::remove_file(&stamp);
     for step in &steps {
         command(step, root)?;
     }
+    fs::write(object.with_extension("o.digest"), object_digest(object)?)
+        .map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+pub(crate) fn compiled_cache(object: &Path, stamp: &Path, key: &str) -> bool {
+    if fs::read_to_string(stamp).ok().as_deref() != Some(key) {
+        return false;
+    }
+    let Some(saved) = fs::read_to_string(object.with_extension("o.digest")).ok() else {
+        return false;
+    };
+    object_digest(object).is_ok_and(|actual| actual == saved)
+}
+
+fn object_digest(object: &Path) -> Result<String, String> {
+    fs::read(object)
+        .map(|bytes| format!("{:x}", Sha256::digest(bytes)))
+        .map_err(|error| format!("{}: {error}", object.display()))
 }
 
 fn c_steps(target: DecompTarget, source: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
@@ -801,12 +951,14 @@ fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), Str
     hasher.update(step.join("\0").as_bytes());
     let key = format!("{:x}", hasher.finalize());
     let stamp = object.with_extension("o.key");
-    if object.is_file() && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
+    if compiled_cache(object, &stamp, &key) {
         return Ok(());
     }
     let _ = fs::remove_file(&stamp);
     fs::write(&assembly, text).map_err(|error| error.to_string())?;
     command(&step, root)?;
+    fs::write(object.with_extension("o.digest"), object_digest(object)?)
+        .map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
 }
 
@@ -969,8 +1121,13 @@ pub(crate) fn stream_ids(
     if !text.contains("overlays/resource_") {
         return Ok(Vec::new());
     }
-    let selected = crate::compiler::assembly_source::selected(&text, target.edition_define)
-        .map_err(|error| format!("{}: {error}", source.display()))?;
+    let output = root.join(target.output_dir);
+    let selected = crate::compiler::assembly_source::selected_includes(
+        &text,
+        target.edition_define,
+        &[root, &output],
+    )
+    .map_err(|error| format!("{}: {error}", source.display()))?;
     let selected = crate::compiler::assembly_source::without_comments(&selected);
     let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"overlays/resource_([0-9a-f]+)\.lz""#)
         .expect("static pattern");
@@ -1085,13 +1242,23 @@ fn build_overlay_streams(
     symbols: &Path,
 ) -> Result<Vec<(PathBuf, PathBuf)>, String> {
     let ids = stream_ids(root, target, source)?;
+    build_overlays(root, target, &ids, output, symbols)
+}
+
+fn build_overlays(
+    root: &Path,
+    target: DecompTarget,
+    ids: &[String],
+    output: &Path,
+    symbols: &Path,
+) -> Result<Vec<(PathBuf, PathBuf)>, String> {
     let listings = overlay_listings(target);
     let directory = output.join("overlays");
     // The sources each overlay's own script links beside its listing, compiled
     // once for every overlay that shares them.
     let mut linked = Vec::with_capacity(ids.len());
     let mut sources = Vec::new();
-    for id in &ids {
+    for id in ids {
         let script = overlay_script(&listings, id);
         let text = fs::read_to_string(root.join(&script))
             .map_err(|error| format!("{}: {error}", script.display()))?;
@@ -1229,15 +1396,9 @@ fn build_overlay(
     let key = format!("{:x}", hasher.finalize());
     // The gates run on every build, on a reused link too: this one on the
     // linked image, the id gate on the listing's object.
-    let kept = [
-        stream.as_path(),
-        Path::new(&elf),
-        Path::new(&map),
-        Path::new(&object),
-    ]
-    .iter()
-    .all(|path| path.is_file());
-    if kept && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
+    if fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str())
+        && valid_overlay_products(directory, id)
+    {
         return overlay_gate(&elf, &map);
     }
     let _ = fs::remove_file(&stamp);
@@ -1286,7 +1447,49 @@ fn build_overlay(
     store_thumb_calls(&mut decoded);
     let encoded = compress_tagged(&decoded, &OVERLAY_MACHINE)?;
     fs::write(&stream, encoded).map_err(|error| error.to_string())?;
+    fs::write(
+        stream.with_extension("lz.digest"),
+        products_digest(&overlay_products(directory, id))?,
+    )
+    .map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+/// Every kept product used by the build, gates or diagnostic maps belongs to
+/// one completed source link and compression. The input key stays separate.
+pub(crate) fn overlay_products(directory: &Path, id: &str) -> [PathBuf; 5] {
+    [
+        format!("resource_{id}_overlay.o"),
+        format!("resource_{id}.elf"),
+        format!("resource_{id}.map"),
+        format!("resource_{id}.bin"),
+        format!("resource_{id}.lz"),
+    ]
+    .map(|name| directory.join(name))
+}
+
+fn products_digest(paths: &[PathBuf]) -> Result<String, String> {
+    let mut hasher = Sha256::new();
+    for path in paths {
+        let name = path
+            .file_name()
+            .ok_or("product has no file name")?
+            .to_string_lossy();
+        let bytes = fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
+        hasher.update((name.len() as u64).to_le_bytes());
+        hasher.update(name.as_bytes());
+        hasher.update((bytes.len() as u64).to_le_bytes());
+        hasher.update(bytes);
+    }
+    Ok(format!("{:x}", hasher.finalize()))
+}
+
+pub(crate) fn valid_overlay_products(directory: &Path, id: &str) -> bool {
+    let receipt = directory.join(format!("resource_{id}.lz.digest"));
+    let Ok(saved) = fs::read_to_string(receipt) else {
+        return false;
+    };
+    products_digest(&overlay_products(directory, id)).is_ok_and(|actual| actual == saved)
 }
 
 /// Every file that feeds an overlay's link, including the compiler runtime
@@ -1411,6 +1614,175 @@ mod tests {
     use super::*;
 
     #[test]
+    fn kept_overlay_products_are_rebuilt_after_any_preserved_timestamp_overwrite() {
+        prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let root = work.path();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
+        let listings = Path::new("recon/tbs/raw/overlays");
+        fs::create_dir_all(root.join(listings)).unwrap();
+        fs::write(root.join(listings).join("resource_36f_overlay.s"), ".section .text,\"ax\"\n.thumb\n.global Candidate\n.type Candidate,%function\n.thumb_func\nCandidate:\nmovs r0,#7\nbx lr\n.size Candidate,.-Candidate\n").unwrap();
+        let script = listings.join("resource_36f.ld");
+        fs::write(
+            root.join(&script),
+            "SECTIONS { .text 0x02008000 : { *(.text) } }\n",
+        )
+        .unwrap();
+        let runtime = root.join("tools/out/compiler-runtime/libgcc.a");
+        fs::create_dir_all(runtime.parent().unwrap()).unwrap();
+        fs::write(runtime, "!<arch>\n").unwrap();
+        let main = root.join("MAIN.S");
+        let object = root.join("main.o");
+        let symbols = root.join("main.elf");
+        fs::write(
+            &main,
+            ".text\n.thumb\n.global Resident\n.thumb_func\nResident:\nbx lr\n",
+        )
+        .unwrap();
+        command(
+            &assembly_command(&main.to_string_lossy(), &object.to_string_lossy()),
+            root,
+        )
+        .unwrap();
+        command(
+            &[
+                "arm-none-eabi-ld",
+                "-Ttext=0x08000000",
+                "-o",
+                &symbols.to_string_lossy(),
+                &object.to_string_lossy(),
+            ],
+            root,
+        )
+        .unwrap();
+        let output = root.join(target.output_dir);
+        let directory = output.join("overlays");
+        let replay = || {
+            build_overlay(
+                root,
+                target,
+                &output,
+                listings,
+                "36f",
+                &script,
+                &[],
+                &symbols,
+                &directory,
+            )
+            .unwrap()
+        };
+        replay();
+        let stamp = directory.join("resource_36f.lz.key");
+        let key = fs::read(&stamp).unwrap();
+        let products = overlay_products(&directory, "36f");
+        let original = products
+            .iter()
+            .map(|path| fs::read(path).unwrap())
+            .collect::<Vec<_>>();
+        assert!(valid_overlay_products(&directory, "36f"));
+        for (index, path) in products.iter().enumerate() {
+            let time = fs::metadata(path).unwrap().modified().unwrap();
+            let mut overwritten = original[index].clone();
+            overwritten[0] ^= 0xff;
+            fs::write(path, overwritten).unwrap();
+            fs::File::open(path)
+                .unwrap()
+                .set_times(fs::FileTimes::new().set_modified(time))
+                .unwrap();
+            assert_eq!(fs::read(&stamp).unwrap(), key);
+            assert!(
+                !valid_overlay_products(&directory, "36f"),
+                "{}",
+                path.display()
+            );
+            replay();
+            assert!(valid_overlay_products(&directory, "36f"));
+            for (actual, expected) in products.iter().zip(&original) {
+                assert_eq!(
+                    fs::read(actual).unwrap(),
+                    *expected,
+                    "{} after {} overwrite",
+                    actual.display(),
+                    path.display()
+                );
+            }
+            assert_eq!(fs::read(&stamp).unwrap(), key);
+        }
+        fs::remove_file(directory.join("resource_36f.lz.digest")).unwrap();
+        assert!(!valid_overlay_products(&directory, "36f"));
+        replay();
+        assert!(valid_overlay_products(&directory, "36f"));
+    }
+
+    #[test]
+    fn candidate_ids_require_current_same_game_listing_and_script() {
+        let work = tempfile::tempdir().unwrap();
+        let root = work.path();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaDe);
+        let listing = root.join(overlay_listings(target));
+        fs::create_dir_all(&listing).unwrap();
+        fs::write(listing.join("resource_66c.ld"), "SECTIONS {}\n").unwrap();
+        fs::write(listing.join("resource_66c_overlay.s"), ".text\n").unwrap();
+        assert_eq!(
+            candidate_overlay_ids(root, target, &["66C".into(), "66c".into()]).unwrap(),
+            ["66c"]
+        );
+        for id in ["", "../66c", "resource_66c", "66d"] {
+            assert!(
+                candidate_overlay_ids(root, target, &[id.into()]).is_err(),
+                "{id}"
+            );
+        }
+        let tbs = crate::targets::target_for(crate::targets::DecompTargetId::TbsDe);
+        assert!(candidate_overlay_ids(root, tbs, &["66c".into()]).is_err());
+        fs::remove_file(listing.join("resource_66c_overlay.s")).unwrap();
+        assert!(candidate_overlay_ids(root, target, &["66c".into()]).is_err());
+    }
+
+    #[test]
+    fn candidate_products_cannot_overlap_live_output_through_parent_or_symlink() {
+        let work = tempfile::tempdir().unwrap();
+        let root = work.path();
+        fs::create_dir_all(root.join("out/tla-de")).unwrap();
+        assert_eq!(
+            candidate_output(root, Path::new("out/candidates/de")).unwrap(),
+            fs::canonicalize(root).unwrap().join("out/candidates/de")
+        );
+        for path in [
+            ".",
+            "games/probe",
+            "out",
+            "out/tla-de",
+            "out/tla-de/probe",
+            "out/candidates/../tla-de",
+        ] {
+            assert!(candidate_output(root, Path::new(path)).is_err(), "{path}");
+        }
+        #[cfg(unix)]
+        {
+            std::os::unix::fs::symlink(root.join("out/tla-de"), root.join("out/redirect")).unwrap();
+            assert!(candidate_output(root, Path::new("out/redirect/probe")).is_err());
+            let external = tempfile::tempdir().unwrap();
+            std::os::unix::fs::symlink(external.path(), root.join("out/tla-fr")).unwrap();
+            assert!(candidate_output(root, &external.path().join("probe")).is_err());
+        }
+    }
+
+    #[test]
+    fn candidate_lane_refuses_external_symbol_tables_and_live_output_before_building() {
+        for option in ["--symbols", "--main-output"] {
+            let error = run_overlays(&[option.into(), "stale.elf".into()]).unwrap_err();
+            assert!(error.starts_with("usage:"), "{option}: {error}");
+        }
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaDe);
+        assert!(candidate_output(
+            crate::compiler::routing::root(),
+            Path::new(target.output_dir)
+        )
+        .is_err());
+    }
+
+    #[test]
     fn edition_streams_use_the_games_common_listing_root_and_active_composition() {
         let work = tempfile::tempdir().unwrap();
         let root = work.path();
@@ -1519,6 +1891,41 @@ mod tests {
                 "{owner}"
             );
         }
+    }
+
+    #[test]
+    fn replay_compiles_current_dependencies_and_rejects_an_overwritten_cached_object() {
+        prefer_installed_binutils();
+        let work = tempfile::tempdir().unwrap();
+        let root = work.path();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEs);
+        let source = Path::new("OWNER.C");
+        let object = root.join("obj/OWNER.o");
+        let stamp = object.with_extension("o.key");
+        fs::write(root.join("OWN.H"), "#define VALUE 1\n").unwrap();
+        fs::write(
+            root.join(source),
+            "#include \"OWN.H\"\nint Owner(int n) { return n + VALUE; }\n",
+        )
+        .unwrap();
+        compile(root, target, source, &object).unwrap();
+        let before = fs::read(&object).unwrap();
+        fs::write(root.join("OWN.H"), "#define VALUE 2\n").unwrap();
+        compile(root, target, source, &object).unwrap();
+        let current = fs::read(&object).unwrap();
+        assert_ne!(current, before);
+        let key = fs::read_to_string(&stamp).unwrap();
+        let original_time = fs::metadata(&object).unwrap().modified().unwrap();
+        fs::write(&object, b"later experiment, current input key retained").unwrap();
+        fs::File::options()
+            .write(true)
+            .open(&object)
+            .unwrap()
+            .set_times(fs::FileTimes::new().set_modified(original_time))
+            .unwrap();
+        assert!(!compiled_cache(&object, &stamp, &key));
+        compile(root, target, source, &object).unwrap();
+        assert_eq!(fs::read(object).unwrap(), current);
     }
 
     #[test]

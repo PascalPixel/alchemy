@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy check editions [--write-report]\n\
-Report English placed C missing from an edition, separately for main and each\n\
+Report Japanese placed C missing from an edition, separately for main and each\n\
 live code overlay. Missing C is diagnostic and does not alter DONE. Reports\n\
 under out/ are for people and never feed builds or counting policy.";
 
@@ -29,7 +29,7 @@ struct MissingFunction {
     target: DecompTargetId,
     placement: Placement,
     name: String,
-    english_bytes: i64,
+    japanese_bytes: i64,
     absent_source: bool,
 }
 
@@ -52,7 +52,7 @@ fn cached_definitions(
 struct Missing {
     target: DecompTargetId,
     placement: Placement,
-    english_bytes: i64,
+    japanese_bytes: i64,
 }
 
 fn placed_c(
@@ -187,7 +187,7 @@ fn read_map(
 
 /// Maps describe the verified link, so a later experimental object cannot
 /// supply its function intervals. Input keys prove the current source still
-/// matches that object; timestamps bound the object/key to the verified image.
+/// matches that object and its digest; timestamps bind them to the image.
 fn current_objects(
     root: &Path,
     target: DecompTarget,
@@ -222,7 +222,8 @@ fn current_objects(
             .join(&source)
             .with_extension("o");
         let stamp = object.with_extension("o.key");
-        for path in [&object, &stamp] {
+        let digest = object.with_extension("o.digest");
+        for path in [&object, &stamp, &digest] {
             let time = std::fs::metadata(root.join(path))
                 .and_then(|metadata| metadata.modified())
                 .map_err(|error| format!("{}: {error}; rebuild", path.display()))?;
@@ -247,6 +248,12 @@ fn current_objects(
             return Err(format!(
                 "{} inputs differ from its placed object; rebuild",
                 source.display()
+            ));
+        }
+        if !crate::build_rom::compiled_cache(&object, &stamp, &key) {
+            return Err(format!(
+                "{} content differs from its compiled digest; rebuild",
+                object.display()
             ));
         }
     }
@@ -309,7 +316,19 @@ fn snapshot(root: &Path, target: DecompTarget) -> Result<Snapshot, String> {
         .and_then(|metadata| metadata.modified())
         .map_err(|error| error.to_string())?;
     let output = root.join(target.output_dir);
-    for script in std::iter::once(target.script()).chain(target.edition_script()) {
+    let mut scripts: BTreeSet<_> = std::iter::once(target.script())
+        .chain(target.edition_script())
+        .collect();
+    // International fragments derive from their source-owned native English
+    // order. A change there invalidates their diagnostic placement as well.
+    if target.edition_script().is_some() {
+        scripts.insert(
+            Path::new("recon")
+                .join(target.compiler.as_str())
+                .join("en/MAIN.LD"),
+        );
+    }
+    for script in scripts {
         if let Err(reason) = composition_fresh(root, &script, &output, time) {
             return Ok(pending(reason));
         }
@@ -337,19 +356,28 @@ fn snapshot(root: &Path, target: DecompTarget) -> Result<Snapshot, String> {
                 return Ok(pending(reason));
             }
         }
-        let object = output
-            .join("overlays")
-            .join(format!("resource_{id}_overlay.o"));
-        let written = std::fs::metadata(&object).and_then(|metadata| metadata.modified());
-        match written {
-            Ok(written) if written <= time => {}
-            Ok(_) => {
-                return Ok(pending(format!(
-                    "{} is newer than its verified image; rebuild",
-                    object.display()
-                )))
+        let directory = output.join("overlays");
+        if !crate::build_rom::valid_overlay_products(&directory, id) {
+            return Ok(pending(format!(
+                "resource_{id} products differ from their source-built receipt; rebuild"
+            )));
+        }
+        let products = crate::build_rom::overlay_products(&directory, id);
+        for path in products.into_iter().chain([
+            directory.join(format!("resource_{id}.lz.key")),
+            directory.join(format!("resource_{id}.lz.digest")),
+        ]) {
+            let written = std::fs::metadata(&path).and_then(|metadata| metadata.modified());
+            match written {
+                Ok(written) if written <= time => {}
+                Ok(_) => {
+                    return Ok(pending(format!(
+                        "{} is newer than its verified image; rebuild",
+                        path.display()
+                    )))
+                }
+                Err(error) => return Ok(pending(format!("{}: {error}; rebuild", path.display()))),
             }
-            Err(error) => return Ok(pending(format!("{}: {error}; rebuild", object.display()))),
         }
         let path = root
             .join(target.output_dir)
@@ -411,9 +439,9 @@ fn missing_functions(
         {
             continue;
         }
-        let english = cached_definitions(
+        let japanese = cached_definitions(
             root,
-            target_for(english(target)),
+            target_for(japanese(target)),
             &placement.source,
             definitions,
         )?;
@@ -422,8 +450,8 @@ fn missing_functions(
             target: target.id,
             placement: placement.clone(),
             name: name.clone(),
-            english_bytes: *extent,
-            absent_source: english.contains(name) && !edition.contains(name),
+            japanese_bytes: *extent,
+            absent_source: japanese.contains(name) && !edition.contains(name),
         });
     }
     Ok(rows)
@@ -431,7 +459,7 @@ fn missing_functions(
 
 fn render_functions(rows: &[MissingFunction]) -> String {
     let mut text =
-        String::from("game\tedition\timage\tsource\tfunction\tenglish_text_bytes\tstatus\n");
+        String::from("game\tedition\timage\tsource\tfunction\tjapanese_text_bytes\tstatus\n");
     for row in rows {
         let target = target_for(row.target);
         text.push_str(&format!(
@@ -441,7 +469,7 @@ fn render_functions(rows: &[MissingFunction]) -> String {
             row.placement.image,
             row.placement.source,
             row.name,
-            row.english_bytes,
+            row.japanese_bytes,
             if row.absent_source {
                 "absent-in-edition-source"
             } else {
@@ -452,26 +480,26 @@ fn render_functions(rows: &[MissingFunction]) -> String {
     text
 }
 
-fn missing(target: DecompTargetId, english: &Snapshot, edition: &Snapshot) -> Vec<Missing> {
-    if english.pending.is_some() || edition.pending.is_some() {
+fn missing(target: DecompTargetId, baseline: &Snapshot, edition: &Snapshot) -> Vec<Missing> {
+    if baseline.pending.is_some() || edition.pending.is_some() {
         return Vec::new();
     }
-    english
+    baseline
         .placed
         .iter()
         .filter(|(key, _)| edition.placed.get(key).copied().unwrap_or(0) <= 0)
         .map(|(key, bytes)| Missing {
             target,
             placement: key.clone(),
-            english_bytes: *bytes,
+            japanese_bytes: *bytes,
         })
         .collect()
 }
 
-fn english(target: DecompTarget) -> DecompTargetId {
+fn japanese(target: DecompTarget) -> DecompTargetId {
     match target.compiler {
-        crate::compiler::routing::CompilerTarget::Tbs => DecompTargetId::TbsEn,
-        crate::compiler::routing::CompilerTarget::Tla => DecompTargetId::TlaEn,
+        crate::compiler::routing::CompilerTarget::Tbs => DecompTargetId::TbsJa,
+        crate::compiler::routing::CompilerTarget::Tla => DecompTargetId::TlaJa,
     }
 }
 
@@ -481,12 +509,12 @@ fn render(
 ) -> (String, String) {
     let mut summary = String::from("target\tstatus\tlive_overlays\tmain_c_objects\toverlay_c_placements\tmissing_main\tmissing_overlay\tabsent_source_main\tabsent_source_overlay\treason\n");
     let mut details = String::from(
-        "game\tedition\timage\tsource\tenglish_text_bytes\tedition_text_bytes\tstatus\n",
+        "game\tedition\timage\tsource\tjapanese_text_bytes\tedition_text_bytes\tstatus\n",
     );
     for id in TARGET_IDS {
         let target = target_for(id);
         let own = &snapshots[id.as_str()];
-        let baseline = &snapshots[english(target).as_str()];
+        let baseline = &snapshots[japanese(target).as_str()];
         let pending = own.pending.as_ref().or(baseline.pending.as_ref());
         let rows = missing(id, baseline, own);
         let main = own.placed.keys().filter(|key| key.image == "main").count();
@@ -528,7 +556,7 @@ fn render(
                 target.compiler.as_str(),
                 row.placement.image,
                 row.placement.source,
-                row.english_bytes,
+                row.japanese_bytes,
                 if absent.contains(&(id.as_str().into(), row.placement.clone())) {
                     "absent-in-edition-source"
                 } else {
@@ -553,23 +581,23 @@ fn run(root: &Path, write: bool) -> Result<(), String> {
         functions.extend(missing_functions(
             root,
             target,
-            &snapshots[english(target).as_str()],
+            &snapshots[japanese(target).as_str()],
             &snapshots[id.as_str()],
             &mut definitions,
         )?);
         for row in missing(
             id,
-            &snapshots[english(target).as_str()],
+            &snapshots[japanese(target).as_str()],
             &snapshots[id.as_str()],
         ) {
-            let en = cached_definitions(
+            let source = cached_definitions(
                 root,
-                target_for(english(target)),
+                target_for(japanese(target)),
                 &row.placement.source,
                 &mut definitions,
             )?;
             let own = cached_definitions(root, target, &row.placement.source, &mut definitions)?;
-            if !en.is_empty() && own.is_empty() {
+            if !source.is_empty() && own.is_empty() {
                 absent.insert((id.as_str().into(), row.placement));
             }
         }
@@ -623,6 +651,14 @@ pub(crate) fn entry(args: &[String]) -> ExitCode {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn record_digest(object: &Path) {
+        use sha2::Digest;
+        std::fs::write(
+            object.with_extension("o.digest"),
+            format!("{:x}", sha2::Sha256::digest(std::fs::read(object).unwrap())),
+        )
+        .unwrap();
+    }
     fn source(root: &Path, stem: &str, extension: &str, text: &str) {
         let path = root.join(format!("{stem}.{extension}"));
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
@@ -634,6 +670,36 @@ mod tests {
         source(root.path(), "games/COMMON/SRC/B", "C", "void B(void) {}\n");
         source(root.path(), "games/COMMON/SRC/ASM", "S", ".thumb\nbx lr\n");
         (root, target_for(DecompTargetId::TbsEn))
+    }
+    #[test]
+    fn japanese_placed_main_and_overlays_are_the_diagnostic_base_for_all_editions() {
+        let main = Placement {
+            image: "main".into(),
+            source: "games/COMMON/SRC/A.C".into(),
+        };
+        let overlay = Placement {
+            image: "overlay:36f".into(),
+            source: "games/COMMON/SRC/B.C".into(),
+        };
+        let mut snapshots = BTreeMap::new();
+        for id in TARGET_IDS {
+            let target = target_for(id);
+            assert!(japanese(target).as_str().ends_with("-ja"));
+            assert_eq!(target_for(japanese(target)).compiler, target.compiler);
+            snapshots.insert(id.as_str().into(), Snapshot::default());
+        }
+        snapshots.get_mut("tbs-ja").unwrap().placed =
+            [(main.clone(), 20), (overlay.clone(), 32)].into();
+        snapshots.get_mut("tbs-en").unwrap().placed = [(main.clone(), 24)].into();
+        let before = snapshots["tbs-ja"].placed.clone();
+        let (summary, details) = render(&snapshots, &BTreeSet::new());
+        assert!(summary.contains("tbs-en\tverified\t0\t1\t0\t0\t1\t"));
+        assert!(summary.contains("tbs-ja\tverified\t0\t1\t1\t0\t0\t"));
+        assert!(details.starts_with("game\tedition\timage\tsource\tjapanese_text_bytes\t"));
+        assert!(details
+            .contains("tbs\ttbs-en\toverlay:36f\tgames/COMMON/SRC/B.C\t32\t0\tmissing-placement"));
+        assert!(!details.contains("tbs\ttbs-ja\t"));
+        assert_eq!(snapshots["tbs-ja"].placed, before);
     }
     #[test]
     fn only_positive_placed_c_text_counts_and_images_remain_distinct() {
@@ -654,7 +720,7 @@ mod tests {
         let rows = missing(DecompTargetId::TbsJa, &baseline, &own);
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].placement.image, "overlay:36f");
-        assert_eq!(rows[0].english_bytes, 24);
+        assert_eq!(rows[0].japanese_bytes, 24);
         assert_eq!(baseline.placed.len(), 2); // reporting never changes the baseline
     }
     #[test]
@@ -734,6 +800,7 @@ mod tests {
         let key =
             crate::build_rom::current_object_key(root.path(), target, source, &object).unwrap();
         std::fs::write(root.path().join(&object), "placed object").unwrap();
+        record_digest(&object);
         std::fs::write(root.path().join(&stamp), key).unwrap();
         let map = format!(
             "Linker script and memory map\n .text 0x0 0x8 {}\n",
@@ -748,6 +815,18 @@ mod tests {
                 .contains("inputs differ")
         );
         std::fs::write(&header, "#define VALUE 1\n").unwrap();
+        let object_time = std::fs::metadata(&object).unwrap().modified().unwrap();
+        std::fs::write(&object, "later experiment with preserved timestamp").unwrap();
+        std::fs::File::open(&object)
+            .unwrap()
+            .set_times(std::fs::FileTimes::new().set_modified(object_time))
+            .unwrap();
+        assert!(
+            current_objects(root.path(), target, &map, false, image_time)
+                .unwrap_err()
+                .contains("content differs")
+        );
+        std::fs::write(&object, "placed object").unwrap();
         let future = image_time + std::time::Duration::from_secs(2);
         std::fs::File::open(root.path().join(&object))
             .unwrap()
@@ -766,9 +845,11 @@ mod tests {
         use sha1::Digest;
         let root = tempfile::tempdir().unwrap();
         let target = target_for(DecompTargetId::TbsEn);
-        let script = root.path().join(target.script());
-        std::fs::create_dir_all(script.parent().unwrap()).unwrap();
-        std::fs::write(&script, "SECTIONS {}\n").unwrap();
+        for script in std::iter::once(target.script()).chain(target.edition_script()) {
+            let script = root.path().join(script);
+            std::fs::create_dir_all(script.parent().unwrap()).unwrap();
+            std::fs::write(&script, "SECTIONS {}\n").unwrap();
+        }
         let owner = Path::new("recon/tbs/overlays.S");
         source(
             root.path(),
@@ -782,6 +863,7 @@ mod tests {
         let key =
             crate::build_rom::current_object_key(root.path(), target, owner, &object).unwrap();
         std::fs::write(&object, "old placed assembly object").unwrap();
+        record_digest(&object);
         std::fs::write(object.with_extension("o.key"), key).unwrap();
         std::fs::write(
             output.join("tbs-en.map"),
@@ -802,7 +884,8 @@ mod tests {
         )
         .unwrap();
         std::fs::write(root.path().join(calcrom::image(target)), image).unwrap();
-        assert!(snapshot(root.path(), target).unwrap().pending.is_none());
+        let current = snapshot(root.path(), target).unwrap();
+        assert!(current.pending.is_none(), "{:?}", current.pending);
         std::fs::create_dir_all(output.join("overlays")).unwrap();
         std::fs::write(output.join("overlays/resource_36f.lz"), "leftover stream").unwrap();
         std::fs::write(output.join("overlays/resource_36f.map"), "leftover map").unwrap();
@@ -814,6 +897,45 @@ mod tests {
         let stale = snapshot(root.path(), target).unwrap();
         assert!(stale.pending.unwrap().contains("inputs differ"));
         assert!(stale.overlays.is_empty() && stale.placed.is_empty());
+    }
+
+    #[test]
+    fn international_native_order_changes_leave_derived_edition_diagnostics_pending() {
+        use sha1::Digest;
+        let root = tempfile::tempdir().unwrap();
+        let target = target_for(DecompTargetId::TbsDe);
+        for path in [
+            target.script(),
+            target.edition_script().unwrap(),
+            PathBuf::from("recon/tbs/en/MAIN.LD"),
+        ] {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, "SECTIONS {}\n").unwrap();
+        }
+        let output = root.path().join(target.output_dir);
+        std::fs::create_dir_all(&output).unwrap();
+        std::fs::write(output.join("tbs-de.map"), "Linker script and memory map\n").unwrap();
+        let image = b"synthetic current image";
+        std::fs::write(
+            root.path().join("rom.sha1"),
+            format!(
+                "{:x}  {}\n",
+                sha1::Sha1::digest(image),
+                calcrom::image(target)
+            ),
+        )
+        .unwrap();
+        std::fs::write(root.path().join(calcrom::image(target)), image).unwrap();
+        assert!(snapshot(root.path(), target).unwrap().pending.is_none());
+        let future = std::time::SystemTime::now() + std::time::Duration::from_secs(2);
+        std::fs::File::open(root.path().join("recon/tbs/en/MAIN.LD"))
+            .unwrap()
+            .set_times(std::fs::FileTimes::new().set_modified(future))
+            .unwrap();
+        let stale = snapshot(root.path(), target).unwrap();
+        assert!(stale.pending.unwrap().contains("composition is newer"));
+        assert!(stale.placed.is_empty() && stale.overlays.is_empty());
     }
 
     #[test]
@@ -834,6 +956,7 @@ mod tests {
             .with_extension("o");
         std::fs::create_dir_all(object.parent().unwrap()).unwrap();
         std::fs::write(&object, "empty edition object").unwrap();
+        record_digest(&object);
         std::fs::write(
             object.with_extension("o.key"),
             crate::build_rom::current_object_key(root.path(), target, source, &object).unwrap(),
@@ -900,7 +1023,7 @@ mod tests {
             root.path(),
             "games/COMMON/SRC/A",
             "C",
-            "#if defined(TBS_EDITION_EN)\nvoid EnglishOnly(void) {}\n#endif\nvoid Both(void) {}\n",
+            "#if defined(TBS_EDITION_JA)\nvoid JapaneseOnly(void) {}\n#endif\nvoid Both(void) {}\n",
         );
         let placement = Placement {
             image: "main".into(),
@@ -908,7 +1031,7 @@ mod tests {
         };
         let baseline = Snapshot {
             functions: [
-                ((placement.clone(), "EnglishOnly".into()), 16),
+                ((placement.clone(), "JapaneseOnly".into()), 16),
                 ((placement.clone(), "Both".into()), 20),
             ]
             .into(),
@@ -917,7 +1040,7 @@ mod tests {
         let own = Snapshot::default();
         let rows = missing_functions(
             root.path(),
-            target_for(DecompTargetId::TbsJa),
+            target_for(DecompTargetId::TbsEn),
             &baseline,
             &own,
             &mut Definitions::new(),
@@ -926,7 +1049,7 @@ mod tests {
         assert_eq!(rows.len(), 2);
         assert!(
             rows.iter()
-                .find(|row| row.name == "EnglishOnly")
+                .find(|row| row.name == "JapaneseOnly")
                 .unwrap()
                 .absent_source
         );
@@ -938,7 +1061,7 @@ mod tests {
                 .absent_source
         );
         let text = render_functions(&rows);
-        assert!(text.contains("EnglishOnly\t16\tabsent-in-edition-source"));
+        assert!(text.contains("JapaneseOnly\t16\tabsent-in-edition-source"));
         assert!(text.contains("Both\t20\tmissing-placement"));
         assert_eq!(baseline.functions.len(), 2);
     }

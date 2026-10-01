@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy build <compilers|runtime|rom> [args]";
+const USAGE: &str = "usage: alchemy build <compilers|runtime|rom|overlays> [args]";
 
 pub fn entry(args: &[String]) -> ExitCode {
     let Some(command) = args.first().map(String::as_str) else {
@@ -18,6 +18,7 @@ pub fn entry(args: &[String]) -> ExitCode {
         }
         "compilers" => crate::make_target("compiler-sources", &rest),
         "rom" => crate::result(crate::build_rom::run(&rest)),
+        "overlays" => crate::result(crate::build_rom::run_overlays(&rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

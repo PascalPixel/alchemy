@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x020085f8,"a",%progbits
@@ -38,7 +39,7 @@ gTitleVramBlock:
 	.ifdef TBS_EDITION_EN
 	.space 58
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.space 58
 	.else
 	.space 54
@@ -52,7 +53,7 @@ gTitleSprites:
 	.ifdef TBS_EDITION_EN
 	.space 216
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.space 216
 	.else
 	.space 1440

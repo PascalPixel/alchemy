@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x02008ea8,"a",%progbits
@@ -574,7 +575,12 @@ gTorebiMachiEvents:
 	.4byte 0x00000033
 	.4byte 0x0f970064
 	.4byte 0x00200009
+	/* Japanese actor-event row has no c400 mode flags. */
+	.ifeq EDITION_INTERNATIONAL
+	.4byte 0x00000023
+	.else
 	.4byte 0x0000c423
+	.endif
 	.4byte 0x0f980065
 	.4byte 0x001000e5
 	.4byte 0x00000013

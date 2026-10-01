@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Title_LogoOnBlackPicture: its 224-colour palette, then 600 tiles of 8-bit colour packed
 @ by the resource packer.
 	.section .rodata
 	.global Title_LogoOnBlackPicture
 Title_LogoOnBlackPicture:
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.incbin "GRAPHICS/TITLE/LOGO_ON_BLACK_JA.gbapal"
 	.incbin "GRAPHICS/TITLE/LOGO_ON_BLACK_JA.8bpp.lz"
 	.else

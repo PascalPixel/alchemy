@@ -1,9 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Field_Map148: a field map.
 	.include "games/THE BROKEN SEAL/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map148
 Field_Map148:
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	map_header 0, 0, 64, 192, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0x7f, 0xff
 	map_layer 64, 0, 16, 16, 0, 0, 0x7f, 0xff

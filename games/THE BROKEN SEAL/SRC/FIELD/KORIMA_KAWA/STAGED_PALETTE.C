@@ -3,6 +3,7 @@
  * overlay's palette adjustment.
  */
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
@@ -153,6 +154,11 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
 void SceneActor_ApplyOffsetObjectPosition(void)
 {
     struct Resource393Position pos;
+#if !EDITION_INTERNATIONAL
+    pos.x = ((struct Resource393Object *)Object_GetById(0))->position_x + 0x1e0000;
+    pos.y = ((struct Resource393Object *)Object_GetById(0))->position_y;
+    pos.z = ((struct Resource393Object *)Object_GetById(0))->position_z;
+#else
     struct Resource393Object *obj = Object_GetById(Data_02000240.object_id);
     u32 xb = obj->position_x & 0xfff00000;
 
@@ -160,6 +166,7 @@ void SceneActor_ApplyOffsetObjectPosition(void)
     pos.y = obj->position_y;
     pos.z = (obj->position_z & 0xfff00000) + 0x80000;
     pos.x = xb + 0x280000;
+#endif
     StagedActor_RunStepEffect(&pos);
 }
 

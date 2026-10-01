@@ -7,6 +7,9 @@ the world. This project hopes to do something similar for the games
 themselves: to bring **The Broken Seal** ☀️ and **The Lost Age** ⚓️ back to a
 form that fans can read, change and build on.
 
+The Japanese releases are the base. The international editions share their
+common changes, with each language keeping its own text, fonts and layout.
+
 ## Progress
 
 **☀️ 78.77% · ⚓️ 7.05% (C 2.14 + assembly 1.40 + stubs 3.50)**

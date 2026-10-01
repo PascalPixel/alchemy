@@ -19,7 +19,7 @@ Func_08108464:
 	bl Inventory_AddItemFar
 	adds r1, r0, #0
 	movs r0, #1
-	bl Func_080ad048
+	bl Inventory_EquipFar
 	movs r1, #195
 	lsls r1, r1, #2
 	adds r1, #255
@@ -27,7 +27,7 @@ Func_08108464:
 	bl Inventory_AddItemFar
 	adds r1, r0, #0
 	movs r0, #0
-	bl Func_080ad048
+	bl Inventory_EquipFar
 	movs r1, #231
 	movs r0, #2
 	bl Inventory_AddItemFar

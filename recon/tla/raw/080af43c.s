@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080af43c
+	.global BattleAction_GetDirect
 	.thumb_func
-Func_080af43c:
+BattleAction_GetDirect:
 	push {lr}
 	movs r3, #252
 	lsls r3, r3, #6
@@ -23,4 +23,4 @@ Func_080af43c:
 	adds r0, r0, r3
 	pop {pc}
 .L_080af460:
-	.4byte Data_080b7c14
+	.4byte BattleAction_DefinitionTable

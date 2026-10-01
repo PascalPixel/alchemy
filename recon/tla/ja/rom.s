@@ -2152,23 +2152,7 @@ Menu_TopEntryPositionByCommand:
 	.global Ui_FixedTileBlocks
 Ui_FixedTileBlocks:
 	.incbin "baserom.gba", 0x0009d664, 0x0000a99c
-	.section .rom.000a8040, "ax"
-	.global PartyInventory_RemoveFar
-	.type PartyInventory_RemoveFar, %function
-	.thumb_func
-PartyInventory_RemoveFar:
-	.incbin "baserom.gba", 0x000a8040, 0x00000008
-	.global Func_080ad048
-	.type Func_080ad048, %function
-	.thumb_func
-Func_080ad048:
-	.incbin "baserom.gba", 0x000a8048, 0x00000008
-	.section .rom.000a8050, "ax"
-	.global Inventory_RemoveFar
-	.type Inventory_RemoveFar, %function
-	.thumb_func
-Inventory_RemoveFar:
-	.incbin "baserom.gba", 0x000a8050, 0x00000020
+	.section .rom.000a8070, "ax"
 	.global Inventory_GetEquippedItemFar
 	.type Inventory_GetEquippedItemFar, %function
 	.thumb_func
@@ -2687,6 +2671,10 @@ Inventory_GetQuantity:
 Inventory_Find:
 	.incbin "baserom.gba", 0x000a9e94, 0x00000030
 	.section .rom.000a9f30, "ax"
+	.global Inventory_Equip
+	.type Inventory_Equip, %function
+	.thumb_func
+Inventory_Equip:
 	.incbin "baserom.gba", 0x000a9f30, 0x000000d4
 	.section .rom.000aa0de, "ax"
 	.incbin "baserom.gba", 0x000aa0de, 0x00000066
@@ -2699,6 +2687,10 @@ Inventory_Remove:
 	.section .rom.000aa1f6, "ax"
 	.incbin "baserom.gba", 0x000aa1f6, 0x0000009e
 	.section .rom.000aa334, "ax"
+	.global Item_GetTargetMode
+	.type Item_GetTargetMode, %function
+	.thumb_func
+Item_GetTargetMode:
 	.incbin "baserom.gba", 0x000aa334, 0x00000040
 	.section .rom.000aa374, "ax"
 	.global Item_AdjustCounter
@@ -2707,6 +2699,10 @@ Inventory_Remove:
 Item_AdjustCounter:
 	.incbin "baserom.gba", 0x000aa374, 0x00000028
 	.section .rom.000aa438, "ax"
+	.global BattleAction_GetDirect
+	.type BattleAction_GetDirect, %function
+	.thumb_func
+BattleAction_GetDirect:
 	.incbin "baserom.gba", 0x000aa438, 0x000002b8
 	.section .rom.000aa78e, "ax"
 	.incbin "baserom.gba", 0x000aa78e, 0x0000018a
@@ -2775,7 +2771,10 @@ Trade_RemoveOffer:
 	.section .rom.000ad334, "ax"
 	.global Item_DefinitionTable
 Item_DefinitionTable:
-	.incbin "baserom.gba", 0x000ad334, 0x0000f1a8
+	.incbin "baserom.gba", 0x000ad334, 0x000058b0
+	.global BattleAction_DefinitionTable
+BattleAction_DefinitionTable:
+	.incbin "baserom.gba", 0x000b2be4, 0x000098f8
 	.section .rom.000bc4dc, "ax"
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:

@@ -280,7 +280,7 @@ Func_080f8170:
 .L_080f83b4:
 	mov r0, r11
 	ldr r1, [sp, #24]
-	bl Func_080ad048
+	bl Inventory_EquipFar
 .L_080f83bc:
 	mov r0, r11
 	bl Owner_RecalculateStatsFar
@@ -399,7 +399,7 @@ Func_080f8170:
 .L_080f84ae:
 	mov r0, r11
 	ldr r1, [sp, #24]
-	bl Func_080ad048
+	bl Inventory_EquipFar
 .L_080f84b6:
 	mov r0, r11
 	bl Owner_RecalculateStatsFar

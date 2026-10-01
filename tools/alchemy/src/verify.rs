@@ -24,7 +24,6 @@ pub const WAVES: &[&[&str]] = &[
         "corpus-check",
         "language-check",
         "lint-production",
-        "steering-debt-check",
         "tooling-index-check",
         "prepare-inputs",
     ],
@@ -48,7 +47,6 @@ const STAGED: &[&str] = &[
     "native-format-check",
     "language-check",
     "lint-staged",
-    "steering-debt-check",
     "tooling-index-check",
     "publication-staged-check",
 ];

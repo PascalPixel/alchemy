@@ -104,8 +104,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         i++;
     } while (i != 171 << 2);
 
-    origin = half << 16;
     i = 0;
+    origin = half << 16;
     do {
         struct EffectStep *spark = &SPARK[i];
 
@@ -337,11 +337,13 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                     } else {
                         x = spark->x;
                         if ((u32)x <= 0x007EFFFF && y >= 0) {
+                            u8 *cell;
+
                             size = spark->variant / 5 + 1;
-                            routine[0](canvas,
-                                (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
-                                (x >> 16) - size / 2, (y >> 16) - size,
-                                size, size * 2);
+                            cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
+                            x = (x >> 16) - size / 2;
+                            y = (y >> 16) - size;
+                            routine[0](canvas, cell, x, y, size, size * 2);
                         }
                     }
                 }

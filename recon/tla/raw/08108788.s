@@ -46,6 +46,6 @@ Func_08108788:
 	pop {pc}
 	.2byte 0x0000
 .L_081087d8:
-	.4byte Data_0810c008
+	.4byte Shop_GlyphBytes
 .L_081087dc:
-	.4byte Data_0810c384
+	.4byte Shop_GlyphRowOffsets

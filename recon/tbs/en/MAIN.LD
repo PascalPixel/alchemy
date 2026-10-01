@@ -933,7 +933,7 @@
         "*/games/COMMON/SRC/GRAPHICS/TILE/TRANSPOSE_COPY.o"(.text)
         "*/recon/tbs/raw/080dfe2a.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080dfe2c.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080e01e4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/JUPITER_DJINN_FALL.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
         "*/recon/tbs/raw/080e0564.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_REVEAL.o"(.text)

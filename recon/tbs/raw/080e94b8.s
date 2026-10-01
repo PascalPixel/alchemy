@@ -482,7 +482,7 @@ Unnamed_080e94b8:
 .L_080e986c:
 	.4byte 0x00007828
 .L_080e9870:
-	.4byte Data_080eeef8 + 0xe
+	.4byte FlameBlade_StrikeColumns
 .L_080e9874:
 	.4byte 0x00007784
 .L_080e9878:
@@ -492,7 +492,7 @@ Unnamed_080e94b8:
 .L_080e9880:
 	.4byte 0x000000c0
 .L_080e9884:
-	.4byte Data_080eeef8 + 0x14
+	.4byte FlameBlade_FlashCells
 .L_080e9888:
 	ldr r0, [r6]
 	ldr r2, .L_080e99ac

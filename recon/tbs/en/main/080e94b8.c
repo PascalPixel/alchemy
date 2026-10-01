@@ -1,319 +1,268 @@
-/* NONMATCHING: 1392 of 1288 bytes, 672 differing halfwords, 454 halfword edits.
- * Setter and random-number signatures agree with exact callees.
- * WALL: particle-loop structure and allocation still differ. */
-#include "types.h"
+/* Draft (2026-10-02, slice-11), rewritten on the shared effect structs.
+   Battle effect: a flame blade slides down over the acting unit, then two
+   strikes eight frames apart each throw twelve flashes and 256 sparks. */
+#include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "EFFECT_STEP.H"
+#include "RAM_BUFFER.H"
+#include "RESOURCE_IDS.H"
+#include "SYSTEM.H"
 
-extern u8 Data_00000055[];
-extern u8 ResourceId_ParticleSpritesA[];
-extern u8 ResourceId_FlashBurstSheet[];
-extern u8 ResourceId_BlastSheet[];
-s32 __divsi3();
-s32 Trig_Cos();
-s32 Trig_Sin();
-void Runtime_ReleaseHeapBlock();
-void WaitFrames();
-void Scheduler_AddOrUpdateCallback();
-void Scheduler_RemoveCallback();
-u32 Random16(void);
-void _call_via_r4();
-void Object_SetMode(s32 object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(s32 object, s32 value);
-void BattleMotion_ApplyVariantMotionFar();
-s32 GetBattleObjectSlotFar();
-void BattleEventRuntime_BeginPhaseFar();
-void ObjectGroup_TickMemberTimers();
-void BattleFx_BeginCanvasLayer();
-void BattleFx_EndCanvasLayer();
-void BattleFx_FetchRectangleBlitters();
-void ObjectGroup_UpdateMembers();
-void Camera_ApplyShake();
-void EffectStep_AdvanceWithGravity2D();
-void BattleFx_StepPaletteToResource();
-void Audio_PlayCue();
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+/* Three tables of 340 sparks fill the map cell buffer. */
+#define SPARK ((struct EffectStep *)Ram_MapCellBuffer)
 
-static __inline__ void Call1(void (*f)(), s32 a0)
+extern void *gBattleFxWork[];
+extern u16 ParticleStreams_CellOffsets[];
+/* The strike column of each of the three strikes, for either side. */
+extern const u8 FlameBlade_StrikeColumns[];
+/* The flash cell for each third of a flash's life. */
+extern const u8 FlameBlade_FlashCells[];
+
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+s32 Trig_Cos(s32 angle);
+s32 Trig_Sin(s32 angle);
+void Object_SetMode(void *object, s32 mode);
+void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void **GetBattleObjectSlotFar(s32 unit);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void ObjectGroup_TickMemberTimers(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_EndCanvasLayer(void);
+void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
+void Camera_ApplyShake(s32 x, s32 y);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+void BattleFx_StepPaletteToResource(s32 resource_id);
+void Audio_PlayCue(s32 cue);
+
+void Unnamed_080e94b8(struct BattleEffectArgument *effect)
 {
-    f(a0);
-}
+    void **heap;
+    void **p;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 n;
+    void *sheet;
+    void *object;
+    DrawRectangle routine[2];
+    s32 frame;
+    s32 i;
 
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
+    heap = gBattleFxWork;
+    p = heap;
+    work = *p++;
+    canvas = *p;
+    sheet = heap[2];
 
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-void Unnamed_080e94b8(s32 a0)
-{
-    u32 i;
-    s32 p10;
-    s32 p11;
-    s32 p11b;
-    s32 p8;
-    s32 p8b;
-    s32 p8c;
-    s32 p9;
-    s32 p9b;
-    s32 rec7;
-    s32 rec8;
-    s32 record;
-    s32 r13;
-    s32 v0;
-    s32 v8;
-    s32 v9;
-    s32 none;
-    s32 v7;
-    s32 v10;
-    s32 a0;
-    s32 v3;
-    s32 v2;
-    s32 v5;
-    s32 v1;
-    s32 base6_24;
-    s32 slot40;
-    s32 slot32;
-    s32 slot28;
-    s32 slot24;
-    s32 slot36;
-    s32 slot20;
-    s32 slot16;
-    s32 slot12;
-    s32 slot8;
-    u8 *p4;
-
-    v0 = *(s32 *)(0x3001eec);
-    slot40 = *(s32 *)(0x3001eec + 4);
-    slot32 = *(s32 *)0x03001ef4;
-    p11 = v0;
-    record = GetBattleObjectSlotFar(*(s32 *)(a0 + 8));
-    slot28 = *(s32 *)(record);
-    *(s32 *)(a0 + 24) = 1;
-    *(s32 *)((0x7828 + p11)) = a0;
+    object = *GetBattleObjectSlotFar(effect->actor);
+    effect->variant = 1;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000052 = 0x1010;
-    slot24 = (r13 + 44);
-    BattleFx_FetchRectangleBlitters(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4));
-    Object_SetMode(slot28, 2);
-    ObjectDispatch_ApplyValueToChildrenFar(slot28, 48);
-    Resource_LoadAndDecompress((s32)Data_00000055, p11, 1, 1);
-    Resource_LoadAndDecompress((s32)ResourceId_FlashBurstSheet, (0x2000 + p11), 1, 0);
-    Resource_LoadAndDecompress((s32)ResourceId_ParticleSpritesA, slot32, 0, 0);
-    slot36 = 0;
-    p9 = slot36;
-    v8 = p11;
-    v9 = p9;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    BattleFx_FetchRectangleBlitters(work->effect->side, routine);
+    Object_SetMode(object, 2);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 48);
+
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, (u8 *)work + (128 << 6), 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+
+    n = 0;
     do {
-        none = 0;
-        v7 = (0x7080 + v8);
-        v10 = none;
-        for (i = 0; (i >> 16) != 16; i += 0x10000) {
-            rec7 = Random16();
-            a0 = (rec7 & 0xffff);
-            record = Trig_Sin((rec7 & 0xffff));
-            *(s32 *)(v7) = ((v10 << 1) * record);
-            record = Trig_Cos((rec7 & 0xffff));
-            *(s32 *)(v7 + 4) = -((v10 << 1) * record);
-            v10 = (v10 + 1);
-            *(s32 *)(v7 + 24) = ((((u32)v10 >> 31) + v10) >> 1);
-            v7 = (v7 + 28);
-        }
-        none = 0;
-        v7 = ((((v9 << 3) - v9) << 2) + 0x2010000);
-        v10 = none;
+        i = 0;
         do {
-            record = Random16();
-            rec8 = Random16();
-            *(s32 *)(v7) = (*(u8 *)(0x080eef06 + (s32)(slot36 + (s32)((s32)(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4) << 1) + *(s32 *)(*(s32 *)((0x7828 + p11)) + 4)))) << 16);
-            *(s32 *)(v7 + 4) = 0x580000;
-            record = Trig_Sin((rec8 & 0xffff));
-            *(s32 *)(v7 + 12) = ((((0x1ff & record) + 32) * record) >> 6);
-            record = Trig_Cos((rec8 & 0xffff));
-            *(s32 *)(v7 + 16) = (-((((0x1ff & record) + 32) * record) << 1) >> 6);
-            record = Random16();
-            *(s32 *)(v7 + 24) = ((7 & record) + 32);
-            v10 = (v10 + 1);
-            v3 = 0x154;
-            v7 = (v7 + 28);
-        } while (v10 != v3);
-        v9 = (v9 + v3);
-        v8 = (v8 + 0x1c0);
-        slot36 = (slot36 + 1);
-        a0 = ((0x1ff & record) + 32);
-    } while (slot36 != 3);
-    *(s32 *)((0x7780 + p11)) = 2;
-    *(s32 *)((0x7784 + p11)) = 75;
-    Call2(Scheduler_AddOrUpdateCallback, 0x80cd261, 0x480);
-    none = 0;
-    v9 = none;
-    L_080e965c:;
-    if (v9 == 4) {
-        Audio_PlayCue(212);
-    }
-    if (v9 == 8) {
-        *(s32 *)((0x77a8 + p11)) = v9;
-    }
-    if (v9 == 18) {
-        Audio_PlayCue(145);
-    }
-    if (v9 == 40) {
-        BattleEventRuntime_BeginPhaseFar(134);
-    }
-    if (v9 <= 39) {
-        v1 = 128;
-        if (*(s32 *)(*(s32 *)((0x7828 + p11)) + 4) == 1) {
-            if (v9 <= 9) {
-                v2 = ((((v9 << 2) + v9) << 1) - 8);
-                v5 = ((v9 << 4) - 128);
-                goto L_080e96fe;
-            }
-            if (v9 > 20) {
-                v2 = (v9 + 62);
-                v5 = ((v9 << 1) - 24);
-                goto L_080e96fe;
-            }
-            v2 = 82;
-        } else {
-            if (v9 <= 9) {
-                v2 = (128 - (((v9 << 2) + v9) << 1));
-                v5 = ((v9 << 4) - 128);
-                goto L_080e96fe;
-            }
-            if (v9 > 20) {
-                v2 = (58 - v9);
-                v5 = ((v9 << 1) - 24);
-                goto L_080e96fe;
-            }
-            v2 = 38;
-        }
-        v5 = 16;
-        L_080e96fe:;
-        if ((v5 + 128) > 104) {
-            v1 = ((v1 - v5) - 24);
-        }
-        if (v1 > 0) {
-            Call6(_call_via_r4, slot40, p11, (v2 - 32), v5, 64, v1);
-        }
-    }
-    if (v9 > 16) {
-        BattleFx_StepPaletteToResource((s32)ResourceId_BlastSheet);
-    }
-    slot36 = 0;
-    slot20 = 22;
-    slot16 = slot36;
-    slot12 = 16;
-    slot8 = p11;
-    L_080e9742:;
-    if (v9 == slot12) {
-        *(s32 *)((0x77a8 + p11)) = 12;
-    }
-    if (v9 >= slot12) {
-        if (v9 < ((slot36 << 3) + 18)) {
-            _call_via_r4(slot40, (0x2000 + p11), (*(u8 *)(0x080eef06 + (s32)(slot36 + (s32)((s32)(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4) << 1) + *(s32 *)(*(s32 *)((0x7828 + p11)) + 4)))) - 16), 56, 32, 64);
-        }
-        none = 0;
-        v5 = (slot8 + 0x7080);
-        v10 = none;
+            struct EffectStep *flash = &work->particles[n * 16 + i];
+
+            s32 scale = i * 2;
+            s32 ang = Random16() & 0xFFFF;
+
+            flash->x = Trig_Sin(ang) * scale;
+            flash->y = -(Trig_Cos(ang) * scale);
+            flash->variant = i / 2 + 25;
+            i++;
+        } while (i != 16);
+
+        i = 0;
         do {
-            if ((u32)*(s32 *)(v5 + 24) <= 17) {
-                record = __divsi3(*(s32 *)(v5 + 24), 3);
-                Call6(_call_via_r4, slot40, ((s32)((*(u8 *)(0x080eef0c + record) << 11) + p11) + 0x2000), ((*(s16 *)(v5 + 2) + *(u8 *)(0x080eef06 + (s32)(slot36 + (s32)((s32)(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4) << 1) + *(s32 *)(*(s32 *)((0x7828 + p11)) + 4))))) - 16), (*(s16 *)(v5 + 6) + 56), 32, 64);
-            }
-            if (*(s32 *)(v5 + 24) > 0) {
-                v3 = (*(s32 *)(v5 + 24) - 1);
-            } else {
-                v3 = -1;
-            }
-            *(s32 *)(v5 + 24) = v3;
-            v10 = (v10 + 1);
-            v5 = (v5 + 28);
-            v7 = *(s16 *)(v5 + 6);
-        } while (v10 != 12);
-    }
-    if (v9 > (slot12 + 5)) {
-        none = 0;
-        v10 = none;
-        do {
-            if (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) > 0) {
-                Call3(EffectStep_AdvanceWithGravity2D, (((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000), 64, 0x1000);
-                v3 = (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) - 1);
-                *(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) = (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) - 1);
-                if (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) > 0x6c0000) {
-                    *(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 16) = ((-*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 16) + ((u32)-*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 16) >> 31)) >> 1);
+            struct EffectStep *spark = &SPARK[n * 340 + i];
+
+            s32 mag;
+            s32 ang;
+            s32 at;
+
+            mag = 0x1FF;
+            mag &= Random16();
+            ang = Random16() & 0xFFFF;
+            at = n + work->effect->side * 3;
+            spark->x = FlameBlade_StrikeColumns[at] << 16;
+            spark->y = 176 << 15;
+            mag += 32;
+            spark->velocity_x = (Trig_Sin(ang) * mag) >> 6;
+            spark->velocity_y = -(Trig_Cos(ang) * mag * 2) >> 6;
+            spark->variant = (Random16() & 7) + 32;
+            i++;
+        } while (i != 170 << 1);
+        n++;
+    } while (n != 3);
+
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+    frame = 0;
+    do {
+        if (frame == 4) {
+            Audio_PlayCue(212);
+        }
+        if (frame == 8) {
+            work->shake_frames = frame;
+        }
+        if (frame == 18) {
+            Audio_PlayCue(145);
+        }
+        if (frame == 40) {
+            BattleEventRuntime_BeginPhaseFar(134);
+        }
+
+        /* The blade: in from the top for ten frames, held, then sinking. */
+        if (frame <= 39) {
+            s32 high;
+            s32 x;
+            s32 top;
+
+            high = 128;
+            if (work->effect->side == 1) {
+                if (frame <= 9) {
+                    x = frame * 10 - 8;
+                    top = frame * 16 - 128;
+                } else if (frame > 20) {
+                    x = frame + 62;
+                    top = frame * 2 - 24;
                 } else {
-                    if ((u32)*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000)) <= 0x7effff) {
-                        if (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) >= 0) {
-                            p8 = (s32)*(u8 **)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) >> 16;
-                            p4 = *(s32 *)(((1 & v10) << 2) + slot24);
-                            p8b = ((s32)p8 - (Value2(__divsi3, v3, 5) + 1));
-                            _call_via_r4(slot40, (slot32 + *(u16 *)(0x080ede48 + (((Value2(__divsi3, v3, 5) + 1) << 1) - 2))), ((*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000)) >> 16) - (((Value2(__divsi3, v3, 5) + 1) + ((u32)(Value2(__divsi3, v3, 5) + 1) >> 31)) >> 1)), (Value2(__divsi3, v3, 5) + 1), ((Value2(__divsi3, v3, 5) + 1) << 1));
-                        }
-                    }
+                    x = 82;
+                    top = 16;
+                }
+            } else {
+                if (frame <= 9) {
+                    x = 128 - frame * 10;
+                    top = frame * 16 - 128;
+                } else if (frame > 20) {
+                    x = 58 - frame;
+                    top = frame * 2 - 24;
+                } else {
+                    x = 38;
+                    top = 16;
                 }
             }
-            v10 = (v10 + 1);
-        } while (v10 != 0x100);
-    }
-    none = 0;
-    if (*(s32 *)(*(s32 *)(p11 + 30760) + 20) != 0) {
-        base6_24 = 36;
-        p8c = slot20;
-        v2 = 0x7828;
-        v10 = none;
-        do {
-            if (v9 == p8c) {
-                v2 = 5;
-                ObjectGroup_UpdateMembers(*(s16 *)(*(s32 *)(((s32)p11 + v2)) + base6_24), 7, v2, v10, 10);
-                BattleMotion_ApplyVariantMotionFar(*(s16 *)(*(s32 *)(((s32)p11 + v2)) + base6_24), 4);
+            if (top + 128 > 104) {
+                high = high - top - 24;
             }
-            v2 = 0x7828;
-            v10 = (v10 + 1);
-            base6_24 = (base6_24 + 2);
-            v5 = ((s32)p11 + v2);
-        } while (v10 != *(s32 *)(*(s32 *)((s32)p11 + v2) + 20));
-    }
-    slot20 = (slot20 + 8);
-    slot16 = (slot16 + 5);
-    slot12 = (slot12 + 8);
-    slot8 = (slot8 + 0x1c0);
-    slot36 = (slot36 + 1);
-    if (slot36 != 2) {
-        goto L_080e9742;
-    }
-    Camera_ApplyShake(16, 16);
-    v5 = 1;
-    ObjectGroup_TickMemberTimers();
-    *(s32 *)((0x7824 + p11)) = v5;
-    WaitFrames(1);
-    v9 = (v9 + 1);
-    if (v9 != 80) {
-        goto L_080e965c;
-    }
-    ObjectDispatch_ApplyValueToChildrenFar(slot28, 16);
-    Call1(Scheduler_RemoveCallback, 0x80cd261);
+            if (high > 0) {
+                routine[0](canvas, work, x - 32, top, 64, high);
+            }
+        }
+
+        if (frame > 16) {
+            BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
+        }
+
+        n = 0;
+        do {
+            s32 start = n * 8 + 16;
+
+            if (frame == start) {
+                work->shake_frames = 12;
+            }
+            if (frame >= start) {
+                if (frame < start + 2) {
+                    s32 at = n + work->effect->side * 3;
+
+                    routine[0](canvas, (u8 *)work + (128 << 6),
+                        FlameBlade_StrikeColumns[at] - 16, 56, 32, 64);
+                }
+                i = 0;
+                do {
+                    struct EffectStep *flash = &work->particles[n * 16 + i];
+
+                    s32 x;
+                    s32 life;
+                    s32 y;
+                    s32 at;
+
+                    y = HI(flash->y);
+                    at = n + work->effect->side * 3;
+                    x = HI(flash->x) + FlameBlade_StrikeColumns[at];
+                    life = flash->variant;
+                    if ((u32)life <= 17) {
+                        routine[0](canvas,
+                            (u8 *)work + (FlameBlade_FlashCells[life / 3] << 11) + (128 << 6),
+                            x - 16, y + 56, 32, 64);
+                    }
+                    life = flash->variant;
+                    flash->variant = life > 0 ? life - 1 : -1;
+                    i++;
+                } while (i != 12);
+            }
+
+            if (frame > start + 5) {
+                i = 0;
+                do {
+                    struct EffectStep *spark = &SPARK[n * 340 + i];
+
+                    if (spark->variant > 0) {
+                        s32 x;
+                        s32 y;
+                        s32 size;
+
+                        EffectStep_AdvanceWithGravity2D(spark, 64, 128 << 5);
+                        y = spark->y;
+                        spark->variant--;
+                        if (y > (216 << 15)) {
+                            spark->velocity_y = -spark->velocity_y / 2;
+                        } else {
+                            x = spark->x;
+                            if ((u32)x <= 0x007EFFFF && y >= 0) {
+                                u8 *cell;
+                                s32 py = y >> 16;
+                                s32 px = x >> 16;
+
+                                size = spark->variant / 5 + 1;
+                                cell = (u8 *)sheet + ParticleStreams_CellOffsets[size - 1];
+                                px -= size / 2;
+                                py -= size;
+                                routine[i & 1](canvas, cell, px, py, size, size * 2);
+                            }
+                        }
+                    }
+                    i++;
+                } while (i != 128 << 1);
+            }
+
+            for (i = 0; i != work->effect->count; i++) {
+                if (frame == start + 6) {
+                    ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 10);
+                    BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+                }
+            }
+            n++;
+        } while (n != 2);
+
+        Camera_ApplyShake(16, 16);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+        frame++;
+    } while (frame != 80);
+
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
-    p9b = v5;
-    v9 = p9b;
-    p10 = base6_24;
-    p11b = slot16;
 }

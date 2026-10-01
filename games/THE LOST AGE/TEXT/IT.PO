@@ -18567,7 +18567,7 @@ msgctxt "message"
 msgid "04639"
 msgstr "Psin. appresa"
 
-msgctxt "message"
+msgctxt "MsgEquipSlotLabels"
 msgid "04640"
 msgstr "Arma"
 

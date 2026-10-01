@@ -242,7 +242,7 @@ Func_080f9644:
 	strb r0, [r3]
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_080fadd0
+	bl ItemMenu_DrawIcons
 	movs r2, #0
 	mov r8, r2
 .L_080f9864:
@@ -388,7 +388,7 @@ Func_080f9644:
 	strb r0, [r3]
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_080fadd0
+	bl ItemMenu_DrawIcons
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #30
@@ -1313,7 +1313,7 @@ Func_080f9644:
 	strb r0, [r3]
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_080fadd0
+	bl ItemMenu_DrawIcons
 	movs r0, #1
 	bl WaitFrames
 	ldrb r3, [r7]
@@ -1397,7 +1397,7 @@ Func_080f9644:
 	movs r1, #0
 	adds r0, r5, #0
 	movs r5, #152
-	bl Func_080fadd0
+	bl ItemMenu_DrawIcons
 	lsls r5, r5, #2
 	movs r0, #1
 	bl WaitFrames

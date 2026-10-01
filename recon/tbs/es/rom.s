@@ -1460,8 +1460,6 @@ BattleEffect_RunEmberColumns:
 	.thumb_func
 BattleFx_RunSparkGroups:
 	.incbin "baserom.gba", 0x000d7e04, 0x000006e4
-	.section .rom.000d9654, "ax"
-	.incbin "baserom.gba", 0x000d9654, 0x000006b0
 	.section .rom.000da170, "ax"
 	.global BattleEffect_RunDitherDissolveScene
 	.type BattleEffect_RunDitherDissolveScene, %function

@@ -1,7 +1,3 @@
-/* Draft, not exact: score 786, 33 instructions differ, same size and frame.
-   All of it is in the second phase's unit loop: the reference steps the
-   unit's byte offset into the spark buffer by 0x700 where this steps a
-   seventh of it and shifts, and three registers differ around the puff draw. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -41,7 +37,7 @@ extern u8 BattleFx_PuffSizes[];
 /* Battle effect: sparks burst from the acting unit and are pulled back to
    it while a djinni travels to the first target; then a cloud of 64 sparks
    closes in on every affected unit, eight frames apart. */
-void BattleEffect_RunSparkTravel(struct BattleEffectArgument *effect)
+void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
     void **cursor;
@@ -53,9 +49,8 @@ void BattleEffect_RunSparkTravel(struct BattleEffectArgument *effect)
     struct MotionObject *actor;
     struct MotionObject *goal;
     s32 frame;
-    s32 position[3];
     s32 i;
-    s32 time;
+    s32 position[3];
     s32 target[3];
     s32 delta[3];
     s32 rider[3];
@@ -79,15 +74,14 @@ void BattleEffect_RunSparkTravel(struct BattleEffectArgument *effect)
     for (i = 0; i != 64; i++) {
         struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
         s32 heading = Random16() & 0xffff;
-        s32 speed = 0xff & Random16();
-        s32 tmp3;
+        s32 speed = (Random16() & 0xff) + 128;
+
         spark->x = 0;
-        tmp3 = speed + 128;
         spark->y = ((Random16() & 31) + 20) << 16;
         spark->z = 0;
-        spark->velocity_x = (Trig_Sin(heading) * tmp3) >> 5;
+        spark->velocity_x = (Trig_Sin(heading) * speed) >> 5;
         spark->velocity_y = 0;
-        spark->velocity_z = (Trig_Cos(heading) * (speed + 128)) >> 5;
+        spark->velocity_z = (Trig_Cos(heading) * speed) >> 5;
         spark->variant = 0;
     }
     work->transfer_mode = 2;
@@ -148,7 +142,8 @@ void BattleEffect_RunSparkTravel(struct BattleEffectArgument *effect)
                 if (screen.depth > 634)
                     screen.depth = 634;
                 size = 9 - (screen.depth - 250) / 64;
-                callbacks[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1], screen.x - size / 2, screen.y - size, size, size * 2);
+                callbacks[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    screen.x - size / 2, screen.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(spark, 60, 0);
                 if (frame > i + 30) {
                     s32 dx = -spark->x >> 8;
@@ -209,10 +204,9 @@ void BattleEffect_RunSparkTravel(struct BattleEffectArgument *effect)
                 ObjectGroup_UpdateMembers(work->effect->actors[member], 0, -1, -1, 0);
             if (frame > start) {
                 SceneTransform_ApplyYaw((frame - start) << 9);
-                i = 0;
-                while (i != 64) {
+                for (i = 0; i != 64; i++) {
                     struct EffectStep *spark =
-                        (struct EffectStep *)(Ram_MapCellBuffer + member * 0x700) + i;
+                        &((struct EffectStep *)Ram_MapCellBuffer)[member * 64 + i];
 
                     if (frame > start + i / 2) {
                         s32 xx = (spark->x >> 8) * (spark->x >> 8);
@@ -220,10 +214,7 @@ void BattleEffect_RunSparkTravel(struct BattleEffectArgument *effect)
                         s32 zz = (spark->z >> 8) * (spark->z >> 8);
                         s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
                         if (distance != 0) {
-                            u32 size;
                             s32 cel;
-                            u32 cell;
-                            u32 half;
 
                             EffectPosition_ApplyBaseAndYOffset((s32 *)spark, &view);
                             view.x >>= 1;
@@ -231,18 +222,25 @@ void BattleEffect_RunSparkTravel(struct BattleEffectArgument *effect)
                                 view.depth = 314;
                             if (view.depth > 634)
                                 view.depth = 634;
+                            /* FAKEMATCH: the size series A draws its sparks at, kept
+                               from that effect and never used here; without it
+                               the loop is short enough for the view's address
+                               to leave it, and 268 instructions differ. */
+                            cel = 3 - (view.depth - 314) / 128;
                             cel = (i * 4 + frame) % 9;
-                            cell = BattleFx_PuffCells[cel];
-                            size = BattleFx_PuffSizes[cel];
-                            half = size >> 1;
-                            draw[1](canvas, (u8 *)sheet + cell,
-                                view.x - half, view.y - half, size, size);
+                            {
+                                u8 *cell = (u8 *)sheet + BattleFx_PuffCells[cel];
+                                u32 edge = BattleFx_PuffSizes[cel];
+                                u32 half = edge >> 1;
+
+                                draw[1](canvas, cell, view.x - half, view.y - half,
+                                    edge, edge);
+                            }
                             spark->x -= spark->x / distance;
                             spark->y -= spark->y / distance;
                             spark->z -= spark->z / distance;
                         }
                     }
-                    i++;
                 }
             }
         }

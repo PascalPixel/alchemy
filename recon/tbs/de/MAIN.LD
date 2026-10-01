@@ -185,8 +185,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP6.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000107f0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP4.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00010be4)
-    "*/recon/tbs/de/rom.o"(.rom.00010ca0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY4.o"(.text)

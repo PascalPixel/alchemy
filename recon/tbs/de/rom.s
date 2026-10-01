@@ -151,18 +151,6 @@ Func_08010788:
 	.thumb_func
 MapAnimation_ApplyAffineFrame:
 	.incbin "baserom.gba", 0x000107f0, 0x000000f0
-	.section .rom.00010be4, "ax"
-	.global Map_UpdateCurrentTileBlock
-	.type Map_UpdateCurrentTileBlock, %function
-	.thumb_func
-Map_UpdateCurrentTileBlock:
-	.incbin "baserom.gba", 0x00010be4, 0x000000bc
-	.section .rom.00010ca0, "ax"
-	.global Map_UpdateCurrentTileBlockUntilBlocked
-	.type Map_UpdateCurrentTileBlockUntilBlocked, %function
-	.thumb_func
-Map_UpdateCurrentTileBlockUntilBlocked:
-	.incbin "baserom.gba", 0x00010ca0, 0x000000c8
 	.section .rom.000113f4, "ax"
 	.global Func_08011bf4
 	.type Func_08011bf4, %function

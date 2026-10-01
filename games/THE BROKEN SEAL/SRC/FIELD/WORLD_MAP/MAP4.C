@@ -199,3 +199,90 @@ void WorldMap_UpdateView(void)
     }
     ((s32 (*)(u8 *, s32 *, u8 *, u8 *))Data_03001e50[46])(cam, pos, map, buffer + (Data_03001e40 & 1) * 0x1400);
 }
+
+/* The world map's window on its tiles: the camera position and a 16 by 16
+ * grid of tile numbers that wraps at its edges. */
+struct WorldTilePosition {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+struct WorldTileWindow {
+    struct WorldTilePosition *position;
+    u8 unknown_004[0x134];
+    u16 tiles[256];
+};
+
+extern struct WorldTileWindow *gMapWork;
+
+s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
+
+/* Redraws the 2 by 2 tiles around the camera's position on both layers,
+ * the second layer's tiles 320 on from the first's. */
+void Map_UpdateCurrentTileBlock(void)
+{
+    struct WorldTileWindow *window = gMapWork;
+    s32 x0 = 0;
+    s32 y0 = 0;
+    u32 layer;
+    u32 row;
+    u32 col;
+    s32 bias;
+    s32 tile;
+
+    if (window->position != NULL) {
+        s32 *p = &window->position->x;
+
+        x0 = *p++;
+        y0 = p[1];
+    }
+    x0 = (x0 - 0x1000000) >> 25;
+    y0 = (y0 - 0x1400000) >> 25;
+    layer = 0;
+    bias = 0;
+    for (; layer < 2; layer++) {
+        for (row = 0; row < 2; row++) {
+            for (col = 0; col < 2; col++) {
+                tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
+                tile = window->tiles[tile];
+                tile += bias;
+                Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
+            }
+        }
+        bias += 320;
+    }
+}
+
+/* Brings the same 2 by 2 tiles up to date without forcing them, and stops
+ * at the first one that had to be drawn, so a frame draws at most one. */
+void Map_UpdateCurrentTileBlockUntilBlocked(void)
+{
+    struct WorldTileWindow *window = gMapWork;
+    s32 x0 = 0;
+    s32 y0 = 0;
+    u32 layer;
+    u32 row;
+    u32 col;
+    s32 tile;
+
+    if (window->position != NULL) {
+        s32 *p = &window->position->x;
+
+        x0 = *p++;
+        y0 = p[1];
+    }
+    x0 = (x0 - 0x1000000) >> 25;
+    y0 = (y0 - 0x1400000) >> 25;
+    for (layer = 0; layer < 2; layer++) {
+        for (row = 0; row < 2; row++) {
+            for (col = 0; col < 2; col++) {
+                tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
+                tile = window->tiles[tile];
+                tile += layer * 320;
+                if (Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) != 0)
+                    return;
+            }
+        }
+    }
+}

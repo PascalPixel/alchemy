@@ -129,6 +129,6 @@ BattleFx_StartItemBreak:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080dd634:
-	.4byte Func_080dcf8c
+	.4byte BattleFx_UpdateItemBreakFragment
 .L_080dd638:
 	.4byte Data_080f0e78

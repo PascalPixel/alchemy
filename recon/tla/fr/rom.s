@@ -2730,7 +2730,14 @@ Item_AdjustCounter:
 BattleAction_GetDirect:
 	.incbin "baserom.gba", 0x000b443c, 0x000002b8
 	.section .rom.000b4792, "ax"
-	.incbin "baserom.gba", 0x000b4792, 0x0000018a
+	.incbin "baserom.gba", 0x000b4792, 0x0000000a
+	.section .rom.000b47ac, "ax"
+	.incbin "baserom.gba", 0x000b47ac, 0x00000124
+	.global Owner_GetLevelThreshold
+	.type Owner_GetLevelThreshold, %function
+	.thumb_func
+Owner_GetLevelThreshold:
+	.incbin "baserom.gba", 0x000b48d0, 0x0000004c
 	.section .rom.000b491c, "ax"
 	.global Owner_LevelUp
 	.type Owner_LevelUp, %function
@@ -2792,13 +2799,19 @@ Djinn_Deactivate:
 Trade_RemoveOffer:
 	.incbin "baserom.gba", 0x000b5d58, 0x000000ac
 	.section .rom.000b6002, "ax"
-	.incbin "baserom.gba", 0x000b6002, 0x00001362
+	.incbin "baserom.gba", 0x000b6002, 0x000002c6
+	.global Owner_ExperienceThresholds
+Owner_ExperienceThresholds:
+	.incbin "baserom.gba", 0x000b62c8, 0x0000109c
 	.global Item_DefinitionTable
 Item_DefinitionTable:
 	.incbin "baserom.gba", 0x000b7364, 0x000058b0
 	.global BattleAction_DefinitionTable
 BattleAction_DefinitionTable:
-	.incbin "baserom.gba", 0x000bcc14, 0x000098f8
+	.incbin "baserom.gba", 0x000bcc14, 0x00009338
+	.global Owner_GrowthRecords
+Owner_GrowthRecords:
+	.incbin "baserom.gba", 0x000c5f4c, 0x000005c0
 	.global Summon_DefinitionTable
 Summon_DefinitionTable:
 	.incbin "baserom.gba", 0x000c650c, 0x000000e8
@@ -4193,7 +4206,7 @@ Func_080dca84:
 Func_080dcadc:
 	.incbin "baserom.gba", 0x000e1ad0, 0x00000478
 	.section .rom.000e1f64, "ax"
-	.incbin "baserom.gba", 0x000e1f64, 0x000000e4
+	.incbin "baserom.gba", 0x000e1f64, 0x0000001c
 	.section .rom.000e2048, "ax"
 	.global Func_080dd054
 	.type Func_080dd054, %function

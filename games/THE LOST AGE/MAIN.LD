@@ -951,7 +951,6 @@ SECTIONS
         "*/recon/tla/raw/0804d38c.o"(.text)
         "*/recon/tla/raw/0804d3e8.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/SELECTION.o"(.text)
-        "*/recon/tla/raw/0804d4f8.o"(.text)
         "*/recon/tla/raw/0804d570.o"(.text)
         "*/recon/tla/raw/0804d5ac.o"(.text)
         "*/recon/tla/raw/0804d678.o"(.text)

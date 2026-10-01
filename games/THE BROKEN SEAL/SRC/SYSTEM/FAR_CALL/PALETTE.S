@@ -18,7 +18,7 @@ Func_080f2000:
 	.thumb_func
 Title_ShowSplashScreenFar:
 	overlay_veneer Title_ShowSplashScreen
-	.global Func_080f2020
+	.global Title_ShowAnimatedSplashFar
 	.thumb_func
-Func_080f2020:
-	overlay_veneer Unnamed_080f2d54
+Title_ShowAnimatedSplashFar:
+	overlay_veneer Title_ShowAnimatedSplash

@@ -380,7 +380,6 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.00070828)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/OBJECT.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SELECT_GROUP_ENTRY.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000816e4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000818e4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOAD_RESOURCE_GROUP.o"(.text)

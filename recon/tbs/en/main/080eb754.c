@@ -23,12 +23,25 @@
 /* 320 burst records fill the map cell buffer, 32 for each affected unit. */
 #define BURST ((struct EffectStep *)Ram_MapCellBuffer)
 
-/* The nine spawned objects, kept in the work block. */
-#define OBJECTS(work) ((struct FxObject **)((u8 *)(work) + 0x77d8))
-
 struct FxObject {
     u8 unknown_00[9];
     u8 flags;
+};
+
+/* The effect's work block: the shared layout with the nine spawned objects
+   named. */
+struct ObjectRowWork {
+    u8 sheet[0x7080];
+    struct EffectStep particles[64];
+    s32 transfer_mode;
+    s32 transfer_value;
+    u8 unknown_7788[0x20];
+    s32 shake_frames;
+    u8 unknown_77ac[0x2c];
+    struct FxObject *objects[9];
+    u8 unknown_77fc[0x28];
+    s32 transfer_pending;
+    struct BattleEffectArgument *effect;
 };
 
 /* A projected placement: a 16.16 position and two words around it. */
@@ -90,7 +103,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     u8 hit_row[14];
     struct FxPlacement place2;
     void *canvas;
-    struct BattleEffectWork *work;
+    struct ObjectRowWork *work;
     DrawRectangle blit;
     u8 *sheet;
     s32 base_x;
@@ -220,7 +233,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             do {
                 place.x = ((base_x + ObjectRow_Columns[i] - lift) << 16) + (224 << 16);
                 place.y = ((ObjectRow_Rows[i] - wave) << 16) + (144 << 15);
-                Object_ApplyProjectedPlacementFar(OBJECTS(work)[i], &place, &pair, 0);
+                Object_ApplyProjectedPlacementFar(work->objects[i], &place, &pair, 0);
                 i++;
             } while (i != 9);
         }
@@ -310,18 +323,13 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     BattleEffect_SetupBlendedDisplay();
     REG16(0x04000040) = 0xf0;
 
-    {
-        struct FxObject **list;
+    i = 0;
+    do {
+        struct FxObject *object = work->objects[i];
 
-        i = 0;
-        list = OBJECTS(work);
-        do {
-            struct FxObject *object = *list++;
-
-            object->flags |= 12;
-            i++;
-        } while (i != 9);
-    }
+        object->flags |= 12;
+        i++;
+    } while (i != 9);
 
     {
     s32 row_x;
@@ -379,7 +387,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             do {
                 place2.x = (row_x + ObjectRow_Columns[i]) << 16;
                 place2.y = ((ObjectRow_Rows[i] - rise) << 16) + (144 << 15);
-                Object_ApplyProjectedPlacementFar(OBJECTS(work)[i], &place2, &pair2, 0);
+                Object_ApplyProjectedPlacementFar(work->objects[i], &place2, &pair2, 0);
                 i++;
             } while (i != 9);
         }
@@ -478,7 +486,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     BattleEventRuntime_BeginPhaseFar(134);
     i = 0;
     do {
-        ResourceObject_ReleaseFar(OBJECTS(work)[i]);
+        ResourceObject_ReleaseFar(work->objects[i]);
         i++;
     } while (i != 9);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);

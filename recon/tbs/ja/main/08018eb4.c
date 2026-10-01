@@ -10,7 +10,17 @@
    r8 for the voicing read, where this build keeps y in r6, x in ip and the
    work block in r5 for both. alchemy permute took the score from 1455 to
    555 (13 register-only, 3 operand, 2 reordered, 3 deleted) in seven
-   minutes and stalled there. */
+   minutes and stalled there.
+   2026-10-01: storing the tile through base rather than out gives y r5 and
+   x r6 as the reference does, and alchemy permute (five minutes, listing
+   editions/glyph_ja.s of the session scratchpad) then reached 170: 2
+   register-only and 1 deleted instruction, plus 3 operand differences
+   that are the listing's absolute call targets, through two temporaries
+   (tmp, tmp2) and pointer arithmetic for the voicing read. What remains is
+   that the reference loads the work block into ip, copies it into r8 for
+   the reads, and stores the tile through ip, where this build keeps it in
+   r8 alone; storing through out or gWindowWork is worse (555 and up),
+   and a separate tilemap pointer for the store scores 175. */
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -71,6 +81,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         return;
     if (mode == 1) {
         s32 column;
+        u16 tmp;
         out = RenderOutput_AcquireFree();
         if (out == NULL)
             return;
@@ -82,7 +93,8 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
             *slot = Resource_FindFreeEntry();
         column = 0xfffe;
         /* FAKEMATCH: the volatile width read is scheduled before the column constant's pool load, as in the reference. */
-        attr->x = (win->x + (column + *(volatile u16 *)&win->width)) * 8 + 4;
+        tmp = win->x;
+        attr->x = (tmp + (column + *(volatile u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 + 1;
         out->x = attr->x;
@@ -96,7 +108,9 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         /* The Japanese voicing marks 0xde and 0xdf go into the cell before
            them, joined to the kana tile 0x0e or 0x11 already there. */
         if (tile - 0xde <= 1) {
-            switch (((struct WindowTilemap *)base)->tiles[(win->y + y) * 32 + (win->x + x)]) {
+            u32 tmp2;
+            tmp2 = (win->y + y) * 32;
+            switch (*(((struct WindowTilemap *)base)->tiles + (tmp2 + (win->x + x)))) {
             case 0xf011:
                 tile -= 0xc0;
                 break;
@@ -110,6 +124,6 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         }
         pos = (win->y + y) * 32 + (win->x + x);
         if (pos < 640)
-            ((struct WindowTilemap *)out)->tiles[pos] = tile | 0xf000;
+            ((struct WindowTilemap *)base)->tiles[pos] = tile | 0xf000;
     }
 }

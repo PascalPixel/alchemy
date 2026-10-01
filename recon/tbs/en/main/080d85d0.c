@@ -1,251 +1,159 @@
 #include "TYPES.H"
-#include "RESOURCE_IDS.H"
+#include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
+#include "EFFECT_STEP.H"
+#include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
-/*
- * Battle-presentation sub-effect at 0x080d85d0, from the 0x03001eec
- * "battle work" subsystem compiler family (template-main-080ce85c /
- * template-main-08099160), already partly recovered at
- * recon/tbs/en/main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and
- * 080e01e4.c.  This owner does not match its assigned template's shape
- * (888 bytes here vs. 724 there): it adds a member-scaled particle-cloud
- * pool at 0x02010000 that is both initialised once (128 particles per
- * party member, positioned at that member's rest coordinates with a random
- * outward kick) and then, once per displayed frame, drawn and pulled toward
- * a single currently-tracked member (state offset 8) with a staggered
- * per-member release gate.  Field offsets, the Value_/gWorkSlot
- * absolute-symbol conventions, and the 0x02010018/0x02010000 particle-pool
- * reset idiom are the same evidence already recorded for the sibling owners
- * above; see those files for the supporting citations.
- *
- * Per recon/tbs/en/dossiers.json#main:080d82b0's evidence, the work+0x7828
- * state pointer must never be materialized into its own named local (even
- * reused verbatim at every site): this compiler's CSE hoists the address
- * across the whole enclosing block and produces a spurious spill/reload the
- * reference does not have.  The STATE macro below re-expands the field
- * access textually at every use instead.
- *
- * The (dx >> 8) and (dz >> 8) range test against [-0xFFF, 0xFFF] is GCC's
- * standard unsigned-bias fold of two signed range comparisons into one
- * `(unsigned)(v + 0xFFF) > 0x1FFE`; it is spelled here as the ordinary
- * bounded comparison and left for the compiler to fold, not hand-written as
- * the bias arithmetic.  The loop-count guards that compare a scaled member
- * count against a negative bias (`* 20 != -72`) rather than testing the
- * unscaled count are kept in that literal, unsimplified form to match
- * 080d82b0.c's confirmed reference shape for the same idiom.
- */
-#define STATE (*(void **)((u8 *)(work) + 0x7828))
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
+extern void *gWorkSlot[];
 
-typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
-
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 id);
-void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
-void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
+void *Resource_GetTableEntry(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
-u32 Random16(void);
-void EffectPosition_ApplyBaseAndYOffset(void *src, void *dest);
-void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
-void Audio_PlayCue(s32 id);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void WaitFrames(s32 frames);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void Audio_PlayCue(s32 cue);
+void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
+    s32 slot, s32 delay);
 void ObjectGroup_TickMemberTimers(void);
 
-extern void *gWorkSlot[];
-extern const u16 ParticleStreams_CellOffsets[];
+extern u16 ParticleStreams_CellOffsets[];
 
-s32 Unnamed_080d85d0(void *object)
+#define MOTES_PER_MEMBER 128
+
+/* Battle effect: 128 motes leave every affected unit in random directions,
+   one unit every twenty frames, and the first 32 of each unit are drawn
+   while they are pulled towards the acting unit, where they vanish. */
+void Unnamed_080d85d0(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
     void **cursor;
-    void *work;
-    void *draw_destination;
-    void *extra_target;
+    struct BattleEffectWork *work;
+    void *canvas;
+    DrawRectangle draw;
+    void *sheet;
     s32 facing;
-    s32 variant;
-    void *palette;
-    DrawRectangleFn draw_rectangle_fn;
-    s32 *pool_cursor;
-    s32 pool_index;
+    struct EffectPosition screen;
+    s32 alternate;
     s32 member;
-    s32 member_id_offset;
-    s32 particle_offset;
-    s32 fp;
+    s32 frame;
+    s32 i;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = &gWorkSlot[39];
     cursor = heap_cache;
     work = *cursor++;
-    draw_destination = *cursor;
-    extra_target = heap_cache[2];
-    facing = *(s32 *)((u8 *)heap_cache - 108);
-    variant = (*(s32 *)((u8 *)(object) + 0x18)) != 0;
-    STATE = object;
-
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    if (effect->variant == 0)
+        alternate = 0;
+    else
+        alternate = 1;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    Resource_LoadAndDecompress((s32) &ResourceId_ParticleSpritesA, extra_target, 0, 0);
-    if (variant) {
-        palette = Resource_GetTableEntry((s32) &ResourceId_BlastSheet);
-    } else {
-        palette = Resource_GetTableEntry((s32) &ResourceId_IceBlockSheet);
-    }
-    _call_via_r3((void *)(160 << 19), palette, 128, (WordCopyFn)0x03001388);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Iwram_CopyWords((void *)BG_PLTT,
+        Resource_GetTableEntry(alternate == 0
+            ? (s32)&ResourceId_IceBlockSheet : (s32)&ResourceId_BlastSheet), 128);
 
-    pool_cursor = (s32 *)0x02010018;
-    pool_index = 0;
-    do {
-        pool_index++;
-        *pool_cursor = -1;
-        pool_cursor += 7;
-    } while (pool_index != 1024);
+    for (i = 0; i != 8 * MOTES_PER_MEMBER; i++)
+        ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
 
-    if ((*(s32 *)((u8 *)(STATE) + 20)) != 0) {
-        s32 *particle;
-        void *member_ptr;
-        s32 member_id;
-        s32 half;
-        s32 i;
+    for (member = 0; member != work->effect->count; member++) {
+        s32 *object;
+        s32 offset;
+        s32 height;
+        struct EffectStep *mote;
 
-        member_id_offset = 36;
-        particle_offset = 0;
-        member = 0;
-        do {
-            member_id = (*(s16 *)((u8 *)(STATE) + (member_id_offset)));
-            member_ptr = *GetBattleObjectSlotFar(member_id);
-            member_id = (*(s16 *)((u8 *)(STATE) + (member_id_offset)));
-            half = Battle_GetObjectTableValueFar(member_id);
-            half = half / 2;
-
-            particle = (s32 *)((u8 *)0x02010000 + particle_offset);
-            for (i = 0; i != 128; i++) {
-                particle[0] = (*(s32 *)((u8 *)(member_ptr) + 8));
-                particle[1] = (*(s32 *)((u8 *)(member_ptr) + 12)) + half;
-                particle[2] = (*(s32 *)((u8 *)(member_ptr) + 16));
-                particle[3] = (s32) (((Random16() & 0xFF) - 128) << 10);
-                particle[4] = (s32) (((Random16() & 0xFF) - 128) << 10);
-                particle[5] = (s32) (((Random16() & 0xFF) - 128) << 10);
-                particle[6] = 0;
-                particle = (s32 *)((u8 *)particle + 28);
-            }
-
-            member_id_offset += 2;
-            particle_offset += 0xE00;
-            member++;
-        } while (member != (*(s32 *)((u8 *)(STATE) + 20)));
+        offset = member * MOTES_PER_MEMBER * sizeof(struct EffectStep);
+        object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+        height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
+        for (i = 0, mote = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+             i != MOTES_PER_MEMBER; i++) {
+            mote->x = object[2];
+            mote->y = object[3] + height;
+            mote->z = object[4];
+            mote->velocity_x = ((Random16() & 0xff) - 128) << 10;
+            mote->velocity_y = ((Random16() & 0xff) - 128) << 10;
+            mote->velocity_z = ((Random16() & 0xff) - 128) << 10;
+            mote->variant = 0;
+            mote++;
+        }
     }
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw_rectangle_fn = (DrawRectangleFn) gWorkSlot[46];
-    (*(s32 *)((u8 *)(work) + 0x7780)) = 3;
-    (*(s32 *)((u8 *)(work) + 0x7784)) = 0x04040404;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    draw = (DrawRectangle)gWorkSlot[46];
+    work->transfer_mode = 3;
+    work->transfer_value = 0x04040404;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
 
-    if ((*(s32 *)((u8 *)(STATE) + 20)) * 20 != -72) {
-        fp = 0;
-        do {
-            void *member_ptr;
-            s32 member_id;
-            s32 half;
+    for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
+        s32 *target;
+        s32 height;
 
-            member_id = (*(s32 *)((u8 *)(STATE) + 8));
-            member_ptr = *GetBattleObjectSlotFar(member_id);
-            member_id = (*(s32 *)((u8 *)(STATE) + 8));
-            half = Battle_GetObjectTableValueFar(member_id);
-            half = half / 2;
+        target = *GetBattleObjectSlotFar(work->effect->actor);
+        height = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
+        if (frame == 64)
+            BattleEventRuntime_BeginPhaseFar(133);
+        Render_ResetTransformState();
+        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        if (frame == 40)
+            ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
+        if (frame == work->effect->count * 20 + 52)
+            ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
+        for (member = 0; member != work->effect->count; member++) {
+            s32 offset;
 
-            if (fp == 64) {
-                BattleEventRuntime_BeginPhaseFar(133);
-            }
-            Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
-            if (fp == 40) {
-                ObjectGroup_UpdateMembers(member_id, 7, -1, -1, 0);
-            }
-            if (fp == (*(s32 *)((u8 *)(STATE) + 20)) * 20 + 52) {
-                ObjectGroup_UpdateMembers(member_id, 0, -1, -1, 0);
-            }
+            offset = member * MOTES_PER_MEMBER * sizeof(struct EffectStep);
+            if (frame == member * 20)
+                ObjectGroup_UpdateMembers(work->effect->actors[member], 7, 5, member, 42);
+            if (frame > member * 20) {
+                struct EffectStep *mote;
 
-            if ((*(s32 *)((u8 *)(STATE) + 20)) != 0) {
-                s32 stagger;
-                s32 draw_offset;
+                for (i = 0, mote = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+                     i != 32; i++) {
+                    if (mote->variant >= 0) {
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &screen);
+                        screen.x >>= 1;
+                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[5],
+                            screen.x - 3, screen.y - 6, 6, 12);
+                        EffectStep_AdvanceWithGravity3D(mote, 62, 0);
+                        if (frame > member * 20 + i + 10) {
+                            s32 dx;
+                            s32 dy;
+                            s32 dz;
 
-                member = 0;
-                stagger = 0;
-                draw_offset = 0;
-                do {
-                    if (fp == stagger) {
-                        s32 trigger_id;
-
-                        trigger_id = (*(s16 *)((u8 *)(STATE) + (36 + member * 2)));
-                        ObjectGroup_UpdateMembers(trigger_id, 7, 5, member, 42);
-                    }
-                    if (fp > stagger) {
-                        s32 *particle;
-                        s32 k;
-
-                        particle = (s32 *)((u8 *)0x02010000 + draw_offset);
-                        for (k = 0; k != 32; k++) {
-                            if (particle[6] >= 0) {
-                                s32 sp52[2];
-
-                                EffectPosition_ApplyBaseAndYOffset(particle, sp52);
-                                sp52[0] = sp52[0] >> 1;
-                                draw_rectangle_fn(
-                                    draw_destination,
-                                    (u8 *) extra_target + ParticleStreams_CellOffsets[5],
-                                    sp52[0] - 3, sp52[1] - 6, 6, 12);
-                                EffectStep_AdvanceWithGravity3D(particle, 62, 0);
-                                if (fp > stagger + k + 10) {
-                                    s32 dx;
-                                    s32 dy;
-                                    s32 dz;
-                                    s32 dxs;
-                                    s32 dzs;
-
-                                    dx = (*(s32 *)((u8 *)(member_ptr) + 8))
-                                        - particle[0];
-                                    dy = ((*(s32 *)((u8 *)(member_ptr) + 12))
-                                            + half)
-                                        - particle[1];
-                                    dz = (*(s32 *)((u8 *)(member_ptr) + 16))
-                                        - particle[2];
-                                    dxs = dx >> 8;
-                                    dzs = dz >> 8;
-                                    particle[3] += dxs;
-                                    particle[4] += dy >> 8;
-                                    particle[5] += dzs;
-                                    if (dxs >= -0xFFF && dxs <= 0xFFF) {
-                                        if (dzs >= -0xFFF && dzs <= 0xFFF) {
-                                            particle[6] = -1;
-                                        }
-                                    }
-                                }
-                            }
-                            particle = (s32 *)((u8 *)particle + 28);
+                            dx = (target[2] - mote->x) >> 8;
+                            dy = (target[3] + height - mote->y) >> 8;
+                            dz = (target[4] - mote->z) >> 8;
+                            mote->velocity_x += dx;
+                            mote->velocity_y += dy;
+                            mote->velocity_z += dz;
+                            if ((dx > -0x1000 && dx < 0x1000) && (dz > -0x1000 && dz < 0x1000))
+                                mote->variant = -1;
                         }
                     }
-                    member++;
-                    stagger += 20;
-                    draw_offset += 0xE00;
-                } while (member != (*(s32 *)((u8 *)(STATE) + 20)));
+                    mote++;
+                }
             }
-
-            ObjectGroup_TickMemberTimers();
-            (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
-            WaitFrames(1);
-
-            fp++;
-        } while (fp != (*(s32 *)((u8 *)(STATE) + 20)) * 20 + 72);
+        }
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(46);
-    return BattleFx_EndCanvasLayer();
+    BattleFx_EndCanvasLayer();
 }

@@ -1487,7 +1487,9 @@ BattleEffectB:
 RunPaletteRampEffect:
 	.incbin "baserom.gba", 0x000dd2e8, 0x000004e0
 	.section .rom.000ddaac, "ax"
-	.incbin "baserom.gba", 0x000ddaac, 0x0000141c
+	.incbin "baserom.gba", 0x000ddaac, 0x00000420
+	.section .rom.000de374, "ax"
+	.incbin "baserom.gba", 0x000de374, 0x00000b54
 	.section .rom.000deee0, "ax"
 	.global RunParticleFieldEffect
 	.type RunParticleFieldEffect, %function
@@ -1719,7 +1721,22 @@ BattleFx10_FallCells:
 	.incbin "baserom.gba", 0x000f21f2, 0x00000006
 	.global IceShardBursts_Gravities
 IceShardBursts_Gravities:
-	.incbin "baserom.gba", 0x000f21f8, 0x00000150
+	.incbin "baserom.gba", 0x000f21f8, 0x00000049
+	.global HomingEmbers_Counts
+HomingEmbers_Counts:
+	.incbin "baserom.gba", 0x000f2241, 0x00000003
+	.global HomingEmbers_FlareWidths
+HomingEmbers_FlareWidths:
+	.incbin "baserom.gba", 0x000f2244, 0x00000006
+	.global HomingEmbers_FlareHeights
+HomingEmbers_FlareHeights:
+	.incbin "baserom.gba", 0x000f224a, 0x00000006
+	.global HomingEmbers_FlareBiasY
+HomingEmbers_FlareBiasY:
+	.incbin "baserom.gba", 0x000f2250, 0x00000006
+	.global HomingEmbers_FlareCells
+HomingEmbers_FlareCells:
+	.incbin "baserom.gba", 0x000f2256, 0x000000f2
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000f2348, 0x00000003

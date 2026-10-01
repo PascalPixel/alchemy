@@ -314,7 +314,7 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_5.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00024e3c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/TOGGLE_FLAG.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.00024ea6)
+    "*/recon/tla/it/rom.o"(.rom.00024ec6)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/SKIP_COMMAND.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_11.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.00024efe)

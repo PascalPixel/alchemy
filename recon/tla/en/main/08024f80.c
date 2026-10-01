@@ -1,12 +1,25 @@
-#include "SCRIPT_INTERPRETER.H"
-extern u8 gObjectSlots[];
+/*
+ * Draft: ScriptObject_FindOverlappingEntry, ported from its ☀️ twin with
+ * ⚓️'s 128-byte objects from their heap slot; the callee is listed as
+ * Func_08026f80, ☀️'s Runtime_CheckRadiusOverlap. Score 180: besides that
+ * name, the listing opens the frame (sub sp, #4) right after loading the
+ * objects, where this C opens it first.
+ */
+#include "TYPES.H"
+#include "RAM_BUFFER.H"
 
-s32 GameFlag_TestFar(s32);
-s32 GameFlag_SetBitFar(s32);
-void GameFlag_ClearBitFar(s32);
-void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
-void ObjectDispatch_Release(void);
-s32 Audio_PlayCue(s32);
+/* ⚓️'s script objects are 128 bytes; ☀️'s 112. */
+struct ScriptObjectEntry {
+    void *data;
+    u8 unknown_04[4];
+    s32 values_08[6];
+    u16 value_20;
+    u8 unknown_22[0x37];
+    u8 flags_59;
+    u8 unknown_5a[0x26];
+};
+
+s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3);
 
 struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
     struct ScriptObjectEntry *object, s32 *values)
@@ -16,7 +29,7 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
     u8 *flags;
     struct ScriptObjectEntry *entry;
 
-    entry = *(struct ScriptObjectEntry **)((u32)&gObjectSlots);
+    entry = Ram_HeapSlots->script_objects;
     index = 0;
     flags = &entry->flags_59;
 loop_1:
@@ -28,7 +41,7 @@ loop_1:
         }
     }
     index += 1;
-    flags += 0x70;
+    flags += 0x80;
     entry++;
     if (index > 0x3F) {
         return NULL;

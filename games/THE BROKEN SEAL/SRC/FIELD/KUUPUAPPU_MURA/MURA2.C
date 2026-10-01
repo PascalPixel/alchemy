@@ -118,40 +118,40 @@ void FieldScene_SetupScene13At152_264(void) { Engine_AudioPlayCue(123); SceneAct
 
 void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int field40)
 {
-    void Task_Wait(int);
+    void Engine_TaskWait(int);
     void Actor_SetPosition(int, int, int);
 
     u8 *record = Actor_Get(actor); int frames;
     Actor_SetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
-    *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Actor_SetSpriteFlags(record, 0);
+    *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Engine_ActorSetSpriteFlags(record, 0);
     Actor_MoveToAndWait(actor, x, z); Actor_SetPosition(actor, x << 16, z << 16);
-    for (frames = 60; frames != 0; --frames) { Task_Wait(1); if (*(s16 *)(record + 42) == 0) break; }
-    Actor_SetSpriteFlags(record, 1); *(s32 *)(record + 72) = 0x10000;
+    for (frames = 60; frames != 0; --frames) { Engine_TaskWait(1); if (*(s16 *)(record + 42) == 0) break; }
+    Engine_ActorSetSpriteFlags(record, 1); *(s32 *)(record + 72) = 0x10000;
 }
 
 void FieldScene_RunActor23SequenceOnceByFlag867(void)
 {
-    void Event_Wait();
+    void Engine_EventWait();
 
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Audio_PlayCue(100);
-    Event_Wait(40);
+    Engine_EventWait(40);
     if (GameFlag_IsSet(0x867) == 0) {
         Actor_SetAttachedEffect(23, 0x102);
-        Actor_Jump(23, 4, 0);
-        Event_Wait(12);
-        Actor_Jump(23, 4, 0);
-        Event_Wait(20);
+        Engine_ActorJump(23, 4, 0);
+        Engine_EventWait(12);
+        Engine_ActorJump(23, 4, 0);
+        Engine_EventWait(20);
         ActorPresentation_MoveActorToPositionAndWait(23, 0x188, 104, 0x70000);
-        Event_Wait(20);
+        Engine_EventWait(20);
         Actor_WalkToAndWait(23, 0x198, 104);
         Actor_WalkToAndWait(23, 0x198, 120);
         GameFlag_Set(0x867);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor19MotionSequence(void)
@@ -160,24 +160,24 @@ void FieldScene_RunActor19MotionSequence(void)
     s32 record;
 
     PartyInventory_Discard(231);
-    Event_Begin();
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(19, 2);
+    Engine_EventBegin();
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(19, 2);
     Actor_SetSpeed(19, 0xcccc, 0x6666);
     Actor_WalkToAndWait(19, 216, 0x198);
-    Event_Wait(10);
+    Engine_EventWait(10);
     Actor_FaceDirection(19, 0x4000, 20);
-    Actor_Jump(19, 6, 0);
-    Event_Wait(30);
-    Actor_Jump(19, 6, 0);
-    Event_Wait(30);
-    Actor_Jump(19, 6, 0);
-    Event_Wait(30);
+    Engine_ActorJump(19, 6, 0);
+    Engine_EventWait(30);
+    Engine_ActorJump(19, 6, 0);
+    Engine_EventWait(30);
+    Engine_ActorJump(19, 6, 0);
+    Engine_EventWait(30);
     Actor_WalkToAndWait(19, 216, 0x188);
-    Event_Wait(10);
+    Engine_EventWait(10);
     Actor_FaceDirection(19, 0x4000, 20);
     GameFlag_Set(0x858);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The saved game state; the entrance the party came in by is at +450. */
@@ -352,13 +352,13 @@ s32 SceneActor_CheckFacingAndRange(struct SceneActor *actor, struct SceneActor *
 void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {
     Event_ShowMessage(actor, 0);
-    Event_Wait(delay);
+    Engine_EventWait(delay);
 }
 
 void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay)
 {
-    Actor_FaceEachOther(actor, cue, 0);
-    Event_Wait(delay);
+    Engine_ActorFaceEachOther(actor, cue, 0);
+    Engine_EventWait(delay);
 }
 
 /*

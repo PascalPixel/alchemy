@@ -57,19 +57,19 @@ void SceneAudio_PlayCue123AndDispatchWork364(void)
     s32 val = gEventWork->touched_trigger;
 
     Audio_PlayCue(123);
-    Event_RequestExit(val);
+    Engine_EventRequestExit(val);
 }
 
 void DialogueLayout_ConfigureRowsByFlag301(void)
 {
-    Map_CopyCellRect(0, 34, 13, 3, 23, 34);
+    Map_CopyCellAttributeRect(0, 34, 13, 3, 23, 34);
 
     if (GameFlag_IsSet(0x301) != 0) {
         SceneActor_PlaceAtTile(11, 35, 35);
-        Map_CopyCellRect(24, 34, 1, 3, 23, 34);
+        Map_CopyCellAttributeRect(24, 34, 1, 3, 23, 34);
     } else {
         SceneActor_PlaceAtTile(11, 23, 35);
-        Map_CopyCellRect(24, 34, 1, 3, 35, 34);
+        Map_CopyCellAttributeRect(24, 34, 1, 3, 35, 34);
     }
 }
 
@@ -83,7 +83,7 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 
     p = Actor_Get(gGameState.selected_actor);
     q = Actor_Get(a0);
-    Event_Begin();
+    Engine_EventBegin();
     {
         x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
         y = ((p->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
@@ -92,7 +92,7 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
         p->f34 = 0x8000;
         Object_SetPosition(p, x, p->f0c, y);
     }
-    Object_SetAnimation(p, 27);
+    Object_SetMode(p, 27);
     {
         x = ((q->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
         y = ((q->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
@@ -102,12 +102,12 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
         Object_SetPosition(q, x, q->f0c, y);
     }
     if (a1 < 0 || a2 < 0) {
-        Object_SetAnimation(q, 4);
+        Object_SetMode(q, 4);
     } else {
-        Object_SetAnimation(q, 3);
+        Object_SetMode(q, 3);
     }
     Object_CommitPosition(p);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunShiftAndSetFlag301(void)
@@ -139,7 +139,7 @@ void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
     struct Rec_3a6 *rec = Actor_Get(id);
 
     if (rec != 0) {
-        Actor_SetSpritePriority(id, 3);
+        Engine_ActorSetSpritePriority(id, 3);
         rec->f34 = 2;
         rec->f35 |= 2;
         rec->f8 = (x << 20) + 0x80000;

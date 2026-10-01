@@ -56,6 +56,7 @@ typedef void (*TransformFn)(const s32 *source, s32 *destination);
    vectors, as at Iwram_Call2's call sites. */
 static __inline__ void Transform(const s32 *source, s32 *destination, TransformFn routine)
 {
+    /* FAKEMATCH: a direct call holds the output vector in r9 instead of rematerializing sp+16. */
     routine(source, destination);
 }
 

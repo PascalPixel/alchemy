@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
@@ -29,7 +30,6 @@ u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 void Shop_RestoreSceneTiles(s32 address);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 flags);
 void Func_0808a528(struct Effect_080b2f4c *effect, s32 mode, s32 x, s32 z);
 void Func_0808a520(
     struct Effect_080b2f4c *effect,
@@ -38,7 +38,6 @@ void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
 void AudioCommand_WaitForStateByteClear(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
-void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
 void Shop_InitEffect(void);
 void Shop_ResetEffects(void);
@@ -149,7 +148,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     Func_08009280((s32)shop->party_member_icons[member], 0);
     WaitFrames(20);
     callback_flags = 0xc80;
-    Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
+    Scheduler_AddOrUpdateCallback((s32)(Shop_ResetEffects), callback_flags);
 
     /* FAKEMATCH: the x store goes through a union with a halfword view so it
        may alias the member_z load, which keeps the reference schedule. */
@@ -216,7 +215,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         }
     }
 
-    Scheduler_RemoveCallback(Shop_ResetEffects);
+    Scheduler_RemoveCallback((u32)(Shop_ResetEffects));
     Func_08009280((s32)shop->party_member_icons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);

@@ -44,6 +44,6 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
 
 s32 SceneState_ApplyArgMode1AndReturnZero(s32 a)
 {
-    Actor_SetSpriteFlags(a, 1);
+    Engine_ActorSetSpriteFlags(a, 1);
     return 0;
 }

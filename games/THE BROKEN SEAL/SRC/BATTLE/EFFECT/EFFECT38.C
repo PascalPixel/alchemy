@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
 #include "GLOBAL_CELLS.H"
@@ -31,7 +32,6 @@ typedef struct {
     u8 transition_phase;
 } SceneTransitionScene;
 
-void Scheduler_RemoveCallback(void (*callback)(void));
 void *BattleFx_FindMatchingEvent(u32 kind, u32 entry_index, s32 *size);
 void BattleFx_ApplyColorToTargetBuffer(u32 battle_value, s32 enabled);
 void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
@@ -147,7 +147,7 @@ void ResetSceneTransitionEffect(void)
 
     if (state->active != 0) {
         Audio_PlayCue(SOUND_SCENE_TRANSITION);
-        Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
+        Scheduler_RemoveCallback((u32)(FieldEffect_WatchLeaderDistance));
 
         zero = 0;
         state->active = zero;

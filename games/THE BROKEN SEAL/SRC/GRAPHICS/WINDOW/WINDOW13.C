@@ -1,10 +1,9 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 
 void PaletteGlow_UpdateSine(void);
-s32 Scheduler_AddOrUpdateCallback(s32, s32);
-s32 Scheduler_RemoveCallback(s32);
 
 extern u8 Data_03001e8c[];
 
@@ -15,7 +14,7 @@ void Scheduler_ScheduleCallbackAAfterFrames(void)
 
 void Scheduler_ScheduleCallbackA(void)
 {
-    Scheduler_RemoveCallback((s32)PaletteGlow_UpdateSine);
+    Scheduler_RemoveCallback((u32)((s32)PaletteGlow_UpdateSine));
 }
 
 void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height)

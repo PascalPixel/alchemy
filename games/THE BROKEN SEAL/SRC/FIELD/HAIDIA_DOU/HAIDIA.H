@@ -70,18 +70,8 @@ void Map_CopyCellAttributeRect(s32 x, s32 z, s32 width, s32 height, s32 dest_x, 
    those names. */
 static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: a direct call changes FieldScene_RunScene3a6_020014ac from sub sp, sp, #8 to ldr r6, .L0 (117/118 assembly lines). */
     ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static __inline__ void Actor_OffsetDestination(s32 actor, s32 dx, s32 dz)
-{
-    ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
-}
-
-static __inline__ void Map_CopyCellRect(s32 x, s32 z, s32 width, s32 height, s32 dest_x,
-                                        s32 dest_z)
-{
-    Map_CopyCellAttributeRect(x, z, width, height, dest_x, dest_z);
 }
 
 void Object_SetPosition(Obj *, s32, s32, s32);

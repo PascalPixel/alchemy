@@ -18,7 +18,6 @@ void *Runtime_AllocateBlock(s32 kind, s32 size);
 void DisplayTransition_UpdateScanlineTable(void);
 void BattleFx_StartWindowHBlankDma(void);
 
-s32 Scheduler_EnableCallbacks(u32 value);
 
 /* Allocates and clears the transition state for a battle effect, arms the
    window mask and installs the two per-frame callbacks that drive it. */

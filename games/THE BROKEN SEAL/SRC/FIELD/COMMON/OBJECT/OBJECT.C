@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
@@ -38,7 +39,6 @@ struct ObjectSystem {
     u8 unk_08[84];
 };
 
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 void ObjectSystem_Configure(s32 mode);
 void Object_UpdateAllMotion(void);
 void Object_UpdateAllThumb(void);
@@ -119,10 +119,8 @@ struct ChildDisplayFlags {
 };
 
 s32 ObjectGroup_SetChildValueUnlessFifteen(s32);
-s32 Scheduler_EnableCallbacks(u32 value);
 s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 s32 BattleFx_StartBufferInterpolationFar(s32);
-s32 Scheduler_DisableCallbacks(u32 value);
 
 struct CameraTile {
     u32 unk_00 : 12;
@@ -380,13 +378,13 @@ void ObjectSystem_Initialize(s32 mode)
     fill = 0;
     Dma_Set((const void *)&fill, state, 0x85000017, (volatile u32 *)0x040000d4);
     if (mode == 4)
-        Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
+        Scheduler_AddOrUpdateCallback((s32)(Object_UpdateAllMotion), 0xc8a);
     else
-        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
+        Scheduler_AddOrUpdateCallback((s32)(Object_UpdateAllThumb), 0xc8a);
     if ((u32)(mode - 3) <= 1) {
-        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)(ObjectSystem_UpdateCameraFixed), 0xc80);
     } else {
-        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)(ObjectSystem_UpdateCamera), 0xc80);
         Data_03001d1c = 0;
         Data_03001cc0 = 0;
     }

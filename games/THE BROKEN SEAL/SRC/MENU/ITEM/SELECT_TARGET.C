@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "TBS_EDITION.H"
 
@@ -68,7 +69,6 @@ void UiWindow_SetBounds(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void *Owner_GetStateFar(s32 owner);
-s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 priority);
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
 void EquipmentMenu_StartCompatibilityIndicators(void);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);

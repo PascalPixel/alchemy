@@ -7,7 +7,6 @@
 extern s32 gFrameCount;
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
-s32 Scheduler_RemoveCallback(s32);
 
 s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 void UiIcon_PrepareObject(void *icon);
@@ -53,7 +52,7 @@ void EquipmentMenu_StartCompatibilityIndicators(void)
             member_index++;
         } while (member_index < menu[0x219]);
     }
-    Scheduler_RemoveCallback((s32)&EquipmentMenu_UpdateCompatibilityIndicators);
+    Scheduler_RemoveCallback((u32)((s32)&EquipmentMenu_UpdateCompatibilityIndicators));
 }
 
 s32 ItemMenu_IsSpecial(s32 item_id)

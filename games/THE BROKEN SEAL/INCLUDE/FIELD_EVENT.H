@@ -242,8 +242,8 @@ enum ActorAnimation {
 #define MAP_CELL_STEPS_END 0xffff
 
 /*
- * The engine entry points a scene overlay imports. Scripts do not call them
- * directly; they use the inline event services that follow.
+ * The engine entry points a scene overlay imports. Scripts call plain imports
+ * directly; the tagged inline services below preserve measured compiler order.
  */
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
@@ -382,95 +382,32 @@ void Audio_PlayCue(s32 cue);
 #endif
 
 /* Holding the party still while an event plays; waits count frames. */
-static inline void Event_Begin(void)
-{
-    Engine_EventBegin();
-}
-
-static inline void Event_End(void)
-{
-    Engine_EventEnd();
-}
-
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
-static inline void Event_Wait(s32 frames)
-{
-    Engine_EventWait(frames);
-}
-#else
-static inline void Event_Wait(s32 frames)
-{
-    Battle_WaitMode0(frames);
-}
-#endif
-
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
-static inline void Task_Wait(s32 frames)
-{
-    Engine_TaskWait(frames);
-}
-#else
-static inline void Task_Wait(s32 frames)
-{
-    WaitFrames(frames);
-}
-#endif
 
 /*
  * Dialogue: choose the message, then let an actor say it. Each message shown
  * advances to the next one. An opened message stays on screen for the
  * question that follows it, and choosing yes returns 0.
  */
-static inline void Event_SetMessage(s32 message)
-{
-    Engine_EventSetMessage(message);
-}
 
 static inline void Event_ShowMessage(s32 speaker, s32 flags)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunFourActorEncounter (EN): mov	r0, #3 becomes mov	r7, r8; the reduced direct-call attempt is retained under recon. */
     Engine_EventShowMessage(speaker, flags);
 }
 
 static inline s32 Event_OpenMessage(s32 speaker, s32 flags)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunFourActorEncounter (EN): mov	r0, #3 becomes mov	r7, r8; the reduced direct-call attempt is retained under recon. */
     return Engine_EventOpenMessage(speaker, flags);
 }
 
 static inline s32 Event_AskYesNo(s32 speaker, s32 flags)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunTwoActorCutsceneSequence (JA): mov	r1, #192 becomes ldr	r5, .L0+24; the reduced direct-call attempt is retained under recon. */
     return Engine_EventAskYesNo(speaker, flags);
 }
 
-static inline s32 Event_ChooseYesNo(s32 actor, s32 flags)
-{
-    return Engine_EventChooseYesNo(actor, flags);
-}
-
-static inline void Message_ShowCentered(s32 message, s32 flags)
-{
-    Engine_MessageShowCentered(message, flags);
-}
-
 /* Leaving the scene, and opening or closing the screen around a change. */
-static inline void Event_RequestExit(s32 exit)
-{
-    Engine_EventRequestExit(exit);
-}
-
-static inline void Event_OpenScreen(void)
-{
-    Engine_EventOpenScreen();
-}
-
-static inline void Event_CloseScreen(void)
-{
-    Engine_EventCloseScreen();
-}
-
-static inline void Event_WaitForScreen(void)
-{
-    Engine_EventWaitForScreen();
-}
 
 /*
  * Actors. Positions set directly are fixed-point; destinations and offsets
@@ -478,159 +415,95 @@ static inline void Event_WaitForScreen(void)
  */
 static inline struct FieldActor *Actor_Get(s32 actor)
 {
+    /* FAKEMATCH: Direct calls change HaidiaArashi_RunRiverSearch (EN): add	r5, r5, #100 becomes mov	r3, r5; the reduced direct-call attempt is retained under recon. */
     return Object_GetById(actor);
 }
 
 static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (EN): mov	r0, #0 becomes lsl	r1, r1, #15; the reduced direct-call attempt is retained under recon. */
     Engine_ActorSetPosition(actor, fixed_x, fixed_z);
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunMiddleSequence (EN): ldr	r0, .L2+20 becomes mov	r5, #128; the reduced direct-call attempt is retained under recon. */
     Engine_ActorSetSpeed(actor, speed, acceleration);
 }
 #else
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene39f_02000d90 (EN): mov	r0, r6 becomes lsl	r1, r1, #10; the reduced direct-call attempt is retained under recon. */
     ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 #endif
 
 static inline void Actor_SetDestination(s32 actor, s32 x, s32 z)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (EN): mov	r0, #0 becomes mov	r5, #160; the reduced direct-call attempt is retained under recon. */
     Engine_ActorSetDestination(actor, x, z);
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
 {
+    /* FAKEMATCH: Direct calls change Kyuden_RunKolimaRequest (EN): mov	r0, #1 becomes neg	r1, r1; the reduced direct-call attempt is retained under recon. */
     Engine_ActorSetDestinationOffset(actor, dx, dz);
-}
-#else
-static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz)
-{
-    ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
 }
 #endif
 
 static inline void Actor_WalkTo(s32 actor, s32 x, s32 z)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (EN): mov	r0, #188 becomes mov	r5, #195; the reduced direct-call attempt is retained under recon. */
     Engine_ActorWalkTo(actor, x, z);
 }
 
 static inline void Actor_WalkBy(s32 actor, s32 dx, s32 dz)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene3aeSequenceB (JA): mov	r5, r8 becomes mov	r5, r9; the reduced direct-call attempt is retained under recon. */
     Engine_ActorWalkBy(actor, dx, dz);
 }
 
 /* Waits until the actor reaches its destination, then stands it still. */
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
-static inline void Actor_WaitForMove(s32 actor)
-{
-    Engine_ActorWaitForMove(actor);
-}
-#else
-static inline void Actor_WaitForMove(s32 actor)
-{
-    ObjectMotion_CommitCurrentPositionAndActivate(actor);
-}
-#endif
-
 static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunMiddleSequence (EN): mov	r0, sl becomes lsl	r1, r1, #8; the reduced direct-call attempt is retained under recon. */
     Engine_ActorFaceDirection(actor, facing, frames);
-}
-
-static inline void Actor_TurnToAngle(s32 actor, s32 angle, s32 frames)
-{
-    Engine_ActorTurnToAngle(actor, angle, frames);
 }
 
 static inline void Actor_FaceActor(s32 actor, s32 target, s32 frames)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunPairedEntranceWalk (JA): push	{r5, lr} becomes push	{r5, r6, lr}; the reduced direct-call attempt is retained under recon. */
     Engine_ActorFaceActor(actor, target, frames);
-}
-
-static inline void Actor_FaceEachOther(s32 actor, s32 other, s32 frames)
-{
-    Engine_ActorFaceEachOther(actor, other, frames);
-}
-
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
-static inline void Actor_SetAnimation(s32 actor, s32 animation)
-{
-    Engine_ActorSetAnimation(actor, animation);
-}
-#else
-static inline void Actor_SetAnimation(s32 actor, s32 animation)
-{
-    Object_SetModeById(actor, animation);
-}
-#endif
-
-static inline void Actor_SetAnimationAndWait(s32 actor, s32 animation)
-{
-    Engine_ActorSetAnimationAndWait(actor, animation);
-}
-
-static inline void Actor_StartRepeatedMotion(s32 actor, s32 repeats)
-{
-    Engine_ActorStartRepeatedMotion(actor, repeats);
-}
-
-static inline void Actor_RunRepeatedMotion(s32 actor, s32 repeats)
-{
-    Engine_ActorRunRepeatedMotion(actor, repeats);
 }
 
 /* Shows an emote over the actor and waits the given frames. */
 static inline void Actor_ShowEmote(s32 actor, s32 emote, s32 frames)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (JA): mov	r0, #9 becomes mov	r5, #129; the reduced direct-call attempt is retained under recon. */
     Engine_ActorShowEmote(actor, emote, frames);
 }
 
 /* Attaches a lasting effect sprite to the actor; effect 0 removes it. */
 static inline void Actor_SetAttachedEffect(s32 actor, s32 effect)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (EN): mov	r0, #12 becomes mov	r5, #129; the reduced direct-call attempt is retained under recon. */
     Engine_ActorSetAttachedEffect(actor, effect);
 }
 
-static inline void Actor_SetSpritePriority(s32 actor, s32 priority)
-{
-    Engine_ActorSetSpritePriority(actor, priority);
-}
-
-static inline void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags)
-{
-    Engine_ActorSetSpriteFlags(actor, flags);
-}
-
 /* The camera. A pan of 0 moves it at once; -1 keeps a coordinate. */
-static inline void Camera_FollowActor(s32 actor, s32 keep_position)
-{
-    Engine_CameraFollowActor(actor, keep_position);
-}
 
 static inline void Camera_SetSpeed(s32 speed, s32 acceleration)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (EN): push	{r5, lr} becomes push	{r5, r6, lr}; the reduced direct-call attempt is retained under recon. */
     Engine_CameraSetSpeed(speed, acceleration);
 }
 
 static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (EN): push	{r5, lr} becomes push	{r5, r6, lr}; the reduced direct-call attempt is retained under recon. */
     Engine_CameraMoveTo(fixed_x, fixed_y, fixed_z, pan);
-}
-
-static inline void Camera_MoveToActor(s32 actor, s32 pan)
-{
-    Engine_CameraMoveToActor(actor, pan);
-}
-
-static inline void Camera_WaitForMove(void)
-{
-    Engine_CameraWaitForMove();
 }
 
 /*
@@ -640,6 +513,7 @@ static inline void Camera_WaitForMove(void)
 static inline void Map_CopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
                                  s32 dest_y)
 {
+    /* FAKEMATCH: Direct calls change Gate_DrawPropped (EN): mov	r2, #62 becomes str	r3, [sp]; the reduced direct-call attempt is retained under recon. */
     Engine_MapCopyCells(src_x, src_y, width, height, dest_x, dest_y);
 }
 
@@ -647,23 +521,21 @@ static inline void Map_CopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s3
 static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                           s32 dest_x, s32 dest_y)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene398SequenceA (JA): mov	r2, #14 becomes str	r3, [sp]; the reduced direct-call attempt is retained under recon. */
     Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
 }
 #else
 static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                           s32 dest_x, s32 dest_y)
 {
+    /* FAKEMATCH: Direct calls change MogoruMori_RunProbedLandingScene (EN): mov	r2, #68 becomes asr	r3, r3, #20; the reduced direct-call attempt is retained under recon. */
     Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
 }
 #endif
 
-static inline void Map_Redraw(void)
-{
-    Engine_MapRedraw();
-}
-
 static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (JA): push	{r5, lr} becomes push	{r5, r6, r7, lr}; the reduced direct-call attempt is retained under recon. */
     Engine_WorkSetValuesIfNonNegative(first, second, third);
 }
 
@@ -677,65 +549,34 @@ enum {
 
 static inline s32 GameFlag_IsSet(s32 flag)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene398SequenceB (EN): ldr	r0, .L1+4 becomes ldr	r6, .L1+4; the reduced direct-call attempt is retained under recon. */
     return Engine_GameFlagIsSet(flag);
 }
 
 static inline s32 GameFlag_Set(s32 flag)
 {
+    /* FAKEMATCH: Direct calls change HaidiaArashi_FlashLightning (EN): push	{lr} becomes push	{r5, lr}; the reduced direct-call attempt is retained under recon. */
     return Engine_GameFlagSet(flag);
 }
 
 static inline void GameFlag_Clear(s32 flag)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene371_02001c08 (EN): push	{lr} becomes push	{r5, r6, lr}; the reduced direct-call attempt is retained under recon. */
     Engine_GameFlagClear(flag);
 }
 
 #ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Audio_PlayCue(s32 cue)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene371_02002274 (EN): ldr	r2, .L0+48 becomes ldr	r5, .L0+48; the reduced direct-call attempt is retained under recon. */
     Engine_AudioPlayCue(cue);
 }
 #endif
 
-static inline void Shop_Open(s32 shop, s32 keeper)
-{
-    Engine_ShopOpen(shop, keeper);
-}
-
-static inline void Inn_Open(s32 inn, s32 keeper)
-{
-    Engine_InnOpen(inn, keeper);
-}
-
-static inline void Sanctum_Open(s32 priest)
-{
-    Engine_SanctumOpen(priest);
-}
-
-
-static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
-{
-    return Engine_TaskAddCallback(callback, priority);
-}
-
-static inline s32 Task_RemoveCallback(void (*callback)(void))
-{
-    return Engine_TaskRemoveCallback(callback);
-}
-
 static inline s32 Random_Next(void)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene3a8SequenceA (EN): mov	r2, r0 becomes ldr	r3, .L0; the reduced direct-call attempt is retained under recon. */
     return Engine_RandomNext();
-}
-
-static inline s32 Math_Sin(s32 angle)
-{
-    return Engine_MathSin(angle);
-}
-
-static inline s32 Math_Cos(s32 angle)
-{
-    return Engine_MathCos(angle);
 }
 
 static inline s32 Math_Divide(s32 dividend, s32 divisor)
@@ -743,33 +584,15 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor)
     return dividend / divisor;
 }
 
-static inline void *Heap_Allocate(s32 slot, s32 size)
-{
-    return Engine_HeapAllocate(slot, size);
-}
-
-static inline void Heap_Release(s32 slot)
-{
-    Engine_HeapRelease(slot);
-}
-
-static inline s32 Vram_Load(s32 block, s32 size, const void *data)
-{
-    return Engine_VramLoad(block, size, data);
-}
-
 static inline struct FieldActor *Object_Create(s32 type, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
+    /* FAKEMATCH: Direct calls change VinasuChojo_RunTransitionStep (DE): mov	r6, r0 becomes mov	sl, r0; the reduced direct-call attempt is retained under recon. */
     return Engine_ObjectCreate(type, fixed_x, fixed_y, fixed_z);
-}
-
-static inline void Object_SetAnimation(struct FieldActor *object, s32 animation)
-{
-    Object_SetMode(object, animation);
 }
 
 static inline void Object_SetScript(struct FieldActor *object, const s32 *script)
 {
+    /* FAKEMATCH: Direct calls change Effect_Spawn (EN): sub	sp, sp, #8 becomes sub	sp, sp, #4; the reduced direct-call attempt is retained under recon. */
     Engine_ObjectSetScript(object, script);
 }
 
@@ -779,121 +602,44 @@ enum ObjectBlendMode {
     OBJECT_BLEND_TRANSLUCENT = 1
 };
 
-static inline void Object_SetBlendMode(struct FieldActor *object, s32 mode)
-{
-    Engine_ObjectSetBlendMode(object, mode);
-}
-
-static inline void Object_SetPalette(struct FieldActor *object, s32 palette)
-{
-    ObjectGroup_SetChildValue(object, palette);
-}
-
-static inline void Object_SetPartPalettes(struct FieldActor *object, s32 palette)
-{
-    Engine_ObjectSetPartPalettes(object, palette);
-}
-
 static inline void Map_AnimateCells(const u16 *steps, s32 dest_x, s32 dest_y)
 {
+    /* FAKEMATCH: Direct calls change Door_Enter (EN): sub	r5, r5, #4 becomes ldr	r2, .L0+4; the reduced direct-call attempt is retained under recon. */
     Engine_MapAnimateCells(steps, dest_x, dest_y);
 }
 
 static inline void MapObject_SetPosition(s32 object, s32 fixed_x, s32 fixed_z)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene3c0SequenceA (EN): mov	r1, #1 becomes mov	r2, #1; the reduced direct-call attempt is retained under recon. */
     Engine_MapObjectSetPosition(object, fixed_x, fixed_z);
-}
-
-static inline void Item_LoadIcon(s32 item)
-{
-    Engine_ItemLoadIcon(item);
-}
-
-static inline void Item_ShowFound(s32 item, s32 height)
-{
-    Engine_ItemShowFound(item, height);
-}
-
-static inline s32 Party_GiveItem(s32 item, s32 flags)
-{
-    return Engine_PartyGiveItem(item, flags);
-}
-
-static inline void Actor_Stop(s32 actor)
-{
-    Engine_ActorStop(actor);
 }
 
 static inline void Actor_CenterAndWalk(s32 actor, s32 priority, s32 dz)
 {
+    /* FAKEMATCH: Direct calls change Scene_RunScene3c3SequenceC (EN): mov	r1, #3 becomes neg	r2, r2; the reduced direct-call attempt is retained under recon. */
     Engine_ActorCenterAndWalk(actor, priority, dz);
 }
 
 static inline void Actor_WalkByAndWait(s32 actor, s32 dx, s32 dz)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunPrimaryScript (EN): push	{lr} becomes push	{r5, lr}; the reduced direct-call attempt is retained under recon. */
     Engine_ActorWalkByAndWait(actor, dx, dz);
-}
-
-static inline s32 Leader_CheckAhead(void)
-{
-    return Engine_LeaderCheckAhead();
-}
-
-static inline void Psynergy_Begin(s32 ability, s32 flags)
-{
-    Engine_PsynergyBegin(ability, flags);
-}
-
-static inline void Psynergy_SetTarget(s32 caster, s32 target)
-{
-    Engine_PsynergySetTarget(caster, target);
-}
-
-static inline void Psynergy_RaiseHands(void)
-{
-    Engine_PsynergyRaiseHands();
-}
-
-static inline void Psynergy_PlayEffect(s32 effect)
-{
-    Engine_PsynergyPlayEffect(effect);
-}
-
-static inline void Psynergy_LowerHands(void)
-{
-    Engine_PsynergyLowerHands();
-}
-
-static inline void Psynergy_Cancel(void)
-{
-    Engine_PsynergyCancel();
 }
 
 /* Shows the next message for a speaker, then waits the given frames. */
 static inline void Event_ShowMessageAndWait(s32 speaker, s32 flags, s32 frames)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunActorTransferSequence (EN): mov	r0, #20 becomes ldr	r5, .L0+92; the reduced direct-call attempt is retained under recon. */
     Engine_EventShowMessageAndWait(speaker, flags, frames);
 }
 
-static inline struct FieldActor *Event_GetViewCenter(void)
-{
-    return Engine_EventGetViewCenter();
-}
-
 /* Gives NULL for an actor the scene does not hold. */
-static inline struct FieldActor *Actor_Lookup(s32 actor)
-{
-    return Engine_ActorLookup(actor);
-}
 
 /* Removes an actor from the scene and frees its slot. */
-static inline void Actor_Destroy(s32 actor)
-{
-    Engine_ActorDestroy(actor);
-}
 
 static inline void Actor_SetChildValue(s32 actor, s32 value)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunScene381_02000e30 (EN): mov	r0, sl becomes lsl	r1, r1, #1; the reduced direct-call attempt is retained under recon. */
     Engine_ActorSetChildValue(actor, value);
 }
 
@@ -903,21 +649,7 @@ static inline void Actor_SetChildValue(s32 actor, s32 value)
  */
 #define ACTION_TABLE_STOP ((const u8 *)1)
 
-static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
-{
-    Engine_ActorEnableActionCallback(actor, table);
-}
-
-static inline void Actor_SetActionCallback(struct FieldActor *actor, s32 value)
-{
-    Engine_ActorSetActionCallback(actor, value);
-}
-
 /* Walks the scene's actor list after the map or camera changes. */
-static inline void Actors_Refresh(void)
-{
-    Engine_ActorsRefresh();
-}
 
 /*
  * Copies a block of map cells; unlike Map_CopyCells the destination comes
@@ -926,29 +658,28 @@ static inline void Actors_Refresh(void)
 static inline void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width,
                                    s32 height)
 {
+    /* FAKEMATCH: Direct calls change UpdateStatueLight1 (JA): mov	r2, #5 becomes str	r3, [sp]; the reduced direct-call attempt is retained under recon. */
     Engine_MapCopyCellsTo(src_x, src_y, dest_x, dest_y, width, height);
 }
 
 /* Stores three map render values; a negative value leaves its slot unchanged. */
 static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunComplexActorSequence (JA): mov	r0, #17 becomes ldr	r3, [r3]; the reduced direct-call attempt is retained under recon. */
     Engine_MapRenderSetValues(value0, value1, value2);
 }
 
 /* The colour buffers a scene blends the palette through. */
 static inline void ColorBuffer_ApplySource(s32 value, s32 mode)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_RunFourActorEncounter (EN): mov	r0, #3 becomes mov	r7, r8; the reduced direct-call attempt is retained under recon. */
     Engine_ColorBufferApplySource(value, mode);
 }
 
 static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode)
 {
+    /* FAKEMATCH: Direct calls change FieldScene_PrepareStatueTransition (DE): mov	r2, #0 becomes ldr	r5, .L0+4; the reduced direct-call attempt is retained under recon. */
     Engine_ColorBufferApplyTarget(value, mode);
-}
-
-static inline void ColorBuffer_Interpolate(s32 frames)
-{
-    Engine_ColorBufferInterpolate(frames);
 }
 
 /*
@@ -957,39 +688,30 @@ static inline void ColorBuffer_Interpolate(s32 frames)
  */
 static inline void Actor_MoveToAndWait(s32 actor, s32 x, s32 z)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (EN): mov	r2, #160 becomes mov	r5, #160; the reduced direct-call attempt is retained under recon. */
     Engine_ActorMoveToAndWait(actor, x, z);
 }
 
 static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z)
 {
+    /* FAKEMATCH: Direct calls change RunEventScript01 (JA): mov	r0, #11 becomes ldr	r1, .L0; the reduced direct-call attempt is retained under recon. */
     Engine_ActorWalkToAndWait(actor, x, z);
 }
 
 /* Throws the actor upward, plays the jump sound and waits the given frames. */
-static inline void Actor_Jump(s32 actor, s32 height, s32 frames)
-{
-    Engine_ActorJump(actor, height, frames);
-}
 
 /* Two speakers say their next messages at once; waits until both close. */
 static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
                                                 s32 other_speaker, s32 other_x, s32 other_y,
                                                 s32 other_arg, s32 other_extra, s32 flags)
 {
+    /* FAKEMATCH: Direct calls change HouseScene_RunRepairMorning (EN): mov	r3, #14 becomes mov	r3, #2; the reduced direct-call attempt is retained under recon. */
     Engine_EventShowTwoMessagesAndWait(speaker, x, y, arg, extra, other_speaker, other_x,
                                        other_y, other_arg, other_extra, flags);
 }
 
 /* Adds two characters to the party. */
-static inline void Party_AddMembers(s32 first, s32 second)
-{
-    Engine_PartyAddMembers(first, second);
-}
 
 /* Waits until the first two map render values settle, then clears the third. */
-static inline void MapRender_WaitForValues(void)
-{
-    Engine_MapRenderWaitForValues();
-}
 
 #endif

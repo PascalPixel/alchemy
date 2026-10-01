@@ -64,7 +64,7 @@ void OverlayObject_WaitUntilSettledAndReset(u8 *obj)
         if (cnt == 0) {
             break;
         }
-        Stage_Wait(1);
+        WaitFrames(1);
         if (*(u32 *)(obj + 12) == *(u32 *)(obj + 20)) {
             break;
         }
@@ -90,7 +90,7 @@ void SceneActor_WaitHeightBelowLimit(u8 *obj, s32 limit)
         if (cnt == 0) {
             break;
         }
-        Stage_Wait(1);
+        WaitFrames(1);
         if (*(s32 *)(obj + 12) <= *(s32 *)(obj + 20)) {
             break;
         }
@@ -181,7 +181,7 @@ s32 SceneActor_ApplyPlacementQueryAndTag(u8 *no)
     r4 = rec[4];
     Map_CopyCellAttributes(2, 2, out20, out16, r2, r4);
 
-    Stage_SetMode(obj, 4);
+    Object_SetMode(obj, 4);
     mask = 2;
     obj[0x23] = obj[0x23] | mask;
 
@@ -212,7 +212,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
         StagedActor_FillGridAttributeRectangle(0, rec[2], rec[4], out20, out16, 255);
     }
 
-    Stage_SetMode(obj, 1);
+    Object_SetMode(obj, 1);
     obj[0x23] &= 0xfd;
 
     return 1;

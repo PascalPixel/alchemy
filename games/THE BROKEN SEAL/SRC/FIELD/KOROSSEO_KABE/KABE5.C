@@ -44,7 +44,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
 
     extent = Resource_FindFreeEntry();
     *(u16 *)(descriptor + 216) = (u16)extent;
-    Vram_Load((s16)extent, 512, handle);
+    Engine_VramLoad((s16)extent, 512, handle);
 
     /* The stage task runs every frame. */
     Engine_TaskAddCallback(FieldScene_RunExtendedActorSequence, 0xc76);

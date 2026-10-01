@@ -494,14 +494,14 @@ void BattleFx_UpdateParticleLinearMotion(void *particle)
   *((s32 *)(((u8 *)particle) + 0x3C)) = velocity_y;
   *((s32 *)(((u8 *)particle) + 0x30)) =
       (s32)(velocity_x - velocity_x / 0x12);
- do {
-   vz = velocity_z;
-   if (velocity_z < 0) {
-     vz += 0xF;
-   }
-   *((s32 *)(((u8 *)particle) + 0x34)) =
-       (s32)(velocity_z - (vz >> 4));
- } while (0);
+
+  vz = velocity_z;
+  if (velocity_z < 0) {
+    vz += 0xF;
+  }
+  *((s32 *)(((u8 *)particle) + 0x34)) =
+      (s32)(velocity_z - (vz >> 4));
+
 }
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */

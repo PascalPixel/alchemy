@@ -1,17 +1,16 @@
 #include "DMA.H"
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 
 void *Runtime_AllocateBlock(s32, u32);
 void Unnamed_080f3078(u32, void *, void *, s32);
-void Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void TitlePalette_UpdateFade(void);
 
 s32 Runtime_ReleaseHeapBlock(s32);
 
 /* runtime/memory/schedule_callback_and_release_block_32_a.c */
-s32 Scheduler_RemoveCallback(s32);
 
 extern u8 Data_03001ed0[];
 void Graphics_InterpolatePaletteBuffers(s16 *, s16 *, s16 *, s32);
@@ -39,12 +38,12 @@ void TitlePalette_InitializeBuffers(void)
     Dma_Set((void *)0x05000200, buffer + 512, 0x84000080, (volatile u32 *)0x040000d4);
     Unnamed_080f3078(0x10000, buffer, buffer + 4096, 0);
     operation = 3200;
-    Scheduler_AddOrUpdateCallback(TitlePalette_UpdateFade, operation);
+    Scheduler_AddOrUpdateCallback((s32)(TitlePalette_UpdateFade), operation);
 }
 
 void Runtime_ScheduleCallbackAndReleaseBlock32A(void)
 {
-    Scheduler_RemoveCallback((s32)&TitlePalette_UpdateFade);
+    Scheduler_RemoveCallback((u32)((s32)&TitlePalette_UpdateFade));
     Runtime_ReleaseHeapBlock(0x20);
 }
 

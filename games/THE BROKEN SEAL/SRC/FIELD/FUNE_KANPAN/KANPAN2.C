@@ -55,8 +55,8 @@ void OverlayObject_ActivateSlotWithMode3(s32 a)
     u8 *p = (u8 *)Object_GetById(a);
 
     if (p != 0) {
-        Actor_SetSpritePriority(a, 3);
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpritePriority(a, 3);
+        Engine_ActorSetSpriteFlags(p, 0);
         p[89] = 0;
         {
             s32 c;

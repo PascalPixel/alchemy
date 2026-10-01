@@ -84,7 +84,7 @@ void FieldScene_RunLateSequence(void);
     u32 saved; \
     u32 *p; \
     s32 n; \
-    do { saved = *ime; } while (0); \
+    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ saved = *ime; } while (0); \
     *ime = (u16)(u32)ime; \
     n = *(u16 *)&gIoWriteQueue; \
     if (n < 32) { \
@@ -94,7 +94,7 @@ void FieldScene_RunLateSequence(void);
         *p++ = (u32)(destination); \
         *p = (control); \
     } \
-    do { *ime = saved; } while (0); \
+    do { /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ *ime = saved; } while (0); \
 }
 
 #define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)
@@ -107,33 +107,33 @@ void FieldScene_RunActorPresentationSequence(void)
     u8 *state = (u8 *)&gGameState;
 
     PaletteGlow_Update(state[0x205], state[0x206]);
-    Event_Begin();
+    Engine_EventBegin();
     BattleFx_ScheduleRatioTransition(0x10000, 0x12c);
     Camera_MoveTo(-1, -1, -1, 0);
-    Actor_SetAnimation(ACTOR_JASMINE, 19);
-    Actor_SetAnimation(8, 5);
+    Engine_ActorSetAnimation(ACTOR_JASMINE, 19);
+    Engine_ActorSetAnimation(8, 5);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     BattleFx_ScheduleRatioTransition(0x18000, 16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplyTarget(0x10003, 1);
     *(s32 *)((u8 *)gEventWork + 0x1c8) = 16;
-    Event_OpenScreen();
+    Engine_EventOpenScreen();
     Event_WaitForDisplayField358Clear();
     Battle_SetObjectFlag5bWhenMode3();
-    Event_Wait(40);
-    Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
-    Event_Wait(20);
-    Event_SetMessage((s32)MsgWorldMapSukuretaHowLongWillIsland);
+    Engine_EventWait(40);
+    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
+    Engine_EventWait(20);
+    Engine_EventSetMessage((s32)MsgWorldMapSukuretaHowLongWillIsland);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-    Actor_RunRepeatedMotion(8, 2);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(8, 2);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_ShowEmote(ACTOR_JASMINE, 0x107, 20);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
     Actor_ShowEmote(8, 0x105, 80);
     Event_ShowMessageAndWait(8, 0, 10);
-    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
     Actor_ShowEmote(8, 0x105, 100);
     Actor_ShowEmote(ACTOR_JASMINE, 0x105, 40);
@@ -142,11 +142,11 @@ void FieldScene_RunActorPresentationSequence(void)
     Actor_ShowEmote(ACTOR_JASMINE, 0x102, 20);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
     Actor_SetAttachedEffect(8, 0x102);
-    Event_Wait(80);
+    Engine_EventWait(80);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_ShowEmote(ACTOR_JASMINE, 0x105, 80);
     Event_ShowMessageAndWait(8, 0, 120);
-    Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
+    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 40);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_ShowEmote(ACTOR_JASMINE, 0x105, 40);
@@ -155,42 +155,42 @@ void FieldScene_RunActorPresentationSequence(void)
     Actor_SetPosition(9, 0x1ddc0000, 0xd840000);
     Actor_WalkToAndWait(9, 0x1d94, 0xd8c);
     Actor_WalkToAndWait(9, 0x1d88, 0xda0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(0x6009, 0, 20);
     Actor_ShowEmote(8, 0x101, 0);
     Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
-    Actor_SetAnimationAndWait(9, 3);
+    Engine_ActorSetAnimationAndWait(9, 3);
     Event_ShowMessage(0x6009, 0);
     Map_LoadDefaultCellsAndUpdateBlock();
-    Event_Wait(20);
-    Actor_EnableActionCallback(9, gPresentGuide9);
-    Event_Wait(80);
-    Actor_SetAnimation(8, 1);
-    Actor_Jump(8, 4, 40);
-    Actor_SetAnimation(ACTOR_JASMINE, 1);
-    Actor_Jump(ACTOR_JASMINE, 4, 60);
+    Engine_EventWait(20);
+    Engine_ActorEnableActionCallback(9, gPresentGuide9);
+    Engine_EventWait(80);
+    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorJump(8, 4, 40);
+    Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
+    Engine_ActorJump(ACTOR_JASMINE, 4, 60);
     Actor_FaceDirection(8, 0x3000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 40);
     Actor_SetSpeed(8, 0x9999, 0x4ccc);
     Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
-    Actor_EnableActionCallback(8, gPresentGuide8);
-    Event_Wait(20);
+    Engine_ActorEnableActionCallback(8, gPresentGuide8);
+    Engine_EventWait(20);
     Camera_SetSpeed(0xb333, 0x1666);
     Camera_MoveTo(0x1e380000, -1, 0xdc80000, 1);
     Engine_ActorEnableActionCallback(5, gPresentGuide5);
     do {
-        Actor_SetAnimation(10, 6);
-        Actor_SetAnimation(6, 8);
-        Task_Wait(1);
+        Engine_ActorSetAnimation(10, 6);
+        Engine_ActorSetAnimation(6, 8);
+        Engine_TaskWait(1);
     } while (*(s16 *)((u8 *)Object_GetById(5) + 100) == 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Actor_FaceDirection(9, 0x8000, 20);
     Actor_SetAttachedEffect(8, 0x102);
     Actor_SetAttachedEffect(ACTOR_JASMINE, 0x102);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Battle_SetObjectFlag5bWhenMode3();
     Call11(Engine_EventShowTwoMessagesAndWait, 5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
-    Event_Wait(20);
+    Engine_EventWait(20);
     Map_LoadDefaultCellsAndUpdateBlock();
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(0x1e580000, -1, 0xdc80000, 1);
@@ -199,39 +199,39 @@ void FieldScene_RunActorPresentationSequence(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0x19999, 0xcccc);
     Actor_WalkTo(8, 0x1e7c, 0xdb8);
     Actor_WalkToAndWait(ACTOR_JASMINE, 0x1e6c, 0xdd8);
-    Actor_SetAnimation(8, 1);
+    Engine_ActorSetAnimation(8, 1);
     Battle_SetObjectFlag5bWhenMode3();
-    Event_Wait(80);
-    Actor_RunRepeatedMotion(8, 1);
+    Engine_EventWait(80);
+    Engine_ActorRunRepeatedMotion(8, 1);
     Event_ShowMessageAndWait(8, 0, 20);
-    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_ShowMessageAndWait(0x1005, 0, 40);
     Actor_FaceDirection(8, 0x8000, 20);
-    Actor_StartRepeatedMotion(8, 2);
+    Engine_ActorStartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 60);
     Map_LoadDefaultCellsAndUpdateBlock();
     Audio_PlayCue(17);
     ColorBuffer_ApplyTarget(0, 0);
-    ColorBuffer_Interpolate(120);
-    Task_Wait(120);
+    Engine_ColorBufferInterpolate(120);
+    Engine_TaskWait(120);
     Event_SetPairWork1c0((s32)&SceneId_Title, 10);
 }
 
 /* Stages the scene transition and arms the timed callback that drives it. */
 void StoryScene_StartTransition(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Audio_PlayCue(141);
     ColorBuffer_ApplySource(0, 0);
     ColorBuffer_ApplyTarget(0, 0);
-    ColorBuffer_Interpolate(1);
-    Task_Wait(2);
+    Engine_ColorBufferInterpolate(1);
+    Engine_TaskWait(2);
     *(s32 *)(*(u8 **)&gEventWork + 456) = 1;
-    Event_OpenScreen();
-    Event_WaitForScreen();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-    Task_Wait(1);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    Engine_TaskWait(1);
     Camera_SetSpeed(0x40000, 0x8000);
     {
         s32 transition_delay = 3200;
@@ -241,14 +241,14 @@ void StoryScene_StartTransition(void)
     ColorBuffer_ApplySource(0, 0);
     ColorBuffer_ApplyTarget(0x10004, 1);
     ColorBuffer_ApplyTarget(0x10000, 2);
-    ColorBuffer_Interpolate(40);
-    Event_Wait(240);
+    Engine_ColorBufferInterpolate(40);
+    Engine_EventWait(240);
     ColorBuffer_ApplyTarget(0, 0);
-    ColorBuffer_Interpolate(80);
-    Task_Wait(90);
-    Event_RequestExit(109);
+    Engine_ColorBufferInterpolate(80);
+    Engine_TaskWait(90);
+    Engine_EventRequestExit(109);
     GameFlag_Set(282);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /*
@@ -273,7 +273,7 @@ void StoryScene_UpdateTransitionEffect(void)
         object->motion_flags = 0;
         object->scale_x = scale;
         object->scale_y = scale;
-        Object_SetAnimation(object, 1);
+        Object_SetMode(object, 1);
         Object_SetScript(object, gTransitionSparkScript);
     }
     if (gFrameCount % 3 == 0) {
@@ -302,10 +302,10 @@ void FieldScene_RunActorEightApproach(void)
     u32 i;
     s32 actor;
 
-    Event_Begin();
+    Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
-    Task_Wait(1);
-    Actor_SetAnimation(ACTOR, 2);
+    Engine_TaskWait(1);
+    Engine_ActorSetAnimation(ACTOR, 2);
     Actor_SetPosition(ACTOR, 0x13080000, 0x3280000);
     actor = Actor_Get(ACTOR);
     {
@@ -314,13 +314,13 @@ void FieldScene_RunActorEightApproach(void)
 
         *(u16 *)(actor + 6) = value;
     }
-    Task_Wait(1);
+    Engine_TaskWait(1);
     BattleFx_ScheduleRatioTransition(0x13333, 1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Camera_FollowActor(ACTOR, 1);
-    Task_Wait(1);
+    Engine_CameraFollowActor(ACTOR, 1);
+    Engine_TaskWait(1);
     SCENE_PHASE = 0x100;
-    Event_OpenScreen();
+    Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR, 0x6666, 0x3333);
     Actor_MoveToAndWait(ACTOR, 0x12d8, 0x2c8);
     Actor_MoveToAndWait(ACTOR, 0x12a8, 0x268);
@@ -330,11 +330,11 @@ void FieldScene_RunActorEightApproach(void)
     Actor_MoveToAndWait(ACTOR, 0x1298, 0x1c8);
     Actor_SetSpeed(ACTOR, 0x1999, 0xccc);
     Actor_MoveToAndWait(ACTOR, 0x1298, 0x1b8);
-    Actor_SetAnimation(ACTOR, 1);
-    Event_Wait(40);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_RequestExit(110);
+    Engine_ActorSetAnimation(ACTOR, 1);
+    Engine_EventWait(40);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(110);
 }
 
 /* Totals slots 0 and 2 against slots 1 and 3 and returns the difference. */
@@ -418,18 +418,18 @@ void FieldScene_RunScene371_0200357c(void)
     s32 record;
 
     actor = (struct FieldActor *)Object_GetById(8);
-    Event_Wait(60);
-    Event_Begin();
+    Engine_EventWait(60);
+    Engine_EventBegin();
     BattleFx_ScheduleRatioTransition(0x9999, 1);
     actor->scale_x = 0x13333;
     actor->scale_y = 0x13333;
-    Camera_FollowActor(8, 1);
-    Task_Wait(1);
+    Engine_CameraFollowActor(8, 1);
+    Engine_TaskWait(1);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     record = Actor_Get(ACTOR_PARTY_LEADER);
-    Actor_SetSpriteFlags(record, 0);
+    Engine_ActorSetSpriteFlags(record, 0);
     record = Actor_Get(8);
-    Actor_SetSpriteFlags(record, 0);
+    Engine_ActorSetSpriteFlags(record, 0);
     Actor_SetSpeed(8, 0x6666, 0x3333);
     actor->unknown_64 = 0;
     Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
@@ -437,15 +437,15 @@ void FieldScene_RunScene371_0200357c(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplyTarget(0x10003, 1);
     gEventWork->transition_frames = 32;
-    Event_OpenScreen();
-    Event_Wait(120);
+    Engine_EventOpenScreen();
+    Engine_EventWait(120);
     BattleFx_ScheduleRatioTransition(0x16666, 0x12c);
-    Event_Wait(0x10e);
+    Engine_EventWait(0x10e);
     gEventWork->transition_frames = 16;
     *(u16 *)0x05000000 = 0x7fff;
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_RequestExit(111);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(111);
 }
 
 void StoryScene_UpdateSelectedActorProgress(void)
@@ -483,25 +483,25 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
     actor = (struct FieldActor *)Object_GetById((s32)p6);
     rec2 = GameFlag_IsSet(0x2f0);
     if (rec2 == 0) {
-        Event_Begin();
+        Engine_EventBegin();
         Actor_SetAttachedEffect((s32)p6, 0x101);
-        Actor_SetAnimation((s32)p6, 9);
+        Engine_ActorSetAnimation((s32)p6, 9);
         record = Object_GetById(a0);
         if (record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        Actor_WaitForMove((s32)p6);
+        Engine_ActorWaitForMove((s32)p6);
         Audio_PlayCue(244);
         Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
         actor->motion_flags = rec2;
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
-        Actor_WaitForMove((s32)p6);
+        Engine_ActorWaitForMove((s32)p6);
         actor->velocity_y = rec2;
         actor->motion_flags = 4;
         *(u8 *)(base + 498) = 2;
         GameFlag_Set(0x2f0);
         GameFlag_SetByte(0x2f8, 180);
-        Event_End();
+        Engine_EventEnd();
         *(u16 *)((u8 *)gEventWork + 0x17c) = rec2;
     }
 }
@@ -544,10 +544,10 @@ void WorldMap_RaiseActors(void)
     struct FieldActor *other = Actor_Get(54);
     s32 frames;
 
-    Event_Begin();
+    Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Audio_PlayCue(219);
-    Actor_SetSpriteFlags(actor, 0);
+    Engine_ActorSetSpriteFlags(actor, 0);
     other->motion_flags = 0;
     actor->motion_flags = 0;
     actor->velocity_y = 0;
@@ -556,11 +556,11 @@ void WorldMap_RaiseActors(void)
     for (frames = 59; frames >= 0; --frames) {
         actor->velocity_y += 0x3333;
         other->velocity_y += 0x3333;
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventEnd();
     GameFlag_Set(0x122);
     Event_SetPairWork1c0((s32)&SceneId_WorldMap, 27);
 }
@@ -701,9 +701,9 @@ void Scene_RunScene371SequenceA(s32 palette)
 void SceneActor_UpdateObjectByCounterBits(u8 *obj)
 {
     if ((gFrameCount & 2) != 0) {
-        Object_SetPartPalettes(obj, 7);
+        Engine_ObjectSetPartPalettes(obj, 7);
     } else {
-        Object_SetPartPalettes(obj, 0);
+        Engine_ObjectSetPartPalettes(obj, 0);
     }
     if ((gFrameCount & 15) == 0) {
         WorldMap_CreateLinkedEffects(obj);
@@ -714,7 +714,7 @@ void SceneActor_UpdateObjectByCounterBits(u8 *obj)
 void OverlayObject_UpdateOnFrameParity(u8 *obj)
 {
     if ((*(volatile u32 *)&gFrameCount & 1) != 0) {
-        Object_SetPartPalettes(obj, __umodsi3((s32)(*(volatile u32 *)&gFrameCount >> 1), 6));
+        Engine_ObjectSetPartPalettes(obj, __umodsi3((s32)(*(volatile u32 *)&gFrameCount >> 1), 6));
     }
     if ((*(volatile u32 *)&gFrameCount & 15) == 0) {
         WorldMap_CreateLinkedEffects(obj);
@@ -726,7 +726,7 @@ void SceneState_RunSlotStepOnOddFrames(s32 arg0)
     if ((*(volatile s32 *)&gFrameCount & 1) != 0) {
         s32 slot = ((u32)*(volatile s32 *)&gFrameCount >> 1) % 6;
 
-        Object_SetPartPalettes(arg0, slot);
+        Engine_ObjectSetPartPalettes(arg0, slot);
     }
 }
 
@@ -745,7 +745,7 @@ void Effect_AnimateVerticalPositive(struct StoryVerticalEffectActor *effect)
         return;
     }
 
-    vertical_amplitude = Math_Sin(animation_frame << 10);
+    vertical_amplitude = Engine_MathSin(animation_frame << 10);
     effect->amplitude_x = vertical_amplitude;
     effect->amplitude_y = vertical_amplitude;
     effect->x = anchor_actor->x;
@@ -768,7 +768,7 @@ void Effect_AnimateVerticalNegative(struct StoryVerticalEffectActor_02004004 *ef
         return;
     }
 
-    vertical_amplitude = Math_Sin(animation_frame << 10);
+    vertical_amplitude = Engine_MathSin(animation_frame << 10);
     effect->amplitude_x = vertical_amplitude;
     effect->amplitude_y = -vertical_amplitude;
     effect->x = anchor_actor->x;

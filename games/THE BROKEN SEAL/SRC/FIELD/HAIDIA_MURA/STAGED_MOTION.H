@@ -2,6 +2,7 @@
 #define GUARD_STAGED_MOTION_H
 
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define ACTOR_A 12
 #define ACTOR_B 13
@@ -176,7 +177,6 @@ void Graphics_EnableObjLayerAndCallbacks();
 void ObjectDispatch_StopCallbacksAndHideLayers();
 void UiText_ShowCenteredMessage();
 void Audio_PlayCueFromEventWork();
-void Scheduler_RemoveCallback();
 void Object_SetPosition();
 void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 void HaidiaMura_OpenVillagerLane(void);

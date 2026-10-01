@@ -59,7 +59,7 @@ void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)
         object->scale_z = scale / 2;
         object->state = 0;
         ObjectDispatch_InitFromTable6(object);
-        Object_SetAnimation(object, 5);
+        Object_SetMode(object, 5);
         Object_SetPosition(object, x << 16, object->y, z << 16);
     }
 }
@@ -88,8 +88,8 @@ void ColossoLogRollingStage_SpawnPositionedObject(s32 object_id, s32 x, s32 z)
     }
 
     ObjectDispatch_InitFromTable6();
-    Object_SetAnimation(object, 5);
+    Object_SetMode(object, 5);
     Object_SetPosition(object, x << 16, *(s32 *)(object + 12), z << 16);
     Object_CommitPosition(object);
-    Object_SetAnimation(object, 1);
+    Object_SetMode(object, 1);
 }

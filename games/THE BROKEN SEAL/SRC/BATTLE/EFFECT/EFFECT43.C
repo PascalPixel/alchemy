@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_0809B11C.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
@@ -45,8 +46,6 @@ void WaitFrames(s32);
 s32 Resource_ResetEntry(s32);
 s32 VramBlock_LoadCached(u32, u32, const void *);
 s32 Resource_FindFreeEntry(void);
-s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
-void Scheduler_RemoveCallback(void (*)(void));
 void ObjectDispatch_SetSingleChildField26Far(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
 void UiText_DrawMessage(s32, s32);
@@ -135,11 +134,11 @@ void RunBattleEffect16(void)
     }
     object->callback = NULL;
     object->angle = angle;
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateEffect16State), 0xc80);
     WaitFrames(15);
     Audio_PlayCue(0xae);
     WaitFrames(55);
-    Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
+    Scheduler_RemoveCallback((u32)(BattleFx_UpdateEffect16State));
     index = 147;
     if (*(s16 *)&gGameState[index] != 0)
         ObjectDispatch_SetSingleChildField26Far(object, 2);

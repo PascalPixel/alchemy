@@ -29,9 +29,9 @@ struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type)
         effect->sprite->priority = 0;
         effect->motion_flags = 0;
         effect->collision_flags = 8;
-        Actor_SetSpriteFlags((struct FieldActor *)effect, 0);
-        Object_SetPalette((struct FieldActor *)effect, PALETTE_TRANSLUCENT_EFFECT);
-        Object_SetBlendMode((struct FieldActor *)effect, OBJECT_BLEND_TRANSLUCENT);
+        Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
+        ObjectGroup_SetChildValue((struct FieldActor *)effect, PALETTE_TRANSLUCENT_EFFECT);
+        Engine_ObjectSetBlendMode((struct FieldActor *)effect, OBJECT_BLEND_TRANSLUCENT);
         return effect;
     }
     return NULL;
@@ -46,8 +46,8 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
         effect->sprite->priority = 1;
         effect->motion_flags = 0;
         effect->collision_flags = 8;
-        Actor_SetSpriteFlags((struct FieldActor *)effect, 0);
-        Object_SetPalette((struct FieldActor *)effect, PALETTE_EFFECT);
+        Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
+        ObjectGroup_SetChildValue((struct FieldActor *)effect, PALETTE_EFFECT);
         effect->priority_flags =
             (effect->priority_flags & ~ACTOR_PRIORITY_AUTOMATIC) | ACTOR_PRIORITY_UNDERFOOT;
         return effect;

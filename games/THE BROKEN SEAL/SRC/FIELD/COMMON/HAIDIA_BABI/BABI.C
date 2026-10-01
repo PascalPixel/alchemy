@@ -85,13 +85,13 @@ void HaidiaBabi_AskAboutKraden(s32 object)
 {
     s32 msg = (s32)MsgHaidiaFolksSeemKnow;
 
-    Event_SetMessage(msg);
+    Engine_EventSetMessage(msg);
     Event_OpenMessage(object, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(msg + 1);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(msg + 1);
     } else {
-        Event_SetMessage(msg + 2);
+        Engine_EventSetMessage(msg + 2);
     }
     Event_ShowMessage(object, 0);
 }
@@ -123,43 +123,43 @@ void HaidiaBabi_RunHeyBoyScene(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
-    Actor_StartRepeatedMotion(16, 2);
-    Event_Wait(30);
-    Event_SetMessage((s32)MsgHaidiaHeyBoy);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
+    Engine_EventBegin();
+    Engine_ActorStartRepeatedMotion(16, 2);
+    Engine_EventWait(30);
+    Engine_EventSetMessage((s32)MsgHaidiaHeyBoy);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
     Event_ShowMessageAndWait(16, 0, 6);
     Actor_ShowEmote(16, 0x102, 0);
-    Actor_StartRepeatedMotion(16, 1);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(16, 4);
-    Event_Wait(20);
+    Engine_ActorStartRepeatedMotion(16, 1);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(16, 4);
+    Engine_EventWait(20);
     Event_OpenMessage(16, 0);
-    if (Event_ChooseYesNo(0, 0) == 1) {
+    if (Engine_EventChooseYesNo(0, 0) == 1) {
         bump_step(1);
     }
-    Actor_StartRepeatedMotion(16, 1);
-    Event_Wait(20);
+    Engine_ActorStartRepeatedMotion(16, 1);
+    Engine_EventWait(20);
     Event_ShowMessageAndWait(16, 0, 4);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneDialogue_RunActorFourteenDialogue11AA(void)
 {
     void *work;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_FaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
-    Event_SetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
+    Engine_EventSetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
     Event_OpenMessage(0xE, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0xE, 0);
     } else {
         work = *(void **)&gEventWork;
         FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16)(FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
         Event_AskYesNo(0xE, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneState_SetWork448To521AndRun(s32 object)
@@ -168,9 +168,9 @@ void SceneState_SetWork448To521AndRun(s32 object)
         BattleFx_SetBlock30ValuesMaxZero();
     }
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_RequestExit(object);
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(object);
 }
 
 void SceneState_SetValue123Mode1(void)
@@ -325,7 +325,6 @@ struct SceneMapState {
     u16 active;
 };
 
-
 extern const u8 gHaidiaBabiSharedAction[];
 extern const u8 gHaidiaBabiActorExitAction[];
 extern const u8 gHaidiaBabiLeaderExitAction[];
@@ -370,13 +369,6 @@ void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 void Engine_AudioPlayCue();
 
-/* FAKEMATCH: transfer DECK_SEQ.C's centered-message call boundary so each
- * draw owns its argument setup; this is not a recovered original helper. */
-static __inline__ void Call3(void (*f)(s32, s32, s32), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
 /* Haidia, the morning after the storm: the leader wakes in the house, the
    view opens on the room, the two talk over the scene's messages, and both
    walk out of the house. */
@@ -409,7 +401,7 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_ActorSetPosition(15, 0, 0);
     Engine_ActorSetPosition(16, 0, 0);
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-    Actor_SetAnimation(0, 18);
+    Engine_ActorSetAnimation(0, 18);
     ground = 0;
     stopped.value = 0;
     sprite->rotation = 1365;
@@ -422,11 +414,11 @@ void FieldScene_RunComplexActorSequence(void)
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(8);
     base = (s32)MsgHaidiaWake;
-    Call3(UiText_ShowCenteredMessage, base, 1, 0);
+    UiText_ShowCenteredMessage(base, 1, 0);
     Engine_EventWait(40);
     MapRender_SetValues(65536, 65536, 65536);
     Ui_SetRenderResultFromObject(8);
-    Call3(UiText_ShowCenteredMessage, base + 1, 1, 0);
+    UiText_ShowCenteredMessage(base + 1, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventWait(40);
     *(u32 *)(work + 236) = 0x01480000;
@@ -460,7 +452,7 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_EventWait(20);
     Map_ClearLayerEntryFlag(8);
     Actor_SetSpeed(0, 65536, 32768);
-    Actor_SetAnimation(0, 19);
+    Engine_ActorSetAnimation(0, 19);
     Actor_MoveToAndWait(0, 557, 679);
     Map_SetLayerEntryFlag(8);
     Map_ClearLayerEntryFlag(9);
@@ -507,8 +499,8 @@ void FieldScene_RunComplexActorSequence(void)
     Object_RefreshSelectorById(8);
     Actor_WalkToAndWait(8, 419, 661);
     Actor_WalkToAndWait(8, 408, 661);
-    Actor_SetAnimation(8, 1);
-    Actor_SetAnimation(0, 1);
+    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(0, 1);
     Actor_FaceDirection(8, 16384, 10);
     Event_OpenMessage(32776, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -516,7 +508,7 @@ void FieldScene_RunComplexActorSequence(void)
     }
     Engine_EventWait(20);
     Event_ShowMessageAndWait(32776, 0, 20);
-    Actor_SetAnimation(0, 3);
+    Engine_ActorSetAnimation(0, 3);
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(8, gHaidiaBabiActorExitAction);

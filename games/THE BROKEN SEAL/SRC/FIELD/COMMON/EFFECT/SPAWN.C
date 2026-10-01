@@ -46,7 +46,7 @@ void __attribute__((section(section_name))) name( \
         return; \
  \
     sprite = effect->sprite; \
-    Object_SetAnimation((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK); \
+    Object_SetMode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK); \
     table_offset = (flags & EFFECT_SCRIPT_MASK) << 2; \
     set_script((struct FieldActor *)effect, gEffectScripts[table_offset >> 2]); \
     effect->motion_flags = 0; \
@@ -63,7 +63,7 @@ void __attribute__((section(section_name))) name( \
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0) \
         return; \
     if ((flags & EFFECT_USE_PALETTE) != 0) \
-        Object_SetPalette((struct FieldActor *)effect, options->palette); \
+        ObjectGroup_SetChildValue((struct FieldActor *)effect, options->palette); \
     if ((flags & EFFECT_USE_PRIORITY) != 0) { \
         effect->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC; \
         sprite->priority = options->priority; \
@@ -83,7 +83,7 @@ void __attribute__((section(section_name))) name( \
         } \
     } \
     if ((flags & EFFECT_USE_SCRIPT) != 0) { \
-        Object_SetAnimation((struct FieldActor *)effect, 1); \
+        Object_SetMode((struct FieldActor *)effect, 1); \
         set_script((struct FieldActor *)effect, options->script); \
     } \
     if ((flags & EFFECT_USE_ROTATION) != 0) \

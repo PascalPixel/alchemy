@@ -44,6 +44,7 @@ void BattlePres_ConfigureEffectDisplay(void)
     *(volatile u16 *)0x0400004a = 0x3f21;
 
     q = &gIoWriteQueue;
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do {
         ime = &REG_IME;
         saved = *ime;

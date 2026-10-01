@@ -44,6 +44,7 @@ void AudioTest_RunParameterController(void)
 
     row = 0;
     preset = 2;
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do {
         Data_03007804 = 0;
     } while (0);
@@ -124,15 +125,13 @@ void MusicCommand_SetPitchAndUpdateFrequency(u16 value)
 
 void MusicCommand_SetPitch(s16 pitch)
 {
+    /* FAKEMATCH: the player pointer temporary preserves measured argument allocation or instruction order. */
   int player_address;
-  int channel_mask;
-  s16 pitch_value;
   player_address = (u32)gMusicPlayerBgm;
+  /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
   do
   {
-    pitch_value = pitch;
-    channel_mask = 0xFF;
-    MusicPlayer_SetPitch(player_address, channel_mask, pitch_value);
+    MusicPlayer_SetPitch(player_address, 0xFF, pitch);
   }
   while (0);
 }
@@ -145,8 +144,8 @@ void Audio_SetWorkPairB(u16 primary, u16 secondary)
 
 void MusicCommand_SetVolume(s16 volume)
 {
+    /* FAKEMATCH: the duplicated volume branch preserves measured argument allocation or instruction order. */
   s16 volume_value;
-  s16 *volume_cell;
   volume_value = volume;
   MusicPlayer_SetVolume((u32)gMusicPlayerBgm, 0xFF, (u16)volume);
   *((s16 *) &gMusicVolumeTarget) = volume_value;
@@ -154,10 +153,10 @@ void MusicCommand_SetVolume(s16 volume)
  store_shared_volume:;
   if (volume_value)
   {
-    *(volume_cell = (s16 *) &gMusicVolume) = volume_value;
+    *(s16 *) &gMusicVolume = volume_value;
   } else
   {
-    *(volume_cell = (s16 *) &gMusicVolume) = volume_value;
+    *(s16 *) &gMusicVolume = volume_value;
   }
 }
 

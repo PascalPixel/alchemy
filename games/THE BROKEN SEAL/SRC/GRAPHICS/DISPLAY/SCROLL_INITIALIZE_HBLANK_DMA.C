@@ -1,7 +1,6 @@
 #include "DMA.H"
 
 void *Runtime_AllocateBlock(s32, s32);
-s32 Scheduler_AddOrUpdateCallback(void (*)(void), s32);
 void DisplayScroll_BuildAndSwapHBlankPage(void);
 void DisplayScroll_ArmHBlankDma(void);
 
@@ -39,6 +38,6 @@ void DisplayScroll_InitializeHBlankDma(s32 mode, s32 a, s32 b, s32 c, s32 d, s32
     work->field_f1c = f;
     work->field_f10 = b;
     work->field_f14 = e;
-    Scheduler_AddOrUpdateCallback(DisplayScroll_BuildAndSwapHBlankPage, 3200);
-    Scheduler_AddOrUpdateCallback(DisplayScroll_ArmHBlankDma, 1152);
+    Scheduler_AddOrUpdateCallback((s32)(DisplayScroll_BuildAndSwapHBlankPage), 3200);
+    Scheduler_AddOrUpdateCallback((s32)(DisplayScroll_ArmHBlankDma), 1152);
 }

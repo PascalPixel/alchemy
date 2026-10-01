@@ -57,8 +57,10 @@ void QueueSceneSound(s32 cue);
  * that function's one-pass loops around the IME read and the queue update. */
 #define QUEUE_IO_WRITE(address, value)                                      \
     q = &gIoWriteQueue;                                                     \
-    do {                                                                    \
-        do {                                                                \
+    do { \
+        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+        do { \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
@@ -83,7 +85,7 @@ void SceneState_SendRequest15With45(void)
 
 s32 OverlayObject_ApplyZeroAndClearByte89(u8 *obj)
 {
-    Actor_SetSpriteFlags(obj, 0);
+    Engine_ActorSetSpriteFlags(obj, 0);
     obj[89] = 0;
     return 0;
 }
@@ -177,26 +179,26 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     Actor_Get(p10);
     rec2 = GameFlag_IsSet(0x20f);
     if (rec2 == 0) {
-        Event_Begin();
+        Engine_EventBegin();
         Actor_SetAttachedEffect((s32)p6, 0x101);
-        Actor_SetAnimation((s32)p6, 9);
+        Engine_ActorSetAnimation((s32)p6, 9);
         record = Object_GetById(p10);
         if (record != 0) {
             Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
-        Actor_WaitForMove((s32)p6);
+        Engine_ActorWaitForMove((s32)p6);
         Audio_PlayCue(244);
         Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
         rec7[85] = rec2;
         Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12) + 0x200000, *(s32 *)(rec7 + 16));
-        Actor_WaitForMove((s32)p6);
+        Engine_ActorWaitForMove((s32)p6);
         *(s32 *)(rec7 + 40) = rec2;
         rec7[85] = 4;
         *(u8 *)(base + 498) = 2;
         GameFlag_Set(0x20f);
         GameFlag_SetByte(0x218, p10);
         GameFlag_SetByte(0x210, 180);
-        Event_End();
+        Engine_EventEnd();
         *(u16 *)(*(u8 **)((u8 *)&gEventWork) + 0x17c) = rec2;
     }
 }
@@ -347,8 +349,8 @@ void FieldScene_RunActorThirteenRestoration(void)
             if (GameFlag_IsSet(0x9b0) == 0) {
             } else {
                 GameFlag_Set(0x9b5);
-                Event_Begin();
-                Event_SetMessage((s32)MsgSuharaNowhereFound);
+                Engine_EventBegin();
+                Engine_EventSetMessage((s32)MsgSuharaNowhereFound);
                 /* Record layout observed here: s32 at +8, s32 at +16. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
@@ -360,34 +362,34 @@ void FieldScene_RunActorThirteenRestoration(void)
                 Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1bc, 0x4d8);
                 Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 40);
                 Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
-                Actor_SetAnimationAndWait(ACTOR_ID, 4);
+                Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
                 Event_ShowMessage(ACTOR_ID, 0);
                 Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
                 Actor_ShowEmote(ACTOR_ID, 0x105, 60);
                 Event_ShowMessage(ACTOR_ID, 0);
-                Event_Wait(30);
-                Actor_RunRepeatedMotion(ACTOR_ID, 2);
+                Engine_EventWait(30);
+                Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
                 Event_ShowMessage(ACTOR_ID, 0);
                 Actor_FaceDirection(ACTOR_ID, 0xc000, 30);
                 Event_AskYesNo(ACTOR_ID, 0);
-                Event_Wait(30);
+                Engine_EventWait(30);
                 Actor_ShowEmote(ACTOR_ID, 0x106, 60);
                 Event_ShowMessage(ACTOR_ID, 0);
-                Actor_SetAnimationAndWait(ACTOR_ID, 3);
+                Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
                 Event_ShowMessage(ACTOR_ID, 0);
                 Actor_SetSpeed(ACTOR_ID, 0xb333, 0x5999);
                 Actor_WalkToAndWait(ACTOR_ID, 0x1b8, 0x4e8);
                 Event_ShowMessage(ACTOR_ID, 0);
-                Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-                Actor_SetAnimation(ACTOR_ID, 2);
+                Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+                Engine_ActorSetAnimation(ACTOR_ID, 2);
                 /* Record layout observed here: s16 at +10, s16 at +18. */
                 record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
                     Actor_SetDestination(ACTOR_ID, *(s16 *)(record + 10), *(s16 *)(record + 18));
                 }
-                Actor_WaitForMove(ACTOR_ID);
+                Engine_ActorWaitForMove(ACTOR_ID);
                 Actor_SetPosition(ACTOR_ID, 0, 0);
-                Event_End();
+                Engine_EventEnd();
             }
         }
     }
@@ -447,7 +449,7 @@ void PlaceActorTwelveWhenFlagClear(void)
 {
     if (GameFlag_IsSet(2487) == 0) {
         GameFlag_Set(526);
-        PlaceActor(12, 240 << 15, 206 << 18);
+        Actor_SetPosition(12, 240 << 15, 206 << 18);
         Engine_ActorEnableActionCallback(12, gSuharaSabakuActor12Action);
     }
 }
@@ -572,7 +574,7 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
          * gives the game's argument order r1, r2, r3, r0. */
         do {
         } while (0);
-        record = Task_RemoveCallback(EncounterPalette_Pulse);
+        record = Engine_TaskRemoveCallback(EncounterPalette_Pulse);
         {
             /* FAKEMATCH: a forced temporary gives the game's load order. */
             s32 shown = gSuharaSabakuShownLevel;
@@ -593,7 +595,7 @@ s32 FieldScene_RunScene3c0SequenceA(void)
         MapObject_SetPosition(100, -1, -1);
         BattleFx_EmitRandomParticle();
         Map_CopyCellAttributes(127, 127, 1, 1, 12, 71);
-        return Task_AddCallback(EncounterPalette_Pulse, 0xc80);
+        return Engine_TaskAddCallback(EncounterPalette_Pulse, 0xc80);
     }
 }
 
@@ -618,7 +620,7 @@ s32 SuharaSabaku_RunSceneScript(void)
     gMapWork.event->start_transition = 0x201;
     if (GameFlag_GetByte(0x210) != 0) {
         gGameState.movement_mode = 2;
-        Task_AddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);
+        Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);
     }
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku1
         || gGameState.scene == (s32)&SceneId_SuharaSabaku2) {

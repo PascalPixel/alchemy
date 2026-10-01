@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "LOBBY.H"
 #include "CALL.H"
@@ -65,7 +66,6 @@ s32 GameFlag_GetByte(s32 counter);
 void GameFlag_SetByte(s32 counter, s32 value);
 void UiText_DrawQuantity(s32 value, s32 digits);
 void SerialRuntime_Initialize(void);
-void Scheduler_SetCallbackMask(void (*callback)(void), s32 value);
 void Owner_RefreshActiveRatios(s32 value);
 void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 extern u32 gLinkLobbyCallFrames;
@@ -540,7 +540,7 @@ s32 LinkLobby_RunRoundResult(void)
     }
     callback = LinkLobby_PollPeerReady;
     Engine_TaskAddCallback(callback, 0xc80);
-    Scheduler_SetCallbackMask(callback, 1);
+    Scheduler_SetCallbackMask((u32)(callback), 1);
     if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {
         Owner_RefreshActiveRatios(1);
         BattlePlacement_UpdateTimedEntriesTwentyTimes();

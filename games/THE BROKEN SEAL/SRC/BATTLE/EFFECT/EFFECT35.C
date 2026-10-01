@@ -1,6 +1,7 @@
 /* Battle effect: spawn the pair of scaled objects that follow the linked
    object in mirrored arcs, one for each scaled-arc update callback. */
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_0809B11C.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
@@ -145,7 +146,6 @@ void BattleFx_SetupObjectPair(s32 first, s32 second);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void BattleFx_UpdateAllEffectSlots(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Vector_AddPolarOffset(s32, s32, void *);
@@ -279,7 +279,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
         scene->unknown_cc0 = running;
     work->tile_slot = Resource_FindFreeEntry();
     VramBlock_LoadCached((s16)work->tile_slot, 256, Data_0809c410);
-    Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateAllEffectSlots), 0xc80);
 }
 
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)

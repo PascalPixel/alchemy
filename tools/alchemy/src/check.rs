@@ -4,9 +4,10 @@ mod commit_progress;
 mod layout;
 mod no_asm;
 mod publication;
+mod steering_debt;
 
 const USAGE: &str =
-    "usage: alchemy check <publication|commit-progress|coverage|layout|no-asm|progress|routes> [args]";
+    "usage: alchemy check <publication|commit-progress|coverage|layout|no-asm|steering-debt|progress|routes> [args]";
 
 /// Run a check body and report its error the way every check does.
 fn report(result: Result<(), String>) -> ExitCode {
@@ -48,6 +49,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             ExitCode::SUCCESS
         }
         "no-asm" => no_asm::entry(rest),
+        "steering-debt" => steering_debt::entry(rest),
         "progress" => {
             crate::coverage::progress::entry(rest);
             ExitCode::SUCCESS

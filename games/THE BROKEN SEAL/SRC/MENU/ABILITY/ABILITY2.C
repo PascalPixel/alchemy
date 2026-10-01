@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 s32 UiWindow_UpdateOrCreate(s32 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
@@ -39,11 +40,9 @@ s32 Party_ListActiveOwnersFar(u16 *out);
 s32 Party_RemapCharacterIdByFlagsFar(u16 value);
 void *ResourceObject_CreateFar(s32 value);
 void AnimationObjects_SelectAnimationFar(void *object, s32 value);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 value);
 void Menu_UpdateEntryObjectTransforms(void);
 
 void ResourceObject_ReleaseFar(void *);
-void Scheduler_RemoveCallback(void (*callback)(void));
 s32 Party_CountActiveOwnersFar(void);
 void Object_ApplyProjectedPlacementFar(void *, s32 *, s32 *, s32);
 
@@ -140,7 +139,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 origin_x, s32 origin_
     {
         s32 delay_frames = 200;
         delay_frames <<= 4;
-        Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, delay_frames);
+        Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), delay_frames);
     }
 }
 
@@ -164,7 +163,7 @@ void Menu_ReleaseEntryObjects(void)
             }
         } while (--i != 0);
     }
-    Scheduler_RemoveCallback((void (*)(void))Menu_UpdateEntryObjectTransforms);
+    Scheduler_RemoveCallback((u32)((void (*)(void))Menu_UpdateEntryObjectTransforms));
 }
 
 void Menu_UpdateEntryObjectTransforms(void)

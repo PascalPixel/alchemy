@@ -3,11 +3,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "STRING.H"
 
-#define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
-extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerTaskCount;
-extern struct SchedulerTask gSchedulerTaskTable[24];
-
 /* ⚓️'s table holds 24 tasks and clears the counts plainly, where ☀️ holds 20. */
 void Scheduler_ResetTaskTable(void)
 {
@@ -265,4 +260,3 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
     } while (0);
     return result;
 }
-

@@ -1,7 +1,6 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
-s32 Scheduler_DisableOverlayCallbacks(void);
-s32 Scheduler_EnableUnmaskedOverlayCallbacks(void);
 s32 Map_DisableUpdateCallbackFar(void);
 s32 Map_EnableUpdateCallbackFar(void);
 s32 GameFlag_ClearBit(s32 flag_no);

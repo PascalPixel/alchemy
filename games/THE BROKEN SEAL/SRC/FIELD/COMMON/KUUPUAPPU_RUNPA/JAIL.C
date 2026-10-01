@@ -121,80 +121,80 @@ const struct SceneEvent *Scene_GetEvents(void)
    party and speaks again. */
 void ThiefLeader_Talk(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
 
     Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
 
     Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
-    Event_Wait(40);
+    Engine_EventWait(40);
 
-    Event_SetMessage((s32)MsgKuupuappuThiefLeaderSilencesThieves);
+    Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderSilencesThieves);
     Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
-    Actor_StartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
-    Actor_RunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
-    Event_Wait(20);
+    Engine_ActorStartRepeatedMotion(ACTOR_LEFT_THIEF, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_RIGHT_THIEF, 2);
+    Engine_EventWait(20);
 
-    Actor_FaceEachOther(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(20);
+    Engine_ActorFaceEachOther(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
+    Engine_EventWait(20);
 
-    Actor_RunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
-    Event_Wait(20);
+    Engine_ActorRunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
+    Engine_EventWait(20);
 
     Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
 
-    Event_End();
+    Engine_EventEnd();
 }
 
 void LeftThief_Talk(void)
 {
-    Event_Begin();
-    Actor_RunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
-    Event_Wait(20);
-    Event_SetMessage((s32)MsgKuupuappuLeftThiefRegretsEscape);
+    Engine_EventBegin();
+    Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
+    Engine_EventWait(20);
+    Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefRegretsEscape);
     Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void RightThief_Talk(void)
 {
-    Event_Begin();
-    Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
-    Event_Wait(20);
-    Event_SetMessage((s32)MsgKuupuappuRightThiefRegretsStaying);
+    Engine_EventBegin();
+    Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
+    Engine_EventWait(20);
+    Engine_EventSetMessage((s32)MsgKuupuappuRightThiefRegretsStaying);
     Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void ThiefLeader_ReadMind(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuThiefLeaderThoughts);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuThiefLeaderThoughts);
     Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void LeftThief_ReadMind(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuLeftThiefThoughts);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuLeftThiefThoughts);
     Event_ShowMessage(ACTOR_LEFT_THIEF, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void RightThief_ReadMind(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuRightThiefThoughts);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuRightThiefThoughts);
     Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void VaultDoor_Leave(void)
 {
     Audio_PlayCue(SOUND_MAP_EXIT);
-    Event_RequestExit(JAIL_EXIT_TO_VAULT);
+    Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
 
 s32 Scene_Initialize(void)

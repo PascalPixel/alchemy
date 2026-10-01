@@ -57,7 +57,7 @@ void FieldScene_RunScene3b3_0200263c();
 
 void FieldScene_RunScene3b3_02001fd4(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (FieldScene_RunScene3b3SequenceD() == 0) {
         *((u8 *)Object_GetById(0) + 85) &= 254;
         *((u8 *)Object_GetById(0) + 35) &= 254;
@@ -75,7 +75,7 @@ void FieldScene_RunScene3b3_02001fd4(void)
             *flags = bits;
         }
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Complete one-call wrapper through interworking return and alignment. */
@@ -159,12 +159,12 @@ void TakaraHashira_RunActorAction(s32 a0)
     s32 record;
 
     rec7 = Value1(Object_GetById, a0);
-    Event_Begin();
+    Engine_EventBegin();
     *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
     Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
     GameFlag_Set((a0 + 0x1f5));
     Engine_ActorEnableActionCallback(a0, (s32)TakaraHashira_ActionTable);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Contiguous unnamed leaf-owner run for resource_3b3. */
@@ -344,13 +344,13 @@ void StagedActor_PlaceAtObjectTenCell(void)
     s32 x;
     s32 z;
 
-    Event_Begin();
+    Engine_EventBegin();
 
     x = *(s32 *)(obj + 8) >> 20;
     z = *(s32 *)(obj + 16) >> 20;
 
     StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* Crossbone Isle: block actor 10's cell and, the first time it reaches
@@ -436,7 +436,7 @@ void FieldScene_RunScene3b3_0200263c(s32 a0)
 
     rec7 = (s32)Object_GetById(a0);
     if (GameFlag_IsSet((a0 + 0x1f5)) != 0) {
-        Stage_SetMode(rec7, 5);
+        Object_SetMode(rec7, 5);
         *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
         Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
         Engine_ActorEnableActionCallback(a0, TakaraHashira_ActionTable);
@@ -477,7 +477,7 @@ loop:
 
     {
         Handle *handle = *(Handle **)(actor + 80);
-        Actor_SetSpritePriority(ACTOR_PARTY_LEADER, handle->mode);
+        Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, handle->mode);
     }
     goto done;
 

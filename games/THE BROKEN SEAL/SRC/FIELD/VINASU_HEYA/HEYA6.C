@@ -29,14 +29,14 @@ void FieldScene_RunGuardedRectStep(void)
     s32 x;
     s32 y;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
         x = 45;
         y = 43;
         Map_CopyCellAttributes(109, 43, 7, 5, x, y);
         RunStagedActorTransition();
     }
-    Event_End();
+    Engine_EventEnd();
     VinasuHeya_RunCellPushScene();
 }
 
@@ -153,13 +153,13 @@ void VinasuHeya_SettlePushedBlocks(void)
 
 void SceneState_RunConditionalStep(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
         s32 k5 = 44, k6 = 39;
         Map_CopyCellAttributes(108, 39, 13, 7, k5, k6);
         RunStagedActorTransition();
     }
-    Event_End();
+    Engine_EventEnd();
     VinasuHeya_SettlePushedBlocks();
 }
 
@@ -254,8 +254,8 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
                   *(s32 *)(sel + 8),
                   highest,
                   *(s32 *)(sel + 16));
-    Actor_WaitForMove(selector);
+    Engine_ActorWaitForMove(selector);
     Audio_PlayCue(188);
     SceneEffect_SpawnNineRadialEffects(selector);
-    Event_Wait(30);
+    Engine_EventWait(30);
 }

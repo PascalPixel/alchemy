@@ -84,6 +84,18 @@
  * No state, zero, loop or counter model changed; zero new DONE bytes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+/* Preserve the original measured FIELD_EVENT adapter context of this draft. */
+static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
+{
+    return Engine_TaskAddCallback(callback, priority);
+}
+
+static inline s32 Task_RemoveCallback(void (*callback)(void))
+{
+    return Engine_TaskRemoveCallback(callback);
+}
+
 extern u8 MsgArutamiraRotatedRock[];
 
 struct PuzzleState {

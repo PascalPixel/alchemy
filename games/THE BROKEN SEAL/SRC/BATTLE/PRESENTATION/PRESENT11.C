@@ -35,6 +35,7 @@ s32 GameFlag_TestFar(s32 flag);
 /* Inline, so the arguments are computed before the routine's address. */
 static __inline__ s32 DivQ16(s32 divisor, s32 value)
 {
+    /* FAKEMATCH: a direct call finishes the value shift before the divisor load; the reference loads the divisor first. */
     return Iwram_RatioMulQ14(divisor, value);
 }
 

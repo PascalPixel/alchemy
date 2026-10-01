@@ -5,6 +5,7 @@
 //! no catalog, no receipt and no guess at what is code.
 use super::progress::GameDone;
 use crate::targets::DecompTarget;
+use object::{Object, ObjectSection, ObjectSymbol, SymbolKind};
 use sha1::{Digest, Sha1};
 use std::path::Path;
 
@@ -51,55 +52,81 @@ pub(crate) struct Mark {
 pub(crate) enum Steered {
     #[default]
     None,
-    /// A tag outside any function: the whole object counts.
+    /// Source-owned file-scope steering: the whole object counts.
     Whole,
-    /// Tags inside or just before these functions.
+    /// Tagged definitions and callers of tagged inline helpers.
     Functions(std::collections::BTreeSet<String>),
 }
 
 /// Read the marks of the maintained source a `games/` object was built from.
-fn source_mark(root: &Path, stem: &str) -> Mark {
-    ["C", "c", "S", "s"]
-        .iter()
-        .find_map(|extension| {
-            std::fs::read_to_string(root.join(format!("{stem}.{extension}"))).ok()
-        })
-        .map_or_else(Mark::default, |text| Mark {
-            steered: if !text.contains("FAKEMATCH") {
-                Steered::None
-            } else {
-                crate::permute::parse::tagged_functions(&text, "FAKEMATCH")
-                    .map_or(Steered::Whole, Steered::Functions)
-            },
-            veneer: text.contains("@ credit: reconstructed_veneer"),
-        })
+fn source_mark(root: &Path, target: DecompTarget, stem: &str) -> Result<Mark, String> {
+    let Some((path, text)) = ["C", "c", "S", "s"].iter().find_map(|extension| {
+        let path = format!("{stem}.{extension}");
+        std::fs::read_to_string(root.join(&path))
+            .ok()
+            .map(|text| (path, text))
+    }) else {
+        return Ok(Mark::default());
+    };
+    let steered = if path.ends_with(".C") || path.ends_with(".c") {
+        let expanded = crate::compiler::preprocess::fresh(root, target, &path)?;
+        let analysis = crate::compiler::steering::analyze(&expanded, &path)?;
+        if analysis
+            .whole_owners
+            .contains(&crate::compiler::steering::owner(&path))
+        {
+            Steered::Whole
+        } else if analysis.steered.is_empty() {
+            Steered::None
+        } else {
+            Steered::Functions(analysis.steered)
+        }
+    } else if !text.contains("FAKEMATCH") {
+        Steered::None
+    } else {
+        crate::permute::parse::tagged_functions(&text, "FAKEMATCH")
+            .map_or(Steered::Whole, Steered::Functions)
+    };
+    Ok(Mark {
+        steered,
+        veneer: text.contains("@ credit: reconstructed_veneer"),
+    })
 }
 
 /// The bytes of `names` in one object's text section of `size` bytes: each
-/// function runs from its symbol to the next symbol, or to the section's
-/// end. The whole section when the object cannot be read.
-fn function_bytes(object: &str, names: &std::collections::BTreeSet<String>, size: i64) -> i64 {
-    let Ok(nm) = std::process::Command::new("arm-none-eabi-nm")
-        .args(["--defined-only", "--numeric-sort"])
-        .arg(object)
-        .output()
-    else {
-        return size;
-    };
-    if !nm.status.success() {
-        return size;
+/// function runs to the next function or the section end, including its pool.
+/// Section offsets are local: unrelated .text.* sections must never mix.
+fn function_bytes(
+    object: &str,
+    section_name: &str,
+    names: &std::collections::BTreeSet<String>,
+    size: i64,
+) -> Result<i64, String> {
+    let bytes =
+        std::fs::read(object).map_err(|error| format!("{object}: steering extent: {error}"))?;
+    function_bytes_from_object(&bytes, section_name, names, size)
+        .map_err(|error| format!("{object}: {error}"))
+}
+fn function_bytes_from_object(
+    bytes: &[u8],
+    section_name: &str,
+    names: &std::collections::BTreeSet<String>,
+    size: i64,
+) -> Result<i64, String> {
+    let file = object::File::parse(bytes).map_err(|error| error.to_string())?;
+    let section = file
+        .section_by_name(section_name)
+        .ok_or_else(|| format!("missing placed section {section_name}"))?;
+    if section.size() != size as u64 {
+        return Err(format!("{section_name}: map/object extent differs"));
     }
-    let listed = String::from_utf8_lossy(&nm.stdout);
-    let symbols: Vec<(i64, &str)> = listed
-        .lines()
-        .filter_map(|line| {
-            let mut fields = line.split_whitespace();
-            let (address, kind, name) = (fields.next()?, fields.next()?, fields.next()?);
-            matches!(kind, "t" | "T")
-                .then(|| Some((i64::from_str_radix(address, 16).ok()?, name)))?
-        })
-        .collect();
-    function_spans(&symbols, names, size)
+    let mut symbols = file.symbols().filter(|symbol| symbol.section_index() == Some(section.index()) && (
+        symbol.kind() == SymbolKind::Text || matches!(symbol.flags(), object::SymbolFlags::Elf { st_info, .. } if st_info & 0xf == 13)
+    ))
+        .filter_map(|symbol| symbol.name().ok().map(|name| ((symbol.address() & !1) as i64, name)))
+        .collect::<Vec<_>>();
+    symbols.sort_by_key(|(address, _)| *address);
+    Ok(function_spans(&symbols, names, size))
 }
 
 /// Sum the spans of `names` among `symbols`, sorted by offset in a section
@@ -109,19 +136,21 @@ fn function_spans(
     names: &std::collections::BTreeSet<String>,
     size: i64,
 ) -> i64 {
-    symbols
-        .iter()
-        .enumerate()
-        .filter(|(_, (_, name))| names.contains(*name))
-        .map(|(index, (start, _))| {
+    let mut intervals = std::collections::BTreeSet::new();
+    for (index, (start, name)) in symbols.iter().enumerate() {
+        if names.contains(*name) {
             let end = symbols
                 .iter()
                 .skip(index + 1)
                 .map(|(next, _)| *next)
                 .find(|next| next > start)
                 .unwrap_or(size);
-            end.min(size) - start
-        })
+            intervals.insert((*start, end.min(size)));
+        }
+    }
+    intervals
+        .into_iter()
+        .map(|(start, end)| (end - start).max(0))
         .sum()
 }
 
@@ -349,7 +378,7 @@ fn tally(
     output: &str,
     overlay: bool,
     source: &dyn Fn(&str) -> Option<Language>,
-    mark: &dyn Fn(&str) -> Mark,
+    mark: &dyn Fn(&str) -> Result<Mark, String>,
 ) -> Result<(), String> {
     for (name, size, object) in sections(map) {
         if size > 0 && is_data(name) {
@@ -367,7 +396,7 @@ fn tally(
         let marked = || {
             relative_object(object, output, overlay)
                 .and_then(|(path, _)| path.strip_suffix(".o"))
-                .map_or_else(Mark::default, mark)
+                .map_or_else(|| Ok(Mark::default()), mark)
         };
         match origin(object, output, overlay, source)? {
             origin @ (Origin::CommonC | Origin::GameC) => {
@@ -376,10 +405,10 @@ fn tally(
                 } else {
                     measurement.done.game_c += size;
                 }
-                measurement.steered += match marked().steered {
+                measurement.steered += match marked()?.steered {
                     Steered::None => 0,
                     Steered::Whole => size,
-                    Steered::Functions(names) => function_bytes(object, &names, size),
+                    Steered::Functions(names) => function_bytes(object, name, &names, size)?,
                 };
             }
             origin @ (Origin::CommonAsm | Origin::GameAsm) => {
@@ -388,7 +417,7 @@ fn tally(
                 } else {
                     measurement.done.game_asm += size;
                 }
-                if marked().veneer {
+                if marked()?.veneer {
                     measurement.done.veneers += size;
                 }
             }
@@ -496,7 +525,7 @@ pub(crate) fn measure(
         marks
             .borrow_mut()
             .entry(stem.to_string())
-            .or_insert_with(|| source_mark(root, stem))
+            .or_insert_with(|| source_mark(root, target, stem))
             .clone()
     };
     let mut measurement = Measurement::default();
@@ -609,13 +638,15 @@ Linker script and memory map
     #[test]
     fn placed_text_is_counted_by_its_object_and_nothing_else() {
         let mut measurement = Measurement::default();
-        let mark = |stem: &str| Mark {
-            steered: if stem == "games/G/SRC/A" {
-                Steered::Whole
-            } else {
-                Steered::None
-            },
-            veneer: stem == "games/COMMON/SRC/D",
+        let mark = |stem: &str| {
+            Ok(Mark {
+                steered: if stem == "games/G/SRC/A" {
+                    Steered::Whole
+                } else {
+                    Steered::None
+                },
+                veneer: stem == "games/COMMON/SRC/D",
+            })
         };
         tally(
             &mut measurement,
@@ -729,6 +760,44 @@ void After(void) { }
         ];
         let names = ["Before", "After"].map(String::from).into_iter().collect();
         assert_eq!(function_spans(&symbols, &names, 0x50), 0x14 + 0x10);
+        let aliases = [(0, "First"), (0, "Alias"), (8, "Next")];
+        assert_eq!(
+            function_spans(&aliases, &["First", "Alias"].map(String::from).into(), 12),
+            8
+        );
+    }
+
+    #[test]
+    fn placed_section_selection_keeps_pools_and_ignores_other_offset_zero_functions() {
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("fixture.s");
+        let object = work.path().join("fixture.o");
+        std::fs::write(&source, ".syntax unified\n.thumb\n.section .text.first,\"ax\",%progbits\n.global First\n.type First,%function\n.thumb_func\nFirst:\n bx lr\n .align 2\nPool:\n .word 0\n.global Alias\n.type Alias,%function\n.set Alias,First\n.global Plain\n.type Plain,%function\n.thumb_func\nPlain:\n bx lr\n .align 2\n.section .text.other,\"ax\",%progbits\n.global Other\n.type Other,%function\n.thumb_func\nOther:\n bx lr\n .align 2\n .word 0\n").unwrap();
+        let assembler = crate::compiler::routing::binutils_prefix().join("bin/arm-none-eabi-as");
+        let output = std::process::Command::new(assembler)
+            .args(["-mcpu=arm7tdmi", "-meabi=gnu"])
+            .arg(&source)
+            .arg("-o")
+            .arg(&object)
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let bytes = std::fs::read(object).unwrap();
+        let names = ["First", "Alias", "Other"].map(String::from).into();
+        assert_eq!(
+            function_bytes_from_object(&bytes, ".text.first", &names, 12).unwrap(),
+            8
+        );
+        assert_eq!(
+            function_bytes_from_object(&bytes, ".text.other", &names, 8).unwrap(),
+            8
+        );
+        assert!(function_bytes_from_object(&bytes, ".text.missing", &names, 8).is_err());
+        assert!(function_bytes_from_object(&bytes, ".text.first", &names, 13).is_err());
     }
 
     #[test]

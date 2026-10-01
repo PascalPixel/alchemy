@@ -257,10 +257,10 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
         }
         if (o != 0) {
             o->motion_flags = 0;
-            Actor_SetSpriteFlags(o, 0);
+            Engine_ActorSetSpriteFlags(o, 0);
             Object_SetScript(o, (s32)KorosseoKawa_ScriptA);
-            Object_SetAnimation(o, 1);
-            Object_SetAnimation(o, 0);
+            Object_SetMode(o, 1);
+            Object_SetMode(o, 0);
         }
     }
 }
@@ -319,7 +319,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     Object_SetScript(rec, (void *)0x0200c6fc);
 
     while (*waitp != 0) {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
 
     if (flag == 0) {
@@ -332,7 +332,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     shared = Data_02000240;
     UiWork_PushValueSlot(*(s32 *)(shared + 500), 1);
-    Message_ShowCentered((s32)MsgKorosseoRobinGotItem, 3);
+    Engine_MessageShowCentered((s32)MsgKorosseoRobinGotItem, 3);
     ObjectDispatch_WaitForValue16(rec);
 
     return flag;

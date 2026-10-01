@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -21,7 +22,6 @@ extern u16 Korosseo_ModeMoveTarget;
 extern u16 Korosseo_ModeMoveDuration;
 extern s32 Korosseo_ModeTaskPosition;
 void Korosseo_UpdateModeTask(void);
-s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -128,7 +128,7 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
     Korosseo_ModeTaskMode = (u16)mode;
     Korosseo_ModeTaskParam = (u16)(param << 4);
 
-    Scheduler_AddOrUpdateCallback(Korosseo_UpdateModeTask, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)(Korosseo_UpdateModeTask), 0xc80);
 
     handler = (s32)KorosseoKawa_RoundSpans;
     if (mode == 2) {
@@ -183,85 +183,85 @@ void SceneData_SelectBlockAndResetCounters(u32 mode, u32 param)
 void FieldScene_RunTwoArmSequence(s32 a)
 {
     if (a == 0) {
-        Event_Begin();
-        Event_OpenScreen();
-        Event_WaitForScreen();
-        Event_Wait(30);
+        Engine_EventBegin();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
+        Engine_EventWait(30);
         Audio_PlayCue(89);
         Korosseo_LoadPortrait(0);
         SceneData_SelectBlockAndResetCounters(1, 0);
-        Event_Wait(120);
-        Event_End();
+        Engine_EventWait(120);
+        Engine_EventEnd();
     } else {
         Audio_PlayCue(247);
-        Event_Begin();
-        Event_OpenScreen();
-        Event_WaitForScreen();
+        Engine_EventBegin();
+        Engine_EventOpenScreen();
+        Engine_EventWaitForScreen();
         KorosseoKawa_RoundSpans[15] = a * 60;
-        Event_Wait(30);
+        Engine_EventWait(30);
         Audio_PlayCue(a + 90);
         Korosseo_LoadPortrait(a);
         SceneData_SelectBlockAndResetCounters(1, 0);
-        Event_Wait(120);
+        Engine_EventWait(120);
         while (AudioCommand_GetStateByte() != 0) {
-            Task_Wait(1);
+            Engine_TaskWait(1);
         }
         Audio_PlayCue(0x121);
         Korosseo_LoadPortrait(5);
         SceneData_SelectBlockAndResetCounters(2, 0);
         Audio_PlayCue(236);
-        Event_Wait(60);
+        Engine_EventWait(60);
         SceneData_SelectBlockAndResetCounters(2, 1);
         Audio_PlayCue(236);
-        Event_Wait(60);
+        Engine_EventWait(60);
         Korosseo_LoadPortrait(6);
         SceneData_SelectBlockAndResetCounters(2, 0);
         Audio_PlayCue(236);
-        Event_Wait(60);
+        Engine_EventWait(60);
         Korosseo_LoadPortrait(7);
         SceneData_SelectBlockAndResetCounters(4, 0);
         Audio_PlayCue(237);
         Audio_PlayCueFromEventWork();
-        Event_End();
+        Engine_EventEnd();
         GameFlag_Set(0x123);
     }
 }
 
 void FieldScene_RunLateSequence(s32 a0)
 {
-    void Task_Wait();
+    void Engine_TaskWait();
 
     s32 kind;
 
     Audio_PlayCue(247);
-    Event_OpenScreen();
-    Event_WaitForScreen();
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     KorosseoKawa_SpanA.span = a0 * 60;
     KorosseoKawa_SpanB.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        Event_Wait(30);
+        Engine_EventWait(30);
         Audio_PlayCue(86);
         Korosseo_LoadPortrait(8);
         /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(SceneData_SelectBlockAndResetCounters, 3, 1);
-        Event_Wait(-a0 * 60 + 60);
+        Engine_EventWait(-a0 * 60 + 60);
         kind = 0;
     } else {
-        Event_Wait(30);
+        Engine_EventWait(30);
         Audio_PlayCue(a0 + 90);
         Korosseo_LoadPortrait(4);
         /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(SceneData_SelectBlockAndResetCounters, 3, 0);
-        Event_Wait(a0 * 60 + 60);
+        Engine_EventWait(a0 * 60 + 60);
         kind = 8;
     }
     Actor_ShowEmote(kind, 0x105, 0);
     while (AudioCommand_GetStateByte()!= 0) {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
     Audio_PlayCue(19);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Audio_PlayCue(0x121);
-    Event_CloseScreen();
-    Event_WaitForScreen();
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
 }

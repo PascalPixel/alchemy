@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
@@ -11,8 +12,7 @@ void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 void TakaraAshiba_RaiseTriggerOnStand(void);
 void SceneState_TriggerColumnTen(void);
 void SceneState_TriggerColumnNineteen(void);
-/* FAKEMATCH: calls that cast Scheduler_AddOrUpdateCallback to another return type keep their original register order. */
-s32 Scheduler_AddOrUpdateCallback();
+/* CALL.H keeps each scheduled callback's original argument order. */
 
 enum {
     /* Message 0x182 + 243. */
@@ -61,11 +61,6 @@ void ObjectDispatch_ApplyValueToChildren();
  * is load-bearing for byte-identity and must not become struct field access.
  */
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
-{
-    Actor_SetPosition(actor, x, y);
-}
-
 void FieldScene_RunScene3b4_02000fdc(s32 a0);
 
 s32 *Engine_GetTriggerActor(s32 slot);
@@ -91,7 +86,7 @@ void FieldScene_RunScene3b4_02002188(void)
     u32 i;
     s32 record;
 
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Korosseo_ShowItemIcon(12, 243);
     Korosseo_ShowItemIcon(11, 244);
     Korosseo_ShowItemIcon(10, 244);
@@ -165,20 +160,20 @@ void FieldScene_RunScene3b4_02002334(void)
     Scheduler_AddOrUpdateCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
     MapObject_SetPosition(107, 0, 0);
     if (GameFlag_IsSet(0xed9) != 0) {
-        Actor_SetAnimation(14, 2);
+        Engine_ActorSetAnimation(14, 2);
     }
     TakaraAshiba_DispatchByActorEightColumn();
     SceneActor_RunWhenActor9AtTile45x43();
     TakaraAshiba_UpdateBlockRects();
     FieldScene_RunSingleStep();
     FieldScene_CallHelper3c70();
-    Actor_SetSpritePriority(8, 3);
+    Engine_ActorSetSpritePriority(8, 3);
     *(u8 *)((s32)Object_GetById(11) + 85) = 0;
     *(u8 *)((s32)Object_GetById(12) + 85) = 0;
     ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
     if (GameFlag_IsSet(0x200) != 0) {
         SceneActor_MarkSlot13AndSetFlag200();
-        Actor_SetAnimation(13, 5);
+        Engine_ActorSetAnimation(13, 5);
     }
     if (GameFlag_IsSet(0x109) == 0) {
         if (GameFlag_IsSet(0x9ca) != 0) {

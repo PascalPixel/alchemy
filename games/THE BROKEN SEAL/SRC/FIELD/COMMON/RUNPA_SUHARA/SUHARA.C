@@ -276,45 +276,45 @@ void Innkeeper_Talk(void)
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
         if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-            Inn_Open(INN_LUNPA, ACTOR_INNKEEPER);
+            Engine_InnOpen(INN_LUNPA, ACTOR_INNKEEPER);
             return;
         }
     }
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_SetMessage((s32)MsgRunpaInnkeeperOffersRoom);
+        Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersRoom);
         Event_AskYesNo(ACTOR_INNKEEPER, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaInnkeeperOffersOwnHome);
+        Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersOwnHome);
         Event_AskYesNo(ACTOR_INNKEEPER, 0);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 void Chef_Talk(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgRunpaChefOffersStory);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgRunpaChefOffersStory);
     Event_AskYesNo(ACTOR_CHEF, 0);
     GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void Chef_ReadMind(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgRunpaChefThinksOfPrisoner);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgRunpaChefThinksOfPrisoner);
     Event_ShowMessage(ACTOR_CHEF, 0);
     GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void InnClerk_Talk(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
     Event_AskYesNo(ACTOR_INN_CLERK, 0);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void TemplePriest_Talk(void)
@@ -323,32 +323,32 @@ void TemplePriest_Talk(void)
 
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
-        Sanctum_Open(ACTOR_TEMPLE_PRIEST);
+        Engine_SanctumOpen(ACTOR_TEMPLE_PRIEST);
     } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_Begin();
-        Event_SetMessage((s32)MsgRunpaTemplePriestReopened);
+        Engine_EventBegin();
+        Engine_EventSetMessage((s32)MsgRunpaTemplePriestReopened);
         Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
-        Event_End();
+        Engine_EventEnd();
     } else {
-        Event_Begin();
-        Event_SetMessage((s32)MsgRunpaTemplePriestSealed);
+        Engine_EventBegin();
+        Engine_EventSetMessage((s32)MsgRunpaTemplePriestSealed);
         Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
 void ItemMerchant_ReadMind(void)
 {
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_Begin();
-        Event_SetMessage((s32)MsgRunpaIsntWeaponsVendors);
+        Engine_EventBegin();
+        Engine_EventSetMessage((s32)MsgRunpaIsntWeaponsVendors);
         Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
-        Event_End();
+        Engine_EventEnd();
     } else {
-        Event_Begin();
-        Event_SetMessage((s32)MsgRunpaItemMerchantSealedThoughts);
+        Engine_EventBegin();
+        Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealedThoughts);
         Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -358,27 +358,27 @@ void ItemMerchant_Talk(void)
 
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
-        Shop_Open(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
+        Engine_ShopOpen(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
     } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_Begin();
-        Event_SetMessage((s32)MsgRunpaItemMerchantReopened);
+        Engine_EventBegin();
+        Engine_EventSetMessage((s32)MsgRunpaItemMerchantReopened);
         Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
-        Event_End();
+        Engine_EventEnd();
     } else {
-        Event_Begin();
-        Event_SetMessage((s32)MsgRunpaItemMerchantSealed);
+        Engine_EventBegin();
+        Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealed);
         Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
 void WeaponMerchant_ReadMind(void)
 {
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_SetMessage((s32)MsgRunpaWeaponMerchantReopenedThoughts);
+        Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopenedThoughts);
         Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaWeaponMerchantSealedThoughts);
+        Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealedThoughts);
         Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     }
 }
@@ -392,15 +392,15 @@ void WeaponMerchant_Talk(void)
     facing = leader->facing;
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         if (FACING_IS_NORTH(facing)) {
-            Shop_Open(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
+            Engine_ShopOpen(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
         } else {
-            Event_Begin();
-            Event_SetMessage((s32)MsgRunpaWeaponMerchantReopened);
+            Engine_EventBegin();
+            Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopened);
             Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
-            Event_End();
+            Engine_EventEnd();
         }
     } else {
-        Event_SetMessage((s32)MsgRunpaWeaponMerchantSealed);
+        Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealed);
         Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     }
 }
@@ -408,10 +408,10 @@ void WeaponMerchant_Talk(void)
 void ArmorMerchant_ReadMind(void)
 {
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_SetMessage((s32)MsgRunpaArmorMerchantReopenedThoughts);
+        Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopenedThoughts);
         Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaArmorMerchantSealedThoughts);
+        Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealedThoughts);
         Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     }
 }
@@ -425,15 +425,15 @@ void ArmorMerchant_Talk(void)
     facing = leader->facing;
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         if (FACING_IS_NORTH(facing)) {
-            Shop_Open(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
+            Engine_ShopOpen(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
         } else {
-            Event_Begin();
-            Event_SetMessage((s32)MsgRunpaArmorMerchantReopened);
+            Engine_EventBegin();
+            Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopened);
             Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
-            Event_End();
+            Engine_EventEnd();
         }
     } else {
-        Event_SetMessage((s32)MsgRunpaArmorMerchantSealed);
+        Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealed);
         Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     }
 }
@@ -452,9 +452,9 @@ s32 Scene_Initialize(void)
         gGameState.saved_scene = (s32)&SceneId_RunpaSuhara;
         gGameState.saved_entrance = entrance;
     }
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ARMOR_COUNTER), 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ITEM_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_ARMOR_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_ITEM_COUNTER), 0);
     return 0;
 }
 
@@ -464,9 +464,9 @@ void TravelingPriest_Talk(void)
 
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
-        Sanctum_Open(ACTOR_TEMPLE_PRIEST);
+        Engine_SanctumOpen(ACTOR_TEMPLE_PRIEST);
     } else {
-        Event_SetMessage((s32)MsgRunpaTravelingPriest);
+        Engine_EventSetMessage((s32)MsgRunpaTravelingPriest);
         Event_ShowMessage(ACTOR_TRAVELING_PRIEST, 0);
     }
 }

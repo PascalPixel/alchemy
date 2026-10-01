@@ -35,6 +35,7 @@ extern void Audio_PlayCue(s32);
 static __inline__ void ConfigureStagedActorMotion(
     s32 actor_id, s32 movement_rate, s32 movement_step)
 {
+    /* FAKEMATCH: a direct call loads rate and step before actor 0; this boundary sets r0 before those literals. */
     ObjectMotion_SetSpeedParameters(actor_id, movement_rate, movement_step);
 }
 
@@ -76,7 +77,6 @@ void StagedActor_AdvancePair(void)
     s32 dir;
     u32 step;
     s32 rate;
-    s32 zero;
 
     lead = Object_GetById(0);
     dir = lead->direction_and_kind >> 12;
@@ -110,8 +110,7 @@ void StagedActor_AdvancePair(void)
     dst[2] = next->z.value + step;
     if (Object_CheckMovementCollision(next, dst) > 0) return;
 
-    zero = next->transition_busy;
-    if (zero != 0) return;
+    if (next->transition_busy != 0) return;
 
     Object_SetMode(lead, 8);
     rate = 0x3333;
@@ -127,12 +126,12 @@ void StagedActor_AdvancePair(void)
     BattleFx_PlayQueuedSound();
     next->x.value = dst[0];
     next->z.value = dst[2];
-    next->unknown_24 = zero;
-    next->unknown_2c = zero;
+    next->unknown_24 = 0;
+    next->unknown_2c = 0;
     lead->unknown_38 = 0x80000000;
     lead->unknown_40 = 0x80000000;
-    lead->unknown_24 = zero;
-    lead->unknown_2c = zero;
+    lead->unknown_24 = 0;
+    lead->unknown_2c = 0;
     lead->x.value = lead->x.parts.cell << 16;
     lead->z.value = lead->z.parts.cell << 16;
     Object_SetMode(lead, 1);
@@ -332,6 +331,7 @@ found:
 
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
+    /* FAKEMATCH: declaring gCam as a pointer reorders the probe spills against its load; retain the integer alias set. */
     u8 *workspace;
     StagedActorRecord *actor;
     StagedActorPosition original_position;

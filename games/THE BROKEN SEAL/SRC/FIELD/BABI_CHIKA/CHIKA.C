@@ -20,7 +20,7 @@ extern u8 *gActorEffectWork;
  */
 s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 {
-    Actor_SetSpriteFlags(no, 0);
+    Engine_ActorSetSpriteFlags(no, 0);
     return 0;
 }
 
@@ -53,25 +53,25 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
         goto refuse;
     }
 
-    Event_Begin();
-    Object_SetAnimation(actor, 6);
-    Task_Wait(6);
+    Engine_EventBegin();
+    Object_SetMode(actor, 6);
+    WaitFrames(6);
     Audio_PlayCue(152);
-    Object_SetAnimation(actor, 7);
+    Object_SetMode(actor, 7);
 
     actor->speedX = 0x00030000;
     actor->speedY = 0x00020000;
     actor->speedZ = 0x00040000;
     actor->flags &= (u8)0x7e;   /* masks the byte re-read here, not `saved` */
 
-    Actor_SetSpriteFlags(actor, 0);
+    Engine_ActorSetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((target->x >> 20) << 4) + 8, ((target->z >> 20) << 4) + 8);
-    Object_SetAnimation(actor, 6);
-    Actor_SetSpriteFlags(actor, 1);
-    Task_Wait(6);
+    Object_SetMode(actor, 6);
+    Engine_ActorSetSpriteFlags(actor, 1);
+    WaitFrames(6);
 
     actor->flags = saved;
-    Event_End();
+    Engine_EventEnd();
     return 0;
 
 refuse:
@@ -171,7 +171,7 @@ void SceneState_SwapSlotPairByRank(s32 first, s32 second)
         t = a->x;    a->x    = b->x;    b->x    = t;
         t = a->y;    a->y    = b->y;    b->y    = t;
         t = a->rank; a->rank = b->rank; b->rank = t;
-        Task_Wait(1);
+        WaitFrames(1);
     }
 }
 
@@ -224,7 +224,7 @@ void SceneActor_WaitValueBelowLimit(struct Track02001038 *track)
         if (cnt != 0) {
             s32 value;
 
-            Task_Wait(1);
+            WaitFrames(1);
             value = track->value;
             limit = track->limit;
             cnt--;
@@ -252,6 +252,7 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     s32 velocity_x;
 
     /* This block orders the Z load after the Y store; do not flatten it. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
     do {
         velocity_x = effect->velocity[0];
         effect->position[0] += velocity_x;

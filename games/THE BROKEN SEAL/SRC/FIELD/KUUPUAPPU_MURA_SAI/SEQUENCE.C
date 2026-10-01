@@ -151,11 +151,6 @@ static __inline__ void bump_step(s32 amount)
     gEventWork->message += amount;
 }
 
-static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
-{
-    Actor_SetSpeed(actor, horizontal, vertical);
-}
-
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {
     struct SceneActor_02000c1c *actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -208,24 +203,24 @@ void FieldScene_RunActor18MotionSequence(void)
     s32 record;
 
     PartyInventory_Discard(231);
-    Event_Begin();
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(18, 2);
+    Engine_EventBegin();
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(18, 2);
     Actor_SetSpeed(18, 0xcccc, 0x6666);
     Actor_WalkToAndWait(18, 216, 0x198);
-    Event_Wait(10);
+    Engine_EventWait(10);
     Actor_FaceDirection(18, 0x4000, 20);
-    Actor_Jump(18, 6, 0);
-    Event_Wait(30);
-    Actor_Jump(18, 6, 0);
-    Event_Wait(30);
-    Actor_Jump(18, 6, 0);
-    Event_Wait(30);
+    Engine_ActorJump(18, 6, 0);
+    Engine_EventWait(30);
+    Engine_ActorJump(18, 6, 0);
+    Engine_EventWait(30);
+    Engine_ActorJump(18, 6, 0);
+    Engine_EventWait(30);
     Actor_WalkToAndWait(18, 216, 0x188);
-    Event_Wait(10);
+    Engine_EventWait(10);
     Actor_FaceDirection(18, 0x4000, 20);
     GameFlag_Set(0x858);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void ActorPresentation_SetPairedSceneCells(void)
@@ -248,27 +243,27 @@ void ActorPresentation_SetAlternatePairedSceneCells(void)
 
 void FieldScene_RunActorEighteenDialogue(void)
 {
-    Event_Begin();
-    Event_SetMessage((s32)MsgKuupuappuRuffRrruff2);
-    Actor_SetAnimation(18, 0);
-    Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(2);
+    Engine_EventBegin();
+    Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff2);
+    Engine_ActorSetAnimation(18, 0);
+    Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
+    Engine_EventWait(2);
     Event_ShowMessage(18, 0);
-    Actor_SetAnimation(18, 1);
+    Engine_ActorSetAnimation(18, 1);
 
     if (PartyInventory_FindOwner(231) != -1 && GameFlag_IsSet(0x858) == 0) {
         ((struct SceneWork_02000e90 *)gWork)->actor18_marker = 1;
     }
 
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneState_SetFlag947AndValue29dc(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
-    Message_ShowCentered((s32)MsgKuupuappuCanHearWaterRumblingDown, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
+    Engine_MessageShowCentered((s32)MsgKuupuappuCanHearWaterRumblingDown, 1);
+    Engine_EventEnd();
 }
 
 const u8 *SceneData_GetExtraTable(void)

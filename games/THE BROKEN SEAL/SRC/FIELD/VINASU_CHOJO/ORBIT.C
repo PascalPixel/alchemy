@@ -5,11 +5,11 @@ void VinasuChojo_FlashScreen(void)
 {
     Audio_PlayCue(187);
     ColorBuffer_ApplyTarget(0x7fff, 1);
-    ColorBuffer_Interpolate(1);
-    Task_Wait(4);
+    Engine_ColorBufferInterpolate(1);
+    Engine_TaskWait(4);
     ColorBuffer_ApplyTarget(0x40250d, 1);
-    ColorBuffer_Interpolate(1);
-    Task_Wait(1);
+    Engine_ColorBufferInterpolate(1);
+    Engine_TaskWait(1);
 }
 
 /* An effect that circles an actor. */
@@ -45,8 +45,8 @@ void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
     struct FieldActor *center = Actor_Get(ORBIT_CENTER_ACTOR);
     u16 angle = effect->orbit.angle;
 
-    effect->orbit.x = center->x.fixed + Math_Cos(angle) * (effect->orbit.radius + 3);
-    effect->orbit.z = center->z.fixed + (Math_Sin(angle) << 1);
+    effect->orbit.x = center->x.fixed + Engine_MathCos(angle) * (effect->orbit.radius + 3);
+    effect->orbit.z = center->z.fixed + (Engine_MathSin(angle) << 1);
     effect->orbit.saved_x = effect->orbit.x;
     effect->orbit.saved_z = effect->orbit.z;
     effect->orbit.angle -= 0x800;
@@ -70,12 +70,12 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
     s32 along;
     s32 across;
 
-    cosine = Math_Cos(angle);
+    cosine = Engine_MathCos(angle);
     along = *(s32 *)(anchor + 8)
           + cosine *(*(s32 *)(actor + 48) + *(u8 *)(actor + 98) + 6);
     *(s32 *)(actor + 8) = along;
 
-    sine = Math_Sin(angle);
+    sine = Engine_MathSin(angle);
     across = *(s32 *)(anchor + 16)
            + sine *(*(u8 *)(actor + 98) + 4);
     *(s32 *)(actor + 16) = across;

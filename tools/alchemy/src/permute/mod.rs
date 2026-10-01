@@ -6,11 +6,11 @@
 //! draft, compiled with the draft's routed compiler command. Nothing derived
 //! from the listing is written into a candidate.
 
-mod ast;
+pub(crate) mod ast;
 mod compile;
 pub mod drafts;
 mod effects;
-mod lex;
+pub(crate) mod lex;
 mod mutate;
 pub(crate) mod parse;
 mod routine;

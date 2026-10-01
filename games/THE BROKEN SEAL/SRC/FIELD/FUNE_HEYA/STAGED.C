@@ -69,7 +69,7 @@ s32 Random16(u8 *o);
 /* Contiguous unnamed state-owner run for resource_3b1. */
 s32 ResetStagedActorState(struct StagedActor *actor)
 {
-    Object_SetAnimation(actor, 1);
+    Object_SetMode(actor, 1);
     actor->x.value = 0;
     actor->y = 0;
     actor->z.value = 0;

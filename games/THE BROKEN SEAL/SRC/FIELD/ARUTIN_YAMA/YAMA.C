@@ -283,10 +283,10 @@ void SceneActor_UpdateSlot10ByTileX(void)
         } else {
             Map_CopyCellAttributes(0, 0, 1, 1, x, y);
         }
-        Actor_SetSpriteFlags(a, 0);
+        Engine_ActorSetSpriteFlags(a, 0);
         ((u8 *)a)[0x55] = 0;
-        Map_Redraw();
-        Task_Wait(1);
+        Engine_MapRedraw();
+        Engine_TaskWait(1);
     }
 }
 
@@ -319,7 +319,7 @@ void ActorPresentation_SetCellAndLowerActorEight(void)
     s1 = 13;
     Map_CopyCellAttributes(7, 13, 1, 1, s0, s1);
     if (p != 0) {
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpriteFlags(p, 0);
         p[3] += 0xffe00000;
         ((u8 *)p)[0x23] = 2;
     }
@@ -353,7 +353,7 @@ void SceneActor_RaiseSlot9StepA(void)
     s0 = 26;
     Map_CopyCellAttributes(0, 0, 1, 1, s0, s0);
     if (p != 0) {
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpriteFlags(p, 0);
         p[3] += 0xffe00000;
         ((u8 *)p)[0x23] = 2;
     }
@@ -371,7 +371,7 @@ void SceneActor_RaiseSlot9StepB(void)
     s1 = 13;
     Map_CopyCellAttributes(23, 13, 1, 1, s0, s1);
     if (p != 0) {
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpriteFlags(p, 0);
         p[3] += 0xffe00000;
         ((u8 *)p)[0x23] = 2;
     }
@@ -391,7 +391,7 @@ void SceneState_ApplyRectAndLowerActor9(void)
     s1 = 41;
     Map_CopyCellAttributes(45, 41, 1, 1, s0, s1);
     if (rec != 0) {
-        Actor_SetSpriteFlags(rec, 0);
+        Engine_ActorSetSpriteFlags(rec, 0);
         rec[3] += 0xffe00000;
         ((u8 *)rec)[0x23] = 2;
     }
@@ -409,7 +409,7 @@ void SceneActor_RaiseSlot11AndSetFlag201(void)
     s1 = 10;
     Map_CopyCellAttributes(1, 0, 1, 1, s0, s1);
     if (p != 0) {
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpriteFlags(p, 0);
         p[3] += 0xffe00000;
         ((u8 *)p)[0x23] = 2;
     }
@@ -429,7 +429,7 @@ void SceneActor_AdjustSlot12AndSetFlag204(void)
     s1 = 15;
     Map_CopyCellAttributes(1, 0, 1, 1, s0, s1);
     if (p != 0) {
-        Actor_SetSpriteFlags(p, 0);
+        Engine_ActorSetSpriteFlags(p, 0);
         p[3] += 0xffe00000;
         ((u8 *)p)[0x23] = 2;
     }
@@ -468,32 +468,32 @@ void FieldScene_RunEarlySequence(void)
     p5 = *(u8 **)&gMapWork;
     Audio_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Event_Wait(10);
+    Engine_EventWait(10);
     rec = p5 + 356;
     for (i = 0; i <= 23; i++) {
         *(s32 *)(rec + 12) -= 0x10000;
-        Task_Wait(4);
+        Engine_TaskWait(4);
         if (i == 8) {
             record = Object_GetById(8);
             *(s32 *)(record + 24) = 0x1999;
             record = Actor_Get(8);
             *(s32 *)(record + 28) = 0x1999;
             Actor_SetPosition(8, 0x980000, 0xd80000);
-            Actor_EnableActionCallback(8, ArutinYama_EarlyActorScript);
+            Engine_ActorEnableActionCallback(8, ArutinYama_EarlyActorScript);
         }
     }
     Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
     *(u16 *)ArutinYama_RiseTimer = 0;
     do {
-        Task_Wait(1);
+        Engine_TaskWait(1);
         v = *(u16 *)ArutinYama_RiseTimer + 1;
         *(u16 *)ArutinYama_RiseTimer = (u16)v;
     } while ((u32)(v << 16) <= 0x640000);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
     GameFlag_Set(0x8fd);
 }
@@ -511,24 +511,24 @@ void FieldScene_RunScene3a4SequenceH(void)
     Map_CopyCells(93, 41, 16, 4, 77, 28);
     Audio_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Event_Wait(10);
+    Engine_EventWait(10);
     rec = p5 + 356;
     for (i = 23; i >= 0; i--) {
         *(s32 *)(rec + 12) -= 0x10000;
-        Task_Wait(4);
+        Engine_TaskWait(4);
     }
     Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
     *(u16 *)ArutinYama_RiseTimer = 0;
     do {
-        Task_Wait(1);
+        Engine_TaskWait(1);
         v = *(u16 *)ArutinYama_RiseTimer + 1;
         *(u16 *)ArutinYama_RiseTimer = (u16)v;
     } while ((u32)(v << 16) <= 0x640000);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Map_CopyCells(77, 41, 16, 4, 77, 28);
     GameFlag_Set(0x8fe);
 }
@@ -548,24 +548,24 @@ void FieldScene_RunScene3a4SequenceI(void)
     Map_CopyCellsTo(64, 32, 103, 18, 1, 2);
     Audio_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Event_Wait(10);
+    Engine_EventWait(10);
     rec = p8 + 356;
     for (i = 23; i >= 0; i--) {
         *(s32 *)(rec + 12) -= 0x10000;
-        Task_Wait(4);
+        Engine_TaskWait(4);
     }
     Runtime_SetIrqHandler(1, 0, SceneState_SetDispcntBit9ByThreshold);
     *(u16 *)ArutinYama_RiseTimer = 0;
     do {
-        Task_Wait(1);
+        Engine_TaskWait(1);
         v = *(u16 *)ArutinYama_RiseTimer + 1;
         *(u16 *)ArutinYama_RiseTimer = (u16)v;
     } while ((u32)(v << 16) <= 0x640000);
-    Task_Wait(1);
+    Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Event_Wait(30);
+    Engine_EventWait(30);
     Map_CopyCellsTo(103, 14, 103, 17, 4, 3);
     GameFlag_Set(0x907);
 }
@@ -590,13 +590,13 @@ void FieldScene_RunScene3a4SequenceB(void)
 
 void FieldScene_RunValue1528Scene(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     FieldScene_RunScene3a4SequenceB();
-    Task_Wait(20);
+    Engine_TaskWait(20);
     BattleFx_PlayQueuedSound();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene3a4SequenceA(void)
@@ -621,13 +621,13 @@ void FieldScene_RunLine1528Sequence(void)
 {
     extern u8 ArutinYama_RiseTimer[];
 
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     FieldScene_RunScene3a4SequenceA();
-    Task_Wait(20);
+    Engine_TaskWait(20);
     BattleFx_PlayQueuedSound();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene3a4SequenceC(void)
@@ -637,8 +637,8 @@ void FieldScene_RunScene3a4SequenceC(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(15, 93, 1, 1, 16, 92);
@@ -649,9 +649,9 @@ void FieldScene_RunScene3a4SequenceC(void)
         Map_CopyCellsTo(46, 29, 16, 28, 1, 2);
         GameFlag_Set(0x326);
     }
-    Task_Wait(20);
+    Engine_TaskWait(20);
     BattleFx_PlayQueuedSound();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene3a4SequenceD(void)
@@ -661,8 +661,8 @@ void FieldScene_RunScene3a4SequenceD(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     if (GameFlag_IsSet(0x327) != 0) {
         Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);
@@ -673,9 +673,9 @@ void FieldScene_RunScene3a4SequenceD(void)
         Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
         GameFlag_Set(0x327);
     }
-    Task_Wait(20);
+    Engine_TaskWait(20);
     BattleFx_PlayQueuedSound();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void SceneActor_SetActor10Byte23To3(void)
@@ -699,17 +699,17 @@ void FieldScene_RunScene3a4_02000c9c(void)
     u32 i;
     s32 record;
 
-    Event_Begin();
+    Engine_EventBegin();
     Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
     Audio_PlayCue(185);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     *(u8 *)((u8 *)Object_GetById(10) + 90) &= 254;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 8);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
     Actor_SetDestination(10, 0x198, 0x1a8);
-    Actor_WaitForMove(10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorWaitForMove(10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     SceneActor_UpdateSlot10ByTileX();
-    Event_End();
+    Engine_EventEnd();
 }

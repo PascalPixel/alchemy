@@ -165,11 +165,11 @@ void ConfigureSceneActor12(void)
     s32 actor_slot = 15;
     u8 *actor;
 
-    Map_CopyCellAttributes(15, 20, 1, 1, actor_slot, 22);
-    Map_CopyCellAttributes(17, 23, 1, 3, actor_slot, 23);
+    Map_CopyCellAttributeRect(15, 20, 1, 1, actor_slot, 22);
+    Map_CopyCellAttributeRect(17, 23, 1, 3, actor_slot, 23);
     actor = Object_GetById(12);
     if (actor != 0) {
-        Actor_SetSpriteFlags(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
         actor[0x55] = 0;
         actor[0x23] = 2;
     }
@@ -186,9 +186,9 @@ void FieldScene_StartActorTwelveTransition(void)
 
     Actor_SetSpeed(12, 0x10000, 0x8000);
     Actor_SetDestination(12, 248, 0x178);
-    Actor_WaitForMove(12);
+    ObjectMotion_CommitCurrentPositionAndActivate(12);
     Audio_PlayCue(215);
-    Event_Wait(60);
+    Battle_WaitMode0(60);
     ConfigureSceneActor12();
     GameFlag_Set(0x943);
 }
@@ -202,11 +202,11 @@ void FieldScene_UpdateActorTwelveTransition(void)
         Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Audio_PlayCue(144);
-        Map_CopyCellAttributes(15, 20, 1, 1, 15, 22);
-        Map_CopyCellAttributes(17, 23, 1, 3, 15, 23);
+        Map_CopyCellAttributeRect(15, 20, 1, 1, 15, 22);
+        Map_CopyCellAttributeRect(17, 23, 1, 3, 15, 23);
         actor = (struct FieldActor *)Value1(Object_GetById, 12);
         if (actor != NULL) {
-            Actor_SetSpriteFlags(actor, 0);
+            Engine_ActorSetSpriteFlags(actor, 0);
             actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         }
         GameFlag_Set(0x943);
@@ -215,7 +215,7 @@ void FieldScene_UpdateActorTwelveTransition(void)
 
 void PlaceActorTwelveAndFinishScene(void)
 {
-    PlaceActor(12, 0x00f80000, 0x01780000);
+    Actor_SetPosition(12, 0x00f80000, 0x01780000);
     ConfigureSceneActor12();
 }
 
@@ -329,7 +329,7 @@ void PlaceSceneObjectPairFromTableC(s32 table_index)
 
     Map_CopyCells(1, 0x50, 1, 3, position_x, position_z);
     Map_CopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
-    Map_CopyCellAttributes(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Map_CopyCellAttributeRect(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
 void FieldScene_UpdateObjectPairC(void)
@@ -352,13 +352,13 @@ void FieldScene_UpdateObjectPairC(void)
 void CellDoor_Touch(void)
 {
     if (PartyInventory_FindOwner(ITEM_CELL_KEY) == -1) {
-        Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+        Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
     }
 }
 
 void LockedDoor_Touch(void)
 {
-    Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+    Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
 }
 
 void Actor8_Interact(void)
@@ -394,17 +394,17 @@ s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
     s32 started = 0;
     s32 interaction;
 
-    Event_Begin();
+    Engine_EventBegin();
     interaction = BattleFx_PlayCueAndStartEmitterOnTarget(0, actor_id, interaction_id);
-    if (Party_GiveItem(interaction_id, 0) != -1) {
-        Actor_SetAnimation(actor_id, 2);
+    if (Engine_PartyGiveItem(interaction_id, 0) != -1) {
+        Object_SetModeById(actor_id, 2);
         started = 1;
     } else {
         Audio_PlayCue(0x7d);
-        Actor_SetAnimation(actor_id, 5);
+        Object_SetModeById(actor_id, 5);
     }
     Engine_ObjectDispatchRelease(interaction);
-    Event_End();
+    Engine_EventEnd();
     return started;
 }
 
@@ -428,13 +428,13 @@ void CellKey_PickUp(void)
 {
 
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Event_Wait(10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Item_ShowFound(ITEM_CELL_KEY, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(ITEM_CELL_KEY, 0);
+    Battle_WaitMode0(10);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_ItemShowFound(ITEM_CELL_KEY, 3);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_PartyGiveItem(ITEM_CELL_KEY, 0);
     GameFlag_Set(0xf2e);
     Actor_SetPosition(8, 0, 0);
 }
@@ -522,14 +522,14 @@ void FieldScene_UpdateActorPairInteraction(void)
 /* The Lunpa fortress: the patrolling guards and the village path triggers. */
 void ConfigureSceneActor9(void)
 {
-    Event_Begin();
-    Actor_Stop(9);
+    Engine_EventBegin();
+    Engine_ActorStop(9);
     Actor_SetDestinationOffset(9, 0, 0);
-    Actor_SetAnimation(9, 0);
-    Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
+    Object_SetModeById(9, 0);
+    Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
     Actor_ShowEmote(9, 256, 0);
     RunActorScriptedSequenceA(10);
-    Event_End();
+    Engine_EventEnd();
 }
 
 s32 AreSceneActorsInPassingLane(void)
@@ -609,7 +609,7 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 void ActivateSceneActor17(void)
 {
     RunActorScriptedSequenceA(17);
-    Event_End();
+    Engine_EventEnd();
 }
 
 s32 IsPlayerInSecondaryTriggerArea(void)
@@ -673,7 +673,7 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 void ActivateSceneActor18(void)
 {
     RunActorScriptedSequenceA(18);
-    Event_End();
+    Engine_EventEnd();
 }
 
 s32 IsPlayerOutsideSceneRectangle(void)
@@ -712,7 +712,7 @@ void FieldScene_RunScene3bfSequenceA(void)
 void RunActor17SceneStep(void)
 {
     RunActorScriptedSequenceA(17);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void TriggerSceneStage95FromActor12(void)
@@ -910,63 +910,63 @@ void TriggerScene40AtVillagePath(void)
  * the party is put out of the fortress. */
 void RunActor9ScriptedSequence(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetDestinationOffset(9, 0, 0);
-    Actor_EnableActionCallback(9, 1);
-    Actor_Stop(9);
-    Actor_SetAnimation(9, 0);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorEnableActionCallback(9, 1);
+    Engine_ActorStop(9);
+    Object_SetModeById(9, 0);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
     {
         s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage(t);
-        Event_ShowMessage(9, 0);
+        Engine_EventSetMessage(t);
+        Engine_EventShowMessage(9, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Event_SetMessage(t + 1);
+        Engine_EventSetMessage(t + 1);
     }
-    Event_ShowMessage(9, 0);
-    Event_RequestExit(60);
-    Event_CloseScreen();
-    Event_End();
+    Engine_EventShowMessage(9, 0);
+    Engine_EventRequestExit(60);
+    Engine_EventCloseScreen();
+    Engine_EventEnd();
 }
 
 void RunActorScriptedSequenceA(s32 actor_id)
 {
-    Event_Begin();
-    Event_Begin();
+    Engine_EventBegin();
+    Engine_EventBegin();
     Actor_ShowEmote(actor_id, 256, 1);
     Actor_SetDestinationOffset(actor_id, 0, 0);
-    Actor_EnableActionCallback(actor_id, 1);
-    Actor_SetAnimation(actor_id, 0);
-    Actor_FaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorEnableActionCallback(actor_id, 1);
+    Object_SetModeById(actor_id, 0);
+    Engine_ActorFaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     Actor_SetDestinationOffset(actor_id, 0, 0);
-    Actor_EnableActionCallback(actor_id, 1);
-    Actor_Stop(actor_id);
-    Actor_SetAnimation(actor_id, 0);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorEnableActionCallback(actor_id, 1);
+    Engine_ActorStop(actor_id);
+    Object_SetModeById(actor_id, 0);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
     {
         s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage(t);
-        Event_ShowMessage(actor_id, 0);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
+        Engine_EventSetMessage(t);
+        Engine_EventShowMessage(actor_id, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Event_SetMessage(t + 1);
+        Engine_EventSetMessage(t + 1);
     }
-    Event_ShowMessage(actor_id, 0);
-    Event_CloseScreen();
-    Event_Wait(60);
-    Event_RequestExit(60);
-    Event_End();
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_EventCloseScreen();
+    Battle_WaitMode0(60);
+    Engine_EventRequestExit(60);
+    Engine_EventEnd();
 }
 
 /* The Lunpa fortress: a guard turns to the party and says one of his lines. */
 void TurnActorToSceneDirection(s32 actor_id)
 {
 
-    Actor_FaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
+    Engine_ActorFaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
     switch ((s32)gRunpaJoRandomPick & 3) {
     case 0:
         RunActorScriptedSequenceB(actor_id);
@@ -991,31 +991,31 @@ void RunActorScriptedSequenceB(s32 handle)
 {
     s32 id;
 
-    Actor_RunRepeatedMotion(handle, 1);
+    Engine_ActorRunRepeatedMotion(handle, 1);
     id = (s32)MsgRunpaIntruder;
-    Event_SetMessage(id);
-    Event_ShowMessage(handle, 0);
+    Engine_EventSetMessage(id);
+    Engine_EventShowMessage(handle, 0);
     Actor_ShowEmote(handle, 258, 60);
-    Event_SetMessage(id + 1);
-    Event_ShowMessage(handle, 0);
+    Engine_EventSetMessage(id + 1);
+    Engine_EventShowMessage(handle, 0);
     id += 2;
-    Actor_SetAnimationAndWait(handle, 4);
-    Event_SetMessage(id);
-    Event_ShowMessage(handle, 0);
+    Engine_ActorSetAnimationAndWait(handle, 4);
+    Engine_EventSetMessage(id);
+    Engine_EventShowMessage(handle, 0);
 }
 
 void RunActorScriptedSequenceC(s32 actor_id)
 {
     u8 *t = MsgRunpaGuardWhosThat;
 
-    Event_SetMessage((s32)t);
-    Event_ShowMessage(actor_id, 0);
-    Actor_RunRepeatedMotion(actor_id, 1);
-    Event_SetMessage((s32)(t + 1));
-    Event_ShowMessage(actor_id, 0);
-    Actor_SetAnimationAndWait(actor_id, 4);
-    Event_SetMessage((s32)(t + 2));
-    Event_ShowMessage(actor_id, 0);
+    Engine_EventSetMessage((s32)t);
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorRunRepeatedMotion(actor_id, 1);
+    Engine_EventSetMessage((s32)(t + 1));
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorSetAnimationAndWait(actor_id, 4);
+    Engine_EventSetMessage((s32)(t + 2));
+    Engine_EventShowMessage(actor_id, 0);
 }
 
 void FieldScene_RunScene3bf_02001cf0(s32 a0)
@@ -1025,41 +1025,41 @@ void FieldScene_RunScene3bf_02001cf0(s32 a0)
     s32 intruder;
 
     intruder = (s32)MsgRunpaShiftAlready;
-    Event_SetMessage(intruder);
-    Event_ShowMessage(a0, 0);
-    Event_Wait(120);
+    Engine_EventSetMessage(intruder);
+    Engine_EventShowMessage(a0, 0);
+    Battle_WaitMode0(120);
     Actor_ShowEmote(a0, 0x101, 60);
-    Event_SetMessage((intruder + 1));
-    Event_ShowMessage(a0, 0);
-    Actor_RunRepeatedMotion(a0, 1);
-    Event_SetMessage((intruder + 2));
-    Event_ShowMessage(a0, 0);
-    Actor_SetAnimationAndWait(a0, 4);
-    Event_SetMessage((intruder + 3));
-    Event_ShowMessage(a0, 0);
+    Engine_EventSetMessage((intruder + 1));
+    Engine_EventShowMessage(a0, 0);
+    Engine_ActorRunRepeatedMotion(a0, 1);
+    Engine_EventSetMessage((intruder + 2));
+    Engine_EventShowMessage(a0, 0);
+    Engine_ActorSetAnimationAndWait(a0, 4);
+    Engine_EventSetMessage((intruder + 3));
+    Engine_EventShowMessage(a0, 0);
 }
 
 void RunActorScriptedSequenceD(s32 actor_id)
 {
     u8 *t = (s32)MsgRunpaScoundrel;
 
-    Event_SetMessage((s32)t);
-    Event_ShowMessage(actor_id, 0);
-    Actor_SetAnimationAndWait(actor_id, 4);
-    Event_SetMessage((s32)(t + 1));
-    Event_ShowMessage(actor_id, 0);
-    Actor_RunRepeatedMotion(actor_id, 1);
-    Event_SetMessage((s32)(t + 2));
-    Event_ShowMessage(actor_id, 0);
-    Actor_SetAnimationAndWait(actor_id, 3);
-    Event_SetMessage((s32)(t + 3));
-    Event_ShowMessage(actor_id, 0);
+    Engine_EventSetMessage((s32)t);
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorSetAnimationAndWait(actor_id, 4);
+    Engine_EventSetMessage((s32)(t + 1));
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorRunRepeatedMotion(actor_id, 1);
+    Engine_EventSetMessage((s32)(t + 2));
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorSetAnimationAndWait(actor_id, 3);
+    Engine_EventSetMessage((s32)(t + 3));
+    Engine_EventShowMessage(actor_id, 0);
 }
 
 void InspectOrdinaryObject(void)
 {
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(15, 256, 60);
     TurnActorToSceneDirection(15);
@@ -1067,14 +1067,14 @@ void InspectOrdinaryObject(void)
     gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(15, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(2380);
 }
 
 void InspectEmptyChest(void)
 {
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(11, 256, 60);
     TurnActorToSceneDirection(11);
@@ -1082,7 +1082,7 @@ void InspectEmptyChest(void)
     gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(11, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(2377);
 }
 
@@ -1093,53 +1093,53 @@ void RunpaJo_RunGuardChallenge(void)
 {
     s32 line;
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Actor_SetAnimation(12, 1);
-    Actor_SetAnimation(13, 1);
-    Actor_SetAnimation(14, 1);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Object_SetModeById(12, 1);
+    Object_SetModeById(13, 1);
+    Object_SetModeById(14, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(12, 0x100, 0);
-    Event_Wait(30);
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(30);
+    Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
     line = (s32)MsgRunpaWho3;
-    Event_SetMessage(line);
-    Event_ShowMessage(12, 0);
+    Engine_EventSetMessage(line);
+    Engine_EventShowMessage(12, 0);
     Actor_ShowEmote(13, 0x100, 0);
     Actor_ShowEmote(14, 0x100, 0);
-    Actor_FaceActor(13, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-    Event_Wait(65);
+    Engine_ActorFaceActor(13, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(14, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
+    Battle_WaitMode0(65);
     Actor_FaceDirection(13, 0x5000, 0);
     Actor_FaceDirection(14, 0xd000, 0);
-    Event_SetMessage((line + 1));
-    Event_ShowMessage(13, 0);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_SetMessage((line + 2));
-    Event_ShowMessage(14, 0);
-    Event_SetMessage((line + 3));
-    Event_ShowMessage(12, 0);
-    Actor_RunRepeatedMotion(13, 1);
-    Event_SetMessage((line + 4));
-    Event_ShowMessage(13, 0);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_SetMessage((line + 5));
-    Event_ShowMessage(14, 0);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_Wait(60);
-    Actor_FaceActor(13, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(70);
+    Engine_EventSetMessage((line + 1));
+    Engine_EventShowMessage(13, 0);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Engine_EventSetMessage((line + 2));
+    Engine_EventShowMessage(14, 0);
+    Engine_EventSetMessage((line + 3));
+    Engine_EventShowMessage(12, 0);
+    Engine_ActorRunRepeatedMotion(13, 1);
+    Engine_EventSetMessage((line + 4));
+    Engine_EventShowMessage(13, 0);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Engine_EventSetMessage((line + 5));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Battle_WaitMode0(60);
+    Engine_ActorFaceActor(13, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(14, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(70);
     Actor_WalkTo(12, 0x2a0, 88);
-    Actor_WaitForMove(12);
+    ObjectMotion_CommitCurrentPositionAndActivate(12);
 #if !defined(TBS_EDITION_JA)
     /* The localized sequence adds this turn after actor 12 is placed. */
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
 #endif
-    Actor_SetAnimationAndWait(12, 3);
-    Event_Wait(30);
-    Event_SetMessage((line + 6));
-    Event_ShowMessage(12, 0);
+    Engine_ActorSetAnimationAndWait(12, 3);
+    Battle_WaitMode0(30);
+    Engine_EventSetMessage((line + 6));
+    Engine_EventShowMessage(12, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
     gGameState.unknown_200[0x22b - 0x200] = 3;
@@ -1147,29 +1147,29 @@ void RunpaJo_RunGuardChallenge(void)
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
     Actor_SetPosition(14, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(0x94a);
 }
 
 /* The Lunpa fortress: the end of a sequence and an empty object. */
 void FieldScene_RunSequenceTail(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetPosition(12, 45088768, 5767168); /* object_id 12, x, z */
     Actor_SetPosition(13, 46137344, 5767168); /* object_id 13, x, z */
     Actor_SetPosition(14, 47185920, 6291456); /* object_id 14, x, z */
-    Actor_SetAnimation(12, 5); /* object_id 12, action 5 */
-    Actor_SetAnimation(13, 5); /* object_id 13, action 5 */
-    Actor_SetAnimation(14, 5); /* object_id 14, action 5 */
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-    Event_End();
-    Event_OpenScreen(); /* main:0808a360 */
+    Object_SetModeById(12, 5); /* object_id 12, action 5 */
+    Object_SetModeById(13, 5); /* object_id 13, action 5 */
+    Object_SetModeById(14, 5); /* object_id 14, action 5 */
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
+    Engine_EventEnd();
+    Engine_EventOpenScreen(); /* main:0808a360 */
 }
 
 void InspectEmptySceneObject(void)
 {
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(16, 256, 60);
     TurnActorToSceneDirection(16);
@@ -1177,7 +1177,7 @@ void InspectEmptySceneObject(void)
     gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(16, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(2379);
 }
 
@@ -1185,26 +1185,26 @@ void InspectEmptySceneObject(void)
  * out and set a flag. */
 void RunActor12InteractionSequence(void)
 {
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
     Audio_PlayCue(113);
     Actor_ShowEmote(12, 256, 60);
     {
         s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage(t);
-        Event_ShowMessage(12, 0);
+        Engine_EventSetMessage(t);
+        Engine_EventShowMessage(12, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 50);
-        Event_SetMessage(t + 1);
+        Engine_EventSetMessage(t + 1);
     }
-    Event_ShowMessage(12, 0);
-    Event_CloseScreen();
-    Event_Wait(60);
-    Event_RequestExit(60);
-    Event_End();
+    Engine_EventShowMessage(12, 0);
+    Engine_EventCloseScreen();
+    Battle_WaitMode0(60);
+    Engine_EventRequestExit(60);
+    Engine_EventEnd();
     GameFlag_Set(548);
 }
 
@@ -1214,25 +1214,25 @@ void RunActors13And21InteractionSequence(void)
     s32 record;
     s32 msg;
 
-    Event_Begin();
+    Engine_EventBegin();
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     Audio_PlayCue(113);
     Actor_ShowEmote(21, 0x100, 0);
     Actor_ShowEmote(13, 0x100, 60);
-    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(13, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(21, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(13, ACTOR_PARTY_LEADER, 0);
     msg = (s32)MsgRunpaWho2;
-    Event_SetMessage(msg);
-    Event_ShowMessage(13, 0);
+    Engine_EventSetMessage(msg);
+    Engine_EventShowMessage(13, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 30);
-    Event_SetMessage(msg + 1);
-    Event_ShowMessage(13, 0);
-    Event_CloseScreen();
-    Event_Wait(60);
-    Event_RequestExit(60);
-    Event_End();
+    Engine_EventSetMessage(msg + 1);
+    Engine_EventShowMessage(13, 0);
+    Engine_EventCloseScreen();
+    Battle_WaitMode0(60);
+    Engine_EventRequestExit(60);
+    Engine_EventEnd();
     GameFlag_Set(0x225);
 }
 
@@ -1240,19 +1240,19 @@ void RunActors13And21InteractionSequence(void)
 void ConfigureInteractionRegionA(void)
 {
     Map_CopyCells(2, 82, 1, 2, 21, 81);
-    Map_CopyCellAttributes(21, 32, 1, 1, 21, 34);
+    Map_CopyCellAttributeRect(21, 32, 1, 1, 21, 34);
 }
 
 void ConfigureInteractionRegionB(void)
 {
     Map_CopyCells(2, 84, 1, 2, 6, 55);
-    Map_CopyCellAttributes(5, 9, 1, 1, 6, 10);
+    Map_CopyCellAttributeRect(5, 9, 1, 1, 6, 10);
 }
 
 void ConfigureInteractionRegionC(void)
 {
     Map_CopyCells(2, 86, 1, 2, 27, 62);
-    Map_CopyCellAttributes(26, 16, 1, 1, 27, 17);
+    Map_CopyCellAttributeRect(26, 16, 1, 1, 27, 17);
 }
 
 void InspectVillageWell(void)
@@ -1260,13 +1260,13 @@ void InspectVillageWell(void)
 
     if (*(s16 *)(((u8*)gEventWork) + 0xcb8) != 0) {
         if (GameFlag_IsSet(0x947) == 0) {
-            Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
+            Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
             Audio_PlayCue(188);
-            Event_Wait(1);
+            Battle_WaitMode0(1);
             Map_CopyCells(6, 77, 1, 2, 17, 82);
-            Event_Wait(5);
+            Battle_WaitMode0(5);
             Map_CopyCells(7, 77, 1, 2, 17, 82);
-            Event_Wait(1);
+            Battle_WaitMode0(1);
             ConfigureInteractionRegionA();
             GameFlag_Set(0x947);
         }
@@ -1278,13 +1278,13 @@ void RunSecondaryMapInteraction(void)
 
     if (*(s16 *)(((u8*)gEventWork) + 0xcb8) != 0) {
         if (GameFlag_IsSet(0x948) == 0) {
-            Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
+            Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
             Audio_PlayCue(188);
-            Event_Wait(1);
+            Battle_WaitMode0(1);
             Map_CopyCells(6, 77, 1, 2, 3, 55);
-            Event_Wait(5);
+            Battle_WaitMode0(5);
             Map_CopyCells(7, 77, 1, 2, 3, 55);
-            Event_Wait(1);
+            Battle_WaitMode0(1);
             ConfigureInteractionRegionB();
             GameFlag_Set(0x948);
         }
@@ -1295,22 +1295,22 @@ void ConfigurePrimaryInteractionRegions(void)
 {
     Map_CopyCells(5, 77, 1, 2, 17, 82);
     Map_CopyCells(5, 77, 1, 2, 3, 55);
-    Map_CopyCellAttributes(15, 33, 1, 1, 17, 35);
-    Map_CopyCellAttributes(3, 8, 1, 1, 3, 10);
+    Map_CopyCellAttributeRect(15, 33, 1, 1, 17, 35);
+    Map_CopyCellAttributeRect(3, 8, 1, 1, 3, 10);
 }
 
 void ConfigureSecondaryInteractionRegions(void)
 {
     Map_CopyCells(8, 77, 1, 2, 17, 82);
     Map_CopyCells(8, 77, 1, 2, 3, 55);
-    Map_CopyCellAttributes(18, 35, 1, 1, 17, 35);
-    Map_CopyCellAttributes(2, 10, 1, 1, 3, 10);
+    Map_CopyCellAttributeRect(18, 35, 1, 1, 17, 35);
+    Map_CopyCellAttributeRect(2, 10, 1, 1, 3, 10);
 }
 
 void InspectWardrobe(void)
 {
     GameFlag_Set(2372);
-    GameFlag_Clear(535);
+    Engine_GameFlagClear(535);
     Actor_SetPosition(8, 0, 0);
 }
 
@@ -1324,7 +1324,7 @@ void InspectFirewood(void)
 void InspectBooks(void)
 {
     GameFlag_Set(2374);
-    GameFlag_Clear(536);
+    Engine_GameFlagClear(536);
     Actor_SetPosition(10, 0, 0);
 }
 
@@ -1355,13 +1355,13 @@ void FieldScene_RunScene3bf_0200252c(void)
     Actor_WalkTo(ACTOR_MIA, 0x1b8, 184);
     Actor_SetSpeed(ACTOR_GERALD, 0xb333, 0x5999);
     Actor_WalkTo(ACTOR_GERALD, 0x1c0, 240);
-    Actor_WaitForMove(ACTOR_IVAN);
-    Actor_FaceActor(ACTOR_IVAN, 12, 0);
-    Actor_WaitForMove(ACTOR_GERALD);
-    Actor_WaitForMove(ACTOR_MIA);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Actor_FaceActor(ACTOR_MIA, 12, 0);
-    Event_Wait(15);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+    Engine_ActorFaceActor(ACTOR_IVAN, 12, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 12, 0);
+    Battle_WaitMode0(15);
 }
 
 void FieldScene_RunScene3bf_020025f8(void)
@@ -1371,9 +1371,9 @@ void FieldScene_RunScene3bf_020025f8(void)
 
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
     Audio_PlayCue(141);
-    Event_Wait(80);
+    Battle_WaitMode0(80);
     Audio_PlayCue(0x120);
-    Event_Wait(5);
+    Battle_WaitMode0(5);
     Audio_PlayCue(145);
     Map_CopyCells(16, 75, 7, 4, 26, 55);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -1382,7 +1382,7 @@ void FieldScene_RunScene3bf_020025f8(void)
     Actor_ShowEmote(ACTOR_IVAN, 0x100, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 0);
     Engine_ActorShowEmote(12, 0x100, 0);
-    Event_Wait(60);
+    Battle_WaitMode0(60);
 }
 
 void FieldScene_RunScene3bf_0200269c(void)
@@ -1390,19 +1390,19 @@ void FieldScene_RunScene3bf_0200269c(void)
     u32 i;
     s32 record;
 
-    Camera_MoveToActor(11, 1);
-    Camera_WaitForMove();
-    Event_Wait(60);
-    Event_SetMessage((s32)MsgRunpaPrepareBecomeMonster);
-    Event_ShowMessage(13, 0);
+    Engine_CameraMoveToActor(11, 1);
+    Engine_CameraWaitForMove();
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((s32)MsgRunpaPrepareBecomeMonster);
+    Engine_EventShowMessage(13, 0);
     Actor_SetSpeed(11, 0x10000, 0x8000);
     Actor_SetSpeed(15, 0x10000, 0x8000);
     Actor_WalkTo(11, 0x1d8, 180);
     Actor_WalkTo(15, 0x1d8, 180);
-    Camera_FollowActor(11, 1);
-    Actor_WaitForMove(11);
-    Actor_SetAnimation(11, 4);
-    Event_Wait(30);
+    Engine_CameraFollowActor(11, 1);
+    ObjectMotion_CommitCurrentPositionAndActivate(11);
+    Object_SetModeById(11, 4);
+    Battle_WaitMode0(30);
 }
 
 void FieldScene_RunScene3bf_02002718(void)
@@ -1416,11 +1416,11 @@ void FieldScene_RunScene3bf_02002718(void)
     Actor_WalkTo(ACTOR_MIA, 0x1b8, 232);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
     Actor_WalkTo(ACTOR_GERALD, 0x1e0, 224);
-    Actor_WaitForMove(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Actor_WaitForMove(ACTOR_IVAN);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 0);
-    Actor_WaitForMove(ACTOR_MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
 }
@@ -1438,21 +1438,21 @@ void PlayStoryScene(void)
     if (GameFlag_IsSet(769) != 0)
         return;
     GameFlag_Set(624);
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(2370) != 0) {
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
         FieldScene_RunScene3bf_0200252c();
         Actor_ShowEmote(12, 256, 60);
         Actor_FaceDirection(12, 32768, 0);
-        Actor_Jump(12, 4, 0);
-        Actor_SetSpriteFlags(Object_GetById(12), 1);
-        Event_Wait(30);
+        Engine_ActorJump(12, 4, 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(12), 1);
+        Battle_WaitMode0(30);
         Actor_SetSpeed(ACTOR_IVAN, 45875, 22937);
         Engine_ActorWalkTo(2, 464, 192);
-        Actor_WaitForMove(ACTOR_IVAN);
-        Event_Wait(30);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+        Battle_WaitMode0(30);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
         Actor_FaceDirection(ACTOR_IVAN, 16384, 0);
         Actor_FaceDirection(ACTOR_GERALD, 16384, 0);
@@ -1460,239 +1460,241 @@ void PlayStoryScene(void)
         Actor_SetPosition(13, 29884416, 20971520);
         Engine_CameraSetSpeed(131072, 16384);
         text_line = (s32)MsgRunpaBackMoreGuess;
-        Event_SetMessage(text_line);
-        Event_ShowMessage(13, 0);
+        Engine_EventSetMessage(text_line);
+        Engine_EventShowMessage(13, 0);
         Engine_ActorWalkTo(13, 458, 272);
-        Actor_WaitForMove(13);
+        ObjectMotion_CommitCurrentPositionAndActivate(13);
         Engine_ActorFaceDirection(13, 20480, 0);
-        Event_Wait(40);
+        Battle_WaitMode0(40);
         Call3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
-        Actor_WaitForMove(13);
-        Event_Wait(60);
+        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Battle_WaitMode0(60);
         Audio_PlayCue(155);
-        Message_ShowCentered(text_line + 1, 1);
+        Engine_MessageShowCentered(text_line + 1, 1);
         ObjectMotion_OffsetPositionAndResetMotion(13, 8, -8);
         FieldScene_RunScene3bf_020025f8();
-        Event_Wait(120);
-        Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-        Actor_StartRepeatedMotion(ACTOR_IVAN, 2);
-        Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-        Actor_StartRepeatedMotion(ACTOR_MIA, 2);
-        Event_Wait(20);
+        Battle_WaitMode0(120);
+        Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+        Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 2);
+        Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorStartRepeatedMotion(ACTOR_MIA, 2);
+        Battle_WaitMode0(20);
         text_line += 2;
         FieldScene_RunScene3bf_02002718();
-        Actor_FaceActor(13, ACTOR_PARTY_LEADER, 0);
-        Event_SetMessage(text_line);
-        Event_ShowMessage(13, 0);
+        Engine_ActorFaceActor(13, ACTOR_PARTY_LEADER, 0);
+        Engine_EventSetMessage(text_line);
+        Engine_EventShowMessage(13, 0);
         FieldScene_RunScene3bf_0200269c();
         SHARED_RECORD_FIELD_448 = 512;
-        Event_Wait(1);
+        Battle_WaitMode0(1);
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             gGameState.unknown_200[0x22b - 0x200] = 3;
         } while (0);
         Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         BattleFx_SetWeightedResult(98, 4);
     } else {
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+        Object_SetModeById(ACTOR_PARTY_LEADER, 1);
         Audio_PlayCue(17);
-        Event_Wait(30);
+        Battle_WaitMode0(30);
         text_line = (s32)MsgRunpaTimeEat;
-        Event_SetMessage(text_line);
-        Event_ShowMessage(12, 0);
-        Actor_FaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
-        Event_Wait(140);
+        Engine_EventSetMessage(text_line);
+        Engine_EventShowMessage(12, 0);
+        Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
+        Battle_WaitMode0(140);
         Actor_FaceDirection(12, 32768, 0);
-        Actor_Jump(12, 4, 0);
-        Actor_SetSpriteFlags(Object_GetById(12), 1);
-        Event_SetMessage(text_line + 1);
-        Event_ShowMessage(12, 0);
+        Engine_ActorJump(12, 4, 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(12), 1);
+        Engine_EventSetMessage(text_line + 1);
+        Engine_EventShowMessage(12, 0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 456, 216);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
         FieldScene_RunScene3bf_0200252c();
         Actor_SetSpeed(ACTOR_IVAN, 45875, 22937);
         Engine_ActorWalkTo(2, 464, 192);
-        Actor_WaitForMove(ACTOR_IVAN);
-        Event_Wait(30);
-        Event_SetMessage(text_line + 2);
-        Event_ShowMessage(ACTOR_IVAN, 0);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+        Battle_WaitMode0(30);
+        Engine_EventSetMessage(text_line + 2);
+        Engine_EventShowMessage(ACTOR_IVAN, 0);
         Engine_ActorShowEmote(12, 256, 0);
-        Event_Wait(110);
+        Battle_WaitMode0(110);
         Audio_PlayCue(60);
-        Event_SetMessage(text_line + 3);
-        Event_ShowMessage(12, 0);
-        Event_Wait(30);
-        Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-        Event_Wait(20);
-        Actor_SetAnimation(ACTOR_IVAN, 1);
-        Actor_StartRepeatedMotion(12, 1);
-        Event_Wait(20);
+        Engine_EventSetMessage(text_line + 3);
+        Engine_EventShowMessage(12, 0);
+        Battle_WaitMode0(30);
+        Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+        Battle_WaitMode0(20);
+        Object_SetModeById(ACTOR_IVAN, 1);
+        Engine_ActorStartRepeatedMotion(12, 1);
+        Battle_WaitMode0(20);
         Actor_SetSpeed(12, 26214, 13107);
         Engine_ActorWalkTo(12, 520, 208);
-        Actor_WaitForMove(12);
-        Actor_SetAnimation(12, 1);
-        Event_Wait(20);
+        ObjectMotion_CommitCurrentPositionAndActivate(12);
+        Object_SetModeById(12, 1);
+        Battle_WaitMode0(20);
         Engine_ActorFaceDirection(12, 45056, 0);
-        Event_Wait(30);
+        Battle_WaitMode0(30);
         Call3(Engine_ActorFaceDirection, 12, 20480, 0);
-        Event_Wait(30);
-        Actor_FaceActor(12, ACTOR_IVAN, 0);
-        Event_Wait(20);
-        Event_SetMessage(text_line + 4);
-        Event_ShowMessage(12, 0);
-        Event_Wait(40);
-        Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-        Event_Wait(20);
+        Battle_WaitMode0(30);
+        Engine_ActorFaceActor(12, ACTOR_IVAN, 0);
+        Battle_WaitMode0(20);
+        Engine_EventSetMessage(text_line + 4);
+        Engine_EventShowMessage(12, 0);
+        Battle_WaitMode0(40);
+        Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+        Battle_WaitMode0(20);
         Call3(Engine_ActorShowEmote, 12, 264, 0);
-        Event_Wait(120);
-        Event_SetMessage(text_line + 5);
-        Event_ShowMessage(12, 0);
-        Event_Wait(25);
-        Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-        Event_Wait(30);
-        Actor_SetAnimationAndWait(12, 3);
-        Event_Wait(40);
+        Battle_WaitMode0(120);
+        Engine_EventSetMessage(text_line + 5);
+        Engine_EventShowMessage(12, 0);
+        Battle_WaitMode0(25);
+        Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
+        Battle_WaitMode0(30);
+        Engine_ActorSetAnimationAndWait(12, 3);
+        Battle_WaitMode0(40);
         Engine_ActorWalkTo(2, 480, 200);
-        Actor_WaitForMove(ACTOR_IVAN);
-        Actor_FaceEachOther(ACTOR_IVAN, 12, 0);
-        Event_Wait(60);
-        Event_SetMessage(text_line + 6);
-        Event_ShowMessage(ACTOR_IVAN, 0);
-        Event_Wait(20);
-        Actor_SetAnimation(12, 4);
-        Event_Wait(80);
-        Event_SetMessage(text_line + 7);
-        Event_ShowMessage(12, 0);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+        Engine_ActorFaceEachOther(ACTOR_IVAN, 12, 0);
+        Battle_WaitMode0(60);
+        Engine_EventSetMessage(text_line + 6);
+        Engine_EventShowMessage(ACTOR_IVAN, 0);
+        Battle_WaitMode0(20);
+        Object_SetModeById(12, 4);
+        Battle_WaitMode0(80);
+        Engine_EventSetMessage(text_line + 7);
+        Engine_EventShowMessage(12, 0);
         Engine_ActorSetPosition(13, 29884416, 20971520);
         Audio_PlayCue(19);
-        Event_SetMessage(text_line + 8);
-        Event_ShowMessage(13, 0);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-        Actor_FaceActor(ACTOR_IVAN, 13, 0);
-        Actor_FaceActor(ACTOR_GERALD, 13, 0);
-        Event_Wait(5);
+        Engine_EventSetMessage(text_line + 8);
+        Engine_EventShowMessage(13, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
+        Engine_ActorFaceActor(ACTOR_IVAN, 13, 0);
+        Engine_ActorFaceActor(ACTOR_GERALD, 13, 0);
+        Battle_WaitMode0(5);
         Actor_FaceDirection(ACTOR_MIA, 16384, 0);
-        Actor_FaceActor(12, 13, 0);
-        Event_Wait(30);
+        Engine_ActorFaceActor(12, 13, 0);
+        Battle_WaitMode0(30);
         Audio_PlayCue(61);
         Camera_SetSpeed(131072, 16384);
-        Camera_MoveToActor(13, 1);
-        Camera_WaitForMove();
+        Engine_CameraMoveToActor(13, 1);
+        Engine_CameraWaitForMove();
         Actor_SetSpeed(13, 52428, 26214);
         Actor_WalkTo(13, 456, 304);
-        Camera_FollowActor(13, 1);
-        Actor_WaitForMove(13);
-        Camera_FollowActor(ACTOR_GERALD, 1);
+        Engine_CameraFollowActor(13, 1);
+        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Engine_CameraFollowActor(ACTOR_GERALD, 1);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 0);
         Actor_ShowEmote(ACTOR_IVAN, 258, 0);
         Actor_ShowEmote(ACTOR_GERALD, 258, 0);
         Actor_ShowEmote(ACTOR_MIA, 258, 0);
         Call3(Engine_ActorShowEmote, 12, 258, 0);
-        Event_Wait(60);
-        Actor_FaceActor(12, 13, 0);
-        Actor_StartRepeatedMotion(12, 2);
-        Event_Wait(60);
-        Event_SetMessage(text_line + 9);
-        Event_ShowMessage(12, 0);
-        Actor_FaceActor(13, 12, 0);
-        Event_SetMessage(text_line + 10);
-        Event_ShowMessage(13, 0);
-        Event_Wait(60);
-        Actor_FaceActor(13, ACTOR_IVAN, 0);
-        Event_Wait(30);
-        Event_SetMessage(text_line + 11);
-        Event_ShowMessage(13, 0);
-        Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-        Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-        Event_Wait(60);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-        Actor_FaceActor(ACTOR_IVAN, 13, 0);
-        Actor_FaceActor(ACTOR_GERALD, 13, 0);
-        Actor_FaceActor(ACTOR_MIA, 13, 0);
-        Actor_StartRepeatedMotion(13, 1);
-        Event_Wait(60);
-        Event_SetMessage(text_line + 12);
-        Event_ShowMessage(13, 0);
+        Battle_WaitMode0(60);
+        Engine_ActorFaceActor(12, 13, 0);
+        Engine_ActorStartRepeatedMotion(12, 2);
+        Battle_WaitMode0(60);
+        Engine_EventSetMessage(text_line + 9);
+        Engine_EventShowMessage(12, 0);
+        Engine_ActorFaceActor(13, 12, 0);
+        Engine_EventSetMessage(text_line + 10);
+        Engine_EventShowMessage(13, 0);
+        Battle_WaitMode0(60);
+        Engine_ActorFaceActor(13, ACTOR_IVAN, 0);
+        Battle_WaitMode0(30);
+        Engine_EventSetMessage(text_line + 11);
+        Engine_EventShowMessage(13, 0);
+        Engine_ActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+        Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
+        Battle_WaitMode0(60);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
+        Engine_ActorFaceActor(ACTOR_IVAN, 13, 0);
+        Engine_ActorFaceActor(ACTOR_GERALD, 13, 0);
+        Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+        Engine_ActorStartRepeatedMotion(13, 1);
+        Battle_WaitMode0(60);
+        Engine_EventSetMessage(text_line + 12);
+        Engine_EventShowMessage(13, 0);
         Call3(Engine_ActorShowEmote, 1, 259, 0);
-        Event_Wait(60);
-        Actor_SetAnimation(13, 4);
-        Event_SetMessage(text_line + 13);
-        Event_ShowMessage(13, 0);
+        Battle_WaitMode0(60);
+        Object_SetModeById(13, 4);
+        Engine_EventSetMessage(text_line + 13);
+        Engine_EventShowMessage(13, 0);
         Call3(Engine_ActorWalkTo, 1, 456, 248);
-        Actor_WaitForMove(ACTOR_GERALD);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
         Call3(Engine_ActorFaceDirection, 1, 16384, 0);
-        Event_SetMessage(text_line + 14);
-        Event_ShowMessage(ACTOR_GERALD, 0);
+        Engine_EventSetMessage(text_line + 14);
+        Engine_EventShowMessage(ACTOR_GERALD, 0);
         Engine_ActorWalkTo(2, 472, 216);
-        Actor_WaitForMove(ACTOR_IVAN);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
         Engine_ActorFaceDirection(2, 16384, 0);
-        Event_Wait(10);
-        Event_SetMessage(text_line + 15);
-        Event_ShowMessage(ACTOR_IVAN, 0);
+        Battle_WaitMode0(10);
+        Engine_EventSetMessage(text_line + 15);
+        Engine_EventShowMessage(ACTOR_IVAN, 0);
         Engine_ActorShowEmote(12, 261, 0);
-        Event_Wait(60);
-        Event_SetMessage(text_line + 16);
-        Event_ShowMessage(12, 0);
+        Battle_WaitMode0(60);
+        Engine_EventSetMessage(text_line + 16);
+        Engine_EventShowMessage(12, 0);
         Engine_ActorWalkTo(3, 440, 216);
-        Actor_WaitForMove(ACTOR_MIA);
-        Actor_FaceActor(ACTOR_MIA, 13, 0);
-        Actor_SetAnimationAndWait(ACTOR_MIA, 3);
-        Event_Wait(10);
-        Event_SetMessage(text_line + 17);
-        Event_ShowMessage(ACTOR_MIA, 0);
-        Actor_SetAnimation(13, 4);
-        Event_SetMessage(text_line + 18);
-        Event_ShowMessage(13, 0);
+        ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+        Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+        Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
+        Battle_WaitMode0(10);
+        Engine_EventSetMessage(text_line + 17);
+        Engine_EventShowMessage(ACTOR_MIA, 0);
+        Object_SetModeById(13, 4);
+        Engine_EventSetMessage(text_line + 18);
+        Engine_EventShowMessage(13, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 0);
         Actor_ShowEmote(ACTOR_GERALD, 258, 0);
         Actor_ShowEmote(ACTOR_MIA, 258, 0);
         Actor_ShowEmote(ACTOR_IVAN, 258, 0);
         Engine_ActorShowEmote(13, 264, 0);
-        Event_Wait(60);
-        Event_SetMessage(text_line + 19);
-        Event_ShowMessage(13, 0);
-        Event_Wait(20);
+        Battle_WaitMode0(60);
+        Engine_EventSetMessage(text_line + 19);
+        Engine_EventShowMessage(13, 0);
+        Battle_WaitMode0(20);
         Engine_ActorShowEmote(1, 259, 0);
-        Event_Wait(60);
-        Event_SetMessage(text_line + 20);
-        Event_ShowMessage(ACTOR_GERALD, 0);
-        Actor_StartRepeatedMotion(13, 1);
-        Event_Wait(60);
-        Event_SetMessage(text_line + 21);
-        Event_ShowMessage(13, 0);
+        Battle_WaitMode0(60);
+        Engine_EventSetMessage(text_line + 20);
+        Engine_EventShowMessage(ACTOR_GERALD, 0);
+        Engine_ActorStartRepeatedMotion(13, 1);
+        Battle_WaitMode0(60);
+        Engine_EventSetMessage(text_line + 21);
+        Engine_EventShowMessage(13, 0);
         Engine_ActorWalkTo(13, 456, 280);
-        Actor_WaitForMove(13);
+        ObjectMotion_CommitCurrentPositionAndActivate(13);
         Engine_ActorFaceDirection(13, 20480, 0);
-        Event_Wait(80);
+        Battle_WaitMode0(80);
         Call3(ObjectMotion_OffsetPositionAndResetMotion, 13, -8, 8);
-        Actor_WaitForMove(13);
-        Event_Wait(60);
+        ObjectMotion_CommitCurrentPositionAndActivate(13);
+        Battle_WaitMode0(60);
         Audio_PlayCue(155);
-        Message_ShowCentered((s32)MsgRunpaDodonpaPulledLever, 1);
+        Engine_MessageShowCentered((s32)MsgRunpaDodonpaPulledLever, 1);
         Actor_SetDestinationOffset(13, 8, -8);
-        Actor_FaceActor(13, 11, 0);
+        Engine_ActorFaceActor(13, 11, 0);
         FieldScene_RunScene3bf_020025f8();
         Audio_PlayCue(52);
-        Event_SetMessage(text_line + 23);
-        Event_ShowMessage(13, 0);
-        Event_Wait(60);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-        Actor_FaceActor(ACTOR_GERALD, 11, 0);
-        Actor_FaceActor(ACTOR_IVAN, 11, 0);
-        Actor_FaceActor(ACTOR_MIA, 11, 0);
-        Actor_FaceActor(12, 11, 0);
+        Engine_EventSetMessage(text_line + 23);
+        Engine_EventShowMessage(13, 0);
+        Battle_WaitMode0(60);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
+        Engine_ActorFaceActor(ACTOR_GERALD, 11, 0);
+        Engine_ActorFaceActor(ACTOR_IVAN, 11, 0);
+        Engine_ActorFaceActor(ACTOR_MIA, 11, 0);
+        Engine_ActorFaceActor(12, 11, 0);
         FieldScene_RunScene3bf_02002718();
         FieldScene_RunScene3bf_0200269c();
         GameFlag_Set(2370);
         SHARED_RECORD_FIELD_448 = 512;
-        Event_Wait(1);
+        Battle_WaitMode0(1);
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
         do {
             gGameState.unknown_200[0x22b - 0x200] = 3;
         } while (0);
         Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         BattleFx_SetWeightedResult(98, 4);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The Lunpa fortress: Dodonpa freed and reunited with his father. */
@@ -1713,9 +1715,9 @@ void FieldScene_RunMainScriptSequence(void)
     GameFlag_Set(0x941);
     Map_CopyCells(16, 75, 7, 4, 26, 55);
     PlaceSceneObjectPairFromTableA(4);
-    Event_Begin();
+    Engine_EventBegin();
     record = Object_GetById(12);
-    Actor_SetSpriteFlags(record, 1);
+    Engine_ActorSetSpriteFlags(record, 1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1c80000, 0xb80000);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_SetPosition(ACTOR_GERALD, 0x1b80000, 0xc00000);
@@ -1729,143 +1731,143 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_SetPosition(11, 0x1c00000, 0xed0000);
     Actor_FaceDirection(11, 0x8000, 0);
     Actor_SetPosition(15, 0x1c00000, 0xee0000);
-    Actor_SetSpritePriority(15, 3);
-    Actor_SetAnimation(11, 3);
+    Engine_ActorSetSpritePriority(15, 3);
+    Object_SetModeById(11, 3);
     Actor_SetPosition(13, 0x1ca0000, 0xf30000);
     Actor_FaceDirection(13, 0x4000, 0);
-    Actor_SetAnimation(13, 5);
-    Event_OpenScreen();
-    Event_Wait(120);
+    Object_SetModeById(13, 5);
+    Engine_EventOpenScreen();
+    Battle_WaitMode0(120);
     /* Script line bases are overlay data symbols: an integer base would be
      * constant-propagated into every offset instead of staying in r5. */
     script_a = (s32)MsgRunpaUhnnGetOff;
-    Event_SetMessage(script_a);
-    Event_ShowMessage(13, 0);
+    Engine_EventSetMessage(script_a);
+    Engine_EventShowMessage(13, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
-    Event_SetMessage((script_a + 1));
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventSetMessage((script_a + 1));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 1);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 1);
     Actor_ShowEmote(ACTOR_MIA, 0x101, 1);
-    Event_Wait(60);
-    Actor_FaceActor(12, 13, 0);
-    Event_Wait(60);
-    Event_SetMessage((script_a + 2));
-    Event_ShowMessage(12, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Actor_FaceActor(ACTOR_IVAN, 12, 0);
-    Actor_FaceActor(ACTOR_MIA, 12, 0);
-    Event_Wait(60);
+    Battle_WaitMode0(60);
+    Engine_ActorFaceActor(12, 13, 0);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_a + 2));
+    Engine_EventShowMessage(12, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, 12, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 12, 0);
+    Battle_WaitMode0(60);
     Actor_WalkTo(12, 0x200, 232);
-    Actor_SetAnimation(12, 4);
-    Event_Wait(60);
-    Event_SetMessage((script_a + 3));
-    Event_ShowMessage(12, 0);
-    Event_Wait(15);
-    Actor_StartRepeatedMotion(13, 2);
-    Event_SetMessage((script_a + 4));
-    Event_ShowMessage(13, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-    Actor_FaceActor(ACTOR_IVAN, 13, 0);
-    Actor_FaceActor(ACTOR_MIA, 13, 0);
-    Actor_FaceActor(ACTOR_GERALD, 13, 0);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-    Event_SetMessage((script_a + 5));
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Object_SetModeById(12, 4);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_a + 3));
+    Engine_EventShowMessage(12, 0);
+    Battle_WaitMode0(15);
+    Engine_ActorStartRepeatedMotion(13, 2);
+    Engine_EventSetMessage((script_a + 4));
+    Engine_EventShowMessage(13, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, 13, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 13, 0);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
+    Engine_EventSetMessage((script_a + 5));
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x105, 0);
-    Actor_SetAnimation(ACTOR_MIA, 4);
-    Event_Wait(80);
-    Actor_SetAnimation(ACTOR_MIA, 1);
-    Event_SetMessage((script_a + 6));
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Object_SetModeById(ACTOR_MIA, 4);
+    Battle_WaitMode0(80);
+    Object_SetModeById(ACTOR_MIA, 1);
+    Engine_EventSetMessage((script_a + 6));
+    Engine_EventShowMessage(ACTOR_MIA, 0);
     Actor_ShowEmote(12, 0x102, 65);
-    Actor_StartRepeatedMotion(12, 2);
-    Event_Wait(100);
-    Event_SetMessage((script_a + 7));
-    Event_ShowMessage(13, 0);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(10);
-    Event_SetMessage((script_a + 8));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-    Event_Wait(30);
-    Event_SetMessage((script_a + 9));
-    Event_ShowMessage(ACTOR_IVAN, 0);
-    Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage((script_a + 10));
-    Event_OpenMessage(ACTOR_MIA, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_SetAnimation(ACTOR_IVAN, 3);
-        Actor_SetAnimation(ACTOR_GERALD, 3);
-        Actor_SetAnimation(ACTOR_MIA, 3);
-        Actor_FaceActor(12, 13, 0);
-        Event_Wait(60);
+    Engine_ActorStartRepeatedMotion(12, 2);
+    Battle_WaitMode0(100);
+    Engine_EventSetMessage((script_a + 7));
+    Engine_EventShowMessage(13, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(10);
+    Engine_EventSetMessage((script_a + 8));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
+    Battle_WaitMode0(30);
+    Engine_EventSetMessage((script_a + 9));
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+    Engine_EventSetMessage((script_a + 10));
+    Engine_EventOpenMessage(ACTOR_MIA, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Object_SetModeById(ACTOR_IVAN, 3);
+        Object_SetModeById(ACTOR_GERALD, 3);
+        Object_SetModeById(ACTOR_MIA, 3);
+        Engine_ActorFaceActor(12, 13, 0);
+        Battle_WaitMode0(60);
     } else {
-        Event_SetMessage((script_a + 11));
-        Event_ShowMessage(ACTOR_MIA, 0);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-        Actor_FaceActor(ACTOR_GERALD, 12, 0);
-        Actor_FaceActor(ACTOR_IVAN, 12, 0);
-        Actor_FaceActor(ACTOR_MIA, 12, 0);
-        Event_Wait(20);
-        Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-        Event_Wait(60);
-        Actor_FaceActor(12, 13, 0);
-        Event_Wait(80);
-        Actor_SetAnimationAndWait(12, 3);
-        Event_Wait(30);
-        Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-        Event_SetMessage((script_a + 12));
-        Event_ShowMessage(12, 0);
-        Event_Wait(60);
-        Actor_FaceActor(ACTOR_IVAN, 12, 0);
-        Actor_FaceActor(ACTOR_GERALD, 12, 0);
-        Actor_FaceActor(ACTOR_MIA, 12, 0);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-        Actor_SetAnimation(ACTOR_IVAN, 3);
-        Actor_SetAnimation(ACTOR_GERALD, 3);
-        Actor_SetAnimation(ACTOR_MIA, 3);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-        Event_Wait(80);
-        Actor_FaceActor(12, 13, 0);
-        Actor_FaceActor(ACTOR_IVAN, 13, 0);
-        Actor_FaceActor(ACTOR_GERALD, 13, 0);
-        Actor_FaceActor(ACTOR_MIA, 13, 0);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
+        Engine_EventSetMessage((script_a + 11));
+        Engine_EventShowMessage(ACTOR_MIA, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+        Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
+        Engine_ActorFaceActor(ACTOR_IVAN, 12, 0);
+        Engine_ActorFaceActor(ACTOR_MIA, 12, 0);
+        Battle_WaitMode0(20);
+        Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
+        Battle_WaitMode0(60);
+        Engine_ActorFaceActor(12, 13, 0);
+        Battle_WaitMode0(80);
+        Engine_ActorSetAnimationAndWait(12, 3);
+        Battle_WaitMode0(30);
+        Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
+        Engine_EventSetMessage((script_a + 12));
+        Engine_EventShowMessage(12, 0);
+        Battle_WaitMode0(60);
+        Engine_ActorFaceActor(ACTOR_IVAN, 12, 0);
+        Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
+        Engine_ActorFaceActor(ACTOR_MIA, 12, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+        Object_SetModeById(ACTOR_IVAN, 3);
+        Object_SetModeById(ACTOR_GERALD, 3);
+        Object_SetModeById(ACTOR_MIA, 3);
+        Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+        Battle_WaitMode0(80);
+        Engine_ActorFaceActor(12, 13, 0);
+        Engine_ActorFaceActor(ACTOR_IVAN, 13, 0);
+        Engine_ActorFaceActor(ACTOR_GERALD, 13, 0);
+        Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_MIA, 0x8000, 0x4000);
     Actor_SetSpeed(ACTOR_IVAN, 0x8000, 0x4000);
     Actor_WalkTo(ACTOR_GERALD, 0x1a0, 216);
-    Actor_WaitForMove(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_WalkTo(ACTOR_GERALD, 0x1a0, 248);
-    Actor_WaitForMove(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_WalkTo(ACTOR_GERALD, 0x1b8, 248);
-    Actor_WaitForMove(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1b8, 216);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Actor_WalkTo(ACTOR_MIA, 0x1e8, 248);
-    Actor_WaitForMove(ACTOR_MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_WalkTo(ACTOR_MIA, 0x1c8, 248);
-    Actor_WaitForMove(ACTOR_MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     Actor_WalkTo(ACTOR_IVAN, 0x1c8, 216);
-    Actor_WaitForMove(ACTOR_IVAN);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
-    Actor_FaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-    Event_Wait(60);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Event_Wait(100);
+    Engine_ActorFaceEachOther(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+    Battle_WaitMode0(60);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Object_SetModeById(ACTOR_IVAN, 3);
+    Object_SetModeById(ACTOR_GERALD, 3);
+    Object_SetModeById(ACTOR_MIA, 3);
+    Battle_WaitMode0(100);
     Audio_PlayCue(226);
-    Actor_SetAnimation(13, 7);
+    Object_SetModeById(13, 7);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x1999, 0xccc);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -24, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0x1999, 0xccc);
@@ -1878,490 +1880,490 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_SetSpeed(15, 0x1999, 0xccc);
     Actor_SetDestinationOffset(11, -24, 0);
     Actor_SetDestinationOffset(15, -24, 0);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Audio_PlayCue(0x120);
-    Event_Wait(60);
+    Battle_WaitMode0(60);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x4000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
-    Event_Wait(60);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Event_Wait(100);
+    Battle_WaitMode0(60);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+    Object_SetModeById(ACTOR_GERALD, 3);
+    Object_SetModeById(ACTOR_IVAN, 3);
+    Object_SetModeById(ACTOR_MIA, 3);
+    Battle_WaitMode0(100);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xb333, 0x5999);
     Actor_SetSpeed(ACTOR_GERALD, 0xb333, 0x5999);
     Actor_SetSpeed(ACTOR_IVAN, 0xb333, 0x5999);
     Actor_SetSpeed(ACTOR_MIA, 0xb333, 0x5999);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1c8, 184);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
     Actor_WalkTo(ACTOR_GERALD, 0x1d0, 0x100);
-    Actor_WaitForMove(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_WalkTo(ACTOR_GERALD, 0x1e0, 248);
-    Actor_WaitForMove(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_WalkTo(ACTOR_GERALD, 0x1b8, 192);
-    Actor_WaitForMove(ACTOR_GERALD);
-    Actor_SetAnimation(ACTOR_GERALD, 1);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
+    Object_SetModeById(ACTOR_GERALD, 1);
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     Actor_WalkTo(ACTOR_MIA, 0x1e8, 248);
-    Actor_WaitForMove(ACTOR_MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_WalkTo(ACTOR_MIA, 0x1e8, 184);
     Actor_WalkTo(ACTOR_IVAN, 0x1d8, 184);
-    Actor_WaitForMove(ACTOR_IVAN);
-    Actor_SetAnimation(ACTOR_IVAN, 1);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
+    Object_SetModeById(ACTOR_IVAN, 1);
     Actor_FaceDirection(ACTOR_IVAN, 0x4000, 0);
-    Actor_WaitForMove(ACTOR_MIA);
-    Actor_SetAnimation(ACTOR_MIA, 1);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
+    Object_SetModeById(ACTOR_MIA, 1);
     Actor_FaceDirection(ACTOR_MIA, 0x4000, 0);
-    Event_Wait(30);
-    Event_Wait(60);
+    Battle_WaitMode0(30);
+    Battle_WaitMode0(60);
     script_b = (s32)MsgRunpaAbleGet;
-    Event_SetMessage(script_b);
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_SetAnimation(13, 6);
-    Event_Wait(120);
-    Actor_StartRepeatedMotion(13, 2);
-    Event_Wait(60);
-    Actor_SetAnimation(13, 7);
-    Event_SetMessage((script_b + 1));
-    Event_ShowMessage(13, 0);
-    Event_Wait(20);
-    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-    Event_Wait(10);
+    Engine_EventSetMessage(script_b);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Object_SetModeById(13, 6);
+    Battle_WaitMode0(120);
+    Engine_ActorStartRepeatedMotion(13, 2);
+    Battle_WaitMode0(60);
+    Object_SetModeById(13, 7);
+    Engine_EventSetMessage((script_b + 1));
+    Engine_EventShowMessage(13, 0);
+    Battle_WaitMode0(20);
+    Engine_ActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+    Battle_WaitMode0(10);
     Actor_ShowEmote(ACTOR_MIA, 0x101, 80);
-    Actor_FaceActor(ACTOR_MIA, 13, 0);
-    Actor_FaceActor(ACTOR_IVAN, 13, 0);
-    Event_SetMessage((script_b + 2));
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, 13, 0);
+    Engine_EventSetMessage((script_b + 2));
+    Engine_EventShowMessage(ACTOR_MIA, 0);
     Actor_ShowEmote(13, 0x102, 70);
-    Actor_StartRepeatedMotion(13, 2);
-    Event_Wait(60);
-    Actor_SetAnimation(13, 5);
-    Event_Wait(70);
-    Event_SetMessage((script_b + 3));
-    Event_ShowMessage(13, 0);
-    Actor_SetAnimation(13, 7);
+    Engine_ActorStartRepeatedMotion(13, 2);
+    Battle_WaitMode0(60);
+    Object_SetModeById(13, 5);
+    Battle_WaitMode0(70);
+    Engine_EventSetMessage((script_b + 3));
+    Engine_EventShowMessage(13, 0);
+    Object_SetModeById(13, 7);
     Actor_ShowEmote(ACTOR_IVAN, 0x108, 40);
-    Event_SetMessage((script_b + 4));
-    Event_ShowMessage(ACTOR_IVAN, 0);
-    Actor_SetAnimationAndWait(12, 3);
+    Engine_EventSetMessage((script_b + 4));
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
+    Engine_ActorSetAnimationAndWait(12, 3);
     Actor_ShowEmote(ACTOR_GERALD, 0x103, 60);
     Actor_WalkTo(ACTOR_GERALD, 0x1b8, 208);
-    Actor_WaitForMove(ACTOR_GERALD);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage((script_b + 5));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Event_Wait(20);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_EventSetMessage((script_b + 5));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Battle_WaitMode0(20);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
     Actor_ShowEmote(12, 0x101, 0);
-    Event_Wait(70);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
+    Battle_WaitMode0(70);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 75);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 4);
-    Event_SetMessage((script_b + 6));
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Object_SetModeById(ACTOR_GERALD, 4);
+    Engine_EventSetMessage((script_b + 6));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Actor_ShowEmote(12, 0x101, 0);
-    Event_Wait(60);
-    Event_SetMessage((script_b + 7));
-    Event_ShowMessage(12, 0);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_b + 7));
+    Engine_EventShowMessage(12, 0);
     Actor_WalkTo(ACTOR_GERALD, 0x1c0, 208);
-    Actor_WaitForMove(ACTOR_GERALD);
-    Actor_SetAnimation(ACTOR_GERALD, 1);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_SetMessage((script_b + 8));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_StartRepeatedMotion(12, 1);
-    Event_Wait(60);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_Wait(60);
-    Event_SetMessage((script_b + 9));
-    Event_ShowMessage(12, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 4);
-    Event_Wait(60);
-    Event_SetMessage((script_b + 10));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-    Event_Wait(30);
-    Event_SetMessage((script_b + 11));
-    Event_ShowMessage(ACTOR_IVAN, 0);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_MIA, 0);
-    Event_Wait(20);
-    Event_SetMessage((script_b + 12));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Event_Wait(30);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
+    Object_SetModeById(ACTOR_GERALD, 1);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
+    Engine_EventSetMessage((script_b + 8));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorStartRepeatedMotion(12, 1);
+    Battle_WaitMode0(60);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_b + 9));
+    Engine_EventShowMessage(12, 0);
+    Object_SetModeById(ACTOR_GERALD, 4);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_b + 10));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
+    Battle_WaitMode0(30);
+    Engine_EventSetMessage((script_b + 11));
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_MIA, 0);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_b + 12));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Battle_WaitMode0(30);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 80);
-    Actor_FaceActor(ACTOR_MIA, ACTOR_GERALD, 0);
-    Event_SetMessage((script_b + 13));
-    Event_ShowMessage(ACTOR_MIA, 0);
-    Actor_FaceActor(ACTOR_MIA, 13, 0);
-    Event_SetMessage((script_b + 14));
-    Event_ShowMessage(ACTOR_MIA, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-    Actor_FaceActor(ACTOR_IVAN, 13, 0);
-    Actor_FaceActor(ACTOR_GERALD, 13, 0);
-    Actor_FaceActor(ACTOR_MIA, 13, 0);
-    Event_Wait(120);
+    Engine_ActorFaceActor(ACTOR_MIA, ACTOR_GERALD, 0);
+    Engine_EventSetMessage((script_b + 13));
+    Engine_EventShowMessage(ACTOR_MIA, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+    Engine_EventSetMessage((script_b + 14));
+    Engine_EventShowMessage(ACTOR_MIA, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, 13, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 13, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+    Battle_WaitMode0(120);
     Actor_ShowEmote(13, 0x102, 30);
-    Actor_StartRepeatedMotion(13, 1);
-    Event_Wait(120);
-    Actor_StartRepeatedMotion(12, 1);
-    Event_Wait(60);
-    Event_SetMessage((script_b + 15));
-    Event_ShowMessage(12, 0);
+    Engine_ActorStartRepeatedMotion(13, 1);
+    Battle_WaitMode0(120);
+    Engine_ActorStartRepeatedMotion(12, 1);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_b + 15));
+    Engine_EventShowMessage(12, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x107, 110);
     Actor_WalkTo(ACTOR_GERALD, 0x1c8, 212);
-    Actor_WaitForMove(ACTOR_GERALD);
-    Actor_SetAnimation(ACTOR_GERALD, 1);
-    Event_SetMessage((script_b + 16));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_GERALD, 0);
-    Event_Wait(60);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-    Event_SetMessage((script_b + 17));
-    Event_ShowMessage(ACTOR_IVAN, 0);
-    Actor_FaceActor(ACTOR_GERALD, 13, 0);
-    Event_Wait(80);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
-    Event_Wait(60);
-    Actor_FaceActor(ACTOR_GERALD, 13, 0);
-    Event_Wait(30);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-    Actor_FaceActor(ACTOR_MIA, 13, 0);
-    Actor_FaceActor(13, 13, 0);
-    Actor_FaceActor(12, 13, 0);
-    Event_Wait(80);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-    Event_Wait(30);
-    Event_SetMessage((script_b + 18));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_StartRepeatedMotion(13, 2);
-    Event_Wait(70);
-    Event_SetMessage((script_b + 19));
-    Event_ShowMessage(13, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
+    Object_SetModeById(ACTOR_GERALD, 1);
+    Engine_EventSetMessage((script_b + 16));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_GERALD, 0);
+    Battle_WaitMode0(60);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
+    Engine_EventSetMessage((script_b + 17));
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 13, 0);
+    Battle_WaitMode0(80);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
+    Battle_WaitMode0(60);
+    Engine_ActorFaceActor(ACTOR_GERALD, 13, 0);
+    Battle_WaitMode0(30);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 13, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 13, 0);
+    Engine_ActorFaceActor(13, 13, 0);
+    Engine_ActorFaceActor(12, 13, 0);
+    Battle_WaitMode0(80);
+    Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3);
+    Battle_WaitMode0(30);
+    Engine_EventSetMessage((script_b + 18));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorStartRepeatedMotion(13, 2);
+    Battle_WaitMode0(70);
+    Engine_EventSetMessage((script_b + 19));
+    Engine_EventShowMessage(13, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 60);
-    Event_SetMessage((script_b + 20));
-    Event_ShowMessage(ACTOR_MIA, 0);
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(80);
-    Event_SetMessage((script_b + 21));
-    Event_OpenMessage(ACTOR_IVAN, 0);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
+    Engine_EventSetMessage((script_b + 20));
+    Engine_EventShowMessage(ACTOR_MIA, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(80);
+    Engine_EventSetMessage((script_b + 21));
+    Engine_EventOpenMessage(ACTOR_IVAN, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
     Actor_SetPosition(14, 0x1c80000, 0x1300000);
     Actor_SetSpeed(14, 0x8000, 0x4000);
-    if (Event_ChooseYesNo(0, 0) == 0) {
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
         Audio_PlayCue(19);
-        Event_SetMessage((script_b + 22));
-        Event_ShowMessage(14, 0);
+        Engine_EventSetMessage((script_b + 22));
+        Engine_EventShowMessage(14, 0);
     } else {
         Audio_PlayCue(19);
-        Event_SetMessage((script_b + 23));
-        Event_ShowMessage(14, 0);
+        Engine_EventSetMessage((script_b + 23));
+        Engine_EventShowMessage(14, 0);
     }
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
-    Actor_FaceActor(ACTOR_GERALD, 14, 0);
-    Actor_FaceActor(ACTOR_MIA, 14, 0);
-    Actor_FaceActor(ACTOR_IVAN, 14, 0);
-    Actor_FaceActor(12, 14, 0);
-    Actor_FaceActor(13, 14, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 14, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 14, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, 14, 0);
+    Engine_ActorFaceActor(12, 14, 0);
+    Engine_ActorFaceActor(13, 14, 0);
     Camera_MoveTo(0x1c80000, -1, 0xf00000, 1);
-    Actor_StartRepeatedMotion(13, 1);
-    Event_Wait(60);
+    Engine_ActorStartRepeatedMotion(13, 1);
+    Battle_WaitMode0(60);
     Audio_PlayCue(8);
     script_c = (s32)MsgRunpaDad;
-    Event_SetMessage(script_c);
-    Event_ShowMessage(13, 0);
+    Engine_EventSetMessage(script_c);
+    Engine_EventShowMessage(13, 0);
     Actor_WalkTo(14, 0x1c8, 0x118);
-    Actor_WaitForMove(14);
+    ObjectMotion_CommitCurrentPositionAndActivate(14);
     Actor_WalkTo(14, 0x1b8, 0x100);
     Camera_MoveTo(0x1c80000, -1, 0xe00000, 1);
-    Event_SetMessage((script_c + 1));
-    Event_ShowMessage(14, 0);
-    Actor_WaitForMove(14);
+    Engine_EventSetMessage((script_c + 1));
+    Engine_EventShowMessage(14, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(14);
     Actor_FaceDirection(14, 0xd000, 0);
     Actor_ShowEmote(13, 0x102, 80);
-    Actor_SetAnimation(14, 4);
-    Event_Wait(89);
-    Event_SetMessage((script_c + 2));
-    Event_ShowMessage(14, 0);
-    Actor_RunRepeatedMotion(13, 2);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_SetMessage((script_c + 3));
-    Event_ShowMessage(14, 0);
+    Object_SetModeById(14, 4);
+    Battle_WaitMode0(89);
+    Engine_EventSetMessage((script_c + 2));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorRunRepeatedMotion(13, 2);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Engine_EventSetMessage((script_c + 3));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(13, 0x100, 80);
-    Actor_SetAnimation(14, 4);
-    Event_Wait(80);
+    Object_SetModeById(14, 4);
+    Battle_WaitMode0(80);
     Actor_FaceDirection(14, 0x3000, 0);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 4));
-    Event_ShowMessage(14, 0);
-    Actor_StartRepeatedMotion(13, 1);
-    Event_SetMessage((script_c + 5));
-    Event_ShowMessage(13, 0);
-    Event_Wait(30);
-    Actor_SetAnimationAndWait(14, 3);
-    Actor_FaceActor(14, 13, 0);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 6));
-    Event_ShowMessage(14, 0);
-    Actor_StartRepeatedMotion(13, 1);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 4));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorStartRepeatedMotion(13, 1);
+    Engine_EventSetMessage((script_c + 5));
+    Engine_EventShowMessage(13, 0);
+    Battle_WaitMode0(30);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Engine_ActorFaceActor(14, 13, 0);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 6));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorStartRepeatedMotion(13, 1);
     Actor_ShowEmote(13, 0x102, 80);
-    Event_SetMessage((script_c + 7));
-    Event_ShowMessage(13, 0);
+    Engine_EventSetMessage((script_c + 7));
+    Engine_EventShowMessage(13, 0);
     Actor_ShowEmote(14, 0x103, 60);
-    Event_SetMessage((script_c + 8));
-    Event_ShowMessage(14, 0);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_SetMessage((script_c + 9));
-    Event_ShowMessage(14, 0);
-    Event_Wait(20);
+    Engine_EventSetMessage((script_c + 8));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Engine_EventSetMessage((script_c + 9));
+    Engine_EventShowMessage(14, 0);
+    Battle_WaitMode0(20);
     Actor_SetAttachedEffect(13, 0x101);
-    Event_Wait(80);
+    Battle_WaitMode0(80);
     Actor_SetAttachedEffect(13, 0);
     Actor_WalkTo(14, 0x1f0, 240);
-    Actor_WaitForMove(14);
-    Actor_FaceActor(14, 12, 0);
-    Event_Wait(20);
-    Actor_FaceActor(12, 14, 0);
-    Event_SetMessage((script_c + 10));
-    Event_ShowMessage(14, 0);
-    Actor_StartRepeatedMotion(12, 1);
-    Event_SetMessage((script_c + 11));
-    Event_ShowMessage(12, 0);
-    Event_Wait(40);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 12));
-    Event_ShowMessage(14, 0);
-    Actor_SetAnimation(14, 3);
+    ObjectMotion_CommitCurrentPositionAndActivate(14);
+    Engine_ActorFaceActor(14, 12, 0);
+    Battle_WaitMode0(20);
+    Engine_ActorFaceActor(12, 14, 0);
+    Engine_EventSetMessage((script_c + 10));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorStartRepeatedMotion(12, 1);
+    Engine_EventSetMessage((script_c + 11));
+    Engine_EventShowMessage(12, 0);
+    Battle_WaitMode0(40);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 12));
+    Engine_EventShowMessage(14, 0);
+    Object_SetModeById(14, 3);
     Actor_ShowEmote(12, 0x102, 60);
-    Event_SetMessage((script_c + 13));
-    Event_ShowMessage(12, 0);
+    Engine_EventSetMessage((script_c + 13));
+    Engine_EventShowMessage(12, 0);
     Actor_ShowEmote(14, 0x100, 70);
-    Event_SetMessage((script_c + 14));
-    Event_ShowMessage(14, 0);
-    Actor_SetAnimation(12, 3);
-    Event_Wait(140);
-    Actor_SetAnimation(14, 3);
-    Event_Wait(120);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 14, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Event_Wait(120);
+    Engine_EventSetMessage((script_c + 14));
+    Engine_EventShowMessage(14, 0);
+    Object_SetModeById(12, 3);
+    Battle_WaitMode0(140);
+    Object_SetModeById(14, 3);
+    Battle_WaitMode0(120);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 14, 0);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+    Object_SetModeById(ACTOR_IVAN, 3);
+    Object_SetModeById(ACTOR_GERALD, 3);
+    Object_SetModeById(ACTOR_MIA, 3);
+    Battle_WaitMode0(120);
     Actor_ShowEmote(14, 0x108, 180);
-    Event_SetMessage((script_c + 15));
-    Event_ShowMessage(14, 0);
+    Engine_EventSetMessage((script_c + 15));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(12, 0x101, 80);
-    Event_SetMessage((script_c + 16));
-    Event_ShowMessage(12, 0);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    Actor_FaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
-    Event_Wait(80);
-    Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(60);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
-    Actor_FaceActor(ACTOR_GERALD, 14, 0);
-    Actor_FaceActor(ACTOR_IVAN, 14, 0);
-    Actor_FaceActor(ACTOR_MIA, 14, 0);
-    Event_Wait(60);
-    Event_SetMessage((script_c + 17));
-    Event_ShowMessage(14, 0);
+    Engine_EventSetMessage((script_c + 16));
+    Engine_EventShowMessage(12, 0);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
+    Engine_ActorFaceEachOther(ACTOR_MIA, ACTOR_IVAN, 0);
+    Battle_WaitMode0(80);
+    Engine_ActorFaceActor(14, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(60);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 14, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, 14, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, 14, 0);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_c + 17));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
-    Event_Wait(100);
-    Event_SetMessage((script_c + 18));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_StartRepeatedMotion(ACTOR_IVAN, 1);
-    Event_Wait(60);
-    Event_SetMessage((script_c + 19));
-    Event_ShowMessage(ACTOR_IVAN, 0);
-    Actor_FaceActor(14, ACTOR_IVAN, 0);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 20));
-    Event_ShowMessage(14, 0);
+    Battle_WaitMode0(100);
+    Engine_EventSetMessage((script_c + 18));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorStartRepeatedMotion(ACTOR_IVAN, 1);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_c + 19));
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
+    Engine_ActorFaceActor(14, ACTOR_IVAN, 0);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 20));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x101, 0);
-    Event_Wait(120);
-    Actor_SetAnimation(14, 4);
-    Event_Wait(120);
-    Event_SetMessage((script_c + 21));
-    Event_ShowMessage(14, 0);
+    Battle_WaitMode0(120);
+    Object_SetModeById(14, 4);
+    Battle_WaitMode0(120);
+    Engine_EventSetMessage((script_c + 21));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(14, 0x102, 90);
-    Event_SetMessage((script_c + 22));
-    Event_ShowMessage(14, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(12, 3);
-    Event_Wait(80);
-    Actor_SetAnimation(14, 4);
-    Event_Wait(120);
-    Event_SetMessage((script_c + 23));
-    Event_ShowMessage(14, 0);
+    Engine_EventSetMessage((script_c + 22));
+    Engine_EventShowMessage(14, 0);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+    Object_SetModeById(ACTOR_IVAN, 3);
+    Object_SetModeById(ACTOR_MIA, 3);
+    Object_SetModeById(ACTOR_GERALD, 3);
+    Object_SetModeById(12, 3);
+    Battle_WaitMode0(80);
+    Object_SetModeById(14, 4);
+    Battle_WaitMode0(120);
+    Engine_EventSetMessage((script_c + 23));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(12, 0x100, 60);
-    Event_SetMessage((script_c + 24));
-    Event_ShowMessage(12, 0);
-    Actor_FaceActor(14, 12, 0);
-    Event_Wait(20);
-    Actor_StartRepeatedMotion(14, 1);
-    Event_Wait(50);
-    Event_SetMessage((script_c + 25));
-    Event_ShowMessage(14, 0);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Event_Wait(70);
-    Event_SetMessage((script_c + 26));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Event_SetMessage((script_c + 27));
-    Event_ShowMessage(ACTOR_MIA, 0);
-    Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 28));
-    Event_ShowMessage(14, 0);
+    Engine_EventSetMessage((script_c + 24));
+    Engine_EventShowMessage(12, 0);
+    Engine_ActorFaceActor(14, 12, 0);
+    Battle_WaitMode0(20);
+    Engine_ActorStartRepeatedMotion(14, 1);
+    Battle_WaitMode0(50);
+    Engine_EventSetMessage((script_c + 25));
+    Engine_EventShowMessage(14, 0);
+    Object_SetModeById(ACTOR_GERALD, 3);
+    Battle_WaitMode0(70);
+    Engine_EventSetMessage((script_c + 26));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Object_SetModeById(ACTOR_MIA, 3);
+    Engine_EventSetMessage((script_c + 27));
+    Engine_EventShowMessage(ACTOR_MIA, 0);
+    Engine_ActorFaceActor(14, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 28));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 90);
-    Event_SetMessage((script_c + 29));
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Engine_EventSetMessage((script_c + 29));
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
     Actor_FaceDirection(14, 0x5000, 0);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 30));
-    Event_ShowMessage(14, 0);
-    Actor_StartRepeatedMotion(12, 1);
-    Event_Wait(60);
-    Event_SetMessage((script_c + 31));
-    Event_ShowMessage(12, 0);
-    Actor_FaceActor(14, 12, 0);
-    Event_Wait(20);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 32));
-    Event_ShowMessage(14, 0);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 30));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorStartRepeatedMotion(12, 1);
+    Battle_WaitMode0(60);
+    Engine_EventSetMessage((script_c + 31));
+    Engine_EventShowMessage(12, 0);
+    Engine_ActorFaceActor(14, 12, 0);
+    Battle_WaitMode0(20);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 32));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x100, 70);
-    Event_SetMessage((script_c + 33));
-    Event_ShowMessage(ACTOR_GERALD, 0);
-    Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(30);
-    Event_SetMessage((script_c + 34));
-    Event_ShowMessage(14, 0);
+    Engine_EventSetMessage((script_c + 33));
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Engine_ActorFaceActor(14, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(30);
+    Engine_EventSetMessage((script_c + 34));
+    Engine_EventShowMessage(14, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x100, 80);
-    Event_SetMessage((script_c + 35));
-    Event_ShowMessage(ACTOR_MIA, 0);
-    Actor_SetAnimationAndWait(14, 3);
-    Event_SetMessage((script_c + 36));
-    Event_ShowMessage(14, 0);
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(30);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Event_Wait(100);
-    Event_SetMessage((script_c + 37));
-    Event_OpenMessage(ACTOR_IVAN, 0);
-    if (Event_ChooseYesNo(0, 0) != 0) {
-        Event_SetMessage((script_c + 38));
-        Event_ShowMessage(14, 0);
+    Engine_EventSetMessage((script_c + 35));
+    Engine_EventShowMessage(ACTOR_MIA, 0);
+    Engine_ActorSetAnimationAndWait(14, 3);
+    Engine_EventSetMessage((script_c + 36));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(30);
+    Object_SetModeById(ACTOR_IVAN, 3);
+    Battle_WaitMode0(100);
+    Engine_EventSetMessage((script_c + 37));
+    Engine_EventOpenMessage(ACTOR_IVAN, 0);
+    if (Engine_EventChooseYesNo(0, 0) != 0) {
+        Engine_EventSetMessage((script_c + 38));
+        Engine_EventShowMessage(14, 0);
     }
-    Event_Wait(30);
-    Actor_SetAnimation(ACTOR_GERALD, 3);
-    Actor_SetAnimation(ACTOR_IVAN, 3);
-    Actor_SetAnimation(ACTOR_MIA, 3);
-    Event_Wait(100);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimation(12, 3);
-    Event_Wait(100);
-    Actor_SetAnimation(ACTOR_GERALD, 2);
+    Battle_WaitMode0(30);
+    Object_SetModeById(ACTOR_GERALD, 3);
+    Object_SetModeById(ACTOR_IVAN, 3);
+    Object_SetModeById(ACTOR_MIA, 3);
+    Battle_WaitMode0(100);
+    Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+    Object_SetModeById(12, 3);
+    Battle_WaitMode0(100);
+    Object_SetModeById(ACTOR_GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(ACTOR_GERALD);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
-    Actor_SetAnimation(ACTOR_IVAN, 2);
+    Object_SetModeById(ACTOR_IVAN, 2);
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(ACTOR_IVAN);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    Actor_SetAnimation(ACTOR_MIA, 2);
+    Object_SetModeById(ACTOR_MIA, 2);
     record = Object_GetById(0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Actor_WaitForMove(ACTOR_MIA);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
-    Event_Wait(30);
+    Battle_WaitMode0(30);
     Actor_SetSpeed(12, 0x6666, 0x3333);
     Actor_WalkTo(12, 0x1d8, 184);
-    Actor_WaitForMove(12);
-    Actor_SetAnimation(12, 1);
+    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Object_SetModeById(12, 1);
     Actor_FaceDirection(12, 0x3000, 0);
-    Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
-    Actor_SetAnimation(14, 3);
-    Event_Wait(20);
-    Actor_FaceActor(14, 13, 0);
-    Event_Wait(20);
-    Event_SetMessage((script_c + 39));
-    Event_ShowMessage(14, 0);
-    Actor_RunRepeatedMotion(13, 2);
-    Event_SetMessage((script_c + 40));
-    Event_ShowMessage(13, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Event_Wait(30);
+    Engine_ActorFaceActor(14, ACTOR_PARTY_LEADER, 0);
+    Object_SetModeById(14, 3);
+    Battle_WaitMode0(20);
+    Engine_ActorFaceActor(14, 13, 0);
+    Battle_WaitMode0(20);
+    Engine_EventSetMessage((script_c + 39));
+    Engine_EventShowMessage(14, 0);
+    Engine_ActorRunRepeatedMotion(13, 2);
+    Engine_EventSetMessage((script_c + 40));
+    Engine_EventShowMessage(13, 0);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+    Battle_WaitMode0(30);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(12, 0x10000, 0x8000);
-    Camera_FollowActor(ACTOR_PARTY_LEADER, 1);
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1e0, 248);
-    Event_Wait(40);
-    Actor_SetSpritePriority(12, 0);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 0);
+    Battle_WaitMode0(40);
+    Engine_ActorSetSpritePriority(12, 0);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
     Actor_WalkTo(12, 0x1e0, 216);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 0);
-    Actor_WaitForMove(12);
-    Actor_FaceActor(12, 14, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(12);
+    Engine_ActorFaceActor(12, 14, 0);
     Actor_FaceDirection(12, 0x3000, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Event_Wait(5);
-    Actor_SetAnimation(12, 3);
-    Event_Wait(100);
-    Actor_SetAnimation(14, 3);
-    Event_Wait(100);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 3);
+    Battle_WaitMode0(5);
+    Object_SetModeById(12, 3);
+    Battle_WaitMode0(100);
+    Object_SetModeById(14, 3);
+    Battle_WaitMode0(100);
     Actor_WalkTo(12, 0x1e0, 248);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1c8, 248);
-    Actor_WaitForMove(12);
+    ObjectMotion_CommitCurrentPositionAndActivate(12);
     Actor_WalkTo(12, 0x1c8, 248);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1c8, 0x168);
-    Actor_WaitForMove(12);
+    ObjectMotion_CommitCurrentPositionAndActivate(12);
     Actor_WalkTo(12, 0x1c8, 0x168);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x160, 0x168);
-    Actor_WaitForMove(12);
+    ObjectMotion_CommitCurrentPositionAndActivate(12);
     Actor_WalkTo(12, 0x160, 0x168);
-    Event_Wait(20);
+    Battle_WaitMode0(20);
     Audio_PlayCue(17);
     gEventWork->start_transition = 0x203;
-    Event_CloseScreen();
-    Event_Wait(1);
-    Event_Wait(210);
-    Event_RequestExit(4);
-    Event_End();
+    Engine_EventCloseScreen();
+    Battle_WaitMode0(1);
+    Battle_WaitMode0(210);
+    Engine_EventRequestExit(4);
+    Engine_EventEnd();
 }
 
 /* The Lunpa fortress: actor 21's line by the day's draw, and the guard who
@@ -2371,42 +2373,42 @@ void FieldScene_SelectActorTwentyOneMessage(void)
 
     switch (gRunpaJoRandomPick) {
     case 0:
-        Event_SetMessage((s32)MsgRunpaHammetGreatMerchant);
-        Event_ShowMessage(21, 0);
+        Engine_EventSetMessage((s32)MsgRunpaHammetGreatMerchant);
+        Engine_EventShowMessage(21, 0);
         break;
     case 1:
-        Event_SetMessage((s32)MsgRunpaZZZ);
-        Event_ShowMessage(21, 0);
+        Engine_EventSetMessage((s32)MsgRunpaZZZ);
+        Engine_EventShowMessage(21, 0);
         break;
     case 2:
-        Event_SetMessage((s32)MsgRunpaDodonpasOrdersAbsolute);
-        Event_ShowMessage(21, 0);
+        Engine_EventSetMessage((s32)MsgRunpaDodonpasOrdersAbsolute);
+        Engine_EventShowMessage(21, 0);
         break;
     case 3:
-        Event_SetMessage((s32)MsgRunpaSighBadCouldnt);
-        Event_ShowMessage(21, 0);
+        Engine_EventSetMessage((s32)MsgRunpaSighBadCouldnt);
+        Engine_EventShowMessage(21, 0);
         break;
     case 4:
-        Event_SetMessage((s32)MsgRunpaStrangeSwearSomeone);
-        Event_ShowMessage(21, 0);
+        Engine_EventSetMessage((s32)MsgRunpaStrangeSwearSomeone);
+        Engine_EventShowMessage(21, 0);
         break;
     case 6:
-        Event_SetMessage((s32)MsgRunpaToldStandGuard);
-        Event_ShowMessage(21, 0);
+        Engine_EventSetMessage((s32)MsgRunpaToldStandGuard);
+        Engine_EventShowMessage(21, 0);
         break;
     case 7:
-        Event_SetMessage((s32)MsgRunpaWhoDisruptingSleep);
-        Event_ShowMessage(21, 0);
+        Engine_EventSetMessage((s32)MsgRunpaWhoDisruptingSleep);
+        Engine_EventShowMessage(21, 0);
         break;
     case 5:
         Actor_FaceDirection(21, 0xd000, 0);
-        Event_Wait(50);
+        Battle_WaitMode0(50);
         Actor_FaceDirection(21, 0xb000, 0);
-        Event_Wait(50);
+        Battle_WaitMode0(50);
         Actor_FaceDirection(21, 0x5000, 0);
-        Event_Wait(50);
-        Event_SetMessage((s32)MsgRunpaTakeCareAnybody);
-        Event_ShowMessage(21, 0);
+        Battle_WaitMode0(50);
+        Engine_EventSetMessage((s32)MsgRunpaTakeCareAnybody);
+        Engine_EventShowMessage(21, 0);
         break;
     }
 }
@@ -2418,20 +2420,20 @@ void FieldScene_RunActorTwentyOneSequence(void)
 
     Actor_ShowEmote(21, 0x101, 30);
     Actor_FaceDirection(21, 0xd000, 0);
-    Event_Wait(50);
+    Battle_WaitMode0(50);
     Actor_FaceDirection(21, 0xb000, 0);
-    Event_Wait(50);
+    Battle_WaitMode0(50);
     Actor_FaceDirection(21, 0x5000, 0);
-    Event_Wait(50);
+    Battle_WaitMode0(50);
     msg = (s32)MsgRunpaLeftGuardHearsSomeone;
-    Event_SetMessage(msg);
-    Event_ShowMessage(21, 0);
-    Actor_SetAnimation(21, 4);
-    Event_Wait(60);
+    Engine_EventSetMessage(msg);
+    Engine_EventShowMessage(21, 0);
+    Object_SetModeById(21, 4);
+    Battle_WaitMode0(60);
     Actor_FaceDirection(21, 0xb000, 0);
-    Event_Wait(40);
-    Event_SetMessage(msg + 1);
-    Event_ShowMessage(21, 0);
+    Battle_WaitMode0(40);
+    Engine_EventSetMessage(msg + 1);
+    Engine_EventShowMessage(21, 0);
 }
 
 /* The Lunpa fortress: actor 25 asking the party not to wake Donpa, the scene
@@ -2443,59 +2445,59 @@ void FieldScene_RunDonpaSleepingSequence(void)
     s32 msg;
     s32 msg2;
 
-    Event_Begin();
+    Engine_EventBegin();
     if (GameFlag_IsSet(0x941) != 0) {
-        Event_SetMessage((s32)MsgRunpaDonpaGrateful);
-        Event_ShowMessage(18, 0);
-        Event_End();
+        Engine_EventSetMessage((s32)MsgRunpaDonpaGrateful);
+        Engine_EventShowMessage(18, 0);
+        Engine_EventEnd();
     } else {
         if (GameFlag_IsSet(0x313) != 0) {
-            Event_SetMessage((s32)MsgRunpaMaybeDodonpasEyes);
-            Event_OpenMessage(25, 0);
-            Event_End();
+            Engine_EventSetMessage((s32)MsgRunpaMaybeDodonpasEyes);
+            Engine_EventOpenMessage(25, 0);
+            Engine_EventEnd();
         } else {
             Actor_ShowEmote(25, 0x102, 30);
-            Actor_FaceActor(25, ACTOR_PARTY_LEADER, 0);
+            Engine_ActorFaceActor(25, ACTOR_PARTY_LEADER, 0);
             msg = (s32)MsgRunpaShhhPleaseDont;
-            Event_SetMessage(msg);
-            Event_ShowMessage(25, 0);
-            Actor_FaceActor(25, 24, 0);
-            Camera_MoveToActor(24, 1);
-            Camera_WaitForMove();
-            Event_Wait(60);
-            Camera_MoveToActor(0, 1);
-            Event_Wait(20);
+            Engine_EventSetMessage(msg);
+            Engine_EventShowMessage(25, 0);
+            Engine_ActorFaceActor(25, 24, 0);
+            Engine_CameraMoveToActor(24, 1);
+            Engine_CameraWaitForMove();
+            Battle_WaitMode0(60);
+            Engine_CameraMoveToActor(0, 1);
+            Battle_WaitMode0(20);
             Actor_ShowEmote(25, 0x105, 60);
-            Event_SetMessage(msg + 1);
-            Event_ShowMessage(25, 0);
+            Engine_EventSetMessage(msg + 1);
+            Engine_EventShowMessage(25, 0);
             Actor_ShowEmote(25, 0x107, 60);
-            Event_SetMessage(msg + 2);
-            Event_ShowMessage(25, 0);
-            Event_Wait(70);
+            Engine_EventSetMessage(msg + 2);
+            Engine_EventShowMessage(25, 0);
+            Battle_WaitMode0(70);
             Actor_ShowEmote(25, 0x100, 60);
-            Actor_FaceActor(25, ACTOR_PARTY_LEADER, 0);
-            Event_SetMessage(msg + 3);
-            Event_OpenMessage(25, 0);
-            if (Event_ChooseYesNo(0, 0) == 0) {
-                Event_SetMessage(msg + 4);
-                Event_OpenMessage(25, 0);
+            Engine_ActorFaceActor(25, ACTOR_PARTY_LEADER, 0);
+            Engine_EventSetMessage(msg + 3);
+            Engine_EventOpenMessage(25, 0);
+            if (Engine_EventChooseYesNo(0, 0) == 0) {
+                Engine_EventSetMessage(msg + 4);
+                Engine_EventOpenMessage(25, 0);
             } else {
-                Event_SetMessage(msg + 5);
-                Event_OpenMessage(25, 0);
+                Engine_EventSetMessage(msg + 5);
+                Engine_EventOpenMessage(25, 0);
             }
-            Event_Wait(60);
+            Battle_WaitMode0(60);
             Actor_ShowEmote(25, 0x105, 60);
             msg2 = (s32)MsgRunpaDonpaKnowsCoddled;
-            Event_SetMessage(msg2);
-            Event_OpenMessage(25, 0);
-            Actor_RunRepeatedMotion(25, 1);
-            Event_SetMessage(msg2 + 1);
-            Event_OpenMessage(25, 0);
-            Actor_SetAnimationAndWait(25, 3);
-            Event_SetMessage(msg2 + 2);
-            Event_OpenMessage(25, 0);
+            Engine_EventSetMessage(msg2);
+            Engine_EventOpenMessage(25, 0);
+            Engine_ActorRunRepeatedMotion(25, 1);
+            Engine_EventSetMessage(msg2 + 1);
+            Engine_EventOpenMessage(25, 0);
+            Engine_ActorSetAnimationAndWait(25, 3);
+            Engine_EventSetMessage(msg2 + 2);
+            Engine_EventOpenMessage(25, 0);
             GameFlag_Set(0x313);
-            Event_End();
+            Engine_EventEnd();
         }
     }
 }
@@ -2503,22 +2505,22 @@ void FieldScene_RunDonpaSleepingSequence(void)
 void SelectActor25SceneVariant(void)
 {
     if (GameFlag_IsSet(0x941)) {
-        Event_SetMessage((s32)MsgRunpaDifficultDonpaRight);
-        Event_ShowMessage(25, 0);
+        Engine_EventSetMessage((s32)MsgRunpaDifficultDonpaRight);
+        Engine_EventShowMessage(25, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaSomeonePunishDodonpa);
-        Event_ShowMessage(25, 0);
+        Engine_EventSetMessage((s32)MsgRunpaSomeonePunishDodonpa);
+        Engine_EventShowMessage(25, 0);
     }
 }
 
 void SelectActor24SceneVariant(void)
 {
     if (GameFlag_IsSet(0x941)) {
-        Event_SetMessage((s32)MsgRunpaFatherStayAngry);
-        Event_ShowMessage(24, 0);
+        Engine_EventSetMessage((s32)MsgRunpaFatherStayAngry);
+        Engine_EventShowMessage(24, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaFatherSorryDodonpa);
-        Event_ShowMessage(24, 0);
+        Engine_EventSetMessage((s32)MsgRunpaFatherSorryDodonpa);
+        Engine_EventShowMessage(24, 0);
     }
 }
 
@@ -2533,8 +2535,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     if (GameFlag_IsSet(2369) != 0) {
         if (GameFlag_IsSet(2382) == 0 && GameFlag_IsSet(788) == 0) {
         sequence_id = (s32)MsgRunpaThankHelpDodonpa;
-        Event_SetMessage(sequence_id);
-        Event_ShowMessage(PRIMARY_ID, 0);
+        Engine_EventSetMessage(sequence_id);
+        Engine_EventShowMessage(PRIMARY_ID, 0);
         Engine_ActorRunRepeatedMotion(PRIMARY_ID, 1);
         Battle_WaitMode0(30);
         Actor_SetSpeed(PRIMARY_ID, 6553, 3276);
@@ -2547,8 +2549,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         Engine_ActorFaceActor(PRIMARY_ID, 0, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(PRIMARY_ID);
         Engine_EventSetMessage(sequence_id + 1);
-        Event_ShowMessage(PRIMARY_ID, 0);
-        Actor_RunRepeatedMotion(PRIMARY_ID, 1);
+        Engine_EventShowMessage(PRIMARY_ID, 0);
+        Engine_ActorRunRepeatedMotion(PRIMARY_ID, 1);
         Engine_ActorFaceActor(DERIVED_ID, PRIMARY_ID, 0);
         Engine_EventSetMessage(sequence_id + 2);
         Engine_EventShowMessage(PRIMARY_ID, 0);
@@ -2560,28 +2562,28 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         ObjectMotion_CommitCurrentPositionAndActivate(DERIVED_ID);
         Engine_ActorFaceDirection(DERIVED_ID, 53248, 0);
         Engine_EventSetMessage(sequence_id + 3);
-        Event_ShowMessage(PRIMARY_ID, 0);
+        Engine_EventShowMessage(PRIMARY_ID, 0);
         Object_SetModeById(PRIMARY_ID, 3);
         Battle_WaitMode0(70);
         ObjectMotion_OffsetPositionAndResetMotion(PRIMARY_ID, 8, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(PRIMARY_ID);
         Object_SetModeById(PRIMARY_ID, 5);
         Engine_EventSetMessage(sequence_id + 4);
-        Event_ShowMessage(PRIMARY_ID, 0);
+        Engine_EventShowMessage(PRIMARY_ID, 0);
         Engine_ActorWalkTo(0, 896, 120);
         ObjectMotion_CommitCurrentPositionAndActivate(0);
         Engine_ActorFaceEachOther(0, DERIVED_ID, 0);
         Battle_WaitMode0(60);
-        Actor_SetAnimation(DERIVED_ID, 3);
+        Object_SetModeById(DERIVED_ID, 3);
         Battle_WaitMode0(30);
         GameFlag_Set(788);
         } else {
-            Event_SetMessage((s32)MsgRunpaWellWorriedDodonpa);
-            Event_ShowMessage(PRIMARY_ID, 0);
+            Engine_EventSetMessage((s32)MsgRunpaWellWorriedDodonpa);
+            Engine_EventShowMessage(PRIMARY_ID, 0);
         }
     } else {
-        Event_SetMessage((s32)MsgRunpaZZZZ);
-        Event_ShowMessage(PRIMARY_ID, 0);
+        Engine_EventSetMessage((s32)MsgRunpaZZZZ);
+        Engine_EventShowMessage(PRIMARY_ID, 0);
     }
 }
 
@@ -2593,30 +2595,30 @@ void ConfigureSceneActor26(void)
 
 void ConfigureSceneActor14(void)
 {
-    Actor_RunRepeatedMotion(14, 2);
-    Event_SetMessage((s32)MsgRunpaOwwwDontHurt);
-    Event_ShowMessage(14, 0);
+    Engine_ActorRunRepeatedMotion(14, 2);
+    Engine_EventSetMessage((s32)MsgRunpaOwwwDontHurt);
+    Engine_EventShowMessage(14, 0);
 }
 
 /* The Lunpa fortress: three actors' lines. */
 void ConfigureSceneActor13(void)
 {
-    Actor_RunRepeatedMotion(13, 2);
-    Event_SetMessage((s32)MsgRunpaRightRightGive);
-    Event_ShowMessage(13, 0);
+    Engine_ActorRunRepeatedMotion(13, 2);
+    Engine_EventSetMessage((s32)MsgRunpaRightRightGive);
+    Engine_EventShowMessage(13, 0);
 }
 
 void ConfigureSceneActor12Variant(void)
 {
-    Actor_RunRepeatedMotion(12, 2);
-    Event_SetMessage((s32)MsgRunpaGuysTougherThought);
-    Event_ShowMessage(12, 0);
+    Engine_ActorRunRepeatedMotion(12, 2);
+    Engine_EventSetMessage((s32)MsgRunpaGuysTougherThought);
+    Engine_EventShowMessage(12, 0);
 }
 
 void ConfigureSceneActor18(void)
 {
-    Event_SetMessage((s32)MsgRunpaKnowWhereDodonpa);
-    Event_AskYesNo(18, 0);
+    Engine_EventSetMessage((s32)MsgRunpaKnowWhereDodonpa);
+    Engine_EventAskYesNo(18, 0);
 }
 
 /* The Lunpa fortress: actor 20's sequence and its end. */
@@ -2628,42 +2630,42 @@ void RunActor20SceneSequence(void)
     s32 msg2;
 
     if (GameFlag_IsSet(0x226) != 0) {
-        Event_SetMessage((s32)MsgRunpaWontTellAnyone);
-        Event_ShowMessage(20, 0);
+        Engine_EventSetMessage((s32)MsgRunpaWontTellAnyone);
+        Engine_EventShowMessage(20, 0);
     } else {
-        Event_Begin();
-        Actor_FaceActor(20, ACTOR_PARTY_LEADER, 0);
+        Engine_EventBegin();
+        Engine_ActorFaceActor(20, ACTOR_PARTY_LEADER, 0);
         if (GameFlag_IsSet(0x227) == 0) {
-            Actor_Jump(20, 4, 0);
-            Actor_Stop(20);
+            Engine_ActorJump(20, 4, 0);
+            Engine_ActorStop(20);
             Object_RefreshSelectorById(20);
-            Event_Wait(20);
+            Battle_WaitMode0(20);
             msg = (s32)MsgRunpaWhWhWho;
-            Event_SetMessage(msg);
-            Event_ShowMessage(20, 0);
+            Engine_EventSetMessage(msg);
+            Engine_EventShowMessage(20, 0);
             Actor_ShowEmote(20, 0x102, 30);
-            Event_SetMessage(msg + 1);
-            Event_ShowMessage(20, 0);
-            Event_Wait(30);
-            Actor_SetAnimation(20, 4);
-            Event_Wait(30);
+            Engine_EventSetMessage(msg + 1);
+            Engine_EventShowMessage(20, 0);
+            Battle_WaitMode0(30);
+            Object_SetModeById(20, 4);
+            Battle_WaitMode0(30);
         }
         msg2 = (s32)MsgRunpaDontLookNearly;
-        Event_SetMessage(msg2);
-        Event_ShowMessage(20, 0);
+        Engine_EventSetMessage(msg2);
+        Engine_EventShowMessage(20, 0);
         Actor_ShowEmote(20, 0x101, 40);
-        Event_SetMessage(msg2 + 1);
-        Event_OpenMessage(20, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage(msg2 + 2);
-            Event_OpenMessage(20, 0);
+        Engine_EventSetMessage(msg2 + 1);
+        Engine_EventOpenMessage(20, 0);
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
+            Engine_EventSetMessage(msg2 + 2);
+            Engine_EventOpenMessage(20, 0);
             GameFlag_Set(0x226);
         } else {
-            Event_SetMessage(msg2 + 3);
-            Event_OpenMessage(20, 0);
+            Engine_EventSetMessage(msg2 + 3);
+            Engine_EventOpenMessage(20, 0);
         }
         GameFlag_Set(0x227);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -2671,13 +2673,13 @@ void FinishActor20SceneSequence(void)
 {
 
     if (GameFlag_IsSet(0x226)) {
-        Event_SetMessage((s32)MsgRunpaMaybeMerchantReason);
-        Event_ShowMessage(20, 0);
+        Engine_EventSetMessage((s32)MsgRunpaMaybeMerchantReason);
+        Engine_EventShowMessage(20, 0);
     } else {
         s16 *q = (s16 *)(((u8*)gEventWork) + 382);
 
         *q = 0;
-        Psynergy_Cancel();
+        Engine_PsynergyCancel();
         RunActor20SceneSequence();
     }
 }
@@ -2691,17 +2693,17 @@ void ConfigureActor13Interaction(void)
 {
     s32 msg = (s32)MsgRunpaWrongTurnOver;
 
-    Event_SetMessage(msg);
-    Event_ShowMessage(0x800d, 0);
+    Engine_EventSetMessage(msg);
+    Engine_EventShowMessage(0x800d, 0);
     if (PartyInventory_FindOwner(234) != -1) {
-        Message_ShowCentered(msg + 2, 1);
+        Engine_MessageShowCentered(msg + 2, 1);
     }
 }
 
 void ConfigureActor13SceneResource(void)
 {
-    Event_SetMessage((s32)MsgRunpaCantBelieveWhen);
-    Event_ShowMessage(13, 0);
+    Engine_EventSetMessage((s32)MsgRunpaCantBelieveWhen);
+    Engine_EventShowMessage(13, 0);
 }
 
 /* The fortress scene start: pick the random guard, then set up each floor.
@@ -2712,7 +2714,7 @@ s32 FieldScene_DispatchActorUpdate(void)
 {
     struct ObjectRuntime *actor;
 
-    gRunpaJoRandomPick = (u32)Random_Next() * 7 >> 16;
+    gRunpaJoRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
     if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo1) {
         Map_SetWorkFlagBits9To11(0xe00);
         FieldScene_InstallSceneTasks();
@@ -2794,9 +2796,9 @@ void FieldScene_InstallSceneTasks(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Value2(Engine_TaskAddCallback, (s32)FieldScene_UpdateActorEighteenInteraction, 3200);
         Engine_TaskAddCallback((s32)TriggerScene41AtVillagePath, 3200);
-        Task_Wait(1);
-        Map_Redraw();
-        Task_Wait(1);
+        WaitFrames(1);
+        Engine_MapRedraw();
+        WaitFrames(1);
         Map_CopyCells(101, 9, 10, 8, 110, 9);
         Map_SetWorkFlagBits9To11(0xe00);
         break;
@@ -2811,12 +2813,12 @@ void FieldScene_InstallSceneTasks(void)
         Map_SetWorkFlagBits9To11(0xe00);
         break;
     }
-    Actor_SetChildValue(18, 1);
-    Actor_SetChildValue(17, 1);
-    Actor_SetChildValue(21, 1);
-    Actor_SetChildValue(12, 1);
-    Actor_SetChildValue(13, 1);
-    Task_Wait(1);
+    Engine_ActorSetChildValue(18, 1);
+    Engine_ActorSetChildValue(17, 1);
+    Engine_ActorSetChildValue(21, 1);
+    Engine_ActorSetChildValue(12, 1);
+    Engine_ActorSetChildValue(13, 1);
+    WaitFrames(1);
 }
 
 void FieldScene_SetupActorsForScene(void)
@@ -2824,9 +2826,9 @@ void FieldScene_SetupActorsForScene(void)
     struct ObjectRuntime *actor;
 
     FieldScene_ActivateTwoActorGroup();
-    Actor_SetChildValue(9, 1);
-    Actor_SetChildValue(10, 1);
-    Actor_SetChildValue(17, 1);
+    Engine_ActorSetChildValue(9, 1);
+    Engine_ActorSetChildValue(10, 1);
+    Engine_ActorSetChildValue(17, 1);
     if (GameFlag_IsSet(0x94c)) {
         Actor_SetPosition(15, 0, 0);
     }
@@ -2846,9 +2848,9 @@ void FieldScene_SetupActorsForScene(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Map_SetWorkFlagBits9To11(0xe00);
         Engine_TaskAddCallback(FieldScene_UpdateActorPairInteraction, 3200);
-        Task_Wait(1);
-        Map_Redraw();
-        Task_Wait(1);
+        WaitFrames(1);
+        Engine_MapRedraw();
+        WaitFrames(1);
         break;
     case 10:
     case 13:
@@ -2857,7 +2859,7 @@ void FieldScene_SetupActorsForScene(void)
     case 24:
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
         Map_SetWorkFlagBits9To11(0xc00);
-        Actor_SetSpriteFlags(Object_GetById(24), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(24), 0);
         if (GameFlag_IsSet(0x314)) {
             Actor_SetPosition(25, 0x3680000, 0x780000);
         }
@@ -2867,9 +2869,9 @@ void FieldScene_SetupActorsForScene(void)
         gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
         Map_SetWorkFlagBits9To11(0xe00);
         Engine_TaskAddCallback(FieldScene_UpdateActorSeventeenInteraction, 3200);
-        Task_Wait(1);
-        Map_Redraw();
-        Task_Wait(1);
+        WaitFrames(1);
+        Engine_MapRedraw();
+        WaitFrames(1);
         break;
     case 11:
     case 12:
@@ -2893,8 +2895,8 @@ void FieldScene_SetupActorsForScene(void)
         break;
     }
     actor = Object_GetById(8);
-    Actor_SetSpriteFlags(Object_GetById(8), 0);
-    Actor_SetSpritePriority(8, 1);
+    Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
+    Engine_ActorSetSpritePriority(8, 1);
     *(s32 *)&actor->unknown_18[0] = 0xc000;
     *(s32 *)&actor->unknown_18[4] = 0xc000;
 }
@@ -2912,7 +2914,7 @@ void FieldScene_RestoreActorsFromFlags(void)
     GameFlag_Set(0x218);
     if (GameFlag_IsSet(0x944)) {
         Actor_SetPosition(8, 0, 0);
-        GameFlag_Clear(0x217);
+        Engine_GameFlagClear(0x217);
     }
     if (GameFlag_IsSet(0x945)) {
         Actor_SetPosition(9, 0, 0);
@@ -2920,7 +2922,7 @@ void FieldScene_RestoreActorsFromFlags(void)
     }
     if (GameFlag_IsSet(0x946)) {
         Actor_SetPosition(10, 0, 0);
-        GameFlag_Clear(0x218);
+        Engine_GameFlagClear(0x218);
     }
     if (GameFlag_IsSet(0x947)) {
         ConfigureInteractionRegionA();
@@ -2928,7 +2930,7 @@ void FieldScene_RestoreActorsFromFlags(void)
     if (GameFlag_IsSet(0x948)) {
         ConfigureInteractionRegionB();
     }
-    Event_Begin();
+    Engine_EventBegin();
     actor = Object_GetById(8);
     if (actor != 0) {
         actor->unknown_23 = 2;
@@ -2943,15 +2945,15 @@ void FieldScene_RestoreActorsFromFlags(void)
     }
     actor = Object_GetById(11);
     if (actor != 0) {
-        Actor_SetSpriteFlags(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
     }
     actor->unknown_23 = 2;
     actor = Object_GetById(12);
     if (actor != 0) {
         actor->unknown_56[3] |= 0x10;
     }
-    Actor_SetSpriteFlags(Object_GetById(11), 0);
-    Event_End();
+    Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
+    Engine_EventEnd();
     Map_SetWorkFlagBits9To11(0xe00);
 }
 

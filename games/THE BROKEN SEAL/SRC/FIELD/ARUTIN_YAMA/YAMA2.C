@@ -64,33 +64,33 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     actor9 = Actor_Get(9);
     actor10 = Actor_Get(10);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Event_Wait(40);
+    Engine_EventWait(40);
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(0x3100000, -1, 0x740000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 6);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 6);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x318, 140);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 100);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
     Audio_PlayCue(183);
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Event_Wait(20);
+    Engine_EventWait(20);
     actor9->scale_x = 0x13333;
     actor9->scale_y = 0x13333;
     actor9->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     actor9->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWithFixedY;
-    Actor_SetAnimation(8, 4);
+    Engine_ActorSetAnimation(8, 4);
     *(s32 *)((u8 *)actor8 + 68) = 0x8000;
     actor8->x.fixed = 0x3120000;
     actor8->y.fixed = 0x200000;
     actor8->z.fixed = 0x5a0000;
     actor8->scale_x = 0x20000;
     actor8->scale_y = 0x20000;
-    Event_Wait(10);
+    Engine_EventWait(10);
     Audio_PlayCue(183);
     Work_SetValuesIfNonNegative(0x40000, 0x20000, 0x10000);
-    Event_Wait(20);
+    Engine_EventWait(20);
     actor10->x.fixed += 0xe0000;
     actor10->y.fixed += -0x80000;
     actor10->sprite->rotation = 0xc000;
@@ -99,12 +99,12 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 80);
     Audio_PlayCue(55);
     Work_SetValuesIfNonNegative(0x10000, 0x30000, 0x10000);
-    Actor_SetSpritePriority(8, 0);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 0);
+    Engine_ActorSetSpritePriority(8, 0);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
     *(u16 *)((u8 *)actor0 + 100) = 0;
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, ArutinYama_LeaderRideScript);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, ArutinYama_LeaderRideScript);
     if (GameFlag_IsSet(0x205) != 0) {
         Actor_SetPosition(ACTOR_GERALD, 0x36e0000, 0x2100000);
         actor = Actor_Get(ACTOR_GERALD);
@@ -112,19 +112,19 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     }
     Camera_SetSpeed(0x14000, 0x2800);
     Camera_MoveTo(0x3120000, -1, 0x22c0000, 1);
-    Event_Wait(a0);
-    Actor_SetSpritePriority(8, 1);
+    Engine_EventWait(a0);
+    Engine_ActorSetSpritePriority(8, 1);
     Actor_SetSpeed(8, 0x195c2, 0xcae1);
     *(u16 *)((u8 *)actor8 + 100) = 0;
-    Actor_EnableActionCallback(8, ArutinYama_LogRideScript);
+    Engine_ActorEnableActionCallback(8, ArutinYama_LogRideScript);
     do {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     } while (*(s16 *)((u8 *)actor0 + 100) == 0);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0);
     do {
-        Task_Wait(1);
+        Engine_TaskWait(1);
     } while (*(s16 *)((u8 *)actor8 + 100) == 0);
-    Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
@@ -139,19 +139,19 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Actor_MoveToAndWait(8, 0x312, 0x25c);
     Actor_SetSpeed(8, 0x33333, 0x19999);
     Actor_SetDestination(8, 0x312, 0x284);
-    Event_Wait(15);
+    Engine_EventWait(15);
     Work_SetValuesIfNonNegative(0x50000, 0x70000, 0x10000);
     Map_CopyCellsTo(25, 36, 43, 36, 11, 9);
     Map_CopyCellAttributes(25, 35, 10, 5, 43, 35);
     Actor_SetPosition(8, 0, 0);
     Actor_SetPosition(9, 0, 0);
     Engine_TaskAddCallback(FieldScene_RunScene3a4SequenceG, 0xc80);
-    Event_Wait(80);
+    Engine_EventWait(80);
     Engine_TaskRemoveCallback(FieldScene_RunScene3a4SequenceG);
-    Event_Wait(60);
+    Engine_EventWait(60);
     Audio_PlayCue(17);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Event_Wait(120);
+    Engine_EventWait(120);
     if (GameFlag_IsSet(0x205) != 0) {
         Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
         Actor_WalkTo(ACTOR_GERALD, 0x338, 0x22e);
@@ -159,28 +159,28 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x356, 0x248);
     if (GameFlag_IsSet(0x205) != 0) {
-        Actor_SetAnimation(ACTOR_GERALD, 1);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 1);
         Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     }
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 40);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Camera_MoveTo(0x3140000, -0x400000, 0x2620000, 1);
-    Camera_WaitForMove();
+    Engine_CameraWaitForMove();
     Audio_PlayCue(148);
-    Event_Wait(240);
+    Engine_EventWait(240);
     if (GameFlag_IsSet(0x205) != 0) {
         Camera_SetSpeed(0x40000, 0x8000);
         Camera_MoveTo(0x3560000, 0, 0x2480000, 1);
-        Camera_WaitForMove();
+        Engine_CameraWaitForMove();
         Actor_WalkToAndWait(ACTOR_GERALD, 0x348, 0x228);
         Actor_WalkToAndWait(ACTOR_GERALD, 0x356, 0x232);
-        Actor_SetAnimation(ACTOR_GERALD, 2);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 2);
         actor = Actor_Get(ACTOR_PARTY_LEADER);
         if (actor != NULL) {
             Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
         }
-        Actor_WaitForMove(ACTOR_GERALD);
+        Engine_ActorWaitForMove(ACTOR_GERALD);
         Actor_SetPosition(ACTOR_GERALD, 0, 0);
     }
     Audio_PlayCueFromEventWork();
@@ -195,7 +195,7 @@ void FieldScene_RunFallingRocksWarning(void)
     u8 *record;
     s32 msg;
 
-    Event_Begin();
+    Engine_EventBegin();
     msg = (s32)MsgArutinWatchFallingRocks;
     Engine_MessageShowCentered(msg, 1);
     if (GameFlag_IsSet(0x908) == 0 && GameFlag_IsSet(0xf14) == 0) {
@@ -211,21 +211,21 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
         Actor_WalkToAndWait(ACTOR_GERALD, 0x320, 140);
         Actor_FaceDirection(ACTOR_GERALD, 0xc000, 20);
-        Event_SetMessage(msg + 1);
-        Actor_SetAnimation(ACTOR_GERALD, 4);
-        Event_Wait(20);
+        Engine_EventSetMessage(msg + 1);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 4);
+        Engine_EventWait(20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-        Actor_Jump(ACTOR_GERALD, 6, 0);
+        Engine_ActorJump(ACTOR_GERALD, 6, 0);
         Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
         ((u8 *)Object_GetById(ACTOR_GERALD))[90] &= 254;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 110);
-        Event_Wait(1);
+        Engine_EventWait(1);
         ((u8 *)Object_GetById(ACTOR_GERALD))[90] |= 1;
         Audio_PlayCue(161);
         Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
         ((u8 *)Object_GetById(ACTOR_GERALD))[90] &= 254;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 120);
-        Event_Wait(1);
+        Engine_EventWait(1);
         {
             u8 *record = (u8 *)Actor_Get(ACTOR_GERALD);
             /* FAKEMATCH: a result temporary, not a compound or-assign: the
@@ -236,10 +236,10 @@ void FieldScene_RunFallingRocksWarning(void)
             record[90] = merged;
         }
         Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-        Event_Wait(80);
+        Engine_EventWait(80);
         Audio_PlayCue(141);
         Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-        Event_Wait(40);
+        Engine_EventWait(40);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
@@ -252,10 +252,10 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_FaceDirection(ACTOR_GERALD, 0xc000, 40);
         Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);
         Actor_FaceDirection(ACTOR_GERALD, 0x4000, 20);
-        Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
+        Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         Actor_SetSpeed(ACTOR_GERALD, 0x28000, 0x14000);
-        Actor_SetAnimation(ACTOR_GERALD, 5);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 5);
         Actor_MoveToAndWait(ACTOR_GERALD, 0x31c, 138);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
         Actor_MoveToAndWait(ACTOR_GERALD, 0x324, 140);
@@ -266,12 +266,12 @@ void FieldScene_RunFallingRocksWarning(void)
         Actor_MoveToAndWait(ACTOR_GERALD, 0x312, 198);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
         Actor_MoveToAndWait(ACTOR_GERALD, 0x312, 246);
-        Actor_SetAnimation(ACTOR_GERALD, 1);
+        Engine_ActorSetAnimation(ACTOR_GERALD, 1);
         Actor_SetPosition(ACTOR_GERALD, 0, 0);
-        Event_Wait(40);
+        Engine_EventWait(40);
         FieldScene_RunSharedSetPiece(10);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* What each of Altin Peak's areas answers; the first area answers

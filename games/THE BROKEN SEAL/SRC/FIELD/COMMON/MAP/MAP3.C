@@ -1,9 +1,9 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "MAP_RENDER_WORK.H"
 #include "RAM_BUFFER.H"
 
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 void MapAnimation_Update(void);
 
 /* One of the sixteen tile-animation channels in the map state. */
@@ -82,9 +82,7 @@ void MapAnimation_Update(void)
     }
 }
 
-s32 Scheduler_EnableCallbacks(u32 value);
 
-s32 Scheduler_DisableCallbacks(u32 value);
 
 void Map_ClearLayerEntryFlag(u32 no)
 {
@@ -135,7 +133,7 @@ void MapAnimation_StartChannels(const u16 *script)
         command = *script++;
     }
     if (count != 0)
-        Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)(MapAnimation_Update), 0xc80);
 }
 
 void Map_EnableUpdateCallback(void)

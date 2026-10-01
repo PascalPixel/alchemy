@@ -1528,10 +1528,10 @@ UiText_DecodeMessage:
 	.section .rom.0003cbd2, "ax"
 	.incbin "baserom.gba", 0x0003cbd2, 0x00000002
 	.section .rom.0003cbd4, "ax"
-	.global Func_0803cb1c
-	.type Func_0803cb1c, %function
+	.global UiWork_DrainPending
+	.type UiWork_DrainPending, %function
 	.thumb_func
-Func_0803cb1c:
+UiWork_DrainPending:
 	.incbin "baserom.gba", 0x0003cbd4, 0x0000018c
 	.section .rom.0003cd60, "ax"
 	.global Func_0803cca8

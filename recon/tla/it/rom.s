@@ -1348,10 +1348,10 @@ UiText_DecodeMessage:
 	.section .rom.0003cb72, "ax"
 	.incbin "baserom.gba", 0x0003cb72, 0x00000002
 	.section .rom.0003cb74, "ax"
-	.global Func_0803cb1c
-	.type Func_0803cb1c, %function
+	.global UiWork_DrainPending
+	.type UiWork_DrainPending, %function
 	.thumb_func
-Func_0803cb1c:
+UiWork_DrainPending:
 	.incbin "baserom.gba", 0x0003cb74, 0x0000018c
 	.section .rom.0003cd00, "ax"
 	.global Func_0803cca8

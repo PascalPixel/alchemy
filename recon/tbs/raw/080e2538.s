@@ -158,7 +158,7 @@ Unnamed_080e2538:
 	str r3, [r5, #4]
 	bl Random16
 	movs r1, #96
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	subs r0, #48
 	lsls r0, r0, #10
 	str r0, [r5, #12]
@@ -259,14 +259,14 @@ Unnamed_080e2538:
 	adds r7, r2, r0
 	movs r1, #5
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_080e28dc
 	adds r5, r5, r0
 	lsls r3, r5, #1

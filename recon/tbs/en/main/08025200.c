@@ -93,7 +93,7 @@ void *Item_GetData(s32 entry);
 void Runtime_SetMainState19(void);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
-s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
+s32 __divsi3(s32 dividend, s32 divisor);
 void Vram_CopyTile(s32 src, s32 dst);
 void Ui_SetRectHighlight(s32 col, s32 row, s32 width, s32 height, s32 fill);
 void UiText_CopyMessageString(s32 id, u8 *buf, s32 size);
@@ -227,9 +227,9 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
             }
 
             if (cnt > 5) {
-                for (i = 0; i < (n = FixedPoint_Ratio(cnt + 4, 5)); i++) {
+                for (i = 0; i < (n = __divsi3(cnt + 4, 5)); i++) {
                     tile = i + 0xF301;
-                    if (i == FixedPoint_Ratio(page, 5)) {
+                    if (i == __divsi3(page, 5)) {
                         tile = i + 0xF30B;
                     }
                     UiWindow_SetTilemapEntry(win_list, tile,
@@ -245,20 +245,20 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
         }
 
         if (cnt > 5) {
-            for (i = 0; i < FixedPoint_Ratio(cnt + 4, 5); i++) {
+            for (i = 0; i < __divsi3(cnt + 4, 5); i++) {
                 tile = i + 0xF301;
                 if ((VIEW_FLAGS & 15) <= 11 &&
-                    i == FixedPoint_Ratio(page, 5)) {
+                    i == __divsi3(page, 5)) {
                     tile = i + 0xF30B;
                 }
                 UiWindow_SetTilemapEntry(
                     win_list, tile,
-                    (win_list->width - FixedPoint_Ratio(cnt + 4, 5)) + i - 2,
+                    (win_list->width - __divsi3(cnt + 4, 5)) + i - 2,
                     -1, 0);
             }
             UiWindow_SetTilemapEntry(
                 win_list, 0xF334,
-                win_list->width - FixedPoint_Ratio(cnt + 4, 5) - 3, -1, 0);
+                win_list->width - __divsi3(cnt + 4, 5) - 3, -1, 0);
             UiWindow_SetTilemapEntry(win_list, 0xF335, win_list->width - 2,
                                      -1, 0);
             work[0xEA3] |= (u8)(2 << ((u32)(win_list->row - 1) >> 2));
@@ -337,7 +337,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
                 Audio_PlayCue(111);
                 pos--;
                 if (pos < 0) {
-                    if (page == FixedPoint_Ratio(cnt - 1, 5) * 5) {
+                    if (page == __divsi3(cnt - 1, 5) * 5) {
                         pos = (cnt - page) - 1;
                     } else {
                         pos = 4;
@@ -357,7 +357,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
                 } else {
                     page = page + 5;
                     pos = keep_pos;
-                    if (page == FixedPoint_Ratio(cnt - 1, 5) * 5) {
+                    if (page == __divsi3(cnt - 1, 5) * 5) {
                         pos = (cnt - page) - 1;
                         if (pos > keep_pos) {
                             pos = keep_pos;
@@ -373,7 +373,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
                     page = page - 5;
                     pos2 = pos * 2;
                 } else {
-                    page = FixedPoint_Ratio(cnt - 1, 5) * 5;
+                    page = __divsi3(cnt - 1, 5) * 5;
                     pos = keep_pos;
                     if (page != 0) {
                         pos = (cnt - page) - 1;

@@ -191,7 +191,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan)
                     BattlePres_SetupTransitionAtPairMidpoint(
                         first,
                         second,
-                        Math_Div(index * 30, divisor) + 100);
+                        index * 30 / divisor + 100);
                 }
                 WaitFrames(1);
             }

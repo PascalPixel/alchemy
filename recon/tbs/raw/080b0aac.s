@@ -88,7 +88,7 @@ Shop_SelBuy:
 	movs r1, #7
 	adds r0, r7, #0
 	mov r11, r2
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	lsls r1, r1, #5
 	ldr r0, [sp, #28]
@@ -141,7 +141,7 @@ Shop_SelBuy:
 	mov r8, r7
 	subs r7, #1
 	adds r0, r7, r1
-	bl Math_Mod
+	bl __modsi3
 	adds r7, r0, #0
 	cmp r8, r7
 	beq .L_080b0be2
@@ -160,7 +160,7 @@ Shop_SelBuy:
 	mov r8, r7
 	adds r7, #1
 	adds r0, r7, r1
-	bl Math_Mod
+	bl __modsi3
 	adds r7, r0, #0
 	cmp r8, r7
 	beq .L_080b0c0a
@@ -191,7 +191,7 @@ Shop_SelBuy:
 	mov r0, r9
 	adds r0, #6
 	movs r1, #7
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #3
 	adds r5, r7, #7
 	subs r3, r3, r0
@@ -300,7 +300,7 @@ Shop_SelBuy:
 	movs r0, #0
 	mov r11, r0
 	adds r0, r7, r1
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #219
 	adds r7, r0, #0
 	lsls r1, r7, #1

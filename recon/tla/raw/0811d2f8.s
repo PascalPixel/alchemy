@@ -88,7 +88,7 @@ Func_0811d2f8:
 	ldr r0, [r3]
 	lsls r0, r0, #4
 	adds r0, #19
-	bl Math_DivU
+	bl __udivsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #2
@@ -123,7 +123,7 @@ Func_0811d2f8:
 	adds r0, #19
 	movs r1, #20
 	mov r8, r3
-	bl Math_DivU
+	bl __udivsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	lsls r3, r3, #2

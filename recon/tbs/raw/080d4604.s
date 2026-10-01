@@ -611,7 +611,7 @@ BattleFx_RunSparkGroups:
 	cmp r0, #17
 	bhi .L_080d4ade
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, .L_080d4cc8
 	ldrb r1, [r2, r0]
 	movs r0, #32
@@ -722,7 +722,7 @@ BattleFx_RunSparkGroups:
 	movs r1, #5
 	adds r0, r3, #0
 	mov r8, r2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, #1
 	mov r2, r10
 	movs r4, #1

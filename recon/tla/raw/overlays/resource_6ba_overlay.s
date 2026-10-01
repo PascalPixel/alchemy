@@ -1213,7 +1213,7 @@ Func_02000848:
 	adds r0, r6, r2
 .L_02008a18:
 	lsls r1, r1, #1
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r6, r0, #0
 	movs r0, #128
 	lsls r0, r0, #1
@@ -1240,7 +1240,7 @@ Func_02000848:
 	adds r0, r6, r3
 .L_02008a4c:
 	lsls r1, r1, #1
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r6, r0, #0
 	movs r0, #128
 	lsls r0, r0, #1

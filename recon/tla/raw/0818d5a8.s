@@ -363,18 +363,18 @@ Func_0818d5a8:
 	lsls r0, r3, #4
 	subs r0, r0, r3
 	lsls r0, r0, #2
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r5, #8]
 	movs r1, #16
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [sp, #36]
 	ldr r1, [sp, #40]
 	ldr r3, [r5, #12]
 	ldr r0, [r1, #12]
 	movs r1, #16
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [sp, #32]
 	mov r0, r9
 	bl Object_ResetMotion

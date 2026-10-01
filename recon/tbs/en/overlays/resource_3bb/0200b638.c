@@ -65,7 +65,7 @@ void Engine_VramLoad(s32 slot, s32 size, u8 *source);
 s32 Resource_ActivateEntry(u32 slot);
 void Runtime_PushSlotEntry(struct OamEntry *entry, s32 priority);
 struct GaugeActor *Engine_ActorLookup(s32 actor);
-s32 Engine_MathDivide(s32 dividend, s32 divisor);
+s32 __divsi3(s32 dividend, s32 divisor);
 
 void Korosseo_DrawGauge(void)
 {
@@ -136,8 +136,8 @@ void Korosseo_DrawGauge(void)
     if ((gFrameCount & 15) > 4) {
         actor = Engine_ActorLookup(gauge->player);
         if (actor != 0) {
-            x = Engine_MathDivide(actor->x - gauge->centre_x, 0xe0000) + 112;
-            y = (Engine_MathDivide(actor->z - gauge->centre_z, 0xe0000) + gauge->level * 6 - 4) & 255;
+            x = __divsi3(actor->x - gauge->centre_x, 0xe0000) + 112;
+            y = (__divsi3(actor->z - gauge->centre_z, 0xe0000) + gauge->level * 6 - 4) & 255;
             *dst++ = 0;
             *dst++ = y | (x << 16) | 0x40000000;
             *dst++ = (tile + 12) | 0xe400;
@@ -145,8 +145,8 @@ void Korosseo_DrawGauge(void)
         }
         actor = Engine_ActorLookup(gauge->rival);
         if (actor != 0) {
-            x = Engine_MathDivide(actor->x - gauge->centre_x, 0xe0000) + 112;
-            y = (Engine_MathDivide(actor->z - gauge->centre_z, 0xe0000) + gauge->level * 6 - 4) & 255;
+            x = __divsi3(actor->x - gauge->centre_x, 0xe0000) + 112;
+            y = (__divsi3(actor->z - gauge->centre_z, 0xe0000) + gauge->level * 6 - 4) & 255;
             *dst++ = 0;
             *dst++ = y | (x << 16) | 0x40000000;
             *dst = (tile + 8) | 0xe400;

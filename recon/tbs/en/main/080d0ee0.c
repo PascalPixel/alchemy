@@ -134,12 +134,12 @@ void Region_080d0ee0(struct BattleEffectArgument *efx)
         q->y = src->y + 0x280000;
         q->z = src->z;
         if (k == 0) {
-            q->velocity_x = Math_Div(target->x - q->x, 12);
+            q->velocity_x = __divsi3(target->x - q->x, 12);
         } else {
-            q->velocity_x = Math_Div(target->x * 2 - q->x, 12);
+            q->velocity_x = __divsi3(target->x * 2 - q->x, 12);
         }
-        q->velocity_y = Math_Div(target->y - q->y + 0x280000, 12);
-        q->velocity_z = Math_Div(target->z - q->z, 12);
+        q->velocity_y = __divsi3(target->y - q->y + 0x280000, 12);
+        q->velocity_z = __divsi3(target->z - q->z, 12);
         q->variant = 0;
     }
 
@@ -205,7 +205,7 @@ void Region_080d0ee0(struct BattleEffectArgument *efx)
                     struct EffectStep *a = &TRAIL[idx + m];
                     struct EffectStep *b;
                     m++;
-                    b = &TRAIL[idx + Math_Mod(m, 10)];
+                    b = &TRAIL[idx + __modsi3(m, 10)];
                     for (s = 0; s != 16; s++) {
                         s32 x = a->velocity_x + (b->velocity_x - a->velocity_x) * s / 16;
                         s32 y = a->velocity_y + (b->velocity_y - a->velocity_y) * s / 16;

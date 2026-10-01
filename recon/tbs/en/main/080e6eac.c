@@ -14,7 +14,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void Audio_PlayCue(s32 id);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 id);
 void BattleFx_PlaceFormationObjects(void *object, s32 a, s32 b);
@@ -137,7 +137,7 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
             u8 w;
             u8 h;
 
-            idx = Math_Div(frame - 8, 5);
+            idx = __divsi3(frame - 8, 5);
             if (idx < 0) {
                 idx = 0;
             }
@@ -231,7 +231,7 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
                     EffectStep_AdvanceWithGravity2D(record_cursor, 64, 0);
                     ((DrawRectangleFn)rect0)(
                         canvas,
-                        (u8 *)work + 0x59D8 + Math_Div(age, 7) * 0x120,
+                        (u8 *)work + 0x59D8 + __divsi3(age, 7) * 0x120,
                         M2C_FIELD(record_cursor, s16 *, 2) - 6,
                         M2C_FIELD(record_cursor, s16 *, 6) - 12, 12, 24);
                 }

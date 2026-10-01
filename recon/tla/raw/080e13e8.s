@@ -13,7 +13,7 @@ Func_080e13e8:
 	beq .L_080e140a
 	movs r1, #6
 	lsrs r0, r0, #1
-	bl Math_ModU
+	bl __umodsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Animation_ApplyChildValuesFar

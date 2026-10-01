@@ -3,8 +3,7 @@
  * that overlay's veneers and tables). Both sit just before RING_SETUP.o, so
  * once exact the function belongs at the head of
  * FIELD/SORU_STAR/RING_SETUP.C (two overlays, 1,504 bytes); it needs
- * __udivsi3 bound in resource_380.ld (IwramUnsignedDivideEntry) and
- * resource_381.ld (IwramUnsignedDivide).
+ * the overlays' __udivsi3 import stubs.
  * 2026-10-01 (☀️ matcher 1): first draft, written from the listing; 752 of
  * 752 bytes, permuter score 1630 (permute runs reached 1347 with temporary
  * shuffles that are not kept). Every block, call, table access (the drift

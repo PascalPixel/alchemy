@@ -24,10 +24,10 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     if ((s32)(value + 1) > limit) {
         value = limit - 1;
     }
-    quotient = Math_Div(value, 5);
-    remainder = Math_Mod(value, 5);
-    groups = Math_Div(limit, 5);
-    if (Math_Mod(limit, 5) != 0) {
+    quotient = __divsi3(value, 5);
+    remainder = __modsi3(value, 5);
+    groups = __divsi3(limit, 5);
+    if (__modsi3(limit, 5) != 0) {
         groups++;
     }
     result->owner_state = encoded;

@@ -176,7 +176,7 @@ Event_SpawnObjectTable:
 	beq .L_0808b556
 	bl Random16
 	movs r1, #30
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	mov r3, r8
 	adds r3, #36
 	strb r0, [r3]

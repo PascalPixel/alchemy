@@ -66,7 +66,6 @@ struct MapShake {
 extern u8 *gMapWork;
 extern u32 gFrameCount;
 void QueueIoWriteDelay2(u32 address, s32 value);
-s32 Engine_MathRemainder(s32 value, s32 divisor);
 void Engine_MapRenderWaitForValues(void);
 
 void KuupuappuDou_RunRumble(void);
@@ -622,7 +621,7 @@ void KuupuappuDou_RunRumble(void)
     do {
         QueueIoWriteDelay2(0x4000052, top | (eva << 5) | evb);
         Event_Wait(1);
-        if (Engine_MathRemainder(frames, 20) == 0) {
+        if (frames % 20 == 0) {
             evb--;
             eva--;
         }

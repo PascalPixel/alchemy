@@ -25,7 +25,6 @@ s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
-s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080b0038(void *object, s32 x, s32 y);
 
 extern volatile u32 Data_03001c94;
@@ -42,8 +41,6 @@ extern u8 Data_080367d6[];
 void OptionMenu_InitializeWork(void);
 void *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
-s32 Math_Mod(s32, s32);
-s32 Math_Div(s32, s32);
 void UiIcon_PrepareObjectFar(struct RenderOutput *);
 void RenderResource_LoadFrame(s32 frame, s32 index, s32 dim);
 void Shop_SetCursorFar(void *cursor, s32 x, s32 y, s32 mode);
@@ -126,7 +123,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[0].output = out;
         x = win->x * 8 + OPTION_SLIDER_X;
-        x += Math_Div(work->option[0] * 60, work->option_count[0]);
+        x += work->option[0] * 60 / work->option_count[0];
         y = win->y * 8 + 4;
         Func_080b0038(&work->marker[0], x, y);
     }
@@ -138,7 +135,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
         ((u8 *)&out->packed)[1] |= 32;
         work->marker[1].output = out;
         x = win->x * 8 + OPTION_SLIDER_X;
-        x += Math_Div(work->option[1] * 60, work->option_count[1]);
+        x += work->option[1] * 60 / work->option_count[1];
         y = win->y * 8 + 20;
         Func_080b0038(&work->marker[1], x, y);
     }
@@ -193,8 +190,8 @@ s32 Menu_RunWorkspaceOptions(void)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            page = Math_Mod(page + 5, 5);
-            work->option[page] = Math_Mod(work->option[page] + work->option_count[page], work->option_count[page]);
+            page = (page + 5) % 5;
+            work->option[page] = (work->option[page] + work->option_count[page]) % work->option_count[page];
             work->page = page;
             if (Data_03001ca0 != 0)
                 work->option[4] = 0;
@@ -228,11 +225,11 @@ s32 Menu_RunWorkspaceOptions(void)
             }
 
             x = icon->x * 8 + OPTION_SLIDER_X;
-            x += Math_Div(*pA * 60, work->option_count[0]);
+            x += (*pA * 60) / work->option_count[0];
             y = icon->y * 8 + 4;
             Shop_SetCursorFar(&work->marker[0], x, y, 1);
             x = icon->x * 8 + OPTION_SLIDER_X;
-            x += Math_Div(*pB * 60, work->option_count[1]);
+            x += (*pB * 60) / work->option_count[1];
             y = icon->y * 8 + 20;
             Shop_SetCursorFar(&work->marker[1], x, y, 1);
 

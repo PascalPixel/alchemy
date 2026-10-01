@@ -197,7 +197,7 @@ Func_0818c7b8:
 	mov r0, r9
 	subs r0, #8
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	mov r2, r11
 	negs r3, r2
 	orrs r3, r2

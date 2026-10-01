@@ -455,42 +455,42 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r2, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldrb r2, [r5, #9]
 	ldr r3, [r6, #4]
 	str r0, [r6]
 	movs r1, #10
 	adds r0, r2, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldrb r2, [r5, #10]
 	ldr r3, [r6, #8]
 	str r0, [r6, #4]
 	movs r1, #10
 	adds r0, r2, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldrb r2, [r5, #11]
 	ldr r3, [r6, #12]
 	str r0, [r6, #8]
 	movs r1, #10
 	adds r0, r2, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldrb r2, [r5, #12]
 	ldr r3, [r6, #16]
 	str r0, [r6, #12]
 	movs r1, #10
 	adds r0, r2, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldrb r2, [r5, #13]
 	ldr r3, [r6, #24]
 	str r0, [r6, #16]
 	movs r1, #10
 	adds r0, r2, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #24]
 	movs r5, #0
 .L_080ad7c6:
@@ -542,7 +542,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6]
 	b .L_080ad8c0
 .L_080ad83a:
@@ -551,7 +551,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #32]
 	b .L_080ad8c0
 .L_080ad84c:
@@ -560,7 +560,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #4]
 	b .L_080ad8c0
 .L_080ad85e:
@@ -569,7 +569,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #36]
 	b .L_080ad8c0
 .L_080ad870:
@@ -578,7 +578,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #8]
 	b .L_080ad8c0
 .L_080ad882:
@@ -587,7 +587,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #12]
 	b .L_080ad8c0
 .L_080ad894:
@@ -596,7 +596,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #16]
 	b .L_080ad8c0
 	.2byte 0x0000
@@ -610,7 +610,7 @@ Owner_RecalculateStats:
 	movs r1, #10
 	adds r0, r3, #0
 	muls r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #24]
 .L_080ad8c0:
 	movs r1, #1

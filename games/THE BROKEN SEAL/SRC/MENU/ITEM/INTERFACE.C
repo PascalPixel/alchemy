@@ -100,7 +100,7 @@ void ItemMenu_HidePageIcons(void)
     do {
         struct InventoryMenuIcon *icon = *icon_slot++;
 
-        if (icon != 0 && Math_Mod(slot, 5) == 0) {
+        if (icon != 0 && slot % 5 == 0) {
             icon->state = hidden_state;
         }
         slot++;

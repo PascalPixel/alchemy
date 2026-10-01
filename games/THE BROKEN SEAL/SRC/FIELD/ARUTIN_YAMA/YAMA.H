@@ -48,7 +48,6 @@ extern s32 ArutinYama_LeafOrigin[3];
 
 /* Main-image code the import veneers reach. */
 s32 ArcTan2(s32, s32);
-s32 IwramUnsignedRemainderEntry();
 void Runtime_SetIrqHandler();
 void SetMapCellCollision();
 s32 Object_SetActionCallbackAndRefreshById();

@@ -23,11 +23,11 @@ Func_080d2b4c:
 	adds r0, r6, #0
 	movs r3, #255
 	ands r7, r3
-	bl Math_DivU
+	bl __udivsi3
 	movs r1, #20
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl Math_ModU
+	bl __umodsi3
 	cmp r0, #19
 	bne .L_080d2b98
 	movs r1, #200

@@ -213,7 +213,7 @@ Func_0817d174:
 	bl Random16
 	movs r1, #200
 	lsls r1, r1, #1
-	bl Math_ModU
+	bl __umodsi3
 	subs r0, #128
 	lsls r0, r0, #9
 	str r0, [r6, #16]
@@ -273,7 +273,7 @@ Func_0817d174:
 	ldr r2, [sp, #52]
 	mov r0, r9
 	ldr r1, [r2, #20]
-	bl Math_Mod
+	bl __modsi3
 	lsls r3, r0, #1
 	str r3, [sp, #28]
 	ldr r7, [sp, #52]

@@ -91,7 +91,7 @@ Func_0815b68c:
 	adds r3, r7, r2
 	movs r1, #7
 	ldr r6, [r3]
-	bl Math_Div
+	bl __divsi3
 	adds r1, r0, #0
 	cmp r0, #0
 	bge .L_0815b744

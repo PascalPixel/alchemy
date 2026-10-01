@@ -272,14 +272,14 @@ Unnamed_080d3c80:
 .L_080d3e8a:
 	movs r1, #5
 	mov r0, r10
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	movs r2, #4
 	mov r3, r10
 	adds r6, r7, #0

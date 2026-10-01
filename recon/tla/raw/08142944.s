@@ -404,7 +404,7 @@ Func_08142944:
 	cmp r0, #17
 	bhi .L_08142cac
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	ldr r2, [sp, #48]
 	adds r1, r0, #0
 	lsls r1, r1, #11

@@ -108,7 +108,7 @@ void Runtime_PushSlotEntry(union MenuSprite *entry, s32 slot);
 void Resource_ResetEntry(s32 handle);
 s32 Resource_LoadIntoFreeSlot(s32 kind);
 s32 Resource_GetBuffer(s32 handle, s32 source);
-s32 Math_Div(s32 dividend, s32 divisor);
+s32 __divsi3(s32 dividend, s32 divisor);
 struct UiWindowWork *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
 void UiWork_Finalize(struct UiWindowWork *window, s32 release);
 void RenderOutput_RedrawSavedRect(struct UiWindowWork *window);
@@ -270,9 +270,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
             if (count > PAGE_ROWS) {
                 i = 0;
-                while (i < (pages = Math_Div(count + 4, PAGE_ROWS))) {
+                while (i < (pages = __divsi3(count + 4, PAGE_ROWS))) {
                     tile = i + 0xf301;
-                    if (i == Math_Div(page, PAGE_ROWS)) {
+                    if (i == __divsi3(page, PAGE_ROWS)) {
                         tile = i + 0xf30b;
                     }
                     UiWindow_SetTilemapEntry(
@@ -293,17 +293,17 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
         if (count > PAGE_ROWS) {
             i = 0;
-            while (i < (pages = Math_Div(count + 4, PAGE_ROWS))) {
+            while (i < (pages = __divsi3(count + 4, PAGE_ROWS))) {
                 tile = i + 0xf301;
                 if ((gFrameCount & 15) <= 11) {
-                    if (i == Math_Div(page, PAGE_ROWS)) {
+                    if (i == __divsi3(page, PAGE_ROWS)) {
                         tile = i + 0xf30b;
                     }
                 }
                 UiWindow_SetTilemapEntry(
                     window,
                     tile,
-                    window->width - Math_Div(count + 4, PAGE_ROWS) + i - 2,
+                    window->width - __divsi3(count + 4, PAGE_ROWS) + i - 2,
                     -1,
                     0);
                 i++;
@@ -366,7 +366,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 Audio_PlayCue(111);
                 row--;
                 if (row < 0) {
-                    if (page == Math_Div(count - 1, PAGE_ROWS) * PAGE_ROWS) {
+                    if (page == __divsi3(count - 1, PAGE_ROWS) * PAGE_ROWS) {
                         row = count - page - 1;
                     } else {
                         row = 4;
@@ -385,7 +385,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     page += PAGE_ROWS;
                     row = preferred_row;
                     if (page ==
-                        Math_Div(count - 1, PAGE_ROWS) * PAGE_ROWS) {
+                        __divsi3(count - 1, PAGE_ROWS) * PAGE_ROWS) {
                         row = count - page - 1;
                         if (row > preferred_row) {
                             row = preferred_row;
@@ -399,7 +399,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     row = preferred_row;
                     page -= PAGE_ROWS;
                 } else {
-                    page = Math_Div(count - 1, PAGE_ROWS) * PAGE_ROWS;
+                    page = __divsi3(count - 1, PAGE_ROWS) * PAGE_ROWS;
                     row = preferred_row;
                     if (page != 0) {
                         row = count - page - 1;

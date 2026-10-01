@@ -117,7 +117,7 @@ Func_080e03cc:
 	subs r3, r3, r5
 	adds r0, r7, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r6, #8]
 	mov r2, r10
@@ -128,7 +128,7 @@ Func_080e03cc:
 	subs r3, r3, r5
 	adds r0, r7, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r6, #12]
 	mov r2, r10
@@ -139,7 +139,7 @@ Func_080e03cc:
 	subs r3, r3, r5
 	adds r0, r7, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #192
 	lsls r3, r3, #8
 	adds r5, r5, r0
@@ -147,7 +147,7 @@ Func_080e03cc:
 	adds r0, r7, #0
 	muls r0, r3
 	str r5, [r6, #16]
-	bl Math_Div
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	adds r0, r0, r3
@@ -220,7 +220,7 @@ Func_080e03cc:
 	subs r3, r3, r5
 	adds r0, r7, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r6, #8]
 	mov r2, r8
@@ -231,7 +231,7 @@ Func_080e03cc:
 	subs r3, r3, r5
 	adds r0, r7, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r6, #12]
 	mov r2, r8
@@ -242,14 +242,14 @@ Func_080e03cc:
 	subs r3, r3, r5
 	adds r0, r7, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, .L_080e0614
 	adds r5, r5, r0
 	movs r1, #10
 	adds r0, r7, #0
 	muls r0, r3
 	str r5, [r6, #16]
-	bl Math_Div
+	bl __divsi3
 	movs r2, #128
 	lsls r2, r2, #9
 	adds r0, r0, r2

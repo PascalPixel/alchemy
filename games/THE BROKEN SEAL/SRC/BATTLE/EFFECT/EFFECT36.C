@@ -90,7 +90,7 @@ extern u8 gFrameCount[];
 void Func_08097644(void);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void BattleEffect_InitializeSharedScene(void);
-s32 Math_ModU(s32, s32);
+s32 __umodsi3(s32, s32);
 void BattleFx_AdvanceHueCycle(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
@@ -288,7 +288,7 @@ void RunSceneTransitionEffect(s32 x, s32 y)
     BattleEffect_InitializeSharedScene();
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x850000a6, (volatile u32 *)0x040000d4);
-    *(u16 *)(work + 0x28e) = Math_ModU(*(s32 *)gFrameCount << 1, 360);
+    *(u16 *)(work + 0x28e) = __umodsi3(*(s32 *)gFrameCount << 1, 360);
     BattleFx_AdvanceHueCycle();
     BattleFx_ApplyColorToTargetBuffer(((s8)work[0x28d] << 10) | ((s8)work[0x28c] << 5) |
                                       (s8)work[0x28b] | 0x200000, 1);

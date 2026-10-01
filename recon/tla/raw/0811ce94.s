@@ -68,7 +68,7 @@ BattleEscape_CheckSuccess:
 	adds r0, r0, r6
 	mov r1, r8
 	lsls r0, r0, #2
-	bl Math_Div
+	bl __divsi3
 	mov r1, r10
 	add r9, r0
 	movs r0, #2
@@ -96,7 +96,7 @@ BattleEscape_CheckSuccess:
 	adds r0, r0, r6
 	lsls r0, r0, #2
 	mov r1, r8
-	bl Math_Div
+	bl __divsi3
 	mov r3, r9
 	subs r3, r3, r0
 	mov r9, r3

@@ -353,7 +353,7 @@ Func_0811ea0c:
 	beq .L_0811ed00
 	mov r1, r11
 	mov r0, r10
-	bl Math_Div
+	bl __divsi3
 	ldr r5, [r7, #8]
 	ldr r6, [r7, #12]
 	adds r2, r0, #0

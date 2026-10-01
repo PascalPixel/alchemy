@@ -54,7 +54,7 @@ struct MotionFrame {
 
 extern struct MotionScene *gEffectWork;
 
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 void WaitFrames(s32);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void Object_SetMode(void *, s32);
@@ -114,16 +114,16 @@ void RunBattleEffect13(void)
         s32 tmp4;
         s32 tmp5;
         value = origin_cursor->x;
-        value += Math_Div((target_cursor->x - value) * step, 10);
+        value += __divsi3((target_cursor->x - value) * step, 10);
         object->pos.x = value;
         tmp5 = origin_cursor->y;
         value = tmp5;
-        value = value + Math_Div((target_cursor->y - value) * step, 10);
+        value = value + __divsi3((target_cursor->y - value) * step, 10);
         object->pos.y = value;
         value = origin_cursor->z;
-        value += Math_Div((target_cursor->z - value) * step, 10);
+        value += __divsi3((target_cursor->z - value) * step, 10);
         object->pos.z = value;
-        tmp4 = Math_Div(step * 0xc000, 10) + 0x4000;
+        tmp4 = __divsi3(step * 0xc000, 10) + 0x4000;
         value = tmp4;
         object->scale_x = value;
         object->scale_y = value;
@@ -157,15 +157,15 @@ void RunBattleEffect13(void)
         register s32 value;
         s32 tmp2;
         value = target_cursor->x;
-        value += Math_Div((origin_cursor->x - value) * step, 10);
+        value += __divsi3((origin_cursor->x - value) * step, 10);
         object->pos.x = value;
         value = target_cursor->y;
-        value += Math_Div((origin_cursor->y - value) * step, 10);
+        value += __divsi3((origin_cursor->y - value) * step, 10);
         object->pos.y = value;
         value = target_cursor->z;
-        value += Math_Div((origin_cursor->z - value) * step, 10);
+        value += __divsi3((origin_cursor->z - value) * step, 10);
         object->pos.z = value;
-        tmp2 = Math_Div(step * (s32)&Value_ffff4000, 10) + 0x10000;
+        tmp2 = __divsi3(step * (s32)&Value_ffff4000, 10) + 0x10000;
         value = tmp2;
         object->scale_x = value;
         object->scale_y = value;

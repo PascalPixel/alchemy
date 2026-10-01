@@ -154,7 +154,6 @@ void PaletteGlow_Update();
 void Map_LoadDefaultCellsAndUpdateBlock();
 void Object_SetActionCallbackAndRefreshById();
 void Object_RefreshSelectorById();
-s32 Engine_MathModulo();
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);
 void QueueIoWriteDelay2(u32 address, u32 value);

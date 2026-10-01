@@ -99,7 +99,7 @@ Func_08146a6c:
 	ldr r3, [r6]
 	movs r1, #12
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #12]
 	ldr r3, [r6, #4]
 	ldr r0, [r7, #12]
@@ -108,13 +108,13 @@ Func_08146a6c:
 	subs r0, r0, r3
 	adds r0, r0, r2
 	movs r1, #12
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #16]
 	ldr r3, [r6, #8]
 	ldr r0, [r7, #16]
 	movs r1, #12
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	str r0, [r6, #20]
 	bl Random16
 	movs r3, #15
@@ -263,7 +263,7 @@ Func_08146a6c:
 	mov r0, r9
 	movs r1, #10
 	mov r10, r2
-	bl Math_Mod
+	bl __modsi3
 	add r0, r11
 	lsls r3, r0, #3
 	ldr r5, .L_08146df4
@@ -282,7 +282,7 @@ Func_08146a6c:
 	adds r0, r4, #0
 	muls r0, r3
 	str r4, [sp, #8]
-	bl Math_Div
+	bl __divsi3
 	mov r2, r8
 	adds r6, r6, r0
 	mov r0, r10
@@ -293,7 +293,7 @@ Func_08146a6c:
 	adds r0, r4, #0
 	muls r0, r3
 	movs r1, #12
-	bl Math_Div
+	bl __divsi3
 	ldr r2, .L_08146df8
 	movs r3, #4
 	subs r3, #2

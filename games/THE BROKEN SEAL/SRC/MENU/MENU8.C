@@ -40,7 +40,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void Palette_LightenBankHighlight(s32 bank);
 s32 GameFlag_TestFar(s32 flag);
-s32 Math_Mod(s32 value, s32 divisor);
 void Menu_CreateWindowAndEntryObjects(s32 owner, s32 frame);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
@@ -75,7 +74,6 @@ struct PsynergyOwnerMenu {
 extern u8 MsgChooseCharacter;
 void *Owner_GetStateFar(s32 owner);
 void RenderOutput_RedrawSavedRectFar(s32 window);
-s32 Math_Mod(s32 numerator, s32 denominator);
 s32 PsynergyMenu_CollectActions(void *owner, void *entries, s32 mode);
 void PsynergyMenu_DrawPsynergyIcons(void *entries);
 void Menu_PlaceEntryObjectsInGrid(s32 x, s32 y, s32 columns);
@@ -215,9 +213,9 @@ s32 CharacterSelector_RunRearrange(void)
             if (GameFlag_TestFar(48))
                 UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnListHelp, work->window, 0, 16);
             UiText_DrawCharacterAtOffsetFar((s32)MsgRearrangeHelp - 3, work->window, 0, 8);
-            cursor = Math_Mod(cursor + count, count);
+            cursor = (cursor + count) % count;
             Owner_GetStateFar(work->owners[cursor]);
-            page = Math_Mod(page + 3, 3);
+            page = (page + 3) % 3;
             Menu_CreateWindowAndEntryObjects(work->owners[cursor], page);
             PsynergyMenu_CallIconRoutineWithValue(work, work->owners[cursor]);
             for (i = MENU_ROW_COUNT - 1; i >= 0; i--)
@@ -308,9 +306,9 @@ s32 PsynergyMenu_SelectOwner(void)
     for (;;) {
         if (pending) {
             pending = 0;
-            selection = Math_Mod(selection + count, count);
+            selection = (selection + count) % count;
             Owner_GetStateFar(menu->character_ids[selection]);
-            frame = Math_Mod(frame + 3, 3);
+            frame = (frame + 3) % 3;
             Menu_CreateWindowAndEntryObjects(menu->character_ids[selection], frame);
             PsynergyMenu_CallIconRoutineWithValue(menu, menu->character_ids[selection]);
             for (i = 0; i < MENU_ROW_COUNT; i++)
@@ -508,7 +506,7 @@ s32 CharacterMenu_SelectCommand(void)
                 limit = count;
                 pane = (pane + 2) % 2;
                 if (pane == 0) {
-                    selected = Math_Mod(selected + limit, limit);
+                    selected = (selected + limit) % limit;
                     RenderOutput_RedrawSavedRectFar(menu->help_window);
                     if (has_ailments == 0) {
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp,
@@ -521,7 +519,7 @@ s32 CharacterMenu_SelectCommand(void)
                     if (has_djinn != 0)
                         selected = (selected + 8) % 8;
                     else
-                        selected = Math_Mod(selected + 7, 7);
+                        selected = (selected + 7) % 7;
                 }
                 CharacterMenu_DrawSelectionCursor(pane, selected, entries, 0);
                 RenderOutput_ClearListFar(menu->help_window);
@@ -580,7 +578,7 @@ s32 CharacterMenu_SelectCommand(void)
                     tab++;
                 else
                     tab--;
-                tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
+                tab = (tab + menu->owner_count) % menu->owner_count;
                 menu->owner = menu->owners[tab];
                 menu->owner_id = menu->owners[tab];
                 menu->tab = tab;

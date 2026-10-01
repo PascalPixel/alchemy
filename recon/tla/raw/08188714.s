@@ -124,7 +124,7 @@ Func_08188714:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #100
-	bl Math_Div
+	bl __divsi3
 	mov r9, r5
 	ldr r5, [sp, #32]
 	adds r6, r6, r0
@@ -135,7 +135,7 @@ Func_08188714:
 	subs r3, r3, r5
 	mov r0, r8
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [sp, #56]
 	adds r5, r5, r0
 	ldr r0, [r1, #8]

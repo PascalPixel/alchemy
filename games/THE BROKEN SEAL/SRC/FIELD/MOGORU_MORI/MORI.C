@@ -10,7 +10,6 @@ s32 Engine_MathCos(s32 angle);
 s32 Engine_MathSin(s32 angle);
 
 /* The IWRAM divide, reached through this overlay's import veneer. */
-s32 IwramSignedDivideEntry(s32 num, s32 den);
 
 struct Vec {
     s32 x;
@@ -187,7 +186,7 @@ void MogoruMori_SpawnPuffRing(s32 id)
         z = Engine_MathSin(i << 12);
         x = v->x;
         v->z = z;
-        x += IwramSignedDivideEntry(x, 3);
+        x += x / 3;
         v->x = x;
         Effect_Spawn(actor->x.fixed, 0x100000, actor->z.fixed, x, v->y + 0x1999, z, 0x20000, p);
     }

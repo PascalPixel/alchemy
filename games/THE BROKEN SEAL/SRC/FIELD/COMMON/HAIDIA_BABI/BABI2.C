@@ -118,7 +118,7 @@ void ObjectDispatch_WaitForValue16();
 void HaidiaBabi_SpawnEffectPair();
 
 /* The overlay's veneer into the resident unsigned remainder. */
-u32 Engine_MathModulo();
+u32 __umodsi3();
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -603,7 +603,7 @@ void OverlayObject_UpdateOnFrameParity(u8 *obj)
     volatile s32 *frames = (volatile s32 *)&gFrameCount;
 
     if ((*frames & 1) != 0) {
-        Object_SetPartPalettes(obj, Engine_MathModulo((s32)((u32)*frames >> 1), 6));
+        Object_SetPartPalettes(obj, __umodsi3((s32)((u32)*frames >> 1), 6));
     }
     if ((*frames & 15) == 0) {
         HaidiaBabi_SpawnEffectPair(obj);
@@ -615,7 +615,7 @@ void OverlayObject_ApplyRandomSlotOnOddFrames(s32 obj)
     volatile s32 *frames = (volatile s32 *)&gFrameCount;
 
     if ((*frames & 1) != 0) {
-        s32 slot = Engine_MathModulo((u32)*frames >> 1, 6);
+        s32 slot = ((u32)*frames >> 1) % 6;
 
         Object_SetPartPalettes(obj, slot);
     }

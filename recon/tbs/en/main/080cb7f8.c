@@ -44,7 +44,7 @@ extern u8 Data_00000070[];
 extern u8 ResourceId_ParticleSpritesD[];
 extern u8 Data_00000100[];
 extern u8 Data_00001000[];
-s32 Math_Mod();
+s32 __modsi3();
 s32 Trig_Cos();
 s32 Trig_Sin();
 void Runtime_ReleaseHeapBlock();
@@ -232,7 +232,7 @@ L_080cb982:
         ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 3, 2);
         blit[1] = ((DrawRectangle *)0x03001f0c)[0];
         blit[1]((void *)slot36, (void *)(r9 + ((((p8 - (p11 << 2)) << 4) + (p8 - (p11 << 2))) << 6)), 47, *(s32 *)(slot8 + 4) - 64, 17, 64);
-        rec = Value2(Math_Mod, p4b / 4, 3);
+        rec = Value2(__modsi3, p4b / 4, 3);
         blit[1]((void *)slot36, (void *)((((rec << 7) + rec) << 3) + r9 + 0x1100), 40, *(s32 *)(slot8 + 4) - 36, 24, 43);
         Runtime_ReleaseHeapBlock(47);
         ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 7, 2);

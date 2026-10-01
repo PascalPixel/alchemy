@@ -917,7 +917,7 @@ Func_02000734:
 	muls r0, r3
 	adds r1, r7, #0
 	str r2, [sp, #0]
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r2, [sp, #0]
 	mov r3, r8
 	b .L_020087a4
@@ -929,13 +929,13 @@ Func_02000734:
 	add r10, r0
 	mov r0, r9
 	muls r0, r2
-	bl Engine_MathDivide
+	bl __divsi3
 	subs r6, r6, r5
 	add r8, r0
 	adds r1, r7, #0
 	mov r0, r9
 	muls r0, r6
-	bl Engine_MathDivide
+	bl __divsi3
 	adds r5, r5, r0
 	lsls r5, r5, #10
 	mov r0, r8
@@ -5182,14 +5182,14 @@ Func_02002de4:
 	movs r1, #40
 	lsls r0, r3, #5
 	subs r0, r0, r3
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r2, [sp, #0]
 	movs r1, #40
 	str r0, [r2]
 	ldr r3, [r5]
 	lsls r0, r3, #5
 	subs r0, r0, r3
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r2, #128
 	str r0, [r6]
 	lsls r2, r2, #5

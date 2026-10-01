@@ -552,7 +552,7 @@ BattlePres_RunBeamSequence:
 	bgt .L_080e3f6e
 	mov r0, r9
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [r6]
 	ldr r3, [r3, #4]
 	adds r5, r0, #0

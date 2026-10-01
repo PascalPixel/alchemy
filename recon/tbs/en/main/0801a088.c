@@ -7,7 +7,7 @@
    flag. Declaration order does not change it.
    Score as --unit candidate-item-icon-compose: compiler division/modulo
    helpers are bound to the two calls proved by the owner's listing.
-   Explicit Math_Mod/Math_Div calls and a cached quotient give 536 bytes /
+   Explicit __modsi3/__divsi3 calls and a cached quotient give 536 bytes /
    81 aligned edits; count spills and code still occupies fp. A volatile
    code parameter adds an address register and grows the frame from 12 to
    16 bytes (544 bytes / 108 edits), not the reference's ordinary spill.

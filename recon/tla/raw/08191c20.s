@@ -21,7 +21,7 @@ Func_08191c20:
 	movs r1, #63
 .L_08191c40:
 	movs r0, #63
-	bl Math_DivU
+	bl __udivsi3
 	adds r1, r0, #0
 	cmp r1, #5
 	bhi .L_08191c4e

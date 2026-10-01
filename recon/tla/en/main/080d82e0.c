@@ -54,8 +54,8 @@ void EffectSlot_SetCallback(void *slot, void *callback);
 void EffectSlot_SetObjectMode(void *slot, s32 mode);
 void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 s32 Random16(void);
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_DivU(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __udivsi3(s32 numerator, s32 denominator);
 struct CaptureObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);
@@ -148,11 +148,11 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         position[2] = leader->z;
         djinni = Object_Spawn(284, position[0], position[1], position[2]);
         if (djinni != NULL) {
-            scale = Math_DivU(Random16(), 3) + 0x10000;
+            scale = __udivsi3(Random16(), 3) + 0x10000;
             djinni->scale_y = scale;
             djinni->scale_x = scale;
             djinni->timer = 100;
-            djinni->angle = Math_Div(remaining << 16, 24);
+            djinni->angle = __divsi3(remaining << 16, 24);
             djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
             djinni->mode = 0;
             Object_SetMode(djinni, 7);

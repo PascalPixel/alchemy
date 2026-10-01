@@ -804,7 +804,7 @@ Func_08146e00:
 	str r3, [r7, #4]
 	bl Random16
 	movs r1, #200
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #1
 	subs r0, #100
 	add r9, r1
@@ -1052,19 +1052,19 @@ Func_08146e00:
 	ldr r5, [r6]
 	mov r1, r8
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	mov r1, r8
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	mov r1, r8
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #8]
 	b .L_08147670
@@ -1106,7 +1106,7 @@ Func_08146e00:
 	ble .L_081476be
 	movs r1, #10
 	mov r0, r10
-	bl Math_Div
+	bl __divsi3
 	ldr r2, .L_081479e4
 	adds r4, r0, #1
 	lsls r0, r4, #1

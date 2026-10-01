@@ -345,7 +345,7 @@ Func_080fc6bc:
 .L_080fc95c:
 	mov r1, r9
 	adds r0, r5, r1
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #129
 	adds r5, r0, #0
 	lsls r3, r3, #2

@@ -487,7 +487,7 @@ Func_0815b764:
 .L_0815bb2a:
 	movs r1, #18
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldr r4, [sp, #88]
 	movs r3, #215
 	lsls r3, r3, #2
@@ -537,7 +537,7 @@ Func_0815b764:
 	cmp r0, #17
 	bhi .L_0815bbd4
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	mov r2, r9
 	movs r5, #1
 	ands r5, r2
@@ -642,7 +642,7 @@ Func_0815b764:
 	lsls r0, r0, #5
 	bl Trig_Cos
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #9
 	movs r4, #1
@@ -657,7 +657,7 @@ Func_0815b764:
 	movs r0, #128
 	adds r1, r6, #0
 	lsls r0, r0, #17
-	bl Math_Div
+	bl __divsi3
 	movs r3, #238
 	lsls r3, r3, #7
 	adds r3, #216
@@ -673,7 +673,7 @@ Func_0815b764:
 	movs r0, #184
 	adds r1, r6, #0
 	lsls r0, r0, #16
-	bl Math_Div
+	bl __divsi3
 	movs r5, #238
 	movs r7, #64
 	lsls r5, r5, #7
@@ -685,7 +685,7 @@ Func_0815b764:
 	movs r0, #152
 	lsls r0, r0, #15
 	adds r1, r6, #0
-	bl Math_Div
+	bl __divsi3
 	movs r5, #238
 	lsls r5, r5, #7
 	adds r5, #212
@@ -1090,9 +1090,9 @@ Func_0815b764:
 	bhi .L_0815c00a
 	adds r0, r5, #0
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0815c0f4
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -1132,7 +1132,7 @@ Func_0815b764:
 .L_0815c018:
 	movs r1, #18
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0815c104
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -1434,7 +1434,7 @@ Func_0815b764:
 	adds r0, r3, r0
 	movs r1, #6
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #4
 	ldr r4, [sp, #20]
 	subs r1, r1, r0
@@ -1828,12 +1828,12 @@ Func_0815b764:
 .L_0815c594:
 	bl Random16
 	movs r1, #48
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #40
 	str r0, [r5]
 	bl Random16
 	movs r1, #96
-	bl Math_ModU
+	bl __umodsi3
 	mov r7, r9
 	adds r0, #16
 	negs r3, r7
@@ -1866,7 +1866,7 @@ Func_0815b764:
 .L_0815c5e2:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_0815c700
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]

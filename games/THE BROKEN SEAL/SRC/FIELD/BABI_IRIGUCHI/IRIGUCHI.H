@@ -74,7 +74,6 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Object_SetModeById(s32 actor, s32 mode);
 void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height,
                                s32 dest_x, s32 dest_y);
-s32 IwramSignedDivideEntry(s32 dividend, s32 divisor);
 void BattleFx_SetPhaseRequest();
 void Battle_ResetEffectCounter();
 void Motion_LaunchFromFocusedObject();
@@ -118,7 +117,7 @@ static __inline__ void Iriguchi_CopyCellAttributes(s32 src_x, s32 src_y, s32 wid
 
 static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 {
-    return IwramSignedDivideEntry(dividend, divisor);
+    return dividend / divisor;
 }
 
 /*

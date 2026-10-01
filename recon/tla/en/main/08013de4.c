@@ -34,7 +34,7 @@ void BlendTransition_Update(void)
             level = gBlendTargetLevel;
             delta = gBlendStartLevel - gBlendTargetLevel;
             step = *remaining;
-            level += Math_Div(delta * step, gBlendDuration);
+            level += __divsi3(delta * step, gBlendDuration);
             *(volatile u16 *)0x04000054 = level;
             if (*remaining == 0)
                 gBlendDuration = 0;

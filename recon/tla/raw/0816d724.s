@@ -424,7 +424,7 @@ Func_0816d724:
 	movs r2, #3
 	movs r1, #3
 	str r2, [sp, #8]
-	bl Math_Div
+	bl __divsi3
 	movs r3, #2
 	ldrsh r6, [r5, r3]
 	movs r4, #6

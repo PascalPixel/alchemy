@@ -16,7 +16,7 @@
 	.4byte \target
 	.endm
 
-	IwramEntry Math_Div, IwramSignedDivide
-	IwramEntry Math_DivU, IwramUnsignedDivide
-	IwramEntry Math_Mod, IwramSignedRemainder
-	IwramEntry Math_ModU, IwramUnsignedRemainder
+	IwramEntry __divsi3, IwramSignedDivide
+	IwramEntry __udivsi3, IwramUnsignedDivide
+	IwramEntry __modsi3, IwramSignedRemainder
+	IwramEntry __umodsi3, IwramUnsignedRemainder

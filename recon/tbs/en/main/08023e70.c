@@ -125,7 +125,7 @@ extern u8 Data_08037308[];
 extern u8 Data_080373e7[];
 extern u8 Data_080373eb[];
 
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void Sys_Free(void *buf);
 void WaitFrames(s32 frames);
 void Runtime_SetMainState19(void);
@@ -348,9 +348,9 @@ s32 Battle_SelectAbility(s32 owner)
                 prev_page = page;
             }
             if (cnt > 5) {
-                for (j = 0; j < (pages = Math_Div(cnt + 4, 5)); j++) {
+                for (j = 0; j < (pages = __divsi3(cnt + 4, 5)); j++) {
                     tile = j + 0xf301;
-                    if (j == Math_Div(page, 5)) {
+                    if (j == __divsi3(page, 5)) {
                         tile = j + 0xf30b;
                     }
                     UiWindow_SetTilemapEntry(list_win, tile, list_win->field_08 - pages + j - 2, -1, 0);
@@ -363,15 +363,15 @@ s32 Battle_SelectAbility(s32 owner)
         }
 
         if (cnt > 5) {
-            for (j = 0; j < (pages = Math_Div(cnt + 4, 5)); j++) {
+            for (j = 0; j < (pages = __divsi3(cnt + 4, 5)); j++) {
                 tile = j + 0xf301;
                 if ((BATTLE_OPTIONS & 0x100) || (FRAME_COUNTER & 15) <= 11) {
-                    if (j == Math_Div(page, 5)) {
+                    if (j == __divsi3(page, 5)) {
                         tile = j + 0xf30b;
                     }
                 }
                 UiWindow_SetTilemapEntry(list_win, tile,
-                              list_win->field_08 - Math_Div(cnt + 4, 5) + j - 2, -1, 0);
+                              list_win->field_08 - __divsi3(cnt + 4, 5) + j - 2, -1, 0);
             }
             if ((BATTLE_OPTIONS & 0x100) == 0) {
                 UiWindow_SetTilemapEntry(list_win, 0xf334, list_win->field_08 - pages - 3, -1, 0);
@@ -441,7 +441,7 @@ s32 Battle_SelectAbility(s32 owner)
                 Audio_PlayCue(0x6f);
                 row--;
                 if (row < 0) {
-                    if (page == Math_Div(cnt - 1, 5) * 5) {
+                    if (page == __divsi3(cnt - 1, 5) * 5) {
                         row = cnt - page - 1;
                     } else {
                         row = 4;
@@ -508,7 +508,7 @@ s32 Battle_SelectAbility(s32 owner)
                 } else {
                     page = page + 5;
                     row = saved_row;
-                    if (page == Math_Div(cnt - 1, 5) * 5) {
+                    if (page == __divsi3(cnt - 1, 5) * 5) {
                         row = cnt - page - 1;
                         if (row > saved_row) {
                             row = saved_row;
@@ -522,7 +522,7 @@ s32 Battle_SelectAbility(s32 owner)
                     page -= 5;
                     row = saved_row;
                 } else {
-                    page = Math_Div(cnt - 1, 5) * 5;
+                    page = __divsi3(cnt - 1, 5) * 5;
                     row = saved_row;
                     if (page != 0) {
                         row = cnt - page - 1;

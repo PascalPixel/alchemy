@@ -26,7 +26,7 @@ void Shop_DrawStock(s32 window, s32 selected)
     shop = gMenuWork;
     item_ids = shop->stock_item_ids;
     item_count = shop->stock_count;
-    first = selected - Math_Mod(selected, 7);
+    first = selected - selected % 7;
     if (window != 0) {
         UiWindow_Clear(window);
         if (first != 0) {

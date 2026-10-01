@@ -40,7 +40,7 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-u32 Math_ModU(u32 value, u32 bound);
+u32 __umodsi3(u32 value, u32 bound);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -206,14 +206,14 @@ void Region_080ddde0(struct BattleEffectArgument *table_param)
                             random = (s32)Random16();
                             table = work->effect;
                             range = Data_080eebd6[table->variant * 4 + 2];
-                            offset = Math_ModU(random, range);
+                            offset = __umodsi3(random, range);
                             y = pos.y - offset;
                             range -= offset;
                             y = y - BattleFx_GlintCellHeights[mask] / 2 + 8;
                             cnt++;
                             random = Random16();
                             range++;
-                            x = pos.x + Math_ModU(random, range);
+                            x = pos.x + __umodsi3(random, range);
                             x -= range / 2;
                             tmp7 = BattleFx_GlintCellWidths[mask];
                             x = x - tmp7 / 2;

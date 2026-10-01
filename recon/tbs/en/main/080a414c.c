@@ -135,8 +135,8 @@ s32 Func_080a414c(void)
             row = 0;
         }
     } else {
-        col = (s8)Math_Mod(saved, 3);
-        row = (s8)Math_Div(saved, 3);
+        col = (s8)__modsi3(saved, 3);
+        row = (s8)__divsi3(saved, 3);
         index = row * 3 + col;
     }
 
@@ -150,7 +150,7 @@ s32 Func_080a414c(void)
 
         if (need_redraw != 0) {
             need_redraw = 0;
-            col = Math_Mod(col + 3, 3);
+            col = __modsi3(col + 3, 3);
             row = (row + 2) % 2;
             index = row * 3 + col;
             EquipmentMenu_StartCompatibilityIndicators();

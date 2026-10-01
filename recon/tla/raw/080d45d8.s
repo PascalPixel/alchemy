@@ -57,7 +57,7 @@ Func_080d45d8:
 	mov r3, r8
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [r6]
 	adds r1, r1, r0
 	movs r0, #144

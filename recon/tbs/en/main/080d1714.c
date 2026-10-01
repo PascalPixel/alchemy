@@ -161,9 +161,9 @@ void Scheduler_RemoveCallback(void (*callback)(void));
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 s32 Random16(void);
 s32 ArcTan2(s32 x, s32 z);
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_Mod(s32 numerator, s32 denominator);
-s32 Math_ModU(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __modsi3(s32 numerator, s32 denominator);
+s32 __umodsi3(s32 numerator, s32 denominator);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void Render_ResetTransformState(void);
@@ -374,7 +374,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                 size = 48;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + Math_Mod(frame / 4, 3) * 3072
+                (u8 *)runtime + __modsi3(frame / 4, 3) * 3072
                     + (48 - size) * 48,
                 32,
                 112 - size,
@@ -388,7 +388,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                 size = 64;
             draw_rectangle(
                 draw_destination,
-                (u8 *)runtime + Math_Mod(frame / 4, 3) * 3072
+                (u8 *)runtime + __modsi3(frame / 4, 3) * 3072
                     + (64 - size) * 48,
                 32,
                 64 - size,
@@ -397,7 +397,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
         }
 
         if ((u32)(frame - 160) <= 239) {
-            src = (u8 *)runtime + Math_Mod(frame / 4, 3) * 3072;
+            src = (u8 *)runtime + __modsi3(frame / 4, 3) * 3072;
             draw_rectangle(draw_destination, src, 8, 0, 48, 64);
             draw_rectangle(draw_destination, src, 8, 64, 48, 64);
         }
@@ -486,7 +486,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                 point->field_04 = speed * Trig_Cos(angle);
                 point->field_18 = 0;
                 point->field_08 =
-                    (Math_ModU(Random16(), 200) - 100) << 16;
+                    (__umodsi3(Random16(), 200) - 100) << 16;
                 index++;
                 point++;
             } while (index != 32);
@@ -556,7 +556,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                                 screen.z = 170;
                             if (screen.z > 350)
                                 screen.z = 350;
-                            span = 6 - Math_Div(screen.z - 170, 36);
+                            span = 6 - __divsi3(screen.z - 170, 36);
                             draw_rectangle_alt(
                                 draw_destination,
                                 graphics + ParticleStreams_CellOffsets[span - 1],
@@ -565,11 +565,11 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                                 span,
                                 span * 2);
                             point->field_00 -=
-                                Math_Div(point->field_00, dist);
+                                __divsi3(point->field_00, dist);
                             point->field_04 -=
-                                Math_Div(point->field_04, dist);
+                                __divsi3(point->field_04, dist);
                             point->field_08 -=
-                                Math_Div(point->field_08, dist);
+                                __divsi3(point->field_08, dist);
                         } else {
                             alive++;
                         }
@@ -578,7 +578,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                     } while (index != 32);
 
                     if (alive > 0) {
-                        span = Math_Div(alive, 10) + 1;
+                        span = __divsi3(alive, 10) + 1;
                         draw_rectangle_alt(
                             draw_destination,
                             graphics + ParticleStreams_CellOffsets[span - 1],
@@ -626,7 +626,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                                 if (screen.z > 350)
                                     screen.z = 350;
                                 span =
-                                    3 - Math_Div(screen.z - 170, 90);
+                                    3 - __divsi3(screen.z - 170, 90);
                                 draw_rectangle(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],
@@ -707,7 +707,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                                 if (screen.z > 350)
                                     screen.z = 350;
                                 span = 3
-                                    - Math_Div(screen.z - 170, 90);
+                                    - __divsi3(screen.z - 170, 90);
                                 draw_rectangle(
                                     draw_destination,
                                     graphics + ParticleStreams_CellOffsets[span - 1],

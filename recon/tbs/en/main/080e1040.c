@@ -9,7 +9,7 @@
 
 extern u8 ResourceId_VenusDjinnSmallSheet[];
 extern u8 Data_000000a7[];
-s32 Math_ModU();
+s32 __umodsi3();
 s32 Trig_Cos();
 s32 Trig_Sin();
 void Runtime_ReleaseHeapBlock();
@@ -173,7 +173,7 @@ void Func_080e1040(s32 a0, s32 a1)
         v5 = (0x7400 + p9);
         do {
             record = Random16();
-            *(s32 *)(v5 + 12) = (Math_ModU(record, 6) + 3);
+            *(s32 *)(v5 + 12) = (__umodsi3(record, 6) + 3);
             record = Random16();
             *(s32 *)(v5 + 16) = *(u8 *)(0x080eec70 + (3 & record));
             v5 = (v5 + 28);

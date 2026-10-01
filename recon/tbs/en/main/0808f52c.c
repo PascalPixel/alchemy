@@ -48,7 +48,7 @@
 void Scheduler_RemoveCallback(void *callback);  /* Scheduler_RemoveCallback */
 void UiWindow_FillFromSceneFar(void *lines);
 u32 Random16(void);             /* Random16 */
-s32 Math_Div(s32 num, s32 den); /* Math_Div */
+s32 __divsi3(s32 num, s32 den); /* __divsi3 */
 void *ObjectTable_Get(s32 id);         /* ObjectTable_Get */
 
 struct BattleSelectionWork {
@@ -218,8 +218,8 @@ void DisplayTransition_UpdateScanlineTable(void)
                     ny = 0;
                     n = cnt;
                     while (n != 0) {
-                        dst[0] = (u16)(((Math_Div(nx, cnt) + x0) << 8)
-                                       + (Math_Div(ny, cnt) + y0));
+                        dst[0] = (u16)(((__divsi3(nx, cnt) + x0) << 8)
+                                       + (__divsi3(ny, cnt) + y0));
                         ny += dy;
                         nx += dx;
                         dst += 2;

@@ -73,7 +73,7 @@ void UpdateLinkSessionCountdown(void)
         current = state->currentOffset;
         if (target != current) {
             difference = target - current;
-            step = Math_Div(difference, 3);
+            step = __divsi3(difference, 3);
             if (step == 0) {
                 step--;
                 if (difference >= 0)
@@ -141,7 +141,7 @@ timer_ready:
         if (timer < 0)
             goto done;
 
-        seconds = Math_Div(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
+        seconds = __divsi3(timer + FRAMES_PER_SECOND - 1, FRAMES_PER_SECOND);
         if (seconds != 0 && seconds *FRAMES_PER_SECOND == timer)
             Audio_PlayCue(SOUND_TRIPLE_TONE_LOW);
 

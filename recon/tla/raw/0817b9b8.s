@@ -218,7 +218,7 @@ Func_0817b9b8:
 	lsls r0, r3, #2
 	adds r0, r0, r3
 	lsls r0, r0, #5
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [sp, #12]
 	mov r2, r11
 	str r0, [r1, #8]
@@ -266,7 +266,7 @@ Func_0817b9b8:
 	lsls r0, r3, #4
 	subs r0, r0, r3
 	lsls r0, r0, #3
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [sp, #12]
 	mov r4, r11
 	str r0, [r3, #8]
@@ -276,7 +276,7 @@ Func_0817b9b8:
 	lsls r0, r3, #2
 	adds r0, r0, r3
 	lsls r0, r0, #4
-	bl Math_Div
+	bl __divsi3
 	mov r1, r11
 	str r0, [r1, #8]
 	ldrh r3, [r1, #6]
@@ -391,7 +391,7 @@ Func_0817b9b8:
 .L_0817bcd8:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	lsls r1, r1, #8
 	movs r3, #139

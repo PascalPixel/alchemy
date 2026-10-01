@@ -118,7 +118,7 @@ Region_080d0ee0:
 	subs r0, r0, r2
 	movs r1, #12
 .L_080d0fd8:
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r5, #12]
 	mov r1, r11
 	ldr r0, [r1, #12]
@@ -128,14 +128,14 @@ Region_080d0ee0:
 	lsls r2, r2, #14
 	adds r0, r0, r2
 	movs r1, #12
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r5, #16]
 	mov r3, r11
 	ldr r0, [r3, #16]
 	ldr r3, [r5, #8]
 	movs r1, #12
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #0
 	str r0, [r5, #20]
 	str r3, [r5, #24]
@@ -330,7 +330,7 @@ Region_080d0ee0:
 	movs r1, #10
 	adds r0, r4, #0
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #32]
 	adds r0, r0, r1
 	lsls r3, r0, #3

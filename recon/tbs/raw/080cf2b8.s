@@ -578,7 +578,7 @@ BattleFx_RunMemberBeam:
 	movs r1, #3
 	subs r0, #88
 	str r2, [sp, #12]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r1, r10
 	subs r1, r1, r0
 	ldr r2, [sp, #12]

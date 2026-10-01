@@ -1402,7 +1402,7 @@ Func_02000b28:
 	adds r5, r5, r0
 	movs r1, #3
 	adds r0, r6, #0
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r5, r5, r0
 	mov r1, r8
 	subs r5, #1

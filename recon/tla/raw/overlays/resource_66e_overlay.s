@@ -1497,7 +1497,7 @@ Func_02000c04:
 .L_02008c8c:
 	bl Random16Far
 	adds r1, r6, #0
-	bl Engine_MathModulo
+	bl __umodsi3
 .L_02008c96:
 	lsls r3, r0, #2
 	ldr r3, [r3, r7]

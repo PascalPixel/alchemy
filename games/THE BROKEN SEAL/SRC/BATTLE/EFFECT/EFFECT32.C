@@ -20,8 +20,6 @@ struct MapActor {
 };
 
 extern struct DjinnEventState Data_02000240;
-s32 Math_Div(s32, s32);
-s32 Math_Mod(s32, s32);
 void GameFlag_SetBitFar(s32);
 struct MapActor *BattleAction_FindDescriptor(s32 id);
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 element, s32 index);
@@ -95,8 +93,8 @@ void Djinn_ResolvePendingEvent(s32 capture)
             flag &= 0x7ff;
             if (st->result > 0) {
                 s32 djinn = flag - 300;
-                s32 element = Math_Div(djinn, 20);
-                s32 index = Math_Mod(djinn, 20);
+                s32 element = djinn / 20;
+                s32 index = djinn % 20;
                 s32 actor;
 
                 for (actor = 8; actor <= 65; actor++) {

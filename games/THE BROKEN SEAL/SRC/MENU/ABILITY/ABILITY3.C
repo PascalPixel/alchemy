@@ -206,7 +206,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
  */
 
 /*
- * types.h already supplies WaitFrames, Math_Mod, Audio_PlayCue, GameFlag_IsSet,
+ * types.h already supplies WaitFrames, __modsi3, Audio_PlayCue, GameFlag_IsSet,
  * Ability_GetData, UiText_DrawCharacterAtOffsetFar, UiIcon_PrepareObject and
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
@@ -388,7 +388,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                     } else {
                         tab = tab - 1;
                     }
-                    tab = Math_Mod(tab + menu->owner_count, menu->owner_count);
+                    tab = (tab + menu->owner_count) % menu->owner_count;
                     menu->field_008 = menu->owner_table[tab];
                     menu->owner_ids[0] = menu->owner_table[tab];
                     menu->psynergy_count = PsynergyMenu_CollectActions(

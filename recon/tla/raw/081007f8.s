@@ -527,7 +527,7 @@ BattleEffect_ApplyToTargets:
 	movs r1, #10
 	lsls r0, r3, #3
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	strh r0, [r5, #56]
 	mov r0, r10
 .L_08100c66:

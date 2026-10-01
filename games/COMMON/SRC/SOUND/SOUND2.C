@@ -3,7 +3,7 @@
 
 void CgbNote_UpdatePanEnvelope(struct SoundNote *note);
 
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void Sound_LoadCommandTable(SoundCommand *table);
 void MusicTrack_HandleNote(u32 command, struct SoundPlayer *player, struct SoundTrack *track);
 void Audio_EmptyCallback(void);
@@ -106,12 +106,12 @@ void AudioEngine_SetPcmRate(u32 mode)
     work->rate = mode;
     frame = Sound_FrameLengths[mode - 1];
     work->frame_samples = frame;
-    work->transfer_period = Math_Div(0x630, frame);
-    work->output_rate = Math_Div(0x91D1B * frame + 5000, 10000);
-    work->rate_step = (Math_Div(0x1000000, work->output_rate) + 1) >> 1;
+    work->transfer_period = __divsi3(0x630, frame);
+    work->output_rate = __divsi3(0x91D1B * frame + 5000, 10000);
+    work->rate_step = (__divsi3(0x1000000, work->output_rate) + 1) >> 1;
     *(u16 *)0x04000102 = 0;
     timer = (u16 *)0x04000100;
-    *timer = -Math_Div(0x44940, frame);
+    *timer = -__divsi3(0x44940, frame);
     AudioEngine_ResumeDirectSound();
     while (*(volatile u8 *)0x04000006 == 159)
         ;

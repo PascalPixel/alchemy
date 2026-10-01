@@ -27,7 +27,7 @@ struct TextWork {
 
 extern u8 *gWindowWork;
 extern struct GlyphInfo UiText_Glyphs[];
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 
 void UiText_MeasureStringVariant(s32 start, s32 *out_width, s32 *out_height,
                                  u16 *spacing)
@@ -177,7 +177,7 @@ done:
                     gap = adjusted_width - *(line_widths + i) - 4;
                     if (gap < 0)
                         gap = 0;
-                    *spacing = (u16)Math_Div(gap << 8, glyph_counts[i] - 1);
+                    *spacing = (u16)__divsi3(gap << 8, glyph_counts[i] - 1);
                 }
                 spacing++;
                 i++;

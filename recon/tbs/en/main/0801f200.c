@@ -47,7 +47,7 @@ struct BattleUnit *Owner_GetStateFar(s32);
 void UiWork_SetParamNibble(s32);
 void UiText_DrawPrefixedNumberAtOffset(s32, struct RenderInput *, s32, s32, s32);
 void UiText_DrawStringAtOffset(u8 *, struct RenderInput *, s32, s32);
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *, s32, s32, s32);
 void UiWindow_SetTilemapEntry(struct RenderInput *, s32, s32, s32, u32);
 /* FAKEMATCH: these four legacy calls reuse the outgoing mode slot left
@@ -137,7 +137,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         UiWork_SetParamNibble(15);
         if (unit->max_hp != 0) {
             current = unit->hp;
-            value = Math_Div(current * 40, unit->max_hp);
+            value = __divsi3(current * 40, unit->max_hp);
             if (value == 0 && current != 0)
                 value = 1;
             UiWindow_DrawStatusBarTiles(window, bar_x, y + 2, value);
@@ -149,7 +149,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
             UiText_DrawPrefixedNumberAtOffset(unit->pp, window, text_x, y * 8 + 16, 1);
             if (unit->max_pp != 0) {
                 current = unit->pp;
-                value = Math_Div(current * 40, unit->max_pp);
+                value = __divsi3(current * 40, unit->max_pp);
                 if (value == 0 && current != 0)
                     value = 1;
                 UiWindow_DrawStatusBarTiles(window, bar_x, y + 3, value);

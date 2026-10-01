@@ -289,7 +289,7 @@ Func_08180c94:
 	cmp r0, #17
 	bhi .L_08180f18
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	adds r1, r0, #0
 	lsls r1, r1, #11
 	movs r0, #224

@@ -75,7 +75,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             }
             while (0);
             ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
-            value = (Math_DivU(Random16(), 3) + 0x10000);
+            value = ((u32)Random16() / 3 + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;
             count = (count - 1);

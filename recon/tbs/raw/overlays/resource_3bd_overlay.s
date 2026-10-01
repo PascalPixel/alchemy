@@ -53,7 +53,7 @@ Func_0200109c:
 	lsls r0, r6, #16
 	movs r1, #5
 	mov r11, r2
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	mov r2, r8
@@ -234,7 +234,7 @@ Func_0200109c:
 	asrs r0, r0, #24
 	movs r1, #5
 	adds r0, #5
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r6, .L_020093dc
 	strb r0, [r7, #1]
 	ldr r2, [r6]

@@ -886,7 +886,7 @@ Func_08122514:
 	lsrs r0, r0, #30
 	movs r1, #3
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	mov r1, r8
 	movs r3, #3
 	ldrb r2, [r1]

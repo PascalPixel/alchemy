@@ -20,8 +20,6 @@ struct FormationWork {
     void *objects[12];
 };
 
-s32 Math_Div(s32, s32);
-s32 Math_Mod(s32, s32);
 void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
 
 /* Places the battle objects of one of four formations around (x, z): a
@@ -39,8 +37,8 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
     switch (formation) {
     case 0:
         for (i = 0; i != 9; i++) {
-            pos.x = (Math_Mod(i, 3) << 21) + x;
-            pos.z = (Math_Div(i, 3) << 21) + z;
+            pos.x = (i % 3 << 21) + x;
+            pos.z = (i / 3 << 21) + z;
             Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
         }
         break;

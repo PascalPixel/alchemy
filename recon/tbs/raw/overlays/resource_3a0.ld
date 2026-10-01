@@ -16,7 +16,4 @@ SECTIONS
         "*/resource_3a0_overlay.o"(.rodata.x020094fc)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
-    /* The compiler calls its division helper by its ABI name; here it is the
-       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
-    __divsi3 = IwramSignedDivideEntry;
 }

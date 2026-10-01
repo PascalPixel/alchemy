@@ -36,7 +36,7 @@ Menu_CenterResourceEntries:
 	movs r1, #3
 	lsls r0, r0, #1
 	sub sp, #4
-	bl Math_Div
+	bl __divsi3
 	lsls r5, r6, #1
 	adds r5, r5, r6
 	adds r5, r5, r0

@@ -449,7 +449,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
         s32 cnt;
         s32 bias;
 
-        cnt = Engine_MathModulo(Engine_RandomNext(), 10) + 5;
+        cnt = (u32)Engine_RandomNext() % 10 + 5;
         /* FAKEMATCH: reuse the coordinate local for the direction mask. */
         x = 1;
         flags &= x;
@@ -457,15 +457,15 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
         bias <<= 2;
         cnt += bias;
         leaf->motion.vertical_rate = (0x3332 * flags - 0x1999) * cnt;
-        cnt = Engine_MathModulo(Engine_RandomNext(), 15) - 7;
+        cnt = (u32)Engine_RandomNext() % 15 - 7;
         leaf->motion.horizontal_rate = 0x1999 * cnt;
         leaf->motion.mode = zero;
     } else {
         s32 cnt;
 
-        cnt = Engine_MathModulo(Engine_RandomNext(), 10) + 8;
+        cnt = (u32)Engine_RandomNext() % 10 + 8;
         leaf->motion.horizontal_rate = (0x3332 * flags - 0x1999) * cnt;
-        cnt = Engine_MathModulo(Engine_RandomNext(), 14) + 1;
+        cnt = (u32)Engine_RandomNext() % 14 + 1;
         leaf->motion.vertical_rate = 0x1999 * cnt;
         leaf->motion.mode = 1;
     }

@@ -138,13 +138,13 @@ Func_080e28d4:
 	subs r3, r3, r5
 	mov r0, r8
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	mov r2, r8
 	adds r5, r5, r0
 	movs r1, #20
 	lsls r0, r2, #15
 	str r5, [r7, #8]
-	bl Math_Div
+	bl __divsi3
 	bl Trig_Sin
 	mov r2, r9
 	adds r6, r0, #0
@@ -155,7 +155,7 @@ Func_080e28d4:
 	subs r3, r3, r5
 	mov r0, r8
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	lsls r3, r6, #2
 	adds r3, r3, r6
 	adds r5, r5, r0
@@ -170,7 +170,7 @@ Func_080e28d4:
 	subs r3, r3, r5
 	mov r0, r8
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r7, #16]
 	movs r0, #1

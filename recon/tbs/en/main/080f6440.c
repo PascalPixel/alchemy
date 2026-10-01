@@ -34,7 +34,7 @@
  * result. Reopen only with a new control-flow, type or lifetime fact. */
 
 u32 Random16(void);
-s32 Math_Mod(s32 value, s32 modulus);
+s32 __modsi3(s32 value, s32 modulus);
 s32 Trig_Sin(s32 angle);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 w, s32 h, s32 flags);
 void UiWork_FinalizeFar(s32 window, s32 flags);
@@ -233,11 +233,11 @@ void ReelGame_RunFrame(void)
             }
         } else {
             if ((work->dir & 16) != 0) {
-                work->cursor = Math_Mod(work->cursor + 1, 6);
+                work->cursor = __modsi3(work->cursor + 1, 6);
                 Audio_PlayCue(111);
             }
             if ((work->dir & 32) != 0) {
-                work->cursor = Math_Mod(work->cursor + 5, 6);
+                work->cursor = __modsi3(work->cursor + 5, 6);
                 Audio_PlayCue(111);
             }
         }
@@ -382,7 +382,7 @@ void ReelGame_RunFrame(void)
                         v = -i - (work->row[i].pos / 16) + 26;
                     else
                         v = col - (work->row[i].pos / 16) + 21;
-                    v = work->row[i].cell[Math_Mod(v, 21)];
+                    v = work->row[i].cell[__modsi3(v, 21)];
                     if (v != 5) {
                         if (found == -1)
                             found = v;
@@ -543,7 +543,7 @@ build_objects:
         for (j = 0; j < 7; j++) {
             work->obj[oam][0] =
                 ((j * 16 + (work->row[i].pos % 16) + 4) | x) | 0x80006000;
-            v = Math_Mod(j - (work->row[i].pos / 16) + 21, 21);
+            v = __modsi3(j - (work->row[i].pos / 16) + 21, 21);
             work->obj[oam][1] = (work->row[i].cell[v] << 4) | 0x800;
             oam += 1;
         }

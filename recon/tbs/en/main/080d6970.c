@@ -59,9 +59,9 @@ void Audio_PlayCue(s32 id);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 unk);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 a, s32 b);
 void BattleEffect_RunImpactBurst(s32 channel, s32 a, s32 b);
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_Mod(s32 numerator, s32 denominator);
-s32 Math_ModU(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __modsi3(s32 numerator, s32 denominator);
+s32 __umodsi3(s32 numerator, s32 denominator);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void AnimationObjects_SelectAnimationFar(void *object, s32 value);
@@ -303,7 +303,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
         if ((u32)(t - 48) <= 48U) {
             s32 cell;
 
-            cell = Math_Mod(Math_Div(t - 48, 24), 3);
+            cell = __modsi3(__divsi3(t - 48, 24), 3);
             AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E4),
                 Data_080ee910[cell * 2]);
             AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E8),
@@ -326,7 +326,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                         u32 w;
                         u32 h;
 
-                        cell = Math_Mod((t + i) / 4, 5);
+                        cell = __modsi3((t + i) / 4, 5);
                         w = Data_080ee920[cell];
                         h = Data_080ee925[cell];
                         rect[0](canvas,
@@ -348,7 +348,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
             drop = (s32 *)((u8 *)work + 0x7240);
             i = 0;
             do {
-                drop[0] = Math_ModU(Random16(), 96) << 16;
+                drop[0] = __umodsi3(Random16(), 96) << 16;
                 drop[1] = ((Random16() & 7) + 88) << 16;
                 drop[3] = ((s32)(Random16() & 255) - 128) << 11;
                 drop[4] = -(s32)(Random16() & 255) << 11;
@@ -421,7 +421,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                         s32 h;
 
                         y = ((ring[1] - scroll) & 0x7F) - 16;
-                        cell = Math_Mod(k, 3);
+                        cell = __modsi3(k, 3);
                         w = Data_080ee930[cell];
                         h = w;
                         if (y + h > ring[1]) {
@@ -452,7 +452,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     u32 w;
                     u32 h;
 
-                    cell = Math_Mod(i, 5);
+                    cell = __modsi3(i, 5);
                     w = Data_080ee93e[cell];
                     h = Data_080ee943[cell];
                     rect[0](canvas, (u8 *)work + Data_080ee934[cell],
@@ -463,7 +463,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                     spark[1] = y;
                     spark[4] = spark[4] + 0x4000;
                     if ((u32)y > 0x780000U && t <= 159) {
-                        spark[0] = Math_ModU(Random16(), 96) << 16;
+                        spark[0] = __umodsi3(Random16(), 96) << 16;
                         spark[1] = ((Random16() & 7) + 88) << 16;
                         spark[3] = ((s32)(Random16() & 255) - 128) << 11;
                         spark[4] = -(s32)(Random16() & 255) << 11;
@@ -492,7 +492,7 @@ void BattleEffect_RunDitherDissolveScene(void *object)
                 r = colour & 31;
                 g = (colour >> 5) & 31;
                 b = (colour >> 10) & 31;
-                grey = Math_Div(r + g + b, 3);
+                grey = __divsi3(r + g + b, 3);
                 if (r > grey) {
                     r--;
                 }

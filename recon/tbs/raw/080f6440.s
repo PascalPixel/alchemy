@@ -422,7 +422,7 @@ Unnamed_080f6440:
 	ldr r0, [r5]
 	movs r1, #6
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	str r0, [r5]
 	movs r0, #111
 	bl AudioCommand_PlayFar
@@ -438,7 +438,7 @@ Unnamed_080f6440:
 	ldr r0, [r5]
 	movs r1, #6
 	adds r0, #5
-	bl Math_Mod
+	bl __modsi3
 	str r0, [r5]
 	movs r0, #111
 	bl AudioCommand_PlayFar
@@ -977,7 +977,7 @@ Unnamed_080f6440:
 .L_080f6b9e:
 	movs r1, #21
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	adds r0, r0, r5
 	adds r0, #4
 	ldrb r3, [r7, r0]
@@ -1789,7 +1789,7 @@ Unnamed_080f6440:
 	adds r0, #21
 	movs r1, #21
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	adds r0, #4
 	ldrb r3, [r5, r0]
 	movs r2, #128

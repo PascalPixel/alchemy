@@ -59,7 +59,7 @@ Func_080f2028:
 	mov r0, r9
 	muls r0, r3
 	movs r1, #80
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r0, r10
 	adds r5, r0, #0
 	subs r5, #16
@@ -128,7 +128,7 @@ Func_080f2028:
 	mov r0, r9
 	muls r0, r3
 	movs r1, #80
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r0, r10
 	adds r5, r0, #0
 	subs r5, #16
@@ -169,7 +169,7 @@ Func_080f2028:
 	mov r0, r9
 	muls r0, r3
 	movs r1, #80
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r0, r10
 	adds r5, r0, #0
 	subs r5, #32
@@ -266,7 +266,7 @@ Func_080f2028:
 	mov r0, r9
 	muls r0, r3
 	movs r1, #80
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r0, r10
 	adds r5, r0, #0
 	subs r5, #16
@@ -335,7 +335,7 @@ Func_080f2028:
 	mov r0, r9
 	muls r0, r3
 	movs r1, #80
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r0, r10
 	adds r5, r0, #0
 	subs r5, #16
@@ -406,7 +406,7 @@ Func_080f2028:
 	mov r0, r9
 	muls r0, r3
 	movs r1, #80
-	bl FixedPoint_Ratio
+	bl __divsi3
 	add r0, r10
 	adds r5, r0, #0
 	subs r5, #32

@@ -219,7 +219,7 @@ Func_0817c6ac:
 	adds r3, #6
 	ldrh r5, [r4, r3]
 	adds r1, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	lsrs r5, r5, #1
 	subs r0, r0, r5
 	lsls r0, r0, #12

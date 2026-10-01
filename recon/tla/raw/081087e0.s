@@ -32,50 +32,50 @@ Func_081087e0:
 	subs r3, #12
 	adds r0, r5, #0
 	movs r1, #10
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r6, #0
 	movs r2, #0
 	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_08108896
 	movs r1, #10
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r6, #0
 	movs r2, #1
 	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_08108896
 	movs r1, #10
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r6, #0
 	movs r2, #2
 	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_08108896
 	movs r1, #10
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r6, #0
 	movs r2, #3
 	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	cmp r0, #0
 	beq .L_08108896
 	movs r1, #10
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r6, #0
 	movs r2, #4
 	bl Shop_CopyGlyphs

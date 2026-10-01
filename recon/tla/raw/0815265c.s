@@ -441,7 +441,7 @@ BattleFx_RunProjectileVolleyB:
 	bl Random16
 	movs r1, #144
 	lsls r1, r1, #3
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #152
 	lsls r1, r1, #5
 	ldr r2, [sp, #76]
@@ -1126,7 +1126,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r2, [sp, #60]
 	movs r1, #3
 	ldr r0, [r2]
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [sp, #60]
 	mov r5, r11
 	str r0, [r3]
@@ -1216,7 +1216,7 @@ BattleFx_RunProjectileVolleyB:
 	ldr r0, [sp, #84]
 	ldr r1, [r0, #20]
 	ldr r0, [sp, #72]
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #72]
 	ldr r2, [sp, #40]
 	mov r10, r0
@@ -1383,9 +1383,9 @@ BattleFx_RunProjectileVolleyB:
 	bne .L_081530e4
 	ldr r0, [sp, #72]
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #3
 	ldr r3, [sp, #60]
 	ldr r6, [sp, #76]
@@ -1407,9 +1407,9 @@ BattleFx_RunProjectileVolleyB:
 .L_081530e4:
 	ldr r0, [sp, #72]
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #3
 	adds r1, r1, r0
 	ldr r0, [sp, #60]
@@ -1510,7 +1510,7 @@ BattleFx_RunProjectileVolleyB:
 	bne .L_081531c8
 	bl Random16
 	movs r1, #96
-	bl Math_ModU
+	bl __umodsi3
 	adds r5, #4
 	ldr r3, [r7, r5]
 	mov r1, r8
@@ -1718,7 +1718,7 @@ BattleFx_RunProjectileVolleyB:
 	add r0, r9
 	asrs r0, r0, #1
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #1
 	mov r2, r9
 	ands r3, r2
@@ -1758,12 +1758,12 @@ BattleFx_RunProjectileVolleyB:
 	bne .L_081533cc
 	movs r1, #5
 	mov r0, r9
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	movs r1, #3
 	adds r5, r5, r0
 	adds r0, r6, #0
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_081536d8
 	adds r5, r5, r0
 	ldrb r4, [r3, r5]

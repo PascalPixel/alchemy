@@ -68,7 +68,7 @@ UiMenu_SlideCursor:
 	subs r0, r0, r5
 	movs r1, #2
 	adds r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r3, r8
 	mov r11, r0
 	lsls r6, r6, #4
@@ -76,7 +76,7 @@ UiMenu_SlideCursor:
 	subs r0, r0, r6
 	adds r0, #1
 	movs r1, #2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r4, .L_080a1b88
 	mov r8, r0
 .L_080a1b56:

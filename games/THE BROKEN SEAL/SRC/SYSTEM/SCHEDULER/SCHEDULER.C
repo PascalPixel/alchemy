@@ -60,7 +60,6 @@ extern u8 gNumberTextBuffer[];
 extern const u8 RomBytes_0800795c[];
 
 /* ui/text/format_signed_decimal_to_work.c */
-extern s32 Math_DivU(u32, s32);
 extern u8 Text_PowersOfTen[];
 
 /* graphics/fill_word_stream_with_f000.c */
@@ -105,13 +104,13 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
 
         sine = Trig_Sin(angle);
         cosine = Trig_Cos(angle);
-        *coefficient = Math_Div(cosine, x_scale);
+        *coefficient = cosine / x_scale;
         coefficient++;
-        *coefficient = Math_Div(sine, x_scale);
+        *coefficient = sine / x_scale;
         coefficient++;
-        *coefficient = Math_Div(-sine, y_scale);
+        *coefficient = (-sine) / y_scale;
         coefficient++;
-        *coefficient = Math_Div(cosine, y_scale);
+        *coefficient = cosine / y_scale;
     }
 
     gObjAffineCount = index + 1;
@@ -807,7 +806,7 @@ u16 ArcTan2(s32 x, s32 y)
         if (value < 0)
             value = -value;
 
-        ratio = Math_Div(value << 8, ratio);
+        ratio = (value << 8) / ratio;
         result = 0x4000;
         if (ratio <= 0xFB6A) {
             table = Math_ArcTanTable;
@@ -954,7 +953,7 @@ void Text_FormatSignedDecimalToWork(s32 arg0) {
     if (count != 0) {
         do {
             word = *tbl++;
-            result = Math_DivU((u32) val, word);
+            result = (u32) val / word;
             *out++ = result + 0x30;
             val -= result * word;
             count -= 1;

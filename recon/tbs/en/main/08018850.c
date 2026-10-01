@@ -32,7 +32,7 @@ struct TextWork {
 extern u8 *gWindowWork;
 extern struct GlyphInfo UiText_Glyphs[];
 
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 
 /* Measures the queued message starting at entry pos: the widest line and
    the total height (15 per line, up to four lines), and optionally the
@@ -128,7 +128,7 @@ done:
                 gap = width - widths[i] - 4;
                 if (gap < 0)
                     gap = 0;
-                gap = Math_Div(gap << 8, *(counts + i) - 1);
+                gap = __divsi3(gap << 8, *(counts + i) - 1);
                 if ((u32)gap > 0xc00)
                     gap = 0x200;
                 *spacing = gap;

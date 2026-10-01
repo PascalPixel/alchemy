@@ -19,7 +19,7 @@
  * H1 transfers the exact position-cursor OAM bitfields and chained position
  * stores, plus named menu/callee interfaces. The two-frame counter starts
  * before the skip-slide guard in the ROM. Caller 080a63e4 supplies x/y;
- * Math_Div is signed and WaitFrames returns void. Predict exact bitfield
+ * __divsi3 is signed and WaitFrames returns void. Predict exact bitfield
  * reads/writes and the original four-byte frame including literal pools.
  * Gate: whole-owner exact bytes plus compare/test/coverage/verify.
  * H1: 262/264 bytes, 85 aligned edits. OAM accesses match in shape, but the

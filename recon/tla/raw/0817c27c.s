@@ -88,7 +88,7 @@ Func_0817c27c:
 	bne .L_0817c400
 	ldr r0, [sp, #20]
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	cmp r0, #4
 	bls .L_0817c338
 	b .L_0817c4d2
@@ -197,7 +197,7 @@ Func_0817c27c:
 .L_0817c400:
 	ldr r0, [sp, #20]
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	cmp r0, #4
 	bhi .L_0817c4d2
 	ldr r2, .L_0817c62c

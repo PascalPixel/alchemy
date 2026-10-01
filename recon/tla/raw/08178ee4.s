@@ -331,7 +331,7 @@ Func_08178ee4:
 	cmp r0, #11
 	bhi .L_081791d4
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [sp, #12]
 	adds r6, r0, #0
 	ldr r5, [r1, #4]
@@ -428,7 +428,7 @@ Func_08178ee4:
 	mov r0, r9
 	subs r0, #56
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	adds r4, r0, #0
 	cmp r4, #0
 	bge .L_08179232

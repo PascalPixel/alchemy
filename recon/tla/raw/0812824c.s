@@ -159,7 +159,7 @@ Func_0812824c:
 	mov r4, r10
 	ldrb r0, [r4, #15]
 	movs r1, #10
-	bl Math_DivU
+	bl __udivsi3
 	lsls r0, r0, #24
 	lsrs r0, r0, #24
 	adds r0, #1
@@ -170,7 +170,7 @@ Func_0812824c:
 	movs r1, #10
 	lsls r0, r5, #1
 	adds r0, r0, r5
-	bl Math_Div
+	bl __divsi3
 	cmp r6, r0
 	bge .L_08128398
 	adds r6, r0, #0
@@ -200,7 +200,7 @@ Func_0812824c:
 	mov r2, r10
 	ldrb r0, [r2, #15]
 	movs r1, #10
-	bl Math_DivU
+	bl __udivsi3
 	lsls r0, r0, #24
 	lsrs r0, r0, #24
 	adds r0, #1
@@ -211,7 +211,7 @@ Func_0812824c:
 	movs r1, #10
 	lsls r0, r5, #1
 	adds r0, r0, r5
-	bl Math_Div
+	bl __divsi3
 	cmp r6, r0
 	bge .L_081283e8
 	adds r6, r0, #0

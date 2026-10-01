@@ -84,7 +84,7 @@ Unnamed_080ae2f4:
 	ldr r0, [sp, #68]
 	movs r1, #6
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, #1
 	str r0, [sp, #68]
 	cmp r0, #0
@@ -95,7 +95,7 @@ Unnamed_080ae2f4:
 	ldr r0, [r1, #4]
 	movs r1, #6
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r2, r11
 	adds r0, #1
 	str r0, [r2, #4]
@@ -294,7 +294,7 @@ Unnamed_080ae2f4:
 	adds r0, r3, #0
 	movs r1, #60
 	str r3, [sp, #48]
-	bl Math_Mod
+	bl __modsi3
 	subs r0, #5
 	movs r0, #0
 	movs r1, #32

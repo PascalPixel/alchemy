@@ -269,7 +269,7 @@ Func_080e1040:
 .L_080e125e:
 	bl Random16
 	movs r1, #6
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	adds r0, #3
 	str r0, [r5, #12]
 	bl Random16

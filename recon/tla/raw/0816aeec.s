@@ -762,7 +762,7 @@ Func_0816aeec:
 	str r4, [sp, #16]
 	bl Random16
 	movs r1, #6
-	bl Math_ModU
+	bl __umodsi3
 	ldr r4, [sp, #16]
 	ldr r3, .L_0816b6b8
 	str r0, [r5, #24]

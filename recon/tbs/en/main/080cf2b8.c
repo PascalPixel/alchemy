@@ -91,7 +91,7 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *record);
 void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *screen);
-s32 Math_Div(s32 value, s32 divisor);
+s32 __divsi3(s32 value, s32 divisor);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void WaitFrames(s32 frames);
 s32 BattleFx_EndCanvasLayer(void);
@@ -329,7 +329,7 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
                         q = frame / 4;
                         thick = 6;
                         if (frame > gap) {
-                            thick = 6 - Math_Div((frame - base) - 88, 3);
+                            thick = 6 - __divsi3((frame - base) - 88, 3);
                         }
                         if (q > 2) {
                             q = (q & 1) + 1;

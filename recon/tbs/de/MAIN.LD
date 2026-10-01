@@ -827,6 +827,8 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000f1df0)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
     "*/recon/tbs/de/rom.o"(.rom.000f3628)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)
+    "*/recon/tbs/de/rom.o"(.rom.000f3cea)
     "*/recon/tbs/de/rom.o"(.rom.000f3cec)
     "*/recon/tbs/de/rom.o"(.rom.000f4180)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SPLASH.o"(.text)

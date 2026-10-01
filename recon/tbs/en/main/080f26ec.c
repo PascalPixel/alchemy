@@ -70,7 +70,7 @@ void Bg0_ClearTilemap(void);
 void Resource_InitializeTable(void);
 void WaitFrames(s32 frames);
 void Scheduler_ResetTaskTable(void);
-void Unnamed_080f24a0(void);
+void Title_LoadIntroBackgrounds(void);
 void TitlePalette_InitializeBuffers(void);
 s32 Graphics_TransformSmallPalette(s32, s32);
 void Graphics_UpdatePaletteInterpolation(s32);
@@ -110,7 +110,7 @@ s32 Func_080f26ec(s32 sprites)
     Scheduler_ResetTaskTable();
     gOamCopyEnabled = result;
     Data_03001f58 = result;
-    Unnamed_080f24a0();
+    Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
     Graphics_TransformSmallPalette(2, 0);
     {

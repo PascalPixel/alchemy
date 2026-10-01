@@ -2442,10 +2442,10 @@ Func_080ccec8:
 Func_080d1684:
 	.incbin "baserom.gba", 0x000da72c, 0x00000020
 	.section .rom.000da74c, "ax"
-	.global Func_080d17ac
-	.type Func_080d17ac, %function
+	.global BattleFx_StartBufferInterpolation
+	.type BattleFx_StartBufferInterpolation, %function
 	.thumb_func
-Func_080d17ac:
+BattleFx_StartBufferInterpolation:
 	.incbin "baserom.gba", 0x000da74c, 0x00000014
 	.section .rom.000da760, "ax"
 	.global Func_080ccd78
@@ -2454,10 +2454,10 @@ Func_080d17ac:
 Func_080ccd78:
 	.incbin "baserom.gba", 0x000da760, 0x0000004c
 	.section .rom.000da7ac, "ax"
-	.global Func_080d172c
-	.type Func_080d172c, %function
+	.global BattleFx_ApplyColorToSourceBuffer
+	.type BattleFx_ApplyColorToSourceBuffer, %function
 	.thumb_func
-Func_080d172c:
+BattleFx_ApplyColorToSourceBuffer:
 	.incbin "baserom.gba", 0x000da7ac, 0x0000003c
 	.section .rom.000da7e8, "ax"
 	.global Func_080d1760
@@ -2530,10 +2530,10 @@ Func_080d072c:
 	.section .rom.000db7fe, "ax"
 	.incbin "baserom.gba", 0x000db7fe, 0x00000152
 	.section .rom.000db950, "ax"
-	.global Func_080cb6f4
-	.type Func_080cb6f4, %function
+	.global BattleParty_ApplyHealthDelta
+	.type BattleParty_ApplyHealthDelta, %function
 	.thumb_func
-Func_080cb6f4:
+BattleParty_ApplyHealthDelta:
 	.incbin "baserom.gba", 0x000db950, 0x000000b0
 	.section .rom.000dba30, "ax"
 	.global Func_080d16f8

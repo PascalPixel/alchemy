@@ -1,22 +1,16 @@
 #include "TYPES.H"
-#include "SCENE.H"
 
-extern u16 RomBytes_080b413c[];
-
-/* shop/sel/fill.c */
-struct Record_080b06c0 {
-    u8 filler0[4];
-    u8 values[21];
-};
-
-extern u16 RomBytes_080b4100[];
+extern u8 Shop_GlyphBytes[];
+extern u16 Shop_GlyphOffsets[];
 
 void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
 {
     u8 *src = Shop_GlyphBytes + ((u32)arg0 << 5);
-    u8 *dst =
-        (u8 *)((u32)arg1 + RomBytes_080b413c[arg2] + 2);
-    s32 count = 3;
+    u8 *dst;
+    s32 count;
+
+    count = 3;
+    dst = (u8 *)((u32)arg1 + Shop_GlyphOffsets[arg2] + 2);
 
     do {
         if (*src != 0) {

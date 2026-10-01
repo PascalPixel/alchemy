@@ -18,7 +18,7 @@ Func_080d20fc:
 	sub sp, #8
 	bl Func_080d170c
 	movs r0, #24
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	ldr r2, .L_080d2184
 	movs r1, #9
 	negs r1, r1

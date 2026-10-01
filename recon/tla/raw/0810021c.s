@@ -45,7 +45,7 @@ Func_0810021c:
 	str r3, [sp, #8]
 	adds r0, r7, #0
 	ldr r1, [r3]
-	bl Func_080fa3d4
+	bl Menu_SpawnIconEntries
 	ldr r5, .L_081004b0
 	movs r6, #24
 	negs r6, r6

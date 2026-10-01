@@ -741,16 +741,16 @@ Animation_InitWorkFromMetadata:
 ResourceMetadata_Register:
 	.incbin "baserom.gba", 0x000229ac, 0x00000078
 	.section .rom.00022a24, "ax"
-	.global Func_08022a24
-	.type Func_08022a24, %function
+	.global ResourceMetadata_Unregister
+	.type ResourceMetadata_Unregister, %function
 	.thumb_func
-Func_08022a24:
+ResourceMetadata_Unregister:
 	.incbin "baserom.gba", 0x00022a24, 0x00000060
 	.section .rom.00022a84, "ax"
-	.global Func_08022a84
-	.type Func_08022a84, %function
+	.global ResourceMetadata_ReleaseSlot
+	.type ResourceMetadata_ReleaseSlot, %function
 	.thumb_func
-Func_08022a84:
+ResourceMetadata_ReleaseSlot:
 	.incbin "baserom.gba", 0x00022a84, 0x00000048
 	.section .rom.00022acc, "ax"
 	.global Func_08022acc

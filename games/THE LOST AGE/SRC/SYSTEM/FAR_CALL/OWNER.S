@@ -124,7 +124,7 @@ Party_AdvanceOwnerCountToTargetFar:
 	.global Func_080ad1a0
 	.thumb_func
 Func_080ad1a0:
-	overlay_veneer Func_080b0028
+	overlay_veneer Owner_GetResistanceValue
 	.global Trade_CountPendingOffersFar
 	.thumb_func
 Trade_CountPendingOffersFar:

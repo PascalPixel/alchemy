@@ -1,20 +1,15 @@
-/*
- * Draft: Owner_GetResistanceValue does not yet match; 5 halfwords differ from ☀️'s C, first at +0x12 (movs r2, #165).
- * Links as recon/tla/raw/080affac.s.
- */
 #include "TYPES.H"
+#include "OWNER_STATE.H"
 
-struct OwnerResistanceState {
-    u8 unknown[0xf8];
-    u8 source[0x30];
-    u8 record;
-};
-
-void *Owner_GetState(s32);
+s32 Math_Div(s32, s32);
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
 
-void *Owner_GetState(s32 owner);
-s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
+/* ⚓️ keeps the class as a halfword at 0x14a; ☀️ as a byte at 0x128. */
+struct OwnerResistanceState {
+    u8 unknown[0xf8];
+    u8 source[0x52];
+    u16 record;
+};
 
 s32 Owner_GetResistanceValue(s32 owner, s32 index)
 {

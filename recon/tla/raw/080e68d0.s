@@ -992,9 +992,9 @@ Func_080e68d0:
 	bl Resource_ResetEntry
 .L_080e70ce:
 	mov r0, r11
-	bl Func_080200c8
+	bl Object_Destroy
 	ldr r0, [sp, #24]
-	bl Func_080200c8
+	bl Object_Destroy
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #92
 	bl Runtime_ReleaseHeapBlock

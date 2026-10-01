@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "RAM_BUFFER.H"
 
-/* The drifting island: its map set-up and the objects it throws up. */
+/* The drifting island: its map set-up; DRIFT_SPAWN.C throws up its objects. */
 
 struct MapLayer {
     u8 unknown_00[6];
@@ -17,8 +17,6 @@ struct MapWork {
     struct MapLayer layer;
 };
 
-extern const u8 gIdejimaSpawnScript[];
-
 /* Before the island drifts: sets two map layer values, copies one map cell and
    gives actor 9 animation 2. */
 void DriftScene_Prepare(void)
@@ -29,22 +27,4 @@ void DriftScene_Prepare(void)
     layer->unknown_1c = 0x2000;
     Engine_MapCopyCellsTo(72, 10, 75, 8, 1, 1);
     Engine_ActorSetAnimation(9, 2);
-}
-
-/* Creates object 0x1e8 at a position, plays cue 0x97 and starts its script. */
-void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value)
-{
-    struct FieldActor *object;
-    struct FieldSprite *sprite;
-
-    object = Engine_ObjectCreate(0x1e8, x, y, z);
-    if (object != 0) {
-        sprite = object->sprite;
-        Engine_AudioPlayCue(0x97);
-        Engine_ObjectSetMode(object, 1);
-        Engine_ObjectSetScript(object, gIdejimaSpawnScript);
-        object->motion_flags = 0;
-        sprite->unknown_1a = 0;
-        sprite->unknown_12 = value;
-    }
 }

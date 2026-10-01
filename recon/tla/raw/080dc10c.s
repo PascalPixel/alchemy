@@ -17,7 +17,7 @@ Object_Spawn:
 	ldrb r3, [r3]
 	cmp r3, #0
 	bne .L_080dc132
-	bl Func_080200c8
+	bl Object_Destroy
 	movs r0, #0
 	b .L_080dc160
 .L_080dc132:

@@ -57,7 +57,7 @@ Func_02001084:
 	.global Func_0200108c
 	.thumb_func
 Func_0200108c:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02001094
 	.thumb_func
 Func_02001094:

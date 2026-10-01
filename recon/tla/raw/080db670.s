@@ -230,7 +230,7 @@ BattleFx_DispatchRequestKind:
 	strh r3, [r6]
 .L_080db832:
 	adds r0, r5, #0
-	bl Func_080e0308
+	bl BattleEffect_PauseObject
 	strh r5, [r6]
 	adds r0, r5, #0
 	bl Func_080e011c

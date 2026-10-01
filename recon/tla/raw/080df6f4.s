@@ -125,10 +125,10 @@ Func_080df6f4:
 	cmp r0, #0
 	bge .L_080df790
 	ldr r0, [sp, #0]
-	bl Func_080200c8
+	bl Object_Destroy
 	mov r3, r11
 	ldr r0, [r3, #4]
-	bl Func_080200c8
+	bl Object_Destroy
 	bl BattleFx_PrepareBufferInterpolation
 	add sp, #20
 	pop {r3, r5, r6, r7}

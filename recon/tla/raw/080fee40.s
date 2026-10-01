@@ -50,7 +50,7 @@ Func_080fee40:
 	bne .L_080feea4
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_080fa3d4
+	bl Menu_SpawnIconEntries
 .L_080feea4:
 	movs r2, #128
 	lsls r2, r2, #1

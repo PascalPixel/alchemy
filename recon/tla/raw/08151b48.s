@@ -28,13 +28,13 @@ Func_08151b48:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleFx_BeginTiledCanvas
+	bl BattleFx_BeginTiledCanvasFilled
 	b .L_08151b8a
 .L_08151b80:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 .L_08151b8a:
 	ldr r1, [sp, #40]
 	ldr r3, [r1, #24]

@@ -81,7 +81,7 @@ Func_0802be4c:
 	mov r8, r3
 	bl Resource_GetTableEntry
 	adds r1, r7, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	mov r2, r8
 	strh r2, [r7]
 	movs r3, #128

@@ -61,7 +61,7 @@ Func_02003df4:
 	.global Func_02003dfc
 	.thumb_func
 Func_02003dfc:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Object_SetPositionAndResetMotion
 	.thumb_func
 Object_SetPositionAndResetMotion:

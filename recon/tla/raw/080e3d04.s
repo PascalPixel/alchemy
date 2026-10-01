@@ -338,7 +338,7 @@ Func_080e3d04:
 .L_080e3f96:
 	bl WaitFrames
 	adds r0, r5, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	movs r0, #10
 	bl WaitFrames
 	b .L_080e4222

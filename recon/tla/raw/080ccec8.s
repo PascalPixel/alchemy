@@ -325,7 +325,7 @@ Func_080ccec8:
 .L_080cd16c:
 	.4byte 0x000015b5
 .L_080cd170:
-	.4byte Func_080cf0d0
+	.4byte BattleFx_EmitRandomParticleFromEmitter
 .L_080cd174:
 	.4byte 0x00000e17
 .L_080cd178:
@@ -456,7 +456,7 @@ Func_080ccec8:
 	b .L_080cd39e
 .L_080cd288:
 	adds r0, r6, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	b .L_080cd39e
 .L_080cd290:
 	cmp r7, #0
@@ -569,7 +569,7 @@ Func_080ccec8:
 	b .L_080cd382
 .L_080cd37c:
 	adds r0, r6, #0
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080cd382:
 	mov r1, r8
 	cmp r1, #133
@@ -718,7 +718,7 @@ Func_080ccec8:
 .L_080cd4a8:
 	.4byte 0x00000e1c
 .L_080cd4ac:
-	.4byte Func_080cf0d0
+	.4byte BattleFx_EmitRandomParticleFromEmitter
 .L_080cd4b0:
 	.4byte 0x00000e10
 .L_080cd4b4:

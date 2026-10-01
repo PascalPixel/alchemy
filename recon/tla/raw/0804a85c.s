@@ -1511,7 +1511,7 @@ Func_0804a85c:
 .L_0804b398:
 	.4byte 0x00000000
 .L_0804b39c:
-	bl Func_080396a0
+	bl Ui_ClearVramBlock
 	ldr r2, [r5]
 	adds r0, r6, #0
 	ldr r1, [sp, #72]

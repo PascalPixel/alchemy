@@ -94,11 +94,10 @@ extern s32 RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
-    register s32 resource_address;
-    void *staging_buffer;
+    void *staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
+    s32 resource_address = RenderResource_PairSourceTable[group_index];
 
-    staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
-    if ((resource_address = RenderResource_PairSourceTable[group_index], resource_index <= 0x5F)) {
+    if (resource_index <= 0x5F) {
         Resource_DecodeByteLz((const void *)resource_address, staging_buffer);
         VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
         Runtime_ReleaseHeapBlock(14);

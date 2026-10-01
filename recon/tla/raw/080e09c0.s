@@ -317,7 +317,7 @@ Func_080e09c0:
 	ldr r0, [sp, #4]
 	bl Resource_ResetEntry
 	mov r0, r8
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080e0c60:
 	bl BattleFx_PrepareBufferInterpolation
 	movs r0, #92

@@ -24,13 +24,13 @@ Func_08181910:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 	b .L_0818194a
 .L_08181940:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #1
-	bl BattleFx_BeginTiledCanvas
+	bl BattleFx_BeginTiledCanvasFilled
 .L_0818194a:
 	ldr r3, .L_08181978
 	movs r2, #128

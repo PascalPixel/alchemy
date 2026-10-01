@@ -1,21 +1,9 @@
 #include "OBJECT_RUNTIME.H"
+#include "FIELD_SPRITE.H"
 
-/* The two priorities of the sprite an object draws. */
-struct ObjectSprite {
-    u8 unknown_00[9];
-    u8 unknown_09 : 2;
-    u8 priority : 2;
-    u8 unknown_09_high : 4;
-    u8 unknown_0a[0x1b];
-    u8 unknown_25 : 2;
-    u8 part_priority : 2;
-    u8 unknown_25_high : 4;
-};
-
-struct ObjectRuntime *Object_GetById(u32);
 extern const u8 ObjectMotion_StepAngleScript[];
+struct ObjectRuntime *Object_GetById(u32);
 
-/* ☀️'s, with ⚓️'s object layout. */
 void Object_ResetTargetAndSetMode1(u32 object_id)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
@@ -40,9 +28,9 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
     }
 }
 
-/* ⚓️'s variant of the above, refreshing the object's selector in place of
-   the wait. */
-void ObjectMotion_ArmCallbackAndRefresh(u32 object_id, s32 angle)
+/* ⚓️ arms the same turn and refreshes the object's selector instead of
+   waiting. */
+void ObjectMotion_ArmCallbackAndRefresh(s32 object_id, s32 angle)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
@@ -58,7 +46,7 @@ void ObjectMotion_SetActionVariant(u32 object_id, s32 priority)
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
     if (object != NULL && (object->animation_kind & 0xF) == 1) {
-        struct ObjectSprite *sprite = object->animation;
+        struct FieldSprite *sprite = object->animation;
 
         sprite->priority = priority;
         sprite->part_priority = priority;

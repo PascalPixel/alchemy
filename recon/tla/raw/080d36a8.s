@@ -11,7 +11,7 @@ Func_080d36a8:
 	ldr r6, [r3, #108]
 	cmp r0, #0
 	beq .L_080d36c6
-	bl Func_080200c8
+	bl Object_Destroy
 	lsls r3, r5, #2
 	adds r3, #20
 	movs r2, #0

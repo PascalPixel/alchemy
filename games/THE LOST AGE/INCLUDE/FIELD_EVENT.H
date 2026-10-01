@@ -2,28 +2,13 @@
 #define TLA_FIELD_EVENT_H
 
 #include "TYPES.H"
+#include "FIELD_SPRITE.H"
 
 /*
  * What a field scene's scripts ask of the engine. Each entry is reached
  * through one of the overlay's import veneers, which the scene's translation
  * unit binds by name.
  */
-
-/* The sprite an object draws; its two parts each carry a priority. */
-struct FieldSprite {
-    u8 unknown_00[9];
-    u8 unknown_09 : 2;
-    u8 priority : 2;
-    u8 unknown_09_high : 4;
-    u8 unknown_0a[8];
-    u16 unknown_12;
-    u8 unknown_14[6];
-    u8 unknown_1a;
-    u8 unknown_1b[10];
-    u8 unknown_25 : 2;
-    u8 part_priority : 2;
-    u8 unknown_25_high : 4;
-};
 
 /* The runtime object behind an actor or a spawned effect. */
 struct FieldActor {

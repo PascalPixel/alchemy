@@ -110,22 +110,22 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Func_02004804
+	.global Engine_ObjectSetMode
 	.thumb_func
-Func_02004804:
+Engine_ObjectSetMode:
 	overlay_veneer Object_SetMode
-	.global Func_0200480c
+	.global Engine_ObjectSetScript
 	.thumb_func
-Func_0200480c:
+Engine_ObjectSetScript:
 	overlay_veneer Object_SetCallback
-	.global Func_02004814
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02004814:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_0200481c
 	.thumb_func
 Func_0200481c:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Object_SetPositionAndResetMotion
 	.thumb_func
 Object_SetPositionAndResetMotion:
@@ -442,7 +442,7 @@ Func_02004a8c:
 	.thumb_func
 Func_02004a94:
 	overlay_veneer Func_08108080
-	.global Func_02004a9c
+	.global Engine_AudioPlayCue
 	.thumb_func
-Func_02004a9c:
+Engine_AudioPlayCue:
 	overlay_veneer Audio_PlayCue

@@ -63,7 +63,7 @@ Func_0811c594:
 	movs r0, #45
 	bl WaitFrames
 	adds r0, r7, #0
-	bl Func_0811c6cc
+	bl BattlePres_ShowMessageWhenField38Positive
 	b .L_0811c640
 .L_0811c616:
 	movs r0, #45

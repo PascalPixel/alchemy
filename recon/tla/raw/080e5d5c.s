@@ -662,7 +662,7 @@ Func_080e5d5c:
 	bl Func_080dbf94
 .L_080e62bc:
 	mov r0, r11
-	bl Func_080200c8
+	bl Object_Destroy
 	ldr r0, [sp, #20]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #12]

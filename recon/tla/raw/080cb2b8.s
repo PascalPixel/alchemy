@@ -447,7 +447,7 @@ Func_080cb2b8:
 	negs r0, r0
 	ands r1, r3
 	str r4, [sp, #0]
-	bl Func_080cb6f4
+	bl BattleParty_ApplyHealthDelta
 	ldr r3, [sp, #8]
 	ldr r4, [sp, #0]
 	adds r3, #1

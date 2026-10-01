@@ -27,7 +27,7 @@ Func_0802c9c8:
 	mov r10, r3
 	bl Resource_GetTableEntry
 	mov r1, r9
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	mov r2, r10
 	mov r3, r9
 	strh r2, [r3]

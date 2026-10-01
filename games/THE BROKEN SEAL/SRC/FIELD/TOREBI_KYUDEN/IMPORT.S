@@ -42,17 +42,17 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global UiText_DrawQuantity
+	.global Engine_UiTextDrawQuantity
 	.thumb_func
-UiText_DrawQuantity:
+Engine_UiTextDrawQuantity:
 	overlay_veneer UiWork_PushValueSlotFar
 	.global Engine_ItemLoadIcon
 	.thumb_func
 Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
-	.global Owner_GetState
+	.global Engine_OwnerGetState
 	.thumb_func
-Owner_GetState:
+Engine_OwnerGetState:
 	overlay_veneer Owner_GetStateFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -66,21 +66,21 @@ Engine_GameFlagSet:
 	.thumb_func
 Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
-	.global Owner_RecalculateRatios
+	.global Engine_OwnerRecalculateRatios
 	.thumb_func
-Owner_RecalculateRatios:
+Engine_OwnerRecalculateRatios:
 	overlay_veneer Owner_RecalculateRatiosFar
-	.global Party_AddActiveOwner
+	.global Engine_PartyAddActiveOwner
 	.thumb_func
-Party_AddActiveOwner:
+Engine_PartyAddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
-	.global Party_ListActiveOwners
+	.global Engine_PartyListActiveOwners
 	.thumb_func
-Party_ListActiveOwners:
+Engine_PartyListActiveOwners:
 	overlay_veneer Party_ListActiveOwnersFar
-	.global InventorySnapshot_Restore
+	.global Engine_InventorySnapshotRestore
 	.thumb_func
-InventorySnapshot_Restore:
+Engine_InventorySnapshotRestore:
 	overlay_veneer InventorySnapshot_RestoreFar
 	.global Engine_EventWait
 	.thumb_func

@@ -200,8 +200,6 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP6.o"(.text)
         "*/recon/tbs/raw/08010ff0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP4.o"(.text)
-        "*/recon/tbs/raw/080113e4.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080114a0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY4.o"(.text)

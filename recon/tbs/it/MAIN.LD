@@ -180,8 +180,6 @@
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP6.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00010ff0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP4.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000113e4)
-    "*/recon/tbs/it/rom.o"(.rom.000114a0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY4.o"(.text)

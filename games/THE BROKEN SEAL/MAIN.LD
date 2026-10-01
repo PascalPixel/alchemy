@@ -482,7 +482,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT14.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT17.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.00091ba8)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLBACK.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_PAUSE.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/FILTER_OBJECT_ID.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT13_HOOK.o"(.text)

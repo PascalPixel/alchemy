@@ -736,12 +736,6 @@ RunBattleEffect05:
 	.thumb_func
 Battle_unk3_2:
 	.incbin "baserom.gba", 0x00090d98, 0x000004f0
-	.section .rom.00091ba8, "ax"
-	.global BattleEffect_RunFallbackObjectTransition
-	.type BattleEffect_RunFallbackObjectTransition, %function
-	.thumb_func
-BattleEffect_RunFallbackObjectTransition:
-	.incbin "baserom.gba", 0x00091ba8, 0x000001bc
 	.section .rom.00091e56, "ax"
 	.incbin "baserom.gba", 0x00091e56, 0x00000002
 	.section .rom.00091e58, "ax"

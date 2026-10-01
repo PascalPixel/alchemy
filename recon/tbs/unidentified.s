@@ -1286,8 +1286,8 @@ Data_080eeac3:
 	.global Data_080eeacc
 Data_080eeacc:
 	.incbin "baserom.gba", 0x000eeacc, 0x00000010
-	.global Data_080eeadc
-Data_080eeadc:
+	.global LightningBolts_Sparks
+LightningBolts_Sparks:
 	.incbin "baserom.gba", 0x000eeadc, 0x00000006
 	.global Data_080eeae2
 Data_080eeae2:

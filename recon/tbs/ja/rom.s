@@ -1481,7 +1481,7 @@ BattleEffectB:
 RunPaletteRampEffect:
 	.incbin "baserom.gba", 0x000d0ae8, 0x000004e0
 	.section .rom.000d1b74, "ax"
-	.incbin "baserom.gba", 0x000d1b74, 0x00000b54
+	.incbin "baserom.gba", 0x000d1b74, 0x000006f0
 	.section .rom.000d26e0, "ax"
 	.global RunParticleFieldEffect
 	.type RunParticleFieldEffect, %function
@@ -1734,7 +1734,10 @@ HomingEmbers_FlareBiasY:
 	.incbin "baserom.gba", 0x000e5a50, 0x00000006
 	.global HomingEmbers_FlareCells
 HomingEmbers_FlareCells:
-	.incbin "baserom.gba", 0x000e5a56, 0x000000f2
+	.incbin "baserom.gba", 0x000e5a56, 0x00000086
+	.global LightningBolts_Sparks
+LightningBolts_Sparks:
+	.incbin "baserom.gba", 0x000e5adc, 0x0000006c
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000e5b48, 0x00000003

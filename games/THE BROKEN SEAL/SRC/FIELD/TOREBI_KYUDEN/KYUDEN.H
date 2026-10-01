@@ -2,20 +2,144 @@
 #define TOREBI_KYUDEN_KYUDEN_H
 extern struct EventWork *gEventWork;
 
+/*
+ * The imports only the palace scene calls, each behind its inline service as
+ * FIELD_SERVICE.H gives the shared ones.
+ */
+struct OwnerState;
+
 void Audio_PlayCueFromEventWorkFar(void);
-void Battle_ResetEffectCounterFar();
-void DisplayTransition_InitializeBattleEffectStateFar();
+static inline void Audio_PlayCueFromEventWork(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Audio_PlayCueFromEventWorkFar();
+}
+
+void Battle_ResetEffectCounterFar(void);
+static inline void Battle_ResetEffectCounter(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Battle_ResetEffectCounterFar();
+}
+
+void DisplayTransition_InitializeBattleEffectStateFar(s32 first);
+static inline void DisplayTransition_InitializeBattleEffectState(s32 first)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    DisplayTransition_InitializeBattleEffectStateFar(first);
+}
+
 void Event_SetStatus1c6Far(void);
+static inline void Event_SetStatus1c6(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Event_SetStatus1c6Far();
+}
+
 void Event_WaitValue1c8FramesFar(void);
-void Inn_PlaySleepFar();
-void Map_ClearLayerEntryFlagFar();
-void Map_SetLayerEntryFlagFar();
-void Motion_LaunchFromFocusedObjectFar();
+static inline void Event_WaitValue1c8Frames(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Event_WaitValue1c8FramesFar();
+}
+
+void Inn_PlaySleepFar(s32 first);
+static inline void Inn_PlaySleep(s32 first)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Inn_PlaySleepFar(first);
+}
+
+void Engine_InventorySnapshotRestore(void);
+static inline void InventorySnapshot_Restore(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_InventorySnapshotRestore();
+}
+
+void Map_ClearLayerEntryFlagFar(s32 first);
+static inline void Map_ClearLayerEntryFlag(s32 first)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Map_ClearLayerEntryFlagFar(first);
+}
+
+void Map_SetLayerEntryFlagFar(s32 value);
+static inline void Map_SetLayerEntryFlag(s32 value)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Map_SetLayerEntryFlagFar(value);
+}
+
+void Motion_LaunchFromFocusedObjectFar(s32 first, s32 second, s32 third, s32 fourth);
+static inline void Motion_LaunchFromFocusedObject(s32 first, s32 second, s32 third, s32 fourth)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Motion_LaunchFromFocusedObjectFar(first, second, third, fourth);
+}
+
+void ObjectMotion_ResetAndSetPositionFar(s32 first, s32 second, s32 third);
+static inline void ObjectMotion_ResetAndSetPosition(s32 first, s32 second, s32 third)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    ObjectMotion_ResetAndSetPositionFar(first, second, third);
+}
+
 void Object_AttachWorkTargetToObjectFar(s32 id, s32 flag);
-void Object_LinkObjectAndSetCallbackFar();
-void Object_RefreshSelectorByIdFar();
-void ObjectMotion_ResetAndSetPositionFar();
-void UiText_DrawQuantity();
+static inline void Object_AttachWorkTargetToObject(s32 id, s32 flag)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Object_AttachWorkTargetToObjectFar(id, flag);
+}
+
+void Object_LinkObjectAndSetCallbackFar(s32 first, s32 second);
+static inline void Object_LinkObjectAndSetCallback(s32 first, s32 second)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Object_LinkObjectAndSetCallbackFar(first, second);
+}
+
+void Object_RefreshSelectorByIdFar(s32 first);
+static inline void Object_RefreshSelectorById(s32 first)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Object_RefreshSelectorByIdFar(first);
+}
+
+struct OwnerState *Engine_OwnerGetState(s32 owner);
+static inline struct OwnerState *Owner_GetState(s32 owner)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    return Engine_OwnerGetState(owner);
+}
+
+void Engine_OwnerRecalculateRatios(s32 owner);
+static inline void Owner_RecalculateRatios(s32 owner)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_OwnerRecalculateRatios(owner);
+}
+
+void Engine_PartyAddActiveOwner(s32 owner);
+static inline void Party_AddActiveOwner(s32 owner)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_PartyAddActiveOwner(owner);
+}
+
+s32 Engine_PartyListActiveOwners(s16 *owners);
+static inline s32 Party_ListActiveOwners(s16 *owners)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    return Engine_PartyListActiveOwners(owners);
+}
+
+void Engine_UiTextDrawQuantity(s32 first, s32 second);
+static inline void UiText_DrawQuantity(s32 first, s32 second)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_UiTextDrawQuantity(first, second);
+}
 
 /* Branching dialogue and actor presentation sequences. */
 

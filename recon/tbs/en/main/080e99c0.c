@@ -116,9 +116,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         ang = Random16() & 0xFFFF;
         spark->x = origin;
         spark->y = 176 << 15;
-        mag += 32;
-        spark->velocity_x = (Trig_Sin(ang) * mag) >> 5;
-        spark->velocity_y = -(Trig_Cos(ang) * mag) >> 6;
+        spark->velocity_x = (Trig_Sin(ang) * (mag + 32)) >> 5;
+        spark->velocity_y = -(Trig_Cos(ang) * (mag + 32)) >> 6;
         spark->variant = (Random16() & 7) + 32;
         i++;
     } while (i != 170 << 1);
@@ -234,8 +233,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
 
         /* The same guard again: a 34x104 strip wrapping through 104 rows. */
         if ((u32)step <= 31) {
-            s32 x = half - 17;
             s32 width = 34;
+            s32 x = half - 17;
             DrawRectangle blit = routine[0];
             s32 size = (frame * 16 - 256) % 104;
 

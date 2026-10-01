@@ -1,3 +1,6 @@
+@ Complete import-bank near miss after the status owners were corrected.
+@ Remaining scene difference: 1 bytes in neighboring import target words.
+@ Preserved before complete source-body identities selected the native owners.
 @ Import veneers after the OVERLAY_688 overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -137,15 +140,7 @@ Event_WaitValue1c8Frames:
 	.global Func_020005cc
 	.thumb_func
 Func_020005cc:
-	.ifdef TLA_EDITION_ES
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer BattleEffect_ResolvePendingActionsFar
-	.else
 	overlay_veneer Func_080c84e0
-	.endif
-	.endif
 	.global BattleFx_GetResourceId
 	.thumb_func
 BattleFx_GetResourceId:

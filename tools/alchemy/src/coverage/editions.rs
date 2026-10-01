@@ -6,8 +6,10 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy check editions [--write-report]\n\
-Report Japanese placed C missing from an edition, separately for main and each\n\
-live code overlay. Missing C is diagnostic and does not alter DONE. Reports\n\
+Report Japanese placed C and the verified six-edition union missing from each\n\
+edition, separately for main and each live code overlay. Japanese evidence is\n\
+preferred; other reference editions are named. A union stays pending until all\n\
+six snapshots are current. Missing C is diagnostic and does not alter DONE. Reports\n\
 under out/ are for people and never feed builds or counting policy.";
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -53,6 +55,237 @@ struct Missing {
     target: DecompTargetId,
     placement: Placement,
     japanese_bytes: i64,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct Evidence {
+    target: DecompTargetId,
+    bytes: i64,
+}
+
+#[derive(Debug, Default)]
+struct PlacedUnion {
+    pending: Option<String>,
+    placed: BTreeMap<Placement, Evidence>,
+    functions: BTreeMap<(Placement, String), Evidence>,
+}
+
+#[derive(Debug)]
+struct UnionMissing {
+    target: DecompTargetId,
+    placement: Placement,
+    evidence: Evidence,
+    absent_source: bool,
+}
+
+#[derive(Debug)]
+struct UnionMissingFunction {
+    target: DecompTargetId,
+    placement: Placement,
+    name: String,
+    evidence: Evidence,
+    absent_source: bool,
+}
+
+/// A union is complete only after every edition of this game passes the same
+/// snapshot gates. Prefer Japanese extents, never the largest localized size.
+fn verified_union(target: DecompTarget, snapshots: &BTreeMap<String, Snapshot>) -> PlacedUnion {
+    let native = japanese(target);
+    let editions: Vec<_> = std::iter::once(native)
+        .chain(
+            TARGET_IDS
+                .into_iter()
+                .filter(|id| *id != native && target_for(*id).compiler == target.compiler),
+        )
+        .collect();
+    let pending: Vec<_> = editions
+        .iter()
+        .filter_map(|id| {
+            snapshots[id.as_str()]
+                .pending
+                .as_ref()
+                .map(|reason| format!("{id}: {reason}"))
+        })
+        .collect();
+    if !pending.is_empty() {
+        return PlacedUnion {
+            pending: Some(pending.join("; ")),
+            ..PlacedUnion::default()
+        };
+    }
+    let mut union = PlacedUnion::default();
+    for id in editions {
+        let own = &snapshots[id.as_str()];
+        for (key, bytes) in &own.placed {
+            if *bytes > 0 {
+                union.placed.entry(key.clone()).or_insert(Evidence {
+                    target: id,
+                    bytes: *bytes,
+                });
+            }
+        }
+        for (key, bytes) in &own.functions {
+            if *bytes > 0 {
+                union.functions.entry(key.clone()).or_insert(Evidence {
+                    target: id,
+                    bytes: *bytes,
+                });
+            }
+        }
+    }
+    union
+}
+
+fn union_missing(
+    root: &Path,
+    target: DecompTarget,
+    union: &PlacedUnion,
+    own: &Snapshot,
+    definitions: &mut Definitions,
+) -> Result<(Vec<UnionMissing>, Vec<UnionMissingFunction>), String> {
+    if union.pending.is_some() || own.pending.is_some() {
+        return Ok((Vec::new(), Vec::new()));
+    }
+    let mut objects = Vec::new();
+    for (placement, evidence) in &union.placed {
+        if own.placed.get(placement).copied().unwrap_or(0) > 0 {
+            continue;
+        }
+        let reference = cached_definitions(
+            root,
+            target_for(evidence.target),
+            &placement.source,
+            definitions,
+        )?;
+        let edition = cached_definitions(root, target, &placement.source, definitions)?;
+        objects.push(UnionMissing {
+            target: target.id,
+            placement: placement.clone(),
+            evidence: *evidence,
+            absent_source: !reference.is_empty() && edition.is_empty(),
+        });
+    }
+    let mut functions = Vec::new();
+    for ((placement, name), evidence) in &union.functions {
+        if own
+            .functions
+            .get(&(placement.clone(), name.clone()))
+            .copied()
+            .unwrap_or(0)
+            > 0
+        {
+            continue;
+        }
+        let reference = cached_definitions(
+            root,
+            target_for(evidence.target),
+            &placement.source,
+            definitions,
+        )?;
+        let edition = cached_definitions(root, target, &placement.source, definitions)?;
+        functions.push(UnionMissingFunction {
+            target: target.id,
+            placement: placement.clone(),
+            name: name.clone(),
+            evidence: *evidence,
+            absent_source: reference.contains(name) && !edition.contains(name),
+        });
+    }
+    Ok((objects, functions))
+}
+
+fn render_union(
+    unions: &BTreeMap<String, PlacedUnion>,
+    snapshots: &BTreeMap<String, Snapshot>,
+    objects: &[UnionMissing],
+    functions: &[UnionMissingFunction],
+) -> (String, String, String) {
+    let mut summary = String::from("target\tstatus\tunion_main_c_objects\tunion_overlay_c_placements\tmissing_main\tmissing_overlay\tabsent_source_main\tabsent_source_overlay\tmissing_main_functions\tmissing_overlay_functions\tabsent_source_main_functions\tabsent_source_overlay_functions\treason\n");
+    let mut details = String::from("game\tedition\timage\tsource\treference_edition\treference_text_bytes\tedition_text_bytes\tstatus\n");
+    let mut function_details = String::from(
+        "game\tedition\timage\tsource\tfunction\treference_edition\treference_text_bytes\tstatus\n",
+    );
+    for id in TARGET_IDS {
+        let target = target_for(id);
+        let union = &unions[japanese(target).as_str()];
+        if let Some(reason) = union
+            .pending
+            .as_ref()
+            .or(snapshots[id.as_str()].pending.as_ref())
+        {
+            summary.push_str(&format!(
+                "{id}\tpending\t\t\t\t\t\t\t\t\t\t\t{}\n",
+                reason.replace(['\t', '\n', '\r'], " ")
+            ));
+            continue;
+        }
+        let main = union
+            .placed
+            .keys()
+            .filter(|key| key.image == "main")
+            .count();
+        let rows: Vec<_> = objects.iter().filter(|row| row.target == id).collect();
+        let functions: Vec<_> = functions.iter().filter(|row| row.target == id).collect();
+        let counts = |main: bool, absent: bool| {
+            rows.iter()
+                .filter(|row| {
+                    (row.placement.image == "main") == main && (!absent || row.absent_source)
+                })
+                .count()
+        };
+        let function_counts = |main: bool, absent: bool| {
+            functions
+                .iter()
+                .filter(|row| {
+                    (row.placement.image == "main") == main && (!absent || row.absent_source)
+                })
+                .count()
+        };
+        summary.push_str(&format!(
+            "{id}\tverified\t{main}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t\n",
+            union.placed.len() - main,
+            counts(true, false),
+            counts(false, false),
+            counts(true, true),
+            counts(false, true),
+            function_counts(true, false),
+            function_counts(false, false),
+            function_counts(true, true),
+            function_counts(false, true)
+        ));
+        for row in rows {
+            details.push_str(&format!(
+                "{}\t{id}\t{}\t{}\t{}\t{}\t0\t{}\n",
+                target.compiler.as_str(),
+                row.placement.image,
+                row.placement.source,
+                row.evidence.target,
+                row.evidence.bytes,
+                if row.absent_source {
+                    "absent-in-edition-source"
+                } else {
+                    "missing-placement"
+                }
+            ));
+        }
+        for row in functions {
+            function_details.push_str(&format!(
+                "{}\t{id}\t{}\t{}\t{}\t{}\t{}\t{}\n",
+                target.compiler.as_str(),
+                row.placement.image,
+                row.placement.source,
+                row.name,
+                row.evidence.target,
+                row.evidence.bytes,
+                if row.absent_source {
+                    "absent-in-edition-source"
+                } else {
+                    "missing-placement"
+                }
+            ));
+        }
+    }
+    (summary, details, function_details)
 }
 
 fn placed_c(
@@ -573,11 +806,31 @@ fn run(root: &Path, write: bool) -> Result<(), String> {
         .into_iter()
         .map(|id| snapshot(root, target_for(id)).map(|value| (id.as_str().into(), value)))
         .collect::<Result<BTreeMap<_, _>, _>>()?;
+    let unions: BTreeMap<String, PlacedUnion> = [DecompTargetId::TbsJa, DecompTargetId::TlaJa]
+        .into_iter()
+        .map(|id| {
+            (
+                id.as_str().into(),
+                verified_union(target_for(id), &snapshots),
+            )
+        })
+        .collect();
     let mut functions = Vec::new();
+    let mut union_objects = Vec::new();
+    let mut union_functions = Vec::new();
     let mut definitions = Definitions::new();
     let mut absent = BTreeSet::new();
     for id in TARGET_IDS {
         let target = target_for(id);
+        let (objects, function_rows) = union_missing(
+            root,
+            target,
+            &unions[japanese(target).as_str()],
+            &snapshots[id.as_str()],
+            &mut definitions,
+        )?;
+        union_objects.extend(objects);
+        union_functions.extend(function_rows);
         functions.extend(missing_functions(
             root,
             target,
@@ -604,7 +857,9 @@ fn run(root: &Path, write: bool) -> Result<(), String> {
     }
     let (summary, details) = render(&snapshots, &absent);
     let function_details = render_functions(&functions);
-    print!("{summary}");
+    let (union_summary, union_details, union_function_details) =
+        render_union(&unions, &snapshots, &union_objects, &union_functions);
+    print!("{summary}{union_summary}");
     if write {
         let path = root.join("out/reports");
         std::fs::create_dir_all(&path).map_err(|error| error.to_string())?;
@@ -612,6 +867,9 @@ fn run(root: &Path, write: bool) -> Result<(), String> {
             ("edition-c-summary.tsv", summary),
             ("edition-c-missing.tsv", details),
             ("edition-c-functions.tsv", function_details),
+            ("edition-c-union-summary.tsv", union_summary),
+            ("edition-c-union-missing.tsv", union_details),
+            ("edition-c-union-functions.tsv", union_function_details),
         ] {
             let path = path.join(name);
             std::fs::write(&path, text).map_err(|error| format!("{}: {error}", path.display()))?;
@@ -621,7 +879,7 @@ fn run(root: &Path, write: bool) -> Result<(), String> {
             );
         }
     } else {
-        print!("{details}{function_details}");
+        print!("{details}{function_details}{union_details}{union_function_details}");
     }
     Ok(())
 }
@@ -670,6 +928,248 @@ mod tests {
         source(root.path(), "games/COMMON/SRC/B", "C", "void B(void) {}\n");
         source(root.path(), "games/COMMON/SRC/ASM", "S", ".thumb\nbx lr\n");
         (root, target_for(DecompTargetId::TbsEn))
+    }
+
+    fn empty_snapshots() -> BTreeMap<String, Snapshot> {
+        TARGET_IDS
+            .into_iter()
+            .map(|id| (id.as_str().into(), Snapshot::default()))
+            .collect()
+    }
+
+    #[test]
+    fn union_reports_japanese_omissions_with_named_evidence_and_separate_images() {
+        let (root, target) = fixture();
+        let main = Placement {
+            image: "main".into(),
+            source: "games/COMMON/SRC/A.C".into(),
+        };
+        let overlay = Placement {
+            image: "overlay:36f".into(),
+            source: "games/COMMON/SRC/B.C".into(),
+        };
+        let mut snapshots = empty_snapshots();
+        snapshots.get_mut("tbs-ja").unwrap().placed = [(main.clone(), 20)].into();
+        snapshots.get_mut("tbs-ja").unwrap().functions = [((main.clone(), "A".into()), 20)].into();
+        snapshots.get_mut("tbs-en").unwrap().placed =
+            [(main.clone(), 24), (overlay.clone(), 32)].into();
+        snapshots.get_mut("tbs-en").unwrap().functions = [
+            ((main.clone(), "A".into()), 24),
+            ((overlay.clone(), "B".into()), 32),
+        ]
+        .into();
+        // A different game and a non-positive placement supply no TBS evidence.
+        snapshots.get_mut("tla-ja").unwrap().placed = [(
+            Placement {
+                image: "main".into(),
+                source: "games/COMMON/SRC/OTHER.C".into(),
+            },
+            80,
+        )]
+        .into();
+        snapshots.get_mut("tbs-de").unwrap().placed = [(
+            Placement {
+                image: "main".into(),
+                source: "games/COMMON/SRC/EMPTY.C".into(),
+            },
+            0,
+        )]
+        .into();
+        let before = snapshots["tbs-ja"].placed.clone();
+        let union = verified_union(target, &snapshots);
+        assert!(union.pending.is_none());
+        assert_eq!(union.placed.len(), 2);
+        assert_eq!(
+            union.placed[&main],
+            Evidence {
+                target: DecompTargetId::TbsJa,
+                bytes: 20
+            }
+        );
+        assert_eq!(union.functions[&(main.clone(), "A".into())].bytes, 20);
+        let (objects, functions) = union_missing(
+            root.path(),
+            target_for(DecompTargetId::TbsJa),
+            &union,
+            &snapshots["tbs-ja"],
+            &mut Definitions::new(),
+        )
+        .unwrap();
+        assert_eq!(objects.len(), 1);
+        assert_eq!(functions.len(), 1);
+        assert_eq!(objects[0].placement, overlay);
+        assert_eq!(objects[0].evidence.target, DecompTargetId::TbsEn);
+        assert!(!objects[0].absent_source);
+        let (present_objects, present_functions) = union_missing(
+            root.path(),
+            target,
+            &union,
+            &snapshots["tbs-en"],
+            &mut Definitions::new(),
+        )
+        .unwrap();
+        assert!(present_objects.is_empty() && present_functions.is_empty());
+        let unions = [
+            ("tbs-ja".into(), union),
+            (
+                "tla-ja".into(),
+                verified_union(target_for(DecompTargetId::TlaJa), &snapshots),
+            ),
+        ]
+        .into();
+        let (_, details, function_details) =
+            render_union(&unions, &snapshots, &objects, &functions);
+        assert!(details.contains(
+            "tbs\ttbs-ja\toverlay:36f\tgames/COMMON/SRC/B.C\ttbs-en\t32\t0\tmissing-placement"
+        ));
+        assert!(function_details.contains("B\ttbs-en\t32\tmissing-placement"));
+        assert_eq!(snapshots["tbs-ja"].placed, before);
+    }
+
+    #[test]
+    fn union_source_exclusions_use_fresh_target_definitions_and_do_not_hide_unlinked_functions() {
+        let (root, target) = fixture();
+        source(root.path(), "games/COMMON/SRC/A", "C",
+            "#ifdef TBS_EDITION_EN\nvoid InternationalOnly(void) {}\n#endif\nvoid Shared(void) {}\n");
+        source(
+            root.path(),
+            "games/COMMON/SRC/B",
+            "C",
+            "#ifdef TBS_EDITION_EN\nvoid InternationalObject(void) {}\n#endif\n",
+        );
+        let main = Placement {
+            image: "main".into(),
+            source: "games/COMMON/SRC/A.C".into(),
+        };
+        let only = Placement {
+            image: "main".into(),
+            source: "games/COMMON/SRC/B.C".into(),
+        };
+        let mut snapshots = empty_snapshots();
+        snapshots.get_mut("tbs-en").unwrap().placed =
+            [(main.clone(), 36), (only.clone(), 16)].into();
+        snapshots.get_mut("tbs-en").unwrap().functions = [
+            ((main.clone(), "InternationalOnly".into()), 16),
+            ((main.clone(), "Shared".into()), 20),
+            ((only.clone(), "InternationalObject".into()), 16),
+        ]
+        .into();
+        let union = verified_union(target, &snapshots);
+        let (objects, functions) = union_missing(
+            root.path(),
+            target_for(DecompTargetId::TbsJa),
+            &union,
+            &snapshots["tbs-ja"],
+            &mut Definitions::new(),
+        )
+        .unwrap();
+        assert!(
+            !objects
+                .iter()
+                .find(|row| row.placement == main)
+                .unwrap()
+                .absent_source
+        );
+        assert!(
+            objects
+                .iter()
+                .find(|row| row.placement == only)
+                .unwrap()
+                .absent_source
+        );
+        assert!(
+            !functions
+                .iter()
+                .find(|row| row.name == "Shared")
+                .unwrap()
+                .absent_source
+        );
+        assert!(
+            functions
+                .iter()
+                .find(|row| row.name == "InternationalOnly")
+                .unwrap()
+                .absent_source
+        );
+        assert!(
+            functions
+                .iter()
+                .find(|row| row.name == "InternationalObject")
+                .unwrap()
+                .absent_source
+        );
+        // A new report must observe source edits rather than borrowing a cached
+        // expansion from an earlier classification.
+        source(
+            root.path(),
+            "games/COMMON/SRC/B",
+            "C",
+            "void InternationalObject(void) {}\n",
+        );
+        let (objects, functions) = union_missing(
+            root.path(),
+            target_for(DecompTargetId::TbsJa),
+            &union,
+            &snapshots["tbs-ja"],
+            &mut Definitions::new(),
+        )
+        .unwrap();
+        assert!(
+            !objects
+                .iter()
+                .find(|row| row.placement == only)
+                .unwrap()
+                .absent_source
+        );
+        assert!(
+            !functions
+                .iter()
+                .find(|row| row.name == "InternationalObject")
+                .unwrap()
+                .absent_source
+        );
+    }
+
+    #[test]
+    fn union_pending_snapshots_cannot_contribute_stale_evidence_or_claim_complete_totals() {
+        let (_, target) = fixture();
+        let mut snapshots = empty_snapshots();
+        let stale = snapshots.get_mut("tbs-es").unwrap();
+        let placement = Placement {
+            image: "main".into(),
+            source: "games/COMMON/SRC/A.C".into(),
+        };
+        stale.pending = Some("changed object digest\nrebuild".into());
+        stale.placed = [(placement.clone(), 32)].into();
+        stale.functions = [((placement, "A".into()), 32)].into();
+        let union = verified_union(target, &snapshots);
+        assert!(union
+            .pending
+            .as_ref()
+            .unwrap()
+            .contains("tbs-es: changed object digest"));
+        assert!(union.placed.is_empty() && union.functions.is_empty());
+        let unions = [
+            ("tbs-ja".into(), union),
+            (
+                "tla-ja".into(),
+                verified_union(target_for(DecompTargetId::TlaJa), &snapshots),
+            ),
+        ]
+        .into();
+        let (summary, details, functions) = render_union(&unions, &snapshots, &[], &[]);
+        let row: Vec<_> = summary
+            .lines()
+            .find(|line| line.starts_with("tbs-ja\t"))
+            .unwrap()
+            .split('\t')
+            .collect();
+        assert_eq!(row.len(), 13);
+        assert_eq!(row[1], "pending");
+        assert!(row[2..12].iter().all(|field| field.is_empty()));
+        assert!(summary.contains("tla-ja\tverified"));
+        assert_eq!(details.lines().count(), 1);
+        assert_eq!(functions.lines().count(), 1);
     }
     #[test]
     fn japanese_placed_main_and_overlays_are_the_diagnostic_base_for_all_editions() {
@@ -888,7 +1388,22 @@ mod tests {
         assert!(current.pending.is_none(), "{:?}", current.pending);
         std::fs::create_dir_all(output.join("overlays")).unwrap();
         std::fs::write(output.join("overlays/resource_36f.lz"), "leftover stream").unwrap();
-        std::fs::write(output.join("overlays/resource_36f.map"), "leftover map").unwrap();
+        std::fs::write(
+            output.join("overlays/resource_36f.map"),
+            format!(
+                "Linker script and memory map\n .text 0x0 0x40 {}/obj/games/COMMON/SRC/B.o\n",
+                output.display()
+            ),
+        )
+        .unwrap();
+        let orphan = snapshot(root.path(), target).unwrap();
+        assert!(orphan.pending.is_none());
+        assert!(orphan.overlays.is_empty() && orphan.placed.is_empty());
+        let mut snapshots = empty_snapshots();
+        snapshots.insert(target.id.as_str().into(), orphan);
+        let union = verified_union(target, &snapshots);
+        assert!(union.pending.is_none());
+        assert!(union.placed.is_empty() && union.functions.is_empty());
         std::fs::write(
             root.path().join(owner),
             ".section .overlays\n.incbin \"overlays/resource_36f.lz\"\n",

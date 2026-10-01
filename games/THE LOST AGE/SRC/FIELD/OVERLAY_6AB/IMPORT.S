@@ -345,7 +345,7 @@ PartyInventory_Remove:
 	.global Func_020042c4
 	.thumb_func
 Func_020042c4:
-	overlay_veneer Func_080ad048
+	overlay_veneer Inventory_EquipFar
 	.global Party_CountActiveOwners
 	.thumb_func
 Party_CountActiveOwners:

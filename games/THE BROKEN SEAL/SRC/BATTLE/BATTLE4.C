@@ -111,9 +111,6 @@ pick:
     return positions[(u32)(Random16() * count) >> 16];
 }
 
-#if defined(TBS_EDITION_EN)
-
-/* The other editions keep their code here in their scaffolds for now. */
 s32 BattleFx_IsReviveFar(s32 effect);
 
 struct BattleAiProfile {
@@ -476,5 +473,3 @@ scan_complete:
     }
     return target_positions[(u32)(Random16() * target_count) >> 16];
 }
-
-#endif

@@ -4,6 +4,7 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "RAM_BUFFER.H"
+#include "TBS_EDITION.H"
 
 /* The reel game's state block, the seventh heap-cache cell. */
 struct ReelWork {
@@ -21,7 +22,7 @@ extern u8 gBattleFxWork[];
 extern char MsgSlotsBet;
 extern const u8 ReelGame_TitleLetterWidths[];
 
-/* Reel game: clear every particle's variant, line the eight title letters
+/* Reel game: clear every particle's variant, line the title letters
    up above the screen (each 0x80000 higher than the last, spaced by their
    widths), build the scanline offset curve (zero outside a cosine bump
    mirrored about line 86), reset the state, cursor and spin count, and open
@@ -49,8 +50,8 @@ void ReelGame_InitTitle(void)
     letter = work->particles;
     y = -0x200000;
     width = ReelGame_TitleLetterWidths;
-    for (i = 0; i != 8; i++) {
-        letter[i].x = (left + 24) << 16;
+    for (i = 0; i != REEL_TITLE_LETTERS; i++) {
+        letter[i].x = (left + REEL_TITLE_X) << 16;
         step = *width;
         width++;
         left += step;

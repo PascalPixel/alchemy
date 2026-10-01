@@ -20,6 +20,19 @@ extern u8 Resource_FixedBlockBTiles[];
 
 extern volatile u32 gKeysRepeat;
 
+/* The Spanish and Japanese choices are shorter: a narrower window further
+   right. */
+#if defined(TBS_EDITION_ES)
+#define TALK_WINDOW_X     9
+#define TALK_WINDOW_WIDTH 12
+#elif defined(TBS_EDITION_JA)
+#define TALK_WINDOW_X     8
+#define TALK_WINDOW_WIDTH 16
+#else
+#define TALK_WINDOW_X     7
+#define TALK_WINDOW_WIDTH 18
+#endif
+
 /* FAKEMATCH: the shared MenuCursor union preserves pointer-store ordering. */
 /* "Descriptions", "Cheer" or "Nothing": returns the row chosen with A, or -1
    when B cancels. */
@@ -33,7 +46,7 @@ s32 PartyTalkMenu_Choose(void)
     u16 *palette;
 
     moved = 1;
-    window = UiWindow_Create(7, 13, 18, 7, 2);
+    window = UiWindow_Create(TALK_WINDOW_X, 13, TALK_WINDOW_WIDTH, 7, 2);
     UiText_DrawCharacterAtOffset((s32)MsgTalkChoice, window, 8, 0);
     UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 1, window, 8, 16);
     UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 2, window, 8, 32);
@@ -48,9 +61,9 @@ s32 PartyTalkMenu_Choose(void)
     Dma_Set((const void *)0x050001e0, palette, 0x84000008, (volatile u32 *)0x040000d4);
     palette[4] = 0x6318;
     do {
-        UiWindow_SetTileAttributeRect(window, 1, row * 2, 14, 1, 14);
+        UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 14);
         WaitFrames(1);
-        UiWindow_SetTileAttributeRect(window, 1, row * 2, 14, 1, 15);
+        UiWindow_SetTileAttributeRect(window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, 15);
         if (moved) {
             moved = 0;
             Shop_SetCursorFar(&cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);

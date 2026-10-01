@@ -18655,7 +18655,7 @@ msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Equipar no tiene efecto"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "04662"
 msgstr "Efectos al equipar"
 

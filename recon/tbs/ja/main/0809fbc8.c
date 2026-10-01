@@ -1,7 +1,30 @@
+/* 2026-10-01: the Japanese PsynergyMenu_DrawRange, PsynergyMenu_DrawRangePage
+   and PsynergyMenu_DrawListPage, written as edition branches of games/THE
+   BROKEN SEAL/SRC/MENU/ABILITY/RANGE_PAGE.C (compile it with the Japanese
+   edition macro). The whole module matches the Japanese extent at 0809fbc8
+   byte for byte: six rows a page starting a tile higher, range icons from
+   tile 0xf200, and the places a Psynergy works listed a line at a time.
+   What keeps it out is its last line: the Japanese page closes with message
+   03231, "can be used", which follows MsgUsableAnywhere and has no
+   counterpart in the other five catalogs, so no name can give it a row in
+   every edition (build_text check_names), and the reference loads it as a
+   pool word of its own, which only MsgUsableAnywhere + 1 reproduces and the
+   ids gate refuses (O3: ids are used whole). */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "PSYNERGY_MENU.H"
+#include "TBS_EDITION.H"
 void UiWindow_Commit(s32 window);
+
+/* The first range icon tile, and the tile row the lists start on: the
+   Japanese pages hold a sixth row, one tile higher. */
+#if defined(TBS_EDITION_JA)
+#define RANGE_ICON_TILE 0xf200
+#define LIST_FIRST_ROW  1
+#else
+#define RANGE_ICON_TILE 0xf280
+#define LIST_FIRST_ROW  2
+#endif
 
 void UiWindow_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
@@ -14,12 +37,12 @@ void PsynergyMenu_DrawRange(
     (void)unused;
 
     n = range * 2;
-    tile = n + 0xf281;
+    tile = n + RANGE_ICON_TILE + 1;
     /* Keep the empty zero path; GCC emits the reference branch shape. */
     if (!n) {
     }
     UiWindow_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0);
-    UiWindow_SetTilemapEntryFar(window, n + 0xf280, x + 1, y, 0);
+    UiWindow_SetTilemapEntryFar(window, n + RANGE_ICON_TILE, x + 1, y, 0);
     UiWindow_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }
 
@@ -79,6 +102,8 @@ extern u8 MsgUsableAnywhere;
 
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_ClearListFar(s32 window);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(s32 window, s32 icon, s32 x, s32 y, s32 palette);
 struct BattleAction *BattleAction_Get(s32 action);
 void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
@@ -97,19 +122,42 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
     s32 base;
 
     menu = (struct PsynergyListWork *)gMenuWork;
-    state->selected_index = state->page * 5 + state->row;
+    state->selected_index = state->page * PAGE_ROWS + state->row;
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
     /* Spanish and Italian clear the info window's top row instead. */
     UiWindow_ClearInteriorTilesFar((s32)menu->info_window, 0, 0, 224, 8);
+#elif defined(TBS_EDITION_JA)
+    RenderOutput_ClearListFar((s32)menu->info_window);
 #else
     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
 #endif
     WaitFrames(1);
     if (menu->psynergies[state->selected_index] != 0) {
-        UiText_DrawCharacterAtOffsetFar((menu->psynergies[state->selected_index] & ACTION_ID_MASK)
+#if defined(TBS_EDITION_JA)
+        UiText_DrawMessageAt(
+#else
+        UiText_DrawCharacterAtOffsetFar(
+#endif
+(menu->psynergies[state->selected_index] & ACTION_ID_MASK)
                 + (s32)&MsgAbilityDescription,
             (s32)menu->info_window, 0, 0);
         ability = BattleAction_Get(menu->psynergies[state->selected_index] & ACTION_ID_MASK);
+#if defined(TBS_EDITION_JA)
+        /* The Japanese page lists where the Psynergy works, a line each,
+           and closes with its words for "can be used", the message after
+           MsgUsableAnywhere. */
+        UiWindow_ClearInteriorTilesFar(window, 0, 72, 64, 96);
+        row = 0;
+        if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInField, window, 0, 72);
+            row = 1;
+        }
+        if ((ability->target_flags & 0x80) != 0) {
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, row * 8 + 72);
+            row++;
+        }
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableAnywhere + 1, window, 0, row * 8 + 72);
+#else
         UiWindow_ClearInteriorTilesFar(window, 0, 96, 224, 104);
         row = 0;
         if (ability->type_0c != 0 || (ability->target_flags & 0x40) != 0) {
@@ -125,27 +173,28 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
         } else if (row == 1) {
             UiText_DrawCharacterAtOffsetFar((s32)&MsgUsableInBattle, window, 0, 96);
         }
+#endif
     }
 
-    base = state->page * 5;
-    for (row = 0; row <= 4; row++) {
+    base = state->page * PAGE_ROWS;
+    for (row = 0; row <= PAGE_ROWS - 1; row++) {
         if (row == state->row) {
             ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
-                UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 0);
-                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 14);
-                Render_SetTilemapFlagRect(window, 25, row * 2 + 2, 3, 1, 14);
+                UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + LIST_FIRST_ROW, 0);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1, 14);
+                Render_SetTilemapFlagRect(window, 25, row * 2 + LIST_FIRST_ROW, 3, 1, 14);
             } else {
-                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 14);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 19, 1, 14);
             }
         } else {
             ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
             if (ability->damage_class != 4) {
-                UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + 2, 4);
-                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);
-                Render_SetTilemapFlagRect(window, 25, row * 2 + 2, 3, 1, 15);
+                UiWindow_SetTilemapEntryFar(window, ability->damage_class + 1, 24, row * 2 + LIST_FIRST_ROW, 4);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 15, 1, 15);
+                Render_SetTilemapFlagRect(window, 25, row * 2 + LIST_FIRST_ROW, 3, 1, 15);
             } else {
-                Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 15);
+                Render_SetTilemapFlagRect(window, 9, row * 2 + LIST_FIRST_ROW, 19, 1, 15);
             }
         }
     }
@@ -168,6 +217,23 @@ extern u8 Menu_LvString;
 #define ACT_ID_MASK 0x3fff
 #define OWNER_LEVEL_OFS 15
 #define OWNER_CLASS_MSG_OFS 0x129
+
+/* The list's page icons, names and PP columns around each edition's words. */
+#if defined(TBS_EDITION_JA)
+#define LIST_ICONS_X     86
+#define LIST_ICONS_Y     53
+#define LIST_PP_X        144
+#define LIST_NAME_X      96
+#define LIST_PP_NUMBER_X 168
+#define LIST_EMPTY_Y     8
+#else
+#define LIST_ICONS_X     80
+#define LIST_ICONS_Y     58
+#define LIST_PP_X        176
+#define LIST_NAME_X      88
+#define LIST_PP_NUMBER_X 176
+#define LIST_EMPTY_Y     17
+#endif
 
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(
@@ -195,16 +261,16 @@ s32 PsynergyMenu_DrawListPage(
 
     UiWindow_Commit(window);
 
-    first = res->page * 5;
+    first = res->page * PAGE_ROWS;
     rows = (u8)(res->entry_count - first);
-    if (rows > 5) {
-        rows = 5;
+    if (rows > PAGE_ROWS) {
+        rows = PAGE_ROWS;
     }
 
-    Menu_SetPageIcons(5, first, window, 80, 58);
-    Menu_DrawPageIndicator(window, res->entry_count, 5, res->page, 28);
+    Menu_SetPageIcons(PAGE_ROWS, first, window, LIST_ICONS_X, LIST_ICONS_Y);
+    Menu_DrawPageIndicator(window, res->entry_count, PAGE_ROWS, res->page, 28);
 
-    UiText_DrawAt((s32)&MsgPsynergyPp, window, 176, 0);
+    UiText_DrawAt((s32)&MsgPsynergyPp, window, LIST_PP_X, 0);
 
     row = 0;
     if (rows > row) {
@@ -218,10 +284,10 @@ s32 PsynergyMenu_DrawListPage(
                 ACT_ID_MASK & *(u16 *)(ofs + (s32)menu));
             msg = (*(u16 *)(ofs + (s32)menu) & ACT_ID_MASK) +
                 (s32)&MsgAbilityName;
-            y = row * 16 + 16;
+            y = row * 16 + LIST_FIRST_ROW * 8;
 
-            UiText_DrawAt(msg, window, 88, y);
-            UiText_DrawNumberAtOffsetFar(act->pp_cost, 2, window, 176, y);
+            UiText_DrawAt(msg, window, LIST_NAME_X, y);
+            UiText_DrawNumberAtOffsetFar(act->pp_cost, 2, window, LIST_PP_NUMBER_X, y);
 
             range = act->range;
             if (range == 0xff) {
@@ -229,7 +295,7 @@ s32 PsynergyMenu_DrawListPage(
             } else {
                 range--;
             }
-            PsynergyMenu_DrawRange(window, 25, row * 2 + 2, range, 0);
+            PsynergyMenu_DrawRange(window, 25, row * 2 + LIST_FIRST_ROW, range, 0);
 
             row++;
             ofs += 2;
@@ -237,7 +303,7 @@ s32 PsynergyMenu_DrawListPage(
     }
 
     if (menu->psynergy_count == 0) {
-        UiText_DrawAt((s32)&MsgNoPsynergy, window, 96, 17);
+        UiText_DrawAt((s32)&MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
     }
 
     UiText_DrawStringAtOffsetFar(owner, (void *)window, 40, 0);

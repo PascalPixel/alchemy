@@ -17,7 +17,7 @@ struct TextWork {
     u16 unknown_eaa;
     u16 color_b;
     u16 color_c;
-    u16 entries[0x200];
+    u16 entries[RENDER_ENTRY_MASK + 1];
     u16 unknown_12b0;
     u16 count;
 };
@@ -43,14 +43,18 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
     if (text == NULL) {
         text = work->entries;
         work->entries[work->count] = c;
-        work->count = (work->count + 1) & 0x1ff;
+        work->count = (work->count + 1) & RENDER_ENTRY_MASK;
     }
+#if defined(TBS_EDITION_JA)
+    while ((c = *text++) != 0) {
+#else
     for (;;) {
         c = *text++;
         if (c > 0xff)
             c = 0x40;
         if (c == 0)
             break;
+#endif
         if (c <= 30) {
             switch (c) {
             case 8:
@@ -79,19 +83,51 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
             case 11:
             case 12:
             case 17:
+#if !defined(TBS_EDITION_JA)
+            /* Code 29 carries an operand outside the Japanese edition. */
             case 29:
+#endif
                 text++;
                 break;
             }
         } else {
+#if defined(TBS_EDITION_JA)
+            /* A Japanese voicing mark after a kana rides in the glyph's
+               upper bits instead of taking a column. */
+            if (*text == 0xde) {
+                c |= 0x4000;
+                text++;
+            } else if (*text == 0xdf) {
+                c |= 0x8000;
+                text++;
+            }
+#else
             if ((window->flags & 8) == 0) {
                 next = *text;
+#if defined(TBS_EDITION_ES)
+                /* Spanish pairs narrower glyphs in colour 1. */
+                if (c > 32 && next > 32) {
+                    s16 width = UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width;
+
+                    if (work->color_b == 1) {
+                        if ((u16)width <= 14) {
+                            c |= next << 8;
+                            text++;
+                        }
+                    } else if ((u16)width <= 15) {
+                        c |= next << 8;
+                        text++;
+                    }
+                }
+#else
                 if (c > 32 && next > 32
                     && (u16)(UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width) <= 15) {
                     c |= next << 8;
                     text++;
                 }
+#endif
             }
+#endif
             x += Func_08018cac(window, c, x, y, 0);
         }
     }

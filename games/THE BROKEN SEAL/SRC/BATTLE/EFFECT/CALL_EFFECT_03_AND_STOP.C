@@ -10,9 +10,6 @@ void BattleFx_CallEffect03AndStop(void)
     EffectRuntime_StopCurrentObject();
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* Battle effect 03: spawn eight shrinking orbit objects around the target,
  * then one spark object that flashes for 30 frames, runs its emitter and is
  * sent off and destroyed; release the linked resource and run the finish
@@ -154,4 +151,3 @@ void RunBattleEffect03(void)
         state->finish_callback();
     BattleFx_PrepareBufferInterpolation();
 }
-#endif

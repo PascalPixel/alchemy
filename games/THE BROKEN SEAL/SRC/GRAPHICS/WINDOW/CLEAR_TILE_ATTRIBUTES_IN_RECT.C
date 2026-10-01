@@ -28,9 +28,6 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height)
     }
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 extern u8 *gWindowWork;
 
 /* Mark attributes used by the visible 30 by 20 tilemap and clear stale marks. */
@@ -61,4 +58,3 @@ void UiWindow_MarkVisibleTileAttributes(void)
             base[RENDER_TILE_ATTR_OFS] = 0;
     }
 }
-#endif

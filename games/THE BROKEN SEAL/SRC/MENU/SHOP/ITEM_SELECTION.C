@@ -293,8 +293,13 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
         UiText_DrawCharacterAtOffsetFar(masked + (s32)&MsgItemName, window, 0, 0);
 
         result = Inventory_CheckDiscardFar(unit_id, item_id);
+        /* The Japanese notes start a character in. */
         if (result == -4) {
+#if defined(TBS_EDITION_JA)
+            UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 8, 8);
+#else
             UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotDrop, window, 0, 8);
+#endif
         } else if (result == -3) {
 #if defined(TBS_EDITION_JA)
             UiText_DrawCharacterAtOffsetFar((s32)&MsgCannotRemove, window, 8, 8);

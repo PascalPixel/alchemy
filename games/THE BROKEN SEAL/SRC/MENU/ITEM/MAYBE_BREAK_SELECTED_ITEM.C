@@ -13,6 +13,7 @@ extern u8 MsgItemBroke[];
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 s32 InventoryMenu_ShowModalMessage(s32, s32, s32);
 s32 Audio_PlayCue(s32);
+void RenderOutput_RedrawSavedRectFar(s32 window);
 
 void ItemMenu_TryBreak(void)
 {
@@ -25,5 +26,9 @@ void ItemMenu_TryBreak(void)
             FIELD(menu, u16 *, 0x174));
         Audio_PlayCue(SOUND_ITEM_BREAK);
         InventoryMenu_ShowModalMessage((s32)MsgItemBroke, 0, -1);
+#if defined(TBS_EDITION_JA)
+        /* The Japanese menu redraws the info window after the message. */
+        RenderOutput_RedrawSavedRectFar(FIELD(menu, s32 *, 0x2C));
+#endif
     }
 }

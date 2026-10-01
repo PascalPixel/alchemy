@@ -60,16 +60,133 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
     return buffer + 13 - width;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
+/* Japanese names take no articles, and the Japanese edition has no article
+   routine; each other edition writes its own language's. */
+#if !defined(TBS_EDITION_JA)
+/* The articles by kind (in English "a ", "an ", "some ", "the "); Italian
+   has eleven kinds, and Spanish five definite ones ("el ", "la ", "los ",
+   "las ") and five indefinite ("un ", "una ", "unos ", "unas "). */
+#if defined(TBS_EDITION_IT)
+#define ARTICLE_KINDS     11
+#define ARTICLE_KIND_MASK 15
+#elif defined(TBS_EDITION_ES)
+#define ARTICLE_KINDS     5
+#define ARTICLE_KIND_MASK 15
+#else
+#define ARTICLE_KINDS     8
+#define ARTICLE_KIND_MASK 7
+#endif
 
-/* The English articles by kind: "a ", "an ", "some ", "the ". */
 struct ArticleTable {
-    s8 *text[8];
+    s8 *text[ARTICLE_KINDS];
 };
 
 extern const struct ArticleTable Data_08033e40;
+#if defined(TBS_EDITION_ES)
+extern const struct ArticleTable UiText_IndefiniteArticles;
+#endif
+#endif
 
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+/* Append a name to the 512-entry render ring, preceded by the article of
+   the kind code 29 at its head selects unless no is 0 or 4 (Spanish takes
+   the indefinite article when no has bit 3 set); with *suffix 2 the article
+   is capitalised. A German name ending in s or z, or a Spanish or French
+   one ending in s (either case), sets *suffix. With mode set, the name is
+   wrapped in a space, two line breaks and a closing sequence. */
+u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
+                             s32 no, s32 plural, s32 *suffix)
+{
+    struct ArticleTable tbl;
+#if defined(TBS_EDITION_ES)
+    struct ArticleTable indefinite_tbl;
+    u16 count;
+    s16 indefinite;
+#endif
+    s32 kind;
+    u16 head;
+    u16 c;
+    s8 *p;
+    s8 c8;
+    s32 cnt;
+
+#if defined(TBS_EDITION_ES)
+    count = no & 7;
+    indefinite = no & 8;
+#endif
+    if (mode != 0) {
+        entry[pos] = ' ';
+        pos = (pos + 1) & 0x1ff;
+        entry[pos] = 0x0a;
+        pos = (pos + 1) & 0x1ff;
+        entry[pos] = 0x0a;
+        pos = (pos + 1) & 0x1ff;
+    }
+#if defined(TBS_EDITION_ES)
+    if (count == 0 || count == 4) {
+#else
+    if (no == 0 || no == 4) {
+#endif
+        head = name[0];
+        if (head == 29)
+            name += 2;
+    } else {
+        kind = 0;
+        tbl = Data_08033e40;
+#if defined(TBS_EDITION_ES)
+        indefinite_tbl = UiText_IndefiniteArticles;
+#endif
+        if (name[0] == 29) {
+            kind = name[1];
+            name += 2;
+        }
+#if defined(TBS_EDITION_ES)
+        if (indefinite == 0)
+            p = tbl.text[kind & ARTICLE_KIND_MASK];
+        else
+            p = indefinite_tbl.text[kind & ARTICLE_KIND_MASK];
+#else
+        p = tbl.text[kind & ARTICLE_KIND_MASK];
+#endif
+        for (cnt = 0; cnt < 8; cnt++) {
+            if ((c8 = *p++) == 0)
+                break;
+            if (cnt == 0 && *suffix == 2)
+                c8 -= 0x20;
+            entry[pos] = c8;
+            pos = (pos + 1) & 0x1ff;
+        }
+    }
+    while (*name != 0) {
+        c = *name++;
+        entry[pos] = (s16)c;
+        pos = (pos + 1) & 0x1ff;
+#if defined(TBS_EDITION_DE)
+        if (c == 's' || c == 'S' || c == 'z' || c == 'Z')
+            *suffix = 1;
+        else
+            *suffix = 0;
+#elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
+        if (c == 's' || c == 'S')
+            *suffix = 1;
+        else
+            *suffix = 0;
+#endif
+    }
+    if (mode != 0) {
+        entry[pos] = 0x0a;
+        pos = (pos + 1) & 0x1ff;
+        entry[pos] = 0x08;
+        pos = (pos + 1) & 0x1ff;
+        entry[pos] = ' ';
+        pos = (pos + 1) & 0x1ff;
+    }
+    return pos;
+}
+#endif
+
+#if defined(TBS_EDITION_EN)
 /* Append a name to the 512-entry render ring, optionally preceded by an
    article (code 29 and a kind at its head selects one; otherwise a vowel
    takes "an ") and followed by a plural "s" or "es". A name ending in S or

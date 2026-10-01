@@ -70,6 +70,10 @@ void RunBattleEffect08(void)
     BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
     BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
     BattleFx_StartBufferInterpolation(1);
+#if !defined(TBS_EDITION_EN)
+    /* The other editions stop the effect's scene first. */
+    scene->active = 0;
+#endif
     WaitFrames(1);
     result = BattleFx_FindMatchingEvent(0x50000005, 8, &resource);
     if (result != 0)

@@ -274,7 +274,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER4.o"(.text)
         "*/recon/tbs/raw/08019fca.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BUILD_ITEM_ICON_TILES.o"(.text)
-        "*/recon/tbs/raw/0801a088.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/COPY_RESOURCE_TO_SLOT.o"(.text)
         "*/recon/tbs/raw/0801a2ea.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/BUILD_PATTERN_TO_SLOT.o"(.text)

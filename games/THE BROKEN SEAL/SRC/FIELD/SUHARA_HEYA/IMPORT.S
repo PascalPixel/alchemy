@@ -110,13 +110,13 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
-	.global Audio_PlayCueFromEventWork
+	.global Engine_AudioPlayCueFromEventWork
 	.thumb_func
-Audio_PlayCueFromEventWork:
+Engine_AudioPlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
-	.global Motion_LaunchFromFocusedObject
+	.global Engine_MotionLaunchFromFocusedObject
 	.thumb_func
-Motion_LaunchFromFocusedObject:
+Engine_MotionLaunchFromFocusedObject:
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	.global Engine_ActorWalkByAndWait
 	.thumb_func
@@ -126,13 +126,13 @@ Engine_ActorWalkByAndWait:
 	.thumb_func
 Engine_ShopOpen:
 	overlay_veneer Shop_RunFar
-	.global Shop_ConfirmAct
+	.global Engine_ShopConfirmAct
 	.thumb_func
-Shop_ConfirmAct:
+Engine_ShopConfirmAct:
 	overlay_veneer Shop_ConfirmActFar
-	.global Inn_CheckIn
+	.global Engine_InnCheckIn
 	.thumb_func
-Inn_CheckIn:
+Engine_InnCheckIn:
 	overlay_veneer Inn_CheckInFar
 	.global Engine_AudioPlayCue
 	.thumb_func

@@ -62,17 +62,17 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
-	.global Map_SetWorkFlagBits9To11
+	.global Engine_MapSetWorkFlagBits9To11
 	.thumb_func
-Map_SetWorkFlagBits9To11:
+Engine_MapSetWorkFlagBits9To11:
 	overlay_veneer Map_SetWorkFlagBits9To11Far
 	.global Engine_MessageShowCentered
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
-	.global PartyInventory_FindOwner
+	.global Engine_PartyInventoryFindOwner
 	.thumb_func
-PartyInventory_FindOwner:
+Engine_PartyInventoryFindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -118,9 +118,9 @@ ObjectMotion_SetSpeedParameters:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
-	.global Object_RefreshSelectorById
+	.global Engine_ObjectRefreshSelectorById
 	.thumb_func
-Object_RefreshSelectorById:
+Engine_ObjectRefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorStop
 	.thumb_func
@@ -242,13 +242,13 @@ Engine_EventGetViewCenter:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
-	.global BattleFx_SetWeightedResult
+	.global Engine_BattleFxSetWeightedResult
 	.thumb_func
-BattleFx_SetWeightedResult:
+Engine_BattleFxSetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
-	.global Party_SetFields1ceAnd1d0
+	.global Engine_PartySetFields1ceAnd1d0
 	.thumb_func
-Party_SetFields1ceAnd1d0:
+Engine_PartySetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
 	.global Engine_EventOpenScreen
 	.thumb_func
@@ -258,9 +258,9 @@ Engine_EventOpenScreen:
 	.thumb_func
 Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
-	.global BattleFx_PlayCueAndStartEmitterOnTarget
+	.global Engine_BattleFxPlayCueAndStartEmitterOnTarget
 	.thumb_func
-BattleFx_PlayCueAndStartEmitterOnTarget:
+Engine_BattleFxPlayCueAndStartEmitterOnTarget:
 	overlay_veneer BattleFx_PlayCueAndStartEmitterOnTargetFar
 	.global Engine_ItemShowFound
 	.thumb_func
@@ -270,9 +270,9 @@ Engine_ItemShowFound:
 	.thumb_func
 Engine_PsynergyCancel:
 	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlockFar
-	.global BattleFx_RunPageEffectForSlot
+	.global Engine_BattleFxRunPageEffectForSlot
 	.thumb_func
-BattleFx_RunPageEffectForSlot:
+Engine_BattleFxRunPageEffectForSlot:
 	overlay_veneer BattleFx_RunPageEffectForSlotFar
 	.global BattleFx_PlayQueuedSound
 	.thumb_func

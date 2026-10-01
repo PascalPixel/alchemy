@@ -934,12 +934,6 @@ Func_080a4f08:
 	.thumb_func
 Menu_ResolveSelectedAction:
 	.incbin "baserom.gba", 0x0009cb94, 0x0000032c
-	.section .rom.0009d4ec, "ax"
-	.global Func_080a6614
-	.type Func_080a6614, %function
-	.thumb_func
-Func_080a6614:
-	.incbin "baserom.gba", 0x0009d4ec, 0x000001ec
 	.section .rom.0009f51c, "ax"
 	.global CharacterMenu_DrawStatusAilments
 	.type CharacterMenu_DrawStatusAilments, %function
@@ -1009,7 +1003,19 @@ Menu_PlusSignString:
 	.incbin "baserom.gba", 0x000a6150, 0x00000004
 	.global Menu_MinusSignString
 Menu_MinusSignString:
-	.incbin "baserom.gba", 0x000a6154, 0x00000014
+	.incbin "baserom.gba", 0x000a6154, 0x00000004
+	.global Menu_ShortcutLString
+Menu_ShortcutLString:
+	.incbin "baserom.gba", 0x000a6158, 0x00000004
+	.global Menu_ShortcutLColonString
+Menu_ShortcutLColonString:
+	.incbin "baserom.gba", 0x000a615c, 0x00000004
+	.global Menu_ShortcutRString
+Menu_ShortcutRString:
+	.incbin "baserom.gba", 0x000a6160, 0x00000004
+	.global Menu_ShortcutRColonString
+Menu_ShortcutRColonString:
+	.incbin "baserom.gba", 0x000a6164, 0x00000004
 	.global Menu_LvString
 Menu_LvString:
 	.incbin "baserom.gba", 0x000a6168, 0x00000004

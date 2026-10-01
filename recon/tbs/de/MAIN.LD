@@ -748,7 +748,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PILLARS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RENDER_MODE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT7.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000d7c54)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPARKS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_PHASED_DELTA.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/RUN_NO_EFFECT_FRAMES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT8.o"(.text)

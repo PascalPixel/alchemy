@@ -889,7 +889,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PILLARS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RENDER_MODE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT7.o"(.text)
-        "*/recon/tbs/raw/080d5e54.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPARKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_PHASED_DELTA.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/RUN_NO_EFFECT_FRAMES.o"(.text)
         "*/recon/tbs/raw/080d6576.o"(.text .rodata .data .padding)

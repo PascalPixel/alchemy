@@ -8,7 +8,7 @@
    2026-09-29 alchemy permute (8 minutes): 1760 -> 1496, minimized to two
    natural changes: count is declared after copy, and the cursors advance
    next_frames, frames, copy, banks. The selected actor is now
-   gGameState.current_owner and the callee and cells carry the build's
+   gGameState.selected_actor and the callee and cells carry the build's
    names; that costs one more moved instruction (1521: 39 register-only,
    1 stack-only, 1 operand, 16 reordered, 2 inserted, 1 deleted). The
    allocation above is unchanged in kind. The index and frame tables are
@@ -104,7 +104,7 @@ void ObjectTable_Restore(void)
             sprite->bank = bank;
             sprite->shadow_bank = bank;
             object->sprite = sprite;
-            if (index == gGameState.current_owner) {
+            if (index == gGameState.selected_actor) {
                 camera = gEventWork->camera;
                 view = gMapWork->view;
                 y = object->y;

@@ -1,13 +1,12 @@
-/* Draft, not exact (2026-09-24): 596 bytes for the 608-byte owner, 288
-   halfwords differ, nearly all of them branch offsets. The spawn body
-   matches instruction for instruction (the object slot store needs the
-   offset local, as ObjectTable_Get's does). Residuals: the reference keeps
-   the table-search index unreduced (mov r0, r9; ldr r3, [r0, r2]) and
-   jumps into a loop header that loads the row id twice (ldrsh for the -1
-   test, ldrh carried into the body and re-extended); here the search is
-   strength-reduced and the id is one ldrsh. u16 id locals and fields, and
-   goto and while forms of the search, move nothing. */
-
+/* Draft, not exact: 616 bytes for the 608-byte listing, 18 instructions
+   differ, all in the row loop's test. The listing's bottom test loads the
+   row id once (ldrh), copies it to the register the body re-extends, and
+   compares the extension, so the entry copy of the test branches into it;
+   here both copies load the id twice (ldrsh and ldrh) and do not merge.
+   The compiler's around-loop CSE replaces the body's first id read with the
+   test's own register; in the listing global CSE did that instead. A
+   do-while with the test repeated before it gives the listing's bottom test
+   but moves slot to the stack. Everything else matches. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -53,7 +52,15 @@ struct EventObject {
     s16 cell_z;                 /* 0x66 */
 };
 
-extern u8 *gEventWork;
+struct ObjectWork {
+    struct EventObjectEntry *tables[4];     /* 0x000 */
+    u8 unknown_010[4];
+    struct EventObject *objects[0x62];      /* 0x014 */
+    u8 unknown_19c[2];
+    s16 scene_mode;                         /* 0x19e */
+};
+
+extern struct ObjectWork *gEventWork;
 
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 Party_RemapCharacterIdByFlags(s32 id);
@@ -69,41 +76,37 @@ u32 __umodsi3(u32 numerator, u32 denominator);
 void ObjectMotion_SetActionCallback(struct EventObject *object, s32 action);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-#define EVENT_STATE_MODE(state) (*(s16 *)((u8 *)(state) + 0x19e))
-
 void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
 {
-    struct EventObjectEntry **tables;
+    struct ObjectWork *work;
     struct EventObject *object;
     struct EventObject *previous;
     struct EventSprite *sprite;
     s32 i;
     s32 index;
     u32 offset;
-    s16 id;
-    u16 uid;
     s32 character;
     s32 condition;
     u8 resource;
 
-    tables = (struct EventObjectEntry **)gEventWork;
+    work = gEventWork;
     for (i = 0; i < 4; i++) {
-        if (tables[i] == entry)
+        if (work->tables[i] == entry)
             break;
-        if (tables[i] == 0) {
-            tables[i] = entry;
+        if (work->tables[i] == 0) {
+            work->tables[i] = entry;
             break;
         }
     }
-    for (; (s16)(uid = entry->id) != -1 && slot <= 65; entry++) {
-        if ((s16)uid <= 7)
-            index = (s16)uid;
-        else if ((s16)uid <= 0x2705)
+    for (; entry->id != -1 && slot <= 65; entry++) {
+        if (entry->id <= 7)
+            index = entry->id;
+        else if (entry->id <= 0x2705)
             index = slot++;
         condition = entry->condition;
         if (!GameFlag_IsConditionActive(condition))
             continue;
-        if ((u32)(condition - 48) <= 79 && EVENT_STATE_MODE(tables) != 3
+        if ((u32)(condition - 48) <= 79 && work->scene_mode != 3
             && !GameFlag_IsConditionActive(condition + 80))
             continue;
         character = Party_RemapCharacterIdByFlags(entry->id);
@@ -113,8 +116,9 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
             if (entry->flags & 1) {
                 previous = ObjectTable_Get(index - 1);
                 if (previous->kind == 1 && object->kind == 1) {
-                    previous->sprite->flags |= 1;
-                    resource = previous->sprite->resource;
+                    sprite = previous->sprite;
+                    sprite->flags |= 1;
+                    resource = sprite->resource;
                     sprite = object->sprite;
                     sprite->flags |= 1;
                     Resource_ResetEntry(sprite->resource);
@@ -140,7 +144,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
                 object->mode = 4;
                 object->y += 0x8000;
             }
-            if (EVENT_STATE_MODE(tables) == 3) {
+            if (work->scene_mode == 3) {
                 object->mode &= 0xfe;
                 if (!GameFlag_TestFar(33))
                     sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
@@ -151,6 +155,6 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
             object->visible = 1;
         }
         offset = index * 4 + 0x14;
-        *(struct EventObject **)((u8 *)tables + offset) = object;
+        *(struct EventObject **)((u8 *)work + offset) = object;
     }
 }

@@ -368,7 +368,6 @@ SECTIONS
         "*/recon/tla/raw/08022f22.o"(.text)
         "*/recon/tla/raw/08022f24.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/MAP/RENDER_ANIMATED_TILE_FRAME.o"(.text)
-        "*/recon/tla/raw/0802301c.o"(.text)
         "*/recon/tla/raw/08023088.o"(.text)
         "*/recon/tla/raw/080230e0.o"(.text)
         "*/recon/tla/raw/080231a4.o"(.text)

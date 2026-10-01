@@ -935,7 +935,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DJINN_BURSTS.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_REVEAL.o"(.text)
-        "*/recon/tbs/raw/080e1040.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_SHAKE.o"(.text)
         "*/recon/tbs/raw/080e15e8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SHATTER_ROCKS.o"(.text)

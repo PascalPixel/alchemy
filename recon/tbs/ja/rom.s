@@ -1514,8 +1514,6 @@ BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x000d5a70, 0x00000e48
 	.section .rom.000d6e2a, "ax"
 	.incbin "baserom.gba", 0x000d6e2a, 0x00000002
-	.section .rom.000d8040, "ax"
-	.incbin "baserom.gba", 0x000d8040, 0x0000051c
 	.section .rom.000d85e8, "ax"
 	.global BattleFx_InitializeMode12
 	.type BattleFx_InitializeMode12, %function
@@ -1776,7 +1774,26 @@ ParticleReveal_CellHeights:
 	.incbin "baserom.gba", 0x000e5c63, 0x00000005
 	.global ParticleReveal_CellSourceOffsets
 ParticleReveal_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000e5c68, 0x0000004a
+	.incbin "baserom.gba", 0x000e5c68, 0x00000008
+	.global RockToss_ChipFlips
+RockToss_ChipFlips:
+	.incbin "baserom.gba", 0x000e5c70, 0x00000004
+	.global RockToss_ChipWidths
+RockToss_ChipWidths:
+	.incbin "baserom.gba", 0x000e5c74, 0x00000009
+	.global RockToss_ChipHeights
+RockToss_ChipHeights:
+	.incbin "baserom.gba", 0x000e5c7d, 0x00000009
+	.global RockToss_ChipCells
+RockToss_ChipCells:
+	.incbin "baserom.gba", 0x000e5c86, 0x00000012
+	.global RockToss_ChipX
+RockToss_ChipX:
+	.incbin "baserom.gba", 0x000e5c98, 0x00000009
+	.global RockToss_ChipY
+RockToss_ChipY:
+	.incbin "baserom.gba", 0x000e5ca1, 0x00000009
+	.incbin "baserom.gba", 0x000e5caa, 0x00000008
 	.global ShatterRocks_ShardOffsets
 ShatterRocks_ShardOffsets:
 	.incbin "baserom.gba", 0x000e5cb2, 0x0000002a

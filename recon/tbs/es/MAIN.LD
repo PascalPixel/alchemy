@@ -69,7 +69,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.00005044)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE8.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.0000572c)
+    "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/INITIALIZE_WORKSPACE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_INITIALIZE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_TIME.o"(.text)

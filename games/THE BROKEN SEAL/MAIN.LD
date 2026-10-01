@@ -80,7 +80,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.00004fe4)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE8.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000056cc)
+    "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/INITIALIZE_WORKSPACE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_INITIALIZE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_TIME.o"(.text)

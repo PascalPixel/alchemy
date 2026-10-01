@@ -29,7 +29,7 @@ Func_080fae2c:
 	bl Func_080f8c94
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_080fadd0
+	bl ItemMenu_DrawIcons
 	adds r0, r6, #0
 	bl Func_080fad1c
 	cmp r0, #0

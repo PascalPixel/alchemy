@@ -16723,7 +16723,7 @@ msgctxt "message"
 msgid "04178"
 msgstr "Learned"
 
-msgctxt "message"
+msgctxt "MsgEquipSlotLabels"
 msgid "04179"
 msgstr "Weapon"
 

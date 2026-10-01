@@ -1,19 +1,27 @@
-#include "OWNER_STATE.H"
-#include "SYSTEM.H"
+#include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 extern u8 MsgEquipSlotLabels;
+void ItemMenu_PosCategory(void);
+void ItemMenu_HideAllIcons(void);
+void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
+void ItemMenu_DrawEquippedItemNames(s32 window, u8 *items);
+void ItemMenu_DrawIcons(u16 *items, s32 mode);
+void ItemMenu_ArrangeCategoryItemIcons(u8 *items);
+void WaitFrames(s32);
 
-extern void ItemMenu_PosCategory(void);
-extern void UiText_DrawCharacterAtOffsetFar(void *, s32, s32, s32);
-extern s32 ItemMenu_DrawEquippedItemNames(s32, void *);
-extern s32 ItemMenu_ArrangeCategoryItemIcons(void *);
+/* ⚓️ keeps the owner's items 0x1c4 into the menu work and does not look the
+   owner up first, as ☀️ does. */
+struct CategoryMenuState {
+    u8 unknown_000[0x1c4];
+    u16 items[15];
+};
 
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
-    struct InventoryMenuState *menu = gMenuWork;
+    struct CategoryMenuState *menu = Ram_HeapSlots->menu_runtime;
     u8 *items;
 
-    Owner_GetStateFar(owner_id);
     ItemMenu_PosCategory();
     ItemMenu_HideAllIcons();
     UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels, window, 0, 0);

@@ -15,6 +15,6 @@ Func_080fa84c:
 	ldr r0, [r5, #36]
 	adds r1, r6, #0
 	movs r2, #0
-	bl Func_081004b8
+	bl ItemMenu_DrawCategory
 	pop {r5, r6, pc}
 	.2byte 0x0000

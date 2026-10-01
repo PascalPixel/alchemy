@@ -113,7 +113,7 @@ Func_0810021c:
 	bl Func_080ff7b4
 	movs r1, #0
 	adds r0, r5, #0
-	bl Func_080fadd0
+	bl ItemMenu_DrawIcons
 	ldr r0, [r7, #52]
 	bl RenderOutput_RedrawSavedRectFar
 	movs r4, #128
@@ -123,7 +123,7 @@ Func_0810021c:
 	ldr r0, [r7, #52]
 	ldrb r1, [r3]
 	movs r2, #1
-	bl Func_081004b8
+	bl ItemMenu_DrawCategory
 	movs r1, #1
 	movs r0, #1
 	str r1, [sp, #12]

@@ -16711,7 +16711,7 @@ msgctxt "message"
 msgid "04175"
 msgstr "しゅうとくずみ"
 
-msgctxt "message"
+msgctxt "MsgEquipSlotLabels"
 msgid "04176"
 msgstr "ぶき"
 

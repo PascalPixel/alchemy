@@ -1981,7 +1981,7 @@ SECTIONS
         "*/recon/tla/raw/080ffee4.o"(.text)
         "*/recon/tla/raw/081000e0.o"(.text)
         "*/recon/tla/raw/0810021c.o"(.text)
-        "*/recon/tla/raw/081004b8.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/ITEM/ITEM6.o"(.text)
         "*/recon/tla/raw/08100540.o"(.text)
         "*/recon/tla/raw/081005e4.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/PLACE_ENTRY_OBJECT_IN_GRID.o"(.text)

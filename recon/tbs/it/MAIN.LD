@@ -803,6 +803,7 @@
     "*/recon/tbs/it/rom.o"(.rom.000e823c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000e94b8)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000ea0d8)
     "*/recon/tbs/it/rom.o"(.rom.000eb754)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT10.o"(.text)

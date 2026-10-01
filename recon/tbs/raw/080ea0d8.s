@@ -838,13 +838,13 @@ Unnamed_080ea0d8:
 .L_080ea77c:
 	.4byte 0xfff80000
 .L_080ea780:
-	.4byte Data_080eef18 + 0x10
+	.4byte FallingSword_DustGravity + 0x10
 .L_080ea784:
-	.4byte Data_080eef18 + 0x18
+	.4byte FallingSword_DustGravity + 0x18
 .L_080ea788:
 	.4byte gTransitionWork + 0xc
 .L_080ea78c:
-	.4byte Data_080eef18 + 0x32
+	.4byte FallingSword_DustGravity + 0x32
 .L_080ea790:
 	.4byte 0x0000ffff
 .L_080ea794:
@@ -1102,9 +1102,9 @@ Unnamed_080ea0d8:
 	b .L_080ea9e2
 	.2byte 0x0000
 .L_080ea9a8:
-	.4byte Data_080eef18 + 0x38
+	.4byte FallingSword_DustGravity + 0x38
 .L_080ea9ac:
-	.4byte Data_080eef18 + 0x26
+	.4byte FallingSword_DustGravity + 0x26
 .L_080ea9b0:
 	.4byte 0xfffff720
 .L_080ea9b4:

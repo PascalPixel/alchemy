@@ -1495,11 +1495,11 @@ Data_080eeeea:
 	.global Data_080eeef8
 Data_080eeef8:
 	.incbin "baserom.gba", 0x000eeef8, 0x0000001a
-	.global Data_080eef12
-Data_080eef12:
+	.global FallingSword_FlashCells
+FallingSword_FlashCells:
 	.incbin "baserom.gba", 0x000eef12, 0x00000006
-	.global Data_080eef18
-Data_080eef18:
+	.global FallingSword_DustGravity
+FallingSword_DustGravity:
 	.incbin "baserom.gba", 0x000eef18, 0x00000050
 	.global BattleFx6_ObjectX
 BattleFx6_ObjectX:

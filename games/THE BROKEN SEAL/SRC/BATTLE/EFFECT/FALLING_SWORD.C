@@ -1,6 +1,3 @@
-/* Draft (2026-10-01, slice-11), rewritten on the shared effect structs.
-   Battle effect: sixteen radial flashes, a pool of 684 dust records and
-   340 sparks around a sword strip that slides down the screen. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -21,8 +18,8 @@
 
 extern void *gBattleFxWork[];
 extern u16 ParticleStreams_CellOffsets[];
-extern const u8 Data_080eef12[];
-extern const s32 Data_080eef18[];
+extern const u8 FallingSword_FlashCells[];
+extern const s32 FallingSword_DustGravity[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 s32 Trig_Cos(s32 angle);
@@ -39,7 +36,10 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
 void BattleFx_StepPaletteToResource(s32 resource_id);
 void Audio_PlayCue(s32 cue);
 
-void Unnamed_080e99c0(struct BattleEffectArgument *effect)
+/* Battle effect: a sword slides down the screen through a column of fire
+   and strikes the ground, with sixteen radial flashes, a pool of 684 dust
+   records and 340 sparks. */
+void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 {
     void **heap;
     void **p;
@@ -54,9 +54,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     s32 origin;
     s32 i;
 
-    /* The reference walks the first two heap slots through a copy of the
-       base pointer (adds/ldmia r3!) and keeps the base itself for slots 2,
-       7 and 8, so the copy is spelled out here. */
+    /* The first two heap slots are read through a walking pointer; the
+       base itself serves the sheet and the two blitters. */
     heap = gBattleFxWork;
     p = heap;
     work = *p++;
@@ -83,7 +82,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    /* Sixteen drawn billboards (the table holds more) at work + 0x7080. */
+    /* Thirty-two flash records are seeded; sixteen are drawn. */
     i = 0;
     do {
         struct EffectStep *flash = &work->particles[i];
@@ -112,6 +111,9 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         s32 mag;
         s32 ang;
 
+        /* FAKEMATCH: the mask is loaded into the magnitude before the
+           random word is taken in, as the native code does; masking the
+           call's result keeps the mask in a scratch register. */
         mag = 0x1FF;
         mag &= Random16();
         ang = Random16() & 0xFFFF;
@@ -154,8 +156,6 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         }
 
         if (frame > 55) {
-            /* The reference holds the cell table base in a callee-saved
-               register across the whole loop rather than reloading it. */
             i = 0;
             do {
                 struct EffectStep *flash = &work->particles[i];
@@ -170,7 +170,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                 if ((u32)life <= 17) {
                     routine[0](canvas,
                         (u8 *)work
-                            + (Data_080eef12[life / 3] << 11)
+                            + (FallingSword_FlashCells[life / 3] << 11)
                             + (221 << 4),
                         x - 16, y + 48, 32, 64);
                 }
@@ -232,7 +232,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
             } while (i != 171 << 2);
         }
 
-        /* The same guard again: a 34x104 strip wrapping through 104 rows. */
+        /* The same guard again: the 34x104 fire column, wrapping through
+           its 104 rows. */
         if ((u32)step <= 31) {
             s32 phase = frame * 16;
             s32 x = half - 17;
@@ -284,7 +285,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                     if (frame > 80) {
                         dust->velocity_y += -32768;
                     } else {
-                        dust->velocity_y += Data_080eef18[i & 3];
+                        dust->velocity_y += FallingSword_DustGravity[i & 3];
                     }
                     dust->velocity_x = dust->velocity_x * 62 / 64;
                     dust->velocity_y = dust->velocity_y * 62 / 64;

@@ -806,6 +806,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000ea03c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000eb2b8)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000ebed8)
     "*/recon/tbs/de/rom.o"(.rom.000ed554)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT10.o"(.text)

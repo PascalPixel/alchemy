@@ -307,7 +307,6 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.0001f87c)
     "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LOOKUP_CHARACTER_VALUE_BY_FLAG32.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00020054)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW16.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/GET_TABLE_WORD_ZERO.o"(.text)

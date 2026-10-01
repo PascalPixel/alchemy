@@ -313,7 +313,6 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.00020af0)
     "*/games/THE BROKEN SEAL/SRC/MENU/PARTY/TALK_CHOICE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LOOKUP_CHARACTER_VALUE_BY_FLAG32.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000213f4)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/LOAD_PAIR.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW16.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/GET_TABLE_WORD_ZERO.o"(.text)

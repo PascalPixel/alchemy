@@ -1166,8 +1166,6 @@ Inn_PriceMultipliers:
 	.thumb_func
 Unnamed_080b56e0:
 	.incbin "baserom.gba", 0x000b96e0, 0x00000184
-	.section .rom.000b9f22, "ax"
-	.incbin "baserom.gba", 0x000b9f22, 0x00000162
 	.section .rom.000ba3e0, "ax"
 	.global Battle_RunEncounter
 	.type Battle_RunEncounter, %function

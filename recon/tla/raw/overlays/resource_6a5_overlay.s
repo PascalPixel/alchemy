@@ -125,45 +125,6 @@ Func_020000ec:
 	.2byte 0x0000
 .L_02008154:
 	.4byte 0xfffff800
-	.section .text.x02008158,"ax",%progbits
-	.global Func_02000158
-	.thumb_func
-Func_02000158:
-	push {lr}
-	adds r2, r0, #0
-	movs r0, #0
-	cmp r2, #0
-	beq .L_0200818c
-	adds r3, r2, #0
-	adds r3, #100
-	ldrh r3, [r3]
-	ldrh r1, [r2, #6]
-	subs r3, r3, r1
-	lsls r3, r3, #16
-	asrs r0, r3, #16
-	cmp r0, #0
-	beq .L_0200818c
-	movs r3, #128
-	lsls r3, r3, #5
-	cmp r0, r3
-	ble .L_02008180
-	movs r0, #128
-	lsls r0, r0, #4
-.L_02008180:
-	ldr r3, .L_02008190
-	cmp r0, r3
-	bge .L_02008188
-	ldr r0, .L_02008194
-.L_02008188:
-	adds r3, r1, r0
-	strh r3, [r2, #6]
-.L_0200818c:
-	pop {pc}
-	.2byte 0x0000
-.L_02008190:
-	.4byte 0xfffff000
-.L_02008194:
-	.4byte 0xfffff800
 	.section .text.x02008198,"ax",%progbits
 	.global Func_02000198
 	.thumb_func

@@ -894,6 +894,7 @@
     "*/recon/tla/de/rom.o"(.rom.000e06c8)
     "*/recon/tla/de/rom.o"(.rom.000e0744)
     "*/recon/tla/de/rom.o"(.rom.000e0780)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/STEP_ANGLE.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/VISUAL_ATTRIBUTES.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000e090c)
     "*/recon/tla/de/rom.o"(.rom.000e0928)

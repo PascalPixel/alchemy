@@ -780,6 +780,7 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/LINK_PAIR.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d35de)
     "*/recon/tla/ja/rom.o"(.rom.000d35e0)
+    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/STEP_ANGLE.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/VISUAL_ATTRIBUTES.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000d38ec)
     "*/recon/tla/ja/rom.o"(.rom.000d3bd8)

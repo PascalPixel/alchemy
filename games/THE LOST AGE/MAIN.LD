@@ -2369,7 +2369,7 @@ SECTIONS
         "*/recon/tla/raw/08126978.o"(.text)
         "*/recon/tla/raw/081269ac.o"(.text)
         "*/recon/tla/raw/081269bc.o"(.text)
-        "*/recon/tla/raw/081269cc.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/INIT_TRANSITION_ENTRIES.o"(.text)
         "*/recon/tla/raw/081269ec.o"(.text)
         "*/recon/tla/raw/081269f8.o"(.text)
         "*/recon/tla/raw/08126ae4.o"(.text)

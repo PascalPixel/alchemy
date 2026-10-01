@@ -1,4 +1,5 @@
 #include "HAIDIA.H"
+#include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
@@ -216,9 +217,15 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
     flag = rec + 85;
     saved = *flag;
     slot = (u8 *)box;
+#if EDITION_INTERNATIONAL
     *(s32 *)(slot + 0) = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
     *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
     *(s32 *)(slot + 8) = (*(s32 *)(rec + 16) & -0x100000) + 0x280000;
+#else
+    *(s32 *)(slot + 0) = *(s32 *)(rec + 8);
+    *(s32 *)(slot + 4) = *(s32 *)(rec + 12);
+    *(s32 *)(slot + 8) = *(s32 *)(rec + 16) + 0x200000;
+#endif
     if (Object_CheckMovementCollision((s32)rec, (s32)slot) == 0) {
         Engine_EventBegin();
         Object_SetMode((s32)rec, 6);

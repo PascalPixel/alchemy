@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "EDITION.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -167,7 +168,9 @@ void FieldScene_RunScene3b4_02002334(void)
     TakaraAshiba_UpdateBlockRects();
     FieldScene_RunSingleStep();
     FieldScene_CallHelper3c70();
+#if EDITION_INTERNATIONAL
     Engine_ActorSetSpritePriority(8, 3);
+#endif
     *(u8 *)((s32)Object_GetById(11) + 85) = 0;
     *(u8 *)((s32)Object_GetById(12) + 85) = 0;
     ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();

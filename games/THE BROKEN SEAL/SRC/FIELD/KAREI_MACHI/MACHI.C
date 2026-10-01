@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "EDITION.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -1305,6 +1306,7 @@ void FieldScene_RunMiddleSequence(void)
 
     *(s32 *)(base[0] + 0x1c0) = 0x204;
     BattleFx_StartFadeOverlay(0);
+#if EDITION_INTERNATIONAL
     rec7 = GameFlag_IsSet(0x109);
     if (rec7 != 0) {
         p5 = base[9];
@@ -1320,6 +1322,20 @@ void FieldScene_RunMiddleSequence(void)
             GameFlag_Clear(0x200);
         }
     }
+#else
+    GameFlag_Set(0x200);
+    if (GameFlag_IsSet(0x109) != 0) {
+        p5 = base[9];
+        r0 = GameFlag_IsSet(0x200);
+        if (r0 != 0) {
+            r0 = Object_GetById(ACTOR_PARTY_LEADER);
+        }
+        *(s32 *)(p5 + 24) = r0;
+    } else if (((union GameStateRows *)&gGameState)->halves[225][0] == 4) {
+        *(s32 *)(base[9] + 24) = 0;
+        GameFlag_Clear(0x200);
+    }
+#endif
     if (GameFlag_IsSet(0x302) != 0) {
         Actor_SetPosition(11, 0x960000, 0x2d80000);
         if (GameFlag_IsSet(0x201) != 0) {

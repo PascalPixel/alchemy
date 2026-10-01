@@ -27443,7 +27443,7 @@ msgctxt "message"
 msgid "06858"
 msgstr "Notre karma nous a protégés.{page_break}Seuls ceux dont le karma{line_break}est négatif sont vulnérables,{line_break}c'est du moins mon impression.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraNeedEldersPermission"
 msgid "06859"
 msgstr "Pour passer, vous devez{line_break}avoir la permission du{line_break}conseiller du village!{end_wait}"
 
@@ -27451,7 +27451,7 @@ msgctxt "message"
 msgid "06860"
 msgstr "Sans cette autorisation,{line_break}personne ne peut franchir{line_break}ce pont!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraGoingToOsenia"
 msgid "06861"
 msgstr "Vous allez à Océnia?{end_now}"
 
@@ -27463,19 +27463,19 @@ msgctxt "message"
 msgid "06863"
 msgstr "Alors, allez-vous-en.{line_break}Car ces terres peuvent{line_break}être très dangereuses...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCanCrossWithPermission"
 msgid "06864"
 msgstr "Si vous avez une autorisation,{line_break}vous passerez sans problème.{page_break}Si vous tentez de passer sans{line_break}permission, on vous jettera dans{line_break}la cellule de Cheveux-bleus!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraForTheirSafety"
 msgid "06865"
 msgstr "J'espère qu'ils ne le{line_break}prendront pas mal...{line_break}C'est pour leur bien.{page_break}Qui sait ce qui les{line_break}attend à Océnia!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraElderReturn"
 msgid "06866"
 msgstr "Je me demande si le{line_break}conseiller et les autres{line_break}vont rentrer un jour.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraHeardAboutYou"
 msgid "06867"
 msgstr "On nous a déjà{line_break}parlé de vous.{page_break}Si vous allez à Océnia,{line_break}je vous conseille de ne{line_break}pas perdre de temps.{end_wait}"
 
@@ -27483,43 +27483,43 @@ msgctxt "message"
 msgid "06868"
 msgstr "Le village d'Alhafra est{line_break}situé au nord-est d'Océnia...{line_break}Impossible de le manquer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraMikasaraVillage"
 msgid "06869"
 msgstr "Au sud-est d'Océnia{line_break}se trouve Mikasalla.{page_break}C'est un tout petit village.{line_break}Vous aurez vite fait{line_break}d'en faire le tour.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraAvoidYanpiSabaku"
 msgid "06870"
 msgstr "Si vous vous rendez à Alhafra{line_break}sans détour, vous tomberez{line_break}sur le Désert Yampi.{page_break}Ne vous aventurez pas{line_break}dans ce désert. Longez{line_break}plutôt la côte jusqu'à Alhafra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWouldNeedBoat"
 msgid "06871"
 msgstr "Avec ou sans autorisation,{line_break}jamais je n'irais à Océnia{line_break}sans bateau.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraRatherStayHome"
 msgid "06872"
 msgstr "Ces voyageurs cherchent{line_break}les ennuis. A leur place,{line_break}je resterais à la maison.{page_break}C'est tellement douillet et{line_break}agréable.{pause_20_skippable} Et sûr.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgMadoraChampaBoat"
 msgid "06873"
 msgstr "C'est un bateau Champa...{line_break}Leur insigne est brodé{line_break}sur le drapeau là-bas.{page_break}Ils se sont probablement{line_break}échoués ici suite au{line_break}puissant raz de marée.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgMadoraSailorNotChampa"
 msgid "06874"
 msgstr "Attendez... S'il s'agit vraiment{line_break}d'un bateau Champa, {actor_name:8}{line_break}n'est alors pas un Champa!{page_break}Mais... pourquoi le conseiller{line_break}a-t-il besoin de Briggs{line_break}pour l'innocenter? {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraWaveDamage"
 msgid "06875"
 msgstr "Regardez-moi ce chantier...{line_break}Cette vague devait être{line_break}énorme...{page_break}Je me demande combien{line_break}de Champas ont péri{line_break}dans la catastrophe...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraCannotEscapeBySea"
 msgid "06876"
 msgstr "Même s'ils avaient{line_break}libéré Briggs...{page_break}Ils n'auraient jamais{line_break}pu traverser la mer...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPayayamuNewShip"
 msgid "06877"
 msgstr "Briggs cherche probablement{line_break}un nouveau bateau dans le{line_break}village d'Alhafra.{page_break}J'espère que le conseiller{line_break}le retrouvera à temps!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMadoraPirateAttackParties"
 msgid "06878"
 msgstr "Ils étaient suffisamment{line_break}nombreux pour creuser ce{line_break}trou et attaquer Madra.{page_break}Et aussi pour former{line_break}deux commandos...{end_wait}"
 
@@ -29027,7 +29027,7 @@ msgctxt "message"
 msgid "07254"
 msgstr "Vous avez récupéré{line_break}tous vos PP!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWindStoneWarning"
 msgid "07255"
 msgstr "Attention aux Pierres d'air.{page_break}Ces pierres amplifient la force{line_break}du vent. A Rochair, la plus{line_break}grande prudence est requise.{end_wait}"
 
@@ -43287,7 +43287,7 @@ msgctxt "message"
 msgid "10819"
 msgstr "La porte est verrouillée.{line_break}Il semble qu'une réunion{line_break}très animée se tient ici...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldAddressCompanion"
 msgid "10820"
 msgstr "Euh... {actor_name:8}?{end_now}"
 
@@ -46131,7 +46131,7 @@ msgctxt "message"
 msgid "11530"
 msgstr "Nous vous attendrons. L'heure{line_break}de vérité est arrivée. Vous{line_break}nous devez des explications!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorLocked"
 msgid "11531"
 msgstr "La porte est verrouillée.{end_wait}"
 
@@ -51643,11 +51643,11 @@ msgctxt "message"
 msgid "12908"
 msgstr "Je suis le gardien du feu.{line_break}Celui qui en sera digne{line_break}héritera de mes pouvoirs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonGuardianOfWind"
 msgid "12909"
 msgstr "Je suis le gardien du vent.{line_break}Celui qui en sera digne{line_break}héritera de mes pouvoirs.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSummonInheritedEarthDarkness"
 msgid "12910"
 msgstr "Nous avons hérité du{line_break}pouvoir de la terre pour{line_break}créer les ténèbres.{pause_60}{page_break}Pour acquérir ce pouvoir,{line_break}touchez cette stèle!{end_wait}"
 

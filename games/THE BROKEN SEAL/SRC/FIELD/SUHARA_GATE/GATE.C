@@ -103,13 +103,29 @@ s32 SuharaGate_EnterScene(void)
     if (scene == (s32)&SceneId_SuharaGate1) {
         if (Engine_GameFlagIsSet(0x897))
             Engine_ActorSetPosition(10, 0, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        else if (Engine_GameFlagIsSet(0x96f))
+            Map_CopyCellAttributes(0, 0, 2, 1, 29, 18);
+        if (Engine_GameFlagIsSet(0x96f)) {
+            Map_CopyCellAttributes(0, 0, 2, 1, 8, 25);
+            Map_CopyCellAttributes(0, 0, 2, 1, 9, 26);
+        }
+#endif
         if (gGameState.entrance == 3) {
             if (Engine_GameFlagIsSet(0x8fb)) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+                gGameState.retreat_scene = (s32)&SceneId_SuharaGate1;
+#else
                 gGameState.retreat_scene = scene;
+#endif
                 gGameState.retreat_entrance = 1;
             }
             if (Engine_GameFlagIsSet(0x8fc)) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+                gGameState.retreat_scene = (s32)&SceneId_SuharaGate1;
+#else
                 gGameState.retreat_scene = scene;
+#endif
                 gGameState.retreat_entrance = 5;
             }
             Engine_GameFlagClear(0x12f);
@@ -176,7 +192,12 @@ void Scene_RunPrimarySequence(void)
     Actor_FaceDirection(9, 16384, 0);
     Engine_ActorSetAnimation(8, 1);
     Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
+    Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
+#else
     Map_CopyCellAttributes(9, 26, 2, 1, 7, 26);
+#endif
     Engine_EventEnd();
 }
 
@@ -273,10 +294,16 @@ void Scene_RunScene3c3SequenceA(void)
         Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(11);
-    v5 = 7;
     Actor_SetPosition(11, 0, 0);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+    Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
+    Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
+#else
+    v5 = 7;
     Map_CopyCellAttributes(6, 27, 1, 1, v5, 27);
     Map_CopyCellAttributes(9, 26, 2, 1, v5, 26);
+#endif
     GameFlag_Set(0x89f);
     Engine_EventEnd();
 }
@@ -370,5 +397,8 @@ void Scene_RunActorTenRepeatedMotion(void)
 
     GameFlag_Set(0x897);
 
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Map_CopyCellAttributes(29, 19, 2, 1, 29, 18);
+#endif
     Engine_EventEnd();
 }

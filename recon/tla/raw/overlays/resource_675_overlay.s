@@ -2162,7 +2162,7 @@ Func_020010ac:
 	bl Func_0200125c
 	pop {r5, pc}
 .L_02009150:
-	.4byte 0x000030aa
+	.4byte MsgSummonGuardianOfWind
 .L_02009154:
 	.4byte gPartyState
 .L_02009158:

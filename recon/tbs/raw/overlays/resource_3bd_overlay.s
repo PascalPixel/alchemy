@@ -470,7 +470,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000020
 	.global ArutamiraDou_ClearTarget
 ArutamiraDou_ClearTarget:
-	.4byte 0x0200c904
+	.4byte gArutamiraActorWheelWork
 	.global ArutamiraDou_SceneTableA
 ArutamiraDou_SceneTableA:
 	.4byte 0xffff0000

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080396a0
+	.global Ui_ClearVramBlock
 	.thumb_func
-Func_080396a0:
+Ui_ClearVramBlock:
 	push {lr}
 	movs r1, #240
 	ldr r3, .L_080396b4

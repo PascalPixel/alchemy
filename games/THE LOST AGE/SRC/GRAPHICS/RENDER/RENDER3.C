@@ -1,6 +1,9 @@
 #include "TYPES.H"
-#include "IWRAM_CALL.H"
-extern u8 Data_03001e8c[];
+#include "RAM_BUFFER.H"
+
+/* ⚓️ keeps the three channel slots 0x6b8 into the window work; ☀️'s
+   Japanese build keeps them at 0x620. */
+#define RENDER_CHANNEL_OFS 0x6b8
 
 struct UiChannelWork {
     u8 padding00[0x14];
@@ -26,13 +29,12 @@ struct UiChannelSlot {
     u16 field26;
 };
 
-extern u8 *gWindowWork;
-void UiWork_ResetChannelTransition(void *);
+s32 Ui_ClearVramBlock(void);
 
 void UiWork_ResetFreeChannel(void)
 {
     struct UiChannelSlot *slot =
-        (struct UiChannelSlot *)(gWindowWork + RENDER_CHANNEL_OFS);
+        (struct UiChannelSlot *)(Ram_HeapSlots->window_tiles + RENDER_CHANNEL_OFS);
     struct UiChannelSlot *sel = 0;
     s32 i;
 

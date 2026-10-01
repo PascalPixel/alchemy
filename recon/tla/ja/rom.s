@@ -1394,10 +1394,10 @@ UiWindow_ClearInteriorTiles:
 RenderOutput_Release:
 	.incbin "baserom.gba", 0x00039504, 0x000001cc
 	.section .rom.000396d0, "ax"
-	.global Func_080396dc
-	.type Func_080396dc, %function
+	.global UiWork_ResetFreeChannel
+	.type UiWork_ResetFreeChannel, %function
 	.thumb_func
-Func_080396dc:
+UiWork_ResetFreeChannel:
 	.incbin "baserom.gba", 0x000396d0, 0x00000948
 	.section .rom.0003a018, "ax"
 	.global Func_0803a084

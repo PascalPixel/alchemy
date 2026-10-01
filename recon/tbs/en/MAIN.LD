@@ -471,7 +471,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE5.o"(.text)
         "*/recon/tbs/raw/08090a5c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT12.o"(.text)
-        "*/recon/tbs/raw/080912b8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/START_FADE_OVERLAY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)

@@ -694,12 +694,6 @@ DisplayTransition_Start:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00095ac8, 0x00000718
-	.section .rom.00096324, "ax"
-	.global Object_EffectSpawnCallback
-	.type Object_EffectSpawnCallback, %function
-	.thumb_func
-Object_EffectSpawnCallback:
-	.incbin "baserom.gba", 0x00096324, 0x000001dc
 	.section .rom.00097ccc, "ax"
 	.global UiText_OpenMessageAtObject
 	.type UiText_OpenMessageAtObject, %function

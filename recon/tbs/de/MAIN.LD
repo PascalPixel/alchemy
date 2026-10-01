@@ -406,7 +406,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE5.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000940c8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT12.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00094924)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/START_FADE_OVERLAY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EVENT/EVENT.o"(.text)

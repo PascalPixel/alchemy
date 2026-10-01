@@ -1,16 +1,14 @@
-/* Draft, not exact (2026-10-01, slice-2): 308 of 308 bytes, 62 instructions
-   differ (score 1675), all register choice and the order it forces.
-   The reference keeps the buffer start in lr and the tile table in sl, then
-   the mask 15 in sl; here the table takes lr and the buffer start sl. The
-   three get equal weight from the allocator (3, 2 and 3 references), so the
-   order follows their live lengths, and the reference's buffer start comes
-   first. Its first buffer address is also a low register copied into ip
-   (add r1, sp, #4; mov ip, r1; mov lr, ip), where this C reloads sp + 4
-   straight into ip. Tried and worse: one start variable (dst = start = buf),
-   array indexing in all three loops (94), static inline helpers (93).
-   The slot search matches except its registers: the reference counts in
-   r4 and loads 127 with movs; here a pool word is used because 127 loses
-   its register. */
+/* Draft, not exact (2026-10-02, slice-2): 308 of 308 bytes, 9 instructions
+   differ (score 260). What closed the rest: the registers the reference
+   shares name the variables the source shared (one source pointer for the
+   first two loops, one variable for the first loop's byte and the search
+   count), and the search wraps with % 128.
+   Remaining: the reference keeps the buffer start in lr and the tile table
+   in sl; here they are swapped (7 register names). The allocator ranks the
+   table 2 references over 21 instructions, the buffer start 3 over 36, so
+   the table goes first; four more instructions of life for the table, or a
+   fourth reference to the start, would turn it. And the search stores the
+   next position one instruction early (before the slot's second shift). */
 #include "DMA.H"
 
 struct PaletteSlotWork {
@@ -30,27 +28,27 @@ void Func_0801dd28(u16 *entry, u16 *mirror, s32 index, u8 *remap)
     u8 *table = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     u32 slot = *(u8 *)entry;
     u8 buf[128];
+    u8 *src;
     u8 *dst;
+    u32 n;
     u32 i;
 
     {
-        u8 *vram = (u8 *)(0x06000000 + slot * 32);
-
         dst = buf;
+        src = (u8 *)(0x06000000 + slot * 32);
         for (i = 0; i < 32; i++) {
-            u32 value = *vram++;
+            n = *src++;
 
-            dst[0] = value & 15;
-            dst[1] = value >> 4;
+            dst[0] = n & 15;
+            dst[1] = n >> 4;
             dst += 2;
         }
     }
     {
-        u8 *tile = table + index * 32;
-
         dst = buf;
+        src = table + index * 32;
         for (i = 0; i < 32; i++) {
-            u32 value = *tile++;
+            u32 value = *src++;
             u32 color;
 
             color = remap[value & 15];
@@ -64,22 +62,22 @@ void Func_0801dd28(u16 *entry, u16 *mirror, s32 index, u8 *remap)
         }
     }
     {
-        u8 *src;
+        u8 *p;
 
         dst = buf;
-        src = buf;
-        for (i = 0; i < 32; i++) {
-            *dst++ = src[0] | (src[1] << 4);
-            src += 2;
+        for (i = 0, p = dst; i < 32; i++) {
+            u32 value = p[0];
+
+            value |= p[1] << 4;
+            p += 2;
+            *dst++ = value;
         }
     }
     if ((s8)slot >= 0) {
-        u32 n;
-
         for (n = 0; n < 128; n++) {
             u32 value = work->next;
 
-            work->next = (value + 1) & 127;
+            work->next = (value + 1) % 128;
             slot = (u8)value;
             if (work->used[slot] == 0)
                 break;

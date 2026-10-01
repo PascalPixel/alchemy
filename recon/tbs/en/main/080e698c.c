@@ -45,7 +45,7 @@ void **GetBattleObjectSlotFar(s32 member_id);
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 _call_via_r2(s32 a, s32 b, s32 target);
 void Object_ResetMotion(void *object);
-void Object_SetPosition(void *object, s32 x, s32 y, s32 z);
+void Object_SetMoveTargetFar(void *object, s32 x, s32 y, s32 z);
 void Object_SetMode(void *object, s32 mode);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
@@ -148,7 +148,7 @@ s32 Unnamed_080e698c(void *object)
     (*(s32 *)((u8 *)member_a + 0x44)) = 0;
     (*(s8 *)((u8 *)member_a + 0x5A)) = 1;
     Object_ResetMotion(member_a);
-    Object_SetPosition(member_a, new_x, 0, new_z);
+    Object_SetMoveTargetFar(member_a, new_x, 0, new_z);
     Object_SetMode(member_a, 2);
 
     for (frame = 0; frame != 70; frame++) {

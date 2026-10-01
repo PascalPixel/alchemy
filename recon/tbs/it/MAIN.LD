@@ -755,7 +755,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/INITIALIZE_MODE10.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/GATHER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000d89ac)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000d91dc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PALETTE_RAMP.o"(.text)

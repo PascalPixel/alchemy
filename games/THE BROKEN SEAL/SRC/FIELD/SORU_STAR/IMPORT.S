@@ -10,6 +10,9 @@
 	.thumb_func
 IwramSignedDivideEntry:
 	overlay_veneer IwramSignedDivide
+	.global IwramUnsignedDivideEntry
+	.thumb_func
+IwramUnsignedDivideEntry:
 	overlay_veneer IwramUnsignedDivide
 	.global Engine_TaskWait
 	.thumb_func
@@ -27,7 +30,13 @@ Engine_RandomNext:
 	.thumb_func
 CalculateAngleFromCoordinateDelta:
 	overlay_veneer ArcTan2Far
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Engine_HeapAllocate
 	.thumb_func

@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x02009bdc,"a",%progbits
@@ -327,7 +328,7 @@ Placement_Effects87a:
 	.4byte 0x00000000
 	/* ES/FR/IT retain the blocked-path event in the final placement group. */
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.4byte 0x00000023
 	.4byte 0x0f410064

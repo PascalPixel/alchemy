@@ -34883,7 +34883,7 @@ msgctxt "MsgTorebiHeyaSinceWeDidntGetToSee"
 msgid "08718"
 msgstr "Since we didn't get to see{line_break}the trials, we're really{line_break}charged up for this!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeyaBabiShowedHimselfAtFinals"
 msgid "08719"
 msgstr "Babi showed himself at{line_break}the finals.{page_break}So was that whole thing{line_break}about him being missing{line_break}just a misunderstanding?{end_now}"
 
@@ -34895,7 +34895,7 @@ msgctxt "MsgTorebiHeyaHuhThenTheyFoundHimIn"
 msgid "08721"
 msgstr "Huh? Then they found him{line_break}in time for the finals?{page_break}That sounds ludicrous!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTorebiHeyaBabiDecidedShowUpForFinals"
 msgid "08722"
 msgstr "What's up? Babi decided{line_break}to show up for the{line_break}finals?{end_wait}"
 

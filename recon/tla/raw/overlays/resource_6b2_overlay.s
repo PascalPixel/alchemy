@@ -496,7 +496,7 @@ Func_020001b0:
 .L_020084b8:
 	.4byte Func_020000f4
 .L_020084bc:
-	.4byte 0x00002e2f
+	.4byte MsgImiruVoicesDisbeliefReply
 .L_020084c0:
 	.4byte Func_02000060
 	.section .text.x020084c4,"ax",%progbits

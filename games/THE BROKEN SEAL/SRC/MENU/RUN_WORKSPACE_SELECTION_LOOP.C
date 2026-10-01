@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
@@ -57,15 +58,15 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     Menu_InitializeSelectedWorkspace();
     temp_sl_29 = gSelectionWork;
     sp10 = Menu_CreateWorkspaceWindows();
-#if defined(TBS_EDITION_JA)
-    /* The Japanese pair sits at one height in the debug build too. */
-    sp8 = (s32)RenderResource_CreatePair(6, sp10, 0x28, -0x18);
-#else
+#if EDITION_INTERNATIONAL
     var_r4_35 = -0x18;
     if (gDebugMode != 0) {
         var_r4_35 = -0x10;
     }
     sp8 = (s32)RenderResource_CreatePair(6, sp10, 0x28, var_r4_35);
+#else
+    /* The Japanese pair sits at one height in the debug build too. */
+    sp8 = (s32)RenderResource_CreatePair(6, sp10, 0x28, -0x18);
 #endif
     WaitFrames(1);
     var_r8_51 = FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574);

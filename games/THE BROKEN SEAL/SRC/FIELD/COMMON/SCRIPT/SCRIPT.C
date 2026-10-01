@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "SCRIPT_OPERANDS.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -873,16 +874,16 @@ void ObjectDispatch_SetField6c(void *arg0, s32 arg1)
 }
 
 /* The Japanese edition tests the held keys where the others read the key state. */
-#if defined(TBS_EDITION_JA)
-
-extern u8 gKeysHeld[];
-
-#define ASSIGNED_KEYS gKeysHeld
-#else
+#if EDITION_INTERNATIONAL
 
 extern u8 Data_03001c94[];
 
 #define ASSIGNED_KEYS Data_03001c94
+#else
+
+extern u8 gKeysHeld[];
+
+#define ASSIGNED_KEYS gKeysHeld
 #endif
 
 u32 Field_StoreAssignedKeyValue(u32 value)

@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x020080c2,"ax",%progbits
@@ -1858,14 +1859,14 @@ gFuneKanpanEvents:
 	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00008602
 	.else
 	.4byte 0x00000002
 	.endif
 	.endif
 	.4byte 0xffff0002
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte FuneKanpan_RunDeckStateEvent
 	.else
 	.ifdef TBS_EDITION_EN
@@ -1996,14 +1997,14 @@ gFuneKanpanEventsFlag928:
 	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00008602
 	.else
 	.4byte 0x00000002
 	.endif
 	.endif
 	.4byte 0xffff0002
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte FuneKanpan_RunDeckStateEvent
 	.else
 	.ifdef TBS_EDITION_EN
@@ -2044,14 +2045,14 @@ gFuneKanpanEventsFlag93e:
 	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00008602
 	.else
 	.4byte 0x00000002
 	.endif
 	.endif
 	.4byte 0xffff0002
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte FuneKanpan_RunDeckStateEvent
 	.else
 	.ifdef TBS_EDITION_EN
@@ -2095,14 +2096,14 @@ gFuneKanpanEventsFlag8a0:
 	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
 	.else
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte 0x00008602
 	.else
 	.4byte 0x00000002
 	.endif
 	.endif
 	.4byte 0xffff0002
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.4byte FuneKanpan_RunDeckStateEvent
 	.else
 	.ifdef TBS_EDITION_EN

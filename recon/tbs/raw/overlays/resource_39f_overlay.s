@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x0200aef8,"a",%progbits
@@ -745,7 +746,7 @@ gMogoruMoriPlacements3:
 	.4byte 0x00500000
 	.4byte 0x01024000
 	.2byte 0x0016
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.2byte 0xffff
 	.else
 	.2byte 0x030b

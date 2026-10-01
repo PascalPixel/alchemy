@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
@@ -27,7 +28,7 @@ void UiWork_Finalize(struct Work *, s32);
 
 s32 UiWork_IsIdle(void *arg0)
 {
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     /* The Japanese check counts a missing work as idle. */
     if (arg0 == NULL)
         return 1;

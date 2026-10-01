@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x020088d0,"a",%progbits
@@ -102,7 +103,7 @@ gItemLevelPlacements:
 	.4byte 0xffff008f
 	.4byte 0x00000001
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.4byte 0x00500000
 	.else
@@ -150,7 +151,7 @@ gItemLevelEvents:
 	.4byte 0xffff000b
 	.4byte FieldScene_RunCountAdjustPanel
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.else
 	.4byte 0x00000000

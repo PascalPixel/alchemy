@@ -1,7 +1,8 @@
+#include "EDITION.H"
 #include "TYPES.H"
 
 s32 WaitFrames(s32);
-#if defined(TLA_EDITION_JA)
+#if !EDITION_INTERNATIONAL
 void Func_08118068(s32, s16, s32, s32);
 #else
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
@@ -20,7 +21,7 @@ struct SparkObject {
 /* ⚓️ adds this step between ☀️'s two: a longer approach, then phase 5. */
 void BattleFx_WaitThenSetField18To5(struct SparkObject *obj)
 {
-#if defined(TLA_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     /* Japanese effects use the preceding motion dispatch entry. */
     Func_08118068(obj->target, obj->angle, 0x18, 0xc3333);
 #else

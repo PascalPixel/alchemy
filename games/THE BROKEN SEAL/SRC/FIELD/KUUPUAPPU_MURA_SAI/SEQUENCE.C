@@ -1,3 +1,4 @@
+#include "EDITION.H"
 /*
  * Later scene steps and the scene initialiser: scene twelve, the flag 0x200
  * cells, actor 18's sequence and the actors placed on entry.
@@ -297,7 +298,7 @@ s32 SceneSetup_InitializeActorsAndFlags(void)
     if (GameFlag_IsSet(0x858))
         Call3(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
     if (gGameState.entrance <= 2 && !GameFlag_IsSet(52)
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
         && !GameFlag_IsSet(0x109)
 #endif
        )

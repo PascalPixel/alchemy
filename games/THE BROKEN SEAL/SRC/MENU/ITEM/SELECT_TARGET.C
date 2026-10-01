@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -148,10 +149,10 @@ s8 ItemMenu_SelectTarget(s32 mode)
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgNoneInStock, window, 16, 72);
                     }
                     if (ItemMenu_Count(menu->owner_ids[selection]) == 15 && quantity == 0)
-#if defined(TBS_EDITION_JA)
-                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 16, 72);
-#else
+#if EDITION_INTERNATIONAL
                         UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 0, 72);
+#else
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgTradeForWhat, window, 16, 72);
 #endif
 #endif
                 }
@@ -163,15 +164,15 @@ s8 ItemMenu_SelectTarget(s32 mode)
                 else
                     Menu_DrawOwnerStatusPanel(menu->status_window, menu->owner_ids[selection], menu->selected_slot, 0);
                 if (!GameFlag_TestFar(0x151) && !shown) {
-#if defined(TBS_EDITION_JA)
-                    RenderOutput_ClearListFar(menu->info_window);
-#else
+#if EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar(menu->info_window);
-#endif
-#if defined(TBS_EDITION_JA)
-                    UiText_DrawMessageAt((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
 #else
+                    RenderOutput_ClearListFar(menu->info_window);
+#endif
+#if EDITION_INTERNATIONAL
                     UiText_DrawCharacterAtOffsetFar((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
+#else
+                    UiText_DrawMessageAt((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
 #endif
                     shown = 1;
                 } else {

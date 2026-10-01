@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
 
@@ -26,11 +27,11 @@ static __inline__ s32 Scope_080270d8(void)
         s16 data[64];
 
         (void)&padding;
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+        UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 0x34);
+#else
         /* The Japanese line is decoded straight into a shorter buffer. */
         UiText_DecodeMessage((s32)MsgWaitingForOpponent, data, 32);
-#else
-        UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 0x34);
 #endif
         return UiText_RenderWideStringAtOffset(data, *(s32 *)(context + 0x44), 0, 4);
     }

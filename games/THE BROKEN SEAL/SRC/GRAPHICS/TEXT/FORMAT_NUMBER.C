@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
@@ -62,7 +63,7 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
 
 /* Japanese names take no articles, and the Japanese edition has no article
    routine; each other edition writes its own language's. */
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
 /* The articles by kind (in English "a ", "an ", "some ", "the "); Italian
    has eleven kinds, and Spanish five definite ones ("el ", "la ", "los ",
    "las ") and five indefinite ("un ", "una ", "unos ", "unas "). */

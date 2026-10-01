@@ -150,7 +150,8 @@ Resource_Overlay395:
 	.incbin "baserom.gba", 0x007a6b91, 0x00000003
 	.global Resource_Overlay396
 Resource_Overlay396:
-	.incbin "baserom.gba", 0x007a6b94, 0x000015c8
+	.incbin "overlays/resource_396.lz"
+	.incbin "baserom.gba", 0x007a8159, 0x00000003
 	.global Resource_Overlay397
 Resource_Overlay397:
 	.incbin "overlays/resource_397.lz"
@@ -196,13 +197,16 @@ Resource_Overlay3A2:
 	.incbin "baserom.gba", 0x007ba6b7, 0x00000001
 	.global Resource_Overlay3A3
 Resource_Overlay3A3:
-	.incbin "baserom.gba", 0x007ba6b8, 0x00001004
+	.incbin "overlays/resource_3a3.lz"
+	.incbin "baserom.gba", 0x007bb6bb, 0x00000001
 	.global Resource_Overlay3A4
 Resource_Overlay3A4:
-	.incbin "baserom.gba", 0x007bb6bc, 0x000029d4
+	.incbin "overlays/resource_3a4.lz"
+	.incbin "baserom.gba", 0x007be08e, 0x00000002
 	.global Resource_Overlay3A5
 Resource_Overlay3A5:
-	.incbin "baserom.gba", 0x007be090, 0x0000182c
+	.incbin "overlays/resource_3a5.lz"
+	.incbin "baserom.gba", 0x007bf8bb, 0x00000001
 	.global Resource_Overlay3A6
 Resource_Overlay3A6:
 	.incbin "overlays/resource_3a6.lz"
@@ -254,7 +258,8 @@ Resource_Overlay3B2:
 	.incbin "baserom.gba", 0x007d28bd, 0x00000003
 	.global Resource_Overlay3B3
 Resource_Overlay3B3:
-	.incbin "baserom.gba", 0x007d28c0, 0x000022b0
+	.incbin "overlays/resource_3b3.lz"
+	.incbin "baserom.gba", 0x007d4b6f, 0x00000001
 	.global Resource_Overlay3B4
 Resource_Overlay3B4:
 	.incbin "overlays/resource_3b4.lz"
@@ -280,13 +285,15 @@ Resource_Overlay3B9:
 	.incbin "baserom.gba", 0x007dcb6d, 0x00000003
 	.global Resource_Overlay3BA
 Resource_Overlay3BA:
-	.incbin "baserom.gba", 0x007dcb70, 0x00002b30
+	.incbin "overlays/resource_3ba.lz"
+	.incbin "baserom.gba", 0x007df69d, 0x00000003
 	.global Resource_Overlay3BB
 Resource_Overlay3BB:
-	.incbin "baserom.gba", 0x007df6a0, 0x00002e14
+	.incbin "overlays/resource_3bb.lz"
 	.global Resource_Overlay3BC
 Resource_Overlay3BC:
-	.incbin "baserom.gba", 0x007e24b4, 0x00003554
+	.incbin "overlays/resource_3bc.lz"
+	.incbin "baserom.gba", 0x007e5a05, 0x00000003
 	.global Resource_Overlay3BD
 Resource_Overlay3BD:
 	.incbin "overlays/resource_3bd.lz"

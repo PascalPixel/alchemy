@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "DMA.H"
 
 /* The quantity, total and coins columns each edition's words leave room for. */
@@ -49,7 +50,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
     s32 count;
     s32 result;
     struct UiSprite *sprite;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     s32 msg;
 #endif
 
@@ -97,7 +98,11 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                     Shop_FillSelector(minimum, 2, buffer);
                     VramBlock_LoadCached(slot, 0x100, buffer);
                     result = count + 1;
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+                    UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
+                    UiText_DrawNumberInWindowFar(price * result, 6, window, QUANTITY_X + 16, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, COINS_X, 0);
+#else
                     /* The Japanese count takes its counter word, and the
                        coins label is the message before it. */
                     UiText_DrawNumberInWindowFar(result, 2, window, 64, 0);
@@ -105,10 +110,6 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                     UiText_DrawCharacterAtOffsetFar(msg, window, 80, 0);
                     UiText_DrawNumberInWindowFar(price * result, 6, window, 96, 0);
                     UiText_DrawCharacterAtOffsetFar(msg - 1, window, 144, 0);
-#else
-                    UiText_DrawNumberInWindowFar(result, 2, window, QUANTITY_X, 0);
-                    UiText_DrawNumberInWindowFar(price * result, 6, window, QUANTITY_X + 16, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, COINS_X, 0);
 #endif
                 }
                 WaitFrames(1);

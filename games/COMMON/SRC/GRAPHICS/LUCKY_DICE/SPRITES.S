@@ -1,12 +1,10 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ LuckyDice_Sprites: its 256-colour palette, then 496 tiles of 8-bit colour packed
 @ by the resource packer.
 	.section .rodata
 	.global LuckyDice_Sprites
 LuckyDice_Sprites:
-	.ifdef TBS_EDITION_JA
-	.set LUCKY_DICE_JA, 1
-	.endif
-	.ifdef TLA_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.set LUCKY_DICE_JA, 1
 	.endif
 	.ifdef TBS_EDITION_DE

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "FIXED_MATH.H"
 #include "INVENTORY_MENU.H"
 #include "GLOBAL_CELLS.H"
@@ -26,7 +27,7 @@ void ItemMenu_TryBreak(void)
             FIELD(menu, u16 *, 0x174));
         Audio_PlayCue(SOUND_ITEM_BREAK);
         InventoryMenu_ShowModalMessage((s32)MsgItemBroke, 0, -1);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
         /* The Japanese menu redraws the info window after the message. */
         RenderOutput_RedrawSavedRectFar(FIELD(menu, s32 *, 0x2C));
 #endif

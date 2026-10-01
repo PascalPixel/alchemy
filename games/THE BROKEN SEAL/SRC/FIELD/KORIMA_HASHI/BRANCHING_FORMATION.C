@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "TBS_EDITION.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KORIMA_MURA.H"
@@ -202,10 +203,16 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
     return 0;
 }
 
-/* The selected actor is read through a register offset into the game state. */
+/* Japanese scenes step from the leader's current position; international
+   scenes use the selected actor's cell centre before applying the offset. */
 void SceneActor_PassSubjectOffsetPosition(void)
 {
     u32 buf[3];
+#if !EDITION_INTERNATIONAL
+    buf[0] = ((struct Struct3848 *)Object_GetById(0))->field08 + 0x1e0000;
+    buf[1] = ((struct Struct3848 *)Object_GetById(0))->field0c;
+    buf[2] = ((struct Struct3848 *)Object_GetById(0))->field10;
+#else
     s32 off = 500;
     struct Struct3848 *p = (void *)Object_GetById(*(s32 *)((u8 *)&gGameState + off));
     u32 base = p->field08 & 0xfff00000;
@@ -214,6 +221,7 @@ void SceneActor_PassSubjectOffsetPosition(void)
     buf[1] = p->field0c;
     buf[2] = (p->field10 & 0xfff00000) + 0x80000;
     buf[0] = base + 0x280000;
+#endif
     StagedActor_RunStepEffect((struct StagedActorEffectRequest *)buf);
 }
 

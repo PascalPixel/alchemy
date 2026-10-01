@@ -237,8 +237,12 @@ fn selected_names(
         crate::compiler::preprocess::fresh_definitions(root, target, &path.to_string_lossy())?
     } else {
         crate::compiler::assembly_source::without_comments(
-            &crate::compiler::assembly_source::selected(&source, target.edition_define)
-                .map_err(|error| format!("{}: {error}", path.display()))?,
+            &crate::compiler::assembly_source::selected_includes(
+                &source,
+                target.edition_define,
+                &[root, &root.join(target.output_dir)],
+            )
+            .map_err(|error| format!("{}: {error}", path.display()))?,
         )
     };
     // Keep active #define bodies visible to the lexer, while strings/comments

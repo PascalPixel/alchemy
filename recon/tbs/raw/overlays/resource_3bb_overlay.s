@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x0200b638,"ax",%progbits
@@ -486,7 +487,7 @@ Korosseo_PortraitPaletteOffsets:
 	.4byte 0x20202000
 	.2byte 0x4060
 	.byte 64
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.byte 64
 	.else
 	.ifdef TBS_EDITION_EN
@@ -1129,7 +1130,7 @@ KorosseoKabe_ModeRecordDefault:
 	.2byte 0x4000
 	.4byte 0x0800ff44
 	.2byte 0x1000
-	.ifdef TBS_EDITION_JA
+	.ifeq EDITION_INTERNATIONAL
 	.2byte 0x0100
 	.else
 	.2byte 0x0180
@@ -1158,32 +1159,72 @@ KorosseoKabe_ModeRecordFour:
 	.2byte 1
 	.4byte 0x00002000
 	.4byte 0x10000001
+	.ifdef TBS_EDITION_FR
+	.4byte 0x00060180
+	.else
 	.4byte 0x00060100
+	.endif
 	.4byte 0x00102000
 	.4byte 0x7fff0006
 	.4byte 0x10000006
+	.ifdef TBS_EDITION_FR
+	.4byte 0x00060200
+	.else
 	.4byte 0x00060180
+	.endif
 	.4byte 0x00067fff
+	.ifdef TBS_EDITION_FR
+	.4byte 0x01801000
+	.else
 	.4byte 0x01001000
+	.endif
 	.4byte 0x7fff0006
 	.4byte 0x10000006
+	.ifdef TBS_EDITION_FR
+	.4byte 0x00060200
+	.else
 	.4byte 0x00060180
+	.endif
 	.4byte 0x00067fff
+	.ifdef TBS_EDITION_FR
+	.4byte 0x01801000
+	.else
 	.4byte 0x01001000
+	.endif
 	.4byte 0x7fff0006
 	.4byte 0x20000006
 	.4byte 0x001e0000
+	.ifdef TBS_EDITION_FR
+	.4byte 0x02001000
+	.else
 	.4byte 0x01801000
+	.endif
 	.4byte 0x7fff0006
 	.4byte 0x10000006
+	.ifdef TBS_EDITION_FR
+	.4byte 0x00060180
+	.else
 	.4byte 0x00060100
+	.endif
 	.4byte 0x00067fff
+	.ifdef TBS_EDITION_FR
+	.4byte 0x02001000
+	.else
 	.4byte 0x01801000
+	.endif
 	.4byte 0x7fff0006
 	.4byte 0x10000006
+	.ifdef TBS_EDITION_FR
+	.4byte 0x00060180
+	.else
 	.4byte 0x00060100
+	.endif
 	.4byte 0x00067fff
+	.ifdef TBS_EDITION_FR
+	.4byte 0x02001000
+	.else
 	.4byte 0x01801000
+	.endif
 	.4byte 0x7fff0006
 	.4byte 0xffff0006
 	.global KorosseoKabe_ModeRecordThree

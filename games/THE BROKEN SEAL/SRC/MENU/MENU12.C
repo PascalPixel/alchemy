@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "LAYOUT_GUARD.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
@@ -69,10 +70,10 @@ struct CharacterSelectorWork {
 
 s32 CharacterMenu_SelectOwner(s32 slot);
 
-#if defined(TBS_EDITION_JA)
-#define ROW_CNT 4
-#else
+#if EDITION_INTERNATIONAL
 #define ROW_CNT 8
+#else
+#define ROW_CNT 4
 #endif
 
 /*

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "INVENTORY_MENU.H"
 /* Item menu: ask whether to drop the item and return the chosen row (1 when cancelled). */
 #include "TYPES.H"
@@ -61,16 +62,16 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     Item_Get(slot);
     UiText_DrawAt(slot + (s32)((u8 *)&MsgItemName), win, 24, 0);
     text = (s32)MsgConfirmDrop;
-#if defined(TBS_EDITION_JA)
-    UiText_DrawAt(text, win, 8, 16);
-#else
+#if EDITION_INTERNATIONAL
     UiText_DrawAt(text, win, 0, 16);
+#else
+    UiText_DrawAt(text, win, 8, 16);
 #endif
     text++;
-#if defined(TBS_EDITION_JA)
-    UiText_DrawAt(text, win, 8, 24);
-#else
+#if EDITION_INTERNATIONAL
     UiText_DrawAt(text, win, 0, 24);
+#else
+    UiText_DrawAt(text, win, 8, 24);
 #endif
     label = (s32)MsgYes;
     UiText_DrawAt(label, win, 24, 40);

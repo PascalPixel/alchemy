@@ -129,7 +129,7 @@ Data_02009098:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.section .bss,"aw",%nobits
-	.space 12
+	.balign 16
 	.global KorimaPalette_First
 KorimaPalette_First:
 	.space 1792

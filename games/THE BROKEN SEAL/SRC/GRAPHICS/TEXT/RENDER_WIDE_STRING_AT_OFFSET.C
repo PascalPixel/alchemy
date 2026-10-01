@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
@@ -45,15 +46,15 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
         work->entries[work->count] = c;
         work->count = (work->count + 1) & RENDER_ENTRY_MASK;
     }
-#if defined(TBS_EDITION_JA)
-    while ((c = *text++) != 0) {
-#else
+#if EDITION_INTERNATIONAL
     for (;;) {
         c = *text++;
         if (c > 0xff)
             c = 0x40;
         if (c == 0)
             break;
+#else
+    while ((c = *text++) != 0) {
 #endif
         if (c <= 30) {
             switch (c) {
@@ -83,7 +84,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
             case 11:
             case 12:
             case 17:
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
             /* Code 29 carries an operand outside the Japanese edition. */
             case 29:
 #endif
@@ -91,17 +92,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
                 break;
             }
         } else {
-#if defined(TBS_EDITION_JA)
-            /* A Japanese voicing mark after a kana rides in the glyph's
-               upper bits instead of taking a column. */
-            if (*text == 0xde) {
-                c |= 0x4000;
-                text++;
-            } else if (*text == 0xdf) {
-                c |= 0x8000;
-                text++;
-            }
-#else
+#if EDITION_INTERNATIONAL
             if ((window->flags & 8) == 0) {
                 next = *text;
 #if defined(TBS_EDITION_ES)
@@ -126,6 +117,16 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
                     text++;
                 }
 #endif
+            }
+#else
+            /* A Japanese voicing mark after a kana rides in the glyph's
+               upper bits instead of taking a column. */
+            if (*text == 0xde) {
+                c |= 0x4000;
+                text++;
+            } else if (*text == 0xdf) {
+                c |= 0x8000;
+                text++;
             }
 #endif
             x += Func_08018cac(window, c, x, y, 0);

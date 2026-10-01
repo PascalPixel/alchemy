@@ -95,9 +95,9 @@ void Korosseo_UpdateModeTask(void)
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
     s32 tile = gVramBlockCache[Korosseo_PortraitSlot].base >> 5;
+    u32 flags;
     s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
-    u32 flags;
     struct SpriteTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
@@ -228,6 +228,28 @@ render:
         }
         break;
     }
+#if defined(TBS_EDITION_FR)
+    case 4: {
+        u32 attr;
+        i = 0;
+        y = 64;
+        flags = 0x80004000;
+        attr = matrix << 25;
+        for (; i < 2; i++) {
+            x = pos + scale * (i * 32 - 16) / 256;
+            left = x + 88;
+            if ((u32)(x + 152) < 304) {
+                x = left & 511;
+                *write++ = 0;
+                *write++ = (x << 16) | y | flags | attr | 0x700;
+                *write++ = 0xf400 | (tile + Korosseo_ModeTaskParam);
+                Runtime_PushSlotEntry(sprite++, 236);
+            }
+            tile += 8;
+        }
+        break;
+    }
+#else
     case 4:
         y = 48;
         flags = 0xc0004000;
@@ -240,6 +262,7 @@ render:
             Runtime_PushSlotEntry(sprite, 236);
         }
         break;
+#endif
     case 2:
         y = 48;
         flags = 0x80000000;

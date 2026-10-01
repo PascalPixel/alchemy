@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ The fourteen interrupt-handler words of the resident runtime, which the
 @ dispatcher in RUNTIME.S loads with ldrne ip, [pc, #...]. They are zero in
 @ this image: after copying the runtime, the start-up routine at 0x0800300c
@@ -31,7 +32,7 @@ IwramIrqDma0:
 IwramIrqDma1:
 	.4byte 0
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	@ The European editions' ROM table carries a halt loop (svc 0x30000,
 	@ then a branch back to it) in the DMA2 and DMA3 words, and start-up
 	@ installs this copy as the Game Pak interrupt handler.

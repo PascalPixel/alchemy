@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 
 extern const u8 UiText_Glyphs[];
@@ -15,7 +16,7 @@ extern const u8 UiText_Glyphs[];
 
 /* The bytes of one glyph record, its width first: both Japanese fonts
    pack their records into 26 bytes. */
-#if defined(TBS_EDITION_JA) || defined(TLA_EDITION_JA)
+#if !EDITION_INTERNATIONAL
 #define GLYPH_RECORD_SIZE 26
 #else
 #define GLYPH_RECORD_SIZE 32

@@ -63,7 +63,7 @@ impl Owner {
     }
 }
 
-/// The production default target, `tbs-en`.
+/// The production default target, `tbs-ja`.
 pub fn default_target() -> DecompTarget {
     crate::targets::target_for(crate::targets::DEFAULT_TARGET)
 }

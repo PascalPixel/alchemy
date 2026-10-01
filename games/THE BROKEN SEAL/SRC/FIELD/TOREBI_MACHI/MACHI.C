@@ -91,7 +91,7 @@ s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
 s32 SceneActor_UpdatePartnerProximity(u8 *self)
 {
     u8 **globals = (u8 **)gWindowWork;
-    u8 *scene = globals[0];
+    struct TorebiSceneWork *scene = (struct TorebiSceneWork *)globals[0];
     u8 *work = globals[12];        /* == *(u8 **)0x03001ebc */
     u16 *flags = (u16 *)(self + 100);
     s32 force = 0;
@@ -117,9 +117,9 @@ s32 SceneActor_UpdatePartnerProximity(u8 *self)
 
     /*
      * Widen the test when the scene counter at work + 376 is already
-     * running, or when the scene byte at scene + 0x0ea4 is set.
+     * running, or when the scene proximity flag is set.
      */
-    if (*(s16 *)(work + 376) != 0 || scene[0x0ea4] != 0) {
+    if (*(s16 *)(work + 376) != 0 || scene->widen_proximity != 0) {
         range = 26;
         if ((*flags & 2) != 0) {
             force = 1;

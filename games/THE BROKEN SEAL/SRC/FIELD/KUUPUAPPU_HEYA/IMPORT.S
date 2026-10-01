@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Import veneers after the KUUPUAPPU_HEYA overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -76,7 +77,7 @@ Map_CopyMetatileCellsRect:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-.ifdef TBS_EDITION_JA
+.ifeq EDITION_INTERNATIONAL
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
@@ -299,7 +300,7 @@ Party_SetFields1ceAnd1d0:
 	.thumb_func
 Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
-.ifndef TBS_EDITION_JA
+.if EDITION_INTERNATIONAL
 	.global Engine_LeaderCheckAhead
 	.thumb_func
 Engine_LeaderCheckAhead:

@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x0200a7d2,"ax",%progbits
@@ -49,13 +50,13 @@ ShindenHeya_ChooseRestartOption:
 	movs r3, #1
 	str r3, [sp, #0]
 	movs r1, #7
-.ifdef TBS_EDITION_JA
+.ifeq EDITION_INTERNATIONAL
 	movs r2, #17
 .else
 	movs r2, #25
 .endif
 	movs r3, #5
-.ifdef TBS_EDITION_JA
+.ifeq EDITION_INTERNATIONAL
 	movs r0, #7
 .else
 	movs r0, #2
@@ -121,7 +122,7 @@ ShindenHeya_ChooseRestartOption:
 	ldr r1, [r2, r3]
 	lsls r2, r5, #4
 	add r0, sp, #8
-.ifdef TBS_EDITION_JA
+.ifeq EDITION_INTERNATIONAL
 	adds r1, #64
 .else
 	adds r1, #24
@@ -518,7 +519,7 @@ ShindenHeya_PlacementB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.global ShindenHeya_PlacementSequenceB
 ShindenHeya_PlacementSequenceB:
 	.4byte 0xffff0002

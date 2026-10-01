@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "ITEM_MENU.H"
 #include "SOUND_IDS.H"
@@ -28,7 +29,7 @@ s32 ItemMenu_Use(void)
         RenderOutput_ClearListFar(menu->info_window);
         InventoryMenu_ShowModalMessage(
             menu->message_offset + (s32)&MsgItemUseResult, result, result);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
         RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
         menu->completion_flag = 1;

@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "FAR_RUNTIME.H"
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
@@ -98,7 +99,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             menu->row_positions[selection] = 0x1a;
             if (!GameFlag_TestFar(0x151) && !shown) {
                 RenderOutput_ClearListFar(menu->info_window);
-#if !defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
                 RenderOutput_RedrawSavedRectFar(menu->info_window);
 #endif
                 UiText_DrawWorkValueWithLabel(menu->info_window);
@@ -293,14 +294,14 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
                 if (!GameFlag_TestFar(0x151) && !shown) {
 /* The Japanese edition clears the info window and draws the description
    as a message; the others redraw the saved window and draw it in place. */
-#if defined(TBS_EDITION_JA)
-                    RenderOutput_ClearListFar(menu->info_window);
-                    UiText_DrawMessageAt(
+#if EDITION_INTERNATIONAL
+                    RenderOutput_RedrawSavedRectFar(menu->info_window);
+                    UiText_DrawCharacterAtOffsetFar(
                         (menu->selected_action & 0x3fff) + (s32)&MsgAbilityDescription,
                         menu->info_window, 0, 0);
 #else
-                    RenderOutput_RedrawSavedRectFar(menu->info_window);
-                    UiText_DrawCharacterAtOffsetFar(
+                    RenderOutput_ClearListFar(menu->info_window);
+                    UiText_DrawMessageAt(
                         (menu->selected_action & 0x3fff) + (s32)&MsgAbilityDescription,
                         menu->info_window, 0, 0);
 #endif

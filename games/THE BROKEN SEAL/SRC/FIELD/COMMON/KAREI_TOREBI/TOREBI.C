@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TBS_EDITION.H"
 #include "KAREI.H"
 #include "text/MSG_IDS.H"
@@ -335,7 +336,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 base6_2000240;
     s32 six00;
 
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
     /* FAKEMATCH: one coin-label selector keeps its saved register through
        the number draw. Separate whole enum arguments rematerialize the unit
        label and shorten the complete Japanese callback by twelve bytes. */
@@ -357,18 +358,18 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             UiWork_PushValueSlot(six00, 5);
             Event_OpenMessage(8, 0);
             rec7 = UiWindow_Create(TICKET_COUNTER_WINDOW_X, 8, TICKET_COUNTER_WIDTH, 4, 2);
-#if defined(TBS_EDITION_JA)
+#if EDITION_INTERNATIONAL
+            UiText_DrawCharacterAtOffset(MsgYourCoins, rec7, 0, 0);
+#else
             msg = MsgYourCoins;
             UiText_DrawCharacterAtOffset(msg, rec7, 0, 0);
-#else
-            UiText_DrawCharacterAtOffset(MsgYourCoins, rec7, 0, 0);
 #endif
             base6_2000240 = (s32)Data_02000240;
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
             msg += MsgCoins - MsgYourCoins;
 #endif
             UiText_DrawNumberInWindow(*(s32 *)(base6_2000240 + 16), 6, rec7, TICKET_COUNTER_X, 8);
-#if defined(TBS_EDITION_JA)
+#if !EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffset(msg, rec7, 48, 8);
 #endif
             if (Engine_EventChooseYesNo(-1, 0) == 1) {

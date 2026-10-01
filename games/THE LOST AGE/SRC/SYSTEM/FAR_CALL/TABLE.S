@@ -20,4 +20,20 @@ Func_08020020:
 	.global InitializeAnimationObjectsFar
 	.thumb_func
 InitializeAnimationObjectsFar:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer ResourceMetadata_Register
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer ResourceMetadata_Register
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer ResourceMetadata_Register
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer ResourceMetadata_Register
+	.else
 	overlay_veneer InitializeAnimationObjects
+	.endif
+	.endif
+	.endif
+	.endif

@@ -234,7 +234,7 @@ mod tests {
                 "{}",
                 String::from_utf8_lossy(&result.stderr)
             );
-            let expected = if edition.is_empty() { "EN" } else { edition };
+            let expected = if edition.is_empty() { "JA" } else { edition };
             assert!(std::fs::read_to_string(&output)
                 .unwrap()
                 .contains(&format!("\n{expected}\n")));

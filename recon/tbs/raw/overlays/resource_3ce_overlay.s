@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .rodata.x020092b0,"a",%progbits
@@ -218,7 +219,7 @@ MenuTest_SlotValues:
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
 	.ifdef TBS_EDITION_FR
 	.4byte DebugMenu_GiveItemToParty
@@ -262,7 +263,7 @@ MenuTest_SlotValues:
 	.4byte 0xffff0011
 	.4byte SceneState_ApplyBlockDa2
 	.ifndef TBS_EDITION_EN
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.4byte 0x00004400
 	.4byte 0xffff0011
 	.4byte DebugMenu_RunMessageTest

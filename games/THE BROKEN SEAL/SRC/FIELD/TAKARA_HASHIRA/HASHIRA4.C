@@ -1,9 +1,11 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "HASHIRA.H"
 #include "FIELD_SCENE.H"
 
 extern u8 *gMapWork;
+extern s32 StagedActor_DirectionSteps[];
 
 struct MapCell {
     u32 tile : 12;
@@ -197,31 +199,53 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     u8 *pflag;
     s32 saved;
     s32 mode;
+#if !EDITION_INTERNATIONAL
+    s32 step;
+#endif
     s32 *p;
     s32 buf[3];
 
     rec = Actor_Get(ACTOR_PARTY_LEADER);
     pflag = rec + 85;
     saved = *pflag;
+#if EDITION_INTERNATIONAL
     mode = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;
+#endif
     if (gCell[249][0] != 0) {
         return 0;
     }
     p = buf;
+#if EDITION_INTERNATIONAL
     p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
     p[1] = *(s32 *)(rec + 12);
     p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
     Vector_AddPolarOffset(0x100000, mode, (s32)p);
+#else
+    mode = *(u16 *)(rec + 6) >> 12;
+    step = StagedActor_DirectionSteps[mode];
+    p[0] = *(s32 *)(rec + 8) + (step & 0xffff0000);
+    p[1] = *(s32 *)(rec + 12);
+    step <<= 16;
+    p[2] = *(s32 *)(rec + 16) + step;
+#endif
     if (Object_CheckMovementCollision((s32)rec, (s32)p) == 1) {
         goto reject;
     }
     if (StagedActor_FindAtTile((s32)p, (s32)rec) != 0) {
         goto reject;
     }
+#if EDITION_INTERNATIONAL
     p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
     p[1] = *(s32 *)(rec + 12);
     p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
     Vector_AddPolarOffset(0x200000, mode, (s32)p);
+#else
+    step = StagedActor_DirectionSteps[mode];
+    p[0] = *(s32 *)(rec + 8) + ((step & 0xffff0000) * 2);
+    p[1] = *(s32 *)(rec + 12);
+    step <<= 17;
+    p[2] = *(s32 *)(rec + 16) + step;
+#endif
     if (StagedActor_FindAtTile((s32)p, (s32)rec) != 0) {
         goto reject;
     }

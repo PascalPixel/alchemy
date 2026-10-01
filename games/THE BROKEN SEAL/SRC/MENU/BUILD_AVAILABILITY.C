@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "MENU_RESULT.H"
@@ -48,10 +49,10 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 }
 
 /* menu/core/build_page_result.c */
-#if defined(TBS_EDITION_JA)
-#define GROUP_LEN 6
-#else
+#if EDITION_INTERNATIONAL
 #define GROUP_LEN 5
+#else
+#define GROUP_LEN 6
 #endif
 
 static __inline__ u8 LoadByte(s32 base, s32 offset)
@@ -115,10 +116,10 @@ extern const struct TileMask Data_080af23c[];
 
 void Menu_BuildPatternTiles(void)
 {
-#if defined(TBS_EDITION_JA)
-    u32 *vram = (u32 *)0x06004000;
-#else
+#if EDITION_INTERNATIONAL
     u32 *vram = (u32 *)0x06005000;
+#else
+    u32 *vram = (u32 *)0x06004000;
 #endif
     s32 set;
     s32 n;

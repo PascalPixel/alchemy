@@ -1,10 +1,11 @@
+#include "EDITION.H"
 #include "TYPES.H"
 
 /* Where the name and ailment labels start: the Japanese edition moves them right. */
-#if defined(TBS_EDITION_JA)
-#define STATUS_X 40
-#else
+#if EDITION_INTERNATIONAL
 #define STATUS_X 32
+#else
+#define STATUS_X 40
 #endif
 
 /* The status panel beside the item and ability lists: the owner's name,
@@ -124,10 +125,10 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         }
         if (cnt < 2) {
             value = unit->level;
-#if defined(TBS_EDITION_JA)
-            UiText_DrawStringInWindowFar(Data_080af20c, window, 40, 16);
-#else
+#if EDITION_INTERNATIONAL
             UiText_DrawStringAtOffsetFar(Data_080af20c, window, 40, 16);
+#else
+            UiText_DrawStringInWindowFar(Data_080af20c, window, 40, 16);
 #endif
             UiText_DrawNumberInWindowFar(value, 4, window, 56, 16);
         }
@@ -158,10 +159,10 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         void *backup;
 
         if (!Item_CanOwnerEquip(owner, item)) {
-#if defined(TBS_EDITION_JA)
-            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotEquip, window, 16, 48);
-#else
+#if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar((s32)MsgCannotEquip, window, 0, 48);
+#else
+            UiText_DrawCharacterAtOffsetFar((s32)MsgCannotEquip, window, 16, 48);
 #endif
             break;
         }

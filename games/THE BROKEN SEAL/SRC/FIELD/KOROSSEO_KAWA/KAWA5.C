@@ -3,6 +3,8 @@
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
 
+extern const s32 KorosseoKawa_ApproachScript[];
+
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 struct FieldActor *Object_GetById();
 
@@ -316,7 +318,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     Object_SetMoveTarget(rec, x, 0, z);
     GameFlag_Set(0x211);
-    Object_SetScript(rec, (void *)0x0200c6fc);
+    Object_SetScript(rec, (s32)KorosseoKawa_ApproachScript);
 
     while (*waitp != 0) {
         Engine_TaskWait(1);

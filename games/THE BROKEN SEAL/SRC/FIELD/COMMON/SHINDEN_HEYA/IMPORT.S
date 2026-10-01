@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Import veneers after the SHINDEN_HEYA overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -124,7 +125,7 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.ifndef TBS_EDITION_JA
+	.if EDITION_INTERNATIONAL
 	.global Event_CallWithLastActiveObjectId
 	.thumb_func
 Event_CallWithLastActiveObjectId:

@@ -29,6 +29,12 @@ struct PartyState {
     u8 unknown_244[7];
     /* 6 in the battles whose foes cannot fall below 1 HP. */
     u8 battle_rule_24b;
+    u8 unknown_24c[0x1d];
+    /* What BattleEffect_PauseObject keeps of the object it pauses; ☀️ keeps
+       them 0x20 earlier. */
+    u8 saved_byte;
+    u8 unknown_26a[6];
+    u32 saved_callback;
 };
 
 extern struct PartyState gPartyState;

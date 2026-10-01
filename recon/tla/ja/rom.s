@@ -2620,8 +2620,8 @@ FieldEvent_RunTypeHandler:
 	.incbin "baserom.gba", 0x000de560, 0x00001730
 	.section .rom.000dfcb4, "ax"
 	.incbin "baserom.gba", 0x000dfcb4, 0x000005f4
-	.section .rom.000e02c4, "ax"
-	.incbin "baserom.gba", 0x000e02c4, 0x000000a4
+	.section .rom.000e0318, "ax"
+	.incbin "baserom.gba", 0x000e0318, 0x00000050
 	.section .rom.000e037e, "ax"
 	.incbin "baserom.gba", 0x000e037e, 0x0000ba5a
 	.section .rom.000ebdea, "ax"

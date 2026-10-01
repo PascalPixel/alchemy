@@ -17,7 +17,7 @@ void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void BattleFx_EndCanvasLayer(void);
 void Graphics_TransposeCopy(const u8 *source_base, u8 *destination_base,
     s32 row_size, s32 column_count);
-void AudioCommand_PlayFar(s32 cue);
+void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
@@ -75,7 +75,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
         work->particles[i].variant = -1;
     for (i = 0; i != 512; i++)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
-    AudioCommand_PlayFar(162);
+    Audio_PlayCue(162);
     frame = 0;
     do {
         if (frame == 56)
@@ -87,7 +87,7 @@ void BattleFx_RunMercuryDjinnFlames(struct BattleEffectArgument *effect)
                 step->x -= 12;
                 step->variant++;
                 if (step->variant == 5) {
-                    AudioCommand_PlayFar(133);
+                    Audio_PlayCue(133);
                     work->shake_frames = 4;
                     for (j = 0; j != 32; j++) {
                         s32 direction;
@@ -197,7 +197,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
     }
     for (i = 0; i != 512; i++)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
-    AudioCommand_PlayFar(171);
+    Audio_PlayCue(171);
     frame = 0;
     angle = 0x8000;
     do {
@@ -229,7 +229,7 @@ void BattleFx_RunJupiterDjinnFall(struct BattleEffectArgument *effect)
                         mote->velocity_y = (Trig_Cos(direction) * speed) >> 6;
                         mote->variant = (Random16() & 15) + 32;
                     }
-                    AudioCommand_PlayFar(133);
+                    Audio_PlayCue(133);
                     work->shake_frames = 4;
                     for (j = 0; j != work->effect->count; j++) {
                         ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 6);

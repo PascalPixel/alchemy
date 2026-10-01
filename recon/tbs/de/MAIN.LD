@@ -784,7 +784,6 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000e1c2a)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DJINN_BURSTS.o"(.text)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000e2364)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_REVEAL.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e2e40)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_SHAKE.o"(.text)

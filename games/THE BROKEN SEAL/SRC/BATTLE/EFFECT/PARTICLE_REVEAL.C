@@ -35,6 +35,116 @@ extern u16 PuffArc_CellSourceOffsets[];
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
+/* Battle effect: the small Venus djinn sheet swings in on an arc while ten
+   blue flame columns rise one after another, four frames apart; each column
+   throws sixteen motes into the map cell buffer as it appears, which fall
+   under gravity while their life in variant runs out, and makes every
+   affected unit react. */
+void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
+{
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 frame;
+    DrawRectangle draw[2];
+    void *sheet;
+    struct EffectStep *step;
+    struct EffectStep *mote;
+    s32 i;
+    s32 j;
+    s32 angle;
+
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0);
+    *(volatile u16 *)0x04000052 = 0x1010;
+    BattleEffect_LoadWork(46, 7, 7, 11, 2);
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    draw[0] = heap_cache[7];
+    draw[1] = heap_cache[8];
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, (u8 *)work + 0x2f8, 1, 0);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    for (i = 0; i != 32; i++) {
+        step = &work->particles[i];
+        step->x = Random16() & 63;
+        step->y = 104;
+    }
+    for (i = 0; i != 512; i++)
+        ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
+    Audio_PlayCue(141);
+    frame = 0;
+    angle = 0x8000;
+    do {
+        if (frame <= 79) {
+            s32 x = (Trig_Sin(angle) * 24) >> 16;
+            s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;
+
+            draw[1](canvas, work, x + 22, y + 29, 20, 38);
+        }
+        if (frame == 56)
+            BattleEventRuntime_BeginPhaseFar(133);
+        for (i = 0; i != 10; i++) {
+            step = &work->particles[i];
+            if (frame >= i * 4 + 16) {
+                draw[0](canvas, (u8 *)work + 0x9e0, step->x - 17, step->y - 32, 34, 65);
+                if (frame == i * 4 + 16) {
+                    for (j = 0; j != 16; j++) {
+                        s32 direction;
+                        s32 speed;
+
+                        mote = &((struct EffectStep *)Ram_MapCellBuffer)[i * 32 + j];
+                        direction = (Random16() & 0x7fff) + 0x4000;
+                        speed = (Random16() & 0x1ff) + 256;
+                        mote->x = step->x << 16;
+                        mote->y = (step->y + 16) << 16;
+                        mote->velocity_x = (Trig_Sin(direction) * speed) >> 7;
+                        mote->velocity_y = (Trig_Cos(direction) * speed) >> 6;
+                        mote->variant = (Random16() & 15) + 32;
+                    }
+                    if (i & 1)
+                        Audio_PlayCue(133);
+                    work->shake_frames = 4;
+                    for (j = 0; j != work->effect->count; j++) {
+                        ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 6);
+                        BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+                    }
+                }
+                step->y -= 12;
+            }
+        }
+        for (i = 0; i != 512; i++) {
+            mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+            if (mote->variant != -1) {
+                s32 size = mote->variant / 16 + 2;
+
+                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+                EffectStep_AdvanceWithGravity2D(mote, 62, 0x2000);
+                mote->variant--;
+            }
+        }
+        Camera_ApplyShake(4, 4);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+        angle -= 0x800;
+        frame++;
+    } while (frame != 96);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
+
 /* Battle effect: a glow orb animates for 24 frames, then the small Mars
    djinn sheet slides across as a 20-pixel strip (frames 20-31, its palette
    copied in at frame 20); from frame 32 nine puffs open along a shallow arc

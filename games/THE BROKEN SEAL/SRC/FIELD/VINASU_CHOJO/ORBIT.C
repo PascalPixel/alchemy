@@ -28,6 +28,7 @@ union OrbitEffect {
         s32 saved_z;
         u8 unknown_44[0x20];
         u16 angle;
+        u16 unknown_66;
     } orbit;
 };
 
@@ -87,5 +88,50 @@ void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
         s32 next = *pangle;
         next = next + (s32)0xfffff800;
         *pangle = (u16)next;
+    }
+}
+
+extern const s32 VinasuChojo_OrbitParticleScript[];
+
+/*
+ * Every third frame, and every frame once flag 0x236 is set, lets a particle
+ * rise beside actor 24: higher once the flag is set. The particle starts at
+ * a random angle of its orbit, with a random radius of up to 24.
+ */
+void SceneEffect_SpawnParticlesAboveActor(void)
+{
+    struct FieldActor *center;
+    union OrbitEffect *effect;
+    struct FieldSprite *sprite;
+    s32 angle;
+
+    if (GameFlag_IsSet(0x236) == 0 && Math_RemainderUnsigned(gFrameCount, 3) != 0) {
+        return;
+    }
+    center = Actor_Get(ORBIT_CENTER_ACTOR);
+    if (GameFlag_IsSet(0x236) != 0) {
+        effect = (union OrbitEffect *)Object_Create(
+            284, center->x.fixed,
+            (s32)((u32)(Random_Next() << 8) >> 16 << 16) + center->y.fixed - 0x1c0000,
+            center->z.fixed);
+    } else {
+        effect = (union OrbitEffect *)Object_Create(
+            284, center->x.fixed,
+            (s32)((u32)(Random_Next() << 6) >> 16 << 16) + center->y.fixed - 0x1c0000,
+            center->z.fixed);
+    }
+    if (effect != 0) {
+        sprite = ((struct FieldEffect *)effect)->sprite;
+        Object_SetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);
+        ObjectGroup_SetChildValue((struct FieldActor *)effect, 1);
+        ((struct FieldEffect *)effect)->motion_flags = 0;
+        angle = Random_Next() & 0xffff000;
+        effect->orbit.angle = angle;
+        effect->orbit.unknown_66 = 0;
+        ((struct FieldEffect *)effect)->update =
+            (void (*)(union FieldObject *))SceneEffect_UpdateOrbitAroundActor;
+        effect->orbit.radius = Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
+        sprite->flags = 0;
+        sprite->priority = 1;
     }
 }

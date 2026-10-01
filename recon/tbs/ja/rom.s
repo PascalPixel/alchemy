@@ -1454,12 +1454,6 @@ BattleFx_RunSparkGroups:
 	.thumb_func
 BattleEffect_RunDitherDissolveScene:
 	.incbin "baserom.gba", 0x000cd970, 0x00000cec
-	.section .rom.000d01dc, "ax"
-	.global BattleEffectB
-	.type BattleEffectB, %function
-	.thumb_func
-BattleEffectB:
-	.incbin "baserom.gba", 0x000d01dc, 0x000008dc
 	.section .rom.000d1b74, "ax"
 	.incbin "baserom.gba", 0x000d1b74, 0x000006f0
 	.section .rom.000d3968, "ax"

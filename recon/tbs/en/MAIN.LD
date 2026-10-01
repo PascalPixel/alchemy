@@ -940,7 +940,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SHATTER_ROCKS.o"(.text)
         "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
         "*/recon/tbs/raw/080e2972.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080e2974.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BURST_SCENE.o"(.text)
         "*/recon/tbs/raw/080e302c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT3.o"(.text)
         "*/recon/tbs/raw/080e3aa0.o"(.text .rodata .data .padding)

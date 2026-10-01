@@ -901,7 +901,6 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT12.o"(.text)
         "*/recon/tbs/raw/080d6970.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/INITIALIZE_MODE10.o"(.text)
-        "*/recon/tbs/raw/080d82b0.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080d85d0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)
         "*/recon/tbs/raw/080d89ac.o"(.text .rodata .data .padding)

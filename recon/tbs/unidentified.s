@@ -1219,8 +1219,8 @@ BattleFx10_FallHeights:
 	.global BattleFx10_FallCells
 BattleFx10_FallCells:
 	.incbin "baserom.gba", 0x000ee9f2, 0x00000006
-	.global Data_080ee9f8
-Data_080ee9f8:
+	.global IceShardBursts_Gravities
+IceShardBursts_Gravities:
 	.incbin "baserom.gba", 0x000ee9f8, 0x00000010
 	.global Data_080eea08
 Data_080eea08:

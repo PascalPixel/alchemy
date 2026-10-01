@@ -13,7 +13,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO.o"(.text)
         "*/resource_3c9_overlay.o"(.text.x0200a360)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ORBIT.o"(.text)
-        "*/resource_3c9_overlay.o"(.text.x0200b6d0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

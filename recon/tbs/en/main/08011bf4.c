@@ -1,3 +1,10 @@
+/* 2026-10-01 (wave 1, slice 1): still 300. Plain C with no device comes
+   close: u16 start and len, an s16 step variable (pos = start + 1; if
+   ((u16)pos >= len) pos = 0; cycle->pos = (u16)pos;) gives the reference's
+   step shape and start/len registers (365, 20 off); a while form of the
+   second loop then fixes the colour pointer and buffer registers (240).
+   Remaining there: the reference shifts start into r1 and copies it to r7
+   before the second loop, and keeps the stepped value in r1. */
 /* 2026-10-01 (matcher 2): 300 (23 register-only, 3 reordered), every
    instruction in the reference's form. Three things fixed the shape: the
    count is masked once into a local (movs r2, #3; ands r2, r3), the colour

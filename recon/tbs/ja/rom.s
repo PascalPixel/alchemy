@@ -580,12 +580,6 @@ GameState_InitDefaults:
 	.thumb_func
 Owner_RefreshClassActions:
 	.incbin "baserom.gba", 0x0006ebf0, 0x00000238
-	.section .rom.0006f460, "ax"
-	.global BattleUnit_Assign
-	.type BattleUnit_Assign, %function
-	.thumb_func
-BattleUnit_Assign:
-	.incbin "baserom.gba", 0x0006f460, 0x0000019c
 	.section .rom.0006fb24, "ax"
 	.global Curve_LookupScaledValue
 	.type Curve_LookupScaledValue, %function

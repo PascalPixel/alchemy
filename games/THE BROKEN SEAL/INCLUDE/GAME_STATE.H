@@ -29,7 +29,9 @@ struct GameState {
     s16 defeat_entrance;
     /* The value Event_GetSpecialValue returns, which battle effects set. */
     s16 special;
-    u8 unknown_1d8[4];
+    u8 unknown_1d8[2];
+    /* The map the current scene shows, from its row of the scene table. */
+    u16 map;
     /* The party's position on the map, in 16.16 fixed point. */
     s32 x;
     s32 y;
@@ -47,7 +49,13 @@ struct GameState {
     s32 selected_actor;
     /* The ids of the party's active members, 0xff after the last. */
     u8 active_owners[8];
-    u8 unknown_200[0x2c];
+    u8 unknown_200[5];
+    /* The two values the palette glow is restored from. */
+    u8 palette_glow[2];
+    u8 unknown_207[0x17];
+    /* The cue a scene the party returns to plays, -1 for the scene's own. */
+    s16 return_cue;
+    u8 unknown_220[0x0c];
     u16 unknown_22c;
     u16 unknown_22e;
     u16 unknown_230;

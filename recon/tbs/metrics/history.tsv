@@ -78,4 +78,4 @@ date	tbs_done	tbs_executable	tbs_percent	tla_done	tla_executable	tla_percent	mod
 2026-09-28	735686	1369624	-	99838	1972424	-	Astra 6=17;Opus 5.5=304;Sol 6=10	Code overhaul: oracle-leakage rebuild; DONE counts only linked source
 2026-09-29	1045378	1373042	-	105684	1972422	-	Opus 5.5=753;Untagged=22	-
 2026-09-30	1077286	1373266	-	129448	1978912	-	Opus 5.5=718;Untagged=95	-
-2026-10-01	1081754	1373278	-	139604	1978904	-	Opus 5.5=153;Untagged=13	-
+2026-10-01	1082110	1373278	-	139604	1978904	-	Opus 5.5=153;Untagged=16	-

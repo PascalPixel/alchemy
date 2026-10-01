@@ -1618,7 +1618,17 @@ PuffArc_CellBiasY:
 	.incbin "baserom.gba", 0x000edeab, 0x00000007
 	.global PuffArc_CellSourceOffsets
 PuffArc_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000edeb2, 0x000001b2
+	.incbin "baserom.gba", 0x000edeb2, 0x0000000c
+	.global BattleFx_GlintCellOffsets
+BattleFx_GlintCellOffsets:
+	.incbin "baserom.gba", 0x000edebe, 0x0000000c
+	.global BattleFx_GlintCellWidths
+BattleFx_GlintCellWidths:
+	.incbin "baserom.gba", 0x000edeca, 0x00000006
+	.global BattleFx_GlintCellHeights
+BattleFx_GlintCellHeights:
+	.incbin "baserom.gba", 0x000eded0, 0x00000006
+	.incbin "baserom.gba", 0x000eded6, 0x0000018e
 	.global TwoResource_CellWidths
 TwoResource_CellWidths:
 	.incbin "baserom.gba", 0x000ee064, 0x00000006
@@ -1759,7 +1769,20 @@ ParticleReveal_CellHeights:
 	.incbin "baserom.gba", 0x000eec63, 0x00000005
 	.global ParticleReveal_CellSourceOffsets
 ParticleReveal_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eec68, 0x000001b6
+	.incbin "baserom.gba", 0x000eec68, 0x00000168
+	.global CastingImpact_GlintDrawFlags
+CastingImpact_GlintDrawFlags:
+	.incbin "baserom.gba", 0x000eedd0, 0x00000004
+	.global CastingImpact_ImageX
+CastingImpact_ImageX:
+	.incbin "baserom.gba", 0x000eedd4, 0x0000000e
+	.global CastingImpact_ImageY
+CastingImpact_ImageY:
+	.incbin "baserom.gba", 0x000eede2, 0x00000008
+	.global CastingImpact_OrbitCells
+CastingImpact_OrbitCells:
+	.incbin "baserom.gba", 0x000eedea, 0x0000000a
+	.incbin "baserom.gba", 0x000eedf4, 0x0000002a
 	.global Data_080eee1e
 Data_080eee1e:
 	.incbin "baserom.gba", 0x000eee1e, 0x0000000c
@@ -1819,12 +1842,6 @@ Func_080f26ec:
 	.thumb_func
 Func_080f2b6c:
 	.incbin "baserom.gba", 0x000f2b6c, 0x00000004
-	.section .rom.000f2d54, "ax"
-	.global Unnamed_080f2d54
-	.type Unnamed_080f2d54, %function
-	.thumb_func
-Unnamed_080f2d54:
-	.incbin "baserom.gba", 0x000f2d54, 0x00000164
 	.section .rom.000f3078, "ax"
 	.global Unnamed_080f3078
 	.type Unnamed_080f3078, %function

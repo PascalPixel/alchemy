@@ -49,8 +49,6 @@
  * 080e7404.c and 080d59b0.c, not the assigned template.  See those files
  * for the evidence behind the field/signature choices below.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
@@ -141,15 +139,15 @@ seed_member:
             s32 *particle;
 
             target = work->effect;
-            member_id = M2C_FIELD(target, s16 *, member_id_offset);
+            member_id = (*(s16 *)((u8 *)(target) + (member_id_offset)));
             member_ptr = *GetBattleObjectSlotFar(member_id);
             target = work->effect;
-            member_id = M2C_FIELD(target, s16 *, member_id_offset);
+            member_id = (*(s16 *)((u8 *)(target) + (member_id_offset)));
             result0 = Battle_GetObjectTableValueFar(member_id);
             result0 = result0 / 2;
-            sp44_ptr[0] = M2C_FIELD(member_ptr, s32 *, 8);
+            sp44_ptr[0] = (*(s32 *)((u8 *)(member_ptr) + 8));
             sp44_ptr[1] = result0;
-            sp44_ptr[2] = M2C_FIELD(member_ptr, s32 *, 16);
+            sp44_ptr[2] = (*(s32 *)((u8 *)(member_ptr) + 16));
             EffectPosition_ApplyBaseAndYOffset(sp44_ptr, &screen);
             sp32_ptr[0] = sp32_ptr[0] >> 1;
 

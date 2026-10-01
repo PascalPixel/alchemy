@@ -34,9 +34,7 @@
  * unscaled count are kept in that literal, unsimplified form to match
  * 080d82b0.c's confirmed reference shape for the same idiom.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
-#define STATE M2C_FIELD(work, void **, 0x7828)
+#define STATE (*(void **)((u8 *)(work) + 0x7828))
 
 typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
@@ -87,7 +85,7 @@ s32 Unnamed_080d85d0(void *object)
     draw_destination = *cursor;
     extra_target = heap_cache[2];
     facing = *(s32 *)((u8 *)heap_cache - 108);
-    variant = M2C_FIELD(object, s32 *, 0x18) != 0;
+    variant = (*(s32 *)((u8 *)(object) + 0x18)) != 0;
     STATE = object;
 
     BattleFx_BeginCanvasLayer(1);
@@ -107,7 +105,7 @@ s32 Unnamed_080d85d0(void *object)
         pool_cursor += 7;
     } while (pool_index != 1024);
 
-    if (M2C_FIELD(STATE, s32 *, 20) != 0) {
+    if ((*(s32 *)((u8 *)(STATE) + 20)) != 0) {
         s32 *particle;
         void *member_ptr;
         s32 member_id;
@@ -118,17 +116,17 @@ s32 Unnamed_080d85d0(void *object)
         particle_offset = 0;
         member = 0;
         do {
-            member_id = M2C_FIELD(STATE, s16 *, member_id_offset);
+            member_id = (*(s16 *)((u8 *)(STATE) + (member_id_offset)));
             member_ptr = *GetBattleObjectSlotFar(member_id);
-            member_id = M2C_FIELD(STATE, s16 *, member_id_offset);
+            member_id = (*(s16 *)((u8 *)(STATE) + (member_id_offset)));
             half = Battle_GetObjectTableValueFar(member_id);
             half = half / 2;
 
             particle = (s32 *)((u8 *)0x02010000 + particle_offset);
             for (i = 0; i != 128; i++) {
-                particle[0] = M2C_FIELD(member_ptr, s32 *, 8);
-                particle[1] = M2C_FIELD(member_ptr, s32 *, 12) + half;
-                particle[2] = M2C_FIELD(member_ptr, s32 *, 16);
+                particle[0] = (*(s32 *)((u8 *)(member_ptr) + 8));
+                particle[1] = (*(s32 *)((u8 *)(member_ptr) + 12)) + half;
+                particle[2] = (*(s32 *)((u8 *)(member_ptr) + 16));
                 particle[3] = (s32) (((Random16() & 0xFF) - 128) << 10);
                 particle[4] = (s32) (((Random16() & 0xFF) - 128) << 10);
                 particle[5] = (s32) (((Random16() & 0xFF) - 128) << 10);
@@ -139,26 +137,26 @@ s32 Unnamed_080d85d0(void *object)
             member_id_offset += 2;
             particle_offset += 0xE00;
             member++;
-        } while (member != M2C_FIELD(STATE, s32 *, 20));
+        } while (member != (*(s32 *)((u8 *)(STATE) + 20)));
     }
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle_fn = (DrawRectangleFn) gWorkSlot[46];
-    M2C_FIELD(work, s32 *, 0x7780) = 3;
-    M2C_FIELD(work, s32 *, 0x7784) = 0x04040404;
+    (*(s32 *)((u8 *)(work) + 0x7780)) = 3;
+    (*(s32 *)((u8 *)(work) + 0x7784)) = 0x04040404;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
     Audio_PlayCue(142);
 
-    if (M2C_FIELD(STATE, s32 *, 20) * 20 != -72) {
+    if ((*(s32 *)((u8 *)(STATE) + 20)) * 20 != -72) {
         fp = 0;
         do {
             void *member_ptr;
             s32 member_id;
             s32 half;
 
-            member_id = M2C_FIELD(STATE, s32 *, 8);
+            member_id = (*(s32 *)((u8 *)(STATE) + 8));
             member_ptr = *GetBattleObjectSlotFar(member_id);
-            member_id = M2C_FIELD(STATE, s32 *, 8);
+            member_id = (*(s32 *)((u8 *)(STATE) + 8));
             half = Battle_GetObjectTableValueFar(member_id);
             half = half / 2;
 
@@ -170,11 +168,11 @@ s32 Unnamed_080d85d0(void *object)
             if (fp == 40) {
                 ObjectGroup_UpdateMembers(member_id, 7, -1, -1, 0);
             }
-            if (fp == M2C_FIELD(STATE, s32 *, 20) * 20 + 52) {
+            if (fp == (*(s32 *)((u8 *)(STATE) + 20)) * 20 + 52) {
                 ObjectGroup_UpdateMembers(member_id, 0, -1, -1, 0);
             }
 
-            if (M2C_FIELD(STATE, s32 *, 20) != 0) {
+            if ((*(s32 *)((u8 *)(STATE) + 20)) != 0) {
                 s32 stagger;
                 s32 draw_offset;
 
@@ -185,7 +183,7 @@ s32 Unnamed_080d85d0(void *object)
                     if (fp == stagger) {
                         s32 trigger_id;
 
-                        trigger_id = M2C_FIELD(STATE, s16 *, 36 + member * 2);
+                        trigger_id = (*(s16 *)((u8 *)(STATE) + (36 + member * 2)));
                         ObjectGroup_UpdateMembers(trigger_id, 7, 5, member, 42);
                     }
                     if (fp > stagger) {
@@ -211,12 +209,12 @@ s32 Unnamed_080d85d0(void *object)
                                     s32 dxs;
                                     s32 dzs;
 
-                                    dx = M2C_FIELD(member_ptr, s32 *, 8)
+                                    dx = (*(s32 *)((u8 *)(member_ptr) + 8))
                                         - particle[0];
-                                    dy = (M2C_FIELD(member_ptr, s32 *, 12)
+                                    dy = ((*(s32 *)((u8 *)(member_ptr) + 12))
                                             + half)
                                         - particle[1];
-                                    dz = M2C_FIELD(member_ptr, s32 *, 16)
+                                    dz = (*(s32 *)((u8 *)(member_ptr) + 16))
                                         - particle[2];
                                     dxs = dx >> 8;
                                     dzs = dz >> 8;
@@ -236,15 +234,15 @@ s32 Unnamed_080d85d0(void *object)
                     member++;
                     stagger += 20;
                     draw_offset += 0xE00;
-                } while (member != M2C_FIELD(STATE, s32 *, 20));
+                } while (member != (*(s32 *)((u8 *)(STATE) + 20)));
             }
 
             ObjectGroup_TickMemberTimers();
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
             WaitFrames(1);
 
             fp++;
-        } while (fp != M2C_FIELD(STATE, s32 *, 20) * 20 + 72);
+        } while (fp != (*(s32 *)((u8 *)(STATE) + 20)) * 20 + 72);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

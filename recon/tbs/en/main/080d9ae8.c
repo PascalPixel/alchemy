@@ -17,8 +17,6 @@ extern u8 Value_00007824;
 #include "BATTLE_EFX.H"
 
 /* Runs the palette-ramp battle presentation for one effect mode. */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
@@ -77,10 +75,10 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     cursor = heap_cache;
     work = *cursor++;
     draw_destination = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = (void *)effect;
+    (*(void **)((u8 *)(work) + 0x7828)) = (void *)effect;
 
     BattleFx_BeginCanvasLayer(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
+    (*(s16 *)((u8 *)((void *)0x04000020) + 0)) = 0x100;
 
     if (mode == 0) {
         Resource_LoadAndDecompress((s32) &ResourceId_DaggerSheet, work, 1, 1);
@@ -131,11 +129,11 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
         }
     }
 
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
-        M2C_FIELD((void *) 0x04000028, s32 *, 0) = 0xFFFF9000;
+    if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 4)) == 1) {
+        (*(s32 *)((u8 *)((void *) 0x04000028) + 0)) = 0xFFFF9000;
         y_offset = -112;
     } else {
-        M2C_FIELD((void *) 0x04000028, s32 *, 0) = 0;
+        (*(s32 *)((u8 *)((void *) 0x04000028) + 0)) = 0;
         y_offset = 0;
     }
 
@@ -163,7 +161,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                 quarter = frame % 4;
                 particle[2] = (quarter << 19) - 0x100000;
             }
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 4)) == 1) {
                 particle[3] = 128 << 10;
             } else {
                 particle[3] = -0x20000;
@@ -176,15 +174,15 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     }
 
     BattleFx_FetchRectangleBlitters(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4),
+        (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 4)),
         callback_pair);
 
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, (s32)&Value_00007784) = 50;
+    (*(s32 *)((u8 *)(work) + 0x7780)) = 2;
+    (*(s32 *)((u8 *)(work) + ((s32)&Value_00007784))) = 50;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
 
     frame = 0;
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) * 4 != -64) {
+    if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)) * 4 != -64) {
         do {
             s32 facing;
             s32 facing_end;
@@ -198,7 +196,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             }
 
             member = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20)
+            if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20))
                     != 0) {
                 local_frame = frame;
                 threshold = frame - 24;
@@ -208,18 +206,16 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                     void *member_object;
                     s32 member_id;
 
-                    member_id = M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s16 *,
-                        36 + member * 2);
+                    member_id = (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (36 + member * 2)));
                     member_object = *GetBattleObjectSlotFar(member_id);
 
                     if (local_frame > 0) {
                         Render_ResetTransformState();
                         Graphics_PrepareTransferInIwramWork(facing, facing_end);
 
-                        rec[0] = M2C_FIELD(member_object, s32 *, 8);
+                        rec[0] = (*(s32 *)((u8 *)(member_object) + 8));
                         rec[1] = 160 << 13;
-                        rec[2] = M2C_FIELD(member_object, s32 *, 16);
+                        rec[2] = (*(s32 *)((u8 *)(member_object) + 16));
 
                         Render_ResetTransformState();
                         Graphics_PrepareTransferInIwramWork(facing, facing_end);
@@ -307,16 +303,15 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                     threshold -= 4;
                     local_frame -= 4;
                 } while (member
-                    != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *,
-                        20));
+                    != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 20)));
             }
 
-            M2C_FIELD(work, s32 *, (s32)&Value_00007824) = 1;
+            (*(s32 *)((u8 *)(work) + ((s32)&Value_00007824))) = 1;
             WaitFrames(1);
 
             frame++;
         } while (frame
-            != M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 20) * 4
+            != (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + ((s32)&Value_00007828)))) + 20)) * 4
                 + 64);
     }
 

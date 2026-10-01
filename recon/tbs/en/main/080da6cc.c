@@ -44,8 +44,6 @@ extern u8 Value_00007824;
  * "landed" glint sequence (kind 47, keyed by state / 2) through four small
  * per-frame tables.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 
 typedef struct Star {
@@ -113,8 +111,8 @@ void Unnamed_080da6cc(void *object)
     draw_destination = *cursor;
     facing = *(s32 *)((u8 *)heap_cache - 108);
     extra_target = heap_cache[2];
-    M2C_FIELD(work, void **, 0x7828) = object;
-    if (M2C_FIELD(object, s32 *, 4) == 1) {
+    (*(void **)((u8 *)(work) + 0x7828)) = object;
+    if ((*(s32 *)((u8 *)(object) + 4)) == 1) {
         BattleFx_BeginCanvasLayer(1);
     } else {
         BattleFx_BeginCanvasLayer(0);
@@ -130,9 +128,9 @@ void Unnamed_080da6cc(void *object)
     *(s16 *) 0x04000052 = 0x1010;
 
     member_obj = *GetBattleObjectSlotFar(
-        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
-    y0 = M2C_FIELD(member_obj, s32 *, 12)
-        + Battle_GetObjectTableValueFar(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
+        (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 8)));
+    y0 = (*(s32 *)((u8 *)(member_obj) + 12))
+        + Battle_GetObjectTableValueFar((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 8)));
 
     star = (Star *) 0x02010000;
     n = 0;
@@ -145,33 +143,33 @@ void Unnamed_080da6cc(void *object)
         star->vx = (mag * Trig_Sin((s32) rand1)) >> 6;
         star->vy = (((Random16() & 127) - 16) << 16) >> 6;
         star->vz = (mag * Trig_Cos((s32) rand1)) >> 6;
-        star->x = M2C_FIELD(member_obj, s32 *, 8);
+        star->x = (*(s32 *)((u8 *)(member_obj) + 8));
         star->y = y0;
-        star->z = M2C_FIELD(member_obj, s32 *, 16);
+        star->z = (*(s32 *)((u8 *)(member_obj) + 16));
         n++;
         star->state = -1;
         star++;
     } while (n != 64);
 
-    M2C_FIELD(work, s32 *, (s32)&Value_000077ac) = 0;
-    M2C_FIELD(work, s32 *, 0x77B0) = 0;
+    (*(s32 *)((u8 *)(work) + ((s32)&Value_000077ac))) = 0;
+    (*(s32 *)((u8 *)(work) + 0x77B0)) = 0;
     Scheduler_AddOrUpdateCallback((void *) 0x080D6505, 0x480);
-    M2C_FIELD(work, s32 *, (s32)&Value_00007780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 0x4B;
+    (*(s32 *)((u8 *)(work) + ((s32)&Value_00007780))) = 2;
+    (*(s32 *)((u8 *)(work) + 0x7784)) = 0x4B;
     Scheduler_AddOrUpdateCallback((void *) 0x080CD261, 0x480);
 
     frame = 0;
     if ((Data_080eea41[
-            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)] >> 1)
+            (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18))] >> 1)
             != -132) {
         facing2 = facing + 12;
         do {
             s32 variant;
 
-            M2C_FIELD(work, s32 *, (s32)&Value_000077ac) =
+            (*(s32 *)((u8 *)(work) + ((s32)&Value_000077ac))) =
                 ((u32) (frame - 17) <= 62) ? 256 : 0;
 
-            variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
+            variant = (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18));
             if (frame == (Data_080eea41[variant] >> 1) + 108) {
                 BattleEventRuntime_BeginPhaseFar(133);
             }
@@ -180,8 +178,7 @@ void Unnamed_080da6cc(void *object)
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing2);
 
-            if (Data_080eea41[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)] != 0) {
+            if (Data_080eea41[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18))] != 0) {
                 s32 idx;
                 Star *cur;
 
@@ -237,23 +234,20 @@ void Unnamed_080da6cc(void *object)
                             s32 vz;
 
                             member_index = __modsi3(idx,
-                                M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                                    s32 *, 0x14));
-                            member_id = M2C_FIELD(
-                                M2C_FIELD(work, void **, 0x7828), s16 *,
-                                36 + member_index * 2);
+                                (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x14)));
+                            member_id = (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (36 + member_index * 2)));
                             member_obj2 = *GetBattleObjectSlotFar(member_id);
 
                             vx = cur->vx
-                                + ((M2C_FIELD(member_obj2, s32 *, 8) - cur->x)
+                                + (((*(s32 *)((u8 *)(member_obj2) + 8)) - cur->x)
                                     >> 9);
                             cur->vx = vx;
                             vy = cur->vy
-                                + ((M2C_FIELD(member_obj2, s32 *, 12) - cur->y)
+                                + (((*(s32 *)((u8 *)(member_obj2) + 12)) - cur->y)
                                     >> 9);
                             cur->vy = vy;
                             vz = cur->vz
-                                + ((M2C_FIELD(member_obj2, s32 *, 16) - cur->z)
+                                + (((*(s32 *)((u8 *)(member_obj2) + 16)) - cur->z)
                                     >> 9);
                             cur->vz = vz;
 
@@ -272,21 +266,17 @@ void Unnamed_080da6cc(void *object)
                                 cur->y = screen[1];
                                 Audio_PlayCue(136);
                                 landed_index = __modsi3(idx,
-                                    M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                                        s32 *, 0x14));
-                                landed_id = M2C_FIELD(
-                                    M2C_FIELD(work, void **, 0x7828), s16 *,
-                                    36 + landed_index * 2);
+                                    (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x14)));
+                                landed_id = (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + (36 + landed_index * 2)));
                                 ObjectGroup_UpdateMembers(landed_id, 10, 5, landed_index, 4);
-                                M2C_FIELD(work, s32 *, 0x77A8) = 2;
+                                (*(s32 *)((u8 *)(work) + 0x77A8)) = 2;
                             }
                         }
                     }
 
                     idx++;
                     cur++;
-                } while (idx != Data_080eea41[M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)]);
+                } while (idx != Data_080eea41[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18))]);
             }
 
             {
@@ -294,8 +284,7 @@ void Unnamed_080da6cc(void *object)
                 Star *cur2;
 
                 m = 0;
-                if (Data_080eea41[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)]
+                if (Data_080eea41[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18))]
                         != 0) {
                     cur2 = (Star *) 0x02010000;
                     do {
@@ -318,23 +307,22 @@ void Unnamed_080da6cc(void *object)
                         }
                         m++;
                         cur2++;
-                    } while (m != Data_080eea41[M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)]);
+                    } while (m != Data_080eea41[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + 0x7828))) + 0x18))]);
                 }
             }
 
-            if (M2C_FIELD(work, s32 *, 0x77B0) == 0) {
-                M2C_FIELD(work, s32 *, (s32)&Value_000077b0) = 1;
+            if ((*(s32 *)((u8 *)(work) + 0x77B0)) == 0) {
+                (*(s32 *)((u8 *)(work) + ((s32)&Value_000077b0))) = 1;
             }
             Camera_ApplyShake(8, 8);
             ObjectGroup_TickMemberTimers();
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
             WaitFrames(1);
 
             frame++;
         } while (frame != (
             (Data_080eea41[
-                M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 0x18)] >> 1)
+                (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + ((s32)&Value_00007828)))) + 0x18))] >> 1)
             + 132));
     }
 

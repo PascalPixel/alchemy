@@ -25,7 +25,6 @@ extern u8 Value_00000800;
 extern u8 Value_00007824;
 #include "BATTLE_EFX.H"
 
-#define FIELD(p, type, off) (*(type *)((u8 *)(p) + (off)))
 
 typedef struct Particle {
     s32 x;
@@ -90,10 +89,10 @@ void Unnamed_080db264(void *object)
     work = *cursor++;
     canvas = *cursor;
     source = cache[2];
-    FIELD(work, void *, 0x7828) = object;
+    (*(void * *)((u8 *)(work) + 0x7828)) = object;
     BattleFx_BeginTiledCanvas(1);
 
-    if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 2)
+    if ((*(s32 *)((u8 *)((*(void * *)((u8 *)(work) + 0x7828))) + 24)) == 2)
         *(volatile u16 *)0x04000020 = 0x80;
     else
         *(volatile u16 *)0x04000020 = 0x100;
@@ -105,12 +104,12 @@ void Unnamed_080db264(void *object)
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, (u8 *)work + 0x60e, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
 
-    if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 2) {
-        if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 1)
+    if ((*(s32 *)((u8 *)((*(void * *)((u8 *)(work) + 0x7828))) + 24)) == 2) {
+        if ((*(s32 *)((u8 *)((*(void * *)((u8 *)(work) + 0x7828))) + 4)) == 1)
             *(volatile u32 *)0x04000028 = 0xfffff000;
         else
             *(volatile u32 *)0x04000028 = 0x1000;
-    } else if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 1) {
+    } else if ((*(s32 *)((u8 *)((*(void * *)((u8 *)(work) + 0x7828))) + 4)) == 1) {
         *(volatile u32 *)0x04000028 = 0xffff8000;
     }
 
@@ -128,8 +127,8 @@ void Unnamed_080db264(void *object)
         particle++;
     } while (i != 1024);
 
-    FIELD(work, s32, 0x7780) = 2;
-    FIELD(work, s32, 0x7784) = 75;
+    (*(s32 *)((u8 *)(work) + 0x7780)) = 2;
+    (*(s32 *)((u8 *)(work) + 0x7784)) = 75;
     Scheduler_AddOrUpdateCallback((void *)0x080cd261, 0x480);
     Audio_PlayCue(138);
 
@@ -148,7 +147,7 @@ void Unnamed_080db264(void *object)
                 center_x = ((32 - frame) * Trig_Sin(radius) >> 16) + 64;
                 center_y = -(Trig_Cos(radius) * 8 >> 16) - 8;
                 sprite = (u8 *)work + (Random16() & 3) * 0xb40 + 0x60e;
-                if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 0) {
+                if ((*(s32 *)((u8 *)((*(void * *)((u8 *)(work) + 0x7828))) + 24)) == 0) {
                     rectangles[0](canvas, sprite,
                         center_x + (Random16() & 7) - 16,
                         center_y, 24, 120);
@@ -169,7 +168,7 @@ void Unnamed_080db264(void *object)
                         particle->vy = -(velocity * Trig_Cos(random_angle) * 2) >> 7;
                         particle->life = (Random16() & 7) + 32;
                         spawned++;
-                        if (spawned == Data_080eeadc[FIELD(FIELD(work, void *, 0x7828), s32, 24) * 2 + 1])
+                        if (spawned == Data_080eeadc[(*(s32 *)((u8 *)((*(void * *)((u8 *)(work) + 0x7828))) + 24)) * 2 + 1])
                             break;
                     }
                     i++;
@@ -177,7 +176,7 @@ void Unnamed_080db264(void *object)
                 } while (i != 1024);
                 pass++;
             } while (pass != 4);
-            FIELD(work, s32, 0x77a8) = 1;
+            (*(s32 *)((u8 *)(work) + 0x77a8)) = 1;
         }
 
         particle = (Particle *)0x02010000;
@@ -207,9 +206,9 @@ void Unnamed_080db264(void *object)
             member = 0;
             member_offset = 36;
             member_frame = 4;
-            while (member != FIELD(FIELD(work, void *, 0x7828), s32, 20)) {
+            while (member != (*(s32 *)((u8 *)((*(void * *)((u8 *)(work) + 0x7828))) + 20))) {
                 if (frame == member_frame)
-                    ObjectGroup_UpdateMembers(FIELD(FIELD(work, void *, (s32)&Value_00007828), s16, member_offset), 7, 5, member, 10);
+                    ObjectGroup_UpdateMembers((*(s16 *)((u8 *)((*(void * *)((u8 *)(work) + ((s32)&Value_00007828)))) + (member_offset))), 7, 5, member, 10);
                 member++;
                 member_offset += 2;
                 member_frame += 4;
@@ -217,7 +216,7 @@ void Unnamed_080db264(void *object)
         }
         Camera_ApplyShake(2, 4);
         ObjectGroup_TickMemberTimers();
-        FIELD(work, s32, 0x7824) = 1;
+        (*(s32 *)((u8 *)(work) + 0x7824)) = 1;
         WaitFrames(1);
         frame++;
     } while (frame != 64);

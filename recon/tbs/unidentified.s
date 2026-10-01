@@ -1289,12 +1289,14 @@ Data_080eeacc:
 	.global LightningBolts_Sparks
 LightningBolts_Sparks:
 	.incbin "baserom.gba", 0x000eeadc, 0x00000006
-	.global Data_080eeae2
-Data_080eeae2:
+	.global ParticleField_Counts
+ParticleField_Counts:
 	.incbin "baserom.gba", 0x000eeae2, 0x0000000a
-	.global Data_080eeaec
-Data_080eeaec:
+	.global ParticleField_PuffCells
+ParticleField_PuffCells:
 	.incbin "baserom.gba", 0x000eeaec, 0x0000000e
+	.global ParticleField_PuffSizes
+ParticleField_PuffSizes:
 	.global Data_080eeafa
 Data_080eeafa:
 	.incbin "baserom.gba", 0x000eeafa, 0x0000004e

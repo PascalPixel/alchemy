@@ -1516,12 +1516,8 @@ BattleFx_InitializeMode12:
 	.incbin "baserom.gba", 0x000d85e8, 0x00000f50
 	.section .rom.000d9972, "ax"
 	.incbin "baserom.gba", 0x000d9972, 0x00000002
-	.section .rom.000d9974, "ax"
-	.global BattlePres_RunBurstScene
-	.type BattlePres_RunBurstScene, %function
-	.thumb_func
-BattlePres_RunBurstScene:
-	.incbin "baserom.gba", 0x000d9974, 0x00000f44
+	.section .rom.000da02c, "ax"
+	.incbin "baserom.gba", 0x000da02c, 0x0000088c
 	.section .rom.000daaa0, "ax"
 	.global BattlePres_RunBeamSequence
 	.type BattlePres_RunBeamSequence, %function
@@ -1810,7 +1806,11 @@ ShatterRocks_ShardHeights:
 	.global ShatterRocks_ShardCells
 ShatterRocks_ShardCells:
 	.incbin "baserom.gba", 0x000e5d1e, 0x0000001e
-	.incbin "baserom.gba", 0x000e5d3c, 0x00000094
+	.incbin "baserom.gba", 0x000e5d3c, 0x00000002
+	.global BurstScene_Records
+BurstScene_Records:
+	.incbin "baserom.gba", 0x000e5d3e, 0x00000040
+	.incbin "baserom.gba", 0x000e5d7e, 0x00000052
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000e5dd0, 0x00000004

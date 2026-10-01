@@ -1440,8 +1440,8 @@ ShatterRocks_ShardHeights:
 ShatterRocks_ShardCells:
 	.incbin "baserom.gba", 0x000eed1e, 0x0000001e
 	.incbin "baserom.gba", 0x000eed3c, 0x00000002
-	.global Data_080eed3e
-Data_080eed3e:
+	.global BurstScene_Records
+BurstScene_Records:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040
 	.global Data_080eed7e
 Data_080eed7e:

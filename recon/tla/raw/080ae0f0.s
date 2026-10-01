@@ -13,9 +13,9 @@ Func_080ae0f0:
 	movs r0, #4
 	bl Func_080afdd8
 	movs r0, #5
-	bl Func_080afe1c
+	bl Party_RemoveActiveOwner
 	movs r0, #6
-	bl Func_080afe1c
+	bl Party_RemoveActiveOwner
 	pop {pc}
 	.2byte 0x0000
 .L_080ae114:

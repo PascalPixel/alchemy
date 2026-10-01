@@ -1086,7 +1086,6 @@ SECTIONS
         "*/recon/tla/raw/080afbec.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/PARTY/COUNT_ACTIVE_OWNERS.o"(.text)
         "*/recon/tla/raw/080afdd8.o"(.text)
-        "*/recon/tla/raw/080afe1c.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/PARTY/LIST_ACTIVE_OWNERS.o"(.text)
         "*/recon/tla/raw/080afeb0.o"(.text .rodata .data .padding)
         "*/games/THE LOST AGE/SRC/GAME/PARTY/COUNTERS.o"(.text)

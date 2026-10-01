@@ -2382,7 +2382,7 @@ Owner_LevelUp:
 	.section .rom.000aabe8, "ax"
 	.incbin "baserom.gba", 0x000aabe8, 0x000001d0
 	.section .rom.000aadd4, "ax"
-	.incbin "baserom.gba", 0x000aadd4, 0x000000a0
+	.incbin "baserom.gba", 0x000aadd4, 0x00000044
 	.section .rom.000aaeac, "ax"
 	.incbin "baserom.gba", 0x000aaeac, 0x00000024
 	.section .rom.000aaf24, "ax"

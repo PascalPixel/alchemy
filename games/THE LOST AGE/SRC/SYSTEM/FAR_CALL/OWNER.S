@@ -52,7 +52,7 @@ Func_080ad108:
 	.global Party_RemoveActiveOwnerFar
 	.thumb_func
 Party_RemoveActiveOwnerFar:
-	overlay_veneer Func_080afe1c
+	overlay_veneer Party_RemoveActiveOwner
 	.global Func_080ad118
 	.thumb_func
 Func_080ad118:

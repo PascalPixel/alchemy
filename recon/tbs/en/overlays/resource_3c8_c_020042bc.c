@@ -1,3 +1,14 @@
+/* 2026-10-01 (☀️ matcher 1): permuter score 830 from 1255 (10
+ * register-only, 29 operand; the operands are the overlay's numeric veneer
+ * calls and pool words). The second wave is now a goto loop entered after
+ * `view = opts`: the loop pass no longer hoists 0x4ccc into r9, and the
+ * scale writer stores through the view copy in sl as the reference does.
+ * Remaining: (1) in the first wave the reference gives repeat sl and opts
+ * r9, here the reverse (global allocation priority; declaration order,
+ * s32 repeat and an early opts do not move it); (2) inside the second wave
+ * CSE keeps 0x4ccc in r5 across the random call, where the reference loads
+ * it from the pool before each multiply, as both do in the first wave. An
+ * explicit view-> writer instead of the inline helper is worse. */
 /* Astra 2026-09-27 scalar phase transfer: after the first wave, assign
  * repeat = (u32)opts and use that scalar's pointer view for the second
  * scale/spin writer. Unlike Takara PROBE.C's memory-produced coordinate,
@@ -95,6 +106,7 @@ void Scene_RunPairedParticleWaveSequence(void)
     s32 offset;
     u32 i;
     struct EffectOptions *opts;
+    struct EffectOptions *view;
 
     gEventWork->start_transition = 0x202;
     Engine_EventBegin();
@@ -140,9 +152,11 @@ void Scene_RunPairedParticleWaveSequence(void)
     Map_CopyCellsTo(111, 7, 111, 5, 5, 2);
     Map_CopyCellsTo(111, 7, 111, 10, 5, 2);
     row = 0;
+    view = opts;
     offset = 0;
-    do {
-        Rubble_SetScaleAndSpin(opts);
+second:
+    {
+        Rubble_SetScaleAndSpin(view);
         i = 0;
         if (row <= 7) {
             s32 z = 0x300000;
@@ -159,7 +173,9 @@ void Scene_RunPairedParticleWaveSequence(void)
         Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
         offset += 0x100000;
         row++;
-    } while (row <= 9);
+    }
+    if (row <= 9)
+        goto second;
     Engine_AudioPlayCue(289);
     Engine_EventWait(60);
     Engine_EventRequestExit(21);

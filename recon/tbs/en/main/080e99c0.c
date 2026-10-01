@@ -54,15 +54,6 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     s32 step;
     s32 origin;
     s32 i;
-    s32 cnt;
-    s32 ang;
-    s32 mag;
-    s32 size;
-    s32 life;
-    s32 top;
-    s32 high;
-    s32 x;
-    s32 y;
 
     /* The reference walks the first two heap slots through a copy of the
        base pointer (adds/ldmia r3!) and keeps the base itself for slots 2,
@@ -96,6 +87,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     /* Sixteen drawn billboards (the table holds more) at work + 0x7080. */
     i = 0;
     do {
+        s32 ang;
+
         ang = Random16() & 0xFFFF;
         work->particles[i].x = (i * 2) * Trig_Sin(ang);
         work->particles[i].y = -((i * 2) * Trig_Cos(ang));
@@ -113,6 +106,9 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     origin = half << 16;
     i = 0;
     do {
+        s32 mag;
+        s32 ang;
+
         mag = Random16() & 0x1FF;
         ang = Random16() & 0xFFFF;
         SPARK[i].x = origin;
@@ -159,6 +155,10 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                register across the whole loop rather than reloading it. */
             i = 0;
             do {
+                s32 x;
+                s32 life;
+                s32 y;
+
                 x = HI(work->particles[i].x) + half;
                 life = work->particles[i].variant;
                 y = HI(work->particles[i].y);
@@ -180,6 +180,9 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
             i = 0;
             do {
                 if (DUST[i].variant == -1) {
+                    s32 mag;
+                    s32 ang;
+
                     mag = Random16() & 63;
                     ang = Random16() & 0xFFFF;
                     DUST[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
@@ -196,10 +199,15 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         /* Frames 32..63 scan all 684 and seed at most sixteen more each. */
         step = frame - 32;
         if ((u32)step <= 31) {
+            s32 cnt;
+
             cnt = 0;
             i = 0;
             do {
                 if (DUST[i].variant == -1) {
+                    s32 mag;
+                    s32 ang;
+
                     mag = Random16() & 63;
                     ang = Random16() & 0xFFFF;
                     DUST[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
@@ -219,6 +227,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
 
         /* The same guard again: a 34x104 strip wrapping through 104 rows. */
         if ((u32)step <= 31) {
+            s32 size;
+
             size = (frame * 16 - 256) % 104;
             draw(canvas, work, half - 17, 4 - size, 34, 104);
             draw(canvas, work, half - 17, 108 - size, 34, size);
@@ -228,6 +238,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
             i = 0;
             do {
                 if (DUST[i].variant >= 0) {
+                    s32 size;
+
                     size = i % 3 + 2;
                     if (DUST[i].velocity_y > 0) {
                         size += 2;
@@ -274,6 +286,10 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         }
 
         if (frame <= 95) {
+            s32 x;
+            s32 high;
+            s32 top;
+
             x = half - 18;
             high = 120;
             if (frame > 60) {
@@ -297,6 +313,10 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
             i = 0;
             do {
                 if (SPARK[i].variant > 0) {
+                    s32 x;
+                    s32 y;
+                    s32 size;
+
                     EffectStep_AdvanceWithGravity2D(&SPARK[i], 64, 128 << 6);
                     y = SPARK[i].y;
                     SPARK[i].variant--;

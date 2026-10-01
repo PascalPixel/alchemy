@@ -36,7 +36,7 @@ struct DebugMessageWork {
 
 extern struct DebugMessageWork gGameState;
 
-void Unnamed_080b5534(void)
+void DebugBattle_ViewMessages(void)
 {
     u16 text[64];
     u8 *name;

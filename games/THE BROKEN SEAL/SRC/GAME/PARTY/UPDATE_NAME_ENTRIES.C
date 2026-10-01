@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+#include "IWRAM_CALL.H"
+#include "BATTLE_TYPES.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_PARTY.H"
 s32 SerialRuntime_BeginTransferB(void);
 void SerialRuntime_WaitForTransferB(void);
 void Party_Apply(s32, u16 *);
@@ -16,6 +20,10 @@ void Party_Do(void *);
 #endif
 
 void *Runtime_BumpAllocateAlternatePool(s32);
+void Runtime_BumpFree(void *block);
+struct BattleUnit *Owner_GetStateFar(s32 unit_id);
+s32 SerialRuntime_BeginTransferA(void *data, s32 size);
+void SerialRuntime_WaitForTransferA(void);
 
 void WaitFrames(s32);
 u8 *Runtime_GetObject(s32);
@@ -79,4 +87,62 @@ s32 UpdateNameEntries(void)
     }
     Party_Do(buffer);
     return named_count;
+}
+
+/* Sends this side's battle party over the link cable: one unit state per
+ * transfer, padded to three, then the Djinn offer with its owners renamed to
+ * the member slots the other side knows them by. It is declared to return a
+ * value and returns none: the epilogue keeps r0 free for one. */
+s32 LinkBattle_SendParty(void)
+{
+    u8 *buffer;
+    struct BattleSession *work;
+    s32 j;
+    struct DjinnRecoveryList *list;
+    s32 size;
+    s32 count;
+    s32 i;
+    s32 mark;
+    u16 owners[8];
+
+    size = 340;
+    buffer = Runtime_BumpAllocateAlternatePool(size);
+    mark = 0xff;
+    work = gBattleWork;
+    for (i = 7; i >= 0; i--)
+        work->owner_slots[i] = mark;
+    count = BattleParty_PrepareActiveOwners(owners);
+    for (i = 0; i < count; i++) {
+        Iwram_CopyWords(buffer, Owner_GetStateFar(owners[i]), size);
+        ((struct BattleUnit *)buffer)->status_12a = 2;
+        work->owner_slots[owners[i]] = i - 128;
+        if (SerialRuntime_BeginTransferA(buffer, 340) == -1)
+            break;
+        SerialRuntime_WaitForTransferA();
+        WaitFrames(2);
+    }
+    for (; i <= 2; i++) {
+        ((struct BattleUnit *)buffer)->status_12a = 0;
+        if (SerialRuntime_BeginTransferA(buffer, 340) == -1)
+            break;
+        SerialRuntime_WaitForTransferA();
+        WaitFrames(2);
+    }
+    size = 320;
+    Runtime_BumpFree(buffer);
+    buffer = Runtime_BumpAllocateAlternatePool(size);
+    /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's
+     * copy is emitted before the count's address as in the reference */
+    do {
+        Iwram_CopyWords(buffer, Trade_GetOfferStateFar(0), size);
+    } while (0);
+    list = &((struct DjinnRecoveryTable *)buffer)->list;
+    for (j = 0; j < list->count; j++)
+        list->entries[j].unit_id = work->owner_slots[list->entries[j].unit_id];
+    if (SerialRuntime_BeginTransferA(buffer, 320) != -1) {
+        SerialRuntime_WaitForTransferA();
+        WaitFrames(1);
+        WaitFrames(2);
+    }
+    Runtime_BumpFree(buffer);
 }

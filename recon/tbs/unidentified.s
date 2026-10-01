@@ -890,6 +890,8 @@ Data_080eda78:
 	.global BattleFx10_UnitScale
 BattleFx10_UnitScale:
 	.incbin "baserom.gba", 0x000eda80, 0x00000008
+	.global RockWall_Heights
+RockWall_Heights:
 	.global Data_080eda88
 Data_080eda88:
 	.incbin "baserom.gba", 0x000eda88, 0x00000028
@@ -1231,8 +1233,8 @@ Data_080eea20:
 	.global Data_080eea2c
 Data_080eea2c:
 	.incbin "baserom.gba", 0x000eea2c, 0x0000000c
-	.global Data_080eea38
-Data_080eea38:
+	.global RockWall_Timings
+RockWall_Timings:
 	.incbin "baserom.gba", 0x000eea38, 0x00000008
 	.incbin "baserom.gba", 0x000eea40, 0x00000001
 	.global HomingEmbers_Counts

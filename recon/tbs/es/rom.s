@@ -1492,8 +1492,6 @@ BattleEffectB:
 	.thumb_func
 RunPaletteRampEffect:
 	.incbin "baserom.gba", 0x000dd2e8, 0x000004e0
-	.section .rom.000ddaac, "ax"
-	.incbin "baserom.gba", 0x000ddaac, 0x00000420
 	.section .rom.000de374, "ax"
 	.incbin "baserom.gba", 0x000de374, 0x00000b54
 	.section .rom.000deee0, "ax"
@@ -1602,7 +1600,10 @@ BattleEffect_LoadWork:
 	.incbin "baserom.gba", 0x000f0c08, 0x00000678
 	.global BattleFx10_UnitScale
 BattleFx10_UnitScale:
-	.incbin "baserom.gba", 0x000f1280, 0x00000038
+	.incbin "baserom.gba", 0x000f1280, 0x00000008
+	.global RockWall_Heights
+RockWall_Heights:
+	.incbin "baserom.gba", 0x000f1288, 0x00000030
 	.global Data_080edab8
 Data_080edab8:
 	.incbin "baserom.gba", 0x000f12b8, 0x00000008
@@ -1727,7 +1728,10 @@ BattleFx10_FallCells:
 	.incbin "baserom.gba", 0x000f21f2, 0x00000006
 	.global IceShardBursts_Gravities
 IceShardBursts_Gravities:
-	.incbin "baserom.gba", 0x000f21f8, 0x00000049
+	.incbin "baserom.gba", 0x000f21f8, 0x00000040
+	.global RockWall_Timings
+RockWall_Timings:
+	.incbin "baserom.gba", 0x000f2238, 0x00000009
 	.global HomingEmbers_Counts
 HomingEmbers_Counts:
 	.incbin "baserom.gba", 0x000f2241, 0x00000003

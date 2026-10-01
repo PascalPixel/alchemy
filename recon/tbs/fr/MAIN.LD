@@ -759,7 +759,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PALETTE_RAMP.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000dd2e8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000ddaac)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000de374)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)

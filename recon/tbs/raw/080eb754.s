@@ -481,7 +481,7 @@ Unnamed_080eb754:
 .L_080ebb0c:
 	.4byte gBgScroll
 .L_080ebb10:
-	.4byte Data_080edac8 + 0x10
+	.4byte ObjectRow_SweepPair
 .L_080ebb14:
 	.4byte 0xfffff980
 .L_080ebb18:
@@ -495,9 +495,9 @@ Unnamed_080eb754:
 .L_080ebb28:
 	.4byte 0x000077d8
 .L_080ebb2c:
-	.4byte FallingSword_DustGravity + 0x3e
+	.4byte ObjectRow_Columns
 .L_080ebb30:
-	.4byte FallingSword_DustGravity + 0x47
+	.4byte ObjectRow_Rows
 .L_080ebb34:
 	.4byte ParticleStreams_CellOffsets
 .L_080ebb38:
@@ -825,7 +825,7 @@ Unnamed_080eb754:
 .L_080ebda8:
 	.4byte 0xfffffe20
 .L_080ebdac:
-	.4byte Data_080edac8 + 0x18
+	.4byte ObjectRow_RisePair
 .L_080ebdb0:
 	movs r1, #128
 	lsls r3, r0, #11
@@ -1216,9 +1216,9 @@ Unnamed_080eb754:
 .L_080ec0b8:
 	.4byte 0x000077d8
 .L_080ec0bc:
-	.4byte FallingSword_DustGravity + 0x3e
+	.4byte ObjectRow_Columns
 .L_080ec0c0:
-	.4byte FallingSword_DustGravity + 0x47
+	.4byte ObjectRow_Rows
 .L_080ec0c4:
 	.4byte 0x000077a8
 .L_080ec0c8:

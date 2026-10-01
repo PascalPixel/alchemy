@@ -54,12 +54,11 @@ extern void *gWorkSlot[];
 extern s32 gProjection[];
 extern u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
-extern const u8 FallingSword_DustGravity[];
-extern const struct FxPair Data_080edac8[];
-
 /* Each object's column and row in the formation. */
-#define COLUMNS (FallingSword_DustGravity + 0x3e)
-#define ROWS (FallingSword_DustGravity + 0x47)
+extern const u8 ObjectRow_Columns[];
+extern const u8 ObjectRow_Rows[];
+extern const struct FxPair ObjectRow_SweepPair;
+extern const struct FxPair ObjectRow_RisePair;
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattlePres_ConfigureEffectDisplay(void);
@@ -90,8 +89,6 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     u8 jitter_row[16];
     u8 hit_row[14];
     struct FxPlacement place2;
-    struct FxPair pair;
-    struct FxPair pair2;
     void *canvas;
     struct BattleEffectWork *work;
     DrawRectangle blit;
@@ -102,10 +99,6 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     struct FxControl *control;
     s32 shift;
     s32 wave;
-    s32 row_x;
-    u8 *hit;
-    u8 *jitter;
-    s32 slide;
     s32 frame;
     s32 i;
 
@@ -194,9 +187,9 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
         }
 
         if (frame <= 149) {
+            struct FxPair pair = ObjectRow_SweepPair;
             s32 lift;
 
-            pair = Data_080edac8[2];
             lift = 0;
             if (frame > 103) {
                 lift = frame * 16 - 1664;
@@ -225,8 +218,8 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             place.scale = 255 << 16;
             i = 0;
             do {
-                place.x = ((base_x + COLUMNS[i] - lift) << 16) + (224 << 16);
-                place.y = ((ROWS[i] - wave) << 16) + (144 << 15);
+                place.x = ((base_x + ObjectRow_Columns[i] - lift) << 16) + (224 << 16);
+                place.y = ((ObjectRow_Rows[i] - wave) << 16) + (144 << 15);
                 Object_ApplyProjectedPlacementFar(OBJECTS(work)[i], &place, &pair, 0);
                 i++;
             } while (i != 9);
@@ -325,23 +318,20 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
         i++;
     } while (i != 9);
 
-    hit = hit_row;
+    {
+    s32 row_x;
+
     row_x = 224;
-    {
-        u8 *p;
-
-        for (p = hit; p != hit + 14; p++) {
-            *p = 0;
-        }
-    }
-    jitter = jitter_row;
-    {
-        u8 *p;
-
-        for (p = jitter; p != jitter + 16; p++) {
-            *p = Random16() & 31;
-        }
-    }
+    i = 0;
+    do {
+        hit_row[i] = 0;
+        i++;
+    } while (i != 14);
+    i = 0;
+    do {
+        jitter_row[i] = Random16() & 31;
+        i++;
+    } while (i != 16);
     i = 0;
     do {
         BURST[i].variant = 0;
@@ -352,15 +342,14 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     work->transfer_value = 75;
     REG16(0x0400000c) = 0x784;
     REG16(0x04000052) = 0x1010;
-    slide = -480;
 
     frame = 0;
     do {
         if (frame <= 23) {
+            struct FxPair pair2 = ObjectRow_RisePair;
             s32 ang;
             s32 rise;
 
-            pair2 = Data_080edac8[3];
             row_x -= 16;
             if (frame <= 8) {
                 ang = frame * 2048 + 0x4000;
@@ -380,8 +369,8 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             place2.scale = 255 << 16;
             i = 0;
             do {
-                place2.x = (row_x + COLUMNS[i]) << 16;
-                place2.y = ((ROWS[i] - rise) << 16) + (144 << 15);
+                place2.x = (row_x + ObjectRow_Columns[i]) << 16;
+                place2.y = ((ObjectRow_Rows[i] - rise) << 16) + (144 << 15);
                 Object_ApplyProjectedPlacementFar(OBJECTS(work)[i], &place2, &pair2, 0);
                 i++;
             } while (i != 9);
@@ -400,12 +389,12 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
 
         /* Each unit bursts once, when the rising row has passed it. */
         for (i = 0; i != work->effect->count; i++) {
-            if (hit[i] == 0) {
+            if (hit_row[i] == 0) {
                 EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[i], &unit);
                 if (unit.x > row_x) {
                     s32 k;
 
-                    hit[i] = 1;
+                    hit_row[i] = 1;
                     k = 0;
                     do {
                         struct EffectStep *burst = &BURST[i * 32 + k];
@@ -453,7 +442,7 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
             i = 0;
             do {
                 blit(canvas, (u8 *)work + (Random16() & 3) * 0x600,
-                    jitter[i] - slide + 120, y, 48, 32);
+                    jitter_row[i] - (frame - 40) * 12 + 120, y, 48, 32);
                 i++;
                 y += 8;
             } while (i != 16);
@@ -472,8 +461,8 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
         work->transfer_pending = 1;
         WaitFrames(1);
         frame++;
-        slide += 12;
     } while (frame != 96);
+    }
 
     BattleEventRuntime_BeginPhaseFar(134);
     i = 0;

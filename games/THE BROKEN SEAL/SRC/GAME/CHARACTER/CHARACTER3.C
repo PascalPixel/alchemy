@@ -1,3 +1,4 @@
+#include "EDITION.H"
 #include "GAME_FLAGS.H"
 #include "PARTY_STATE.H"
 #include "TYPES.H"
@@ -7,6 +8,7 @@
 #include "PRESET_TABLE.H"
 #include "FIXED_MATH.H"
 #include "OWNER_STATE.H"
+#include "IWRAM_CALL.H"
 
 s32 GameFlag_SetBit(s32);
 void GameFlag_ClearBit(s32);
@@ -93,6 +95,175 @@ struct OwnerDerivedState {
 s32 Owner_RefreshClassActions(s32);
 u32 Owner_BuildDigitTiles(s32 owner, s16 destination[4][2]);
 s32 Owner_DetermineClass(s32 character, const u8 *djinn);
+
+/* An 84-byte enemy definition. */
+struct EnemyDefinition {
+    u8 unknown_00[15];
+    u8 level;                   /* 0x0f */
+    u16 hp;                     /* 0x10 */
+    u16 pp;                     /* 0x12 */
+    u16 attack;                 /* 0x14 */
+    u16 defense;                /* 0x16 */
+    u16 agility;                /* 0x18 */
+    u8 luck;                    /* 0x1a */
+    u8 turns;                   /* 0x1b */
+    u8 hp_regen;                /* 0x1c */
+    u8 pp_regen;                /* 0x1d */
+    u8 unknown_1e[2];
+    u32 rewards;                /* 0x20 */
+    u8 unknown_24[4];
+    /* What the enemy carries, and how many of each. */
+    u16 items[4];               /* 0x28 */
+    u8 counts[4];               /* 0x30 */
+    u8 unknown_34[0x20];
+};
+
+/* The fields of a battle unit that an enemy's definition fills. */
+struct EnemyUnit {
+    u8 name[14];                /* 0x00 */
+    u8 name_end;                /* 0x0e */
+    u8 level;                   /* 0x0f */
+    u16 base_hp;                /* 0x10 */
+    u16 base_pp;                /* 0x12 */
+    u16 hp_ratio;               /* 0x14 current/maximum HP, Q14 */
+    u16 pp_ratio;               /* 0x16 */
+    u16 attack;                 /* 0x18 */
+    u16 defense;                /* 0x1a */
+    u16 agility;                /* 0x1c */
+    u8 luck;                    /* 0x1e */
+    u8 turns;                   /* 0x1f */
+    u8 hp_regen;                /* 0x20 */
+    u8 pp_regen;                /* 0x21 */
+    u8 unknown_22[2];
+    s16 element_levels[4][2];   /* 0x24 */
+    u16 max_hp;                 /* 0x34 */
+    u16 max_pp;                 /* 0x36 */
+    u16 hp;                     /* 0x38 */
+    u16 pp;                     /* 0x3a */
+    u8 unknown_3c[0x9c];
+    u16 inventory[15];          /* 0xd8 */
+    u8 unknown_0f6[0x2a];
+    u32 rewards;                /* 0x120 */
+    u8 unknown_124[4];
+    u8 enemy;                   /* 0x128 */
+    u8 class_index;             /* 0x129 */
+    u8 side;                    /* 0x12a */
+};
+
+enum {
+    BATTLE_UNIT_BYTES = 0x14c
+};
+
+/* The mark after a repeated enemy's name: a letter from A in Japanese, a
+   digit from 1 in the localizations. */
+#if EDITION_INTERNATIONAL
+#define ENEMY_SUFFIX_FIRST '1'
+#define ENEMY_SUFFIX_LAST 8
+#else
+#define ENEMY_SUFFIX_FIRST 'A'
+#define ENEMY_SUFFIX_LAST 25
+#endif
+
+extern const u8 Data_08080ec8[];
+extern u8 MsgEnemyName;
+
+void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
+void Owner_RecalculateStats(s32 owner);
+
+typedef s32 (*ClearWordsFn)(void *destination, s32 size);
+
+static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 size)
+{
+    /* FAKEMATCH: a direct call puts the size in its register before the routine's address; the ROM loads the address between the two halves of the size. */
+    clear(destination, size);
+}
+
+/* Fill battle unit 128..134 from an enemy's definition and name it, with a
+   mark after the name when the battle holds the same enemy more than
+   once. The enemy carries each item of its definition as many times as the
+   definition counts, and enemies 158..171 fight on the second side. */
+s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
+{
+    struct EnemyUnit *unit;
+    const struct EnemyDefinition *enemy;
+    u16 name[15];
+    s32 i;
+    u32 index;
+    s32 q;
+    s32 count;
+
+    index = enemy_id - 8;
+    if (unit_id <= 127)
+        return 0;
+    if (unit_id > 134)
+        return 0;
+    if (index > 242)
+        return 0;
+    unit = Owner_GetState(unit_id);
+    ClearWords(Iwram_ClearWords, unit, BATTLE_UNIT_BYTES);
+    if (index > 164)
+        index = 0;
+    enemy = (const struct EnemyDefinition *)(Data_08080ec8 + index * 84);
+    unit->level = enemy->level;
+    unit->base_hp = enemy->hp;
+    unit->hp = enemy->hp;
+    unit->max_hp = enemy->hp;
+    unit->base_pp = enemy->pp;
+    unit->pp = enemy->pp;
+    unit->max_pp = enemy->pp;
+    unit->hp_ratio = 0x4000;
+    unit->pp_ratio = 0x4000;
+    unit->attack = enemy->attack;
+    unit->defense = enemy->defense;
+    unit->agility = enemy->agility;
+    unit->luck = enemy->luck;
+    unit->turns = enemy->turns;
+    unit->hp_regen = enemy->hp_regen;
+    unit->pp_regen = enemy->pp_regen;
+    UiText_DecodeMessageFar(index + (s32)&MsgEnemyName, name, 15);
+    for (i = 0; i < 14 && name[i] != 0; i++)
+        unit->name[i] = name[i];
+    if (suffix <= ENEMY_SUFFIX_LAST) {
+        unit->name[i] = ENEMY_SUFFIX_FIRST + suffix;
+        i++;
+    }
+    unit->name[i] = 0;
+    unit->name_end = 0;
+    count = 0;
+    for (i = 0; i < 4; i++) {
+        if (enemy->items[i] != 0) {
+            for (q = 0; q < enemy->counts[i]; q++) {
+                if (count < 15)
+                    unit->inventory[count++] = enemy->items[i];
+            }
+        }
+    }
+    unit->rewards = enemy->rewards;
+    unit->class_index = 0;
+    unit->enemy = enemy_id;
+    Owner_BuildDigitTiles(unit_id, unit->element_levels);
+    Owner_RecalculateStats(unit_id);
+    unit->side = 1;
+    switch (unit->enemy) {
+    case 158:
+    case 159:
+    case 160:
+    case 161:
+    case 162:
+    case 163:
+    case 164:
+    case 165:
+    case 166:
+    case 167:
+    case 168:
+    case 169:
+    case 170:
+    case 171:
+        unit->side = 2;
+        break;
+    }
+    return 1;
+}
 
 s32 Party_CountActiveOwners(void)
 {

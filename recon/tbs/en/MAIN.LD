@@ -510,8 +510,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORM_FLASH.o"(.text)
-        "*/recon/tbs/raw/08094bba.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08094bbc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT2.o"(.text)
         "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT31.o"(.text)

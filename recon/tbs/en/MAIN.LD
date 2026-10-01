@@ -873,7 +873,7 @@
         "*/recon/tbs/raw/080d05fc.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080d0ad4.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080d0ee0.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080d1350.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STARS.o"(.text)
         "*/recon/tbs/raw/080d1714.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.o"(.text)
         "*/recon/tbs/raw/080d2464.o"(.text .rodata .data .padding)

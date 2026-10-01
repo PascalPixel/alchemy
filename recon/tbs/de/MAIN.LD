@@ -736,6 +736,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000d16e0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT6.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000d23fc)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STARS.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000d3514)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000d4264)

@@ -5,7 +5,9 @@
 
 /* Position and movement values are 16.16 fixed point. */
 struct ObjectRuntime {
-    u8 unknown_00[0x08];
+    s32 *script;
+    s16 step;
+    u16 angle;
     s32 x;
     s32 y;
     s32 z;

@@ -2987,31 +2987,7 @@ Object_SetPartAttribute:
 	.type Func_080d3780, %function
 	.thumb_func
 Func_080d3780:
-	.incbin "baserom.gba", 0x000d8774, 0x00000094
-	.section .rom.000d8808, "ax"
-	.global Func_080d3814
-	.type Func_080d3814, %function
-	.thumb_func
-Func_080d3814:
-	.incbin "baserom.gba", 0x000d8808, 0x00000024
-	.section .rom.000d882c, "ax"
-	.global ObjectMotion_ArmCallback
-	.type ObjectMotion_ArmCallback, %function
-	.thumb_func
-ObjectMotion_ArmCallback:
-	.incbin "baserom.gba", 0x000d882c, 0x00000028
-	.section .rom.000d8854, "ax"
-	.global Func_080d3860
-	.type Func_080d3860, %function
-	.thumb_func
-Func_080d3860:
-	.incbin "baserom.gba", 0x000d8854, 0x00000028
-	.section .rom.000d887c, "ax"
-	.global ObjectMotion_SetActionVariant
-	.type ObjectMotion_SetActionVariant, %function
-	.thumb_func
-ObjectMotion_SetActionVariant:
-	.incbin "baserom.gba", 0x000d887c, 0x0000004c
+	.incbin "baserom.gba", 0x000d8774, 0x00000054
 	.section .rom.000d8900, "ax"
 	.global Func_080d390c
 	.type Func_080d390c, %function
@@ -3931,7 +3907,10 @@ Field_SceneTable:
 	.incbin "baserom.gba", 0x000f679c, 0x00001b28
 	.global Object_OffsetMotionScript
 Object_OffsetMotionScript:
-	.incbin "baserom.gba", 0x000f82c4, 0x000004b0
+	.incbin "baserom.gba", 0x000f82c4, 0x00000030
+	.global ObjectMotion_StepAngleScript
+ObjectMotion_StepAngleScript:
+	.incbin "baserom.gba", 0x000f82f4, 0x00000480
 	.global Object_LinkedMotionScript
 Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x000f8774, 0x0000188c

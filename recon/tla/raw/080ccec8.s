@@ -826,4 +826,4 @@ Func_080ccec8:
 .L_080cd57c:
 	.4byte Object_LinkedMotionScript
 .L_080cd580:
-	.4byte Data_080f3300
+	.4byte ObjectMotion_StepAngleScript

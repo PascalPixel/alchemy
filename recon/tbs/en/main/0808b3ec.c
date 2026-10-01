@@ -1,4 +1,4 @@
-/* Draft, not exact: 616 bytes for the 608-byte listing, 15 instructions
+/* Draft, not exact: 616 bytes for the 608-byte listing, 18 instructions
    differ, all in the row loop's test. The listing's bottom test loads the
    row id once (ldrh), copies it to the register the body re-extends, and
    compares the extension, so the entry copy of the test branches into it;

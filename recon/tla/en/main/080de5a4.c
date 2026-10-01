@@ -1,3 +1,7 @@
+/* Near miss: score 60. ⚓️ shifts life << 17 into r0 between loading and
+   storing the middle coordinate, a load-delay fill; with -mtune=arm9tdmi
+   this draft compiles exactly. It would join
+   UPDATE_ORBITING_PARTICLE_MAIN.C after the fade. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OBJECT_EFX.H"
@@ -9,6 +13,15 @@ s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
+
+struct OrbitingParticleVector {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+void Vector_AddPolarOffset(s32 radius, s32 angle, struct OrbitingParticleVector *position);
+void BattleFx_UpdateOrbitingParticleFade(void *object);
 void Animation_ApplyChildValuesFar(struct OrbitingParticle *particle, s32 battle_mode);
 
 void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)

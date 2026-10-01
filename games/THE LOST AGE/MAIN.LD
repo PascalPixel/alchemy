@@ -2183,7 +2183,7 @@ SECTIONS
         "*/recon/tla/raw/08118d2c.o"(.text)
         "*/recon/tla/raw/08118d60.o"(.text)
         "*/recon/tla/raw/08118d6c.o"(.text)
-        "*/recon/tla/raw/08118d70.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/PARTY/RESET_ACTIVE_RUNTIME_FIELDS.o"(.text)
         "*/recon/tla/raw/08118e64.o"(.text)
         "*/recon/tla/raw/08118eb0.o"(.text)
         "*/recon/tla/raw/08118f6c.o"(.text)

@@ -24,7 +24,7 @@ Func_08118130:
 	.global Func_08118138
 	.thumb_func
 Func_08118138:
-	overlay_veneer Func_0811a0b0
+	overlay_veneer BattleParty_PrepareReserveOwners
 	.global Func_08118140
 	.thumb_func
 Func_08118140:

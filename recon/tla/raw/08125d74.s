@@ -301,7 +301,7 @@ Func_08125d74:
 	mov r8, r0
 	lsls r0, r0, #1
 	adds r0, r5, r0
-	bl Func_0811a0b0
+	bl BattleParty_PrepareReserveOwners
 	add r8, r0
 	mov r1, r8
 	movs r6, #0

@@ -922,7 +922,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STAGED_PARTICLES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT19.o"(.text)
-        "*/recon/tbs/raw/080ddde0.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/LIGHTNING_BOLTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PREPARE_CANVAS_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PROJECTILE_VOLLEY.o"(.text)
         "*/recon/tbs/raw/080dea6e.o"(.text .rodata .data .padding)

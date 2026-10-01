@@ -1,13 +1,3 @@
-/* Draft, complete main:080ddde0 [080ddde0,080de2f8), 1304 bytes, written
-   fresh from the listing in plain C: 1304 of 1304 bytes, 30 differing
-   instructions, all in the glint loop. Remaining difference: the ROM calls
-   Random16 before it reads the glint range and tests the loop on entry
-   through the saved effect address; reading the range inside the modulus
-   gives both but then the loop pass also hoists the position address,
-   which takes r9 from the constant 3 (it must stay unhoisted: four
-   invariants have to move ahead of it, this shape moves three). The tables
-   need names (Data_080eebd6 holds four counts per variant: sparks, glints,
-   glint range, bolts). */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
@@ -38,9 +28,10 @@ extern u16 ParticleStreams_CellOffsets[];
 extern u16 BattleFx_GlintCellOffsets[];
 extern u8 BattleFx_GlintCellWidths[];
 extern u8 BattleFx_GlintCellHeights[];
-extern u8 Data_080eebd6[];
-extern u8 Data_080eebe2[];
-extern u8 Data_080eebe6[];
+/* Four counts per variant: sparks, glints, glint range and bolts. */
+extern u8 LightningBolts_Counts[];
+extern u8 LightningBolts_GlintPalettes[];
+extern u8 LightningBolts_GlintModes[];
 
 /* Battle effect: a lightning bolt strikes each affected unit in turn, eight
    frames apart. The canvas flashes as a bolt starts; the bolt grows for two
@@ -48,7 +39,7 @@ extern u8 Data_080eebe6[];
    cell buffer on its third frame and scatters glints around the unit for
    twenty-two frames. The sparks bounce once and fade as their life in
    variant runs out. The variant picks how many bolts, sparks and glints. */
-void Region_080ddde0(struct BattleEffectArgument *effect)
+void BattleFx_RunLightningBolts(struct BattleEffectArgument *effect)
 {
     void **heap_cache;
     void **cursor;
@@ -104,12 +95,12 @@ void Region_080ddde0(struct BattleEffectArgument *effect)
 
                 if (height > 104)
                     height = 104;
-                for (j = 0; j != Data_080eebd6[work->effect->variant * 4 + 3]; j++) {
+                for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 3]; j++) {
                     draw[0](canvas, (u8 *)work + (((i + frame + j) / 2) & 3) * 2880 + 0xc56,
                         position.x - 12, 0, 24, height);
                 }
                 if (frame == start + 2) {
-                    for (j = 0; j != Data_080eebd6[work->effect->variant * 4]; j++) {
+                    for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4]; j++) {
                         struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i * 128 + j];
                         s32 speed = (Random16() & 0x1ff) + 64;
                         s32 angle = (Random16() & 0x7fff) - 0x4000;
@@ -123,16 +114,20 @@ void Region_080ddde0(struct BattleEffectArgument *effect)
                 }
             }
             if (frame >= start + 2 && frame < start + 24) {
-                for (j = 0; j != Data_080eebd6[work->effect->variant * 4 + 1]; j++) {
+                for (j = 0; j != LightningBolts_Counts[work->effect->variant * 4 + 1]; j++) {
                     s32 kind = j & 3;
-                    s32 range = Data_080eebd6[work->effect->variant * 4 + 2];
-                    s32 drop = Random16() % range;
+                    s32 drop = Random16() % LightningBolts_Counts[work->effect->variant * 4 + 2];
+                    s32 spread = LightningBolts_Counts[work->effect->variant * 4 + 2] - drop + 1;
                     s32 y = position.y - drop - (BattleFx_GlintCellHeights[kind] >> 1) + 8;
-                    s32 spread = range - drop + 1;
-                    s32 x = position.x + Random16() % spread - spread / 2 - (BattleFx_GlintCellWidths[kind] >> 1);
+                    u32 random = Random16();
+                    s32 x = position.x;
 
-                    BattleEffect_LoadWork(47, 7, 7, Data_080eebe2[Random16() & 3] | 3,
-                        Data_080eebe6[work->effect->variant]);
+                    x += random % spread;
+                    x -= spread / 2;
+                    x -= (BattleFx_GlintCellWidths[kind] >> 1);
+
+                    BattleEffect_LoadWork(47, 7, 7, LightningBolts_GlintPalettes[Random16() & 3] | 3,
+                        LightningBolts_GlintModes[work->effect->variant]);
                     ((DrawRectangle *)gBattleFxWork)[8](canvas,
                         (u8 *)work + BattleFx_GlintCellOffsets[kind], x, y,
                         BattleFx_GlintCellWidths[kind], BattleFx_GlintCellHeights[kind]);

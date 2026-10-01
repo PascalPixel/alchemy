@@ -251,7 +251,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
 #else
                             EffectPosition_ApplyBaseAndYOffset(point, &screen);
                             screen.x = (screen.x >> 1) + x;
-                            /* The localized releases draw the trail a tile lower. */
+                            /* The localized releases draw the trail sixteen pixels lower. */
                             screen.y = screen.y + y + 16;
 #endif
                             trail->x -= 4;

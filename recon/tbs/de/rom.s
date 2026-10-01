@@ -1496,8 +1496,6 @@ RunPaletteRampEffect:
 	.thumb_func
 RunParticleFieldEffect:
 	.incbin "baserom.gba", 0x000dd4e0, 0x00000444
-	.section .rom.000dfbe0, "ax"
-	.incbin "baserom.gba", 0x000dfbe0, 0x00000518
 	.section .rom.000e086e, "ax"
 	.incbin "baserom.gba", 0x000e086e, 0x00000002
 	.section .rom.000e0870, "ax"
@@ -1755,7 +1753,17 @@ BattleFxPillar_PuffHeights:
 	.incbin "baserom.gba", 0x000f09c0, 0x00000008
 	.global BattleFxPillar_PuffCells
 BattleFxPillar_PuffCells:
-	.incbin "baserom.gba", 0x000f09c8, 0x00000092
+	.incbin "baserom.gba", 0x000f09c8, 0x0000000e
+	.global LightningBolts_Counts
+LightningBolts_Counts:
+	.incbin "baserom.gba", 0x000f09d6, 0x0000000c
+	.global LightningBolts_GlintPalettes
+LightningBolts_GlintPalettes:
+	.incbin "baserom.gba", 0x000f09e2, 0x00000004
+	.global LightningBolts_GlintModes
+LightningBolts_GlintModes:
+	.incbin "baserom.gba", 0x000f09e6, 0x00000002
+	.incbin "baserom.gba", 0x000f09e8, 0x00000072
 	.global MercuryDjinnFlames_LaunchFrames
 MercuryDjinnFlames_LaunchFrames:
 	.incbin "baserom.gba", 0x000f0a5a, 0x00000005

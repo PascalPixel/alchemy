@@ -1,3 +1,7 @@
+/* Near miss: score 60. The menu page work is ⚓️'s heap slot menu_page_work,
+   its icons 4 bytes later and its entry count at 0x214. ⚓️ reloads the
+   stacked y argument (ldr r7, [sp, #32]) earlier; a load-scheduling
+   difference that -mtune=arm9tdmi narrows but does not close. */
 #include "TYPES.H"
 
 struct MenuPageIcon {
@@ -8,13 +12,13 @@ struct MenuPageIcon {
 };
 
 struct MenuPageWork {
-    u8 reserved_000[0x48];
+    u8 reserved_000[0x4c];
     struct MenuPageIcon *icons[32];
-    u8 reserved_0c8[0x150];
+    u8 reserved_0cc[0x148];
     u8 entry_count;
 };
 
-extern struct MenuPageWork *gMenuWork;
+#include "RAM_BUFFER.H"
 
 void UiIcon_PrepareObject(struct MenuPageIcon *icon);
 
@@ -26,7 +30,7 @@ void UiIcon_PrepareObject(struct MenuPageIcon *icon);
 
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y)
 {
-    struct MenuPageWork *menu = gMenuWork;
+    struct MenuPageWork *menu = Ram_HeapSlots->menu_page_work;
     struct MenuPageIcon *icon;
     s32 i;
 

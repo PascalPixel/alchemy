@@ -1051,8 +1051,8 @@ CounterReveal_PanelY:
 	.global SpinningTriangle_Vertex
 SpinningTriangle_Vertex:
 	.incbin "baserom.gba", 0x000ee128, 0x0000000c
-	.global Data_080ee134
-Data_080ee134:
+	.global TriangleStrike_Vertex
+TriangleStrike_Vertex:
 	.incbin "baserom.gba", 0x000ee134, 0x0000000c
 	.global RingBolts_Points
 RingBolts_Points:

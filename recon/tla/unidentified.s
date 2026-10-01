@@ -207,8 +207,8 @@ Data_0802f380:
 	.global Data_0804e584
 Data_0804e584:
 	.incbin "baserom.gba", 0x0004e584, 0x00000100
-	.global Data_0804e684
-Data_0804e684:
+	.global UiIcon_BaseGlyphPointers
+UiIcon_BaseGlyphPointers:
 	.incbin "baserom.gba", 0x0004e684, 0x000000bc
 	.global Data_0804e740
 Data_0804e740:
@@ -225,8 +225,8 @@ Data_0804eb58:
 	.global Data_0804f124
 Data_0804f124:
 	.incbin "baserom.gba", 0x0004f124, 0x000058f0
-	.global Data_08054a14
-Data_08054a14:
+	.global UiIcon_PsynergyIconPointers
+UiIcon_PsynergyIconPointers:
 	.incbin "baserom.gba", 0x00054a14, 0x00000410
 	.global Data_08054e24
 Data_08054e24:

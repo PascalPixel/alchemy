@@ -43,13 +43,6 @@ struct ResourceTableEntry {
 
 extern struct ResourceTableEntry ResourceTableEntries[];
 
-struct SchedulerTask {
-    u32 callback;
-    u16 state;
-    u8 mask;
-    u8 reserved;
-};
-
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerTaskCount;

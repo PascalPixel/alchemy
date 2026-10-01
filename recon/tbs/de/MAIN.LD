@@ -741,6 +741,8 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000d4264)
     "*/recon/tbs/de/rom.o"(.rom.000d4b98)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VORTEX.o"(.text)
+    "*/recon/tbs/de/rom.o"(.rom.000d5654)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/UPDATE_PHASE.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000d5fa4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_TWO_MODE_B_MODE0.o"(.text)

@@ -1088,7 +1088,11 @@ Data_080ee1ac:
 	.incbin "baserom.gba", 0x000ee1ac, 0x00000008
 	.global Data_080ee1b4
 Data_080ee1b4:
-	.incbin "baserom.gba", 0x000ee1b4, 0x0000001f
+	.incbin "baserom.gba", 0x000ee1b4, 0x00000010
+	.global VortexMotes_Counts
+VortexMotes_Counts:
+	.incbin "baserom.gba", 0x000ee1c4, 0x00000006
+	.incbin "baserom.gba", 0x000ee1ca, 0x00000009
 	.global Data_080ee1d3
 Data_080ee1d3:
 	.incbin "baserom.gba", 0x000ee1d3, 0x00000021

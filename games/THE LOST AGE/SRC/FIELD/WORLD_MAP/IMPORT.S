@@ -121,7 +121,7 @@ Func_02004b30:
 	.global Func_02004b38
 	.thumb_func
 Func_02004b38:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02004b40
 	.thumb_func
 Func_02004b40:

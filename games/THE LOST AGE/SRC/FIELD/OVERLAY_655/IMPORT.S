@@ -73,7 +73,7 @@ Func_02003bb0:
 	.global Func_02003bb8
 	.thumb_func
 Func_02003bb8:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Object_SetPositionAndResetMotion
 	.thumb_func
 Object_SetPositionAndResetMotion:

@@ -59,7 +59,7 @@ Func_080d7c04:
 	str r3, [r6, #8]
 	bl Camera_WorldToScreen
 	adds r0, r7, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	movs r0, #164
 	bl Audio_PlayCue
 	movs r7, #23

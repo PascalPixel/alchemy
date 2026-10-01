@@ -496,9 +496,9 @@ Func_080df1fc:
 	movs r0, #131
 	bl Audio_PlayCue
 	ldr r0, [sp, #20]
-	bl Func_080200c8
+	bl Object_Destroy
 	ldr r0, [sp, #24]
-	bl Func_080200c8
+	bl Object_Destroy
 	ldr r3, [sp, #32]
 	adds r0, r7, #0
 	adds r3, #64

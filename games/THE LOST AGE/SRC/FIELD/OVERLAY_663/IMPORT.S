@@ -93,7 +93,7 @@ Func_02003b40:
 	.global Func_02003b48
 	.thumb_func
 Func_02003b48:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02003b50
 	.thumb_func
 Func_02003b50:

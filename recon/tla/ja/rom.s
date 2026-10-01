@@ -2264,7 +2264,12 @@ OwnerAction_AddFar:
 	.type Equipment_HasValueFar, %function
 	.thumb_func
 Equipment_HasValueFar:
-	.incbin "baserom.gba", 0x000a8088, 0x00000068
+	.incbin "baserom.gba", 0x000a8088, 0x00000050
+	.global Owner_UpdateRatioPairFar
+	.type Owner_UpdateRatioPairFar, %function
+	.thumb_func
+Owner_UpdateRatioPairFar:
+	.incbin "baserom.gba", 0x000a80d8, 0x00000018
 	.global Party_CountActiveOwnersFar
 	.type Party_CountActiveOwnersFar, %function
 	.thumb_func
@@ -2940,6 +2945,10 @@ BattleActor_SpawnObjectsForList:
 ResetMotionRecordGroup:
 	.incbin "baserom.gba", 0x0011b9dc, 0x0000024c
 	.section .rom.0011bc60, "ax"
+	.global ActivateBattleObjectSlot
+	.type ActivateBattleObjectSlot, %function
+	.thumb_func
+ActivateBattleObjectSlot:
 	.incbin "baserom.gba", 0x0011bc60, 0x000000ec
 	.section .rom.0011bd4c, "ax"
 	.global Func_0811bd50
@@ -3006,7 +3015,12 @@ Camera_ConfigureScene:
 	.section .rom.0011d744, "ax"
 	.incbin "baserom.gba", 0x0011d744, 0x00000c24
 	.section .rom.0011e3a6, "ax"
-	.incbin "baserom.gba", 0x0011e3a6, 0x00001b5e
+	.incbin "baserom.gba", 0x0011e3a6, 0x0000100e
+	.global BattleActor_RemoveFromLists
+	.type BattleActor_RemoveFromLists, %function
+	.thumb_func
+BattleActor_RemoveFromLists:
+	.incbin "baserom.gba", 0x0011f3b4, 0x00000b50
 	.section .rom.0011ff04, "ax"
 	.global BattlePresentation_WaitForAdvance
 	.type BattlePresentation_WaitForAdvance, %function
@@ -3018,7 +3032,7 @@ BattlePresentation_WaitForAdvance:
 	.type Func_08120060, %function
 	.thumb_func
 Func_08120060:
-	.incbin "baserom.gba", 0x0012005c, 0x00000154
+	.incbin "baserom.gba", 0x0012005c, 0x00000118
 	.section .rom.001201c0, "ax"
 	.global BattleEv_DispatchQueued
 	.type BattleEv_DispatchQueued, %function

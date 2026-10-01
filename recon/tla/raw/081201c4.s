@@ -59,7 +59,7 @@ BattleEv_DispatchQueued:
 	lsls r3, r7, #2
 	adds r3, #64
 	ldr r0, [r6, r3]
-	bl Func_08120178
+	bl BattleActor_DestroyTemporaryObject
 	b .L_08120346
 .L_08120252:
 	lsls r3, r7, #2

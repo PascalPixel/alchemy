@@ -40,7 +40,7 @@ Func_080d489c:
 	cmp r5, #0
 	beq .L_080d4984
 	adds r0, r5, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	str r6, [r7, #104]
 	b .L_080d4984
 .L_080d48f0:

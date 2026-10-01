@@ -239,7 +239,7 @@ Func_080dfd00:
 	adds r0, r7, #0
 	bl Func_08020340
 	adds r0, r7, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	b .L_080dffd2
 .L_080dfef8:
 	mov r3, r11
@@ -341,7 +341,7 @@ Func_080dfd00:
 	adds r0, r7, #0
 	bl Func_08020340
 	adds r0, r7, #0
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080dffd2:
 	bl BattleFx_PrepareBufferInterpolation
 .L_080dffd6:

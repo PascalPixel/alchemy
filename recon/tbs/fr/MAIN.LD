@@ -754,7 +754,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/GATHER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000dc9dc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PALETTE_RAMP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)

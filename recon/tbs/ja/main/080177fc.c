@@ -13,7 +13,15 @@
    Japanese ROM) took the score from 510 to 455 in four minutes (7
    register-only, 2 reordered; the 15 operand differences are the listing's
    absolute call targets) by indexing the mark table through pointer
-   arithmetic, and found no match. */
+   arithmetic, and found no match.
+   2026-10-01, later: with the code taken as unsigned and buf + 7 assigned to
+   the loop's start inside each mark call (tagged below), the packing loop's
+   register order matches, leaving one order: whether the out pointer's
+   spill or gWindowWork's load comes first. Indexing the mark table through
+   pointer arithmetic fixes that order but swaps the ldrh base and index;
+   every other form tried keeps one of the two. alchemy permute ran another
+   eight minutes from these forms (best 305 = 1 register-only plus the 15
+   operand differences of the listing's absolute call targets). */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "TBS_EDITION.H"
@@ -37,7 +45,7 @@ extern u8 UiText_KanjiGlyphs[];
    canvas, with the voicing mark its top two bits name drawn over the cell
    above-left of it, then pack the canvas into four 4bpp tiles. Returns the
    width. */
-s32 UiText_RenderGlyphPair(s32 code, u32 *out)
+s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 {
     u8 buf[256];
     struct GlyphWork *work;
@@ -56,16 +64,16 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 
     work = gWindowWork;
     mark = 0;
-    mark_code = UiText_MarkGlyphCodes[(u32)code >> 14];
+    mark_code = UiText_MarkGlyphCodes[code >> 14];
     if (mark_code != 0)
         mark = UiText_Glyphs + (mark_code - 32) * 26 + 2;
     code &= 0x3fff;
-    if ((u32)code <= 0xff) {
-        input = UiText_Glyphs + ((u32)code - 32) * 26;
+    if (code <= 0xff) {
+        input = UiText_Glyphs + (code - 32) * 26;
         length = *(const u16 *)input;
         input += 2;
     } else {
-        input = UiText_KanjiGlyphs + ((u32)code - 256) * 24;
+        input = UiText_KanjiGlyphs + (code - 256) * 24;
         length = 10;
     }
     Iwram_ClearWords(buf, 256);
@@ -86,7 +94,10 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         Iwram_ExpandBitRuns(input, buf + 33, colour);
         if (mark != 0) {
-            Iwram_ExpandBitRuns(mark, buf + 7, colour);
+            /* FAKEMATCH: assigning the loop's start in the argument makes
+               the argument register hold buf + 7 first, as the reference
+               does; the assignment after the branches repeats it. */
+            Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
             Iwram_ExpandBitRuns(mark, buf + 8, colour);
         }
         length++;
@@ -96,7 +107,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
             Iwram_ExpandBitRuns(mark, buf + 24, transparent);
         Iwram_ExpandBitRuns(input, buf + 32, colour);
         if (mark != 0)
-            Iwram_ExpandBitRuns(mark, buf + 7, colour);
+            Iwram_ExpandBitRuns(mark, digits = buf + 7, colour);
     }
 
     digits = buf + 7;

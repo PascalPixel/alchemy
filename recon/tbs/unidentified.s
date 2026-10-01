@@ -1494,7 +1494,13 @@ Data_080eeeea:
 	.incbin "baserom.gba", 0x000eeeea, 0x0000000e
 	.global Data_080eeef8
 Data_080eeef8:
-	.incbin "baserom.gba", 0x000eeef8, 0x0000001a
+	.incbin "baserom.gba", 0x000eeef8, 0x0000000e
+	.global FlameBlade_StrikeColumns
+FlameBlade_StrikeColumns:
+	.incbin "baserom.gba", 0x000eef06, 0x00000006
+	.global FlameBlade_FlashCells
+FlameBlade_FlashCells:
+	.incbin "baserom.gba", 0x000eef0c, 0x00000006
 	.global FallingSword_FlashCells
 FallingSword_FlashCells:
 	.incbin "baserom.gba", 0x000eef12, 0x00000006

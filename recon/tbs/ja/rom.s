@@ -355,12 +355,6 @@ Debug_SelectAbilityPair:
 	.thumb_func
 Menu_Check:
 	.incbin "baserom.gba", 0x0001c494, 0x00000360
-	.section .rom.0001d9bc, "ax"
-	.global Menu_CreateWorkspaceWindows
-	.type Menu_CreateWorkspaceWindows, %function
-	.thumb_func
-Menu_CreateWorkspaceWindows:
-	.incbin "baserom.gba", 0x0001d9bc, 0x0000019c
 	.section .rom.0001dd00, "ax"
 	.incbin "baserom.gba", 0x0001dd00, 0x00000134
 	.section .rom.0001de34, "ax"

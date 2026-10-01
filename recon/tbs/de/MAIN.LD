@@ -280,7 +280,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU14.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU15.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU3.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0001c678)
     "*/games/THE BROKEN SEAL/SRC/MENU/RUN_WORKSPACE_SELECTION_LOOP.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0001c9cc)
     "*/recon/tbs/de/rom.o"(.rom.0001cb00)

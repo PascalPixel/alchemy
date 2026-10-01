@@ -310,21 +310,26 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
     BattleEffect_SetupBlendedDisplay();
     REG16(0x04000040) = 0xf0;
 
-    i = 0;
-    do {
-        struct FxObject *object = OBJECTS(work)[i];
+    {
+        struct FxObject **list;
 
-        object->flags |= 12;
-        i++;
-    } while (i != 9);
+        i = 0;
+        list = OBJECTS(work);
+        do {
+            struct FxObject *object = *list++;
+
+            object->flags |= 12;
+            i++;
+        } while (i != 9);
+    }
 
     {
     s32 row_x;
     u8 *hit;
     u8 *jitter;
 
-    hit = hit_row;
     row_x = 224;
+    hit = hit_row;
     i = 0;
     do {
         hit[i] = 0;

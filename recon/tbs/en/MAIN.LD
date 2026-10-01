@@ -948,7 +948,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.o"(.text)
         "*/recon/tbs/raw/080e698c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.o"(.text)
-        "*/recon/tbs/raw/080e6eac.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE7.o"(.text)
         "*/recon/tbs/raw/080e7338.o"(.text)
         "*/recon/tbs/raw/080e73a0.o"(.text)

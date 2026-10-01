@@ -1520,8 +1520,6 @@ BattleFx_RunCastingImpact:
 	.incbin "baserom.gba", 0x000e47b8, 0x00002190
 	.section .rom.000e698c, "ax"
 	.incbin "baserom.gba", 0x000e698c, 0x000003b0
-	.section .rom.000e6eac, "ax"
-	.incbin "baserom.gba", 0x000e6eac, 0x000003d0
 	.section .rom.000e7338, "ax"
 	.incbin "baserom.gba", 0x000e7338, 0x000000cc
 	.section .rom.000e7404, "ax"
@@ -1774,7 +1772,16 @@ Data_080eee46:
 	.incbin "baserom.gba", 0x000eee46, 0x00000008
 	.global Data_080eee4e
 Data_080eee4e:
-	.incbin "baserom.gba", 0x000eee4e, 0x0000011a
+	.incbin "baserom.gba", 0x000eee4e, 0x00000008
+	.global ImpactBurst_CellWidths
+ImpactBurst_CellWidths:
+	.incbin "baserom.gba", 0x000eee56, 0x00000008
+	.global ImpactBurst_CellHeights
+ImpactBurst_CellHeights:
+	.incbin "baserom.gba", 0x000eee5e, 0x00000008
+	.global ImpactBurst_CellSourceOffsets
+ImpactBurst_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000eee66, 0x00000102
 	.global BattleFx6_ObjectX
 BattleFx6_ObjectX:
 	.incbin "baserom.gba", 0x000eef68, 0x00000008

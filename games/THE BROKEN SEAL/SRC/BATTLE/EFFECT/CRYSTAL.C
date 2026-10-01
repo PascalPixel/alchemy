@@ -1,12 +1,3 @@
-/* Draft, not exact: 1106 bytes against 1100, 44 bytes of stack against 40.
-   The setup, the crystal seeding loop and the camera scroll block match.
-   In the frame loop the reference keeps the crystal pointer in r8, the
-   shard pointer in r7 and the blitter choice in ip, and loads each shard
-   width and height once; this draft keeps the crystal pointer in r7, the
-   shard pointer in r10 and reloads both sizes for the stack arguments.
-   Crystal_Counts is Data_080ee1f5, Crystal_ShardStarts Data_080ee1d3,
-   Crystal_ShardWidths Data_080ee1fb, Crystal_ShardHeights Data_080ee207
-   and Crystal_ShardOffsets Data_080ee214. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -24,8 +15,11 @@ struct CameraWork {
 
 extern u8 gWorkSlot[];
 extern u8 gMapCellBuffer[];
+/* By variant: how many crystals fall, and for how many frames. */
 extern u8 Crystal_Counts[];
+/* Sixteen x and y pairs: where each shard of a broken crystal starts. */
 extern u8 Crystal_ShardStarts[];
+/* By shard cell: its width, its height and where it sits in the sheet. */
 extern u8 Crystal_ShardWidths[];
 extern u8 Crystal_ShardHeights[];
 extern s32 Crystal_ShardOffsets[];
@@ -41,7 +35,15 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 s32 BattleFx_EndCanvasLayer(void);
 
-void Unnamed_080d3c80(struct BattleEffectArgument *effect)
+/*
+ * Crystals fall one after another, eight frames apart, toward the affected
+ * side. A crystal that reaches the ground breaks into sixteen shards that
+ * fly apart, tumble through three cells each and slow down, while the
+ * screen shakes and the affected units are knocked. The variant picks how
+ * many crystals fall and how long the effect runs; the strongest also
+ * scrolls the camera for its first 104 frames.
+ */
+void BattleFx_RunFallingCrystals(struct BattleEffectArgument *effect)
 {
     DrawRectangle draw[2];
     void **cursor;
@@ -111,12 +113,12 @@ void Unnamed_080d3c80(struct BattleEffectArgument *effect)
                 point = &work->particles[i];
                 if (point->z == 1) {
                     for (j = 0; j != 16; j++) {
+                        cell = (j % 5) * 3 + (sparks[i * 16 + j].variant / 96) % 3;
                         spark = &sparks[i * 16 + j];
-                        cell = (j % 5) * 3 + (spark->variant / 96) % 3;
                         draw[j <= 2](canvas,
                             (u8 *)work + Crystal_ShardOffsets[cell] + 0x800,
-                            ((s16 *)&spark->x)[1] - (Crystal_ShardWidths[cell] >> 1),
-                            ((s16 *)&spark->y)[1] - (Crystal_ShardHeights[cell] >> 1),
+                            ((s16 *)&spark->x)[1] - Crystal_ShardWidths[cell] / 2,
+                            ((s16 *)&spark->y)[1] - Crystal_ShardHeights[cell] / 2,
                             Crystal_ShardWidths[cell], Crystal_ShardHeights[cell]);
                         EffectStep_AdvanceWithGravity2D(spark, 64, 0x2000);
                         spark->variant += spark->z;

@@ -1095,23 +1095,23 @@ VortexMotes_Counts:
 	.global Tornado_Shapes
 Tornado_Shapes:
 	.incbin "baserom.gba", 0x000ee1ca, 0x00000009
-	.global Data_080ee1d3
-Data_080ee1d3:
+	.global Crystal_ShardStarts
+Crystal_ShardStarts:
 	.incbin "baserom.gba", 0x000ee1d3, 0x00000021
 	.incbin "baserom.gba", 0x000ee1f4, 0x00000001
-	.global Data_080ee1f5
-Data_080ee1f5:
+	.global Crystal_Counts
+Crystal_Counts:
 	.incbin "baserom.gba", 0x000ee1f5, 0x00000005
 	.incbin "baserom.gba", 0x000ee1fa, 0x00000001
-	.global Data_080ee1fb
-Data_080ee1fb:
+	.global Crystal_ShardWidths
+Crystal_ShardWidths:
 	.incbin "baserom.gba", 0x000ee1fb, 0x0000000b
 	.incbin "baserom.gba", 0x000ee206, 0x00000001
-	.global Data_080ee207
-Data_080ee207:
+	.global Crystal_ShardHeights
+Crystal_ShardHeights:
 	.incbin "baserom.gba", 0x000ee207, 0x0000000d
-	.global Data_080ee214
-Data_080ee214:
+	.global Crystal_ShardOffsets
+Crystal_ShardOffsets:
 	.incbin "baserom.gba", 0x000ee214, 0x00000030
 	.global LightningPillar_Sparks
 LightningPillar_Sparks:

@@ -1432,8 +1432,6 @@ BattleEffect_RunPaletteParticles:
 	.thumb_func
 BattleEffect_RunEmberColumns:
 	.incbin "baserom.gba", 0x000c9d98, 0x00000628
-	.section .rom.000cac80, "ax"
-	.incbin "baserom.gba", 0x000cac80, 0x0000046c
 	.section .rom.000cbce8, "ax"
 	.incbin "baserom.gba", 0x000cbce8, 0x00000570
 	.section .rom.000cc2c8, "ax"
@@ -1673,7 +1671,21 @@ VortexMotes_Counts:
 	.global Tornado_Shapes
 Tornado_Shapes:
 	.incbin "baserom.gba", 0x000e51ca, 0x00000009
-	.incbin "baserom.gba", 0x000e51d3, 0x00000071
+	.global Crystal_ShardStarts
+Crystal_ShardStarts:
+	.incbin "baserom.gba", 0x000e51d3, 0x00000022
+	.global Crystal_Counts
+Crystal_Counts:
+	.incbin "baserom.gba", 0x000e51f5, 0x00000006
+	.global Crystal_ShardWidths
+Crystal_ShardWidths:
+	.incbin "baserom.gba", 0x000e51fb, 0x0000000c
+	.global Crystal_ShardHeights
+Crystal_ShardHeights:
+	.incbin "baserom.gba", 0x000e5207, 0x0000000d
+	.global Crystal_ShardOffsets
+Crystal_ShardOffsets:
+	.incbin "baserom.gba", 0x000e5214, 0x00000030
 	.global LightningPillar_Sparks
 LightningPillar_Sparks:
 	.incbin "baserom.gba", 0x000e5244, 0x0000000c

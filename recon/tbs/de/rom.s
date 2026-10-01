@@ -1237,12 +1237,6 @@ Func_080cc5d8:
 	.thumb_func
 BattleFx_RunMemberBurst:
 	.incbin "baserom.gba", 0x000d0954, 0x00000410
-	.section .rom.000d0df8, "ax"
-	.global BattleFx_RunFortyEightFrameEffect
-	.type BattleFx_RunFortyEightFrameEffect, %function
-	.thumb_func
-BattleFx_RunFortyEightFrameEffect:
-	.incbin "baserom.gba", 0x000d0df8, 0x000002a8
 	.section .rom.000d10b8, "ax"
 	.global BattleFx_RunMemberBeam
 	.type BattleFx_RunMemberBeam, %function
@@ -1255,8 +1249,6 @@ BattleFx_RunMemberBeam:
 	.thumb_func
 BattleFx_RunSevenMode:
 	.incbin "baserom.gba", 0x000d16e0, 0x00000614
-	.section .rom.000d23fc, "ax"
-	.incbin "baserom.gba", 0x000d23fc, 0x00001118
 	.section .rom.000d3514, "ax"
 	.global Unnamed_080d1714
 	.type Unnamed_080d1714, %function
@@ -1269,20 +1261,8 @@ Unnamed_080d1714:
 	.thumb_func
 BattleEffect_RunPaletteParticles:
 	.incbin "baserom.gba", 0x000d4264, 0x00000934
-	.section .rom.000d4b98, "ax"
-	.global BattleEffect_RunEmberColumns
-	.type BattleEffect_RunEmberColumns, %function
-	.thumb_func
-BattleEffect_RunEmberColumns:
-	.incbin "baserom.gba", 0x000d4b98, 0x00001354
-	.section .rom.000d5fa4, "ax"
-	.incbin "baserom.gba", 0x000d5fa4, 0x00000448
-	.section .rom.000d6404, "ax"
-	.global BattleFx_RunSparkGroups
-	.type BattleFx_RunSparkGroups, %function
-	.thumb_func
-BattleFx_RunSparkGroups:
-	.incbin "baserom.gba", 0x000d6404, 0x00000c54
+	.section .rom.000d6ae8, "ax"
+	.incbin "baserom.gba", 0x000d6ae8, 0x00000570
 	.section .rom.000d70c8, "ax"
 	.global BattleFx_RenderMode
 	.type BattleFx_RenderMode, %function
@@ -1366,6 +1346,10 @@ BattleFx_RunCastingImpact:
 	.section .rom.000e878c, "ax"
 	.incbin "baserom.gba", 0x000e878c, 0x000003b0
 	.section .rom.000e8cac, "ax"
+	.global BattleEffect_RunImpactBurst
+	.type BattleEffect_RunImpactBurst, %function
+	.thumb_func
+BattleEffect_RunImpactBurst:
 	.incbin "baserom.gba", 0x000e8cac, 0x000003d0
 	.section .rom.000e9138, "ax"
 	.incbin "baserom.gba", 0x000e9138, 0x000000cc
@@ -1465,13 +1449,79 @@ TwoResource_CellX:
 	.incbin "baserom.gba", 0x000efe7c, 0x0000000c
 	.global TwoResource_CellBiasY
 TwoResource_CellBiasY:
-	.incbin "baserom.gba", 0x000efe88, 0x00000084
+	.incbin "baserom.gba", 0x000efe88, 0x0000000e
+	.global EarthWall_CellSourceOffsets
+EarthWall_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000efe96, 0x00000006
+	.global EarthWall_CellWidths
+EarthWall_CellWidths:
+	.incbin "baserom.gba", 0x000efe9c, 0x00000003
+	.global EarthWall_CellHeights
+EarthWall_CellHeights:
+	.incbin "baserom.gba", 0x000efe9f, 0x00000003
+	.incbin "baserom.gba", 0x000efea2, 0x0000006a
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000eff0c, 0x0000000e
 	.global CounterReveal_PanelY
 CounterReveal_PanelY:
-	.incbin "baserom.gba", 0x000eff1a, 0x0000019a
+	.incbin "baserom.gba", 0x000eff1a, 0x0000000e
+	.global SpinningTriangle_Vertex
+SpinningTriangle_Vertex:
+	.incbin "baserom.gba", 0x000eff28, 0x0000000c
+	.global TriangleStrike_Vertex
+TriangleStrike_Vertex:
+	.incbin "baserom.gba", 0x000eff34, 0x0000000c
+	.global RingBolts_Points
+RingBolts_Points:
+	.incbin "baserom.gba", 0x000eff40, 0x00000018
+	.global SpinningStars_Radii
+SpinningStars_Radii:
+	.incbin "baserom.gba", 0x000eff58, 0x00000002
+	.incbin "baserom.gba", 0x000eff5a, 0x00000052
+	.global EmberColumns_Columns
+EmberColumns_Columns:
+	.incbin "baserom.gba", 0x000effac, 0x00000008
+	.global EmberColumns_Gravity
+EmberColumns_Gravity:
+	.incbin "baserom.gba", 0x000effb4, 0x00000010
+	.global VortexMotes_Counts
+VortexMotes_Counts:
+	.incbin "baserom.gba", 0x000effc4, 0x00000006
+	.global Tornado_Shapes
+Tornado_Shapes:
+	.incbin "baserom.gba", 0x000effca, 0x00000009
+	.global Crystal_ShardStarts
+Crystal_ShardStarts:
+	.incbin "baserom.gba", 0x000effd3, 0x00000022
+	.global Crystal_Counts
+Crystal_Counts:
+	.incbin "baserom.gba", 0x000efff5, 0x00000006
+	.global Crystal_ShardWidths
+Crystal_ShardWidths:
+	.incbin "baserom.gba", 0x000efffb, 0x0000000c
+	.global Crystal_ShardHeights
+Crystal_ShardHeights:
+	.incbin "baserom.gba", 0x000f0007, 0x0000000d
+	.global Crystal_ShardOffsets
+Crystal_ShardOffsets:
+	.incbin "baserom.gba", 0x000f0014, 0x00000030
+	.global LightningPillar_Sparks
+LightningPillar_Sparks:
+	.incbin "baserom.gba", 0x000f0044, 0x0000000c
+	.global LightningPillar_Columns
+LightningPillar_Columns:
+	.incbin "baserom.gba", 0x000f0050, 0x0000000e
+	.global LightningPillar_Counts
+LightningPillar_Counts:
+	.incbin "baserom.gba", 0x000f005e, 0x00000004
+	.global SparkGroups_Shapes
+SparkGroups_Shapes:
+	.incbin "baserom.gba", 0x000f0062, 0x00000032
+	.global SparkGroups_FlashCells
+SparkGroups_FlashCells:
+	.incbin "baserom.gba", 0x000f0094, 0x00000006
+	.incbin "baserom.gba", 0x000f009a, 0x0000001a
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000f00b4, 0x000006c0

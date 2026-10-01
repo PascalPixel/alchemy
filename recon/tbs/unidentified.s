@@ -1013,7 +1013,16 @@ TwoResource_CellBiasY:
 	.incbin "baserom.gba", 0x000ee088, 0x00000008
 	.global Data_080ee090
 Data_080ee090:
-	.incbin "baserom.gba", 0x000ee090, 0x00000012
+	.incbin "baserom.gba", 0x000ee090, 0x00000006
+	.global EarthWall_CellSourceOffsets
+EarthWall_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000ee096, 0x00000006
+	.global EarthWall_CellWidths
+EarthWall_CellWidths:
+	.incbin "baserom.gba", 0x000ee09c, 0x00000003
+	.global EarthWall_CellHeights
+EarthWall_CellHeights:
+	.incbin "baserom.gba", 0x000ee09f, 0x00000003
 	.global Data_080ee0a2
 Data_080ee0a2:
 	.incbin "baserom.gba", 0x000ee0a2, 0x00000008
@@ -1045,11 +1054,17 @@ CounterReveal_PanelX:
 	.global CounterReveal_PanelY
 CounterReveal_PanelY:
 	.incbin "baserom.gba", 0x000ee11a, 0x0000000e
-	.global Data_080ee128
-Data_080ee128:
-	.incbin "baserom.gba", 0x000ee128, 0x00000030
-	.global Data_080ee158
-Data_080ee158:
+	.global SpinningTriangle_Vertex
+SpinningTriangle_Vertex:
+	.incbin "baserom.gba", 0x000ee128, 0x0000000c
+	.global TriangleStrike_Vertex
+TriangleStrike_Vertex:
+	.incbin "baserom.gba", 0x000ee134, 0x0000000c
+	.global RingBolts_Points
+RingBolts_Points:
+	.incbin "baserom.gba", 0x000ee140, 0x00000018
+	.global SpinningStars_Radii
+SpinningStars_Radii:
 	.incbin "baserom.gba", 0x000ee158, 0x00000002
 	.global Data_080ee15a
 Data_080ee15a:
@@ -1074,44 +1089,50 @@ Data_080ee17a:
 	.global Data_080ee17e
 Data_080ee17e:
 	.incbin "baserom.gba", 0x000ee17e, 0x0000002e
-	.global Data_080ee1ac
-Data_080ee1ac:
+	.global EmberColumns_Columns
+EmberColumns_Columns:
 	.incbin "baserom.gba", 0x000ee1ac, 0x00000008
-	.global Data_080ee1b4
-Data_080ee1b4:
-	.incbin "baserom.gba", 0x000ee1b4, 0x0000001f
-	.global Data_080ee1d3
-Data_080ee1d3:
+	.global EmberColumns_Gravity
+EmberColumns_Gravity:
+	.incbin "baserom.gba", 0x000ee1b4, 0x00000010
+	.global VortexMotes_Counts
+VortexMotes_Counts:
+	.incbin "baserom.gba", 0x000ee1c4, 0x00000006
+	.global Tornado_Shapes
+Tornado_Shapes:
+	.incbin "baserom.gba", 0x000ee1ca, 0x00000009
+	.global Crystal_ShardStarts
+Crystal_ShardStarts:
 	.incbin "baserom.gba", 0x000ee1d3, 0x00000021
 	.incbin "baserom.gba", 0x000ee1f4, 0x00000001
-	.global Data_080ee1f5
-Data_080ee1f5:
+	.global Crystal_Counts
+Crystal_Counts:
 	.incbin "baserom.gba", 0x000ee1f5, 0x00000005
 	.incbin "baserom.gba", 0x000ee1fa, 0x00000001
-	.global Data_080ee1fb
-Data_080ee1fb:
+	.global Crystal_ShardWidths
+Crystal_ShardWidths:
 	.incbin "baserom.gba", 0x000ee1fb, 0x0000000b
 	.incbin "baserom.gba", 0x000ee206, 0x00000001
-	.global Data_080ee207
-Data_080ee207:
+	.global Crystal_ShardHeights
+Crystal_ShardHeights:
 	.incbin "baserom.gba", 0x000ee207, 0x0000000d
-	.global Data_080ee214
-Data_080ee214:
+	.global Crystal_ShardOffsets
+Crystal_ShardOffsets:
 	.incbin "baserom.gba", 0x000ee214, 0x00000030
-	.global Data_080ee244
-Data_080ee244:
+	.global LightningPillar_Sparks
+LightningPillar_Sparks:
 	.incbin "baserom.gba", 0x000ee244, 0x0000000c
-	.global Data_080ee250
-Data_080ee250:
+	.global LightningPillar_Columns
+LightningPillar_Columns:
 	.incbin "baserom.gba", 0x000ee250, 0x0000000e
-	.global Data_080ee25e
-Data_080ee25e:
+	.global LightningPillar_Counts
+LightningPillar_Counts:
 	.incbin "baserom.gba", 0x000ee25e, 0x00000004
-	.global Data_080ee262
-Data_080ee262:
+	.global SparkGroups_Shapes
+SparkGroups_Shapes:
 	.incbin "baserom.gba", 0x000ee262, 0x00000032
-	.global Data_080ee294
-Data_080ee294:
+	.global SparkGroups_FlashCells
+SparkGroups_FlashCells:
 	.incbin "baserom.gba", 0x000ee294, 0x00000006
 	.global Data_080ee29a
 Data_080ee29a:

@@ -1,131 +1,66 @@
+/* Draft, complete main:080e302c [080e302c,080e38b8), 2188 bytes, written
+   fresh from the listing in plain C; 159 instructions off. The frame (72
+   bytes), the set-up, the palette loop, the object and rock seeding, the
+   mound and wall-row blocks and the dust block match. Remaining difference:
+   1. The tile repack reads each strip width once in the byte loop
+      preheader and tests entry on a value read once per strip. Only an
+      unchanging (const) table lets the loop pass hoist those reads, since
+      the byte stores could alias; but with the tables const the wall-row
+      loops keep the width in a register across the blitter calls, where
+      the ROM reads it again after every call, as non-const tables do here.
+   2. The standing-wall block: the ROM reads the 48 back before each call
+      (its frame loop hoists it: second loop pass, 15 x life 29 = 435
+      against 439 instructions here) and so keeps the wall pointer in r6.
+   3. The rock block: the ROM keeps the scale address in r7, the rock count
+      in sl and -1 in r4, saved around the placement call, and uses the
+      slot index straight from r0; taking the index out of i moves i from
+      r7 to r6 in every loop, so i has to lose its register some other way. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
+#include "RESOURCE.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "EFFECT_STEP.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "B5_CONTEXT.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
 
-/*
- * Battle-presentation full-screen weather scene at 0x080e302c.  The single
- * argument is the effect state pointer; like every other member of the
- * 0x03001eec "battle work" subsystem family it is parked at work + 0x7828
- * (see recon/tbs/en/main/080e2538.c, 080e7404.c and 080e01e4.c for the
- * shared prologue, the heap_cache cursor pair and the callee evidence this
- * owner reuses).
- *
- * The state's s32 at 0x18 selects one of three intensity variants and drives
- * BG2PA, the horizontal bias pair, the sprite row picked out of
- * Data_080eeda6, and the spark respawn spread near the end.
- *
- * Setup: decompress resource 0x7b into 0x02010000, DMA palette resource 0x7c
- * into 0x05000000 through the IWRAM copy routine at 0x03001388, darken all
- * 63 foreground palette entries by 8 per channel, then repack the decompressed
- * tiles into work as four runs (a 9-row strip table driven by Data_080eed90,
- * a 32 x 3 block run, a flat 0x3f0-byte run, and a 3-entry width x height run
- * driven by Data_080eeda0 / Data_080eeda3).  Decompress resource 0x73 over
- * heap_cache[2], create eleven kind-0x186 objects into work + 0x77d8,
- * register the two blit routines 0x2e and 0x2f and keep their entry points,
- * program BLDCNT/BLDALPHA and BG3CNT, seed eleven sparks at work + 0x7198 and
- * 256 drops at 0x02010000, then run exactly 192 frames.
- *
- * Each frame cues audio at frames 0, 40, 96 and 120, redraws the two curtain
- * halves while fp <= 0x51, scrolls a four-row band in (fp - 0xc <= 0x4b) and
- * back out again (fp - 0xa0 <= 0x17), draws the two foreground panels while
- * fp - 0x58 <= 0x47, steps and draws the drops once past fp 0x57, spawns and
- * steps the sparks through Object_ApplyProjectedPlacementFar, pokes every real party member,
- * applies the camera shake, ticks the object group and waits one frame.
- *
- * Neither `_call_via_r3` nor `_call_via_r4`, `_call_via_r6`,
- * `_call_via_r8` and `_call_via_sl` is a real function symbol: they are
- * entries 3, 4, 6, 8 and 10 of the `_call_via_rN` trampoline bundle at
- * recon/tbs/raw/080072e4.s, four bytes per slot from base 0x080072e4, i.e.
- * indirect calls through whatever pointer the compiler kept in that slot.
- * Here they are exactly three distinct pointers: the IWRAM copy routine at
- * 0x03001388, and the two blit routines BattleEffect_LoadWork publishes into
- * heap_cache[7] / heap_cache[8] (0x03001f08 / 0x03001f0c, reached in the
- * reference through the 0x03001e50 base with +184 / +188, so they are spelled
- * that way here).  Modelling them as direct calls is what cost the previous
- * draft its coverage: every call site lost the pointer load that feeds it.
- *
- * The resource ids 0x73, 0x7b and 0x7c reach their calls through the literal
- * pool rather than `movs`, which the project's external `Value_xxxxxxxx`
- * spelling reproduces; the original source form of those three ids is not
- * recovered.  The Data_ tables are deliberately not `const`: the reference
- * reloads every one of them after an intervening call, which a read-only
- * qualifier would let the compiler hoist away.
- *
- * Still uncertain: the roles of the spark and drop fields beyond the ones
- * this owner reads, the meaning of the 0x7780 / 0x7784 / 0x77a8 / 0x7824
- * words, and whether the six-entry Data_080eedac run really addresses sparks
- * 6..11 of an eleven-entry table or a separate twelve-entry one.  The drop
- * table is seeded with 0x100 entries but the per-frame step and draw only
- * walks the first 0x40 of them; the reference is unambiguous about both
- * counts, so the remaining 0xc0 entries are either used by another owner in
- * this family or simply over-allocated here.
- *
- * Residual: the emitted extent now equals the owner's 2188 bytes and the
- * block topology follows the reference, but register assignment and spill
- * slot numbering still differ throughout -- the reference keeps the frame
- * counter in fp and orders its frame slots 16 row_y / 20 col_x / 24 bias /
- * 28 sprite_src / 32 blit_a / 36 blit_b, where this draft lands on r9 and a
- * different slot order.  Five small constants (0xcc, 0xaa, 0x3f46, 0x1010,
- * 0x785) are materialised by the reference as 32-bit pool words and by this
- * draft as 16-bit ones; spelling them through `Value_xxxxxxxx` symbols made
- * the whole function worse and was reverted.
- */
+/* A scene object: two bits of its tenth byte pick its draw variant. */
+typedef struct {
+    u8 reserved_00[9];
+    u8 flags09_0 : 2;
+    u8 variant : 2;
+    u8 flags09_4 : 4;
+    u8 reserved_0a[28];
+    u8 enabled;
+} BattleEffectObject;
 
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
+typedef struct Scale {
+    s32 x;
+    s32 y;
+} Scale;
 
-/* The state pointer this owner parks in, and reloads from, work + 0x7828. */
-#define STATE (*(void **)(work + 0x7828))
+extern u8 gBattleFxWork[];
+extern u8 gMapCellBuffer[];
+extern DrawRectangle gWorkSlot[];
 
-typedef void (*BlitFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 w, s32 h);
-typedef void (*CopyFn)(void *dest, const void *src, s32 count);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_EndCanvasLayer(void);
+BattleEffectObject *GetBattleEffectObject(s32 kind);
+void AnimationObjects_SelectAnimationFar(BattleEffectObject *object, s32 animation);
+void Object_ApplyProjectedPlacementFar(BattleEffectObject *object, s32 *position, Scale *scale, s32 mode);
+void ResourceObject_ReleaseFar(BattleEffectObject *object);
+void Audio_PlayCue(s32 cue);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void Camera_ApplyShake(s32 x, s32 y);
+void ObjectGroup_TickMemberTimers(void);
 
-/* Two adjacent s32 words copied as a unit out of Data_080edab0. */
-struct Pair {
-    s32 field_0000;
-    s32 field_0004;
-};
-
-/* Four s32 words handed to Object_ApplyProjectedPlacementFar as the spawn transform. */
-struct Transform {
-    s32 field_0000;
-    s32 field_0004;
-    s32 field_0008;
-    s32 field_000c;
-};
-
-/* Eleven entries at work + 0x7198. */
-struct Spark {
-    s32 pos;
-    s32 height;
-    s32 fall;
-    s32 phase;
-    s32 rate;
-    s32 unk_14;
-    s32 timer;
-};
-
-/* 0x100 entries at 0x02010000; pos/height are 16.16. */
-struct Drop {
-    s32 pos;
-    s32 height;
-    s32 unk_08;
-    s32 unk_0c;
-    s32 rate;
-    s32 unk_14;
-    s32 timer;
-};
-
-extern u8 Value_00000073;
-extern u8 Value_0000007b;
-extern u8 Value_0000007c;
-
-/* heap_cache[7] and heap_cache[8] reached through the 0x03001e50 base. */
-extern void *gWorkSlot[];
-extern void *gBattleFxWork[];
-
-extern struct Pair Data_080edab0;
 extern u16 ParticleStreams_CellOffsets[];
+extern const Scale Data_080edab0;
 extern u16 Data_080eed7e[];
 extern u8 Data_080eed90[];
 extern u16 Data_080eed9a[];
@@ -134,549 +69,300 @@ extern u8 Data_080eeda3[];
 extern s8 Data_080eeda6[];
 extern u8 Data_080eedac[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 id);
-void *ResourceObject_CreateFar(s32 kind);
-void AnimationObjects_SelectAnimationFar(void *object, s32 index);
-void Object_ApplyProjectedPlacementFar(
-    void *object, struct Transform *transform, struct Pair *pair, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
-u32 Random16(void);
-s32 __umodsi3(s32 value, s32 range);
-s32 __divsi3(s32 value, s32 shift);
-s32 __modsi3(s32 value, s32 divisor);
-void Audio_PlayCue(s32 id);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
-void BattleMotion_ApplyVariantMotionFar(s32 member, s32 kind);
-void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 index, s32 e);
-void Camera_ApplyShake(s32 x, s32 y);
-void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 id);
-void BattleFx_EndCanvasLayer(void);
+/* The eleven scene objects the effect work keeps. */
+#define OBJECTS ((BattleEffectObject **)((u8 *)work + 0x77d8))
 
-void Unnamed_080e302c(void *object)
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
+
+/* Battle effect: an earth wall. Two mirrored halves of a mound rise, a
+   column of wall rows scrolls up between them and later back down, the full
+   wall stands for seventy-two frames while dust falls in front of it, and
+   eleven rocks drop along it one after another, each respawning until the
+   wall goes. Every affected unit reacts while the wall stands. */
+void Unnamed_080e302c(struct BattleEffectArgument *effect)
 {
-    void **heap;
+    void **heap_cache;
     void **cursor;
-    u8 *work;
-    void *draw_target;
-    void *sprite_src;
-    BlitFn blit_a;
-    BlitFn blit_b;
-    struct Spark *sparks;
-    struct Spark *spark;
-    struct Drop *drops;
-    struct Drop *drop;
-    const u8 *strip;
-    const u8 *w_tbl;
-    const u8 *h_tbl;
-    const u8 *tbl_end;
-    const u8 *src;
-    u8 *dst;
-    u16 *pal;
-    u16 *reg;
-    struct Pair pair;
-    struct Transform transform;
+    struct BattleEffectWork *work;
+    void *canvas;
+    DrawRectangle draw[2];
+    void *sheet;
     s32 bias;
-    s32 row_y;
-    s32 col_x;
-    s32 off;
-    s32 slot;
-    s32 cnt;
-    s32 num;
+    s32 offset;
+    Scale scale;
+    s32 position[4];
+    u8 *source;
+    u16 *palette;
+    s32 written;
+    s32 offset_in_work;
+    s32 frame;
     s32 i;
     s32 j;
-    s32 fp;
-    s32 idx;
-    s32 spread;
-    s32 timer;
-    s32 y;
-    s32 w;
-    s32 h;
-    s32 pos;
-    s32 mode;
-    s32 flags;
-    s32 red;
-    s32 green;
-    s32 blue;
-    u16 entry;
-    u32 packed;
-    void *node;
+    s32 k;
 
-    heap = gBattleFxWork;
-    cursor = heap;
-    work = (u8 *)*cursor++;
-    draw_target = *cursor;
-    sprite_src = heap[2];
-    STATE = object;
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-
-    mode = M2C_FIELD(STATE, s32 *, 0x18);
-    if (mode == 0) {
-        *(u16 *)0x04000020 = 0xCC;
-    } else if (mode == 1) {
-        *(u16 *)0x04000020 = 0xAA;
-    }
-
-    if (M2C_FIELD(STATE, s32 *, 4) == 1) {
+    if (work->effect->variant == 0)
+        *(volatile u16 *)0x04000020 = 204;
+    else if (work->effect->variant == 1)
+        *(volatile u16 *)0x04000020 = 170;
+    if (work->effect->side == 1) {
         bias = 8;
-        mode = M2C_FIELD(STATE, s32 *, 0x18);
-        col_x = 0x28;
-        if (mode != 0) {
-            col_x = 0x24;
-            if (mode != 1) {
-                col_x = 0x28;
-            }
-        }
+        if (work->effect->variant == 0)
+            offset = 40;
+        else if (work->effect->variant == 1)
+            offset = 36;
+        else
+            offset = 40;
     } else {
-        bias = -0x10;
-        col_x = -0xC;
+        bias = -16;
+        offset = -12;
     }
+    *(volatile u32 *)0x04000028 =
+        Data_080eeda6[work->effect->side * 3 + work->effect->variant] << 8;
+    Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, gMapCellBuffer, 1, 0);
+    Iwram_CopyWords((void *)0x05000000,
+        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
+    palette = (u16 *)0x05000002;
+    for (i = 0; i != 63; i++) {
+        s32 color = *palette;
+        s32 blue = ((u16)color >> 10) & 31;
+        s32 green = ((u16)color >> 5) & 31;
+        s32 red = 31;
 
-    *(s32 *)0x04000028 =
-        Data_080eeda6[M2C_FIELD(STATE, s32 *, 0x18)
-            + (M2C_FIELD(STATE, s32 *, 4) * 3)]
-        << 8;
+        red &= color;
+        blue -= 8;
+        green -= 8;
+        red -= 8;
 
-    Resource_LoadAndDecompress((s32)&Value_0000007b, (void *)0x02010000, 1, 0);
-    ((CopyFn)0x03001388)(
-        (void *)0x05000000, Resource_GetTableEntry((s32)&Value_0000007c), 0x80);
-
-    /* Darken every foreground palette entry by eight per channel. */
-    pal = (u16 *)0x05000002;
-    i = 0;
-    do {
-        entry = *pal;
-        packed = (u32)entry << 16;
-        red = (s32)((packed >> 0x1A) & 0x1F) - 8;
-        green = (s32)((packed >> 0x15) & 0x1F) - 8;
-        blue = (s32)(0x1F & entry) - 8;
-        if (red < 0) {
-            red = 0;
-        }
-        if (green < 0) {
-            green = 0;
-        }
-        if (blue < 0) {
+        if (blue < 0)
             blue = 0;
+        if (green < 0)
+            green = 0;
+        if (red < 0)
+            red = 0;
+        *palette++ = (blue << 10) | (green << 5) | red;
+    }
+    source = gMapCellBuffer;
+    written = 0;
+    for (j = 0; j != 9; j++) {
+        for (i = 0; i != 32; i++) {
+            for (k = 0; k != Data_080eed90[j]; k++)
+                ((u8 *)work)[written++] = source[k];
         }
-        i++;
-        *pal = (u16)((red << 0xA) | (green << 5) | blue);
-        pal++;
-    } while (i != 0x3F);
+        source += Data_080eed90[j];
+    }
+    for (j = 0; j != 32; j++) {
+        for (i = 0; i != 3; i++) {
+            for (k = 0; k != 48; k++)
+                ((u8 *)work)[written++] = source[k];
+        }
+        source += 48;
+    }
+    for (i = 0; i != 1008; i++)
+        ((u8 *)work)[written++] = *source++;
+    for (j = 0; j != 3; j++) {
+        for (k = 0; k != Data_080eeda3[j] * Data_080eeda0[j]; k++)
+            ((u8 *)work)[written++] = *source++;
+    }
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    offset_in_work = 0x77d8;
+    for (i = 0; i != 11; i++) {
+        BattleEffectObject *object = GetBattleEffectObject(390);
 
-    /* Repack the decompressed tiles into work as four consecutive runs. */
-    strip = Data_080eed90;
-    src = (const u8 *)0x02010000;
-    off = 0;
-    i = 0;
-    do {
-        w = *strip;
-        j = 0;
-        do {
-            cnt = 0;
-            if (w != 0) {
-                const u8 *run;
+        *(BattleEffectObject **)((u8 *)work + offset_in_work) = object;
+        if (object != 0) {
+            object->enabled = 0;
+            AnimationObjects_SelectAnimationFar(object, i / 4);
+            (*(BattleEffectObject **)((u8 *)work + offset_in_work))->variant = 1;
+        }
+        offset_in_work += 4;
+    }
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw[0] = gWorkSlot[46];
+    BattleEffect_LoadWork(47, 7, 7, 7, 2);
+    draw[1] = gWorkSlot[47];
+    *(volatile u16 *)0x04000050 = 0x3f46;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    for (i = 0; i != 11; i++) {
+        struct EffectStep *rock = &work->particles[10 + i];
 
-                dst = work + off;
-                run = src;
-                do {
-                    *dst = *run;
-                    cnt++;
-                    run++;
-                    dst++;
-                    off++;
-                } while (cnt != Data_080eed90[i]);
+        rock->x = (Random16() & 15) + 88;
+        rock->y = 128;
+        rock->z = (Random16() & 15) + 2;
+        rock->velocity_x = i;
+        rock->velocity_y = 1;
+        rock->velocity_z = 0x8000;
+        rock->variant = 44 - i * 4;
+    }
+    for (i = 0; i != 6; i++)
+        work->particles[16 + i].x = Data_080eedac[i];
+    for (i = 0; i != 256; i++) {
+        struct EffectStep *dust = &((struct EffectStep *)Ram_MapCellBuffer)[i];
+
+        dust->x = ((Random16() & 63) + bias + 32) << 16;
+        dust->y = ((Random16() & 7) + 96) << 16;
+        dust->velocity_y = ((Random16() & 63) + 32) << 13;
+        dust->variant = Random16() & 31;
+    }
+    *(volatile u16 *)0x0400000c = 0x785;
+    work->shake_frames = 250;
+    for (frame = 0; frame != 192; frame++) {
+        if (frame == 0)
+            Audio_PlayCue(212);
+        if (frame == 40)
+            Audio_PlayCue(141);
+        if (frame == 96)
+            Audio_PlayCue(145);
+        if (frame == 120)
+            BattleEventRuntime_BeginPhaseFar(134);
+        if (frame <= 81) {
+            s32 cell = frame / 4;
+
+            if (cell > 2)
+                cell = (cell & 1) + 1;
+            draw[0](canvas, (u8 *)work + Data_080eed9a[cell], bias - Data_080eeda0[cell] + 64,
+                116 - Data_080eeda3[cell], Data_080eeda0[cell], Data_080eeda3[cell]);
+            draw[1](canvas, (u8 *)work + Data_080eed9a[cell], bias + 64,
+                116 - Data_080eeda3[cell], Data_080eeda0[cell], Data_080eeda3[cell]);
+        }
+        if (frame >= 12 && frame <= 87) {
+            s32 row = (frame - 64) / 3;
+            s32 y;
+
+            if (row < 0)
+                row = 0;
+            if (row > 7)
+                row = 7;
+            for (i = 0, y = -12; i != 4; i++, y += 32) {
+                draw[0](canvas, (u8 *)work + Data_080eed7e[row], bias - Data_080eed90[row] + 64,
+                    y, Data_080eed90[row], 32);
+                draw[1](canvas, (u8 *)work + Data_080eed7e[row], bias + 64,
+                    y, Data_080eed90[row], 32);
             }
-            j++;
-        } while (j != 0x20);
-        i++;
-        src += *strip;
-        strip++;
-    } while (i != 9);
-
-    i = 0;
-    do {
-        const u8 *end;
-
-        end = src + 0x30;
-        j = 0;
-        do {
-            const u8 *run;
-
-            dst = work + off;
-            run = src;
-            do {
-                *dst = *run;
-                run++;
-                off++;
-                dst++;
-            } while (run != end);
-            j++;
-        } while (j != 3);
-        i++;
-        src += 0x30;
-    } while (i != 0x20);
-
-    cnt = 0;
-    dst = work + off;
-    do {
-        *dst = *src;
-        cnt++;
-        src++;
-        dst++;
-        off++;
-    } while (cnt != 0x3F0);
-
-    w_tbl = Data_080eeda0;
-    h_tbl = Data_080eeda3;
-    tbl_end = w_tbl + 3;
-    do {
-        cnt = 0;
-        num = *h_tbl * *w_tbl;
-        if (num != 0) {
-            dst = work + off;
-            do {
-                *dst = *src;
-                cnt++;
-                dst++;
-                src++;
-                off++;
-            } while (cnt != num);
         }
-        w_tbl++;
-        h_tbl++;
-    } while (w_tbl != tbl_end);
+        if (frame >= 160 && frame <= 183) {
+            s32 row = 7 - (frame - 160) / 3;
+            s32 y;
 
-    Resource_LoadAndDecompress((s32)&Value_00000073, sprite_src, 0, 0);
-
-    /* Eleven scene objects, kept in work + 0x77d8. */
-    slot = 0x77D8;
-    i = 0;
-    do {
-        node = ResourceObject_CreateFar(0x186);
-        M2C_FIELD(work, void **, slot) = node;
-        if (node != NULL) {
-            M2C_FIELD(node, u8 *, 0x26) = 0;
-            idx = i;
-            if (i < 0) {
-                idx = i + 3;
+            if (row < 0)
+                row = 0;
+            if (row > 7)
+                row = 7;
+            for (i = 0, y = -12; i != 4; i++, y += 32) {
+                draw[0](canvas, (u8 *)work + Data_080eed7e[row], bias - Data_080eed90[row] + 64,
+                    y, Data_080eed90[row], 32);
+                draw[1](canvas, (u8 *)work + Data_080eed7e[row], bias + 64,
+                    y, Data_080eed90[row], 32);
             }
-            AnimationObjects_SelectAnimationFar(node, idx >> 2);
-            node = M2C_FIELD(work, void **, slot);
-            flags = M2C_FIELD(node, u8 *, 9);
-            M2C_FIELD(node, u8 *, 9) = (flags & ~0xC) | 4;
         }
-        i++;
-        slot += 4;
-    } while (i != 0xB);
+        if (frame >= 88 && frame <= 159) {
+            u8 *wall = (u8 *)work + 0x13c0;
 
-    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
-    blit_a = (BlitFn)gWorkSlot[46];
-    BattleEffect_LoadWork(0x2F, 7, 7, 7, 2);
-
-    reg = (u16 *)0x04000050;
-    *reg++ = 0x3F46;
-    *reg = 0x1010;
-
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    blit_b = (BlitFn)gWorkSlot[47];
-    M2C_FIELD(work, s32 *, 0x7784) = 0x4B;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
-
-    sparks = (struct Spark *)(work + 0x7198);
-    spark = sparks;
-    i = 0;
-    do {
-        pos = (s32)(Random16() & 0xF) + 0x58;
-        spark->height = 0x80;
-        spark->pos = pos;
-        y = (s32)(Random16() & 0xF);
-        spark->rate = 1;
-        spark->unk_14 = 0x8000;
-        spark->phase = i;
-        timer = 0x2C - (i * 4);
-        i++;
-        spark->fall = y + 2;
-        spark->timer = timer;
-        spark++;
-    } while (i != 0xB);
-
-    spark = (struct Spark *)(work + 0x7240);
-    i = 0;
-    do {
-        spark->pos = Data_080eedac[i];
-        i++;
-        spark++;
-    } while (i != 6);
-
-    drops = (struct Drop *)0x02010000;
-    drop = drops;
-    i = 0;
-    do {
-        drop->pos = (s32)(((Random16() & 0x3F) + bias + 0x20) << 0x10);
-        drop->height = (s32)(((7 & Random16()) + 0x60) << 0x10);
-        drop->rate = (s32)(((Random16() & 0x3F) + 0x20) << 0xD);
-        i++;
-        drop->timer = (s32)(0x1F & Random16());
-        drop++;
-    } while (i != 0x100);
-
-    *(u16 *)0x0400000c = 0x785;
-    M2C_FIELD(work, s32 *, 0x77A8) = 0xFA;
-
-    row_y = bias + 0x40;
-    fp = 0;
-    do {
-        if (fp == 0) {
-            Audio_PlayCue(0xD4);
+            draw[0](canvas, wall, bias + 16, 0, 48, 96);
+            draw[1](canvas, wall, bias + 64, 0, 48, 96);
+            wall = (u8 *)work + 0x25c0;
+            draw[0](canvas, wall, bias + 16, 96, 48, 21);
+            draw[1](canvas, wall, bias + 64, 96, 48, 21);
         }
-        if (fp == 0x28) {
-            Audio_PlayCue(0x8D);
-        }
-        if (fp == 0x60) {
-            Audio_PlayCue(0x91);
-        }
-        if (fp == 0x78) {
-            BattleEventRuntime_BeginPhaseFar(0x86);
-        }
+        if (frame > 87) {
+            for (i = 0; i != 64; i++) {
+                struct EffectStep *dust = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
-        /* The two curtain halves, until they have finished parting. */
-        if (fp <= 0x51) {
-            idx = fp;
-            if (fp < 0) {
-                idx = fp + 3;
+                if (dust->variant == 0) {
+                    s32 size = (i & 3) + 5;
+
+                    draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                        HI(dust->x) - size / 2, HI(dust->y) - size, size, size * 2);
+                    dust->y -= dust->velocity_y;
+                    if (dust->y < 0 && frame <= 159)
+                        dust->y = 0x600000;
+                } else {
+                    dust->variant--;
+                }
             }
-            idx >>= 2;
-            if (idx > 2) {
-                idx = (1 & idx) + 1;
-            }
-            w = Data_080eeda0[idx];
-            h = Data_080eeda3[idx];
-            blit_a(draw_target, work + Data_080eed9a[idx],
-                (bias - w) + 0x40, 0x74 - h, w, h);
-            h = Data_080eeda3[idx];
-            blit_b(draw_target, work + Data_080eed9a[idx], row_y, 0x74 - h,
-                Data_080eeda0[idx], h);
         }
+        if (frame > 4) {
+            s32 rocks = 6;
 
-        /* Four band rows scrolling in, then the same rows scrolling out. */
-        if ((u32)(fp - 0xC) <= 0x4BU) {
-            idx = __divsi3(fp - 0x40, 3);
-            if (idx < 0) {
-                idx = 0;
-            }
-            if (idx > 7) {
-                idx = 7;
-            }
-            j = 0;
-            y = -0xC;
-            do {
-                w = Data_080eed90[idx];
-                blit_a(draw_target, work + Data_080eed7e[idx],
-                    (bias - w) + 0x40, y, w, 0x20);
-                blit_b(draw_target, work + Data_080eed7e[idx], row_y, y,
-                    Data_080eed90[idx], 0x20);
-                j++;
-                y += 0x20;
-            } while (j != 4);
-        }
+            if (frame > 71)
+                rocks = 11;
+            for (k = 0; k != rocks; k++) {
+                struct EffectStep *rock = &work->particles[10 + k];
 
-        if ((u32)(fp - 0xA0) <= 0x17U) {
-            idx = 7 - __divsi3(fp - 0xA0, 3);
-            if (idx < 0) {
-                idx = 0;
-            }
-            if (idx > 7) {
-                idx = 7;
-            }
-            j = 0;
-            y = -0xC;
-            do {
-                w = Data_080eed90[idx];
-                blit_a(draw_target, work + Data_080eed7e[idx],
-                    (bias - w) + 0x40, y, w, 0x20);
-                blit_b(draw_target, work + Data_080eed7e[idx], row_y, y,
-                    Data_080eed90[idx], 0x20);
-                j++;
-                y += 0x20;
-            } while (j != 4);
-        }
-
-        /* The two foreground panels. */
-        if ((u32)(fp - 0x58) <= 0x47U) {
-            void *panel;
-
-            panel = work + 0x13C0;
-            blit_a(draw_target, panel, bias + 0x10, 0, 0x30, 0x60);
-            blit_b(draw_target, panel, row_y, 0, 0x30, 0x60);
-            panel = work + 0x25C0;
-            blit_a(draw_target, panel, bias + 0x10, 0x60, 0x30, 0x15);
-            blit_b(draw_target, panel, row_y, 0x60, 0x30, 0x15);
-        }
-
-        /* Step and draw the drops. */
-        if (fp > 0x57) {
-            drop = drops;
-            i = 0;
-            do {
-                timer = drop->timer;
-                if (timer == 0) {
-                    u32 size;
-
-                    size = (3 & i) + 5;
-                    h = size * 2;
-                    blit_a(draw_target,
-                        (u8 *)sprite_src
-                            + *(u16 *)((u8 *)ParticleStreams_CellOffsets + (h - 2)),
-                        M2C_FIELD(drop, s16 *, 2) - (size >> 1),
-                        M2C_FIELD(drop, s16 *, 6) - size, size, h);
-                    pos = drop->height - drop->rate;
-                    drop->height = pos;
-                    if (pos < 0 && fp <= 0x9F) {
-                        drop->height = 0x600000;
+                if (rock->variant == 0) {
+                    scale = Data_080edab0;
+                    if (frame > 71) {
+                        scale.x = (k << 12) + 0x8000;
+                        scale.x += work->effect->variant << 14;
+                    } else {
+                        scale.x = 0x8000;
+                    }
+                    scale.y = scale.x;
+                    position[3] = 0;
+                    position[0] = (rock->x + offset * 2) << 16;
+                    position[2] = 0x2000000;
+                    position[1] = 0x2000000 - (rock->y << 16);
+                    i = (frame / 2 + k) % 11;
+                    if (i != -1)
+                        Object_ApplyProjectedPlacementFar(OBJECTS[i], position, &scale, 0);
+                    rock->y -= rock->z;
+                    rock->velocity_x += rock->velocity_y;
+                    if (rock->velocity_x > 12)
+                        rock->velocity_x -= 12;
+                    if (rock->y < 0) {
+                        if (frame > 159) {
+                            rock->variant = -1;
+                        } else {
+                            if (frame > 87) {
+                                rock->z = (Random16() & 7) + 8;
+                                if (work->effect->variant == 0)
+                                    rock->x = Random16() % 96 + 42;
+                                else if (work->effect->variant == 1)
+                                    rock->x = Random16() % 112 + 34;
+                                else
+                                    rock->x = Random16() % 160 + 10;
+                            }
+                            rock->y = 128;
+                            rock->variant = 8;
+                        }
                     }
                 } else {
-                    drop->timer = timer - 1;
+                    rock->variant--;
                 }
-                i++;
-                drop++;
-            } while (i != 0x40);
-        }
-
-        /* Spawn and step the sparks. */
-        if (fp > 4) {
-            num = 6;
-            if (fp > 0x47) {
-                num = 0xB;
-            }
-            i = 0;
-            if (num != 0) {
-                spark = sparks;
-                do {
-                    timer = spark->timer;
-                    if (timer != 0) {
-                        spark->timer = timer - 1;
-                    } else {
-                        s32 base;
-
-                        pair = Data_080edab0;
-                        if (fp > 0x47) {
-                            base = (i << 0xC) + 0x8000;
-                            /*
-                             * The reference really does store the spread
-                             * twice here: once before the state term is
-                             * folded in and once after, so the first store
-                             * is kept even though it is dead.
-                             */
-                            pair.field_0000 = base;
-                            base =
-                                (M2C_FIELD(STATE, s32 *, 0x18) << 0xE) + base;
-                        } else {
-                            base = 0x8000;
-                        }
-                        pair.field_0000 = base;
-                        pair.field_0004 = pair.field_0000;
-
-                        transform.field_000c = 0;
-                        transform.field_0000 =
-                            (s32)((spark->pos + (col_x * 2)) << 0x10);
-                        transform.field_0004 =
-                            (s32)(0x02000000 - (spark->height << 0x10));
-                        transform.field_0008 = 0x02000000;
-
-                        idx = __modsi3((fp / 2) + i, 0xB);
-                        timer = -1;
-                        if (idx != -1) {
-                            Object_ApplyProjectedPlacementFar(
-                                M2C_FIELD(work, void **, (idx * 4) + 0x77D8),
-                                &transform, &pair, 0);
-                        }
-
-                        spark->height -= spark->fall;
-                        pos = spark->phase + spark->rate;
-                        spark->phase = pos;
-                        if (pos > 0xC) {
-                            spark->phase = pos - 0xC;
-                        }
-                        if (spark->height < 0) {
-                            if (fp > 0x9F) {
-                                spark->timer = timer;
-                            } else {
-                                if (fp > 0x57) {
-                                    spark->fall =
-                                        (s32)((7 & Random16()) + 8);
-                                    spread = M2C_FIELD(STATE, s32 *, 0x18);
-                                    if (spread == 0) {
-                                        pos = __umodsi3(
-                                            Random16(), 0x60) + 0x2A;
-                                    } else if (spread == 1) {
-                                        pos = __umodsi3(
-                                            Random16(), 0x70) + 0x22;
-                                    } else {
-                                        pos = __umodsi3(
-                                            Random16(), 0xA0) + 0xA;
-                                    }
-                                    spark->pos = pos;
-                                }
-                                spark->height = 0x80;
-                                spark->timer = 8;
-                            }
-                        }
-                    }
-                    i++;
-                    spark++;
-                } while (i != num);
             }
         }
-
-        /* Poke every real party member the state carries. */
-        if (fp <= 0x9E) {
-            j = 0;
-            if (M2C_FIELD(STATE, s32 *, 0x14) != 0) {
-                off = 0x24;
-                do {
-                    if (fp > 0x55) {
-                        if (__modsi3(fp, 0xC) == 0) {
-                            ObjectGroup_UpdateMembers(
-                                M2C_FIELD(STATE, s16 *, off), 7, 5, j, 6);
-                        }
-                        if (!(fp & 3)) {
-                            BattleMotion_ApplyVariantMotionFar(M2C_FIELD(STATE, s16 *, off), 5);
-                        }
-                    }
-                    j++;
-                    off += 2;
-                } while (j != M2C_FIELD(STATE, s32 *, 0x14));
+        if (frame <= 158) {
+            for (i = 0; i != work->effect->count; i++) {
+                if (frame > 85) {
+                    if (frame % 12 == 0)
+                        ObjectGroup_UpdateMembers(work->effect->actors[i], 7, 5, i, 6);
+                    if ((frame & 3) == 0)
+                        BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 5);
+                }
             }
         }
-
-        if ((u32)(fp - 0x5A) > 0x46U) {
+        if (frame < 90 || frame > 160)
             Camera_ApplyShake(2, 2);
-        } else {
+        else
             Camera_ApplyShake(8, 8);
-        }
-
         ObjectGroup_TickMemberTimers();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
-        fp++;
-    } while (fp != 0xC0);
-
-    Scheduler_RemoveCallback((void *)0x080CD261);
-    Runtime_ReleaseHeapBlock(0x2F);
-    Runtime_ReleaseHeapBlock(0x2E);
-
-    cursor = (void **)(work + 0x77D8);
-    i = 0;
-    do {
-        node = *cursor++;
-        i++;
-        ResourceObject_ReleaseFar(node);
-    } while (i != 0xB);
-
+    }
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    for (i = 0; i != 11; i++)
+        ResourceObject_ReleaseFar(OBJECTS[i]);
     BattleFx_EndCanvasLayer();
 }

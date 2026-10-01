@@ -10899,7 +10899,7 @@ msgctxt "MsgPsynergyChooseTarget"
 msgid "02722"
 msgstr "Auf wen anwenden?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyNeedMorePp"
 msgid "02723"
 msgstr "Du brauchst mehr PP."
 
@@ -11063,7 +11063,7 @@ msgctxt "MsgCurrentDjinn"
 msgid "02763"
 msgstr "Aktuelle Dschinns"
 
-msgctxt "message"
+msgctxt "MsgPanelHpMaxLabel"
 msgid "02764"
 msgstr "KP/Max"
 
@@ -11083,7 +11083,7 @@ msgctxt "MsgPanelDefenseLabel"
 msgid "02768"
 msgstr "Vert."
 
-msgctxt "message"
+msgctxt "MsgPanelStatusLabel"
 msgid "02769"
 msgstr "Status"
 

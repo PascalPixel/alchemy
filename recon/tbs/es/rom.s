@@ -284,34 +284,6 @@ UiWork_AnimateSpriteSlots:
 	.thumb_func
 MenuSelection_DrawFrame:
 	.incbin "baserom.gba", 0x0001996c, 0x00000560
-	.section .rom.0001aa48, "ax"
-	.global Menu_ScrollSelectionList
-	.type Menu_ScrollSelectionList, %function
-	.thumb_func
-Menu_ScrollSelectionList:
-	.incbin "baserom.gba", 0x0001aa48, 0x000001cc
-	.section .rom.0001ae60, "ax"
-	.global Menu_ConfirmSelection
-	.type Menu_ConfirmSelection, %function
-	.thumb_func
-Menu_ConfirmSelection:
-	.incbin "baserom.gba", 0x0001ae60, 0x00000244
-	.section .rom.0001b4ac, "ax"
-	.global Debug_SelectAbilityPair
-	.type Debug_SelectAbilityPair, %function
-	.thumb_func
-Debug_SelectAbilityPair:
-	.global Menu_Check
-	.type Menu_Check, %function
-	.thumb_func
-Menu_Check:
-	.incbin "baserom.gba", 0x0001b4ac, 0x00000360
-	.section .rom.0001c9e4, "ax"
-	.global Menu_CreateWorkspaceWindows
-	.type Menu_CreateWorkspaceWindows, %function
-	.thumb_func
-Menu_CreateWorkspaceWindows:
-	.incbin "baserom.gba", 0x0001c9e4, 0x0000019c
 	.section .rom.0001cd38, "ax"
 	.incbin "baserom.gba", 0x0001cd38, 0x00000134
 	.section .rom.0001ce6c, "ax"
@@ -320,14 +292,6 @@ Menu_CreateWorkspaceWindows:
 	.thumb_func
 UiText_RenderStringTiles:
 	.incbin "baserom.gba", 0x0001ce6c, 0x00000410
-	.section .rom.0001df84, "ax"
-	.incbin "baserom.gba", 0x0001df84, 0x00000298
-	.section .rom.0001e21c, "ax"
-	.global UiWindow_DrawPartyStatusContents
-	.type UiWindow_DrawPartyStatusContents, %function
-	.thumb_func
-UiWindow_DrawPartyStatusContents:
-	.incbin "baserom.gba", 0x0001e21c, 0x000003d4
 	.section .rom.0001f260, "ax"
 	.global SaveMenu_SelectSlot
 	.type SaveMenu_SelectSlot, %function
@@ -342,12 +306,6 @@ SaveMenu_SelectSlot:
 	.thumb_func
 NameEntry_EditOwnerName:
 	.incbin "baserom.gba", 0x0001fbf4, 0x000004b4
-	.section .rom.000203cc, "ax"
-	.global Party_ShowJoinedMessage
-	.type Party_ShowJoinedMessage, %function
-	.thumb_func
-Party_ShowJoinedMessage:
-	.incbin "baserom.gba", 0x000203cc, 0x000000f8
 	.section .rom.00020ea6, "ax"
 	.incbin "baserom.gba", 0x00020ea6, 0x000008fe
 	.section .rom.00021ab6, "ax"
@@ -470,7 +428,10 @@ SideObject_CharacterIdMap:
 	.incbin "baserom.gba", 0x00035aac, 0x00000028
 	.global SideObject_ActorKindIdMap
 SideObject_ActorKindIdMap:
-	.incbin "baserom.gba", 0x00035ad4, 0x000009d4
+	.incbin "baserom.gba", 0x00035ad4, 0x000009b8
+	.global UiWindow_PartyColumnOffsets
+UiWindow_PartyColumnOffsets:
+	.incbin "baserom.gba", 0x0003648c, 0x0000001c
 	.global StatusMenu_LevelLetterString
 StatusMenu_LevelLetterString:
 	.incbin "baserom.gba", 0x000364a8, 0x00000028

@@ -210,7 +210,7 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000154ae)
-    "*/recon/tbs/es/rom.o"(.rom.000154b0)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/CLEAR_INTERIOR_TILES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/OUTPUT_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_PROCESS_RENDER_CHANNELS.o"(.text)

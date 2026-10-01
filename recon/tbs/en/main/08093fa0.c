@@ -1,3 +1,12 @@
+/* 2026-10-01 (matcher 3): Value_00000001 names its own value (O2) and must
+ * go. The pooled 1 is almost certainly a halfword constant: agscc loads
+ * every HImode constant from the literal pool (*thumb_movhi_insn lists "mn"
+ * before "I"), as in `u16 *p; *p = 8;`. A u16 `variant |= 1` pools it but
+ * adds a zero extension before the call; u16 locals are promoted to SImode
+ * and give movs. The HImode 1 must come from a halfword context whose own
+ * use disappears (compare ResetSceneTransitionEffect in EFFECT38.C, where an
+ * s16 field store's store_bit_field mask leaves a pooled halfword zero that
+ * CSE hands to a later byte store). */
 /* Not-yet-C: complete [08093fa0,08094154), 436 bytes including pools.
  * The adjacent exact grid-placement routine supplies signed /16 indexing:
  * 432 bytes / 163 differing halfwords / 66 aligned edits, frame 24 bytes.

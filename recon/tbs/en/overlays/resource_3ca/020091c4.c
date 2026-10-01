@@ -1,3 +1,8 @@
+/* 2026-10-01 (matcher 3): a seven-minute permute reached 555 from 960 with
+ * a dead `tmp = (-step / 2) & 0xff;` in the first loop and the third loop
+ * as i = 0; while (i < 8) { ...; i++; }; four of its operand differences
+ * are only the unlabelled BabiFune_FadeSlot, _FadeStep and _FadeSprites.
+ * The pointer roles (r0 walking, r1 its copy) still differ. Not kept. */
 /* Draft of BabiFune_StepFade, resource_3ca at 0x020091c4, for
  * FIELD/BABI_FUNE. Linking it needs the 288-byte buffer that opens the
  * overlay's .bss labelled BabiFune_FadeSprites and the import veneer to

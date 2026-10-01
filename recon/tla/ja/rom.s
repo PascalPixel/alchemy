@@ -2539,7 +2539,7 @@ ObjectMotion_SetVariantCallback:
 	.type FacingObject_TurnPairToFaceEachOther, %function
 	.thumb_func
 FacingObject_TurnPairToFaceEachOther:
-	.incbin "baserom.gba", 0x000d35e0, 0x000002d4
+	.incbin "baserom.gba", 0x000d35e0, 0x000001d4
 	.section .rom.000d38ec, "ax"
 	.incbin "baserom.gba", 0x000d38ec, 0x000002ec
 	.section .rom.000d3bd8, "ax"
@@ -2637,7 +2637,10 @@ Field_SceneTable:
 	.incbin "baserom.gba", 0x000f16b4, 0x00001b28
 	.global Object_OffsetMotionScript
 Object_OffsetMotionScript:
-	.incbin "baserom.gba", 0x000f31dc, 0x000004b0
+	.incbin "baserom.gba", 0x000f31dc, 0x00000030
+	.global ObjectMotion_StepAngleScript
+ObjectMotion_StepAngleScript:
+	.incbin "baserom.gba", 0x000f320c, 0x00000480
 	.global Object_LinkedMotionScript
 Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x000f368c, 0x00004974

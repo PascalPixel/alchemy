@@ -762,8 +762,8 @@ Object_OffsetMotionScript:
 	.global Data_080f32e0
 Data_080f32e0:
 	.incbin "baserom.gba", 0x000f32e0, 0x00000020
-	.global Data_080f3300
-Data_080f3300:
+	.global ObjectMotion_StepAngleScript
+ObjectMotion_StepAngleScript:
 	.incbin "baserom.gba", 0x000f3300, 0x0000000c
 	.global Data_080f330c
 Data_080f330c:

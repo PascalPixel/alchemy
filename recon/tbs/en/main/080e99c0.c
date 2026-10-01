@@ -45,8 +45,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     void **p;
     struct BattleEffectWork *work;
     void *canvas;
-    DrawRectangleFn draw2;
-    DrawRectangleFn draw;
+    DrawRectangle routine[2];
     void *sheet;
     struct EffectPosition pos;
     s32 frame;
@@ -71,9 +70,9 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
     half = pos.x / 2;
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw = (DrawRectangleFn)heap[7];
+    routine[0] = heap[7];
     BattleEffect_LoadWork(47, 7, 7, 3, 1);
-    draw2 = (DrawRectangleFn)heap[8];
+    routine[1] = heap[8];
 
     Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet, (u8 *)work + 20000, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work, 1, 0);
@@ -169,7 +168,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                 life = flash->variant;
                 y = HI(flash->y);
                 if ((u32)life <= 17) {
-                    draw(canvas,
+                    routine[0](canvas,
                         (u8 *)work
                             + (Data_080eef12[life / 3] << 11)
                             + (221 << 4),
@@ -237,7 +236,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
         if ((u32)step <= 31) {
             s32 x = half - 17;
             s32 width = 34;
-            DrawRectangleFn blit = draw;
+            DrawRectangle blit = routine[0];
             s32 size = (frame * 16 - 256) % 104;
 
             blit(canvas, work, x, 4 - size, width, 104);
@@ -271,7 +270,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                     if (frame > 76) {
                         size = 10;
                     }
-                    draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                    routine[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                         HI(dust->x) - size / 2,
                         HI(dust->y) - size,
                         size, size * 2);
@@ -317,7 +316,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                 high = high - top - 12;
             }
             if (high > 0) {
-                draw2(canvas, (u8 *)work + 20000, x, top, 36, high);
+                routine[1](canvas, (u8 *)work + 20000, x, top, 36, high);
             }
         }
 
@@ -340,7 +339,7 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                         x = spark->x;
                         if ((u32)x <= 0x007EFFFF && y >= 0) {
                             size = spark->variant / 5 + 1;
-                            draw(canvas,
+                            routine[0](canvas,
                                 (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                                 (x >> 16) - size / 2, (y >> 16) - size,
                                 size, size * 2);

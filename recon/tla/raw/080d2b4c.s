@@ -61,7 +61,7 @@ Func_080d2b4c:
 	adds r2, r2, r1
 	strh r3, [r2]
 	adds r0, r6, #0
-	bl Func_080ca1a4
+	bl BattleFx_GetPhaseResult
 	movs r3, #178
 	lsls r3, r3, #1
 	add r3, r10
@@ -77,7 +77,7 @@ Func_080d2b4c:
 	bl Func_080cdf5c
 	bl ObjectTable_Get
 	adds r0, #8
-	bl Func_080c9f2c
+	bl BattleFx_LookupResult
 .L_080d2bec:
 	movs r0, #0
 	movs r1, #0

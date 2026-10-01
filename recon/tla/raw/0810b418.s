@@ -87,7 +87,7 @@ Func_0810b418:
 	mov r0, r8
 	bl UiWork_FinalizeFar
 	adds r0, r5, #0
-	bl Func_0810b520
+	bl Inn_PlaySleep
 	mov r0, r9
 	bl Object_GetByIdFar
 	ldr r3, [r0, #80]

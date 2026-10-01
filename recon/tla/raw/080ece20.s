@@ -133,7 +133,7 @@ Func_080ece20:
 	lsls r1, r7, #12
 	add r0, r9
 	adds r1, r1, r2
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	lsls r5, r7, #6
 	ldr r3, .L_080ecf70
 	add r5, r8

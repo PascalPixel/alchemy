@@ -22,7 +22,7 @@ Func_08118958:
 	lsls r5, r5, #1
 	bl Func_08014bac
 	bl Func_08014b70
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	bl Func_08014c6c
 	bl Func_08014368
 	adds r0, r5, #0
@@ -169,7 +169,7 @@ Func_08118958:
 	strb r2, [r3]
 	bl Func_08014bac
 	bl Func_08014b70
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	bl Func_08014c6c
 	bl Func_08014368
 	b .L_081189ae

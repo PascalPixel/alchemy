@@ -126,7 +126,7 @@ Func_080ed2a4:
 	str r3, [r2]
 	bl Func_080d2a64
 	bl Func_080d2a8c
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	bl UiWork_InitializeWithResourceCountersFar
 	ldr r2, [sp, #12]
 	movs r0, #1
@@ -620,7 +620,7 @@ Func_080ed2a4:
 .L_080ed768:
 	.4byte 0x00000000
 .L_080ed76c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080ed770:
 	.4byte 0x04000208
 .L_080ed774:

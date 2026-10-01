@@ -1,7 +1,11 @@
+/* Near miss: unscored without IWRAM_CALL.H's Iwram_CopyWords, which ⚓️
+   would need at 0x03000730 (IwramCopyWords); with it the code is close in
+   shape but saves r11 too, one more callee-saved register than ⚓️ uses. The
+   delays come from ⚓️'s heap slot 0x64 and the buffer is Ram_MapCellBuffer. */
 #include "TYPES.H"
-#include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
+#include "IWRAM_CALL.H"
 
 /* Convert the tiled background through a blue palette ramp. Each screen
  * column begins after its random delay; the row budget grows each frame.
@@ -9,6 +13,14 @@
  */
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
+
+
+
+static __inline__ void CopyWords(WordCopy copy, void *destination,
+                                 const void *source, s32 size)
+{
+    copy(destination, source, size);
+}
 
 void Graphics_ConvertBackgroundToBlueRamp(void)
 {
@@ -26,10 +38,10 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
         *palette++ = (i << 10) | (half << 5) | half;
         i++;
     } while (i != 32);
-    delays = *(u8 **)(gWorkSlot + 41 * 4);
+    delays = Ram_HeapSlots->unknown_64[0];
     end = 0;
     speed = 16;
-    CopyWords(Iwram_CopyWords, PIXEL_BUFFER, (void *)0x06008000, 0x7800);
+    CopyWords(Iwram_CopyWords, Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
     delay_mask = 63;
     p = delays;
     do {
@@ -47,7 +59,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
                 if (y < 0) goto next_pixel;
                 if (y > 119) goto next_pixel;
                 {
-                    pixel = PIXEL_BUFFER + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) + ((y / 8) << 11));
+                    pixel = Ram_MapCellBuffer + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) + ((y / 8) << 11));
                     color = ((s16 *)0x05000000)[*pixel];
                     red = color & 31;
                     green = (color >> 5) & 31;
@@ -61,7 +73,7 @@ next_pixel:
             } while (x != 256);
             row++;
         }
-        Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+        CopyWords(Iwram_CopyWords, (void *)0x06008000, Ram_MapCellBuffer, 0x7800);
         WaitFrames(1);
         if (end > 248) break;
         i++;
@@ -76,9 +88,9 @@ next_pixel:
     } while (i != 32);
     i = 0;
     do {
-        PIXEL_BUFFER[i] += 64;
+        Ram_MapCellBuffer[i] += 64;
         i++;
     } while (i != 0x7800);
-    CopyWords(Iwram_CopyWords, (void *)0x06008000, PIXEL_BUFFER, 0x7800);
+    CopyWords(Iwram_CopyWords, (void *)0x06008000, Ram_MapCellBuffer, 0x7800);
     WaitFrames(1);
 }

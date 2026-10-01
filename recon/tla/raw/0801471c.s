@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0801471c
+	.global Scheduler_SetCallbackMask
 	.thumb_func
-Func_0801471c:
+Scheduler_SetCallbackMask:
 	push {r5, r6, lr}
 	adds r6, r1, #0
 	ldr r1, .L_08014754

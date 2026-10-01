@@ -38,5 +38,5 @@ Field_BeginPaletteTransition:
 	lsls r0, r0, #1
 	bl GameFlag_ClearBit
 	adds r0, r7, #0
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	pop {r5, r6, r7, pc}

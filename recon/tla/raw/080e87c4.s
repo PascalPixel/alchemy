@@ -76,7 +76,7 @@ Func_080e87c4:
 	ldr r0, .L_080e8990
 	bl Resource_GetTableEntry
 	mov r1, r10
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	lsls r1, r1, #1

@@ -1,4 +1,8 @@
+/* Near miss: score 460: one shift and four reordered instructions in the
+   spread's setup. ⚓️ reads the current owner from gPartyState and the
+   effect slot from the shared EFFECT_0809B11C.H. */
 #include "TYPES.H"
+#include "EFFECT_0809B11C.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
@@ -34,7 +38,7 @@ struct PositionSource_08096048 {
     struct Output_08096048 position;
 };
 
-extern s32 gGameState[];
+#include "PARTY_STATE.H"
 extern u32 gFrameTick;
 
 s32 Object_GetById(u32);
@@ -52,7 +56,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
     u32 random;
 
     source = (struct PositionSource_08096048 *)
-        Object_GetById(gGameState[125]);
+        Object_GetById(gPartyState.current_owner);
     state = effect->state;
 
     if (state == 0) {

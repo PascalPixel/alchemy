@@ -789,7 +789,7 @@ Func_08103218:
 	adds r2, #4
 	mov r0, r9
 	adds r1, r7, #0
-	bl Func_08104b18
+	bl UiIcon_CreateWithLoadedResource
 	mov r3, r8
 	ldrh r2, [r3]
 	ldr r3, .L_0810389c

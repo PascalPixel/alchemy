@@ -44,7 +44,7 @@ Func_081823a8:
 	ldr r1, [sp, #40]
 	ldr r0, .L_08182414
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #104
 	movs r1, #7
 	bl Func_081963ec

@@ -1,7 +1,11 @@
+/* Near miss: score 75. The selection work is ⚓️'s heap slot
+   menu_select_work. ⚓️ copies the entry number into r10 straight after
+   loading the work, before copying the work pointer; this draft copies it
+   after reading the entry count. 45 s of permuting found nothing. */
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
-extern u8 Data_03001f38[];
+#include "RAM_BUFFER.H"
 
 struct MenuSelectionState {
     u8 padding000[0x78];
@@ -14,7 +18,6 @@ struct MenuSelectionState {
     s16 resource_base;
 };
 
-extern struct MenuSelectionState *gMenuSelectWork;
 extern u8 Menu_SelectionStepDelays[];
 extern u8 MsgCommandName;
 
@@ -31,7 +34,7 @@ void Menu_AppendResourceEntry(s32 no)
     s32 off;
     s32 flags;
 
-    base = *(u8 **)((u32)&Data_03001f38);
+    base = Ram_HeapSlots->menu_select_work;
     index = *(s16 *)(base + 142);
     if (index <= 5)
     {

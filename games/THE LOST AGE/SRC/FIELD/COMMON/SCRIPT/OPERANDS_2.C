@@ -56,3 +56,24 @@ void Script_SetOrCompareWord10(struct ScriptOperands *state, s32 operation, s32 
     }
     state->comparison_result = result;
 }
+
+void Script_SetOrCompareHalfword20(struct ScriptOperands *state, s32 operation, s32 value)
+{
+    s8 result;
+    u32 current;
+
+    if (operation == 0) {
+        state->halfword_20 = value;
+        return;
+    }
+    if (operation == 1) {
+        state->halfword_20 = (u16)((u32)state->halfword_20 + (u32)value);
+        return;
+    }
+    current = state->halfword_20;
+    asm volatile("" : "+l"(current)); /* FAKEMATCH: ⚓️ loads the halfword before extending the value */
+    result = 0;
+    if (current == (u32)(s16)value)
+        result = 1;
+    state->comparison_result = result;
+}

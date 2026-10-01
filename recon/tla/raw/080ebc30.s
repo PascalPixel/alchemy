@@ -42,7 +42,7 @@ Func_080ebc30:
 	cmp r3, #0
 	beq .L_080ebc7e
 	adds r0, r5, #0
-	bl Func_080ebd24
+	bl EffectSlot_UpdateMotion
 .L_080ebc7e:
 	adds r3, r5, #0
 	adds r3, #68
@@ -52,6 +52,6 @@ Func_080ebc30:
 	cmp r3, #0
 	beq .L_080ebc92
 	adds r0, r5, #0
-	bl Func_080ebc94
+	bl BattleFx_DrawScaledObject
 .L_080ebc92:
 	pop {r5, r6, pc}

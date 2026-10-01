@@ -5,9 +5,9 @@
 Func_08023840:
 	push {lr}
 	ldr r0, .L_08023860
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 	ldr r0, .L_08023864
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 	movs r1, #128
 	lsls r1, r1, #19
 	ldrh r2, [r1]

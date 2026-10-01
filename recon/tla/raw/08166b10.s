@@ -65,7 +65,7 @@ Func_08166b10:
 	ldr r0, .L_08166c08
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_08166b96:
 	ldr r4, [sp, #40]
 	movs r5, #224
@@ -74,7 +74,7 @@ Func_08166b10:
 	ldr r0, .L_08166c0c
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #160
 	ldr r6, [sp, #40]
 	lsls r2, r2, #5
@@ -83,12 +83,12 @@ Func_08166b10:
 	ldr r0, .L_08166c10
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #0
 	ldr r0, .L_08166c14
 	ldr r1, [sp, #20]
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #44]
 	cmp r3, #1
 	bne .L_08166c18

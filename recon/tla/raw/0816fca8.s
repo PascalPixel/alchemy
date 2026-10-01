@@ -53,12 +53,12 @@ Func_0816fca8:
 	add r1, r11
 	movs r2, #1
 	str r3, [sp, #32]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816fd2c
 	ldr r1, [sp, #36]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816fd30
 	ldr r1, .L_0816fd34
 	movs r2, #1
@@ -75,7 +75,7 @@ Func_0816fca8:
 	.4byte gMapCellBuffer
 .L_0816fd38:
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r7, [sp, #56]
 	cmp r7, #1
 	bne .L_0816fd58

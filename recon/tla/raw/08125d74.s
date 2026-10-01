@@ -301,7 +301,7 @@ Func_08125d74:
 	mov r8, r0
 	lsls r0, r0, #1
 	adds r0, r5, r0
-	bl Func_0811a0b0
+	bl BattleParty_PrepareReserveOwners
 	add r8, r0
 	mov r1, r8
 	movs r6, #0
@@ -420,7 +420,7 @@ Func_08125d74:
 .L_081260cc:
 	.4byte 0x000000ff
 .L_081260d0:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_081260d4:
 	.4byte 0x04000208
 .L_081260d8:

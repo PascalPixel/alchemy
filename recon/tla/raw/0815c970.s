@@ -48,12 +48,12 @@ Func_0815c970:
 	add r1, r10
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #1
 	ldr r0, .L_0815cba8
 	ldr r1, .L_0815cbac
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r2, r11
 	cmp r2, #0
 	bne .L_0815c9f4

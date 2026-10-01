@@ -1,4 +1,9 @@
+/* Near miss: score 60. ⚓️ loads the callback delay (ldrh r2, [r5, #58])
+   before storing the incremented age and decrements that copy; this draft
+   reloads it after the store. A u16 copy or u16 pointer changes the code
+   more. */
 #include "TYPES.H"
+#include "EFFECT_0809B11C.H"
 
 /* battle/effects/runtime/update_slot.c */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);

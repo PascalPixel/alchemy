@@ -59,6 +59,6 @@ Func_08143d04:
 	bl WaitFrames
 	pop {r5, pc}
 .L_08143d78:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08143d7c:
 	.4byte 0x04000208

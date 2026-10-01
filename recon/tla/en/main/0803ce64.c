@@ -1,8 +1,12 @@
+/* Near miss: score 100 beyond the trailing pad. The render work is ⚓️'s
+   heap slot 0x3c, with its entries at 0xf40 and cursor at 0x1384. ⚓️
+   reloads the window height (ldr r4, [sp, #8]) before subtracting the width
+   from 30; -mtune=arm9tdmi does not move it, nor 45 s of permuting. */
 #include "TYPES.H"
 
 struct CenteredTextWork {
-    u8 unknown_000[0xeb0];
-    u16 entries[(0x12f4 - 0xeb0) / 2];
+    u8 unknown_000[0xf40];
+    u16 entries[(0x1384 - 0xf40) / 2];
     u16 cursor;
     u16 scroll;
 };
@@ -11,7 +15,7 @@ struct CenteredTextWindow {
     u16 width;
     u16 height;
 };
-extern struct CenteredTextWork *Data_03001e8c;
+#include "RAM_BUFFER.H"
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 void UiText_GetResourceDimensions(s32, s32 *, s32 *, s32 *, s32 *);
 struct CenteredTextWindow *UiWindow_Create(s32, s32, s32, s32, s32);
@@ -31,7 +35,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
     s32 height;
     s32 entry;
 
-    work = Data_03001e8c;
+    work = (struct CenteredTextWork *)Ram_HeapSlots->window_tiles;
     x = 8;
     y = 8;
     /* FAKEMATCH: the null window also supplies the zero style argument,

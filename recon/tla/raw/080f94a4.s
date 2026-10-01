@@ -73,7 +73,7 @@ Func_080f94a4:
 	adds r3, r5, #0
 	adds r3, #240
 	str r0, [r3]
-	bl Func_080f80c4
+	bl Scheduler_EnableOverlayCallbacksWithFlags
 	ldr r3, .L_080f95f4
 	ldr r1, .L_080f95f8
 	mov r9, r3
@@ -89,13 +89,13 @@ Func_080f94a4:
 	.2byte 0xf800
 	movs r0, #1
 	bl Func_080383c0
-	bl Func_080f9448
+	bl Menu_CancelSoundReset
 	add r1, sp, #8
 	add r0, sp, #12
 	add r2, sp, #4
 	bl Func_080f9644
 	mov r8, r0
-	bl Func_080f9464
+	bl Menu_EnsureCancelSound
 	mov r1, r8
 	cmp r1, #1
 	bne .L_080f95a4

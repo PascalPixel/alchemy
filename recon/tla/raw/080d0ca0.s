@@ -196,7 +196,7 @@ Func_080d0ca0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080d0e10:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080d0e14:
 	.4byte 0x04000208
 .L_080d0e18:

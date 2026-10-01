@@ -139,9 +139,9 @@ void Scheduler_AddOrUpdateCallback(void *, s32);
 void Resource_ResetEntry(s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
 void Func_08118040(s32, s32, s32);
-void Func_08157cf4(s32, void *, s32, s32);
+void Resource_LoadAndDecompress(s32, void *, s32, s32);
 u32 Resource_GetTableEntry(u32);
-void Func_0801587c(const void *, void *);
+void Resource_DecodeType01(const void *, void *);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
@@ -281,7 +281,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             work->unk_779c = 0;
             Scheduler_AddOrUpdateCallback(Func_0813baec, 0x480);
             ctl[4] = 1;
-            Func_08157cf4(0x134, work->frames, 0, 0);
+            Resource_LoadAndDecompress(0x134, work->frames, 0, 0);
             for (i = 0; i != 10; i++) {
                 for (j = 0; j != 32; j++) {
                     v = work->frames[Ulysses_MapOffsets[3] + j];
@@ -295,7 +295,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
             src = (const u8 *)Resource_GetTableEntry(0xa0);
             Iwram_Copy((void *)0x050003e0, src, 32);
-            Func_0801587c(src + 32, work->frames);
+            Resource_DecodeType01(src + 32, work->frames);
             for (row = 0; row != 2; row++) {
                 src = work->frames + (row << 12);
                 for (j = 0; j != 8; j++) {
@@ -313,7 +313,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             }
             src = (const u8 *)Resource_GetTableEntry(0xa1);
             Iwram_Copy((void *)0x05000200, src, 0x1c0);
-            Func_0801587c(src + 0x1c0, DECODE_BUFFER);
+            Resource_DecodeType01(src + 0x1c0, DECODE_BUFFER);
             for (i = 0; i != 21; i++) {
                 obj = Func_0815b290(32, 32, 0x80002000, 0);
                 obj->priority = 3;
@@ -326,7 +326,7 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
             Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000), DECODE_BUFFER + i * 0x400, 0x800);
             src = (const u8 *)Resource_GetTableEntry(0xa2);
             Iwram_Copy((void *)0x050003c0, src, 32);
-            Func_0801587c(src + 32, DECODE_BUFFER);
+            Resource_DecodeType01(src + 32, DECODE_BUFFER);
             obj = Func_0815b290(16, 8, 0x4000, 0xe000);
             obj->priority = 1;
             work->sprites[41] = obj;
@@ -388,10 +388,10 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
     work->unk_7798 = -1;
     work->unk_779c = 0;
     ctl[4] = 1;
-    Func_08157cf4(0xba, work->frames, 0, 0);
-    Func_08157cf4(0x13e, work->frames + 0x6c0, 1, 0);
-    Func_08157cf4(0xbb, work->frames + 0x36c0, 0, 0);
-    Func_08157cf4(0xc2, DECODE_BUFFER, 0, 0);
+    Resource_LoadAndDecompress(0xba, work->frames, 0, 0);
+    Resource_LoadAndDecompress(0x13e, work->frames + 0x6c0, 1, 0);
+    Resource_LoadAndDecompress(0xbb, work->frames + 0x36c0, 0, 0);
+    Resource_LoadAndDecompress(0xc2, DECODE_BUFFER, 0, 0);
     Iwram_Copy((void *)0x05000000, (const void *)Resource_GetTableEntry(0x161), 128);
     work->transfer_mode = 2;
     work->transfer_value = 50;
@@ -950,8 +950,8 @@ void BattleSummon_RunUlysses(struct SummonArgument *arg)
         work->sprites[1 + i]->unk_16 = 32;
         work->sprites[1 + i]->unk_17 = 8;
     }
-    Func_08157cf4(0x13e, work->frames, 1, 0);
-    Func_08157cf4(0xba, work->frames + 0x3000, 0, 0);
+    Resource_LoadAndDecompress(0x13e, work->frames, 1, 0);
+    Resource_LoadAndDecompress(0xba, work->frames + 0x3000, 0, 0);
     Iwram_Copy((void *)0x05000000, (const void *)Resource_GetTableEntry(0x148), 128);
 
     for (frame = 0; frame != 109; frame++) {

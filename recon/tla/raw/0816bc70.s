@@ -57,7 +57,7 @@ Func_0816bc70:
 .L_0816bcdc:
 	.4byte 0x00000193
 .L_0816bce0:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, .L_0816be28
 	movs r2, #156
 	lsls r2, r2, #7
@@ -66,12 +66,12 @@ Func_0816bc70:
 	ldr r0, .L_0816be2c
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816be30
 	ldr r1, .L_0816be28
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_0816be28
 	movs r4, #128
 	lsls r4, r4, #5
@@ -79,12 +79,12 @@ Func_0816bc70:
 	ldr r0, .L_0816be34
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816be38
 	mov r1, r8
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r2, [sp, #36]
 	movs r3, #222
 	lsls r3, r3, #6
@@ -92,7 +92,7 @@ Func_0816bc70:
 	ldr r0, .L_0816be3c
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #36]
 	movs r0, #239
 	movs r1, #238

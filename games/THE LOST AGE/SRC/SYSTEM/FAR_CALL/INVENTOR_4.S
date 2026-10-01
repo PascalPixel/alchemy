@@ -60,4 +60,4 @@ PartyInventory_CountItemFar:
 	.global Func_080ad2b0
 	.thumb_func
 Func_080ad2b0:
-	overlay_veneer Func_080af2c0
+	overlay_veneer PartyInventory_Discard

@@ -1,14 +1,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001e98[];
+extern u8 *gResQueueWork;
 
 /* resource/transfer/find_free_entry.c */
 s32 Resource_FindFreeTransferEntry(s32 kind)
 {
-    s32 z0;
-    s32 s;
-    s32 z1;
     s32 state;
     s32 off;
     s32 i;
@@ -18,17 +15,17 @@ s32 Resource_FindFreeTransferEntry(s32 kind)
     u16 *p;
     u32 v;
 
-    (s32)s = (*(s32 *)((u32)&Data_03001e98)); state = s;
+    state = (s32)gResQueueWork;
     if (kind != 0) {
-        (s32)i = 0;
-        p = state + 0x1DE;
+        i = 0;
+        p = (u16 *)(state + 0x1DE);
         off = 0;
 loop_2:
         if (*p == 0) {
             return state + off + 0x1D4;
         }
-        z0 = 0; i = i + 1;
-        (s32)p += 0x34;
+        i = i + 1;
+        p += 0x1A;
         off = off + 0x34;
         if (i == 5) {
             goto block_10;
@@ -37,14 +34,14 @@ loop_2:
     }
     j = 0;
     ret = state + 0x68;
-    q = state + 0x72;
+    q = (u16 *)(state + 0x72);
 loop_7:
     v = *q;
-    (s32)q += 0x34;
+    q += 0x1A;
     if (v == 0) {
         return ret;
     }
-    z1 = 0; ret += 0x34;
+    ret += 0x34;
     j += 1;
     if (j == 7) {
 block_10:

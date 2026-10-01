@@ -32,7 +32,7 @@ Func_08178ee4:
 	movs r2, #1
 	movs r3, #1
 	adds r1, r6, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
 	bl Func_081963ec

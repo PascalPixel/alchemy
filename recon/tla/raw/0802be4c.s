@@ -100,18 +100,18 @@ Func_0802be4c:
 	ldr r0, [r6, #4]
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	adds r0, r5, #0
 	bl Func_0802cc9c
 	ldr r5, .L_0802c040
 	ldr r0, [r6, #8]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802c044
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r6, #12]
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -124,7 +124,7 @@ Func_0802be4c:
 	ldr r0, [r6, #16]
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -137,7 +137,7 @@ Func_0802be4c:
 	ldr r0, [r6, #20]
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -150,7 +150,7 @@ Func_0802be4c:
 	ldr r0, [r6, #24]
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -162,11 +162,11 @@ Func_0802be4c:
 	ldr r0, [r6, #28]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802c068
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r6, #32]
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802c06c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r3, .L_0802c070
 	mov r0, sp
 	str r3, [r0]

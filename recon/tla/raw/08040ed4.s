@@ -25,7 +25,7 @@ Func_08040ed4:
 	strh r2, [r3]
 	ldr r0, .L_08040f10
 	movs r1, #1
-	bl Func_080c8268
+	bl Event_SetPairWork1c0Far
 	pop {pc}
 .L_08040f0c:
 	.4byte gPartyState

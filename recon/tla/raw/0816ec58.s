@@ -34,7 +34,7 @@ Func_0816ec58:
 	add r1, r9
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #220
 	lsls r1, r1, #6
 	adds r1, #96
@@ -42,7 +42,7 @@ Func_0816ec58:
 	movs r2, #1
 	movs r3, #0
 	ldr r0, .L_0816ecc4
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816ecc8
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

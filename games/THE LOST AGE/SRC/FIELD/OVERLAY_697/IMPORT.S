@@ -329,7 +329,7 @@ Func_02005980:
 	.global Func_02005988
 	.thumb_func
 Func_02005988:
-	overlay_veneer Func_080c8268
+	overlay_veneer Event_SetPairWork1c0Far
 	.global Func_02005990
 	.thumb_func
 Func_02005990:

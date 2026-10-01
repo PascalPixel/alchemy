@@ -26,6 +26,6 @@ Func_0803f82c:
 	movs r0, #1
 	bl Func_0803e998
 	adds r5, r0, #0
-	bl Func_0803e6d8
+	bl Resource_ResetOwnerEntries
 	adds r0, r5, #0
 	pop {r5, pc}

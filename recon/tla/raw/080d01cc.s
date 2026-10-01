@@ -46,9 +46,9 @@ Func_080d01cc:
 	movs r0, #128
 	ldrh r1, [r3]
 	lsls r0, r0, #8
-	bl Func_080d172c
+	bl BattleFx_ApplyColorToSourceBuffer
 	mov r0, r10
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	movs r0, #1
 	bl WaitFrames
 	ldr r1, .L_080d027c
@@ -85,7 +85,7 @@ Func_080d01cc:
 .L_080d0278:
 	.4byte .L_080d01f8
 .L_080d027c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080d0280:
 	.4byte 0x04000208
 .L_080d0284:
@@ -152,7 +152,7 @@ Func_080d01cc:
 .L_080d0304:
 	.4byte Func_080cf6fc
 .L_080d0308:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080d030c:
 	.4byte 0x04000208
 .L_080d0310:
@@ -276,7 +276,7 @@ Func_080d01cc:
 .L_080d03fc:
 	.4byte DisplayTransition_UpdateFrame
 .L_080d0400:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080d0404:
 	.4byte 0x04000208
 .L_080d0408:
@@ -416,6 +416,6 @@ Func_080d01cc:
 .L_080d0514:
 	.4byte Func_080d0954
 .L_080d0518:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080d051c:
 	.4byte 0x04000208

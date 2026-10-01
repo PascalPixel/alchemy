@@ -279,7 +279,7 @@ Func_08122d10:
 	ldr r1, [r3]
 	bl Func_0812824c
 	ldr r0, [r5]
-	bl Func_0811fe3c
+	bl BattleActor_ResetRuntimeFields
 	ldr r0, [r5]
 	bl Owner_GetState
 	movs r5, #0

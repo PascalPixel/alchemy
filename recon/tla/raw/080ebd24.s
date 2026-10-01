@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ebd24
+	.global EffectSlot_UpdateMotion
 	.thumb_func
-Func_080ebd24:
+EffectSlot_UpdateMotion:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

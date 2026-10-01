@@ -118,7 +118,7 @@ Func_0815e3ac:
 	ldr r0, .L_0815e590
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_0815e4fa
 .L_0815e4aa:
 	ldr r5, [sp, #28]
@@ -145,7 +145,7 @@ Func_0815e3ac:
 .L_0815e4de:
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_0815e4fa
 .L_0815e4e8:
 	ldr r3, [sp, #48]
@@ -155,7 +155,7 @@ Func_0815e3ac:
 	ldr r0, .L_0815e59c
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0815e4fa:
 	ldr r6, [sp, #52]
 	ldr r3, [r6, #8]
@@ -183,12 +183,12 @@ Func_0815e3ac:
 	ldr r1, [sp, #36]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0815e5ac
 	ldr r1, .L_0815e5b0
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, [sp, #48]
 	movs r1, #239
 	lsls r1, r1, #7

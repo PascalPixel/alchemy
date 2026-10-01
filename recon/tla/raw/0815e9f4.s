@@ -87,7 +87,7 @@ Func_0815e9f4:
 	ldr r0, .L_0815ed64
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r3, r11
 	ldr r0, [r3, #8]
 	ldr r1, [r3, #12]
@@ -99,7 +99,7 @@ Func_0815e9f4:
 	ldr r1, .L_0815ed6c
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r1, r11
 	ldr r0, [r1, #8]
 	cmp r0, #7
@@ -129,7 +129,7 @@ Func_0815e9f4:
 	ldr r1, [sp, #44]
 	ldr r0, .L_0815ed74
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r1, r11
 	ldr r0, [r1, #8]
 	movs r2, #130

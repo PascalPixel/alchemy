@@ -27,7 +27,7 @@ Menu_ScrollSelectionList:
 	movs r0, #0
 	adds r3, r2, r4
 	ldrh r6, [r7, r3]
-	bl Func_0803deac
+	bl Resource_FindFreeTransferEntry
 	adds r5, r0, #0
 	cmp r5, #0
 	bne .L_0803f040
@@ -132,7 +132,7 @@ Menu_ScrollSelectionList:
 	movs r0, #0
 	adds r3, r2, r1
 	ldrh r6, [r7, r3]
-	bl Func_0803deac
+	bl Resource_FindFreeTransferEntry
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0803f1ca

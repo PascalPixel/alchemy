@@ -112,7 +112,7 @@ Func_08179f18:
 	.2byte 0xf800
 	adds r0, r6, #0
 	ldr r1, .L_0817a10c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r1, .L_0817a110
 	mov r8, r5
 	movs r7, #240
@@ -264,7 +264,7 @@ Func_08179f18:
 	adds r6, r6, r5
 	adds r0, r6, #0
 	ldr r1, .L_0817a298
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r6, #0
 	ldr r0, .L_0817a29c
 	ldr r1, .L_0817a2a0
@@ -318,7 +318,7 @@ Func_08179f18:
 	adds r1, r5, r6
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0817a1a4:
 	ldr r0, [sp, #144]
 	movs r3, #128
@@ -349,12 +349,12 @@ Func_08179f18:
 	adds r0, r5, #0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r0, r5, #0
 	ldr r1, [sp, #148]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0817a2b4
 	movs r6, #0
 	movs r1, #63
@@ -2667,7 +2667,7 @@ Func_08179f18:
 .L_0817b390:
 	.4byte IwramCopyWords
 .L_0817b394:
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r3, [sp, #172]
 	movs r5, #0
 	movs r4, #184

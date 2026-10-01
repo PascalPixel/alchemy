@@ -39,7 +39,7 @@ Func_0817d174:
 	ldr r0, .L_0817d1d0
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r7, [sp, #44]
 	str r5, [sp, #24]
 	mov r10, r7
@@ -132,12 +132,12 @@ Func_0817d174:
 	ldr r0, .L_0817d5fc
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	ldr r1, [sp, #36]
 	movs r3, #0
 	ldr r0, .L_0817d600
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0817d604
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

@@ -325,7 +325,7 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00025bb4)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_2.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.00025c5c)
+    "*/recon/tla/de/rom.o"(.rom.00025c8a)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_3.o"(.text)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_4.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.00026320)

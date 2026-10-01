@@ -448,7 +448,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.o"(.text)
         "*/recon/tla/raw/08025bb4.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_2.o"(.text)
-        "*/recon/tla/raw/08025c5c.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_3.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_4.o"(.text)
         "*/recon/tla/raw/08026320.o"(.text)

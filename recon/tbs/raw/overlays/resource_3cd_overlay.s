@@ -25,6 +25,7 @@ gItemLevelItemFull:
 	.4byte 0x2e2e2e4c
 	.4byte 0x2e2e2e2e
 	.4byte 0x0000002e
+	.if EDITION_INTERNATIONAL
 	.global gItemLevelPsyPrompt
 gItemLevelPsyPrompt:
 	.4byte 0x20797350
@@ -57,6 +58,7 @@ gItemLevelGlyphsMarks:
 	.4byte 0x203f2021
 	.4byte 0x20242023
 	.4byte 0x00000025
+	.endif
 	.global gItemLevelEntrances
 gItemLevelEntrances:
 	.4byte 0xffff0000
@@ -99,7 +101,12 @@ gItemLevelPlacements:
 	.4byte 0x03180000
 	.4byte 0x00000000
 	.4byte 0x03200000
+	.ifeq EDITION_INTERNATIONAL
+	.4byte 0x00002000
+	.else
 	.4byte 0x00000000
+	.endif
+	.if EDITION_INTERNATIONAL
 	.4byte 0xffff008f
 	.4byte 0x00000001
 	.ifndef TBS_EDITION_EN
@@ -130,6 +137,7 @@ gItemLevelPlacements:
 	.4byte 0x00000000
 	.4byte 0x02b00000
 	.4byte 0x00025000
+	.endif
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -150,6 +158,7 @@ gItemLevelEvents:
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte FieldScene_RunCountAdjustPanel
+	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
 	.ifndef TBS_EDITION_DE
@@ -174,9 +183,14 @@ gItemLevelEvents:
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte FieldScene_RunActor13Mode105Step
+	.endif
 	.4byte 0x00008e15
 	.4byte 0xffff000a
+	.if EDITION_INTERNATIONAL
 	.4byte FieldScene_DrawThreeCaptionWindow
+	.else
+	.4byte ItemLevel_RunMotionTest
+	.endif
 	.4byte 0x10008e15
 	.4byte 0xffff000a
 	.4byte SceneState_SetRecordFlag53

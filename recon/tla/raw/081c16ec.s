@@ -1,8 +1,11 @@
+@ Ends a sequence: mark every linked channel for release, detach it, and clear
+@ the track flags. This is the MusicPlayer2000 ply_fine behavior; every TLA
+@ edition has this complete48-byte instruction extent, including its alignment.
 .syntax unified
 	.thumb
-	.global Func_081c16ec
+	.global MusicTrack_FinishSequence
 	.thumb_func
-Func_081c16ec:
+MusicTrack_FinishSequence:
 	push {r4, r5, lr}
 	adds r5, r1, #0
 	ldr r4, [r5, #32]

@@ -1,5 +1,9 @@
 /* Draft: Japanese debug-room source.
- * 2026-10-01: The current international source builds 5,772 bytes for Japanese; its own scene is 5,356 bytes. The directional-message command group is absent, while the Djinn configuration owner grows by 76 bytes; command rows and slot data remain unresolved.
+ * 2026-10-01: This international model produced a 5,772-byte Japanese scene,
+ * 416 bytes longer than its own image. The Japanese scene omits the directional
+ * message group, adds a buffer benchmark and character selector, sets 777,777
+ * coins and levels all four owners to 30. This attempt retains the earlier
+ * international behavior.
  * Compiles with ordinary TBS flags; no source selection or credit is claimed.
  */
 #include "EDITION.H"

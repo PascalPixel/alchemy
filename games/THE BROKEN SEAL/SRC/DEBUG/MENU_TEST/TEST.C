@@ -69,6 +69,7 @@ u8 *SceneData_GetTable93fc(void)
     return MenuTest_CommandTableC;
 }
 
+#if EDITION_INTERNATIONAL
 void SceneDialogue_ShowMessageAndWait(s32 arg0)
 {
     UiWork_FinalizePendingCore();
@@ -160,6 +161,7 @@ void SceneState_ApplyBlockDa2(void)
 {
     CommandTable_RunDirectionalInput((s32)MsgWarriorItemShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
 }
+#endif
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 void DebugMenu_RunMessageTest(void)
@@ -440,6 +442,27 @@ void FieldScene_GrantItemListToSlots(void)
 void CommandTable_ConfigureCommandGroups(void)
 {
     u8 buf[256];
+#if !EDITION_INTERNATIONAL
+    s32 i;
+    s32 j;
+
+    /* The Japanese debug command fills a buffer with successive characters,
+     * wrapping the scene's character counter from 96 back to 65. */
+    for (i = 0; i < 16; i++) {
+        for (j = 255; j >= 0; j--) {
+            buf[j] = 0;
+        }
+        /* FAKEMATCH: The loop-index constraint avoids GCC's extra r6 address copy/save. */
+        asm("" : "+r"(i));
+        for (j = 0; j < i + 32; j++) {
+            buf[j] = MenuTest_BenchmarkCharacter + 1;
+        }
+        MenuTest_BenchmarkCharacter++;
+        if (MenuTest_BenchmarkCharacter > 96) {
+            MenuTest_BenchmarkCharacter = 65;
+        }
+    }
+#endif
     UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotDjinni, 1);
     Djinn_AddToOwner(0, 0, 0);
     Djinn_AddToOwner(0, 0, 1);
@@ -740,10 +763,18 @@ s32 CommandTable_ConfigureCommandList(void)
     Item_AdjustCounter(130, 1);
     Item_AdjustCounter(140, 1);
     Item_AdjustCounter(151, 1);
-    /* FAKEMATCH: the first three calls only match through a cast pointer */
+    /* FAKEMATCH: the typed void calls put the first three owner arguments
+     * before the target count; ordinary calls reverse their order. */
+#if EDITION_INTERNATIONAL
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 50);
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(JERARD, 30);
     ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(MEARI, 30);
+#else
+    gGameState.coins = 777777;
+    ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(ROBIN, 30);
+    ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(JERARD, 30);
+    ((void (*)(s32, s32))Party_AdvanceOwnerCountToTarget)(MEARI, 30);
+#endif
     Party_AdvanceOwnerCountToTarget(IWAN, 30);
     Owner_RecalculateStats(ROBIN);
     Owner_RecalculateStats(JERARD);
@@ -756,6 +787,13 @@ s32 SceneState_GetFarResult2384(void)
 {
     return DebugMenu_BrowseIcons();
 }
+
+#if !EDITION_INTERNATIONAL
+s32 DebugMenu_SelectCharacter(void)
+{
+    return Menu_OpenCharacterSelector();
+}
+#endif
 
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
 #else

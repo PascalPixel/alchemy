@@ -1,3 +1,4 @@
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ Import veneers after the ITEM_LEVEL overlay's code: fixed 8-byte veneers
 @ through which the overlay calls main-image code, each loading its target
 @ into r4 and branching, which the calling convention permits.
@@ -78,10 +79,12 @@ Engine_DebugGetItem:
 	.thumb_func
 PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
+	.if EDITION_INTERNATIONAL
 	.global Engine_DebugGetAbility
 	.thumb_func
 Engine_DebugGetAbility:
 	overlay_veneer Func_08077080
+	.endif
 	.global Party_ListActiveOwners
 	.thumb_func
 Party_ListActiveOwners:
@@ -94,6 +97,7 @@ Party_AdvanceOwnerCountToTarget:
 	.thumb_func
 PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
+	.if EDITION_INTERNATIONAL
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
@@ -102,6 +106,8 @@ Object_GetById:
 	.thumb_func
 Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
+	.endif
+	.if EDITION_INTERNATIONAL
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
@@ -114,6 +120,32 @@ Engine_EventShowMessage:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.else
+	.global Battle_Reset
+	.thumb_func
+Battle_Reset:
+	overlay_veneer Battle_ResetFar
+	.global BattleFx_FinishAction
+	.thumb_func
+BattleFx_FinishAction:
+	overlay_veneer BattleFx_FinishActionFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
+	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetHorizontalPositionWithTerrain
+	.thumb_func
+ObjectMotion_SetHorizontalPositionWithTerrain:
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	.global Engine_ActorSetAnimation
+	.thumb_func
+Engine_ActorSetAnimation:
+	overlay_veneer Object_SetModeByIdFar
+	.global ObjectMotion_WaitForAnimationChange
+	.thumb_func
+ObjectMotion_WaitForAnimationChange:
+	overlay_veneer ObjectMotion_WaitForAnimationChangeFar
+	.endif
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:

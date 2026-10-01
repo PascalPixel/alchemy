@@ -1,7 +1,5 @@
 #include "TLA_EDITION.H"
 
-/* The Japanese resource selection is still in its raw owner. */
-#if EDITION_INTERNATIONAL
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
@@ -87,5 +85,3 @@ s32 Menu_SelectTopEntry(s32 sel)
 
     return ret;
 }
-
-#endif

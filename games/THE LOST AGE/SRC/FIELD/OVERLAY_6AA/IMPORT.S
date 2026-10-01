@@ -469,7 +469,15 @@ Func_02004d88:
 	.global BattleFx_PrepareBufferInterpolation
 	.thumb_func
 BattleFx_PrepareBufferInterpolation:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer BattleFx_PrepareBufferInterpolationFar
+	.endif
+	.endif
 	.global Func_02004d98
 	.thumb_func
 Func_02004d98:

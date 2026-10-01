@@ -4,6 +4,7 @@
 
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+#include "GAME_STATE.H"
 
 extern s16 Data_02000240[];
 extern volatile s32 Data_03001ae8;
@@ -19,6 +20,7 @@ extern u8 MenuTest_CommandTable[];
 extern u8 MenuTest_CommandTableB[];
 extern u8 MenuTest_CommandTableC[];
 extern u8 MenuTest_SlotOffsets[];
+extern s32 MenuTest_BenchmarkCharacter;
 
 u8 Engine_TaskWait();
 u8 UiText_OpenMessageWindow(s32, s32, s32, s32);
@@ -45,6 +47,7 @@ s32 Party_AddActiveOwner();
 s32 Item_AdjustCounter();
 s32 DebugMenu_BrowseIcons(void);
 s32 Shop_ConfirmAct(void);
+s32 Menu_OpenCharacterSelector(void);
 
 /* Scene state, dialogue and command-table steps for resource_3ce. */
 
@@ -114,5 +117,6 @@ void FieldScene_AssignCodeSetBToSlots(void);
 s32 CommandTable_ConfigureCommandList(void);
 s32 SceneState_GetFarResult2384(void);
 s32 SceneState_GetFarResult2418(void);
+s32 DebugMenu_SelectCharacter(void);
 
 #endif

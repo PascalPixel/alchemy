@@ -703,9 +703,9 @@ Func_02000534:
 	pop {pc}
 	.2byte 0x0000
 .L_02008618:
-	.4byte 0x00002706
+	.4byte MsgLemuriaStayExploring
 .L_0200861c:
-	.4byte 0x00002707
+	.4byte MsgLemuriaStayExploringAlternate
 .L_02008620:
 	.4byte 0x00013333
 .L_02008624:
@@ -1157,7 +1157,7 @@ Func_02000838:
 	b .L_02008a50
 	.2byte 0x0000
 .L_020089f8:
-	.4byte 0x000026c3
+	.4byte MsgLemuriaRecognizePsynergy
 .L_020089fc:
 	movs r0, #40
 	bl Battle_WaitMode0

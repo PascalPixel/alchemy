@@ -347,10 +347,10 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r7, r5]
-	bl Func_0811a484
+	bl BattleMotion_GetSlotField14
 	adds r1, r0, #0
 	ldr r0, [r6]
-	bl Func_0811f030
+	bl BattleMotion_SetRecordChildValues
 	ldr r0, [r7, r5]
 	bl BattlePres_SetActorModeAndAction
 	b .L_08122ff0
@@ -645,10 +645,10 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	adds r6, r0, #0
 	ldr r0, [r5]
-	bl Func_0811a484
+	bl BattleMotion_GetSlotField14
 	adds r1, r0, #0
 	ldr r0, [r6]
-	bl Func_0811f030
+	bl BattleMotion_SetRecordChildValues
 	b .L_0812324e
 .L_0812322a:
 	movs r3, #28
@@ -666,10 +666,10 @@ Func_08122d10:
 	bl GetBattleObjectSlot
 	movs r1, #7
 	ldr r0, [r0]
-	bl Func_0811f030
+	bl BattleMotion_SetRecordChildValues
 .L_0812324e:
 	mov r0, r9
-	bl Func_080382a0
+	bl BattleLayout_HighlightPartyPanelsFar
 .L_08123254:
 	movs r3, #168
 	lsls r3, r3, #1

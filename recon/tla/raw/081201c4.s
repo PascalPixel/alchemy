@@ -140,7 +140,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r3]
 	movs r1, #0
 	movs r2, #0
-	bl Func_0811f330
+	bl BattleMotion_RunValueSequence
 	b .L_08120346
 .L_081202f2:
 	movs r2, #182

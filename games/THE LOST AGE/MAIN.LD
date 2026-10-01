@@ -2296,7 +2296,7 @@ SECTIONS
         "*/recon/tla/raw/0811edb0.o"(.text)
         "*/recon/tla/raw/0811f030.o"(.text)
         "*/recon/tla/raw/0811f088.o"(.text)
-        "*/recon/tla/raw/0811f330.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/MOTION/RUN_VALUE_SEQUENCE.o"(.text)
         "*/recon/tla/raw/0811f3b8.o"(.text)
         "*/recon/tla/raw/0811f444.o"(.text)
         "*/recon/tla/raw/0811f4d4.o"(.text)

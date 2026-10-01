@@ -1,18 +1,13 @@
 #include "TYPES.H"
-#include "SYSTEM.H"
-
-struct ObjectSlot_080babdc {
-    void *object;
-};
-
+#include "MOTION_OBJECT.H"
+#include "OWNER_STATE.H"
 #include "BATTLE_WORK.H"
 
-void *Owner_GetStateFar(s32 id);
-struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
-void Object_SetMode(void *object, s32 mode);
-void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
-void BattleMotion_SetRecordChildValues(void *object, s32 value);
-s32 BattleMotion_GetSlotField14(s32 id);
+void Object_SetMode(void *, s32);
+void BattleLayout_HighlightPartyPanelsFar(u16 *);
+void BattleMotion_SetRecordChildValues(void *, s32);
+s32 BattleMotion_GetSlotField14(s32);
+void WaitFrames(s32);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)
@@ -22,7 +17,7 @@ void BattleMotion_RunValueSequence(s32 id)
     s32 target;
     s32 remaining;
 
-    Owner_GetStateFar(id);
+    Owner_GetState(id);
     Object_SetMode(GetBattleObjectSlot(id)->object, 5);
 
     sel = selection;
@@ -42,5 +37,5 @@ void BattleMotion_RunValueSequence(s32 id)
         remaining--;
     } while (remaining >= 0);
 
-    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
+    UiWindow_DrawPartyStatusContentsFar(Ram_HeapSlots->battle_work->party_status_mode);
 }

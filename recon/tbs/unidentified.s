@@ -1397,7 +1397,30 @@ ParticleReveal_CellHeights:
 	.incbin "baserom.gba", 0x000eec63, 0x00000005
 	.global ParticleReveal_CellSourceOffsets
 ParticleReveal_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eec68, 0x000000d6
+	.incbin "baserom.gba", 0x000eec68, 0x0000004a
+	.global ShatterRocks_ShardOffsets
+ShatterRocks_ShardOffsets:
+	.incbin "baserom.gba", 0x000eecb2, 0x0000002a
+	.incbin "baserom.gba", 0x000eecdc, 0x00000016
+	.global ShatterRocks_RockX
+ShatterRocks_RockX:
+	.incbin "baserom.gba", 0x000eecf2, 0x00000005
+	.global ShatterRocks_DropFrames
+ShatterRocks_DropFrames:
+	.incbin "baserom.gba", 0x000eecf7, 0x00000005
+	.global ShatterRocks_RockCounts
+ShatterRocks_RockCounts:
+	.incbin "baserom.gba", 0x000eecfc, 0x00000003
+	.global ShatterRocks_ShardWidths
+ShatterRocks_ShardWidths:
+	.incbin "baserom.gba", 0x000eecff, 0x0000000f
+	.global ShatterRocks_ShardHeights
+ShatterRocks_ShardHeights:
+	.incbin "baserom.gba", 0x000eed0e, 0x00000010
+	.global ShatterRocks_ShardCells
+ShatterRocks_ShardCells:
+	.incbin "baserom.gba", 0x000eed1e, 0x0000001e
+	.incbin "baserom.gba", 0x000eed3c, 0x00000002
 	.global Data_080eed3e
 Data_080eed3e:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040

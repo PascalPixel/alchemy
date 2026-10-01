@@ -1515,7 +1515,7 @@ BattleFx_RunProjectileVolley:
 	.type BattleFx_InitializeMode12, %function
 	.thumb_func
 BattleFx_InitializeMode12:
-	.incbin "baserom.gba", 0x000e15e8, 0x0000130c
+	.incbin "baserom.gba", 0x000e15e8, 0x00000f50
 	.section .rom.000e2972, "ax"
 	.incbin "baserom.gba", 0x000e2972, 0x00000002
 	.section .rom.000e2974, "ax"
@@ -1770,7 +1770,30 @@ ParticleReveal_CellHeights:
 	.incbin "baserom.gba", 0x000eec63, 0x00000005
 	.global ParticleReveal_CellSourceOffsets
 ParticleReveal_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eec68, 0x00000168
+	.incbin "baserom.gba", 0x000eec68, 0x0000004a
+	.global ShatterRocks_ShardOffsets
+ShatterRocks_ShardOffsets:
+	.incbin "baserom.gba", 0x000eecb2, 0x0000002a
+	.incbin "baserom.gba", 0x000eecdc, 0x00000016
+	.global ShatterRocks_RockX
+ShatterRocks_RockX:
+	.incbin "baserom.gba", 0x000eecf2, 0x00000005
+	.global ShatterRocks_DropFrames
+ShatterRocks_DropFrames:
+	.incbin "baserom.gba", 0x000eecf7, 0x00000005
+	.global ShatterRocks_RockCounts
+ShatterRocks_RockCounts:
+	.incbin "baserom.gba", 0x000eecfc, 0x00000003
+	.global ShatterRocks_ShardWidths
+ShatterRocks_ShardWidths:
+	.incbin "baserom.gba", 0x000eecff, 0x0000000f
+	.global ShatterRocks_ShardHeights
+ShatterRocks_ShardHeights:
+	.incbin "baserom.gba", 0x000eed0e, 0x00000010
+	.global ShatterRocks_ShardCells
+ShatterRocks_ShardCells:
+	.incbin "baserom.gba", 0x000eed1e, 0x0000001e
+	.incbin "baserom.gba", 0x000eed3c, 0x00000094
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000eedd0, 0x00000004

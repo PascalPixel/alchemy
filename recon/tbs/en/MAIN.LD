@@ -910,7 +910,7 @@
         "*/recon/tbs/raw/080d9ae8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
         "*/recon/tbs/raw/080da2ac.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080da6cc.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
         "*/recon/tbs/raw/080dab74.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080db264.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)

@@ -1235,20 +1235,20 @@ Data_080eea2c:
 Data_080eea38:
 	.incbin "baserom.gba", 0x000eea38, 0x00000008
 	.incbin "baserom.gba", 0x000eea40, 0x00000001
-	.global Data_080eea41
-Data_080eea41:
+	.global HomingEmbers_Counts
+HomingEmbers_Counts:
 	.incbin "baserom.gba", 0x000eea41, 0x00000003
-	.global Data_080eea44
-Data_080eea44:
+	.global HomingEmbers_FlareWidths
+HomingEmbers_FlareWidths:
 	.incbin "baserom.gba", 0x000eea44, 0x00000006
-	.global Data_080eea4a
-Data_080eea4a:
+	.global HomingEmbers_FlareHeights
+HomingEmbers_FlareHeights:
 	.incbin "baserom.gba", 0x000eea4a, 0x00000006
-	.global Data_080eea50
-Data_080eea50:
+	.global HomingEmbers_FlareBiasY
+HomingEmbers_FlareBiasY:
 	.incbin "baserom.gba", 0x000eea50, 0x00000006
-	.global Data_080eea56
-Data_080eea56:
+	.global HomingEmbers_FlareCells
+HomingEmbers_FlareCells:
 	.incbin "baserom.gba", 0x000eea56, 0x0000000c
 	.global Data_080eea62
 Data_080eea62:

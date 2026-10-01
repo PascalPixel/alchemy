@@ -762,6 +762,8 @@
     "*/recon/tbs/it/rom.o"(.rom.000d9ae8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000da2ac)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
+    "*/recon/tbs/it/rom.o"(.rom.000dab74)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000db6e0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)

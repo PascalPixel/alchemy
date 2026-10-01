@@ -770,6 +770,8 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000d0ae8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT9.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d12ac)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
+    "*/recon/tbs/ja/rom.o"(.rom.000d1b74)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d26e0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)

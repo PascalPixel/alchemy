@@ -1,13 +1,12 @@
 /* Draft, complete main:080ddde0 [080ddde0,080de2f8), 1304 bytes, written
-   fresh from the listing in plain C: 1304 of 1304 bytes, 63 differing
-   instructions, all in the last two loops. Remaining difference: in the
-   glint loop the ROM reads the range table after the first Random16 call
-   and position.x before the second remainder, where this reads them the
-   other way round (every spelling tried that moves the range read also
-   hands r9 to the position address instead of the constant 3); in the
-   closing spark loop the ROM keeps x and y in r2 and r3 and the spark
-   pointer in r6, where this has them in r5, r6 and r7. The tables need
-   names (Data_080eebd6 holds four counts per variant: sparks, glints,
+   fresh from the listing in plain C: 1304 of 1304 bytes, 30 differing
+   instructions, all in the glint loop. Remaining difference: the ROM calls
+   Random16 before it reads the glint range and tests the loop on entry
+   through the saved effect address; reading the range inside the modulus
+   gives both but then the loop pass also hoists the position address,
+   which takes r9 from the constant 3 (it must stay unhoisted: four
+   invariants have to move ahead of it, this shape moves three). The tables
+   need names (Data_080eebd6 holds four counts per variant: sparks, glints,
    glint range, bolts). */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -151,9 +150,11 @@ void Region_080ddde0(struct BattleEffectArgument *effect)
                     spark->velocity_y = -spark->velocity_y / 2;
                 } else if ((u32)spark->x <= 0x7effff && spark->y >= 0) {
                     s32 size = spark->variant / 16 + 1;
+                    s32 x = spark->x >> 16;
+                    s32 y = spark->y >> 16;
 
                     draw[0](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
-                        (spark->x >> 16) - size / 2, (spark->y >> 16) - size, size, size * 2);
+                        x - size / 2, y - size, size, size * 2);
                 }
             }
         }

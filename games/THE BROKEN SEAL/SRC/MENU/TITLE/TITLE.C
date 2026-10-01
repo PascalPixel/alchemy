@@ -54,7 +54,7 @@ static __inline__ void RestoreInterrupts(u32 saved)
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
@@ -78,7 +78,7 @@ static __inline__ void DecodeBackground(const u8 *res)
 {
     /* FAKEMATCH: this call boundary keeps the source in r4 and reloads the
        map-cell buffer after the decode; a direct call retains r5 and changes
-       the DMA literal pool in the retained draft. */
+       the DMA literal pool. */
     Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
 }
 
@@ -260,7 +260,7 @@ localized_sprite:
         {
             /* FAKEMATCH: the explicit inner boundary keeps the record writer
                independent of the sprite pointer; a nested for loop adds a
-               saved register and twelve bytes in the retained draft. */
+               saved register and twelve bytes. */
             *w++ = 0;
             *w++ = (i * 8 << 16) | y | 0x2400;
             *w++ = tile;

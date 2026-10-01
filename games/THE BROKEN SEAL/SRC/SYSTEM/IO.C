@@ -50,7 +50,7 @@ extern u8 TransferCommandExecutor_Size[];
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \

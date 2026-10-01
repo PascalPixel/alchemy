@@ -122,7 +122,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         *blend_y = zero;
         sixteen = 16;
         /* Preserve the volatile register-store scheduling used by agbcc. */
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             blend_y[-1] = sixteen;
         } while (0);

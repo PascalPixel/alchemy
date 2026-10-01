@@ -30,7 +30,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
         s32 count;                                                          \
                                                                             \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \

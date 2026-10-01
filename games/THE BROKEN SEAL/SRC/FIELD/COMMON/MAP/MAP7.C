@@ -118,7 +118,7 @@ void Map_ShowWorldMap(void)
     BattleFx_CleanupResourcesAndWindow();
     {
         s32 v;
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             v = 64;
         } while (0);
@@ -132,7 +132,7 @@ void Map_ShowWorldMap(void)
         s32 count;
 
         q = &gIoWriteQueue;
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             ime = &REG_IME;
             saved = *ime;
@@ -148,7 +148,7 @@ void Map_ShowWorldMap(void)
         }
         *ime = saved;
     }
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         layer = map->layers;
     } while (0);

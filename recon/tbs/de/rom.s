@@ -1182,14 +1182,6 @@ BattleActor_SpawnObjectsForList:
 	.thumb_func
 BattlePres_RunUnitAction:
 	.incbin "baserom.gba", 0x000bb234, 0x0000019c
-	.section .rom.000bbb6c, "ax"
-	.incbin "baserom.gba", 0x000bbb6c, 0x000001d0
-	.section .rom.000bbd3c, "ax"
-	.global BattlePresentation_AppendLinkedActions
-	.type BattlePresentation_AppendLinkedActions, %function
-	.thumb_func
-BattlePresentation_AppendLinkedActions:
-	.incbin "baserom.gba", 0x000bbd3c, 0x00000190
 	.section .rom.000bc146, "ax"
 	.incbin "baserom.gba", 0x000bc146, 0x00000206
 	.section .rom.000bc4d8, "ax"

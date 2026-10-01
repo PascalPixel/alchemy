@@ -435,7 +435,6 @@
     "*/recon/tbs/it/rom.o"(.rom.000945d0)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000948ac)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORM_FLASH.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00094c46)
     "*/recon/tbs/it/rom.o"(.rom.00094c48)

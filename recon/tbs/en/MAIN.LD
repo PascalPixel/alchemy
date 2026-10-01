@@ -503,7 +503,6 @@
         "*/recon/tbs/raw/08093872.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT17.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD6.o"(.text)
-        "*/recon/tbs/raw/08093fa0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT7.o"(.text)
         "*/recon/tbs/raw/080941de.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT10.o"(.text)

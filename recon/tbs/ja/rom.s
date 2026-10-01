@@ -704,12 +704,6 @@ Object_EffectSpawnCallback:
 	.thumb_func
 UiText_OpenMessageAtObject:
 	.incbin "baserom.gba", 0x00089c60, 0x0000030c
-	.section .rom.0008af88, "ax"
-	.global battle_owner_69
-	.type battle_owner_69, %function
-	.thumb_func
-battle_owner_69:
-	.incbin "baserom.gba", 0x0008af88, 0x000001b4
 	.section .rom.0008b52c, "ax"
 	.global DisplayScroll_BuildAndSwapHBlankPage
 	.type DisplayScroll_BuildAndSwapHBlankPage, %function

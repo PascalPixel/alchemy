@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "STRING.H"
 
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 extern volatile u8 gSchedulerStatus;
@@ -54,11 +55,11 @@ sort_pass:
     remaining = pass;
 next_task:
     if ((s16)task[1].state > (s16)task->state) {
-        __builtin_memcpy(&saved, task, sizeof(saved));
+        memcpy(&saved, task, sizeof(saved));
         base = task;
         task++;
-        __builtin_memcpy(base, task, sizeof(saved));
-        __builtin_memcpy(task, &saved, sizeof(saved));
+        memcpy(base, task, sizeof(saved));
+        memcpy(task, &saved, sizeof(saved));
     } else {
         task++;
     }
@@ -72,13 +73,14 @@ finish_pass:
 s32 Scheduler_FindCallback(u32 callback)
 {
     s32 result;
-    s32 returned_result;
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 i;
 
     task = gSchedulerTaskTable;
     result = -1;
+    /* FAKEMATCH: the two blocks that run once are meaningless. Without both, the
+     * interrupt-master save is scheduled ahead of the task table's address load. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -95,24 +97,21 @@ s32 Scheduler_FindCallback(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
 {
     u32 saved_interrupt_state;
     s32 index;
-    s32 returned_index;
     struct SchedulerTask *task;
-    volatile u8 *scheduler_status;
     s32 i;
 
-    scheduler_status = &gSchedulerStatus;
     task = gSchedulerTaskTable;
-    (void)*scheduler_status;
+    (void)gSchedulerStatus; /* read and dropped */
     index = -1;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_state = REG_IME;
         {
@@ -165,9 +164,8 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
         } while (0);
         Scheduler_SortTasks();
         REG_IME = saved_interrupt_state;
-        returned_index = index;
     } while (0);
-    return returned_index;
+    return index;
 }
 
 void Scheduler_Idle(void) {}
@@ -179,11 +177,11 @@ s32 Scheduler_RemoveCallback(u32 callback)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     task = gSchedulerTaskTable;
     result = -1;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -202,9 +200,8 @@ s32 Scheduler_RemoveCallback(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_EnableCallbacks(u32 callback)
@@ -212,11 +209,11 @@ s32 Scheduler_EnableCallbacks(u32 callback)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     task = gSchedulerTaskTable;
     result = -1;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -235,9 +232,8 @@ s32 Scheduler_EnableCallbacks(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
@@ -245,11 +241,11 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     task = gSchedulerTaskTable;
     result = -1;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -266,8 +262,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 

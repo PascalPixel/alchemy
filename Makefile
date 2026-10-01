@@ -234,13 +234,15 @@ progress-report:
 drafts:
 	$(ALCHEMY) drafts
 
+# The listings under recon/<game>/raw are the English builds' disassembly, so
+# both reports read the English builds: the Japanese ones link few of them.
 similar:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-ja --build out/tla-ja \
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- similar --build out/tbs-en --build out/tla-en \
 	    --out out/reports/similar.tsv $(SIMILAR_FLAGS)
 
 # A report for people only: the build and the count never read it.
 deps:
-	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- deps --build out/tbs-ja --build out/tla-ja \
+	$(CARGO_RUN) $(TOOLS)/psynergy/Cargo.toml -- deps --build out/tbs-en --build out/tla-en \
 	    --out-dir out/reports $(DEPS_FLAGS)
 
 progress-check:

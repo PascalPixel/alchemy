@@ -1386,8 +1386,8 @@ Data_080eec44:
 	.global Data_080eec52
 Data_080eec52:
 	.incbin "baserom.gba", 0x000eec52, 0x00000008
-	.global Data_080eec5a
-Data_080eec5a:
+	.global MercuryDjinnFlames_LaunchFrames
+MercuryDjinnFlames_LaunchFrames:
 	.incbin "baserom.gba", 0x000eec5a, 0x00000005
 	.global ParticleReveal_CellWidths
 ParticleReveal_CellWidths:

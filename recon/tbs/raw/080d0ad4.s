@@ -494,7 +494,7 @@ Unnamed_080d0ad4:
 .L_080d0ecc:
 	.4byte 0x01010101
 .L_080d0ed0:
-	.4byte Data_080ee128 + 0xc
+	.4byte Data_080ee134
 .L_080d0ed4:
 	.4byte BattleFx6_FlareCells
 .L_080d0ed8:

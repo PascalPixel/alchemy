@@ -3028,7 +3028,7 @@ SECTIONS
         "*/recon/tla/raw/081b3294.o"(.text)
         "*/recon/tla/raw/081b336c.o"(.text)
         "*/recon/tla/raw/081b34a8.o"(.text)
-        "*/recon/tla/raw/081b3e34.o"(.text)
+        "*/games/THE LOST AGE/SRC/SOUND/RESET_SLOT_BUCKETS.o"(.text)
         "*/recon/tla/raw/081b3e70.o"(.text)
         "*/games/THE LOST AGE/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
         "*/recon/tla/raw/081b3ed8.o"(.text)

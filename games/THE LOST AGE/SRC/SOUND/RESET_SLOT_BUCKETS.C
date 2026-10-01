@@ -1,17 +1,8 @@
 #include "TYPES.H"
 extern u8 Flash_Handler3[];
 
-struct AudioTrackSlotWork {
-    u8 unknown0000[0x3404];
-    s32 bucket_by_slot[0x400];
-    u8 unknown4404[0x34];
-    u32 input_cursor;
-    s32 unknown443c;
-    u32 input_limit;
-};
-
-extern struct AudioTrackSlotWork *Data_02004c00;
-
+/* ☀️'s: number every slot node and clear its link, then empty the 256
+   bucket heads. */
 void AudioTrack_ResetSlotBuckets(void)
 {
     s32 index;
@@ -20,8 +11,8 @@ void AudioTrack_ResetSlotBuckets(void)
     u8 *record;
     s32 *slot;
 
-    limit = 0x3FF;
     index = 0;
+    limit = 0x3FF;
     zero = 0;
     record = *(u8 **)Flash_Handler3 + 4;
     do {

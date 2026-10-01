@@ -147,12 +147,6 @@ Map_CopyMetatileCellsRect:
 	.thumb_func
 Func_08010788:
 	.incbin "baserom.gba", 0x000106e8, 0x0000013c
-	.section .rom.00010844, "ax"
-	.global Map_WriteLayerCellTile
-	.type Map_WriteLayerCellTile, %function
-	.thumb_func
-Map_WriteLayerCellTile:
-	.incbin "baserom.gba", 0x00010844, 0x00000104
 	.section .rom.00010f50, "ax"
 	.global MapAnimation_ApplyAffineFrame
 	.type MapAnimation_ApplyAffineFrame, %function

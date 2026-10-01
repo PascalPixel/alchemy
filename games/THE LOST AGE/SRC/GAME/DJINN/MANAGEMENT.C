@@ -102,3 +102,19 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, s32 bit)
     GameFlag_SetBit(flag);
     return best_no;
 }
+
+/* ☀️'s; ⚓️ reads the owned word into a temporary before testing it. */
+s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
+{
+    struct OwnerBitState *state = Owner_GetState(owner);
+    u32 owned;
+
+    if (state->bit_counts[index] > 9)
+        return -1;
+    owned = state->bits[index];
+    if ((owned & (1 << bit)) != 0)
+        return -1;
+    state->bit_counts[index]++;
+    state->bits[index] |= 1 << bit;
+    return 0;
+}

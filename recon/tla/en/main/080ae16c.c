@@ -1,3 +1,6 @@
+/* Near miss: score 80. The owners come from gPartyState. ⚓️ loads
+   gPartyState's address before forming the owner's offset (134 << 2); this
+   draft forms the offset first, and -mtune=arm9tdmi does not change that. */
 #include "SCENE.H"
 #include "GAME_FLAGS.H"
 #include "INVENTORY.H"

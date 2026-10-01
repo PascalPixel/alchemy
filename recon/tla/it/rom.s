@@ -2147,12 +2147,8 @@ Owner_LevelUp:
 	.incbin "baserom.gba", 0x000b02a4, 0x000001c8
 	.section .rom.000b04c6, "ax"
 	.incbin "baserom.gba", 0x000b04c6, 0x000005da
-	.section .rom.000b0b84, "ax"
-	.global Djinn_AddToOwner
-	.type Djinn_AddToOwner, %function
-	.thumb_func
-Djinn_AddToOwner:
-	.incbin "baserom.gba", 0x000b0b84, 0x00000100
+	.section .rom.000b0bc2, "ax"
+	.incbin "baserom.gba", 0x000b0bc2, 0x000000c2
 	.section .rom.000b0ca6, "ax"
 	.incbin "baserom.gba", 0x000b0ca6, 0x00000002
 	.section .rom.000b0ca8, "ax"

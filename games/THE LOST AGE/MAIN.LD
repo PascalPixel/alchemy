@@ -1110,7 +1110,7 @@ SECTIONS
         "*/recon/tla/raw/080b0740.o"(.text)
         "*/recon/tla/raw/080b075c.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT.o"(.text)
-        "*/recon/tla/raw/080b0b78.o"(.text)
+        "*/recon/tla/raw/080b0bb6.o"(.text)
         "*/recon/tla/raw/080b0bb8.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_2.o"(.text)
         "*/recon/tla/raw/080b0c9a.o"(.text)

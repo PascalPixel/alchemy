@@ -1,3 +1,6 @@
+/* Near miss: score 160. The owners come from gPartyState; ⚓️ also names its
+   element table where this draft uses ☀️'s Character_ElementGroupTable, and
+   loads gPartyState's address before the owner offset. */
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "GAME_FLAGS.H"

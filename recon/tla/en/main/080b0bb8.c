@@ -1,3 +1,6 @@
+/* Near miss: score 160 with temporaries for the owned and pledged words. ⚓️
+   sets the 0 result between loading the pledged word and testing its bit;
+   this draft after. With -mtune=arm9tdmi this draft compiles exactly. */
 /*
  * Draft: Trade_CanOfferDjinn does not yet match; 8 bytes differ from +0x30.
  * Links as recon/tla/raw/080b0bb8.s.
@@ -46,11 +49,12 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerTradeState *state =
-        (struct OwnerTradeState *)Owner_GetState(owner);
+    struct OwnerTradeState *state = (struct OwnerTradeState *)Owner_GetState(owner);
     struct TradeOfferTable *table;
     s32 i;
     s32 status;
+    u32 owned;
+    u32 pledged;
 
     if (state->owned_counts[index] == 0)
         return 0;
@@ -58,18 +62,18 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
         state->offer_counts[index] = 10;
         return 0;
     }
-    if ((state->owned[index] & (1 << bit)) == 0)
+    owned = state->owned[index];
+    if ((owned & (1 << bit)) == 0)
         return 0;
-    if ((state->pledged[index] & (1 << bit)) != 0)
+    pledged = state->pledged[index];
+    if ((pledged & (1 << bit)) != 0)
         return 0;
-
     table = (struct TradeOfferTable *)(Trade_GetOfferState((u32)owner > 7) + 8);
     for (i = 0; i < table->count; i++) {
         if (index == table->offers[i].index && bit == table->offers[i].bit)
             break;
     }
-    if (i == table->count ||
-        ((status = (s8)table->offers[i].status) <= 0 && status != -2))
+    if (i == table->count || ((status = (s8)table->offers[i].status) <= 0 && status != -2))
         return 1;
     return 0;
 }

@@ -667,7 +667,7 @@
     "*/games/THE LOST AGE/SRC/GAME/ITEM/GET_UNLEASH_RATE_BONUS.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b54ba)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT.o"(.text)
-    "*/recon/tla/fr/rom.o"(.rom.000b5b78)
+    "*/recon/tla/fr/rom.o"(.rom.000b5bb6)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT_2.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.000b5c9a)
     "*/recon/tla/fr/rom.o"(.rom.000b5c9c)

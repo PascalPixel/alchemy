@@ -773,7 +773,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000de768)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT19.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000dfbe0)
-    "*/recon/tbs/de/rom.o"(.rom.000e00f8)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PREPARE_CANVAS_EFFECT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PROJECTILE_VOLLEY.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e086e)
     "*/recon/tbs/de/rom.o"(.rom.000e0870)

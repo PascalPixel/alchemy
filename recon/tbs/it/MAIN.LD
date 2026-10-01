@@ -770,7 +770,7 @@
     "*/recon/tbs/it/rom.o"(.rom.000dc968)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT19.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000ddde0)
-    "*/recon/tbs/it/rom.o"(.rom.000de2f8)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PREPARE_CANVAS_EFFECT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PROJECTILE_VOLLEY.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000dea6e)
     "*/recon/tbs/it/rom.o"(.rom.000dea70)

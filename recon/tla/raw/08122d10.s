@@ -231,7 +231,7 @@ Func_08122d10:
 	lsls r3, r6, #2
 	adds r3, #64
 	ldr r0, [r7, r3]
-	bl Func_08120178
+	bl BattleActor_DestroyTemporaryObject
 	b .L_08122ff0
 .L_08122ee4:
 	movs r0, #180

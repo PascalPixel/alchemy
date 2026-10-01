@@ -89,7 +89,7 @@ Func_02005d74:
 	.global Func_02005d7c
 	.thumb_func
 Func_02005d7c:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02005d84
 	.thumb_func
 Func_02005d84:

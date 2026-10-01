@@ -20,7 +20,7 @@ Func_080d7d90:
 	str r2, [r0, #24]
 	cmp r2, r3
 	bge .L_080d7db6
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080d7db6:
 	pop {pc}
 .L_080d7db8:

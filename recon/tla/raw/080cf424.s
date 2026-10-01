@@ -79,7 +79,7 @@ Func_080cf424:
 	movs r1, #1
 	bl Object_SetMode
 	adds r0, r6, #0
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080cf4d0:
 	pop {r3, r5, r6}
 	mov r8, r3

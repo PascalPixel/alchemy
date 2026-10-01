@@ -123,7 +123,7 @@ Func_080e3698:
 	movs r0, #15
 	bl Battle_WaitMode0
 	mov r0, r8
-	bl Func_080200c8
+	bl Object_Destroy
 	add r2, sp, #16
 	ldrh r2, [r2]
 	movs r3, #0

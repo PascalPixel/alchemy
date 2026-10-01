@@ -93,7 +93,7 @@ Func_02004db4:
 	.global Func_02004dbc
 	.thumb_func
 Func_02004dbc:
-	overlay_veneer Func_080200c8
+	overlay_veneer Object_Destroy
 	.global Func_02004dc4
 	.thumb_func
 Func_02004dc4:

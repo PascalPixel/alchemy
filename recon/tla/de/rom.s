@@ -659,7 +659,12 @@ Flash_ChipAtmelLayout:
 	.section .rom.00020060, "ax"
 	.incbin "baserom.gba", 0x00020060, 0x00000020
 	.section .rom.000200c0, "ax"
-	.incbin "baserom.gba", 0x000200c0, 0x00000028
+	.incbin "baserom.gba", 0x000200c0, 0x00000008
+	.global Object_Destroy
+	.type Object_Destroy, %function
+	.thumb_func
+Object_Destroy:
+	.incbin "baserom.gba", 0x000200c8, 0x00000020
 	.section .rom.00020180, "ax"
 	.incbin "baserom.gba", 0x00020180, 0x00000030
 	.section .rom.000201f0, "ax"
@@ -4233,6 +4238,10 @@ BattleActor_SpawnObjectsForList:
 ResetMotionRecordGroup:
 	.incbin "baserom.gba", 0x0011b9f8, 0x0000024c
 	.section .rom.0011bc7c, "ax"
+	.global ActivateBattleObjectSlot
+	.type ActivateBattleObjectSlot, %function
+	.thumb_func
+ActivateBattleObjectSlot:
 	.incbin "baserom.gba", 0x0011bc7c, 0x000001d8
 	.section .rom.0011be54, "ax"
 	.global GetBattleObjectSlot
@@ -4251,13 +4260,18 @@ GetBattleObjectSlot:
 	.section .rom.0011d760, "ax"
 	.incbin "baserom.gba", 0x0011d760, 0x00000c24
 	.section .rom.0011e3c2, "ax"
-	.incbin "baserom.gba", 0x0011e3c2, 0x00001b5e
+	.incbin "baserom.gba", 0x0011e3c2, 0x0000100e
+	.global BattleActor_RemoveFromLists
+	.type BattleActor_RemoveFromLists, %function
+	.thumb_func
+BattleActor_RemoveFromLists:
+	.incbin "baserom.gba", 0x0011f3d0, 0x00000b50
 	.section .rom.0011ff20, "ax"
 	.global BattlePresentation_WaitForAdvance
 	.type BattlePresentation_WaitForAdvance, %function
 	.thumb_func
 BattlePresentation_WaitForAdvance:
-	.incbin "baserom.gba", 0x0011ff20, 0x000002ac
+	.incbin "baserom.gba", 0x0011ff20, 0x00000270
 	.section .rom.001201dc, "ax"
 	.global BattleEv_DispatchQueued
 	.type BattleEv_DispatchQueued, %function

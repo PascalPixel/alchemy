@@ -2307,7 +2307,6 @@ SECTIONS
         "*/recon/tla/raw/0811ff08.o"(.text)
         "*/recon/tla/raw/08120060.o"(.text)
         "*/recon/tla/raw/08120158.o"(.text)
-        "*/recon/tla/raw/08120178.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.o"(.text)
         "*/recon/tla/raw/081201c4.o"(.text)
         "*/recon/tla/raw/08120360.o"(.text)

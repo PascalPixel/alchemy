@@ -773,7 +773,6 @@
         "*/recon/tbs/raw/080bac6c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_RESET_RUNTIME_FIELDS.o"(.text)
-        "*/recon/tbs/raw/080bb7c0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_QUEUE.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)
         "*/recon/tbs/raw/080bbb0a.o"(.text .rodata .data .padding)

@@ -1210,12 +1210,6 @@ BattlePresentation_AppendLinkedActions:
 	.thumb_func
 BattleActor_RemoveFromLists:
 	.incbin "baserom.gba", 0x000bec84, 0x0000007c
-	.section .rom.000bf7d8, "ax"
-	.global Unnamed_080bb7c0
-	.type Unnamed_080bb7c0, %function
-	.thumb_func
-Unnamed_080bb7c0:
-	.incbin "baserom.gba", 0x000bf7d8, 0x00000118
 	.section .rom.000c143a, "ax"
 	.incbin "baserom.gba", 0x000c143a, 0x00000002
 	.section .rom.000c143c, "ax"

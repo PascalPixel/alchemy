@@ -656,7 +656,6 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000bd284)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_RESET_RUNTIME_FIELDS.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000bddd8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_QUEUE.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/CAN_AFFECT_DEFEATED_UNIT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.o"(.text)

@@ -1,21 +1,20 @@
 /* Draft, complete main:080e302c [080e302c,080e38b8), 2188 bytes, written
-   fresh from the listing in plain C; 205 instructions off. The frame (72
-   bytes), the set-up, the object and rock seeding, the mound and wall-row
-   blocks and the dust block match. Remaining difference:
+   fresh from the listing in plain C; 159 instructions off. The frame (72
+   bytes), the set-up, the palette loop, the object and rock seeding, the
+   mound and wall-row blocks and the dust block match. Remaining difference:
    1. The tile repack reads each strip width once in the byte loop
-      preheader, which is what const tables give; with them const the frame
-      loop then keeps table values in registers across the blitter calls
-      where the ROM reads them again after every call.
-   2. The palette loop: the ROM leaves the 32-bit 31 inside the loop and has
-      the pointer in r5 and blue, green, red in r0, r1, r4. The second loop
-      pass hoists the 31 here (30 against a loop of 29 instructions).
-   3. The standing-wall block: the ROM reads the 48 back before each call
+      preheader and tests entry on a value read once per strip. Only an
+      unchanging (const) table lets the loop pass hoist those reads, since
+      the byte stores could alias; but with the tables const the wall-row
+      loops keep the width in a register across the blitter calls, where
+      the ROM reads it again after every call, as non-const tables do here.
+   2. The standing-wall block: the ROM reads the 48 back before each call
       (its frame loop hoists it: second loop pass, 15 x life 29 = 435
       against 439 instructions here) and so keeps the wall pointer in r6.
-   4. The rock block: the ROM copies the unit scale as one struct, keeps
-      the scale address in r7 and the slot index out of i, with -1 in r4
-      saved around the placement call; trying that moved i from r7 to r6
-      everywhere, so the two have to be solved together. */
+   3. The rock block: the ROM keeps the scale address in r7, the rock count
+      in sl and -1 in r4, saved around the placement call, and uses the
+      slot index straight from r0; taking the index out of i moves i from
+      r7 to r6 in every loop, so i has to lose its register some other way. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -38,6 +37,11 @@ typedef struct {
     u8 enabled;
 } BattleEffectObject;
 
+typedef struct Scale {
+    s32 x;
+    s32 y;
+} Scale;
+
 extern u8 gBattleFxWork[];
 extern u8 gMapCellBuffer[];
 extern DrawRectangle gWorkSlot[];
@@ -47,7 +51,7 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
 BattleEffectObject *GetBattleEffectObject(s32 kind);
 void AnimationObjects_SelectAnimationFar(BattleEffectObject *object, s32 animation);
-void Object_ApplyProjectedPlacementFar(BattleEffectObject *object, s32 *position, s32 *scale, s32 mode);
+void Object_ApplyProjectedPlacementFar(BattleEffectObject *object, s32 *position, Scale *scale, s32 mode);
 void ResourceObject_ReleaseFar(BattleEffectObject *object);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -56,7 +60,7 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u16 ParticleStreams_CellOffsets[];
-extern s32 Data_080edab0[];
+extern const Scale Data_080edab0;
 extern u16 Data_080eed7e[];
 extern u8 Data_080eed90[];
 extern u16 Data_080eed9a[];
@@ -86,7 +90,7 @@ void Unnamed_080e302c(struct BattleEffectArgument *effect)
     void *sheet;
     s32 bias;
     s32 offset;
-    s32 scale[2];
+    Scale scale;
     s32 position[4];
     u8 *source;
     u16 *palette;
@@ -128,9 +132,14 @@ void Unnamed_080e302c(struct BattleEffectArgument *effect)
     palette = (u16 *)0x05000002;
     for (i = 0; i != 63; i++) {
         s32 color = *palette;
-        s32 blue = (((u16)color >> 10) & 31) - 8;
-        s32 green = (((u16)color >> 5) & 31) - 8;
-        s32 red = (31 & color) - 8;
+        s32 blue = ((u16)color >> 10) & 31;
+        s32 green = ((u16)color >> 5) & 31;
+        s32 red = 31;
+
+        red &= color;
+        blue -= 8;
+        green -= 8;
+        red -= 8;
 
         if (blue < 0)
             blue = 0;
@@ -291,22 +300,21 @@ void Unnamed_080e302c(struct BattleEffectArgument *effect)
                 struct EffectStep *rock = &work->particles[10 + k];
 
                 if (rock->variant == 0) {
-                    scale[0] = Data_080edab0[0];
-                    scale[1] = Data_080edab0[1];
+                    scale = Data_080edab0;
                     if (frame > 71) {
-                        scale[0] = (k << 12) + 0x8000;
-                        scale[0] += work->effect->variant << 14;
+                        scale.x = (k << 12) + 0x8000;
+                        scale.x += work->effect->variant << 14;
                     } else {
-                        scale[0] = 0x8000;
+                        scale.x = 0x8000;
                     }
-                    scale[1] = scale[0];
+                    scale.y = scale.x;
                     position[3] = 0;
                     position[0] = (rock->x + offset * 2) << 16;
                     position[2] = 0x2000000;
                     position[1] = 0x2000000 - (rock->y << 16);
                     i = (frame / 2 + k) % 11;
                     if (i != -1)
-                        Object_ApplyProjectedPlacementFar(OBJECTS[i], position, scale, 0);
+                        Object_ApplyProjectedPlacementFar(OBJECTS[i], position, &scale, 0);
                     rock->y -= rock->z;
                     rock->velocity_x += rock->velocity_y;
                     if (rock->velocity_x > 12)
@@ -343,10 +351,10 @@ void Unnamed_080e302c(struct BattleEffectArgument *effect)
                 }
             }
         }
-        if (frame >= 90 && frame <= 160)
-            Camera_ApplyShake(8, 8);
-        else
+        if (frame < 90 || frame > 160)
             Camera_ApplyShake(2, 2);
+        else
+            Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);

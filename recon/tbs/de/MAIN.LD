@@ -433,7 +433,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT29.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT17.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD6.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0009763c)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT7.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT10.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.00097be0)

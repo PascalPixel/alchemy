@@ -430,7 +430,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT29.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT17.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD6.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.0009402c)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT7.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT10.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000945d0)

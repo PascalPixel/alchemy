@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0804dad0
+	.global Menu_DrawSelectionRow
 	.thumb_func
-Func_0804dad0:
+Menu_DrawSelectionRow:
 	push {r5, r6, lr}
 	mov r6, r10
 	mov r5, r9

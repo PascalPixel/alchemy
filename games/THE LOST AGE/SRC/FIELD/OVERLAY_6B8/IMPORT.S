@@ -185,7 +185,7 @@ Func_02000eac:
 	.global Func_02000eb4
 	.thumb_func
 Func_02000eb4:
-	overlay_veneer Func_080c8268
+	overlay_veneer Event_SetPairWork1c0Far
 	.global Func_02000ebc
 	.thumb_func
 Func_02000ebc:

@@ -24307,7 +24307,7 @@ msgctxt "message"
 msgid "06074"
 msgstr "Fantastic work, {actor_name:5}!{line_break}Keep a watchful eye for{line_break}any strange-looking areas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldRopeThrownAgain"
 msgid "06075"
 msgstr "All right! I'm gonna{line_break}throw the rope again!{end_wait}"
 
@@ -24339,7 +24339,7 @@ msgctxt "message"
 msgid "06082"
 msgstr "Fine! Just don't jump{line_break}down or do anything{line_break}dumb, OK?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStartledCompanion"
 msgid "06083"
 msgstr "Wah! You scared me!{end_wait}"
 
@@ -24355,7 +24355,7 @@ msgctxt "MsgFieldICantFindAnythingAroundHere"
 msgid "06086"
 msgstr "I can't find anything{line_break}around here that'll help{line_break}get him down from there!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPraiseRopeWork"
 msgid "06087"
 msgstr "Excellent work, {actor_name:5}!{end_wait}"
 
@@ -24463,7 +24463,7 @@ msgctxt "message"
 msgid "06113"
 msgstr "We should be going, too.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldStatueLikeDeriShrine"
 msgid "06114"
 msgstr "This statue looks a lot like{line_break}the one in Daila's Sanctum.{end_wait}"
 
@@ -25043,11 +25043,11 @@ msgctxt "message"
 msgid "06258"
 msgstr "The Champa dug this hole{line_break}when they raided our town,{line_break}but there's more to it...{page_break}The hole they dug uncovered{line_break}a cave that runs all the way{line_break}under our town!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldCaveFoundByChampa"
 msgid "06259"
 msgstr "I can't believe the Champa{line_break}just stumbled onto this{line_break}cave accidentally...{page_break}That's like winning the{line_break}lottery or something!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWhoDugCave"
 msgid "06260"
 msgstr "Who dug this cave?{pause_20_skippable}{line_break}And why?{end_wait}"
 
@@ -25719,11 +25719,11 @@ msgctxt "MsgMadoraPirateAttackParties"
 msgid "06427"
 msgstr "They still had enough{line_break}men to dig that hole{line_break}and attack Madra.{page_break}And enough to form{line_break}two attack parties, too...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldEyesOfTruth"
 msgid "06428"
 msgstr "Look upon me with eyes{line_break}of truth... Then the door{line_break}will open...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorWontBudge"
 msgid "06429"
 msgstr "The door won't budge.{line_break}...Must be locked.{end_wait}"
 
@@ -39699,7 +39699,7 @@ msgctxt "message"
 msgid "09922"
 msgstr "We won't be getting into Lemuria.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaRecognizePsynergy"
 msgid "09923"
 msgstr "Why, that was Psynergy,{line_break}wasn't it?{end_wait}"
 
@@ -39967,11 +39967,11 @@ msgctxt "message"
 msgid "09989"
 msgstr "To Lemuria... The city you've{line_break}all been longing to see...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploring"
 msgid "09990"
 msgstr "Lost already, {actor_name:5}? That's{line_break}the way to the boat dock! You{line_break}can't want to return already!{page_break}We've only just gotten to{line_break}Lemuria. We can't leave yet!{line_break}There's still so much to see!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLemuriaStayExploringAlternate"
 msgid "09991"
 msgstr "Lost already, {actor_name:5}? That's{line_break}the way to the boat dock! You{line_break}can't want to return already!{page_break}We've only just gotten to{line_break}Lemuria. We can't leave yet!{line_break}There's still so much to see!{end_wait}"
 
@@ -43503,7 +43503,7 @@ msgctxt "message"
 msgid "10873"
 msgstr "There's still time! We have to{line_break}help {actor_name:1}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldWaitingForCompanion"
 msgid "10874"
 msgstr "Ah, {actor_name:5}... I've been{line_break}waiting for you.{end_wait}"
 
@@ -43543,11 +43543,11 @@ msgctxt "message"
 msgid "10883"
 msgstr "There you go! Consider it a{line_break}gift. You can still make it.{line_break}Go on...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFollowTrueFeelings"
 msgid "10884"
 msgstr "It is time you followed your{line_break}true feelings. Go on.{line_break}Save your friends.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartWithAgatio"
 msgid "10885"
 msgstr "Even now, I want to run to{line_break}{actor_name:4}, to give her my aid...{line_break}It seems I am weak as well...{page_break}I suppose I have no choice{line_break}but to part ways with Agatio{line_break}and Karst.{end_wait}"
 
@@ -44331,7 +44331,7 @@ msgctxt "MsgFieldDoorLocked"
 msgid "11080"
 msgstr "The door's locked.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldShowAnemosPower"
 msgid "11081"
 msgstr "Holder of the star...{line_break}Show the power of Anemos!{end_wait}"
 
@@ -48331,7 +48331,7 @@ msgctxt "message"
 msgid "12080"
 msgstr "{actor_name:1}! {actor_name:5}!{line_break}We're off!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallFirstApproach"
 msgid "12081"
 msgstr "Kraden, come look at this...{line_break}There's a huge ice wall{line_break}blocking our path...{end_wait}"
 
@@ -48339,7 +48339,7 @@ msgctxt "message"
 msgid "12082"
 msgstr "Hm... If we can't do something{line_break}about that wall, we're not going{line_break}any farther, {actor_name:5}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipIceWallCrewReposition"
 msgid "12083"
 msgstr "Kraden, come look at this...{line_break}There's a huge ice wall{line_break}blocking our path...{end_wait}"
 
@@ -48355,7 +48355,7 @@ msgctxt "message"
 msgid "12086"
 msgstr "{actor_name:5}, take us between those{line_break}two blocks of ice for shelter{line_break}when you fire the cannon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShipSafeFiringDistance"
 msgid "12087"
 msgstr "We should be safe if we{line_break}fire from this distance.{end_wait}"
 
@@ -48383,7 +48383,7 @@ msgctxt "message"
 msgid "12093"
 msgstr "Let's go!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunFormation"
 msgid "12094"
 msgstr "The Golden Sun... The very{line_break}quintessence of Alchemy's{line_break}power! It's beginning!{end_wait}"
 
@@ -48391,7 +48391,7 @@ msgctxt "message"
 msgid "12095"
 msgstr "Wait for me! Please, wait!{line_break}Wait until I reach the{line_break}summit of Mt. Aleph!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunEternalLifeAndPower"
 msgid "12096"
 msgstr "At last! I have it!{line_break}Eternal life...and{line_break}limitless power!{end_wait}"
 

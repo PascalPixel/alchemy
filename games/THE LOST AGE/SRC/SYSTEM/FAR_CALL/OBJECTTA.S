@@ -153,7 +153,21 @@ Func_080c84c0:
 	.thumb_func
 BattleEffect_InitializeSharedSceneFar:
 	overlay_veneer BattleEffect_InitializeSharedScene
+.ifdef TLA_EDITION_ES
+	.global BattleEffect_ResolvePendingActionsFar
+	.thumb_func
+BattleEffect_ResolvePendingActionsFar:
+	overlay_veneer BattleEffect_ResolvePendingActions
+.else
+.ifdef TLA_EDITION_IT
+	.global BattleEffect_ResolvePendingActionsFar
+	.thumb_func
+BattleEffect_ResolvePendingActionsFar:
+	overlay_veneer BattleEffect_ResolvePendingActions
+.else
 	.global BattleFx_PrepareBufferInterpolationFar
 	.thumb_func
 BattleFx_PrepareBufferInterpolationFar:
 	overlay_veneer BattleFx_PrepareBufferInterpolation
+.endif
+.endif

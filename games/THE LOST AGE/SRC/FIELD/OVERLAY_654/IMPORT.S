@@ -77,7 +77,25 @@ Func_02003998:
 	.global Func_020039a0
 	.thumb_func
 Func_020039a0:
+	@ The localized scaffold exports this same complete resident routine
+	@ under its own source label.
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020180
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020180
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020180
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020180
+	.else
 	overlay_veneer Func_080201b0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_020039a8
 	.thumb_func
 Func_020039a8:
@@ -257,19 +275,35 @@ Func_02003ae0:
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8398
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8398
+	.else
 	overlay_veneer Event_SetStatus1c6Far
+	.endif
+	.endif
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c83a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c83a0
+	.else
 	overlay_veneer Event_ClearStatus1c6Far
+	.endif
+	.endif
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.endif
@@ -277,11 +311,27 @@ Event_WaitValue1c8Frames:
 	.global Func_02003b00
 	.thumb_func
 Func_02003b00:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8470
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8470
+	.else
 	overlay_veneer Func_080c8480
+	.endif
+	.endif
 	.global Func_02003b08
 	.thumb_func
 Func_02003b08:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer Func_080c84e0
+	.endif
+	.endif
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func
 Object_LinkObjectAndSetCallback:
@@ -289,11 +339,27 @@ Object_LinkObjectAndSetCallback:
 	.global Func_02003b18
 	.thumb_func
 Func_02003b18:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8698
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8698
+	.else
 	overlay_veneer Func_080c86a8
+	.endif
+	.endif
 	.global Func_02003b20
 	.thumb_func
 Func_02003b20:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86d8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86d8
+	.else
 	overlay_veneer Func_080c86e8
+	.endif
+	.endif
 	.global Func_02003b28
 	.thumb_func
 Func_02003b28:
@@ -309,15 +375,39 @@ Func_02003b28:
 	.global Func_02003b30
 	.thumb_func
 Func_02003b30:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8708
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8708
+	.else
 	overlay_veneer Func_080c8718
+	.endif
+	.endif
 	.global Func_02003b38
 	.thumb_func
 Func_02003b38:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8710
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8710
+	.else
 	overlay_veneer Func_080c8720
+	.endif
+	.endif
 	.global Func_02003b40
 	.thumb_func
 Func_02003b40:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8718
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8718
+	.else
 	overlay_veneer Func_080c8728
+	.endif
+	.endif
 	.global Func_02003b48
 	.thumb_func
 Func_02003b48:

@@ -129,8 +129,8 @@ Data_0802edc4:
 	.global Data_0802eec4
 Data_0802eec4:
 	.incbin "baserom.gba", 0x0002eec4, 0x00000100
-	.global Data_0802efc4
-Data_0802efc4:
+	.global Map_TerrainHeightHandlers
+Map_TerrainHeightHandlers:
 	.incbin "baserom.gba", 0x0002efc4, 0x00000040
 	.global Data_0802f004
 Data_0802f004:

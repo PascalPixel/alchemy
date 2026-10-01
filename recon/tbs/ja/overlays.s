@@ -356,7 +356,9 @@ Resource_Overlay3CC:
 	.incbin "baserom.gba", 0x007f4c2b, 0x00000001
 	.global Resource_Overlay3CD
 Resource_Overlay3CD:
-	.incbin "baserom.gba", 0x007f4c2c, 0x00000480
+	.incbin "overlays/resource_3cd.lz"
+	.incbin "baserom.gba", 0x007f50a9, 0x00000003
 	.global Resource_Overlay3CE
 Resource_Overlay3CE:
-	.incbin "baserom.gba", 0x007f50ac, 0x0000af54
+	.incbin "overlays/resource_3ce.lz"
+	.incbin "baserom.gba", 0x007f57a3, 0x0000a85d

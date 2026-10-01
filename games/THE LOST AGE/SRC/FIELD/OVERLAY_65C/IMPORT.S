@@ -25,16 +25,48 @@ Object_SetModeById:
 	.global Func_02000190
 	.thumb_func
 Func_02000190:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8698
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8698
+	.else
 	overlay_veneer Func_080c86a8
+	.endif
+	.endif
 	.global Func_02000198
 	.thumb_func
 Func_02000198:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86a0
+	.else
 	overlay_veneer Func_080c86b0
+	.endif
+	.endif
 	.global Func_020001a0
 	.thumb_func
 Func_020001a0:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86b0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86b0
+	.else
 	overlay_veneer Func_080c86c0
+	.endif
+	.endif
 	.global Func_020001a8
 	.thumb_func
 Func_020001a8:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86d8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86d8
+	.else
 	overlay_veneer Func_080c86e8
+	.endif
+	.endif

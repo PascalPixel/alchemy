@@ -1,8 +1,10 @@
+@ Reads byte4 of one8-byte summon entry, returning0 outside indices0..386.
+@ Its complete28-byte extent, table pointer included, matches all six editions.
 .syntax unified
 	.thumb
-	.global Func_08128194
+	.global Summon_GetEntryByte4
 	.thumb_func
-Func_08128194:
+Summon_GetEntryByte4:
 	push {lr}
 	movs r3, #193
 	lsls r3, r3, #1

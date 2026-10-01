@@ -28,4 +28,4 @@ Func_08118048:
 	.global Func_08118050
 	.thumb_func
 Func_08118050:
-	overlay_veneer Func_08128194
+	overlay_veneer Summon_GetEntryByte4

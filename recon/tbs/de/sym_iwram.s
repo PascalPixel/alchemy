@@ -301,7 +301,10 @@ gLinkCountdownWork:
 gMenuSelectWork:
 	.global Data_03001f38
 Data_03001f38:
-	.space 0x0000001c
+	.space 0x00000004
+	.global gKorosseoWork
+gKorosseoWork:
+	.space 0x00000018
 	.global gDebugMode
 gDebugMode:
 	.space 0x00000004

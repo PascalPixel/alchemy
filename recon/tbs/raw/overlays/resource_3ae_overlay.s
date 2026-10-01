@@ -553,55 +553,70 @@ gKareiTorebiEvents1:
 	.4byte KareiTorebi_AskGoToTolbi
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001cfb
+	.4byte MsgKareiTorebiWeCantTakeSilkRoadSo
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001cfc
+	.4byte MsgKareiTorebiYouCantTakeSilkRoadMuch
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte FieldScene_RunScene3ae_02000260
 	.4byte 0x00000000
 	.4byte 0x0911000c
-	.4byte 0x00001d12
+	.4byte MsgKareiTorebiTodayThereAreSupposedToBe
 	.4byte 0x00000000
 	.4byte 0x0911000d
-	.4byte 0x00001d13
+	.4byte MsgKareiTorebiTheShipWillBeOpenUntil
 	.4byte 0x00000400
 	.4byte 0x08a9000c
 	.4byte SceneDialogue_RunActor12Event
 	.4byte 0x00008400
 	.4byte 0x08a9000c
 	.4byte SceneDialogue_RunActor12Event
+	.ifndef TBS_EDITION_EN
+.ifndef TBS_EDITION_JA
+.ifndef TBS_EDITION_DE
+	.4byte 0x0000c400
+	.4byte 0x18a9000c
+.else
 	.4byte 0x00000000
 	.4byte 0xffff000c
+.endif
+.else
+	.4byte 0x00000000
+	.4byte 0xffff000c
+.endif
+.else
+	.4byte 0x00000000
+	.4byte 0xffff000c
+.endif
 	.4byte FieldScene_RunScene3ae_020002dc
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte FieldScene_RunActorThirteenFlagDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001d00
+	.4byte MsgKareiTorebiWithSilkRoadClosedEveryoneWill
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001d01
+	.4byte MsgKareiTorebiICantBelieveHowExpensiveTickets
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001d02
+	.4byte MsgKareiTorebiWellIsntThisGreatWeCant
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001d03
+	.4byte MsgKareiTorebiWeveSpentAYearPlanningThis
 	.4byte 0x00008d15
 	.4byte 0x0911000c
-	.4byte 0x00001d14
+	.4byte MsgKareiTorebiTheCaptainsInAGoodMood
 	.4byte 0x00008d15
 	.4byte 0x0911000d
-	.4byte 0x00001d15
+	.4byte MsgKareiTorebiTheCaptainsInAGoodMoodThats
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001d1d
+	.4byte MsgKareiTorebiSilkRoadIsBlockedSoThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001d1e
+	.4byte MsgKareiTorebiTheReplacementShipHasntArrivedSo
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneState_ApplyValues14And0And5
@@ -624,16 +639,16 @@ gKareiTorebiEvents1Flag93e:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001f85
+	.4byte MsgKareiTorebiTheShipHasntReturnedSoWe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001f86
+	.4byte MsgKareiTorebiOhHoHoWithoutAShip
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001f87
+	.4byte MsgKareiTorebiImGladIOnlyWorkOn
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001f88
+	.4byte MsgKareiTorebiIWonderIfMonstersGotEveryone
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneState_ApplyValues14And0And5
@@ -659,7 +674,7 @@ gKareiTorebiEvents3:
 	.4byte KareiTorebi_TalkScaryTrip
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001f0c
+	.4byte MsgKareiTorebiSighIThinkWereDoneSailing
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte KareiTorebi_TalkSeasickTourists
@@ -668,31 +683,31 @@ gKareiTorebiEvents3:
 	.4byte FieldScene_RunScene3ae_020006c8
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001f1d
+	.4byte MsgKareiTorebiIfYoureGoingToTolbiKeep
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001f1e
+	.4byte MsgKareiTorebiItsBeenQuiteSomeTimeSince
 	.4byte 0x00008d15
 	.4byte 0x18a8000b
-	.4byte 0x00001f20
+	.4byte MsgKareiTorebiItWasAHardCrossingVery
 	.4byte 0x00008d15
 	.4byte 0xffff040b
 	.4byte FieldScene_RunScene3ae_020006c8
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001f1f
+	.4byte MsgKareiTorebiAfterSeeingTheLooksOnThe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001f21
+	.4byte MsgKareiTorebiIGetTheFeelingThatIt
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001f22
+	.4byte MsgKareiTorebiYouCrossedTheSeaJustFor
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f0d
+	.4byte MsgKareiTorebiIGuessWeWontBeSeeing
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001f0e
+	.4byte MsgKareiTorebiIThinkThatMissingShipMust
 	.4byte 0x00008c15
 	.4byte 0xffff000e
 	.4byte FieldScene_PlaceSlots14And15
@@ -724,52 +739,52 @@ gKareiTorebiEvents3Flag950:
 	.4byte FieldScene_RunScene3aeSequenceB
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000023e1
+	.4byte MsgKareiTorebiThereAreManyHereWhoWant
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000023e2
+	.4byte MsgKareiTorebiHangingAroundHereLikeThisAnd
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000023e3
+	.4byte MsgKareiTorebiIfBothTheCaptainAndKaja
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000023e4
+	.4byte MsgKareiTorebiIfKajaAndTheOthersSay
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000023fd
+	.4byte MsgKareiTorebiTourGroupsShouldTakeCareOf
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000023fe
+	.4byte MsgKareiTorebiToHeckWithYouImStaying
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000023ff
+	.4byte MsgKareiTorebiSighIWonderWhenWellBe
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002400
+	.4byte MsgKareiTorebiWellBeCountingOnYouIf
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002401
+	.4byte MsgKareiTorebiAsLongAsWereStuckHere
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002402
+	.4byte MsgKareiTorebiSighIfIKnewItWould
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002403
+	.4byte MsgKareiTorebiIfTheydJustLetTheShip
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002404
+	.4byte MsgKareiTorebiIfImGoingToBeStuck
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002405
+	.4byte MsgKareiTorebiGrrrWhyDontYouGetUp
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002406
+	.4byte MsgKareiTorebiAsLongAsYoureHereWe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002407
+	.4byte MsgKareiTorebiThisTourWasntWellOrganizedThats
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002408
+	.4byte MsgKareiTorebiIWonderIfGrandmaIsDoing
 	.4byte 0x00008c15
 	.4byte 0xffff000e
 	.4byte FieldScene_PlaceSlots14And15
@@ -798,40 +813,40 @@ gKareiTorebiEvents2:
 	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001d0c
+	.4byte MsgKareiTorebiHmmmThatsStrangeIsntTheReplacement
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001d0d
+	.4byte MsgKareiTorebiOnceWeveCrossedTheKaragolWell
 	.4byte 0x00008d15
 	.4byte 0x08a50008
-	.4byte 0x00001d0e
+	.4byte MsgKareiTorebiIFeelSortOfBadThat
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001d0f
+	.4byte MsgKareiTorebiIfYouveAlreadyBoughtYourTicket
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001d10
+	.4byte MsgKareiTorebiTheShipWontLeaveHereTill
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001d11
+	.4byte MsgKareiTorebiLetsGetGoingImNotGetting
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001f0f
+	.4byte MsgKareiTorebiImSorryButWeJustCant
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001f10
+	.4byte MsgKareiTorebiWeRentedOutOurHouseFor
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001f11
+	.4byte MsgKareiTorebiWeRentedOutOurHouseIf
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001f12
+	.4byte MsgKareiTorebiSighWeCouldHaveMadeLots
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001f13
+	.4byte MsgKareiTorebiMaybeWellStayHereUntilThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001f14
+	.4byte MsgKareiTorebiAreWeSupposedToSleepOn
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -845,28 +860,28 @@ gKareiTorebiEvents2Flag93e:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001f83
+	.4byte MsgKareiTorebiTheShipWontBeLeavingHere
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f84
+	.4byte MsgKareiTorebiAhhhImBoredWhenAreWe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001f0f
+	.4byte MsgKareiTorebiImSorryButWeJustCant
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001f10
+	.4byte MsgKareiTorebiWeRentedOutOurHouseFor
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001f11
+	.4byte MsgKareiTorebiWeRentedOutOurHouseIf
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001f12
+	.4byte MsgKareiTorebiSighWeCouldHaveMadeLots
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001f13
+	.4byte MsgKareiTorebiMaybeWellStayHereUntilThe
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001f14
+	.4byte MsgKareiTorebiAreWeSupposedToSleepOn
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -880,28 +895,28 @@ gKareiTorebiEvents2Flag950:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001f83
+	.4byte MsgKareiTorebiTheShipWontBeLeavingHere
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f84
+	.4byte MsgKareiTorebiAhhhImBoredWhenAreWe
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000023e5
+	.4byte MsgKareiTorebiImStuckIWantToCross
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000023e6
+	.4byte MsgKareiTorebiYeahTheShipsNotGoingAnywhere
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000023e7
+	.4byte MsgKareiTorebiTheKaragolSeaLooksSoCalm
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000023e8
+	.4byte MsgKareiTorebiWeveGotPassengersButNobodysSailing
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000023e9
+	.4byte MsgKareiTorebiTheCaptainMustBeAStubborn
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000023ea
+	.4byte MsgKareiTorebiTheMarineBlueKaragolSeaIs
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

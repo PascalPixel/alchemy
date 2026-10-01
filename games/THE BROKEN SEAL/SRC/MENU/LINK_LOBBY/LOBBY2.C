@@ -4,6 +4,7 @@
 #include "LOBBY.H"
 #include "SERIAL_RUNTIME.H"
 #include "CALL.H"
+#include "TBS_EDITION.H"
 
 extern u8 MsgLobbyWantParticipatePlease[];
 
@@ -141,12 +142,18 @@ test1:
     if (buf[i] != 0) {
         do {
             i++;
-            if (i > 4) {
+            if (i > LOBBY_PREFIX_LIMIT) {
                 break;
             }
         } while (buf[i] != 0);
     }
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    buf[i] = ' ';
+    n = i + 1;
+#else
     n = i;
+#endif
     for (i = 14; i >= n; i--) {
         rec[i] = rec[i - n];
     }

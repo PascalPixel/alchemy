@@ -3,7 +3,9 @@
  * MsgHaidiaFarewell as table-owned symbols. The pool resolves to the same
  * ids, but allocation changes the opening stack-argument stores and the
  * two closing actor priority updates. Three finite C rewrites retained
- * those differences; IE.C keeps tagged immediates pending a matching form.
+ * those differences. Production IE.C now imports the canonical names as
+ * PO-generated C enum constants and matches all six editions; this older
+ * pointer-symbol attempt remains as the measured unsuccessful form.
  */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.H"
 

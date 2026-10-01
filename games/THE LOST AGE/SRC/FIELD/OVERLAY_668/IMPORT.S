@@ -101,15 +101,63 @@ Func_02004a44:
 	.global Func_02004a4c
 	.thumb_func
 Func_02004a4c:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b0
+	.else
 	overlay_veneer Func_080201e0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02004a54
 	.thumb_func
 Func_02004a54:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b8
+	.else
 	overlay_veneer Func_080201e8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02004a5c
 	.thumb_func
 Func_02004a5c:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Map_GetTerrainHeightFar
+	.else
 	overlay_veneer Func_080201f0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02004a64
 	.thumb_func
 Func_02004a64:
@@ -281,7 +329,15 @@ Func_02004bac:
 	.global Func_02004bb4
 	.thumb_func
 Func_02004bb4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Object_GetTriggerTileAheadOfCurrentFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Object_GetTriggerTileAheadOfCurrentFar
+	.else
 	overlay_veneer Func_080c82c0
+	.endif
+	.endif
 	.global Func_02004bbc
 	.thumb_func
 Func_02004bbc:
@@ -301,7 +357,15 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_02004be4
 	.thumb_func
 Func_02004be4:
@@ -325,7 +389,15 @@ Object_LinkObjectAndSetCallback:
 	.global Func_02004c0c
 	.thumb_func
 Func_02004c0c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Object_SetActionCallbackFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Object_SetActionCallbackFar
+	.else
 	overlay_veneer Func_080c8690
+	.endif
+	.endif
 	.global Func_02004c14
 	.thumb_func
 Func_02004c14:
@@ -345,11 +417,27 @@ Func_02004c2c:
 	.global Func_02004c34
 	.thumb_func
 Func_02004c34:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8700
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8700
+	.else
 	overlay_veneer Func_080c8710
+	.endif
+	.endif
 	.global Func_02004c3c
 	.thumb_func
 Func_02004c3c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8728
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8728
+	.else
 	overlay_veneer Func_080c8738
+	.endif
+	.endif
 	.global Func_02004c44
 	.thumb_func
 Func_02004c44:
@@ -361,11 +449,27 @@ Func_02004c4c:
 	.global Func_02004c54
 	.thumb_func
 Func_02004c54:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8798
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8798
+	.else
 	overlay_veneer Func_080c87a8
+	.endif
+	.endif
 	.global Func_02004c5c
 	.thumb_func
 Func_02004c5c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87a8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87a8
+	.else
 	overlay_veneer Func_080c87b8
+	.endif
+	.endif
 	.global Func_02004c64
 	.thumb_func
 Func_02004c64:
@@ -377,7 +481,15 @@ Func_02004c6c:
 	.global Func_02004c74
 	.thumb_func
 Func_02004c74:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c87d0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c87d0
+	.else
 	overlay_veneer Func_080c87e0
+	.endif
+	.endif
 	.global Func_02004c7c
 	.thumb_func
 Func_02004c7c:
@@ -389,11 +501,27 @@ Func_02004c84:
 	.global Func_02004c8c
 	.thumb_func
 Func_02004c8c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8858
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8858
+	.else
 	overlay_veneer Func_080c8868
+	.endif
+	.endif
 	.global Func_02004c94
 	.thumb_func
 Func_02004c94:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8860
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8860
+	.else
 	overlay_veneer Func_080c8870
+	.endif
+	.endif
 	.global Func_02004c9c
 	.thumb_func
 Func_02004c9c:

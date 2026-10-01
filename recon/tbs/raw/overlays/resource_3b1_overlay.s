@@ -1130,61 +1130,61 @@ FuneHeya_SceneTable05:
 	.4byte FieldScene_RunScene3b1_020007f8
 	.4byte 0x00000000
 	.4byte 0x09250009
-	.4byte 0x00001d4f
+	.4byte MsgFuneHeyaApparentlyWeCantTakeSilkRoad
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001e18
+	.4byte MsgFuneHeyaAllThatMoneyOnTicketsAnd
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte SceneDialogue_ShowLine1E19Or1D50
 	.4byte 0x00000000
 	.4byte 0x0925000b
-	.4byte 0x00001d51
+	.4byte MsgFuneHeyaYoureGoingToTolbiToSee
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001e1c
+	.4byte MsgFuneHeyaINeverThoughtIdGetTo
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001e12
+	.4byte MsgFuneHeyaYouAllAgreedToHelpOf
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte FieldScene_RunScene3b1SequenceC
 	.4byte 0x00008d15
 	.4byte 0x09250008
-	.4byte 0x00001d52
+	.4byte MsgFuneHeyaMaybeIShouldJustForgetAbout
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001e1d
+	.4byte MsgFuneHeyaIfSomethingHappensToOurOarsmen
 	.4byte 0x00008d15
 	.4byte 0x09250009
-	.4byte 0x00001d53
+	.4byte MsgFuneHeyaTheyreJustTakingAdvantageOfUs
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001e1e
+	.4byte MsgFuneHeyaDoTheyHonestlyThinkImGoing
 	.4byte 0x00008d15
 	.4byte 0x0925000a
-	.4byte 0x00001d54
+	.4byte MsgFuneHeyaMusclesRipplingEverywhereLooksGreatIf
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001e1f
+	.4byte MsgFuneHeyaImSureItdBeEasierTo
 	.4byte 0x00008d15
 	.4byte 0x0925000b
-	.4byte 0x00001d55
+	.4byte MsgFuneHeyaWeLeftTheOldLadyBack
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001e20
+	.4byte MsgFuneHeyaWellShootMaybeWeShouldHave
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001e21
+	.4byte MsgFuneHeyaAskingThePassengersToHelpOut
 	.4byte 0x00008d15
 	.4byte 0x0925000f
-	.4byte 0x00001f7c
+	.4byte MsgFuneHeyaEvenThoughImOpposedToViolence
 	.4byte 0x00008d15
 	.4byte 0x093e000f
-	.4byte 0x00001f7e
+	.4byte MsgFuneHeyaICantRowButIAm
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001f82
+	.4byte MsgFuneHeyaWeMadeItToColossoIn
 	.4byte 0x00000033
 	.4byte 0x0f930065
 	.4byte 0x00200017
@@ -1204,7 +1204,7 @@ FuneHeya_SceneTable06:
 	.4byte FieldScene_RunScene3b1SequenceC
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001f80
+	.4byte MsgFuneHeyaIsThisCruelOrdealPartOf
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte SceneState_RunFlagBranchedActor8Setup
@@ -1234,58 +1234,58 @@ FuneHeya_SceneTable06:
 	.4byte FieldScene_RunActor16FlagDialogue
 	.4byte 0x00008d15
 	.4byte 0x03000008
-	.4byte 0x00001e95
+	.4byte MsgFuneHeyaNobodyWouldChooseMeAfterAll
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001ea7
+	.4byte MsgFuneHeyaYouMakeMeNervousJustStanding
 	.4byte 0x00008d15
 	.4byte 0x0300000a
-	.4byte 0x00001e96
+	.4byte MsgFuneHeyaHeyLooksLikeTheyNeedSomeone
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001ea8
+	.4byte MsgFuneHeyaIveBeenInAColdSweat
 	.4byte 0x00008d15
 	.4byte 0x0300000b
-	.4byte 0x00001e97
+	.4byte MsgFuneHeyaRowingIsAToughJobIsnt
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001ea9
+	.4byte MsgFuneHeyaOhThisPoorSapLooksSad
 	.4byte 0x00008d15
 	.4byte 0x0300000c
-	.4byte 0x00001e98
+	.4byte MsgFuneHeyaHeyThisGuysBeenStaringAt
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001eaa
+	.4byte MsgFuneHeyaOhNoNoWhenOurEyes
 	.4byte 0x00008d15
 	.4byte 0x0300000d
-	.4byte 0x00001e99
+	.4byte MsgFuneHeyaOhOhNoHesNotComing
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001eab
+	.4byte MsgFuneHeyaItsOnlyNaturalThatINot
 	.4byte 0x00008d15
 	.4byte 0x0300000e
-	.4byte 0x00001e9a
+	.4byte MsgFuneHeyaPleasePleaseImBeggingJustDont
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001eac
+	.4byte MsgFuneHeyaISnuckByThisTimeBut
 	.4byte 0x00008d15
 	.4byte 0x0300000f
-	.4byte 0x00001e9b
+	.4byte MsgFuneHeyaWhatsWithYouGoBotherThe
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001ead
+	.4byte MsgFuneHeyaWowThisWarriorIsntGonnaLet
 	.4byte 0x00008d15
 	.4byte 0x03000010
-	.4byte 0x00001e9c
+	.4byte MsgFuneHeyaWhyAmIGettingSoWorked
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001eae
+	.4byte MsgFuneHeyaYouCanJustMoveRightAlong
 	.4byte 0x00008d15
 	.4byte 0x03000009
-	.4byte 0x00001e9d
+	.4byte MsgFuneHeyaWeHadEnoughTroubleJustGetting
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001eaf
+	.4byte MsgFuneHeyaCarefulNowWatchOutDontMake
 	.4byte 0x00000033
 	.4byte 0x0f930065
 	.4byte 0x00200017
@@ -1305,61 +1305,61 @@ FuneHeya_SceneTable07:
 	.4byte FieldScene_RunScene3b1SequenceC
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001f52
+	.4byte MsgFuneHeyaInAPerfectWorldThereWouldnt
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001f3f
+	.4byte MsgFuneHeyaYouCantGoOntoTheIsland
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001f40
+	.4byte MsgFuneHeyaButThereWereMonstersAtSea
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001f41
+	.4byte MsgFuneHeyaWeveBeenCoopedUpOnThat
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001f42
+	.4byte MsgFuneHeyaThereCouldBeMonstersHereSo
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001f43
+	.4byte MsgFuneHeyaTheShipKeepsShakingSheCant
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001f44
+	.4byte MsgFuneHeyaWhyShouldWeHaveToWait
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001f45
+	.4byte MsgFuneHeyaIfThereAreMonstersImNot
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001f46
+	.4byte MsgFuneHeyaIDontHearThePassengersScreaming
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte FieldScene_RunActor11FlagDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f49
+	.4byte MsgFuneHeyaWhatToDoImWorriedAbout
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001f4a
+	.4byte MsgFuneHeyaButWhyShouldWeStayOnboard
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001f4b
+	.4byte MsgFuneHeyaImSickOfThisShipIm
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001f4c
+	.4byte MsgFuneHeyaLandMonstersICanHandleSea
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001f4d
+	.4byte MsgFuneHeyaIveBeenWobblingOnThisBoat
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001f4e
+	.4byte MsgFuneHeyaGoAheadTryAndStopMe
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001f4f
+	.4byte MsgFuneHeyaJustDontMakeMeFaceThat
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001f50
+	.4byte MsgFuneHeyaSoAnyoneKnowIfThereAre
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001f51
+	.4byte MsgFuneHeyaOhhThatsCreepy
 	.4byte 0x00000033
 	.4byte 0x0f930065
 	.4byte 0x00200017
@@ -1379,52 +1379,52 @@ FuneHeya_SceneTable08:
 	.4byte FieldScene_RunScene3b1_02000670
 	.4byte 0x00000000
 	.4byte 0x09210009
-	.4byte 0x00001d32
+	.4byte MsgFuneHeyaIWonderIfThereAreAny
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001dce
+	.4byte MsgFuneHeyaRightWhenWeFoundSomeWarriors
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001dcf
+	.4byte MsgFuneHeyaICantBelieveHimRefusingTo
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001dd0
+	.4byte MsgFuneHeyaIHadNoIdeaHeWas
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte SceneDialogue_RunActor12Line
 	.4byte 0x00008d15
 	.4byte 0x09210008
-	.4byte 0x00001d33
+	.4byte MsgFuneHeyaThisIsAChanceToMake
 	.4byte 0x00008d15
 	.4byte 0x09250008
-	.4byte 0x00001dd5
+	.4byte MsgFuneHeyaTheShipWontLeaveDockUntil
 	.4byte 0x00008d15
 	.4byte 0x09280008
-	.4byte 0x00001e07
+	.4byte MsgFuneHeyaAsLongAsWeHaveThe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001eb6
+	.4byte MsgFuneHeyaWeKnewTheRisksWhenWe
 	.4byte 0x00008d15
 	.4byte 0x0921000a
-	.4byte 0x00001d34
+	.4byte MsgFuneHeyaSendingOutAShipWhenIts
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001dda
+	.4byte MsgFuneHeyaIWaitedTooLongIllGet
 	.4byte 0x00008d15
 	.4byte 0x09210009
-	.4byte 0x00001d35
+	.4byte MsgFuneHeyaIfWeDontSetSailNow
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001dd6
+	.4byte MsgFuneHeyaThisIsRidiculousTheShipCant
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001dd7
+	.4byte MsgFuneHeyaThatThingCouldntHaveGottenLost
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001dd8
+	.4byte MsgFuneHeyaIDontThinkAnyoneWouldSteal
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001dd9
+	.4byte MsgFuneHeyaIfTheShipDoesntLeaveSoon
 	.4byte 0x00000002
 	.4byte 0x0920000a
 	.4byte FieldScene_RunFlagGatedThreeActorSetup
@@ -1444,16 +1444,16 @@ FuneHeya_SceneTable09:
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001f65
+	.4byte MsgFuneHeyaWeMayHaveTakenTheWrong
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001f66
+	.4byte MsgFuneHeyaWereLookingIntoTheShipsPosition
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f67
+	.4byte MsgFuneHeyaImReallySurprisedThatThereIs
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001f68
+	.4byte MsgFuneHeyaTheWindsDirectionAndTheHigh
 	.4byte 0x00000023
 	.4byte 0x0f940066
 	.4byte 0x001000b5
@@ -1467,10 +1467,10 @@ FuneHeya_SceneTable10:
 	.4byte 0x00000005
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001f07
+	.4byte MsgFuneHeyaWhenTheWatersAreThisDangerous
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f08
+	.4byte MsgFuneHeyaSeeOurShipSurvivedAnAttack
 	.4byte 0x00000023
 	.4byte 0x0f940066
 	.4byte 0x001000b5
@@ -1484,100 +1484,100 @@ FuneHeya_SceneTable11:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x08a00008
-	.4byte 0x00001d79
+	.4byte MsgFuneHeyaWeCanLeaveAsSoonAs
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001f33
+	.4byte MsgFuneHeyaIveBeenSailingForManyYears
 	.4byte 0x00000000
 	.4byte 0x08a00009
-	.4byte 0x00001d7a
+	.4byte MsgFuneHeyaEveryoneRowsInTimeWithThis
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001f34
+	.4byte MsgFuneHeyaWowIHaveABlisterOn
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001d7b
+	.4byte MsgFuneHeyaRowingIsAMansJob
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001d7c
+	.4byte MsgFuneHeyaWereTheOnesWhoMakeThe
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001d7d
+	.4byte MsgFuneHeyaOnceWeCastOffYouJust
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001d7e
+	.4byte MsgFuneHeyaYouCanOnlyDoHardWork
 	.4byte 0x00000000
 	.4byte 0x08a0000e
-	.4byte 0x00001d7f
+	.4byte MsgFuneHeyaHmmmIWonderWhenWereGoing
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001f35
+	.4byte MsgFuneHeyaIWonderIfItsOkayTo
 	.4byte 0x00000000
 	.4byte 0x08a0000f
-	.4byte 0x00001d80
+	.4byte MsgFuneHeyaICantWaitUntilWeGet
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001f36
+	.4byte MsgFuneHeyaStoppingAgainAndAgainLikeThis
 	.4byte 0x00000000
 	.4byte 0x08a00010
-	.4byte 0x00001d81
+	.4byte MsgFuneHeyaIHearTheresAnIsleIn
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001f37
+	.4byte MsgFuneHeyaLetsSeeIslandsInTheKaragol
 	.4byte 0x00000000
 	.4byte 0x08a00011
-	.4byte 0x00001d82
+	.4byte MsgFuneHeyaFromTheSeaItLooksLike
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001f38
+	.4byte MsgFuneHeyaWhenWereRowingWeCanJust
 	.4byte 0x00008d15
 	.4byte 0x08a00008
-	.4byte 0x00001d83
+	.4byte MsgFuneHeyaEnoughIsEnoughLetsSetOff
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001f39
+	.4byte MsgFuneHeyaItsCrazyToHaveInexperiencedPassengers
 	.4byte 0x00008d15
 	.4byte 0x08a00009
-	.4byte 0x00001d84
+	.4byte MsgFuneHeyaILoveItWhenTheOars
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001f3a
+	.4byte MsgFuneHeyaItWasHardForMeAll
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001d85
+	.4byte MsgFuneHeyaEveryoneDownHereGetsSoCompetitive
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001d86
+	.4byte MsgFuneHeyaTheseBigMusclesAreASign
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001d87
+	.4byte MsgFuneHeyaWellSeeToItThatThey
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001d88
+	.4byte MsgFuneHeyaYouveGotToSaveUpLots
 	.4byte 0x00008d15
 	.4byte 0x08a0000e
-	.4byte 0x00001d89
+	.4byte MsgFuneHeyaIDontFeelLikeRowingAll
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001f3b
+	.4byte MsgFuneHeyaISureHopeAnotherMonsterDoesnt
 	.4byte 0x00008d15
 	.4byte 0x08a0000f
-	.4byte 0x00001d8a
+	.4byte MsgFuneHeyaSpendYourMoneyWhileYoureYoung
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001f3c
+	.4byte MsgFuneHeyaLooksLikeImGoingToHave
 	.4byte 0x00008d15
 	.4byte 0x08a00010
-	.4byte 0x00001d8b
+	.4byte MsgFuneHeyaItSeemsLikeThereWouldBe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001f3d
+	.4byte MsgFuneHeyaCouldThisBeThatIslandThats
 	.4byte 0x00008d15
 	.4byte 0x08a00011
-	.4byte 0x00001d8c
+	.4byte MsgFuneHeyaHaHahIfYouWantTo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001f3e
+	.4byte MsgFuneHeyaMaybeItsTimeForMeTo
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1597,112 +1597,112 @@ FuneHeya_SceneTable12:
 	.4byte FuneHeya_RunFlagBranchSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001e4a
+	.4byte MsgFuneHeyaMonstersFromTheDeepAreAttacking
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001e4b
+	.4byte MsgFuneHeyaCurseThoseBeastsTheyGotOne
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001e4d
+	.4byte MsgFuneHeyaFightingOffTheMonstersIsYour
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001e4e
+	.4byte MsgFuneHeyaFoulBeastIMayBeTrembling
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001e4f
+	.4byte MsgFuneHeyaIfIWerentSoTiredId
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001e50
+	.4byte MsgFuneHeyaCursesIWantToSmackThat
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001e51
+	.4byte MsgFuneHeyaWhoIsThatThingGoingTo
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001e52
+	.4byte MsgFuneHeyaIfYouDontDoABetter
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001e4c
+	.4byte MsgFuneHeyaWeOarsmenMayBeStrongBut
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00001e5c
+	.4byte MsgFuneHeyaWereSurroundedByDangerOnAll
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001e5d
+	.4byte MsgFuneHeyaAhhhhSeaMonstersRealLiveSea
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001e5e
+	.4byte MsgFuneHeyaWhaHeyYouThisIsNo
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001e5f
+	.4byte MsgFuneHeyaAahIHaveToRowThis
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001e60
+	.4byte MsgFuneHeyaHHeyRobinShouldntYouBe
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001e61
+	.4byte MsgFuneHeyaYaaahhhIImNotAfraidOf
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x00001e62
+	.4byte MsgFuneHeyaTheOarsmenAreInDireStraights
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001e63
+	.4byte MsgFuneHeyaIICantDoThisFighting
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001e64
+	.4byte MsgFuneHeyaIDontCareWhatHappensNow
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001e53
+	.4byte MsgFuneHeyaWhyArentYouDoingAnythingTo
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001e54
+	.4byte MsgFuneHeyaIfWeLoseAnyMoreOarsmen
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001e56
+	.4byte MsgFuneHeyaIfTheSeaMonstersGetUs
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001e57
+	.4byte MsgFuneHeyaImScaredThoseSeaMonstersAre
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001e58
+	.4byte MsgFuneHeyaFightingSeaMonstersIsForWarriors
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001e59
+	.4byte MsgFuneHeyaTheSeaMonstersAreSoTough
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001e5a
+	.4byte MsgFuneHeyaIDontCareWhoElseThe
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001e5b
+	.4byte MsgFuneHeyaPleaseJustStayHereAndProtect
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001e55
+	.4byte MsgFuneHeyaWeDontEvenKnowIfAttacking
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001e65
+	.4byte MsgFuneHeyaSeaMonstersAreTerriblyFerocious
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001e66
+	.4byte MsgFuneHeyaIfIWereAWarriorI
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001e67
+	.4byte MsgFuneHeyaIWonderIfThisWarriorHas
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001e68
+	.4byte MsgFuneHeyaWereSureInAFixSay
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001e69
+	.4byte MsgFuneHeyaImSoOutOfMyWits
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001e6a
+	.4byte MsgFuneHeyaTheseSeaMonstersLookAwfullyStrong
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001e6b
+	.4byte MsgFuneHeyaPleaseOhPleaseLetMeMake
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001e6c
+	.4byte MsgFuneHeyaWhyDidSeaMonstersHaveTo
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001e6d
+	.4byte MsgFuneHeyaIdRatherBeEatenByA
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1713,25 +1713,25 @@ FuneHeya_SceneTable13:
 	.4byte 0x00000013
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001ec7
+	.4byte MsgFuneHeyaImagineTheSizeOfThatBeast
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001ec8
+	.4byte MsgFuneHeyaHowCanTheseSeaMonstersKeep
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001ec9
+	.4byte MsgFuneHeyaJudgingFromKajasReactionItMust
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001eca
+	.4byte MsgFuneHeyaKajaWouldntAskForHelpUnless
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001ecb
+	.4byte MsgFuneHeyaTheWholeShipIsRockingThat
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001ecc
+	.4byte MsgFuneHeyaWereOkayWithYouHereWe
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001ecd
+	.4byte MsgFuneHeyaIfTheShipSinksWereFinished
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte SceneDialogue_ShowLine1ECETo1ED0
@@ -1758,28 +1758,28 @@ FuneHeya_SceneTable13:
 	.4byte SceneDialogue_RunActor25FlaggedLine
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001ed3
+	.4byte MsgFuneHeyaOwwwMyHandsAreRawFrom
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001ed4
+	.4byte MsgFuneHeyaWhyIsHeDownHereShouldnt
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001ed5
+	.4byte MsgFuneHeyaWhatTheHowManyMonstersDoes
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001ed6
+	.4byte MsgFuneHeyaWhatKindOfMonsterIsRocking
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001ed7
+	.4byte MsgFuneHeyaWereRunningLowOnOarsmenAnd
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001ed8
+	.4byte MsgFuneHeyaImTakingALittleBreakUntil
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001ed9
+	.4byte MsgFuneHeyaGoodThingWeHaveSomeStrong
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001eda
+	.4byte MsgFuneHeyaIWonderIfTheMonsterIs
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte SceneDialogue_RunActor18TwoFlagLine
@@ -1806,7 +1806,7 @@ FuneHeya_SceneTable13:
 	.4byte SceneDialogue_ShowLine1EDEOr1EDF
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001ee0
+	.4byte MsgFuneHeyaIWonderIfTheyllMakeUs
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1817,40 +1817,40 @@ FuneHeya_SceneTable14:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001ef3
+	.4byte MsgFuneHeyaIDontThinkAnyoneWillBe
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001ef4
+	.4byte MsgFuneHeyaYouFolksReallyFoughtWell
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00001ef5
+	.4byte MsgFuneHeyaALotOfOarsmenWereInjured
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00001ef6
+	.4byte MsgFuneHeyaAreWeSafeItsAllBecause
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00001ef7
+	.4byte MsgFuneHeyaIveBeenAnOarsmanAllMy
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001ef8
+	.4byte MsgFuneHeyaYouGoOnAheadJustWhen
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001ef9
+	.4byte MsgFuneHeyaWeCantFindAnyoneToReplace
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001efa
+	.4byte MsgFuneHeyaImJustGladTheKrakenDidnt
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001efb
+	.4byte MsgFuneHeyaSureThePaysGoodButIt
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00001efc
+	.4byte MsgFuneHeyaRobinAndHisPalsWereSo
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00001efd
+	.4byte MsgFuneHeyaIFeelBetterNowIWas
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00001efe
+	.4byte MsgFuneHeyaImInNoRushAnywayThis
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

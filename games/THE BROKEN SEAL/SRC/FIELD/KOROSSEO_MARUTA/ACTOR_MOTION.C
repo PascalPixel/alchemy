@@ -149,7 +149,9 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Engine_EventWait(120);
             ColossoLogRollingStage_ResetActorMotion(0);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+#if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
             Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+#endif
             Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
             rec7 = Object_GetById(0);
             for (i = 119; i >= 0; i--) {

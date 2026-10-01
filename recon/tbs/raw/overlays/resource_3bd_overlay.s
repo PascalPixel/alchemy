@@ -398,7 +398,7 @@ Func_0200109c:
 	bx r0
 	.2byte 0x0000
 .L_020093d4:
-	.4byte 0x000021db
+	.4byte MsgArutamiraRotatedRock
 .L_020093d8:
 	.4byte gSceneState + 0x1
 .L_020093dc:
@@ -974,7 +974,7 @@ gArutamiraDouEvents2:
 	.4byte FieldScene_RunBranchingCutsceneSequence
 	.4byte 0x00008d15
 	.4byte 0x0f300008
-	.4byte 0x00002182
+	.4byte MsgArutamiraNeedDraught
 	.4byte 0x00008d15
 	.4byte 0x09620408
 	.4byte FieldScene_RunExtendedActorPresentation

@@ -2,6 +2,7 @@
 #define ALCHEMY_INTERIORS_H
 
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 #include "ABILITY_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -107,50 +108,46 @@ enum {
 };
 
 /* Lines spoken while Lunpa is sealed, then after it trades again. */
-enum InteriorMessage {
-    MSG_FIRST_HOME_A_SEALED = 0x1bc1,
-    MSG_FIRST_HOME_B_SEALED,
-    MSG_FIRST_HOME_A_SEALED_THOUGHTS,
-    MSG_FIRST_HOME_B_SEALED_THOUGHTS,
-    MSG_SECOND_HOME_A_SEALED,
-    MSG_SECOND_HOME_B_SEALED,
-    MSG_SECOND_HOME_A_SEALED_THOUGHTS,
-    MSG_SECOND_HOME_B_SEALED_THOUGHTS,
-    MSG_THIRD_HOME_A_SEALED,
-    MSG_THIRD_HOME_B_SEALED,
-    MSG_THIRD_HOME_A_SEALED_THOUGHTS,
-    MSG_THIRD_HOME_B_SEALED_THOUGHTS,
-    MSG_INN_CLERK_SEALED = 0x1bd3,
-    MSG_INN_WORKER_SEALED,
-    MSG_INNKEEPER_SEALED_THOUGHTS = 0x1bd8,
-    MSG_INN_CLERK_SEALED_THOUGHTS,
-    MSG_INN_WORKER_SEALED_THOUGHTS,
-    MSG_TEMPLE_PRIEST_SEALED_THOUGHTS = 0x1bdd,
-
-    MSG_FIRST_HOME_A_REOPENED = 0x24e9,
-    MSG_FIRST_HOME_B_REOPENED,
-    MSG_FIRST_HOME_A_REOPENED_THOUGHTS,
-    MSG_FIRST_HOME_B_REOPENED_THOUGHTS,
-    MSG_SECOND_HOME_A_REOPENED,
-    MSG_SECOND_HOME_B_REOPENED,
-    MSG_SECOND_HOME_A_REOPENED_THOUGHTS,
-    MSG_SECOND_HOME_B_REOPENED_THOUGHTS,
-    MSG_THIRD_HOME_A_REOPENED,
-    MSG_THIRD_HOME_B_REOPENED,
-    MSG_THIRD_HOME_A_REOPENED_THOUGHTS,
-    MSG_THIRD_HOME_B_REOPENED_THOUGHTS,
-    MSG_INN_WORKER_REOPENED = 0x2501,
-    MSG_CHEF_REOPENED,
-    MSG_INNKEEPER_REOPENED_THOUGHTS,
-    MSG_INN_CLERK_REOPENED_THOUGHTS,
-    MSG_INN_WORKER_REOPENED_THOUGHTS,
-    MSG_CHEF_REOPENED_THOUGHTS,
-    MSG_TEMPLE_PRIEST_REOPENED_THOUGHTS = 0x2508,
-    MSG_TRAVELING_PRIEST_THOUGHTS = 0x266c,
-
-    MSG_FIRST_OVEN = 0x29ba,
-    MSG_SECOND_OVEN
-};
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeASealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeASealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeASealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeASealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeASealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeASealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnClerkSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnkeeperSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnClerkSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsTemplePriestSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeAReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeAReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstHomeBReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeAReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeAReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondHomeBReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeAReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeAReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsThirdHomeBReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsChefReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnkeeperReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnClerkReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsInnWorkerReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsChefReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsTemplePriestReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsTravelingPriestThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsFirstOven);
+TEXT_MESSAGE_ENUM(MsgRunpaInteriorsSecondOven);
 
 extern const struct SceneEntrance gInteriorEntrances[];
 extern const u32 gInteriorExits[];

@@ -83,6 +83,100 @@ fn macro_ranges(source: &str) -> Vec<(usize, usize, String)> {
     found
 }
 
+/// Find raw-source owners through each conditional arm. These are lexical
+/// views, not evaluated editions: every device is still counted once below,
+/// including devices in arms that no current edition enables. Selecting an
+/// arm together with its ancestors avoids combining mutually exclusive braces
+/// while preserving byte offsets back into the maintained source.
+fn definition_ranges(source: &str) -> Result<Vec<(usize, usize, String)>, String> {
+    let original = lex(source)?;
+    let comments = original
+        .iter()
+        .filter(|token| matches!(token.tok, Tok::Comment(_)))
+        .map(|token| token.start..token.end)
+        .collect::<Vec<_>>();
+    let mut lines = Vec::new();
+    let mut paths = BTreeSet::from([Vec::new()]);
+    let mut path = Vec::new();
+    let mut group = 0;
+    let mut start = 0;
+    let mut continuation = false;
+    for row in source.split_inclusive('\n') {
+        let first = row.trim_start();
+        let offset = start + row.len() - first.len();
+        let directive = !continuation
+            && !comments.iter().any(|range| range.contains(&offset))
+            && first.starts_with('#');
+        if directive {
+            let word = first[1..]
+                .trim_start()
+                .split_whitespace()
+                .next()
+                .unwrap_or("");
+            match word {
+                "if" | "ifdef" | "ifndef" => {
+                    path.push((group, 0usize));
+                    group += 1;
+                }
+                "else" | "elif" => {
+                    if let Some((_, arm)) = path.last_mut() {
+                        *arm += 1;
+                    }
+                }
+                "endif" => {
+                    path.pop();
+                }
+                _ => {}
+            }
+        }
+        // The lexer skips directives and complete macro continuations itself.
+        // Keep those lines; only ordinary inactive source needs masking.
+        lines.push((
+            start,
+            start + row.len(),
+            path.clone(),
+            directive || continuation,
+        ));
+        if !directive && !continuation {
+            paths.insert(path.clone());
+        }
+        continuation = (directive || continuation) && row.trim_end_matches('\n').ends_with('\\');
+        start += row.len();
+    }
+    let mut ranges = BTreeSet::new();
+    for selected in paths {
+        let mut bytes = source.as_bytes().to_vec();
+        for (start, end, path, directive) in &lines {
+            if !directive
+                && path.iter().any(|(group, arm)| {
+                    selected
+                        .iter()
+                        .find(|(choice, _)| choice == group)
+                        .map_or(0, |(_, choice)| *choice)
+                        != *arm
+                })
+            {
+                for byte in &mut bytes[*start..*end] {
+                    if *byte != b'\n' && *byte != b'\r' {
+                        *byte = b' ';
+                    }
+                }
+            }
+        }
+        let view = String::from_utf8(bytes).expect("masking preserves UTF-8");
+        // Preserve the ordinary raw scanner's macro definition boundaries.
+        // Hiding a macro here makes its leading comment part of the next
+        // function's declaration range and moves existing debt to that caller.
+        let tokens = lex(&directive_text(&view))?;
+        for (name, boundary, _, _, open) in scan_definitions(&tokens) {
+            if let Some(close) = matching(&tokens, open) {
+                ranges.insert((tokens[boundary].start, tokens[close].end, name));
+            }
+        }
+    }
+    Ok(ranges.into_iter().collect())
+}
+
 fn source_inventory(path: &str, source: &str) -> Result<Inventory, String> {
     let Some(scope) = scope(path) else {
         return Ok(Inventory::new());
@@ -90,13 +184,7 @@ fn source_inventory(path: &str, source: &str) -> Result<Inventory, String> {
     let expanded = directive_text(source);
     let tokens = lex(&expanded).map_err(|error| format!("{path}: {error}"))?;
     let macros = macro_ranges(source);
-    let definitions = scan_definitions(&tokens)
-        .into_iter()
-        .filter_map(|(name, boundary, _, _, open)| {
-            let close = matching(&tokens, open)?;
-            Some((tokens[boundary].start, tokens[close].end, name))
-        })
-        .collect::<Vec<_>>();
+    let definitions = definition_ranges(source).map_err(|error| format!("{path}: {error}"))?;
     let function = |offset| {
         macros
             .iter()
@@ -425,6 +513,96 @@ mod tests {
             totals(&inventory).get(&("tbs".into(), "register_pin".into())),
             Some(&1)
         );
+    }
+    #[test]
+    fn conditional_braces_keep_all_raw_devices_in_their_real_function() {
+        let source = r#"void F(void) {
+#if EUROPE
+    if (ready) { /* FAKEMATCH: first arm. */ }
+    else {
+#else
+    if (!ready) {
+        /* FAKEMATCH: inactive arm also counts. */
+#endif
+#if EXTRA
+        /* FAKEMATCH: nested arm. */
+        register int priority __asm__("r1");
+#else
+        register int actor __asm__("r0");
+#endif
+    }
+}
+void G(void) { /* FAKEMATCH: separate owner. */ }
+"#;
+        let inventory = counts(source);
+        let get = |function: &str, metric: &str| {
+            inventory.get(&("tbs".into(), SOURCE.into(), function.into(), metric.into()))
+        };
+        assert_eq!(get("F", "fakematch"), Some(&3));
+        assert_eq!(get("F", "register_pin"), Some(&2));
+        assert_eq!(get("G", "fakematch"), Some(&1));
+        assert!(inventory.keys().all(|key| key.2 != "<file>"));
+        let before = counts("void F(void) { /* FAKEMATCH: existing. */ }");
+        let growth = rises(&before, &inventory, &Inventory::new());
+        assert_eq!(growth.len(), 2);
+        assert!(growth.iter().any(|row| row.contains("fakematch")));
+        assert!(growth.iter().any(|row| row.contains("register_pin")));
+    }
+    #[test]
+    fn inactive_function_definitions_and_macro_devices_keep_their_owners() {
+        let source = r#"#if FIRST
+void F(void) { /* FAKEMATCH: first definition. */ }
+#elif SECOND
+void G(void) { /* FAKEMATCH: second definition. */ }
+#else
+#if NESTED
+void H(void) { /* FAKEMATCH: nested inactive definition. */ }
+#endif
+#endif
+#define DEVICE(v) do { /* FAKEMATCH: macro. */ asm(""); } while (0)
+"#;
+        let inventory = counts(source);
+        assert_eq!(inventory.values().sum::<usize>(), 5);
+        for function in ["F", "G", "H", "macro:DEVICE"] {
+            assert_eq!(
+                inventory.get(&(
+                    "tbs".into(),
+                    SOURCE.into(),
+                    function.into(),
+                    "fakematch".into()
+                )),
+                Some(&1)
+            );
+        }
+    }
+    #[test]
+    fn conditional_views_preserve_preamble_owners_before_macro_bodies() {
+        let source = r#"/* FAKEMATCH: macro template preamble. */
+#define DEFINE_WRITE(name) \
+    void name(void) { /* FAKEMATCH: macro body. */ }
+DEFINE_WRITE(Write)
+void Next(void) {}
+"#;
+        let inventory = counts(source);
+        assert_eq!(
+            inventory.get(&(
+                "tbs".into(),
+                SOURCE.into(),
+                "name".into(),
+                "fakematch".into()
+            )),
+            Some(&1)
+        );
+        assert_eq!(
+            inventory.get(&(
+                "tbs".into(),
+                SOURCE.into(),
+                "macro:DEFINE_WRITE".into(),
+                "fakematch".into()
+            )),
+            Some(&1)
+        );
+        assert!(inventory.keys().all(|key| key.2 != "Next"));
     }
     #[test]
     fn each_metric_requires_its_own_live_exact_site_allowance() {

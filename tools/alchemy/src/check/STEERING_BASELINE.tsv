@@ -24,7 +24,6 @@ tbs	games/THE BROKEN SEAL/INCLUDE/DMA.H	Dma_Set	inline_asm	1
 tbs	games/THE BROKEN SEAL/INCLUDE/DMA.H	Dma_Set	register_pin	4
 tbs	games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H	Iwram_Call2	inline_asm	1
 tbs	games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H	Iwram_Call2	register_pin	2
-tbs	games/THE BROKEN SEAL/INCLUDE/WORKSPACE_OPTIONS.H	<file>	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C	Battle_ResolveTargetAction	fakematch	4
 tbs	games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_RESET_RUNTIME_FIELDS.C	BattlePresentation_WaitForAdvance	fakematch	2
 tbs	games/THE BROKEN SEAL/SRC/BATTLE/BATTLE6.C	<file>	fakematch	2
@@ -118,7 +117,6 @@ tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD3.C	Event_ShowSpeakerMessage	reg
 tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD5.C	Field_ProcessStep	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD6.C	Field_TryJumpForward	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/BABI.C	<file>	fakematch	1
-tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/BABI.C	Call3	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/BABI.C	FieldScene_RunComplexActorSequence	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/BABI2.C	FieldScene_RunPaletteRampSequence	fakematch	6
 tbs	games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/BABI2.C	FieldScene_RunPaletteRampSequence	inline_asm	2
@@ -182,7 +180,6 @@ tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ARASHI2.C	HaidiaArashi_SpawnEf
 tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IE.C	FieldScene_RunElderAidEvent	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IE.C	FieldScene_RunGroupChoreography	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IE.C	HaidiaIe_SpawnEffectPair	fakematch	1
-tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IE.C	Scene_RunExtendedActorSequence	fakematch	2
 tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/MURA.C	FieldScene_RunLargeStagingSequence	fakematch	2
 tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/MURA.C	HaidiaMura_TestFacing	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/SUKURETA.C	HaidiaSukureta_RestoreEntryState	fakematch	1
@@ -271,7 +268,6 @@ tbs	games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SABAKU.C	SuharaSabaku_ApplyVis
 tbs	games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SABAKU.C	SuharaSabaku_MeetActor	fakematch	2
 tbs	games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SABAKU.C	SuharaSabaku_MeetActor	register_pin	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SABAKU.C	SuharaSabaku_RestoreActorScaleAndBlend	fakematch	2
-tbs	games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/RUN_2.C	<file>	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/HASHIRA3.C	TakaraHashira_SetupArea	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/HASHIRA4.C	TakaraHashira_LowerActorToLedge	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/HASHIRA4.C	TakaraHashira_SetCellAttributes	fakematch	1
@@ -362,7 +358,7 @@ tbs	games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM7.C	ItemMenu_DrawEquipPreview	fakema
 tbs	games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM7.C	ItemMenu_DrawEquipPreview	register_pin	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM9.C	ItemMenu_DrawItemDetails	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM9.C	Menu_SelectQuantity	fakematch	1
-tbs	games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN_COMMANDS.C	<file>	fakematch	1
+tbs	games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN_COMMANDS.C	ItemMenu_RunCommands	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY.C	LinkLobby_PeerSlotMatches	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY4.C	<file>	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/LOBBY4.C	LinkLobby_ExchangePartyRecords	fakematch	1
@@ -389,7 +385,6 @@ tbs	games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP5.C	EventTable_CopyRowHeader	fakemat
 tbs	games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP7.C	Shop_RunPartyMemberIconBurst	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/TITLE/TITLE.C	<file>	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/TITLE/TITLE.C	DecodeBackground	fakematch	1
-tbs	games/THE BROKEN SEAL/SRC/MENU/TITLE/TITLE.C	ResetCounter	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/MENU/TITLE/TITLE.C	Title_LoadBackground	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/SYSTEM/INITIALIZE.C	System_Initialize	fakematch	1
 tbs	games/THE BROKEN SEAL/SRC/SYSTEM/INSTALL_IWRAM_AND_IRQS.C	Runtime_InstallIwramAndIrqs	fakematch	1

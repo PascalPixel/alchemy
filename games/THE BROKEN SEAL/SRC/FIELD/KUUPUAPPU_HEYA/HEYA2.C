@@ -286,6 +286,8 @@ void Party_RemoveOwnerRestored();
 extern u8 MsgKuupuappuIvanGotShamansRod[];
 extern u8 MsgKuupuappuWaitDontWantTakeYour[];
 extern u8 MsgKuupuappuYouRobinRightWontForget[];
+extern u8 KuupuappuHeya_Villager11ExitScript[];
+extern u8 KuupuappuHeya_Villager12ExitScript[];
 extern u8 KuupuappuHeya_VaultScriptA[];
 extern u8 KuupuappuHeya_VaultScriptB[];
 extern u8 KuupuappuHeya_VaultScriptC[];
@@ -916,9 +918,9 @@ void FieldScene_RunVaultClosingSequence(void)
     Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Engine_ActorFaceActor(2, 10, 0);
     Engine_ActorFaceActor(8, 10, 0);
-    Engine_ActorEnableActionCallback(11, 33608264);
+    Engine_ActorEnableActionCallback(11, (s32)KuupuappuHeya_Villager11ExitScript);
     Engine_EventWait(40);
-    Engine_ActorEnableActionCallback(12, 33608364);
+    Engine_ActorEnableActionCallback(12, (s32)KuupuappuHeya_Villager12ExitScript);
     Object_RefreshSelectorById(12);
     Actor_FaceDirection(11, 8192, 0);
     Actor_FaceDirection(12, 8192, 0);
@@ -1649,7 +1651,11 @@ s32 KuupuappuHeya_ApplyEntryState(void)
             Engine_ActorSetPosition(2, 0, 0);
         }
         if (Engine_GameFlagIsSet(0x855) != 0) {
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            Call3((void (*)())Engine_ActorSetPosition, 16, 0x2180000, 0x1c30000);
+#else
             Call3((void (*)())Engine_ActorSetPosition, 16, 0x2180000, 0x1d00000);
+#endif
             ((void (*)())Engine_ActorEnableActionCallback)(16, 1);
             Call3((void (*)())Engine_ActorFaceDirection, 16, 0x5000, 0);
         }

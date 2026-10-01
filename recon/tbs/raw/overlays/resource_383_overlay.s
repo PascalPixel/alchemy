@@ -135,7 +135,7 @@ Func_02000690:
 	bx r0
 	.2byte 0x0000
 .L_020087a8:
-	.4byte 0x000012ad
+	.4byte MsgKuupuappuNoLeaveAlone
 .L_020087ac:
 	.4byte .L_020086e4
 .L_020087b0:
@@ -158,6 +158,287 @@ Func_02000690:
 	.global KuupuappuHeya_UpdateActorStops
 	.thumb_func
 KuupuappuHeya_UpdateActorStops:
+.ifdef TBS_EDITION_JA
+@ Japanese actor stops always use the actor facing when the leader is outside
+@ the forward cone; localized editions additionally keep the near-point angle.
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	movs r0, #0
+	sub sp, #8
+	bl Engine_ActorLookup
+	ldr r3, .L_0200cb20
+	ldr r3, [r3]
+	movs r1, #0
+	mov r8, r0
+	movs r0, #2
+	mov r9, r1
+	mov r11, r3
+	bl Engine_ActorLookup
+	adds r6, r0, #0
+	adds r5, r6, #0
+	adds r5, #8
+	adds r0, r5, #0
+	bl SceneData_FindEntryAtPosition
+	mov r10, r0
+	cmp r0, #0
+	beq .L_0200c9b8
+	movs r2, #128
+	ldr r3, [r6, #56]
+	lsls r2, r2, #24
+	cmp r3, r2
+	bne .L_0200c9b8
+	mov r1, r8
+	ldr r2, [r5]
+	ldr r3, [r1, #8]
+	subs r7, r2, r3
+	ldr r3, [r1, #16]
+	ldr r2, [r6, #16]
+	mov r4, sp
+	subs r5, r2, r3
+	movs r2, #6
+	ldrsh r3, [r1, r2]
+	adds r4, #6
+	strh r3, [r4]
+	adds r1, r7, #0
+	adds r0, r5, #0
+	str r4, [sp, #0]
+	bl ArcTan2
+	movs r3, #206
+	lsls r3, r3, #1
+	add r3, r11
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	lsls r0, r0, #16
+	asrs r0, r0, #16
+	asrs r7, r7, #16
+	asrs r5, r5, #16
+	ldr r4, [sp, #0]
+	cmp r3, #0
+	ble .L_0200c97e
+	adds r2, r5, #0
+	muls r2, r5
+	adds r3, r7, #0
+	muls r3, r7
+	adds r3, r3, r2
+	movs r2, #200
+	lsls r2, r2, #1
+	cmp r3, r2
+	bgt .L_0200c97e
+	lsls r3, r0, #16
+	ldrh r2, [r4]
+	lsrs r3, r3, #16
+	subs r2, r2, r3
+	lsls r2, r2, #16
+	ldr r3, .L_0200cb24
+	asrs r0, r2, #16
+	cmp r0, r3
+	ble .L_0200c97e
+	movs r1, #128
+	lsls r1, r1, #5
+	cmp r0, r1
+	blt .L_0200c98c
+.L_0200c97e:
+	movs r2, #6
+	ldrsh r3, [r6, r2]
+	strh r3, [r4]
+.L_0200c98c:
+	mov r0, r10
+	adds r1, r4, #0
+	bl KuupuappuHeya_SnapToNearestStop
+	adds r5, r0, #0
+	bl SceneActor_CheckTileFreeOfKinds
+	cmp r0, #0
+	bne .L_0200c9b0
+	adds r0, r6, #0
+	adds r1, r5, #0
+	bl SceneActor_ApplyScaledBytePairPosition
+	adds r0, r6, #0
+	movs r1, #2
+	bl ObjectDispatch_ApplyArgumentToChildren
+	b .L_0200c9b8
+.L_0200c9b0:
+	adds r0, r6, #0
+	movs r1, #1
+	bl ObjectDispatch_ApplyArgumentToChildren
+.L_0200c9b8:
+	movs r0, #24
+	bl Engine_ActorLookup
+	adds r6, r0, #0
+	adds r0, #8
+	bl SceneData_FindEntryAtPosition
+	mov r10, r0
+	cmp r0, #0
+	beq .L_0200ca4c
+	movs r1, #128
+	ldr r3, [r6, #56]
+	lsls r1, r1, #24
+	cmp r3, r1
+	bne .L_0200ca4c
+	bl Random16
+	lsls r0, r0, #1
+	lsrs r0, r0, #16
+	lsls r3, r0, #1
+	adds r3, r3, r0
+	movs r1, #208
+	lsls r1, r1, #24
+	lsls r3, r3, #29
+	ldrh r2, [r6, #6]
+	adds r3, r3, r1
+	mov r7, sp
+	lsrs r3, r3, #16
+	adds r7, #6
+	adds r3, r3, r2
+	strh r3, [r7]
+	mov r0, r10
+	adds r1, r7, #0
+	bl KuupuappuHeya_SnapToNearestStop
+	adds r5, r0, #0
+	bl SceneActor_CheckTileFreeOfKinds
+	cmp r0, #0
+	beq .L_0200ca3c
+	ldrh r3, [r6, #6]
+	movs r2, #128
+	lsls r2, r2, #8
+	adds r3, r3, r2
+	strh r3, [r7]
+	mov r0, r10
+	adds r1, r7, #0
+	bl KuupuappuHeya_SnapToNearestStop
+	adds r5, r0, #0
+	bl SceneActor_CheckTileFreeOfKinds
+	cmp r0, #0
+	bne .L_0200ca2e
+	movs r0, #24
+	movs r1, #2
+	bl Engine_ActorSetAttachedEffect
+	b .L_0200ca3c
+.L_0200ca2e:
+	adds r0, r6, #0
+	movs r1, #4
+	bl ObjectDispatch_ApplyArgumentToChildren
+	movs r3, #1
+	mov r9, r3
+	b .L_0200ca4c
+.L_0200ca3c:
+	adds r0, r6, #0
+	adds r1, r5, #0
+	bl SceneActor_ApplyScaledBytePairPosition
+	adds r0, r6, #0
+	movs r1, #2
+	bl ObjectDispatch_ApplyArgumentToChildren
+.L_0200ca4c:
+	movs r0, #25
+	bl Engine_ActorLookup
+	adds r6, r0, #0
+	adds r0, #8
+	bl SceneData_FindEntryAtPosition
+	mov r10, r0
+	cmp r0, #0
+	beq .L_0200cae2
+	movs r1, #128
+	ldr r3, [r6, #56]
+	lsls r1, r1, #24
+	cmp r3, r1
+	bne .L_0200cae2
+	bl Random16
+	lsls r2, r0, #1
+	adds r2, r2, r0
+	lsrs r2, r2, #16
+	lsls r3, r2, #1
+	adds r3, r3, r2
+	movs r1, #208
+	lsls r1, r1, #24
+	lsls r3, r3, #28
+	ldrh r2, [r6, #6]
+	adds r3, r3, r1
+	mov r7, sp
+	lsrs r3, r3, #16
+	adds r7, #6
+	adds r3, r3, r2
+	strh r3, [r7]
+	mov r0, r10
+	adds r1, r7, #0
+	bl KuupuappuHeya_SnapToNearestStop
+	adds r5, r0, #0
+	bl SceneActor_CheckTileFreeOfKinds
+	cmp r0, #0
+	beq .L_0200cad2
+	ldrh r3, [r6, #6]
+	movs r2, #128
+	lsls r2, r2, #8
+	adds r3, r3, r2
+	strh r3, [r7]
+	mov r0, r10
+	adds r1, r7, #0
+	bl KuupuappuHeya_SnapToNearestStop
+	adds r5, r0, #0
+	bl SceneActor_CheckTileFreeOfKinds
+	cmp r0, #0
+	bne .L_0200cac4
+	movs r0, #25
+	movs r1, #2
+	bl Engine_ActorSetAttachedEffect
+	b .L_0200cad2
+.L_0200cac4:
+	adds r0, r6, #0
+	movs r1, #4
+	bl ObjectDispatch_ApplyArgumentToChildren
+	movs r3, #2
+	add r9, r3
+	b .L_0200cae2
+.L_0200cad2:
+	adds r0, r6, #0
+	adds r1, r5, #0
+	bl SceneActor_ApplyScaledBytePairPosition
+	adds r0, r6, #0
+	movs r1, #2
+	bl ObjectDispatch_ApplyArgumentToChildren
+.L_0200cae2:
+	mov r1, r9
+	cmp r1, #0
+	beq .L_0200cb08
+	ldr r2, .L_0200cb28
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	movs r2, #232
+	lsls r3, r3, #16
+	lsls r2, r2, #13
+	cmp r3, r2
+	bls .L_0200cb0e
+	movs r2, #193
+	mov r3, r9
+	lsls r2, r2, #1
+	adds r3, #200
+	add r2, r11
+	strh r3, [r2]
+	b .L_0200cb0e
+.L_0200cb08:
+	ldr r3, .L_0200cb28
+	mov r1, r9
+	strh r1, [r3]
+.L_0200cb0e:
+	add sp, #8
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+.L_0200cb20:
+	.4byte gEventWork
+.L_0200cb24:
+	.4byte 0xfffff000
+.L_0200cb28:
+	.4byte KuupuappuHeya_StopTimer
+.else
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -446,6 +727,7 @@ KuupuappuHeya_UpdateActorStops:
 	.4byte 0xfffff000
 .L_0200cb28:
 	.4byte KuupuappuHeya_StopTimer
+.endif
 	.section .rodata.x0200cf2c,"a",%progbits
 	.global KuupuappuHeya_Stops
 KuupuappuHeya_Stops:
@@ -650,6 +932,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global KuupuappuHeya_Villager11ExitScript
+KuupuappuHeya_Villager11ExitScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -675,6 +959,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x00000000
 	.4byte 0x00000014
 	.4byte 0x00000010
+	.global KuupuappuHeya_Villager12ExitScript
+KuupuappuHeya_Villager12ExitScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -1571,13 +1857,13 @@ gKuupuappuHeyaEvents:
 	.4byte FieldScene_RunSetupSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001242
+	.4byte MsgKuupuappuThisRockWasBlownHereAll
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_RunActor9FlaggedLine
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001246
+	.4byte MsgKuupuappuMyNeighborCreepsMeOutHe
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActorElevenDialogue
@@ -1586,28 +1872,28 @@ gKuupuappuHeyaEvents:
 	.4byte SceneDialogue_RunActorTwelveFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000124d
+	.4byte MsgKuupuappuEverSinceTheEruptionGrandpaKeeps
 	.4byte 0x00000000
 	.4byte 0x0856000e
-	.4byte 0x00001252
+	.4byte MsgKuupuappuICouldHelpIvanIfI
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000127a
+	.4byte MsgKuupuappuYoureHelpingIvanYouDontLook
 	.4byte 0x00000000
 	.4byte 0x0856000f
 	.4byte FieldScene_RunScene383_02000428
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000127b
+	.4byte MsgKuupuappuSinceYoureHelpingIvanIllTell
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte FieldScene_RunFlag856DialogueBranch
 	.4byte 0x00000000
 	.4byte 0x08560011
-	.4byte 0x00001251
+	.4byte MsgKuupuappuMyHusbandTheMayorCantBelieve
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001279
+	.4byte MsgKuupuappuReallyYoureGoingToHelpIvan
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte SceneDialogue_ShowLine128E
@@ -1622,7 +1908,7 @@ gKuupuappuHeyaEvents:
 	.4byte SceneState_BranchOnSlotZeroFacingAndFlag855
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0000128c
+	.4byte MsgKuupuappuTheGuestsUpstairsWerentInTheir
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte FieldScene_RunActorTwentyThreeAngleDialogue
@@ -1640,10 +1926,10 @@ gKuupuappuHeyaEvents:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x08530018
-	.4byte 0x00001290
+	.4byte MsgKuupuappuThatKidIvanHeCreepsMe
 	.4byte 0x00000000
 	.4byte 0x08530019
-	.4byte 0x00001291
+	.4byte MsgKuupuappuWeHaventDoneAnythingYoureA
 	.4byte 0x00000000
 	.4byte 0xffff0018
 	.4byte SceneActor_StepActor24AnimationByFacing
@@ -1652,13 +1938,13 @@ gKuupuappuHeyaEvents:
 	.4byte Func_02000690
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001244
+	.4byte MsgKuupuappuTheOtherSparklingRocksAllCrumbled
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte SceneDialogue_RunActorNineFlaggedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000124a
+	.4byte MsgKuupuappuHeyMaybeMyNeighborIsThe
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActorElevenFlaggedDialogue
@@ -1667,37 +1953,37 @@ gKuupuappuHeyaEvents:
 	.4byte SceneDialogue_ShowLine124EOr135E
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000124f
+	.4byte MsgKuupuappuYouNeverBoughtMeAnythingWorth
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000127e
+	.4byte MsgKuupuappuTheseGuysLookReliableIGuess
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000127f
+	.4byte MsgKuupuappuIWonderWhatSortOfThing
 	.4byte 0x00008d15
 	.4byte 0xffff0010
 	.4byte SceneDialogue_RunActor16FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000127d
+	.4byte MsgKuupuappuMaybeTheyllFindOurStolenFamily
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte SceneDialogue_RunActorEighteenBranchedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001281
+	.4byte MsgKuupuappuAllOurBestWeaponsWereStolen
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001283
+	.4byte MsgKuupuappuIWonderIfTheyLeftUs
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001287
+	.4byte MsgKuupuappuHahhWereSureToSeeA
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001292
+	.4byte MsgKuupuappuItWouldBeAwfulIfOur
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001293
+	.4byte MsgKuupuappuThatVolcanoCostUsALot
 	.4byte 0x00008d15
 	.4byte 0xffff0418
 	.4byte SceneActor_StepActor24AnimationByFacing
@@ -1724,10 +2010,12 @@ gKuupuappuHeyaEvents:
 	.4byte 0x001000c3
 	.4byte 0x0000c4f3
 	.4byte 0xffff00c8
-	.4byte 0x004029d1
+	.2byte MsgKuupuappuTheresABookEntitledHistoryOf
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029d2
+	.2byte MsgKuupuappuTheresABookEntitledGemsOf
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1750,7 +2038,7 @@ gKuupuappuHeyaEventsEntrances15To17:
 	.4byte SceneDialogue_ShowEmptyChest
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000012c4
+	.4byte MsgKuupuappuAhhHelpMe
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1791,7 +2079,7 @@ gKuupuappuHeyaEventsFlag855:
 	.4byte FieldScene_RunOpeningSequenceSecond
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001352
+	.4byte MsgKuupuappuICanSleepWellNowThat
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_RunActor9FlaggedLine
@@ -1806,19 +2094,19 @@ gKuupuappuHeyaEventsFlag855:
 	.4byte SceneDialogue_RunActorTwelveFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000135d
+	.4byte MsgKuupuappuJustAsIThoughtNothingWas
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte SceneDialogue_RunActor14Line
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000136b
+	.4byte MsgKuupuappuIvanLearnedALotByTalking
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte FieldScene_RunScene383SequenceC
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00001367
+	.4byte MsgKuupuappuYoureThePersonWhoGotOur
 	.4byte 0x00000000
 	.4byte 0x02500012
 	.4byte FieldScene_RunScene383_0200091c
@@ -1833,19 +2121,19 @@ gKuupuappuHeyaEventsFlag855:
 	.4byte SceneState_BranchOnSlotZeroFacingAndFlag855
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x0000137a
+	.4byte MsgKuupuappuImShockedThoseGuestsOfOurs
 	.4byte 0x00000000
 	.4byte 0xffff0017
 	.4byte FieldScene_RunActorTwentyThreeAngleDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001354
+	.4byte MsgKuupuappuEverybodysAfterMyRockTheyWant
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte SceneDialogue_RunActorNineFlaggedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000135a
+	.4byte MsgKuupuappuTheReasonLunpaTurnedBadIs
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActorElevenFlaggedDialogue
@@ -1854,37 +2142,37 @@ gKuupuappuHeyaEventsFlag855:
 	.4byte SceneDialogue_ShowLine124EOr135E
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000135f
+	.4byte MsgKuupuappuIWishIHadSomethingWorth
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000136e
+	.4byte MsgKuupuappuWhenIGrowUpIWant
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0000136f
+	.4byte MsgKuupuappuIWishIHadWingsLike
 	.4byte 0x00008d15
 	.4byte 0xffff0010
 	.4byte SceneDialogue_RunActor16FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000136d
+	.4byte MsgKuupuappuImSoRelievedNowThatWe
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte SceneDialogue_RunActorEighteenBranchedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00001371
+	.4byte MsgKuupuappuMyWeaponsWereFoundInThe
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001373
+	.4byte MsgKuupuappuItMustBeSnowingUpIn
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001375
+	.4byte MsgKuupuappuWhyAreThesePeopleSoAnxious
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001380
+	.4byte MsgKuupuappuWhoCouldHaveKnownTheyWere
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001381
+	.4byte MsgKuupuappuOfCourseIAlwaysSuspectedThey
 	.4byte 0x00000023
 	.4byte 0x0f4b0064
 	.4byte 0x00200007
@@ -1899,10 +2187,12 @@ gKuupuappuHeyaEventsFlag855:
 	.4byte 0x001000c3
 	.4byte 0x0000c4f3
 	.4byte 0xffff00c8
-	.4byte 0x004029d1
+	.2byte MsgKuupuappuTheresABookEntitledHistoryOf
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029d2
+	.2byte MsgKuupuappuTheresABookEntitledGemsOf
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

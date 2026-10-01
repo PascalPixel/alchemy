@@ -336,6 +336,7 @@ impl Problem {
                 .unwrap_or_else(|| absolute.to_string_lossy().into_owned()),
             file_name,
             include: absolute.parent().map(Path::to_path_buf).unwrap_or_default(),
+            message_imports: crate::build_text::current_c_imports(root(), config.target)?,
         };
         let setup = scratch.join("setup");
         let preprocessed = toolchain.preprocess(&draft, &setup)?;

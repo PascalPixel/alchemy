@@ -49,9 +49,17 @@ ShindenHeya_ChooseRestartOption:
 	movs r3, #1
 	str r3, [sp, #0]
 	movs r1, #7
+.ifdef TBS_EDITION_JA
+	movs r2, #17
+.else
 	movs r2, #25
+.endif
 	movs r3, #5
+.ifdef TBS_EDITION_JA
+	movs r0, #7
+.else
 	movs r0, #2
+.endif
 	bl UiWindow_Create
 	ldr r5, .L_0200a8f8
 	adds r7, r0, #0
@@ -113,7 +121,11 @@ ShindenHeya_ChooseRestartOption:
 	ldr r1, [r2, r3]
 	lsls r2, r5, #4
 	add r0, sp, #8
+.ifdef TBS_EDITION_JA
+	adds r1, #64
+.else
 	adds r1, #24
+.endif
 	adds r2, #60
 	bl UiTextResource_SetPosition
 	movs r0, #1
@@ -137,7 +149,7 @@ ShindenHeya_ChooseRestartOption:
 	pop {r1}
 	bx r1
 .L_0200a8f8:
-	.4byte 0x0000116e
+	.4byte MsgShindenGreatHealer
 .L_0200a8fc:
 	.4byte gKeyState
 .L_0200a900:
@@ -506,6 +518,7 @@ ShindenHeya_PlacementB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.ifndef TBS_EDITION_JA
 	.global ShindenHeya_PlacementSequenceB
 ShindenHeya_PlacementSequenceB:
 	.4byte 0xffff0002
@@ -520,6 +533,7 @@ ShindenHeya_PlacementSequenceB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.endif
 	.global ShindenHeya_PlacementC
 ShindenHeya_PlacementC:
 	.4byte 0xffff0079
@@ -623,10 +637,10 @@ ShindenHeya_SceneTableA:
 	.4byte FieldScene_RunActorEightFacingDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001036
+	.4byte MsgShindenOurPsynergyWasGivenToUs
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001037
+	.4byte MsgShindenPsynergyIsAPowerThatShould
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -646,7 +660,7 @@ ShindenHeya_SceneTableB:
 	.4byte FieldScene_RunActorNineFlagDialogueA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001378
+	.4byte MsgShindenGoOnIfThatEasesThe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte FieldScene_RunActorNineFlagDialogueB
@@ -669,7 +683,7 @@ ShindenHeya_SceneTableC:
 	.4byte FieldScene_RunActorNineFlagDialogueA
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001cea
+	.4byte MsgShindenIHopeTheEarthquakesArentA
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte FieldScene_RunActorNineFlagDialogueB
@@ -683,19 +697,19 @@ ShindenHeya_SceneTableD:
 	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0xffff0001
-	.4byte 0x00001168
+	.4byte MsgShindenItIsATerribleBurdenTo
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00001169
+	.4byte MsgShindenMotherWouldNeverDoubtYourCourage
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001167
+	.4byte MsgShindenIDontBlameYouICouldnt
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000116a
+	.4byte MsgShindenWasItRightToRefuseWhen
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000116b
+	.4byte MsgShindenItsClearThatTheGreatHealer
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte ShindenHeya_RunAltarScene
@@ -715,19 +729,19 @@ ShindenHeya_SceneTableE:
 	.4byte FieldScene_RunActorEightFacingDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000119e
+	.4byte MsgShindenThePowerOfMtAlephStems
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte FieldScene_RunActorTenCountStep
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000011d8
+	.4byte MsgShindenThePowerOfMyPsynergyHas
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000011d9
+	.4byte MsgShindenTheAngaranContinentWillCertainlySee
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000011da
+	.4byte MsgShindenMyPsynergyHasntChangedAtAll
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -744,16 +758,16 @@ ShindenHeya_SceneTableF:
 	.4byte FieldScene_RunScene378SequenceB
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001c02
+	.4byte MsgShindenWhyIsItThatDifferentAdepts
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001c03
+	.4byte MsgShindenItllBeDifficultToReachSol
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001c04
+	.4byte MsgShindenISeeABeautifulGirlHas
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001c05
+	.4byte MsgShindenItsNotFairIWantTo
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -770,10 +784,10 @@ ShindenHeya_SceneTableG:
 	.4byte SceneDialogue_RunActorEightFollowupDialogue
 	.4byte 0x00008d15
 	.4byte 0x09090008
-	.4byte 0x0000190b
+	.4byte MsgShindenPleaseSaveTheHelplessInAltin
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001952
+	.4byte MsgShindenAlmightyFateMustHaveHeardMe
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -784,22 +798,22 @@ ShindenHeya_SceneTableH:
 	.4byte SceneDialogue_RunActorEightFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x08450009
-	.4byte 0x00001409
+	.4byte MsgShindenPleaseGiveMeStrengthAtTimes
 	.4byte 0x00008d15
 	.4byte 0x08450008
-	.4byte 0x0000140a
+	.4byte MsgShindenWillITurnIntoATree
 	.4byte 0x00008d15
 	.4byte 0x08450009
-	.4byte 0x0000140b
+	.4byte MsgShindenSomeoneWillSaveUsJustKeep
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000171d
+	.4byte MsgShindenHowAboutThatOurWishesHave
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000171e
+	.4byte MsgShindenTheSignsOfDangerAreActually
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000171f
+	.4byte MsgShindenPeaceWillBeKeptAsLong
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000029
@@ -816,7 +830,7 @@ ShindenHeya_SceneTableI:
 	.4byte SceneDialogue_RunActorEightDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001824
+	.4byte MsgShindenWhenYouStayInXianFor
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

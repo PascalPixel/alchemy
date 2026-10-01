@@ -181,7 +181,7 @@ Func_02001ca4:
 .L_02009e38:
 	.4byte 0x00000101
 .L_02009e3c:
-	.4byte 0x00000c4f
+	.4byte MsgWorldMapOh
 .L_02009e40:
 	.4byte 0x00013333
 .L_02009e44:
@@ -605,25 +605,25 @@ Func_02001ca4:
 	pop {r0}
 	bx r0
 .L_0200a24c:
-	.4byte 0x00000c62
+	.4byte MsgWorldMapMeanieDontCare
 .L_0200a250:
-	.4byte 0x00000c5c
+	.4byte MsgWorldMapComePromiseWont
 .L_0200a254:
-	.4byte 0x00000c63
+	.4byte MsgWorldMapSeeWontRegret
 .L_0200a258:
-	.4byte 0x00000c64
+	.4byte MsgWorldMapAbilityVenusDjinni
 .L_0200a25c:
-	.4byte 0x00000c68
+	.4byte MsgWorldMapSeeDjinnUseful
 .L_0200a260:
 	.4byte 0x0000016f
 .L_0200a264:
 	.4byte 0x00000171
 .L_0200a268:
-	.4byte 0x00000c6a
+	.4byte MsgWorldMapGoSetStandby
 .L_0200a26c:
-	.4byte 0x00000c6d
+	.4byte MsgWorldMapHmmmmExplainAgain
 .L_0200a270:
-	.4byte 0x00000c6f
+	.4byte MsgWorldMapYeahWantLearn
 	.section .text.x0200a8e8,"ax",%progbits
 	.global Func_020028e8
 	.thumb_func
@@ -1021,7 +1021,7 @@ Func_020028e8:
 .L_0200ac98:
 	.4byte gWorldMapTriggerActor
 .L_0200ac9c:
-	.4byte 0x00002644
+	.4byte MsgWorldMapMatter
 .L_0200aca0:
 	.4byte 0x0d580000
 .L_0200aca4:

@@ -141,7 +141,15 @@ Func_02002294:
 	.global Func_0200229c
 	.thumb_func
 Func_0200229c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Field_DispatchTypeHandlerFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Field_DispatchTypeHandlerFar
+	.else
 	overlay_veneer Func_080c84a8
+	.endif
+	.endif
 	.global Func_020022a4
 	.thumb_func
 Func_020022a4:
@@ -173,7 +181,15 @@ ObjectMotion_OffsetPositionAndReset:
 	.global Func_020022dc
 	.thumb_func
 Func_020022dc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_020022e4
 	.thumb_func
 Func_020022e4:
@@ -185,7 +201,15 @@ Func_020022ec:
 	.global Func_020022f4
 	.thumb_func
 Func_020022f4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8808
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8808
+	.else
 	overlay_veneer Func_080c8818
+	.endif
+	.endif
 	.global Func_020022fc
 	.thumb_func
 Func_020022fc:

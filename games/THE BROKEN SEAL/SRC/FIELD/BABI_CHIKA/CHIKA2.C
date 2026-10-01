@@ -398,7 +398,7 @@ void FieldScene_RunFourStepSequenceA(void)
 
 void FieldScene_SetActor19TableB3B8(void)
 {
-    Engine_ActorEnableActionCallback(19, 0x0200B3B8);
+    Engine_ActorEnableActionCallback(19, (s32)BabiChika_FlickerScript);
 }
 
 void SceneState_SetValue202ThenCall(void)
@@ -424,9 +424,9 @@ void SceneDialogue_RunFlag982Or983Dialogue(void)
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
     if (GameFlag_IsSet(0x982) != 0 || GameFlag_IsSet(0x983) != 0) {
-        Engine_MessageShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE_2, 1);
+        Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksAfterAnswer, 1);
     } else {
-        Engine_MessageShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE, 1);
+        Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksRobinSoulYe, 1);
     }
     Engine_EventEnd();
 }
@@ -455,7 +455,7 @@ void SceneActor_InstallSlotNineHandler(void)
 
     u8 *owner;
 
-    Engine_ActorEnableActionCallback(8, 0x0200B3B8);
+    Engine_ActorEnableActionCallback(8, (s32)BabiChika_FlickerScript);
     GameFlag_Set(0x203);
     owner = Actor_Get(9);
     *(s32 *)(owner + 108) = (s32)SceneActor_CopyActor8PositionWhenAtRow10;
@@ -860,14 +860,14 @@ void SceneState_SetValue268bInScene(void)
 {
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
-    Engine_MessageShowCentered(MSG_STATUE_SEEMS_SPEAK_YOUR_SOUL, 1);
+    Engine_MessageShowCentered(MsgBabiChikaStatueSeemsSpeakYourSoul, 1);
     Engine_EventEnd();
 }
 
 void FieldScene_RunScriptedStep953(void)
 {
     Engine_EventBegin();
-    Engine_MessageShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
+    Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
     Engine_EventEnd();
 }
 

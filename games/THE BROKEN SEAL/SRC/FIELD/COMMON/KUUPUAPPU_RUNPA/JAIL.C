@@ -11,6 +11,8 @@ extern u8 MsgKuupuappuRightThiefRegretsStaying[];
 extern u8 MsgKuupuappuRightThiefThoughts[];
 extern u8 MsgKuupuappuThiefLeaderSilencesThieves[];
 extern u8 MsgKuupuappuThiefLeaderThoughts[];
+extern u8 MsgKuupuappuPrisonerRegretsFight[];
+extern u8 MsgKuupuappuPrisonerThoughts[];
 
 /*
  * The jail cell on the underground way between the Vault and Lunpa. While
@@ -67,11 +69,6 @@ enum JailSprite {
     SPRITE_THIEF_LEADER = 0x3f,
     SPRITE_THIEF = 0x40,
     SPRITE_PRISONER = 0x74
-};
-
-enum JailMessage {
-    MSG_PRISONER_REGRETS_FIGHT = 0x1cf6,
-    MSG_PRISONER_THOUGHTS = 0x1cf7
 };
 
 /* The collision flags set on whoever sits in the cell. */
@@ -280,8 +277,9 @@ const struct SceneEvent gJailThiefEvents[] = {
 
 const struct SceneEvent gJailPrisonerEvents[] = {
     { EVENT_EXIT, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, JAIL_EXIT_TO_VAULT_REVISIT },
-    { EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS, MSG_PRISONER_REGRETS_FIGHT },
+    { EVENT_TALK, ACTOR_PRISONER, CONDITION_ALWAYS,
+      (s32)MsgKuupuappuPrisonerRegretsFight },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRISONER, CONDITION_ALWAYS,
-      MSG_PRISONER_THOUGHTS },
+      (s32)MsgKuupuappuPrisonerThoughts },
     { SCENE_EVENTS_END },
 };

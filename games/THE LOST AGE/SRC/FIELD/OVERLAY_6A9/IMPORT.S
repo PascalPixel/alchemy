@@ -69,11 +69,43 @@ Map_GetTerrainHeight:
 	.global Func_020010a4
 	.thumb_func
 Func_020010a4:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020198
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_08020198
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020198
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_08020198
+	.else
 	overlay_veneer Func_080201c8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_020010ac
 	.thumb_func
 Func_020010ac:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_080201b8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080201b8
+	.else
 	overlay_veneer Func_080201e8
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_020010b4
 	.thumb_func
 Func_020010b4:
@@ -89,7 +121,15 @@ Animation_SetStateFlags:
 	.global Func_020010cc
 	.thumb_func
 Func_020010cc:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Func_08020330
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Func_08020330
+	.else
 	overlay_veneer Func_08020360
+	.endif
+	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
@@ -161,7 +201,15 @@ Func_02001154:
 	.global Func_0200115c
 	.thumb_func
 Func_0200115c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8728
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8728
+	.else
 	overlay_veneer Func_080c8738
+	.endif
+	.endif
 	.global Func_02001164
 	.thumb_func
 Func_02001164:

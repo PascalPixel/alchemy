@@ -60,9 +60,9 @@ BabiIriguchi_SetupScene:
 .L_0200a908:
 	.4byte gCell
 .L_0200a90c:
-	.4byte 0x000000b1
+	.4byte SceneId_BabiIriguchi4
 .L_0200a910:
-	.4byte 0x000000b0
+	.4byte SceneId_BabiIriguchi3
 .L_0200a914:
 	cmp r12, r2
 	beq .L_0200a91a
@@ -71,10 +71,35 @@ BabiIriguchi_SetupScene:
 	movs r0, #8
 	movs r1, #6
 	bl Engine_ActorSetChildValue
+	.ifdef TBS_EDITION_EN
 	movs r0, #9
 	movs r1, #6
+	.else
+	.ifdef TBS_EDITION_JA
+	movs r0, #9
+	movs r1, #6
+	.else
+	movs r1, #6
+	movs r0, #9
+	.endif
+	.endif
 	bl Engine_ActorSetChildValue
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	movs r0, #8
+	bl Object_GetById
+	ldr r5, .L_BabiLeaderPriority
+	str r5, [r0, #108]
+	movs r0, #9
+	bl Object_GetById
+	.endif
+	.endif
 	movs r2, #225
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	str r5, [r0, #108]
+	.endif
+	.endif
 	lsls r2, r2, #1
 	adds r3, r6, r2
 	movs r0, #0
@@ -161,8 +186,15 @@ BabiIriguchi_SetupScene:
 	ldr r3, [r1, #80]
 	adds r3, #38
 	b .L_0200a9f4
+	.balign 4, 0
 .L_0200a9ec:
 	.4byte 0x00000000
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+.L_BabiLeaderPriority:
+	.4byte BabiIriguchi_MatchLeaderPriority
+	.endif
+	.endif
 .L_0200a9f0:
 	.4byte 0x00000109
 .L_0200a9f4:
@@ -1221,28 +1253,28 @@ gBabiIriguchiEvents3:
 	.4byte SceneState_BranchOnActorEightOrNineTile
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000026fa
+	.4byte MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000026fb
+	.4byte MsgBabiIriguchiOnlyTwoOfThoseSixEver
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000026fc
+	.4byte MsgBabiIriguchiTheyJustKickedUsOutOf
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000026fd
+	.4byte MsgBabiIriguchiTheySetFireToEverythingThats
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000026fe
+	.4byte MsgBabiIriguchiWereTheOnesWhoAttackedBut
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000026ff
+	.4byte MsgBabiIriguchiTheOtherFourDidntSeemTo
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002700
+	.4byte MsgBabiIriguchiWhatCouldTheyBePlanningFor
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002701
+	.4byte MsgBabiIriguchiNoneOfThemHadAnyTorches
 	.4byte 0x00008c15
 	.4byte 0xffff0008
 	.4byte BabiIriguchi_JumpFromLedge
@@ -1333,64 +1365,64 @@ gBabiIriguchiEvents1:
 	.4byte BabiIriguchi_OpenTruthDoor
 	.4byte 0x00000000
 	.4byte 0x0989000a
-	.4byte 0x00002725
+	.4byte MsgBabiIriguchiIAmCountingOnYouRobin
 	.4byte 0x00000000
 	.4byte 0x0989000b
-	.4byte 0x00002726
+	.4byte MsgBabiIriguchiWhenISawThemTheyHad
 	.4byte 0x00000000
 	.4byte 0x0989000c
-	.4byte 0x00002727
+	.4byte MsgBabiIriguchiIAmSorryButNotEven
 	.4byte 0x00000000
 	.4byte 0x0989000d
-	.4byte 0x00002728
+	.4byte MsgBabiIriguchiThisAllStartedWhenActorWas
 	.4byte 0x00000000
 	.4byte 0x0989000e
-	.4byte 0x00002729
+	.4byte MsgBabiIriguchiIfYouCanOpenThisDoor
 	.4byte 0x00008d15
 	.4byte 0x0989000a
-	.4byte 0x0000272a
+	.4byte MsgBabiIriguchiIDoNotMeanToDoubt
 	.4byte 0x00008d15
 	.4byte 0x0989000b
-	.4byte 0x0000272b
+	.4byte MsgBabiIriguchiNobodyThinksTheDoorCanBe
 	.4byte 0x00008d15
 	.4byte 0x0989000c
-	.4byte 0x0000272c
+	.4byte MsgBabiIriguchiIDontKnowWhatTheyreWaiting
 	.4byte 0x00008d15
 	.4byte 0x0989000d
-	.4byte 0x0000272d
+	.4byte MsgBabiIriguchiThisIsAllAHugeWaste
 	.4byte 0x00008d15
 	.4byte 0x0989000e
-	.4byte 0x0000272e
+	.4byte MsgBabiIriguchiIHopeTheyCanOpenThe
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000274c
+	.4byte MsgBabiIriguchiIBegOfYouRobinPlease
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000274d
+	.4byte MsgBabiIriguchiICantBelieveThisDoorActually
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000274e
+	.4byte MsgBabiIriguchiItTakesGreatCourageToContinue
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000274f
+	.4byte MsgBabiIriguchiImVeryInterestedInWhatLies
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002750
+	.4byte MsgBabiIriguchiIAmNotAfraidOfDanger
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002751
+	.4byte MsgBabiIriguchiIfAnythingHappensToActorTolbi
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002752
+	.4byte MsgBabiIriguchiIfThisDoorOpensMaybeWe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002753
+	.4byte MsgBabiIriguchiIBetTheMonstersAroundHere
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002754
+	.4byte MsgBabiIriguchiThisIsABigWasteOf
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002755
+	.4byte MsgBabiIriguchiIDontWantToHinderActors
 	.4byte 0x00000003
 	.4byte 0xffff003c
 	.4byte BabiIriguchi_FlipTruthDoorSwitch
@@ -1428,28 +1460,28 @@ gBabiIriguchiEventsOther:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000026b7
+	.4byte MsgBabiIriguchiWeHaventBeenOrderedToStart
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000026b8
+	.4byte MsgBabiIriguchiThereWereStrangeFolkGoingTo
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000026b9
+	.4byte MsgBabiIriguchiItsOddThatBabiWouldBuild
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000026ba
+	.4byte MsgBabiIriguchiCuttingTheseStonesAndStackingThem
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000026c5
+	.4byte MsgBabiIriguchiThereWasABigFightThat
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000026c6
+	.4byte MsgBabiIriguchiIfFaranWentAfterThemThen
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000026c7
+	.4byte MsgBabiIriguchiWhyWouldTheyWantToRush
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000026c8
+	.4byte MsgBabiIriguchiNowThatIThinkOfIt
 	.4byte 0x00000413
 	.4byte 0x0fbc0064
 	.4byte 0x001000c4

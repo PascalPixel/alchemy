@@ -308,6 +308,13 @@ Scene_RunScene3c8SequenceA:
 	bl Object_GetById
 	str r0, [sp, #8]
 	bl Engine_EventBegin
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	bl Battle_ResetEffectCounter
+	.endif
+	.endif
+	.endif
 	movs r3, #5
 	movs r2, #48
 	str r3, [sp, #0]
@@ -3348,43 +3355,43 @@ gVinasuHeyaEvents1:
 	.4byte FieldScene_RunActorEightTenStepLoop
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000266e
+	.4byte MsgVinasuHeyaIodemBeHappyTheEntranceTo
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000266f
+	.4byte MsgVinasuHeyaOhhhHowCouldTheyAttackMere
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte SceneDialogue_RunActorElevenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002672
+	.4byte MsgVinasuHeyaHowHowDidTheyOpenThe
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002673
+	.4byte MsgVinasuHeyaTheyAreAlreadyHeadedForBabi
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002674
+	.4byte MsgVinasuHeyaBabisSoldiersAreAllColossoVictors
 	.4byte 0x00008d15
 	.4byte 0xffff0408
 	.4byte FieldScene_RunActorEightTenStepLoop
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002675
+	.4byte MsgVinasuHeyaUhnnnIfOnlyICouldMove
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002676
+	.4byte MsgVinasuHeyaTheirPowersWereSoStrangeWho
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002677
+	.4byte MsgVinasuHeyaIMustGetInsideVenusLighthouse
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002678
+	.4byte MsgVinasuHeyaTheYoungBoySeemedToGlow
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002679
+	.4byte MsgVinasuHeyaTheyWerentInVenusLighthouseVery
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x0000267a
+	.4byte MsgVinasuHeyaIThoughtIRecognizedOneOf
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -3473,26 +3480,52 @@ gVinasuHeyaEvents2:
 	.4byte FieldScene_RunFiveCallSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000267b
+	.4byte MsgVinasuHeyaKradenToldThemToStopBut
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000267c
+	.4byte MsgVinasuHeyaKradenWentInsideButThenCame
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte FieldScene_SetupActorTenCamera
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000267f
+	.4byte MsgVinasuHeyaIfKradenHadntBeenThereWe
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002680
+	.4byte MsgVinasuHeyaKradenSaidSomethingAboutThisBeing
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002681
+	.4byte MsgVinasuHeyaIWonderWhatMysteriesTheStatue
 	.4byte 0x00000003
+	.ifdef TBS_EDITION_JA
 	.4byte 0xffff0023
 	.4byte SceneDialogue_ReadRelief
 	.4byte 0x00000003
+	.4byte 0xffff0024
+	.4byte SceneDialogue_ReadRelief
+	.4byte 0x00000003
+	.4byte 0xffff0025
+	.4byte SceneDialogue_ReadRelief
+	.4byte 0x00000003
+	.4byte 0xffff0026
+	.4byte SceneDialogue_ReadRelief
+	.4byte 0x00000003
+	.4byte 0xffff0027
+	.4byte SceneDialogue_ReadRelief
+	.4byte 0x00000003
+	.4byte 0xffff0028
+	.4byte SceneDialogue_ReadRelief
+	.4byte 0x00000003
+	.else
+	.4byte 0xffff0023
+	.4byte SceneDialogue_ReadRelief
+	.4byte 0x00000003
+	.ifndef TBS_EDITION_EN
+	.4byte 0xffff0028
+	.4byte SceneDialogue_ReadRelief
+	.4byte 0x00000003
+	.endif
+	.endif
 	.4byte 0xffff0029
 	.4byte FieldScene_RunStatueDialogueSequence
 	.4byte 0x00000013

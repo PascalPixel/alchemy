@@ -182,6 +182,14 @@ Engine_ActorWalkToAndWait:
 	.thumb_func
 ObjectMotion_SnapHeadingAndOffset:
 	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.endif
+	.endif
 	.global ObjectMotion_SetHorizontalPositionWithTerrain
 	.thumb_func
 ObjectMotion_SetHorizontalPositionWithTerrain:

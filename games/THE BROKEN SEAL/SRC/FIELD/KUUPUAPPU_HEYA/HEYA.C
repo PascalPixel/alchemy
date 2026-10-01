@@ -3,6 +3,11 @@
 #include "ITEM_IDS.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "FIXED_POINT_POSITION.H"
+#include "TBS_EDITION.H"
+
+s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
+void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
 
 /* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
  * this file's code made before it shared the header's declaration. */
@@ -252,20 +257,76 @@ prepare:
 /* The "shown" half word at +100 of an actor record. */
 
 /* Phase/status word at 0x1c0 of the shared scene work record. */
+#if defined(TBS_EDITION_JA)
+s32 KuupuappuHeya_TryJumpTo(struct FixedPointPosition *pos)
+{
+    struct FieldActor *obj;
+    u8 *flags;
+    u8 saved;
+
+    obj = Object_GetById(0);
+    flags = &obj->motion_flags;
+    saved = *flags;
+    if (Object_CheckMovementCollision(obj, pos) == 0) {
+        Engine_EventBegin();
+        ObjectDispatch_ApplyArgumentToChildren(obj, 6);
+        Engine_TaskWait(6);
+        Engine_AudioPlayCue(152);
+        ObjectDispatch_ApplyArgumentToChildren(obj, 7);
+        obj->speed = 0x30000;
+        obj->acceleration = 0x20000;
+        obj->velocity_y = 0x40000;
+        *flags &= 0x7e;
+        Engine_ActorSetSpriteFlags(obj, 0);
+        Engine_ActorMoveToAndWait(0, *(s16 *)((u8 *)pos + 2), *(s16 *)((u8 *)pos + 10));
+        ObjectDispatch_ApplyArgumentToChildren(obj, 6);
+        Engine_ActorSetSpriteFlags(obj, 1);
+        Engine_TaskWait(6);
+        *flags = saved;
+        Engine_EventEnd();
+        return 1;
+    }
+    return 0;
+}
+#endif
+
 void ActorPresentation_SetSceneCellByAngle(void)
 {
     s32 x;
     s32 z;
+#if defined(TBS_EDITION_JA)
+    struct FixedPointPosition target;
+    struct FixedPointPosition *pos;
+    struct FieldActor *obj;
+#endif
 
     if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0xa000
         && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0xe000) {
+#if defined(TBS_EDITION_JA)
+        obj = ((struct FieldActor *(*)())Object_GetById)(0);
+        pos = &target;
+        pos->x = obj->x.fixed;
+        pos->y = ((struct FieldActor *(*)())Object_GetById)(0)->y.fixed;
+        pos->z = ((struct FieldActor *(*)())Object_GetById)(0)->z.fixed - 0x1e0000;
+        KuupuappuHeya_TryJumpTo(pos);
+#else
         Engine_LeaderCheckAhead();
+#endif
         x = 42;
         z = 85;
         Map_CopyCellAttributes(41, 85, 1, 1, x, z);
     } else if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0x2000
                && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0x6000) {
+#if defined(TBS_EDITION_JA)
+        obj = ((struct FieldActor *(*)())Object_GetById)(0);
+        pos = &target;
+        pos->x = obj->x.fixed;
+        pos->y = ((struct FieldActor *(*)())Object_GetById)(0)->y.fixed;
+        pos->z = ((struct FieldActor *(*)())Object_GetById)(0)->z.fixed + 0x1e0000;
+        KuupuappuHeya_TryJumpTo(pos);
+#else
         Engine_LeaderCheckAhead();
+#endif
         x = 42;
         z = 85;
         Map_CopyCellAttributes(43, 85, 1, 1, x, z);
@@ -384,7 +445,9 @@ void FieldScene_RunActorEighteenConditionalScene(void)
 
 void SceneDialogue_ShowLine12BB(void)
 {
+#if !defined(TBS_EDITION_JA)
     Battle_InitializeRenderObject();
+#endif
     Engine_EventSetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);
     Event_ShowMessage(ACTOR_GERALD, 0);
 }

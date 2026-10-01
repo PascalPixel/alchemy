@@ -538,7 +538,17 @@ gColossoSceneEventEffect:
 	.global Korosseo_PortraitPaletteOffsets
 Korosseo_PortraitPaletteOffsets:
 	.4byte 0x20202000
-	.4byte 0x40404060
+	.2byte 0x4060
+	.byte 64
+	.ifdef TBS_EDITION_JA
+	.byte 64
+	.else
+	.ifdef TBS_EDITION_EN
+	.byte 64
+	.else
+	.byte 160
+	.endif
+	.endif
 	.2byte 0x0080
 	.global gColossoModeScript2
 gColossoModeScript2:
@@ -1164,25 +1174,25 @@ gKorosseoMarutaEvents:
 	.4byte ColossoLogRollingStage_RunLogRollingInteraction
 	.4byte 0x00008d15
 	.4byte 0xffff0020
-	.4byte 0x0000213c
+	.4byte MsgKorosseoKawaThisYearsFinalsAreIncredibleThis
 	.4byte 0x00008d15
 	.4byte 0xffff0021
-	.4byte 0x00002146
+	.4byte MsgKorosseoMarutaTheStreetVendorsCornOnThe
 	.4byte 0x00008d15
 	.4byte 0xffff0022
-	.4byte 0x00002147
+	.4byte MsgKorosseoMarutaICantSeeAnythingWhenIm
 	.4byte 0x00008d15
 	.4byte 0xffff0023
-	.4byte 0x00002148
+	.4byte MsgKorosseoMarutaItsNotVeryExcitingWorkBut
 	.4byte 0x00008d15
 	.4byte 0xffff0024
-	.4byte 0x00002149
+	.4byte MsgKorosseoMarutaStandingForLongPeriodsOfTime
 	.4byte 0x00008d15
 	.4byte 0xffff0025
-	.4byte 0x0000214a
+	.4byte MsgKorosseoMarutaIWasUpAllNightTrying
 	.4byte 0x00008d15
 	.4byte 0xffff0026
-	.4byte 0x0000214b
+	.4byte MsgKorosseoMarutaSomeTouristToldMeILook
 	.4byte 0x00000006
 	.4byte 0xffff0063
 	.4byte ColossoLogRollingStage_SelectNearestObstacle
@@ -1415,7 +1425,12 @@ Korosseo_PortraitSlot:
 gColossoModeScriptDefault:
 	.2byte 0x4000
 	.4byte 0x0800ff44
-	.4byte 0x01801000
+	.2byte 0x1000
+	.ifdef TBS_EDITION_JA
+	.2byte 0x0100
+	.else
+	.2byte 0x0180
+	.endif
 	.4byte 0x20000001
 	.4byte 0x00010010
 	.4byte 0x000e7fff
@@ -1428,7 +1443,15 @@ gColossoModeScriptDefault:
 	.global gColossoModeScript4
 gColossoModeScript4:
 	.2byte 0x1000
+	.ifdef TBS_EDITION_ES
+	.4byte 0x00010180
+	.else
+	.ifdef TBS_EDITION_IT
+	.4byte 0x00010180
+	.else
 	.4byte 0x00010200
+	.endif
+	.endif
 	.4byte 0x00002000
 	.4byte 0x10000001
 	.4byte 0x00060100
@@ -1543,7 +1566,7 @@ KorosseoMaruta_PlaceScript:
 	.4byte 0x00000001
 	.4byte 0x00000010
 	.section .bss,"aw",%nobits
-	.space 8
+	.balign 16
 	.global gColossoParticleCount
 gColossoParticleCount:
 	.space 16

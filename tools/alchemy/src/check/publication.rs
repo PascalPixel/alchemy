@@ -385,6 +385,62 @@ fn check_documents(root: &Path) -> Result<(), String> {
 /// `.incbin "GRAPHICS/FX/STAR.bitmap.lz"` from `SRC/GRAPHICS/FX/STAR.PNG` or
 /// `.incbin "MAP/M/METATILES.delta1.lz"` from `SRC/MAP/M/METATILES.TSV`, as pret's
 /// data files read the `.4bpp.lz` files gbagfx makes.
+fn font_range(text: &str) -> bool {
+    let text = text
+        .chars()
+        .filter(|ch| !ch.is_whitespace())
+        .collect::<String>();
+    let tokens = regex::Regex::new(r"0[xX][0-9a-fA-F]+|[0-9]+|[-+*()]")
+        .expect("font layout arithmetic")
+        .find_iter(&text)
+        .map(|token| token.as_str())
+        .collect::<Vec<_>>();
+    if tokens.concat() != text || tokens.is_empty() {
+        return false;
+    }
+    fn atom(tokens: &[&str], at: &mut usize) -> Option<usize> {
+        let token = *tokens.get(*at)?;
+        *at += 1;
+        if token == "(" {
+            let value = sum(tokens, at)?;
+            if tokens.get(*at) != Some(&")") {
+                return None;
+            }
+            *at += 1;
+            Some(value)
+        } else if let Some(digits) = token
+            .strip_prefix("0x")
+            .or_else(|| token.strip_prefix("0X"))
+        {
+            usize::from_str_radix(digits, 16).ok()
+        } else {
+            token.parse().ok()
+        }
+    }
+    fn product(tokens: &[&str], at: &mut usize) -> Option<usize> {
+        let mut value = atom(tokens, at)?;
+        while tokens.get(*at) == Some(&"*") {
+            *at += 1;
+            value = value.checked_mul(atom(tokens, at)?)?;
+        }
+        Some(value)
+    }
+    fn sum(tokens: &[&str], at: &mut usize) -> Option<usize> {
+        let mut value = product(tokens, at)?;
+        while let Some(operator @ ("+" | "-")) = tokens.get(*at).copied() {
+            *at += 1;
+            let next = product(tokens, at)?;
+            value = if operator == "+" {
+                value.checked_add(next)?
+            } else {
+                value.checked_sub(next)?
+            };
+        }
+        Some(value)
+    }
+    let mut at = 0;
+    sum(&tokens, &mut at).is_some() && at == tokens.len()
+}
 fn incbin(path: &str, data: &[u8]) -> bool {
     let base_rom = regex::Regex::new(
         r#"^\s*\.incbin\s+"baserom\.gba"\s*,\s*0x[0-9a-f]+\s*,\s*0x[0-9a-f]+\s*$"#,
@@ -403,10 +459,21 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         r#"^\s*\.incbin\s+"((?:COMMON/)?(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.[a-z0-9.]+)"\s*$"#,
     )
     .expect("built graphics pattern");
+    // A font's source-owned character split labels its glyph and kanji groups
+    // inside one editable PNG recipe. Only constant layout arithmetic may
+    // slice an uncompressed generated font; ROMs and raw assets remain refused.
+    let built_font = regex::Regex::new(
+        r#"^\s*\.incbin\s+"((?:COMMON/)?GRAPHICS(?:/[A-Z0-9_]+)+\.font)"\s*,\s*([^,]+?)(?:\s*,\s*([^,]+?))?\s*$"#,
+    ).expect("built font range pattern");
     let is_built_graphics = |line: &str| {
         built_graphics
             .captures(line)
             .is_some_and(|capture| ags::resource::is_recipe(&capture[1]))
+            || built_font.captures(line).is_some_and(|capture| {
+                ags::resource::is_recipe(&capture[1])
+                    && font_range(&capture[2])
+                    && capture.get(3).is_none_or(|size| font_range(size.as_str()))
+            })
     };
     let scaffolding = path.starts_with("recon/");
     let parts = path.split('/').collect::<Vec<_>>();
@@ -3721,6 +3788,33 @@ mod tests {
             assert!(super::incbin(path, line), "{path}");
         }
         assert_eq!(super::publication_data_reason(star, sheet, None), None);
+    }
+
+    #[test]
+    fn generated_fonts_allow_only_constant_character_layout_ranges() {
+        let path = "games/COMMON/SRC/GRAPHICS/FONT/TEXT.S";
+        for line in [
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, (0x100 - 0x20) * (2 + 12 * 2)\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", (0x100 - 0x20) * (2 + 12 * 2)\n",
+        ] {
+            assert!(!super::incbin(path, line.as_bytes()), "{line}");
+            assert!(
+                super::incbin("recon/tbs/ja/rom.s", line.as_bytes()),
+                "{line}"
+            );
+        }
+        for line in [
+            ".incbin \"baserom.gba\", 0, (0x100 - 0x20) * 26\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.raw\", 0, 26\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font.lz\", 0, 26\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", ExpectedOffset, 26\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, LOADADDR(.font)\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, 2 +\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", 0, (2 * 26\n",
+            ".incbin \"GRAPHICS/FONT/TEXT_JA.font\", -1, 26\n",
+        ] {
+            assert!(super::incbin(path, line.as_bytes()), "{line}");
+        }
     }
 
     use super::*;

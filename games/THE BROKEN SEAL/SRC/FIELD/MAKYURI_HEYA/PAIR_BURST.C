@@ -1,9 +1,30 @@
 #include "PROBE.H"
+#include "RAM_BUFFER.H"
 
 void SceneState_ApplyPair12And21(void)
 {
     BattleFx_SetPhaseRequest(12, 21);
 }
+
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+/* The later localizations stop the leader effect following an idle actor
+ * in the narrow middle strip of this room. */
+struct LeaderEffectWork {
+    u8 unknown_00[24];
+    struct FieldActor *target;
+};
+
+void MakyuriHeya_UpdateLeaderEffectTarget(void)
+{
+    struct FieldActor *actor = Object_GetById(0);
+    struct LeaderEffectWork *work = *(struct LeaderEffectWork **)Ram_ActorEffectWork;
+
+    if (actor->unknown_22 == 0 && actor->z.fixed >> 20 > 12 && actor->z.fixed >> 20 <= 18)
+        work->target = NULL;
+    else
+        work->target = actor;
+}
+#endif
 
 s32 MakyuriHeya_TrailSparks(struct FieldActor *actor)
 {

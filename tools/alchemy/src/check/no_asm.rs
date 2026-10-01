@@ -18,6 +18,35 @@ type Job = (String, Vec<String>);
 /// One preprocessing command prefix of a target and the sources it expands.
 type Group = ((String, Vec<String>), Vec<String>);
 
+/// Keep fresh catalog metadata alive for every batch in an edition.
+struct MessageImports {
+    _directory: tempfile::TempDir,
+    flag: String,
+    signature: String,
+}
+
+fn message_imports(
+    root: &Path,
+    target_ids: &[DecompTargetId],
+) -> Result<BTreeMap<String, MessageImports>, String> {
+    let mut imports = BTreeMap::new();
+    for &id in target_ids {
+        if let Some(directory) = crate::build_text::fresh_c_imports(root, target_for(id))? {
+            let header = fs::read(directory.path().join(crate::build_text::C_INCLUDE))
+                .map_err(|error| error.to_string())?;
+            imports.insert(
+                id.as_str().into(),
+                MessageImports {
+                    flag: format!("-I{}", directory.path().display()),
+                    signature: crate::compiler::sha256::hex(&header),
+                    _directory: directory,
+                },
+            );
+        }
+    }
+    Ok(imports)
+}
+
 fn sibling(root: &Path, source: &str) -> Option<std::path::PathBuf> {
     (source.ends_with(".c") || source.ends_with(".C"))
         .then(|| root.join(source).with_extension("s"))
@@ -27,7 +56,11 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
     crate::compiler::preprocess::command(target, source, false)
 }
 
-fn groups(root: &Path, target_ids: &[DecompTargetId]) -> Result<Vec<Group>, String> {
+fn groups(
+    root: &Path,
+    target_ids: &[DecompTargetId],
+    imports: &BTreeMap<String, MessageImports>,
+) -> Result<Vec<Group>, String> {
     let mut groups = BTreeMap::<(String, Vec<String>), Vec<String>>::new();
     for &id in target_ids {
         let target = target_for(id);
@@ -49,7 +82,10 @@ fn groups(root: &Path, target_ids: &[DecompTargetId]) -> Result<Vec<Group>, Stri
                 .unwrap_or(&path)
                 .to_string_lossy()
                 .into_owned();
-            let command = prefix(target, &source)?;
+            let mut command = prefix(target, &source)?;
+            if let Some(metadata) = imports.get(id.as_str()) {
+                command.insert(1, metadata.flag.clone());
+            }
             let group = groups.entry((id.as_str().into(), command)).or_default();
             group.push(source);
         }
@@ -66,21 +102,42 @@ fn groups(root: &Path, target_ids: &[DecompTargetId]) -> Result<Vec<Group>, Stri
 /// whose expansion was clean under the same identity is not expanded again,
 /// as make skips an up-to-date object; any change to it or a header it
 /// includes scans it afresh.
-fn clean_key(root: &Path, label: &str, prefix: &[String], source: &str) -> Option<String> {
+fn clean_key(
+    root: &Path,
+    label: &str,
+    prefix: &[String],
+    source: &str,
+    imports: Option<&MessageImports>,
+) -> Option<String> {
     let tree = crate::compiler::source_inputs::compiler_source_tree_signature(
         root,
         Path::new(source),
         &[prefix.to_vec()],
     )
     .ok()?;
+    // A temporary include directory is not a compiler option. Its current
+    // catalog contents are part of every key, even when this source does not
+    // import any messages. Imported headers also stay in the source tree
+    // signature; their temporary path may cause a safe extra expansion.
+    let command = prefix
+        .iter()
+        .map(|part| {
+            if imports.is_some_and(|metadata| part == &metadata.flag) {
+                "-I<current-message-catalog>".into()
+            } else {
+                part.clone()
+            }
+        })
+        .collect::<Vec<_>>();
     let identity = format!(
         "{:?}",
         (
-            "no-asm-clean-v2-forwarders",
+            "no-asm-clean-v3-message-imports",
             crate::compiler::bundle::executable_signature().ok()?,
             crate::compiler::bundle::compiler_bundle_signature(),
             label,
-            crate::compiler::source_inputs::portable_commands(root, &[prefix.to_vec()]),
+            crate::compiler::source_inputs::portable_commands(root, &[command]),
+            imports.map(|metadata| metadata.signature.as_str()),
             source,
             crate::compiler::sha256::hex(&tree),
         )
@@ -94,6 +151,7 @@ fn jobs(
     root: &Path,
     groups: Vec<Group>,
     cache: Option<&psynergy::cache::SqliteCache>,
+    imports: &BTreeMap<String, MessageImports>,
 ) -> (Vec<(Job, Vec<String>)>, usize) {
     let inputs = groups.iter().map(|(_, sources)| sources.len()).sum();
     let mut jobs = Vec::new();
@@ -105,9 +163,10 @@ fn jobs(
                 .chunks(chunk)
                 .map(|part| {
                     let (label, prefix) = (&label, &prefix);
+                    let metadata = imports.get(label);
                     scope.spawn(move || {
                         part.iter()
-                            .map(|source| clean_key(root, label, prefix, source))
+                            .map(|source| clean_key(root, label, prefix, source, metadata))
                             .collect::<Vec<_>>()
                     })
                 })
@@ -216,7 +275,13 @@ fn scan_preprocessed(
     target_ids: &[DecompTargetId],
 ) -> Result<(usize, usize, Vec<Finding>), String> {
     let cache = psynergy::cache::SqliteCache::open(&root.join("out/cache/no-asm.sqlite3")).ok();
-    let (jobs, inputs) = jobs(root, groups(root, target_ids)?, cache.as_ref());
+    let imports = message_imports(root, target_ids)?;
+    let (jobs, inputs) = jobs(
+        root,
+        groups(root, target_ids, &imports)?,
+        cache.as_ref(),
+        &imports,
+    );
     let workers = std::thread::available_parallelism().map_or(1, |count| count.get().min(16));
     let results = Mutex::new(Vec::new());
     std::thread::scope(|scope| {
@@ -400,5 +465,80 @@ fn expanded_typed_forwarders_cannot_be_suppressed_by_raw_definitions() {
         run(compiler_root(), &("forwarder-regression".into(), command))
             .unwrap()
             .is_empty()
+    );
+}
+
+#[test]
+fn batched_audit_uses_current_catalog_and_invalidates_clean_keys() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    let id = DecompTargetId::TbsEn;
+    let target = target_for(id);
+    let catalog = root.join(format!("{}/TEXT/EN.PO", target.game_dir()));
+    fs::create_dir_all(catalog.parent().unwrap()).unwrap();
+    let write_catalog = |number| {
+        fs::write(
+            &catalog,
+            format!(
+                "msgid \"\"\nmsgstr \"\"\n\"X-Alchemy-Target: tbs-en\\n\"\n\n\
+                 msgctxt \"MsgImported\"\nmsgid \"{number:05}\"\nmsgstr \"one\"\n"
+            ),
+        )
+        .unwrap();
+    };
+    write_catalog(7);
+    crate::build_text::write_c_imports(
+        &root.join(target.output_dir),
+        "#error stale generated header\n",
+    )
+    .unwrap();
+    let source = root.join("IMPORT.C");
+    fs::write(
+        &source,
+        "#include \"text/MSG_IDS.H\"\nTEXT_MESSAGE_ENUM(MsgImported);\n\
+         #if TEXT_MESSAGE_NUMBER_MsgImported == 8\n#define KIND naked\n\
+         #else\n#define KIND packed\n#endif\n\
+         void Imported(void) __attribute__((KIND));\n",
+    )
+    .unwrap();
+    let plain = root.join("PLAIN.C");
+    fs::write(&plain, "void Plain(void) {}\n").unwrap();
+    let first = message_imports(root, &[id]).unwrap();
+    let command = |imports: &BTreeMap<String, MessageImports>| {
+        let mut command = prefix(target, source.to_str().unwrap()).unwrap();
+        command.insert(1, imports[id.as_str()].flag.clone());
+        command
+    };
+    let key = |imports: &BTreeMap<String, MessageImports>, path: &Path| {
+        clean_key(
+            root,
+            id.as_str(),
+            &command(imports),
+            path.to_str().unwrap(),
+            imports.get(id.as_str()),
+        )
+        .unwrap()
+    };
+    let mut batch = command(&first);
+    batch.push(source.to_string_lossy().into_owned());
+    assert!(run(root, &(id.as_str().into(), batch)).unwrap().is_empty());
+    let same = message_imports(root, &[id]).unwrap();
+    assert_eq!(key(&first, &plain), key(&same, &plain));
+    write_catalog(8);
+    let changed = message_imports(root, &[id]).unwrap();
+    assert_ne!(key(&first, &plain), key(&changed, &plain));
+    assert_ne!(key(&first, &source), key(&changed, &source));
+    let mut batch = command(&changed);
+    batch.push(source.to_string_lossy().into_owned());
+    let found = run(root, &(id.as_str().into(), batch)).unwrap();
+    assert_eq!(found.len(), 1);
+    assert!(found[0].token.contains("naked"));
+    assert_eq!(
+        fs::read_to_string(
+            root.join(target.output_dir)
+                .join(crate::build_text::C_INCLUDE)
+        )
+        .unwrap(),
+        "#error stale generated header\n"
     );
 }

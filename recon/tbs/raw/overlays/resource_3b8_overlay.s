@@ -834,13 +834,13 @@ gTorebiKyudenEventsOther:
 	.4byte FieldScene_RunBranchedSteps1FF1
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00001ff4
+	.4byte MsgTorebiKyudenIfYoureEnteringColossoHurryAlong
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001ff5
+	.4byte MsgTorebiKyudenIWonderHowDiligentlyBabisSoldiers
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001ff6
+	.4byte MsgTorebiKyudenWarriorsAreNotAllowedToStay
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte RunOpeningAuxiliarySequence
@@ -852,58 +852,58 @@ gTorebiKyudenEventsOther:
 	.4byte RunMiddleAuxiliarySequence
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000200c
+	.4byte MsgTorebiKyudenIWantToWatchTheColosso
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000200d
+	.4byte MsgTorebiKyudenIGetSoAngrySeeingAll
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x0000200e
+	.4byte MsgTorebiKyudenMaybeIShouldntHaveEatenQuite
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000200f
+	.4byte MsgTorebiKyudenOnlyWarriorsWhoFightWellIn
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002010
+	.4byte MsgTorebiKyudenLordBabiIsBuildingTheLighthouse
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x00002011
+	.4byte MsgTorebiKyudenBabisNameIsRidingOnThe
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002012
+	.4byte MsgTorebiKyudenEvenIfLordBabiDoesntReturn
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002013
+	.4byte MsgTorebiKyudenMyFirstColossoWasSoExciting
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002014
+	.4byte MsgTorebiKyudenOnceTheLighthouseIsCompleteBabis
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002015
+	.4byte MsgTorebiKyudenWedNeverGetNearTheLighthouse
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002016
+	.4byte MsgTorebiKyudenIHearThatGirlIsGoing
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0000204b
+	.4byte MsgTorebiKyudenItLooksLikeLordBabiDidnt
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000204c
+	.4byte MsgTorebiKyudenIGuessLordBabiDidNot
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000204d
+	.4byte MsgTorebiKyudenActorHasBeenStayingAsLord
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x0000204e
+	.4byte MsgTorebiKyudenActorWasReveredAsAChild
 	.4byte 0x00000000
 	.4byte 0xffff0006
-	.4byte 0x0000204f
+	.4byte MsgTorebiKyudenBabiIsHoldingMeHostageIn
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002050
+	.4byte MsgTorebiKyudenActorWasTakenHostageToForce
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002051
+	.4byte MsgTorebiKyudenActorIsNotPermittedToLeave
 	.4byte 0x00008d15
 	.4byte 0xffff0006
 	.4byte FieldScene_RunScene3b8_0200049c
@@ -912,25 +912,32 @@ gTorebiKyudenEventsOther:
 	.4byte FieldScene_RunScene3b8SequenceA
 	.4byte 0x000001b3
 	.4byte 0xffff00c8
-	.4byte 0x004029b0
+	.2byte MsgTorebiKyudenTheArmorLooksHeavyItLooks
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00c9
-	.4byte 0x004029b1
+	.2byte MsgTorebiKyudenTheresNothingInThereItsCompletely
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00ca
-	.4byte 0x004029b2
+	.2byte MsgTorebiKyudenTheresAHeadbandItSaysNever
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x004029b3
+	.2byte MsgTorebiKyudenTheresABookEntitledTheHeart
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x004029b4
+	.2byte MsgTorebiKyudenTheresANotebookThatShowsThe
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x004029b5
+	.2byte MsgTorebiKyudenTheresABookEntitledBecomeA
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029b6
+	.2byte MsgTorebiKyudenHeyItsBabisDiaryItReads
+	.2byte 0x40
 	.4byte 0x00000033
 	.4byte 0x0f9f0064
 	.4byte 0x001000e5
@@ -1058,70 +1065,77 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x0000002d
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000223d
+	.4byte MsgTorebiKyudenBabisSoldiersHaveGoneToSee
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000223e
+	.4byte MsgTorebiKyudenWhatAreYouDoingHurryOver
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000223f
+	.4byte MsgTorebiKyudenThoseGuysLookReallyConfidentAbout
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002240
+	.4byte MsgTorebiKyudenTheFinalsAreAllThatsLeft
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte FieldScene_RunScene3b8_02000264
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002246
+	.4byte MsgTorebiKyudenIHopeYoullAllDoWell
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x00002247
+	.4byte MsgTorebiKyudenBabiHasReturnedAndTheFinals
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002248
+	.4byte MsgTorebiKyudenWhenBabiReturnedHeHeadedOff
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x00002249
+	.4byte MsgTorebiKyudenWhatsGoingOnActorIsLooking
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0000224a
+	.4byte MsgTorebiKyudenTheSoldiersCameToSeeActor
 	.4byte 0x00000000
 	.4byte 0xffff0006
-	.4byte 0x0000224b
+	.4byte MsgTorebiKyudenHmphIWishColossoWouldHurry
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x0000224c
+	.4byte MsgTorebiKyudenASmileOnAPrettyGirl
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x0000224d
+	.4byte MsgTorebiKyudenActorIsAGoodGirlBut
 	.4byte 0x00008d15
 	.4byte 0xffff0006
-	.4byte 0x0000224e
+	.4byte MsgTorebiKyudenIDontHaveTheLeastInterest
 	.4byte 0x00000003
 	.4byte 0x19670046
 	.4byte FieldScene_RunScene3b8SequenceA
 	.4byte 0x000001b3
 	.4byte 0xffff00c8
-	.4byte 0x004029b0
+	.2byte MsgTorebiKyudenTheArmorLooksHeavyItLooks
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00c9
-	.4byte 0x004029b1
+	.2byte MsgTorebiKyudenTheresNothingInThereItsCompletely
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00ca
-	.4byte 0x004029b2
+	.2byte MsgTorebiKyudenTheresAHeadbandItSaysNever
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x004029b3
+	.2byte MsgTorebiKyudenTheresABookEntitledTheHeart
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x004029b4
+	.2byte MsgTorebiKyudenTheresANotebookThatShowsThe
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x004029b5
+	.2byte MsgTorebiKyudenTheresABookEntitledBecomeA
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029b6
+	.2byte MsgTorebiKyudenHeyItsBabisDiaryItReads
+	.2byte 0x40
 	.4byte 0x00000033
 	.4byte 0x0f9f0064
 	.4byte 0x001000e5
@@ -1255,91 +1269,98 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte SceneDialogue_RunChoiceSequence22ab
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000022ae
+	.4byte MsgTorebiKyudenIHaventSeenMuchOfBabi
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000022af
+	.4byte MsgTorebiKyudenItWouldBeAWasteTo
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000022b0
+	.4byte MsgTorebiKyudenNoOnesGoingToSleepIn
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000022b1
+	.4byte MsgTorebiKyudenWouldThisRoomGetVeryDusty
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000022b2
+	.4byte MsgTorebiKyudenBabiWasFoundSafeAndSound
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000022b3
+	.4byte MsgTorebiKyudenNowThatColossoIsOverIm
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x000022b4
+	.4byte MsgTorebiKyudenTheSouthernContinentIsADangerous
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000022b5
+	.4byte MsgTorebiKyudenIWasHopingIdBeThe
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000022b6
+	.4byte MsgTorebiKyudenColossoHasEndedSoWeHave
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000022b7
+	.4byte MsgTorebiKyudenIWantThatLighthouseFinishedQuickly
 	.4byte 0x00000000
 	.4byte 0x1f31000e
-	.4byte 0x00002357
+	.4byte MsgTorebiKyudenIfYouUseTheCloakBall
 	.4byte 0x00008d15
 	.4byte 0x1f31000e
-	.4byte 0x00002358
+	.4byte MsgTorebiKyudenWhyWouldAnAdeptLikeYou
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0000234e
+	.4byte MsgTorebiKyudenSleepingALotHelpsToDelay
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0000234f
+	.4byte MsgTorebiKyudenBabisFaceIsVeryPaleLike
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002350
+	.4byte MsgTorebiKyudenIWishIHadMetYou
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002351
+	.4byte MsgTorebiKyudenIfSomethingHappensToBabiWhat
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte SceneDialogue_RunChoiceSequence2352
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002359
+	.4byte MsgTorebiKyudenTheGirlFromLaliveroIsNo
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000235a
+	.4byte MsgTorebiKyudenIAmSurprisedActorWasAllowed
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0000235b
+	.4byte MsgTorebiKyudenItSeemedOnlyNaturalThatActor
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x0000235c
+	.4byte MsgTorebiKyudenIAmSoRelievedActorHas
 	.4byte 0x00000003
 	.4byte 0xffff0046
 	.4byte FieldScene_RunScene3b8SequenceA
 	.4byte 0x000001b3
 	.4byte 0xffff00c8
-	.4byte 0x004029b0
+	.2byte MsgTorebiKyudenTheArmorLooksHeavyItLooks
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00c9
-	.4byte 0x004029b1
+	.2byte MsgTorebiKyudenTheresNothingInThereItsCompletely
+	.2byte 0x40
 	.4byte 0x000001b3
 	.4byte 0xffff00ca
-	.4byte 0x004029b2
+	.2byte MsgTorebiKyudenTheresAHeadbandItSaysNever
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cb
-	.4byte 0x004029b3
+	.2byte MsgTorebiKyudenTheresABookEntitledTheHeart
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cc
-	.4byte 0x004029b4
+	.2byte MsgTorebiKyudenTheresANotebookThatShowsThe
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00cd
-	.4byte 0x004029b5
+	.2byte MsgTorebiKyudenTheresABookEntitledBecomeA
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00ce
-	.4byte 0x004029b6
+	.2byte MsgTorebiKyudenHeyItsBabisDiaryItReads
+	.2byte 0x40
 	.4byte 0x00000033
 	.4byte 0x0f9f0064
 	.4byte 0x001000e5
@@ -1356,16 +1377,16 @@ gTorebiKyudenEvents2:
 	.4byte RunSceneEffectSetup
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001fed
+	.4byte MsgTorebiKyudenNormallyNoOnesAllowedIntoBabis
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001fee
+	.4byte MsgTorebiKyudenSomeOfTheRoomsInThe
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001fef
+	.4byte MsgTorebiKyudenShouldThePalaceReallyBeOpen
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001ff0
+	.4byte MsgTorebiKyudenIWonderHowManyPeopleWill
 	.4byte 0x00000003
 	.4byte 0xffff005a
 	.4byte FieldScene_RunStepWithValue29e0
@@ -1394,16 +1415,16 @@ gTorebiKyudenEvents2Colosso:
 	.4byte RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002238
+	.4byte MsgTorebiKyudenBabiWantsYouToGoStraight
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_ThankForSavingBabi
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000223b
+	.4byte MsgTorebiKyudenSureTheySavedBabiButIm
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000223c
+	.4byte MsgTorebiKyudenBabiIsADeliberateManHe
 	.4byte 0x00000003
 	.4byte 0xffff005a
 	.4byte FieldScene_RunStepWithValue29e0
@@ -1420,16 +1441,16 @@ gTorebiKyudenEvents2AfterColosso:
 	.4byte RunSceneEffectSetup
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000022a2
+	.4byte MsgTorebiKyudenIveLostAllMyEnthusiasmSince
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte SceneDialogue_AskIfLeavingPalace
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000022a6
+	.4byte MsgTorebiKyudenTheEndOfAFestivalIs
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000022a7
+	.4byte MsgTorebiKyudenAllTheHeroicWarriorsWhoTook
 	.4byte 0x00000003
 	.4byte 0xffff005a
 	.4byte FieldScene_RunStepWithValue29e0

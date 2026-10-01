@@ -3,6 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
+#include "TBS_EDITION.H"
 
 extern u8 MsgWorldMapLook[];
 extern u8 MsgWorldMapNowUseOnShip[];
@@ -228,11 +229,15 @@ void StoryScene_ShowRewardDialogue(void)
 {
 
     Engine_EventBegin();
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA) || defined(TBS_EDITION_DE)
     Battle_SetObjectFlag5bWhenMode3();
+#endif
     Engine_MessageShowCentered((s32)MsgWorldMapWreckageShipScuttledOffCoast, 1);
     if (GameFlag_IsSet(0x234) != 0) {
         ((struct StoryDialogueWork *)gEventWork)->story_result = 1;
     }
+#if defined(TBS_EDITION_EN) || defined(TBS_EDITION_JA) || defined(TBS_EDITION_DE)
     Battle_ClearObjectFlag5bWhenMode3();
+#endif
     Engine_EventEnd();
 }

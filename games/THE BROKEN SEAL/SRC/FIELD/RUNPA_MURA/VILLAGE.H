@@ -2,6 +2,7 @@
 #define GUARD_VILLAGE_H
 
 #include "TYPES.H"
+#include "text/MSG_IDS.H"
 #include "ABILITY_IDS.H"
 #include "FIELD_EFFECT.H"
 #include "FIELD_EVENT.H"
@@ -209,39 +210,37 @@ enum {
     GATE_RETREAT_ENTRANCE = 10
 };
 
-enum LunpaMessage {
-    MSG_WEST_GUARD_SEALED_THOUGHTS = 0x1ba4,
-    MSG_VILLAGER_B_SEALED = 0x1ba9,
-    MSG_VILLAGER_D_SEALED = 0x1bad,
-    MSG_VILLAGER_E_SEALED = 0x1bae,
-    MSG_VILLAGER_F_SEALED = 0x1baf,
-    MSG_VILLAGER_H_SEALED = 0x1bb3,
-    MSG_VILLAGER_A_SEALED_THOUGHTS = 0x1bb7,
-    MSG_VILLAGER_B_SEALED_THOUGHTS,
-    MSG_VILLAGER_C_SEALED_THOUGHTS,
-    MSG_VILLAGER_D_SEALED_THOUGHTS,
-    MSG_VILLAGER_E_SEALED_THOUGHTS,
-    MSG_VILLAGER_F_SEALED_THOUGHTS,
-    MSG_VILLAGER_G_SEALED_THOUGHTS,
-    MSG_VILLAGER_H_SEALED_THOUGHTS,
-    MSG_VILLAGER_A_REOPENED = 0x24d0,
-    MSG_VILLAGER_C_REOPENED = 0x24d2,
-    MSG_VILLAGER_E_REOPENED = 0x24d6,
-    MSG_VILLAGER_F_REOPENED,
-    MSG_VILLAGER_G_REOPENED,
-    MSG_VILLAGER_H_REOPENED,
-    MSG_VILLAGER_A_REOPENED_THOUGHTS = 0x24df,
-    MSG_VILLAGER_B_REOPENED_THOUGHTS,
-    MSG_VILLAGER_C_REOPENED_THOUGHTS,
-    MSG_VILLAGER_D_REOPENED_THOUGHTS,
-    MSG_VILLAGER_E_REOPENED_THOUGHTS,
-    MSG_VILLAGER_F_REOPENED_THOUGHTS,
-    MSG_VILLAGER_G_REOPENED_THOUGHTS,
-    MSG_VILLAGER_H_REOPENED_THOUGHTS,
-    MSG_WEST_GUARD_REOPENED = 0x2509,
-    MSG_EAST_GUARD_REOPENED = 0x250a,
-    MSG_WEST_GUARD_REOPENED_THOUGHTS = 0x250b
-};
+TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerESealed);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHSealed);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerASealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerESealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHSealedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerAReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerEReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerAReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerBReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerCReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerDReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerEReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerFReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerGReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageVillagerHReopenedThoughts);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageEastGuardReopened);
+TEXT_MESSAGE_ENUM(MsgRunpaVillageWestGuardReopenedThoughts);
 
 /* The guards' warning to a party they catch is a run of lines. */
 

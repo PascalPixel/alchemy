@@ -422,10 +422,10 @@ gSoruIriguchiEvents2:
 	.4byte FieldScene_RunScriptedStep953
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x0000111d
+	.4byte MsgHaidiaItIsVeryDangerousToGo
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000111e
+	.4byte MsgHaidiaIAmAllAloneInThis
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

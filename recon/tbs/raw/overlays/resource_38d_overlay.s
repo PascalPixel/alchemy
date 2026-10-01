@@ -548,142 +548,142 @@ gBiribinoKyudenEvents:
 	.4byte 0x0000001d
 	.4byte 0x00000000
 	.4byte 0x084e0008
-	.4byte 0x0000141e
+	.4byte MsgBilibinIfYouWantToSeeLord
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001759
+	.4byte MsgBilibinThePeopleOfBilibinWillNever
 	.4byte 0x00000000
 	.4byte 0x084e0009
-	.4byte 0x0000141f
+	.4byte MsgBilibinMakeSureYouDontOffendLord
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0000175a
+	.4byte MsgBilibinIHeardYouReceivedASpectacular
 	.4byte 0x00000000
 	.4byte 0x084e000a
 	.4byte Kyuden_AskAboutKolima
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x0000175b
+	.4byte MsgBilibinLadyMccoyIsQuiteUpsetThat
 	.4byte 0x00000000
 	.4byte 0x084e000b
-	.4byte 0x00001423
+	.4byte MsgBilibinIAlwaysBelievedThatTheOld
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x0000175c
+	.4byte MsgBilibinThingsAreLookingGrimSouthOf
 	.4byte 0x00000000
 	.4byte 0x084e000c
-	.4byte 0x00001424
+	.4byte MsgBilibinThisIsLadyMccoysRoomSo
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0000175d
+	.4byte MsgBilibinMiladyWasVeryUpsetWhenShe
 	.4byte 0x00000000
 	.4byte 0x084e000d
-	.4byte 0x0000142a
+	.4byte MsgBilibinMiladyWasRenownedFarAndWide
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00001763
+	.4byte MsgBilibinForOnceMilordDidntLetLady
 	.4byte 0x00000000
 	.4byte 0x084e000e
-	.4byte 0x0000142b
+	.4byte MsgBilibinOhSomedayIWantToSleep
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte FieldScene_RunStartledGuard
 	.4byte 0x00000000
 	.4byte 0x084f000f
-	.4byte 0x0000142e
+	.4byte MsgBilibinYouCanSeeKolimaPrettyWell
 	.4byte 0x00000000
 	.4byte 0x084e000f
-	.4byte 0x00001467
+	.4byte MsgBilibinHeyIfYouCantDoThe
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte FieldScene_RunScene38dSequenceA
 	.4byte 0x00000000
 	.4byte 0x084e0010
-	.4byte 0x0000142f
+	.4byte MsgBilibinHmmItSeemsTheCurseOf
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte SceneDialogue_RunActor16Message1769
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00001747
+	.4byte MsgBilibinYouMaySelectASingleItem
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte FieldScene_RunActorSeventeenFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x084e0012
-	.4byte 0x00001466
+	.4byte MsgBilibinSorryLadsButKolimasFutureIs
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0000174f
+	.4byte MsgBilibinYehveTaughtMeThatICannae
 	.4byte 0x00008d15
 	.4byte 0x084e0008
-	.4byte 0x00001425
+	.4byte MsgBilibinHowManyTimesDoIHave
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x0000175e
+	.4byte MsgBilibinIFeelSorryForTheWarriors
 	.4byte 0x00008d15
 	.4byte 0x084e0009
-	.4byte 0x00001426
+	.4byte MsgBilibinTheyShouldNeverHaveLetSuch
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000175f
+	.4byte MsgBilibinIWonderWhatKindOfTreasure
 	.4byte 0x00008d15
 	.4byte 0x084e000a
-	.4byte 0x00001427
+	.4byte MsgBilibinSendingTheseChildrenToKolimaForest
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00001760
+	.4byte MsgBilibinIWishShedJustStopWhining
 	.4byte 0x00008d15
 	.4byte 0x084e000b
-	.4byte 0x00001428
+	.4byte MsgBilibinIShouldntHaveSaidAnythingWhen
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00001761
+	.4byte MsgBilibinTheydBeGuaranteedAGoodLife
 	.4byte 0x00008d15
 	.4byte 0x084e000c
-	.4byte 0x00001429
+	.4byte MsgBilibinOfAllTheNerveComingInto
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00001762
+	.4byte MsgBilibinICanTellWhenShesUpset
 	.4byte 0x00008d15
 	.4byte 0x084e000d
-	.4byte 0x0000142c
+	.4byte MsgBilibinWillIEverFindSomeoneTo
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00001766
+	.4byte MsgBilibinSometimesAMansJustGottaPut
 	.4byte 0x00008d15
 	.4byte 0x084e000e
-	.4byte 0x0000142d
+	.4byte MsgBilibinOhNoThisNightgownHasA
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00001767
+	.4byte MsgBilibinTheHoleInThisNightgownIs
 	.4byte 0x00008d15
 	.4byte 0x084f000f
-	.4byte 0x00001430
+	.4byte MsgBilibinLordMccoyHasntComeHereFor
 	.4byte 0x00008d15
 	.4byte 0x084e000f
-	.4byte 0x0000146b
+	.4byte MsgBilibinItsAToughThingBeingSo
 	.4byte 0x00008d15
 	.4byte 0xffff000f
 	.4byte SceneDialogue_RunActor15Flag303Scene
 	.4byte 0x00008d15
 	.4byte 0x084e0010
-	.4byte 0x00001431
+	.4byte MsgBilibinKolimaForestUsedToBeSo
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x0000176d
+	.4byte MsgBilibinACourageousWarriorWouldntThinkTwice
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x0000174a
+	.4byte MsgBilibinTheseCourageousWarriorsDeserveToReceive
 	.4byte 0x00008d15
 	.4byte 0xffff0011
 	.4byte FieldScene_RunActorSeventeenFlagDialogue
 	.4byte 0x00008d15
 	.4byte 0x084e0012
-	.4byte 0x0000146a
+	.4byte MsgBilibinThereIsNothingMoreToTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00001755
+	.4byte MsgBilibinButICannaeFiggerOutHow
 	.4byte 0x00000003
 	.4byte 0xffff0064
 	.4byte FieldScene_RunStep210ByFlag84e
@@ -710,10 +710,12 @@ gBiribinoKyudenEvents:
 	.4byte 0x001000e2
 	.4byte 0x000001c3
 	.4byte 0xffff00c8
-	.4byte 0x004029d7
+	.2byte MsgBilibinTheresASilkNegligeeRobinPut
+	.2byte 0x40
 	.4byte 0x000000f3
 	.4byte 0xffff00c9
-	.4byte 0x004029d8
+	.2byte MsgBilibinTheresASheetOfPaperTitled
+	.2byte 0x40
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -163,10 +163,23 @@ void SceneState_UpdateActor11WithFlag203(void)
     s32 a;
     s32 b;
 
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    struct FieldActor *actor = Object_GetById(11);
+
+    a = actor->x.fixed >> 20;
+    if (a != 15)
+        return;
+    b = actor->z.fixed >> 20;
+    if (b != 7)
+        return;
+    GameFlag_Set(0x203);
+    Engine_ActorSetSpritePriority(11, 3);
+#else
     GameFlag_Set(0x203);
     Engine_ActorSetSpritePriority(11, 3);
     a = 15;
     b = 7;
+#endif
     Map_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
@@ -232,7 +245,7 @@ void FieldScene_RunThreeActorChoreography(void)
     Engine_ActorStartRepeatedMotion(19, 2);
     Engine_ActorRunRepeatedMotion(20, 2);
     Engine_EventWait(40);
-    Engine_EventSetMessage(MSG_MIA);
+    Engine_EventSetMessage(MsgImiruMary);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_MIA, 0xe000, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);

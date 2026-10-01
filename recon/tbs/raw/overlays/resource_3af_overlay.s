@@ -1855,9 +1855,25 @@ gFuneKanpanEvents:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FuneKanpan_RunDeckStateEvent
+	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
+	.else
+	.ifdef TBS_EDITION_JA
+	.4byte 0x00008602
+	.else
+	.4byte 0x00000002
+	.endif
+	.endif
 	.4byte 0xffff0002
+	.ifdef TBS_EDITION_JA
 	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.ifdef TBS_EDITION_EN
+	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.4byte FuneKanpan_RunDeckStateEventFromEntry
+	.endif
+	.endif
 	.4byte 0x0000c602
 	.4byte 0xffff0003
 	.4byte FuneKanpan_RunDeckStateEvent
@@ -1866,19 +1882,19 @@ gFuneKanpanEvents:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0x09230014
-	.4byte 0x00001d24
+	.4byte MsgFuneKanpanThereAreALotOfPassengers
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001d8f
+	.4byte MsgFuneKanpanOhAtTheRiskOfSounding
 	.4byte 0x00008d15
 	.4byte 0x09230014
-	.4byte 0x00001d25
+	.4byte MsgFuneKanpanTheReplacementShipFromTolbiShould
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001d90
+	.4byte MsgFuneKanpanIHidTheAnchorCharmNo
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001d4a
+	.4byte MsgFuneKanpanWeApologizeForAnyTroubleThat
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte FieldScene_RunOpeningAuxiliarySequence
@@ -1887,79 +1903,79 @@ gFuneKanpanEvents:
 	.4byte FieldScene_RunScene3afSequenceA
 	.4byte 0x00000000
 	.4byte 0x09220019
-	.4byte 0x00001d38
+	.4byte MsgFuneKanpanIWonderWhatsGoingOnWeve
 	.4byte 0x00000000
 	.4byte 0x09250019
-	.4byte 0x00001d71
+	.4byte MsgFuneKanpanThoseWarriorsGotTiredOfWaiting
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x00001e0a
+	.4byte MsgFuneKanpanIfWeJustPromiseToHelp
 	.4byte 0x00000000
 	.4byte 0x0922001a
-	.4byte 0x00001d39
+	.4byte MsgFuneKanpanIWonderIfImTheOnly
 	.4byte 0x00000000
 	.4byte 0x0925001a
-	.4byte 0x00001d72
+	.4byte MsgFuneKanpanIWonderIfThoseTwoAre
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x00001e0b
+	.4byte MsgFuneKanpanIllAgreeToAnythingEvenRowing
 	.4byte 0x00000000
 	.4byte 0x0922001b
-	.4byte 0x00001d3a
+	.4byte MsgFuneKanpanTheKaragolIsLikeAHumongous
 	.4byte 0x00000000
 	.4byte 0x0925001b
-	.4byte 0x00001d73
+	.4byte MsgFuneKanpanHaHahThoseMercenariesAreGoing
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x00001e0c
+	.4byte MsgFuneKanpanThatSeaDogKajaIsA
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001d4c
+	.4byte MsgFuneKanpanThereIsNothingToFearAs
 	.4byte 0x00008d15
 	.4byte 0x09220015
-	.4byte 0x00001d3b
+	.4byte MsgFuneKanpanWhenAreWeGoingWhenAre
 	.4byte 0x00008d15
 	.4byte 0x09250015
-	.4byte 0x00001d74
+	.4byte MsgFuneKanpanUsingForceToLaunchTheShip
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001e0d
+	.4byte MsgFuneKanpanAreYouSeriousAboutSettingSail
 	.4byte 0x00008d15
 	.4byte 0x09220018
-	.4byte 0x00001d3c
+	.4byte MsgFuneKanpanHmmmThisIsSoFrustratingWhy
 	.4byte 0x00008d15
 	.4byte 0x09250018
-	.4byte 0x00001d75
+	.4byte MsgFuneKanpanTheyWereJustAboutToLaunch
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x00001e0e
+	.4byte MsgFuneKanpanItProbablyWontMakeAnyDifference
 	.4byte 0x00008d15
 	.4byte 0x09220019
-	.4byte 0x00001d3d
+	.4byte MsgFuneKanpanTravelingByShipIsFasterThan
 	.4byte 0x00008d15
 	.4byte 0x09250019
-	.4byte 0x00001d76
+	.4byte MsgFuneKanpanThoseThugsAreTooImpatientTrying
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x00001e0f
+	.4byte MsgFuneKanpanUltimatelyTheyreJustBeingThreatenedInto
 	.4byte 0x00008d15
 	.4byte 0x0922001a
-	.4byte 0x00001d3e
+	.4byte MsgFuneKanpanMostOfThePeopleGoingTo
 	.4byte 0x00008d15
 	.4byte 0x0925001a
-	.4byte 0x00001d77
+	.4byte MsgFuneKanpanHeeHeeIfWeCanGet
 	.4byte 0x00008d15
 	.4byte 0xffff001a
-	.4byte 0x00001e10
+	.4byte MsgFuneKanpanBesidesRowingIsAMansJob
 	.4byte 0x00008d15
 	.4byte 0x0922001b
-	.4byte 0x00001d3f
+	.4byte MsgFuneKanpanTheKaragolSeaIsPrettyFoggy
 	.4byte 0x00008d15
 	.4byte 0x0925001b
-	.4byte 0x00001d78
+	.4byte MsgFuneKanpanThoseGuysSeemPrettySureOf
 	.4byte 0x00008d15
 	.4byte 0xffff001b
-	.4byte 0x00001e11
+	.4byte MsgFuneKanpanUsHelpWithTheRowingGet
 	.4byte 0x00000002
 	.4byte 0x0920000a
 	.4byte FieldScene_RunActorAndEffectPresentationSetup
@@ -1977,30 +1993,46 @@ gFuneKanpanEventsFlag928:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FuneKanpan_RunDeckStateEvent
+	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
+	.else
+	.ifdef TBS_EDITION_JA
+	.4byte 0x00008602
+	.else
+	.4byte 0x00000002
+	.endif
+	.endif
 	.4byte 0xffff0002
+	.ifdef TBS_EDITION_JA
 	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.ifdef TBS_EDITION_EN
+	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.4byte FuneKanpan_RunDeckStateEventFromEntry
+	.endif
+	.endif
 	.4byte 0x0000c602
 	.4byte 0xffff0003
 	.4byte FuneKanpan_RunDeckStateEvent
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001e77
+	.4byte MsgFuneKanpanYouMustFeelAwfullyImportantOrdering
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001eb0
+	.4byte MsgFuneKanpanItLooksLikeAnotherOarsmanWas
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001eb1
+	.4byte MsgFuneKanpanIFeelSorryForTheOarsmen
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001e94
+	.4byte MsgFuneKanpanAnOarsmanWasInjuredByA
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001eb4
+	.4byte MsgFuneKanpanWeHaveNoIdeaWhenThose
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001eb5
+	.4byte MsgFuneKanpanUhnnnWhenILookAtThe
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2009,9 +2041,25 @@ gFuneKanpanEventsFlag93e:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FuneKanpan_RunDeckStateEvent
+	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
+	.else
+	.ifdef TBS_EDITION_JA
+	.4byte 0x00008602
+	.else
+	.4byte 0x00000002
+	.endif
+	.endif
 	.4byte 0xffff0002
+	.ifdef TBS_EDITION_JA
 	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.ifdef TBS_EDITION_EN
+	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.4byte FuneKanpan_RunDeckStateEventFromEntry
+	.endif
+	.endif
 	.4byte 0x0000c602
 	.4byte 0xffff0003
 	.4byte FuneKanpan_RunDeckStateEvent
@@ -2020,22 +2068,22 @@ gFuneKanpanEventsFlag93e:
 	.4byte 0x00000006
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x00001eff
+	.4byte MsgFuneKanpanYouLookinForSeanAndOuranos
 	.4byte 0x00000000
 	.4byte 0xffff0015
 	.4byte SceneDialogue_RunActor21Line
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001f03
+	.4byte MsgFuneKanpanThisGroupThatCameOnOur
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x00001f04
+	.4byte MsgFuneKanpanIWantSeanAndOuranosTo
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001f05
+	.4byte MsgFuneKanpanImJustGoingToHangOut
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001f06
+	.4byte MsgFuneKanpanIWonderWhatHappenedToThat
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2044,9 +2092,25 @@ gFuneKanpanEventsFlag8a0:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte FuneKanpan_RunDeckStateEvent
+	.ifdef TBS_EDITION_EN
 	.4byte 0x00008602
+	.else
+	.ifdef TBS_EDITION_JA
+	.4byte 0x00008602
+	.else
+	.4byte 0x00000002
+	.endif
+	.endif
 	.4byte 0xffff0002
+	.ifdef TBS_EDITION_JA
 	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.ifdef TBS_EDITION_EN
+	.4byte FuneKanpan_RunDeckStateEvent
+	.else
+	.4byte FuneKanpan_RunDeckStateEventFromEntry
+	.endif
+	.endif
 	.4byte 0x0000c602
 	.4byte 0xffff0003
 	.4byte FuneKanpan_RunDeckStateEvent
@@ -2055,34 +2119,34 @@ gFuneKanpanEventsFlag8a0:
 	.4byte 0x00000007
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x00001f54
+	.4byte MsgFuneKanpanKajaAndTheCaptainAreProfessionals
 	.4byte 0x00000000
 	.4byte 0x09030016
 	.4byte FieldScene_RunThreeActorEncounter
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x00001f5c
+	.4byte MsgFuneKanpanTheresNoTellingWhatKindOf
 	.4byte 0x00000000
 	.4byte 0x09030015
 	.4byte FieldScene_RunThreeActorEncounter
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x00001f5d
+	.4byte MsgFuneKanpanWeveDoneAGoodJobOf
 	.4byte 0x00008d15
 	.4byte 0xffff0017
-	.4byte 0x00001f5e
+	.4byte MsgFuneKanpanIWantToBeASailor
 	.4byte 0x00008d15
 	.4byte 0x09030016
-	.4byte 0x00001f5f
+	.4byte MsgFuneKanpanIGiveUpWhatAreWe
 	.4byte 0x00008d15
 	.4byte 0xffff0016
-	.4byte 0x00001f61
+	.4byte MsgFuneKanpanThisIslandGivesMeTheCreeps
 	.4byte 0x00008d15
 	.4byte 0x09030015
-	.4byte 0x00001f60
+	.4byte MsgFuneKanpanThatsEnoughBickering
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001f62
+	.4byte MsgFuneKanpanWhatWeCanDoNowIs
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -89,15 +89,23 @@ Event_SetStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_0200061c
 	.thumb_func
 Func_0200061c:
-	overlay_veneer Func_081a0000
+	overlay_veneer Resource_FarCall00A + 1
 	.global Func_02000624
 	.thumb_func
 Func_02000624:
-	overlay_veneer Func_081a6000
+	overlay_veneer Resource_FarCall00B + 1
 	.global Func_0200062c
 	.thumb_func
 Func_0200062c:

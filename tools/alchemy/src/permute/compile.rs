@@ -19,6 +19,8 @@ pub struct Toolchain {
     pub file_name: String,
     /// The draft's directory, for its local includes.
     pub include: PathBuf,
+    /// This research run's current catalog, shared by all candidates.
+    pub message_imports: String,
 }
 
 impl Toolchain {
@@ -32,7 +34,13 @@ impl Toolchain {
         options.preprocessor_flags = vec![format!("-D{}=1", self.target.edition_define)];
         options.preprocessed_output =
             Some(input.with_extension("i").to_string_lossy().into_owned());
-        options.support_flags = vec![format!("-I{}", self.include.display())];
+        options.support_flags = vec![
+            format!("-I{}", self.include.display()),
+            format!(
+                "-I{}",
+                input.parent().expect("candidate directory").display()
+            ),
+        ];
         let mut steps = source_to_assembly_plan(&options)?;
         steps.push(compiler_assembly_command(
             &input.with_extension("s").to_string_lossy(),
@@ -45,6 +53,7 @@ impl Toolchain {
     fn write(&self, text: &str, directory: &Path) -> Result<PathBuf, String> {
         fs::create_dir_all(directory)
             .map_err(|error| format!("{}: {error}", directory.display()))?;
+        crate::build_text::write_c_imports(directory, &self.message_imports)?;
         let input = directory.join(&self.file_name);
         fs::write(&input, text).map_err(|error| format!("{}: {error}", input.display()))?;
         Ok(input)

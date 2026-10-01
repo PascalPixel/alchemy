@@ -138,6 +138,13 @@ void Reveal_ShowSecrets(void)
     Map_CopyCellAttributes(34, 37, 3, 3, 13, 3);
     Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, PIXELS(232), PIXELS(72));
     Actor_Get(ACTOR_HIDDEN_PUDDLE)->y.fixed = 0;
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+    if (GameFlag_IsSet(FLAG_LUNPA_PUDDLE_FROZEN)) {
+        Map_CopyCellAttributes(17, 4, 1, 1, 14, 4);
+        Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
+        Map_CopyCellAttributes(15, 3, 1, 1, 13, 4);
+    }
+#endif
     if (GameFlag_IsSet(FLAG_LUNPA_PASSAGE_OPEN) != 0) {
         Map_CopyCells(41, 49, 3, 4, 1, 14);
         Map_CopyCells(44, 49, 3, 4, 33, 14);
@@ -624,7 +631,11 @@ void Cloak_End(void)
     if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240)
         && leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
         Engine_TaskRemoveCallback(Guards_Watch);
+#if defined(TBS_EDITION_JA)
+        Guards_CatchParty();
+#else
         work->raised_trigger = TRIGGER_PARTY_SPOTTED;
+#endif
     }
     Gateway_Reopen();
     GameFlag_Clear(FLAG_GATE_PARTY_CAUGHT);
@@ -806,6 +817,10 @@ s32 Scene_Initialize(void)
             && GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
             Engine_TaskAddCallback(Party_WatchForFortress, TASK_PRIORITY_SCENE);
         }
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
+        if (gGameState.cloaked != 0)
+            Cloak_Begin();
+#endif
         Engine_TaskAddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
         GameFlag_Clear(FLAG_FORTRESS_VISIT + 1);
         GameFlag_Clear(FLAG_FORTRESS_VISIT + 2);

@@ -1,3 +1,5 @@
+#if !defined(TBS_EDITION_JA)
+/* These localization routines have no counterpart in Japanese TBS. */
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
@@ -39,3 +41,5 @@ void PaletteGlow_UpdateSine(void)
         do { *palette++ = packed; } while (0);
     } while (++index <= 3);
 }
+
+#endif

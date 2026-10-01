@@ -121,7 +121,15 @@ Event_ClearStatus1c6:
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Event_SetStatus1c6Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Event_SetStatus1c6Far
+	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.endif
+	.endif
 	.global Func_02000524
 	.thumb_func
 Func_02000524:
@@ -137,7 +145,15 @@ ObjectMotion_CommitPositionAndActivate:
 	.global Func_0200053c
 	.thumb_func
 Func_0200053c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8768
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8768
+	.else
 	overlay_veneer Func_080c8778
+	.endif
+	.endif
 	.global Func_02000544
 	.thumb_func
 Func_02000544:

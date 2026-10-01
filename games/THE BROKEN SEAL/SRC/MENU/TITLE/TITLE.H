@@ -12,7 +12,7 @@ struct TitleSprite {
 extern s16 gTitleVramBlock;
 /* Frames the sprite row has been revealing. */
 extern s16 gTitleRevealFrame;
-/* The eighteen title sprites. */
+/* The title sheet: eighteen sprites in EN/JA, four rows of thirty elsewhere. */
 extern struct TitleSprite gTitleSprites[];
 
 void Title_LoadSprites(s32 unused);

@@ -2515,4 +2515,5 @@
     "*/recon/tbs/it/rom.o"(.rom.00778047)
     "*/games/THE BROKEN SEAL/SRC/MAP/MAP_179/MAP.o"(.rodata)
     "*/recon/tbs/it/rom.o"(.rom.007788af)
+    "*/recon/tbs/it/overlays.o"(.overlays)
 }

@@ -11,9 +11,14 @@ Func_020003cc:
 	push {r5, r6, r7}
 	mov r7, r8
 	push {r7}
+	.ifdef TBS_EDITION_JA
+	sub sp, #488
+	movs r0, #0
+	.else
 	ldr r5, .L_020086b4
 	movs r0, #0
 	add sp, r5
+	.endif
 	str r0, [sp, #20]
 	bl Clear_LoadBackground
 	movs r1, #200
@@ -88,10 +93,35 @@ Func_020003cc:
 	bl UiWork_Finalize
 	movs r1, #2
 	ldr r0, [sp, #12]
+	.ifdef TBS_EDITION_JA
 	bl UiWork_Finalize
 	movs r0, #1
 	bl WaitFrames
 	b .L_020084a8
+	.else
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	b Clear_FinalizeAndWait
+	.else
+	bl UiWork_Finalize
+	movs r0, #1
+	bl WaitFrames
+	b .L_020084a8
+	.endif
+	.else
+	bl UiWork_Finalize
+	movs r0, #1
+	bl WaitFrames
+	b .L_020084a8
+	.endif
+	.else
+	bl UiWork_Finalize
+	movs r0, #1
+	bl WaitFrames
+	b .L_020084a8
+	.endif
+	.endif
 .L_020084a0:
 	add r0, sp, #20
 	ldr r3, .L_020086d0
@@ -348,6 +378,10 @@ Func_020003cc:
 	bne .L_02008714
 	bl SaveState_DeleteSelectedSlot
 	b .L_020084a8
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	.else
 .L_020086b4:
 	.4byte 0xfffffddc
 .L_020086b8:
@@ -396,9 +430,124 @@ Func_020003cc:
 	.4byte 0x00000004
 .L_02008710:
 	.4byte 0x0000013f
+	.endif
+	.else
+.L_020086b4:
+	.4byte 0xfffffddc
+.L_020086b8:
+	.4byte Clear_CheckButtonCodes
+.L_020086bc:
+	.4byte gEventWork
+.L_020086c0:
+	.4byte gCell
+.L_020086c4:
+	.4byte 0x00000007
+.L_020086c8:
+	.4byte 0x0000020f
+.L_020086cc:
+	.4byte 0x00000002
+.L_020086d0:
+	.4byte Data_03001ca0
+.L_020086d4:
+	.4byte gDebugMode
+.L_020086d8:
+	.4byte 0x0000022a
+.L_020086dc:
+	.4byte gOptionMirror
+.L_020086e0:
+	.4byte 0x0000000a
+.L_020086e4:
+	.4byte Clear_UpdateBlend
+.L_020086e8:
+	.4byte 0x00000205
+.L_020086ec:
+	.4byte 0x00000206
+.L_020086f0:
+	.4byte Clear_CodeUnlocked
+.L_020086f4:
+	.4byte Clear_ExtraCodeUnlocked
+.L_020086f8:
+	.4byte 0x00000008
+.L_020086fc:
+	.4byte 0x00000109
+.L_02008700:
+	.4byte gKeysHeld
+.L_02008704:
+	.4byte 0x00000006
+.L_02008708:
+	.4byte gSceneState
+.L_0200870c:
+	.4byte 0x00000004
+.L_02008710:
+	.4byte 0x0000013f
+	.endif
+	.else
+.L_020086b4:
+	.4byte 0xfffffddc
+.L_020086b8:
+	.4byte Clear_CheckButtonCodes
+.L_020086bc:
+	.4byte gEventWork
+.L_020086c0:
+	.4byte gCell
+.L_020086c4:
+	.4byte 0x00000007
+.L_020086c8:
+	.4byte 0x0000020f
+.L_020086cc:
+	.4byte 0x00000002
+.L_020086d0:
+	.4byte Data_03001ca0
+.L_020086d4:
+	.4byte gDebugMode
+.L_020086d8:
+	.4byte 0x0000022a
+.L_020086dc:
+	.4byte gOptionMirror
+.L_020086e0:
+	.4byte 0x0000000a
+.L_020086e4:
+	.4byte Clear_UpdateBlend
+.L_020086e8:
+	.4byte 0x00000205
+.L_020086ec:
+	.4byte 0x00000206
+.L_020086f0:
+	.4byte Clear_CodeUnlocked
+.L_020086f4:
+	.4byte Clear_ExtraCodeUnlocked
+.L_020086f8:
+	.4byte 0x00000008
+.L_020086fc:
+	.4byte 0x00000109
+.L_02008700:
+	.4byte gKeysHeld
+.L_02008704:
+	.4byte 0x00000006
+.L_02008708:
+	.4byte gSceneState
+.L_0200870c:
+	.4byte 0x00000004
+.L_02008710:
+	.4byte 0x0000013f
+	.endif
 .L_02008714:
 	cmp r6, #4
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	beq Clear_LoadFourthSlot
+	b .L_020087b2
+Clear_LoadFourthSlot:
+	.else
 	bne .L_020087b2
+	.endif
+	.else
+	bne .L_020087b2
+	.endif
+	.else
+	bne .L_020087b2
+	.endif
 	movs r0, #4
 	bl SaveState_LoadRecordIntoWork
 	movs r1, #1
@@ -408,7 +557,19 @@ Func_020003cc:
 	bne .L_0200872a
 	b .L_020084a8
 .L_0200872a:
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	ldr r5, .L_020086c0
+	.else
 	ldr r5, .L_02008864
+	.endif
+	.else
+	ldr r5, .L_02008864
+	.endif
+	.else
+	ldr r5, .L_02008864
+	.endif
 	movs r2, #250
 	lsls r2, r2, #1
 	adds r3, r5, r2
@@ -436,14 +597,50 @@ Func_020003cc:
 	movs r0, #3
 	bl Party_AddActiveOwner
 .L_02008774:
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	ldr r0, .L_020086e8
+	.else
 	ldr r0, .L_0200886c
+	.endif
+	.else
+	ldr r0, .L_0200886c
+	.endif
+	.else
+	ldr r0, .L_0200886c
+	.endif
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	ldr r1, .L_020086ec
+	.else
 	ldr r1, .L_02008870
+	.endif
+	.else
+	ldr r1, .L_02008870
+	.endif
+	.else
+	ldr r1, .L_02008870
+	.endif
 	adds r3, r5, r0
 	ldrb r0, [r3]
 	adds r3, r5, r1
 	ldrb r1, [r3]
 	bl PaletteGlow_Update
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	ldr r0, .L_020086fc
+	.else
 	ldr r0, .L_02008874
+	.endif
+	.else
+	ldr r0, .L_02008874
+	.endif
+	.else
+	ldr r0, .L_02008874
+	.endif
 	bl GameFlag_ClearBit
 	movs r0, #131
 	lsls r0, r0, #1
@@ -451,7 +648,19 @@ Func_020003cc:
 	movs r0, #191
 	lsls r0, r0, #1
 	bl GameFlag_SetBit
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	ldr r2, .L_020086d0
+	.else
 	ldr r2, .L_02008878
+	.endif
+	.else
+	ldr r2, .L_02008878
+	.endif
+	.else
+	ldr r2, .L_02008878
+	.endif
 	movs r3, #1
 	strb r3, [r2]
 	ldr r0, .L_0200887c
@@ -461,9 +670,132 @@ Func_020003cc:
 .L_020087aa:
 	movs r7, #1
 	b .L_020088e0
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	.ifndef TBS_EDITION_JA
+	.balign 4, 0
+	.ifndef TBS_EDITION_JA
+.L_020086b4:
+	.4byte 0xfffffddc
+	.endif
+.L_020086b8:
+	.4byte Clear_CheckButtonCodes
+.L_020086bc:
+	.4byte gEventWork
+.L_020086c0:
+	.4byte gCell
+.L_020086c4:
+	.4byte 0x00000007
+.L_020086c8:
+	.4byte 0x0000020f
+.L_020086cc:
+	.4byte 0x00000002
+.L_020086d0:
+	.4byte Data_03001ca0
+.L_020086d4:
+	.4byte gDebugMode
+.L_020086d8:
+	.4byte 0x0000022a
+.L_020086dc:
+	.4byte gOptionMirror
+.L_020086e0:
+	.4byte 0x0000000a
+.L_020086e4:
+	.4byte Clear_UpdateBlend
+.L_020086e8:
+	.4byte 0x00000205
+.L_020086ec:
+	.4byte 0x00000206
+.L_020086f0:
+	.4byte Clear_CodeUnlocked
+.L_020086f4:
+	.4byte Clear_ExtraCodeUnlocked
+.L_020086f8:
+	.4byte 0x00000008
+.L_020086fc:
+	.4byte 0x00000109
+.L_02008700:
+	.4byte gKeysHeld
+.L_02008704:
+	.4byte 0x00000006
+.L_02008708:
+	.4byte gSceneState
+.L_0200870c:
+	.4byte 0x00000004
+.L_02008710:
+	.4byte 0x0000013f
+.L_02008868:
+	.4byte 0x00000952
+.L_0200887c:
+	.4byte 0x000000be
+	.endif
+	.else
+	.endif
+	.else
+	.endif
+	.else
+	.endif
 .L_020087ae:
 	movs r4, #0
 	b .L_0200895e
+	.ifdef TBS_EDITION_JA
+	.balign 4, 0
+	.ifndef TBS_EDITION_JA
+.L_020086b4:
+	.4byte 0xfffffddc
+	.endif
+.L_020086b8:
+	.4byte Clear_CheckButtonCodes
+.L_020086bc:
+	.4byte gEventWork
+.L_020086c0:
+	.4byte gCell
+.L_020086c4:
+	.4byte 0x00000007
+.L_020086c8:
+	.4byte 0x0000020f
+.L_020086cc:
+	.4byte 0x00000002
+.L_020086d0:
+	.4byte Data_03001ca0
+.L_020086d4:
+	.4byte gDebugMode
+.L_020086d8:
+	.4byte 0x0000022a
+.L_020086dc:
+	.4byte gOptionMirror
+.L_020086e0:
+	.4byte 0x0000000a
+.L_020086e4:
+	.4byte Clear_UpdateBlend
+.L_020086e8:
+	.4byte 0x00000205
+.L_020086ec:
+	.4byte 0x00000206
+.L_020086f0:
+	.4byte Clear_CodeUnlocked
+.L_020086f4:
+	.4byte Clear_ExtraCodeUnlocked
+.L_020086f8:
+	.4byte 0x00000008
+.L_020086fc:
+	.4byte 0x00000109
+.L_02008700:
+	.4byte gKeysHeld
+.L_02008704:
+	.4byte 0x00000006
+.L_02008708:
+	.4byte gSceneState
+.L_0200870c:
+	.4byte 0x00000004
+.L_02008710:
+	.4byte 0x0000013f
+.L_02008868:
+	.4byte 0x00000952
+.L_0200887c:
+	.4byte 0x000000be
+	.endif
 .L_020087b2:
 	cmp r6, #5
 	beq .L_020087b8
@@ -501,9 +833,21 @@ Func_020003cc:
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #5
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	movs r2, #22
+	movs r3, #8
+	movs r0, #4
+	.else
 	movs r2, #18
 	movs r3, #8
 	movs r0, #6
+	.endif
+	.else
+	movs r2, #18
+	movs r3, #8
+	movs r0, #6
+	.endif
 	bl UiWindow_Create
 	ldr r5, .L_02008880
 	adds r6, r0, #0
@@ -547,25 +891,77 @@ Func_020003cc:
 	cmp r1, #4
 	bne .L_0200884c
 	b .L_020088ce
-	.2byte 0x0000
+	.balign 4, 0
 .L_02008860:
 	.4byte 0x00000030
 .L_02008864:
 	.4byte gCell
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	.else
 .L_02008868:
 	.4byte 0x00000952
+	.endif
+	.else
+.L_02008868:
+	.4byte 0x00000952
+	.endif
+	.else
+.L_02008868:
+	.4byte 0x00000952
+	.endif
 .L_0200886c:
 	.4byte 0x00000205
 .L_02008870:
 	.4byte 0x00000206
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	.else
 .L_02008874:
 	.4byte 0x00000109
+	.endif
+	.else
+.L_02008874:
+	.4byte 0x00000109
+	.endif
+	.else
+.L_02008874:
+	.4byte 0x00000109
+	.endif
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	.else
 .L_02008878:
 	.4byte Data_03001ca0
+	.endif
+	.else
+.L_02008878:
+	.4byte Data_03001ca0
+	.endif
+	.else
+.L_02008878:
+	.4byte Data_03001ca0
+	.endif
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	.else
 .L_0200887c:
 	.4byte 0x000000be
+	.endif
+	.else
+.L_0200887c:
+	.4byte 0x000000be
+	.endif
+	.else
+.L_0200887c:
+	.4byte 0x000000be
+	.endif
 .L_02008880:
-	.4byte 0x00000c83
+	.4byte MsgClearSaveLabel
 .L_02008884:
 	.4byte gSerialTransfer + 0x4
 .L_02008888:
@@ -589,7 +985,27 @@ Func_020003cc:
 	lsls r2, r2, #3
 	adds r2, r2, r3
 	ldrh r3, [r2]
+	.ifdef TBS_EDITION_DE
+	cmp r3, #69
+	.else
+	.ifdef TBS_EDITION_FR
+	cmp r3, #70
+	.else
+	.ifdef TBS_EDITION_JA
+	cmp r3, #67
+	.else
+	.ifdef TBS_EDITION_ES
+	cmp r3, #83
+	.else
+	.ifdef TBS_EDITION_IT
+	cmp r3, #73
+	.else
 	cmp r3, #85
+	.endif
+	.endif
+	.endif
+	.endif
+	.endif
 	bne .L_020088c8
 	ldrh r3, [r2, #2]
 	cmp r3, #86
@@ -624,9 +1040,21 @@ Func_020003cc:
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r1, #10
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	movs r2, #22
+	movs r3, #4
+	movs r0, #4
+	.else
 	movs r2, #20
 	movs r3, #4
 	movs r0, #5
+	.endif
+	.else
+	movs r2, #20
+	movs r3, #4
+	movs r0, #5
+	.endif
 	bl UiWindow_Create
 	adds r6, r0, #0
 	movs r2, #0
@@ -700,12 +1128,46 @@ Func_020003cc:
 	bl SerialRuntime_RemoveIrqHandlers
 	movs r0, #10
 	bl WaitFrames
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_DE
+	.ifndef TBS_EDITION_FR
+	.ifdef TBS_EDITION_JA
+	adds r0, r6, #0
+	bl RenderOutput_PrepareForRedraw
+	.endif
+	adds r0, r6, #0
+	movs r1, #2
+Clear_FinalizeAndWait:
+	bl UiWork_Finalize
+	.ifndef TBS_EDITION_JA
+	movs r0, #1
+	bl WaitFrames
+	.endif
+	b .L_020084a8
+	.else
 	adds r0, r6, #0
 	bl RenderOutput_PrepareForRedraw
 	adds r0, r6, #0
 	movs r1, #2
 	bl UiWork_Finalize
 	b .L_020084a8
+	.endif
+	.else
+	adds r0, r6, #0
+	bl RenderOutput_PrepareForRedraw
+	adds r0, r6, #0
+	movs r1, #2
+	bl UiWork_Finalize
+	b .L_020084a8
+	.endif
+	.else
+	adds r0, r6, #0
+	bl RenderOutput_PrepareForRedraw
+	adds r0, r6, #0
+	movs r1, #2
+	bl UiWork_Finalize
+	b .L_020084a8
+	.endif
 .L_020089a6:
 	movs r0, #113
 	bl Engine_AudioPlayCue
@@ -735,7 +1197,11 @@ Func_020003cc:
 	bne .L_020089e4
 	b .L_020087dc
 .L_020089e4:
+	.ifdef TBS_EDITION_JA
+	add r5, sp, #288
+	.else
 	add r5, sp, #348
+	.endif
 	adds r2, r5, #0
 	adds r1, r6, #0
 	movs r0, #0
@@ -775,9 +1241,27 @@ Func_020003cc:
 	adds r0, #1
 	mov r8, r0
 	movs r1, #0
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	movs r2, #13
+	movs r3, #4
+	movs r0, #8
+	.else
 	movs r2, #10
 	movs r3, #4
 	movs r0, #10
+	.endif
+	.else
+	movs r2, #10
+	movs r3, #4
+	movs r0, #10
+	.endif
+	.else
+	movs r2, #10
+	movs r3, #4
+	movs r0, #10
+	.endif
 	str r6, [sp, #0]
 	bl UiWindow_Create
 	ldr r5, .L_02008b24
@@ -800,15 +1284,39 @@ Func_020003cc:
 	str r0, [sp, #16]
 	ldr r1, [sp, #16]
 	subs r0, r5, #2
+	.ifdef TBS_EDITION_JA
+	movs r2, #0
+	.else
 	movs r2, #80
+	.endif
 	movs r3, #0
 	bl UiText_DrawCharacterAtOffset
 	b .L_02008a9e
+	.ifdef TBS_EDITION_JA
 .L_02008a82:
 	movs r1, #16
+	movs r2, #24
+	movs r3, #3
+	movs r0, #3
+	.else
+.L_02008a82:
+	movs r1, #16
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	movs r2, #30
+	movs r3, #3
+	movs r0, #0
+	.else
 	movs r2, #28
 	movs r3, #3
 	movs r0, #1
+	.endif
+	.else
+	movs r2, #28
+	movs r3, #3
+	movs r0, #1
+	.endif
+	.endif
 	str r6, [sp, #0]
 	bl UiWindow_Create
 	str r0, [sp, #16]
@@ -863,7 +1371,7 @@ Func_020003cc:
 	add r0, r8
 	subs r0, #1
 	b .L_02008b4e
-	.2byte 0x0000
+	.balign 4, 0
 .L_02008afc:
 	.4byte gLinkStatus
 .L_02008b00:
@@ -873,7 +1381,7 @@ Func_020003cc:
 .L_02008b08:
 	.4byte gKeyState
 .L_02008b0c:
-	.4byte 0x00000c85
+	.4byte MsgClearSendingData
 .L_02008b10:
 	.4byte 0x00001004
 .L_02008b14:
@@ -883,9 +1391,9 @@ Func_020003cc:
 .L_02008b1c:
 	.4byte gSerialSendSource
 .L_02008b20:
-	.4byte 0x00000c87
+	.4byte MsgClearCommunicationError
 .L_02008b24:
-	.4byte 0x00000c82
+	.4byte MsgClearPasswordLabel
 .L_02008b28:
 	.4byte 0x06006000
 .L_02008b2c:
@@ -1086,9 +1594,13 @@ Func_020003cc:
 	bl Battle_WaitMode0
 .L_02008cbe:
 	movs r0, #0
+	.ifdef TBS_EDITION_JA
+	add sp, #488
+	.else
 	movs r3, #137
 	lsls r3, r3, #2
 	add sp, r3
+	.endif
 	pop {r3, r5, r6, r7}
 	mov r8, r3
 	mov r9, r5
@@ -1097,7 +1609,7 @@ Func_020003cc:
 	pop {r5, r6, r7}
 	pop {r1}
 	bx r1
-	.2byte 0x0000
+	.balign 4, 0
 .L_02008cd8:
 	.4byte gKeyState
 .L_02008cdc:
@@ -1111,7 +1623,11 @@ Func_020003cc:
 .L_02008cec:
 	.4byte gWindowWork
 .L_02008cf0:
+	.ifdef TBS_EDITION_JA
+	.4byte 0x00000f33
+	.else
 	.4byte 0x00000ea3
+	.endif
 .L_02008cf4:
 	.4byte gEventWork
 .L_02008cf8:

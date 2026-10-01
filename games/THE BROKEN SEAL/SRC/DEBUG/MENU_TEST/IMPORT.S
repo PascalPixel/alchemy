@@ -134,6 +134,28 @@ Item_AdjustCounter:
 	.thumb_func
 PartyInventory_HasSpace:
 	overlay_veneer PartyInventory_HasSpaceFar
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.ifndef TBS_EDITION_DE
+	.global PartyInventory_GiveItem
+	.thumb_func
+PartyInventory_GiveItem:
+	overlay_veneer PartyInventory_GiveItemFar
+	.endif
+	.endif
+	.endif
+	.ifndef TBS_EDITION_EN
+	.ifndef TBS_EDITION_JA
+	.global Event_SetValue1d8
+	.thumb_func
+Event_SetValue1d8:
+	overlay_veneer Event_SetValue1d8Far
+	.global BattleEv_RunWait
+	.thumb_func
+BattleEv_RunWait:
+	overlay_veneer BattleEv_RunWaitFar
+	.endif
+	.endif
 	.global Engine_DebugDrawItemDetails
 	.thumb_func
 Engine_DebugDrawItemDetails:
@@ -142,10 +164,26 @@ Engine_DebugDrawItemDetails:
 	.thumb_func
 Battle_ApplyPresetItemsAndFlags:
 	overlay_veneer Battle_ApplyPresetItemsAndFlagsFar
+	.ifdef TBS_EDITION_EN
 	.global Shop_ConfirmAct
 	.thumb_func
 Shop_ConfirmAct:
 	overlay_veneer Shop_ConfirmActFar
+	.else
+	.ifdef TBS_EDITION_JA
+	.global Shop_ConfirmAct
+	.thumb_func
+Shop_ConfirmAct:
+	overlay_veneer Shop_ConfirmActFar
+	.else
+	.ifdef TBS_EDITION_DE
+	.global Shop_ConfirmAct
+	.thumb_func
+Shop_ConfirmAct:
+	overlay_veneer Shop_ConfirmActFar
+	.endif
+	.endif
+	.endif
 	.global Shop_PickUnitItem
 	.thumb_func
 Shop_PickUnitItem:

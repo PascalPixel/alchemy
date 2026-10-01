@@ -891,19 +891,19 @@ Placement_Effects:
 	.4byte Alex_Talk
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000010cb
+	.4byte MsgSoruSukuretaIAmResponsible
 	.4byte 0x00008d15
 	.4byte 0xffff0005
 	.4byte Jasmine_Talk
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000010ca
+	.4byte MsgSoruSaturosBringTheFinalStar
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte Menardi_Talk
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000010cc
+	.4byte MsgSoruAlexOnlyOneLeft
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte SceneDialogue_RunLine1072WithPair9And10

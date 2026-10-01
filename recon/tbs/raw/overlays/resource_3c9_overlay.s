@@ -501,7 +501,7 @@ Scene_RunPairedActorEffectSequence:
 .L_0200a830:
 	.4byte Data_0200e074
 .L_0200a834:
-	.4byte 0x000027cf
+	.4byte MsgVinasuBeatEm
 .L_0200a838:
 	.4byte 0x00001001
 .L_0200a83c:

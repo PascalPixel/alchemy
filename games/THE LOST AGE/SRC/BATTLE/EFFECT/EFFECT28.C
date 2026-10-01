@@ -1,7 +1,4 @@
 #include "TYPES.H"
-#include "FIXED_MATH.H"
-#include "OBJECT_EFFECT.H"
-#include "SYSTEM.H"
 
 struct ParticlePosition {
     s32 x;
@@ -28,25 +25,11 @@ struct ParticleEffectObject {
     struct ParticleChild *child;
 };
 
-#define OBJECT_0808EEE4_OFFSET(type, field) \
-    ((u32)&(((type *)0)->field))
-typedef char ParticlePosition_size[
-    sizeof(struct ParticlePosition) == 0x0c ? 1 : -1
-];
-typedef char ParticleEmitter_travel_offset_offset[
-    OBJECT_0808EEE4_OFFSET(struct ParticleEmitter, travel_offset) == 0x28 ? 1 : -1
-];
-typedef char ParticleEmitter_active_offset[
-    OBJECT_0808EEE4_OFFSET(struct ParticleEmitter, active) == 0x55 ? 1 : -1
-];
-typedef char ParticleEffectObject_child_offset[
-    OBJECT_0808EEE4_OFFSET(struct ParticleEffectObject, child) == 0x50 ? 1 : -1
-];
-#undef OBJECT_0808EEE4_OFFSET
-
-extern void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
-extern void ObjectDispatch_InitializeFar(struct ParticleEffectObject *, void *);
-extern void Object_SetMode(struct ParticleEffectObject *, s32);
+u32 Random16(void);
+void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
+struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
+void Object_SetCallback(struct ParticleEffectObject *, const void *);
+void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 BattleFx_ParticleScript[];
 
 void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
@@ -66,13 +49,13 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
     position.z = emitter->position.z;
     random_angle = Random16();
     Vector_AddPolarOffset(random_angle << 4, Random16(), &position);
-    object = (struct ParticleEffectObject *)Object_Spawn(
-        0x11D, position.x, position.y, position.z);
+    /* ⚓️'s particle is object 0x2a1; ☀️'s is 0x11d. */
+    object = Object_Spawn(0x2a1, position.x, position.y, position.z);
     if (object != 0) {
         s32 mask;
         u8 flags;
 
-        ObjectDispatch_InitializeFar(object, (void *)BattleFx_ParticleScript);
+        Object_SetCallback(object, BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

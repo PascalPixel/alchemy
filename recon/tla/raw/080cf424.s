@@ -88,4 +88,4 @@ Func_080cf424:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080cf4dc:
-	.4byte Func_080cf0d0
+	.4byte BattleFx_EmitRandomParticleFromEmitter

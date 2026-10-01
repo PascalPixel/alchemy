@@ -1,10 +1,5 @@
 #include "TYPES.H"
-
-
-/* Counts the units in the lists selected by groups, bit 0 for the
- * party and bit 1 for the enemies, skipping removed 254 entries.
- * When dst is given, the unit ids are also written there and terminated
- * with 255. */
+#include "BATTLE_WORK.H"
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 {
@@ -12,7 +7,7 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
     s32 count;
     s32 i;
 
-    order = gBattleWork;
+    order = Ram_HeapSlots->battle_work;
     count = 0;
     if (groups & 1) {
         for (i = 0; order->party_units[i] != 255; i++) {

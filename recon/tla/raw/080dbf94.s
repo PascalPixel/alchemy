@@ -41,7 +41,7 @@ Func_080dbf94:
 	adds r0, r6, #0
 	muls r0, r3
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	add r0, r10
 	str r0, [r5, #8]
 	mov r2, r9
@@ -51,7 +51,7 @@ Func_080dbf94:
 	adds r0, r6, #0
 	muls r0, r3
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	add r0, r8
 	str r0, [r5, #12]
 	mov r2, r9
@@ -60,12 +60,12 @@ Func_080dbf94:
 	subs r3, r3, r7
 	adds r0, r6, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	adds r0, r7, r0
 	str r0, [r5, #16]
 	movs r1, #10
 	mov r0, r11
-	bl Math_Div
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #9
 	adds r0, r0, r3

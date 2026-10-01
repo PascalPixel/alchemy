@@ -394,7 +394,7 @@ Unnamed_080e94b8:
 	cmp r0, #17
 	bhi .L_080e97f2
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r2, r8
 	ldrb r1, [r2, r0]
 	movs r3, #128
@@ -505,7 +505,7 @@ Unnamed_080e94b8:
 	asrs r6, r0, #16
 	movs r1, #5
 	adds r0, r3, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, #1
 	lsls r5, r0, #1
 	mov r3, r10

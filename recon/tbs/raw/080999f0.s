@@ -100,7 +100,7 @@ RunBattleEffect05:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r7, #8]
 	mov r2, r10
@@ -111,7 +111,7 @@ RunBattleEffect05:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r7, #12]
 	mov r2, r9
@@ -122,7 +122,7 @@ RunBattleEffect05:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #192
 	lsls r3, r3, #8
 	adds r5, r5, r0
@@ -130,7 +130,7 @@ RunBattleEffect05:
 	mov r0, r8
 	muls r0, r3
 	str r5, [r7, #16]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	adds r0, r0, r3
@@ -326,7 +326,7 @@ RunBattleEffect05:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r7, #8]
 	mov r1, r10
@@ -336,7 +336,7 @@ RunBattleEffect05:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r5, r0
 	str r5, [r7, #12]
 	mov r2, r10
@@ -346,14 +346,14 @@ RunBattleEffect05:
 	mov r0, r8
 	muls r0, r3
 	movs r1, #10
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, .L_08099d14
 	adds r5, r5, r0
 	movs r1, #10
 	mov r0, r8
 	muls r0, r3
 	str r5, [r7, #16]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #9
 	adds r0, r0, r3

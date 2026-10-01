@@ -17,7 +17,7 @@ Func_0811bf18:
 	mov r0, r10
 	muls r0, r3
 	mov r8, r2
-	bl Math_Div
+	bl __divsi3
 	ldr r3, [r6, #16]
 	ldr r6, [r5, #16]
 	add r8, r0
@@ -25,7 +25,7 @@ Func_0811bf18:
 	mov r0, r10
 	muls r0, r3
 	movs r1, #100
-	bl Math_Div
+	bl __divsi3
 	ldr r3, .L_0811bf88
 	movs r2, #128
 	lsls r2, r2, #19

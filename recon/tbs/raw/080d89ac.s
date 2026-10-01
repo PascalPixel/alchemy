@@ -850,7 +850,7 @@ BattleEffectA:
 	lsls r0, r2, #2
 	add r0, r11
 	movs r1, #9
-	bl Math_Mod
+	bl __modsi3
 	adds r4, r0, #0
 	b .L_080d9052
 .L_080d9044:
@@ -911,19 +911,19 @@ BattleEffectA:
 	ldr r5, [r6]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #8]
 .L_080d90d6:

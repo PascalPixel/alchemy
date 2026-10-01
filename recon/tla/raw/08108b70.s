@@ -95,7 +95,7 @@ Func_08108b70:
 	movs r1, #7
 	adds r6, r0, #0
 	ldr r0, [sp, #36]
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	lsls r1, r1, #5
 	ldr r0, [sp, #28]

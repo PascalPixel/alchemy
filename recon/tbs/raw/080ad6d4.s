@@ -367,7 +367,7 @@ OwnerAction_RunCompareLoop:
 	ldr r0, [sp, #120]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, #1
 	str r0, [sp, #120]
 	cmp r0, #0
@@ -379,7 +379,7 @@ OwnerAction_RunCompareLoop:
 	ldr r0, [r2, #4]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [sp, #28]
 	adds r0, #1
 	str r0, [r3, #4]
@@ -1167,7 +1167,7 @@ OwnerAction_RunCompareLoop:
 	str r1, [sp, #92]
 	adds r0, r1, #0
 	movs r1, #60
-	bl Math_Mod
+	bl __modsi3
 	subs r6, r0, #5
 	cmp r6, #0
 	bge .L_080ae066
@@ -1189,7 +1189,7 @@ OwnerAction_RunCompareLoop:
 	bhi .L_080ae0ec
 	movs r1, #30
 	adds r0, r6, #0
-	bl Math_Mod
+	bl __modsi3
 	adds r3, r0, #0
 	lsls r0, r3, #4
 	adds r0, r0, r3
@@ -1216,7 +1216,7 @@ OwnerAction_RunCompareLoop:
 .L_080ae0ba:
 	adds r0, r6, #0
 	movs r1, #35
-	bl Math_Mod
+	bl __modsi3
 	lsls r6, r0, #1
 	adds r1, r6, #0
 	adds r2, r5, #0
@@ -1321,7 +1321,7 @@ OwnerAction_RunCompareLoop:
 	ldr r0, [sp, #88]
 	movs r1, #3
 	adds r0, #1
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #2
 	str r0, [sp, #88]
 	movs r0, #111

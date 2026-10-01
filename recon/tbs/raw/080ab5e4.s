@@ -32,13 +32,13 @@ DjinnMenu_SelectDjinn:
 	ldrh r5, [r7, r3]
 	movs r1, #10
 	adds r0, r5, #0
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	lsls r0, r0, #16
 	lsrs r0, r0, #16
 	str r0, [sp, #56]
 	movs r1, #10
 	adds r0, r5, #0
-	bl Math_DivU
+	bl __udivsi3
 	mov r2, sp
 	adds r2, #100
 	lsls r0, r0, #16
@@ -197,11 +197,11 @@ DjinnMenu_SelectDjinn:
 	ldrh r6, [r3]
 	movs r1, #10
 	adds r0, r6, #0
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	movs r1, #10
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl Math_DivU
+	bl __udivsi3
 	lsls r5, r5, #16
 	lsrs r5, r5, #16
 	ldr r3, [sp, #76]

@@ -400,7 +400,7 @@ Func_0812561c:
 	ldrsh r3, [r2, r1]
 	movs r1, #10
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #192
 	lsls r3, r3, #18
 	adds r7, r0, #0

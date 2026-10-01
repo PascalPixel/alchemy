@@ -108,7 +108,7 @@ void Runtime_BumpFree(void *buffer);
 struct OwnerStats *Owner_GetState(s32 owner);
 struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
 struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 
 /* Distance between a stored value and one recomputed from its ratio. */
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
@@ -267,12 +267,12 @@ void Owner_RecalculateStats(s32 owner)
         {
             struct ClassRecord *class = Owner_GetRecordStride84(st->class_id);
 
-            work->hp = Math_Div(work->hp * class->hp, 10);
-            work->pp = Math_Div(work->pp * class->pp, 10);
-            work->attack = Math_Div(work->attack * class->attack, 10);
-            work->defense = Math_Div(work->defense * class->defense, 10);
-            work->agility = Math_Div(work->agility * class->agility, 10);
-            work->luck = Math_Div(work->luck * class->luck, 10);
+            work->hp = __divsi3(work->hp * class->hp, 10);
+            work->pp = __divsi3(work->pp * class->pp, 10);
+            work->attack = __divsi3(work->attack * class->attack, 10);
+            work->defense = __divsi3(work->defense * class->defense, 10);
+            work->agility = __divsi3(work->agility * class->agility, 10);
+            work->luck = __divsi3(work->luck * class->luck, 10);
         }
 
         for (i = 0; i < 15; i++) {
@@ -287,28 +287,28 @@ void Owner_RecalculateStats(s32 owner)
                 work->amount = amount;
                 switch (kind) {
                 case 0:
-                    work->hp = Math_Div(work->hp * work->amount, 10);
+                    work->hp = __divsi3(work->hp * work->amount, 10);
                     break;
                 case 1:
-                    work->stat_20 = Math_Div(work->stat_20 * work->amount, 10);
+                    work->stat_20 = __divsi3(work->stat_20 * work->amount, 10);
                     break;
                 case 2:
-                    work->pp = Math_Div(work->pp * work->amount, 10);
+                    work->pp = __divsi3(work->pp * work->amount, 10);
                     break;
                 case 3:
-                    work->stat_24 = Math_Div(work->stat_24 * work->amount, 10);
+                    work->stat_24 = __divsi3(work->stat_24 * work->amount, 10);
                     break;
                 case 4:
-                    work->attack = Math_Div(work->attack * work->amount, 10);
+                    work->attack = __divsi3(work->attack * work->amount, 10);
                     break;
                 case 5:
-                    work->defense = Math_Div(work->defense * work->amount, 10);
+                    work->defense = __divsi3(work->defense * work->amount, 10);
                     break;
                 case 6:
-                    work->agility = Math_Div(work->agility * work->amount, 10);
+                    work->agility = __divsi3(work->agility * work->amount, 10);
                     break;
                 case 7:
-                    work->luck = Math_Div(work->luck * work->amount, 10);
+                    work->luck = __divsi3(work->luck * work->amount, 10);
                     break;
                 }
             }

@@ -46,7 +46,6 @@ extern u8 MsgLobbyMonsterBattleResults[];
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 s32 UiWork_IsComplete(void);
 void SaveState_ProcessSelectedSlot(void);
-s32 Engine_MathRemainder(s32 value, s32 divisor);
 
 extern u8 MsgLobbyNotBadNextMonster[];
 extern u8 MsgLobbyNoteCantUse[];
@@ -343,8 +342,8 @@ s32 LinkLobby_DrawThreeDigitValue(s32 value)
     if (value > 999)
         value = 999;
     for (digit = 0; digit <= 2; digit++) {
-        Engine_MapCopyCellsTo(27, Engine_MathRemainder(value, 10), 16 - digit, 8, 1, 1);
-        value = Engine_MathDivide(value, 10);
+        Engine_MapCopyCellsTo(27, value % 10, 16 - digit, 8, 1, 1);
+        value = value / 10;
     }
     Engine_MapRedraw();
 }

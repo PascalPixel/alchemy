@@ -27,7 +27,7 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
     cursor = gCell[308 + topic];
 
     /* `lsls #1 / lsrs #16` - a 0/1 coin flip from the same random source. */
-    variant = Engine_MathRemainder(cursor + (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4, 3);
+    variant = (cursor + (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4) % 3;
 
     gCell[308 + topic] = (s8)variant;
 

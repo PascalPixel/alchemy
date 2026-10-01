@@ -328,7 +328,7 @@ BattleEffect_RunDualParticleStream:
 	bgt .L_080e8cce
 	adds r0, r3, #0
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, .L_080e8e18
 	adds r5, r0, #0
 	lsls r0, r5, #1

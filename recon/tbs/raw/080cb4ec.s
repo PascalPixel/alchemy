@@ -100,7 +100,7 @@ Unnamed_080cb4ec:
 .L_080cb5b2:
 	bl Random16
 	movs r1, #96
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	mov r2, r9
 	adds r0, #16
 	str r0, [r5]

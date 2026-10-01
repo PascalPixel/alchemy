@@ -271,7 +271,7 @@ Func_081a7a28:
 	adds r0, r7, #0
 	add r9, r2
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	ldr r4, [sp, #0]
 	subs r7, r7, r0
 	adds r4, #6
@@ -421,7 +421,7 @@ Func_081a7a28:
 	adds r0, r0, r5
 	str r4, [sp, #0]
 	add r9, r3
-	bl Math_Div
+	bl __divsi3
 	bl BattleFx_ClampRgb555Channel
 	ldr r4, [sp, #0]
 	asrs r3, r4, #1
@@ -494,11 +494,11 @@ Func_081a7a28:
 	adds r4, r0, #0
 	adds r0, r7, #0
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	movs r1, #3
 	subs r7, r7, r0
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	ldr r1, .L_081a7e30
 	subs r5, r5, r0
 	lsls r3, r5, #1
@@ -563,7 +563,7 @@ Func_081a7a28:
 	movs r1, #3
 	ands r5, r2
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	ldr r4, [sp, #0]
 	subs r7, r7, r0
 	adds r4, #6

@@ -10,7 +10,7 @@ Text_FormatPlayTime:
 	movs r1, #225
 	lsls r1, r1, #4
 	sub sp, #16
-	bl Math_DivU
+	bl __udivsi3
 	movs r3, #234
 	lsls r3, r3, #8
 	adds r6, r0, #0
@@ -21,11 +21,11 @@ Text_FormatPlayTime:
 .L_080431d0:
 	adds r0, r6, #0
 	movs r1, #60
-	bl Math_DivU
+	bl __udivsi3
 	movs r1, #60
 	adds r5, r0, #0
 	adds r0, r6, #0
-	bl Math_ModU
+	bl __umodsi3
 	mov r8, sp
 	adds r1, r5, #0
 	adds r6, r0, #0

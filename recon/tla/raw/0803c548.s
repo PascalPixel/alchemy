@@ -130,7 +130,7 @@ Func_0803c548:
 	movs r1, #80
 	str r2, [sp, #4]
 	str r4, [sp, #0]
-	bl Math_ModU
+	bl __umodsi3
 	ldr r2, [sp, #4]
 	mov r1, r8
 	ldrb r3, [r2, r0]
@@ -359,7 +359,7 @@ Func_0803c548:
 	ldrh r0, [r6, #12]
 	movs r1, #20
 	str r4, [sp, #0]
-	bl Math_ModU
+	bl __umodsi3
 	ldr r4, [sp, #0]
 	lsls r0, r0, #16
 	lsrs r0, r0, #15
@@ -375,7 +375,7 @@ Func_0803c548:
 	strh r3, [r7, #6]
 	movs r1, #20
 	ldrh r0, [r6, #12]
-	bl Math_ModU
+	bl __umodsi3
 	lsls r0, r0, #16
 	ldr r4, [sp, #0]
 	lsrs r0, r0, #15

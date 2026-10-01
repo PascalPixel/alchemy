@@ -107,7 +107,7 @@ s32 BattleFx_StepRatioTransition(void)
     delta = *(s32 *)(work + 0x354) - *from;
     step = (s16 *)(work + 0x35a);
     (*step)++;
-    offset = *from + Math_Div(delta * *step, *duration);
+    offset = *from + __divsi3(delta * *step, *duration);
     *(s32 *)(work + 0x34c) = Iwram_MulQ16(*(s32 *)(work + 0x348), offset);
     *(u32 *)Data_03001af4 = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {

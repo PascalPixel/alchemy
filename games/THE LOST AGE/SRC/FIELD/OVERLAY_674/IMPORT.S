@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_MathRemainder
+	.global __modsi3
 	.thumb_func
-Engine_MathRemainder:
+__modsi3:
 	overlay_veneer IwramSignedRemainder
 	.global WaitFrames
 	.thumb_func

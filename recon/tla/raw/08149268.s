@@ -265,14 +265,14 @@ Func_08149268:
 .L_08149468:
 	movs r1, #5
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
-	bl Math_Div
+	bl __divsi3
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	movs r2, #4
 	mov r3, r8
 	adds r6, r7, #0

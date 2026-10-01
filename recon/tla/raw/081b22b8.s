@@ -60,14 +60,14 @@ Func_081b22b8:
 	blt .L_081b232c
 	adds r1, r5, #0
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	mov r12, r0
 	ldr r4, [sp, #0]
 	b .L_081b2338
 .L_081b232c:
 	subs r1, r7, r4
 	str r4, [sp, #0]
-	bl Math_Div
+	bl __divsi3
 	ldr r4, [sp, #0]
 	mov r12, r0
 .L_081b2338:
@@ -153,7 +153,7 @@ Func_081b22b8:
 	mov r6, r10
 	subs r1, r3, r6
 .L_081b23c8:
-	bl Math_Div
+	bl __divsi3
 	mov r12, r0
 	mov r0, r8
 	adds r1, r7, #0

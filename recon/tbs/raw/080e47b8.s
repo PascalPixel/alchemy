@@ -977,7 +977,7 @@ BattleFx_RunCastingImpact:
 	ldr r0, [r1, #8]
 	movs r1, #6
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [sp, #24]
 	str r0, [r3]
 	ldr r5, [sp, #28]
@@ -989,7 +989,7 @@ BattleFx_RunCastingImpact:
 	subs r0, r0, r3
 	adds r0, r0, r2
 	movs r1, #6
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [sp, #24]
 	str r0, [r3, #4]
 	ldr r0, [r5, #16]
@@ -997,7 +997,7 @@ BattleFx_RunCastingImpact:
 	ldr r3, [r5, #8]
 	movs r1, #6
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, [sp, #24]
 	str r0, [r1, #8]
 	ldr r5, [sp, #92]
@@ -2348,7 +2348,7 @@ BattleFx_RunCastingImpact:
 	movs r1, #3
 	asrs r0, r0, #1
 	adds r6, r6, r3
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #2
 	adds r5, r5, r0
 	lsls r3, r5, #9
@@ -3369,7 +3369,7 @@ BattleFx_RunCastingImpact:
 .L_080e6308:
 	mov r0, r10
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r6, #0
 	adds r5, r0, #0
 	adds r0, r7, #0

@@ -4,8 +4,8 @@
 extern u8 Data_00000058[];
 extern u8 ResourceId_EmberStreakSheet[];
 extern u8 Data_00001000[];
-s32 Math_Div();
-s32 Math_Mod();
+s32 __divsi3();
+s32 __modsi3();
 s32 Trig_Sin();
 void Runtime_ReleaseHeapBlock();
 s32 Resource_GetTableEntry();
@@ -152,11 +152,11 @@ void BattleFx_RunFiveMode(s32 a0, s32 a1)
                 *(s32 *)(v7 + 4) = ((s32)p5 + 0x140000);
                 p6 = *(s32 *)(p10 + 16);
                 *(s32 *)(v7 + 8) = (s32)p6;
-                record = Value2(Math_Div, (*(s32 *)(p8 + 8) - *(s32 *)(p10 + 8)), 24);
+                record = Value2(__divsi3, (*(s32 *)(p8 + 8) - *(s32 *)(p10 + 8)), 24);
                 *(s32 *)(v7 + 12) = record;
-                record = Value2(Math_Div, ((s32)(*(s32 *)(p8 + 12) + 0x140000) - (s32)((s32)p5 + 0x140000)), 24);
+                record = Value2(__divsi3, ((s32)(*(s32 *)(p8 + 12) + 0x140000) - (s32)((s32)p5 + 0x140000)), 24);
                 *(s32 *)(v7 + 16) = record;
-                record = Value2(Math_Div, (*(s32 *)(p8 + 16) - (s32)p6), 24);
+                record = Value2(__divsi3, (*(s32 *)(p8 + 16) - (s32)p6), 24);
                 *(s32 *)(v7 + 20) = record;
                 v11 = (v11 + 1);
                 *(s32 *)(v7 + 24) = 0;
@@ -220,7 +220,7 @@ void BattleFx_RunFiveMode(s32 a0, s32 a1)
                         v2 = 5;
                     }
                     if (*(s8 *)(0x080edee8 + slot32) != 0) {
-                        value = Value2(Math_Mod, ((((u32)v10 >> 31) + v10) >> 1), 3);
+                        value = Value2(__modsi3, ((((u32)v10 >> 31) + v10) >> 1), 3);
                         Call6(_call_via_r4, slot60, (slot64 + ((((((v2 << 1) + v2) << 3) + v2) << 5) + (((((value << 2) + value) << 4) - ((value << 2) + value)) << 6))), (v7 - 10), (*(s32 *)(slot72 + 4) - 40), 20, 40);
                         Call6(_call_via_r4, slot60, (slot64 + ((((((v2 << 1) + v2) << 3) + v2) << 5) + (((((value << 2) + value) << 4) - ((value << 2) + value)) << 6))), (*(s32 *)(slot72) - 10), *(s32 *)(slot72 + 4), 20, 40);
                     } else {

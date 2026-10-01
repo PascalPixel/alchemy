@@ -1941,14 +1941,55 @@ fn runtime_definition_reason(path: &str, text: &str) -> Option<&'static str> {
         return None;
     }
     let [c, assembly] = runtime_definitions();
-    let source = if listed(extension(path), &["c", "h"]) {
-        c
+    let defined = if listed(extension(path), &["c", "h"]) {
+        c.is_match(text)
     } else {
-        assembly
+        assembly.is_match(text)
+            && !(only_veneers(text)
+                && (!text.contains(".macro overlay_veneer")
+                    || path.ends_with("SYSTEM/OVERLAY.INC")))
     };
-    source
-        .is_match(text)
-        .then_some("compiler runtime routine: build it from its licensed container")
+    defined.then_some("compiler runtime routine: build it from its licensed container")
+}
+/// Whether every compiler-runtime name an assembly source defines labels
+/// only a veneer: a stub that jumps to another, non-runtime routine and holds
+/// no code of its own, as each overlay's import stub for the game's own
+/// divider does. The stub macro itself may only be defined in OVERLAY.INC.
+fn only_veneers(text: &str) -> bool {
+    let [_, assembly] = runtime_definitions();
+    let lines: Vec<&str> = text.lines().map(str::trim).collect();
+    let runtime = |name: &str| {
+        RUNTIME_ROUTINES
+            .iter()
+            .any(|routine| name.trim_start_matches('_') == routine.trim_start_matches('_'))
+    };
+    let veneer = |name: &str| {
+        lines.iter().enumerate().any(|(index, line)| {
+            line.strip_suffix(':') == Some(name)
+                && lines[index + 1..]
+                    .iter()
+                    .find(|next| {
+                        !next.is_empty()
+                            && !next.starts_with(".thumb_func")
+                            && !next.starts_with(".global")
+                            && !next.starts_with(".globl")
+                            && !next.ends_with(':')
+                    })
+                    .and_then(|next| next.strip_prefix("overlay_veneer "))
+                    .map(str::trim)
+                    .is_some_and(|target| !target.is_empty() && !runtime(target))
+        })
+    };
+    assembly.find_iter(text).all(|found| {
+        let definition = found.as_str().trim();
+        let name = definition
+            .strip_prefix(".globl")
+            .or_else(|| definition.strip_prefix(".global"))
+            .unwrap_or(definition)
+            .trim()
+            .trim_end_matches(':');
+        !name.contains("FUNC_START") && veneer(name)
+    })
 }
 /// A commit message may describe work, never carry what may not be tracked.
 fn history_message_reason(message: &str) -> Option<&'static str> {
@@ -3658,6 +3699,19 @@ mod tests {
         let branch = format!("\tbl {routine}\n");
         assert!(runtime_definition_reason("asm/lib.s", &label).is_some());
         assert!(runtime_definition_reason("asm/lib.s", &branch).is_none());
+        // An overlay's import stub may carry the name the compiler calls,
+        // when it only jumps to the game's own routine.
+        let veneer = format!(
+            "\t.global {routine}\n\t.thumb_func\n{routine}:\n\toverlay_veneer IwramSignedDivide\n"
+        );
+        assert!(runtime_definition_reason("SRC/FIELD/IMPORT.S", &veneer).is_none());
+        let other = format!("__{}si3", "mod");
+        let onward = format!("\t.global {routine}\n{routine}:\n\toverlay_veneer {other}\n");
+        assert!(runtime_definition_reason("SRC/FIELD/IMPORT.S", &onward).is_some());
+        let beside = format!("{veneer}\t.global {other}\n{other}:\n\tpush {{lr}}\n");
+        assert!(runtime_definition_reason("SRC/FIELD/IMPORT.S", &beside).is_some());
+        let redefined = format!(".macro overlay_veneer target\n\tpush {{lr}}\n.endm\n{veneer}");
+        assert!(runtime_definition_reason("SRC/FIELD/IMPORT.S", &redefined).is_some());
         assert!(runtime_definition_reason("notes.json", &defined_c).is_none());
         assert!(history_message_reason(&format!("Add the divider\n\n{defined_c}")).is_some());
         assert!(history_message_reason(&format!("Bind {routine} calls in the link")).is_none());

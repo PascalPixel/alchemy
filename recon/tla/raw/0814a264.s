@@ -262,7 +262,7 @@ Func_0814a264:
 	adds r3, r3, r7
 	adds r0, r0, r3
 	movs r1, #104
-	bl Math_Mod
+	bl __modsi3
 	ldr r5, [sp, #32]
 	mov r8, r0
 	mov r3, r11

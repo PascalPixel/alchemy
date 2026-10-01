@@ -103,8 +103,6 @@ void Runtime_BumpFree(void *buffer);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 void Owner_RecalculateStats(s32 owner);
 u32 Random16(void);
-s32 Math_Div(s32 numerator, s32 denominator);
-u32 Math_DivU(u32 numerator, u32 denominator);
 
 struct Owner_080792c4 {
     u8 unknown_000[0x0f];
@@ -283,23 +281,23 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
             res->agility += work->growth->agility[0];
             res->luck += work->growth->luck[0];
         }
-        band = Math_Div(res->level, 20);
+        band = res->level / 20;
         if (band < 0)
             band = 0;
         if (band > 4)
             band = 4;
         diff = work->growth->hp[band + 1] - work->growth->hp[band];
-        res->hp += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->hp += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->pp[band + 1] - work->growth->pp[band];
-        res->pp += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->pp += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->attack[band + 1] - work->growth->attack[band];
-        res->attack += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->attack += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->defense[band + 1] - work->growth->defense[band];
-        res->defense += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->defense += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->agility[band + 1] - work->growth->agility[band];
-        res->agility += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->agility += ((Random16() * 20 >> 16) + diff) / 20;
         diff = work->growth->luck[band + 1] - work->growth->luck[band];
-        res->luck += Math_DivU((Random16() * 20 >> 16) + diff, 20);
+        res->luck += ((Random16() * 20 >> 16) + diff) / 20;
         st->base_hp += res->hp;
         st->base_pp += res->pp;
         st->base_attack += res->attack;

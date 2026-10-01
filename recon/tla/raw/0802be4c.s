@@ -47,7 +47,7 @@ Func_0802be4c:
 	movs r1, #10
 	lsls r3, r3, #2
 	lsrs r0, r3, #26
-	bl Math_Div
+	bl __divsi3
 	movs r3, #3
 	cmp r0, #3
 	beq .L_0802bec2

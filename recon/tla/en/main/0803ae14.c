@@ -21,8 +21,8 @@ u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width)
 
     buffer[0] = ' ';
     for (offset = 12; offset != 0; offset--) {
-        buffer[offset] = Math_Mod(value, 10) + '0';
-        value = Math_Div(value, 10);
+        buffer[offset] = __modsi3(value, 10) + '0';
+        value = __divsi3(value, 10);
     }
 
     offset = 0;

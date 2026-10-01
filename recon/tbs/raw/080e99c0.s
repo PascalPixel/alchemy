@@ -283,7 +283,7 @@ Unnamed_080e99c0:
 	cmp r0, #17
 	bhi .L_080e9c30
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r2, r10
 	ldrb r1, [r2, r0]
 	ldr r3, [sp, #36]
@@ -499,7 +499,7 @@ Unnamed_080e99c0:
 	mov r10, r3
 	mov r8, r4
 	ldr r5, [sp, #24]
-	bl Math_Mod
+	bl __modsi3
 	mov r9, r5
 	mov r2, r8
 	adds r5, r0, #0
@@ -534,7 +534,7 @@ Unnamed_080e99c0:
 	blt .L_080e9eda
 	mov r0, r8
 	movs r1, #3
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [r5, #16]
 	adds r4, r0, #2
 	cmp r3, #0
@@ -772,7 +772,7 @@ Unnamed_080e99c0:
 	cmp r6, #0
 	blt .L_080e9fee
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, #1
 	lsls r4, r0, #1
 	ldr r2, .L_080ea0c0

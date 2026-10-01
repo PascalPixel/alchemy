@@ -6,7 +6,6 @@ void Engine_PartyRemoveActiveOwner(s32 id);
 void Engine_PartyAddActiveOwner(s32 id);
 void Engine_ObjectAttachWorkTarget(s32 id, s32 target);
 u8 *Engine_OwnerGetState(s32 id);
-s32 Engine_MathDivide(s32 dividend, s32 divisor);
 void Engine_EventClearInvalidPackedValues(void);
 
 /* Colosso: leave only the competitor id in the active party, remember it,
@@ -41,7 +40,7 @@ void Korosseo_SelectSoloCompetitor(s32 id)
         *(u16 *)(rec + 58) = *(u16 *)(rec + 54);
         rec[0x131] = z.v;
     }
-    v = Engine_MathDivide(*(s16 *)(rec + 56) << 14, *(s16 *)(rec + 52));
+    v = (*(s16 *)(rec + 56) << 14) / (*(s16 *)(rec + 52));
     t = 0x4000;
     if (v <= 0x4000) {
         t = 0;
@@ -55,7 +54,7 @@ void Korosseo_SelectSoloCompetitor(s32 id)
 
         *(u16 *)(rec + 20) = one;
     }
-    v = Engine_MathDivide(*(s16 *)(rec + 58) << 14, *(s16 *)(rec + 54));
+    v = (*(s16 *)(rec + 58) << 14) / (*(s16 *)(rec + 54));
     t = 0x4000;
     if (v <= 0x4000) {
         t = 0;

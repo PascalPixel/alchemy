@@ -771,7 +771,7 @@ Func_020003cc:
 	mov r10, r0
 	mov r0, r9
 	mov r11, r3
-	bl Engine_MathDivide
+	bl __divsi3
 	adds r0, #1
 	mov r8, r0
 	movs r1, #0
@@ -907,7 +907,7 @@ Func_020003cc:
 	adds r0, #1
 .L_02008b4e:
 	mov r1, r8
-	bl Engine_MathRemainder
+	bl __modsi3
 	movs r7, #1
 	mov r11, r0
 .L_02008b58:
@@ -1012,18 +1012,18 @@ Func_020003cc:
 	bl Clear_NameEntryCharacter
 	adds r0, r7, #0
 	movs r1, #10
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r4, [sp, #4]
 	cmp r0, #4
 	ble .L_02008c4a
 	adds r0, r4, #0
 	movs r1, #10
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r4, [sp, #4]
 	adds r5, r0, #0
 	movs r1, #10
 	adds r0, r4, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	lsls r2, r5, #1
 	adds r3, r0, #0
 	adds r2, r2, r5
@@ -1035,12 +1035,12 @@ Func_020003cc:
 	adds r0, r4, #0
 	movs r1, #10
 	str r4, [sp, #4]
-	bl Engine_MathRemainder
+	bl __modsi3
 	ldr r4, [sp, #4]
 	adds r5, r0, #0
 	movs r1, #10
 	adds r0, r4, #0
-	bl Engine_MathDivide
+	bl __divsi3
 	lsls r2, r5, #1
 	adds r3, r0, #0
 	adds r2, r2, r5

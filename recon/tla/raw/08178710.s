@@ -505,7 +505,7 @@ Func_08178710:
 	adds r0, r4, #0
 	movs r1, #3
 	str r4, [sp, #8]
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [sp, #24]
 	str r0, [sp, #40]
 	adds r6, r1, #0
@@ -634,7 +634,7 @@ Func_08178710:
 	lsls r0, r4, #5
 	movs r1, #36
 	str r4, [sp, #8]
-	bl Math_Div
+	bl __divsi3
 	mov r1, r9
 	lsls r6, r1, #2
 	str r0, [sp, #36]

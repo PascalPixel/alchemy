@@ -263,7 +263,7 @@ Func_0816a730:
 	cmp r0, #28
 	bgt .L_0816a988
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r2, #2
 	ldrsh r4, [r5, r2]
 	movs r3, #6

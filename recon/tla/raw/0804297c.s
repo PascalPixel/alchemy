@@ -289,7 +289,7 @@ Func_0804297c:
 	lsls r0, r5, #2
 	adds r0, r0, r5
 	lsls r0, r0, #3
-	bl Math_Div
+	bl __divsi3
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_08042bbe
@@ -334,7 +334,7 @@ Func_0804297c:
 	lsls r0, r5, #2
 	adds r0, r0, r5
 	lsls r0, r0, #3
-	bl Math_Div
+	bl __divsi3
 	adds r3, r0, #0
 	cmp r3, #0
 	bne .L_08042c18

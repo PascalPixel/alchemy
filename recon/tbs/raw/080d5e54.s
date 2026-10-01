@@ -144,7 +144,7 @@ BattleEffect_RunSparkTravel:
 	ldr r3, [r1]
 	movs r1, #40
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r5]
 	ldr r2, [sp, #52]
 	mov r5, r11
@@ -152,7 +152,7 @@ BattleEffect_RunSparkTravel:
 	ldr r0, [r2, #4]
 	movs r1, #40
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r1, [sp, #48]
 	str r0, [r1, #4]
 	ldr r2, [sp, #52]
@@ -160,7 +160,7 @@ BattleEffect_RunSparkTravel:
 	ldr r0, [r2, #8]
 	movs r1, #40
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [sp, #48]
 	movs r5, #0
 	str r0, [r3, #8]
@@ -711,7 +711,7 @@ BattleEffect_RunSparkTravel:
 	lsls r0, r3, #2
 	movs r1, #9
 	add r0, r9
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_080d64c4
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -734,19 +734,19 @@ BattleEffect_RunSparkTravel:
 	ldr r5, [r6]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6]
 	ldr r5, [r6, #4]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #4]
 	ldr r5, [r6, #8]
 	adds r1, r7, #0
 	adds r0, r5, #0
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #8]
 .L_080d6456:

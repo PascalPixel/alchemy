@@ -271,7 +271,7 @@ Unnamed_080d3854:
 	add r0, r11
 	movs r1, #3
 	asrs r0, r0, #1
-	bl Math_Mod
+	bl __modsi3
 	lsls r5, r0, #2
 	ldr r2, [sp, #40]
 	adds r5, r5, r0

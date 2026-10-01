@@ -421,7 +421,7 @@ Region_080ddde0:
 	adds r3, #2
 	ldrb r5, [r1, r3]
 	adds r1, r5, #0
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	ldr r2, [sp, #24]
 	ldr r2, [r2, #4]
 	mov r8, r2
@@ -443,7 +443,7 @@ Region_080ddde0:
 	ldr r3, [sp, #24]
 	adds r1, r5, #0
 	ldr r6, [r3]
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	ldr r4, [sp, #8]
 	adds r6, r6, r0
 	ldr r0, .L_080de2d0

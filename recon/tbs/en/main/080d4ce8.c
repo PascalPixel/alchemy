@@ -28,7 +28,7 @@ void Graphics_PrepareTransferInIwramWork(void *, void *);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void EffectPosition_ApplyBaseAndYOffset(void *, s32 *);
 void Audio_PlayCue(s32);
-s32 Math_Mod(s32, s32);
+s32 __modsi3(s32, s32);
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
@@ -138,7 +138,7 @@ void Region_080d4ce8(Effect *effect)
                         Audio_PlayCue(145);
                     if (frame >= *trigger + 4) {
                         s32 spin;
-                        spin = Math_Mod(slot * 25 + (frame << 4), 104);
+                        spin = __modsi3(slot * 25 + (frame << 4), 104);
                         draws[slot & 1](destination, work, screen[0] - 17,
                             screen[1] - spin - 104, 34, 104);
                         draws[slot & 1](destination, work, screen[0] - 17,

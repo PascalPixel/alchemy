@@ -111,7 +111,7 @@ DjinnMenu_ShowChangePreview:
 	movs r1, #5
 	str r0, [sp, #20]
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, [sp, #108]
 	adds r0, #1
 	str r0, [r3]

@@ -39,12 +39,12 @@ Func_08025608:
 	mov r0, r8
 	muls r0, r5
 	adds r1, r7, #0
-	bl Math_Div
+	bl __divsi3
 	adds r1, r7, #0
 	mov r8, r0
 	mov r0, r10
 	muls r0, r5
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [r6, #8]
 	ldr r3, [r6, #16]
 	add r1, r8

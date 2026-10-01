@@ -17,7 +17,7 @@
  * base value. So the reference's RTL before sched2 differs, not the
  * scheduler's choice. Moving motion's assignment before target_actor (371),
  * computing the difference first (916) or assigning motion after the
- * first Math_Div (1063) all break the spill slots. */
+ * first __divsi3 (1063) all break the spill slots. */
 /* 2026-09-30 (Mercury, later): sched2's table (-fsched-verbose=5) at
  * 80e500c: the motion spill store and the target_actor and position
  * reloads all have priority 125 and five dependents, and neither depends
@@ -32,7 +32,7 @@
  * motion is a spilled pseudo there too; what removes the dependence is not
  * found yet (a volatile motion moves the frame: 2759). */
 /* 2026-09-30 (Mercury): 5 differing halfwords, all in the first
- * Math_Div (80e500c): the reference loads target_actor and position into
+ * __divsi3 (80e500c): the reference loads target_actor and position into
  * r1/r2 before the motion spill store; here the store, the two reloads and
  * nothing else tie at sched2 priority 125 with equal dependents, so the
  * store wins on insn order. Fixed since 72: reload picks reload registers
@@ -48,7 +48,7 @@
  * target_screen made in the loop: global const propagation turns it into a
  * copy after copy propagation has run, and the loop hoists it after the
  * projection address, giving the reference's r3/r5/r0 reload order.
- * Tried for the Math_Div order without success: operand temporaries,
+ * Tried for the __divsi3 order without success: operand temporaries,
  * copies, an inline aim helper (any argument order), the subtraction first,
  * split subtraction, velocity stored directly, motion assigned in the
  * argument list or as the store's left side, a slot/object split, and asm
@@ -74,7 +74,7 @@
  * fp rise). 185 instruction-diff lines remain, excluding the reference's
  * jump-table words: the folded gWorkSlot+188 constant (the reference adds
  * 188 in a register), the kind 31 constants 2/48 swapped between r9 and sl,
- * a motion store scheduled before the Math_Div operand loads, and the
+ * a motion store scheduled before the __divsi3 operand loads, and the
  * tail's r8/r9/sl rotation. A per-call slot argument unfolds the address but
  * gives the pointer r6 ahead of the width. */
 /* 2026-09-29: five minutes of permutation (--function
@@ -534,11 +534,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     /* Restore the caster and aim the travelling orb at the first target. */
     target_actor = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     motion = &velocity;
-    speed = Math_Div(target_actor->x - position->x, 6);
+    speed = __divsi3(target_actor->x - position->x, 6);
     motion->x = speed;
-    speed = Math_Div(target_actor->y - position->y + 0x1e0000, 6);
+    speed = __divsi3(target_actor->y - position->y + 0x1e0000, 6);
     motion->y = speed;
-    speed = Math_Div(target_actor->z - position->z, 6);
+    speed = __divsi3(target_actor->z - position->z, 6);
     motion->z = speed;
     for (i = 0; i != 64; i++) {
         particle = &work->particles[i];
@@ -900,7 +900,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 goto FinishFrame;
             }
             strip_x = target_screen->x / 2 - 20;
-            image = Math_Mod(frame / 2, 3);
+            image = __modsi3(frame / 2, 3);
             image_offset = image * 2560;
             blitters[0](canvas, IMAGE_WORK + 0xc56 + image_offset, strip_x, 16, 40, 32);
             blitters[0](canvas, image * 1280 + (IMAGE_WORK + 0x2a56), strip_x, 48, 40, 32);
@@ -1130,7 +1130,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 s32 mask;
                 /* FAKEMATCH: Initialize the mask after the loop counter. */
                 for (i = 0, mask = 3; i != 16; i++, step++) {
-                    s32 image = Math_Mod(i, 3);
+                    s32 image = __modsi3(i, 3);
                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                     projected.x /= 2;
                     blitters[i & 1](canvas, IMAGE_WORK + image * 576, projected.x - 12, projected.y - 12, 24, 24);

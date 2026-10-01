@@ -20,7 +20,7 @@ Func_0804b6a0:
 	subs r6, r0, r5
 	adds r0, r6, #0
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	cmp r0, #0
 	bne .L_0804b6d0
 	subs r0, #1
@@ -124,7 +124,7 @@ Func_0804b6a0:
 	adds r0, r6, #0
 	adds r0, #59
 	movs r1, #60
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0804b7a0

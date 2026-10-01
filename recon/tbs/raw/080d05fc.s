@@ -405,7 +405,7 @@ Func_080d05fc:
 	adds r0, r7, #0
 	str r3, [sp, #36]
 	str r7, [sp, #24]
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, [sp, #32]
 	adds r0, r0, r3
 	lsls r3, r0, #3
@@ -439,7 +439,7 @@ Func_080d05fc:
 	mov r0, r10
 	muls r0, r3
 	movs r1, #24
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, [sp, #28]
 	ldr r1, [sp, #36]
 	ldr r3, [r2, #16]
@@ -449,7 +449,7 @@ Func_080d05fc:
 	movs r1, #24
 	mov r0, r10
 	muls r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, .L_080d0aa0
 	subs r3, r7, #2
 	ldrh r1, [r2, r3]

@@ -5296,7 +5296,7 @@ Func_02002edc:
 	adds r3, r3, r7
 	movs r1, #18
 	str r3, [r6, #16]
-	bl Engine_MathDivide
+	bl __divsi3
 	subs r5, r5, r0
 	str r5, [r6, #68]
 	adds r3, r7, #0
@@ -6180,7 +6180,7 @@ Func_02003504:
 	lsls r1, r1, #1
 	str r5, [r7, #76]
 	mov r0, r9
-	bl IwramUnsignedDivideEntry
+	bl __udivsi3
 	ldr r6, .L_0200b5ec
 	adds r3, r7, #0
 	adds r3, #102
@@ -9308,7 +9308,7 @@ Func_0200516c:
 	lsls r1, r1, #16
 	asrs r1, r1, #16
 	lsls r0, r1, #14
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -9334,7 +9334,7 @@ Func_0200516c:
 	movs r2, #54
 	ldrsh r1, [r5, r2]
 	lsls r0, r0, #14
-	bl Engine_MathDivide
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3

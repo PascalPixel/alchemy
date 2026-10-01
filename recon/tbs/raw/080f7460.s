@@ -454,7 +454,7 @@ Unnamed_080f7460:
 .L_080f77de:
 	bl Random16
 	movs r1, #5
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	adds r6, #1
 	strb r0, [r5]
 	adds r5, #1
@@ -480,7 +480,7 @@ Unnamed_080f7460:
 	str r4, [sp, #8]
 	bl Random16
 	movs r1, #21
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	mov r1, r8
 	str r0, [r5, r7]
 	movs r6, #0
@@ -730,7 +730,7 @@ Unnamed_080f7460:
 .L_080f7a14:
 	mov r0, r11
 	movs r1, #80
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #15
 	bgt .L_080f7a28
 	ldr r0, .L_080f7c00
@@ -862,7 +862,7 @@ Unnamed_080f7460:
 	blt .L_080f7b5c
 	movs r1, #12
 	asrs r5, r3, #16
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r0, #1
 	lsls r4, r0, #1
 	mov r3, r8

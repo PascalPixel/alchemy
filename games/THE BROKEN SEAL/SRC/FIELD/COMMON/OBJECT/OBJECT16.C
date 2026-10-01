@@ -66,7 +66,6 @@ struct Object_08092624 {
 
 extern struct Object_08092624 *Object_CreateFar(s32, s32, s32, s32);
 extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
-extern s32 Math_ModU(s32, s32);
 extern const u8 BattleFx_BurstParticleScriptA[];
 extern const u8 BattleFx_BurstParticleScriptB[];
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
@@ -494,7 +493,7 @@ void BattleFx_UpdateParticleLinearMotion(void *particle)
   *((s32 *)(((u8 *)particle) + 0xC)) = velocity_y;
   *((s32 *)(((u8 *)particle) + 0x3C)) = velocity_y;
   *((s32 *)(((u8 *)particle) + 0x30)) =
-      (s32)(velocity_x - Math_Div(velocity_x, 0x12));
+      (s32)(velocity_x - velocity_x / 0x12);
  do {
    vz = velocity_z;
    if (velocity_z < 0) {
@@ -530,9 +529,9 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
             ObjectGroup_SetChildValue(object);
 
         object->mode_55 = 0;
-        value = Math_ModU(Random16(), 10) + 5;
+        value = Random16() % 10 + 5;
         object->field_34 = -0x1999 * value;
-        value = Math_ModU(Random16(), 15) - 7;
+        value = Random16() % 15 - 7;
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;

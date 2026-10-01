@@ -106,7 +106,7 @@ Func_08146638:
 	lsls r0, r0, #1
 .L_08146712:
 	subs r0, r0, r2
-	bl Math_Div
+	bl __divsi3
 	str r0, [r5, #12]
 	mov r4, r11
 	ldr r0, [r4, #12]
@@ -116,14 +116,14 @@ Func_08146638:
 	lsls r1, r1, #14
 	adds r0, r0, r1
 	movs r1, #12
-	bl Math_Div
+	bl __divsi3
 	str r0, [r5, #16]
 	mov r2, r11
 	ldr r0, [r2, #16]
 	ldr r3, [r5, #8]
 	movs r1, #12
 	subs r0, r0, r3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #0
 	str r0, [r5, #20]
 	str r3, [r5, #24]
@@ -317,7 +317,7 @@ Func_08146638:
 	movs r1, #10
 	adds r0, r4, #0
 	str r4, [sp, #8]
-	bl Math_Mod
+	bl __modsi3
 	ldr r1, [sp, #32]
 	ldr r2, .L_081469bc
 	adds r0, r0, r1

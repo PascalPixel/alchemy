@@ -612,7 +612,7 @@ Func_080ea14c:
 	mov r0, r10
 	muls r0, r3
 	movs r1, #30
-	bl Math_Div
+	bl __divsi3
 	movs r2, #130
 	lsls r2, r2, #16
 	lsls r5, r5, #5
@@ -626,7 +626,7 @@ Func_080ea14c:
 	mov r0, r10
 	muls r0, r3
 	movs r1, #30
-	bl Math_Div
+	bl __divsi3
 	lsls r5, r5, #5
 	movs r3, #240
 	adds r5, #68

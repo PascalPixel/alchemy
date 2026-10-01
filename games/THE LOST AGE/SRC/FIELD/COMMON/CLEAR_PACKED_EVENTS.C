@@ -16,7 +16,6 @@ struct OwnerVitals {
 };
 
 s32 Event_ValidatePackedId(u32 packed);
-s32 Math_Div(s32, s32);
 void Party_RemoveActiveOwnerFar(s32 owner);
 s32 Party_CountActiveOwnersFar(void);
 
@@ -31,7 +30,7 @@ void Event_ClearValidPackedIds(void)
 
 static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
 {
-    s32 ratio = Math_Div(value << 14, max);
+    s32 ratio = (value << 14) / max;
     s32 clamped = 0x4000;
 
     if (ratio <= 0x4000) {

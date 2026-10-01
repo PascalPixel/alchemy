@@ -147,7 +147,7 @@ void FieldScene_RunStatefulSequence(s32 action)
 
         next = Data_02001001.next;
         previous = (u8)Data_02001001.next;
-        work->values[WORK_ANGLE] = Engine_MathDivide(next << 16, 5) + 0x4000;
+        work->values[WORK_ANGLE] = __divsi3(next << 16, 5) + 0x4000;
     }
     if ((s8)state == 0) {
         if (action == 16) {

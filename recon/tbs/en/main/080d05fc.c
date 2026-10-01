@@ -187,15 +187,15 @@ void Func_080d05fc(Effect *effect)
                     do {
                         from = &work->points[point_base + point];
                         point++;
-                        to = &work->points[point_base + Math_Mod(point, 3)];
+                        to = &work->points[point_base + __modsi3(point, 3)];
                         radius = 5 - tick / 16;
                         sample = 0;
                         width = radius << 1;
                         do {
                             x = from->position.x;
-                            x += Math_Div(sample * (to->position.x - x), 24);
+                            x += __divsi3(sample * (to->position.x - x), 24);
                             y = from->position.y;
-                            y += Math_Div(sample * (to->position.y - y), 24);
+                            y += __divsi3(sample * (to->position.y - y), 24);
                             x -= radius; y -= radius;
                             draw[0](dst, (u8 *)work + BattleFx6_FlareCells[radius - 1] + 0x1000, x, y, width, width);
                             sample++;

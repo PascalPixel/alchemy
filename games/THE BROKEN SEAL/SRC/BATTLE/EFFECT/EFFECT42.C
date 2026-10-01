@@ -13,7 +13,6 @@ struct BattleEffect16GlobalState {
 
 extern struct BattleEffect16GlobalState gGameState;
 extern u32 gFrameCount;
-s32 Math_ModU(u32, s32);
 void BattleFx_SpawnDescendingArcParticles(void *);
 
 extern s32 gCell[];
@@ -33,7 +32,7 @@ void BattleFx_UpdateEffect16State(void)
 
     effect_state = *(u8 **)(ObjectTable_Get(gGameState.active_object_id) + 0x50);
     child_state = *(u8 **)(effect_state + 0x28);
-    phase = Math_ModU(gFrameCount, 5);
+    phase = gFrameCount % 5;
     if (phase == 0) {
         state_byte = effect_state + 0x25;
         *state_byte = 1;
@@ -64,9 +63,9 @@ void BattleFx_UpdatePairedArcSpawner(void *object)
     counter = (*(u16 *)((u8 *)object + 0x66))++;
 
     if (gGameState.scene == (s32)&SceneId_Clear) {
-        if (Math_Mod(counter, 7) == 0)
+        if (__modsi3(counter, 7) == 0)
             BattleFx_SpawnDescendingArcParticles(object);
-    } else if (Math_Mod(counter, 5) == 0) {
+    } else if (__modsi3(counter, 5) == 0) {
         BattleFx_SpawnDescendingArcParticles(object);
     }
 

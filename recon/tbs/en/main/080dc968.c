@@ -165,7 +165,7 @@ void BattleEffect_RunStagedParticles(void *arg0) {
     sp2C = 0;
     var_r7_185 = temp_r3_25 + 0x7080;
     do {
-        M2C_FIELD(var_r7_185, s32 *, 0) = (s32) ((Math_ModU(Random16(), 0x60) + 0xC) << 0x10);
+        M2C_FIELD(var_r7_185, s32 *, 0) = (s32) ((__umodsi3(Random16(), 0x60) + 0xC) << 0x10);
         M2C_FIELD(var_r7_185, s32 *, 4) = ((0x3F & Random16()) + 0x20) << 0x10;
         M2C_FIELD(var_r7_185, s32 *, 0xC) = 0;
         M2C_FIELD(var_r7_185, s32 *, 0x10) = 0;
@@ -384,7 +384,7 @@ block_36:
     sp2C = 0;
     var_r5_836 = temp_r3_25 + 0x7080;
     do {
-        temp_r0_841 = Math_Mod(sp2C, 6);
+        temp_r0_841 = __modsi3(sp2C, 6);
         temp_r2_844 = M2C_FIELD(temp_r3_25, void **, 0x7828);
         if (temp_r0_841 < (s32) M2C_FIELD(temp_r2_844, s32 *, 0x14)) {
             EffectPosition_ApplyStepAndYOffset(M2C_FIELD(temp_r2_844, s16 *,
@@ -464,7 +464,7 @@ loop_58:
                 M2C_FIELD(var_r7_927, s32 *, 0x18) = 0;
                 M2C_FIELD(temp_r3_25, s32 *, 0x77A8) = 2;
                 Audio_PlayCue(0x86);
-                temp_r0_1078 = Math_Mod(sp2C, 6);
+                temp_r0_1078 = __modsi3(sp2C, 6);
                 temp_r2_1081 = M2C_FIELD(temp_r3_25, void **, 0x7828);
                 if (temp_r0_1078 < (s32) M2C_FIELD(temp_r2_1081, s32 *, 0x14)) {
                     temp_r5_1087 = (temp_r0_1078 * 2) + 0x24;

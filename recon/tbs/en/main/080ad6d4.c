@@ -53,7 +53,7 @@ s16 *Runtime_BumpAllocateAlternatePool(s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 s32 Modulo(s32, s32);
-s32 FixedPoint_Ratio(s32, s32);
+s32 __divsi3(s32, s32);
 s32 Menu_GetModuloOfSum(s32, s32);
 void BattleUnit_Recalculate(s32);
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
@@ -234,11 +234,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Sys_Free(diff_work);
     }
 
-    count[0] = FixedPoint_Ratio(count[0] - 1, 5) + 1;
+    count[0] = __divsi3(count[0] - 1, 5) + 1;
     if (count[0] == 0) {
         count[0] = 1;
     }
-    count[1] = FixedPoint_Ratio(count[1] - 1, 5) + 1;
+    count[1] = __divsi3(count[1] - 1, 5) + 1;
     if (count[1] == 0) {
         count[1] = 1;
     }

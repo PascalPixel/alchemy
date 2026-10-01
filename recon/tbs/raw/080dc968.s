@@ -220,7 +220,7 @@ BattleEffect_RunStagedParticles:
 .L_080dcb34:
 	bl Random16
 	movs r1, #96
-	bl IwramUnsignedRemainderEntry
+	bl __umodsi3
 	adds r0, #12
 	lsls r0, r0, #16
 	str r0, [r7]
@@ -836,7 +836,7 @@ BattleEffect_RunStagedParticles:
 .L_080dd010:
 	ldr r0, [sp, #44]
 	movs r1, #6
-	bl Math_Mod
+	bl __modsi3
 	ldr r3, .L_080dd054
 	add r3, r11
 	ldr r2, [r3]
@@ -1073,7 +1073,7 @@ BattleEffect_RunStagedParticles:
 	bl AudioCommand_PlayFar
 	movs r1, #6
 	ldr r0, [sp, #44]
-	bl Math_Mod
+	bl __modsi3
 	ldr r6, .L_080dd2a0
 	add r6, r11
 	ldr r2, [r6]

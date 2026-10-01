@@ -102,7 +102,7 @@ BattleFx_RunFortyEightFrameEffect:
 	negs r0, r0
 	lsls r0, r0, #2
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r2, .L_080cf104
 	adds r0, #64
 .L_080cf0d4:

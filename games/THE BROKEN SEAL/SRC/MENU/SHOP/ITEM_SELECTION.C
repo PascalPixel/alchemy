@@ -10,7 +10,6 @@ extern u8 MsgCannotDropIt[];
 extern u8 MsgCannotRemoveIt[];
 
 
-s32 Math_Mod(s32 value, s32 divisor);
 void UiWork_FinalizeFar(s32 window, s32 style);
 struct ShopCursorAnchor *RenderOutput_CreateFar(
     u32 resource,
@@ -59,9 +58,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            selected_index = Math_Mod(
-                selected_index + shop->party_member_count,
-                shop->party_member_count);
+            selected_index = (selected_index + shop->party_member_count) % shop->party_member_count;
             unit_id = shop->party_member_ids[selected_index];
             Shop_PlaceCursor((void *)list_window, selected_index * 24 - 12, 0);
             shop->mode = 3;
@@ -189,8 +186,8 @@ s32 Shop_SelUse(s32 actor)
             off = selection * 2 + 216;
             flags = *(u16 *)(object + off) & 0x1ff;
             window = (void *)shop->item_window;
-            x = Math_Mod(selection, 5) << 4;
-            y = (Math_Div(selection, 5) << 4) + 8;
+            x = selection % 5 << 4;
+            y = (selection / 5 << 4) + 8;
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
             Shop_DrawUseItem(win1, actor, selection);
@@ -223,7 +220,7 @@ s32 Shop_SelUse(s32 actor)
             goto exit_loop;
         }
 
-        /* selection -= 1 / += 1 as its own statement before the Math_Mod
+        /* selection -= 1 / += 1 as its own statement before the __modsi3
          * call (matching sibling main:080b211c's idiom) so the compiler
          * commits the +-1 directly into selection's home register (r7)
          * ahead of the add; folding it into one `selection +- 1 + count`
@@ -232,13 +229,13 @@ s32 Shop_SelUse(s32 actor)
         if ((gKeysRepeat & 0x20) != 0) {
             Audio_PlayCue(111);
             selection -= 1;
-            selection = Math_Mod(selection + count, count);
+            selection = (selection + count) % count;
             redraw = 1;
         }
         if ((gKeysRepeat & 0x10) != 0) {
             Audio_PlayCue(111);
             selection += 1;
-            selection = Math_Mod(selection + count, count);
+            selection = (selection + count) % count;
             redraw = 1;
         }
         if ((gKeysRepeat & 0x40) != 0) {

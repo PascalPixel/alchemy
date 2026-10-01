@@ -48,7 +48,7 @@ extern s32 Battle_GetEntryField2LowBits(u8 value);
 extern s32 Func_080771a0_rng(void);
 extern void BattlePresentation_WaitForAdvance(void);
 extern void Func_080bf1d4(void); /* unreachable; long-branch veneer target only, never a real call site */
-extern void Math_Div(s32 a, s32 b);         /* FixedPoint_Ratio */
+extern void __divsi3(s32 a, s32 b);         /* __divsi3 */
 extern void Equipment_GetUnleashRateBonusFar(s16 id);
 extern s32 Ability_CheckStatusOrSpecialId(s16 id);
 extern s32 Battle_HitCheck(s16 id, u8 a, u8 b, u8 c, s32 mode);
@@ -727,9 +727,9 @@ L_080befb4_shared:
     {
         s16 impactPower;
         s32 rangeMask;
-        impactPower = *(s16 *)(req + 0); /* placeholder wiring for Equipment_GetUnleashRateBonusFar/Math_Div chain */
+        impactPower = *(s16 *)(req + 0); /* placeholder wiring for Equipment_GetUnleashRateBonusFar/__divsi3 chain */
         Equipment_GetUnleashRateBonusFar(impactPower);
-        Math_Div(200 << 16, 0);
+        __divsi3(200 << 16, 0);
         rangeMask = BattleRandom16Far();
         (void)rangeMask;
         if (rangeMask <= 0) {

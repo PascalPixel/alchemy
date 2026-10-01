@@ -25,7 +25,7 @@
  * modeled the same way those files model their own veneer slot: a direct
  * call to the veneer's own symbol with the real jump target passed as a
  * trailing argument.  The middle argument is never assigned between the
- * preceding Math_Div call and this call in the retained assembly (no
+ * preceding __divsi3 call and this call in the retained assembly (no
  * instruction touches r1 in between), so it is passed uninitialized here,
  * matching FixedSqrt's own "unused1"/"unused2" idiom for the identical
  * situation.
@@ -44,7 +44,7 @@
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_pair);
 void **GetBattleObjectSlotFar(s32 member_id);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 s32 _call_via_r2(s32 a, s32 b, s32 target);
 void Object_ResetMotion(void *object);
 void Object_SetPosition(void *object, s32 x, s32 y, s32 z);
@@ -59,7 +59,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
-s32 Math_Mod(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -130,12 +130,12 @@ s32 Unnamed_080e698c(void *object)
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
     new_x = M2C_FIELD(member_a, s32 *, 8);
     dx = M2C_FIELD(member_b, s32 *, 8) - new_x;
-    dx_scaled = Math_Div(dx * 80, 100);
+    dx_scaled = __divsi3(dx * 80, 100);
     dz = M2C_FIELD(member_b, s32 *, 16) - M2C_FIELD(member_a, s32 *, 16);
-    dz_scaled = Math_Div(dz * 80, 100);
+    dz_scaled = __divsi3(dz * 80, 100);
     new_x = new_x + dx_scaled;
     new_z = M2C_FIELD(member_a, s32 *, 16) + dz_scaled;
-    speed = Math_Div(
+    speed = __divsi3(
         _call_via_r2(
             ((dx_scaled >> 8) * (dx_scaled >> 8))
                 + ((dz_scaled >> 8) * (dz_scaled >> 8)),
@@ -247,7 +247,7 @@ s32 Unnamed_080e698c(void *object)
                             if (cell < 0) {
                                 cell += 3;
                             }
-                            cell = Math_Mod(cell >> 2, 6);
+                            cell = __modsi3(cell >> 2, 6);
                             draw_pair[0](
                                 draw_destination,
                                 (u8 *)work + 0x3E80 + (cell << 8),

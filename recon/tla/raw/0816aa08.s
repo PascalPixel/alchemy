@@ -331,7 +331,7 @@ Func_0816aa08:
 	blt .L_0816acfc
 	adds r0, r6, #0
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #1
 	bgt .L_0816acc2
@@ -383,7 +383,7 @@ Func_0816aa08:
 	cmp r0, #17
 	bhi .L_0816ad54
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r1, #60
 	adds r5, r0, #0
 	ldr r2, .L_0816ae38
@@ -423,7 +423,7 @@ Func_0816aa08:
 	lsls r0, r3, #3
 	movs r1, #104
 	mov r8, r4
-	bl Math_Mod
+	bl __modsi3
 	mov r10, r0
 	ldr r0, [sp, #8]
 	ldr r1, [sp, #16]

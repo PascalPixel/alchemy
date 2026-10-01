@@ -52,7 +52,7 @@ Func_08109624:
 	ldr r3, .L_081096f4
 	ldrh r1, [r2]
 	ldr r0, [r3, #16]
-	bl Math_DivU
+	bl __udivsi3
 	adds r5, r0, #0
 .L_08109690:
 	movs r3, #129

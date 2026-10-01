@@ -3,7 +3,7 @@
  *
  * Remaining difference (alchemy permute 4400; best permuted 2835): register
  * allocation and scheduling in the opening scene-state reads and in the two
- * scaling loops. It needs import labels Engine_MathRemainder,
+ * scaling loops. It needs import labels __modsi3,
  * Engine_TaskAddCallback and Engine_TaskRemoveCallback on the matching
  * veneers in ARUTAMIRA_DOU/IMPORT.S.
  */
@@ -12,7 +12,7 @@
 void ArutamiraDou_SpinActorWheel(void);
 
 void SceneActor_SetPositionFromTransformedBase(s32 actor, s32 radius, s32 angle);
-s32 Engine_MathRemainder(s32 dividend, s32 divisor);
+s32 __modsi3(s32 dividend, s32 divisor);
 
 void ArutamiraDou_RunWheelGame(s32 actor)
 {
@@ -46,7 +46,7 @@ void ArutamiraDou_RunWheelGame(s32 actor)
     chosen = ((s8 *)p)[1];
     wheel = ArutamiraDou_ClearTarget;
     offset = p[1];
-    wheel[3] = Engine_MathDivide(chosen << 16, 5) + 0x4000;
+    wheel[3] = __divsi3(chosen << 16, 5) + 0x4000;
     if ((s8)state == 0) {
         if (actor == 16) {
             state = 1;
@@ -111,7 +111,7 @@ void ArutamiraDou_RunWheelGame(s32 actor)
     if (spin == 0)
         return;
     turns = ++q[-1];
-    q[1] = Engine_MathRemainder((s8)((((u32)Engine_RandomNext() << 2) >> 16) + offset + 1) + 5, 5);
+    q[1] = __modsi3((s8)((((u32)Engine_RandomNext() << 2) >> 16) + offset + 1) + 5, 5);
     wheel = ArutamiraDou_ClearTarget;
     {
         s32 zero = 0;

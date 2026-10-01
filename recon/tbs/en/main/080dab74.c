@@ -124,9 +124,9 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_Mod(s32 numerator, s32 denominator);
-s32 Math_ModU(s32 value, s32 range);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __modsi3(s32 numerator, s32 denominator);
+s32 __umodsi3(s32 value, s32 range);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
@@ -265,7 +265,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                         }
                     } else {
                         mote->radius += 8;
-                        mote->height -= (Math_Mod(j, 5) + 2) << 16;
+                        mote->height -= (__modsi3(j, 5) + 2) << 16;
                         if (ymin > mote->height)
                             ymin = mote->height;
                         if (ymax < mote->height)
@@ -283,11 +283,11 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
             for (k = 0;
                     k != Data_080eea88[work->argument->variant * 3 + 1];
                     k++) {
-                if (k < Math_Div(phase, 3)) {
+                if (k < __divsi3(phase, 3)) {
                     s32 image;
                     s32 height;
 
-                    image = Math_Mod(k, 3);
+                    image = __modsi3(k, 3);
                     if (frame
                             >= Data_080eea88[
                                 work->argument->variant * 3 + 2] - 7) {
@@ -368,7 +368,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                     mote->y = ymin << 16;
                 } else {
                     mote->y =
-                        (Math_ModU(Random16(), ymax - ymin) + ymin)
+                        (__umodsi3(Random16(), ymax - ymin) + ymin)
                         << 16;
                 }
                 mote->frame = (Random16() & 15) + 20;
@@ -407,7 +407,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
                         mote->frame = 17;
                         mote->x = (Random16() & 127) << 16;
                         mote->y =
-                            (Math_ModU(Random16(), ymax - ymin)
+                            (__umodsi3(Random16(), ymax - ymin)
                                 + ymin) << 16;
                     }
                 }

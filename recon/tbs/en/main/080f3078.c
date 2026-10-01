@@ -68,7 +68,7 @@ extern u8 Value_00000600;
  *  - The reference also cross-jumps its two DMA request sites into one shared
  *    tail at the end of the function; the two Dma_Set calls here are
  *    expanded separately.
- *  - In cases 0x10003 and 0x10007 the reference emits Math_Div before the
+ *  - In cases 0x10003 and 0x10007 the reference emits __divsi3 before the
  *    three channel clamps, while the spelling kept here schedules the red
  *    clamp first. Splitting those statements to force the reference call order
  *    was measured and costs 8 extra bytes and about 57 more differing
@@ -80,11 +80,11 @@ extern u8 Value_00000600;
  * this candidate keeps them in low registers and reloads or spills them around
  * the calls. Every reference branch, loop, call and store is represented, and
  * the call inventory agrees exactly (17 clamp-channel, 3 clamp-component,
- * 5 Math_Div, 7 indirect). This is a draft, not exact C. */
+ * 5 __divsi3, 7 indirect). This is a draft, not exact C. */
 
 s32 Graphics_ClampRgb555Channel(s32 val);
 s32 Graphics_ClampRgb555Component(s32 val);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 
 typedef s32 (*DivideFunc)(s32 num, s32 den);
 
@@ -185,7 +185,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                     r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
                     g = (c >> 5) & 31;
                     b = (c >> 10) & 31;
-                    g = Graphics_ClampRgb555Channel(4 + (g - Math_Div(g, 3)));
+                    g = Graphics_ClampRgb555Channel(4 + (g - __divsi3(g, 3)));
                     b = Graphics_ClampRgb555Channel(b - 6);
                     dst[0] = Data_080f3a6e[b];
                     dst[1] = *(Data_080f3a2e + g);
@@ -240,7 +240,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = c & 31;
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
-                v = Graphics_ClampRgb555Channel(Math_Div(r + (g + b), 3));
+                v = Graphics_ClampRgb555Channel(__divsi3(r + (g + b), 3));
                 r = Graphics_ClampRgb555Channel((r >> 1) + v);
                 g = Graphics_ClampRgb555Channel((g >> 1) + v);
                 b = Graphics_ClampRgb555Channel((b >> 1) + v);
@@ -257,8 +257,8 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
                 r = Graphics_ClampRgb555Channel(r + ((b >> 3) + (g >> 3)));
-                g = g - Math_Div(g, 3);
-                b = b - Math_Div(b, 3);
+                g = g - __divsi3(g, 3);
+                b = b - __divsi3(b, 3);
                 *dst = Data_080f39ee[b];
                 dst[1] = Data_080f39ee[g];
                 dst[2] = *(Data_080f3a2e + r);
@@ -275,7 +275,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                     r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
                     g = (c >> 5) & 31;
                     b = (c >> 10) & 31;
-                    g = Graphics_ClampRgb555Channel(4 + (g - Math_Div(g, 3)));
+                    g = Graphics_ClampRgb555Channel(4 + (g - __divsi3(g, 3)));
                     b = Graphics_ClampRgb555Channel(b - 6);
                     dst[0] = Data_080f3a6e[b];
                     dst[1] = ((u16 *)Data_080f3a2e)[g];

@@ -104,7 +104,7 @@ s32 BattleEffect_SelectNearbyObject(s32 sourceId)
         squaredDistance = xSquared + ySquared + zSquared;
         distance = Iwram_Sqrt(squaredDistance);
         if ((candidate->unknown_56[3] & 4) != 0)
-            distance = Math_Div(distance * 10, 13);
+            distance = distance * 10 / 13;
         if (distance >= bestDistance)
             continue;
 
@@ -187,7 +187,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 
         distance = Iwram_Sqrt(deltaX * deltaX + cellZ * cellZ);
         if ((candidate->flags & 0x10) != 0)
-            distance = Math_Div(distance * 2, 3);
+            distance = distance * 2 / 3;
         if (distance >= bestDistance)
             continue;
 

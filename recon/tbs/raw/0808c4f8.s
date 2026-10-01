@@ -512,7 +512,7 @@ Func_0808c4f8:
 	adds r0, r5, #0
 	movs r2, #52
 	ldrsh r1, [r6, r2]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3
@@ -545,7 +545,7 @@ Func_0808c4f8:
 	movs r3, #54
 	ldrsh r1, [r6, r3]
 	lsls r0, r0, #14
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #128
 	lsls r3, r3, #7
 	cmp r0, r3

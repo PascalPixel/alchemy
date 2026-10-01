@@ -414,7 +414,7 @@ BattleMenu_RunActionSelection:
 	ldr r0, [sp, #60]
 	movs r1, #5
 	adds r6, r7, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	bne .L_08025c7e
 	ldr r0, .L_08025cf8
@@ -435,7 +435,7 @@ BattleMenu_RunActionSelection:
 .L_08025c98:
 	mov r0, r8
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r7, r5
 	blt .L_08025c6a
@@ -498,7 +498,7 @@ BattleMenu_RunActionSelection:
 	bhi .L_08025d24
 	ldr r0, [sp, #60]
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	bne .L_08025d24
 	ldr r1, .L_08025e28
@@ -508,7 +508,7 @@ BattleMenu_RunActionSelection:
 	movs r1, #5
 	mov r0, r8
 	ldrh r5, [r2, #8]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	subs r5, r5, r0
 	adds r5, r5, r7
 	movs r3, #0
@@ -523,7 +523,7 @@ BattleMenu_RunActionSelection:
 .L_08025d48:
 	mov r0, r8
 	movs r1, #5
-	bl FixedPoint_Ratio
+	bl __divsi3
 	cmp r7, r0
 	blt .L_08025d04
 	mov r1, r11
@@ -764,7 +764,7 @@ BattleMenu_RunActionSelection:
 	ldr r0, [sp, #68]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	ldr r0, [sp, #60]
@@ -817,7 +817,7 @@ BattleMenu_RunActionSelection:
 	movs r1, #5
 	str r3, [sp, #60]
 	mov r10, r2
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	ldr r0, [sp, #60]
@@ -856,7 +856,7 @@ BattleMenu_RunActionSelection:
 	ldr r0, [sp, #68]
 	movs r1, #5
 	subs r0, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r3, r0, #2
 	adds r3, r3, r0
 	str r3, [sp, #60]

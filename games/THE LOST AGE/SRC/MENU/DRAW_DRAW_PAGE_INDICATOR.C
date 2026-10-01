@@ -21,8 +21,8 @@ void Menu_DrawPageIndicator(
 
     x = right_edge;
     tile = PAGE_LABEL_FIRST;
-    page_count = Math_Div(item_count, page_size);
-    if (Math_Mod(item_count, page_size) != 0)
+    page_count = item_count / page_size;
+    if (item_count % page_size != 0)
         page_count++;
 
     x -= page_count;

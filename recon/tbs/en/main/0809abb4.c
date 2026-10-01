@@ -46,7 +46,7 @@ extern struct BattleEffectMotionState *gEffectWork;
 struct BattleEffectMotionObject *Object_Spawn(s32, s32, s32, s32);
 void Object_SetMode(struct BattleEffectMotionObject *, s32);
 void BattleEffect_InitializeSharedScene(void);
-s32 Math_Div(s32, s32);
+s32 __divsi3(s32, s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 void Camera_WorldToScreen(s32 *);
@@ -63,7 +63,7 @@ static __inline__ s32 InterpolateCoordinate(s32 from, s32 to, s32 step)
     s32 delta;
 
     delta = to - from;
-    return from + Math_Div(step * delta, 10);
+    return from + __divsi3(step * delta, 10);
 }
 
 void BattleEffect_RunFallbackObjectTransition(void)
@@ -99,7 +99,7 @@ Interpolate:
         object->x = InterpolateCoordinate(origin.x, destination.x, step);
         object->y = InterpolateCoordinate(origin.y, destination.y, step);
         object->z = InterpolateCoordinate(origin.z, destination.z, step);
-        scale = Math_Div(step * 0xc000, 10) + 0x4000;
+        scale = __divsi3(step * 0xc000, 10) + 0x4000;
         object->scale_x = scale;
         object->scale_y = scale;
         step++;

@@ -14,9 +14,4 @@ SECTIONS
     }
     .bss : { "*/resource_396_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
-    /* The compiler calls its division helpers by their ABI names; here they
-       are the overlay's veneers into the resident IWRAM dividers, as in
-       MAIN.LD. */
-    __divsi3 = Engine_MathDivide;
-    __udivsi3 = IwramUnsignedDivideEntry;
 }

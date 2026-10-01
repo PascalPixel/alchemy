@@ -88,7 +88,7 @@ check_exit:
 
     if (changed != 0) {
         changed = 0;
-        quantity = Math_Mod(quantity + 5, 5);
+        quantity = (quantity + 5) % 5;
         ItemMenu_DrawItemDetails(window, value);
     }
 

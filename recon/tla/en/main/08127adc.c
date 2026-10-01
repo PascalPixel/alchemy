@@ -1,6 +1,6 @@
 /*
  * Draft: Summon_TakeCharge, ported from its ☀️ twin (⚓️'s 9 channels, the
- * battle work from the heap slot, % for Math_Mod); it goes before
+ * battle work from the heap slot, % for __modsi3); it goes before
  * Summon_ReleaseCharge in SRC/BATTLE/SUMMON/CHARGE.C. Score 280, three
  * scheduling steps: the listing clears i (movs r1, #0) before loading the
  * count, stores the new channel before copying r7 for the mask offset, and

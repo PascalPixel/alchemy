@@ -827,7 +827,7 @@ void ToretoHeya_SpawnSwirlSparks(void)
     counter = &ToretoHeya_SparkCounter;
     frame = *counter;
     previous = 0;
-    wave = Engine_MathDivide(frame, 10);
+    wave = __divsi3(frame, 10);
     switch (frame) {
     case 0:
     case 10:

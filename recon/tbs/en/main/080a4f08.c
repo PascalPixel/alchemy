@@ -40,7 +40,7 @@ s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 struct RenderOutput *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 Math_Mod(s32 value, s32 modulus);
+s32 __modsi3(s32 value, s32 modulus);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
@@ -84,7 +84,7 @@ update:
     if (changed == 0)
         goto input;
     changed = 0;
-    quantity = Math_Mod(range + quantity, range);
+    quantity = __modsi3(range + quantity, range);
     RenderOutput_RedrawSavedRectFar(window);
     UiText_DrawCharacterAtOffsetFar(0xade, window, 32, 0);
     Dma_Set(Data_080af08c, tiles, 0x84000040, (volatile u32 *)0x040000d4);

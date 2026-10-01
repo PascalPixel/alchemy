@@ -82,7 +82,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         object_pointer = slot;
         value = *(s32 *)object_pointer;
         ObjectGroup_SetChildValueUnlessFifteenFar(value, 10);
-        value = Math_DivU(Random16(), 3) + 0x10000;
+        value = __udivsi3(Random16(), 3) + 0x10000;
         *(s32 *)((u8 *)slot + 44) = value;
         *(s32 *)((u8 *)slot + 40) = value;
         remaining--;

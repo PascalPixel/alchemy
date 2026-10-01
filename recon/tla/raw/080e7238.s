@@ -136,7 +136,7 @@ Func_080e7238:
 	movs r1, #100
 	str r5, [r6, #12]
 	str r7, [r6, #20]
-	bl Math_Mod
+	bl __modsi3
 	movs r3, #1
 	negs r3, r3
 	add r10, r3
@@ -247,7 +247,7 @@ Func_080e7238:
 	strh r3, [r1, #6]
 	lsls r0, r2, #16
 	movs r1, #30
-	bl Math_Div
+	bl __divsi3
 	mov r3, r8
 	str r0, [r3, #24]
 	movs r3, #128

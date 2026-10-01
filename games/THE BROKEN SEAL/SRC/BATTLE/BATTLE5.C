@@ -19,7 +19,6 @@ struct Object_080c1a34 {
 
 struct Object_080c1a34 *Owner_GetRecordFar(s32 id);
 s32 GameFlag_IsSet(s32 flag);
-s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
 s32 GameFlag_ClearBitFar(s32 id);
 void Runtime_BumpFree(void *ptr);
@@ -65,7 +64,6 @@ struct OwnerState {
     struct OwnerStats stats;
 };
 
-s32 Math_Div(s32 numerator, s32 denominator);
 void Owner_RecalculateStatsFar(s32 owner);
 void Runtime_BumpFree(void *block);
 
@@ -149,7 +147,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 
     if (eligible_count == 0)
         return -3;
-    return FixedPoint_Ratio(level_sum, eligible_count);
+    return level_sum / eligible_count;
 }
 
 /* battle/formation/select_level_matched_candidate.c */
@@ -179,7 +177,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
         } while (i != 0);
     }
 
-    chance = Math_Div(level_total, unit_count);
+    chance = level_total / unit_count;
     chance += (s8)GameFlag_GetByteFar(1016);
     if (chance <= 0)
         chance = 1;
@@ -252,8 +250,8 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
 
     value = stats->max_hp;
-    value += Math_Div(levels * 97, 10);
-    floor = Math_Div(base->max_hp * 7, 10);
+    value += levels * 97 / 10;
+    floor = base->max_hp * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 9999)
@@ -261,38 +259,38 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     stats->max_hp = value;
 
     value = state->stats.max_pp;
-    value += Math_Div(levels * 15, 10);
-    floor = Math_Div(base->max_pp * 7, 10);
+    value += levels * 15 / 10;
+    floor = base->max_pp * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
     state->stats.max_pp = value;
 
-    floor = Math_Div(levels * 123, 10);
+    floor = levels * 123 / 10;
     value = state->stats.attack;
     value += floor;
-    floor = Math_Div(base->attack * 7, 10);
+    floor = base->attack * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
     state->stats.attack = value;
 
-    floor = Math_Div(levels * 33, 10);
+    floor = levels * 33 / 10;
     value = state->stats.defense;
     value += floor;
-    floor = Math_Div(base->defense * 7, 10);
+    floor = base->defense * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
     state->stats.defense = value;
 
-    floor = Math_Div(levels * 51, 10);
+    floor = levels * 51 / 10;
     value = state->stats.agility;
     value += floor;
-    floor = Math_Div(base->agility * 7, 10);
+    floor = base->agility * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
@@ -301,7 +299,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 
     for (i = 0; i < 4; i++) {
         value = state->stats.elements[i].power + levels * 15;
-        floor = Math_Div(base->elements[i].power * 7, 10);
+        floor = base->elements[i].power * 7 / 10;
         if (value < floor)
             value = floor;
         if (value > 200)
@@ -346,7 +344,7 @@ s32 Summon_TakeCharge(s32 no, s32 n)
             return 0x8001;
         }
         for (; retry <= 31; retry++) {
-            ch = Math_Mod(w->channels[i] + 1, CH_CNT);
+            ch = (w->channels[i] + 1) % CH_CNT;
             w->channels[i] = ch;
             if ((w->used_masks[i] & (1 << (s8)ch)) == 0)
                 break;

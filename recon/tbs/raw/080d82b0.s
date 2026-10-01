@@ -263,7 +263,7 @@ Unnamed_080d82b0:
 	blt .L_080d852e
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	adds r0, #1
 	lsls r4, r0, #1
 	ldr r2, .L_080d85c4

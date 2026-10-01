@@ -7,7 +7,6 @@
 #include "BATTLE_ESCAPE.H"
 
 s32 Trig_Cos(s32);
-s32 Math_Div(s32, s32);
 extern s32 gFrameCount;
 
 void Render_ResetTransformState(void);
@@ -121,7 +120,7 @@ void Palette_UpdatePulseBrightness(void)
         tick = gFrameCount;
         angle = (tick * 3) << 10;
         color = palette[16];
-        amount = Math_Div(0x10000 - Trig_Cos(angle), 0x2AAA);
+        amount = (0x10000 - Trig_Cos(angle)) / 0x2AAA;
 
         red = (color >> 10) & mask;
         green = (color >> 5) & mask;
@@ -222,7 +221,7 @@ s32 BattleEscape_CheckSuccess(void)
             level_total += Owner_GetStateFar(
                 (s32)living_units[unit_index])[0x0f];
         }
-        chance += Math_Div(level_total * 0x1F4, living_count);
+        chance += level_total * 0x1F4 / living_count;
         living_count = BattleParty_ListLivingUnits(
             BATTLE_SIDE_ENEMIES,
             living_units);
@@ -231,7 +230,7 @@ s32 BattleEscape_CheckSuccess(void)
             level_total += Owner_GetStateFar(
                 (s32)living_units[unit_index])[0x0f];
         }
-        chance -= Math_Div(level_total * 0x1F4, living_count);
+        chance -= level_total * 0x1F4 / living_count;
         if ((chance > 0) &&
             ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
             escaped = 1;

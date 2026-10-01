@@ -1389,11 +1389,11 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     if (flags & EFFECT_SCALE_TO_TARGET) {
         script = table.script[flags & EFFECT_SCRIPT_MASK];
         if (flags & EFFECT_USE_START_SCALE) {
-            obj->scale_rate_x = Engine_MathDivide(extra->target_scale_x - obj->scale_x, script[3]);
-            obj->scale_rate_y = Engine_MathDivide(extra->target_scale_y - obj->scale_y, script[3]);
+            obj->scale_rate_x = (extra->target_scale_x - obj->scale_x) / script[3];
+            obj->scale_rate_y = (extra->target_scale_y - obj->scale_y) / script[3];
         } else {
-            obj->scale_rate_x = Engine_MathDivide(extra->target_scale_x - 0x10000, script[3]);
-            obj->scale_rate_y = Engine_MathDivide(extra->target_scale_y - 0x10000, script[3]);
+            obj->scale_rate_x = (extra->target_scale_x - 0x10000) / script[3];
+            obj->scale_rate_y = (extra->target_scale_y - 0x10000) / script[3];
         }
     }
 }

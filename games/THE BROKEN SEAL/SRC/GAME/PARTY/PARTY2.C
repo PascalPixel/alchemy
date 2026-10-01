@@ -26,7 +26,6 @@ struct OwnerWork {
     u16 inventory[15];
 };
 
-s32 Math_Div(s32, s32);
 s32 OwnerAction_Add(s32 id, s32 value);
 
 /* owner/Owner_RefreshActiveRatios.c */
@@ -83,7 +82,7 @@ void Party_ApplyStatePreset(void)
         {
             s16 max_hp = *(s16 *)((u8 *)unit + 0x34);
 
-            ratio = Math_Div(max_hp << 14, max_hp);
+            ratio = (max_hp << 14) / max_hp;
         }
         rate = 0x4000;
         if (ratio <= rate) {
@@ -97,7 +96,7 @@ void Party_ApplyStatePreset(void)
             unit->hp_rate = 1;
         }
 
-        ratio = Math_Div(unit->pp << 14, unit->max_pp);
+        ratio = (unit->pp << 14) / unit->max_pp;
         rate = 0x4000;
         if (ratio <= rate) {
             rate = 0;
@@ -151,7 +150,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
         } while (0);
 
         v34 = *(s16 *)(obj + 0x34);
-        t = Math_Div(v34 << 14, v34);
+        t = (v34 << 14) / v34;
         v14 = 0x4000;
         if (t <= 0x4000) {
             v14 = 0;
@@ -165,7 +164,7 @@ void Owner_RefreshActiveRatios(s32 arg0)
             *(s16 *)(obj + 0x14) = (s16)one;
         }
 
-        t = Math_Div(*(s16 *)(obj + 0x3A) << 14, *(s16 *)(obj + 0x36));
+        t = (*(s16 *)(obj + 0x3A) << 14) / (*(s16 *)(obj + 0x36));
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;
@@ -229,7 +228,7 @@ void Owner_RefreshRatiosOnFlag(void)
 
         v38 = *(s16 *)(obj + 0x38);
         v34 = *(s16 *)(obj + 0x34);
-        t = Math_Div(v38 << 14, v34);
+        t = (v38 << 14) / v34;
         v14 = 0x4000;
         if (t <= 0x4000) {
             v14 = 0;
@@ -245,7 +244,7 @@ void Owner_RefreshRatiosOnFlag(void)
 
         v3A = *(s16 *)(obj + 0x3A);
         v36 = *(s16 *)(obj + 0x36);
-        t = Math_Div(v3A << 14, v36);
+        t = (v3A << 14) / v36;
         v16 = 0x4000;
         if (t <= 0x4000) {
             v16 = 0;
@@ -274,8 +273,7 @@ void Owner_RecalculateRatios(s32 owner_no)
     struct OwnerRatioState *owner;
 
     owner = Owner_GetState(owner_no);
-    first = Math_Div(
-        (s32)((u32)(s32)owner->value_38 << 14), owner->divisor_34);
+    first = (s32)((u32)(s32)owner->value_38 << 14) / owner->divisor_34;
     first_value = 0x4000;
     if (first <= 0x4000) {
         first_value = 0;
@@ -288,8 +286,7 @@ void Owner_RecalculateRatios(s32 owner_no)
         first_value = 1;
         owner->value_14 = first_value;
     }
-    second = Math_Div(
-        (s32)((u32)(s32)owner->value_3a << 14), owner->divisor_36);
+    second = (s32)((u32)(s32)owner->value_3a << 14) / owner->divisor_36;
     second_value = 0x4000;
     if (second <= 0x4000) {
         second_value = 0;
@@ -317,7 +314,7 @@ void Owner_UpdateRatioPair(struct OwnerRatioState *state, s32 input)
         }
     }
     state->value_38 = value;
-    value = Math_Div((value << 16) >> 2, state->divisor_34);
+    value = ((value << 16) >> 2) / state->divisor_34;
 
     {
         s32 output = 0x4000;
@@ -334,7 +331,7 @@ void Owner_UpdateRatioPair(struct OwnerRatioState *state, s32 input)
         }
     }
 
-    value = Math_Div(state->value_3a << 14, state->divisor_36);
+    value = (state->value_3a << 14) / state->divisor_36;
     {
         s32 output = 0x4000;
 

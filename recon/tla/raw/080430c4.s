@@ -14,32 +14,32 @@ Func_080430c4:
 	movs r1, #60
 	sub sp, #16
 	adds r5, r0, #0
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #60
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Math_DivU
+	bl __udivsi3
 	movs r3, #100
 	adds r5, r0, #0
 	movs r1, #60
 	adds r0, r6, #0
 	muls r0, r3
-	bl Math_DivU
+	bl __udivsi3
 	movs r1, #60
 	mov r11, r0
 	adds r0, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #60
 	mov r9, r0
 	adds r0, r5, #0
-	bl Math_DivU
+	bl __udivsi3
 	movs r1, #60
 	adds r5, r0, #0
-	bl Math_ModU
+	bl __umodsi3
 	movs r1, #60
 	adds r6, r0, #0
 	adds r0, r5, #0
-	bl Math_DivU
+	bl __udivsi3
 	mov r10, sp
 	adds r1, r0, #0
 	movs r2, #3

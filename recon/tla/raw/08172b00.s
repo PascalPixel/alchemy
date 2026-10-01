@@ -1017,7 +1017,7 @@ Func_08172b00:
 	cmp r0, #0
 	blt .L_08173320
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	movs r5, #5
 	subs r5, r5, r0
 	adds r1, r7, #0

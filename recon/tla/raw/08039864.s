@@ -715,7 +715,7 @@ Func_08039864:
 	adds r0, #128
 	lsls r1, r1, #1
 	str r4, [sp, #12]
-	bl Math_Div
+	bl __divsi3
 	ldr r4, [sp, #12]
 	subs r0, #3
 	mov r12, r0

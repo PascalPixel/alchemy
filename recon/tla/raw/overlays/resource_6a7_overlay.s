@@ -790,7 +790,7 @@ Func_020006b0:
 	strb r1, [r6, #9]
 	mov r0, r8
 	movs r1, #6
-	bl Engine_MathDivide
+	bl __divsi3
 	mov r1, r10
 	ldr r3, [r1]
 	adds r5, r0, #0
@@ -799,7 +799,7 @@ Func_020006b0:
 	movs r1, #6
 	str r3, [r7]
 	mov r0, r8
-	bl Engine_MathRemainder
+	bl __modsi3
 	mov r2, r10
 	ldr r3, [r2, #4]
 	lsls r0, r0, #20

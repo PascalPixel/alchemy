@@ -36,7 +36,7 @@
  * Resource_GetTableEntry=08002f40; Resource_DecodeType01=08005340;
  * Scheduler_AddOrUpdateCallback=080041d8; Scheduler_RemoveCallback=08004278;
  * BattlePresentation_ProcessPendingGraphicsTransfer=080cd260 (Thumb +1);
- * GetBattleObjectSlotFar=080b5098; Math_Div/Mod=080022ec/080022fc;
+ * GetBattleObjectSlotFar=080b5098; __divsi3/Mod=080022ec/080022fc;
  * Trig_Cos/Sin=0800231c/08002322; Random16=08004458;
  * BattleFx_BeginCanvasLayer=080cd594; BattleFx_EndCanvasLayer=080cdbc0;
  * Graphics_UpdatePhasePalette=080d40ec; BattleEventRuntime_BeginPhaseFar=080b50e8;
@@ -152,14 +152,14 @@ void Unnamed_080d1350(struct BattleEffectArgument *argument)
         point->x = source->x / 2;
         point->y = source->y + 0x780000;
         point->z = source->z;
-        point->velocity_x = Math_Div(
+        point->velocity_x = __divsi3(
             target->x + (((Random16() & 0x7f) - 0x40) << 16)
                 - point->x,
             12);
-        point->velocity_y = Math_Div(
+        point->velocity_y = __divsi3(
             target->y - point->y + 0x140000,
             12);
-        point->velocity_z = Math_Div(target->z - point->z, 12);
+        point->velocity_z = __divsi3(target->z - point->z, 12);
         point->variant = (Random16() & 0xf) + point_index * 8;
         point_index++;
         point++;
@@ -215,17 +215,17 @@ point_loop:
                             current = &((struct EffectStep *)0x02010000)[
                                 trail_base + vertex];
                             next = &((struct EffectStep *)0x02010000)[
-                                trail_base + Math_Mod(vertex + 1, 10)];
+                                trail_base + __modsi3(vertex + 1, 10)];
                             step = 0;
                             do {
                                 s32 x;
                                 s32 y;
 
                                 x = current->velocity_x;
-                                x += Math_Div(
+                                x += __divsi3(
                                     step * (next->velocity_x - x), 12);
                                 y = current->velocity_y;
-                                y += Math_Div(
+                                y += __divsi3(
                                     step * (next->velocity_y - y), 12);
                                 draw_rectangle[0](
                                     draw_destination,

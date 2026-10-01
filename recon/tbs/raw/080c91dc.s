@@ -480,7 +480,7 @@ BattleEffect_RunFallingParticles:
 .L_080c956a:
 	movs r1, #3
 	str r2, [sp, #12]
-	bl FixedPoint_Ratio
+	bl __divsi3
 	adds r1, r0, #0
 	lsls r1, r1, #10
 	movs r3, #128

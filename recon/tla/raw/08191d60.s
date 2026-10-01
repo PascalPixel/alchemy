@@ -304,10 +304,10 @@ Func_08191d60:
 	lsls r0, r0, #15
 	subs r0, r0, r3
 	mov r1, r8
-	bl Math_Div
+	bl __divsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
-	bl Math_Div
+	bl __divsi3
 	lsls r6, r6, #14
 	str r0, [r7, #12]
 	b .L_08191fde
@@ -376,7 +376,7 @@ Func_08191d60:
 	asrs r0, r0, #5
 	bl Trig_Sin
 	movs r1, #5
-	bl Math_Div
+	bl __divsi3
 	ldr r2, [r7, #12]
 	ldr r3, [r7]
 	adds r2, r2, r0

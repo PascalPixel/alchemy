@@ -871,7 +871,7 @@ Battle_ResolveTargetAction:
 	bl Battle_CalcAttack
 	movs r1, #10
 	muls r0, r7
-	bl Math_Div
+	bl __divsi3
 	b .L_08120b42
 .L_08120b06:
 	ldr r0, [sp, #80]
@@ -930,7 +930,7 @@ Battle_ResolveTargetAction:
 	mov r1, r8
 	ldrb r0, [r1, #15]
 	movs r1, #5
-	bl Math_DivU
+	bl __udivsi3
 	lsls r0, r0, #24
 	ldr r2, [sp, #8]
 	lsrs r0, r0, #24
@@ -991,7 +991,7 @@ Battle_ResolveTargetAction:
 	adds r0, r5, #0
 	movs r1, #10
 .L_08120be8:
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 .L_08120bee:
 	cmp r5, #0
@@ -1163,7 +1163,7 @@ Battle_ResolveTargetAction:
 	movs r1, #100
 	adds r0, r3, #0
 	muls r0, r5
-	bl Math_Div
+	bl __divsi3
 	mov r2, r9
 	ldr r1, [sp, #52]
 	ldrb r3, [r2]
@@ -1187,7 +1187,7 @@ Battle_ResolveTargetAction:
 	adds r0, r5, #0
 	movs r1, #10
 .L_08120d64:
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 .L_08120d6a:
 	ldr r4, [sp, #84]
@@ -1272,7 +1272,7 @@ Battle_ResolveTargetAction:
 	adds r0, r3, #0
 	muls r0, r5
 	movs r1, #100
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	ldr r0, [sp, #52]
 	muls r5, r0
@@ -1367,7 +1367,7 @@ Battle_ResolveTargetAction:
 	adds r0, r3, #0
 	muls r0, r5
 	movs r1, #100
-	bl Math_Div
+	bl __divsi3
 	mov r1, r9
 	adds r5, r0, #0
 	ldrb r3, [r1]
@@ -1391,7 +1391,7 @@ Battle_ResolveTargetAction:
 	adds r0, r5, #0
 	movs r1, #10
 .L_08120ef6:
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 .L_08120efc:
 	movs r0, #8
@@ -1694,7 +1694,7 @@ Battle_ResolveTargetAction:
 .L_0812111c:
 	muls r0, r2
 	movs r1, #100
-	bl Math_Div
+	bl __divsi3
 	adds r7, r7, r0
 .L_08121126:
 	movs r2, #128
@@ -1736,7 +1736,7 @@ Battle_ResolveTargetAction:
 	movs r1, #100
 	adds r0, r3, #0
 	muls r0, r5
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 .L_08121172:
 	bl BattleRandom16Far
@@ -1765,7 +1765,7 @@ Battle_ResolveTargetAction:
 	adds r0, r5, #0
 	movs r1, #10
 .L_081211a2:
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 .L_081211a8:
 	ldr r3, .L_0812143c
@@ -1902,7 +1902,7 @@ Battle_ResolveTargetAction:
 	movs r1, #100
 	adds r0, r3, #0
 	muls r0, r5
-	bl Math_Div
+	bl __divsi3
 	ldr r1, [sp, #52]
 	adds r5, r0, #0
 	muls r5, r1
@@ -1996,7 +1996,7 @@ Battle_ResolveTargetAction:
 	movs r1, #100
 	adds r0, r3, #0
 	muls r0, r5
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	mov r0, r9
 	ldrb r3, [r0]
@@ -2018,7 +2018,7 @@ Battle_ResolveTargetAction:
 	adds r0, r5, #0
 	movs r1, #10
 .L_0812138e:
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 .L_08121394:
 	movs r0, #8
@@ -2569,7 +2569,7 @@ Battle_ResolveTargetAction:
 .L_081218aa:
 	movs r1, #100
 .L_081218ac:
-	bl Math_Div
+	bl __divsi3
 	adds r5, r5, r0
 .L_081218b2:
 	lsls r3, r6, #16
@@ -2617,7 +2617,7 @@ Battle_ResolveTargetAction:
 	ldrsh r0, [r2, r1]
 	movs r1, #10
 	ldrh r6, [r2, #54]
-	bl Math_Div
+	bl __divsi3
 	lsls r0, r0, #16
 	asrs r0, r0, #16
 	b .L_0812193a
@@ -2641,7 +2641,7 @@ Battle_ResolveTargetAction:
 	subs r0, r0, r3
 	movs r1, #100
 .L_08121936:
-	bl Math_Div
+	bl __divsi3
 .L_0812193a:
 	adds r5, r5, r0
 	lsls r3, r6, #16
@@ -3118,7 +3118,7 @@ Battle_ResolveTargetAction:
 	ldrsh r0, [r5, r1]
 	movs r1, #10
 	lsls r0, r0, #3
-	bl Math_Div
+	bl __divsi3
 	mov r2, r8
 	strh r0, [r2, #56]
 	b .L_08121fe4
@@ -3139,7 +3139,7 @@ Battle_ResolveTargetAction:
 	lsls r0, r3, #1
 	adds r0, r0, r3
 	lsls r0, r0, #1
-	bl Math_Div
+	bl __divsi3
 	mov r1, r8
 	strh r0, [r1, #56]
 	b .L_08121fe4
@@ -3651,7 +3651,7 @@ Battle_ResolveTargetAction:
 .L_08122112:
 	ldr r0, [sp, #48]
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	mov r0, r8
 	movs r4, #58
@@ -3699,7 +3699,7 @@ Battle_ResolveTargetAction:
 	movs r2, #54
 	ldrsh r0, [r3, r2]
 	movs r1, #10
-	bl Math_Div
+	bl __divsi3
 	lsls r0, r0, #16
 	asrs r5, r0, #16
 	mov r0, r8

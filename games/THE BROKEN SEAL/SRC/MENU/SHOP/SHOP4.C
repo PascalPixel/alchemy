@@ -199,9 +199,7 @@ s32 Shop_PickUnit(void)
     for (;;) {
         if (redraw != 0) {
             redraw = 0;
-            selection = Math_Mod(
-                selection + shop->party_member_count,
-                shop->party_member_count);
+            selection = (selection + shop->party_member_count) % shop->party_member_count;
             unit_id = shop->party_member_ids[selection];
             Shop_PlaceCursor(
                 (void *)list_window,
@@ -294,8 +292,8 @@ s32 Shop_SelSell(s32 unit_id)
                     selection = item_count - 1;
                 item_id = 0x1ff & unit->inventory[selection];
                 window = (void *)shop->item_window;
-                x = Math_Mod(selection, 5) * 16;
-                Shop_PlaceCursor(window, x, Math_Div(selection, 5) * 16 + 8);
+                x = selection % 5 * 16;
+                Shop_PlaceCursor(window, x, selection / 5 * 16 + 8);
                 shop->mode = 3;
                 Shop_DrawItemPrice(
                     list_window,
@@ -318,13 +316,13 @@ s32 Shop_SelSell(s32 unit_id)
             if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
-                selection = Math_Mod(selection + item_count, item_count);
+                selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
             if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
-                selection = Math_Mod(selection + item_count, item_count);
+                selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
             if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x40) != 0) {

@@ -1065,7 +1065,7 @@ Func_0814bee0:
 	bgt .L_0814c71e
 	movs r1, #3
 	mov r0, r9
-	bl Math_Div
+	bl __divsi3
 	movs r3, #184
 	movs r5, #3
 	lsls r3, r3, #5
@@ -1192,7 +1192,7 @@ Func_0814bee0:
 	bl Func_08015160
 	movs r1, #3
 	lsls r0, r5, #2
-	bl Math_Div
+	bl __divsi3
 	adds r2, r5, #0
 	adds r1, r0, #0
 	adds r0, r5, #0

@@ -201,7 +201,7 @@ Func_080d82e0:
 	beq .L_080d84e8
 	bl Random16
 	movs r1, #3
-	bl Math_DivU
+	bl __udivsi3
 	movs r2, #128
 	lsls r2, r2, #9
 	adds r0, r0, r2
@@ -213,7 +213,7 @@ Func_080d82e0:
 	movs r1, #24
 	strh r3, [r2]
 	lsls r0, r7, #16
-	bl Math_Div
+	bl __divsi3
 	adds r3, r6, #0
 	adds r3, #102
 	strh r0, [r3]

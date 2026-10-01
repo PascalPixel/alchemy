@@ -392,7 +392,7 @@ Func_020002cc:
 	adds r0, r6, r3
 	lsls r1, r1, #2
 	mov r9, r2
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r6, r0, #0
 	adds r0, r7, #0
 	bl RenderOutput_RedrawSavedRect
@@ -574,7 +574,7 @@ Func_020002cc:
 	adds r0, r6, r2
 	lsls r1, r1, #2
 .L_020084c6:
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r6, r0, #0
 	movs r0, #128
 	lsls r0, r0, #1
@@ -602,7 +602,7 @@ Func_020002cc:
 	adds r0, r6, r3
 .L_020084fa:
 	lsls r1, r1, #2
-	bl Engine_MathRemainder
+	bl __modsi3
 	adds r6, r0, #0
 	movs r0, #128
 	lsls r0, r0, #1

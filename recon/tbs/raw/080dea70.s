@@ -492,7 +492,7 @@ BattleFx_RunProjectileVolley:
 	ldr r3, [r5]
 	mov r1, r10
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r1, r8
 	str r0, [r5, #12]
 	cmp r1, #7
@@ -602,14 +602,14 @@ BattleFx_RunProjectileVolley:
 	mov r1, r10
 	subs r0, r0, r3
 .L_080def00:
-	bl FixedPoint_Ratio
+	bl __divsi3
 	str r0, [r5, #16]
 .L_080def06:
 	ldr r3, [r5, #8]
 	ldr r0, [r7, #16]
 	mov r1, r10
 	subs r0, r0, r3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r3, #0
 	str r0, [r5, #20]
 	str r3, [r5, #24]
@@ -1322,7 +1322,7 @@ BattleFx_RunProjectileVolley:
 	bgt .L_080df57c
 	movs r1, #6
 	ldr r0, [sp, #120]
-	bl Math_Mod
+	bl __modsi3
 	lsls r1, r0, #1
 	ldr r2, [r7]
 	ldr r3, [r7, #4]
@@ -1368,7 +1368,7 @@ BattleFx_RunProjectileVolley:
 	bne .L_080df4fc
 	movs r1, #6
 	ldr r0, [sp, #124]
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, [r7]
 	ldr r3, [r7, #4]
 	adds r1, r0, #0

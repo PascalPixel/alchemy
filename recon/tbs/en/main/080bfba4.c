@@ -49,7 +49,7 @@ s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
 void Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *block);
-s32 Math_Div(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
 void Object_SetMode(void *object, s32 animation);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 flags);
 void Audio_PlayCue(s32 cue);
@@ -209,7 +209,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         BattleEventRuntime_Reset();
         poison = &unit->poison;
         if (*poison != 0) {
-            s32 damage = Math_Div(*poison * unit->max_hp, 10);
+            s32 damage = __divsi3(*poison * unit->max_hp, 10);
             struct BattleState *state = gBattleWork;
 
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);

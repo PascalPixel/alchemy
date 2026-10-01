@@ -44,7 +44,7 @@ void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 s32 GameFlag_TestFar(s32 flag);
-s32 Math_Mod(s32 numerator, s32 denominator);
+s32 __modsi3(s32 numerator, s32 denominator);
 void Owner_RecalculateStatsFar(s32 owner);
 void Owner_RefreshClassActionsFar(s32 owner);
 
@@ -70,7 +70,7 @@ s32 Unnamed_080a5388(void)
         while (!GameFlag_TestFar(0x150)) {
             if (changed) {
                 changed = 0;
-                selection = Math_Mod(selection + 2, 2);
+                selection = __modsi3(selection + 2, 2);
             }
             if (gKeyState & 1) {
                 Audio_PlayCue(175);

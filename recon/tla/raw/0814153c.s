@@ -1142,7 +1142,7 @@ Func_0814153c:
 	bl Random16
 	lsls r5, r5, #1
 	adds r1, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	ldr r2, .L_08141e98
 	asrs r6, r5, #1
 	ldrb r3, [r2, r7]
@@ -1153,7 +1153,7 @@ Func_0814153c:
 	mov r8, r0
 	bl Random16
 	adds r1, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	ldr r3, .L_08141e9c
 	add r0, r9
 	ldrb r3, [r3, r7]
@@ -1212,7 +1212,7 @@ Func_0814153c:
 	subs r5, r1, r5
 	adds r1, r6, #0
 	subs r5, r5, r3
-	bl Math_ModU
+	bl __umodsi3
 	lsrs r3, r6, #31
 	adds r6, r6, r3
 	ldr r3, .L_08142050

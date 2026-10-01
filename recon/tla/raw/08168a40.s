@@ -184,7 +184,7 @@ Func_08168a40:
 	str r0, [r5, #16]
 	bl Random16
 	movs r1, #48
-	bl Math_ModU
+	bl __umodsi3
 	movs r4, #1
 	add r8, r4
 	adds r0, #2
@@ -472,7 +472,7 @@ Func_08168a40:
 	bne .L_08168e54
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	ldr r2, .L_08168e1c
 	adds r0, #1
 	lsls r4, r0, #1

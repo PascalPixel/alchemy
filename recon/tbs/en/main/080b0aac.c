@@ -23,8 +23,8 @@ extern u8 gKeysRepeat[];
 
 extern u8 MsgItemPlainName;
 
-s32 Math_Mod(s32 value, s32 divisor);
-s32 Math_Div(s32 value, s32 divisor);
+s32 __modsi3(s32 value, s32 divisor);
+s32 __divsi3(s32 value, s32 divisor);
 struct ItemDefinition *Item_Get(s32 item);
 void UiWork_FinalizeFar(s32 window, s32 style);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -88,7 +88,7 @@ outer:
                 item_id = shop->stock_item_ids[cursor];
                 stock_item = Item_Get(item_id);
                 redraw = 0;
-                Shop_PlaceCursor((void *)stock_window, Math_Mod(cursor, 7) * 32 - 8, 8);
+                Shop_PlaceCursor((void *)stock_window, __modsi3(cursor, 7) * 32 - 8, 8);
                 shop->mode = 4;
                 Shop_DrawStock(stock_window, cursor);
                 Shop_DrawMsg(message_window, item_id + (s32)&MsgItemPlainName);
@@ -101,7 +101,7 @@ outer:
                 goto stock_cancelled;
             if ((INPUT_REPEAT_KEYS & 0x20) != 0) {
                 result = cursor;
-                cursor = Math_Mod(--cursor + count, count);
+                cursor = __modsi3(--cursor + count, count);
                 if (result != cursor) {
                     Audio_PlayCue(0x6f);
                     redraw = 1;
@@ -109,7 +109,7 @@ outer:
             }
             if ((INPUT_REPEAT_KEYS & 0x10) != 0) {
                 result = cursor;
-                cursor = Math_Mod(++cursor + count, count);
+                cursor = __modsi3(++cursor + count, count);
                 if (result != cursor) {
                     Audio_PlayCue(0x6f);
                     redraw = 1;
@@ -120,7 +120,7 @@ outer:
                 redraw = 1;
             }
             if ((INPUT_REPEAT_KEYS & 0x80) != 0) {
-                if (cursor + 7 < Math_Div(count + 6, 7) * 7) {
+                if (cursor + 7 < __divsi3(count + 6, 7) * 7) {
                     cursor += 7;
                     redraw = 1;
                 }
@@ -159,7 +159,7 @@ outer:
             }
             if (redraw != 0) {
                 redraw = 0;
-                cursor = Math_Mod(cursor + shop->party_member_count, shop->party_member_count);
+                cursor = __modsi3(cursor + shop->party_member_count, shop->party_member_count);
                 member = shop->party_member_ids[cursor];
                 Shop_PlaceCursor((void *)party_window, cursor * 24 - 12, 0);
                 shop->mode = 3;

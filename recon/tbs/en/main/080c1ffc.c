@@ -40,7 +40,7 @@ extern struct BattleSetup *gBattleWork;
 s32 GameFlag_TestFar(s32 flag);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin);
 s32 Summon_IsEntryFlagged(s32 id);
-s32 Math_Div(s32 a, s32 b);
+s32 __divsi3(s32 a, s32 b);
 u32 Random16(void);
 void *Owner_GetStateFar(s32 unit);
 s32 BattleUnit_AssignFar(s32 unit, s32 id, s32 charge);
@@ -105,7 +105,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         room = record->maximum_counts[i] - record->minimum_counts[i];
         if (room > 0) {
             size = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
-            fit = Math_Div(budget, size);
+            fit = __divsi3(budget, size);
             if (fit < room)
                 room = fit;
             extra[i] = ((room + 1) * Random16()) >> 16;

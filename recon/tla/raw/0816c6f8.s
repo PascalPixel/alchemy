@@ -729,11 +729,11 @@ Func_0816c6f8:
 	subs r3, r3, r5
 	adds r0, r6, #0
 	muls r0, r3
-	bl Math_Div
+	bl __divsi3
 	movs r1, #12
 	adds r7, r5, r0
 	lsls r0, r6, #6
-	bl Math_Div
+	bl __divsi3
 	adds r0, #16
 	mov r9, r0
 	lsls r0, r6, #1
@@ -747,7 +747,7 @@ Func_0816c6f8:
 	strh r3, [r5, #4]
 	movs r1, #12
 	negs r0, r0
-	bl Math_Div
+	bl __divsi3
 	adds r0, #78
 	strh r0, [r5, #6]
 	ldr r1, [sp, #84]
@@ -857,7 +857,7 @@ Func_0816c6f8:
 	adds r1, r7, #0
 	lsls r0, r0, #5
 	adds r5, r2, r3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #64
 	subs r3, r3, r0
 	lsls r3, r3, #8
@@ -872,7 +872,7 @@ Func_0816c6f8:
 	str r3, [r2]
 	adds r1, r7, #0
 	lsls r0, r0, #6
-	bl Math_Div
+	bl __divsi3
 	movs r2, #238
 	ldr r1, [sp, #80]
 	lsls r2, r2, #7

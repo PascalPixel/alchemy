@@ -95,7 +95,7 @@ Func_08127588:
 .L_08127632:
 	mov r0, r9
 	mov r1, r10
-	bl Math_Div
+	bl __divsi3
 .L_0812763a:
 	add sp, #32
 	pop {r3, r5, r6}

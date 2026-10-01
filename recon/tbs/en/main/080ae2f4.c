@@ -25,7 +25,7 @@
  * lost negative exit result. H1 restores these directly from the full listing.
  * Budget: three independent structural hypotheses / 30 minutes; hard stop
  * after 45 minutes without adoption. No register permutations.
- * Reference has a dead Math_Mod(frame, 60)-5 before slot positioning. Its
+ * Reference has a dead __modsi3(frame, 60)-5 before slot positioning. Its
  * survival is an unresolved compiler-lowering fact, not a semantic dependency.
  * H1 result: 976 B / 1056, 520 differing halfwords, aligned distance 319;
  * 370 wrong instructions, 117 runs (5 pool/immediate, 31 copy/rematerialise,
@@ -192,10 +192,10 @@ s32 Unnamed_080ae2f4(void)
         owner->action_slots, buf, &first_count, &second_count));
     Runtime_BumpFree(owner_buf);
     Runtime_BumpFree(buf);
-    Menu_PutPair(page, 0, Math_Div(Menu_GetPair(page, 0) - 1, 6) + 1);
+    Menu_PutPair(page, 0, __divsi3(Menu_GetPair(page, 0) - 1, 6) + 1);
     if (Menu_GetPair(page, 0) == 0)
         Menu_PutPair(page, 0, 1);
-    Menu_PutPair(page, 1, Math_Div(Menu_GetPair(page, 1) - 1, 6) + 1);
+    Menu_PutPair(page, 1, __divsi3(Menu_GetPair(page, 1) - 1, 6) + 1);
     if (Menu_GetPair(page, 1) == 0)
         Menu_PutPair(page, 1, 1);
     UiWindow_UpdateOrCreate(&work->left_window, 0, 5, 15, 15, 2);
@@ -237,7 +237,7 @@ s32 Unnamed_080ae2f4(void)
             render->dirty_rows |= 2 << (window->y >> 2);
         }
         frame++;
-        Math_Mod(frame, 60) - 5;
+        __modsi3(frame, 60) - 5;
         FourObjectMotion_SetSlotPosition(0, 32, 200, 0);
         if (pending) {
             pending = 0;

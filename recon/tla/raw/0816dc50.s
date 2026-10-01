@@ -561,7 +561,7 @@ Func_0816dc50:
 	cmp r0, #23
 	bhi .L_0816e0e6
 	movs r1, #6
-	bl Math_Div
+	bl __divsi3
 	adds r1, r7, #0
 	adds r5, r0, #0
 	adds r0, r6, #0
@@ -742,7 +742,7 @@ Func_0816dc50:
 	lsls r0, r0, #4
 	mov r10, r4
 	str r2, [sp, #8]
-	bl Math_Div
+	bl __divsi3
 	ldr r2, [sp, #8]
 	adds r5, r0, #0
 	ldr r3, [r2, #16]
@@ -753,7 +753,7 @@ Func_0816dc50:
 	lsls r0, r3, #2
 	adds r0, r0, r3
 	lsls r0, r0, #4
-	bl Math_Div
+	bl __divsi3
 	add r10, r5
 	add r8, r0
 	asrs r5, r5, #8
@@ -769,7 +769,7 @@ Func_0816dc50:
 	.2byte 0xf800
 	movs r1, #10
 	lsls r0, r0, #8
-	bl Math_Div
+	bl __divsi3
 	adds r3, r6, #0
 	movs r2, #1
 	adds r3, #88

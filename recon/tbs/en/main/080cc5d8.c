@@ -93,8 +93,8 @@ void EffectPosition_ApplyStepAndYOffset(s32 source, void *screen);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Math_Div(s32 numerator, s32 denominator);
-s32 Math_Mod(s32 numerator, s32 denominator);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __modsi3(s32 numerator, s32 denominator);
 void Runtime_ReleaseHeapBlock(s32 id);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -191,7 +191,7 @@ void Func_080cc5d8(void *object)
         }
 
         if ((u32)(frame - 28) <= 20) {
-            s32 sprite_frame = Math_Div(frame - 28, 3);
+            s32 sprite_frame = __divsi3(frame - 28, 3);
 
             rectangle[0](
                 canvas, (u8 *)work + 0x1400 + sprite_frame * 0x900,
@@ -199,7 +199,7 @@ void Func_080cc5d8(void *object)
         }
 
         if ((u32)frame <= 14) {
-            s32 offset = (Math_Mod(Math_Div(frame, 3), 5)) << 10;
+            s32 offset = (__modsi3(__divsi3(frame, 3), 5)) << 10;
 
             for (i = 0; i != 4; i++) {
                 s32 x;

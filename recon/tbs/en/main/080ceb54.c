@@ -45,7 +45,7 @@ void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Trig_Sin(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyBaseAndYOffset(void *src, void *dest);
-s32 Math_Mod(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -243,7 +243,7 @@ s32 BattleFx_RunMemberBurst(void *object, s32 variant)
                                     ((DrawRectangleFn)callback_pair[0])(
                                         draw_destination,
                                         (u8 *)work
-                                            + (Math_Mod(k, 3) * 5 << 7),
+                                            + (__modsi3(k, 3) * 5 << 7),
                                         x, screen[1] - 16, 20, 32);
                                     EffectStep_AdvanceWithGravity3D(particle, 62, 0);
                                     if (outer > base_fp + k + 30) {

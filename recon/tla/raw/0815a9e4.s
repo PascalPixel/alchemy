@@ -563,7 +563,7 @@ Func_0815a9e4:
 	ldr r0, [sp, #40]
 	movs r1, #3
 	subs r0, #64
-	bl Math_Div
+	bl __divsi3
 	adds r5, r0, #0
 	cmp r5, #0
 	bge .L_0815ae32
@@ -637,7 +637,7 @@ Func_0815a9e4:
 	cmp r0, #23
 	bhi .L_0815af3a
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	movs r3, #7
 	subs r5, r3, r0
 	cmp r5, #0
@@ -897,7 +897,7 @@ Func_0815a9e4:
 	asrs r0, r0, #1
 	add r0, r8
 	movs r1, #11
-	bl Math_Mod
+	bl __modsi3
 	movs r4, #1
 	negs r4, r4
 	cmp r0, r4
@@ -953,7 +953,7 @@ Func_0815a9e4:
 	bne .L_0815b118
 	bl Random16
 	movs r1, #96
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #42
 	b .L_0815b158
 .L_0815b118:
@@ -961,7 +961,7 @@ Func_0815a9e4:
 	bne .L_0815b14c
 	bl Random16
 	movs r1, #112
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #34
 	b .L_0815b158
 	.2byte 0x0000
@@ -984,7 +984,7 @@ Func_0815a9e4:
 .L_0815b14c:
 	bl Random16
 	movs r1, #160
-	bl Math_ModU
+	bl __umodsi3
 	adds r0, #10
 .L_0815b158:
 	str r0, [r5]
@@ -1022,7 +1022,7 @@ Func_0815a9e4:
 	ble .L_0815b1c4
 	adds r0, r2, #0
 	movs r1, #12
-	bl Math_Mod
+	bl __modsi3
 	cmp r0, #0
 	bne .L_0815b1ac
 	ldr r3, [sp, #52]

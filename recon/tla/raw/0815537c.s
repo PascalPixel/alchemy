@@ -398,7 +398,7 @@ Func_0815537c:
 	adds r3, #2
 	ldrb r5, [r1, r3]
 	adds r1, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	ldr r2, [r7, #4]
 	ldr r4, [sp, #8]
 	mov r8, r2
@@ -418,7 +418,7 @@ Func_0815537c:
 	mov r10, r0
 	bl Random16
 	adds r1, r5, #0
-	bl Math_ModU
+	bl __umodsi3
 	ldr r6, [r7]
 	lsrs r3, r5, #31
 	adds r5, r5, r3

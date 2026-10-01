@@ -281,7 +281,7 @@ UiText_MeasureStringVariant:
 	ldrh r1, [r5, r3]
 	lsls r0, r0, #8
 	subs r1, #1
-	bl FixedPoint_Ratio
+	bl __divsi3
 	mov r2, r8
 	movs r3, #2
 	strh r0, [r2]

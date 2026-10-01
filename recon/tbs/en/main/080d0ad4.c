@@ -201,7 +201,7 @@ loop_11:
                     sp20 = sp44 + ((var_r7_304 + sp1C) * 0x1C) + 0x7080;
                     sp18 = temp_r7_314;
                     var_r2_331 = var_fp_191;
-                    temp_r9_332 = sp44 + ((Math_Mod(temp_r7_314, 3) + sp1C) * 0x1C) + 0x7080;
+                    temp_r9_332 = sp44 + ((__modsi3(temp_r7_314, 3) + sp1C) * 0x1C) + 0x7080;
                     if (var_r2_331 < 0) {
                         var_r2_331 += 0xF;
                     }
@@ -212,8 +212,8 @@ loop_23:
                     temp_r6_346 = M2C_FIELD(sp20, s32 *, 0xC);
                     sp8 = var_r4_339;
                     temp_r5_357 = M2C_FIELD(sp20, s32 *, 0x10);
-                    temp_r6_359 = temp_r6_346 + Math_Div(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0xC) - temp_r6_346), 0x18);
-                    temp_r3_376 = (temp_r5_357 + Math_Div(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0x10) - temp_r5_357), 0x18)) - var_r4_339;
+                    temp_r6_359 = temp_r6_346 + __divsi3(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0xC) - temp_r6_346), 0x18);
+                    temp_r3_376 = (temp_r5_357 + __divsi3(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0x10) - temp_r5_357), 0x18)) - var_r4_339;
                     sp34(sp40,
                         (u8 *)sp44
                             + BattleFx6_FlareCells[var_r4_339 - 1]

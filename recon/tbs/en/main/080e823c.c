@@ -93,7 +93,7 @@ void BattleEffect_WipeCanvas(s32 a, s32 b);
 void BattleFx_SelectLivingTargets(void *object);
 void BattleFx_SpawnObjects(s32 a, s32 b, s32 c);
 void *ResourceObject_CreateFar(s32 id);
-s32 Math_Mod(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
 void AnimationObjects_SelectAnimationFar(void *object, s32 value);
 void WaitFrames(s32 frames);
 void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
@@ -102,7 +102,7 @@ void Audio_PlayCue(s32 id);
 void Object_ApplyProjectedPlacementFar(s32 handle, const s32 *pos, const s32 *clip, s32 mode);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Math_Div(s32 a, s32 b);
+s32 __divsi3(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(SceneParticle *particle, s32 a, s32 b);
 void BattleMotion_ApplyVariantMotionFar(s32 member, s32 a);
 void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 c, s32 d);
@@ -175,7 +175,7 @@ void BattleEffect_RunCirclingFallingScene(void *object)
         M2C_FIELD(work, void **, handle_off) = drawable;
         if (drawable != NULL) {
             M2C_FIELD(drawable, s8 *, 0x26) = 0;
-            AnimationObjects_SelectAnimationFar(drawable, Math_Mod(i, 3));
+            AnimationObjects_SelectAnimationFar(drawable, __modsi3(i, 3));
             drawable = M2C_FIELD(work, void **, handle_off);
             M2C_FIELD(drawable, u8 *, 9) =
                 (u8)((M2C_FIELD(drawable, u8 *, 9) & ~0xC) | 4);
@@ -382,7 +382,7 @@ void BattleEffect_RunCirclingFallingScene(void *object)
                 life = entry->timer;
                 if (life >= 0) {
                     if ((u32)life <= 23U) {
-                        idx = Math_Div(life, 6) + 3;
+                        idx = __divsi3(life, 6) + 3;
                         offset = Data_080eeeea[idx];
                         size = Data_080eeef8[idx];
                         ((DrawRectangleFn)rectangle[0])(

@@ -257,7 +257,7 @@ Func_0803fd28:
 	movs r1, #0
 	ldrsb r1, [r3, r1]
 	lsls r0, r0, #2
-	bl Math_Div
+	bl __divsi3
 	mov r2, r11
 	movs r1, #14
 	ldrsh r3, [r2, r1]
@@ -316,7 +316,7 @@ Func_0803fd28:
 	movs r1, #0
 	ldrsb r1, [r3, r1]
 	lsls r0, r0, #2
-	bl Math_Div
+	bl __divsi3
 	mov r2, r11
 	movs r1, #14
 	ldrsh r3, [r2, r1]

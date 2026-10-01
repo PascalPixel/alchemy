@@ -84,7 +84,7 @@ BattleEffect_RunCirclingFallingScene:
 	strb r3, [r2]
 	movs r1, #3
 	mov r0, r8
-	bl Math_Mod
+	bl __modsi3
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Object_InitializeMode
@@ -711,7 +711,7 @@ BattleEffect_RunCirclingFallingScene:
 	cmp r0, #23
 	bhi .L_080e87ec
 	movs r1, #6
-	bl FixedPoint_Ratio
+	bl __divsi3
 	ldr r3, .L_080e89b8
 	adds r0, #3
 	lsls r0, r0, #1

@@ -235,7 +235,7 @@ Func_0816467c:
 	adds r0, r7, #0
 	subs r0, #8
 	movs r1, #5
-	bl Math_Div
+	bl __divsi3
 	adds r4, r0, #0
 	cmp r4, #0
 	bge .L_08164872
@@ -390,7 +390,7 @@ Func_0816467c:
 	bl BattleFxKernels_IntegrateVector2
 	movs r1, #7
 	adds r0, r6, #0
-	bl Math_Div
+	bl __divsi3
 	lsls r1, r0, #3
 	adds r1, r1, r0
 	movs r0, #192

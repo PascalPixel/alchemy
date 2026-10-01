@@ -438,7 +438,7 @@ Func_081665a4:
 	cmp r0, #17
 	bhi .L_08166932
 	movs r1, #3
-	bl Math_Div
+	bl __divsi3
 	mov r2, r8
 	ldrb r1, [r2, r0]
 	ldr r3, [sp, #52]
@@ -545,7 +545,7 @@ Func_081665a4:
 	asrs r6, r0, #16
 	movs r1, #5
 	adds r0, r3, #0
-	bl Math_Div
+	bl __divsi3
 	ldr r2, .L_08166af0
 	adds r0, #1
 	lsls r5, r0, #1

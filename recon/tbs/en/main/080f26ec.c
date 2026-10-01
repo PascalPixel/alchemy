@@ -74,8 +74,8 @@ void Unnamed_080f24a0(void);
 void TitlePalette_InitializeBuffers(void);
 s32 Graphics_TransformSmallPalette(s32, s32);
 void Graphics_UpdatePaletteInterpolation(s32);
-s32 Math_Mod(s32, s32);
-u32 Math_ModU(u32, u32);
+s32 __modsi3(s32, s32);
+u32 __umodsi3(u32, u32);
 void Blend_SetBrightenTarget16(s32);
 void Blend_SetBrightenTarget0(s32);
 void Blend_WaitForTransition(void);
@@ -150,7 +150,7 @@ s32 Func_080f26ec(s32 sprites)
         work->frame = next;
         if (next <= 278) {
             tick = work->tick;
-            if (Math_Mod(tick, 3) == 0) {
+            if (__modsi3(tick, 3) == 0) {
                 scroll[3] = scroll[3] + 0xffff;
                 if ((scroll[3] & 7) == 0) {
                     Dma_Set((u8 *)0x02012580 - work->rows_a * 960, (u8 *)0x06004b00 - work->rows_a * 960,
@@ -170,7 +170,7 @@ s32 Func_080f26ec(s32 sprites)
                         s32 row;
 
                         zero = 0;
-                        row = Math_Mod(160 - work->rows_b * 8, 160);
+                        row = __modsi3(160 - work->rows_b * 8, 160);
                         Dma_Set(&zero, (u8 *)0x06004ec0 + row * 240, 0x810003c0, (volatile u32 *)0x040000d4);
                         tile = (u16 *)0x0600f6c0;
                         for (i = 0; i < 5; i++) {
@@ -268,7 +268,7 @@ s32 Func_080f26ec(s32 sprites)
                 x += 32;
                 sprite++;
             }
-            phase = Math_ModU(i, 60);
+            phase = __umodsi3(i, 60);
             *(volatile u16 *)0x04000050 = 0x2f50;
             level = Data_080f39b1[phase];
             *(volatile u16 *)0x04000052 = ((16 - level) << 8) + level;

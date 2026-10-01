@@ -6,9 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	.global Engine_DebugRemainder
+	.global __modsi3
 	.thumb_func
-Engine_DebugRemainder:
+__modsi3:
 	overlay_veneer IwramSignedRemainder
 	.global Engine_TaskWait
 	.thumb_func

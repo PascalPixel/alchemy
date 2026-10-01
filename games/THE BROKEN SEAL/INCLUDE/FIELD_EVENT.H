@@ -304,7 +304,7 @@ s32 Engine_TaskRemoveCallback(void (*callback)(void));
 s32 Engine_RandomNext(void);
 s32 Engine_MathSin(s32 angle);
 s32 Engine_MathCos(s32 angle);
-s32 Engine_MathDivide(s32 dividend, s32 divisor);
+s32 __divsi3(s32 dividend, s32 divisor);
 void *Engine_HeapAllocate(s32 slot, s32 size);
 void Engine_HeapRelease(s32 slot);
 s32 Engine_VramLoad(s32 block, s32 size, const void *data);
@@ -740,7 +740,7 @@ static inline s32 Math_Cos(s32 angle)
 
 static inline s32 Math_Divide(s32 dividend, s32 divisor)
 {
-    return Engine_MathDivide(dividend, divisor);
+    return dividend / divisor;
 }
 
 static inline void *Heap_Allocate(s32 slot, s32 size)

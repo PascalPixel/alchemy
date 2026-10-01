@@ -43,7 +43,7 @@ ImiruMura_SwayAndSpark:
 	ldr r3, .L_02009694
 	movs r1, #3
 	ldr r0, [r3]
-	bl Engine_MathModulo
+	bl __umodsi3
 	cmp r0, #0
 	bne .L_020096a4
 	ldr r3, [r6, #8]

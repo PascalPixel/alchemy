@@ -39,7 +39,7 @@ void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
         coin = (u32)(Engine_RandomNext() << 1) >> 16;
         if (coin != 0) {
             s32 r = Engine_RandomNext();
-            s32 vz = Engine_MathDivide((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000, 10);
+            s32 vz = __divsi3((((u32)(Engine_RandomNext() * 5) >> 16) << 16) + 0x70000, 10);
 
             Effect_Spawn((x + (((u32)(r << 1) >> 16) << 4)) << 16, 0, z << 19, 0, phase, vz, 0x880000, opts);
         } else {

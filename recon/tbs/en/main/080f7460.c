@@ -66,9 +66,9 @@ void _call_via_r3(void *dest, s32 size, s32 source, void *state);
 void FarCall_WindowTable(void);
 void ReelGame_InitTitle(void);
 u32 Random16(void);
-s32 Math_ModU(s32 value, s32 divisor);
-s32 Math_Mod(s32 value, s32 divisor);
-s32 Math_Div(s32 value, s32 divisor);
+s32 __umodsi3(s32 value, s32 divisor);
+s32 __modsi3(s32 value, s32 divisor);
+s32 __divsi3(s32 value, s32 divisor);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 s32 FarCall_EffectTable(s32 id, s32 a, s32 b, s32 c, s32 d);
@@ -251,7 +251,7 @@ void Scene_RunParticleSequence(void)
         entry->unk19 = 0;
         entry->unk1a = 0xFF;
         for (j = 0; j != 21; j++) {
-            entry->cells[j] = (u8)Math_ModU((s32)Random16(), 5);
+            entry->cells[j] = (u8)__umodsi3((s32)Random16(), 5);
         }
         entry++;
     }
@@ -261,7 +261,7 @@ void Scene_RunParticleSequence(void)
     entry = (SceneEntry *)state;
     for (i = 0; i != 5; i++) {
         for (j = 0; j != 8; j++) {
-            pick[j] = Math_ModU((s32)Random16(), 21);
+            pick[j] = __umodsi3((s32)Random16(), 21);
             for (k = 0; k != j; k++) {
                 if (pick[j] == pick[k]) {
                     j--;
@@ -319,7 +319,7 @@ void Scene_RunParticleSequence(void)
         }
 
         if (M2C_FIELD(state, s32 *, 0x8C) == 3) {
-            phase = Math_Mod(frame, 80);
+            phase = __modsi3(frame, 80);
             if (phase <= 15) {
                 Palette_StepTowardResource((s32)&Value_00000091);
             } else if (phase <= 31) {
@@ -359,7 +359,7 @@ void Scene_RunParticleSequence(void)
                     if ((u32)px <= 0x00FFFFFF) {
                         py = particle->y;
                         if (py <= 0x007FFFFF && py >= 0) {
-                            half = Math_Div(particle->life, 12) + 1;
+                            half = __divsi3(particle->life, 12) + 1;
                             routine[i & 1](canvas,
                                 sprites + Data_080f86f8[half - 1],
                                 (px >> 16) - half,

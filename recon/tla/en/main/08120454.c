@@ -200,7 +200,7 @@ after_power:
                     bonus = 0;
                 apwr = action->power;
                 if (nibble == 4)
-                    dmg = Math_Div(
+                    dmg = __divsi3(
                         Battle_CalcAttack((actor->attack), scale, 0,
                                           bonus)
                             * apwr,
@@ -216,7 +216,7 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                    dmg += (u8)Math_DivU(((u8 *)target)[15], 5) + 6;
+                    dmg += (u8)__udivsi3(((u8 *)target)[15], 5) + 6;
                     if (pass == 0) {
                         BattleEv_Push(BATTLE_EVENT_MARK, 0);
                         {
@@ -229,7 +229,7 @@ after_power:
                     }
                 }
                 dmg += BattleRandom16Far() & 3;
-                { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = Math_Div(dmg * 2, 5); else dmg = Math_Div(dmg, 10); }; };
+                { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
@@ -280,9 +280,9 @@ after_power:
             }
             apwr = action->power;
             dmg = Battle_CalcPower(apwr, bonus, 256);
-            dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
+            dmg = __divsi3(dmg * PpLossFalloff[offset], 100);
             dmg *= adjust;
-            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = Math_Div(dmg * 2, 5); else dmg = Math_Div(dmg, 10); }; };
+            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
                 dmg = pp;
             if ((dmg) > (pp)) (dmg) = (pp);
@@ -314,7 +314,7 @@ after_power:
             if ((cur) == 0) break;
             apwr = action->power;
             dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(dmg * HpHealFalloff[offset], 100);
+            dmg = __divsi3(dmg * HpHealFalloff[offset], 100);
             dmg *= adjust;
             dmg += BattleRandom16Far() & 3;
             cur += dmg;
@@ -344,9 +344,9 @@ after_power:
             { if (range != 4) { s32 off; off = range * 4 + 72; bonus = power - ((s16 *)((u8 *)target + off))[1]; } };
             apwr = action->power;
             dmg = Battle_CalcPower(apwr, bonus, 256);
-            dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
+            dmg = __divsi3(dmg * PpDmgFalloff[offset], 100);
             dmg *= adjust;
-            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = Math_Div(dmg * 2, 5); else dmg = Math_Div(dmg, 10); }; };
+            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -380,22 +380,22 @@ after_power:
                 if (round == 0)
                     bonus = 0;
                 apwr = action->power;
-                if (action_id == 0x2ab || action_id == 0x2a1 || action_id == 0x2d4 || ((plan)->command) == 6 || ((plan)->command) == 10) { s32 rate; rate = 0; switch (action_id) { default: case 0x189: break; case 0x196: case 0x184: case 0x18c: case 0x17c: rate = 3; break; case 0x199: case 0x191: case 0x18f: case 0x187: case 0x17f: rate = 12; break; case 0x2ab: rate = 35; break; case 0x197: case 0x190: case 0x18d: case 0x185: case 0x180: case 0x17d: rate = 6; break; case 0x18e: case 0x188: case 0x186: case 0x19a: case 0x198: case 0x17e: rate = 9; break; case 0x192: rate = 7; break; case 0x19b: case 0x193: case 0x181: rate = 15; break; case 0x18a: rate = 21; break; case 0x19c: rate = 24; break; case 0x2a1: case 0x182: rate = 30; break; case 0x2d4: case 0x194: rate = 40; break; } value = target->max_hp; if (value > 10000) value = 10000; (apwr) += Math_Div(value * rate, 100); };
+                if (action_id == 0x2ab || action_id == 0x2a1 || action_id == 0x2d4 || ((plan)->command) == 6 || ((plan)->command) == 10) { s32 rate; rate = 0; switch (action_id) { default: case 0x189: break; case 0x196: case 0x184: case 0x18c: case 0x17c: rate = 3; break; case 0x199: case 0x191: case 0x18f: case 0x187: case 0x17f: rate = 12; break; case 0x2ab: rate = 35; break; case 0x197: case 0x190: case 0x18d: case 0x185: case 0x180: case 0x17d: rate = 6; break; case 0x18e: case 0x188: case 0x186: case 0x19a: case 0x198: case 0x17e: rate = 9; break; case 0x192: rate = 7; break; case 0x19b: case 0x193: case 0x181: rate = 15; break; case 0x18a: rate = 21; break; case 0x19c: rate = 24; break; case 0x2a1: case 0x182: rate = 30; break; case 0x2d4: case 0x194: rate = 40; break; } value = target->max_hp; if (value > 10000) value = 10000; (apwr) += __divsi3(value * rate, 100); };
                 dmg = Battle_CalcPower(apwr, bonus, 256);
                 dmg *= adjust;
                 switch (nibble & 15) {
                 case 5:
-                    dmg = Math_Div(HpDmgFalloff5[offset] * dmg, 100);
+                    dmg = __divsi3(HpDmgFalloff5[offset] * dmg, 100);
                     break;
                 case 8:
-                    dmg = Math_Div(dmg * HpDmgFalloff8[offset], 100);
+                    dmg = __divsi3(dmg * HpDmgFalloff8[offset], 100);
                     break;
                 case 6:
-                    dmg = Math_Div(dmg * HpDmgFalloff6[offset], 100);
+                    dmg = __divsi3(dmg * HpDmgFalloff6[offset], 100);
                     break;
                 }
                 dmg += BattleRandom16Far() & 3;
-                { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = Math_Div(dmg * 2, 5); else dmg = Math_Div(dmg, 10); }; };
+                { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
                 if (((gPartyState.battle_rule_24b == 6 || (GameFlag_Test(366) != 0 && ((plan)->command) == 6)) && (cur) > (dmg))) {
                     dmg = cur;
                 }
@@ -442,7 +442,7 @@ after_power:
             pp = target->pp;
             apwr = action->power;
             dmg = Battle_CalcRestore(apwr, range == 4 ? 100 : power, 256);
-            dmg = Math_Div(dmg * PpHealFalloff[offset], 100);
+            dmg = __divsi3(dmg * PpHealFalloff[offset], 100);
             dmg *= adjust;
             pp += dmg;
             if (pp > target->max_pp) {
@@ -476,8 +476,8 @@ pp_store:
             apwr = action->power;
             dmg = Battle_CalcPower(apwr, bonus, 256);
             dmg *= adjust;
-            dmg = Math_Div(dmg * HpDmgFalloff[offset], 100);
-            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = Math_Div(dmg * 2, 5); else dmg = Math_Div(dmg, 10); }; };
+            dmg = __divsi3(dmg * HpDmgFalloff[offset], 100);
+            { guard = ((target)->guard_level); if (guard != 0) { if (guard == 1) dmg /= 2; else if (guard == 2) dmg = __divsi3(dmg * 2, 5); else dmg = __divsi3(dmg, 10); }; };
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -583,7 +583,7 @@ dealt = target->hp - cur;
         s32 maxv;
         s32 heal;
         u16 *stat_ptr;
-        { (stat_ptr) = (u16 *)&target->hp; (old) = *(stat_ptr)--; (heal) = *(s16 *)((stat_ptr) + 1); if (action->effect == 0x4c) { (maxv) = *(s16 *)&target->max_hp; (maxu) = *(u16 *)&target->max_hp; (heal) += Math_Div((maxv) * 2, 5); } else if (action->effect == 0x47) { (maxv) = *(s16 *)&target->max_hp; (maxu) = *(u16 *)&target->max_hp; (heal) += Math_Div((maxv) * 7, 10); } else if (action->effect == 0x46) { (maxu) = *(u16 *)&target->max_hp; (heal) += (s16)(maxu) / 2; } else { (stat_ptr)--; (maxu) = *(stat_ptr)--; (maxv) = *(s16 *)(stat_ptr + 1); if (action->effect == EFX_HEAL_60) (heal) += Math_Div((maxv) * 60, 100); else (heal) += Math_Div((maxv) * 30, 100); } };
+        { (stat_ptr) = (u16 *)&target->hp; (old) = *(stat_ptr)--; (heal) = *(s16 *)((stat_ptr) + 1); if (action->effect == 0x4c) { (maxv) = *(s16 *)&target->max_hp; (maxu) = *(u16 *)&target->max_hp; (heal) += __divsi3((maxv) * 2, 5); } else if (action->effect == 0x47) { (maxv) = *(s16 *)&target->max_hp; (maxu) = *(u16 *)&target->max_hp; (heal) += __divsi3((maxv) * 7, 10); } else if (action->effect == 0x46) { (maxu) = *(u16 *)&target->max_hp; (heal) += (s16)(maxu) / 2; } else { (stat_ptr)--; (maxu) = *(stat_ptr)--; (maxv) = *(s16 *)(stat_ptr + 1); if (action->effect == EFX_HEAL_60) (heal) += __divsi3((maxv) * 60, 100); else (heal) += __divsi3((maxv) * 30, 100); } };
         if (heal > (s16)maxu)
             heal = (s16)maxu;
         tmp = heal - (s16)old;
@@ -602,7 +602,7 @@ dealt = target->hp - cur;
     case EFX_PP_RESTORE_7:
     case 0x4d: case 0x4e:
     {
-        { s32 heal; s32 old; s32 maxu; s32 maxv; s32 effect; effect = action->effect; heal = target->pp; old = *(u16 *)&target->pp; if (effect == 0x4d) { maxv = *(s16 *)((u8 *)target + 54); maxu = *(u16 *)((u8 *)target + 54); heal += (s16)Math_Div(maxv, 10); } else if (effect == 0x4e) { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += Math_Div(maxv * 3, 10); } else { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += Math_Div(maxv * 7, 100); } if (heal > (s16)maxu) heal = (s16)maxu; tmp = heal - (s16)old; if (tmp == 0 && nibble != 11) break; if (heal == (s16)maxu) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpFull); else { BattleEv_Push(BATTLE_EVENT_VALUE, tmp); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpRecover); } target->pp = (s16)heal; Owner_RecalculateRatiosFar(target_id); break; };
+        { s32 heal; s32 old; s32 maxu; s32 maxv; s32 effect; effect = action->effect; heal = target->pp; old = *(u16 *)&target->pp; if (effect == 0x4d) { maxv = *(s16 *)((u8 *)target + 54); maxu = *(u16 *)((u8 *)target + 54); heal += (s16)__divsi3(maxv, 10); } else if (effect == 0x4e) { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += __divsi3(maxv * 3, 10); } else { maxv = target->max_pp; maxu = *(u16 *)&target->max_pp; heal += __divsi3(maxv * 7, 100); } if (heal > (s16)maxu) heal = (s16)maxu; tmp = heal - (s16)old; if (tmp == 0 && nibble != 11) break; if (heal == (s16)maxu) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpFull); else { BattleEv_Push(BATTLE_EVENT_VALUE, tmp); BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPpRecover); } target->pp = (s16)heal; Owner_RecalculateRatiosFar(target_id); break; };
     }
     case EFX_AGI_SET_UP8:
         (*(s8 *)&(target->agility_modifier)) = 8;
@@ -705,10 +705,10 @@ dealt = target->hp - cur;
         if (target->hp != 0)
             break;
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived);
-        target->hp = (s16)Math_Div(target->max_hp * 8, 10);
+        target->hp = (s16)__divsi3(target->max_hp * 8, 10);
         Owner_RecalculateRatiosFar(target_id);
         break;
-    case 0x49: if (target->hp != 0) break; BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived); target->hp = (s16)Math_Div(target->max_hp * 6, 10); Owner_RecalculateRatiosFar(target_id); break;
+    case 0x49: if (target->hp != 0) break; BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgRevived); target->hp = (s16)__divsi3(target->max_hp * 6, 10); Owner_RecalculateRatiosFar(target_id); break;
     case EFX_CURE_POISON:
         if (target->poison != 0)
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurePoison);
@@ -830,7 +830,7 @@ dealt = target->hp - cur;
         break;
     }
     case EFX_PP_LEECH:
-        dmg = Math_Div(dealt, 10);
+        dmg = __divsi3(dealt, 10);
         if (target->pp < dmg)
             dmg = target->pp;
         if (actor->pp + dmg > actor->max_pp)
@@ -841,7 +841,7 @@ dealt = target->hp - cur;
         { if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechTake)); else BattleEv_Push(BATTLE_EVENT_TEXT, ((s32)&MsgLeechGain)); };
         Owner_AdjustSecondValueFar(actor_id, dmg);
         break;
-    case 0x54: dmg = (s16)Math_Div(target->max_pp, 10); if (target->pp < dmg) dmg = target->pp; if (dmg == 0) break; BattleEv_Push(BATTLE_EVENT_VALUE, dmg); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossP); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossE); Owner_AdjustSecondValueFar(target_id, -dmg); break;
+    case 0x54: dmg = (s16)__divsi3(target->max_pp, 10); if (target->pp < dmg) dmg = target->pp; if (dmg == 0) break; BattleEv_Push(BATTLE_EVENT_VALUE, dmg); if ((u32)target_id <= 7) BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossP); else BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgMorePpLossE); Owner_AdjustSecondValueFar(target_id, -dmg); break;
     case EFX_BUFF_CLEAR:
         if (target->attack_modifier > 0) {
             target->attack_modifier = 0;

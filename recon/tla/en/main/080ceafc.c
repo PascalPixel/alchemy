@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-s32 Math_ModU(s32, s32) __attribute__((const));
+s32 __umodsi3(s32, s32) __attribute__((const));
 void Event_SetValue1d8(s32);
 void BattleEv_RunWait(s32, s32);
 void BattleFx_FinishAction();

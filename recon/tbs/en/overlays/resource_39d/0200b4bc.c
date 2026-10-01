@@ -68,7 +68,7 @@ void MakyuriChojo_SpawnLampSpark(void)
     if (tick != 0)
         return;
     spark = (union ArcObject *)Object_Create(0x11c, lamp->x.fixed + 0x80000, lamp->y.fixed + height + 0x80000, lamp->z.fixed);
-    height = Engine_MathDivide(height, 0x60000);
+    height = __divsi3(height, 0x60000);
     height <<= 16;
     if (spark == NULL)
         return;

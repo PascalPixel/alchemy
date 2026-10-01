@@ -65,7 +65,7 @@ void ObjectDispatch_RegisterChildMetadataFar(struct EventObject *object, s32 val
 void Object_SetPositionAndResetMotionFar(struct EventObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct EventObject *object, s32 mode);
 u32 Random16(void);
-u32 Math_ModU(u32 numerator, u32 denominator);
+u32 __umodsi3(u32 numerator, u32 denominator);
 void ObjectMotion_SetActionCallback(struct EventObject *object, s32 action);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
@@ -129,7 +129,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
         if (object) {
             Object_SetMode(object, 1);
             if (object->kind == 1 && (sprite = object->sprite) != 0)
-                sprite->phase = Math_ModU(Random16(), 30);
+                sprite->phase = __umodsi3(Random16(), 30);
             object->facing = entry->facing;
             object->active = 1;
             ObjectMotion_SetActionCallback(object, entry->action);

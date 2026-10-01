@@ -70,7 +70,7 @@ void BattleFx_EndCanvasLayer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void Audio_PlayCue(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Math_Mod(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -238,7 +238,7 @@ draw_particle:
                                 s32 y;
                                 s32 h;
 
-                                raw = Math_Mod(pool_index, 3);
+                                raw = __modsi3(pool_index, 3);
                                 idx = raw + 1;
                                 half = idx / 2;
                                 y = *(s16 *)((u8 *)particle + 2) - half;

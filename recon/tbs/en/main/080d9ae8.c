@@ -42,7 +42,7 @@ s32 Trig_Cos(s32 angle);
 void SceneTransform_ApplyPosition(void *record);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_pair);
 u32 Random16(void);
-s32 Math_Mod(s32 a, s32 b);
+s32 __modsi3(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void Audio_PlayCue(s32 id);
@@ -237,7 +237,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                             if (local_frame <= 26) {
                                 s32 v;
 
-                                v = Math_Mod(local_frame / 4, 7);
+                                v = __modsi3(local_frame / 4, 7);
                                 ((DrawRectangleFn) callback_pair[0])(
                                     draw_destination,
                                     (u8 *) work + ((v * 15) << 6),
@@ -247,7 +247,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                             if (local_frame <= 23) {
                                 s32 v;
 
-                                v = Math_Mod(local_frame / 4, 6);
+                                v = __modsi3(local_frame / 4, 6);
                                 ((DrawRectangleFn) callback_pair[1])(
                                     draw_destination,
                                     (u8 *) work + ((v * 25) << 6),
@@ -281,7 +281,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                             s32 idx;
 
                             sel = (outer % 4) * 3;
-                            idx = Math_Mod(
+                            idx = __modsi3(
                                 (particle[6] + local_frame) / 8, 3);
                             EffectPosition_ApplyBaseAndYOffset(particle, screen);
                             x = screen[0] + y_offset;

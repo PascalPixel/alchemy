@@ -264,7 +264,7 @@ Func_080cc5d8:
 	cmp r0, #20
 	bhi .L_080cc816
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	lsls r1, r0, #3
 	adds r1, r1, r0
 	lsls r1, r1, #8
@@ -287,9 +287,9 @@ Func_080cc5d8:
 	cmp r0, #14
 	bhi .L_080cc878
 	movs r1, #3
-	bl FixedPoint_Ratio
+	bl __divsi3
 	movs r1, #5
-	bl Math_Mod
+	bl __modsi3
 	ldr r6, .L_080cc944
 	lsls r0, r0, #10
 	movs r7, #0

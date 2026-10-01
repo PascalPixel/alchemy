@@ -769,7 +769,7 @@ Func_02000630:
 	ldr r0, [r3]
 	ldr r5, .L_020086b8
 	lsrs r0, r0, #2
-	bl Engine_MathModulo
+	bl __umodsi3
 	lsls r0, r0, #1
 	ldrsh r0, [r5, r0]
 	movs r3, #160

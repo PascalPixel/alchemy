@@ -286,7 +286,7 @@ Func_0200015c:
 	beq .L_020082b6
 	ldr r0, [r6, #24]
 	subs r0, r3, r0
-	bl Engine_MathDivide
+	bl __divsi3
 	str r0, [r6, #48]
 	ldr r0, [r7, #20]
 	ldr r3, [r6, #28]
@@ -296,14 +296,14 @@ Func_0200015c:
 .L_020082b6:
 	ldr r2, .L_02008338
 	adds r0, r3, r2
-	bl Engine_MathDivide
+	bl __divsi3
 	str r0, [r6, #48]
 	ldr r0, [r7, #20]
 	ldr r3, .L_02008338
 	ldr r1, [r5, #12]
 	adds r0, r0, r3
 .L_020082c8:
-	bl Engine_MathDivide
+	bl __divsi3
 	str r0, [r6, #52]
 .L_020082ce:
 	movs r3, #128
@@ -1069,7 +1069,7 @@ Func_02000840:
 	mov lr, r10
 	.2byte 0xf800
 	movs r1, #3
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r3, [r5, #76]
 	ldr r2, [r5, #72]
 	adds r3, r3, r0
@@ -1888,7 +1888,7 @@ Func_02000ef4:
 	strh r0, [r6]
 	bl Random16Far
 	lsls r1, r5, #1
-	bl Engine_MathModulo
+	bl __umodsi3
 	ldrh r3, [r6]
 	subs r0, r0, r5
 	adds r2, r3, r0
@@ -2407,7 +2407,7 @@ Func_02001010:
 	str r3, [r6, #8]
 	bl Random16Far
 	movs r1, #144
-	bl Engine_MathModulo
+	bl __umodsi3
 	movs r1, #128
 	adds r5, r0, #0
 	lsls r1, r1, #17
@@ -2415,7 +2415,7 @@ Func_02001010:
 	adds r5, r5, r1
 	bl Random16Far
 	movs r1, #144
-	bl Engine_MathModulo
+	bl __umodsi3
 	ldr r1, [r6, #4]
 	ldr r3, [r6]
 	str r1, [sp, #0]
@@ -4659,7 +4659,7 @@ Func_0200257c:
 	strh r0, [r6]
 	bl Random16Far
 	lsls r1, r5, #1
-	bl Engine_MathModulo
+	bl __umodsi3
 	ldrh r3, [r6]
 	subs r0, r0, r5
 	adds r2, r3, r0
@@ -5365,7 +5365,7 @@ Func_02002b88:
 	adds r0, r0, r3
 	asrs r0, r0, #16
 	movs r1, #112
-	bl Engine_MathDivide
+	bl __divsi3
 	ldr r3, .L_0200ac20
 	adds r5, r0, #0
 	ldr r3, [r3]

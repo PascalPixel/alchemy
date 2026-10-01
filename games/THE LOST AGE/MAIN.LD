@@ -162,7 +162,7 @@ SECTIONS
         "*/recon/tla/raw/08014c6c.o"(.text)
         "*/recon/tla/raw/08014ca0.o"(.text)
         "*/recon/tla/raw/08014cb0.o"(.text)
-        "*/recon/tla/raw/08014cc0.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/MEMORY.o"(.text)
         "*/recon/tla/raw/08014d00.o"(.text)
         "*/recon/tla/raw/08014d40.o"(.text)
         "*/recon/tla/raw/08014d78.o"(.text)

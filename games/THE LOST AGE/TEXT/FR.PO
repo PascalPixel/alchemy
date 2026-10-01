@@ -24439,7 +24439,7 @@ msgctxt "MsgVinasuChojoTrueHeart"
 msgid "06107"
 msgstr "Le vrai chemin{line_break}sera révélé à un{line_break}c¾ur pur.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaIsThisThePlace"
 msgid "06108"
 msgstr "C'est ici, non?{end_now}"
 
@@ -24615,7 +24615,7 @@ msgctxt "message"
 msgid "06151"
 msgstr "Mais... qu'allons-nous{line_break}devenir?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHowLongWillWeDrift"
 msgid "06152"
 msgstr "Thélos... Combien de{line_break}temps penses-tu que{line_break}cet îlot va dériver?{end_wait}"
 
@@ -24695,7 +24695,7 @@ msgctxt "message"
 msgid "06171"
 msgstr "Qu'est-ce donc?{line_break}Alex, que s'est-il passé?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaThoughtTheyWereInsideLighthouse"
 msgid "06172"
 msgstr "Je croyais que {actor_name:5} et{line_break}{actor_name:7} étaient encore à{line_break}l'intérieur du phare.{end_wait}"
 
@@ -24971,7 +24971,7 @@ msgctxt "message"
 msgid "06240"
 msgstr "Au secours!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCheckForInjuries"
 msgid "06241"
 msgstr "Veux-tu voir si tu es blessé?{end_now}"
 
@@ -24987,7 +24987,7 @@ msgctxt "message"
 msgid "06244"
 msgstr "Marche un peu... Tu{line_break}sembles très en forme.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaGroan"
 msgid "06245"
 msgstr "Oh là là...{end_wait}"
 
@@ -25023,7 +25023,7 @@ msgctxt "message"
 msgid "06253"
 msgstr "Thélos a rejoint{line_break}votre groupe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaAwakeningExclamation"
 msgid "06254"
 msgstr "Comment...{end_wait}"
 
@@ -25063,7 +25063,7 @@ msgctxt "message"
 msgid "06263"
 msgstr "{actor_name:6} a rejoint{line_break}votre groupe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaSecondGroan"
 msgid "06264"
 msgstr "Ohhh...{end_wait}"
 
@@ -25103,7 +25103,7 @@ msgctxt "message"
 msgid "06273"
 msgstr "{actor_name:7} a rejoint{line_break}votre groupe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHeyGarcia"
 msgid "06274"
 msgstr "Ohé, {actor_name:5}!{end_wait}"
 
@@ -25139,7 +25139,7 @@ msgctxt "message"
 msgid "06282"
 msgstr "Thélos a rejoint{line_break}votre groupe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCantBelieveYouTwo"
 msgid "06283"
 msgstr "Comme vous me décevez!{end_wait}"
 
@@ -25175,7 +25175,7 @@ msgctxt "message"
 msgid "06291"
 msgstr "{actor_name:6} a rejoint{line_break}votre groupe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWaitForMe"
 msgid "06292"
 msgstr "Hé! Attendez!{end_wait}"
 
@@ -25227,7 +25227,7 @@ msgctxt "message"
 msgid "06304"
 msgstr "{actor_name:7} a rejoint{line_break}votre groupe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWhereHasAlexGone"
 msgid "06305"
 msgstr "Au fait...{line_break}Où est passé Alex?{end_wait}"
 

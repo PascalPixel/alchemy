@@ -23727,7 +23727,7 @@ msgctxt "MsgVinasuChojoTrueHeart"
 msgid "05929"
 msgstr "ただしき こころで見る者に{line_break}まことの道が しめされる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaIsThisThePlace"
 msgid "05930"
 msgstr "まちあわせの ばしょは{line_break}ここで いいんじゃな・・・?{end_now}"
 
@@ -23903,7 +23903,7 @@ msgctxt "message"
 msgid "05973"
 msgstr "あーん わたしたち・・・{line_break}どうなっちゃうのかしら!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHowLongWillWeDrift"
 msgid "05974"
 msgstr "ああ スクレータ・・・{line_break}この島 いつまで{line_break}ながされてるのかしら?{end_wait}"
 
@@ -23983,7 +23983,7 @@ msgctxt "message"
 msgid "05993"
 msgstr "どういうことじゃ アレクス{line_break}なにが あったんじゃ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaThoughtTheyWereInsideLighthouse"
 msgid "05994"
 msgstr "{actor_name:5}と{actor_name:7}のふたりとも{line_break}あの いへんの中で・・・{line_break}よく 生きとったもんじゃ。{end_wait}"
 
@@ -24259,7 +24259,7 @@ msgctxt "message"
 msgid "06062"
 msgstr "た たすけてーっ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCheckForInjuries"
 msgid "06063"
 msgstr "からだに いじょうがないか{line_break}しらべて みますか?{end_now}"
 
@@ -24275,7 +24275,7 @@ msgctxt "message"
 msgid "06066"
 msgstr "あるいてみたが・・・{line_break}どこにも もんだいはなかった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaGroan"
 msgid "06067"
 msgstr "うう・・・。{end_wait}"
 
@@ -24311,7 +24311,7 @@ msgctxt "message"
 msgid "06075"
 msgstr "スクレータは{line_break}ごうりゅうした。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaAwakeningExclamation"
 msgid "06076"
 msgstr "いったーい!{end_wait}"
 
@@ -24351,7 +24351,7 @@ msgctxt "message"
 msgid "06085"
 msgstr "{actor_name:6}が{line_break}なかまにくわわった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaSecondGroan"
 msgid "06086"
 msgstr "うっ うーん・・・。{end_wait}"
 
@@ -24391,7 +24391,7 @@ msgctxt "message"
 msgid "06095"
 msgstr "{actor_name:7}が{line_break}なかまにくわわった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHeyGarcia"
 msgid "06096"
 msgstr "おおい {actor_name:5}!{end_wait}"
 
@@ -24427,7 +24427,7 @@ msgctxt "message"
 msgid "06104"
 msgstr "スクレータは{line_break}ごうりゅうした。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCantBelieveYouTwo"
 msgid "06105"
 msgstr "ひっどーい!{end_wait}"
 
@@ -24463,7 +24463,7 @@ msgctxt "message"
 msgid "06113"
 msgstr "{actor_name:6}が{line_break}なかまにくわわった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWaitForMe"
 msgid "06114"
 msgstr "ま まってよーっ!{end_wait}"
 
@@ -24515,7 +24515,7 @@ msgctxt "message"
 msgid "06126"
 msgstr "{actor_name:7}が{line_break}なかまにくわわった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWhereHasAlexGone"
 msgid "06127"
 msgstr "そういえば アレクス・・・{line_break}どこに行ったんじゃろう?{end_wait}"
 

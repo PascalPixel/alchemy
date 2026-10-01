@@ -46,7 +46,7 @@ Func_02000098:
 Func_020000f0:
 	push {r5, r6, lr}
 	sub sp, #8
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	movs r1, #1
@@ -54,16 +54,16 @@ Func_020000f0:
 	bl Motion_SetVarCbAndRefresh
 	ldr r6, .L_020082ac
 	adds r0, r6, #0
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #2
 	bl Motion_SetVarCbAndRefresh
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r3, #25
 	movs r2, #42
 	str r3, [sp, #0]
@@ -99,7 +99,7 @@ Func_020000f0:
 	bl Task_Wait
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r5, .L_020082b0
 	movs r3, #133
 	lsls r3, r3, #2
@@ -125,7 +125,7 @@ Func_020000f0:
 	bl Func_020032c0
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #160
 	movs r0, #8
 	lsls r1, r1, #7
@@ -162,7 +162,7 @@ Func_020000f0:
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #128
 	movs r2, #20
 	ldr r0, [r5]
@@ -176,7 +176,7 @@ Func_020000f0:
 	bl Battle_WaitMode0
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r1, [r5]
 	movs r2, #0
 	movs r0, #8
@@ -189,7 +189,7 @@ Func_020000f0:
 	bl ObjectMotion_SetAngleToward
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #2
 	bl Engine_ActorSetAnimation
@@ -218,11 +218,11 @@ Func_020000f0:
 	lsls r0, r0, #4
 	adds r0, #99
 	bl GameFlag_SetBit
-	bl Func_020031c0
+	bl Engine_EventEnd
 	add sp, #8
 	pop {r5, r6, pc}
 .L_020082ac:
-	.4byte 0x000016a2
+	.4byte MsgIdejimaGroan
 .L_020082b0:
 	.4byte gPartyState
 	.section .text.x020082b4,"ax",%progbits
@@ -231,7 +231,7 @@ Func_020000f0:
 Func_020002b4:
 	push {r5, lr}
 	sub sp, #8
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	movs r1, #1
@@ -245,7 +245,7 @@ Func_020002b4:
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r0, .L_02008490
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r0, #5
 	movs r1, #0
 	movs r2, #40
@@ -257,7 +257,7 @@ Func_020002b4:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r3, #17
 	movs r2, #46
 	str r3, [sp, #0]
@@ -298,7 +298,7 @@ Func_020002b4:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #192
 	movs r0, #5
 	lsls r1, r1, #7
@@ -320,7 +320,7 @@ Func_020002b4:
 	bl ObjectMotion_Launch
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r5, .L_02008494
 	movs r2, #133
 	lsls r2, r2, #2
@@ -342,7 +342,7 @@ Func_020002b4:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #3
 	ldr r0, [r5]
 	bl Motion_SetModeAndWaitAnimation
@@ -366,7 +366,7 @@ Func_020002b4:
 	bl Engine_ActorSetAnimation
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	b .L_02008430
 .L_02008416:
 	movs r3, #192
@@ -380,7 +380,7 @@ Func_020002b4:
 	adds r3, #2
 	strh r3, [r2]
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 .L_02008430:
 	movs r2, #204
 	lsls r2, r2, #8
@@ -419,11 +419,11 @@ Func_020002b4:
 	lsls r0, r0, #4
 	adds r0, #100
 	bl GameFlag_SetBit
-	bl Func_020031c0
+	bl Engine_EventEnd
 	add sp, #8
 	pop {r5, pc}
 .L_02008490:
-	.4byte 0x000016ab
+	.4byte MsgIdejimaAwakeningExclamation
 .L_02008494:
 	.4byte gPartyState
 .L_02008498:
@@ -434,27 +434,27 @@ Func_020002b4:
 Func_0200049c:
 	push {r5, lr}
 	sub sp, #8
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	movs r1, #2
 	movs r0, #6
 	bl Motion_SetVarCbAndRefresh
 	ldr r0, .L_02008634
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r2, #40
 	movs r0, #6
 	movs r1, #0
 	bl Func_02003298
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #6
 	movs r1, #18
 	bl Engine_ActorSetAnimation
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r3, #14
 	movs r2, #40
 	str r3, [sp, #0]
@@ -492,7 +492,7 @@ Func_0200049c:
 	bl Object_LinkPair
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r0, [r5]
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -503,7 +503,7 @@ Func_0200049c:
 	bl Func_020032c0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #224
 	movs r0, #6
 	lsls r1, r1, #8
@@ -526,7 +526,7 @@ Func_0200049c:
 	bl Func_020032c0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #0
 	ldr r1, [r5]
 	movs r0, #6
@@ -538,13 +538,13 @@ Func_0200049c:
 	bl Engine_ActorSetAnimation
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r0, [r5]
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #204
 	lsls r2, r2, #8
 	movs r0, #6
@@ -563,7 +563,7 @@ Func_0200049c:
 	bl ObjectMotion_ArmCallback
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #6
 	movs r1, #2
 	bl Engine_ActorSetAnimation
@@ -591,11 +591,11 @@ Func_0200049c:
 	lsls r0, r0, #4
 	adds r0, #101
 	bl GameFlag_SetBit
-	bl Func_020031c0
+	bl Engine_EventEnd
 	add sp, #8
 	pop {r5, pc}
 .L_02008634:
-	.4byte 0x000016b5
+	.4byte MsgIdejimaSecondGroan
 .L_02008638:
 	.4byte gPartyState
 .L_0200863c:
@@ -605,7 +605,7 @@ Func_0200049c:
 	.thumb_func
 Func_02000640:
 	push {lr}
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	movs r0, #123
@@ -665,16 +665,16 @@ Func_020006a8:
 	beq .L_020086bc
 	b .L_0200887e
 .L_020086bc:
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	bl Func_02000664
 	ldr r6, .L_02008aa4
 	adds r0, r6, #0
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #0
 	movs r2, #0
@@ -756,7 +756,7 @@ Func_020006a8:
 	bl ObjectMotion_Launch
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #2
 	movs r2, #0
 	adds r1, #255
@@ -764,7 +764,7 @@ Func_020006a8:
 	bl Func_020032c0
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #128
 	movs r2, #20
 	lsls r1, r1, #1
@@ -772,7 +772,7 @@ Func_020006a8:
 	bl Func_020032c0
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #208
 	movs r2, #0
 	movs r0, #8
@@ -780,7 +780,7 @@ Func_020006a8:
 	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #160
 	movs r2, #0
 	movs r0, #8
@@ -788,13 +788,13 @@ Func_020006a8:
 	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #4
 	bl Engine_ActorSetAnimation
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #189
 	movs r0, #8
 	movs r1, #172
@@ -811,7 +811,7 @@ Func_020006a8:
 	lsls r0, r0, #7
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #2
 	bl Engine_ActorSetAnimation
@@ -845,7 +845,7 @@ Func_020006a8:
 	lsls r0, r0, #4
 	adds r0, #99
 	bl GameFlag_SetBit
-	bl Func_020031c0
+	bl Engine_EventEnd
 .L_0200887e:
 	movs r0, #128
 	lsls r0, r0, #4
@@ -855,7 +855,7 @@ Func_020006a8:
 	beq .L_0200888e
 	b .L_02008ac8
 .L_0200888e:
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	bl Func_02000664
@@ -867,10 +867,10 @@ Func_020006a8:
 	movs r0, #1
 	bl Task_Wait
 	ldr r0, .L_02008abc
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #0
 	movs r0, #6
 	movs r1, #0
@@ -952,10 +952,10 @@ Func_020006a8:
 	bl ObjectMotion_Launch
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #129
 	ldr r0, [r6]
 	lsls r1, r1, #1
@@ -971,7 +971,7 @@ Func_020006a8:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #6
 	movs r2, #0
 	adds r1, #255
@@ -994,7 +994,7 @@ Func_020006a8:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #224
 	movs r2, #40
 	movs r0, #5
@@ -1004,7 +1004,7 @@ Func_020006a8:
 	lsls r0, r0, #7
 	adds r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #192
 	movs r0, #8
 	lsls r1, r1, #6
@@ -1035,7 +1035,7 @@ Func_020006a8:
 	lsls r0, r0, #7
 	adds r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #208
 	movs r0, #8
 	lsls r1, r1, #8
@@ -1068,10 +1068,10 @@ Func_020006a8:
 	lsls r0, r0, #4
 	adds r0, #100
 	bl GameFlag_SetBit
-	bl Func_020031c0
+	bl Engine_EventEnd
 	b .L_02008ac8
 .L_02008aa4:
-	.4byte 0x000016bf
+	.4byte MsgIdejimaHeyGarcia
 .L_02008aa8:
 	.4byte 0x02d10000
 .L_02008aac:
@@ -1083,7 +1083,7 @@ Func_020006a8:
 .L_02008ab8:
 	.4byte Data_02003650
 .L_02008abc:
-	.4byte 0x000016c8
+	.4byte MsgIdejimaCantBelieveYouTwo
 .L_02008ac0:
 	.4byte Data_02003734
 .L_02008ac4:
@@ -1097,7 +1097,7 @@ Func_020006a8:
 	beq .L_02008ad8
 	b .L_02008cf4
 .L_02008ad8:
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	bl Func_02000664
@@ -1109,10 +1109,10 @@ Func_020006a8:
 	movs r0, #1
 	bl Task_Wait
 	ldr r0, .L_02008cfc
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #153
 	movs r1, #152
 	lsls r0, r0, #8
@@ -1197,7 +1197,7 @@ Func_020006a8:
 	bl Object_RefreshSelectorById
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #129
 	ldr r0, [r6]
 	lsls r1, r1, #1
@@ -1209,14 +1209,14 @@ Func_020006a8:
 	bl Func_020032c0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #40
 	movs r0, #8
 	movs r1, #0
 	bl Func_02003298
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #10
 	movs r2, #40
 	adds r1, #255
@@ -1224,19 +1224,19 @@ Func_020006a8:
 	bl Func_020032c0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #6
 	movs r1, #4
 	bl Engine_ActorSetAnimation
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #6
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #3
 	bl Engine_ActorSetAnimation
@@ -1260,7 +1260,7 @@ Func_020006a8:
 	bl ObjectMotion_ArmCallback
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #2
 	movs r2, #20
 	adds r1, #255
@@ -1268,7 +1268,7 @@ Func_020006a8:
 	bl Func_020032c0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r0, [r6]
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -1277,13 +1277,13 @@ Func_020006a8:
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #6
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #3
 	bl Engine_ActorSetAnimation
@@ -1309,14 +1309,14 @@ Func_020006a8:
 	lsls r0, r0, #4
 	adds r0, #101
 	bl GameFlag_SetBit
-	bl Func_020031c0
+	bl Engine_EventEnd
 .L_02008cf4:
 	add sp, #8
 	pop {r5, r6, pc}
 .L_02008cf8:
 	.4byte 0x029a0000
 .L_02008cfc:
-	.4byte 0x000016d1
+	.4byte MsgIdejimaWaitForMe
 .L_02008d00:
 	.4byte 0x02d10000
 .L_02008d04:
@@ -1327,879 +1327,6 @@ Func_020006a8:
 	.4byte gPartyState
 .L_02008d10:
 	.4byte Data_02003790
-	.section .text.x02008d14,"ax",%progbits
-	.global Func_02000d14
-	.thumb_func
-Func_02000d14:
-	push {r5, lr}
-	bl Func_020031b8
-	movs r0, #0
-	bl Func_02003310
-	movs r0, #153
-	movs r1, #152
-	lsls r0, r0, #8
-	lsls r1, r1, #5
-	adds r0, #153
-	adds r1, #51
-	bl Func_020032d0
-	movs r0, #216
-	movs r1, #1
-	movs r2, #180
-	movs r3, #1
-	lsls r0, r0, #15
-	negs r1, r1
-	lsls r2, r2, #18
-	bl Motion_CamBounds
-	ldr r5, .L_02009098
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r5, r5, r2
-	movs r1, #204
-	movs r2, #204
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	ldr r0, [r5]
-	adds r1, #204
-	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
-	movs r2, #178
-	lsls r2, r2, #2
-	ldr r0, [r5]
-	movs r1, #86
-	bl ObjectMotion_SetPositionAndReset
-	ldr r1, [r5]
-	movs r0, #8
-	bl Func_02003238
-	movs r0, #1
-	bl Task_Wait
-	movs r1, #204
-	movs r2, #204
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	movs r0, #8
-	adds r1, #204
-	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
-	movs r2, #178
-	movs r0, #8
-	movs r1, #104
-	lsls r2, r2, #2
-	bl ObjectMotion_SetPositionAndReset
-	ldr r0, [r5]
-	movs r1, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #128
-	movs r2, #20
-	lsls r1, r1, #8
-	movs r0, #8
-	bl ObjectMotion_ArmCallback
-	ldr r0, .L_0200909c
-	bl Func_02003288
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r0, #8
-	movs r1, #0
-	movs r2, #40
-	bl ObjectMotion_ArmCallback
-	movs r1, #160
-	movs r0, #8
-	lsls r1, r1, #7
-	movs r2, #20
-	bl ObjectMotion_ArmCallback
-	movs r0, #8
-	movs r1, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r2, #182
-	ldr r0, [r5]
-	movs r1, #104
-	lsls r2, r2, #2
-	bl ObjectMotion_SetPositionAndReset
-	ldr r0, [r5]
-	movs r1, #0
-	movs r2, #20
-	bl ObjectMotion_ArmCallback
-	movs r1, #128
-	ldr r0, [r5]
-	lsls r1, r1, #6
-	movs r2, #20
-	bl ObjectMotion_ArmCallback
-	movs r2, #0
-	ldr r0, [r5]
-	movs r1, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #192
-	movs r0, #8
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #192
-	movs r2, #20
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #8
-	movs r1, #3
-	bl Engine_ActorSetAnimation
-	movs r1, #0
-	movs r0, #8
-	bl Func_020032a8
-	movs r1, #131
-	movs r2, #40
-	lsls r1, r1, #1
-	movs r0, #8
-	bl Func_020032c0
-	movs r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	ldr r1, [r5]
-	movs r0, #5
-	bl Func_02003238
-	ldr r1, [r5]
-	movs r0, #6
-	bl Func_02003238
-	movs r0, #1
-	bl Task_Wait
-	movs r1, #204
-	movs r2, #204
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	movs r0, #6
-	adds r1, #204
-	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
-	movs r1, #204
-	movs r2, #204
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	movs r0, #5
-	adds r1, #204
-	adds r2, #102
-	bl ObjectMotion_SetSpeedParameters
-	movs r2, #178
-	movs r0, #5
-	movs r1, #86
-	lsls r2, r2, #2
-	bl ObjectMotion_ResetAndSetPositionInMode2
-	movs r2, #182
-	movs r0, #6
-	movs r1, #86
-	lsls r2, r2, #2
-	bl ObjectMotion_SetPositionAndReset
-	movs r1, #224
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #6
-	bl ObjectMotion_ArmCallback
-	movs r0, #5
-	bl ObjectMotion_CommitCurrentPositionAndActivate
-	movs r0, #5
-	movs r1, #1
-	bl Engine_ActorSetAnimation
-	movs r1, #128
-	movs r2, #0
-	movs r0, #5
-	lsls r1, r1, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	movs r2, #40
-	bl ObjectMotion_ArmCallback
-	movs r1, #224
-	movs r0, #6
-	lsls r1, r1, #8
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #192
-	movs r2, #0
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #8
-	movs r1, #4
-	bl Engine_ActorSetAnimation
-	movs r0, #128
-	lsls r0, r0, #6
-	movs r1, #0
-	adds r0, #8
-	bl UiText_OpenMessageAtObject
-	movs r0, #6
-	movs r1, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #128
-	movs r0, #5
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	ldr r0, [r5]
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_02008f58
-	movs r0, #8
-	movs r1, #4
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	b .L_02008f7e
-.L_02008f58:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	movs r0, #8
-	adds r3, #1
-	movs r1, #3
-	strh r3, [r2]
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-.L_02008f7e:
-	movs r2, #0
-	movs r0, #5
-	movs r1, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #2
-	adds r1, #255
-	movs r2, #0
-	movs r0, #6
-	bl Func_020032c0
-	movs r1, #192
-	movs r2, #0
-	movs r0, #6
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #160
-	movs r2, #0
-	movs r0, #8
-	lsls r1, r1, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	ldr r3, .L_02009098
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r3, r2
-	movs r1, #2
-	ldr r0, [r3]
-	adds r1, #255
-	movs r2, #40
-	bl Func_020032c0
-	movs r1, #192
-	movs r2, #0
-	movs r0, #8
-	lsls r1, r1, #6
-	bl ObjectMotion_ArmCallback
-	movs r0, #8
-	movs r1, #4
-	bl Engine_ActorSetAnimation
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	movs r2, #20
-	lsls r1, r1, #1
-	movs r0, #5
-	bl Func_020032c0
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	movs r2, #20
-	movs r0, #8
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #8
-	movs r1, #3
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r2, #20
-	movs r0, #6
-	movs r1, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	movs r0, #5
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #0
-	movs r0, #5
-	bl UiText_OpenMessageAtObject
-	movs r0, #8
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020090a0
-	movs r1, #192
-	movs r2, #20
-	movs r0, #8
-	lsls r1, r1, #6
-	bl ObjectMotion_ArmCallback
-	movs r0, #8
-	movs r1, #3
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	b .L_020090da
-	.2byte 0x0000
-.L_02009098:
-	.4byte gPartyState
-.L_0200909c:
-	.4byte 0x000016de
-.L_020090a0:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	movs r1, #4
-	adds r3, #1
-	strh r3, [r2]
-	adds r1, #255
-	movs r2, #0
-	movs r0, #8
-	bl Func_020032c0
-	movs r1, #128
-	movs r0, #8
-	lsls r1, r1, #7
-	movs r2, #20
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	bl Func_02003320
-.L_020090da:
-	movs r1, #128
-	movs r2, #0
-	lsls r1, r1, #1
-	movs r0, #5
-	bl Func_020032c0
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #40
-	movs r0, #8
-	bl Func_020032c0
-	movs r1, #160
-	movs r2, #0
-	movs r0, #8
-	lsls r1, r1, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #2
-	adds r1, #255
-	movs r2, #0
-	movs r0, #6
-	bl Func_020032c0
-	movs r1, #224
-	movs r2, #40
-	movs r0, #6
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	movs r2, #20
-	movs r0, #5
-	lsls r1, r1, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #192
-	movs r0, #8
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	ldr r5, .L_02009478
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r5, r5, r2
-	movs r1, #192
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	movs r2, #20
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #6
-	movs r1, #0
-	adds r0, #8
-	bl UiText_OpenMessageAtObject
-	ldr r0, [r5]
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_020091b0
-	movs r1, #4
-	adds r1, #255
-	movs r2, #0
-	movs r0, #6
-	bl Func_020032c0
-	movs r2, #20
-	movs r0, #6
-	movs r1, #0
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	b .L_020091e0
-.L_020091b0:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	movs r1, #132
-	adds r3, #1
-	strh r3, [r2]
-	lsls r1, r1, #1
-	movs r2, #0
-	movs r0, #6
-	bl Func_020032c0
-	movs r0, #6
-	movs r1, #0
-	movs r2, #20
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-.L_020091e0:
-	movs r1, #128
-	movs r2, #0
-	lsls r1, r1, #1
-	movs r0, #8
-	bl Func_020032c0
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #224
-	movs r2, #0
-	movs r0, #6
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #3
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #2
-	movs r2, #40
-	adds r1, #255
-	movs r0, #5
-	bl Func_020032c0
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	ldr r5, .L_02009478
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r5, r5, r2
-	ldr r0, [r5]
-	movs r1, #6
-	bl Object_LinkObjectAndSetCallback
-	movs r0, #8
-	movs r1, #6
-	bl Object_LinkObjectAndSetCallback
-	movs r0, #5
-	movs r1, #6
-	bl Object_LinkObjectAndSetCallback
-	movs r1, #204
-	movs r2, #204
-	lsls r1, r1, #7
-	lsls r2, r2, #6
-	movs r0, #6
-	adds r1, #102
-	adds r2, #51
-	bl ObjectMotion_SetSpeedParameters
-	movs r2, #187
-	movs r1, #86
-	lsls r2, r2, #2
-	movs r0, #6
-	bl ObjectMotion_SetPositionAndReset
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r1, #10
-	movs r2, #80
-	adds r1, #255
-	movs r0, #6
-	bl Func_020032c0
-	movs r0, #128
-	lsls r0, r0, #6
-	movs r1, #0
-	adds r0, #8
-	bl Func_020032a0
-	ldr r0, [r5]
-	bl ObjectMotion_EnableActionAndResetMotion
-	movs r0, #8
-	bl ObjectMotion_EnableActionAndResetMotion
-	movs r0, #5
-	bl ObjectMotion_EnableActionAndResetMotion
-	movs r1, #3
-	movs r0, #6
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #40
-	bl Battle_WaitMode0
-	movs r0, #5
-	movs r1, #4
-	bl Engine_ActorSetAnimation
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #192
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #6
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	bl Object_RefreshSelectorById
-	movs r0, #6
-	movs r1, #4
-	bl Engine_ActorSetAnimation
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #192
-	movs r0, #8
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #192
-	ldr r0, [r5]
-	lsls r1, r1, #8
-	movs r2, #40
-	bl ObjectMotion_ArmCallback
-	movs r1, #160
-	movs r0, #8
-	lsls r1, r1, #7
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #192
-	movs r2, #20
-	ldr r0, [r5]
-	lsls r1, r1, #7
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r0, #6
-	movs r1, #3
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r0, #8
-	movs r1, #3
-	bl Engine_ActorSetAnimation
-	movs r0, #5
-	movs r1, #3
-	bl Engine_ActorSetAnimation
-	ldr r0, [r5]
-	movs r1, #3
-	bl Motion_SetModeAndWaitAnimation
-	movs r1, #224
-	movs r2, #0
-	movs r0, #6
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #192
-	movs r2, #0
-	movs r0, #8
-	lsls r1, r1, #6
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #6
-	movs r1, #0
-	adds r0, #8
-	bl Func_020032a8
-	movs r1, #160
-	movs r2, #40
-	movs r0, #6
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r0, #5
-	movs r1, #0
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #128
-	movs r2, #20
-	movs r0, #8
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #4
-	bl Engine_ActorSetAnimation
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	movs r0, #5
-	lsls r1, r1, #7
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #160
-	movs r0, #8
-	lsls r1, r1, #7
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #6
-	adds r1, #255
-	movs r2, #0
-	movs r0, #8
-	bl Func_020032c0
-	movs r1, #6
-	movs r2, #40
-	adds r1, #255
-	movs r0, #5
-	bl Func_020032c0
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #192
-	movs r2, #0
-	movs r0, #6
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #129
-	movs r0, #8
-	lsls r1, r1, #1
-	bl Func_020032c8
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #132
-	lsls r1, r1, #1
-	movs r2, #20
-	movs r0, #6
-	bl Func_020032c0
-	movs r1, #224
-	movs r2, #20
-	movs r0, #6
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #6
-	movs r1, #0
-	bl Func_020032a0
-	movs r0, #8
-	movs r1, #3
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #128
-	movs r0, #5
-	lsls r1, r1, #6
-	movs r2, #0
-	bl ObjectMotion_ArmCallback
-	movs r1, #0
-	movs r0, #5
-	bl UiText_OpenMessageAtObject
-	ldr r0, [r5]
-	movs r1, #0
-	bl Inventory_PromptAndSetObjectMode
-	cmp r0, #0
-	bne .L_0200947c
-	movs r0, #5
-	movs r1, #3
-	bl Engine_ActorSetAnimation
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	b .L_0200949e
-	.2byte 0x0000
-.L_02009478:
-	.4byte gPartyState
-.L_0200947c:
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r2, [r3, #108]
-	movs r3, #226
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	movs r0, #5
-	adds r3, #1
-	movs r1, #4
-	strh r3, [r2]
-	bl Engine_ActorSetAnimation
-	movs r0, #5
-	movs r1, #0
-	bl Func_020032a0
-.L_0200949e:
-	movs r1, #10
-	movs r2, #40
-	adds r1, #255
-	movs r0, #8
-	bl Func_020032c0
-	movs r1, #4
-	movs r0, #6
-	bl Motion_SetModeAndWaitAnimation
-	movs r0, #20
-	bl Battle_WaitMode0
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r0, #6
-	movs r1, #3
-	bl Motion_SetModeAndWaitAnimation
-	movs r1, #128
-	movs r2, #20
-	movs r0, #8
-	lsls r1, r1, #8
-	bl ObjectMotion_ArmCallback
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r2, #20
-	movs r0, #8
-	movs r1, #4
-	bl ObjectMotion_Launch
-	movs r0, #128
-	lsls r0, r0, #6
-	adds r0, #8
-	movs r1, #0
-	bl Func_020032a0
-	movs r1, #204
-	movs r2, #204
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	adds r2, #102
-	movs r0, #6
-	adds r1, #204
-	bl ObjectMotion_SetSpeedParameters
-	ldr r5, .L_02009538
-	movs r0, #8
-	adds r1, r5, #0
-	bl ObjectMotion_EnableActionAndSetCallback
-	adds r1, r5, #0
-	movs r0, #5
-	bl ObjectMotion_EnableActionAndSetCallback
-	adds r1, r5, #0
-	movs r0, #6
-	bl Object_SetActionCallbackAndRefreshById
-	movs r0, #237
-	lsls r0, r0, #3
-	adds r0, #255
-	bl GameFlag_SetBit
-	bl Func_020031c0
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02009538:
-	.4byte Data_020037c4
 	.section .text.x0200953c,"ax",%progbits
 	.global Func_0200153c
 	.thumb_func
@@ -2366,7 +1493,7 @@ Func_020016d8:
 	mov r6, r9
 	mov r5, r8
 	push {r5, r6}
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	movs r0, #1
@@ -2500,7 +1627,7 @@ Func_020016d8:
 	movs r0, #8
 	bl ObjectMotion_ArmCallback
 	ldr r0, .L_02009b24
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r0, #128
 	lsls r0, r0, #5
 	movs r1, #0
@@ -2519,7 +1646,7 @@ Func_020016d8:
 	lsls r0, r0, #5
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -2547,7 +1674,7 @@ Func_020016d8:
 	lsls r0, r0, #5
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -2559,7 +1686,7 @@ Func_020016d8:
 	lsls r0, r0, #5
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -2623,7 +1750,7 @@ Func_020016d8:
 	lsls r0, r0, #6
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -2658,7 +1785,7 @@ Func_020016d8:
 	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #226
 	movs r2, #164
@@ -2686,7 +1813,7 @@ Func_020016d8:
 	lsls r0, r0, #6
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #128
 	movs r0, #5
 	lsls r1, r1, #6
@@ -2811,7 +1938,7 @@ Func_020016d8:
 .L_02009b20:
 	.4byte gPartyState
 .L_02009b24:
-	.4byte 0x00001619
+	.4byte MsgIdejimaIsThisThePlace
 .L_02009b28:
 	.4byte Data_02003330
 .L_02009b2c:
@@ -2830,7 +1957,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -2838,7 +1965,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #2
 	adds r1, #255
 	movs r2, #0
@@ -2854,7 +1981,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #224
 	lsls r2, r2, #8
 	movs r5, #192
@@ -2882,7 +2009,7 @@ Func_020016d8:
 	bl Battle_WaitMode0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #160
 	movs r0, #8
 	lsls r1, r1, #7
@@ -2908,7 +2035,7 @@ Func_020016d8:
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #176
 	movs r0, #8
 	lsls r1, r1, #8
@@ -2923,7 +2050,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	mov r1, r10
 	movs r0, #5
 	movs r2, #0
@@ -2939,7 +2066,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #128
 	movs r2, #20
 	lsls r1, r1, #1
@@ -2947,7 +2074,7 @@ Func_020016d8:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -3019,7 +2146,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #2
 	movs r2, #0
 	adds r1, #255
@@ -3027,7 +2154,7 @@ Func_020016d8:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #176
 	movs r2, #20
 	movs r0, #8
@@ -3040,23 +2167,23 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #3
 	bl Engine_ActorSetAnimation
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #160
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #144
 	lsls r0, r0, #8
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #192
 	movs r0, #5
 	lsls r1, r1, #7
@@ -3087,7 +2214,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -3113,7 +2240,7 @@ Func_020016d8:
 	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #208
 	movs r2, #0
 	movs r0, #10
@@ -3123,7 +2250,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	mov r1, r8
 	movs r0, #5
 	movs r2, #0
@@ -3145,7 +2272,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	mov r1, r11
 	movs r0, #5
 	movs r2, #0
@@ -3158,12 +2285,12 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #160
 	lsls r0, r0, #8
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #208
 	movs r2, #40
 	movs r0, #10
@@ -3173,7 +2300,7 @@ Func_020016d8:
 	lsls r0, r0, #8
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #192
 	movs r2, #0
 	movs r0, #5
@@ -3183,7 +2310,7 @@ Func_020016d8:
 	lsls r0, r0, #6
 	adds r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	mov r1, r8
 	movs r2, #80
@@ -3208,7 +2335,7 @@ Func_02001ee0:
 	sub sp, #28
 	bl Object_GetById
 	adds r6, r0, #0
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	bl Func_0200161c
@@ -3308,14 +2435,14 @@ Func_02001ee0:
 	movs r0, #120
 	bl Battle_WaitMode0
 	ldr r0, .L_0200a2e8
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r2, #40
 	movs r0, #5
 	movs r1, #0
 	bl Func_02003298
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #8
 	movs r2, #0
 	adds r1, #255
@@ -3323,7 +2450,7 @@ Func_02001ee0:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #6
 	movs r2, #80
 	adds r1, #255
@@ -3331,10 +2458,10 @@ Func_02001ee0:
 	bl Func_020032c0
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #6
 	adds r1, #255
 	movs r2, #40
@@ -3347,10 +2474,10 @@ Func_02001ee0:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #129
 	movs r2, #0
 	lsls r1, r1, #1
@@ -3358,7 +2485,7 @@ Func_02001ee0:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #129
 	lsls r1, r1, #1
 	movs r0, #8
@@ -3367,7 +2494,7 @@ Func_02001ee0:
 	bl Battle_WaitMode0
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #6
 	adds r1, #255
 	movs r2, #40
@@ -3397,7 +2524,7 @@ Func_02001ee0:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #204
 	movs r2, #204
 	lsls r1, r1, #8
@@ -3421,7 +2548,7 @@ Func_02001ee0:
 	bl ObjectMotion_SetPositionAndReset
 	movs r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #2
 	adds r1, #255
 	movs r2, #0
@@ -3434,7 +2561,7 @@ Func_02001ee0:
 	bl Func_020032c0
 	movs r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r1, .L_0200a2ec
 	movs r0, #10
 	bl ObjectMotion_EnableActionAndSetCallback
@@ -3578,7 +2705,7 @@ Func_02001ee0:
 	lsls r0, r0, #7
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #10
 	movs r0, #5
 	movs r1, #4
@@ -3587,7 +2714,7 @@ Func_02001ee0:
 	lsls r0, r0, #5
 	adds r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #176
 	movs r0, #8
 	lsls r1, r1, #8
@@ -3619,7 +2746,7 @@ Func_02001ee0:
 .L_0200a2e4:
 	.4byte 0xffff0000
 .L_0200a2e8:
-	.4byte 0x00001645
+	.4byte MsgIdejimaHowLongWillWeDrift
 .L_0200a2ec:
 	.4byte Data_020033a8
 .L_0200a2f0:
@@ -3651,7 +2778,7 @@ Func_02002304:
 	sub sp, #28
 	bl Object_GetById
 	adds r7, r0, #0
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	movs r0, #1
@@ -3728,10 +2855,10 @@ Func_02002304:
 	movs r0, #20
 	bl Battle_WaitMode0
 	ldr r0, .L_0200a710
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #176
 	movs r2, #0
 	movs r0, #10
@@ -3741,13 +2868,13 @@ Func_02002304:
 	lsls r0, r0, #6
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #4
 	bl Engine_ActorSetAnimation
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -3810,13 +2937,13 @@ Func_02002304:
 	bl Battle_WaitMode0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #2
 	movs r2, #40
 	adds r1, #255
@@ -3824,7 +2951,7 @@ Func_02002304:
 	bl Func_020032c0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #18
 	movs r0, #6
 	bl Engine_ActorSetAnimation
@@ -3832,7 +2959,7 @@ Func_02002304:
 	bl Battle_WaitMode0
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #3
 	bl Engine_ActorSetAnimation
@@ -3878,7 +3005,7 @@ Func_02002304:
 	bl Battle_WaitMode0
 	movs r1, #0
 	movs r0, #5
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #6
 	bl Object_GetById
 	adds r0, #90
@@ -3946,7 +3073,7 @@ Func_02002304:
 	lsls r0, r0, #5
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #224
 	movs r0, #6
 	lsls r1, r1, #8
@@ -3969,13 +3096,13 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #4
 	bl Engine_ActorSetAnimation
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #0
 	movs r0, #5
 	movs r1, #4
@@ -3984,7 +3111,7 @@ Func_02002304:
 	lsls r0, r0, #5
 	adds r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #20
 	movs r0, #6
 	mov r1, r8
@@ -3996,7 +3123,7 @@ Func_02002304:
 	lsls r0, r0, #5
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #204
 	lsls r2, r2, #8
 	movs r0, #6
@@ -4017,7 +3144,7 @@ Func_02002304:
 	lsls r0, r0, #7
 	movs r1, #0
 	adds r0, #6
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	bl ObjectMotion_EnableActionAndResetMotion
 	movs r0, #5
@@ -4047,7 +3174,7 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #128
 	movs r2, #0
 	lsls r1, r1, #1
@@ -4056,7 +3183,7 @@ Func_02002304:
 .L_0200a70c:
 	.4byte gPartyState
 .L_0200a710:
-	.4byte 0x00001659
+	.4byte MsgIdejimaThoughtTheyWereInsideLighthouse
 .L_0200a714:
 	.4byte 0x00019999
 .L_0200a718:
@@ -4065,7 +3192,7 @@ Func_02002304:
 	lsls r0, r0, #5
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #6
 	movs r1, #4
 	bl Motion_SetModeAndWaitAnimation
@@ -4078,7 +3205,7 @@ Func_02002304:
 	lsls r0, r0, #7
 	adds r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
@@ -4089,7 +3216,7 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #160
 	movs r2, #0
 	movs r0, #6
@@ -4097,12 +3224,12 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #128
 	lsls r0, r0, #5
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #192
 	movs r2, #0
 	lsls r1, r1, #7
@@ -4122,7 +3249,7 @@ Func_02002304:
 	lsls r0, r0, #5
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #128
 	movs r2, #0
 	movs r0, #8
@@ -4130,7 +3257,7 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #160
 	movs r2, #0
 	lsls r1, r1, #8
@@ -4177,7 +3304,7 @@ Func_02002304:
 	bl Engine_ActorSetAnimation
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #6
 	movs r2, #0
 	adds r1, #255
@@ -4209,7 +3336,7 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #42
 	ldr r0, [r6]
 	bl Engine_ActorSetAnimation
@@ -4233,7 +3360,7 @@ Func_02002304:
 	lsls r0, r0, #6
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #10
 	movs r2, #40
 	adds r1, #255
@@ -4241,7 +3368,7 @@ Func_02002304:
 	bl Func_020032c0
 	movs r1, #0
 	movs r0, #5
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r0, [r6]
 	bl Object_GetById
 	adds r0, #90
@@ -4275,7 +3402,7 @@ Func_02002304:
 	bl Func_020032c8
 	movs r1, #0
 	movs r0, #5
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r0, [r6]
 	bl Object_GetById
 	adds r0, #90
@@ -4303,7 +3430,7 @@ Func_02002304:
 	lsls r0, r0, #6
 	adds r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #2
 	adds r1, #255
 	movs r2, #0
@@ -4320,7 +3447,7 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #128
 	ldr r0, [r6]
 	lsls r1, r1, #6
@@ -4345,7 +3472,7 @@ Func_02002304:
 	bl Motion_SetModeAndWaitAnimation
 	movs r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
@@ -4361,7 +3488,7 @@ Func_02002304:
 	bl Func_020032c0
 	movs r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #160
 	movs r2, #20
 	movs r0, #6
@@ -4369,14 +3496,14 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r2, #0
 	movs r0, #8
 	mov r1, r9
 	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
@@ -4441,7 +3568,7 @@ Func_02002304:
 	lsls r0, r0, #7
 	adds r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #8
 	mov r1, r9
 	movs r2, #0
@@ -4468,7 +3595,7 @@ Func_02002304:
 	bl ObjectMotion_ArmCallback
 	movs r0, #8
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #132
 	movs r2, #0
 	lsls r1, r1, #1
@@ -4478,7 +3605,7 @@ Func_02002304:
 	lsls r0, r0, #5
 	adds r0, #10
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #153
 	movs r1, #152
 	lsls r0, r0, #8
@@ -4573,15 +3700,15 @@ Func_02002304:
 	lsls r0, r0, #5
 	adds r0, #5
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #128
 	lsls r0, r0, #5
 	adds r0, #6
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r1, #0
 	movs r0, #8
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #13
 	bl Func_020032e8
 	add sp, #28
@@ -4598,7 +3725,7 @@ Func_02002304:
 Func_02002c64:
 	push {r5, lr}
 	bl FelixWake_BeginStep
-	bl Func_020031b8
+	bl Engine_EventBegin
 	movs r0, #0
 	bl Func_02003310
 	movs r0, #1
@@ -4689,7 +3816,7 @@ Func_02002c64:
 	ldr r0, [r5]
 	bl ObjectMotion_Launch
 	ldr r0, .L_0200aec4
-	bl Func_02003288
+	bl Engine_EventSetMessage
 	movs r1, #0
 	movs r0, #11
 	bl UiText_OpenMessageAtObject
@@ -4723,7 +3850,7 @@ Func_02002c64:
 	bl FelixWake_BeginStep
 	movs r1, #0
 	movs r0, #11
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #1
 	bl Task_Wait
 	movs r1, #3
@@ -4753,7 +3880,7 @@ Func_02002c64:
 	bl FelixWake_BeginStep
 	movs r1, #0
 	movs r0, #11
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	movs r0, #1
 	bl Task_Wait
 	ldr r0, [r5]
@@ -4793,7 +3920,7 @@ Func_02002c64:
 	bl FelixWake_BeginStep
 	movs r0, #11
 	movs r1, #0
-	bl Func_020032a0
+	bl Engine_EventShowMessage
 	ldr r0, [r5]
 	movs r1, #3
 	bl Motion_SetModeAndWaitAnimation
@@ -4809,7 +3936,7 @@ Func_02002c64:
 	lsls r0, r0, #4
 	adds r0, #68
 	bl GameFlag_SetBit
-	bl Func_020031c0
+	bl Engine_EventEnd
 	bl FelixWake_EndStep
 	pop {r5, pc}
 	.2byte 0x0000
@@ -4818,7 +3945,7 @@ Func_02002c64:
 .L_0200aec0:
 	.4byte 0x02be0000
 .L_0200aec4:
-	.4byte 0x0000169e
+	.4byte MsgIdejimaCheckForInjuries
 	.section .text.x0200aec8,"ax",%progbits
 	.global Func_02002ec8
 	.thumb_func
@@ -5426,8 +4553,8 @@ Data_02003790:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000011
-	.global Data_020037c4
-Data_020037c4:
+	.global Idejima_ActorDepartureScript
+Idejima_ActorDepartureScript:
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -5546,7 +4673,7 @@ gIdejimaEventsWake:
 	.4byte Func_020006a8
 	.4byte 0x00000002
 	.4byte 0x08670008
-	.4byte Func_02000d14
+	.4byte Idejima_RunAlexDeparture
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

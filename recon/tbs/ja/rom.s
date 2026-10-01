@@ -710,12 +710,6 @@ UiText_OpenMessageAtObject:
 	.thumb_func
 DisplayScroll_BuildAndSwapHBlankPage:
 	.incbin "baserom.gba", 0x0008b52c, 0x000001ec
-	.section .rom.0008b808, "ax"
-	.global Unnamed_08094820
-	.type Unnamed_08094820, %function
-	.thumb_func
-Unnamed_08094820:
-	.incbin "baserom.gba", 0x0008b808, 0x00000188
 	.section .rom.0008bba2, "ax"
 	.incbin "baserom.gba", 0x0008bba2, 0x00000002
 	.section .rom.0008bba4, "ax"
@@ -830,7 +824,10 @@ ObjectMotion_VariantScripts:
 	.incbin "baserom.gba", 0x00095be0, 0x00000184
 	.global ObjectGroup_BlinkChildValues
 ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x00095d64, 0x000002a4
+	.incbin "baserom.gba", 0x00095d64, 0x00000204
+	.global FieldFx_GroundParticleFrames
+FieldFx_GroundParticleFrames:
+	.incbin "baserom.gba", 0x00095f68, 0x000000a0
 	.global Data_0809f024
 Data_0809f024:
 	.incbin "baserom.gba", 0x00096008, 0x00000080

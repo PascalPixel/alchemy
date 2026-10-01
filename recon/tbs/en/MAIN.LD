@@ -509,7 +509,6 @@
         "*/recon/tbs/raw/08094544.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.o"(.text)
-        "*/recon/tbs/raw/08094820.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORM_FLASH.o"(.text)
         "*/recon/tbs/raw/08094bba.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08094bbc.o"(.text .rodata .data .padding)

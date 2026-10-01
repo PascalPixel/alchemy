@@ -41,7 +41,7 @@ Unnamed_080e2538:
 	mov r10, r3
 	movs r0, #46
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #28]
 	str r5, [sp, #20]
 	mov r4, r8

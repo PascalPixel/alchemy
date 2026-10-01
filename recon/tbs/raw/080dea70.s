@@ -74,7 +74,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080deb28
 .L_080deb02:
 	ldr r3, [r2, #4]
@@ -87,7 +87,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080deb28
 .L_080deb1a:
 	movs r3, #3
@@ -95,7 +95,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080deb28:
 	ldr r3, .L_080dec20
 	adds r3, #184
@@ -811,7 +811,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080df0ac
 .L_080df09e:
 	movs r3, #3
@@ -819,7 +819,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080df0ac:
 	ldr r3, .L_080df2fc
 	adds r3, #188
@@ -1231,7 +1231,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080df3e4
 .L_080df3d4:
 	movs r3, #2
@@ -1240,7 +1240,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080df3e4:
 	ldr r4, [sp, #92]
 	ldr r3, .L_080df698
@@ -1273,7 +1273,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #15
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080df43c
 .L_080df42c:
 	movs r3, #2
@@ -1282,7 +1282,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #11
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080df43c:
 	movs r1, #32
 	ldr r2, [r7]
@@ -1532,7 +1532,7 @@ BattleFx_RunProjectileVolley:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	lsls r5, r6, #1
 	mov r4, r9
 	mov r0, r10
@@ -1561,7 +1561,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r3, #15
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080df6b8
 	ldr r4, .L_080df6b0
 	ldrb r0, [r3, r6]
@@ -1617,7 +1617,7 @@ BattleFx_RunProjectileVolley:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	lsls r5, r6, #1
 	mov r2, r9
 	ldrh r1, [r2, r5]
@@ -1650,7 +1650,7 @@ BattleFx_RunProjectileVolley:
 	movs r1, #7
 	movs r3, #15
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r2, r9
 	ldrh r1, [r2, r5]
 	ldr r3, .L_080df88c

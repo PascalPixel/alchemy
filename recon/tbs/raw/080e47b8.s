@@ -2031,7 +2031,7 @@ BattleFx_RunCastingImpact:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080e5ae0
 	mov r1, r8
 	lsls r3, r1, #1
@@ -2113,7 +2113,7 @@ BattleFx_RunCastingImpact:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080e5af0
 	ldr r0, [sp, #12]
 	mov r8, r3
@@ -2249,7 +2249,7 @@ BattleFx_RunCastingImpact:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r3, r9
 	movs r1, #24
 	ldr r6, .L_080e5af0
@@ -2272,7 +2272,7 @@ BattleFx_RunCastingImpact:
 	movs r2, #7
 	movs r3, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r1, r8
 	mov r2, r9
 	str r1, [sp, #0]

@@ -33,13 +33,13 @@ Func_080e0564:
 	movs r3, #11
 	movs r0, #46
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #3
 	movs r1, #7
 	movs r2, #7
 	movs r0, #47
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, [r5, #28]
 	ldr r5, [r5, #32]
 	str r3, [sp, #24]

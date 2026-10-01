@@ -35,7 +35,7 @@ Unnamed_080d1714:
 	movs r3, #3
 	movs r0, #46
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r7, [r5, #24]
 	movs r3, #3
 	movs r1, #7
@@ -43,7 +43,7 @@ Unnamed_080d1714:
 	movs r0, #47
 	str r7, [sp, #84]
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #28]
 	ldr r0, .L_080d19cc
 	str r5, [sp, #88]

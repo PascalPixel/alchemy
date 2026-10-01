@@ -265,7 +265,7 @@ BattleEffect_RunTileAndPaletteAnimation:
 	movs r3, #3
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, .L_080cbfac
 	adds r3, r5, #0
 	adds r3, #184
@@ -277,7 +277,7 @@ BattleEffect_RunTileAndPaletteAnimation:
 	movs r2, #7
 	movs r0, #47
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	adds r5, #188
 	ldr r5, [r5]
 	movs r2, #225

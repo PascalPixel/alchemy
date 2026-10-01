@@ -195,7 +195,7 @@ Unnamed_080eb754:
 	movs r0, #46
 	movs r1, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080eb90c
 	adds r3, #184
 	ldr r3, [r3]

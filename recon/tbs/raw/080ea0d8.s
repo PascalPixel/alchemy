@@ -49,7 +49,7 @@ Unnamed_080ea0d8:
 	movs r3, #3
 	movs r0, #46
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, [r5, #24]
 	movs r0, #239
 	str r5, [sp, #88]
@@ -710,7 +710,7 @@ Unnamed_080ea0d8:
 	movs r0, #47
 	str r5, [sp, #0]
 	adds r6, r6, r4
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r1, #60
 	mov r9, r1
 	ldr r0, [sp, #100]
@@ -740,7 +740,7 @@ Unnamed_080ea0d8:
 	movs r1, #7
 	movs r3, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r3, r8
 	mov r2, r10
 	str r2, [sp, #0]
@@ -760,7 +760,7 @@ Unnamed_080ea0d8:
 	movs r1, #7
 	movs r3, #11
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r3, r8
 	mov r2, r10
 	str r2, [sp, #0]
@@ -780,7 +780,7 @@ Unnamed_080ea0d8:
 	movs r2, #7
 	movs r3, #15
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r2, r8
 	mov r1, r10
 	str r1, [sp, #0]
@@ -888,7 +888,7 @@ Unnamed_080ea0d8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r7, [sp, #56]
 	movs r5, #64
 	movs r2, #24
@@ -909,7 +909,7 @@ Unnamed_080ea0d8:
 	movs r2, #7
 	movs r3, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r4, #24
 	str r5, [sp, #4]
 	str r4, [sp, #0]
@@ -951,7 +951,7 @@ Unnamed_080ea0d8:
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r7, [r7]
 	adds r6, r6, r5
 	movs r3, #4
@@ -1075,7 +1075,7 @@ Unnamed_080ea0d8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080ea9d0
 	adds r3, #184
 	ldr r3, [r3]
@@ -1784,7 +1784,7 @@ Unnamed_080ea0d8:
 	movs r3, #3
 	movs r0, #47
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r2, #24
 	str r2, [sp, #0]
 	str r2, [sp, #4]
@@ -1804,7 +1804,7 @@ Unnamed_080ea0d8:
 	movs r3, #7
 	movs r0, #47
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r4, #24
 	str r4, [sp, #0]
 	str r4, [sp, #4]
@@ -1822,7 +1822,7 @@ Unnamed_080ea0d8:
 	movs r3, #11
 	movs r0, #47
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r1, #24
 	str r1, [sp, #0]
 	str r1, [sp, #4]
@@ -1841,7 +1841,7 @@ Unnamed_080ea0d8:
 	movs r3, #15
 	movs r0, #47
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #24
 	str r3, [sp, #0]
 	str r3, [sp, #4]
@@ -2438,7 +2438,7 @@ Unnamed_080ea0d8:
 	movs r1, #7
 	movs r2, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r6, .L_080eb610
 	ldr r0, [sp, #84]
 	ldr r4, [r6]

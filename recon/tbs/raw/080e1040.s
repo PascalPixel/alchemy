@@ -49,7 +49,7 @@ Func_080e1040:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080e10c8
 	.2byte 0x0000
 .L_080e10a8:
@@ -67,7 +67,7 @@ Func_080e1040:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080e10c8:
 	ldr r3, .L_080e13a0
 	adds r3, #184
@@ -215,7 +215,7 @@ Func_080e1040:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080e120a
 .L_080e11fc:
 	movs r3, #3
@@ -223,7 +223,7 @@ Func_080e1040:
 	movs r1, #7
 	movs r2, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080e120a:
 	ldr r4, [sp, #40]
 	cmp r4, #3
@@ -386,7 +386,7 @@ Func_080e1040:
 	str r2, [sp, #0]
 	movs r0, #47
 	movs r2, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080e13bc
 	ldr r1, [r7, #16]
 	ldr r2, [r2]

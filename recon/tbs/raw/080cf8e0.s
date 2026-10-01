@@ -227,7 +227,7 @@ BattleFx_RunSevenMode:
 	movs r0, #46
 	movs r2, #7
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, .L_080cfc78
 	adds r3, r5, #0
 	adds r3, #184
@@ -252,7 +252,7 @@ BattleFx_RunSevenMode:
 	movs r1, #7
 	movs r2, #7
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	adds r3, r5, #0
 	adds r3, #188
 	ldr r3, [r3]
@@ -268,7 +268,7 @@ BattleFx_RunSevenMode:
 	movs r1, #7
 	movs r2, #7
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r5, .L_080cfc78
 	adds r3, r5, #0
 	adds r3, #184
@@ -286,7 +286,7 @@ BattleFx_RunSevenMode:
 	movs r0, #47
 	movs r2, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	adds r3, r5, #0
 	adds r3, #188
 	ldr r3, [r3]
@@ -302,7 +302,7 @@ BattleFx_RunSevenMode:
 	movs r1, #7
 	str r6, [sp, #0]
 .L_080cfb34:
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	adds r3, r5, #0
 	adds r3, #188
 	ldr r3, [r3]

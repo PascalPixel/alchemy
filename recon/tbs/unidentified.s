@@ -904,7 +904,13 @@ Data_080edac0:
 	.incbin "baserom.gba", 0x000edac0, 0x00000008
 	.global Data_080edac8
 Data_080edac8:
-	.incbin "baserom.gba", 0x000edac8, 0x00000020
+	.incbin "baserom.gba", 0x000edac8, 0x00000010
+	.global ObjectRow_SweepPair
+ObjectRow_SweepPair:
+	.incbin "baserom.gba", 0x000edad8, 0x00000008
+	.global ObjectRow_RisePair
+ObjectRow_RisePair:
+	.incbin "baserom.gba", 0x000edae0, 0x00000008
 	.global BattleFx6_UnitScale
 BattleFx6_UnitScale:
 	.incbin "baserom.gba", 0x000edae8, 0x00000008
@@ -1539,13 +1545,25 @@ Data_080eeeea:
 	.incbin "baserom.gba", 0x000eeeea, 0x0000000e
 	.global Data_080eeef8
 Data_080eeef8:
-	.incbin "baserom.gba", 0x000eeef8, 0x0000001a
-	.global Data_080eef12
-Data_080eef12:
+	.incbin "baserom.gba", 0x000eeef8, 0x0000000e
+	.global FlameBlade_StrikeColumns
+FlameBlade_StrikeColumns:
+	.incbin "baserom.gba", 0x000eef06, 0x00000006
+	.global FlameBlade_FlashCells
+FlameBlade_FlashCells:
+	.incbin "baserom.gba", 0x000eef0c, 0x00000006
+	.global FallingSword_FlashCells
+FallingSword_FlashCells:
 	.incbin "baserom.gba", 0x000eef12, 0x00000006
-	.global Data_080eef18
-Data_080eef18:
-	.incbin "baserom.gba", 0x000eef18, 0x00000050
+	.global FallingSword_DustGravity
+FallingSword_DustGravity:
+	.incbin "baserom.gba", 0x000eef18, 0x0000003e
+	.global ObjectRow_Columns
+ObjectRow_Columns:
+	.incbin "baserom.gba", 0x000eef56, 0x00000009
+	.global ObjectRow_Rows
+ObjectRow_Rows:
+	.incbin "baserom.gba", 0x000eef5f, 0x00000009
 	.global BattleFx6_ObjectX
 BattleFx6_ObjectX:
 	.incbin "baserom.gba", 0x000eef68, 0x00000008
@@ -1586,16 +1604,16 @@ Data_080f1770:
 Func_080f2b6c:
 	.incbin "baserom.gba", 0x000f2b6c, 0x00000004
 	.section .unidentified.080f38bc,"a"
-	.global Data_080f38bc
-Data_080f38bc:
+	.global Title_PromptTiles
+Title_PromptTiles:
 	.incbin "baserom.gba", 0x000f38bc, 0x000000ee
 	.incbin "baserom.gba", 0x000f39aa, 0x00000001
 	.global Data_080f39ab
 Data_080f39ab:
 	.incbin "baserom.gba", 0x000f39ab, 0x00000005
 	.incbin "baserom.gba", 0x000f39b0, 0x00000001
-	.global Data_080f39b1
-Data_080f39b1:
+	.global Title_PromptBlendLevels
+Title_PromptBlendLevels:
 	.incbin "baserom.gba", 0x000f39b1, 0x0000003d
 	.global Data_080f39ee
 Data_080f39ee:

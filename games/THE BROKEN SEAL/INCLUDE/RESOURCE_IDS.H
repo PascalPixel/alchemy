@@ -109,6 +109,7 @@ extern char ResourceId_RedCrescentSheetB;
 extern char ResourceId_TanPalette;
 extern char ResourceId_CyanPalette;
 extern char ResourceId_IntroGraphicsA;
+extern char ResourceId_IntroGraphicsB;
 extern char ResourceId_IntroGraphicsC;
 extern char ResourceId_CyanSparkSheet;
 extern char ResourceId_StarBurstSheet;

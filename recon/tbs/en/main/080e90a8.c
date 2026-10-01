@@ -92,7 +92,6 @@ void Unnamed_080e90a8(struct ShardEffect *object)
     u8 *cells;
     u8 *transfer;
     struct SlotObject *slot;
-    struct Shard *seed;
     struct Shard *shard;
     s32 position[3];
     s32 origin[3];
@@ -121,8 +120,9 @@ void Unnamed_080e90a8(struct ShardEffect *object)
     slot = *GetBattleObjectSlotFar(work->effect->target);
 
     i = 0;
-    seed = work->shards;
     do {
+        struct Shard *seed = &work->shards[i];
+
         seed->x = slot->x;
         seed->y = slot->y;
         seed->z = slot->z;
@@ -133,7 +133,6 @@ void Unnamed_080e90a8(struct ShardEffect *object)
             seed->vx = -seed->vx;
         }
         seed->life = i / 4 * 2 + 16;
-        seed++;
         i++;
     } while (i != 64);
 
@@ -189,8 +188,11 @@ void Unnamed_080e90a8(struct ShardEffect *object)
         Graphics_PrepareTransferInIwramWork(transfer, transfer + 12);
         if (frame > 3) {
             BattleFx_FetchRectangleBlitters(work->effect->mirror, routine);
-            for (i = 0, shard = work->shards; i != 64; i++) {
-                s32 life = shard->life;
+            for (i = 0; i != 64; i++) {
+                s32 life;
+
+                shard = &work->shards[i];
+                life = shard->life;
 
                 if (life > 0) {
                     EffectPosition_ApplyBaseAndYOffset(shard, out);
@@ -202,7 +204,6 @@ void Unnamed_080e90a8(struct ShardEffect *object)
                     EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
                     shard->life--;
                 }
-                shard++;
             }
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);

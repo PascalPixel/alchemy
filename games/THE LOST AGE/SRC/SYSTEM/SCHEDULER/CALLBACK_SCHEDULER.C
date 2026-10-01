@@ -79,8 +79,8 @@ s32 Scheduler_FindCallback(u32 callback)
 
     task = gSchedulerTaskTable;
     result = -1;
-    /* FAKEMATCH: the two blocks that run once are meaningless. Without both, the
-     * interrupt-master save is scheduled ahead of the task table's address load. */
+    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the
+     * interrupt-master register's address is loaded before the task table's. */
     do {
         saved_interrupt_master = REG_IME;
         {

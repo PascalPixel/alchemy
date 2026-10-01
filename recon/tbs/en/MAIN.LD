@@ -708,7 +708,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_DISPATCH.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.080b5218)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
-        /* The tile bit decoder block 080c08ec copies to RAM, DECODE.S to BIT_COMMANDS.S. */
+        /* The tile bit decoder block BattleBackground_Load copies to RAM, DECODE.S to BIT_COMMANDS.S. */
         BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
         "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
         "*/recon/tbs/raw/080b5534.o"(.text .rodata .data .padding)
@@ -802,7 +802,6 @@
         "*/recon/tbs/raw/080c02a4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT9.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT10.o"(.text)
-        "*/recon/tbs/raw/080c08ec.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT11.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/TRANS_SETUP.o"(.text)
         "*/games/COMMON/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)
@@ -818,7 +817,6 @@
         "*/recon/tbs/raw/080c1012.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/BATTLE/PRESENTATION/PRESENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT3.o"(.text)
-        "*/recon/tbs/raw/080c1470.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE6.o"(.text)
         "*/recon/tbs/raw/080c1796.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080c1798.o"(.text .rodata .data .padding)
@@ -842,12 +840,10 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TWELVE_MODE.o"(.text)
         "*/recon/tbs/raw/080ca60c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
-        "*/recon/tbs/raw/080cb4ec.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080cb7f8.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080cbc0c.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080cc5d8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT3.o"(.text)
-        "*/recon/tbs/raw/080ccebc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT44.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT45.o"(.text)

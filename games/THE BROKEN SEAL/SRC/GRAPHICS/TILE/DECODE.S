@@ -1,5 +1,5 @@
 @ Decodes a bit-coded 8bpp image, one pixel per call of the command dispatcher
-@ in BIT_DISPATCH.S. The loader at 0x080c08ec copies this routine, the
+@ in BIT_DISPATCH.S. BattleBackground_Load copies this routine, the
 @ dispatcher, its jump tables and BIT_COMMANDS.S to RAM as one 560-byte block;
 @ on entry the routine rebuilds the dispatcher's table for the address it runs
 @ at, from its own position (add r3, pc, #240; add r4, pc, #200). It keeps the

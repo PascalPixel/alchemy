@@ -423,7 +423,6 @@
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER2.o"(.text)
         "*/games/COMMON/SRC/GAME/PARTY/ADVANCE_OWNER_COUNT_TO_TARGET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/FLAGS/TEST.o"(.text)
-        "*/recon/tbs/raw/08079460.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER3.o"(.text)
         "*/recon/tbs/raw/08079b24.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/RANDOM16.o"(.text)

@@ -3615,7 +3615,7 @@ msgctxt "message"
 msgid "00901"
 msgstr "Anelli clericali"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "00902"
 msgstr "???"
 

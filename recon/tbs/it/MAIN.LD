@@ -359,7 +359,6 @@
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER2.o"(.text)
     "*/games/COMMON/SRC/GAME/PARTY/ADVANCE_OWNER_COUNT_TO_TARGET.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GAME/FLAGS/TEST.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00079460)
     "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/CHARACTER3.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.00079b24)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/RANDOM16.o"(.text)

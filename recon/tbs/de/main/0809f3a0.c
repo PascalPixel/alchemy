@@ -15,7 +15,13 @@
    took the score from 6008 to 1552 in ten minutes (39 register-only, 22
    stack-only, 20 operand, 13 reordered, 1 deleted) through 116 rewrites,
    mostly reordered declarations and statements, and stalled there; the
-   candidate was not kept. */
+   candidate was not kept.
+   2026-10-01: after main's merge the game state field is selected_actor.
+   Reading the leader before the work block lines up 406 of the reference's
+   619 instructions against 398: the reference loads the leader, the work
+   block and the place table in that order, keeps the work block in sl and
+   the marker pointer, computed from it at once, in r8, and computes each
+   squared distance's two products after storing the place's x and y. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
@@ -168,16 +174,16 @@ void Map_UpdateWorldMapMarkers(void)
     struct IoWriteQueue *q;
     volatile u16 *ime;
 
+    leader = gGameState.selected_actor;
     work = (struct WorldMapWork *)Ram_MapCellBuffer;
-    leader = gGameState.current_owner;
     place = WorldMap_PlaceMarkers;
-    tile_base = gVramBlockCache[work->vram_block].offset >> 5;
     marker = work->markers;
+    tile_base = gVramBlockCache[work->vram_block].offset >> 5;
     best = -1;
     best_distance = WORLD_MAP_NAME_RANGE;
     blend = WorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
     if (!GameFlag_TestFar(0x11c) && (gKeysHeld & 0x300)) {
-        object = ObjectTable_Get(gGameState.current_owner);
+        object = ObjectTable_Get(gGameState.selected_actor);
         if (object == NULL)
             goto markers;
         cursor_x = ((object->x - 0x10000000) >> 16) * 240 / 4096;

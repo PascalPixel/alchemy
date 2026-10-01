@@ -2,6 +2,23 @@
  * Draft of resource_3a5 0x02008e2c (Func_02000e2c), between SABAKU2 and
  * SABAKU3 of games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU; the range links
  * as disassembly (section .text.x02008e2c of the overlay listing).
+ *
+ * 2026-10-01 (matcher 2): 300 (24 register-only, 3 operand, 2 reordered)
+ * against the listing with the overlay ELF; the three operand rows are the
+ * scorer adding the Thumb bit to the safe-point labels the listing's data
+ * carries, not a difference in bytes. What got it here: two separate actor
+ * locals for the two sand bursts (one shared local keeps the leader out of
+ * r0); the 600 and the clamp's zero go through s32 locals (a halfword
+ * constant becomes a pool load); the index is doubled in place before the
+ * speed call; the search loop walks a byte offset under an if guard, and
+ * the height read comes first so the second word is read as [base, #4].
+ * Remaining: in the search loop the reference gives the countdown r7 and the
+ * byte offset r6 (here r6 and r7), and in the placement the address r3 (here
+ * r2); global-alloc takes left before i by priority (13 references over 54
+ * insns against 7 over 34), so the reference must exclude r6 for the
+ * countdown, through a preference or registers used so far. The timer
+ * loop's reload registers follow from that. Declaration order changes
+ * nothing (120 orders); the permuter finds nothing below 300 in ten minutes.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

@@ -8,4 +8,8 @@
 #error multiple TLA editions selected
 #endif
 
+/* The top menu's selection window width, sized to the English words as in
+   ☀️; the other editions link their own copies until theirs are proven. */
+#define SELECT_MENU_WIDTH 7
+
 #endif

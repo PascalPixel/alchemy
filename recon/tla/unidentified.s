@@ -407,11 +407,11 @@ Data_0805f89b:
 	.global Data_0805f89f
 Data_0805f89f:
 	.incbin "baserom.gba", 0x0005f89f, 0x00000008
-	.global Data_0805f8a7
-Data_0805f8a7:
+	.global Menu_TopEntryCommandByPosition
+Menu_TopEntryCommandByPosition:
 	.incbin "baserom.gba", 0x0005f8a7, 0x0000000c
-	.global Data_0805f8b3
-Data_0805f8b3:
+	.global Menu_TopEntryPositionByCommand
+Menu_TopEntryPositionByCommand:
 	.incbin "baserom.gba", 0x0005f8b3, 0x0000000c
 	.global Data_0805f8bf
 Data_0805f8bf:

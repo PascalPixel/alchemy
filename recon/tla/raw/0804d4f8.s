@@ -55,6 +55,6 @@ Menu_SelectTopEntry:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0804d568:
-	.4byte Data_0805f8b3
+	.4byte Menu_TopEntryPositionByCommand
 .L_0804d56c:
-	.4byte Data_0805f8a7
+	.4byte Menu_TopEntryCommandByPosition

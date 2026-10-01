@@ -810,7 +810,7 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000de404)
     "*/recon/tbs/ja/rom.o"(.rom.000df23c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000e04b8)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLAME_BLADE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000e10d8)
     "*/recon/tbs/ja/rom.o"(.rom.000e2754)

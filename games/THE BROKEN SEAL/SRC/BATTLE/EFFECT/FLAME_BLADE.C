@@ -1,6 +1,3 @@
-/* Draft (2026-10-02, slice-11), rewritten on the shared effect structs.
-   Battle effect: a flame blade slides down over the acting unit, then two
-   strikes eight frames apart each throw twelve flashes and 256 sparks. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -41,7 +38,10 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 void BattleFx_StepPaletteToResource(s32 resource_id);
 void Audio_PlayCue(s32 cue);
 
-void Unnamed_080e94b8(struct BattleEffectArgument *effect)
+/* Battle effect: a flame blade slides down beside the acting unit, then two
+   strikes eight frames apart each throw twelve flashes and 256 sparks and
+   make the affected units react six frames later. */
+void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 {
     void **heap;
     void **p;
@@ -54,6 +54,8 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
+    /* The first two heap slots are read through a walking pointer; the
+       base itself serves the sheet. */
     heap = gBattleFxWork;
     p = heap;
     work = *p++;
@@ -95,6 +97,9 @@ void Unnamed_080e94b8(struct BattleEffectArgument *effect)
             s32 mag;
             s32 ang;
 
+            /* FAKEMATCH: the mask is loaded into the magnitude before the
+               random word is taken in, as the native code does; masking the
+               call's result keeps the mask in a scratch register. */
             mag = 0x1FF;
             mag &= Random16();
             ang = Random16() & 0xFFFF;

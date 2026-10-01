@@ -1574,8 +1574,6 @@ BattleEffect_RunParticleStreams:
 	.thumb_func
 BattleEffect_RunCirclingFallingScene:
 	.incbin "baserom.gba", 0x000ea03c, 0x00000e6c
-	.section .rom.000eb2b8, "ax"
-	.incbin "baserom.gba", 0x000eb2b8, 0x00000508
 	.section .rom.000ebed8, "ax"
 	.global Unnamed_080ea0d8
 	.type Unnamed_080ea0d8, %function
@@ -1814,7 +1812,13 @@ Data_080eee46:
 	.incbin "baserom.gba", 0x000f0c46, 0x00000008
 	.global Data_080eee4e
 Data_080eee4e:
-	.incbin "baserom.gba", 0x000f0c4e, 0x000000c4
+	.incbin "baserom.gba", 0x000f0c4e, 0x000000b8
+	.global FlameBlade_StrikeColumns
+FlameBlade_StrikeColumns:
+	.incbin "baserom.gba", 0x000f0d06, 0x00000006
+	.global FlameBlade_FlashCells
+FlameBlade_FlashCells:
+	.incbin "baserom.gba", 0x000f0d0c, 0x00000006
 	.global FallingSword_FlashCells
 FallingSword_FlashCells:
 	.incbin "baserom.gba", 0x000f0d12, 0x00000006

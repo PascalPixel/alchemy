@@ -165,7 +165,6 @@
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT14.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.0000daf0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_AIM_APPROACH_LINKED_OBJECT.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.0000dd70)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/SCRIPT.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.0000ebec)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD.o"(.text)

@@ -399,20 +399,18 @@ s32 Resource_GetBuffer(s32 index, s32 value)
 void Scheduler_ResetTaskTable(void)
 {
     struct SchedulerTask *task = gSchedulerTaskTable;
-    s32 remaining = ((u32)task | ~(u32)task) + 1;
-    gSchedulerTaskCount = remaining;
-    gSchedulerStatus = remaining;
-    {
-        u32 zero = 0;
-        remaining = 19;
-        do {
-            task->callback = zero;
-            task->state = 0xffff;
-            task->mask = zero;
-            task++;
-            remaining--;
-        } while (remaining >= 0);
-    }
+    s32 remaining;
+
+    gSchedulerTaskCount = 0;
+    gSchedulerStatus = 0;
+    remaining = 19;
+    do {
+        task->callback = 0;
+        task->state = 0xffff;
+        task->mask = 0;
+        task++;
+        remaining--;
+    } while (remaining >= 0);
     gSchedulerTaskCount = 1;
 }
 
@@ -459,13 +457,14 @@ finish_pass:
 s32 Scheduler_FindCallback(u32 callback)
 {
     s32 result;
-    s32 returned_result;
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 i;
 
     result = -1;
     task = gSchedulerTaskTable;
+    /* FAKEMATCH: the two blocks that run once are meaningless. Without either, the
+     * interrupt-master register's address is loaded before the task table's. */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -482,24 +481,21 @@ s32 Scheduler_FindCallback(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
 {
     u32 saved_interrupt_state;
     s32 index;
-    s32 returned_index;
     struct SchedulerTask *task;
-    volatile u8 *scheduler_status;
     s32 i;
 
-    scheduler_status = &gSchedulerStatus;
     index = -1;
     task = gSchedulerTaskTable;
-    (void)*scheduler_status;
+    (void)gSchedulerStatus; /* read and dropped */
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_state = REG_IME;
         {
@@ -552,9 +548,8 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
         } while (0);
         Scheduler_SortTasks();
         REG_IME = saved_interrupt_state;
-        returned_index = index;
     } while (0);
-    return returned_index;
+    return index;
 }
 
 void Scheduler_Idle(void) {}
@@ -566,11 +561,11 @@ s32 Scheduler_RemoveCallback(u32 callback)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     result = -1;
     task = gSchedulerTaskTable;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -589,9 +584,8 @@ s32 Scheduler_RemoveCallback(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_EnableCallbacks(u32 callback)
@@ -599,11 +593,11 @@ s32 Scheduler_EnableCallbacks(u32 callback)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     result = -1;
     task = gSchedulerTaskTable;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -622,9 +616,8 @@ s32 Scheduler_EnableCallbacks(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
@@ -632,11 +625,11 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     result = -1;
     task = gSchedulerTaskTable;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -653,9 +646,8 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
@@ -663,11 +655,11 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     result = -1;
     task = gSchedulerTaskTable;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -685,9 +677,8 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_DisableCallbacks(u32 callback)
@@ -695,11 +686,11 @@ s32 Scheduler_DisableCallbacks(u32 callback)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     result = -1;
     task = gSchedulerTaskTable;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -716,9 +707,8 @@ s32 Scheduler_DisableCallbacks(u32 callback)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 s32 Scheduler_DisableOverlayCallbacks(void)
@@ -726,11 +716,11 @@ s32 Scheduler_DisableOverlayCallbacks(void)
     struct SchedulerTask *task;
     u32 saved_interrupt_master;
     s32 result;
-    s32 returned_result;
     s32 i;
 
     result = -1;
     task = gSchedulerTaskTable;
+    /* FAKEMATCH: the two blocks that run once, as in Scheduler_FindCallback */
     do {
         saved_interrupt_master = REG_IME;
         {
@@ -747,9 +737,8 @@ s32 Scheduler_DisableOverlayCallbacks(void)
             }
         } while (0);
         REG_IME = saved_interrupt_master;
-        returned_result = result;
     } while (0);
-    return returned_result;
+    return result;
 }
 
 /* The scheduler's retained globals (defined in the scheduler unit). */

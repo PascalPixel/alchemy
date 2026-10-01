@@ -1,4 +1,5 @@
 #include "HAIDIA_BABI.H"
+#include "RAM_BUFFER.H"
 
 s32 ArcTan2(s32, s32);
 s32 FieldScene_PrepareActors(s32);
@@ -315,4 +316,215 @@ s32 HaidiaBabi_RestoreEntryState(void)
     }
     L_02000550:;
     return 0;
+}
+
+extern u8 MsgHaidiaWake[];
+
+struct SceneMapState {
+    u8 unknown_0000[0x1f84];
+    u16 active;
+};
+
+
+extern const u8 gHaidiaBabiSharedAction[];
+extern const u8 gHaidiaBabiActorExitAction[];
+extern const u8 gHaidiaBabiLeaderExitAction[];
+
+/* FAKEMATCH: a one-halfword record keeps the leader-flag zero in a halfword
+   register, which the reference reloads from the literal pool after the
+   actor lookup. */
+struct SceneHalf {
+    u16 value;
+};
+
+void FieldScene_RunSixStepSequence17e4();
+void Engine_TaskWait();
+void Engine_MapRedraw();
+void Map_ClearLayerEntryFlag();
+void Map_SetLayerEntryFlag();
+void Engine_ActorSetSpriteFlags(struct FieldActor *actor, s32 flags);
+void Graphics_EnableObjLayerAndCallbacks();
+void ObjectDispatch_StopCallbacksAndHideLayers();
+void ObjectDispatch_RegisterChildMetadata(struct FieldActor *actor, s32 palette);
+void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset);
+void Engine_EventWait();
+void Engine_EventBegin();
+s32 Engine_EventChooseYesNo();
+void Object_RefreshSelectorById();
+void Engine_ActorSetPosition();
+void Engine_ActorSetAnimationAndWait();
+void Engine_ActorJump();
+void Engine_ActorStartRepeatedMotion();
+void Engine_ActorRunRepeatedMotion();
+void Engine_ActorSetChildValue();
+void Engine_EventSetMessage();
+void Ui_SetRenderResultFromObject();
+void Engine_ActorSetSpritePriority();
+void Engine_CameraFollowActor();
+void Engine_EventRequestExit();
+void BattleFx_StartTwelveFrameBlend();
+void BattleFx_SetBlock30Values12Zero();
+void BattleFx_SetBlock30Values128One();
+void Engine_EventOpenScreen();
+void Engine_EventCloseScreen();
+void Engine_EventWaitForScreen();
+void Engine_AudioPlayCue();
+
+/* FAKEMATCH: transfer DECK_SEQ.C's centered-message call boundary so each
+ * draw owns its argument setup; this is not a recovered original helper. */
+static __inline__ void Call3(void (*f)(s32, s32, s32), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+/* Haidia, the morning after the storm: the leader wakes in the house, the
+   view opens on the room, the two talk over the scene's messages, and both
+   walk out of the house. */
+void FieldScene_RunComplexActorSequence(void)
+{
+    s32 base;
+    struct FieldSprite *sprite;
+    struct FieldActor *p12;
+    struct FieldActor *p89;
+    u8 *work;
+    struct FieldActor *scene_actor;
+    struct EventWork **control;
+    struct SceneHalf stopped;
+    s32 ground;
+
+    control = (struct EventWork **)Ram_EventWork;
+    /* FAKEMATCH: stage the root reads before consuming the event record. */
+    {
+        struct EventWork *event = *control;
+
+        work = *(u8 **)Ram_MapWork;
+        scene_actor = event->view_center;
+    }
+    sprite = Object_GetById(17)->sprite;
+    Engine_EventBegin();
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
+    Engine_ActorSetPosition(13, 0, 0);
+    Engine_ActorSetPosition(14, 0, 0);
+    Engine_ActorSetPosition(15, 0, 0);
+    Engine_ActorSetPosition(16, 0, 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
+    Actor_SetAnimation(0, 18);
+    ground = 0;
+    stopped.value = 0;
+    sprite->rotation = 1365;
+    p12 = Object_GetById(17);
+    p12->motion_flags = stopped.value;
+    Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
+    Engine_ActorSetPosition(17, 37748736, 42598400);
+    Map_ClearLayerEntryFlag(7);
+    Engine_ActorSetPosition(8, 34996224, 45088768);
+    Graphics_EnableObjLayerAndCallbacks();
+    Ui_SetRenderResultFromObject(8);
+    base = (s32)MsgHaidiaWake;
+    Call3(UiText_ShowCenteredMessage, base, 1, 0);
+    Engine_EventWait(40);
+    MapRender_SetValues(65536, 65536, 65536);
+    Ui_SetRenderResultFromObject(8);
+    Call3(UiText_ShowCenteredMessage, base + 1, 1, 0);
+    ObjectDispatch_StopCallbacksAndHideLayers();
+    Engine_EventWait(40);
+    *(u32 *)(work + 236) = 0x01480000;
+    *(u32 *)(work + 240) = 0x02580000;
+    *(u32 *)(work + 244) = 0x02700000;
+    *(u32 *)(work + 248) = 0x03300000;
+    scene_actor->x.fixed = 0x02340000;
+    scene_actor->y.fixed = ground;
+    scene_actor->z.fixed = 0x02b30000;
+    Engine_MapRedraw();
+    Engine_TaskWait(1);
+    (*control)->start_transition = 521;
+    (*control)->transition_frames = 64;
+    BattleFx_StartTwelveFrameBlend();
+    (*(struct SceneMapState **)((u8 *)control + Ram_SceneMapStateOffset))->active = 1;
+    BattleFx_SetBlock30Values12Zero();
+    Engine_TaskWait(30);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    BattleFx_SetBlock30Values128One();
+    Engine_ActorSetAnimationAndWait(8, 4);
+    Engine_EventSetMessage(base + 2);
+    Event_ShowMessageAndWait(36872, 0, 60);
+    Engine_ActorRunRepeatedMotion(0, 2);
+    Engine_EventWait(40);
+    Engine_ActorRunRepeatedMotion(8, 1);
+    Engine_EventWait(40);
+    Event_ShowMessageAndWait(36872, 0, 20);
+    Engine_ActorRunRepeatedMotion(0, 2);
+    Map_SetLayerEntryFlag(7);
+    Engine_EventWait(20);
+    Map_ClearLayerEntryFlag(8);
+    Actor_SetSpeed(0, 65536, 32768);
+    Actor_SetAnimation(0, 19);
+    Actor_MoveToAndWait(0, 557, 679);
+    Map_SetLayerEntryFlag(8);
+    Map_ClearLayerEntryFlag(9);
+    Actor_MoveToAndWait(0, 555, 680);
+    Engine_EventWait(30);
+    Actor_FaceDirection(8, 53248, 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 1);
+    Engine_ActorJump(0, 4, 0);
+    Actor_WalkToAndWait(0, 543, 674);
+    Engine_ActorSetSpritePriority(0, 3);
+    Actor_FaceDirection(0, 16384, 40);
+    Engine_ActorSetAnimationAndWait(8, 4);
+    Engine_EventWait(20);
+    Event_ShowMessage(36872, 0);
+    FieldScene_RunSixStepSequence17e4();
+    Engine_ActorStartRepeatedMotion(8, 2);
+    Event_ShowMessageAndWait(36872, 0, 20);
+    Object_GetById(8)->unknown_5a &= 0xfe;
+    Actor_WalkToAndWait(8, 542, 680);
+    Engine_EventWait(1);
+    Object_GetById(8)->unknown_5a |= 0x1;
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(8, 2);
+    ObjectDispatch_RegisterChildMetadata(Object_GetById(0), 226);
+    Engine_GameFlagSet(33);
+    Engine_AudioPlayCue(126);
+    Engine_ActorSetChildValue(0, 7);
+    Engine_EventWait(10);
+    Engine_ActorSetChildValue(0, 0);
+    Engine_EventWait(20);
+    Object_GetById(8)->unknown_5a &= 0xfe;
+    Actor_WalkToAndWait(8, 534, 688);
+    Engine_EventWait(1);
+    Object_GetById(8)->unknown_5a |= 0x1;
+    Engine_EventWait(20);
+    Actor_SetSpeed(8, 98304, 49152);
+    Actor_SetSpeed(0, 98304, 49152);
+    Engine_CameraFollowActor(8, 1);
+    p89 = Object_GetById(0);
+    p89->priority_flags |= 0x1;
+    Engine_ActorEnableActionCallback(8, gHaidiaBabiSharedAction);
+    Engine_EventWait(20);
+    Engine_ActorEnableActionCallback(0, gHaidiaBabiSharedAction);
+    Object_RefreshSelectorById(8);
+    Actor_WalkToAndWait(8, 419, 661);
+    Actor_WalkToAndWait(8, 408, 661);
+    Actor_SetAnimation(8, 1);
+    Actor_SetAnimation(0, 1);
+    Actor_FaceDirection(8, 16384, 10);
+    Event_OpenMessage(32776, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        (*control)->message++;
+    }
+    Engine_EventWait(20);
+    Event_ShowMessageAndWait(32776, 0, 20);
+    Actor_SetAnimation(0, 3);
+    Engine_ActorSetAnimationAndWait(8, 3);
+    Engine_EventWait(20);
+    Engine_ActorEnableActionCallback(8, gHaidiaBabiActorExitAction);
+    Engine_ActorEnableActionCallback(0, gHaidiaBabiLeaderExitAction);
+    Engine_EventWait(20);
+    (*control)->start_transition = 513;
+    (*control)->transition_frames = 16;
+    Engine_EventCloseScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventRequestExit(20);
 }

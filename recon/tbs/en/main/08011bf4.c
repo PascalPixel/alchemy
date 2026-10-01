@@ -1,3 +1,19 @@
+/* 2026-10-01 (matcher 2): 300 (23 register-only, 3 reordered), every
+   instruction in the reference's form. Three things fixed the shape: the
+   count is masked once into a local (movs r2, #3; ands r2, r3), the colour
+   pointer is taken after the destination, and pos is (s16)start << 16, so
+   gcse gives the zero-extension of start for the second loop the same
+   shift and copies it (lsls r1, r7, #16; adds r7, r1, #0). The step's test
+   assigns pos and reads next through a copy of the sum, which keeps gcse
+   from reusing the test's shift at the join (the reference shifts twice:
+   lsrs r3, r1, #16 before the compare and after movs r1, #0). Left: global
+   allocation. The colour pointer takes r1 (the reference's r4) because the
+   DMA's length, local in r4, makes the length shift prefer r4 and the
+   pointer outranks the two buffer copies (r1 in the reference); then pos
+   takes r6 before the length shift, and start r4. Computing pos after the
+   second loop and the control word before it scores 185 on the scorer
+   (24 register-only, 1 reordered), the same allocation problem; 520,000
+   permuter candidates from 335, 185 and 300 found nothing lower. */
 /* 2026-09-30 (Mercury): 30 differing halfwords, 236 of 236 bytes, no
    FAKEMATCH (was 65). The position steps in 16.16: pos = start << 16 before
    the second copy loop, next = pos + 0x10000, next = 0 when it reaches len
@@ -27,10 +43,10 @@ void Func_08011bf4(void)
 {
     u8 *work = gPaletteWork;
     u8 i;
-    u16 flags = *(u16 *)(work + 176);
+    u16 count = *(u16 *)(work + 176) & 3;
     u16 buf[16];
 
-    for (i = 0; i < (flags & 3); i++) {
+    for (i = 0; i < count; i++) {
         struct PaletteCycle *cycle = (struct PaletteCycle *)(work + i * 44);
 
         if (cycle->timer == 0) {
@@ -41,17 +57,22 @@ void Func_08011bf4(void)
             u8 j;
             u32 pos;
             u32 next;
+            u32 value;
 
             for (j = len - start; j < len; j++)
                 buf[j] = *src++;
-            pos = start << 16;
+            pos = (s16)start << 16;
             for (j = 0; j < len - start; j++)
                 buf[j] = *src++;
             Dma_Set(buf, dest, 0x80000000 | len, (volatile u32 *)0x040000d4);
-            next = pos + 0x10000;
-            if (next >= len << 16)
+            /* FAKEMATCH: the copy of the sum and the test assigning pos keep
+               gcse from sharing the test's shift with the store. */
+            value = pos + 0x10000;
+            next = value;
+            if ((pos = next >> 16) >= len)
                 next = 0;
-            cycle->pos = next >> 16;
+            value = next >> 16;
+            cycle->pos = value;
             cycle->timer = cycle->delay;
         } else {
             cycle->timer--;

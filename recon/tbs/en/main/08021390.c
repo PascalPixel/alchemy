@@ -1,3 +1,14 @@
+/* 2026-10-01 (matcher 3): a seven-minute permute (seed 1017, 2 jobs) went
+   from 1510 to 190 (9 register-only, 1 operand, 2 reordered): zero = 0
+   before work = gWindowWork; entry = icon after the window is created;
+   `if (0 != window)`; resource declared before window; inside the branch
+   icon[0] written through an index variable set to a (s32)0 temporary
+   after the busy store, icon[1] as *(1 + icon); and WaitFrames' 1 passed
+   through that temporary. Left: zero and work swap r5/r6, and icon[2]
+   goes through r7 + 8 where the reference stores it at sp + 24. The same
+   body with a plain index and icon[1] scores 565. A further permute from
+   190 on a loaded machine reported nothing lower before it was stopped.
+   Not kept (no programmer writes those indexes). */
 /* Draft, not exact (2026-09-26): 256 of 248 bytes, 98 differing halfwords.
    Complete owner [0x08021390, 0x08021488), including its literal pool.
    Recovered from the validated split listing. Remaining: the zero is shared

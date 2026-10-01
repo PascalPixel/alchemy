@@ -42,12 +42,21 @@ Engine_MathCos:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.global Runtime_AllocateHeapBlock
+	.thumb_func
+Runtime_AllocateHeapBlock:
 	overlay_veneer Runtime_AllocateHeapBlockFar
+	.global Runtime_ReleaseHeapBlock
+	.thumb_func
+Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
+	.global VramBlock_LoadCached
+	.thumb_func
+VramBlock_LoadCached:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global AnimationObjects_SelectAnimation
 	.thumb_func
@@ -73,7 +82,13 @@ Engine_ObjectDispatchRelease:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Object_SetMoveTarget
+	.thumb_func
+Object_SetMoveTarget:
 	overlay_veneer Object_SetMoveTargetFar
+	.global Script_WaitForEventTimeout
+	.thumb_func
+Script_WaitForEventTimeout:
 	overlay_veneer Script_WaitForEventTimeoutFar
 	.global Engine_MapCopyCellsTo
 	.thumb_func
@@ -119,6 +134,9 @@ Engine_MessageShowCentered:
 	.thumb_func
 UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
+	.global ItemIcon_LoadTiles
+	.thumb_func
+ItemIcon_LoadTiles:
 	overlay_veneer ItemIcon_LoadTilesFar
 	.global Inventory_AddItem
 	.thumb_func
@@ -144,6 +162,9 @@ Engine_GameFlagSet:
 	.thumb_func
 Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
+	.global Owner_RefreshRatiosOnFlag
+	.thumb_func
+Owner_RefreshRatiosOnFlag:
 	overlay_veneer Owner_RefreshRatiosOnFlagFar
 	.global Engine_EventWait
 	.thumb_func

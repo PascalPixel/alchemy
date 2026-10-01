@@ -376,7 +376,7 @@ Func_0804a85c:
 	adds r0, r3, #0
 	adds r1, r2, #0
 	str r3, [sp, #68]
-	bl __modsi3
+	bl Math_Mod
 	str r0, [sp, #68]
 .L_0804ab1c:
 	ldr r3, [sp, #68]
@@ -1511,7 +1511,7 @@ Func_0804a85c:
 .L_0804b398:
 	.4byte 0x00000000
 .L_0804b39c:
-	bl Func_080396a0
+	bl Ui_ClearVramBlock
 	ldr r2, [r5]
 	adds r0, r6, #0
 	ldr r1, [sp, #72]
@@ -1807,7 +1807,7 @@ Func_0804a85c:
 	str r1, [sp, #68]
 	adds r0, r1, #0
 	ldr r1, [sp, #60]
-	bl __modsi3
+	bl Math_Mod
 	str r0, [sp, #68]
 	ldr r4, [sp, #20]
 	lsls r2, r0, #1
@@ -1832,7 +1832,7 @@ Func_0804a85c:
 	subs r3, #1
 	adds r0, r3, #0
 	str r3, [sp, #68]
-	bl __modsi3
+	bl Math_Mod
 	str r0, [sp, #68]
 	ldr r2, [sp, #20]
 	lsls r3, r0, #1

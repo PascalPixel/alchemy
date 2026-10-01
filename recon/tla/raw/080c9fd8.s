@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080c9fd8
+	.global Encounter_SelectEnemyGroup
 	.thumb_func
-Func_080c9fd8:
+Encounter_SelectEnemyGroup:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -197,7 +197,7 @@ Func_080c9fd8:
 .L_080ca154:
 	.4byte gPartyState
 .L_080ca158:
-	.4byte Data_080edacc
+	.4byte Encounter_EnemyGroupTable
 .L_080ca15c:
 	.4byte IwramRatioMulQ14
 .L_080ca160:

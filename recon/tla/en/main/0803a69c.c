@@ -1,11 +1,15 @@
+/* Near miss: score 160 beyond the trailing pad. The window work is ⚓️'s
+   heap slot 0x3c with its entries at 0xf40 and cursor at 0x1384. ⚓️ builds
+   the slot table's address before opening the frame (sub sp, #36) and loads
+   the work before spilling y; this draft opens the frame first. */
 #include "RENDER_INPUT.H"
 
 /* The window work's message state. Its leading records hold words: typed
    as words, a store to the message cursor may alias the spilled x, so the
    spill keeps its place ahead of the cursor store. */
 struct MessageWindowWork {
-    s32 records[0xeb0 / 4];
-    u16 entries[(0x12f4 - 0xeb0) / 2];
+    s32 records[0xf40 / 4];
+    u16 entries[(0x1384 - 0xf40) / 2];
     u16 cursor;
     u16 scroll;
     u16 unknown_12f8;
@@ -13,7 +17,7 @@ struct MessageWindowWork {
     u8 pending;
 };
 
-extern struct MessageWindowWork *gWindowWork;
+#include "RAM_BUFFER.H"
 
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
@@ -37,7 +41,7 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 pack
     struct RenderInput *window;
     struct MessageWindowWork *work;
 
-    work = gWindowWork;
+    work = (struct MessageWindowWork *)Ram_HeapSlots->window_tiles;
     work->cursor = (packed << 4) >> 20;
     /* FAKEMATCH: retain the null window as the scroll and layout zero. */
     window = NULL;

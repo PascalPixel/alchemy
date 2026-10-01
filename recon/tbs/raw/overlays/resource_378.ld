@@ -7,10 +7,11 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/HEYA.o"(.text)
+        "*/resource_378_overlay.o"(.text.x0200a7d2)
         "*/resource_378_overlay.o"(.text.x0200a7d4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/HEYA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.o"(.text)
-        "*/resource_378_overlay.o"(.rodata)
+        "*/resource_378_overlay.o"(.rodata.x0200b740)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

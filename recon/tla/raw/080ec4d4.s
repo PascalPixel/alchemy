@@ -1226,6 +1226,6 @@ Func_080ec4d4:
 .L_080ece14:
 	.4byte Data_0202a63a
 .L_080ece18:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_080ece1c:
 	.4byte 0x04000208

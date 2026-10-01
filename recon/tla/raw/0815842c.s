@@ -44,7 +44,7 @@ Func_0815842c:
 	add r1, r11
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r11
@@ -164,7 +164,7 @@ Func_0815842c:
 	add r1, r11
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #216
 	lsls r1, r1, #7
 	adds r1, #192
@@ -188,7 +188,7 @@ Func_0815842c:
 .L_081585b0:
 	.4byte 0x00000155
 .L_081585b4:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_081585b8:
 	ldr r1, [sp, #20]
 	ldr r3, [r1, #28]

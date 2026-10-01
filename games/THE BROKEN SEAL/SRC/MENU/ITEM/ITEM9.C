@@ -26,7 +26,7 @@ void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 
 extern u8 MsgEquipEffectHeading[], MsgStatLabel[], MsgDefenseLabel[], MsgEquipEffectName[];
 extern u8 MsgItemCursed[], MsgBestowsPsynergy[], MsgUsesHeading[], MsgSingleUse[];
-extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[];
+extern u8 MsgBrokenNotice[], MsgMightBreak[], MsgNumberHeading[], MsgEffectRateSuffix[];
 extern u8 MsgRareItem[], MsgImportantItem[], MsgDetailsUnknown[];
 extern u8 Data_080af21c[], Data_080af220[];
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -38,14 +38,24 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
 
 s32 Menu_SelectQuantity(s32 value)
 {
+#if defined(TBS_EDITION_JA)
+    u8 *menu = (u8 *)gMenuWork;
+    s32 changed = 1;
+#else
     s32 changed = 1;
     u8 *menu = (u8 *)gMenuWork;
     u8 *confirmState = MENU_SUBOBJECT(menu, 540);
+#endif
     s32 window;
     s32 quantity = 0;
 
+#if defined(TBS_EDITION_JA)
+    /* The Japanese window covers only the left of the screen. */
+    window = UiWindow_CreateFar(0, 0, 13, 10, 2);
+#else
     confirmState[5] = 13;
     window = UiWindow_CreateFar(0, 0, 30, 10, 2);
+#endif
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
     {
@@ -108,9 +118,21 @@ done:
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
+#if defined(TBS_EDITION_JA)
+        /* The Japanese menu marks itself for a redraw instead of framing
+           the right-hand windows again. */
+        /* FAKEMATCH: one register carries the 1 both stores write. */
+        s32 one = 1;
+
+        iconState[5] = one;
+        *(u16 *)(menu + 0x220) = one;
+#else
         iconState[5] = 1;
+#endif
     }
+#if !defined(TBS_EDITION_JA)
     UiWindow_DrawFrameFar(13, 0, 17, 10);
+#endif
 
     return quantity;
 }
@@ -195,6 +217,19 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         case 13:
         case 14:
             UiText_DrawCharacterAtOffsetFar(def->effects[i].kind + (s32)MsgEquipEffectName, window, 0, row * 8);
+#if defined(TBS_EDITION_JA)
+            /* The Japanese rate reads 1.5 and then its word for times. */
+            if (amount > 9) {
+                UiText_DrawNumberInWindowFar(1, 1, window, 48, row * 8);
+                UiText_DrawStringInWindowFar(Data_080af220, window, 56, row * 8);
+                UiText_DrawNumberInWindowFar(amount - 10, 1, window, 64, row * 8);
+            } else {
+                UiText_DrawNumberInWindowFar(0, 1, window, 48, row * 8);
+                UiText_DrawStringInWindowFar(Data_080af220, window, 56, row * 8);
+                UiText_DrawNumberInWindowFar(amount, 1, window, 64, row * 8);
+            }
+            UiText_DrawCharacterAtOffsetFar((s32)MsgEffectRateSuffix, window, 72, row * 8);
+#else
             UiText_DrawStringInWindowFar(Data_080af21c, window, 64, row * 8);
             if (amount > 9) {
                 UiText_DrawNumberInWindowFar(1, 1, window, 72, row * 8);
@@ -205,6 +240,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
                 UiText_DrawStringInWindowFar(Data_080af220, window, 80, row * 8);
                 UiText_DrawNumberInWindowFar(amount, 1, window, 88, row * 8);
             }
+#endif
             break;
         case 23:
         case 25:
@@ -264,8 +300,14 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         UiText_DrawCharacterAtOffsetFar(i, window, 16, row * 8);
         row++;
         amount = (item & 0xf800) / 2048;
+#if defined(TBS_EDITION_JA)
+        /* The Japanese note draws the count before its words. */
+        UiText_DrawNumberInWindowFar(amount + 1, 2, window, 0, row * 8);
+        UiText_DrawCharacterAtOffsetFar(i + 1, window, 16, row * 8);
+#else
         UiWork_PushValueSlotFar(amount + 1, 5);
         UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
+#endif
         row++;
     }
     found = 0;

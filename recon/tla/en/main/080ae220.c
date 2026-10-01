@@ -1,3 +1,6 @@
+/* Near miss: score 160. The owners come from gPartyState; ⚓️ also names its
+   element table where this draft uses ☀️'s Character_ElementGroupTable, and
+   loads gPartyState's address before the owner offset. */
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "GAME_FLAGS.H"
@@ -25,7 +28,7 @@ void Owner_RefreshRatiosOnFlag(void)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        ownerId = gGameState.active_owners[n];
+        ownerId = gPartyState.active_owners[n];
         group = Character_ElementGroupTable[ownerId];
         doRefresh = 0;
         if (group == 0) {

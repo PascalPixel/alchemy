@@ -73,7 +73,7 @@ Func_0803dd98:
 	ldrh r7, [r4]
 	str r4, [sp, #0]
 	mov r8, r2
-	bl Func_0803deac
+	bl Resource_FindFreeTransferEntry
 	adds r5, r0, #0
 	ldr r4, [sp, #0]
 	cmp r5, #0

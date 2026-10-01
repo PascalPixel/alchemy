@@ -43,7 +43,7 @@ SECTIONS
         "*/resource_696_overlay.o"(.text.x02009aa4)
         "*/resource_696_overlay.o"(.text.x02009cc8)
         "*/resource_696_overlay.o"(.text.x02009d3c)
-        "*/resource_696_overlay.o"(.text.x02009fa0)
+        "*/games/THE LOST AGE/SRC/FIELD/COMMON/DRIFT_SPAWN.o"(.text)
         "*/resource_696_overlay.o"(.text.x02009fec)
         "*/resource_696_overlay.o"(.text.x0200a068)
         "*/resource_696_overlay.o"(.text.x0200a79c)
@@ -83,5 +83,6 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/OVERLAY_696/IMPORT.o"(.text)
         "*/resource_696_overlay.o"(.rodata.x0200caa4)
     }
+    .bss : { "*/resource_696_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

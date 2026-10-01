@@ -1,6 +1,14 @@
+/*
+ * Draft: UiWindow_Create, ported from its ☀️ twin with ⚓️'s twelve windows
+ * 0x508 into the window work in its heap slot. Remaining difference, in the
+ * attribute-drawn branch: the listing stores the timer before or-ing 2 into
+ * the flags; this C or-s first (score 220; 45 seconds of permuting found
+ * nothing better).
+ */
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
-/* One of the eight window records at gWindowWork + 0x500. */
+/* One of the twelve window records 0x508 into the window work. */
 struct UiWindow {
     s32 state;
     struct UiWindow *self;
@@ -17,7 +25,6 @@ struct UiWindow {
     u8 unknown_1c[8];
 };
 
-extern u8 *gWindowWork;
 
 void WaitFrames(s32 frames);
 void UiWork_ResetCounters();
@@ -27,7 +34,7 @@ void UiWork_WaitUntilField1aClear(struct UiWindow *window);
 /* Open a window at a tile position and size in the first free record, with
    the attribute bits that choose its frame and drawing; a window drawn
    through its attributes appears at once, any other one opens over eight
-   frames. Returns the record, or 0 when all eight are in use. */
+   frames. Returns the record, or 0 when all twelve are in use. */
 
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
 {
@@ -35,13 +42,13 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
     struct UiWindow *found;
     s32 i;
 
-    slot = (struct UiWindow *)(gWindowWork + 0x500);
+    slot = (struct UiWindow *)(Ram_HeapSlots->window_tiles + 0x508);
     found = 0;
     i = 0;
     while ((slot->flags & 1) != 0 || slot->timer != 0) {
         i++;
         slot++;
-        if (i == 8) {
+        if (i == 12) {
             goto done;
         }
     }
@@ -74,9 +81,9 @@ done:
             found->flags |= 0x100;
         }
         if (attrs & 2) {
+            found->timer = 1;
             found->flags |= 2;
             found->unknown_18 = 0;
-            found->timer = 1;
             UiWork_DrawByAttributes(found);
         } else {
             found->timer = 8;

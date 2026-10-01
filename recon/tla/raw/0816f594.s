@@ -34,7 +34,7 @@ Func_0816f594:
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_0816f5fc
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0816f600
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

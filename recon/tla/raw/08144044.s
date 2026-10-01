@@ -29,7 +29,7 @@ Func_08144044:
 	ldr r0, .L_08144348
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0814434c
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -270,7 +270,7 @@ Func_08144044:
 	asrs r5, r5, #1
 	str r5, [r2]
 	mov r0, r10
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [sp, #36]
 	lsls r1, r0, #3
 	adds r1, r1, r0

@@ -83,8 +83,8 @@ Game_ResetForNewGame:
 	ldrb r1, [r3]
 	bl Func_08038348
 	bl Func_08014368
-	bl Func_080144c0
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
+	bl Scheduler_ResetTaskTable
 	ldr r2, .L_080c9a1c
 	mov r9, r2
 .L_080c99ea:
@@ -148,7 +148,7 @@ Game_ResetForNewGame:
 	ldrh r3, [r1, #10]
 	movs r3, #1
 	strb r3, [r2]
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
@@ -233,7 +233,7 @@ Game_ResetForNewGame:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r6, #0
-	bl Func_081b2000
+	bl Resource_FarCall00E
 .L_080c9b1e:
 	movs r3, #128
 	movs r2, #132

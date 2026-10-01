@@ -57,6 +57,9 @@ Engine_ObjectDispatchRelease:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global ObjectDispatch_WaitForValue16
+	.thumb_func
+ObjectDispatch_WaitForValue16:
 	overlay_veneer ObjectDispatch_WaitForValue16Far
 	.global Engine_ObjectSetPosition
 	.thumb_func
@@ -258,7 +261,13 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Object_PlaceCurrentWithinCameraBounds
+	.thumb_func
+Object_PlaceCurrentWithinCameraBounds:
 	overlay_veneer Object_PlaceCurrentWithinCameraBoundsFar
+	.global Battle_GetWorkObject1e0
+	.thumb_func
+Battle_GetWorkObject1e0:
 	overlay_veneer Battle_GetWorkObject1e0Far
 	.global Engine_EventRequestExit
 	.thumb_func

@@ -26,12 +26,21 @@ Engine_RandomNext:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.global Runtime_BumpAllocate
+	.thumb_func
+Runtime_BumpAllocate:
 	overlay_veneer Runtime_BumpAllocateFar
+	.global Sys_Free
+	.thumb_func
+Sys_Free:
 	overlay_veneer Sys_FreeFar
 	.global Resource_DecodeType01
 	.thumb_func
 Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
+	.global Resource_ActivateEntry
+	.thumb_func
+Resource_ActivateEntry:
 	overlay_veneer Resource_ActivateEntryFar
 	.global Engine_VramLoad
 	.thumb_func
@@ -41,7 +50,13 @@ Engine_VramLoad:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
+	.global Runtime_PushSlotEntry
+	.thumb_func
+Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
+	.global QueueIoWriteDelay3
+	.thumb_func
+QueueIoWriteDelay3:
 	overlay_veneer QueueIoWriteDelay3Far
 	.global Object_SetMode
 	.thumb_func

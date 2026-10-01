@@ -1,7 +1,6 @@
 .syntax unified
 	.thumb
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200e190,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -916,7 +915,7 @@ gHaidiaMuraEvents:
 	.4byte 0x00000f80
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008add
+	.4byte SceneDialogue_RunActorTenFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte 0x00000f79
@@ -928,97 +927,97 @@ gHaidiaMuraEvents:
 	.4byte 0x00000f84
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008b29
+	.4byte SceneDialogue_RunActorFourteenTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x02008ba9
+	.4byte FieldScene_RunFlag807BranchSequence
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte 0x00000f67
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008c61
+	.4byte SceneDialogue_RunActor21FlaggedLine
 	.4byte 0x00000000
 	.4byte 0xffff0016
 	.4byte 0x00000fd1
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008dc1
+	.4byte FieldScene_RunScene373_02000dc0
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008df1
+	.4byte SceneState_ApplyFlag801Branch
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02008e19
+	.4byte SceneState_SetValue123Mode3
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x02008e2d
+	.4byte SceneState_SetValue123Mode4
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x02008e41
+	.4byte SceneState_ApplyValues123And2
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008e55
+	.4byte FieldScene_RunScene373_02000e54
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008e85
+	.4byte FieldScene_RunScene373_02000e84
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008eb5
+	.4byte SceneDialogue_RunFlag815GatedStep
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008f5d
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x02008f8d
+	.4byte FieldScene_RunScene373SequenceA
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte 0x02008fbd
+	.4byte FieldScene_RunPrimarySequenceSecond
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008d71
+	.4byte SceneState_Send210AndApplyRectAt40x84
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008d99
+	.4byte SceneState_Send210AndApplyRect
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte 0x020090d9
+	.4byte HaidiaMura_RunCameraRiseScene
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x020091d9
+	.4byte FieldScene_RunPuppyBarks
 	.4byte 0x00000002
 	.4byte 0x08230032
-	.4byte 0x020092bd
+	.4byte FieldScene_RunScene373SequenceE
 	.4byte 0x00000002
 	.4byte 0xffff0033
-	.4byte 0x02009455
+	.4byte SceneState_RunTablePairWhenActor22State1
 	.4byte 0x00000002
 	.4byte 0xffff0034
-	.4byte 0x02009555
+	.4byte SceneState_RunTablePairWhenActor22State2
 	.4byte 0x00000002
 	.4byte 0xffff0035
-	.4byte 0x02009591
+	.4byte SceneState_RunTablePairByActor22State
 	.4byte 0x0000c602
 	.4byte 0xffff0064
-	.4byte 0x02009245
+	.4byte SceneState_RunFlag204Step
 	.4byte 0x00004602
 	.4byte 0xffff0065
-	.4byte 0x02009281
+	.4byte SceneState_SetFlag204AndConfigureRegion49_46
 	.4byte 0x00009415
 	.4byte 0x0fd0001a
-	.4byte 0x02008a45
+	.4byte SceneDialogue_RunActor181Scene
 	.4byte 0x00008c15
 	.4byte 0xffff0014
-	.4byte 0x0200d951
+	.4byte HaidiaMura_OpenVillagerLane
 	.4byte 0x00000602
 	.4byte 0xffff001e
-	.4byte 0x0200d929
+	.4byte SceneState_ApplyRectAndRunTwo
 	.4byte 0x00008602
 	.4byte 0xffff001f
-	.4byte 0x0200d929
+	.4byte SceneState_ApplyRectAndRunTwo
 	.4byte 0x00000003
 	.4byte 0xffff0018
-	.4byte 0x0200da25
+	.4byte FieldScene_RunScriptedStepEE4
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1032,7 +1031,7 @@ gHaidiaMuraEvents2:
 	.4byte 0x000011cb
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008add
+	.4byte SceneDialogue_RunActorTenFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte 0x000011c5
@@ -1044,7 +1043,7 @@ gHaidiaMuraEvents2:
 	.4byte 0x000011cd
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008b29
+	.4byte SceneDialogue_RunActorFourteenTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x000011b4
@@ -1086,82 +1085,82 @@ gHaidiaMuraEvents2:
 	.4byte 0x000011f9
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008dc1
+	.4byte FieldScene_RunScene373_02000dc0
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008df1
+	.4byte SceneState_ApplyFlag801Branch
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02008e19
+	.4byte SceneState_SetValue123Mode3
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x02008e2d
+	.4byte SceneState_SetValue123Mode4
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x02008e41
+	.4byte SceneState_ApplyValues123And2
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008e55
+	.4byte FieldScene_RunScene373_02000e54
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008e85
+	.4byte FieldScene_RunScene373_02000e84
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008eb5
+	.4byte SceneDialogue_RunFlag815GatedStep
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008f5d
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x02008f8d
+	.4byte FieldScene_RunScene373SequenceA
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte 0x02008fbd
+	.4byte FieldScene_RunPrimarySequenceSecond
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008d71
+	.4byte SceneState_Send210AndApplyRectAt40x84
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008d99
+	.4byte SceneState_Send210AndApplyRect
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte 0x020090d9
+	.4byte HaidiaMura_RunCameraRiseScene
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x020091d9
+	.4byte FieldScene_RunPuppyBarks
 	.4byte 0x00000002
 	.4byte 0x08230032
-	.4byte 0x020092bd
+	.4byte FieldScene_RunScene373SequenceE
 	.4byte 0x00000002
 	.4byte 0xffff0033
-	.4byte 0x02009455
+	.4byte SceneState_RunTablePairWhenActor22State1
 	.4byte 0x00000002
 	.4byte 0xffff0034
-	.4byte 0x02009555
+	.4byte SceneState_RunTablePairWhenActor22State2
 	.4byte 0x00000002
 	.4byte 0xffff0035
-	.4byte 0x02009591
+	.4byte SceneState_RunTablePairByActor22State
 	.4byte 0x0000c602
 	.4byte 0xffff0064
-	.4byte 0x02009245
+	.4byte SceneState_RunFlag204Step
 	.4byte 0x00004602
 	.4byte 0xffff0065
-	.4byte 0x02009281
+	.4byte SceneState_SetFlag204AndConfigureRegion49_46
 	.4byte 0x00009415
 	.4byte 0x0fd0001a
-	.4byte 0x02008a45
+	.4byte SceneDialogue_RunActor181Scene
 	.4byte 0x00008c15
 	.4byte 0xffff0014
-	.4byte 0x0200d951
+	.4byte HaidiaMura_OpenVillagerLane
 	.4byte 0x00000602
 	.4byte 0xffff001e
-	.4byte 0x0200d929
+	.4byte SceneState_ApplyRectAndRunTwo
 	.4byte 0x00008602
 	.4byte 0xffff001f
-	.4byte 0x0200d929
+	.4byte SceneState_ApplyRectAndRunTwo
 	.4byte 0x00000003
 	.4byte 0xffff0018
-	.4byte 0x0200da25
+	.4byte FieldScene_RunScriptedStepEE4
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1169,19 +1168,19 @@ gHaidiaMuraEvents2:
 gHaidiaMuraEvents3:
 	.4byte 0x00000000
 	.4byte 0x03030008
-	.4byte 0x0200acb1
+	.4byte FieldScene_RunSecondaryActorSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001c62
 	.4byte 0x00000000
 	.4byte 0x03040009
-	.4byte 0x0200af15
+	.4byte FieldScene_RunPrimaryActorSequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001c63
 	.4byte 0x00000000
 	.4byte 0x081f000a
-	.4byte 0x02008c9d
+	.4byte SceneDialogue_RunActor10LineAndFlag81f
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x00001c8e
@@ -1193,28 +1192,28 @@ gHaidiaMuraEvents3:
 	.4byte 0x00001c99
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02008cd1
+	.4byte FieldScene_RunScene373_02000cd0
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x00001c9c
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x02008d2d
+	.4byte SceneDialogue_RunActorNineteenDialogue
 	.4byte 0x00008d15
 	.4byte 0x03030408
-	.4byte 0x0200acb1
+	.4byte FieldScene_RunSecondaryActorSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001c64
 	.4byte 0x00008d15
 	.4byte 0x03040409
-	.4byte 0x0200af15
+	.4byte FieldScene_RunPrimaryActorSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte 0x00001c65
 	.4byte 0x00008d15
 	.4byte 0x081f040a
-	.4byte 0x02008c9d
+	.4byte SceneDialogue_RunActor10LineAndFlag81f
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte 0x00001c8f
@@ -1232,70 +1231,70 @@ gHaidiaMuraEvents3:
 	.4byte 0x00001ca9
 	.4byte 0x00008d15
 	.4byte 0x03070413
-	.4byte 0x02008d2d
+	.4byte SceneDialogue_RunActorNineteenDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte 0x00001caa
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008dc1
+	.4byte FieldScene_RunScene373_02000dc0
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02008df1
+	.4byte SceneState_ApplyFlag801Branch
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02008e19
+	.4byte SceneState_SetValue123Mode3
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x02008e2d
+	.4byte SceneState_SetValue123Mode4
 	.4byte 0x00000002
 	.4byte 0xffff0005
-	.4byte 0x02008e41
+	.4byte SceneState_ApplyValues123And2
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008e55
+	.4byte FieldScene_RunScene373_02000e54
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008e85
+	.4byte FieldScene_RunScene373_02000e84
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008eb5
+	.4byte SceneDialogue_RunFlag815GatedStep
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008f5d
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x02008f8d
+	.4byte FieldScene_RunScene373SequenceA
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte 0x02008fbd
+	.4byte FieldScene_RunPrimarySequenceSecond
 	.4byte 0x00000002
 	.4byte 0xffff000f
-	.4byte 0x02008d71
+	.4byte SceneState_Send210AndApplyRectAt40x84
 	.4byte 0x00000002
 	.4byte 0xffff000e
-	.4byte 0x02008d99
+	.4byte SceneState_Send210AndApplyRect
 	.4byte 0x0000c602
 	.4byte 0xffff0064
-	.4byte 0x02009245
+	.4byte SceneState_RunFlag204Step
 	.4byte 0x00004602
 	.4byte 0xffff0065
-	.4byte 0x02009281
+	.4byte SceneState_SetFlag204AndConfigureRegion49_46
 	.4byte 0x00009415
 	.4byte 0x0fd00014
-	.4byte 0x02008a75
+	.4byte FieldScene_RunActor181Scene
 	.4byte 0x00008c15
 	.4byte 0xffff0015
-	.4byte 0x0200d951
+	.4byte HaidiaMura_OpenVillagerLane
 	.4byte 0x00000602
 	.4byte 0xffff001e
-	.4byte 0x0200d929
+	.4byte SceneState_ApplyRectAndRunTwo
 	.4byte 0x00008602
 	.4byte 0xffff001f
-	.4byte 0x0200d929
+	.4byte SceneState_ApplyRectAndRunTwo
 	.4byte 0x00000003
 	.4byte 0xffff0018
-	.4byte 0x0200da25
+	.4byte FieldScene_RunScriptedStepEE4
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

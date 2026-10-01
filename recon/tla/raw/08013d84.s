@@ -47,7 +47,7 @@ Func_08013d84:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_08013dd8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08013ddc:
 	.4byte 0x0000006b
 .L_08013de0:

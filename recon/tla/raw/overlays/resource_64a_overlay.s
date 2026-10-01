@@ -209,7 +209,7 @@ Func_0200015c:
 .L_020081e4:
 	.4byte Data_020024f4
 .L_020081e8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020081ec:
 	.4byte 0x04000208
 .L_020081f0:
@@ -2173,7 +2173,7 @@ Func_02000e44:
 .L_02009170:
 	.4byte 0x00000d8d
 .L_02009174:
-	.4byte gOverlayArea + 0x274a
+	.4byte Data_0200274a
 .L_02009178:
 	.4byte IwramClearWords
 .L_0200917c:
@@ -2519,7 +2519,7 @@ Func_02000e44:
 .L_0200940c:
 	.4byte Data_0200265e
 .L_02009410:
-	.4byte gOverlayArea + 0x274a
+	.4byte Data_0200274a
 .L_02009414:
 	movs r0, #2
 	str r0, [sp, #12]
@@ -2913,9 +2913,9 @@ Func_02000e44:
 .L_02009758:
 	.4byte gInput
 .L_0200975c:
-	.4byte gOverlayArea + 0x288a
+	.4byte Data_0200288a
 .L_02009760:
-	.4byte gOverlayArea + 0x274a
+	.4byte Data_0200274a
 .L_02009764:
 	.4byte 0x00000d91
 .L_02009768:
@@ -4385,8 +4385,8 @@ Data_0200247c:
 	.global Data_02002490
 Data_02002490:
 	.4byte 0x09510941
-	.4byte Field_Map165 + 0x1193
-	.4byte Resource_DirectoryTable + 0x81e
+	.4byte 0x08d108b3
+	.4byte 0x0868081e
 	.global gSceneEntrances
 gSceneEntrances:
 	.4byte 0xffff0000
@@ -4507,7 +4507,7 @@ Data_02002500:
 	.4byte 0xd6b475ab
 	.4byte 0xe027d5fe
 	.4byte 0x1da27e1f
-	.4byte Resource_Data012 + 0xc79ce
+	.4byte 0x083c79ce
 	.4byte 0xf8707e1c
 	.4byte 0x870fe1c2
 	.4byte 0x5e072c4f
@@ -4579,8 +4579,8 @@ Data_020026f0:
 	.global Data_02002700
 Data_02002700:
 	.4byte 0x09510941
-	.4byte Field_Map165 + 0x1193
-	.4byte Resource_DirectoryTable + 0x81e
+	.4byte 0x08d108b3
+	.4byte 0x0868081e
 	.global Data_0200270c
 Data_0200270c:
 	.4byte 0x00c900c8
@@ -4601,3 +4601,9 @@ Data_0200271c:
 	.4byte 0x00ee00ec
 	.4byte 0x00f000ef
 	.2byte 0x00f1
+	.section .bss,"aw",%nobits
+	.global Data_0200274a
+Data_0200274a:
+	.space 0x00000140
+	.global Data_0200288a
+Data_0200288a:

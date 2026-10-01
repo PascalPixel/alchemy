@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008bd4,"a",%progbits
 	.global Niwa_GateCells
 Niwa_GateCells:
 	.4byte 0x00190022
@@ -118,7 +118,7 @@ gBiribinoNiwaEvents:
 	.4byte 0x000016d0
 	.4byte 0x00000000
 	.4byte 0x08450009
-	.4byte 0x02008185
+	.4byte SceneDialogue_AskAboutBarricade
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x000016d1

@@ -62,7 +62,7 @@ Map_WriteLayerCellTile:
 	beq .L_0802b8f4
 	add r0, r11
 	adds r1, r7, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	b .L_0802b8fe
 .L_0802b8f4:
 	ldr r3, .L_0802b984

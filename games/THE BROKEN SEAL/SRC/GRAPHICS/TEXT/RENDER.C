@@ -199,12 +199,24 @@ void UiText_DrawPrefixedNumberAtOffset(
 
     base = gWindowWork;
     text = UiText_FormatNumber(formatted, value, 4);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
+    defined(TBS_EDITION_IT)
+    /* Here the second variant has a prefix glyph pair of its own. */
+    if (variant == 0) {
+        output[0] = 0xf01d;
+        output[1] = 0xf01e;
+    } else {
+        output[0] = 0xf01f;
+        output[1] = 0xf005;
+    }
+#else
     if (variant == 0) {
         output[0] = 0xf01d;
     } else {
         output[0] = 0xf01f;
     }
     output[1] = 0xf01e;
+#endif
     for (index = 0; index <= 4; index++) {
         output[index + 2] = text[index];
     }

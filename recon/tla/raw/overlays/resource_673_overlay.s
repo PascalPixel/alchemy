@@ -2402,16 +2402,16 @@ Data_020015c4:
 	.4byte 0xffff0031
 	.4byte Func_02000100
 	.4byte 0x00001815
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_020006cc
 	.4byte 0x00001815
-	.4byte Data_02010002 + 0x7
+	.4byte 0x02010009
 	.4byte Func_02000704
 	.4byte 0x00001815
-	.4byte Data_02020004 + 0x6
+	.4byte 0x0202000a
 	.4byte Func_02000740
 	.4byte 0x00001815
-	.4byte Data_02030000 + 0xb
+	.4byte 0x0203000b
 	.4byte Func_0200077c
 	.4byte 0x00001815
 	.4byte 0x0204000c
@@ -2469,7 +2469,7 @@ Data_02001714:
 	.4byte 0xffff0032
 	.4byte Func_0200094c
 	.4byte 0x00001815
-	.4byte Data_02000000 + 0x8
+	.4byte 0x02000008
 	.4byte Func_02000868
 	.4byte 0xffffffff
 	.4byte 0x00000000

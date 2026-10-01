@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200c550,"a",%progbits
 	.global TorebiKyuden_CellSteps
 TorebiKyuden_CellSteps:
 	.4byte 0x001c0019
@@ -13,6 +13,7 @@ TorebiKyuden_CellSteps:
 	.4byte 0xffff0005
 	.global TorebiKyuden_MiddleActionScript
 TorebiKyuden_MiddleActionScript:
+.L_0200c570:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -451,7 +452,7 @@ gTorebiKyudenPlacementsOther:
 	.4byte 0x00600000
 	.4byte 0x00000000
 	.4byte 0xffff003e
-	.4byte 0x0200c570
+	.4byte .L_0200c570
 	.4byte 0x01d80000
 	.4byte 0x00000000
 	.4byte 0x00880000
@@ -725,10 +726,10 @@ gTorebiKyudenEventsOther:
 	.4byte 0x00000005
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0008
 	.4byte 0x00000008
@@ -752,7 +753,7 @@ gTorebiKyudenEventsOther:
 	.4byte 0x00000010
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -788,13 +789,13 @@ gTorebiKyudenEventsOther:
 	.4byte 0x0000001d
 	.4byte 0x0000c602
 	.4byte 0xffff001e
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff001f
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff0020
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0021
 	.4byte 0x00000021
@@ -821,16 +822,16 @@ gTorebiKyudenEventsOther:
 	.4byte 0x0000002b
 	.4byte 0x0000c602
 	.4byte 0xffff002c
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff002d
 	.4byte 0x0000002d
 	.4byte 0x00000002
 	.4byte 0x096b003c
-	.4byte 0x02008ff9
+	.4byte RunPrimaryEffectSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020080c9
+	.4byte FieldScene_RunBranchedSteps1FF1
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00001ff4
@@ -842,13 +843,13 @@ gTorebiKyudenEventsOther:
 	.4byte 0x00001ff6
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008109
+	.4byte RunOpeningAuxiliarySequence
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008349
+	.4byte FieldScene_RunBranchedSteps2006
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020083b1
+	.4byte RunMiddleAuxiliarySequence
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte 0x0000200c
@@ -905,10 +906,10 @@ gTorebiKyudenEventsOther:
 	.4byte 0x00002051
 	.4byte 0x00008d15
 	.4byte 0xffff0006
-	.4byte 0x0200849d
+	.4byte FieldScene_RunScene3b8_0200049c
 	.4byte 0x00000003
 	.4byte 0x19690046
-	.4byte 0x02008af9
+	.4byte FieldScene_RunScene3b8SequenceA
 	.4byte 0x000001b3
 	.4byte 0xffff00c8
 	.4byte 0x004029b0
@@ -955,10 +956,10 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x00000005
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0008
 	.4byte 0x00000008
@@ -982,7 +983,7 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x00000010
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -1018,13 +1019,13 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x0000001d
 	.4byte 0x0000c602
 	.4byte 0xffff001e
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff001f
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff0020
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0021
 	.4byte 0x00000021
@@ -1051,7 +1052,7 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x0000002b
 	.4byte 0x0000c602
 	.4byte 0xffff002c
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff002d
 	.4byte 0x0000002d
@@ -1069,7 +1070,7 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x00002240
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008265
+	.4byte FieldScene_RunScene3b8_02000264
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte 0x00002246
@@ -1099,7 +1100,7 @@ gTorebiKyudenEventsColosso:
 	.4byte 0x0000224e
 	.4byte 0x00000003
 	.4byte 0x19670046
-	.4byte 0x02008af9
+	.4byte FieldScene_RunScene3b8SequenceA
 	.4byte 0x000001b3
 	.4byte 0xffff00c8
 	.4byte 0x004029b0
@@ -1146,10 +1147,10 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x00000005
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0008
 	.4byte 0x00000008
@@ -1173,7 +1174,7 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x00000010
 	.4byte 0x0000c602
 	.4byte 0xffff0011
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0012
 	.4byte 0x00000012
@@ -1209,13 +1210,13 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x0000001d
 	.4byte 0x0000c602
 	.4byte 0xffff001e
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff001f
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x0000c602
 	.4byte 0xffff0020
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff0021
 	.4byte 0x00000021
@@ -1242,16 +1243,16 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x0000002b
 	.4byte 0x0000c602
 	.4byte 0xffff002c
-	.4byte 0x0200bd41
+	.4byte FieldScene_RunScene3b8_02003d40
 	.4byte 0x00000001
 	.4byte 0xffff002d
 	.4byte 0x0000002d
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008525
+	.4byte SceneDialogue_ShowMessage22a8Branch
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008565
+	.4byte SceneDialogue_RunChoiceSequence22ab
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x000022ae
@@ -1302,7 +1303,7 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x00002351
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020085a5
+	.4byte SceneDialogue_RunChoiceSequence2352
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte 0x00002359
@@ -1317,7 +1318,7 @@ gTorebiKyudenEventsAfterColosso:
 	.4byte 0x0000235c
 	.4byte 0x00000003
 	.4byte 0xffff0046
-	.4byte 0x02008af9
+	.4byte FieldScene_RunScene3b8SequenceA
 	.4byte 0x000001b3
 	.4byte 0xffff00c8
 	.4byte 0x004029b0
@@ -1352,7 +1353,7 @@ gTorebiKyudenEvents2:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x0200bdf9
+	.4byte RunSceneEffectSetup
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001fed
@@ -1367,7 +1368,7 @@ gTorebiKyudenEvents2:
 	.4byte 0x00001ff0
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x0200c00d
+	.4byte FieldScene_RunStepWithValue29e0
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1378,25 +1379,25 @@ gTorebiKyudenEvents2Colosso:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x0200bdf9
+	.4byte RunSceneEffectSetup
 	.4byte 0x00000000
 	.4byte 0x096c0008
-	.4byte 0x0200be41
+	.4byte RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0x096c0009
-	.4byte 0x0200be41
+	.4byte RunSupplementalSequenceOne
 	.4byte 0x00008d15
 	.4byte 0x096c0408
-	.4byte 0x0200be41
+	.4byte RunSupplementalSequenceOne
 	.4byte 0x00008d15
 	.4byte 0x096c0409
-	.4byte 0x0200be41
+	.4byte RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00002238
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0200bf85
+	.4byte SceneDialogue_ThankForSavingBabi
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x0000223b
@@ -1405,7 +1406,7 @@ gTorebiKyudenEvents2Colosso:
 	.4byte 0x0000223c
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x0200c00d
+	.4byte FieldScene_RunStepWithValue29e0
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1416,13 +1417,13 @@ gTorebiKyudenEvents2AfterColosso:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x0200bdf9
+	.4byte RunSceneEffectSetup
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000022a2
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0200bfc5
+	.4byte SceneDialogue_AskIfLeavingPalace
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x000022a6
@@ -1431,7 +1432,7 @@ gTorebiKyudenEvents2AfterColosso:
 	.4byte 0x000022a7
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x0200c00d
+	.4byte FieldScene_RunStepWithValue29e0
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

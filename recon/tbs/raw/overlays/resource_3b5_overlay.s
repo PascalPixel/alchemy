@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02008ea8,"a",%progbits
+.L_02008ea8:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0xffff0000
@@ -9,6 +10,7 @@
 	.4byte 0x00000010
 	.global gTorebiMachiActor16Action
 gTorebiMachiActor16Action:
+.L_02008ec0:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -63,6 +65,7 @@ gTorebiMachiActor16Action:
 	.4byte 0xc0010000
 	.global gTorebiMachiActor17Action
 gTorebiMachiActor17Action:
+.L_02008f90:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -288,13 +291,13 @@ gTorebiMachiPlacements:
 	.4byte 0x01c80000
 	.4byte 0x0001d000
 	.4byte 0xffff006b
-	.4byte 0x02008ec0
+	.4byte .L_02008ec0
 	.4byte 0x01580000
 	.4byte 0x00000000
 	.4byte 0x01480000
 	.4byte 0x00020000
 	.4byte 0xffff0066
-	.4byte 0x02008f90
+	.4byte .L_02008f90
 	.4byte 0x01780000
 	.4byte 0x00000000
 	.4byte 0x01480000
@@ -354,7 +357,7 @@ gTorebiMachiPlacements:
 	.4byte 0x00a80000
 	.4byte 0x00025000
 	.4byte 0xffff0074
-	.4byte 0x02008ea8
+	.4byte .L_02008ea8
 	.4byte 0x01380000
 	.4byte 0x00000000
 	.4byte 0x00780000
@@ -399,55 +402,55 @@ gTorebiMachiPlacements:
 gTorebiMachiEvents:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte 0x02008225
+	.4byte FieldScene_RunScene3b5_02000224
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x00000002
 	.4byte 0x08c00014
-	.4byte 0x02008981
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x0000c402
 	.4byte 0x18c100ef
-	.4byte 0x02008955
+	.4byte SceneState_SetValue30ThenCall
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x00001f8d
@@ -465,13 +468,13 @@ gTorebiMachiEvents:
 	.4byte 0x00001f91
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x020084e9
+	.4byte SceneDialogue_RunActor15Message1f92
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020082f1
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x020083d1
+	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x00001f97
@@ -489,19 +492,19 @@ gTorebiMachiEvents:
 	.4byte 0x00001f9b
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x02008509
+	.4byte SceneDialogue_RunActor24Message1f9d
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x02008529
+	.4byte FieldScene_RunPatientTalk
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x02008569
+	.4byte FieldScene_RunScene3b5_02000568
 	.4byte 0x00000000
 	.4byte 0xffff001b
-	.4byte 0x0200859d
+	.4byte SceneDialogue_RunActor27Message1fa3
 	.4byte 0x00000000
 	.4byte 0x08c1001c
-	.4byte 0x02008895
+	.4byte FieldScene_RunScene3b5SequenceA
 	.4byte 0x00000000
 	.4byte 0xffff001c
 	.4byte 0x00000e40
@@ -525,10 +528,10 @@ gTorebiMachiEvents:
 	.4byte 0x00001fa9
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x020082f1
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x020083d1
+	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x00001fac
@@ -561,13 +564,13 @@ gTorebiMachiEvents:
 	.4byte 0x00000e41
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte 0x02008031
+	.4byte SceneState_SetValues31_2_4
 	.4byte 0x00000003
 	.4byte 0xffff001e
-	.4byte 0x020082b9
+	.4byte SceneDialogue_RunMessage0e36
 	.4byte 0x00000003
 	.4byte 0xffff001f
-	.4byte 0x020082d5
+	.4byte SceneDialogue_RunMessage0e37
 	.4byte 0x00000033
 	.4byte 0x0f970064
 	.4byte 0x00200009
@@ -579,13 +582,13 @@ gTorebiMachiEvents:
 	.4byte 0x001000bf
 	.4byte 0x00001815
 	.4byte 0x02010009
-	.4byte 0x02008ca9
+	.4byte FieldScene_ResetActor9AndDrawTiles
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008261
+	.4byte ConfigureAndPlaceActorOneHundredTwo
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x0200828d
+	.4byte HideActorOneHundredTwo
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -593,52 +596,52 @@ gTorebiMachiEvents:
 gTorebiMachiEvents2:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte 0x02008225
+	.4byte FieldScene_RunScene3b5_02000224
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0x18c100ef
-	.4byte 0x02008955
+	.4byte SceneState_SetValue30ThenCall
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x000021dc
@@ -659,10 +662,10 @@ gTorebiMachiEvents2:
 	.4byte 0x000021e1
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020082f1
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x020083d1
+	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x000021e4
@@ -680,19 +683,19 @@ gTorebiMachiEvents2:
 	.4byte 0x000021e8
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x02008509
+	.4byte SceneDialogue_RunActor24Message1f9d
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x02008529
+	.4byte FieldScene_RunPatientTalk
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x02008569
+	.4byte FieldScene_RunScene3b5_02000568
 	.4byte 0x00000000
 	.4byte 0xffff001b
 	.4byte 0x000021ee
 	.4byte 0x00000000
 	.4byte 0x08c1001c
-	.4byte 0x02008895
+	.4byte FieldScene_RunScene3b5SequenceA
 	.4byte 0x00000000
 	.4byte 0xffff001c
 	.4byte 0x00000e40
@@ -716,10 +719,10 @@ gTorebiMachiEvents2:
 	.4byte 0x000021f4
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x020082f1
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x020083d1
+	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x000021f7
@@ -752,13 +755,13 @@ gTorebiMachiEvents2:
 	.4byte 0x00000e41
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte 0x02008031
+	.4byte SceneState_SetValues31_2_4
 	.4byte 0x00000003
 	.4byte 0xffff001e
-	.4byte 0x020082b9
+	.4byte SceneDialogue_RunMessage0e36
 	.4byte 0x00000003
 	.4byte 0xffff001f
-	.4byte 0x020082d5
+	.4byte SceneDialogue_RunMessage0e37
 	.4byte 0x00000033
 	.4byte 0x0f970064
 	.4byte 0x00200009
@@ -770,13 +773,13 @@ gTorebiMachiEvents2:
 	.4byte 0x001000bf
 	.4byte 0x00001815
 	.4byte 0x02010009
-	.4byte 0x02008ca9
+	.4byte FieldScene_ResetActor9AndDrawTiles
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008261
+	.4byte ConfigureAndPlaceActorOneHundredTwo
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x0200828d
+	.4byte HideActorOneHundredTwo
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -784,52 +787,52 @@ gTorebiMachiEvents2:
 gTorebiMachiEvents3:
 	.4byte 0x00000c15
 	.4byte 0x02000008
-	.4byte 0x02008225
+	.4byte FieldScene_RunScene3b5_02000224
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008645
+	.4byte SceneScript_SetupActors
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x00000001
 	.4byte 0xffff000c
 	.4byte 0x0000000c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte 0x02008965
+	.4byte SceneState_PassWorkHalfword16C
 	.4byte 0x0000c402
 	.4byte 0x18c100ef
-	.4byte 0x02008955
+	.4byte SceneState_SetValue30ThenCall
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x0000235d
@@ -838,7 +841,7 @@ gTorebiMachiEvents3:
 	.4byte 0x0000235e
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020085bd
+	.4byte SceneDialogue_RunActor24Message235f
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte 0x00002362
@@ -850,19 +853,19 @@ gTorebiMachiEvents3:
 	.4byte 0x00002364
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020082f1
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x020083d1
+	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x00002367
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020085dd
+	.4byte FieldScene_RunScene3b5_020005dc
 	.4byte 0x00000000
 	.4byte 0x08c1001c
-	.4byte 0x02008895
+	.4byte FieldScene_RunScene3b5SequenceA
 	.4byte 0x00000000
 	.4byte 0xffff001c
 	.4byte 0x00000e40
@@ -886,10 +889,10 @@ gTorebiMachiEvents3:
 	.4byte 0x00002370
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x020082f1
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x020083d1
+	.4byte FieldScene_RunSiblingsTalk
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x00002373
@@ -901,13 +904,13 @@ gTorebiMachiEvents3:
 	.4byte 0x00000e41
 	.4byte 0x00000000
 	.4byte 0xffff001f
-	.4byte 0x02008031
+	.4byte SceneState_SetValues31_2_4
 	.4byte 0x00000003
 	.4byte 0xffff001e
-	.4byte 0x020082b9
+	.4byte SceneDialogue_RunMessage0e36
 	.4byte 0x00000003
 	.4byte 0xffff001f
-	.4byte 0x020082d5
+	.4byte SceneDialogue_RunMessage0e37
 	.4byte 0x00000033
 	.4byte 0x0f970064
 	.4byte 0x00200009
@@ -919,16 +922,17 @@ gTorebiMachiEvents3:
 	.4byte 0x001000bf
 	.4byte 0x00001815
 	.4byte 0x02010009
-	.4byte 0x02008ca9
+	.4byte FieldScene_ResetActor9AndDrawTiles
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008261
+	.4byte ConfigureAndPlaceActorOneHundredTwo
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x0200828d
+	.4byte HideActorOneHundredTwo
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+.L_02009ce8:
 	.4byte 0x00200027
 	.4byte 0x00020001
 	.4byte 0x00280006
@@ -937,21 +941,21 @@ gTorebiMachiEvents3:
 	.4byte 0x0000ffff
 	.global gTorebiMachiCellSteps
 gTorebiMachiCellSteps:
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x00060030
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x0004003f
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x00080047
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x00040047
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x00150042
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x0018003d
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x001a0032
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x00160032
-	.4byte 0x02009ce8
+	.4byte .L_02009ce8
 	.4byte 0x0014002b

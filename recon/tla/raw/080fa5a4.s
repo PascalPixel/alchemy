@@ -47,7 +47,7 @@ Func_080fa5a4:
 	beq .L_080fa604
 	ldr r1, [r5]
 	adds r0, r7, #0
-	bl Func_080fa3d4
+	bl Menu_SpawnIconEntries
 .L_080fa604:
 	movs r3, #44
 	adds r3, r3, r7

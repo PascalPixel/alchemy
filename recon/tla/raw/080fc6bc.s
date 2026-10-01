@@ -345,7 +345,7 @@ Func_080fc6bc:
 .L_080fc95c:
 	mov r1, r9
 	adds r0, r5, r1
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #129
 	adds r5, r0, #0
 	lsls r3, r3, #2
@@ -430,7 +430,7 @@ Func_080fc6bc:
 	movs r1, #0
 	strb r0, [r7, r6]
 	adds r0, r5, #0
-	bl Func_080fadd0
+	bl ItemMenu_DrawIcons
 	movs r4, #134
 	lsls r4, r4, #2
 	adds r3, r7, r4

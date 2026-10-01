@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811a484
+	.global BattleMotion_GetSlotField14
 	.thumb_func
-Func_0811a484:
+BattleMotion_GetSlotField14:
 	push {lr}
 	bl GetBattleObjectSlot
 	ldr r0, [r0, #20]

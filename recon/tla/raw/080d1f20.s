@@ -31,7 +31,7 @@ Func_080d1f20:
 	adds r7, r7, r3
 	mov r1, r8
 	adds r0, r7, #0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -115,7 +115,7 @@ Func_080d1f20:
 	subs r2, #6
 	strh r3, [r2]
 	movs r1, #0
-	bl Func_080d172c
+	bl BattleFx_ApplyColorToSourceBuffer
 	movs r0, #128
 	lsls r0, r0, #9
 	b .L_080d203c
@@ -147,7 +147,7 @@ Func_080d1f20:
 	movs r1, #0
 	bl Func_080d170c
 	movs r0, #24
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	ldrh r3, [r5]
 	ldr r2, .L_080d205c
 	movs r7, #120

@@ -92,7 +92,7 @@ Func_080e37e0:
 	movs r0, #10
 	bl Battle_WaitMode0
 	adds r0, r5, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	movs r3, #0
 	str r3, [r7, #108]
 	mov r3, r10

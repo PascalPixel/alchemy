@@ -272,7 +272,7 @@ Func_080e5d5c:
 	bl Resource_GetTableEntry
 	mov r2, r8
 	ldr r1, [r2, #96]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	adds r3, r7, #0
 	adds r3, #193
 	strb r6, [r3]
@@ -335,7 +335,7 @@ Func_080e5d5c:
 	str r3, [r6, #16]
 	bl Resource_GetTableEntry
 	ldr r1, [sp, #28]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	lsls r1, r1, #1
@@ -662,7 +662,7 @@ Func_080e5d5c:
 	bl Func_080dbf94
 .L_080e62bc:
 	mov r0, r11
-	bl Func_080200c8
+	bl Object_Destroy
 	ldr r0, [sp, #20]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #12]

@@ -236,7 +236,7 @@ void Func_08143001(void);
 void Func_08143489(void);
 void Func_081434f8(void);
 void BattleFx_BeginCanvasLayer(s32);
-void Func_08143a88(s32);
+void BattleFx_BeginTiledCanvas(s32);
 void Func_08143bb8(void);
 void Func_08144aac(s32, struct DrawFuncs *);
 void BattleFx_RunSparkGroups(struct SummonAction *, s32);
@@ -246,8 +246,8 @@ void Func_081504b4(struct SummonAction *);
 void Func_081504c0(struct SummonAction *);
 void Func_081504cc(struct SummonAction *);
 void Func_08152475(void);
-void Func_08156140(struct SummonAction *, s32);
-s32 Func_08157cf4(s32, void *, s32, s32);
+void BattleFx_RunProjectileVolley(struct SummonAction *, s32);
+s32 Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Func_08158ce0(s32, s32);
 void Func_0815b434(void *, s32, s32);
 void Func_0815e1ec(void *, s32 *);
@@ -364,22 +364,22 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     scrollB = 0;
 
     if (kind == 41 || kind == 38 || kind == 62 || kind == 85 || kind == 86 || kind == 87 || kind == 88)
-        Func_08143a88(0x2000);
+        BattleFx_BeginTiledCanvas(0x2000);
     else
         BattleFx_BeginCanvasLayer(0);
 
     REG_BLDALPHA = 0x1010;
-    Func_08157cf4((s32)&Value_00000134, tiles, 0, 0);
-    Func_08157cf4((s32)&Value_00000159, work->frames, 1, 0);
-    Func_08157cf4((s32)&Value_0000015c, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000134, tiles, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000159, work->frames, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000015c, EWRAM_BUF, 1, 0);
     Graphics_PackTileRows(EWRAM_BUF, work->frames + 0x5100, 40, 0x120);
 
     if (kind == 5 || kind == 53 || kind == 78) {
-        Func_08157cf4((s32)&Value_0000013e, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000013e, EWRAM_BUF, 1, 0);
     } else if (kind == 42 || kind == 15) {
-        Func_08157cf4((s32)&Value_0000016d, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000016d, EWRAM_BUF, 1, 0);
     } else if (kind == 16) {
-        Func_08157cf4((s32)&Value_000000d9, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000d9, EWRAM_BUF, 1, 0);
         for (i = 1; i != 8; i++) {
             src = EWRAM_BUF;
             dst = EWRAM_BUF + i * 0x400;
@@ -394,32 +394,32 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             }
         }
     } else if (kind == 10) {
-        Func_08157cf4((s32)&Value_00000105, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000105, EWRAM_BUF, 1, 0);
     } else if (kind == 6 || kind == 57 || kind == 14 || kind == 17) {
-        Func_08157cf4((s32)&Value_00000192, EWRAM_BUF, 1, 0);
-        Func_08157cf4((s32)&Value_00000188, EWRAM_BUF + 0xc56, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000188, EWRAM_BUF + 0xc56, 1, 0);
     } else if (kind == 68) {
-        Func_08157cf4((s32)&Value_00000192, EWRAM_BUF, 1, 0);
-        Func_08157cf4((s32)&Value_00000161, EWRAM_BUF + 0x1809, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000161, EWRAM_BUF + 0x1809, 1, 0);
     } else if (kind == 61) {
-        Func_08157cf4((s32)&Value_0000013a, EWRAM_BUF, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_0000013a, EWRAM_BUF, 1, 1);
     } else if (kind == 38) {
-        Func_08157cf4((s32)&Value_00000187, EWRAM_BUF, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000187, EWRAM_BUF, 1, 1);
     } else if (kind == 44) {
-        Func_08157cf4((s32)&Value_00000130, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000130, EWRAM_BUF, 1, 0);
     } else if (kind == 60) {
-        Func_08157cf4((s32)&Value_00000192, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
     } else if (kind == 46) {
-        Func_08157cf4((s32)&Value_0000017c, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000017c, EWRAM_BUF, 1, 0);
     } else if (kind == 50) {
-        Func_08157cf4((s32)&Value_00000178, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000178, EWRAM_BUF, 1, 0);
     } else if (kind == 90) {
-        Func_08157cf4((s32)&Value_000000da, EWRAM_BUF, 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000da, EWRAM_BUF, 0, 0);
     } else if (kind == 91) {
-        Func_08157cf4((s32)&Value_000000c1, EWRAM_BUF + 0x4000, 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000c1, EWRAM_BUF + 0x4000, 0, 0);
     } else if (kind == 84) {
-        Func_08157cf4((s32)&Value_00000192, EWRAM_BUF, 1, 0);
-        Func_08157cf4((s32)&Value_00000188, work->frames, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000188, work->frames, 1, 1);
         ((void (*)(void *, s32))0x03000258)(EWRAM_BUF + 0xc56, 0x4000);
         for (i = 0; i != 4; i++) {
             for (j = 0; j != 120; j++) {
@@ -427,16 +427,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
                     EWRAM_BUF[0xc5a + i * 0x1000 + j * 32 + k] = work->frames[i * 2880 + j * 24 + k];
             }
         }
-        Func_08157cf4((s32)&Value_00000159, work->frames, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000159, work->frames, 1, 0);
     } else if (kind == 63 || kind == 64) {
-        Func_08157cf4((s32)&Value_00000115, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000115, EWRAM_BUF, 1, 0);
     } else if (kind == 71 || kind == 82) {
-        Func_08157cf4((s32)&Value_000000b4, EWRAM_BUF, 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000b4, EWRAM_BUF, 0, 0);
     } else if (kind == 96 || kind == 97 || kind == 98) {
-        Func_08157cf4((s32)&Value_0000018a, EWRAM_BUF, 0, 0);
-        Func_08157cf4((s32)&Value_0000013e, EWRAM_BUF + 0xd80, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000018a, EWRAM_BUF, 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000013e, EWRAM_BUF + 0xd80, 1, 0);
     } else if (kind == 80) {
-        Func_08157cf4((s32)&Value_0000013a, EWRAM_BUF + 0x1000, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000013a, EWRAM_BUF + 0x1000, 1, 0);
         ((void (*)(void *, s32))0x03000258)(EWRAM_BUF, 0x1000);
         for (i = 0; i != 48; i++) {
             for (k = 0; k != 24; k++) {
@@ -455,16 +455,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             }
         }
     } else if (kind == 94) {
-        Func_08157cf4((s32)&Value_0000014d, EWRAM_BUF, 1, 1);
-        Func_08157cf4((s32)&Value_000000e6, EWRAM_BUF + 0x2000, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_0000014d, EWRAM_BUF, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000e6, EWRAM_BUF + 0x2000, 1, 1);
     } else if (kind == 73) {
         REG_BLDALPHA = 0xc10;
     } else if (kind == 70) {
-        Func_08157cf4((s32)&Value_00000193, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000193, EWRAM_BUF, 1, 0);
     } else if (kind == 66) {
-        Func_08157cf4((s32)&Value_00000129, EWRAM_BUF, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000129, EWRAM_BUF, 1, 1);
     } else if (kind != 41 && kind != 62) {
-        Func_08157cf4((s32)&Value_00000161, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000161, EWRAM_BUF, 1, 0);
     }
 
     switch (kind) {
@@ -472,26 +472,26 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     case 43: case 63: case 72: case 73: case 79: case 85: case 94: case 97: case 98:
         Dma_Set(Func_08013300((s32)&Value_00000184), PLTT, 0x84000020, DMA3);
         if (action->unk1c == 1)
-            Func_08157cf4((s32)&Value_00000157, EWRAM_BUF + 0x3c56, 1, 0);
+            Resource_LoadAndDecompress((s32)&Value_00000157, EWRAM_BUF + 0x3c56, 1, 0);
         break;
     case 2: case 9: case 10: case 11: case 13: case 44: case 45: case 46: case 47: case 48:
     case 49: case 68: case 69: case 70: case 71: case 80: case 82: case 99:
         if (action->unk1c == 1)
-            Func_08157cf4((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1, 1);
+            Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1, 1);
         else
             Dma_Set(Func_08013300((s32)&Value_00000155), PLTT, 0x84000020, DMA3);
         break;
     case 3: case 5: case 14: case 15: case 50: case 51: case 52: case 53: case 54: case 55:
     case 64: case 65: case 66: case 67: case 74: case 78: case 81: case 90: case 91:
         if (action->unk1c == 1)
-            Func_08157cf4((s32)&Value_00000151, EWRAM_BUF + 0x3c56, 1, 1);
+            Resource_LoadAndDecompress((s32)&Value_00000151, EWRAM_BUF + 0x3c56, 1, 1);
         else
             Dma_Set(Func_08013300((s32)&Value_00000151), PLTT, 0x84000020, DMA3);
         break;
     case 1: case 6: case 16: case 17: case 56: case 57: case 58: case 59: case 60: case 61:
     case 62: case 75: case 76: case 77: case 83: case 84: case 86: case 88: case 89: case 92:
         if (action->unk1c == 1)
-            Func_08157cf4((s32)&Value_00000153, EWRAM_BUF + 0x3c56, 1, 1);
+            Resource_LoadAndDecompress((s32)&Value_00000153, EWRAM_BUF + 0x3c56, 1, 1);
         else
             Dma_Set(Func_08013300((s32)&Value_00000153), PLTT, 0x84000020, DMA3);
         break;
@@ -499,12 +499,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         Dma_Set(Func_08013300((s32)&Value_00000182), PLTT, 0x84000020, DMA3);
         break;
     case 100:
-        Func_08157cf4((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1, 1);
         break;
     }
 
     if (kind == 81 || kind == 83 || kind == 91 || kind == 92 || kind == 93)
-        Func_08157cf4((s32)&Value_000000c2, EWRAM_BUF, 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000c2, EWRAM_BUF, 0, 0);
     work->unk7780 = 2;
     if (kind == 42)
         work->unk7784 = 75;
@@ -643,11 +643,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         Func_0801314c(104);
         Func_08020090(object, 3);
         if (kind == 45)
-            Func_08156140(action, 9);
+            BattleFx_RunProjectileVolley(action, 9);
         if (kind == 54)
             Func_0814a7f0(action);
         if (kind == 56)
-            Func_08156140(action, 8);
+            BattleFx_RunProjectileVolley(action, 8);
         return;
     }
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
@@ -704,25 +704,25 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         }
     }
     if (kind == 41) {
-        Func_08157cf4((s32)&Value_0000016f, work->frames, 1, 1);
-        Func_08157cf4((s32)&Value_00000170, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000016f, work->frames, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000170, EWRAM_BUF, 1, 0);
         REG_BLDALPHA = 0xe10;
     }
     if (kind == 86) {
-        Func_08157cf4((s32)&Value_000000f1, EWRAM_BUF, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000f1, EWRAM_BUF, 1, 1);
         REG_BLDALPHA = 0x810;
     }
     if (kind == 88) {
-        Func_08157cf4((s32)&Value_000000dd, EWRAM_BUF, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000dd, EWRAM_BUF, 1, 1);
         REG_BLDALPHA = 0x810;
     }
     if (kind == 62) {
-        Func_08157cf4((s32)&Value_00000171, work->frames, 1, 1);
-        Func_08157cf4((s32)&Value_00000172, EWRAM_BUF, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_00000171, work->frames, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000172, EWRAM_BUF, 1, 0);
         REG_BLDALPHA = 0xe10;
     }
     if (kind == 85) {
-        Func_08157cf4((s32)&Value_000000f0, EWRAM_BUF, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000f0, EWRAM_BUF, 1, 1);
         REG_BLDALPHA = 0xe10;
     }
 
@@ -1524,7 +1524,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             }
         } else if (kind == 94) {
             if (frame == 0) {
-                Func_08157cf4((s32)&Value_000000e6, EWRAM_BUF + 0x2000, 1, 1);
+                Resource_LoadAndDecompress((s32)&Value_000000e6, EWRAM_BUF + 0x2000, 1, 1);
                 REG_BLDALPHA = 0x410;
                 work->unk7780 = 1;
                 work->unk7784 = 0;

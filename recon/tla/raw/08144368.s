@@ -32,7 +32,7 @@ Func_08144368:
 	ldr r0, .L_081443d0
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
 	bl Func_081963ec

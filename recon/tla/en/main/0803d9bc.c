@@ -1,3 +1,6 @@
+/* Near miss: score 120. ⚓️ borrows heap block 0x44 and its two glyph tables
+   take names in its listings. It loads the Psynergy icon table's address
+   before setting the 2 x 2 size; this draft sets the size first. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
@@ -21,7 +24,7 @@ extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
 
 extern s32 VramBlock_LoadCached(s32 index, s32 size, u8 *destination);
 
-extern s32 RomBytes_08029a10[];
+extern s32 UiIcon_BaseGlyphPointers[];
 extern s32 UiIcon_PsynergyIconPointers[];
 
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
@@ -30,14 +33,14 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
     FontTransfer *work;
     s32 slot;
 
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
+    work = Runtime_AllocateHeapBlock(0x44, 0x608);
     slot = 0;
 
     if (glyph >= Ui_CountSecondTableEntries())
         glyph = 0;
 
     if (with_base != 0) {
-        work->f604 = RomBytes_08029a10[2];
+        work->f604 = UiIcon_BaseGlyphPointers[2];
         work->f600 = 2;
         work->f602 = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 0);
@@ -53,5 +56,5 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 with_base, s32 *src,
         *src = Resource_FindFreeEntry();
 
     *dst = VramBlock_LoadCached(*src, 0x80, &work->f400);
-    Runtime_ReleaseHeapBlock(0x11);
+    Runtime_ReleaseHeapBlock(0x44);
 }

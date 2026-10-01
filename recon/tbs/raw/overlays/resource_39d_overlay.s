@@ -1,7 +1,6 @@
 .syntax unified
 	.thumb
 	.section .text.x0200b4bc,"ax",%progbits
-	.balign 4
 	.global MakyuriChojo_FlickerActorEight
 	.thumb_func
 MakyuriChojo_FlickerActorEight:
@@ -11,11 +10,11 @@ MakyuriChojo_FlickerActorEight:
 	mov r5, r8
 	push {r5, r6, r7}
 	movs r0, #8
-	bl 0x0200b6f0
-	ldr r3, [pc, #100]
+	bl Object_GetById
+	ldr r3, .L_0200b534
 	mov r10, r0
 	ldr r5, [r3]
-	bl 0x0200b640
+	bl Engine_RandomNext
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	lsls r3, r3, #4
@@ -26,60 +25,63 @@ MakyuriChojo_FlickerActorEight:
 	movs r0, #2
 	ldrsh r3, [r5, r0]
 	cmp r3, #129
-	bgt .L_020034bc_0
-	ldr r3, [pc, #72]
+	bgt .L_0200b540
+	ldr r3, .L_0200b538
 	ldr r3, [r3]
 	movs r2, #1
 	ands r3, r2
 	cmp r3, #0
-	beq .L_020034bc_1
+	beq .L_0200b512
 	movs r1, #152
 	movs r2, #144
 	lsls r1, r1, #17
 	lsls r2, r2, #16
 	movs r0, #8
-	bl 0x0200b728
+	bl Engine_ActorSetPosition
 	movs r0, #8
-	bl 0x0200b6f0
+	bl Object_GetById
 	movs r5, #128
 	lsls r5, r5, #9
-	b .L_020034bc_2
-.L_020034bc_1:
+	b .L_0200b528
+.L_0200b512:
 	movs r1, #152
 	movs r2, #151
 	lsls r1, r1, #17
 	lsls r2, r2, #16
 	movs r0, #8
-	bl 0x0200b728
+	bl Engine_ActorSetPosition
 	movs r0, #8
-	bl 0x0200b6f0
-	ldr r5, [pc, #20]
-.L_020034bc_2:
+	bl Object_GetById
+	ldr r5, .L_0200b53c
+.L_0200b528:
 	str r5, [r0, #24]
 	movs r0, #8
-	bl 0x0200b6f0
+	bl Object_GetById
 	str r5, [r0, #28]
-	b .L_020034bc_3
-	.4byte 0x03001e70
-	.4byte 0x03001e40
+	b .L_0200b54e
+.L_0200b534:
+	.4byte gMapWork
+.L_0200b538:
+	.4byte gFrameCount
+.L_0200b53c:
 	.4byte 0x00014ccc
-.L_020034bc_0:
+.L_0200b540:
 	movs r1, #128
 	movs r2, #128
 	movs r0, #8
 	lsls r1, r1, #12
 	lsls r2, r2, #12
-	bl 0x0200b728
-.L_020034bc_3:
+	bl Engine_ActorSetPosition
+.L_0200b54e:
 	mov r1, r10
 	cmp r1, #0
-	beq .L_020034bc_4
-	ldr r3, [pc, #160]
+	beq .L_0200b618
+	ldr r3, .L_0200b5f8
 	ldr r6, [r3]
 	movs r3, #15
 	ands r6, r3
 	cmp r6, #0
-	bne .L_020034bc_4
+	bne .L_0200b618
 	mov r0, r10
 	ldr r2, [r0, #12]
 	ldr r1, [r1, #8]
@@ -91,48 +93,48 @@ MakyuriChojo_FlickerActorEight:
 	ldr r3, [r0, #16]
 	movs r0, #142
 	lsls r0, r0, #1
-	bl 0x0200b670
+	bl CreateOverlayObject
 	movs r1, #192
 	lsls r1, r1, #11
 	adds r7, r0, #0
 	mov r0, r8
-	bl 0x0200b628
+	bl IwramSignedDivideEntry
 	mov r8, r0
 	mov r1, r8
 	lsls r1, r1, #16
 	mov r8, r1
 	cmp r7, #0
-	beq .L_020034bc_4
-	ldr r1, [pc, #104]
+	beq .L_0200b618
+	ldr r1, .L_0200b5fc
 	adds r0, r7, #0
 	ldr r5, [r7, #80]
-	bl 0x0200b668
+	bl Engine_ObjectSetScript
 	movs r1, #3
 	adds r0, r7, #0
-	bl 0x0200b760
+	bl ObjectGroup_SetChildValue
 	adds r3, r7, #0
 	adds r3, #85
 	strb r6, [r3]
-	bl 0x0200b640
-	ldr r3, [pc, #80]
+	bl Engine_RandomNext
+	ldr r3, .L_0200b600
 	adds r2, r7, #0
 	ands r3, r0
 	adds r2, #100
-	ldr r0, [pc, #60]
+	ldr r0, .L_0200b5f4
 	strh r3, [r2]
 	adds r3, r7, #0
 	mov r9, r0
 	adds r3, #102
-	ldr r0, [pc, #64]
+	ldr r0, .L_0200b604
 	strh r6, [r3]
 	mov r2, r8
-	ldr r3, [pc, #64]
+	ldr r3, .L_0200b608
 	mov r1, r10
 	ands r0, r2
 	str r1, [r7, #104]
 	str r3, [r7, #108]
 	asrs r0, r0, #4
-	bl 0x0200b648
+	bl Engine_MathSin
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	lsls r3, r3, #3
@@ -147,21 +149,27 @@ MakyuriChojo_FlickerActorEight:
 	ldrb r3, [r3, #9]
 	movs r2, #12
 	ands r2, r3
-	b .L_020034bc_5
+	b .L_0200b60c
+.L_0200b5f4:
 	.4byte 0x00000000
-	.4byte 0x03001e40
-	.4byte 0x0200bc54
+.L_0200b5f8:
+	.4byte gFrameCount
+.L_0200b5fc:
+	.4byte Data_02003c54
+.L_0200b600:
 	.4byte 0x0ffff000
+.L_0200b604:
 	.4byte 0x000fffff
+.L_0200b608:
 	.4byte SceneEffect_UpdateArcPosition
-.L_020034bc_5:
+.L_0200b60c:
 	ldrb r1, [r5, #9]
 	movs r3, #13
 	negs r3, r3
 	ands r3, r1
 	orrs r3, r2
 	strb r3, [r5, #9]
-.L_020034bc_4:
+.L_0200b618:
 	pop {r3, r5, r6}
 	mov r8, r3
 	mov r9, r5
@@ -170,8 +178,8 @@ MakyuriChojo_FlickerActorEight:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200b884,"a",%progbits
+.L_0200b884:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -186,6 +194,7 @@ MakyuriChojo_FlickerActorEight:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b8bc:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -200,6 +209,7 @@ MakyuriChojo_FlickerActorEight:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b8f4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -216,9 +226,9 @@ MakyuriChojo_FlickerActorEight:
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200b884
-	.4byte 0x0200b8bc
-	.4byte 0x0200b8f4
+	.4byte .L_0200b884
+	.4byte .L_0200b8bc
+	.4byte .L_0200b8f4
 	.global MakyuriChojo_ScriptTable
 MakyuriChojo_ScriptTable:
 	.4byte 0xffff0000
@@ -428,6 +438,8 @@ MakyuriChojo_EventTable:
 	.global MakyuriChojo_NearestActor
 MakyuriChojo_NearestActor:
 	.4byte 0x00000000
+	.global Data_02003c54
+Data_02003c54:
 	.4byte 0x00000015
 	.4byte 0x0000000a
 	.4byte 0x00016666

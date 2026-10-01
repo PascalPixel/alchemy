@@ -40,7 +40,7 @@ Object_LinkObjectAndSetCallbackFar:
 	.global Func_080c8608
 	.thumb_func
 Func_080c8608:
-	overlay_veneer Func_080e0308
+	overlay_veneer BattleEffect_PauseObject
 	.global Func_080c8610
 	.thumb_func
 Func_080c8610:

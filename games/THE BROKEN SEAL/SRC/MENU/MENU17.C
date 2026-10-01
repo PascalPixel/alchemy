@@ -46,9 +46,6 @@ void Menu_EndResourceSelection(void)
     WaitFrames(1U);
 }
 
-#if defined(TBS_EDITION_EN)
-
-/* The other editions keep their code here in their scaffolds for now. */
 struct MenuSelectionState {
     u8 unknown_000[0x78];
     void *window;
@@ -118,5 +115,3 @@ redraw:
         }
     }
 }
-
-#endif

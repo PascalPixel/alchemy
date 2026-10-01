@@ -381,7 +381,7 @@ Func_080dd054:
 	ldr r0, .L_080dd438
 .L_080dd370:
 	ldr r0, [r0]
-	bl Func_080dcf54
+	bl BattleFx_GetCycledTableWord
 	ldr r1, [sp, #40]
 	lsls r0, r0, #16
 	ldr r5, [r1, #36]

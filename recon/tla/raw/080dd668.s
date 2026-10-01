@@ -96,7 +96,7 @@ UpdateRisingParticleBurst:
 	movs r0, #131
 	bl Audio_PlayCue
 	adds r0, r7, #0
-	bl Func_080200c8
+	bl Object_Destroy
 	pop {r3, r5}
 	mov r8, r3
 	mov r10, r5

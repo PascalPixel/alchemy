@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x020089b0,"a",%progbits
+.L_020089b0:
 	.4byte 0x00000022
 	.4byte SceneState_ApplyArgMode0AndReturnZero
 	.4byte 0x00000010
@@ -257,19 +258,19 @@ gBiribinoDouPlacements1:
 	.4byte 0x02080000
 	.4byte 0x01024000
 	.4byte 0xffff00e3
-	.4byte 0x020089b0
+	.4byte .L_020089b0
 	.4byte 0x01280000
 	.4byte 0x00000000
 	.4byte 0x00e60000
 	.4byte 0x00024000
 	.4byte 0xffff00e3
-	.4byte 0x020089b0
+	.4byte .L_020089b0
 	.4byte 0x01f80000
 	.4byte 0x00000000
 	.4byte 0x01180000
 	.4byte 0x00024000
 	.4byte 0xffff00e3
-	.4byte 0x020089b0
+	.4byte .L_020089b0
 	.4byte 0x02480000
 	.4byte 0x00000000
 	.4byte 0x01780000

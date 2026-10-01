@@ -33,7 +33,7 @@ Func_08148e9c:
 	ldr r0, .L_08148f04
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #19
 	movs r0, #104
 	bl Func_081963ec
@@ -241,7 +241,7 @@ Func_08148e9c:
 	add r0, r11
 	movs r1, #3
 	asrs r0, r0, #1
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #36]
 	lsls r5, r0, #2
 	adds r5, r5, r0

@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200a854,"a",%progbits
 	.4byte 0x01000000
 	.4byte 0x02020101
 	.4byte 0x03030302
@@ -253,7 +253,7 @@ Data_0200ab2c:
 	.global Data_0200ac00
 Data_0200ac00:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte Object_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -1140,10 +1140,10 @@ Data_0200b938:
 	.4byte 0x00000f3b
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x020081c5
+	.4byte Villager_AskAboutMeditation
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x020081f1
+	.4byte Villager_RecallThreeYearsAgo
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte 0x00000f42
@@ -1152,13 +1152,13 @@ Data_0200b938:
 	.4byte 0x00000f43
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x0200821d
+	.4byte Villager_AskAboutTheTravelers
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte 0x00000f47
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02008249
+	.4byte Villager_ShowOffPsynergy
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x00000f4c
@@ -1167,25 +1167,25 @@ Data_0200b938:
 	.4byte 0x00000f7b
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008751
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x020087ed
+	.4byte FieldScene_RunSupplementalSequenceThree
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x0200881d
+	.4byte FieldScene_RunSupplementalSequenceFour
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x0200884d
+	.4byte FieldScene_RunSupplementalSequenceFive
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x0200887d
+	.4byte FieldScene_RunSupplementalSequenceSix
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x020088ad
+	.4byte FieldScene_RunSupplementalSequenceSeven
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x020088f1
+	.4byte SceneState_ApplyFlag815Branch
 	.4byte 0x00000001
 	.4byte 0xffff0009
 	.4byte 0x00000008
@@ -1194,16 +1194,16 @@ Data_0200b938:
 	.4byte 0x0000000b
 	.4byte 0x00004e15
 	.4byte 0x090b0008
-	.4byte 0x02008911
+	.4byte SceneState_ApplyFlag90b
 	.4byte 0x00004e15
 	.4byte 0x090c0009
-	.4byte 0x02008921
+	.4byte SceneState_ApplyFlag90c
 	.4byte 0x00004e15
 	.4byte 0x090d000a
-	.4byte 0x02008931
+	.4byte SceneState_ApplyFlag90d
 	.4byte 0x00000003
 	.4byte 0xffff0064
-	.4byte 0x0200810d
+	.4byte Scene_CheckPsynergyStone
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1211,7 +1211,7 @@ Data_0200b938:
 Data_0200ba64:
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020083b5
+	.4byte SceneDialogue_RunFlagGatedMessageStep
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00000eab
@@ -1223,40 +1223,40 @@ Data_0200ba64:
 	.4byte 0x00000ead
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x020084d5
+	.4byte FieldScene_RunMiddleAuxiliarySequence
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020085e9
+	.4byte Villager_PointTheWay
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte 0x00000ec5
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008751
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x020087ed
+	.4byte FieldScene_RunSupplementalSequenceThree
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x0200881d
+	.4byte FieldScene_RunSupplementalSequenceFour
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x0200884d
+	.4byte FieldScene_RunSupplementalSequenceFive
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x0200887d
+	.4byte FieldScene_RunSupplementalSequenceSix
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x020088ad
+	.4byte FieldScene_RunSupplementalSequenceSeven
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte 0x020088dd
+	.4byte FieldScene_RunStep7BThen8
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte 0x02008bbd
+	.4byte FieldScene_RunElderAidEvent
 	.4byte 0x00000003
 	.4byte 0xffff0064
-	.4byte 0x0200810d
+	.4byte Scene_CheckPsynergyStone
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1281,7 +1281,7 @@ Data_0200bb3c:
 	.4byte 0x00001190
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020083b5
+	.4byte SceneDialogue_RunFlagGatedMessageStep
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00001194
@@ -1293,13 +1293,13 @@ Data_0200bb3c:
 	.4byte 0x00001196
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02008249
+	.4byte Villager_ShowOffPsynergy
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x0000119c
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x02008445
+	.4byte Scene_StoneFellOnTheHut
 	.4byte 0x00008d15
 	.4byte 0xffff000d
 	.4byte 0x000011ce
@@ -1335,25 +1335,25 @@ Data_0200bb3c:
 	.4byte 0x000011f4
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008751
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x020087ed
+	.4byte FieldScene_RunSupplementalSequenceThree
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x0200881d
+	.4byte FieldScene_RunSupplementalSequenceFour
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x0200884d
+	.4byte FieldScene_RunSupplementalSequenceFive
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x0200887d
+	.4byte FieldScene_RunSupplementalSequenceSix
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x020088ad
+	.4byte FieldScene_RunSupplementalSequenceSeven
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x020088f1
+	.4byte SceneState_ApplyFlag815Branch
 	.4byte 0x00000001
 	.4byte 0xffff0009
 	.4byte 0x00000008
@@ -1362,16 +1362,16 @@ Data_0200bb3c:
 	.4byte 0x0000000b
 	.4byte 0x00004e15
 	.4byte 0x090b0008
-	.4byte 0x02008911
+	.4byte SceneState_ApplyFlag90b
 	.4byte 0x00004e15
 	.4byte 0x090c0009
-	.4byte 0x02008921
+	.4byte SceneState_ApplyFlag90c
 	.4byte 0x00004e15
 	.4byte 0x090d000a
-	.4byte 0x02008931
+	.4byte SceneState_ApplyFlag90d
 	.4byte 0x00000003
 	.4byte 0xffff0064
-	.4byte 0x0200810d
+	.4byte Scene_CheckPsynergyStone
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1379,7 +1379,7 @@ Data_0200bb3c:
 Data_0200bcec:
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008635
+	.4byte Villager_WelcomeBack
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00001be5
@@ -1391,7 +1391,7 @@ Data_0200bcec:
 	.4byte 0x00001be7
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x020083b5
+	.4byte SceneDialogue_RunFlagGatedMessageStep
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte 0x00001bed
@@ -1409,7 +1409,7 @@ Data_0200bcec:
 	.4byte 0x00001bf1
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008675
+	.4byte Scene_PsynergyStoneIsGone
 	.4byte 0x00008d15
 	.4byte 0xffff000b
 	.4byte 0x00001bf2
@@ -1442,34 +1442,34 @@ Data_0200bcec:
 	.4byte 0x00001bfb
 	.4byte 0x00008d15
 	.4byte 0x03060415
-	.4byte 0x02008675
+	.4byte Scene_PsynergyStoneIsGone
 	.4byte 0x00008d15
 	.4byte 0xffff0015
 	.4byte 0x00001ca5
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008751
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008781
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x020087ed
+	.4byte FieldScene_RunSupplementalSequenceThree
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x0200881d
+	.4byte FieldScene_RunSupplementalSequenceFour
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x0200884d
+	.4byte FieldScene_RunSupplementalSequenceFive
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x0200887d
+	.4byte FieldScene_RunSupplementalSequenceSix
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x020088ad
+	.4byte FieldScene_RunSupplementalSequenceSeven
 	.4byte 0x00000002
 	.4byte 0xffff0008
-	.4byte 0x020088f1
+	.4byte SceneState_ApplyFlag815Branch
 	.4byte 0x00000001
 	.4byte 0xffff0009
 	.4byte 0x00000008
@@ -1478,16 +1478,16 @@ Data_0200bcec:
 	.4byte 0x0000000b
 	.4byte 0x00004e15
 	.4byte 0x090b0008
-	.4byte 0x02008911
+	.4byte SceneState_ApplyFlag90b
 	.4byte 0x00004e15
 	.4byte 0x090c0009
-	.4byte 0x02008921
+	.4byte SceneState_ApplyFlag90c
 	.4byte 0x00004e15
 	.4byte 0x090d000a
-	.4byte 0x02008931
+	.4byte SceneState_ApplyFlag90d
 	.4byte 0x00000003
 	.4byte 0xffff0064
-	.4byte 0x0200810d
+	.4byte Scene_CheckPsynergyStone
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

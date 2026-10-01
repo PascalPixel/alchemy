@@ -47,7 +47,7 @@ BattlePres_RunBurstScene:
 	ldr r0, .L_0815a17c
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r2, [sp, #60]
 	movs r5, #224
 	lsls r5, r5, #3
@@ -62,7 +62,7 @@ BattlePres_RunBurstScene:
 	ldr r0, .L_0815a4f8
 	movs r3, #0
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #184
 	lsls r0, r0, #6
 	movs r1, #144
@@ -109,7 +109,7 @@ BattlePres_RunBurstScene:
 	ldr r0, .L_0815a500
 	movs r3, #0
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, [sp, #64]
 	ldr r3, .L_0815a504
 	lsls r5, r5, #3
@@ -124,7 +124,7 @@ BattlePres_RunBurstScene:
 	ldr r0, .L_0815a508
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_0815a21c
 .L_0815a20a:
 	ldr r5, [sp, #60]
@@ -134,18 +134,18 @@ BattlePres_RunBurstScene:
 	ldr r0, .L_0815a50c
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0815a21c:
 	ldr r0, .L_0815a510
 	ldr r1, .L_0815a4fc
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #1
 	movs r3, #0
 	ldr r0, .L_0815a514
 	ldr r1, .L_0815a518
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #40]
 	ldr r2, .L_0815a504
 	adds r3, #1

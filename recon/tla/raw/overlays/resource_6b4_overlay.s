@@ -1122,7 +1122,7 @@ Func_02000564:
 .L_02008930:
 	.4byte IwramCopyWords
 .L_02008934:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008938:
 	.4byte 0x04000208
 .L_0200893c:
@@ -1187,7 +1187,7 @@ Func_02000564:
 .L_020089bc:
 	.4byte Data_03001120
 .L_020089c0:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020089c4:
 	.4byte 0x04000208
 .L_020089c8:
@@ -1657,7 +1657,7 @@ Func_02000564:
 .L_02008de0:
 	.4byte IwramCopyWords
 .L_02008de4:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008de8:
 	.4byte 0x04000208
 .L_02008dec:

@@ -39,7 +39,7 @@ Func_081548d0:
 	ldr r0, .L_08154928
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_0815493e
 .L_08154920:
 	.4byte 0x00000100
@@ -55,7 +55,7 @@ Func_081548d0:
 	adds r1, r5, r6
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0815493e:
 	ldr r0, [sp, #44]
 	ldr r3, [r0, #4]
@@ -130,7 +130,7 @@ Func_081548d0:
 	str r5, [r6, #16]
 	mov r0, r10
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldrb r3, [r7, r0]
 	cmp r3, r5
 	bge .L_081549de
@@ -266,7 +266,7 @@ Func_081548d0:
 	ble .L_08154b6c
 	movs r1, #3
 	mov r0, r10
-	bl __modsi3
+	bl Math_Mod
 	mov r1, r11
 	mov r2, r9
 	subs r3, r1, r2

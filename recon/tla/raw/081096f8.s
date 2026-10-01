@@ -114,7 +114,7 @@ Func_081096f8:
 	adds r0, r7, r2
 	mov r1, r9
 	str r3, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19
@@ -129,22 +129,22 @@ Func_081096f8:
 	mov r2, r8
 	movs r0, #30
 	movs r1, #14
-	bl Func_0810875c
+	bl Shop_FillSelector
 	mov r0, r11
 	add r0, r9
 	movs r1, #0
 	mov r2, r8
-	bl Func_0810875c
+	bl Shop_FillSelector
 	mov r3, r11
 	adds r0, r3, r7
 	adds r0, #1
 	movs r1, #10
 	mov r2, r8
-	bl Func_0810875c
+	bl Shop_FillSelector
 	mov r0, r11
 	movs r1, #2
 	mov r2, r8
-	bl Func_0810875c
+	bl Shop_FillSelector
 	movs r1, #128
 	ldr r0, [sp, #4]
 	lsls r1, r1, #1

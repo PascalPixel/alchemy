@@ -245,7 +245,7 @@ Func_081a15dc:
 .L_081a17ac:
 	.4byte SentouKouka_Tenkai2Code
 .L_081a17b0:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_081a17b4:
 	.4byte 0x04000208
 .L_081a17b8:

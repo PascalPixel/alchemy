@@ -4365,7 +4365,7 @@ Data_02002a6c:
 	.4byte 0x17a9ad75
 	.4byte 0x586f8f25
 	.4byte 0x75fcd4d3
-	.4byte Text_MessageContexts + 0x7d28
+	.4byte 0x08068958
 	.4byte 0x9c9a2b93
 	.4byte 0xfbcfa216
 	.4byte 0x7e458240
@@ -4658,13 +4658,13 @@ gSceneEvents:
 	.4byte 0xffff0002
 	.4byte 0x00000002
 	.4byte 0x00000002
-	.4byte Resource_Data197 + 0x2e8c1
+	.4byte 0x08920009
 	.4byte Func_02000440
 	.4byte 0x00000002
-	.4byte Resource_Data197 + 0xe8c2
+	.4byte 0x0890000a
 	.4byte Func_02000510
 	.4byte 0x00000002
-	.4byte Resource_Data197 + 0x3e8c3
+	.4byte 0x0893000b
 	.4byte Func_02001a2c
 	.4byte 0x00000002
 	.4byte 0xffff000c

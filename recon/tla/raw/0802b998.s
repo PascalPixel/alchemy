@@ -86,7 +86,7 @@ Func_0802b998:
 	ldr r0, .L_0802bccc
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802bcd0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #248
 	lsls r3, r3, #5
 	strh r3, [r7, #20]
@@ -95,7 +95,7 @@ Func_0802b998:
 	ldr r0, .L_0802bcd4
 	bl Resource_GetTableEntry
 	ldr r1, .L_0802bcd8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r2, #168
 	movs r3, #128
 	lsls r2, r2, #8

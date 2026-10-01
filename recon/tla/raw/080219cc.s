@@ -45,30 +45,18 @@ Func_080219cc:
 	.4byte .L_08021a6a
 	.4byte .L_08021a5c
 	.4byte .L_08021a58
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x1a66
-	.2byte 0x0802
-	.2byte 0x19e8
-	.2byte 0x0802
-	.2byte 0x1a6a
-	.2byte 0x0802
-	.2byte 0x1a6a
-	.2byte 0x0802
-	.2byte 0x1a60
-	.2byte 0x0802
+	.4byte .L_080219e8
+	.4byte .L_080219e8
+	.4byte .L_080219e8
+	.4byte .L_080219e8
+	.4byte .L_080219e8
+	.4byte .L_080219e8
+	.4byte .L_080219e8
+	.4byte .L_08021a66
+	.4byte .L_080219e8
+	.4byte .L_08021a6a
+	.4byte .L_08021a6a
+	.4byte .L_08021a60
 .L_08021a54:
 	strb r1, [r4, #4]
 	b .L_080219e8
@@ -78,9 +66,10 @@ Func_080219cc:
 .L_08021a5c:
 	strb r1, [r5, #23]
 	b .L_080219e8
-	.2byte 0x23ff
-	.2byte 0x75e3
-	.2byte 0xe7c0
+.L_08021a60:
+	movs r3, #255
+	strb r3, [r4, #23]
+	b .L_080219e8
 .L_08021a66:
 	strb r0, [r4, #23]
 	b .L_080219e8

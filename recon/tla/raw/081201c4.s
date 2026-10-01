@@ -59,7 +59,7 @@ BattleEv_DispatchQueued:
 	lsls r3, r7, #2
 	adds r3, #64
 	ldr r0, [r6, r3]
-	bl Func_08120178
+	bl BattleActor_DestroyTemporaryObject
 	b .L_08120346
 .L_08120252:
 	lsls r3, r7, #2
@@ -140,7 +140,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r3]
 	movs r1, #0
 	movs r2, #0
-	bl Func_0811f330
+	bl BattleMotion_RunValueSequence
 	b .L_08120346
 .L_081202f2:
 	movs r2, #182
@@ -152,7 +152,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r5]
 	bl Func_0812824c
 	ldr r0, [r6, r5]
-	bl Func_0811fe3c
+	bl BattleActor_ResetRuntimeFields
 	ldr r0, [r6, r5]
 	bl Func_0811f444
 	b .L_08120346

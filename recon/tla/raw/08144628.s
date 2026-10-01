@@ -30,7 +30,7 @@ Func_08144628:
 	ldr r0, .L_08144994
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, [sp, #68]
 	cmp r0, #0
 	beq .L_0814466e
@@ -364,7 +364,7 @@ Func_08144628:
 	asrs r5, r5, #1
 	str r5, [r1]
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #64]
 	lsls r1, r0, #2
 	adds r1, r1, r0

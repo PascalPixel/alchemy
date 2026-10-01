@@ -47,7 +47,7 @@ Func_0802a6b8:
 	ldr r3, [r7, #36]
 	ldr r1, .L_0802a904
 	adds r0, r7, r3
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Tilemap_DecodeStagedBuffer
 	movs r3, #1
 	add r0, sp, #4
@@ -62,23 +62,23 @@ Func_0802a6b8:
 	subs r3, #12
 	ldr r3, [r7, #40]
 	adds r0, r7, r3
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r3, [r7, #44]
 	ldr r1, .L_0802a910
 	adds r0, r7, r3
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Func_0802a5e4
 	ldr r3, [r7, #48]
 	ldr r1, .L_0802a914
 	adds r0, r7, r3
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r7, #52]
 	cmp r0, #0
 	beq .L_0802a76a
 	ldr r5, .L_0802a918
 	adds r0, r7, r0
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	adds r0, r5, #0
 	bl Func_0802cc9c
 .L_0802a76a:
@@ -88,14 +88,14 @@ Func_0802a6b8:
 	ldr r5, .L_0802a91c
 	adds r0, r7, r0
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	adds r0, r5, #0
 	bl Func_0802ce4c
 .L_0802a780:
 	ldr r3, [r7, #60]
 	ldr r1, .L_0802a920
 	adds r0, r7, r3
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldrb r3, [r7]
 	mov r2, r8
 	adds r2, #236
@@ -372,7 +372,7 @@ Func_0802a6b8:
 	adds r0, r0, r6
 	bl Resource_GetTableEntry
 	adds r1, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r2, #224
 	adds r1, r7, #0
 	strh r5, [r7]

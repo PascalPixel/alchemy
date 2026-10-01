@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200ded8,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -53,10 +53,11 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
-	.section .rodata.part2,"a",%progbits
+	.section .rodata.x0200dfa4,"a",%progbits
 	.global gRunpaJoRandomPick
 gRunpaJoRandomPick:
 	.4byte 0x00000000
+.L_0200dfa8:
 	.4byte 0x00000015
 	.4byte 0x00000010
 	.4byte 0x00011999
@@ -82,6 +83,7 @@ gRunpaJoRandomPick:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+.L_0200e00c:
 	.4byte 0x00000015
 	.4byte 0x00000010
 	.4byte 0x00011999
@@ -107,9 +109,11 @@ gRunpaJoRandomPick:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+.L_0200e070:
 	.4byte 0x0000001c
 	.4byte 0x00000005
 	.4byte 0x00000010
+.L_0200e07c:
 	.4byte 0x00000015
 	.4byte 0x00000010
 	.4byte 0x00003333
@@ -185,6 +189,7 @@ gRunpaJoRandomPick:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+.L_0200e1a8:
 	.4byte 0x00000015
 	.4byte 0x00000010
 	.4byte 0x00003333
@@ -848,7 +853,7 @@ gRunpaJoPlacements1:
 	.4byte 0x00e80000
 	.4byte 0x00003000
 	.4byte 0xffff0085
-	.4byte 0x0200e07c
+	.4byte .L_0200e07c
 	.4byte 0x02e00000
 	.4byte 0x00000000
 	.4byte 0x02880000
@@ -886,13 +891,13 @@ gRunpaJoPlacements2:
 	.4byte 0x03580000
 	.4byte 0x00024000
 	.4byte 0xffff0085
-	.4byte 0x0200e00c
+	.4byte .L_0200e00c
 	.4byte 0x00580000
 	.4byte 0x00000000
 	.4byte 0x00c00000
 	.4byte 0x00004000
 	.4byte 0xffff0085
-	.4byte 0x0200dfa8
+	.4byte .L_0200dfa8
 	.4byte 0x00580000
 	.4byte 0x00000000
 	.4byte 0x01200000
@@ -934,7 +939,7 @@ gRunpaJoPlacements2:
 	.4byte 0x03380000
 	.4byte 0x00004000
 	.4byte 0xffff0085
-	.4byte 0x0200e1a8
+	.4byte .L_0200e1a8
 	.4byte 0x03980000
 	.4byte 0x00000000
 	.4byte 0x02580000
@@ -976,7 +981,7 @@ gRunpaJoPlacements2:
 	.4byte 0x01580000
 	.4byte 0x00015000
 	.4byte 0xffff002c
-	.4byte 0x0200e070
+	.4byte .L_0200e070
 	.4byte 0x03b00000
 	.4byte 0x00000000
 	.4byte 0x007a0000
@@ -1190,31 +1195,31 @@ gRunpaJoEvents1:
 	.4byte 0x00000014
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte 0x02008f95
+	.4byte CellDoor_Touch
 	.4byte 0x0000c402
 	.4byte 0x035a0028
-	.4byte 0x02008f31
+	.4byte FieldScene_UpdateObjectPairC
 	.4byte 0x00004402
 	.4byte 0x035a0028
-	.4byte 0x02008f31
+	.4byte FieldScene_UpdateObjectPairC
 	.4byte 0x0000c402
 	.4byte 0x035b0029
-	.4byte 0x02008f31
+	.4byte FieldScene_UpdateObjectPairC
 	.4byte 0x00004402
 	.4byte 0x035b0029
-	.4byte 0x02008f31
+	.4byte FieldScene_UpdateObjectPairC
 	.4byte 0x0000c402
 	.4byte 0x035c002a
-	.4byte 0x02008f31
+	.4byte FieldScene_UpdateObjectPairC
 	.4byte 0x00004402
 	.4byte 0x035c002a
-	.4byte 0x02008f31
+	.4byte FieldScene_UpdateObjectPairC
 	.4byte 0x00000002
 	.4byte 0x02240032
-	.4byte 0x0200a135
+	.4byte RunActor12InteractionSequence
 	.4byte 0x00000002
 	.4byte 0x02250033
-	.4byte 0x0200a1c5
+	.4byte RunActors13And21InteractionSequence
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte 0x00002445
@@ -1229,10 +1234,10 @@ gRunpaJoEvents1:
 	.4byte 0x00002448
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x0200cbfd
+	.4byte RunActor20SceneSequence
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x0200c705
+	.4byte FieldScene_RunActorTwentyOneSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte 0x00002449
@@ -1247,22 +1252,22 @@ gRunpaJoEvents1:
 	.4byte 0x0000244c
 	.4byte 0x00008d15
 	.4byte 0xffff0014
-	.4byte 0x0200cd0d
+	.4byte FinishActor20SceneSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x0200c639
+	.4byte FieldScene_SelectActorTwentyOneMessage
 	.4byte 0x00000006
 	.4byte 0xffff005d
-	.4byte 0x02009651
+	.4byte ActivateSceneActor18
 	.4byte 0x00000006
 	.4byte 0xffff005e
-	.4byte 0x02009709
+	.4byte RunActor17SceneStep
 	.4byte 0x00000006
 	.4byte 0xffff005f
-	.4byte 0x0200a135
+	.4byte RunActor12InteractionSequence
 	.4byte 0x00000006
 	.4byte 0xffff0060
-	.4byte 0x0200a1c5
+	.4byte RunActors13And21InteractionSequence
 	.4byte 0x00000013
 	.4byte 0x0fa20064
 	.4byte 0x001000bc
@@ -1357,37 +1362,37 @@ gRunpaJoEvents2:
 	.4byte 0x00000018
 	.4byte 0x00000002
 	.4byte 0x0949001e
-	.4byte 0x02009e2d
+	.4byte InspectEmptyChest
 	.4byte 0x00000002
 	.4byte 0x094a001f
-	.4byte 0x02009e95
+	.4byte RunpaJo_RunGuardChallenge
 	.4byte 0x00000002
 	.4byte 0x094b0020
-	.4byte 0x0200a0cd
+	.4byte InspectEmptySceneObject
 	.4byte 0x00000002
 	.4byte 0x094c0021
-	.4byte 0x02009dc5
+	.4byte InspectOrdinaryObject
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte 0x02008f95
+	.4byte CellDoor_Touch
 	.4byte 0x00004402
 	.4byte 0x03580028
-	.4byte 0x02008e81
+	.4byte FieldScene_UpdateTableBObjectPair
 	.4byte 0x0000c402
 	.4byte 0x03590029
-	.4byte 0x02008e81
+	.4byte FieldScene_UpdateTableBObjectPair
 	.4byte 0x00004402
 	.4byte 0x03590029
-	.4byte 0x02008e81
+	.4byte FieldScene_UpdateTableBObjectPair
 	.4byte 0x00009415
 	.4byte 0xffff0008
-	.4byte 0x020090a9
+	.4byte CellKey_PickUp
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020090a9
+	.4byte CellKey_PickUp
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x0200cbe5
+	.4byte ConfigureSceneActor18
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte 0x0000245c
@@ -1405,22 +1410,22 @@ gRunpaJoEvents2:
 	.4byte 0x0000242d
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x0200cbc5
+	.4byte ConfigureSceneActor12Variant
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200cba5
+	.4byte ConfigureSceneActor13
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x0200cb85
+	.4byte ConfigureSceneActor14
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte 0x0200c795
+	.4byte FieldScene_RunDonpaSleepingSequence
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x0200c9a1
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00000000
 	.4byte 0xffff001a
-	.4byte 0x0200cb69
+	.4byte ConfigureSceneActor26
 	.4byte 0x00008d15
 	.4byte 0xffff0012
 	.4byte 0x0000245f
@@ -1450,16 +1455,16 @@ gRunpaJoEvents2:
 	.4byte 0x00002444
 	.4byte 0x00008d15
 	.4byte 0xffff0018
-	.4byte 0x0200c965
+	.4byte SelectActor24SceneVariant
 	.4byte 0x00008d15
 	.4byte 0xffff0019
-	.4byte 0x0200c929
+	.4byte SelectActor25SceneVariant
 	.4byte 0x00000006
 	.4byte 0xffff005b
-	.4byte 0x020092e1
+	.4byte ConfigureSceneActor9
 	.4byte 0x00000006
 	.4byte 0xffff005c
-	.4byte 0x020094bd
+	.4byte ActivateSceneActor17
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1485,52 +1490,52 @@ gRunpaJoEvents3:
 	.4byte 0x00000006
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte 0x02008f95
+	.4byte CellDoor_Touch
 	.4byte 0x00000003
 	.4byte 0xffff0062
-	.4byte 0x02008fb5
+	.4byte LockedDoor_Touch
 	.4byte 0x0000c402
 	.4byte 0x03550028
-	.4byte 0x02008dcd
+	.4byte FieldScene_UpdateObjectPairB
 	.4byte 0x0000c402
 	.4byte 0x03560029
-	.4byte 0x02008dcd
+	.4byte FieldScene_UpdateObjectPairB
 	.4byte 0x0000c402
 	.4byte 0x0357002a
-	.4byte 0x02008dcd
+	.4byte FieldScene_UpdateObjectPairB
 	.4byte 0x00004402
 	.4byte 0x0357002a
-	.4byte 0x02008dcd
+	.4byte FieldScene_UpdateObjectPairB
 	.4byte 0x00004602
 	.4byte 0xffff0032
-	.4byte 0x02008bad
+	.4byte FieldScene_StartActorTwelveTransition
 	.4byte 0x00000202
 	.4byte 0xffff0046
-	.4byte 0x02008ba1
+	.4byte RunSceneObjectSetup
 	.4byte 0x00000003
 	.4byte 0x02180033
-	.4byte 0x0200a38d
+	.4byte RunSecondaryMapInteraction
 	.4byte 0x00000003
 	.4byte 0x02170034
-	.4byte 0x0200a309
+	.4byte InspectVillageWell
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x0200a411
+	.4byte ConfigurePrimaryInteractionRegions
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x0200a469
+	.4byte ConfigureSecondaryInteractionRegions
 	.4byte 0x00004e15
 	.4byte 0xffff0008
-	.4byte 0x0200a4c1
+	.4byte InspectWardrobe
 	.4byte 0x00004e15
 	.4byte 0xffff0009
-	.4byte 0x0200a4e5
+	.4byte InspectFirewood
 	.4byte 0x00004e15
 	.4byte 0xffff000a
-	.4byte 0x0200a505
+	.4byte InspectBooks
 	.4byte 0x00008c15
 	.4byte 0x0943000c
-	.4byte 0x02008bed
+	.4byte FieldScene_UpdateActorTwelveTransition
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1547,25 +1552,25 @@ gRunpaJoEventsOther:
 	.4byte 0x00000005
 	.4byte 0x00000003
 	.4byte 0xffff0063
-	.4byte 0x02008f95
+	.4byte CellDoor_Touch
 	.4byte 0x0000c402
 	.4byte 0x03500028
-	.4byte 0x02008ce1
+	.4byte FieldScene_UpdateObjectPairA
 	.4byte 0x0000c402
 	.4byte 0x03510029
-	.4byte 0x02008ce1
+	.4byte FieldScene_UpdateObjectPairA
 	.4byte 0x0000c402
 	.4byte 0x0352002a
-	.4byte 0x02008ce1
+	.4byte FieldScene_UpdateObjectPairA
 	.4byte 0x0000c402
 	.4byte 0x0353002b
-	.4byte 0x02008ce1
+	.4byte FieldScene_UpdateObjectPairA
 	.4byte 0x0000c402
 	.4byte 0x0354002c
-	.4byte 0x02008ce1
+	.4byte FieldScene_UpdateObjectPairA
 	.4byte 0x00000002
 	.4byte 0x02700014
-	.4byte 0x0200a7b1
+	.4byte PlayStoryScene
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte 0x0000256a
@@ -1580,10 +1585,10 @@ gRunpaJoEventsOther:
 	.4byte 0x0000256d
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x0200cd51
+	.4byte ConfigureActor13Interaction
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x0200cd89
+	.4byte ConfigureActor13SceneResource
 	.4byte 0x00000013
 	.4byte 0x0fa70065
 	.4byte 0x001000bf

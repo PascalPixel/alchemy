@@ -73,7 +73,7 @@ Func_08181ed4:
 	ldr r0, .L_0818229c
 	ldr r1, [sp, #20]
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r2, [sp, #32]
 	cmp r2, #0
 	bne .L_08181f90
@@ -83,7 +83,7 @@ Func_08181ed4:
 	movs r2, #1
 	movs r3, #1
 	ldr r0, .L_081822a0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_081822a4
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -102,7 +102,7 @@ Func_08181ed4:
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_081822ac
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_081822b0
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

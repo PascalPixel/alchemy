@@ -36,12 +36,12 @@ Func_081514bc:
 	ldr r0, .L_08151528
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0815152c
 	ldr r1, [sp, #32]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, sp
 	adds r4, #52
 	movs r0, #0
@@ -359,7 +359,7 @@ Func_081514bc:
 	adds r3, #8
 	str r3, [r6, #8]
 	movs r1, #5
-	bl __modsi3
+	bl Math_Mod
 	ldr r3, [r6, #4]
 	adds r0, #2
 	lsls r0, r0, #16
@@ -422,7 +422,7 @@ Func_081514bc:
 	bge .L_08151894
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	lsls r3, r5, #1
 	adds r4, r0, #0
 	ldr r0, .L_08151844

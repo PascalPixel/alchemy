@@ -13,7 +13,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LINKED_EFFECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/IMPORT.o"(.text)
-        "*/resource_371_overlay.o"(.rodata)
+        "*/resource_371_overlay.o"(.rodata.x0200c4ac)
     }
     .bss (NOLOAD) :
     {

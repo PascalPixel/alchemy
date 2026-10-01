@@ -9,7 +9,7 @@ form that fans can read, change and build on.
 
 ## Progress
 
-**☀️ 78.44% · ⚓️ 6.54% (C 1.63 + assembly 1.40 + stubs 3.50)**
+**☀️ 78.76% · ⚓️ 7.05% (C 2.14 + assembly 1.40 + stubs 3.50)**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 

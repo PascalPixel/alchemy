@@ -13,6 +13,14 @@ extern const u8 UiText_Glyphs[];
 #define WIDE_WIDTH_FIXED 1
 #endif
 
+/* The bytes of one glyph record, its width first: the first Japanese
+   game's font packs its records into 26 bytes. */
+#if defined(TBS_EDITION_JA)
+#define GLYPH_RECORD_SIZE 26
+#else
+#define GLYPH_RECORD_SIZE 32
+#endif
+
 s32 UiText_GetWideStringWidth(u16 *text)
 {
     s32 width;
@@ -35,7 +43,8 @@ s32 UiText_GetWideStringWidth(u16 *text)
 #else
                 idx = c - 0xDE;
                 if (idx > 1U) {
-                    width += FIELD_AT_OFFSET(((idx + 0xBE) << 5), u16, (s32)UiText_Glyphs);
+                    idx += 0xBE;
+                    width += FIELD_AT_OFFSET(idx * GLYPH_RECORD_SIZE, u16, (s32)UiText_Glyphs);
                 }
             } else {
                 width += 0xA;

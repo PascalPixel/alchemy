@@ -2,26 +2,6 @@
 	.thumb
 	.section .text.x0200807e,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008080,"ax",%progbits
-	.global Func_02000080
-	.thumb_func
-Func_02000080:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r2, #4
-	movs r3, #8
-	adds r6, r1, #0
-	strb r3, [r2]
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	adds r0, r5, #0
-	adds r1, r6, #0
-	bl Object_SetPartAttribute
-	pop {r5, r6, pc}
 	.section .text.x020080a4,"ax",%progbits
 	.global Func_020000a4
 	.thumb_func
@@ -42,7 +22,7 @@ Func_020000a4:
 	bl Object_SetSpritePriority
 	adds r0, r5, #0
 	movs r1, #14
-	bl Func_02000080
+	bl ConfigureOverlayObject
 	adds r0, r5, #0
 	movs r1, #1
 	bl Animation_SetStateFlags
@@ -72,7 +52,7 @@ Func_020000dc:
 	bl Object_SetSpritePriority
 	adds r0, r5, #0
 	movs r1, #15
-	bl Func_02000080
+	bl ConfigureOverlayObject
 	adds r1, r5, #0
 	adds r1, #35
 	ldrb r2, [r1]
@@ -2857,25 +2837,25 @@ gSceneEntrances:
 	.4byte 0x00000158
 	.4byte 0xc00000e8
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0004
 	.4byte 0x000001d8
 	.4byte 0x400000b8
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0005
 	.4byte 0x00000178
 	.4byte 0x400000b8
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0006
 	.4byte 0x00000158
 	.4byte 0x40000068
 	.4byte 0x01000000
-	.4byte Data_02000000 + 0x30
+	.4byte 0x02000030
 	.4byte 0x000000f8
 	.4byte 0xffff0007
 	.4byte 0x00000348
@@ -2953,13 +2933,13 @@ gSceneEntrances:
 	.4byte 0x00000188
 	.4byte 0x400003b8
 	.4byte 0x01100000
-	.4byte Data_0200024c + 0xdc
+	.4byte 0x02000328
 	.4byte 0x000003d8
 	.4byte 0xffff0019
 	.4byte 0x00000188
 	.4byte 0x40000358
 	.4byte 0x01100000
-	.4byte Data_0200024c + 0xdc
+	.4byte 0x02000328
 	.4byte 0x000003d8
 	.4byte 0xffff001a
 	.4byte 0x000002f8
@@ -3282,7 +3262,7 @@ gSceneEvents:
 	.4byte 0xffff0020
 	.4byte 0x00000020
 	.4byte 0x00000002
-	.4byte Data_02000000 + 0x2d
+	.4byte 0x0200002d
 	.4byte Func_020006ac
 	.4byte 0x00000002
 	.4byte 0xffff002e

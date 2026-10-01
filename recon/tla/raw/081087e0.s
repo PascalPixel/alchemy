@@ -32,10 +32,10 @@ Func_081087e0:
 	subs r3, #12
 	adds r0, r5, #0
 	movs r1, #10
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r6, #0
 	movs r2, #0
-	bl Func_08108788
+	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
 	bl Math_Div
@@ -43,10 +43,10 @@ Func_081087e0:
 	cmp r5, #0
 	beq .L_08108896
 	movs r1, #10
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r6, #0
 	movs r2, #1
-	bl Func_08108788
+	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
 	bl Math_Div
@@ -54,10 +54,10 @@ Func_081087e0:
 	cmp r5, #0
 	beq .L_08108896
 	movs r1, #10
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r6, #0
 	movs r2, #2
-	bl Func_08108788
+	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
 	bl Math_Div
@@ -65,20 +65,20 @@ Func_081087e0:
 	cmp r5, #0
 	beq .L_08108896
 	movs r1, #10
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r6, #0
 	movs r2, #3
-	bl Func_08108788
+	bl Shop_CopyGlyphs
 	adds r0, r5, #0
 	movs r1, #10
 	bl Math_Div
 	cmp r0, #0
 	beq .L_08108896
 	movs r1, #10
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r6, #0
 	movs r2, #4
-	bl Func_08108788
+	bl Shop_CopyGlyphs
 .L_08108896:
 	bl Resource_FindFreeEntry
 	adds r5, r0, #0

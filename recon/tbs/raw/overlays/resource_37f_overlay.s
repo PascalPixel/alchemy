@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02009cd4,"a",%progbits
 	.global gSoruIriguchiEntrancesOther
 gSoruIriguchiEntrancesOther:
 	.4byte 0xffff0000
@@ -632,7 +632,7 @@ gSoruIriguchiEvents1Entrances14To16:
 	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0x0000e104
 	.4byte 0xffff0415
-	.4byte 0x02008421
+	.4byte SoruIriguchi_SetSmallGem
 	.4byte 0x00000003
 	.4byte 0xffff0015
 	.4byte FieldScene_RunFlag821Dialogue

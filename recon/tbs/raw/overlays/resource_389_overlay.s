@@ -1,7 +1,6 @@
 .syntax unified
 	.thumb
-@ The compiler library links here from its licensed container.
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x02009554,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -56,36 +55,39 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000020
 	.global GomaHashira_PillarScripts
 GomaHashira_PillarScripts:
-	.4byte 0x02009618
-	.4byte 0x02009640
-	.4byte 0x02009668
+	.4byte .L_02009618
+	.4byte .L_02009640
+	.4byte .L_02009668
+.L_02009618:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
 	.4byte 0x00000016
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02008a59
+	.4byte OverlayObject_ApplyValue15
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009640:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
 	.4byte 0x0000002c
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02008a59
+	.4byte OverlayObject_ApplyValue15
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009668:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
 	.4byte 0x0000007e
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02008a59
+	.4byte OverlayObject_ApplyValue15
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
@@ -211,13 +213,13 @@ GomaHashira_Extras:
 	.4byte 0x00000005
 	.4byte 0x00000202
 	.4byte 0x0301000a
-	.4byte 0x0200909d
+	.4byte FieldScene_RunFourStepSequence
 	.4byte 0x00008602
 	.4byte 0xffff0014
-	.4byte 0x020090b5
+	.4byte FieldScene_TryJumpForward
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020089dd
+	.4byte ConfigureActorThirteenSceneParameters
 	.4byte 0x00000000
 	.4byte 0x00a8000d
 	.4byte 0x0000132b
@@ -232,19 +234,19 @@ GomaHashira_Extras:
 	.4byte 0x0000132e
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x02008b6d
+	.4byte ConfigureSceneForActorEightColumn
 	.4byte 0x00008c15
 	.4byte 0x03000009
-	.4byte 0x02008ce1
+	.4byte FieldScene_RunPillarSequence
 	.4byte 0x00008c15
 	.4byte 0x0301000a
-	.4byte 0x02009089
+	.4byte FieldScene_RunThreeCallSequence
 	.4byte 0x00000013
 	.4byte 0x0f4f0065
 	.4byte 0x001000e5
 	.4byte 0x00000006
 	.4byte 0xffff0063
-	.4byte 0x0200915d
+	.4byte FieldScene_RunActor13Departure
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

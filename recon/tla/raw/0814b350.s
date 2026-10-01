@@ -30,12 +30,12 @@ Func_0814b350:
 	ldr r0, .L_0814b598
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	ldr r1, [sp, #56]
 	ldr r0, .L_0814b59c
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, [sp, #72]
 	mov r6, sp
 	ldr r0, [r5, #4]
@@ -469,7 +469,7 @@ Func_0814b350:
 	movs r2, #0
 	ldr r0, .L_0814b9a4
 	ldr r1, [sp, #56]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, [sp, #72]
 	movs r6, #72
 	ldr r3, [r5, #20]
@@ -694,7 +694,7 @@ Func_0814b350:
 	lsls r0, r3, #2
 	movs r1, #9
 	add r0, r9
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0814b9ac
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]

@@ -1,3 +1,3 @@
 .syntax unified
-.text
-	.hword 0
+	.thumb
+	.2byte 0x0000

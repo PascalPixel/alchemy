@@ -50,7 +50,7 @@ Func_0813cb34:
 	ldr r1, [sp, #20]
 	movs r2, #0
 	str r5, [sp, #32]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r3, r10
 	cmp r3, #0
 	bne .L_0813cba4

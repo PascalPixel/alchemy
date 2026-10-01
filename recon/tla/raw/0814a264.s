@@ -34,12 +34,12 @@ Func_0814a264:
 	ldr r0, .L_0814a2cc
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #0
 	ldr r0, .L_0814a2d0
 	ldr r1, [sp, #28]
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, [sp, #48]
 	ldr r3, [r5, #24]
 	cmp r3, #0
@@ -262,7 +262,7 @@ Func_0814a264:
 	adds r3, r3, r7
 	adds r0, r0, r3
 	movs r1, #104
-	bl __modsi3
+	bl Math_Mod
 	ldr r5, [sp, #32]
 	mov r8, r0
 	mov r3, r11

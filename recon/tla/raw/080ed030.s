@@ -29,7 +29,7 @@ Func_080ed030:
 	mov r1, r10
 	adds r0, #128
 	str r4, [sp, #0]
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r5, #6
 	ldr r2, .L_080ed098
 	adds r5, r7, r5

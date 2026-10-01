@@ -97,212 +97,230 @@ Func_0803bb58:
 	ldr r3, [r3, r2]
 	mov pc, r3
 .L_0803bc08:
-	.2byte 0xbcb2
-	.2byte 0x0803
-	.2byte 0xbccc
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbc7c
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbd04
-	.2byte 0x0803
-	.2byte 0xbd10
-	.2byte 0x0803
-	.2byte 0xbd04
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbcfa
-	.2byte 0x0803
-	.2byte 0xbd04
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbd04
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbbb8
-	.2byte 0x0803
-	.2byte 0xbcfa
-	.2byte 0x0803
-	.2byte 0x465b
-	.2byte 0x4652
-	.2byte 0x3001
-	.2byte 0x5298
-	.2byte 0x9b03
-	.2byte 0x529f
-	.2byte 0x2c00
-	.2byte 0xd102
-	.2byte 0x45b9
-	.2byte 0xd200
-	.2byte 0x46b9
-	.2byte 0x9b04
-	.2byte 0x2b02
-	.2byte 0xd803
-	.2byte 0x3301
-	.2byte 0x9304
-	.2byte 0x005b
-	.2byte 0x469a
-	.2byte 0x00a2
-	.2byte 0x58b3
-	.2byte 0x2000
-	.2byte 0x330f
-	.2byte 0x50b3
-	.2byte 0x4a3c
-	.2byte 0x2700
-	.2byte 0x4694
-	.2byte 0xe782
-	.2byte 0x465b
-	.2byte 0x4652
-	.2byte 0x3001
-	.2byte 0x5298
-	.2byte 0x9b03
-	.2byte 0x529f
-	.2byte 0x2c00
-	.2byte 0xd102
-	.2byte 0x45b9
-	.2byte 0xd200
-	.2byte 0x46b9
-	.2byte 0x3401
-	.2byte 0xe033
-	.2byte 0x465b
-	.2byte 0x4652
-	.2byte 0x3001
-	.2byte 0x5298
-	.2byte 0x9b03
-	.2byte 0x529f
-	.2byte 0x2c00
-	.2byte 0xd102
-	.2byte 0x45b9
-	.2byte 0xd200
-	.2byte 0x46b9
-	.2byte 0x3401
-	.2byte 0x9002
-	.2byte 0x9101
-	.2byte 0x9400
-	.2byte 0xf7fe
-	.2byte 0xfb8b
-	.2byte 0x4b2b
-	.2byte 0x9802
-	.2byte 0x469c
-	.2byte 0x9901
-	.2byte 0x9c00
-	.2byte 0xe75e
-	.2byte 0x2380
-	.2byte 0x005b
-	.2byte 0x3501
-	.2byte 0x33ff
-	.2byte 0x401d
-	.2byte 0x2380
-	.2byte 0x005b
-	.2byte 0x3501
-	.2byte 0x33ff
-	.2byte 0x401d
-	.2byte 0xe753
-	.2byte 0x22f4
-	.2byte 0x006b
-	.2byte 0x0112
-	.2byte 0x189b
-	.2byte 0x5aca
-	.2byte 0x23f0
-	.2byte 0x011b
-	.2byte 0x333c
-	.2byte 0x185b
-	.2byte 0x801a
-	.2byte 0x2380
-	.2byte 0x4a1d
-	.2byte 0x005b
-	.2byte 0x3501
-	.2byte 0x33ff
-	.2byte 0x401d
-	.2byte 0x4694
-	.2byte 0xe741
-	.2byte 0x790b
-	.2byte 0x2b00
-	.2byte 0xd001
-	.2byte 0x2302
-	.2byte 0x4499
-	.2byte 0x2000
-	.2byte 0x42a0
-	.2byte 0xd212
-	.2byte 0x1c31
-	.2byte 0x1c0d
-	.2byte 0x2800
-	.2byte 0xd103
-	.2byte 0x682b
-	.2byte 0x9a05
-	.2byte 0x6013
-	.2byte 0xe006
-	.2byte 0x9a05
-	.2byte 0x6813
-	.2byte 0x680a
-	.2byte 0x4293
-	.2byte 0xd201
-	.2byte 0x9b05
-	.2byte 0x601a
-	.2byte 0x3001
-	.2byte 0x3104
-	.2byte 0x42a0
-	.2byte 0xd3ee
-	.2byte 0x9b06
-	.2byte 0x464a
-	.2byte 0x601a
-	.2byte 0x464b
-	.2byte 0x3313
-	.2byte 0x08db
-	.2byte 0x00db
-	.2byte 0x3b10
-	.2byte 0x4642
-	.2byte 0x4699
-	.2byte 0x2a00
-	.2byte 0xd027
-	.2byte 0x2600
-	.2byte 0x2500
-	.global Func_0803bd86
-	.thumb_func
-Func_0803bd86:
-	.2byte 0x465a
-	.2byte 0x5aab
-	.2byte 0x2b01
-	.2byte 0xd80a
-	.2byte 0x4b02
-	.2byte 0x4642
-	.2byte 0x8013
-	.2byte 0xe016
+	.4byte .L_0803bcb2
+	.4byte .L_0803bccc
+	.4byte .L_0803bbb8
+	.4byte .L_0803bc7c
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bd04
+	.4byte .L_0803bd10
+	.4byte .L_0803bd04
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bcfa
+	.4byte .L_0803bd04
+	.4byte .L_0803bbb8
+	.4byte .L_0803bd04
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bbb8
+	.4byte .L_0803bcfa
+.L_0803bc7c:
+	mov r3, r11
+	mov r2, r10
+	adds r0, #1
+	strh r0, [r3, r2]
+	ldr r3, [sp, #12]
+	strh r7, [r3, r2]
+	cmp r4, #0
+	bne .L_0803bc92
+	cmp r9, r7
+	bcs .L_0803bc92
+	mov r9, r7
+.L_0803bc92:
+	ldr r3, [sp, #16]
+	cmp r3, #2
+	bhi .L_0803bca0
+	adds r3, #1
+	str r3, [sp, #16]
+	lsls r3, r3, #1
+	mov r10, r3
+.L_0803bca0:
+	lsls r2, r4, #2
+	ldr r3, [r6, r2]
+	movs r0, #0
+	adds r3, #15
+	str r3, [r6, r2]
+	ldr r2, .L_0803bd9c
+	movs r7, #0
+	mov r12, r2
+	b .L_0803bbb8
+.L_0803bcb2:
+	mov r3, r11
+	mov r2, r10
+	adds r0, #1
+	strh r0, [r3, r2]
+	ldr r3, [sp, #12]
+	strh r7, [r3, r2]
+	cmp r4, #0
+	bne .L_0803bcc8
+	cmp r9, r7
+	bcs .L_0803bcc8
+	mov r9, r7
+.L_0803bcc8:
+	adds r4, #1
+	b .L_0803bd34
+.L_0803bccc:
+	mov r3, r11
+	mov r2, r10
+	adds r0, #1
+	strh r0, [r3, r2]
+	ldr r3, [sp, #12]
+	strh r7, [r3, r2]
+	cmp r4, #0
+	bne .L_0803bce2
+	cmp r9, r7
+	bcs .L_0803bce2
+	mov r9, r7
+.L_0803bce2:
+	adds r4, #1
+	str r0, [sp, #8]
+	str r1, [sp, #4]
+	str r4, [sp, #0]
+	bl UiWork_ResetCounters
+	ldr r3, .L_0803bd9c
+	ldr r0, [sp, #8]
+	mov r12, r3
+	ldr r1, [sp, #4]
+	ldr r4, [sp, #0]
+	b .L_0803bbb8
+.L_0803bcfa:
+	movs r3, #128
+	lsls r3, r3, #1
+	adds r5, #1
+	adds r3, #255
+	ands r5, r3
+.L_0803bd04:
+	movs r3, #128
+	lsls r3, r3, #1
+	adds r5, #1
+	adds r3, #255
+	ands r5, r3
+	b .L_0803bbb8
+.L_0803bd10:
+	movs r2, #244
+	lsls r3, r5, #1
+	lsls r2, r2, #4
+	adds r3, r3, r2
+	ldrh r2, [r1, r3]
+	movs r3, #240
+	lsls r3, r3, #4
+	adds r3, #60
+	adds r3, r3, r1
+	strh r2, [r3]
+	movs r3, #128
+	ldr r2, .L_0803bd9c
+	lsls r3, r3, #1
+	adds r5, #1
+	adds r3, #255
+	ands r5, r3
+	mov r12, r2
+	b .L_0803bbb8
+.L_0803bd34:
+	ldrb r3, [r1, #4]
+	cmp r3, #0
+	beq .L_0803bd3e
+	movs r3, #2
+	add r9, r3
+.L_0803bd3e:
+	movs r0, #0
+	cmp r0, r4
+	bcs .L_0803bd6a
+	adds r1, r6, #0
+	adds r5, r1, #0
+.L_0803bd48:
+	cmp r0, #0
+	bne .L_0803bd54
+	ldr r3, [r5]
+	ldr r2, [sp, #20]
+	str r3, [r2]
+	b .L_0803bd62
+.L_0803bd54:
+	ldr r2, [sp, #20]
+	ldr r3, [r2]
+	ldr r2, [r1]
+	cmp r3, r2
+	bcs .L_0803bd62
+	ldr r3, [sp, #20]
+	str r2, [r3]
+.L_0803bd62:
+	adds r0, #1
+	adds r1, #4
+	cmp r0, r4
+	bcc .L_0803bd48
+.L_0803bd6a:
+	ldr r3, [sp, #24]
+	mov r2, r9
+	str r2, [r3]
+	mov r3, r9
+	adds r3, #19
+	lsrs r3, r3, #3
+	lsls r3, r3, #3
+	subs r3, #16
+	mov r2, r8
+	mov r9, r3
+	cmp r2, #0
+	beq .L_0803bdd2
+	movs r6, #0
+	movs r5, #0
+.L_0803bd86:
+	mov r2, r11
+	ldrh r3, [r5, r2]
+	cmp r3, #1
+	bhi .L_0803bda4
+	ldr r3, .L_0803bd98
+	mov r2, r8
+	strh r3, [r2]
+	b .L_0803bdc4
 	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0x0000
+.L_0803bd98:
+	.4byte 0x00000000
 .L_0803bd9c:
 	.4byte .L_0803bc08
 .L_0803bda0:
 	.4byte UiText_Glyphs
+.L_0803bda4:
+	ldr r2, [sp, #12]
+	ldrh r3, [r5, r2]
+	mov r2, r9
+	subs r0, r2, r3
+	subs r0, #4
+	cmp r0, #0
+	bge .L_0803bdb4
+	movs r0, #0
+.L_0803bdb4:
+	mov r3, r11
+	ldrh r1, [r5, r3]
+	lsls r0, r0, #8
+	subs r1, #1
+	bl Math_Div
+	mov r2, r8
+	strh r0, [r2]
+.L_0803bdc4:
+	movs r3, #2
+	add r8, r3
+	ldr r2, [sp, #16]
+	adds r6, #1
+	adds r5, #2
+	cmp r6, r2
+	bls .L_0803bd86
+.L_0803bdd2:
+	bl UiWork_ResetCounters
+	add sp, #108
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}

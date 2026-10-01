@@ -78,7 +78,7 @@ Func_08165ab4:
 	strb r3, [r5, #26]
 	movs r1, #3
 	adds r0, r7, #0
-	bl __modsi3
+	bl Math_Mod
 	adds r1, r0, #0
 	adds r0, r5, #0
 	bl Animation_ApplyChildArgumentFar
@@ -135,7 +135,7 @@ Func_08165ab4:
 	ldr r1, [sp, #48]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_08165bec
 .L_08165bd8:
 	.4byte 0x00002737
@@ -154,7 +154,7 @@ Func_08165ab4:
 	add r1, r11
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_08165c34
 	movs r2, #128
 	lsls r2, r2, #19

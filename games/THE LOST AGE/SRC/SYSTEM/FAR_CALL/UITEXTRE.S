@@ -12,7 +12,7 @@ UiWork_FinalizeSharedSlotFar:
 	.global Func_08038220
 	.thumb_func
 Func_08038220:
-	overlay_veneer Func_080396dc
+	overlay_veneer UiWork_ResetFreeChannel
 	.global UiTextResource_InitializeFar
 	.thumb_func
 UiTextResource_InitializeFar:

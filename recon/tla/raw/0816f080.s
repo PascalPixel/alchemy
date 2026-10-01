@@ -205,14 +205,14 @@ Func_0816f080:
 	ldr r0, .L_0816f49c
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #142
 	lsls r1, r1, #7
 	movs r3, #0
 	ldr r0, .L_0816f4a0
 	add r1, r10
 	movs r2, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, sp
 	movs r3, #0
 	adds r4, #48

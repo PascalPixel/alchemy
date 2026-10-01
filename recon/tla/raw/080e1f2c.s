@@ -44,7 +44,7 @@ Func_080e1f2c:
 	ldr r0, .L_080e2254
 	bl Resource_GetTableEntry
 	ldr r1, [r6]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	str r0, [sp, #8]
 	adds r1, r5, #0
@@ -127,7 +127,7 @@ Func_080e1f2c:
 	str r3, [r7, #8]
 	bl Resource_GetTableEntry
 	ldr r1, [r6]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	str r0, [sp, #12]
 	movs r1, #128

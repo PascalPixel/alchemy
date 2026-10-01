@@ -10,6 +10,7 @@ struct SharedWork080a23c0 {
 };
 
 extern void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
+void UiWindow_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
 extern struct SharedWork080a23c0 gGameState;
 extern u8 MsgCoinsLabel[];
 
@@ -17,6 +18,10 @@ void UiText_DrawWorkValueWithLabel(s32 work)
 {
     UiText_DrawNumberAtOffsetFar(gGameState.resource, 7, work, 8, 0);
     UiText_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, work, 0x40, 0);
+#if defined(TBS_EDITION_JA)
+    /* The Japanese window closes the coin count off with a short rule. */
+    UiWindow_DrawDividerLineFar(work, 12, 0, 12, 2);
+#endif
 }
 
 /* ui/window/set_bounds.c */

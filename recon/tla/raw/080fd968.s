@@ -119,7 +119,7 @@ Func_080fd968:
 	lsls r0, r0, #6
 	adds r0, #255
 	ands r0, r3
-	bl Func_080fe164
+	bl PsynergyMenu_IsActionRestricted
 	cmp r0, #0
 	beq .L_080fda6a
 	movs r0, #4

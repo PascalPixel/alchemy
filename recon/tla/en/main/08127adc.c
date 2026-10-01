@@ -1,14 +1,16 @@
-#include "BATTLE_SUMMON.H"
-#include "FIXED_MATH.H"
+/*
+ * Draft: Summon_TakeCharge, ported from its ☀️ twin (⚓️'s 9 channels, the
+ * battle work from the heap slot, % for Math_Mod); it goes before
+ * Summon_ReleaseCharge in SRC/BATTLE/SUMMON/CHARGE.C. Score 280, three
+ * scheduling steps: the listing clears i (movs r1, #0) before loading the
+ * count, stores the new channel before copying r7 for the mask offset, and
+ * loads the mask before building the bit. Setting i before the count does
+ * not move it.
+ */
+#include "TYPES.H"
+#include "RAM_BUFFER.H"
 
-/* 召喚チャージ管理。クラスごとに使用中チャンネルのビットを持ち、 */
-/* 取得・解放・名前印のリセットを行う。 */
-
-#if defined(TBS_EDITION_JA)
-#define CH_CNT 26
-#else
 #define CH_CNT 9
-#endif
 
 struct SummonChargeState {
     u8 unknown_00[0x10];
@@ -19,20 +21,6 @@ struct SummonChargeState {
     u8 count;           /* 0x40 */
 };
 
-struct BattleActorDefinition {
-    u8 name[14];
-    u8 unknown_0e[282];
-    u8 class_id;
-    u8 unavailable;
-};
-
-extern struct SummonChargeState *gBattleWork;
-
-struct BattleActorDefinition *Owner_GetStateFar(s32 actor_id);
-
-/* 番号表を線形探索し、既存なら次の空きビットを剰余で回して確保、 */
-/* 無ければ表末尾に新規登録する。 */
-
 s32 Summon_TakeCharge(s32 no, s32 n)
 {
     struct SummonChargeState *w;
@@ -41,7 +29,7 @@ s32 Summon_TakeCharge(s32 no, s32 n)
     s32 retry;
     s32 ch;
 
-    w = gBattleWork;
+    w = (struct SummonChargeState *)Ram_HeapSlots->battle_work;
     num = w->count;
     for (i = 0; i < num; i++) {
         if (w->class_ids[i] == no)
@@ -55,7 +43,7 @@ s32 Summon_TakeCharge(s32 no, s32 n)
             return 0x8001;
         }
         for (; retry <= 31; retry++) {
-            ch = Math_Mod(w->channels[i] + 1, CH_CNT);
+            ch = (w->channels[i] + 1) % CH_CNT;
             w->channels[i] = ch;
             if ((w->used_masks[i] & (1 << (s8)ch)) == 0)
                 break;

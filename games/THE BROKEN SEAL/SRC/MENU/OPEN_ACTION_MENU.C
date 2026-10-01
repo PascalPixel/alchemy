@@ -27,6 +27,14 @@ extern struct MenuObjectControl *gMenuCtrlWork;
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
+/* The bytes of BG character block 1 the menu saves and restores: the
+   Japanese menu keeps 0x800 and leaves the block as it was. */
+#if defined(TBS_EDITION_JA)
+#define SAVED_TILE_BYTES 0x800
+#else
+#define SAVED_TILE_BYTES 0x2000
+#endif
+
 struct ActionMenuState {
     u8 padding000[0x24];
     s32 screen_handle;
@@ -76,7 +84,7 @@ s32 ActionMenu_Open(void)
 {
     struct ActionMenuState *state = Runtime_AllocateHeapBlock(55, 0x0a70);
     void *palette = Runtime_BumpAllocateAlternatePool(64);
-    void *tiles = Runtime_BumpAllocateAlternatePool(0x2000);
+    void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
     s32 result;
     s32 index;
 
@@ -89,16 +97,21 @@ s32 ActionMenu_Open(void)
     state->character_count = Party_ListActiveOwnersFar(state->character_ids);
     Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
     CopyWords(Iwram_CopyWords, palette, (void *)0x05000000, 64);
+#if defined(TBS_EDITION_JA)
+    CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
+#endif
     Palette_LightenBankHighlight(14);
     Dma_Set((void *)0x05000200, (void *)0x05000000, 0x80000010, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x050001c8, (void *)0x0500001c, 0x80000001, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000200, (void *)0x05000020, 0x80000010, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x050001e8, (void *)0x0500003c, 0x80000001, (volatile u32 *)0x040000d4);
-    CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, 0x2000);
-    FillWords(Iwram_FillWords, (void *)0x06004000, 0x2000, 0x33333333);
+#if !defined(TBS_EDITION_JA)
+    CopyWords(Iwram_CopyWords, tiles, (void *)0x06004000, SAVED_TILE_BYTES);
+    FillWords(Iwram_FillWords, (void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
     Func_080153e0(1);
+#endif
     state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
-    for (index = 0; index < 8; index++)
+    for (index = 0; index < MENU_ROW_COUNT; index++)
         state->row_positions[index] = 30;
     if (Party_SumDjinnCountsFar(-1) != 0)
         FourObjectMotion_InitializeTopRow(state->selector_window, 0);
@@ -118,11 +131,13 @@ s32 ActionMenu_Open(void)
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
+#if !defined(TBS_EDITION_JA)
     Func_080152a8();
     Func_080153e0(0);
     WaitFrames(1);
+#endif
     CopyWords(Iwram_CopyWords, (void *)0x05000000, palette, 64);
-    CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, 0x2000);
+    CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, SAVED_TILE_BYTES);
     Runtime_BumpFree(tiles);
     Runtime_BumpFree(palette);
     FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 1;

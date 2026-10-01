@@ -27,7 +27,7 @@ Func_0802a650:
 	adds r0, r0, r3
 	bl Resource_GetTableEntry
 	adds r1, r6, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	mov r3, r8
 	strh r3, [r6]
 	movs r2, #132

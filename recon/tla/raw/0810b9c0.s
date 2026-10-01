@@ -77,7 +77,7 @@ Func_0810b9c0:
 	movs r1, #5
 	adds r0, r7, #0
 	str r3, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	movs r1, #5
 	adds r5, r0, #0
 	adds r0, r7, #0
@@ -265,7 +265,7 @@ Func_0810b9c0:
 	bl Audio_PlayCue
 	mov r1, r11
 	adds r0, r7, r1
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #4]
 	movs r2, #1
 	adds r7, r0, #0
@@ -283,7 +283,7 @@ Func_0810b9c0:
 	mov r3, r11
 	adds r0, r7, r3
 	mov r1, r11
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #4]
 	movs r1, #1
 	adds r7, r0, #0

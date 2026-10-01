@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02008108,"a",%progbits
 	.global GomaIke_SceneTable0
 GomaIke_SceneTable0:
 	.4byte 0xffff0000

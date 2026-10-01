@@ -60,7 +60,7 @@ Func_08040798:
 	mov r0, r8
 	add r0, r11
 	mov r1, r11
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #160
 	lsls r3, r3, #3
 	mov r8, r0

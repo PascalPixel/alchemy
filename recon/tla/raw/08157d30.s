@@ -42,7 +42,7 @@ Func_08157d30:
 	movs r2, #0
 	movs r3, #0
 	str r5, [sp, #32]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #224
 	lsls r1, r1, #3
 	ldr r0, .L_08157da0
@@ -58,7 +58,7 @@ Func_08157d30:
 .L_08157da0:
 	.4byte 0x00000157
 .L_08157da4:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #144
 	lsls r1, r1, #4
 	adds r1, #248
@@ -66,7 +66,7 @@ Func_08157d30:
 	add r1, r9
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #239
 	lsls r2, r2, #7
 	add r2, r9

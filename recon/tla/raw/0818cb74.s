@@ -104,7 +104,7 @@ Func_0818cb74:
 	movs r2, #1
 	movs r3, #0
 	str r7, [sp, #28]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r4, #152
 	ldr r3, [sp, #52]
 	lsls r4, r4, #5
@@ -114,14 +114,14 @@ Func_0818cb74:
 	movs r2, #0
 	movs r3, #0
 	ldr r7, .L_0818cf68
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #160
 	lsls r2, r2, #7
 	adds r1, r7, r2
 	movs r3, #0
 	ldr r0, .L_0818cf6c
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r7, #144
 	movs r3, #0
 	lsls r7, r7, #6
@@ -153,22 +153,22 @@ Func_0818cb74:
 	ldr r1, .L_0818cf68
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0818cf74
 	ldr r1, .L_0818cf78
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0818cf7c
 	ldr r1, .L_0818cf80
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	ldr r1, [sp, #36]
 	movs r3, #0
 	ldr r0, .L_0818cf84
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0818cf88
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -786,7 +786,7 @@ Func_0818cb74:
 	ldr r3, [r6, #4]
 	adds r6, #8
 	str r3, [r5, #20]
-	bl __modsi3
+	bl Math_Mod
 	movs r4, #1
 	lsls r0, r0, #2
 	add r9, r4
@@ -820,7 +820,7 @@ Func_0818cb74:
 .L_0818d1e4:
 	asrs r0, r0, #3
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	mov r8, r0
 	movs r3, #16
 	negs r3, r3

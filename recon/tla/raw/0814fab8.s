@@ -123,7 +123,7 @@ Func_0814fab8:
 	ldr r0, .L_0814fbbc
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #208
 	ldr r2, [sp, #72]
 	lsls r3, r3, #4
@@ -132,7 +132,7 @@ Func_0814fab8:
 	ldr r0, .L_0814fbc0
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, r11
 	cmp r4, #3
 	beq .L_0814fbd0
@@ -159,7 +159,7 @@ Func_0814fab8:
 	movs r3, #1
 	ldr r0, .L_0814fe00
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r3, r11
 	cmp r3, #3
 	bne .L_0814fbee
@@ -183,7 +183,7 @@ Func_0814fab8:
 	ldr r0, .L_0814fe0c
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_0814fcc2
 .L_0814fc14:
 	mov r4, r11
@@ -197,7 +197,7 @@ Func_0814fab8:
 	movs r3, #0
 	movs r2, #1
 	ldr r0, .L_0814fe0c
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0814fc2e:
 	ldr r0, .L_0814fe10
 .L_0814fc30:
@@ -222,7 +222,7 @@ Func_0814fab8:
 	adds r1, r4, r5
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_0814fc74
 .L_0814fc60:
 	ldr r2, [sp, #72]
@@ -233,7 +233,7 @@ Func_0814fab8:
 	ldr r0, .L_0814fe1c
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0814fc74:
 	mov r4, r11
 	cmp r4, #0
@@ -333,7 +333,7 @@ Func_0814fab8:
 .L_0814fd18:
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_0814fd36
 .L_0814fd22:
 	ldr r2, [sp, #72]
@@ -344,7 +344,7 @@ Func_0814fab8:
 	ldr r0, .L_0814fe10
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0814fd36:
 	ldr r5, .L_0814fe28
 	movs r4, #0
@@ -919,7 +919,7 @@ Func_0814fab8:
 .L_081501c8:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl __modsi3
+	bl Math_Mod
 	movs r1, #1
 	adds r5, r0, #0
 	str r1, [sp, #0]
@@ -980,7 +980,7 @@ Func_0814fab8:
 .L_08150240:
 	asrs r0, r3, #2
 	movs r1, #7
-	bl __modsi3
+	bl Math_Mod
 	movs r2, #1
 	adds r5, r0, #0
 	str r2, [sp, #0]
@@ -1046,7 +1046,7 @@ Func_0814fab8:
 .L_081502be:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl __modsi3
+	bl Math_Mod
 	movs r4, #1
 	ldr r3, [sp, #48]
 	adds r5, r0, #0
@@ -1104,7 +1104,7 @@ Func_0814fab8:
 	lsrs r3, r0, #31
 	adds r0, r0, r3
 	asrs r0, r0, #1
-	bl __modsi3
+	bl Math_Mod
 	movs r1, #1
 	str r1, [sp, #0]
 	ldr r3, [sp, #48]
@@ -1197,7 +1197,7 @@ Func_0814fab8:
 .L_081503ec:
 	asrs r0, r3, #2
 	movs r1, #6
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #0
 	adds r5, r0, #0
 	str r3, [sp, #0]

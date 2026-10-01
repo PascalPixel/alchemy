@@ -1,3 +1,7 @@
+/* Near miss: score 220. ☀️'s, reading the track table through ⚓️'s
+   Flash_Handler3 cell. ⚓️ scales the index (lsls r1, r0, #1) before loading
+   the table pointer; this draft after, and moving the statement reallocates
+   every register. */
 #include "TYPES.H"
 extern u8 Flash_Handler3[];
 
@@ -10,7 +14,6 @@ struct AudioTrackSlotWork {
     u32 input_limit;
 };
 
-extern struct AudioTrackSlotWork *Data_02004c00;
 
 void AudioTrack_InsertSlotNode(s32 index)
 {
@@ -23,7 +26,7 @@ void AudioTrack_InsertSlotNode(s32 index)
     void **node;
     void *next;
 
-    base = (s32)Data_02004c00;
+    base = *(s32 *)Flash_Handler3;
     node_off = index * 12;
     tbl_off = index * 4 + 0x3404;
     bucket = *(s32 *)(base + tbl_off) * 4;
@@ -35,5 +38,5 @@ void AudioTrack_InsertSlotNode(s32 index)
     *(void **)(base + bucket_off) = node;
     next = *node;
     if (next != 0)
-        FIELD(next, void *, 4) = node;
+        ((void **)next)[1] = node;
 }

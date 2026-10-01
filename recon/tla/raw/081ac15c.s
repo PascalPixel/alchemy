@@ -41,7 +41,7 @@ LuckyDice_Run:
 	ldr r0, .L_081ac2e4
 	bl Func_080132fc
 	bl Func_081ac028
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081ac2e8
 	movs r3, #0
 	strb r3, [r2]
@@ -93,7 +93,7 @@ LuckyDice_Run:
 	adds r4, r4, r0
 	adds r0, r4, #0
 	ldr r1, .L_081ac2f4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -126,7 +126,7 @@ LuckyDice_Run:
 	adds r4, r4, r1
 	adds r0, r4, #0
 	ldr r1, .L_081ac2f4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -340,7 +340,7 @@ LuckyDice_Run:
 	str r3, [r0, #28]
 	str r1, [r0, #32]
 	str r2, [r0, #36]
-	bl Resource_FarCall004
+	bl UiWork_InitializeWithResourceCountersFar
 	movs r1, #6
 	str r1, [sp, #0]
 	mov r8, r1
@@ -1776,7 +1776,7 @@ LuckyDice_Run:
 	asrs r0, r0, #10
 	movs r1, #3
 	str r4, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #8]
 	cmp r0, #1
 	bne .L_081acf4e

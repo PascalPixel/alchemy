@@ -23,7 +23,7 @@ Func_080e7238:
 	ldr r0, .L_080e74d0
 	bl Resource_GetTableEntry
 	ldr r1, [sp, #16]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #3
@@ -136,7 +136,7 @@ Func_080e7238:
 	movs r1, #100
 	str r5, [r6, #12]
 	str r7, [r6, #20]
-	bl __modsi3
+	bl Math_Mod
 	movs r3, #1
 	negs r3, r3
 	add r10, r3

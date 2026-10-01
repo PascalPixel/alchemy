@@ -22,7 +22,7 @@ Func_08145784:
 	lsls r0, r0, #6
 	str r2, [sp, #32]
 	mov r8, r3
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 	ldr r3, .L_081457ec
 	movs r2, #128
 	lsls r2, r2, #19
@@ -39,12 +39,12 @@ Func_08145784:
 	ldr r0, .L_081457f8
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #1
 	adds r1, r6, #0
 	movs r3, #0
 	ldr r0, .L_081457fc
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
 	bl Func_081963ec

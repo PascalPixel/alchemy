@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x0200937c,"a",%progbits
+.L_0200937c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_020093b4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_020093ec:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -45,18 +48,20 @@
 	.4byte 0x0000001b
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200937c
-	.4byte 0x020093b4
-	.4byte 0x020093ec
+	.4byte .L_0200937c
+	.4byte .L_020093b4
+	.4byte .L_020093ec
+.L_02009430:
 	.4byte 0x00000022
-	.4byte 0x02008325
+	.4byte OverlayObject_ApplyZeroAndClearByte89
 	.4byte 0x00000022
-	.4byte 0x0200833d
+	.4byte OverlayObject_ToggleField84Bit0
 	.4byte 0x00000010
+.L_02009444:
 	.4byte 0x00000022
-	.4byte 0x02008325
+	.4byte OverlayObject_ApplyZeroAndClearByte89
 	.4byte 0x00000022
-	.4byte 0x0200833d
+	.4byte OverlayObject_ToggleField84Bit0
 	.4byte 0x00000010
 	.global gSuharaSabakuEntrancesOther
 gSuharaSabakuEntrancesOther:
@@ -183,31 +188,31 @@ gSuharaSabakuPlacementsOther:
 	.global gSuharaSabakuPlacements1
 gSuharaSabakuPlacements1:
 	.4byte 0x03010121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x00380000
 	.4byte 0x00000000
 	.4byte 0x01080000
 	.4byte 0x00024000
 	.4byte 0x03020121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x01c80000
 	.4byte 0x00000000
 	.4byte 0x01080000
 	.4byte 0x01024000
 	.4byte 0x03030121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x00780000
 	.4byte 0x00000000
 	.4byte 0x02c80000
 	.4byte 0x01024000
 	.4byte 0x03040121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x01080000
 	.4byte 0x00000000
 	.4byte 0x02c80000
 	.4byte 0x01024000
 	.4byte 0x03050121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x01b80000
 	.4byte 0x00000000
 	.4byte 0x02e80000
@@ -227,25 +232,25 @@ gSuharaSabakuPlacements1:
 	.global gSuharaSabakuPlacements2
 gSuharaSabakuPlacements2:
 	.4byte 0x03110121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x00d80000
 	.4byte 0x00000000
 	.4byte 0x01480000
 	.4byte 0x00024000
 	.4byte 0x03120121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x01280000
 	.4byte 0x00000000
 	.4byte 0x01480000
 	.4byte 0x01024000
 	.4byte 0x03130121
-	.4byte 0x02009430
+	.4byte .L_02009430
 	.4byte 0x01980000
 	.4byte 0x00000000
 	.4byte 0x01480000
 	.4byte 0x01024000
 	.4byte 0x03140121
-	.4byte 0x02009444
+	.4byte .L_02009444
 	.4byte 0x01780000
 	.4byte 0x00000000
 	.4byte 0x02780000
@@ -291,7 +296,7 @@ gSuharaSabakuPlacements3:
 	.global gSuharaSabakuActor12Action
 gSuharaSabakuActor12Action:
 	.4byte 0x00000022
-	.4byte 0x020089cd
+	.4byte SuharaSabaku_FollowLeaderWithSparks
 	.4byte 0x00000010
 	.global gSuharaSabakuEventsOther
 gSuharaSabakuEventsOther:
@@ -309,64 +314,64 @@ gSuharaSabakuEventsOther:
 	.4byte 0x00000004
 	.4byte 0x00000002
 	.4byte 0x09b50009
-	.4byte 0x02008839
+	.4byte FieldScene_RunActorThirteenRestoration
 	.4byte 0x00000002
 	.4byte 0x03010029
-	.4byte 0x02008559
+	.4byte FieldScene_RunActor8Step
 	.4byte 0x00000002
 	.4byte 0x0302002a
-	.4byte 0x02008565
+	.4byte FieldScene_RunActor9Step
 	.4byte 0x00000002
 	.4byte 0x0303002b
-	.4byte 0x02008571
+	.4byte FieldScene_RunActor10Step
 	.4byte 0x00000002
 	.4byte 0x0304002c
-	.4byte 0x0200857d
+	.4byte FieldScene_RunActor11Step
 	.4byte 0x00000002
 	.4byte 0x0305002d
-	.4byte 0x02008589
+	.4byte FieldScene_RunActor12Step
 	.4byte 0x00000002
 	.4byte 0x03110033
-	.4byte 0x02008559
+	.4byte FieldScene_RunActor8Step
 	.4byte 0x00000002
 	.4byte 0x03120034
-	.4byte 0x02008565
+	.4byte FieldScene_RunActor9Step
 	.4byte 0x00000002
 	.4byte 0x03130035
-	.4byte 0x02008571
+	.4byte FieldScene_RunActor10Step
 	.4byte 0x00000002
 	.4byte 0x0206003d
-	.4byte 0x020087fd
+	.4byte FieldScene_RunLateActor8Step
 	.4byte 0x00000002
 	.4byte 0x0207003e
-	.4byte 0x02008809
+	.4byte FieldScene_RunLateActor9Step
 	.4byte 0x00000002
 	.4byte 0x0208003f
-	.4byte 0x02008815
+	.4byte FieldScene_RunLateActor10Step
 	.4byte 0x00000002
 	.4byte 0x02090040
-	.4byte 0x02008821
+	.4byte FieldScene_RunLateActor11Step
 	.4byte 0x00000002
 	.4byte 0x020a0041
-	.4byte 0x0200882d
+	.4byte FieldScene_RunLateActor12Step
 	.4byte 0x00000002
 	.4byte 0x02060047
-	.4byte 0x020087fd
+	.4byte FieldScene_RunLateActor8Step
 	.4byte 0x00000002
 	.4byte 0x02070048
-	.4byte 0x02008809
+	.4byte FieldScene_RunLateActor9Step
 	.4byte 0x00000002
 	.4byte 0x02080049
-	.4byte 0x02008815
+	.4byte FieldScene_RunLateActor10Step
 	.4byte 0x00000002
 	.4byte 0x03140036
-	.4byte 0x0200857d
+	.4byte FieldScene_RunActor11Step
 	.4byte 0x00000002
 	.4byte 0x020e0051
-	.4byte 0x02008add
+	.4byte PlaceActorTwelveWhenFlagClear
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02008315
+	.4byte SceneState_SendRequest15With45
 	.4byte 0x00000003
 	.4byte 0x03510064
 	.4byte 0x00300000
@@ -384,19 +389,19 @@ gSuharaSabakuEventsOther:
 	.4byte 0x00500006
 	.4byte 0x10002115
 	.4byte 0x120f0008
-	.4byte 0x02008b15
+	.4byte SceneState_SetStateByte52
 	.4byte 0x10002115
 	.4byte 0x120f0009
-	.4byte 0x02008b15
+	.4byte SceneState_SetStateByte52
 	.4byte 0x10002115
 	.4byte 0x120f000a
-	.4byte 0x02008b15
+	.4byte SceneState_SetStateByte52
 	.4byte 0x10002115
 	.4byte 0x120f000b
-	.4byte 0x02008b15
+	.4byte SceneState_SetStateByte52
 	.4byte 0x10002115
 	.4byte 0x120f000c
-	.4byte 0x02008b15
+	.4byte SceneState_SetStateByte52
 	.4byte 0x00002115
 	.4byte 0x120f0008
 	.4byte SuharaSabaku_MeetActor
@@ -414,16 +419,16 @@ gSuharaSabakuEventsOther:
 	.4byte SuharaSabaku_MeetActor
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008dc9
+	.4byte FieldScene_RunScene3c0SequenceA
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02008d25
+	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000006
 	.4byte 0xffff0063
-	.4byte 0x02008c01
+	.4byte SuharaSabaku_DropAndLeave
 	.4byte 0x00000006
 	.4byte 0xffff0037
-	.4byte 0x02008589
+	.4byte FieldScene_RunActor12Step
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

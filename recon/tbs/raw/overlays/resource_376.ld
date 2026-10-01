@@ -8,7 +8,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/HEYA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/IMPORT.o"(.text)
-        "*/resource_376_overlay.o"(.rodata)
+        "*/resource_376_overlay.o"(.rodata.x020092fc)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its remainder helper by its ABI name; here it is the

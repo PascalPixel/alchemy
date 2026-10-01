@@ -53,7 +53,7 @@ Func_080e43a4:
 	lsls r3, r3, #2
 	ldr r0, [r3, r2]
 	adds r1, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	b .L_080e4440
 .L_080e440e:
 	cmp r3, #3

@@ -2,6 +2,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 #include "DMA.H"
+#include "GAME_STATE.H"
 
 union EffectMotionSlot {
     u32 word;
@@ -36,7 +37,6 @@ struct EffectKindObject {
     u8 kind;
 };
 
-extern u32 gGameState[];
 
 /* Object table: 192 pointers at gEventWork + 0x14 (see ObjectTable_Get). */
 void *ResourceMetadata_RegisterFar(void *, s32);
@@ -82,6 +82,67 @@ struct DisplayScrollState {
 
 extern struct DisplayScrollState *gHBlankScrollWork;
 
+#if defined(TBS_EDITION_EN)
+/* The other editions keep this function in their scaffolds for now. */
+
+struct SceneFadeWork {
+    u8 unknown_000[0x19e];
+    s16 mode;
+    u8 unknown_1a0[0x26];
+    u16 step;
+};
+
+extern struct SceneFadeWork *gEventWork;
+void DisplayTransition_Finish(s32 mode, s32 frames);
+
+/* Plays the scene's cue and two sound effects, whitens one palette colour
+   (colour 243 in mode 3, the backdrop otherwise), finishes the display
+   transition, then fades that colour from white to black over 16 frames.
+   It returns no value, but its epilogue is the value-returning one. */
+s32 Scene_FadeColorFromWhite(void)
+{
+    struct SceneFadeWork *work = gEventWork;
+    s32 i;
+    s32 c;
+
+    Audio_PlayCue(gGameState.scene_cue);
+    Audio_PlayCue(288);
+    Audio_PlayCue(147);
+    if (work->mode == 3) {
+        s32 color = 0x7fff;
+
+        do {
+            /* FAKEMATCH: the do/while (0) ends a scheduling region, which keeps
+               this store ahead of the call's arguments as the reference has it */
+            *(u16 *)0x050001e6 = color;
+        } while (0);
+        DisplayTransition_Finish(0x401, 16);
+        work->step = 0;
+        WaitFrames(16);
+        for (i = 0; i < 16; i++) {
+            c = 30 - i * 2;
+            color = (c << 10) | (c << 5) | c;
+            *(u16 *)0x050001e6 = color;
+            WaitFrames(1);
+        }
+    } else {
+        s32 color = 0x7fff;
+
+        *(u16 *)0x05000000 = color;
+        DisplayTransition_Finish(0x207, 16);
+        work->step = 0;
+        WaitFrames(16);
+        for (i = 0; i < 16; i++) {
+            c = 30 - i * 2;
+            color = (c << 10) | (c << 5) | c;
+            *(u16 *)0x05000000 = color;
+            WaitFrames(1);
+        }
+    }
+}
+
+#endif
+
 void ObjectEffect_PrepareContextEffect(s32 value)
 {
     u32 zero;
@@ -90,7 +151,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     struct EffectMotionObject *context;
     struct EffectKindObject *effect;
 
-    object = ObjectTable_Get(gGameState[125]);
+    object = ObjectTable_Get(gGameState.selected_actor);
     context = object->context;
     effect = ResourceMetadata_RegisterFar(context, 27);
     zero = 0;
@@ -124,7 +185,7 @@ void ObjectEffect_EndContextEffect(s32 arg0)
 {
     s32 zero;
     s32 mask;
-    EffectCleanupObject *obj = ObjectTable_Get(gGameState[125]);
+    EffectCleanupObject *obj = ObjectTable_Get(gGameState.selected_actor);
     EffectCleanupContext *ctx = obj->ctx;
     struct EffectKindObject *eff = ResourceMetadata_RegisterFar(ctx, 27);
 
@@ -169,7 +230,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 void *obj;
 
                 GameFlag_ClearBitFar(flag);
-                id = gGameState[125];
+                id = gGameState.selected_actor;
                 obj = ObjectTable_Get(id);
                 *(s32 *)((u8 *)obj + 12) += 0x00a00000;
                 Motion_CamBounds(-1, -1, -1, 0);

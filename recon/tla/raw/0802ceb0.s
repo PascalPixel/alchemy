@@ -5,7 +5,7 @@
 Func_0802ceb0:
 	push {lr}
 	ldr r0, .L_0802cebc
-	bl Func_0801475c
+	bl Scheduler_DisableCallbacks
 	pop {pc}
 	.2byte 0x0000
 .L_0802cebc:

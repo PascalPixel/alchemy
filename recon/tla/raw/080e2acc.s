@@ -58,7 +58,7 @@ Func_080e2acc:
 	ldr r0, .L_080e2c30
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r2, #192
 	lsls r2, r2, #1

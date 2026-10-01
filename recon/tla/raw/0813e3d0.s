@@ -74,12 +74,12 @@ Func_0813e3d0:
 	adds r0, r5, #0
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_0813e48c
 	ldr r1, [sp, #16]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r2, [sp, #32]
 	ldr r3, [r2]
 	cmp r3, #1
@@ -308,7 +308,7 @@ Func_0813e3d0:
 	asrs r0, r0, #2
 	movs r1, #3
 	mov r8, r0
-	bl __modsi3
+	bl Math_Mod
 	adds r5, r0, #0
 	lsls r1, r5, #7
 	adds r1, r1, r5
@@ -367,7 +367,7 @@ Func_0813e3d0:
 	.2byte 0xf800
 	movs r1, #3
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	adds r5, r0, #0
 	lsls r1, r5, #7
 	mov r4, r11

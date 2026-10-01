@@ -1,24 +1,17 @@
-/* 2026-09-29 alchemy permute: score 2048 to 1518 on the permuter's scorer
-   (0 is exact); remaining 22 register-only, 3 stack-only, 5 operand, 16
-   reordered, 2 inserted, 1 deleted. Kept rewrites: 10x reorder independent
-   statements, 6x add a same-width cast, 5x drop a same-width cast, 4x
-   reorder local declarations, 4x introduce a temporary, 4x change loop
-   form, 4x pointer arithmetic or indexing, 4x move an assignment into or
-   out of a condition, 4x test truth or compare with zero, 3x split or join
-   a compound assignment, 3x toggle register, 2x swap commutative operands,
-   1x remove a temporary. FAKEMATCH: the permuter's temporaries, register
-   hints and swapped operand orders below only steer allocation and
-   scheduling; no programmer would write them, so they stay tagged until a
-   natural spelling replaces them. */
-/* Draft, not exact (2026-09-26): 184 of 188 bytes, 75 differing halfwords.
-   The ROM indexes one shared tile table and adds a 320-tile bias for the
-   second layer, not a second table. The origin pointer walks after x and
-   the row coordinate advances independently of its row counter. Retained
-   the canonical s32 tile service declaration. Goto loops give 172 bytes;
-   separate mask regions and a void result-discarding wrapper give the same
-   184-byte output. Remaining: cached mask in r9, origin x kept in fp rather
-   than its stack slot, and a spilled row counter instead of the ROM's sl.
- */
+/* NONMATCHING: main [080113e4,080114a0), 188 bytes with its pool.
+ * 2026-10-01 (☀️ matcher 1): rewritten as plain C; permuter score 1163
+ * (the previous permuter-built body scored 1518), 45 aligned differing
+ * lines. Passing y0 + row and x0 + col straight to the call lets loop.c
+ * strength-reduce the row coordinate and copy it for the call (the
+ * reference's mov r8, r6), and the layer/row/column structure, the stack
+ * slots for the window, x0 and y0 and every pool word line up.
+ * Remaining: the reference loads 15 twice inside the loops (movs r2, #15
+ * before each and), but here loop.c hoists one shared 15 into a callee-saved
+ * register, which pushes the row copy into r4 and a spill slot (frame 20
+ * instead of 16) and moves the column increment after the call. A row-level
+ * base offset, u32 coordinates, % 16, a two-dimensional tile array, a tile
+ * temporary and the bias added first do not change it (45 to 55); a 240 s
+ * permuter run reached 694 only through temporaries and register hints. */
 #include "TYPES.H"
 
 struct MapPosition_080113e4 {
@@ -37,61 +30,34 @@ extern struct MapTileWindow_080113e4 *gMapWork;
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
+/* Redraws the 2 x 2 cells around the camera's position on both layers, the
+   second layer's tiles 320 on from the first's. */
 void Map_UpdateCurrentTileBlock(void)
 {
-    struct MapTileWindow_080113e4 *window;
-    struct MapPosition_080113e4 *position;
-    s32 origin_y;
-    s32 origin_x;
-    register u32 layer;
-    u32 tile_bias;
+    struct MapTileWindow_080113e4 *window = gMapWork;
+    s32 x0 = 0;
+    s32 y0 = 0;
+    u32 layer;
     u32 row;
-    u32 column;
-    s32 tmp3;
-    struct MapTileWindow_080113e4 *tmp;
+    u32 col;
+    s32 bias;
 
-    origin_y = 0;
-    origin_x = 0;
-    tmp = gMapWork;
-    window = tmp;
-    position = window->position;
-    if (position != 0) {
-        s32 *walk = &position->x;
-        s32 tmp2;
-        origin_x = walk++[0];
-        tmp2 = walk[1];
-        origin_y = tmp2;
+    if (window->position != NULL) {
+        s32 *p = &window->position->x;
+
+        x0 = *p++;
+        y0 = p[1];
     }
-    tmp3 = origin_x - 0x01000000;
-    layer = 0;
-    origin_x = tmp3 >> 25;
-    origin_y = (origin_y - 0x01400000) >> 25;
-    tile_bias = 0;
-    while (1) {
-        register s32 y = origin_y;
-        row = 0;
-        if (1 != 0) {
-            do {
-                s32 tile_row = (y & 15) << 4;
-                column = 0;
-                row++;
-                while (1) {
-                    register s32 x = origin_x + column;
-                    s32 tile_col = x & 15;
-                    s32 tile = *(window[0].tiles + (tile_col + tile_row)) + tile_bias;
-                    Map_WriteLayerCellTile(layer, x, y, tile, 1);
-                    column++;
-                    if (column > 1)
-                        break;
-                }
-                (u32)y++;
-                if (row > 1)
-                    break;
-            } while (1);
+    x0 = (x0 - 0x1000000) >> 25;
+    y0 = (y0 - 0x1400000) >> 25;
+    bias = 0;
+    for (layer = 0; layer < 2; layer++) {
+        for (row = 0; row < 2; row++) {
+            for (col = 0; col < 2; col++) {
+                Map_WriteLayerCellTile(layer, x0 + col, y0 + row,
+                    window->tiles[(((y0 + row) & 15) << 4) + ((x0 + col) & 15)] + bias, 1);
+            }
         }
-        layer++;
-        tile_bias = tile_bias + 320;
-        if (layer > 1)
-            break;
+        bias += 320;
     }
 }

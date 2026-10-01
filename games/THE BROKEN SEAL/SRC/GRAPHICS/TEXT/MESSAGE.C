@@ -103,7 +103,7 @@ s32 UiText_OpenEntryMessage(s32 no, s32 argument)
     u8 unused[8];
 
     *(u16 *)(base + RENDER_RESULT_OFS) = 0;
-    *(u16 *)(base + 0x12f6) = 0;
+    *(u16 *)(base + RENDER_RESULT_OFS + 2) = 0;
     entry = Func_08018038(argument, 1);
     entry_offset = entry * 2;
     entry_offset += RENDER_ENTRY_TBL_OFS;

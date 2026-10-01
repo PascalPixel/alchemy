@@ -36,13 +36,13 @@ Func_080e4730:
 	strb r2, [r3]
 	movs r1, #1
 	mov r0, r8
-	bl Func_080dc164
+	bl ObjectGroup_SetActionForOthers
 	ldr r0, .L_080e4a1c
 	bl Scheduler_RemoveCallback
 	ldr r0, .L_080e4a20
 	bl Resource_GetTableEntry
 	mov r1, r10
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #4
@@ -331,7 +331,7 @@ Func_080e4730:
 	movs r1, #0
 	movs r2, #16
 	mov r0, r8
-	bl Func_080dc164
+	bl ObjectGroup_SetActionForOthers
 	ldr r0, [sp, #32]
 	bl Resource_ResetEntry
 	ldr r0, [sp, #28]

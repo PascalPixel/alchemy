@@ -41,7 +41,7 @@ Func_08146638:
 	ldr r1, [sp, #52]
 	movs r3, #0
 	ldr r0, .L_081469b4
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r0, r6, #0
 	movs r1, #2
 	bl Object_SetMode
@@ -317,7 +317,7 @@ Func_08146638:
 	movs r1, #10
 	adds r0, r4, #0
 	str r4, [sp, #8]
-	bl __modsi3
+	bl Math_Mod
 	ldr r1, [sp, #32]
 	ldr r2, .L_081469bc
 	adds r0, r0, r1

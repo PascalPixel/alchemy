@@ -32,7 +32,7 @@ Func_080d7240:
 	adds r6, r0, #0
 	adds r1, r6, #0
 	ldr r0, .L_080d72f0
-	bl Func_0801591c
+	bl Resource_DecodeByteLzInRam
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	adds r2, r6, #0

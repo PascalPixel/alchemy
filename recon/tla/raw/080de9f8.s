@@ -182,7 +182,7 @@ Func_080de9f8:
 	adds r0, r6, #0
 	bl Object_CommitPosition
 	adds r0, r6, #0
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080deb76:
 	mov r3, r9
 	cmp r3, #96

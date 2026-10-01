@@ -1,11 +1,11 @@
 /*
- * Draft: Object_SetTargetAndCallback does not yet match; 3 halfwords differ from ☀️'s C, first at +0x30 (ldr r1, [pc, #24]).
- * Links as recon/tla/raw/080d3600.s.
+ * Draft: Object_SetTargetAndCallback, ported from its ☀️ twin; it goes
+ * before ObjectMotion_StepAngle in SRC/FIELD/COMMON/OBJECT/VISUAL_ATTRIBUTES.C.
+ * The listing loads the zero it stores at 0x59 from a literal pool
+ * (ldr r1, =0) ahead of the acceleration copy and places the pool after a
+ * branch; this C builds the zero with movs after the copies.
  */
 #include "OBJECT_RUNTIME.H"
-#include "FIELD_EVENT.H"
-
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *, const void *);
 
 void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callback)
 {
@@ -18,8 +18,8 @@ void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callb
             first->action = 40;
             first->acceleration = second->acceleration * 2;
             first->speed_limit = second->speed_limit;
-            first->unknown_56[3] = 0;
+            first->unknown_57[2] = 0;
         }
-        ObjectDispatch_InitializeFar(first, callback);
+        Object_SetCallback(first, callback);
     }
 }

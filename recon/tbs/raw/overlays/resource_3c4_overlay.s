@@ -2,129 +2,137 @@
 	.thumb
 	.section .text.x020090c2,"ax",%progbits
 	.2byte 0x0000
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	movs	r0, #0
-	sub	sp, #56
-	bl 0x0200b10c
-	adds	r6, r0, #0
-	bl 0x0200b0f4
-	movs	r1, #6
-	adds	r0, r6, #0
-	bl 0x0200b054
-	movs	r0, #0
-	bl 0x0200b14c
-	adds	r0, r6, #0
-	movs	r1, #1
-	bl 0x0200b054
-	movs	r1, #0
-	adds	r0, r6, #0
-	bl 0x0200b0ac
-	movs	r0, #85
-	adds	r0, r0, r6
-	ldrb	r2, [r0, #0]
-	movs	r3, #2
-	orrs	r3, r2
-	strb	r3, [r0, #0]
-	mov	sl, r0
-	movs	r0, #152
-	bl 0x0200b1ac
-	movs	r3, #128
-	lsls	r3, r3, #11
-	str	r3, [r6, #40]
-	movs	r0, #192
-	ldr	r3, [r6, #16]
-	lsls	r0, r0, #12
-	adds	r3, r3, r0
-	ldr	r1, [r6, #8]
-	ldr	r2, [r6, #12]
-	adds	r0, r6, #0
-	bl 0x0200b074
-	movs	r0, #6
-	bl 0x0200b024
-	add	r3, sp, #16
-	mov	r8, r3
-	ldr	r3, [pc, #156]
-	mov	r2, sl
-	mov	r0, r8
-	movs	r5, #0
-	strb	r5, [r2, #0]
-	str	r3, [r0, #36]
-	movs	r0, #127
-	bl 0x0200b1ac
-	movs	r7, #0
-.L_02001142:
-	ldr	r3, [r6, #12]
-	ldr	r2, [pc, #136]
-	adds	r3, r3, r2
-	str	r3, [r6, #12]
-	str	r3, [r6, #60]
-	movs	r0, #1
-	bl 0x0200b024
-	movs	r3, #1
-	ands	r3, r7
-	cmp	r3, #0
-	beq.n	.L_020011a6
-	bl 0x0200b034
-	movs	r1, #10
-	bl 0x0200b01c
-	ldr	r3, [pc, #108]
-	subs	r0, #5
-	adds	r5, r0, #0
-	muls	r5, r3
-	bl 0x0200b034
-	movs	r1, #10
-	bl 0x0200b01c
-	lsls	r3, r0, #1
-	adds	r3, r3, r0
-	lsls	r3, r3, #2
-	adds	r3, r3, r0
-	lsls	r4, r3, #6
-	subs	r4, r4, r3
-	lsls	r4, r4, #3
-	adds	r4, r4, r0
-	ldr	r3, [pc, #80]
-	negs	r4, r4
-	adds	r4, r4, r3
-	movs	r3, #0
-	ldr	r0, [r6, #8]
-	ldr	r1, [r6, #12]
-	ldr	r2, [r6, #16]
-	str	r3, [sp, #0]
-	ldr	r3, [pc, #68]
-	str	r3, [sp, #8]
-	mov	r3, r8
-	str	r3, [sp, #12]
-	adds	r3, r5, #0
-	str	r4, [sp, #4]
+	.section .text.x020090c4,"ax",%progbits
+	.global Func_020010c4
+	.thumb_func
+Func_020010c4:
+	push {r5, r6, r7, lr}
+	mov r7, r10
+	mov r6, r8
+	push {r6, r7}
+	movs r0, #0
+	sub sp, #56
+	bl Object_GetById
+	adds r6, r0, #0
+	bl Engine_EventBegin
+	movs r1, #6
+	adds r0, r6, #0
+	bl Object_SetMode
+	movs r0, #0
+	bl ObjectMotion_WaitForAnimationChange
+	adds r0, r6, #0
+	movs r1, #1
+	bl Object_SetMode
+	movs r1, #0
+	adds r0, r6, #0
+	bl Engine_ActorSetSpriteFlags
+	movs r0, #85
+	adds r0, r0, r6
+	ldrb r2, [r0]
+	movs r3, #2
+	orrs r3, r2
+	strb r3, [r0]
+	mov r10, r0
+	movs r0, #152
+	bl Audio_PlayCue
+	movs r3, #128
+	lsls r3, r3, #11
+	str r3, [r6, #40]
+	movs r0, #192
+	ldr r3, [r6, #16]
+	lsls r0, r0, #12
+	adds r3, r3, r0
+	ldr r1, [r6, #8]
+	ldr r2, [r6, #12]
+	adds r0, r6, #0
+	bl Object_SetPosition
+	movs r0, #6
+	bl WaitFrames
+	add r3, sp, #16
+	mov r8, r3
+	ldr r3, .L_020091cc
+	mov r2, r10
+	mov r0, r8
+	movs r5, #0
+	strb r5, [r2]
+	str r3, [r0, #36]
+	movs r0, #127
+	bl Audio_PlayCue
+	movs r7, #0
+.L_02009142:
+	ldr r3, [r6, #12]
+	ldr r2, .L_020091d0
+	adds r3, r3, r2
+	str r3, [r6, #12]
+	str r3, [r6, #60]
+	movs r0, #1
+	bl WaitFrames
+	movs r3, #1
+	ands r3, r7
+	cmp r3, #0
+	beq .L_020091a6
+	bl Engine_RandomNext
+	movs r1, #10
+	bl Engine_MathModulo
+	ldr r3, .L_020091d4
+	subs r0, #5
+	adds r5, r0, #0
+	muls r5, r3
+	bl Engine_RandomNext
+	movs r1, #10
+	bl Engine_MathModulo
+	lsls r3, r0, #1
+	adds r3, r3, r0
+	lsls r3, r3, #2
+	adds r3, r3, r0
+	lsls r4, r3, #6
+	subs r4, r4, r3
+	lsls r4, r4, #3
+	adds r4, r4, r0
+	ldr r3, .L_020091d8
+	negs r4, r4
+	adds r4, r4, r3
+	movs r3, #0
+	ldr r0, [r6, #8]
+	ldr r1, [r6, #12]
+	ldr r2, [r6, #16]
+	str r3, [sp, #0]
+	ldr r3, .L_020091dc
+	str r3, [sp, #8]
+	mov r3, r8
+	str r3, [sp, #12]
+	adds r3, r5, #0
+	str r4, [sp, #4]
 	bl Effect_Spawn
-.L_020011a6:
-	adds	r7, #1
-	cmp	r7, #7
-	bls.n	.L_02001142
-	adds	r0, r6, #0
-	movs	r1, #1
-	bl 0x0200b0ac
-	movs	r3, #3
-	mov	r0, sl
-	strb	r3, [r0, #0]
-	bl 0x0200b0fc
-	add	sp, #56
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
+.L_020091a6:
+	adds r7, #1
+	cmp r7, #7
+	bls .L_02009142
+	adds r0, r6, #0
+	movs r1, #1
+	bl Engine_ActorSetSpriteFlags
+	movs r3, #3
+	mov r0, r10
+	strb r3, [r0]
+	bl Engine_EventEnd
+	add sp, #56
+	pop {r3, r5}
+	mov r8, r3
+	mov r10, r5
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+.L_020091cc:
 	.4byte Effect_AdvanceMotion
+.L_020091d0:
 	.4byte 0xfffe0000
+.L_020091d4:
 	.4byte 0x00003332
+.L_020091d8:
 	.4byte 0xffff8003
-	.2byte 0x0001
-	.2byte 0x0100
-	.section .rodata.part1,"a",%progbits
+.L_020091dc:
+	.4byte 0x01000001
+	.section .rodata.x0200b1f0,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
 	.4byte 0x00100000
@@ -177,6 +185,7 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
+.L_0200b2a8:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -191,6 +200,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b2e0:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -205,6 +215,7 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_0200b318:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -230,9 +241,10 @@ Data_0200b350:
 	.4byte 0xffb00000
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x0200b2a8
-	.4byte 0x0200b2e0
-	.4byte 0x0200b318
+	.4byte .L_0200b2a8
+	.4byte .L_0200b2e0
+	.4byte .L_0200b318
+.L_0200b378:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00009999
@@ -245,6 +257,7 @@ gEffectScripts:
 	.4byte 0x00000022
 	.4byte SceneState_ApplyArgMode0AndReturnZero
 	.4byte 0x00000010
+.L_0200b3a8:
 	.4byte 0x00000015
 	.4byte 0x0000000a
 	.4byte 0x00019999
@@ -643,19 +656,19 @@ Data_0200b8f4:
 	.4byte 0x03180000
 	.4byte 0x01024000
 	.4byte 0x000000f8
-	.4byte 0x0200b3a8
+	.4byte .L_0200b3a8
 	.4byte 0x01a00000
 	.4byte 0x00000000
 	.4byte 0x031a0000
 	.4byte 0x0000c000
 	.4byte 0x000000f8
-	.4byte 0x0200b3a8
+	.4byte .L_0200b3a8
 	.4byte 0x01b00000
 	.4byte 0x00000000
 	.4byte 0x031a0000
 	.4byte 0x0000c000
 	.4byte 0x097000f8
-	.4byte 0x0200b3a8
+	.4byte .L_0200b3a8
 	.4byte 0x02380000
 	.4byte 0x00000000
 	.4byte 0x03580000
@@ -685,7 +698,7 @@ Data_0200b8f4:
 	.4byte 0x00b80000
 	.4byte 0x0002c000
 	.4byte 0x00000114
-	.4byte 0x0200b378
+	.4byte .L_0200b378
 	.4byte 0x00e80000
 	.4byte 0x00000000
 	.4byte 0x00f80000
@@ -864,13 +877,13 @@ Data_0200bc0c:
 	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000202
 	.4byte 0xffff0018
-	.4byte 0x02009319
+	.4byte SceneState_RunRect73x38Step
 	.4byte 0x00004602
 	.4byte 0xffff0019
-	.4byte 0x020090c5
+	.4byte Func_020010c4
 	.4byte 0x00000202
 	.4byte 0xffff001a
-	.4byte 0x02009375
+	.4byte FieldScene_RunLayoutAt93By30
 	.4byte 0x00004602
 	.4byte 0xffff001b
 	.4byte FieldScene_RunStepWith6
@@ -894,7 +907,7 @@ Data_0200bc0c:
 	.4byte SceneActor_CheckTwoUnitsAboveActorZero
 	.4byte 0x00000202
 	.4byte 0xffff001c
-	.4byte 0x020093e1
+	.4byte SceneState_ApplyTwoRectsAndRunThree
 	.4byte 0x00000202
 	.4byte 0x0971001d
 	.4byte FieldScene_RunFourCallSequenceB
@@ -1043,7 +1056,7 @@ Data_0200bef4:
 	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00004602
 	.4byte 0xffff001b
-	.4byte 0x020090c5
+	.4byte Func_020010c4
 	.4byte 0x00000202
 	.4byte 0xffff001c
 	.4byte FieldScene_RunThreeStepSequence

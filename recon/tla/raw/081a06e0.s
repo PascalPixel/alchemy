@@ -24,7 +24,7 @@ Func_081a06e0:
 	strh r2, [r7]
 	strb r2, [r3]
 	adds r6, r0, #0
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_081a0758

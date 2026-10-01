@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
-	.section .rodata,"a",%progbits
+	.section .rodata.x02009c00,"a",%progbits
+.L_02009c00:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -15,6 +16,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009c38:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -29,6 +31,7 @@
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+.L_02009c70:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -111,9 +114,9 @@ ToretoHeya_MapPatches:
 	.4byte 0x0000ffff
 	.global gEffectScripts
 gEffectScripts:
-	.4byte 0x02009c00
-	.4byte 0x02009c38
-	.4byte 0x02009c70
+	.4byte .L_02009c00
+	.4byte .L_02009c38
+	.4byte .L_02009c70
 	.global ToretoHeya_TableActions0
 ToretoHeya_TableActions0:
 	.4byte 0x0000001c
@@ -1021,136 +1024,136 @@ gToretoHeyaEvents:
 	.4byte 0x0000000f
 	.4byte 0x00000202
 	.4byte 0xffff0015
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0016
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0017
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0018
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0019
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff001a
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff001b
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff001c
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff001d
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff001f
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0020
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0032
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0033
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0034
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0035
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0036
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0037
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0038
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff0039
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff003a
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000202
 	.4byte 0xffff003b
-	.4byte 0x02008675
+	.4byte SceneState_ClearStoryVariantWhenIdle
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x02008495
+	.4byte FieldScene_RunStep200
 	.4byte 0x00000002
 	.4byte 0xffff0016
-	.4byte 0x020084a9
+	.4byte FieldScene_RunStep201
 	.4byte 0x00000002
 	.4byte 0xffff0017
-	.4byte 0x020084c1
+	.4byte FieldScene_RunStep202
 	.4byte 0x00000002
 	.4byte 0xffff0018
-	.4byte 0x020084d9
+	.4byte FieldScene_RunStep203
 	.4byte 0x00000002
 	.4byte 0xffff0019
-	.4byte 0x020084f1
+	.4byte FieldScene_RunStep204
 	.4byte 0x00000002
 	.4byte 0xffff001a
-	.4byte 0x02008505
+	.4byte FieldScene_RunStep205
 	.4byte 0x00000002
 	.4byte 0xffff001b
-	.4byte 0x0200851d
+	.4byte FieldScene_RunStep206
 	.4byte 0x00000002
 	.4byte 0xffff001c
-	.4byte 0x02008535
+	.4byte FieldScene_RunStep207
 	.4byte 0x00000002
 	.4byte 0xffff001d
-	.4byte 0x0200854d
+	.4byte FieldScene_RunStep208
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte 0x02008561
+	.4byte FieldScene_RunStep209
 	.4byte 0x00000002
 	.4byte 0xffff0020
-	.4byte 0x02008579
+	.4byte FieldScene_RunStep20a
 	.4byte 0x00000002
 	.4byte 0xffff0032
-	.4byte 0x02008591
+	.4byte FieldScene_RunStep20b
 	.4byte 0x00000002
 	.4byte 0xffff0033
-	.4byte 0x020085a9
+	.4byte FieldScene_RunStep20c
 	.4byte 0x00000002
 	.4byte 0xffff0034
-	.4byte 0x020085bd
+	.4byte FieldScene_RunStep20d
 	.4byte 0x00000002
 	.4byte 0xffff0035
-	.4byte 0x020085d5
+	.4byte FieldScene_RunStep20e
 	.4byte 0x00000002
 	.4byte 0xffff0036
-	.4byte 0x020085ed
+	.4byte FieldScene_RunStep20f
 	.4byte 0x00000002
 	.4byte 0xffff0037
-	.4byte 0x02008605
+	.4byte FieldScene_RunStep210
 	.4byte 0x00000002
 	.4byte 0xffff0038
-	.4byte 0x02008619
+	.4byte FieldScene_RunStep211
 	.4byte 0x00000002
 	.4byte 0xffff0039
-	.4byte 0x02008631
+	.4byte FieldScene_RunStep212
 	.4byte 0x00000002
 	.4byte 0xffff003a
-	.4byte 0x02008649
+	.4byte FieldScene_RunStep213
 	.4byte 0x00000002
 	.4byte 0xffff003b
-	.4byte 0x02008661
+	.4byte FieldScene_RunStep214
 	.4byte 0x00000002
 	.4byte 0x08440028
-	.4byte 0x0200869d
+	.4byte ToretoHeya_RunTableScene
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x0200984d
+	.4byte SceneEffect_RegisterPaletteFadeCallback
 	.4byte 0x00000013
 	.4byte 0x0f5b0064
 	.4byte 0x00100109

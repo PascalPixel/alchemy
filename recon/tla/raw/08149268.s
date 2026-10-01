@@ -34,12 +34,12 @@ Func_08149268:
 	ldr r0, .L_081492d0
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r1, r5, #0
 	movs r2, #1
 	ldr r0, .L_081492d4
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, sp
 	adds r4, #32
 	mov r3, r9
@@ -265,14 +265,14 @@ Func_08149268:
 .L_08149468:
 	movs r1, #5
 	mov r0, r8
-	bl __modsi3
+	bl Math_Mod
 	lsls r5, r0, #1
 	adds r5, r5, r0
 	movs r1, #96
 	ldr r0, [r7, #24]
 	bl Math_Div
 	movs r1, #3
-	bl __modsi3
+	bl Math_Mod
 	movs r2, #4
 	mov r3, r8
 	adds r6, r7, #0

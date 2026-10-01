@@ -1,9 +1,20 @@
-/* Draft, not exact (2026-09-29, Mercury): score 2105 (was 2325) on the
-   permuter's scorer. The debug battle menu reads its keys and the game
-   state's rule byte and special halfword as named fields of gGameState;
-   the ROM derives the second field's address from the first (movs #85;
-   negs; add), keeps 362 in r5 across the first two flag calls and
-   allocates the menu values differently. */
+/* NONMATCHING: main [080b56e0,080b5864), 388 bytes with its pool.
+ * 2026-10-01 (☀️ matcher 1): rewritten from the listing as plain C; 384 of
+ * 388 bytes, permuter score 260 (the earlier permuter body was 2105). The
+ * debug battle menu restarts through a goto (a for (;;) lets loop.c hoist
+ * 0x80 and loses the reference's 362 in r5), and the quick encounter
+ * follows the held-SELECT block, whose distance gives the bne/b pair.
+ * Remaining, two spots:
+ * - The reference stores special = 29 from the literal pool (ldr r3, =29,
+ *   an HImode constant move); here store_field expands the u16 field store
+ *   as a read-modify-write that combine folds to movs r3, #29, which also
+ *   drops the pool word (4 bytes). Storing through a cast pointer gives the
+ *   pool load but loses the hoisted address pair (34 lines); pointer
+ *   locals for the two fields give 20 to 30, s16 array views 22 to 36.
+ * - sched2 puts movs r3, #5 after mov r2, r9 for the rule store; the
+ *   reference has it before.
+ * A 300 s permuter run (131,234 candidates) found nothing below 260. The
+ * listing calls GameState_InitDefaultsFar as bl 0x08077098. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 
@@ -34,28 +45,26 @@ void Scheduler_ResetTaskTable(void);
 void Battle_ReservedNoOp2A08(void);
 void BattleUnit_Recalculate(s32);
 
+/* Debug battle menu: hold SELECT to pick an encounter (left/right by one,
+   up/down by ten) and a party preset (R/L) before A starts it; B locks the
+   battle rule to 5. Without SELECT, encounter 257 runs at once. */
 void Unnamed_080b56e0(void)
 {
-    s32 held;
+    s32 locked = 0;
     s32 encounter;
     s32 preset;
     s32 loaded;
 
-    held = 0;
     GameState_InitDefaultsFar();
-    for (;;) {
-        Ui_LoadWindowGraphics();
-        Bg0_ClearTilemap();
-        Scheduler_ResetTaskTable();
-        Runtime_InitializeHeap();
-        Resource_InitializeTable();
-        GameFlag_SetBitFar(362);
-        encounter = 257;
-        if (!(gKeysHeld & 0x80)) {
-            GameFlag_SetBitFar(354);
-            Battle_RunEncounter(257);
-            continue;
-        }
+restart:
+    Ui_LoadWindowGraphics();
+    Bg0_ClearTilemap();
+    Scheduler_ResetTaskTable();
+    Runtime_InitializeHeap();
+    Resource_InitializeTable();
+    GameFlag_SetBitFar(362);
+    encounter = 257;
+    if (gKeysHeld & 0x80) {
         loaded = -1;
         GameFlag_ClearBitFar(362);
         preset = 0;
@@ -81,8 +90,8 @@ void Unnamed_080b56e0(void)
                     Unnamed_080b5534();
                 if (gKeysRepeat & 4)
                     Battle_ReservedNoOp2A08();
-                if ((gKeysRepeat & 2) || held) {
-                    held = 1;
+                if ((gKeysRepeat & 2) || locked) {
+                    locked = 1;
                     gGameState.battle_rule = 5;
                 }
                 if (preset != loaded) {
@@ -107,4 +116,7 @@ void Unnamed_080b56e0(void)
             Resource_InitializeTable();
         }
     }
+    GameFlag_SetBitFar(354);
+    Battle_RunEncounter(257);
+    goto restart;
 }

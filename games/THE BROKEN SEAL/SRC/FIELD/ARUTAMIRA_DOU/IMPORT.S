@@ -10,6 +10,9 @@
 	.thumb_func
 Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
+	.global Engine_MathRemainder
+	.thumb_func
+Engine_MathRemainder:
 	overlay_veneer IwramSignedRemainder
 	.global IwramUnsignedDivide
 	.thumb_func
@@ -22,7 +25,13 @@ WaitFrames:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Scheduler_AddOrUpdateCallback
+	.thumb_func
+Scheduler_AddOrUpdateCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Scheduler_RemoveCallback
+	.thumb_func
+Scheduler_RemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Engine_RandomNext
 	.thumb_func

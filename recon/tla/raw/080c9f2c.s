@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080c9f2c
+	.global BattleFx_LookupResult
 	.thumb_func
-Func_080c9f2c:
+BattleFx_LookupResult:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

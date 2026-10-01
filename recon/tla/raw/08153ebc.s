@@ -96,7 +96,7 @@ Func_08153ebc:
 	adds r7, r7, r1
 	adds r0, r7, #0
 	adds r1, r6, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r7, #238
 	movs r2, #0
 	ldr r3, .L_081540e0
@@ -146,7 +146,7 @@ Func_08153ebc:
 	movs r2, #1
 	movs r3, #1
 	ldr r0, .L_081540ec
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_081540f0
 	bl Resource_GetTableEntry
 	adds r7, r0, #0
@@ -161,7 +161,7 @@ Func_08153ebc:
 	ldr r1, [sp, #40]
 	movs r3, #0
 	ldr r0, .L_081540f4
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_081540f8
 	bl Resource_GetTableEntry
 	movs r1, #19
@@ -941,7 +941,7 @@ Func_08153ebc:
 	ldr r0, .L_0815465c
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #0
 	str r1, [sp, #48]
 	add r6, sp, #76
@@ -974,7 +974,7 @@ Func_08153ebc:
 .L_08154660:
 	ldr r0, [sp, #48]
 	movs r1, #6
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, [sp, #64]
 	ldr r3, [r2, #20]
 	cmp r0, r3
@@ -1196,7 +1196,7 @@ Func_08153ebc:
 	bl Audio_PlayCue
 	movs r1, #6
 	ldr r0, [sp, #48]
-	bl __modsi3
+	bl Math_Mod
 	ldr r1, [sp, #64]
 	adds r4, r0, #0
 	ldr r3, [r1, #20]

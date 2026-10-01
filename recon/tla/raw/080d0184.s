@@ -5,9 +5,9 @@
 Func_080d0184:
 	push {lr}
 	ldr r0, .L_080d0194
-	bl Func_08014694
+	bl Scheduler_EnableCallbacks
 	ldr r0, .L_080d0198
-	bl Func_08014694
+	bl Scheduler_EnableCallbacks
 	pop {pc}
 .L_080d0194:
 	.4byte Func_080cf78c

@@ -35,6 +35,12 @@ struct MenuSelection {
     struct MenuNode nodes[2];
     u8 unknown_68[0x27a];
     u16 mode;
+    u8 unknown_2e4[0x394 - 0x2e4];
+    u16 count;
+    u16 first;
+    u16 second;
+    u16 unknown_39a;
+    u16 other;
 };
 
 extern u32 gFrameTick;
@@ -89,8 +95,7 @@ void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
 void Resource_ResetPendingTransfer(void);
 
-s32 Menu_SetupSelectionSide(s32, s32);
-extern u8 Data_03001e98[];
+void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index);
 
 /* menu/selection/set_node_coordinates.c */
 struct Node_0801b1ec {
@@ -247,9 +252,57 @@ void Menu_SetNodeCoordinates(u32 first, u32 second)
 /* menu/selection/setup_both_sides.c */
 void Menu_SetupSelectionBothSides(void)
 {
-    s32 state;
+    struct MenuSelection *state;
 
-    state = *(s32 *)((u32)&Data_03001e98);
+    state = (struct MenuSelection *)gResQueueWork;
     Menu_SetupSelectionSide(state, 0);
     Menu_SetupSelectionSide(state, 1);
 }
+
+#if defined(TBS_EDITION_EN)
+/* The other editions keep this function in their scaffolds for now. */
+
+extern s32 Resource_FindFreeEntry(void);
+
+void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index)
+{
+    struct SlotEntry *entry = &state->nodes[index].entry;
+    u8 *frames = 0;
+    u32 count;
+
+    state->nodes[index].active = 0;
+    if (index != 0) {
+        /* FAKEMATCH: a separate local gives the early r5 load and late copy */
+        u8 *right = Menu_CursorObjectTiles;
+
+        count = state->count;
+        if (state->other != 0)
+            count -= state->other;
+        if (count > 5) {
+            state->nodes[index].active = 1;
+            count = 5;
+        }
+        frames = right;
+        state->nodes[1].x = state->first + 16 * (count - 1) + 17;
+    } else {
+        frames = Menu_CursorLeftObjectTiles;
+        state->nodes[0].x = state->first - 9;
+        if (state->other != 0)
+            state->nodes[0].active = 1;
+    }
+    if (state->nodes[index].y == 0) {
+        state->nodes[index].handle = Resource_FindFreeEntry();
+        state->nodes[index].tile_id = VramBlock_LoadCached(state->nodes[index].handle, 128, frames);
+        state->nodes[index].y = state->second;
+        state->nodes[index].offset = 0;
+        entry->mode = 0;
+        entry->mosaic = 0;
+        entry->colors = 1;
+        entry->affine = 0;
+        entry->param = 0;
+        entry->size = 0;
+        entry->shape = 2;
+        entry->prio = 0;
+    }
+}
+#endif

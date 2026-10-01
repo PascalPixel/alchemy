@@ -1,6 +1,6 @@
 .syntax unified
 	.thumb
-	.section .rodata.part1,"a",%progbits
+	.section .rodata.x0200bd84,"a",%progbits
 	.global KareiMachi_Data01
 KareiMachi_Data01:
 	.4byte 0x00100000
@@ -1021,10 +1021,10 @@ gKareiMachiEvents1:
 	.4byte 0x0000000e
 	.4byte 0x00000002
 	.4byte 0xffff0009
-	.4byte 0x02008591
+	.4byte FieldScene_RunStagedGroupSequence
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008591
+	.4byte FieldScene_RunStagedGroupSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001a71
@@ -1302,6 +1302,7 @@ gKareiMachiEvents6:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+.L_0200d0c8:
 	.4byte 0x00210023
 	.4byte 0x00020001
 	.4byte 0x00250005
@@ -1310,21 +1311,21 @@ gKareiMachiEvents6:
 	.4byte 0x0000ffff
 	.global KareiMachi_DoorCells
 KareiMachi_DoorCells:
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x000a0024
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x00070039
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x000b0039
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x00170039
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x00190034
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x000e0027
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x000e0033
-	.4byte 0x0200d0c8
+	.4byte .L_0200d0c8
 	.4byte 0x00190029
 	.global KareiMachi_Script02
 KareiMachi_Script02:

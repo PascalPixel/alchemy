@@ -52,7 +52,7 @@ Func_080ad108:
 	.global Party_RemoveActiveOwnerFar
 	.thumb_func
 Party_RemoveActiveOwnerFar:
-	overlay_veneer Func_080afe1c
+	overlay_veneer Party_RemoveActiveOwner
 	.global Func_080ad118
 	.thumb_func
 Func_080ad118:
@@ -124,7 +124,7 @@ Party_AdvanceOwnerCountToTargetFar:
 	.global Func_080ad1a0
 	.thumb_func
 Func_080ad1a0:
-	overlay_veneer Func_080b0028
+	overlay_veneer Owner_GetResistanceValue
 	.global Trade_CountPendingOffersFar
 	.thumb_func
 Trade_CountPendingOffersFar:

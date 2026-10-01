@@ -202,7 +202,7 @@ Func_0815b764:
 .L_0815b8e8:
 	.4byte 0x00001f83
 .L_0815b8ec:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0815b8f0:
 	.4byte 0x04000208
 .L_0815b8f4:
@@ -237,7 +237,7 @@ Func_0815b764:
 	ldr r0, .L_0815ba10
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r7, #0
 	movs r1, #140
 	mov r9, r7
@@ -286,17 +286,17 @@ Func_0815b764:
 	add r1, r11
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0815ba18
 	adds r1, r5, #0
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0815ba1c
 	ldr r1, [sp, #84]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #92]
 	movs r1, #0
 	movs r2, #200
@@ -390,7 +390,7 @@ Func_0815b764:
 	ldr r0, .L_0815bad0
 	add r1, r11
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #1
 	str r3, [sp, #60]
 .L_0815ba76:
@@ -487,7 +487,7 @@ Func_0815b764:
 .L_0815bb2a:
 	movs r1, #18
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	ldr r4, [sp, #88]
 	movs r3, #215
 	lsls r3, r3, #2
@@ -837,7 +837,7 @@ Func_0815b764:
 	add r1, r11
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #0
 	str r0, [sp, #60]
 .L_0815bddc:
@@ -992,7 +992,7 @@ Func_0815b764:
 	ldr r1, .L_0815c0e0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_0815bf08:
 	ldr r7, [sp, #88]
 	cmp r7, #76
@@ -1092,7 +1092,7 @@ Func_0815b764:
 	movs r1, #6
 	bl Math_Div
 	movs r1, #6
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0815c0f4
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -1132,7 +1132,7 @@ Func_0815b764:
 .L_0815c018:
 	movs r1, #18
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0815c104
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -1434,7 +1434,7 @@ Func_0815b764:
 	adds r0, r3, r0
 	movs r1, #6
 	asrs r0, r0, #1
-	bl __modsi3
+	bl Math_Mod
 	lsls r1, r0, #4
 	ldr r4, [sp, #20]
 	subs r1, r1, r0
@@ -1866,7 +1866,7 @@ Func_0815b764:
 .L_0815c5e2:
 	movs r1, #6
 	asrs r0, r0, #2
-	bl __modsi3
+	bl Math_Mod
 	ldr r2, .L_0815c700
 	lsls r3, r0, #1
 	ldrh r1, [r2, r3]
@@ -2138,7 +2138,7 @@ Func_0815b764:
 .L_0815c810:
 	.4byte Func_08143488
 .L_0815c814:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0815c818:
 	.4byte 0x04000208
 .L_0815c81c:
@@ -2303,7 +2303,7 @@ Func_0815b764:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0815c94c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0815c950:
 	.4byte 0x04000208
 .L_0815c954:

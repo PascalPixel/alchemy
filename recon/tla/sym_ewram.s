@@ -112,8 +112,8 @@ Data_02003874:
 	.global Data_020038d0
 Data_020038d0:
 	.space 0x00000010
-	.global Data_020038e0
-Data_020038e0:
+	.global gIoWriteQueue
+gIoWriteQueue:
 	.space 0x00000190
 	.global Data_02003a70
 Data_02003a70:

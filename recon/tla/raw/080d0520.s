@@ -40,7 +40,7 @@ Func_080d0520:
 	movs r1, #0
 	bl Func_080d170c
 	mov r0, r10
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	b .L_080d0718
 .L_080d0578:
 	.4byte .L_080d0544

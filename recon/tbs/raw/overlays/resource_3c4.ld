@@ -13,10 +13,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/CHIKA.o"(.text)
         "*/resource_3c4_overlay.o"(.text.x020090c2)
+        "*/resource_3c4_overlay.o"(.text.x020090c4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/CHIKA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3c4_overlay.o"(.rodata.part1)
+        "*/resource_3c4_overlay.o"(.rodata.x0200b1f0)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

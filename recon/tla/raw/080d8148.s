@@ -20,7 +20,7 @@ BattleFx_ShrinkObjectAndDestroyFast:
 	str r2, [r0, #24]
 	cmp r2, r3
 	bge .L_080d816e
-	bl Func_080200c8
+	bl Object_Destroy
 .L_080d816e:
 	pop {pc}
 .L_080d8170:

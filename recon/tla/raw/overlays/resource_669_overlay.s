@@ -5304,7 +5304,7 @@ gSceneEvents:
 	.4byte 0xffff0005
 	.4byte 0x00000005
 	.4byte 0x00000002
-	.4byte Field_Map006 + 0x48
+	.4byte 0x08aa0014
 	.4byte Func_020004f4
 	.4byte 0x00000000
 	.4byte 0xffff000b

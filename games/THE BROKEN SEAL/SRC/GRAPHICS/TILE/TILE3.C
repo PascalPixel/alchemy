@@ -149,9 +149,6 @@ void DisplayScroll_StepPositionEveryFourFrames(void)
     }
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep this function in their scaffolds for now. */
-
 extern u8 gOamCopyEnabled;
 extern u8 Data_03001f58;
 extern u8 Data_03001ac4;
@@ -219,4 +216,3 @@ s32 DisplayScroll_RunSlideshow(void)
 }
 
 #undef Io_Write16
-#endif

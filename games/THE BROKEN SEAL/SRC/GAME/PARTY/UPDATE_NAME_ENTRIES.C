@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
-s32 Party_Check(void);
+s32 SerialRuntime_BeginTransferB(void);
 void SerialRuntime_WaitForTransferB(void);
 void Party_Apply(s32, u16 *);
 void Party_Do(void *);
@@ -38,7 +38,7 @@ s32 UpdateNameEntries(void)
     index = 0;
     while (index <= 2) {
         name_entry = Runtime_GetObject(index + 128);
-        if (Party_Check() == -1) {
+        if (SerialRuntime_BeginTransferB() == -1) {
             break;
         }
         SerialRuntime_WaitForTransferB();
@@ -73,7 +73,7 @@ s32 UpdateNameEntries(void)
     Party_Do(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(320);
     Trade_GetOfferStateFar(1);
-    if (Party_Check() != -1) {
+    if (SerialRuntime_BeginTransferB() != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }

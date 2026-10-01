@@ -120,8 +120,6 @@ Object_UpdateAllThumb:
 	.incbin "baserom.gba", 0x0000c2cc, 0x00000664
 	.section .rom.0000d2f0, "ax"
 	.incbin "baserom.gba", 0x0000d2f0, 0x000001ec
-	.section .rom.0000d570, "ax"
-	.incbin "baserom.gba", 0x0000d570, 0x00000194
 	.section .rom.0000e3ec, "ax"
 	.incbin "baserom.gba", 0x0000e3ec, 0x0000070c
 	.section .rom.0000f338, "ax"

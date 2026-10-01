@@ -170,7 +170,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT14.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000d2f0)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_AIM_APPROACH_LINKED_OBJECT.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0000d570)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCRIPT/SCRIPT.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000e3ec)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD.o"(.text)

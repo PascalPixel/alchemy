@@ -357,7 +357,6 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
         if (frame <= 23) {
             struct FxPair pair2 = ObjectRow_RisePair;
             s32 ang;
-            s32 swing;
             s32 rise;
 
             row_x -= 16;
@@ -366,15 +365,14 @@ void Unnamed_080eb754(struct BattleEffectArgument *effect)
                 if (ang > 0x8000) {
                     ang -= 0x8000;
                 }
-                swing = Trig_Sin(ang) << 6;
+                rise = (Trig_Sin(ang) << 6) >> 16;
             } else {
                 ang = frame * 2048 + 0x4000;
                 if (ang > 0x8000) {
                     ang -= 0x8000;
                 }
-                swing = Trig_Sin(ang) << 5;
+                rise = (Trig_Sin(ang) << 5) >> 16;
             }
-            rise = swing >> 16;
             place2.unknown_0c = 0;
             place2.scale = 255 << 16;
             i = 0;

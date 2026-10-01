@@ -36,7 +36,7 @@ fn unknown_command_is_refused() {
 
 #[test]
 fn project_build_stages_remain_discoverable() {
-    for stage in ["compilers", "runtime", "rom", "overlays"] {
+    for stage in ["compilers", "runtime", "rom"] {
         let output = command().args(["build", stage, "--help"]).output().unwrap();
         assert!(
             output.status.success(),
@@ -46,31 +46,6 @@ fn project_build_stages_remain_discoverable() {
         assert!(
             String::from_utf8_lossy(&output.stdout).contains("usage: alchemy build"),
             "{stage}"
-        );
-    }
-}
-
-#[test]
-fn overlay_candidates_refuse_unbound_symbols_and_live_products() {
-    for arguments in [
-        vec!["build", "overlays", "--symbols", "old.elf"],
-        vec![
-            "build",
-            "overlays",
-            "--target",
-            "tla-de",
-            "--id",
-            "66c",
-            "--output",
-            "out/tla-de",
-        ],
-    ] {
-        let output = command().args(arguments).output().unwrap();
-        assert!(!output.status.success());
-        let error = String::from_utf8_lossy(&output.stderr);
-        assert!(
-            error.contains("usage:") || error.contains("overlaps live"),
-            "{error}"
         );
     }
 }

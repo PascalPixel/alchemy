@@ -1216,14 +1216,6 @@ BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000c3bbc, 0x00000414
 	.section .rom.000c42bc, "ax"
 	.incbin "baserom.gba", 0x000c42bc, 0x0000045c
-	.section .rom.000c4904, "ax"
-	.global BattleBackground_Load
-	.type BattleBackground_Load, %function
-	.thumb_func
-BattleBackground_Load:
-	.incbin "baserom.gba", 0x000c4904, 0x00000138
-	.section .rom.000c5488, "ax"
-	.incbin "baserom.gba", 0x000c5488, 0x00000260
 	.section .rom.000c57ae, "ax"
 	.incbin "baserom.gba", 0x000c57ae, 0x00000002
 	.section .rom.000c57b0, "ax"
@@ -1358,8 +1350,6 @@ BattleFx_RunParticlePool:
 	.thumb_func
 BattleFx_RunTwelveMode:
 	.incbin "baserom.gba", 0x000cde0c, 0x00000b98
-	.section .rom.000cecec, "ax"
-	.incbin "baserom.gba", 0x000cecec, 0x0000030c
 	.section .rom.000ceff8, "ax"
 	.global Unnamed_080cb7f8
 	.type Unnamed_080cb7f8, %function
@@ -1378,8 +1368,6 @@ BattleEffect_RunTileAndPaletteAnimation:
 	.thumb_func
 Func_080cc5d8:
 	.incbin "baserom.gba", 0x000cfdd8, 0x00000388
-	.section .rom.000d06bc, "ax"
-	.incbin "baserom.gba", 0x000d06bc, 0x00000248
 	.section .rom.000d1834, "ax"
 	.incbin "baserom.gba", 0x000d1834, 0x00000828
 	.section .rom.000d2354, "ax"
@@ -1620,7 +1608,16 @@ BattleFx_GlintCellWidths:
 	.global BattleFx_GlintCellHeights
 BattleFx_GlintCellHeights:
 	.incbin "baserom.gba", 0x000f16d0, 0x00000006
-	.incbin "baserom.gba", 0x000f16d6, 0x0000018e
+	.incbin "baserom.gba", 0x000f16d6, 0x000000a9
+	.global BladeRain_CellWidths
+BladeRain_CellWidths:
+	.incbin "baserom.gba", 0x000f177f, 0x00000004
+	.global BladeRain_CellHeights
+BladeRain_CellHeights:
+	.incbin "baserom.gba", 0x000f1783, 0x00000005
+	.global BladeRain_CellSourceOffsets
+BladeRain_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000f1788, 0x000000dc
 	.global TwoResource_CellWidths
 TwoResource_CellWidths:
 	.incbin "baserom.gba", 0x000f1864, 0x00000006

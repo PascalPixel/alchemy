@@ -2,6 +2,11 @@
 #include "SYSTEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
+#include "RESOURCE.H"
+#include "RAM_BUFFER.H"
+#include "IWRAM_CALL.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "BATTLE_WORK.H"
 
 extern u32 *gTransitionWork;
 
@@ -20,4 +25,71 @@ void BattlePresentation_InitializeWorkAndResetState(void)
 void Runtime_ReleaseHeapBlock10(void)
 {
     Runtime_ReleaseHeapBlock(0xA);
+}
+
+typedef void (*BitDecoder)(const u8 *source, void *destination);
+
+/* The battle view's display mode: 0 until a background is shown. */
+struct BattleView {
+    u8 padding00[8];
+    s32 mode;
+};
+
+/* The length of the tile bit decoder block copied to RAM, DECODE.S through
+   BIT_COMMANDS.S, as the linker script measures it. */
+extern u8 BitDecoder_Size[];
+
+void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
+s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
+void Graphics_BuildSequentialTileTable(void *destination);
+void BattlePresentation_BuildTilemap(void *destination);
+void BitDecoder_DecodeImage(void);
+void BattlePres_UpdateHBlankScroll(void);
+
+/* Decode a battle background's tiles through the bit decoder copied into
+   heap slot 49, keep its palette in the session and show it at the given
+   level (a negative level leaves the shown palette alone), then rebuild the
+   tile table and the tilemap and start the H-blank scroll on first use. */
+void BattleBackground_Load(s32 mode, s32 resource, s32 level)
+{
+    void **cache = &Ram_WorkSlot[44];
+    struct BattleView *view = cache[44 - 44];
+    u8 *data = Resource_GetTableEntry(resource);
+    struct BattleSession *session = cache[9 - 44];
+    u16 *palette;
+
+    /* FAKEMATCH: the one-pass block keeps the size load after the session load and the decoder call after the copy. */
+    do {
+        u32 size = (u32)BitDecoder_Size;
+        void *decoder = Runtime_AllocateHeapBlock(49, size);
+
+        Dma_Set((void *)BitDecoder_DecodeImage, decoder, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    } while (0);
+    {
+        u32 offset = 0x100;
+        void *vram;
+
+        /* Dma_Set is a volatile statement, which the scheduler counts as one
+           more dependent of the tile address: written plainly, the address
+           is added before the VRAM address loads, the reverse of the ROM. */
+        /* FAKEMATCH: the empty statement keeps the tile offset a load of its own, ahead of the VRAM address. */
+        __asm__("" : "+r"(offset));
+        vram = (void *)0x06008000;
+        ((BitDecoder)cache[49 - 44])(data + offset, vram);
+    }
+    Runtime_ReleaseHeapBlock(49);
+    palette = session->palette;
+    Dma_Set(data, palette, 0x84000040, (volatile u32 *)0x040000d4);
+    if (level >= 0)
+        Graphics_ScaleRgb555Clamped(palette, (u16 *)0x050000c0, session->brightness = 0x10000 - level * 1092, 128);
+    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, (volatile u32 *)0x040000d4);
+    *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+    Graphics_BuildSequentialTileTable((void *)0x06003800);
+    BattlePresentation_BuildTilemap((void *)0x0600f800);
+    Iwram_ClearWords((void *)0x0600ffc0, 64);
+    if (view->mode == 0)
+        Scheduler_AddOrUpdateCallback((s32)BattlePres_UpdateHBlankScroll, 0x4ff);
+    view->mode = mode;
+    if (mode == 1)
+        *(volatile u16 *)0x0400000a = 0x1f83;
 }

@@ -19,6 +19,12 @@
  * countdown, through a preference or registers used so far. The timer
  * loop's reload registers follow from that. Declaration order changes
  * nothing (120 orders); the permuter finds nothing below 300 in ten minutes.
+ * Later the same day: indexing the points (i++ and points + i * 8) gives
+ * exactly the reference's left in r7 and offset in r6, because loop.c's
+ * reduced register (7 references over 17 insns) outranks left where the
+ * user index (7 over 34) does not; but loop.c then reduces the point
+ * itself (adds r5, r6, #0 for adds r5, r3, r6) and it scores 815. Testing
+ * count, seeding the point from the index, register and u32 change nothing.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

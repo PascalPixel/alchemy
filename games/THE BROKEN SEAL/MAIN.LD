@@ -774,7 +774,6 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000d1b74)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BOLTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000d26e0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT18.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)

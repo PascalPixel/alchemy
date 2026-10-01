@@ -1454,12 +1454,6 @@ BattleEffect_RunEmberColumns:
 	.thumb_func
 BattleFx_RunSparkGroups:
 	.incbin "baserom.gba", 0x000d6404, 0x000006e4
-	.section .rom.000d70c8, "ax"
-	.global BattleFx_RenderMode
-	.type BattleFx_RenderMode, %function
-	.thumb_func
-BattleFx_RenderMode:
-	.incbin "baserom.gba", 0x000d70c8, 0x000006e8
 	.section .rom.000d7c54, "ax"
 	.incbin "baserom.gba", 0x000d7c54, 0x000006b0
 	.section .rom.000d8770, "ax"
@@ -1659,7 +1653,10 @@ FirePillars_Depths:
 	.incbin "baserom.gba", 0x000f009d, 0x0000000c
 	.global FirePillars_StartFrames
 FirePillars_StartFrames:
-	.incbin "baserom.gba", 0x000f00a9, 0x0000000b
+	.incbin "baserom.gba", 0x000f00a9, 0x00000005
+	.global RenderMode_GlintFlips
+RenderMode_GlintFlips:
+	.incbin "baserom.gba", 0x000f00ae, 0x00000006
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000f00b4, 0x000006c0

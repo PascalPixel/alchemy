@@ -1484,12 +1484,6 @@ RunPaletteRampEffect:
 	.thumb_func
 RunParticleFieldEffect:
 	.incbin "baserom.gba", 0x000db6e0, 0x00000444
-	.section .rom.000dc968, "ax"
-	.global BattleEffect_RunStagedParticles
-	.type BattleEffect_RunStagedParticles, %function
-	.thumb_func
-BattleEffect_RunStagedParticles:
-	.incbin "baserom.gba", 0x000dc968, 0x00000944
 	.section .rom.000ddde0, "ax"
 	.incbin "baserom.gba", 0x000ddde0, 0x00000518
 	.section .rom.000dea6e, "ax"
@@ -1692,7 +1686,10 @@ BattleFx10_FallHeights:
 	.incbin "baserom.gba", 0x000ee9ef, 0x00000003
 	.global BattleFx10_FallCells
 BattleFx10_FallCells:
-	.incbin "baserom.gba", 0x000ee9f2, 0x00000156
+	.incbin "baserom.gba", 0x000ee9f2, 0x0000014e
+	.global StagedParticles_UnitScale
+StagedParticles_UnitScale:
+	.incbin "baserom.gba", 0x000eeb40, 0x00000008
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000eeb48, 0x00000003

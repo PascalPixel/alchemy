@@ -767,7 +767,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT18.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000dc968)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STAGED_PARTICLES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT19.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000ddde0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PREPARE_CANVAS_EFFECT.o"(.text)

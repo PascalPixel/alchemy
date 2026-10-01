@@ -6,7 +6,7 @@ use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use psynergy::assets::wav::wav_pcm8;
 use std::collections::{BTreeMap, BTreeSet};
 use std::io::{BufRead, BufReader, Read, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode, Stdio};
 const BLOCKED_EXTENSIONS: &[&str] = &[
     "a", "bin", "bps", "bsdiff", "d", "diff", "dis", "dll", "dmp", "dump", "dylib", "elf", "exe",
@@ -20,7 +20,7 @@ pub(crate) const PRESENTATION_EXTENSIONS: &[&str] = &[
     "mov", "svg",
 ];
 const BACKUP_EXTENSIONS: &[&str] = &["bak", "orig", "rej", "swp"];
-/// The only two owned prose documents, including ignored output.
+/// The only two owned prose documents, in every path git does not ignore.
 const DOCUMENT_EXTENSIONS: &[&str] = &[
     "adoc", "asciidoc", "markdown", "md", "mdown", "mkdn", "mdx", "rdoc", "rest", "rst", "text",
     "txt",
@@ -336,13 +336,39 @@ fn upstream_documents(root: &Path, path: &Path) -> bool {
                 && path.join("bfd").is_dir()
         })
 }
+/// Every untracked path git's standard excludes ignore, an ignored directory
+/// named once and not entered. A tracked file is never among them.
+fn ignored_paths(root: &Path) -> Result<BTreeSet<PathBuf>, String> {
+    let output = git(
+        root,
+        &[
+            "ls-files",
+            "-z",
+            "--others",
+            "--ignored",
+            "--exclude-standard",
+            "--directory",
+        ],
+        "ignored path scan",
+    )?;
+    Ok(nul_list(&output)
+        .iter()
+        .map(|path| root.join(path.trim_end_matches('/')))
+        .collect())
+}
+/// Tracked files and untracked files git does not ignore, nested checkouts
+/// included. Ignored paths (build output, other worktrees) are not read.
 fn check_documents(root: &Path) -> Result<(), String> {
+    let ignored = ignored_paths(root)?;
     let mut pending = vec![root.to_path_buf()];
     let mut rejected = Vec::new();
     while let Some(directory) = pending.pop() {
         for entry in std::fs::read_dir(&directory).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
             let path = entry.path();
+            if ignored.contains(&path) {
+                continue;
+            }
             let kind = entry.file_type().map_err(|e| e.to_string())?;
             if kind.is_dir() {
                 if entry.file_name() != ".git" && !upstream_documents(root, &path) {
@@ -367,7 +393,7 @@ fn check_documents(root: &Path) -> Result<(), String> {
         Ok(())
     } else {
         Err(format!(
-            "separate documentation is forbidden, including ignored files:\n{}",
+            "separate documentation is forbidden:\n{}",
             rejected.join("\n")
         ))
     }
@@ -3905,7 +3931,7 @@ fn self_test(root: &Path) -> Result<(), String> {
     }
     Ok(())
 }
-const USAGE: &str = "usage: check publication [--documents | --staged | --pre-push | --tree [REV] | --history [REV] | --self-test]\n\nModes:\n  --documents    Check owned documentation, including ignored output.\n  --history [REV] Check every commit message and file version in history, or reachable from REV; writes out/history-audit.tsv.\n  --staged       Check staged files before committing.\n  --pre-push     Check commits absent from remotes and each pushed tree using update lines on stdin.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
+const USAGE: &str = "usage: check publication [--documents | --staged | --pre-push | --tree [REV] | --history [REV] | --self-test]\n\nModes:\n  --documents    Check owned documentation in every path git does not ignore.\n  --history [REV] Check every commit message and file version in history, or reachable from REV; writes out/history-audit.tsv.\n  --staged       Check staged files before committing.\n  --pre-push     Check commits absent from remotes and each pushed tree using update lines on stdin.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
 fn fail(message: &str) -> ExitCode {
     eprintln!("error: {message}");
     ExitCode::FAILURE
@@ -4696,12 +4722,14 @@ mod tests {
         assert!(publication_path_reason("tools/reverse-gcc296/src/main.rs").is_none());
     }
     #[test]
-    fn documents_have_two_owners_even_in_ignored_or_nested_checkouts() {
+    fn documents_have_two_owners_in_nested_checkouts_but_ignored_paths_are_not_read() {
         let temp = tempfile::tempdir().unwrap();
         let root = temp.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
         for dir in [
             "out",
             ".agents",
+            ".claude/worktrees/agent",
             "worktrees/scene",
             "tools/out/compiler-build/experiment/gcc",
             "tools/out/compiler-build/sources/binutils-2.10/gas",
@@ -4711,7 +4739,11 @@ mod tests {
         ] {
             std::fs::create_dir_all(root.join(dir)).unwrap();
         }
-        std::fs::write(root.join(".gitignore"), "out/\n").unwrap();
+        // The root's build output and one local file are ignored in the tree;
+        // other worktrees are ignored in the checkout's own exclude file.
+        std::fs::write(root.join(".gitignore"), "/out/\n/local.txt\n").unwrap();
+        std::fs::create_dir_all(root.join(".git/info")).unwrap();
+        std::fs::write(root.join(".git/info/exclude"), ".claude/worktrees/\n").unwrap();
         std::fs::write(root.join("README.md"), "public introduction").unwrap();
         std::fs::write(root.join("AGENTS.md"), "all working guidance").unwrap();
         std::fs::write(root.join("agscc/README.md"), "upstream").unwrap();
@@ -4736,20 +4768,20 @@ mod tests {
         )
         .unwrap();
         std::fs::write(root.join("worktrees/scene/.git"), "gitdir: ../../.git\n").unwrap();
+        std::fs::write(
+            root.join(".claude/worktrees/agent/.git"),
+            "gitdir: ../../../.git\n",
+        )
+        .unwrap();
         assert!(check_documents(root).is_ok());
+        // Tracked or untracked, a document git does not ignore is refused,
+        // in a nested checkout too.
         for name in [
-            "out/verdict.md",
-            "out/score.TXT",
-            "out/plan.rst",
-            "out/notes.text",
-            "out/notes.mdown",
-            "out/notes.rest",
-            "out/notes.adoc",
-            "out/allocator-order/normal.text",
             "tools/out/compiler-build/notes.md",
             "TODO.md",
             "CONTRIBUTING.md",
             ".agents/RECOVERY.md",
+            ".claude/plan.md",
             "worktrees/scene/README.md",
             "worktrees/scene/score.txt",
         ] {
@@ -4757,15 +4789,54 @@ mod tests {
             assert!(check_documents(root).unwrap_err().contains(name), "{name}");
             std::fs::remove_file(root.join(name)).unwrap();
         }
-        // An extra document symlink must not bypass the same path policy.
+        // What git ignores is not read: build output, a local file and other
+        // worktrees, each with the documents of its own checkout.
+        for name in [
+            "out/verdict.md",
+            "out/score.TXT",
+            "out/plan.rst",
+            "out/allocator-order/normal.text",
+            "local.txt",
+            ".claude/worktrees/agent/README.md",
+            ".claude/worktrees/agent/AGENTS.md",
+            ".claude/worktrees/agent/out/notes.md",
+        ] {
+            std::fs::create_dir_all(root.join(name).parent().unwrap()).unwrap();
+            std::fs::write(root.join(name), "another guide").unwrap();
+            assert!(check_documents(root).is_ok(), "{name}");
+        }
         std::os::unix::fs::symlink("../AGENTS.md", root.join("out/alias.md")).unwrap();
-        assert!(check_documents(root).unwrap_err().contains("out/alias.md"));
-        std::fs::remove_file(root.join("out/alias.md")).unwrap();
+        assert!(check_documents(root).is_ok());
+        // An ignore rule never hides a tracked document.
+        git(
+            root,
+            &["add", "--force", "out/verdict.md", "local.txt"],
+            "fixture git",
+        )
+        .unwrap();
+        let error = check_documents(root).unwrap_err();
+        assert!(error.contains("out/verdict.md"), "{error}");
+        assert!(error.contains("local.txt"), "{error}");
+        assert!(!error.contains("out/score.TXT"), "{error}");
+        assert!(!error.contains("out/alias.md"), "{error}");
+        assert!(!error.contains(".claude/worktrees"), "{error}");
+        git(
+            root,
+            &["rm", "--quiet", "--force", "out/verdict.md", "local.txt"],
+            "fixture git",
+        )
+        .unwrap();
+        assert!(check_documents(root).is_ok());
+        // A competing guide beside the two owners fails as a file or a link.
         std::fs::write(root.join("CLAUDE.md"), "a competing guide").unwrap();
         assert!(check_documents(root).unwrap_err().contains("CLAUDE.md"));
         std::fs::remove_file(root.join("CLAUDE.md")).unwrap();
         std::os::unix::fs::symlink("AGENTS.md", root.join("CLAUDE.md")).unwrap();
         assert!(check_documents(root).unwrap_err().contains("CLAUDE.md"));
+        // Outside a git checkout nothing says what is ignored: the check fails.
+        let bare = tempfile::tempdir().unwrap();
+        std::fs::write(bare.path().join("README.md"), "public introduction").unwrap();
+        assert!(check_documents(bare.path()).is_err());
     }
     #[test]
     fn later_parts_share_the_first_parts_built_palette() {

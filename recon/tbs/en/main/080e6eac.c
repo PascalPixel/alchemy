@@ -2,8 +2,6 @@
 #include "BATTLE_EFX.H"
 
 /* Runs the layered particle presentation over the shared battle-effect work buffers. */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*ClearFn)(void *dest, s32 size);
 
@@ -46,9 +44,9 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
     half_x = (raw_x + 0x280000) / 2;
     aux = heap_cache[2];
 
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x80;
-    M2C_FIELD((void *)0x04000020, s32 *, 8) = 0;
-    M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F46;
+    (*(s16 *)((u8 *)((void *)0x04000020) + 0)) = 0x80;
+    (*(s32 *)((u8 *)((void *)0x04000020) + 8)) = 0;
+    (*(s16 *)((u8 *)((void *)0x04000050) + 0)) = 0x3F46;
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rect0 = heap_cache[7];
@@ -59,8 +57,8 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
     Resource_LoadAndDecompress(0x5E, work, 1, 0);
     Resource_LoadAndDecompress(0x5F, (u8 *)work + 0x59D8, 0, 0);
 
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
+    (*(s32 *)((u8 *)work + 0x7780)) = 2;
+    (*(s32 *)((u8 *)work + 0x7784)) = 50;
     Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     {
@@ -73,13 +71,13 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
 
             amp = (0xFF & Random16()) + 0x100;
             seed = (u16)Random16();
-            M2C_FIELD(record_cursor, s32 *, 0) = half_x;
-            M2C_FIELD(record_cursor, s32 *, 4) = y_arg;
-            M2C_FIELD(record_cursor, s32 *, 0xC) =
+            (*(s32 *)((u8 *)record_cursor + 0)) = half_x;
+            (*(s32 *)((u8 *)record_cursor + 4)) = y_arg;
+            (*(s32 *)((u8 *)record_cursor + 0xC)) =
                 (amp * Trig_Sin(seed)) >> 7;
-            M2C_FIELD(record_cursor, s32 *, 0x10) =
+            (*(s32 *)((u8 *)record_cursor + 0x10)) =
                 0 - ((amp * Trig_Cos(seed)) >> 6);
-            M2C_FIELD(record_cursor, s32 *, 0x18) =
+            (*(s32 *)((u8 *)record_cursor + 0x18)) =
                 (0xF & Random16()) + 0x10;
             record_cursor = (u8 *)record_cursor + 0x1C;
         }
@@ -92,11 +90,11 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
         record_cursor = (u8 *)work + 0x772C;
         angle = 0;
         for (i = 0; i != 3; i++) {
-            M2C_FIELD(record_cursor, s32 *, 0) = half_x;
-            M2C_FIELD(record_cursor, s32 *, 4) = y_arg;
-            M2C_FIELD(record_cursor, s32 *, 0xC) =
+            (*(s32 *)((u8 *)record_cursor + 0)) = half_x;
+            (*(s32 *)((u8 *)record_cursor + 4)) = y_arg;
+            (*(s32 *)((u8 *)record_cursor + 0xC)) =
                 (Trig_Sin(angle) << 5) >> 6;
-            M2C_FIELD(record_cursor, s32 *, 0x10) =
+            (*(s32 *)((u8 *)record_cursor + 0x10)) =
                 0 - ((Trig_Cos(angle) << 5) >> 5);
             angle += 0x5555;
             record_cursor = (u8 *)record_cursor + 0x1C;
@@ -113,13 +111,13 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
 
             amp = (0xFF & Random16()) + 0x20;
             seed = (u16)Random16();
-            M2C_FIELD(record_cursor, s32 *, 0) = half_x;
-            M2C_FIELD(record_cursor, s32 *, 4) = y_arg;
-            M2C_FIELD(record_cursor, s32 *, 0xC) =
+            (*(s32 *)((u8 *)record_cursor + 0)) = half_x;
+            (*(s32 *)((u8 *)record_cursor + 4)) = y_arg;
+            (*(s32 *)((u8 *)record_cursor + 0xC)) =
                 (amp * Trig_Sin(seed)) >> 6;
-            M2C_FIELD(record_cursor, s32 *, 0x10) =
+            (*(s32 *)((u8 *)record_cursor + 0x10)) =
                 0 - ((amp * Trig_Cos(seed)) >> 5);
-            M2C_FIELD(record_cursor, s32 *, 0x18) =
+            (*(s32 *)((u8 *)record_cursor + 0x18)) =
                 (0xF & Random16()) + 0x14;
             record_cursor = (u8 *)record_cursor + 0x1C;
         }
@@ -156,15 +154,15 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
                 if (frame > i / 2) {
                     s32 timer;
 
-                    timer = M2C_FIELD(record_cursor, s32 *, 0x18);
+                    timer = (*(s32 *)((u8 *)record_cursor + 0x18));
                     if (timer > 0) {
                         s32 phase;
                         s32 tile;
                         s32 half;
 
-                        M2C_FIELD(record_cursor, s32 *, 0x18) = timer - 1;
+                        (*(s32 *)((u8 *)record_cursor + 0x18)) = timer - 1;
                         EffectStep_AdvanceWithGravity2D(record_cursor, 60, 0);
-                        phase = M2C_FIELD(record_cursor, s32 *, 0x18);
+                        phase = (*(s32 *)((u8 *)record_cursor + 0x18));
                         if (phase < 0) {
                             phase += 15;
                         }
@@ -174,8 +172,8 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
                         ((DrawRectangleFn)rect1)(
                             canvas,
                             (u8 *)aux + ParticleStreams_CellOffsets[phase - 1],
-                            M2C_FIELD(record_cursor, s16 *, 2) - half,
-                            M2C_FIELD(record_cursor, s16 *, 6) - phase,
+                            (*(s16 *)((u8 *)record_cursor + 2)) - half,
+                            (*(s16 *)((u8 *)record_cursor + 6)) - phase,
                             phase, tile);
                     }
                 }
@@ -193,15 +191,15 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
                 if (frame > 35) {
                     s32 timer;
 
-                    timer = M2C_FIELD(record_cursor, s32 *, 0x18);
+                    timer = (*(s32 *)((u8 *)record_cursor + 0x18));
                     if (timer > 0) {
                         s32 phase;
                         s32 tile;
                         s32 half;
 
-                        M2C_FIELD(record_cursor, s32 *, 0x18) = timer - 1;
+                        (*(s32 *)((u8 *)record_cursor + 0x18)) = timer - 1;
                         EffectStep_AdvanceWithGravity2D(record_cursor, 60, 0);
-                        phase = M2C_FIELD(record_cursor, s32 *, 0x18);
+                        phase = (*(s32 *)((u8 *)record_cursor + 0x18));
                         if (phase < 0) {
                             phase += 15;
                         }
@@ -211,8 +209,8 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
                         ((DrawRectangleFn)rect1)(
                             canvas,
                             (u8 *)aux + table[phase - 1],
-                            M2C_FIELD(record_cursor, s16 *, 2) - half,
-                            M2C_FIELD(record_cursor, s16 *, 6) - phase,
+                            (*(s16 *)((u8 *)record_cursor + 2)) - half,
+                            (*(s16 *)((u8 *)record_cursor + 6)) - phase,
                             phase, tile);
                     }
                 }
@@ -232,8 +230,8 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
                     ((DrawRectangleFn)rect0)(
                         canvas,
                         (u8 *)work + 0x59D8 + __divsi3(age, 7) * 0x120,
-                        M2C_FIELD(record_cursor, s16 *, 2) - 6,
-                        M2C_FIELD(record_cursor, s16 *, 6) - 12, 12, 24);
+                        (*(s16 *)((u8 *)record_cursor + 2)) - 6,
+                        (*(s16 *)((u8 *)record_cursor + 6)) - 12, 12, 24);
                 }
                 record_cursor = (u8 *)record_cursor + 0x1C;
             }
@@ -243,7 +241,7 @@ void BattleEffect_RunImpactBurst(void *object, s32 x_arg, s32 y_arg)
             BattleFx_PlaceFormationObjects(object, raw_x, y_arg);
         }
 
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((u8 *)work + 0x7824)) = 1;
         WaitFrames(1);
     }
 

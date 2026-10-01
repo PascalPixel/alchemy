@@ -128,7 +128,6 @@
  * (1596 -> 1572 bytes, 637 -> 623 differing halfwords).
  */
 
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 /* The object pointer this owner parks in, and reloads from, work + 0x7828. */
 #define STATE (*(void **)(work + 0x7828))
@@ -256,9 +255,9 @@ void BattlePres_RunBeamSequence(void *object)
     draw_target = *cursor;
     sprite_src = heap[2];
     xfer = heap[-27];
-    kind = M2C_FIELD(object, s32 *, 0);
+    kind = (*(s32 *)((s8 *)object + 0));
     STATE = object;
-    record = Owner_GetStateFar(M2C_FIELD(object, s32 *, 8));
+    record = Owner_GetStateFar((*(s32 *)((s8 *)object + 8)));
     WaitFrames(1);
     BattlePres_ConfigureEffectDisplay();
     BattleFx_SetupCanvasTileMap();
@@ -267,7 +266,7 @@ void BattlePres_RunBeamSequence(void *object)
 
     /* Register the two rectangle blits for the beam body. */
     if (kind == 5) {
-        if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+        if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
             BattleEffect_LoadWork(46, 7, 7, 11, 3);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
         } else {
@@ -275,7 +274,7 @@ void BattlePres_RunBeamSequence(void *object)
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
         }
     } else {
-        if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+        if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
             BattleEffect_LoadWork(46, 7, 7, 3, 3);
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
         } else {
@@ -305,7 +304,7 @@ void BattlePres_RunBeamSequence(void *object)
         }
     }
 
-    if (M2C_FIELD(STATE, s32 *, 8) > 7) {
+    if ((*(s32 *)((s8 *)STATE + 8)) > 7) {
         IWRAM_COPY((void *)0x05000000,
             Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 0x80);
     } else {
@@ -315,13 +314,13 @@ void BattlePres_RunBeamSequence(void *object)
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprite_src, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, (void *)0x02010000, 1, 0);
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
+    (*(s32 *)((s8 *)work + 0x7780)) = 2;
+    (*(s32 *)((s8 *)work + 0x7784)) = 50;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     REG_BG1CNT = 0x1F81;
 
-    EffectPosition_ApplyAnimationAndYOffset(M2C_FIELD(STATE, s16 *, 0x24), anchor);
-    if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+    EffectPosition_ApplyAnimationAndYOffset((*(s16 *)((s8 *)STATE + 0x24)), anchor);
+    if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
         dx = 96 - anchor[0];
     } else {
         dx = 32 - anchor[0];
@@ -338,8 +337,8 @@ void BattlePres_RunBeamSequence(void *object)
     WaitFrames(1);
 
     /* Seed the sparks from the actor's world position. */
-    member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 0x24));
-    half = Battle_GetObjectTableValueFar(M2C_FIELD(STATE, s16 *, 0x24)) / 2;
+    member = *GetBattleObjectSlotFar((*(s16 *)((s8 *)STATE + 0x24)));
+    half = Battle_GetObjectTableValueFar((*(s16 *)((s8 *)STATE + 0x24))) / 2;
     spark = SPARKS;
     i = 0;
     do {
@@ -361,23 +360,23 @@ void BattlePres_RunBeamSequence(void *object)
     i = 0;
     do {
         if (i == 5) {
-            if (Summon_IsEntrySecondaryFlaggedFar(M2C_FIELD(record, u8 *, 296)) != 0) {
+            if (Summon_IsEntrySecondaryFlaggedFar((*(u8 *)((s8 *)record + 296))) != 0) {
                 BattleEventRuntime_BeginPhaseFar(134);
             } else {
                 BattleEventRuntime_BeginPhaseFar(133);
             }
         }
         if (i == 4) {
-            BattleMotion_ApplyVariantMotionFar(M2C_FIELD(STATE, s16 *, 0x24), 0);
+            BattleMotion_ApplyVariantMotionFar((*(s16 *)((s8 *)STATE + 0x24)), 0);
         }
 
-        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
+        EffectPosition_ApplyStepAndYOffset((*(s32 *)((s8 *)STATE + 8)), pos);
         pos[1] = pos[1] + 16;
 
         /* The beam body, one rectangle per scene family. */
         if (kind == 4) {
             if (i <= 11) {
-                if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+                if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
                     blit[1](draw_target, work + (5 - i / 2) * 768,
                         pos[0] + dx - 48, pos[1] - 8, 48, 16);
                 } else {
@@ -387,7 +386,7 @@ void BattlePres_RunBeamSequence(void *object)
             }
         } else if ((kind >= 0 && kind <= 2) || kind == 5) {
             if (i <= 11) {
-                if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+                if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
                     blit[1](draw_target, work + (i / 2) * 3456,
                         pos[0] + dx - 48, pos[1] - 40, 48, 72);
                 } else {
@@ -398,7 +397,7 @@ void BattlePres_RunBeamSequence(void *object)
         } else {
             if (i <= 17) {
                 idx = __divsi3(i, 3);
-                if (M2C_FIELD(STATE, s32 *, 4) == 0) {
+                if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
                     blit[1](draw_target, work + Data_080eedbe[idx],
                         pos[0] + Data_080eedca[idx] + dx - 58,
                         pos[1] - Data_080eedb8[idx] / 2,
@@ -444,7 +443,7 @@ void BattlePres_RunBeamSequence(void *object)
             } while (j != 64);
         }
 
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        (*(s32 *)((s8 *)work + 0x7824)) = 1;
         WaitFrames(1);
         i++;
     } while (i != 32);

@@ -41,4 +41,4 @@ Owner_GetLevelThreshold:
 .L_080af916:
 	pop {r5, pc}
 .L_080af918:
-	.4byte Data_080b12c8
+	.4byte Owner_ExperienceThresholds

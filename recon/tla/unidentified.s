@@ -478,8 +478,8 @@ Data_080b1284:
 	.global Data_080b1290
 Data_080b1290:
 	.incbin "baserom.gba", 0x000b1290, 0x00000038
-	.global Data_080b12c8
-Data_080b12c8:
+	.global Owner_ExperienceThresholds
+Owner_ExperienceThresholds:
 	.incbin "baserom.gba", 0x000b12c8, 0x00000c60
 	.section .unidentified.080b1f2c,"a"
 	.global Data_080b1f2c
@@ -500,8 +500,8 @@ BattleAction_DefinitionTable:
 	.global Data_080b9e7c
 Data_080b9e7c:
 	.incbin "baserom.gba", 0x000b9e7c, 0x000070d0
-	.global Data_080c0f4c
-Data_080c0f4c:
+	.global Owner_GrowthRecords
+Owner_GrowthRecords:
 	.incbin "baserom.gba", 0x000c0f4c, 0x000005a0
 	.global Summon_OrderList
 Summon_OrderList:

@@ -1113,14 +1113,14 @@ Data_080ee207:
 	.global Data_080ee214
 Data_080ee214:
 	.incbin "baserom.gba", 0x000ee214, 0x00000030
-	.global Data_080ee244
-Data_080ee244:
+	.global LightningPillar_Sparks
+LightningPillar_Sparks:
 	.incbin "baserom.gba", 0x000ee244, 0x0000000c
-	.global Data_080ee250
-Data_080ee250:
+	.global LightningPillar_Columns
+LightningPillar_Columns:
 	.incbin "baserom.gba", 0x000ee250, 0x0000000e
-	.global Data_080ee25e
-Data_080ee25e:
+	.global LightningPillar_Counts
+LightningPillar_Counts:
 	.incbin "baserom.gba", 0x000ee25e, 0x00000004
 	.global Data_080ee262
 Data_080ee262:

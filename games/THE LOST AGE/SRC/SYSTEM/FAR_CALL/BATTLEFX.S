@@ -28,7 +28,7 @@ Func_080c8540:
 	.global Func_080c8548
 	.thumb_func
 Func_080c8548:
-	overlay_veneer Func_080cb6f4
+	overlay_veneer BattleParty_ApplyHealthDelta
 	.global Func_080c8550
 	.thumb_func
 Func_080c8550:

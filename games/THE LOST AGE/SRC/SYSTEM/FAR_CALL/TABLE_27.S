@@ -12,7 +12,7 @@ Func_080c8378:
 	.global Func_080c8380
 	.thumb_func
 Func_080c8380:
-	overlay_veneer Func_080d172c
+	overlay_veneer BattleFx_ApplyColorToSourceBuffer
 	.global Func_080c8388
 	.thumb_func
 Func_080c8388:

@@ -75,9 +75,9 @@ Func_080cb788:
 	lsls r0, r0, #1
 	adds r0, #255
 	movs r1, #0
-	bl Func_080d172c
+	bl BattleFx_ApplyColorToSourceBuffer
 	movs r0, #4
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	movs r0, #133
 	bl Audio_PlayCue
 .L_080cb822:

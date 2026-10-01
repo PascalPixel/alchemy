@@ -12,11 +12,11 @@ ResourceMetadata_RegisterFar:
 	.global Func_08020060
 	.thumb_func
 Func_08020060:
-	overlay_veneer Func_08022a24
+	overlay_veneer ResourceMetadata_Unregister
 	.global Func_08020068
 	.thumb_func
 Func_08020068:
-	overlay_veneer Func_08022a84
+	overlay_veneer ResourceMetadata_ReleaseSlot
 	.global ResourceMetadata_ClearRecordFar
 	.thumb_func
 ResourceMetadata_ClearRecordFar:

@@ -1,26 +1,42 @@
 # Alchemy
 
 Golden Sun: **The Broken Seal (TBS)** ☀️ and **The Lost Age (TLA)** ⚓️,
-rebuilt byte for byte from readable C, assembly and editable assets. Japanese
-releases are the source editions; localizations are measured differences.
-Build IDs are `tbs` and `tla`. All twelve editions build their code from C.
+rebuilt byte for byte from readable C, assembly and editable assets, in all
+twelve editions: each game in Japanese, English, German, Spanish, French and
+Italian. Japanese releases are the source editions; localizations are measured
+differences. Build IDs are `tbs` and `tla`, then the language: `tbs-ja`,
+`tla-en`.
 
 This file is the only place Alchemy's rules live. `README.md` is for fans.
-Every rule has an ID; a rule a tool can enforce names its check, and every
-check in `make verify` names the rule it enforces. Pascal decides rule
-wording, compilers, what counts as DONE, and deleting anything that cannot be
-restored; git history records when. Everything else goes ahead without
-asking him, including fixing a check that wrongly blocks honest work, as long
-as it still refuses everything it refused before.
+Every rule has an ID, and a rule a tool can enforce names its check. Pascal
+decides rule wording, compilers, what counts as DONE, and deleting anything
+that cannot be restored; git history records when. Everything else goes ahead
+without asking him, including fixing a check that wrongly blocks honest work,
+as long as it still refuses everything it refused before.
 
 ## Goal
 
 **DONE = matching C + proven library, handwritten or veneer assembly**, over
-each game's executable bytes in all six of its editions together.
-`make progress` prints the exact counts, shows ⚓️ in its parts (C, assembly and
-8-byte stubs) and shows the bytes of FAKEMATCH-steered code as their own
-number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%, sharing as much
-code between the games as possible.
+each game's executable bytes in all six of its editions together. 100% means
+every language of a game builds all of its code from source. `make progress`
+prints the exact counts with one line per edition, shows ⚓️ in its parts (C,
+assembly and 8-byte stubs) and shows the bytes of FAKEMATCH-steered code as
+their own number. ☀️ has the priority; the target is ☀️ 100% and ⚓️ 100%,
+sharing as much code between the games as possible.
+
+## Where things are
+
+- `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT` and `games/COMMON` hold the
+  source. `games/<GAME>/MAIN.LD` is the Japanese object order.
+- `recon/<game>/raw` holds the English disassembly of code that is not C yet,
+  one listing per function or run. `recon/<game>/en/MAIN.LD` is the English
+  object order; German, Spanish, French and Italian follow it through their
+  own `recon/<game>/<lang>/MAIN.LD`.
+- `recon/<game>/<lang>` holds that edition's ROM scaffold (`rom.s`,
+  `overlays.s`) and its drafts (`main/`, `overlays/`).
+- `tools/` holds alchemy (build, checks, count), ags (encoders) and psynergy
+  (reading and analysis). `out/` and `tools/out/` are build output and are
+  ignored.
 
 ## Rules
 
@@ -29,8 +45,8 @@ code between the games as possible.
 - **L1** Never commit, upload or publish a ROM, the cartridge logo, private
   inputs or any other copy of the original game files. _Check: publication._
 - **L2** Evidence comes only from our own ROMs, this repository and public
-  documentation. Never use another project's Golden Sun work.
-  _Check: publication._
+  documentation. Never use another project's Golden Sun work, and never open
+  one to compare.
 - **L3** Never use leaked Nintendo or Camelot code or SDKs, and never open, read
   or mention sources that might contain them.
 
@@ -43,11 +59,11 @@ code between the games as possible.
 - **C2** DONE is pret's calcrom over the linker maps of byte-identical builds:
   the code the linker places from `games/`, counted once for each of the
   game's six editions whose build links it, out of six; sizes are the English
-  build's. Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only
-  proven library, handwritten and veneer assembly counts as assembly. Whole
-  aligned 8-byte far-call stubs count as veneers. Padding a source marks as
-  carrying no credit does not count.
-  _Check: coverage-check._
+  build's, so code that exists only in another edition is outside the total.
+  Uncredited disassembly is `not-yet-c` in `recon/<game>/raw`; only proven
+  library, handwritten and veneer assembly counts as assembly. Whole aligned
+  8-byte far-call stubs count as veneers. Padding a source marks as carrying
+  no credit does not count. _Check: coverage-check._
 - **C3** Main commits carry the verified percentage, README and both progress
   figures, written by `make land`. _Check: commit-msg hook, coverage-check._
 
@@ -74,7 +90,7 @@ or functions is exactly this cheating.
   name that spells its own value. _Check: publication, fixed-address check._
 - **O3** Scene and resource ids come only from their tables and are used whole.
   Overlay code never branches straight into the main image.
-  _Check: publication._
+  _Check: the build's id gate._
 - **O4** A mismatch is fixed in source, or the code stays disassembly or a
   draft. Before announcing a milestone, run an independent audit for leaks.
 - **O5** Old git history, deleted files, backups and unreachable git objects
@@ -90,20 +106,28 @@ or functions is exactly this cheating.
   100%, and is then removed as the final step, as pret's was. Until then
   compiler-steering C (wrappers, volatile, forced temporaries, dead code),
   inline assembly and fixed-register variables are allowed when each carries a
-  `FAKEMATCH` tag with a reason. A fake match stays in the source, tagged; it is
-  never replaced by a compiler option or routing that fits only those
-  functions (K1, K3). `/* CAMELOT_ASM: proof */` marks assembly
-  Camelot very likely wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros
-  stay. Never patch compiler output. _Check: no-asm (in lint-staged)._
+  `FAKEMATCH` tag with its measured reason inside the function. A device is
+  for a difference of instruction order or register choice only, and only
+  after reshaping the source has failed; a function is never written as
+  inline assembly. A fake match stays in the source, tagged; it is never
+  replaced by a compiler option or routing that fits only those functions
+  (K1, K3). `/* CAMELOT_ASM: proof */` marks assembly Camelot very likely
+  wrote in C; the reviewed `Dma_Set` and `Iwram_*` macros stay. Never patch
+  compiler output. _Check: no-asm (in lint-staged)._
 - **S3** Write it the way Camelot would have in 2001: `games/<GAME>/SRC`,
   `INCLUDE`, `SOUND`, `TEXT`, with the same folder layout in both games and
   `games/COMMON`; uppercase 8.3-style names, C89, `Subsystem_VerbObject`
   functions, short locals, named struct fields and enums, Japanese character
   names and romaji plus one area word for places. Shared code and declarations
-  live once in `games/COMMON`.
-- **S4** Never throw work away: commit each adoption and attempt, and keep near
-  misses as drafts with the remaining difference in their header. Workers may
-  edit and delete `recon/` listing and linker lines when adopting a function.
+  live once in `games/COMMON`. Adopt a function into the module that holds its
+  linker neighbours, not into a new file of its own.
+- **S4** Never throw work away: commit each adoption and attempt, and keep a
+  near miss as a draft with the remaining difference in its header. One draft
+  per listing, overwritten as it improves: a trial is a commit or a line in
+  that header, never another file or folder. Workers may edit and delete
+  `recon/` listing and linker lines when adopting a function. An edition whose
+  bytes differ stays on its scaffold until its branch is written; it never
+  blocks the adoption in the others.
 
 ### Assets
 
@@ -179,24 +203,32 @@ never a file or a function.
 
 - **W1** Scripts are TypeScript on Bun or Rust; no Python, no shell beyond a
   command line. New tooling solves a demonstrated recurring blocker and
-  carries a test. _Check: language-check._
-- **W2** Work on your own branch; `main` is the only long-lived branch. Land on
-  main with `make land`, which builds and compares all twelve editions and runs
-  the tests. _Check: land._
+  carries a test; tooling nothing needs is removed. Pret builds its games with
+  about 15,000 lines of tools. _Check: language-check._
+- **W2** Work on your own branch; `main` is the only long-lived branch, and a
+  worktree is removed when its branch lands. Land on main with `make land`,
+  which builds and compares all twelve editions and runs the tests.
+  _Check: land._
 - **W3** Alchemy owns compilation, linking and verification; the ags crate owns
   encoding (agsgfx, mid2ags, wav2ags, po2ags); Psynergy owns reading, decoding,
   analysis and comparison. Look at how pret does something before inventing.
+- **W4** Choose what to match from `make deps`: first the functions other
+  unfinished functions call, with the structures they share, then the ones
+  with nothing left to name, largest first.
 
 ## Commands
 
 ```sh
 git submodule update --init && git config core.hooksPath .hooks
 make bootstrap
-make worktree      # in a new worktree, before its first build
-make compare-all   # make compare-editions for all twelve
+make worktree          # in a new worktree, before its first build
+make compare           # the Japanese base of ☀️; compare-tla for ⚓️
+make compare-editions  # all twelve editions
 make test
-make deps          # dependency map for choosing targets
-make drafts        # compile and score every draft against its listing
+make progress          # the count, with one line per edition
+make deps              # dependency map: what unblocks the most
+make drafts            # compile and score every draft against its listing
+make similar           # ⚓️ functions and their ☀️ twins
 make verify
-make land          # on main, before committing a landing
+make land              # on main, before committing a landing
 ```

@@ -1,3 +1,5 @@
+/* Near miss: score 120 beyond the trailing pad. ⚓️ loads the halfword (ldrh
+   r2, [r0, #32]) before sign-extending the value; this draft extends first. */
 /*
  * Draft: Script_SetOrCompareHalfword20 does not yet match; 4 bytes differ from +0x18.
  * Links as recon/tla/raw/08025c5c.s.

@@ -1,3 +1,5 @@
+/* Near miss: score 60. ⚓️ loads the comparison byte before narrowing the
+   value; this draft narrows first, a load-scheduling difference. */
 /*
  * Draft: Script_SetOrCompareComparisonResult does not yet match; 4 bytes differ from +0x22.
  * Links as recon/tla/raw/08025f9c.s.

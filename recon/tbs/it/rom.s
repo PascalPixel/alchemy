@@ -247,12 +247,6 @@ Tile_BuildMetatiles:
 Tile_BuildMetatilesEnd:
 	.section .rom.000164ae, "ax"
 	.incbin "baserom.gba", 0x000164ae, 0x00000002
-	.section .rom.000164b0, "ax"
-	.global UiWindow_ClearInteriorTiles
-	.type UiWindow_ClearInteriorTiles, %function
-	.thumb_func
-UiWindow_ClearInteriorTiles:
-	.incbin "baserom.gba", 0x000164b0, 0x00000098
 	.section .rom.000168d0, "ax"
 	.global UiWork_StepChannelScript
 	.type UiWork_StepChannelScript, %function

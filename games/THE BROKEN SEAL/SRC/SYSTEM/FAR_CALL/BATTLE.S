@@ -157,7 +157,7 @@ Func_080b5118:
 	.global Func_080b5128
 	.thumb_func
 Func_080b5128:
-	overlay_veneer Unnamed_080bb7c0
+	overlay_veneer BattlePresentation_WaitForPromptAt
 	.global BattlePlacement_CountValidEntriesFar
 	.thumb_func
 BattlePlacement_CountValidEntriesFar:

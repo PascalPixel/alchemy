@@ -912,7 +912,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
         "*/recon/tbs/raw/080dab74.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080db264.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BOLTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)
         "*/recon/tbs/raw/080db6e0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)

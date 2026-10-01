@@ -763,6 +763,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ROCKWALL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EMBERS.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000de374)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BOLTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000deee0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.o"(.text)

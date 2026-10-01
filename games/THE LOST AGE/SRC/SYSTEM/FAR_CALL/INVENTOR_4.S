@@ -44,7 +44,7 @@ Owner_RefreshClassActionsFar:
 	.global Func_080ad290
 	.thumb_func
 Func_080ad290:
-	overlay_veneer Func_080ad360
+	overlay_veneer Party_GetAverageLevel
 	.global Owner_RefreshDerivedDataFar
 	.thumb_func
 Owner_RefreshDerivedDataFar:

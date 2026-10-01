@@ -44,7 +44,7 @@ Func_0815f16c:
 .L_0815f1b8:
 	movs r0, #128
 	lsls r0, r0, #6
-	bl Func_08143a88
+	bl BattleFx_BeginTiledCanvas
 	b .L_0815f1c8
 .L_0815f1c2:
 	movs r0, #0

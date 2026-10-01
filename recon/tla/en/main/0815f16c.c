@@ -236,7 +236,7 @@ void Func_08143001(void);
 void Func_08143489(void);
 void Func_081434f8(void);
 void BattleFx_BeginCanvasLayer(s32);
-void Func_08143a88(s32);
+void BattleFx_BeginTiledCanvas(s32);
 void Func_08143bb8(void);
 void Func_08144aac(s32, struct DrawFuncs *);
 void BattleFx_RunSparkGroups(struct SummonAction *, s32);
@@ -364,7 +364,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
     scrollB = 0;
 
     if (kind == 41 || kind == 38 || kind == 62 || kind == 85 || kind == 86 || kind == 87 || kind == 88)
-        Func_08143a88(0x2000);
+        BattleFx_BeginTiledCanvas(0x2000);
     else
         BattleFx_BeginCanvasLayer(0);
 

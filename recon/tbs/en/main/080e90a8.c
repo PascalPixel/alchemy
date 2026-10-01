@@ -56,10 +56,10 @@ struct SlotObject {
     s32 z;
 };
 
-extern u8 Value_00002710;
 extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
 
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
 void BattleMotion_ApproachTargetFar(s32 position, s32 target, s32 speed, s32 mode);
@@ -96,11 +96,12 @@ void Unnamed_080e90a8(struct ShardEffect *object)
     s32 position[3];
     s32 origin[3];
     s32 out[3];
-    s32 fill;
+    volatile s32 fill;
     DrawRectangleFn routine[2];
     s32 i;
     s32 frame;
     s32 size;
+    u8 *burst;
 
     heap_cache = (void **)0x03001EEC;
     cursor = heap_cache;
@@ -108,17 +109,19 @@ void Unnamed_080e90a8(struct ShardEffect *object)
     canvas = *cursor;
     cells = heap_cache[2];
     transfer = heap_cache[-27];
+    burst = (u8 *)0x02010000;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, (void *)0x02010000, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireBurstSheet, burst, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
     BattleMotion_ApproachTargetFar(work->effect->position, work->effect->target, 4, 0);
     WaitFrames(1);
     slot = *GetBattleObjectSlotFar(work->effect->target);
 
+    i = 0;
     shard = work->shards;
-    for (i = 0; i != 64; i++) {
+    do {
         shard->x = slot->x;
         shard->y = slot->y;
         shard->z = slot->z;
@@ -130,10 +133,11 @@ void Unnamed_080e90a8(struct ShardEffect *object)
         }
         shard->life = i / 4 * 2 + 16;
         shard++;
-    }
+        i++;
+    } while (i != 64);
 
     EffectPosition_ApplyStepAndYOffset(work->effect->target, origin);
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     work->unknown_7780 = 2;
     work->unknown_7784 = 75;
 
@@ -173,7 +177,7 @@ void Unnamed_080e90a8(struct ShardEffect *object)
                 base = 0x2580;
             }
             routine[0](canvas, (u8 *)0x02010000 + base + step * 0xc80, origin[0] / 2 - 20, origin[1] - 48, 40, 80);
-            BattleFx_RunNoEffectFrames((s32)&Value_00002710);
+            BattleFx_RunNoEffectFrames(10000);
             Runtime_ReleaseHeapBlock(46);
         }
         if (frame == 8) {
@@ -185,12 +189,13 @@ void Unnamed_080e90a8(struct ShardEffect *object)
         if (frame > 3) {
             BattleFx_FetchRectangleBlitters(work->effect->mirror, routine);
             for (i = 0, shard = work->shards; i != 64; i++) {
-                size = shard->life;
-                if (size > 0) {
+                s32 life = shard->life;
+
+                if (life > 0) {
                     EffectPosition_ApplyBaseAndYOffset(shard, out);
                     out[0] >>= 1;
                     out[1] = out[1] + origin[1] - 112;
-                    size = (size >> 3) + 2;
+                    size = (life >> 3) + 2;
                     routine[(i / 2) & 1](canvas, cells + ParticleStreams_CellOffsets[size - 1], out[0] - size / 2, out[1] - size,
                         size, size * 2);
                     EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
@@ -216,6 +221,6 @@ void Unnamed_080e90a8(struct ShardEffect *object)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback(0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

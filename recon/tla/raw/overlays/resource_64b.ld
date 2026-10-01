@@ -14,7 +14,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/WORLD_MAP/SCENE_TABLES.o"(.text)
         "*/resource_64b_overlay.o"(.text.x020082a4)
         "*/resource_64b_overlay.o"(.text.x020082c4)
-        "*/resource_64b_overlay.o"(.text.x0200834c)
+        "*/games/THE LOST AGE/SRC/FIELD/WORLD_MAP/STORY_ACTOR.o"(.text)
         "*/resource_64b_overlay.o"(.text.x02008388)
         "*/resource_64b_overlay.o"(.text.x020083a8)
         "*/resource_64b_overlay.o"(.text.x020083b4)

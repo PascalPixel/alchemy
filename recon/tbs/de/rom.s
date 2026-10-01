@@ -1519,7 +1519,7 @@ BattleFx_PrepareCanvasEffect:
 BattleFx_RunProjectileVolley:
 	.incbin "baserom.gba", 0x000e0870, 0x00000e48
 	.section .rom.000e1c2a, "ax"
-	.incbin "baserom.gba", 0x000e1c2a, 0x000006fa
+	.incbin "baserom.gba", 0x000e1c2a, 0x000003ba
 	.section .rom.000e2364, "ax"
 	.incbin "baserom.gba", 0x000e2364, 0x0000035c
 	.section .rom.000e2e40, "ax"

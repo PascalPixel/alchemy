@@ -164,8 +164,8 @@ void Unnamed_080e99c0(struct BattleEffectArgument *effect)
                 s32 life;
                 s32 y;
 
-                x = HI(flash->x) + half;
                 y = HI(flash->y);
+                x = HI(flash->x) + half;
                 life = flash->variant;
                 if ((u32)life <= 17) {
                     routine[0](canvas,

@@ -209,7 +209,7 @@ Func_080df1fc:
 .L_080df3a4:
 	mov r2, r11
 	ldr r0, [r2]
-	bl Func_080dcf54
+	bl BattleFx_GetCycledTableWord
 	movs r3, #255
 	lsls r0, r0, #16
 	lsls r3, r3, #8

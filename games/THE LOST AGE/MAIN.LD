@@ -1618,7 +1618,7 @@ SECTIONS
         "*/recon/tla/raw/080dce60.o"(.text)
         "*/recon/tla/raw/080dcf08.o"(.text)
         "*/recon/tla/raw/080dcf2c.o"(.text)
-        "*/recon/tla/raw/080dcf54.o"(.text)
+        "*/games/THE LOST AGE/SRC/BATTLE/EFFECT/GET_CYCLED_TABLE_WORD.o"(.text)
         "*/recon/tla/raw/080dcf70.o"(.text)
         "*/recon/tla/raw/080dcf8c.o"(.text)
         "*/recon/tla/raw/080dd054.o"(.text)

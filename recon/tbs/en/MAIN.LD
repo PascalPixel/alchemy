@@ -554,7 +554,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT14.o"(.text)
         "*/recon/tbs/raw/0809a8c2.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT17.o"(.text)
-        "*/recon/tbs/raw/0809abb4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLBACK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECT_PAUSE.o"(.text)
         "*/games/COMMON/SRC/BATTLE/EFFECT/FILTER_OBJECT_ID.o"(.text)
         "*/recon/tbs/raw/0809ae56.o"(.text .rodata .data .padding)

@@ -2617,7 +2617,7 @@ SECTIONS
         "*/recon/tla/raw/08157636.o"(.text)
         "*/recon/tla/raw/08157638.o"(.text)
         "*/recon/tla/raw/081579d0.o"(.text)
-        "*/recon/tla/raw/08157cf4.o"(.text)
+        "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
         "*/recon/tla/raw/08157d30.o"(.text)
         "*/recon/tla/raw/0815806c.o"(.text)
         "*/recon/tla/raw/0815842c.o"(.text)

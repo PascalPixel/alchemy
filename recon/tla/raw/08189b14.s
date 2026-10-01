@@ -50,7 +50,7 @@ Func_08189b14:
 	ldr r1, .L_08189cd8
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #48]
 	movs r4, #224
 	lsls r4, r4, #3
@@ -63,7 +63,7 @@ Func_08189b14:
 	ldr r1, [sp, #28]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, [sp, #48]
 	movs r6, #142
 	lsls r6, r6, #7
@@ -71,19 +71,19 @@ Func_08189b14:
 	ldr r0, .L_08189ce0
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #174
 	lsls r2, r2, #7
 	adds r1, r5, r2
 	ldr r0, .L_08189ce4
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08189ce8
 	ldr r1, .L_08189cd8
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #239
 	movs r4, #238
 	lsls r3, r3, #7

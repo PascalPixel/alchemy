@@ -29,7 +29,7 @@ Func_080d9b08:
 	adds r1, r6, #0
 	str r0, [r5, #8]
 	ldr r0, .L_080d9b74
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	adds r2, r6, #0
 	ldr r0, [r5, #8]
 	movs r1, #64

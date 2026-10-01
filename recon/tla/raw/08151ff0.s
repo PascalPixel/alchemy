@@ -32,7 +32,7 @@ Func_08151ff0:
 	ldr r0, .L_08152044
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r1, [sp, #40]
 	cmp r1, #1
 	bne .L_0815206a

@@ -124,7 +124,7 @@ Func_080001a0:
 	.global Func_080001a8
 	.thumb_func
 Func_080001a8:
-	overlay_veneer Func_0801587c
+	overlay_veneer Resource_DecodeType01
 	.global Func_080001b0
 	.thumb_func
 Func_080001b0:

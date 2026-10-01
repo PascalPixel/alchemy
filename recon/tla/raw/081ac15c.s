@@ -93,7 +93,7 @@ LuckyDice_Run:
 	adds r4, r4, r0
 	adds r0, r4, #0
 	ldr r1, .L_081ac2f4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -126,7 +126,7 @@ LuckyDice_Run:
 	adds r4, r4, r1
 	adds r0, r4, #0
 	ldr r1, .L_081ac2f4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

@@ -59,7 +59,7 @@ Func_08163e14:
 	lsls r6, r6, #3
 	adds r1, r3, r6
 	adds r0, r4, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_08164210
 	bl Resource_GetTableEntry
 	ldr r7, [sp, #40]
@@ -70,11 +70,11 @@ Func_08163e14:
 	adds r0, #228
 	adds r1, r7, r0
 	adds r0, r4, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, .L_08164214
 	bl Resource_GetTableEntry
 	ldr r1, [sp, #36]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r1, #239
 	lsls r1, r1, #7
 	adds r2, r7, r1

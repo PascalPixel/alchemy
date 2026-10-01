@@ -35,7 +35,7 @@ Func_0814b160:
 	ldr r0, .L_0814b1c4
 	movs r3, #1
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, r10
 	ldr r3, [r4, #4]
 	cmp r3, #1

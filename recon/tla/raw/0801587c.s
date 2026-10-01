@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0801587c
+	.global Resource_DecodeType01
 	.thumb_func
-Func_0801587c:
+Resource_DecodeType01:
 	push {r5, r6, lr}
 	mov r6, r10
 	mov r5, r8

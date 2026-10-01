@@ -32,7 +32,7 @@ Func_081a76f8:
 	mov r8, r3
 	bl Resource_GetTableEntry
 	adds r1, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	movs r2, #132
 	adds r6, r5, #0

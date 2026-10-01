@@ -86,7 +86,7 @@ Func_0818f620:
 	ldr r1, [sp, #32]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #0
 	movs r7, #0
 	mov r8, r0
@@ -146,7 +146,7 @@ Func_0818f620:
 	adds r1, r6, r7
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r1, [sp, #24]
 	movs r0, #0
 	str r0, [sp, #44]

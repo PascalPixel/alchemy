@@ -82,7 +82,7 @@ Func_0815a9e4:
 	ldr r1, .L_0815aacc
 	movs r3, #0
 	ldr r0, .L_0815aad0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0815aad4
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -275,7 +275,7 @@ Func_0815a9e4:
 	ldr r1, [sp, #28]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r5, #238
 	movs r4, #13
 	lsls r5, r5, #7

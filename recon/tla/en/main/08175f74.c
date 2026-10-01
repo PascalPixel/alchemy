@@ -226,10 +226,10 @@ void Func_08118040(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void Func_08144aac(s32, DrawRectangleFn *);
 u16 *Resource_GetTableEntry(s32);
-void Func_0801587c(const void *, void *);
+void Resource_DecodeType01(const void *, void *);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
-void Func_08157cf4(s32, void *, s32, s32);
+void Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Func_081c0010(s32);
 u32 Random16(void);
 s32 Func_0800206c(s32, s32);
@@ -348,7 +348,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009c);
     CpuCopy(PLTT + 0x120, source, 0x140);
     source += 0x140;
-    Func_0801587c(source, work->buffer);
+    Resource_DecodeType01(source, work->buffer);
     for (i = 0; i != 0x1000; i++) {
         if (work->buffer[i] != 0) {
             work->buffer[i] += 32;
@@ -363,7 +363,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
 
     source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009e);
     CpuCopy(PLTT + 0x1f0, source, 32);
-    Func_0801587c(source + 32, work->buffer);
+    Resource_DecodeType01(source + 32, work->buffer);
     for (i = 0; i != 16; i++) {
         object = Func_0815b290(16, 16, 0, 0xf000);
         object->priority = 1;
@@ -376,8 +376,8 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         SPRITES[16 + i] = object;
         CpuCopy(object, SPRITES[0], 24);
     }
-    Func_08157cf4((s32)&Value_00000134, glyphs, 0, 0);
-    Func_08157cf4((s32)&Value_00000134, work->buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000134, work->buffer, 0, 0);
     for (j = 0; j != 10; j++) {
         for (i = 0; i != 32; i++) {
             s32 value = work->buffer[Data_08197410[3] + i];
@@ -391,8 +391,8 @@ void Func_08175f74(struct BattleEffectArgument *arg)
             glyphs[j * 32 + i] = value;
         }
     }
-    Func_08157cf4((s32)&Value_000000b4, work->buffer, 0, 0);
-    Func_08157cf4((s32)&Value_000000b6, work->buffer + 0x1000, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000b4, work->buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000b6, work->buffer + 0x1000, 1, 1);
     source = (u8 *)Resource_GetTableEntry((s32)&Value_000000bd);
     CpuCopy(PLTT, source, 128);
     REG_BG2CNT = 0x784;
@@ -657,7 +657,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009b);
                 CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
                 source += 0x180;
-                Func_0801587c(source, work->buffer + 0x2400);
+                Resource_DecodeType01(source, work->buffer + 0x2400);
                 for (i = 0; i != 12; i++) {
                     object = Func_0815b290(32, 32, 0x80002000, 0);
                     object->priority = 3;
@@ -668,7 +668,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009f);
                 CpuCopy(PLTT + 0x1e0, source, 32);
                 CpuFill(PLTT + 0x1e0, 32, 0x7fff7fff);
-                Func_0801587c(source + 32, work->buffer + 0x2400);
+                Resource_DecodeType01(source + 32, work->buffer + 0x2400);
                 object = Func_0815b290(64, 64, 0xc0000000, 0xe000);
                 work->objects[12] = object;
                 object->priority = 3;
@@ -680,16 +680,16 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 CpuFill(OBJ_VRAM + TILE_SLOTS[object->slot].offset, 0x1000, 0);
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_000000b8);
                 CpuCopy(PLTT, source, 128);
-                Func_08157cf4((s32)&Value_00000137, work->buffer + 0x2400, 0, 0);
+                Resource_LoadAndDecompress((s32)&Value_00000137, work->buffer + 0x2400, 0, 0);
                 CpuCopy(glyphs, work->buffer + 0x2400, 0x302);
-                Func_08157cf4((s32)&Value_000000be, work->buffer + 0x1000, 1, 1);
+                Resource_LoadAndDecompress((s32)&Value_000000be, work->buffer + 0x1000, 1, 1);
                 pos_x = 144 << 15;
                 pos_z = 224 << 14;
             }
             if (frame == 243) {
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009d);
                 CpuFill(PLTT + 0x1c0, 64, 0);
-                Func_0801587c(source + 64, REVEAL_BUFFER);
+                Resource_DecodeType01(source + 64, REVEAL_BUFFER);
                 for (i = 0; i != 0x1000; i++) {
                     if (REVEAL_BUFFER[i] != 0) {
                         REVEAL_BUFFER[i] += 192;
@@ -857,7 +857,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     CpuCopy(PLTT + 0x60, Resource_GetTableEntry((s32)&Value_00000075), 0x100);
                     source = (u8 *)Resource_GetTableEntry((s32)&Value_000000bd);
                     CpuCopy(PLTT, source, 128);
-                    Func_08157cf4((s32)&Value_000000c2, work->buffer + 0x1000, 0, 0);
+                    Resource_LoadAndDecompress((s32)&Value_000000c2, work->buffer + 0x1000, 0, 0);
                     Func_0815b410();
                 }
                 if (frame > 303) {
@@ -1103,7 +1103,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                 work->transfer_mode = 3;
                 work->transfer_value = 0x04040404;
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_000000b5);
-                Func_0801587c(source + 32, work->buffer + 0x2400);
+                Resource_DecodeType01(source + 32, work->buffer + 0x2400);
                 for (y = 0; y != 80; y++) {
                     for (x = 0; x != 184; x += 2) {
                         u16 *dst = (u16 *)(BG_VRAM_A900 + ((((y / 8) * 32 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)));
@@ -1290,8 +1290,8 @@ void Func_08175f74(struct BattleEffectArgument *arg)
     Func_0815b434(work->buffer, 56, 0x10000);
     Func_0815b434(work->buffer + 0x1000, 16, 0x10000);
     CpuFill(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
-    Func_08157cf4((s32)&Value_000000c3, work->buffer + 0x3000, 0, 0);
-    Func_08157cf4((s32)&Value_00000134, glyphs, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000c3, work->buffer + 0x3000, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
     for (i = 0; i != 0x302; i += 35) {
     }
     for (i = 0; i != 0x1000; i++) {
@@ -1392,7 +1392,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
                     PARTICLES[128 + i].vy = (Func_08002090(angle) * speed) >> 6;
                     PARTICLES[128 + i].timer = (Random16() & 15) + 16;
                 }
-                Func_08157cf4((s32)&Value_0000013e, SPRITE_BUFFER, 1, 0);
+                Resource_LoadAndDecompress((s32)&Value_0000013e, SPRITE_BUFFER, 1, 0);
                 Func_081c0010(144);
                 CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
                 REG_BG2CNT = 0x784;

@@ -20,7 +20,7 @@ Func_08042e28:
 	adds r7, r0, #0
 	adds r1, r7, #0
 	ldr r0, .L_08042ed4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19

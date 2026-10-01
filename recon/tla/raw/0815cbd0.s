@@ -45,7 +45,7 @@ Func_0815cbd0:
 	add r1, r10
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #239
 	b .L_0815cc3c
 .L_0815cc30:

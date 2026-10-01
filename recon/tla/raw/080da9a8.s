@@ -38,22 +38,22 @@ Func_080da9a8:
 	bne .L_080daa28
 	adds r1, r6, #0
 	ldr r0, .L_080daa8c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #1
 	adds r1, r6, r3
 	ldr r0, .L_080daa90
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r1, r6, r3
 	ldr r0, .L_080daa94
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #192
 	lsls r3, r3, #2
 	adds r1, r6, r3
 	ldr r0, .L_080daa98
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r7]
 	mov r1, r8
 	adds r2, r6, #0
@@ -62,23 +62,23 @@ Func_080da9a8:
 .L_080daa28:
 	adds r1, r6, #0
 	ldr r0, .L_080daa9c
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r5, .L_080daaa0
 	movs r3, #128
 	lsls r3, r3, #1
 	adds r1, r6, r3
 	adds r0, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r1, r6, r3
 	adds r0, r5, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #192
 	lsls r3, r3, #2
 	adds r1, r6, r3
 	ldr r0, .L_080daaa4
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r0, [r7]
 	mov r1, r8
 	adds r2, r6, #0

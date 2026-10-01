@@ -90,12 +90,12 @@ BattleFx_RunSparkGroups:
 	ldr r0, .L_08149c78
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08149c7c
 	ldr r1, [sp, #32]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r1, [sp, #52]
 	b .L_08149c80
 	.2byte 0x0000

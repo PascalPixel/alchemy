@@ -37,7 +37,7 @@ Func_08154f84:
 	movs r2, #1
 	movs r3, #1
 	add r1, r9
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r2, [sp, #52]
 	ldr r3, [r2, #4]
 	cmp r3, #1

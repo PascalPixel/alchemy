@@ -142,7 +142,7 @@ Func_081811d4:
 .L_081812d8:
 	movs r2, #1
 	ldr r0, .L_081813a4
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
 	bl Func_081963ec

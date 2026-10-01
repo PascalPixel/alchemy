@@ -40,14 +40,14 @@ Func_0817c27c:
 	ldr r0, .L_0817c614
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #224
 	lsls r1, r1, #3
 	add r1, r9
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_0817c618
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0817c61c
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

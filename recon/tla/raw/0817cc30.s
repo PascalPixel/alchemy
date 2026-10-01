@@ -39,7 +39,7 @@ Func_0817cc30:
 	adds r1, r5, #0
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #24]
 	movs r4, #224
 	lsls r4, r4, #3
@@ -47,7 +47,7 @@ Func_0817cc30:
 	ldr r0, .L_0817cca8
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	ldr r1, [sp, #20]
 	b .L_0817ccac
@@ -63,7 +63,7 @@ Func_0817cc30:
 .L_0817ccac:
 	movs r3, #0
 	ldr r0, .L_0817d03c
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0817d040
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -125,7 +125,7 @@ Func_0817cc30:
 	ldr r0, .L_0817d050
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #145
 	bl Audio_PlayCue
 	movs r0, #238

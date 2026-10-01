@@ -473,10 +473,10 @@ Func_08015714:
 Render_ProjectPoint:
 	.incbin "baserom.gba", 0x000157a4, 0x00000104
 	.section .rom.000158a8, "ax"
-	.global Func_0801587c
-	.type Func_0801587c, %function
+	.global Resource_DecodeType01
+	.type Resource_DecodeType01, %function
 	.thumb_func
-Func_0801587c:
+Resource_DecodeType01:
 	.incbin "baserom.gba", 0x000158a8, 0x000000a0
 	.section .rom.00015948, "ax"
 	.global Func_0801591c

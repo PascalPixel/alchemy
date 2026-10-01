@@ -812,7 +812,7 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT21.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TILE/TRANSPOSE_COPY.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000dfe2a)
-    "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
+    "*/games/COMMON/SRC/SYSTEM/RESOURCE/LOAD_AND_DECOMPRESS.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000e0564)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_REVEAL.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000e1040)

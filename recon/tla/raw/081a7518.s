@@ -64,7 +64,7 @@ Func_081a7518:
 	adds r4, r4, r3
 	adds r1, r5, #0
 	adds r0, r4, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212

@@ -1,3 +1,5 @@
+/* alchemy permute: Func_0801dd28 against recon/tbs/raw/0801dd28.s: score 0 (exact).
+   Job 9, iteration 3006; rewrites: 7x reorder local declarations, 5x introduce a temporary, 4x add a same-width cast, 3x remove a temporary, 2x swap commutative operands, 2x drop a same-width cast, 2x change loop form, 2x split or join a compound assignment, 1x reorder independent statements, 1x share one temporary between two statements, 1x pointer arithmetic or indexing, 1x toggle register, 1x test truth or compare with zero. */
 /* Draft, not exact (2026-10-02, slice-2): 308 of 308 bytes, 9 instructions
    differ (score 260). What closed the rest: the registers the reference
    shares name the variables the source shared (one source pointer for the
@@ -25,31 +27,34 @@ extern u8 ResourceId_WindowTiles;
 void Func_0801dd28(u16 *entry, u16 *mirror, s32 index, u8 *remap)
 {
     struct PaletteSlotWork *work = gWindowWork;
+    u8 buf[128];
     u8 *table = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
     u32 slot = *(u8 *)entry;
-    u8 buf[128];
-    u8 *src;
     u8 *dst;
     u32 n;
+    u8 *src;
     u32 i;
 
     {
         dst = buf;
-        src = (u8 *)(0x06000000 + slot * 32);
-        for (i = 0; i < 32; i++) {
-            n = *src++;
+        src = (u8 *)(0x06000000 + 32 * slot);
+        i = 0;
+        while (i < 32) {
+            u8 *high = dst + 1;
 
+            n = *src++;
             dst[0] = n & 15;
-            dst[1] = n >> 4;
+            *high = n >> 4;
             dst += 2;
+            i++;
         }
     }
     {
         dst = buf;
         src = table + index * 32;
-        for (i = 0; i < 32; i++) {
-            u32 value = *src++;
+        for (i = 0; 32 > i; i++) {
             u32 color;
+            u32 value = *src++;
 
             color = remap[value & 15];
             if (color != 0)
@@ -63,22 +68,23 @@ void Func_0801dd28(u16 *entry, u16 *mirror, s32 index, u8 *remap)
     }
     {
         u8 *p;
-
         dst = buf;
-        for (i = 0, p = dst; i < 32; i++) {
+        i = 0, p = dst;
+        while (i < 32) {
             u32 value = p[0];
-
             value |= p[1] << 4;
             p += 2;
             *dst++ = value;
+            i += 1;
         }
     }
     if ((s8)slot >= 0) {
         for (n = 0; n < 128; n++) {
             u32 value = work->next;
-
-            work->next = (value + 1) % 128;
+            u32 tmp4;
+            tmp4 = (value + 1) % 128;
             slot = (u8)value;
+            work->next = tmp4;
             if (work->used[slot] == 0)
                 break;
         }

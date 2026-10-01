@@ -12,7 +12,7 @@ common changes, with each language keeping its own text, fonts and layout.
 
 ## Progress
 
-**☀️ 79.01% · ⚓️ 7.17% (C 2.26 + assembly 1.40 + stubs 3.50)**
+**☀️ 78.81% · ⚓️ 4.61% (C 1.98 + assembly 1.40 + stubs 1.23)**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 

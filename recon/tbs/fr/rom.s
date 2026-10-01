@@ -1463,19 +1463,13 @@ BattleEffect_RunParticleStreams:
 	.type BattleEffect_RunCirclingFallingScene, %function
 	.thumb_func
 BattleEffect_RunCirclingFallingScene:
-	.incbin "baserom.gba", 0x000eba3c, 0x00001e9c
+	.incbin "baserom.gba", 0x000eba3c, 0x00000e6c
 	.section .rom.000ed8d8, "ax"
 	.global Unnamed_080ea0d8
 	.type Unnamed_080ea0d8, %function
 	.thumb_func
 Unnamed_080ea0d8:
 	.incbin "baserom.gba", 0x000ed8d8, 0x0000167c
-	.section .rom.000eef54, "ax"
-	.global Unnamed_080eb754
-	.type Unnamed_080eb754, %function
-	.thumb_func
-Unnamed_080eb754:
-	.incbin "baserom.gba", 0x000eef54, 0x0000098c
 	.section .rom.000f1278, "ax"
 	.incbin "baserom.gba", 0x000f1278, 0x00000008
 	.global BattleFx10_UnitScale
@@ -1486,7 +1480,13 @@ Data_080edab8:
 	.incbin "baserom.gba", 0x000f12b8, 0x00000008
 	.global Data_080edac0
 Data_080edac0:
-	.incbin "baserom.gba", 0x000f12c0, 0x00000028
+	.incbin "baserom.gba", 0x000f12c0, 0x00000018
+	.global ObjectRow_SweepPair
+ObjectRow_SweepPair:
+	.incbin "baserom.gba", 0x000f12d8, 0x00000008
+	.global ObjectRow_RisePair
+ObjectRow_RisePair:
+	.incbin "baserom.gba", 0x000f12e0, 0x00000008
 	.global BattleFx6_UnitScale
 BattleFx6_UnitScale:
 	.incbin "baserom.gba", 0x000f12e8, 0x00000008
@@ -1767,7 +1767,25 @@ Data_080eee46:
 	.incbin "baserom.gba", 0x000f2646, 0x00000008
 	.global Data_080eee4e
 Data_080eee4e:
-	.incbin "baserom.gba", 0x000f264e, 0x0000011a
+	.incbin "baserom.gba", 0x000f264e, 0x000000b8
+	.global FlameBlade_StrikeColumns
+FlameBlade_StrikeColumns:
+	.incbin "baserom.gba", 0x000f2706, 0x00000006
+	.global FlameBlade_FlashCells
+FlameBlade_FlashCells:
+	.incbin "baserom.gba", 0x000f270c, 0x00000006
+	.global FallingSword_FlashCells
+FallingSword_FlashCells:
+	.incbin "baserom.gba", 0x000f2712, 0x00000006
+	.global FallingSword_DustGravity
+FallingSword_DustGravity:
+	.incbin "baserom.gba", 0x000f2718, 0x0000003e
+	.global ObjectRow_Columns
+ObjectRow_Columns:
+	.incbin "baserom.gba", 0x000f2756, 0x00000009
+	.global ObjectRow_Rows
+ObjectRow_Rows:
+	.incbin "baserom.gba", 0x000f275f, 0x00000009
 	.global BattleFx6_ObjectX
 BattleFx6_ObjectX:
 	.incbin "baserom.gba", 0x000f2768, 0x00000008
@@ -1799,13 +1817,11 @@ DisplayScroll_SlideResources:
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f42a4, 0x00000d5c
 	.section .rom.000f5028, "ax"
-	.incbin "baserom.gba", 0x000f5028, 0x000006c4
-	.section .rom.000f56ec, "ax"
-	.global Func_080f26ec
-	.type Func_080f26ec, %function
+	.global Func_080f2028
+	.type Func_080f2028, %function
 	.thumb_func
-Func_080f26ec:
-	.incbin "baserom.gba", 0x000f56ec, 0x00000480
+Func_080f2028:
+	.incbin "baserom.gba", 0x000f5028, 0x00000478
 	.section .rom.000f5b6c, "ax"
 	.global Func_080f2b6c
 	.type Func_080f2b6c, %function
@@ -1819,7 +1835,12 @@ Func_080f2b6c:
 Unnamed_080f3078:
 	.incbin "baserom.gba", 0x000f6078, 0x00000704
 	.section .rom.000f68bc, "ax"
-	.incbin "baserom.gba", 0x000f68bc, 0x00000744
+	.global Title_PromptTiles
+Title_PromptTiles:
+	.incbin "baserom.gba", 0x000f68bc, 0x000000ec
+	.global Title_PromptBlendLevels
+Title_PromptBlendLevels:
+	.incbin "baserom.gba", 0x000f69a8, 0x00000658
 	.section .rom.000f7168, "ax"
 	.global LuckyDice_Run
 	.type LuckyDice_Run, %function

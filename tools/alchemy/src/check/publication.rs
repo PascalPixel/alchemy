@@ -4,7 +4,7 @@
 use psynergy::assets::image::{indexed_bitmap_png, PNG_SIGNATURE};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use psynergy::assets::wav::wav_pcm8;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
 use std::process::{Command, ExitCode, Stdio};
@@ -1403,14 +1403,176 @@ fn linker_assignment_reason(path: &str, text: &str) -> Option<&'static str> {
         .then_some(LINKER_ASSIGNMENT_REASON)
 }
 const RAW_ADDRESS_REASON: &str = "numeric call target or ROM/RAM literal-pool address in raw disassembly (O2): reference a label where its bytes are";
+fn raw_source_game(path: &str) -> Option<&str> {
+    match path.split('/').collect::<Vec<_>>().as_slice() {
+        ["recon", game @ ("tbs" | "tla"), "raw", .., leaf]
+            if extension(leaf).eq_ignore_ascii_case("s") =>
+        {
+            Some(game)
+        }
+        _ => None,
+    }
+}
+fn game_source(path: &str, game: &str) -> bool {
+    let directory = if game == "tbs" {
+        "THE BROKEN SEAL"
+    } else {
+        "THE LOST AGE"
+    };
+    path.starts_with("games/COMMON/") || path.starts_with(&format!("games/{directory}/"))
+}
+/// Type evidence is read from the tree being inspected, including push deltas.
+/// A declaration identifies pointer use; it never provides a numeric address.
+fn raw_pointer_types(
+    sources: &[(String, String)],
+    game: &str,
+) -> psynergy::assembly::addresses::Types {
+    use crate::permute::lex::lex;
+    use crate::permute::parse::{parameters, Parser};
+    let mut text = sources
+        .iter()
+        .filter(|(path, _)| game_source(path, game) && listed(extension(path), &["c", "h"]))
+        .map(|(path, text)| (path, text))
+        .collect::<Vec<_>>();
+    text.sort_by_key(|(path, _)| (!path.ends_with("/TYPES.H"), !path.ends_with(".H"), *path));
+    let mut names = BTreeSet::new();
+    let mut units = Vec::new();
+    for _ in 0..2 {
+        units.clear();
+        for (_, text) in &text {
+            let Ok(tokens) = lex(text) else {
+                continue;
+            };
+            let mut parser = Parser::new(tokens, &mut names);
+            parser.scan_unit();
+            units.push(parser.unit);
+        }
+    }
+    let mut pointer_types = BTreeSet::new();
+    loop {
+        let before = pointer_types.len();
+        for unit in &units {
+            for (name, (specs, decl)) in &unit.typedefs {
+                if decl.before.iter().any(|token| token == "*")
+                    || specs.iter().any(|spec| pointer_types.contains(spec))
+                {
+                    pointer_types.insert(name.clone());
+                }
+            }
+        }
+        if pointer_types.len() == before {
+            break;
+        }
+    }
+    let mut types = psynergy::assembly::addresses::Types::default();
+    for unit in units {
+        for (name, (specs, decl)) in unit.globals {
+            if specs.iter().any(|spec| spec == "static") {
+                continue;
+            }
+            if decl.after.first().is_some_and(|token| token == "(") {
+                let text = decl.after.join(" ");
+                let Ok(tokens) = lex(&text) else {
+                    continue;
+                };
+                let Some(end) = crate::permute::parse::matching(&tokens, 0) else {
+                    continue;
+                };
+                let Ok(parameters) = parameters(&tokens[1..end], &mut names.clone()) else {
+                    continue;
+                };
+                // Aggregates and wide scalar arguments have a different ABI
+                // register layout; their raw bodies provide the use evidence.
+                if parameters.iter().any(|decl| {
+                    decl.specs
+                        .iter()
+                        .filter(|spec| spec.as_str() == "long")
+                        .count()
+                        > 1
+                        || decl
+                            .specs
+                            .iter()
+                            .any(|spec| matches!(spec.as_str(), "double" | "s64" | "u64"))
+                        || (decl
+                            .specs
+                            .iter()
+                            .any(|spec| matches!(spec.as_str(), "struct" | "union"))
+                            && !decl
+                                .items
+                                .iter()
+                                .any(|item| item.before.iter().any(|token| token == "*")))
+                }) {
+                    continue;
+                }
+                let mut mask = 0;
+                for (argument, decl) in parameters.into_iter().take(4).enumerate() {
+                    if decl.specs.iter().any(|spec| pointer_types.contains(spec))
+                        || decl.items.iter().any(|item| {
+                            item.before.iter().any(|token| token == "*")
+                                || item.after.first().is_some_and(|token| token == "[")
+                        })
+                    {
+                        mask |= 1 << argument;
+                    }
+                }
+                *types
+                    .arguments
+                    .entry(name.to_ascii_lowercase())
+                    .or_default() |= mask;
+            } else if decl.after.iter().any(|token| token == "[")
+                && (decl.before.iter().any(|token| token == "*")
+                    || specs.iter().any(|spec| pointer_types.contains(spec)))
+            {
+                types.tables.insert(name.to_ascii_lowercase());
+            } else if decl.before.iter().any(|token| token == "*")
+                || specs.iter().any(|spec| pointer_types.contains(spec))
+            {
+                types.objects.insert(name.to_ascii_lowercase());
+            }
+        }
+    }
+    types
+}
+fn raw_context_findings(
+    sources: &[(String, String)],
+) -> BTreeMap<String, Vec<psynergy::assembly::addresses::Site>> {
+    let mut findings = BTreeMap::<String, Vec<_>>::new();
+    for game in ["tbs", "tla"] {
+        let types = raw_pointer_types(sources, game);
+        let main = sources
+            .iter()
+            .enumerate()
+            .filter(|(_, (path, _))| {
+                raw_source_game(path) == Some(game) && !path.contains("/overlays/")
+            })
+            .map(|(index, _)| index)
+            .collect::<Vec<_>>();
+        let overlays = sources
+            .iter()
+            .enumerate()
+            .filter(|(_, (path, _))| {
+                raw_source_game(path) == Some(game) && path.contains("/overlays/")
+            })
+            .map(|(index, _)| index)
+            .collect::<Vec<_>>();
+        // Overlay labels are local to their own linked image. Equal numeric
+        // placeholder names in other resources never supply call evidence.
+        for indices in std::iter::once(main).chain(overlays.into_iter().map(|index| vec![index])) {
+            let code = indices
+                .iter()
+                .map(|&index| unquoted_source(&sources[index].1).to_ascii_lowercase())
+                .collect::<Vec<_>>();
+            let source = code.iter().map(String::as_str).collect::<Vec<_>>();
+            for site in psynergy::assembly::addresses::sites(&source, &types) {
+                let path = sources[indices[site.source]].0.clone();
+                findings.entry(path).or_default().push(site);
+            }
+        }
+    }
+    findings
+}
 fn numeric_word(text: &str) -> Option<u32> {
-    let text = text.trim();
-    text.strip_prefix("0x")
-        .or_else(|| text.strip_prefix("0X"))
-        .map_or_else(
-            || text.parse().ok(),
-            |hex| u32::from_str_radix(hex, 16).ok(),
-        )
+    psynergy::assembly::addresses::integer(text)
 }
 fn memory_address(word: u32) -> bool {
     // GBA address-space regions, including the Game Pak ROM's bus mirrors.
@@ -1535,10 +1697,17 @@ fn loaded_pointer(lines: &[&str], register: &str) -> bool {
 }
 /// The same local pointer-use proof for ARM instructions that recon still
 /// spells as words. Unknown encodings end the proof instead of guessing.
-fn loaded_pointer_words(words: &[Option<u32>], register: u32) -> bool {
-    let mut aliases = 1_u16 << register;
-    for word in words {
-        let Some(word) = word else { break };
+fn loaded_pointer_words(words: &[Option<u32>], start: usize, register: u32) -> bool {
+    let mut states = BTreeMap::from([(start, 1_u16 << register)]);
+    let mut queue = std::collections::VecDeque::from([start]);
+    while let Some(index) = queue.pop_front() {
+        let Some(Some(word)) = words.get(index) else {
+            continue;
+        };
+        let before = states[&index];
+        let mut aliases = before;
+        let conditional = word >> 28 != 14;
+        let mut next = vec![index + 1];
         let base = (word >> 16) & 15;
         let destination = (word >> 12) & 15;
         let memory = word & 0x0c00_0000 == 0x0400_0000;
@@ -1547,12 +1716,17 @@ fn loaded_pointer_words(words: &[Option<u32>], register: u32) -> bool {
             return true;
         }
         if word & 0x0fff_fff0 == 0x012f_ff10 {
-            return aliases & (1 << (word & 15)) != 0;
-        }
-        if word & 0x0fff_0ff0 == 0x01a0_0000 {
+            if aliases & (1 << (word & 15)) != 0 {
+                return true;
+            }
+            next.clear();
+        } else if word & 0x0fff_0ff0 == 0x01a0_0000 {
             let copied = aliases & (1 << (word & 15)) != 0;
             if destination == 15 {
-                return copied;
+                if copied {
+                    return true;
+                }
+                next.clear();
             }
             aliases &= !(1 << destination);
             if copied {
@@ -1568,21 +1742,55 @@ fn loaded_pointer_words(words: &[Option<u32>], register: u32) -> bool {
             }
         } else if word & 0x0e00_0000 == 0x0a00_0000 {
             if word & (1 << 24) == 0 {
-                break;
-            }
-            aliases &= !0x501f;
-        } else if word & 0x0c00_0000 == 0 {
-            if !matches!((word >> 21) & 15, 8..=11) {
-                if destination == 15 {
-                    break;
+                let displacement = ((*word as i32) << 8) >> 8;
+                let target = index as i64 + 2 + i64::from(displacement);
+                next.clear();
+                if 0 <= target && target < words.len() as i64 {
+                    next.push(target as usize);
                 }
-                aliases &= !(1 << destination);
+                if conditional {
+                    next.push(index + 1);
+                }
+            } else {
+                aliases &= !0x501f;
+            }
+        } else if word & 0x0c00_0000 == 0 {
+            let opcode = (word >> 21) & 15;
+            if !matches!(opcode, 8..=11) {
+                if destination == 15 {
+                    next.clear();
+                } else if matches!(opcode, 2 | 4) && word & (1 << 25) != 0 {
+                    let copied = aliases & (1 << base) != 0;
+                    aliases &= !(1 << destination);
+                    if copied {
+                        aliases |= 1 << destination;
+                    }
+                } else {
+                    aliases &= !(1 << destination);
+                }
             }
         } else {
-            break;
+            continue;
+        }
+        if conditional {
+            aliases |= before;
+            if next.is_empty() {
+                next.push(index + 1);
+            }
         }
         if aliases == 0 {
-            break;
+            continue;
+        }
+        for next in next {
+            if next >= words.len() {
+                continue;
+            }
+            let old = states.entry(next).or_default();
+            let combined = *old | aliases;
+            if *old != combined {
+                *old = combined;
+                queue.push_back(next);
+            }
         }
     }
     false
@@ -1604,7 +1812,15 @@ fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
             .expect("assembly literal pool load pattern")
     });
     let code = unquoted_source(text).to_ascii_lowercase();
-    if call.is_match(&code) {
+    if call.is_match(&code) || !psynergy::assembly::addresses::numeric_calls(&code).is_empty() {
+        return Some(RAW_ADDRESS_REASON);
+    }
+    if !psynergy::assembly::addresses::sites(
+        &[&code],
+        &psynergy::assembly::addresses::Types::default(),
+    )
+    .is_empty()
+    {
         return Some(RAW_ADDRESS_REASON);
     }
     let mut pools = BTreeSet::new();
@@ -1636,7 +1852,7 @@ fn raw_address_reason(path: &str, text: &str) -> Option<&'static str> {
             if word & 0x0f7f_0000 != 0x051f_0000 || word & 3 != 0 {
                 return false;
             }
-            if !loaded_pointer_words(&words[index + 1..], (word >> 12) & 15) {
+            if !loaded_pointer_words(words, index + 1, (word >> 12) & 15) {
                 return false;
             }
             let displacement = (word & 0xfff) as isize / 4;
@@ -2113,6 +2329,7 @@ struct Entry {
     path: String,
     object: String,
     listing_reason: Option<&'static str>,
+    revision: Option<String>,
 }
 /// One inspected path. Approved compiler submodules carry no blob to read;
 /// any other gitlink fails without being read.
@@ -2130,6 +2347,7 @@ fn inspected(scope: &str, path: String, object: String, gitlink: bool) -> Option
         path,
         object,
         listing_reason,
+        revision: None,
     })
 }
 /// Stream blobs through one `git cat-file --batch` process in request order.
@@ -2202,6 +2420,27 @@ fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String>
             failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
         }
     })?;
+    let contexts = readable
+        .iter()
+        .filter(|entry| {
+            raw_source_game(&entry.path).is_some()
+                || (entry.path.starts_with("games/") && listed(extension(&entry.path), &["c", "h"]))
+        })
+        .map(|entry| entry.revision.clone())
+        .collect::<BTreeSet<_>>();
+    for revision in contexts {
+        let scope = revision
+            .as_deref()
+            .map_or("tree", |revision| &revision[..12.min(revision.len())]);
+        for (path, sites) in raw_tree_findings(root, revision.as_deref())? {
+            for site in sites {
+                failures.push(format!(
+                    "{scope} {path}:{}: {RAW_ADDRESS_REASON} (0x{:08x})",
+                    site.line, site.value
+                ));
+            }
+        }
+    }
     if failures.is_empty() {
         Ok(())
     } else {
@@ -2251,8 +2490,37 @@ fn tree_entries(root: &Path, revision: Option<&str>) -> Result<Vec<Entry>, Strin
     });
     Ok(records
         .into_iter()
-        .filter_map(|(gitlink, object, path)| inspected(&scope, path, object, gitlink))
+        .filter_map(|(gitlink, object, path)| {
+            let mut entry = inspected(&scope, path, object, gitlink)?;
+            entry.revision = revision.map(str::to_string);
+            Some(entry)
+        })
         .collect())
+}
+fn raw_tree_findings(
+    root: &Path,
+    revision: Option<&str>,
+) -> Result<BTreeMap<String, Vec<psynergy::assembly::addresses::Site>>, String> {
+    let sources = tracked(root, revision)?
+        .into_iter()
+        .filter(|(gitlink, _, path)| {
+            !gitlink
+                && (raw_source_game(path).is_some()
+                    || path.starts_with("games/") && listed(extension(path), &["c", "h"]))
+        })
+        .map(|(_, object, path)| (object, path))
+        .collect::<Vec<_>>();
+    let mut text = Vec::new();
+    blobs(
+        root,
+        sources.iter().map(|(object, _)| object.clone()).collect(),
+        |index, data| {
+            if let Ok(source) = std::str::from_utf8(data) {
+                text.push((sources[index].1.clone(), source.to_string()));
+            }
+        },
+    )?;
+    Ok(raw_context_findings(&text))
 }
 fn check_tree(root: &Path, revision: Option<&str>) -> Result<(), String> {
     let entries = tree_entries(root, revision)?;
@@ -2655,7 +2923,9 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
         let scope = &commit[..12.min(commit.len())];
         entries.extend(changes.into_iter().filter_map(|(path, gitlink)| {
             let object = format!("{commit}:{path}");
-            inspected(scope, path, object, gitlink)
+            let mut entry = inspected(scope, path, object, gitlink)?;
+            entry.revision = Some(commit.clone());
+            Some(entry)
         }));
     }
     // Each pushed tip must also pass as a whole tree, not only as its deltas.
@@ -3896,6 +4166,8 @@ mod tests {
             "bl 0x08000101\n",
             "blx 50331648\n",
             "blne 0x03000100\n",
+            "local: bl (0x08000000 + 0x101)\n",
+            "blxeq #(0x03000000 | 1)\n",
             "ldr r0, =0x02000000\nldr r1, [r0]\n",
             "LDR R0, .L_POOL\nLDR R1, [R0]\nBX LR\n.L_POOL:\n.WORD 0x03000100\n",
             "ldr r0, .L_pool\nldr r1, [r0]\nbx lr\n.L_pool:\n.4byte 0x03000100\n",
@@ -3904,6 +4176,8 @@ mod tests {
             ".4byte 0xe59f0004\n.4byte 0xe5901000\n.4byte 0xe12fff1e\n.4byte 0x02004778\n",
             ".4byte 0x03000100\n.4byte 0xe51f000c\n.4byte 0xe5901000\n.4byte 0xe12fff1e\n",
             ".4byte 0xe59f0004\n.4byte 0xe1a05000\n.4byte 0xe5951000\n.4byte 0x02004778\n",
+            ".word 0xe59f0010, 0xe3510000, 0x1a000000, 0xe3a00000, 0xe5901000, 0xe12fff1e, 0x02000100\n",
+            ".word 0xe59f0004, 0x03a00000, 0xe5901000, 0x02000100\n",
         ] {
             assert_eq!(
                 raw_address_reason(path, source),
@@ -3933,11 +4207,84 @@ mod tests {
             "ldr r0, .L_pool\nldr r1, [r0]\nbx lr\n.L_pool:\n.4byte 4\n.section .rodata\n.4byte 0x0200001a\n",
             ".4byte 0xe59f0004\n.4byte 0xe1a01000\n.4byte 0xeb000001\n.4byte 0x08040000\n",
             ".4byte 0xe59f0004\n.4byte 0xe3a00000\n.4byte 0xe5901000\n.4byte 0x02000100\n",
+            ".word 0xe59f0010, 0xea000001, 0xe3a00000, 0xe5901000, 0xe12fff1e, 0xe12fff1e, 0x02000100\n",
         ] {
             assert!(raw_address_reason(path, source).is_none(), "{source}");
         }
         assert!(
             raw_address_reason("games/THE LOST AGE/SRC/ROUTINE.S", "bl 0x08000100\n").is_none()
+        );
+    }
+
+    #[test]
+    fn raw_address_context_uses_owned_pointer_declarations_and_typed_tables() {
+        let sources = [
+            ("games/COMMON/INCLUDE/TYPES.H", "typedef int s32; typedef void (*Callback)(void);"),
+            ("games/THE LOST AGE/INCLUDE/API.H", "void Reader(const void *source, s32 coordinate); void Callback_Set(Callback callback); extern Callback Handlers[2]; extern void *Work; void Motion_CamBounds(s32 x);"),
+            ("games/THE BROKEN SEAL/INCLUDE/API.H", "void Motion_CamBounds(void *x);"),
+            ("recon/tla/raw/caller.s", "ldr r0, pool\nbl Reader\nbx lr\npool:\n.word 0x02000100\n"),
+            ("recon/tla/raw/callback.s", "ldr r0, pool\nbl Callback_Set\nbx lr\npool:\n.word 0x08000101\n"),
+            ("recon/tla/raw/standalone.s", "Handlers:\n.word 0x08000201, NamedHandler\n"),
+            ("recon/tla/raw/object.s", "Work:\n.word 0x02000200\n.word 0x08040000\n"),
+            ("recon/tla/raw/scalar.s", "ldr r0, pool\nbl Motion_CamBounds\nbx lr\npool:\n.word 0x08040000\n"),
+        ].into_iter().map(|(path, text)| (path.to_string(), text.to_string())).collect::<Vec<_>>();
+        let findings = raw_context_findings(&sources);
+        assert_eq!(
+            findings.keys().map(String::as_str).collect::<Vec<_>>(),
+            [
+                "recon/tla/raw/callback.s",
+                "recon/tla/raw/caller.s",
+                "recon/tla/raw/object.s",
+                "recon/tla/raw/standalone.s"
+            ]
+        );
+        assert_eq!(findings["recon/tla/raw/object.s"].len(), 1);
+    }
+
+    #[test]
+    fn equal_placeholder_labels_in_other_overlays_do_not_supply_argument_types() {
+        let sources = [
+            ("recon/tla/raw/overlays/resource_1_overlay.s", ".thumb_func\nFunc_02000000:\nldr r0, pool\nbl Func_02000010\nbx lr\npool:\n.word 0x08040000\n.thumb_func\nFunc_02000010:\nbx lr\n"),
+            ("recon/tla/raw/overlays/resource_2_overlay.s", ".thumb_func\nFunc_02000010:\nldr r1, [r0]\nbx lr\n"),
+        ].into_iter().map(|(path, text)| (path.to_string(), text.to_string())).collect::<Vec<_>>();
+        assert!(raw_context_findings(&sources).is_empty());
+    }
+
+    #[test]
+    #[ignore = "read-only working-tree audit, run when changing raw address analysis"]
+    fn current_raw_address_uses_are_labelled() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .unwrap()
+            .parent()
+            .unwrap();
+        let sources = walkdir::WalkDir::new(root.join("games"))
+            .into_iter()
+            .chain(walkdir::WalkDir::new(root.join("recon")))
+            .filter_map(Result::ok)
+            .filter(|entry| entry.file_type().is_file())
+            .filter_map(|entry| {
+                let path = entry.path().strip_prefix(root).ok()?.to_str()?.to_string();
+                (listed(extension(&path), &["c", "h"]) && path.starts_with("games/")
+                    || raw_source_game(&path).is_some())
+                .then(|| {
+                    std::fs::read_to_string(entry.path())
+                        .ok()
+                        .map(|text| (path, text))
+                })
+                .flatten()
+            })
+            .collect::<Vec<_>>();
+        let findings = raw_context_findings(&sources);
+        for (path, sites) in &findings {
+            for site in sites {
+                println!("{path}:{}: 0x{:08x}", site.line, site.value);
+            }
+        }
+        assert!(
+            findings.is_empty(),
+            "{} raw source files still contain address uses",
+            findings.len()
         );
     }
 
@@ -4566,6 +4913,47 @@ mod tests {
             .trim()
             .to_string()
     }
+    #[test]
+    fn raw_pointer_context_is_bound_to_the_index_and_each_outgoing_tree() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "fixture git").unwrap();
+        let header = "games/THE LOST AGE/INCLUDE/API.H";
+        let raw = "recon/tla/raw/caller.s";
+        let scalar = b"void Consumer(int value);\n".to_vec();
+        let pointer = b"void Consumer(void *value);\n".to_vec();
+        let published = commit(
+            root,
+            &[
+                (header, scalar.clone()),
+                (
+                    raw,
+                    b"ldr r0, pool\nbl Consumer\nbx lr\npool:\n.word 0x08040000\n".to_vec(),
+                ),
+            ],
+        );
+        assert!(check_tree(root, Some(&published)).is_ok());
+
+        // Unstaged source must not type a staged raw operand. Conversely, a
+        // staged declaration can expose an unchanged raw pointer argument.
+        std::fs::write(root.join(header), &pointer).unwrap();
+        assert!(check_tree(root, None).is_ok());
+        git(root, &["add", header], "fixture git").unwrap();
+        std::fs::write(root.join(header), &scalar).unwrap();
+        assert!(check_tree(root, None).unwrap_err().contains(raw));
+        assert!(check_staged(root).unwrap_err().contains(raw));
+        assert!(check_tree(root, Some(&published)).is_ok());
+
+        std::fs::write(root.join(header), &pointer).unwrap();
+        let bad = commit(root, &[]);
+        let tip = commit(root, &[(header, scalar)]);
+        assert!(check_tree(root, Some(&tip)).is_ok());
+        let update = format!("refs/heads/topic {tip} refs/heads/topic {published}\n");
+        let rejected = check_push(root, &update).unwrap_err();
+        assert!(rejected.contains(&bad[..12]), "{rejected}");
+        assert!(rejected.contains(raw), "{rejected}");
+    }
+
     #[test]
     fn new_branch_push_excludes_published_history_but_full_history_still_audits_it() {
         let directory = tempfile::tempdir().unwrap();

@@ -57,6 +57,7 @@ extern u8 ArutamiraDou_SceneTableB[];
 /* The actor wheel's work, past the overlay's image; the scene start clears
    it. */
 extern u16 *ArutamiraDou_ClearTarget;
+extern u16 gArutamiraActorWheelWork[6];
 
 void BattleFx_SetPhaseRequest(s32, s32);
 void Battle_ResetEffectCounter();

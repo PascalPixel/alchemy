@@ -48,7 +48,7 @@ Func_02000054:
 	bl Func_020002c0
 	pop {pc}
 .L_020080b8:
-	.4byte 0x0000190a
+	.4byte MsgMadoraGoingToOsenia
 .L_020080bc:
 	.4byte gPartyState
 	.section .text.x020080c8,"ax",%progbits
@@ -201,7 +201,7 @@ Func_020000c8:
 .L_0200821c:
 	.4byte gPartyState
 .L_02008220:
-	.4byte 0x00001908
+	.4byte MsgMadoraNeedEldersPermission
 	.section .text.x02008224,"ax",%progbits
 	.global Func_02000224
 	.thumb_func
@@ -240,7 +240,7 @@ Func_02000224:
 	bl Func_020002c0
 	pop {pc}
 .L_0200827c:
-	.4byte 0x00001910
+	.4byte MsgMadoraHeardAboutYou
 	.section .text.x02008280,"ax",%progbits
 	.global Func_02000280
 	.thumb_func
@@ -317,25 +317,25 @@ gSceneEvents:
 	.4byte Func_02000054
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001912
+	.4byte MsgMadoraMikasaraVillage
 	.4byte 0x00000000
 	.4byte 0x09130009
-	.4byte 0x0000190d
+	.4byte MsgMadoraCanCrossWithPermission
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001913
+	.4byte MsgMadoraAvoidYanpiSabaku
 	.4byte 0x00008d15
 	.4byte 0x09130008
-	.4byte 0x0000190e
+	.4byte MsgMadoraForTheirSafety
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001914
+	.4byte MsgMadoraWouldNeedBoat
 	.4byte 0x00008d15
 	.4byte 0x09130009
-	.4byte 0x0000190f
+	.4byte MsgMadoraElderReturn
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00001915
+	.4byte MsgMadoraRatherStayHome
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

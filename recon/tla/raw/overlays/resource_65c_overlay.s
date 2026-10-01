@@ -227,22 +227,22 @@ gSceneEvents:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00001916
+	.4byte MsgMadoraChampaBoat
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00001917
+	.4byte MsgMadoraSailorNotChampa
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00001918
+	.4byte MsgMadoraWaveDamage
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00001919
+	.4byte MsgMadoraCannotEscapeBySea
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x0000191a
+	.4byte MsgMadoraPayayamuNewShip
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x0000191b
+	.4byte MsgMadoraPirateAttackParties
 	.4byte 0x00008515
 	.4byte 0x0203000d
 	.4byte Func_02000054

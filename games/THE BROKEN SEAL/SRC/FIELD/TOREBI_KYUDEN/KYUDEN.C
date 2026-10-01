@@ -194,6 +194,9 @@ void RunOpeningAuxiliarySequence(s32 a)
         Engine_EventWait(20);
         Call3(Engine_ActorWalkByAndWait, a, -64, 0);
         Actor_WalkByAndWait(a, 0, 48);
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        Call3(Engine_ActorSetPosition, a, 56 << 16, 120 << 16);
+#endif
     }
     Engine_EventEnd();
 }

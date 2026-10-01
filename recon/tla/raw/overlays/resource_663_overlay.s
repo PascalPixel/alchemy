@@ -681,7 +681,7 @@ Func_02000548:
 	pop {pc}
 	.2byte 0x0000
 .L_02008564:
-	.4byte 0x00001a94
+	.4byte MsgFieldWindStoneWarning
 	.section .text.x02008568,"ax",%progbits
 	.global Func_02000568
 	.thumb_func

@@ -3416,7 +3416,7 @@ Func_02001b88:
 	pop {pc}
 	.2byte 0x0000
 .L_02009be8:
-	.4byte 0x000030ab
+	.4byte MsgSummonInheritedEarthDarkness
 	.section .text.x02009bec,"ax",%progbits
 	.global Func_02001bec
 	.thumb_func

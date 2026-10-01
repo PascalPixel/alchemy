@@ -467,6 +467,7 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.0008e62c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT37.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT2.o"(.text)
+    "*/games/COMMON/SRC/BATTLE/EFFECT/FRAGMENT.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.0008ec24)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT13.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT08.o"(.text)

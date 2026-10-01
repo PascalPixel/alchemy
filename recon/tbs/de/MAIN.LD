@@ -460,6 +460,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.0009ace0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT37.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT2.o"(.text)
+    "*/games/COMMON/SRC/BATTLE/EFFECT/FRAGMENT.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0009b2d8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT13.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT08.o"(.text)

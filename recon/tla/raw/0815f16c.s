@@ -1397,7 +1397,7 @@ Func_0815f16c:
 	bne .L_0815fcc0
 	ldr r0, [sp, #128]
 	movs r1, #9
-	bl Func_08156140
+	bl BattleFx_RunProjectileVolley
 .L_0815fcc0:
 	ldr r3, [sp, #124]
 	cmp r3, #54
@@ -1412,7 +1412,7 @@ Func_0815f16c:
 .L_0815fcd6:
 	ldr r0, [sp, #128]
 	movs r1, #8
-	bl Func_08156140
+	bl BattleFx_RunProjectileVolley
 	bl .L_081638ac
 .L_0815fce2:
 	adds r0, r7, #0

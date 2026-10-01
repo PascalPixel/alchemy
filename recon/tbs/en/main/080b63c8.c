@@ -133,7 +133,7 @@ void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
-void Unnamed_080bb7c0(s32 a, s32 b);
+void BattlePresentation_WaitForPromptAt(s32 a, s32 b);
 void Battle_ApplyValueToWork2224(void);
 void BattleUnit_AssignFar(s32 a, s32 b, s32 c);
 void UiWork_ClearValueNameTablesFar(void);
@@ -371,7 +371,7 @@ s32 Battle_RunEncounter(s32 arg)
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
         handle = UiText_OpenMessageWindowFar(0xc48, 10, 4, 1);
-        Unnamed_080bb7c0(92, 24);
+        BattlePresentation_WaitForPromptAt(92, 24);
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
     }

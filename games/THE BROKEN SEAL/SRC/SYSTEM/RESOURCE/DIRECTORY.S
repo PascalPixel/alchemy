@@ -44,7 +44,7 @@ Resource_DirectoryTable:
 	resource GoldenSunLogo, Title_GoldenSunLogo
 	resource WorldMapPicture, Field_WorldMapPicture
 	resource IntroTilesB, Title_IntroTilesB
-	resource , Battle_SuharaGateBackdrop
+	resource SuharaGateBackdrop, Battle_SuharaGateBackdrop
 	resource , Battle_TakaraShimaBackdrop
 	resource , Battle_TakaraShimaCaveBackdrop
 	resource , Battle_KorosseoBackdrop

@@ -1151,15 +1151,11 @@ Inn_PriceMultipliers:
 	.section .rom.000b9218, "ax"
 	.incbin "baserom.gba", 0x000b9218, 0x00000040
 	.section .rom.000b9534, "ax"
-	.incbin "baserom.gba", 0x000b9534, 0x000001ac
-	.section .rom.000b96e0, "ax"
-	.global Unnamed_080b56e0
-	.type Unnamed_080b56e0, %function
+	.global DebugBattle_ViewMessages
+	.type DebugBattle_ViewMessages, %function
 	.thumb_func
-Unnamed_080b56e0:
-	.incbin "baserom.gba", 0x000b96e0, 0x00000184
-	.section .rom.000b9f22, "ax"
-	.incbin "baserom.gba", 0x000b9f22, 0x00000162
+DebugBattle_ViewMessages:
+	.incbin "baserom.gba", 0x000b9534, 0x000001ac
 	.section .rom.000ba3e0, "ax"
 	.global Battle_RunEncounter
 	.type Battle_RunEncounter, %function
@@ -1184,14 +1180,6 @@ BattleActor_SpawnObjectsForList:
 	.thumb_func
 BattlePres_RunUnitAction:
 	.incbin "baserom.gba", 0x000bcc34, 0x0000019c
-	.section .rom.000bd56c, "ax"
-	.incbin "baserom.gba", 0x000bd56c, 0x000001d0
-	.section .rom.000bd73c, "ax"
-	.global BattlePresentation_AppendLinkedActions
-	.type BattlePresentation_AppendLinkedActions, %function
-	.thumb_func
-BattlePresentation_AppendLinkedActions:
-	.incbin "baserom.gba", 0x000bd73c, 0x00000190
 	.section .rom.000bdb46, "ax"
 	.incbin "baserom.gba", 0x000bdb46, 0x00000206
 	.section .rom.000bded8, "ax"
@@ -1206,12 +1194,6 @@ BattlePresentation_AppendLinkedActions:
 	.thumb_func
 BattleActor_RemoveFromLists:
 	.incbin "baserom.gba", 0x000bec84, 0x0000007c
-	.section .rom.000bf7d8, "ax"
-	.global Unnamed_080bb7c0
-	.type Unnamed_080bb7c0, %function
-	.thumb_func
-Unnamed_080bb7c0:
-	.incbin "baserom.gba", 0x000bf7d8, 0x00000118
 	.section .rom.000c143a, "ax"
 	.incbin "baserom.gba", 0x000c143a, 0x00000002
 	.section .rom.000c143c, "ax"

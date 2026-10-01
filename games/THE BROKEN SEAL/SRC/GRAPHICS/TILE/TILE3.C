@@ -93,7 +93,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
         s32 count;
 
         q = &gIoWriteQueue;
-        /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+        /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
         do {
             ime = &REG_IME;
             saved = *ime;

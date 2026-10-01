@@ -48,7 +48,7 @@ extern u16 gSleepActive;
 #define Io_Write16(v, reg)                                                     \
     do { \
         /* FAKEMATCH: the halfword-to-word register temporary preserves measured value allocation. */ \
-        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
         u32 value_ = (u16)(v);                                                 \
         *(reg) = value_;                                                       \
     } while (0)

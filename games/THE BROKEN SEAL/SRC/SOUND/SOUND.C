@@ -44,7 +44,7 @@ void AudioTest_RunParameterController(void)
 
     row = 0;
     preset = 2;
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         Data_03007804 = 0;
     } while (0);
@@ -128,7 +128,7 @@ void MusicCommand_SetPitch(s16 pitch)
     /* FAKEMATCH: the player pointer temporary preserves measured argument allocation or instruction order. */
   int player_address;
   player_address = (u32)gMusicPlayerBgm;
-  /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+  /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
   do
   {
     MusicPlayer_SetPitch(player_address, 0xFF, pitch);

@@ -58,9 +58,9 @@ void QueueSceneSound(s32 cue);
 #define QUEUE_IO_WRITE(address, value)                                      \
     q = &gIoWriteQueue;                                                     \
     do { \
-        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling; see its retained draft. */ \
+            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
             ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \

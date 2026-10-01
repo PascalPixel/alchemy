@@ -257,7 +257,7 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     s32 velocity_x;
 
     /* This block orders the Z load after the Y store; do not flatten it. */
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling; see its retained draft. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
         velocity_x = effect->velocity[0];
         effect->position[0] += velocity_x;

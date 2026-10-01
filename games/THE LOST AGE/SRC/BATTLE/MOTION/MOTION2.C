@@ -1,6 +1,9 @@
 #include "TYPES.H"
-#include "MOTION_OBJECT.H"
-extern u8 Data_03001e74[];
+
+struct MotionRecordState {
+    u8 unknown_00[0x10];
+    s32 field10;
+};
 
 void ResetMotionRecordGroup(void *owner)
 {

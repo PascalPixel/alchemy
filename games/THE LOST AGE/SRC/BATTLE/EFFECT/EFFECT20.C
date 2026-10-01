@@ -1,5 +1,7 @@
+#include "B5_CONTEXT.H"
 #include "TYPES.H"
 
+struct B5Context *GetBattleObjectSlotFar(s32);
 void Object_ResetMotion(void *);
 void Object_SetPosition(void *, s32, s32, s32);
 void Object_SetMode(void *, s32);

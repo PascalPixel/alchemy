@@ -1,9 +1,5 @@
 #include "TYPES.H"
 
-/* Battle effect: open the canvas layer with a 16 by 16 tile canvas on a
-   32-wide map. The left half of each map row holds the canvas tile pairs,
-   the right half is cleared. */
-
 void BattleFx_BeginCanvasLayer(s32 bg_control);
 
 void BattleFx_BeginTiledCanvas(s32 bg_control)
@@ -13,7 +9,7 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
     s32 offset;
 
     BattleFx_BeginCanvasLayer(bg_control);
-    *(volatile u16 *)0x0400000c = bg_control | 0x6784;
+    *(volatile u16 *)0x0400000c = bg_control | 0x4784;
     offset = 0;
     for (row = 0; row != 16; row++) {
         for (col = 0; col != 8; col++, offset += 2) {

@@ -12687,7 +12687,7 @@ msgctxt "message"
 msgid "03169"
 msgstr "{argument_class_name}"
 
-msgctxt "message"
+msgctxt "MsgActorDefends"
 msgid "03170"
 msgstr "{argument_actor_name:234} みをまもっている!"
 

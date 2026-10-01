@@ -2039,10 +2039,10 @@ Ui_FixedTileBlocks:
 Trade_GetOfferState:
 	.incbin "baserom.gba", 0x000ba348, 0x00000018
 	.section .rom.000ba360, "ax"
-	.global Func_080ad360
-	.type Func_080ad360, %function
+	.global Party_GetAverageLevel
+	.type Party_GetAverageLevel, %function
 	.thumb_func
-Func_080ad360:
+Party_GetAverageLevel:
 	.incbin "baserom.gba", 0x000ba360, 0x00000048
 	.section .rom.000ba3a8, "ax"
 	.global Owner_GetRecord

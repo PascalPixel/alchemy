@@ -35,7 +35,9 @@ struct ScriptObjectRuntime {
     u8 flags_59;
     u8 action_flags;
     u8 movement_state;
-    u8 unknown_5c[0x04];
+    u8 unknown_5c[0x02];
+    /* Set when a wander finds no free heading and turns the object round. */
+    u16 turned_back;
     void *callback;
     s16 home_x;
     s16 home_z;

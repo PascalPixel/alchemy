@@ -17,7 +17,16 @@ struct GameState {
     s16 entrance;
     s16 saved_scene;
     s16 saved_entrance;
-    u8 unknown_1c8[0x0e];
+    /* Where a scene change goes when it names no scene or entrance. */
+    s16 default_scene;
+    s16 default_entrance;
+    u8 unknown_1cc[2];
+    /* The scene and entrance a scene change asked for, -1 for the default. */
+    s16 next_scene;
+    s16 next_entrance;
+    /* Where the party wakes after falling in battle, -1 for the default. */
+    s16 defeat_scene;
+    s16 defeat_entrance;
     /* The value Event_GetSpecialValue returns, which battle effects set. */
     s16 special;
     u8 unknown_1d8[4];
@@ -43,7 +52,10 @@ struct GameState {
     u16 unknown_22e;
     u16 unknown_230;
     s16 unknown_232;
-    u8 unknown_234[0x0a];
+    u8 unknown_234[2];
+    /* Why the scene is changing: -1 when the party fell in battle. */
+    s16 scene_change_reason;
+    u8 unknown_238[6];
     s16 unknown_23e;
     /* Where Retreat returns the party. */
     s16 retreat_scene;

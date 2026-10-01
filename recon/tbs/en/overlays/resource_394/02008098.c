@@ -6,7 +6,10 @@
  * pool for every cell; this swaps r8 and ip for the 0xfff mask and the
  * column end and loads the second table address into r2. Tried: the row
  * inside and outside the inner loop, byte offsets and word indexes, and
- * four minutes of permute. */
+ * four minutes of permute. 2026-10-01 (matcher 3): five more minutes (3
+ * jobs, seed 100, 47,647 candidates) found nothing below 290, and the
+ * plain one-statement cell body scores worse (it keeps 0x06002800 out of
+ * lr and hoists the table address into r7). */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 

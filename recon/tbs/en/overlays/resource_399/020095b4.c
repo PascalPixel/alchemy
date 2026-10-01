@@ -1,4 +1,14 @@
 /*
+ * 2026-10-01 (matcher 3): the pooled zero is a halfword constant. agscc
+ * loads every HImode constant from the literal pool (*thumb_movhi_insn
+ * lists "mn" before "I"), and local-alloc moves a set-once, used-once
+ * REG_EQUIV constant to just before its use when set and use sit in
+ * different basic blocks outside loop notes. So the reference's zero is an
+ * HImode 0 made before the `spark != NULL` test (or before the frame test)
+ * that CSE shares into motion_flags' byte store; ResetSceneTransitionEffect
+ * (EFFECT38.C) gets the same shape from an s16 field store, whose
+ * store_bit_field mask is that zero. Not yet found here.
+ *
  * Draft of resource_399 0x020095b4 (ImiruMura_SwayAndSpark), from games/THE
  * BROKEN SEAL/SRC/FIELD/IMIRU_MURA; the range links as disassembly (section
  * .text.x020095b4 of the overlay listing).

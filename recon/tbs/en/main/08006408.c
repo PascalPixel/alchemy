@@ -1,3 +1,20 @@
+/* 2026-10-01 (matcher 3): why the zero is pooled. agscc loads every
+   HImode constant from the literal pool (*thumb_movhi_insn lists "mn"
+   before "I"), so the reference's `ldr r0, [pc]` is a halfword zero that
+   CSE shares into the byte store. The plain body (state set up front, the
+   test on SERIAL_ACTIVE_B, the six stores in order, no blocks) already
+   pools it and scores 315: its HImode zero is set at SERIAL_VALUE_B's
+   store, lives across `SERIAL_ACTIVE_B = value` and pushes value into r5.
+   local-alloc's update_equiv_regs moves a set-once, used-once REG_EQUIV
+   constant to just before its use only when the two sit in different basic
+   blocks and the use is outside any loop notes (do/while(0) blocks count),
+   which is how ResetSceneTransitionEffect (EFFECT38.C) gets its late pooled
+   zero: an s16 field store's store_bit_field mask makes the HImode zero in
+   an earlier block. Nothing in this body gives the zero an earlier block
+   yet: u16/s16 zero locals are promoted to SImode, a struct-field form of
+   SERIAL_VALUE_B folds into the state pointer, and a block around the first
+   stores lets CSE use busy (r4) again. The permuter's 190 changed what is
+   stored, so it was discarded. */
 /* 2026-09-30 (Mercury): this A-shaped body (the sibling
    SerialRuntime_BeginTransferA's goto layout and one-pass block, with the
    sequence clear after the block) matches every instruction but one: the

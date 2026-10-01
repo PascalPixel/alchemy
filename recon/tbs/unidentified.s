@@ -1122,11 +1122,11 @@ LightningPillar_Columns:
 	.global LightningPillar_Counts
 LightningPillar_Counts:
 	.incbin "baserom.gba", 0x000ee25e, 0x00000004
-	.global Data_080ee262
-Data_080ee262:
+	.global SparkGroups_Shapes
+SparkGroups_Shapes:
 	.incbin "baserom.gba", 0x000ee262, 0x00000032
-	.global Data_080ee294
-Data_080ee294:
+	.global SparkGroups_FlashCells
+SparkGroups_FlashCells:
 	.incbin "baserom.gba", 0x000ee294, 0x00000006
 	.global Data_080ee29a
 Data_080ee29a:

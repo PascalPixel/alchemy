@@ -1,16 +1,3 @@
-/* Draft, not exact: 160 instructions off, 1730 bytes against 1726, 76 bytes
-   of stack against 80. The whole difference is one decision of the loop
-   pass: the reference computes the address of work->effect once before the
-   frame loop, keeps it in a stack slot, and reads the five frame-loop uses
-   (the variant 3 test, both ends of the group loop, the flash draw and the
-   ring loop) through it; this draft builds the address again at each use,
-   and every later register choice shifts with that. Reading those five uses
-   through an explicit pointer local gives the reference frame and matches
-   all but three places: the store of that pointer sits before the loop entry
-   test instead of after it, the ring y product has its operands the other
-   way round, and the spark address adds index then base.
-   SparkGroups_Shapes is Data_080ee262 and SparkGroups_FlashCells is
-   Data_080ee294. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -48,6 +35,22 @@ void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 s32 BattleFx_EndCanvasLayer(void);
 
+static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
+{
+    /* FAKEMATCH: forwarding the copy through this helper loads the routine's
+       address before the palette address is shifted into place; a direct
+       call swaps those two instructions at both palette copies. */
+    copy(destination, source, size);
+}
+
+/*
+ * Groups of sparks burst one after another, eight frames apart. Each group
+ * flashes for two frames, shows a ring of twelve fading flashes around its
+ * column, then throws its sparks, which fall and bounce until they fade.
+ * The variant picks how many groups there are, how many sparks each throws
+ * and where each column stands; kind 0 and 1 burst at a fixed place and any
+ * other kind at the acting unit, and kind 2 makes the sparks rise.
+ */
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
 {
     struct EffectPosition pos;
@@ -95,15 +98,11 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
     if (kind == 1) {
-        void *palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-        WordCopy copy = Iwram_CopyWords;
-
-        copy((void *)0x05000000, palette, 128);
+        CopyPalette(Iwram_CopyWords, (void *)0x05000000,
+            Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     } else if (kind == 2) {
-        void *palette = Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
-        WordCopy copy = Iwram_CopyWords;
-
-        copy((void *)0x05000000, palette, 128);
+        CopyPalette(Iwram_CopyWords, (void *)0x05000000,
+            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
     }
     sparks = (struct EffectStep *)gMapCellBuffer;
 
@@ -115,23 +114,21 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
             point = &work->particles[i * 16 + j];
             radius = j * 2;
             angle = Random16() & 0xffff;
-            point->x = radius * Trig_Sin(angle);
+            point->x = Trig_Sin(angle) * radius;
             point->y = -(Trig_Cos(angle) * radius);
             point->variant = j / 2 + 25;
         }
         for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++) {
             s32 speed;
             s32 angle;
-            s32 x;
 
-            spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5] + j];
+            spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5]] + j;
             speed = (Random16() & 0x3ff) + 32;
             angle = Random16() & 0xffff;
             if (work->effect->side == 1)
-                x = origin_x - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28;
+                spark->x = (origin_x - SparkGroups_Shapes[work->effect->variant * 5 + i + 2] + 28) << 16;
             else
-                x = origin_x + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28;
-            spark->x = x << 16;
+                spark->x = (origin_x + SparkGroups_Shapes[work->effect->variant * 5 + i + 2] - 28) << 16;
             spark->y = origin_y << 16;
             spark->velocity_x = (Trig_Sin(angle) * speed) >> 6;
             spark->velocity_y = -((Trig_Cos(angle) * speed) << 1) >> 6;
@@ -181,7 +178,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
                     s32 x;
                     s32 y;
 
-                    point = &work->particles[i * 16 + j];
+                    point = &work->particles[i * 16] + j;
                     y = ((s16 *)&point->y)[1] + origin_y;
                     if (work->effect->side == 1)
                         x = ((s16 *)&point->x)[1] + origin_x
@@ -207,7 +204,7 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind)
                 else
                     gravity = 0x1000;
                 for (j = 0; j != SparkGroups_Shapes[work->effect->variant * 5]; j++) {
-                    spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5] + j];
+                    spark = &sparks[i * SparkGroups_Shapes[work->effect->variant * 5]] + j;
                     if (spark->variant > 0) {
                         EffectStep_AdvanceWithGravity2D(spark, 60, gravity);
                         spark->variant--;

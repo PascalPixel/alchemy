@@ -1434,12 +1434,8 @@ BattleEffect_RunEmberColumns:
 	.incbin "baserom.gba", 0x000c9d98, 0x00000628
 	.section .rom.000cac80, "ax"
 	.incbin "baserom.gba", 0x000cac80, 0x0000046c
-	.section .rom.000cb604, "ax"
-	.global BattleFx_RunSparkGroups
-	.type BattleFx_RunSparkGroups, %function
-	.thumb_func
-BattleFx_RunSparkGroups:
-	.incbin "baserom.gba", 0x000cb604, 0x00000c54
+	.section .rom.000cbce8, "ax"
+	.incbin "baserom.gba", 0x000cbce8, 0x00000570
 	.section .rom.000cc2c8, "ax"
 	.global BattleFx_RenderMode
 	.type BattleFx_RenderMode, %function
@@ -1687,7 +1683,13 @@ LightningPillar_Columns:
 	.global LightningPillar_Counts
 LightningPillar_Counts:
 	.incbin "baserom.gba", 0x000e525e, 0x00000004
-	.incbin "baserom.gba", 0x000e5262, 0x00000052
+	.global SparkGroups_Shapes
+SparkGroups_Shapes:
+	.incbin "baserom.gba", 0x000e5262, 0x00000032
+	.global SparkGroups_FlashCells
+SparkGroups_FlashCells:
+	.incbin "baserom.gba", 0x000e5294, 0x00000006
+	.incbin "baserom.gba", 0x000e529a, 0x0000001a
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000e52b4, 0x000006c0

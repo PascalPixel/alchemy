@@ -606,6 +606,8 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_DISPATCH.o"(.text .rodata .data .padding)
     "*/recon/tbs/es/rom.o"(.rom.000b9218)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/BIT_COMMANDS.o"(.text .rodata .data .padding)
+    /* The tile bit decoder block BattleBackground_Load copies to RAM, DECODE.S to BIT_COMMANDS.S. */
+    BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000b9534)
     "*/recon/tbs/es/rom.o"(.rom.000b96e0)
@@ -679,7 +681,6 @@
     "*/recon/tbs/es/rom.o"(.rom.000c42bc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT9.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT10.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000c4904)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT11.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/TRANS_SETUP.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/SETUP_TRANSITION_AT_PAIR_MIDPOINT.o"(.text)

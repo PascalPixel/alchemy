@@ -1230,12 +1230,6 @@ BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000b6ba4, 0x00000414
 	.section .rom.000b72a4, "ax"
 	.incbin "baserom.gba", 0x000b72a4, 0x0000045c
-	.section .rom.000b78ec, "ax"
-	.global BattleBackground_Load
-	.type BattleBackground_Load, %function
-	.thumb_func
-BattleBackground_Load:
-	.incbin "baserom.gba", 0x000b78ec, 0x00000138
 	.section .rom.000b8470, "ax"
 	.incbin "baserom.gba", 0x000b8470, 0x00000260
 	.section .rom.000b8796, "ax"

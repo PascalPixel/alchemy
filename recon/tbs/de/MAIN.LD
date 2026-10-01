@@ -82,7 +82,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_XCHG.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000618c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_INTR.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00006438)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000658c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_TEST.o"(.text)

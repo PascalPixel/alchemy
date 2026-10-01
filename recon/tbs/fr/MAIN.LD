@@ -77,7 +77,6 @@
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_XCHG.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.0000616c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_INTR.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.00006418)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.0000656c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_TEST.o"(.text)

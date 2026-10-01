@@ -2070,7 +2070,7 @@ SECTIONS
         "*/recon/tla/raw/08108660.o"(.text)
         "*/recon/tla/raw/08108690.o"(.text)
         "*/recon/tla/raw/0810875c.o"(.text)
-        "*/recon/tla/raw/08108788.o"(.text)
+        "*/games/THE LOST AGE/SRC/MENU/SHOP/COPY_GLYPHS.o"(.text)
         "*/recon/tla/raw/081087e0.o"(.text)
         "*/recon/tla/raw/081088d8.o"(.text)
         "*/recon/tla/raw/08108928.o"(.text)

@@ -121,7 +121,7 @@ extern u16 Korosseo_MarkerStartY;
 extern u16 Korosseo_MarkerStep;
 extern u8 gColossoRandomEffect[];
 extern u8 gColossoLinkedEffect[];
-extern u8 gColossoSceneDescriptor[];
+extern u8 Korosseo_GaugeGraphics[];
 extern u32 StagedActor_DirectionSteps[];
 
 extern u8 gColossoMultiPhaseData[];

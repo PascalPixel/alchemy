@@ -783,6 +783,7 @@
     "*/recon/tbs/fr/rom.o"(.rom.000e4840)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_SHAKE.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000e4de8)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SHATTER_ROCKS.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000e6172)
     "*/recon/tbs/fr/rom.o"(.rom.000e6174)

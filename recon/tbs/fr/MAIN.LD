@@ -261,7 +261,6 @@
     "*/recon/tbs/fr/rom.o"(.rom.000198bc)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU2.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.0001a998)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESOURCE2.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.0001adb0)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RESOURCE.o"(.text)

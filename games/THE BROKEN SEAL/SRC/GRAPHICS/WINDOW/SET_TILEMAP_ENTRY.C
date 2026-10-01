@@ -82,9 +82,6 @@ plain:
     *(u16 *)((u8 *)map + (index << 1)) = value;
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 struct ScaleEffect {
     unsigned x : 16;
     unsigned y : 16;
@@ -162,4 +159,3 @@ void RenderOutput_UpdateScaleAnimation(struct AnimatedOutput *output)
         }
     }
 }
-#endif

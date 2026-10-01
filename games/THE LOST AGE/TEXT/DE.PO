@@ -18655,7 +18655,7 @@ msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Das Anlegen zeigt keinen Effekt."
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "04662"
 msgstr "Effekt, wenn angelegt:"
 

@@ -60,9 +60,6 @@ again:
     }
 }
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* Display transition frame callback: step the transition value towards its
  * end over the configured duration (or stop the H-blank DMA and remove the
  * callback when done), toggle the dither phase, write two palette nibbles
@@ -147,4 +144,3 @@ void DisplayTransition_UpdateFrame(void)
         *ime = savedIme;
     }
 }
-#endif

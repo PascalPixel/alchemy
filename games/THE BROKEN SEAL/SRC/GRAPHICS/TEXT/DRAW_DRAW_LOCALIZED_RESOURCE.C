@@ -8,6 +8,7 @@
  * layout; the public alias gives the reconstructed entry its address name.
  */
 s32 UiText_CopyMessageString(s32, s16 *, s32);
+void UiText_DecodeMessage(s32, s16 *, s32);
 s32 UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 
 extern u8 MsgWaitingForOpponent[];
@@ -25,7 +26,12 @@ static __inline__ s32 Scope_080270d8(void)
         s16 data[64];
 
         (void)&padding;
+#if defined(TBS_EDITION_JA)
+        /* The Japanese line is decoded straight into a shorter buffer. */
+        UiText_DecodeMessage((s32)MsgWaitingForOpponent, data, 32);
+#else
         UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 0x34);
+#endif
         return UiText_RenderWideStringAtOffset(data, *(s32 *)(context + 0x44), 0, 4);
     }
 

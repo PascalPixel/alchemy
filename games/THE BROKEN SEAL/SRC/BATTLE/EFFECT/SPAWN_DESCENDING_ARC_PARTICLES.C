@@ -3,9 +3,6 @@
 #include "TYPES.H"
 #include "SCENE_IDS.H"
 
-#if defined(TBS_EDITION_EN)
-/* The other editions keep their code here in their scaffolds for now. */
-
 /* A falling particle: a 16.16 position, the height it vanishes at, its
    sprite scale, and the object it drifts down beside. */
 struct ArcParticle {
@@ -88,7 +85,6 @@ void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle)
     particle->y = y - 0x20000;
     particle->z = source->z - ((0x10000 - scale) * 5) + 0x100000;
 }
-#endif
 
 struct ArcParticle;
 void BattleFx_UpdateDescendingParticleNegativeArc(struct ArcParticle *particle);

@@ -11431,7 +11431,7 @@ msgctxt "message"
 msgid "02855"
 msgstr "kann es nicht benutzt werden."
 
-msgctxt "message"
+msgctxt "MsgEffectRateSuffix"
 msgid "02856"
 msgstr "="
 
@@ -12951,7 +12951,7 @@ msgctxt "MsgCoins"
 msgid "03235"
 msgstr "Münzen"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "03236"
 msgstr "="
 
@@ -41527,7 +41527,7 @@ msgctxt "message"
 msgid "10379"
 msgstr "Wir haben Babi versprochen,{line_break}Lemuria zu finden. Wir{line_break}werden ihn nicht enttäuschen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotBlackOrb"
 msgid "10380"
 msgstr "{actor_name:1} erhält den Schwarzen{line_break}Ball.{end_wait}"
 

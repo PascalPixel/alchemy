@@ -5,7 +5,7 @@ struct TextWork {
     u8 unknown_000[RENDER_DIRTY_OFS];
     u8 dirty;
     u8 unknown_ea4[0xc];
-    u16 entries[0x200];
+    u16 entries[RENDER_ENTRY_MASK + 1];
     u16 unknown_12b0;
     u16 count;
 };
@@ -28,7 +28,7 @@ void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
     if (text == NULL) {
         text = (s16 *)work->entries;
         work->entries[work->count] = 0;
-        work->count = (work->count + 1) & 0x1ff;
+        work->count = (work->count + 1) & RENDER_ENTRY_MASK;
     }
     c = *text++;
     if (c != 0) do {
@@ -49,7 +49,10 @@ void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
             case 11:
             case 12:
             case 17:
+#if !defined(TBS_EDITION_JA)
+            /* Code 29 carries an operand outside the Japanese edition. */
             case 29:
+#endif
                 text++;
                 break;
             }

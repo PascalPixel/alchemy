@@ -18655,7 +18655,7 @@ msgctxt "MsgCoins"
 msgid "04661"
 msgstr "Nessun effetto se attivato"
 
-msgctxt "message"
+msgctxt "MsgPiece"
 msgid "04662"
 msgstr "Effetto se attivato:"
 

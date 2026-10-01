@@ -918,14 +918,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.00098a6a, "ax"
-	.incbin "baserom.gba", 0x00098a6a, 0x00000002
-	.section .rom.00098a6c, "ax"
-	.global UiMenu_SlideCursor
-	.type UiMenu_SlideCursor, %function
-	.thumb_func
-UiMenu_SlideCursor:
-	.incbin "baserom.gba", 0x00098a6c, 0x00000108
 	.section .rom.00099454, "ax"
 	.global RunAssetSelectionScreen
 	.type RunAssetSelectionScreen, %function

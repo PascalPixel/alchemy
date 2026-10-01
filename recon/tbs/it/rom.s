@@ -907,14 +907,6 @@ BattleFx_UntargetedObjectScript:
 	.global gEffectScripts
 gEffectScripts:
 	.incbin "baserom.gba", 0x000a0284, 0x00000d7c
-	.section .rom.000a1abe, "ax"
-	.incbin "baserom.gba", 0x000a1abe, 0x00000002
-	.section .rom.000a1ac0, "ax"
-	.global UiMenu_SlideCursor
-	.type UiMenu_SlideCursor, %function
-	.thumb_func
-UiMenu_SlideCursor:
-	.incbin "baserom.gba", 0x000a1ac0, 0x00000108
 	.section .rom.000a24d0, "ax"
 	.global RunAssetSelectionScreen
 	.type RunAssetSelectionScreen, %function

@@ -498,8 +498,6 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/DRAW_VALUE_PAIR_ROWS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/TEXT6.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY2.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000a62b2)
-    "*/recon/tbs/es/rom.o"(.rom.000a62b4)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/RESERVED_NO_OP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/OWNER_ENTRIES.o"(.text)
     "*/games/COMMON/SRC/MENU/ITEM/POSITION_OWNER_ENTRY.o"(.text)

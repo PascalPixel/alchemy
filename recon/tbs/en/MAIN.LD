@@ -585,8 +585,6 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/TEXT6.o"(.text)
         "*/recon/tbs/raw/080a1812.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY2.o"(.text)
-        "*/recon/tbs/raw/080a1abe.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080a1ac0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/RESERVED_NO_OP.o"(.text)
         "*/recon/tbs/raw/080a1bca.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/OWNER_ENTRIES.o"(.text)

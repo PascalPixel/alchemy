@@ -16,6 +16,10 @@
  * the copy writes to without an extra instruction. */
 #define Ram_SoundMixer ((u8 *)0x03006000) /* SoundDriver_Mixer */
 
+/* The end of the IWRAM the heap hands blocks out of; the sound mixer's
+ * workspace follows it. */
+#define Ram_IwramHeapEnd ((u8 *)0x03006fc0) /* IwramSoundMixWorkspace */
+
 /* The heap's slot words, which hold the resident work blocks, open IWRAM.
  * GCC reaches a slot from the constant base with the slot's offset in the
  * load, as it does for a field of a structure at a constant address. */

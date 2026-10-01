@@ -1466,8 +1466,8 @@ BattleFx_RenderMode:
 	.thumb_func
 BattleEffect_RunDitherDissolveScene:
 	.incbin "baserom.gba", 0x000da170, 0x00000cec
-	.section .rom.000dbab0, "ax"
-	.incbin "baserom.gba", 0x000dbab0, 0x00000698
+	.section .rom.000dbdd0, "ax"
+	.incbin "baserom.gba", 0x000dbdd0, 0x00000378
 	.section .rom.000dc1ac, "ax"
 	.global BattleEffectA
 	.type BattleEffectA, %function
@@ -1716,7 +1716,10 @@ BattleFx10_FallHeights:
 	.incbin "baserom.gba", 0x000f21ef, 0x00000003
 	.global BattleFx10_FallCells
 BattleFx10_FallCells:
-	.incbin "baserom.gba", 0x000f21f2, 0x00000156
+	.incbin "baserom.gba", 0x000f21f2, 0x00000006
+	.global IceShardBursts_Gravities
+IceShardBursts_Gravities:
+	.incbin "baserom.gba", 0x000f21f8, 0x00000150
 	.global Data_080eeb48
 Data_080eeb48:
 	.incbin "baserom.gba", 0x000f2348, 0x00000003

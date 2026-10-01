@@ -756,7 +756,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT12.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000d8770)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/INITIALIZE_MODE10.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000da0b0)
+    "*/recon/tbs/de/rom.o"(.rom.000da3d0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000da7ac)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)

@@ -751,7 +751,7 @@
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT12.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000da170)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/INITIALIZE_MODE10.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000dbab0)
+    "*/recon/tbs/fr/rom.o"(.rom.000dbdd0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000dc1ac)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.o"(.text)

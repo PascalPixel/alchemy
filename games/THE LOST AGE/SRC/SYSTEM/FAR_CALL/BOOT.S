@@ -12,7 +12,7 @@ WaitFramesFar:
 	.global Func_080000c8
 	.thumb_func
 Func_080000c8:
-	overlay_veneer Func_080144c0
+	overlay_veneer Scheduler_ResetTaskTable
 	.global Scheduler_AddOrUpdateCallbackFar
 	.thumb_func
 Scheduler_AddOrUpdateCallbackFar:
@@ -24,11 +24,11 @@ Func_080000d8:
 	.global Func_080000e0
 	.thumb_func
 Func_080000e0:
-	overlay_veneer Func_08014694
+	overlay_veneer Scheduler_EnableCallbacks
 	.global Func_080000e8
 	.thumb_func
 Func_080000e8:
-	overlay_veneer Func_0801475c
+	overlay_veneer Scheduler_DisableCallbacks
 	.global Func_080000f0
 	.thumb_func
 Func_080000f0:
@@ -124,7 +124,7 @@ Func_080001a0:
 	.global Func_080001a8
 	.thumb_func
 Func_080001a8:
-	overlay_veneer Func_0801587c
+	overlay_veneer Resource_DecodeType01
 	.global Func_080001b0
 	.thumb_func
 Func_080001b0:
@@ -388,7 +388,7 @@ Func_080003b0:
 	.global Func_080003b8
 	.thumb_func
 Func_080003b8:
-	overlay_veneer Func_0801471c
+	overlay_veneer Scheduler_SetCallbackMask
 	.global Owner_GetStateFar
 	.thumb_func
 Owner_GetStateFar:
@@ -436,7 +436,7 @@ Func_08000410:
 	.global Func_08000418
 	.thumb_func
 Func_08000418:
-	overlay_veneer Func_0801456c
+	overlay_veneer Scheduler_FindCallback
 	.global Func_08000420
 	.thumb_func
 Func_08000420:

@@ -47,7 +47,7 @@ BattleFx_BeginCanvasLayer:
 .L_08143638:
 	.4byte 0x00000000
 .L_0814363c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08143640:
 	.4byte 0x04000208
 .L_08143644:

@@ -22,12 +22,12 @@ Func_0802b828:
 	ldr r3, [r5, #44]
 	ldr r1, .L_0802b870
 	adds r0, r5, r3
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Func_0802a5e4
 	ldr r3, [r5, #48]
 	ldr r1, .L_0802b874
 	adds r0, r5, r3
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	pop {r5, pc}
 .L_0802b864:
 	.4byte gPartyState

@@ -40,12 +40,12 @@ Func_0817e0c0:
 	ldr r1, [sp, #24]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0817e134
 	ldr r1, .L_0817e138
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	lsls r5, r5, #3
 	mov r2, r9
 	adds r1, r2, r5
@@ -64,7 +64,7 @@ Func_0817e0c0:
 .L_0817e13c:
 	.4byte 0x00000181
 .L_0817e140:
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r6, #248
 	movs r3, #176
 	lsls r3, r3, #4
@@ -97,7 +97,7 @@ Func_0817e0c0:
 	ldr r0, .L_0817e4c8
 	add r1, r9
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #40]
 	cmp r3, #5
 	bhi .L_0817e1bc

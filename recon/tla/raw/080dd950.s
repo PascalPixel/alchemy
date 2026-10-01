@@ -41,15 +41,15 @@ Func_080dd950:
 	adds r0, r5, #0
 	bl Func_080d170c
 	movs r0, #1
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	movs r0, #0
 	movs r1, #0
-	bl Func_080d172c
+	bl BattleFx_ApplyColorToSourceBuffer
 	movs r1, #0
 	adds r0, r5, #0
 	bl Func_080d170c
 	movs r0, #30
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	movs r0, #1
 	bl WaitFrames
 	movs r0, #8

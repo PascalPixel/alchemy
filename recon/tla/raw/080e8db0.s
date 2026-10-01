@@ -48,7 +48,7 @@ Func_080e8db0:
 	ldr r7, [sp, #52]
 	adds r7, #84
 	adds r1, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #64
 	adds r2, r7, #0

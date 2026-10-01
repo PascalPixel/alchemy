@@ -207,8 +207,8 @@ Data_0802f380:
 	.global Data_0804e584
 Data_0804e584:
 	.incbin "baserom.gba", 0x0004e584, 0x00000100
-	.global Data_0804e684
-Data_0804e684:
+	.global UiIcon_BaseGlyphPointers
+UiIcon_BaseGlyphPointers:
 	.incbin "baserom.gba", 0x0004e684, 0x000000bc
 	.global Data_0804e740
 Data_0804e740:
@@ -225,8 +225,8 @@ Data_0804eb58:
 	.global Data_0804f124
 Data_0804f124:
 	.incbin "baserom.gba", 0x0004f124, 0x000058f0
-	.global Data_08054a14
-Data_08054a14:
+	.global UiIcon_PsynergyIconPointers
+UiIcon_PsynergyIconPointers:
 	.incbin "baserom.gba", 0x00054a14, 0x00000410
 	.global Data_08054e24
 Data_08054e24:
@@ -407,11 +407,11 @@ Data_0805f89b:
 	.global Data_0805f89f
 Data_0805f89f:
 	.incbin "baserom.gba", 0x0005f89f, 0x00000008
-	.global Data_0805f8a7
-Data_0805f8a7:
+	.global Menu_TopEntryCommandByPosition
+Menu_TopEntryCommandByPosition:
 	.incbin "baserom.gba", 0x0005f8a7, 0x0000000c
-	.global Data_0805f8b3
-Data_0805f8b3:
+	.global Menu_TopEntryPositionByCommand
+Menu_TopEntryPositionByCommand:
 	.incbin "baserom.gba", 0x0005f8b3, 0x0000000c
 	.global Data_0805f8bf
 Data_0805f8bf:
@@ -545,8 +545,8 @@ Data_080ed90c:
 	.global Data_080eda0c
 Data_080eda0c:
 	.incbin "baserom.gba", 0x000eda0c, 0x000000c0
-	.global Data_080edacc
-Data_080edacc:
+	.global Encounter_EnemyGroupTable
+Encounter_EnemyGroupTable:
 	.incbin "baserom.gba", 0x000edacc, 0x00000c08
 	.global Data_080ee6d4
 Data_080ee6d4:
@@ -557,8 +557,8 @@ Data_080eedbc:
 	.global Data_080eef34
 Data_080eef34:
 	.incbin "baserom.gba", 0x000eef34, 0x00000020
-	.global Data_080eef54
-Data_080eef54:
+	.global Encounter_AreaEntryTable
+Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000eef54, 0x00000140
 	.global Data_080ef094
 Data_080ef094:
@@ -687,8 +687,8 @@ Data_080f0e78:
 	.global Data_080f0e9c
 Data_080f0e9c:
 	.incbin "baserom.gba", 0x000f0e9c, 0x00000008
-	.global Data_080f0ea4
-Data_080f0ea4:
+	.global BattleFx_CyclePatternWords
+BattleFx_CyclePatternWords:
 	.incbin "baserom.gba", 0x000f0ea4, 0x00000020
 	.global Data_080f0ec4
 Data_080f0ec4:
@@ -762,8 +762,8 @@ Object_OffsetMotionScript:
 	.global Data_080f32e0
 Data_080f32e0:
 	.incbin "baserom.gba", 0x000f32e0, 0x00000020
-	.global Data_080f3300
-Data_080f3300:
+	.global ObjectMotion_StepAngleScript
+ObjectMotion_StepAngleScript:
 	.incbin "baserom.gba", 0x000f3300, 0x0000000c
 	.global Data_080f330c
 Data_080f330c:
@@ -948,8 +948,8 @@ Data_08105a40:
 Data_08105a50:
 	.incbin "baserom.gba", 0x00105a50, 0x000025b0
 	.section .unidentified.0810c008,"a"
-	.global Data_0810c008
-Data_0810c008:
+	.global Shop_GlyphBytes
+Shop_GlyphBytes:
 	.incbin "baserom.gba", 0x0010c008, 0x00000140
 	.global Data_0810c148
 Data_0810c148:
@@ -960,8 +960,8 @@ Data_0810c248:
 	.global Data_0810c348
 Data_0810c348:
 	.incbin "baserom.gba", 0x0010c348, 0x0000003c
-	.global Data_0810c384
-Data_0810c384:
+	.global Shop_GlyphRowOffsets
+Shop_GlyphRowOffsets:
 	.incbin "baserom.gba", 0x0010c384, 0x0000000a
 	.global Data_0810c38e
 Data_0810c38e:

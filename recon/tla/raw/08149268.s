@@ -34,12 +34,12 @@ Func_08149268:
 	ldr r0, .L_081492d0
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r1, r5, #0
 	movs r2, #1
 	ldr r0, .L_081492d4
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, sp
 	adds r4, #32
 	mov r3, r9

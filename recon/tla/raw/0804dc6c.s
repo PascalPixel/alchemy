@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0804dc6c
+	.global Menu_HandleSelectionRowInput
 	.thumb_func
-Func_0804dc6c:
+Menu_HandleSelectionRowInput:
 	push {r5, r6, r7, lr}
 	ldr r6, .L_0804dcd8
 	adds r7, r0, #0
@@ -151,7 +151,7 @@ Func_0804dc6c:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	adds r2, r4, #0
-	bl Func_0804dad0
+	bl Menu_DrawSelectionRow
 	b .L_0804ddc4
 .L_0804dd7e:
 	ldr r3, [r6, #12]
@@ -190,7 +190,7 @@ Func_0804dc6c:
 	adds r0, r7, #0
 	adds r1, r5, #0
 	adds r2, r4, #0
-	bl Func_0804dad0
+	bl Menu_DrawSelectionRow
 .L_0804ddc4:
 	adds r0, r5, #0
 .L_0804ddc6:

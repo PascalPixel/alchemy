@@ -205,7 +205,7 @@ Func_02001cc4:
 	.global Func_02001ccc
 	.thumb_func
 Func_02001ccc:
-	overlay_veneer Func_080c8268
+	overlay_veneer Event_SetPairWork1c0Far
 	.global Func_02001cd4
 	.thumb_func
 Func_02001cd4:

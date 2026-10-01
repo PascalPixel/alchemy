@@ -33,17 +33,17 @@ Func_081661dc:
 	ldr r0, .L_08166580
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r1, r5, #0
 	ldr r0, .L_08166584
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	ldr r1, [sp, #28]
 	ldr r0, .L_08166588
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r3, r9
 	movs r2, #36
 	ldrsh r1, [r3, r2]

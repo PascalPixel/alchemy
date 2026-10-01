@@ -95,7 +95,7 @@ Func_08168a40:
 	ldr r1, [sp, #68]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #224
 	lsls r2, r2, #3
 	b .L_08168b28
@@ -115,7 +115,7 @@ Func_08168a40:
 	ldr r0, .L_08168b7c
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_08168b6c
 	movs r2, #128
 	lsls r2, r2, #19

@@ -68,12 +68,12 @@ Func_0818b868:
 	movs r2, #0
 	movs r3, #0
 	str r5, [sp, #40]
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	ldr r1, [sp, #36]
 	movs r3, #0
 	ldr r0, .L_0818bc28
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0818bc2c
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

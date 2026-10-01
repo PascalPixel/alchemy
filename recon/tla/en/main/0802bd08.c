@@ -1,14 +1,19 @@
+/* Near miss: score 100 beyond the trailing pad. ⚓️'s map work is its heap
+   slot map_work, with a 32 x 32 tile window at 0x148 and the second layer's
+   tiles 0x400 on. ⚓️ clears r6 before keeping the work pointer in r8 and
+   loading its position, a load-scheduling difference; with -mtune=arm9tdmi
+   this draft compiles exactly. */
 #include "TYPES.H"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 struct MapTileWindow_08010d48 {
     s32 *position;
-    u8 unknown_004[0x134];
-    u16 tiles[16][16];
+    u8 unknown_004[0x144];
+    u16 tiles[32][32];
 };
 
-extern struct MapTileWindow_08010d48 *gMapWork;
+#include "RAM_BUFFER.H"
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
@@ -20,7 +25,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
     s32 origin_y;
     s32 tile;
 
-    window = gMapWork;
+    window = (struct MapTileWindow_08010d48 *)Ram_HeapSlots->map_work;
     origin_x = 0;
     origin_y = 0;
     position = window->position;
@@ -35,11 +40,11 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
     y >>= 4;
     px >>= 3;
     py >>= 3;
-    tile = (y << 4) + x;
-    window->tiles[(py / 2) & 15][(px / 2) & 15] = tile;
+    tile = (y << 5) + x;
+    window->tiles[(py / 2) & 31][(px / 2) & 31] = tile;
 
     if (ABS(origin_x - px) <= 1 && ABS(origin_y - py) <= 1) {
         Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
-        Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x140, 1);
+        Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
     }
 }

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08156140
+	.global BattleFx_RunProjectileVolley
 	.thumb_func
-Func_08156140:
+BattleFx_RunProjectileVolley:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -93,7 +93,7 @@ Func_08156140:
 	ldr r0, .L_081563a4
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r1, r9
 	cmp r1, #0
 	beq .L_08156206
@@ -136,7 +136,7 @@ Func_08156140:
 .L_0815623c:
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_08156258
 .L_08156246:
 	ldr r6, [sp, #144]
@@ -146,7 +146,7 @@ Func_08156140:
 	adds r1, r6, r7
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 .L_08156258:
 	mov r0, r9
 	cmp r0, #5
@@ -168,7 +168,7 @@ Func_08156140:
 	ldr r0, .L_081563bc
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r4, r9
 	cmp r4, #5
 	bne .L_0815629e
@@ -221,7 +221,7 @@ Func_08156140:
 	adds r1, r6, r7
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #239
 	movs r1, #238
 	lsls r0, r0, #7
@@ -280,7 +280,7 @@ Func_08156140:
 .L_0815635a:
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	b .L_08156542
 .L_08156364:
 	mov r3, r9
@@ -293,7 +293,7 @@ Func_08156140:
 	adds r1, r4, r5
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_081563a0
 	movs r2, #128
 	lsls r2, r2, #19
@@ -360,7 +360,7 @@ Func_08156140:
 	adds r1, r3, r4
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, [sp, #144]
 	movs r6, #239
 	movs r0, #238
@@ -388,7 +388,7 @@ Func_08156140:
 	ldr r0, .L_08156760
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #144]
 	movs r5, #239
 	movs r6, #238
@@ -414,7 +414,7 @@ Func_08156140:
 	ldr r0, .L_08156764
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #144]
 	movs r5, #239
 	movs r6, #238
@@ -437,7 +437,7 @@ Func_08156140:
 	ldr r0, .L_08156768
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r4, [sp, #144]
 	movs r5, #239
 	movs r6, #238
@@ -462,7 +462,7 @@ Func_08156140:
 	movs r2, #1
 	movs r3, #1
 	ldr r0, .L_0815676c
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r3, #0
 	ldr r4, [sp, #144]
 	movs r1, #160
@@ -501,7 +501,7 @@ Func_08156140:
 	ldr r0, .L_08156770
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r7, #216
 	ldr r6, [sp, #144]
 	lsls r7, r7, #7
@@ -510,7 +510,7 @@ Func_08156140:
 	adds r1, r6, r7
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #239
 	movs r1, #238
 	lsls r0, r0, #7

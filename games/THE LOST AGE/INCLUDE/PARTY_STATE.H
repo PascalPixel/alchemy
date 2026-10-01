@@ -14,7 +14,11 @@ struct PartyState {
     u8 unknown_13d[0xa3];
     s16 scene;
     s16 entrance;
-    u8 unknown_1e4[0xa];
+    u8 unknown_1e4[4];
+    /* The debug selection's remembered pair; ☀️ keeps it at 0x1c8. */
+    s16 primary;
+    s16 secondary;
+    u8 unknown_1ec[2];
     /* Two halfword pairs; ☀️ keeps its first pair at 0x1ce. */
     u16 pair_1ee[2];
     u16 pair_1f2[2];

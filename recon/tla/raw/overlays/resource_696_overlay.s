@@ -5510,7 +5510,7 @@ Func_02002a20:
 .L_0200af14:
 	.4byte 0xc0004000
 .L_0200af18:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200af1c:
 	.4byte 0x04000208
 	.section .text.x0200af20,"ax",%progbits

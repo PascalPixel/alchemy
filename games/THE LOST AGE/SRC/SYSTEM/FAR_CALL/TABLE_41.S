@@ -48,4 +48,4 @@ AudioCommand_WaitForStateByteClearFar:
 	.global Func_08108080
 	.thumb_func
 Func_08108080:
-	overlay_veneer Func_0810b520
+	overlay_veneer Inn_PlaySleep

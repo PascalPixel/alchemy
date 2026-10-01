@@ -18,7 +18,7 @@ Func_08044348:
 	mov r10, r0
 	mov r1, r10
 	mov r0, r8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r1, #14
 	ldrsh r3, [r6, r1]
 	movs r1, #12

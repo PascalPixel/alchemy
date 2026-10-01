@@ -339,9 +339,9 @@ Func_020002a4:
 .L_020082c0:
 	.4byte 0x00000000
 	.section .text.x020082c4,"ax",%progbits
-	.global Func_020002c4
+	.global WorldMap_UpdateBobbingMarker
 	.thumb_func
-Func_020002c4:
+WorldMap_UpdateBobbingMarker:
 	push {r5, r6, lr}
 	ldr r3, .L_0200833c
 	movs r2, #2
@@ -409,39 +409,6 @@ Func_020002c4:
 	.4byte IwramMulQ16
 .L_02008348:
 	.4byte 0x20a40000
-	.section .text.x0200834c,"ax",%progbits
-	.global Func_0200034c
-	.thumb_func
-Func_0200034c:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #55
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008380
-	movs r0, #183
-	lsls r0, r0, #1
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008380
-	ldr r3, .L_02008384
-	str r3, [r5, #108]
-	adds r3, r5, #0
-	adds r3, #85
-	strb r0, [r3]
-	adds r3, #15
-	strh r0, [r3]
-	adds r3, #2
-	strh r0, [r3]
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [r5, #24]
-	str r3, [r5, #28]
-.L_02008380:
-	movs r0, #0
-	pop {r5, pc}
-.L_02008384:
-	.4byte Func_020002c4
 	.section .text.x02008388,"ax",%progbits
 	.global Func_02000388
 	.thumb_func
@@ -6409,7 +6376,7 @@ Func_020038e4:
 .L_0200b956:
 	pop {pc}
 .L_0200b958:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200b95c:
 	.4byte 0x04000208
 	.section .text.x0200b960,"ax",%progbits
@@ -7105,7 +7072,7 @@ Func_02003d44:
 .L_0200be90:
 	.4byte Data_02005058
 .L_0200be94:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200be98:
 	.4byte 0x04000208
 .L_0200be9c:
@@ -7883,7 +7850,7 @@ Func_020042e0:
 .L_0200c4d8:
 	.4byte Data_0200556e
 .L_0200c4dc:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200c4e0:
 	.4byte 0x04000208
 .L_0200c4e4:
@@ -10015,7 +9982,7 @@ gSceneExits:
 	.global Data_0200632c
 Data_0200632c:
 	.4byte 0x0000002e
-	.4byte Func_0200034c
+	.4byte StoryActor_Initialize
 	.4byte 0x00000011
 	.global Data_02006338
 Data_02006338:

@@ -19,7 +19,7 @@ Func_081b3ff4:
 	str r0, [sp, #32]
 	str r3, [r5]
 	adds r6, r2, #0
-	bl Func_081b3e34
+	bl AudioTrack_ResetSlotBuckets
 	ldr r2, [r5]
 	movs r1, #136
 	lsls r1, r1, #7

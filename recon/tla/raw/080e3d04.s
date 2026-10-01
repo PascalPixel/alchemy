@@ -402,7 +402,7 @@ Func_080e3d04:
 .L_080e4012:
 	bl Resource_GetTableEntry
 	mov r1, r8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r5, #128
 	lsls r5, r5, #5
@@ -463,7 +463,7 @@ Func_080e3d04:
 	ldr r0, .L_080e4188
 	bl Resource_GetTableEntry
 	mov r1, r8
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	bl Resource_FindFreeEntry
 	movs r1, #128
 	lsls r1, r1, #4

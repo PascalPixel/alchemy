@@ -124,7 +124,7 @@ Func_0812628c:
 .L_08126370:
 	.4byte Func_08125c0c
 .L_08126374:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08126378:
 	.4byte 0x04000208
 .L_0812637c:

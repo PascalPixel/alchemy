@@ -35,7 +35,7 @@ Func_08159cac:
 	ldr r0, .L_08159d14
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #35
 	movs r0, #104
 	bl Func_081963ec

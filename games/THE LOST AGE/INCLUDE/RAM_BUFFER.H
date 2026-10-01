@@ -34,13 +34,22 @@ struct HeapSlots {
     void *unknown_40[2];
     /* The menu screen work, which The Broken Seal keeps as gResQueueWork. */
     void *menu_work;
-    void *unknown_4c[8];
+    void *unknown_4c[4];
+    /* The battle effect work pair, The Broken Seal's gBattleFxWork. */
+    u8 *battle_fx_work[2];
+    void *unknown_64[2];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
     void *unknown_70[23];
     /* The serial link runtime's work. */
     void *serial_work;
-    void *unknown_d0[12];
+    void *unknown_d0[3];
+    /* The menu page work, The Broken Seal's gMenuWork. */
+    void *menu_page_work;
+    void *unknown_e0[2];
+    /* The menu selection work, The Broken Seal's gMenuSelectWork. */
+    void *menu_select_work;
+    void *unknown_ec[5];
 };
 
 #define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */

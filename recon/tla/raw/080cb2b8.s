@@ -204,7 +204,7 @@ Func_080cb2b8:
 	ldr r0, [sp, #12]
 	adds r1, r5, #0
 	adds r0, #8
-	bl Func_080ca17c
+	bl BattleFx_ApplyLookupResult
 	b .L_080cb44a
 .L_080cb438:
 	movs r3, #4
@@ -215,7 +215,7 @@ Func_080cb2b8:
 .L_080cb442:
 	adds r0, r6, #0
 	adds r1, r5, #0
-	bl Func_080ca164
+	bl EffectRuntime_LookupByTableEntry
 .L_080cb44a:
 	movs r3, #178
 	lsls r3, r3, #1
@@ -265,7 +265,7 @@ Func_080cb2b8:
 	bl Audio_PlayCue
 .L_080cb4a8:
 	bl Event_ClearValidPackedIds
-	bl Func_080cb788
+	bl BattleParty_ApplyStatusDamage
 	str r0, [sp, #8]
 .L_080cb4b2:
 	ldr r4, .L_080cb504

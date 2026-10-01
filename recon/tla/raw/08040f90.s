@@ -32,7 +32,7 @@ Func_08040f90:
 	bl GameFlag_SetBit
 	ldr r0, .L_08040fe0
 	movs r1, #1
-	bl Func_080c8268
+	bl Event_SetPairWork1c0Far
 	pop {pc}
 	.2byte 0x0000
 .L_08040fe0:

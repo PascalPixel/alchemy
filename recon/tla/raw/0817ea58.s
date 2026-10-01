@@ -180,7 +180,7 @@ Func_0817ea58:
 	movs r2, #0
 	add r1, r11
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r6, .L_0817ee8c
 	movs r2, #0
 	mov r10, r2
@@ -238,7 +238,7 @@ Func_0817ea58:
 	adds r0, r5, #0
 	add r1, r11
 	lsls r6, r6, #7
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	adds r6, #220
 	movs r4, #0
 	mov r10, r4
@@ -364,7 +364,7 @@ Func_0817ea58:
 	adds r5, r5, r4
 	adds r0, r5, #0
 	ldr r1, .L_0817eeac
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r5, #240
 	ldr r0, .L_0817ee9c
 	ldr r1, .L_0817ee94
@@ -447,7 +447,7 @@ Func_0817ea58:
 	.2byte 0xf800
 	adds r0, r5, #0
 	ldr r1, .L_0817eeac
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r2, #128
 	movs r3, #224
 	movs r1, #8
@@ -843,26 +843,26 @@ Func_0817ea58:
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #220
 	lsls r1, r1, #4
 	ldr r0, .L_0817f174
 	add r1, r11
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #247
 	lsls r1, r1, #6
 	ldr r0, .L_0817f178
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r1, .L_0817f17c
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_0817f180
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0817f184
 	bl Resource_GetTableEntry
 	adds r1, r0, #0
@@ -3896,14 +3896,14 @@ Func_0817ea58:
 	add r1, r11
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #220
 	lsls r1, r1, #6
 	add r1, r11
 	movs r2, #0
 	movs r3, #0
 	ldr r0, .L_08180a78
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08180a7c
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

@@ -32,7 +32,7 @@ Func_08157638:
 	ldr r1, [sp, #20]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r5, .L_081579b4
 	movs r1, #224
 	lsls r1, r1, #3
@@ -40,12 +40,12 @@ Func_08157638:
 	add r1, r9
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	adds r1, r5, #0
 	ldr r0, .L_081579bc
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #144
 	lsls r1, r1, #4
 	adds r1, #168

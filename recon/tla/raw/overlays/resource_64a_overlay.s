@@ -209,7 +209,7 @@ Func_0200015c:
 .L_020081e4:
 	.4byte Data_020024f4
 .L_020081e8:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_020081ec:
 	.4byte 0x04000208
 .L_020081f0:

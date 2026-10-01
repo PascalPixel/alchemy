@@ -40,7 +40,7 @@ Func_0804db74:
 	mov r2, r10
 	adds r1, r6, #0
 	adds r7, r0, #0
-	bl Func_0804dad0
+	bl Menu_DrawSelectionRow
 	add r3, sp, #12
 	mov r8, r3
 	add r1, sp, #4
@@ -62,7 +62,7 @@ Func_0804db74:
 	adds r0, r7, #0
 	mov r2, r10
 	mov r3, r9
-	bl Func_0804dc6c
+	bl Menu_HandleSelectionRowInput
 	movs r1, #1
 	lsls r0, r0, #16
 	asrs r5, r0, #16
@@ -78,7 +78,7 @@ Func_0804db74:
 	adds r0, r6, #0
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	bl Func_080c8268
+	bl Event_SetPairWork1c0Far
 	adds r0, r5, #0
 	b .L_0804dc56
 .L_0804dc1c:

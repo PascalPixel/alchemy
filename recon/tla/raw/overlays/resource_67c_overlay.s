@@ -1948,7 +1948,7 @@ Func_02000ecc:
 .L_02009010:
 	.4byte 0xffe00000
 .L_02009014:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02009018:
 	.4byte 0x04000208
 	.section .text.x0200901c,"ax",%progbits

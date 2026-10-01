@@ -37,7 +37,7 @@ Func_0818eda4:
 	ldr r1, .L_0818ee14
 	movs r2, #1
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #40]
 	movs r2, #224
 	lsls r2, r2, #3
@@ -45,7 +45,7 @@ Func_0818eda4:
 	ldr r0, .L_0818ee18
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, [sp, #40]
 	movs r2, #184
 	lsls r2, r2, #5
@@ -64,17 +64,17 @@ Func_0818eda4:
 	ldr r0, .L_0818f098
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0818f09c
 	ldr r1, .L_0818f0a0
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r2, #0
 	ldr r1, [sp, #32]
 	movs r3, #0
 	ldr r0, .L_0818f0a4
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_0818f0a8
 	bl Resource_GetTableEntry
 	adds r1, r0, #0

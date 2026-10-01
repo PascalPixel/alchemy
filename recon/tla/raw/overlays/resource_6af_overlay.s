@@ -1628,7 +1628,7 @@ Func_02000ba0:
 .L_02008ce8:
 	.4byte Data_02001b08
 .L_02008cec:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008cf0:
 	.4byte 0x04000208
 	.section .text.x02008cf4,"ax",%progbits

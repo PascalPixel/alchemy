@@ -1,4 +1,8 @@
+/* Near miss: score 240: four reordered instructions around the particle's
+   start offsets. ⚓️ reads the current owner from gPartyState and the effect
+   slot from the shared EFFECT_0809B11C.H. */
 #include "FIXED_MATH.H"
+#include "EFFECT_0809B11C.H"
 #include "SYSTEM.H"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
@@ -13,7 +17,7 @@ struct EffectPositionSource {
     struct EffectVector position;
 };
 
-extern s32 gGameState[];
+#include "PARTY_STATE.H"
 
 struct EffectPositionSource *Object_GetById(s32 id);
 void Vector_AddPolarOffset(
@@ -30,7 +34,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
     s8 *state_pointer;
     s32 state;
 
-    source = Object_GetById(gGameState[125]);
+    source = Object_GetById(gPartyState.current_owner);
     state_pointer = &effect->state;
     state = *state_pointer;
 

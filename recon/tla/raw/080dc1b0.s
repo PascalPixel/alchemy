@@ -68,7 +68,7 @@ Func_080dc1b0:
 	lsls r0, r0, #1
 	bl GameFlag_SetBit
 	adds r0, r7, #0
-	bl Func_080d17ac
+	bl BattleFx_StartBufferInterpolation
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080dc23c:

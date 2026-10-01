@@ -211,7 +211,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect)
         return;
     dx = effect->target_x - effect->x;
     dz = effect->target_z - effect->z;
-    if (effect->flag41 != 0) {
+    if (effect->stop_at_target != 0) {
         ix = dx / 0x10000;
         iz = dz / 0x10000;
         distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
@@ -251,7 +251,7 @@ u32 BattleFx_HasReachedTarget(struct EffectSlot *effect)
 {
     u32 value;
 
-    if (effect->flag41 == 0) {
+    if (effect->stop_at_target == 0) {
         return 0;
     }
     value = (u32)effect->target_x ^ 0x80000000;
@@ -303,7 +303,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
     effect->origin_x = x;
     effect->origin_z = z;
     ((s8 *)effect->object)[38] = 0;
-    effect->flag41 = 1;
+    effect->stop_at_target = 1;
     effect->flag42 = 1;
     effect->update_motion = 1;
     effect->render = 1;

@@ -422,7 +422,7 @@ Func_08021a84:
 	lsls r3, r3, #2
 	ldr r0, [r3, r2]
 	mov r1, r9
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	b .L_08021e62
 .L_08021dcc:
 	cmp r3, #3

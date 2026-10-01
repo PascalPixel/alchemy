@@ -36,7 +36,7 @@ Func_081b83c4:
 	ldr r0, .L_081b8610
 	bl Func_080132fc
 	bl Func_081b8020
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r2, .L_081b8614
 	movs r3, #0
 	strb r3, [r2]
@@ -89,7 +89,7 @@ Func_081b83c4:
 	adds r0, r3, #0
 	ldr r1, .L_081b8620
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -115,7 +115,7 @@ Func_081b83c4:
 	adds r5, #128
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -142,7 +142,7 @@ Func_081b83c4:
 	adds r6, #32
 	adds r0, r6, #0
 	str r6, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19
@@ -170,7 +170,7 @@ Func_081b83c4:
 	ldr r1, .L_081b8620
 	adds r0, #32
 	str r0, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -199,7 +199,7 @@ Func_081b83c4:
 	adds r5, #32
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -228,7 +228,7 @@ Func_081b83c4:
 	adds r3, #32
 	adds r0, r3, #0
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	movs r2, #132
 	lsls r3, r3, #19
@@ -354,7 +354,7 @@ Func_081b83c4:
 	adds r6, #32
 	adds r0, r6, #0
 	str r6, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -368,13 +368,13 @@ Func_081b83c4:
 	ldr r0, [sp, #128]
 	movs r2, #0
 	adds r3, r5, #0
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	movs r1, #160
 	lsls r1, r1, #19
 	movs r2, #0
 	adds r3, r5, #0
 	add r0, sp, #244
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	ldr r3, .L_081b8704
 	movs r2, #128
 	lsls r2, r2, #19
@@ -1081,7 +1081,7 @@ Func_081b83c4:
 	ldr r1, .L_081b8f24
 	adds r2, r5, #0
 	movs r3, #16
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	ldr r4, [sp, #128]
 	movs r1, #224
 	lsls r1, r1, #1
@@ -1117,7 +1117,7 @@ Func_081b83c4:
 	ldr r1, .L_081b8f20
 	adds r2, r5, #0
 	movs r3, #16
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	ldr r1, [sp, #128]
 	movs r2, #240
 	lsls r2, r2, #1
@@ -2175,7 +2175,7 @@ Func_081b83c4:
 	lsls r2, r2, #8
 .L_081b94fa:
 	movs r3, #16
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	b .L_081b9550
 	.2byte 0x0000
 .L_081b9504:
@@ -2214,7 +2214,7 @@ Func_081b83c4:
 	ldr r1, .L_081b9630
 	lsls r2, r2, #8
 	movs r3, #16
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 .L_081b9550:
 	ldr r3, [sp, #56]
 	movs r4, #1
@@ -2253,7 +2253,7 @@ Func_081b83c4:
 	ldr r1, .L_081b963c
 	adds r0, #32
 	str r0, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2288,7 +2288,7 @@ Func_081b83c4:
 	adds r3, #32
 	adds r0, r3, #0
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2444,7 +2444,7 @@ Func_081b83c4:
 	adds r5, #32
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2470,7 +2470,7 @@ Func_081b83c4:
 	adds r6, #32
 	adds r0, r6, #0
 	str r6, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2509,7 +2509,7 @@ Func_081b83c4:
 	adds r5, #32
 	adds r0, r5, #0
 	str r5, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -2545,7 +2545,7 @@ Func_081b83c4:
 	adds r3, #32
 	adds r0, r3, #0
 	str r3, [sp, #112]
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	movs r3, #128
 	lsls r3, r3, #19
 	adds r3, #212
@@ -3901,13 +3901,13 @@ Func_081b83c4:
 	adds r2, r5, #0
 	adds r3, r6, #0
 	ldr r0, [sp, #128]
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	movs r1, #160
 	add r0, sp, #244
 	lsls r1, r1, #19
 	adds r2, r5, #0
 	adds r3, r6, #0
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 .L_081ba23a:
 	bl Func_08014de4
 	ldr r0, [sp, #116]
@@ -3956,14 +3956,14 @@ Func_081b83c4:
 	adds r2, r5, #0
 	ldr r1, .L_081ba304
 	adds r3, r6, #0
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	movs r1, #160
 	adds r2, r5, #0
 	add r0, sp, #244
 	lsls r1, r1, #19
 	adds r3, r6, #0
 	movs r5, #1
-	bl Func_081b80a8
+	bl Graphics_ScaleRgb555BufferB
 	add r11, r5
 	movs r0, #1
 	bl WaitFrames

@@ -104,7 +104,7 @@ Func_0802de8c:
 	bl Func_08013eb4
 .L_0802df54:
 	bl Func_08014c6c
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	movs r1, #160
 	movs r0, #36
 	bl Runtime_AllocateBlock
@@ -721,7 +721,7 @@ Func_0802de8c:
 	ands r2, r3
 	cmp r2, #0
 	beq .L_0802e402
-	bl Func_080144c0
+	bl Scheduler_ResetTaskTable
 	ldr r0, .L_0802e438
 	ldr r1, .L_0802e43c
 	bl Runtime_ConstantZeroResult

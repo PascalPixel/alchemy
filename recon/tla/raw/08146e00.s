@@ -39,12 +39,12 @@ Func_08146e00:
 	adds r1, r5, r6
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r0, .L_08147118
 	ldr r1, [sp, #80]
 	movs r2, #0
 	movs r3, #0
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r0, #238
 	lsls r0, r0, #7
 	adds r2, r5, r7
@@ -732,7 +732,7 @@ Func_08146e00:
 	adds r1, r6, r7
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	ldr r3, .L_0814764c
 	movs r0, #0
 	movs r2, #128

@@ -252,7 +252,7 @@ Func_0810abf0:
 	bl UiWork_FinalizePendingCoreFar
 	mov r0, r8
 	mov r1, r10
-	bl Func_0810aea4
+	bl BattleUnit_ResetStateByMode
 	ldr r3, [sp, #12]
 	adds r0, r3, #0
 	cmp r3, #0

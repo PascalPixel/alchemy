@@ -639,7 +639,7 @@ Func_020003e8:
 .L_02008534:
 	.4byte Data_020029b8
 .L_02008538:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_0200853c:
 	.4byte 0x04000208
 	.section .text.x02008540,"ax",%progbits
@@ -823,7 +823,7 @@ Func_02000540:
 .L_02008688:
 	.4byte Data_02002a38
 .L_0200868c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008690:
 	.4byte 0x04000208
 	.section .text.x02008694,"ax",%progbits
@@ -940,7 +940,7 @@ Func_020006bc:
 .L_02008760:
 	.4byte Data_02002a78
 .L_02008764:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008768:
 	.4byte 0x04000208
 .L_0200876c:
@@ -1179,7 +1179,7 @@ Func_020007a4:
 .L_02008960:
 	.4byte Func_02000780
 .L_02008964:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_02008968:
 	.4byte 0x04000208
 .L_0200896c:

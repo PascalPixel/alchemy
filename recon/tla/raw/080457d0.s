@@ -1245,6 +1245,6 @@ Func_080457d0:
 .L_08046128:
 	.4byte Graphics_SetBg1Priority3
 .L_0804612c:
-	.4byte Data_020038e0
+	.4byte gIoWriteQueue
 .L_08046130:
 	.4byte 0x04000208

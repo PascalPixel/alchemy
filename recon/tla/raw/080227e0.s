@@ -60,7 +60,7 @@ Func_080227e0:
 .L_08022848:
 	bl Resource_GetTableEntry
 	adds r1, r7, #0
-	bl Func_0801587c
+	bl Resource_DecodeType01
 	ldr r3, [r7]
 	adds r4, r7, #0
 	movs r5, #0

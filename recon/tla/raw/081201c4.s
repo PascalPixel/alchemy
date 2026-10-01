@@ -152,7 +152,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r5]
 	bl Func_0812824c
 	ldr r0, [r6, r5]
-	bl Func_0811fe3c
+	bl BattleActor_ResetRuntimeFields
 	ldr r0, [r6, r5]
 	bl Func_0811f444
 	b .L_08120346

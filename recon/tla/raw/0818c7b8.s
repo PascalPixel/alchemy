@@ -53,14 +53,14 @@ Func_0818c7b8:
 	ldr r1, .L_0818c874
 	movs r2, #1
 	movs r3, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	movs r1, #224
 	lsls r1, r1, #3
 	movs r3, #0
 	ldr r0, .L_0818c878
 	add r1, r10
 	movs r2, #1
-	bl Func_08157cf4
+	bl Resource_LoadAndDecompress
 	mov r3, r11
 	cmp r3, #0
 	bne .L_0818c884

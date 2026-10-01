@@ -711,13 +711,13 @@ UiText_OpenMessageAtObject:
 DisplayScroll_BuildAndSwapHBlankPage:
 	.incbin "baserom.gba", 0x0008b52c, 0x000001ec
 	.section .rom.0008b808, "ax"
-	.incbin "baserom.gba", 0x0008b808, 0x00000188
-	.section .rom.0008bab0, "ax"
-	.global Unnamed_08094ac8
-	.type Unnamed_08094ac8, %function
+	.global Unnamed_08094820
+	.type Unnamed_08094820, %function
 	.thumb_func
-Unnamed_08094ac8:
-	.incbin "baserom.gba", 0x0008bab0, 0x000000f4
+Unnamed_08094820:
+	.incbin "baserom.gba", 0x0008b808, 0x00000188
+	.section .rom.0008bba2, "ax"
+	.incbin "baserom.gba", 0x0008bba2, 0x00000002
 	.section .rom.0008bba4, "ax"
 	.global Unnamed_08094bbc
 	.type Unnamed_08094bbc, %function
@@ -907,7 +907,10 @@ ObjectMotion_TurnTowardLinkedScript:
 	.incbin "baserom.gba", 0x00096f10, 0x00000014
 	.global ObjectMotion_LinkedActionScript
 ObjectMotion_LinkedActionScript:
-	.incbin "baserom.gba", 0x00096f24, 0x000000de
+	.incbin "baserom.gba", 0x00096f24, 0x00000018
+	.global FieldFx_GroundParticleTiles
+FieldFx_GroundParticleTiles:
+	.incbin "baserom.gba", 0x00096f3c, 0x000000c6
 	.global FieldFx_MoteTiles
 FieldFx_MoteTiles:
 	.incbin "baserom.gba", 0x00097002, 0x0000009a

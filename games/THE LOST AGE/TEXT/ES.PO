@@ -24467,7 +24467,7 @@ msgctxt "MsgVinasuChojoTrueHeart"
 msgid "06114"
 msgstr "El verdadero camino sólo puede{line_break}ser revelado a aquel que tenga{line_break}un corazón verdadero.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaIsThisThePlace"
 msgid "06115"
 msgstr "Parece que ya hemos{line_break}llegado, ¿no?{end_now}"
 
@@ -24643,7 +24643,7 @@ msgctxt "message"
 msgid "06158"
 msgstr "¿Qué va a ser{line_break}de nosotros?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHowLongWillWeDrift"
 msgid "06159"
 msgstr "Kraaadeen... ¿Cuándo va{line_break}a detenerse esta isla?{end_wait}"
 
@@ -24723,7 +24723,7 @@ msgctxt "message"
 msgid "06178"
 msgstr "¿Qué es todo esto?{line_break}Álex, ¿qué ha ocurrido?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaThoughtTheyWereInsideLighthouse"
 msgid "06179"
 msgstr "Creí que {actor_name:5}{line_break}y {actor_name:7} seguían{line_break}dentro del faro.{end_wait}"
 
@@ -24999,7 +24999,7 @@ msgctxt "message"
 msgid "06247"
 msgstr "¡¡Socorro!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCheckForInjuries"
 msgid "06248"
 msgstr "¿Quieres comprobar si{line_break}estás herido?{end_now}"
 
@@ -25015,7 +25015,7 @@ msgctxt "message"
 msgid "06251"
 msgstr "Caminas un poco y todo{line_break}parece estar como siempre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaGroan"
 msgid "06252"
 msgstr "Ooooh...{end_wait}"
 
@@ -25051,7 +25051,7 @@ msgctxt "message"
 msgid "06260"
 msgstr "Kraden se{line_break}unió a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaAwakeningExclamation"
 msgid "06261"
 msgstr "¿Qué...?{end_wait}"
 
@@ -25091,7 +25091,7 @@ msgctxt "message"
 msgid "06270"
 msgstr "{actor_name:6} se{line_break}unió a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaSecondGroan"
 msgid "06271"
 msgstr "Oooh...{end_wait}"
 
@@ -25131,7 +25131,7 @@ msgctxt "message"
 msgid "06280"
 msgstr "{actor_name:7} se{line_break}unió a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaHeyGarcia"
 msgid "06281"
 msgstr "¡Ey, {actor_name:5}!{end_wait}"
 
@@ -25167,7 +25167,7 @@ msgctxt "message"
 msgid "06289"
 msgstr "Kraden se{line_break}unió a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaCantBelieveYouTwo"
 msgid "06290"
 msgstr "¡Si no lo veo, no lo creo!{end_wait}"
 
@@ -25203,7 +25203,7 @@ msgctxt "message"
 msgid "06298"
 msgstr "{actor_name:6} se{line_break}unió a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWaitForMe"
 msgid "06299"
 msgstr "¡E... esperad!{end_wait}"
 
@@ -25255,7 +25255,7 @@ msgctxt "message"
 msgid "06311"
 msgstr "{actor_name:7} se{line_break}unió a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgIdejimaWhereHasAlexGone"
 msgid "06312"
 msgstr "A todo esto...{line_break}¿Adónde ha ido Álex?{end_wait}"
 

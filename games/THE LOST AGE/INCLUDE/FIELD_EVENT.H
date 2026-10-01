@@ -61,7 +61,10 @@ struct EventWork {
     u8 unknown_156[2];
     /* Set to 999 when a destination is chosen. */
     s16 countdown;
-    u8 unknown_15a[0xb5e];
+    u8 unknown_15a[0x6a];
+    /* The current dialogue row; message and choice commands advance it. */
+    u16 message_id;
+    u8 unknown_1c6[0xaf2];
     /* -1 when the sound test's cue pair is played. */
     s16 cue_state;
 };

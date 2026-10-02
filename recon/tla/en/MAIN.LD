@@ -448,7 +448,7 @@
         "*/recon/tla/raw/0802af9c.o"(.text)
         "*/recon/tla/raw/0802b1a0.o"(.text)
         "*/recon/tla/raw/0802b2d4.o"(.text)
-        "*/recon/tla/raw/0802b344.o"(.text)
+        "*/games/COMMON/SRC/FIELD/COMMON/MAP/MAPCOPY.o"(.text)
         "*/recon/tla/raw/0802b38c.o"(.text)
         "*/recon/tla/raw/0802b450.o"(.text)
         "*/recon/tla/raw/0802b590.o"(.text)

@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 /*
  * resource_393 scene script: staged-actor motion, scene beats, and the
  * overlay's palette adjustment.
@@ -23,7 +24,6 @@ struct SceneBeatSubject {
 void Battle_Reset(void);
 void Object_SetModeById(s32, s32); void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
 void Battle_WaitMode0(s32); u8 *Object_GetById();
-void Map_CopyCellAttributeRect(s32, s32, s32, s32, s32, s32);
 void GameFlag_SetBit(s32); void ObjectDispatch_SetSingleChildField26(u8 *, s32);
 void BattleFx_FinishAction(void);
 s32 Object_CheckMovementCollision(struct StagedActorEffect *actor,

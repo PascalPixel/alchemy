@@ -1,6 +1,8 @@
 #ifndef RUNPA_JO_JO_H
 #define RUNPA_JO_JO_H
 
+#include "MAPCOPY.H"
+
 /*
  * What the Lunpa fortress scene sees of the engine. The fortress links beside
  * the staged-actor code (FIELD/COMMON/OBJECT/STAGED_ACTOR.C), and several of
@@ -140,7 +142,6 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Object_SetModeById(s32 actor, s32 animation);
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Audio_PlayCue(s32 cue);
 
 /* The other import veneers the fortress calls. */

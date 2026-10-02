@@ -953,12 +953,6 @@ Map_CopyMetatileIndicesRect:
 	.thumb_func
 Func_0802b2d4:
 	.incbin "baserom.gba", 0x0002b250, 0x00000070
-	.section .rom.0002b2c0, "ax"
-	.global Map_CopyCellsRect
-	.type Map_CopyCellsRect, %function
-	.thumb_func
-Map_CopyCellsRect:
-	.incbin "baserom.gba", 0x0002b2c0, 0x00000048
 	.section .rom.0002b308, "ax"
 	.global Map_CopyCellAttributeRect
 	.type Map_CopyCellAttributeRect, %function

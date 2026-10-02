@@ -173,7 +173,7 @@
         "*/recon/tbs/raw/08010424.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08010560.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080105d4.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.o"(.text)
+        "*/games/COMMON/SRC/FIELD/COMMON/MAP/MAPCOPY.o"(.text)
         "*/recon/tbs/raw/08010788.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SET_WORK_FLAG_BITS9_11.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP6.o"(.text)

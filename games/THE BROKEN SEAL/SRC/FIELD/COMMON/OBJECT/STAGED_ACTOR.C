@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "STAGED_ACTOR.H"
 #include "FIXED_POINT_POSITION.H"
 #include "IWRAM_CALL.H"
@@ -27,7 +28,6 @@ extern void ObjectMotion_OffsetPositionAndResetMotion(s32, s32, s32);
 extern void ObjectMotion_CommitCurrentPositionAndActivate(s32);
 extern void Object_SetModeById(s32, s32);
 extern void BattleFx_PlayQueuedSound(void);
-extern void Map_CopyCellAttributeRect(s32, s32, s32, s32, s32, s32);
 extern void Audio_PlayCue(s32);
 
 /* Called through this helper, not directly: the copied arguments keep the

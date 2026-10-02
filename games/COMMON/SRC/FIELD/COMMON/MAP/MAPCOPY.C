@@ -1,4 +1,18 @@
-#include "TYPES.H"
+#include "EDITION.H"
+#include "MAPCOPY.H"
+
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+/* Only this complete wrapper is source-owned in TLA; its index and
+   attribute callees remain raw at their existing neighboring boundaries. */
+void Map_CopyCellsRect(
+    s32 src_x, s32 src_y, s32 width, s32 height, s32 dst_x, s32 dst_y)
+{
+    Map_CopyMetatileIndicesRect(src_x, src_y, dst_x, dst_y, width, height);
+    Map_CopyCellAttributeRect(src_x, src_y, width, height, dst_x, dst_y);
+}
+#else
 extern u8 gMapCellBuffer[];
 
 #define MAP_CELLS ((u32 *)gMapCellBuffer)
@@ -31,3 +45,4 @@ void Map_CopyCellAttributeRect(
         }
     }
 }
+#endif

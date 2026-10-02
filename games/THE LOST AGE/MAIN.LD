@@ -363,7 +363,7 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0002af18)
     "*/recon/tla/ja/rom.o"(.rom.0002b11c)
     "*/recon/tla/ja/rom.o"(.rom.0002b250)
-    "*/recon/tla/ja/rom.o"(.rom.0002b2c0)
+    "*/games/COMMON/SRC/FIELD/COMMON/MAP/MAPCOPY.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0002b308)
     "*/recon/tla/ja/rom.o"(.rom.0002b3cc)
     "*/recon/tla/ja/rom.o"(.rom.0002b50c)

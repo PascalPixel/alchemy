@@ -767,12 +767,6 @@ BattleFx_UntargetedObjectScript:
 	.global gEffectScripts
 gEffectScripts:
 	.incbin "baserom.gba", 0x000a5284, 0x0000057c
-	.section .rom.000a6cd0, "ax"
-	.global RunAssetSelectionScreen
-	.type RunAssetSelectionScreen, %function
-	.thumb_func
-RunAssetSelectionScreen:
-	.incbin "baserom.gba", 0x000a6cd0, 0x000001b0
 	.section .rom.000a895a, "ax"
 	.incbin "baserom.gba", 0x000a895a, 0x00000002
 	.section .rom.000a895c, "ax"

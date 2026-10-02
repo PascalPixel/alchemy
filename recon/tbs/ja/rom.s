@@ -768,12 +768,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.00099454, "ax"
-	.global RunAssetSelectionScreen
-	.type RunAssetSelectionScreen, %function
-	.thumb_func
-RunAssetSelectionScreen:
-	.incbin "baserom.gba", 0x00099454, 0x00000138
 	.section .rom.0009b008, "ax"
 	.global Func_080a414c
 	.type Func_080a414c, %function

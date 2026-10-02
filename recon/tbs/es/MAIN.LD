@@ -482,7 +482,7 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU18.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_WORK_VALUE_WITH_LABEL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU9.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000a6cc4)
+    "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/SELECT_SCREEN.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN_COMMANDS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/USE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/INTERFACE.o"(.text)

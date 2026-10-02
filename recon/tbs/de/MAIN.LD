@@ -743,7 +743,6 @@ iwram :
     "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e4772)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BURST_SCENE.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000e4e2c)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT3.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e58a0)
     "*/recon/tbs/de/rom.o"(.rom.000e5ea4)

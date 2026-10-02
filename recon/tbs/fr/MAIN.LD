@@ -738,7 +738,6 @@
     "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000e6172)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BURST_SCENE.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000e682c)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT3.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000e72a0)
     "*/recon/tbs/fr/rom.o"(.rom.000e78a4)

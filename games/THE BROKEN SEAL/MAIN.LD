@@ -750,7 +750,6 @@ SECTIONS
     "*/games/COMMON/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000d9972)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BURST_SCENE.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000da02c)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT3.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000daaa0)
     "*/recon/tbs/ja/rom.o"(.rom.000db0a4)

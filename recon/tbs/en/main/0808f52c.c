@@ -33,15 +33,11 @@
  *     and drops the value; the bare volatile read below reproduces it, but
  *     the statement it came from is a guess.
  *
- * Residual, measured with `alchemy score --owner 0808f52c`: 2268 candidate
- * bytes against 2316 reference bytes.  Every branch, loop, call and store is
- * present and the emitted blocks line up case for case; what is left is
- * register allocation.  The reference keeps each scanline loop counter, and
- * the loop-invariant square-root address, in the high registers r8..fp, which
- * costs it an extra `mov` on entry and two more per iteration.  This source
- * puts those counters in r5..r7, so each of the eight fill loops comes out
- * four to six bytes shorter.  No source spelling tried here moved the
- * allocator, and contriving one would not be evidence.
+ * Not exact: 2276 of 2316 bytes.  One counter for every outer loop puts it in
+ * r8 as the reference has it, and the mode 1 record is two halfwords and
+ * three spans.  Remaining: the reference keeps the phase in r5 in every case
+ * (here r6), the inner counter of mode 1 in r9 with y0 in r6 (here swapped),
+ * and the line centre in r10 with the square root's address in r9.
  */
 
 /* Resolved project symbols. */
@@ -84,6 +80,14 @@ struct TransitionSpan {
     u8 y1;
 };
 
+/* One record of the mode 1 table: the two control halfwords, then three
+   spans. */
+struct TransitionShape {
+    u16 first;
+    u16 second;
+    struct TransitionSpan spans[3];
+};
+
 struct DisplayTransitionWork {
     u16 buf[2][322];   /* two 644-byte scanline buffers */
     u8 unk_508[0x20];
@@ -106,14 +110,13 @@ void DisplayTransition_UpdateScanlineTable(void)
 {
     struct DisplayTransitionWork *p;
     struct TransitionSpan *span;
+    struct TransitionShape *shape;
     u8 *sys;
     u16 *dst;
     s32 *cam;
     s32 *obj;
     u32 i;
-    u32 j;
     s32 k;
-    s32 n;
     s32 cnt;
     s32 val;
     s32 v;
@@ -175,14 +178,14 @@ void DisplayTransition_UpdateScanlineTable(void)
         *dst++ = 1;
         v = p->phase;
         if (v & 32) {
-            k = 32 - (v & 31);
+            v = 32 - (v & 31);
         } else {
-            k = v & 31;
+            v = v & 31;
         }
-        lo = Data_0809e8ac[k];
+        v = Data_0809e8ac[v];
         for (i = 0; i < 160; i++) {
-            t = ((u32)(241 - lo) * Random16()) >> 16;
-            dst[0] = (u16)((t << 8) | (t + lo));
+            t = (Random16() * (u32)(241 - v)) >> 16;
+            dst[0] = (u16)((t << 8) | (t + v));
             dst += 2;
         }
         break;
@@ -191,16 +194,16 @@ void DisplayTransition_UpdateScanlineTable(void)
         /* Table-driven shape: three spans per record, each either a run of a
            constant value or a linear ramp of both edges. */
         v = p->phase;
-        span = (struct TransitionSpan *)(Data_0809f840 + (v & 31) * 28);
+        shape = (struct TransitionShape *)(Data_0809f840 + (v & 31) * 28);
         if (v & 32) {
-            *dst++ = ((u16 *)span)[0];
-            *dst++ = ((u16 *)span)[1];
+            *dst++ = shape->first;
+            *dst++ = shape->second;
         } else {
-            *dst++ = ((u16 *)span)[1];
-            *dst++ = ((u16 *)span)[0];
+            *dst++ = shape->second;
+            *dst++ = shape->first;
         }
-        span++;
-        for (j = 0; j < 3; j++) {
+        span = shape->spans;
+        for (i = 0; i < 3; i++) {
             cnt = span->cnt;
             val = span->val;
             if (cnt != 0) {
@@ -214,16 +217,16 @@ void DisplayTransition_UpdateScanlineTable(void)
                     y0 = span->y0;
                     dx = span->x1 - x0;
                     dy = span->y1 - y0;
-                    nx = 0;
                     ny = 0;
-                    n = cnt;
-                    while (n != 0) {
+                    nx = 0;
+                    k = cnt;
+                    while (k != 0) {
                         dst[0] = (u16)(((__divsi3(nx, cnt) + x0) << 8)
                                        + (__divsi3(ny, cnt) + y0));
                         ny += dy;
                         nx += dx;
                         dst += 2;
-                        n--;
+                        k--;
                     }
                 }
             }

@@ -162,8 +162,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *slot;
     u8 slot16[40];
 
-    a = *(s32 *)(Value1(Object_GetById, ACTOR_PARTY_LEADER) + 8) / 0x100000;
-    b = *(s32 *)(Value1(Object_GetById, ACTOR_PARTY_LEADER) + 16) / 0x100000;
+    a = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed / 0x100000;
+    b = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed / 0x100000;
     if (a == 12 && b == 32) {
         Engine_EventBegin();
         ColorBuffer_ApplyTarget(0x10000, 0);

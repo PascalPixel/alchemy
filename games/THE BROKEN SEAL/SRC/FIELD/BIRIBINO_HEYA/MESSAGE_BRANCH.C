@@ -114,7 +114,7 @@ void FieldScene_RunActor17MessageBranch(void)
 {
     u32 dir;
 
-    dir = *(u16 *)(Value1(Object_GetById, 0) + 6);
+    dir = Object_GetById(0)->facing;
     Engine_EventBegin();
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Engine_ShopOpen(8, 17);

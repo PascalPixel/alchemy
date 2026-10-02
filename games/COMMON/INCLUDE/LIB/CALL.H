@@ -3,8 +3,8 @@
  * GCC 2.96 hoists a costly constant argument of a direct call into
  * a pseudo register that later uses in the block share; called through one of
  * these, each call loads its constants straight into the argument registers
- * and a value-returning call sets r0 last. Every call still spelled this way
- * was measured to differ as a direct call.
+ * and a value-returning call with arguments sets r0 last. The inline boundary
+ * can also change the lifetime of a returned value without arguments.
  *
  * Bounded TBS probe, 2026-10-02: 24 compilations with the approved standard
  * flags, three scenes in English and Japanese, four variants each. The

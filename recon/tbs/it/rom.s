@@ -1281,20 +1281,10 @@ BattlePres_RunBeamSequence:
 	.thumb_func
 Unnamed_080e40a4:
 	.incbin "baserom.gba", 0x000e40a4, 0x0000064c
-	.section .rom.000e47b8, "ax"
-	.global BattleFx_RunCastingImpact
-	.type BattleFx_RunCastingImpact, %function
-	.thumb_func
-BattleFx_RunCastingImpact:
-	.incbin "baserom.gba", 0x000e47b8, 0x00002190
+	.section .rom.000e6638, "ax"
+	.incbin "baserom.gba", 0x000e6638, 0x00000310
 	.section .rom.000e698c, "ax"
 	.incbin "baserom.gba", 0x000e698c, 0x000003b0
-	.section .rom.000e6eac, "ax"
-	.global BattleEffect_RunImpactBurst
-	.type BattleEffect_RunImpactBurst, %function
-	.thumb_func
-BattleEffect_RunImpactBurst:
-	.incbin "baserom.gba", 0x000e6eac, 0x000003d0
 	.section .rom.000e7338, "ax"
 	.incbin "baserom.gba", 0x000e7338, 0x000000cc
 	.section .rom.000e7404, "ax"
@@ -1764,7 +1754,16 @@ Data_080eee46:
 	.incbin "baserom.gba", 0x000eee46, 0x00000008
 	.global Data_080eee4e
 Data_080eee4e:
-	.incbin "baserom.gba", 0x000eee4e, 0x000000b8
+	.incbin "baserom.gba", 0x000eee4e, 0x00000008
+	.global ImpactBurst_CellWidths
+ImpactBurst_CellWidths:
+	.incbin "baserom.gba", 0x000eee56, 0x00000008
+	.global ImpactBurst_CellHeights
+ImpactBurst_CellHeights:
+	.incbin "baserom.gba", 0x000eee5e, 0x00000008
+	.global ImpactBurst_CellSourceOffsets
+ImpactBurst_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000eee66, 0x000000a0
 	.global FlameBlade_StrikeColumns
 FlameBlade_StrikeColumns:
 	.incbin "baserom.gba", 0x000eef06, 0x00000006

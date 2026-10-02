@@ -1,107 +1,9 @@
-/* Layout (folded from the retired 0x080e4e0c slice draft): the per-kind
- * scene setup at 0x080e4e0c ends in the 34-way switch; its table fills
- * 0x080e53f4..0x080e547c, then come ten 8-byte case stubs, a 14-word
- * literal pool at 0x080e54cc, three more stubs and the default arm at
- * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
- * reaches by bl, not separate functions. */
-/* 2026-10-01 (wave 1, slice 10): still 100 (2 operand, 1 reordered), all at
- * the first __divsi3. Only one sched2 choice is wrong: with the add last
- * scheduled, the motion store and both reloads are ready at priority 125
- * with five dependents each, and insn order takes the store. Once the
- * store follows the reloads the rest falls out: both loads wait on it and
- * position->x has four dependents to target->x's three. The store's
- * priority is 125 because a store-to-load dependence off the stack costs 2
- * (arm_adjust_cost), and reload always gives a spilled pseudo alias set 0
- * (reload1.c), so no C form of motion removes it; the reference's RTL
- * before sched2 must differ in insn order instead, which nothing tried
- * here reaches without moving the slots. */
-/* 2026-10-01 (matcher 2): 120 (3 operand, 1 reordered); the operand row
- * at the pool word 0xfffff000 is the listing decoding that word as a bl
- * and is not a difference in bytes. Which dependence has to go: only the
- * store's memory dependence on the position->x load (1865). Its r0
- * anti-dependence keeps target->x (1863) behind the store either way, so
- * without 1865 the store has four dependents, both reloads outrank it, and
- * after it position->x wins the class tie-break against target->x: the
- * reference's order exactly. sched2 cannot drop it for a spill slot: the
- * slot has alias set 0, sp counts as varying for
- * fixed_scalar_and_varying_struct_p, and the reload register r2 has no
- * base value. So the reference's RTL before sched2 differs, not the
- * scheduler's choice. Moving motion's assignment before target_actor (371),
- * computing the difference first (916) or assigning motion after the
- * first __divsi3 (1063) all break the spill slots. */
-/* 2026-09-30 (Mercury, later): sched2's table (-fsched-verbose=5) at
- * 80e500c: the motion spill store and the target_actor and position
- * reloads all have priority 125 and five dependents, and neither depends
- * on the add before them, so insn order picks the store. The spill slot MEM
- * has alias set 0 (reload turns spilled pseudos into MEMs with no alias
- * information), so both operand loads truly depend on it. The reference's
- * order (both reloads, the store, position->x, target->x) is exactly what
- * sched2 gives when the store loses one of those load dependences: its
- * dependent count drops to four and the reloads outrank it, and after it
- * the independent position->x load comes before target->x, which waits on
- * r0. The ROM never takes the slot's address (no add rN, sp, #24), so
- * motion is a spilled pseudo there too; what removes the dependence is not
- * found yet (a volatile motion moves the frame: 2759). */
-/* 2026-09-30 (Mercury): 5 differing halfwords, all in the first
- * __divsi3 (80e500c): the reference loads target_actor and position into
- * r1/r2 before the motion spill store; here the store, the two reloads and
- * nothing else tie at sched2 priority 125 with equal dependents, so the
- * store wins on insn order. Fixed since 72: reload picks reload registers
- * round-robin over r0-r3/r5, so the kind 14 tail keeps its own
- * FetchRectangleBlitters call (jump2 cross-jumps it into kind 31's) and the
- * deleted copy's reloads advance the rotation as the reference's did; this
- * fixes kind 31. The rising column is plain C in place: draw loaded then
- * advanced by 47 (the reference's mov r8 / add r8,r5 is the reload of a
- * two-step set), column_x before column_y, top before width and width before
- * tile_height, which makes local-alloc give tile_height r5, width r6, draw
- * r8, and the scrolled height subtracted inside DrawScrolledImage so width
- * dies one insn earlier. The orbit origin is a zero-biased copy of
- * target_screen made in the loop: global const propagation turns it into a
- * copy after copy propagation has run, and the loop hoists it after the
- * projection address, giving the reference's r3/r5/r0 reload order.
- * Tried for the __divsi3 order without success: operand temporaries,
- * copies, an inline aim helper (any argument order), the subtraction first,
- * split subtraction, velocity stored directly, motion assigned in the
- * argument list or as the store's left side, a slot/object split, and asm
- * or fixed-register forcing (these move the reloads but break the rotation
- * or rematerialize position as sp+148). */
-/* 2026-09-30 (Mars): linked in place of the listing, 72 differing halfwords
- * (was 1657 with a 4-byte size shortfall). The rising column's blitter is
- * gWorkSlot pinned to r8 plus an asm-hidden 188 offset, which restores the
- * size and every later offset. Left: the str r0,[sp,#24] scheduled before
- * the effect loads (80e500c); the column's add r8,#188 scheduled late
- * (80e594c); kind 31's low temporaries (r0/r3 for 2/48, r1 for 24); the
- * orbit loop's r0/r3/r5 temporaries (80e610c). Pinning the orbit origin
- * and projection to r8/r9 reshuffles the whole function (988). */
-/* 2026-09-29 (Mars, later): setting the kind 31 height before the first
- * load gives 48 r9 and 2 sl as the reference does; 183 lines remain, about
- * 98 of them the reference's jump-table words, so roughly 85 real. Kind 31
- * still differs in low-register choice for the 2/48 constants. Unfolding
- * gWorkSlot + 188 (local base pointer, index variable) always gives the
- * pointer r6 and width 17 r8, 221 lines. */
-/* 2026-09-29 (Mars): the rising column takes (RectangleBlit *)gWorkSlot + 47
- * directly instead of the shared work_blitters cursor, which restores the
- * column's high-register assignment (r8 blitter, r9 column_y, sl column_x,
- * fp rise). 185 instruction-diff lines remain, excluding the reference's
- * jump-table words: the folded gWorkSlot+188 constant (the reference adds
- * 188 in a register), the kind 31 constants 2/48 swapped between r9 and sl,
- * a motion store scheduled before the __divsi3 operand loads, and the
- * tail's r8/r9/sl rotation. A per-call slot argument unfolds the address but
- * gives the pointer r6 ahead of the width. */
-/* 2026-09-29: five minutes of permutation (--function
- * BattleFx_RunCastingImpact): 2621 -> 2380 (45 register-only, 37 operand,
- * 13 reordered, 3 inserted, 3 deleted) with four natural rewrites, the
- * particle and fade reads assigned inside their tests and the image height
- * set after the blitter table is loaded; the function is in the permuter's
- * own formatting. Many resource and message numbers are still Value_
- * symbols. */
-/* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
- * The acting unit gathers particles, then launches the selected effect at
- * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7808 bytes; 181 differing halfwords, 113 aligned edits.
- * Separate column/pair cursors canonicalize to the same 7804-byte draft
- * (189 aligned edits); loading the moving x before subtracting gives
- * 7808 bytes / 182 halfwords / 116 edits. The closer model is retained. */
+/* The casting and impact sequence shared by most battle effects. The acting
+ * unit gathers particles for 32 frames, then the effect chosen by kind is
+ * launched at the first affected unit: per-kind images are loaded into the map
+ * cell buffer, a travelling orb is aimed at the target in six steps, and the
+ * frame loop draws the kind's impact while the battle event advances. Kinds 15,
+ * 17, 24, 26 and 35 hand over to their own routines after the gathering. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
@@ -113,9 +15,9 @@
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_PRESENTATION.H"
-
-/* Image resources share this EWRAM scratch area for the duration of the effect. */
-#define IMAGE_WORK ((u8 *)0x02010000)
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
+#include "IO_REG.H"
 
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
@@ -150,28 +52,28 @@ void BattleFx_StepPaletteToResource(s32 resource_id);
 
 void Audio_PlayCue(s32 cue);
 
-/* FAKEMATCH: Inline scope keeps each resource call's arguments local. */
 static __inline__ void LoadResource(s32 id, void *dest, s32 skip, s32 copy)
 {
+    /* FAKEMATCH: Inline scope keeps each resource call's arguments local. */
     Resource_LoadAndDecompress(id, dest, skip, copy);
 }
 
-/* FAKEMATCH: Keep packing arguments within their own inline scope. */
 static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 {
+    /* FAKEMATCH: Keep packing arguments within their own inline scope. */
     Graphics_PackTileRows(src, dest, width, height);
 }
 
-/* FAKEMATCH: Inline scope makes each clearing call reload its byte count. */
 static __inline__ void ClearWords(void *dest, u32 size)
 {
-    ((s32 (*)(void *, u32))0x03000164)(dest, size);
+    /* FAKEMATCH: Inline scope makes each clearing call reload its byte count. */
+    Iwram_ClearWords(dest, size);
 }
 
-/* FAKEMATCH: Inline scope reloads the fill routine before its arguments. */
 static __inline__ void FillWords(void *dest, u32 size, u32 value)
 {
-    ((void (*)(void *, u32, u32))0x03000168)(dest, size, value);
+    /* FAKEMATCH: Inline scope reloads the fill routine before its arguments. */
+    Iwram_FillWords(dest, size, value);
 }
 
 /* Particle image offsets indexed by size; the remaining tables describe
@@ -189,32 +91,32 @@ extern u8 CastingImpact_GlintDrawFlags[];
 extern u8 CastingImpact_ImageX[];
 extern u8 CastingImpact_ImageY[];
 
-/* FAKEMATCH: Inline scope reloads each image address at its drawing call. */
 static __inline__ void DrawImage(void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height,
                                  RectangleBlit *draw)
 {
+    /* FAKEMATCH: Inline scope reloads each image address at its drawing call. */
     (*draw)(canvas, pixels, x, y, width, height);
 }
 
-/* FAKEMATCH: Derive height inside the inline scope so the dimension stores
- * reuse one register instead of keeping two argument temporaries alive. */
 static __inline__ void DrawTallImage(void *canvas, const void *pixels,
     s32 x, s32 y, s32 width, RectangleBlit *draw)
 {
+    /* FAKEMATCH: Derive height inside the inline scope so the dimension stores
+     * reuse one register instead of keeping two argument temporaries alive. */
     (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
-/* FAKEMATCH: Subtract the scrolled part inside the drawing scope. */
 static __inline__ void DrawScrolledImage(void *canvas, const void *pixels,
     s32 x, s32 y, s32 width, s32 height, s32 scroll, RectangleBlit *draw)
 {
+    /* FAKEMATCH: Subtract the scrolled part inside the drawing scope. */
     (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
-/* FAKEMATCH: Keep the cropped height inside the drawing scope. */
 static __inline__ void DrawCroppedImage(void *canvas, const void *pixels,
     s32 x, s32 y, s32 width, RectangleBlit *draw)
 {
+    /* FAKEMATCH: Keep the cropped height inside the drawing scope. */
     (*draw)(canvas, pixels, x, y, width, 91);
 }
 
@@ -226,7 +128,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     s32 image_offset;
     /* FAKEMATCH: Keep the shake timer address live into the shared store. */
     s32 *shake_addr;
-    s32 speed;
     struct EffectPosition caster_pos;
     struct EffectPosition target_pos;
     struct FixedPointPosition moving_pos;
@@ -280,39 +181,39 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     } else {
         BattleFx_BeginCanvasLayer(0);
     }
-    *(volatile u16 *)0x04000052 = 0x1010;
+    REG_BLDALPHA = 0x1010;
     LoadResource((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
     LoadResource((s32)&ResourceId_FireStreakSheet, work, 1, 0);
-    LoadResource((s32)&ResourceId_YellowOrbSheet, IMAGE_WORK, 1, 0);
+    LoadResource((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1, 0);
     /* FAKEMATCH: Local dimensions preserve the packing argument order. */
     {
         s32 width = 40;
         s32 height = 0x120;
-        PackRows(IMAGE_WORK, (u8 *)work + 0x5100, width, height);
+        PackRows(Ram_MapCellBuffer, (u8 *)work + 0x5100, width, height);
     }
     if (kind == 5 || kind == 23) {
-        LoadResource((s32)&ResourceId_FlashBurstSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_FlashBurstSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 12) {
-        LoadResource((s32)&ResourceId_SkullSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_SkullSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 6 || kind == 27) {
-        LoadResource((s32)&ResourceId_TornadoSheet, IMAGE_WORK, 1, 0);
-        LoadResource((s32)&ResourceId_LightningBoltSheet, (void *)0x02010c56, 1, 0);
+        LoadResource((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
+        LoadResource((s32)&ResourceId_LightningBoltSheet, Ram_MapCellBuffer + 0xc56, 1, 0);
     } else if (kind == 31) {
-        LoadResource((s32)&ResourceId_RuneSheet, IMAGE_WORK, 1, 1);
+        LoadResource((s32)&ResourceId_RuneSheet, Ram_MapCellBuffer, 1, 1);
     } else if (kind == 8) {
-        LoadResource((s32)&ResourceId_RockSpireSheet, IMAGE_WORK, 1, 1);
+        LoadResource((s32)&ResourceId_RockSpireSheet, Ram_MapCellBuffer, 1, 1);
     } else if (kind == 14) {
-        LoadResource((s32)&ResourceId_BlueFlameSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_BlueFlameSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 30) {
-        LoadResource((s32)&ResourceId_TornadoSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 16) {
-        LoadResource((s32)&ResourceId_IceChipSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1, 0);
     } else if (kind == 20) {
-        LoadResource((s32)&ResourceId_EmberStreakSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);
     } else if ((u32)(kind - 33) <= 1) {
-        LoadResource((s32)&ResourceId_FlameSheetA, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1, 0);
     } else if (kind != 11 && kind != 32) {
-        LoadResource((s32)&ResourceId_SmokeSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
     }
     switch (kind) {
     case 0:
@@ -325,7 +226,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 12:
     case 13:
     case 33:
-        LoadResource((s32)&ResourceId_VenusDjinnSmallSheet, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_VenusDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 2:
     case 14:
@@ -334,7 +235,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 17:
     case 18:
     case 19:
-        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 3:
     case 5:
@@ -346,7 +247,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 25:
     case 34:
     case 35:
-        LoadResource((s32)&ResourceId_MarsDjinnSmallSheet, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_MarsDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 1:
     case 6:
@@ -357,10 +258,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 30:
     case 31:
     case 32:
-        LoadResource((s32)&ResourceId_JupiterDjinnSmallSheet, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_JupiterDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     case 100:
-        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, Ram_MapCellBuffer + 0x3c56, 1, 1);
         break;
     }
     work->transfer_mode = 2;
@@ -453,7 +354,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 orb_x += (u32)orb_x >> 31;
                 orb_x >>= 1;
                 spark_screen.x = orb_x;
-                blitters[0](canvas, IMAGE_WORK + 0x3c56, orb_x - 10, spark_screen.y - 4, 20, 40);
+                blitters[0](canvas, Ram_MapCellBuffer + 0x3c56, orb_x - 10, spark_screen.y - 4, 20, 40);
             }
         }
         work->transfer_pending = 1;
@@ -464,15 +365,15 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
        * projection above uses the stack position directly. */
     position = &moving_pos;
     if (kind == 11) {
-        *(volatile u16 *)0x04000020 = 0x100;
+        REG_BG2PA = 0x100;
         if (work->effect->side == 0) {
-            *(volatile s32 *)0x04000028 = (frame - target_screen->x) << 8;
+            REG_BG2X = (frame - target_screen->x) << 8;
         } else {
-            *(volatile s32 *)0x04000028 = (96 - target_screen->x) << 8;
+            REG_BG2X = (96 - target_screen->x) << 8;
         }
     } else {
         if (kind == 32) {
-            *(volatile u16 *)0x04000020 = 0x100;
+            REG_BG2PA = 0x100;
             if (work->effect->side == 0) {
                 scroll_pos = -0x800000;
                 scroll_speed = 0xc0000;
@@ -480,31 +381,31 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 scroll_pos = 0x80000;
                 scroll_speed = -0xc0000;
             }
-            *(volatile s32 *)0x04000028 = (scroll_pos >> 16) << 8;
+            REG_BG2X = (scroll_pos >> 16) << 8;
         }
     }
     if (kind == 8) {
-        *(volatile u16 *)0x04000020 = 0x100;
-        *(volatile s32 *)0x04000028 = (64 - target_screen->x) << 8;
+        REG_BG2PA = 0x100;
+        REG_BG2X = (64 - target_screen->x) << 8;
         work->transfer_mode = 1;
         work->transfer_value = 0;
-        ClearWords((void *)0x06004000, 0x4000);
+        ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         {
             s32 shown = 0;
-            *(volatile u16 *)0x04000050 = shown;
+            REG_BLDCNT = shown;
         }
     }
     if (kind == 31) {
-        *(volatile u16 *)0x04000020 = 0x100;
+        REG_BG2PA = 0x100;
         if (work->effect->side == 0) {
-            *(volatile s32 *)0x04000028 = (32 - target_screen->x) << 8;
+            REG_BG2X = (32 - target_screen->x) << 8;
         } else {
-            *(volatile s32 *)0x04000028 = (96 - target_screen->x) << 8;
+            REG_BG2X = (96 - target_screen->x) << 8;
         }
     }
     if (kind == 15 || kind == 17 || kind == 24 || kind == 26) {
-        ClearWords((void *)0x06004000, 0x4000);
+        ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->unknown_001c = 0;
         Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
@@ -531,7 +432,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     caster_actor->acceleration = saved_acceleration;
     caster_actor->vertical_motion_strength = saved_vertical_strength;
     if (kind == 35) {
-        ClearWords((void *)0x06004000, 0x4000);
+        ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->unknown_001c = 0;
         Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
@@ -545,12 +446,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     /* Restore the caster and aim the travelling orb at the first target. */
     target_actor = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     motion = &velocity;
-    speed = __divsi3(target_actor->x - position->x, 6);
-    motion->x = speed;
-    speed = __divsi3(target_actor->y - position->y + 0x1e0000, 6);
-    motion->y = speed;
-    speed = __divsi3(target_actor->z - position->z, 6);
-    motion->z = speed;
+    motion->x = (target_actor->x - position->x) / 6;
+    motion->y = (target_actor->y - position->y + 0x1e0000) / 6;
+    motion->z = (target_actor->z - position->z) / 6;
     for (i = 0; i != 64; i++) {
         particle = &work->particles[i];
         particle->variant = 0;
@@ -578,20 +476,20 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     }
     if (kind == 11) {
         LoadResource((s32)&ResourceId_CounterRevealSheet, work, 1, 1);
-        LoadResource((s32)&ResourceId_RedCrescentSheetA, IMAGE_WORK, 1, 0);
-        *(volatile u16 *)0x04000052 = 0xe10;
+        LoadResource((s32)&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer, 1, 0);
+        REG_BLDALPHA = 0xe10;
     }
     if (kind == 32) {
         LoadResource((s32)&ResourceId_BlueBeastSheet, work, 1, 1);
-        LoadResource((s32)&ResourceId_RedCrescentSheetB, IMAGE_WORK, 1, 0);
-        *(volatile u16 *)0x04000052 = 0xe10;
+        LoadResource((s32)&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer, 1, 0);
+        REG_BLDALPHA = 0xe10;
     }
     if (kind != 7 && kind != 13 && kind != 18 && kind != 11 && kind != 32 && kind != 19) {
         s32 height = 0;
         if (kind != 12)
             height = 0x140000;
         for (i = 0; i != 64; i++) {
-            particle = &((struct EffectStep *)0x02014000)[i];
+            particle = &((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))[i];
             particle->x = target_actor->x;
             particle->y = height;
             particle->z = target_actor->z;
@@ -741,7 +639,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
             }
             if (frame == 12) {
-                particle = (struct EffectStep *)0x02014000;
+                particle = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
                 for (i = 0; i != 64; i++, particle++) {
                     particle->x = target_actor->x;
                     particle->y = 0x140000;
@@ -756,7 +654,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 goto FinishFrame;
             }
             {
-                struct EffectStep *step = (struct EffectStep *)0x02014000;
+                struct EffectStep *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
                 struct MotionObject *caster;
                 s32 height;
                 caster = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -791,7 +689,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 phase = frame;
                 i = 0;
                 do {
-                    blitters[0](canvas, ((phase / 2) & 3) * 2880 + (IMAGE_WORK + 0xc56), target_screen->x / 2 - 8, 0, 24, 104);
+                    blitters[0](canvas, ((phase / 2) & 3) * 2880 + (Ram_MapCellBuffer + 0xc56), target_screen->x / 2 - 8, 0, 24, 104);
                     i++;
                     phase += 3;
                 } while (i != 2);
@@ -818,7 +716,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 Runtime_ReleaseHeapBlock(46);
                 draw_flags = Random16();
                 BattleEffect_LoadWork(47, 7, 7, CastingImpact_GlintDrawFlags[draw_flags & 3] | 3, 2);
-                ((RectangleBlit *)gWorkSlot)[47](canvas, IMAGE_WORK + BattleFx_GlintCellOffsets[image], image_x, image_y + 56, BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
+                ((RectangleBlit *)gWorkSlot)[47](canvas, Ram_MapCellBuffer + BattleFx_GlintCellOffsets[image], image_x, image_y + 56, BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
                 Runtime_ReleaseHeapBlock(47);
                 BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
             }
@@ -852,9 +750,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 top = column_y - 104;
                 width = 17;
                 tile_height = 104;
-                DrawImage(canvas, IMAGE_WORK, column_x, top, width, tile_height, draw);
-                DrawScrolledImage(canvas, IMAGE_WORK, column_x, column_y, width, tile_height, scroll, draw);
-                (*draw)(canvas, IMAGE_WORK + 0x6e8, origin_x - width, rise + 47, width * 2, 65);
+                DrawImage(canvas, Ram_MapCellBuffer, column_x, top, width, tile_height, draw);
+                DrawScrolledImage(canvas, Ram_MapCellBuffer, column_x, column_y, width, tile_height, scroll, draw);
+                (*draw)(canvas, Ram_MapCellBuffer + 0x6e8, origin_x - width, rise + 47, width * 2, 65);
                 Runtime_ReleaseHeapBlock(47);
                 if (frame == 8) {
                     work->shake_frames = frame;
@@ -893,10 +791,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 height = 48;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 work_blitters = (RectangleBlit *)gWorkSlot;
-                DrawImage(canvas, IMAGE_WORK, pair_x - 24, 48, 24, height, work_blitters + 47);
+                DrawImage(canvas, Ram_MapCellBuffer, pair_x - 24, 48, 24, height, work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
                 BattleEffect_LoadWork(47, 7, 7, 7, 2);
-                DrawImage(canvas, IMAGE_WORK, pair_x, 48, 24, height, work_blitters + 47);
+                DrawImage(canvas, Ram_MapCellBuffer, pair_x, 48, 24, height, work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
             }
             BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
@@ -905,7 +803,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         if (kind == 30) {
             s32 image;
             if (frame > 15) {
-                *(volatile u16 *)0x04000052 = (0x20 - frame) | 0x1000;
+                REG_BLDALPHA = (0x20 - frame) | 0x1000;
             }
             if (frame <= 5) {
                 goto FinishFrame;
@@ -913,9 +811,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             strip_x = target_screen->x / 2 - 20;
             image = __modsi3(frame / 2, 3);
             image_offset = image * 2560;
-            blitters[0](canvas, IMAGE_WORK + 0xc56 + image_offset, strip_x, 16, 40, 32);
-            blitters[0](canvas, image * 1280 + (IMAGE_WORK + 0x2a56), strip_x, 48, 40, 32);
-            blitters[0](canvas, image_offset + (IMAGE_WORK + 0x1156), strip_x, 80, 40, 32);
+            blitters[0](canvas, Ram_MapCellBuffer + 0xc56 + image_offset, strip_x, 16, 40, 32);
+            blitters[0](canvas, image * 1280 + (Ram_MapCellBuffer + 0x2a56), strip_x, 48, 40, 32);
+            blitters[0](canvas, image_offset + (Ram_MapCellBuffer + 0x1156), strip_x, 80, 40, 32);
             goto FinishFrame;
         }
         if (kind != 5) {
@@ -924,7 +822,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
         }
         {
-            struct EffectStep *step = (struct EffectStep *)0x02014000;
+            struct EffectStep *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
             for (i = 0; i != 16; i++, step++) {
                 if (frame >= i / 2 + 4) {
                     s32 age = step->variant;
@@ -932,7 +830,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         s32 image = age / 2;
                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                         projected.x /= 2;
-                        blitters[0](canvas, IMAGE_WORK + (image << 11), projected.x - 16, projected.y - 32, 32, 64);
+                        blitters[0](canvas, Ram_MapCellBuffer + (image << 11), projected.x - 16, projected.y - 32, 32, 64);
                         EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
                         step->variant++;
                     }
@@ -967,18 +865,18 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 blitters[0](canvas, (u8 *)work + 0x3081, CastingImpact_ImageX[work->effect->side * 7 + 2], image_y + CastingImpact_ImageY[2], 128, 91);
             }
             if ((u32)(frame - 8) <= 1) {
-                DrawCroppedImage(canvas, IMAGE_WORK, CastingImpact_ImageX[work->effect->side * 7 + 3], image_y + CastingImpact_ImageY[3], 128, &blitters[0]);
+                DrawCroppedImage(canvas, Ram_MapCellBuffer, CastingImpact_ImageX[work->effect->side * 7 + 3], image_y + CastingImpact_ImageY[3], 128, &blitters[0]);
             }
             if ((u32)(frame - 10) <= 1) {
-                blitters[0](canvas, IMAGE_WORK + 0x2d80, CastingImpact_ImageX[work->effect->side * 7 + 4], image_y + CastingImpact_ImageY[4], 128, 59);
+                blitters[0](canvas, Ram_MapCellBuffer + 0x2d80, CastingImpact_ImageX[work->effect->side * 7 + 4], image_y + CastingImpact_ImageY[4], 128, 59);
             }
             if ((u32)(frame - 12) <= 1) {
-                blitters[0](canvas, IMAGE_WORK + 0x4b00, CastingImpact_ImageX[work->effect->side * 7 + 5], image_y + CastingImpact_ImageY[5], 122, 29);
+                blitters[0](canvas, Ram_MapCellBuffer + 0x4b00, CastingImpact_ImageX[work->effect->side * 7 + 5], image_y + CastingImpact_ImageY[5], 122, 29);
             }
             if ((u32)(frame - 14) > 1) {
                 goto FinishFrame;
             }
-            blitters[0](canvas, IMAGE_WORK + 0x58d2, CastingImpact_ImageX[work->effect->side * 7 + 6], image_y + CastingImpact_ImageY[6], 76, 25);
+            blitters[0](canvas, Ram_MapCellBuffer + 0x58d2, CastingImpact_ImageX[work->effect->side * 7 + 6], image_y + CastingImpact_ImageY[6], 76, 25);
             goto FinishFrame;
         } else if (kind == 32) {
             scroll_pos = scroll_pos + scroll_speed;
@@ -989,12 +887,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 s32 x = scroll_pos;
                 x >>= 16;
                 x <<= 8;
-                *(volatile s32 *)0x04000028 = x;
+                REG_BG2X = x;
             }
             {
                 s32 fade;
                 if ((u32)(fade = frame - 16) <= 15) {
-                    *(volatile u16 *)0x04000052 = (16 - fade) | 0x1000;
+                    REG_BLDALPHA = (16 - fade) | 0x1000;
                 }
             }
             if ((u32)(frame - 4) <= 1) {
@@ -1024,18 +922,18 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 blitters[0](canvas, (u8 *)work + 0x3e80, 0, 16, 128, 91);
             }
             if ((u32)(frame - 8) <= 1) {
-                DrawCroppedImage(canvas, IMAGE_WORK, 0, 16, 128, &blitters[0]);
+                DrawCroppedImage(canvas, Ram_MapCellBuffer, 0, 16, 128, &blitters[0]);
             }
             if ((u32)(frame - 10) <= 1) {
-                blitters[0](canvas, IMAGE_WORK + 0x2d80, 0, 16, 128, 59);
+                blitters[0](canvas, Ram_MapCellBuffer + 0x2d80, 0, 16, 128, 59);
             }
             if ((u32)(frame - 12) <= 1) {
-                blitters[0](canvas, IMAGE_WORK + 0x4b00, 0, 16, 128, 29);
+                blitters[0](canvas, Ram_MapCellBuffer + 0x4b00, 0, 16, 128, 29);
             }
             if ((u32)(frame - 14) > 1) {
                 goto FinishFrame;
             }
-            blitters[0](canvas, IMAGE_WORK + 0x5980, 0, 16, 128, 26);
+            blitters[0](canvas, Ram_MapCellBuffer + 0x5980, 0, 16, 128, 26);
             goto FinishFrame;
         } else if (kind == 20) {
             for (i = 0; i != 12; i++) {
@@ -1053,13 +951,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         if (((i - 1) & 3) > 1)
                             mirrored = 1;
                     }
-                    blitters[mirrored](canvas, IMAGE_WORK + PuffArc_CellSourceOffsets[image], image_x, PuffArc_CellBiasY[image] + 48, PuffArc_CellWidths[image], PuffArc_CellHeights[image]);
+                    blitters[mirrored](canvas, Ram_MapCellBuffer + PuffArc_CellSourceOffsets[image], image_x, PuffArc_CellBiasY[image] + 48, PuffArc_CellWidths[image], PuffArc_CellHeights[image]);
                 }
             }
         } else if (kind == 16) {
             if (frame == 0) {
                 for (i = 0; i != 64; i++) {
-                    particle = &((struct EffectStep *)0x02014000)[i];
+                    particle = &((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))[i];
                     particle->x = (Random16() & 127) + 32;
                     particle->y = 0;
                     particle->z = 0;
@@ -1067,10 +965,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     particle->velocity_y = Random16() & 0xffff;
                     particle->velocity_z = Random16() & 0xffff;
                 }
-                ((struct EffectStep *)0x02014000)[63].y = 159;
+                ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))[63].y = 159;
             }
             {
-                struct EffectStep *step = (struct EffectStep *)0x02014000;
+                struct EffectStep *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
                 struct EffectPosition *origin;
                 /* FAKEMATCH: A zero offset known only after global const propagation keeps the origin copy out of copy propagation, so the loop hoists it after the projection address. */
                 s32 bias = 0;
@@ -1084,7 +982,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         origin = (struct EffectPosition *)((u8 *)target_screen + bias); /* FAKEMATCH: see bias above */
                         projected.x = projected.x / 2 + origin->x / 2;
                         projected.y += origin->y + 32;
-                        blitters[1](canvas, IMAGE_WORK + CastingImpact_OrbitCells[image], projected.x - 4, projected.y - 4, 8, 8);
+                        blitters[1](canvas, Ram_MapCellBuffer + CastingImpact_OrbitCells[image], projected.x - 4, projected.y - 4, 8, 8);
                         step->x -= 6;
                         if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
                             Audio_PlayCue(133);
@@ -1107,7 +1005,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             if (height > 96) {
                 height = 96;
             }
-            DrawImage(canvas, IMAGE_WORK, 48, 104 - height, 32, height, &blitters[0]);
+            DrawImage(canvas, Ram_MapCellBuffer, 48, 104 - height, 32, height, &blitters[0]);
         } else if ((u32)(kind - 33) <= 1) {
             s32 offset;
             s32 image_x;
@@ -1131,26 +1029,26 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 image_x -= offset * 2;
                 image_y = target_screen->y - offset * 4 + 24;
             }
-            DrawTallImage(canvas, IMAGE_WORK, image_x - 16, image_y - 32, 32, &blitters[1]);
+            DrawTallImage(canvas, Ram_MapCellBuffer, image_x - 16, image_y - 32, 32, &blitters[1]);
         } else if (kind == 12) {
             if (frame > 47) {
-                *(volatile u16 *)0x04000052 = (0x40 - frame) | 0x1000;
+                REG_BLDALPHA = (0x40 - frame) | 0x1000;
             }
             {
-                struct EffectStep *step = (struct EffectStep *)0x02014000;
+                struct EffectStep *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
                 s32 mask;
                 /* FAKEMATCH: Initialize the mask after the loop counter. */
                 for (i = 0, mask = 3; i != 16; i++, step++) {
                     s32 image = __modsi3(i, 3);
                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                     projected.x /= 2;
-                    blitters[i & 1](canvas, IMAGE_WORK + image * 576, projected.x - 12, projected.y - 12, 24, 24);
+                    blitters[i & 1](canvas, Ram_MapCellBuffer + image * 576, projected.x - 12, projected.y - 12, 24, 24);
                     EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & mask) + 11));
                     step->variant++;
                 }
             }
         } else if (kind != 100) {
-            struct EffectStep *step = (struct EffectStep *)0x02014000;
+            struct EffectStep *step = (struct EffectStep *)(Ram_MapCellBuffer + 0x4000);
             for (i = 0; i != 16; i++, step++) {
                 if (frame >= i + 4) {
                     s32 age = step->variant;
@@ -1158,7 +1056,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         s32 image = age / 4;
                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                         projected.x /= 2;
-                        blitters[i & 1](canvas, IMAGE_WORK + image * 1152, projected.x - 12, projected.y - 24, 24, 48);
+                        blitters[i & 1](canvas, Ram_MapCellBuffer + image * 1152, projected.x - 12, projected.y - 24, 24, 48);
                         if (kind == 25)
                             EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
                         else
@@ -1178,7 +1076,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 orb_x += (u32)orb_x >> 31;
                 orb_x >>= 1;
                 projected.x = orb_x;
-                draw_pair[1](canvas, IMAGE_WORK + 0x3c56, orb_x - 10, projected.y - 4, 20, 40);
+                draw_pair[1](canvas, Ram_MapCellBuffer + 0x3c56, orb_x - 10, projected.y - 4, 20, 40);
                 position->x += motion->x;
                 position->y += motion->y;
                 position->z += motion->z;
@@ -1232,7 +1130,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     }
     /* Hand off the follow-up effect, or release the canvas layer. */
     if (kind == 21) {
-        ClearWords((void *)0x06004000, 0x4000);
+        ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->unknown_001c = 0;
         Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);

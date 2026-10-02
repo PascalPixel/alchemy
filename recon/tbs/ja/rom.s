@@ -4,12 +4,6 @@
 	.global Rom_Start
 Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
-	.section .rom.00004fe4, "ax"
-	.global Graphics_PrepareTransfer
-	.type Graphics_PrepareTransfer, %function
-	.thumb_func
-Graphics_PrepareTransfer:
-	.incbin "baserom.gba", 0x00004fe4, 0x000001f4
 	.section .rom.0000615c, "ax"
 	.global SerialRuntime_CollectReceivedPayloads
 	.type SerialRuntime_CollectReceivedPayloads, %function

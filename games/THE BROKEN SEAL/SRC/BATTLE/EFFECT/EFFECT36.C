@@ -87,7 +87,7 @@ struct EffectVector {
 s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *result);
 
 extern u8 gFrameCount[];
-void Func_08097644(void);
+void BattleFx_UpdateWaveScene(void);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void BattleEffect_InitializeSharedScene(void);
 s32 __umodsi3(s32, s32);
@@ -297,5 +297,5 @@ void RunSceneTransitionEffect(s32 x, s32 y)
     *(u16 *)(work + 0x292) = y;
     work[0x294] = 8;
     Ui_FillBank15PaletteGrey();
-    Scheduler_AddOrUpdateCallback((void (*)(void))Func_08097644, 0xc80);
+    Scheduler_AddOrUpdateCallback((void (*)(void))BattleFx_UpdateWaveScene, 0xc80);
 }

@@ -87,6 +87,7 @@ extern char ResourceId_Lettering;
 extern char ResourceId_ShopCursorFrames;
 extern char ResourceId_Icons;
 extern char ResourceId_CommandIcons;
+extern char ResourceId_Map001;
 extern char ResourceId_SheepSheet;
 extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;

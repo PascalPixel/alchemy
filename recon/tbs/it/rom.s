@@ -112,12 +112,6 @@ Object_UpdateAllThumb:
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000ebec, "ax"
 	.incbin "baserom.gba", 0x0000ebec, 0x0000070c
-	.section .rom.0000fb38, "ax"
-	.global Map_LoadLayeredScene
-	.type Map_LoadLayeredScene, %function
-	.thumb_func
-Map_LoadLayeredScene:
-	.incbin "baserom.gba", 0x0000fb38, 0x00000364
 	.section .rom.00010424, "ax"
 	.global Map_CopyMetatileIndicesRect
 	.type Map_CopyMetatileIndicesRect, %function
@@ -227,7 +221,10 @@ ObjectDispatch_Table6Script:
 	.incbin "baserom.gba", 0x00013620, 0x000000c0
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
-	.incbin "baserom.gba", 0x000136e0, 0x00001920
+	.incbin "baserom.gba", 0x000136e0, 0x000000a4
+	.global Map_LayeredScenes
+Map_LayeredScenes:
+	.incbin "baserom.gba", 0x00013784, 0x0000187c
 	.section .rom.000155d0, "ax"
 	.incbin "baserom.gba", 0x000155d0, 0x000002f4
 	.global Tile_BuildMetatiles
@@ -541,20 +538,6 @@ Enemy_ElementPresetTable:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008926c, 0x00000d94
-	.section .rom.0008b3f2, "ax"
-	.incbin "baserom.gba", 0x0008b3f2, 0x00000002
-	.section .rom.0008b3f4, "ax"
-	.global Event_SpawnObjectTable
-	.type Event_SpawnObjectTable, %function
-	.thumb_func
-Event_SpawnObjectTable:
-	.incbin "baserom.gba", 0x0008b3f4, 0x00000260
-	.section .rom.0008bb34, "ax"
-	.global ObjectTable_Restore
-	.type ObjectTable_Restore, %function
-	.thumb_func
-ObjectTable_Restore:
-	.incbin "baserom.gba", 0x0008bb34, 0x00000118
 	.section .rom.0008c500, "ax"
 	.global Func_0808c4f8
 	.type Func_0808c4f8, %function
@@ -569,36 +552,18 @@ Func_0808c4f8:
 	.thumb_func
 DisplayTransition_UpdateScanlineTable:
 	.incbin "baserom.gba", 0x0008f598, 0x0000090c
-	.section .rom.0008ff68, "ax"
-	.global DisplayTransition_Start
-	.type DisplayTransition_Start, %function
-	.thumb_func
-DisplayTransition_Start:
-	.incbin "baserom.gba", 0x0008ff68, 0x000002c4
 	.section .rom.00090ac8, "ax"
 	.global BattleFx_BuildBuffer
 	.type BattleFx_BuildBuffer, %function
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00090ac8, 0x00000718
-	.section .rom.00092ccc, "ax"
-	.global UiText_OpenMessageAtObject
-	.type UiText_OpenMessageAtObject, %function
-	.thumb_func
-UiText_OpenMessageAtObject:
-	.incbin "baserom.gba", 0x00092ccc, 0x00000344
 	.section .rom.000945d0, "ax"
 	.global DisplayScroll_BuildAndSwapHBlankPage
 	.type DisplayScroll_BuildAndSwapHBlankPage, %function
 	.thumb_func
 DisplayScroll_BuildAndSwapHBlankPage:
 	.incbin "baserom.gba", 0x000945d0, 0x000001ec
-	.section .rom.000976d0, "ax"
-	.global Func_08097644
-	.type Func_08097644, %function
-	.thumb_func
-Func_08097644:
-	.incbin "baserom.gba", 0x000976d0, 0x00000224
 	.section .rom.00097cc8, "ax"
 	.global FunctionHead_08097c3c
 	.type FunctionHead_08097c3c, %function

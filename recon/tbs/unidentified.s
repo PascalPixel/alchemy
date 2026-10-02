@@ -168,8 +168,8 @@ Data_08013624:
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x000136e0, 0x000000a4
-	.global Data_08013784
-Data_08013784:
+	.global Map_LayeredScenes
+Map_LayeredScenes:
 	.incbin "baserom.gba", 0x00013784, 0x0000187c
 	.section .unidentified.08029910,"a"
 	.global WorkspaceOptions_SliderTiles

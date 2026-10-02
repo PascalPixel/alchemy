@@ -47,8 +47,21 @@ struct EventRuntime {
     u16 value_1c4;
     u16 status_1c6;
     s32 value_1c8;
-    u8 unknown_1cc[0x0c];
-    u16 value_1d8;
+    s32 message_busy;
+    u8 unknown_1d0[0x08];
+    s16 message;
+    u8 unknown_1da[0x1a];
+    s32 speaker;
+    s32 message_window;
+    s32 side_window;
+};
+
+/* The work pointers gWindowWork starts: the window work first, the event
+   runtime twelve pointers later. */
+struct WorkPointers {
+    u8 *window;
+    u8 unknown_04[0x2c];
+    struct EventRuntime *event;
 };
 
 extern struct EventRuntime *gWork;

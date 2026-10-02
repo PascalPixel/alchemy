@@ -164,13 +164,13 @@ s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)
 void TakaraHashira_RunActorAction(s32 a0)
 {
     u32 i;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 record;
 
-    rec7 = Value1(Object_GetById, a0);
+    rec7 = Object_GetById(a0);
     Engine_EventBegin();
-    *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
-    Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
+    rec7->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
+    Map_CopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
     GameFlag_Set((a0 + 0x1f5));
     Engine_ActorEnableActionCallback(a0, (s32)TakaraHashira_ActionTable);
     Engine_EventEnd();

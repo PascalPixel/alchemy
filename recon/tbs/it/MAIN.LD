@@ -676,7 +676,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CANVAS_DRAW_CLIPPED_LINE.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000ce034)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT4.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000ceb54)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000cf2b8)

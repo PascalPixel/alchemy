@@ -1182,12 +1182,6 @@ Func_080cc5d8:
 	.incbin "baserom.gba", 0x000cfdd8, 0x00000388
 	.section .rom.000d1834, "ax"
 	.incbin "baserom.gba", 0x000d1834, 0x00000828
-	.section .rom.000d2354, "ax"
-	.global BattleFx_RunMemberBurst
-	.type BattleFx_RunMemberBurst, %function
-	.thumb_func
-BattleFx_RunMemberBurst:
-	.incbin "baserom.gba", 0x000d2354, 0x00000410
 	.section .rom.000d2ab8, "ax"
 	.global BattleFx_RunMemberBeam
 	.type BattleFx_RunMemberBeam, %function
@@ -1383,7 +1377,10 @@ TwoResource_CellX:
 	.incbin "baserom.gba", 0x000f187c, 0x0000000c
 	.global TwoResource_CellBiasY
 TwoResource_CellBiasY:
-	.incbin "baserom.gba", 0x000f1888, 0x0000000e
+	.incbin "baserom.gba", 0x000f1888, 0x00000008
+	.global MemberBurst_Counts
+MemberBurst_Counts:
+	.incbin "baserom.gba", 0x000f1890, 0x00000006
 	.global EarthWall_CellSourceOffsets
 EarthWall_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000f1896, 0x00000006

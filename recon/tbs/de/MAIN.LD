@@ -679,7 +679,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CANVAS_DRAW_CLIPPED_LINE.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000cfe34)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT4.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000d0954)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000d10b8)

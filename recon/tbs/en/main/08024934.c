@@ -1,4 +1,22 @@
 /* Not-yet-C: complete 2124-byte summon picker, including literal pools.
+ * Current EN score15925: 219 register,75 stack,50 operand,84 reordered,
+ * 41 inserted,44 deleted instruction differences; no unresolved symbols.
+ * Ordinary routed compilation emits2124 bytes including pools, frame376
+ * versus native372. Equal extent does not mean byte identity.
+ * 2026-10-02 owner recovery: MENU_LIST.H owns windows, render work, menu
+ * cell, sprites and text-call prototypes. gWindowWork[0]/[42] are their
+ * existing pointer cells; no invented global bundle or duplicate record.
+ * MsgAbilityName/Description come from the current editable catalogs, and
+ * tile-map entries are enum values rather than address-spelling symbols.
+ * H0 shared owners: score17411, frame368 versus native372. Retained as
+ * the source owner correction, despite the scheduling changes.
+ * H1 used cursor base across rendering calls: score17294, retained.
+ * H2 existing MenuPoint for both used cursor coordinates: score15925,
+ * frame376. Retained as the closer ordinary source shape; it is not exact.
+ * Earlier scalar baseline score16810 had eight unresolved Value_* symbols.
+ * No unused storage, fixed register, inline assembly, option or output patch
+ * was added. This function remains a draft and earns no edition credit.
+ * Earlier near-miss measurements before this owner correction:
  * Standby counts arrive in argument three; returns a summon id or -1.
  * Candidate 2112 bytes, 655 aligned halfword edits. Per-phase counters
  * recover drawn_page in r9. Holding last=count-1 across sorting/navigation
@@ -13,111 +31,59 @@
  * sprite writes; the typed record now follows those observed accesses. */
 #include "TYPES.H"
 #include "BATTLE_SUMMON.H"
+#include "MENU_LIST.H"
 
-struct SummonWindow {
-    u8 unknown_00[8];
-    u16 width, height, x, y;
+enum {
+    SUMMON_ELEMENT_TILE = 0x5001,
+    SUMMON_PAGE_TILE = 0xf301,
+    SUMMON_SELECTED_PAGE_TILE = 0xf30b,
+    SUMMON_LEFT_ARROW_TILE = 0xf334,
+    SUMMON_RIGHT_ARROW_TILE = 0xf335
 };
 
-struct SummonNavigation {
-    u8 unknown_00[0x30];
-    s32 row, page, preferred_row;
-    u8 unknown_3c[0x10];
-    s32 active;
-    u8 unknown_50[0x88];
-    s32 automatic, delay;
-};
+extern u8 MsgAbilityName;
+extern u8 MsgAbilityDescription;
 
-struct SummonRender {
-    u8 unknown_000[0xea3];
-    u8 dirty;
-    u8 unknown_ea4[2];
-    u8 busy;
-};
-
-struct SummonGlobals {
-    struct SummonRender *render;
-    u8 unknown_04[0xa4];
-    struct SummonNavigation *navigation;
-};
-
-union SummonSprite {
-    struct { void *next; u32 attr01, attr23; } word;
-    struct {
-        void *next;
-        u8 y, flags;
-        u16 x : 9;
-        u16 flags06 : 5;
-        u16 size : 2;
-        u16 tile : 10;
-        u16 flags08 : 2;
-        u16 palette : 4;
-        u16 affine;
-    } attr;
-};
-
-extern struct SummonGlobals gWindowWork;
-extern struct SummonNavigation *gLinkCountdownWork;
-extern volatile u32 gKeyState, gKeysRepeat, gFrameCount;
-extern u8 Resource_FixedBlockBTiles[];
-extern u8 Value_0000053a, Value_00000333, Value_00005001;
-extern u8 Value_0000f301, Value_0000f30b, Value_0000f334, Value_0000f335;
-extern u8 Value_0000fffc;
-
-void WaitFrames(s32 frames);
-void Runtime_SetMainState19(void);
-void Runtime_PushSlotEntry(union SummonSprite *sprite, s32 priority);
-void Resource_ResetEntry(s32 handle);
-s32 Resource_LoadIntoFreeSlot(s32 kind);
-s32 Resource_GetBuffer(s32 handle, const void *source);
-struct SummonWindow *UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWork_Finalize(struct SummonWindow *, s32);
-void RenderOutput_RedrawSavedRect(struct SummonWindow *);
-void Ui_FillVramBlockPattern(void);
-s32 UiText_CopyMessageString(s32 message, s16 *text, s32 size);
-void UiText_RenderWideStringAtOffset(s16 *, struct SummonWindow *, s32, s32);
-void UiWindow_SetTilemapEntry(struct SummonWindow *, s32, s32, s32, s32);
-void UiWindow_PutGlyph(struct SummonWindow *, s32, s32, s32, s32);
+void UiWindow_PutGlyph(struct UiWindow *, u32, u32, u32, s32);
 void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
-void UiWork_SetParamNibble(s32 colour);
-void UiText_DrawCharacterAtOffset(s32, struct SummonWindow *, s32, s32);
-void Ui_SetRectHighlight(s32, s32, s32, s32, s32);
 s32 Trade_ListFlaggedEntriesFar(u8 *ids);
-void Audio_PlayCue(s32 cue);
 
-s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
+s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
 {
-    union SummonSprite cursor;
-    union SummonSprite sprites[4];
+    struct MenuSprite cursor;
+    struct MenuSprite sprites[4];
     u8 available[33];
     u8 ordered[33];
-    s16 text[64];
+    u16 text[64];
     s32 handles[4];
     u8 visible[4];
     s32 glyph;
-    struct SummonRender *render;
-    struct SummonWindow *description, *counts, *window;
-    struct SummonNavigation *nav;
+    struct UiRenderWork *render;
+    struct UiWindow *description, *counts, *window;
+    struct MenuCell *nav;
     const struct SummonDefinition *summon;
-    union SummonSprite *sprite;
+    struct MenuSprite *sprite;
+    struct MenuSprite *cursor_sprite;
     const u8 *required, *supply;
     u8 *src, *dst;
     s32 *handle;
     s32 drawn_row, drawn_page, row, page, preferred;
     s32 cursor_handle, count, last, used, mask, element;
-    s32 id, tile, affordable, cursor_x, cursor_y;
+    s32 id, tile, affordable;
+    struct MenuPoint cursor_position;
     s32 pressed, repeated, result;
 
-    render = gWindowWork.render;
+    render = (struct UiRenderWork *)gWindowWork[0];
     drawn_row = -1;
     drawn_page = -1;
+    cursor_sprite = &cursor;
     cursor_handle = (s16)Resource_LoadIntoFreeSlot(128);
     description = UiWindow_Create(0, 4, 30, 4, 42);
     counts = UiWindow_Create(20, 8, 10, 3, 6);
     mask = 0;
-    page = gWindowWork.navigation->page;
-    row = gWindowWork.navigation->row;
-    preferred = gWindowWork.navigation->preferred_row;
+    page = ((struct MenuCell *)gWindowWork[42])->page;
+    row = ((struct MenuCell *)gWindowWork[42])->row;
+    preferred = ((struct MenuCell *)gWindowWork[42])->preferred_row;
     window = UiWindow_Create(13, 11, 17, 9, 6);
     {
         s32 index;
@@ -125,10 +91,10 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         sprite = sprites;
         index = 0;
         do {
-            sprite->word.attr01 = 0x40000000;
-            sprite->word.attr23 = 0;
-            sprite->attr.x = window->x * 8 + 8;
-            sprite->attr.y = (index * 2 + window->y) * 8 + 4;
+            sprite->oam.word.attr01 = 0x40000000;
+            sprite->oam.word.attr23 = 0;
+            sprite->oam.f.x = window->x * 8 + 8;
+            sprite->oam.f.y = (index * 2 + window->y) * 8 + 4;
             index++;
             sprite++;
         } while (index <= 3);
@@ -142,7 +108,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         do {
             s32 slot = Resource_LoadIntoFreeSlot(128);
             *handle++ = slot;
-            sprite->attr.tile = Resource_GetBuffer(slot, (void *)-1);
+            sprite->oam.f.tile = Resource_GetBuffer(slot, -1);
             sprite++;
         } while (--index >= 0);
 
@@ -188,13 +154,13 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
 
     for (;;) {
         if (page != drawn_page || row != drawn_row) {
-            render->busy = 1;
+            render->menu_busy = 1;
             Ui_SetRectHighlight(window->x + 1, window->y + drawn_row * 2 + 1,
                 window->width - 2, 1, 15);
             Ui_FillVramBlockPattern();
             summon = SummonDefinition_Get(ordered[page + row]);
-            UiText_CopyMessageString(summon->name_message_id + (s32)&Value_0000053a, text, 52);
-            UiText_RenderWideStringAtOffset(text, description, 0, 4);
+            UiText_CopyMessageString(summon->name_message_id + (s32)&MsgAbilityDescription, text, 52);
+            UiText_RenderWideStringAtOffset(text, (struct TextWindow *)description, 0, 4);
             mask = 0;
             drawn_row = row;
             {
@@ -213,7 +179,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
 
                     col = 1;
                     for (element = 0; element <= 3; element++) {
-                        UiWindow_SetTilemapEntry(counts, element + (s32)&Value_00005001, element * 2, 0, 0);
+                        UiWindow_SetTilemapEntry(counts, element + SUMMON_ELEMENT_TILE, element * 2, 0, 0);
                         UiWindow_PutGlyph(counts, standby[element] + 48, col, 0, 0);
                         col += 2;
                     }
@@ -236,16 +202,16 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                         }
                         affordable = element == 4;
                         Ability_LoadGlyph(summon->name_message_id & 0x3fff, 0, &handles[index], &glyph, 1);
-                        sprites[index].attr.tile = glyph;
+                        sprites[index].oam.f.tile = glyph;
                         if (!affordable)
                             UiWork_SetParamNibble(2);
-                        UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&Value_00000333,
-                            window, 16, index * 16);
+                        UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
+                            (struct TextRenderWork *)window, 16, index * 16);
                         required = summon->djinn_required;
                         col = 13;
                         for (element = 0; element <= 3; element++) {
                             if (*required != 0) {
-                                UiWindow_SetTilemapEntry(window, element + (s32)&Value_00005001, col, index * 2, 0);
+                                UiWindow_SetTilemapEntry(window, element + SUMMON_ELEMENT_TILE, col, index * 2, 0);
                                 UiWindow_PutGlyph(window, *required + 48, col + 1, index * 2, 0);
                                 col += 2;
                             }
@@ -264,9 +230,9 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                     s32 index;
 
                     for (index = 0; index < (count + 3) / 4; index++) {
-                        tile = index + (s32)&Value_0000f301;
+                        tile = index + SUMMON_PAGE_TILE;
                         if (index == page / 4)
-                            tile = index + (s32)&Value_0000f30b;
+                            tile = index + SUMMON_SELECTED_PAGE_TILE;
                         UiWindow_SetTilemapEntry(window, tile,
                             window->width - (count + 3) / 4 + index - 2, -1, 0);
                     }
@@ -274,7 +240,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             }
             Ui_SetRectHighlight(window->x + 1, window->y + row * 2 + 1, window->width - 2, 1, 14);
             render->dirty = 1;
-            render->busy = 0;
+            render->menu_busy = 0;
         }
         {
             s32 index;
@@ -283,18 +249,18 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             src = visible;
             for (index = 0; index <= 3; index++) {
                 if (*src++ != 0)
-                    Runtime_PushSlotEntry(sprite, 240);
+                    Runtime_PushSlotEntry((s32 *)sprite, 240);
                 sprite++;
             }
         }
-        cursor_x = window->x * 8 - 2;
-        cursor_y = (row * 2 + window->y) * 8 + 20;
-        cursor.word.attr01 = 0x40000000;
-        cursor.word.attr23 = 0;
-        cursor.attr.tile = Resource_GetBuffer((u16)cursor_handle, Resource_FixedBlockBTiles);
-        cursor.attr.x = cursor_x + ((gFrameCount & 4) >> 1) + (s32)&Value_0000fffc;
-        cursor.attr.y = cursor_y - ((gFrameCount & 4) >> 2) + 248;
-        Runtime_PushSlotEntry(&cursor, 242);
+        cursor_position.x = window->x * 8 - 2;
+        cursor_position.y = (row * 2 + window->y) * 8 + 20;
+        cursor_sprite->oam.word.attr01 = 0x40000000;
+        cursor_sprite->oam.word.attr23 = 0;
+        cursor_sprite->oam.f.tile = Resource_GetBuffer((u16)cursor_handle, (s32)Resource_FixedBlockBTiles);
+        cursor_sprite->oam.f.x = cursor_position.x + ((gFrameCount & 4) >> 1) - 4;
+        cursor_sprite->oam.f.y = cursor_position.y - ((gFrameCount & 4) >> 2) + 248;
+        Runtime_PushSlotEntry((s32 *)cursor_sprite, 242);
         affordable = gFrameCount & 8;
         {
             s32 element;
@@ -311,14 +277,14 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                 s32 index;
 
                 for (index = 0; index < (count + 3) / 4; index++) {
-                    tile = index + (s32)&Value_0000f301;
+                    tile = index + SUMMON_PAGE_TILE;
                     if ((gFrameCount & 15) <= 11 && index == page / 4)
-                        tile = index + (s32)&Value_0000f30b;
+                        tile = index + SUMMON_SELECTED_PAGE_TILE;
                     UiWindow_SetTilemapEntry(window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
                 }
             }
-            UiWindow_SetTilemapEntry(window, (s32)&Value_0000f334, window->width - (count + 3) / 4 - 3, -1, 0);
-            UiWindow_SetTilemapEntry(window, (s32)&Value_0000f335, window->width - 2, -1, 0);
+            UiWindow_SetTilemapEntry(window, SUMMON_LEFT_ARROW_TILE, window->width - (count + 3) / 4 - 3, -1, 0);
+            UiWindow_SetTilemapEntry(window, SUMMON_RIGHT_ARROW_TILE, window->width - 2, -1, 0);
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
         nav = gLinkCountdownWork;
@@ -327,15 +293,15 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         nav->preferred_row = preferred;
         pressed = gKeyState;
         repeated = gKeysRepeat;
-        if (nav->automatic != 0) {
+        if (nav->auto_enabled != 0) {
             repeated = 0;
             pressed = 0;
-            if (nav->delay == 0) {
-                nav->delay = 120;
+            if (nav->auto_delay == 0) {
+                nav->auto_delay = 120;
                 repeated = 1;
                 pressed = 1;
             } else {
-                nav->delay--;
+                nav->auto_delay--;
             }
         }
         if (pressed & 1) {
@@ -343,18 +309,18 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             break;
         }
         if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
-            Audio_PlayCue(113);
+            AudioCommand_PlayFar(113);
             result = -1;
             break;
         }
         if (repeated & 128) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             row++;
             if (row == 4 || page + row == count)
                 row = 0;
             preferred = row;
         } else if (repeated & 64) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             row--;
             if (row < 0) {
                 if (page == (last / 4) * 4)
@@ -364,7 +330,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             }
             preferred = row;
         } else if (repeated & 16) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             Runtime_SetMainState19();
             if (page + 4 >= count) {
                 if (page != 0) {
@@ -381,7 +347,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                 }
             }
         } else if (repeated & 32) {
-            Audio_PlayCue(111);
+            AudioCommand_PlayFar(111);
             Runtime_SetMainState19();
             if (page != 0) {
                 row = preferred;

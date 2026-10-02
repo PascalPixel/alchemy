@@ -1,4 +1,53 @@
-/* Draft, not exact: current EN score1112 (48 register-only,2 stack-only,
+/* Draft, not exact: current EN score1052 (49 register-only,2 stack-only,
+ * 2 operand,9 reordered,2 inserted), no unresolved symbols.
+ * Native complete extent876; candidate complete extent884; both frame124.
+ * Every local array has real reads/writes; shared owners remain unchanged.
+ * Retained only a phase-local minimum r2 binding plus an empty, read-only
+ * input/memory-order barrier after source reshaping failed. The device only
+ * changes load order/register choice and emits no instructions or storage.
+ * W8 minimization: input-only constraint has identical1052 code/score.
+ * W9: native counts-base r0 constraint with the repaired minimum lifetime
+ * scored1581; it fixes the local store base/index, but rotates earlier
+ * allocation and maximum increment order. Rejected and fully removed.
+ * Remaining: maximum address/setup allocation; count-base/index allocation;
+ * shuffled copy count/list reload order, two real extra register copies,
+ * default copy bound allocation and assignment-entry list reload.
+ * Scan/budget minimum base remains preserved, and consumed minimum is now
+ * read before maximum. No filler, dead instructions, aliases, compiler
+ * options, routing, output patch or edition/adoption credit is introduced.
+ * Source edits frozen after this measured axis; all six builds required.
+ */
+/* W7: moving the non-memory minimum-value constraint between the two
+ * reads leaves score1057 unchanged: independent maximum reads still move.
+ * W8: a no-instruction memory-order barrier scores1052, restores actual
+ * minimum-before-maximum reads, and adds no instructions or storage.
+ * Dropping the minimum r2 binding scores1067; rejected.
+ */
+/* W6: constraining the two consumed count values scored1057; removing the
+ * maximum binding gives identical code/score. Removing minimum's r2 binding
+ * leaves score1077. Retained only the used minimum r2/order device.
+ */
+/* W5: phase-local used count-base r0 constraint scored1666; it fixes the
+ * count-store base/index pair but rotates minimum/maximum and earlier code.
+ * Rejected; no constraint from that trial remains.
+ */
+/* W4: computing room before the count store scored1701 (94 register-only),
+ * perturbing earlier allocation as well; rejected. Store-before-room retained.
+ */
+/* W3: hoisting a used member entry under an explicit nonempty-count guard
+ * scored1712 (7 inserted,1 deleted), retaining an extra guard; rejected.
+ */
+/* W2: explicit shuffled-copy dst with separate count increment scored2041
+ * (10 inserted), extending list/count lifetimes and adding induction state;
+ * rejected. The indexed copy remains the best sound source shape.
+ */
+/* 2026-10-02 formation wave:
+ * W1: a used walking maximum_counts pointer, minimum indexing unchanged.
+ * Score1372 (47 register,2 stack,5 operand,10 reordered,3 inserted,1 deleted).
+ * It reschedules the minimum-base adjustment and does not repair copies;
+ * rejected. Retained indexed baseline score1112.
+ */
+/* Previous retained draft: EN score1112 (48 register-only,2 stack-only,
  * 2 operand,10 reordered,2 inserted), no unresolved symbols. Native complete
  * extent876 includes all pools; frame124 and every local array has uses.
  * 2026-10-02 fallback, bounded to three source trials:
@@ -115,9 +164,14 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     }
 
     for (i = 0; i <= 4; i++) {
-        s32 minimum = record->minimum_counts[i];
-        s32 maximum = record->maximum_counts[i];
+        /* FAKEMATCH: Failed source trials; native minimum is read and consumed in r2. */
+        register s32 minimum asm("r2");
+        s32 maximum;
 
+        minimum = record->minimum_counts[i];
+        /* FAKEMATCH: Failed source trials; prevent maximum load moving before native minimum read, no instructions. */
+        asm volatile("" : : "r"(minimum) : "memory");
+        maximum = record->maximum_counts[i];
         counts[i] = minimum;
         room = maximum - minimum;
         if (room > 0) {

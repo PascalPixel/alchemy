@@ -180,7 +180,7 @@ s32 Ui_RunSelectionScreen(s32 mode);
 void BattleLayout_HighlightPartyPanels(u16 *header);
 void Ui_RunOwnerStatusScreen(void *block, s32 handle, s32 actor);
 s32 Battle_SelectAbility(s32 actor, s32 mode);
-s32 Func_08024934(s32 a, s32 b, u8 *cost);
+s32 SummonMenu_SelectSummon(s32 a, s32 b, const u8 *standby);
 s32 BattleMenu_RunActionSelection(s32 actor, u16 *list, s32 count);
 s32 ItemList_SelectEntry(s32 actor, u16 *list);
 void Sys_Free(void *block);
@@ -728,7 +728,7 @@ djinn_menu:
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 80);
                 BattleLayout_HighlightPartyPanels(hdr);
-                res = Func_08024934(0, 0, state->cost[i]);
+                res = SummonMenu_SelectSummon(0, 0, state->cost[i]);
                 BattleLayout_HighlightPartyPanels(hdr);
                 if (res == -1) {
                     goto mark_visible;

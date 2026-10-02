@@ -190,8 +190,8 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         Graphics_ResetVramBlockAndReleaseHeapBlocks(kind);
     } else if (mode == 1) {
         BattlePresentation_PrepareSceneFar(kind);
-        for (frame = 39; frame >= 0; frame--) {
-            work = gBattleFxWork[0];
+        for (frame = 0; frame < 40; frame++) {
+            work = gWorkSlot.context;
             BattleMotion_ProjectScaledPosition(unit, &position2);
             work->origin_x = (64 - position2.x) << 8;
             work->origin_y = (64 - position2.y) << 8;
@@ -215,8 +215,8 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         launch2.unknown_001c = 0;
         launch2.variant = 0;
         launch2.actor = unit;
-        launch2.target = unit;
         launch2.actors[0] = unit;
+        launch2.target = unit;
         launch2.count = 1;
         launch2.unknown_0010 = 1;
         Func_080c9030(&launch2);

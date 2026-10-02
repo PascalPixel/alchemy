@@ -36,7 +36,6 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 s32 BattleActor_SpawnObjectsForList(void *list, s32 mode);
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode);
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode);
-void BattleEventRuntime_WaitForReady(void);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void BattleEvent_Playback(void);
 

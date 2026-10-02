@@ -75,7 +75,6 @@ void BattleMotion_InitializeActorRecords(u32);
 void UiWindow_DrawPartyStatusContentsFar(u32);
 void BattleUnit_BuildStatusFlags(u32, u32);
 void BattlePres_SetActorModeAndAction(u32);
-u32 BattleEventRuntime_Reset(void);
 
 u32 BattleEv_DispatchQueued(void)
 {

@@ -1,6 +1,6 @@
 //! The README's two figures, drawn in whole game pixels with the lettering
 //! defined in `letters` and written at `FIGURE_SCALE`: PROGRESS_CHART.png, each
-//! game's DONE by calendar day, and PROGRESS.png, the map of tracked files.
+//! game's DONE by hour, and PROGRESS.png, the map of tracked files.
 //! Both are drawn in Weyard UI (`palette`) and are opaque but for the four
 //! cut corner pixels of their frames, so they read the same on light and
 //! dark pages.
@@ -46,7 +46,7 @@ fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i3
 }
 // ------------------------------------------------------------------ chart
 
-/// The daily chart of `history`: x is calendar days since the project
+/// The hourly chart of `history`: x is calendar hours since the project
 /// began, y is 0–100%, today's
 /// values are labelled at the right end.
 pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
@@ -59,12 +59,14 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     canvas.bevel(0, 0, WIDTH, height, Relief::Raised);
     canvas.clear_corners(0, 0, WIDTH, height);
     let began = day_number(&history.began).unwrap_or_default();
-    let last = days
+    let last_hour = days
         .iter()
-        .filter_map(|row| day_number(&row.date))
+        .chain(&history.hours)
+        .filter_map(|row| super::history::hour_number(&row.date))
         .max()
-        .unwrap_or(began)
-        .max(began + 1);
+        .unwrap_or(began * 24)
+        .max((began + 1) * 24);
+    let last = last_hour / 24;
     let series = [
         ("tbs", "The Broken Seal", GOLD),
         ("tla", "The Lost Age", BLUE),
@@ -115,8 +117,10 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         };
         canvas.text(letters, left, top - 16, &note, MUTED, Some(SHADOW));
     }
-    let span = (last - began) as i32;
-    let x_of = |day: i64| left + ((day - began) as i32 * (plot_w - 1) + span / 2) / span;
+    let span = last_hour - began * 24;
+    let x_hour =
+        |hour: i64| left + (((hour - began * 24) * i64::from(plot_w - 1) + span / 2) / span) as i32;
+    let x_of = |day: i64| x_hour(day * 24);
     let y_of = |value: f64| {
         bottom - 1 - ((value.clamp(0.0, 100.0) / 100.0) * (plot_h - 2) as f64).round() as i32
     };
@@ -166,12 +170,9 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     // The lines, then today's values beside their ends.
     let mut ends = Vec::new();
     for ((key, _, ink), label) in series.iter().zip(&latest) {
-        let points = days
-            .iter()
-            .filter_map(|row| {
-                let day = day_number(&row.date)?;
-                Some((x_of(day), y_of(row.game(key).and_then(Measure::percent)?)))
-            })
+        let points = super::history::points(history, key)
+            .into_iter()
+            .map(|(hour, value)| (x_hour(hour), y_of(value)))
             .collect::<Vec<_>>();
         for pair in points.windows(2) {
             canvas.line(
@@ -739,6 +740,30 @@ mod tests {
         let shades = (423..431).map(|y| canvas.get(strip, y)).collect::<Vec<_>>();
         assert_eq!(shades.iter().filter(|c| **c == Some(pink)).count(), 6);
         assert_eq!(shades.iter().filter(|c| **c == Some(grey)).count(), 2);
+    }
+    #[test]
+    fn hourly_points_change_the_line_and_leave_the_date_axis_and_strip_alone() {
+        let mut history = History {
+            began: "2026-07-16".into(),
+            days: vec![
+                row("2026-07-16", Some(1.0), None),
+                row("2026-09-23", Some(60.0), None),
+                row("2026-09-24", Some(65.0), None),
+            ],
+            ..History::default()
+        };
+        let daily = chart(&fixture(), &history);
+        history.hours = vec![
+            row("2026-09-23T08", Some(40.0), None),
+            row("2026-09-23T20", Some(60.0), None),
+        ];
+        let hourly = chart(&fixture(), &history);
+        assert_ne!(daily.rgba(1), hourly.rgba(1));
+        for y in 399..daily.height {
+            for x in 0..daily.width {
+                assert_eq!(daily.get(x, y), hourly.get(x, y), "{x},{y}");
+            }
+        }
     }
     #[test]
     fn pending_audits_label_unknown_and_keep_the_historical_lines() {

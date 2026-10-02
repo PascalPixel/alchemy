@@ -130,7 +130,9 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
         s32 count; \
  \
         q = &gIoWriteQueue; \
-        saved = *ime; \
+        do { \
+            saved = *ime; \
+        } while (0); \
         *ime = (u16)(u32)ime; \
         count = q->count; \
         if (count <= 31) { \
@@ -140,7 +142,9 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocksFar(void);
             *destination++ = 0x04000028; \
             *destination = 0x84000002; \
         } \
-        *ime = saved; \
+        do { \
+            *ime = saved; \
+        } while (0); \
     }
 
 void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
@@ -172,11 +176,10 @@ void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant)
         reg = (volatile u16 *)0x04000208;
         QueueIoWriteDelay2(0x04000052, 0x100e);
         BattleFx_InitializeStarField(kind);
-        brightness = &session->brightness;
-        for (frame = 0, fade = 0; frame <= 44; frame++, fade += 0x444) {
+        for (frame = 0; frame <= 44; frame++) {
             work = gWorkSlot.context;
             if (frame <= 24)
-                Graphics_ScaleRgb555Clamped(session->palette, (u16 *)0x050000c0, *brightness = 0x10000 - fade, 128);
+                Graphics_ScaleRgb555Clamped(session->palette, (u16 *)0x050000c0, session->brightness = 0x10000 - frame * 1092, 128);
             BattleMotion_ProjectScaledPosition(unit, &position);
             work->origin_x = (64 - position.x) << 8;
             work->origin_y = (64 - position.y) << 8;

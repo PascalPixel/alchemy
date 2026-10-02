@@ -1,136 +1,115 @@
-/* Draft, not exact (2026-09-26): complete 428-byte owner and literal pool.
- * Current candidate: 420 bytes, 182 differing halfwords, 103 aligned edits.
- * Explicit message/input back edges remove the extra saved register; the
- * word-sized display constant restores one final literal pool. A single-read
- * character copy restores the counter and removes repeated source reads.
- * Remaining: signed character loads, input-loop block order, initial mode
- * address calculation, and cursor/window/range allocation. The baseline was
- * 428/177/110; outer back edge 424/178/103; both back edges 424/181/121;
- * typed mode plus display constant 420/183/109; copy model 420/182/103.
- * Three structural hypotheses stopped; no new byte credit.
- */
+/* DRAFT (score 240), rewritten 2026-10-02 in plain C: 7 of 187 instructions
+ * differ, in two places.
+ * 1. The ROM clears the message index (movs r5, #0) straight after the sound
+ *    call, before the display-control store; here the scheduler lets it sink
+ *    to the end of that block, wherever the statement is written.
+ * 2. The ROM loads each window's first message into r3 and adds the index
+ *    into r0; here the message is loaded into r0 itself.
+ * Settled: the two loops are plain for (;;) loops (the compiler moves the
+ * part after the last exit test to the top); the range is written out in
+ * the clamp, not kept in a variable; the name is stored through the unit
+ * structure, which is what lets the copy loop test the value it loaded; the
+ * display-control value goes through an int; the flag is a pointer and a
+ * value set before the loop and again at its end.
+ * The sample text 0x903 still needs its message name. */
 #include "TYPES.H"
-#include "GLOBAL_CELLS.H"
-extern u8 gKeysRepeat[];
-extern u8 gWindowWork[];
+#include "BATTLE_UNIT.H"
+
+extern volatile s32 gKeysRepeat;
+extern u8 *gWindowWork;
+extern u8 gCell[];
+extern u8 MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely;
+extern u8 MsgRariberoHowDidSearchForSheba;
+extern u8 MsgBecameCursed;
 
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void FarCall_WindowTable(void);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32, s32);
-s32 UiWork_Create(s32, s32, s32, s32);
+s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_DrainPendingFar(s32);
-void UiWindow_Close(s32, s32);
-u8 *Runtime_GetObject(s32);
-
-extern u8 Value_000026fa[];
-extern u8 Value_00000ad0[];
-extern u8 Value_00002850[];
-extern u8 Value_00001341;
-
-struct DebugMessageWork {
-    u8 reserved_000[0x20c];
-    u8 mode;
-};
-
-extern struct DebugMessageWork gGameState;
+void UiWork_FinalizeFar(s32, s32);
+struct BattleUnit *Owner_GetStateFar(s32);
+void AudioCommand_PlayFar(s32);
+void WaitFrames(s32);
 
 void DebugBattle_ViewMessages(void)
 {
     u16 text[64];
-    u8 *name;
-    s32 state;
-    u16 ch;
-    s32 cursor;
-    s32 window;
-    s32 range;
+    s32 second = 0;
+    struct BattleUnit *unit = Owner_GetStateFar(0);
     s32 i;
-    u8 *flag_ptr;
-    s32 flag_val;
+    s32 index;
+    s32 window;
+    u8 *flag;
+    s32 value;
 
-    state = 0;
-    name = Runtime_GetObject(0);
     Ui_AdjustValueWithoutLimitFar(0x903, text);
-    ch = text[state];
-    name[0] = (u8)ch;
-    i = 0;
-    if (ch != 0) {
-        u16 *src = text;
-        u8 *dst = name;
-        do {
-            i++;
-            if (i > 13)
-                break;
-            src++;
-            ch = *src;
-            dst++;
-            *dst = (u8)ch;
-        } while (ch != 0);
+    for (i = 0; i <= 13; i++) {
+        unit->name[i] = text[i];
+        if (text[i] == 0)
+            break;
     }
-    name[14] = 0;
-
+    unit->name[14] = 0;
     FarCall_WindowTable();
-    Audio_PlayCue(71);
-    cursor = 0;
-    *(volatile u16 *)0x04000000 = (u32)&Value_00001341;
-    flag_ptr = &gGameState.mode;
-    flag_val = 2;
+    AudioCommand_PlayFar(71);
+    index = 0;
+    {
+        s32 control = 0x1341;
 
-next_message:
-        *flag_ptr = flag_val;
+        *(volatile u16 *)0x04000000 = control;
+    }
+    flag = gCell;
+    flag += 0x20c;
+    value = 2;
+    for (;;) {
+        *flag = value;
         UiWork_ClearValueNameTablesFar();
-        UiText_DrawQuantity(0x3e7, 5);
+        UiText_DrawQuantity(999, 5);
         UiText_DrawQuantity(0, 3);
         UiText_DrawQuantity(1, 1);
         UiText_DrawQuantity(1, 2);
         UiText_DrawQuantity(2, 4);
-
-        if (state == 0)
-            window = UiWork_Create(cursor + (s32)Value_000026fa, 2, 10, 4);
+        if (second == 0)
+            window = UiText_OpenMessageWindowFar(index + (s32)&MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely, 2, 10, 4);
         else
-            window = UiWork_Create(cursor + (s32)Value_00000ad0, 2, 2, 4);
-
+            window = UiText_OpenMessageWindowFar(index + (s32)&MsgBecameCursed, 2, 2, 4);
         WaitFrames(10);
-        range = (s32)Value_00002850 - (s32)Value_000026fa;
-
-read_keys:
-            if (*(volatile u32 *)gKeysRepeat & 2) {
-                if (state != 0) {
-                    state = 0;
+        for (;;) {
+            if (gKeysRepeat & 2) {
+                if (second != 0) {
+                    second = 0;
                 } else {
-                    cursor++;
-                    state = 1;
+                    index++;
+                    second = 1;
                 }
             }
-            if (*(volatile u32 *)gKeysRepeat & 0x10)
-                cursor++;
-            if (*(volatile u32 *)gKeysRepeat & 0x20)
-                cursor -= 2;
-            if (*(volatile u32 *)gKeysRepeat & 0x40)
-                state = 1;
-            if (*(volatile u32 *)gKeysRepeat & 0x80)
-                state = 0;
-            if (*(volatile u32 *)gKeysRepeat & 0x100)
-                cursor += 10;
-            if (*(volatile u32 *)gKeysRepeat & 0x200)
-                cursor -= 10;
-            if (cursor < 0)
-                cursor = 0;
-            if ((u32)cursor >= (u32)(range + 5))
-                cursor = range + 5;
-
-            if (*(volatile u32 *)gKeysRepeat & 0x3f2)
-                goto close_message;
-            if (UiWork_IsCompleteFar() != 0 && (*(volatile u32 *)gKeysRepeat & 1))
-                goto close_message;
+            if (gKeysRepeat & 0x10)
+                index++;
+            if (gKeysRepeat & 0x20)
+                index -= 2;
+            if (gKeysRepeat & 0x40)
+                second = 1;
+            if (gKeysRepeat & 0x80)
+                second = 0;
+            if (gKeysRepeat & 0x100)
+                index += 10;
+            if (gKeysRepeat & 0x200)
+                index -= 10;
+            if (index < 0)
+                index = 0;
+            if ((u32)index >= (u32)((s32)&MsgRariberoHowDidSearchForSheba - (s32)&MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5))
+                index = (s32)&MsgRariberoHowDidSearchForSheba - (s32)&MsgBabiIriguchiTheyWereTerribleWeWereAbsolutely + 5;
+            if (gKeysRepeat & 0x3f2)
+                break;
+            if (UiWork_IsCompleteFar() != 0 && (gKeysRepeat & 1))
+                break;
             WaitFrames(1);
-            goto read_keys;
-
-close_message:
+        }
         UiWork_DrainPendingFar(1);
-        UiWindow_Close(window, 1);
-        flag_val = 0;
-        flag_ptr = (u8 *)(*(s32 *)gWindowWork + 0x12f8);
-        goto next_message;
+        UiWork_FinalizeFar(window, 1);
+        flag = &gWindowWork[0x12f8];
+        value = 0;
+    }
 }

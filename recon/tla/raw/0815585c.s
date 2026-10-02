@@ -558,7 +558,7 @@ Func_0815585c:
 	beq .L_08155c9e
 	b .L_08155dd4
 .L_08155c9e:
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	movs r3, #3
 	mov r1, r8
 	ands r3, r1

@@ -1,3 +1,4 @@
+#include "TRANSFORM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -24,7 +25,6 @@ struct B5Context *GetBattleObjectSlotFar(s32 id);
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
-void Graphics_SaveTransferWorkOnce(void);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);

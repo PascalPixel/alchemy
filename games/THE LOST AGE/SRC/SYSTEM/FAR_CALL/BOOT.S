@@ -176,7 +176,7 @@ Func_08000208:
 	.global Func_08000210
 	.thumb_func
 Func_08000210:
-	overlay_veneer Func_08014e38
+	overlay_veneer Graphics_SaveTransferWorkOnce
 	.global Func_08000218
 	.thumb_func
 Func_08000218:

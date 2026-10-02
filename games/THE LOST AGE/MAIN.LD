@@ -140,7 +140,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/MEMORY.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00014de0)
     "*/recon/tla/ja/rom.o"(.rom.00014de4)
-    "*/recon/tla/ja/rom.o"(.rom.00014e38)
+    "*/games/COMMON/SRC/GRAPHICS/RENDER/RENDER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00014ea8)
     "*/recon/tla/ja/rom.o"(.rom.00014ee0)
     "*/recon/tla/ja/rom.o"(.rom.00014efc)

@@ -2,19 +2,25 @@
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "IWRAM_CALL.H"
 
 extern u16 Data_02004c00;
 extern s16 Flash_Handler0;
 extern u32 *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
-s32 Func_080f07f0(const void *text, s32 tile, s32 mode);
 extern s16 Flash_Layout;
 extern const void *DisplayScroll_LineTable[];
 
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
-s32 Func_080f07f0(const void *resource, s32 offset, s32 mode);
+void Runtime_BumpFree(void *block);
+s32 GameFlag_TestFar(s32 flag);
+void GameFlag_SetBitFar(s32 flag);
+s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
+
+extern const u8 DisplayScroll_GlyphWidths[];
+extern const u8 DisplayScroll_Font[];
 
 /* Lay the 16 x 6 grid of wide text objects over the scroll position: each
    row is eight pixels lower less the position's fine offset, and the tiles
@@ -61,7 +67,7 @@ void DisplayScroll_RenderEnteringLine(void)
         if ((s16)Data_02004c00 / 8 != Flash_Layout / 8) {
             line = (s16)Data_02004c00 / 8;
             Flash_Layout = current;
-            Flash_Handler0 = Func_080f07f0(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
+            Flash_Handler0 = DisplayScroll_DrawLine(DisplayScroll_LineTable[line], ((line + 16) & 31) * 24, 1);
         }
     }
 }
@@ -129,5 +135,5 @@ void DisplayScroll_InitObjectTable(void)
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
     for (i = 0; i < 32; i++)
-        Func_080f07f0(DisplayScroll_LineTable[0], i * 24, 1);
+        DisplayScroll_DrawLine(DisplayScroll_LineTable[0], i * 24, 1);
 }

@@ -1,10 +1,9 @@
-/* Draft, not exact (2026-09-25): 492 of 492 bytes, 141 differing halfwords.
-   Written from the listing. What lined up: the bounds taken before the
-   leader test, the whole-pixel distance reusing the step-x local, and the
-   motion-step divide through a pointer local.
-   Remaining: the ROM keeps the clamped leader x in fp, y in r5 and z in a
-   stack slot; here x and z take r9 and fp (declaration order moved nothing
-   in 60 shuffles; separate whole-pixel locals shifted the bounds registers). */
+/* Draft, not exact: 500 bytes against 492. Written from the listing.
+   The clamped x is in fp and z in a stack slot as in the ROM, once the
+   whole-pixel z distance reuses dz as the x distance reuses dx.
+   Remaining: the ROM keeps the leader y in r5 and the lower bounds in r7 and
+   r6; here the bounds take r6 and r5 and y shares r9 with dy through a copy.
+   Merging y with the step fixes the bounds but moves x to r5. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -56,7 +55,6 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
     s32 dz;
     s32 dist;
     s32 dx;
-    s32 short_z;
     s32 step;
     s32 (*div)(s32, s32);
 
@@ -88,8 +86,8 @@ s32 Camera_FollowLeaderInBounds(struct FollowObject *obj)
             obj->z = z;
         } else {
             dx = (x - obj->x) / 0x10000;
-            short_z = (z - obj->z) / 0x10000;
-            dist = ((s32 (*)(s32))0x030001d8)(dx * dx + short_z * short_z) << 16;
+            dz = (z - obj->z) / 0x10000;
+            dist = ((s32 (*)(s32))0x030001d8)(dx * dx + dz * dz) << 16;
             dx = x - obj->x;
             dy = y - obj->y;
             dz = z - obj->z;

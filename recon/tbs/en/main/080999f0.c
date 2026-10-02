@@ -83,14 +83,13 @@ void RunBattleEffect05(void)
     struct EffectObject *main;
     struct Vec3 *from;
     struct Vec3 *to;
-    struct Vec3 *at;
     s32 i;
     s32 steps = 11;
     s32 count;
+    s32 y;
+    struct EffectObject *particle;
 
-    /* FAKEMATCH: the first step also supplies the spawn's zero X. */
-    i = 0;
-    main = Object_Spawn(0xef, i, 0, 0);
+    main = Object_Spawn(0xef, i = 0, 0, 0);
     if (main == 0)
         return;
     BattleEffect_InitializeSharedScene();
@@ -107,10 +106,11 @@ void RunBattleEffect05(void)
     from->z = target->position.z;
     to = &end;
     to->x = state->x;
-    to->y = state->y + 0x200000;
+    y = state->y;
+    to->y = y + 0x200000;
     to->z = state->z;
     if ((s8)state->variant != 0)
-        to->y = state->y + 0x500000;
+        to->y = y + 0x500000;
 
     for (; i < steps; i++) {
         s32 scale;
@@ -129,23 +129,20 @@ void RunBattleEffect05(void)
         count = 10;
         if ((s8)state->high_arc == 0)
             count = 24;
-        at = &spawn;
         for (i = 0; i < count; i++) {
-            struct EffectObject *particle;
-
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
             Vector_AddPolarOffset(Random16() * 5 + 0x30000, Random16(), &spawn);
             if (i == count - 1) {
                 WaitFrames(25);
-                at->x = main->x;
-                at->y = main->y;
-                at->z = main->z;
+                spawn.x = main->x;
+                spawn.y = main->y;
+                spawn.z = main->z;
             }
-            particle = Object_Spawn(0xf0, at->x, at->y, at->z);
+            particle = Object_Spawn(0xf0, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
-                particle->altitude = at->y - 0x200000;
+                particle->altitude = spawn.y - 0x200000;
                 particle->callback = BattleFx_SpawnRandomAngleTriplet;
                 particle->flag = 2;
             }
@@ -158,8 +155,6 @@ void RunBattleEffect05(void)
         if ((s8)state->high_arc == 0)
             count = 30;
         for (i = count; i != 0; i--) {
-            struct EffectObject *particle;
-
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
@@ -177,7 +172,8 @@ void RunBattleEffect05(void)
         WaitFrames(70);
     }
 
-    for (i = 0; i < steps; i++) {
+    i = 0;
+    do {
         s32 scale;
 
         main->x = Interpolate(end.x, start.x, i);
@@ -187,7 +183,8 @@ void RunBattleEffect05(void)
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);
-    }
+        i++;
+    } while (i < steps);
     ObjectDispatch_ReleaseFar(main);
     BattleFx_PrepareBufferInterpolation();
 }

@@ -9,7 +9,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI.o"(.text)
-        "*/resource_3b7_overlay.o"(.text.x020084bc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI2.o"(.text)
         "*/resource_3b7_overlay.o"(.text.x02008ac8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI3.o"(.text)

@@ -43,7 +43,7 @@ s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s3
 void Menu_SpawnIconEntries(struct PsynergyOwnerMenu *menu, s32 window);
 struct PsynergyOwnerIcon *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, s32 window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
-s32 Func_080a6614(s32 window, s32 owner);
+s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
 void UiText_DrawWorkValueWithLabel(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -92,7 +92,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             owner = Owner_GetStateFar(owner_ids[selection]);
             PsynergyMenu_RefreshOwnerPsynergy(owner_ids[selection]);
             Menu_DrawOwnerStatusPanel(window, owner_ids[selection], 0, 0);
-            Func_080a6614(menu->shortcut_window, owner_ids[selection]);
+            PsynergyMenu_DrawShortcuts(menu->shortcut_window, owner_ids[selection]);
             PsynergyMenu_CallIconRoutineWithValue((s32)menu, owner_ids[selection]);
             for (i = 3; i >= 0; i--)
                 menu->row_positions[i] = 0x1e;
@@ -358,3 +358,159 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
     }
     return 1;
 }
+
+extern char MsgShortcutLabel;
+extern char MsgShortcutChangeHelp;
+extern char MsgShortcutEmptyL;
+extern char MsgShortcutEmptyR;
+extern char MsgAbilityName;
+
+s32 UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
+void UiText_DrawStringAtOffsetFar(void *text, s32 *window, s32 x, s32 y);
+void UiWork_SetParamNibbleFar(s32 value);
+
+#if EDITION_INTERNATIONAL
+extern char MsgShortcutNameL;
+extern char MsgShortcutNameR;
+
+void UiWork_PushValueSlotFar(s32 value, s32 slot);
+
+/* Fill the shortcut window: its heading, then a row for L and a row for R.
+   A set shortcut's row message takes the Psynergy name as its argument, and
+   the owner's name follows when the Psynergy name is short enough to leave
+   room for it. */
+s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
+{
+    s32 left;
+    s32 top;
+    s32 width;
+    s32 height;
+    s32 wide;
+
+    if (Data_02000240.psynergy_shortcuts[0] != 0 &&
+        Data_02000240.psynergy_shortcuts[1] != 0)
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutChangeHelp, (s32 *)window, 0, -8);
+    else
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutLabel, (s32 *)window, 0, -8);
+
+    UiText_GetResourceDimensionsFar(
+        (Data_02000240.psynergy_shortcuts[0] & 0x3ff) + (s32)&MsgAbilityName,
+        &left, &top, &width, &height);
+    if ((u32)width > 10)
+        wide = 1;
+    else
+        wide = 0;
+    if (Data_02000240.psynergy_shortcuts[0] != 0) {
+        UiWork_PushValueSlotFar(Data_02000240.psynergy_shortcuts[0] & 0x3ff, 4);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutNameL, (s32 *)window, 0, 0);
+        if (wide == 0)
+            UiText_DrawStringAtOffsetFar(
+                Owner_GetStateFar(Data_02000240.psynergy_shortcuts[0] >> 10),
+                (s32 *)window, 80, 0);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyL, (s32 *)window, 0, 0);
+    }
+
+    UiText_GetResourceDimensionsFar(
+        (Data_02000240.psynergy_shortcuts[1] & 0x3ff) + (s32)&MsgAbilityName,
+        &left, &top, &width, &height);
+    if ((u32)width > 10)
+        wide = 1;
+    else
+        wide = 0;
+    if (Data_02000240.psynergy_shortcuts[1] != 0) {
+        UiWork_PushValueSlotFar(Data_02000240.psynergy_shortcuts[1] & 0x3ff, 4);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutNameR, (s32 *)window, 0, 8);
+        if (wide == 0)
+            UiText_DrawStringAtOffsetFar(
+                Owner_GetStateFar(Data_02000240.psynergy_shortcuts[1] >> 10),
+                (s32 *)window, 80, 8);
+        UiWork_SetParamNibbleFar(15);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyR, (s32 *)window, 0, 8);
+    }
+    return 1;
+}
+#else
+extern const u8 Menu_ShortcutLString[];
+extern const u8 Menu_ShortcutLColonString[];
+extern const u8 Menu_ShortcutRString[];
+extern const u8 Menu_ShortcutRColonString[];
+
+void UiText_DrawStringInWindowFar(const u8 *text, s32 *window, s32 x, s32 y);
+
+/* Fill the shortcut window: its heading, then a row for L and a row for R.
+   Each row starts with the button's letter, followed by a colon when the
+   Psynergy name is short; a set shortcut then shows the Psynergy name and
+   its owner's name. */
+s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner)
+{
+    s32 left;
+    s32 top;
+    s32 width;
+    s32 height;
+    u16 wide;
+
+    if (Data_02000240.psynergy_shortcuts[0] != 0 &&
+        Data_02000240.psynergy_shortcuts[1] != 0)
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutChangeHelp, (s32 *)window, 0, -8);
+    else
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutLabel, (s32 *)window, 0, -8);
+
+    UiText_GetResourceDimensionsFar(
+        (Data_02000240.psynergy_shortcuts[0] & 0x3ff) + (s32)&MsgAbilityName,
+        &left, &top, &width, &height);
+    if ((u32)width > 11)
+        wide = 1;
+    else
+        wide = 0;
+    if (wide)
+        UiText_DrawStringInWindowFar(Menu_ShortcutLString, (s32 *)window, 0, 0);
+    else
+        UiText_DrawStringInWindowFar(Menu_ShortcutLColonString, (s32 *)window, 0, 0);
+    if (Data_02000240.psynergy_shortcuts[0] != 0) {
+        if (wide)
+            UiText_DrawCharacterAtOffsetFar(
+                (Data_02000240.psynergy_shortcuts[0] & 0x3ff) + (s32)&MsgAbilityName,
+                (s32 *)window, 8, 0);
+        else
+            UiText_DrawCharacterAtOffsetFar(
+                (Data_02000240.psynergy_shortcuts[0] & 0x3ff) + (s32)&MsgAbilityName,
+                (s32 *)window, 16, 0);
+        UiText_DrawStringAtOffsetFar(
+            Owner_GetStateFar(Data_02000240.psynergy_shortcuts[0] >> 10),
+            (s32 *)window, 80, 0);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyL, (s32 *)window, 24, 0);
+    }
+
+    UiText_GetResourceDimensionsFar(
+        (Data_02000240.psynergy_shortcuts[1] & 0x3ff) + (s32)&MsgAbilityName,
+        &left, &top, &width, &height);
+    if ((u32)width > 11)
+        wide = 1;
+    else
+        wide = 0;
+    if (wide)
+        UiText_DrawStringInWindowFar(Menu_ShortcutRString, (s32 *)window, 0, 8);
+    else
+        UiText_DrawStringInWindowFar(Menu_ShortcutRColonString, (s32 *)window, 0, 8);
+    if (Data_02000240.psynergy_shortcuts[1] != 0) {
+        if (wide)
+            UiText_DrawCharacterAtOffsetFar(
+                (Data_02000240.psynergy_shortcuts[1] & 0x3ff) + (s32)&MsgAbilityName,
+                (s32 *)window, 8, 8);
+        else
+            UiText_DrawCharacterAtOffsetFar(
+                (Data_02000240.psynergy_shortcuts[1] & 0x3ff) + (s32)&MsgAbilityName,
+                (s32 *)window, 16, 8);
+        UiText_DrawStringAtOffsetFar(
+            Owner_GetStateFar(Data_02000240.psynergy_shortcuts[1] >> 10),
+            (s32 *)window, 80, 8);
+        UiWork_SetParamNibbleFar(15);
+    } else {
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgShortcutEmptyR, (s32 *)window, 24, 8);
+    }
+    return 1;
+}
+#endif

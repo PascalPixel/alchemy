@@ -11,7 +11,7 @@ FarCall_PaletteTable:
 	.global Func_080f2000
 	.thumb_func
 Func_080f2000:
-	overlay_veneer Func_080f26ec
+	overlay_veneer Title_ShowIntro
 	overlay_veneer Graphics_NoOpColor
 	overlay_veneer Func_080f2b6c
 	.global Title_ShowSplashScreenFar

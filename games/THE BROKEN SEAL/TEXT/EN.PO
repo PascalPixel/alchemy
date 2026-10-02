@@ -2627,7 +2627,7 @@ msgctxt "message"
 msgid "00654"
 msgstr "{article_class:2}Cleric's Ring"
 
-msgctxt "message"
+msgctxt "MsgEnemyName"
 msgid "00655"
 msgstr "???"
 
@@ -11159,23 +11159,23 @@ msgctxt "MsgShortcutSetR"
 msgid "02787"
 msgstr "A shortcut was set to {button_icon:4}."
 
-msgctxt "message"
+msgctxt "MsgShortcutChangeHelp"
 msgid "02788"
 msgstr "{button_icon:3}{button_icon:4}:Change shortcut"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyL"
 msgid "02789"
 msgstr "{button_icon:3}:Set to {button_icon:3}"
 
-msgctxt "message"
+msgctxt "MsgShortcutEmptyR"
 msgid "02790"
 msgstr "{button_icon:4}:Set to {button_icon:4}"
 
-msgctxt "message"
+msgctxt "MsgShortcutNameL"
 msgid "02791"
 msgstr "{button_icon:3}:{argument_ability_name}"
 
-msgctxt "message"
+msgctxt "MsgShortcutNameR"
 msgid "02792"
 msgstr "{button_icon:4}:{argument_ability_name}"
 
@@ -11191,7 +11191,7 @@ msgctxt "MsgPsynergyChooseTarget"
 msgid "02795"
 msgstr "Use it on whom?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyNeedMorePp"
 msgid "02796"
 msgstr "You need more PP."
 
@@ -11371,7 +11371,7 @@ msgctxt "MsgCurrentDjinn"
 msgid "02840"
 msgstr "Current Djinn"
 
-msgctxt "message"
+msgctxt "MsgPanelHpMaxLabel"
 msgid "02841"
 msgstr "HP/Max"
 
@@ -11391,7 +11391,7 @@ msgctxt "MsgPanelDefenseLabel"
 msgid "02845"
 msgstr "Defense"
 
-msgctxt "message"
+msgctxt "MsgPanelStatusLabel"
 msgid "02846"
 msgstr "Status"
 

@@ -3,6 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
+#include "IWRAM_CALL.H"
 
 extern const struct SceneEntrance gImiruMuraEntrances2[];
 extern const struct SceneEntrance gImiruMuraEntrancesOther[];
@@ -905,6 +906,40 @@ void SceneActor_UpdateCountdownArcPosition(T_0200154c *o)
             o->unk10 = b[2];
         } else {
             Engine_ObjectDispatchRelease(o);
+        }
+    }
+}
+
+extern const s32 ImiruMura_SparkScript[];
+
+/* Sways the actor from side to side around the arc's origin and, every
+ * third frame, throws a spark from a random point around it. */
+void ImiruMura_SwayAndSpark(struct FieldActor *actor)
+{
+    s32 pos[3];
+    struct FieldActor *spark;
+    s32 radius;
+
+    actor->x.fixed = ImiruMura_ArcOrigin[0] + Iwram_MulQ16(0x60000, Engine_MathSin((s16)actor->unknown_64 << 10));
+    actor->unknown_64++;
+    actor->unknown_64 = ((s16)actor->unknown_64 + 64) % 64;
+    if (gFrameCount % 3 == 0) {
+        pos[0] = actor->x.fixed;
+        pos[1] = actor->y.fixed + 0x20000;
+        pos[2] = actor->z.fixed;
+        radius = Engine_RandomNext();
+        Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
+        spark = Engine_ObjectCreate(0x11d, pos[0], pos[1], pos[2]);
+        if (spark != NULL) {
+            spark->sprite->priority = 0;
+            Engine_ActorSetSpriteFlags(spark, 0);
+            Object_SetMode(spark, 1);
+            spark->scale_x = 0x9999;
+            spark->scale_y = 0x9999;
+            spark->priority_flags = 2;
+            spark->motion_flags = 0;
+            ObjectGroup_SetChildValue(spark, 9);
+            Engine_ObjectSetScript(spark, ImiruMura_SparkScript);
         }
     }
 }

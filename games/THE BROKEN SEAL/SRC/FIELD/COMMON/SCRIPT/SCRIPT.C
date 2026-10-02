@@ -20,6 +20,86 @@ void Object_SetMoveTarget(struct ScriptObjectRuntime *object, s32 x, s32 y, s32 
 u16 ArcTan2(s32 y, s32 x);
 
 /*
+ * Script command: wander to a random point. The three arguments are the
+ * base distance, the random extra distance and the leash radius around the
+ * object's home cell. Up to seven headings within a quarter turn either
+ * side of the facing are tried; each must be free of objects, and the point
+ * a further half tile on, turned an eighth either side, must be walkable
+ * and inside the leash. When none fits, the object turns round.
+ */
+s32 Object_Wander(struct ScriptObjectRuntime *object)
+{
+    struct WanderPosition pos;
+    struct WanderPosition probe;
+    s32 base;
+    const s32 *args;
+    s32 range;
+    s32 limit;
+    s32 radius;
+    s32 heading;
+    s32 tries;
+    s32 dx;
+    s32 dz;
+
+    args = &object->script[(s16)object->script_cursor + 1];
+    base = *args++;
+    range = *args++;
+    limit = *args / 0x10000;
+    tries = 0;
+    limit = limit * limit;
+retry:
+    tries++;
+    if (tries <= 7) {
+        pos.x = object->x;
+        pos.y = object->y;
+        pos.z = object->z;
+        radius = base + Iwram_MulQ16(Random16(), range);
+        heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
+        Vector_AddPolarOffset(radius, heading, &pos);
+        if (ScriptObject_CheckOverlap(object, &pos) != 0)
+            goto retry;
+        if (Func_080120dc(object, &pos) != 0)
+            goto retry;
+        radius += 0x80000;
+        probe.x = object->x;
+        probe.y = object->y;
+        probe.z = object->z;
+        Vector_AddPolarOffset(radius, heading, &probe);
+        probe.x = object->x;
+        probe.y = object->y;
+        probe.z = object->z;
+        Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
+        if (Func_080120dc(object, &probe) != 0)
+            goto retry;
+        probe.x = object->x;
+        probe.y = object->y;
+        probe.z = object->z;
+        Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
+        if (Func_080120dc(object, &probe) != 0)
+            goto retry;
+        /* FAKEMATCH: the block that runs once ends the first CSE pass's
+         * path after the two loads, so the move target reuses them only in
+         * the pass after the loop pass: the loads land in the division's
+         * registers and are copied for the call, where plain C loads them
+         * into the call's registers and divides copies. */
+        do {
+            dx = pos.x / 0x10000 - object->home_x;
+            dz = pos.z / 0x10000 - object->home_z;
+        } while (0);
+        if (dx * dx + dz * dz > limit)
+            goto retry;
+        goto found;
+    }
+    object->script_value += 0x8000;
+    object->turned_back = 1;
+    return 0;
+found:
+    Object_SetMoveTarget(object, pos.x, pos.y, pos.z);
+    object->script_cursor += 4;
+    return 1;
+}
+
+/*
  * Script command: wander about the object's home cell (+0x64, +0x66). The
  * three arguments are the base distance, the random extra distance and the
  * leash radius in whole units. Inside the leash, up to seven headings near

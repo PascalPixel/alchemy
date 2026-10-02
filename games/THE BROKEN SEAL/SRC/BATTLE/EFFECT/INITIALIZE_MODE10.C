@@ -10,6 +10,8 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
+#include "IWRAM_CALL.H"
+#include "IO_REG.H"
 extern u8 gMapCellBuffer[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -505,5 +507,133 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    BattleFx_EndCanvasLayer();
+}
+
+void *Resource_GetTableEntry(s32 id);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void **GetBattleObjectSlotFar(s32 member_id);
+s32 Battle_GetObjectTableValueFar(s32 member_id);
+void ObjectGroup_TickMemberTimers(void);
+
+extern u16 ParticleStreams_CellOffsets[];
+extern s32 IceShardBursts_Gravities[];
+
+#define SHARDS_PER_MEMBER 128
+
+/* Battle effect: every affected unit in turn, twenty frames apart, bursts
+   into 128 ice shards. Each shard starts on a random ring around the unit,
+   flies up and outwards and falls under one of four gravities until it has
+   dropped below the ground line. The shards of unit n lie n * 128 records
+   into the map cell buffer. */
+void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
+{
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    DrawRectangle draw;
+    void *sheet;
+    s32 facing;
+    s32 point[3];
+    struct EffectPosition screen;
+    s32 member;
+    s32 frame;
+    s32 i;
+
+    heap_cache = (void **)(gWorkSlot + 39 * 4);
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    facing = *(s32 *)(gWorkSlot + 12 * 4);
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Iwram_CopyWords((void *)BG_PLTT,
+        Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw = (DrawRectangle)heap_cache[7];
+
+    for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
+        ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
+
+    Render_ResetTransformState();
+    Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+
+    for (member = 0; member != work->effect->count; member++) {
+        void *object;
+        s32 offset;
+        s32 height;
+        struct EffectStep *shard;
+
+        offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
+        object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+        height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
+        point[0] = *(s32 *)((u8 *)object + 8);
+        point[1] = height;
+        point[2] = *(s32 *)((u8 *)object + 16);
+        EffectPosition_ApplyBaseAndYOffset(point, &screen);
+        screen.x >>= 1;
+        for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+             i != SHARDS_PER_MEMBER; i++) {
+            s32 radius;
+            s32 angle;
+            s32 lift;
+
+            radius = Random16() & 0xff;
+            angle = Random16() & 0xffff;
+            shard->x = ((Trig_Sin(angle) * radius) >> 7) + (screen.x << 16);
+            shard->y = ((Trig_Cos(angle) * radius) >> 3) + (screen.y << 16);
+            shard->velocity_x = (128 - (Random16() & 0xff)) << 9;
+            lift = Random16() & 0xff;
+            shard->variant = 0;
+            shard->velocity_y = (-lift - 128) << 10;
+            shard++;
+        }
+    }
+
+    work->transfer_mode = 2;
+    work->transfer_value = 50;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+    for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
+        if (frame == 32)
+            BattleEventRuntime_BeginPhaseFar(0);
+        for (member = 0; member != work->effect->count; member++) {
+            s32 offset;
+
+            offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
+            if (frame == member * 20) {
+                Audio_PlayCue(143);
+                ObjectGroup_UpdateMembers(work->effect->actors[member], 7, -1, member, 20);
+            }
+            if (frame > member * 20) {
+                struct EffectStep *shard;
+
+                for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+                     i != SHARDS_PER_MEMBER; i++) {
+                    if (shard->variant >= 0) {
+                        s32 size;
+
+                        size = i % 3 + 1;
+                        draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
+                            HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
+                        EffectStep_AdvanceWithGravity2D(shard, 62, IceShardBursts_Gravities[i & 3]);
+                        shard->variant++;
+                        if (shard->velocity_y > 0 && HI(shard->y) > 112)
+                            shard->variant = -1;
+                    }
+                    shard++;
+                }
+            }
+        }
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

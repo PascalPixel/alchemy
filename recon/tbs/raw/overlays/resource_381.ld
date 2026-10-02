@@ -7,7 +7,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/FUNKA.o"(.text)
-        "*/resource_381_overlay.o"(.text.x0200b01c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/IMPORT.o"(.text)
         "*/resource_381_overlay.o"(.rodata.x0200b62c)

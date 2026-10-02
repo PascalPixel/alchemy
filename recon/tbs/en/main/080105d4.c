@@ -1,4 +1,20 @@
-/* 2026-09-29 alchemy permute: score 2602 to 2055 on the permuter's scorer
+/* 2026-10-01 (wave 1, slice 1): what the reference's loops say, for the
+   next attempt (this body still scores best, 2055). (1) Nothing is hoisted
+   out of the three-layer loop: the cell's << 3 stays in the drawing block
+   because its result goes into a variable that is also set outside the
+   block (the one that held ((y & 15) << 5) + (x & 15), r3), and loop.c
+   does not move such a set past a conditional branch. Spelling that reuse
+   (n = cell * 8 in the block) keeps the shift there. (2) For the same
+   reason only y & 15 and the 15 leave the x loop: the << 5 is assigned to
+   that variable too (n = (y & 15) << 5; n += x & 15;). (3) The 0x800 step
+   and the block's four bases are built beside their adds, as twice-set
+   pointers or a ++ on a 0x800-byte type give. (4) The layer loop keeps its
+   test at the bottom only while its break lies more than 30 RTL insns
+   from the loop's start (stmt.c's exit-test scan); shorter spellings of
+   the block get rotated around the break. (5) y is the dst_y parameter
+   itself (r6) and its limit a stack slot. Plain C with (1)-(3) reaches the
+   reference's block and frame but not yet (4) and (5) together.
+   2026-09-29 alchemy permute: score 2602 to 2055 on the permuter's scorer
    (0 is exact); remaining 28 register-only, 11 operand, 17 reordered, 3
    inserted, 3 deleted. Kept rewrites: 7x reorder independent statements,
    4x reorder local declarations, 3x add a same-width cast, 3x change loop

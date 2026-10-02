@@ -55,7 +55,11 @@ struct GameState {
     u8 unknown_207[0x17];
     /* The cue a scene the party returns to plays, -1 for the scene's own. */
     s16 return_cue;
-    u8 unknown_220[0x0c];
+    /* The two Psynergy shortcuts: the owner in the top six bits, the
+       ability in the low ten. */
+    u16 first_shortcut;
+    u16 second_shortcut;
+    u8 unknown_224[8];
     u16 unknown_22c;
     u16 unknown_22e;
     u16 unknown_230;
@@ -85,6 +89,7 @@ LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
 LAYOUT_OFFSET_GUARD(GameState_MovementMode, struct GameState, movement_mode, 0x1f2);
 LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0x1f4);
 LAYOUT_OFFSET_GUARD(GameState_ActiveOwners, struct GameState, active_owners, 0x1f8);
+LAYOUT_OFFSET_GUARD(GameState_FirstShortcut, struct GameState, first_shortcut, 0x220);
 LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState, retreat_entrance, 0x242);
 LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
 LAYOUT_OFFSET_GUARD(GameState_LinkTallies, struct GameState, link_tallies, 0x2a4);

@@ -439,9 +439,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
-	.global ObjectTable_Get
+	.global Engine_ActorLookup
 	.thumb_func
-ObjectTable_Get:
+Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
 	.global Battle_ResetEffectCounter
 	.thumb_func

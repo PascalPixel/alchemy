@@ -42,9 +42,9 @@ Object_SetMode:
 	.thumb_func
 ObjectDispatch_ApplyValueToChildren:
 	overlay_veneer ObjectDispatch_ApplyValueToChildrenFar
-	.global Map_CopyMetatileIndicesRect
+	.global Engine_MapCopyCellsTo
 	.thumb_func
-Map_CopyMetatileIndicesRect:
+Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global UiWindow_Create
 	.thumb_func

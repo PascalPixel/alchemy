@@ -37,7 +37,7 @@ BattleFx_RunFiveMode:
 	movs r3, #11
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, [r6, #28]
 	movs r0, #47
 	str r3, [sp, #48]
@@ -52,7 +52,7 @@ BattleFx_RunFiveMode:
 	movs r3, #15
 	movs r0, #46
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r4, [r6, #28]
 	movs r0, #47
 	movs r1, #7
@@ -61,7 +61,7 @@ BattleFx_RunFiveMode:
 	str r4, [sp, #48]
 .L_080c9d1c:
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r6, [r6, #32]
 	str r6, [sp, #52]
 	ldr r0, .L_080c9d6c

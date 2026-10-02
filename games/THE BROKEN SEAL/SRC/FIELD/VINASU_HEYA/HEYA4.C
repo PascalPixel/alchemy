@@ -14,6 +14,69 @@ extern const s32 gVinasuSprayScript[];
 struct FieldActor;
 s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor);
 
+/* Gives the next rubble a random size between 1.5 and 1.8 and a random spin. */
+static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
+{
+    opts->start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+    opts->start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+    opts->spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+}
+
+/* The west ceiling gives way twice over: rubble rains down in ten rows, the
+ * fourth row four times, while the map fills in behind it; then the fallen
+ * blocks settle and a second fall uncovers the floor row by row. */
+void Scene_RunPairedParticleWaveSequence(void)
+{
+    struct EffectOptions options;
+    u32 repeat;
+    u32 row;
+    u32 i;
+
+    gEventWork->start_transition = 0x202;
+    Engine_EventBegin();
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
+    Engine_ActorSetChildValue(0, 15);
+    BattleFx_SetQueuedSoundAndPlay(170);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(162);
+    repeat = 0;
+    for (row = 0; row < 10; row++) {
+        options.start_scale_x = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.start_scale_y = ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
+        options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
+    again:
+        for (i = 0; i < 4 && row < 8; i++) {
+            Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3600000, 0,
+                         0x300000 + row * 0x100000 + i * 0x40000, 0, 0, 0, 0x880000, &options);
+        }
+        Engine_TaskWait(3);
+        if (row == 3 && repeat < 3) {
+            repeat++;
+            goto again;
+        }
+        Map_CopyCellsTo(48, row + 3, 54, row + 3, 3, 1);
+    }
+    Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
+    Map_CopyCellsTo(111, 10, 117, 10, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 5, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 10, 5, 2);
+    for (row = 0; row < 10; row++) {
+        Rubble_SetScaleAndSpin(&options);
+        for (i = 0; i < 4 && row < 8; i++) {
+            Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3000000, 0,
+                         0x300000 + row * 0x100000 + i * 0x40000, 0, 0, 0, 0x880000, &options);
+        }
+        Engine_TaskWait(3);
+        Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
+    }
+    Engine_AudioPlayCue(289);
+    Engine_EventWait(60);
+    Engine_EventRequestExit(21);
+    Engine_EventEnd();
+}
+
 /* Rubble falling from the ceiling: on every fourth frame a coin toss drops
  * either a sinking piece near (x, z) or a slower one over x's own band, both
  * shrunk to 0.7 and given a random spin. */

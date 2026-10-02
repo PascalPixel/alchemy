@@ -25,7 +25,6 @@ extern u8 MsgSoruTheBagsAreFromSukuretas[];
 extern u8 MsgSoruTheStarsHaveEnormousPower[];
 
 void SoruStar_SetupElementalRings();
-void Func_0200227c();
 void Scene_EnterStarRoom();
 
 s32 PartyInventory_FindOwner(s32 item);
@@ -950,7 +949,7 @@ s32 SoruStar_ApplyEntryState(void)
         Engine_MapCopyCellsTo(83, 40, 91, 10, 3, 4);
         Engine_MapCopyCellAttributes(0, 0, 1, 1, 36, 10);
         Engine_MapCopyCellsTo(87, 42, 36, 12, 1, 2);
-        Func_0200227c();
+        SoruStar_LineUpFollowers();
     }
     if (Engine_GameFlagIsSet(0x83b) == 0) {
         if (gGameState.entrance == 10) {

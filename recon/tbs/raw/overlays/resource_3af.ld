@@ -7,9 +7,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/UPDATE_SCALE.o"(.text)
-        "*/resource_3af_overlay.o"(.text.x020080c2)
-        "*/resource_3af_overlay.o"(.text.x020080c4)
-        "*/resource_3af_overlay.o"(.text.x020082ec)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/KANPAN3.o"(.text)

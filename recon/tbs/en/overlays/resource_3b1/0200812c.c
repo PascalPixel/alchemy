@@ -11,6 +11,19 @@
  * step = step + 1 and storing the zero first all keep or worsen the swap.
  * The unit matched only while the zero was the address of a link-time
  * symbol at 0.
+ *
+ * 2026-10-02 (slice 13), from the pass dumps: the pool zero is the 16-bit
+ * all-zero mask of the step store (every field store expands through the
+ * bit-field path; CSE then stores that mask register into rise_counter).
+ * Here it is created before the step store, in the same block, and the
+ * scheduler keeps that order on a priority tie. The game's order needs the
+ * zero's instruction after the step store in the chain: then it ties with
+ * the address copy and wins because the copy is anti-dependent on the
+ * store. local-alloc moves a constant's set down to its use only when the
+ * register is set in one basic block and used once in another, so the
+ * game's 16-bit zero was set in a different block from the byte store.
+ * Three written-out copies of the tail, a label between its two statements
+ * (plain zero, movs) and a step pointer (movs) do not give that.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

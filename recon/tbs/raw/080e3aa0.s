@@ -63,14 +63,14 @@ BattlePres_RunBeamSequence:
 	movs r2, #7
 	movs r3, #11
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #11
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080e3ba0
 .L_080e3b36:
 	movs r3, #3
@@ -79,14 +79,14 @@ BattlePres_RunBeamSequence:
 	movs r2, #7
 	movs r3, #15
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #15
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080e3ba0
 .L_080e3b58:
 	ldr r3, [r5]
@@ -98,14 +98,14 @@ BattlePres_RunBeamSequence:
 	movs r2, #7
 	movs r0, #46
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080e3ba0
 .L_080e3b80:
 	movs r3, #3
@@ -114,14 +114,14 @@ BattlePres_RunBeamSequence:
 	movs r2, #7
 	movs r3, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #2
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080e3ba0:
 	ldr r3, .L_080e3ca8
 	adds r2, r3, #0

@@ -12,7 +12,7 @@ other language is written as its differences from them.
 
 ## Progress
 
-**☀️ 79.85% · ⚓️ 4.61% (C 1.98 + assembly 1.40 + stubs 1.23)**
+**☀️ 85.05% · ⚓️ 4.61% (C 1.98 + assembly 1.40 + stubs 1.23)**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 

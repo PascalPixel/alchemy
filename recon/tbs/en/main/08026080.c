@@ -3,8 +3,9 @@
 /* Select a combatant, display its condition and animate the target markers.
  * Confirmation returns an encoded side/index; cancellation returns -1.
  *
- * Draft, not exact (2026-09-24): 3,660 of 3,584 bytes, 46.0% aligned
- * similarity. Every call site is in the ROM's order. Proven from the ROM:
+ * Draft, not exact: `alchemy drafts` scores it 784 instructions off of
+ * 1,585 (the field macro with a type argument kept it from scoring before).
+ * Every call site is in the ROM's order. Proven from the ROM:
  * the id copies read runtime->first_ids[i] directly (movs r3, #88; ldrsh);
  * the status search and the sel lookup both sit inside if (mode == 2), with
  * case 5 setting sel itself; the two per-frame tbl loops ascend (GCC counts
@@ -19,7 +20,6 @@
  * in the spread loop is indexed, not strength-reduced.
  */
 
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 /* Object list entry chained by Runtime_PushSlotEntry; ordinary GBA OAM. */
 struct DisplayEntry {
@@ -144,7 +144,7 @@ void Resource_ResetEntry(s32 slot);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat;
+extern volatile u32 gKeysRepeat; extern u8 Data_080346f8[]; extern u8 Data_080373dc[]; extern u8 Data_080373e0[]; extern u8 Data_080373e4[];
 
 s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
 {
@@ -322,10 +322,10 @@ step_back:
     for (;;) {
         pending = 0;
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], &pos);
-        M2C_FIELD(head, s32 *, 4) = 0x40002000;
-        M2C_FIELD(head, s32 *, 8) = pending;
+        ((s32 *)head)[1] = 0x40002000;
+        ((s32 *)head)[2] = pending;
         head->tile = Resource_GetBuffer(
-            slotId, (((gFrameCount >> 2) & 31) << 8) + 0x080346F8);
+            slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Data_080346f8);
         i = Trig_Sin(gFrameCount << 12);
         if (i < 0)
             i += 0x7FFF;
@@ -434,9 +434,9 @@ step_back:
             if (pos.x / 8 + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-            UiText_DrawStringAtOffset(0x080373DC, infoWin, 0, 0);
+            UiText_DrawStringAtOffset((s32)Data_080373dc, infoWin, 0, 0);
             UiText_DrawNumberInWindow(unit->hp, 4, infoWin, 16, 0);
-            UiText_DrawStringAtOffset(0x080373E0, infoWin, 48, 0);
+            UiText_DrawStringAtOffset((s32)Data_080373e0, infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_hp, 4, infoWin, 56, 0);
             goto frame_tail;
         case 2:
@@ -444,9 +444,9 @@ step_back:
             if (pos.x / 8 + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-            UiText_DrawStringAtOffset(0x080373E4, infoWin, 0, 0);
+            UiText_DrawStringAtOffset((s32)Data_080373e4, infoWin, 0, 0);
             UiText_DrawNumberInWindow(unit->pp, 4, infoWin, 16, 0);
-            UiText_DrawStringAtOffset(0x080373E0, infoWin, 48, 0);
+            UiText_DrawStringAtOffset((s32)Data_080373e0, infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_pp, 4, infoWin, 56, 0);
             goto frame_tail;
         case 5:

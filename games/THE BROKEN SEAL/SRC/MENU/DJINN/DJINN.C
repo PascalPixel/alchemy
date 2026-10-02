@@ -106,7 +106,22 @@ s32 Menu_RunPairedEntryAction(s32 mode, s32 param)
 }
 
 #if EDITION_INTERNATIONAL
-/* The Japanese preview lays its columns out differently and is not C yet. */
+#define PREVIEW_DIGITS 3
+#define PREVIEW_CURRENT_X 48
+#define PREVIEW_MAX_X 80
+#define PREVIEW_SLASH_X 72
+#define PREVIEW_LUCK_X 56
+#define PREVIEW_ARROW_X icon_x
+#define PREVIEW_PP_X 88
+#else
+#define PREVIEW_DIGITS 4
+#define PREVIEW_CURRENT_X 32
+#define PREVIEW_MAX_X 72
+#define PREVIEW_SLASH_X 64
+#define PREVIEW_LUCK_X 48
+#define PREVIEW_ARROW_X (x * 8 + 64)
+#define PREVIEW_PP_X 56
+#endif
 static __inline__ void Unit_Copy(struct BattleUnit *dst, struct BattleUnit *src)
 {
     Iwram_CopyWords(dst, src, sizeof(struct BattleUnit));
@@ -141,20 +156,20 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
 
     if (page == 0) {
         if (mode == 3) {
-            UiNumber_DrawAt(state->max_hp, 3, window, x * 8 + 80, y * 8 + 56);
-            UiNumber_DrawAt(state->max_pp, 3, window, x * 8 + 80, y * 8 + 64);
-            UiNumber_DrawAt(state->hp, 3, window, x * 8 + 48, y * 8 + 56);
-            UiNumber_DrawAt(state->pp, 3, window, x * 8 + 48, y * 8 + 64);
-            UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + 72, y * 8 + 56);
-            UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + 72, y * 8 + 64);
+            UiNumber_DrawAt(state->max_hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 56);
+            UiNumber_DrawAt(state->max_pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_MAX_X, y * 8 + 64);
+            UiNumber_DrawAt(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
+            UiNumber_DrawAt(state->pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
+            UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 56);
+            UiText_DrawStringAtOffsetFar(DjinnMenu_TextSlash, window, x * 8 + PREVIEW_SLASH_X, y * 8 + 64);
         } else {
-            UiNumber_DrawAt(state->hp, 3, window, x * 8 + 48, y * 8 + 56);
-            UiNumber_DrawAt(state->pp, 3, window, x * 8 + 48, y * 8 + 64);
+            UiNumber_DrawAt(state->hp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 56);
+            UiNumber_DrawAt(state->pp, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 64);
         }
-        UiNumber_DrawAt(state->attack, 3, window, x * 8 + 48, y * 8 + 72);
-        UiNumber_DrawAt(state->defense, 3, window, x * 8 + 48, y * 8 + 80);
-        UiNumber_DrawAt(state->agility, 3, window, x * 8 + 48, y * 8 + 88);
-        UiNumber_DrawAt(state->luck, 2, window, x * 8 + 56, y * 8 + 96);
+        UiNumber_DrawAt(state->attack, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 72);
+        UiNumber_DrawAt(state->defense, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 80);
+        UiNumber_DrawAt(state->agility, PREVIEW_DIGITS, window, x * 8 + PREVIEW_CURRENT_X, y * 8 + 88);
+        UiNumber_DrawAt(state->luck, 2, window, x * 8 + PREVIEW_LUCK_X, y * 8 + 96);
     }
 
     switch (mode) {
@@ -206,7 +221,9 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
 
     if (page == 0) {
         s32 column;
+#if EDITION_INTERNATIONAL
         s32 icon_x;
+#endif
         s32 px;
 
         if (saved->class_index != state->class_index) {
@@ -223,48 +240,50 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
                 ((struct OwnerDjinnState *)state)->active_counts[i] + 0xf030,
                 column + i * 2 + 1, y + 5, 0);
         }
+#if EDITION_INTERNATIONAL
         icon_x = x * 8 + 70;
+#endif
         if (state->hp != saved->hp) {
             UiNumber_DrawAt(state->hp, 4, window, x * 8 + 72, y * 8 + 56);
             if (state->hp > saved->hp)
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 56, 0);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56, 0);
             else
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 56, 1);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 56, 1);
         }
         if (state->pp != saved->pp) {
             UiNumber_DrawAt(state->pp, 4, window, x * 8 + 72, y * 8 + 64);
             if (state->pp > saved->pp)
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 64, 0);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 0);
             else
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 64, 1);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 64, 1);
         }
         if (state->attack != saved->attack) {
             UiNumber_DrawAt(state->attack, 4, window, x * 8 + 72, y * 8 + 72);
             if (state->attack > saved->attack)
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 72, 0);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 72, 0);
             else
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 72, 1);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 72, 1);
         }
         if (state->defense != saved->defense) {
             UiNumber_DrawAt(state->defense, 4, window, x * 8 + 72, y * 8 + 80);
             if (state->defense > saved->defense)
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 80, 0);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 80, 0);
             else
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 80, 1);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 80, 1);
         }
         if (state->agility != saved->agility) {
             UiNumber_DrawAt(state->agility, 4, window, x * 8 + 72, y * 8 + 88);
             if (state->agility > saved->agility)
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 88, 0);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 88, 0);
             else
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 88, 1);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 88, 1);
         }
         if (state->luck != saved->luck) {
             UiNumber_DrawAt(state->luck, 2, window, x * 8 + 88, y * 8 + 96);
             if (state->luck > saved->luck)
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 96, 0);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 96, 0);
             else
-                UiIcon_DrawVariantWithTileOffset(window, icon_x, y * 8 + 96, 1);
+                UiIcon_DrawVariantWithTileOffset(window, PREVIEW_ARROW_X, y * 8 + 96, 1);
         }
     }
     }
@@ -297,7 +316,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
             line++;
         }
         UiWork_SetParamNibbleFar(15);
-        UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, x * 8 + 88, y * 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, x * 8 + PREVIEW_PP_X, y * 8);
         if (mode != 3) {
             s32 lines;
 
@@ -326,4 +345,3 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     Runtime_BumpFree(saved);
     return 1;
 }
-#endif

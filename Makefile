@@ -37,7 +37,7 @@ $(LIBGCC):
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check untracked-check
 .PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
-.PHONY: progress progress-subject progress-report progress-check prepare-inputs raw drafts similar deps clean
+.PHONY: progress progress-subject progress-report progress-check decomp-report prepare-inputs raw drafts similar deps clean
 
 help:
 	@printf '%s\n' \
@@ -48,6 +48,7 @@ help:
 	  'make verify          verify source, publication and both ROM compositions' \
 	  'make coverage        update README and both published figures' \
 	  'make progress        report DONE in all six editions from the linker maps of verified builds' \
+	  'make decomp-report   build, compare and export all twelve editions for decomp.dev' \
 	  'make raw             generate private disassembly under out/' \
 	  'make drafts         compile and score every draft against its listing' \
 	  'make similar         rank not-yet-C functions against C into out/reports/similar.tsv' \
@@ -229,6 +230,9 @@ progress-subject:
 
 progress-report:
 	$(CHECK) progress --write-report
+
+decomp-report:
+	$(CHECK) progress --write-decomp-report
 
 # A report for people only: the build and the count never read it.
 drafts:

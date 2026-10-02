@@ -9883,7 +9883,7 @@ msgctxt "MsgBattleAdditionalPsynergyHelp"
 msgid "02468"
 msgstr "{button_icon:4}: zus. Psynergy"
 
-msgctxt "message"
+msgctxt "MsgPreviewStatLabel"
 msgid "02469"
 msgstr "KP"
 
@@ -11611,11 +11611,11 @@ msgctxt "message"
 msgid "02900"
 msgstr "{button_icon:4}:Status"
 
-msgctxt "message"
+msgctxt "MsgPsynergyGained"
 msgid "02901"
 msgstr "* neue Psynergy"
 
-msgctxt "message"
+msgctxt "MsgPsynergyLost"
 msgid "02902"
 msgstr "* geht verloren"
 
@@ -11635,7 +11635,7 @@ msgctxt "message"
 msgid "02906"
 msgstr "Tauschen"
 
-msgctxt "message"
+msgctxt "MsgPsynergyUnchanged"
 msgid "02907"
 msgstr "* Keine Veränd."
 

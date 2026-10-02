@@ -8903,7 +8903,7 @@ msgctxt "MsgBattleAdditionalPsynergyHelp"
 msgid "02223"
 msgstr "R:エナジーのへんか"
 
-msgctxt "message"
+msgctxt "MsgPreviewStatLabel"
 msgid "02224"
 msgstr "HP"
 
@@ -13499,11 +13499,11 @@ msgctxt "message"
 msgid "03372"
 msgstr "R:ステータス"
 
-msgctxt "message"
+msgctxt "MsgPsynergyGained"
 msgid "03373"
 msgstr "*くわわるエナジー"
 
-msgctxt "message"
+msgctxt "MsgPsynergyLost"
 msgid "03374"
 msgstr "*なくなるエナジー"
 
@@ -13523,7 +13523,7 @@ msgctxt "message"
 msgid "03378"
 msgstr "こうかんします"
 
-msgctxt "message"
+msgctxt "MsgPsynergyUnchanged"
 msgid "03379"
 msgstr "*エナジーはへんかしません"
 

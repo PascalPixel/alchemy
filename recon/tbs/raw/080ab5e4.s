@@ -692,7 +692,7 @@ DjinnMenu_SelectDjinn:
 .L_080abb54:
 	.4byte 0x00000741
 .L_080abb58:
-	.4byte Data_080af28c
+	.4byte DjinnMenu_TextLevel
 .L_080abb5c:
 	.4byte 0x00000ba9
 .L_080abb60:

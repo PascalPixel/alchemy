@@ -9883,7 +9883,7 @@ msgctxt "MsgBattleAdditionalPsynergyHelp"
 msgid "02468"
 msgstr "{button_icon:4}:Psinergia otten."
 
-msgctxt "message"
+msgctxt "MsgPreviewStatLabel"
 msgid "02469"
 msgstr "PS"
 
@@ -11611,11 +11611,11 @@ msgctxt "message"
 msgid "02900"
 msgstr "{button_icon:4}:Stato"
 
-msgctxt "message"
+msgctxt "MsgPsynergyGained"
 msgid "02901"
 msgstr "* Psinergia ottenuta"
 
-msgctxt "message"
+msgctxt "MsgPsynergyLost"
 msgid "02902"
 msgstr "* Psinergia persa"
 
@@ -11635,7 +11635,7 @@ msgctxt "message"
 msgid "02906"
 msgstr "Scambia"
 
-msgctxt "message"
+msgctxt "MsgPsynergyUnchanged"
 msgid "02907"
 msgstr "* Nessuna modifica"
 

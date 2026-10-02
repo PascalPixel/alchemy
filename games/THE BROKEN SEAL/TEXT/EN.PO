@@ -8895,7 +8895,7 @@ msgctxt "MsgBattleAdditionalPsynergyHelp"
 msgid "02221"
 msgstr "{button_icon:4}:Psynergy Gained"
 
-msgctxt "message"
+msgctxt "MsgPreviewStatLabel"
 msgid "02222"
 msgstr "HP"
 
@@ -11919,11 +11919,11 @@ msgctxt "message"
 msgid "02977"
 msgstr "{button_icon:4}:Status"
 
-msgctxt "message"
+msgctxt "MsgPsynergyGained"
 msgid "02978"
 msgstr "* Psynergy Gained"
 
-msgctxt "message"
+msgctxt "MsgPsynergyLost"
 msgid "02979"
 msgstr "* Psynergy Lost"
 
@@ -11943,7 +11943,7 @@ msgctxt "message"
 msgid "02983"
 msgstr "Trade"
 
-msgctxt "message"
+msgctxt "MsgPsynergyUnchanged"
 msgid "02984"
 msgstr "* No change"
 

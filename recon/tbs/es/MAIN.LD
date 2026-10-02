@@ -612,7 +612,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/SET_RECORD_CHILD_VALUES.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000be98e)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/RUN_VALUE_SEQUENCE.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000bec84)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_RESET_RUNTIME_FIELDS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_QUEUE.o"(.text)

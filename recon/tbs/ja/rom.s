@@ -1023,12 +1023,6 @@ Func_080ba6ac:
 	.thumb_func
 Func_080ba978:
 	.incbin "baserom.gba", 0x000b1978, 0x00000264
-	.section .rom.000b1c6c, "ax"
-	.global BattleActor_RemoveFromLists
-	.type BattleActor_RemoveFromLists, %function
-	.thumb_func
-BattleActor_RemoveFromLists:
-	.incbin "baserom.gba", 0x000b1c6c, 0x0000007c
 	.section .rom.000b4422, "ax"
 	.incbin "baserom.gba", 0x000b4422, 0x00000002
 	.section .rom.000b4424, "ax"

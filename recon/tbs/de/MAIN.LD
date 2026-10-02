@@ -616,7 +616,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/SET_RECORD_CHILD_VALUES.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000bcf8e)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/RUN_VALUE_SEQUENCE.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000bd284)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/ACTOR_RESET_RUNTIME_FIELDS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_QUEUE.o"(.text)

@@ -3,6 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+#include "KAWA.H"
 #include "CALL.H"
 #include "RESOURCE_IDS.H"
 
@@ -56,11 +57,6 @@ struct ModeRecord {
     u16 span;
 };
 
-typedef struct Position3 {
-    s32 x;
-    s32 y;
-    s32 z;
-} Position3;
 
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
@@ -88,7 +84,6 @@ s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-s32 *SceneActor_FindOccupantAheadOfSubject(void);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
@@ -179,7 +174,6 @@ void SceneState_StoreParamsAndInitTable();
 void SceneState_InitTableWordsAndLoad3200();
 void SceneState_ReleaseTableAndResetC6a6();
 void Engine_ObjectSetPosition();
-void SceneActor_MarkObjectAtTiles94To95(void);
 
 extern u8 MsgKorosseoLogsKeyClearingStage[];
 extern u8 MsgKorosseoOperatorBridgeWillAlsoCheer[];
@@ -757,13 +751,13 @@ void FieldScene_RunScene3ba_02000974(s32 a0)
     Engine_EventEnd();
 }
 
-void SceneActor_MarkObjectAtTiles94To95(void)
+void SceneActor_MarkObjectAtTiles94To95(s32 actor)
 {
     struct FieldActor *o;
     s32 x;
     s32 y;
 
-    o = ((struct FieldActor * (*)(void))Object_GetById)();
+    o = Object_GetById(actor);
     if (o != 0) {
         x = o->x.fixed >> 19;
         y = o->z.fixed >> 19;
@@ -854,9 +848,9 @@ s32 KorosseoKawa_ApplyEntryState(void)
             Engine_AudioPlayCue(17);
             Korosseo_SelectSoloCompetitor(0);
             SceneActor_PlaceSlots1To3FromWork();
-            ((s32 (*)())SceneActor_MarkObjectAtTiles94To95)(1);
-            ((s32 (*)())SceneActor_MarkObjectAtTiles94To95)(2);
-            ((s32 (*)())SceneActor_MarkObjectAtTiles94To95)(3);
+            SceneActor_MarkObjectAtTiles94To95(1);
+            SceneActor_MarkObjectAtTiles94To95(2);
+            SceneActor_MarkObjectAtTiles94To95(3);
             FieldScene_RunTwoArmSequence(1);
         }
         Object_LinkObjectAndSetCallback(1, 0);
@@ -926,7 +920,7 @@ void FieldScene_RunCommandSequence(s32 a0)
     s32 x;
     s32 z;
 
-    actor = (struct FieldActor *)((s32 (*)())Object_GetById)();
+    actor = Object_GetById(a0);
     x = actor->x.part.pixel;
     z = actor->z.part.pixel;
     Engine_EventBegin();

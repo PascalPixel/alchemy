@@ -565,12 +565,6 @@ Func_0808c4f8:
 	.thumb_func
 DisplayTransition_UpdateScanlineTable:
 	.incbin "baserom.gba", 0x0008652c, 0x0000090c
-	.section .rom.00086efc, "ax"
-	.global DisplayTransition_Start
-	.type DisplayTransition_Start, %function
-	.thumb_func
-DisplayTransition_Start:
-	.incbin "baserom.gba", 0x00086efc, 0x000002c4
 	.section .rom.00087a5c, "ax"
 	.global BattleFx_BuildBuffer
 	.type BattleFx_BuildBuffer, %function

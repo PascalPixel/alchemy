@@ -380,7 +380,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT28.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.00092b98)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY2.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00093568)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY7.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_UPDATE_SCANLINE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE5.o"(.text)

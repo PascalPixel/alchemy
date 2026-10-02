@@ -104,12 +104,9 @@ void UiWork_FinalizePendingCoreFar(void);
 void Battle_Reset(void);
 void Event_SetValue1d8(s32 effect_id);
 
-/* FAKEMATCH: retain the ROM caller's r1=0; the registered callee has one argument. */
 void BattleEv_RunWait(s32 value, s32 flag);
 void BattleFx_FinishAction(void);
 
-/* FAKEMATCH: the ROM caller treats this call as setting r0 (an implicit-int
-   style declaration); the callee itself returns void. */
 s32 BattleFx_LoadActionEffectResources(s32 action_id, s32 mode);
 void BattleFx_Run(void);
 void BattleEffect_CleanupSceneObjects(void);
@@ -234,6 +231,10 @@ s32 Event_FindFacingTrigger(s32 source)
 
 s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 {
+    /* FAKEMATCH: retain the caller's r1=0; the callee's flag parameter is unused. */
+    /* FAKEMATCH: the ROM caller treats this call as setting r0 (an implicit-int
+       style declaration); the callee itself returns void. */
+
     s32 result;
     s32 item_id;
     s32 actor;
@@ -418,6 +419,9 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
  * selected_object, matching main:0808e23c's use of the same shared symbol. */
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 {
+    /* FAKEMATCH: the ROM caller treats this call as setting r0 (an implicit-int
+       style declaration); the callee itself returns void. */
+
     s32 output;
     s32 index;
     s32 mode;

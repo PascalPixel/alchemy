@@ -101,9 +101,9 @@ const struct ScenePlacement *Scene_GetPlacements(void)
             break;
         }
     } else if (gGameState.scene == (s32)&SceneId_KorashiamuIriguchi3) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             table = gKorashiamuIriguchiPlacements3Flag950;
-        } else if (GameFlag_IsSet(0x962) != 0) {
+        } else if (Engine_GameFlagIsSet(0x962) != 0) {
             table = gKorashiamuIriguchiPlacements3Flag962;
         } else {
             table = gKorashiamuIriguchiPlacements3;

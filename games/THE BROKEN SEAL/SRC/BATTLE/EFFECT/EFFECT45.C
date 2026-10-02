@@ -3,13 +3,7 @@
    the battle palette out, start the palette fade transfer, switch BG2 to the
    affine canvas through the next-frame queue, set the identity projection,
    window and blend registers, lay out the 16 by 16 canvas tile map (two tile
-   numbers per halfword) and clear the canvas buffers.
-
-   FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
-   (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
-   constructs, the one-pass loop around the IME read and the count stored
-   through an explicit u16 pointer; the queue and IME pointers are held for
-   the whole function as the ROM keeps them. */
+   numbers per halfword) and clear the canvas buffers. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
@@ -78,6 +72,12 @@ void QueueIoWriteDelay2(u32 first, u32 second);
 
 void BattleFx_BeginCanvasLayer(s32 bg_control)
 {
+    /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
+     * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
+     * constructs, the one-pass loop around the IME read and the count stored
+     * through an explicit u16 pointer; the queue and IME pointers are held for
+     * the whole function as the ROM keeps them. */
+
     void **cache = (void **)(gWorkSlot + 39 * 4);
     u8 *work = cache[0];
     u8 *battle = *(u8 **)(gWorkSlot + 9 * 4);
@@ -173,15 +173,15 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
    starts the palette fade transfer at 24 frames and queues the display
    without the windows until the canvas is set up; it lays out the same 16 by
    16 canvas tile map (two tile numbers per halfword) and clears the canvas
-   buffers.
-
-   FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
-   (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
-   constructs, the one-pass loop around the IME read and the count stored
-   through an explicit u16 pointer; the queue and IME pointers are held for
-   the whole function as the ROM keeps them. */
+   buffers. */
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
+    /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
+     * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
+     * constructs, the one-pass loop around the IME read and the count stored
+     * through an explicit u16 pointer; the queue and IME pointers are held for
+     * the whole function as the ROM keeps them. */
+
     void **cache = (void **)(gWorkSlot + 39 * 4);
     u8 *work = cache[0];
     u8 *battle = *(u8 **)(gWorkSlot + 9 * 4);
@@ -308,16 +308,16 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
    pair saved in the work block, recentre the projection, clear the canvas
    tiles, stop the canvas transfer callback, switch the display back through
    the next-frame queue, and fade the battle palette back in over eight
-   frames.
-
-   FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
-   (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
-   constructs, the one-pass loop around the IME read and the count stored
-   through an explicit u16 pointer, plus a one-pass loop around everything
-   after the queue pointer so the queue literal loads ahead of the store
-   before it. */
+   frames. */
 void BattleFx_EndCanvasLayer(void)
 {
+    /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
+     * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
+     * constructs, the one-pass loop around the IME read and the count stored
+     * through an explicit u16 pointer, plus a one-pass loop around everything
+     * after the queue pointer so the queue literal loads ahead of the store
+     * before it. */
+
     struct Cells03001ad0 *scroll;
     u8 *work = *(u8 **)(gWorkSlot + 39 * 4);
     u8 *battle = *(u8 **)(gWorkSlot + 9 * 4);

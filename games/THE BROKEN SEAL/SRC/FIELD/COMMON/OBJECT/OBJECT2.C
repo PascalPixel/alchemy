@@ -30,9 +30,6 @@ struct ShortcutListEntry {
     u16 ability;
 };
 
-/* FAKEMATCH: the first shortcut is read through a volatile field. That keeps
-   its read one zero-extended ldrh from the state base plus 0x220; a plain
-   read is folded into the address and combined into sign-extending shifts. */
 struct ShortcutState {
     u32 unknown_000[0x220 / 4];
     volatile u16 first;
@@ -45,6 +42,8 @@ void Debug_SelectAbilityPair(void);
 
 s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
 {
+    /* FAKEMATCH: retain the initial byte-offset resource read and the integer
+     * output-cursor address while their native source form is unresolved. */
     u16 object_ids[14];
     s32 output_count = 0;
     s32 object_count = Party_ListActiveOwnersFar(object_ids);
@@ -104,6 +103,9 @@ s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct ShortcutListEntry *entries)
 {
+    /* FAKEMATCH: the first shortcut is read through a volatile field. That keeps
+       its read one zero-extended ldrh from the state base plus 0x220; a plain
+       read is folded into the address and combined into sign-extending shifts. */
     s32 i;
     u16 first;
 

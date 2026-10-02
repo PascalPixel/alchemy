@@ -37,7 +37,7 @@ pub(crate) struct Counted {
     pub done: GameDone,
     /// Compiler-library members, counted within `done.game_asm`.
     pub library: i64,
-    /// Text of the C functions a FAKEMATCH tag steers, counted within DONE.
+    /// English text bytes of C functions this edition's FAKEMATCH tags steer.
     pub steered: i64,
     /// Padding a source marks as carrying no credit, left out of DONE.
     pub uncredited: i64,
@@ -84,6 +84,26 @@ pub(crate) fn share(english: &Measurement, linked: &BTreeSet<Unit>) -> Counted {
     counted.done.game_asm -= english.stray.min(counted.done.game_asm);
     counted.uncredited += english.stray;
     counted.done.executable = english.done.executable;
+    counted
+}
+
+/// Keep English sizes and source credit, but use the tags in the edition
+/// whose build links each function. Conditional localized devices must not
+/// inherit the English branch's unsteered classification, or vice versa.
+fn share_edition(english: &Measurement, edition: &Measurement) -> Counted {
+    let linked = edition.credits.keys().cloned().collect();
+    let mut counted = share(english, &linked);
+    counted.steered = english
+        .credits
+        .iter()
+        .filter(|(unit, _)| {
+            edition
+                .credits
+                .get(*unit)
+                .is_some_and(|credit| credit.steered > 0)
+        })
+        .map(|(_, credit)| credit.done.game_c + credit.done.common_c)
+        .sum();
     counted
 }
 
@@ -751,37 +771,6 @@ fn tally(
     Ok(credited)
 }
 
-/// The units one map links from source: every object under `games/` and
-/// every compiler-library member that supplies text to its image.
-fn links(
-    map: &str,
-    output: &str,
-    image: &str,
-    source: &dyn Fn(&str) -> Option<Language>,
-) -> Result<BTreeSet<Unit>, String> {
-    let overlay = image != MAIN_IMAGE;
-    let mut units = BTreeSet::new();
-    for placed in sections(map).into_iter().filter(is_text) {
-        match origin(placed.object, output, overlay, source)? {
-            Origin::Raw | Origin::Listing | Origin::Other => continue,
-            Origin::CommonC | Origin::GameC => {
-                let object = unit_object(placed.object, output, overlay).ok_or_else(|| {
-                    format!("{}: credited outside the build directory", placed.object)
-                })?;
-                for function in placed_c_functions(&placed)? {
-                    units.insert((image.to_string(), object.clone(), Some(function.name)));
-                }
-            }
-            _ => {
-                if let Some(object) = unit_object(placed.object, output, overlay) {
-                    units.insert((image.to_owned(), object, None));
-                }
-            }
-        }
-    }
-    Ok(units)
-}
-
 /// The language `build rom` compiled a `games/` object from.
 pub(crate) fn maintained_source(root: &Path, stem: &str) -> Option<Language> {
     [
@@ -923,7 +912,7 @@ fn maps(root: &Path, target: DecompTarget) -> Result<Result<Vec<ImageMap>, Strin
     Ok(Ok(found))
 }
 
-/// The English build's measurement from its verified image, or why it is
+/// An edition's measurement from its verified image, or why it is
 /// pending.
 pub(crate) fn measure(
     root: &Path,
@@ -985,25 +974,6 @@ pub(crate) fn measure(
     Ok(Ok(measurement))
 }
 
-/// The units an edition's verified build links from source, in its main
-/// image and in every code overlay it builds from source, or why it is
-/// pending.
-pub(crate) fn linked(
-    root: &Path,
-    target: DecompTarget,
-) -> Result<Result<BTreeSet<Unit>, String>, String> {
-    let maps = match maps(root, target)? {
-        Ok(maps) => maps,
-        Err(reason) => return Ok(Err(reason)),
-    };
-    let source = |stem: &str| maintained_source(root, stem);
-    let mut units = BTreeSet::new();
-    for map in &maps {
-        units.extend(links(&map.text, target.output_dir, &map.image, &source)?);
-    }
-    Ok(Ok(units))
-}
-
 /// A game's DONE in all six editions together, measured on its English
 /// build `target`, or why it is pending: every edition's build must be
 /// verified and current.
@@ -1017,18 +987,20 @@ pub(crate) fn measure_game(
     };
     let mut editions = Vec::with_capacity(6);
     for edition in target.editions() {
-        let units = if edition.id == target.id {
-            english.credits.keys().cloned().collect()
+        let earned = if edition.id == target.id {
+            share_edition(&english, &english)
         } else {
-            match linked(root, edition)? {
-                Ok(units) => units,
+            let measurement = match measure(root, edition)? {
+                Ok(measurement) => measurement,
                 Err(reason) => return Ok(Err(reason)),
-            }
+            };
+            share_edition(&english, &measurement)
         };
-        let earned = share(&english, &units);
         // The English build links every unit it credits: its share is its
         // own measurement, byte for byte.
-        if edition.id == target.id && earned.done != english.done {
+        if edition.id == target.id
+            && (earned.done != english.done || earned.steered != english.steered)
+        {
             return Err(format!(
                 "{}: its credited units do not add up to its DONE",
                 target.id
@@ -1331,6 +1303,57 @@ Linker script and memory map
     }
 
     #[test]
+    fn edition_tags_use_english_sizes_and_only_its_linked_source() {
+        let unit = |name: &str| {
+            (
+                "36f".to_string(),
+                "games/G/SRC/TITLE.o".to_string(),
+                Some(name.to_string()),
+            )
+        };
+        let c = |bytes, steered| Counted {
+            done: GameDone {
+                game_c: bytes,
+                ..GameDone::default()
+            },
+            steered,
+            ..Counted::default()
+        };
+        let english = Measurement {
+            done: GameDone {
+                game_c: 336,
+                executable: 1000,
+                ..GameDone::default()
+            },
+            steered: 120,
+            credits: BTreeMap::from([
+                (unit("Reveal"), c(176, 0)),
+                (unit("EnglishDevice"), c(120, 120)),
+                (unit("ScaffoldHere"), c(40, 0)),
+            ]),
+            ..Measurement::default()
+        };
+        let localized = Measurement {
+            credits: BTreeMap::from([
+                (unit("Reveal"), c(196, 196)),
+                (unit("EnglishDevice"), c(100, 0)),
+                (unit("LocalizedOnly"), c(300, 300)),
+            ]),
+            ..Measurement::default()
+        };
+        let linked = localized.credits.keys().cloned().collect();
+        let before = share(&english, &linked);
+        let earned = share_edition(&english, &localized);
+        assert_eq!(earned.done, before.done);
+        assert_eq!(earned.library, before.library);
+        assert_eq!(earned.uncredited, before.uncredited);
+        assert_eq!(earned.done.game_c, 176 + 120);
+        assert_eq!(earned.done.executable, 1000);
+        assert_eq!(earned.steered, 176);
+        assert_eq!(share_edition(&english, &english).steered, 120);
+    }
+
+    #[test]
     fn an_object_linked_in_four_of_six_editions_earns_four_sixths() {
         let unit = |image: &str, object: &str| (image.to_string(), object.to_string(), None);
         let c = |bytes, steered| Counted {
@@ -1504,18 +1527,13 @@ Linker script and memory map
         let root = work.path();
         std::fs::create_dir_all(root.join("games/G/SRC")).unwrap();
         std::fs::write(root.join("games/G/SRC/MODULE.C"),
-            "int Module_Always(int x) { return x + 1; }\n#if defined(TBS_EDITION_EN)\nextern int gModulePendingValue;\nint Module_Pending(int x) { return gModulePendingValue + x; }\n#endif\n").unwrap();
+            "int Module_Always(int x) {\n#if defined(TBS_EDITION_DE)\n/* FAKEMATCH: localized fixture device. */\n#endif\nreturn x + 1; }\n#if defined(TBS_EDITION_EN)\nextern int gModulePendingValue;\nint Module_Pending(int x) { /* FAKEMATCH: English fixture device. */ return gModulePendingValue + x; }\n#endif\n").unwrap();
         let en = crate::targets::decomp_target(Some("tbs-en")).unwrap();
         let de = crate::targets::decomp_target(Some("tbs-de")).unwrap();
         let english_map = native_module(root, en);
         let german_map = native_module(root, de);
         let source = |stem: &str| maintained_source(root, stem);
-        let mark = |_: &str| {
-            Ok(Mark {
-                steered: Steered::Functions(["Module_Pending".to_string()].into()),
-                ..Mark::default()
-            })
-        };
+        let mark = |stem: &str| source_mark(root, en, stem);
         let mut english = Measurement::default();
         let placed = tally(
             &mut english,
@@ -1552,15 +1570,37 @@ Linker script and memory map
             file.section_by_name(".text").unwrap().size() as i64
         );
         assert!(pending >= 8);
-        let german = links(&german_map, de.output_dir, MAIN_IMAGE, &source).unwrap();
-        let earned = share(&english, &german);
+        let mut german = Measurement::default();
+        tally(
+            &mut german,
+            &german_map,
+            de.output_dir,
+            MAIN_IMAGE,
+            &source,
+            &|stem| source_mark(root, de, stem),
+        )
+        .unwrap();
+        let earned = share_edition(&english, &german);
         assert_eq!(earned.done.game_c, always);
-        assert_eq!(earned.steered, 0);
+        assert_eq!(earned.steered, always);
         assert_eq!(earned.done.executable, always + pending);
-        let other_image = links(&german_map, de.output_dir, "36f", &source).unwrap();
-        assert_eq!(share(&english, &other_image).done.game_c, 0);
-        let all = links(&english_map, en.output_dir, MAIN_IMAGE, &source).unwrap();
-        assert_eq!(share(&english, &all).done.game_c, always + pending);
+        let mut other_image = Measurement::default();
+        tally(
+            &mut other_image,
+            &german_map,
+            de.output_dir,
+            "36f",
+            &source,
+            &|stem| source_mark(root, de, stem),
+        )
+        .unwrap();
+        assert_eq!(share_edition(&english, &other_image).done.game_c, 0);
+        assert_eq!(share_edition(&english, &other_image).steered, 0);
+        assert_eq!(
+            share_edition(&english, &english).done.game_c,
+            always + pending
+        );
+        assert_eq!(share_edition(&english, &english).steered, pending);
 
         // A source mark spanning two contributions is removed from both,
         // including the steered part, rather than from just the first one.
@@ -1570,8 +1610,13 @@ Linker script and memory map
             .unwrap()
             .0;
         discredit(&mut english, &placed, &[(pending_start - 2, 4)]);
-        assert_eq!(share(&english, &german).done.game_c, always - 2);
-        assert_eq!(share(&english, &all).done.game_c, always + pending - 4);
+        assert_eq!(share_edition(&english, &german).done.game_c, always - 2);
+        assert_eq!(share_edition(&english, &german).steered, always - 2);
+        assert_eq!(
+            share_edition(&english, &english).done.game_c,
+            always + pending - 4
+        );
+        assert_eq!(share_edition(&english, &english).steered, pending - 2);
         assert_eq!(english.steered, pending - 2);
     }
 
@@ -1620,9 +1665,8 @@ Linker script and memory map
         assert_eq!(english.credits.len(), 1);
         assert_eq!(english.done.game_c, size);
         assert_eq!(english.steered, size);
-        let linked = links(&map, target.output_dir, MAIN_IMAGE, &source).unwrap();
-        assert_eq!(share(&english, &linked).done.game_c, size);
-        assert_eq!(share(&english, &linked).steered, size);
+        assert_eq!(share_edition(&english, &english).done.game_c, size);
+        assert_eq!(share_edition(&english, &english).steered, size);
     }
 
     #[test]

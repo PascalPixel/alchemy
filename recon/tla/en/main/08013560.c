@@ -7,8 +7,9 @@
  * substitutions, masked failures or compiler-output patches.
  * The first private checkpoint lacked five callee definitions in five
  * editions. Naming their actual raw/scaffold locations closed those links.
- * The AST draft scorer still refuses inline assembly; the checks above use
- * ordinary direct compilation and complete symbolic links.
+ * The immutable draft scorer compiles this original full source; mutable
+ * permutation still refuses inline assembly. The complete checks above
+ * remain independent ordinary compilations and symbolic links.
  * No edition adopts this draft and it earns no source credit. Production
  * remains blocked by the numeric cartridge restart target, true allocator
  * return type and shared record/API ownership, and coherent module placement.

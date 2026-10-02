@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.global UiText_OpenMessageAtObject
+	.type UiText_OpenMessageAtObject, %function
 	.thumb_func
 UiText_OpenMessageAtObject:
 	push {r5, r6, r7, lr}
@@ -10,7 +11,7 @@ UiText_OpenMessageAtObject:
 	push {r5, r6, r7}
 	mov r7, r8
 	push {r7}
-	ldr r3, .L_08092f74
+	ldr r3, .Lpool0
 	ldr r1, [r3]
 	sub sp, #64
 	str r1, [sp, #32]
@@ -39,7 +40,7 @@ UiText_OpenMessageAtObject:
 	adds r3, r1, r2
 	movs r2, #0
 	ldrsh r1, [r3, r2]
-	ldr r3, .L_08092f78
+	ldr r3, .Lpool1
 	ands r6, r3
 	movs r4, #0
 	adds r0, r6, #0
@@ -58,17 +59,17 @@ UiText_OpenMessageAtObject:
 	movs r7, #0
 	ldr r4, [sp, #4]
 	cmp r3, #0
-	beq .L_08092cb6
-	b .L_08092f3c
-.L_08092cb6:
+	beq .L0
+	b .L1
+.L0:
 	cmp r0, #0
-	beq .L_08092ce6
+	beq .L2
 	subs r2, #46
 	adds r3, r1, r2
 	movs r1, #0
 	ldrsh r3, [r3, r1]
 	cmp r3, #3
-	bne .L_08092cde
+	bne .L3
 	add r5, sp, #52
 	adds r1, r5, #0
 	adds r0, #8
@@ -79,16 +80,16 @@ UiText_OpenMessageAtObject:
 	asrs r5, r3, #3
 	movs r7, #1
 	subs r5, #2
-	b .L_08092d38
-.L_08092cde:
+	b .L4
+.L3:
 	add r5, sp, #52
 	adds r1, r5, #0
 	adds r0, r6, #0
-	b .L_08092d24
-.L_08092ce6:
+	b .L5
+.L2:
 	cmp r6, #7
-	bgt .L_08092d38
-	ldr r3, .L_08092f7c
+	bgt .L4
+	ldr r3, .Lpool2
 	movs r2, #250
 	lsls r2, r2, #1
 	str r6, [sp, #24]
@@ -102,7 +103,7 @@ UiText_OpenMessageAtObject:
 	movs r1, #0
 	ldrsh r3, [r3, r1]
 	cmp r3, #3
-	bne .L_08092d1e
+	bne .L6
 	add r5, sp, #52
 	adds r1, r5, #0
 	adds r0, #8
@@ -111,12 +112,12 @@ UiText_OpenMessageAtObject:
 	asrs r4, r3, #3
 	ldr r3, [r5, #4]
 	movs r7, #1
-	b .L_08092d36
-.L_08092d1e:
+	b .L7
+.L6:
 	ldr r0, [r5]
 	add r5, sp, #52
 	adds r1, r5, #0
-.L_08092d24:
+.L5:
 	bl Object_GetScreenPosition
 	mvns r0, r0
 	negs r3, r0
@@ -125,16 +126,16 @@ UiText_OpenMessageAtObject:
 	ldr r3, [r5]
 	asrs r4, r3, #3
 	ldr r3, [r5, #4]
-.L_08092d36:
+.L7:
 	asrs r5, r3, #3
-.L_08092d38:
+.L4:
 	cmp r7, #0
-	bne .L_08092d44
+	bne .L8
 	movs r3, #15
 	str r3, [sp, #48]
 	movs r3, #10
-	b .L_08092d94
-.L_08092d44:
+	b .L9
+.L8:
 	movs r3, #0
 	add r0, sp, #36
 	str r3, [sp, #48]
@@ -158,83 +159,83 @@ UiText_OpenMessageAtObject:
 	mov r2, r11
 	ands r3, r2
 	cmp r3, #0
-	beq .L_08092d7e
+	beq .L10
 	ldr r3, [sp, #36]
 	subs r3, r5, r3
 	subs r3, #1
-	b .L_08092d94
-.L_08092d7e:
+	b .L9
+.L10:
 	mov r1, r11
 	lsrs r3, r1, #15
 	cmp r3, #0
-	bne .L_08092d92
+	bne .L11
 	cmp r5, #8
-	bgt .L_08092d92
+	bgt .L11
 	ldr r3, [sp, #36]
 	subs r3, r5, r3
 	subs r3, #1
-	b .L_08092d94
-.L_08092d92:
+	b .L9
+.L11:
 	adds r3, r5, #4
-.L_08092d94:
+.L9:
 	str r3, [sp, #44]
 	ldr r2, [sp, #32]
-	ldr r1, .L_08092f80
+	ldr r1, .Lpool3
 	adds r3, r2, r1
 	ldrb r3, [r3]
 	cmp r3, #0
-	beq .L_08092da6
+	beq .L12
 	movs r2, #5
 	str r2, [sp, #12]
-.L_08092da6:
+.L12:
 	movs r3, #128
 	lsls r3, r3, #5
 	mov r1, r11
 	ands r3, r1
 	adds r6, r4, #0
 	cmp r3, #0
-	beq .L_08092dc2
+	beq .L13
 	ldr r2, [sp, #12]
 	subs r3, r6, r2
 	subs r6, r3, #2
 	cmp r6, #0
-	bge .L_08092dfe
+	bge .L14
 	movs r6, #0
-	b .L_08092dfe
-.L_08092dc2:
+	b .L14
+.L13:
 	movs r3, #128
 	lsls r3, r3, #6
 	mov r1, r11
 	ands r3, r1
 	cmp r3, #0
-	beq .L_08092dde
+	beq .L15
 	ldr r2, [sp, #12]
 	adds r6, #2
 	adds r3, r6, r2
 	cmp r3, #29
-	ble .L_08092dfe
+	ble .L14
 	movs r3, #29
 	subs r6, r3, r2
-	b .L_08092dfe
-.L_08092dde:
+	b .L14
+.L15:
 	cmp r6, #15
-	bgt .L_08092df0
+	bgt .L16
 	ldr r1, [sp, #12]
 	subs r3, r6, r1
 	subs r6, r3, #2
 	cmp r6, #0
-	bge .L_08092dfe
+	bge .L14
 	adds r6, r4, #2
-	b .L_08092dfe
-.L_08092df0:
+	b .L14
+.L16:
 	ldr r2, [sp, #12]
 	adds r6, #2
 	adds r3, r6, r2
 	cmp r3, #29
-	ble .L_08092dfe
+	ble .L14
 	subs r3, r4, r2
 	subs r6, r3, #2
-.L_08092dfe:
+.L14:
 	ldr r0, [sp, #24]
 	bl Localization_LookupEntryIdFar
 	movs r3, #1
@@ -242,7 +243,7 @@ UiText_OpenMessageAtObject:
 	adds r7, r0, #0
 	mov r10, r3
 	cmp r7, r10
-	beq .L_08092e80
+	beq .L17
 	mov r3, sp
 	movs r1, #48
 	movs r2, #44
@@ -261,29 +262,29 @@ UiText_OpenMessageAtObject:
 	mov r8, r10
 	str r1, [sp, #16]
 	cmp r2, r5
-	bgt .L_08092e3e
+	bgt .L18
 	ldr r3, [sp, #36]
 	adds r3, r2, r3
 	str r3, [sp, #16]
-.L_08092e3e:
+.L18:
 	ldr r3, [sp, #16]
 	cmp r3, #0
-	bge .L_08092e4c
+	bge .L19
 	ldr r3, [sp, #36]
 	adds r3, r2, r3
 	str r3, [sp, #16]
-	b .L_08092e58
-.L_08092e4c:
+	b .L20
+.L19:
 	ldr r3, [sp, #16]
 	adds r3, #5
 	cmp r3, #19
-	ble .L_08092e58
+	ble .L20
 	subs r1, r2, #5
 	str r1, [sp, #16]
-.L_08092e58:
+.L20:
 	ldr r3, [sp, #16]
 	cmp r2, r3
-	bge .L_08092ea2
+	bge .L21
 	movs r0, #1
 	mov r1, r9
 	ldr r3, [sp, #8]
@@ -299,11 +300,11 @@ UiText_OpenMessageAtObject:
 	adds r5, #1
 	mov r8, r1
 	str r5, [sp, #20]
-	b .L_08092ea2
-.L_08092e80:
+	b .L21
+.L17:
 	ldr r3, [sp, #44]
 	cmp r3, r5
-	bge .L_08092ea2
+	bge .L21
 	add r0, sp, #36
 	add r3, sp, #40
 	str r0, [sp, #0]
@@ -317,49 +318,49 @@ UiText_OpenMessageAtObject:
 	adds r5, #1
 	str r5, [sp, #20]
 	mov r8, r7
-.L_08092ea2:
+.L21:
 	cmp r6, #0
-	bge .L_08092eaa
+	bge .L22
 	movs r6, #0
-	b .L_08092eb6
-.L_08092eaa:
+	b .L23
+.L22:
 	ldr r2, [sp, #12]
 	adds r3, r6, r2
 	cmp r3, #29
-	ble .L_08092eb6
+	ble .L23
 	movs r3, #29
 	subs r6, r3, r2
-.L_08092eb6:
+.L23:
 	ldr r1, [sp, #32]
-	ldr r2, .L_08092f80
+	ldr r2, .Lpool3
 	adds r3, r1, r2
 	ldrb r3, [r3]
 	cmp r3, #0
-	beq .L_08092ee6
+	beq .L24
 	movs r0, #8
 	bl WaitFrames
 	ldr r3, [sp, #20]
 	cmp r3, #0
-	beq .L_08092edc
+	beq .L25
 	ldr r2, [sp, #44]
 	adds r2, r2, r3
 	ldr r1, [sp, #48]
 	subs r2, #1
 	mov r0, r8
 	movs r3, #18
-	b .L_08092f10
-.L_08092edc:
+	b .L26
+.L25:
 	ldr r1, [sp, #48]
 	ldr r2, [sp, #44]
 	mov r0, r8
 	movs r3, #2
-	b .L_08092f10
-.L_08092ee6:
+	b .L26
+.L24:
 	ldr r0, [sp, #24]
 	bl BattleFx_GetResourceId
 	ldr r1, [sp, #20]
 	cmp r1, #0
-	beq .L_08092f04
+	beq .L27
 	ldr r3, [sp, #20]
 	ldr r2, [sp, #44]
 	adds r2, r2, r3
@@ -368,20 +369,20 @@ UiText_OpenMessageAtObject:
 	orrs r3, r0
 	ldr r1, [sp, #48]
 	subs r2, #1
-	b .L_08092f0e
-.L_08092f04:
+	b .L28
+.L27:
 	lsls r3, r0, #16
 	movs r0, #1
 	orrs r3, r0
 	ldr r1, [sp, #48]
 	ldr r2, [sp, #44]
-.L_08092f0e:
+.L28:
 	mov r0, r8
-.L_08092f10:
+.L26:
 	bl UiText_OpenMessageWindowFar
 	mov r10, r0
 	ldr r1, [sp, #32]
-	ldr r2, .L_08092f80
+	ldr r2, .Lpool3
 	adds r3, r1, r2
 	ldrb r3, [r3]
 	ldr r0, [sp, #24]
@@ -390,15 +391,15 @@ UiText_OpenMessageAtObject:
 	ldr r3, [sp, #16]
 	bl UiWindow_CreateWithSideObjectFar
 	mov r9, r0
-	b .L_08092f34
-.L_08092f2e:
+	b .L29
+.L30:
 	movs r0, #1
 	bl WaitFrames
-.L_08092f34:
+.L29:
 	bl UiWork_IsCompleteFar
 	cmp r0, #0
-	beq .L_08092f2e
-.L_08092f3c:
+	beq .L30
+.L1:
 	ldr r1, [sp, #28]
 	movs r2, #252
 	lsls r2, r2, #1
@@ -418,7 +419,7 @@ UiText_OpenMessageAtObject:
 	adds r3, #1
 	mov r0, r10
 	strh r3, [r2]
-	add sp, #64
+	sub sp, #-64
 	pop {r3, r5, r6, r7}
 	mov r8, r3
 	mov r9, r5
@@ -427,11 +428,12 @@ UiText_OpenMessageAtObject:
 	pop {r5, r6, r7}
 	pop {r1}
 	bx r1
-.L_08092f74:
+.Lpool0:
 	.4byte gWindowWork
-.L_08092f78:
+.Lpool1:
 	.4byte 0x00000fff
-.L_08092f7c:
-	.4byte gCell
-.L_08092f80:
+.Lpool2:
+	.4byte gGameState
+.Lpool3:
 	.4byte 0x00000ea4
+	.size UiText_OpenMessageAtObject, .-UiText_OpenMessageAtObject

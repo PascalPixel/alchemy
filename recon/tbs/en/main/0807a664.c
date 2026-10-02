@@ -1,14 +1,14 @@
-/* Draft, not exact: 316 of 316 bytes, the pools in the listing's places,
-   18 instructions differ in three spots. (1) The packing loop tests
-   the slot as 16 bits (lsls #16, cmp) and steps the read pointer before the
-   test; here the test is on the whole register and the step comes last.
-   (2) The count of kept slots and the loop counter sit in each other's
-   registers (r5/r6), and the listing loads the 15 of the fill loop after
-   its guard. (3) The listing loads the address of the active owners before
-   stepping the save pointer and keeps it in r0. This is the twin of
-   InventorySnapshot_Restore (GAME/INVENTORY/RESTORE_SNAPSHOT.C). The zero
-   written to a slot is a pool load only because the slots are u16: no
-   symbol is needed. */
+/* Draft, not exact: 316 of 316 bytes, score 220 (was 470), 11 register
+   names and the packing loop's test. What closed the rest: the counter of the
+   first two loops is the count of kept slots (one variable, r5), the packing
+   loop has its own counter, and it reads each slot once into a word. Left:
+   the listing tests that word as 16 bits (lsls #16, cmp) after stepping the
+   read pointer, and keeps the read pointer in r4 and the write pointer in
+   r1; here the test is on the whole register. It loads the address of the
+   active owners before stepping the save pointer and keeps it in r0. This
+   is the twin of InventorySnapshot_Restore (GAME/INVENTORY/RESTORE_SNAPSHOT.C).
+   The zero written to a slot is a pool load only because the slots are u16:
+   no symbol is needed. */
 #include "TYPES.H"
 #include "ITEM.H"
 #include "GAME_STATE.H"
@@ -58,22 +58,23 @@ void Func_0807a664(void)
         second = ((struct ShortcutState *)&gGameState)->psynergy_shortcuts[1];
         for (owner = 0; owner < 4; owner++) {
             st = Owner_GetState(owner);
-            for (i = 0; i < 15; i++)
-                *save++ = st->inventory[i];
-            for (i = 0; i < 15; i++) {
-                if (Item_GetDirect(st->inventory[i])->type != 6)
-                    st->inventory[i] = 0;
+            for (n = 0; n < 15; n++)
+                *save++ = st->inventory[n];
+            for (n = 0; n < 15; n++) {
+                if (Item_GetDirect(st->inventory[n])->type != 6)
+                    st->inventory[n] = 0;
             }
             n = 0;
             inventory = st->inventory;
             src = inventory;
             dst = inventory;
             for (i = 0; i < 15; i++) {
-                if (*src != 0) {
-                    *dst++ = *src;
+                u32 item = *src++;
+
+                if ((u16)item != 0) {
+                    *dst++ = item;
                     n++;
                 }
-                src++;
             }
             for (; n < 15; n++)
                 inventory[n] = 0;

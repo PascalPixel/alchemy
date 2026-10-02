@@ -1,7 +1,28 @@
+#include "EDITION.H"
 #include "EVENT_RUNTIME.H"
+#include "GAME_STATE.H"
 #include "TYPES.H"
 
 extern struct EventRuntime *Data_03001ebc;
+extern struct WorkPointers gWindowWork;
+
+/* The window work's flag for a message shown without the speaker's icon. */
+struct MessageWindowWork {
+    u8 unknown_000[0xea4];
+    u8 plain;
+};
+
+u8 *ObjectTable_Get(s32 id);
+s32 Render_ProjectPoint(const s32 *point, s32 *screen);
+s32 Object_GetScreenPosition(s32 id, s32 *screen);
+void UiText_GetResourceDimensionsAltFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
+void UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
+s32 Localization_LookupEntryIdFar(s32 speaker);
+void WaitFrames(s32 frames);
+s32 BattleFx_GetResourceId(s32 speaker);
+s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 style);
+s32 UiWindow_CreateWithSideObjectFar(s32 speaker, s32 mode, s32 x, s32 y);
+s32 UiWork_IsCompleteFar(void);
 
 struct EventRuntime1d8 {
     u8 unknown_000[0x1d8];

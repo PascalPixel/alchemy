@@ -465,3 +465,53 @@ s32 Summon_Refresh(void)
         }
     }
 }
+
+s32 BattleParty_PrepareActiveOwners(u16 *ids);
+
+/*
+ * Stands every unit at its place: the party in the order
+ * BattleParty_PrepareActiveOwners lists it, each member's place recorded in
+ * the session, then the enemy list at its computed positions.
+ */
+void BattleUnit_RefreshPlacement(void)
+{
+    struct BattleSession *work;
+    u16 ids[14];
+    s32 x[6];
+    s32 z[6];
+    s32 count;
+    s32 i;
+    s32 place;
+    s32 stand;
+    s32 n;
+    s32 value;
+    u8 *p;
+
+    place = 0;
+    stand = 0;
+    work = gBattleWork;
+    count = BattleParty_PrepareActiveOwners(ids);
+    value = 0xff;
+    for (i = 13; i >= 0; i--)
+        work->placement[i] = value;
+    p = &work->placement[13];
+    for (n = 5, value = 13; n >= 0; n--, value--)
+        *p-- = value;
+    for (i = 0; i < count; place++, i++) {
+        s32 id = ids[i];
+
+        work->placement[id] = place;
+        BattlePresentation_SpawnActorObject((Actor *)GetBattleObjectSlot(id), id,
+            BattlePlacement_StepPairs[place * 2], BattlePlacement_StepPairs[place * 2 + 1]);
+    }
+    for (i = 0; i < 6 && work->enemy_units[i] != 0xff; i++)
+        ids[i] = work->enemy_units[i];
+    count = i;
+    Summon_LayoutPositions(ids, count, x, z);
+    for (i = 0; i < count; i++, stand++) {
+        s32 id = work->enemy_units[i];
+
+        if (id != 0xfe)
+            BattlePresentation_SpawnActorObject((Actor *)GetBattleObjectSlot(id), id, x[stand], z[stand]);
+    }
+}

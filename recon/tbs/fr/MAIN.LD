@@ -594,7 +594,6 @@
     "*/games/COMMON/SRC/BATTLE/ACTOR_COMMIT_PLACEMENT.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PARTY/LIST_ALL_UNITS_AND_SUBMIT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT8.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000bb5f4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/CONTAINS_ID.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000bb750)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE.o"(.text)

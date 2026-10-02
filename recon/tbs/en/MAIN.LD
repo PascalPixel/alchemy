@@ -703,7 +703,6 @@
         "*/games/COMMON/SRC/BATTLE/PARTY/LIST_ALL_UNITS_AND_SUBMIT.o"(.text)
         "*/recon/tbs/raw/080b6cce.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT8.o"(.text)
-        "*/recon/tbs/raw/080b75dc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/CONTAINS_ID.o"(.text)
         "*/recon/tbs/raw/080b7738.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE.o"(.text)

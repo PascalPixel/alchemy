@@ -1025,8 +1025,6 @@ DebugBattle_ViewMessages:
 	.thumb_func
 Battle_RunEncounter:
 	.incbin "baserom.gba", 0x000ad3c8, 0x00000698
-	.section .rom.000ae5dc, "ax"
-	.incbin "baserom.gba", 0x000ae5dc, 0x00000130
 	.section .rom.000ae738, "ax"
 	.incbin "baserom.gba", 0x000ae738, 0x000001ac
 	.section .rom.000aeb6a, "ax"

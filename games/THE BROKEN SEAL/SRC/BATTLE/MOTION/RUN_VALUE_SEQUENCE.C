@@ -1,14 +1,11 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
-struct ObjectSlot_080babdc {
-    void *object;
-};
+#include "MOTION_OBJECT.H"
 
 #include "BATTLE_WORK.H"
 
-void *Owner_GetStateFar(s32 id);
-struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
+#include "BATTLE_RUNTIME.H"
 void Object_SetMode(void *object, s32 mode);
 void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
 void BattleMotion_SetRecordChildValues(void *object, s32 value);

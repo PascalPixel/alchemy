@@ -92,7 +92,6 @@ void Actor_ResetMotionAtAnchor(s32);
 s32 BattlePres_BuildTargetList(void *, struct PresentationWork *);
 u32 BattleEv_DispatchQueued(void);
 u32 BattleEv_Push(u32, u32);
-s32 BattleEventRuntime_WaitForReady(void);
 void BattlePres_SetActorModes(u16 *, s32);
 s32 Graphics_ScaleRgb555Clamped(u16 *, u16 *, s32, s32);
 void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);

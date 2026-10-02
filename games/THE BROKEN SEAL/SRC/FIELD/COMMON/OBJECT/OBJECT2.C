@@ -1,34 +1,18 @@
 #include "TYPES.H"
-#include "SCENE.H"
-#include "GLOBAL_CELLS.H"
+#include "OWNER_STATE.H"
+#include "GAME_STATE.H"
 
 s32 Party_ListActiveOwnersFar(u16 *objects);
-#define RESOURCE_ID_MASK_0801C7FC 0x3FFF
+#define ACTION_ID_MASK 0x3FFF
 
-struct ObjectResource_0801c7fc {
-    u16 id;
-    u16 padding_02;
-};
-
-struct Object_0801c7fc {
-    u8 padding_00[0x58];
-    struct ObjectResource_0801c7fc resources[32];
-};
-
-struct ResourcePair_0801c7fc {
-    u16 object_id;
-    u16 resource_id;
-};
-
-struct Object_0801c7fc *Runtime_GetObject(s32 object_id);
-void *Ability_GetData(s32 resource_id);
-
-/* One entry of a collected ability list, in the packed form of a shortcut:
-   the owner in the top six bits, the ability in the low ten. */
-struct ShortcutListEntry {
+/* An ability collected for an active owner; shortcuts pack the two values. */
+struct AbilityListEntry {
     u16 owner;
     u16 ability;
 };
+
+struct OwnerActionState *Runtime_GetObject(s32 object_id);
+void *Ability_GetData(s32 resource_id);
 
 struct ShortcutState {
     u32 unknown_000[0x220 / 4];
@@ -36,11 +20,9 @@ struct ShortcutState {
     u16 second;
 };
 
-extern struct ShortcutState gGameState;
-
 void Debug_SelectAbilityPair(void);
 
-s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
+s32 Object_CollectResources(struct AbilityListEntry *output)
 {
     /* FAKEMATCH: retain the initial byte-offset resource read and the integer
      * output-cursor address while their native source form is unresolved. */
@@ -53,8 +35,8 @@ s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
         s32 remaining = object_count;
 
         do {
-            struct Object_0801c7fc *object;
-            struct ObjectResource_0801c7fc *resource;
+            struct OwnerActionState *object;
+            struct OwnerActionSlot *resource;
             u32 id;
             s32 index;
             u32 resource_id;
@@ -64,32 +46,32 @@ s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
             object_id++;
             object = Runtime_GetObject(id);
             index = 0;
-            resource_offset = sizeof(object->padding_00);
+            resource_offset = sizeof(object->unknown_000);
             resource_id =
                 *(u16 *)((u8 *)object + resource_offset)
-                & RESOURCE_ID_MASK_0801C7FC;
+                & ACTION_ID_MASK;
 
             if (resource_id != 0) {
-                struct ResourcePair_0801c7fc *pair;
+                struct AbilityListEntry *pair;
 
-                resource = object->resources;
-                pair = (struct ResourcePair_0801c7fc *)
+                resource = object->action_slots;
+                pair = (struct AbilityListEntry *)
                     (output_count *sizeof(*pair) + (s32)output);
                 do {
                     Ability_GetData(resource_id);
-                    pair->object_id = id;
-                    pair->resource_id = resource_id;
+                    pair->owner = id;
+                    pair->ability = resource_id;
                     output_count++;
                     pair++;
 
-                    if (++index >= (s32)(sizeof(object->resources)
-                                      / sizeof(object->resources[0]))) {
+                    if (++index >= (s32)(sizeof(object->action_slots)
+                                      / sizeof(object->action_slots[0]))) {
                         break;
                     }
 
                     resource++;
                     resource_id =
-                        resource->id & RESOURCE_ID_MASK_0801C7FC;
+                        resource->encoded_action & ACTION_ID_MASK;
                 } while (resource_id != 0);
             }
         } while (--remaining != 0);
@@ -101,18 +83,20 @@ s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
 /* Find the positions of the two Psynergy shortcuts in a 448-entry ability
    list; a shortcut that is not in the list leaves its position at 0. */
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
-                              const struct ShortcutListEntry *entries)
+                              const struct AbilityListEntry *entries)
 {
     /* FAKEMATCH: the first shortcut is read through a volatile field. That keeps
        its read one zero-extended ldrh from the state base plus 0x220; a plain
-       read is folded into the address and combined into sign-extending shifts. */
+       read is folded into the address and combined into sign-extending shifts.
+       Taking its volatile member address shrinks this module by eight bytes
+       in all six TBS editions, so the existing view is kept. */
     s32 i;
     u16 first;
 
     *first_index = 0;
     *second_index = 0;
 
-    first = gGameState.first;
+    first = ((struct ShortcutState *)&gGameState)->first;
     for (i = 0; i <= 447; i++) {
         if (entries[i].ability == (first & 0x3ff) &&
             entries[i].owner == (first >> 10)) {
@@ -122,16 +106,14 @@ void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
     }
 
     for (i = 0; i <= 447; i++) {
-        if (entries[i].ability == (gGameState.second & 0x3ff) &&
-            entries[i].owner == (gGameState.second >> 10)) {
+        if (entries[i].ability == (gGameState.second_shortcut & 0x3ff) &&
+            entries[i].owner == (gGameState.second_shortcut >> 10)) {
             *second_index = i;
             break;
         }
     }
 }
 
-/* menu/run_selection_hook.c */
-/* menu/sel/run_selection_hook.c */
 void Menu_RunSelectionHook(void)
 {
     Debug_SelectAbilityPair();

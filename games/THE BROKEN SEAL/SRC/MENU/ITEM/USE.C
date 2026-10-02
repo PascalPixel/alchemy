@@ -1,28 +1,27 @@
 #include "EDITION.H"
 #include "TYPES.H"
-#include "ITEM_MENU.H"
+#include "INVENTORY_MENU.H"
 #include "SOUND_IDS.H"
 #include "TBS_EDITION.H"
 
 /* menu/item_menu/use.c */
 extern char MsgItemUseResult;
-extern struct ItemMenuState *gMenuWork;
 s32 Audio_PlayCue(s32);
-void RenderOutput_RedrawSavedRectFar(s32 window);
+void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 s32 Item_Use(s32 slot, s32 owner, s32 target);
 void Item_PlayUseAnimation(u32 item);
-s32 RenderOutput_ClearListFar(s32 window);
+void RenderOutput_ClearListFar(void *window);
 s32 InventoryMenu_ShowModalMessage(s32 message, s32 a, s32 b);
 void Owner_RecalculateStatsFar(s32 owner);
 
 s32 ItemMenu_Use(void)
 {
-    struct ItemMenuState *menu;
+    struct InventoryMenuState *menu;
     s32 result;
 
     menu = gMenuWork;
     result = Item_Use(
-        menu->selected_slot, menu->item_owner, menu->target_owner);
+        menu->selected_slots[0], menu->pane_owner[0], menu->pane_owner[1]);
 
     if (result == -1) {
         Audio_PlayCue(SOUND_MENU_ERROR);
@@ -36,8 +35,8 @@ s32 ItemMenu_Use(void)
         return result;
     }
 
-    Item_PlayUseAnimation(menu->selected_item & 0x1ff);
-    Owner_RecalculateStatsFar(menu->item_owner);
-    Owner_RecalculateStatsFar(menu->target_owner);
+    Item_PlayUseAnimation(menu->selected_items[0] & 0x1ff);
+    Owner_RecalculateStatsFar(menu->pane_owner[0]);
+    Owner_RecalculateStatsFar(menu->pane_owner[1]);
     return 1;
 }

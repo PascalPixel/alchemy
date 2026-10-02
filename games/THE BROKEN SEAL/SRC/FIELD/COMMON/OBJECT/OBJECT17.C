@@ -4,6 +4,8 @@
 #include "OBJECT_RUNTIME.H"
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
+#include "GAME_STATE.H"
+#include "SCRIPT_OBJECT_RUNTIME.H"
 
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void *ObjectTable_Get(u32 object);
@@ -39,11 +41,9 @@ void BattleFx_CopyLinkedObjectPosition(void);
 extern const u8 Data_0809fd38[];
 
 extern u8 gObjectSlots[];
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 ObjectDispatch_SetSingleChildField26Far(void *, s32);
 u16 ArcTan2(s32, s32);
 void *Object_GetById(u32);
-extern s16 gGameState[];
 extern const u8 ObjectMotion_ActionKind1Script[];
 extern const u8 ObjectMotion_ActionKind2Script[];
 extern const u8 ObjectMotion_ActionKind3Script[];
@@ -51,8 +51,8 @@ extern const u8 ObjectMotion_ActionKind4Script[];
 extern const u8 ObjectMotion_MoveTowardTargetScript[];
 extern const u8 ObjectMotion_TurnTowardLinkedScript[];
 extern const u8 ObjectMotion_ResetActionScript[];
-s32 Object_SetPosition(s32, s32, s32, s32);
-s32 Object_SetMode(s32, s32);
+void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_SetMode(struct ObjectRuntime *, s32);
 
 struct FacingRecord {
     u8 unknown_00[0x28];
@@ -149,14 +149,14 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 s32 Object_ResetAndClearField59(void *obj)
 {
     ObjectDispatch_SetSingleChildField26Far(obj, 0);
-    FIELD_AT_OFFSET(obj, s8 *, 0x59) = 0;
+    ((struct ScriptObjectRuntime *)obj)->flags_59 = 0;
     return 0;
 }
 
-s32 ObjectMotion_MoveTowardTarget(s32 arg0)
+s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 {
-    s32 object;
-    void *target;
+    s32 step;
+    struct ObjectRuntime *target;
     s32 deltaX;
     s32 deltaY;
     s32 cellX;
@@ -164,25 +164,24 @@ s32 ObjectMotion_MoveTowardTarget(s32 arg0)
     s32 newX;
     s32 distance;
 
-    object = arg0;
-    target = *(void **)(object + 0x68);
+    target = object->linked_object;
     if (target != 0) {
-        deltaX = *(s32 *)(target + 8) - *(s32 *)(object + 8);
+        deltaX = target->x - object->x;
         if (deltaX < 0)
             deltaX += 0xffff;
         cellX = deltaX >> 16;
-        deltaY = *(s32 *)(target + 0x10) - *(s32 *)(object + 0x10);
+        deltaY = target->z - object->z;
         if (deltaY < 0)
             deltaY += 0xffff;
         cellY = deltaY >> 16;
         distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
-        arg0 = *(s16 *)(object + 0x64);
-        if (distance >= arg0) {
-            newX = *(s32 *)(object + 8) +
-                (cellX << 20) / arg0;
-            Object_SetPosition(object, newX, *(s32 *)(object + 0x0c),
-                          *(s32 *)(object + 0x10) +
-                              __divsi3(cellY << 20, arg0));
+        step = object->action;
+        if (distance >= step) {
+            newX = object->x +
+                (cellX << 20) / step;
+            Object_SetPosition(object, newX, object->y,
+                          object->z +
+                              __divsi3(cellY << 20, step));
             Object_SetMode(object, 2);
         } else {
             Object_SetMode(object, 1);
@@ -217,8 +216,6 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object)
 
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
 {
-    s32 index;
-
     switch ((u32)(kind - 1)) {
     case 0:
         kind = (s32)ObjectMotion_ActionKind1Script;
@@ -236,8 +233,7 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
         kind = (s32)ObjectMotion_MoveTowardTargetScript;
         break;
     case 5:
-        index = 250;
-        object->linked_object = Object_GetById(*(u32 *)&gGameState[index]);
+        object->linked_object = Object_GetById(gGameState.selected_actor);
         kind = (s32)ObjectMotion_TurnTowardLinkedScript;
         break;
     case 6:

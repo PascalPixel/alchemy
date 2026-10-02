@@ -1,16 +1,13 @@
 #include "TYPES.H"
-
-struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
-struct PlacementList { struct PlacementEntry entries[64]; s32 count; };
-struct PlacementTable { u8 padding[8]; struct PlacementList list; };
+#include "BATTLE_PARTY.H"
 
 s32 BattleParty_ListActorIds(s32, u16 *);
-struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 owner);
 
 s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
 {
     u16 values[8];
-    struct PlacementList *list;
+    struct DjinnRecoveryList *list;
     s32 total;
     s32 found;
     s32 i;
@@ -33,13 +30,13 @@ s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
     i = 0;
     if (list->count != 0) {
         do {
-            if (list->entries[i].timer == -1) {
+            if (list->entries[i].turns == -1) {
                 for (j = 0; j < total; j++)
-                    if (values[j] == list->entries[i].id)
+                    if (values[j] == list->entries[i].unit_id)
                         break;
                 if (j != total) {
                     if (counts != 0)
-                        counts[list->entries[i].x]++;
+                        counts[list->entries[i].element]++;
                     found++;
                 }
             }

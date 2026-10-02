@@ -4,10 +4,7 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"
 
-struct BattleMotionSlot {
-    void *object;
-};
-
+#include "MOTION_OBJECT.H"
 
 /* The two party groups in the order their round-end effects resolve. */
 struct BattleGroupOrder {
@@ -31,11 +28,8 @@ void Audio_PlayCue(s32 cue);
 s32 BattleParty_ListActorIds(s32 group, u16 *ids);
 void BattleUnit_BuildStatusFlags(s32 unit_id, void *slot);
 void BattlePres_SetActorModeAndAction(s32 unit_id);
-struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void BattlePresentation_WaitForAdvance(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);
-u32 BattleEventRuntime_Reset(void);
-s32 BattleEventRuntime_WaitForReady(void);
 s32 BattleUnit_TickCounter132(s32 unit_id);
 s32 BattleUnit_TickCounter134(s32 unit_id);
 s32 BattleUnit_TickCounter136(s32 unit_id);

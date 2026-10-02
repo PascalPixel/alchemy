@@ -1,4 +1,8 @@
 #include "TYPES.H"
+#include "GAME_STATE.H"
+#include "FIELD_SCENE.H"
+#include "MAP.H"
+#include "MAP_SCROLL.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "SCENE.H"
@@ -12,19 +16,6 @@ struct ObjectTableWork {
 extern struct ObjectTableWork *gEventWork;
 void *ObjectTable_Get(s32);
 void Object_Destroy(void *);
-
-/* One row of a scene's object table; a row whose id is -1 ends it. */
-struct EventObjectEntry {
-    s16 id;                     /* 0x00 */
-    s16 condition;              /* 0x02 */
-    s32 action;                 /* 0x04 */
-    s32 x;                      /* 0x08 */
-    s32 y;                      /* 0x0c */
-    s32 z;                      /* 0x10 */
-    u16 facing;                 /* 0x14 */
-    u8 unknown_16;
-    u8 flags;                   /* 0x17 */
-};
 
 struct EventSprite {
     u8 unknown_00[0x18];
@@ -65,7 +56,7 @@ struct ObjectWork {
     u8 unknown_1a0[0x40];
     struct EventObject *camera_object;      /* 0x1e0 */
     u8 unknown_1e4[0x1c];
-    struct EventObjectEntry player[2];      /* 0x200 */
+    struct ScenePlacement player[2];      /* 0x200 */
 };
 
 struct PlayerState {
@@ -83,11 +74,6 @@ struct PlayerState {
 };
 
 /* One cell of the field map's 128-cell-wide collision grid in EWRAM. */
-struct MapCell {
-    u8 unknown_0[2];
-    u8 kind;
-    u8 unknown_3;
-};
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
@@ -97,11 +83,9 @@ struct ResourceMetadata {
     u8 height;
 };
 
-extern struct ObjectWork *Data_03001ebc;
-extern struct PlayerState Data_02000240;
-extern const struct EventObjectEntry Data_0809f810[2];
+extern const struct ScenePlacement Data_0809f810[2];
 void ObjectTable_ClearBattleSlots(void);
-void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot);
+void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void ObjectDispatch_SetSingleChildField26Far(struct EventObject *object, s32 value);
 void Object_SetMode(struct EventObject *object, s32 mode);
@@ -118,7 +102,6 @@ u32 Random16(void);
 u32 __umodsi3(u32 numerator, u32 denominator);
 void ObjectMotion_SetActionCallback(struct EventObject *object, s32 action);
 
-/* object/table/ObjectTable_FindLastActiveId.c */
 struct State_0808b824 {
     u8 padding[0x34];
     s32 values[58];
@@ -131,7 +114,7 @@ extern struct State_0808b824 *gWork;
    holds: party rows (ids up to 7) take their own table index, the others the
    next slot from `slot` up to 65. A row whose object already stands is moved
    to its place instead. */
-void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
+void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
     struct ObjectWork *work;
     struct EventObject *object;
@@ -145,7 +128,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
     u8 resource;
     u16 id;
 
-    work = Data_03001ebc;
+    work = (struct ObjectWork *)gEventWork;
     for (i = 0; i < 4; i++) {
         if (work->header[i] == (s32)entry)
             break;
@@ -154,11 +137,11 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
             break;
         }
     }
-    for (id = entry->id; (s16)id != -1 && slot <= 65; entry++, id = entry->id) {
+    for (id = entry->sprite; (s16)id != -1 && slot <= 65; entry++, id = entry->sprite) {
         /* FAKEMATCH: the ROM reads the row id once per step and extends it
            again in the body; without this second read the compiler shares
            the shifted id between the test and the body. */
-        id = entry->id;
+        id = entry->sprite;
         if ((s16)id <= 7)
             index = (s16)id;
         else if ((s16)id <= 0x2705)
@@ -169,7 +152,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
         if ((u32)(condition - 48) <= 79 && work->scene_mode != 3
             && !GameFlag_IsConditionActive(condition + 80))
             continue;
-        character = Party_RemapCharacterIdByFlags(entry->id);
+        character = Party_RemapCharacterIdByFlags(entry->sprite);
         object = ObjectTable_Get(index);
         if (object == 0) {
             object = Object_CreateFar(character, entry->x, entry->y, entry->z);
@@ -196,7 +179,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
                 sprite->phase = __umodsi3(Random16(), 30);
             object->facing = entry->facing;
             object->active = 1;
-            ObjectMotion_SetActionCallback(object, entry->action);
+            ObjectMotion_SetActionCallback(object, entry->behavior);
             Object_SetMode(object, 1);
             object->cell_x = object->x / 0x10000;
             object->cell_z = object->z / 0x10000;
@@ -234,10 +217,10 @@ void ObjectTable_DestroyAtIndex(s32 index)
  * the leader and the scene's own objects, put the leader on a ladder when
  * the map cell and the one north of it are both ladder cells (kind 0xfd),
  * and create the camera object that follows it. */
-void ObjectTable_ResetForObject(struct EventObjectEntry *table)
+void ObjectTable_ResetForObject(struct ScenePlacement *table)
 {
     struct ObjectWork *work;
-    struct EventObjectEntry *entry;
+    struct ScenePlacement *entry;
     struct EventObject *object;
     struct EventObject *camera;
     struct MapCell *cell;
@@ -246,8 +229,8 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
     s32 pos;
     s32 hgt;
 
-    work = Data_03001ebc;
-    leader = Data_02000240.leader;
+    work = (struct ObjectWork *)gEventWork;
+    leader = gGameState.selected_actor;
     entry = &work->player[0];
     work->player[0] = Data_0809f810[0];
     work->player[1] = Data_0809f810[1];
@@ -255,21 +238,21 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
         work->header[pos] = 0;
     ObjectTable_ClearBattleSlots();
     entry->condition = -1;
-    entry->id = leader;
-    entry->x = Data_02000240.x;
+    entry->sprite = leader;
+    entry->x = gGameState.x;
     entry->y = 0;
-    entry->z = Data_02000240.z;
-    entry->facing = Data_02000240.facing;
+    entry->z = gGameState.z;
+    entry->facing = gGameState.heading;
     Event_SpawnObjectTable(entry, leader);
     Event_SpawnObjectTable(table, 8);
 
     object = work->objects[leader];
-    object->terrain_id = Data_02000240.terrain_id;
+    object->terrain_id = ((struct PlayerState *)&gGameState)->terrain_id;
     pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
     cell = &MAP_CELLS[pos];
     above = &MAP_CELLS[pos - 128];
-    if (Data_02000240.y != 0 && cell->kind == 0xfd && above->kind == 0xfd) {
-        Data_02000240.on_ladder = 1;
+    if (gGameState.y != 0 && cell->collision_code == 0xfd && above->collision_code == 0xfd) {
+        gGameState.movement_mode = 1;
         hgt = Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) - 0x200000;
         object->y += hgt;
         object->ground = object->y;
@@ -277,7 +260,7 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
         ObjectDispatch_SetSingleChildField26Far(object, 0);
         Object_SetMode(object, 12);
     } else {
-        Data_02000240.on_ladder = 0;
+        gGameState.movement_mode = 0;
     }
 
     camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
@@ -288,7 +271,7 @@ void ObjectTable_ResetForObject(struct EventObjectEntry *table)
         meta->width = 15;
         meta->height = 9;
     }
-    *((void **)gMapWork[0]) = &camera->x;
+    ((struct MapScrollWork *)gMapWork[0])->origin = &camera->x;
     work->camera_object = camera;
 }
 
@@ -314,8 +297,7 @@ s32 ObjectTable_FindLastActiveId(void)
     return result;
 }
 
-/* object/table/ObjectTable_GetSlotAddress.c */
 void *ObjectTable_GetSlotAddress(u32 index)
 {
-    return *(u8 **)((u32)&Data_03001ebc) + index * 4 + 20;
+    return &gEventWork->objects[index];
 }

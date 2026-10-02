@@ -7,6 +7,26 @@
 /* Records both games keep in their battle sessions. Each game's
    BATTLE_WORK.H lays out its own session around them. */
 
+struct MotionObject;
+struct SpriteEntry;
+
+struct BattleObjectSlot {
+    struct MotionObject *object;
+    u16 resource;  /* the unit's sprite resource */
+    u16 overlay;   /* extra sprite resources registered on the unit's object */
+    u16 animation;
+    u16 effect;
+    s32 anchor_x;
+    s32 anchor_z;
+    s32 palette;
+    s32 scale;
+    u8 unknown_1c[0x04];
+    struct SpriteEntry *animation_entry; /* of the animation and effect resources */
+    struct SpriteEntry *effect_entry;
+    s16 active;
+    s16 fading; /* set while a defeated unit dissolves */
+};
+
 /* One queued action: the acting unit and what it does. */
 struct BattleActionRecord {
     s16 unit_id;                    /* 0x00 */
@@ -23,6 +43,10 @@ struct BattleSpoils {
     s32 defeated;                   /* 0x08 */
     u16 items[4];                   /* 0x0c */
 };
+
+LAYOUT_SIZE_GUARD(BattleObjectSlot_Size, struct BattleObjectSlot, 0x2c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BattleObjectSlot, anchor_x, 0x0c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BattleObjectSlot, active, 0x28);
 
 LAYOUT_SIZE_GUARD(BattleActionRecord_Size, struct BattleActionRecord, 0x10);
 LAYOUT_SIZE_GUARD(BattleSpoils_Size, struct BattleSpoils, 0x14);

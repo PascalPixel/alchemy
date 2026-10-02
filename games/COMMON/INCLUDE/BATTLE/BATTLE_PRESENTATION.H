@@ -44,6 +44,33 @@ LAYOUT_OFFSET_GUARD(BattlePresentationTransition_Active, struct BattlePresentati
 LAYOUT_SIZE_GUARD(BattlePresentationWork_Size, struct BattlePresentationWork, 0x54);
 LAYOUT_OFFSET_GUARD(BattlePresentationWork_Actors, struct BattlePresentationWork, actors, 0x24);
 
+/* Background modes share heap slot 44 with the other presentation work. */
+struct BattleBackgroundView {
+    u8 unknown_00[8];
+    s32 mode;
+    s32 second_mode;
+    s32 busy;
+};
+
+struct BattleAffine {
+    u16 pa, pb, pc, pd;
+    s32 x, y;
+};
+
+/* Each page supplies one BG2CNT value per display line. */
+struct BattleAffineHdma {
+    u32 page;
+    u8 unknown_04[12];
+    struct BattleAffine affine;
+    u16 lines[2][160];
+};
+
+LAYOUT_SIZE_GUARD(BattleBackgroundView_Size, struct BattleBackgroundView, 0x14);
+LAYOUT_OFFSET_GUARD(BattleBackgroundView_Mode, struct BattleBackgroundView, mode, 0x08);
+LAYOUT_SIZE_GUARD(BattleAffineHdma_Size, struct BattleAffineHdma, 0x2a0);
+LAYOUT_OFFSET_GUARD(BattleAffineHdma_Affine, struct BattleAffineHdma, affine, 0x10);
+LAYOUT_OFFSET_GUARD(BattleAffineHdma_Lines, struct BattleAffineHdma, lines, 0x20);
+
 struct BattlePlan;
 s32 BattlePres_BuildTargetList(
     struct BattlePlan *plan, struct BattlePresentationWork *work);

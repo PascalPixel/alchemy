@@ -1,9 +1,9 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 #include "BATTLE_PARTY.H"
+#include "BATTLE_WORK.H"
 
 extern u8 gLinkPeerSignatures[];
-extern u8 *gBattleWork;
 extern u8 gLinkStatus[];
 
 /* The five-stage link handshake that opens a linked battle turn. Each side
@@ -11,16 +11,6 @@ extern u8 gLinkStatus[];
    "EXEC", "tu" and "RN") and waits until the peer's record echoes it. A
    frame without a complete transfer counts as a miss; 25 misses in a row,
    or a peer that has already moved on to a different tag, fail with -1. */
-struct LinkWork {
-    u8 pad0[0x44];
-    u8 enabled;
-    u8 pad1[0x0b];
-    u8 side;
-    u8 pad2;
-    u8 paused;
-};
-
-#define LINK_WORK ((struct LinkWork *)gBattleWork)
 #define LINK_REC (u32)gLinkPeerSignatures
 #define LINK_STAT (*(u16 *)gLinkStatus)
 void WaitFrames(s32 frames);
@@ -38,14 +28,14 @@ s16 _call_via_r3(s32, s32, s16, s32);
 /* battle/presentation/sync_turn.c */
 s32 BattlePres_SyncTurn(void)
 {
-    struct LinkWork *work = LINK_WORK;
+    struct BattleSession *work = gBattleWork;
     u16 *peer;
     u16 *sync;
     s32 miss = 0;
     u16 unused[10]; /* FAKEMATCH: the reference reserves a 20-byte frame it never uses */
 
-    if (work->enabled != 0) {
-        u32 side = work->side;
+    if (work->two_sided != 0) {
+        u32 side = work->link_side;
         u32 other = 1;
 
         other ^= side;
@@ -54,7 +44,7 @@ s32 BattlePres_SyncTurn(void)
         side <<= 3;
         peer = (u16 *)(LINK_REC + side);
         sync = (u16 *)gSerialTransfer.reserved;
-        if (work->paused != 0) {
+        if (work->link_paused != 0) {
             goto fail;
         }
 
@@ -170,15 +160,14 @@ s32 BattlePres_SyncTurn(void)
 s32 BattleParty_AssignMemberSlots(void)
 {
     u16 active_members[8];
-    u8 *battle_state = gBattleWork;
+    struct BattleSession *battle_state = gBattleWork;
     s32 party_size = BattleParty_PrepareActiveOwners(active_members);
     s32 member_slot;
     s32 unit_id;
 
     for (member_slot = 0; member_slot < party_size; member_slot++) {
         unit_id = active_members[member_slot];
-        unit_id += 72;
-        battle_state[unit_id] = (s8)(member_slot - 128);
+        battle_state->owner_slots[unit_id] = (s8)(member_slot - 128);
     }
 }
 

@@ -16,7 +16,6 @@ extern u8 gSaveBuffer[];
 extern u8 gSaveStamp[];
 extern u8 MsgNoBackupMemory;
 extern u8 MsgSaveFailed;
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 SaveState_InitializeWorkspace(void);
 u32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
 s32 SaveState_WriteRecord(s32 slot, void *buffer);

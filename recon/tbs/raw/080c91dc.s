@@ -142,14 +142,14 @@ BattleEffect_RunFallingParticles:
 	movs r2, #7
 	movs r0, #46
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #3
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #2
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	b .L_080c932a
 .L_080c930a:
 	movs r3, #2
@@ -158,14 +158,14 @@ BattleEffect_RunFallingParticles:
 	movs r2, #7
 	movs r3, #6
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r3, #3
 	str r3, [sp, #0]
 	movs r0, #47
 	movs r1, #7
 	movs r2, #7
 	movs r3, #6
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 .L_080c932a:
 	ldr r3, .L_080c938c
 	adds r2, r3, #0

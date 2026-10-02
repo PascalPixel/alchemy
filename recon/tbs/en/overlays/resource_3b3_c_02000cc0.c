@@ -1,61 +1,52 @@
-/* NONMATCHING: resource_3b3 at 0x02008cc0, TakaraHashira_CopyCellBlock,
- * 184/184 bytes with its pool (2026-09-29). Placed as
- * FIELD/TAKARA_HASHIRA/COPY_CELL_BLOCK.C in place of the listing section
- * .text.x02008cc0, it scores 290 under alchemy permute: 9 register-only and
- * 4 reordered instructions, frame 8 and every pool word agree.
- *
- * Remaining difference, all in the inner loop's preheader: the reference
- * hoists 0xfff (r8), 15 (r7), the row base (sp+0), 0x06002800 (lr) and only
- * then copies the column bound into ip, keeping 0x02020004 in r6 and
- * 0x06002840 in r1. Here the bound is copied into ip first and 0xfff into r8
- * last, which swaps r1/r2 and r2/r6 in the body. A named bound variable
- * (680) and a plain nested for loop (1065) are worse; three permute runs of
- * 400-580 s from this draft found nothing below 290.
- *
- * The chains of copied pointers are permute output that keeps the two
- * 0x02020000/0x02020004 loads from being CSEd into one base register; the
- * plain spelling hoists 0x02020000 and spills two more words. Tag them
- * FAKEMATCH (forced temporaries) if this is ever adopted. */
+/* NONMATCHING: resource_3b3 .text.x02008cc0, TakaraHashira_CopyCellBlock,
+ * 184/184 bytes with its pool; its twin is resource_394 .text.x02008098
+ * (KorimaMagari_DrawPanel). Destined for FIELD/TAKARA_HASHIRA as its own
+ * module in place of the listing section.
+ * 2026-10-02 (slice 13): rewritten without the temporary chains; 13 of 86
+ * instructions differ (the chained draft had 19). What the loop pass dumps
+ * showed, and what this body now reproduces:
+ * - the inner loop must hold 32 instructions in the first loop pass and 27
+ *   in the second, so that only 0xfff and 0x06002800 are hoisted and the
+ *   three later constants stay inside. A 16-bit offset gives exactly that;
+ * - src and dst are each assigned twice, which keeps them out of the local
+ *   allocator, so the second source address is not tied to the offset and
+ *   the second pair of statements comes out exactly as the game's.
+ * Remaining difference: the game hoists the column bound's copy in the
+ * second loop pass, after the two constants, which needs one instruction
+ * between that copy and the loop's compare. Written as a plain
+ * `for (col = destX; col < destX + width; col++)` the copy has a lifetime
+ * of one and stays in the loop (21 differ); the do/while below gets the
+ * lifetime of two, but its compare is then `cmp ip, r0; bgt` where the game
+ * has `cmp r0, ip; blt`, and the two hoisted constant loads are scheduled
+ * in the other order. Wanted: a loop form that evaluates the bound before
+ * the increment and still compares col against it. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 
 /* Draws a width by height block of map cells, starting at cell (x, y), into
- * the background plane's screen blocks at (destX, destY), each cell's tile
- * entries read from its metatile. */
+ * the background plane's screen blocks at (destX, destY): each cell's two
+ * rows of tile entries come from its map block. */
 void TakaraHashira_CopyCellBlock(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY)
 {
     u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);
     s32 row;
     s32 col;
 
-    row = destY;
-    if (row < destY + height) {
-        do {
-            col = destX;
-            while ((u32)(col < width + destX) != 0) {
-                u32 offset = (0xfff & *cell++) * 8;
-                s32 index = (plane * 16 + (row & 15)) * 32 + (col & 15);
-                u32 *tmp;
-                u32 *tmp3;
-                u32 *tmp2;
-                u32 *tmp4;
-                u32 *tmp5;
-                tmp3 = (u32 *)0x06002800 + index;
-                tmp = tmp3;
-                tmp5 = (u32 *)(Ram_MapBlocks + offset);
-                tmp4 = tmp5;
-                tmp3 = tmp4;
-                tmp2 = tmp3;
-                *tmp = *tmp2;
-                col++;
-                tmp5 = (u32 *)0x06002840;
-                tmp2 = tmp5;
-                tmp = tmp2;
-                tmp4 = (u32 *)(offset + (Ram_MapBlocks + 4));
-                tmp[index] = *tmp4;
-            }
-            cell += 128 - width;
-            (u32)row++;
-        } while (row < destY + height);
+    for (row = destY; row < destY + height; row++) {
+        col = destX;
+        if (col < destX + width) do {
+            u16 offset = (0xfff & *cell++) * 8;
+            s32 index = (plane * 16 + (row & 15)) * 32 + (col & 15);
+            u32 *src;
+            u32 *dst;
+
+            dst = (u32 *)0x06002800 + index;
+            src = (u32 *)(Ram_MapBlocks + offset);
+            *dst = *src;
+            src = (u32 *)(Ram_MapBlocks + 4 + offset);
+            dst = (u32 *)0x06002840 + index;
+            *dst = *src;
+        } while (destX + width > ++col);
+        cell += 128 - width;
     }
 }

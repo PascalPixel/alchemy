@@ -259,3 +259,116 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
     SceneEffect_SpawnNineRadialEffects(selector);
     Engine_EventWait(30);
 }
+
+struct FieldActor *Battle_GetWorkObject1e0(void);
+
+/* The scale pans, actors 8 and 9, keep a signed index into the height table. */
+struct FloatingBlock {
+    u8 unknown_00[0x64];
+    s16 height_index;
+};
+
+/* Leaves a block resting where it is: no target height, no fall, no step. */
+static __inline__ void FloatingBlock_Settle(struct FieldActor *block, s32 value)
+{
+    block->target_y = ACTOR_NO_TARGET;
+    *(s32 *)block->unknown_14 = value;
+    block->velocity_y = value;
+    block->motion_flags = value;
+    ((struct FloatingBlock *)block)->height_index = value;
+}
+
+static __inline__ void Actor_CopyPosition(struct FieldActor *to, struct FieldActor *from)
+{
+    to->x.fixed = from->x.fixed;
+    to->y.fixed = from->y.fixed;
+    to->z.fixed = from->z.fixed;
+}
+
+/*
+ * After a push, deals with the first of blocks 10 to 13 that has come to
+ * rest somewhere that matters and marks it done with flag 0x200 + block:
+ * on the socket at cell (13, 7) it locks in place; pushed into the pit it
+ * sinks behind two splashes and leaves the room; on the scale at row 19 it
+ * changes places with the first earlier block still in play, drops onto
+ * the pan below, and tips the two pans one step.
+ */
+void VinasuHeya_ResolveFloatingBlock(void)
+{
+    struct FieldActor work;
+    struct FieldActor *first = NULL;
+    struct FieldActor *second = NULL;
+    struct FieldActor *block;
+    struct FieldActor *other;
+    s32 i;
+    s32 j;
+    s32 slot;
+    s32 x;
+    s32 z;
+
+    Engine_EventBegin();
+    for (i = 0; i < 4; i++) {
+        block = Object_GetById(i + 10);
+        x = block->x.fixed >> 20;
+        if (x == 13 && (z = block->z.fixed >> 20) == 7 && !GameFlag_IsSet(0x200 + i)) {
+            OverlayObject_WaitUntilIdle(block);
+            GameFlag_Set(0x200 + i);
+            block->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            block->collision_flags = 0;
+            block->motion_flags = 0;
+            Engine_MapCopyCellAttributes(4, 19, 1, 1, x, z);
+            break;
+        }
+        if (block->sprite->priority == 3 && !GameFlag_IsSet(0x200 + i)) {
+            /* FAKEMATCH: the zero is taken before the priority call, in the search counter, so it is held in r5 across the call */
+            j = 0;
+            Engine_ActorSetSpritePriority(i + 10, 1);
+            *(s32 *)block->unknown_44 = j;
+            if (block->z.fixed >> 20 <= 12) {
+                first = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xe00000, 253);
+                second = OverlayObject_SpawnWithMode14(block->x.fixed, 0, 0xf00000, 253);
+            }
+            OverlayObject_WaitUntilIdle(block);
+            Engine_ActorSetPosition(i + 10, 0, 0);
+            Engine_ObjectDispatchRelease(first);
+            Engine_ObjectDispatchRelease(second);
+            GameFlag_Set(0x200 + i);
+            break;
+        }
+        if (block->z.fixed >> 20 == 19 && !GameFlag_IsSet(0x200 + i)) {
+            FloatingBlock_Settle(block, 0);
+            slot = i;
+            for (j = 0; j < i; j++) {
+                if (!GameFlag_IsSet(0x200 + j)) {
+                    other = Object_GetById(j + 10);
+                    Actor_CopyPosition(&work, block);
+                    Actor_CopyPosition(block, other);
+                    Actor_CopyPosition(other, &work);
+                    slot = j;
+                    break;
+                }
+            }
+            other = Object_GetById(slot + 10);
+            FloatingBlock_Settle(other, 0);
+            Engine_CameraSetSpeed(0x30000, 0x6000);
+            Battle_GetWorkObject1e0()->motion_flags = 0;
+            Engine_CameraMoveTo(0x880000, 0x80000, 0x1580000, 1);
+            Engine_CameraWaitForMove();
+            SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);
+            if (Object_GetById(slot + 10)->x.fixed >> 20 == 6) {
+                ((struct FloatingBlock *)Object_GetById(8))->height_index++;
+                ((struct FloatingBlock *)Object_GetById(9))->height_index--;
+            } else {
+                ((struct FloatingBlock *)Object_GetById(8))->height_index--;
+                ((struct FloatingBlock *)Object_GetById(9))->height_index++;
+            }
+            Object_GetById(slot + 10)->update =
+                (void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
+            VinasuHeya_LowerFloatingBlocks(40);
+            Object_GetById(slot + 10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            GameFlag_Set(slot + 0x200);
+            break;
+        }
+    }
+    Engine_EventEnd();
+}

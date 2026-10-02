@@ -1,3 +1,13 @@
+/* 2026-10-02 (wave 1, slice 1): still 1530. Two readings of the reference
+   for the next attempt. The entry is compared as a full word (ldrh, cmp
+   against 0xffff), so it is an int-width variable: a u16 one narrows the
+   test to lsls #16 against 0xffff0000. And combine folds a sign-extending
+   load into its (u16) conversion unless a store or a call lies between
+   the two; the reference keeps all four ldrsh and lsls/lsrs pairs, the
+   delay's before the first call, so each conversion follows a store or is
+   made where combine cannot reach the load. A volatile argument pointer,
+   u16 locals filled from s32 ones, an inline step with u16 parameters and
+   a record with s16 fields all score 32-39 rows off. */
 /* Not-yet-C: complete 116-byte map-copy sequence, split from 08010000.
  * The original 120-byte candidate differs by 34 aligned halfwords.
  * Widening source to u32 recovers unsigned entry reads but removes the

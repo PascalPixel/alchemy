@@ -104,7 +104,7 @@ typedef struct Position3 {
 
 /* The stage's data, in the overlay's read-only data and work. */
 extern u8 HexDigits[];
-extern u8 KorosseoKabe_MarkerGraphics[];
+extern u8 Korosseo_GaugeGraphics[];
 extern s32 KorosseoKabe_SparkScript[];
 extern s32 KorosseoKabe_RaiseScript[];
 extern u32 KorosseoKabe_DirectionSteps[];
@@ -178,7 +178,7 @@ void Korosseo_RestoreCompetitor();
 void Korosseo_UpdatePathRival(void);
 void Korosseo_UpdateModeTask(void);
 void Korosseo_UpdateMarker(void);
-void FieldScene_RunExtendedActorSequence(void);
+void Korosseo_DrawGauge(void);
 
 /* The area's functions, in cartridge order. */
 void SceneData_NoOpHandler(void);

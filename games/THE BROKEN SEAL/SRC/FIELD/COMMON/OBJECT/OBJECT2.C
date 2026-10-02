@@ -41,7 +41,7 @@ struct ShortcutState {
 
 extern struct ShortcutState gGameState;
 
-s32 Menu_Check();
+void Debug_SelectAbilityPair(void);
 
 s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
 {
@@ -132,5 +132,5 @@ void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
 /* menu/sel/run_selection_hook.c */
 void Menu_RunSelectionHook(void)
 {
-    Menu_Check();
+    Debug_SelectAbilityPair();
 }

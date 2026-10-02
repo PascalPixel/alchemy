@@ -180,7 +180,7 @@ Func_080cc5d8:
 	movs r1, #7
 	movs r3, #7
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080cc7d8
 	adds r3, #184
 	ldr r3, [r3]
@@ -304,7 +304,7 @@ Func_080cc5d8:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080cc94c
 	ldrsb r2, [r3, r7]
 	ldr r3, .L_080cc950

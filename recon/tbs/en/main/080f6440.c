@@ -1,16 +1,22 @@
-/* NONMATCHING: alchemy drafts scores 11572, 528 differing instructions of
- * 1731 (was 48534 and 1088). Control flow, the 44-byte frame against 40 and
- * most registers now agree; work is r7, the pressed-keys pointer r6.
- * Found: the object buffer words are volatile (their addresses stay
- * work + index, never a walking pointer); a row stop count is a signed 8-bit
- * bitfield written as -1; the fill loops count with !=; three counters
- * (rows, lines, and a third for the coin, held-row, 14 and 8 loops); the
- * prizes live in a struct whose label is 12 bytes into gCell, written here
- * as gReelSave, which needs that label in recon/tbs/sym_ewram.s on adoption.
- * Remaining: one spill too many; the second gKeysHeld read comes before the
- * pressed store in the listing; the line-check loop keeps the match symbol
- * in r4 and reads pos as work + row offset; the build_objects join stubs
- * differ in temporaries. Messages other than MsgSlotsBet still need names. */
+/* NONMATCHING: alchemy drafts scores 6025, 234 differing instructions of
+ * 1731 (was 11572 and 528). The frame is the listing's 40 bytes now.
+ * Found: the line check reads the symbol in each of its three branches (the
+ * shared modulo call and cell read in the listing are those three tails
+ * merged after register allocation, and the row offset is used twice per
+ * branch, which keeps it an offset rather than a row pointer); its hit count,
+ * mismatch flag and first symbol are declared in their blocks; the pad is
+ * read twice before the pressed bits are stored, the second read masked into
+ * a variable; n is cleared before blend is set. Earlier: the object buffer
+ * words are volatile; a row stop count is a signed 8-bit bitfield; the fill
+ * loops count with !=; the prizes live in a struct whose label is 12 bytes
+ * into gCell, written here as gReelSave, which needs that label in
+ * recon/tbs/sym_ewram.s on adoption.
+ * Remaining: the listing spills the hit count and keeps the mismatch flag in
+ * r9, the column in r10 and the bet address in r11 where this draft spills
+ * the flag and keeps the count in r11, the column in r8, the bet address in
+ * r9 (coins and the bet address are swapped the same way in state 0); the
+ * build_objects join stubs follow from that. Messages other than MsgSlotsBet
+ * still need names. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIXED_MATH.H"
@@ -92,12 +98,10 @@ void ReelGame_RunFrame(void)
     s32 n;
     s32 blend;
     u16 pad;
+    u32 held;
     s32 coins;
     s32 all;
     s32 cnt;
-    s32 hits;
-    s32 found;
-    s32 mixed;
     s32 col;
     s32 v;
     s32 x;
@@ -107,8 +111,8 @@ void ReelGame_RunFrame(void)
 
     work = ((struct ReelWork **)gBattleFxWork)[6];
     fx = ((struct BattleEffectWork **)gBattleFxWork)[0];
-    blend = 0x400;
     n = 0;
+    blend = 0x400;
 
     Random16();
 
@@ -120,8 +124,9 @@ void ReelGame_RunFrame(void)
             (volatile u32 *)dma);
 
     pad = gKeysHeld;
+    held = gKeysHeld & 0xf0;
     work->pressed = pad & ~work->keys;
-    work->dir = gKeysHeld & 0xf0;
+    work->dir = held;
     if ((work->keys & 0xf0) == work->dir) {
         if (work->repeat > 12)
             work->repeat = 12;
@@ -169,7 +174,7 @@ void ReelGame_RunFrame(void)
         REG_BLDALPHA = 0x10;
         if (work->pressed & 1) {
             work->state = 1;
-            fx->reel_stop_frames = 0;
+            fx->frame = 0;
             UiWork_FinalizeFar(work->window, 1);
             for (k = 0; k != work->bet; k++)
                 PartyInventory_RemoveFar(228);
@@ -185,7 +190,7 @@ void ReelGame_RunFrame(void)
             all = 1;
         if (work->pressed & 1) {
             work->timer = 0;
-            fx->reel_stop_frames = 0;
+            fx->frame = 0;
             if (work->spins == 4) {
                 work->spins = 0;
                 work->cursor = 0;
@@ -299,8 +304,8 @@ void ReelGame_RunFrame(void)
         if (work->timer == 16)
             AudioCommand_PlayFar(0x132);
         if (work->timer > 56) {
-            if (fx->reel_stop_frames > 31 || (work->pressed & 0x100)) {
-                fx->reel_stop_frames = 0;
+            if (fx->frame > 31 || (work->pressed & 0x100)) {
+                fx->frame = 0;
                 for (i = 0; i != 5; i++) {
                     if (work->row[i].held == 0 && work->row[i].stop == -1) {
                         work->row[i].stop = (Random16() & 3) + 4;
@@ -324,24 +329,29 @@ void ReelGame_RunFrame(void)
         }
 
         if (cnt == 5) {
-            hits = 0;
+            s32 hits = 0;
+
             for (col = 0; col != 7; col++) {
+                s32 mixed;
+                s32 found;
+
                 work->line[col] = 0;
                 mixed = 0;
                 found = -1;
                 if (col > 3 - work->bet && col < work->bet + 3) {
                     for (i = 0; i != 5; i++) {
+                        s32 sym;
+
                         if (col == 0)
-                            v = i - work->row[i].pos / 16 + 22;
+                            sym = work->row[i].cell[(i - work->row[i].pos / 16 + 22) % 21];
                         else if (col == 6)
-                            v = -i - work->row[i].pos / 16 + 26;
+                            sym = work->row[i].cell[(-i - work->row[i].pos / 16 + 26) % 21];
                         else
-                            v = col - work->row[i].pos / 16 + 21;
-                        v = work->row[i].cell[v % 21];
-                        if (v != 5) {
+                            sym = work->row[i].cell[(col - work->row[i].pos / 16 + 21) % 21];
+                        if (sym != 5) {
                             if (found == -1)
-                                found = v;
-                            else if (found != v)
+                                found = sym;
+                            else if (found != sym)
                                 mixed = 1;
                         }
                     }
@@ -406,7 +416,7 @@ void ReelGame_RunFrame(void)
                 }
             }
         }
-        (fx->reel_stop_frames)++;
+        (fx->frame)++;
         work->timer++;
     }
 

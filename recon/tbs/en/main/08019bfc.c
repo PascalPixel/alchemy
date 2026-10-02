@@ -1,4 +1,16 @@
-/* 2026-09-29 alchemy permute: score 1205 to 1170 on the permuter's scorer
+/* 2026-10-01 (wave 1, slice 1): the code reads as a tree walk with one bit
+   reader used three times (bit = bits & 1; bits >>= 1; refill from the
+   cursor with 0x80 on top when a set bit empties the buffer): for (;;) {
+   read tree bit; if set, break; read text bit; if clear, continue; depth =
+   0; do { read tree bit; clear: depth++, set: rank++, depth-- } while
+   (depth >= 0); }. Written that way with a bit-reader macro, every
+   instruction has the reference's shape and the five loop values are a
+   permutation of r0-r4 (1510: 76 register-only): the reference allocates
+   depth r3, bit r2, tree cursor r1, text bits r0, tree bits r4, plain C
+   gives bit r3, tree bits r2, text bits r1, tree cursor r0, depth r4. The
+   reference also loads the text reader's 1 inside the loop where the tree
+   reader's 1 and both 0x80s are hoisted. The goto body below scores lower.
+   2026-09-29 alchemy permute: score 1205 to 1170 on the permuter's scorer
    (0 is exact); remaining 79 register-only, 1 operand, 7 reordered, 1
    inserted, 2 deleted. Kept rewrites: 2x swap commutative operands, 1x
    reorder independent statements, 1x introduce a temporary. FAKEMATCH: the

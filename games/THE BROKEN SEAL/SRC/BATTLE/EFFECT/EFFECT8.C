@@ -11,7 +11,7 @@ typedef void (*Callback)(s32 *);
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void BattleEffect_RunCirclingFallingScene(s32 *);
 void BattleEffect_RunEmberColumns(s32 *);
-void Unnamed_080eb754(s32 *);
+void BattleFx_RunObjectRow(s32 *);
 void BattleEffect_RunStagedParticles(s32 *);
 void BattleEffect_RunDitherDissolveScene(s32 *);
 void BattleFx_InitializeMode6(s32 *);
@@ -49,7 +49,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleEffect_RunEmberColumns(arg0);
             break;
         case 3:
-            Unnamed_080eb754(arg0);
+            BattleFx_RunObjectRow(arg0);
             break;
         case 4:
             BattleEffect_RunStagedParticles(arg0);

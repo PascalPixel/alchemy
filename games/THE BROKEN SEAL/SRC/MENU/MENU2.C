@@ -24,11 +24,30 @@
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
+/* One entry of the selection list: a 52-byte record linked into the list
+   the screen shows, sliding from y toward target_y by speed each frame. */
 struct SelectionNode {
-    u8 pad0[10];
+    struct SelectionNode *prev;
+    struct SelectionNode *next;
+    u16 base;
     u16 kind;
+    u16 slot;
+    u8 pad_0e[2];
+    s16 y;
+    u16 z;
+    u16 speed;
+    u8 pad_16[2];
+    u16 target_y;
+    u16 target_z;
+    u8 pad_1c[6];
+    s16 scale;
+    u16 scale_step;
+    u16 scale_target;
+    u8 pad_28[12];
 };
 
+/* The screen keeps its entries in its own block: the list entries start
+   after the two arrow records and the head pointer follows the pool. */
 struct SelectionScreen {
     u8 pad0[8];
     u16 upScroll;
@@ -36,11 +55,17 @@ struct SelectionScreen {
     u8 pad1[0x3c - 0xc];
     u16 downScroll;
     u16 downArrow;
-    u8 pad2[0x348 - 0x40];
+    u8 pad2[0x68 - 0x40];
+    struct SelectionNode pool[14];
+    u8 pad_340[8];
     struct SelectionNode *node;
-    u8 pad3[0x394 - 0x34c];
+    u8 pad3[8];
+    u16 kinds[16];
+    u16 bases[16];
     u16 count;
-    u8 pad4[0x39c - 0x396];
+    u16 base_y;
+    u16 base_z;
+    u8 pad4[2];
     u16 top;
     u16 cursor;
     u16 busy;
@@ -48,7 +73,10 @@ struct SelectionScreen {
 };
 
 LAYOUT_OFFSET_GUARD(SelectionScreen_DownArrow, struct SelectionScreen, downArrow, 0x3e);
+LAYOUT_OFFSET_GUARD(SelectionScreen_Pool, struct SelectionScreen, pool, 0x68);
 LAYOUT_OFFSET_GUARD(SelectionScreen_Node, struct SelectionScreen, node, 0x348);
+LAYOUT_OFFSET_GUARD(SelectionScreen_Kinds, struct SelectionScreen, kinds, 0x354);
+LAYOUT_OFFSET_GUARD(SelectionScreen_BaseY, struct SelectionScreen, base_y, 0x396);
 LAYOUT_OFFSET_GUARD(SelectionScreen_Status, struct SelectionScreen, status, 0x3a2);
 extern struct SelectionScreen *gResQueueWork;
 extern u32 gKeyState;
@@ -99,7 +127,7 @@ struct StepMenu {
 #define MENU_BASE_Y(state) (*(u16 *)((u8 *)(state) + 0x396))
 #define MENU_BASE_Z(state) (*(u16 *)((u8 *)(state) + 0x398))
 void WaitFrames(s32 frames);
-void Menu_ScrollSelectionList(struct StepMenu *state, u32 mode);
+void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
 void MenuSelection_SetupEntry(u32 id, u32 kind, struct StepNode *node, u32 flag);
 
 struct MenuResourceNode {
@@ -320,7 +348,7 @@ void Menu_StepRight(struct StepMenu *state)
             state->cursor--;
             state->scroll_down = 8;
             state->top++;
-            Menu_ScrollSelectionList(state, 1);
+            Menu_ScrollSelectionList((struct SelectionScreen *)state, 1);
             if (state->top + state->cursor + 2 == state->count)
                 state->more_below = 0;
             state->more_above = 1;
@@ -378,7 +406,7 @@ void Menu_StepLeft(struct StepMenu *state)
             if (state->cursor == 1 && state->top != 0) {
                 state->scroll_up = 8;
                 state->top--;
-                Menu_ScrollSelectionList(state, 0);
+                Menu_ScrollSelectionList((struct SelectionScreen *)state, 0);
                 if (state->top == 0)
                     state->more_above = 0;
                 state->more_below = 1;
@@ -485,4 +513,106 @@ void Menu_SendNodeCountList(u8 *arg0)
     }
     data[count] = 0xff;
     BattlePres_SetActorModesFar(data, 0);
+}
+
+struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
+void Resource_ResetEntry(s32 id);
+
+/* Scrolls the visible list one row. A new entry grows in at the far end
+   while every entry slides 16 lines, two a frame, and the entry that
+   leaves shrinks away; then the entry that left is released. */
+void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
+{
+    struct SelectionNode *p;
+    struct SelectionNode *last;
+    struct SelectionNode *first;
+    s32 base;
+    s32 kind;
+    u32 index;
+    s32 y;
+    s32 z;
+
+    if (forward != 0) {
+        index = screen->top + SELECTION_ROWS;
+        base = screen->bases[index];
+        kind = screen->kinds[index];
+        p = Resource_FindFreeTransferEntry(0);
+        if (p == NULL)
+            return;
+        MenuSelection_SetupEntry(kind, base, (struct StepNode *)p, 0);
+        y = screen->base_y;
+        p->y = y + 80;
+        z = screen->base_z;
+        p->target_y = y + 64;
+        p->z = z;
+        p->target_z = z;
+        p->scale_step = 32;
+        p->scale = 32;
+        p->scale_target = 256;
+        p->speed = -2;
+        last = p;
+        p = screen->node;
+        p->scale_step = -32;
+        p->scale_target = 0;
+        for (;;) {
+            p->target_y = p->y - 16;
+            p->speed = -2;
+            if (p->next == NULL)
+                break;
+            p = p->next;
+        }
+        p->next = last;
+        last->next = NULL;
+        last->prev = p;
+        p = screen->node;
+        do {
+            WaitFrames(1);
+        } while (p->scale != 0);
+        screen->node = p->next;
+        Resource_ResetEntry(p->slot);
+        p->kind = 0;
+        p = p->next;
+        p->prev = NULL;
+    } else {
+        index = screen->top;
+        base = screen->bases[index];
+        kind = screen->kinds[index];
+        p = Resource_FindFreeTransferEntry(0);
+        if (p == NULL)
+            return;
+        MenuSelection_SetupEntry(kind, base, (struct StepNode *)p, 0);
+        p->y = screen->base_y - 16;
+        p->z = screen->base_z;
+        p->target_z = p->z;
+        p->speed = 2;
+        p->scale = 32;
+        p->scale_step = 32;
+        p->target_y = p->y + 16;
+        p->scale_target = 256;
+        first = p;
+        p = screen->node;
+        p->prev = first;
+        first->next = p;
+        first->prev = NULL;
+        screen->node = first;
+        p = first;
+        for (;;) {
+            p->target_y = p->y + 16;
+            p->speed = 2;
+            if (p->next == NULL)
+                break;
+            p = p->next;
+        }
+        p->scale_target = 0;
+        p->scale_step = -32;
+        p = screen->node;
+        do {
+            WaitFrames(1);
+        } while (p->scale != 256);
+        while (p->next != NULL)
+            p = p->next;
+        Resource_ResetEntry(p->slot);
+        p->kind = 0;
+        p->prev->next = NULL;
+    }
 }

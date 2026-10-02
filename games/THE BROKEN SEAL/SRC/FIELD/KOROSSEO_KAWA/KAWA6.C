@@ -67,12 +67,12 @@ typedef struct ActiveSubjectSlot {
 } ActiveSubjectSlot;
 
 extern u8 LinkedMessage_WouldYouLikeHearDescription;
-extern u8 KorosseoKawa_ImageData[];
+extern u8 Korosseo_GaugeGraphics[];
 extern u8 Korosseo_UpdatePathRival[];
 extern u8 HexDigits[];
 extern u32 KorosseoKawa_DirectionSteps[];
 typedef void(*SceneTask)(void);
-void Scene_RunScene3baSequenceA(void);
+void Korosseo_DrawGauge(void);
 s32 Resource_GetTableEntryFar(void);
 void Resource_DecodeType01(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
@@ -208,13 +208,13 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     *(u16 *)(desc + 218) = 0;
     *(u16 *)(desc + 220) = 0;
 
-    Resource_DecodeType01(KorosseoKawa_ImageData, handle);
+    Resource_DecodeType01(Korosseo_GaugeGraphics, handle);
 
     pal = Resource_FindFreeEntry();
     *(u16 *)(desc + 216) = (u16)pal;
     Engine_VramLoad((s16)pal, 512, handle);
 
-    Scheduler_AddOrUpdateCallback((s32)Scene_RunScene3baSequenceA + 1, 0xc76);
+    Scheduler_AddOrUpdateCallback((s32)Korosseo_DrawGauge + 1, 0xc76);
 
     Runtime_BumpFree(handle);
 }

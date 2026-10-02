@@ -26,7 +26,7 @@ struct InventoryMenuState {
     s32 message_window;             /* 0x10c */
     u8 unknown_110[0x64];
     u16 selected_slot;              /* 0x174 */
-    u8 unknown_176[2];
+    u16 equip_item;                 /* 0x176 */
     u16 selected_item;              /* 0x178 */
     u8 unknown_17a[2];
     struct InventoryMenuIcon *cursor; /* 0x17c */

@@ -195,7 +195,7 @@ BattleFx_InitializeMode12:
 	movs r2, #7
 	movs r0, #46
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r3, .L_080e17c0
 	adds r3, #184
 	ldr r3, [r3]
@@ -598,7 +598,7 @@ BattleFx_InitializeMode12:
 	movs r0, #47
 	movs r1, #7
 	str r3, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080e1ac8
 	ldr r2, [r2]
 	str r2, [sp, #88]
@@ -636,7 +636,7 @@ BattleFx_InitializeMode12:
 	movs r1, #7
 	movs r2, #7
 	movs r3, #3
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r4, .L_080e1db0
 	ldr r4, [r4]
 	str r4, [sp, #88]
@@ -818,7 +818,7 @@ BattleFx_InitializeMode12:
 	movs r1, #7
 	movs r3, #3
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, [sp, #28]
 	movs r5, #96
 	movs r6, #32
@@ -841,7 +841,7 @@ BattleFx_InitializeMode12:
 	movs r3, #7
 	movs r0, #47
 	str r4, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	str r5, [sp, #4]
 	str r6, [sp, #0]
 	ldr r5, .L_080e1db0
@@ -1313,7 +1313,7 @@ BattleFx_InitializeMode12:
 	movs r2, #7
 	movs r1, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r1, #3
 	mov r0, r9
 	bl __modsi3
@@ -1474,7 +1474,7 @@ BattleFx_InitializeMode12:
 	movs r3, #3
 	movs r0, #47
 	str r5, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	movs r1, #24
 	movs r5, #24
 	movs r6, #12
@@ -1531,7 +1531,7 @@ BattleFx_InitializeMode12:
 	movs r2, #7
 	movs r3, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r0, .L_080e24fc
 	str r5, [sp, #4]
 	str r6, [sp, #0]
@@ -1549,7 +1549,7 @@ BattleFx_InitializeMode12:
 	movs r1, #7
 	movs r3, #11
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080e24fc
 	str r5, [sp, #4]
 	str r6, [sp, #0]
@@ -1567,7 +1567,7 @@ BattleFx_InitializeMode12:
 	movs r2, #7
 	movs r3, #15
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	str r5, [sp, #4]
 	str r6, [sp, #0]
 	ldr r5, .L_080e24fc
@@ -1639,7 +1639,7 @@ BattleFx_InitializeMode12:
 	movs r3, #15
 	movs r0, #47
 	movs r1, #7
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r2, .L_080e24fc
 	ldr r2, [r2]
 	movs r3, #0
@@ -1810,7 +1810,7 @@ BattleFx_InitializeMode12:
 	movs r1, #7
 	movs r2, #7
 	movs r0, #47
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	ldr r4, [sp, #8]
 	ldr r2, .L_080e2524
 	lsls r3, r4, #1

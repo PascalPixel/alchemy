@@ -50,7 +50,7 @@ Unnamed_080ce4e8:
 	movs r2, #7
 	movs r3, #3
 	movs r0, #46
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r3, r8
 	ldr r3, [r3, #28]
 	movs r6, #3
@@ -60,7 +60,7 @@ Unnamed_080ce4e8:
 	movs r1, #7
 	movs r0, #47
 	str r6, [sp, #0]
-	bl Unnamed_080ed408
+	bl BattleEffect_LoadWork
 	mov r5, r8
 	ldr r5, [r5, #32]
 	str r5, [sp, #36]

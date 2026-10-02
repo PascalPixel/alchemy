@@ -1632,7 +1632,9 @@ void FieldScene_RunLargeStagingSequence(void)
     u32 i;
     /* FAKEMATCH: rec's dead zero initialiser, and k, none2 and facing below,
      * park values in locals only to keep the reference's register
-     * assignment; folding any of them into its uses changes it. */
+     * assignment; folding any of them into its uses changes it.
+     * 2026-10-02: removing only rec's initializer still changes allocation
+     * through the whole scene, including actor setup and stacked messages. */
     s32 rec = 0;
     s32 rec3;
     u8 *rec8;

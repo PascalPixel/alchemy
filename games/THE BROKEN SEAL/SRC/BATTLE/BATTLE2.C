@@ -6,6 +6,7 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_ESCAPE.H"
+#include "BATTLE_RUNTIME.H"
 
 s32 Trig_Cos(s32);
 extern s32 gFrameCount;
@@ -66,14 +67,7 @@ void Runtime_BumpFree(void *ptr);
 extern u8 Data_03001e74[];
 s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 
-/* battle/actor/clear_field_12b_for_group.c */
-u8 *Owner_GetStateFar(s32);
 void Owner_RecalculateStatsFar(u16 id);
-
-struct ActorState_080b90ac {
-    u8 padding_000[0x12b];
-    u8 field_12b;
-};
 
 /* battle/escape/check_success.c */
 struct BattleEscapeState {
@@ -187,10 +181,10 @@ void BattleUnit_ClearField12bForGroup(void)
 
     count = BattleParty_ListActorIds(3, ids);
     for (index = 0; index < count; index++) {
-        struct ActorState_080b90ac *actor;
+        struct BattleUnit *actor;
 
-        actor = (struct ActorState_080b90ac *)Owner_GetStateFar(ids[index]);
-        actor->field_12b = 0;
+        actor = Owner_GetStateFar(ids[index]);
+        actor->guard_level = 0;
         Owner_RecalculateStatsFar(ids[index]);
     }
 }
@@ -219,7 +213,7 @@ s32 BattleEscape_CheckSuccess(void)
         level_total = 0;
         for (unit_index = escaped; unit_index < living_count; unit_index++) {
             level_total += Owner_GetStateFar(
-                (s32)living_units[unit_index])[0x0f];
+                (s32)living_units[unit_index])->level;
         }
         chance += level_total * 0x1F4 / living_count;
         living_count = BattleParty_ListLivingUnits(
@@ -228,7 +222,7 @@ s32 BattleEscape_CheckSuccess(void)
         level_total = 0;
         for (unit_index = 0; unit_index < living_count; unit_index++) {
             level_total += Owner_GetStateFar(
-                (s32)living_units[unit_index])[0x0f];
+                (s32)living_units[unit_index])->level;
         }
         chance -= level_total * 0x1F4 / living_count;
         if ((chance > 0) &&
@@ -254,15 +248,16 @@ s32 BattlePres_BuildUnitEntries(
     s32 unit_index;
 
     for (unit_index = 0; unit_index < unit_count; unit_index++) {
-        u8 *unit = Owner_GetStateFar(unit_ids[unit_index]);
+        struct BattleUnit *unit = Owner_GetStateFar(unit_ids[unit_index]);
         s32 copy_index;
 
-        for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {
-            if (unit[0x13c] != 0 || (*(u32 *)(unit + 0x138) & 0xffffff00)) {
+        for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++) {
+            /* The word read tests confusion, charm and stun together. */
+            if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00)) {
                 struct BattlePresentationUnitEntry *entry =
                     &entries[entry_count];
                 entry->unit_id = unit_ids[unit_index];
-                entry->value = *(u16 *)(unit + 0x40);
+                entry->value = unit->agility;
                 entry->width = 8;
                 entry->mode = 0;
                 entry->height = 0x180;

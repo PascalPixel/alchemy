@@ -1,29 +1,12 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
-#include "MAP_SCROLL.H"
-
-/* Two pages of 160 scanline rows, consumed as BG1-BG3 HOFS/VOFS pairs. */
-struct ScrollWork {
-    struct BgScroll rows[2][160][3];
-    u8 page;
-    u8 mode;
-    u16 frame;
-    u8 unknown_f04[4];
-    s32 freq_x;
-    s32 freq_y;
-    s32 step_x;
-    s32 step_y;
-    s32 amp_x;
-    s32 amp_y;
-};
-extern struct ScrollWork *gHBlankScrollWork;
-extern const s16 DisplayScroll_WaveSine[];
+#include "SCROLL.H"
 
 /* Build the idle page of per-scanline background offsets, bending each line
    by a sine wave, then make it the page the H-blank DMA reads next. */
 void DisplayScroll_BuildAndSwapHBlankPage(void)
 {
-    struct ScrollWork *work = gHBlankScrollWork;
+    struct DisplayScrollWork *work = gHBlankScrollWork;
     s32 x3 = (s16)gBgScroll[3].x;
     s32 y3 = (s16)gBgScroll[3].y;
     s32 x2 = (s16)gBgScroll[2].x;

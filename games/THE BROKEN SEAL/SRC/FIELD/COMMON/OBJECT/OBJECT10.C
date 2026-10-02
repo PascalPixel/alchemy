@@ -3,6 +3,7 @@
 #include "SYSTEM.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
+#include "SCROLL.H"
 
 union EffectMotionSlot {
     u32 word;
@@ -74,13 +75,6 @@ void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Audio_PlayCue(s32);
 void Battle_WaitMode0(s32 arg0);
 void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
-
-struct DisplayScrollState {
-    u8 padding000[0xf00];
-    u8 page;
-};
-
-extern struct DisplayScrollState *gHBlankScrollWork;
 
 struct SceneFadeWork {
     u8 unknown_000[0x19e];
@@ -248,14 +242,14 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
 void DisplayScroll_ArmHBlankDma(void)
 {
     volatile u32 *dma;
-    struct DisplayScrollState *state;
+    struct DisplayScrollWork *state;
     u32 *source;
     u16 status;
     u32 control;
     volatile u32 *destination;
 
     state = gHBlankScrollWork;
-    source = (u32 *)((u8 *)state + state->page * 0x780);
+    source = (u32 *)state->rows[state->page];
 
     dma = (volatile u32 *)0x040000b0;
     destination = (volatile u32 *)0x04000014;

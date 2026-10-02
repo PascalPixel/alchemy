@@ -4,14 +4,9 @@
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
-
-struct BgScroll {
-    s16 x;
-    s16 y;
-};
+#include "MAP_SCROLL.H"
 
 extern u8 gOamCopyEnabled;
-extern struct BgScroll gBgScroll[4];
 extern volatile u32 gKeyState;
 
 void Audio_PlayCue(s32 cue);

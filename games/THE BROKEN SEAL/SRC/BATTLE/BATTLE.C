@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
-
-u8 *Owner_GetStateFar(s32);
+#include "BATTLE_RUNTIME.H"
 
 struct BattleStatusIconOwner {
     u8 reserved[0x50];
@@ -44,31 +43,31 @@ void ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 
 s32 BattleUnit_BuildStatusFlags(s32 id, u8 *output)
 {
-    u8 *state = Owner_GetStateFar(id);
-    s8 mode = *(s8 *)(state + 0x131);
+    struct BattleUnit *state = Owner_GetStateFar(id);
+    s8 mode = state->poison;
     u32 flags = 0;
 
     if (mode == 1)
         flags = 1;
     if (mode == 2)
         flags |= mode;
-    if (state[0x138] != 0)
+    if (state->delusion != 0)
         flags |= 0x20;
-    if (state[0x13B] != 0) {
+    if (state->stun != 0) {
         s32 kind;
         flags |= 4;
-        kind = state[0x128];
+        kind = state->class_id;
         if (kind == 0x79 || kind == 0x94)
             flags &= ~4;
     }
-    if (state[0x13D] != 0)
+    if (state->psy_seal != 0)
         flags |= 8;
-    if (state[0x140] != 0)
+    if (state->evil_spirit != 0)
         flags |= 0x40;
-    if (state[0x13C] != 0)
+    if (state->sleep != 0)
         flags |= 0x10;
-    if (state[0x141] != 0)
-        flags |= 1 << (state[0x141] + 6);
+    if (state->death_count != 0)
+        flags |= 1 << (state->death_count + 6);
     *(u16 *)(output + 0x1C) = flags;
 }
 
@@ -165,16 +164,16 @@ done:
 
 s32 BattlePres_SetActorModeAndAction(s32 id)
 {
-    u8 *state;
+    struct BattleUnit *state;
     s32 value;
 
     state = Owner_GetStateFar(id);
     value = 1;
-    if (*(s16 *)(state + 56) != 0) {
-        if (state[316] != 0 || state[315] != 0 || state[325] != 0)
-            value = (state[298] != 1) * 4;
+    if (state->hp != 0) {
+        if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
+            value = (state->status_12a != 1) * 4;
     } else {
-        s32 changed = state[298] ^ value;
+        s32 changed = state->status_12a ^ value;
         value = (u32)(-changed | changed) >> 31;
         value = 5 - value;
     }

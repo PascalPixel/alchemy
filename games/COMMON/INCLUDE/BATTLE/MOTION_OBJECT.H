@@ -13,7 +13,8 @@ struct MotionObject {
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x08];
+    u8 unknown_14[0x04];
+    s32 scale_x;
     s32 scale_y; /* negated to draw the object upside down */
     u16 height;
     u8 unknown_22[0x02];
@@ -67,6 +68,9 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object);
 
 typedef char MotionObject_size[
     sizeof(struct MotionObject) == 0x70 ? 1 : -1
+];
+typedef char MotionObject_scale_x_offset[
+    MOTION_OBJECT_OFFSET(struct MotionObject, scale_x) == 0x18 ? 1 : -1
 ];
 typedef char MotionObject_x_offset[
     MOTION_OBJECT_OFFSET(struct MotionObject, x) == 0x08 ? 1 : -1

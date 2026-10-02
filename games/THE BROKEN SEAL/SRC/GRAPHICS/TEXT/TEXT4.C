@@ -35,7 +35,7 @@ extern s32 gGameState[];
 struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed);
 
 void UiWork_ProcessRenderChannels(void);
-s32 UiWork_ProcessDirectWork(void);
+void UiWork_ProcessDirectWork(void);
 s32 UiWork_AnimateSpriteSlots(void);
 
 void UiWork_SetBusyFlags(s32 flags)

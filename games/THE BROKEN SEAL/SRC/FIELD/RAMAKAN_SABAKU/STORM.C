@@ -166,7 +166,7 @@ void RamakanSabaku_RunSandstorm(void)
         sprite->next = NULL;
         sprite->oam.word.attr01 = (y << 16) | x | attributes;
         sprite->oam.word.attr23 = 0xe400 | tile;
-        Runtime_PushSlotEntry((struct MenuSprite *)((u8 *)RamakanSabaku_SandWork + offset), 255);
+        Runtime_PushSlotEntry((s32 *)((u8 *)RamakanSabaku_SandWork + offset), 255);
         sprite++;
         tile += 8;
         offset += 12;

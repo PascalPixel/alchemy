@@ -8943,7 +8943,7 @@ msgctxt "message"
 msgid "02233"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02234"
 msgstr "Exp"
 
@@ -8955,19 +8955,19 @@ msgctxt "message"
 msgid "02236"
 msgstr "Maximum PP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02237"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02238"
 msgstr "Unable to fight"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02239"
 msgstr "Current experience points. {argument_signed_number}{line_break}more to reach the next level."
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02240"
 msgstr "Use the L & R buttons to switch{line_break}between characters."
 
@@ -9039,7 +9039,7 @@ msgctxt "message"
 msgid "02257"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02258"
 msgstr "Normal status."
 

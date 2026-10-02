@@ -61,7 +61,10 @@ struct BattleUnit {
     } elements[4];                  /* 0x048 */
     u8 unknown_058[0x80];
     u16 inventory[15];              /* 0x0d8 */
-    u8 unknown_0f6[0x2e];
+    u8 unknown_0f6[0x22];
+    u8 djinn_owned_counts[4];       /* 0x118, by element */
+    u8 djinn_active_counts[4];      /* 0x11c, set Djinn by element */
+    u8 unknown_120[4];
     u32 experience;                 /* 0x124 */
     u8 class_id;                    /* 0x128 */
     /* Offset of the class name among the class-name messages. */
@@ -140,6 +143,16 @@ LAYOUT_OFFSET_GUARD(
     struct BattleUnit,
     inventory,
     0x0d8);
+LAYOUT_OFFSET_GUARD(
+    BattleUnit_DjinnOwnedCounts,
+    struct BattleUnit,
+    djinn_owned_counts,
+    0x118);
+LAYOUT_OFFSET_GUARD(
+    BattleUnit_DjinnActiveCounts,
+    struct BattleUnit,
+    djinn_active_counts,
+    0x11c);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_GuardLevel,
     struct BattleUnit,

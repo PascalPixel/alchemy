@@ -464,9 +464,9 @@ Ui_RunOwnerStatusScreen:
 .L_08023520:
 	.4byte gKeysRepeat
 .L_08023524:
-	.4byte Data_08037328
+	.4byte OwnerStatus_StatCursors
 .L_08023528:
-	.4byte Data_080373a8
+	.4byte OwnerStatus_EquipmentCursors
 .L_0802352c:
 	cmp r2, #2
 	bne .L_08023544
@@ -551,7 +551,7 @@ Ui_RunOwnerStatusScreen:
 .L_080235cc:
 	.4byte 0x000000ac
 .L_080235d0:
-	.4byte Data_080373b8
+	.4byte OwnerStatus_ConditionCursors
 .L_080235d4:
 	.4byte 0xc0002400
 .L_080235d8:
@@ -935,15 +935,15 @@ Ui_RunOwnerStatusScreen:
 	b .L_08023aa0
 	.2byte 0x0000
 .L_08023910:
-	.4byte Data_080373d8
+	.4byte OwnerStatus_LevelString
 .L_08023914:
 	.4byte 0x000008ba
 .L_08023918:
-	.4byte Data_080373dc
+	.4byte OwnerStatus_HpString
 .L_0802391c:
-	.4byte Data_080373e0
+	.4byte OwnerStatus_SlashString
 .L_08023920:
-	.4byte Data_080373e4
+	.4byte OwnerStatus_PpString
 .L_08023924:
 	.4byte 0x00000129
 .L_08023928:

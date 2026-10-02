@@ -9,6 +9,14 @@ struct TextRenderWork {
     u16 y;
 };
 
+struct TextWindow;
+
+void UiText_DrawCharacterAtOffset(
+    s32 character,
+    struct TextRenderWork *work,
+    u32 offset_x,
+    u32 offset_y);
+
 void UiText_DrawStringAtOffset(
     u8 *text,
     struct TextRenderWork *work,

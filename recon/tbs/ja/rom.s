@@ -1187,7 +1187,7 @@ BattleEffect_RunTileAndPaletteAnimation:
 Func_080cc5d8:
 	.incbin "baserom.gba", 0x000c35d8, 0x00000388
 	.section .rom.000c5034, "ax"
-	.incbin "baserom.gba", 0x000c5034, 0x00000828
+	.incbin "baserom.gba", 0x000c5034, 0x000004b4
 	.section .rom.000c68e0, "ax"
 	.global BattleFx_RunSevenMode
 	.type BattleFx_RunSevenMode, %function

@@ -673,7 +673,6 @@
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/EFFECT.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT7.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_FIVE_MODE_MODE0.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000cd4a8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_POOL.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000cd9fc)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TWELVE_MODE.o"(.text)

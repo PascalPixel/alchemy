@@ -956,9 +956,12 @@ FallingShards_Counts:
 	.global FallingBolts_Counts
 FallingBolts_Counts:
 	.incbin "baserom.gba", 0x000ededc, 0x0000000c
-	.global Data_080edee8
-Data_080edee8:
-	.incbin "baserom.gba", 0x000edee8, 0x0000001c
+	.global FiveMode_Records
+FiveMode_Records:
+	.incbin "baserom.gba", 0x000edee8, 0x00000014
+	.global FiveMode_Tremble
+FiveMode_Tremble:
+	.incbin "baserom.gba", 0x000edefc, 0x00000008
 	.global Data_080edf04
 Data_080edf04:
 	.incbin "baserom.gba", 0x000edf04, 0x00000054

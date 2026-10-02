@@ -431,7 +431,6 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT26.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT5.o"(.text)
-        "*/recon/tbs/raw/0808bb2c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY3.o"(.text)
         "*/recon/tbs/raw/0808c4f8.o"(.text .rodata .data .padding)

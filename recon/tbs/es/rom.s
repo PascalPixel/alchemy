@@ -569,12 +569,6 @@ Djinn_DefinitionTable:
 	.thumb_func
 Event_SpawnObjectTable:
 	.incbin "baserom.gba", 0x000903f4, 0x00000260
-	.section .rom.00090b34, "ax"
-	.global ObjectTable_Restore
-	.type ObjectTable_Restore, %function
-	.thumb_func
-ObjectTable_Restore:
-	.incbin "baserom.gba", 0x00090b34, 0x00000118
 	.section .rom.00091500, "ax"
 	.global Func_0808c4f8
 	.type Func_0808c4f8, %function

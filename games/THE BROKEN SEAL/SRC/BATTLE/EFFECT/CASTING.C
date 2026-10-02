@@ -767,10 +767,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                             step->z = target_actor->z;
                             step->velocity_x = ((Random16() & 255) - 127) << 12;
                             step->velocity_y = ((Random16() & 255) - 64) << 10;
-                            /* FAKEMATCH: Finish velocity before deriving the particle lifetime. */
-                            do {
-                                step->velocity_z = ((Random16() & 255) - 127) << 12;
-                            } while (0);
+                            step->velocity_z = ((Random16() & 255) - 127) << 12;
                             step->variant = i / 2 + 32;
                             emitted++;
                             if (emitted == 4)

@@ -8,7 +8,7 @@
    lists, the target and status screens. Each opens a list window and a message
    window, draws one page of rows, queues one sprite per row and a blinking
    cursor, and keeps its page and row in the shared menu cell so that the list
-   reopens where it was left. */
+   reopens where it was left. A page holds PAGE_ROWS rows (TBS_EDITION.H). */
 
 /* One window record, as UiWindow_Create returns it; positions and sizes are
    in tiles. */
@@ -90,8 +90,6 @@ struct MenuCell {
     u8 unknown_3c[0x10];
     s32 active;                 /* 0x4c */
 };
-
-#define MENU_PAGE_ROWS 5
 
 extern u8 *gWindowWork[];
 extern struct MenuCell *gLinkCountdownWork;

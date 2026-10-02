@@ -45,7 +45,6 @@
  */
 
 #define ACTION_ID_MASK 0x3fff
-#define PAGE_ROWS MENU_PAGE_ROWS
 
 extern u8 MsgAbilityName;
 extern u8 MsgAbilityDescription;
@@ -73,6 +72,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     s32 row;
     s32 entry;
     s32 tile;
+    s32 edge;
     s32 range;
     s32 result;
     s32 i;
@@ -93,9 +93,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     page = ((struct MenuCell *)gWindowWork[42])->page;
     row = ((struct MenuCell *)gWindowWork[42])->row;
     preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
-    window = UiWindow_Create(9, 9, 21, 11, 6);
+    window = UiWindow_Create(9, 9, 21, PAGE_ROWS * 2 + 1, 6);
 
-    for (i = 0; i <= 4; i++) {
+    for (i = 0; i < PAGE_ROWS; i++) {
         s32 y = i * 2;
 
         spr = &sprites[i];
@@ -230,10 +230,11 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     -1,
                     0);
             }
+            edge = -1;
             UiWindow_SetTilemapEntry(
-                window, 0xf334, window->width - (count + 4) / PAGE_ROWS - 3, -1, 0);
+                window, 0xf334, window->width - (count + 4) / PAGE_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
-                window, 0xf335, window->width - 2, -1, 0);
+                window, 0xf335, window->width - 2, edge, 0);
             render->dirty |=
                 2 << ((u32)(window->y - 1) >> 2);
         }
@@ -293,7 +294,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     if (page == (count - 1) / PAGE_ROWS * PAGE_ROWS) {
                         row = count - page - 1;
                     } else {
-                        row = 4;
+                        row = PAGE_ROWS - 1;
                     }
                 }
                 preferred_row = row;

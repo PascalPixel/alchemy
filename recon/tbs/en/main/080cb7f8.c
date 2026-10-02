@@ -1,297 +1,168 @@
-/* 2026-09-29 alchemy permute: score 10309 to 8966 on the permuter's scorer
-   (0 is exact); remaining 112 register-only, 11 stack-only, 51 operand, 34
-   reordered, 28 inserted, 24 deleted. Kept rewrites: 11x introduce a
-   temporary, 9x reorder independent statements, 4x swap commutative
-   operands, 4x pointer arithmetic or indexing, 3x remove a temporary, 3x
-   split or join a compound assignment, 2x reorder local declarations, 2x
-   drop a same-width cast, 2x change loop form, 1x add a same-width cast,
-   1x toggle register. FAKEMATCH: the permuter's temporaries, register
-   hints and swapped operand orders below only steer allocation and
-   scheduling; no programmer would write them, so they stay tagged until a
-   natural spelling replaces them. */
+/* Draft, same instructions, two swaps left: the ROM keeps the work block in
+   r9 and the pillar picture quotient in r11 (their allocation priorities are
+   0.197 and 0.200 here, one reference apart), and it spills the camera
+   position pointer above the ground position pointer, not below. */
 #include "TYPES.H"
+#include "SCENE.H"
+#include "RESOURCE_IDS.H"
+#include "RESOURCE.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "EFFECT_STEP.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "B5_CONTEXT.H"
+#include "MOTION_OBJECT.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
 
-/* NONMATCHING: complete extent 1044B. The old 393-instruction draft had
- * uninitialized heap/stack stand-ins, discarded palette-selection values,
- * and _call_via trampolines treated as services with extra arguments.
- * Recovered heap base, palette cases and real callback calls: 424 versus
- * 420 normalized instructions, 76-byte frame. One world/screen/target
- * aggregate gives 422 instructions and 72 bytes. DrawRectangle blit[2]
- * restores the reference's 76-byte frame and point arrays at sp+40/+52/+64:
- * 425 instructions, topology still different, no byte-match claim.
- * Remaining: the main heap pointer spills instead of living in r9; the
- * halfword I/O constants use short-range pool loads; loop counters and
- * callback reloads differ. Do not tune allocation before first-pool
- * admission. All three structural hypotheses are exhausted.
- * Pool-width follow-up: a u16 struct member emits the same instructions;
- * Value_0000100c selects word ldr but removes the early short-range pool.
- * A u8 resource-76 local becomes movs, not the reference's pooled halfword.
- * Width-only spellings do not admit the reference's first pool. */
+extern DrawRectangle gWorkSlot[];
+extern struct BattleCamera *gCameraWork;
+extern u16 BattleFx6_FlareCells[];
 
-typedef void (*PaletteCopy)(void *, const void *, s32);
+#define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-struct EffectPositions {
-    s32 world[3];
-    s32 screen[3];
-    s32 target[3];
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_EndCanvasLayer(void);
+struct B5Context *GetBattleObjectSlotFar(s32 id);
+void AudioCommand_PlayFar(s32 value);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
+void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
+s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
+
+struct BlitterPair {
+    DrawRectangle upper;
+    DrawRectangle lower;
 };
-extern u8 Data_00000057[];
-extern u8 Data_00000046[];
-extern u8 Data_00000047[];
-extern u8 Data_00000048[];
-extern u8 Data_00000070[];
-extern u8 ResourceId_ParticleSpritesD[];
-extern u8 Data_00000100[];
-extern u8 Data_00001000[];
-s32 __modsi3();
-s32 Trig_Cos();
-s32 Trig_Sin();
-void Runtime_ReleaseHeapBlock();
-s32 Resource_GetTableEntry();
-void WaitFrames();
-s32 Scheduler_AddOrUpdateCallback();
-void Scheduler_RemoveCallback();
-s32 Random16();
-s32 Runtime_AllocateHeapBlock();
-void Render_ResetTransformState();
-void Graphics_PrepareTransferInIwramWork();
-void _call_via_r3();
-void _call_via_r4();
-void _call_via_r6();
-void GetBattleObjectSlotFar();
-void ObjectGroup_TickMemberTimers();
-void BattleFx_BeginCanvasLayer();
-void BattleFx_EndCanvasLayer();
-void ObjectGroup_UpdateMembers();
-s32 EffectPosition_ApplyBaseAndYOffset();
-void EffectPosition_ApplyAlternateStepAndYOffset();
-void Audio_PlayCue();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
+/* Battle effect: a pillar rises over the actor in two mirrored halves while
+   flecks spiral up around it. The effect brings its own work block, canvas
+   and sheet. */
+void Unnamed_080cb7f8(struct BattleEffectArgument *effect)
 {
-    f(a0);
-}
+    struct EffectPosition ground;
+    struct EffectPosition position;
+    s32 point[3];
+    struct BattleEffectWork *work;
+    void *canvas;
+    struct BlitterPair draw;
+    u8 *sheet;
+    struct BattleCamera *camera;
+    void *palette;
+    s32 frame;
+    s32 i;
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6)
-{
-    f(a0, a1, a2, a3, a4, a5, a6);
-}
-
-void Unnamed_080cb7f8(s32 a0)
-{
-    u32 i;
-    s32 p11;
-    s32 p10;
-    s32 p11b;
-    s32 p4;
-    s32 p4b;
-    s32 p4c;
-    s32 p8;
-    s32 p9;
-    s32 rec;
-    register s32 record;
-    s32 rec3;
-    s32 r9;
-    s32 r13;
-    s32 r8;
-    s32 none;
-    s32 base5_2010000;
-    s32 v8;
-    s32 v3;
-    s32 v10;
-    s32 v0;
-    s32 v6;
-    s32 v7;
-    s32 v2;
-    s32 slot36;
-    s32 slot24;
-    s32 slot20;
-    s32 slot8;
-    s32 slot12;
-    s32 slot16;
-    DrawRectangle blit[2];
-    struct EffectPositions pos;
-    s32 tmp6;
-    s32 tmp4;
-    s32 tmp7;
-
-    rec3 = Value2(Runtime_AllocateHeapBlock, 39, 0x782c);
-    r9 = rec3;
-    record = Value2(Runtime_AllocateHeapBlock, 40, 0x4000);
-    slot36 = record;
-    record = Value2(Runtime_AllocateHeapBlock, 41, 0x60e);
-    slot24 = record;
-    (u32)(slot20 = *(s32 *)0x03001e80);
-    *(s32 *)(0x7828 + rec3) = a0;
+    work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(39, sizeof *work);
+    canvas = (void *)Runtime_AllocateHeapBlock(40, 0x4000);
+    sheet = (u8 *)Runtime_AllocateHeapBlock(41, 0x60e);
+    camera = gCameraWork;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    *(s32 *)(0x77b4 + rec3) = 24;
-    *(s32 *)(0x77b8 + rec3) = 0;
-    v6 = (s32)Data_00000057;
-    *(u16 *)0x04000052 = 0x100c;
-    *(u16 *)0x04000020 = (s32)Data_00000100;
-    Resource_LoadAndDecompress((s32)Data_00000057, rec3, 1, 0);
-    Resource_LoadAndDecompress((s32)ResourceId_ParticleSpritesD, slot24, 0, 0);
-    switch (*(s32 *)*(s32 *)(0x7828 + rec3)) {
+    work->fade_frames = 24;
+    work->fade_step = 0;
+    *(volatile u16 *)0x04000052 = 0x100c;
+    *(volatile u16 *)0x04000020 = 0x100;
+    Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+    switch (work->effect->kind) {
     case 0:
-        record = (s32)Data_00000048;
+        palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
         break;
     case 1:
-        record = v6;
+        palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
         break;
     case 2:
-        record = (s32)Data_00000047;
+        palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
         break;
     default:
-        record = (s32)Data_00000046;
+        palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
         break;
     }
-    record = Value1(Resource_GetTableEntry, record);
-    ((PaletteCopy)0x03001388)((void *)0x05000000, (void *)record, 128);
-    base5_2010000 = 0x2010000;
-    none = 0;
-    v8 = none;
-    do {
-        *(s32 *)(base5_2010000 + 4) = 0;
-        record = Random16();
-        *(s32 *)base5_2010000 = 0xffff & record;
-        record = Random16();
-        p4 = v8;
-        *(s32 *)(base5_2010000 + 8) = (0x1ff & record) + (s32)((s32)p4 << 1);
-        *(s32 *)(base5_2010000 + 24) = -p4;
-        v8 = p4 + 1;
-        base5_2010000 = base5_2010000 + 28;
-    } while (v8 != 128);
-    *(s32 *)(0x7780 + r9) = 2;
-    ((s32 *)(0x7784 + r9))[0] = 75;
-    Value2(Scheduler_AddOrUpdateCallback, 0x80cd261, 0x480);
+    { s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords; copy((void *)0x05000000, palette, 128); }
+
+    for (i = 0; i != 128; i++) {
+        gFlecks[i].y = 0;
+        gFlecks[i].x = Random16() & 0xffff;
+        gFlecks[i].z = (Random16() & 0x1ff) + i * 2;
+        gFlecks[i].variant = -i;
+    }
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    blit[0] = *(DrawRectangle *)0x03001f08;
-    v3 = ((s32 *)(*(s32 *)(0x7828 + r9) + 24))[0] + 1;
-    (*(s32 *)(*(s32 *)(0x7828 + r9) + 24))++;
-    if (v3 <= 0) {
-        *(s32 *)(*(s32 *)(0x7828 + r9) + 24) = 1;
-    }
-    slot16 = 0x7828 + r9;
-    if (*(s32 *)(*(s32 *)(0x7828 + r9) + 24) > 4) {
-        ((s32 *)(*(s32 *)(0x7828 + r9) + 24))[0] = 4;
-    }
-    Audio_PlayCue(212);
-    slot8 = (s32)pos.target;
-    slot12 = slot20 + 12;
-    none = 0;
-    v10 = none;
-L_080cb982:
-    ;
-    EffectPosition_ApplyAlternateStepAndYOffset(*(s32 *)(*(s32 *)slot16 + 8), slot8);
-    tmp7 = *(s32 *)slot8;
-    *(s32 *)0x04000028 = (64 - tmp7) << 8;
-    if (v10 > 49) {
-        *(u16 *)0x04000052 = ((s32)Data_00000070 - (v10 << 1)) | (s32)Data_00001000;
-    }
-    p4b = v10;
-    if (p4b == 16) {
-        ObjectGroup_UpdateMembers(*(s16 *)(*(s32 *)slot16 + 36), 7, -1, 0, 20);
-    }
-    if (55 >= p4b) {
-        DrawRectangle *tmp3;
-        s32 tmp5;
-        s32 tmp8;
-        tmp5 = p4b;
-        p8 = (s32)(((u32)tmp5 >> 31) + p4b) >> 1;
-        v0 = p8;
-        if (p8 < 0) {
-            v0 = p8 + 3;
+    draw.upper = gWorkSlot[46];
+    work->effect->variant++;
+    if (work->effect->variant <= 0)
+        work->effect->variant = 1;
+    if (work->effect->variant > 4)
+        work->effect->variant = 4;
+    AudioCommand_PlayFar(212);
+
+    for (frame = 0; frame != 56; frame++) {
+        EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &ground);
+        *(volatile s32 *)0x04000028 = (64 - ground.x) << 8;
+        if (frame > 49)
+            *(volatile u16 *)0x04000052 = (0x70 - frame * 2) | 0x1000;
+        if (frame == 16)
+            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
+        if (frame <= 55) {
+            s32 n;
+            u8 *glow;
+
+            i = frame / 2;
+            n = i % 4;
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
+            draw.lower = ((DrawRectangle *)Ram_WorkSlot)[47];
+            draw.lower(canvas, work->sheet + n * 1088, 47, ground.y - 64, 17, 64);
+            n = frame / 4 % 3;
+            glow = work->sheet + n * 1032 + 0x1100;
+            draw.lower(canvas, glow, 40, ground.y - 36, 24, 43);
+            Runtime_ReleaseHeapBlock(47);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
+            draw.lower = ((DrawRectangle *)Ram_WorkSlot)[47];
+            n = i % 4;
+            draw.lower(canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
+            draw.lower(canvas, glow, 64, ground.y - 36, 24, 43);
+            Runtime_ReleaseHeapBlock(47);
         }
-        p11 = v0 >> 2;
-        ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 3, 2);
-        blit[1] = ((DrawRectangle *)0x03001f0c)[0];
-        blit[1]((void *)slot36, (void *)(r9 + ((((p8 - (p11 << 2)) << 4) + (p8 - (p11 << 2))) << 6)), 47, *(s32 *)(slot8 + 4) - 64, 17, 64);
-        rec = Value2(__modsi3, p4b / 4, 3);
-        blit[1]((void *)slot36, (void *)((((rec << 7) + rec) << 3) + r9 + 0x1100), 40, *(s32 *)(slot8 + 4) - 36, 24, 43);
-        Runtime_ReleaseHeapBlock(47);
-        ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 7, 2);
-        tmp3 = (DrawRectangle *)0x03001f0c;
-        tmp8 = (s32)((s32)p11 << 2);
-        v7 = (s32)p8 - tmp8;
-        blit[1] = *tmp3;
-        blit[1]((void *)slot36, (void *)(((((p8 - (p11 << 2)) << 4) + (p8 - (p11 << 2))) << 6) + r9), 64, *(s32 *)(slot8 + 4) - 64, 17, 64);
-        v6 = (s32)blit[1];
-        blit[1]((void *)slot36, (void *)((((rec << 7) + rec) << 3) + r9 + 0x1100), 64, *(s32 *)(slot8 + 4) - 36, 24, 43);
-        Runtime_ReleaseHeapBlock(47);
-    }
-    GetBattleObjectSlotFar(*(s32 *)(*(s32 *)slot16 + 8));
-    base5_2010000 = 0x2010000;
-    Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(slot20, slot12);
-    none = 0;
-    v8 = none;
-    do {
-        s32 tmp2;
-        tmp2 = *(s32 *)(base5_2010000 + 24);
-        if (tmp2 >= 0) {
-            s32 tmp;
-            record = Trig_Sin(*(s32 *)base5_2010000);
-            pos.world[0] = (*(s32 *)(base5_2010000 + 8) * record) >> 4;
-            record = Trig_Cos(*(s32 *)base5_2010000);
-            pos.world[2] = -((*(s32 *)(base5_2010000 + 8) * record) >> 4);
-            pos.world[1] = *(s32 *)(base5_2010000 + 4);
-            *(s32 *)base5_2010000 += 0x400;
-            *(s32 *)(base5_2010000 + 4) += 0x50000;
-            tmp = base5_2010000 + 8;
-            *(s32 *)tmp = *(s32 *)tmp + 64;
-            Value2(EffectPosition_ApplyBaseAndYOffset, (s32)pos.world, (s32)pos.screen);
-            v2 = (pos.screen[0] + ((u32)pos.screen[0] >> 31)) >> 1;
-            pos.screen[0] = (pos.screen[0] + ((u32)pos.screen[0] >> 31)) >> 1;
-            blit[0]((void *)slot36, (void *)(slot24 + *(u16 *)(0x080ede5c + (((*(s32 *)(*(s32 *)slot16 + 24) + (1 & v8)) << 1) - 2))), v2 - ((1 & v8) + *(s32 *)(*(s32 *)slot16 + 24)), pos.screen[1] - ((1 & v8) + *(s32 *)(*(s32 *)slot16 + 24)), (*(s32 *)(*(s32 *)slot16 + 24) + (1 & v8)) << 1, ((1 & v8) + *(s32 *)(*(s32 *)slot16 + 24)) << 1);
+        GetBattleObjectSlotFar(work->effect->actor);
+        Render_ResetTransformState();
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        for (i = 0; i != 32; i++) {
+            struct EffectStep *fleck = &gFlecks[i];
+
+            if (fleck->variant >= 0) {
+                s32 size;
+
+                point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
+                point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
+                point[1] = fleck->y;
+                fleck->x += 0x400;
+                fleck->y += 0x50000;
+                fleck->z += 64;
+                EffectPosition_ApplyBaseAndYOffset(point, &position);
+                position.x /= 2;
+                size = (i & 1) + work->effect->variant;
+                draw.upper(canvas, sheet + BattleFx6_FlareCells[size - 1],
+                    position.x - size, position.y - size, size * 2, size * 2);
+            }
+            fleck->variant++;
         }
-        v8 = v8 + 1;
-        *(s32 *)(base5_2010000 + 24) += 1;
-        base5_2010000 += 28;
-    } while (v8 != 32);
-    ObjectGroup_TickMemberTimers();
-    *(s32 *)(0x7824 + r9) = 1;
-    WaitFrames(1);
-    tmp4 = p4b + 1;
-    v10 = tmp4;
-    p4c = v10;
-    if (p4c != 56) {
-        goto L_080cb982;
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
     }
+
     Runtime_ReleaseHeapBlock(46);
-    Call1(Scheduler_RemoveCallback, 0x80cd261);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
     Runtime_ReleaseHeapBlock(41);
     Runtime_ReleaseHeapBlock(40);
-    tmp6 = (s32)pos.screen;
     Runtime_ReleaseHeapBlock(39);
-    p10 = tmp6;
-    v10 = p10;
-    p11b = (s32)pos.world;
-    p9 = base5_2010000;
 }

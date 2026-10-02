@@ -830,12 +830,6 @@ Func_080aa768:
 	.incbin "baserom.gba", 0x000aa7fc, 0x0000051c
 	.section .rom.000ab678, "ax"
 	.incbin "baserom.gba", 0x000ab678, 0x000012fc
-	.section .rom.000acb30, "ax"
-	.global DjinnMenu_DrawStatPreview
-	.type DjinnMenu_DrawStatPreview, %function
-	.thumb_func
-DjinnMenu_DrawStatPreview:
-	.incbin "baserom.gba", 0x000acb30, 0x000007bc
 	.section .rom.000ad484, "ax"
 	.global FourObjectMotion_UpdateBottomRow
 	.type FourObjectMotion_UpdateBottomRow, %function
@@ -901,7 +895,13 @@ Data_080af23c:
 	.incbin "baserom.gba", 0x000af2b4, 0x00000030
 	.global Menu_BackdropFrameTile
 Menu_BackdropFrameTile:
-	.incbin "baserom.gba", 0x000af2e4, 0x00000028
+	.incbin "baserom.gba", 0x000af2e4, 0x00000020
+	.global DjinnMenu_TextLevel
+DjinnMenu_TextLevel:
+	.incbin "baserom.gba", 0x000af304, 0x00000004
+	.global DjinnMenu_TextSlash
+DjinnMenu_TextSlash:
+	.incbin "baserom.gba", 0x000af308, 0x00000004
 	.global UiMenu_CursorBobX
 UiMenu_CursorBobX:
 	.incbin "baserom.gba", 0x000af30c, 0x00000009

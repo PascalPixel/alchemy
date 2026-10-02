@@ -42,11 +42,13 @@ struct DjinnMenuWork {
     s32 window;
     u8 unknown_028[0x08];
     s32 list_window;
-    u8 unknown_034[0xd8];
+    s32 second_window;
+    u8 unknown_038[0xd4];
     s32 help_window;
     u8 unknown_110[0x34];
     u16 frames[8];
-    u8 unknown_154[0x28];
+    u8 unknown_154[0x24];
+    u16 pair_entries[2];
     struct DjinnMenuCursor *second_cursor;
     u8 unknown_180[0x04];
     struct DjinnMenuBackdrop *backdrop;
@@ -54,9 +56,14 @@ struct DjinnMenuWork {
     u16 owners[DJINN_LIST_OWNERS];
     u8 unknown_218;
     u8 owner_count;
-    u8 unknown_21a[0x1a];
+    u8 shown_owner[2];
+    u8 unknown_21c[0x18];
     u16 slot_x[4];
     u16 slot_y[4];
+    u8 unknown_244[0x10];
+    u8 pair_index[2];
+    u8 pair_element[2];
+    u8 pair_owner[2];
 };
 
 #endif

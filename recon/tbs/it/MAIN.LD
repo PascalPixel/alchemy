@@ -545,7 +545,6 @@
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW10.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000ab678)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000acb30)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_INITIALIZE_TOP_ROW.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000ad484)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT15.o"(.text)

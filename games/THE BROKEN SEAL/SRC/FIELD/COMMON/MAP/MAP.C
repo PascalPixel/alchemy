@@ -4,6 +4,9 @@
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "MAP_SCROLL.H"
+#include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
+#include "RUNTIME_MEM.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void Map_SetCameraCenter(s32 x, s32 y);
@@ -57,6 +60,234 @@ static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod
     tiles = (u32 *)(Ram_MapBlocks + 4);
     tiles += index;
     *(u32 *)(dest + 64) = *tiles;
+}
+
+/* A layered scene's resources, as rows counted from the first field map:
+   the map itself, then the palette, the three tile sheets and the layer
+   data. */
+struct SceneEntry {
+    u16 resources[6];
+};
+
+struct SceneLayerSource {
+    u8 x;
+    u8 y;
+    s8 scroll_x;
+    s8 scroll_y;
+    s8 speed_x;
+    s8 speed_y;
+    u8 period_x;
+    u8 period_y;
+};
+
+/* The head of a field map resource (SRC/MAP/MAP.INC). */
+struct SceneHeader {
+    u8 origin[4];
+    u8 priority[3];
+    u8 screen[3];
+    u16 unknown_0a;
+    struct SceneLayerSource layers[3];
+    s32 tiles;
+    s32 collision;
+    s32 tilemap;
+    s32 animation;
+    s32 blend;
+    s32 script;
+};
+
+struct SceneLayer {
+    s32 x;
+    s32 y;
+    s32 base_x;
+    s32 base_y;
+    s32 scroll_x;
+    s32 scroll_y;
+    s32 speed_x;
+    s32 speed_y;
+    s32 phase_x;
+    s32 phase_y;
+    u32 period_x : 16;
+    u32 period_y : 16;
+    u32 *cells;
+};
+
+struct SceneWork {
+    u8 unknown_00[0x10];
+    u8 *script;
+    u32 blend_control : 16;
+    u32 unknown_16 : 16;
+    u8 unknown_18[0xcc];
+    s32 scale_x;
+    s32 scale_y;
+    s32 origin[4];
+    u8 unknown_fc[4];
+    u8 priority[3];
+    u8 unknown_103;
+    struct SceneLayer layers[3];
+};
+
+extern struct SceneEntry Map_LayeredScenes[];
+extern u8 gMapLayerData[];
+
+void Blend_SetDarkenTarget0(s32 value);
+s32 Resource_DecodeType01(const void *source, void *destination);
+s32 Resource_DecodeType2(const void *source, void *destination);
+void Tilemap_DecodeStagedBuffer(void);
+void Tilemap_ConvertBuffer(void);
+void MapAnimation_StartChannels(void *channels);
+void DisplayBlend_StartScript(void *script);
+s32 GameFlag_IsSet(s32 flag);
+void GameFlag_ClearBitFar(s32 flag);
+void Runtime_BumpFree(void *allocation);
+void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
+
+/* Iwram_Call2 (IWRAM_CALL.H) with r3 among the registers the routine may
+   change; the ROM keeps nothing in r3 across the two layer multiplies. */
+static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
+{
+    /* FAKEMATCH: the call's operands in their registers, as Iwram_Call2. */
+    register s32 result __asm__("r0") = left; /* FAKEMATCH: as above. */
+    register s32 factor __asm__("r1") = right;
+
+    /* FAKEMATCH: the same call, with r3 listed as changed. */
+    __asm__ volatile(".align 2\n\tmov ip, pc\n\tbx %2\n\t"
+                     : "+r"(result)
+                     : "r"(factor), "r"(routine)
+                     : "r1", "r2", "r3", "ip", "cc");
+    return result;
+}
+
+/* Loads a layered scene: decodes the map's cells, collision and tilemap and
+   starts its optional tile animation and blend script, sets the three
+   layers' origins, scroll rates and periods, writes the layers' background
+   controls, and, unless the flag that keeps the current pictures is set,
+   decodes the scene's palette, tile sheets and layer data. */
+s32 Map_LoadLayeredScene(s32 index)
+{
+    struct SceneEntry *entry;
+    struct SceneWork *work;
+    struct SceneHeader *header;
+    struct SceneLayer *layer;
+    struct SceneLayerSource *source;
+    s32 *scale_x;
+    s32 *scale_y;
+    s32 i;
+    u8 *buf;
+    s32 backdrop;
+    u8 *src;
+    s32 cnt;
+
+    *(volatile u16 *)0x04000000 &= 0xc1ff;
+    Blend_SetDarkenTarget0(0);
+    entry = &Map_LayeredScenes[index];
+    work = Runtime_AllocateBlock(8, sizeof(struct SceneWork));
+    Iwram_ClearWords(work, sizeof(struct SceneWork));
+    header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
+    src = (u8 *)header + header->tiles;
+    Resource_DecodeType01(src, Ram_MapCellBuffer + 1);
+    Tilemap_DecodeStagedBuffer();
+    src = (u8 *)header + header->collision;
+    Resource_DecodeType01(src, Ram_MapCollision);
+    src = (u8 *)header + header->tilemap;
+    Resource_DecodeType01(src, Ram_MapCellBuffer);
+    Tilemap_ConvertBuffer();
+    /* FAKEMATCH: the optional blocks' offsets pass through the pointer
+       variable, which keeps them in r0 as the ROM does. */
+    src = (u8 *)header->animation;
+    if (src != 0) {
+        Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1000);
+        MapAnimation_StartChannels(Ram_MapCollision + 0x1000);
+    }
+    src = (u8 *)header->blend;
+    if (src != 0) {
+        Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1e00);
+        DisplayBlend_StartScript(Ram_MapCollision + 0x1e00);
+    }
+    work->script = (u8 *)header + header->script;
+    work->origin[0] = header->origin[0] << 19;
+    work->origin[1] = header->origin[1] << 19;
+    work->origin[2] = header->origin[2] << 19;
+    work->origin[3] = header->origin[3] << 19;
+    scale_x = &work->scale_x;
+    *scale_x = 0;
+    scale_y = &work->scale_y;
+    *scale_y = 0;
+    work->priority[0] = header->priority[0];
+    work->priority[1] = header->priority[1];
+    work->priority[2] = header->priority[2];
+    layer = work->layers;
+    source = header->layers;
+    for (i = 0; i < 3; i++) {
+        u32 x = source->x;
+        u32 y = source->y;
+        s32 scroll_x;
+        s32 scroll_y;
+        s32 base_x;
+        s32 base_y;
+
+        layer->base_x = base_x = x << 19;
+        layer->base_y = base_y = y << 19;
+        layer->speed_x = source->speed_x << 12;
+        layer->speed_y = source->speed_y << 12;
+        layer->period_x = source->period_x;
+        layer->period_y = source->period_y;
+        layer->phase_x = 0;
+        layer->phase_y = 0;
+        scroll_x = source->scroll_x << 12;
+        scroll_y = source->scroll_y << 12;
+        layer->scroll_x = scroll_x;
+        layer->scroll_y = scroll_y;
+        layer->cells = (u32 *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
+        layer->x = Scene_Call2(*scale_x, scroll_x, IwramMulQ16ReturnIp) + base_x;
+        layer->y = Scene_Call2(*scale_y, scroll_y, IwramMulQ16ReturnIp) + base_y;
+        source++;
+        layer++;
+    }
+    work->blend_control = 0x1000;
+    if (work->priority[0] != 0)
+        work->blend_control = 0x1800;
+    if (work->priority[1] != 0)
+        work->blend_control |= 0x400;
+    if (work->priority[2] != 0)
+        work->blend_control |= 0x200;
+    cnt = work->priority[0] | (header->screen[0] << 2) | 0x500;
+    *(volatile u16 *)0x0400000e = cnt;
+    /* FAKEMATCH: one-pass loops hold the second and third background
+       control writes in source order. */
+    do {
+        cnt = work->priority[1] | (header->screen[1] << 2) | 0x600;
+        *(volatile u16 *)0x0400000c = cnt;
+    } while (0);
+    do {
+        cnt = work->priority[2] | (header->screen[2] << 2) | 0x700;
+        *(volatile u16 *)0x0400000a = cnt;
+    } while (0);
+    if (GameFlag_IsSet(0x170) != 0) {
+        GameFlag_ClearBitFar(0x170);
+    } else {
+        buf = (u8 *)Runtime_BumpAllocate(0x4000);
+        if (buf != NULL) {
+            backdrop = *(s16 *)0x05000000;
+            Resource_DecodeType01(Resource_GetTableEntry(entry->resources[1] + (u32)&ResourceId_Map001), buf);
+            *(s16 *)buf = backdrop;
+            Iwram_CopyWords((void *)0x05000000, buf, 0x1c0);
+            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[2] + (u32)&ResourceId_Map001), buf);
+            Iwram_CopyWords((void *)0x06004000, buf, 0x4000);
+            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[3] + (u32)&ResourceId_Map001), buf);
+            Iwram_CopyWords((void *)0x06008000, buf, 0x4000);
+            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[4] + (u32)&ResourceId_Map001), buf);
+            Iwram_CopyWords((void *)0x0600c000, buf, 0x4000);
+            Resource_DecodeType2(Resource_GetTableEntry(entry->resources[5] + (u32)&ResourceId_Map001), gMapLayerData);
+            Runtime_BumpFree(buf);
+        }
+    }
+    cnt = 0;
+    *(volatile u16 *)0x0400004c = cnt;
+    *(volatile u16 *)0x04000050 = cnt;
+    cnt = 0x140;
+    *(volatile u16 *)0x04000000 = cnt;
+    Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
+    return 2;
 }
 
 void Map_ApplyWorkOriginAndSpan(void)

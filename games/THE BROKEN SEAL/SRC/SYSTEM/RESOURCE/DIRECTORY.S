@@ -311,7 +311,7 @@ Resource_DirectoryTable:
 	resource , Monster_PurpleBeastSprites
 	resource , Monster_RedWarriorSprites
 	resource , Monster_SwordGirlSprites
-	resource , Field_Map001
+	resource Map001, Field_Map001
 	resource , Resource_Data129
 	resource , Resource_Data12A
 	resource , Resource_Data12B

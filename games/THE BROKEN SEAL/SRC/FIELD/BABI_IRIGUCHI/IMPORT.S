@@ -46,9 +46,9 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
-	.global Map_CopyMetatileIndicesRect
+	.global Engine_MapCopyCellsTo
 	.thumb_func
-Map_CopyMetatileIndicesRect:
+Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -58,9 +58,9 @@ Map_GetTerrainHeight:
 	.thumb_func
 Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global Engine_MapCopyCellsTo
+	.global Engine_MapCopyCellsLayered
 	.thumb_func
-Engine_MapCopyCellsTo:
+Engine_MapCopyCellsLayered:
 	overlay_veneer Func_080091c8
 	.global Object_CheckMovementCollision
 	.thumb_func

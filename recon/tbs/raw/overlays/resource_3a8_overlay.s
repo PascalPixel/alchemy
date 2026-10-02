@@ -1335,7 +1335,7 @@ KareiMachi_Script02:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.section .bss,"aw",%nobits
-	.space 16
+	.space 12
 	.global KareiMachi_DanceStep
 KareiMachi_DanceStep:
 	.space 4

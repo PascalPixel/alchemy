@@ -1,5 +1,5 @@
 /*
- * Intended canonical draft: recon/tla/en/main/08143000.c (currently absent).
+ * Unmatched canonical draft: recon/tla/en/main/08143000.c.
  * BattlePresentation_ProcessPendingGraphicsTransfer (raw Func_08143000).
  * Measured 2026-10-02 with the ordinary TLA compiler plan, all six editions.
  * Native complete extent is 276 bytes, pools included. This source emits
@@ -34,10 +34,10 @@
  * canvas loaded only for a transfer: 272/135
  * This self-contained conversion is a representation check, not a ninth form.
  *
- * Production linkage limit: the captured EN image defines all four raw
- * ColorBuffer_* loaders; JA/DE/ES/FR/IT namespaces omit those four names.
- * Their complete raw instruction definitions at the actual native bytes
- * were used for private linkage proof, not aliases or production adoption.
+ * The private proof initially resolved the four ColorBuffer_* loaders through
+ * their complete raw instruction definitions at the actual native bytes.
+ * All six editions now define those names at their raw/scaffold starts; the
+ * localized definitions preserve the same128-byte scaffold and carry no credit.
  * Existing reviewed resident entries remain IwramCopyWords/IwramFillWords.
  */
 

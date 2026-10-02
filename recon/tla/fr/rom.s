@@ -17,7 +17,30 @@ SoundDriver_EnterFrameUpdate:
 Render_BuildOamList:
 	.incbin "baserom.gba", 0x000019f4, 0x00000020
 	.section .rom.00001c90, "ax"
-	.incbin "baserom.gba", 0x00001c90, 0x00000080
+	.global ColorBuffer_ScaleThreeQuarters
+	.type ColorBuffer_ScaleThreeQuarters, %function
+	.thumb_func
+ColorBuffer_ScaleThreeQuarters:
+	.incbin "baserom.gba", 0x00001c90, 0x00000020
+	.size ColorBuffer_ScaleThreeQuarters, .-ColorBuffer_ScaleThreeQuarters
+	.global ColorBuffer_Halve
+	.type ColorBuffer_Halve, %function
+	.thumb_func
+ColorBuffer_Halve:
+	.incbin "baserom.gba", 0x00001cb0, 0x00000020
+	.size ColorBuffer_Halve, .-ColorBuffer_Halve
+	.global ColorBuffer_Brighten
+	.type ColorBuffer_Brighten, %function
+	.thumb_func
+ColorBuffer_Brighten:
+	.incbin "baserom.gba", 0x00001cd0, 0x00000020
+	.size ColorBuffer_Brighten, .-ColorBuffer_Brighten
+	.global ColorBuffer_Darken
+	.type ColorBuffer_Darken, %function
+	.thumb_func
+ColorBuffer_Darken:
+	.incbin "baserom.gba", 0x00001cf0, 0x00000020
+	.size ColorBuffer_Darken, .-ColorBuffer_Darken
 	.section .rom.00013164, "ax"
 	.global Sys_Free
 	.type Sys_Free, %function

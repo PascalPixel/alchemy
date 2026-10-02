@@ -93,12 +93,6 @@ Object_UpdateAll:
 Object_UpdateAllEnd:
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
-	.section .rom.0000cacc, "ax"
-	.global Object_UpdateAllThumb
-	.type Object_UpdateAllThumb, %function
-	.thumb_func
-Object_UpdateAllThumb:
-	.incbin "baserom.gba", 0x0000cacc, 0x00000664
 	.section .rom.0000daf0, "ax"
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000ebec, "ax"
@@ -182,7 +176,10 @@ Map_TileDissolveOrder:
 	.incbin "baserom.gba", 0x000130ac, 0x00000044
 	.global Camera_FixedViewMatrix
 Camera_FixedViewMatrix:
-	.incbin "baserom.gba", 0x000130f0, 0x000000b0
+	.incbin "baserom.gba", 0x000130f0, 0x00000030
+	.global ScriptObject_CycleTable
+ScriptObject_CycleTable:
+	.incbin "baserom.gba", 0x00013120, 0x00000080
 	.global Script_MainScript
 Script_MainScript:
 	.incbin "baserom.gba", 0x000131a0, 0x00000014
@@ -230,7 +227,10 @@ ObjectDispatch_Table5Script:
 	.incbin "baserom.gba", 0x00013568, 0x00000018
 	.global ObjectDispatch_Table6Script
 ObjectDispatch_Table6Script:
-	.incbin "baserom.gba", 0x00013580, 0x000000c0
+	.incbin "baserom.gba", 0x00013580, 0x00000004
+	.global ScriptObject_CommandTable
+ScriptObject_CommandTable:
+	.incbin "baserom.gba", 0x00013584, 0x000000bc
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x00013640, 0x000000a4

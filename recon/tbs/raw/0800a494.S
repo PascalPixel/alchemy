@@ -268,7 +268,7 @@ Data_0800a494:
 	str	r3, [sp, #8]
 	b	.L_0800a87c
 	.4byte gObjectSlots
-	.4byte Data_08013624
+	.4byte ScriptObject_CommandTable
 	.4byte IwramSqrt
 	.4byte IwramRatioMulQ14
 .L_0800a854:

@@ -105,8 +105,8 @@ Map_TileDissolveOrder:
 	.global Camera_FixedViewMatrix
 Camera_FixedViewMatrix:
 	.incbin "baserom.gba", 0x00013190, 0x00000030
-	.global Data_080131c0
-Data_080131c0:
+	.global ScriptObject_CycleTable
+ScriptObject_CycleTable:
 	.incbin "baserom.gba", 0x000131c0, 0x00000080
 	.global Script_MainScript
 Script_MainScript:
@@ -162,8 +162,8 @@ ObjectDispatch_Table5Script:
 	.global ObjectDispatch_Table6Script
 ObjectDispatch_Table6Script:
 	.incbin "baserom.gba", 0x00013620, 0x00000004
-	.global Data_08013624
-Data_08013624:
+	.global ScriptObject_CommandTable
+ScriptObject_CommandTable:
 	.incbin "baserom.gba", 0x00013624, 0x000000bc
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:

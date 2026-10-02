@@ -2,27 +2,8 @@
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
+#include "MENU_LIST.H"
 
-struct Work {
-    s32 unknown00;
-    s32 unknown04;
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-    u16 unknown10;
-    u16 unknown12;
-    u16 state;
-    u16 flags;
-    s16 frame;
-    s16 duration;
-    s16 previous_x;
-    s16 previous_y;
-    s16 previous_width;
-    s16 previous_height;
-};
-
-extern u8 *gWindowWork;
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWork_DrawByAttributes(void *arg0);
@@ -51,40 +32,40 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 
 void UiWork_ProcessDirectWork(void)
 {
-    u8 *base = gWindowWork;
-    struct Work *work = (struct Work *)(base + 0x500);
+    u8 *base = gWindowWork[0];
+    struct UiWindow *work = (struct UiWindow *)(base + 0x500);
     s32 index = 0;
     u8 dirty;
 
 loop:
     if (work->flags != 0) {
-        if (work->frame != 0) {
+        if ((s16)work->frame != 0) {
             UiWindow_UpdateInterpolatedGeometry(work, 0);
-            work->frame--;
+            work->frame = (s16)work->frame - 1;
         } else if (work->duration != 0) {
             UiWork_DrawByAttributes(work);
         }
     } else if (work->duration != 0) {
-        if (work->frame != work->duration) {
-            UiWindow_EraseBorderRect(work->previous_x, work->previous_y,
-                                     work->previous_width,
-                                     work->previous_height);
+        if ((s16)work->frame != work->duration) {
+            UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
+                                     (s16)work->previous_width,
+                                     (s16)work->previous_height);
             UiWindow_UpdateInterpolatedGeometry(work, 1);
             work->frame++;
             dirty = 1;
             base[RENDER_DIRTY_OFS] = dirty;
         } else {
-            UiWindow_EraseBorderRect(work->previous_x, work->previous_y,
-                                     work->previous_width,
-                                     work->previous_height);
-            work->unknown00 = 0;
-            work->unknown04 = 0;
+            UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
+                                     (s16)work->previous_width,
+                                     (s16)work->previous_height);
+            work->unknown_00 = 0;
+            work->unknown_04 = 0;
             work->width = 0;
             work->height = 0;
             work->x = 0;
             work->y = 0;
-            work->unknown10 = 0;
-            work->unknown12 = 0;
+            work->unknown_10 = 0;
+            work->unknown_12 = 0;
             work->state = 0;
             work->flags = 0;
             work->frame = 0;
@@ -171,7 +152,7 @@ u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count)
    tiles of the second border set. */
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {
-    u8 *base = gWindowWork;
+    u8 *base = gWindowWork[0];
     u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
     u32 row;
 
@@ -212,7 +193,7 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
    The full-width form covers the border columns too. */
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width)
 {
-    u8 *base = gWindowWork;
+    u8 *base = gWindowWork[0];
     u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
     u32 row;
     u32 col;

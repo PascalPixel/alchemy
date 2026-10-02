@@ -2,6 +2,7 @@
 #include "TBS_EDITION.H"
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
+#include "MENU_LIST.H"
 
 struct CenteredTextWork {
     u8 unknown_000[RENDER_ENTRY_TBL_OFS];
@@ -10,24 +11,13 @@ struct CenteredTextWork {
     u16 scroll;
 };
 
-struct CenteredTextWindow {
-    u8 unknown_00[8];
-    u16 width;
-    u16 height;
-};
-
-extern struct CenteredTextWork *Data_03001e8c;
+struct TextRender;
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
-void UiText_GetResourceDimensions(s32, s32 *, s32 *, s32 *, s32 *);
-struct CenteredTextWindow *UiWindow_Create(s32, s32, s32, s32, s32);
-s32 UiText_QueueRenderEntries(struct CenteredTextWindow *, s32, s32, s32, s32, s32);
-void UiWork_Finalize(struct CenteredTextWindow *, s32);
-void WaitFrames(s32);
+s32 UiText_GetResourceDimensions(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
+struct TextRender *UiText_QueueRenderEntries(void *window, s32 entry,
+    s32 x, s32 y, u16 *colours, s32 flags);
 s32 UiWork_IsComplete(void);
-s32 UiWork_IsIdle(struct CenteredTextWindow *);
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-s32 UiText_BuildRenderEntries(s32, s32);
+s32 UiWork_IsIdle(void *window);
 
 extern const u8 Func_08015570[];
 
@@ -38,14 +28,14 @@ extern u8 UiText_LookupMessageCodeSize[];
 void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
 {
     struct CenteredTextWork *work;
-    struct CenteredTextWindow *window;
+    struct UiWindow *window;
     s32 x;
     s32 y;
     s32 width;
     s32 height;
     s32 entry;
 
-    work = Data_03001e8c;
+    work = (struct CenteredTextWork *)gWindowWork[0];
     x = 8;
     y = 8;
     /* FAKEMATCH: the null window also supplies the zero style argument,
@@ -53,7 +43,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 y_offset)
     window = NULL;
     entry = UiText_BuildRenderEntries(message, 1);
     if (work->entries[entry] != 0) {
-        UiText_GetResourceDimensions(message, &x, &y, &width, &height);
+        UiText_GetResourceDimensions(message, &x, &y, (u32 *)&width, (u32 *)&height);
         x = (30 - width) >> 1;
         y = ((15 - height) >> 1) + y_offset;
         if (mode != 0)

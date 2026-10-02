@@ -6,22 +6,6 @@
 #include "MAP.H"
 
 
-struct SubQueueItem_08011b00 {
-    u32 unknown_00;
-    u16 unknown_04;
-    u16 unknown_06;
-    u16 unknown_08;
-    u16 unknown_0a;
-    u16 unknown_0c[16];
-};
-
-struct Queue_08011b00 {
-    struct SubQueueItem_08011b00 slots[4];
-    u16 count;
-};
-
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-
 struct PaletteSnapshot {
     u16 *source;
     u16 unknown_04;
@@ -38,7 +22,7 @@ struct PaletteSnapshotWork {
 
 extern struct PaletteSnapshotWork *gPaletteWork;
 
-extern u8 Func_08011bf4;
+void Func_08011bf4(void);
 
 /* Blend script runner: a halfword script in the map work that writes
    BLDCNT and the alpha or brightness level on a frame delay. */
@@ -133,21 +117,21 @@ void DisplayBlend_DisableRunScript(void)
 
 void Runtime_AllocateAndClearQueue(void)
 {
-    struct Queue_08011b00 *queue;
-    struct SubQueueItem_08011b00 *entry;
+    struct PaletteSnapshotWork *queue;
+    struct PaletteSnapshot *entry;
     u16 i;
     u16 j;
 
-    queue = (struct Queue_08011b00 *)Runtime_AllocateBlock(28, sizeof(struct Queue_08011b00));
-    entry = queue->slots;
+    queue = Runtime_AllocateBlock(28, sizeof(struct PaletteSnapshotWork));
+    entry = queue->entries;
     for (i = 0; i != 4; i++) {
-        entry->unknown_00 = 0;
+        entry->source = 0;
         entry->unknown_04 = 0;
         entry->unknown_06 = 0;
-        entry->unknown_08 = 0;
-        entry->unknown_0a = 0;
+        entry->value = 0;
+        entry->count = 0;
         for (j = 0; j != 16; j++) {
-            entry->unknown_0c[j] = 0;
+            entry->colors[j] = 0;
         }
         entry++;
     }
@@ -183,6 +167,6 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 value, s16 count)
 
 void Runtime_ScheduleCallbackAndReleaseBlock28(void)
 {
-    Scheduler_RemoveCallback((u32)(&Func_08011bf4));
+    Scheduler_RemoveCallback((u32)Func_08011bf4);
     Runtime_ReleaseHeapBlock(0x1C);
 }

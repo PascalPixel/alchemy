@@ -1,26 +1,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_PRESENTATION.H"
 
-struct BattleActionRecord {
-    s16 unit_id;
-    u8 reserved_02[2];
-    u16 value;
-    s16 kind;
-    u8 reserved_08[8];
-};
-
-struct BattleTransitionWork {
-    s32 angle;
-};
-
-struct CharacterRuntimeRecord {
-    u8 reserved_00[0x12b];
-    u8 presentation_side;
-};
-
-extern u8 *gBattleWork;
-extern struct BattleTransitionWork *gTransitionWork;
+extern struct BattlePresentationTransition *gTransitionWork;
 void BattleUnit_ClearField12bForGroup(void);
 void Palette_CopyBanksWithBrightnessOffset(s32 offset);
 void GameFlag_SetBitFar(s32 flag);
@@ -33,12 +18,10 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
 s32 BattlePres_WaitSync(void);
 s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *actions);
 void BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
-struct CharacterRuntimeRecord *Owner_GetStateFar(s32 unit_id);
 void Camera_InitDefaultTransform(void);
 
-extern u8 Data_03001e74[];
 extern u8 gCameraWork[];
-extern u8 Data_03001ae8[];
+extern u8 gKeysHeld[];
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
 void Palette_CopyBanksWithBrightnessOffset(s32 arg0)
@@ -92,17 +75,12 @@ void Palette_CopyBanksWithBrightnessOffset(s32 arg0)
     } while (iter <= 1);
 }
 
-/*
- * Builds the turn's action list: clears the twenty queued records, lets the
- * party choose (unless an escape already ended the choice), appends the
- * linked player's or the opponents' actions, sorts them by priority and
- * marks the side each acting unit presents from. Returns the action count,
- * or -1 when the link fails.
- */
+/* Builds and sorts this turn's actions, setting guard levels for defensive
+   actions. Returns the action count, or -1 when the link fails. */
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 {
-    struct CharacterRuntimeRecord *character;
-    u8 *battle;
+    struct BattleUnit *character;
+    struct BattleSession *battle;
     u8 *mode;
     s32 count;
     s32 added;
@@ -110,7 +88,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 
     battle = gBattleWork;
     {
-        struct BattleActionRecord *queued = (struct BattleActionRecord *)(battle + 187 * 4);
+        struct BattleActionRecord *queued = battle->actions;
         u32 n;
 
         for (n = 0; n < 20; n++) {
@@ -122,7 +100,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
     BattleUnit_ClearField12bForGroup();
     Palette_CopyBanksWithBrightnessOffset(8);
     GameFlag_SetBitFar(0x16b);
-    mode = battle + 69;
+    mode = &battle->encounter_mode;
     Camera_ConfigureScene(0);
     UiWork_FinalizeSharedSlotFar();
 
@@ -136,7 +114,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
         count = 0;
     }
 
-    if (gBattleWork[68] != 0) {
+    if (gBattleWork->two_sided != 0) {
         added = BattlePresentation_AppendLinkedActions(actions, count);
         if (BattlePres_WaitSync() < 0) {
             count = -1;
@@ -159,7 +137,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
         do {
             if (action->kind == 3 || action->kind == 7) {
                 character = Owner_GetStateFar(action->unit_id);
-                character->presentation_side = action->kind == 3 ? 1 : 2;
+                character->guard_level = action->kind == 3 ? 1 : 2;
             }
             action++;
             i--;
@@ -169,26 +147,21 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 finish:
     GameFlag_ClearBitFar(0x16b);
     Camera_InitDefaultTransform();
-    gTransitionWork->angle = 0x2000;
+    gTransitionWork->target_yaw = 0x2000;
     return count;
 }
 
-/* battle/find_tagged_slot_by_value.c */
-/* battle/get_tagged_slot_value.c */
-s16 Battle_GetTaggedSlotValue(s32 arg0)
+/* A tagged slot names a member by its low nibble; bit 7 selects the enemy. */
+s16 Battle_GetTaggedSlotValue(s32 slot)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e74);
-    s32 offset;
+    struct BattleSession *battle = gBattleWork;
 
-    if ((arg0 & 0x80) != 0) {
-        offset = (arg0 & 0xF) * 2 + 0x64;
-        base += 2;
-    } else {
-        offset = (arg0 & 0xF) * 2 + 0x58;
-    }
-    return *(s16 *)(base + offset);
+    if ((slot & 0x80) != 0)
+        return battle->enemy_units[slot & 0xf];
+    return battle->party_units[slot & 0xf];
 }
 
+/* Removed members are skipped; the end marker means no matching slot. */
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
     s32 index;
@@ -197,7 +170,7 @@ s32 Battle_FindTaggedSlotByValue(u32 value)
     char *base;
     s16 item;
 
-    base = gBattleWork;
+    base = (char *)gBattleWork;
     if (value <= 7) {
         tag = 0x80;
         index = 0;
@@ -239,18 +212,18 @@ next_second:
 /* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-    void **slot = (void **)((u32)&gCameraWork);
-    u8 *cam = slot[0];
-    u8 *trans = slot[32];
-    volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);
+    void **slot = (void **)gCameraWork;
+    struct BattleCamera *cam = slot[0];
+    struct BattlePresentationTransition *trans = slot[32];
+    volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {
-        *(u16 *)(cam + 54) += 512;
+        cam->yaw += 512;
     }
     if ((*keys & 256) != 0) {
-        *(u16 *)(cam + 54) -= 512;
+        cam->yaw -= 512;
     }
-    if (*(u32 *)(trans + 20) == 0) {
+    if (trans->flag == 0) {
         BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
     }
 }

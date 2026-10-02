@@ -8,6 +8,7 @@
 #include "INVENTORY.H"
 #include "DMA.H"
 #include "SCENE.H"
+#include "BATTLE_WORK.H"
 
 extern u8 gLinkStatus[];
 extern u8 gCameraWork[];
@@ -18,15 +19,6 @@ struct SceneCameraTransfer {
     s32 z;
 };
 
-struct LinkWork {
-    u8 pad0[0x44];
-    u8 enabled;
-    u8 pad1[0x0b];
-    u8 side;
-    u8 miss;
-    u8 paused;
-};
-
 #define LINK_STAT (*(u16 *)gLinkStatus)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 void Render_ResetTransformState(void);
@@ -34,7 +26,6 @@ void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 
-extern u8 *gBattleWork;
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32, s32);
 void UiText_ShowMessageAndWaitCoreFar(s32);
@@ -49,24 +40,24 @@ void BattlePresentation_UpdateCamera(void)
     void **slot = (void **)((u32)&gCameraWork);
     struct BattleCamera *state = slot[0];
     struct BattlePresentationTransition *transition = slot[32];
-    struct LinkWork *work = slot[-3];
+    struct BattleSession *work = slot[-3];
     struct SceneCameraTransfer local;
     s32 *pos;
     s16 delta;
     u32 id;
 
-    if (work->enabled != 0) {
+    if (work->two_sided != 0) {
         if ((LINK_STAT & 3) != 3) {
-            work->miss++;
-            if (work->miss > 24) {
-                work->paused = 1;
+            work->link_misses++;
+            if (work->link_misses > 24) {
+                work->link_paused = 1;
             }
         } else {
             id = (REG_SIOCNT << 0x1A) >> 0x1E;
-            if (work->side != id) {
-                work->paused = 1;
+            if (work->link_side != id) {
+                work->link_paused = 1;
             }
-            work->miss = 0;
+            work->link_misses = 0;
         }
     }
 
@@ -100,11 +91,11 @@ void BattlePresentation_UpdateCamera(void)
 void BattleIntro_AnnounceEncounter(s32 enemy_count)
 {
     s16 enemies[8];
-    u8 *battle_state;
+    struct BattleSession *battle;
     s16 *enemy;
     s32 announced;
 
-    battle_state = gBattleWork;
+    battle = gBattleWork;
     UiWork_ClearValueNameTablesFar();
     BattleParty_ListPresentEnemies(enemies);
 
@@ -123,12 +114,12 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     }
 
     UiWork_FinalizeSharedSlotFar();
-    if (battle_state[69] == BATTLE_ENCOUNTER_PARTY_FIRST) {
+    if (battle->encounter_mode == BATTLE_ENCOUNTER_PARTY_FIRST) {
         UiWork_ClearValueNameTablesFar();
         UiWork_PushValueSlotFar(0, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyStrikesFirst);
         BattlePresentation_WaitForAdvance();
-    } else if (battle_state[69] == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
+    } else if (battle->encounter_mode == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
         UiWork_ClearValueNameTablesFar();
         UiWork_PushValueSlotFar(0, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartySurprised);
@@ -148,7 +139,7 @@ void BattleParty_CollectUnitList(void)
     s32 kind;
     u16 *out;
 
-    state = gBattleWork;
+    state = (u8 *)gBattleWork;
     count = BattleParty_PrepareActiveOwners(buf);
     for (i = 0; i < count; i++) {
         *(u16 *)(state + 88 + i * 2) = buf[i];
@@ -157,7 +148,7 @@ void BattleParty_CollectUnitList(void)
     *(u16 *)(state + offset) = 0xFF;
 
     count = BattleParty_ListPresentEnemies(buf);
-    kind = state[66];
+    kind = ((struct BattleSession *)state)->unknown_042;
     if (kind >= 0) {
         if (kind <= 1) {
             for (i = 0; i < count; i++) {

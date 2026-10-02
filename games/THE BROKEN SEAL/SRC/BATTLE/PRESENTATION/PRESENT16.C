@@ -12,20 +12,10 @@
 #include "DMA.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_MOTION.H"
-
-struct BattleSortedUnitEntry {
-    u16 unit_id;
-    u16 unknown_02;
-    s16 value;
-    s16 width;
-    s16 mode;
-    s16 priority;
-    u8 unknown_0c[4];
-};
+#include "BATTLE_COMMAND.H"
 
 void UiWork_ClearValueNameTablesFar(void);
 extern u8 gCameraWork[];
-extern u8 Data_03001ae8[];
 s32 BattlePres_ShowMessageWhenField38Positive(s16 *);
 s32 BattlePres_RunUnitAction(s16 *);
 s32 BattlePresentation_RunPairedUnitTransition(s16 *);
@@ -37,7 +27,6 @@ void UiText_ShowMessageAndWaitCoreFar(s32);
 void UiWork_ResetFreeChannelFar(void);
 
 /* battle/presentation/misc/msg_field38.c */
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 void UiWork_PushValueSlotFar(s32, s32);
 
 struct TransitionContext {
@@ -55,13 +44,7 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 
 s32 BattleObject_IsValidId(u32);
 
-struct Input_080b8b48 {
-    s16 primary_id;
-    u8 padding02[8];
-    u16 secondary_id;
-};
-
-struct Work_080b8b48 {
+struct ApproachPresentation {
     u8 padding00[4];
     s32 secondary_is_low_id;
     s32 primary_id;
@@ -74,33 +57,24 @@ struct Work_080b8b48 {
     u8 padding26[46];
 };
 
-struct ObjectSlot_080b8b48 {
-    void *object;
-};
-
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 void Actor_ResetMotionAtAnchor(s32);
-void BattleFx_DispatchByIdRangeFar(struct Work_080b8b48 *);
+void BattleFx_DispatchByIdRangeFar(struct ApproachPresentation *);
 
-/* main:080b8574 BattlePresentation_BuildSortedUnitEntries - exact (376 of
-   376 bytes, 2026-09-30 helper hF). Builds one entry per living party unit
-   (agility, priority 0x80) and per living enemy (half agility plus a random
-   share, random priority below the party count), then bubble-sorts the
-   entries by value, swapping through DMA. One function-scope unit pointer
-   shared by both scans makes the agility address its own register, as in
-   the ROM; the enemy scan indexes unit_ids so the hoisted zero is set
-   before the id pointer copy, which leaves entries spilled at [sp+12]. */
+/* Build the action order from agility: party members start with target
+   priority 0x80, enemies with a random party target. Sort by descending
+   agility, moving the complete command records through DMA. */
 s32 BattlePresentation_BuildSortedUnitEntries(
-    struct BattleSortedUnitEntry *entries)
+    struct BattleCommandRequest *entries)
 {
-    struct BattleSortedUnitEntry swap;
+    struct BattleCommandRequest swap;
     u16 unit_ids[14];
     s32 first_count;
     s32 count = 0;
     s32 second_count;
     s32 priority_range;
     s32 index;
-    struct BattleSortedUnitEntry *entry;
+    struct BattleCommandRequest *entry;
     struct BattleUnit *unit;
 
     first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
@@ -111,11 +85,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
         unit = Owner_GetStateFar(unit_id);
         entry = &entries[index];
-        entry->unit_id = unit_id;
-        entry->value = unit->agility;
-        entry->width = 0;
-        entry->mode = 0;
-        entry->priority = 0x80;
+        entry->actor_id = unit_id;
+        entry->priority = unit->agility;
+        entry->command = 0;
+        entry->parameter = 0;
+        entry->target = 0x80;
         count++;
     }
     second_count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unit_ids);
@@ -125,13 +99,13 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         s32 unit_id = unit_ids[index];
 
         unit = Owner_GetStateFar(unit_id);
-        entry->unit_id = unit_id;
-        entry->value = unit->agility >> 1;
-        if (entry->value != 0)
-            entry->value += (u32)(Random16() * unit->agility) >> 16;
-        entry->width = 0;
-        entry->mode = 0;
-        entry->priority = (u32)(Random16() * priority_range) >> 16;
+        entry->actor_id = unit_id;
+        entry->priority = unit->agility >> 1;
+        if (entry->priority != 0)
+            entry->priority += (u32)(Random16() * unit->agility) >> 16;
+        entry->command = 0;
+        entry->parameter = 0;
+        entry->target = (u32)(Random16() * priority_range) >> 16;
         count++;
         entry++;
     }
@@ -140,7 +114,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         s32 pos;
 
         for (pos = count - 1; pos > 0; pos--) {
-            if (entries[pos].value > entries[pos - 1].value) {
+            if (entries[pos].priority > entries[pos - 1].priority) {
                 Dma_Set(&entries[pos], &swap, 0x84000004, (volatile u32 *)0x040000d4);
                 Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004, (volatile u32 *)0x040000d4);
                 Dma_Set(&swap, &entries[pos - 1], 0x84000004, (volatile u32 *)0x040000d4);
@@ -158,7 +132,7 @@ void BattlePres_AdjustCameraByShoulderKeys(void)
     void **slot = (void **)((u32)&gCameraWork);
     struct BattleCamera *cam = slot[0];
     struct BattlePresentationTransition *trans = slot[32];
-    volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);
+    volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {
         cam->yaw += 512;
@@ -176,11 +150,11 @@ s32 BattlePres_RunAction(s16 *action)
     struct BattlePresentationTransition *transition;
     s32 actor_id;
     s32 battle_mode;
-    u8 *actor;
+    struct BattleUnit *actor;
 
     actor_id = action[0];
     actor = Owner_GetStateFar(actor_id);
-    if (*(s16 *)(actor + 0x38) == 0)
+    if (actor->hp == 0)
         return -1;
 
     action[5] = BattleTarget_ReplaceDefeated((u8 *)action);
@@ -271,15 +245,15 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
 {
     s32 object_id;
     s32 result;
-    void *object;
+    struct BattleUnit *unit;
 
     object_id = *script;
-    object = Owner_GetStateFar(object_id);
+    unit = Owner_GetStateFar(object_id);
     if (BattleObject_IsValidId(object_id) < 0) {
         return -1;
     }
     result = 0;
-    if (FIELD(object, s16 *, 0x38) <= 0) {
+    if (unit->hp <= 0) {
         return result;
     }
     UiWork_ClearValueNameTablesFar();
@@ -395,9 +369,9 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     return 0;
 }
 
-s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
+s32 BattlePres_RunApproachAction(struct BattleCommandRequest *input)
 {
-    struct Work_080b8b48 work;
+    struct ApproachPresentation work;
 
     if (gTransitionWork->target_yaw == 0x2000) {
         gTransitionWork->target_yaw = 0x2000;
@@ -407,11 +381,11 @@ s32 BattlePres_RunApproachAction(struct Input_080b8b48 *input)
         WaitFrames(30);
     }
 
-    work.primary_id = input->primary_id;
+    work.primary_id = input->actor_id;
     if (BattleObject_IsValidId(work.primary_id) < 0)
         return -1;
 
-    work.secondary_id = input->secondary_id;
+    work.secondary_id = ((u16)input->target);
     if (BattleObject_IsValidId(work.secondary_id) < 0)
         return -1;
 

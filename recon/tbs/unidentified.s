@@ -998,14 +998,14 @@ BladeRain_CellHeights:
 	.global BladeRain_CellSourceOffsets
 BladeRain_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000edf88, 0x000000d0
-	.global Data_080ee058
-Data_080ee058:
+	.global CornerSparks_X
+CornerSparks_X:
 	.incbin "baserom.gba", 0x000ee058, 0x00000004
-	.global Data_080ee05c
-Data_080ee05c:
+	.global CornerSparks_Y
+CornerSparks_Y:
 	.incbin "baserom.gba", 0x000ee05c, 0x00000004
-	.global Data_080ee060
-Data_080ee060:
+	.global CornerSparks_DrawFlags
+CornerSparks_DrawFlags:
 	.incbin "baserom.gba", 0x000ee060, 0x00000004
 	.global TwoResource_CellWidths
 TwoResource_CellWidths:

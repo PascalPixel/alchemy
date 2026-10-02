@@ -667,7 +667,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000cb7f8)
     "*/recon/tbs/it/rom.o"(.rom.000cbc0c)
-    "*/recon/tbs/it/rom.o"(.rom.000cc5d8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT44.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY5.o"(.text)

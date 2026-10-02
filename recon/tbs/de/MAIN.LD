@@ -430,7 +430,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT35.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT36.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FINISH_SCENE_AND_RELEASE_HEAP_BLOCK.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0009ace0)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT37.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT2.o"(.text)
     "*/games/COMMON/SRC/BATTLE/EFFECT/FRAGMENT.o"(.text)

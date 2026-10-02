@@ -77,11 +77,9 @@ s32 BattlePres_BuildOpponentEntries(
             }
 
             if (unit->sleep != 0 || unit->stun != 0) {
-                struct BattleCommandRequest *command = (struct BattleCommandRequest *)entry;
-
-                command->command = 8;
-                command->parameter = 0;
-                command->target = 0x100;
+                entry->kind = 8;
+                entry->parameter = 0;
+                entry->target = 0x100;
             } else {
                 BattleCommand_SelectAutomatic((struct BattleCommandRequest *)entry, 0);
             }
@@ -105,14 +103,13 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 
     for (i = 0; i < count; i++) {
         struct BattleActionRecord *entry = &entries[i];
-        struct BattleCommandRequest *command = (struct BattleCommandRequest *)entry;
 
         if (entry->kind == 5) {
             struct BattleAction *action;
 
             Owner_GetStateFar(entry->unit_id);
             action = BattleAction_Get(Func_080771e8(
-                (s16)((u16)command->parameter) >> 8 & 15, ((u16)command->parameter) & 0xff));
+                (s16)((u16)entry->parameter) >> 8 & 15, ((u16)entry->parameter) & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
                 entry->value += 10000;
             }

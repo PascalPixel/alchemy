@@ -3,6 +3,8 @@
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "GAME_STATE.H"
+#include "FIELD_SPRITE.H"
 
 struct BattleEventState {
     u8 padding[0xcc8];
@@ -24,20 +26,10 @@ void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_WaitForValue16Far(struct ObjectRuntime *);
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *, s32);
 extern const u8 ObjectMotion_LinkedActionScript[];
-extern s32 gGameState[];
 extern u8 ObjectMotion_LaunchScript;
 extern const u8 ObjectMotion_VariantScripts[];
 
 void WaitFrames(s32);
-
-struct BurstSprite {
-    u8 pad_00[9];
-    u8 low_09 : 2;
-    u8 copied_09 : 2;
-    u8 high_09 : 4;
-    u8 pad_0a[28];
-    u8 field_26;
-};
 
 struct BurstParticle {
     u8 pad_00[8];
@@ -45,25 +37,28 @@ struct BurstParticle {
     s32 y;
     s32 z;
     u8 pad_14[28];
-    s32 field_30;
-    s32 field_34;
-    u8 pad_38[24];
-    struct BurstSprite *child;
+    s32 velocity_x;
+    s32 velocity_z;
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+    u8 unknown_44[12];
+    struct FieldSprite *child;
     u8 pad_54;
     u8 mode_55;
     u8 pad_56[14];
     u16 field_64;
     u8 pad_66[6];
-    void (*callback_6c)(void);
+    void (*callback_6c)(struct BurstParticle *);
 };
 
 extern struct BurstParticle *Object_CreateFar(s32, s32, s32, s32);
-extern void ObjectGroup_SetChildValue(struct BurstParticle *);
+void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value);
 extern const u8 BattleFx_BurstParticleScriptA[];
 extern const u8 BattleFx_BurstParticleScriptB[];
 void ObjectMotion_ArmCallback(s32 arg0, s32 arg1, s32 arg2);
 void BattleFx_PlayQueuedSound(void);
-void BattleFx_UpdateParticleLinearMotion(void *particle);
+void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle);
 
 struct ObjectRuntime *Object_GetById(u32 object_id);
 
@@ -282,7 +277,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         struct ObjectRuntime *other;
 
         ObjectMotion_SetSpeedParameters(arg0, 0x9999, 0x4CCC);
-        other = Object_GetById(gGameState[125]);
+        other = Object_GetById(gGameState.selected_actor);
         if (other != NULL)
             ObjectMotion_SetHorizontalPositionWithTerrain(arg0, other->x, other->z);
         object->movement_state = 0;
@@ -466,7 +461,7 @@ void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant)
     Object_RefreshSelectorById(object_id);
 }
 
-void BattleFx_UpdateParticleLinearMotion(void *particle)
+void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
 {
   s32 velocity_x;
   s32 x;
@@ -474,25 +469,25 @@ void BattleFx_UpdateParticleLinearMotion(void *particle)
   s32 z;
   s32 velocity_y;
   s32 vz;
-  velocity_x = *((s32 *)(((u8 *)particle) + 0x30));
-  x = (*((s32 *)(((u8 *)particle) + 8))) + velocity_x;
-  *((s32 *)(((u8 *)particle) + 8)) = x;
-  *((s32 *)(((u8 *)particle) + 0x38)) = x;
-  velocity_z = *((s32 *)(((u8 *)particle) + 0x34));
-  z = (*((s32 *)(((u8 *)particle) + 0x10))) + velocity_z;
-  *((s32 *)(((u8 *)particle) + 0x10)) = z;
-  *((s32 *)(((u8 *)particle) + 0x40)) = z;
-  velocity_y = (*((s32 *)(((u8 *)particle) + 0xC))) + 0x400;
-  *((s32 *)(((u8 *)particle) + 0xC)) = velocity_y;
-  *((s32 *)(((u8 *)particle) + 0x3C)) = velocity_y;
-  *((s32 *)(((u8 *)particle) + 0x30)) =
+  velocity_x = particle->velocity_x;
+  x = (particle->x) + velocity_x;
+  particle->x = x;
+  particle->target_x = x;
+  velocity_z = particle->velocity_z;
+  z = (particle->z) + velocity_z;
+  particle->z = z;
+  particle->target_z = z;
+  velocity_y = (particle->y) + 0x400;
+  particle->y = velocity_y;
+  particle->target_y = velocity_y;
+  particle->velocity_x =
       (s32)(velocity_x - velocity_x / 0x12);
 
   vz = velocity_z;
   if (velocity_z < 0) {
     vz += 0xF;
   }
-  *((s32 *)(((u8 *)particle) + 0x34)) =
+  particle->velocity_z =
       (s32)(velocity_z - (vz >> 4));
 
 }
@@ -501,7 +496,7 @@ void BattleFx_UpdateParticleLinearMotion(void *particle)
 void BattleFx_SpawnBurstParticle(struct BurstParticle *source, s32 optional)
 {
     struct BurstParticle *object;
-    struct BurstSprite *child;
+    struct FieldSprite *child;
     s32 value;
 
     object = Object_CreateFar(222, source->x, source->y, source->z);
@@ -519,18 +514,18 @@ void BattleFx_SpawnBurstParticle(struct BurstParticle *source, s32 optional)
         }
 
         if (optional != 0)
-            ObjectGroup_SetChildValue(object);
+            ObjectGroup_SetChildValue((struct DispatchObject *)object, optional);
 
         object->mode_55 = 0;
         value = Random16() % 10 + 5;
-        object->field_34 = -0x1999 * value;
+        object->velocity_z = -0x1999 * value;
         value = Random16() % 15 - 7;
         value <<= 1;
-        object->field_30 = 0x1999 * value;
+        object->velocity_x = 0x1999 * value;
         object->field_64 = 0;
-        object->callback_6c = (void (*)(void))BattleFx_UpdateParticleLinearMotion;
-        child->field_26 = 0;
-        child->copied_09 = source->child->copied_09;
+        object->callback_6c = BattleFx_UpdateParticleLinearMotion;
+        child->flags = 0;
+        child->priority = source->child->priority;
     }
 }
 

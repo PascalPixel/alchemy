@@ -9,19 +9,17 @@ void UiWindow_Clear(s32 window);
 s32 Item_FindSlot(s32 unit_id, s32 item_id);
 void UiWork_PushValueSlotFar(s32 kosuu, s32 style);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-u8 *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
+struct RenderOutput *UiIcon_Draw(u16 no, s32 kind, s32 window, s32 x, s32 y);
 
 extern struct ShopRuntime *gMenuWork;
-extern u8 Data_03001f2c[];
 extern u8 MsgHowManyToBuy;
 extern void UiMessage_ShowAndWait(s32);
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Ability_GetMaximum(s32, s32);
 extern s32 Shop_SelectQuantity(s32, s32, s32);
 
-/* 所持品欄の再描画。窓を開き直し、選択中の品目に応じて見出しを差し替え、
-   所持枠を左上から順に並べる。枠は5個目と10個目で折り返す。
-   枠番号は0xd8からのu16列で、0が終端。 */
+/* Draw the member's inventory in three rows of five icons, with the
+   number already owned above them when the chosen item is in the bag. */
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
     u8 *unit;
@@ -55,7 +53,7 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
         if (*(u16 *)(unit + first_offset) != 0) {
             for (;;) {
                 item_offset = item_index * 2 + 216;
-                icon = UiIcon_Draw(*(u16 *)(unit + item_offset), 27,
+                icon = (u8 *)UiIcon_Draw(*(u16 *)(unit + item_offset), 27,
                                      window, x, y);
                 icon[15] = 252;
                 x += 16;

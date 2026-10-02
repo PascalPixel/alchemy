@@ -2,49 +2,33 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_WORK.H"
-extern u8 Data_03001ee4[];
-
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
 void BattleEv_SetRuntimeField8(void)
 {
-    FIELD_AT_OFFSET(*(void **)((u32)&Data_03001ee4), s32 *, 8) = 1;
+    gBattleDisplayWork->marked = 1;
 }
 
-struct BattleEventActor {
-    u8 padding_000[0x12a];
-    u8 field_12a;
-};
-
-struct BattleEventObjectSlot {
-    s32 field_00;
-    u8 padding_004[0x24];
-    s16 field_28;
-};
-
 s32 Object_Destroy(s32);
-struct BattleEventActor *Owner_GetStateFar();
+struct BattleUnit *Owner_GetStateFar();
 s32 Owner_UpdateRatioPairFar(void *, s32);
-struct BattleEventObjectSlot *GetBattleObjectSlot(s32 arg0);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
 s32 BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
     s32 result;
-    struct BattleEventActor *creature;
-    struct BattleEventObjectSlot *runtime;
+    struct BattleUnit *creature;
+    struct BattleObjectSlot *runtime;
 
     creature = Owner_GetStateFar();
-    if (creature->field_12a == 1) {
+    if (creature->status_12a == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
         runtime = GetBattleObjectSlot(arg0);
-        result = Object_Destroy(runtime->field_00);
-        runtime->field_00 = 0;
-        runtime->field_28 = 0;
+        result = Object_Destroy((s32)runtime->object);
+        runtime->object = 0;
+        runtime->active = 0;
         return result;
     }
     return (s32)creature;
@@ -59,7 +43,6 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 
-extern u8 *gBattleDisplayWork;
 
 
 
@@ -91,7 +74,7 @@ u32 BattleEv_DispatchQueued(void)
         case 1: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
         case 2: UiWork_PushValueSlotFar(queue->operands[i] & 0x1ff, 2); break;
         case 3: UiWork_PushValueSlotFar(queue->operands[i] & 0x3fff, 4); break;
-        case 6: FIELD(gBattleDisplayWork, s32, 8) = 1; break;
+        case 6: gBattleDisplayWork->marked = 1; break;
         case 7: UiWork_ClearValueNameTablesFar(); break;
         case 4:
             if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);

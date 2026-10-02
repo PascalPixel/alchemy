@@ -6,16 +6,10 @@
 #include "GLOBAL_CELLS.H"
 #include "GAME_STATE.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
+#include "FIELD_SPRITE.H"
 
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void *ObjectTable_Get(u32 object);
-
-struct LinkedEffectVisual {
-    u8 unknown_00[9];
-    u8 flags;
-    u8 unknown_0a[28];
-    u8 value_26;
-};
 
 struct LinkedEffectObject {
     u8 unknown_00[8];
@@ -23,27 +17,27 @@ struct LinkedEffectObject {
     s32 y;
     s32 z;
     u8 unknown_14[60];
-    struct LinkedEffectVisual *visual;
+    struct FieldSprite *visual;
     u8 value_54;
     u8 value_55;
     u8 unknown_56[14];
     u16 counter;
     u16 resource_id;
     struct LinkedEffectObject *resource;
-    void (*callback)(void);
+    s32 (*callback)(void *);
 };
 
 struct LinkedEffectObject *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
 void Func_08009098(struct LinkedEffectObject *object, const void *configuration);
 void Func_08009080(struct LinkedEffectObject *object, s32 mode);
 void Func_080090d0(struct LinkedEffectObject *object);
-void BattleFx_CopyLinkedObjectPosition(void);
+s32 BattleFx_CopyLinkedObjectPosition(void *);
 extern const u8 Data_0809fd38[];
 
 extern u8 gObjectSlots[];
-s32 ObjectDispatch_SetSingleChildField26Far(void *, s32);
+void ObjectDispatch_SetSingleChildField26Far(void *, s32);
 u16 ArcTan2(s32, s32);
-void *Object_GetById(u32);
+struct ObjectRuntime *Object_GetById(u32);
 extern const u8 ObjectMotion_ActionKind1Script[];
 extern const u8 ObjectMotion_ActionKind2Script[];
 extern const u8 ObjectMotion_ActionKind3Script[];
@@ -59,24 +53,11 @@ struct FacingRecord {
     s16 *id;
 };
 
-struct FacingEntry {
-    void *data;
-    u8 unknown_04[2];
-    u16 facing;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unknown_14[0x3c];
-    struct FacingRecord *record;
-    u8 kind;
-    u8 unknown_55[0x1b];
-};
-
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 {
     struct LinkedEffectObject *object = ObjectTable_Get(id);
     struct LinkedEffectObject *child;
-    struct LinkedEffectVisual *visual;
+    struct FieldSprite *visual;
     s32 mode;
 
     child = 0;
@@ -120,29 +101,30 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
     child->value_55 = 0;
     child->callback = BattleFx_CopyLinkedObjectPosition;
     visual = child->visual;
-    visual->value_26 = 0;
+    visual->flags = 0;
     child->resource = object;
 
+    /* Sprite priority is bits2-3 of the third attribute's high byte. */
     if (flags & 0x100) {
         s32 mask = 13;
-        u8 visual_flags = visual->flags;
+        u8 visual_flags = ((u8 *)visual)[9];
 
         mask = -mask;
         mask &= visual_flags;
         mask |= 4;
-        visual->flags = mask;
+        ((u8 *)visual)[9] = mask;
     } else {
         s32 copied_flags = 12;
-        u8 source_flags = object->visual->flags;
+        u8 source_flags = ((u8 *)object->visual)[9];
         u8 destination_flags;
         s32 clear_mask = 13;
 
         copied_flags &= source_flags;
-        destination_flags = visual->flags;
+        destination_flags = ((u8 *)visual)[9];
         clear_mask = -clear_mask;
         clear_mask &= destination_flags;
         clear_mask |= copied_flags;
-        visual->flags = clear_mask;
+        ((u8 *)visual)[9] = clear_mask;
     }
 }
 
@@ -245,11 +227,11 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
     ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)kind);
 }
 
-struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32 id)
+struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self, s32 id)
 {
-    struct FacingEntry *entry;
-    struct FacingEntry *found;
-    struct FacingEntry *result;
+    struct ObjectRuntime *entry;
+    struct ObjectRuntime *found;
+    struct ObjectRuntime *result;
     s32 cnt;
     s32 best;
     s32 dy;
@@ -261,13 +243,13 @@ struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32
 
     found = NULL;
     best = 40;
-    entry = *(struct FacingEntry **)((u32)&gObjectSlots);
+    entry = *(struct ObjectRuntime **)((u32)&gObjectSlots);
     for (cnt = 0; cnt < 64; cnt++, entry++) {
-        if (entry->data == NULL)
+        if (entry->script == NULL)
             continue;
         if (entry == self)
             continue;
-        if (entry->kind != 1)
+        if (entry->animation_kind != 1)
             continue;
         dy = entry->y - self->y;
         if (dy >= 0) {
@@ -284,7 +266,7 @@ struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32
             continue;
         angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
         if (dist > 23) {
-            turn = (s16)(angle - self->facing);
+            turn = (s16)(angle - self->angle);
             if (turn < -0x2fff)
                 continue;
             if (turn > 0x2fff)
@@ -295,7 +277,7 @@ struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32
     }
     if (found == NULL)
         return NULL;
-    if (*found->record->id != id)
+    if (*((struct FacingRecord *)found->animation)->id != id)
         return NULL;
     return found;
 }

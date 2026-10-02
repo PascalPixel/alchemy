@@ -119,4 +119,18 @@ extern char MsgActorUnleashesDjinn;
 extern char MsgSummonLacksDjinn;
 extern char MsgActorSummons;
 
+/* Battle spoils and level gains. */
+extern char MsgAgilityRises;
+extern char MsgExpGained;
+extern char MsgLevelUp;
+extern char MsgAbilityMastered;
+extern char MsgMaxHpRises;
+extern char MsgMaxPpRises;
+extern char MsgAttackRises;
+extern char MsgDefenseRises;
+extern char MsgLuckRises;
+extern char MsgCoinsGained;
+extern char MsgItemGained;
+extern char MsgDowned;
+
 #endif

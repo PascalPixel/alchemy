@@ -28,6 +28,27 @@ struct BattlePromptSprite {
     } tile;
 };
 
+struct UiWindow;
+
+/* The message viewport scrolls in 8.8 fixed point. */
+struct BattleDisplayOffset {
+    s32 unknown_00;
+    u16 x;
+    u16 y;
+};
+
+/* Heap slot 37: the message window, its viewport, and the queued mark. */
+struct BattleDisplayWork {
+    struct UiWindow *window;
+    struct BattleDisplayOffset *offset;
+    s32 marked;
+};
+
+LAYOUT_SIZE_GUARD(BattleDisplayOffset_Size, struct BattleDisplayOffset, 8);
+LAYOUT_SIZE_GUARD(BattleDisplayWork_Size, struct BattleDisplayWork, 12);
+LAYOUT_OFFSET_GUARD(BattleDisplayWork_Marked, struct BattleDisplayWork, marked, 8);
+extern struct BattleDisplayWork *gBattleDisplayWork;
+
 /* Queued battle events and the state of their playback. */
 struct BattleEventState {
     struct BattleEventQueue queue;  /* 0x000 */
@@ -60,7 +81,8 @@ struct BattleSession {
     u8 flags_043;                   /* 0x043, bit 1: an enemy challenged */
     u8 two_sided;                   /* 0x044, a linked battle */
     u8 encounter_mode;              /* 0x045 */
-    u8 unknown_046[2];
+    u8 escape_failures;             /* 0x046 */
+    u8 unknown_047;
     u8 owner_slots[8];              /* 0x048, member slot per owner, 0xff none */
     u8 link_side;                   /* 0x050 */
     u8 link_misses;                 /* 0x051, consecutive missed link frames */

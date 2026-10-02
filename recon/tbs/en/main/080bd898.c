@@ -26,24 +26,7 @@
 #include "IO_WRITE_QUEUE.H"
 #include "RESOURCE.H"
 #include "UI.H"
-
-struct BattleDisplayContext {
-    u16 unknown_00[6];
-    u16 tile_x;
-    u16 tile_y;
-};
-
-struct BattleDisplayViewport {
-    u16 unknown_00[2];
-    u16 scroll_x;
-    u16 scroll_y;
-};
-
-struct BattleDisplayWork {
-    struct BattleDisplayContext *context;
-    struct BattleDisplayViewport *viewport;
-    s32 marked;
-};
+#include "MENU_LIST.H"
 
 struct BattleMotionPart {
     u8 unknown_00[5];
@@ -62,7 +45,6 @@ struct BattleMotionRecord {
     struct BattleMotionPart *part;
 };
 
-extern struct BattleDisplayWork *gBattleDisplayWork;
 extern volatile u32 gFrameCount;
 extern volatile s32 gFrameTick;
 extern volatile s32 gKeysPressedLatch;
@@ -85,7 +67,6 @@ s32 BattleMotion_GetSlotField14(s32 unit_id);
 void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
 void BattlePres_SetActorModeAndAction(s32 unit_id);
 void QueueIoWriteDelay6(u32 address, u32 value);
-void Runtime_PushSlotEntry(struct BattlePromptSprite *entry, s32 slot);
 void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
 s32 Summon_GetEntryByte3Kind(s32 class_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
@@ -238,16 +219,16 @@ void BattleEvent_Playback(void)
         } else if (state->phase == 5) {
             struct BattleDisplayWork *display;
             struct BattlePromptSprite *entry;
-            struct BattleDisplayContext *context;
-            struct BattleDisplayViewport *viewport;
+            struct UiWindow *context;
+            struct BattleDisplayOffset *viewport;
             s32 tiles;
             s32 x;
 
             tiles = (s32)BattlePres_AdvanceArrowTiles + ((gFrameCount >> 2) & 7) * 128;
             display = gBattleDisplayWork;
             entry = &state->display_entry;
-            context = display->context;
-            viewport = display->viewport;
+            context = display->window;
+            viewport = display->offset;
             x = 0;
             if (state->display_source == -1)
                 state->display_source = work->prompt_slot;
@@ -257,16 +238,16 @@ void BattleEvent_Playback(void)
             entry->attributes.word = 0xa000;
             entry->tile.word = x;
             entry->tile.bits.tile = Resource_GetBuffer(state->display_source, tiles);
-            x = context->tile_x * 8 + (viewport->scroll_x >> 8) + 4;
+            x = context->x * 8 + (viewport->x >> 8) + 4;
             entry->attributes.bits.x = x;
-            entry->attributes.bits.y = Trig_Sin(gFrameCount << 12) / 0x8000 + context->tile_y * 8 + (viewport->scroll_y >> 8) + 6;
+            entry->attributes.bits.y = Trig_Sin(gFrameCount << 12) / 0x8000 + context->y * 8 + (viewport->y >> 8) + 6;
             if ((BATTLE_OPTIONS & 2) || (gKeysPressedLatch & 0x303)
                 || ((u32)(gFrameTick - state->timer) > 10 && (BATTLE_OPTIONS & 0x303))) {
                 AudioCommand_PlayFar(111);
                 state->phase = 2;
                 state->timer = 0;
             } else {
-                Runtime_PushSlotEntry(entry, 240);
+                Runtime_PushSlotEntry((s32 *)entry, 240);
                 return;
             }
         } else if (state->phase == 10) {

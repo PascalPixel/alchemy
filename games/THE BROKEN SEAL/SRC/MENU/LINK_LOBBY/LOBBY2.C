@@ -1,5 +1,6 @@
 /* The link lobby: the attendant's call into the circle. */
 #include "TYPES.H"
+#include "CHARACTER.H"
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "LOBBY.H"
@@ -22,7 +23,6 @@ s32 SerialRuntime_BeginTransferB(void);
 s32 SerialRuntime_GetActiveTransfers(void);
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
-void Trade_GetOfferState(s32 mode);
 
 /* Unless flag 0x203 is set, has the attendant call "please step into the
  * circle!" (MsgLobbyWantParticipatePlease) once every 300 frames: flag 0x200 marks a call

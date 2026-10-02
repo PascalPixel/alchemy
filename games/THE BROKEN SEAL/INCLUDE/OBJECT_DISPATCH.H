@@ -30,6 +30,8 @@ struct DispatchObject {
 };
 
 void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value);
+void Animation_ApplyChildValues(struct DispatchObject *object, u32 value);
+void ObjectGroup_SetChildValueUnlessFifteen(void *parent, u32 value);
 
 extern const u32 ObjectDispatch_Table0Script[];
 extern const u32 ObjectDispatch_Table1Script[];

@@ -1,5 +1,7 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "MENU_LIST.H"
+#include "RENDER_INPUT.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
@@ -17,29 +19,16 @@ struct SideObjectRegistry {
 #endif
 };
 
-struct SideObject {
-    u8 pad_00[4];
-    u8 mode_04;
-    u8 pad_05[20];
-    u8 slot_19;
-};
-
-extern struct SideObjectRegistry *gWindowWork;
 extern s32 GameFlag_IsSet(s32);
 extern s32 Localization_LookupEntryId(s32);
-extern struct SideObject *RenderOutput_Create(
-    s32, s32, s32, s32, s32);
-
-extern u8 Data_03001e8c[];
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 s32 GameFlag_TestFar(s32);
-s32 Localization_LookupEntryId(s32);
 
-struct SideObject *CreateSideObject(
+struct RenderOutput *CreateSideObject(
     s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
-    struct SideObjectRegistry *state = gWindowWork;
-    struct SideObject *object = 0;
+    struct SideObjectRegistry *state = (struct SideObjectRegistry *)gWindowWork[0];
+    struct RenderOutput *object = 0;
     s32 first;
     s32 second;
     s32 id;
@@ -67,12 +56,13 @@ struct SideObject *CreateSideObject(
 
     slot = 14 + side;
     UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
-    object = RenderOutput_Create(first, 0x80000000, arg3, arg4, arg5);
+    object = RenderOutput_Create(first, 0x80000000, (struct RenderInput *)arg3, arg4, arg5);
     if (object != 0) {
         s32 slotBits = slot << 4;
 
-        object->slot_19 = (object->slot_19 & 15) | slotBits;
-        object->mode_04 = 2;
+        /* The top nibble of the packed table's second byte selects the slot. */
+        ((u8 *)&object->table)[1] = (((u8 *)&object->table)[1] & 15) | slotBits;
+        object->one4 = 2;
     }
 
     state->state_ids[side] = id;
@@ -80,21 +70,14 @@ struct SideObject *CreateSideObject(
     return object;
 }
 
-/* ui/load_character_entry_for_slot.c */
-/* ui/load_character_entry_for_slot.c */
-#define SLOT1_ID_OFS (RENDER_SLOT_ID_OFS + 2)
-#define SLOT0_ID_OFS RENDER_SLOT_ID_OFS
-#define SLOT_VALUE_OFS RENDER_SLOT_VALUE_OFS
-
 void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
 {
     s32 result;
     s32 current;
     u32 character_id;
-    u8 *state;
-    s32 offset;
+    struct SideObjectRegistry *state;
 
-    state = *(u8 **)((u32)&Data_03001e8c);
+    state = (struct SideObjectRegistry *)gWindowWork[0];
 
     if (GameFlag_TestFar(0x20) != 0) {
         if (character == 0)
@@ -106,16 +89,15 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
     character_id = Localization_LookupEntryId(character);
     if (character_id != -1U) {
         if (slot > 1U) {
-            if (*(u16 *)(state + SLOT1_ID_OFS) == character_id) {
+            if (state->state_ids[1] == character_id) {
                 slot = 1;
-            } else if (*(u16 *)(state + SLOT0_ID_OFS) == character_id) {
+            } else if (state->state_ids[0] == character_id) {
                 slot = 0;
             } else {
                 return;
             }
         }
-        offset = SLOT_VALUE_OFS + slot * 2;
-        current = *(u16 *)(state + offset);
+        current = state->state_values[slot];
         UiGlyph_LoadEntryWithPalette(character_id, value, &current, &result, slot + 0xe, 1);
     }
 }

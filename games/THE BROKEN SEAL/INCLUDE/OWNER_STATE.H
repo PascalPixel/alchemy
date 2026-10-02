@@ -11,11 +11,6 @@ struct OwnerInventoryState {
     u8 class_id;                    /* 0x128 */
 };
 
-struct OwnerActionSlot {
-    u16 encoded_action;
-    u16 unknown_02;
-};
-
 struct OwnerActionState {
     u8 unknown_000[0x58];
     struct OwnerActionSlot action_slots[32];
@@ -62,10 +57,6 @@ LAYOUT_OFFSET_GUARD(
     struct OwnerInventoryState,
     class_id,
     0x128);
-LAYOUT_SIZE_GUARD(
-    OwnerActionSlot_Size,
-    struct OwnerActionSlot,
-    0x04);
 LAYOUT_OFFSET_GUARD(
     OwnerActionState_ActionSlots,
     struct OwnerActionState,

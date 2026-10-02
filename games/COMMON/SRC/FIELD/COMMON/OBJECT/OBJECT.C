@@ -16,6 +16,8 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+#include "MAP_SCROLL.H"
+#include "SCRIPT.H"
 
 extern u8 ResourceTableEntries[];
 
@@ -29,14 +31,6 @@ extern u8 Map_TileDissolveOrder[];
 
 /* map/shared/render_animated_tile_frames_for_object.c */
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
-
-/* map/shared/get_screen_relative_position.c */
-struct Thing {
-    u8 filler0[8];
-    s32 field8;
-    u8 filler12[4];
-    s32 field16;
-};
 
 /* The object system state block (92 bytes). */
 struct ObjectSystem {
@@ -102,11 +96,10 @@ struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimation(void *, s32);
 void AnimationObjects_SetField15OnActive(void *, s32);
-struct State_0800b7c0;
-s32 Animation_InitializeObjects(struct State_0800b7c0 *);
+struct AnimationSetupState;
+s32 Animation_InitializeObjects(struct AnimationSetupState *);
 struct MetadataSlotState;
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 struct ChildStateFlags {
     u8 padding[5];
@@ -122,7 +115,6 @@ struct ChildDisplayFlags {
     u8 unk_2 : 6;
 };
 
-s32 ObjectGroup_SetChildValueUnlessFifteen(s32);
 s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 s32 BattleFx_StartBufferInterpolationFar(s32);
 
@@ -214,10 +206,10 @@ void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
     } while (pos <= 0x7FU);
 }
 
-s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out)
+s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
 {
-    u8 *state = gMapWork[0];
-    s32 *org = (s32 *)(state + 228);
+    struct MapScrollWork *state = gMapWork[0];
+    s32 *org = &state->view_x;
     s32 a;
     s32 b;
     s32 x;
@@ -225,8 +217,8 @@ s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out)
 
     a = org[0] & 0xffff0000;
     b = org[1] & 0xffff0000;
-    x = obj->field8 - a;
-    y = obj->field16 - b;
+    x = obj->x - a;
+    y = obj->z - b;
     if ((u32)(x + 0x001fffff) <= 0x012ffffe && y > 0 && y < 0xe00000) {
         *out++ = x >> 16;
         *out = y >> 16;
@@ -479,20 +471,20 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
     }
 }
 
-void ObjectDispatch_ApplyPairToChildren(void *arg0, s32 arg1, s32 arg2)
+void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 arg1, s32 arg2)
 {
     void **items;
     void *item;
     s32 count;
 
-    if (arg0 != 0) {
-        switch (*((u8 *)arg0 + 84) & 15) {
+    if (object != 0) {
+        switch (object->kind & 15) {
         case 1:
-            AnimationObjects_SelectAnimation(*(void **)((u8 *)arg0 + 80), arg1);
-            AnimationObjects_SetField15OnActive(*(void **)((u8 *)arg0 + 80), arg2);
+            AnimationObjects_SelectAnimation(object->target.child, arg1);
+            AnimationObjects_SetField15OnActive(object->target.child, arg2);
             break;
         case 2:
-            items = *(void ***)((u8 *)arg0 + 80);
+            items = object->target.children;
             for (count = 3; count >= 0; count--) {
                 item = *items++;
                 if (item != 0) {
@@ -511,13 +503,16 @@ void ObjectDispatch_SetChildField1e(struct DispatchObject *object, u32 value)
         *(s16 *)((u8 *)object->target.child + 0x1e) = value;
 }
 
-void Animation_SetIndexAndInitObjects(void *obj, s32 no)
+void Animation_SetIndexAndInitObjects(void *raw_object, s32 no)
 {
-    if ((obj != NULL) && ((0xF & FIELD_AT_OFFSET(obj, u8 *, 0x54)) == 1)) {
-        obj = FIELD_AT_OFFSET(obj, void **, 0x50);
+    struct DispatchObject *object = raw_object;
+    void *child;
+
+    if (object != NULL && (object->kind & 0xf) == 1) {
+        child = object->target.child;
         if (no >= 0) {
-            *FIELD_AT_OFFSET(obj, s16 **, 0x28) = (s16)no;
-            Animation_InitializeObjects((struct State_0800b7c0 *)obj);
+            **(s16 **)((u8 *)child + 0x28) = (s16)no;
+            Animation_InitializeObjects((struct AnimationSetupState *)child);
         }
     }
 }
@@ -573,50 +568,51 @@ void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object, s3
     }
 }
 
-void ObjectDispatch_WaitForValue16(void *obj)
+void ObjectDispatch_WaitForValue16(void *raw_object)
 {
+    struct ScriptInterpreter *object = raw_object;
     s32 cnt;
 
     cnt = 0;
-    if (*(s32 *)((FIELD(obj, s16 *, 4) * 4) + FIELD(obj, s32 *, 0)) != 0x10) {
+    if (object->script[object->cursor] != 0x10) {
         do {
             WaitFrames(1);
             cnt++;
-            if (cnt > 0x12B) {
+            if (cnt > 0x12b) {
                 break;
             }
-        } while (*(s32 *)((FIELD(obj, s16 *, 4) * 4) + FIELD(obj, s32 *, 0)) != 0x10);
+        } while (object->script[object->cursor] != 0x10);
     }
 }
 
-void ObjectDispatch_SetSingleChildField26(u8 *arg0, u32 arg1)
+void ObjectDispatch_SetSingleChildField26(struct DispatchObject *object, u32 value)
 {
-    if (arg0 != NULL) {
-        if ((arg0[0x54] & 0xf) == 1)
-            (*(u8 **)(arg0 + 0x50))[0x26] = arg1;
+    if (object != NULL) {
+        if ((object->kind & 0xf) == 1)
+            ((u8 *)object->target.child)[0x26] = value;
     }
 }
 
-void Animation_SetStateField5Bits2To3(u8 *obj, u32 v)
+void Animation_SetStateField5Bits2To3(struct DispatchObject *obj, u32 v)
 {
-    if (obj != 0 && obj[84] == 1) {
-        struct ChildStateFlags *state = *(struct ChildStateFlags **)(obj + 80);
+    if (obj != 0 && obj->kind == 1) {
+        struct ChildStateFlags *state = (struct ChildStateFlags *)obj->target.child;
         state->field_2 = v;
     }
 }
 
-void Animation_SetStateField1dBit1(u8 *obj, u32 v)
+void Animation_SetStateField1dBit1(struct DispatchObject *obj, u32 v)
 {
-    if (obj != 0 && obj[84] == 1) {
-        struct ChildDisplayFlags *state = *(struct ChildDisplayFlags **)(obj + 80);
+    if (obj != 0 && obj->kind == 1) {
+        struct ChildDisplayFlags *state = (struct ChildDisplayFlags *)obj->target.child;
         state->field_1 = v;
     }
 }
 
-void Animation_ApplyChildValues(void *obj)
+void Animation_ApplyChildValues(struct DispatchObject *obj, u32 value)
 {
-    if ((obj != NULL) && (FIELD_AT_OFFSET(obj, u8 *, 0x54) == 1)) {
-        ObjectGroup_SetChildValueUnlessFifteen(FIELD_AT_OFFSET(obj, s32 *, 0x50));
+    if (obj != NULL && obj->kind == 1) {
+        ObjectGroup_SetChildValueUnlessFifteen(obj->target.child, value);
     }
 }
 

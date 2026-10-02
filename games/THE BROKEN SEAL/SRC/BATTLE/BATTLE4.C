@@ -7,12 +7,11 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_WORK.H"
+#include "MOTION_OBJECT.H"
+#include "CHARACTER.H"
 
-s32 *GetBattleObjectSlot(s32);
-u8 *GetMotionRecord(s32, s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
-void ActivateBattleObjectSlot(s32);
 
 struct SlotArray { s16 items[64]; };
 
@@ -69,7 +68,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 
     state = Owner_GetStateFar(id);
     index = 0;
-    while ((item = GetMotionRecord(*GetBattleObjectSlot(id), index)) != 0) {
+    while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
         if (state->status_12a != 1)
             AnimationObjects_SelectAnimationFar(item, 4);
         else
@@ -79,7 +78,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 
     if (state->status_12a == 1) {
         index = 0;
-        while ((item = GetMotionRecord(*GetBattleObjectSlot(id), index)) != 0) {
+        while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
             child = *(u8 **)(item + 40);
             items[index] = item;
             child[5] = 6;
@@ -157,12 +156,7 @@ pick:
 
 s32 BattleFx_IsReviveFar(s32 effect);
 
-struct BattleAiProfile {
-    u8 unknown_00[0x35];
-    s8 target_strategy;
-};
-
-struct BattleAiProfile *Owner_GetRecordFar(s32 class_id);
+struct EnemyDefinition *Owner_GetRecordFar(s32 class_id);
 
 u32 Random16(void);
 
@@ -199,13 +193,13 @@ u32 Random16(void);
             (count)++;                                                        \
         if ((unit)->res_modifier > 0)                                         \
             (count)++;                                                        \
-        if ((s8)(unit)->status_12c > 0)                                       \
+        if ((unit)->element_modifier[0] > 0)                                   \
             (count)++;                                                        \
-        if ((s8)(unit)->status_12d > 0)                                       \
+        if ((unit)->element_modifier[1] > 0)                                   \
             (count)++;                                                        \
-        if ((s8)(unit)->status_12e > 0)                                       \
+        if ((unit)->element_modifier[2] > 0)                                   \
             (count)++;                                                        \
-        if ((s8)(unit)->status_12f > 0)                                       \
+        if ((unit)->element_modifier[3] > 0)                                   \
             (count)++;                                                        \
     }
 

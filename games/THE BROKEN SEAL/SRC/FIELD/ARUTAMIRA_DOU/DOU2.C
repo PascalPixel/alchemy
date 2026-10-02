@@ -2,6 +2,7 @@
 #include "EDITION.H"
 #include "ABILITY_IDS.H"
 #include "FIELD_EVENT.H"
+#include "OBJECT_DISPATCH.H"
 #include "FIELD_SCENE.H"
 #include "ARUTAMIRA.H"
 #include "CALL.H"
@@ -72,7 +73,6 @@ void Camera_WorldToScreen(s32 *pos);
 void EffectSlot_Initialize(u8 *object, s32 type, s32 x, s32 z);
 void EffectSlot_SetCallback(u8 *object, void (*update)());
 void EffectSlot_SetObjectMode(u8 *object, s32 mode);
-void ObjectGroup_SetChildValueUnlessFifteen(s32 handle, s32 frame);
 s32 Math_DivideUnsigned(s32 value, s32 divisor);
 void OverlayObject_UpdateThreeStateMotion();
 
@@ -1424,7 +1424,7 @@ void ArutamiraDou_ReleaseWallBurst(void)
         EffectSlot_Initialize(object, 284, p[0], p[2]);
         EffectSlot_SetCallback(object, OverlayObject_UpdateThreeStateMotion);
         EffectSlot_SetObjectMode(object, 7);
-        ObjectGroup_SetChildValueUnlessFifteen(*(s32 *)object, (u32)(Engine_RandomNext() * 7) >> 16);
+        ObjectGroup_SetChildValueUnlessFifteen((void *)*(s32 *)object, (u32)(Engine_RandomNext() * 7) >> 16);
         speed = Math_DivideUnsigned(Engine_RandomNext(), 3) + 0x18000;
         *(s32 *)(object + 44) = speed;
         *(s32 *)(object + 40) = speed;

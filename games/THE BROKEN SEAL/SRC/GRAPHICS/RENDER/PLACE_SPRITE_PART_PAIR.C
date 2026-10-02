@@ -1,8 +1,6 @@
 /* Places both 12-byte sprite parts from fixed-point screen coordinates,
    object/ground heights and a two-word scale. Unsigned dimensions and a
    signed vertical offset share the exact projected-sprite family layout.
-   Keeping incoming screen_x separate from pixel_x reproduces the original
-   register lifetimes and two margin stack slots.
    Complete body and own pools: [0800b074,0800b166), 242 exact bytes.
    Inter-function alignment at b166 is retained separately and uncredited. */
 #include "TYPES.H"
@@ -43,7 +41,6 @@ void Render_PlaceSpritePartPair(struct ProjectedSprite *sprite, s32 screen_x,
     s32 affine = 1;
     s32 scale_x = *scale++;
     s32 scale_y = *scale;
-    s32 pixel_x;
     s32 x;
     s32 y;
     struct ProjectedSpritePart *shadow;
@@ -55,16 +52,14 @@ void Render_PlaceSpritePartPair(struct ProjectedSprite *sprite, s32 screen_x,
         half_width <<= 1;
         half_height <<= 1;
     }
-    /* FAKEMATCH: separate the pixel-X lifetime from the incoming argument. */
-    pixel_x = screen_x >> 16;
-    x = pixel_x - half_width;
+    x = (screen_x >> 16) - half_width;
     y = ((screen_y - height) >> 16) - half_height
         - ((((sprite->height >> 1) - sprite->offset_y) * scale_y
             + 0xffff) >> 16);
     sprite->part[0].affine = affine;
     sprite->part[0].x = x;
     sprite->part[0].y = y;
-    x = pixel_x - margin_x;
+    x = (screen_x >> 16) - margin_x;
     y = ((screen_y - ground_height) >> 16) - margin_y;
     shadow = &sprite->part[1];
     shadow->affine = affine;

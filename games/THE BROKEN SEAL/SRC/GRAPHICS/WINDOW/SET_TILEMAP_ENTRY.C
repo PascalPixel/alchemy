@@ -55,7 +55,9 @@ void UiWindow_SetTilemapEntry(
 
     /* FAKEMATCH: the plain write is a separate tail reached by goto so the
        palette and plain stores keep their own copies of the bounds check,
-       and the byte-offset store keeps map as the strh offset register. */
+       and the byte-offset store keeps map as the strh offset register.
+       2026-10-02: map[index] swaps the encoded base and offset registers
+       in both strh stores; the rest of the generated assembly is equal. */
     switch (mode) {
     case TILEMAP_ENTRY_PLAIN:
         goto plain;

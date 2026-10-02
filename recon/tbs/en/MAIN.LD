@@ -900,7 +900,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STEP_PALETTE_TO_RESOURCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CASTING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.o"(.text)
-        "*/recon/tbs/raw/080e698c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE7.o"(.text)
         "*/recon/tbs/raw/080e7338.o"(.text)

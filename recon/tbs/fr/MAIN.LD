@@ -761,7 +761,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STEP_PALETTE_TO_RESOURCE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CASTING.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000ea18c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE7.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000eab38)

@@ -10,9 +10,9 @@
 	.thumb_func
 Math_DivideUnsigned:
 	overlay_veneer IwramUnsignedDivide
-	.global WaitFrames
+	.global Engine_TaskWait
 	.thumb_func
-WaitFrames:
+Engine_TaskWait:
 	overlay_veneer WaitFramesFar
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
@@ -74,9 +74,9 @@ Engine_MapCopyCellAttributes:
 	.thumb_func
 Engine_ObjectSetBlendMode:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
-	.global Runtime_SetWorkTripleIfNonNegative
+	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
-Runtime_SetWorkTripleIfNonNegative:
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Inventory_AddItemFar
 	.thumb_func
@@ -94,9 +94,9 @@ Engine_EventWait:
 	.thumb_func
 Engine_EventBegin:
 	overlay_veneer Battle_ResetFar
-	.global BattleFx_FinishAction
+	.global Engine_EventEnd
 	.thumb_func
-BattleFx_FinishAction:
+Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
 	.global Inventory_PromptAndSetObjectMode
 	.thumb_func

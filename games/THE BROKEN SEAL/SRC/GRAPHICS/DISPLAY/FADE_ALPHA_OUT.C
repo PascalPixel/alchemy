@@ -12,7 +12,9 @@ void Graphics_FadeAlphaOut(void)
   alpha_step = 1;
   do
   {
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling.
+     * 2026-10-02: a plain scope moves alpha_step's add before loading the
+     * WaitFrames argument into r0; the English translation unit differs. */
     do
     {
       *((s16 *)alpha) = 0x1010 - alpha_step;

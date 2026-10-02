@@ -9,7 +9,6 @@
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 extern u8 gProjection[];
-void Graphics_PrepareTransfer(void *src, void *dst, void *work);
 
 /* camera/scene/set_angle_parameters.c */
 struct CameraWork {
@@ -71,7 +70,7 @@ void Graphics_PrepareTransferAndRun(void *src, void *dst)
 {
     u8 work[48];
 
-    Graphics_PrepareTransfer(src, dst, work);
+    Graphics_PrepareTransfer(src, dst, (s32 *)work);
     Iwram_TransformMatrix((s32 *)work);
 }
 

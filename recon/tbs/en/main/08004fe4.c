@@ -1,11 +1,22 @@
+/* 2026-10-02: complete English extent scores 0, including the literal pool.
+   Baseline 505: 4 register, 2 operand, 4 reordered, 1 inserted/1 deleted.
+   Natural source's remaining negation/spill and zero/axis-copy order did not
+   follow its statement order. Used-value trials: early uz output barrier
+   1590; add r8 binding 770; rest output barrier 1380; scoped r0 zero 300;
+   add vx/r10 290; pin whole destination/r9 4109 (rejected global lifetime);
+   ex/r11 with natural vx 240; ex/r11 + vx/r10 180; rest barrier then 980;
+   add used uz/r8 60. Scoped row/r4 read-write 604 and input-only 649 both
+   altered spills, rejected. Moving zero's source lifetime after out[0]
+   stayed 60. Making uz depend on zero 210 altered eye loads, rejected.
+   Retained r1 clobber on the consumed zero constraint: 0. All storage and
+   emitted instructions carry actual function work. Adoption still requires
+   every edition's complete linked ROM comparison. */
 /* DRAFT of Graphics_PrepareTransfer: builds a look-at matrix. The forward
    axis is target - eye, normalised; the side axis is perpendicular to it in
    the ground plane; the third is their cross product. Each row ends with
    minus the eye's dot product with its axis. The dot product runs from a
    28-byte routine copied to the stack.
-   Not exact: 500 of 500 bytes. Remaining: after the third product the ROM
-   negates dx before storing dz, and in the tail it keeps the zero in r0 and
-   reloads uz through r1, where this build uses r3 and r0. */
+   Exact draft: complete 500-byte owner including alignment and literal pool. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
@@ -20,11 +31,15 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
     u32 code[7];
     s32 dx, dy, dz;
     s32 ux;
-    s32 ex;
+    /* FAKEMATCH: the used eye x component remains in r11 through the row dot calls. */
+    register s32 ex asm("r11");
     Dot3Fn dot;
     s32 ey;
-    s32 uz;
-    s32 vx, vy, vz;
+    /* FAKEMATCH: the used perpendicular axis stays in r8 through the cross product. */
+    register s32 uz asm("r8");
+    /* FAKEMATCH: the used third-row x component stays in r10 through normalization. */
+    register s32 vx asm("r10");
+    s32 vy, vz;
     s32 scale;
     s32 ez;
     s32 rest;
@@ -44,6 +59,8 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
     dy = Iwram_MulQ16(dy, scale);
     rest = Iwram_MulQ16(dz, scale);
     uz = -dx;
+    /* FAKEMATCH: keep the used negated axis before spilling the third product. */
+    asm("" : "+r"(rest) : "r"(uz));
     dz = rest;
     rest = Iwram_MulQ16(dy, dy);
     scale = 0x10000;
@@ -61,10 +78,17 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
     ex = eye[0];
     ey = eye[1];
     ez = eye[2];
-    out[0] = ux;
-    out[3] = 0;
-    out[6] = uz;
-    out[9] = -dot(ex, ux, ez, uz, 0, 0);
+    {
+        /* FAKEMATCH: the used zero argument remains in r0 beside the first row stores. */
+        register s32 zero asm("r0");
+        out[0] = ux;
+        zero = 0;
+        /* FAKEMATCH: keep the used zero in r0 and delay the used axis copy into r1. */
+        asm("" : "+r"(zero) : : "r1");
+        out[3] = zero;
+        out[6] = uz;
+        out[9] = -dot(ex, ux, ez, uz, zero, zero);
+    }
     out[4] = vy;
     out[7] = vz;
     out[1] = vx;

@@ -1,3 +1,23 @@
+/* 2026-10-02 bounded structural wave: restored the stable score-2055
+ * body after three failed trials. Current output is the complete 304-byte
+ * extent with a 36-byte frame and its first 84 bytes exact. Width is r11,
+ * src/dst are sp+8/sp+4; older allocation warnings below are historical.
+ * Remaining: row moves r6 to r7, row shift/cell scale/0x800 are hoisted,
+ * and row stride is rebuilt at row end instead of retained in r8.
+ * Trial 1: end_y = dst_y + height, then mutate dst_y, helper unchanged:
+ * 2715 (37 register, 5 stack, 8 operand, 12 reordered, 7 inserted,
+ * 9 deleted); frame40, end_y in r11, width spills and prefix regresses.
+ * Trial 2: height += dst_y, then mutate dst_y, helper unchanged:
+ * 2875 (36 register, 5 stack, 8 operand, 13 reordered, 7 inserted,
+ * 10 deleted); same frame40 and row limit r11. Parameter axis closed.
+ * Trial 3: original row loop; shared n for row sum, cell*8 and 0x800;
+ * byte-pointer drawing and explicit visibility do loop:
+ * 2191 (44 register, 6 stack, 6 operand, 15 reordered, 3 inserted,
+ * 6 deleted). Cell scaling and 0x800 stay inside their reference blocks,
+ * but frame32/prefix/spills regress and row still moves to r7.
+ * All three trials rejected; no unused storage or instructions added.
+ * The next blocker is retaining the reference row/stride lifetimes while
+ * suppressing those drawing invariants without altering the frame. */
 /* 2026-10-01 (wave 1, slice 1): what the reference's loops say, for the
    next attempt (this body still scores best, 2055). (1) Nothing is hoisted
    out of the three-layer loop: the cell's << 3 stays in the drawing block

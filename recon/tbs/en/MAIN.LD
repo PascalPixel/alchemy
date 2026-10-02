@@ -411,7 +411,7 @@
         "*/recon/tbs/raw/0808c4f8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/DEBUG2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT27.o"(.text)
-        "*/recon/tbs/raw/0808d9a4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/TILEACT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT11.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE6.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE7.o"(.text)

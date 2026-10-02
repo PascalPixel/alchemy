@@ -469,7 +469,10 @@ gBattleCueTable:
 	.incbin "baserom.gba", 0x0009e488, 0x00000046
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
-	.incbin "baserom.gba", 0x0009e4ce, 0x000001b8
+	.incbin "baserom.gba", 0x0009e4ce, 0x000001b2
+	.global Field_TileMessageOffsets
+Field_TileMessageOffsets:
+	.incbin "baserom.gba", 0x0009e680, 0x00000006
 	.global BattleFx_TargetRangeByMode
 BattleFx_TargetRangeByMode:
 	.incbin "baserom.gba", 0x0009e686, 0x00000032

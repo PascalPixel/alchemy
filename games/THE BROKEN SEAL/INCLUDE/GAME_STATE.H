@@ -59,7 +59,11 @@ struct GameState {
        ability in the low ten. */
     u16 first_shortcut;
     u16 second_shortcut;
-    u8 unknown_224[8];
+    /* Set once the world map's perspective scene is up. */
+    u8 perspective_scene;
+    u8 unknown_225[6];
+    /* How the next battle begins: 2 when a tile's ambush starts it. */
+    u8 battle_start;
     u16 unknown_22c;
     u16 unknown_22e;
     u16 unknown_230;

@@ -45,6 +45,7 @@ extern u8 IwramMulQ16ReturnIp[];
 #define Iwram_TransformMatrix ((void (*)(const s32 *matrix))0x030002c0) /* IwramTransformMatrix */
 #define Iwram_SignedDivide ((s32 (*)(s32 dividend, s32 divisor))0x03000380) /* IwramSignedDivide */
 #define Iwram_UnsignedDivide ((u32 (*)(u32 dividend, u32 divisor))0x030003f0) /* IwramUnsignedDivide */
+#define Iwram_Decompress ((void *(*)(const void *source, void *destination))0x030005c0) /* IwramDecompress */
 #define Iwram_CopyWords ((s32 (*)(void *destination, const void *source, s32 size))0x03001388) /* IwramCopyWords */
 #define Iwram_Sqrt ((s32 (*)(s32 value))0x030001d8) /* IwramSqrt */
 #define Iwram_RatioMulQ14 ((s32 (*)(s32 divisor, s32 value))0x0300013c) /* IwramRatioMulQ14 */

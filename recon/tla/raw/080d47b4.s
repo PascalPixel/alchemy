@@ -32,7 +32,7 @@ Func_080d47b4:
 	cmp r5, #0
 	beq .L_080d4858
 	ldr r1, .L_080d483c
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	movs r1, #15
 	ands r1, r7
 	adds r0, r5, #0

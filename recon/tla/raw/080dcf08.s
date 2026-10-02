@@ -16,7 +16,7 @@ Func_080dcf08:
 	cmp r3, r2
 	bne .L_080dcf26
 	ldr r1, .L_080dcf28
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080dcf26:
 	pop {pc}
 .L_080dcf28:

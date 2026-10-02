@@ -61,7 +61,7 @@ Func_080df8e0:
 	ldr r1, [r2, r3]
 	adds r0, r6, #0
 	mov r9, r3
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	adds r3, r6, #0
 	movs r0, #0
 	adds r3, #85
@@ -196,7 +196,7 @@ Func_080df8e0:
 	bl Object_SetMode
 	ldr r1, [r7, #28]
 	adds r0, r6, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080dfa66:
 	movs r3, #128
 	lsls r3, r3, #15

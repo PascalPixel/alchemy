@@ -1,4 +1,5 @@
 #include "OBJECT_RUNTIME.H"
+#include "OBJDISP.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
@@ -78,7 +79,7 @@ void BattleFx_UpdateScaledArcObjectA(struct ArcObject *obj)
     link = obj->link;
     v = (s16)++obj->step;
     if (v > 31) {
-        ObjectDispatch_InitializeFar((s32)obj, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
         return;
     }
     v = Trig_Sin(v << 10);
@@ -97,7 +98,7 @@ void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj)
     link = obj->link;
     v = (s16)++obj->step;
     if (v > 31) {
-        ObjectDispatch_InitializeFar((s32)obj, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
         return;
     }
     v = Trig_Sin(v << 10);

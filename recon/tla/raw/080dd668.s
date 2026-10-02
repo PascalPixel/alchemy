@@ -55,7 +55,7 @@ UpdateRisingParticleBurst:
 	cmp r6, #0
 	beq .L_080dd71e
 	ldr r1, .L_080dd744
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	bl Random16
 	mov r3, r10
 	adds r2, r6, #0

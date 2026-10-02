@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
@@ -36,7 +37,6 @@ struct FormationCandidate {
 };
 
 struct BattleUnitLevel *Owner_GetStateFar(s32 unit_id);
-s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
 extern u16 RomBytes_080c73f8[];
 s32 GameFlag_GetByteFar(s32 id);
@@ -245,7 +245,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     s32 floor;
     s32 i;
 
-    base = Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
+    base = (struct OwnerStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
     state = Owner_GetStateFar(owner);
     stats = &state->stats;
     Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));

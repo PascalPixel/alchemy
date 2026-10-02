@@ -1,10 +1,10 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "FIELD_EFFECT.H"
 #include "FIELD_SCENE.H"
 
 extern const s32 *const gEffectScripts[];
 struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(struct FieldActor *object, const s32 *script);
 
 static inline struct FieldActor *Effect_CreateResident(s32 type, s32 x, s32 y, s32 z)
 {
@@ -15,7 +15,7 @@ static inline struct FieldActor *Effect_CreateResident(s32 type, s32 x, s32 y, s
 static inline void Effect_SetResidentScript(struct FieldActor *object, const s32 *script)
 {
     /* FAKEMATCH: retain the inline call shape of the resident spawn's script setup. */
-    ObjectDispatch_InitializeFar(object, script);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)script);
 }
 
 enum {

@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "SCRIPT_INTERPRETER.H"
+#include "SCRIPT.H"
 
 extern u16 Data_0802ec48[];
 

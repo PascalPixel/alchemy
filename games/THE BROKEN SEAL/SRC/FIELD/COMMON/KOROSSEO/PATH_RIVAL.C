@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "CALL.H"
@@ -142,7 +143,6 @@ struct GaugeWork {
 extern u16 Korosseo_GaugePalette[];
 extern u8 Korosseo_GaugeGraphics[];
 
-u8 *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(u8 *block);
 void Resource_DecodeType01(u8 *source, u8 *destination);
 void VramBlock_LoadCached(s32 block, s32 size, u8 *source);
@@ -182,7 +182,7 @@ void Korosseo_DrawGauge(void)
         if (++gauge->level == 1) {
             Dma_Set(Korosseo_GaugePalette, (void *)0x050003c0, 0x80000010,
                     (volatile u32 *)0x040000d4);
-            buf = (u8 *)Value1((s32 (*)())Runtime_BumpAllocateAlternatePool, 512);
+            buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
             Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
             Call3((void (*)())VramBlock_LoadCached, gauge->vram_block, 512, (s32)buf);
             Runtime_BumpFree(buf);

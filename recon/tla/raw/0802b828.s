@@ -38,4 +38,4 @@ Func_0802b828:
 .L_0802b870:
 	.4byte gMapCellBuffer
 .L_0802b874:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid

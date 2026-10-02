@@ -15,7 +15,7 @@ Func_080ded84:
 	movs r5, #0
 	strh r3, [r2]
 	ldr r1, .L_080deda4
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	str r5, [r6, #108]
 .L_080deda2:
 	pop {r5, r6, pc}

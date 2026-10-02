@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
 #include "SCENE.H"
@@ -69,7 +70,6 @@ typedef struct {
 } Object;
 
 Object *Object_CreateFar(s32, s32, s32);
-void ObjectDispatch_InitializeFar(Object *, const void *);
 s32 Inventory_GetEquippedItemFar(Unit *, s32);
 s32 SummonSlot_RegisterActorSprites(s32);
 s32 BattleUnit_LookupWeaponValueByClass(s32);
@@ -370,7 +370,7 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
         object->scale_x = 0x10000;
         object->scale_y = 0x10000;
     }
-    ObjectDispatch_InitializeFar(object, BattlePres_ActorObjectScript);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattlePres_ActorObjectScript);
 }
 
 /*

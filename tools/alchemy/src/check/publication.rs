@@ -1311,8 +1311,62 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| address_equate_reason(path, text))
         .or_else(|| edition_equate_reason(path, text))
         .or_else(|| linker_assignment_reason(path, text))
+        .or_else(|| c_alias_reason(path, text))
         .or_else(|| raw_address_reason(path, text))
         .or_else(|| raw_encoding_reason(path, text))
+}
+const C_ALIAS_REASON: &str =
+    "GCC alias attribute in maintained C (O2): define one name where its bytes are";
+/// Inspect attribute names, not text in comments, literals or nested arguments.
+fn c_alias_reason(path: &str, text: &str) -> Option<&'static str> {
+    use crate::permute::lex::{lex, Tok};
+    use crate::permute::parse::matching;
+    if !path.starts_with("games/") || !listed(extension(path), &["c", "h"]) {
+        return None;
+    }
+    // C splices before tokenization. Keep directive bodies visible so a direct
+    // attribute macro is subject to the same rule as an ordinary declaration.
+    let text = text.replace("\\\r\n", "").replace("\\\n", "");
+    if !text.contains("__attribute") {
+        return None;
+    }
+    let mut source = text.into_bytes();
+    for line in source.split_mut(|byte| *byte == b'\n') {
+        if let Some(first) = line.iter_mut().find(|byte| !byte.is_ascii_whitespace()) {
+            if *first == b'#' {
+                *first = b' ';
+            }
+        }
+    }
+    let source = String::from_utf8(source).expect("source remains UTF-8");
+    let tokens = lex(&source).ok()?;
+    let tokens = tokens
+        .into_iter()
+        .filter(|token| !matches!(token.tok, Tok::Comment(_)))
+        .collect::<Vec<_>>();
+    for index in 0..tokens.len() {
+        if !matches!(&tokens[index].tok, Tok::Ident(word) if matches!(word.as_str(), "__attribute" | "__attribute__"))
+            || !matches!(tokens.get(index + 1).map(|t| &t.tok), Some(Tok::Punct("(")))
+            || !matches!(tokens.get(index + 2).map(|t| &t.tok), Some(Tok::Punct("(")))
+        {
+            continue;
+        }
+        let end = matching(&tokens, index + 2)?;
+        let mut at = index + 3;
+        while at < end {
+            if matches!(&tokens[at].tok, Tok::Ident(word) if matches!(word.as_str(), "alias" | "__alias__"))
+                && matches!(tokens.get(at + 1).map(|t| &t.tok), Some(Tok::Punct("(")))
+            {
+                return Some(C_ALIAS_REASON);
+            }
+            at = if matches!(tokens[at].tok, Tok::Punct("(")) {
+                matching(&tokens, at)? + 1
+            } else {
+                at + 1
+            };
+        }
+    }
+    None
 }
 /// Comments and quoted strings carry no linker or assembler statements.
 fn unquoted_source(text: &str) -> String {
@@ -3978,6 +4032,68 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 }
 #[cfg(test)]
 mod tests {
+    use super::{publication_reason, C_ALIAS_REASON};
+
+    #[test]
+    fn maintained_c_names_are_real_definitions_not_gcc_alias_attributes() {
+        for path in [
+            "games/THE BROKEN SEAL/SRC/BATTLE/DRAW_PARTY_PANELS_WITH_EMPTY_LIST.C",
+            "games/THE BROKEN SEAL/SRC/BATTLE/SELECT_WEIGHTED_INDEX.C",
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.C",
+            "games/THE LOST AGE/SRC/SYSTEM/A.C",
+            "games/COMMON/INCLUDE/SYSTEM/A.H",
+            "games/COMMON/SRC/SYSTEM/A.c",
+        ] {
+            for source in [
+                "extern void Public(void) __attribute__((alias(\"Target\")));",
+                "extern int Public __attribute (( __alias__ (\"Target\")));",
+                "extern void Public(void) __attribute__ /* a */ ( /* b */ ( /* c */ __alias__ /* d */ (\"Target\") /* e */ ) /* f */ );",
+                "extern void Public(void) __attribute__((unused, alias(\"Target\"), aligned(4)));",
+                "extern void Public(void) __attri\\\nbute__((a\\\nlias(\"Target\")));",
+                "#define PUBLIC __attribute__((alias(\"Target\")))\nextern void Public(void) PUBLIC;",
+                "#define PUBLIC \\\n __attribute__((__alias__(\"Target\")))\nextern void Public(void) PUBLIC;",
+            ] {
+                assert_eq!(
+                    publication_reason(path, source.as_bytes(), None),
+                    Some(C_ALIAS_REASON),
+                    "{path}: {source}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn alias_text_and_unrelated_attributes_do_not_claim_another_definition() {
+        for source in [
+            "/* __attribute__((alias(\"Target\"))) */\nint Ordinary;",
+            "// __attribute__((__alias__(\"Target\")))\nint Ordinary;",
+            "const char *note = \"__attribute__((alias(\\\"Target\\\")))\";",
+            "const char *note = \"escaped \\\" quote; __attribute__((__alias__(\\\"Target\\\")))\";",
+            "int alias(void); void f(void) { alias(); }",
+            "int __alias__(void); void f(void) { __alias__(); }",
+            "int value __attribute__((section(\"alias\"), aligned(4)));",
+            "void f(void) __attribute__((format(printf, 1, 2)));",
+            "int value __attribute__((aligned(sizeof(alias()))));",
+            "int value __attribute__((aligned(sizeof(obj.__alias__))));",
+            "#define NOTE \"__attribute__((alias(\\\"Target\\\")))\"\nint Ordinary;",
+            "#define NOTE /* __attribute__((alias(\"Target\"))) */ 1\nint Ordinary;",
+        ] {
+            assert_eq!(
+                publication_reason("games/COMMON/INCLUDE/SYSTEM/A.H", source.as_bytes(), None),
+                None,
+                "{source}"
+            );
+        }
+        let source = b"extern void Public(void) __attribute__((alias(\"Target\")));";
+        for path in [
+            "tools/tests/A.c",
+            "recon/tbs/en/main/A.c",
+            "games/THE LOST AGE/SRC/SYSTEM/A.S",
+        ] {
+            assert_eq!(publication_reason(path, source, None), None, "{path}");
+        }
+    }
+
     #[test]
     fn only_base_rom_ranges_and_built_overlays_may_incbin_and_only_in_scaffolding() {
         let range = b".incbin \"baserom.gba\", 0x00037464, 0x0003c3a4\n";

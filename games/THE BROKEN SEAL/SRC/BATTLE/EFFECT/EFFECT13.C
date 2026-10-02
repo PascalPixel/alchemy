@@ -1,4 +1,5 @@
 #include "FIXED_MATH.H"
+#include "OBJDISP.H"
 #include "EFFECT_0809B11C.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
@@ -35,7 +36,6 @@ extern void *Object_Spawn(s32, s32, s32, s32);
 extern void Motion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
-extern void ObjectDispatch_InitializeFar(void *, void *);
 extern void BattleFx_UpdateItemBreakFragment(void *);
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -169,7 +169,7 @@ void *BattleFx_StartItemBreak(void *source)
                               *(s32 *)((s8 *)source + 12) + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            ObjectDispatch_InitializeFar(child, &BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
             fragment_scale = Random16() + 0x10000;
             *(s32 *)((s8 *)child + 0x34) = 0x10000;
             *(s32 *)((s8 *)child + 0x30) = fragment_scale;
@@ -235,7 +235,7 @@ void UpdateRisingParticleBurst(void *source)
                              *(s32 *)((s8 *)source + 12),
                              *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            ObjectDispatch_InitializeFar(child, &BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
             {
                 s32 speed = Random16();
 

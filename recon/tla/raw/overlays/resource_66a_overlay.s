@@ -1391,7 +1391,15 @@ Func_02000818:
 	bl Func_020015c0
 	bl Func_020015b8
 	movs r0, #8
+	.ifdef TLA_EDITION_ES
+	bl Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	bl Field_EndActorSpriteEffect
+	.else
 	bl Field_BeginPaletteTransition
+	.endif
+	.endif
 	movs r0, #30
 	bl Battle_WaitMode0
 	movs r1, #128
@@ -1539,7 +1547,15 @@ Func_02000818:
 	bl Func_020015c0
 	bl Func_020015b8
 	movs r0, #8
+	.ifdef TLA_EDITION_ES
+	bl Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	bl Field_EndActorSpriteEffect
+	.else
 	bl Field_BeginPaletteTransition
+	.endif
+	.endif
 	movs r0, #16
 	movs r1, #0
 	movs r2, #0

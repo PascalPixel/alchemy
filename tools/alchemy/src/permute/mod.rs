@@ -312,18 +312,27 @@ pub struct Problem {
     pub unresolved: std::collections::BTreeSet<String>,
 }
 
-impl Problem {
-    pub fn load(config: &Config, scratch: &Path) -> Result<Problem, String> {
+/// Immutable source and its ordinary compilation plan, shared by scoring and
+/// the permuter. No source is reprinted or changed here.
+struct DraftSource {
+    path: PathBuf,
+    draft: String,
+    stem: String,
+    toolchain: Toolchain,
+}
+
+impl DraftSource {
+    fn load(config: &Config) -> Result<Self, String> {
         let draft = std::fs::read_to_string(&config.draft)
             .map_err(|error| format!("{}: {error}", config.draft.display()))?;
         let here = std::env::current_dir().map_err(|error| error.to_string())?;
-        let absolute = here.join(&config.draft);
-        let file_name = absolute
+        let path = here.join(&config.draft);
+        let file_name = path
             .file_name()
             .and_then(|name| name.to_str())
             .ok_or("the draft needs a file name")?
             .to_string();
-        let stem = absolute
+        let stem = path
             .file_stem()
             .and_then(|stem| stem.to_str())
             .unwrap_or("")
@@ -333,16 +342,35 @@ impl Problem {
             route: config
                 .route
                 .clone()
-                .unwrap_or_else(|| absolute.to_string_lossy().into_owned()),
+                .unwrap_or_else(|| path.to_string_lossy().into_owned()),
             file_name,
-            include: absolute.parent().map(Path::to_path_buf).unwrap_or_default(),
+            include: path.parent().map(Path::to_path_buf).unwrap_or_default(),
             message_imports: crate::build_text::current_c_imports(root(), config.target)?,
         };
-        let setup = scratch.join("setup");
-        let preprocessed = toolchain.preprocess(&draft, &setup)?;
-        let unit = scan_unit(&preprocessed)?;
-        let located = locate(&draft, config.function.as_deref(), &unit.typedef_names())?;
-        let name = located.function.name.clone();
+        Ok(Self {
+            path,
+            draft,
+            stem,
+            toolchain,
+        })
+    }
+}
+
+/// The same reference and symbol comparison for immutable scores and searches.
+struct Comparison {
+    reference: Routine,
+    symbols: Symbols,
+    listing: PathBuf,
+}
+
+impl Comparison {
+    fn load(
+        config: &Config,
+        source: &DraftSource,
+        name: &str,
+        setup: &Path,
+    ) -> Result<Self, String> {
+        let here = std::env::current_dir().map_err(|error| error.to_string())?;
         let listing = match &config.listing {
             Some(listing) => here.join(listing),
             None => ["s", "S"]
@@ -350,13 +378,13 @@ impl Problem {
                 .map(|extension| {
                     root()
                         .join(config.target.asm_dir)
-                        .join(format!("{stem}.{extension}"))
+                        .join(format!("{}.{extension}", source.stem))
                 })
                 .find(|path| path.is_file())
                 .ok_or_else(|| {
                     format!(
-                        "no listing {}/{stem}.s; name one with --listing",
-                        config.target.asm_dir
+                        "no listing {}/{}.s; name one with --listing",
+                        config.target.asm_dir, source.stem
                     )
                 })?,
         };
@@ -374,29 +402,94 @@ impl Problem {
                 Symbols::default()
             }
         };
+        let symbol = config.symbol.clone().unwrap_or_else(|| name.to_string());
+        let linked = symbols.get(&symbol).map(|address| address & !1);
+        let object = assemble(&listing, setup, &build, config.target)?;
+        let reference = routine(&object, &symbol, &symbols, linked)
+            .map_err(|error| format!("{}: {error}", listing.display()))?;
+        Ok(Self {
+            reference,
+            symbols,
+            listing,
+        })
+    }
+}
+
+struct DraftScore {
+    score: Score,
+    unresolved: std::collections::BTreeSet<String>,
+}
+
+/// Compile the original full source only. This has no mutable Function AST and
+/// cannot be passed to the search or candidate-writing paths.
+fn score_draft(config: &Config, scratch: &Path) -> Result<DraftScore, String> {
+    let name = config
+        .function
+        .as_deref()
+        .ok_or("scoring needs a function name")?;
+    let source = DraftSource::load(config)?;
+    let setup = scratch.join("setup");
+    let comparison = Comparison::load(config, &source, name, &setup)?;
+    evaluate_source(
+        &source.toolchain,
+        &comparison.reference,
+        &comparison.symbols,
+        name,
+        &source.draft,
+        &setup,
+    )
+}
+
+/// One compilation/routine/scoring owner for both consumers.
+fn evaluate_source(
+    toolchain: &Toolchain,
+    reference: &Routine,
+    symbols: &Symbols,
+    name: &str,
+    text: &str,
+    directory: &Path,
+) -> Result<DraftScore, String> {
+    let object = toolchain.compile(text, directory)?;
+    let candidate = routine(&object, name, symbols, None)?;
+    Ok(DraftScore {
+        score: score(reference, &candidate),
+        unresolved: candidate.unresolved,
+    })
+}
+
+impl Problem {
+    pub fn load(config: &Config, scratch: &Path) -> Result<Problem, String> {
+        let source = DraftSource::load(config)?;
+        let setup = scratch.join("setup");
+        let preprocessed = source.toolchain.preprocess(&source.draft, &setup)?;
+        let unit = scan_unit(&preprocessed)?;
+        // Search still requires the mutable AST; inline assembly remains
+        // refused by the existing parser before any candidate can be mutated.
+        let located = locate(
+            &source.draft,
+            config.function.as_deref(),
+            &unit.typedef_names(),
+        )?;
+        let name = located.function.name.clone();
+        let comparison = Comparison::load(config, &source, &name, &setup)?;
         let focus = match &config.focus {
             Some(pattern) => {
                 Some(regex::Regex::new(pattern).map_err(|error| format!("--focus: {error}"))?)
             }
             None => None,
         };
-        let symbol = config.symbol.clone().unwrap_or_else(|| name.clone());
-        let linked = symbols.get(&symbol).map(|address| address & !1);
-        let object = assemble(&listing, &setup, &build, config.target)?;
-        let reference = routine(&object, &symbol, &symbols, linked)
-            .map_err(|error| format!("{}: {error}", listing.display()))?;
         let mut problem = Problem {
             name,
-            draft_path: absolute,
-            draft,
+            draft_path: source.path,
+            draft: source.draft,
             span: (located.start, located.end),
             function: located.function,
             unit,
-            toolchain,
-            reference,
-            symbols,
+            toolchain: source.toolchain,
+            reference: comparison.reference,
+            symbols: comparison.symbols,
             focus,
-            listing,
+            listing: comparison.listing,
             unresolved: Default::default(),
         };
         let object = problem.toolchain.compile(&problem.draft, &setup)?;
@@ -460,9 +553,15 @@ impl Problem {
     }
 
     pub fn evaluate(&self, text: &str, directory: &Path) -> Result<Score, String> {
-        let object = self.toolchain.compile(text, directory)?;
-        let candidate = routine(&object, &self.name, &self.symbols, None)?;
-        Ok(score(&self.reference, &candidate))
+        Ok(evaluate_source(
+            &self.toolchain,
+            &self.reference,
+            &self.symbols,
+            &self.name,
+            text,
+            directory,
+        )?
+        .score)
     }
 
     fn env(&self, function: &Function) -> Env {
@@ -833,6 +932,94 @@ mod tests {
     use super::*;
 
     const DRAFT: &str = "/* Two stores in the draft's order. */\nextern int gX;\nextern int gY;\n\nvoid Store_Pair(int a, int b)\n{\n    gX = a + 1;\n    gY = b;\n}\n";
+
+    fn scoring_fixture(source: &str) -> (tempfile::TempDir, Config) {
+        let work = tempfile::tempdir().unwrap();
+        let draft = work.path().join("SCORING.c");
+        std::fs::write(&draft, source).unwrap();
+        let config = Config {
+            draft,
+            function: Some("Draft_Value".into()),
+            listing: Some(work.path().join("SCORING.s")),
+            symbol: None,
+            target: decomp_target(Some("tla-en")).unwrap(),
+            route: None,
+            elf: None,
+            focus: None,
+        };
+        let input = DraftSource::load(&config).unwrap();
+        let reference = work.path().join("reference");
+        input.toolchain.compile(source, &reference).unwrap();
+        std::fs::copy(
+            reference.join("SCORING.s"),
+            config.listing.as_ref().unwrap(),
+        )
+        .unwrap();
+        (work, config)
+    }
+
+    #[test]
+    fn unchanged_inline_assembly_scores_but_is_never_permuted() {
+        let source = "int Draft_Value(void) {\n/* FAKEMATCH: an unchanged source-scoring fixture. */\n__asm__ volatile(\"\");\nreturn 5;\n}\n";
+        let (work, config) = scoring_fixture(source);
+        let score = score_draft(&config, &work.path().join("score")).unwrap();
+        assert!(score.score.exact);
+        assert!(score.unresolved.is_empty());
+        let error = match Problem::load(&config, &work.path().join("search")) {
+            Ok(_) => panic!("inline assembly was allowed into search"),
+            Err(error) => error,
+        };
+        assert!(error.contains("inline assembly is not permuted"), "{error}");
+        assert!(crate::compiler::no_asm::find_forbidden("draft.c", source).is_empty());
+        let untagged = source.replace("/* FAKEMATCH: an unchanged source-scoring fixture. */", "");
+        assert!(!crate::compiler::no_asm::find_forbidden("draft.c", &untagged).is_empty());
+        assert_eq!(std::fs::read_to_string(&config.draft).unwrap(), source);
+    }
+
+    #[test]
+    fn unchanged_plain_scores_share_search_evaluation_and_detect_pool_changes() {
+        let source = "int Draft_Value(void) { return 0x12345678; }\n";
+        let (work, config) = scoring_fixture(source);
+        let unchanged = score_draft(&config, &work.path().join("score")).unwrap();
+        assert!(unchanged.score.exact);
+        let search = Problem::load(&config, &work.path().join("search")).unwrap();
+        assert_eq!(
+            unchanged.score,
+            search
+                .evaluate(&search.draft, &work.path().join("plain"))
+                .unwrap()
+        );
+        std::fs::write(&config.draft, source.replace("0x12345678", "0x12345679")).unwrap();
+        let changed = score_draft(&config, &work.path().join("changed")).unwrap();
+        assert!(!changed.score.exact && changed.score.total > 0);
+        assert!(changed
+            .score
+            .lines
+            .iter()
+            .any(|(_, a, b)| a.contains("12345678") && b.contains("12345679")));
+    }
+
+    #[test]
+    fn unchanged_source_scores_retain_explicit_unresolved_symbol_limits() {
+        let source = "extern int Draft_UnboundCellForScoreFixture;\nint Draft_Value(void) { return Draft_UnboundCellForScoreFixture; }\n";
+        let (work, config) = scoring_fixture(source);
+        let score = score_draft(&config, &work.path().join("score")).unwrap();
+        let search = Problem::load(&config, &work.path().join("search")).unwrap();
+        assert_eq!(
+            score.score,
+            search
+                .evaluate(&search.draft, &work.path().join("plain"))
+                .unwrap()
+        );
+        assert_eq!(
+            score.unresolved.into_iter().collect::<Vec<_>>(),
+            ["Draft_UnboundCellForScoreFixture"]
+        );
+        assert_eq!(
+            search.unresolved.into_iter().collect::<Vec<_>>(),
+            ["Draft_UnboundCellForScoreFixture"]
+        );
+    }
 
     // The target: the same stores, gY first, as the compiler emits them.
     const LISTING: &str = "\t.syntax unified\n\t.thumb\n\t.global Store_Pair\n\t.thumb_func\nStore_Pair:\n\tldr\tr3, .Lgy\n\tstr\tr1, [r3]\n\tldr\tr3, .Lgx\n\tadds\tr0, #1\n\tstr\tr0, [r3]\n\tbx\tlr\n\t.align 2\n.Lgy:\n\t.4byte gY\n.Lgx:\n\t.4byte gX\n";

@@ -8843,7 +8843,7 @@ Func_020044f8:
 	adds r2, r1, #0
 	b .L_0200c7f4
 .L_0200c7d0:
-	.4byte Data_030011bc
+	.4byte gRandomState
 .L_0200c7d4:
 	.4byte Data_020023c4 + 0x288
 .L_0200c7d8:
@@ -8914,7 +8914,7 @@ Func_020044f8:
 .L_0200c854:
 	.4byte Data_020023c4 + 0x288
 .L_0200c858:
-	.4byte Data_030011bc
+	.4byte gRandomState
 	.section .text.x0200c85c,"ax",%progbits
 	.global Func_0200485c
 	.thumb_func

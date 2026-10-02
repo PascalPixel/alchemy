@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08013ffc
+	.global Graphics_ResetFrameState
 	.thumb_func
-Func_08013ffc:
+Graphics_ResetFrameState:
 	push {lr}
 	ldr r2, .L_08014010
 	movs r3, #0

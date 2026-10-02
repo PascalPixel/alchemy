@@ -161,7 +161,7 @@ Func_080cf554:
 	adds r3, #85
 	strb r7, [r3]
 	ldr r1, .L_080cf6f8
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	adds r0, r5, #0
 	movs r1, #0
 	bl ObjectDispatch_SetSingleChildField26Far

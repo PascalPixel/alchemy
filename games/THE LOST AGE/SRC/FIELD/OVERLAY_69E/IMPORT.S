@@ -113,7 +113,7 @@ ObjectDispatch_ApplyValueToChildren:
 	.global Func_02002820
 	.thumb_func
 Func_02002820:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_02002828
 	.thumb_func
 Func_02002828:
@@ -560,10 +560,10 @@ Func_02002a00:
 	.thumb_func
 Func_02002a08:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
 	overlay_veneer Func_080c8810
 	.endif

@@ -44,7 +44,7 @@ Func_080dd054:
 	str r1, [r2, #104]
 	mov r0, r11
 	ldr r1, .L_080dd424
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	mov r0, r11
 	bl BattleFx_StartItemBreak
 	mov r9, r0
@@ -412,7 +412,7 @@ Func_080dd054:
 	ldr r4, [sp, #40]
 	mov r0, r10
 	ldr r1, [r4, #60]
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	ldr r0, [sp, #40]
 	mov r1, r10
 	ldr r3, [r0, #56]

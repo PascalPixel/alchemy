@@ -63,14 +63,14 @@ Func_0802b738:
 	adds r3, r4, #0
 	str r6, [sp, #0]
 	str r5, [sp, #4]
-	bl Func_0802b38c
+	bl Map_CopyCellAttributeRect
 	b .L_0802b75c
 .L_0802b7b8:
 	str r2, [sp, #0]
 	adds r3, r5, #0
 	adds r2, r6, #0
 	str r4, [sp, #4]
-	bl Func_0802b1a0
+	bl Map_CopyMetatileIndicesRect
 	b .L_0802b75c
 .L_0802b7c6:
 	ldr r3, [sp, #8]

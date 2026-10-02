@@ -332,7 +332,7 @@ Func_08153ebc:
 	ands r0, r2
 	bl Func_08015068
 	adds r0, r6, #0
-	bl Func_08014e74
+	bl Graphics_SaveTransferWork
 	movs r3, #1
 	add r11, r3
 	mov r0, r11
@@ -814,7 +814,7 @@ Func_08153ebc:
 	cmp r3, #0
 	ble .L_0815456a
 	adds r0, r7, #0
-	bl Func_08014e90
+	bl Graphics_LoadTransferWork
 	ldr r3, [r5]
 	ldr r2, [sp, #20]
 	adds r1, r6, #0

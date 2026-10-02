@@ -19,7 +19,7 @@ ObjectMotion_SetVariantCallback:
 	subs r1, r1, r5
 	lsls r1, r1, #7
 	adds r1, r1, r3
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080d3324:
 	pop {r5, pc}
 	.2byte 0x0000

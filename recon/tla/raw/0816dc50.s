@@ -948,7 +948,7 @@ Func_0816dc50:
 	movs r1, #62
 	lsls r2, r2, #3
 	bl BattleFxKernels_IntegrateVector3
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	ldr r1, [r5, #4]
 	ldr r2, [r5, #8]
 	ldr r0, [r5]
@@ -1026,7 +1026,7 @@ Func_0816dc50:
 	ands r3, r2
 	negs r3, r3
 	strb r3, [r0, #25]
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	ldr r5, [sp, #52]
 	movs r2, #0
 	cmp r5, #31
@@ -1135,7 +1135,7 @@ Func_0816dc50:
 	negs r1, r1
 	cmp r5, r1
 	ble .L_0816e58c
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	mov r2, r9
 	str r5, [r2, #20]
 	ldr r3, [sp, #36]

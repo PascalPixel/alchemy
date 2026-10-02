@@ -105,7 +105,7 @@ BattleFx_StartRandomParticleEmitter:
 	beq .L_080cf32e
 	ldr r1, .L_080cf2f0
 	adds r0, r7, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	ldr r6, [r7, #80]
 	movs r3, #0
 	ldrb r2, [r6, #5]

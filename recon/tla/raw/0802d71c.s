@@ -75,7 +75,7 @@ Func_0802d71c:
 .L_0802d79e:
 	pop {r5, r6, r7, pc}
 .L_0802d7a0:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0802d7a4:
 	.4byte gMapCollision
 .L_0802d7a8:

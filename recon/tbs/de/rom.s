@@ -568,6 +568,12 @@ DisplayTransition_UpdateScanlineTable:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x000940c8, 0x00000718
+	.section .rom.000962dc, "ax"
+	.global UiText_OpenMessageAtObject
+	.type UiText_OpenMessageAtObject, %function
+	.thumb_func
+UiText_OpenMessageAtObject:
+	.incbin "baserom.gba", 0x000962dc, 0x00000344
 	.section .rom.00097be0, "ax"
 	.global DisplayScroll_BuildAndSwapHBlankPage
 	.type DisplayScroll_BuildAndSwapHBlankPage, %function
@@ -1829,6 +1835,13 @@ RisingBurst_SparkSizes:
 	.global SentouKouka_BitOperands
 SentouKouka_BitOperands:
 	.incbin "baserom.gba", 0x000f0e34, 0x000007cc
+	.section .rom.000f1df0, "ax"
+	.global DisplayScroll_DrawLine
+	.type DisplayScroll_DrawLine, %function
+	.thumb_func
+DisplayScroll_DrawLine:
+	.incbin "baserom.gba", 0x000f1df0, 0x0000026c
+	.size DisplayScroll_DrawLine, .-DisplayScroll_DrawLine
 	.section .rom.000f205c, "ax"
 	.global DisplayScroll_SlideResources
 DisplayScroll_SlideResources:
@@ -3188,3 +3201,44 @@ Resource_Data36D:
 	.global Resource_Data36E
 Resource_Data36E:
 	.incbin "baserom.gba", 0x00779280, 0x00000140
+	.section .rom.000c07a4, "ax"
+	.balign 4
+	.type BattleCommand_SelectTargets.0, %function
+	.thumb_func
+BattleCommand_SelectTargets.0:
+	.incbin "baserom.gba", 0x000c07a4, 0x000001ec
+	.size BattleCommand_SelectTargets.0, .-BattleCommand_SelectTargets.0
+	.global BattleCommand_BuildPlan
+	.type BattleCommand_BuildPlan, %function
+	.thumb_func
+BattleCommand_BuildPlan:
+	.incbin "baserom.gba", 0x000c0990, 0x00000e90
+	.size BattleCommand_BuildPlan, .-BattleCommand_BuildPlan
+	.section .rom.0000be2c, "ax"
+	.balign 4
+	.global ObjectSystem_UpdateCamera
+	.type ObjectSystem_UpdateCamera, %function
+	.thumb_func
+ObjectSystem_UpdateCamera:
+	.incbin "baserom.gba", 0x0000be2c, 0x00000250
+	.size ObjectSystem_UpdateCamera, .-ObjectSystem_UpdateCamera
+	.global ObjectCamera_ReturnTrue
+	.type ObjectCamera_ReturnTrue, %function
+	.thumb_func
+ObjectCamera_ReturnTrue:
+	.incbin "baserom.gba", 0x0000c07c, 0x00000004
+	.size ObjectCamera_ReturnTrue, .-ObjectCamera_ReturnTrue
+	.global ObjectSystem_UpdateCameraFixed
+	.type ObjectSystem_UpdateCameraFixed, %function
+	.thumb_func
+ObjectSystem_UpdateCameraFixed:
+	.incbin "baserom.gba", 0x0000c080, 0x000001ac
+	.size ObjectSystem_UpdateCameraFixed, .-ObjectSystem_UpdateCameraFixed
+	.section .rom.0000b470, "ax"
+	.balign 4
+	.global ResourceObject_Create
+	.type ResourceObject_Create, %function
+	.thumb_func
+ResourceObject_Create:
+	.incbin "baserom.gba", 0x0000b470, 0x00000164
+	.size ResourceObject_Create, .-ResourceObject_Create

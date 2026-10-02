@@ -1,5 +1,6 @@
 /* Setting up the stage's scene descriptor. */
 #include "LOG_ROLLING.H"
+#include "RUNTIME_MEM.H"
 
 u8 *Resource_GetTableEntry(s32 resource);
 void Korosseo_UpdatePathRival(void);
@@ -9,7 +10,6 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
                    s32 fourth_actor)
 {
     extern u8 *Runtime_AllocateBlock();
-    extern s32 Runtime_BumpAllocateAlternatePool();
     extern void Resource_DecodeType01();
     extern s32 Resource_FindFreeEntry();
     extern void Runtime_BumpFree();
@@ -22,7 +22,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     s32 extent;
 
     descriptor = Runtime_AllocateBlock(59, 0x7170);
-    handle = Runtime_BumpAllocateAlternatePool(512);
+    handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
     *(u16 *)(descriptor + 222) = (u16)first_actor;
     *(u16 *)(descriptor + 224) = (u16)second_actor;

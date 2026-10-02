@@ -3,10 +3,10 @@
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
-#include "SCRIPT_INTERPRETER.H"
+#include "SCRIPT.H"
 #include "SCRIPT_OBJECT_ENTRY.H"
 #include "GLOBAL_CELLS.H"
-#include "OBJECT_COMMANDS.H"
+#include "OBJDISP.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 
 s32 FixedSqrt(s32 value);
@@ -55,12 +55,11 @@ s32 GameFlag_TestFar(s32);
 s32 GameFlag_SetBitFar(s32);
 void GameFlag_ClearBitFar(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
-void ObjectDispatch_Release(void);
 s32 Audio_PlayCue(s32);
 s32 Object_IsTargetUnset(void *);
 extern const s32 Script_MainScript[];
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3);
-void Object_SetPositionAndResetMotion(struct ScriptInterpreter *, s32, s32, s32);
+void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
 
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 
@@ -467,9 +466,9 @@ s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter)
     return 1;
 }
 
-s32 ObjectDispatch_RunHookAndReturnZero(void)
+s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter)
 {
-    ObjectDispatch_Release();
+    ObjectDispatch_Release((struct DispatchObject *)interpreter);
     return 0;
 }
 
@@ -555,7 +554,7 @@ s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
     second = *argument;
     argument++;
     third = *argument;
-    Object_SetPositionAndResetMotion(interpreter, first, second, third);
+    Object_SetPositionAndResetMotion((struct ObjectRuntime *)interpreter, first, second, third);
     interpreter->cursor = (u16)interpreter->cursor + 4;
     return 1;
 }

@@ -166,7 +166,7 @@ Func_0816d130:
 	add r6, sp, #52
 	add r5, sp, #40
 .L_0816d288:
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	ldr r0, [r7]
 	ldr r1, [r7, #4]
 	ldr r2, [r7, #8]

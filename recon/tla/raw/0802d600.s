@@ -35,4 +35,4 @@ Func_0802d600:
 .L_0802d63c:
 	.4byte 0xfdff0000
 .L_0802d640:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid

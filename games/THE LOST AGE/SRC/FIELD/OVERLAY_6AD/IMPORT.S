@@ -97,23 +97,7 @@ GameFlag_SetByte:
 	.global ResourceMetadata_ClearRecord
 	.thumb_func
 ResourceMetadata_ClearRecord:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer GetBattleEffectObject
-	.else
-	.ifdef TLA_EDITION_ES
-	overlay_veneer GetBattleEffectObject
-	.else
-	.ifdef TLA_EDITION_FR
-	overlay_veneer GetBattleEffectObject
-	.else
-	.ifdef TLA_EDITION_IT
-	overlay_veneer GetBattleEffectObject
-	.else
 	overlay_veneer ResourceMetadata_ClearRecordFar
-	.endif
-	.endif
-	.endif
-	.endif
 	.global Func_02005480
 	.thumb_func
 Func_02005480:
@@ -125,7 +109,7 @@ ObjectDispatch_ApplyValueToChildren:
 	.global Func_02005490
 	.thumb_func
 Func_02005490:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_02005498
 	.thumb_func
 Func_02005498:

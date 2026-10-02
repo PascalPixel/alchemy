@@ -18,7 +18,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     s32 extent;
 
     descriptor = Runtime_AllocateBlock(59, 0x7170);
-    handle = Runtime_BumpAllocateAlternatePool(512);                /* 128 << 2 */
+    handle = (s32)Runtime_BumpAllocateAlternatePool(512);                /* 128 << 2 */
 
     *(u16 *)(descriptor + 222) = (u16)first;
     *(u16 *)(descriptor + 224) = (u16)second;

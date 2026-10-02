@@ -1,4 +1,4 @@
-#include "SCRIPT_INTERPRETER.H"
+#include "SCRIPT.H"
 
 void Object_SetMoveTarget(void *, s32, s32, s32);
 

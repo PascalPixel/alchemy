@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08016430
+	.global SerialRuntime_PollStatus
 	.thumb_func
-Func_08016430:
+SerialRuntime_PollStatus:
 	push {r5, r6, r7, lr}
 	ldr r7, .L_080164b4
 	ldr r6, .L_080164b8

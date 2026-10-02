@@ -941,7 +941,7 @@ BattlePresentation_SpawnActorObject:
 	str r3, [r2, #28]
 	ldr r1, .L_0811b168
 	mov r0, r8
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	add sp, #20
 	pop {r3, r5, r6, r7}
 	mov r8, r3

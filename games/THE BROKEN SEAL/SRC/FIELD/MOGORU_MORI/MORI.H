@@ -2,6 +2,8 @@
 #ifndef MORI_H
 #define MORI_H
 
+#include "MAPCOPY.H"
+
 /* The forest links the staged-actor code, so its scenes reach the engine by
    the names that code gives the imports. */
 #define FIELD_STAGED_ACTOR_IMPORTS
@@ -71,7 +73,6 @@ void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Object_SetModeById(s32 actor, s32 mode);
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 s32 Object_CheckMovementCollision(s32 *p, s16 *q);
 void BattleFx_SetPhaseRequest(s32 a, s32 b);
 void BattleFx_SetWeightedResult();

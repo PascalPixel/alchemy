@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "VRAM_BLOCK.H"
@@ -32,7 +33,6 @@ struct FxObject {
 extern struct FxWindowWork gMapCellBuffer;
 extern struct BattleWork gGameState;
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *block);
 struct FxObject *Object_GetById(s32 id);
 u16 Resource_FindFreeEntry(void);
@@ -53,7 +53,7 @@ void BattleFx_SetupResourcesAndWindow(void)
     u32 tile;
     u32 attr2;
 
-    pal = Runtime_BumpAllocateAlternatePool(32);
+    pal = (u32 *)Runtime_BumpAllocateAlternatePool(32);
     work = &gMapCellBuffer;
     oam = (u32 *)work->entries;
     object = Object_GetById(gGameState.object_id);

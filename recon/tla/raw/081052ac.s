@@ -26,7 +26,7 @@ Func_081052ac:
 	ldr r3, .L_081052fc
 	lsls r2, r5, #2
 	ldr r0, [r3, r2]
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_081052f4

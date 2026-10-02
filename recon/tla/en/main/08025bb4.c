@@ -2,7 +2,7 @@
  * Draft: Script_SetOrCompareUnsignedHalfword does not yet match; 4 bytes differ from +0x18.
  * Links as recon/tla/raw/08025bb4.s.
  */
-#include "SCRIPT_OPERANDS.H"
+#include "SCRIPT.H"
 
 void Script_SetOrCompareUnsignedHalfword(struct ScriptOperands *state, s32 operation, s32 value)
 {

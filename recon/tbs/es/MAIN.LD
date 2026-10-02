@@ -360,8 +360,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT24.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT25.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000903f2)
-    "*/recon/tbs/es/rom.o"(.rom.000903f4)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT26.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT5.o"(.text)

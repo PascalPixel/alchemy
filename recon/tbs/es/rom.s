@@ -561,14 +561,6 @@ Enemy_ElementPresetTable:
 	.global Djinn_DefinitionTable
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008e26c, 0x00000d94
-	.section .rom.000903f2, "ax"
-	.incbin "baserom.gba", 0x000903f2, 0x00000002
-	.section .rom.000903f4, "ax"
-	.global Event_SpawnObjectTable
-	.type Event_SpawnObjectTable, %function
-	.thumb_func
-Event_SpawnObjectTable:
-	.incbin "baserom.gba", 0x000903f4, 0x00000260
 	.section .rom.00091500, "ax"
 	.global Func_0808c4f8
 	.type Func_0808c4f8, %function

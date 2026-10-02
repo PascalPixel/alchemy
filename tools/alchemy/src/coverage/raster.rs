@@ -111,24 +111,6 @@ impl Canvas {
             });
         }
     }
-    /// `color` laid at `opacity` percent over what the box covers.
-    pub(crate) fn shade(
-        &mut self,
-        x: i32,
-        y: i32,
-        width: i32,
-        height: i32,
-        color: &str,
-        opacity: u32,
-    ) {
-        let ink = rgb(color);
-        for row in y.max(0)..(y + height).min(self.height) {
-            for column in x.max(0)..(x + width).min(self.width) {
-                let slot = &mut self.pixels[(row * self.width + column) as usize];
-                *slot = Some(slot.map_or(ink, |beneath| blend(ink, beneath, opacity)));
-            }
-        }
-    }
     pub(crate) fn fill(&mut self, x: i32, y: i32, width: i32, height: i32, color: &str) {
         let color = Some(rgb(color));
         for row in y.max(0)..(y + height).min(self.height) {

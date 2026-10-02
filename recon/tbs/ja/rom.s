@@ -1869,8 +1869,8 @@ LuckyDice_Run:
 	.thumb_func
 Unnamed_080f7460:
 	.incbin "baserom.gba", 0x000ee388, 0x00000950
-	.section .rom.000eee9c, "ax"
-	.incbin "baserom.gba", 0x000eee9c, 0x000007be
+	.section .rom.000ef61c, "ax"
+	.incbin "baserom.gba", 0x000ef61c, 0x0000003e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:
 	.incbin "baserom.gba", 0x000ef65a, 0x000009a6

@@ -7,13 +7,34 @@
 #include "BATTLE_EVENT.H"
 #include "BATTLE_SESSION.H"
 
+/* The advance arrow as the session keeps it: an OAM entry in the making. */
+struct BattlePromptSprite {
+    u32 unknown_00;
+    union {
+        u32 word;
+        struct {
+            unsigned y : 8;
+            unsigned flags : 8;
+            unsigned x : 9;
+            unsigned high : 7;
+        } bits;
+    } attributes;
+    union {
+        u32 word;
+        struct {
+            unsigned tile : 10;
+            unsigned high : 22;
+        } bits;
+    } tile;
+};
+
 /* Queued battle events and the state of their playback. */
 struct BattleEventState {
     struct BattleEventQueue queue;  /* 0x000 */
     s32 phase;                      /* 0x148 */
     s32 event_index;                /* 0x14c */
     s32 timer;                      /* 0x150 */
-    u8 display_entry[12];           /* 0x154 */
+    struct BattlePromptSprite display_entry; /* 0x154 */
     s32 display_source;             /* 0x160 */
     s32 actor_id;                   /* 0x164 */
     s32 pending_cue;                /* 0x168, played before the next actor */
@@ -44,7 +65,8 @@ struct BattleSession {
     u8 link_side;                   /* 0x050 */
     u8 unknown_051;
     u8 link_paused;                 /* 0x052 */
-    u8 unknown_053[5];
+    u8 unknown_053;
+    s32 prompt_slot;                /* 0x054, the advance arrow's tile slot */
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
     u8 unknown_074[0x268];

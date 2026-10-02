@@ -686,9 +686,12 @@ Data_080af23c:
 	.global Menu_BackdropFrameTile
 Menu_BackdropFrameTile:
 	.incbin "baserom.gba", 0x000af26c, 0x00000020
-	.global Data_080af28c
-Data_080af28c:
-	.incbin "baserom.gba", 0x000af28c, 0x00000008
+	.global DjinnMenu_TextLevel
+DjinnMenu_TextLevel:
+	.incbin "baserom.gba", 0x000af28c, 0x00000004
+	.global DjinnMenu_TextSlash
+DjinnMenu_TextSlash:
+	.incbin "baserom.gba", 0x000af290, 0x00000004
 	.global UiMenu_CursorBobX
 UiMenu_CursorBobX:
 	.incbin "baserom.gba", 0x000af294, 0x00000009

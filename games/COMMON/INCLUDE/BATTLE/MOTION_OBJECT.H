@@ -46,7 +46,7 @@ struct BattleObjectSlot {
     s32 runtime_word_20;
     s32 runtime_word_24;
     s16 active;
-    u8 unknown_2a[0x02];
+    s16 fading; /* set while a defeated unit dissolves */
 };
 
 /* Raw linker spellings stay here; reconstructed APIs are used by C bodies. */

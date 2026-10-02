@@ -162,10 +162,7 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
                     *destination++ = 0x05000002;
                     *destination = 0x8000003f;
                 }
-                /* FAKEMATCH: the restore names the register in a one-pass block of its own. The pointer is then set and used in one basic block, so the loop pass moves it ahead of the loop after the ramp end, as the reference has it. */
-                do {
-                    REG_IME = saved;
-                } while (0);
+                REG_IME = saved;
             }
         }
         WaitFrames(1);

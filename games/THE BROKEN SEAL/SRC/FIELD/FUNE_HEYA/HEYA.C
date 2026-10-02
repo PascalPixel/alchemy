@@ -402,24 +402,24 @@ u8 *SceneData_SelectTableBySceneIndexAndFlags(void)
     switch (scene) {
     case 1:
     case 2:
-        if (GameFlag_IsSet(2208) != 0) {
+        if (Engine_GameFlagIsSet(2208) != 0) {
             return FuneHeya_SceneTable07;
         }
-        if (GameFlag_IsSet(0x928) != 0 && GameFlag_IsSet(0x93e) == 0) {
+        if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
             return FuneHeya_SceneTable06;
         }
         return FuneHeya_SceneTable05;
     case 4:
     case 23:
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return FuneHeya_SceneTable14;
         }
         return FuneHeya_SceneTable11;
     case 5:
-        if (GameFlag_IsSet(2208) != 0) {
+        if (Engine_GameFlagIsSet(2208) != 0) {
             return FuneHeya_SceneTable09;
         }
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return FuneHeya_SceneTable10;
         }
         return FuneHeya_SceneTable08;

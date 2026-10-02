@@ -8,6 +8,7 @@ pub(crate) mod letters;
 pub(crate) mod model;
 pub(crate) mod palette;
 pub(crate) mod progress;
+pub(crate) mod publish;
 pub(crate) mod raster;
 pub(crate) mod sessions;
 pub(crate) mod tree;

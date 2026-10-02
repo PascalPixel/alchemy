@@ -663,6 +663,11 @@ pub(crate) fn write(root: &Path) -> Result<String, String> {
     if !status.success() {
         return Err("all twelve editions must build and compare before report export".into());
     }
+    write_verified(root)
+}
+
+/// Only the exporter and the completed landing gate may call this after comparison.
+pub(crate) fn write_verified(root: &Path) -> Result<String, String> {
     let sun = measure_game(root, crate::targets::decomp_target(Some("tbs-en"))?)?;
     let anchor = measure_game(root, crate::targets::decomp_target(Some("tla-en"))?)?;
     publish(root, [("tbs", sun), ("tla", anchor)])

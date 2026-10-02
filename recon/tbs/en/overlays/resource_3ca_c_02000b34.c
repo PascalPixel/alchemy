@@ -45,13 +45,13 @@ static inline s32 Task_RemoveCallback(void (*callback)(void))
 
 #include "MAP_SCROLL.H"
 
-extern u32 Data_020097e8;
-extern u32 Data_020097ec;
+extern u32 BabiFune_ShimmerActive;
+extern u32 BabiFune_ShimmerPhase;
 extern u32 Data_020097f4;
-extern u32 Data_020097f8;
-extern u32 Data_020097fc;
-extern u32 Data_02009804;
-extern u32 Data_02009808;
+extern u32 BabiFune_DriftActive;
+extern u32 BabiFune_SwellActive;
+extern u32 BabiFune_SwellLayerSixY;
+extern u32 BabiFune_SwellLayerSevenY;
 
 /* AUDITED GENERATED PRESENTATION FINALE for Scene_ClosePresentationSequence:
  * 35 calls, palette ramps, blend-register setup, and runtime handoff. */
@@ -111,15 +111,15 @@ void Scene_ClosePresentationSequence(void)
             Event_Wait(65);
         }
     }
-    Data_020097e8 = 1;
-    Data_020097ec = 0;
+    BabiFune_ShimmerActive = 1;
+    BabiFune_ShimmerPhase = 0;
     Task_AddCallback(BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
-    Data_020097f8 = 1;
+    BabiFune_DriftActive = 1;
     Event_Wait(20);
     Audio_PlayCue(163);
     Work_SetValuesIfNonNegative(65536, 65536, 65536);
     Event_Wait(60);
-    Data_020097f8 = 1;
+    BabiFune_DriftActive = 1;
     Work_SetValuesIfNonNegative(131072, 131072, 65536);
     Event_Wait(60);
     Work_SetValuesIfNonNegative(196608, 196608, 65536);
@@ -138,7 +138,7 @@ void Scene_ClosePresentationSequence(void)
         struct Half { u16 v; } three, two;
 
         three.v = 3;
-        Data_020097f8 = 0;
+        BabiFune_DriftActive = 0;
         cnt = (*(volatile u16 *)0x0400000e & 0xfffc) | three.v;
         REG_SET(0x0400000e, cnt);
         cnt = (*(volatile u16 *)0x0400000c & 0xfffc) | three.v;
@@ -147,7 +147,7 @@ void Scene_ClosePresentationSequence(void)
         cnt = (*(volatile u16 *)0x0400000a & 0xfffc) | two.v;
         REG_SET(0x0400000a, cnt);
     }
-    Data_020097e8 = 0;
+    BabiFune_ShimmerActive = 0;
     Audio_PlayCue(288);
     Task_Wait(1);
     Audio_PlayCue(145);
@@ -162,9 +162,9 @@ void Scene_ClosePresentationSequence(void)
     }
     Event_Wait(40);
     Work_SetValuesIfNonNegative(-1, -1, 58982);
-    Data_02009804 = runtime->layers[1].offset_y;
-    Data_02009808 = runtime->layers[2].offset_y;
-    Data_020097fc = 1;
+    BabiFune_SwellLayerSixY = runtime->layers[1].offset_y;
+    BabiFune_SwellLayerSevenY = runtime->layers[2].offset_y;
+    BabiFune_SwellActive = 1;
     for (i4 = 16; i4 >= 0; i4--) {
         REG_SET(0x04000054, i4);
         Event_Wait(8);

@@ -1,4 +1,10 @@
-/* Draft. */
+/* Draft, 664 rows off, most of them from one cause: the frame is 4 bytes
+   short. The ROM spills count itself (sp+100, between size and sc) as a copy
+   of the frame * 2 induction; here count is replaced by the temporary of its
+   own multiplication, whose slot falls below sc. The ROM also reduces
+   frame * 4 for the three line lengths to an induction of its own (sp+24);
+   here that value lives too briefly to be worth one. And the ROM keeps j in
+   r8 and n in r10 where this has them the other way round. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -84,7 +90,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     void *dst;
     u8 *aux;
     s32 frame;
-    struct BlitterPair blit;
+    DrawRectangle blit[2];
     s32 size;
     s32 count;
     s32 *sc;
@@ -145,7 +151,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     *(u16 *)0x04000020 = 0x80;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     cache = (DrawRectangle *)gWorkSlot;
-    blit.upper = cache[46];
+    blit[0] = cache[46];
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x100f;
@@ -210,10 +216,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             SceneTransform_ApplyYaw(a << 12);
             if (frame > 150) {
                 s32 s = frame * 0x1800 - 0xd9400;
+                size = 5;
                 sc[0] = s;
                 sc[1] = s;
                 sc[2] = s;
-                size = 5;
             } else {
                 s32 s = 0x10000 - a * 3 * 0x400;
                 sc[0] = s;
@@ -232,6 +238,8 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         }
 
         if (frame <= 149) {
+            s32 reach = frame * 4;
+
             for (i = 0; i != 6; i++) {
                 vec[0] = (Mode12_Points[i][0] - 96) << 16;
                 vec[1] = 0;
@@ -241,7 +249,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 pts[i].y = HI(pts[i].y) + 60;
             }
             for (i = 0; i != 3; i++) {
-                n = frame * 4 - i * 48 - 256;
+                n = reach - i * 48 - 256;
                 if (n > 48) {
                     n = 48;
                 }
@@ -249,7 +257,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                     for (j = 0; j != n; j++) {
                         s32 x = pts[i * 2].x + Iwram_MulQ16(j * (pts[i * 2 + 1].x - pts[i * 2].x), 0x555);
                         s32 y = pts[i * 2].y + Iwram_MulQ16(j * (pts[i * 2 + 1].y - pts[i * 2].y), 0x555);
-                        blit.upper(dst, aux + ParticleStreams_CellOffsets[size - 1], x - size / 2, y - size, size, size * 2);
+                        blit[0](dst, aux + ParticleStreams_CellOffsets[size - 1], x - size / 2, y - size, size, size * 2);
                     }
                 }
             }
@@ -301,11 +309,11 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             }
             for (i = 1; i != 10; i++) {
                 if (w + i <= 15) {
-                    blit.upper(dst, &ramp[w + i], w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
+                    blit[0](dst, &ramp[w + i], w + 48 + i, 16 - i, 32 - w * 2 - i * 2, 1);
                 }
             }
             for (i = 0; i != h; i++) {
-                blit.upper(dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
+                blit[0](dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
             SLOT(47)(dst, work, 32, h - 56, 32, 96);
@@ -371,10 +379,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             s32 start = j * 128 + 8;
             if (frame >= start && frame < j * 128 + 17) {
                 if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-                    blit.upper(dst, work->sheet, 36, 0, 48, 112);
+                    blit[0](dst, work->sheet, 36, 0, 48, 112);
                 }
                 if (frame >= j * 128 + 12 && frame < start + 8) {
-                    blit.upper(dst, work->sheet + 0x1500, 36, 0, 48, 112);
+                    blit[0](dst, work->sheet + 0x1500, 36, 0, 48, 112);
                 }
                 if (frame == start + 2) {
                     n = 0;

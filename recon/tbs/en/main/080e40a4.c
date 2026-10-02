@@ -1,482 +1,265 @@
-/* Draft, not exact (2026-09-24): candidate=1612 reference=1612 differing_halfwords=732. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft, complete main:080e40a4 [080e40a4,080e46f0), 1612 bytes, written
+   fresh from the listing in plain C. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
-extern u8 Value_00001f80;
-extern u8 Value_00007780;
-extern u8 Value_00007784;
-extern u8 Value_00000480;
-extern u8 Value_00007080;
-extern u8 Value_0000ffff;
-extern u8 Value_000077b4;
-extern u8 Value_000077b8;
-extern u8 Value_00000c80;
-extern u8 Value_00007824;
-extern u8 Value_00004000;
-extern u8 Value_00001f81;
-extern u8 Value_00003840;
-extern u8 Value_00000400;
-extern u8 Value_00000648;
+#include "RESOURCE.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "BATTLE_WORK.H"
+#include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "MOTION_OBJECT.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
+#include "MAP_SCROLL.H"
 
-/*
- * Battle-presentation ring-and-spark scene at 0x080e40a4.
- *
- * One argument, the effect state pointer, parked at work + 0x7828 like
- * every other member of the 0x03001eec "battle work" family (see
- * recon/tbs/en/main/080e2974.c and 080e08c0.c for the shared
- * heap-cache cursor prologue, the Value_xxxxxxxx resource-id idiom and
- * the _call_via_rN trampoline spelling reused here).
- *
- * Setup: latch whether the state's s32 at 0 exceeds 199, publish the
- * state, run one paced frame, program BG1 control, then register the two
- * blit routines 0x2E and 0x2F with a shade that depends on the state's
- * s32 at 4 and keep their entry points.  Three more paced frames pull
- * resource 0x49 over the work block, resource 0x4A into 0x02010000 and,
- * when the state's s32 at 8 exceeds 7, one 128-word palette through the
- * IWRAM copy routine at 0x03001388; resource 0x76 then lands on the
- * sprite source.  The 0x7780 / 0x7784 pacing pair is set to (1, 0) and
- * the 0x080CD261 scheduler callback is installed.
- *
- * First phase (only when the state's s32 at 0 exceeded 199): 64 records
- * of 28 bytes at work + 0x7080 are seeded with a radius of 16..79 and
- * three random 16-bit angles, the actor context's fields 0x24, 0x28,
- * 0x2C, 0x34 and 0x48 are saved and cleared around a mode change, the
- * actor's screen position is resolved once, and the 0x03001AD4 /
- * 0x03001AD6 camera-shake pair is primed from it.  Thirty-two frames
- * then rotate each record by its three angles, project it, bias it by
- * the anchor and the resolved y, clamp the projected z into [-60, 60],
- * shift it by 60 and blit a (5 or 6)-radius cell; every drawn record's
- * radius drops by 4, and a record only draws once the frame index has
- * reached index / 4.  The saved actor fields are restored afterwards.
- *
- * Second phase (always): the draw target and 0x06004000 are cleared, the
- * pacing pair becomes (2, 75), BG1 control is reprogrammed, the actor
- * anchor is resolved from the state's s16 at 0x24 and the shake offset is
- * clamped into [-128, 0].  The same 64 records are reseeded as sparks at
- * the actor's world position with random velocities and a stagger timer
- * of index + 16.  Thirty-two frames cue audio on frame 5, poke the actor
- * on frame 4, redraw one of four full 120x120 backdrops for the first
- * eight frames, and from frame 4 onwards step and draw the live sparks
- * under gravity.  That loop runs 64 times over the first 32 records, so
- * each live spark is drawn, advanced and decremented twice per frame; the
- * blit routine is chosen by the record index, not by the visit, so both
- * visits to one record use the same routine and neighbouring records
- * alternate between the two.  The scene closes by removing the callback,
- * releasing blit blocks 0x2E and 0x2F, and running seven paced frames of
- * a fading cue read from the pointer at 0x03001E74, plus 1608.
- *
- * Neither _call_via_r3, _call_via_r4 nor _call_via_r5 is a real
- * function symbol: they are entries of the _call_via_rN trampoline bundle
- * at recon/tbs/raw/080072e4.s, so they are spelled here as calls through
- * typed pointers - the IWRAM word copier at 0x03001388, the IWRAM clear
- * routine at 0x03000164, and the two blit routines BattleEffect_LoadWork
- * publishes into heap_cache[46] and heap_cache[47].
- *
- * The resource ids 0x49, 0x4A, 0x76 and 0x8E reach their calls through
- * the literal pool rather than a movs, which the project's external
- * Value_xxxxxxxx spelling reproduces; the original source form of those
- * ids is not recovered.
- *
- * The `val` scratch is a measured spelling, not a recovered one.  Thumb has
- * no store-immediate halfword, so the reference's `movs`/`ldr` then `strh`
- * pairs are not by themselves evidence of a source-level temporary; what is
- * evidence is the codegen.  Writing those four halfword stores directly
- * costs 28 bytes and 100 wrong instructions (measured: 1652 candidate
- * bytes, 758 differing halfwords, against 1624 and 588 with the scratch),
- * so the extra live word is load-bearing.  The first BG1 control word is
- * the exception
- * that is written directly, which restores the early four-word literal pool
- * at function offset 0x7c.  The original source form of both is unknown.
- *
- * Still uncertain: the role of the 28-byte record's first word, which the
- * first phase uses as a shrinking radius and the second phase as a world
- * x; why the first phase computes and stores a clamped, biased projected
- * z that the blit never reads; the meaning of the 0x7780 / 0x7784 /
- * 0x77B4 / 0x77B8 / 0x7824 work words; and why the final camera-shake
- * duration is written with the frame counter's terminal value.
- *
- * Residual against the reference: the recovered control flow, calls,
- * effects and aggregate offsets line up instruction for instruction, and
- * the four s32[3] scratch arrays land in the reference's order, but this
- * compile keeps the phase counter in memory instead of a high register.
- * The reference holds it in r9 and spills the address of `pos` to sp+12;
- * this compile does the reverse, keeping &pos in sl and giving the counter
- * its own frame slot at sp+20 (`sub sp, #116` against the reference's
- * `#112`).  That reload appears at every counter read and shifts the
- * scalar slots below the arrays by four or eight bytes; the arrays and the
- * saved-field block are otherwise laid out the same way.  Two secondary,
- * purely cosmetic consequences of the same assignment: the member context
- * sits in a low register here and in r8 in the reference, and the final
- * camera-shake duration is written as the literal 32 rather than reused
- * from the counter register.  Six source spellings were measured against
- * this - dropping the s32 scratch, collapsing the saved actor fields into
- * an array, a separate phase-1 frame counter, a pooled BG1 control word,
- * reusing the terminal loop values for the 64 and the 32 (no change at
- * all), and reordering the declarations to the reference's implied slot
- * order (587/482, a wash) - and none moved the allocation.  Moving it
- * would need a compiler-level fact, not another source spelling.
- */
-
-
-/* The state pointer this owner parks in, and reloads from, work + 0x7828. */
-#define STATE (*(void **)(work + 0x7828))
-
-/* Camera-shake parameter block; only the offset and duration are used. */
-struct ShakeParams {
-    u8 unknown_0000[4];
-    u16 offset;
-    u16 duration;
-};
-
-#define SHAKE (*(struct ShakeParams *)0x03001AD0)
-
-typedef void (*BlitFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 w, s32 h);
-typedef void (*CopyFn)(void *dest, const void *src, s32 count);
-typedef void (*ClearFn)(void *dest, s32 count);
-
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
-   This owner reads kinds 9, 12, 39 (its work block), 40 (the draw target),
-   41 (the sprite source) and the two blit entries 46 and 47.  The family
-   spells the 39.. window through its own base, which is what the
-   reference's 0x03001eec pool word is. */
-extern void *gWorkSlot[];
-
-/* Sixteen halfword cell offsets shared with the rest of the family. */
+extern u8 gBattleFxWork[];
+extern DrawRectangle gWorkSlot[];
 extern u16 BattleFx6_FlareCells[];
 
-/* Value_ symbols carry a literal the reference loads from its pool rather
-   than materializing with a mov. */
-
-/* 28-byte records at work + 0x7080, reused by both phases: the first
-   phase treats the first word as a shrinking radius and words 3..5 as
-   rotation angles, the second phase as a world position, a velocity and
-   a stagger timer. */
-struct Particle {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 vx;
-    s32 vy;
-    s32 vz;
-    s32 timer;
-};
-
-/* Only the world position this owner copies out of the member context;
-   the 0x24..0x48 window it saves and clears is reached by offset. */
-struct Member {
-    s32 field_0000;
-    s32 field_0004;
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-void BattlePres_SetupTransitionAtPairMidpointFar(s32 a, s32 b, s32 c);
-void WaitFrames(s32 frames);
+void BattlePres_SetupTransitionAtPairMidpointFar(s32 actor, s32 target, s32 mode);
 void BattleFx_SetupCanvasTileMap(void);
-void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
-void *Resource_GetTableEntry(s32 id);                                       /* get */
-void _call_via_r3(void *dest, const void *src, s32 count, CopyFn copier);
-struct Member **GetBattleObjectSlotFar(s32 member);
-u32 Random16(void);                                           /* random_16 */
-void ObjectDispatch_ApplyValueToChildrenFar(struct Member *member, s32 mode);
-void EffectPosition_ApplyStepAndYOffset(s32 source, s32 *out);                          /* apply_step_and_y_offset */
-void Audio_PlayCue(s32 id);
-void Render_ResetTransformState(void);                                          /* Render_ResetTransformState */
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
+void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
+void AudioCommand_PlayFar(s32 cue);
+void Render_ResetTransformState(void);
 void SceneTransform_ApplyRoll(s32 angle);
-void SceneTransform_ApplyPitch(s32 angle);                                     /* SceneTransform_ApplyPitch */
-void SceneTransform_ApplyYaw(s32 angle);                                     /* SceneTransform_ApplyYaw */
-void EffectPosition_ApplyBaseAndYOffset(const void *particle, s32 *out);                /* apply_base_and_y_offset */
-s32 Battle_GetObjectTableValueFar(s32 member);
-void BattleEventRuntime_BeginPhaseFar(s32 id);
-void BattleMotion_ApplyVariantMotionFar(s32 member, s32 kind);
-void Graphics_PrepareTransferInIwramWork(void *a, void *b);                              /* Graphics_PrepareTransferInIwramWork */
-void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);                  /* advance_with_gravity_3d */
-void Runtime_ReleaseHeapBlock(s32 id);                                        /* Runtime_ReleaseHeapBlock */
-void BattlePresentation_SetPaletteLevelFar(s32 cue, s32 level);
-void BattleFx_SetTransitionFlagAndDisplay(void);                                          /* BattleFx_SetTransitionFlagAndDisplay */
+void SceneTransform_ApplyPitch(s32 angle);
+void SceneTransform_ApplyYaw(s32 angle);
+s32 Battle_GetObjectTableValueFar(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
+void BattlePresentation_SetPaletteLevelFar(s32 background, s32 level);
+void BattleFx_SetTransitionFlagAndDisplay(void);
 
-void BattlePres_RunRingAndSparkScene(void *object)
+/* Battle presentation: a ring closes on the actor and bursts into sparks on
+   the target. When the effect's kind is above 199, sixty-four motes first
+   circle the actor on three random angles, each closing in by four a frame,
+   while the actor stands still and the palette fades. Then four full-canvas
+   pictures flash by two frames each, and sparks fly from the target and fall
+   under gravity. The background's palette level steps back up at the end. */
+void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
 {
-    void **heap;
+    struct EffectPosition pos;
+    struct EffectPosition anchor;
+    struct EffectPosition point;
+    struct EffectPosition spot;
+    void **heap_cache;
     void **cursor;
-    u8 *work;
-    void *draw_target;
-    void *sprite_src;
-    void *xfer;
-    struct Member *member;
-    struct Particle *p;
-    const u16 *cue;
-    BlitFn blit[2];
-    s32 pos[3];
-    s32 anchor[3];
-    s32 tmp[3];
-    s32 tmp2[3];
-    s32 saved24;
-    s32 saved28;
-    s32 saved2c;
-    s32 saved34;
-    s32 saved48;
+    struct BattleEffectWork *work;
+    void *canvas;
     s32 shake;
-    s32 half;
-    s32 size;
-    s32 timer;
-    s32 frame;
+    u8 *sheet;
+    struct BattleCamera *camera;
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    s32 acceleration;
+    s32 strength;
+    DrawRectangle draw[2];
+    struct MotionObject *object;
+    struct MotionObject *target;
+    u16 *background;
+    void *colors = (void *)0x05000000;
+    s32 words = 0x4000;
     s32 big;
+    s32 half;
+    s32 frame;
     s32 i;
-    s32 j;
-    s32 val;
 
-    heap = &gWorkSlot[39];
-    cursor = heap;
-    work = (u8 *)*cursor++;
-    draw_target = *cursor;
-    sprite_src = heap[2];
-    xfer = heap[-27];
-
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
     big = 1;
-    if ((*(s32 *)((s8 *)object + 0)) <= 199) {
+    if (effect->kind <= 199)
         big = 0;
-    }
-
-    STATE = object;
-    BattlePres_SetupTransitionAtPairMidpointFar(
-        (*(s32 *)((s8 *)object + 8)), (*(s32 *)((s8 *)object + 12)), 130);
+    work->effect = effect;
+    BattlePres_SetupTransitionAtPairMidpointFar(effect->actor, effect->unknown_000c, 130);
     WaitFrames(1);
     BattleFx_SetupCanvasTileMap();
-    *(u16 *)0x0400000A = (s32)&Value_00001f80;
-
-    if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
+    *(volatile u16 *)0x0400000a = 0x1f80;
+    if (work->effect->side == 0) {
         BattleEffect_LoadWork(46, 7, 7, 3, 3);
         BattleEffect_LoadWork(47, 7, 7, 3, 2);
     } else {
         BattleEffect_LoadWork(46, 7, 7, 7, 3);
         BattleEffect_LoadWork(47, 7, 7, 7, 2);
     }
-    blit[0] = (BlitFn)gWorkSlot[46];
-    blit[1] = (BlitFn)gWorkSlot[47];
-
-    BattlePres_SetupTransitionAtPairMidpointFar(
-        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
+    draw[0] = gWorkSlot[46];
+    draw[1] = gWorkSlot[47];
+    BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor, work->effect->unknown_000c, 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet, work, 1, 0);
-
-    BattlePres_SetupTransitionAtPairMidpointFar(
-        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
+    BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor, work->effect->unknown_000c, 130);
     WaitFrames(1);
-    Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, (void *)0x02010000, 1, 1);
-
-    if ((*(s32 *)((s8 *)STATE + 8)) > 7) {
-        _call_via_r3((void *)0x05000000,
-            Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128, (CopyFn)0x03001388);
-    }
-
-    BattlePres_SetupTransitionAtPairMidpointFar(
-        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
+    Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, Ram_MapCellBuffer, 1, 1);
+    if (work->effect->actor > 7)
+        Iwram_CopyWords(colors,
+            Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
+    BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor, work->effect->unknown_000c, 130);
     WaitFrames(1);
-    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprite_src, 0, 0);
-
-    BattlePres_SetupTransitionAtPairMidpointFar(
-        (*(s32 *)((s8 *)STATE + 8)), (*(s32 *)((s8 *)STATE + 12)), 130);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+    BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor, work->effect->unknown_000c, 130);
     WaitFrames(1);
-    (*(s32 *)((s8 *)work + 0x7780)) = 1;
-    (*(s32 *)((s8 *)work + 0x7784)) = 0;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     if (big == 1) {
-        /* Seed the ring: a shrinking radius and three random angles. */
-        member = *GetBattleObjectSlotFar((*(s32 *)((s8 *)STATE + 8)));
-        p = (struct Particle *)(work + 0x7080);
-        i = 0;
-        do {
-            p->x = (s32)(Random16() & 63) + 16;
-            p->y = 0;
-            p->z = 0;
-            p->vx = (s32)(Random16() & 0xFFFF);
-            p->vy = (s32)(Random16() & 0xFFFF);
-            p->vz = (s32)(Random16() & 0xFFFF);
-            i++;
-            p++;
-        } while (i != 64);
+        object = GetBattleObjectSlotFar(work->effect->actor)->object;
+        for (i = 0; i != 64; i++) {
+            struct EffectStep *mote = &work->particles[i];
 
-        ObjectDispatch_ApplyValueToChildrenFar(member, 0);
-        saved24 = (*(s32 *)((s8 *)member + 0x24));
-        saved28 = (*(s32 *)((s8 *)member + 0x28));
-        saved2c = (*(s32 *)((s8 *)member + 0x2C));
-        saved48 = (*(s32 *)((s8 *)member + 0x48));
-        saved34 = (*(s32 *)((s8 *)member + 0x34));
-        (*(s32 *)((s8 *)member + 0x24)) = 0;
-        (*(s32 *)((s8 *)member + 0x28)) = 0;
-        (*(s32 *)((s8 *)member + 0x2C)) = 0;
-        (*(s32 *)((s8 *)member + 0x34)) = 0;
-        (*(s32 *)((s8 *)member + 0x48)) = 0;
+            mote->x = (Random16() & 63) + 16;
+            mote->y = 0;
+            mote->z = 0;
+            mote->velocity_x = Random16() & 0xffff;
+            mote->velocity_y = Random16() & 0xffff;
+            mote->velocity_z = Random16() & 0xffff;
+        }
+        ObjectDispatch_ApplyValueToChildrenFar(object, 0);
+        velocity_x = object->velocity_x;
+        velocity_y = object->velocity_y;
+        velocity_z = object->velocity_z;
+        strength = object->vertical_motion_strength;
+        acceleration = object->acceleration;
+        object->velocity_x = 0;
+        object->velocity_y = 0;
+        object->velocity_z = 0;
+        object->acceleration = 0;
+        object->vertical_motion_strength = 0;
+        EffectPosition_ApplyStepAndYOffset(work->effect->actor, &pos);
+        shake = 64 - pos.x;
+        gBgScroll[1].x = shake;
+        gBgScroll[1].y = 80;
+        work->fade_frames = 24;
+        work->fade_step = 0;
+        Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
+        AudioCommand_PlayFar(212);
+        for (frame = 0; frame != 32; frame++) {
+            BattlePres_SetupTransitionAtPairMidpointFar(work->effect->actor,
+                work->effect->unknown_000c, 130);
+            for (i = 0; i != 64; i++) {
+                struct EffectStep *mote = &work->particles[i];
 
-        EffectPosition_ApplyStepAndYOffset((*(s32 *)((s8 *)STATE + 8)), pos);
-        shake = 64 - pos[0];
-        SHAKE.offset = (u16)shake;
-        val = 80;
-        SHAKE.duration = val;
-        (*(s32 *)((s8 *)work + 0x77B4)) = 24;
-        (*(s32 *)((s8 *)work + 0x77B8)) = 0;
-        Scheduler_AddOrUpdateCallback((void *)0x080CD4B5, 0xC80);
-        Audio_PlayCue(212);
+                if (mote->x >= 0 && frame >= i / 4) {
+                    s32 size = (i & 1) + 5;
 
-        frame = 0;
-        do {
-            BattlePres_SetupTransitionAtPairMidpointFar((*(s32 *)((s8 *)STATE + 8)),
-                (*(s32 *)((s8 *)STATE + 12)), 130);
-            p = (struct Particle *)(work + 0x7080);
-            i = 0;
-            do {
-                if (p->x >= 0 && frame >= i / 4) {
-                    size = (i & 1) + 5;
                     Render_ResetTransformState();
-                    SceneTransform_ApplyRoll(p->vz);
-                    SceneTransform_ApplyPitch(p->vx);
-                    SceneTransform_ApplyYaw(p->vy);
-                    EffectPosition_ApplyBaseAndYOffset(p, tmp);
-                    tmp[0] = tmp[0] + 64;
-                    tmp[1] = tmp[1] + pos[1] + 24;
-                    if (tmp[2] < -60) {
-                        tmp[2] = -60;
-                    }
-                    if (tmp[2] > 60) {
-                        tmp[2] = 60;
-                    }
-                    tmp[2] = tmp[2] + 60;
-                    blit[0](draw_target,
-                        (u8 *)sprite_src + BattleFx6_FlareCells[size - 1],
-                        tmp[0] - size, tmp[1] - size, size * 2, size * 2);
-                    p->x = p->x - 4;
+                    SceneTransform_ApplyRoll(mote->velocity_z);
+                    SceneTransform_ApplyPitch(mote->velocity_x);
+                    SceneTransform_ApplyYaw(mote->velocity_y);
+                    EffectPosition_ApplyBaseAndYOffset(&mote->x, &point);
+                    point.x += 64;
+                    point.y = point.y + pos.y + 24;
+                    if (point.depth < -60)
+                        point.depth = -60;
+                    if (point.depth > 60)
+                        point.depth = 60;
+                    point.depth += 60;
+                    draw[0](canvas, sheet + BattleFx6_FlareCells[size - 1],
+                        point.x - size, point.y - size, size * 2, size * 2);
+                    mote->x -= 4;
                 }
-                i++;
-                p++;
-            } while (i != 64);
-            (*(s32 *)((s8 *)work + 0x7824)) = 1;
+            }
+            work->transfer_pending = 1;
             WaitFrames(1);
-            frame++;
-        } while (frame != 32);
-
-        Scheduler_RemoveCallback((void *)0x080CD4B5);
-        ObjectDispatch_ApplyValueToChildrenFar(member, 16);
-        (*(s32 *)((s8 *)member + 0x24)) = saved24;
-        (*(s32 *)((s8 *)member + 0x28)) = saved28;
-        (*(s32 *)((s8 *)member + 0x2C)) = saved2c;
-        (*(s32 *)((s8 *)member + 0x34)) = saved34;
-        (*(s32 *)((s8 *)member + 0x48)) = saved48;
+        }
+        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+        ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+        object->velocity_x = velocity_x;
+        object->velocity_y = velocity_y;
+        object->velocity_z = velocity_z;
+        object->acceleration = acceleration;
+        object->vertical_motion_strength = strength;
     }
 
-    ((ClearFn)0x03000164)(draw_target, 0x4000);
-    ((ClearFn)0x03000164)((void *)0x06004000, 0x4000);
-    (*(s32 *)((s8 *)work + 0x7780)) = 2;
-    (*(s32 *)((s8 *)work + 0x7784)) = 75;
-    val = 0x1F81;
-    *(u16 *)0x0400000A = val;
-
-    EffectPosition_ApplyStepAndYOffset((*(s16 *)((s8 *)STATE + 0x24)), anchor);
-    if ((*(s32 *)((s8 *)STATE + 4)) == 0) {
-        shake = 32 - anchor[0];
-    } else {
-        shake = 96 - anchor[0];
-    }
-    if (shake > 0) {
+    Iwram_ClearWords(canvas, words);
+    Iwram_ClearWords((void *)0x06004000, words);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    *(volatile u16 *)0x0400000a = 0x1f81;
+    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &anchor);
+    if (work->effect->side == 0)
+        shake = 32 - anchor.x;
+    else
+        shake = 96 - anchor.x;
+    if (shake > 0)
         shake = 0;
-    }
-    if (shake < -128) {
+    if (shake < -128)
         shake = -128;
+    anchor.x += shake;
+    gBgScroll[1].y = 80;
+    gBgScroll[1].x = shake;
+    target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+    half = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
+    for (i = 0; i != 64; i++) {
+        struct EffectStep *spark = &work->particles[i];
+
+        spark->x = target->x;
+        spark->y = target->y + half;
+        spark->z = target->z;
+        spark->velocity_x = (Random16() & 255) << 10;
+        spark->velocity_y = (Random16() & 255) << 10;
+        spark->velocity_z = ((Random16() & 255) - 127) << 10;
+        if (spark->x > 0)
+            spark->velocity_x = -spark->velocity_x;
+        spark->variant = i + 16;
     }
-    anchor[0] = anchor[0] + shake;
-    val = 80;
-    SHAKE.duration = val;
-    SHAKE.offset = (u16)shake;
 
-    /* Reseed the same records as sparks at the actor's world position. */
-    member = *GetBattleObjectSlotFar((*(s16 *)((s8 *)STATE + 0x24)));
-    half = Battle_GetObjectTableValueFar((*(s16 *)((s8 *)STATE + 0x24))) / 2;
-    p = (struct Particle *)(work + (s32)&Value_00007080);
-    i = 0;
-    do {
-        p->x = member->x;
-        p->y = member->y + half;
-        p->z = member->z;
-        p->vx = (s32)(Random16() & 255) << 10;
-        p->vy = (s32)(Random16() & 255) << 10;
-        p->vz = ((s32)(Random16() & 255) - 127) << 10;
-        if (p->x > 0) {
-            p->vx = -p->vx;
-        }
-        p->timer = i + 16;
-        i++;
-        p++;
-    } while (i != 64);
-
-    frame = 0;
-    do {
-        if (frame == 5) {
+    for (frame = 0; frame != 32; frame++) {
+        if (frame == 5)
             BattleEventRuntime_BeginPhaseFar(134);
-        }
-        if (frame == 4) {
-            BattleMotion_ApplyVariantMotionFar((*(s16 *)((s8 *)STATE + 0x24)), 0);
-        }
-        EffectPosition_ApplyStepAndYOffset((*(s32 *)((s8 *)STATE + 8)), pos);
-        pos[1] = pos[1] + 16;
-
-        if (frame <= 1) {
-            blit[0](draw_target, work, 0, 0, 120, 120);
-        } else if (frame <= 3) {
-            blit[0](draw_target, work + (s32)&Value_00003840, 0, 0, 120, 120);
-        } else if (frame <= 5) {
-            blit[0](draw_target, (void *)0x02010000, 0, 0, 120, 120);
-        } else if (frame <= 7) {
-            blit[0](draw_target, (void *)0x02013840, 0, 0, 120, 120);
-        }
-
+        if (frame == 4)
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 0);
+        EffectPosition_ApplyStepAndYOffset(work->effect->actor, &pos);
+        pos.y += 16;
+        if (frame <= 1)
+            draw[0](canvas, work, 0, 0, 120, 120);
+        else if (frame <= 3)
+            draw[0](canvas, (u8 *)work + 0x3840, 0, 0, 120, 120);
+        else if (frame <= 5)
+            draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
+        else if (frame <= 7)
+            draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(xfer, (u8 *)xfer + 12);
-
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame >= 4 && frame <= 31) {
-            i = 0;
-            do {
-                j = i / 2;
-                p = (struct Particle *)(work + (s32)&Value_00007080) + j;
-                timer = p->timer;
-                if (timer > 0) {
-                    EffectPosition_ApplyBaseAndYOffset(p, tmp2);
-                    tmp2[0] = tmp2[0] + shake;
-                    size = (timer >> 3) + 2;
-                    tmp2[1] = tmp2[1] + 16;
-                    blit[j & 1](draw_target,
-                        (u8 *)sprite_src + BattleFx6_FlareCells[size - 1],
-                        tmp2[0] - size, tmp2[1] - size, size * 2, size * 2);
-                    EffectStep_AdvanceWithGravity3D(p, 60, -0x400);
-                    p->timer = p->timer - 1;
+            for (i = 0; i != 64; i++) {
+                s32 pair = i / 2;
+                struct EffectStep *spark = &work->particles[pair];
+                s32 size = spark->variant;
+
+                if (size > 0) {
+                    EffectPosition_ApplyBaseAndYOffset(&spark->x, &spot);
+                    spot.x += shake;
+                    size >>= 3;
+                    size += 2;
+                    spot.y += 16;
+                    draw[pair & 1](canvas, sheet + BattleFx6_FlareCells[size - 1],
+                        spot.x - size, spot.y - size, size * 2, size * 2);
+                    EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
+                    spark->variant--;
                 }
-                i++;
-            } while (i != 64);
+            }
         }
-
-        (*(s32 *)((s8 *)work + 0x7824)) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
-        frame++;
-    } while (frame != 32);
+    }
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    val = 32;
-    SHAKE.duration = val;
-
-    cue = (const u16 *)((u8 *)*(void **)0x03001E74 + 1608);
-    i = 0;
-    do {
-        BattlePresentation_SetPaletteLevelFar(*cue, 6 - i);
+    gBgScroll[1].y = 32;
+    for (frame = 0, background = &gBattleWork->background; frame != 7; frame++) {
+        BattlePresentation_SetPaletteLevelFar(*background, 6 - frame);
         WaitFrames(1);
-        i++;
-    } while (i != 7);
-
+    }
     BattleFx_SetTransitionFlagAndDisplay();
 }

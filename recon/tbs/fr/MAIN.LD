@@ -612,7 +612,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LINKACT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT6.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000bdb46)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT13.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000bded8)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)

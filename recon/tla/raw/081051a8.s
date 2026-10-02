@@ -46,7 +46,7 @@ Func_081051a8:
 	ldmia r2!, {r0}
 	adds r1, r2, #0
 	str r1, [sp, #4]
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	adds r5, r0, #0
 	ldr r4, [sp, #0]
 	cmp r5, #0

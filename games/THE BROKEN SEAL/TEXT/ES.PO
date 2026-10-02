@@ -10239,11 +10239,11 @@ msgctxt "message"
 msgid "02557"
 msgstr "Ganas:"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "02558"
 msgstr "Arriba y abajo cambian el valor."
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Jugar        {button_icon:2}:Salir"
 
@@ -12971,7 +12971,7 @@ msgctxt "MsgPriceHeading"
 msgid "03240"
 msgstr "Vale"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03241"
 msgstr "No equipable."
 
@@ -13011,7 +13011,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03250"
 msgstr "¡No sale!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03251"
 msgstr "ATA."
 
@@ -43635,7 +43635,7 @@ msgctxt "message"
 msgid "10906"
 msgstr "Parameter"
 
-msgctxt "message"
+msgctxt "MsgDebugSampleName"
 msgid "10907"
 msgstr "Ha hi fu he ho"
 

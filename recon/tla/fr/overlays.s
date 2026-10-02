@@ -244,7 +244,9 @@ Resource_Overlay695:
 	.incbin "baserom.gba", 0x00f34618, 0x00000b1c
 	.global Resource_Overlay696
 Resource_Overlay696:
-	.incbin "baserom.gba", 0x00f35134, 0x00003310
+	.incbin "overlays/resource_696.lz"
+	@ Uncredited inter-stream alignment.
+	.incbin "baserom.gba", 0x00f38441, 0x00000003
 	.global Resource_Overlay697
 Resource_Overlay697:
 	.incbin "baserom.gba", 0x00f38444, 0x00004450

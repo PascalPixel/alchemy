@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "EDITION.H"
 #include "MORI.H"
 #include "TYPES.H"
@@ -37,7 +38,6 @@ void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Battle_WaitMode0(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Engine_ActorSetSpritePriority(s32 actor, s32 value);
-void Map_CopyCellAttributeRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 void Engine_EventEnd(void);
 
 void Engine_EventBegin();
@@ -85,7 +85,6 @@ void ObjectMotion_CommitCurrentPositionAndActivate();
 void Engine_ActorShowEmote();
 void InitializeOrbitingEffect();
 void Object_SetModeById();
-void Map_CopyCellAttributeRect();
 s32 StagedActor_FillGridAttributeRectangle(u32, s32, s32, u32, u32, s32);
 u8 *OverlayObject_SpawnConfiguredWithMode15(s32, s32, s32, s32);
 void FieldScene_RunSupplementalSequenceOne();

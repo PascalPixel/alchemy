@@ -5,10 +5,6 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Object_SetCallback
-	.thumb_func
-Object_SetCallback:
-	.thumb_func
 	.global ObjectDispatch_InitializeFar
 	.thumb_func
 ObjectDispatch_InitializeFar:
@@ -20,4 +16,4 @@ Func_080200b0:
 	.global Func_080200b8
 	.thumb_func
 Func_080200b8:
-	overlay_veneer Func_080231a4
+	overlay_veneer ObjectDispatch_FindFreeObject

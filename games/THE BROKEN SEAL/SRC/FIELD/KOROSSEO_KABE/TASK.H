@@ -4,6 +4,7 @@
 /* Declarations shared by the Colosso wall stage's scene code. */
 
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
@@ -141,7 +142,6 @@ void *Runtime_AllocateBlock();
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();
-s32 Runtime_BumpAllocateAlternatePool();
 void Runtime_BumpFree();
 void Resource_ResetEntry();
 s32 Resource_FindFreeEntry();

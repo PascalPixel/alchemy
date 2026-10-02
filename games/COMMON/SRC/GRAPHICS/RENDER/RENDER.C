@@ -1,0 +1,237 @@
+#include "EDITION.H"
+#include "TYPES.H"
+#include "TRANSFORM.H"
+#include "DMA.H"
+
+/* Lost Age source currently covers rewind, push and the two matrix copies.
+   Its reset, pop and identity helpers remain raw until their C matches.
+   These game branches describe source presence; both games retain their
+   ordinary compiler and options, and each native bank keeps its order. */
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#include "RAM_BUFFER.H"
+
+void SceneTransform_RewindStack(void)
+{
+    gTransformStackTop = Ram_HeapSlots->transform_stack;
+    gTransformStackDepth = 0;
+}
+
+#else
+#include "SYSTEM.H"
+#include "IWRAM_CALL.H"
+
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+
+/* Allocates the transform stack's 48-byte slots, empties it and loads the
+   identity into the current transform. */
+void Render_ResetTransformState(void)
+{
+    gTransformStackTop = Runtime_AllocateBlock(2, sizeof(gTransform));
+    gTransformStackDepth = 0;
+    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    Transform_SetIdentity(gTransform);
+}
+
+#endif
+
+void Graphics_SaveTransferWorkOnce(void)
+{
+    if (gTransformStackDepth <= 0) {
+        Dma_Set(gTransform, gTransformStackTop, 0x8400000c, (volatile u32 *)0x040000d4);
+        gTransformStackDepth++;
+        gTransformStackTop += 48;
+    }
+}
+
+void Graphics_SaveTransferWork(void *destination)
+{
+    Dma_Set(gTransform, destination, 0x8400000c, (volatile u32 *)0x040000d4);
+}
+
+void Graphics_LoadTransferWork(const void *source)
+{
+    Dma_Set(source, gTransform, 0x8400000c, (volatile u32 *)0x040000d4);
+}
+
+#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
+void Graphics_RestoreTransferWork(void)
+{
+    if (gTransformStackDepth > 0) {
+        --gTransformStackDepth;
+        gTransformStackTop -= 48;
+        Dma_Set(gTransformStackTop, gTransform, 0x8400000c, (volatile u32 *)0x040000d4);
+    }
+}
+
+void SceneTransform_ResetMatrix(void)
+{
+    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    Transform_SetIdentity(gTransform);
+}
+
+/* Builds the rotation matrix for the three angles (Q16 sines and cosines,
+   rows x, y, z, zero translation) and hands it to the IWRAM transform
+   routine. */
+void SceneTransform_ApplyRotation(s32 *angles)
+{
+    s32 sx, cx, sy, cy, sz, cz;
+    s32 m[12];
+
+    sx = Trig_Sin(angles[0]);
+    cx = Trig_Cos(angles[0]);
+    sy = Trig_Sin(angles[1]);
+    cy = Trig_Cos(angles[1]);
+    sz = Trig_Sin(angles[2]);
+    cz = Trig_Cos(angles[2]);
+    m[0] = Iwram_MulQ16(cy, cz);
+    m[1] = Iwram_MulQ16(cy, sz);
+    m[2] = -sy;
+    m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
+    m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
+    m[5] = Iwram_MulQ16(sx, cy);
+    m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
+    m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
+    m[8] = Iwram_MulQ16(cx, cy);
+    m[9] = 0;
+    m[10] = 0;
+    m[11] = 0;
+    Iwram_TransformMatrix(m);
+}
+
+/* Each builds one elementary matrix on the identity and hands it to the
+   IWRAM transform routine. */
+void SceneTransform_ApplyPitch(s32 angle)
+{
+    s32 matrix[12];
+    s32 sin = Trig_Sin(angle);
+    s32 cos = Trig_Cos(angle);
+
+    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    Transform_SetIdentity(matrix);
+    matrix[4] = cos;
+    matrix[5] = sin;
+    matrix[7] = -sin;
+    matrix[8] = cos;
+    Iwram_TransformMatrix(matrix);
+}
+
+void SceneTransform_ApplyYaw(s32 angle)
+{
+    s32 matrix[12];
+    s32 sin = Trig_Sin(angle);
+    s32 cos = Trig_Cos(angle);
+
+    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    Transform_SetIdentity(matrix);
+    matrix[0] = cos;
+    matrix[2] = -sin;
+    matrix[6] = sin;
+    matrix[8] = cos;
+    Iwram_TransformMatrix(matrix);
+}
+
+void SceneTransform_ApplyRoll(s32 angle)
+{
+    s32 matrix[12];
+    s32 sin = Trig_Sin(angle);
+    s32 cos = Trig_Cos(angle);
+
+    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    Transform_SetIdentity(matrix);
+    matrix[0] = cos;
+    matrix[1] = sin;
+    matrix[3] = -sin;
+    matrix[4] = cos;
+    Iwram_TransformMatrix(matrix);
+}
+
+void SceneTransform_ApplyPosition(const s32 *position)
+{
+    s32 matrix[12];
+
+    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    Transform_SetIdentity(matrix);
+    matrix[9] = position[0];
+    matrix[10] = position[1];
+    matrix[11] = position[2];
+    Iwram_TransformMatrix(matrix);
+}
+
+void SceneTransform_ApplyScale(const s32 *scale)
+{
+    s32 matrix[12];
+
+    /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
+    Transform_SetIdentity(matrix);
+    matrix[0] = scale[0];
+    matrix[4] = scale[1];
+    matrix[8] = scale[2];
+    Iwram_TransformMatrix(matrix);
+}
+
+/* Builds the rotation matrix for the three angles with the given
+   translation as its last row and hands it to the IWRAM transform
+   routine. */
+void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position)
+{
+    s32 sx, cx, sy, cy, sz, cz;
+    s32 m[12];
+
+    sx = Trig_Sin(angles[0]);
+    cx = Trig_Cos(angles[0]);
+    sy = Trig_Sin(angles[1]);
+    cy = Trig_Cos(angles[1]);
+    sz = Trig_Sin(angles[2]);
+    cz = Trig_Cos(angles[2]);
+    m[0] = Iwram_MulQ16(cy, cz);
+    m[1] = Iwram_MulQ16(cy, sz);
+    m[2] = -sy;
+    m[3] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz);
+    m[4] = Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz);
+    m[5] = Iwram_MulQ16(sx, cy);
+    m[6] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz);
+    m[7] = Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz);
+    m[8] = Iwram_MulQ16(cx, cy);
+    m[9] = position[0];
+    m[10] = position[1];
+    m[11] = position[2];
+    Iwram_TransformMatrix(m);
+}
+
+/* SceneTransform_ApplyRotationTranslation with each matrix row scaled by
+   the matching component of the scale vector. */
+void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
+{
+    s32 sx, cx, sy, cy, sz, cz;
+    s32 s;
+    s32 m[12];
+
+    sx = Trig_Sin(angles[0]);
+    cx = Trig_Cos(angles[0]);
+    sy = Trig_Sin(angles[1]);
+    cy = Trig_Cos(angles[1]);
+    sz = Trig_Sin(angles[2]);
+    cz = Trig_Cos(angles[2]);
+    s = scale[0];
+    m[0] = Iwram_MulQ16(s, Iwram_MulQ16(cy, cz));
+    m[1] = Iwram_MulQ16(s, Iwram_MulQ16(cy, sz));
+    m[2] = Iwram_MulQ16(s, -sy);
+    s = scale[1];
+    m[3] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), cz) - Iwram_MulQ16(cx, sz));
+    m[4] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(sx, sy), sz) + Iwram_MulQ16(cx, cz));
+    m[5] = Iwram_MulQ16(s, Iwram_MulQ16(sx, cy));
+    s = scale[2];
+    m[6] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), cz) + Iwram_MulQ16(sx, sz));
+    m[7] = Iwram_MulQ16(s, Iwram_MulQ16(Iwram_MulQ16(cx, sy), sz) - Iwram_MulQ16(sx, cz));
+    m[8] = Iwram_MulQ16(s, Iwram_MulQ16(cx, cy));
+    m[9] = position[0];
+    m[10] = position[1];
+    m[11] = position[2];
+    Iwram_TransformMatrix(m);
+}
+#endif

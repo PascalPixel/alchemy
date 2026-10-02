@@ -522,7 +522,7 @@ Func_08181910:
 	ldr r3, .L_08181e80
 	strb r4, [r5]
 	str r3, [r7, #8]
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	mov r1, r8
 	ldr r0, [r1, #20]
 	lsls r0, r0, #11
@@ -619,7 +619,7 @@ Func_08181910:
 	movs r6, #0
 	adds r5, #80
 .L_08181dd6:
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	adds r0, r5, #0
 	bl Func_080150e4
 	movs r1, #1

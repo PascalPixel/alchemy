@@ -2103,7 +2103,7 @@ Func_081848ec:
 	adds r5, r5, r4
 	adds r6, #170
 .L_081858f0:
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	adds r0, r6, #0
 	bl Func_080150e4
 	adds r0, r5, #0
@@ -3144,7 +3144,7 @@ Func_08185b9c:
 	asrs r5, r5, #16
 	adds r5, r1, r5
 	subs r5, #16
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	mov r0, r8
 	bl Func_080150e4
 	movs r0, #0
@@ -4328,7 +4328,7 @@ Func_08185b9c:
 	lsls r0, r0, #8
 	adds r0, #240
 	bl Func_0801521c
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	movs r0, #128
 	lsls r0, r0, #7
 	bl Func_080150e4

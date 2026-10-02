@@ -134,7 +134,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 
 u8 *Runtime_AllocateBlock();            /* allocate a record by (id, size) */
 
-s32 Runtime_BumpAllocateAlternatePool();            /* reserve a graphics handle */
 
 void Resource_DecodeType01();           /* upload image data to a handle */
 

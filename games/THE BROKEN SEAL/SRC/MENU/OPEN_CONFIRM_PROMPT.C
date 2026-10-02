@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -37,7 +38,6 @@ void Event_ClearInvalidPackedValuesFar(void);
 #define PROMPT_SAVES_TILES 1
 #define PROMPT_TILES ((void *)0x06004000)
 #define PROMPT_TILES_SIZE 0x2000
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *buffer);
 void UiWork_SetAltFlagAndClearTableFar(s32 enable);
 void UiWindow_MarkVisibleTileAttributesFar(void);

@@ -1,4 +1,5 @@
 #include "OBJECT_LOOKUP.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "MAP.H"
@@ -65,7 +66,6 @@ typedef struct {
 } EffectSprite;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-s32 ObjectDispatch_InitializeFar(void *, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
@@ -226,7 +226,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
 
     if ((s32)FIELD_AT_OFFSET(object, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(object, s32 *, 0x14)) {
         FIELD_AT_OFFSET(object, s16 *, 0x5E) = phase;
-        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
         p = NULL;
         FIELD_AT_OFFSET(object, void **, 0x6C) = p;
         for (i = 0; i <= 2; i++) {
@@ -244,7 +244,7 @@ void BattleFx_SpawnRandomAngleTriplet(void *object)
             pp = &FIELD_AT_OFFSET(p, s16 *, 0x5E);
             phase2 = 6;
             *pp = phase2;
-            ObjectDispatch_InitializeFar(p, BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)p, (u32)BattleFx_CommonParticleScript);
         }
     }
 }
@@ -259,7 +259,7 @@ void BattleFx_UpdateDriftingFallObject(void *obj)
     r = Random16();
     FIELD_AT_OFFSET(obj, s32 *, 8) = (s32)(FIELD_AT_OFFSET(obj, s32 *, 8) + (r - Random16()));
     if ((s32)FIELD_AT_OFFSET(obj, s32 *, 0xC) <= (s32)FIELD_AT_OFFSET(obj, s32 *, 0x14)) {
-        ObjectDispatch_InitializeFar(obj, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
     }
 }
 

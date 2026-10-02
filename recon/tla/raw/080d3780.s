@@ -37,7 +37,7 @@ Func_080d3780:
 .L_080d37c2:
 	adds r0, r5, #0
 	adds r1, r7, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	b .L_080d37d0
 .L_080d37cc:
 	.4byte 0x00000000

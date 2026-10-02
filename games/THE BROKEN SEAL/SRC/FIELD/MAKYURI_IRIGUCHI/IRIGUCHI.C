@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "ENTRANCE.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
@@ -45,7 +46,6 @@ void Engine_ActorShowEmote();
 void Engine_CameraMoveToActor();
 void Engine_ActorWalkToAndWait();
 void Engine_CameraWaitForMove();
-void Map_CopyCellAttributeRect();
 void Engine_EventEnd();
 s32 SceneActor_FaceLeaderWhileGrounded(u8 *object);
 

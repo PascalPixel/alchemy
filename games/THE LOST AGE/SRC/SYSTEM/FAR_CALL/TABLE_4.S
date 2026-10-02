@@ -24,8 +24,8 @@ Func_080201d8:
 	.global Func_080201e0
 	.thumb_func
 Func_080201e0:
-	overlay_veneer Func_0802b344
+	overlay_veneer Map_CopyCellsRect
 	.global Func_080201e8
 	.thumb_func
 Func_080201e8:
-	overlay_veneer Func_0802b38c
+	overlay_veneer Map_CopyCellAttributeRect

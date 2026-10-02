@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "HAIDIA.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -17,7 +18,6 @@ extern const struct ScenePlacement gHaidiaDouPlacements2[];
 extern const struct ScenePlacement gHaidiaDouPlacements3[];
 
 struct FieldActor *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind);
-void Map_CopyCellAttributeRect();
 
 void SceneState_SetValues8_3_4(void)
 {

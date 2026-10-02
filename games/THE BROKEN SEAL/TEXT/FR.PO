@@ -10239,11 +10239,11 @@ msgctxt "message"
 msgid "02557"
 msgstr "Gains"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "02558"
 msgstr "Haut ou bas pour changer valeur"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Jouer      {button_icon:2}:Quitter"
 
@@ -12971,7 +12971,7 @@ msgctxt "MsgPriceHeading"
 msgid "03240"
 msgstr "Prix"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03241"
 msgstr "Non utilisable"
 
@@ -13011,7 +13011,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03250"
 msgstr "Vous ne pouvez pas l'enlever!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03251"
 msgstr "ATT"
 
@@ -43635,6 +43635,6 @@ msgctxt "message"
 msgid "10906"
 msgstr "Parameter"
 
-msgctxt "message"
+msgctxt "MsgDebugSampleName"
 msgid "10907"
 msgstr "Ha hi fu he ho"

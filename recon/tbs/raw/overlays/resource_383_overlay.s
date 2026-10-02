@@ -1,158 +1,6 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
-	.section .text.x02008690,"ax",%progbits
-	.global Func_02000690
-	.thumb_func
-Func_02000690:
-	push {r5, r6, r7, lr}
-	movs r0, #25
-	bl Object_GetById
-	movs r7, #240
-	ldrh r3, [r0, #6]
-	adds r5, r0, #0
-	adds r5, #100
-	lsls r7, r7, #8
-	ands r7, r3
-	ldrh r3, [r5]
-	lsls r3, r3, #16
-	asrs r6, r3, #17
-	bl Engine_EventBegin
-	movs r1, #2
-	movs r0, #25
-	bl Engine_ActorRunRepeatedMotion
-	ldr r0, .L_020087a8
-	bl Engine_EventSetMessage
-	movs r0, #25
-	movs r1, #0
-	bl Engine_EventShowMessage
-	movs r1, #224
-	movs r2, #224
-	movs r0, #25
-	lsls r1, r1, #10
-	lsls r2, r2, #9
-	bl Engine_ActorSetSpeed
-	movs r0, #0
-	ldrsh r3, [r5, r0]
-	cmp r3, #4
-	bhi .L_0200878e
-	ldr r2, .L_020087ac
-	lsls r3, r3, #2
-	ldr r3, [r3, r2]
-	mov pc, r3
-	.2byte 0x0000
-.L_020086e4:
-	.4byte .L_0200871a
-	.4byte .L_02008742
-	.4byte .L_0200871a
-	.4byte .L_02008742
-	.4byte .L_020086f8
-.L_020086f8:
-	ldr r2, .L_020087b0
-	ldr r0, .L_020087b4
-	adds r3, r7, r2
-	cmp r3, r0
-	bhi .L_0200870e
-	ldr r1, .L_020087b8
-	movs r0, #25
-	bl Engine_ActorEnableActionCallback
-	movs r3, #2
-	b .L_0200878c
-.L_0200870e:
-	ldr r1, .L_020087bc
-	movs r0, #25
-	bl Engine_ActorEnableActionCallback
-	movs r3, #3
-	b .L_0200878c
-.L_0200871a:
-	ldr r2, .L_020087b0
-	ldr r0, .L_020087b4
-	adds r3, r7, r2
-	cmp r3, r0
-	bhi .L_0200876a
-	movs r0, #0
-	ldrsh r2, [r5, r0]
-	lsls r3, r6, #2
-	adds r3, r3, r2
-	ldr r1, .L_020087c0
-	lsls r3, r3, #2
-	ldr r1, [r1, r3]
-	movs r0, #25
-	bl Engine_ActorEnableActionCallback
-	ldrh r3, [r5]
-	lsls r2, r6, #1
-	subs r3, r3, r2
-	adds r3, #1
-	b .L_0200878c
-.L_02008742:
-	ldr r0, .L_020087c4
-	ldr r2, .L_020087b4
-	adds r3, r7, r0
-	cmp r3, r2
-	bhi .L_0200876a
-	movs r0, #0
-	ldrsh r2, [r5, r0]
-	lsls r3, r6, #2
-	adds r3, r3, r2
-	ldr r1, .L_020087c0
-	lsls r3, r3, #2
-	ldr r1, [r1, r3]
-	movs r0, #25
-	bl Engine_ActorEnableActionCallback
-	ldrh r3, [r5]
-	lsls r2, r6, #1
-	subs r3, r3, r2
-	adds r3, #1
-	b .L_0200878c
-.L_0200876a:
-	movs r3, #1
-	movs r0, #0
-	ldrsh r2, [r5, r0]
-	eors r3, r6
-	lsls r3, r3, #2
-	adds r3, r3, r2
-	ldr r1, .L_020087c0
-	lsls r3, r3, #2
-	ldr r1, [r1, r3]
-	movs r0, #25
-	bl Engine_ActorEnableActionCallback
-	ldrh r3, [r5]
-	lsls r2, r6, #1
-	subs r3, r3, r2
-	ldr r2, .L_020087c8
-	adds r3, r3, r2
-.L_0200878c:
-	strh r3, [r5]
-.L_0200878e:
-	ldrh r2, [r5]
-	movs r3, #3
-	ands r3, r2
-	strh r3, [r5]
-	movs r0, #25
-	bl Object_RefreshSelectorById
-	bl Engine_EventEnd
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-.L_020087a8:
-	.4byte MsgKuupuappuNoLeaveAlone
-.L_020087ac:
-	.4byte .L_020086e4
-.L_020087b0:
-	.4byte 0xffffdfff
-.L_020087b4:
-	.4byte 0x00007ffe
-.L_020087b8:
-	.4byte KuupuappuHeya_PairScriptR
-.L_020087bc:
-	.4byte KuupuappuHeya_PairScriptP
-.L_020087c0:
-	.4byte Data_020064d8
-.L_020087c4:
-	.4byte 0xffff9fff
-.L_020087c8:
-	.4byte 0x0000ffff
 	.section .text.x0200c8c6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200c8c8,"ax",%progbits
@@ -1936,7 +1784,7 @@ gKuupuappuHeyaEvents:
 	.4byte SceneActor_StepActor24AnimationByFacing
 	.4byte 0x00000000
 	.4byte 0xffff0019
-	.4byte Func_02000690
+	.4byte KuupuappuHeya_RunActor25Response
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte MsgKuupuappuTheOtherSparklingRocksAllCrumbled
@@ -1990,7 +1838,7 @@ gKuupuappuHeyaEvents:
 	.4byte SceneActor_StepActor24AnimationByFacing
 	.4byte 0x00008d15
 	.4byte 0xffff0419
-	.4byte Func_02000690
+	.4byte KuupuappuHeya_RunActor25Response
 	.4byte 0x00008c15
 	.4byte 0x0859001a
 	.4byte FieldScene_RunObjectTwentySixPositionCheck
@@ -2213,8 +2061,8 @@ KuupuappuHeya_IdleActions:
 	.4byte .L_0200d600
 	.4byte .L_0200d6f0
 	.4byte .L_0200d6c8
-	.global Data_020064d8
-Data_020064d8:
+	.global KuupuappuHeya_ResponseScripts
+KuupuappuHeya_ResponseScripts:
 	.4byte .L_0200d7cc
 	.4byte .L_0200d894
 	.4byte .L_0200d858

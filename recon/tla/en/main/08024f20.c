@@ -1,4 +1,28 @@
-#include "SCRIPT_INTERPRETER.H"
+/*
+ * Draft: ScriptObject_CheckOverlap retains an unproven TBS-shaped body.
+ * On 2026-10-02 the original saved draft failed ordinary TLA compilation:
+ * ScriptObjectEntry was incomplete at its member accesses and increment.
+ * This LOCAL DRAFT view copies the current TBS 112-byte record only to
+ * preserve that attempted body. Its flags += 0x70 and entry++ are not a
+ * proved TLA 128-byte stride; no native match or credit is claimed.
+ * Under this same visible local view, the SCRIPT.H include migration
+ * preserves every whole object in all six TLA editions, metadata included.
+ * No matching shape was changed or compiler device introduced.
+ */
+#include "SCRIPT.H"
+/* LOCAL DRAFT: current TBS view; not a shared TLA layout. */
+struct ScriptObjectEntry {
+    void *data;
+    u8 unknown_04[4];
+    s32 values_08[6];
+    u16 value_20;
+    u8 unknown_22[0x37];
+    u8 flags_59;
+    u8 unknown_5a[0x16];
+};
+
+s32 Runtime_CheckRadiusOverlap(s32 *, s32, s32 *, s32);
+
 extern u8 gObjectSlots[];
 
 s32 GameFlag_TestFar(s32);

@@ -49,7 +49,7 @@ struct RenderState {
 };
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 Func_0800aa0c(struct ProjectedSprite *sprite, u16 mode);
+s32 Sprite_ComposeAnimationFrame(struct ProjectedSprite *sprite, u16 mode);
 s32 AffineMatrix_BuildForEffect(struct ProjectedEffect *source);
 void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 Resource_ActivateEntry(u32 resource_index);
@@ -81,7 +81,7 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     s32 depth;
     struct ProjectedSpritePart *part;
 
-    flip = Func_0800aa0c(sprite, mode);
+    flip = Sprite_ComposeAnimationFrame(sprite, mode);
     if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0) {
         affine = 0;
         matrix = 0;
@@ -171,7 +171,7 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     half_width = sprite->width >> 1;
     half_height = sprite->height >> 1;
     size = 8;
-    flip = Func_0800aa0c(sprite, mode);
+    flip = Sprite_ComposeAnimationFrame(sprite, mode);
     base = (z + 0x400) & -0x800;
     scale_x = Iwram_MulQ16(base, *scale++);
     scale_y = Iwram_MulQ16(base, *scale);

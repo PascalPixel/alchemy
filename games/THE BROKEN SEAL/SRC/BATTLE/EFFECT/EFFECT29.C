@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
@@ -65,9 +66,6 @@ struct BattleEffectLinkedObject *Object_CreateFar(
     s32 x,
     s32 y,
     s32 z);
-void ObjectDispatch_InitializeFar(
-    struct BattleEffectLinkedObject *object,
-    const void *configuration);
 void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);
@@ -194,7 +192,7 @@ void BattleFx_SpawnLinked(
             Object_CreateFar(21, resource->x, resource->y, resource->z);
 
         if (object != 0) {
-            ObjectDispatch_InitializeFar(object, BattleFx_LinkedObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_LinkedObjectScript);
             Object_SetMode(object, flags & 15);
             object->value_55 = 0;
             object->counter = 0;

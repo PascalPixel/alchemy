@@ -42,7 +42,7 @@ Func_0802b2d4:
 	mov r2, r10
 	mov r3, r8
 	lsrs r5, r5, #16
-	bl Func_0802b1a0
+	bl Map_CopyMetatileIndicesRect
 	adds r7, #10
 	adds r0, r5, #0
 	bl WaitFrames

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "GAME_STATE.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
@@ -78,7 +79,6 @@ extern void Object_LinkPair(s32, s32, s32);
 extern void UiWork_SetBusyFlagsFar(s32);
 extern void Battle_InitializeRenderObject(void);
 extern void ObjectMotion_SetActionCallback(struct BattleActionObject *, void *);
-extern void ObjectDispatch_InitializeFar(struct BattleActionObject *, void *);
 extern void BattleFx_ResumeObject(s32);
 
 typedef struct {
@@ -310,7 +310,7 @@ run_descriptor:
                 ObjectMotion_SetActionCallback(object, (void *)ObjectMotion_LinkedActionScript);
             } else if (action->mode == 1) {
                 object->saved_value = saved_value;
-                ObjectDispatch_InitializeFar(object, (void *)ObjectMotion_StepAngleScript);
+                ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
             }
         }
         object->busy_5b = 0;

@@ -1,4 +1,4 @@
-#include "SCRIPT_INTERPRETER.H"
+#include "SCRIPT.H"
 
 s32 Audio_PlayCue(s32);
 

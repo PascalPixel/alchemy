@@ -42,21 +42,21 @@ Engine_MathCos:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	.global Runtime_AllocateHeapBlock
+	.global Engine_HeapAllocate
 	.thumb_func
-Runtime_AllocateHeapBlock:
+Engine_HeapAllocate:
 	overlay_veneer Runtime_AllocateHeapBlockFar
-	.global Runtime_ReleaseHeapBlock
+	.global Engine_HeapRelease
 	.thumb_func
-Runtime_ReleaseHeapBlock:
+Engine_HeapRelease:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
-	.global VramBlock_LoadCached
+	.global Engine_VramLoad
 	.thumb_func
-VramBlock_LoadCached:
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global AnimationObjects_SelectAnimation
 	.thumb_func
@@ -82,13 +82,13 @@ Engine_ObjectDispatchRelease:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
-	.global Object_SetMoveTarget
+	.global Engine_ObjectSetPosition
 	.thumb_func
-Object_SetMoveTarget:
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
-	.global Script_WaitForEventTimeout
+	.global Engine_ObjectCommitPosition
 	.thumb_func
-Script_WaitForEventTimeout:
+Engine_ObjectCommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
 	.global Engine_MapCopyCellsTo
 	.thumb_func
@@ -134,9 +134,9 @@ Engine_MessageShowCentered:
 	.thumb_func
 UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
-	.global ItemIcon_LoadTiles
+	.global Engine_ItemLoadIcon
 	.thumb_func
-ItemIcon_LoadTiles:
+Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
 	.global Inventory_AddItem
 	.thumb_func

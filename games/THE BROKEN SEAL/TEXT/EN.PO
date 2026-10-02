@@ -9235,7 +9235,7 @@ msgctxt "MsgLooksForHelp"
 msgid "02306"
 msgstr "{argument_actor_name:1} looks for help."
 
-msgctxt "message"
+msgctxt "MsgDebugSampleName"
 msgid "02307"
 msgstr "Ha hi fu he ho"
 
@@ -9255,11 +9255,11 @@ msgctxt "message"
 msgid "02311"
 msgstr "Winnings"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "02312"
 msgstr "Press up or down to change value"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "02313"
 msgstr "{button_icon:1}:Start machine      {button_icon:2}:Quit"
 
@@ -12863,7 +12863,7 @@ msgctxt "MsgPriceHeading"
 msgid "03213"
 msgstr "Price"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03214"
 msgstr "Can't equip"
 
@@ -12903,7 +12903,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03223"
 msgstr "You can't remove it!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03224"
 msgstr "ATK"
 

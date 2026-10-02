@@ -184,7 +184,7 @@ BattlePresentation_AppendLinkedActions:
 .L_0811d578:
 	.4byte Data_020054c8
 .L_0811d57c:
-	.4byte Data_030011bc
+	.4byte gRandomState
 .L_0811d580:
 	bl Func_08016950
 	bl SerialRuntime_RemoveIrqHandlers

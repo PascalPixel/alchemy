@@ -50,7 +50,7 @@ Func_080de864:
 .L_080de8be:
 	ldr r1, .L_080de8cc
 	adds r0, r6, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080de8c6:
 	add sp, #12
 	pop {r5, r6, pc}

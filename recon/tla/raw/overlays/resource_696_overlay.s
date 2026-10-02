@@ -1,3 +1,51 @@
+@ Shaman village: message ids are owned by the editable catalogs.
+@ Trial: the unlocalized source matched EN 25,420 completely; JA 280 and DE 283
+@ differing byte positions remained in full 25,420-byte loaded scenes.
+@ Trial: ES/IT status repairs built 25,420 bytes with nine differences in
+@ neighboring imports and one scale; the FR two-sprite worker built 25,452
+@ bytes with 16 animation-parameter differences before its measured scales.
+@ Current all-six scenes and encoded prefixes match completely. The raw
+@ worker and animation tables remain uncredited; only existing C and veneers
+@ are adopted in the final three editions.
+
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
+@ The palette selector table below supplies five 32-byte banks in JA/EN.
+@ DE/ES/FR/IT give the eighth graphic its own sixth bank; tiles follow it.
+@ Graphics script command 0x1000 sets the horizontal 8.8 scale; each value
+@ below belongs to this scene animation, independent of its loaded position.
+	.set SHAMAN_GRAPHIC1_SCALE, 256
+	.set SHAMAN_GRAPHIC4_START_SCALE, 512
+	.set SHAMAN_GRAPHIC4_SMALL_SCALE, 256
+	.set SHAMAN_GRAPHIC4_LARGE_SCALE, 384
+	.ifdef TLA_EDITION_ES
+	.set SHAMAN_GRAPHIC4_START_SCALE, 384
+	.endif
+	.ifdef TLA_EDITION_IT
+	.set SHAMAN_GRAPHIC4_START_SCALE, 384
+	.endif
+	.ifdef TLA_EDITION_FR
+	.set SHAMAN_GRAPHIC1_SCALE, 384
+	.set SHAMAN_GRAPHIC4_SMALL_SCALE, 384
+	.set SHAMAN_GRAPHIC4_LARGE_SCALE, 512
+	.endif
+	.set SHAMAN_PALETTE_ROWS, 5
+	.set SHAMAN_GRAPHIC7_PALETTE, (2 * 32)
+	.ifdef TLA_EDITION_DE
+	.set SHAMAN_PALETTE_ROWS, 6
+	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
+	.endif
+	.ifdef TLA_EDITION_ES
+	.set SHAMAN_PALETTE_ROWS, 6
+	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
+	.endif
+	.ifdef TLA_EDITION_FR
+	.set SHAMAN_PALETTE_ROWS, 6
+	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
+	.endif
+	.ifdef TLA_EDITION_IT
+	.set SHAMAN_PALETTE_ROWS, 6
+	.set SHAMAN_GRAPHIC7_PALETTE, (5 * 32)
+	.endif
 .syntax unified
 	.thumb
 	.section .text.x0200807e,"ax",%progbits
@@ -1619,7 +1667,7 @@ Func_02000d08:
 	pop {pc}
 	.2byte 0x0000
 .L_02008d24:
-	.4byte 0x00002936
+	.4byte MsgShamanEntranceLocked
 	.section .text.x02008d28,"ax",%progbits
 	.global Func_02000d28
 	.thumb_func
@@ -1635,7 +1683,7 @@ Func_02000d28:
 	pop {pc}
 	.2byte 0x0000
 .L_02008d44:
-	.4byte 0x00002938
+	.4byte MsgShamanEntranceClosed
 	.section .text.x02008d48,"ax",%progbits
 	.global Func_02000d48
 	.thumb_func
@@ -1651,7 +1699,7 @@ Func_02000d48:
 	pop {pc}
 	.2byte 0x0000
 .L_02008d64:
-	.4byte 0x00002937
+	.4byte MsgShamanTrialRoadPermissionSign
 	.section .text.x02008d68,"ax",%progbits
 	.global Func_02000d68
 	.thumb_func
@@ -1741,7 +1789,7 @@ Func_02000d68:
 	bl Func_020048cc
 	pop {r5, pc}
 .L_02008e30:
-	.4byte 0x000029b0
+	.4byte MsgShamanGuardRepeatRulesBeforeTrial
 .L_02008e34:
 	.4byte gPartyState
 .L_02008e38:
@@ -1825,7 +1873,7 @@ Func_02000e3c:
 	bl Func_020048cc
 	pop {r5, pc}
 .L_02008eec:
-	.4byte 0x000029b3
+	.4byte MsgShamanOtherGuardRepeatRulesBeforeTrial
 .L_02008ef0:
 	.4byte gPartyState
 .L_02008ef4:
@@ -1854,7 +1902,7 @@ Func_02000ef8:
 	bl Func_020048cc
 	pop {r5, pc}
 .L_02008f28:
-	.4byte 0x0000293e
+	.4byte MsgShamanOutsidersLeaveTown
 	.section .text.x02008f2c,"ax",%progbits
 	.global Func_02000f2c
 	.thumb_func
@@ -1879,7 +1927,7 @@ Func_02000f2c:
 	bl Func_020048cc
 	pop {r5, pc}
 .L_02008f5c:
-	.4byte 0x00002940
+	.4byte MsgShamanFearMoapaPower
 	.section .text.x02008f60,"ax",%progbits
 	.global Func_02000f60
 	.thumb_func
@@ -1904,7 +1952,7 @@ Func_02000f60:
 	bl Func_020048cc
 	pop {r5, pc}
 .L_02008f90:
-	.4byte 0x0000293f
+	.4byte MsgShamanSpeakToMoapa
 	.section .text.x02008f94,"ax",%progbits
 	.global Func_02000f94
 	.thumb_func
@@ -2037,13 +2085,13 @@ Func_02000fc4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020090b8:
-	.4byte 0x00002a1e
+	.4byte MsgShamanVisitorsHaveTraveledFar
 .L_020090bc:
-	.4byte 0x00002962
+	.4byte MsgShamanInnPaymentPrompt
 .L_020090c0:
 	.4byte gPartyState
 .L_020090c4:
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.section .text.x020090c8,"ax",%progbits
 	.global Func_020010c8
 	.thumb_func
@@ -2080,9 +2128,9 @@ Func_020010c8:
 	pop {pc}
 	.2byte 0x0000
 .L_02009110:
-	.4byte 0x00002a2a
+	.4byte MsgShamanMoapaDefeatIncredible
 .L_02009114:
-	.4byte 0x00002966
+	.4byte MsgShamanTribeForbidsTalking
 	.section .text.x02009118,"ax",%progbits
 	.global Func_02001118
 	.thumb_func
@@ -2099,7 +2147,7 @@ Func_02001118:
 	bl Func_020048cc
 	pop {pc}
 .L_02009138:
-	.4byte 0x000029dc
+	.4byte MsgShamanCheckOtherMountainSide
 	.section .text.x0200913c,"ax",%progbits
 	.global Func_0200113c
 	.thumb_func
@@ -2158,9 +2206,9 @@ Func_0200113c:
 	bl Func_020048cc
 	pop {pc}
 .L_020091b4:
-	.4byte 0x00002a30
+	.4byte MsgShamanMoapaNeverForgetsVictor
 .L_020091b8:
-	.4byte 0x00002a0f
+	.4byte MsgShamanMoapaAsksVictorsNames
 .L_020091bc:
 	.4byte gPartyState
 	.section .text.x020091c0,"ax",%progbits
@@ -2189,7 +2237,7 @@ Func_020011c0:
 	pop {pc}
 	.2byte 0x0000
 .L_020091f4:
-	.4byte 0x00002a1b
+	.4byte MsgShamanWelcomeContigoHero
 	.section .text.x020091f8,"ax",%progbits
 	.global Func_020011f8
 	.thumb_func
@@ -2350,13 +2398,13 @@ Func_0200122c:
 	pop {pc}
 	.2byte 0x0000
 .L_0200936c:
-	.4byte 0x00002a09
+	.4byte MsgShamanFortuneAvoidNortheast
 .L_02009370:
-	.4byte 0x000029fe
+	.4byte MsgShamanFortuneAvoidSouth
 .L_02009374:
-	.4byte 0x00002a00
+	.4byte MsgShamanFortuneOfferAfterTrial
 .L_02009378:
-	.4byte 0x000029f5
+	.4byte MsgShamanFortuneOfferBeforeTrial
 .L_0200937c:
 	.4byte gPartyState
 	.section .text.x02009380,"ax",%progbits
@@ -2641,7 +2689,7 @@ Func_02001380:
 	bl Func_02004a04
 	pop {r5, pc}
 .L_02009628:
-	.4byte 0x00002999
+	.4byte MsgShamanTrialRulesAreSimple
 .L_0200962c:
 	.4byte 0x00019999
 .L_02009630:
@@ -2649,7 +2697,7 @@ Func_02001380:
 .L_02009634:
 	.4byte 0x00013333
 .L_02009638:
-	.4byte 0x00002993
+	.4byte MsgShamanListenCarefully
 .L_0200963c:
 	.4byte 0x00033333
 .L_02009640:
@@ -2773,7 +2821,7 @@ Func_02001644:
 .L_0200974c:
 	.4byte 0x00033333
 .L_02009750:
-	.4byte 0x000029b9
+	.4byte MsgShamanGiveUpTrialPrompt
 .L_02009754:
 	.4byte gPartyState
 .L_02009758:
@@ -2907,7 +2955,7 @@ Func_02001764:
 .L_02009878:
 	.4byte gPartyState
 .L_0200987c:
-	.4byte 0x000029be
+	.4byte MsgShamanChallengeTrialRoadPrompt
 	.section .text.x02009880,"ax",%progbits
 	.global Func_02001880
 	.thumb_func
@@ -3133,7 +3181,7 @@ Func_02001880:
 .L_02009a94:
 	.4byte 0x00019999
 .L_02009a98:
-	.4byte 0x000029bc
+	.4byte MsgShamanGuardsTakeOtherPath
 .L_02009a9c:
 	.4byte Data_02004c5c
 .L_02009aa0:
@@ -3363,7 +3411,7 @@ Func_02001aa4:
 .L_02009cb8:
 	.4byte 0x00019999
 .L_02009cbc:
-	.4byte 0x000029bc
+	.4byte MsgShamanGuardsTakeOtherPath
 .L_02009cc0:
 	.4byte Data_02004c5c
 .L_02009cc4:
@@ -3679,7 +3727,7 @@ Func_02001d3c:
 .L_02009f94:
 	.4byte 0x00013333
 .L_02009f98:
-	.4byte 0x00002939
+	.4byte MsgShamanMoapaGiveMeRoom
 .L_02009f9c:
 	.4byte 0x00019999
 	.section .text.x02009fec,"ax",%progbits
@@ -4210,7 +4258,7 @@ Func_02002068:
 .L_0200a4d4:
 	.4byte 0x00026666
 .L_0200a4d8:
-	.4byte 0x00002947
+	.4byte MsgShamanRecognizeShamanRod
 .L_0200a4dc:
 	.4byte 0x00019999
 .L_0200a4e0:
@@ -4513,7 +4561,7 @@ Func_0200279c:
 	bl Func_020048cc
 	pop {pc}
 .L_0200a7bc:
-	.4byte 0x00002944
+	.4byte MsgShamanShowMeSomething
 	.section .text.x0200a7c0,"ax",%progbits
 	.global Func_020027c0
 	.thumb_func
@@ -4530,7 +4578,7 @@ Func_020027c0:
 	bl Func_020048cc
 	pop {pc}
 .L_0200a7e0:
-	.4byte 0x00002946
+	.4byte MsgShamanCannotBuyGift
 	.section .text.x0200a7e4,"ax",%progbits
 	.global Func_020027e4
 	.thumb_func
@@ -4547,7 +4595,7 @@ Func_020027e4:
 	bl Func_020048cc
 	pop {pc}
 .L_0200a804:
-	.4byte 0x00002945
+	.4byte MsgShamanShowItToMoapa
 	.section .text.x0200a808,"ax",%progbits
 	.global Func_02002808
 	.thumb_func
@@ -4594,7 +4642,7 @@ Func_02002808:
 	pop {pc}
 	.2byte 0x0000
 .L_0200a870:
-	.4byte 0x000029f4
+	.4byte MsgShamanFortuneGreeting
 .L_0200a874:
 	.4byte gPartyState
 	.section .text.x0200a878,"ax",%progbits
@@ -4802,7 +4850,7 @@ Func_0200290c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200aa18:
-	.4byte 0x000029ac
+	.4byte MsgShamanMissingShamanRod
 .L_0200aa1c:
 	.4byte gPartyState
 	.section .text.x0200aa20,"ax",%progbits
@@ -5308,6 +5356,76 @@ Func_02002a20:
 	ble .L_0200ad5c
 	b .L_0200ae8e
 .L_0200adda:
+	@ French uses two 32x16 sprites for graphic 4; other editions
+	@ use one 64x32 sprite. Both forms use the existing graphic tile bank.
+	.ifdef TLA_EDITION_FR
+	movs r5, #0
+.L_shaman_french_graphic_loop:
+	ldr r4, [sp, #0]
+	lsls r3, r5, #5
+	subs r3, #16
+	muls r3, r4
+	movs r1, #64
+	ldr r0, .L_0200af0c
+	cmp r3, #0
+	bge .L_shaman_french_graphic_position
+	adds r3, #255
+.L_shaman_french_graphic_position:
+	asrs r3, r3, #8
+	adds r3, r6, r3
+	movs r7, #48
+	adds r2, r3, #0
+	adds r7, #255
+	adds r3, #152
+	adds r2, #88
+	cmp r3, r7
+	bhi .L_shaman_french_graphic_next
+	movs r3, #128
+	ldr r7, [sp, #12]
+	lsls r3, r3, #1
+	adds r3, #255
+	ands r2, r3
+	movs r3, #0
+	stmia r7!, {r3}
+	lsls r3, r2, #16
+	orrs r3, r1
+	orrs r3, r0
+	mov r0, r8
+	lsls r2, r0, #25
+	orrs r3, r2
+	movs r2, #224
+	lsls r2, r2, #3
+	adds r4, r7, #0
+	orrs r3, r2
+	adds r2, r7, #0
+	str r4, [sp, #12]
+	stmia r2!, {r3}
+	ldr r3, .L_0200af10
+	adds r1, r2, #0
+	movs r4, #0
+	ldrsh r3, [r3, r4]
+	movs r2, #244
+	add r3, r10
+	lsls r2, r2, #8
+	adds r0, r1, #0
+	orrs r3, r2
+	stmia r0!, {r3}
+	adds r7, r0, #0
+	ldr r0, [sp, #8]
+	str r7, [sp, #12]
+	adds r1, r0, #0
+	adds r1, #12
+	str r1, [sp, #8]
+	movs r1, #236
+	bl Func_020047cc
+.L_shaman_french_graphic_next:
+	movs r2, #8
+	adds r5, #1
+	add r10, r2
+	cmp r5, #1
+	ble .L_shaman_french_graphic_loop
+	b .L_0200ae8e
+	.else
 	adds r3, r6, #0
 	movs r4, #152
 	adds r2, r6, #0
@@ -5352,6 +5470,7 @@ Func_02002a20:
 	movs r1, #236
 	bl Func_020047cc
 	b .L_0200ae8e
+	.endif
 .L_0200ae34:
 	adds r3, r6, #0
 	movs r4, #152
@@ -5461,15 +5580,19 @@ Func_02002a20:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
+	.ifndef TLA_EDITION_FR
 	.2byte 0x0000
+	.endif
 .L_0200af08:
 	.4byte Data_020064b0
 .L_0200af0c:
 	.4byte 0x80004000
 .L_0200af10:
 	.4byte Data_02006494
+	.ifndef TLA_EDITION_FR
 .L_0200af14:
 	.4byte 0xc0004000
+	.endif
 .L_0200af18:
 	.4byte gIoWriteQueue
 .L_0200af1c:
@@ -5562,7 +5685,7 @@ Func_02002fb0:
 	mov r7, r8
 	push {r7}
 	adds r5, r0, #0
-	movs r0, #229
+	movs r0, #(224 + SHAMAN_PALETTE_ROWS)
 	lsls r0, r0, #5
 	bl Runtime_BumpAllocateAlternatePool
 	ldr r7, .L_0200b030
@@ -5601,7 +5724,7 @@ Func_02002fb0:
 	lsls r2, r5, #10
 	adds r2, r2, r6
 	movs r1, #128
-	adds r2, #160
+	adds r2, #(32 * SHAMAN_PALETTE_ROWS)
 	movs r3, #0
 	ldrsh r0, [r7, r3]
 	lsls r1, r1, #3
@@ -6143,7 +6266,7 @@ Func_020030bc:
 .L_0200b52c:
 	.4byte Data_02005008
 .L_0200b530:
-	.4byte 0x0000296e
+	.4byte MsgShamanCheerForCompanion
 .L_0200b534:
 	.4byte 0x00019999
 .L_0200b538:
@@ -7263,7 +7386,7 @@ Func_02003d30:
 .L_0200bf70:
 	.4byte gPartyState
 .L_0200bf74:
-	.4byte 0x000029a5
+	.4byte MsgShamanMustFinishTrialRoad
 	.section .text.x0200bf78,"ax",%progbits
 	.global Func_02003f78
 	.thumb_func
@@ -7314,7 +7437,7 @@ Func_02003f78:
 	bl Func_020048cc
 	pop {r5, pc}
 .L_0200bff4:
-	.4byte 0x000029c9
+	.4byte MsgShamanMoapaAdvisesLeaving
 	.section .text.x0200bff8,"ax",%progbits
 	.global Func_02003ff8
 	.thumb_func
@@ -8295,7 +8418,7 @@ Data_02004b80:
 Data_02004bfe:
 	.2byte 0x2000
 	.4byte 0x40602020
-	.4byte 0x00804040
+	.byte 64, SHAMAN_GRAPHIC7_PALETTE, 128, 0
 	.global Data_02004c08
 Data_02004c08:
 	.4byte 0x00000016
@@ -8681,7 +8804,7 @@ Data_02005158:
 Data_0200515a:
 	.2byte 0x4000
 	.4byte 0x0800ff44
-	.4byte 0x01001000
+	.4byte ((SHAMAN_GRAPHIC1_SCALE << 16) | 0x1000)
 	.4byte 0x20000001
 	.4byte 0x00010010
 	.4byte 0x000e7fff
@@ -8694,35 +8817,35 @@ Data_0200515a:
 	.global Data_02005186
 Data_02005186:
 	.2byte 0x1000
-	.4byte 0x00010200
+	.4byte ((1 << 16) | SHAMAN_GRAPHIC4_START_SCALE)
 	.4byte 0x00002000
 	.4byte 0x10000001
-	.4byte 0x00060100
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
 	.4byte 0x00102000
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060180
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_LARGE_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01001000
+	.4byte ((SHAMAN_GRAPHIC4_SMALL_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060180
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_LARGE_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01001000
+	.4byte ((SHAMAN_GRAPHIC4_SMALL_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x20000006
 	.4byte 0x001e0000
-	.4byte 0x01801000
+	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060100
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01801000
+	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060100
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01801000
+	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0xffff0006
 	.global Data_02005204
@@ -9339,40 +9462,40 @@ Data_02005aac:
 	.4byte Func_02001aa4
 	.4byte 0x00000000
 	.4byte 0x094c000f
-	.4byte 0x00002968
+	.4byte MsgShamanYegelosSandChallenge
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000029af
+	.4byte MsgShamanChooseEitherRoad
 	.4byte 0x00008d15
 	.4byte 0x094c000f
-	.4byte 0x0000296b
+	.4byte MsgShamanRodWasStolen
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000029b6
+	.4byte MsgShamanMoapaCannotLose
 	.4byte 0x00000000
 	.4byte 0x094c0011
-	.4byte 0x00002969
+	.4byte MsgShamanTrialRoadAncientBattle
 	.4byte 0x00000000
 	.4byte 0xffff0011
 	.4byte Func_02000d68
 	.4byte 0x00008d15
 	.4byte 0x094c0011
-	.4byte 0x0000296c
+	.4byte MsgShamanNeedContigoOrShamanPower
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x000029b7
+	.4byte MsgShamanMoapaGreatestWarrior
 	.4byte 0x00000000
 	.4byte 0x094c0010
-	.4byte 0x0000296a
+	.4byte MsgShamanAncientHeroesVanishedSand
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte Func_02000e3c
 	.4byte 0x00008d15
 	.4byte 0x094c0010
-	.4byte 0x0000296d
+	.4byte MsgShamanSandChallengeWillFail
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000029b8
+	.4byte MsgShamanJadeNeedsYegelosHeir
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9416,22 +9539,22 @@ Data_02005bc0:
 	.4byte Func_0200122c
 	.4byte 0x00008d15
 	.4byte 0x0a210011
-	.4byte 0x000029ff
+	.4byte MsgShamanCloudyFortuneBeforeTrial
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002a0a
+	.4byte MsgShamanCloudyFortuneAfterTrial
 	.4byte 0x00000000
 	.4byte 0x09fe000f
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000029da
+	.4byte MsgShamanNewLegendaryBattle
 	.4byte 0x00008d15
 	.4byte 0x09fe000f
-	.4byte 0x00002932
+	.4byte MsgShamanAncestorsDistrustOutsiders
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000029e4
+	.4byte MsgShamanContigoHeroVictorySurprise
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9499,118 +9622,118 @@ Data_02005ca4:
 	.4byte Func_02001d3c
 	.4byte 0x00000000
 	.4byte 0x09fe0008
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000029d6
+	.4byte MsgShamanMoapaImpressedByChallenge
 	.4byte 0x00008d15
 	.4byte 0x09fe0008
-	.4byte 0x0000292e
+	.4byte MsgShamanWaitForOutsidersToLeave
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000029e0
+	.4byte MsgShamanMoapaPraisesOpponents
 	.4byte 0x00000000
 	.4byte 0x09fe0009
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000029d7
+	.4byte MsgShamanRespectForeignWarriors
 	.4byte 0x00008d15
 	.4byte 0x09fe0009
-	.4byte 0x0000292f
+	.4byte MsgShamanChiefForbidsTalkingToOutsiders
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000029e1
+	.4byte MsgShamanDoubtMoapaDefeat
 	.4byte 0x00000000
 	.4byte 0x09fe000a
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000029d8
+	.4byte MsgShamanVictoryProvesSkill
 	.4byte 0x00008d15
 	.4byte 0x09fe000a
-	.4byte 0x00002930
+	.4byte MsgShamanWhoInvitedOutsiders
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000029e2
+	.4byte MsgShamanHopeForStrongerShamanChild
 	.4byte 0x00000000
 	.4byte 0x09fe000b
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000029d9
+	.4byte MsgShamanForeignersCanBeHeroes
 	.4byte 0x00008d15
 	.4byte 0x09fe000b
-	.4byte 0x00002931
+	.4byte MsgShamanRefuseToTalkToOutsiders
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000029e3
+	.4byte MsgShamanWorldShouldWelcomeStrangers
 	.4byte 0x00000000
 	.4byte 0x09fe000c
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x000029db
+	.4byte MsgShamanHoabnaPromiseFulfilled
 	.4byte 0x00008d15
 	.4byte 0x09fe000c
-	.4byte 0x00002933
+	.4byte MsgShamanTrustContigoFriends
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x000029e5
+	.4byte MsgShamanRemainFriendsWithContigo
 	.4byte 0x00000000
 	.4byte 0x09fe000d
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_02001118
 	.4byte 0x00008d15
 	.4byte 0x09fe000d
-	.4byte 0x00002934
+	.4byte MsgShamanDistrustFriendlyOutsiders
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x000029e6
+	.4byte MsgShamanWishToBreakSandWalls
 	.4byte 0x00000000
 	.4byte 0x09fe000e
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x000029df
+	.4byte MsgShamanChosenFewHavePower
 	.4byte 0x00008d15
 	.4byte 0x09fe000e
-	.4byte 0x00002935
+	.4byte MsgShamanShutDoorsAgainstOutsiders
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x000029e7
+	.4byte MsgShamanOutskirtsHaveDifferentPowers
 	.4byte 0x00000000
 	.4byte 0xffff000f
 	.4byte Func_02000ef8
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x00002941
+	.4byte MsgShamanOutsidersAreNotContigo
 	.4byte 0x00000000
 	.4byte 0x09fe0011
 	.4byte Func_02000f2c
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002a0b
+	.4byte MsgShamanGuardPromisesRematchVictory
 	.4byte 0x00008d15
 	.4byte 0x09fe0011
-	.4byte 0x00002943
+	.4byte MsgShamanContigoTempleTreasure
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002a0d
+	.4byte MsgShamanClimbingTrialRoadIsHard
 	.4byte 0x00000000
 	.4byte 0x09fe0010
 	.4byte Func_02000f60
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x00002a0c
+	.4byte MsgShamanVillagersBlameGuardDefeat
 	.4byte 0x00008d15
 	.4byte 0x09fe0010
-	.4byte 0x00002942
+	.4byte MsgShamanMoapaSparedOutsiders
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x00002a0e
+	.4byte MsgShamanGuardBlamesMountainClimb
 	.4byte 0x00004114
 	.4byte 0x09e1000f
 	.4byte Func_02002068
@@ -9672,109 +9795,112 @@ Data_02005f98:
 	.4byte 0x0000000e
 	.4byte 0x00000000
 	.4byte 0x09fe0008
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x00002a12
+	.4byte MsgShamanMoapaWantsToKnowNames
 	.4byte 0x00008d15
 	.4byte 0x09fe0008
-	.4byte 0x0000295f
+	.4byte MsgShamanMoapaLeftDoorOpen
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002a16
+	.4byte MsgShamanShameNotKnowingVictors
 	.4byte 0x00000000
 	.4byte 0x09fe0009
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002a13
+	.4byte MsgShamanFormalBattleNeedsNames
 	.4byte 0x00008d15
 	.4byte 0x09fe0009
-	.4byte 0x00002960
+	.4byte MsgShamanFatherNeverLoses
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002a17
+	.4byte MsgShamanFatherLostToRudeOutsiders
 	.4byte 0x00000000
 	.4byte 0x09fe000a
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002a14
+	.4byte MsgShamanNamesDoNotMatter
 	.4byte 0x00008d15
 	.4byte 0x09fe000a
-	.4byte 0x00002961
+	.4byte MsgShamanFirstForeignVisitors
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002a18
+	.4byte MsgShamanNamesBeforeBattleOldFashioned
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte Func_0200113c
 	.4byte 0x00008d15
 	.4byte 0x09ed000b
-	.4byte 0x00002a15
+	.4byte MsgShamanVictorsDeserveRespect
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x00002a31
+	.4byte MsgShamanVictorsNamesOnTrialColumns
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte Func_02000fc4
 	.4byte 0x00008d15
 	.4byte 0x09fe000d
-	.4byte 0x00002963
+	.4byte MsgShamanPayingStrangersMayStay
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002a25
+	.4byte MsgShamanMoapaMiserableAfterDefeat
 	.4byte 0x00000000
 	.4byte 0x09fe000e
-	.4byte 0x0000292d
+	.4byte MsgShamanSilentVillager
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x00002a21
+	.4byte MsgShamanForgiveUnkindVillagers
 	.4byte 0x00008d15
 	.4byte 0x09fe000e
-	.4byte 0x00002964
+	.4byte MsgShamanMoapaAllowsStrangersToStay
 	.4byte 0x00008d15
 	.4byte 0xffff000e
-	.4byte 0x00002a26
+	.4byte MsgShamanVillagersWorryTooMuch
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x000029e8
+	.4byte MsgShamanFinallyOpenLockedDoor
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x000029ea
+	.4byte MsgShamanQuietWhileLockedInside
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x000029e9
+	.4byte MsgShamanMissedTrialRoadChallenge
 	.4byte 0x00008d15
 	.4byte 0xffff0010
-	.4byte 0x000029eb
+	.4byte MsgShamanHidingLawPreventedWatching
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x00002a22
+	.4byte MsgShamanEnjoyGettingOutside
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x00002a27
+	.4byte MsgShamanChildrenIgnoreTradition
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x00002a23
+	.4byte MsgShamanPlanPicnicMeal
 	.4byte 0x00008d15
 	.4byte 0xffff0012
-	.4byte 0x00002a28
+	.4byte MsgShamanEagerForDinner
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x00002a24
+	.4byte MsgShamanSimpleMeatPotatoesBeans
 	.4byte 0x00008d15
 	.4byte 0xffff0013
-	.4byte 0x00002a29
+	.4byte MsgShamanSaltAndPepperOnly
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305b
+	.2byte MsgShamanRoastedRiverFish
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x0040305c
+	.2byte MsgShamanTraditionalBoneBroth
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x0040305d
+	.2byte MsgShamanStrangeBoiledVegetables
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9791,49 +9917,52 @@ Data_020061f0:
 	.4byte 0x00000011
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x000029ec
+	.4byte MsgShamanAncientHesperiaAttekaWar
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x000029f0
+	.4byte MsgShamanNewContigoHeroStronger
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x000029ed
+	.4byte MsgShamanHoabnaYegelosDecideWar
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x000029f1
+	.4byte MsgShamanDoubtShamanSuperiority
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x000029ee
+	.4byte MsgShamanTownsChooseChampions
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x000029f2
+	.4byte MsgShamanGrandparentsUpsetByDefeat
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x000029ef
+	.4byte MsgShamanYegelosBraveJourney
 	.4byte 0x00008d15
 	.4byte 0xffff000b
-	.4byte 0x000029f3
+	.4byte MsgShamanGrandparentsTiredOfWarStories
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte Func_020011c0
 	.4byte 0x00008d15
 	.4byte 0xffff000c
-	.4byte 0x00002a1d
+	.4byte MsgShamanHusbandWorriesAboutWeapons
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x00002a1a
+	.4byte MsgShamanWarehouseOwnerFeelsResponsible
 	.4byte 0x00008d15
 	.4byte 0xffff000d
-	.4byte 0x00002a1c
+	.4byte MsgShamanWeaponsDidNotCauseLoss
 	.4byte 0x00000173
 	.4byte 0xffff00c8
-	.4byte 0x0040305b
+	.2byte MsgShamanRoastedRiverFish
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00c9
-	.4byte 0x0040305c
+	.2byte MsgShamanTraditionalBoneBroth
+	.2byte 0x0040
 	.4byte 0x00000173
 	.4byte 0xffff00ca
-	.4byte 0x0040305d
+	.2byte MsgShamanStrangeBoiledVegetables
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -9847,22 +9976,22 @@ Data_020062d4:
 	.4byte Func_020010c8
 	.4byte 0x00008d15
 	.4byte 0x09fe0008
-	.4byte 0x00002967
+	.4byte MsgShamanVisitorsMustFindMoapa
 	.4byte 0x00008d15
 	.4byte 0xffff0008
-	.4byte 0x00002a2d
+	.4byte MsgShamanFearRenewedContigoWar
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x00002a2b
+	.4byte MsgShamanThreatenContigoRematch
 	.4byte 0x00008d15
 	.4byte 0xffff0009
-	.4byte 0x00002a2e
+	.4byte MsgShamanMoapaMustHaveBeenHungry
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x00002a2c
+	.4byte MsgShamanPrayForShamanWarrior
 	.4byte 0x00008d15
 	.4byte 0xffff000a
-	.4byte 0x00002a2f
+	.4byte MsgShamanPrayForContigoConqueror
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

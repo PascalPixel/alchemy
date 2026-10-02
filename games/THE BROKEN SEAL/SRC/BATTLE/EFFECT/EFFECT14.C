@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "FIELD_EFFECT.H"
 #include "FIXED_MATH.H"
 #include "IWRAM_CALL.H"
@@ -30,7 +31,6 @@ struct OrbitEffect {
     void (*update)(struct OrbitEffect *);
 };
 
-void ObjectDispatch_InitializeFar(struct OrbitEffect *effect, s32 data);
 
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
 
@@ -99,7 +99,7 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
         effect->pause = ((Random16() << 4) >> 16) + 8;
     }
     if (++effect->timer == 101)
-        ObjectDispatch_InitializeFar(effect, (s32)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)effect, (u32)BattleFx_CommonParticleScript);
 }
 
 /* Circles the anchor for 121 frames, then hands over to a random wander. */

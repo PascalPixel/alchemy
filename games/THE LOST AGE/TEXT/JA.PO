@@ -43379,55 +43379,55 @@ msgctxt "message"
 msgid "10842"
 msgstr "お客ぜんいんの しょくじを{line_break}ひとりでつくってるボクって{line_break}かんがえたら えらいよな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSilentVillager"
 msgid "10843"
 msgstr "・・・・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWaitForOutsidersToLeave"
 msgid "10844"
 msgstr "シャーマンは よそ者に{line_break}はなしかけられても・・・{line_break}こたえてはいけないのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChiefForbidsTalkingToOutsiders"
 msgid "10845"
 msgstr "村長が はなしていいというまで{line_break}よそ者は 知らんぷりするのが{line_break}シャーマンぞくの おきてだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWhoInvitedOutsiders"
 msgid "10846"
 msgstr "よそ者が ウロウロするのは{line_break}すごく うっとうしいなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRefuseToTalkToOutsiders"
 msgid "10847"
 msgstr "よそ者は みんな わるいヤツ{line_break}けっして こころをゆるして{line_break}はなしをしてはダメだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanAncestorsDistrustOutsiders"
 msgid "10848"
 msgstr "シャーマンはウソつかないが{line_break}よそ者は たくさんウソつく{line_break}それが せんぞのおしえじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrustContigoFriends"
 msgid "10849"
 msgstr "よそ者の中で ともだちなのは{line_break}アテカ大陸のギアナぞくだけじゃ{line_break}それが せんぞのおしえじゃわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanDistrustFriendlyOutsiders"
 msgid "10850"
 msgstr "こんど やってきたよそ者は{line_break}わるそうには 見えないけど{line_break}それをしんじちゃダメ・・・{page_break}いくら いい人に見えても{line_break}よそ者は わるい人なんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShutDoorsAgainstOutsiders"
 msgid "10851"
 msgstr "みんな よそ者がきたから{line_break}いえのドア しめたんだわ{page_break}なるべく かかわらないのが{line_break}シャーマンのちえなのよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanEntranceLocked"
 msgid "10852"
 msgstr "カギがかかっているようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrialRoadPermissionSign"
 msgid "10853"
 msgstr "この先 トライアルロード{line_break}モアパのきょかなき者は{line_break}立ち入りきんし{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanEntranceClosed"
 msgid "10854"
 msgstr "入り口が しまっている{line_break}中には入れないようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaGiveMeRoom"
 msgid "10855"
 msgstr "ここは 村長モアパのいえだ{line_break}わたしなら 出てきてやったぞ{line_break}さあ うしろへ下がれ 下がれ。{end_wait}"
 
@@ -43447,43 +43447,43 @@ msgctxt "message"
 msgid "10859"
 msgstr "もし いいたいことがあるなら{line_break}ひとつだけ きいてやろう{line_break}さあ いってみるがいいぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOutsidersLeaveTown"
 msgid "10860"
 msgstr "どうした いいたいことがないなら{line_break}モアパも いそがしいのだ・・・{line_break}すぐに村から 立ちさるがいい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSpeakToMoapa"
 msgid "10861"
 msgstr "いいたいことが あるのならば{line_break}われわれに いうのではなく{line_break}村長のモアパへ いうことだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFearMoapaPower"
 msgid "10862"
 msgstr "モアパをおこらせたりしたら{line_break}かれの おそろしい力によって{line_break}お前は ひどい目にあうだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOutsidersAreNotContigo"
 msgid "10863"
 msgstr "この戦士 どう見たって・・・{line_break}ギアナぞくには見えないから{line_break}かんげいなんか ひつようない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaSparedOutsiders"
 msgid "10864"
 msgstr "モアパが おとなしくしてろと{line_break}めいれいしてなかったら・・・{line_break}こいつ 村からつまみ出すとこだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanContigoTempleTreasure"
 msgid "10865"
 msgstr "もしも宝をさがしているのなら{line_break}シャーマンではなくギアナだと{line_break}いってやりたいぐらいだ・・・{page_break}アテカ大陸のギアナ村の神殿には{line_break}たいへんな宝が ねむってるはず{line_break}そっちへ行けば いいことなのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShowMeSomething"
 msgid "10866"
 msgstr "モアパは お前のような男から{line_break}ほどこしは うけないぞ・・・{line_break}それとも なにか見せたいのか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShowItToMoapa"
 msgid "10867"
 msgstr "オレは そんなものになんか{line_break}すこしも きょうみないぞ{page_break}なにか 見てもらいたいのなら{line_break}村長のモアパに 見せるのだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCannotBuyGift"
 msgid "10868"
 msgstr "いいものをもってるな お前{line_break}それを売りたいのか・・・{line_break}オレ 金なんかもってないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRecognizeShamanRod"
 msgid "10869"
 msgstr "それはシャーマンのツエ・・・!{end_wait}"
 
@@ -43579,27 +43579,27 @@ msgctxt "message"
 msgid "10892"
 msgstr "行ってみようぞ {actor_name:5}よ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaLeftDoorOpen"
 msgid "10893"
 msgstr "モアパ ドアをしめなかったから{line_break}よそ者が 入ってきたじゃないの{line_break}ああ もう・・・出て行ってよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFatherNeverLoses"
 msgid "10894"
 msgstr "こいつら 戦士みたいだけど{line_break}父さんには かなわないだろ{page_break}シャーマンのゆうしゃだからこそ{line_break}父さんは この村の長なんだ・・・{line_break}ぜったい だれにもまけないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFirstForeignVisitors"
 msgid "10895"
 msgstr "よそ者って はじめて見たけど{line_break}おもったよりも ふつうなのね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanInnPaymentPrompt"
 msgid "10896"
 msgstr "金を出せば やどにはとめるから{line_break}{argument_signed_number}コインをおいていけ・・・と{line_break}カードにかいてある{page_break}{argument_signed_number}コインをはらいますか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShamanPayingStrangersMayStay"
 msgid "10897"
 msgstr "やどに とまりたいんだったら{line_break}とめてやっても いいけど・・・{line_break}よそ者をとめるのは こわいなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaAllowsStrangersToStay"
 msgid "10898"
 msgstr "やどぐらいは とめてやれと{line_break}モアパが めいれいしなけりゃ{line_break}ドアにカギをかけてたのに・・・。{end_wait}"
 
@@ -43607,39 +43607,39 @@ msgctxt "message"
 msgid "10899"
 msgstr "金がないなら かえってくれ{line_break}・・・とカードにかいてある。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTribeForbidsTalking"
 msgid "10900"
 msgstr "いくら 村の者にはなしかけても{line_break}へんじをしてくれないのは・・・{line_break}みなさんが よそ者だからです{page_break}よそ者と はなしをしないのが{line_break}シャーマンぞくの おきてなのです。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVisitorsMustFindMoapa"
 msgid "10901"
 msgstr "なにか ようがあるなら{line_break}モアパに ちょくせつ{line_break}あうしか ないんだろうな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanYegelosSandChallenge"
 msgid "10902"
 msgstr "お前がイエグロスのいしをつぎ{line_break}ここへ やってきたのなら・・・{line_break}そのすなをけしてみるがいい{page_break}それができたら お前たちは{line_break}ギアナからきた ゆうしゃだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrialRoadAncientBattle"
 msgid "10903"
 msgstr "この先はナバホとイエグロスが{line_break}力のかぎり戦ったとされる・・・{line_break}トライアルロードという道だ{page_break}ゆうしゃたちは その道をかつて{line_break}すごい みじかいじかんで・・・{line_break}かけあがったそうだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanAncientHeroesVanishedSand"
 msgid "10904"
 msgstr "イエグロスは ナバホとの戦いで{line_break}この道をすすもうとした時・・・{line_break}いっしゅんで すなをけしたそうだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRodWasStolen"
 msgid "10905"
 msgstr "きっと こいつらは・・・{line_break}ギアナ村からツエをぬすみ{line_break}ここへ やってきたのだ{page_break}もうすぐ ヤツらのウソが{line_break}ここで あきらかになるぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNeedContigoOrShamanPower"
 msgid "10906"
 msgstr "シャーマンの力とギアナの力の{line_break}どちらかをもっていなければ{line_break}トライアルロードは上れないのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSandChallengeWillFail"
 msgid "10907"
 msgstr "こいつらに すなはけせないだろ{line_break}さあ グラビティのヒスイをあきらめ{line_break}この村から 出て行くんだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCheerForCompanion"
 msgid "10908"
 msgstr "がんばってね {actor_name:7}!{end_wait}"
 
@@ -43787,7 +43787,7 @@ msgctxt "message"
 msgid "10944"
 msgstr "まあいい いちおう・・・{line_break}ルールをせつめいするから{line_break}モアパに ついてこい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanListenCarefully"
 msgid "10945"
 msgstr "せつめいしよう・・・。{end_wait}"
 
@@ -43811,7 +43811,7 @@ msgctxt "message"
 msgid "10950"
 msgstr "それいらい これを戦うのは{line_break}シャーマンの長ということに{line_break}きまっているのだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrialRulesAreSimple"
 msgid "10951"
 msgstr "ルールはかんたんだ・・・。{end_wait}"
 
@@ -43859,7 +43859,7 @@ msgctxt "message"
 msgid "10962"
 msgstr "それで ちゅうしにできる・・・{line_break}ゆうしゃを名のる戦士だったら{line_break}なるべく使わないでおくべきだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMustFinishTrialRoad"
 msgid "10963"
 msgstr "この頂上での 戦いのためには{line_break}トライアルロードのきょうそうも{line_break}けっして まけられないことになる。{end_wait}"
 
@@ -43887,7 +43887,7 @@ msgctxt "message"
 msgid "10969"
 msgstr "それでも やるというなら{line_break}よろこんで うけて立とう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMissingShamanRod"
 msgid "10970"
 msgstr "しかし いま お前の手には{line_break}シャーマンのツエがないようだ{page_break}ツエをもっていないのでは{line_break}ちょうせんは うけられない{line_break}あきらめて かえってくれ。{end_wait}"
 
@@ -43899,11 +43899,11 @@ msgctxt "message"
 msgid "10972"
 msgstr "右と左の道の どちらでも{line_break}キミから えらびたまえ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChooseEitherRoad"
 msgid "10973"
 msgstr "右と左の道の どちらでも{line_break}キミから えらびたまえ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGuardRepeatRulesBeforeTrial"
 msgid "10974"
 msgstr "また シャーマンの長モアパに{line_break}トライアルロードのルールを{line_break}ききたくなったのか?{end_now}"
 
@@ -43915,7 +43915,7 @@ msgctxt "message"
 msgid "10976"
 msgstr "もう グラビティのヒスイはあきらめ{line_break}シャーマン村から出ていくのだ{line_break}それが お前たちのためだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOtherGuardRepeatRulesBeforeTrial"
 msgid "10977"
 msgstr "また シャーマンの長モアパに{line_break}トライアルロードのルールを{line_break}ききたくなったのか?{end_now}"
 
@@ -43927,19 +43927,19 @@ msgctxt "message"
 msgid "10979"
 msgstr "お前たちが 村にとどまると{line_break}村の者の じゆうがなくなって{line_break}とても かわいそうなのだ・・・{page_break}トライアルロードをやめるなら{line_break}たのむから 村を出てってくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaCannotLose"
 msgid "10980"
 msgstr "わたしは なにがあろうとも{line_break}まけることは できない・・・{page_break}それがシャーマンぞくの長の{line_break}あたえられた せきにんなのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaGreatestWarrior"
 msgid "10981"
 msgstr "モアパは ヘスペリア大陸の中で{line_break}さいきょうの戦士なのだから{line_break}だれも たおすことはできない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanJadeNeedsYegelosHeir"
 msgid "10982"
 msgstr "わるいヤツらじゃないってことが{line_break}だんだんと わかってきたけど{line_break}宝石をわたすわけにはいかない{page_break}グラビティのヒスイをわたせるのは{line_break}ギアナのゆうしゃイエグロスの{line_break}ちをうけつぐ者だけなのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGiveUpTrialPrompt"
 msgid "10983"
 msgstr "やっぱり やめるというのだな?{end_now}"
 
@@ -43951,7 +43951,7 @@ msgctxt "message"
 msgid "10985"
 msgstr "それでは右の道か左の道か{line_break}どちらかを えらびたまえ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGuardsTakeOtherPath"
 msgid "10986"
 msgstr "キミたちが そっちなら{line_break}わたしは こちらだ。{end_wait}"
 
@@ -43959,7 +43959,7 @@ msgctxt "message"
 msgid "10987"
 msgstr "わたしが3つカウントして{line_break}0になったらスタートだ{line_break}それではカウントするよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChallengeTrialRoadPrompt"
 msgid "10988"
 msgstr "わたしに トライアルロードで{line_break}ちょうせんしようというのか?{end_now}"
 
@@ -44003,7 +44003,7 @@ msgctxt "message"
 msgid "10998"
 msgstr "まだまだ"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaAdvisesLeaving"
 msgid "10999"
 msgstr "どうせ ちょうじょうまで行っても{line_break}わたしには かてないのだから{line_break}リタイアは かしこいせんたくだ{page_break}それでは シャーマン村から{line_break}はやく 立ちさるがいい。{end_wait}"
 
@@ -44055,31 +44055,31 @@ msgctxt "message"
 msgid "11011"
 msgstr "みんなも つかれたじゃろう{line_break}村にもどって やすむとしよう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaImpressedByChallenge"
 msgid "11012"
 msgstr "お前 トライアルロードを戦って{line_break}モアパをたおしたそうだな・・・{line_break}モアパが お前をほめていたぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRespectForeignWarriors"
 msgid "11013"
 msgstr "わたしたち シャーマンぞくは{line_break}つよくて ゆうかんな戦士を{line_break}こころから もてなすのよ{page_break}モアパをたおした お前は・・・{line_break}ゆうしゃの中の ゆうしゃだから{line_break}とうぜん 大かんげいだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVictoryProvesSkill"
 msgid "11014"
 msgstr "あんたは モアパと戦って{line_break}ゆうきある戦士だってことを{line_break}みごとに しょうめいしたよ{page_break}これから 村の者はみんな{line_break}あんたと しゃべることを{line_break}さけたりは しないだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanForeignersCanBeHeroes"
 msgid "11015"
 msgstr "ゆうしゃに わる者はいないわ{line_break}よそ者だって ゆうしゃには{line_break}みんな こころをゆるすわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNewLegendaryBattle"
 msgid "11016"
 msgstr "そのむかし ゆうしゃナバホと{line_break}ギアナのゆうしゃイエグロスが{line_break}トライアルロードで戦った{page_break}お前とモアパとの戦いは・・・{line_break}その伝説の さいげんじゃぞ{line_break}その戦い・・・見たかったのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHoabnaPromiseFulfilled"
 msgid "11017"
 msgstr "ナバホと イエグロスの・・・{line_break}ふたりのゆうしゃの やくそくが{line_break}ついにはたされ めでたいのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCheckOtherMountainSide"
 msgid "11018"
 msgstr "お兄ちゃん 戦いがおわってから{line_break}マウンテンのむこうへ行った?{end_now}"
 
@@ -44091,95 +44091,95 @@ msgctxt "message"
 msgid "11020"
 msgstr "お兄ちゃんたちがウワサどおり{line_break}ナバホと同じ力をもってるなら{line_break}行けるかもしれないよ{page_break}そこは シャーマンぞくの力じゃ{line_break}行けないばしょらしいんだ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChosenFewHavePower"
 msgid "11021"
 msgstr "この シャーマンぞくの中には{line_break}ふしぎな力をもつ人がいるのよ{page_break}その力をもっている人たちは{line_break}神にえらばれた人なんだってさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaPraisesOpponents"
 msgid "11022"
 msgstr "じぶんが戦って やぶれたあいてを{line_break}ほめるモアパは やっぱり男らしい{line_break}さすがシャーマンぞくの長だな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanDoubtMoapaDefeat"
 msgid "11023"
 msgstr "じぶんたちの長 モアパがやぶれて{line_break}ちょっと くやしい気もするけど{line_break}それは いわないことにしましょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHopeForStrongerShamanChild"
 msgid "11024"
 msgstr "いつか シャーマンの子どもは{line_break}モアパより つよくなって・・・{page_break}モアパが ギアナぞくにまけた{line_break}このかりをかえすだろう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWorldShouldWelcomeStrangers"
 msgid "11025"
 msgstr "わたしたち よそ者を見ると{line_break}つい けいかいしちゃうわね{line_break}もっと こころをひらかなきゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanContigoHeroVictorySurprise"
 msgid "11026"
 msgstr "ふたつの宝をこうかんするなんて{line_break}ぜったいないと しんじてたが{line_break}おこってしまったんじゃな・・・{page_break}まさかシャーマンのゆうしゃが{line_break}ギアナのゆうしゃにまけるとは{line_break}ユメにも おもわなかったわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRemainFriendsWithContigo"
 msgid "11027"
 msgstr "これで シャーマンとギアナの{line_break}おたがいの いいかんけいが{line_break}なくなったら さみしいのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWishToBreakSandWalls"
 msgid "11028"
 msgstr "ボクが すなのかべをこわせるなら{line_break}マウンテンの ちょうじょうへ上り{line_break}いずみへ 下りてみたいなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOutskirtsHaveDifferentPowers"
 msgid "11029"
 msgstr "村のはずれの きとうしの力は{line_break}いちぞくの中でも とくべつだわ{line_break}いったい どうしてなのかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFinallyOpenLockedDoor"
 msgid "11030"
 msgstr "やっと いえのドアをあけて{line_break}空気の入れかえが できたよ{page_break}いえに とじこもっているうちに{line_break}モアパが戦っていたなんて・・・{line_break}ぜんぜん 気づかなかったなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMissedTrialRoadChallenge"
 msgid "11031"
 msgstr "トライアルロードの戦いを{line_break}やるのだと わかっていたら{line_break}ドアにカギをかけなかったわ{page_break}ああ せっかくの戦いなのに{line_break}見のがしちゃったじゃないさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanQuietWhileLockedInside"
 msgid "11032"
 msgstr "いえを しめきっているあいだ{line_break}そとが あんまり しずかだから{line_break}おかしいと おもったんだよなあ{page_break}そうか あのトライアルロードで{line_break}戦いをやってたからだったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHidingLawPreventedWatching"
 msgid "11033"
 msgstr "トライアルロードの戦いって{line_break}たしかマウンテンの上だから{line_break}だれも見られなかったのよね{page_break}だけど それでもやっぱり・・・{line_break}見られなかったのは クヤシイ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanAncientHesperiaAttekaWar"
 msgid "11034"
 msgstr "むかしから シャーマンぞくは{line_break}ヘスペリア大陸のリーダーとして{line_break}そとの大陸と戦っておったんじゃ{page_break}そしてアテカ大陸のギアナぞくと{line_break}戦うことに なったそうな・・・{line_break}ずっと むかしのはなしじゃよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHoabnaYegelosDecideWar"
 msgid "11035"
 msgstr "シャーマンとギアナは そのむかし{line_break}おたがいの大陸をまもるため・・・{line_break}なんども なんども 戦ったんじゃ{page_break}ついに けっちゃくがつかなくて{line_break}ゆうしゃのナバホとイエグロスが{line_break}戦うことになったということじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTownsChooseChampions"
 msgid "11036"
 msgstr "シャーマンとギアナの戦いは・・・{line_break}それぞれの 戦士がいなくなるほど{line_break}はげしい戦いだったんだってさ{page_break}これじゃ 村がほろびちゃうからって{line_break}ふたりのゆうしゃナバホとイエグロスが{line_break}だいひょうで 戦うことになったんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanYegelosBraveJourney"
 msgid "11037"
 msgstr "どうして ナバホとイエグロスが{line_break}シャーマン村で戦うことになったか{line_break}いまじゃ わからないわよね・・・{page_break}だけどシャーマンまでやってきた{line_break}イエグロスっていうゆうしゃは{line_break}ゆうきのある人だったとおもうわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNewContigoHeroStronger"
 msgid "11038"
 msgstr "ギアナ村は イエグロスのあと{line_break}ゆうしゃに めぐまれないと{line_break}きいておったんじゃが・・・{page_break}いつのまにか モアパをやぶるような{line_break}つよいゆうしゃが いたとはのう{line_break}ぜんぜん 知らんかったわい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanDoubtShamanSuperiority"
 msgid "11039"
 msgstr "むかしから ギアナのゆうしゃは{line_break}シャーマンの伝説のゆうしゃにも{line_break}おとらぬほど つよかったらしい{page_break}しかし いまはどうじゃ・・・{line_break}ゆうしゃ同士の戦いだってのに{line_break}まけてしまったじゃないかいな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGrandparentsUpsetByDefeat"
 msgid "11040"
 msgstr "ジイちゃんと バアちゃんは{line_break}モアパが まけてしまったから{line_break}きげんが わるいんだよ・・・{page_break}もう 伝説の戦いのはなしを{line_break}なんかい きかされたかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGrandparentsTiredOfWarStories"
 msgid "11041"
 msgstr "バアちゃんたち ふたりとも・・・{line_break}ナバホとイエグロスのはなしを{line_break}なんども はなすのよねぇ・・・{page_break}それに つきあっているから{line_break}もう つかれちゃったわよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneGreeting"
 msgid "11042"
 msgstr "フンマカ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneOfferBeforeTrial"
 msgid "11043"
 msgstr "お主 うんせいを{line_break}知りたいのかな?{end_now}"
 
@@ -44215,15 +44215,15 @@ msgctxt "message"
 msgid "11051"
 msgstr "おおお おそろしすぎて・・・{line_break}それ以上 見えないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneAvoidSouth"
 msgid "11052"
 msgstr "お主 南に行くことだけは{line_break}ぜったい やめることだ{line_break}よいな わかったな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCloudyFortuneBeforeTrial"
 msgid "11053"
 msgstr "なんだか わからないが・・・{line_break}エレメンタルが ざわめいて{line_break}とても さわがしいのだ・・・{page_break}もしかすると いま 世界が・・・{line_break}かわろうとしているのかもしれない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneOfferAfterTrial"
 msgid "11054"
 msgstr "お主 うんせいを{line_break}知りたいのかな?{end_now}"
 
@@ -44259,31 +44259,31 @@ msgctxt "message"
 msgid "11062"
 msgstr "おおお おそろしすぎて・・・{line_break}それ以上 見えないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneAvoidNortheast"
 msgid "11063"
 msgstr "お主 北北東にだけは{line_break}けっして 行ってはならぬ{line_break}よいな わかったな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCloudyFortuneAfterTrial"
 msgid "11064"
 msgstr "なんだか わからないが・・・{line_break}エレメンタルが ざわめいて{line_break}とても さわがしいのだ・・・{page_break}もしかすると いま 世界が・・・{line_break}かわろうとしているのかもしれない。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGuardPromisesRematchVictory"
 msgid "11065"
 msgstr "お前の するどいこうげきは{line_break}オレも おどろいたけど・・・{line_break}つぎに戦ったら まけないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVillagersBlameGuardDefeat"
 msgid "11066"
 msgstr "くそう 村の者たち みんなで{line_break}われわれが まけた まけたと{line_break}口ぐちに いってるんだ・・・{page_break}お前たちの つよさを知れば{line_break}そんなカゲ口は たたけないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanClimbingTrialRoadIsHard"
 msgid "11067"
 msgstr "しかしトライアルロードの戦いは{line_break}マウンテンを 上がるだけでも{line_break}しんどいなんてもんじゃなかった{page_break}ナバホとイエグロスのふたりも{line_break}たいへんだったんだろうぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGuardBlamesMountainClimb"
 msgid "11068"
 msgstr "トライアルロードのトラップで{line_break}力を使いまくってしまったから{line_break}戦いにならなかったんだ・・・{page_break}マウンテンの ちょうじょうでの{line_break}戦いが あるっていうのに・・・{line_break}あれにはホント まいったぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaAsksVictorsNames"
 msgid "11069"
 msgstr "お前たち ギアナのゆうしゃの{line_break}名前をきいてなかったが・・・{line_break}わたしに おしえてくれるか?{end_now}"
 
@@ -44295,31 +44295,31 @@ msgctxt "message"
 msgid "11071"
 msgstr "そうか {actor_name:5}に{actor_name:6}{line_break}{actor_name:7}と{actor_name:8}というのか・・・{line_break}その名前 おぼえておくとしよう。{page_break}モアパ 戦ったあいての名前{line_break}ぜったい わすれない・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaWantsToKnowNames"
 msgid "11072"
 msgstr "モアパは 戦った戦士たちの{line_break}名前をききわすれたといって{line_break}ざんねんがっていました・・・{page_break}どうか みなさんの名前を{line_break}モアパに おしえて下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFormalBattleNeedsNames"
 msgid "11073"
 msgstr "せいしきな戦いの前には・・・{line_break}じぶんの名前を名のりあうのは{line_break}戦士の じょうしきじゃない{page_break}いまからでも おそくないから{line_break}父さんに名前をおしえてよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNamesDoNotMatter"
 msgid "11074"
 msgstr "戦った あいての名前なんて{line_break}どうでも いいじゃない・・・{line_break}大人って ふしぎだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVictorsDeserveRespect"
 msgid "11075"
 msgstr "じぶんの戦った あいてならば{line_break}名前を知っていなければならぬ{page_break}まして わたしをやぶった・・・{line_break}ゆうしゃの名は 知っておきたい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShameNotKnowingVictors"
 msgid "11076"
 msgstr "モアパは じぶんがやぶれた{line_break}あいての名前を知らないことを{line_break}とても ざんねんがっていたわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFatherLostToRudeOutsiders"
 msgid "11077"
 msgstr "父さん じょうしきを知らない{line_break}いなか者の戦士と戦って・・・{line_break}まけるなんて ダメだなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNamesBeforeBattleOldFashioned"
 msgid "11078"
 msgstr "戦いの前に 名前を知らせるのが{line_break}戦士としての れいぎだとか・・・{line_break}いってることが ふるくさいわよ。{end_wait}"
 
@@ -44327,23 +44327,23 @@ msgctxt "message"
 msgid "11079"
 msgstr "モアパ 戦ったあいての名前{line_break}ぜったい わすれない・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWarehouseOwnerFeelsResponsible"
 msgid "11080"
 msgstr "モアパが まけちゃったと知って{line_break}オレも ショックだったよ・・・{page_break}モアパの武器や防具は みんな{line_break}オレが しいれたものだから{line_break}すこし せきにんをかんじるぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWelcomeContigoHero"
 msgid "11081"
 msgstr "モアパが 戦いにまけたからと{line_break}うちの人 おちこんじゃって{line_break}・・・しっかりしてほしいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWeaponsDidNotCauseLoss"
 msgid "11082"
 msgstr "武器や防具が よわかったから{line_break}まけたんじゃないだろうなあ{page_break}そんなウワサが ながれたら{line_break}商売が やりにくくなるぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHusbandWorriesAboutWeapons"
 msgid "11083"
 msgstr "モアパが よそ者の戦士にまけたのは{line_break}うちの武器のせいじゃないかって・・・{line_break}うちの人 ちょっとノイローゼかしら。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVisitorsHaveTraveledFar"
 msgid "11084"
 msgstr "あんたは アテカ大陸のほかにも{line_break}いろいろ たびをしてるんだろ?{end_now}"
 
@@ -44355,71 +44355,71 @@ msgctxt "message"
 msgid "11086"
 msgstr "それにしちゃ りっぱな船で{line_break}やってきたみたいだな・・・{page_break}あんな船に のれるんだから{line_break}きっと 武器や防具だって{line_break}りっぱなのを使ってるはずだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanForgiveUnkindVillagers"
 msgid "11087"
 msgstr "うちの人は 村の長のモアパとは{line_break}とっても なかがいいんだよ・・・{page_break}もしも あの戦いについて{line_break}気にさわることをいっても{line_break}ゆるしてやっておくれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanEnjoyGettingOutside"
 msgid "11088"
 msgstr "ずっといえに こもってたから{line_break}こうして 出あるけることが{line_break}ありがたく おもえるんですよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanPlanPicnicMeal"
 msgid "11089"
 msgstr "きょうは ひさしぶりだから{line_break}おもてで しょくじをとるわ{line_break}さあて なにをたべようかな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSimpleMeatPotatoesBeans"
 msgid "11090"
 msgstr "ヘスペリアの こういう店では{line_break}ステーキに イモとマメってのが{line_break}いっぱんてきな りょうりだよ{page_break}口にあうか どうかは・・・{line_break}ちょっと わからないけど{line_break}えいようは まんてんさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaMiserableAfterDefeat"
 msgid "11091"
 msgstr "村長のモアパは 戦いにまけて{line_break}きっと みじめな気もちだ・・・{line_break}オレが かわってやりたいぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVillagersWorryTooMuch"
 msgid "11092"
 msgstr "うちの人 モアパのこととなると{line_break}見さかいが なくなるから・・・{line_break}あたしゃ ハラハラしちまうのさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChildrenIgnoreTradition"
 msgid "11093"
 msgstr "村の長モアパが まけたことで{line_break}年よりのれんちゅうは みんな{line_break}なんだか げんきがないな・・・{page_break}オレたち 村のわかい者たちは{line_break}それほどでも ないんだけど。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanEagerForDinner"
 msgid "11094"
 msgstr "ここのコックのステーキ・・・{line_break}にくのやき方が さいこうよ{page_break}あじは シオにコショーだから{line_break}うちでたべるのと同じだけどね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSaltAndPepperOnly"
 msgid "11095"
 msgstr "しょくじは ざいりょうのあじを{line_break}たのしむのが ただしいんだ{page_break}にくのあじをたのしむんだったら{line_break}やっぱりシオにコショーだろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaDefeatIncredible"
 msgid "11096"
 msgstr "モアパに かってしまうなんて{line_break}あなた つよかったんですね{line_break}いやあ ビックリしましたよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanThreatenContigoRematch"
 msgid "11097"
 msgstr "モアパに かったからって{line_break}いい気に なるでないぞ{page_break}つぎの代では ギアナぞくに{line_break}ぜったい かってやるんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanPrayForShamanWarrior"
 msgid "11098"
 msgstr "神よ わがシャーマンぞくに{line_break}ホントに つよいゆうしゃが{line_break}うまれますように・・・ブツブツ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFearRenewedContigoWar"
 msgid "11099"
 msgstr "モアパが たおされてしまうから{line_break}村の年よりは おこってますよ{page_break}この戦いが きっかけになって{line_break}シャーマンとギアナのあいだで{line_break}せんそうが おきないだろうな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaMustHaveBeenHungry"
 msgid "11100"
 msgstr "モアパが 戦いにまけたのは・・・{line_break}きゅうにハラがいたくなったりして{line_break}力が出せなかったからにちがいない{page_break}そうでなけりゃギアナぞくなんかに{line_break}シャーマンぞくが まけたりせんぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanPrayForContigoConqueror"
 msgid "11101"
 msgstr "なにが クヤシイっていって・・・{line_break}ギアナぞくに まけたってのが{line_break}あたしゃ ゆるせないんだよ・・・{page_break}どうか ギアナぞくをコテンパンに{line_break}やっつけてくれる ゆうしゃが・・・{line_break}シャーマンに あらわれますように。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaNeverForgetsVictor"
 msgid "11102"
 msgstr "ギアナの ゆうしゃ{actor_name:5}よ{line_break}わたしをやぶった お前たちを{line_break}けして わすれはしないぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVictorsNamesOnTrialColumns"
 msgid "11103"
 msgstr "わたしをやぶった ゆうしゃたちは{line_break}{actor_name:5}に{actor_name:6}に{actor_name:7}に{line_break}{actor_name:8}という名前なのか・・・{page_break}トライアルロードのはしらに{line_break}いずれは かれらの名前を{line_break}きざまなければならないな。{end_wait}"
 
@@ -50759,15 +50759,15 @@ msgctxt "message"
 msgid "12687"
 msgstr "ギアナめいぶつ{line_break}カタヌキがある{page_break}これを つくるには{line_break}かなりの しょくにんわざが{line_break}ひつようらしい・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRoastedRiverFish"
 msgid "12688"
 msgstr "ちかくの川でつれる{line_break}サカナの しおやきだ!{page_break}けむりが目にしみる・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTraditionalBoneBroth"
 msgid "12689"
 msgstr "ギュウコツで だしをとった{line_break}スープを にこんでいる{page_break}シャーマン村に だいだいつたわる{line_break}でんとうりょうりらしい・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanStrangeBoiledVegetables"
 msgid "12690"
 msgstr "見たこともない しょくざいが{line_break}にこまれている{page_break}うげげっ ひどいにおいだ!{line_break}ほんとうにこれ たべられるの?{end_wait}"
 

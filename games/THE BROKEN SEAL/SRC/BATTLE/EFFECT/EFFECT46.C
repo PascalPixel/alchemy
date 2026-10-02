@@ -6,6 +6,9 @@
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
+#include "RESOURCE.H"
+#include "BATTLE_PRESENTATION.H"
+#include "FIXED_MATH.H"
 #include "SYSTEM.H"
 
 /* A battle object as its slot holds it: the world position follows two
@@ -36,6 +39,545 @@ void Graphics_PrepareTransferInIwramWork(u8 *source, u8 *destination);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
+void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
+void AudioCommand_PlayFar(s32 cue);
+
+extern struct BattleCamera *gCameraWork;
+extern u8 PuffArc_CellWidths[];
+extern u8 PuffArc_CellHeights[];
+extern u8 PuffArc_CellBiasY[];
+extern u16 PuffArc_CellSourceOffsets[];
+
+/* A scene object: two bits of its tenth byte pick its draw variant. */
+struct SceneObject {
+    u8 reserved_00[9];
+    u8 flags09_0 : 2;
+    u8 variant : 2;
+    u8 flags09_4 : 4;
+    u8 reserved_0a[28];
+    u8 enabled;
+};
+
+/* A pair of 16.16 values: a scale, or a point on the ground. */
+struct Scale {
+    s32 x;
+    s32 y;
+};
+
+extern volatile u32 gKeysRepeat;
+/* Where each of the seven sky objects stands, in whole pixels. */
+extern u8 CirclingScene_ObjectColumns[];
+extern u8 CirclingScene_ObjectRows[];
+/* The puff pictures in the blast sheet and how wide each square one is. */
+extern u16 CirclingScene_PuffSheetOffsets[];
+extern u16 CirclingScene_PuffSizes[];
+extern const struct Scale CirclingScene_UnitScale;
+
+void BattlePres_ConfigureEffectDisplay(void);
+void BattleEffect_WipeCanvas(s32 mode, s32 layer);
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
+void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
+void BattleEffect_SetupBlendedDisplay(void);
+struct SceneObject *GetBattleEffectObject(s32 kind);
+void Object_InitializeMode(struct SceneObject *object, s32 animation);
+void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+
+/* The sparks of the last burst live at the start of the map cell buffer. */
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
+
+/* Battle effect: an orb circles in over a desert sky, drops three times and
+   each time throws up puffs, while six rocks fall and bounce; then the orb
+   flies off, and a burst of five hundred sparks hits every target. A or B
+   skips to the end. */
+void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
+{
+    s32 position[4];
+    DrawRectangle draw[2];
+    struct Scale scale;
+    void **cache;
+    void *canvas;
+    struct BattleEffectWork *work;
+    s32 frame;
+    u8 *sheet;
+    struct Scale base;
+    struct Scale orb;
+    s32 i;
+    s32 k;
+
+    cache = &gBattleFxWork[1];
+    canvas = cache[0];
+    work = cache[-1];
+    sheet = cache[1];
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0);
+    BattlePres_ConfigureEffectDisplay();
+    *(u16 *)0x05000000 = 0;
+    *(u16 *)0x05000002 = 0;
+    work->transfer_mode = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    BattleEffect_WipeCanvas(1, 0);
+    BattleFx_SelectLivingTargets(work->effect);
+    BattleFx_SpawnObjects(9, 379, 2);
+    for (i = 0; i != 6; i++) {
+        struct SceneObject *object = GetBattleEffectObject(390);
+
+        work->objects[9 + i] = object;
+        if (object != 0) {
+            object->enabled = 0;
+            Object_InitializeMode(object, i % 3);
+            ((struct SceneObject *)work->objects[9 + i])->variant = 1;
+        }
+    }
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw[0] = (DrawRectangle)gWorkSlot[46];
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    draw[1] = (DrawRectangle)gWorkSlot[47];
+    *(volatile u16 *)0x04000048 = 0x2737;
+    *(volatile u16 *)0x04000040 = 0xf0;
+    *(volatile u16 *)0x04000046 = 0x1088;
+    WaitFrames(1);
+    BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
+    BattleEffect_WipeCanvas(1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 1);
+    *(volatile u16 *)0x04000000 = 0x7741;
+    *(volatile u16 *)0x04000020 = 0x80;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    *(volatile u16 *)0x04000050 = 0x3f44;
+    work->transfer_mode = 2;
+    work->transfer_value = 50;
+    base.x = 0xbc0000;
+    base.y = 0x5c0000;
+    orb.x = 0xa00000;
+    orb.y = 0x5c0000;
+    for (i = 0; i != 6; i++) {
+        struct EffectStep *rock = &work->particles[i];
+
+        rock->x = (Random16() & 127) << 16;
+        rock->y = i * -0x100000;
+        rock->velocity_x = 0;
+        rock->velocity_y = 0;
+        rock->variant = 0;
+    }
+    for (i = 0; i != 58; i++)
+        work->particles[6 + i].variant = 24;
+    for (i = 0; i != 1024; i++)
+        SPARKS[i].variant = -1;
+    work->fade_frames = 24;
+    work->fade_step = 0;
+
+    for (frame = 0; frame != 320 && !(gKeysRepeat & 3); frame++) {
+        if (frame == 94)
+            AudioCommand_PlayFar(156);
+        if (frame == 136)
+            AudioCommand_PlayFar(156);
+        if (frame == 178)
+            AudioCommand_PlayFar(156);
+        if (frame == 260)
+            AudioCommand_PlayFar(145);
+        scale = CirclingScene_UnitScale;
+        if (frame >= 96 && frame <= 251)
+            work->shake_frames = 1;
+        else if (frame >= 260 && frame <= 263)
+            work->shake_frames = 1;
+        position[3] = 0;
+        position[1] = 0;
+        for (i = 0; i != 7; i++) {
+            position[0] = (CirclingScene_ObjectColumns[i] << 16) + base.x - 0x200000;
+            position[2] = (CirclingScene_ObjectRows[i] << 16) + base.y - 0x200000;
+            Object_ApplyProjectedPlacementFar(work->objects[i], position, &scale, 0);
+        }
+        if (frame <= 90) {
+            orb.x = Trig_Sin(frame << 9) * 16 + 0x9c0000;
+            orb.y = Trig_Cos(frame << 9) * 16 + 0x5c0000;
+        }
+        if (frame <= 196) {
+            s32 start;
+
+            for (i = 0, start = 91; i != 3; start += 40, i++) {
+                if (frame >= start && frame < start + 4)
+                    orb.y += 0x80000;
+                if (frame == start + 3) {
+                    for (k = 0; k != 4; k++) {
+                        struct EffectStep *puff = &work->particles[6 + i * 8 + k];
+
+                        puff->x = 0x400000;
+                        puff->y = 0x600000;
+                        puff->velocity_x = ((Random16() & 255) - 127) << 10;
+                        puff->velocity_y = ((Random16() & 255) - 127) << 10;
+                        puff->variant = Random16() & 15;
+                    }
+                }
+                if (frame >= start + 20 && frame < start + 36)
+                    orb.y -= 0x20000;
+            }
+        }
+        if (frame >= 244 && frame <= 251)
+            orb.x -= 0x10000;
+        if (frame >= 252 && frame <= 275)
+            orb.x -= (frame - 250) << 16;
+        if (frame <= 259) {
+            position[0] = orb.x;
+            position[1] = -0x1000000;
+            position[2] = orb.y - 0x1000000;
+            Object_ApplyProjectedPlacementFar(work->objects[7], position, &scale, 0);
+            position[0] = orb.x + 0x200000;
+            Object_ApplyProjectedPlacementFar(work->objects[8], position, &scale, 0);
+        }
+        position[1] = 0;
+        for (i = 0; i != 6; i++) {
+            struct EffectStep *rock = &work->particles[i];
+
+            if (rock->variant != 2) {
+                position[0] = rock->x;
+                position[2] = rock->y;
+                Object_ApplyProjectedPlacementFar(work->objects[9 + i], position, &scale, 0);
+                rock->x += rock->velocity_x;
+                rock->y += rock->velocity_y;
+                if (frame > 96)
+                    rock->velocity_y += 0x4000;
+                if (rock->y > 0x780000) {
+                    rock->variant++;
+                    if (rock->variant == 1) {
+                        rock->velocity_y = -rock->velocity_y / 2;
+                        for (k = 0; k != 2; k++) {
+                            struct EffectStep *puff = &work->particles[30 + i * 2 + k];
+
+                            puff->x = rock->x / 2;
+                            puff->y = rock->y - 0x200000;
+                            puff->velocity_x = ((Random16() & 255) - 127) << 10;
+                            puff->velocity_y = ((Random16() & 255) - 127) << 10;
+                            puff->variant = Random16() & 15;
+                        }
+                    } else if (frame <= 199) {
+                        rock->y = 0;
+                        rock->velocity_y = 0;
+                        rock->variant = 0;
+                    }
+                }
+            }
+        }
+        for (i = 0; i != 56; i++) {
+            struct EffectStep *puff = &work->particles[6 + i];
+
+            if (puff->variant >= 0) {
+                if ((u32)puff->variant <= 23) {
+                    s32 cell = puff->variant / 6 + 3;
+
+                    draw[0](canvas, (u8 *)work + CirclingScene_PuffSheetOffsets[cell],
+                        HI(puff->x) - CirclingScene_PuffSizes[cell] / 2,
+                        HI(puff->y) - CirclingScene_PuffSizes[cell] / 2,
+                        CirclingScene_PuffSizes[cell], CirclingScene_PuffSizes[cell]);
+                }
+                EffectStep_AdvanceWithGravity2D(puff, 60, -0x4000);
+                puff->variant++;
+            }
+        }
+        if (frame == 260) {
+            for (i = 0; i != work->effect->count; i++) {
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+                ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
+            }
+            work->shake_frames = 8;
+        }
+        if (frame == 260) {
+            for (i = 0; i != 512; i++) {
+                struct EffectStep *spark = &SPARKS[i];
+                s32 speed;
+                s32 angle;
+
+                speed = 0x3ff;
+                speed &= Random16();
+                angle = Random16() & 0xffff;
+                spark->x = 0x200000;
+                spark->y = 0x5c0000;
+                spark->velocity_x = Trig_Sin(angle) * (speed + 32) >> 7;
+                spark->velocity_y = -(Trig_Cos(angle) * (speed + 32) << 1) >> 7;
+                spark->variant = (Random16() & 15) + 32;
+            }
+        }
+        for (i = 0; i != 512; i++) {
+            struct EffectStep *spark = &SPARKS[i];
+
+            if (spark->variant >= 0) {
+                s32 size = (spark->variant >> 3) + 1;
+
+                draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                    HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+                EffectStep_AdvanceWithGravity2D(spark, 62, 0x1000);
+                spark->variant--;
+            }
+        }
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    BattleEventRuntime_BeginPhaseFar(134);
+    BattleEffect_SetupBlendedDisplay();
+    for (i = 0; i != 15; i++)
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
+
+/* Where one copy of the flame is drawn. */
+struct TrailPoint {
+    s32 x;
+    s32 y;
+};
+
+/* Battle effect: a flame flies along a stored path to the target and
+   bursts, then drops on it a second time. Nineteen fading copies trail
+   behind the flame; puffs mark where it starts, and embers and flashes fly
+   from each strike. The camera swings for the first sixty-four frames. */
+void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
+{
+    struct TrailPoint trail[20];
+    struct EffectPosition position;
+    DrawRectangle draw[2];
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 frame;
+    s32 drift;
+    s8 *path;
+    s32 x;
+    s32 y;
+    u8 *sheet;
+    struct BattleCamera *camera;
+    s32 i;
+    s32 j;
+
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    drift = 0;
+    x = 0;
+    y = 0;
+    sheet = heap_cache[2];
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0);
+    *(volatile u16 *)0x04000052 = 0x1010;
+    Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work, 1, 1);
+    for (i = 1; i != 20; i++) {
+        for (j = 0; j != 936; j++) {
+            s32 shade = work->sheet[0x1680 + j];
+
+            if (i > 10) {
+                shade = shade - i * 4 + 40;
+                if (shade < 0)
+                    shade = 0;
+                work->sheet[0x1680 + (i - 10) * 936 + j] = shade;
+            }
+        }
+    }
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, &work->sheet[0x3c00], 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, Ram_MapCellBuffer, 1, 0);
+    BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+    for (j = 0; j != 40; j++) {
+        struct EffectStep *ember = &work->particles[8 + j];
+
+        if (work->effect->side == 0)
+            ember->x = -0x380000;
+        else
+            ember->x = 0x380000;
+        ember->y = 0;
+        ember->z = 0;
+        ember->velocity_x = ((Random16() & 63) - 32) << 14;
+        ember->velocity_y = (Random16() & 63) << 13;
+        ember->velocity_z = ((Random16() & 63) - 32) << 14;
+        ember->variant = 1;
+    }
+    for (j = 0; j != 16; j++) {
+        struct EffectStep *flash = &work->particles[48 + j];
+
+        if (work->effect->side == 0)
+            flash->x = -0x380000;
+        else
+            flash->x = 0x380000;
+        flash->y = 0x140000;
+        flash->z = 0;
+        flash->velocity_x = ((Random16() & 63) - 32) << 14;
+        flash->velocity_y = (Random16() & 63) << 12;
+        flash->velocity_z = ((Random16() & 63) - 32) << 14;
+        flash->variant = 0;
+    }
+    for (i = 0, j = -0x4000; i != 8; i++, j += 0x1000) {
+        struct EffectStep *puff = &work->particles[i];
+
+        if (work->effect->side == 1)
+            puff->x = (Trig_Sin(j) * 24 >> 16) + 88;
+        else
+            puff->x = (-(Trig_Sin(j) * 24) >> 16) + 16;
+        puff->y = (Trig_Cos(j) * 16 >> 16) + 40;
+        puff->variant = -(i * 2);
+    }
+    path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
+
+    for (frame = 0; frame != 150; frame++) {
+        camera = gCameraWork;
+        if (frame == 83)
+            BattleEventRuntime_BeginPhaseFar(134);
+        if (frame == 0)
+            AudioCommand_PlayFar(136);
+        if (frame == 50)
+            AudioCommand_PlayFar(136);
+        if (work->effect->side == 0) {
+            if (frame <= 63)
+                camera->yaw -= 0x100;
+        } else {
+            if (frame <= 63)
+                camera->yaw += 0x100;
+        }
+        BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
+        if (frame <= 17) {
+            s32 cell = frame / 3;
+
+            draw[0](canvas, &work->sheet[0x3c00] + PuffArc_CellSourceOffsets[cell],
+                48, PuffArc_CellBiasY[cell] + 60,
+                PuffArc_CellWidths[cell], PuffArc_CellHeights[cell]);
+            draw[1](canvas, &work->sheet[0x3c00] + PuffArc_CellSourceOffsets[cell],
+                56, PuffArc_CellBiasY[cell] + 60,
+                PuffArc_CellWidths[cell], PuffArc_CellHeights[cell]);
+        }
+        if (frame >= 18 && frame <= 58) {
+            if (frame == 18) {
+                x = (path[0] << 8) + (u8)path[1];
+                y = (path[2] << 8) + (u8)path[3] + 16;
+                path += 4;
+            } else {
+                x += path[0];
+                y += path[1];
+                path += 2;
+            }
+        }
+        if (frame >= 78 && frame <= 118) {
+            if (frame == 78) {
+                x = -56;
+                y = 48;
+            } else {
+                y -= 16;
+            }
+        }
+        for (j = 19; j != 0; j--) {
+            if (frame > j + 18 && frame <= j + 83) {
+                trail[j].x = trail[j - 1].x;
+                trail[j].y = trail[j - 1].y;
+                if (j > 10)
+                    draw[0](canvas, &work->sheet[0x1680 + (j - 10) * 936],
+                        trail[j].x, trail[j].y, 24, 39);
+                else
+                    draw[0](canvas, &work->sheet[0x1680], trail[j].x, trail[j].y, 24, 39);
+            }
+        }
+        Render_ResetTransformState();
+        Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+        if (frame >= 18 && frame <= 83) {
+            s32 lift;
+
+            if (work->effect->side == 1)
+                position.x = 64 - x / 2;
+            else
+                position.x = x / 2 + 64;
+            position.y = 60 - y;
+            lift = (position.y - trail[0].y - 24) / 2;
+            if (lift > 2)
+                lift = 2;
+            if (lift < -2)
+                lift = -2;
+            drift += lift;
+            if (drift > 8)
+                drift = 8;
+            if (drift < -8)
+                drift = -8;
+            lift = drift / 4 + 2;
+            trail[0].x = position.x - 12;
+            trail[0].y = position.y - 20;
+            draw[0](canvas, &work->sheet[lift * 0x480],
+                trail[0].x - 6, trail[0].y - 2, 24, 48);
+        }
+        if (frame == 83) {
+            work->shake_frames = 8;
+            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
+        }
+        if (frame > 83) {
+            for (i = 0; i != 56; i++) {
+                struct EffectStep *ember = &work->particles[8 + i];
+
+                if (ember->y >= 0) {
+                    s32 size;
+
+                    EffectPosition_ApplyBaseAndYOffset(&ember->x, &position);
+                    position.x >>= 1;
+                    if (position.depth <= 159)
+                        position.depth = 160;
+                    if (position.depth > 799)
+                        position.depth = 799;
+                    size = 9 - (position.depth - 160) / 64;
+                    if (i > 47) {
+                        if (ember->variant <= 11) {
+                            draw[0](canvas, Ram_MapCellBuffer + ember->variant / 2 * 0x800,
+                                position.x - 16, position.y - 32, 32, 64);
+                            ember->variant++;
+                        }
+                    } else {
+                        draw[0](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                            position.x - size / 2, position.y - size, size, size * 2);
+                    }
+                    ember->x += ember->velocity_x;
+                    ember->y += ember->velocity_y;
+                    ember->z += ember->velocity_z;
+                    ember->velocity_y -= 0x2000;
+                }
+            }
+        }
+        if (frame == 50) {
+            work->shake_frames = 12;
+            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+        }
+        if (frame > 49) {
+            for (i = 0; i != 8; i++) {
+                struct EffectStep *puff = &work->particles[i];
+
+                if ((u32)puff->variant <= 11) {
+                    s32 cell = puff->variant / 2;
+
+                    draw[1](canvas, &work->sheet[0x3c00] + PuffArc_CellSourceOffsets[cell],
+                        puff->x - PuffArc_CellWidths[cell] / 2,
+                        puff->y + PuffArc_CellBiasY[cell],
+                        PuffArc_CellWidths[cell], PuffArc_CellHeights[cell]);
+                }
+                puff->variant++;
+            }
+        }
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
 
 /* Battle effect: the actor closes on the first affected unit, a streak
    crosses it on frames 6-11 (mirrored for the other side) and a burst strip

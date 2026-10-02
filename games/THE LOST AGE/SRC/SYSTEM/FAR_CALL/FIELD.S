@@ -69,18 +69,46 @@ Func_080c87e0:
 	.thumb_func
 Func_080c87e8:
 	overlay_veneer Func_080db9c0
-	.global Func_080c87f0
-	.thumb_func
-Func_080c87f0:
-	overlay_veneer Func_080db9cc
-	.global Func_080c87f8
-	.thumb_func
-Func_080c87f8:
-	overlay_veneer Func_080dc1b0
+	.ifdef TLA_EDITION_ES
 	.global Field_BeginPaletteTransitionFar
 	.thumb_func
 Field_BeginPaletteTransitionFar:
 	overlay_veneer Field_BeginPaletteTransition
+	.else
+	.ifdef TLA_EDITION_IT
+	.global Field_BeginPaletteTransitionFar
+	.thumb_func
+Field_BeginPaletteTransitionFar:
+	overlay_veneer Field_BeginPaletteTransition
+	.else
+	.global Func_080c87f0
+	.thumb_func
+Func_080c87f0:
+	overlay_veneer Func_080db9cc
+	.endif
+	.endif
+	.global Func_080c87f8
+	.thumb_func
+Func_080c87f8:
+	overlay_veneer Func_080dc1b0
+	.ifdef TLA_EDITION_ES
+	.global Field_EndActorSpriteEffectFar
+	.thumb_func
+Field_EndActorSpriteEffectFar:
+	overlay_veneer Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	.global Field_EndActorSpriteEffectFar
+	.thumb_func
+Field_EndActorSpriteEffectFar:
+	overlay_veneer Field_EndActorSpriteEffect
+	.else
+	.global Field_BeginPaletteTransitionFar
+	.thumb_func
+Field_BeginPaletteTransitionFar:
+	overlay_veneer Field_BeginPaletteTransition
+	.endif
+	.endif
 	.global Func_080c8808
 	.thumb_func
 Func_080c8808:

@@ -4,6 +4,7 @@
  * angles.
  */
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "SYSTEM.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
@@ -37,7 +38,6 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 struct ScatterShard *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(void *object, const u8 *script);
 extern const u8 BattleFx_FragmentScript[];
 void Object_Destroy(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -90,7 +90,7 @@ void RunBattleEffect11(void)
     for (index = 0; index < 24; index++) {
         obj = SpawnShard(scene, &position);
         if (obj != 0) {
-            ObjectDispatch_InitializeFar(obj, BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_FragmentScript);
             obj->speed = Random16() + 0x20000;
             obj->lift = 0x20000;
             obj->flag = 0;

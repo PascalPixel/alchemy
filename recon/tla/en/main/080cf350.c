@@ -1,4 +1,13 @@
+/*
+ * Canonical draft API context; no match or adoption is claimed.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six original incomplete-context compile failures remain.
+ * No missing view, declaration or physical symbol was supplied.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ */
 #include "OBJECT_LOOKUP.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
@@ -22,6 +31,6 @@ void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
     Object_SetPosition(object, entity->x, entity->y + 0x240000, entity->z);
     WaitFrames(3);
     Object_SetMode(entity, 28);
-    ObjectDispatch_InitializeFar(object, RomBytes_0809e75c);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)RomBytes_0809e75c);
     entity->angle = 0x4000;
 }

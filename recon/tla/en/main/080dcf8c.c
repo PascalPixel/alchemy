@@ -1,4 +1,13 @@
+/*
+ * Canonical draft API context; no match or adoption is claimed.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six prior successful objects retain every allocated byte and
+ * normalized call/pool operand; no new match or adoption is claimed.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ */
 #include "FIXED_MATH.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
@@ -35,7 +44,6 @@ extern s32 ArcTan2(s32, s32);
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
-extern void ObjectDispatch_InitializeFar(struct ItemBreakFragmentObject *, const void *);
 
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 {
@@ -74,6 +82,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         object->field_48 = 0x1999;
         Object_SetMode(object, 0);
         object->field_5e = 12;
-        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
 }

@@ -1,4 +1,13 @@
+/*
+ * Canonical draft API context; no match or adoption is claimed.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six prior successful objects retain every allocated byte and
+ * normalized call/pool operand; no new match or adoption is claimed.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ */
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "SYSTEM.H"
 #include "OBJECT_EFX.H"
 
@@ -24,7 +33,6 @@ extern struct BattleEffectScene *gEffectWork;
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
-void ObjectDispatch_InitializeFar(void *object, const void *callback);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
@@ -57,7 +65,7 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     BattleEffect_InitializeSharedScene();
     *(void **)((u8 *)main_object + 0x68) = child;
-    ObjectDispatch_InitializeFar(main_object, BattleFx_CommonParticleScript + 12);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)main_object, (u32)(BattleFx_CommonParticleScript + 12));
 
     x = scene->x;
     position[0] = x;

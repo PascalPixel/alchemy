@@ -740,7 +740,7 @@ Func_0817d724:
 	lsls r1, r1, #9
 	adds r2, r7, #0
 	bl Func_080151e4
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	ldr r1, [sp, #28]
 	ldr r2, [sp, #44]
 	ldr r0, [r1]

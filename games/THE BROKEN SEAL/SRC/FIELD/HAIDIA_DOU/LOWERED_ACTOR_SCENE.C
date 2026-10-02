@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
 #include "CALL.H"
@@ -7,7 +8,6 @@ void Object_SetModeById(s32 id, s32 mode);
 void Engine_EventBegin();
 void Battle_WaitMode0();
 void ObjectMotion_SetSpeedParameters();
-void Map_CopyCellAttributeRect();
 void Engine_GameFlagSet();
 void Func_020032f6();
 void ObjectMotion_OffsetPositionAndResetMotion();

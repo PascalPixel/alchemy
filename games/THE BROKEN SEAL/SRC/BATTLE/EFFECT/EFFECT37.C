@@ -1,4 +1,5 @@
 #include "DMA.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
@@ -11,7 +12,6 @@ s32 BattleFx_HueChannelRamp(s32, s32, s32);
 void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *minimum);
 s32 Fixed_Remainder(s32 value, s32 divisor);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-s32 ObjectDispatch_InitializeFar(void *, s32);
 extern const u8 BattleFx_UntargetedObjectScript[];
 
 struct Target_08097a54 {
@@ -131,7 +131,7 @@ void BattleFx_SetCallbackWhenTargetUnset(struct Target_08097a54 *target)
     if (tx == 0x80000000) {
         ty = target->y;
         if ((ty == tx) && (target->z == ty)) {
-            ObjectDispatch_InitializeFar(target, (s32)BattleFx_UntargetedObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)BattleFx_UntargetedObjectScript);
         }
     }
 }

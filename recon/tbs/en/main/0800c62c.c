@@ -1,13 +1,22 @@
-/* 2026-09-30 (Mercury): EXACT, 592 of 592 bytes with approved agscc with the game build flags and two
-   tagged FAKEMATCHes. It sits between
-   FIELD/COMMON/OBJECT/DISPATCH_RETURN_TRUE and OBJECT2, so its module is
-   Mars's to choose; compile it under #if defined(TBS_EDITION_EN) until the
-   other editions adopt theirs. */
-#include "TYPES.H"
-#include "DMA.H"
-#include "IWRAM_CALL.H"
-
-/* main:0800c62c ObjectSystem_UpdateCamera - exact (592 of 592 bytes,
+/* Canonical uncredited draft: ObjectSystem_UpdateCamera.
+   2026-10-02: approved ordinary TBS compiler/options in all six editions.
+   Native and generated complete function extents are 592 bytes, including
+   any literal pool; 2 differing byte positions in each edition.
+   Difference sites: +0x12 (stack allocation) and +0x210 (stack release). Frame changes: 80 to 44.
+   Complete source-linked identities match: 5 direct calls, 4 source-owned pool relocations and 7 other pool words.
+   Trial 1: remove only the unread local array and its obsolete frame
+   claim. Preserve the used scale/position vectors, all source statements
+   and the existing measured order-only do-while device. No additional
+   source shape, compiler option or instruction-presence device was tried.
+   Native source membership and reference-ROM checks were made from the
+   current tree and private immutable same-target namespaces; no output
+   patch or address-binding table feeds the build.
+   The original named function and its neighbours stay in the uncredited
+   raw suffix until coherent matching source can replace that run.
+   Prior trial notes preserved from the current source comment (the former
+   exact status depended on the rejected unread array and is superseded
+   by the current measured result above):
+   main:0800c62c ObjectSystem_UpdateCamera - exact (592 of 592 bytes,
    2026-09-30 helper hF).
 
    Each frame the field camera places every live object on screen: objects
@@ -33,7 +42,13 @@
    gives them r4 and r3 as in the ROM; and one do-while around the size
    load and Dma_Set ends in a loop note, a scheduling barrier that keeps
    the count-zero constant ahead of the object-list load, with the count
-   reset now written before that load. */
+   reset now written before that load.
+*/
+#include "TYPES.H"
+#include "DMA.H"
+#include "IWRAM_CALL.H"
+
+extern u8 *gObjectSlots;
 
 struct CameraTile {
     u32 unk_00 : 12;
@@ -109,10 +124,8 @@ struct CameraSync {
     s16 frozen;
 };
 
-extern u8 gObjectSlots[];
 extern u8 Render_DecodeFrame[];
 extern u8 Render_DecodeFrameCodeSize[];
-
 u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 s32 Resource_ActivateEntry(u32 resource_index);
@@ -135,18 +148,17 @@ void ObjectSystem_UpdateCamera(void)
     s32 top;
     struct CameraTile *tile;
     u32 bits;
-    s32 unused[9]; /* FAKEMATCH: the ROM frame keeps 36 more bytes than it uses. */
     s32 scale[2];
     s32 pos[4];
     s32 y;
     s32 height;
     u32 bits_val;
 
-    state = *(struct CameraState **)((u32)gObjectSlots + 12);
+    state = *(struct CameraState **)((u32)((u8 *)&gObjectSlots) + 12);
     cam = &state->x;
     cam_x = cam[0] & 0xffff0000;
     cam_z = cam[1] & 0xffff0000;
-    sync = *(struct CameraSync **)((u32)gObjectSlots + 4);
+    sync = *(struct CameraSync **)((u32)((u8 *)&gObjectSlots) + 4);
     /* FAKEMATCH: the do-while keeps the copy between the runtime loads and the count reset. */
     do {
         size = (u32)Render_DecodeFrameCodeSize;
@@ -154,7 +166,7 @@ void ObjectSystem_UpdateCamera(void)
             (volatile u32 *)0x040000d4);
     } while (0);
     sync->count = 0;
-    obj = *(struct CameraObject **)(u32)gObjectSlots;
+    obj = *(struct CameraObject **)(u32)((u8 *)&gObjectSlots);
     for (cnt = 0; cnt < 64; cnt++, obj++) {
         if (obj->active == 0)
             continue;

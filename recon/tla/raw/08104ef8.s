@@ -78,7 +78,7 @@ Func_08104ef8:
 	ldrh r0, [r6, r1]
 	strh r3, [r7]
 	bl Func_080c82b8
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	adds r5, r0, #0
 	adds r7, #2
 	cmp r5, #0

@@ -77,7 +77,7 @@ Func_0200285c:
 	.global Func_02002864
 	.thumb_func
 Func_02002864:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_0200286c
 	.thumb_func
 Func_0200286c:
@@ -358,10 +358,24 @@ Func_02002a2c:
 	.thumb_func
 Func_02002a34:
 	overlay_veneer Func_080c87f8
+	.ifdef TLA_EDITION_ES
+	.global Field_EndActorSpriteEffect
+	.thumb_func
+Field_EndActorSpriteEffect:
+	overlay_veneer Field_EndActorSpriteEffectFar
+	.else
+	.ifdef TLA_EDITION_IT
+	.global Field_EndActorSpriteEffect
+	.thumb_func
+Field_EndActorSpriteEffect:
+	overlay_veneer Field_EndActorSpriteEffectFar
+	.else
 	.global Field_BeginPaletteTransition
 	.thumb_func
 Field_BeginPaletteTransition:
 	overlay_veneer Field_BeginPaletteTransitionFar
+	.endif
+	.endif
 	.global Func_02002a44
 	.thumb_func
 Func_02002a44:

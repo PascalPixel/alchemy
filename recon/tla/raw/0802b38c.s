@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0802b38c
+	.global Map_CopyCellAttributeRect
 	.thumb_func
-Func_0802b38c:
+Map_CopyCellAttributeRect:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -102,6 +102,6 @@ Func_0802b38c:
 .L_0802b444:
 	.4byte gMapCellBuffer
 .L_0802b448:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0802b44c:
 	.4byte 0xfffff000

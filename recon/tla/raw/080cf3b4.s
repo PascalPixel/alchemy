@@ -20,7 +20,7 @@ Func_080cf3b4:
 	bl ObjectDispatch_SetSingleChildField26Far
 	ldr r1, .L_080cf41c
 	adds r0, r5, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	movs r3, #128
 	lsls r3, r3, #10
 	str r3, [r5, #40]

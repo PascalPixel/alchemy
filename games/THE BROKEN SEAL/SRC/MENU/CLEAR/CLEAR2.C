@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 
-s32 Runtime_BumpAllocateAlternatePool(s32 mask);
 void Resource_DecodeType01(s32 value, s32 saved);
 void Runtime_BumpFree(s32 saved);
 extern u8 *gWindowWork;
@@ -30,7 +30,7 @@ void SaveMenu_FillTileGrid(struct TileWindow *window, s32 value)
     s32 offset;
 
     shadow = (u16 *)gWindowWork;
-    saved = Runtime_BumpAllocateAlternatePool(0x300);
+    saved = (s32)Runtime_BumpAllocateAlternatePool(0x300);
     Resource_DecodeType01(value, saved);
     offset = (window->y * 32 + window->x) * 2;
     vram = (u16 *)(0x06002000 + offset);

@@ -357,7 +357,7 @@ Func_081823a8:
 	beq .L_08182664
 	b .L_081827b8
 .L_08182664:
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	ldr r2, [sp, #44]
 	movs r3, #3
 	add r2, r8

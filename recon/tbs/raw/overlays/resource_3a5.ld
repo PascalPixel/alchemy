@@ -11,7 +11,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU2.o"(.text)
-        "*/resource_3a5_overlay.o"(.text.x02008e2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SABAKU3.o"(.text)
         "*/resource_3a5_overlay.o"(.text.x020098a2)
         "*/resource_3a5_overlay.o"(.text.x020098a4)

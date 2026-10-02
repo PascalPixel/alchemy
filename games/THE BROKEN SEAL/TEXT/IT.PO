@@ -10843,7 +10843,7 @@ msgctxt "MsgSwapForWhat"
 msgid "02708"
 msgstr "Scambiare per cosa?"
 
-msgctxt "message"
+msgctxt "MsgGiveHowMany"
 msgid "02709"
 msgstr "Quantità?"
 

@@ -553,7 +553,7 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OPEN_ITEM_DETAILS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM9.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/WINDOW.o"(.text)
-        "*/recon/tbs/raw/080a4f08.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GIVE_QUANTITY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM4.o"(.text)
         "*/recon/tbs/raw/080a5b92.o"(.text .rodata .data .padding)

@@ -765,10 +765,6 @@ gEffectScripts:
 	.thumb_func
 Func_080a414c:
 	.incbin "baserom.gba", 0x000a414c, 0x00000340
-	.section .rom.000a4f08, "ax"
-	.global Func_080a4f08
-Func_080a4f08:
-	.incbin "baserom.gba", 0x000a4f08, 0x000002c8
 	.section .rom.000a5d3c, "ax"
 	.global Menu_ResolveSelectedAction
 	.type Menu_ResolveSelectedAction, %function
@@ -804,7 +800,10 @@ Data_080aed4c:
 	.incbin "baserom.gba", 0x000aedc4, 0x00000080
 	.global Data_080aedcc
 Data_080aedcc:
-	.incbin "baserom.gba", 0x000aee44, 0x00000440
+	.incbin "baserom.gba", 0x000aee44, 0x000002c0
+	.global Data_080af08c
+Data_080af08c:
+	.incbin "baserom.gba", 0x000af104, 0x00000180
 	.global Data_080af20c
 Data_080af20c:
 	.incbin "baserom.gba", 0x000af284, 0x00000004

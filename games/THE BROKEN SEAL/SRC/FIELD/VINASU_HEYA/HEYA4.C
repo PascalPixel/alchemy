@@ -84,7 +84,9 @@ void VinasuHeya_SpawnRandomParticles(s32 x, s32 z)
 {
     struct EffectOptions options;
     struct EffectOptions *p = &options;
-    register struct EffectOptions *opts asm("r8"); /* FAKEMATCH: the options pointer is held in r8 once both scales are stored through p */
+    register struct EffectOptions *opts asm("r8"); /* FAKEMATCH: the options pointer is held in r8 once both scales are stored through p.
+        2026-10-02: an ordinary pointer puts options in r7 and x in r8,
+        changing spin storage and both spawn calls. */
     s32 phase;
     u32 coin;
 

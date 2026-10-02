@@ -94,12 +94,6 @@ Object_UpdateAll:
 	.incbin "baserom.gba", 0x0000a494, 0x000004e8
 	.global Object_UpdateAllEnd
 Object_UpdateAllEnd:
-	.section .rom.0000aa0c, "ax"
-	.global Func_0800aa0c
-	.type Func_0800aa0c, %function
-	.thumb_func
-Func_0800aa0c:
-	.incbin "baserom.gba", 0x0000aa0c, 0x00000668
 	.section .rom.0000caca, "ax"
 	.incbin "baserom.gba", 0x0000caca, 0x00000002
 	.section .rom.0000cacc, "ax"
@@ -158,7 +152,34 @@ Object_ShadowTiles:
 	.incbin "baserom.gba", 0x00012f20, 0x00000080
 	.global ResourceSlot_NumberTable
 ResourceSlot_NumberTable:
-	.incbin "baserom.gba", 0x00012fa0, 0x000001ac
+	.incbin "baserom.gba", 0x00012fa0, 0x000000dc
+	.global AnimationFacing_Kind1
+AnimationFacing_Kind1:
+	.incbin "baserom.gba", 0x0001307c, 0x00000010
+	.global AnimationFacing_Kind22
+AnimationFacing_Kind22:
+	.incbin "baserom.gba", 0x0001308c, 0x00000008
+	.global AnimationFacing_Kind2
+AnimationFacing_Kind2:
+	.incbin "baserom.gba", 0x00013094, 0x00000008
+	.global AnimationFacing_Kind3
+AnimationFacing_Kind3:
+	.incbin "baserom.gba", 0x0001309c, 0x00000010
+	.global AnimationFacing_Kind5
+AnimationFacing_Kind5:
+	.incbin "baserom.gba", 0x000130ac, 0x00000010
+	.global AnimationFacing_Kind8
+AnimationFacing_Kind8:
+	.incbin "baserom.gba", 0x000130bc, 0x00000008
+	.global AnimationFacing_Kind88
+AnimationFacing_Kind88:
+	.incbin "baserom.gba", 0x000130c4, 0x00000008
+	.global AnimationFacing_Kind4
+AnimationFacing_Kind4:
+	.incbin "baserom.gba", 0x000130cc, 0x00000040
+	.global AnimationFacing_Kind6
+AnimationFacing_Kind6:
+	.incbin "baserom.gba", 0x0001310c, 0x00000040
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
 	.incbin "baserom.gba", 0x0001314c, 0x00000044

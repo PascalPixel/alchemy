@@ -1188,12 +1188,6 @@ Func_080cc5d8:
 	.incbin "baserom.gba", 0x000c35d8, 0x00000388
 	.section .rom.000c5034, "ax"
 	.incbin "baserom.gba", 0x000c5034, 0x00000828
-	.section .rom.000c62b8, "ax"
-	.global BattleFx_RunMemberBeam
-	.type BattleFx_RunMemberBeam, %function
-	.thumb_func
-BattleFx_RunMemberBeam:
-	.incbin "baserom.gba", 0x000c62b8, 0x000005d4
 	.section .rom.000c68e0, "ax"
 	.global BattleFx_RunSevenMode
 	.type BattleFx_RunSevenMode, %function
@@ -1396,7 +1390,18 @@ EarthWall_CellWidths:
 	.global EarthWall_CellHeights
 EarthWall_CellHeights:
 	.incbin "baserom.gba", 0x000e509f, 0x00000003
-	.incbin "baserom.gba", 0x000e50a2, 0x0000006a
+	.global MemberBeam_MotePictures
+MemberBeam_MotePictures:
+	.incbin "baserom.gba", 0x000e50a2, 0x00000008
+	.global MemberBeam_HeadOffsets
+MemberBeam_HeadOffsets:
+	.incbin "baserom.gba", 0x000e50aa, 0x00000006
+	.global MemberBeam_HeadWidths
+MemberBeam_HeadWidths:
+	.incbin "baserom.gba", 0x000e50b0, 0x00000003
+	.global MemberBeam_HeadHeights
+MemberBeam_HeadHeights:
+	.incbin "baserom.gba", 0x000e50b3, 0x00000059
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000e510c, 0x0000000e

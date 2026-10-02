@@ -1034,18 +1034,18 @@ EarthWall_CellWidths:
 	.global EarthWall_CellHeights
 EarthWall_CellHeights:
 	.incbin "baserom.gba", 0x000ee09f, 0x00000003
-	.global Data_080ee0a2
-Data_080ee0a2:
+	.global MemberBeam_MotePictures
+MemberBeam_MotePictures:
 	.incbin "baserom.gba", 0x000ee0a2, 0x00000008
-	.global Data_080ee0aa
-Data_080ee0aa:
+	.global MemberBeam_HeadOffsets
+MemberBeam_HeadOffsets:
 	.incbin "baserom.gba", 0x000ee0aa, 0x00000006
-	.global Data_080ee0b0
-Data_080ee0b0:
+	.global MemberBeam_HeadWidths
+MemberBeam_HeadWidths:
 	.incbin "baserom.gba", 0x000ee0b0, 0x00000002
 	.incbin "baserom.gba", 0x000ee0b2, 0x00000001
-	.global Data_080ee0b3
-Data_080ee0b3:
+	.global MemberBeam_HeadHeights
+MemberBeam_HeadHeights:
 	.incbin "baserom.gba", 0x000ee0b3, 0x00000003
 	.global Data_080ee0b6
 Data_080ee0b6:

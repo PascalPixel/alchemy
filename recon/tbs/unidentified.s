@@ -1183,46 +1183,46 @@ RenderMode_GlintFlips:
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000ee2b4, 0x0000065c
-	.global Data_080ee910
-Data_080ee910:
+	.global ThornVines_ObjectPoses
+ThornVines_ObjectPoses:
 	.incbin "baserom.gba", 0x000ee910, 0x00000006
-	.global Data_080ee916
-Data_080ee916:
+	.global ThornVines_ThornOffsets
+ThornVines_ThornOffsets:
 	.incbin "baserom.gba", 0x000ee916, 0x0000000a
-	.global Data_080ee920
-Data_080ee920:
+	.global ThornVines_ThornWidths
+ThornVines_ThornWidths:
 	.incbin "baserom.gba", 0x000ee920, 0x00000004
 	.incbin "baserom.gba", 0x000ee924, 0x00000001
-	.global Data_080ee925
-Data_080ee925:
+	.global ThornVines_ThornHeights
+ThornVines_ThornHeights:
 	.incbin "baserom.gba", 0x000ee925, 0x00000005
-	.global Data_080ee92a
-Data_080ee92a:
+	.global ThornVines_LeafOffsets
+ThornVines_LeafOffsets:
 	.incbin "baserom.gba", 0x000ee92a, 0x00000006
-	.global Data_080ee930
-Data_080ee930:
+	.global ThornVines_LeafSizes
+ThornVines_LeafSizes:
 	.incbin "baserom.gba", 0x000ee930, 0x00000004
-	.global Data_080ee934
-Data_080ee934:
+	.global ThornVines_ChipOffsets
+ThornVines_ChipOffsets:
 	.incbin "baserom.gba", 0x000ee934, 0x0000000a
-	.global Data_080ee93e
-Data_080ee93e:
+	.global ThornVines_ChipWidths
+ThornVines_ChipWidths:
 	.incbin "baserom.gba", 0x000ee93e, 0x00000004
 	.incbin "baserom.gba", 0x000ee942, 0x00000001
-	.global Data_080ee943
-Data_080ee943:
+	.global ThornVines_ChipHeights
+ThornVines_ChipHeights:
 	.incbin "baserom.gba", 0x000ee943, 0x00000005
-	.global Data_080ee948
-Data_080ee948:
+	.global ThornVines_SparkOffsets
+ThornVines_SparkOffsets:
 	.incbin "baserom.gba", 0x000ee948, 0x0000000a
-	.global Data_080ee952
-Data_080ee952:
+	.global ThornVines_SparkSizes
+ThornVines_SparkSizes:
 	.incbin "baserom.gba", 0x000ee952, 0x00000006
-	.global Data_080ee958
-Data_080ee958:
+	.global ThornVines_EmberOffsets
+ThornVines_EmberOffsets:
 	.incbin "baserom.gba", 0x000ee958, 0x0000000e
-	.global Data_080ee966
-Data_080ee966:
+	.global ThornVines_EmberSizes
+ThornVines_EmberSizes:
 	.incbin "baserom.gba", 0x000ee966, 0x0000000e
 	.global BattleFx10_Points
 BattleFx10_Points:

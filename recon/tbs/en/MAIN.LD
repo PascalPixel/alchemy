@@ -793,7 +793,7 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP_BLENDED_DISPLAY.o"(.text)
         "*/recon/tbs/raw/080d6886.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT12.o"(.text)
-        "*/recon/tbs/raw/080d6970.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/THORN_VINES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/INITIALIZE_MODE10.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/GATHER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SERIES_A.o"(.text)

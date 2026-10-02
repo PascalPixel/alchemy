@@ -1,89 +1,106 @@
-/* DRAFT: 596 of 620 bytes, 165 aligned halfword edits. Renders a string in the
- * 8x8 font (0x080F1770, widths at 0x080F11BD) into a 256-wide 8bpp buffer
- * with a drop shadow, aligned left, right (2) or centred (1) in 192 pixels,
- * packs it to 4bpp and copies 24 tiles to OBJ VRAM from slot; flag 0x200
- * marks the first call, later calls keep the previous top row.
- * Remaining: the frame is 44 bytes (the unused tile array reproduces that);
- * the reference hoists 96 twice (r7 for the pre-check and pointer rewind,
- * r8 as the reversed counter's start), 192 into lr and 256 into r6 for the
- * pack loop, and counts the tile loop down from sl = 24 with the VRAM offset
- * and source as separate pointers. A countdown with separate source and VRAM
- * cursors reproduces those increments, but the count remains in a low register;
- * the first character is also shared across the width and drawing scans. */
+/* Native DisplayScroll_DrawLine: complete 620 bytes including its literal pool.
+ * Ordinary TBS flags, freshly linked in all six editions, 2026-10-02.
+ * This plain source differs at exactly two byte positions (+0x12 and +0x226):
+ * stack reservation/release are 12 bytes; native code uses 44. All working
+ * stack accesses, calls and pool words match. No unread reservation is kept.
+ * Incoming unread u32[8] matched 620 bytes, but was refused under S2: its
+ * sole effect is the frame reserve/release extent; removing it changes no
+ * working stack offsets. That attempt is recorded here, not kept as source.
+ * Four ordinary EN trials: declarations-before-call 620/26, scoped glyph
+ * locals 612/249, real glyph-state aggregate 712/613, tile packet 640/474
+ * (emitted bytes/differing bytes, complete linked extents).
+ * The measured CopyWords/register-rematerialization devices remain tagged.
+ */
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
+#include "DMA.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "IWRAM_CALL.H"
 
-typedef s32 (*FillFn)(void *dst, s32 size, s32 value);
-typedef s32 (*CopyFn)(void *src, void *dst, s32 size);
+extern u16 Data_02004c00;
+extern s16 Flash_Handler0;
+extern u32 *gFlashNumRemainingBytes;
+extern u32 gFrameTick;
 
-static __inline__ void FillWords(void *dst, s32 size, s32 value)
-{
-    ((FillFn)0x03000168)(dst, size, value);
-}
+extern s16 Flash_Layout;
+extern const void *DisplayScroll_LineTable[];
 
-static __inline__ void CopyWords(void *src, void *dst, s32 size)
-{
-    ((CopyFn)0x03001388)(src, dst, size);
-}
-
-extern u8 Data_080f11bd[];
-extern u8 Data_080f1770[];
-
-u8 *Runtime_BumpAllocateAlternatePool(s32 size);
+void DisplayScroll_UpdateObjects(void);
+void DisplayScroll_RenderEnteringLine(void);
 void Runtime_BumpFree(void *block);
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
+s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align);
 
-s32 Unnamed_080f07f0(u8 *text, s32 slot, s32 align)
+extern const u8 DisplayScroll_GlyphWidths[];
+extern const u8 DisplayScroll_Font[];
+
+static __inline__ void DisplayScroll_CopyWords(void *destination, void *source, s32 size)
 {
-    u8 *buf = Runtime_BumpAllocateAlternatePool(0x900);
-    u32 tile[8];
+    /* FAKEMATCH: a direct call keeps the size in r5 for the fill that follows
+       and puts the row total in r6; through this the size is built in r2. */
+    Iwram_CopyWords(destination, source, size);
+}
+
+/* Draw one line of the scrolling text into 24 object tiles starting at
+   `slot`: left aligned, centred (1) or right aligned (2) in 192 pixels.
+
+   The line is drawn 8bpp into a 256-wide work buffer, each lit pixel in
+   colour 15 with a shadow in colour 1 one pixel down and to the right, then
+   packed to 4bpp in place and copied to object VRAM a tile column at a time.
+   The buffer has nine pixel rows: the ninth holds the shadow that falls below
+   the line, and becomes the top row of the next line drawn. */
+s32 DisplayScroll_DrawLine(const u8 *text, s32 slot, s32 align)
+{
+    u8 *buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x900);
     s32 x = 0;
     s32 width = 192;
-    s32 half;
+    const u8 *font = DisplayScroll_Font;
     s32 tiles;
     s32 pos;
-    u8 *p;
-    u8 *glyph;
+    const u8 *p;
     u8 *dst;
-    u8 *src;
     u32 c;
-    s32 idx;
+    s32 glyph;
     s32 w;
     s32 row;
     s32 bit;
     u32 bits;
     u32 mask;
-    s32 n;
-    s32 offset;
-    u32 *words;
 
     if (text == NULL)
         return -1;
     if (!GameFlag_TestFar(0x200)) {
-        FillWords(buf, 0x900, 0);
+        Iwram_FillWords(buf, 0x900, 0);
         GameFlag_SetBitFar(0x200);
     } else {
-        CopyWords(buf, buf + 0x800, 0x100);
-        FillWords(buf + 0x100, 0x800, 0);
+        DisplayScroll_CopyWords(buf, buf + 0x800, 0x100);
+        Iwram_FillWords(buf + 0x100, 0x800, 0);
     }
+
     p = text;
     pos = 0;
     while ((c = *p++) != 0) {
         if (c > 31)
-            pos += Data_080f11bd[c - 32];
+            pos += DisplayScroll_GlyphWidths[c - 32];
     }
     if (align == 2)
         x = width - pos;
     else if (align == 1)
         x = (width - pos) / 2;
+
+    /* FAKEMATCH: nothing reads this pointer before the glyph row sets it;
+       without the assignment the first character is fetched through r2 and
+       the text pointer stepped with a constant in r3. */
+    p = text;
     pos = 0;
     while ((c = *text++) != 0) {
         if (c > 31) {
-            idx = c - 32;
-            glyph = &Data_080f1770[idx * 8];
+            glyph = c - 32;
+            p = font + glyph * 8;
             dst = buf + x + pos;
             for (row = 0; row < 8; row++) {
-                bits = *glyph++;
+                bits = *p++;
                 mask = 0x80;
                 for (bit = 7; bit >= 0; bit--) {
                     if (bits & mask) {
@@ -97,35 +114,36 @@ s32 Unnamed_080f07f0(u8 *text, s32 slot, s32 align)
             }
             w = 1;
             if (c > 31)
-                w = Data_080f11bd[idx];
+                w = DisplayScroll_GlyphWidths[glyph];
             pos += w;
         }
     }
+
     tiles = width / 8;
-    half = width / 2;
+    p = buf;
     dst = buf;
-    src = buf;
-    for (row = 7; row >= 0; row--) {
-        for (n = half; n != 0; n--) {
-            *dst++ = src[0] | (src[1] << 4);
-            src += 2;
+    for (row = 0; row < 8; row++) {
+        for (bit = 0; bit < tiles * 4; bit++) {
+            c = *p++;
+            c |= *p++ << 4;
+            *dst++ = c;
         }
-        dst += 256 - half;
-        src += 256 - width;
+        dst += 256 - tiles * 4;
+        p += 256 - tiles * 8;
     }
-    words = (u32 *)buf;
-    offset = slot * 32;
-    for (n = tiles; n != 0; n--) {
-        *(u32 *)(0x06010000 + offset) = words[0x000];
-        *(u32 *)(0x06010004 + offset) = words[0x040];
-        *(u32 *)(0x06010008 + offset) = words[0x080];
-        *(u32 *)(0x0601000c + offset) = words[0x0c0];
-        *(u32 *)(0x06010010 + offset) = words[0x100];
-        *(u32 *)(0x06010014 + offset) = words[0x140];
-        *(u32 *)(0x06010018 + offset) = words[0x180];
-        *(u32 *)(0x0601001c + offset) = words[0x1c0];
-        offset += 32;
-        words++;
+
+    for (row = 0; row < tiles; row++) {
+        s32 tile = slot + row;
+        u32 *words = (u32 *)buf + row;
+
+        *(u32 *)(0x06010000 + tile * 32) = words[0x000];
+        *(u32 *)(0x06010004 + tile * 32) = words[0x040];
+        *(u32 *)(0x06010008 + tile * 32) = words[0x080];
+        *(u32 *)(0x0601000c + tile * 32) = words[0x0c0];
+        *(u32 *)(0x06010010 + tile * 32) = words[0x100];
+        *(u32 *)(0x06010014 + tile * 32) = words[0x140];
+        *(u32 *)(0x06010018 + tile * 32) = words[0x180];
+        *(u32 *)(0x0601001c + tile * 32) = words[0x1c0];
     }
     Runtime_BumpFree(buf);
     return 0;

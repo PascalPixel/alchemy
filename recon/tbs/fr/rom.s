@@ -1813,15 +1813,25 @@ RisingBurst_SparkSizes:
 SentouKouka_BitOperands:
 	.incbin "baserom.gba", 0x000f2834, 0x000007cc
 	.section .rom.000f37f0, "ax"
-	.global Func_080f07f0
-Func_080f07f0:
+	.global DisplayScroll_DrawLine
+	.type DisplayScroll_DrawLine, %function
+	.thumb_func
+DisplayScroll_DrawLine:
 	.incbin "baserom.gba", 0x000f37f0, 0x0000026c
+	.size DisplayScroll_DrawLine, .-DisplayScroll_DrawLine
+	.section .rom.000f3a5c, "ax"
 	.global DisplayScroll_SlideResources
 DisplayScroll_SlideResources:
-	.incbin "baserom.gba", 0x000f3a5c, 0x00000848
+	.incbin "baserom.gba", 0x000f3a5c, 0x000007e5
+	.global DisplayScroll_GlyphWidths
+DisplayScroll_GlyphWidths:
+	.incbin "baserom.gba", 0x000f4241, 0x00000063
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
-	.incbin "baserom.gba", 0x000f42a4, 0x00000d5c
+	.incbin "baserom.gba", 0x000f42a4, 0x00000544
+	.global DisplayScroll_Font
+DisplayScroll_Font:
+	.incbin "baserom.gba", 0x000f47e8, 0x00000818
 	.section .rom.000f5028, "ax"
 	.global Func_080f2028
 	.type Func_080f2028, %function
@@ -1861,8 +1871,8 @@ LuckyDice_Run:
 	.thumb_func
 Unnamed_080f7460:
 	.incbin "baserom.gba", 0x000fa470, 0x00000954
-	.section .rom.000faf88, "ax"
-	.incbin "baserom.gba", 0x000faf88, 0x000007be
+	.section .rom.000fb708, "ax"
+	.incbin "baserom.gba", 0x000fb708, 0x0000003e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:
 	.incbin "baserom.gba", 0x000fb746, 0x000000ba

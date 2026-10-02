@@ -1178,8 +1178,8 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000cb438, 0x000013c8
-	.section .rom.000cc9dc, "ax"
-	.incbin "baserom.gba", 0x000cc9dc, 0x00000a84
+	.section .rom.000ccf2c, "ax"
+	.incbin "baserom.gba", 0x000ccf2c, 0x00000534
 	.section .rom.000cd4a8, "ax"
 	.global BattleFx_RunFiveMode
 	.type BattleFx_RunFiveMode, %function
@@ -1363,6 +1363,8 @@ BattleFx_GlintCellWidths:
 	.global BattleFx_GlintCellHeights
 BattleFx_GlintCellHeights:
 	.incbin "baserom.gba", 0x000f16d0, 0x00000006
+	.global FallingShards_Counts
+FallingShards_Counts:
 	.incbin "baserom.gba", 0x000f16d6, 0x000000a9
 	.global BladeRain_CellWidths
 BladeRain_CellWidths:

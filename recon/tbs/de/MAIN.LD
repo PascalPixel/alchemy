@@ -676,7 +676,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.000c5022)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/EFFECT.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT7.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000cafdc)
+    "*/recon/tbs/de/rom.o"(.rom.000cb52c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_FIVE_MODE_MODE0.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000cbaa8)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_POOL.o"(.text)

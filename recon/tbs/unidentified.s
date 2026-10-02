@@ -950,8 +950,8 @@ BattleFx_GlintCellWidths:
 	.global BattleFx_GlintCellHeights
 BattleFx_GlintCellHeights:
 	.incbin "baserom.gba", 0x000eded0, 0x00000006
-	.global Data_080eded6
-Data_080eded6:
+	.global FallingShards_Counts
+FallingShards_Counts:
 	.incbin "baserom.gba", 0x000eded6, 0x00000006
 	.global Data_080ededc
 Data_080ededc:

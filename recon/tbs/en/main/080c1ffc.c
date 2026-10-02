@@ -93,10 +93,10 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     count = 0;
     budget = 6;
     for (i = 0; i <= 4; i++) {
-        if (record->minimum_counts[i] != 0)
-        {
+        if (record->minimum_counts[i] != 0) {
             size = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
-            budget -= size * record->minimum_counts[i];
+            size *= record->minimum_counts[i];
+            budget -= size;
         }
     }
 
@@ -181,16 +181,14 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     for (i = 128; i <= 133; i++)
         ((ClearFn)0x03000164)(Owner_GetStateFar(i), 332);
 
-    n = 0;
-    if (list[0] != 0) do {
-        charge = Summon_TakeCharge(list[n], 1);
+    for (i = 0; i <= 5 && list[i] != 0; i++) {
+        charge = Summon_TakeCharge(list[i], 1);
         if (charge & 0x8000)
-            Summon_ResetCharge(list[n]);
-        BattleUnit_AssignFar(n + 128, list[n], charge & 0x7fff);
-        Owner_GetStateFar(n + 128);
+            Summon_ResetCharge(list[i]);
+        BattleUnit_AssignFar(i + 128, list[i], charge & 0x7fff);
+        Owner_GetStateFar(i + 128);
         if (margin != 0)
-            Owner_ApplyLevelGains(n + 128, margin);
-        n++;
-    } while (n <= 5 && list[n] != 0);
-    return n;
+            Owner_ApplyLevelGains(i + 128, margin);
+    }
+    return i;
 }

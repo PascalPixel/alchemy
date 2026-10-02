@@ -6,62 +6,21 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
-
-/* The 0x70-byte script object as this pass uses it. */
-struct ScriptWords {
-    s32 word[1];
-};
-
-struct MotionObject {
-    const struct ScriptWords *script;
-    u16 script_cursor;
-    u16 script_value;
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 terrain_height;
-    u8 unknown_18[0x0a];
-    u8 terrain_id;
-    u8 unknown_23;
-    s32 velocity_x;
-    s32 velocity_y;
-    s32 velocity_z;
-    s32 speed_limit;
-    s32 acceleration;
-    s32 target_x;
-    s32 target_y;
-    s32 target_z;
-    s32 phase;
-    s32 gravity;
-    u8 unknown_4c[9];
-    u8 flags;
-    u8 action;
-    u8 unknown_57;
-    u8 snap;
-    u8 collide;
-    u8 steer;
-    u8 paused;
-    u8 unknown_5c[2];
-    s16 wait;
-    u8 refused;
-    u8 guard;
-    u8 unknown_62[10];
-    void (*hook)(struct MotionObject *);
-};
+#include "SCRIPT_MOTION.H"
+#include "SCRIPT_OBJECT_ENTRY.H"
 
 /* An axis target holds this sentinel while no target is set. */
 #define TARGET_UNSET ((s32)0x80000000)
 
 /* The 64-entry script command dispatch table and the cycle table used by the
  * flag-8/flag-4 vertical motion. */
-typedef s32 (*ScriptCommandFn)(struct MotionObject *);
+typedef s32 (*ScriptCommandFn)(struct ScriptMotionObject *);
 
 extern ScriptCommandFn ScriptObject_CommandTable[];
 extern const s32 ScriptObject_CycleTable[];
-extern struct MotionObject *gObjectSlots;
+extern struct ScriptMotionObject *gObjectSlots;
 
 s32 Func_08011f54(s32, s32, s32);
-s32 ScriptObject_CheckOverlap(struct MotionObject *, s32 *);
 s32 FixedSqrt(s32);
 s32 ArcTan2(s32, s32);
 
@@ -74,8 +33,8 @@ static __inline__ s32 Square(s32 value)
 
 void Object_UpdateAllThumb(void)
 {
-    struct MotionObject *obj;
-    const struct ScriptWords *script;
+    struct ScriptMotionObject *obj;
+    const struct ScriptMotionWords *script;
     s32 cnt;
     s32 px;
     s32 py;
@@ -136,8 +95,8 @@ void Object_UpdateAllThumb(void)
         py = obj->y;
         pz = obj->z;
 
-        if (obj->guard == 0) {
-            if (obj->flags == 0) {
+        if (obj->frozen == 0) {
+            if (obj->motion_flags == 0) {
                 /* Three-axis approach. */
                 if (obj->target_x != TARGET_UNSET) {
                     dx = (obj->target_x - px) / 65536;
@@ -234,7 +193,7 @@ void Object_UpdateAllThumb(void)
 
                 /* Flag 0x01: follow the ground under the next planar step and
                  * bleed off speed proportional to the slope climbed. */
-                if ((obj->flags & 1) != 0) {
+                if ((obj->motion_flags & 1) != 0) {
                     vx = px + obj->velocity_x;
                     vz = pz + obj->velocity_z;
                     ground = Func_08011f54((s32)obj->terrain_id, vx, vz);
@@ -247,7 +206,7 @@ void Object_UpdateAllThumb(void)
                     if (vy > half)
                         vy = half;
                     vy = vy * 3;
-                    if (vy != 0 && (obj->flags & 0x10) == 0) {
+                    if (vy != 0 && (obj->motion_flags & 0x10) == 0) {
                         dx = obj->velocity_x;
                         dy = obj->velocity_y;
                         dz = obj->velocity_z;
@@ -268,13 +227,13 @@ void Object_UpdateAllThumb(void)
 
                 /* Flag 0x02: fall toward the stored ground height, then
                  * rebound with the damping factor at +0x44. */
-                if ((obj->flags & 2) != 0) {
+                if ((obj->motion_flags & 2) != 0) {
                     ground = obj->terrain_height;
                     if (py > ground) {
                         obj->velocity_y -= obj->gravity;
                     } else if (obj->velocity_y < 0) {
                         py = ground;
-                        obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->phase);
+                        obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
                         if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
                             obj->velocity_y = 0;
                     }
@@ -282,13 +241,13 @@ void Object_UpdateAllThumb(void)
 
                 /* Flag 0x04: drive the vertical velocity straight off the
                  * cycle table instead, at one of two scales. */
-                if ((obj->flags & 4) != 0) {
-                    phase = (u32)(obj->phase & 0x3f);
-                    if ((obj->flags & 8) != 0)
+                if ((obj->motion_flags & 4) != 0) {
+                    phase = (u32)(obj->vertical.phase & 0x3f);
+                    if ((obj->motion_flags & 8) != 0)
                         obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 16;
                     else
                         obj->velocity_y = ScriptObject_CycleTable[phase >> 1] * obj->gravity / 64;
-                    obj->phase++;
+                    obj->vertical.phase++;
                 }
             }
         }
@@ -299,11 +258,11 @@ void Object_UpdateAllThumb(void)
 
         /* Flag 0x80 at +0x59: refuse a step that would overlap another
          * entry, and count how many frames in a row it was refused. */
-        if ((obj->collide & 0x80) != 0) {
+        if ((obj->collision_flags & 0x80) != 0) {
             pos[0] = px;
             pos[1] = py;
             pos[2] = pz;
-            if (ScriptObject_CheckOverlap(obj, pos) != 0) {
+            if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)obj, pos) != 0) {
                 obj->refused++;
                 continue;
             }
@@ -312,7 +271,7 @@ void Object_UpdateAllThumb(void)
 
         /* Action kinds 16/17/18 watch one axis and report the frame in which
          * the target is reached or passed. */
-        switch (obj->action) {
+        switch (obj->arrival_axis) {
         case 16:
             if (px == obj->target_x ||
                 ((obj->x - obj->target_x) ^ (px - obj->target_x)) < 0)
@@ -333,12 +292,12 @@ void Object_UpdateAllThumb(void)
         }
 
         if (reached != 0) {
-            if (obj->snap != 0) {
+            if (obj->snap_to_target != 0) {
                 px = obj->target_x;
                 obj->velocity_x = 0;
                 pz = obj->target_z;
                 obj->velocity_z = 0;
-                if (obj->flags == 0) {
+                if (obj->motion_flags == 0) {
                     py = obj->target_y;
                     obj->velocity_y = 0;
                 }
@@ -346,7 +305,7 @@ void Object_UpdateAllThumb(void)
             obj->target_x = TARGET_UNSET;
             obj->target_y = TARGET_UNSET;
             obj->target_z = TARGET_UNSET;
-            obj->action = 0;
+            obj->arrival_axis = 0;
         }
 
         obj->x = px;
@@ -355,20 +314,20 @@ void Object_UpdateAllThumb(void)
 
         /* Flag 0x01 at +0x5a: steer the facing angle toward the direction of
          * travel, at most 0x1000 of a 0x10000 turn per frame. */
-        if ((obj->steer & 1) != 0) {
+        if ((obj->steering_flags & 1) != 0) {
             px = obj->velocity_x;
             pz = obj->velocity_z;
             if (px != 0 || pz != 0) {
                 s32 limit;
 
-                work = (s16)(ArcTan2(pz, px) - obj->script_value);
+                work = (s16)(ArcTan2(pz, px) - obj->facing);
                 limit = 0x1000;
                 if (work > limit)
                     work = limit;
                 limit = -0x1000;
                 if (work < limit)
                     work = limit;
-                obj->script_value = obj->script_value + work;
+                obj->facing = obj->facing + work;
             }
         }
     }

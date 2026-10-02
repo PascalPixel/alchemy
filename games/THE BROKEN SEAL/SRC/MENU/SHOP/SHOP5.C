@@ -9,9 +9,8 @@
 #include "TYPES.H"
 
 extern struct ShopRuntime *gMenuWork;
-extern u8 Data_03001f2c[];
-extern u8 Data_03001c94[];
-extern u8 gKeysRepeat[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 void UiWork_FinalizeFar(s32, s32);
 s32 Inventory_CountFar(s32);
 void Audio_PlayCue(s32);
@@ -34,14 +33,7 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void Func_08077068(s32 unit_id, s32 slot);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
-extern volatile u32 gKeyState;
 #define SPECIAL_ITEM 228
-
-struct SpecialItemState {
-    u8 unknown_000[0x118];
-    s32 coins;
-    s8 purchases;
-};
 
 extern const s16 Shop_SpecialItemPrices[];
 extern u8 MsgTokenGift[];
@@ -97,7 +89,7 @@ s32 Shop_SelRepair(s32 unit_id)
 
     for (;;) {
         price_window = UiWindow_CreateFar(0, 5, 30, 3, 2);
-        shop->cursor.anchor->kind = 18;
+        shop->cursor.anchor->one5 = 18;
         shop->mode = 12;
         redraw = 1;
 
@@ -118,29 +110,29 @@ s32 Shop_SelRepair(s32 unit_id)
                 Shop_DrawMsg(
                     price_window, item_id + (s32)&MsgItemPlainName);
             }
-            if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {
+            if ((gKeyState & 1) != 0) {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
                 result = 0;
                 goto done;
             }
-            if ((*(volatile u32 *)((u32)&Data_03001c94) & 2) != 0) {
+            if ((gKeyState & 2) != 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 result = -1;
                 goto done;
             }
-            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x20) != 0) {
+            if ((gKeysRepeat & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
-            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x10) != 0) {
+            if ((gKeysRepeat & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
-            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x40) != 0) {
+            if ((gKeysRepeat & 0x40) != 0) {
                 selection -= 5;
                 if (selection < 0)
                     selection += 15;
@@ -149,7 +141,7 @@ s32 Shop_SelRepair(s32 unit_id)
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
-            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x80) != 0) {
+            if ((gKeysRepeat & 0x80) != 0) {
                 selection += 5;
                 if (selection >= item_count)
                     selection -= 15;
@@ -253,7 +245,6 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
 void Shop_BuySpecialItem(void *window, s32 item_window)
 {
     struct ShopRuntime *shop = gMenuWork;
-    struct SpecialItemState *state = (struct SpecialItemState *)&gGameState;
     s32 price;
     u32 saved;
     s32 redraw;
@@ -265,10 +256,10 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
     redraw = 1;
     unit_id = 0;
     saved = shop->selected_item;
-    price = Shop_SpecialItemPrices[state->purchases];
+    price = Shop_SpecialItemPrices[gGameState.shop_gifts];
     selected_index = 0;
 
-    if (price > state->coins)
+    if (price > gGameState.shop_credit)
         return;
     shop->selected_item = SPECIAL_ITEM;
     UiWork_PushValueSlotFar(SPECIAL_ITEM, 2);
@@ -312,12 +303,12 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
             Audio_PlayCue(0x71);
             goto done;
         }
-        if (((*(volatile u32 *)gKeysRepeat) & 0x20) != 0) {
+        if (((gKeysRepeat) & 0x20) != 0) {
             Audio_PlayCue(0x6f);
             selected_index--;
             redraw = 1;
         }
-        if (((*(volatile u32 *)gKeysRepeat) & 0x10) != 0) {
+        if (((gKeysRepeat) & 0x10) != 0) {
             Audio_PlayCue(0x6f);
             selected_index++;
             redraw = 1;

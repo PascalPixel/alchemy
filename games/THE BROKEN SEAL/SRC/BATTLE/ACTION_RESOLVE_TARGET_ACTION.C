@@ -149,14 +149,14 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 
     /* 属性相性。テーブルを二方向に走査して符号を決める。 */
     if (range != 4) {
-        struct BattleElementLevel *levels;
+        struct BattleElementStats *levels;
         s32 i;
 
-        value = target->element_levels[range].level;
-        levels = target->element_levels;
+        value = target->base_elements[range].resist;
+        levels = target->base_elements;
         i = 0;
-        if (value >= levels[0].level) {
-            struct BattleElementLevel *p;
+        if (value >= levels[0].resist) {
+            struct BattleElementStats *p;
 
             p = levels;
             do {
@@ -164,7 +164,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
                 p++;
                 if (i > 3)
                     break;
-            } while (value >= p->level);
+            } while (value >= p->resist);
         }
         if (i == 4)
             affinity = -1;
@@ -181,7 +181,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
                     i++;
                     if (i > 3)
                         break;
-                } while (value <= target->element_levels[i].level);
+                } while (value <= target->base_elements[i].resist);
             }
         }
         if (i == 4)
@@ -1208,10 +1208,10 @@ pp_store:
         }
         if (target->agility_modifier > 0)
             target->agility_modifier = 0;
-        target->status_12c = 0;
-        target->status_12d = 0;
-        target->status_12e = 0;
-        target->status_12f = 0;
+        target->element_modifier[0] = 0;
+        target->element_modifier[1] = 0;
+        target->element_modifier[2] = 0;
+        target->element_modifier[3] = 0;
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgBuffsReset);
         break;
 

@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "SCENE.H"
+#include "FIELD_SPRITE.H"
 
 extern u8 ResourceBlockOwners[];
 
@@ -24,17 +24,17 @@ s32 ResourceTable_CountFreeBlocks(void)
 void *Object_ReplaceResourceEntry(void *src, void *alt)
 {
     void *ret;
-    void *obj;
+    struct FieldSprite *obj;
 
     obj = src;
     ret = NULL;
     if (obj != NULL) {
         if (alt == NULL) {
-            FIELD_AT_OFFSET(obj, u8 *, 0x1D) = (u8)(FIELD_AT_OFFSET(obj, u8 *, 0x1D) | 1);
+            *((u8 *)obj + 0x1d) = (u8)(*((u8 *)obj + 0x1d) | 1);
         } else {
-            Resource_ResetEntry(FIELD_AT_OFFSET(obj, u8 *, 0x1C));
-            FIELD_AT_OFFSET(obj, u8 *, 0x1C) = (u8)FIELD_AT_OFFSET(alt, u8 *, 0x1C);
-            FIELD_AT_OFFSET(obj, u8 *, 0x1D) = (u8)(FIELD_AT_OFFSET(obj, u8 *, 0x1D) | 1);
+            Resource_ResetEntry(obj->vram_block);
+            obj->vram_block = (u8)((struct FieldSprite *)alt)->vram_block;
+            *((u8 *)obj + 0x1d) = (u8)(*((u8 *)obj + 0x1d) | 1);
             obj = alt;
         }
         ret = obj;

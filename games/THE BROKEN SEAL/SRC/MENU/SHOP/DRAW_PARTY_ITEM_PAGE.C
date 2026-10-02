@@ -1,6 +1,8 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+#include "INVENTORY_MENU.H"
+#include "BATTLE_RUNTIME.H"
 
 /* The Japanese item names and stats sit closer, and the page icons a little
    further right. */
@@ -14,79 +16,58 @@
 #define SHOP_STAT_X       72
 #endif
 
-/* Main-image symbols: every pool word inside the ROM or the work RAM. */
 extern u8 MsgItemName[];
 extern u8 MsgStatLabel[];
 extern char MsgItemMenuEmpty;
-extern u8 gMenuWork[];
-void UiWindow_ClearInteriorTilesFar();
-void UiText_DrawCharacterAtOffsetFar();
-void UiText_DrawStringAtOffsetFar();
-void UiText_DrawNumberInWindowFar();
-s32 Owner_GetStateFar();
-void Menu_DrawPageIndicator();
-void Menu_SetPageIcons();
+extern struct InventoryMenuState *gMenuWork;
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
+void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
+void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
+void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 
-s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
+s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state)
 {
-    u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p11;
-    s32 p8;
-    s32 p9;
-    s32 p9b;
-    s32 rec5;
-    s32 record;
-    s32 r10;
-    s32 v10;
-    s32 v5;
-    s32 base6_0;
-    s32 v6;
-    s32 base5_af7;
+    struct InventoryMenuState *menu = gMenuWork;
+    struct BattleUnit *unit;
+    u16 *item;
+    s32 first;
+    u32 count;
+    u32 row;
+    s32 message;
 
-    p9 = *(s32 *)gMenuWork;
-    rec5 = Owner_GetStateFar(*(u8 *)((0x21a + p9)));
-    UiWindow_ClearInteriorTilesFar(a0, 128, 8, 224, 96);
-    p8 = *(s32 *)(a2 + 8) * PAGE_ROWS;
-    p10 = ((u32)(s32)((s32)(*(s32 *)(a2 + 20) - (s32)p8) << 24) >> 24);
-    v10 = p10;
-    if ((u32)p10 > PAGE_ROWS) {
-        v10 = PAGE_ROWS;
-    }
-    Menu_SetPageIcons(PAGE_ROWS, p8, a0, SHOP_PAGE_ICONS_X, 52);
-    Menu_DrawPageIndicator(a0, *(s32 *)(a2 + 20), PAGE_ROWS, *(s32 *)(a2 + 8), 28);
-    if (*(u8 *)((0x218 + p9)) == 0) {
+    unit = Owner_GetStateFar(menu->pane_owner[0]);
+    UiWindow_ClearInteriorTilesFar(window, 128, 8, 224, 96);
+    first = state->page * PAGE_ROWS;
+    count = (u8)(state->entry_count - first);
+    if (count > PAGE_ROWS)
+        count = PAGE_ROWS;
+    Menu_SetPageIcons(PAGE_ROWS, first, window, SHOP_PAGE_ICONS_X, 52);
+    Menu_DrawPageIndicator(window, state->entry_count, PAGE_ROWS, state->page, 28);
+    if (menu->item_count == 0) {
 #if defined(TBS_EDITION_DE)
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, a0, 112, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, window, 112, 8);
 #else
-        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, a0, 120, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)&MsgItemMenuEmpty, window, 120, 8);
 #endif
-        v6 = r10;
     } else {
-        v6 = 0;
-        base6_0 = 0;
-        /* The entry guard compares the count variable, not a literal zero:
-           folded to a literal it becomes `!= 0` and a `beq`, where the
-           original keeps the unsigned `bls`. */
-        if ((u32)v10 > base6_0) {
-            v5 = ((s32)(((s32)p8 << 1) + p9) + 0x1c8);
+        row = 0;
+        if (count > row) {
+            item = &menu->items[first];
             do {
-                UiText_DrawCharacterAtOffsetFar(((0x1ff & *(u16 *)(v5)) + (s32)MsgItemName), a0, SHOP_ITEM_NAME_X, ((base6_0 << 4) + 8));
-                base6_0 = ((u32)((base6_0 + 1) << 24) >> 24);
-                v5 = (v5 + 2);
-            } while ((u32)v10 > base6_0);
-            v6 = base6_0;
+                UiText_DrawCharacterAtOffsetFar((*item & 0x1ff) + (s32)MsgItemName,
+                    window, SHOP_ITEM_NAME_X, (row << 4) + 8);
+                row = (u8)(row + 1);
+                item++;
+            } while (count > row);
         }
     }
-    UiText_DrawStringAtOffsetFar(rec5, a0, 40, 0);
-    base5_af7 = (s32)MsgStatLabel;
-    UiText_DrawCharacterAtOffsetFar(base5_af7, a0, 32, 16);
-    UiText_DrawCharacterAtOffsetFar((base5_af7 + 1), a0, 32, 24);
-    UiText_DrawNumberInWindowFar(*(u16 *)(rec5 + 60), 3, a0, SHOP_STAT_X, 16);
-    UiText_DrawNumberInWindowFar(*(u16 *)(rec5 + 62), 3, a0, SHOP_STAT_X, 24);
-    p9b = base5_af7 + 1;
-    p10b = v6;
-    p11 = a0;
+    UiText_DrawStringAtOffsetFar((s32)unit->name, window, 40, 0);
+    message = (s32)MsgStatLabel;
+    UiText_DrawCharacterAtOffsetFar(message, window, 32, 16);
+    UiText_DrawCharacterAtOffsetFar(message + 1, window, 32, 24);
+    UiText_DrawNumberInWindowFar(unit->attack, 3, window, SHOP_STAT_X, 16);
+    UiText_DrawNumberInWindowFar(unit->defense, 3, window, SHOP_STAT_X, 24);
     return 1;
 }

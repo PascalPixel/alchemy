@@ -12,27 +12,15 @@ union EffectMotionSlot {
     struct {
         u8 unknown0[2];
         u8 active;
-        u8 unknown3;
+        u8 part_count;
     } bytes;
 };
 
-struct EffectMotionContext {
-    u8 unknown0[5];
-    u8 kind;
-    u8 unknown6[2];
-    u32 x;
-    u8 unknownC[4];
-    u32 y;
-    u8 unknown14[16];
-    union EffectMotionSlot slot24;
-    u8 unknown28[4];
-    u32 field2C;
-    u8 unknown30[8];
-    u32 field38;
-    u8 unknown3C[4];
-    u32 field40;
-    u8 unknown44[12];
-    struct EffectMotionContext *context;
+struct EffectAnimationContext {
+    u8 unknown_00[0x24];
+    union EffectMotionSlot control;
+    u8 unknown_28[4];
+    struct EffectKindObject *effect;
 };
 
 struct EffectKindObject {
@@ -45,14 +33,6 @@ void *ResourceMetadata_RegisterFar(void *, s32);
 void Object_SetMode(void *, s32);
 s32 GameFlag_SetBitFar(s32);
 void ObjectEffect_PrepareContextEffect(s32);
-
-typedef struct {
-    u8 unknown00[38];
-    u8 first_flag;
-    u8 second_flag;
-    u8 unknown28[4];
-    void *eff;
-} EffectCleanupContext;
 
 void ResourceMetadata_ClearRecordFar(void *);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
@@ -119,7 +99,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     u32 zero;
     u8 kind;
     struct ObjectRuntime *object;
-    struct EffectMotionContext *context;
+    struct EffectAnimationContext *context;
     struct EffectKindObject *effect;
 
     object = ObjectTable_Get(gGameState.selected_actor);
@@ -128,7 +108,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     zero = 0;
     kind = 15;
 
-    context->slot24.bytes.active = zero;
+    context->control.bytes.active = zero;
     effect->kind = kind;
     object->x = (object->x & 0xFFF00000) + 0x80000;
     object->z = (object->z & 0xFFF00000) + 0x100000;
@@ -157,21 +137,21 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     s32 zero;
     s32 mask;
     struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selected_actor);
-    EffectCleanupContext *ctx = obj->animation;
+    struct EffectAnimationContext *ctx = obj->animation;
     struct EffectKindObject *eff = ResourceMetadata_RegisterFar(ctx, 27);
 
     zero = 0;
     mask = 0xfff00000;
-    *(u8 *)((u8 *)ctx + 38) = zero;
+    ctx->control.bytes.active = zero;
     eff->kind = 15;
     obj->x = (obj->x & mask) + 0x80000;
     obj->z &= mask;
     Object_SetMode(obj, arg0);
     WaitFrames(30);
-    ctx->second_flag = 1;
-    ResourceMetadata_ClearRecordFar(ctx->eff);
-    ctx->eff = (void *)zero;
-    *(u8 *)((u8 *)ctx + 38) = 1;
+    ctx->control.bytes.part_count = 1;
+    ResourceMetadata_ClearRecordFar(ctx->effect);
+    ctx->effect = (void *)zero;
+    ctx->control.bytes.active = 1;
     obj->acceleration = 0x10000;
     obj->speed_limit = 0x10000;
     Object_SetPosition(obj,

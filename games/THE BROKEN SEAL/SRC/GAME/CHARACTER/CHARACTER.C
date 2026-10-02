@@ -2,6 +2,7 @@
 #include "RUNTIME_MEM.H"
 #include "SCENE.H"
 #include "OWNER_STATE.H"
+#include "CHARACTER.H"
 #include "PARTY_STATE.H"
 #include "RUNTIME_INTERFACES.H"
 #include "ITEM.H"
@@ -13,87 +14,10 @@
 s32 GameState_InitDefaults();
 s32 Game_ResetForNewGameFar(s32);
 
-/* party/get_average_level.c */
 
-struct OwnerState {
-    u8 bytes[0x14c];
-};
-
-struct GameStateOwners {
-    u8 unknown_000[0x2c0];
-    struct OwnerState owners[8];
-};
-
-extern struct OwnerState *gBattleOwnerStates;
+extern struct BattleUnit *gBattleOwnerStates;
 extern const u8 Data_08080ec8[];
 
-/* One party member's stored state: base statistics, derived statistics
-   and what the recalculation reads from equipment, Djinn and class. */
-struct OwnerStats {
-    u8 unknown_000[0x10];
-    s16 base_hp;                /* 0x10 */
-    s16 base_pp;                /* 0x12 */
-    s16 hp_ratio;               /* 0x14 current/maximum HP, Q14 */
-    s16 pp_ratio;               /* 0x16 current/maximum PP, Q14 */
-    u16 base_attack;            /* 0x18 */
-    u16 base_defense;           /* 0x1a */
-    u16 base_agility;           /* 0x1c */
-    u8 base_luck;               /* 0x1e */
-    u8 base_turns;              /* 0x1f low nibble */
-    u8 base_20;                 /* 0x20 */
-    u8 base_21;                 /* 0x21 */
-    u8 unknown_022[2];
-    s16 base_element[4][2];     /* 0x24 power, resistance */
-    s16 max_hp;                 /* 0x34 */
-    s16 max_pp;                 /* 0x36 */
-    s16 hp;                     /* 0x38 */
-    s16 pp;                     /* 0x3a */
-    s16 attack;                 /* 0x3c */
-    s16 defense;                /* 0x3e */
-    s16 agility;                /* 0x40 */
-    u8 luck;                    /* 0x42 */
-    u8 turns;                   /* 0x43 */
-    u8 stat_44;                 /* 0x44 */
-    u8 stat_45;                 /* 0x45 */
-    u8 unknown_046[2];
-    s16 element[4][2];          /* 0x48 */
-    u8 unknown_058[0x80];
-    u16 equipment[15];          /* 0xd8 */
-    u8 unknown_0f6[0x12];
-    u32 djinn[4];               /* 0x108 */
-    u8 unknown_118[0x10];
-    u8 character;               /* 0x128 */
-    u8 class_id;                /* 0x129 */
-    u8 unknown_12a[2];
-    s8 element_level[4];        /* 0x12c */
-    s8 curse;                   /* 0x130 */
-    u8 unknown_131[2];
-    s8 attack_level;            /* 0x133 */
-    u8 unknown_134;
-    s8 defense_level;           /* 0x135 */
-    u8 unknown_136;
-    s8 resist_level;            /* 0x137 */
-    u8 unknown_138[3];
-    u8 unknown_13b[7];
-    u8 bonus_142;               /* 0x142 */
-    u8 bonus_143;               /* 0x143 */
-    u8 extra_turn;              /* 0x144 */
-    u8 unknown_145[2];
-    s8 agility_level;           /* 0x147 */
-};
-
-/* Djinn definition: the statistic bonuses it adds while set. */
-struct DjinnDefinition {
-    u8 unknown_00[4];
-    s8 hp;                      /* 0x04 */
-    s8 pp;                      /* 0x05 */
-    s8 attack;                  /* 0x06 */
-    s8 defense;                 /* 0x07 */
-    s8 agility;                 /* 0x08 */
-    s8 luck;                    /* 0x09 */
-};
-
-/* Class record: statistic multipliers in tenths. */
 struct ClassRecord {
     u8 unknown_00[8];
     u8 hp;                      /* 0x08 */
@@ -113,8 +37,8 @@ struct StatWork {
     s32 unused_14;
     s32 luck;                   /* 0x18 */
     s32 turns;                  /* 0x1c */
-    s32 stat_20;                /* 0x20 */
-    s32 stat_24;                /* 0x24 */
+    s32 hp_regen;                /* 0x20 */
+    s32 pp_regen;                /* 0x24 */
     s32 element[4][2];          /* 0x28 */
     s32 kind;                   /* 0x48 */
     s32 unused_4c[2];
@@ -124,7 +48,6 @@ struct StatWork {
 };
 
 void Runtime_BumpFree(void *buffer);
-struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
 struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 
 /* Distance between a stored value and one recomputed from its ratio. */
@@ -133,25 +56,22 @@ struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 void GameFlag_ClearBit(s32 flag);
 s32 GameFlag_SetBit(s32 flag);
 
-/* runtime/System_GetBuildStampTime.c */
 extern u8 gDebugMode;
 
 void *Owner_GetState(u32 owner);
 
-/* trade/get_offer_state.c */
-/* owner/refresh_and_reset_zero.c */
 void Owner_RefreshAndResetZero(void)
 {
     GameState_InitDefaults();
     Game_ResetForNewGameFar(0);
 }
 
-s32 Trade_GetOfferState(s32 arg0)
+void *Trade_GetOfferState(s32 arg0)
 {
     if (arg0 != 0) {
         return Owner_GetState(0x83);
     }
-    return (s32)&gGameState.unknown_008[4];
+    return &gGameState.unknown_008[4];
 }
 
 u32 Party_GetAverageLevel(void)
@@ -166,8 +86,8 @@ u32 Party_GetAverageLevel(void)
         return 0;
     }
     for (i = 0; i < count; i++) {
-        total += ((u8 *)Owner_GetState(
-            gGameState.active_owners[i]))[15];
+        total += ((struct BattleUnit *)Owner_GetState(
+            gGameState.active_owners[i]))->level;
     }
     total = total / count;
     return total;
@@ -175,11 +95,11 @@ u32 Party_GetAverageLevel(void)
 
 void *Owner_GetState(u32 owner)
 {
-    struct OwnerState *states;
+    struct BattleUnit *states;
     register u32 offset asm("r3"); /* FAKEMATCH: the scaled index in r3 */
 
     asm volatile("mov r3, lr" ::: "r3"); /* FAKEMATCH: the entry copy of lr */
-    states = (*(struct GameStateOwners *)&gGameState).owners;
+    states = gGameState.owners;
     if (owner < 8)
         {
         register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
@@ -239,7 +159,7 @@ void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 directio
 void Owner_RecalculateStats(s32 owner)
 {
     struct StatWork *work;
-    struct OwnerStats *st;
+    struct BattleUnit *st;
     s32 i, j, el;
     s32 value;
     s32 flag;
@@ -256,11 +176,11 @@ void Owner_RecalculateStats(s32 owner)
     work->defense = st->base_defense;
     work->agility = st->base_agility;
     work->luck = st->base_luck;
-    work->turns = st->base_turns & 15;
-    work->stat_20 = st->base_20;
-    work->stat_24 = st->base_21;
+    work->turns = st->base_action_count & 15;
+    work->hp_regen = st->base_hp_regen;
+    work->pp_regen = st->base_pp_regen;
     {
-        s16 *src = st->base_element[0];
+        s16 *src = &st->base_elements[0].power;
         s32 *dst = work->element[0];
         for (i = 0; i < 4; i++) {
             dst[0] = src[0];
@@ -270,29 +190,29 @@ void Owner_RecalculateStats(s32 owner)
         }
     }
 
-    if (STAT_DIFF(st->max_hp * st->hp_ratio / 0x4000, st->hp) > 1
-        || STAT_DIFF(st->max_pp * st->pp_ratio / 0x4000, st->pp) > 1) {
-        st->hp_ratio = 0x4000;
-        st->pp_ratio = 0x4000;
+    if (STAT_DIFF(st->max_hp * st->hp_gauge / 0x4000, st->hp) > 1
+        || STAT_DIFF(st->max_pp * st->pp_gauge / 0x4000, st->pp) > 1) {
+        st->hp_gauge = 0x4000;
+        st->pp_gauge = 0x4000;
         st->hp = st->max_hp;
         st->pp = st->max_pp;
     }
 
-    st->curse &= ~3;
-    if (st->curse & 4)
-        st->curse |= 1;
-    if (st->extra_turn)
+    st->restraint &= ~3;
+    if (st->restraint & 4)
+        st->restraint |= 1;
+    if (st->ready_pose)
         work->turns++;
-    st->bonus_142 = 0;
-    st->bonus_143 = 0;
+    st->unknown_142[0] = 0;
+    st->unknown_142[1] = 0;
 
-    if (st->class_id) {
+    if (st->class_index) {
         for (i = 0; i < 15; i++) {
-            if (!(st->equipment[i] & 0x200))
+            if (!(st->inventory[i] & 0x200))
                 continue;
-            work->item = Item_GetDirect(st->equipment[i]);
+            work->item = Item_GetDirect(st->inventory[i]);
             if (work->item->flags & 1)
-                st->curse |= 3;
+                st->restraint |= 3;
             /* FAKEMATCH: a do-while barrier keeps the defense load after the
                item bonus load, as the ROM schedules it */
             do {
@@ -311,13 +231,13 @@ void Owner_RecalculateStats(s32 owner)
                     work->hp += work->amount;
                     break;
                 case 2:
-                    work->stat_20 += work->amount;
+                    work->hp_regen += work->amount;
                     break;
                 case 3:
                     work->pp += work->amount;
                     break;
                 case 4:
-                    work->stat_24 += work->amount;
+                    work->pp_regen += work->amount;
                     break;
                 case 5:
                     work->agility += work->amount;
@@ -350,13 +270,13 @@ void Owner_RecalculateStats(s32 owner)
                     work->element[3][1] += work->amount;
                     break;
                 case 23:
-                    st->bonus_142 += work->amount;
+                    st->unknown_142[0] += work->amount;
                     break;
                 case 24:
-                    st->bonus_143 += work->amount;
+                    st->unknown_142[1] += work->amount;
                     break;
                 case 25:
-                    st->curse |= 8;
+                    st->restraint |= 8;
                     break;
                 case 26:
                     work->turns += work->amount;
@@ -364,11 +284,11 @@ void Owner_RecalculateStats(s32 owner)
                 }
             }
         }
-        if (st->curse & 8)
-            st->curse &= ~9;
+        if (st->restraint & 8)
+            st->restraint &= ~9;
 
         for (el = 0; el < 4; el++) {
-            u32 bits = st->djinn[el];
+            u32 bits = st->djinn_active[el];
 
             for (i = 0; i < 20; i++) {
                 if (bits & (1 << i)) {
@@ -385,7 +305,7 @@ void Owner_RecalculateStats(s32 owner)
         }
 
         {
-            struct ClassRecord *class = Owner_GetRecordStride84(st->class_id);
+            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_index);
 
             work->hp = work->hp * class->hp / 10;
             work->pp = work->pp * class->pp / 10;
@@ -396,9 +316,9 @@ void Owner_RecalculateStats(s32 owner)
         }
 
         for (i = 0; i < 15; i++) {
-            if (!(st->equipment[i] & 0x200))
+            if (!(st->inventory[i] & 0x200))
                 continue;
-            work->item = Item_GetDirect(st->equipment[i]);
+            work->item = Item_GetDirect(st->inventory[i]);
             for (j = 0; j < 4; j++) {
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
@@ -410,13 +330,13 @@ void Owner_RecalculateStats(s32 owner)
                     work->hp = work->hp * work->amount / 10;
                     break;
                 case 1:
-                    work->stat_20 = work->stat_20 * work->amount / 10;
+                    work->hp_regen = work->hp_regen * work->amount / 10;
                     break;
                 case 2:
                     work->pp = work->pp * work->amount / 10;
                     break;
                 case 3:
-                    work->stat_24 = work->stat_24 * work->amount / 10;
+                    work->pp_regen = work->pp_regen * work->amount / 10;
                     break;
                 case 4:
                     work->attack = work->attack * work->amount / 10;
@@ -435,17 +355,17 @@ void Owner_RecalculateStats(s32 owner)
         }
     }
 
-    work->attack = work->attack * (st->attack_level + 8) / 8;
-    work->defense = work->defense * (st->defense_level + 8) / 8;
-    work->agility = work->agility * (st->agility_level + 8) / 8;
+    work->attack = work->attack * (st->attack_modifier + 8) / 8;
+    work->defense = work->defense * (st->defense_modifier + 8) / 8;
+    work->agility = work->agility * (st->agility_modifier + 8) / 8;
     for (i = 0; i < 4; i++)
-        work->element[i][0] += (st->element_level[i] * st->element_level[i] + st->element_level[i]) * 5;
+        work->element[i][0] += (st->element_modifier[i] * st->element_modifier[i] + st->element_modifier[i]) * 5;
     for (i = 0; i < 4; i++)
-        work->element[i][1] += st->resist_level * 20;
+        work->element[i][1] += st->res_modifier * 20;
 
-    if (st->class_id) {
+    if (st->class_index) {
         flag = 0;
-        switch (st->character) {
+        switch (st->class_id) {
         case 0:
             flag = GameFlag_Test(0x110);
             break;
@@ -463,7 +383,7 @@ void Owner_RecalculateStats(s32 owner)
             break;
         }
         if (flag)
-            work->stat_24 += 4;
+            work->pp_regen += 4;
     }
 
     if (work->attack < 0)
@@ -486,14 +406,14 @@ void Owner_RecalculateStats(s32 owner)
         work->turns = 0;
     if (work->turns > 2)
         work->turns = 2;
-    if (work->stat_20 < 0)
-        work->stat_20 = 0;
-    if (work->stat_20 > 10000)
-        work->stat_20 = 10000;
-    if (work->stat_24 < 0)
-        work->stat_24 = 0;
-    if (work->stat_24 > 200)
-        work->stat_24 = 200;
+    if (work->hp_regen < 0)
+        work->hp_regen = 0;
+    if (work->hp_regen > 10000)
+        work->hp_regen = 10000;
+    if (work->pp_regen < 0)
+        work->pp_regen = 0;
+    if (work->pp_regen > 200)
+        work->pp_regen = 200;
     for (i = 0; i < 4; i++) {
         if (work->element[i][0] < 0)
             work->element[i][0] = 0;
@@ -509,16 +429,16 @@ void Owner_RecalculateStats(s32 owner)
     st->defense = work->defense;
     st->agility = work->agility;
     st->luck = work->luck;
-    st->turns = work->turns;
-    st->stat_44 = work->stat_20;
-    st->stat_45 = work->stat_24;
+    st->action_entry_count = work->turns;
+    st->hp_regen = work->hp_regen;
+    st->pp_regen = work->pp_regen;
     for (i = 0; i < 4; i++) {
-        st->element[i][0] = work->element[i][0];
-        st->element[i][1] = work->element[i][1];
+        st->elements[i].power = work->element[i][0];
+        st->elements[i].resist = work->element[i][1];
     }
 
     cap = 9999;
-    if (st->class_id)
+    if (st->class_index)
         cap = 1999;
 
     old = st->max_hp;
@@ -528,7 +448,7 @@ void Owner_RecalculateStats(s32 owner)
         work->hp = cap;
     st->max_hp = work->hp;
     if (old != st->max_hp) {
-        value = work->hp * st->hp_ratio / 0x4000;
+        value = work->hp * st->hp_gauge / 0x4000;
         if (value < 0)
             value = 0;
         if (value > cap)
@@ -545,7 +465,7 @@ void Owner_RecalculateStats(s32 owner)
         work->pp = cap;
     st->max_pp = work->pp;
     if (old != st->max_pp) {
-        value = work->pp * st->pp_ratio / 0x4000;
+        value = work->pp * st->pp_gauge / 0x4000;
         if (value < 0)
             value = 0;
         if (value > cap)
@@ -558,7 +478,6 @@ void Owner_RecalculateStats(s32 owner)
     Runtime_BumpFree(work);
 }
 
-/* game_flags/refresh_lure_cap.c */
 void GameFlag_RefreshLureCap(void)
 {
     s32 count;
@@ -567,7 +486,7 @@ void GameFlag_RefreshLureCap(void)
     GameFlag_ClearBit(0x167);
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        struct OwnerInventoryState *owner;
+        struct BattleUnit *owner;
         s32 i;
 
         owner = Owner_GetState(gGameState.active_owners[n]);

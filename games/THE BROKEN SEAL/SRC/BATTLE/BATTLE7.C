@@ -3,6 +3,8 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "BATTLE_RUNTIME.H"
 #include "DMA.H"
+#include "GAME_STATE.H"
+#include "SCRIPT_OBJECT_RUNTIME.H"
 
 struct BattleTargetCandidate { u8 pad00[4]; u16 flags; };
 
@@ -89,22 +91,8 @@ struct MarkerEvent {
     u32 mode;                       /* 0x08; top twelve bits */
 };
 
-struct MarkerObject {
-    u8 unknown_00[8];
-    s32 x;                          /* 0x08 */
-    u8 unknown_0c[4];
-    s32 z;                          /* 0x10 */
-    u8 unknown_14[0x23 - 0x14];
-    u8 unknown_23;                  /* 0x23 */
-    u8 unknown_24[0x59 - 0x24];
-    u8 unknown_59;                  /* 0x59 */
-    u8 unknown_5a[0x64 - 0x5a];
-    s16 home_x;                     /* 0x64 */
-    s16 home_z;                     /* 0x66 */
-};
-
 struct MarkerSlot {
-    struct MarkerObject *object;    /* 0x00 */
+    struct ScriptObjectRuntime *object;    /* 0x00 */
     u8 id;                          /* 0x04 */
     u8 unknown_05;
     u8 column;                      /* 0x06 */
@@ -128,12 +116,12 @@ struct MarkerServices {
 };
 
 extern struct MarkerServices gOverlayArea;
-struct MarkerObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_SetSingleChildField26Far(struct MarkerObject *object, s32 value);
+struct ScriptObjectRuntime *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+void ObjectDispatch_SetSingleChildField26Far(struct ScriptObjectRuntime *object, s32 value);
 s32 GameFlag_TestFar(s32 flag);
-void Object_Destroy(struct MarkerObject *object);
-void Object_SetMode(struct MarkerObject *object, s32 mode);
-void Object_ResetMotion(struct MarkerObject *object);
+void Object_Destroy(struct ScriptObjectRuntime *object);
+void Object_SetMode(struct ScriptObjectRuntime *object, s32 mode);
+void Object_ResetMotion(struct ScriptObjectRuntime *object);
 
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
@@ -151,7 +139,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     targetMode = BattleAction_Get(actionId)->type_0c;
     actor = ACTION_ACTOR(encodedAction);
-    ObjectTable_Get(Data_02000240.object_id);
+    ObjectTable_Get(gGameState.selected_actor);
     specialResult = 0;
     Battle_InitializeRenderObject();
     GameFlag_ClearBitFar(0x145);
@@ -178,12 +166,12 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         if (status != 0)
             return 0;
         {
-            u16 *work = (u16 *)&Data_02000240;
+            struct GameState *work = &gGameState;
             s32 a, b;
-            a = work[288];
-            work[224] = a;
-            b = work[289];
-            work[225] = b;
+            a = (u16)work->retreat_scene;
+            work->scene = a;
+            b = (u16)work->retreat_entrance;
+            work->entrance = b;
         }
         runtime->result_code = RESULT_ABILITY_USED;
         specialResult = 1;
@@ -210,7 +198,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     GameFlag_SetBitFar(FLAG_EFFECT_RUN);
     GameFlag_SetBitFar(FLAG_EFFECT_DISPATCH);
     if (primary || secondary || tertiary) {
-        targetId = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, targetMode);
+        targetId = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, targetMode);
         if (secondary && (secondary->flags & 0x400)) {
             GameFlag_ClearBitFar(FLAG_EFFECT_RUN);
             GameFlag_ClearBitFar(FLAG_EFFECT_DISPATCH);
@@ -222,7 +210,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         BattleEffect_ClearOutOfBoundsObjects();
     BattleFx_LoadActionEffectResources(actionId, 0);
     runtime->resolving_action = 1;
-    BattleFx_SetupObjectPair(Data_02000240.object_id, targetId);
+    BattleFx_SetupObjectPair(gGameState.selected_actor, targetId);
     EventObject_Initialize();
 
     BattleFx_RunEventAction(primary, actor, targetId);
@@ -287,7 +275,7 @@ void Battle_PlaceMapMarkers(void)
     struct MarkerSlot *slot = work->slots;
     volatile u32 fill;
     struct MarkerEvent *event;
-    struct MarkerObject *object;
+    struct ScriptObjectRuntime *object;
     u32 column;
     u32 row;
 
@@ -323,7 +311,7 @@ void Battle_PlaceMapMarkers(void)
                 object->home_x = object->x / 0x10000;
                 object->home_z = object->z / 0x10000;
                 object->unknown_23 = 1;
-                object->unknown_59 = 1;
+                object->flags_59 = 1;
                 slot->id = event->id;
                 slot->object = object;
                 slot->column = object->x / 0x100000;
@@ -346,7 +334,7 @@ void Battle_PlaceMapMarkers(void)
                 Object_SetMode(object, 1);
                 object->home_x = object->x / 0x10000;
                 object->home_z = object->z / 0x10000;
-                object->unknown_59 = 1;
+                object->flags_59 = 1;
                 object->unknown_23 = 1;
                 slot->object = object;
                 slot->id = event->id;

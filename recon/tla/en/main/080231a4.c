@@ -6,8 +6,6 @@
  * actual BL/pool operands equal. Raw resource create336/release72 independently
  * symbolic-linked complete all six; their proposed production names remain
  * absent. These private context links establish physical identities, not credit.
- * Earlier maintained draft reported three halfword differences against TBS
- * source; the actual six-edition function/pool proof above supersedes it.
  * Below records are English instruction/pool scores; each tuple is extent/diff
  * for lookup,release,constructor,initialize, then whole extent/diff. Retained
  * ordinary baseline and every retained phase were also whole-linked all six.
@@ -32,21 +30,31 @@
  * constructor/initialize then stay raw before the unchanged DISPATCH320 owner.
  */
 
-/* This listing proposal owns ObjectDispatch_Initialize only; native complete function/pool38 bytes.
- * Its40-byte raw listing also carries a trailing anonymous zero
+/* This listing proposal owns ObjectDispatch_FindFreeObject only; native complete function/pool34 bytes.
+ * Its36-byte raw listing also carries a trailing anonymous zero
  * alignment halfword; this standalone draft emits no final halfword.
  * Unmarked internal compiler alignment can count under the current C2 span
  * convention; final linker gaps do not. No counting marker is introduced. */
 
-#include "OBJECT_DISPATCH.H"
+#include "OBJECT_RUNTIME.H"
+#include "RAM_BUFFER.H"
 
-void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
+void *ObjectDispatch_FindFreeObject(void)
 {
-    if (object !=0) {
-        object->value_04 =0;
-        object->value_00 = value;
-        object->value_5b =0;
-        object->value_5d =0;
-        object->value_57 =0;
+    struct ObjectRuntime *object = Ram_HeapSlots->script_objects;
+    void *result =0;
+    s32 index =0;
+
+    /* FAKEMATCH:ordinary eight-form cohort leaves this36-byte lookup with4 differing bytes:result-zero setup follows the first script load. Tie the existing used pointer/result values at one empty boundary so result initialization precedes the pointer-dependent script read. */
+    asm("" : "+r"(object), "+r"(result));
+
+    while (index <=63) {
+        if (object->script ==0) {
+            result = object;
+            break;
+        }
+        index++;
+        object++;
     }
+    return result;
 }

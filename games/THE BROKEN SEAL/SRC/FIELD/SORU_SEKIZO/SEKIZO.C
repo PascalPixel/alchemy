@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "STATUE_HALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -474,7 +475,7 @@ void SoruSekizo_RunSealOpenedSequence(void)
     s32 side;
     s32 i;
 
-    work = ((struct FocusWork *)gMapWork);
+    work = gMapWork[0];
     leader = Object_GetById(0);
     if (leader->z.fixed < 0xb30000) {
         Actor_WalkToAndWait(0, 0x23f, 132);
@@ -544,7 +545,7 @@ void SoruSekizo_RunSealOpenedSequence(void)
 
 void SceneEffect_UpdateScrollingSpriteRows(void)
 {
-    s32 *cp = &gMapWork->x;
+    s32 *cp = &((struct Cam *)gMapWork[0])->x;
     struct Ent *e = SoruSekizo_SpriteRows;
     s32 sx = cp[0] / 65536;
     s32 sy = 80 - cp[1] / 65536;

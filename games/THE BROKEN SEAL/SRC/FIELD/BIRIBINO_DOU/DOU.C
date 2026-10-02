@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "REGION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -281,12 +282,12 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
 
 void SceneState_SetGlobalByte17(void)
 {
-    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 1;
+    FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 1;
 }
 
 void SceneState_ClearRuntimeByte17(void)
 {
-    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 0;
+    FIELD_AT_OFFSET(gMapWork[0], s8 *, 0x17) = 0;
 }
 
 /* The cave's scene start: each of its three areas runs its own setup. */

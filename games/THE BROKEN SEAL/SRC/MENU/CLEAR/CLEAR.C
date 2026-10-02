@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TBS_EDITION.H"
 #include "TEXT_FONT.H"
@@ -16,7 +17,6 @@ extern u8 Clear_MessageTable[];
 extern u8 Clear_ActorTable[];
 extern u8 Clear_EffectTable[];
 
-extern struct MapRenderWork *gMapWork;
 extern u16 gBgScroll[];
 void Resource_DecodeType01(const u8 *source, void *destination);
 
@@ -166,7 +166,7 @@ col:
         scroll++;
     }
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, DMA3);
-    (*(struct ClearWork **)&gMapWork)->mode = 0x1400;
+    ((struct ClearWork *)gMapWork[0])->mode = 0x1400;
     {
         struct FieldActor *leader;
 

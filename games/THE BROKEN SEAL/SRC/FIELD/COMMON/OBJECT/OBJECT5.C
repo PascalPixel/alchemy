@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "EVENT_RUNTIME.H"
 #include "DMA.H"
@@ -53,7 +54,6 @@ struct SnapshotMapWork {
 
 extern struct SnapshotObject Data_02001124[32];
 extern struct SnapshotWork *gEventWork;
-extern struct SnapshotMapWork *gMapWork;
 
 void Object_SetMode(struct SnapshotObject *object, s32 mode);
 void ObjectDispatch_SetSingleChildField26Far(struct SnapshotObject *object, s32 value);
@@ -162,7 +162,7 @@ void ObjectTable_Restore(void)
     s32 y;
     s32 *selected = &gGameState.selected_actor;
     struct SnapshotWork **work = &gEventWork;
-    struct SnapshotMapWork **map = &gMapWork;
+    struct SnapshotMapWork **map = ((struct SnapshotMapWork * *)gMapWork);
 
     count = 0;
     index = *indices++;

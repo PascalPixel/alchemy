@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "STAGED_MOTION.H"
 #include "TYPES.H"
@@ -22,7 +23,6 @@ extern u8 MsgHaidiaYouMakeMeSoMad[];
 extern u8 MsgHaidiaYourGrandpaIsTheMayor[];
 extern u8 MsgHaidiaPuppiesPlayingOver[];
 extern u8 MsgHaidiaRrruffRrrruff[];
-extern struct MapRenderWork *gMapWork;
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
 void Battle_WaitMode0();
@@ -452,7 +452,7 @@ void HaidiaMura_RunCameraRiseScene(void)
     s32 pos[3];
 
     if (Engine_GameFlagIsSet(0x808) == 0) {
-        cam = *(s32 ***)&gMapWork;
+        cam = gMapWork[0];
         Engine_EventBegin();
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x10000, 0x8000);
         Object_SetModeById(0, 1);

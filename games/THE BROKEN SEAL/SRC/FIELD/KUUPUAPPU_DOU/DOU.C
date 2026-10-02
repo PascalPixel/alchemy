@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "text/MSG_IDS.H"
 #include "FIELD_EVENT.H"
@@ -62,7 +63,6 @@ struct MapShake {
     s32 scroll;
 };
 
-extern u8 *gMapWork;
 extern u32 gFrameCount;
 void QueueIoWriteDelay2(u32 address, s32 value);
 void Engine_MapRenderWaitForValues(void);
@@ -590,7 +590,7 @@ void SceneState_SetEntries16To21Byte35(void)
    passage is copied into the map and the chime plays. */
 void KuupuappuDou_RunRumble(void)
 {
-    struct MapShake *shake = (struct MapShake *)(gMapWork + 0x164);
+    struct MapShake *shake = (struct MapShake *)(((u8 *)gMapWork[0]) + 0x164);
     s32 frames;
     s32 eva;
     s32 evb;

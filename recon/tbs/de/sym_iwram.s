@@ -194,8 +194,6 @@ gMapAnimationPages:
 	.space 0x00000004
 	.global gMapWork
 gMapWork:
-	.global gCam
-gCam:
 	.space 0x00000004
 	.global Data_03001e74_a
 Data_03001e74_a:

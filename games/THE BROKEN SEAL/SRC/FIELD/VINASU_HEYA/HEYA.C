@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "ENTRY_SETUP.H"
 #include "IWRAM_CALL.H"
@@ -169,7 +170,7 @@ void RunStagedActorTransition(void)
 
 s32 SceneState_FillGridCellByte2(u32 no, s32 x, s32 y, u32 w, u32 h, s32 val)
 {
-    u8 *g = gMapWork;
+    u8 *g = gMapWork[0];
     u8 *base;
     u32 i;
     u32 j;

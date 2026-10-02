@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "YAMA.H"
 /* Arutin mountain: the leader is carried with actor 8 until it has come
    level with it, then the rolling object starts. */
@@ -465,7 +466,7 @@ void FieldScene_RunEarlySequence(void)
     u8 *rec;
     s32 v;
 
-    p5 = *(u8 **)&gMapWork;
+    p5 = gMapWork[0];
     Audio_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
@@ -507,7 +508,7 @@ void FieldScene_RunScene3a4SequenceH(void)
     u8 *rec;
     s32 v;
 
-    p5 = *(u8 **)&gMapWork;
+    p5 = gMapWork[0];
     Map_CopyCells(93, 41, 16, 4, 77, 28);
     Audio_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
@@ -542,7 +543,7 @@ void FieldScene_RunScene3a4SequenceI(void)
     u8 *rec;
     s32 v;
 
-    p8 = *(u8 **)&gMapWork;
+    p8 = gMapWork[0];
     Map_CopyCellsTo(113, 31, 103, 17, 1, 1);
     Map_CopyCellsTo(111, 32, 104, 18, 3, 2);
     Map_CopyCellsTo(64, 32, 103, 18, 1, 2);

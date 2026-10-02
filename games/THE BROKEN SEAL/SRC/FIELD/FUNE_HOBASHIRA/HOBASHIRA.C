@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "FUNE.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -8,7 +9,6 @@ struct Other {
     u16 x;
 };
 
-extern s32 **gMapWork;
 
 struct Object {
     u8 filler00[8];
@@ -80,7 +80,7 @@ s32 FuneHobashira_SwayX __attribute__((section(".bss")));
  * saved camera origin, around the saved centre. */
 s32 Object_PlaceFromCameraOffset(struct Object *object)
 {
-    s32 *position = *gMapWork;
+    s32 *position = *((s32 **)gMapWork[0]);
     s32 *origin = FuneHobashira_CameraOrigin;
     s32 *center = FuneHobashira_CameraCenter;
     s32 q0 = *position++;
@@ -373,7 +373,7 @@ void FieldScene_RunScene3b0_020004b0(void)
  * lookout walks and leaps before the scene exits. */
 void Scene_RunFourActorStagingSequence(void)
 {
-    s32 *placement = *(*(struct FieldGlobals *)&gMapWork).map;
+    s32 *placement = *(*(struct FieldGlobals *)gMapWork).map;
     struct FieldActor *actor;
     struct EventWork **event;
     s32 x;
@@ -387,7 +387,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorSetChildValue(0, 15);
     Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
-    event = &(*(struct FieldGlobals *)&gMapWork).event;
+    event = &(*(struct FieldGlobals *)gMapWork).event;
     (*event)->start_transition = 0x203;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -778,7 +778,7 @@ void FieldScene_RunSevenActorEnsemble(void)
  * random steps, kept to 16 bits. */
 void FuneHobashira_UpdateSway(void)
 {
-    s32 *pos = *gMapWork;
+    s32 *pos = *((s32 **)gMapWork[0]);
     s32 dx = Engine_MathCos(FuneHobashira_SwayX);
     s32 dy = Engine_MathSin(FuneHobashira_SwayY);
 

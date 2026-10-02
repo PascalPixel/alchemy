@@ -823,7 +823,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000f8a60)
     "*/games/THE BROKEN SEAL/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000f9578)
+    "*/recon/tbs/de/rom.o"(.rom.000f9cf8)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SOUND.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SOUND/COMMAND_PLAY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SOUND/MUSIC_PLAYER_STEP_VOLUME_AND_PITCH_TOWARD_TARGETS.o"(.text)

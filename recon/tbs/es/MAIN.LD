@@ -817,7 +817,7 @@
     "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000fa4ac)
     "*/games/THE BROKEN SEAL/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000fafc4)
+    "*/recon/tbs/es/rom.o"(.rom.000fb744)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SOUND.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/SOUND/COMMAND_PLAY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SOUND/MUSIC_PLAYER_STEP_VOLUME_AND_PITCH_TOWARD_TARGETS.o"(.text)

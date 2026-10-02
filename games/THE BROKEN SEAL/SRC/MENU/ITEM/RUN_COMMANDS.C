@@ -118,7 +118,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 arg3);
 s32 Func_080a414c(void);
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
 void Menu_SelectQuantity(s32 item);
-s32 Func_080a4f08(s32 unused, s32 limit, s32 mode);
+s32 ItemMenu_SelectGiveQuantity(s32 unused, s32 limit, s32 mode);
 s32 ItemMenu_ConfirmDrop(s32 index);
 s32 Unnamed_080a5388(s32 mode);
 s32 ItemMenu_RunList(s32 pane);
@@ -380,7 +380,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 qty = (menu->selected_item >> 11) + 1;
                 if (qty > 1) {
                     ItemMenu_DrawItemHead();
-                    result = Func_080a4f08(0, qty, 1);
+                    result = ItemMenu_SelectGiveQuantity(0, qty, 1);
                 }
             }
             if (result == -1) {
@@ -459,7 +459,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         amount = 30 - qty;
                     }
                     if (stack > 1) {
-                        result = Func_080a4f08(0, amount, 0);
+                        result = ItemMenu_SelectGiveQuantity(0, amount, 0);
                     } else {
                         result = 0;
                     }
@@ -743,7 +743,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 12:
-            result = Func_080a4f08(0, 30, 0);
+            result = ItemMenu_SelectGiveQuantity(0, 30, 0);
             if (result != -1) {
                 qty = result;
             }

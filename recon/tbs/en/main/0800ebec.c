@@ -1,27 +1,13 @@
-/* Draft, not exact (2026-09-24): 1,790 of 1,804 bytes, 77.5% aligned
- * similarity; every call site is in the ROM's order. Rewritten from the ROM:
- * the four delay loops are goto loops (a do/while is unrolled away); the
- * timer and footprint-phase stores go through the actor's members so the
- * constants become movs; FieldObject_Create takes the kind first; the ungated
- * path squares the x and z velocity through Iwram_MulQ16, takes FixedSqrt
- * and redirects it along the facing. Remaining: the ROM keeps angle << 16 in
- * [sp+4] and derives (u32)angle >> 16 afresh after each join, where GCSE
- * here keeps one copy (so r6/r8/fp/r9 roles shift); the footprint phase is
- * read twice (ldrsh for == 2, ldrh for the flip) with the flip's zero from
- * the pool; mode and facing trade [sp+8]/[sp+12] with declaration order.
- * Tried: angle = the raw s16 table value with every use spelled (u16)angle
- * (and the clamp's difference through its own local) reproduces [sp+4] =
- * angle << 16 and the 104-byte frame, but the u16 is still carried in r6
- * across the first probe (758 halfwords); (void)&angle, an s16 angle and
- * u16 or s16 spellings of the first test all regress. The search loop exits
- * with cmp #6; blt in the ROM where combine gives cmp #5; ble here; i <= 5,
- * i - 6 < 0, (u32)i < 6, a sizeof bound and a goto loop all keep ble.
- * 2026-09-29 (alchemy permute scorer): the draft scored 6285 (73
- * register-only, 19 operand, 23 reordered, 19 inserted, 22 deleted). This body
- * is the permuter's best after a 300-second search (about 40,000 candidates):
- * 5300 (67 register-only, 14 operand, 24 reordered, 12 inserted, 20
- * deleted). Its rewrites are search output, not a
- * reading of the ROM; the allocation above is still the difference.
+/* Draft, not exact: 1,788 of 1,804 bytes, every call site in the ROM order.
+ * The angle is the table value itself, narrowed at each use; the facing
+ * clamp subtracts in int and narrows after, as the ROM does.
+ * Remaining: the ROM keeps only angle << 16 ([sp+4]) and shifts it down
+ * afresh in the block after the first probe, where one copy is carried in
+ * r6 here from the top (GCSE), which shifts the roles of r6, r8, fp and r9;
+ * the search loop ends cmp #6; blt in the ROM, cmp #5; ble here; the
+ * footprint phase is read twice (ldrsh for == 2, ldrh for the flip).
+ * Tried without gain: (void)&angle, s16 and u16 angle variables, a signed
+ * first test, i <= 5, i - 6 < 0, (u32)i < 6, a goto loop.
  */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -126,8 +112,6 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     s32 i;
     struct FieldActor *entry;
     s16 *timer;
-    u16 tmp;
-    u16 tmp2;
 
     blocked = 0;
     handled = 0;
@@ -192,9 +176,8 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
         actor->accel = 0x10000;
         mode = 5;
     }
-    angle = Data_08013254[(gKeysHeld >> 4) & 15] << 16;
-    tmp2 = (u16)((u32)angle >> 16);
-    if (tmp2 == 0xffff) {
+    angle = Data_08013254[(gKeysHeld >> 4) & 15];
+    if ((u16)angle == 0xffff) {
         blocked |= 4;
         goto tail;
     }
@@ -202,10 +185,9 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     posA[1] = actor->pos[1];
     posA[2] = actor->pos[2];
     blocked = 0;
-    tmp = (u16)((u32)angle >> 16);
-    Vector_AddPolarOffset(0x80000, tmp, posA);
+    Vector_AddPolarOffset(0x80000, (u16)angle, posA);
     if (gDebugMode != 0) {
-        facing = angle >> 16;
+        facing = (s16)angle;
         if (gKeysHeld & 0x200)
             goto tail;
     }
@@ -214,31 +196,31 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, 0x1000 + (u16)((u32)angle >> 16), posB);
+    Vector_AddPolarOffset(0x80000, 0x1000 + (u16)angle, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16) - 0x1000, posB);
+    Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16) + 0x2000, posB);
+    Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = ((s32 *)actor->pos)[2];
-    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16) - 0x2000, posB);
+    Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
-    facing = angle >> 16;
+    facing = (s16)angle;
     goto move;
 search:
-    dir = (u16)((u32)angle >> 16);
+    dir = (u16)angle;
     deltas[0] = dir + 0x1000;
     deltas[1] = dir - 0x1000;
     deltas[2] = dir + 0x2000;
@@ -370,7 +352,10 @@ tail:
         actor->velocity_z = 0;
         if (blocked & 3) {
             s32 diff;
-            if ((diff = (s16)((u16)((u32)angle >> 16) - actor->facing)) > 0x1000)
+
+            diff = (u16)angle - actor->facing;
+            diff = (s16)diff;
+            if (diff > 0x1000)
                 diff = 0x1000;
             if (diff < -0x1000)
                 diff = -0x1000;
@@ -388,7 +373,7 @@ tail:
         if (actor->step_timer != 0)
             actor->step_timer--;
     }
-    dir = (u16)((u32)angle >> 16);
+    dir = (u16)angle;
     if (gMapWork->footprints != 0 && actor->step_timer == 0 && blocked == 0) {
         struct FieldActor *print;
         print = FieldObject_Create(25, actor->pos[0], actor->pos[1], actor->pos[2]);

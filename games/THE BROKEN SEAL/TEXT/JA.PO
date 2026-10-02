@@ -9531,7 +9531,7 @@ msgctxt "MsgNothingHappens"
 msgid "02380"
 msgstr "しかし なにもおこらなかった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTileChecked"
 msgid "02381"
 msgstr "{text_color:16}"
 
@@ -9551,7 +9551,7 @@ msgctxt "message"
 msgid "02385"
 msgstr "{protagonist_name}は かべをしらべた{page_break}"
 
-msgctxt "message"
+msgctxt "MsgCheckedGround"
 msgid "02386"
 msgstr "{protagonist_name}は 目の前をしらべた{page_break}"
 
@@ -9659,7 +9659,7 @@ msgctxt "MsgFieldPeeredWell"
 msgid "02412"
 msgstr "{protagonist_name}は いどを のぞきこんだ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgTileResult"
 msgid "02413"
 msgstr "0"
 
@@ -9679,7 +9679,7 @@ msgctxt "message"
 msgid "02417"
 msgstr "とくに あやしいところはなかった{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGroundDidntFindAnything"
 msgid "02418"
 msgstr "しかし なにも 見つからなかった{end_wait}"
 
@@ -9787,11 +9787,11 @@ msgctxt "message"
 msgid "02444"
 msgstr "すいこまれそうで{line_break}くらくらしてきた{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFoundItem"
 msgid "02445"
 msgstr "{protagonist_name}は{line_break}{argument_item_name:134} 見つけた{page_break}"
 
-msgctxt "message"
+msgctxt "MsgGotCoins"
 msgid "02446"
 msgstr "{protagonist_name}は{line_break}{argument_signed_number}コイン 手に入れた{end_wait}"
 
@@ -9815,11 +9815,11 @@ msgctxt "message"
 msgid "02451"
 msgstr "あやしげな けはいをかんじる{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCantOpenIt"
 msgid "02452"
 msgstr "しかし {protagonist_name}にはあけられなかった・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotPsynergyStone"
 msgid "02453"
 msgstr "{protagonist_name}は{line_break}エナジーストーンを手に入れた{page_break}"
 
@@ -9831,7 +9831,7 @@ msgctxt "message"
 msgid "02455"
 msgstr "エナジーストーンは{line_break}きえてしまった・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChestWasMimic"
 msgid "02456"
 msgstr "宝ばこはミミックだった!!{end_wait}"
 
@@ -9843,7 +9843,7 @@ msgctxt "message"
 msgid "02458"
 msgstr "{protagonist_name}は 目の前をしらべた{page_break}"
 
-msgctxt "message"
+msgctxt "MsgButFoundNothing"
 msgid "02459"
 msgstr "しかし なにも 見つからなかった{end_wait}"
 
@@ -12731,7 +12731,7 @@ msgctxt "MsgSwapForWhat"
 msgid "03180"
 msgstr "どれとこうかん?"
 
-msgctxt "message"
+msgctxt "MsgGiveHowMany"
 msgid "03181"
 msgstr "いくつ?"
 
@@ -13051,7 +13051,7 @@ msgctxt "message"
 msgid "03260"
 msgstr "じぶんにはわたせません"
 
-msgctxt "message"
+msgctxt "MsgItemCounter"
 msgid "03261"
 msgstr "こ"
 

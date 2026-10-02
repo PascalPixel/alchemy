@@ -15,7 +15,8 @@ struct MotionObject {
     s32 z;
     u8 unknown_14[0x08];
     s32 scale_y; /* negated to draw the object upside down */
-    u8 unknown_20[0x04];
+    u16 height;
+    u8 unknown_22[0x02];
     s32 velocity_x;
     s32 velocity_y;
     s32 velocity_z;
@@ -37,14 +38,21 @@ struct MotionObject {
     u8 unknown_5b[0x15];
 };
 
+struct SpriteEntry;
+
 struct BattleObjectSlot {
     struct MotionObject *object;
-    u8 unknown_04[0x08];
+    u16 resource;  /* the unit's sprite resource */
+    u16 overlay;   /* extra sprite resources registered on the unit's object */
+    u16 animation;
+    u16 effect;
     s32 anchor_x;
     s32 anchor_z;
-    u8 unknown_14[0x0c];
-    s32 runtime_word_20;
-    s32 runtime_word_24;
+    s32 palette;
+    s32 scale;
+    u8 unknown_1c[0x04];
+    struct SpriteEntry *animation_entry; /* of the animation and effect resources */
+    struct SpriteEntry *effect_entry;
     s16 active;
     s16 fading; /* set while a defeated unit dissolves */
 };

@@ -5,15 +5,59 @@
 #include "FIXED_MATH.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_TYPES.H"
+#include "BATTLE_SUMMON.H"
+#include "BATTLE_WORK.H"
 
 s32 *GetBattleObjectSlot(s32);
 u8 *GetMotionRecord(s32, s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
-void BattleActor_RemoveFromLists(s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void ActivateBattleObjectSlot(s32);
 
 struct SlotArray { s16 items[64]; };
+
+/* Takes a defeated unit out of the party or enemy list, leaving the removed
+ * mark in its place, and cancels the actions queued for it. */
+void BattleActor_RemoveFromLists(s32 actor)
+{
+    struct BattleSession *work;
+    s32 i;
+    u32 j;
+    s32 unit;
+
+    work = gBattleWork;
+    Owner_GetStateFar(actor)->status_12a = 0;
+    for (i = 0; ; i++) {
+        if (work->party_units[i] == actor) {
+            work->party_units[i] = 0xfe;
+            goto removed;
+        }
+        if (work->party_units[i] == 0xff)
+            break;
+    }
+    /* FAKEMATCH: the enemy scan is a goto loop inside a block that runs once,
+     * which keeps the loop pass off it. Written as a for like the party scan
+     * it compiles to a pointer walk with the 0xfe held in a register. */
+    do {
+        j = 0;
+again:
+        unit = work->enemy_units[j];
+        if (unit == actor) {
+            work->enemy_units[j] = 0xfe;
+            goto removed;
+        }
+        j++;
+        if (unit == 0xff)
+            return;
+        goto again;
+    } while (0);
+removed:
+    Summon_ReleaseCharge(actor);
+    for (j = 0; j < 20; j++) {
+        if (work->actions[j].unit_id == actor)
+            work->actions[j].unit_id = 0xff;
+    }
+}
 
 void BattleMotion_InitializeActorRecords(s32 id)
 {

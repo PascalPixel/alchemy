@@ -523,7 +523,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/SHOW_CURRENT_LIST.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU8.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOW_OWNER_PROGRESS_MESSAGE.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000ab480)
+    "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_STATUS_AILMENTS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/RUN_BUSY_WAIT_DELAY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/DRAW_OWNER_STATUS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/BUILD_AVAILABILITY.o"(.text)

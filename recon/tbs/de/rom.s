@@ -787,12 +787,6 @@ Func_080a4f08:
 	.thumb_func
 Menu_ResolveSelectedAction:
 	.incbin "baserom.gba", 0x000a8b3c, 0x00000320
-	.section .rom.000ab480, "ax"
-	.global CharacterMenu_DrawStatusAilments
-	.type CharacterMenu_DrawStatusAilments, %function
-	.thumb_func
-CharacterMenu_DrawStatusAilments:
-	.incbin "baserom.gba", 0x000ab480, 0x00000300
 	.section .rom.000ad5e4, "ax"
 	.global Func_080aa768
 Func_080aa768:

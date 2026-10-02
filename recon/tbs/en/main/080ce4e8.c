@@ -1,195 +1,164 @@
+/* Draft, one instruction out of place: before the first palette copy the
+   ROM loads the copy routine address before it copies the palette pointer
+   to r1 (a direct call does that, but then the two copies share 0x05000000
+   in a register); passing the routine as a wrapper parameter fixes the order
+   but makes the slot pointer take r5 instead of r8. */
 #include "TYPES.H"
+#include "SCENE.H"
 #include "RESOURCE_IDS.H"
+#include "RESOURCE.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "EFFECT_STEP.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "B5_CONTEXT.H"
+#include "MOTION_OBJECT.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
 
-/* Only the m2c spellings this draft actually uses. */
-#define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+extern u8 gBattleFxWork[];
+extern struct BattleCamera *gCameraWork;
 
-void **GetBattleObjectSlotFar(s32 member_id);
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef s32 (*MagnitudeFn)(s32 squared_distance);
+#define gSkulls ((struct EffectStep *)Ram_MapCellBuffer)
 
-s32 Unnamed_080ce4e8(s32 actor) {
-    s32 sp8;
-    s32 spC;
-    s32 sp10;
-    s32 sp14;
-    u32 *sp18;
-    s32 sp1C;
-    u32 sp20;
-    u32 sp24;
-    s32 sp28;
-    u32 sp2C;
-    s32 sp30[3];
-    s32 sp3C[3];
-    s32 *var_r6_142;
-    s32 temp_r1_281;
-    s32 temp_r2_277;
-    s32 temp_r2_373;
-    s32 temp_r3_271;
-    s32 temp_r3_275;
-    s32 temp_r3_279;
-    s32 temp_r5_233;
-    s32 temp_r5_298;
-    s32 temp_r5_318;
-    s32 temp_r5_324;
-    s32 temp_r5_330;
-    s32 temp_r7_288;
-    s32 var_fp_192;
-    s32 var_r4_146;
-    s32 var_r4_170;
-    s32 var_r4_260;
-    s32 var_r4_87;
-    s32 var_r5_147;
-    s32 var_r5_171;
-    u8 *var_r5_84;
-    u8 *var_r6_262;
-    void *temp_r0_29;
-    void *temp_r5_216;
-    void *temp_sl_23;
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_ArmBg2AffineHBlankDma(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_EndCanvasLayer(void);
+struct B5Context *GetBattleObjectSlotFar(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void AudioCommand_PlayFar(s32 value);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
+void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPitch(s32 angle);
+u32 Resource_DecodeType01(const void *source, void *destination);
 
-    sp2C = *(u32 *)0x03001EF0;
-    temp_sl_23 = *(void **)0x03001EEC;
-    M2C_FIELD(temp_sl_23, s32 *, 0x7828) = actor;
+/* A resource that opens with a 64-colour palette. */
+struct PaletteBlock {
+    u16 colors[64];
+};
+
+static __inline__ void CopyPalette(void *destination, const void *source)
+{
+    /* FAKEMATCH: the two palette copies share the routine's address but
+       build the palette address again at each call, which only an inlined
+       constant argument compiles to; a direct call keeps it in a register. */
+    Iwram_CopyWords(destination, source, 128);
+}
+
+struct BlitterPair {
+    DrawRectangle upper;
+    DrawRectangle lower;
+};
+
+/* Battle effect: eight skulls for each target start scattered around it and
+   close in, turning with the frame, while the background sways. */
+void Unnamed_080ce4e8(struct BattleEffectArgument *effect)
+{
+    struct EffectPosition position;
+    s32 point[3];
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 frame;
+    struct BlitterPair draw;
+    struct BattleCamera *camera;
+    struct PaletteBlock *palette;
+    s32 i;
+    s32 k;
+
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    temp_r0_29 = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
-    ((WordCopyFn)0x03001388)((void *)0x05000000, temp_r0_29, 0x80);
-    Resource_DecodeType01(temp_r0_29 + 0x80, temp_sl_23);
-    ((WordCopyFn)0x03001388)((void *)0x05000000,
-        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 0x80);
-    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
-    sp20 = *(u32 *)0x03001F08;
-    BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);
-    sp24 = *(u32 *)0x03001F0C;
-    Scheduler_AddOrUpdateCallback(0x080DBB9D, 0x480);
-    M2C_FIELD(temp_sl_23, s32 *, 0x7780) = 3;
-    M2C_FIELD(temp_sl_23, s32 *, 0x7784) = 0x04040404;
-    var_r5_84 = (u8 *)0x02010000;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    var_r4_87 = 0;
-    do {
-        sp8 = var_r4_87;
-        M2C_FIELD(var_r5_84, s32 *, 0) = (s32) ((Random16() - 0x7F) << 0xF);
-        M2C_FIELD(var_r5_84, s32 *, 4) =
-            (Random16() - 0x7F) << 0xF;
-        var_r4_87 += 1;
-        M2C_FIELD(var_r5_84, s32 *, 8) =
-            (Random16() - 0x7F) << 0xF;
-        var_r5_84 += 0x1C;
-    } while (var_r4_87 != 0x200);
-    Audio_PlayCue(0x8E);
-    sp28 = 0;
-    if ((M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 0x14) << 5) == -0x60) {
+    palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
+    CopyPalette((void *)0x05000000, palette++);
+    Resource_DecodeType01(palette, work);
+    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
+    CopyPalette((void *)0x05000000, palette);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw.upper = heap_cache[7];
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    draw.lower = heap_cache[8];
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    work->transfer_mode = 3;
+    work->transfer_value = 0x04040404;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    } else {
-loop_4:
-        sp1C = *(s32 *)0x03001E80;
-        if (sp28 == 0x60) {
+    for (i = 0; i != 512; i++) {
+        gSkulls[i].x = ((Random16() & 255) - 127) << 15;
+        gSkulls[i].y = ((Random16() & 255) - 127) << 15;
+        gSkulls[i].z = ((Random16() & 255) - 127) << 15;
+    }
+    AudioCommand_PlayFar(142);
+
+    for (frame = 0; frame != work->effect->count * 32 + 96; frame++) {
+        s32 *row;
+
+        camera = gCameraWork;
+        if (frame == 96)
             BattleEventRuntime_BeginPhaseFar(0);
-        }
-        var_r6_142 = temp_sl_23 + 0x6980;
-        if (M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 4) == 0) {
-            var_r4_146 = 0;
-            var_r5_147 = sp28 << 0xB;
-            do {
-                sp8 = var_r4_146;
-                *var_r6_142 = (s32) (0x60000 - (Trig_Sin(var_r5_147) * 6)) >> 0xA;
-                var_r6_142 += 4;
-                var_r4_146 += 1;
-                var_r5_147 += 0x800;
-            } while (var_r4_146 != 0xA0);
+        row = work->bg2_x;
+        if (work->effect->side == 0) {
+            for (i = 0; i != 160; i++)
+                *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
         } else {
-            var_r4_170 = 0;
-            var_r5_171 = sp28 << 0xB;
-            do {
-                sp8 = var_r4_170;
-                var_r4_170 += 1;
-                *var_r6_142 = (s32) (Trig_Sin(var_r5_171) * 6) >> 0xA;
-                var_r6_142 += 4;
-                var_r5_171 += 0x800;
-            } while (var_r4_170 != 0xA0);
+            for (i = 0; i != 160; i++)
+                *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
         }
-        var_fp_192 = 0;
-        if (M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 0x14) == 0) {
+        for (k = 0; k != work->effect->count; k++) {
+            struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
-        } else {
-            sp18 = (u32 *)(sp1C + 12);
-            sp10 = 0x24;
-            spC = 0;
-loop_15:
-            temp_r5_216 = *GetBattleObjectSlotFar(M2C_FIELD(
-                M2C_FIELD(temp_sl_23, void **, 0x7828), s16 *, sp10));
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(sp1C, (s32)sp18);
-            M2C_FIELD(&sp30, s32 *, 0) = (s32) M2C_FIELD(temp_r5_216, s32 *, 8);
-            M2C_FIELD(&sp30, s32 *, 4) = 0x140000;
-            M2C_FIELD(&sp30, s32 *, 8) = (s32) M2C_FIELD(temp_r5_216, s32 *, 0x10);
-            SceneTransform_ApplyPosition(&sp30);
-            temp_r5_233 = var_fp_192 << 5;
-            if (sp28 > temp_r5_233) {
-                SceneTransform_ApplyPitch(sp28 << 9);
-                if (sp28 == (temp_r5_233 + 0x20)) {
-                    ObjectGroup_UpdateMembers(M2C_FIELD(
-                        M2C_FIELD(temp_sl_23, void **, 0x7828), s16 *, sp10),
-                        7, 5, var_fp_192, 0x20);
-                }
-                sp14 = var_fp_192 * 8;
-                var_r4_260 = 0;
-                var_r6_262 = (u8 *)0x02010000 + spC;
-                do {
-                    if (sp28 > (s32) ((sp14 + var_r4_260) * 4)) {
-                        temp_r3_271 = (s32) M2C_FIELD(var_r6_262, s32 *, 0) >> 8;
-                        temp_r3_275 = (s32) M2C_FIELD(var_r6_262, s32 *, 4) >> 8;
-                        temp_r2_277 = temp_r3_275 * temp_r3_275;
-                        temp_r3_279 = (s32) M2C_FIELD(var_r6_262, s32 *, 8) >> 8;
-                        temp_r1_281 = temp_r3_279 * temp_r3_279;
-                        sp8 = var_r4_260;
-                        temp_r7_288 = ((MagnitudeFn)0x030001D8)(
-                            (temp_r3_271 * temp_r3_271)
-                                + temp_r2_277 + temp_r1_281) >> 8;
-                        if (temp_r7_288 != 0) {
-                            EffectPosition_ApplyBaseAndYOffset(var_r6_262, &sp3C);
-                            temp_r5_298 = (s32) M2C_FIELD(&sp3C, s32 *, 0) >> 1;
-                            M2C_FIELD(&sp3C, s32 *, 0) = temp_r5_298;
-                            ((DrawRectangleFn)sp24)(
-                                (void *)sp2C,
-                                (u8 *)temp_sl_23
-                                    + __modsi3(sp8, 3) * 0x240,
-                                temp_r5_298 - 0xC, sp3C[1] - 0xC,
-                                0x18, 0x18);
-                            temp_r5_318 = M2C_FIELD(var_r6_262, s32 *, 0);
-                            M2C_FIELD(var_r6_262, s32 *, 0) = (s32) (temp_r5_318 - __divsi3(temp_r5_318, temp_r7_288));
-                            temp_r5_324 = M2C_FIELD(var_r6_262, s32 *, 4);
-                            M2C_FIELD(var_r6_262, s32 *, 4) = (s32) (temp_r5_324 - __divsi3(temp_r5_324, temp_r7_288));
-                            temp_r5_330 = M2C_FIELD(var_r6_262, s32 *, 8);
-                            M2C_FIELD(var_r6_262, s32 *, 8) = (s32) (temp_r5_330 - __divsi3(temp_r5_330, temp_r7_288));
-                            M2C_FIELD(var_r6_262, s32 *, 0x18) = (s32) (M2C_FIELD(var_r6_262, s32 *, 0x18) + 1);
-                            var_r4_260 = sp8;
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+            point[0] = target->x;
+            point[1] = 0x140000;
+            point[2] = target->z;
+            SceneTransform_ApplyPosition(point);
+            if (frame > k * 32) {
+                SceneTransform_ApplyPitch(frame << 9);
+                if (frame == k * 32 + 32)
+                    ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 32);
+                for (i = 0; i != 8; i++) {
+                    struct EffectStep *skull = &gSkulls[k * 64 + i];
+
+                    if (frame > (k * 8 + i) * 4) {
+                        s32 x = (skull->x >> 8) * (skull->x >> 8);
+                        s32 y = (skull->y >> 8) * (skull->y >> 8);
+                        s32 z = (skull->z >> 8) * (skull->z >> 8);
+                        s32 distance = Iwram_Sqrt(x + y + z) >> 8;
+
+                        if (distance != 0) {
+                            EffectPosition_ApplyBaseAndYOffset((s32 *)skull, &position);
+                            position.x >>= 1;
+                            draw.upper(canvas, work->sheet + i % 3 * 576,
+                                position.x - 12, position.y - 12, 24, 24);
+                            skull->x -= skull->x / distance;
+                            skull->y -= skull->y / distance;
+                            skull->z -= skull->z / distance;
+                            skull->variant++;
                         }
                     }
-                    var_r4_260 += 1;
-                    var_r6_262 += 0x1C;
-                } while (var_r4_260 != 8);
-            }
-            sp10 += 2;
-            spC += 0x700;
-            var_fp_192 += 1;
-            if (var_fp_192 != M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 0x14)) {
-                goto loop_15;
+                }
             }
         }
         ObjectGroup_TickMemberTimers();
-        M2C_FIELD(temp_sl_23, s32 *, 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
-        temp_r2_373 = sp28 + 1;
-        sp28 = temp_r2_373;
-        if (temp_r2_373 != ((M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 0x14) << 5) + 0x60)) {
-            goto loop_4;
-        }
     }
-    Scheduler_RemoveCallback(0x080CD261);
-    Scheduler_RemoveCallback(0x080DBB9D);
-    Runtime_ReleaseHeapBlock(0x2F);
-    Runtime_ReleaseHeapBlock(0x2E);
-    return BattleFx_EndCanvasLayer();
+
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
 }

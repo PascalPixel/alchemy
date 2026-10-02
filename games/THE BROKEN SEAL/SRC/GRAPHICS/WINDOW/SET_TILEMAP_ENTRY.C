@@ -1,14 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-
-/* A window's frame on the 32-tile-wide text tilemap. */
-struct UiWindowFrame {
-    u8 unknown_00[8];
-    u16 width;
-    u16 height;
-    u16 left;
-    u16 top;
-};
+#include "MENU_LIST.H"
 
 enum {
     TILEMAP_ENTRY_PLAIN,
@@ -21,13 +13,11 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
-extern u16 *Data_03001e8c;
-
 /* Writes one tile into a window's tilemap; modes 2-4 add palette bits. */
 void UiWindow_SetTilemapEntry(
-    struct UiWindowFrame *window, s32 value, s32 x, s32 y, u32 mode)
+    struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
 {
-    u16 *map = Data_03001e8c;
+    u16 *map = (u16 *)gWindowWork[0];
     s32 palette;
     s32 index;
 
@@ -61,14 +51,14 @@ void UiWindow_SetTilemapEntry(
     case TILEMAP_ENTRY_PALETTE_14:
     case TILEMAP_ENTRY_PALETTE_15:
     case TILEMAP_ENTRY_PALETTE_1:
-        index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
+        index = (window->y + y) * TILEMAP_WIDTH + (window->x + x);
         if ((u32)index >= TILEMAP_ENTRIES)
             return;
         *(u16 *)((u8 *)map + (index << 1)) = palette | value;
         return;
     case TILEMAP_ENTRY_PLAIN:
     default:
-        index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
+        index = (window->y + y) * TILEMAP_WIDTH + (window->x + x);
         if ((u32)index >= TILEMAP_ENTRIES)
             return;
         *(u16 *)((u8 *)map + (index << 1)) = value;

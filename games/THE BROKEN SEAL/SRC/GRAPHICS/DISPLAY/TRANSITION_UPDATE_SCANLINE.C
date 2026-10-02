@@ -5,6 +5,7 @@
 #include "IWRAM_CALL.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
+#include "DISPTRAN.H"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -69,29 +70,17 @@ again:
 
 extern const u8 DisplayTransition_DitherTable[];
 
-struct DisplayTransitionState {
-    u8 pad_000[0x508];
-    u8 palette_nibbles[0x22];
-    u16 transition_value;
-    u8 pad_52c[13];
-    u8 dither_toggle;
-    s8 transition_start;
-    s8 transition_end;
-    s8 transition_duration;
-    s8 transition_step;
-};
-
 void DisplayTransition_UpdateFrame(void)
 {
-    struct DisplayTransitionState *state = *(struct DisplayTransitionState **)Ram_DisplayWork;
+    struct DisplayTransitionFrame *state = *(struct DisplayTransitionFrame **)Ram_DisplayWork;
     s32 value;
     s32 blend;
     u32 i;
 
-    if (state->transition_duration != 0) {
-        if (state->transition_step >= state->transition_duration) {
+    if (state->duration != 0) {
+        if (state->step >= state->duration) {
             volatile u16 *dma0;
-            state->transition_duration = 0;
+            state->duration = 0;
             Scheduler_RemoveCallback((u32)((void *)DisplayTransition_UpdateFrame));
             dma0 = REG_DMA0;
             dma0[5] &= 0xc5ff;
@@ -99,14 +88,14 @@ void DisplayTransition_UpdateFrame(void)
             (void)dma0[5];
             return;
         } else {
-            s32 delta = state->transition_end - state->transition_start;
-            state->transition_step++;
-            state->transition_value = state->transition_start
-                + Iwram_SignedDivide(delta * state->transition_step, state->transition_duration);
+            s32 delta = state->end - state->start;
+            state->step++;
+            state->value = state->start
+                + Iwram_SignedDivide(delta * state->step, state->duration);
         }
     }
 
-    value = state->transition_value - 1;
+    value = state->value - 1;
     state->dither_toggle ^= 1;
     blend = 0;
     if (value & 32)

@@ -6,6 +6,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
+#include "DISPTRAN.H"
 
 struct DisplayTransitionState {
     u8 data[0x528];
@@ -38,39 +39,6 @@ void DisplayTransition_Update(void);
 void DisplayTransition_UpdateFromCentre(void);
 void DisplayTransition_UpdateScanline(void);
 
-
-struct DisplayTransitionState2 {
-    u8 pad_000[0x52a];
-    u16 transition_value;
-    u8 pad_52c[14];
-    s8 transition_start;
-    s8 transition_end;
-    s8 transition_duration;
-    s8 transition_step;
-};
-
-struct DisplayTransitionRegisters {
-    u8 pad_000[0x100];
-    u16 primary_value;
-    u16 secondary_value;
-};
-
-
-struct DisplayTransitionState3 {
-    u8 reserved_000[0x52a];
-    u16 value;
-    u8 reserved_52c[14];
-    s8 start;
-    s8 end;
-    s8 duration;
-    s8 step;
-};
-
-struct DisplayTransitionWindow {
-    u8 reserved_000[0x100];
-    u16 first_line;
-    u16 second_line;
-};
 
 extern volatile u32 gFrameCount;
 
@@ -275,38 +243,36 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
     }
 }
 
-/* display/state/clear_flags.c */
 void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
 {
-    void *state;
+    struct DisplayWork *state;
 
     state = gMapWork[0];
     if (state != NULL) {
         if (clear_0200 != 0) {
-            FIELD_AT_OFFSET(state, u16 *, 0x14) &= 0xFDFF;
+            state->dispcnt &= 0xFDFF;
         }
         if (clear_0400 != 0) {
-            FIELD_AT_OFFSET(state, u16 *, 0x14) &= 0xFBFF;
+            state->dispcnt &= 0xFBFF;
         }
         if (clear_0800 != 0) {
-            FIELD_AT_OFFSET(state, u16 *, 0x14) &= 0xF7FF;
+            state->dispcnt &= 0xF7FF;
         }
     }
 }
 
-/* display/transition/update.c */
 /* Signed division runs from IWRAM through the register-call veneer. */
 void DisplayTransition_Update(void)
 {
-    struct DisplayTransitionState2 *state =
-        *(struct DisplayTransitionState2 **)Ram_DisplayWork;
-    struct DisplayTransitionRegisters *display =
-        *(struct DisplayTransitionRegisters **)Ram_MapWork;
-    s8 *duration = &state->transition_duration;
+    struct DisplayTransitionFrame *state =
+        *(struct DisplayTransitionFrame **)Ram_DisplayWork;
+    struct DisplayTransitionWindow *display =
+        *(struct DisplayTransitionWindow **)Ram_MapWork;
+    s8 *duration = &state->duration;
     u32 display_value;
 
     if (*duration != 0) {
-        s8 *step = &state->transition_step;
+        s8 *step = &state->step;
 
         if (*step >= *duration) {
             *duration = 0;
@@ -314,22 +280,22 @@ void DisplayTransition_Update(void)
             Runtime_SetIrqHandler(1, 0, 0);
             return;
         } else {
-            s32 delta = state->transition_end - state->transition_start;
+            s32 delta = state->end - state->start;
             s32 value;
 
             (*step)++;
             value = Iwram_SignedDivide(delta * *step, *duration);
-            state->transition_value = state->transition_start + value;
+            state->value = state->start + value;
         }
     }
 
-    display_value = state->transition_value;
+    display_value = state->value;
     if (display_value > 79) {
-        display->primary_value = 200;
-        display->secondary_value = 250;
+        display->first_line = 200;
+        display->second_line = 250;
     } else {
-        display->primary_value = display_value;
-        display->secondary_value = 159 - display_value;
+        display->first_line = display_value;
+        display->second_line = 159 - display_value;
     }
 }
 
@@ -340,8 +306,8 @@ void DisplayTransition_Update(void)
  * row; otherwise 0 and 159, the whole screen. */
 void DisplayTransition_UpdateFromCentre(void)
 {
-    struct DisplayTransitionState3 *state =
-        *(struct DisplayTransitionState3 **)Ram_DisplayWork;
+    struct DisplayTransitionFrame *state =
+        *(struct DisplayTransitionFrame **)Ram_DisplayWork;
     struct DisplayTransitionWindow *window =
         *(struct DisplayTransitionWindow **)Ram_MapWork;
     s8 *duration = &state->duration;

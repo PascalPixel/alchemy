@@ -1,11 +1,8 @@
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#include "BATTLE_RUNTIME.H"
 #include "DMA.H"
-
-struct BattleActionDefinition { u8 pad00[9]; u8 pp_cost; u8 pad0a[2]; u8 target_mode; };
-
-struct BattleUnitRecord { u8 pad00[58]; s16 pp; };
 
 struct BattleTargetCandidate { u8 pad00[4]; u16 flags; };
 
@@ -25,17 +22,6 @@ extern u8 MsgNothingHappened[];
 extern u8 MsgDoesNotWorkHere[];
 extern u8 MsgNotEnoughPp[];
 
-/*
- * Returns u8 * to match the prototype shared with the other callers; the raw
- * pointer is cast to the local action-definition view below.
- */
-u8 *BattleAction_Get(s32);
-
-/*
- * Returns void * because callers view the same record through different
- * structs; each casts the shared pointer to its own view locally.
- */
-void *Owner_GetStateFar(s32);
 void *ObjectTable_Get(s32);
 void Battle_InitializeRenderObject(void);
 void GameFlag_ClearBitFar(s32);
@@ -163,7 +149,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     s32 cost;
     s32 status;
 
-    targetMode = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->target_mode;
+    targetMode = BattleAction_Get(actionId)->type_0c;
     actor = ACTION_ACTOR(encodedAction);
     ObjectTable_Get(Data_02000240.object_id);
     specialResult = 0;
@@ -207,8 +193,8 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     /* Party members pay the action's PP cost up front. */
     if (actor <= ACTOR_LAST_PARTY) {
-        cost = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->pp_cost;
-        if (((struct BattleUnitRecord *)Owner_GetStateFar(actor))->pp < cost) {
+        cost = BattleAction_Get(actionId)->pp_cost;
+        if (Owner_GetStateFar(actor)->pp < cost) {
             Command_ShowActionMessage(actor, actionId, MsgNotEnoughPp);
             if (specialResult)
                 runtime->result_code = 0;

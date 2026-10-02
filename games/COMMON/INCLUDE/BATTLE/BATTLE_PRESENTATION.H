@@ -2,6 +2,7 @@
 #define ALCHEMY_BATTLE_PRESENTATION_H
 
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
 
 struct BattleCamera {
     u8 unknown_00[12];
@@ -17,9 +18,35 @@ struct BattleCamera {
 struct BattlePresentationTransition {
     s32 target_yaw;
     s32 frames;
-    u8 unknown_08[12];
+    u8 unknown_08[8];
+    s32 active;                    /* 0x10, an escape presentation is playing */
     s32 flag;
 };
+
+/* The action effect prepared from a plan and consumed by the presentation
+   dispatchers. Its target storage is distinct from an individual effect
+   argument: presentation reserves 24 ids. */
+struct BattlePresentationWork {
+    s32 kind;
+    s32 side;
+    s32 actor;
+    s32 first_target;
+    s32 initial_value;
+    s32 count;
+    s32 variant;
+    s32 flags;
+    u8 unknown_20[4];
+    s16 actors[24];
+};
+
+LAYOUT_SIZE_GUARD(BattlePresentationTransition_Size, struct BattlePresentationTransition, 0x18);
+LAYOUT_OFFSET_GUARD(BattlePresentationTransition_Active, struct BattlePresentationTransition, active, 0x10);
+LAYOUT_SIZE_GUARD(BattlePresentationWork_Size, struct BattlePresentationWork, 0x54);
+LAYOUT_OFFSET_GUARD(BattlePresentationWork_Actors, struct BattlePresentationWork, actors, 0x24);
+
+struct BattlePlan;
+s32 BattlePres_BuildTargetList(
+    struct BattlePlan *plan, struct BattlePresentationWork *work);
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 

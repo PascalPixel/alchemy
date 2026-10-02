@@ -2,11 +2,9 @@
 #include "RUNTIME_INTERFACES.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
+#include "MENU_LIST.H"
 
 s32 UiText_MeasureStringVariant(s32 start, s32 *width, s32 *count, s32 mode);
-extern u8 *gWindowWork;
-
-extern u8 Data_03001e8c[];
 s32 UiText_BuildRenderEntries(s32, s32);
 
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
@@ -32,7 +30,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
     s32 pos;
 
 #if !defined(FIT_FIXED_LIMIT)
-    base = gWindowWork;
+    base = gWindowWork[0];
 #endif
     x = *px;
     y = *py;
@@ -94,36 +92,36 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
     UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), x, y, 0);
 }
 
-s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)
 {
     u16 *base;
     s32 temp;
     s32 offset;
 
-    base = *(u16 **)((u32)&Data_03001e8c);
+    base = (u16 *)gWindowWork[0];
     temp = UiText_BuildRenderEntries(no, 0);
     offset = temp * 2 + RENDER_ENTRY_TBL_OFS;
     if (*(u16 *)((u8 *)base + offset) == 0)
     {
         return 0;
     }
-    UiWindow_FitOnScreen(temp, arg1, arg2, arg3, arg4, 0, 0);
+    UiWindow_FitOnScreen(temp, x, y, width, height, 0, 0);
     return 1;
 }
 
-s32 UiText_GetResourceDimensionsAlt(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
+s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)
 {
     u16 *base;
     s32 idx;
     s32 ofs;
 
-    base = *(u16 **)((u32)&Data_03001e8c);
+    base = (u16 *)gWindowWork[0];
     idx = UiText_BuildRenderEntries(no, 0);
     ofs = idx * 2 + RENDER_ENTRY_TBL_OFS;
     if (*(u16 *)((u8 *)base + ofs) == 0)
     {
         return 0;
     }
-    UiWindow_FitOnScreen(idx, arg1, arg2, arg3, arg4, 0, 1);
+    UiWindow_FitOnScreen(idx, x, y, width, height, 0, 1);
     return 1;
 }

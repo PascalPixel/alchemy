@@ -269,7 +269,9 @@ void Menu_SetupSelectionSide(struct MenuSelection *state, s32 index)
 
     state->nodes[index].active = 0;
     if (index != 0) {
-        /* FAKEMATCH: a separate local gives the early r5 load and late copy */
+        /* FAKEMATCH: a separate local gives the early r5 load and late copy.
+           2026-10-02: assigning frames here directly changes allocation
+           throughout the function, including the later node accesses. */
         u8 *right = Menu_CursorObjectTiles;
 
         count = state->count;

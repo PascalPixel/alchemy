@@ -81,7 +81,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         }
     advance:
         walker->step++;
-        obj->rise_counter = 0;
+        *(u8 *)&obj->rise_counter = (u16)0;
         break;
     case 9:
         Object_SetMode(obj, 2);

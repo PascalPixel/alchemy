@@ -1192,12 +1192,6 @@ BattleFx_RunSevenMode:
 	.thumb_func
 Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000c8714, 0x00000d38
-	.section .rom.000cd970, "ax"
-	.global BattleEffect_RunDitherDissolveScene
-	.type BattleEffect_RunDitherDissolveScene, %function
-	.thumb_func
-BattleEffect_RunDitherDissolveScene:
-	.incbin "baserom.gba", 0x000cd970, 0x00000cec
 	.section .rom.000d5a6e, "ax"
 	.incbin "baserom.gba", 0x000d5a6e, 0x00000002
 	.section .rom.000d5a70, "ax"
@@ -1493,7 +1487,46 @@ RenderMode_GlintFlips:
 	.incbin "baserom.gba", 0x000e52ae, 0x00000006
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
-	.incbin "baserom.gba", 0x000e52b4, 0x000006c0
+	.incbin "baserom.gba", 0x000e52b4, 0x0000065c
+	.global ThornVines_ObjectPoses
+ThornVines_ObjectPoses:
+	.incbin "baserom.gba", 0x000e5910, 0x00000006
+	.global ThornVines_ThornOffsets
+ThornVines_ThornOffsets:
+	.incbin "baserom.gba", 0x000e5916, 0x0000000a
+	.global ThornVines_ThornWidths
+ThornVines_ThornWidths:
+	.incbin "baserom.gba", 0x000e5920, 0x00000005
+	.global ThornVines_ThornHeights
+ThornVines_ThornHeights:
+	.incbin "baserom.gba", 0x000e5925, 0x00000005
+	.global ThornVines_LeafOffsets
+ThornVines_LeafOffsets:
+	.incbin "baserom.gba", 0x000e592a, 0x00000006
+	.global ThornVines_LeafSizes
+ThornVines_LeafSizes:
+	.incbin "baserom.gba", 0x000e5930, 0x00000004
+	.global ThornVines_ChipOffsets
+ThornVines_ChipOffsets:
+	.incbin "baserom.gba", 0x000e5934, 0x0000000a
+	.global ThornVines_ChipWidths
+ThornVines_ChipWidths:
+	.incbin "baserom.gba", 0x000e593e, 0x00000005
+	.global ThornVines_ChipHeights
+ThornVines_ChipHeights:
+	.incbin "baserom.gba", 0x000e5943, 0x00000005
+	.global ThornVines_SparkOffsets
+ThornVines_SparkOffsets:
+	.incbin "baserom.gba", 0x000e5948, 0x0000000a
+	.global ThornVines_SparkSizes
+ThornVines_SparkSizes:
+	.incbin "baserom.gba", 0x000e5952, 0x00000006
+	.global ThornVines_EmberOffsets
+ThornVines_EmberOffsets:
+	.incbin "baserom.gba", 0x000e5958, 0x0000000e
+	.global ThornVines_EmberSizes
+ThornVines_EmberSizes:
+	.incbin "baserom.gba", 0x000e5966, 0x0000000e
 	.global BattleFx10_Points
 BattleFx10_Points:
 	.incbin "baserom.gba", 0x000e5974, 0x00000020

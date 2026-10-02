@@ -241,7 +241,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW3.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.00018750)
     "*/recon/tbs/ja/rom.o"(.rom.0001898c)
-    "*/recon/tbs/ja/rom.o"(.rom.00018eb4)
+    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/PUT_GLYPH.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_TILEMAP_ENTRY.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000191c8)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/ADJUST_VALUE_WITHOUT_LIMIT.o"(.text)

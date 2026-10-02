@@ -7,9 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP.o"(.text)
-        "*/resource_371_overlay.o"(.text.x02009ca4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP2.o"(.text)
-        "*/resource_371_overlay.o"(.text.x0200a8e8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/MAP3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LINKED_EFFECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/IMPORT.o"(.text)

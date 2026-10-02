@@ -1,4 +1,3 @@
-/* Draft, not exact. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -29,36 +28,39 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
 void *GetMotionRecordFar(struct MotionObject *object, s32 index);
-void Object_InitializeMode(void *object, s32 mode);
+s32 Object_InitializeMode(void *object, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-void Audio_PlayCue(s32 cue);
+void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 x, s32 y);
 
-extern u8 Data_080ee910[];
-extern u16 Data_080ee916[];
-extern u8 Data_080ee920[];
-extern u8 Data_080ee925[];
-extern u16 Data_080ee92a[];
-extern u8 Data_080ee930[];
-extern u16 Data_080ee934[];
-extern u8 Data_080ee93e[];
-extern u8 Data_080ee943[];
-extern u16 Data_080ee948[];
-extern u8 Data_080ee952[];
-extern u16 Data_080ee958[];
-extern u16 Data_080ee966[];
+/* Three pairs of poses for the two middle objects, one pair every 24
+   frames. */
+extern u8 ThornVines_ObjectPoses[];
+/* The pictures in the sheet, each kind with where it starts and how large
+   it is: five thorns, three leaves, five chips, five sparks and seven
+   embers. */
+extern u16 ThornVines_ThornOffsets[];
+extern u8 ThornVines_ThornWidths[];
+extern u8 ThornVines_ThornHeights[];
+extern u16 ThornVines_LeafOffsets[];
+extern u8 ThornVines_LeafSizes[];
+extern u16 ThornVines_ChipOffsets[];
+extern u8 ThornVines_ChipWidths[];
+extern u8 ThornVines_ChipHeights[];
+extern u16 ThornVines_SparkOffsets[];
+extern u8 ThornVines_SparkSizes[];
+extern u16 ThornVines_EmberOffsets[];
+extern u16 ThornVines_EmberSizes[];
 
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
-/* The eight objects the effect spawns, kept in the work block. */
-#define WORK_OBJECTS(work) ((void **)((u8 *)(work) + 0x77d8))
 
 /* Battle effect: vines grow up through the ground under the enemy side,
    thorns scatter, the picture dissolves through a shuffled dither, and
@@ -75,6 +77,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     s32 rise;
     s32 i;
     s32 j;
+    u8 *cells;
     s32 point[3];
     struct EffectPosition screen;
     DrawRectangle draw[2];
@@ -85,16 +88,19 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_SpawnObjects(8, 0x177, 1);
 
+    cells = Ram_MapCellBuffer;
     for (i = 0; i != 1024; i++)
-        Ram_MapCellBuffer[i] = i & 127;
+        cells[i] = i & 127;
     for (i = 0; i != 8; i++) {
         for (j = 0; j != 128; j++) {
             s32 a = Random16() & 127;
             s32 b = Random16() & 127;
-            u8 t = Ram_MapCellBuffer[i * 128 + b];
+            u8 *to = &cells[i * 128 + b];
+            u8 *from = &cells[i * 128 + a];
+            u8 t = *to;
 
-            Ram_MapCellBuffer[i * 128 + b] = Ram_MapCellBuffer[i * 128 + a];
-            Ram_MapCellBuffer[i * 128 + a] = t;
+            *to = *from;
+            *from = t;
         }
     }
 
@@ -157,14 +163,14 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         if (frame == 31) {
             work->shake_frames = 8;
-            Audio_PlayCue(157);
+            AudioCommand_PlayFar(157);
             for (i = 0; i != work->effect->count; i++)
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
         }
         if (frame == 72)
-            Audio_PlayCue(136);
+            AudioCommand_PlayFar(136);
         if (frame == 140)
-            Audio_PlayCue(156);
+            AudioCommand_PlayFar(156);
         speed += 0x4000;
         height += speed;
         if (height > 0x400000)
@@ -173,8 +179,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         if (frame >= 48 && frame <= 96) {
             s32 pose = (frame - 48) / 24 % 3;
 
-            Object_InitializeMode(WORK_OBJECTS(work)[3], Data_080ee910[pose * 2]);
-            Object_InitializeMode(WORK_OBJECTS(work)[4], Data_080ee910[pose * 2 + 1]);
+            Object_InitializeMode(work->objects[3], ThornVines_ObjectPoses[pose * 2]);
+            Object_InitializeMode(work->objects[4], ThornVines_ObjectPoses[pose * 2 + 1]);
         }
         if (frame >= 72 && frame <= 127) {
             for (i = 0; i != 16; i++) {
@@ -182,13 +188,16 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 
                 if (frame >= i + 72 && thorn->y <= 0x67ffff) {
                     s32 cel = (frame + i) / 4 % 5;
-                    u32 width;
+                    s32 x = HI(thorn->x);
+                    s32 y = thorn->y >> 16;
+                    u8 *cell = (u8 *)work + ThornVines_ThornOffsets[cel];
+                    u32 width = ThornVines_ThornWidths[cel];
                     u32 tall;
 
-                    draw[0](canvas, (u8 *)work + Data_080ee916[cel],
-                        HI(thorn->x) - ((width = Data_080ee920[cel]) >> 1),
-                        (thorn->y >> 16) - ((tall = Data_080ee925[cel]) >> 1),
-                        width, tall);
+                    x -= width >> 1;
+                    tall = ThornVines_ThornHeights[cel];
+                    y -= tall >> 1;
+                    draw[0](canvas, cell, x, y, width, tall);
                     EffectStep_AdvanceWithGravity2D(thorn, 64, 0x1000);
                 }
             }
@@ -220,6 +229,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                     u8 *sheet = (u8 *)work;
                     s32 top;
                     s32 wrap;
+                    s32 k;
 
                     if (i > 5)
                         sheet = (u8 *)work + 0x6c0;
@@ -228,8 +238,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                         ;
                     if (wrap <= 119)
                         draw[i & 1](canvas, sheet, vine->x, vine->y - wrap - 8, 24, 8);
-                    for (j = 0; j != 3; j++) {
-                        s32 y = vine->y - wrap + j * 64;
+                    for (k = 0; k != 3; k++) {
+                        s32 y = vine->y - wrap + k * 64;
                         s32 skip = 0;
                         s32 rows = 64;
 
@@ -247,13 +257,13 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                     if ((i & 1) != 0) {
                         s32 y = ((vine->y - top) & 127) - 16;
                         s32 kind = i % 3;
-                        s32 full = Data_080ee930[kind];
+                        s32 full = ThornVines_LeafSizes[kind];
                         s32 rows = full;
 
                         if (y + rows > vine->y)
                             rows -= y + rows - vine->y;
                         if (rows > 0)
-                            draw[i & 1](canvas, (u8 *)work + Data_080ee92a[kind],
+                            draw[i & 1](canvas, (u8 *)work + ThornVines_LeafOffsets[kind],
                                 vine->x + 8, y, full, rows);
                     }
                 }
@@ -266,8 +276,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                 if (chip->variant >= 0) {
                     s32 cel = i % 5;
 
-                    draw[0](canvas, (u8 *)work + Data_080ee934[cel],
-                        HI(chip->x), HI(chip->y), Data_080ee93e[cel], Data_080ee943[cel]);
+                    draw[0](canvas, (u8 *)work + ThornVines_ChipOffsets[cel],
+                        HI(chip->x), HI(chip->y), ThornVines_ChipWidths[cel], ThornVines_ChipHeights[cel]);
                     chip->x += chip->velocity_x;
                     chip->y += chip->velocity_y;
                     chip->velocity_y += 0x4000;
@@ -324,8 +334,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                         spark->y = screen.y + (Random16() & 15) - 40;
                     }
                     if ((u32)spark->variant <= 4) {
-                        u8 *cell = (u8 *)work + Data_080ee948[spark->variant];
-                        u32 size = Data_080ee952[spark->variant];
+                        u8 *cell = (u8 *)work + ThornVines_SparkOffsets[spark->variant];
+                        u32 size = ThornVines_SparkSizes[spark->variant];
                         u32 half = size >> 1;
 
                         draw[0](canvas, cell, spark->x - half, spark->y - half, size, size);
@@ -339,31 +349,31 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 
         if (frame > 232) {
             s32 row = frame * 2 - 496;
-            s32 line;
 
-            line = row;
             for (i = 0; i != 32; i++) {
                 for (j = 0; j != 4; j++) {
-                    if ((u32)line <= 127) {
-                        s32 x = Ram_MapCellBuffer[((line & 7) * 32 + i) * 4 + j];
+                    s32 y = row + i;
 
-                        ((u8 *)canvas)[((line / 8 * 16 + x / 8) * 8 + (line & 7)) * 8
+                    if ((u32)y <= 127) {
+                        s32 x = cells[((y & 7) * 32 + i) * 4 + j];
+
+                        ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8
                             + (x & 7)] = 0;
                     }
                 }
-                line++;
             }
-            line = row + 1;
+            row++;
             for (i = 0; i != 32; i++) {
                 for (j = 0; j != 4; j++) {
-                    if ((u32)line <= 127) {
-                        s32 x = Ram_MapCellBuffer[((line & 7) * 32 + i) * 4 + j];
+                    s32 y = row + i;
 
-                        ((u8 *)canvas)[((line / 8 * 16 + x / 8) * 8 + (line & 7)) * 8
+                    if ((u32)y <= 127) {
+                        s32 x = cells[((y & 7) * 32 + i) * 4 + j];
+
+                        ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8
                             + (x & 7)] = 0;
                     }
                 }
-                line++;
             }
         }
 
@@ -372,13 +382,15 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                 if (frame > i * 8 + 160) {
                     struct BattleObjectSlot *slot =
                         GetBattleObjectSlotFar(work->effect->actors[i]);
+                    struct MotionObject *object = slot->object;
                     void *record;
+                    s32 n;
 
-                    slot->object->y += 0x80000;
-                    if (slot->object->y > 0x800000)
-                        slot->object->y = 0x800000;
-                    slot->object->vertical_motion_strength = 0;
-                    for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0; j++)
+                    object->y += 0x80000;
+                    if (object->y > 0x800000)
+                        object->y = 0x800000;
+                    object->vertical_motion_strength = 0;
+                    for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
                         Object_InitializeMode(record, 5);
                 }
             }
@@ -393,7 +405,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
             }
             if (frame == i * 5 + 302) {
                 ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
-                Audio_PlayCue(134);
+                AudioCommand_PlayFar(134);
                 work->shake_frames = 8;
             }
         }
@@ -459,9 +471,10 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
                         screen.x >>= 1;
                         if ((u32)ember->variant <= 26) {
                             s32 cel = 6;
-                            u32 size = Data_080ee966[cel];
+                            s32 offset = ThornVines_EmberOffsets[cel];
+                            u32 size = ThornVines_EmberSizes[cel];
 
-                            draw[0](canvas, (u8 *)work + Data_080ee958[cel],
+                            draw[0](canvas, (u8 *)work + offset,
                                 screen.x - (size >> 1), screen.y - (size >> 1), size, size);
                         }
                         EffectStep_AdvanceWithGravity2D(ember, 60, 0x1000);
@@ -488,6 +501,6 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     BattleEventRuntime_BeginPhaseFar(134);
     BattleEffect_RunImpactBurst(2, 0x800000, height);
     for (i = 0; i != 8; i++)
-        ResourceObject_ReleaseFar(WORK_OBJECTS(work)[i]);
+        ResourceObject_ReleaseFar(work->objects[i]);
     BattleFx_EndCanvasLayer();
 }

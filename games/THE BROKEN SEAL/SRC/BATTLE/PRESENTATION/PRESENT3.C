@@ -39,6 +39,148 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void *Resource_GetTableEntry(s32 id);
 void BattlePresentation_DrawStreaks(void);
+#include "FIXED_MATH.H"
+#include "RESOURCE.H"
+
+extern DrawRectangle gWorkSlot[];
+extern u16 BattleFx6_FlareCells[];
+/* The four corner sparks: where each sits and how it is flipped. */
+extern s8 CornerSparks_X[];
+extern s8 CornerSparks_Y[];
+extern u8 CornerSparks_DrawFlags[];
+
+#define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
+
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 BattleFx_EndCanvasLayer(void);
+void AudioCommand_PlayFar(s32 value);
+void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
+
+struct BlitterPair {
+    DrawRectangle upper;
+    DrawRectangle lower;
+};
+
+/* Battle effect: four sparks flash at the corners of the actor, a ring of
+   motes closes in on it and a burst opens over it. The effect brings its own
+   work block, canvas and sheet. */
+void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
+{
+    struct EffectPosition ground;
+    struct BattleEffectWork *work;
+    void *canvas;
+    struct BlitterPair draw;
+    u8 *sheet;
+    void *palette;
+    s32 frame;
+    s32 i;
+
+    work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(39, sizeof *work);
+    canvas = (void *)Runtime_AllocateHeapBlock(40, 0x4000);
+    sheet = (u8 *)Runtime_AllocateHeapBlock(41, 0x60e);
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0);
+    work->fade_frames = 24;
+    work->fade_step = 0;
+    *(volatile u16 *)0x04000052 = 0x100c;
+    *(volatile u16 *)0x04000020 = 0x100;
+    Resource_LoadAndDecompress((s32)&ResourceId_CyanSparkSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
+    switch (work->effect->kind) {
+    case 0:
+        palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
+        break;
+    case 1:
+        palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
+        break;
+    case 2:
+        palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+        break;
+    default:
+        palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+        break;
+    }
+    {
+        s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+        copy((void *)0x05000000, palette, 128);
+    }
+
+    for (i = 0; i != 128; i++) {
+        gFlecks[i].y = 0x800000;
+        gFlecks[i].x = Random16() & 0xffff;
+        gFlecks[i].z = (Random16() & 0x1ff) + 0x400;
+        gFlecks[i].variant = -i;
+    }
+    for (i = 0; i != 64; i++) {
+        work->particles[i].x = Random16() & 0xffff;
+        work->particles[i].y = (Random16() & 31) + 16;
+        work->particles[i].variant = (i & 15) + 16;
+    }
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    BattleEffect_LoadWork(46, 7, 7, 7, 3);
+    draw.upper = gWorkSlot[46];
+    AudioCommand_PlayFar(140);
+
+    for (frame = 0; frame != 56; frame++) {
+        EffectPosition_ApplyStepAndYOffset(effect->actor, &ground);
+        *(volatile s32 *)0x04000028 = (64 - ground.x) << 8;
+        if (frame > 49)
+            *(volatile u16 *)0x04000052 = (0x70 - frame * 2) | 0x1000;
+        if (frame == 26) {
+            AudioCommand_PlayFar(212);
+            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, -1, 0, 20);
+        }
+        if ((u32)(frame - 28) <= 20)
+            draw.upper(canvas, work->sheet + (frame - 28) / 3 * 2304 + 0x1400, 40, ground.y - 24, 48, 48);
+        if ((u32)frame <= 14) {
+            s32 picture = frame / 3 % 5;
+            DrawRectangle *slot = &((DrawRectangle *)Ram_WorkSlot)[47];
+
+            for (i = 0; i != 4; i++) {
+                BattleEffect_LoadWork(47, 7, 7, CornerSparks_DrawFlags[i] | 3, 2);
+                draw.lower = *slot;
+                draw.lower(canvas, work->sheet + (picture << 10), CornerSparks_X[i] + 32,
+                    ground.y + CornerSparks_Y[i] - 32, 32, 32);
+                Runtime_ReleaseHeapBlock(47);
+            }
+        }
+        if (frame >= 0) {
+            for (i = 0; i != 64; i++) {
+                struct EffectStep *mote = &work->particles[i];
+
+                if (mote->variant >= 0 && mote->y > 0) {
+                    s32 size = (mote->variant >> 3) + 1;
+                    s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
+                    s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
+
+                    if (size <= 0)
+                        size = 1;
+                    draw.upper(canvas, sheet + BattleFx6_FlareCells[size - 1],
+                        x - size, y - size, size * 2, size * 2);
+                    mote->y -= 2;
+                    mote->variant--;
+                }
+            }
+        }
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    BattleFx_EndCanvasLayer();
+    Runtime_ReleaseHeapBlock(41);
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
+}
+
 
 /*
  * Frame callback that BattlePresentation_PrepareScene schedules at 0xc80.

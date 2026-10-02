@@ -35,7 +35,7 @@ BattleEffect_RunTileAndPaletteAnimationFar:
 	.global Func_080c9030
 	.thumb_func
 Func_080c9030:
-	overlay_veneer Func_080cc5d8
+	overlay_veneer BattleFx_RunGatheringBurst
 	.global BattlePresentation_PrepareSceneFar
 	.thumb_func
 BattlePresentation_PrepareSceneFar:

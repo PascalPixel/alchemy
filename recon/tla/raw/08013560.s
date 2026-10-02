@@ -29,7 +29,7 @@ WaitFrames:
 	movs r0, #144
 	strb r1, [r5]
 	lsls r0, r0, #3
-	bl Func_080147d8
+	bl Scheduler_RunCallbacksByKey
 	movs r3, #0
 	strb r3, [r5]
 	ldr r3, .L_0801366c

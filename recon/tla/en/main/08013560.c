@@ -50,7 +50,6 @@ extern u32 Data_0300122c;
 extern u32 Data_0300117c;
 extern u16 Data_030011b8;
 extern volatile u16 Data_02003000;
-void Func_080147d8(s32 key);
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Render_BuildOamList(void *work);
 void Func_080134b0(void);
@@ -96,7 +95,7 @@ void WaitFrames(s32 frames)
 
     for (i = 0; i < (u32)frames; i++) {
         gSchedulerStatus = 1;
-        Func_080147d8(0x480);
+        Scheduler_RunCallbacksByKey(0x480);
         gSchedulerStatus = 0;
         if (Data_0300120c) {
             Render_BuildOamList(Runtime_AllocateHeapBlock(80, 0x400));

@@ -5690,7 +5690,7 @@ Func_02002c30:
 .L_0200ac58:
 	.4byte 0xffffffff
 .L_0200ac5c:
-	.4byte Data_030011bc
+	.4byte gRandomState
 .L_0200ac60:
 	.4byte Data_020023c4 + 0x88
 .L_0200ac64:
@@ -5761,7 +5761,7 @@ Func_02002c30:
 .L_0200ace0:
 	.4byte Data_02005be0
 .L_0200ace4:
-	.4byte Data_030011bc
+	.4byte gRandomState
 	.section .text.x0200ace8,"ax",%progbits
 	.global Func_02002ce8
 	.thumb_func

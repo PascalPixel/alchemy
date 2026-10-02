@@ -32,7 +32,7 @@ Func_080000e8:
 	.global Func_080000f0
 	.thumb_func
 Func_080000f0:
-	overlay_veneer Func_080147d8
+	overlay_veneer Scheduler_RunCallbacksByKey
 	.global Func_080000f8
 	.thumb_func
 Func_080000f8:

@@ -244,18 +244,6 @@ Resource_GetBuffer:
 	.thumb_func
 Scheduler_SetCallbackMask:
 	.incbin "baserom.gba", 0x00014748, 0x00000040
-	.section .rom.00014804, "ax"
-	.global Func_080147d8
-	.type Func_080147d8, %function
-	.thumb_func
-Func_080147d8:
-	.incbin "baserom.gba", 0x00014804, 0x000000a0
-	.section .rom.000148a4, "ax"
-	.global Random16
-	.type Random16, %function
-	.thumb_func
-Random16:
-	.incbin "baserom.gba", 0x000148a4, 0x00000024
 	.section .rom.000148c8, "ax"
 	.global Vector_AddPolarOffset
 	.type Vector_AddPolarOffset, %function
@@ -340,12 +328,12 @@ Func_08014ca0:
 	.thumb_func
 Func_08014cb0:
 	.incbin "baserom.gba", 0x00014cdc, 0x00000010
-	.section .rom.00014d2c, "ax"
-	.global Runtime_AllocateBlock
-	.type Runtime_AllocateBlock, %function
+	.section .rom.00014d6c, "ax"
+	.global Func_08014d40
+	.type Func_08014d40, %function
 	.thumb_func
-Runtime_AllocateBlock:
-	.incbin "baserom.gba", 0x00014d2c, 0x00000078
+Func_08014d40:
+	.incbin "baserom.gba", 0x00014d6c, 0x00000038
 	.section .rom.00014da4, "ax"
 	.global Runtime_BumpAllocate
 	.type Runtime_BumpAllocate, %function
@@ -4557,10 +4545,10 @@ Object_Spawn:
 Func_080db9c0:
 	.incbin "baserom.gba", 0x000dc1a4, 0x00000094
 	.section .rom.000dc238, "ax"
-	.global Func_080db9cc
-	.type Func_080db9cc, %function
+	.global Field_BeginPaletteTransition
+	.type Field_BeginPaletteTransition, %function
 	.thumb_func
-Func_080db9cc:
+Field_BeginPaletteTransition:
 	.incbin "baserom.gba", 0x000dc238, 0x000003e8
 	.global Func_080dc62c
 	.type Func_080dc62c, %function
@@ -4650,10 +4638,10 @@ Func_080e1650:
 Func_080dc1b0:
 	.incbin "baserom.gba", 0x000e15f0, 0x00000054
 	.section .rom.000e1644, "ax"
-	.global Field_BeginPaletteTransition
-	.type Field_BeginPaletteTransition, %function
+	.global Field_EndActorSpriteEffect
+	.type Field_EndActorSpriteEffect, %function
 	.thumb_func
-Field_BeginPaletteTransition:
+Field_EndActorSpriteEffect:
 	.incbin "baserom.gba", 0x000e1644, 0x00000f98
 	.section .rom.000e25dc, "ax"
 	.global Func_080eaeb4

@@ -421,7 +421,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT28.o"(.text)
         "*/recon/tbs/raw/0808f52c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY2.o"(.text)
-        "*/recon/tbs/raw/0808fefc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY7.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_UPDATE_SCANLINE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE5.o"(.text)

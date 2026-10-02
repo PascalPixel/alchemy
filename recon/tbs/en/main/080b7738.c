@@ -1,22 +1,15 @@
-/* Draft, not exact (2026-09-28): 420 of 428 bytes, 104 aligned edits (was
-   432 bytes / 142 edits). Battle: cycle the status icons of every actor
-   (state 9 while the object is hidden) and set the sprite priority of each
-   side from the camera angle.
-   The icon loop is an if/goto loop: loop.c leaves it alone, so it indexes
-   ids[i * 2] afresh each pass exactly as the reference does (the for, while
-   and do/while spellings are all strength-reduced). Taking each child record
-   with *records++ gives the reference's ldmia walk.
-   Open: the reference keeps both priorities and two hoisted masks on the
-   stack (frame 44 against 32 here) and does not reverse the two side loops
-   (it compares i against the count, unfolded at i = 0); here loop.c's second
-   pass reverses them into a count-down.
-   2026-09-29 (alchemy permute scorer): the draft scored 5064 (44
-   register-only, 4 stack-only, 21 operand, 10 reordered, 17 inserted, 21
-   deleted). This body is the permuter's best after a 300-second search
-   (45,000 candidates): 2968 (39 register-only, 3 stack-only, 6 operand, 9
-   reordered, 11 inserted, 10 deleted). Many of its 73 rewrites are noise;
-   the 44-byte frame (40 here) and the unreversed side loops remain.
- */
+/* DRAFT (score 2343), rewritten 2026-10-02: 74 instructions differ, from two
+ * causes.
+ * 1. The ROM keeps both sprite priorities on the stack (sp+8, sp+12) and masks
+ *    each with 3 before shifting it into the record; here the near one stays in
+ *    r5 and, both being known to be 1 or 2, the mask is dropped. As a two-word
+ *    array they are on the stack and masked, but then the second case reloads
+ *    the word where the ROM reuses the masked value it holds in r11.
+ * 2. In the icon scan the ROM leaves the motion record in r0 and loads the icon
+ *    effect into r2; here they are the other way round.
+ * Settled: the icon scan is not strength-reduced in the ROM (kept as a goto
+ * loop, tagged); the slot is a variable of each loop, not of the function;
+ * the four-record loops are ascending loops the compiler reverses. */
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 
@@ -65,113 +58,94 @@ struct IconContext *GetMotionRecord(struct ActorObject *object, s32 record_index
 void Func_080b7738(void)
 {
     u16 ids[14];
-    struct ActorSlot *slot;
-    struct ActorObject *object;
     s32 near_priority;
-    struct IconContext *context;
-    register s32 far_priority;
-    struct SpriteRecord **records;
+    s32 far_priority;
+    struct ActorObject *object;
     s32 i;
-    s32 count;
     s32 j;
-    s32 state;
-    s32 tmp8;
+    s32 count;
 
-    i = 0;
     BattleParty_ListActorIds(3, ids);
-    if (0xff != ids[i]) {
-    loop:
-        slot = GetBattleObjectSlot(ids[i]);
-        if (slot != 0) {
-            struct BattleStatusIconRecord *tmp7;
-            struct ActorObject *tmp9;
-            tmp9 = slot->object;
-            tmp7 = (struct BattleStatusIconRecord *)slot;
-            BattleStatusIcon_Cycle(tmp7);
-            object = tmp9;
-            if (slot->icon_effect != 0) {
-                if (context = GetMotionRecord(object, 0)) {
-                    s32 tmp;
-                    u8 tmp5;
-                    s32 tmp6;
-                    state = 0;
-                    if (object->hidden)
-                        state = 9;
-                    tmp5 = slot[0].icon_effect->state;
-                    if (tmp6 = (tmp = tmp5 != state) != 0) {
-                        slot->icon_effect->state = state;
-                        context->dirty = 1;
+    /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop
+     * pass off it; as a for loop it becomes a pointer walk. */
+    i = 0;
+    if (ids[i] != 0xff) {
+again:
+        {
+            struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+
+            if (slot != 0) {
+                object = slot->object;
+                BattleStatusIcon_Cycle((struct BattleStatusIconRecord *)slot);
+                if (slot->icon_effect != 0) {
+                    struct IconContext *context = GetMotionRecord(object, 0);
+
+                    if (context != 0) {
+                        struct IconEffect *effect;
+                        s32 state = 0;
+
+                        if (object->hidden != 0)
+                            state = 9;
+                        effect = slot->icon_effect;
+                        if (effect->state != state) {
+                            effect->state = state;
+                            context->dirty = 1;
+                        }
                     }
                 }
             }
         }
-        if (13 >= ++i && ids[i] != 0xff)
-            goto loop;
+        i++;
+        if (i <= 13 && ids[i] != 0xff)
+            goto again;
     }
-    if (0 <= gCameraWork->angle) {
+    if (gCameraWork->angle >= 0) {
         near_priority = 1;
         far_priority = 2;
-    } else {
-        far_priority = 1;
+    } else if (gCameraWork->angle < 0) {
         near_priority = 2;
+        far_priority = 1;
     }
     count = BattleParty_ListActorIds(1, ids);
     for (i = 0; i < count; i++) {
-        s32 tmp4;
-        s32 tmp2;
-        slot = GetBattleObjectSlot(ids[i]);
-        tmp2 = slot == 0;
-        tmp4 = tmp2;
-        if (tmp4)
-            continue;
-        object = slot->object;
-        switch (object->record_kind & 15) {
-        case 1:
-            ((struct SpriteRecord *)object->records)->priority = near_priority;
-            break;
-        case 2:
-            records = object->records;
-            j = 3;
-            if (0 <= j) {
-                while (1) {
-                    struct SpriteRecord *record = records++[0];
-                    if (0 != record)
+        struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+
+        if (slot != 0) {
+            object = slot->object;
+            switch (object->record_kind & 15) {
+            case 1:
+                ((struct SpriteRecord *)object->records)->priority = near_priority;
+                break;
+            case 2:
+                for (j = 0; j < 4; j++) {
+                    struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+
+                    if (record != 0)
                         record->priority = near_priority;
-                    j--;
-                    if (0 > j)
-                        break;
                 }
+                break;
             }
-            break;
         }
     }
-    tmp8 = BattleParty_ListActorIds(2, ids);
-    count = tmp8;
+    count = BattleParty_ListActorIds(2, ids);
     for (i = 0; i < count; i++) {
-        s32 tmp3;
-        slot = GetBattleObjectSlot(ids[i]);
-        tmp3 = slot == 0;
-        if (tmp3)
-            continue;
-        object = slot->object;
-        switch (object->record_kind & 15) {
-        case 1:
-            ((struct SpriteRecord *)object->records)->priority = far_priority;
-            break;
-        case 2:
-            records = object->records;
-            j = 3;
-            if (j >= 0) {
-                while (1) {
-                    struct SpriteRecord *record = *records++;
-                    if (0 != record)
+        struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+
+        if (slot != 0) {
+            object = slot->object;
+            switch (object->record_kind & 15) {
+            case 1:
+                ((struct SpriteRecord *)object->records)->priority = far_priority;
+                break;
+            case 2:
+                for (j = 0; j < 4; j++) {
+                    struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+
+                    if (record != 0)
                         record->priority = far_priority;
-                    --j;
-                    if (0 > j)
-                        break;
                 }
+                break;
             }
-            break;
         }
     }
 }

@@ -3,8 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
-/* FAKEMATCH: calls that cast SceneActor_FindSlotAtTilePosition to another return type keep their original register order. */
-s32 *SceneActor_FindSlotAtTilePosition(s32 *arg0);
+#include "KAWA.H"
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -53,16 +52,11 @@ struct ModeRecord {
     u16 span;
 };
 
-typedef struct Position3 {
-    s32 x;
-    s32 y;
-    s32 z;
-} Position3;
 
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
     u8 pad[500];
-    void *handle;
+    s32 handle;
 } ActiveSubjectSlot;
 
 extern u8 LinkedMessage_WouldYouLikeHearDescription;
@@ -112,7 +106,6 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 
-s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
@@ -150,19 +143,19 @@ void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);   /* place at (x,
 
 void Script_WaitForEventTimeout(struct FieldActor *);              /* re-attach the camera */
 
-s32 *SceneActor_FindSlotAtTilePosition(s32 *arg0)
+struct FieldActor *SceneActor_FindSlotAtTilePosition(Position3 *pos, struct FieldActor *subject)
 {
     extern u8 *Data_03001ebc;
 
-    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
+    struct FieldActor **slots = (struct FieldActor **)(Data_03001ebc + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        s32 *p = slots[i];
+        struct FieldActor *p = slots[i];
 
-        if ((arg0[0] >> 20) == (p[2] >> 20)
-            && (arg0[1] >> 20) == (p[3] >> 20)
-            && (arg0[2] >> 20) == (p[4] >> 20)) {
+        if ((pos->x >> 20) == (p->x.fixed >> 20)
+            && (pos->y >> 20) == (p->y.fixed >> 20)
+            && (pos->z >> 20) == (p->z.fixed >> 20)) {
             return p;
         }
     }
@@ -202,7 +195,7 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = subject->z.fixed + (s32)step;
 
-    target = ((struct FieldActor *(*)())SceneActor_FindSlotAtTilePosition)(&pos, subject);
+    target = SceneActor_FindSlotAtTilePosition(&pos, subject);
     if (target == 0) {
         return;
     }
@@ -214,7 +207,7 @@ void StagedActor_PushActorAhead(void)
     step <<= 16;
     pos.z = target->z.fixed + (s32)step;
 
-    blocker = ((struct FieldActor *(*)())SceneActor_FindSlotAtTilePosition)(&pos, target);
+    blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
     if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
         return;
     }
@@ -224,7 +217,7 @@ void StagedActor_PushActorAhead(void)
     pos.y = target->y.fixed + 0x100000;      /* 128 << 13 */
     pos.z = target->z.fixed;
 
-    blocker = ((struct FieldActor *(*)())SceneActor_FindSlotAtTilePosition)(&pos, target);
+    blocker = SceneActor_FindSlotAtTilePosition(&pos, target);
     if (blocker != 0 && (blocker->collision_flags & 1) != 0) {
         return;
     }
@@ -279,33 +272,33 @@ void StagedActor_PushActorAhead(void)
  * whole units and re-centres them by half a unit, carrying y unrounded. Only
  * the record fields at +6, +8, +12 and +16 are asserted.
  */
-s32 *SceneActor_FindOccupantAheadOfSubject(void)
+struct FieldActor *SceneActor_FindOccupantAheadOfSubject(void)
 {
     extern s16 Data_02000240[];
 
-    u8 *rec;
+    struct FieldActor *rec;
     s32 facing;
-    s32 pos[3];
-    s32 *hit;
+    Position3 pos;
+    struct FieldActor *hit;
 
-    rec = (u8 *)Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
+    rec = Object_GetById(((ActiveSubjectSlot *)Data_02000240)->handle);
 
     /* 128 << 6 = 0x2000 bias, then masked to bits 14-15 (192 << 8). */
-    facing = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;
+    facing = (rec->facing + 0x2000) & 0xc000;
 
-    pos[0] = (*(s32 *)(rec + 8) & 0xfff00000) + 0x80000;
-    pos[1] = *(s32 *)(rec + 12);
-    pos[2] = (*(s32 *)(rec + 16) & 0xfff00000) + 0x80000;
-    Vector_AddPolarOffset(0x100000, facing, pos);          /* 128 << 13 */
+    pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
+    pos.y = rec->y.fixed;
+    pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
+    Vector_AddPolarOffset(0x100000, facing, &pos);          /* 128 << 13 */
 
-    hit = ((s32 *(*)())SceneActor_FindSlotAtTilePosition)(pos, rec);
+    hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
     if (hit == 0) {
-        pos[0] = (*(s32 *)(rec + 8) & 0xfff00000) + 0x80000;
-        pos[1] = *(s32 *)(rec + 12);
-        pos[2] = (*(s32 *)(rec + 16) & 0xfff00000) + 0x80000;
-        Vector_AddPolarOffset(0x200000, facing, pos);      /* 128 << 14 */
+        pos.x = (rec->x.fixed & 0xfff00000) + 0x80000;
+        pos.y = rec->y.fixed;
+        pos.z = (rec->z.fixed & 0xfff00000) + 0x80000;
+        Vector_AddPolarOffset(0x200000, facing, &pos);      /* 128 << 14 */
 
-        hit = ((s32 *(*)())SceneActor_FindSlotAtTilePosition)(pos, rec);
+        hit = SceneActor_FindSlotAtTilePosition(&pos, rec);
     }
 
     return hit;

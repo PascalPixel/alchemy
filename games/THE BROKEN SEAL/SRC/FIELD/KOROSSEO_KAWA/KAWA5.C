@@ -2,11 +2,10 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+#include "KAWA.H"
 
 extern const s32 KorosseoKawa_ApproachScript[];
 
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-struct FieldActor *Object_GetById();
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -55,11 +54,6 @@ struct ModeRecord {
     u16 span;
 };
 
-typedef struct Position3 {
-    s32 x;
-    s32 y;
-    s32 z;
-} Position3;
 
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
@@ -80,7 +74,6 @@ void Vector_AddPolarOffset(s32, s32, s32 *);
 struct FieldActor *Object_CreateFar(s32, s32, s32, s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-s32 *SceneActor_FindOccupantAheadOfSubject(void);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
@@ -285,7 +278,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 
     u8 *work = gKorosseoWork;
     u8 *shared;
-    u8 *rec;
+    struct FieldActor *rec;
     s32 flag;
     s32 x;
     s32 z;
@@ -295,9 +288,9 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     flag = GameFlag_IsSet(0x211);
 
     shared = Data_02000240;
-    rec = ((u8 *(*)())Object_GetById)(*(s32 *)(shared + 500));
+    rec = Object_GetById(*(s32 *)(shared + 500));
 
-    if (*(s32 *)(work + 232) < *(s32 *)(rec + 8)) {
+    if (*(s32 *)(work + 232) < rec->x.fixed) {
         x = *(s32 *)(work + 232) + 0xc0000;
     } else {
         x = *(s32 *)(work + 232) - 0xc0000;
@@ -311,10 +304,10 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
         cuep = (u16 *)(work + 226);
     }
 
-    waitp = (s16 *)(rec + 100);
+    waitp = (s16 *)&rec->unknown_64;
     *waitp = *cuep;
-    *(s32 *)(rec + 52) = 0x4000;
-    *(s32 *)(rec + 48) = 0x10000;
+    rec->acceleration = 0x4000;
+    rec->speed = 0x10000;
 
     Object_SetMoveTarget(rec, x, 0, z);
     GameFlag_Set(0x211);

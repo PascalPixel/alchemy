@@ -1,10 +1,8 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
-/* The international glyph renderer. The Japanese renderer also combines
-   kana voicing marks; its remaining instruction-order draft lives in recon
-   until its complete extent matches. */
-#if EDITION_INTERNATIONAL
+/* The glyph renderer. The Japanese one also joins a kana voicing mark to the
+   kana before it, and draws its sprites two pixels lower. */
 
 extern u8 *gWindowWork;
 
@@ -44,6 +42,8 @@ struct RenderOutput {
 struct WindowTilemap {
     u16 tiles[640];
 };
+
+#if EDITION_INTERNATIONAL
 
 /* Places a glyph: mode 1 queues it as a sprite at the window cell, other
    modes write tiles up to 0xff into the window tilemap. */
@@ -90,6 +90,76 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         pos = (win->y + y) * 32 + (win->x + x);
         if (pos < 640)
             ((struct WindowTilemap *)out)->tiles[pos] = tile | 0xf000;
+    }
+}
+
+#else
+
+/* Places a glyph: mode 1 queues it as a sprite at the window cell, other
+   modes write tiles up to 0xff into the window tilemap. */
+void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
+{
+    /* FAKEMATCH: the game keeps the work block in r12 for the tile store and a copy in r8 for the rest; as one plain variable it lives in r8 alone. */
+    register u8 *work asm("r12") = gWindowWork;
+    u8 *base = work;
+    struct RenderOutput *out;
+    s32 idx;
+    u16 *slot;
+    struct SpriteAttr *attr;
+    u32 pos;
+    u16 row;
+
+    if (y > (u32)(win->height - 2))
+        return;
+    if (x > (u32)(win->width - 2))
+        return;
+    if (mode == 1) {
+        s32 column;
+        u16 left;
+        out = RenderOutput_AcquireFree();
+        if (out == NULL)
+            return;
+        idx = (out - (struct RenderOutput *)(base + RENDER_OUTPUT_TBL_OFS)) * 4;
+        out->one5 = 2;
+        attr = &out->attr;
+        slot = (u16 *)(base + RENDER_COUNTER_OFS);
+        if (*slot == 99)
+            *slot = Resource_FindFreeEntry();
+        column = 0xfffe;
+        left = win->x;
+        /* FAKEMATCH: the volatile width read is scheduled before the column constant's pool load, as in the reference. */
+        attr->x = (left + (column + *(volatile u16 *)&win->width)) * 8 + 4;
+        row = (u8)win->y + (row = (u8)win->height + 254);
+        attr->y = row * 8 + 1;
+        out->x = attr->x;
+        out->y = attr->y;
+        out->zero = 0;
+        out->index = idx;
+        if (out->one5 == 0)
+            out->one5 = mode;
+        RenderOutput_AppendToList(win, (s8 *)out);
+    } else if (tile <= 0xff) {
+        /* The voicing marks 0xde and 0xdf go into the cell before them,
+           joined to the kana tile 0x0e or 0x11 already there. */
+        if (tile - 0xde <= 1) {
+            u32 line;
+
+            line = (win->y + y) * 32;
+            switch (*(((struct WindowTilemap *)base)->tiles + (line + (win->x + x)))) {
+            case 0xf011:
+                tile -= 0xc0;
+                break;
+            case 0xf00e:
+                tile -= 0xd0;
+                break;
+            }
+        } else {
+            x++;
+            y++;
+        }
+        pos = (win->y + y) * 32 + (win->x + x);
+        if (pos < 640)
+            ((struct WindowTilemap *)work)->tiles[pos] = tile | 0xf000;
     }
 }
 

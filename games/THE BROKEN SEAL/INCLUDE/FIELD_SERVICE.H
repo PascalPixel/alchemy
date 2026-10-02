@@ -112,6 +112,14 @@ static inline void Event_Wait(s32 frames)
     Engine_EventWait(frames);
 }
 
+/* Moves an object to a fixed-point position; committing it follows. */
+static inline void FieldObject_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y,
+                                           s32 fixed_z)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_ObjectSetPosition(object, fixed_x, fixed_y, fixed_z);
+}
+
 static inline void *Heap_Allocate(s32 slot, s32 size)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */

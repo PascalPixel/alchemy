@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
+#include "IWRAM_CALL.H"
+#include "FIXED_POINT_POSITION.H"
 
 extern u8 BabiFune_SceneTableA[];
 
@@ -144,6 +146,117 @@ void SceneState_CountDownEveryFortyTicks(void)
         if (BabiFune_Count > 4) {
             BabiFune_Count -= 1;
             BabiFune_CountTicks = 0;
+        }
+    }
+}
+
+/* The map layers as the sea swell moves them. */
+struct WaveMapLayer {
+    s32 unknown_00[3];
+    s32 y;
+    s32 unknown_10[8];
+};
+
+struct WaveMap {
+    u8 unknown_00[20];
+    struct WaveMapLayer layers[8];
+};
+
+extern struct WaveMap *gMapWork;
+extern s32 BabiFune_ShimmerActive;
+extern s32 BabiFune_ShimmerPhase;
+extern s32 BabiFune_DriftActive;
+extern s32 BabiFune_SwellActive;
+extern s32 BabiFune_SwellPhase;
+extern s32 BabiFune_SwellLayerSixY;
+extern s32 BabiFune_SwellLayerSevenY;
+extern s32 BabiFune_StoredSlot0;
+extern s32 BabiFune_StoredRecord1;
+extern s32 BabiFune_StoredSlot3;
+extern s32 BabiFune_StoredRecord2;
+
+void BabiFune_UpdateDriftingObject(u8 *obj);
+
+/* Each frame at sea: shimmer the blend, lift the two sea layers and the
+   party on the swell, and every other frame let one piece of drift loose
+   ahead of the ship. All four party members take the first one's rest
+   height, as the game has it. */
+void BabiFune_UpdateWaves(void)
+{
+    volatile u16 blend;
+    u8 zero;
+    struct FixedPointPosition place;
+    struct FixedPointPosition *pos;
+    struct WaveMap *map;
+    struct FieldActor *actor;
+    s32 swell;
+    s32 x, z;
+
+    map = gMapWork;
+    if (BabiFune_ShimmerActive != 0) {
+        swell = Iwram_MulQ16(Engine_MathSin(BabiFune_ShimmerPhase << 9), 3);
+        blend = BabiFune_Count + ((swell + 8) << 8);
+        {
+            /* FAKEMATCH: the game reads the halfword back into r2, over its address, and only then forms the register's address; unpinned it reads into r3, and outside a one-pass block the address is formed first. */
+            register u32 value asm("r2") = blend;
+
+            do {
+                *(volatile u16 *)0x04000052 = value;
+            } while (0);
+        }
+        BabiFune_ShimmerPhase++;
+    }
+    if (BabiFune_SwellActive != 0) {
+        swell = Iwram_MulQ16(Engine_MathSin(BabiFune_SwellPhase << 9), 2) << 16;
+        map->layers[6].y = BabiFune_SwellLayerSixY + swell;
+        map->layers[7].y = BabiFune_SwellLayerSevenY + swell;
+        if (BabiFune_StoredSlot0 != -0x10000) {
+            actor = Object_GetById(0);
+            actor->y.fixed = BabiFune_StoredSlot0 + swell;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->motion_flags = 0;
+        }
+        if (BabiFune_StoredRecord1 != -0x10000) {
+            actor = Object_GetById(1);
+            actor->y.fixed = BabiFune_StoredRecord1 + swell;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->motion_flags = 0;
+        }
+        if (BabiFune_StoredSlot3 != -0x10000) {
+            actor = Object_GetById(3);
+            actor->y.fixed = BabiFune_StoredSlot3 + swell;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->motion_flags = 0;
+        }
+        if (BabiFune_StoredRecord2 != -0x10000) {
+            actor = Object_GetById(2);
+            actor->y.fixed = BabiFune_StoredRecord2 + swell;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + swell;
+            actor->motion_flags = 0;
+        }
+        BabiFune_SwellPhase++;
+    }
+    if (BabiFune_DriftActive != 0 && (gFrameCount & 1) != 0) {
+        x = map->layers[4].unknown_10[0] & -0x10000;
+        z = map->layers[4].unknown_10[1] & -0x10000;
+        x += Random_Next() * 240;
+        pos = &place;
+        pos->x = x;
+        pos->y = 0;
+        z += Random_Next() * 160;
+        z += 0x1e0000;
+        pos->z = z;
+        actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
+        if (actor != 0) {
+            actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
+            actor->unknown_64 = 60;
+            zero = 0;
+            actor->unknown_66 = 1;
+            actor->motion_flags = zero;
+            actor->priority_flags = 2;
+            actor->sprite->priority = 2;
+            Engine_ObjectSetBlendMode(actor, OBJECT_BLEND_NORMAL);
+            Object_SetMode(actor, 0);
         }
     }
 }

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0802b344
+	.global Map_CopyCellsRect
 	.thumb_func
-Func_0802b344:
+Map_CopyCellsRect:
 	push {r5, r6, lr}
 	mov r6, r11
 	mov r5, r10
@@ -21,14 +21,14 @@ Func_0802b344:
 	adds r3, r6, #0
 	mov r8, r0
 	mov r10, r1
-	bl Func_0802b1a0
+	bl Map_CopyMetatileIndicesRect
 	mov r0, r8
 	mov r1, r10
 	mov r2, r9
 	mov r3, r11
 	str r5, [sp, #0]
 	str r6, [sp, #4]
-	bl Func_0802b38c
+	bl Map_CopyCellAttributeRect
 	add sp, #8
 	pop {r3, r5, r6}
 	mov r8, r3

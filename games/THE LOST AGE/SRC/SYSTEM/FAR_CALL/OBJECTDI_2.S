@@ -20,4 +20,4 @@ Func_080200b0:
 	.global Func_080200b8
 	.thumb_func
 Func_080200b8:
-	overlay_veneer Func_080231a4
+	overlay_veneer ObjectDispatch_FindFreeObject

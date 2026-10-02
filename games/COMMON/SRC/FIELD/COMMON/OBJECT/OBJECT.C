@@ -1,13 +1,21 @@
+#include "EDITION.H"
+#include "OBJDISP.H"
+#include "RESOURCE.H"
+#include "OBJECT_RUNTIME.H"
+#include "OBJECT_DISPATCH.H"
+#include "IO_REG.H"
+#include "DMA.H"
+
+/* Object dispatch and its linker-neighbor bank. The TBS terminal camera bank
+   remains raw; TLA emits only the adjacent lookup/release prefix. */
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#include "RAM_BUFFER.H"
+#else
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
-#include "DMA.H"
-#include "OBJECT_DISPATCH.H"
-#include "OBJECT_COMMANDS.H"
-#include "IWRAM_CALL.H"
-#include "SCRIPT_INTERPRETER.H"
 
 extern u8 ResourceTableEntries[];
 extern u8 gCam[];
@@ -47,11 +55,8 @@ void ObjectSystem_UpdateCamera(void);
 extern s32 Data_03001d1c;
 extern s32 Data_03001cc0;
 
-void *ObjectDispatch_FindFreeObject(void);
-
 /* object/dispatch/find_free_object.c */
 extern u8 *gObjectSlots;
-void ResourceObject_Release(void *);
 
 struct FieldObject {
     u32 script;
@@ -94,14 +99,14 @@ struct ObjectSpriteList {
 
 extern struct ObjectSpriteList *gMenuCtrlWork;
 extern const u32 ObjectDispatch_DefaultScript[];
-void *ResourceObject_Create(s32 id);
 struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
-void Object_SetPositionAndResetMotion(struct FieldObject *object, s32 x, s32 y, s32 z);
+void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimation(void *, s32);
 void AnimationObjects_SetField15OnActive(void *, s32);
 struct State_0800b7c0;
 s32 Animation_InitializeObjects(struct State_0800b7c0 *);
-s32 ResourceMetadata_Register(s32 child);
+struct MetadataSlotState;
+s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 struct ChildStateFlags {
@@ -121,134 +126,6 @@ struct ChildDisplayFlags {
 s32 ObjectGroup_SetChildValueUnlessFifteen(s32);
 s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 s32 BattleFx_StartBufferInterpolationFar(s32);
-
-struct CameraTile {
-    u32 unk_00 : 12;
-    u32 layer : 2;
-    u32 priority : 2;
-    u32 unk_10 : 16;
-};
-
-struct CameraSprite {
-    u8 unknown_00[4];
-    u16 y : 8;
-    u16 affine : 2;
-    u16 blend_mode : 2;
-    u16 mosaic : 1;
-    u16 full_color : 1;
-    u16 shape : 2;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 flip_x : 1;
-    u16 flip_y : 1;
-    u16 tile : 10;
-    u16 priority : 2;
-    u16 palette : 4;
-    u8 unknown_0a[0x0a];
-    u16 second_tile : 10;
-    u16 second_priority : 2;
-    u16 second_palette : 4;
-    u8 unknown_16[2];
-    s32 scale;
-    u8 resource;
-    u8 flags_1d;
-    u8 unk_1e[7];
-    u8 activated;
-};
-
-struct CameraObject {
-    u32 active;
-    u16 unk_04;
-    u16 angle;
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 height;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unk_20[2];
-    u8 layer;
-    u8 flags;
-    u8 unk_24[0x2c];
-    struct CameraSprite *sprite;
-    u8 kind;
-    u8 unk_55[7];
-    u8 held;
-    u8 unk_5d[0x13];
-};
-
-struct CameraLayer {
-    struct CameraTile *tiles;
-    u8 unk_04[44];
-};
-
-struct CameraState {
-    u8 unk_000[0xe4];
-    s32 x;
-    s32 z;
-    u8 unk_0ec[0x44];
-    struct CameraLayer layers[1];
-};
-
-struct CameraSync {
-    s16 count;
-    s16 unk_02;
-    s16 frozen;
-};
-
-extern u8 Render_DecodeFrame[];
-extern u8 Render_DecodeFrameCodeSize[];
-u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-s32 Resource_ActivateEntry(u32 resource_index);
-void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale, u16 angle);
-extern const s32 Camera_FixedViewMatrix[];
-
-struct FixedObject {
-    u32 active;
-    u16 unk_04;
-    u16 angle;
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 height;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unk_20[2];
-    u8 layer;
-    u8 flags;
-    u8 unk_24[0x2c];
-    void *sprite;
-    u8 kind;
-    u8 unk_55[0x1b];
-};
-
-struct FixedPoint {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct FixedCamera {
-    struct FixedPoint eye;
-    struct FixedPoint target;
-    struct FixedPoint *eye_override;
-    struct FixedPoint *target_override;
-};
-
-struct FixedSync {
-    s16 count;
-    s16 unk_02;
-    s16 frozen;
-};
-
-s32 ArcTan2(s32 x, s32 y);
-void Render_ResetTransformState(void);
-s32 GameFlag_TestFar(s32 flag);
-void _call_via_r3(u32 arg, s32 unused1, s32 unused2, u32 routine);
-void Graphics_PrepareTransferAndRun(struct FixedPoint *eye, struct FixedPoint *target);
-void Graphics_PrepareTransferInIwramWork(struct FixedPoint *eye, struct FixedPoint *target);
-void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);
 
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
 {
@@ -402,42 +279,72 @@ void ResourceTable_ReservedNoOp2(void)
 {
 }
 
+
+#endif
+
 void *ObjectDispatch_FindFreeObject(void)
 {
-    u8 *entry = gObjectSlots;
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    struct ObjectRuntime *entry = Ram_HeapSlots->script_objects;
+#else
+    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+#endif
     void *ret = 0;
     s32 index = 0;
 
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    /* FAKEMATCH: ordinary eight-form lookup 36/4 initializes its used zero result after the first script load; this initialized entry/result boundary retains the native register order without an added access. */
+    asm("" : "+r"(entry), "+r"(ret));
+#endif
     while (index <= 63) {
-        if (*(u32 *)entry == 0) {
+        if (entry->script == 0) {
             ret = entry;
             break;
         }
         index++;
-        entry += 112;
+        entry++;
     }
     return ret;
 }
 
 void ObjectDispatch_Release(struct DispatchObject *work)
 {
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    u32 zero;
+    u32 *src;
+#else
     volatile u32 zero;
+    volatile u32 *src;
+#endif
     s32 count;
-    void **child;
+    struct ResourceObjectWork **child;
+
     if (work) {
         switch (work->kind & 15) {
-        case 1: ResourceObject_Release(work->target.child); break;
+        case 1:
+            ResourceObject_Release((struct ResourceObjectWork *)work->target.child);
+            break;
         case 2:
-            child = work->target.children;
+            child = (struct ResourceObjectWork **)work->target.children;
             count = 3;
-            do { void *entry = *child++; if (entry) ResourceObject_Release(entry); } while (--count >= 0);
+            do {
+                struct ResourceObjectWork *entry = *child++;
+                if (entry)
+                    ResourceObject_Release(entry);
+            } while (--count >= 0);
             break;
         }
-        zero = 0;
-        Dma_Set(&zero, work, 0x8500001c, (volatile u32 *)0x040000d4);
+        src = &zero;
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+        /* FAKEMATCH: ordinary release 88/15 captures its real DMA-zero pointer after the store/setup; tie only initialized src before the actual zero store to retain native order, without reading the uninitialized word. */
+        asm("" : "+r"(src));
+#endif
+        *src = 0;
+        Dma_Set(src, work, 0x85000000 | (sizeof(struct ObjectRuntime) / 4), REG_DMA3);
     }
 }
 
+#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
 /* The engine's object constructor, reached from far code through
    Object_CreateFar: takes a free object slot, attaches the sprite or the
    two-sprite list the descriptor id names (its top nibble is the kind), and
@@ -489,7 +396,7 @@ struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
         }
     }
     if (object != NULL) {
-        Object_SetPositionAndResetMotion(object, x, y, z);
+        Object_SetPositionAndResetMotion((struct ObjectRuntime *)object, x, y, z);
         object->script = (u32)ObjectDispatch_DefaultScript;
         object->speed_limit = 0x20000;
         object->unknown_04 = 0;
@@ -621,7 +528,7 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 val
     if (object != 0 && (object->kind & 0xf) == 1) {
         void *child = object->target.child;
         if (value >= 0)
-            ResourceMetadata_Register((s32)child);
+            ResourceMetadata_Register((struct MetadataSlotState *)child, value);
     }
 }
 
@@ -738,243 +645,5 @@ s32 ObjectDispatch_ReturnTrue(void)
     return 1;
 }
 
-/* The render decoder and its data run from a heap copy (DECODE.S). */
-/* main:0800c62c ObjectSystem_UpdateCamera - exact (592 of 592 bytes,
-   2026-09-30 helper hF).
 
-   Each frame the field camera places every live object on screen: objects
-   inside the view are projected through their tile's layer bits, and objects
-   that leave it (or sit at the origin) fall back to their resource entry.
-
-   The approved IWRAM header now emits the reference's long first-view
-   branch; the old instruction-length residual no longer applies. Do not
-   change that header for this draft. Remaining: count-zero scheduling,
-   the 63/MulQ16 entry register order, tile-layer scratch r0 versus r1,
-   and the missing tail kind copy (adds r3,r6,#0; ands r3,r2). The latter
-   shortens the body and shifts its final pool. No code or byte credit added.
-   2026-09-29 (Venus): the tile layer in its own local (bits_val) fixes the
-   r0/r1 scratch, and testing flags_1d against 1 rather than kind fixes the
-   tail's operand order (23 to 11 diff lines). Left: the count-zero and
-   63/pool-load scheduling at the loop head, and the out-of-view path loads
-   flags_1d itself (ldrb r2) before joining the shared test; a goto into
-   the shared test reorders the whole body.
-   2026-09-30 (hF): exact. The out-of-view path stores the constant 1
-   (no kind = 1 before the test), so its flags load is not cross-jumped
-   into the shared tail; the loop counts up from 0 to 64, so loop.c emits
-   the reversed counter's 63 after the hoisted MulQ16 entry and reload
-   gives them r4 and r3 as in the ROM; and one do-while around the size
-   load and Dma_Set ends in a loop note, a scheduling barrier that keeps
-   the count-zero constant ahead of the object-list load, with the count
-   reset now written before that load. */
-void ObjectSystem_UpdateCamera(void)
-{
-    s32 cnt;
-    struct CameraState *state;
-    s32 cam_x;
-    s32 cam_z;
-    struct CameraSync *sync;
-    struct CameraObject *obj;
-    struct CameraSprite *sprite;
-    s32 *cam;
-    u32 size;
-    u32 kind;
-    s32 dx;
-    s32 dz;
-    s32 top;
-    struct CameraTile *tile;
-    u32 bits;
-    s32 unused[9]; /* FAKEMATCH: the ROM frame keeps 36 more bytes than it uses. */
-    s32 scale[2];
-    s32 pos[4];
-    s32 y;
-    s32 height;
-    u32 bits_val;
-
-    state = *(struct CameraState **)((u32)((u8 *)&gObjectSlots) + 12);
-    cam = &state->x;
-    cam_x = cam[0] & 0xffff0000;
-    cam_z = cam[1] & 0xffff0000;
-    sync = *(struct CameraSync **)((u32)((u8 *)&gObjectSlots) + 4);
-    /* FAKEMATCH: the do-while keeps the copy between the runtime loads and the count reset. */
-    do {
-        size = (u32)Render_DecodeFrameCodeSize;
-        Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
-            (volatile u32 *)0x040000d4);
-    } while (0);
-    sync->count = 0;
-    obj = *(struct CameraObject **)(u32)((u8 *)&gObjectSlots);
-    for (cnt = 0; cnt < 64; cnt++, obj++) {
-        if (obj->active == 0)
-            continue;
-        if (obj->x != 0 || obj->z != 0) {
-            kind = obj->kind & 15;
-            if (kind == 0)
-                continue;
-            if (kind != 1)
-                continue;
-            if (sync->frozen != 0 && obj->held == 0) {
-                struct CameraSprite *frozen = obj->sprite;
-
-                Resource_ActivateEntry(frozen->resource);
-                frozen->activated = kind;
-                continue;
-            }
-            dx = obj->x - cam_x;
-            dz = obj->z - cam_z;
-            top = dz - obj->y;
-            sprite = obj->sprite;
-            if (dx > -0x200000 && dx < 0x1100000 && top > -0x200000 && top < 0xe00000) {
-                tile = &state->layers[obj->layer].tiles[(obj->x >> 20) + ((obj->z >> 20) << 7)];
-                if (obj->flags & 1) {
-                    bits = tile->priority;
-                    if (bits != 0) {
-                        sprite->priority = bits;
-                        sprite->second_priority = bits;
-                    }
-                }
-                bits_val = tile->layer;
-                if (bits_val != 0)
-                    obj->layer = bits_val - 1;
-                scale[0] = Iwram_MulQ16(obj->scale_x, sprite->scale);
-                scale[1] = Iwram_MulQ16(obj->scale_y, sprite->scale);
-                pos[0] = dx;
-                pos[1] = obj->y;
-                pos[2] = dz;
-                pos[3] = obj->height;
-                if (obj->flags & 2) {
-                    pos[1] += 0xfec00000;
-                    pos[2] += 0xfec00000;
-                    pos[3] += 0xfec00000;
-                }
-                if (obj->flags & 4) {
-                    pos[1] += 0x1400000;
-                    pos[2] += 0x1400000;
-                    pos[3] += 0x1400000;
-                }
-                Render_ApplyProjectedPlacement(sprite, pos, scale, obj->angle);
-                continue;
-            }
-            if (obj->held == 0) {
-                if (!(sprite->flags_1d & 1)) {
-                    Resource_ActivateEntry(sprite->resource);
-                    sprite->activated = 1;
-                }
-            }
-        } else {
-            kind = obj->kind & 15;
-            if (kind == 1) {
-                sprite = obj->sprite;
-                if (obj->held == 0 && !(sprite->flags_1d & 1)) {
-                    Resource_ActivateEntry(sprite->resource);
-                    sprite->activated = kind;
-                }
-            }
-        }
-    }
-    Runtime_ReleaseHeapBlock(52);
-}
-
-/* A routine that only reports success, before the fixed camera update;
-   nothing in the image calls it by name. */
-s32 ObjectCamera_ReturnTrue(void)
-{
-    return 1;
-}
-
-/* The fixed-camera variant of the field object pass: it aims the view from
-   the camera eye toward its target, then walks the object table from the
-   last record down and places every single or four-part sprite. */
-void ObjectSystem_UpdateCameraFixed(void)
-{
-    s32 cnt;
-    struct FixedCamera *camera;
-    struct FixedSync *sync;
-    struct FixedPoint *eye;
-    struct FixedPoint *target;
-    struct FixedObject *obj;
-    s32 angle;
-    s32 part;
-    s32 kind;
-    s32 *pos;
-    s32 unit;
-    u32 size;
-    void **parts;
-    void *sprite;
-    s32 scale2[2];
-    s32 scale[2];
-    /* FAKEMATCH: unused words that give the ROM's 52-byte frame. */
-    s32 unused[6];
-
-    camera = *(struct FixedCamera **)((u32)((u8 *)&gObjectSlots) + 0x1c);
-    sync = *(struct FixedSync **)((u32)((u8 *)&gObjectSlots) + 4);
-    /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
-    do { size = (u32)Render_DecodeFrameCodeSize; } while (0);
-    Dma_Set(Render_DecodeFrame, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
-        (volatile u32 *)0x040000d4);
-    eye = &camera->eye;
-    target = &camera->target;
-    if (camera->eye_override != NULL)
-        eye = camera->eye_override;
-    if (camera->target_override != NULL)
-        target = camera->target_override;
-    angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
-    sync->count = 0;
-    Render_ResetTransformState();
-    if (GameFlag_TestFar(0x16b)) {
-        angle += 0xffffe000;
-        Iwram_TransformMatrix(Camera_FixedViewMatrix);
-        Graphics_PrepareTransferAndRun(eye, target);
-    } else {
-        Graphics_PrepareTransferInIwramWork(eye, target);
-    }
-    obj = *(struct FixedObject **)(u32)((u8 *)&gObjectSlots);
-    obj += 63;
-    unit = 0x10000;
-    for (cnt = 63; cnt >= 0; cnt--, obj--) {
-        if (obj->active == 0)
-            continue;
-        kind = obj->kind & 15;
-        switch (kind) {
-        case 1:
-            pos = &obj->x;
-            scale[0] = obj->scale_x;
-            scale[1] = obj->scale_y;
-            sprite = obj->sprite;
-            if (GameFlag_TestFar(0x16b)) {
-                scale[0] = unit;
-                scale[1] = unit;
-            }
-            Render_PlaceProjectedSprite(sprite, pos, scale, obj->angle + angle, obj->layer);
-            break;
-        case 2:
-            scale2[0] = obj->scale_x;
-            scale2[1] = obj->scale_y;
-            if (GameFlag_TestFar(0x16b)) {
-                scale2[0] = unit;
-                scale2[1] = unit;
-            }
-            parts = obj->sprite;
-            for (part = 3; part >= 0; part--) {
-                sprite = *parts++;
-                if (sprite != NULL)
-                    Render_PlaceProjectedSprite(sprite, &obj->x, scale2, obj->angle + angle, obj->layer);
-            }
-            break;
-        case 0:
-            break;
-        }
-    }
-    Runtime_ReleaseHeapBlock(52);
-}
-
-/* script/advance_past_cursor.c */
-/* script/interpreter/cmd/advance.c */
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter)
-{
-    s32 zero;
-
-    interpreter->script = interpreter->script + interpreter->cursor + 1;
-    zero = 0;
-    interpreter->cursor = zero;
-    return 1;
-}
+#endif

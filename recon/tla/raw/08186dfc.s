@@ -111,7 +111,7 @@ Func_08186dfc:
 .L_08186eda:
 	movs r0, #165
 	lsls r0, r0, #2
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	ldr r4, [sp, #88]
 	str r0, [r5, r4]
 	cmp r0, #0
@@ -151,7 +151,7 @@ Func_08186dfc:
 	movs r0, #203
 	lsls r0, r0, #1
 	adds r0, #255
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	ldr r7, [sp, #88]
 	str r0, [r5, r7]
 	cmp r0, #0

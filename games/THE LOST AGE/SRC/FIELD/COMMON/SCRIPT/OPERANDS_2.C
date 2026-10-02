@@ -1,4 +1,4 @@
-#include "SCRIPT_OPERANDS.H"
+#include "SCRIPT.H"
 
 void Script_SetOrCompareWord08(struct ScriptOperands *state, s32 operation, s32 value)
 {

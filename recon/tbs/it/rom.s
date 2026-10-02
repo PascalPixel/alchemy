@@ -3150,3 +3150,31 @@ BattleCommand_SelectTargets.0:
 BattleCommand_BuildPlan:
 	.incbin "baserom.gba", 0x000be390, 0x00000e90
 	.size BattleCommand_BuildPlan, .-BattleCommand_BuildPlan
+	.section .rom.0000c62c, "ax"
+	.balign 4
+	.global ObjectSystem_UpdateCamera
+	.type ObjectSystem_UpdateCamera, %function
+	.thumb_func
+ObjectSystem_UpdateCamera:
+	.incbin "baserom.gba", 0x0000c62c, 0x00000250
+	.size ObjectSystem_UpdateCamera, .-ObjectSystem_UpdateCamera
+	.global ObjectCamera_ReturnTrue
+	.type ObjectCamera_ReturnTrue, %function
+	.thumb_func
+ObjectCamera_ReturnTrue:
+	.incbin "baserom.gba", 0x0000c87c, 0x00000004
+	.size ObjectCamera_ReturnTrue, .-ObjectCamera_ReturnTrue
+	.global ObjectSystem_UpdateCameraFixed
+	.type ObjectSystem_UpdateCameraFixed, %function
+	.thumb_func
+ObjectSystem_UpdateCameraFixed:
+	.incbin "baserom.gba", 0x0000c880, 0x000001ac
+	.size ObjectSystem_UpdateCameraFixed, .-ObjectSystem_UpdateCameraFixed
+	.section .rom.0000bc70, "ax"
+	.balign 4
+	.global ResourceObject_Create
+	.type ResourceObject_Create, %function
+	.thumb_func
+ResourceObject_Create:
+	.incbin "baserom.gba", 0x0000bc70, 0x00000164
+	.size ResourceObject_Create, .-ResourceObject_Create

@@ -1,11 +1,7 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
+#include "RESOURCE.H"
 
-void ResourceObject_ReleaseFar(void *);
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-void Func_08020018(void *);
-#endif
 void ReleaseBattleObjectRecords(s32 object_id)
 {
     struct BattleObjectSlot *slot;
@@ -21,13 +17,7 @@ void ReleaseBattleObjectRecords(s32 object_id)
             slot->effect_entry = 0;
             record_index = 0;
             while ((record = GetMotionRecord(object, record_index)) != NULL) {
-#if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
-    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-                /* These editions release records through this owned entry. */
-                Func_08020018(record);
-#else
-                ResourceObject_ReleaseFar(record);
-#endif
+                ResourceObject_ReleaseFar((struct ResourceObjectWork *)record);
                 record_index += 1;
             }
             object->record_storage_kind = (s8)record;

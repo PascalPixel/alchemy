@@ -672,7 +672,12 @@ Animation_ApplyChildValuesToRecord:
 	.type Func_080227e0, %function
 	.thumb_func
 Func_080227e0:
-	.incbin "baserom.gba", 0x000227e0, 0x00000100
+	.incbin "baserom.gba", 0x000227e0, 0x000000dc
+	.global Animation_LookupValueByKey
+	.type Animation_LookupValueByKey, %function
+	.thumb_func
+Animation_LookupValueByKey:
+	.incbin "baserom.gba", 0x000228bc, 0x00000024
 	.section .rom.000228e0, "ax"
 	.global InitializeAnimationObjects
 	.type InitializeAnimationObjects, %function
@@ -740,17 +745,11 @@ Func_08022c84:
 ResourceMetadata_ClearRecord:
 	.incbin "baserom.gba", 0x00022d1c, 0x00000024
 	.section .rom.00022d40, "ax"
-	.global Func_08022d40
-	.type Func_08022d40, %function
+	.global ResourceObject_Create
+	.type ResourceObject_Create, %function
 	.thumb_func
-Func_08022d40:
+ResourceObject_Create:
 	.incbin "baserom.gba", 0x00022d40, 0x00000150
-	.section .rom.00022e90, "ax"
-	.global Func_08022e90
-	.type Func_08022e90, %function
-	.thumb_func
-Func_08022e90:
-	.incbin "baserom.gba", 0x00022e90, 0x00000048
 	.section .rom.00022f22, "ax"
 	.incbin "baserom.gba", 0x00022f22, 0x00000002
 	.section .rom.00022f24, "ax"
@@ -771,19 +770,8 @@ Func_08023088:
 	.thumb_func
 Func_080230e0:
 	.incbin "baserom.gba", 0x000230e0, 0x000000c4
-	.section .rom.000231a4, "ax"
-	.global Func_080231a4
-	.type Func_080231a4, %function
-	.thumb_func
-Func_080231a4:
-	.incbin "baserom.gba", 0x000231a4, 0x00000024
-	.section .rom.000231c8, "ax"
-	.global Func_080231c8
-	.type Func_080231c8, %function
-	.thumb_func
-Func_080231c8:
-	.incbin "baserom.gba", 0x000231c8, 0x00000058
 	.section .rom.00023220, "ax"
+	.balign 4
 	.global Func_08023220
 	.type Func_08023220, %function
 	.thumb_func
@@ -856,7 +844,7 @@ Func_080237f8:
 	.type Func_08023840, %function
 	.thumb_func
 Func_08023840:
-	.incbin "baserom.gba", 0x00023840, 0x000006d4
+	.incbin "baserom.gba", 0x00023840, 0x000006bc
 	.section .rom.00023f62, "ax"
 	.incbin "baserom.gba", 0x00023f62, 0x00000002
 	.section .rom.00023f64, "ax"
@@ -954,10 +942,10 @@ Func_0802aa74:
 Func_0802af9c:
 	.incbin "baserom.gba", 0x0002af18, 0x00000204
 	.section .rom.0002b11c, "ax"
-	.global Func_0802b1a0
-	.type Func_0802b1a0, %function
+	.global Map_CopyMetatileIndicesRect
+	.type Map_CopyMetatileIndicesRect, %function
 	.thumb_func
-Func_0802b1a0:
+Map_CopyMetatileIndicesRect:
 	.incbin "baserom.gba", 0x0002b11c, 0x00000134
 	.section .rom.0002b250, "ax"
 	.global Func_0802b2d4
@@ -966,16 +954,16 @@ Func_0802b1a0:
 Func_0802b2d4:
 	.incbin "baserom.gba", 0x0002b250, 0x00000070
 	.section .rom.0002b2c0, "ax"
-	.global Func_0802b344
-	.type Func_0802b344, %function
+	.global Map_CopyCellsRect
+	.type Map_CopyCellsRect, %function
 	.thumb_func
-Func_0802b344:
+Map_CopyCellsRect:
 	.incbin "baserom.gba", 0x0002b2c0, 0x00000048
 	.section .rom.0002b308, "ax"
-	.global Func_0802b38c
-	.type Func_0802b38c, %function
+	.global Map_CopyCellAttributeRect
+	.type Map_CopyCellAttributeRect, %function
 	.thumb_func
-Func_0802b38c:
+Map_CopyCellAttributeRect:
 	.incbin "baserom.gba", 0x0002b308, 0x000000c4
 	.section .rom.0002b3cc, "ax"
 	.global Func_0802b450

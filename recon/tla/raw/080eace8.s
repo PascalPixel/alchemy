@@ -139,4 +139,4 @@ Func_080eace8:
 .L_080eadf4:
 	.4byte 0xfdff0000
 .L_080eadf8:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid

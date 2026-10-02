@@ -44,7 +44,9 @@ void AudioTest_RunParameterController(void)
 
     row = 0;
     preset = 2;
-    /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
+    /* FAKEMATCH: removing this one-pass block changes instruction scheduling.
+       2026-10-02: a plain assignment still moves the state address load ahead
+       of the preset setup and the state store after the timer setup. */
     do {
         Data_03007804 = 0;
     } while (0);
@@ -125,7 +127,9 @@ void MusicCommand_SetPitchAndUpdateFrequency(u16 value)
 
 void MusicCommand_SetPitch(s16 pitch)
 {
-    /* FAKEMATCH: the player pointer temporary preserves measured argument allocation or instruction order. */
+    /* FAKEMATCH: the player pointer temporary preserves measured argument allocation or instruction order.
+       2026-10-02: replacing this temporary and one-pass block with a direct
+       call moves pitch sign extension before the player address load. */
   int player_address;
   player_address = (u32)gMusicPlayerBgm;
   /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
@@ -144,20 +148,9 @@ void Audio_SetWorkPairB(u16 primary, u16 secondary)
 
 void MusicCommand_SetVolume(s16 volume)
 {
-    /* FAKEMATCH: the duplicated volume branch preserves measured argument allocation or instruction order. */
-  s16 volume_value;
-  volume_value = volume;
-  MusicPlayer_SetVolume((u32)gMusicPlayerBgm, 0xFF, (u16)volume);
-  *((s16 *) &gMusicVolumeTarget) = volume_value;
-  /* GCC 2.96 preserves this matched branch shape. */
- store_shared_volume:;
-  if (volume_value)
-  {
-    *(s16 *) &gMusicVolume = volume_value;
-  } else
-  {
-    *(s16 *) &gMusicVolume = volume_value;
-  }
+    MusicPlayer_SetVolume((u32)gMusicPlayerBgm, 0xFF, (u16)volume);
+    gMusicVolumeTarget = volume;
+    gMusicVolume = volume;
 }
 
 void Audio_SetWorkPairA(u16 primary, u16 secondary)

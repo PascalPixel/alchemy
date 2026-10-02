@@ -962,27 +962,27 @@ FiveMode_Records:
 	.global FiveMode_Tremble
 FiveMode_Tremble:
 	.incbin "baserom.gba", 0x000edefc, 0x00000008
-	.global Data_080edf04
-Data_080edf04:
+	.global TwelveMode_Records
+TwelveMode_Records:
 	.incbin "baserom.gba", 0x000edf04, 0x00000054
-	.global Data_080edf58
-Data_080edf58:
+	.global TwelveMode_StrikeWidths
+TwelveMode_StrikeWidths:
 	.incbin "baserom.gba", 0x000edf58, 0x00000006
-	.global Data_080edf5e
-Data_080edf5e:
+	.global TwelveMode_StrikeHeights
+TwelveMode_StrikeHeights:
 	.incbin "baserom.gba", 0x000edf5e, 0x00000006
-	.global Data_080edf64
-Data_080edf64:
+	.global TwelveMode_StrikeOffsets
+TwelveMode_StrikeOffsets:
 	.incbin "baserom.gba", 0x000edf64, 0x0000000c
-	.global Data_080edf70
-Data_080edf70:
+	.global TwelveMode_StrikeReach
+TwelveMode_StrikeReach:
 	.incbin "baserom.gba", 0x000edf70, 0x00000006
-	.global Data_080edf76
-Data_080edf76:
+	.global TwelveMode_ColumnStages
+TwelveMode_ColumnStages:
 	.incbin "baserom.gba", 0x000edf76, 0x00000004
 	.incbin "baserom.gba", 0x000edf7a, 0x00000001
-	.global Data_080edf7b
-Data_080edf7b:
+	.global TwelveMode_GlintDrawFlags
+TwelveMode_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000edf7b, 0x00000003
 	.incbin "baserom.gba", 0x000edf7e, 0x00000001
 	.global BladeRain_CellWidths

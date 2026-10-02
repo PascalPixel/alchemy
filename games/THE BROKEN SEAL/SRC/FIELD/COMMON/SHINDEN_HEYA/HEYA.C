@@ -356,10 +356,10 @@ u8 *SceneData_SelectTableBySceneIdAndFlags(void)
         break;
     }
 
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         return ShindenHeya_SceneTableF;
     }
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return ShindenHeya_SceneTableE;
     }
     return ShindenHeya_SceneTableA;

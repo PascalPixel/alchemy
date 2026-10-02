@@ -59,7 +59,18 @@
  * determine one setup order. A flat rule based on native ABI, r0 first
  * or argument lifetime does not explain the family. This does not identify
  * the original source boundary, a responsible compiler pass or an admissible
- * compiler change. */
+ * compiler change.
+ *
+ * One-argument follow-up, 2026-10-02: four EN direct native flag-query
+ * candidates with the settled s32 argument and return interface all failed.
+ * FuneHeya_GetStepScript kept 0x8a0 in new saved r5 (464 -> 468 bytes),
+ * KorimaKi_RunMessageScene kept 0x84c in r5 (208 -> 212),
+ * FuneHeya_PlaceAnchorCharm kept 0x200 in r7 (160 -> 160; registers differ),
+ * MakyuriHeya_TriggerFloorSwitch kept 0x256 in r6 (160 -> 164).
+ * Each constant survived to a later query or setter, enlarging the save set.
+ * Complete objects disagreed; no JA or alternate variant followed.
+ * Successful single-argument forwarding removals therefore do not explain
+ * these cross-call constant lifetimes. Keep all four inline boundaries. */
 #ifndef ALCHEMY_CALL_H
 #define ALCHEMY_CALL_H
 

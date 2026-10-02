@@ -35,7 +35,7 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
     first_record = Object_GetById(first_actor);
     second_record = Object_GetById(second_actor);
 
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(0x109) == 0) {
         *(s32 *)(second_record + 8) =
             (centre << 1) - *(s32 *)(first_record + 8);
         *(s32 *)(second_record + 16) = *(s32 *)(first_record + 16);

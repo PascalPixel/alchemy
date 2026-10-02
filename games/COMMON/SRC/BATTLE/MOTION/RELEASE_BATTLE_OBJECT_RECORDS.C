@@ -17,8 +17,8 @@ void ReleaseBattleObjectRecords(s32 object_id)
     if (slot != NULL) {
         object = slot->object;
         if (object != NULL) {
-            slot->runtime_word_20 = 0;
-            slot->runtime_word_24 = 0;
+            slot->animation_entry = 0;
+            slot->effect_entry = 0;
             record_index = 0;
             while ((record = GetMotionRecord(object, record_index)) != NULL) {
 #if defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \

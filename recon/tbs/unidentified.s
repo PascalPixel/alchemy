@@ -469,7 +469,10 @@ gBattleCueTable:
 	.incbin "baserom.gba", 0x0009e488, 0x00000046
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
-	.incbin "baserom.gba", 0x0009e4ce, 0x000001b8
+	.incbin "baserom.gba", 0x0009e4ce, 0x000001b2
+	.global Field_TileMessageOffsets
+Field_TileMessageOffsets:
+	.incbin "baserom.gba", 0x0009e680, 0x00000006
 	.global BattleFx_TargetRangeByMode
 BattleFx_TargetRangeByMode:
 	.incbin "baserom.gba", 0x0009e686, 0x00000032
@@ -527,8 +530,8 @@ BattleFx_PulseScales:
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x0009f0b0, 0x0000000c
-	.global Data_0809f0bc
-Data_0809f0bc:
+	.global BattleFx_SourceHoldScript
+BattleFx_SourceHoldScript:
 	.incbin "baserom.gba", 0x0009f0bc, 0x00000018
 	.global BattleFx_FragmentScript
 BattleFx_FragmentScript:
@@ -871,8 +874,8 @@ BattleMotion_VariantDistancePercent:
 	.global BattlePres_TileVariants
 BattlePres_TileVariants:
 	.incbin "baserom.gba", 0x000c5a30, 0x00000100
-	.global Data_080c5b30
-Data_080c5b30:
+	.global BattlePres_CurtainTiles
+BattlePres_CurtainTiles:
 	.incbin "baserom.gba", 0x000c5b30, 0x000000e0
 	.global Data_080c5c10
 Data_080c5c10:
@@ -953,33 +956,39 @@ BattleFx_GlintCellWidths:
 	.global BattleFx_GlintCellHeights
 BattleFx_GlintCellHeights:
 	.incbin "baserom.gba", 0x000eded0, 0x00000006
-	.global Data_080eded6
-Data_080eded6:
+	.global FallingShards_Counts
+FallingShards_Counts:
 	.incbin "baserom.gba", 0x000eded6, 0x00000006
-	.global Data_080ededc
-Data_080ededc:
-	.incbin "baserom.gba", 0x000ededc, 0x00000028
-	.global Data_080edf04
-Data_080edf04:
+	.global FallingBolts_Counts
+FallingBolts_Counts:
+	.incbin "baserom.gba", 0x000ededc, 0x0000000c
+	.global FiveMode_Records
+FiveMode_Records:
+	.incbin "baserom.gba", 0x000edee8, 0x00000014
+	.global FiveMode_Tremble
+FiveMode_Tremble:
+	.incbin "baserom.gba", 0x000edefc, 0x00000008
+	.global TwelveMode_Records
+TwelveMode_Records:
 	.incbin "baserom.gba", 0x000edf04, 0x00000054
-	.global Data_080edf58
-Data_080edf58:
+	.global TwelveMode_StrikeWidths
+TwelveMode_StrikeWidths:
 	.incbin "baserom.gba", 0x000edf58, 0x00000006
-	.global Data_080edf5e
-Data_080edf5e:
+	.global TwelveMode_StrikeHeights
+TwelveMode_StrikeHeights:
 	.incbin "baserom.gba", 0x000edf5e, 0x00000006
-	.global Data_080edf64
-Data_080edf64:
+	.global TwelveMode_StrikeOffsets
+TwelveMode_StrikeOffsets:
 	.incbin "baserom.gba", 0x000edf64, 0x0000000c
-	.global Data_080edf70
-Data_080edf70:
+	.global TwelveMode_StrikeReach
+TwelveMode_StrikeReach:
 	.incbin "baserom.gba", 0x000edf70, 0x00000006
-	.global Data_080edf76
-Data_080edf76:
+	.global TwelveMode_ColumnStages
+TwelveMode_ColumnStages:
 	.incbin "baserom.gba", 0x000edf76, 0x00000004
 	.incbin "baserom.gba", 0x000edf7a, 0x00000001
-	.global Data_080edf7b
-Data_080edf7b:
+	.global TwelveMode_GlintDrawFlags
+TwelveMode_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000edf7b, 0x00000003
 	.incbin "baserom.gba", 0x000edf7e, 0x00000001
 	.global BladeRain_CellWidths
@@ -1526,22 +1535,22 @@ CastingImpact_ImageY:
 	.global CastingImpact_OrbitCells
 CastingImpact_OrbitCells:
 	.incbin "baserom.gba", 0x000eedea, 0x0000000a
-	.global Data_080eedf4
-Data_080eedf4:
+	.global FireSwirl_CellWidths
+FireSwirl_CellWidths:
 	.incbin "baserom.gba", 0x000eedf4, 0x00000006
 	.incbin "baserom.gba", 0x000eedfa, 0x00000001
-	.global Data_080eedfb
-Data_080eedfb:
+	.global FireSwirl_CellHeights
+FireSwirl_CellHeights:
 	.incbin "baserom.gba", 0x000eedfb, 0x00000007
-	.global Data_080eee02
-Data_080eee02:
+	.global FireSwirl_CellSourceOffsets
+FireSwirl_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000eee02, 0x0000000e
-	.global Data_080eee10
-Data_080eee10:
+	.global FireSwirl_CellBiasX
+FireSwirl_CellBiasX:
 	.incbin "baserom.gba", 0x000eee10, 0x00000006
 	.incbin "baserom.gba", 0x000eee16, 0x00000001
-	.global Data_080eee17
-Data_080eee17:
+	.global FireSwirl_CellBiasY
+FireSwirl_CellBiasY:
 	.incbin "baserom.gba", 0x000eee17, 0x00000007
 	.global Data_080eee1e
 Data_080eee1e:

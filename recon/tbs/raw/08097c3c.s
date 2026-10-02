@@ -375,7 +375,7 @@ FunctionHead_08097c3c:
 .L_08097f50:
 	.4byte gEffectWork
 .L_08097f54:
-	.4byte Data_0809f0bc
+	.4byte BattleFx_SourceHoldScript
 .L_08097f58:
 	.4byte ObjectGroup_ApplyRandomChildValues
 .L_08097f5c:

@@ -877,7 +877,7 @@ Func_0808c4f8:
 	bl Battle_SetObjectFlag5bWhenMode3
 	movs r3, #0
 	ldrsh r0, [r5, r3]
-	bl Func_0808d9a4
+	bl Field_RunTileAction
 	b .L_0808cc6e
 	.2byte 0x0000
 .L_0808cc20:

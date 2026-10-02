@@ -1,13 +1,14 @@
 /* DRAFT of RunBattleEffect05: an orb rises from the source object to a point
    one step ahead, sheds particles there (random-angle triplets, or drifting
    fall objects for the alternate form), and returns.
-   Not exact: 828 of 808 bytes. In place: the sprite's mode as a two-bit
+   Not exact: 816 of 808 bytes. In place: the sprite's mode as a two-bit
    field, the step count as a variable (the reference ends its glide loops
-   cmp #11; blt), named callbacks. Remaining: the reference multiplies the
-   step by the scale rate on every pass and rebuilds the rate there, where
-   the loop pass here turns it into a running sum; it keeps the end pointer
-   in r11 (here spilled) and reaches the particle position through r10 for
-   the offset and r6 after it. */
+   cmp #11; blt), the scale through the same interpolation as the position
+   (so the step is multiplied on every pass, as in the reference), the end
+   pointer in r11. Remaining: the reference's reload registers rotate over
+   r0 to r3 from the first statement (its zero for the step goes through
+   r1); here r1 never becomes a reload register, so most of the 213
+   differing lines are r0/r1/r2 choices. */
 #include "TYPES.H"
 
 struct Vec3 { s32 x, y, z; };
@@ -69,7 +70,7 @@ void BattleFx_UpdateDriftingFallObject(void);
 
 static __inline__ s32 Interpolate(s32 start, s32 end, s32 step)
 {
-    return start + __divsi3(step * (end - start), 10);
+    return start + step * (end - start) / 10;
 }
 
 void RunBattleEffect05(void)
@@ -83,13 +84,13 @@ void RunBattleEffect05(void)
     struct Vec3 *from;
     struct Vec3 *to;
     struct Vec3 *at;
-    s32 i = 0;
+    s32 i;
     s32 steps = 11;
-    s32 grow = 0xc000;
-    s32 shrink = -0xc000;
     s32 count;
 
-    main = Object_Spawn(0xef, 0, 0, 0);
+    /* FAKEMATCH: the first step also supplies the spawn's zero X. */
+    i = 0;
+    main = Object_Spawn(0xef, i, 0, 0);
     if (main == 0)
         return;
     BattleEffect_InitializeSharedScene();
@@ -117,7 +118,7 @@ void RunBattleEffect05(void)
         main->x = Interpolate(start.x, end.x, i);
         main->y = Interpolate(start.y, end.y, i);
         main->z = Interpolate(start.z, end.z, i);
-        scale = __divsi3(i * grow, 10) + 0x4000;
+        scale = Interpolate(0x4000, 0x10000, i);
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);
@@ -182,7 +183,7 @@ void RunBattleEffect05(void)
         main->x = Interpolate(end.x, start.x, i);
         main->y = Interpolate(end.y, start.y, i);
         main->z = Interpolate(end.z, start.z, i);
-        scale = __divsi3(i * shrink, 10) + 0x10000;
+        scale = Interpolate(0x10000, 0x4000, i);
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);

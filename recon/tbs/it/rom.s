@@ -1133,26 +1133,6 @@ Unnamed_080cb7f8:
 	.thumb_func
 BattleEffect_RunTileAndPaletteAnimation:
 	.incbin "baserom.gba", 0x000cbc0c, 0x000009cc
-	.section .rom.000cc5d8, "ax"
-	.global Func_080cc5d8
-	.type Func_080cc5d8, %function
-	.thumb_func
-Func_080cc5d8:
-	.incbin "baserom.gba", 0x000cc5d8, 0x00000388
-	.section .rom.000ce034, "ax"
-	.incbin "baserom.gba", 0x000ce034, 0x00000828
-	.section .rom.000ceb54, "ax"
-	.global BattleFx_RunMemberBurst
-	.type BattleFx_RunMemberBurst, %function
-	.thumb_func
-BattleFx_RunMemberBurst:
-	.incbin "baserom.gba", 0x000ceb54, 0x00000410
-	.section .rom.000cf2b8, "ax"
-	.global BattleFx_RunMemberBeam
-	.type BattleFx_RunMemberBeam, %function
-	.thumb_func
-BattleFx_RunMemberBeam:
-	.incbin "baserom.gba", 0x000cf2b8, 0x000005d4
 	.section .rom.000cf8e0, "ax"
 	.global BattleFx_RunSevenMode
 	.type BattleFx_RunSevenMode, %function
@@ -1165,18 +1145,6 @@ BattleFx_RunSevenMode:
 	.thumb_func
 Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000d1714, 0x00000d38
-	.section .rom.000d2464, "ax"
-	.global BattleEffect_RunPaletteParticles
-	.type BattleEffect_RunPaletteParticles, %function
-	.thumb_func
-BattleEffect_RunPaletteParticles:
-	.incbin "baserom.gba", 0x000d2464, 0x00000934
-	.section .rom.000d6970, "ax"
-	.global BattleEffect_RunDitherDissolveScene
-	.type BattleEffect_RunDitherDissolveScene, %function
-	.thumb_func
-BattleEffect_RunDitherDissolveScene:
-	.incbin "baserom.gba", 0x000d6970, 0x00000cec
 	.section .rom.000dea6e, "ax"
 	.incbin "baserom.gba", 0x000dea6e, 0x00000002
 	.section .rom.000dea70, "ax"
@@ -1327,7 +1295,16 @@ BladeRain_CellHeights:
 	.incbin "baserom.gba", 0x000edf83, 0x00000005
 	.global BladeRain_CellSourceOffsets
 BladeRain_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000edf88, 0x000000dc
+	.incbin "baserom.gba", 0x000edf88, 0x000000d0
+	.global CornerSparks_X
+CornerSparks_X:
+	.incbin "baserom.gba", 0x000ee058, 0x00000004
+	.global CornerSparks_Y
+CornerSparks_Y:
+	.incbin "baserom.gba", 0x000ee05c, 0x00000004
+	.global CornerSparks_DrawFlags
+CornerSparks_DrawFlags:
+	.incbin "baserom.gba", 0x000ee060, 0x00000004
 	.global TwoResource_CellWidths
 TwoResource_CellWidths:
 	.incbin "baserom.gba", 0x000ee064, 0x00000006
@@ -1342,7 +1319,10 @@ TwoResource_CellX:
 	.incbin "baserom.gba", 0x000ee07c, 0x0000000c
 	.global TwoResource_CellBiasY
 TwoResource_CellBiasY:
-	.incbin "baserom.gba", 0x000ee088, 0x0000000e
+	.incbin "baserom.gba", 0x000ee088, 0x00000008
+	.global MemberBurst_Counts
+MemberBurst_Counts:
+	.incbin "baserom.gba", 0x000ee090, 0x00000006
 	.global EarthWall_CellSourceOffsets
 EarthWall_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000ee096, 0x00000006
@@ -1352,7 +1332,18 @@ EarthWall_CellWidths:
 	.global EarthWall_CellHeights
 EarthWall_CellHeights:
 	.incbin "baserom.gba", 0x000ee09f, 0x00000003
-	.incbin "baserom.gba", 0x000ee0a2, 0x0000006a
+	.global MemberBeam_MotePictures
+MemberBeam_MotePictures:
+	.incbin "baserom.gba", 0x000ee0a2, 0x00000008
+	.global MemberBeam_HeadOffsets
+MemberBeam_HeadOffsets:
+	.incbin "baserom.gba", 0x000ee0aa, 0x00000006
+	.global MemberBeam_HeadWidths
+MemberBeam_HeadWidths:
+	.incbin "baserom.gba", 0x000ee0b0, 0x00000003
+	.global MemberBeam_HeadHeights
+MemberBeam_HeadHeights:
+	.incbin "baserom.gba", 0x000ee0b3, 0x00000059
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000ee10c, 0x0000000e
@@ -1371,7 +1362,28 @@ RingBolts_Points:
 	.global SpinningStars_Radii
 SpinningStars_Radii:
 	.incbin "baserom.gba", 0x000ee158, 0x00000002
-	.incbin "baserom.gba", 0x000ee15a, 0x00000052
+	.incbin "baserom.gba", 0x000ee15a, 0x0000002a
+	.global PaletteParticles_DropSpeeds
+PaletteParticles_DropSpeeds:
+	.incbin "baserom.gba", 0x000ee184, 0x00000004
+	.global PaletteParticles_SparkPixels
+PaletteParticles_SparkPixels:
+	.incbin "baserom.gba", 0x000ee188, 0x00000002
+	.global PaletteParticles_DropSizes
+PaletteParticles_DropSizes:
+	.incbin "baserom.gba", 0x000ee18a, 0x00000004
+	.global PaletteParticles_StreakWidths
+PaletteParticles_StreakWidths:
+	.incbin "baserom.gba", 0x000ee18e, 0x00000006
+	.global PaletteParticles_StreakHeights
+PaletteParticles_StreakHeights:
+	.incbin "baserom.gba", 0x000ee194, 0x00000006
+	.global PaletteParticles_StreakDrops
+PaletteParticles_StreakDrops:
+	.incbin "baserom.gba", 0x000ee19a, 0x00000006
+	.global PaletteParticles_StreakOffsets
+PaletteParticles_StreakOffsets:
+	.incbin "baserom.gba", 0x000ee1a0, 0x0000000c
 	.global EmberColumns_Columns
 EmberColumns_Columns:
 	.incbin "baserom.gba", 0x000ee1ac, 0x00000008
@@ -1428,7 +1440,46 @@ RenderMode_GlintFlips:
 	.incbin "baserom.gba", 0x000ee2ae, 0x00000006
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
-	.incbin "baserom.gba", 0x000ee2b4, 0x000006c0
+	.incbin "baserom.gba", 0x000ee2b4, 0x0000065c
+	.global ThornVines_ObjectPoses
+ThornVines_ObjectPoses:
+	.incbin "baserom.gba", 0x000ee910, 0x00000006
+	.global ThornVines_ThornOffsets
+ThornVines_ThornOffsets:
+	.incbin "baserom.gba", 0x000ee916, 0x0000000a
+	.global ThornVines_ThornWidths
+ThornVines_ThornWidths:
+	.incbin "baserom.gba", 0x000ee920, 0x00000005
+	.global ThornVines_ThornHeights
+ThornVines_ThornHeights:
+	.incbin "baserom.gba", 0x000ee925, 0x00000005
+	.global ThornVines_LeafOffsets
+ThornVines_LeafOffsets:
+	.incbin "baserom.gba", 0x000ee92a, 0x00000006
+	.global ThornVines_LeafSizes
+ThornVines_LeafSizes:
+	.incbin "baserom.gba", 0x000ee930, 0x00000004
+	.global ThornVines_ChipOffsets
+ThornVines_ChipOffsets:
+	.incbin "baserom.gba", 0x000ee934, 0x0000000a
+	.global ThornVines_ChipWidths
+ThornVines_ChipWidths:
+	.incbin "baserom.gba", 0x000ee93e, 0x00000005
+	.global ThornVines_ChipHeights
+ThornVines_ChipHeights:
+	.incbin "baserom.gba", 0x000ee943, 0x00000005
+	.global ThornVines_SparkOffsets
+ThornVines_SparkOffsets:
+	.incbin "baserom.gba", 0x000ee948, 0x0000000a
+	.global ThornVines_SparkSizes
+ThornVines_SparkSizes:
+	.incbin "baserom.gba", 0x000ee952, 0x00000006
+	.global ThornVines_EmberOffsets
+ThornVines_EmberOffsets:
+	.incbin "baserom.gba", 0x000ee958, 0x0000000e
+	.global ThornVines_EmberSizes
+ThornVines_EmberSizes:
+	.incbin "baserom.gba", 0x000ee966, 0x0000000e
 	.global BattleFx10_Points
 BattleFx10_Points:
 	.incbin "baserom.gba", 0x000ee974, 0x00000020

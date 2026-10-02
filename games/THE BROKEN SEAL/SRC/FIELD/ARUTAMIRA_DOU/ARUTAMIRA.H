@@ -59,6 +59,29 @@ extern u8 ArutamiraDou_SceneTableB[];
 extern u16 *ArutamiraDou_ClearTarget;
 extern u16 gArutamiraActorWheelWork[6];
 
+/* The actor wheel's work read as its fields: the phase the wheel task is
+   in (99 once it has stopped), the ticks spent in it, the ring's angle and
+   turning speed, and the travel since the last cue. */
+struct ActorWheel {
+    s16 phase;
+    s16 ticks;
+    s16 unknown_04;
+    s16 angle;
+    s16 speed;
+    s16 travel;
+};
+
+#define ArutamiraDou_Wheel ((struct ActorWheel *)ArutamiraDou_ClearTarget)
+
+/* The rock puzzle's bytes in the scene state, after the count of rounds
+   won: how far the present round has come, and the rock the wheel chose. */
+struct RockPuzzle {
+    u8 state;
+    s8 chosen;
+};
+
+#define ArutamiraDou_RockPuzzle ((struct RockPuzzle *)&gSceneState[1])
+
 void BattleFx_SetPhaseRequest(s32, s32);
 void Battle_ResetEffectCounter();
 void Motion_LaunchFromFocusedObject();

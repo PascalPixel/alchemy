@@ -111,7 +111,7 @@ struct GlyphWork {
     u8 unknown_3ba[42];
 };
 
-extern const u8 Data_080346f8[];
+extern const u8 Menu_AnimatedCursorTiles[];
 struct GlyphWork *Runtime_AllocateBlock(s32 kind, s32 size);
 s32 Resource_FindFreeEntry(void);
 
@@ -322,7 +322,7 @@ void UiGlyph_ResetWorkState(void)
     work->rows[1].index.cursor = 0;
     work->rows[0].state = 0;
     work->rows[1].state = 0;
-    tbl = Data_080346f8;
+    tbl = Menu_AnimatedCursorTiles;
     work->slot = Resource_FindFreeEntry();
     work->tile = VramBlock_LoadCached(work->slot, 256, tbl);
     work->field_2e2 = 0;

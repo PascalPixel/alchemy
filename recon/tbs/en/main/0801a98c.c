@@ -35,7 +35,7 @@
  *     games/THE BROKEN SEAL/src/effects/position/apply_step_and_y_offset.c は同じ
  *     入口を戻り値なしで宣言しているが、この所有者は戻り値を -1 と
  *     比較して失敗を判定する。名前は未確定。
- *   - Data_08036740 は 16 個の符号付き揺れ量表、Data_080346f8 は
+ *   - Data_08036740 は 16 個の符号付き揺れ量表、Menu_AnimatedCursorTiles は
  *     0x100 バイト単位の画素ブロック列。どちらも役割名は未確定。
  *   - 節点 +0x22 は二役ある。2 と 3 では AffineMatrix_BuildForEffect の
  *     x/y 倍率として渡すので scale と呼ぶが、1 と 4 では単に 0 以外かどうか
@@ -93,7 +93,7 @@ struct MenuNode {
 extern u8 *gResQueueWork;
 extern volatile u32 gFrameTick;
 extern s8 Data_08036740[];
-extern u8 Data_080346f8[];
+extern u8 Menu_AnimatedCursorTiles[];
 
 extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);
 extern s32 GameFlag_IsSet(s32 flag);
@@ -255,7 +255,7 @@ void MenuSelection_DrawFrame(void)
     if (cursor->active != 0) {
         cursor_entry->tile = VramBlock_LoadCached(
             cursor->handle, 0x100,
-            &Data_080346f8[((gFrameTick >> 2) & 15) << 8]);
+            &Menu_AnimatedCursorTiles[((gFrameTick >> 2) & 15) << 8]);
         if (cursor->x_end != cursor->x) {
             tmp = (cursor->x_end - cursor->x) >> 1;
             if (tmp != 0) {

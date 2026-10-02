@@ -594,7 +594,7 @@ MenuSelection_DrawFrame:
 .L_0801ae04:
 	.4byte gFrameTick
 .L_0801ae08:
-	.4byte Data_080346f8
+	.4byte Menu_AnimatedCursorTiles
 .L_0801ae0c:
 	.4byte 0xfffffc00
 .L_0801ae10:

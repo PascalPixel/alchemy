@@ -9931,7 +9931,7 @@ msgctxt "message"
 msgid "02480"
 msgstr "Dschinn"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02481"
 msgstr "Erf."
 
@@ -9943,19 +9943,19 @@ msgctxt "message"
 msgid "02483"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02484"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02485"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02486"
 msgstr "Momentane Erfahrungspunkte. {argument_signed_number}{line_break}bis zum nächsten Level."
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02487"
 msgstr "Drücke die L- oder R-Taste, um{line_break}die Charaktere zu wechseln."
 
@@ -10027,7 +10027,7 @@ msgctxt "message"
 msgid "02504"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02505"
 msgstr "Normaler Status."
 

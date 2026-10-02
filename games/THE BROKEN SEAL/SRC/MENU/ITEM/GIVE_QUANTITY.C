@@ -24,8 +24,8 @@ extern u8 MsgItemCounter;
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
+void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
+void RenderOutput_ClearListFar(void *window);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 struct RenderOutput *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
@@ -57,12 +57,12 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
 
     changed = 1;
     other_count = 0;
-    window = menu->message_window;
+    window = (s32)menu->message_window;
     ItemMenu_SetMsgWin7();
-    RenderOutput_RedrawSavedRectFar(window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
     if (single == 0)
-        other_count = InventoryMenu_GetItemQuantity(menu->target_owner, menu->selected_item & 0x1ff);
-    count = InventoryMenu_GetItemQuantity(menu->item_owner, menu->selected_item & 0x1ff);
+        other_count = InventoryMenu_GetItemQuantity(menu->pane_owner[1], menu->selected_items[0] & 0x1ff);
+    count = InventoryMenu_GetItemQuantity(menu->pane_owner[0], menu->selected_items[0] & 0x1ff);
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
         VramBlock_LoadCached(slot, 256, 0);
@@ -74,7 +74,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
             if (changed) {
                 changed = 0;
                 quantity = (range + quantity) % range;
-                RenderOutput_RedrawSavedRectFar(window);
+                RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
                 UiText_DrawCharacterAtOffsetFar((s32)&MsgGiveHowMany, window, GIVE_ASK_X, GIVE_ASK_Y);
                 Dma_Set(Data_080af08c, tiles, 0x84000040, (volatile u32 *)0x040000d4);
                 Shop_FillSelectorFar(30, 14, tiles);
@@ -83,7 +83,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                 Shop_FillSelectorFar(base, 2, tiles);
                 VramBlock_LoadCached(slot, 256, tiles);
                 UiNumber_DrawAt(quantity + 1, 2, window, 32, 32);
-                UiText_DrawCharacterAtOffsetFar((menu->selected_item & 0x1ff) + (s32)&MsgItemName,
+                UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & 0x1ff) + (s32)&MsgItemName,
                     window, 16, 8);
                 UiNumber_DrawAt(count - quantity - 1, 2, window, 16, 24);
 #if EDITION_INTERNATIONAL
@@ -96,9 +96,9 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                     UiText_DrawCharacterAtOffsetFar((s32)&MsgItemCounter, window, 96, 24);
                 }
 #endif
-                UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->item_owner), window, 16, 16);
+                UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[0]), window, 16, 16);
                 if (single == 0)
-                    UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->target_owner), window, 80, 16);
+                    UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[1]), window, 80, 16);
             }
             if (gKeyState & 1) {
                 AudioCommand_PlayFar(112);
@@ -123,8 +123,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
             WaitFrames(1);
         }
     }
-    RenderOutput_RedrawSavedRectFar(window);
-    RenderOutput_ClearListFar(window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+    RenderOutput_ClearListFar((void *)window);
     Runtime_ReleaseHeapBlock(14);
     menu->selected_item_icon->state = 13;
     if (GameFlag_IsSet(0x150))

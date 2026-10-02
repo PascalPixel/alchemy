@@ -1,31 +1,15 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "INVENTORY_MENU.H"
 #include "SYSTEM.H"
 
-extern u8 gMenuWork[];
-extern u8 gKeyState[];
-
-struct MenuIcon {
-    u8 padding0[5];
-    u8 state;
-};
-
-struct InventoryMenuWork {
-    u8 padding000[0x14];
-    struct MenuIcon *icon;
-    u8 padding018[0x14];
-    s32 message_window;
-    u8 padding030[0x0c];
-    s32 window;
-    u8 padding040[0x1e2];
-    u16 refresh;
-};
+extern volatile u32 gKeyState;
 
 void Func_08015108(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWindow_SetBounds(s32 window, s32 x, s32 y, s32 width, s32 height);
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void RenderOutput_ClearListFar(s32 window);
+void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
+void RenderOutput_ClearListFar(void *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Func_08015078(s32 message, s32 window, s32 x, s32 y);
 void GameFlag_SetBitFar(s32 flag);
@@ -36,24 +20,24 @@ void UiWindow_CloseIfOpen(s32 *window, s32 mode);
    for A, B or Start and clear it; otherwise set flag 0x151. */
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
 {
-    struct InventoryMenuWork *menu = *(struct InventoryMenuWork **)gMenuWork;
+    struct InventoryMenuState *menu = gMenuWork;
     s32 window;
     s32 height;
     s32 width;
     s32 top;
     s32 left;
 
-    menu->icon->state = 13;
+    menu->pane_icons[0]->state = 13;
     if (y != -1) {
         Func_08015108(message, &left, &top, &width, &height);
-        if (UiWindow_UpdateOrCreate(&menu->window, x, y, width, height, 0x102) == 0)
-            UiWindow_SetBounds(menu->window, x, y, width, height);
-        window = menu->window;
+        if (UiWindow_UpdateOrCreate((s32 *)&menu->modal_window, x, y, width, height, 0x102) == 0)
+            UiWindow_SetBounds((s32)menu->modal_window, x, y, width, height);
+        window = (s32)menu->modal_window;
     } else {
-        window = menu->message_window;
+        window = (s32)menu->info_window;
     }
-    RenderOutput_RedrawSavedRectFar(window);
-    RenderOutput_ClearListFar(window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
+    RenderOutput_ClearListFar((void *)window);
 #if EDITION_INTERNATIONAL
     if (y == -1)
         UiText_DrawCharacterAtOffsetFar(message, window, 0, 0);
@@ -68,19 +52,19 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
         WaitFrames(1);
         do {
             WaitFrames(1);
-        } while (!(*(volatile u32 *)gKeyState & 1) && !(*(volatile u32 *)gKeyState & 2) && !(*(volatile u32 *)gKeyState & 8));
+        } while (!(gKeyState & 1) && !(gKeyState & 2) && !(gKeyState & 8));
 #if EDITION_INTERNATIONAL
         if (y == -1)
-            RenderOutput_RedrawSavedRectFar(window);
+            RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
 #endif
-        RenderOutput_ClearListFar(window);
+        RenderOutput_ClearListFar((void *)window);
     } else {
         GameFlag_SetBitFar(0x151);
     }
-    menu->refresh = 1;
-    menu->icon->state = 1;
+    menu->completion_flag = 1;
+    menu->pane_icons[0]->state = 1;
 #if EDITION_INTERNATIONAL
     if (y != -1)
-        UiWindow_CloseIfOpen(&menu->window, 1);
+        UiWindow_CloseIfOpen((s32 *)&menu->modal_window, 1);
 #endif
 }

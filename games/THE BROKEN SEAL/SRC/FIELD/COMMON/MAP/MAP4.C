@@ -2,9 +2,9 @@
 #include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
 #include "MAP.H"
+#include "OBJECT_RUNTIME.H"
 
 extern u8 gMapCellBuffer[];
-
 
 /* A metatile's attributes are four bytes: its shape in the low nibble of
  * the first, then the height bytes its shape's function reads. */
@@ -102,12 +102,6 @@ s32 Map_GetCellHighFlags(s32 x, s32 y)
 }
 
 /* The fields of a field object the terrain test reads. */
-struct TerrainObject {
-    u8 unknown_00[20];
-    s32 height;
-    u8 unknown_18[10];
-    u8 map_layer;
-};
 
 /* A 16.16 position: the terrain test reads only its whole x and z. */
 struct TerrainPosition {
@@ -123,7 +117,7 @@ struct TerrainPosition {
  * above the object, -1 when it is more than three quarters of a tile
  * below, 0 when the object can step there or no map is loaded.
  */
-s32 Func_080120dc(struct TerrainObject *object, struct TerrainPosition *position)
+s32 Func_080120dc(struct ObjectRuntime *object, struct TerrainPosition *position)
 {
     struct MapState *state;
     s32 x;
@@ -138,8 +132,8 @@ s32 Func_080120dc(struct TerrainObject *object, struct TerrainPosition *position
     state = gMapWork[0];
     if (state == NULL)
         return 0;
-    if (object->map_layer <= 2)
-        cell = (u8 *)state->layers[object->map_layer].cells;
+    if (object->terrain_id <= 2)
+        cell = (u8 *)state->layers[object->terrain_id].cells;
     else
         cell = Ram_MapCellBuffer;
     cell += (x / 16 + (z / 16 << 7)) * 4;
@@ -147,7 +141,7 @@ s32 Func_080120dc(struct TerrainObject *object, struct TerrainPosition *position
         return 2;
     attributes = Ram_MapCollision + cell[3] * 4;
     height = Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
-    delta = height - object->height;
+    delta = height - object->terrain_height;
     if (delta > 0x80000)
         return 1;
     if (delta < (s32)0xfff40000)

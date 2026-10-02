@@ -151,7 +151,7 @@ s32 Trade_GetOfferState(s32 arg0)
     if (arg0 != 0) {
         return Owner_GetState(0x83);
     }
-    return (s32)&gGameState.unknown_000[0xc];
+    return (s32)&gGameState.unknown_008[4];
 }
 
 u32 Party_GetAverageLevel(void)

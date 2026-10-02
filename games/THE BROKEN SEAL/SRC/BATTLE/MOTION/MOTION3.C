@@ -2,10 +2,10 @@
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
+#include "BATTLE_RUNTIME.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 WaitFrames(s32);
-void *ResourceMetadata_RegisterFar(s32, s32);
+struct SpriteEntry *ResourceMetadata_RegisterFar(void *, s32);
 s32 Animation_SetWorkEntryFar(void *, s32);
 
 struct BattleMotionRecord {
@@ -16,20 +16,19 @@ struct BattleMotionRecord {
 void Camera_ApplyTransformByFlag(void);
 s32 Render_ProjectPoint(const s32 *, s32 *);
 u32 Battle_GetObjectTableValue(s32);
-u8 *Owner_GetStateFar(s32);
 s32 Summon_IsEntryFlagged(s32);
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 {
-    void *object;
-    void *effect;
+    struct MotionObject *object;
+    struct SpriteEntry *effect;
 
     object = GetBattleObjectSlot(id)->object;
-    if ((object != NULL) && ((0xF & FIELD_AT_OFFSET(object, u8 *, 0x54)) == 1)) {
-        effect = ResourceMetadata_RegisterFar(FIELD_AT_OFFSET(object, s32 *, 0x50), 0x11B);
+    if ((object != NULL) && ((0xF & object->record_storage_kind) == 1)) {
+        effect = ResourceMetadata_RegisterFar(object->records, 0x11B);
         if (effect != NULL) {
             Animation_SetWorkEntryFar(effect, 1);
-            FIELD_AT_OFFSET(effect, s8 *, 6) = 3;
+            effect->priority = 3;
         }
         WaitFrames(0xA);
     }
@@ -61,7 +60,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
     Camera_ApplyTransformByFlag();
     scaled = Render_ProjectPoint(&object->x, projected);
     factor = Iwram_MulQ16(scaled, record->scale_18);
-    if (Summon_IsEntryFlagged(Owner_GetStateFar(id)[0x128]) != 0)
+    if (Summon_IsEntryFlagged(Owner_GetStateFar(id)->class_id) != 0)
         scaled = Iwram_MulQ16(factor, 24);
     else
         scaled = Iwram_MulQ16(factor, 48);
@@ -74,10 +73,10 @@ u32 Battle_GetObjectTableValue(s32 id)
     u32 value;
     u8 no;
 
-    no = FIELD_AT_OFFSET(Owner_GetStateFar(id), u8 *, 0x128);
+    no = Owner_GetStateFar(id)->class_id;
     value = (u32)(Summon_GetEntryByte4((s32)no) << 0x18) >> 8;
     if (value == 0) {
-        no = FIELD_AT_OFFSET(Owner_GetStateFar(id), u8 *, 0x128);
+        no = Owner_GetStateFar(id)->class_id;
         if (Summon_IsEntryFlagged((s32)no) != 0) {
             value = 0x180000;
         } else {

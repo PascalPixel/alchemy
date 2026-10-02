@@ -10,5 +10,5 @@ void ItemMenu_OpenCategory(s32 owner_id)
     menu = gMenuWork;
     ItemMenu_PosCategory();
     RenderOutput_RedrawSavedRectFar(menu->item_window);
-    ItemMenu_DrawCategory(menu->item_window, owner_id, 0);
+    ItemMenu_DrawCategory((s32)menu->item_window, owner_id, 0);
 }

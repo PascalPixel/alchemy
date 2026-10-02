@@ -30,18 +30,18 @@ void ItemMenu_DrawItemHead(void)
     struct InventoryMenuState *menu = gMenuWork;
 
     Resource_LoadByModeIntoSlotFar(
-        2, menu->selected_item, menu->selected_item_icon->render_target, 0);
+        2, menu->selected_items[0], menu->selected_item_icon->render_target, 0);
     menu->selected_item_icon->state = 1;
     menu->selected_item_icon->x = 112;
     menu->selected_item_icon->y = 8;
     UiIcon_PrepareObject(menu->selected_item_icon);
     UiText_DrawStringAtOffsetFar(
-        Owner_GetStateFar(menu->item_owner),
+        Owner_GetStateFar(menu->pane_owner[0]),
         (void *)menu->message_window,
         16,
         0);
     UiText_DrawCharacterAtOffsetFar(
-        (menu->selected_item & 0x1FF) +
+        (menu->selected_items[0] & 0x1FF) +
             (s32)&MsgItemName,
         (void *)menu->message_window,
         16,
@@ -152,19 +152,19 @@ s32 Unnamed_080a5388(void)
     s32 sel = 0;
     s32 changed = 1;
     struct InventoryMenuState *menu = gMenuWork;
-    void *state = (void *)Owner_GetStateFar(menu->target_owner);
+    void *state = (void *)Owner_GetStateFar(menu->pane_owner[1]);
     void *saved;
     s32 win;
     s32 item;
     s32 owner;
 
-    item = menu->equip_item;
-    owner = menu->target_owner;
+    item = menu->selected_slots[1];
+    owner = menu->pane_owner[1];
     ItemMenu_DrawEquipPreview(owner, item, 0, owner);
     saved = Runtime_BumpAllocate(0x14c);
     CopyWords((WordCopyFn)Iwram_CopyWords, saved, state, 0x14c);
-    win = menu->message_window;
-    if ((u32)(Inventory_EquipFar(menu->target_owner, menu->equip_item) + 2) <= 1) {
+    win = (s32)menu->message_window;
+    if ((u32)(Inventory_EquipFar(menu->pane_owner[1], menu->selected_slots[1]) + 2) <= 1) {
         sel = 1;
     } else {
         /* The Japanese menu stacks the two answers at the right; the
@@ -226,7 +226,7 @@ s32 Unnamed_080a5388(void)
     if (sel == 1)
         CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, 0x14c);
     Runtime_BumpFree(saved);
-    Owner_RecalculateStatsFar(menu->target_owner);
-    Owner_RefreshClassActionsFar(menu->target_owner);
+    Owner_RecalculateStatsFar(menu->pane_owner[1]);
+    Owner_RefreshClassActionsFar(menu->pane_owner[1]);
     return sel;
 }

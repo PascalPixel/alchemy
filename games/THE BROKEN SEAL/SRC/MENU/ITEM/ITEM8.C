@@ -24,7 +24,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
     struct ItemDefinition *item;
 
     menu = gMenuWork;
-    item = Item_Get(0x1ff & menu->selected_item);
+    item = Item_Get(0x1ff & menu->selected_items[0]);
 
     if (item->type == 0) {
         command_states[0] = COMMAND_AVAILABLE;
@@ -34,17 +34,17 @@ void ItemMenu_BuildCmd(s8 *command_states)
         command_states[1] = COMMAND_AVAILABLE;
     }
 
-    if (Item_ClassifyUseMode(menu->item_owner, menu->selected_item) != -1)
+    if (Item_ClassifyUseMode(menu->pane_owner[0], menu->selected_items[0]) != -1)
         command_states[0] = COMMAND_AVAILABLE;
     else
         command_states[0] = COMMAND_DISABLED;
 
-    if (menu->selected_item & 0x400)
+    if (menu->selected_items[0] & 0x400)
         command_states[0] = COMMAND_DISABLED;
 
     if (Item_CanOwnerEquip(
-            menu->item_owner,
-            menu->selected_item & 0x1ff) == 0) {
+            menu->pane_owner[0],
+            menu->selected_items[0] & 0x1ff) == 0) {
         command_states[1] = COMMAND_DISABLED;
     }
 
@@ -52,7 +52,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
     command_states[5] = COMMAND_AVAILABLE;
     command_states[2] = COMMAND_AVAILABLE;
 
-    if (menu->selected_item & 0x200) {
+    if (menu->selected_items[0] & 0x200) {
         command_states[4] = COMMAND_AVAILABLE;
         command_states[1] = COMMAND_DISABLED;
     } else {
@@ -61,13 +61,13 @@ void ItemMenu_BuildCmd(s8 *command_states)
 
     if (item->flags & 2) {
         command_states[4] = COMMAND_DISABLED;
-        if (menu->selected_item & 0x200) {
+        if (menu->selected_items[0] & 0x200) {
             command_states[3] = COMMAND_DISABLED;
             command_states[5] = COMMAND_DISABLED;
         }
     }
 
-    if (BattleFx_HasTriggerFar(menu->selected_item & 0x1ff) != 0)
+    if (BattleFx_HasTriggerFar(menu->selected_items[0] & 0x1ff) != 0)
         command_states[0] = COMMAND_AVAILABLE;
 
     if (menu->party_count <= 1)

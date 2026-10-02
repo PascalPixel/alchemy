@@ -2,6 +2,7 @@
 #define GUARD_SAVE_STATE_H
 
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
 #include "DMA.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
@@ -23,6 +24,25 @@ struct SaveSlotHeader {
     u8 reserved[4];
 };
 
+struct SaveSummary {
+    u8 slot_header[16];
+    u8 name[12];
+    u8 level;
+    u8 class_id;
+    u16 area;
+    u32 play_time;
+    u32 coins;
+    u8 djinn[4];
+    s8 party[5];
+    u8 send_flag;
+    u8 flag_count;
+    u8 has_flag_20;
+    u8 palette_glow[2];
+    u16 frames;
+    u8 unknown_38[4];
+    u32 checksum;
+};
+
 struct SaveWorkspace {
     u8 occupied[16];
     u8 record_id[16];
@@ -34,8 +54,17 @@ struct SaveWorkspace {
         } record;
         u8 bytes[0x1000];
     } slot;
-    u8 summary[3][64];
+    struct SaveSummary summary[3];
 };
+
+LAYOUT_SIZE_GUARD(SaveSummary_Size, struct SaveSummary, 64);
+LAYOUT_OFFSET_GUARD(SaveSummary_Level, struct SaveSummary, level, 0x1c);
+LAYOUT_OFFSET_GUARD(SaveSummary_SendFlag, struct SaveSummary, send_flag, 0x31);
+LAYOUT_OFFSET_GUARD(SaveSummary_Checksum, struct SaveSummary, checksum, 0x3c);
+LAYOUT_OFFSET_GUARD(SaveWorkspace_Slot, struct SaveWorkspace, slot, 0x40);
+LAYOUT_OFFSET_GUARD(SaveWorkspace_Summary, struct SaveWorkspace, summary, 0x1040);
+
+extern struct SaveWorkspace *gSaveWorkspace;
 
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000

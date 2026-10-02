@@ -1075,8 +1075,6 @@ BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000b518a, 0x0000107e
 	.section .rom.000b6ba4, "ax"
 	.incbin "baserom.gba", 0x000b6ba4, 0x00000414
-	.section .rom.000b72a4, "ax"
-	.incbin "baserom.gba", 0x000b72a4, 0x0000045c
 	.section .rom.000b8796, "ax"
 	.incbin "baserom.gba", 0x000b8796, 0x00000002
 	.section .rom.000b8ffc, "ax"
@@ -1172,7 +1170,10 @@ BattleMotion_VariantDistancePercent:
 	.incbin "baserom.gba", 0x000bca04, 0x0000002c
 	.global BattlePres_TileVariants
 BattlePres_TileVariants:
-	.incbin "baserom.gba", 0x000bca30, 0x000001e0
+	.incbin "baserom.gba", 0x000bca30, 0x00000100
+	.global BattlePres_CurtainTiles
+BattlePres_CurtainTiles:
+	.incbin "baserom.gba", 0x000bcb30, 0x000000e0
 	.global Data_080c5c10
 Data_080c5c10:
 	.incbin "baserom.gba", 0x000bcc10, 0x00000028

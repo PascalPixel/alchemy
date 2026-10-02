@@ -773,7 +773,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_MOSAIC_FADE_OUT.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/TILE/BUILD_SEQUENTIAL_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT.o"(.text)
-        "*/recon/tbs/raw/080c02a4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT9.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT10.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT11.o"(.text)

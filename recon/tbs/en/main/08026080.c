@@ -1,4 +1,35 @@
-/* Bounded trials closed; H0 real-owner body retained, no register devices.
+/* Draft, not exact: retained EN score16188 (413 register-only,58 stack-only,
+ * 97 operand,74 reordered,45 inserted,29 deleted); frame320 vs native324.
+ * Every symbol resolves. Complete native extent3584 includes all pools.
+ * Ordinary routed compilation emits3612 bytes including pools.
+ * Retained devices bind only the live window and selected combatant.
+ * No frame storage, masks, compiler options or output bytes were added;
+ * no adoption or edition credit is claimed.
+ * 2026-10-02 continuation:
+ * H4: unsigned eight-bit cursor flags: identical score21123/counts/frame320;
+ * the field type alone changes no generated operation. Reverted.
+ * H5: both six-record passes walk a pointer while their count descends:
+ * score21171 (461 register,46 stack,88 operand,79 reordered,70 inserted,
+ * 50 deleted), frame320. Worse; indexed passes restored.
+ * H6: sleep/psy_seal as the low half of the four-byte condition group:
+ * identical21123/counts/frame320. Retained; the mask excludes refrain and
+ * reflect rather than redundantly masking an already unsigned halfword.
+ * H7: sole live infoWin binding to native r9: score18857 (429 register,
+ * 47 stack,108 operand,83 reordered,56 inserted,36 deleted), frame320.
+ * Retained; fourteen inserted and fourteen deleted differences disappear.
+ * H8: setup-mode copy bound to r8: identical18857/counts/frame320;
+ * the compiler propagates the argument instead. Copy and binding removed.
+ * H9: existing selected-combatant local bound to native setup r10:
+ * score16188 (413 register,58 stack,97 operand,74 reordered,45 inserted,
+ * 29 deleted), frame320. Retained with the live window r9 binding.
+ * H10: separate setup and confirmation selections into their real scopes:
+ * first compile exposed the confirmation use; with its ordinary local,
+ * score17290 (412 register,55 stack,107 operand,82 reordered,44 inserted,
+ * 34 deleted), frame320. Worse; single consumed selection restored.
+ * Remaining: compiler spills/register order, native eligibility AND masks,
+ * table/spread allocation, branches and complete literal-pool placement.
+ */
+/* Previous bounded trials closed with H0 real-owner body and no devices.
  * H1: five pointers scoped inside case 4; identical score/counts/frame to H0.
  * H2: actual sleep/psy_seal pair as unsigned16 bitfield; identical to H0,
  * still no native mask/spill; removed the exploratory view.
@@ -134,10 +165,12 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     struct CursorSlot *slot;
     struct DisplayEntry *entry;
     struct DisplayEntry *head;
-    s32 sel;
+    /* FAKEMATCH: Live sel in r10; scope trials failed, score18857 ->16188. */
+    register s32 sel asm("r10");
     s32 slotId;
     struct UiWindow *window;
-    struct UiWindow *infoWin;
+    /* FAKEMATCH: Live infoWin in r9; walks failed, score21123 ->18857. */
+    register struct UiWindow *infoWin asm("r9");
     s32 matrix;
     s32 cursor;
     s32 cnt;
@@ -224,7 +257,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                 case 4:
                     if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
                         found = 1;
-                    else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
+                    else if ((*(u32 *)&unit->sleep & 0xFFFF) != 0)
                         found = 1;
                     else if (unit->death_count != 0)
                         found = 1;
@@ -238,7 +271,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                 case 6:
                     if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
                         found = 1;
-                    else if ((*(u16 *)&unit->sleep & 0xFFFF) != 0)
+                    else if ((*(u32 *)&unit->sleep & 0xFFFF) != 0)
                         found = 1;
                     else if (unit->death_count != 0)
                         found = 1;

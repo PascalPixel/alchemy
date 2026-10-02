@@ -542,18 +542,6 @@ Func_08016990:
 	.thumb_func
 Owner_GetState:
 	.incbin "baserom.gba", 0x00016ca4, 0x00000040
-	.section .rom.00016cfc, "ax"
-	.global GameFlag_SetBit
-	.type GameFlag_SetBit, %function
-	.thumb_func
-GameFlag_SetBit:
-	.incbin "baserom.gba", 0x00016cfc, 0x0000001c
-	.section .rom.00016d18, "ax"
-	.global GameFlag_ClearBit
-	.type GameFlag_ClearBit, %function
-	.thumb_func
-GameFlag_ClearBit:
-	.incbin "baserom.gba", 0x00016d18, 0x0000001c
 	.section .rom.00016d34, "ax"
 	.global Func_08016d34
 	.type Func_08016d34, %function

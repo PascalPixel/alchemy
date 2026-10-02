@@ -180,8 +180,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.00016990)
     "*/recon/tla/ja/rom.o"(.rom.00016ca4)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.00016cfc)
-    "*/recon/tla/ja/rom.o"(.rom.00016d18)
     "*/recon/tla/ja/rom.o"(.rom.00016d34)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/SET_BYTE.o"(.text)

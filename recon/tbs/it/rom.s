@@ -1168,12 +1168,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000c7438, 0x00001bc8
-	.section .rom.000ca1fc, "ax"
-	.global BattleFx_RunParticlePool
-	.type BattleFx_RunParticlePool, %function
-	.thumb_func
-BattleFx_RunParticlePool:
-	.incbin "baserom.gba", 0x000ca1fc, 0x00000380
 	.section .rom.000ca60c, "ax"
 	.global BattleFx_RunTwelveMode
 	.type BattleFx_RunTwelveMode, %function

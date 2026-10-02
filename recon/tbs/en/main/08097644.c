@@ -1,30 +1,13 @@
-/* Draft, not exact (2026-09-24): 92 differing halfwords, 544 of 548 bytes.
-   Written from the listing. The palette clear goes through a u8 local zero
-   so its short-reach pool constant splits the literal pool where the ROM
-   has it. Remaining: the reference uses r4 for most short-lived constants
-   and hi-register copies (r0 here), loads 0x28b from the pool instead of
-   deriving it from 0x28d, and is 4 bytes longer.
-   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 17,340
-   candidates; adding the target's height after its metadata offset for the
-   second vector, kept here, gives 615 (32 register-only, 4 reordered, 1
-   inserted, 1 deleted). The reference's r4 constants and its pooled 0x28b
-   remain.
-   2026-10-01 (☀️ matcher 1): all seven of the reference's r4 uses are
-   reload registers (the 0x28a, 0x290 and 0x292 work offsets and the
-   copies of sl, r9 and r8 for the vector stores and loads); r4 is never a
-   pseudo's home. So r4 is in the reference's spill set and reload's
-   round-robin lands on it, while here every reload takes r0-r3 and r4
-   never enters the set. The pooled 0x28b follows: with 0x28d's reload in
-   r0 and r0 reused, postreload's move2add has no register still holding
-   0x28d to derive 0x28b from. Compiling the draft after its neighbour
-   BattleFx_FinishSceneAndReleaseHeapBlock changes nothing (reload state is
-   per function).
-   2026-10-02 (slice 4): here r0 enters the spill set at one instruction,
-   the third vector load before the last call (r1 and r2 hold the first two
-   loads, r3 is the destination, r0 is free). The reference takes r4 at an
-   instruction like it, so r0 holds a value there: the angle returned by
-   ArcTan2 is the candidate, still unstored. Keeping the angle in a local
-   and storing it last moves it to a saved register instead (score 4020). */
+/* DRAFT: 548 of 548 bytes, every instruction present; one pair is swapped.
+   After ArcTan2 the ROM has `orrs r3, r2; strh r0, [r6, #6]` and this build
+   stores the angle first. The post-reload scheduler ranks the two equally
+   here because the angle store depends on the three vector loads for the
+   last call: FxObject's alias set has int members, as the vector does. In
+   the ROM that store does not depend on them (while the scale stores do).
+   What fixed the rest (2026-10-02): Object_CreateFar takes all three
+   coordinates, so to.x's reload finds r0 to r3 busy and brings r4 into the
+   spill set; the pooled 0 for the palette is what the compiler gives a byte
+   zero stored after a halfword register store, with no local needed. */
 #include "TYPES.H"
 
 struct FxVector {
@@ -43,19 +26,18 @@ struct FxSprite {
 };
 
 struct FxObject {
-    u8 unknown_00[6];
-    u16 angle;
+    u16 unknown_00[3]; u16 angle;
     s32 x;
     s32 y;
     s32 z;
-    u8 unknown_14[0x1c];
+    u32 unknown_14[7];
     s32 scale_x;
     s32 scale_y;
-    u8 unknown_38[0x18];
+    u32 unknown_38[6];
     struct FxSprite *sprite;
-    u8 unknown_54;
-    u8 visible;
-    u8 unknown_56[0x16];
+    u32 unknown_54 : 8;
+    u32 visible : 8;
+    u32 unknown_56 : 16; u32 unknown_58[5];
     void *callback;
 };
 
@@ -85,10 +67,10 @@ struct FxObject *Object_GetById(s32 id);
 void Animation_ApplyChildPalette(struct FxObject *object, s32 palette);
 s16 *BattleAction_FindDescriptor(s32 id);
 s8 *Resource_GetMetadataRecordFar(s32 id);
-struct FxObject *Object_CreateFar(s32 sprite, s32 x);
+struct FxObject *Object_CreateFar(s32 sprite, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Object_SetPosition(struct FxObject *object, s32 x, s32 y, s32 z);
-void Audio_PlayCue(s32 cue);
+void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
+void AudioCommand_PlayFar(s32 cue);
 void BattleFx_SetCallbackWhenTargetUnset(void);
 
 void Func_08097644(void)
@@ -103,7 +85,6 @@ void Func_08097644(void)
     struct FxVector from;
     struct FxVector to;
     s8 *meta;
-    u8 zero;
 
     if (work->delay != 0) {
         work->delay--;
@@ -132,9 +113,9 @@ void Func_08097644(void)
             from.z = source->z;
             to.x = target->x;
             meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->target_id));
-            to.y = (meta[8] << 16) + target->y - 0x20000;
+            to.y = target->y + (meta[8] << 16) - 0x20000;
             to.z = target->z;
-            object = Object_CreateFar(0x119, to.x);
+            object = Object_CreateFar(0x119, to.x, to.y, to.z);
             if (object != 0) {
                 sprite = object->sprite;
                 object->visible = 0;
@@ -142,16 +123,15 @@ void Func_08097644(void)
                 object->scale_y = 0xa3d7;
                 object->angle = ArcTan2(from.z - to.z, from.x - to.x);
                 object->callback = BattleFx_SetCallbackWhenTargetUnset;
-                zero = 0;
-                sprite->palette = zero;
+                sprite->palette = 0;
                 sprite->mode = 1;
-                Object_SetPosition(object, from.x, from.y, from.z);
+                Object_SetMoveTargetFar(object, from.x, from.y, from.z);
             }
         }
     }
 
     if (work->counter == 0)
-        Audio_PlayCue(130);
+        AudioCommand_PlayFar(130);
     if (++work->counter > 60)
         work->counter = 0;
 }

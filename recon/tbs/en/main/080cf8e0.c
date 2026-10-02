@@ -1,434 +1,253 @@
-/* 2026-09-29: five minutes of permutation reached 10393 from 16680 through
- * 117 rewrites; not kept, since the owner is far from exact and blocked by
- * Value_ resource numbers below 256. */
-/* 2026-09-29: callees carry the build's names; alchemy permute scores
- * 16680, from 16860. */
+/* Draft, 342 rows off, nearly all register and stack-slot numbers. Two causes
+   remain: the ROM keeps the 0x40000 shot height in a stack slot (r4 is then
+   free as a reload register from the palette chain on), and in the frame loop
+   it strength-reduces k * 8 and hoists k * 4 for the burst index. */
 #include "TYPES.H"
+#include "SCENE.H"
 #include "RESOURCE_IDS.H"
+#include "RESOURCE.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "B5_CONTEXT.H"
+#include "MOTION_OBJECT.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
 
-/*
- * Battle-presentation sub-effect at 0x080cf8e0 (1556 bytes).  It belongs to
- * the same 0x03001eec "battle work" family as the exact
- * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (main:080ce85c) and
- * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PUFF_ARC.C (main:080d9fc8), and to the
- * measured draft recon/tbs/en/main/080dab74.c.  The work-block layout
- * (display mode/value at 0x7780/0x7784, frame_ready at 0x7824, the
- * republished effect argument at 0x7828), the effect-argument layout
- * (direction 0x04, source id 0x08, member count 0x14, member ids 0x24) and
- * the DrawRectangleFn convention (an indirect call through the _call_via_rN
- * trampolines at recon/tbs/raw/080072e4.s: 0x080072f0 = r3, 0x080072f4 = r4,
- * 0x080072f8 = r5) are taken from those owners.
- *
- * Behaviour: the owner takes the effect argument and a small variant index.
- * It loads a fixed palette plus its 16000-byte sprite bank, a second palette
- * plus the bank that follows it, and a third palette chosen from the variant
- * (a six-way if chain over the resource-id constants 0x9f, 0x59, 0xa0, 0xbf,
- * 0x8d and the shared default 0x77).  Data_080ee0b6[variant * 2] is the
- * style flag; it selects the second rectangle blitter's shape, the run
- * length, the spark count, the spark velocity spread, the spark sprite bank
- * and the gravity sign, so the two styles are two different presentations of
- * the same sequence.
- *
- * The 1024 twenty-eight byte records at 0x02010000 are cleared (frame = -1),
- * then sixteen consecutive records per party member are seeded with the
- * caster's position and a velocity that reaches that member's position in
- * sixteen steps.  Only record [member * 16] is handled here; the other
- * fifteen and the whole seeded set are advanced by the 0x080CD261 callback
- * this owner installs.  The 256 records at 0x02011c00 - which is
- * &record[256] of the same table - are the sparks, also cleared to -1.
- *
- * Each of member_count * 8 + 72 (or + 56) frames:
- *   - rebuilds the transfer state;
- *   - for every member whose window is open (frame >= member * 8), draws its
- *     lead record with sprite cell min((frame - member * 8) / 3, 9) taken
- *     from work + cell * 768, either 32x24 or 24x32; on the frame numbered
- *     member * 8 + 17 it runs update_members and plays cue 133; on the
- *     window's first frame it starts the record falling, and when the record
- *     passes y = 0 it lands and scatters four or sixteen sparks with random
- *     velocities into 0x02011c00 + (member * 32 + k) * 28;
- *   - draws and advances every spark whose frame counter is in 0..44, using
- *     cell frame / 8 of the second bank for style 0 and the width/height/
- *     offset tables Data_080ee0c4 / Data_080ee0d6 / Data_080ee0e8 for the
- *     other style, mirrored by the argument direction and the sign of the
- *     spark's x velocity;
- *   - shakes the camera by (2, 2), ticks the object-group timers, publishes
- *     the frame and waits one frame.
- *
- * Uncertain, and left as read from the reference:
- *   - the two clear loops overlap: the first clears 1024 records from
- *     0x02010000, the second re-clears records 256..511 through the separate
- *     spelling 0x02011c00.  Both write -1, so the overlap is harmless; it is
- *     reproduced as written rather than folded into one loop.
- *   - the lead records' gravity call is gated on frame == 0, so it runs once
- *     per record; every later position update comes from the 0x080CD261
- *     callback.
- *   - Data_080ee0b6 is fourteen bytes (seven variants, stride two) and only
- *     the first byte of each pair is read here, so the pair's second byte and
- *     the roles of Data_080ee0c4 / Data_080ee0d6 / Data_080ee0e8 beyond
- *     width, height and source offset stay address-derived.
- *
- * Measured residual (drafted, NOT exact, and not close to exact).  Scored
- * with the approved route: candidate 1560 bytes against 1556 reference bytes
- * (100.3%), 739 differing halfwords, 643 wrong instructions, and the scorer
- * still reports topology=different.  The aligned comparison is 666 candidate
- * instructions against 670 reference instructions with 277 identical, 305
- * substituted and 152/151 unpaired, so the block sequence does track the
- * reference end to end - but "tracks" is as strong as the claim gets; this is
- * a readable draft of the right program, not a near match.  Every reference
- * branch, loop, switch arm, call, store and access width was checked against
- * the disassembly and is represented.  The residual is register allocation:
- *   - the reference keeps the work-block pointer in fp for the whole owner,
- *     so each of its sixteen uses is one `add rN, fp`; this source leaves it
- *     in a stack slot, which costs an extra load at each use and renames the
- *     registers downstream.  GCC here spends fp on the short-lived spark
- *     count instead.  Making `variant` die early (a `style` index local,
- *     matching the reference's spilled `variant * 2`) was tried and made the
- *     match worse; the emitted code already spills `variant * 2` to one slot
- *     and reads it at all seven style sites exactly as the reference does,
- *     so `variant` is not what is holding the work pointer out of fp.
- *   - the reference recomputes the spark slot address from the member index
- *     inside the scatter loop; this source lets the compiler strength-reduce
- *     it into a member-loop induction variable, which is four instructions
- *     shorter and adds one more long-lived value.
- */
+extern u8 gBattleFxWork[];
+extern DrawRectangle gWorkSlot[];
 
+/* Two bytes for each mode; the first says whether the shot bursts into
+   shards (1) or into smoke (0). */
+extern s8 SevenMode_Records[];
+/* The shards' eighteen pictures: width, height and place in the sheet. */
+extern u8 SevenMode_ShardWidths[];
+extern u8 SevenMode_ShardHeights[];
+extern u16 SevenMode_ShardOffsets[];
 
+#define gShots ((struct EffectStep *)Ram_MapCellBuffer)
+#define gBursts ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 
-typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 words);
+typedef s32 (*WordCopy)(void *, const void *, s32);
 
-struct EffectArgument {
-    u8 unknown_00[4];
-    s32 direction;           /* 0x04 */
-    s32 source_id;           /* 0x08 */
-    u8 unknown_0c[8];
-    s32 member_count;        /* 0x14 */
-    u8 unknown_18[12];
-    s16 member_ids[8];       /* 0x24 */
-};
-
-/* One twenty-eight byte motion record.  The same shape is used for the
-   member shards at 0x02010000 and the sparks at 0x02011c00. */
-typedef struct Shard {
-    s32 x;                   /* 0x00 */
-    s32 y;                   /* 0x04 */
-    s32 z;                   /* 0x08 */
-    s32 vx;                  /* 0x0c */
-    s32 vy;                  /* 0x10 */
-    s32 vz;                  /* 0x14 */
-    s32 frame;               /* 0x18 */
-} Shard;
-
-/* The projected object GetBattleObjectSlotFar resolves; only the two position words
-   this owner reads are named. */
-struct ActorObject {
-    u8 unknown_00[8];
-    s32 x;                   /* 0x08 */
-    u8 unknown_0c[4];
-    s32 z;                   /* 0x10 */
-};
-
-struct EffectRuntime {
-    u8 sprites[0x7780];      /* 0x0000 */
-    s32 display_mode;        /* 0x7780 */
-    s32 display_value;       /* 0x7784 */
-    u8 unknown_7788[0x9c];
-    s32 frame_ready;         /* 0x7824 */
-    struct EffectArgument *argument;   /* 0x7828 */
-};
-
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
-   This owner reads kinds 46 and 47 through it. */
-extern u8 gWorkSlot[];
-
-/* Value_ symbols carry a resource id the reference loads from its literal
-   pool rather than materializing with a mov. */
-extern u8 Value_00000059;
-extern u8 Value_00000077;
-extern u8 Value_0000008d;
-extern u8 Value_0000009f;
-extern u8 Value_000000a0;
-
-extern s8 Data_080ee0b6[];
-extern u8 Data_080ee0c4[];
-extern u8 Data_080ee0d6[];
-extern u16 Data_080ee0e8[];
-
-/* Names the project already resolves for this owner's callees; the four
-   lowercase spellings are static in their own units, so they are aliased
-   here the way recon/tbs/en/main/08027114.c aliases random_16. */
-
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 resource_id);   /* "get" in alchemy inspect */
-u32 Resource_DecodeType01(const void *source, void *destination);
-struct ActorObject **GetBattleObjectSlotFar(s32 member_id);
-void Audio_PlayCue(s32 cue);
+void BattleFx_EndCanvasLayer(void);
+struct B5Context *GetBattleObjectSlotFar(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
-void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void BattleEventRuntime_BeginPhaseFar(s32 cue);
-s32 __divsi3(s32 numerator, s32 denominator);
-void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
-void EffectStep_AdvanceWithGravity3D(void *record, s32 mode, s32 gravity);
-s32 Random16(void);
+void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
-void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 resource_id);
-void BattleFx_EndCanvasLayer(void);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+u32 Resource_DecodeType01(const void *source, void *destination);
 
-void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
+static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {
+    /* FAKEMATCH: the palette copies share the routine's address but build
+       the palette address again at each call, which only an inlined constant
+       argument compiles to; a direct call keeps it in a register. */
+    copy(destination, source, size);
+}
+
+/* Battle effect: a shot flies from the actor to each target in turn and
+   bursts where it lands, into smoke or into shards as the mode says. */
+void BattleFx_RunSevenMode(struct BattleEffectArgument *effect, s32 mode)
+{
+    struct EffectPosition position;
+    DrawRectangle draw[2];
+    void **heap_cache;
     void **cursor;
-    struct EffectRuntime *work;
+    struct BattleEffectWork *work;
     void *canvas;
-    s32 facing;
-    void *rectangle[2];
-    void **rectangle_slot;
-    struct ActorObject *source;
-    struct ActorObject *target;
-    Shard *shard;
-    Shard *spark;
-    u8 *palette;
-    u8 *state;
-    s32 resource_id;
-    s32 total;
     s32 frame;
-    s32 member;
-    s32 start;
-    s32 count;
-    s32 cell;
+    s32 k;
+    s32 total;
+    struct BattleCamera *camera;
+    struct MotionObject *source;
+    u8 *palette;
     s32 i;
-    s32 screen[3];
+    s32 height;
 
-    cursor = (void **)0x03001EEC;
-    work = (struct EffectRuntime *)*cursor++;
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
     canvas = *cursor;
-    facing = *(s32 *)0x03001E80;
-    work->argument = object;
+    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
-    *(u16 *)0x04000052 = 0x1010;
-
-    palette = (u8 *)Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
-    ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    Resource_DecodeType01(palette + 128, work);
-    palette = (u8 *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
-    ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    Resource_DecodeType01(palette + 128, work->sprites + 16000);
-
-    /* An if chain, not a switch: the reference tests 0, 1, 2, 3, 4 and 6 in
-       order and cross-jumps the variant-3 arm onto the default arm, which is
-       what this shape produces and a jump table does not. */
-    if (variant == 0)
-        resource_id = (s32)&Value_0000009f;
-    else if (variant == 1)
-        resource_id = (s32)&Value_00000059;
-    else if (variant == 2)
-        resource_id = (s32)&Value_000000a0;
-    else if (variant == 3)
-        resource_id = (s32)&Value_00000077;
-    else if (variant == 4)
-        resource_id = (s32)&ResourceId_GoldShellSheet;
-    else if (variant == 6)
-        resource_id = (s32)&Value_0000008d;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
+    CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+    palette += 128;
+    Resource_DecodeType01(palette, work);
+    palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
+    CopyPalette(Iwram_CopyWords, (void *)0x05000000, palette, 128);
+    palette += 128;
+    Resource_DecodeType01(palette, work->sheet + 0x3e80);
+    if (mode == 0)
+        palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
+    else if (mode == 1)
+        palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
+    else if (mode == 2)
+        palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+    else if (mode == 3)
+        palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    else if (mode == 4)
+        palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
+    else if (mode == 6)
+        palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
-        resource_id = (s32)&Value_00000077;
-    palette = (u8 *)Resource_GetTableEntry(resource_id);
-    ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+        palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    Iwram_CopyWords((void *)0x05000000, palette, 128);
 
     for (i = 0; i != 1024; i++)
-        ((Shard *)0x02010000)[i].frame = -1;
+        gShots[i].variant = -1;
+    source = GetBattleObjectSlotFar(work->effect->actor)->object;
+    height = 0x40000;
+    for (k = 0; k != work->effect->count; k++) {
+        struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
-    source = *GetBattleObjectSlotFar(work->argument->source_id);
-    member = 0;
-    if (work->argument->member_count != 0) {
-        do {
-            target = *GetBattleObjectSlotFar(work->argument->member_ids[member]);
-            shard = &((Shard *)0x02010000)[member * 16];
-            for (i = 0; i != 16; i++) {
-                shard->x = source->x;
-                shard->y = 0x40000;
-                shard->z = source->z;
-                shard->vx = (target->x - source->x) >> 4;
-                shard->vy = 0x40000;
-                shard->vz = (target->z - source->z) >> 4;
-                shard->frame = 0;
-                shard++;
-            }
-            member++;
-        } while (member != work->argument->member_count);
+        for (i = 0; i != 16; i++) {
+            struct EffectStep *shot = &gShots[k * 16 + i];
+
+            shot->x = source->x;
+            shot->y = height;
+            shot->z = source->z;
+            shot->velocity_x = (target->x - source->x) >> 4;
+            shot->velocity_y = 0x40000;
+            shot->velocity_z = (target->z - source->z) >> 4;
+            shot->variant = 0;
+        }
     }
-
     for (i = 0; i != 256; i++)
-        ((Shard *)0x02011C00)[i].frame = -1;
+        gBursts[i].variant = -1;
 
-    if (object->direction == 0) {
+    if (effect->side == 0) {
         BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        state = gWorkSlot;
-        rectangle[0] = *(void **)(state + 184);
-        if (Data_080ee0b6[variant * 2] == 0)
+        draw[0] = gWorkSlot[46];
+        if (SevenMode_Records[mode * 2] == 0) {
             BattleEffect_LoadWork(47, 7, 7, 3, 3);
-        else
+            draw[1] = gWorkSlot[47];
+        } else {
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
+            draw[1] = gWorkSlot[47];
+        }
     } else {
         BattleEffect_LoadWork(46, 7, 7, 7, 2);
-        state = gWorkSlot;
-        rectangle[0] = *(void **)(state + 184);
-        if (Data_080ee0b6[variant * 2] == 0)
+        draw[0] = gWorkSlot[46];
+        if (SevenMode_Records[mode * 2] == 0) {
             BattleEffect_LoadWork(47, 7, 7, 3, 3);
-        else
+            draw[1] = gWorkSlot[47];
+        } else {
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
+            draw[1] = gWorkSlot[47];
+        }
     }
-    rectangle_slot = rectangle;
-    rectangle_slot[1] = *(void **)(state + 188);
-
-    work->display_mode = 2;
-    work->display_value = 75;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
-
-    if (Data_080ee0b6[variant * 2] == 0)
-        total = (work->argument->member_count * 8) + 72;
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    if (SevenMode_Records[mode * 2] == 0)
+        total = work->effect->count * 8 + 72;
     else
-        total = (work->argument->member_count * 8) + 56;
-
-    Audio_PlayCue(103);
+        total = work->effect->count * 8 + 56;
+    AudioCommand_PlayFar(103);
 
     for (frame = 0; frame != total; frame++) {
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        for (k = 0; k != work->effect->count; k++) {
+            if (frame >= k * 8) {
+                struct EffectStep *shot = &gShots[k * 16];
 
-        member = 0;
-        if (work->argument->member_count != 0) {
-            shard = (Shard *)0x02010000;
-            start = 0;
-            do {
-                if (frame >= start) {
-                    if (frame == start + 17) {
-                        ObjectGroup_UpdateMembers(
-                            work->argument->member_ids[member], 7, 5, member, 16);
-                        BattleEventRuntime_BeginPhaseFar(133);
-                    }
-                    if (shard->frame >= 0) {
-                        cell = __divsi3(frame - start, 3);
-                        if (cell > 9)
-                            cell = 9;
-                        EffectPosition_ApplyBaseAndYOffset(shard, screen);
-                        screen[0] >>= 1;
-                        if (cell > 4) {
-                            ((DrawRectangleFn)rectangle[0])(
-                                canvas,
-                                work->sprites + (cell * 768),
-                                screen[0] - 16,
-                                screen[1] - 12,
-                                32,
-                                24);
-                        } else {
-                            ((DrawRectangleFn)rectangle[0])(
-                                canvas,
-                                work->sprites + (cell * 768),
-                                screen[0] - 12,
-                                screen[1] - 16,
-                                24,
-                                32);
-                        }
-                        if (shard->frame == 0)
-                            EffectStep_AdvanceWithGravity3D(shard, 63, -0x8000);
-                        if (shard->y < 0) {
-                            shard->y = 0;
-                            shard->frame = 1;
-                            if (Data_080ee0b6[variant * 2] == 0)
-                                count = 4;
-                            else
-                                count = 16;
-                            for (i = 0; i != count; i++) {
-                                spark = &((Shard *)0x02011C00)[
-                                    (member * 32) + i];
-                                spark->x = shard->x;
-                                spark->y = shard->y;
-                                spark->z = shard->z;
-                                if (Data_080ee0b6[variant * 2] == 0) {
-                                    spark->vx =
-                                        ((Random16() & 63) - 32) << 11;
-                                    spark->vy = 0;
-                                    spark->vz =
-                                        ((Random16() & 63) - 32) << 11;
-                                } else {
-                                    spark->vx =
-                                        ((Random16() & 63) - 32) << 13;
-                                    spark->vy =
-                                        ((Random16() & 31) + 32) << 12;
-                                    spark->vz =
-                                        ((Random16() & 63) - 32) << 13;
-                                }
-                                spark->frame = 0;
+                if (frame == k * 8 + 17) {
+                    ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 16);
+                    BattleEventRuntime_BeginPhaseFar(133);
+                }
+                if (shot->variant >= 0) {
+                    s32 step = (frame - k * 8) / 3;
+
+                    if (step > 9)
+                        step = 9;
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)shot, &position);
+                    position.x >>= 1;
+                    if (step > 4)
+                        draw[0](canvas, work->sheet + step * 768, position.x - 16, position.y - 12, 32, 24);
+                    else
+                        draw[0](canvas, work->sheet + step * 768, position.x - 12, position.y - 16, 24, 32);
+                    if (shot->variant == 0)
+                        EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
+                    if (shot->y < 0) {
+                        s32 count;
+
+                        shot->y = 0;
+                        shot->variant = 1;
+                        count = 4;
+                        if (SevenMode_Records[mode * 2] != 0)
+                            count = 16;
+                        for (i = 0; i != count; i++) {
+                            struct EffectStep *burst = &gBursts[k * 32 + i];
+
+                            burst->x = shot->x;
+                            burst->y = shot->y;
+                            burst->z = shot->z;
+                            if (SevenMode_Records[mode * 2] == 0) {
+                                burst->velocity_x = ((Random16() & 63) - 32) << 11;
+                                burst->velocity_y = 0;
+                                burst->velocity_z = ((Random16() & 63) - 32) << 11;
+                            } else {
+                                burst->velocity_x = ((Random16() & 63) - 32) << 13;
+                                burst->velocity_y = ((Random16() & 31) + 32) << 12;
+                                burst->velocity_z = ((Random16() & 63) - 32) << 13;
                             }
+                            burst->variant = 0;
                         }
                     }
                 }
-                shard += 16;
-                start += 8;
-                member++;
-            } while (member != work->argument->member_count);
-        }
-
-        spark = (Shard *)0x02011C00;
-        for (i = 0; i != 256; i++) {
-            /* The folded range test is what the reference's single unsigned
-               compare came from: an unstarted spark keeps frame = -1. */
-            if ((spark->frame >= 0) && (spark->frame <= 44)
-                    && (spark->y >= 0)) {
-                EffectPosition_ApplyBaseAndYOffset(spark, screen);
-                screen[0] >>= 1;
-                if (Data_080ee0b6[variant * 2] == 0) {
-                    ((DrawRectangleFn)rectangle_slot[1])(
-                        canvas,
-                        work->sprites + ((spark->frame / 8) * 1152) + 16000,
-                        screen[0] - 12,
-                        screen[1] - 24,
-                        24,
-                        48);
-                } else {
-                    s32 index;
-                    s32 side;
-                    s32 wide;
-                    s32 high;
-
-                    index = __divsi3(spark->frame, 5);
-                    if ((i & 1) != 0)
-                        index += 9;
-                    side = object->direction;
-                    if (spark->vx > 0)
-                        side ^= 1;
-                    /* Each table entry is read once and reused for both the
-                       centring shift and the size argument, as in the exact
-                       games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PUFF_ARC.C. */
-                    wide = Data_080ee0c4[index];
-                    high = Data_080ee0d6[index];
-                    ((DrawRectangleFn)rectangle_slot[side])(
-                        canvas,
-                        work->sprites + Data_080ee0e8[index] + 7680,
-                        screen[0] - (wide >> 1),
-                        screen[1] - (high >> 1),
-                        wide,
-                        high);
-                }
-                if (Data_080ee0b6[variant * 2] == 0)
-                    EffectStep_AdvanceWithGravity3D(spark, 62, 0x800);
-                else
-                    EffectStep_AdvanceWithGravity3D(spark, 62, -0x8000);
-                spark->frame++;
             }
-            spark++;
         }
+        for (i = 0; i != 256; i++) {
+            struct EffectStep *burst = &gBursts[i];
 
+            if ((u32)burst->variant <= 44 && burst->y >= 0) {
+                EffectPosition_ApplyBaseAndYOffset((s32 *)burst, &position);
+                position.x >>= 1;
+                if (SevenMode_Records[mode * 2] == 0) {
+                    draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + 0x3e80,
+                        position.x - 12, position.y - 24, 24, 48);
+                } else {
+                    s32 picture = burst->variant / 5;
+                    s32 flip;
+
+                    if (i & 1)
+                        picture += 9;
+                    flip = effect->side;
+                    if (burst->velocity_x > 0)
+                        flip ^= 1;
+                    draw[flip](canvas, work->sheet + SevenMode_ShardOffsets[picture] + 0x1e00,
+                        position.x - SevenMode_ShardWidths[picture] / 2,
+                        position.y - SevenMode_ShardHeights[picture] / 2,
+                        SevenMode_ShardWidths[picture], SevenMode_ShardHeights[picture]);
+                }
+                if (SevenMode_Records[mode * 2] == 0)
+                    EffectStep_AdvanceWithGravity3D(burst, 62, 0x800);
+                else
+                    EffectStep_AdvanceWithGravity3D(burst, 62, -0x8000);
+                burst->variant++;
+            }
+        }
         Camera_ApplyShake(2, 2);
         ObjectGroup_TickMemberTimers();
-        work->frame_ready = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

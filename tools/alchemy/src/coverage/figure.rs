@@ -11,7 +11,7 @@ use super::history::{day_number, Day, History, Measure, UNTAGGED};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
 use super::model::{treemap, Rect, Tile};
-use super::palette::{BAND, BAND_OPACITY, BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
+use super::palette::{BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
 use super::raster::{Canvas, Relief};
 use super::sessions::{family, Family};
 use std::path::Path;
@@ -47,7 +47,7 @@ fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i3
 // ------------------------------------------------------------------ chart
 
 /// The daily chart of `history`: x is calendar days since the project
-/// began, y is 0–100%, stricter-rule days are light bands, and today's
+/// began, y is 0–100%, today's
 /// values are labelled at the right end.
 pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     let days = &history.days;
@@ -82,10 +82,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         canvas.mark(key_x, 6, key, ink, SHADOW);
         key_x -= 12;
     }
-    let stricter = "Code Overhauls";
-    key_x -= letters.width(stricter) as i32;
-    canvas.text(letters, key_x, 6, stricter, INK, Some(SHADOW));
-    canvas.shade(key_x - 14, 9, 10, 10, BAND, BAND_OPACITY);
     debug_assert!(
         masthead_end + 12 <= key_x - 14,
         "the chart's top line overflows"
@@ -125,14 +121,6 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         bottom - 1 - ((value.clamp(0.0, 100.0) / 100.0) * (plot_h - 2) as f64).round() as i32
     };
     canvas.fill(left, top, plot_w, plot_h, WELL);
-    for (date, _) in history.stricter() {
-        if let Some(day) = day_number(date) {
-            // The band covers the step into the stricter day.
-            let (from, to) = (x_of(day - 1) + 1, x_of(day) + 1);
-            canvas.shade(from, top + 1, to - from, plot_h - 2, BAND, BAND_OPACITY);
-            canvas.shade(from, top - 4, to - from, 3, BAND, BAND_OPACITY);
-        }
-    }
     for quarter in 0..=4 {
         let value = quarter as f64 * 25.0;
         let y = y_of(value);

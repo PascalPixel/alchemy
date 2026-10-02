@@ -569,12 +569,6 @@ BattleFx_BuildBuffer:
 	.thumb_func
 DisplayScroll_BuildAndSwapHBlankPage:
 	.incbin "baserom.gba", 0x000945d0, 0x000001ec
-	.section .rom.000976d0, "ax"
-	.global Func_08097644
-	.type Func_08097644, %function
-	.thumb_func
-Func_08097644:
-	.incbin "baserom.gba", 0x000976d0, 0x00000224
 	.section .rom.00097cc8, "ax"
 	.global FunctionHead_08097c3c
 	.type FunctionHead_08097c3c, %function

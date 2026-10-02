@@ -216,8 +216,6 @@
         "*/recon/tla/raw/08016bdc.o"(.text)
         "*/recon/tla/raw/08016ca4.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST.o"(.text)
-        "*/recon/tla/raw/08016cfc.o"(.text)
-        "*/recon/tla/raw/08016d18.o"(.text)
         "*/recon/tla/raw/08016d34.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.o"(.text)
         "*/games/THE LOST AGE/SRC/GAME/FLAGS/SET_BYTE.o"(.text)

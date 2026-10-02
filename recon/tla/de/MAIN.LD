@@ -167,8 +167,6 @@
     "*/recon/tla/de/rom.o"(.rom.000169bc)
     "*/recon/tla/de/rom.o"(.rom.00016cd0)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/TEST.o"(.text)
-    "*/recon/tla/de/rom.o"(.rom.00016d28)
-    "*/recon/tla/de/rom.o"(.rom.00016d44)
     "*/recon/tla/de/rom.o"(.rom.00016d60)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.o"(.text)
     "*/games/THE LOST AGE/SRC/GAME/FLAGS/SET_BYTE.o"(.text)

@@ -550,7 +550,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/ITEM.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000a1664)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU10.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000a1eb4)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW10.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000a24e0)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)

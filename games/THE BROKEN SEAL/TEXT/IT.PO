@@ -11655,7 +11655,7 @@ msgctxt "message"
 msgid "02911"
 msgstr "{button_icon:1}{button_icon:2}{button_icon:3}{button_icon:4}:Esci"
 
-msgctxt "message"
+msgctxt "MsgUnleashEffect"
 msgid "02912"
 msgstr "Effetto in battaglia:"
 

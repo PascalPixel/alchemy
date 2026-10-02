@@ -830,7 +830,7 @@ Unnamed_080ea0d8:
 .L_080ea76c:
 	.4byte gMapCellBuffer
 .L_080ea770:
-	.4byte Data_080edac8 + 0x8
+	.4byte CirclingScene_UnitScale + 0x8
 .L_080ea774:
 	.4byte 0x000077d8
 .L_080ea778:

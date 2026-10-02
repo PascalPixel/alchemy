@@ -48,6 +48,288 @@ extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
 
+/* A scene object: two bits of its tenth byte pick its draw variant. */
+struct SceneObject {
+    u8 reserved_00[9];
+    u8 flags09_0 : 2;
+    u8 variant : 2;
+    u8 flags09_4 : 4;
+    u8 reserved_0a[28];
+    u8 enabled;
+};
+
+/* A pair of 16.16 values: a scale, or a point on the ground. */
+struct Scale {
+    s32 x;
+    s32 y;
+};
+
+extern volatile u32 gKeysRepeat;
+/* Where each of the seven sky objects stands, in whole pixels. */
+extern u8 CirclingScene_ObjectColumns[];
+extern u8 CirclingScene_ObjectRows[];
+/* The puff pictures in the blast sheet and how wide each square one is. */
+extern u16 CirclingScene_PuffSheetOffsets[];
+extern u16 CirclingScene_PuffSizes[];
+extern const struct Scale CirclingScene_UnitScale;
+
+void BattlePres_ConfigureEffectDisplay(void);
+void BattleEffect_WipeCanvas(s32 mode, s32 layer);
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
+void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
+void BattleEffect_SetupBlendedDisplay(void);
+struct SceneObject *GetBattleEffectObject(s32 kind);
+void Object_InitializeMode(struct SceneObject *object, s32 animation);
+void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
+void ResourceObject_ReleaseFar(void *object);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+
+/* The sparks of the last burst live at the start of the map cell buffer. */
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
+
+/* Battle effect: an orb circles in over a desert sky, drops three times and
+   each time throws up puffs, while six rocks fall and bounce; then the orb
+   flies off, and a burst of five hundred sparks hits every target. A or B
+   skips to the end. */
+void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
+{
+    s32 position[4];
+    DrawRectangle draw[2];
+    struct Scale scale;
+    void **cache;
+    void *canvas;
+    struct BattleEffectWork *work;
+    s32 frame;
+    u8 *sheet;
+    struct Scale base;
+    struct Scale orb;
+    s32 i;
+    s32 k;
+
+    cache = &gBattleFxWork[1];
+    canvas = cache[0];
+    work = cache[-1];
+    sheet = cache[1];
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0);
+    BattlePres_ConfigureEffectDisplay();
+    *(u16 *)0x05000000 = 0;
+    *(u16 *)0x05000002 = 0;
+    work->transfer_mode = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    BattleEffect_WipeCanvas(1, 0);
+    BattleFx_SelectLivingTargets(work->effect);
+    BattleFx_SpawnObjects(9, 379, 2);
+    for (i = 0; i != 6; i++) {
+        struct SceneObject *object = GetBattleEffectObject(390);
+
+        work->objects[9 + i] = object;
+        if (object != 0) {
+            object->enabled = 0;
+            Object_InitializeMode(object, i % 3);
+            ((struct SceneObject *)work->objects[9 + i])->variant = 1;
+        }
+    }
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw[0] = (DrawRectangle)gWorkSlot[46];
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    draw[1] = (DrawRectangle)gWorkSlot[47];
+    *(volatile u16 *)0x04000048 = 0x2737;
+    *(volatile u16 *)0x04000040 = 0xf0;
+    *(volatile u16 *)0x04000046 = 0x1088;
+    WaitFrames(1);
+    BattleBackground_LoadFar(1, (s32)&ResourceId_DesertBackdrop, 0);
+    BattleEffect_WipeCanvas(1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 1);
+    *(volatile u16 *)0x04000000 = 0x7741;
+    *(volatile u16 *)0x04000020 = 0x80;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    *(volatile u16 *)0x04000050 = 0x3f44;
+    work->transfer_mode = 2;
+    work->transfer_value = 50;
+    base.x = 0xbc0000;
+    base.y = 0x5c0000;
+    orb.x = 0xa00000;
+    orb.y = 0x5c0000;
+    for (i = 0; i != 6; i++) {
+        struct EffectStep *rock = &work->particles[i];
+
+        rock->x = (Random16() & 127) << 16;
+        rock->y = i * -0x100000;
+        rock->velocity_x = 0;
+        rock->velocity_y = 0;
+        rock->variant = 0;
+    }
+    for (i = 0; i != 58; i++)
+        work->particles[6 + i].variant = 24;
+    for (i = 0; i != 1024; i++)
+        SPARKS[i].variant = -1;
+    work->fade_frames = 24;
+    work->fade_step = 0;
+
+    for (frame = 0; frame != 320 && !(gKeysRepeat & 3); frame++) {
+        if (frame == 94)
+            AudioCommand_PlayFar(156);
+        if (frame == 136)
+            AudioCommand_PlayFar(156);
+        if (frame == 178)
+            AudioCommand_PlayFar(156);
+        if (frame == 260)
+            AudioCommand_PlayFar(145);
+        scale = CirclingScene_UnitScale;
+        if (frame >= 96 && frame <= 251)
+            work->shake_frames = 1;
+        else if (frame >= 260 && frame <= 263)
+            work->shake_frames = 1;
+        position[3] = 0;
+        position[1] = 0;
+        for (i = 0; i != 7; i++) {
+            position[0] = (CirclingScene_ObjectColumns[i] << 16) + base.x - 0x200000;
+            position[2] = (CirclingScene_ObjectRows[i] << 16) + base.y - 0x200000;
+            Object_ApplyProjectedPlacementFar(work->objects[i], position, &scale, 0);
+        }
+        if (frame <= 90) {
+            orb.x = Trig_Sin(frame << 9) * 16 + 0x9c0000;
+            orb.y = Trig_Cos(frame << 9) * 16 + 0x5c0000;
+        }
+        if (frame <= 196) {
+            s32 start;
+
+            for (i = 0, start = 91; i != 3; start += 40, i++) {
+                if (frame >= start && frame < start + 4)
+                    orb.y += 0x80000;
+                if (frame == start + 3) {
+                    for (k = 0; k != 4; k++) {
+                        struct EffectStep *puff = &work->particles[6 + i * 8 + k];
+
+                        puff->x = 0x400000;
+                        puff->y = 0x600000;
+                        puff->velocity_x = ((Random16() & 255) - 127) << 10;
+                        puff->velocity_y = ((Random16() & 255) - 127) << 10;
+                        puff->variant = Random16() & 15;
+                    }
+                }
+                if (frame >= start + 20 && frame < start + 36)
+                    orb.y -= 0x20000;
+            }
+        }
+        if (frame >= 244 && frame <= 251)
+            orb.x -= 0x10000;
+        if (frame >= 252 && frame <= 275)
+            orb.x -= (frame - 250) << 16;
+        if (frame <= 259) {
+            position[0] = orb.x;
+            position[1] = -0x1000000;
+            position[2] = orb.y - 0x1000000;
+            Object_ApplyProjectedPlacementFar(work->objects[7], position, &scale, 0);
+            position[0] = orb.x + 0x200000;
+            Object_ApplyProjectedPlacementFar(work->objects[8], position, &scale, 0);
+        }
+        position[1] = 0;
+        for (i = 0; i != 6; i++) {
+            struct EffectStep *rock = &work->particles[i];
+
+            if (rock->variant != 2) {
+                position[0] = rock->x;
+                position[2] = rock->y;
+                Object_ApplyProjectedPlacementFar(work->objects[9 + i], position, &scale, 0);
+                rock->x += rock->velocity_x;
+                rock->y += rock->velocity_y;
+                if (frame > 96)
+                    rock->velocity_y += 0x4000;
+                if (rock->y > 0x780000) {
+                    rock->variant++;
+                    if (rock->variant == 1) {
+                        rock->velocity_y = -rock->velocity_y / 2;
+                        for (k = 0; k != 2; k++) {
+                            struct EffectStep *puff = &work->particles[30 + i * 2 + k];
+
+                            puff->x = rock->x / 2;
+                            puff->y = rock->y - 0x200000;
+                            puff->velocity_x = ((Random16() & 255) - 127) << 10;
+                            puff->velocity_y = ((Random16() & 255) - 127) << 10;
+                            puff->variant = Random16() & 15;
+                        }
+                    } else if (frame <= 199) {
+                        rock->y = 0;
+                        rock->velocity_y = 0;
+                        rock->variant = 0;
+                    }
+                }
+            }
+        }
+        for (i = 0; i != 56; i++) {
+            struct EffectStep *puff = &work->particles[6 + i];
+
+            if (puff->variant >= 0) {
+                if ((u32)puff->variant <= 23) {
+                    s32 cell = puff->variant / 6 + 3;
+
+                    draw[0](canvas, (u8 *)work + CirclingScene_PuffSheetOffsets[cell],
+                        HI(puff->x) - CirclingScene_PuffSizes[cell] / 2,
+                        HI(puff->y) - CirclingScene_PuffSizes[cell] / 2,
+                        CirclingScene_PuffSizes[cell], CirclingScene_PuffSizes[cell]);
+                }
+                EffectStep_AdvanceWithGravity2D(puff, 60, -0x4000);
+                puff->variant++;
+            }
+        }
+        if (frame == 260) {
+            for (i = 0; i != work->effect->count; i++) {
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 4);
+                ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
+            }
+            work->shake_frames = 8;
+        }
+        if (frame == 260) {
+            for (i = 0; i != 512; i++) {
+                struct EffectStep *spark = &SPARKS[i];
+                s32 speed;
+                s32 angle;
+
+                speed = 0x3ff;
+                speed &= Random16();
+                angle = Random16() & 0xffff;
+                spark->x = 0x200000;
+                spark->y = 0x5c0000;
+                spark->velocity_x = Trig_Sin(angle) * (speed + 32) >> 7;
+                spark->velocity_y = -(Trig_Cos(angle) * (speed + 32) << 1) >> 7;
+                spark->variant = (Random16() & 15) + 32;
+            }
+        }
+        for (i = 0; i != 512; i++) {
+            struct EffectStep *spark = &SPARKS[i];
+
+            if (spark->variant >= 0) {
+                s32 size = (spark->variant >> 3) + 1;
+
+                draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                    HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+                EffectStep_AdvanceWithGravity2D(spark, 62, 0x1000);
+                spark->variant--;
+            }
+        }
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    BattleEventRuntime_BeginPhaseFar(134);
+    BattleEffect_SetupBlendedDisplay();
+    for (i = 0; i != 15; i++)
+        ResourceObject_ReleaseFar(work->objects[i]);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
+
 /* Where one copy of the flame is drawn. */
 struct TrailPoint {
     s32 x;

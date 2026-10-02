@@ -45,8 +45,6 @@ static __inline__ void RestoreInterrupts(u32 saved)
     REG_IME = saved;
 }
 
-/* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
- * the count cast preserves the queue's original publication order. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -310,6 +308,8 @@ loop:
  * that clears over sixteen steps. */
 void Title_RevealScreen(s32 unused)
 {
+    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
+     * the count cast preserves the queue's original publication order. */
     s32 i;
     struct IoWriteQueue *q;
 

@@ -47,13 +47,6 @@ void FieldScene_RunSupplementalSequenceOne(void);
 void KorosseoKabe_MarkSceneProgress(void);
 void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 
-/* FAKEMATCH: the game state read as rows of halfwords and written as rows
- * of bytes keeps the base-plus-index address form for both accesses, where
- * its fields fold the offsets into the pool. */
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-};
 
 extern u8 MsgKorosseoSiteSecondFinals[];
 void Engine_EventBegin();
@@ -716,6 +709,14 @@ void FieldScene_RunPairedEntranceWalk(s32 a0)
 /* Wall arena entry: record the arrival, set the pillars, ledges and item icons by the story flags, then start the entrance's opening scene. */
 s32 KorosseoKabe_ApplyEntryState(void)
 {
+    /* FAKEMATCH: the game state read as rows of halfwords and written as rows
+     * of bytes keeps the base-plus-index address form for both accesses, where
+     * its fields fold the offsets into the pool. */
+    union GameStateRows {
+        u8 bytes[512][2];
+        s16 halves[512][1];
+    };
+
     struct FieldActor *actor;
     s32 x;
     s32 i;
@@ -960,6 +961,8 @@ void Korosseo_RunGreetScene(s32 a0)
  * along the wall, show the introduction and hand over to the stage. */
 void KorosseoKabe_RunStageIntro(s32 a0)
 {
+    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
+
     s32 rec;
     struct FieldActor *record;
 
@@ -1216,6 +1219,8 @@ void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
  * explaining it; afterwards reminds that the logs are rolled into a path. */
 void KorosseoKabe_RunGuideTalk(s32 speaker)
 {
+    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
+
     s32 result;
 
     if (gGameState.entrance == 2) {

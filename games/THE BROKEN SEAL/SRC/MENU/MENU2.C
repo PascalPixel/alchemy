@@ -121,9 +121,6 @@ struct StepMenu {
     u16 status;
 };
 
-/* FAKEMATCH: the row targets are read as plain halfwords, not struct
-   members, so GCC reloads them after every node store as the reference
-   does. */
 #define MENU_BASE_Y(state) (*(u16 *)((u8 *)(state) + 0x396))
 #define MENU_BASE_Z(state) (*(u16 *)((u8 *)(state) + 0x398))
 void WaitFrames(s32 frames);
@@ -168,6 +165,8 @@ struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *state)
 /* Runs the selection until it is confirmed, or cancelled when mode allows. */
 s32 Menu_SelectionLoop(s32 mode)
 {
+    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM
+     * loads in the right and left tests. */
     struct SelectionScreen *screen = gResQueueWork;
 
     Menu_LoadSelectionNodeResource(screen, 0);
@@ -194,6 +193,8 @@ s32 Menu_SelectionLoop(s32 mode)
 /* As Menu_SelectionLoop, with sound cues, returning the chosen row. */
 u32 Menu_WaitForSelectionInput(u32 mode)
 {
+    /* FAKEMATCH: the volatile repeat-key cell preserves the separate RAM
+     * loads in the right and left tests. */
     struct SelectionScreen *screen = gResQueueWork;
     u32 result;
 
@@ -298,6 +299,9 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
    cursor reaches the fourth slot. */
 void Menu_StepRight(struct StepMenu *state)
 {
+    /* FAKEMATCH: the row targets are read as plain halfwords, not struct
+       members, so GCC reloads them after every node store as the reference
+       does. */
     struct StepNode *node;
     u16 *ids;
     s32 y;

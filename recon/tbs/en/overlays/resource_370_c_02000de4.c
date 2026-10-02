@@ -1,7 +1,12 @@
-/* NONMATCHING: resource_370 password packer, 1024 bytes; 202 of 492 lines differ, frame now 64.
- * Remaining: the counter and write offset swap r9/r10 with r8 free, the item pass keeps its
- * owner in r7 where the reference saves r4 around the call, and the quantity is widened
- * once before the sign test in the reference (lsl above the branch, lsr in each arm). */
+/* NONMATCHING: resource_370 password packer, 1024 bytes, 488 lines against 492; the item and
+ * quantity passes now allocate as the reference does. What got them there: the item pass counter and the
+ * quantity search counter are one function-level variable (n), the found quantity shares
+ * the first pass counter (j), the table entry is compared inside the search loop, and the
+ * coins byte is the word shifted. The unused narrowing assignment "quantity = j" stands in
+ * for whatever left a lone shift above the sign test; a real form is still wanted.
+ * Remaining: the first pass keeps its shifted 1 in r12 where the reference uses r10; the
+ * item pass orders the bit update and its constants differently; the row pass stores
+ * byte 7 once where the reference stores it twice and byte 11 before byte 10. */
 #include "TYPES.H"
 #include "ITEM.H"
 #include "GAME_STATE.H"
@@ -33,20 +38,6 @@ extern const u16 Data_020016d0[6];
 extern const u16 Data_020016dc[8];
 extern const u16 Data_020016ec[23];
 
-static inline u16 Password_FindQuantity(struct PasswordOwner *owner, s32 item)
-{
-    u16 quantity;
-    s32 k;
-
-    quantity = 0;
-    for (k = 0; k != 15; k++) {
-        if ((owner->items[k] & 0x1ff) == item) {
-            quantity = (owner->items[k] & 0xf800) >> 11;
-        }
-    }
-    return quantity;
-}
-
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
     s32 length;
@@ -58,6 +49,9 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     s32 i;
     s32 p;
     s32 bit;
+    s32 j;
+    s32 k;
+    s32 n;
 
     length = 11;
     switch (mode) {
@@ -92,7 +86,6 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     for (i = 0; i != 4; i++) {
         struct PasswordOwner *owner = Owner_GetState(Data_020016c0[i]);
         struct PasswordStats *stats = &owner->stats;
-        s32 j;
 
         if (stats->value_10 > 1999) {
             stats->value_10 = 1999;
@@ -146,13 +139,12 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         bit = 0;
         for (i = 0; i != 4; i++) {
             struct PasswordOwner *owner = Owner_GetState(Data_020016c0[i]);
-            s32 j;
 
-            for (j = 0; j != 15; j++) {
+            for (n = 0; n != 15; n++) {
                 s32 item;
 
-                Item_Get(owner->items[j]);
-                item = owner->items[j];
+                Item_Get(owner->items[n]);
+                item = owner->items[n];
                 item &= 0x1ff;
                 out[p] += item >> (bit + 1);
                 out[p + 1] += item << (7 - bit);
@@ -169,16 +161,25 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         bit = -1;
         for (i = 0; i != 4; i++) {
             struct PasswordOwner *owner = Owner_GetState(Data_020016c0[i]);
-            s32 j;
+            s32 m;
 
-            for (j = 0; j != 23; j++) {
-                u16 quantity = Password_FindQuantity(owner, Data_020016ec[j]);
+            for (m = 0; m != 23; m++) {
+                u16 quantity;
+                s32 k;
+
+                j = 0;
+                for (n = 0; n != 15; n++) {
+                    if ((owner->items[n] & 0x1ff) == Data_020016ec[m]) {
+                        j = (owner->items[n] & 0xf800) >> 11;
+                    }
+                }
+                quantity = j;
                 if (bit < 0) {
-                    out[p] += quantity >> -bit;
+                    out[p] += (u16)j >> -bit;
                     p++;
                     bit += 8;
                 }
-                out[p] += quantity << bit;
+                out[p] += (u16)j << bit;
                 bit -= 5;
                 if (bit == -5) {
                     p++;
@@ -186,7 +187,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                 }
             }
         }
-        out[165] = ((u16 *)&gGameState.coins)[1];
+        out[165] = (u32)gGameState.coins >> 16;
         out[166] = (u32)gGameState.coins >> 8;
         out[167] = gGameState.coins;
     }

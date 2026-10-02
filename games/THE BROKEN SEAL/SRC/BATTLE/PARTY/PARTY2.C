@@ -16,27 +16,7 @@ s32 GameFlag_TestFar(s32 message);
 s32 Djinn_ActivateFar(s32 id, s32 x, s32 y);
 s32 Trade_RemoveOfferFar(s32 id, s32 x, s32 y);
 
-/* battle/placement/update_entries.c */
-struct PlacementEntry {
-    u8 x;
-    u8 y;
-    u8 id;
-    s8 timer;
-};
-
-struct PlacementList {
-    struct PlacementEntry entries[64];
-    s32 count;
-};
-
-struct PlacementTable {
-    u32 available_mask;
-    u8 padding[4];
-    struct PlacementList list;
-};
-
-struct BattleObjectSlot;
-struct PlacementTable *Trade_GetOfferStateFar(s32 side);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)
@@ -108,11 +88,11 @@ s32 BattlePlacement_UpdateEntries(void)
         for (x = 0; x <= 3; x++) {
             for (y = 0; y <= 19; y++) {
                 if (Trade_CanOfferDjinnFar(owner, x, y) != 0) {
-                    struct PlacementList *list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
+                    struct DjinnRecoveryList *list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                     s32 j;
 
                     for (j = 0; j < list->count; j++) {
-                        if (x == list->entries[j].x && y == list->entries[j].y)
+                        if (x == list->entries[j].element && y == list->entries[j].index)
                             break;
                     }
                     if (j == list->count)
@@ -126,8 +106,8 @@ s32 BattlePlacement_UpdateEntries(void)
         return;
 
     {
-        struct PlacementList *list = &Trade_GetOfferStateFar(0)->list;
-        struct PlacementEntry *entry;
+        struct DjinnRecoveryList *list = &Trade_GetOfferStateFar(0)->list;
+        struct DjinnRecoveryEntry *entry;
 
         i = 0;
         if (i < list->count) {
@@ -135,10 +115,10 @@ s32 BattlePlacement_UpdateEntries(void)
 
             entry = list->entries;
             do {
-                if (entry->timer == permanent_timer && GetBattleObjectSlot(entry->id) == 0) {
-                    u8 id = entry->id;
-                    u8 ex = entry->x;
-                    u8 ey = entry->y;
+                if (entry->turns == permanent_timer && GetBattleObjectSlot(entry->unit_id) == 0) {
+                    u8 id = entry->unit_id;
+                    u8 ex = entry->element;
+                    u8 ey = entry->index;
 
                     Djinn_ActivateFar(id, ex, ey);
                     Trade_RemoveOfferFar(id, ex, ey);

@@ -1,6 +1,7 @@
 #include "LOW_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
 #include "DMA.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
@@ -20,11 +21,21 @@ extern const u8 System_BasicColorPalette[];
 extern const u16 Ui_WindowPalette[];
 extern u8 gWorkSlot[];
 
-struct HeapState { void *next_ewram; void *next_iwram; u8 entries[248]; };
+/* The first two slots are heap cursors; the others cache allocated blocks. */
+union HeapState {
+    struct {
+        void *next_ewram;
+        void *next_iwram;
+        void *blocks[62];
+    } heap;
+    void *slots[64];
+};
+
+LAYOUT_SIZE_GUARD(HeapState_Size, union HeapState, 0x100);
+LAYOUT_OFFSET_GUARD(HeapState_Iwram, union HeapState, heap.next_iwram, 4);
+LAYOUT_OFFSET_GUARD(HeapState_Blocks, union HeapState, heap.blocks, 8);
 
 extern u8 Data_03007800[];
-extern u8 Data_03001e50[];
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void Runtime_WriteDebugTextTiles(const u8 *src)
 {
@@ -147,54 +158,54 @@ void PaletteDma_LoadBlock(void)
 
 void Runtime_InitializeHeap(void)
 {
-    struct HeapState *work = (struct HeapState *)gWorkSlot;
+    union HeapState *work = (union HeapState *)gWorkSlot;
     volatile u32 zero = 0;
     Dma_Set(&zero, work, 0x85000040, (volatile u32 *)0x040000d4);
-    work->next_iwram = gIwramHeap;
-    work->next_ewram = gEwramHeap;
+    work->heap.next_iwram = gIwramHeap;
+    work->heap.next_ewram = gEwramHeap;
 }
 
 s32 Runtime_GetRemainingIwram(void)
 {
-    s32 state = ((u32)&Data_03001e50);
+    union HeapState *work = (union HeapState *)gWorkSlot;
 
-    return (s32)Data_03007800 - *(s32 *)(state + 4);
+    return (s32)Data_03007800 - (s32)work->heap.next_iwram;
 }
 
 s32 Runtime_GetRemainingEwram(void)
 {
-    return 0x02040000 - *(s32 *)((u32)&Data_03001e50);
+    union HeapState *work = (union HeapState *)gWorkSlot;
+
+    return 0x02040000 - (s32)work->heap.next_ewram;
 }
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
 {
-    u32 *allocator_state;
-    s32 kind_offset;
+    union HeapState *work;
     s32 aligned_size;
     u32 address;
     u32 next_address;
     u32 next;
     u32 cached_address;
 
-    allocator_state = (u32 *)((u32)&Data_03001e50);
-    kind_offset = kind * 4;
-    cached_address = *(u32 *)((u8 *)allocator_state + kind_offset);
+    work = (union HeapState *)gWorkSlot;
+    cached_address = (u32)work->slots[kind];
     if (cached_address == 0) {
-        cached_address = allocator_state[1];
+        cached_address = (u32)work->heap.next_iwram;
         aligned_size = (((u32)size + 3) >> 2) * 4;
         next = cached_address + aligned_size;
         if (next >= (u32)Ram_IwramHeapEnd) {
-            address = allocator_state[0];
+            address = (u32)work->heap.next_ewram;
             next_address = address + aligned_size;
             if (next_address >= 0x02040000U) {
                 return 0;
             }
-            allocator_state[0] = next_address;
-            *(u32 *)((u8 *)allocator_state + kind_offset) = address;
+            work->heap.next_ewram = (void *)next_address;
+            work->slots[kind] = (void *)address;
             return (s32)address;
         }
-        allocator_state[1] = next;
-        *(u32 *)((u8 *)allocator_state + kind_offset) = cached_address;
+        work->heap.next_iwram = (void *)next;
+        work->slots[kind] = (void *)cached_address;
         return (s32)cached_address;
     }
     return (s32)cached_address;
@@ -202,33 +213,31 @@ s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
 
 void *Runtime_AllocateBlock(s32 kind, s32 size)
 {
-    u32 *allocator_state;
-    s32 kind_offset;
+    union HeapState *work;
     u32 aligned_size;
     u32 next;
     u32 address;
     u32 next_address;
     u32 cached_address;
 
-    allocator_state = (u32 *)((u32)&Data_03001e50);
-    kind_offset = kind * 4;
-    cached_address = *(u32 *)((u8 *)allocator_state + kind_offset);
+    work = (union HeapState *)gWorkSlot;
+    cached_address = (u32)work->slots[kind];
     if (cached_address == 0) {
-        address = allocator_state[0];
+        address = (u32)work->heap.next_ewram;
         aligned_size = (((u32)size + 3) >> 2) * 4;
         next = address + aligned_size;
         if (next >= (u32)(129 << 18)) {
-            address = allocator_state[1];
+            address = (u32)work->heap.next_iwram;
             next_address = address + aligned_size;
             if (next_address >= (u32)Ram_IwramHeapEnd) {
                 return NULL;
             }
-            allocator_state[1] = next_address;
-            *(u32 *)((u8 *)allocator_state + kind_offset) = address;
+            work->heap.next_iwram = (void *)next_address;
+            work->slots[kind] = (void *)address;
             return (void *)address;
         }
-        allocator_state[0] = next;
-        *(u32 *)((u8 *)allocator_state + kind_offset) = address;
+        work->heap.next_ewram = (void *)next;
+        work->slots[kind] = (void *)address;
         return (void *)address;
     }
     return (void *)cached_address;
@@ -236,50 +245,50 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
 
 u32 Runtime_BumpAllocate(s32 size)
 {
-    u32 *allocator_state = (u32 *)((u32)&Data_03001e50);
+    union HeapState *work = (union HeapState *)gWorkSlot;
     u32 next_address;
     u32 next;
     u32 allocation_address;
     u32 aligned_words = ((u32)size + 3) >> 2;
 
-    allocation_address = allocator_state[1];
+    allocation_address = (u32)work->heap.next_iwram;
     size = (s32)(aligned_words << 2);
     next = allocation_address + (u32)size;
     if (next >= (u32)Ram_IwramHeapEnd) {
-        allocation_address = allocator_state[0];
+        allocation_address = (u32)work->heap.next_ewram;
         next_address = allocation_address + (u32)size;
         if (next_address >= 0x02040000U) {
             return 0U;
         }
-        allocator_state[0] = next_address;
+        work->heap.next_ewram = (void *)next_address;
         goto block_5;
     }
-    allocator_state[1] = next;
+    work->heap.next_iwram = (void *)next;
 block_5:
     return allocation_address;
 }
 
 s16 *Runtime_BumpAllocateAlternatePool(s32 arg0)
 {
-    s32 allocator_state_address = ((u32)&Data_03001e50);
+    union HeapState *work = (union HeapState *)gWorkSlot;
     u32 alternate_next_address;
     u32 primary_next_address;
     u32 allocation_address;
     u32 aligned_words = ((u32)arg0 + 3) >> 2;
 
-    allocation_address = FIELD_AT_OFFSET((void *)allocator_state_address, u32 *, 0);
+    allocation_address = (u32)work->heap.next_ewram;
     arg0 = (s32)(aligned_words << 2);
     primary_next_address = allocation_address + (u32)arg0;
     if (primary_next_address >= 0x02040000U) {
-        allocation_address = FIELD_AT_OFFSET((void *)allocator_state_address, u32 *, 4);
+        allocation_address = (u32)work->heap.next_iwram;
         alternate_next_address = allocation_address + (u32)arg0;
         if (alternate_next_address >= (u32)Ram_IwramHeapEnd) {
             return NULL;
         }
-        FIELD_AT_OFFSET((void *)allocator_state_address, u32 *, 4) = alternate_next_address;
+        work->heap.next_iwram = (void *)alternate_next_address;
         goto done;
     }
-    FIELD_AT_OFFSET((void *)allocator_state_address, u32 *, 0) = primary_next_address;
+    work->heap.next_ewram = (void *)primary_next_address;
 done:
     return (s16 *)allocation_address;
 }

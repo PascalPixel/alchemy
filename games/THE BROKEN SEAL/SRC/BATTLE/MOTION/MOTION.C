@@ -4,39 +4,27 @@
 #include "FIXED_MATH.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_MOTION.H"
+#include "BATTLE_PRESENTATION.H"
+#include "BATTLE_RUNTIME.H"
 
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 
-struct State_080b7f9c {
-    u8 filler0[12];
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-    s32 field18;
-    s32 field1c;
-    s32 field20;
-    u8 filler24[16];
-    s16 field34;
-    s16 field36;
+struct CameraPosition {
+    s32 x;
+    s32 y;
+    s32 z;
 };
 
-struct Local_080b7f9c {
-    s32 first;
-    s32 second;
-    s32 third;
-};
-
-extern struct State_080b7f9c *gCameraWork;
+extern struct BattleCamera *gCameraWork;
 
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
 s32 ArcTan2(s32, s32);
 
-u8 *Owner_GetStateFar(s32);
 extern s32 BattleMotion_VariantAcceleration[];
 extern s32 BattleMotion_VariantSpeedLimit[];
 extern s32 BattleMotion_VariantVelocityY[];
@@ -44,26 +32,26 @@ extern s32 BattleMotion_VariantDistancePercent[];
 
 void Camera_InitDefaultTransform(void)
 {
-    struct State_080b7f9c *state = gCameraWork;
-    struct Local_080b7f9c transfer;
+    struct BattleCamera *state = gCameraWork;
+    struct CameraPosition transfer;
 
-    state->field36 = 192 << 6;
-    state->field34 = 254 << 8;
-    state->field20 = 255 << 17;
-    state->field0c = 0;
-    state->field10 = 0;
-    state->field14 = 0;
-    state->field1c = 0;
-    state->field18 = 0;
+    state->yaw = 192 << 6;
+    state->pitch = 254 << 8;
+    state->distance = 255 << 17;
+    state->pos[0] = 0;
+    state->pos[1] = 0;
+    state->pos[2] = 0;
+    state->follow_pos = 0;
+    state->unknown_18 = 0;
 
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(&state->field0c);
-    SceneTransform_ApplyYaw(state->field36);
-    SceneTransform_ApplyPitch(state->field34);
+    SceneTransform_ApplyPosition(&state->pos[0]);
+    SceneTransform_ApplyYaw((s16)state->yaw);
+    SceneTransform_ApplyPitch((s16)state->pitch);
 
-    transfer.first = 0;
-    transfer.second = 0;
-    transfer.third = state->field20;
+    transfer.x = 0;
+    transfer.y = 0;
+    transfer.z = state->distance;
     Iwram_TransformVector((s32 *)&transfer, (s32 *)state);
 }
 
@@ -201,7 +189,7 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 
     slot = GetBattleObjectSlot(id);
     object = slot->object;
-    if (Owner_GetStateFar(id)[0x128] != 0x94) {
+    if (Owner_GetStateFar(id)->class_id != 0x94) {
         table = BattleMotion_VariantAcceleration;
         offset = variant * sizeof(*table);
         object->acceleration = *(s32 *)((u8 *)table + offset);

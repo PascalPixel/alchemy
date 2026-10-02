@@ -8,8 +8,7 @@
    reports 2 or when the bag ends before such a stack, 0 otherwise. */
 #include "INVENTORY.H"
 
-void RenderOutput_RedrawSavedRectFar(s32 window);
-void ItemMenu_RefreshEntry(s32 mode);
+void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *buffer);
@@ -80,7 +79,7 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     ItemMenu_DrawIcons(items, 0);
     if (ItemMenu_Count(owner_id) == 0)
         UiText_DrawCharacterAtOffsetFar(
-            (s32)&MsgItemMenuEmpty, menu->item_window, 8, 24);
+            (s32)&MsgItemMenuEmpty, (s32)menu->item_window, 8, 24);
 }
 
 void InventoryMenu_NoOp(void)
@@ -102,7 +101,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
         style = 0x100;
     switch (Item_Get(item & 0x1ff)->type) {
     case 0:
-        Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+        Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
         break;
     case 1:
     case 2:
@@ -114,7 +113,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
     case 9:
         if (owner == target) {
             style |= 2;
-            Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+            Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
         } else {
             s32 size;
 
@@ -128,12 +127,12 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
                 equipped = Inventory_AddItemFar(target, item);
                 if (equipped != -1) {
                     style |= 2;
-                    Menu_DrawOwnerStatusPanel(menu->status_window, target, equipped, style);
+                    Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, equipped, style);
                 } else {
-                    Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+                    Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
                 }
             } else {
-                Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+                Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
             }
             Iwram_CopyWords(state, saved, size);
             Runtime_BumpFree(saved);
@@ -142,7 +141,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
     case 6:
         if (target == owner) {
             style |= 4;
-            Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+            Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
         } else {
             s32 size;
 
@@ -155,12 +154,12 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
                 equipped = Inventory_AddItemFar(target, item);
                 if (equipped != -1) {
                     style |= 4;
-                    Menu_DrawOwnerStatusPanel(menu->status_window, target, equipped, style);
+                    Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, equipped, style);
                 } else {
-                    Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+                    Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
                 }
             } else {
-                Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
+                Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
             }
             Iwram_CopyWords(state, saved, size);
             Runtime_BumpFree(saved);

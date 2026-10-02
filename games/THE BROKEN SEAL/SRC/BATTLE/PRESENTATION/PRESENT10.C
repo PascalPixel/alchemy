@@ -7,19 +7,20 @@
 #include "IWRAM_CALL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_WORK.H"
+#include "BATTLE_PRESENTATION.H"
 
-extern u32 *gTransitionWork;
+extern struct BattleBackgroundView *gTransitionWork;
 
 void BattlePresentation_InitializeWorkAndResetState(void)
 {
     void *work;
-    u32 *state;
+    struct BattleBackgroundView *state;
     volatile u32 zero;
     work = Runtime_AllocateBlock(10, 0x2a0);
     state = gTransitionWork;
     zero = 0;
     Dma_Set(&zero, work, 0x850000a8, (volatile u32 *)0x040000d4);
-    state[2] = 0;
+    state->mode = 0;
 }
 
 void Runtime_ReleaseHeapBlock10(void)
@@ -28,12 +29,6 @@ void Runtime_ReleaseHeapBlock10(void)
 }
 
 typedef void (*BitDecoder)(const u8 *source, void *destination);
-
-/* The battle view's display mode: 0 until a background is shown. */
-struct BattleView {
-    u8 padding00[8];
-    s32 mode;
-};
 
 /* The length of the tile bit decoder block copied to RAM, DECODE.S through
    BIT_COMMANDS.S, as the linker script measures it. */
@@ -53,7 +48,7 @@ void BattlePres_UpdateHBlankScroll(void);
 void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {
     void **cache = &Ram_WorkSlot[44];
-    struct BattleView *view = cache[44 - 44];
+    struct BattleBackgroundView *view = cache[44 - 44];
     u8 *data = Resource_GetTableEntry(resource);
     struct BattleSession *session = cache[9 - 44];
     u16 *palette;

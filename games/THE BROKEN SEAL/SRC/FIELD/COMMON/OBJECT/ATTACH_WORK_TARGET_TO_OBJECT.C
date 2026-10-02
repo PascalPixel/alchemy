@@ -1,60 +1,50 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
-#include "SCENE.H"
+#include "FIELD_EVENT.H"
 #include "OBJECT_EFFECT.H"
 #include "GLOBAL_CELLS.H"
 #include "OBJECT_RUNTIME.H"
+#include "MAP_SCROLL.H"
+#include "EVENT_RUNTIME.H"
 void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
 void Map_ApplyWorkOriginAndSpanFar(void);
 
 void WaitFrames(s32);
 
-/* object/attach_work_target_to_object.c */
-/* object/attach_work_target_to_object.c */
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {
-    s32 obj;
-    void *target;
-    void *work;
-    s32 *p;
+    struct ObjectRuntime *obj;
+    struct ObjectRuntime *target;
+    struct EventWork *work;
+    struct MapScrollWork *p;
 
     obj = ObjectTable_Get(id);
     work = Runtime_AllocateBlock(0x1B, 0xCCC);
-    target = FIELD_AT_OFFSET(work, void **, 0x1E0);
+    target = (struct ObjectRuntime *)work->view_center;
     p = gMapWork[0];
     if (obj != 0) {
-        *p = (s32)((u8 *)target + 8);
+        p->origin = &target->x;
         ObjectDispatch_InitFromTable4WithArgumentFar(target, (void *)obj);
         if (flag == 0) {
-            FIELD_AT_OFFSET(target, s32 *, 8) = (s32)FIELD_AT_OFFSET(obj, s32 *, 8);
-            FIELD_AT_OFFSET(target, s32 *, 0xC) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0xC);
-            FIELD_AT_OFFSET(target, s32 *, 0x10) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0x10);
+            target->x = obj->x;
+            target->y = obj->y;
+            target->z = obj->z;
             WaitFrames(1);
-            if (FIELD_AT_OFFSET(work, s16 *, 0x19E) != 3) {
+            if (((struct EventRuntime *)work)->mode_19e != 3) {
                 Map_ApplyWorkOriginAndSpanFar();
             }
         }
     }
 }
 
-/* object/table/allocate_and_set_object_speed.c */
-
-struct ObjectOwner_080933d4 {
-    u8 unknown_000[0x1e0];
-    struct ObjectRuntime *object;
-};
-
 void ObjectTable_AllocateAndSetObjectSpeed(s32 first, s32 second)
 {
-    struct ObjectOwner_080933d4 *owner = Runtime_AllocateBlock(0x1b, 0xccc);
-    owner->object->speed_limit = first;
-    owner->object->acceleration = second;
+    struct EventWork *owner = Runtime_AllocateBlock(0x1b, 0xccc);
+    ((struct ObjectRuntime *)owner->view_center)->speed_limit = first;
+    ((struct ObjectRuntime *)owner->view_center)->acceleration = second;
 }
-
-/* object/motion/pos/Motion_CamBounds.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 void Object_ResetMotion(void *);
 
@@ -63,7 +53,7 @@ void Object_SetPosition(void *, s32, s32, s32);
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {
     s32 should_use_setter;
-    void *runtime_block;
+    struct EventWork *runtime_block;
     s32 minimum_x;
     s32 minimum_z;
     s32 maximum_x;
@@ -72,31 +62,31 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     s32 position_x;
     s32 position_z;
     s32 position_y;
-    void *camera_state;
-    void *object;
+    struct MapScrollWork *camera_state;
+    struct ObjectRuntime *object;
 
     position_x = requested_x;
     position_y = requested_y;
     should_use_setter = use_setter;
     position_z = requested_z;
     runtime_block = Runtime_AllocateBlock(0x1B, 0xCCC);
-    object = FIELD_AT_OFFSET(runtime_block, void **, 0x1E0);
+    object = (struct ObjectRuntime *)runtime_block->view_center;
     camera_state = gMapWork[0];
-    minimum_x = FIELD_AT_OFFSET(camera_state, s32, 0xEC) + 0x780000;
-    object_z_offset = FIELD_AT_OFFSET(object, s32, 0xC);
-    minimum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF0) + object_z_offset + 0x600000;
-    maximum_x = FIELD_AT_OFFSET(camera_state, s32, 0xF4) + 0xFF880000;
-    maximum_z = FIELD_AT_OFFSET(camera_state, s32, 0xF8) + object_z_offset + 0xFFC00000;
-    FIELD_AT_OFFSET(camera_state, void **, 0) = (void *)(object + 8);
+    minimum_x = camera_state->min_x + 0x780000;
+    object_z_offset = object->y;
+    minimum_z = camera_state->min_y + object_z_offset + 0x600000;
+    maximum_x = camera_state->max_x + 0xFF880000;
+    maximum_z = camera_state->max_y + object_z_offset + 0xFFC00000;
+    camera_state->origin = &object->x;
     Object_ResetMotion(object);
     if (position_x == -1) {
-        position_x = FIELD_AT_OFFSET(object, s32, 8);
+        position_x = object->x;
     }
     if (position_y == -1) {
-        position_y = FIELD_AT_OFFSET(object, s32, 0xC);
+        position_y = object->y;
     }
     if (position_z == -1) {
-        position_z = FIELD_AT_OFFSET(object, s32, 0x10);
+        position_z = object->z;
     }
     if (position_x < minimum_x) {
         position_x = minimum_x;
@@ -111,11 +101,11 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
         position_z = maximum_z;
     }
     if (should_use_setter == 0) {
-        FIELD_AT_OFFSET(object, s32, 8) = position_x;
-        FIELD_AT_OFFSET(object, s32, 0xC) = position_y;
-        FIELD_AT_OFFSET(object, s32, 0x10) = position_z;
+        object->x = position_x;
+        object->y = position_y;
+        object->z = position_z;
         WaitFrames(1U);
-        if (FIELD_AT_OFFSET(runtime_block, s16, 0x19E) != 3) {
+        if (((struct EventRuntime *)runtime_block)->mode_19e != 3) {
             Map_ApplyWorkOriginAndSpanFar();
         }
     } else {
@@ -123,58 +113,47 @@ void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use
     }
 }
 
-/* object/motion/pos/place_current_within_camera_bounds.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 void Motion_CamBounds(s32, s32, s32, s32);
 
 void Object_PlaceCurrentWithinCameraBounds(s32 arg0, s32 arg1)
 {
-    void *obj;
+    struct ObjectRuntime *obj;
 
     obj = ObjectTable_Get();
     Runtime_AllocateBlock(0x1B, 0xCCC);
     if (obj != NULL) {
-        Motion_CamBounds(FIELD_AT_OFFSET(obj, s32 *, 8), -1, FIELD_AT_OFFSET(obj, s32 *, 0x10), arg1);
+        Motion_CamBounds(obj->x, -1, obj->z, arg1);
     }
 }
 
-/* battle/fx_commit_object_position_and_wait.c */
-/* battle/effects/object_control/commit_position_and_wait.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-s32 Object_CommitPosition(s32);
+void Object_CommitPosition(struct ObjectRuntime *);
 void Battle_WaitMode0(s32 arg0);
 
 void BattleFx_CommitObjectPositionAndWait(void)
 {
-    Object_CommitPosition(FIELD_AT_OFFSET(Runtime_AllocateBlock(0x1B, 0xCCC), s32 *, 0x1E0));
+    Object_CommitPosition((struct ObjectRuntime *)
+        ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center);
     Battle_WaitMode0(2);
 }
 
-/* battle/get_work_object_1e0.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
 s32 Battle_GetWorkObject1e0(void)
 {
-    return FIELD_AT_OFFSET(Runtime_AllocateBlock(0x1B, 0xCCC), s32 *, 0x1E0);
+    return (s32)((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center;
 }
 
-/* battle/effects/object_control/link_object_to_target.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void BattleFx_LinkObjectToTarget(void *target, s32 keep_current_position)
+void BattleFx_LinkObjectToTarget(struct ObjectRuntime *target, s32 keep_current_position)
 {
-    void *object;
+    struct ObjectRuntime *object;
 
-    object = FIELD_AT_OFFSET(Runtime_AllocateBlock(0x1B, 0xCCC), void **, 0x1E0);
+    object = (struct ObjectRuntime *)
+        ((struct EventWork *)Runtime_AllocateBlock(0x1B, 0xCCC))->view_center;
     if (target != NULL) {
         ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
-        FIELD_AT_OFFSET(object, void **, 0x68) = target;
+        object->linked_object = target;
         if (keep_current_position == 0) {
-            FIELD_AT_OFFSET(object, s32 *, 8) = FIELD_AT_OFFSET(target, s32 *, 8);
-            FIELD_AT_OFFSET(object, s32 *, 0xC) = FIELD_AT_OFFSET(target, s32 *, 0xC);
-            FIELD_AT_OFFSET(object, s32 *, 0x10) = FIELD_AT_OFFSET(target, s32 *, 0x10);
+            object->x = target->x;
+            object->y = target->y;
+            object->z = target->z;
         }
     }
 }

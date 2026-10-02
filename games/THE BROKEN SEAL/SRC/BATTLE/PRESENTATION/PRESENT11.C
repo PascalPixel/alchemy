@@ -3,32 +3,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "SCENE.H"
 
-/* BG2 affine parameters as the HDMA work block keeps them. */
-struct Affine {
-    u16 pa;
-    u16 pb;
-    u16 pc;
-    u16 pd;
-    s32 x;
-    s32 y;
-};
-
-/* Double-buffered per-scanline BG2CNT values; page selects the one shown. */
-struct AffineHdma {
-    u32 page;
-    u8 padding04[12];
-    struct Affine affine;
-    u16 lines[2][160];
-};
-
-struct BattleView {
-    u8 padding00[8];
-    s32 mode;
-    s32 mode2;
-    s32 busy;
-};
-
-extern u16 gBgScroll[];
+#include "MAP_SCROLL.H"
 extern u8 gTransitionWork[];
 s32 GameFlag_TestFar(s32 flag);
 
@@ -57,13 +32,13 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
     /* FAKEMATCH: the work and camera pointers are addressed from the view
      * pointer's symbol, as the reference derives them from its pool entry. */
-    struct BattleView *view = *(struct BattleView **)gTransitionWork;
-    struct AffineHdma *work = *(struct AffineHdma **)(gTransitionWork - 136);
+    struct BattleBackgroundView *view = *(struct BattleBackgroundView **)gTransitionWork;
+    struct BattleAffineHdma *work = *(struct BattleAffineHdma **)(gTransitionWork - 136);
     struct BattleCamera *camera = *(struct BattleCamera **)(gTransitionWork - 128);
     u16 wrap;
     s32 horizon;
     u16 *line;
-    struct Affine *affine;
+    struct BattleAffine *affine;
     s32 ratio;
     s32 step;
     s32 x;
@@ -79,8 +54,8 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
     }
     if (work == NULL)
         return;
-    if ((view->mode == 1 || view->mode2 == 1) && view->busy == 0)
-        gBgScroll[2] = horizon >> 8;
+    if ((view->mode == 1 || view->second_mode == 1) && view->busy == 0)
+        gBgScroll[1].x = horizon >> 8;
     if (view->mode != 2)
         return;
     line = work->lines[work->page ^ 1];

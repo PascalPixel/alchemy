@@ -1,12 +1,13 @@
 #include "TYPES.H"
 #include "EVENT_RUNTIME.H"
+#include "GAME_STATE.H"
+#include "FIELD_SCENE.H"
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 
-extern struct EventValueWork gGameState;
-void ObjectTable_ResetForObject(s32);
+void ObjectTable_ResetForObject(struct ScenePlacement *table);
 void Event_NoOpHook(void);
-s32 Event_SpawnObjectTable(s32 event_id, s32 state);
+void Event_SpawnObjectTable(struct ScenePlacement *table, s32 slot);
 s32 ObjectTable_FindLastActiveId(void);
 
 /* The event work as this setter sees it: one word at +0x10 that scripts
@@ -37,17 +38,17 @@ void Event_NoOpHook(void)
     /* Event hook intentionally left empty. */
 }
 
-void Event_RunObjectHookAndWait(s32 object_id)
+void Event_RunObjectHookAndWait(struct ScenePlacement *table)
 {
     Event_NoOpHook();
-    ObjectTable_ResetForObject(object_id);
+    ObjectTable_ResetForObject(table);
     WaitFrames(1);
-    ObjectTable_Get(gGameState.value);
+    ObjectTable_Get(gGameState.selected_actor);
 }
 
-void Event_CallWithLastActiveObjectId(s32 event_id)
+void Event_CallWithLastActiveObjectId(struct ScenePlacement *table)
 {
-    Event_SpawnObjectTable(event_id, ObjectTable_FindLastActiveId());
+    Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
 void Event_SetWorkWord10(s32 value)
@@ -87,8 +88,8 @@ s32 Event_ValidatePackedId(u32 packed_id)
 
 void Event_ClearInvalidPackedValues(void)
 {
-    if (Event_ValidatePackedId((*(struct EventValidationWork *)&gGameState).values[0]) != 0)
-        (*(struct EventValidationWork *)&gGameState).values[0] = 0;
-    if (Event_ValidatePackedId((*(struct EventValidationWork *)&gGameState).values[1]) != 0)
-        (*(struct EventValidationWork *)&gGameState).values[1] = 0;
+    if (Event_ValidatePackedId(gGameState.first_shortcut) != 0)
+        gGameState.first_shortcut = 0;
+    if (Event_ValidatePackedId(gGameState.second_shortcut) != 0)
+        gGameState.second_shortcut = 0;
 }

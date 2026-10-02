@@ -2,6 +2,7 @@
 #define ALCHEMY_MOTION_OBJECT_H
 
 #include "TYPES.H"
+#include "BATTLE_SESSION.H"
 
 /*
  * Shared 0x70-byte object used by the motion engine.
@@ -39,23 +40,11 @@ struct MotionObject {
     u8 unknown_5b[0x15];
 };
 
-struct SpriteEntry;
-
-struct BattleObjectSlot {
-    struct MotionObject *object;
-    u16 resource;  /* the unit's sprite resource */
-    u16 overlay;   /* extra sprite resources registered on the unit's object */
-    u16 animation;
-    u16 effect;
-    s32 anchor_x;
-    s32 anchor_z;
-    s32 palette;
-    s32 scale;
-    u8 unknown_1c[0x04];
-    struct SpriteEntry *animation_entry; /* of the animation and effect resources */
-    struct SpriteEntry *effect_entry;
-    s16 active;
-    s16 fading; /* set while a defeated unit dissolves */
+/* The fields battle uses at the start of a 24-byte animation entry. */
+struct SpriteEntry {
+    u8 unknown_00[5];
+    u8 palette;
+    u8 priority;
 };
 
 /* Raw linker spellings stay here; reconstructed APIs are used by C bodies. */
@@ -90,15 +79,9 @@ typedef char MotionObject_records_offset[
 typedef char MotionObject_record_storage_kind_offset[
     MOTION_OBJECT_OFFSET(struct MotionObject, record_storage_kind) == 0x54 ? 1 : -1
 ];
-typedef char BattleObjectSlot_size[
-    sizeof(struct BattleObjectSlot) == 0x2c ? 1 : -1
-];
-typedef char BattleObjectSlot_anchor_x_offset[
-    MOTION_OBJECT_OFFSET(struct BattleObjectSlot, anchor_x) == 0x0c ? 1 : -1
-];
-typedef char BattleObjectSlot_active_offset[
-    MOTION_OBJECT_OFFSET(struct BattleObjectSlot, active) == 0x28 ? 1 : -1
-];
+LAYOUT_SIZE_GUARD(SpriteEntry_PrefixSize, struct SpriteEntry, 0x08);
+LAYOUT_OFFSET_GUARD(SpriteEntry_Palette, struct SpriteEntry, palette, 0x05);
+LAYOUT_OFFSET_GUARD(SpriteEntry_Priority, struct SpriteEntry, priority, 0x06);
 
 #undef MOTION_OBJECT_OFFSET
 

@@ -5,139 +5,99 @@
 #include "MENU_RESULT.H"
 
 struct InventoryMenuIcon {
-    struct InventoryMenuIcon *next; /* 0x00 */
+    struct InventoryMenuIcon *next;
     u8 unknown_04;
-    u8 state;                       /* 0x05 */
-    u16 x;                          /* 0x06 */
-    u16 y;                          /* 0x08 */
-    u8 unknown_0a[4];
-    u8 render_target;               /* 0x0e */
+    u8 state;
+    s16 x;
+    s16 y;
+    u8 unknown_0a[2];
+    u16 unknown_0c;
+    u8 render_target;
+    u8 sentinel;
 };
+
+struct UiWindow;
 
 struct InventoryMenuState {
-    u8 unknown_000[0x20];
-    s32 item_window;                /* 0x020 */
-    s32 status_window;              /* 0x024 */
-    u8 unknown_028[4];
-    s32 info_window;                /* 0x02c */
-    u8 unknown_030[0x18];
-    struct InventoryMenuIcon *entry_icons[32]; /* 0x048 */
-    u8 unknown_0c8[0x44];
-    s32 message_window;             /* 0x10c */
-    u8 unknown_110[0x64];
-    u16 selected_slot;              /* 0x174 */
-    u16 equip_item;                 /* 0x176 */
-    u16 selected_item;              /* 0x178 */
-    u8 unknown_17a[2];
-    struct InventoryMenuIcon *cursor; /* 0x17c */
+    u8 unknown_000[8];
+    s32 selected_owner;
+    u8 unknown_00c[4];
+    struct UiWindow *main_window;
+    struct InventoryMenuIcon *pane_icons[2];
+    s8 pane_index[2];
+    s8 pane_count[2];
+    struct UiWindow *item_window;
+    struct UiWindow *status_window;
+    struct UiWindow *help_window;
+    struct UiWindow *info_window;
+    struct UiWindow *equip_window;
+    struct UiWindow *list_window;
+    struct UiWindow *unknown_window_38;
+    struct UiWindow *modal_window;
+    struct UiWindow *unknown_window_40;
+    struct InventoryMenuIcon *grid_cursor;
+    struct InventoryMenuIcon *entry_icons[32];
+    struct InventoryMenuIcon *category_icons[8];
+    u8 unknown_0e8[0x24];
+    struct UiWindow *message_window;
+    u8 unknown_110[4];
+    void *owner_objects[8];
+    s16 owner_x[8];
+    s16 owner_y[8];
+    s32 owner_scale[8];
+    u16 selected_slots[2];
+    u16 selected_items[2];
+    struct InventoryMenuIcon *cursor;
     u8 unknown_180[0x48];
-    u16 items[32];                  /* 0x1c8 */
-    u16 owner_ids[8];               /* 0x208 */
-    u8 item_count;                  /* 0x218 */
-    u8 party_count;                 /* 0x219 */
-    u8 item_owner;                  /* 0x21a */
-    u8 target_owner;                /* 0x21b */
-    struct InventoryMenuIcon *selected_item_icon; /* 0x21c */
-    u8 unknown_220[2];
-    s16 completion_flag;            /* 0x222 */
+    u16 items[32];
+    u16 owner_ids[8];
+    u8 item_count;
+    u8 party_count;
+    u8 pane_owner[2];
+    struct InventoryMenuIcon *selected_item_icon;
+    u16 flags;
+    s16 completion_flag;
     u8 unknown_224[0x36];
-    s16 message_offset;             /* 0x25a */
+    s16 message_offset;
+    u8 equip_preview;
+    u8 list_mode;
+    u8 unknown_25e[2];
+    s8 selected_index_by_owner[8];
+    u8 mode;
 };
 
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuIcon_State,
-    struct InventoryMenuIcon,
-    state,
-    0x05);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuIcon_RenderTarget,
-    struct InventoryMenuIcon,
-    render_target,
-    0x0e);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuIcon_X,
-    struct InventoryMenuIcon,
-    x,
-    0x06);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuIcon_Y,
-    struct InventoryMenuIcon,
-    y,
-    0x08);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_ItemWindow,
-    struct InventoryMenuState,
-    item_window,
-    0x020);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_InfoWindow,
-    struct InventoryMenuState,
-    info_window,
-    0x02c);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_EntryIcons,
-    struct InventoryMenuState,
-    entry_icons,
-    0x048);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_MessageWindow,
-    struct InventoryMenuState,
-    message_window,
-    0x10c);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_SelectedSlot,
-    struct InventoryMenuState,
-    selected_slot,
-    0x174);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_SelectedItem,
-    struct InventoryMenuState,
-    selected_item,
-    0x178);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_Cursor,
-    struct InventoryMenuState,
-    cursor,
-    0x17c);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_Items,
-    struct InventoryMenuState,
-    items,
-    0x1c8);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_ItemCount,
-    struct InventoryMenuState,
-    item_count,
-    0x218);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_OwnerIds,
-    struct InventoryMenuState,
-    owner_ids,
-    0x208);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_ItemOwner,
-    struct InventoryMenuState,
-    item_owner,
-    0x21a);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_TargetOwner,
-    struct InventoryMenuState,
-    target_owner,
-    0x21b);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_SelectedItemIcon,
-    struct InventoryMenuState,
-    selected_item_icon,
-    0x21c);
-LAYOUT_OFFSET_GUARD(
-    InventoryMenuState_MessageOffset,
-    struct InventoryMenuState,
-    message_offset,
-    0x25a);
-LAYOUT_SIZE_GUARD(
-    InventoryMenuState_Size,
-    struct InventoryMenuState,
-    0x25c);
+LAYOUT_OFFSET_GUARD(InventoryMenuIcon_State, struct InventoryMenuIcon, state, 5);
+LAYOUT_OFFSET_GUARD(InventoryMenuIcon_X, struct InventoryMenuIcon, x, 6);
+LAYOUT_OFFSET_GUARD(InventoryMenuIcon_Y, struct InventoryMenuIcon, y, 8);
+LAYOUT_OFFSET_GUARD(InventoryMenuIcon_RenderTarget, struct InventoryMenuIcon, render_target, 0x0e);
+LAYOUT_OFFSET_GUARD(InventoryMenuIcon_Sentinel, struct InventoryMenuIcon, sentinel, 0x0f);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneIcons, struct InventoryMenuState, pane_icons, 0x14);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneIndex, struct InventoryMenuState, pane_index, 0x1c);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneCount, struct InventoryMenuState, pane_count, 0x1e);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_ItemWindow, struct InventoryMenuState, item_window, 0x20);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_InfoWindow, struct InventoryMenuState, info_window, 0x2c);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_GridCursor, struct InventoryMenuState, grid_cursor, 0x44);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_EntryIcons, struct InventoryMenuState, entry_icons, 0x48);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_CategoryIcons, struct InventoryMenuState, category_icons, 0xc8);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_MessageWindow, struct InventoryMenuState, message_window, 0x10c);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_Unknown110, struct InventoryMenuState, unknown_110, 0x110);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerObjects, struct InventoryMenuState, owner_objects, 0x114);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerX, struct InventoryMenuState, owner_x, 0x134);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerY, struct InventoryMenuState, owner_y, 0x144);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerScale, struct InventoryMenuState, owner_scale, 0x154);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedSlots, struct InventoryMenuState, selected_slots, 0x174);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedItems, struct InventoryMenuState, selected_items, 0x178);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_Cursor, struct InventoryMenuState, cursor, 0x17c);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_Items, struct InventoryMenuState, items, 0x1c8);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerIds, struct InventoryMenuState, owner_ids, 0x208);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_ItemCount, struct InventoryMenuState, item_count, 0x218);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_PaneOwner, struct InventoryMenuState, pane_owner, 0x21a);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedItemIcon, struct InventoryMenuState, selected_item_icon, 0x21c);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_MessageOffset, struct InventoryMenuState, message_offset, 0x25a);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_EquipPreview, struct InventoryMenuState, equip_preview, 0x25c);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedIndex, struct InventoryMenuState, selected_index_by_owner, 0x260);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_Mode, struct InventoryMenuState, mode, 0x268);
+LAYOUT_SIZE_GUARD(InventoryMenuState_Size, struct InventoryMenuState, 0x26c);
 
 extern struct InventoryMenuState *gMenuWork;
 extern char MsgItemMenuEmpty;
@@ -152,6 +112,9 @@ struct BattleUnit;
 s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
+void ItemMenu_RefreshEntry(s32 layout);
+void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
+s32 ItemMenu_RunOwnerSelection(u16 *owners, u16 *items);
 void InventoryMenu_NoOp(void);
 s32 ItemMenu_Use(void);
 void ItemMenu_HideAllIcons(void);

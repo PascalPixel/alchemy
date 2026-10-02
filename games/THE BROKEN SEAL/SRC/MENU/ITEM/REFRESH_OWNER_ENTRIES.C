@@ -1,6 +1,5 @@
 #include "M7_INTERFACES.H"
-#include "GLOBAL_CELLS.H"
-extern u8 Data_03001f2c[];
+#include "INVENTORY_MENU.H"
 
 void ItemMenu_RefreshEntry(s32 layout)
 {
@@ -9,14 +8,14 @@ void ItemMenu_RefreshEntry(s32 layout)
     struct Object080a1c *object;
     s32 index;
     s32 origin_y;
-    s32 base;
+    struct InventoryMenuState *menu;
 
-    base = *(s32 *)((u32)&Data_03001f2c);
+    menu = gMenuWork;
     origin_y = 0x38;
     if (layout != 1) {
         origin_y = 0x28;
     }
-    slot = (struct Object080a1c **)(base + 0x48);
+    slot = (struct Object080a1c **)menu->entry_icons;
     index = 0;
     scan = slot;
     do {

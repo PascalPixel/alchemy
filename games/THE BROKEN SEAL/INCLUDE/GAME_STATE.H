@@ -6,7 +6,9 @@
 
 /* The part of the saved game that records where the party is. */
 struct GameState {
-    u8 unknown_000[0x10];
+    u32 build_stamp;
+    u32 play_time;
+    u8 unknown_008[8];
     /* The party's coins. */
     s32 coins;
     u8 unknown_014[0x118];
@@ -52,7 +54,9 @@ struct GameState {
     u8 unknown_200[5];
     /* The two values the palette glow is restored from. */
     u8 palette_glow[2];
-    u8 unknown_207[0x17];
+    u8 unknown_207[8];
+    u8 unknown_20f;
+    u8 unknown_210[0xe];
     /* The cue a scene the party returns to plays, -1 for the scene's own. */
     s16 return_cue;
     /* The two Psynergy shortcuts: the owner in the top six bits, the
@@ -61,7 +65,8 @@ struct GameState {
     u16 second_shortcut;
     /* Set once the world map's perspective scene is up. */
     u8 perspective_scene;
-    u8 unknown_225[6];
+    u8 unknown_225[5];
+    u8 saved_options;
     /* How the next battle begins: 2 when a tile's ambush starts it. */
     u8 battle_start;
     u16 unknown_22c;
@@ -89,6 +94,9 @@ struct GameState {
     u16 link_tallies[8];
 };
 
+LAYOUT_OFFSET_GUARD(GameState_BuildStamp, struct GameState, build_stamp, 0);
+LAYOUT_OFFSET_GUARD(GameState_PlayTime, struct GameState, play_time, 4);
+LAYOUT_OFFSET_GUARD(GameState_SavedOptions, struct GameState, saved_options, 0x22a);
 LAYOUT_OFFSET_GUARD(GameState_Coins, struct GameState, coins, 0x10);
 LAYOUT_OFFSET_GUARD(GameState_WonPrizes, struct GameState, won_prizes, 0x12c);
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);

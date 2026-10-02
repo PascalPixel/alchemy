@@ -1,9 +1,7 @@
 #include "EDITION.H"
 #include "TYPES.H"
-#include "ITEM_MENU.H"
+#include "INVENTORY_MENU.H"
 #include "BATTLE_TYPES.H"
-
-extern u8 gMenuWork[];
 
 /* The panel loads the "Exp" label from the literal pool and reaches the four
    stat labels, which sit 23 messages before it, by subtracting; the
@@ -36,16 +34,15 @@ void WaitFrames(s32 frames);
 #define STAT_X      192
 #endif
 
-
 /* The owner's status panel: name, class, level, HP and PP against their
    maxima and experience on the left, the four battle stats on the right.
    Bit 8 of flags skips clearing the panel first. */
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 {
-    struct ItemMenuState *menu;
+    struct InventoryMenuState *menu;
     struct BattleUnit *unit;
 
-    menu = *(struct ItemMenuState **)gMenuWork;
+    menu = gMenuWork;
     unit = Owner_GetStateFar(owner);
     menu->cursor->state = 1;
     flags &= 0x100;

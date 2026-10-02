@@ -6,7 +6,6 @@
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
 
-extern u8 *Data_03001e74;
 s32 Party_CountActiveOwnersFar(void);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 
@@ -20,7 +19,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     s32 index;
 
     limit = 4;
-    if (((u8 *)Data_03001e74)[68] != 0)
+    if (gBattleWork->two_sided != 0)
         limit = 3;
 
     count = Party_CountActiveOwnersFar();
@@ -39,8 +38,6 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
         *owners = 0xff;
     return count;
 }
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
 {
@@ -61,7 +58,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
         id = 0x80;
         entry_limit += 0x80;
         for (; id < entry_limit; id += 1) {
-            if (FIELD_AT_OFFSET(Owner_GetStateFar(id), u8 *, 0x12A) != 0) {
+            if (Owner_GetStateFar(id)->status_12a != 0) {
                 *output = (s16)id;
                 entry_count += 1;
                 output += 1;
@@ -72,9 +69,6 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
     }
     return battle_result;
 }
-
-#undef FIELD_AT_OFFSET
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
 {
@@ -89,7 +83,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     s32 unit_id;
     s16 hp;
     s32 active_count;
-    void *unit;
+    struct BattleUnit *unit;
 
     output = unit_ids;
     living_count = 0;
@@ -106,7 +100,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
             do {
                 unit_id = *member;
                 member += 1;
-                hp = FIELD_AT_OFFSET(Owner_GetStateFar(unit_id), s16, 0x38);
+                hp = Owner_GetStateFar(unit_id)->hp;
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -124,7 +118,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         if (remaining < enemy_limit) {
             do {
                 unit = Owner_GetStateFar(remaining);
-                if ((FIELD_AT_OFFSET(unit, u8, 0x12A) != 0) && ((s32)FIELD_AT_OFFSET(unit, s16, 0x38) > 0)) {
+                if ((unit->status_12a != 0) && ((s32)unit->hp > 0)) {
                     if (output != NULL) {
                         *output = (u16)remaining;
                         output += 1;
@@ -140,8 +134,6 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     }
     return living_count;
 }
-
-#undef FIELD_AT_OFFSET
 
 /* Counts the units in the lists selected by groups, bit 0 for the
  * party and bit 1 for the enemies, skipping removed 254 entries.

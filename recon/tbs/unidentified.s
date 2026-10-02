@@ -1001,14 +1001,14 @@ BladeRain_CellHeights:
 	.global BladeRain_CellSourceOffsets
 BladeRain_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000edf88, 0x000000d0
-	.global Data_080ee058
-Data_080ee058:
+	.global CornerSparks_X
+CornerSparks_X:
 	.incbin "baserom.gba", 0x000ee058, 0x00000004
-	.global Data_080ee05c
-Data_080ee05c:
+	.global CornerSparks_Y
+CornerSparks_Y:
 	.incbin "baserom.gba", 0x000ee05c, 0x00000004
-	.global Data_080ee060
-Data_080ee060:
+	.global CornerSparks_DrawFlags
+CornerSparks_DrawFlags:
 	.incbin "baserom.gba", 0x000ee060, 0x00000004
 	.global TwoResource_CellWidths
 TwoResource_CellWidths:
@@ -1025,8 +1025,8 @@ TwoResource_CellX:
 	.global TwoResource_CellBiasY
 TwoResource_CellBiasY:
 	.incbin "baserom.gba", 0x000ee088, 0x00000008
-	.global Data_080ee090
-Data_080ee090:
+	.global MemberBurst_Counts
+MemberBurst_Counts:
 	.incbin "baserom.gba", 0x000ee090, 0x00000006
 	.global EarthWall_CellSourceOffsets
 EarthWall_CellSourceOffsets:
@@ -1037,18 +1037,18 @@ EarthWall_CellWidths:
 	.global EarthWall_CellHeights
 EarthWall_CellHeights:
 	.incbin "baserom.gba", 0x000ee09f, 0x00000003
-	.global Data_080ee0a2
-Data_080ee0a2:
+	.global MemberBeam_MotePictures
+MemberBeam_MotePictures:
 	.incbin "baserom.gba", 0x000ee0a2, 0x00000008
-	.global Data_080ee0aa
-Data_080ee0aa:
+	.global MemberBeam_HeadOffsets
+MemberBeam_HeadOffsets:
 	.incbin "baserom.gba", 0x000ee0aa, 0x00000006
-	.global Data_080ee0b0
-Data_080ee0b0:
+	.global MemberBeam_HeadWidths
+MemberBeam_HeadWidths:
 	.incbin "baserom.gba", 0x000ee0b0, 0x00000002
 	.incbin "baserom.gba", 0x000ee0b2, 0x00000001
-	.global Data_080ee0b3
-Data_080ee0b3:
+	.global MemberBeam_HeadHeights
+MemberBeam_HeadHeights:
 	.incbin "baserom.gba", 0x000ee0b3, 0x00000003
 	.global Data_080ee0b6
 Data_080ee0b6:
@@ -1102,7 +1102,28 @@ Data_080ee17a:
 	.incbin "baserom.gba", 0x000ee17a, 0x00000004
 	.global Data_080ee17e
 Data_080ee17e:
-	.incbin "baserom.gba", 0x000ee17e, 0x0000002e
+	.incbin "baserom.gba", 0x000ee17e, 0x00000006
+	.global PaletteParticles_DropSpeeds
+PaletteParticles_DropSpeeds:
+	.incbin "baserom.gba", 0x000ee184, 0x00000004
+	.global PaletteParticles_SparkPixels
+PaletteParticles_SparkPixels:
+	.incbin "baserom.gba", 0x000ee188, 0x00000002
+	.global PaletteParticles_DropSizes
+PaletteParticles_DropSizes:
+	.incbin "baserom.gba", 0x000ee18a, 0x00000004
+	.global PaletteParticles_StreakWidths
+PaletteParticles_StreakWidths:
+	.incbin "baserom.gba", 0x000ee18e, 0x00000006
+	.global PaletteParticles_StreakHeights
+PaletteParticles_StreakHeights:
+	.incbin "baserom.gba", 0x000ee194, 0x00000006
+	.global PaletteParticles_StreakDrops
+PaletteParticles_StreakDrops:
+	.incbin "baserom.gba", 0x000ee19a, 0x00000006
+	.global PaletteParticles_StreakOffsets
+PaletteParticles_StreakOffsets:
+	.incbin "baserom.gba", 0x000ee1a0, 0x0000000c
 	.global EmberColumns_Columns
 EmberColumns_Columns:
 	.incbin "baserom.gba", 0x000ee1ac, 0x00000008
@@ -1165,46 +1186,46 @@ RenderMode_GlintFlips:
 	.global BattleFx_ModeHandlers
 BattleFx_ModeHandlers:
 	.incbin "baserom.gba", 0x000ee2b4, 0x0000065c
-	.global Data_080ee910
-Data_080ee910:
+	.global ThornVines_ObjectPoses
+ThornVines_ObjectPoses:
 	.incbin "baserom.gba", 0x000ee910, 0x00000006
-	.global Data_080ee916
-Data_080ee916:
+	.global ThornVines_ThornOffsets
+ThornVines_ThornOffsets:
 	.incbin "baserom.gba", 0x000ee916, 0x0000000a
-	.global Data_080ee920
-Data_080ee920:
+	.global ThornVines_ThornWidths
+ThornVines_ThornWidths:
 	.incbin "baserom.gba", 0x000ee920, 0x00000004
 	.incbin "baserom.gba", 0x000ee924, 0x00000001
-	.global Data_080ee925
-Data_080ee925:
+	.global ThornVines_ThornHeights
+ThornVines_ThornHeights:
 	.incbin "baserom.gba", 0x000ee925, 0x00000005
-	.global Data_080ee92a
-Data_080ee92a:
+	.global ThornVines_LeafOffsets
+ThornVines_LeafOffsets:
 	.incbin "baserom.gba", 0x000ee92a, 0x00000006
-	.global Data_080ee930
-Data_080ee930:
+	.global ThornVines_LeafSizes
+ThornVines_LeafSizes:
 	.incbin "baserom.gba", 0x000ee930, 0x00000004
-	.global Data_080ee934
-Data_080ee934:
+	.global ThornVines_ChipOffsets
+ThornVines_ChipOffsets:
 	.incbin "baserom.gba", 0x000ee934, 0x0000000a
-	.global Data_080ee93e
-Data_080ee93e:
+	.global ThornVines_ChipWidths
+ThornVines_ChipWidths:
 	.incbin "baserom.gba", 0x000ee93e, 0x00000004
 	.incbin "baserom.gba", 0x000ee942, 0x00000001
-	.global Data_080ee943
-Data_080ee943:
+	.global ThornVines_ChipHeights
+ThornVines_ChipHeights:
 	.incbin "baserom.gba", 0x000ee943, 0x00000005
-	.global Data_080ee948
-Data_080ee948:
+	.global ThornVines_SparkOffsets
+ThornVines_SparkOffsets:
 	.incbin "baserom.gba", 0x000ee948, 0x0000000a
-	.global Data_080ee952
-Data_080ee952:
+	.global ThornVines_SparkSizes
+ThornVines_SparkSizes:
 	.incbin "baserom.gba", 0x000ee952, 0x00000006
-	.global Data_080ee958
-Data_080ee958:
+	.global ThornVines_EmberOffsets
+ThornVines_EmberOffsets:
 	.incbin "baserom.gba", 0x000ee958, 0x0000000e
-	.global Data_080ee966
-Data_080ee966:
+	.global ThornVines_EmberSizes
+ThornVines_EmberSizes:
 	.incbin "baserom.gba", 0x000ee966, 0x0000000e
 	.global BattleFx10_Points
 BattleFx10_Points:

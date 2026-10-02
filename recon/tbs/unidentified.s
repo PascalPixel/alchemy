@@ -1623,14 +1623,14 @@ SentouKouka_BitOperands:
 DisplayScroll_SlideResources:
 	.incbin "baserom.gba", 0x000f0a5c, 0x00000760
 	.incbin "baserom.gba", 0x000f11bc, 0x00000001
-	.global Data_080f11bd
-Data_080f11bd:
+	.global DisplayScroll_GlyphWidths
+DisplayScroll_GlyphWidths:
 	.incbin "baserom.gba", 0x000f11bd, 0x00000063
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
 	.incbin "baserom.gba", 0x000f1220, 0x00000550
-	.global Data_080f1770
-Data_080f1770:
+	.global DisplayScroll_Font
+DisplayScroll_Font:
 	.incbin "baserom.gba", 0x000f1770, 0x00000890
 	.section .unidentified.080f2b6c,"ax"
 	.global Func_080f2b6c

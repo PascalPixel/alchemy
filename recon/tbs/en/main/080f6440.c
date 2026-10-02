@@ -16,7 +16,17 @@
  * the flag and keeps the count in r11, the column in r8, the bet address in
  * r9 (coins and the bet address are swapped the same way in state 0); the
  * build_objects join stubs follow from that. Messages other than MsgSlotsBet
- * still need names. */
+ * still need names.
+ * Measured since (global allocation order from the .greg dump): the draft
+ * allocates column, line pointer, bet address, hit count in that order and
+ * the flag last; the listing needs line pointer (r8), column (r10), flag
+ * (r9), bet address (r11), with the hit count left over. The listing's
+ * held-marker loop also copies each row's held byte into r10, the column's
+ * register, before testing it, so that variable is live there while the
+ * spins address sits in r8; holding the byte in col in the draft is folded
+ * away and changes nothing. One flag for all-held and mismatch, the count
+ * shared with the settled count, and function-scope declarations were each
+ * tried and are worse or equal. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIXED_MATH.H"

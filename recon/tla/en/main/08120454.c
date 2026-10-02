@@ -1,3 +1,7 @@
+/* 2026-10-03: the four unit modifier bytes now use element_modifier.
+ * This draft still cannot compile because seven old battle/runtime headers
+ * it includes are missing. Native comparison awaits their migration; the
+ * previous measured residual below is retained. */
 /* Draft, not exact (2026-09-30, Mars): ⚓️'s Battle_ResolveTargetAction,
  * the twin of ☀️'s 080bbb0c (games/THE BROKEN SEAL/SRC/BATTLE/
  * ACTION_RESOLVE_TARGET_ACTION.C), at 08120454 (recon/tla/raw/08120454.s;
@@ -857,10 +861,10 @@ dealt = target->hp - cur;
         }
         if (target->agility_modifier > 0)
             target->agility_modifier = 0;
-        target->status_12c = 0;
-        target->status_12d = 0;
-        target->status_12e = 0;
-        target->status_12f = 0;
+        target->element_modifier[0] = 0;
+        target->element_modifier[1] = 0;
+        target->element_modifier[2] = 0;
+        target->element_modifier[3] = 0;
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgBuffsReset);
         break;
     case EFX_EVIL_SPIRIT:

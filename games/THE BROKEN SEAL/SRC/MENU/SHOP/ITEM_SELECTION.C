@@ -1,10 +1,11 @@
 #include "EDITION.H"
 #include "SHOP.H"
+#include "BATTLE_RUNTIME.H"
+#include "SYSTEM.H"
 extern struct ShopRuntime *gMenuWork;
-void *Runtime_GetObject(s32);
+struct BattleUnit *Runtime_GetObject(s32);
 void UiWindow_Commit(s32);
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
-extern u8 Data_03001f2c[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 MsgCannotDropIt[];
@@ -12,7 +13,7 @@ extern u8 MsgCannotRemoveIt[];
 
 
 void UiWork_FinalizeFar(s32 window, s32 style);
-struct ShopCursorAnchor *RenderOutput_CreateFar(
+struct RenderOutput *RenderOutput_CreateFar(
     u32 resource,
     u32 flags,
     s32 window,
@@ -31,7 +32,7 @@ void Audio_PlayCue(s32 cue);
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 {
     struct ShopRuntime *shop;
-    struct ShopCursorAnchor *cursor_anchor;
+    struct RenderOutput *cursor_anchor;
     s32 list_window;
     s32 selected_index = 0;
     s32 redraw = 1;
@@ -44,13 +45,13 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
     cursor_anchor = RenderOutput_CreateFar(
-        *(u16 *)((u8 *)shop + 0x390),
+        shop->cursor_icon,
         0x40000000,
         list_window,
         0,
         result);
-    cursor_anchor->kind = 4;
-    cursor_anchor->unknown_00[4] = result;
+    cursor_anchor->one5 = 4;
+    cursor_anchor->one4 = result;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     shop->mode = 12;
@@ -77,7 +78,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             Audio_PlayCue(0x70);
             item_slot = Shop_SelUse(unit_id);
             if (item_slot == -1) {
-                shop->cursor.anchor->kind = 4;
+                shop->cursor.anchor->one5 = 4;
                 shop->mode = 12;
                 redraw = 1;
                 continue;
@@ -139,14 +140,13 @@ s32 Shop_SelUse(s32 actor)
      * object and win2 to each other's slots under this compiler. */
     s32 win2;
     s32 win1;
-    u8 *object;
+    struct BattleUnit *object;
     s32 selection;
     s32 redraw;
     s32 count;
     s32 result;
     s32 status;
     s32 flags;
-    s32 off;
     void *window;
     s32 x;
     s32 y;
@@ -166,7 +166,7 @@ s32 Shop_SelUse(s32 actor)
     win1 = UiWindow_CreateFar(16, 8, 14, 4, 2);
 #endif
     win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
-    shop->cursor.anchor->kind = 18;
+    shop->cursor.anchor->one5 = 18;
     shop->mode = 12;
     selection = 0;
 
@@ -177,15 +177,7 @@ s32 Shop_SelUse(s32 actor)
             if (selection > count - 1)
                 selection = count - 1;
 
-            /* Split into a plain-int offset statement followed by a separate
-             * pointer dereference: writing this as one expression (any
-             * algebraic grouping of object+216+selection*2) always makes the
-             * compiler fold object into the offset register before the load
-             * (adds+adds+ldrh[reg,#0]); computing the byte offset in `off`
-             * first keeps object untouched in its own register so the load
-             * folds to a single reg+reg ldrh, matching the reference. */
-            off = selection * 2 + 216;
-            flags = *(u16 *)(object + off) & 0x1ff;
+            flags = object->inventory[selection] & 0x1ff;
             window = (void *)shop->item_window;
             x = selection % 5 << 4;
             y = (selection / 5 << 4) + 8;
@@ -271,17 +263,15 @@ extern u8 MsgCannotDrop;
 extern u8 MsgCannotRemove;
 extern u8 MsgPriceHeading;
 
-void *Owner_GetStateFar(s32);
 void RenderOutput_RedrawSavedRectFar(s32);
 s32 Shop_SalePrice(s32);
 void UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-    u8 *unit = Owner_GetStateFar(unit_id);
-    s32 slot_offset = item_id * 2 + 216;
-    s32 masked = *(u16 *)(unit + slot_offset) & 0x1ff;
-    u32 entry = *(u16 *)(unit + slot_offset);
+    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
+    s32 masked = unit->inventory[item_id] & 0x1ff;
+    u32 entry = unit->inventory[item_id];
     s32 mult = (entry >> 11) + 1;
 
     if (window != 0) {
@@ -308,7 +298,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             s32 qty;
             s32 total;
 
-            qty = Shop_SalePrice(*(u16 *)(unit + slot_offset));
+            qty = Shop_SalePrice(unit->inventory[item_id]);
             total = mult *qty;
 
 /* The price line: the Japanese edition counts the coins with the word

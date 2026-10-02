@@ -6,18 +6,10 @@
 #include "PARTY_STATE.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
+#include "BATTLE_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
 
-struct ShopServiceWork {
-    u8 unk_000[0x380];
-    void *mode_state;
-    u8 unk_384[0x20];
-    u16 value;
-    u8 unk_3a6[4];
-    s8 mode;
-};
-
-u8 *Owner_GetStateFar(s32);
-extern struct ShopServiceWork *gMenuWork;
+extern struct ShopRuntime *gMenuWork;
 s32 Shop_CanServe(s32 selection, s32 variant);
 extern u8 MsgReviveService;
 extern u8 MsgCurePoisonService;
@@ -27,14 +19,13 @@ s32 BattleFx_GetResourceIdFar(u16);
 void UiWork_FinalizePendingCoreFar(void);
 s32 Shop_MsgByMode(s32 value);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern u8 Data_03001f2c[];
 extern u8 MsgSanctumWelcome[];
 extern u8 MsgSanctumMoreAid[];
 extern u8 MsgSanctumFarewell[];
-s32 Object_GetByIdFar(s32 unit_id);
+struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-struct ShopCursorAnchor *RenderOutput_CreateFar(
+struct RenderOutput *RenderOutput_CreateFar(
     u32 resource,
     u32 flags,
     s32 window,
@@ -48,8 +39,8 @@ s32 Shop_CountUnits(void);
 s32 Menu_SelectEntry19To1cFar(s32 prev);
 void UiWork_FinalizeFar(s32 window, s32 style);
 
-extern u8 Data_03001c94[];
-extern u8 gKeysRepeat[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 s32 Shop_CanServe(s32 unit_id, s32 kind);
 s32 Shop_ServicePrice(s32 unit_id, s32 kind);
@@ -69,7 +60,7 @@ s32 Sanctum_RunPartyService(void);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {
-    u8 value = Owner_GetStateFar(entry_no)[0xF];
+    u8 value = Owner_GetStateFar(entry_no)->level;
     s32 result = 0;
 
     if (kind == 0) {
@@ -86,13 +77,13 @@ s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 
 s32 Shop_CanServe(s32 entry_no, s32 kind)
 {
-    u8 *entry = Owner_GetStateFar(entry_no);
+    struct BattleUnit *entry = Owner_GetStateFar(entry_no);
     s32 result = 0;
 
-    if ((kind == 0 && *(s16 *)(entry + 56) <= 0)
-        || (kind == 1 && *(s8 *)(entry + 305) != 0)
-        || (kind == 2 && entry[320] != 0)
-        || (kind == 3 && *(s8 *)(entry + 304) != 0)) {
+    if ((kind == 0 && entry->hp <= 0)
+        || (kind == 1 && entry->poison != 0)
+        || (kind == 2 && entry->evil_spirit != 0)
+        || (kind == 3 && (s8)entry->restraint != 0)) {
         result = 1;
     }
     return result;
@@ -123,7 +114,7 @@ s32 Shop_CountUnits(void)
 
 s32 Shop_MsgByMode(s32 value)
 {
-    s8 mode = gMenuWork->mode;
+    s8 mode = gMenuWork->party_action;
 
     if (mode == 1) {
         value += (u32)&MsgCurePoisonService - (u32)&MsgReviveService;
@@ -141,7 +132,7 @@ void UiMessage_ShowResolvedAndWait(s32 value)
 {
     s32 no;
 
-    no = BattleFx_GetResourceIdFar(gMenuWork->value);
+    no = BattleFx_GetResourceIdFar(gMenuWork->keeper_resource);
     UiWork_FinalizePendingCoreFar();
     value = Shop_MsgByMode(value);
     UiText_OpenMessageWindowFar(value, 5, 0, (no << 0x10) | 0x22);
@@ -153,23 +144,23 @@ void UiMessage_ShowResolvedAndWait(s32 value)
 
 void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
 {
-    struct ShopServiceWork *state;
-    void **slot;
+    struct ShopRuntime *state;
+    struct RenderOutput **slot;
     s32 value;
     u8 saved;
 
     state = gMenuWork;
-    slot = &state->mode_state;
-    saved = *(u8 *)((u8 *)*slot + 5);
-    value = BattleFx_GetResourceIdFar(state->value);
+    slot = &state->cursor.anchor;
+    saved = (*slot)->one5;
+    value = BattleFx_GetResourceIdFar(state->keeper_resource);
     arg0 = Shop_MsgByMode(arg0);
-    *(u8 *)((u8 *)*slot + 5) = 13;
+    (*slot)->one5 = 13;
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(arg0, 5, 0, (value << 16) | 0x22);
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
     WaitFrames(1);
-    *(u8 *)((u8 *)state->mode_state + 5) = saved;
+    state->cursor.anchor->one5 = saved;
 }
 
 /* Run the shop's yes/no party-action confirmation prompt for one unit. */
@@ -178,7 +169,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     s32 party_action = 0;
     s32 list_window = 0;
     struct ShopRuntime *shop;
-    struct ShopCursorAnchor *cursor_anchor;
+    struct RenderOutput *cursor_anchor;
 
     Shop_InitializeCursorWork();
     shop = ((struct ShopRuntime *)gMenuWork);
@@ -186,11 +177,11 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
     {
         s32 shown =
-            *(u16 *)(*(u32 *)(*(u32 *)((u8 *)Object_GetByIdFar(unit_id) + 80) + 40));
-        *(u16 *)((u8 *)shop + 0x3a4) = shown;
+            *((struct ShopKeeperAnimation *)Object_GetByIdFar(unit_id)->animation)->resource;
+        shop->keeper_resource = shown;
     }
 
-    list_window = UiWindow_CreateWithSideObjectFar(*(u16 *)((u8 *)shop + 0x3a4), 0, 0, 0);
+    list_window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
     if (list_window == 0) {
         list_window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
     }
@@ -200,13 +191,13 @@ s32 Shop_ConfirmAct(s32 unit_id)
     }
 
     cursor_anchor = RenderOutput_CreateFar(
-        *(u16 *)((u8 *)shop + 0x390),
+        shop->cursor_icon,
         0x40000000,
         list_window,
         0,
         0);
-    cursor_anchor->kind = 1;
-    cursor_anchor->unknown_00[4] = 0;
+    cursor_anchor->one5 = 1;
+    cursor_anchor->one4 = 0;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     UiMessage_ShowResolvedAndWait((s32)MsgSanctumWelcome);
@@ -273,7 +264,7 @@ s32 Sanctum_RunPartyService(void)
     UiMessage_ShowResolvedAndWait((s32)MsgWhoToRevive);
 
     list_window = UiWindow_CreateFar(1, 12, 13, 3, 2);
-    shop->cursor.anchor->kind = 4;
+    shop->cursor.anchor->one5 = 4;
     shop->mode = redraw;
     PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, price_window);
 #if defined(TBS_EDITION_DE)
@@ -319,7 +310,7 @@ s32 Sanctum_RunPartyService(void)
             Shop_DrawSelMsg(price_window, unit_id);
         }
 
-        if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             WaitFrames(1);
             price = Shop_ServicePrice(unit_id, kind);
             if (Shop_CanServe(unit_id, kind) == 0) {
@@ -355,16 +346,16 @@ s32 Sanctum_RunPartyService(void)
                 continue;
             }
             break;
-        } else if ((*(volatile u32 *)((u32)&Data_03001c94) & 2) != 0) {
+        } else if ((gKeyState & 2) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
             break;
         } else {
-            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x20) != 0) {
+            if ((gKeysRepeat & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection -= 1;
             }
-            if ((*(volatile u32 *)((u32)&gKeysRepeat) & 0x10) != 0) {
+            if ((gKeysRepeat & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection += 1;

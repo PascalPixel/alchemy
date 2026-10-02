@@ -11,7 +11,6 @@
 s32 BattleFx_GetResourceIdFar(s32);
 void UiIcon_PrepareObjectFar(void *);
 s32 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
-extern u8 Data_03001f2c[];
 
 /* ui/message/show_and_wait.c */
 void UiWork_FinalizePendingCoreFar(void);
@@ -33,8 +32,8 @@ extern u16 RomBytes_080b4100[];
 /* shop/draw/glyphs.c */
 extern u8 Shop_GlyphBytes[];
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
-u8 *RenderOutput_CreateFar(s32 no, u32 flags, s32 window, s32 x, s32 y);
-void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2);
+struct RenderOutput *RenderOutput_CreateFar(s32 no, u32 flags, s32 window, s32 x, s32 y);
+void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 void BattleFx_StartBufferInterpolationFar(s32);
@@ -70,7 +69,7 @@ struct ShopCursorSprite2 {
     u16 y;
     u8 unknown_0a[0x0a];
     u8 screen_y;
-    u8 unknown_1b;
+    u8 unknown_15;
     u16 attr_x : 9;
     u16 attr_rest : 7;
 };
@@ -90,7 +89,7 @@ struct SpriteAttr2 {
 /* The render output the cursor is anchored to: it links to the next one
    like the anchor, then keeps its position and its OAM attributes. */
 struct ShopCursorSprite3 {
-    struct ShopCursorAnchor *next;
+    struct RenderOutput *next;
     u8 unknown_04[2];
     u16 x;
     u16 y;
@@ -105,18 +104,18 @@ void Shop_SetCursor(struct ShopCursor *cursor, s32 x, s32 y, s8 kind);
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
-    s32 *state = *(s32 **)((u32)&Data_03001f2c);
-    s32 value = BattleFx_GetResourceIdFar(*(u16 *)&state[233]);
+    struct ShopRuntime *state = gMenuWork;
+    s32 value = BattleFx_GetResourceIdFar(state->keeper_resource);
     s32 result = arg0;
     s8 mode;
 
     UiWork_FinalizePendingCoreFar();
-    mode = *(s8 *)((u8 *)state + 0x3a9);
+    mode = (s8)state->shop_type;
     if (mode == 2)
         result += MsgArmorShopWelcome - MsgWeaponShopWelcome;
     if (mode == 0)
         result += MsgItemShopWelcome - MsgWeaponShopWelcome;
-    if (*(s8 *)&state[235] != 0)
+    if ((s8)state->warrior_shop != 0)
         result += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
     UiText_OpenMessageWindowFar(result, 5, 0, (value << 16) | 0x22);
     while (UiWork_IsCompleteFar() == 0)
@@ -132,58 +131,58 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     s8 mode;
     s8 flag;
     u8 saved;
-    void *state;
-    u8 **slot;
+    struct ShopRuntime *state;
+    struct RenderOutput **slot;
 
-    state = *(void **)((u32)&Data_03001f2c);
-    slot = (u8 **)((u8 *)state + 0x380);
-    saved = (*slot)[5];
+    state = gMenuWork;
+    slot = &state->cursor.anchor;
+    saved = (*slot)->one5;
     no = message_id;
-    variant = BattleFx_GetResourceIdFar(FIELD_AT_OFFSET(state, u16 *, 0x3A4));
-    mode = FIELD_AT_OFFSET(state, s8 *, 0x3A9);
+    variant = BattleFx_GetResourceIdFar(state->keeper_resource);
+    mode = (s8)state->shop_type;
     if (mode == 2) {
         no += (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome;
     }
     if (mode == 0) {
         no += (s32)MsgItemShopWelcome - (s32)MsgWeaponShopWelcome;
     }
-    flag = FIELD_AT_OFFSET(state, u8 *, 0x3AC);
+    flag = state->warrior_shop;
     if (flag != 0) {
         no += (s32)MsgWarriorShopWelcome - (s32)MsgWeaponShopWelcome;
     }
-    (*slot)[5] = 0xDU;
+    (*slot)->one5 = 0xDU;
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
     while (UiWork_IsCompleteFar() == 0) {
         WaitFrames(1U);
     }
     WaitFrames(1U);
-    FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void **, 0x380), u8 *, 5) = saved;
+    state->cursor.anchor->one5 = saved;
 }
 
 /* ui/message/show_choice.c */
 s32 UiMessage_ShowChoice(s32 arg0)
 {
-    u8 **slot = (u8 **)(*(u8 **)((u32)&Data_03001f2c) + 0x380);
-    u8 saved = (*slot)[5];
+    struct RenderOutput **slot = &gMenuWork->cursor.anchor;
+    u8 saved = (*slot)->one5;
     UiIcon_PrepareObjectFar(*slot);
 #if defined(TBS_EDITION_DE)
     arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
 #else
     arg0 = Menu_RunConfirmSelectionAtFar(7, 5, arg0);
 #endif
-    (*slot)[5] = saved;
+    (*slot)->one5 = saved;
     return arg0;
 }
 
 /* ui/message/show_choice_variant.c */
 s32 UiMessage_ShowChoiceVariant(s32 arg0)
 {
-    u8 **slot = (u8 **)(*(u8 **)((u32)&Data_03001f2c) + 0x380);
-    u8 saved = (*slot)[5];
+    struct RenderOutput **slot = &gMenuWork->cursor.anchor;
+    u8 saved = (*slot)->one5;
     UiIcon_PrepareObjectFar(*slot);
     arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);
-    (*slot)[5] = saved;
+    (*slot)->one5 = saved;
     return arg0;
 }
 
@@ -221,11 +220,11 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 }
 
 /* 4行分の非0バイトを指定配置へ順にコピーする。 */
-void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
+void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2)
 {
     u8 *src = Shop_GlyphBytes + ((u32)arg0 << 5);
     u8 *dst =
-        (u8 *)((u32)arg1 + RomBytes_080b413c[arg2] + 2);
+        arg1 + RomBytes_080b413c[arg2] + 2;
     s32 count = 3;
 
     do {
@@ -246,11 +245,11 @@ void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
 
 /* Builds a sprite showing a price of up to five digits, least significant
    digit first, over the blank price tiles. */
-u8 *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
+struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 {
     u8 *buf;
     s32 slot;
-    u8 *sprite;
+    struct RenderOutput *sprite;
 
     buf = Runtime_AllocateBlock(14, 0x400);
     sprite = 0;
@@ -395,10 +394,10 @@ void Shop_SetCursor(
     s32 target_y,
     s8 kind)
 {
-    struct ShopCursorAnchor *anchor = cursor->anchor;
+    struct RenderOutput *anchor = cursor->anchor;
 
-    cursor->x = anchor->x;
-    cursor->y = anchor->y;
+    cursor->x = (u16)anchor->x;
+    cursor->y = (u16)anchor->y;
     cursor->target_x = target_x;
     cursor->target_y = target_y;
     cursor->kind = kind;
@@ -438,8 +437,8 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
     cursor_y = y;
     shop = gMenuWork;
     if (window != NULL) {
-        cursor_x = cursor_x + (FIELD_AT_OFFSET(window, u16 *, 0xC) * 8) + 8;
-        cursor_y = cursor_y + (FIELD_AT_OFFSET(window, u16 *, 0xE) * 8) + 8;
+        cursor_x = cursor_x + (((struct RenderInput *)window)->x * 8) + 8;
+        cursor_y = cursor_y + (((struct RenderInput *)window)->y * 8) + 8;
     }
     Shop_SetCursor(
         &shop->cursor,

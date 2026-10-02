@@ -2,6 +2,7 @@
 #define ALCHEMY_OWNER_STATE_H
 
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
 
 struct OwnerInventoryState {
     u8 unknown_000[0xd8];
@@ -9,11 +10,6 @@ struct OwnerInventoryState {
     u8 unknown_0f6[0x54];
     /* ⚓️ keeps the class as a halfword at 0x14a; ☀️ as a byte at 0x128. */
     u16 class_id;
-};
-
-struct OwnerActionSlot {
-    u16 encoded_action;
-    u16 unknown_02;
 };
 
 struct OwnerActionState {

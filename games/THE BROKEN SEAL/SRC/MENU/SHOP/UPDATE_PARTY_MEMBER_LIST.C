@@ -3,7 +3,7 @@
 void AnimationObjects_SelectAnimationFar(void *, s32);
 s32 Item_IsCompatibleWithOwnerFar(s16, s32);
 
-extern u8 *gMenuWork;
+extern struct ShopRuntime *gMenuWork;
 
 union ShopPartyMemberId {
     s32 word;
@@ -19,7 +19,7 @@ void Shop_DrawParty(s32 window, s32 selected, s32 requirement)
     s32 offset;
     s16 unit_id;
 
-    shop = gMenuWork;
+    shop = (u8 *)gMenuWork;
     if (window != 0) {
         index = 0;
         if (index < *(s8 *)(shop + 0x3a7)) {

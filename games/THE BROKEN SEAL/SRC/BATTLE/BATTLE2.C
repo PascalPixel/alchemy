@@ -7,6 +7,9 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_ESCAPE.H"
 #include "BATTLE_RUNTIME.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "GAME_STATE.H"
 
 s32 Trig_Cos(s32);
 extern s32 gFrameCount;
@@ -18,31 +21,10 @@ void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
-/* Alternate scene-camera setup used by the later field presentation. */
-struct SceneCameraState {
-    u8 filler0[12];
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-    s32 field18;
-    s32 field1c;
-    s32 field20;
-    u8 filler24[16];
-    s16 field34;
-    s16 field36;
-};
-
-struct SceneCameraAuxiliary {
-    s32 field00;
-    u8 filler04[12];
-    s32 field10;
-    s32 field14;
-};
-
 struct SceneCameraRuntime {
-    struct SceneCameraState *state;
+    struct BattleCamera *state;
     u8 filler04[124];
-    struct SceneCameraAuxiliary *secondary;
+    struct BattlePresentationTransition *secondary;
 };
 
 struct SceneCameraTransfer {
@@ -64,34 +46,11 @@ extern struct SceneCameraObject gProjection;
 
 s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
 void Runtime_BumpFree(void *ptr);
-extern u8 Data_03001e74[];
 s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 
 void Owner_RecalculateStatsFar(u16 id);
 
-/* battle/escape/check_success.c */
-struct BattleEscapeState {
-    u8 reserved_00[0x45];
-    u8 guaranteed;
-    u8 failed_attempts;
-};
-
 u32 Random16(void);
-
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-extern u8 gGameState[];
-
-/* battle/presentation/list/units.c */
-
-struct BattlePresentationUnitEntry {
-    u16 unit_id;
-    u16 unknown_02;
-    u16 value;
-    s16 width;
-    s16 mode;
-    s16 height;
-    u8 unknown_0c[4];
-};
 
 void Palette_UpdatePulseBrightness(void)
 {
@@ -135,42 +94,41 @@ void Palette_UpdatePulseBrightness(void)
     } while (i >= 0);
 }
 
-/* Keep the address symbol for the build map while exposing its role to C. */
 void Camera_ConfigureScene(s32 pos)
 {
-    struct SceneCameraState *state = gCameraWork.state;
-    struct SceneCameraAuxiliary *secondary = gCameraWork.secondary;
+    struct BattleCamera *state = gCameraWork.state;
+    struct BattlePresentationTransition *secondary = gCameraWork.secondary;
     struct SceneCameraTransfer local;
     u32 result;
 
-    state->field10 = 160 << 11;
-    state->field0c = 0;
-    state->field14 = 0;
-    secondary->field00 = 128 << 7;
-    state->field36 = 128 << 7;
-    state->field34 = 244 << 8;
-    state->field1c = 0;
-    state->field20 = 0x02ee0000;
-    state->field18 = 0;
+    state->pos[1] = 160 << 11;
+    state->pos[0] = 0;
+    state->pos[2] = 0;
+    secondary->target_yaw = 128 << 7;
+    state->yaw = 128 << 7;
+    state->pitch = 244 << 8;
+    state->follow_pos = 0;
+    state->distance = 0x02ee0000;
+    state->unknown_18 = 0;
 
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(&state->field0c);
-    SceneTransform_ApplyYaw(state->field36);
-    SceneTransform_ApplyPitch(state->field34);
+    SceneTransform_ApplyPosition(&state->pos[0]);
+    SceneTransform_ApplyYaw((s16)state->yaw);
+    SceneTransform_ApplyPitch((s16)state->pitch);
 
     local.first = 0;
     local.second = 0;
-    local.third = state->field20;
+    local.third = state->distance;
     Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
     result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
     Camera_StoreSceneParameters(0, result, 0x07920000);
 
     gProjection.anchor = pos + 120;
-    secondary->field10 = 1;
+    secondary->active = 1;
     BattleCamera_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
-    secondary->field14 = 1;
-    secondary->field10 = 0;
+    secondary->flag = 1;
+    secondary->active = 0;
 }
 
 void BattleUnit_ClearField12bForGroup(void)
@@ -198,15 +156,15 @@ s32 BattleEscape_CheckSuccess(void)
     s32 level_total;
     s32 unit_index;
     s32 chance;
-    struct BattleEscapeState *escape_state;
+    struct BattleSession *escape_state;
 
     escaped = 0;
-    escape_state = *(struct BattleEscapeState **)((u32)&Data_03001e74);
-    if (escape_state->guaranteed == 1) {
+    escape_state = gBattleWork;
+    if (escape_state->encounter_mode == 1) {
         escaped = 1;
     } else {
-        failed_attempts = &escape_state->failed_attempts;
-        chance = 0x1388 + (escape_state->failed_attempts * 0x7D0);
+        failed_attempts = &escape_state->escape_failures;
+        chance = 0x1388 + (escape_state->escape_failures * 0x7D0);
         living_count = BattleParty_ListLivingUnits(
             BATTLE_SIDE_PARTY,
             living_units);
@@ -231,14 +189,14 @@ s32 BattleEscape_CheckSuccess(void)
         }
         *failed_attempts += 1;
     }
-    if (gGameState[0x22B] == 2) {
+    if (gGameState.battle_start == 2) {
         escaped = 0;
     }
     return escaped;
 }
 
 s32 BattlePres_BuildUnitEntries(
-    struct BattlePresentationUnitEntry *entries)
+    struct BattleActionRecord *entries)
 {
     u16 *excluded_units = (u16 *)Runtime_BumpAllocateAlternatePool(17);
     u16 *unit_ids = (u16 *)Runtime_BumpAllocateAlternatePool(9);
@@ -254,13 +212,13 @@ s32 BattlePres_BuildUnitEntries(
         for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++) {
             /* The word read tests confusion, charm and stun together. */
             if (unit->sleep != 0 || (*(u32 *)&unit->delusion & 0xffffff00)) {
-                struct BattlePresentationUnitEntry *entry =
+                struct BattleActionRecord *entry =
                     &entries[entry_count];
                 entry->unit_id = unit_ids[unit_index];
                 entry->value = unit->agility;
-                entry->width = 8;
-                entry->mode = 0;
-                entry->height = 0x180;
+                entry->kind = 8;
+                entry->parameter = 0;
+                entry->target = 0x180;
                 entry_count++;
             } else {
                 excluded_units[excluded_count++] = unit_ids[unit_index];

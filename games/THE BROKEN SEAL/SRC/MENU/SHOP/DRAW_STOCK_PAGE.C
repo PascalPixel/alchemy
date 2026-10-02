@@ -1,12 +1,11 @@
 #include "SHOP.H"
 #include "FIXED_MATH.H"
 extern struct ShopRuntime *gMenuWork;
-extern u8 Data_03001f2c[];
 
 void UiWindow_Clear(s32 window);
-u8 *RenderOutput_CreateFar(u16 no, u32 flags, s32 window, s32 x, s32 y);
-u8 *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
-u8 *Shop_CreatePriceSprite(s16 value, s32 window, s32 x, s32 y);
+struct RenderOutput *RenderOutput_CreateFar(u16 no, u32 flags, s32 window, s32 x, s32 y);
+struct RenderOutput *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
+struct RenderOutput *Shop_CreatePriceSprite(s16 value, s32 window, s32 x, s32 y);
 
 void Shop_DrawStock(s32 window, s32 selected)
 {
@@ -21,7 +20,7 @@ void Shop_DrawStock(s32 window, s32 selected)
     s32 highlight;
     s16 stock_item;
     struct ItemDefinition *definition;
-    u8 *icon;
+    struct RenderOutput *icon;
 
     shop = gMenuWork;
     item_ids = shop->stock_item_ids;
@@ -33,17 +32,17 @@ void Shop_DrawStock(s32 window, s32 selected)
             icon = RenderOutput_CreateFar(shop->previous_page_icon, 0x40000000,
                                  window, 216, -16);
             clear = 0;
-            icon[4] = clear;
-            icon[5] = 17;
-            *(u16 *)(icon + 12) = clear;
+            icon->one4 = clear;
+            icon->one5 = 17;
+            *(u16 *)&icon->unknown_0a[2] = clear;
         }
         if (first + 7 < item_count) {
             icon = RenderOutput_CreateFar(shop->next_page_icon, 0x40000000,
                                  window, 216, 24);
             clear = 0;
-            icon[4] = clear;
-            icon[5] = 15;
-            *(u16 *)(icon + 12) = clear;
+            icon->one4 = clear;
+            icon->one5 = 15;
+            *(u16 *)&icon->unknown_0a[2] = clear;
         }
         slot = 0;
         if ((u32)first < (u32)item_count) {
@@ -55,15 +54,15 @@ void Shop_DrawStock(s32 window, s32 selected)
                 definition = Item_Get(stock_item);
                 icon = UiIcon_Draw(
                     stock_item, 1, window, slot * 32, 0);
-                icon[15] = 252;
+                icon->sentinel = 252;
                 if (first == selected) {
-                    icon[5] = 9;
+                    icon->one5 = 9;
                     highlight = 10;
-                    *(u16 *)(icon + 12) = highlight;
-                    icon[15] = 253;
+                    *(u16 *)&icon->unknown_0a[2] = highlight;
+                    icon->sentinel = 253;
                 }
                 icon = Shop_CreatePriceSprite(definition->price, window, x, 0);
-                icon[15] = 251;
+                icon->sentinel = 251;
             }
         }
     }

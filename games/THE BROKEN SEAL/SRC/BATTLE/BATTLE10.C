@@ -4,16 +4,10 @@
 #include "INVENTORY.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_TYPES.H"
+#include "BATTLE_MSG.H"
+#include "CHARACTER.H"
 
-struct EnemyRecord {
-    u8 unknown_00[0x4c];
-    u16 coins;                      /* 0x4c */
-    s16 item;                       /* 0x4e */
-    s16 item_chance;                /* 0x50 */
-    u16 experience;                 /* 0x52 */
-};
-
-struct EnemyRecord *Owner_GetRecordFar(s32);
+struct EnemyDefinition *Owner_GetRecordFar(s32);
 s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);
@@ -53,18 +47,6 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(
     return bonus + base;
 }
 
-struct SpoilsUnit {
-    u8 unk_000[15];
-    u8 level;
-    u8 unk_010[0x48];
-    struct { u16 id; u16 unk_02; } psynergy[32];
-    u8 unk_0d8[0x4c];
-    s32 experience;
-    u8 unk_128;
-    u8 class_name;
-    u8 unk_12a[0x22];
-};
-
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
@@ -76,17 +58,6 @@ void Audio_PlayCue(s32 cue);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
 s32 PartyInventory_AddFar(s32 item);
-extern u8 MsgAgilityRises[];
-extern u8 MsgExpGained[];
-extern u8 MsgLevelUp[];
-extern u8 MsgAbilityMastered[];
-extern u8 MsgMaxHpRises[];
-extern u8 MsgMaxPpRises[];
-extern u8 MsgAttackRises[];
-extern u8 MsgDefenseRises[];
-extern u8 MsgLuckRises[];
-extern u8 MsgCoinsGained[];
-extern u8 MsgItemGained[];
 #define PSYNERGY_MASK 0x3fff
 
 /* Counts one defeated enemy toward the battle spoils: its coins and
@@ -96,7 +67,7 @@ extern u8 MsgItemGained[];
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {
     struct BattleUnit *unit;
-    struct EnemyRecord *rec;
+    struct EnemyDefinition *rec;
     struct BattleSession *formation;
     struct BattleSpoils *spoils;
     s32 i;
@@ -186,8 +157,8 @@ void Battle_AwardSpoils(void)
     u16 *list;
     s32 i;
     s32 unit_id;
-    struct SpoilsUnit *unit;
-    struct SpoilsUnit *backup;
+    struct BattleUnit *unit;
+    struct BattleUnit *backup;
     s32 cnt;
     u32 learned;
     s32 j;
@@ -202,71 +173,71 @@ void Battle_AwardSpoils(void)
     spoils = &gBattleWork->spoils;
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgExpGained);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgExpGained);
         BattlePresentation_WaitForAdvance();
     }
     list = units;
     count = BattleParty_ListLivingUnits(1, list);
-    backup = (struct SpoilsUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct SpoilsUnit));
+    backup = (struct BattleUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
     for (i = 0; i < count; i++) {
         unit_id = list[i];
-        unit = (struct SpoilsUnit *)Owner_GetStateFar(unit_id);
+        unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
         unit->experience += spoils->experience;
-        while (Iwram_CopyWords(backup, unit, sizeof(struct SpoilsUnit)),
+        while (Iwram_CopyWords(backup, unit, sizeof(struct BattleUnit)),
             Func_080770b8(unit_id, gains) != 0) {
             Audio_PlayCue(0x59);
             UiWork_ClearValueNameTablesFar();
-            UiWork_PushValueSlotFar(unit->class_name, 3);
+            UiWork_PushValueSlotFar(unit->class_index, 3);
             UiWork_PushValueSlotFar(list[i], 1);
             UiWork_PushValueSlotFar(unit->level, 5);
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgLevelUp);
+            UiText_ShowMessageAndWaitCoreFar((s32)&MsgLevelUp);
             BattlePresentation_WaitForAdvance();
             for (cnt = 0; cnt < 32; cnt++) {
-                learned = unit->psynergy[cnt].id;
+                learned = unit->action_slots[cnt].encoded_action;
                 if ((learned & PSYNERGY_MASK) && (learned >> 15)) {
                     for (j = 0; j < 32; j++) {
-                        if (learned == backup->psynergy[j].id)
+                        if (learned == backup->action_slots[j].encoded_action)
                             break;
                     }
                     if (j == 32) {
                         UiWork_ClearValueNameTablesFar();
-                        UiWork_PushValueSlotFar(unit->class_name, 3);
+                        UiWork_PushValueSlotFar(unit->class_index, 3);
                         UiWork_PushValueSlotFar(unit_id, 1);
                         UiWork_PushValueSlotFar(learned & PSYNERGY_MASK, 4);
                         Audio_PlayCue(0x9a);
-                        UiText_ShowMessageAndWaitCoreFar((s32)MsgAbilityMastered);
+                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgAbilityMastered);
                         BattlePresentation_WaitForAdvance();
                     }
                 }
             }
             if (gains[2] != 0) {
                 UiWork_PushValueSlotFar(gains[2], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxHpRises);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgMaxHpRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[3] != 0) {
                 UiWork_PushValueSlotFar(gains[3], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgMaxPpRises);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgMaxPpRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[4] != 0) {
                 UiWork_PushValueSlotFar(gains[4], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgAttackRises);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgAttackRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[5] != 0) {
                 UiWork_PushValueSlotFar(gains[5], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgDefenseRises);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgDefenseRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[6] != 0) {
                 UiWork_PushValueSlotFar(gains[6], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgAgilityRises);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgAgilityRises);
                 BattlePresentation_WaitForAdvance();
             }
             if (gains[7] != 0) {
                 UiWork_PushValueSlotFar(gains[7], 5);
-                UiText_ShowMessageAndWaitCoreFar((s32)MsgLuckRises);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgLuckRises);
                 BattlePresentation_WaitForAdvance();
             }
         }
@@ -274,7 +245,7 @@ void Battle_AwardSpoils(void)
     Runtime_BumpFree(backup);
     if (spoils->coins != 0) {
         UiWork_PushValueSlotFar(spoils->coins, 5);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgCoinsGained);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgCoinsGained);
         Party_AdjustSixDigitCounterAFar(spoils->coins);
         BattlePresentation_WaitForAdvance();
     }
@@ -294,7 +265,7 @@ void Battle_AwardSpoils(void)
         if (best_slot == -1)
             break;
         UiWork_PushValueSlotFar(spoils->items[best_slot], 2);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgItemGained);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgItemGained);
         BattlePresentation_WaitForAdvance();
         if (PartyInventory_AddFar(spoils->items[best_slot]) == -1) {
             *found = spoils->items[best_slot];

@@ -8,6 +8,7 @@
 #include "GLOBAL_CELLS.H"
 #include "OBJDISP.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
+#include "SCRIPT_MOTION.H"
 
 s32 FixedSqrt(s32 value);
 
@@ -15,39 +16,8 @@ s32 FixedSqrt(s32 value);
 extern u8 Object_UpdateAll[];
 extern u8 Object_UpdateAllCodeSize[];
 
-extern u8 gObjectSlots[];
+extern struct ScriptMotionObject *gObjectSlots;
 #define TARGET_UNSET ((s32)0x80000000)
-
-struct MotionObject {
-    s32 active;          /* 0x00 */
-    u16 unk_04;
-    u16 angle;           /* 0x06 */
-    s32 x;               /* 0x08 */
-    s32 y;               /* 0x0c */
-    s32 z;               /* 0x10 */
-    s32 floor;           /* 0x14 */
-    u8 unk_18[0x0c];
-    s32 vx;              /* 0x24 */
-    s32 vy;              /* 0x28 */
-    s32 vz;              /* 0x2c */
-    s32 speed_limit;     /* 0x30 */
-    s32 acceleration;    /* 0x34 */
-    s32 target_x;        /* 0x38 */
-    s32 target_y;        /* 0x3c */
-    s32 target_z;        /* 0x40 */
-    s32 bounce;          /* 0x44 */
-    s32 gravity;         /* 0x48 */
-    u8 unk_4c[0x09];
-    u8 flags;            /* 0x55 */
-    u8 arrive_axis;      /* 0x56 */
-    u8 unk_57;
-    u8 snap;             /* 0x58 */
-    u8 unk_59;
-    u8 turn;             /* 0x5a */
-    u8 unk_5b[0x06];
-    u8 frozen;           /* 0x61 */
-    u8 unk_62[0x0e];
-};
 
 s32 ArcTan2(s32, s32);
 
@@ -97,7 +67,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
         object->target_z = 0x80000000;
         return;
     }
-    if (object->unknown_56[2] == 0) {
+    if (object->snap_to_target == 0) {
         s32 brake;
 
         brake = Iwram_RatioMulQ14(object->acceleration,
@@ -117,7 +87,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
     dx = x - object->x;
     dist = y - object->y;
     dz = z - object->z;
-    axis = &object->unknown_56[0];
+    axis = &object->arrival_axis;
     *axis = 16;
     if ((dx < 0 ? -dx : dx) < (dz < 0 ? -dz : dz)) {
         *axis = 18;
@@ -150,7 +120,7 @@ void Object_RunUpdateAllFromHeap(void)
    turns the entry to face its motion. */
 void Object_UpdateAllMotion(void)
 {
-    struct MotionObject *obj;
+    struct ScriptMotionObject *obj;
     s32 cnt;
     s32 y;
     s32 arrived;
@@ -164,9 +134,9 @@ void Object_UpdateAllMotion(void)
     s32 vy;
     s32 turn;
 
-    obj = *(struct MotionObject **)gObjectSlots;
+    obj = gObjectSlots;
     for (cnt = 13; cnt >= 0; cnt--, obj++) {
-        if (obj->active == 0)
+        if (obj->script == 0)
             continue;
         x = obj->x;
         y = obj->y;
@@ -187,52 +157,52 @@ void Object_UpdateAllMotion(void)
                     z = obj->target_z;
                 } else {
                     ratio = Iwram_RatioMulQ14(dist, obj->acceleration);
-                    vx = obj->vx + Iwram_MulQ16(dx, ratio);
-                    obj->vx = vx;
-                    dx = obj->vz + Iwram_MulQ16(dz, ratio);
-                    obj->vz = dx;
+                    vx = obj->velocity_x + Iwram_MulQ16(dx, ratio);
+                    obj->velocity_x = vx;
+                    dx = obj->velocity_z + Iwram_MulQ16(dz, ratio);
+                    obj->velocity_z = dx;
                     dist = Iwram_Sqrt(Iwram_MulQ16(vx, vx) + Iwram_MulQ16(dx, dx)) << 8;
                     if (dist > obj->speed_limit) {
                         ratio = Iwram_RatioMulQ14(dist, obj->speed_limit);
-                        obj->vx = Iwram_MulQ16(vx, ratio);
-                        obj->vz = Iwram_MulQ16(dx, ratio);
+                        obj->velocity_x = Iwram_MulQ16(vx, ratio);
+                        obj->velocity_z = Iwram_MulQ16(dx, ratio);
                     }
                 }
             } else {
-                dx = obj->vx;
-                dz = obj->vz;
+                dx = obj->velocity_x;
+                dz = obj->velocity_z;
                 if ((dx | dz) != 0) {
                     dist = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz)) << 8;
                     if (dist != 0) {
                         if (dist - obj->acceleration < 0) {
-                            obj->vx = 0;
-                            obj->vz = 0;
+                            obj->velocity_x = 0;
+                            obj->velocity_z = 0;
                         } else {
                             ratio = Iwram_RatioMulQ14(dist, dist - obj->acceleration);
-                            obj->vx = Iwram_MulQ16(dx, ratio);
-                            obj->vz = Iwram_MulQ16(dz, ratio);
+                            obj->velocity_x = Iwram_MulQ16(dx, ratio);
+                            obj->velocity_z = Iwram_MulQ16(dz, ratio);
                         }
                     } else {
-                        obj->vx = 0;
-                        obj->vz = 0;
+                        obj->velocity_x = 0;
+                        obj->velocity_z = 0;
                     }
                 }
             }
-            if (obj->flags & 2) {
-                if (y > obj->floor) {
-                    obj->vy -= obj->gravity;
-                } else if (obj->vy < 0) {
-                    y = obj->floor;
-                    obj->vy = -Iwram_MulQ16(obj->vy, obj->bounce);
-                    if ((obj->vy < 0 ? -obj->vy : obj->vy) <= obj->gravity)
-                        obj->vy = 0;
+            if (obj->motion_flags & 2) {
+                if (y > obj->terrain_height) {
+                    obj->velocity_y -= obj->gravity;
+                } else if (obj->velocity_y < 0) {
+                    y = obj->terrain_height;
+                    obj->velocity_y = -Iwram_MulQ16(obj->velocity_y, obj->vertical.bounce);
+                    if ((obj->velocity_y < 0 ? -obj->velocity_y : obj->velocity_y) <= obj->gravity)
+                        obj->velocity_y = 0;
                 }
             }
         }
-        x += obj->vx;
-        y += obj->vy;
-        z += obj->vz;
-        if (obj->arrive_axis != 0) switch (obj->arrive_axis) {
+        x += obj->velocity_x;
+        y += obj->velocity_y;
+        z += obj->velocity_z;
+        if (obj->arrival_axis != 0) switch (obj->arrival_axis) {
         case 16:
             if (x == obj->target_x || ((obj->x - obj->target_x) ^ (x - obj->target_x)) < 0)
                 arrived = 1;
@@ -247,34 +217,34 @@ void Object_UpdateAllMotion(void)
             break;
         }
         if (arrived) {
-            if (obj->snap) {
-                obj->vx = 0;
-                obj->vz = 0;
+            if (obj->snap_to_target) {
+                obj->velocity_x = 0;
+                obj->velocity_z = 0;
                 x = obj->target_x;
                 z = obj->target_z;
-                if (obj->flags == 0) {
+                if (obj->motion_flags == 0) {
                     y = obj->target_y;
-                    obj->vy = 0;
+                    obj->velocity_y = 0;
                 }
             }
             obj->target_x = TARGET_UNSET;
             obj->target_y = TARGET_UNSET;
             obj->target_z = TARGET_UNSET;
-            obj->arrive_axis = 0;
+            obj->arrival_axis = 0;
         }
         obj->x = x;
         obj->y = y;
         obj->z = z;
-        if (obj->turn & 1) {
-            x = obj->vx;
-            z = obj->vz;
+        if (obj->steering_flags & 1) {
+            x = obj->velocity_x;
+            z = obj->velocity_z;
             if (x != 0 || z != 0) {
-                turn = (s16)(ArcTan2(z, x) - obj->angle);
+                turn = (s16)(ArcTan2(z, x) - obj->facing);
                 if (turn > 0x1000)
                     turn = 0x1000;
                 if (turn < -0x1000)
                     turn = -0x1000;
-                obj->angle += turn;
+                obj->facing += turn;
             }
         }
     }
@@ -573,7 +543,7 @@ s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter)
     second = *argument;
     argument++;
     third = *argument;
-    Object_SetMoveTarget(interpreter, first, second, third);
+    Object_SetMoveTarget((struct ObjectRuntime *)interpreter, first, second, third);
     interpreter->cursor = (u16)interpreter->cursor + 4;
     return 1;
 }
@@ -586,7 +556,7 @@ s32 Script_ApplyRelativePosition(struct ScriptObjectRuntime *object)
     s32 second = *cursor++;
     s32 third = *cursor;
 
-    Object_SetMoveTarget(object, object->x + first,
+    Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + first,
         object->y + second, object->z + third);
     object->script_cursor += 4;
     return 1;
@@ -609,7 +579,7 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptObjectRuntime *object)
     struct ScriptObjectRuntime *target;
 
     target = object->linked_object;
-    Object_SetMoveTarget(object, target->x, target->y, target->z);
+    Object_SetMoveTarget((struct ObjectRuntime *)object, target->x, target->y, target->z);
     object->script_cursor++;
     return 1;
 }
@@ -619,7 +589,7 @@ s32 Script_ApplyLocalOffsetPosition(u8 *arg0)
     s32 offset[3];
 
     Object_SetMoveTarget(
-        arg0,
+        (struct ObjectRuntime *)arg0,
         *(s32 *)(arg0 + 8) + offset[0],
         *(s32 *)(arg0 + 12) + offset[1],
         *(s32 *)(arg0 + 16) + offset[2]

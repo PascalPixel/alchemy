@@ -3,8 +3,8 @@
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
+#include "SHOP.H"
 
-u8 *Item_Get(u16);
 
 s32 Shop_CanServe(s32, s32);
 s32 Shop_ServicePrice(s32 selection, s32 variant);
@@ -12,7 +12,7 @@ s32 Shop_MsgByMode(s32 msg);
 
 /* shop/unit/hilite.c */
 void AnimationObjects_SelectAnimationFar(void *, s32);
-extern u8 *gMenuWork;
+extern struct ShopRuntime *gMenuWork;
 
 /* shop/draw/sel_msg.c */
 extern u8 MsgReviveCost;
@@ -21,29 +21,14 @@ void UiWindow_Clear(s32 target);
 void UiText_DrawMessageAt(s32 message, s32 target, s32 arg2, s32 arg3);
 void UiWork_PushValueSlotFar(s32 message, s32 style);
 
-void EffectSlot_SetPositionFar(struct Effect_080b2f4c *, s32, s32);
-s32 BattleFx_HasReachedTargetFar(struct Effect_080b2f4c *);
-void BattleFx_ClearOwnedSlotFar(struct Effect_080b2f4c *);
+void EffectSlot_SetPositionFar(struct EffectSlot *, s32, s32);
+s32 BattleFx_HasReachedTargetFar(struct EffectSlot *);
+void BattleFx_ClearOwnedSlotFar(struct EffectSlot *);
 
 struct Position {
     s32 x;
     s32 y;
     s32 z;
-};
-
-struct Effect_080b2f4c {
-    u8 filler_00[0xC];
-    s32 x;
-    s32 z;
-    s32 source_x;
-    s32 source_z;
-    s32 filler_1C;
-    s32 velocity;
-    s32 acceleration;
-    u8 filler_28[0x18];
-    s8 state;
-    u8 filler_41;
-    s8 flag;
 };
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
@@ -66,7 +51,7 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 
         for (i = 0; i < 15; i++) {
             if (unit->inventory[i] & 0x200) {
-                if (Item_Get(unit->inventory[i])[3] & 1) {
+                if (Item_Get(unit->inventory[i])->flags & 1) {
                     unit->inventory[i] ^= 0x200;
                     Owner_RecalculateStatsFar(id);
                 }
@@ -85,7 +70,7 @@ void Shop_HiliteUnit(s32 enabled, s32 selected)
     s32 variant;
     s16 id;
 
-    state = gMenuWork;
+    state = (u8 *)gMenuWork;
     variant = *(s8 *)(state + 0x3aa);
     if (enabled != 0) {
         index = 0;
@@ -115,7 +100,7 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
     s32 variant;
     s32 message;
 
-    variant = (s8)gMenuWork[0x3AA];
+    variant = gMenuWork->party_action;
     message = Shop_ServicePrice(selection, variant);
     if (target != 0) {
         UiWindow_Clear(target);
@@ -130,7 +115,7 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
     }
 }
 
-void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
+void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
 {
     struct Position position;
     s8 *state_pointer;
@@ -140,18 +125,18 @@ void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect)
     state_pointer = &effect->state;
     state = *state_pointer;
     if (state == 0) {
-        position.x = effect->source_x;
-        position.z = effect->source_z;
+        position.x = effect->origin_x;
+        position.z = effect->origin_z;
         Vector_AddPolarOffset(0x280000, Random16(), &position);
         EffectSlot_SetPositionFar(effect, position.x, position.z);
-        position.x = effect->source_x;
-        position.z = effect->source_z;
+        position.x = effect->origin_x;
+        position.z = effect->origin_z;
         Vector_AddPolarOffset(0x40000, Random16(), &position);
-        effect->x = position.x;
-        effect->z = position.z;
-        effect->velocity = 0x20000;
+        effect->target_x = position.x;
+        effect->target_z = position.z;
+        effect->max_speed = 0x20000;
         effect->acceleration = 0x6666;
-        effect->flag = state;
+        effect->flag42 = state;
         *state_pointer = (u8)*state_pointer + 1;
     } else if (state == 1) {
         result = BattleFx_HasReachedTargetFar(effect);

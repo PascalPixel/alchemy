@@ -6,7 +6,7 @@
  * again; alchemy permute scores 8560 (the residual below still holds). */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-#include "GLOBAL_PROGRESS.H"
+#include "GAME_STATE.H"
 #include "TBS_EDITION.H"
 
 extern u8 *gWindowWork;
@@ -157,7 +157,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
     s32 zero;
 
     base = gWindowWork;
-    cnt = ((u8 *)SPEED_STEPS_TBL)[((u8 *)&Data_02000240)[0x20C]];
+    cnt = ((u8 *)SPEED_STEPS_TBL)[((u8 *)&gGameState)[0x20C]];
     if (base[RENDER_MENU_STATE_OFS] != 0) {
         speed = *(u16 *)0x03001CD0;
         if (speed < 0)
@@ -376,7 +376,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
             gx = (ch->pos_x + 128) / 256;
             gy = (ch->pos_y + 128) / 256;
             cue_wait =
-                ((u8 *)SPEED_CUE_WAIT_TBL)[((u8 *)&Data_02000240)[0x20C]];
+                ((u8 *)SPEED_CUE_WAIT_TBL)[((u8 *)&gGameState)[0x20C]];
             if (base[RENDER_MODE_OFS] != 0)
                 gx += 8;
             ofs = ((ch->pc + 1) & RENDER_ENTRY_MASK) * 2
@@ -401,7 +401,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
             }
             tmp = UiText_DrawGlyph(pane, code, gx, gy, 0);
             ch->delay =
-                ((u8 *)SPEED_DELAY_TBL)[((u8 *)&Data_02000240)[0x20C]];
+                ((u8 *)SPEED_DELAY_TBL)[((u8 *)&gGameState)[0x20C]];
             if (tmp != 0) {
                 if (*(u16 *)(base + RENDER_RESULT_OFS) != 0) {
                     if (*(u16 *)(base + RENDER_CUE_WAIT_OFS) != 0) {

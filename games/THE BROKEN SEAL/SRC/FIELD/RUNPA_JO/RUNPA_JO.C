@@ -2952,7 +2952,7 @@ void FieldScene_RestoreActorsFromFlags(void)
     actor->unknown_23 = 2;
     actor = Actor_Get(12);
     if (actor != 0) {
-        actor->unknown_56[3] |= 0x10;
+        actor->unknown_59 |= 0x10;
     }
     Actor_SetSpriteFlags(Actor_Get(11), 0);
     Engine_EventEnd();

@@ -33,7 +33,10 @@ struct BattleActionRecord {
     u8 unknown_02[2];
     u16 value;                      /* 0x04 */
     s16 kind;                       /* 0x06 */
-    u8 unknown_08[8];
+    s16 parameter;                  /* 0x08 */
+    s16 target;                     /* 0x0a */
+    s16 range;                      /* 0x0c */
+    s16 unknown_0e;
 };
 
 /* What the party has won so far: coins, experience and up to four items. */
@@ -49,6 +52,8 @@ LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BattleObjectSlot, anchor_x,
 LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BattleObjectSlot, active, 0x28);
 
 LAYOUT_SIZE_GUARD(BattleActionRecord_Size, struct BattleActionRecord, 0x10);
+LAYOUT_OFFSET_GUARD(BattleActionRecord_Parameter, struct BattleActionRecord, parameter, 0x08);
+LAYOUT_OFFSET_GUARD(BattleActionRecord_Target, struct BattleActionRecord, target, 0x0a);
 LAYOUT_SIZE_GUARD(BattleSpoils_Size, struct BattleSpoils, 0x14);
 
 #endif

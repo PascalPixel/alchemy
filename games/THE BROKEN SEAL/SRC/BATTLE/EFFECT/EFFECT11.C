@@ -84,7 +84,7 @@ s32 BattleEffect_SelectNearbyObject(s32 sourceId)
             continue;
 
         candidate = ObjectTable_Get(candidateId);
-        if (candidate == 0 || (candidate->unknown_56[3] & 8) != 0)
+        if (candidate == 0 || (candidate->unknown_59 & 8) != 0)
             continue;
 
         if (candidate->y - source->y >= 0) {
@@ -103,7 +103,7 @@ s32 BattleEffect_SelectNearbyObject(s32 sourceId)
         zSquared = cellZ * cellZ;
         squaredDistance = xSquared + ySquared + zSquared;
         distance = Iwram_Sqrt(squaredDistance);
-        if ((candidate->unknown_56[3] & 4) != 0)
+        if ((candidate->unknown_59 & 4) != 0)
             distance = distance * 10 / 13;
         if (distance >= bestDistance)
             continue;

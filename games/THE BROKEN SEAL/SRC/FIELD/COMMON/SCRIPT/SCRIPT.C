@@ -4,6 +4,8 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
+#include "SCRIPT_OBJECT_ENTRY.H"
 #include "IWRAM_CALL.H"
 
 struct WanderPosition {
@@ -14,9 +16,7 @@ struct WanderPosition {
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct WanderPosition *position);
-s32 ScriptObject_CheckOverlap(struct ScriptObjectRuntime *object, struct WanderPosition *position);
 s32 Func_080120dc(struct ScriptObjectRuntime *object, struct WanderPosition *position);
-void Object_SetMoveTarget(struct ScriptObjectRuntime *object, s32 x, s32 y, s32 z);
 u16 ArcTan2(s32 y, s32 x);
 
 /*
@@ -56,7 +56,7 @@ retry:
         radius = base + Iwram_MulQ16(Random16(), range);
         heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
         Vector_AddPolarOffset(radius, heading, &pos);
-        if (ScriptObject_CheckOverlap(object, &pos) != 0)
+        if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
             goto retry;
         if (Func_080120dc(object, &pos) != 0)
             goto retry;
@@ -94,7 +94,7 @@ retry:
     object->turned_back = 1;
     return 0;
 found:
-    Object_SetMoveTarget(object, pos.x, pos.y, pos.z);
+    Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
     object->script_cursor += 4;
     return 1;
 }
@@ -145,7 +145,7 @@ roam:
     pos.y = object->y;
     pos.z = object->z;
     Vector_AddPolarOffset(0x80000, heading, &pos);
-    if (ScriptObject_CheckOverlap(object, &pos) != 0)
+    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
         goto roam;
     pos.x = object->x;
     pos.y = object->y;
@@ -189,7 +189,7 @@ roam:
     if (dx * dx + dz * dz > limit)
         goto roam;
     object->flags_59 |= 2;
-    Object_SetMoveTarget(object, pos.x, pos.y, pos.z);
+    Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
     goto done;
 home:
     tries = 0;
@@ -204,7 +204,7 @@ back:
     pos.y = object->y;
     pos.z = object->z;
     Vector_AddPolarOffset(0x80000, heading, &pos);
-    if (ScriptObject_CheckOverlap(object, &pos) != 0)
+    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
         goto back;
     pos.x = object->x;
     pos.y = object->y;
@@ -213,7 +213,7 @@ back:
     if (Func_080120dc(object, &pos) != 0)
         goto back;
     object->flags_59 &= ~2;
-    Object_SetMoveTarget(object, pos.x, pos.y, pos.z);
+    Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
 done:
     object->script_cursor += 4;
     return 1;

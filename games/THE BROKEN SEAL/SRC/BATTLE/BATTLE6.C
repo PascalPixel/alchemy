@@ -5,6 +5,9 @@
 #include "OBJECT_LOOKUP.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "ITEM.H"
+#include "GAME_STATE.H"
+#include "BATTLE_UNIT.H"
+#include "MOTION_OBJECT.H"
 
 struct Item0808e0b0 {
     u8 padding0[5];
@@ -51,25 +54,7 @@ struct FacingTriggerRuntime {
     struct FacingTrigger *triggers;
 };
 
-struct FacingObject {
-    u8 unknown_00[6];
-    u16 facing;
-};
-
-extern struct BattleWork gGameState;
 extern struct BattleRuntime *gEventWork;
-
-struct BattleUnitObject {
-    u8 unknown_000[0xd8];
-    u16 abilities[15]; /* 0xd8: object+216, masked 0x1ff, matches
-                           shop/sel/use.c's Ability_GetAvailability scan. */
-};
-
-struct ItemPartyView {
-    u8 unknown_000[0x1f4];
-    s32 object_id;
-    u8 active_owners[8];
-};
 
 struct ItemCommandRuntime {
     u8 unknown_000[0x170];
@@ -92,7 +77,7 @@ struct BattleItemEventRecord {
     union BattleItemEffect effect; /* The ID/pointer threshold is signed. */
 };
 
-void *Owner_GetStateFar(s32 actor);
+struct BattleUnit *Owner_GetStateFar(s32 actor);
 s32 Party_CountActiveOwnersFar(void);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
@@ -195,9 +180,9 @@ s32 Event_FindFacingTrigger(s32 source)
     struct FacingTriggerRuntime *runtime =
         (struct FacingTriggerRuntime *)Data_03001ebc;
     struct FacingTrigger *trigger = runtime->triggers;
-    s32 facing = ((struct FacingObject *)ObjectTable_Get(
-        Data_02000240.object_id))->facing;
-    s32 selected = BattleEffect_SelectNearbyObject(Data_02000240.object_id);
+    s32 facing = ((struct MotionObject *)ObjectTable_Get(
+        gGameState.selected_actor))->angle;
+    s32 selected = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
     s32 collision;
 
     source &= 0x1ff;
@@ -238,7 +223,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     s32 result;
     s32 item_id;
     s32 actor;
-    struct BattleUnitObject *obj;
+    struct BattleUnit *obj;
     struct BattleItemEventRecord *event;
     u16 *p;
     s32 j;
@@ -259,12 +244,11 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             actor = 0;
             i = 0;
             if (actor < count) {
-                struct ItemPartyView *party =
-                    (struct ItemPartyView *)&gGameState;
+                struct GameState *party = &gGameState;
                 do {
-                    obj = (struct BattleUnitObject *)Owner_GetStateFar(party->active_owners[i]);
+                    obj = (struct BattleUnit *)Owner_GetStateFar(party->active_owners[i]);
                     matches = 0;
-                    p = obj->abilities;
+                    p = obj->inventory;
                     j = 14;
                     do {
                         if ((*p++ & 0x1ff) == item_id)
@@ -280,8 +264,8 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                 } while (i < count);
             }
         } else {
-            obj = (struct BattleUnitObject *)Owner_GetStateFar(actor);
-            p = obj->abilities;
+            obj = (struct BattleUnit *)Owner_GetStateFar(actor);
+            p = obj->inventory;
             j = 14;
             do {
                 if ((*p++ & 0x1ff) == item_id)
@@ -306,7 +290,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
         }
         if (event->effect.id < 0x10000) {
-            s32 objref = BattleEffect_SelectNearbyObject(gGameState.object_id);
+            s32 objref = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
             Battle_Reset();
             Event_SetValue1d8(event->effect.id);
             BattleEv_RunWait(objref, 0);
@@ -340,12 +324,12 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                     return 0;
 
                 {
-                    u16 *work = (u16 *)&gGameState;
+                    struct GameState *work = &gGameState;
                     s32 a, b;
-                    a = work[288];
-                    work[224] = a;
-                    b = work[289];
-                    work[225] = b;
+                    a = (u16)work->retreat_scene;
+                    work->scene = a;
+                    b = (u16)work->retreat_entrance;
+                    work->entrance = b;
                 }
                 runtime->result_code = 999;
             }
@@ -377,8 +361,8 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
         (struct BattleEffectRuntime *)Data_03001ebc;
     struct BattleEffectEventRecord *event = runtime->events;
     s32 reference = ((struct BattleEffectValueRecord *)ObjectTable_Get(
-        Data_02000240.object_id))->value;
-    s32 selected = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, group);
+        gGameState.selected_actor))->value;
+    s32 selected = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, group);
     s32 alternate;
     s32 ignore_flags = 0;
 
@@ -414,9 +398,6 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
     return 0;
 }
 
-/* Data_02000240 is struct BattleWork (battle_effect_runtime.h); its
- * object_id field sits at the same 0x1f4 offset this owner reads as
- * selected_object, matching main:0808e23c's use of the same shared symbol. */
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 {
     /* FAKEMATCH: the ROM caller treats this call as setting r0 (an implicit-int
@@ -432,11 +413,11 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
     index = packed & 0x3FF;
     mode = ((u32)packed >> 10) & 0xF;
     object = Ability_GetData(index)[0xC];
-    ObjectTable_Get(Data_02000240.object_id);
+    ObjectTable_Get(gGameState.selected_actor);
     first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
     second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);
     BattleFx_LoadActionEffectResources(index, 0);
-    BattleFx_SetupObjectPair(Data_02000240.object_id, output);
+    BattleFx_SetupObjectPair(gGameState.selected_actor, output);
     BattleFx_RunEventAction(first, mode, output);
     FieldEvent_RunTypeHandler();
     EffectRuntime_StopCurrentObject();

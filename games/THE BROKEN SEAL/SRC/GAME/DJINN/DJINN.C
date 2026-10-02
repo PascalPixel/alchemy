@@ -7,8 +7,8 @@
 #include "GAME_FLAGS.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
+#include "CHARACTER.H"
 
-s32 Owner_GetRecordStride84(s32 arg0);
 s32 Owner_GetResistanceValue(s32, s32);
 s32 BattleRandomPercent(void);
 
@@ -41,7 +41,6 @@ struct TradeOfferTable {
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
 u32 GameFlag_SetBit(u32 flag);
-u8 *Trade_GetOfferState(s32 which);
 u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
 s32 Trade_CanOfferDjinn(s32, s32, s32);
@@ -160,7 +159,7 @@ first_loop:
 
     offset = 0x129;
     field = state + offset;
-    entries = Owner_GetRecordStride84(*field) + 0x50;
+    entries = (u8 *)Owner_GetRecordStride84(*field) + 0x50;
     entry_index = 0;
 second_loop:
     battle_value = *entries++;
@@ -373,7 +372,7 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
     if ((state->pledged[index] & (1 << bit)) != 0)
         return 0;
 
-    table = (struct TradeOfferTable *)(Trade_GetOfferState((u32)owner > 7) + 8);
+    table = (struct TradeOfferTable *)((u8 *)Trade_GetOfferState((u32)owner > 7) + 8);
     for (i = 0; i < table->count; i++) {
         if (index == table->offers[i].index && bit == table->offers[i].bit)
             break;
@@ -431,7 +430,7 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit)
     s32 found = 0;
     s32 i;
 
-    table = (struct TradeOfferTable *)(Trade_GetOfferState((u32)owner > 7) + 8);
+    table = (struct TradeOfferTable *)((u8 *)Trade_GetOfferState((u32)owner > 7) + 8);
     for (i = 0; i < table->count; i++) {
         if (index == table->offers[i].index && bit == table->offers[i].bit) {
             table->count--;

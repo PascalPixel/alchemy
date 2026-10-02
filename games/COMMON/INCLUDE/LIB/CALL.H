@@ -26,7 +26,24 @@
  * showed the effect too, so the unprototyped pointer alone cannot explain it.
  * This supports an inline-boundary/register-lifetime effect, not a missing
  * integer conversion. It does not identify a compiler pass or establish a
- * whole-game compiler change. No candidate passed; stop without adoption. */
+ * whole-game compiler change. No candidate passed; stop without adoption.
+ *
+ * Single-use follow-up, 2026-10-02: twelve EN functions, one direct-call
+ * replacement per function with all other source unchanged; none matched.
+ * Constant reuse/register changes: FieldScene_RunClosingAuxiliarySequence,
+ * FieldScene_RunFinalAuxiliarySequence, MakyuriChojo_RiseActorPair,
+ * MakyuriChojo_SinkActorPair, FieldScene_RunScene3b4_02002290.
+ * Argument order only: KareiMachi_SetupEntryActors,
+ * HaidiaArashi_RunCallOutSequence, MakyuriHeya_SinkActorWithSparks,
+ * HaidiaDou_RunLoweredActorScene, FieldScene_RunScene3ba_02000270,
+ * ShindenHeya_ApplyEntryState, KareiMachi_RunExitDoor.
+ * Two additional -da compilations of HaidiaArashi_RunCallOutSequence locate
+ * a difference already in initial RTL: the direct call builds 256 in a
+ * pseudo before assigning r0=22; the expanded inline sets r0=22 then r1=256.
+ * Reload splits the constant at those different positions. Post-reload
+ * scheduling interleaves r0 between the two constant instructions only for
+ * the inline form. This is evidence about call expansion as well as the
+ * scheduler, not permission to change either or a whole-game K3 result. */
 #ifndef ALCHEMY_CALL_H
 #define ALCHEMY_CALL_H
 

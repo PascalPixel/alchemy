@@ -299,7 +299,10 @@ static __inline__ void bump_halfword(s32 off, s32 amount)
     u8 *work = (u8 *)gEventWork;
     u16 *slot = (u16 *)(work + off);
     /* FAKEMATCH: the sum goes through a word-sized temporary before the
-     * halfword store, as the reference computes it. */
+     * halfword store, as the reference computes it. 2026-10-02: both
+     * *slot += amount and *slot = *slot + amount introduce a pooled one
+     * shared with an earlier byte store in RunDialoguePromptScene, adding
+     * a saved register and changing its literal-pool placement. */
     s32 next = *slot + amount;
 
     *slot = next;

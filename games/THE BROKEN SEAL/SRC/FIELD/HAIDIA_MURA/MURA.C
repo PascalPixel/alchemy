@@ -2924,7 +2924,7 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id)
     actor->active = zero;
     actor->mode = zero;
 
-    if (GameFlag_IsSet(0x109) == 0)
+    if (Engine_GameFlagIsSet(0x109) == 0)
         actor->y += 0x200000;
 
     actor->flags_23 &= 0xfe;

@@ -40,7 +40,6 @@ void Engine_DebugRedrawWindow(struct TextRenderWork *window);
 void Engine_DebugClearWindow(struct TextRenderWork *window);
 void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
 void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
 void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
 

@@ -1881,14 +1881,14 @@ Unnamed_080f3078:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x000f5768, 0x00001e98
 	.section .rom.000f7a40, "ax"
-	.incbin "baserom.gba", 0x000f7a40, 0x00000edc
-	.section .rom.000f8a60, "ax"
-	.global Unnamed_080f7460
-	.type Unnamed_080f7460, %function
+	.global Unnamed_080f6440
+	.type Unnamed_080f6440, %function
 	.thumb_func
-Unnamed_080f7460:
-	.incbin "baserom.gba", 0x000f8a60, 0x00000954
+Unnamed_080f6440:
+	.incbin "baserom.gba", 0x000f7a40, 0x00000edc
 	.section .rom.000f9cf8, "ax"
+	.global ReelGame_SparkCellOffsets
+ReelGame_SparkCellOffsets:
 	.incbin "baserom.gba", 0x000f9cf8, 0x0000003e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:

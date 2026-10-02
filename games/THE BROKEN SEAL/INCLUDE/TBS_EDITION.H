@@ -191,6 +191,21 @@
 #define REEL_TITLE_X       24
 #endif
 
+/* The reel game's two-line help window: the Japanese lines are shorter.
+   Its jackpot picture is sixteen tiles longer in the localized editions and
+   so starts sixteen tiles earlier in the sprite tiles. */
+#if EDITION_INTERNATIONAL
+#define REEL_HELP_WINDOW_X     2
+#define REEL_HELP_WINDOW_WIDTH 26
+#define REEL_JACKPOT_TILES     0x06016e00
+#define REEL_JACKPOT_COPY      0x84000480
+#else
+#define REEL_HELP_WINDOW_X     6
+#define REEL_HELP_WINDOW_WIDTH 18
+#define REEL_JACKPOT_TILES     0x06017000
+#define REEL_JACKPOT_COPY      0x84000400
+#endif
+
 #if !EDITION_INTERNATIONAL
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \

@@ -1682,8 +1682,8 @@ Data_080f5408:
 Data_080f541a:
 	.incbin "baserom.gba", 0x000f541a, 0x00000be6
 	.section .unidentified.080f86f8,"a"
-	.global Data_080f86f8
-Data_080f86f8:
+	.global ReelGame_SparkCellOffsets
+ReelGame_SparkCellOffsets:
 	.incbin "baserom.gba", 0x000f86f8, 0x00000014
 	.global Data_080f870c
 Data_080f870c:

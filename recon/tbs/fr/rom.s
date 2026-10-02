@@ -1880,14 +1880,14 @@ Title_PromptBlendLevels:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x000f7168, 0x00001e98
 	.section .rom.000f9440, "ax"
-	.incbin "baserom.gba", 0x000f9440, 0x00000eec
-	.section .rom.000fa470, "ax"
-	.global Unnamed_080f7460
-	.type Unnamed_080f7460, %function
+	.global Unnamed_080f6440
+	.type Unnamed_080f6440, %function
 	.thumb_func
-Unnamed_080f7460:
-	.incbin "baserom.gba", 0x000fa470, 0x00000954
+Unnamed_080f6440:
+	.incbin "baserom.gba", 0x000f9440, 0x00000eec
 	.section .rom.000fb708, "ax"
+	.global ReelGame_SparkCellOffsets
+ReelGame_SparkCellOffsets:
 	.incbin "baserom.gba", 0x000fb708, 0x0000003e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:

@@ -9255,11 +9255,11 @@ msgctxt "message"
 msgid "02311"
 msgstr "Winnings"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "02312"
 msgstr "Press up or down to change value"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "02313"
 msgstr "{button_icon:1}:Start machine      {button_icon:2}:Quit"
 

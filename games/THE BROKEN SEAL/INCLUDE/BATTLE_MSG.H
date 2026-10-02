@@ -88,4 +88,35 @@ extern char MsgSplitFail; /* 「ぶんれつに しっぱいした！」 */
 extern char MsgAppears; /* 「あらわれた！！」 */
 extern char MsgNoOneCame; /* 「しかし だれもこなかった！」 */
 
+/* The plan builder's announcements. */
+extern char MsgWeaponHowls;
+extern char MsgActorCasts;
+extern char MsgItemAlreadyUsed;
+extern char MsgActorRaisesItem;
+extern char MsgActorUsesBattleItem;
+extern char MsgActorUsesAbility;
+extern char MsgActorUnleashesAbility;
+extern char MsgEmitsUltrasonicWaves;
+extern char MsgGlowersFerociously;
+extern char MsgIsIntimidated;
+extern char MsgBalefulGaze;
+extern char MsgEatsWorms;
+extern char MsgLetsOutAbility;
+extern char MsgEnemyUnleashesAbility;
+extern char MsgGlowersMiserably;
+extern char MsgFuriousRage;
+extern char MsgSmellOfDecay;
+extern char MsgAttemptsToDivide;
+extern char MsgLooksForAllies;
+extern char MsgLooksForHelp;
+extern char MsgUnableToMove;
+extern char MsgIsAsleep;
+extern char MsgIsParalyzed;
+extern char MsgIsBound;
+extern char MsgActorRuns;
+extern char MsgDjinnInRecovery;
+extern char MsgActorUnleashesDjinn;
+extern char MsgSummonLacksDjinn;
+extern char MsgActorSummons;
+
 #endif

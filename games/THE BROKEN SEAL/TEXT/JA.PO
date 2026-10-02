@@ -8291,15 +8291,15 @@ msgctxt "MsgActorDefends"
 msgid "02070"
 msgstr "{argument_actor_name:234} みをまもっている!"
 
-msgctxt "message"
+msgctxt "MsgActorUsesBattleItem"
 msgid "02071"
 msgstr "{argument_actor_name:234} {argument_item_name:134}つかった!"
 
-msgctxt "message"
+msgctxt "MsgActorRaisesItem"
 msgid "02072"
 msgstr "{argument_actor_name:234} {argument_item_name:134}かざした!"
 
-msgctxt "message"
+msgctxt "MsgWeaponHowls"
 msgid "02073"
 msgstr "{argument_actor_name:233} {argument_item_name:150}゙{line_break}うなりを上げた! "
 
@@ -8307,7 +8307,7 @@ msgctxt "message"
 msgid "02074"
 msgstr "{argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgItemAlreadyUsed"
 msgid "02075"
 msgstr "{argument_actor_name:233} つかおうとしたアイテムは{line_break}もう なくなっている!"
 
@@ -8447,11 +8447,11 @@ msgctxt "message"
 msgid "02109"
 msgstr "{argument_actor_name:234} 戦いに やぶれた・・・"
 
-msgctxt "message"
+msgctxt "MsgActorCasts"
 msgid "02110"
 msgstr "{argument_actor_name:234}{argument_ability_name}を発動した!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesDjinn"
 msgid "02111"
 msgstr "{argument_actor_name:234}{argument_ability_name}をときはなった!"
 
@@ -8459,11 +8459,11 @@ msgctxt "message"
 msgid "02112"
 msgstr "{argument_actor_name:234}{argument_ability_name}をセットした!"
 
-msgctxt "message"
+msgctxt "MsgActorSummons"
 msgid "02113"
 msgstr "{argument_actor_name:234}{argument_ability_name}を しょうかんした!"
 
-msgctxt "message"
+msgctxt "MsgSummonLacksDjinn"
 msgid "02114"
 msgstr "{argument_actor_name:234}{argument_ability_name}を しょうかんしたが{line_break}スタンバイ・ジンが たりなかった!"
 
@@ -8479,7 +8479,7 @@ msgctxt "MsgNoTimeToRun"
 msgid "02117"
 msgstr "ここで にげるわけにはいかない!"
 
-msgctxt "message"
+msgctxt "MsgActorRuns"
 msgid "02118"
 msgstr "{argument_actor_name:234} にげだした!"
 
@@ -8555,15 +8555,15 @@ msgctxt "message"
 msgid "02136"
 msgstr "しかし エナジーをふうじられている!"
 
-msgctxt "message"
+msgctxt "MsgIsParalyzed"
 msgid "02137"
 msgstr "{argument_actor_name:234} しびれて動けなかった!"
 
-msgctxt "message"
+msgctxt "MsgIsAsleep"
 msgid "02138"
 msgstr "{argument_actor_name:234} ねむっている!"
 
-msgctxt "message"
+msgctxt "MsgIsBound"
 msgid "02139"
 msgstr "{argument_actor_name:234} かなしばりで動けなかった!"
 
@@ -8571,7 +8571,7 @@ msgctxt "message"
 msgid "02140"
 msgstr "{argument_actor_name:233} こうげきは はずれた!"
 
-msgctxt "message"
+msgctxt "MsgDjinnInRecovery"
 msgid "02141"
 msgstr "{argument_actor_name:233} {argument_ability_name}はリカバリー中だった!"
 
@@ -8719,7 +8719,7 @@ msgctxt "MsgImmobile"
 msgid "02177"
 msgstr "{argument_actor_name:234} みうごきが とれなくなった!"
 
-msgctxt "message"
+msgctxt "MsgUnableToMove"
 msgid "02178"
 msgstr "{argument_actor_name:234} みうごきが とれない!"
 
@@ -9167,15 +9167,15 @@ msgctxt "message"
 msgid "02289"
 msgstr "同じジンは2かい えらべません"
 
-msgctxt "message"
+msgctxt "MsgActorUsesAbility"
 msgid "02290"
 msgstr "{argument_actor_name:234}{argument_ability_name}をつかった!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesAbility"
 msgid "02291"
 msgstr "{argument_actor_name:234}{argument_ability_name}をはき出した!"
 
-msgctxt "message"
+msgctxt "MsgEmitsUltrasonicWaves"
 msgid "02292"
 msgstr "{argument_actor_name:234} ちょうおんぱを はっした!"
 
@@ -9195,51 +9195,51 @@ msgctxt "MsgNoOneCame"
 msgid "02296"
 msgstr "しかし だれも あらわれなかった!"
 
-msgctxt "message"
+msgctxt "MsgGlowersFerociously"
 msgid "02297"
 msgstr "{argument_actor_name:234}{line_break}おそろしいかおで にらみつけた!"
 
-msgctxt "message"
+msgctxt "MsgIsIntimidated"
 msgid "02298"
 msgstr "{argument_actor_name:234} ビビって{line_break}手のふるえがとまらない!"
 
-msgctxt "message"
+msgctxt "MsgBalefulGaze"
 msgid "02299"
 msgstr "{argument_actor_name:234} キョロキョロしている!"
 
-msgctxt "message"
+msgctxt "MsgEatsWorms"
 msgid "02300"
 msgstr "{argument_actor_name:234} みみずをたべた!"
 
-msgctxt "message"
+msgctxt "MsgLetsOutAbility"
 msgid "02301"
 msgstr "{argument_actor_name:234}{argument_ability_name}をはっした!"
 
-msgctxt "message"
+msgctxt "MsgEnemyUnleashesAbility"
 msgid "02302"
 msgstr "{argument_actor_name:234}{argument_ability_name}をはいた!"
 
-msgctxt "message"
+msgctxt "MsgGlowersMiserably"
 msgid "02303"
 msgstr "{argument_actor_name:234} せつないひとみでみつめた!"
 
-msgctxt "message"
+msgctxt "MsgFuriousRage"
 msgid "02304"
 msgstr "{argument_actor_name:234} きょうぼうかした!"
 
-msgctxt "message"
+msgctxt "MsgSmellOfDecay"
 msgid "02305"
 msgstr "{argument_actor_name:234} ふらんしゅうをはなった!"
 
-msgctxt "message"
+msgctxt "MsgAttemptsToDivide"
 msgid "02306"
 msgstr "{argument_actor_name:234} ぞうしょくうんどうをした!"
 
-msgctxt "message"
+msgctxt "MsgLooksForAllies"
 msgid "02307"
 msgstr "{argument_actor_name:234} なかまをさがした!"
 
-msgctxt "message"
+msgctxt "MsgLooksForHelp"
 msgid "02308"
 msgstr "{argument_actor_name:234} たすけをさがした!"
 

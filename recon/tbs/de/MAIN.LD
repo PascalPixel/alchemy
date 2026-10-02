@@ -640,7 +640,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE11.o"(.text)
     "*/games/COMMON/SRC/BATTLE/PARTY/IS_UNIT_LISTED.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/COUNT_VALID_ENTRIES.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000c07a2)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/COMMAND.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/ROLL_COUNTER_EARLY_END.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/TIMED_ENTRIES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/RUNTIME_RESERVED_NO_OP_C.o"(.text)

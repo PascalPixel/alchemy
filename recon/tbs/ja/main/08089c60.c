@@ -1,14 +1,15 @@
-/* DRAFT: the Japanese UiText_OpenMessageAtObject, at 08089c60 in the
-   Japanese ROM (780 bytes); the five international editions are C in
-   SRC/FIELD/COMMON/OBJECT/OBJECT9.C. Compiled for Japanese this is 780
-   bytes with 28 instructions unaligned, all in the tail placement: the ROM
-   copies top into r1 after loading it and computes the second top + height
-   and top - 5 from that copy in place, where this build reuses r2 and shares
-   the first top - 5 through ip; and it loads the -1 for message one
-   instruction earlier. The ROM's shape is what the compiler gives when its
-   first CSE pass stops at the label after `if (top <= y)`: an if/else there
-   gives the r1 copy but not the unconditional first top - 5. */
+/* DRAFT: Japanese UiText_OpenMessageAtObject at 08089c60 (780 bytes
+   including pools); the five international editions remain drafts.
+   2026-10-02: use RENDER_MODE_OFS for the Japanese work byte (0xf34).
+   With call targets named from the current linked build, the plain source
+   scores 560 (7 register-only, 2 reordered, 2 inserted, 2 deleted).
+   The retained tagged r1 top copy scores 340 (3 register-only, 2 reordered,
+   1 inserted, 1 deleted): it loads top directly into r1 then reloads r2,
+   where the ROM loads r2 and copies r1. Two dimension arguments and the
+   final -1 are prepared in another order. Pinning the initial top to r2
+   scored 625; exposing top before the copy scored 445. No exact match. */
 #include "EDITION.H"
+#include "TBS_EDITION.H"
 #include "TYPES.H"
 
 /* ui/text/open_message_at_object.c */
@@ -75,6 +76,8 @@ s32 UiText_OpenMessageAtObject(s32 arg)
     s32 face;
     s32 column;
     s32 none;
+    /* FAKEMATCH: the tail clamp retains the loaded top in r1; CSE otherwise shares top - 5 through ip. */
+    register s32 base asm("r1");
 
     win = gWindowWork.window;
     work = gWindowWork.message;
@@ -134,7 +137,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             else
                 top = y + 4;
         }
-        if (win[0xea4] != 0)
+        if (win[RENDER_MODE_OFS] != 0)
             margin = 5;
         column = x;
         if (flags & 0x1000) {
@@ -161,12 +164,15 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
             message = face;
             tail = top - 5;
+            base = top;
+            /* FAKEMATCH: keep the reference top copy in the register the clamp uses. */
+            asm ("" : : "r" (base));
             if (top <= y)
                 tail = top + height;
             if (tail < 0)
-                tail = top + height;
+                tail = base + height;
             else if (tail + 5 > 19)
-                tail = top - 5;
+                tail = base - 5;
         }
         if (top < y) {
             s32 lines = height;
@@ -204,7 +210,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             column = 0;
         else if (column + margin > 29)
             column = 29 - margin;
-        if (win[0xea4] != 0) {
+        if (win[RENDER_MODE_OFS] != 0) {
             WaitFrames(8);
             if (extra != 0)
                 handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1, 18);
@@ -217,7 +223,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             else
                 handle = UiText_OpenMessageWindowFar(message, left, top, (icon << 16) | 1);
         }
-        if (win[0xea4] != 0)
+        if (win[RENDER_MODE_OFS] != 0)
             side = UiWindow_CreateWithSideObjectFar(speaker, 0, column, tail);
         else
             side = UiWindow_CreateWithSideObjectFar(speaker, 0, column, tail);

@@ -1,3 +1,10 @@
+/* 2026-10-02: the remaining difference is one allocation fact. In the
+ * greg dump the actor (67 refs/222 insns) outranks the cell offset (10/79)
+ * by priority, so it is not order: global.c's first pass only takes a hard
+ * register already in use, and r5/r6 are held by block-local pointers while
+ * the actor lives. The game's actor lands in r8 because r8 is already in use
+ * (or r7 is held) when the actor is allocated; here r7 is the first free.
+ * Pinning the actor to r8 defeats CSE of its coordinates (270 lines). */
 /* NONMATCHING (2026-09-27): explicit selected-cell byte offset, shared
  * between the depth test and both CopyCells calls, gives 956/976 bytes,
  * 431 halfwords / 198 aligned edits. Actor remains r7, offset becomes sl,

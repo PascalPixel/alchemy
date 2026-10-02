@@ -71,7 +71,9 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     s32 pz = *pos++;
     s32 pw = *pos;
     s32 slot;
-    /* FAKEMATCH: unused; they give the ROM's 68-byte frame */
+    /* FAKEMATCH: unused; they give the ROM's 68-byte frame.
+       2026-10-02: deleting both arrays changes only the stack allocation
+       and release from 68 to 44 bytes; the complete function then differs. */
     s32 ground[3];
     s32 screen[3];
     struct ProjectedEffect effect;

@@ -176,7 +176,6 @@ s32 Battle_RunEncounter(s32 arg)
     s32 i;
     s32 delay;
     s32 handle;
-    s32 ret;
     s32 wait;
     u32 pos;
     s32 off;
@@ -235,12 +234,14 @@ s32 Battle_RunEncounter(s32 arg)
         gCell[0x22b] = 4;
     }
     if (work->field_44 != 0) {
-        gBattleRandomSeed = 0;
+        do {
+            gBattleRandomSeed = 0;
+        } while (0);
         for (wait = 0;;) {
             if ((gLinkStatus & 3) == 3)
                 break;
-            wait++;
             WaitFrames(1);
+            wait++;
             if (wait > 24) {
                 work->field_52 = 1;
                 break;
@@ -342,10 +343,7 @@ s32 Battle_RunEncounter(s32 arg)
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
             if (GameFlag_IsSet(0x16a) == 0) {
-                delay = 10;
-                if (i != 0)
-                    delay = 0;
-                if (BattlePresentation_DispatchAction(&work->actions[i], delay) == 1)
+                if (BattlePresentation_DispatchAction(&work->actions[i], i == 0 ? 10 : 0) == 1)
                     goto interrupted;
             } else {
                 if (BattlePres_RunAction(&work->actions[i]) == 1)
@@ -408,14 +406,14 @@ resolved:
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);
     Blend_WaitForTransition();
-    ret = work->field_538;
+    i = work->field_538;
     goto finished;
 
 aborted:
     Battle_ApplyValueToWork2224();
     Scheduler_EnableCallbacks(0);
     *(u16 *)0x04000000 = 1;
-    ret = work->field_538;
+    i = work->field_538;
     GameFlag_SetBitFar(0x3e8);
     goto finished;
 
@@ -433,7 +431,7 @@ party_lost:
     BattlePresentation_WaitForAdvance();
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);
-    ret = -1;
+    i = -1;
     Blend_WaitForTransition();
     goto finished;
 
@@ -441,7 +439,7 @@ interrupted:
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);
     Blend_WaitForTransition();
-    ret = 0x3e7;
+    i = 0x3e7;
 
 finished:
     BattleParty_ResetActiveRuntimeFields();
@@ -450,5 +448,5 @@ finished:
     gCell[0x22b] = 0;
     Scheduler_RemoveCallback((s32)Func_080b7738);
     Runtime_ReleaseHeapBlock10();
-    return ret;
+    return i;
 }

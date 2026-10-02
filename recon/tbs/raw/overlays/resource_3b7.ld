@@ -12,7 +12,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI2.o"(.text)
         "*/resource_3b7_overlay.o"(.text.x02008ac8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI3.o"(.text)
-        "*/resource_3b7_overlay.o"(.text.x02008e5c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IZUMI4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

@@ -966,14 +966,6 @@ Battle_RunEncounter:
 	.incbin "baserom.gba", 0x000b63e0, 0x00000698
 	.section .rom.000b7750, "ax"
 	.incbin "baserom.gba", 0x000b7750, 0x000001ac
-	.section .rom.000b7b82, "ax"
-	.incbin "baserom.gba", 0x000b7b82, 0x00000002
-	.section .rom.000b7b84, "ax"
-	.global BattleActor_SpawnObjectsForList
-	.type BattleActor_SpawnObjectsForList, %function
-	.thumb_func
-BattleActor_SpawnObjectsForList:
-	.incbin "baserom.gba", 0x000b7b84, 0x00000264
 	.section .rom.000b8c34, "ax"
 	.global BattlePres_RunUnitAction
 	.type BattlePres_RunUnitAction, %function

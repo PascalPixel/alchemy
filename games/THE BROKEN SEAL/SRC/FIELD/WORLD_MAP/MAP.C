@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "STORY.H"
 #include "TYPES.H"
 #include "FIELD_SERVICE.H"
@@ -232,7 +233,7 @@ s32 StoryActor_ApplyFlaggedMode(u8 *actor)
 /* Turns the actor's sprite to the map's rotation. */
 s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
 {
-    struct MapRenderWork *work = gMapWork;
+    struct MapRenderWork *work = gMapWork[0];
     struct FieldSprite *sprite = actor->sprite;
 
     sprite->rotation = work->rotation;
@@ -243,7 +244,7 @@ s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
 /* Sets the actor's first collision flag and turns its sprite to the map's rotation. */
 s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
 {
-    struct MapRenderWork *work = gMapWork;
+    struct MapRenderWork *work = gMapWork[0];
     struct FieldSprite *sprite = actor->sprite;
 
     actor->collision_flags |= 1;

@@ -38,7 +38,6 @@ void DisplayTransition_Update(void);
 void DisplayTransition_UpdateFromCentre(void);
 void DisplayTransition_UpdateScanline(void);
 
-extern u8 gCam[];
 
 struct DisplayTransitionState2 {
     u8 pad_000[0x52a];
@@ -281,7 +280,7 @@ void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
 {
     void *state;
 
-    state = *(void **)((u32)&gCam);
+    state = gMapWork[0];
     if (state != NULL) {
         if (clear_0200 != 0) {
             FIELD_AT_OFFSET(state, u16 *, 0x14) &= 0xFDFF;

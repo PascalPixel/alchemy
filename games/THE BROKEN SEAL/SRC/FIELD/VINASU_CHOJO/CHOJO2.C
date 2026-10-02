@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -74,7 +75,6 @@ extern const s32 VinasuChojo_RiseParticleScript[];
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor);
 void SceneEffect_AdvanceGatedRiseCounter(u8 *obj);
 
-extern struct MapScrollWork *gMapWork;
 extern const s32 VinasuChojo_BesideParticleScript[];
 void FieldScene_RunScene3c9_02005b90(union FieldObject *object);
 
@@ -1371,7 +1371,7 @@ void SceneEffect_SpawnParticlesBesideActor(void)
     s32 angle;
 
     center = Actor_Get(23);
-    map = gMapWork;
+    map = gMapWork[0];
     drift = (u32)(Random_Next() * 48) >> 16 << 16;
     if ((s16)(map->view_y >> 16) <= 129) {
         if (gFrameCount & 1) {

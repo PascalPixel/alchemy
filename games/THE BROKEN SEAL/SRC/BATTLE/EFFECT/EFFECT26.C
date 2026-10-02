@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "MAP_SCROLL.H"
 
@@ -66,7 +67,7 @@ void Event_SpawnObjectTable(s32 event_id, s32 last_id);
    kept set, when it lies outside. */
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
 {
-    struct MapScrollWork *view = gCam;
+    struct MapScrollWork *view = gMapWork[0];
 
     GameFlag_ClearBitFar(0x164);
     GameFlag_SetBitFar(0x165);

@@ -7,10 +7,8 @@
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 
-extern struct MapState *gMapWork;
 extern u8 WorldMap_TerrainBehaviorTable[];
 
-extern u8 gCam[];
 
 struct Work_08012330 {
     s32 unknown_00;
@@ -71,7 +69,7 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
 
     x = position->x / 65536;
     y = (position->y - *(s32 *)((u8 *)position + 4)) / 65536;
-    work = gMapWork;
+    work = gMapWork[0];
     if (work == NULL)
         return 0;
     cell = (u8 *)work->layers[2].cells;
@@ -166,7 +164,7 @@ void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
 {
     struct Work_08012330 *work;
 
-    work = *(struct Work_08012330 **)((u32)&gCam);
+    work = gMapWork[0];
     if (value0 >= 0) {
         work->value_04 = value0;
     }
@@ -183,7 +181,7 @@ void Map_WaitWorkValuesBelow256(void)
     s32 *work;
     s32 cnt;
 
-    work = *(s32 **)((u32)&gCam);
+    work = gMapWork[0];
     cnt = 0;
     if (work[1] > 255 || work[2] > 255) {
         goto body;

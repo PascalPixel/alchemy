@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "YAMA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -8,7 +9,6 @@
 void ArutinYama_ApplyEntryState(void);
 void ArutinYama_PlaceFlaggedActors(void);
 
-extern struct MapRenderWork *gMapWork;
 extern u8 ArutinYama_ActorScript[];
 s32 Engine_GameFlagIsSet();
 void FieldScene_RunOpeningAuxiliarySequence();
@@ -166,7 +166,7 @@ void ArutinYama_ApplyEntryState(void)
             Call3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)script);
         }
     } else {
-        p5 = *(s32 *)&gMapWork;
+        p5 = (s32)gMapWork[0];
         Engine_ActorSetPosition(10, 0, 0);
         Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 2, 3, 14);
         *(u16 *)((s32)p5 + 20) &= 0xfdff;
@@ -202,7 +202,7 @@ void FieldScene_RunScene3a4_02002310(void)
 {
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
+        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
         Actor_SetPosition(9, 0, 0);
     } else {
         ArutinYama_StartPaletteAnim();
@@ -234,7 +234,7 @@ void FieldScene_RunScene3a4_02002428(void)
     extern u8 Data_02000240[];
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
+        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
     } else {
         Map_CopyCellAttributes(52, 42, 1, 1, 53, 42);
     }
@@ -254,7 +254,7 @@ void FieldScene_RunScene3a4_02002490(void)
     u8 *record;
 
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
+        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
         Actor_SetPosition(10, 0, 0);
     } else {
         if (GameFlag_IsSet(0x109) == 0) {
@@ -314,7 +314,7 @@ void FieldScene_RunScene3a4_020025c0(void)
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
+        *(u16 *)(((u8 *)gMapWork[0]) + 20) &= ~0x200;
     }
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);

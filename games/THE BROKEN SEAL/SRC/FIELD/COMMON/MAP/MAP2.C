@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "MAP.H"
 #include "TYPES.H"
@@ -29,7 +30,6 @@ s32 Resource_DecodeByteLz(const void *source, void *destination);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
 void Map_ShowBg1FromBuffer(void);
-extern u8 *gCam;
 #define BG_PALETTE ((s16 *)0x05000000)
 
 struct MapWindow {
@@ -101,7 +101,7 @@ void Map_LoadAreaGraphics(void)
     u8 *buffer;
     s16 value;
 
-    state = gCam;
+    state = gMapWork[0];
     buffer = (u8 *)gMapCellBuffer;
     resources = *(u32 **)(state + 0x11c);
     value = BG_PALETTE[0];
@@ -130,7 +130,7 @@ void Map_LoadAreaGraphics(void)
 /* map/shared/load_default_cells_and_update_block.c */
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
-    struct MapInitWork *work = *(struct MapInitWork **)((u32)&gCam);
+    struct MapInitWork *work = gMapWork[0];
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
     work->first = 0;
     work->second = 0x9f;

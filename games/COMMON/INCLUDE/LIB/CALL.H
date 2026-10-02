@@ -43,7 +43,23 @@
  * Reload splits the constant at those different positions. Post-reload
  * scheduling interleaves r0 between the two constant instructions only for
  * the inline form. This is evidence about call expansion as well as the
- * scheduler, not permission to change either or a whole-game K3 result. */
+ * scheduler, not permission to change either or a whole-game K3 result.
+ *
+ * Unchanged-source follow-up, 2026-10-02: six EN extents, seven call
+ * controls, no candidate compilations. OBJECT16's matching direct speed
+ * call with (actor, 0x9999, 0x4ccc) writes r2, r0, r1; neither constant
+ * is used afterward. STAGED's early direct speed call reuses 0x8000 and
+ * 0x1999 already written to the actor record, across the rectangle call.
+ * Its later inline call freshly loads 0x4ccc and 0x1999 instead.
+ * Raw 080cb7f8.s and 080cf8e0.s both add the same callback,
+ * BattlePresentation_ProcessPendingGraphicsTransfer, with order 0x480,
+ * but finalize r0 last and first respectively. Both discard the returned
+ * index and reload that callback when removing it later. Native SI modes,
+ * equal arguments, return use and later constant reuse therefore do not
+ * determine one setup order. A flat rule based on native ABI, r0 first
+ * or argument lifetime does not explain the family. This does not identify
+ * the original source boundary, a responsible compiler pass or an admissible
+ * compiler change. */
 #ifndef ALCHEMY_CALL_H
 #define ALCHEMY_CALL_H
 

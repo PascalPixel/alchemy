@@ -1,10 +1,10 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "HASHIRA.H"
 #include "FIELD_SCENE.H"
 
-extern u8 *gMapWork;
 extern s32 StagedActor_DirectionSteps[];
 
 struct MapCell {
@@ -51,7 +51,7 @@ extern u32 gBgScroll[];
  * cell at x, y of a map layer. */
 void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src)
 {
-    struct MapState *map = *(struct MapState **)&gMapWork;
+    struct MapState *map = gMapWork[0];
 
     if (map != 0) {
         struct MapCell *cell = map->layers[layer].cells;

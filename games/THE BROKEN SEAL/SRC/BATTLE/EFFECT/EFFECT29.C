@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -14,9 +15,7 @@ struct State_080935b0 {
     s32 fourth;
 };
 
-extern struct State_080935b0 *gCam;
 extern u8 Data_03001af4[];
-extern u8 *gMapWork;
 u8 *Runtime_AllocateBlock(s32 kind, s32 size);
 s32 BattleFx_StepRatioTransition(void);
 
@@ -74,7 +73,7 @@ s32 BattleFx_CopyLinkedObjectPosition(void *obj);
 
 void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
 {
-    struct State_080935b0 *work = gCam;
+    struct State_080935b0 *work = gMapWork[0];
 
     work->first = first;
     work->second = second;
@@ -94,7 +93,7 @@ s32 BattleFx_StepRatioTransition(void)
     s32 offset;
     s32 delta;
 
-    work = gMapWork;
+    work = gMapWork[0];
     if ((*(u8 **)(Runtime_AllocateBlock(27, 0xccc) + 480))[91] != 0)
         return;
     duration = (s16 *)(work + 0x358);
@@ -121,7 +120,7 @@ s32 BattleFx_StepRatioTransition(void)
 /* the transition callback, Thumb address */
 void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 {
-    struct Work_080936a0 *state = *(struct Work_080936a0 **)((u32)&gCam);
+    struct Work_080936a0 *state = gMapWork[0];
     s32 handle;
     s32 result;
 
@@ -143,7 +142,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 void Event_WaitForDisplayField358Clear(void)
 {
     s32 frames;
-    u8 *work = *(u8 **)((u32)&gCam);
+    u8 *work = gMapWork[0];
 
     if (*(s16 *)((u8 *)Runtime_AllocateBlock(0x1b, 0xccc) + 0x19e) == 3) {
         frames = 0;

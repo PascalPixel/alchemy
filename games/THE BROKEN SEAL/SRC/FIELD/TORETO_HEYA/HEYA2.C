@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "HEYA.H"
 #include "CALL.H"
 #include "IWRAM_CALL.H"
@@ -29,7 +30,6 @@ extern u8 MsgToretoDoingNowsNot[];
 extern u8 MsgToretoMmmmm[];
 extern u8 MsgToretoTurnedPeopleKolima[];
 
-extern struct MapRenderWork *gMapWork;
 void ToretoPalette_CaptureBank(void);
 void ToretoHeya_ApplyFlaggedMapPatches(void);
 void SceneState_ApplyRectsByFlag844(s32 flag);
@@ -590,7 +590,7 @@ s32 ToretoHeya_EnterRoom(void)
     }
     if (Value1(Engine_GameFlagIsSet, 0x109))
         ToretoHeya_ApplyFlaggedMapPatches();
-    globals = (u8 **)&gMapWork;
+    globals = (u8 **)gMapWork;
     work = globals[0];
     camera = (s32 *)(work + 260);
     camera[2] += Iwram_MulQ16(*(s32 *)(work + 236) + 0xa00000, 0x1999);

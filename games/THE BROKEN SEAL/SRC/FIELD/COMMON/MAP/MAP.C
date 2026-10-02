@@ -43,7 +43,6 @@ static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32
     *(u16 *)(destination + 64) = *colors;
 }
 
-extern struct MapRenderWork *gMapWork;
 void Map_UpdateLayerScroll(void);
 
 static __inline__ void CopyCameraCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
@@ -297,7 +296,7 @@ void Map_ApplyWorkOriginAndSpan(void)
     s32 second;
     s32 *p;
 
-    p = **(s32 ***)((u32)&gCam);
+    p = *((s32 **)gMapWork[0]);
     first = 0;
     second = 0;
     third = 0;
@@ -372,7 +371,7 @@ void Map_UpdateLayerScroll(void)
     s32 base_x, base_y;
     u32 i;
 
-    work = *(struct MapScrollWork **)&gMapWork;
+    work = gMapWork[0];
     origin = work->origin;
     layer = work->layers;
     if (origin == 0)
@@ -456,7 +455,7 @@ void Map_SetCameraCenter(s32 x, s32 y)
 {
     u32 no;
     u8 *dest;
-    struct MapScrollWork *work = gCam;
+    struct MapScrollWork *work = gMapWork[0];
     struct MapLayerScroll *layer = work->layers;
 
     x -= 0x780000;

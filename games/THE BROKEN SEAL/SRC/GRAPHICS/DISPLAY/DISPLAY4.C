@@ -1,10 +1,10 @@
+#include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "MAP.H"
 
-extern struct MapState *gMapWork;
 
 struct SubQueueItem_08011b00 {
     u32 unknown_00;
@@ -44,7 +44,7 @@ extern u8 Func_08011bf4;
    BLDCNT and the alpha or brightness level on a frame delay. */
 void DisplayBlend_RunScript(void)
 {
-    struct MapState *work = gMapWork;
+    struct MapState *work = gMapWork[0];
     struct BlendScriptState *state;
     u16 *cursor;
     u32 command;
@@ -108,7 +108,7 @@ void DisplayBlend_StartScript(u16 *script)
 
     started = 0;
     zero = 0;
-    state = &gMapWork->blend;
+    state = &((struct MapState *)gMapWork[0])->blend;
     Dma_Set((const void *)&zero, state, 0x85000003, (volatile u32 *)0x040000d4);
     if (*script != 0xffff) {
         state->script = script;

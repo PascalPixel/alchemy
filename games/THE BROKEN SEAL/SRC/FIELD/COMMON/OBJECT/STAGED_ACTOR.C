@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "MAPCOPY.H"
 #include "STAGED_ACTOR.H"
 #include "FIXED_POINT_POSITION.H"
@@ -9,9 +10,6 @@ extern u8 gMapCellBuffer[];
  * footprint and direction tables. */
 
 extern u8 *gWork;
-/* A word, not a pointer: an integer read shares the alias set of the probe
- * fields SceneActor_MoveAndRedraw spills, which keeps those spills first. */
-extern u32 gCam;
 extern s32 StagedActor_DirectionSteps[];
 extern s32 StagedActor_FootprintKinds[];
 extern s32 StagedActor_FootprintBounds[];
@@ -139,7 +137,7 @@ void StagedActor_AdvancePair(void)
 
 s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
 {
-    u8 *map = (u8 *)gCam;
+    u8 *map = gMapWork[0];
     u8 *cells;
     u32 row;
     u32 column;
@@ -331,7 +329,8 @@ found:
 
 void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
-    /* FAKEMATCH: declaring gCam as a pointer reorders the probe spills against its load; retain the integer alias set. */
+    /* FAKEMATCH: the integer cell read keeps the incoming probe spills
+     * before the cache load; the native pointer read reorders them. */
     u8 *workspace;
     StagedActorRecord *actor;
     StagedActorPosition original_position;
@@ -341,7 +340,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
     s32 horizontal_extent;
     s32 vertical_extent;
 
-    workspace = (u8 *)gCam;
+    workspace = (u8 *)*(u32 *)gMapWork;
     direction = ((StagedActorRecord *)Object_GetById(0))->orientation >> 12;
     actor = Object_GetById(probe.actor_slot);
     footprint_table = (u8 *)StagedActor_FootprintBounds;
@@ -494,7 +493,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 
 s32 FieldScene_RedrawActorFootprint(s32 id)
 {
-    s32 *work = (s32 *)gCam;
+    s32 *work = (s32 *)gMapWork[0];
     struct StagedActor *actor = Object_GetById(id);
     struct StagedActorProbe probe;
     u32 idx = 0;

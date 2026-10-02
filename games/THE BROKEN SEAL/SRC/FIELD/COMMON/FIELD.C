@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -243,7 +244,7 @@ update_object:
         object->action--;
 
 movement_done:
-    work = gMapWork;
+    work = gMapWork[0];
     rate = Data_0801328c[(gKeysHeld >> 4) & 15];
     step = (s16)(rate - work->rotation) / 8;
     if (step > 0x200)

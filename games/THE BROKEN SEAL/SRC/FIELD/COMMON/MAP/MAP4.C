@@ -4,9 +4,7 @@
 #include "MAP.H"
 
 extern u8 gMapCellBuffer[];
-extern u8 gCam[];
 
-extern struct MapState *gMapWork;
 
 /* A metatile's attributes are four bytes: its shape in the low nibble of
  * the first, then the height bytes its shape's function reads. */
@@ -20,7 +18,7 @@ extern TerrainHeightFn Map_TerrainHeightFunctions[16];
  * height bytes and the position inside the metatile. */
 s32 Func_08011f54(s32 layer, s32 x, s32 y)
 {
-    u8 *work = (u8 *)gMapWork;
+    u8 *work = gMapWork[0];
     u8 *cells;
     u8 *attributes;
 
@@ -39,7 +37,7 @@ s32 Func_08011f54(s32 layer, s32 x, s32 y)
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 {
-    u8 *state = *(u8 **)((u32)&gCam);
+    u8 *state = gMapWork[0];
     u8 *map;
     s32 off;
     s32 col;
@@ -66,7 +64,7 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
     s32 cell_address;
     s32 layer_offset;
 
-    state = *(struct MapState **)((u32)&gCam);
+    state = gMapWork[0];
     x >>= 20;
     y >>= 20;
     cell_address = (u32)gMapCellBuffer;
@@ -80,7 +78,7 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
 {
-    struct MapState *state = gMapWork;
+    struct MapState *state = gMapWork[0];
 
     x >>= 20;
     y >>= 20;
@@ -137,7 +135,7 @@ s32 Func_080120dc(struct TerrainObject *object, struct TerrainPosition *position
 
     x = position->x;
     z = position->z;
-    state = gMapWork;
+    state = gMapWork[0];
     if (state == NULL)
         return 0;
     if (object->map_layer <= 2)

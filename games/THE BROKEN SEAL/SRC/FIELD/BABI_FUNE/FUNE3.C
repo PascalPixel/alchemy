@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 /* Sets up the scene: actor collision and sprite priorities, the BG priorities,
  * the blend, and lowers map layers 6 and 7. The sprite priorities are the
  * FieldSprite bitfields read through an s32 view of actor->sprite; the BG
@@ -37,7 +38,6 @@ struct FieldGlobals {
     u8 *event;
 };
 
-extern struct FieldGlobals gMapWork;
 #define SPRITE_BYTES(actor) ((u8 *)(actor)->sprite)
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n) ((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
@@ -127,7 +127,7 @@ void BabiFune_RunDeparture(void)
     s32 sunk;
     volatile u16 cnt;
 
-    map = gMapWork.map;
+    map = (*(struct FieldGlobals *)gMapWork).map;
 
     Event_Begin();
     Battle_ResetEffectCounter();
@@ -228,11 +228,11 @@ s32 BabiFune_SetupScene(void)
     struct MapWork *map;
     volatile u16 cnt;
 
-    map = gMapWork.map;
+    map = (*(struct FieldGlobals *)gMapWork).map;
     if (((union GameStateRows *)&gGameState)->halves[225][0] == 99) {
         Inventory_AddItemFar(0, 242);
     }
-    *(s32 *)(gMapWork.event + 0x1c0) = 0x100;
+    *(s32 *)((*(struct FieldGlobals *)gMapWork).event + 0x1c0) = 0x100;
     Object_GetById(8)->collision_flags = 0;
     Object_GetById(8)->priority_flags = 2;
     Object_GetById(9)->collision_flags = 0;

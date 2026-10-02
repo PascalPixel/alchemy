@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 /* The Suhara desert: the phase request and two object toggles. */
 #include "SABAKU.H"
 #include "TYPES.H"
@@ -49,7 +50,6 @@ struct FieldGlobals {
     struct EventWork *event;
 };
 
-extern struct FieldGlobals gMapWork;
 
 void QueueSceneSound(s32 cue);
 
@@ -616,8 +616,8 @@ s32 SuharaSabaku_RunSceneScript(void)
 {
     u8 *map;
 
-    map = gMapWork.map;
-    gMapWork.event->start_transition = 0x201;
+    map = (*(struct FieldGlobals *)gMapWork).map;
+    (*(struct FieldGlobals *)gMapWork).event->start_transition = 0x201;
     if (GameFlag_GetByte(0x210) != 0) {
         gGameState.movement_mode = 2;
         Engine_TaskAddCallback(SuharaSabaku_SyncSelectedActorProgress, 0xc80);

@@ -1,8 +1,8 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OBJECT_LOOKUP.H"
 
-extern u8 *gCam;
 
 struct ScreenObject {
     u8 pad00[8];
@@ -30,7 +30,7 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 
     if (object == 0)
         return -1;
-    camera = (s32 *)(gCam + 228);
+    camera = (s32 *)(((u8 *)gMapWork[0]) + 228);
     camera_x = camera[0] & 0xffff0000;
     camera_z = camera[1] & 0xffff0000;
     x = object->x - camera_x;

@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 /* Declarations shared by Altin Peak's set-piece sources (resource_3a4). */
 #ifndef YAMA_H
 #define YAMA_H
@@ -9,7 +10,6 @@
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-extern struct MapRenderWork *gMapWork;
 
 enum {
     /* Message 0x182 + 202. */

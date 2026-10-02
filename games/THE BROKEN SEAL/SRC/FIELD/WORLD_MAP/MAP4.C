@@ -214,7 +214,6 @@ struct WorldTileWindow {
     u16 tiles[256];
 };
 
-extern struct WorldTileWindow *gMapWork;
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
@@ -222,7 +221,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
  * the second layer's tiles 320 on from the first's. */
 void Map_UpdateCurrentTileBlock(void)
 {
-    struct WorldTileWindow *window = gMapWork;
+    struct WorldTileWindow *window = gMapWork[0];
     s32 x0 = 0;
     s32 y0 = 0;
     u32 layer;
@@ -258,7 +257,7 @@ void Map_UpdateCurrentTileBlock(void)
  * at the first one that had to be drawn, so a frame draws at most one. */
 void Map_UpdateCurrentTileBlockUntilBlocked(void)
 {
-    struct WorldTileWindow *window = gMapWork;
+    struct WorldTileWindow *window = gMapWork[0];
     s32 x0 = 0;
     s32 y0 = 0;
     u32 layer;

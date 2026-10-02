@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "DMA.H"
@@ -140,7 +141,6 @@ struct MarkerServices {
     struct MarkerEvent *(*events)(void);
 };
 
-extern struct MarkerGlobals gMapWork;
 extern struct MarkerServices gOverlayArea;
 struct MarkerObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildField26Far(struct MarkerObject *object, s32 value);
@@ -294,8 +294,8 @@ void ObjectMotion_SnapToTerrain(void *object)
 void Battle_PlaceMapMarkers(void)
 {
     u32 id;
-    struct MarkerMap *map = gMapWork.map;
-    struct MarkerWork *work = gMapWork.work;
+    struct MarkerMap *map = (*(struct MarkerGlobals *)gMapWork).map;
+    struct MarkerWork *work = (*(struct MarkerGlobals *)gMapWork).work;
     s32 count = 0;
     u8 *list = map->markers;
     struct MarkerSlot *slot = work->slots;

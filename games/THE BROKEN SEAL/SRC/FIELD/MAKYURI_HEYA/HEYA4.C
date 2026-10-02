@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "PROBE.H"
 #include "TYPES.H"
@@ -1667,7 +1668,7 @@ void MakyuriHeya_RideLift(void)
     struct LiftLayer *layer;
     s32 speed;
 
-    layer = (struct LiftLayer *)((u8 *)gMapWork + 356);
+    layer = (struct LiftLayer *)(((u8 *)gMapWork[0]) + 356);
     speed = 0x9c28;
     layer->offset = 0x04890000;
     layer->unknown_1c = 0;

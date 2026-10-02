@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #ifndef ALCHEMY_MAP_SCROLL_H
 #define ALCHEMY_MAP_SCROLL_H
 
@@ -27,7 +28,6 @@ struct MapScrollWork {
 
 struct BgScroll { u16 x, y; };
 
-extern struct MapScrollWork *gCam;
 extern struct BgScroll gBgScroll[];
 
 void Map_RenderPaletteMappedBlock(u32 layer, s32 x, s32 y);

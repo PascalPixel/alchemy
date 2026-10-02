@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
@@ -13,7 +14,6 @@ struct MapWork {
     struct ScrollLayer layer;
 };
 
-extern struct MapWork *gMapWork;
 
 extern u8 gVinasuPushScript[];
 extern u8 gVinasuPushCells[];
@@ -45,7 +45,7 @@ void VinasuHeya_ShiftBridge(void)
     u32 i;
     s32 dust_x;
 
-    layer = &gMapWork->layer;
+    layer = &((struct MapWork *)gMapWork[0])->layer;
     leader = Object_GetById(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;

@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -9,7 +10,6 @@ struct SceneEffectOrigin {
 struct SceneEffectWork {
     struct SceneEffectOrigin *origin;
 };
-extern struct SceneEffectWork *gCam;
 
 /* The spread of the falling effect, in the overlay's work past its image. */
 s32 gFallingEffectOffset __attribute__((section(".bss")));
@@ -49,7 +49,7 @@ void FieldScene_UpdateFallingEffect(void)
         break;
     }
     if ((gFrameCount & 7) == 0 && (object = Engine_ObjectCreate(285, 0, 0, 0)) != 0) {
-        origin = gCam->origin;
+        origin = ((struct SceneEffectWork *)gMapWork[0])->origin;
         if ((gFrameCount & 63) == 0)
             Engine_AudioPlayCue(246);
         if (gFallingEffectState != 0)

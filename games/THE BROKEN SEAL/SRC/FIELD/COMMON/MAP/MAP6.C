@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
@@ -103,14 +104,12 @@ struct MapTileWindow_08010d48 {
     u16 tiles[16][16];
 };
 
-extern struct MapTileWindow_08010d48 *gMapWork;
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 u32 Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
-extern u8 *gCam;
 extern u32 Data_080132cc[][6];
 
 struct WorldCell {
@@ -145,7 +144,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
  */
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update)
 {
-    struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork;
+    struct PerspectiveWork *work = (struct PerspectiveWork *)gMapWork[0];
     u32 *graphics = work->tiles;
     u16 *shown;
     u16 *buffer;
@@ -354,7 +353,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
     s32 origin_y;
     s32 tile;
 
-    window = gMapWork;
+    window = gMapWork[0];
     origin_x = 0;
     origin_y = 0;
     position = window->position;
@@ -398,7 +397,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 
     variant = 0;
     buffer = (u8 *)Runtime_BumpAllocate(0x200);
-    state = (struct WorldMapState *)gCam;
+    state = (struct WorldMapState *)gMapWork[0];
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;
     resources = Data_080132cc[variant];

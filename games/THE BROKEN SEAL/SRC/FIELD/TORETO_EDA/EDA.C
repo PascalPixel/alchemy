@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -24,7 +25,6 @@ union SceneCell {
 };
 
 extern s32 gCell[];
-extern u8 *gCam;
 extern u8 *gWork;
 extern u32 gFrameCount;
 extern s32 gKeysHeld;
@@ -294,7 +294,7 @@ void Effect_UpdateBg3HofsByVcount(void)
  */
 void Effect_SetBg3HofsSplit(void)
 {
-    union SceneCell *work = (union SceneCell *)(gCam + 260);
+    union SceneCell *work = (union SceneCell *)(((u8 *)gMapWork[0]) + 260);
     s32 hofs;
 
     sSplitLine = 192 - work[1].h[1];

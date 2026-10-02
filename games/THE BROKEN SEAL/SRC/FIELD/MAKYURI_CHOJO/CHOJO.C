@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -24,7 +25,6 @@ struct MapWork {
 };
 
 /* The map work, read here as its layers. */
-extern void *gMapWork;
 
 struct SceneActor {
     u8 unk_00[6]; u16 angle; s32 x,y,z; u8 unk_14[20];
@@ -170,7 +170,7 @@ s32 MakyuriChojo_ApplyEntryState(void)
     } else if (gGameState.entrance == 2) {
         if (!Engine_GameFlagIsSet(0x251)) {
             {
-                struct MapLayer *layer = &((struct MapWork *)gMapWork)->layers[7];
+                struct MapLayer *layer = &((struct MapWork *)gMapWork[0])->layers[7];
 
                 layer->y = 0x4000000;
             }
@@ -1220,9 +1220,9 @@ void RunScene59Sequence(void)
     {
         void **scene_system_cell;
         Camera_MoveTo(PIXELS(0x98), -1, PIXELS(0xD8), 1);
-        scene_system_cell = (void **)(gCam + 0x164);
+        scene_system_cell = (void **)(((u8 *)gMapWork[0]) + 0x164);
         FIELD(scene_system_cell, s32 *, 0xC) = 0x03800000;
-        scene_system_cell = (void **)&gCam;
+        scene_system_cell = (void **)gMapWork;
         Engine_MapRedraw();
         Engine_TaskWait(1);
         FIELD(Actor_Get(9), s8 *, 0x55) = 0;
@@ -1462,7 +1462,7 @@ void RunScene59Sequence(void)
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     {
         void **record;
-        record = (void **)(gCam + 0x164);
+        record = (void **)(((u8 *)gMapWork[0]) + 0x164);
         FIELD(record, s32 *, 0xC) = 0x04000000;
     }
     Engine_MapRedraw();
@@ -1478,7 +1478,7 @@ void FieldScene_RunScene39d_02002ddc(void)
     s32 record;
     u8 *work;
 
-    work = gCam + 0x164;
+    work = ((u8 *)gMapWork[0]) + 0x164;
     Engine_EventBegin();
     *(s32 *)(work + 12) = 0x3800000;
     Engine_MapRedraw();
@@ -1648,7 +1648,7 @@ void MakyuriChojo_LowerCollectedActors(void)
     s32 speed;
     u8 *actor;
 
-    work = *(u8 **)&gMapWork + 0x164;
+    work = ((u8 *)gMapWork[0]) + 0x164;
     speed = 0x1999;
     n = 0;
     for (i = 0; i <= 4; i++)
@@ -1690,7 +1690,7 @@ void MakyuriChojo_RaiseCollectedActors(void)
     s32 speed;
     u8 *actor;
 
-    work = *(u8 **)&gMapWork + 0x164;
+    work = ((u8 *)gMapWork[0]) + 0x164;
     speed = 0x18000;
     n = 0;
     for (i = 0; i <= 4; i++)

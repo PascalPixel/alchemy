@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "IMIRU.H"
 #include "CALL.H"
 
@@ -135,14 +136,14 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
     r = GameFlag_IsSet(g);
     if (r != 0)
         return;
-    (*(State **)&gMapWork)->unk17 = r;
+    ((State *)gMapWork[0])->unk17 = r;
     ((void (*)(s32))Engine_GameFlagSet)(g);
     GameFlag_Clear(h);
     return;
 
 rest:
     if (x > 0xE80000 && obj->unkC > 0x1E0000 && y > 0xD40000) {
-        st = *(State **)&gMapWork;
+        st = gMapWork[0];
         st->unk17 = 0;
         ((void (*)(s32))Engine_GameFlagSet)(g);
         GameFlag_Clear(h);
@@ -151,7 +152,7 @@ rest:
     r = GameFlag_IsSet(h);
     if (r != 0)
         return;
-    st = *(State **)&gMapWork;
+    st = gMapWork[0];
     st->unk17 = 1;
     ((void (*)(s32))Engine_GameFlagSet)(h);
     GameFlag_Clear(g);

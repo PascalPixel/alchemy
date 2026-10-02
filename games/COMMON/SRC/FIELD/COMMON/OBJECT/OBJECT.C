@@ -18,7 +18,6 @@
 #include "SYSTEM.H"
 
 extern u8 ResourceTableEntries[];
-extern u8 gCam[];
 
 /* map/shared/Map_RenderAnimatedTileFrame.c */
 struct MapBase {
@@ -217,7 +216,7 @@ void Map_RenderAllAnimatedTileFrames(u8 **tbl, s32 cnt)
 
 s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out)
 {
-    u8 *state = *(u8 **)((u32)&gCam);
+    u8 *state = gMapWork[0];
     s32 *org = (s32 *)(state + 228);
     s32 a;
     s32 b;

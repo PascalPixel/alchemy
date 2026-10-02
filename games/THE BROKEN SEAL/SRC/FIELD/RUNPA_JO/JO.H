@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #ifndef RUNPA_JO_JO_H
 #define RUNPA_JO_JO_H
 
@@ -133,7 +134,6 @@ enum ActorPriorityFlag {
 };
 
 /* The map work cell; the event work pointer follows it at +0x4c. */
-extern u8 gCam[];
 
 /* Import veneers named by the staged-actor code. */
 void Battle_WaitMode0(s32 frames);
@@ -438,12 +438,6 @@ static inline void Event_CloseScreen(void)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
     Engine_EventCloseScreen();
-}
-
-static inline void Event_End(void)
-{
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
-    Engine_EventEnd();
 }
 
 static inline struct FieldActor *Event_GetViewCenter(void)

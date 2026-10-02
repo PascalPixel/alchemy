@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 /* Field effects: set up 32 motes on the terrain around the map position, the blend registers and their update callback. */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -31,7 +32,6 @@ struct MoteWork {
 
 struct Blend { u16 cnt; u16 alpha; u16 y; };
 
-extern s32 **gMapWork;
 extern const u8 FieldFx_MoteTiles[];
 
 struct Sparkle {
@@ -243,7 +243,7 @@ void FieldMotes_Start(void)
     work->vram = VramBlock_LoadCached(work->resource, 0x300, tiles);
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
-        s32 *pos = *gMapWork;
+        s32 *pos = *((s32 **)gMapWork[0]);
         register s32 *p asm("r1") = &mote->state; /* FAKEMATCH: steps the fields through r1 */
         s32 x, z;
         *p++ = 0;
@@ -372,7 +372,7 @@ void FieldEffect_InitSparkles(void)
     clear = 0;
 loop:
     {
-        struct FieldView *view = ((struct FieldView *)gMapWork);
+        struct FieldView *view = gMapWork[0];
         /* FAKEMATCH: keeps the leader pointer in r2 */
         register s32 *leader asm("r2");
         union DustWord *attr;

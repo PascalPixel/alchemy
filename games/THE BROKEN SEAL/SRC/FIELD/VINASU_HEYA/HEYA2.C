@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "ENTRY_SETUP.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -36,7 +37,7 @@ void VinasuHeya_RetractBridge(void)
     u32 i;
     s32 dust_x;
 
-    layer = &(*(struct MapWork * *)&gMapWork)->layer;
+    layer = &((struct MapWork *)gMapWork[0])->layer;
     leader = Object_GetById(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
@@ -99,7 +100,7 @@ void VinasuHeya_ExtendBridge(void)
     u32 i;
     s32 dust_x;
 
-    layer = &(*(struct MapWork * *)&gMapWork)->layer;
+    layer = &((struct MapWork *)gMapWork[0])->layer;
     leader = Object_GetById(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;

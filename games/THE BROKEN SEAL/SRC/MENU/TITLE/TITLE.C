@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 /* The title overlay: its scene tables. */
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
@@ -71,7 +72,6 @@ static __inline__ void RestoreInterrupts(u32 saved)
     } while (0)
 
 
-extern struct MapRenderWork *gMapWork;
 extern u16 gBgScroll[];
 
 static __inline__ void DecodeBackground(const u8 *res)
@@ -389,5 +389,5 @@ col:
         scroll++;
     }
     Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, DMA3);
-    (*(struct TitleWork **)&gMapWork)->mode = 0x1400;
+    ((struct TitleWork *)gMapWork[0])->mode = 0x1400;
 }

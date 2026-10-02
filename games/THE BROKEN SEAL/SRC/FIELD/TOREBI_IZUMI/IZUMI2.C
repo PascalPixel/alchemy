@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
@@ -7,7 +8,6 @@ struct Workspace {
     struct FieldActor actor;
 };
 
-extern struct Workspace *gMapWork;
 extern const u16 TorebiIzumi_AlphaSteps[];
 
 extern u8 MsgTorebiBadComeBack[];
@@ -31,7 +31,7 @@ void Event_SetPair1c0AndSetValue170(s32 value, s32 mode);
 /* Lifts the workspace actor sixteen pixels with a cue, then steps the blend alpha through its eight-entry table. */
 void TorebiIzumi_RiseAndFadeIn(void)
 {
-    u8 *p = (u8 *)gMapWork;
+    u8 *p = gMapWork[0];
     s32 i;
 
     Engine_AudioPlayCue(216);

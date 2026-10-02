@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -70,7 +71,6 @@ extern u8 MsgFuneDidntDoAnything[];
 
 /* The map work pointer heads the field's IWRAM pointer block; the event
    work pointer is its twentieth word. */
-extern u8 *gMapWork;
 extern s32 FuneKanpan_WaveAngleX;
 extern s32 FuneKanpan_WaveAngleY;
 extern s32 FuneKanpan_LayerScroll[];
@@ -910,7 +910,7 @@ void FieldScene_RunScene3af_020012f0(void)
    apply the entry state again. */
 s32 FuneKanpan_ResetDeck(void)
 {
-    u8 **base = &gMapWork;
+    u8 **base = ((u8 * *)gMapWork);
     u8 *map = base[0] + 0x104;
 
     Engine_GameFlagClear(0x11c);
@@ -1008,7 +1008,7 @@ void FuneKanpan_ApplyEntryState(void)
         return;
     }
     if (Engine_GameFlagIsSet(0x93e) != 0) {
-        *(s32 *)(gMapWork + 236) = 0x410000;
+        *(s32 *)(((u8 *)gMapWork[0]) + 236) = 0x410000;
     } else if (Engine_GameFlagIsSet(0x8a0) != 0) {
         ((void (*)(void))FuneKanpan_PlaceDeckActors)();
     } else if (Engine_GameFlagIsSet(0x92b) != 0) {
@@ -1187,7 +1187,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
     s32 record;
     s32 v5;
 
-    *(s32 *)(*(s32 *)&gMapWork + 236) = 0x410000;
+    *(s32 *)((s32)gMapWork[0] + 236) = 0x410000;
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScriptE);
     Engine_TaskWait(1);
@@ -2205,7 +2205,7 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
  * wrapping the scroll within two cells. */
 void FuneKanpan_RockDeck(void)
 {
-    struct MapWork *map = ((struct MapWork *)gMapWork);
+    struct MapWork *map = ((struct MapWork *)gMapWork[0]);
     s32 *camera = map->camera;
     s32 dx = Engine_MathCos(FuneKanpan_WaveAngleX);
     s32 dy = Engine_MathSin(FuneKanpan_WaveAngleY);

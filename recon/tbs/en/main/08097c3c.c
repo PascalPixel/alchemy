@@ -49,7 +49,7 @@ extern struct PreviewWork *gEffectWork;
 extern u32 gKeysHeld;
 extern u32 gFrameCount;
 extern u32 gKeyState;
-extern const u8 Data_0809f0bc[];
+extern const u8 BattleFx_SourceHoldScript[];
 extern const u8 Data_0809f118[];
 extern const u8 Value_00006666;
 extern const u8 Value_00003333;
@@ -119,7 +119,7 @@ void FunctionHead_08097c3c(void)
         return;
     BattleEffect_InitializeSharedScene();
     parent->object.linked_object = &actor->object;
-    ObjectDispatch_InitializeFar(parent, Data_0809f0bc);
+    ObjectDispatch_InitializeFar(parent, BattleFx_SourceHoldScript);
     preview = BattleFx_StartItemBreak(parent);
     if (!(preview != 0)) {
         BattleFx_PrepareBufferInterpolation();

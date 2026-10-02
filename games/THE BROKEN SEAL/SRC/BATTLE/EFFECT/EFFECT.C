@@ -8,7 +8,7 @@ void BattleFx_MarkChildAndRunFallbackTransition(s32 obj_id);
 void BattleEffect_RunFallbackObjectTransition(void);
 void FunctionHead_08097c3c(s32);
 void BattleEffect_RunTargetedItemBreak(s32);
-void Battle_unk3_2(s32);
+void BattleFx_SteerLiftedTarget(s32);
 void BattleFx_CallEffect04(s32);
 void BattleFx_CallEffect05(s32);
 void BattleFx_StartOrbitingParticles(s32);
@@ -196,7 +196,7 @@ void BattleFx_DispatchRequestKind(void)
         BattleEffect_RunTargetedItemBreak(target_id);
         break;
     case 11:
-        Battle_unk3_2(target_id);
+        BattleFx_SteerLiftedTarget(target_id);
         break;
     case 4:
         BattleFx_CallEffect04(target_id);

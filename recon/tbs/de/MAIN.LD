@@ -443,7 +443,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.0009d096)
     "*/recon/tbs/de/rom.o"(.rom.0009d098)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLES.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0009d44c)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/LIFT_DROP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT16.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_OBJECT_MOTION_SCALE_AND_LINKED_ANGLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident)

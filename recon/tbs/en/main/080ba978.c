@@ -68,6 +68,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
     struct BattlePresentationTransition *transition = gTransitionWork;
     struct MotionObject *object;
     s32 scripted;
+    s32 i;
 
     if (input->flags & 0x40000) {
         transition->target_yaw = input->primary <= 7 ? -0x2000 : 0x5000;
@@ -75,13 +76,14 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
     } else {
         struct MotionObject *actor = GetBattleObjectSlot(input->primary)->object;
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
+        u32 primary = input->primary;
         s32 current = angle - 0x1800;
-        if (input->primary > 7)
+        if (primary > 7)
             current = angle + 0x1800;
         current = (s16)current;
-        current += ((input->primary <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        if (SameSide(input->primary, input->secondary))
-            current = input->primary <= 7 ? 0x2400 : -0x2400;
+        current += ((primary <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
+        if (SameSide(primary, input->secondary))
+            current = primary <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;
     }
@@ -110,13 +112,11 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         work.secondary_is_low_id = 0;
 
     {
-    s32 i;
     for (i = 0; i != work.entry_count; i++) {
         struct MotionEntry *entry = GetMotionRecord(
             GetBattleObjectSlot(work.members[i])->object, 0);
-        s32 count = entry->count - 1;
         s32 j;
-        for (j = 0; j != count; j++)
+        for (j = 0; j != entry->count - 1; j++)
             work.values[i][j] =
                 ((struct MotionChild *)entry->children[j])->value;
     }
@@ -143,7 +143,6 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         BattleEventRuntime_WaitForReady();
         Object_SetMode(object, 1);
         {
-        s32 i;
         for (i = 0; i != work.entry_count; i++)
             Actor_ResetMotionAtAnchor(work.members[i]);
         }

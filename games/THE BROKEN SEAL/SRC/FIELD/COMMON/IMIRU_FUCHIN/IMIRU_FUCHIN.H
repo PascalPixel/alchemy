@@ -178,7 +178,7 @@ void ImiruFuchin_HopBy(s32 dx, s32 dz);
 static __inline__ void AdvanceProbe(s32 heading, s32 *probe)
 {
     /*
-     * Keep this call behind an inline boundary: it is what makes sp+8 be
+     * FAKEMATCH: keep this call behind an inline boundary: it is what makes sp+8 be
      * rematerialized for argument 2 before the split 0x100000 constant is
      * completed.
      */

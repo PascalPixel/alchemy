@@ -37,7 +37,6 @@ struct SpriteTile { u16 pad, base; };
 
 struct SpriteTransform { unsigned x : 16; unsigned y : 16; unsigned angle : 16; unsigned pad : 16; };
 
-/* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
 struct Half { u16 value; };
 
 extern struct SpriteTile gVramBlockCache[];
@@ -53,8 +52,6 @@ extern void Resource_ResetEntry(s32 slot);
 extern s32 AffineMatrix_BuildForEffect(struct SpriteTransform *work);
 extern void Runtime_PushSlotEntry(void *sprite, s32 priority);
 
-/* FAKEMATCH: transfer the exact queue read boundary and count-store alias.
- * Each publication owns its cursor; only the hardware pointers persist. */
 #define QueueRegister(address, value) \
 { \
     u32 saved; \
@@ -92,6 +89,9 @@ void Korosseo_LoadPortrait(s32 id)
 
 void Korosseo_UpdateModeTask(void)
 {
+    /* FAKEMATCH: transfer the exact queue read boundary and count-store alias.
+     * Each publication owns its cursor; only the hardware pointers persist. */
+    /* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
     s32 tile = gVramBlockCache[Korosseo_PortraitSlot].base >> 5;

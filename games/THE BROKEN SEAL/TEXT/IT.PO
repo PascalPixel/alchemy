@@ -12971,7 +12971,7 @@ msgctxt "MsgPriceHeading"
 msgid "03240"
 msgstr "Costo"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03241"
 msgstr "Non attivabile"
 
@@ -13011,7 +13011,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03250"
 msgstr "Non puoi riporre strum.!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03251"
 msgstr "ATT"
 

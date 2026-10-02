@@ -822,20 +822,20 @@ s32 StageSetup_BuildAndDispatch(void)
     rec[85] = 0;
     *(s32 *)(rec + 12) = 0x200000;
 
-    rec = ((u8 * (*)())Object_GetById)(11);
+    rec = (u8 *)Object_GetById(11);
     Engine_ActorSetSpriteFlags(rec, 0);
     rec[85] = 0;
     *(s32 *)(rec + 12) = 0x40000;
 
     if (Engine_GameFlagIsSet(866) != 0) {
         Engine_ActorSetAnimation(9, 5);
-        rec = ((u8 * (*)())Object_GetById)(10);
+        rec = (u8 *)Object_GetById(10);
         *(s32 *)(rec + 12) = 0x40000;
-        rec = ((u8 * (*)())Object_GetById)(11);
+        rec = (u8 *)Object_GetById(11);
         *(s32 *)(rec + 12) = 0x200000;
         Call6(Engine_MapCopyCellAttributes, 15, 12, 1, 1, 13, 12);
     } else {
-        rec = ((u8 * (*)())Object_GetById)(9);
+        rec = (u8 *)Object_GetById(9);
         *(s32 *)(rec + 24) = 0x18000;
         *(s32 *)(rec + 28) = 0x18000;
         if (Engine_GameFlagIsSet(871) != 0) {
@@ -848,15 +848,15 @@ s32 StageSetup_BuildAndDispatch(void)
     if (Engine_GameFlagIsSet(872) != 0) {
         Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, 12);
         Engine_MapCopyCellAttributes(1, 25, 1, 1, 9, 12);
-        rec = ((u8 * (*)())Object_GetById)(12);
+        rec = (u8 *)Object_GetById(12);
         Engine_ActorSetSpriteFlags(rec, 0);
         rec[85] = 0;
         *(s32 *)(rec + 12) = 0x20000;
         rec[35] = 2;
-        rec = ((u8 * (*)())Object_GetById)(10);
+        rec = (u8 *)Object_GetById(10);
         *(s32 *)(rec + 12) = 0x40000;
         rec[35] = 2;
-        rec = ((u8 * (*)())Object_GetById)(11);
+        rec = (u8 *)Object_GetById(11);
         *(s32 *)(rec + 12) = 0x200000;
     }
 
@@ -864,7 +864,7 @@ s32 StageSetup_BuildAndDispatch(void)
     if (cnt == 0) {
         cnt = 19;
     }
-    rec = ((u8 * (*)())Object_GetById)(13);
+    rec = (u8 *)Object_GetById(13);
     *(s32 *)(rec + 8) = (cnt << 20) + 0x80000;
     rec[85] = 0;
     rec[35] = 2;
@@ -875,7 +875,7 @@ s32 StageSetup_BuildAndDispatch(void)
      * grid is planted and drawn twice, once on its own row and once 52 rows
      * further down. */
     for (i = 15; i <= 17; i++) {
-        rec = ((u8 * (*)())Object_GetById)(i);
+        rec = (u8 *)Object_GetById(i);
         hit = Map_GetTerrainHeight(0, *(s32 *)(rec + 8), *(s32 *)(rec + 16));
         if (*(s32 *)(rec + 12) == 0 && hit == 0) {
             rec[35] = 2;
@@ -899,10 +899,10 @@ s32 StageSetup_BuildAndDispatch(void)
         val = 33;
         row = 11;
         for (; i <= 22; i++) {
-            rec = ((u8 * (*)())Object_GetById)(i);
+            rec = (u8 *)Object_GetById(i);
             rec[35] = mode;
             Object_SetMode(rec, 2);
-            rec = ((u8 * (*)())Object_GetById)(i + 5);
+            rec = (u8 *)Object_GetById(i + 5);
             rec[35] = mode;
             rec[85] = state;
             *(s32 *)(rec + 12) = 0x200000;
@@ -920,9 +920,9 @@ s32 StageSetup_BuildAndDispatch(void)
         state = 0;
         mode = 2;
         for (; i <= 22; i++) {
-            rec = ((u8 * (*)())Object_GetById)(i);
+            rec = (u8 *)Object_GetById(i);
             rec[35] = mode;
-            rec = ((u8 * (*)())Object_GetById)(i + 5);
+            rec = (u8 *)Object_GetById(i + 5);
             rec[35] = mode;
             rec[85] = state;
             *(s32 *)(rec + 12) = 0x200000;
@@ -937,7 +937,7 @@ s32 StageSetup_BuildAndDispatch(void)
 
     if (Engine_GameFlagIsSet(867) != 0) {
         Map_SetLayerEntryFlag(1);
-        rec = ((u8 * (*)())Object_GetById)(30);
+        rec = (u8 *)Object_GetById(30);
         rec[85] = 0;
         *(s32 *)(rec + 8) = 0x046a0000;
         *(s32 *)(rec + 16) = 0xb80000;
@@ -949,13 +949,13 @@ s32 StageSetup_BuildAndDispatch(void)
     }
 
     if (Engine_GameFlagIsSet(873) != 0) {
-        rec = ((u8 * (*)())Object_GetById)(31);
+        rec = (u8 *)Object_GetById(31);
         Object_SetMode(rec, 8);
         rec[35] = 2;
         Engine_MapCopyCellAttributes(86, 10, 1, 2, 84, 10);
         Engine_MapCopyCellAttributes(86, 9, 1, 1, 84, 12);
     } else {
-        rec = ((u8 * (*)())Object_GetById)(31);
+        rec = (u8 *)Object_GetById(31);
         Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, *(s32 *)(rec + 8) >> 20, 9);
         Call6(Engine_MapCopyCellAttributes, 85, 9, 1, 4, *(s32 *)(rec + 8) >> 20, 61);
     }
@@ -966,13 +966,13 @@ s32 StageSetup_BuildAndDispatch(void)
 
         state = 0;
         mode = 2;
-        rec = ((u8 * (*)())Object_GetById)(9);
+        rec = (u8 *)Object_GetById(9);
         rec[85] = state;
         rec[35] = mode;
-        rec = ((u8 * (*)())Object_GetById)(10);
+        rec = (u8 *)Object_GetById(10);
         rec[85] = state;
         rec[35] = mode;
-        rec = ((u8 * (*)())Object_GetById)(11);
+        rec = (u8 *)Object_GetById(11);
         rec[85] = state;
         rec[35] = mode;
         Engine_ActorSetAnimation(8, 9);
@@ -1325,12 +1325,11 @@ void Korosseo_RunGreetScene(s32 a0)
 {
     s32 p10;
     s32 p9;
-    s32 record;
-    s32 v6;
+    struct FieldActor *record;
 
-    record = ((s32 (*)())Object_GetById)(a0);
-    p9 = *(s16 *)(record + 10);
-    p10 = *(s16 *)(record + 18);
+    record = Object_GetById(a0);
+    p9 = record->x.part.pixel;
+    p10 = record->z.part.pixel;
     Engine_EventBegin();
     Call3(Engine_ActorSetSpeed, a0, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
@@ -1342,11 +1341,8 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_ActorSetPosition(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
     Engine_ActorSetPosition(3, (p9 << 16), ((p10 << 16) - 0x200000));
     Engine_ActorSetPosition(a0, (p9 << 16), ((p10 << 16) - 0x500000));
-    /* FAKEMATCH: the facing is built from a parked local, which keeps its
-     * constant in the register the reference holds it in for both uses. */
-    v6 = 192;
-    record = ((s32 (*)())Object_GetById)(0);
-    *(u16 *)(record + 6) = (v6 << 8);
+    record = Object_GetById(0);
+    record->facing = 0xc000;
     Engine_CameraFollowActor(0, 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -1365,19 +1361,19 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(1, 2);
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(2, 2);
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(2, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(3, 2);
-    record = ((s32 (*)())Object_GetById)(0);
+    record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(3, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 64));
     Engine_ActorSetPosition(1, 0, 0);
@@ -1385,7 +1381,7 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_ActorSetPosition(3, 0, 0);
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 16));
     Engine_ActorWalkToAndWait(a0, p9, p10);
-    Engine_ActorFaceDirection(a0, (v6 << 8), 10);
+    Engine_ActorFaceDirection(a0, 0xc000, 10);
     Engine_EventEnd();
 }
 

@@ -10,8 +10,6 @@
 s32 Object_CheckMovementCollision(struct FieldActor *object, struct FixedPointPosition *position);
 void ObjectDispatch_ApplyArgumentToChildren(struct FieldActor *object, s32 mode);
 
-/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
- * this file's code made before it shared the header's declaration. */
 
 void Owner_RecalculateStats();
 
@@ -301,31 +299,31 @@ void ActorPresentation_SetSceneCellByAngle(void)
     struct FieldActor *obj;
 #endif
 
-    if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0xa000
-        && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0xe000) {
+    if (Object_GetById(0)->facing >= 0xa000
+        && Object_GetById(0)->facing <= 0xe000) {
 #if EDITION_INTERNATIONAL
         Engine_LeaderCheckAhead();
 #else
-        obj = ((struct FieldActor *(*)())Object_GetById)(0);
+        obj = Object_GetById(0);
         pos = &target;
         pos->x = obj->x.fixed;
-        pos->y = ((struct FieldActor *(*)())Object_GetById)(0)->y.fixed;
-        pos->z = ((struct FieldActor *(*)())Object_GetById)(0)->z.fixed - 0x1e0000;
+        pos->y = Object_GetById(0)->y.fixed;
+        pos->z = Object_GetById(0)->z.fixed - 0x1e0000;
         KuupuappuHeya_TryJumpTo(pos);
 #endif
         x = 42;
         z = 85;
         Map_CopyCellAttributes(41, 85, 1, 1, x, z);
-    } else if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0x2000
-               && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0x6000) {
+    } else if (Object_GetById(0)->facing >= 0x2000
+               && Object_GetById(0)->facing <= 0x6000) {
 #if EDITION_INTERNATIONAL
         Engine_LeaderCheckAhead();
 #else
-        obj = ((struct FieldActor *(*)())Object_GetById)(0);
+        obj = Object_GetById(0);
         pos = &target;
         pos->x = obj->x.fixed;
-        pos->y = ((struct FieldActor *(*)())Object_GetById)(0)->y.fixed;
-        pos->z = ((struct FieldActor *(*)())Object_GetById)(0)->z.fixed + 0x1e0000;
+        pos->y = Object_GetById(0)->y.fixed;
+        pos->z = Object_GetById(0)->z.fixed + 0x1e0000;
         KuupuappuHeya_TryJumpTo(pos);
 #endif
         x = 42;
@@ -395,7 +393,7 @@ void FieldScene_RunActorNineteenAngleDialogue(void)
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 void FieldScene_RunActorTwentyAngleDialogue(void)
 {
-    s32 v = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
+    s32 v = Object_GetById(0)->facing;
 
     Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {
@@ -413,7 +411,7 @@ void FieldScene_RunActorTwentyAngleDialogue(void)
 
 void FieldScene_RunActorTwentyThreeAngleDialogue(void)
 {
-    s32 v = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
+    s32 v = Object_GetById(0)->facing;
 
     Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {
@@ -519,7 +517,7 @@ void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 
 void SceneState_RunGuardedActorStep(s32 x)
 {
-    u8 *flag = (u8 *)((s32 (*)())Object_GetById)() + 91;
+    u8 *flag = &Object_GetById(x)->unknown_5b;
     s32 zero = 0;
 
     *flag = 1;
@@ -564,7 +562,7 @@ void FieldScene_RunScene383_02000428(void)
 
 void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
 {
-    s32 value = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
+    s32 value = Object_GetById(0)->facing;
 
     Engine_EventBegin();
     if (value >= 0xa001 && value <= 0xdfff) {

@@ -896,12 +896,11 @@ void Korosseo_RunGreetScene(s32 a0)
 {
     s32 p10;
     s32 p9;
-    s32 record;
-    s32 v6;
+    struct FieldActor *record;
 
     record = Object_GetById(a0);
-    p9 = *(s16 *)(record + 10);
-    p10 = *(s16 *)(record + 18);
+    p9 = record->x.part.pixel;
+    p10 = record->z.part.pixel;
     Engine_EventBegin();
     Call3(Engine_ActorSetSpeed, a0, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
@@ -913,11 +912,8 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_ActorSetPosition(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
     Engine_ActorSetPosition(3, (p9 << 16), ((p10 << 16) - 0x200000));
     Engine_ActorSetPosition(a0, (p9 << 16), ((p10 << 16) - 0x500000));
-    /* FAKEMATCH: the facing is built from a parked local, which keeps its
-     * constant in the register the reference holds it in for both uses. */
-    v6 = 192;
     record = Object_GetById(0);
-    *(u16 *)(record + 6) = (v6 << 8);
+    record->facing = 0xc000;
     Engine_CameraFollowActor(0, 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
@@ -938,17 +934,17 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_ActorSetAnimation(1, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(1, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(2, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(2, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorSetAnimation(3, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(3, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 64));
     Engine_ActorSetPosition(1, 0, 0);
@@ -956,7 +952,7 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_ActorSetPosition(3, 0, 0);
     Engine_ActorWalkToAndWait(a0, (p9 - 16), (p10 - 16));
     Engine_ActorWalkToAndWait(a0, p9, p10);
-    Engine_ActorFaceDirection(a0, (v6 << 8), 10);
+    Engine_ActorFaceDirection(a0, 0xc000, 10);
     Engine_EventEnd();
 }
 
@@ -965,7 +961,7 @@ void Korosseo_RunGreetScene(s32 a0)
 void KorosseoKabe_RunStageIntro(s32 a0)
 {
     s32 rec;
-    s32 record;
+    struct FieldActor *record;
 
     if (gCell[225] == 2) {
         Korosseo_FinishSoloRound();
@@ -987,8 +983,8 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x4c8, 248);
             SceneActor_PlaceWithScale14000(0, 0x4a8, 248);
             Engine_EventWait(3);
-            record = ((s32 (*)())Object_GetById)(0);
-            *(s32 *)(record + 40) = 0x40000;
+            record = Object_GetById(0);
+            record->velocity_y = 0x40000;
             Engine_ActorSetAnimation(0, 28);
             Engine_ActorSetAttachedEffect(0, 0x102);
             Engine_EventWait(30);

@@ -259,12 +259,6 @@ UiText_MeasureStringVariant:
 	.global Func_08018cac
 Func_08018cac:
 	.incbin "baserom.gba", 0x00018c4c, 0x00000268
-	.section .rom.00018eb4, "ax"
-	.global UiWindow_PutGlyph
-	.type UiWindow_PutGlyph, %function
-	.thumb_func
-UiWindow_PutGlyph:
-	.incbin "baserom.gba", 0x00018eb4, 0x00000148
 	.section .rom.000191c8, "ax"
 	.global UiWork_AnimateSpriteSlots
 	.type UiWork_AnimateSpriteSlots, %function

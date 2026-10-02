@@ -1,47 +1,54 @@
-/* Not-yet-C: complete 808-byte effect including its final pool.
- * Reused RunBattleEffect04's explicit default/override position stores;
- * this recovers the observed second Y store: 816 bytes / 161 aligned edits.
- * The ROM forms +0xc000 immediately but pool-loads -0xc000. Correcting those
- * two sources recovers the latter multiply but strength-reduces the former
- * loop into a second induction value: 824 bytes / 165 edits.
- * Initializing the first step before Object_Spawn and using it as the zero
- * X argument restores its early r8 lifetime and target in sl: 820 bytes,
- * 365 differing halfwords / 161 aligned edits, with the correct 44-byte
- * frame. Neither result is an exact match. Three bounded models stopped.
- * Remaining: start/end pointer spills, initial Y snapshot, first scale-loop
- * strength reduction, child-byte mask representation, and loop end tests.
- * The prior 808-byte baseline remains in Git. No new DONE credit. */
+/* DRAFT of RunBattleEffect05: an orb rises from the source object to a point
+   one step ahead, sheds particles there (random-angle triplets, or drifting
+   fall objects for the alternate form), and returns.
+   Not exact: 828 of 808 bytes. In place: the sprite's mode as a two-bit
+   field, the step count as a variable (the reference ends its glide loops
+   cmp #11; blt), named callbacks. Remaining: the reference multiplies the
+   step by the scale rate on every pass and rebuilds the rate there, where
+   the loop pass here turns it into a running sum; it keeps the end pointer
+   in r11 (here spilled) and reaches the particle position through r10 for
+   the offset and r6 after it. */
 #include "TYPES.H"
-extern u8 Value_0000c000;
-extern u8 Value_ffff4000;
-extern u8 Value_00004000;
-extern u8 Value_0000011c;
 
 struct Vec3 { s32 x, y, z; };
-struct EffectTarget { u8 reserved_00[8]; struct Vec3 position; };
+
+struct EffectTarget {
+    u8 reserved_00[8];
+    struct Vec3 position;
+};
+
+struct EffectSprite {
+    u32 unknown_00[2];
+    u8 unknown_08;
+    u32 unknown_09_0 : 2;
+    u32 mode : 2;               /* 0x09, bits 2-3 */
+    u32 unknown_09_4 : 4;
+};
+
 struct EffectObject {
     u8 reserved_00[8];
     s32 x, y, z;
     s32 altitude;
     s32 scale_x, scale_y;
     u8 reserved_20[0x30];
-    u8 *child;
+    struct EffectSprite *sprite;    /* 0x50 */
     u8 reserved_54;
-    u8 mode;
+    u8 flag;                        /* 0x55 */
     u8 reserved_56[0x16];
-    void *callback;
+    void *callback;                 /* 0x6c */
 };
+
 struct Effect05State {
     s32 angle;
     s32 x, y, z;
-    struct EffectTarget *target;
-    s32 initialized;
+    struct EffectTarget *target;    /* 0x10 */
+    s32 initialized;                /* 0x14 */
     u8 reserved_18[8];
-    s8 high_arc;
+    u8 high_arc;                    /* 0x20 */
     u8 reserved_21[0x13];
-    s8 variant;
+    u8 variant;                     /* 0x34 */
     u8 reserved_35[0x10];
-    s8 alternate;
+    u8 alternate;                   /* 0x45 */
 };
 
 extern struct Effect05State *gEffectWork;
@@ -50,101 +57,117 @@ void WaitFrames(s32);
 s32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct Vec3 *);
 void Object_SetMode(struct EffectObject *, s32);
-void Object_Destroy(struct EffectObject *);
+void ObjectDispatch_ReleaseFar(struct EffectObject *);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 void Animation_ApplyChildValuesFar(struct EffectObject *, s32);
 struct EffectObject *Object_Spawn(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
-void Audio_PlayCue(s32);
+void AudioCommand_PlayFar(s32);
+void BattleFx_SpawnRandomAngleTriplet(void);
+void BattleFx_UpdateDriftingFallObject(void);
 
-static inline s32 Interpolate(s32 start, s32 end, s32 step)
+static __inline__ s32 Interpolate(s32 start, s32 end, s32 step)
 {
     return start + __divsi3(step * (end - start), 10);
 }
 
 void RunBattleEffect05(void)
 {
-    struct Effect05State *state = gEffectWork;
-    struct EffectTarget *target = state->target;
-    struct EffectObject *main;
     struct Vec3 spawn;
     struct Vec3 start;
     struct Vec3 end;
-    s32 i;
+    struct Effect05State *state = gEffectWork;
+    struct EffectTarget *target = state->target;
+    struct EffectObject *main;
+    struct Vec3 *from;
+    struct Vec3 *to;
+    struct Vec3 *at;
+    s32 i = 0;
+    s32 steps = 11;
+    s32 grow = 0xc000;
+    s32 shrink = -0xc000;
     s32 count;
 
-    /* FAKEMATCH: the first step also supplies the spawn's zero X. */
-    i = 0;
-    main = Object_Spawn(0xef, i, 0, 0);
+    main = Object_Spawn(0xef, 0, 0, 0);
     if (main == 0)
         return;
     BattleEffect_InitializeSharedScene();
-    Audio_PlayCue(0x8a);
+    AudioCommand_PlayFar(0x8a);
     if (state->initialized == 0) {
         state->x = target->position.x;
         state->z = target->position.z;
         Vector_AddPolarOffset(0x100000, state->angle, (struct Vec3 *)&state->x);
         state->y = Map_GetTerrainHeightFar(0, state->x, state->z);
     }
-    start.x = target->position.x;
-    start.y = target->position.y + 0x100000;
-    start.z = target->position.z;
-    end.x = state->x;
-    end.y = state->y + 0x200000;
-    end.z = state->z;
-    if (state->variant != 0)
-        end.y = state->y + 0x500000;
+    from = &start;
+    from->x = target->position.x;
+    from->y = target->position.y + 0x100000;
+    from->z = target->position.z;
+    to = &end;
+    to->x = state->x;
+    to->y = state->y + 0x200000;
+    to->z = state->z;
+    if ((s8)state->variant != 0)
+        to->y = state->y + 0x500000;
 
-    for (; i < 11; i++) {
+    for (; i < steps; i++) {
         s32 scale;
+
         main->x = Interpolate(start.x, end.x, i);
         main->y = Interpolate(start.y, end.y, i);
         main->z = Interpolate(start.z, end.z, i);
-        scale = __divsi3(i * 0xc000, 10) + 0x4000;
+        scale = __divsi3(i * grow, 10) + 0x4000;
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);
     }
     WaitFrames(10);
 
-    if (state->alternate == 0) {
-        count = state->high_arc ? 10 : 24;
+    if ((s8)state->alternate == 0) {
+        count = 10;
+        if ((s8)state->high_arc == 0)
+            count = 24;
+        at = &spawn;
         for (i = 0; i < count; i++) {
             struct EffectObject *particle;
+
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
             Vector_AddPolarOffset(Random16() * 5 + 0x30000, Random16(), &spawn);
             if (i == count - 1) {
                 WaitFrames(25);
-                spawn.x = main->x;
-                spawn.y = main->y;
-                spawn.z = main->z;
+                at->x = main->x;
+                at->y = main->y;
+                at->z = main->z;
             }
-            particle = Object_Spawn(0xf0, spawn.x, spawn.y, spawn.z);
+            particle = Object_Spawn(0xf0, at->x, at->y, at->z);
             if (particle != 0) {
-                particle->altitude = spawn.y - 0x200000;
-                particle->callback = (void *)0x08099921;
-                particle->mode = 2;
+                particle->altitude = at->y - 0x200000;
+                particle->callback = BattleFx_SpawnRandomAngleTriplet;
+                particle->flag = 2;
             }
-            Audio_PlayCue(0x84);
+            AudioCommand_PlayFar(0x84);
             WaitFrames(6);
         }
         WaitFrames(10);
     } else {
-        count = state->high_arc ? 10 : 30;
+        count = 10;
+        if ((s8)state->high_arc == 0)
+            count = 30;
         for (i = count; i != 0; i--) {
             struct EffectObject *particle;
+
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;
             Vector_AddPolarOffset(Random16() * 5 + 0x30000, Random16(), &spawn);
             particle = Object_Spawn(0x11c, spawn.x, spawn.y, spawn.z);
             if (particle != 0) {
-                particle->callback = (void *)0x080999a9;
-                particle->mode = 0;
-                particle->child[9] = (particle->child[9] & ~12) | 8;
+                particle->callback = BattleFx_UpdateDriftingFallObject;
+                particle->flag = 0;
+                particle->sprite->mode = 2;
                 Object_SetMode(particle, 8);
                 Animation_ApplyChildValuesFar(particle, 7);
             }
@@ -153,16 +176,17 @@ void RunBattleEffect05(void)
         WaitFrames(70);
     }
 
-    for (i = 0; i < 11; i++) {
+    for (i = 0; i < steps; i++) {
         s32 scale;
+
         main->x = Interpolate(end.x, start.x, i);
         main->y = Interpolate(end.y, start.y, i);
         main->z = Interpolate(end.z, start.z, i);
-        scale = __divsi3(i * (s32)&Value_ffff4000, 10) + 0x10000;
+        scale = __divsi3(i * shrink, 10) + 0x10000;
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);
     }
-    Object_Destroy(main);
+    ObjectDispatch_ReleaseFar(main);
     BattleFx_PrepareBufferInterpolation();
 }

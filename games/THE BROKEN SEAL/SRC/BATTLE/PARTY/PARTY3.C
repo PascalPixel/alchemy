@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_TYPES.H"
+#include "BATTLE_RUNTIME.H"
 #include "PARTY_STATE.H"
 #include "SOUND_IDS.H"
 #include "FIXED_MATH.H"
 
 s32 Party_CountActiveOwnersFar();
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 void Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
@@ -93,19 +93,19 @@ s32 BattleParty_ApplyStatusDamage(void)
         remaining = count;
 
         do {
-            u8 *object = (u8 *)Owner_GetStateFar(*entry);
+            struct BattleUnit *unit = Owner_GetStateFar(*entry);
             s32 amount;
 
-            switch ((s8)object[0x131]) {
+            switch (unit->poison) {
             case 1:
-                amount = -((*(s16 *)(object + 0x34) + 10) / 20);
+                amount = -((unit->max_hp + 10) / 20);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 0)
                     result = 1;
                 break;
             case 2:
-                amount = -((*(s16 *)(object + 0x34) + 5) / 10);
+                amount = -((unit->max_hp + 5) / 10);
                 if (amount == 0)
                     amount = -1;
                 if (result <= 1)

@@ -62,7 +62,7 @@ removed:
 void BattleMotion_InitializeActorRecords(s32 id)
 {
     void *items[4];
-    u8 *state;
+    struct BattleUnit *state;
     u8 *item;
     u8 *child;
     s32 index;
@@ -70,14 +70,14 @@ void BattleMotion_InitializeActorRecords(s32 id)
     state = Owner_GetStateFar(id);
     index = 0;
     while ((item = GetMotionRecord(*GetBattleObjectSlot(id), index)) != 0) {
-        if (state[0x12a] != 1)
+        if (state->status_12a != 1)
             AnimationObjects_SelectAnimationFar(item, 4);
         else
             AnimationObjects_SelectAnimationFar(item, 5);
         index++;
     }
 
-    if (state[0x12a] == 1) {
+    if (state->status_12a == 1) {
         index = 0;
         while ((item = GetMotionRecord(*GetBattleObjectSlot(id), index)) != 0) {
             child = *(u8 **)(item + 40);

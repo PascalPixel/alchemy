@@ -3,67 +3,25 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
-
-extern u8 *gWindowWork;
+#include "MENU_LIST.H"
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
-extern u8 Data_03001e8c[];
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-s32 UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
-void UiWindow_DrawFrame(s32, s32, s32, s32);
-typedef void (*UiFillFn)(s32 dst, s32 size, s32 value);
+void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
+void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
+typedef s32 (*UiFillFn)(void *dst, s32 size, u32 value);
 
-/* One of the eight window records at gWindowWork + 0x500. */
-struct UiWindow {
-    s32 state;
-    struct UiWindow *self;
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-    u16 unknown_10;
-    u16 unknown_12;
-    u16 unknown_14;
-    u16 flags;
-    u16 unknown_18;
-    s16 timer;
-    u8 unknown_1c[8];
-};
-
-void WaitFrames(s32 frames);
 void UiWork_ResetCounters();
 
-struct UiWindowWork {
-    s32 unknown00;
-    s32 unknown04;
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-    u16 unknown10;
-    u16 unknown12;
-    u16 state;
-    u16 flags;
-    u16 frame;
-    s16 duration;
-    u16 previous_x;
-    u16 previous_y;
-    u16 previous_width;
-    u16 previous_height;
-};
-
-void RenderOutput_PrepareForRedraw(void *work);
-void RenderOutput_RedrawSavedRect(void *work);
+void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(void *node);
-void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWork_DrawByAttributes(void *arg0);
-void UiWork_WaitUntilField1aClear(void *work);
+void UiWork_DrawByAttributes(struct UiWindow *window);
+void UiWork_WaitUntilField1aClear(struct UiWindow *window);
 
 void UiWork_UploadDirtyBlocks(void)
 {
-    u8 *work = gWindowWork;
+    u8 *work = gWindowWork[0];
     u32 flags;
     u8 *src;
     u8 *dst;
@@ -88,7 +46,7 @@ void UiWork_UploadDirtyBlocks(void)
 
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 {
-    u8 *base = gWindowWork;
+    u8 *base = gWindowWork[0];
     u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
     s32 tile;
     u32 bottom;
@@ -135,44 +93,44 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
     base[RENDER_DIRTY_OFS] = 1;
 }
 
-void UiWork_DrawByAttributes(void *arg0)
+void UiWork_DrawByAttributes(struct UiWindow *window)
 {
-    u32 attr;
-    u32 tmp;
-    u32 v0;
-    u32 v1;
-    u32 v2;
-    u32 v3;
-    s32 dst;
+    u32 flags;
+    u32 value;
+    u32 x;
+    u32 y;
+    u32 width;
+    u32 height;
+    void *dst;
     UiFillFn fill;
-    void *work;
+    struct UiRenderWork *work;
 
     /* 描画属性に従い転送方法を切り替える。 */
-    work = *(void **)((u32)&Data_03001e8c);
-    tmp = FIELD_AT_OFFSET(arg0, u16 *, 0xA);
-    attr = FIELD_AT_OFFSET(arg0, u16 *, 0x16);
-    v3 = tmp;
-    tmp = 0;
-    FIELD_AT_OFFSET(arg0, s16 *, 0x1A) = tmp;
-    v0 = FIELD_AT_OFFSET(arg0, u16 *, 0xC);
-    v1 = FIELD_AT_OFFSET(arg0, u16 *, 0xE);
-    v2 = FIELD_AT_OFFSET(arg0, u16 *, 8);
-    if (8 & attr) {
-        if (0x20 & attr) {
-            UiWindow_DrawFrame(v0, v1, v2, v3);
-            fill = (UiFillFn)Iwram_FillWords;
-            dst = 0x06002500;
+    work = (struct UiRenderWork *)gWindowWork[0];
+    value = window->height;
+    flags = window->flags;
+    height = value;
+    value = 0;
+    window->duration = value;
+    x = window->x;
+    y = window->y;
+    width = window->width;
+    if (8 & flags) {
+        if (0x20 & flags) {
+            UiWindow_DrawFrame(x, y, width, height);
+            fill = Iwram_FillWords;
+            dst = (void *)0x06002500;
             fill(dst, 0xF00, 0x44444444);
         } else {
-            fill = (UiFillFn)Iwram_FillWords;
-            dst = 0x06002500;
+            fill = Iwram_FillWords;
+            dst = (void *)0x06002500;
             fill(dst, 0xF00, 0);
         }
-        UiWindow_MapTextCanvasTiles(v0, v1, v2, v3, 0);
+        UiWindow_MapTextCanvasTiles(x, y, width, height, 0);
     } else {
-        UiWindow_DrawFrame(v0, v1, v2, v3);
+        UiWindow_DrawFrame(x, y, width, height);
     }
-    FIELD_AT_OFFSET(work, s8 *, RENDER_DIRTY_OFS) = 1;
+    work->dirty = 1;
 }
 
 /* Open a window at a tile position and size in the first free record, with
@@ -185,10 +143,10 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
     struct UiWindow *found;
     s32 i;
 
-    slot = (struct UiWindow *)(gWindowWork + 0x500);
+    slot = (struct UiWindow *)(gWindowWork[0] + 0x500);
     found = 0;
     i = 0;
-    while ((slot->flags & 1) != 0 || slot->timer != 0) {
+    while ((slot->flags & 1) != 0 || slot->duration != 0) {
         i++;
         slot++;
         if (i == WINDOW_COUNT) {
@@ -202,9 +160,9 @@ done:
         found->width = width;
         found->height = height;
         found->x = x;
+        found->unknown_00 = 0;
         found->state = 0;
-        found->unknown_14 = 0;
-        found->self = slot;
+        found->unknown_04 = (s32)slot;
         found->unknown_10 = 1;
         found->flags = 1;
         UiWork_ResetCounters(x); /* the reset ignores the x it is passed */
@@ -225,12 +183,12 @@ done:
         }
         if (attrs & 2) {
             found->flags |= 2;
-            found->unknown_18 = 0;
-            found->timer = 1;
+            found->frame = 0;
+            found->duration = 1;
             UiWork_DrawByAttributes(found);
         } else {
-            found->timer = 8;
-            found->unknown_18 = 7;
+            found->duration = 8;
+            found->frame = 7;
             UiWork_WaitUntilField1aClear(found);
             WaitFrames(1);
         }
@@ -238,17 +196,17 @@ done:
     return found;
 }
 
-void UiWork_WaitUntilField1aClear(void *work)
+void UiWork_WaitUntilField1aClear(struct UiWindow *window)
 {
     /* 値が0になるまで更新処理を進める。 */
-    if (!(2 & ((struct UiWindowWork *)work)->flags) && (((struct UiWindowWork *)work)->duration != 0)) {
+    if (!(2 & window->flags) && window->duration != 0) {
         do {
             WaitFrames(1);
-        } while (((struct UiWindowWork *)work)->duration != 0);
+        } while (window->duration != 0);
     }
 }
 
-void UiWork_Finalize(struct UiWindowWork *work, s32 release)
+void UiWork_Finalize(struct UiWindow *work, s32 release)
 {
     u16 zero;
 
@@ -265,14 +223,14 @@ void UiWork_Finalize(struct UiWindowWork *work, s32 release)
 
     if (release != 0) {
         UiWindow_EraseBorderRect(work->x, work->y, work->width, work->height);
-        work->unknown00 = zero;
-        work->unknown04 = zero;
+        work->unknown_00 = zero;
+        work->unknown_04 = zero;
         work->width = zero;
         work->height = zero;
         work->x = zero;
         work->y = zero;
-        work->unknown10 = zero;
-        work->unknown12 = zero;
+        work->unknown_10 = zero;
+        work->unknown_12 = zero;
         work->state = zero;
         work->flags = zero;
         work->frame = zero;
@@ -287,20 +245,19 @@ void UiWork_Finalize(struct UiWindowWork *work, s32 release)
     }
 }
 
-void RenderOutput_PrepareForRedraw(void *arg0)
+void RenderOutput_PrepareForRedraw(struct UiWindow *window)
 {
     /* 属性0x8がない時だけ描画と子リストを解放する。 */
-    if (!(8 & ((struct UiWindowWork *)arg0)->flags)) {
-        RenderOutput_RedrawSavedRect(arg0);
-        RenderOutput_ClearList(arg0);
+    if (!(8 & window->flags)) {
+        RenderOutput_RedrawSavedRect(window);
+        RenderOutput_ClearList(window);
     }
 }
 
-void RenderOutput_RedrawSavedRect(void *arg0)
+void RenderOutput_RedrawSavedRect(struct UiWindow *window)
 {
     /* 保存済みの矩形を再描画する。 */
-    struct UiWindowWork *work = arg0;
-    UiWindow_DrawFrame(work->x, work->y, work->width, work->height);
+    UiWindow_DrawFrame(window->x, window->y, window->width, window->height);
 }
 
 void RenderOutput_ClearList(void *arg0)

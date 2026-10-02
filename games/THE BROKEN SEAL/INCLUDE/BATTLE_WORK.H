@@ -63,7 +63,7 @@ struct BattleSession {
     u8 unknown_046[2];
     u8 owner_slots[8];              /* 0x048, member slot per owner, 0xff none */
     u8 link_side;                   /* 0x050 */
-    u8 unknown_051;
+    u8 link_misses;                 /* 0x051, consecutive missed link frames */
     u8 link_paused;                 /* 0x052 */
     u8 unknown_053;
     s32 prompt_slot;                /* 0x054, the advance arrow's tile slot */

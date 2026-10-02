@@ -12,7 +12,7 @@ extern u8 gKeysHeld[];
 struct BattleCommandRequest {
     s16 actor_id;                   /* 0x00 */
     s16 unknown_02;
-    s16 unknown_04;
+    s16 priority;                  /* 0x04, turn order */
     s16 command;                    /* 0x06: dispatch selector, 0..99 */
     s16 parameter;                  /* 0x08: action, inventory slot, or Djinni */
     s16 target;                     /* 0x0a: position in bits 0-3, bit 7 the enemy side */

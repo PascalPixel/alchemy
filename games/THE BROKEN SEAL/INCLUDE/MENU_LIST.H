@@ -129,7 +129,7 @@ s32 UiText_CopyMessageString(s32 message, u16 *buffer, u32 count);
 void UiText_RenderWideStringAtOffset(
     u16 *buffer, struct TextWindow *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntry(
-    struct UiWindow *window, s32 tile, s32 x, s32 y, s32 layer);
+    struct UiWindow *window, s32 tile, s32 x, s32 y, u32 layer);
 void UiWork_SetParamNibble(s32 param);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 value);
 void Ui_FillVramBlockPattern(void);

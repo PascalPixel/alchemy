@@ -1,23 +1,16 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
-
-struct Work_08017c1c {
-    u8 pad_00[12];
-    u16 x;
-    u16 y;
-};
-
-extern u8 *gWindowWork;
+#include "MENU_LIST.H"
 
 s32 UiText_RenderStringTiles(u16 *, s32, s32, s32);
 
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,
-    const struct Work_08017c1c *work,
+    const struct TextRenderWork *work,
     s32 offset_x,
     s32 offset_y)
 {
-    u8 *base = gWindowWork;
+    u8 *base = gWindowWork[0];
     s32 index;
     u32 cell;
 

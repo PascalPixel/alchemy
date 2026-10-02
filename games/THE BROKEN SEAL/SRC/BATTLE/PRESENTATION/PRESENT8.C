@@ -1,27 +1,12 @@
 #include "TYPES.H"
 #include "OBJDISP.H"
-#include "GLOBAL_CELLS.H"
 #include "RAM_BUFFER.H"
-#include "SCENE.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_WORK.H"
+#include "BATTLE_RUNTIME.H"
+#include "INVENTORY.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-extern u8 Data_03001e74[];
-extern s32 Summon_IsEntryFlagged(s32 index);
 
-struct Layout {
-    u8 pad[4];
-    s16 field[6];
-};
-
-struct BattleActorDefinition {
-    u8 reserved_000[296];
-    u8 class_id;
-    u8 unavailable;
-};
-
-struct BattleActorDefinition *Owner_GetStateFar(s32 actor_id);
 s32 Summon_IsEntryFlagged(s32 class_id);
 s32 Summon_GetEntryValue(s32 class_id);
 s32 Summon_GetEntryFlag1Field(s32 class_id);
@@ -34,77 +19,38 @@ extern u16 BattleUnit_WeaponAnimsClass2[];
 extern u16 BattleUnit_WeaponAnimsClass3[];
 extern u16 BattleUnit_WeaponAnimsClass5[];
 
-typedef struct {
-    /* 0x00 */ void *object;
-    /* 0x04 */ u16 sprite;
-    /* 0x06 */ u16 anim;
-    /* 0x08 */ u16 field_08;
-    /* 0x0a */ u16 field_0a;
-    /* 0x0c */ s32 x;
-    /* 0x10 */ s32 y;
-    /* 0x14 */ s32 flag;
-    /* 0x18 */ s32 scale;
-    /* 0x1c */ s32 field_1c;
-    /* 0x20 */ s32 field_20;
-    /* 0x24 */ s32 field_24;
-    /* 0x28 */ u16 field_28;
-    /* 0x2a */ u16 field_2a;
-} Actor;
-
-typedef struct {
-    /* 0x000 */ u8 field_000[296];
-    /* 0x128 */ unsigned int class_id : 8;
-    /* 0x129 */ unsigned int kind : 8;
-} Unit;
-
-typedef struct {
-    /* 0x00 */ u8 field_00[6];
-    /* 0x06 */ u16 angle;
-    /* 0x08 */ u8 field_08[16];
-    /* 0x18 */ s32 scale_x;
-    /* 0x1c */ s32 scale_y;
-    /* 0x20 */ u8 field_20[53];
-    /* 0x55 */ u8 field_55;
-    /* 0x56 */ u8 field_56[3];
-    /* 0x59 */ u8 field_59;
-} Object;
-
-Object *Object_CreateFar(s32, s32, s32);
-s32 Inventory_GetEquippedItemFar(Unit *, s32);
+struct MotionObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+s32 Inventory_GetEquippedItemFar(struct OwnerInventoryState *owner, s32 type);
 s32 SummonSlot_RegisterActorSprites(s32);
 s32 BattleUnit_LookupWeaponValueByClass(s32);
-s32 Summon_GetEntryValue(s32);
-s32 Summon_GetEntryFlag1Field(s32);
 s32 ArcTan2(s32, s32);
 extern const u8 BattlePres_ActorObjectScript[];
 
 /* Step table for battle placement: signed bytes in (x, y) pairs. */
 extern const s8 BattlePlacement_StepPairs[];
-struct BattleActorDefinition;
-struct BattleActorDefinition *Owner_GetStateFar(s32);
 s32 Resource_FindFreeSlot(s32 key);
 
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
 
 s32 BattleMotion_GetSlotField14(s32 id)
 {
-    return FIELD_AT_OFFSET(GetBattleObjectSlot(id), s32 *, 0x14);
+    return GetBattleObjectSlot(id)->palette;
 }
 
 s32 Summon_ClassValid(s32 arg0)
 {
-    struct Layout *ptr;
+    struct BattleSession *ptr;
     s32 retval;
     s32 i;
 
     retval = Summon_IsEntryFlagged(arg0);
-    ptr = *(struct Layout **)((u32)&Data_03001e74);
+    ptr = gBattleWork;
     for (i = 0; i <= 5; i++) {
-        if (ptr->field[i] != 0)
+        if (ptr->sprite_slots[i] != 0)
             continue;
         if (retval != 0)
             break;
-        if (i <= 4 && ptr->field[i + 1] == 0)
+        if (i <= 4 && ptr->sprite_slots[i + 1] == 0)
             break;
     }
     return i != 6;
@@ -113,8 +59,8 @@ s32 Summon_ClassValid(s32 arg0)
 s32 SummonSlot_RegisterActorSprites(s32 unit)
 {
     s32 pass;
-    struct Layout *table = (struct Layout *)gBattleWork;
-    struct BattleActorDefinition *actor = Owner_GetStateFar(unit);
+    struct BattleSession *table = gBattleWork;
+    struct BattleUnit *actor = Owner_GetStateFar(unit);
     s32 single_slot = Summon_IsEntryFlagged(actor->class_id);
     s32 result = 0;
     s32 sprite_value = Summon_GetEntryValue(actor->class_id);
@@ -124,15 +70,15 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
     do {
         s32 slot;
 
-        if (actor->unavailable != 0)
+        if (actor->class_index != 0)
             continue;
 
         for (slot = 0; slot <= 5; slot++) {
-            if (table->field[slot] != 0)
+            if (table->sprite_slots[slot] != 0)
                 continue;
             if (single_slot)
                 break;
-            if (slot <= 4 && table->field[slot + 1] == 0)
+            if (slot <= 4 && table->sprite_slots[slot + 1] == 0)
                 break;
         }
 
@@ -152,9 +98,9 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
         if (pass == 0)
             result = (slot << 12) | sprite_value;
 
-        table->field[slot] = (s16)unit;
+        table->sprite_slots[slot] = (s16)unit;
         if (!single_slot)
-            table->field[slot + 1] = (s16)unit;
+            table->sprite_slots[slot + 1] = (s16)unit;
 
         if (sprite_value != 476 && sprite_value != 483)
             break;
@@ -170,7 +116,7 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
     s32 index;
     s16 item;
 
-    base = *(u8 **)((u32)&Data_03001e74);
+    base = (u8 *)gBattleWork;
     index = 0;
     do {
         offset = index * 2 + 4;
@@ -209,7 +155,7 @@ done:
 /* battle/unit/lookup_weapon_value_by_class.c */
 s32 BattleUnit_LookupWeaponValueByClass(s32 id)
 {
-    u8 *state;
+    struct BattleUnit *state;
     s32 entry;
     s32 result;
 
@@ -217,12 +163,10 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
     entry = Inventory_FindEquippedFar(id, 1);
     result = 0;
     if (entry >= 0) {
-        s32 ofs;
         s32 sel;
 
-        ofs = entry * 2 + 216;
-        sel = Resource_FindFreeSlot(*(u16 *)(state + ofs) & 0x1FF);
-        switch (state[296]) {
+        sel = Resource_FindFreeSlot(state->inventory[entry] & 0x1FF);
+        switch (state->class_id) {
         case 0:
             result = RomBytes_080c2a1c[sel];
             break;
@@ -245,27 +189,27 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
     return result;
 }
 
-void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
+void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 unit, s32 x, s32 y)
 {
     s32 fixed_x;
     s32 fixed_y;
     s32 actor_flag;
     s32 sprite;
     s32 existing_sprite;
-    Unit *unit_record;
-    Object *object;
+    struct BattleUnit *unit_record;
+    struct MotionObject *object;
     s32 position;
     s32 anim;
     u8 class_id;
 
     fixed_x = x << 16;
     fixed_y = y << 16;
-    object = Object_CreateFar(0xf000, fixed_x, 0);
+    object = Object_CreateFar(0xf000, fixed_x, 0, fixed_y);
     unit_record = Owner_GetStateFar(unit);
     actor_flag = 0;
     existing_sprite = SummonSlot_RegisterActorSprites(unit);
 
-    if (unit_record->kind == 0) {
+    if (unit_record->class_index == 0) {
         sprite = Summon_GetEntryValue(unit_record->class_id);
         if (existing_sprite == 0)
             actor_flag = Summon_GetEntryFlag1Field(unit_record->class_id);
@@ -334,36 +278,36 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
     }
 
     actor->object = object;
-    actor->x = fixed_x;
-    actor->y = fixed_y;
-    actor->flag = actor_flag;
-    actor->sprite = sprite;
+    actor->anchor_x = fixed_x;
+    actor->anchor_z = fixed_y;
+    actor->palette = actor_flag;
+    actor->resource = sprite;
     anim = BattleUnit_LookupWeaponValueByClass(unit);
-    actor->field_08 = 0;
-    actor->field_20 = 0;
-    actor->field_24 = 0;
-    actor->field_28 = 0;
-    actor->field_2a = 0;
-    actor->field_0a = 0x1fe;
+    actor->animation = 0;
+    actor->animation_entry = 0;
+    actor->effect_entry = 0;
+    actor->active = 0;
+    actor->fading = 0;
+    actor->effect = 0x1fe;
     class_id = unit_record->class_id;
-    actor->anim = anim;
+    actor->overlay = anim;
 
-    if (class_id <= 1 && Inventory_GetEquippedItemFar(unit_record, 1) == 15) {
+    if (class_id <= 1 && Inventory_GetEquippedItemFar((struct OwnerInventoryState *)unit_record, 1) == 15) {
         if (unit_record->class_id == 0) {
             sprite = 480;
-            actor->sprite = sprite;
+            actor->resource = sprite;
         } else {
             sprite = 482;
-            actor->sprite = sprite;
+            actor->resource = sprite;
         }
-        actor->anim = 0;
+        actor->overlay = 0;
     }
 
     position = ArcTan2(y / 8, x) + 0x8000;
     object->angle = position;
-    object->field_59 = 3;
-    object->field_55 = 2;
-    if (unit_record->kind == 0) {
+    object->unknown_59 = 3;
+    object->motion_flags = 2;
+    if (unit_record->class_index == 0) {
         object->scale_x = 0x14ccc;
         object->scale_y = 0x14ccc;
     } else {
@@ -398,7 +342,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 
         x_positions[index] = -80;
         if (index != 0) {
-            struct BattleActorDefinition *actor;
+            struct BattleUnit *actor;
 
             spacing = 25;
             if ((u16)(actor_ids[index] - 254) > 1) {
@@ -413,7 +357,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
         z_positions[index] = z;
         spacing = 25;
         if ((u16)(actor_ids[index] - 254) > 1) {
-            struct BattleActorDefinition *actor = Owner_GetStateFar(actor_ids[index]);
+            struct BattleUnit *actor = Owner_GetStateFar(actor_ids[index]);
 
             spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
         }
@@ -428,7 +372,7 @@ s32 Summon_FindSlot(void)
 
     for (i = 0; i <= 5; i++) {
         id = i + 0x80;
-        if (((u8 *)Owner_GetStateFar(id))[0x12A] == 0)
+        if (Owner_GetStateFar(id)->status_12a == 0)
             break;
     }
     if (i == 6)
@@ -501,7 +445,7 @@ void BattleUnit_RefreshPlacement(void)
         s32 id = ids[i];
 
         work->placement[id] = place;
-        BattlePresentation_SpawnActorObject((Actor *)GetBattleObjectSlot(id), id,
+        BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id,
             BattlePlacement_StepPairs[place * 2], BattlePlacement_StepPairs[place * 2 + 1]);
     }
     for (i = 0; i < 6 && work->enemy_units[i] != 0xff; i++)
@@ -512,6 +456,6 @@ void BattleUnit_RefreshPlacement(void)
         s32 id = work->enemy_units[i];
 
         if (id != 0xfe)
-            BattlePresentation_SpawnActorObject((Actor *)GetBattleObjectSlot(id), id, x[stand], z[stand]);
+            BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, x[stand], z[stand]);
     }
 }

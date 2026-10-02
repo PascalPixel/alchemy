@@ -6,30 +6,12 @@
    copier. */
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
+#include "BATTLE_COMMAND.H"
+#include "BATTLE_PARTY.H"
 #include "IWRAM_CALL.H"
 
-extern u8 gBattleWork[];
 s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
-void BattleCommand_SelectAutomatic(void *entry, s32 arg1);
-
-struct BattlePresentationOpponentEntry {
-    u16 unit_id;
-    u16 unknown_02;
-    u16 value;
-    s16 width;
-    s16 mode;
-    s16 height;
-    u8 unknown_0c[4];
-};
-
-struct BattleQueueEntry {
-    s16 owner_id;
-    u16 unknown_02;
-    s16 priority;
-    s16 command_kind;
-    u16 encoded_action;
-    u8 unknown_0a[6];
-};
+void BattleCommand_SelectAutomatic(struct BattleCommandRequest *entry, s32 mode);
 
 s32 Func_080771e8(s32 group, s32 index);
 
@@ -41,15 +23,15 @@ static __inline__ void CopyWords(
 }
 
 s32 BattlePres_BuildOpponentEntries(
-    struct BattlePresentationOpponentEntry *entries)
+    struct BattleActionRecord *entries)
 {
     u16 unit_ids[14];
     s32 entry_count = 0;
-    u8 *battle = *(u8 **)gBattleWork;
+    struct BattleSession *battle = gBattleWork;
     s32 unit_count;
     s32 i;
 
-    if (battle[0x45] == 1) {
+    if (battle->encounter_mode == 1) {
         return 0;
     }
 
@@ -66,7 +48,7 @@ s32 BattlePres_BuildOpponentEntries(
         unit_ids[second] = swap;
     }
 
-    if (battle[0x45] == 2) {
+    if (battle->encounter_mode == 2) {
         s32 limit = ((u32)(Random16() * 5) >> 16) + 1;
 
         if (limit <= 1) {
@@ -79,32 +61,34 @@ s32 BattlePres_BuildOpponentEntries(
 
     for (i = 0; i < unit_count; i++) {
         s32 unit_id = unit_ids[i];
-        u8 *unit = Owner_GetStateFar(unit_id);
+        struct BattleUnit *unit = Owner_GetStateFar(unit_id);
         s32 copy_index;
 
-        for (copy_index = 0; copy_index < unit[0x43]; copy_index++) {
-            struct BattlePresentationOpponentEntry *entry =
+        for (copy_index = 0; copy_index < unit->action_entry_count; copy_index++) {
+            struct BattleActionRecord *entry =
                 &entries[entry_count];
             s32 value;
 
             entry->unit_id = unit_id;
-            value = *(u16 *)(unit + 0x40);
+            value = unit->agility;
             entry->value = value;
             if (copy_index != 0) {
                 entry->value = (s16)value / 2;
             }
 
-            if (unit[0x13c] != 0 || unit[0x13b] != 0) {
-                entry->width = 8;
-                entry->mode = 0;
-                entry->height = 0x100;
+            if (unit->sleep != 0 || unit->stun != 0) {
+                struct BattleCommandRequest *command = (struct BattleCommandRequest *)entry;
+
+                command->command = 8;
+                command->parameter = 0;
+                command->target = 0x100;
             } else {
-                BattleCommand_SelectAutomatic(entry, 0);
+                BattleCommand_SelectAutomatic((struct BattleCommandRequest *)entry, 0);
             }
 
             entry_count++;
 
-            if (battle[0x45] == 2) {
+            if (battle->encounter_mode == 2) {
                 break;
             }
         }
@@ -113,23 +97,24 @@ s32 BattlePres_BuildOpponentEntries(
     return entry_count;
 }
 
-void BattleQueue_SortByPriority(struct BattleQueueEntry *entries, s32 count)
+void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
 {
     s32 i;
     s32 j;
     s32 swapped;
 
     for (i = 0; i < count; i++) {
-        struct BattleQueueEntry *entry = &entries[i];
+        struct BattleActionRecord *entry = &entries[i];
+        struct BattleCommandRequest *command = (struct BattleCommandRequest *)entry;
 
-        if (entry->command_kind == 5) {
+        if (entry->kind == 5) {
             struct BattleAction *action;
 
-            Owner_GetStateFar(entry->owner_id);
+            Owner_GetStateFar(entry->unit_id);
             action = BattleAction_Get(Func_080771e8(
-                (s16)entry->encoded_action >> 8 & 15, entry->encoded_action & 0xff));
+                (s16)((u16)command->parameter) >> 8 & 15, ((u16)command->parameter) & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
-                entry->priority += 10000;
+                entry->value += 10000;
             }
         }
     }
@@ -137,8 +122,8 @@ void BattleQueue_SortByPriority(struct BattleQueueEntry *entries, s32 count)
     do {
         swapped = 0;
         for (j = count - 1; j > 0; j--) {
-            if (entries[j].priority > entries[j - 1].priority) {
-                struct BattleQueueEntry temporary;
+            if ((s16)entries[j].value > (s16)entries[j - 1].value) {
+                struct BattleActionRecord temporary;
 
                 CopyWords(&temporary, &entries[j], 16);
                 CopyWords(&entries[j], &entries[j - 1], 16);

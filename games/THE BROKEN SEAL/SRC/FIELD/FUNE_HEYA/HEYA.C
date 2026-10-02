@@ -143,6 +143,86 @@ extern s32 FuneHeya_TurnSteps[];
 
 void FuneHeya_TurnActorToOpenSide(s32 a0);
 
+s32 StagedActor_CountdownUntilPositionUnset(u8 *object);
+void StagedActor_AdvanceCounter98(u8 *object);
+
+struct Walker {
+    u8 unknown_00[0x4c];
+    s32 countdown;
+    u8 unknown_50[0x16];
+    s16 step;
+};
+
+/* Ship cabin walker: advance the actor's scripted walk one step, turning, walking and waiting on the leader between steps. */
+void FuneHeya_RunWalkerStep(struct FieldActor *obj)
+{
+    struct FieldActor *leader;
+    struct Walker *walker;
+
+    walker = (struct Walker *)obj;
+    leader = Object_GetById(8);
+    switch (walker->step) {
+    case 0:
+        obj->facing = 0xb000;
+        goto advance;
+    case 2:
+        obj->facing = 0;
+        goto advance;
+    case 4:
+        Object_SetMode(obj, 2);
+        Call4(Engine_ObjectSetPosition, (s32)obj, 0x1d40000, 0x200000, 0x2780000);
+        walker->countdown = 60;
+        walker->step++;
+        break;
+    case 5:
+        if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0) {
+            Object_SetMode(obj, 1);
+            obj->rise_counter = 0;
+            if (leader->unknown_5b == 0) {
+                obj->rise_enabled = 1;
+            }
+            walker->step++;
+        }
+        break;
+    case 7:
+        if (leader->unknown_5b == 0) {
+            Object_SetMode(obj, 3);
+            obj->rise_enabled = 2;
+        }
+    advance:
+        walker->step++;
+        /* FAKEMATCH: the zero is spelled as a 16-bit value so it is loaded after the step store; a plain 0 is loaded before it. */
+        *(u8 *)&obj->rise_counter = (u16)0;
+        break;
+    case 9:
+        Object_SetMode(obj, 2);
+        Call4(Engine_ObjectSetPosition, (s32)obj, 0x1e00000, 0x200000, 0x2580000);
+        walker->countdown = 60;
+        walker->step++;
+        if (leader->unknown_5b == 0) {
+            obj->rise_enabled = 3;
+        }
+        break;
+    case 10:
+        if (StagedActor_CountdownUntilPositionUnset((u8 *)obj) != 0) {
+            Object_SetMode(obj, 1);
+            obj->rise_counter = 0;
+            walker->step++;
+        }
+        break;
+    case 1:
+    case 3:
+    case 6:
+    case 8:
+    case 11:
+        StagedActor_AdvanceCounter98((u8 *)obj);
+        break;
+    case 12:
+        walker->step = 0;
+        break;
+    }
+}
+
 void UpdateActorNineEffectMode(struct EffectRecord *record)
 {
     struct SceneActor *actor;

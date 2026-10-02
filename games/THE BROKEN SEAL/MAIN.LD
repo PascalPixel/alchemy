@@ -566,7 +566,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_ITEM_PRICE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_MESSAGE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/UPDATE_PARTY_MEMBER_LIST.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000a8278)
+    "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/DRAW_EQUIP_COMPARISON.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SELECT_QUANTITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/SHOP4.o"(.text)
@@ -585,7 +585,7 @@ SECTIONS
     /* The tile bit decoder block BattleBackground_Load copies to RAM, DECODE.S to BIT_COMMANDS.S. */
     BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000ac534)
+    "*/games/THE BROKEN SEAL/SRC/DEBUG/VIEW_MESSAGES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY2.o"(.text)

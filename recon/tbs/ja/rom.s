@@ -927,8 +927,6 @@ FourObjectMotion_ResourceIds:
 	.thumb_func
 Shop_SelBuy:
 	.incbin "baserom.gba", 0x000a7aac, 0x000004f8
-	.section .rom.000a8278, "ax"
-	.incbin "baserom.gba", 0x000a8278, 0x00000210
 	.section .rom.000aa964, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:
@@ -979,12 +977,6 @@ Inn_PriceMultipliers:
 	.incbin "baserom.gba", 0x000ac204, 0x00000008
 	.section .rom.000ac218, "ax"
 	.incbin "baserom.gba", 0x000ac218, 0x00000040
-	.section .rom.000ac534, "ax"
-	.global DebugBattle_ViewMessages
-	.type DebugBattle_ViewMessages, %function
-	.thumb_func
-DebugBattle_ViewMessages:
-	.incbin "baserom.gba", 0x000ac534, 0x000001ac
 	.section .rom.000ad3c8, "ax"
 	.global Battle_RunEncounter
 	.type Battle_RunEncounter, %function

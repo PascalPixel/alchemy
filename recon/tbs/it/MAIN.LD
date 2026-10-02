@@ -574,7 +574,7 @@
     /* The tile bit decoder block BattleBackground_Load copies to RAM, DECODE.S to BIT_COMMANDS.S. */
     BitDecoder_Size = ABSOLUTE(BitDecoder_End - BitDecoder_DecodeImage);
     "*/games/THE BROKEN SEAL/SRC/DEBUG/LOAD_PARTY_PRESET.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000b5534)
+    "*/games/THE BROKEN SEAL/SRC/DEBUG/VIEW_MESSAGES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/BATTLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/PARTY2.o"(.text)

@@ -7,7 +7,7 @@ form people can read, change and build on.
 
 ## Progress
 
-**☀️ 84.97% · ⚓️ 4.67%**
+**☀️ 84.97% · ⚓️ 4.68%**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 

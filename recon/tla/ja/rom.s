@@ -328,24 +328,9 @@ Func_08014ca0:
 	.thumb_func
 Func_08014cb0:
 	.incbin "baserom.gba", 0x00014cb0, 0x00000010
-	.section .rom.00014d40, "ax"
-	.global Func_08014d40
-	.type Func_08014d40, %function
-	.thumb_func
-Func_08014d40:
-	.incbin "baserom.gba", 0x00014d40, 0x00000038
-	.section .rom.00014d78, "ax"
-	.global Runtime_BumpAllocate
-	.type Runtime_BumpAllocate, %function
-	.thumb_func
-Runtime_BumpAllocate:
-	.incbin "baserom.gba", 0x00014d78, 0x00000034
-	.section .rom.00014dac, "ax"
-	.global Runtime_BumpAllocateAlternatePool
-	.type Runtime_BumpAllocateAlternatePool, %function
-	.thumb_func
-Runtime_BumpAllocateAlternatePool:
-	.incbin "baserom.gba", 0x00014dac, 0x00000038
+	.section .rom.00014de0, "ax"
+	@ Uncredited four-byte tail; independent purpose is unproved.
+	.incbin "baserom.gba", 0x00014de0, 0x00000004
 	.section .rom.00014de4, "ax"
 	.global Func_08014de4
 	.type Func_08014de4, %function

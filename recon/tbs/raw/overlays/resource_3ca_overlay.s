@@ -566,130 +566,6 @@ Func_02000b34:
 	.4byte Data_020017fc
 .L_02008da0:
 	.4byte BabiFune_CyclePalette
-	.section .text.x020091c4,"ax",%progbits
-	.global BabiFune_StepFade
-	.thumb_func
-BabiFune_StepFade:
-	push {r5, r6, r7, lr}
-	ldr r3, .L_02009298
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	ldr r2, .L_0200929c
-	lsls r3, r3, #2
-	adds r3, r3, r2
-	ldr r2, .L_020092a0
-	ldrh r3, [r3, #2]
-	mov lr, r2
-	lsrs r3, r3, #5
-	mov r1, lr
-	mov r12, r3
-	movs r4, #0
-	ldrsh r3, [r1, r4]
-	ldr r0, .L_020092a4
-	ldrh r2, [r2]
-	cmp r3, #0
-	beq .L_020091f0
-	subs r3, r2, #1
-	mov r2, lr
-	strh r3, [r2]
-.L_020091f0:
-	movs r5, #0
-.L_020091f2:
-	mov r4, lr
-	ldrh r3, [r4]
-	lsls r4, r3, #16
-	asrs r1, r4, #16
-	negs r3, r1
-	lsrs r2, r3, #31
-	adds r3, r3, r2
-	asrs r3, r3, #1
-	movs r2, #0
-	movs r7, #255
-	stmia r0!, {r2}
-	ands r3, r7
-	lsls r2, r5, #21
-	ldr r6, .L_020092a8
-	orrs r3, r2
-	orrs r3, r6
-	stmia r0!, {r3}
-	mov r2, r12
-	adds r5, #1
-	stmia r0!, {r2}
-	cmp r5, #7
-	bls .L_020091f2
-	lsrs r3, r4, #31
-	adds r3, r1, r3
-	asrs r3, r3, #1
-	adds r2, r3, #0
-	adds r2, #136
-	ands r2, r7
-	movs r5, #0
-	movs r7, #0
-	adds r4, r6, #0
-	adds r1, r0, #0
-.L_02009232:
-	lsls r3, r5, #21
-	orrs r3, r2
-	orrs r3, r4
-	str r3, [r1, #4]
-	adds r5, #1
-	mov r3, r12
-	str r7, [r1]
-	str r3, [r1, #8]
-	adds r0, #12
-	adds r1, #12
-	cmp r5, #7
-	bls .L_02009232
-	ldr r3, .L_020092a0
-	ldrh r3, [r3]
-	lsls r3, r3, #16
-	asrs r2, r3, #16
-	lsrs r3, r3, #31
-	adds r2, r2, r3
-	asrs r2, r2, #1
-	adds r2, #152
-	movs r3, #255
-	ldr r4, .L_020092a8
-	movs r5, #0
-	ands r2, r3
-	movs r6, #0
-	adds r1, r0, #0
-.L_02009266:
-	lsls r3, r5, #21
-	orrs r3, r2
-	orrs r3, r4
-	str r3, [r1, #4]
-	adds r5, #1
-	mov r3, r12
-	str r6, [r1]
-	str r3, [r1, #8]
-	adds r1, #12
-	cmp r5, #7
-	bls .L_02009266
-	ldr r6, .L_020092a4
-	movs r5, #0
-.L_02009280:
-	adds r0, r6, #0
-	movs r1, #255
-	adds r5, #1
-	bl Runtime_PushSlotEntry
-	adds r6, #12
-	cmp r5, #23
-	bls .L_02009280
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-.L_02009298:
-	.4byte BabiFune_FadeSlot
-.L_0200929c:
-	.4byte ResourceTableEntries
-.L_020092a0:
-	.4byte BabiFune_FadeStep
-.L_020092a4:
-	.4byte Data_02001af8
-.L_020092a8:
-	.4byte 0x80004000
 	.section .rodata.x020094ac,"a",%progbits
 	.global BabiFune_PaletteFrames
 BabiFune_PaletteFrames:
@@ -1145,8 +1021,8 @@ BabiFune_ActionScriptD:
 	.4byte SceneState_StoreSlotThreeField12
 	.4byte 0x00000010
 	.section .bss,"aw",%nobits
-	.global Data_02001af8
-Data_02001af8:
+	.global BabiFune_FadeSprites
+BabiFune_FadeSprites:
 	.space 288
 	.global BabiFune_FadeStep
 BabiFune_FadeStep:

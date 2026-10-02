@@ -1,27 +1,28 @@
-/* NONMATCHING: shared callee return types audited on 2026-09-26.
- * 1044 of 1044 bytes, 434 differing halfwords, 175 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
-/*
- * NONMATCHING: complete 1,044-byte owner including pools; prior score
- * 1,044 candidate bytes, 434 halfword edits. Count clearing keeps a counter
- * where the ROM compares the element pointer against the array base.
- * The copy call uses _call_via_r3, which is the ROM's 080072f0 veneer;
- * that earlier apparent mismatch was a naming error, not a residual.
- * The diagnostic frame is 28 bytes instead of 32. List, entry and index
- * registers also differ. Audit stopped before rewrite; no adoption.
- * 2026-09-26 bounded trials: signed address comparison while clearing from
- * counts+3 down to the array base fixes the opening r6/r7 allocation but
- * gives 1056 bytes/224 aligned edits rather than 1044/175; frame stays 28.
- * Declaring the IWRAM copier value-returning changes no bytes. A volatile
- * count pointer with phase-local base reloads gives the 32-byte frame but
- * wrong slot order, 1076 bytes and 215 edits. These three trials are not
- * kept. The missing array-base spill is not explained by array padding.
- */
+/* DRAFT (score 120): 12 of 454 instructions differ, register names only. In the
+ * loop that orders the recovering Djinn the ROM keeps the counter of the owner
+ * and order scans in r4 and the -1 it compares the owner with in r3; here both
+ * are r1, and the copy of that -1 into the order lands one instruction later.
+ * The ROM's allocator ranks the counter and the order below the hoisted base
+ * of the counts array; every spelling tried ranks them above it (the counters
+ * shared or separate across the four loops, all 256 combinations; the order
+ * shared with the gain or not; five minutes of alchemy permute).
+ * Settled on the way: the three scans index the list (no entry pointer), the
+ * counts are cleared by an ascending loop the compiler reverses, the first
+ * scan's counter is the variable that later holds the best element, and the
+ * order is the variable that later holds the gain.
+ * The listing calls BattleUnit_Recalculate, Audio_PlayCue and Sys_Free
+ * Owner_RecalculateStatsFar, AudioCommand_PlayFar and Runtime_BumpFree. */
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_MSG.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_TYPES.H"
+#include "IWRAM_CALL.H"
+
+struct UnitBoosts {
+    u8 unknown_000[0x12c];
+    s8 boost[4];
+};
 
 struct BattleMotionSlot {
     void *object;
@@ -39,8 +40,6 @@ extern struct BattleState *gBattleWork;
    that. */
 #define MSG_REAPER_CALLS ((s32)&MsgGoesDown + 3)
 #define MSG_EXHAUSTED ((s32)&MsgGoesDown + 6)
-
-typedef void (*BlockCopy)(void *destination, const void *source, s32 size);
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
@@ -67,106 +66,93 @@ s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 {
     s32 id;
-    s32 both_sides;
     struct BattleUnit *unit;
-    struct DjinnRecoveryList *list;
-    struct DjinnRecoveryEntry *entry;
-    s32 i;
+    s32 both_sides;
     s32 counts[4];
-    s32 *count;
-    s32 owner;
+    struct DjinnRecoveryList *list;
+    s32 best;
     s32 order;
 
     id = plan->actor_id;
     both_sides = 0;
     unit = Owner_GetStateFar(id);
     list = &Trade_GetOfferStateFar((u32)id > 7)->list;
-    i = 0;
-    if (i < list->count) {
-        entry = list->entries;
-        do {
-            if (entry->unit_id == id && entry->turns == -1) {
-                Djinn_DeactivateFar(id, entry->element, entry->index);
-            }
-            i++;
-            entry++;
-        } while (i < list->count);
+    for (best = 0; best < list->count; best++) {
+        if (list->entries[best].unit_id == id && list->entries[best].turns == -1) {
+            Djinn_DeactivateFar(id, list->entries[best].element, list->entries[best].index);
+        }
     }
     if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) != 0
         && BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) != 0) {
         both_sides = 1;
     }
 
-    list = &Trade_GetOfferStateFar((u32)id > 7)->list;
-    count = counts;
-    for (i = 3; i >= 0; i--) {
-        count[i] = 0;
-    }
-    for (;;) {
-        owner = -1;
-        for (i = 0; i < list->count; i++) {
-            if (list->entries[i].turns == -2) {
-                owner = list->entries[i].unit_id;
+    {
+        s32 i;
+        s32 j;
+        s32 owner;
+
+        list = &Trade_GetOfferStateFar((u32)id > 7)->list;
+        for (i = 0; i < 4; i++) {
+            counts[i] = 0;
+        }
+        for (;;) {
+            owner = -1;
+            for (i = 0; i < list->count; i++) {
+                if (list->entries[i].turns == -2) {
+                    owner = list->entries[i].unit_id;
+                    break;
+                }
+            }
+            if (owner == -1) {
                 break;
             }
-        }
-        if (owner == -1) {
-            break;
-        }
-        order = -1;
-        if (list->count > 0) {
-            s32 n = list->count;
-
-            entry = list->entries;
-            do {
-                if (entry->unit_id == owner && entry->turns > order) {
-                    order = entry->turns;
+            order = -1;
+            for (i = 0; i < list->count; i++) {
+                if (list->entries[i].unit_id == owner && list->entries[i].turns > order) {
+                    order = list->entries[i].turns;
                 }
-                n--;
-                entry++;
-            } while (n != 0);
-        }
-        order++;
-        if (order <= 1) {
-            order = 2;
-        }
-        for (i = 0; i < list->count; i++) {
-            entry = &list->entries[i];
-            if (entry->unit_id == owner && entry->turns == -2) {
-                entry->turns = order;
-                count[entry->element]++;
-                order++;
+            }
+            order++;
+            if (order <= 1) {
+                order = 2;
+            }
+            for (j = 0; j < list->count; j++) {
+                if (list->entries[j].unit_id == owner && list->entries[j].turns == -2) {
+                    list->entries[j].turns = order;
+                    counts[list->entries[j].element]++;
+                    order++;
+                }
             }
         }
     }
 
     if (both_sides != 0) {
         struct BattleUnit *before;
-        s32 best;
         s32 most;
-        s32 gain;
+        s32 i;
 
         most = 0;
         before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
-        ((BlockCopy)0x03001388)(before, unit, sizeof(struct BattleUnit));
+        Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
         best = -1;
         for (i = 0; i <= 3; i++) {
-            if (count[i] > most) {
-                most = count[i];
+            if (counts[i] > most) {
+                most = counts[i];
                 best = i;
             }
         }
-        if (best >= 0 && (&((s8 *)&unit->status_12c)[best])[0] < most) {
-            ((s8 *)&unit->status_12c)[best] = most;
+        if (best >= 0 && ((struct UnitBoosts *)unit)->boost[best] < most) {
+            ((struct UnitBoosts *)unit)->boost[best] = most;
         }
         BattleUnit_Recalculate(id);
         for (i = 0; i <= 3; i++) {
-            gain = unit->elements[i].power - before->elements[i].power;
-            if (gain > 0) {
+            order = unit->elements[i].power - before->elements[i].power;
+            if (order > 0) {
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(25);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
-                BattleEv_Push(BATTLE_EVENT_VALUE, gain);
+                BattleEv_Push(BATTLE_EVENT_VALUE, order);
                 BattleEv_Push(BATTLE_EVENT_SOUND, 175);
                 BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgEarthPowerUp + i);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
@@ -209,7 +195,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         BattleEventRuntime_Reset();
         poison = &unit->poison;
         if (*poison != 0) {
-            s32 damage = __divsi3(*poison * unit->max_hp, 10);
+            s32 damage = __divsi3(unit->max_hp * *poison, 10);
             struct BattleState *state = gBattleWork;
 
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);

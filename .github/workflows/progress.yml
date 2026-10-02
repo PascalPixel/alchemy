@@ -7,45 +7,25 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: decomp-progress
-  cancel-in-progress: false
-
 jobs:
   report:
     if: github.repository == 'PascalPixel/alchemy'
-    # A dedicated Apple Silicon runner needs Rust and Xcode command-line tools.
-    # Set its ALCHEMY_ROMS to the local twelve-ROM directory outside its checkout.
-    runs-on: [self-hosted, macOS, ARM64, alchemy]
-    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Check out the pushed commit
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          ref: ${{ github.sha }}
-          submodules: true
-          persist-credentials: false
-
-      - name: Connect local reference ROMs
-        run: ln -s "${ALCHEMY_ROMS:?Set ALCHEMY_ROMS on the runner to its local ROM directory}" roms
-
-      - name: Fetch Rust dependencies
-        run: cargo fetch --locked --manifest-path tools/Cargo.toml
-
-      - name: Install the approved toolchain
-        run: make bootstrap
-
-      - name: Check source and publication rules
-        run: make test lint-production
-
-      - name: Build and verify all twelve editions
-        run: make decomp-report
+      # make land verifies locally; the pre-push hook uploads before this run starts.
+      - name: Download the verified report for this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          REPORT_COMMIT: ${{ github.sha }}
+        run: gh release download decomp-reports --pattern "${REPORT_COMMIT}.pb" --output report.pb
 
       # decomp.dev splits the native combined report into twelve named versions.
       - name: Upload all twelve editions
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: combined_report
-          path: out/reports/decomp/combined_report/report.pb
+          path: report.pb
           if-no-files-found: error
           retention-days: 90

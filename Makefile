@@ -138,7 +138,8 @@ verify:
 	@$(ALCHEMY_BIN) verify
 
 # On main, before committing a landing: every gate, the tests and the
-# publication (README and both figures), staged for the commit.
+# publication (README and both figures), staged for the commit. Prepare the
+# decomp.dev report locally; pre-push uploads it for the hosted reporting Action.
 land:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify --land

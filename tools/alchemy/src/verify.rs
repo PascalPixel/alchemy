@@ -36,11 +36,12 @@ Runs every gate (make verify) in dependency waves, concurrently within a wave, o
 passing gate and the whole output of a failing one. Logs: out/verify/<gate>.log.\n\
        alchemy verify --land\n\
 On main, before committing a landing (make land): the staged checks, the tests, all twelve editions\n\
-built and compared, and README and both progress figures written and staged.\n\
+built and compared, README and both progress figures written and staged, and the decomp.dev report prepared.\n\
        alchemy verify --pre-commit\n\
 The commit hooks' staged checks, on every branch; they build and publish nothing.\n\
        alchemy verify --pre-push\n\
-Checks commits absent from remotes, each pushed tree and the verified publication of an outgoing main tip.";
+Checks commits absent from remotes, each pushed tree and the verified publication of an outgoing main tip.\n\
+For pushes to PascalPixel/alchemy, uploads the prepared report using authenticated GitHub CLI.";
 
 const STAGED: &[&str] = &[
     "index-sync-check",
@@ -219,6 +220,10 @@ fn pre_push(root: &Path) -> Result<(), String> {
     {
         return Err("outgoing publication history failed".into());
     }
+    if let Some(tip) = outgoing_main(&updates)? {
+        let remote = std::env::var("ALCHEMY_PUSH_URL").unwrap_or_default();
+        crate::coverage::publish::upload(root, tip, &remote)?;
+    }
     Ok(())
 }
 
@@ -268,7 +273,13 @@ fn run(root: &Path, mode: Mode) -> Result<bool, String> {
         Mode::Land if !is_main(root)? => {
             Err("make land publishes main's progress: run it on main".into())
         }
-        Mode::Land => run_waves(root, &executable, true, true),
+        Mode::Land => {
+            if !run_waves(root, &executable, true, true)? {
+                return Ok(false);
+            }
+            crate::coverage::publish::prepare(root)?;
+            Ok(true)
+        }
     }
 }
 

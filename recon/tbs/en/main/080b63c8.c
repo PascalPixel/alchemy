@@ -80,6 +80,11 @@ struct BattleEncounterWork {
     } while (0)
 
 extern u8 gCell[];
+extern u8 MsgDowned;
+extern u8 MsgPartyDefeated;
+extern u8 MsgGoesDownInDefeat;
+extern u8 MsgTutorialUnleashed;
+extern u8 MsgTutorialStandby;
 extern s32 gBattleRandomSeed;
 extern volatile u16 gLinkStatus;
 extern u8 *gBattleOwnerStates;
@@ -178,7 +183,7 @@ s32 Battle_RunEncounter(s32 arg)
     u32 actor;
     s16 cue;
     u8 unused[48];
-    s32 fill;
+    volatile u32 fill;
 
     scene = (struct BattleSceneWork *)Runtime_AllocateBlock(12, 76);
     work = (struct BattleEncounterWork *)Runtime_AllocateBlock(9, 0x82c);
@@ -231,15 +236,16 @@ s32 Battle_RunEncounter(s32 arg)
     }
     if (work->field_44 != 0) {
         gBattleRandomSeed = 0;
-        wait = 0;
-        do {
+        for (wait = 0;;) {
             if ((gLinkStatus & 3) == 3)
-                goto linked;
+                break;
             wait++;
             WaitFrames(1);
-        } while (wait <= 24);
-        work->field_52 = 1;
-    linked:
+            if (wait > 24) {
+                work->field_52 = 1;
+                break;
+            }
+        }
         work->field_50 = (u8)((*(u32 *)0x04000128 << 26) >> 30);
         src = gActorSpriteSlots;
         dst = gBattleOwnerStates;
@@ -371,12 +377,12 @@ s32 Battle_RunEncounter(s32 arg)
         if (GameFlag_IsSet(0x16e) == 0)
             continue;
 
-        handle = UiText_OpenMessageWindowFar(0xc47, 0, 4, 1);
+        handle = UiText_OpenMessageWindowFar((s32)&MsgTutorialUnleashed, 0, 4, 1);
         while (UiWork_IsCompleteFar() == 0)
             WaitFrames(1);
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
-        handle = UiText_OpenMessageWindowFar(0xc48, 10, 4, 1);
+        handle = UiText_OpenMessageWindowFar((s32)&MsgTutorialStandby, 10, 4, 1);
         BattlePresentation_WaitForPromptAt(92, 24);
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
@@ -393,7 +399,7 @@ resolved:
                 BattleUnit_AssignFar(128, work->msg_ids[work->field_3c], 26);
                 UiWork_ClearValueNameTablesFar();
                 UiWork_PushValueSlotFar(128, 1);
-                UiText_ShowMessageAndWaitCoreFar(work->field_3e + 0x838);
+                UiText_ShowMessageAndWaitCoreFar(work->field_3e + (s32)&MsgDowned);
                 BattlePresentation_WaitForAdvance();
             }
         }
@@ -421,9 +427,9 @@ party_lost:
     src = gCell + off;
     UiWork_PushValueSlotFar(*src, 1);
     if (BattleParty_PrepareActiveOwners(0) == 1)
-        UiText_ShowMessageAndWaitCoreFar(0x83d);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgGoesDownInDefeat);
     else
-        UiText_ShowMessageAndWaitCoreFar(0x837);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyDefeated);
     BattlePresentation_WaitForAdvance();
     AudioCommand_PlayFar(17);
     Blend_SetDarkenTarget16(30);

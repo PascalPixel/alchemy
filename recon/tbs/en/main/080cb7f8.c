@@ -68,23 +68,23 @@ void Unnamed_080cb7f8(struct BattleEffectArgument *effect)
     work->fade_step = 0;
     *(volatile u16 *)0x04000052 = 0x100c;
     *(volatile u16 *)0x04000020 = 0x100;
-    Resource_LoadAndDecompress((s32)&ResourceId_VioletPaletteA, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceTileSheet, work, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
     switch (work->effect->kind) {
     case 0:
-        palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
-        break;
-    case 1:
-        palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
-        break;
-    case 2:
         palette = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteA);
         break;
-    default:
+    case 1:
         palette = Resource_GetTableEntry((s32)&ResourceId_IceTileSheet);
         break;
+    case 2:
+        palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteA);
+        break;
+    default:
+        palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
+        break;
     }
-    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    { s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords; copy((void *)0x05000000, palette, 128); }
 
     for (i = 0; i != 128; i++) {
         gFlecks[i].y = 0;

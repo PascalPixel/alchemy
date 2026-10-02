@@ -890,7 +890,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT23.o"(.text)
         "*/recon/tbs/raw/080f6440.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)
-        "*/recon/tbs/raw/080f7460.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.080f86f8)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/SOUND.o"(.text .rodata .data .padding)

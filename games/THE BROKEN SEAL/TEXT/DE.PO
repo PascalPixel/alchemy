@@ -10239,11 +10239,11 @@ msgctxt "message"
 msgid "02557"
 msgstr "Gewinn:"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "02558"
 msgstr "Ändere Wert mit oben/unten."
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Starten     {button_icon:2}:Stopp"
 

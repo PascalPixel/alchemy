@@ -1,12 +1,22 @@
 /* Allocates battle work, plays the opening, and runs rounds to completion.
-   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 28,144
-   candidates; the best scored 3922 against 4257 (83 register-only, 2
-   stack-only, 49 operand, 18 reordered, 5 inserted, 9 deleted) after 12
-   rewrites (introduce a temporary, reorder local declarations, change loop
-   form, pointer arithmetic or indexing), none of them kept. Separately, the
-   callees now use the build's names where the address has exactly one,
-   which alone takes the draft to 3757; four callees have none. */
-
+ * DRAFT (52 of 754 instructions differ), reworked 2026-10-02: same frame.
+ * 1. At the top the ROM keeps the scene in r10, its vector in r9 and the
+ *    shared zero in r7; here they are r7, r10 and r6. The zero lives in the
+ *    first block only, so the ROM's first block has r6 taken while the zero
+ *    is alive, and nothing visible holds it.
+ * 2. The link flag's address (work + 0x44) is stored to its stack slot and
+ *    read back before the store through it; here the store goes first.
+ * 3. The 0x7c8-byte copy has the source in r1 and the destination in r2;
+ *    here they are swapped. The defeat line's leader byte is read through
+ *    r3, here r2.
+ * Settled: the frame carries 48 bytes nothing reads (the unused array); the
+ *    fills go through one volatile cell; the seed clear is followed by a
+ *    scheduling barrier (written as a do-while (0)); the link wait is one
+ *    loop that stores its timeout inside; the dispatch delay is a conditional
+ *    argument; the result is kept in the loop index; messages are names.
+ * Three messages still need catalogue names: MsgPartyDefeated (0x837),
+ * MsgGoesDownInDefeat (0x83d), MsgTutorialUnleashed and MsgTutorialStandby
+ * (0xc47, 0xc48). */
 #include "DMA.H"
 
 struct BattleTimerWork {

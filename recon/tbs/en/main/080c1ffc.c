@@ -1,30 +1,35 @@
-/* Draft, not exact (2026-09-25): 876 of 876 bytes, 311 differing halfwords.
+/* Draft, not exact: 81 instructions off (was 201), score 1847.
    BattleFormation_BuildEnemyList: picks the formation record (level-matched
    when flag 0x173 is set), spends a budget of 6 slots on each member's
    minimum count (1 slot for a flagged summon entry, 2 otherwise), adds random
    extras within the budget, orders the enemy list by the record's battle type
    (0 shuffled groups, 1 random draw, else in record order), clears units
-   128..133 and assigns up to six. Written from the listing. What lined up:
-   arrays declared list, extra, counts, order (reverse stack order); the size
-   held in a local so the multiply keeps the store-flag form; the setup block
-   fields as struct members so 6 and 0 are built with movs; the final loop as
-   a do-while so it indexes the list instead of walking a pointer.
-   Remaining: register allocation throughout. The ROM keeps i in r7 and the
-   extra/offset cursor in r6 (here swapped), spills the counts address to
-   sp+12 and member_ids to sp+8 (here the other way round), and the shuffled
-   and sequential copies precompute count * 2 instead of walking a pointer.
-   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 32,206
-   candidates; the best scored 2785 against 3293 (99 register-only, 5
-   stack-only, 6 operand, 20 reordered, 6 inserted, 3 deleted) after 54
-   rewrites (swap commutative operands, reorder local declarations, reorder
-   independent statements, introduce a temporary), none of them kept. Its
-   gains come from register keywords, temporaries and loop forms spread over
-   the whole function; most of the remaining 99 register-only differences
-   are the counters' and work pointer's roles. */
+   128..133 and assigns up to six.
+   2026-10-02, what lined up: one unsigned counter for every loop (r7);
+   record->member_ids[i] written out each time (the member address then
+   spills below the counts address, as in the ROM); the slot size as a
+   variable local to each of the first two loops and shared in the third;
+   both counts read before counts[i] is stored; the copies as
+   for (n = 0; n < counts[k]; n++), which the loop pass reverses and which
+   reads counts[k] twice as the ROM does. The budget, extras and adjust
+   loops are exact.
+   Remaining:
+   - the last loop. The ROM keeps i * 2 in r2 across the back edge (set to 0
+     before the loop, shifted and copied at the bottom) and does not walk a
+     pointer: gcse's partial redundancy insertion without strength reduction,
+     so the loop pass skipped that loop. for (i = 0; i <= 5 && list[i]; i++)
+     has the ROM's block order but the loop pass reduces it; if (list[0])
+     do { } while (i <= 5 && list[i]) is skipped as phony (gcse inserts after
+     the loop note) but keeps the list test above the body with a branch.
+   - reload register choices before the first loop, in the second loop and
+     in the copies (r0, r5, r3 there; r3, r1, r2 here). They follow from how
+     often each hard register is used in the whole function, so they should
+     settle once the last loop matches. */
 #include "TYPES.H"
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_FORMATION.H"
 #include "BATTLE_CALC.H"
+#include "IWRAM_CALL.H"
 
 struct BattleSetup {
     u8 unknown_00[60];
@@ -54,7 +59,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     struct BattleSetup *work;
     struct BattleFormationRecord *record;
     s32 count;
-    u8 *member_ids;
+#define member_ids record->member_ids
     s32 margin;
     u16 list_buffer[14];
     s32 extra[5];
@@ -89,23 +94,26 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     if (j == 5)
         record = &BattleFormation_Records[1];
 
-    member_ids = record->member_ids;
     count = 0;
     budget = 6;
     for (i = 0; i <= 4; i++) {
         if (record->minimum_counts[i] != 0) {
-            size = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
-            size *= record->minimum_counts[i];
-            budget -= size;
+            s32 size1 = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
+
+            budget -= size1 * record->minimum_counts[i];
         }
     }
 
     for (i = 0; i <= 4; i++) {
-        counts[i] = record->minimum_counts[i];
-        room = record->maximum_counts[i] - record->minimum_counts[i];
+        s32 minimum = record->minimum_counts[i];
+        s32 maximum = record->maximum_counts[i];
+
+        counts[i] = minimum;
+        room = maximum - minimum;
         if (room > 0) {
-            size = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
-            fit = __divsi3(budget, size);
+            s32 size2 = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
+
+            fit = budget / size2;
             if (fit < room)
                 room = fit;
             extra[i] = ((room + 1) * Random16()) >> 16;
@@ -146,10 +154,8 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         }
         for (i = 0; i <= 4; i++) {
             k = order[i];
-            if (counts[k] > 0) {
-                for (n = counts[k]; n != 0; n--)
-                    list[count++] = member_ids[k] + 8;
-            }
+            for (n = 0; n < counts[k]; n++)
+                list[count++] = member_ids[k] + 8;
         }
         break;
     case 1:
@@ -168,10 +174,8 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         break;
     default:
         for (i = 0; i <= 4; i++) {
-            if (counts[i] > 0) {
-                for (n = counts[i]; n != 0; n--)
-                    list[count++] = member_ids[i] + 8;
-            }
+            for (n = 0; n < counts[i]; n++)
+                list[count++] = member_ids[i] + 8;
         }
         break;
     }
@@ -179,10 +183,11 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     work->unknown_3c = 6;
     work->unknown_3e = 0;
     for (i = 128; i <= 133; i++)
-        ((ClearFn)0x03000164)(Owner_GetStateFar(i), 332);
+        Iwram_ClearWords(Owner_GetStateFar(i), 332);
 
     for (i = 0; i <= 5 && list[i] != 0; i++) {
-        charge = Summon_TakeCharge(list[i], 1);
+        s32 charge = Summon_TakeCharge(list[i], 1);
+
         if (charge & 0x8000)
             Summon_ResetCharge(list[i]);
         BattleUnit_AssignFar(i + 128, list[i], charge & 0x7fff);

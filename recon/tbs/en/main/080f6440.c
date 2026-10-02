@@ -1,5 +1,16 @@
-/* NONMATCHING: alchemy drafts scores 6025, 234 differing instructions of
- * 1731 (was 11572 and 528). The frame is the listing's 40 bytes now.
+/* NONMATCHING: alchemy drafts scores 3720, 146 differing instructions of
+ * 1731 (was 6025 and 234). The frame is the listing's 40 bytes.
+ * Latest: in the line check the mismatch flag and the first symbol are
+ * cleared before the line's win flag (mixed = 0; found = -1; line = 0).
+ * With the flag cleared after the win flag the allocator ranked it below
+ * the hit count; cleared first it ranks just above the bet address, so the
+ * flag takes r9, the bet address r11 and the hit count is spilled to
+ * sp+16, as listed. What is left of the allocation order: the listing has
+ * the line pointer in r8 and the column in r10, this draft the reverse
+ * (the column still outranks the line pointer, 50 weighted references over
+ * 324 instructions against 9 over 79). Holding the pause flag or the held
+ * byte in the column variable, a line pointer variable, and declaration
+ * order do not change that. The "Remaining" paragraph below predates this.
  * Found: the line check reads the symbol in each of its three branches (the
  * shared modulo call and cell read in the listing are those three tails
  * merged after register allocation, and the row offset is used twice per
@@ -345,9 +356,9 @@ void ReelGame_RunFrame(void)
                 s32 mixed;
                 s32 found;
 
-                work->line[col] = 0;
                 mixed = 0;
                 found = -1;
+                work->line[col] = 0;
                 if (col > 3 - work->bet && col < work->bet + 3) {
                     for (i = 0; i != 5; i++) {
                         s32 sym;

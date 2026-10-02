@@ -104,6 +104,7 @@ impl History {
         })
     }
     /// The days whose credit rules grew stricter, with their notes.
+    #[cfg(test)]
     pub(crate) fn stricter(&self) -> impl Iterator<Item = (&str, &str)> {
         self.days.iter().filter_map(|day| {
             day.correction

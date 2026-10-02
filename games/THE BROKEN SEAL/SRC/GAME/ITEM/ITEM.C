@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_TYPES.H"
@@ -103,7 +104,6 @@ struct ItemMenuWork {
 extern struct ItemMenuModeState gGameState;
 extern struct ItemMenuDisplayState *gMenuCtrlWork;
 struct ItemMenuWork *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *buffer);
 s32 GameFlag_TestFar(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
@@ -548,7 +548,7 @@ s32 ItemMenu_Run(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
-    saved = Runtime_BumpAllocateAlternatePool(0x2130);
+    saved = (struct ItemMenuSavedGraphics *)Runtime_BumpAllocateAlternatePool(0x2130);
     menu->saved = saved;
     saved->reserved_2128 = 0;
     saved->variant = 0;

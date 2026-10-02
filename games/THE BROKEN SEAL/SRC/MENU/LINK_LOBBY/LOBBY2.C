@@ -1,5 +1,6 @@
 /* The link lobby: the attendant's call into the circle. */
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "LOBBY.H"
 #include "SERIAL_RUNTIME.H"
@@ -16,7 +17,6 @@ extern u8 MsgLobbyLinkDisconnected[];
 
 extern u8 MsgEnemyLabel[];
 extern u8 gLinkStatus[];
-s32 Runtime_BumpAllocateAlternatePool(u32 size);
 void Runtime_BumpFree(s32 heap);
 s32 SerialRuntime_BeginTransferB(void);
 s32 SerialRuntime_GetActiveTransfers(void);
@@ -108,7 +108,7 @@ s32 LinkLobby_ReceivePartyRecords(void)
     s32 i;
 
     size = 0x154;
-    heap = Runtime_BumpAllocateAlternatePool(size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool((s32)size);
     result = 0;
     timeout = 900;
     slot = 0;
@@ -198,7 +198,7 @@ test2:
 second:
     Runtime_BumpFree(heap);
     size = 0x140;
-    heap = Runtime_BumpAllocateAlternatePool(size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool((s32)size);
     Trade_GetOfferState(1);
     tries = 0;
     if ((ret = SerialRuntime_BeginTransferB()) != -1) {

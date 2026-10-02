@@ -1,4 +1,5 @@
 #include "OWNER_STATE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "INVENTORY.H"
 
@@ -98,7 +99,6 @@ struct LevelUpWork {
     u8 unused_0c[0x20];
 };
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *buffer);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 void Owner_RecalculateStats(s32 owner);
@@ -254,7 +254,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
     s32 level;
 
     st = (struct OwnerLevelState *)Owner_GetState(owner);
-    work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
+    work = (struct LevelUpWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
     work->class_id = st->class_id;
     level = st->level;
     work->level = level;

@@ -751,8 +751,6 @@ SECTIONS
     "*/recon/tbs/ja/rom.o"(.rom.000d9972)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BURST_SCENE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/EFFECT3.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000daaa0)
-    "*/recon/tbs/ja/rom.o"(.rom.000db0a4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STEP_PALETTE_TO_RESOURCE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CASTING.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORE_OBJECT_AND_RUN_STEP7.o"(.text)

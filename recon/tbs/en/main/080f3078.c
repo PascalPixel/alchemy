@@ -1,12 +1,11 @@
-/* Draft, not exact: score 863, 120 differing instructions of 831 (was 10457
+/* Draft, not exact: score 363, 20 differing instructions of 831 (was 10457
  * and 447). Rewritten from the listing in plain C: no link-time constants,
  * no permuter temporaries. Same size, same frame, every loop in place.
+ * Green and blue have the listing's registers (b r5, g r6) because the
+ * 0x10004 loop takes green before red; the other four loops take red first.
+ * The allocator's priorities for g and b are 1% apart, so most edits to any
+ * loop swap them back (about 100 instructions): check that first.
  * Remaining, all register choice or order:
- *  - green and blue are swapped throughout (listing b r5, g r6; here g r5,
- *    b r6). The allocator's priorities are 4.46 for g and 4.43 for b; blue
- *    needs 128 weighted references (it has 118) or two fewer instructions of
- *    green's life. No natural spelling found that moves it without changing
- *    code elsewhere; this is about 100 of the 122.
  *  - the grey sum (0x10001 and the 0x200000 tint) adds its first two terms
  *    and then the third in the listing; here the last two are added first.
  *    (c takes the quotient: that keeps c out of the 0x7c00 and, as listed.)
@@ -14,7 +13,7 @@
  *    green's lower clamp; here green is computed and tested.
  *  - in the 0x400000 blend the listing spills tr + tg last (sp+4, below the
  *    three shifted tints); here it is spilled first (sp+16).
- * The permuter reaches 206 from here only with duplicated statements. */
+ * The permuter reaches 196 from here only with pointless temporaries. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
@@ -129,8 +128,8 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         case 0x10004:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                r = c & 31;
                 g = (c >> 5) & 31;
+                r = c & 31;
                 b = (c >> 10) & 31;
                 if (r < 10)
                     r = 10;

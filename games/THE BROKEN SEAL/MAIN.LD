@@ -758,7 +758,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE7.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.000de338)
     "*/recon/tbs/ja/rom.o"(.rom.000de404)
-    "*/recon/tbs/ja/rom.o"(.rom.000df23c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLAME_BLADE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)

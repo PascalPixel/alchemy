@@ -1250,12 +1250,6 @@ BattleFx_InitializeMode12:
 	.thumb_func
 BattleEffect_RunParticleStreams:
 	.incbin "baserom.gba", 0x000de404, 0x00000e38
-	.section .rom.000df23c, "ax"
-	.global BattleEffect_RunCirclingFallingScene
-	.type BattleEffect_RunCirclingFallingScene, %function
-	.thumb_func
-BattleEffect_RunCirclingFallingScene:
-	.incbin "baserom.gba", 0x000df23c, 0x000007b0
 	.section .rom.000e10d8, "ax"
 	.global Unnamed_080ea0d8
 	.type Unnamed_080ea0d8, %function
@@ -1278,7 +1272,10 @@ Data_080edab8:
 	.incbin "baserom.gba", 0x000e4ab8, 0x00000008
 	.global Data_080edac0
 Data_080edac0:
-	.incbin "baserom.gba", 0x000e4ac0, 0x00000018
+	.incbin "baserom.gba", 0x000e4ac0, 0x00000008
+	.global CirclingScene_UnitScale
+CirclingScene_UnitScale:
+	.incbin "baserom.gba", 0x000e4ac8, 0x00000010
 	.global ObjectRow_SweepPair
 ObjectRow_SweepPair:
 	.incbin "baserom.gba", 0x000e4ad8, 0x00000008
@@ -1801,7 +1798,19 @@ ImpactBurst_CellHeights:
 	.incbin "baserom.gba", 0x000e5e5e, 0x00000008
 	.global ImpactBurst_CellSourceOffsets
 ImpactBurst_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000e5e66, 0x000000a0
+	.incbin "baserom.gba", 0x000e5e66, 0x00000072
+	.global CirclingScene_ObjectColumns
+CirclingScene_ObjectColumns:
+	.incbin "baserom.gba", 0x000e5ed8, 0x00000009
+	.global CirclingScene_ObjectRows
+CirclingScene_ObjectRows:
+	.incbin "baserom.gba", 0x000e5ee1, 0x00000009
+	.global CirclingScene_PuffSheetOffsets
+CirclingScene_PuffSheetOffsets:
+	.incbin "baserom.gba", 0x000e5eea, 0x0000000e
+	.global CirclingScene_PuffSizes
+CirclingScene_PuffSizes:
+	.incbin "baserom.gba", 0x000e5ef8, 0x0000000e
 	.global FlameBlade_StrikeColumns
 FlameBlade_StrikeColumns:
 	.incbin "baserom.gba", 0x000e5f06, 0x00000006

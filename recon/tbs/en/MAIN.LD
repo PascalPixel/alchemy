@@ -845,7 +845,6 @@
         "*/recon/tbs/raw/080e7338.o"(.text)
         "*/recon/tbs/raw/080e73a0.o"(.text)
         "*/recon/tbs/raw/080e7404.o"(.text)
-        "*/recon/tbs/raw/080e823c.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLAME_BLADE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)

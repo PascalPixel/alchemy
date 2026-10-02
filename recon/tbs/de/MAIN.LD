@@ -751,7 +751,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE7.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000e9138)
     "*/recon/tbs/de/rom.o"(.rom.000e9204)
-    "*/recon/tbs/de/rom.o"(.rom.000ea03c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT46.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLAME_BLADE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FALLING_SWORD.o"(.text)

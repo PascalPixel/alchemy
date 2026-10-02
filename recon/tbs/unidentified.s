@@ -907,8 +907,8 @@ Data_080edab8:
 	.global Data_080edac0
 Data_080edac0:
 	.incbin "baserom.gba", 0x000edac0, 0x00000008
-	.global Data_080edac8
-Data_080edac8:
+	.global CirclingScene_UnitScale
+CirclingScene_UnitScale:
 	.incbin "baserom.gba", 0x000edac8, 0x00000010
 	.global ObjectRow_SweepPair
 ObjectRow_SweepPair:
@@ -1576,18 +1576,18 @@ ImpactBurst_CellHeights:
 	.global ImpactBurst_CellSourceOffsets
 ImpactBurst_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000eee66, 0x00000072
-	.global Data_080eeed8
-Data_080eeed8:
+	.global CirclingScene_ObjectColumns
+CirclingScene_ObjectColumns:
 	.incbin "baserom.gba", 0x000eeed8, 0x00000008
 	.incbin "baserom.gba", 0x000eeee0, 0x00000001
-	.global Data_080eeee1
-Data_080eeee1:
+	.global CirclingScene_ObjectRows
+CirclingScene_ObjectRows:
 	.incbin "baserom.gba", 0x000eeee1, 0x00000009
-	.global Data_080eeeea
-Data_080eeeea:
+	.global CirclingScene_PuffSheetOffsets
+CirclingScene_PuffSheetOffsets:
 	.incbin "baserom.gba", 0x000eeeea, 0x0000000e
-	.global Data_080eeef8
-Data_080eeef8:
+	.global CirclingScene_PuffSizes
+CirclingScene_PuffSizes:
 	.incbin "baserom.gba", 0x000eeef8, 0x0000000e
 	.global FlameBlade_StrikeColumns
 FlameBlade_StrikeColumns:

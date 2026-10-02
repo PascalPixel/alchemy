@@ -1,10 +1,8 @@
 #include "DMA.H"
-#include "RUNTIME_1E74.H"
+#include "BATTLE_WORK.H"
 
 /* The container-built _call_via_r0 veneer: it calls the routine in r0. */
 void _call_via_r0(u32 routine);
-
-extern u8 Data_03001e74[];
 
 void BattleEvent_Playback(void);
 
@@ -20,26 +18,26 @@ void Dma_StopAllThenRunHook(void)
 
 void BattleEventRuntime_BeginPhase(s32 parameter)
 {
-    struct Runtime1e74 *runtime;
+    struct BattleSession *runtime;
 
-    runtime = Runtime1e74_Get();
-    if (runtime->phase == 0) {
-        runtime->phase = 1;
+    runtime = gBattleWork;
+    if (runtime->events.phase == 0) {
+        runtime->events.phase = 1;
         if (parameter != 0) {
-            runtime->parameter = parameter;
+            runtime->events.pending_cue = parameter;
         }
     }
 }
 
 s32 BattleEventRuntime_SchedulePhase(s32 parameter)
 {
-    struct Runtime1e74 *runtime;
+    struct BattleSession *runtime;
 
-    runtime = Runtime1e74_Get();
-    runtime->value_7fc = 0;
-    runtime->value_804 = 0;
-    runtime->value_808 = parameter;
-    runtime->phase = 2;
-    runtime->flag_655 = 0;
+    runtime = gBattleWork;
+    runtime->events.queue.count = 0;
+    runtime->events.event_index = 0;
+    runtime->events.timer = parameter;
+    runtime->events.phase = 2;
+    runtime->plan.target_count = 0;
     return Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xC80);
 }

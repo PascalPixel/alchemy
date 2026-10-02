@@ -87,15 +87,15 @@ void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
     u32 dst_attr;
     u32 merged;
 
-    p = (struct ObjectRuntime *)Object_GetById(source_id);
-    p = *(void **)((u8 *)p + 0x50);
-    flags = *(u8 *)((u8 *)p + 0x1C);
+    p = Object_GetById(source_id);
+    p = ((struct ObjectRuntime *)p)->animation;
+    flags = ((struct FieldSprite *)p)->vram_block;
     shape = *(u16 *)((u8 *)p + 0x8);
 
-    p = (struct ObjectRuntime *)Object_GetById(target_id);
-    p = *(void **)((u8 *)p + 0x50);
+    p = Object_GetById(target_id);
+    p = ((struct ObjectRuntime *)p)->animation;
     dst_attr = *(u16 *)((u8 *)p + 0x8);
-    *(u8 *)((u8 *)p + 0x1C) = flags;
+    ((struct FieldSprite *)p)->vram_block = flags;
     shape <<= 22;
     shape >>= 22;
     merged = 0xfffffc00;

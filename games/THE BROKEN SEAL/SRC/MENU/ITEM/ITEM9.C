@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "INVENTORY_MENU.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -10,16 +11,13 @@
    consumption, curse and repair notes. */
 #include "ITEM.H"
 
-#define MENU_SUBOBJECT(menu, offset) (*(u8 **)((u8 *)(menu) + (offset)))
-struct InventoryMenuState;
-extern struct InventoryMenuState *gMenuWork;
 extern volatile s32 gKeysRepeat;
 extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
 void Palette_CopyObjectBankToBackground14(void);
 s32 GameFlag_TestFar(s32);
 void ItemMenu_DrawItemDetails(s32, s32);
-s32 RenderOutput_RedrawSavedRectFar(s32);
+void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
 void Palette_LightenBankHighlight(s32);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
@@ -40,17 +38,17 @@ s32 Menu_SelectQuantity(s32 value)
 {
 #if EDITION_INTERNATIONAL
     s32 changed = 1;
-    u8 *menu = (u8 *)gMenuWork;
-    u8 *confirmState = MENU_SUBOBJECT(menu, 540);
+    struct InventoryMenuState *menu = gMenuWork;
+    struct InventoryMenuIcon *confirmState = menu->selected_item_icon;
 #else
-    u8 *menu = (u8 *)gMenuWork;
+    struct InventoryMenuState *menu = gMenuWork;
     s32 changed = 1;
 #endif
     s32 window;
     s32 quantity = 0;
 
 #if EDITION_INTERNATIONAL
-    confirmState[5] = 13;
+    confirmState->state = 13;
     window = UiWindow_CreateFar(0, 0, 30, 10, 2);
 #else
     /* The Japanese window covers only the left of the screen. */
@@ -59,8 +57,8 @@ s32 Menu_SelectQuantity(s32 value)
     Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
 
     {
-        u8 *iconState = MENU_SUBOBJECT(menu, 380);
-        iconState[5] = 13;
+        struct InventoryMenuIcon *iconState = menu->cursor;
+        iconState->state = 13;
     }
     Palette_CopyObjectBankToBackground14();
     WaitFrames(1);
@@ -105,10 +103,10 @@ check_exit:
     goto adjust;
 
 done:
-    RenderOutput_RedrawSavedRectFar(window);
+    RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
     WaitFrames(1);
     UiWork_FinalizeFar(window, 1);
-    RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 16));
+    RenderOutput_RedrawSavedRectFar(menu->main_window);
     Palette_LightenBankHighlight(14);
     {
         s32 delay = 0xc80;
@@ -117,17 +115,17 @@ done:
     }
 
     {
-        u8 *iconState = MENU_SUBOBJECT(menu, 380);
+        struct InventoryMenuIcon *iconState = menu->cursor;
 #if EDITION_INTERNATIONAL
-        iconState[5] = 1;
+        iconState->state = 1;
 #else
         /* The Japanese menu marks itself for a redraw instead of framing
            the right-hand windows again. */
         /* FAKEMATCH: one register carries the 1 both stores write. */
         s32 one = 1;
 
-        iconState[5] = one;
-        *(u16 *)(menu + 0x220) = one;
+        iconState->state = one;
+        menu->flags = one;
 #endif
     }
 #if EDITION_INTERNATIONAL

@@ -1,19 +1,15 @@
 #include "TYPES.H"
+#include "EVENT_RUNTIME.H"
 #include "SYSTEM.H"
 
-struct State_08093168 {
-    u8 padding[472];
-    s16 counter;
-};
-
-extern struct State_08093168 *gEventWork;
+extern struct EventRuntime *gEventWork;
 extern s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
 extern s32 UiWork_IsIdleFar(s32);
 
 void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
     s32 x0 = x;
-    struct State_08093168 *state = gEventWork;
+    struct EventRuntime *state = gEventWork;
     s32 py = y;
     s32 px = x0;
     s32 min_x = 8;
@@ -34,8 +30,8 @@ void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
     if (py > 220)
         py = 220;
 
-    ret = UiText_OpenMessageWindowFar(state->counter, px, py, 1);
+    ret = UiText_OpenMessageWindowFar(state->message, px, py, 1);
     while (UiWork_IsIdleFar(ret) == 0)
         WaitFrames(1);
-    state->counter++;
+    state->message++;
 }

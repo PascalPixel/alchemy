@@ -7,13 +7,9 @@
 #include "BATTLE_WORK.H"
 #include "SYSTEM.H"
 #include "RESOURCE_IDS.H"
-
-struct TransitionWork {
-    u8 unknown_00[8];
-    s32 phase;
-    s32 visible;
-    s32 done;
-};
+#include "BATTLE_PRESENTATION.H"
+#include "MOTION_OBJECT.H"
+#include "BATTLE_RUNTIME.H"
 
 /* The first two display registers. */
 struct DisplayRegisters {
@@ -45,12 +41,9 @@ void Graphics_ClearBg0Vofs(void);
 void UiWindow_CreateWithLayoutBoundsFar(s32 terrain);
 void BattleIntro_AnnounceEncounter(s32 enemy_count);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
-u8 *GetBattleObjectSlot(s32 object_id);
-u8 *Owner_GetStateFar(s32 id);
 void BattleActor_SpawnObjectsForList(u16 *ids, s32 mode);
 void BattleEffect_RunTileAndPaletteAnimationFar(struct TransitionActorList *list);
 void BattlePres_SetActorRecordMode(s32 id, s32 mode);
-
 
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a)
@@ -69,7 +62,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
     struct TransitionActorList list;
     u16 party[14];
     u16 actors[14];
-    struct TransitionWork *work;
+    struct BattleBackgroundView *work;
     s32 *timer;
     u16 *map;
     s32 tile;
@@ -77,12 +70,12 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
     u32 j;
     s32 count;
     s32 id;
-    u8 *object;
+    struct BattleObjectSlot *object;
     struct BattleSession *session;
     u16 *ids;
     s32 n;
 
-    work = *(struct TransitionWork **)(gWorkSlot + 44 * 4);
+    work = *(struct BattleBackgroundView **)(gWorkSlot + 44 * 4);
     timer = Runtime_AllocateHeapBlock(42, 4);
     if (kind != 0x15b) {
         {
@@ -100,16 +93,16 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
             Dma_Set(BattlePres_CurtainTiles + 192, (void *)0x060050e0, 0x84000008, dma);
             ((struct DisplayRegisters *)((u8 *)dma - 212))->control = 1;
         }
-        work->visible = 1;
-        work->phase = 1;
-        work->done = 0;
+        work->second_mode = 1;
+        work->mode = 1;
+        work->busy = 0;
         fill = 0x33333333;
         Dma_Set((void *)&fill, (void *)0x06005000, 0x85000008, (volatile u32 *)0x040000d4);
         fill = 0;
         Dma_Set((void *)&fill, (void *)0x06005100, 0x85000008, (volatile u32 *)0x040000d4);
         REG_BG1CNT = 0xc04;
         REG_BG0CNT |= 2;
-        work->phase = 2;
+        work->mode = 2;
         map = (u16 *)0x06006000;
         for (i = 0; i <= 31; i++) {
             if (i <= 20)
@@ -154,16 +147,16 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         }
     } else {
         session = *(struct BattleSession **)(gWorkSlot + 9 * 4);
-        work->visible = 1;
-        work->done = 0;
+        work->second_mode = 1;
+        work->busy = 0;
         count = BattleParty_ListActorIds(3, party);
         for (i = 0; i != count; i++) {
             id = i + 120;
             if ((s32)i <= 7)
                 id = i;
             object = GetBattleObjectSlot(id);
-            if (Owner_GetStateFar(id)[0x128] != 148)
-                *(s32 *)(object + 24) = 0xb333;
+            if (Owner_GetStateFar(id)->class_id != 148)
+                object->scale = 0xb333;
         }
         {
             volatile u16 *ime;
@@ -299,12 +292,12 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
      * queue, and the green and blue mask is a one-halfword struct, which keeps
      * it a pool constant held across the fade loop as in the ROM. */
 
-    s32 *transition = *(s32 **)gTransitionWork;
+    struct BattleBackgroundView *transition = *(struct BattleBackgroundView **)gTransitionWork;
 
-    if (transition[2] == 0) {
+    if (transition->mode == 0) {
         Scheduler_AddOrUpdateCallback((s32)(BattlePres_UpdateHBlankScroll), 0x4ff);
     }
-    transition[2] = mode;
+    transition->mode = mode;
 
     if (mode == 1) {
         volatile u16 *ime;

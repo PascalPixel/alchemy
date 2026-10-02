@@ -3,8 +3,8 @@
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
-
-extern u8 Data_03001e74[];
+#include "BATTLE_WORK.H"
+#include "BATTLE_PRESENTATION.H"
 
 struct MotionRecordState {
     u8 unknown_00[0x10];
@@ -14,26 +14,13 @@ struct MotionRecordState {
 s32 BattleMotion_ReleaseObjectSlotByValue();
 s32 Object_Destroy(s32);
 
-struct Entry_080b7eb4 {
-    s32 first;
-    s32 second;
-    u8 filler8[36];
+struct BattleAnchorPosition {
+    s32 x;
+    s32 y;
+    s32 z;
 };
 
-struct State_080b7eb4 {
-    u8 filler0[0x80];
-    struct Entry_080b7eb4 entries[1];
-};
-
-struct Output_080b7eb4 {
-    s32 first;
-    s32 middle;
-    s32 second;
-};
-
-extern struct State_080b7eb4 *volatile gBattleWork;
-
-extern u8 gCameraWork[];
+extern struct BattleCamera *gCameraWork;
 void Render_ResetTransformState(void);
 s32 Graphics_PrepareTransferAndRun(void *, void *);
 s32 Graphics_PrepareTransferInIwramWork(void *, void *);
@@ -50,17 +37,17 @@ s32 Render_ProjectPoint(const s32 *, s32 *);
 s32 Camera_ApplyTransformByFlag(void);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id) {
-    u8 *base = *(u8 **)((u32)&Data_03001e74);
-    u8 *result_base = base + 0x74;
-    s32 offset;
+    struct BattleSession *work = gBattleWork;
+    struct BattleObjectSlot *slots = work->slots;
+    s32 index;
     if (object_id > 7) {
         object_id -= 0x78;
     }
-    offset = object_id + 0x2DC;
-    if (base[offset] == 0xFF) {
+    index = object_id;
+    if (work->placement[index] == 0xFF) {
         return NULL;
     }
-    return (struct BattleObjectSlot *)(result_base + base[offset] * 0x2C);
+    return &slots[work->placement[index]];
 }
 
 void ResetMotionRecordGroup(void *owner)
@@ -140,25 +127,25 @@ void *BattleMotion_DestroyAllSlotObjects(void)
     } while (i <= 0xD);
 }
 
-s32 Battle_GetWorkEntryPair(s32 no, struct Output_080b7eb4 *out)
+s32 Battle_GetWorkEntryPair(s32 no, struct BattleAnchorPosition *out)
 {
-    struct State_080b7eb4 *state = gBattleWork;
+    struct BattleSession *state = gBattleWork;
 
-    out->first = state->entries[no].first;
-    out->middle = 0;
-    out->second = state->entries[no].second;
+    out->x = state->slots[no].anchor_x;
+    out->y = 0;
+    out->z = state->slots[no].anchor_z;
     return 0;
 }
 
 s32 Camera_ApplyTransformByFlag(void)
 {
-    u8 *state = *(u8 **)((u32)&gCameraWork);
+    struct BattleCamera *state = gCameraWork;
     Render_ResetTransformState();
     if (GameFlag_TestFar(0x16B) != 0) {
         Iwram_TransformMatrix((s32 *)Camera_FlagTransformWork);
-        return Graphics_PrepareTransferAndRun(state, state + 0xC);
+        return Graphics_PrepareTransferAndRun(state, state->pos);
     } else {
-        return Graphics_PrepareTransferInIwramWork(state, state + 0xC);
+        return Graphics_PrepareTransferInIwramWork(state, state->pos);
     }
 }
 

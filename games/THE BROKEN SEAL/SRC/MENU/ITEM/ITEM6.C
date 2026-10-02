@@ -4,41 +4,19 @@
 #include "OWNER_STATE.H"
 #include "SYSTEM.H"
 #include "ITEM.H"
-#include "A9_MOTION.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
 #include "LAYOUT_GUARD.H"
 
 extern u8 MsgEquipSlotLabels;
 extern void ItemMenu_PosCategory(void);
-extern void UiText_DrawCharacterAtOffsetFar(void *, s32, s32, s32);
+extern void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 extern u8 MsgItemName;
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
-extern u8 Data_03001f2c[];
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-void UiIcon_PrepareObject(void *arg0);
-
-struct CategoryItemIcon {
-    u8 reserved_00[6];
-    s16 x;
-    s16 y;
-};
-
-struct CategoryItemIconState {
-    u8 reserved_00[72];
-    struct CategoryItemIcon *icons[15];
-};
-
-LAYOUT_OFFSET_GUARD(CategoryItemIcon_X, struct CategoryItemIcon, x, 6);
-LAYOUT_OFFSET_GUARD(CategoryItemIcon_Y, struct CategoryItemIcon, y, 8);
-LAYOUT_OFFSET_GUARD(
-    CategoryItemIconState_Icons,
-    struct CategoryItemIconState,
-    icons,
-    72);
 void ItemMenu_PosCategory(void);
 void UiIcon_PrepareObject(void *icon);
+void Menu_PlaceEntryObjectInGrid(struct InventoryMenuIcon *, s32, s32, s32, s32);
 
 s32 Menu_ReservedStatusOne(void)
 {
@@ -51,20 +29,20 @@ s32 Menu_ReservedStatusOne(void)
 void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
 {
     struct InventoryMenuState *menu = gMenuWork;
-    u8 *items;
+    u16 *items;
 
     Owner_GetStateFar(owner_id);
     ItemMenu_PosCategory();
     ItemMenu_HideAllIcons();
-    UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels, window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels + 1, window, 0, 32);
-    UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels + 2, window, 0, 16);
-    UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels + 3, window, 0, 48);
-    items = (u8 *)menu->items;
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels, window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels + 1, window, 0, 32);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels + 2, window, 0, 16);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgEquipSlotLabels + 3, window, 0, 48);
+    items = menu->items;
     ItemMenu_DrawEquippedItemNames(window, items);
     if (mode == 0) {
         WaitFrames(1);
-        ItemMenu_DrawIcons((u16 *)items, 1);
+        ItemMenu_DrawIcons(items, 1);
         ItemMenu_ArrangeCategoryItemIcons(items);
     }
 }
@@ -105,12 +83,12 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)
 void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
 {
     s32 i;
-    struct Object080a9bd8 *obj;
-    struct Object080a9bd8 **tbl;
+    struct InventoryMenuIcon *obj;
+    struct InventoryMenuIcon **tbl;
 
     i = 0;
     tbl =
-        (struct Object080a9bd8 **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
+        gMenuWork->entry_icons;
     do {
         obj = *tbl++;
         if (obj != NULL) {
@@ -120,7 +98,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
     } while (i <= 0x1F);
 }
 
-void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
+void Menu_PlaceEntryObjectInGrid(struct InventoryMenuIcon *obj, s32 index,
     s32 origin_x, s32 origin_y, s32 phase) {
     s32 no;
 
@@ -141,15 +119,15 @@ void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
    in a register across the loop. */
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
 {
-    struct CategoryItemIconState *state;
-    struct CategoryItemIcon *icon;
+    struct InventoryMenuState *state;
+    struct InventoryMenuIcon *icon;
     s32 i;
 
-    state = *(struct CategoryItemIconState **)Data_03001f2c;
+    state = gMenuWork;
     ItemMenu_PosCategory();
     for (i = 0; i < 15; i++) {
         if (items[i] != 0 && (items[i] & 0x200) != 0) {
-            icon = state->icons[i];
+            icon = state->entry_icons[i];
             if (icon != 0) {
                 switch (Item_Get(items[i] & 0x1ff)->type) {
                 case 1:

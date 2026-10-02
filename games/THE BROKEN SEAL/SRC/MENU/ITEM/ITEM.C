@@ -7,50 +7,44 @@
 extern s32 gFrameCount;
 void AnimationObjects_SelectAnimationFar(void *, s32);
 
-
 s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 void UiIcon_PrepareObject(void *icon);
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
 {
-    u8 *menu;
+    struct InventoryMenuState *menu;
     s8 member_index;
 
-    menu = ((u8 *)gMenuWork);
-    if ((gFrameCount & 31) == 0 && menu[0x219] != 0) {
+    menu = gMenuWork;
+    if ((gFrameCount & 31) == 0 && menu->party_count != 0) {
         member_index = 0;
         do {
-            s32 owner_offset = member_index * 2 + 520;
-
-            if (Item_CanOwnerEquip(*(u16 *)(menu + owner_offset),
-                                   *(u16 *)(menu + 376) & 0x1FF) != 0) {
-                s32 off = member_index * 4 + 276;
-                void *indicator = *(void **)(menu + off);
+            if (Item_CanOwnerEquip(menu->owner_ids[member_index],
+                                   menu->selected_items[0] & 0x1FF) != 0) {
+                void *indicator = menu->owner_objects[member_index];
                 AnimationObjects_SelectAnimationFar(indicator, 3);
             } else {
-                s32 off = member_index * 4 + 276;
-                void *indicator = *(void **)(menu + off);
+                void *indicator = menu->owner_objects[member_index];
                 AnimationObjects_SelectAnimationFar(indicator, 1);
             }
             member_index++;
-        } while (member_index < menu[0x219]);
+        } while (member_index < menu->party_count);
     }
 }
 
 void EquipmentMenu_StartCompatibilityIndicators(void)
 {
-    u8 *menu;
+    struct InventoryMenuState *menu;
     s8 member_index;
 
-    menu = ((u8 *)gMenuWork);
-    if (menu[0x219] != 0) {
+    menu = gMenuWork;
+    if (menu->party_count != 0) {
         member_index = 0;
         do {
-            s32 off = member_index * 4 + 276;
-            void *indicator = *(void **)(menu + off);
+            void *indicator = menu->owner_objects[member_index];
             AnimationObjects_SelectAnimationFar(indicator, 1);
             member_index++;
-        } while (member_index < menu[0x219]);
+        } while (member_index < menu->party_count);
     }
     Scheduler_RemoveCallback((u32)((s32)&EquipmentMenu_UpdateCompatibilityIndicators));
 }
@@ -80,7 +74,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
 
     menu = gMenuWork;
     RenderOutput_RedrawSavedRectFar(menu->message_window);
-    UiText_DrawCharacterAtOffsetFar(message, menu->message_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(message, (s32)menu->message_window, 0, 0);
 }
 
 void Menu_HideEmptyEntryIcons(const u16 *items)

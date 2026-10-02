@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "OBJECT_RUNTIME.H"
+#include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 #include "DMA.H"
@@ -14,7 +16,7 @@ union EffectMotionSlot {
     } bytes;
 };
 
-struct EffectMotionObject {
+struct EffectMotionContext {
     u8 unknown0[5];
     u8 kind;
     u8 unknown6[2];
@@ -30,14 +32,13 @@ struct EffectMotionObject {
     u8 unknown3C[4];
     u32 field40;
     u8 unknown44[12];
-    struct EffectMotionObject *context;
+    struct EffectMotionContext *context;
 };
 
 struct EffectKindObject {
     u8 unknown0[5];
     u8 kind;
 };
-
 
 /* Object table: 192 pointers at gEventWork + 0x14 (see ObjectTable_Get). */
 void *ResourceMetadata_RegisterFar(void *, s32);
@@ -53,21 +54,9 @@ typedef struct {
     void *eff;
 } EffectCleanupContext;
 
-typedef struct {
-    u8 unknown00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unknown14[28];
-    s32 speed30;
-    s32 speed34;
-    u8 unknown38[24];
-    EffectCleanupContext *ctx;
-} EffectCleanupObject;
-
 void ResourceMetadata_ClearRecordFar(void *);
-void Object_SetPosition(EffectCleanupObject *, s32, s32, s32);
-void Object_CommitPosition(EffectCleanupObject *);
+void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
+void Object_CommitPosition(struct ObjectRuntime *);
 s32 GameFlag_TestFar(s32);
 void GameFlag_ClearBitFar(s32);
 void ObjectEffect_EndContextEffect(s32 arg0);
@@ -76,14 +65,7 @@ void Audio_PlayCue(s32);
 void Battle_WaitMode0(s32 arg0);
 void Object_AttachWorkTargetToObject(s32 arg0, s32 arg1);
 
-struct SceneFadeWork {
-    u8 unknown_000[0x19e];
-    s16 mode;
-    u8 unknown_1a0[0x26];
-    u16 step;
-};
-
-extern struct SceneFadeWork *gEventWork;
+extern struct EventRuntime *gEventWork;
 void DisplayTransition_Finish(s32 mode, s32 frames);
 
 /* Plays the scene's cue and two sound effects, whitens one palette colour
@@ -92,14 +74,14 @@ void DisplayTransition_Finish(s32 mode, s32 frames);
    It returns no value, but its epilogue is the value-returning one. */
 s32 Scene_FadeColorFromWhite(void)
 {
-    struct SceneFadeWork *work = gEventWork;
+    struct EventRuntime *work = gEventWork;
     s32 i;
     s32 c;
 
     Audio_PlayCue(gGameState.scene_cue);
     Audio_PlayCue(288);
     Audio_PlayCue(147);
-    if (work->mode == 3) {
+    if (work->mode_19e == 3) {
         s32 color = 0x7fff;
 
         do {
@@ -108,7 +90,7 @@ s32 Scene_FadeColorFromWhite(void)
             *(u16 *)0x050001e6 = color;
         } while (0);
         DisplayTransition_Finish(0x401, 16);
-        work->step = 0;
+        work->status_1c6 = 0;
         WaitFrames(16);
         for (i = 0; i < 16; i++) {
             c = 30 - i * 2;
@@ -121,7 +103,7 @@ s32 Scene_FadeColorFromWhite(void)
 
         *(u16 *)0x05000000 = color;
         DisplayTransition_Finish(0x207, 16);
-        work->step = 0;
+        work->status_1c6 = 0;
         WaitFrames(16);
         for (i = 0; i < 16; i++) {
             c = 30 - i * 2;
@@ -136,12 +118,12 @@ void ObjectEffect_PrepareContextEffect(s32 value)
 {
     u32 zero;
     u8 kind;
-    struct EffectMotionObject *object;
-    struct EffectMotionObject *context;
+    struct ObjectRuntime *object;
+    struct EffectMotionContext *context;
     struct EffectKindObject *effect;
 
     object = ObjectTable_Get(gGameState.selected_actor);
-    context = object->context;
+    context = object->animation;
     effect = ResourceMetadata_RegisterFar(context, 27);
     zero = 0;
     kind = 15;
@@ -149,11 +131,11 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     context->slot24.bytes.active = zero;
     effect->kind = kind;
     object->x = (object->x & 0xFFF00000) + 0x80000;
-    object->y = (object->y & 0xFFF00000) + 0x100000;
-    object->slot24.word = zero;
-    object->field2C = zero;
-    object->field38 = 0x80000000;
-    object->field40 = 0x80000000;
+    object->z = (object->z & 0xFFF00000) + 0x100000;
+    object->velocity_x = zero;
+    object->velocity_z = zero;
+    object->target_x = 0x80000000;
+    object->target_z = 0x80000000;
     Object_SetMode(object, value);
     WaitFrames(18);
 }
@@ -174,8 +156,8 @@ void ObjectEffect_EndContextEffect(s32 arg0)
 {
     s32 zero;
     s32 mask;
-    EffectCleanupObject *obj = ObjectTable_Get(gGameState.selected_actor);
-    EffectCleanupContext *ctx = obj->ctx;
+    struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selected_actor);
+    EffectCleanupContext *ctx = obj->animation;
     struct EffectKindObject *eff = ResourceMetadata_RegisterFar(ctx, 27);
 
     zero = 0;
@@ -190,8 +172,8 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     ResourceMetadata_ClearRecordFar(ctx->eff);
     ctx->eff = (void *)zero;
     *(u8 *)((u8 *)ctx + 38) = 1;
-    obj->speed34 = 0x10000;
-    obj->speed30 = 0x10000;
+    obj->acceleration = 0x10000;
+    obj->speed_limit = 0x10000;
     Object_SetPosition(obj,
         obj->x, obj->y, obj->z + 0x80000);
     Object_CommitPosition(obj);
@@ -216,19 +198,19 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
             flag = 0x122;
             if (GameFlag_TestFar(flag)!= 0) {
                 s32 id;
-                void *obj;
+                struct ObjectRuntime *obj;
 
                 GameFlag_ClearBitFar(flag);
                 id = gGameState.selected_actor;
                 obj = ObjectTable_Get(id);
-                *(s32 *)((u8 *)obj + 12) += 0x00a00000;
+                obj->y += 0x00a00000;
                 Motion_CamBounds(-1, -1, -1, 0);
-                while (*(s32 *)((u8 *)obj + 12) + *(s32 *)((u8 *)obj + 40) >
-                       *(s32 *)((u8 *)obj + 20)) {
+                while (obj->y + obj->velocity_y >
+                       obj->terrain_height) {
                     WaitFrames(1);
                 }
                 Audio_PlayCue(159);
-                *(s32 *)((u8 *)obj + 12) = *(s32 *)((u8 *)obj + 20);
+                obj->y = obj->terrain_height;
                 Object_SetMode(obj, 22);
                 Battle_WaitMode0(15);
                 Object_AttachWorkTargetToObject(id, 1);

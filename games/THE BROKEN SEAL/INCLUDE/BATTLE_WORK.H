@@ -69,7 +69,7 @@ struct BattleSession {
     s32 prompt_slot;                /* 0x054, the advance arrow's tile slot */
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
-    u8 unknown_074[0x268];
+    struct BattleObjectSlot slots[14]; /* 0x074, object records in formation order */
     u8 placement[14];               /* 0x2dc, standing place per unit */
     u8 unknown_2ea[2];
     struct BattleActionRecord actions[20]; /* 0x2ec */
@@ -82,6 +82,8 @@ struct BattleSession {
     struct BattlePlan plan;         /* 0x654 */
     struct BattleEventState events; /* 0x6b8 */
 };
+
+LAYOUT_SIZE_GUARD(BattleSession_Size, struct BattleSession, 0x828);
 
 LAYOUT_OFFSET_GUARD(
     BattleSession_PartyStatusMode,
@@ -99,6 +101,8 @@ LAYOUT_OFFSET_GUARD(
     struct BattleSession,
     enemy_units,
     0x066);
+LAYOUT_OFFSET_GUARD(BattleSession_Slots, struct BattleSession, slots, 0x074);
+LAYOUT_OFFSET_GUARD(BattleSession_Placement, struct BattleSession, placement, 0x2dc);
 LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BattleSession, actions, 0x2ec);
 LAYOUT_OFFSET_GUARD(BattleSession_Spoils, struct BattleSession, spoils, 0x530);
 LAYOUT_OFFSET_GUARD(BattleSession_Palette, struct BattleSession, palette, 0x544);
@@ -118,6 +122,10 @@ LAYOUT_OFFSET_GUARD(BattleEventState_Phase, struct BattleEventState, phase, 0x14
 LAYOUT_OFFSET_GUARD(BattleEventState_Flags, struct BattleEventState, flags, 0x16c);
 
 extern struct BattleSession *gBattleWork;
+
+/* Reset hands on the value left in r0; callers retain its integer return. */
+u32 BattleEventRuntime_Reset(void);
+s32 BattleEventRuntime_WaitForReady(void);
 
 void Sys_SetMode(s32 mode);
 

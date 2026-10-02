@@ -11,7 +11,6 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"
 #include "MOTION_OBJECT.H"
-#include "RUNTIME_1E74.H"
 #include "RUNTIME_MEM.H"
 
 void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);

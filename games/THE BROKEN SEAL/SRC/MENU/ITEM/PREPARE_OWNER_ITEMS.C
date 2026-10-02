@@ -1,44 +1,31 @@
 #include "INVENTORY_MENU.H"
+#include "OWNER_STATE.H"
 #include "SYSTEM.H"
 
-void RenderOutput_ClearListFar(s32);
-void UiMenu_SlideCursor(s32, s32);
-s32 Owner_GetStateFar(s32);
-s32 ItemMenu_RunOwnerSelection(void *, void *);
+void RenderOutput_ClearListFar(void *window);
+void UiMenu_SlideCursor(s32 x, s32 y);
 void UiIcon_PrepareObject(void *icon);
 
-s32 ItemMenu_PrepOwner(s32 party_slot)
+s32 ItemMenu_PrepOwner(s32 pane)
 {
-    register void *menu = gMenuWork;
-    register s32 offset = party_slot + 28;
+    struct InventoryMenuState *menu = gMenuWork;
     s32 result = 0;
-    register s32 owner_index;
-    u8 *owner_slots;
+    s32 index;
+    struct BattleUnit *owner;
 
-    owner_index = *(s8 *)(menu + offset);
-    RenderOutput_ClearListFar(*(s32 *)(menu + 44));
-    owner_slots = menu + 2;
-    owner_slots[offset] = *(u8 *)(menu + 0x219);
-    if (owner_index == -1) {
-        *(u8 *)(menu + offset) = result;
-        offset = 0;
+    index = menu->pane_index[pane];
+    RenderOutput_ClearListFar(menu->info_window);
+    menu->pane_count[pane] = menu->party_count;
+    if (index == -1) {
+        menu->pane_index[pane] = result;
+        index = 0;
     } else {
-        offset = owner_index * 2;
-        UiMenu_SlideCursor(owner_index * 24 - 10, 16);
+        UiMenu_SlideCursor(index * 24 - 10, 16);
     }
-
-    {
-        s32 off = offset + 0x208;
-        result = Owner_GetStateFar(*(u16 *)(menu + off));
-    }
-    offset = (s32)(menu + 0x1C8);
-    *(s8 *)(menu + 0x218) =
-        (s8)ItemMenu_Collect((void *)result, (u16 *)offset, 0);
-    result = ItemMenu_RunOwnerSelection(menu + 0x208, (void *)offset);
-    {
-        s32 cursor_offset = party_slot * 4 + 20;
-        UiIcon_PrepareObject(*(s32 *)(menu + cursor_offset));
-    }
+    owner = Owner_GetStateFar(menu->owner_ids[index]);
+    menu->item_count = ItemMenu_Collect(owner, menu->items, 0);
+    result = ItemMenu_RunOwnerSelection(menu->owner_ids, menu->items);
+    UiIcon_PrepareObject(menu->pane_icons[pane]);
     WaitFrames(1);
     return result;
 }

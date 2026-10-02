@@ -47,7 +47,7 @@ void Actor_ResetMotionAtAnchor(s32);
 s32 BattlePres_BuildTargetList(void *, struct PresentationWork *);
 u32 BattleEv_DispatchQueued(void);
 u32 BattleEv_Push(u32, u32);
-void BattleEventRuntime_WaitForReady(void);
+s32 BattleEventRuntime_WaitForReady(void);
 void BattlePres_SetActorModes(u16 *, s32);
 void BattleFx_PlayUnitElementEffect(s32, s32, s32, s32);
 void BattlePres_RunWithZeroArguments(void);

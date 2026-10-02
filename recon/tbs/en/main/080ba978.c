@@ -1,28 +1,21 @@
-/* Draft, whole main:080ba978, 612 bytes including pool.
- * Baseline: 612/612 bytes, 261 differing halfwords, 144 aligned edits.
- * H1: transfer exact RUN_SIMPLE's typed work and unsigned angle input;
- * narrow after the offset, correct the 0x80000 angle, use signed member IDs,
- * and snapshot each motion record's child count before copying its values.
- * The caller passes mode 0/1/2; LIST_TARGETS owns the complete 84-byte output.
- * H1 result: 592/612 bytes, 275 differing halfwords, 114 aligned edits;
- * frame 88 and high-register save set now match. The signed target loop and
- * child-copy body are structurally correct. First divergence is the target
- * angle branch; the same-team ternary also omits reference materialized
- * boolean branches. Input/transition and flags/object roles remain swapped.
- * H2: materialize the same-team predicate as a local on each branch, as the
- * reference tests a 0/1 result rather than branching directly on both IDs.
- * H2 result: 604/612 bytes, 269 differing halfwords, 110 aligned edits.
- * Boolean materialization returned 12 bytes, but the two branch tails still
- * merge. The target-angle conditional is if-converted; row-offset lifetime
- * still keeps r8 instead of the reference r6 and spills the wrong loop role.
- * Stop after the single structural followup: no established closing path.
- * No matching-C credit claimed.
- * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): testing the
- * primary side as > 7 with the far target first, kept here, gives 1690
- * against 1930 (after names first); the search's 1660 also assigned the
- * script test to an unused local, which is not kept. The first divergence
- * is still the target angle branch.
- */
+/* DRAFT (43 instructions differ), reworked 2026-10-02: same frame and the
+ * same saved registers as the ROM; input, transition, work and the scripted
+ * bit sit in the ROM's registers.
+ * 1. The ROM reads the primary id once into r4 and copies it into a fresh
+ *    register before each of its four tests; here the first copy is reused
+ *    and the same-side test reloads the byte. A local for the id, or an
+ *    inline predicate per test, both score worse.
+ * 2. In both member loops the ROM keeps the index in r4, saved around the
+ *    calls, with the row offset in r6 and the child count copied from r3 to
+ *    ip after the zero test; here the index takes r6, the offset r8 and the
+ *    count r4, and flags and the object trade r8 and r10.
+ * Settled: the far target is a conditional expression inside the three-quarter
+ * step; the same-side test is an inline function of unsigned ids, which is
+ * what materialises its 0/1 result on both arms; the scripted bit and each
+ * loop's index are separate variables.
+ * Still literal: messages 0x855 "But the Psynergy was blocked!" and 0x856
+ * "...But doesn't have enough PP!" need catalogue names, and the callback is
+ * BattleEvent_Playback. */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_PRESENTATION.H"
@@ -62,12 +55,19 @@ void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
 void BattleFx_DispatchModeFar(struct PresentationWork *);
 void Audio_PlayCue(s32);
 
+static inline s32 SameSide(u32 first, u32 second)
+{
+    if (second <= 7)
+        return first <= 7;
+    return first > 7;
+}
+
 s32 Func_080ba978(struct PresentationInput *input, s32 flags)
 {
     struct PresentationWork work;
     struct BattlePresentationTransition *transition = gTransitionWork;
     struct MotionObject *object;
-    s32 i;
+    s32 scripted;
 
     if (input->flags & 0x40000) {
         transition->target_yaw = input->primary <= 7 ? -0x2000 : 0x5000;
@@ -76,21 +76,11 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         struct MotionObject *actor = GetBattleObjectSlot(input->primary)->object;
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
         s32 current = angle - 0x1800;
-        s32 target;
-        s32 same_team;
         if (input->primary > 7)
             current = angle + 0x1800;
         current = (s16)current;
-        if (input->primary > 7)
-            target = -0x2000;
-        else
-            target = 0x2000;
-        current += (target - current) * 3 / 4;
-        if (input->secondary <= 7)
-            same_team = input->primary <= 7;
-        else
-            same_team = input->primary > 7;
-        if (same_team)
+        current += ((input->primary <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
+        if (SameSide(input->primary, input->secondary))
             current = input->primary <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;
@@ -101,8 +91,8 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
     }
 
     BattlePres_BuildTargetList(input, &work);
-    i = flags & 1;
-    if (i)
+    scripted = flags & 1;
+    if (scripted)
         work.scripted = 1;
     BattlePres_SetActorModes(0, 0);
     UiWindow_DrawPartyStatusContentsFar(gBattleWork[65] & ~1);
@@ -112,13 +102,15 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
     Audio_PlayCue(0x9a);
     if (flags & 2)
         BattleFx_PlayUnitElementEffect(work.primary_id, input->coordinate, 1, 0);
-    else if (!i)
+    else if (!scripted)
         BattleFx_PlayUnitElementEffect(work.primary_id, input->coordinate, 0, 0);
     if (input->secondary <= 7)
         work.secondary_is_low_id = 1;
     else
         work.secondary_is_low_id = 0;
 
+    {
+    s32 i;
     for (i = 0; i != work.entry_count; i++) {
         struct MotionEntry *entry = GetMotionRecord(
             GetBattleObjectSlot(work.members[i])->object, 0);
@@ -127,6 +119,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         for (j = 0; j != count; j++)
             work.values[i][j] =
                 ((struct MotionChild *)entry->children[j])->value;
+    }
     }
     if (input->script != 0) {
         if (input->script == 1) {
@@ -149,8 +142,11 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         }
         BattleEventRuntime_WaitForReady();
         Object_SetMode(object, 1);
+        {
+        s32 i;
         for (i = 0; i != work.entry_count; i++)
             Actor_ResetMotionAtAnchor(work.members[i]);
+        }
     }
     return 0;
 }

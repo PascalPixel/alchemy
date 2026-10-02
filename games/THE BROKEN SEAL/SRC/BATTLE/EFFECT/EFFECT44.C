@@ -3,10 +3,15 @@
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "RAM_BUFFER.H"
+#include "EFFECT_STEP.H"
+#include "RESOURCE_IDS.H"
+#include "BATTLE_EFX.H"
+#include "BATTLE_PRESENTATION.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
 
 extern u8 gWorkSlot[];
 u32 Random16(void);
-void WaitFrames(s32 frames);
 
 extern u8 gBattleFxWork[];
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -27,6 +32,86 @@ void ColorBuffer_BackupAndHalve(void *source, void *destination, s32 size);
 void ColorBuffer_BackupAndScaleThreeQuarters(void *source, void *destination, s32 size);
 void ColorBuffer_BackupAndDarken(void *source, s32 amount, void *destination, s32 size);
 void ColorBuffer_BackupAndBrighten(void *source, s32 amount, void *destination, s32 size);
+
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 BattleFx_EndCanvasLayer(void);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void Audio_PlayCue(s32 cue);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_TickMemberTimers(void);
+
+/* Battle effect: a spider web drawn as four 32 by 32 rectangles on the
+   canvas layer, centred between the first and the last affected unit. The
+   blend fades it in over the first nine of 63 frames and out over the last
+   nine; frame 10 hits every affected unit. */
+void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
+{
+    struct EffectPosition first;
+    struct EffectPosition last;
+    void *canvas;
+    struct BattleEffectWork *work;
+    s32 size;
+    s32 step;
+    /* Left to the allocator the frame takes r10 and the step r9, which
+       exchanges the two registers in 15 instructions. */
+    /* FAKEMATCH: the frame counter is pinned to r9, as the reference keeps it. */
+    register s32 frame __asm__("r9");
+    s32 i;
+
+    /* FAKEMATCH: the reference holds the slot table address in the register
+       that later holds the size, and the blend register address in the one
+       that later holds the step; only variables assigned twice do that. */
+    size = (s32)&Ram_WorkSlot[40];
+    canvas = *(void **)size;
+    work = *(struct BattleEffectWork **)(size - 4);
+    work->effect = efx;
+    BattleFx_BeginCanvasLayer(2);
+    step = 0x04000052;
+    *(u16 *)0x04000020 = 0x100;
+    *(u16 *)step = 0x1000;
+    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &first);
+    EffectPosition_ApplyStepAndYOffset(work->effect->actors[work->effect->count - 1], &last);
+    first.x += (last.x - first.x) / 2;
+    *(s32 *)0x04000028 = (64 - first.x) << 8;
+    Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work, 1, 1);
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Audio_PlayCue(143);
+    frame = 0;
+    step = 1;
+    size = 32;
+    do {
+        if (frame <= 8)
+            *(u16 *)0x04000052 = (frame << 1) | 0x1000;
+        if (frame > 53)
+            *(u16 *)0x04000052 = (0x7c - (frame << 1)) | 0x1000;
+        BattleEffect_LoadWork(46, 7, 7, 3, step);
+        ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 41, size, size);
+        Runtime_ReleaseHeapBlock(46);
+        BattleEffect_LoadWork(46, 7, 7, 7, step);
+        ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 64, 41, size, size);
+        Runtime_ReleaseHeapBlock(46);
+        BattleEffect_LoadWork(46, 7, 7, 11, step);
+        ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 72, size, size);
+        Runtime_ReleaseHeapBlock(46);
+        BattleEffect_LoadWork(46, 7, 7, 15, step);
+        ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 64, 72, size, size);
+        Runtime_ReleaseHeapBlock(46);
+        if (frame == 32)
+            BattleEventRuntime_BeginPhaseFar(143);
+        for (i = 0; i != work->effect->count; i++) {
+            if (frame == 10)
+                ObjectGroup_UpdateMembers(work->effect->actors[i], 7, -1, i, 8);
+        }
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = step;
+        WaitFrames(1);
+        frame++;
+    } while (frame != 63);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    BattleFx_EndCanvasLayer();
+}
 
 /* Battle effect: wipe the 128 by 128 canvas (16 by 16 tiles of 8 by 8
    bytes) with a ragged front. Each of the 128 lanes waits a random 0..63

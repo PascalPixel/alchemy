@@ -19,7 +19,7 @@ Func_080ddda0:
 	adds r0, r5, #0
 	str r7, [r5, #104]
 	ldr r1, .L_080dde9c
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	ldr r0, [r6, #4]
 	add r5, sp, #8
 	str r0, [r5]

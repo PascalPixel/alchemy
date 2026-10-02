@@ -223,7 +223,7 @@ Func_08146638:
 	adds r5, r3, r0
 .L_081467f6:
 	str r4, [sp, #12]
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	ldr r1, [sp, #40]
 	lsls r0, r1, #10
 	bl Func_080150e4

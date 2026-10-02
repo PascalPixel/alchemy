@@ -1,3 +1,4 @@
+#include "TRANSFORM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -19,7 +20,6 @@ s32 BattleFx_EndCanvasLayer(void);
 void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void Graphics_SaveTransferWorkOnce(void);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);

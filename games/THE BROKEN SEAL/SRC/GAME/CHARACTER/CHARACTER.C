@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "SCENE.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
@@ -122,7 +123,6 @@ struct StatWork {
     s32 unused_5c;
 };
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *buffer);
 struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
 struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
@@ -248,7 +248,7 @@ void Owner_RecalculateStats(s32 owner)
     s32 cap;
     s16 old;
 
-    work = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
+    work = (struct StatWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
     st = Owner_GetState(owner);
     work->hp = st->base_hp;
     work->pp = st->base_pp;

@@ -27,7 +27,15 @@ Func_02000054:
 	bl Func_02002a54
 	bl Func_02002a4c
 	movs r0, #8
+	.ifdef TLA_EDITION_ES
+	bl Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	bl Field_EndActorSpriteEffect
+	.else
 	bl Field_BeginPaletteTransition
+	.endif
+	.endif
 	pop {r5, pc}
 	.section .text.x0200809c,"ax",%progbits
 	.global Func_0200009c
@@ -1577,7 +1585,15 @@ Func_02000510:
 	bl Func_02002a54
 	bl Func_02002a4c
 	movs r0, #16
+	.ifdef TLA_EDITION_ES
+	bl Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	bl Field_EndActorSpriteEffect
+	.else
 	bl Field_BeginPaletteTransition
+	.endif
+	.endif
 	movs r0, #10
 	bl Battle_WaitMode0
 	movs r1, #9

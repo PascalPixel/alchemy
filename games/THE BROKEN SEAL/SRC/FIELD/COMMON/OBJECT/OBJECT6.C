@@ -1,7 +1,7 @@
 #include "OBJECT_RUNTIME.H"
+#include "OBJDISP.H"
 #include "FIELD_EVENT.H"
 
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *, const void *);
 void Object_ResetMotion(struct ObjectRuntime *);
 void Battle_WaitMode0(s32);
 extern const u8 ObjectMotion_StepAngleScript[];
@@ -19,7 +19,7 @@ void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callb
             first->speed_limit = second->speed_limit;
             first->unknown_56[3] = 0;
         }
-        ObjectDispatch_InitializeFar(first, callback);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)first, (u32)callback);
     }
 }
 
@@ -61,7 +61,7 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
 
     if (object != NULL) {
         object->action = angle;
-        ObjectDispatch_InitializeFar(object, ObjectMotion_StepAngleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
         Battle_WaitMode0(wait);
     }
 }

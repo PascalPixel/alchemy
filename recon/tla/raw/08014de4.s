@@ -25,8 +25,8 @@ Func_08014de4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_08014e10:
-	.4byte Data_03001220
+	.4byte gTransformStackTop
 .L_08014e14:
-	.4byte Data_030011cc
+	.4byte gTransformStackDepth
 .L_08014e18:
 	.4byte gTransform

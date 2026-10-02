@@ -179,7 +179,15 @@ Func_0200013c:
 	bl Func_02003288
 	bl Func_02003280
 	movs r0, #8
+	.ifdef TLA_EDITION_ES
+	bl Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	bl Field_EndActorSpriteEffect
+	.else
 	bl Field_BeginPaletteTransition
+	.endif
+	.endif
 	movs r3, #3
 	strb r3, [r7]
 	movs r3, #128

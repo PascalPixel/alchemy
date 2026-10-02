@@ -4,6 +4,7 @@
  * resource entry until their scripts finish.
  */
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "EFFECT_0809B11C.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "SCENE.H"
@@ -89,7 +90,6 @@ s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 struct OrbitingParticle;
 
 /* battle/effects/orbiting_particles/update_fade.c */
-void ObjectDispatch_InitializeFar(void *, void *);
 
 /* battle/effects/orbiting_particles/update_orbit_left.c */
 struct OrbitingParticleVector {
@@ -291,13 +291,13 @@ void RunBattleEffect04(void)
         pos.z = scene->pos.z;
     }
     Object_SetPosition(object, pos.x, pos.y, pos.z);
-    ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleObjectScript + 0x10);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)(BattleFx_BurstParticleObjectScript + 0x10));
     for (index = 0; index < 3; index++) {
         copy = spawned[index];
         if (copy != NULL) {
             WaitFrames(3);
             Object_SetPosition(copy, pos.x, pos.y, pos.z);
-            ObjectDispatch_InitializeFar(copy, BattleFx_CommonParticleScript + 4);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)copy, (u32)(BattleFx_CommonParticleScript + 4));
         }
         }
     index = 0;
@@ -354,7 +354,7 @@ void BattleFx_UpdateOrbitingParticleFade(void *object)
     *((s32 *)(object_bytes + 0x18)) = primary_fade;
     if (primary_fade <= 0x1000)
     {
-      ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
+      ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
   }
 }
@@ -548,7 +548,7 @@ void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
             *(s32 *)(arg + 12) = local.y;
             *(s32 *)(arg + 16) = local.z;
         } else {
-            ObjectDispatch_InitializeFar(arg, BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)arg, (u32)BattleFx_CommonParticleScript);
         }
     }
 }
@@ -586,7 +586,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *object)
             spark->anchor_x = spark->x;
             Animation_ApplyChildValuesFar(spark, 9);
             spark->unknown_5e = 72;
-            ObjectDispatch_InitializeFar(spark, (s32)BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)spark, (u32)BattleFx_CommonParticleScript);
         }
     }
 }

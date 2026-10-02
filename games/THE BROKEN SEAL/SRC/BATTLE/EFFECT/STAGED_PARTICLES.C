@@ -1,3 +1,4 @@
+#include "TRANSFORM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -46,10 +47,7 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
-void Graphics_SaveTransferWork(void *matrix);
-void Graphics_LoadTransferWork(void *matrix);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, const Scale *scale, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
 void Audio_PlayCue(s32 cue);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void Camera_ApplyShake(s32 x, s32 y);
@@ -270,7 +268,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     gBgScroll[1].x = scroll_x;
     BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 9; i++)
-        ResourceObject_ReleaseFar(OBJECTS[i]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)OBJECTS[i]);
     *(volatile u16 *)0x04000020 = 0x80;
     *(volatile u16 *)0x04000000 = 0x7741;
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, Ram_MapCellBuffer, 1, 0);

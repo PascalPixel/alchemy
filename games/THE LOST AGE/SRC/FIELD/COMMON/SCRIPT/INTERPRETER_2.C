@@ -1,4 +1,4 @@
-#include "SCRIPT_INTERPRETER.H"
+#include "SCRIPT.H"
 
 s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter)
 {

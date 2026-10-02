@@ -4442,7 +4442,7 @@ Func_0200222c:
 .L_0200a348:
 	.4byte 0xfdff0000
 .L_0200a34c:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0200a350:
 	.4byte gPartyState
 	.section .text.x0200a354,"ax",%progbits
@@ -4894,7 +4894,7 @@ Func_020025e0:
 .L_0200a740:
 	.4byte 0xfdff0000
 .L_0200a744:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 	.section .text.x0200a748,"ax",%progbits
 	.global Func_02002748
 	.thumb_func
@@ -5540,7 +5540,7 @@ Func_02002c1c:
 .L_0200ac9c:
 	.4byte 0xfdff0000
 .L_0200aca0:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0200aca4:
 	.4byte 0x000fffff
 	.section .text.x0200aca8,"ax",%progbits

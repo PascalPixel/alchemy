@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "OBJECT_EFX.H"
@@ -36,11 +37,6 @@ extern s32 ArcTan2(s32, s32);
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
-#else
-extern void ObjectDispatch_InitializeFar(struct ItemBreakFragmentObject *, const void *);
-#endif
 
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 {
@@ -96,10 +92,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         object->field_48 = 0x1999;
         Object_SetMode(object, 0);
         object->field_5e = 12;
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-        Object_SetCallback(object, BattleFx_CommonParticleScript);
-#else
-        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
-#endif
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
 }

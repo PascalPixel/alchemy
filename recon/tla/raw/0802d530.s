@@ -55,6 +55,6 @@ Func_0802d530:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0802d58c:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0802d590:
 	.4byte gMapCollision

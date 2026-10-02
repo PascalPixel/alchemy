@@ -27,7 +27,10 @@ struct BattleSession;
 struct MapWork;
 
 struct HeapSlots {
-    void *unknown_00[5];
+    void *unknown_00[2];
+    /* The transform stack's block of 48-byte matrices. */
+    u8 *transform_stack;
+    void *unknown_0c[2];
     /* The field's 64 script objects, which The Broken Seal keeps as
        gObjectSlots. */
     void *script_objects;

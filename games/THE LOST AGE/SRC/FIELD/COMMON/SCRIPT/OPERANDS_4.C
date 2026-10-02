@@ -1,4 +1,4 @@
-#include "SCRIPT_OPERANDS.H"
+#include "SCRIPT.H"
 
 typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc Script_OperandHandlerTable[];

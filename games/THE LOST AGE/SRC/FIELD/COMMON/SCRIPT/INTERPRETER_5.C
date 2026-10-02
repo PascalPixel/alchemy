@@ -1,4 +1,4 @@
-#include "SCRIPT_INTERPRETER.H"
+#include "SCRIPT.H"
 
 s32 GameFlag_Test(s32);
 s32 GameFlag_SetBit(s32);

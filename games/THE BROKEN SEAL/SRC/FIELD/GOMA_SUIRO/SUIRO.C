@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -14,7 +15,6 @@ extern const struct ScenePlacement gGomaSuiroPlacements2[];
 extern const struct ScenePlacement gGomaSuiroPlacementsOther[];
 
 void Engine_ActorSetSpriteFlags();
-void Map_CopyCellAttributeRect();
 void GameFlag_SetBit();
 void SceneEffect_RunActorBurst(s32 no);
 

@@ -1,4 +1,5 @@
 #include "FIXED_MATH.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
 #include "SOUND_IDS.H"
@@ -71,7 +72,6 @@ struct ImpactObject {
 
 void Audio_PlayCue(s32 cue);
 struct ImpactObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(struct ImpactObject *object, const void *callback);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     struct ImpactObject *object, s32 magnitude, s32 angle);
 
@@ -146,13 +146,13 @@ s32 SpawnHeavyImpactEffect(struct ImpactSource *source)
     if (object != NULL) {
         object->mode_55 = 0;
         object->field_5e = 20;
-        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
 
     for (i = 0; i < 12; i++) {
         fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
         if (fragment != NULL) {
-            ObjectDispatch_InitializeFar(fragment, &BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)fragment, (u32)&BattleFx_FragmentScript);
             fragment->field_30 = Random16() + 0x10000;
             fragment->field_34 = 0x10000;
             fragment->mode_55 = 0;

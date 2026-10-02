@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 /*
  * Actor 13's departure and the scene initialiser that restores the pillars.
  */
@@ -20,7 +21,6 @@ extern u8 GomaHashira_Messages[];
 extern u8 GomaHashira_Actors[];
 
 /* Imports this overlay shares with the staged-actor module, by its names. */
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Battle_WaitMode0(s32 frames);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 

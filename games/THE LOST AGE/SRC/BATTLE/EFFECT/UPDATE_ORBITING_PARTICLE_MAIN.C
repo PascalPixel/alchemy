@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "SCENE.H"
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
@@ -18,7 +19,7 @@ void BattleFx_UpdateOrbitingParticleFade(void *object)
     *((s32 *)(object_bytes + 0x18)) = primary_fade;
     if (primary_fade <= 0x1000)
     {
-      ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
+      ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
   }
 }

@@ -1,5 +1,6 @@
 /* The title overlay: its scene tables. */
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 #include "RESOURCE_IDS.H"
@@ -29,7 +30,6 @@ void ScrollFar_Entry00(s32 mode);
 s32 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *buffer);
 s32 Resource_FindFreeEntry(void);
 u8 *Resource_GetTableEntry(s32 resource);
@@ -208,7 +208,7 @@ void Title_LoadSprites(s32 unused)
 
     /* The localized title fills four rows; its resource starts with the
        full object palette, followed by the compressed tile sheet. */
-    buffer = Runtime_BumpAllocateAlternatePool(0x9600);
+    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x9600);
     res = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
@@ -218,7 +218,7 @@ void Title_LoadSprites(s32 unused)
     Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 0x1e00,
           (s32)(buffer + 0x7800));
 #else
-    buffer = Runtime_BumpAllocateAlternatePool(0x520);
+    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x520);
     if (gTitleVramBlock == -1)
         gTitleVramBlock = Resource_FindFreeEntry();
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), buffer);

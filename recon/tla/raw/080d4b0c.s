@@ -66,7 +66,7 @@ Object_SetActionCallback:
 	ldr r1, .L_080d4bc0
 .L_080d4b86:
 	adds r0, r5, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080d4b90:

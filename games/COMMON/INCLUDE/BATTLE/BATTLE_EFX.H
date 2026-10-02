@@ -3,6 +3,10 @@
 
 #include "TYPES.H"
 
+struct BattleEffectArgument;
+void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
+
 void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
 
 /* BattleEffect_LoadWork builds a rectangle blitter into heap slot `slot`,

@@ -43975,55 +43975,55 @@ msgctxt "message"
 msgid "10991"
 msgstr "Devo essere il miglior cuoco{line_break}del mondo! Guarda quanto cibo{line_break}ho preparato! Sono incredibile!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSilentVillager"
 msgid "10992"
 msgstr "... ...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWaitForOutsidersToLeave"
 msgid "10993"
 msgstr "Hmm... forestieri... Non{line_break}mi piacciono. Aspetterò{line_break}finché non se ne vanno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChiefForbidsTalkingToOutsiders"
 msgid "10994"
 msgstr "Finché il capo non dice altrimenti,{line_break}non parlerò ai forestieri.{line_break}È la legge.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWhoInvitedOutsiders"
 msgid "10995"
 msgstr "Chi ha invitato questi{line_break}forestieri in città?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRefuseToTalkToOutsiders"
 msgid "10996"
 msgstr "Bah... forestieri! Non{line_break}sprecherò il mio tempo{line_break}a {text_effect:2}parlargli{reset_text_style}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanAncestorsDistrustOutsiders"
 msgid "10997"
 msgstr "I nostri antenati impararono{line_break}una dura lezione... Noi non{line_break}mentiamo mai, gli stranieri, sì.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrustContigoFriends"
 msgid "10998"
 msgstr "I nostri antenati impararono{line_break}a non fidarsi di nessuno, se non{line_break}dei nostri amici di Contigo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanDistrustFriendlyOutsiders"
 msgid "10999"
 msgstr "Questi stranieri sembrano{line_break}affidabili, ma io lo so...{page_break}Sembrano gentili, ma sotto sotto{line_break}sono tutti dei mostri!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShutDoorsAgainstOutsiders"
 msgid "11000"
 msgstr "Chiudete bene le porte{line_break}quando ci sono gli stranieri.{page_break}Se vogliamo proteggere la{line_break}nostra cultura, dobbiamo{line_break}mandarli {text_effect:2}via{reset_text_style}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanEntranceLocked"
 msgid "11001"
 msgstr "Sembra chiuso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrialRoadPermissionSign"
 msgid "11002"
 msgstr "Via delle Prove:{line_break}nessuno può entrare senza{line_break}il permesso di Moapa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanEntranceClosed"
 msgid "11003"
 msgstr "L'accesso è vietato.{line_break}Non dovresti entrare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaGiveMeRoom"
 msgid "11004"
 msgstr "Questa è la mia casa. Se{line_break}cercate Moapa, sono io.{line_break}Indietreggiate. Fatemi spazio.{end_wait}"
 
@@ -44043,43 +44043,43 @@ msgctxt "message"
 msgid "11008"
 msgstr "Se c'è qualcosa che volete dire{line_break}sbrigatevi e parlate.{line_break}Ascolterò, ma non per molto!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOutsidersLeaveTown"
 msgid "11009"
 msgstr "Che c'è? Niente da dire?{line_break}Allora perché siete{line_break}qui? Uscite dalla città!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSpeakToMoapa"
 msgid "11010"
 msgstr "Se c'è qualcosa che volete dire,{line_break}ditela a Moapa, non a noi.{line_break}Noi non vogliamo sentire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFearMoapaPower"
 msgid "11011"
 msgstr "Se fate arrabbiare Moapa,{line_break}avrete un assaggio dei{line_break}suoi incredibili e terribili poteri.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOutsidersAreNotContigo"
 msgid "11012"
 msgstr "Non sembra provengano{line_break}da Contigo... Non c'è{line_break}ragione per essere gentili.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaSparedOutsiders"
 msgid "11013"
 msgstr "Se non fosse stato per{line_break}Moapa, sarei stato felice di{line_break}cacciarli a pedate.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanContigoTempleTreasure"
 msgid "11014"
 msgstr "Forse cercano il tesoro.{line_break}Dovrebbero provare a{line_break}Contigo, non qui.{page_break}Il tempio di Contigo è{line_break}colmo di ogni{line_break}tesoro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShowMeSomething"
 msgid "11015"
 msgstr "Se siete qui a offrire la{line_break}carità, non la voglio... O siete{line_break}venuti a mostrarmi dell'altro?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShowItToMoapa"
 msgid "11016"
 msgstr "Cosa vi fa pensare{line_break}che io sia interessato?{page_break}Mostratelo a Moapa, se{line_break}dovete, non a me.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCannotBuyGift"
 msgid "11017"
 msgstr "Sì, sì. molto bello.{line_break}Volete vendere? Io non{line_break}ho soldi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRecognizeShamanRod"
 msgid "11018"
 msgstr "È il Bastone sciamanico!{end_wait}"
 
@@ -44175,27 +44175,27 @@ msgctxt "message"
 msgid "11041"
 msgstr "Fai del tuo meglio, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaLeftDoorOpen"
 msgid "11042"
 msgstr "Moapa ha lasciato la porta aperta,{line_break}e gli stranieri sono entrati... Ah,{line_break}sono già andati via...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFatherNeverLoses"
 msgid "11043"
 msgstr "Gli stranieri sembrano{line_break}guerrieri, ma non possono{line_break}competere con mio padre.{page_break}È il capo del Villaggio{line_break}Sciamanico, ed è forte.{line_break}Non perde mai!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFirstForeignVisitors"
 msgid "11044"
 msgstr "Sono i primi stranieri{line_break}che vedo... Non sembrano{line_break}così diversi da noi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanInnPaymentPrompt"
 msgid "11045"
 msgstr "C'è scritto: \"Lascia {argument_signed_number} monet{control:13}{end_wait}{line_break}sul banco per rimanere\".{page_break}Paghi {argument_signed_number} monet{control:13}{end_wait}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShamanPayingStrangersMayStay"
 msgid "11046"
 msgstr "Non mi piacciono gli stranieri,{line_break}ma se pagano,{line_break}possono rimanere.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaAllowsStrangersToStay"
 msgid "11047"
 msgstr "Moapa ci ha ordinato di lasciarli{line_break}stare. Non capisco il perché,{line_break}però. Sono sempre stranieri.{end_wait}"
 
@@ -44203,39 +44203,39 @@ msgctxt "message"
 msgid "11048"
 msgstr "Sul cartello c'è scritto:{line_break}\"Se non hai soldi,{line_break}puoi anche andare\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTribeForbidsTalking"
 msgid "11049"
 msgstr "Niente di personale, ma nessuno{line_break}in città vi parlerà.{page_break}Sembrerà strano, ma è una{line_break}legge del Villaggio{line_break}Sciamanico.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVisitorsMustFindMoapa"
 msgid "11050"
 msgstr "Dovranno trovare Moapa{line_break}se vogliono parlare{line_break}con i locali.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanYegelosSandChallenge"
 msgid "11051"
 msgstr "Per ottenere la pietra di{line_break}Yegelos, dovete far sparire{line_break}la sabbia.{page_break}Se riuscirete a farcela,{line_break}allora il sangue di Contigo{line_break}scorre nelle vostre vene.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrialRoadAncientBattle"
 msgid "11052"
 msgstr "Più avanti c'è la Via delle{line_break}Prove, dove Hoabna e Yegelos{line_break}si sono scontrati.{page_break}Solo esseri superiori{line_break}come loro, hanno potuto{line_break}arrivarne alla fine.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanAncientHeroesVanishedSand"
 msgid "11053"
 msgstr "Quando Yegelos e Hoabna{line_break}hanno combattuto qui, la{line_break}sabbia è sparita improvvisamente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRodWasStolen"
 msgid "11054"
 msgstr "Conosco la verità. Questi{line_break}forestieri hanno rubato{line_break}il bastone da Contigo.{page_break}Non importa. I loro crimini{line_break}saranno rivelati quando{line_break}falliranno sulla Via delle Prove.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNeedContigoOrShamanPower"
 msgid "11055"
 msgstr "Se non hanno il potere di Contigo{line_break}o del Villaggio Sciamanico,{line_break}falliranno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSandChallengeWillFail"
 msgid "11056"
 msgstr "Non riusciranno a far{line_break}sparire la sabbia. Si{line_break}arrenderanno e andranno via.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCheerForCompanion"
 msgid "11057"
 msgstr "Puoi farcela, {actor_name:7}!{end_wait}"
 
@@ -44383,7 +44383,7 @@ msgctxt "message"
 msgid "11093"
 msgstr "Ve lo permetterò lo stesso.{line_break}Seguitemi e vi spiegherò.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanListenCarefully"
 msgid "11094"
 msgstr "Ascoltatemi attentamente.{end_wait}"
 
@@ -44407,7 +44407,7 @@ msgctxt "message"
 msgid "11099"
 msgstr "In onore di quella battaglia,{line_break}è stata creata la Via{line_break}delle Prove.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTrialRulesAreSimple"
 msgid "11100"
 msgstr "Le regole sono semplici.{end_wait}"
 
@@ -44455,7 +44455,7 @@ msgctxt "message"
 msgid "11111"
 msgstr "Così finirete lo scontro.{line_break}Un vero eroe, però, non{line_break}si arrenderebbe facilmente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMustFinishTrialRoad"
 msgid "11112"
 msgstr "Per poter raggiungere la cima,{line_break}non potete fallire sulla{line_break}Via delle Prove.{end_wait}"
 
@@ -44483,7 +44483,7 @@ msgctxt "message"
 msgid "11118"
 msgstr "Conoscete le regole e{line_break}volete continuare.{line_break}Siete stati avvertiti.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMissingShamanRod"
 msgid "11119"
 msgstr "Cosa? Non avete più{line_break}il Bastone sciamanico?{page_break}Non possiamo accettare la{line_break}vostra sfida se non lo{line_break}avete più.{end_wait}"
 
@@ -44495,11 +44495,11 @@ msgctxt "message"
 msgid "11121"
 msgstr "Scegliete la via che{line_break}preferite, per noi è uguale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChooseEitherRoad"
 msgid "11122"
 msgstr "Scegliete la via che{line_break}preferite, per noi è uguale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGuardRepeatRulesBeforeTrial"
 msgid "11123"
 msgstr "Volete ascoltare ancora{line_break}le spiegazioni di Moapa?{end_now}"
 
@@ -44511,7 +44511,7 @@ msgctxt "message"
 msgid "11125"
 msgstr "Allora lasciate il villaggio{line_break}e scordatevi della Giada della{line_break}sospensione.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOtherGuardRepeatRulesBeforeTrial"
 msgid "11126"
 msgstr "Volete ascoltare ancora{line_break}le spiegazioni di Moapa?{end_now}"
 
@@ -44523,19 +44523,19 @@ msgctxt "message"
 msgid "11128"
 msgstr "Finché rimanete nel{line_break}villaggio, la mia gente non{line_break}è libera di fare come vuole.{page_break}Se non volete intraprendere{line_break}la sfida della Via delle Prove,{line_break}dovete andarvene.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaCannotLose"
 msgid "11129"
 msgstr "Non posso perdere. Non{line_break}perderò.{page_break}È mia responsabilità come{line_break}capo del Villaggio Sciamanico.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaGreatestWarrior"
 msgid "11130"
 msgstr "Siete finiti. Moapa è{line_break}il più grande guerriero{line_break}di tutta l'Hesperia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanJadeNeedsYegelosHeir"
 msgid "11131"
 msgstr "Non sembrate cattivi,{line_break}per essere forestieri, ma{line_break}non possiamo darvi la pietra.{page_break}Solo l'eroe con il sangue di{line_break}Yegelos, l'eroe di Contigo,{line_break}potrà averla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGiveUpTrialPrompt"
 msgid "11132"
 msgstr "Avete finalmente{line_break}deciso di arrendervi?{end_now}"
 
@@ -44547,7 +44547,7 @@ msgctxt "message"
 msgid "11134"
 msgstr "Scegliete la via che{line_break}preferite, per noi è uguale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGuardsTakeOtherPath"
 msgid "11135"
 msgstr "Se avete scelto così, noi{line_break}prenderemo l'altra via.{end_wait}"
 
@@ -44555,7 +44555,7 @@ msgctxt "message"
 msgid "11136"
 msgstr "Al via,{line_break}inizierà la sfida!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChallengeTrialRoadPrompt"
 msgid "11137"
 msgstr "Volete sfidarmi sulla{line_break}Via delle Prove?{end_now}"
 
@@ -44599,7 +44599,7 @@ msgctxt "message"
 msgid "11147"
 msgstr "No"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaAdvisesLeaving"
 msgid "11148"
 msgstr "Fareste bene ad arrendervi.{line_break}Anche se raggiungete la{line_break}cima, non riuscirete a battermi.{page_break}Fareste bene a lasciare{line_break}subito il Villaggio Sciamanico.{end_wait}"
 
@@ -44651,31 +44651,31 @@ msgctxt "message"
 msgid "11160"
 msgstr "Anche voi sarete stanchi.{line_break}Torniamo al villaggio{line_break}a riposare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaImpressedByChallenge"
 msgid "11161"
 msgstr "Siete riusciti a superare{line_break}la Via delle Prove? Moapa è{line_break}rimasto molto colpito!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRespectForeignWarriors"
 msgid "11162"
 msgstr "La gente del Villaggio Sciamanico{line_break}in genere è tranquilla,{line_break}coraggiosa e nobile.{page_break}Avete sconfitto Moapa,{line_break}rispetto il coraggio che{line_break}avete dimostrato affrontandolo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVictoryProvesSkill"
 msgid "11163"
 msgstr "Avete battuto Moapa.{line_break}Questa è una grande prova{line_break}delle vostre capacità.{page_break}Ora vedrete che la gente{line_break}del Villaggio Sciamanico vi{line_break}tratterà in un'altra maniera.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanForeignersCanBeHeroes"
 msgid "11164"
 msgstr "Gli eroi non sono malvagi.{line_break}Ora abbiamo imparato che anche{line_break}gli stranieri possono essere eroi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNewLegendaryBattle"
 msgid "11165"
 msgstr "La vostra battaglia con Moapa{line_break}è stata come la battaglia{line_break}leggendaria fra Hoabna e Yegelos!{page_break}Avrei voluto{line_break}vedere nascere{line_break}una leggenda...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHoabnaPromiseFulfilled"
 msgid "11166"
 msgstr "Tutti in città parlano di{line_break}come avete mantenuto la{line_break}promessa di Hoabna.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCheckOtherMountainSide"
 msgid "11167"
 msgstr "Dopo la battaglia, avete{line_break}controllato l'altro{line_break}lato della montagna?{end_now}"
 
@@ -44687,95 +44687,95 @@ msgctxt "message"
 msgid "11169"
 msgstr "Se avete gli stessi poteri{line_break}di Hoabna, dovreste riuscire{line_break}ad arrivarci...{page_break}Nessuno che abbia solo{line_break}i poteri della Tribù Sciamanica{line_break}può raggiungere la fonte nascosta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChosenFewHavePower"
 msgid "11170"
 msgstr "Alcuni nella Tribù{line_break}Sciamanica possiedono un{line_break}potere speciale...{page_break}Si dice che chi abbia{line_break}questo potere sia{line_break}un prescelto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaPraisesOpponents"
 msgid "11171"
 msgstr "Moapa è modesto, fa{line_break}bene a cantare le loro lodi.{line_break}Questo lo rende un capo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanDoubtMoapaDefeat"
 msgid "11172"
 msgstr "È difficile pensare che{line_break}loro siano riusciti a battere{line_break}Moapa. Ma io non ci penso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHopeForStrongerShamanChild"
 msgid "11173"
 msgstr "Un giorno un bambino del{line_break}villaggio diventerà più{line_break}forte di Moapa.{page_break}Allora, la Tribù Sciamanica{line_break}risorgerà e ci riprenderemo{line_break}ciò che Contigo ci tolse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWorldShouldWelcomeStrangers"
 msgid "11174"
 msgstr "Siamo troppo diffidenti verso{line_break}gli stranieri. Il mondo non{line_break}dovrebbe essere ostile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanContigoHeroVictorySurprise"
 msgid "11175"
 msgstr "Non credevo che avrei{line_break}vissuto fino a vedere mantenuta{line_break}la promessa di Hoabna.{page_break}Comunque, non avrei{line_break}immaginato che qualcuno con{line_break}sangue di Contigo ci riuscisse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRemainFriendsWithContigo"
 msgid "11176"
 msgstr "Spero che rimarremo buoni{line_break}amici con Contigo, dopo{line_break}questa vicenda.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWishToBreakSandWalls"
 msgid "11177"
 msgstr "Se avessi il potere di abbattere{line_break}i muri di sabbia, scalerei{line_break}l'altro lato della montagna.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanOutskirtsHaveDifferentPowers"
 msgid "11178"
 msgstr "Chi vive nelle vicinanze{line_break}del Villaggio Sciamanico{line_break}ha altri poteri.{page_break}Perché?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFinallyOpenLockedDoor"
 msgid "11179"
 msgstr "Finalmente posso aprire la{line_break}porta per far entrare l'aria.{page_break}Non riesco a credere che Moapa{line_break}combatteva in montagna mentre{line_break}io ero bloccato qui.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMissedTrialRoadChallenge"
 msgid "11180"
 msgstr "Se avessi saputo della{line_break}sfida sulla Via{line_break}delle Prove...{page_break}Non avrei chiuso tutto.{line_break}Sarei andata a{line_break}guardare lo scontro!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanQuietWhileLockedInside"
 msgid "11181"
 msgstr "Pensavo che fosse tutto{line_break}tranquillo. Sono stato dentro{line_break}tutto il giorno, non ho visto...{page_break}Tutto perché loro stavano{line_break}affrontando Moapa sulla{line_break}Via delle Prove...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHidingLawPreventedWatching"
 msgid "11182"
 msgstr "Nessuno ha visto la sfida{line_break}sulla Via delle Prove.{line_break}Troppo lontana dalla città.{page_break}Che legge stupida, doversi{line_break}nascondere e perdersi{line_break}tutte le battaglie!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanAncientHesperiaAttekaWar"
 msgid "11183"
 msgstr "Per anni, Hesperia{line_break}ha combattuto contro{line_break}Atteka...{page_break}Il Villaggio Sciamanico{line_break}si è trovato nel conflitto,{line_break}come la gente di Contigo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHoabnaYegelosDecideWar"
 msgid "11184"
 msgstr "In quei giorni bui, noi e{line_break}Contigo abbiamo combattuto{line_break}per difendere la nostra terra.{page_break}Combattemmo fino a decidere{line_break}che Hoabna e Yegelos si{line_break}affrontassero per il risultato.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTownsChooseChampions"
 msgid "11185"
 msgstr "Gli scontri tra noi e{line_break}Contigo erano terribili.{line_break}Pochi guerrieri sopravvivevano.{page_break}Alla fine, le nostre città{line_break}scelsero Hoabna e Yegelos perché{line_break}combattessero come campioni.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanYegelosBraveJourney"
 msgid "11186"
 msgstr "Mi sono sempre chiesta come{line_break}mai lo scontro finale fra Hoabna{line_break}e Yegelos si sia tenuto qui.{page_break}Yegelos è stato davvero{line_break}coraggioso a viaggiare fino a{line_break}qui da Contigo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNewContigoHeroStronger"
 msgid "11187"
 msgstr "Pensavo che dopo{line_break}Yegelos, Contigo sarebbe{line_break}rimasta senza un eroe.{page_break}Ora l'eroe è arrivato,{line_break}ed è più forte di{line_break}Moapa. Incredibile!{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgShamanDoubtShamanSuperiority"
 msgid "11188"
 msgstr "Le leggende dicono{line_break}che gli eroi di Contigo{line_break}sono inferiori ai nostri.{page_break}Ora non sono sicura...{line_break}Lo scontro sembrava{line_break}equo, eppure Moapa ha perso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGrandparentsUpsetByDefeat"
 msgid "11189"
 msgstr "Nonna e nonno sono{line_break}nervosi da quando hanno{line_break}sentito di Moapa...{page_break}Probabilmente sono stanchi{line_break}di raccontare dell'antica{line_break}guerra tra Atteka ed Hesperia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGrandparentsTiredOfWarStories"
 msgid "11190"
 msgstr "Tutti chiedono a nonna{line_break}e nonno delle grandi{line_break}battaglie leggendarie.{page_break}Tutti parlano solo di{line_break}quello. Scommetto che{line_break}sono stufi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneGreeting"
 msgid "11191"
 msgstr "Hulabadula!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneOfferBeforeTrial"
 msgid "11192"
 msgstr "Vuoi conoscere{line_break}il tuo destino?{end_now}"
 
@@ -44811,15 +44811,15 @@ msgctxt "message"
 msgid "11200"
 msgstr "Oh, è terribile! Oltre{line_break}ogni dire, basta, basta!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneAvoidSouth"
 msgid "11201"
 msgstr "Non andare a sud,{line_break}Hai capito?{line_break}Parlo seriamente...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCloudyFortuneBeforeTrial"
 msgid "11202"
 msgstr "Strano... tutto è offuscato...{line_break}Grigio o come pieno di nebbia...{page_break}Il mondo sta cambiando,{line_break}parrebbe.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneOfferAfterTrial"
 msgid "11203"
 msgstr "Vuoi conoscere{line_break}il tuo destino?{end_now}"
 
@@ -44855,31 +44855,31 @@ msgctxt "message"
 msgid "11211"
 msgstr "Oh, è terribile! Oltre{line_break}ogni dire, basta, basta!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFortuneAvoidNortheast"
 msgid "11212"
 msgstr "Ascolta, promettimi che{line_break}non andrai MAI a nord{line_break}nordest, va bene?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanCloudyFortuneAfterTrial"
 msgid "11213"
 msgstr "Strano... tutto è offuscato...{line_break}Grigio o come{line_break}pieno di nebbia...{page_break}Il mondo sta cambiando,{line_break}parrebbe.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgShamanGuardPromisesRematchVictory"
 msgid "11214"
 msgstr "I vostri attacchi hanno forza{line_break}e velocità, ma se combatteremo{line_break}ancora, non perderò.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVillagersBlameGuardDefeat"
 msgid "11215"
 msgstr "Non credo che saremo{line_break}perdonati per aver perso{line_break}sulla Via delle Prove.{page_break}Se sapessero quanto{line_break}siete forti, non{line_break}parlerebbero più.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanClimbingTrialRoadIsHard"
 msgid "11216"
 msgstr "Anche solo arrivare alla fine{line_break}della Via delle Prove è difficile.{page_break}Dev'essere stata dura{line_break}anche per Yegelos e Hoabna.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanGuardBlamesMountainClimb"
 msgid "11217"
 msgstr "Non è giusto... Ero{line_break}così stanco dopo la{line_break}scalata... Come potevo lottare?{page_break}Come ha fatto Hoabna a{line_break}combattere così, dopo{line_break}l'arrampicata!?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaAsksVictorsNames"
 msgid "11218"
 msgstr "Mi avete battuto e ancora{line_break}non conosco i vostri{line_break}nomi... Me li direte?{end_now}"
 
@@ -44891,31 +44891,31 @@ msgctxt "message"
 msgid "11220"
 msgstr "{actor_name:5}, {actor_name:6}, {actor_name:7}{line_break}e {actor_name:8}. Ricorderò{line_break}questi nomi.{page_break}Non scordiamo i nomi{line_break}degli eroi che mi hanno{line_break}battuto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaWantsToKnowNames"
 msgid "11221"
 msgstr "Moapa ha detto di non{line_break}conoscere i nomi degli{line_break}eroi che l'hanno battuto...{page_break}Gli dispiace di non averli{line_break}chiesti. Forse dovreste{line_break}dirglieli.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFormalBattleNeedsNames"
 msgid "11222"
 msgstr "In una sfida formale,{line_break}è onorevole dare{line_break}il proprio nome.{page_break}Non è tardi per voi...{line_break}Per favore, dite a mio{line_break}padre i vostri nomi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNamesDoNotMatter"
 msgid "11223"
 msgstr "Cosa importa se conosci{line_break}il nome di chi ti{line_break}ha battuto o meno?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVictorsDeserveRespect"
 msgid "11224"
 msgstr "Se un guerriero ti batte,{line_break}devi impararne il nome...{page_break}Non sono molti quelli{line_break}che mi hanno battuto{line_break}e meritano rispetto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanShameNotKnowingVictors"
 msgid "11225"
 msgstr "Mi dispiacerebbe non{line_break}conoscere il nome del{line_break}guerriero che mi ha battuto...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFatherLostToRudeOutsiders"
 msgid "11226"
 msgstr "Che vergogna... Mio padre{line_break}sconfitto da degli stranieri{line_break}ignoranti e maleducati.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanNamesBeforeBattleOldFashioned"
 msgid "11227"
 msgstr "È così vecchio stile{line_break}dichiarare il proprio nome{line_break}prima di una battaglia.{end_wait}"
 
@@ -44923,23 +44923,23 @@ msgctxt "message"
 msgid "11228"
 msgstr "Non dimentico mai{line_break}il nome di chi affronto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWarehouseOwnerFeelsResponsible"
 msgid "11229"
 msgstr "Mi ha sorpreso che{line_break}Moapa sia stato sconfitto...{page_break}Le sue armi erano di{line_break}mia produzione, mi{line_break}sento responsabile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWelcomeContigoHero"
 msgid "11230"
 msgstr "Da quando Moapa ha perso,{line_break}sono tutti depressi. Dovrebbero{line_break}gioire per la venuta dell'eroe!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanWeaponsDidNotCauseLoss"
 msgid "11231"
 msgstr "Ma non sarebbe giusto{line_break}dire che ha perso per{line_break}le armi che ha usato.{page_break}Sarei rovinato se si{line_break}spargesse una voce simile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanHusbandWorriesAboutWeapons"
 msgid "11232"
 msgstr "Mio marito si preoccupa che{line_break}le sue armi abbiano{line_break}causato la sconfitta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVisitorsHaveTraveledFar"
 msgid "11233"
 msgstr "Avete viaggiato per molte{line_break}terre, vero?{end_now}"
 
@@ -44951,71 +44951,71 @@ msgctxt "message"
 msgid "11235"
 msgstr "Avrei giurato che quella{line_break}bella nave fosse vostra...{page_break}Se potete permettervi una{line_break}nave così, potete anche{line_break}permettervi buone armi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanForgiveUnkindVillagers"
 msgid "11236"
 msgstr "Siamo fieri di Moapa.{line_break}È un grande capo.{page_break}Se qualcuno in città{line_break}dice altrimenti,{line_break}perdonatelo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanEnjoyGettingOutside"
 msgid "11237"
 msgstr "Sono rimasto chiuso in{line_break}casa tutto il giorno!{line_break}Ora devo muovermi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanPlanPicnicMeal"
 msgid "11238"
 msgstr "Ah... è tanto che non esco...{line_break}Credo che farò un picnic!{line_break}Ma cosa dovrei mangiare?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSimpleMeatPotatoesBeans"
 msgid "11239"
 msgstr "Qui, le persone amano{line_break}una bistecca, qualche{line_break}patata, i fagioli...{page_break}Voi forestieri sarete{line_break}abituati ai cibi esotici, ma{line_break}noi amiamo i piatti semplici.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaMiserableAfterDefeat"
 msgid "11240"
 msgstr "Moapa è sempre triste{line_break}da quando è stato sconfitto.{line_break}Vorrei poterlo aiutare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVillagersWorryTooMuch"
 msgid "11241"
 msgstr "Mi dà fastidio che{line_break}tutti qui si esaltino{line_break}per Moapa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanChildrenIgnoreTradition"
 msgid "11242"
 msgstr "Tutti gli anziani{line_break}sono furiosi perché{line_break}Moapa ha perso...{page_break}A noi ragazzi non importa.{line_break}Credo che siano troppo{line_break}attaccati alle tradizioni.{end_wait} "
 
-msgctxt "message"
+msgctxt "MsgShamanEagerForDinner"
 msgid "11243"
 msgstr "Ho fame! Non posso{line_break}aspettare! Adoro la carne{line_break}e le patate! E i FAGIOLI!!!{page_break}Devono essere le spezie{line_break}che usa il cuoco... Molto sale,{line_break}e molto pepe!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanSaltAndPepperOnly"
 msgid "11244"
 msgstr "I cuochi stranieri{line_break}usano molte spezie per{line_break}nascondere il gusto dei cibi.{page_break}Per quanto mi riguarda,{line_break}ci sono solo due spezie:{line_break}sale e pepe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaDefeatIncredible"
 msgid "11245"
 msgstr "Avete battuto Moapa? Incredibile!{line_break}Non che avessi dei dubbi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanThreatenContigoRematch"
 msgid "11246"
 msgstr "Non siate troppo felici{line_break}di aver battuto Moapa.{page_break}Prima o poi,{line_break}assalteremo Contigo,{line_break}e ve la faremo vedere!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanPrayForShamanWarrior"
 msgid "11247"
 msgstr "Per favore... c'è bisogno{line_break}che nasca un vero guerriero{line_break}nel villaggio, per favore!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanFearRenewedContigoWar"
 msgid "11248"
 msgstr "Gli anziani del villaggio{line_break}sono furiosi perché Moapa{line_break}è stato battuto.{page_break}Speriamo non ricominci{line_break}la faida con Contigo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaMustHaveBeenHungry"
 msgid "11249"
 msgstr "Moapa doveva essere{line_break}affamato dopo la scalata{line_break}della montagna...{page_break}È l'unica spiegazione. Altrimenti{line_break}non avrebbe mai perso contro{line_break}quei miserabili di Contigo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanPrayForContigoConqueror"
 msgid "11250"
 msgstr "Non posso accettare che{line_break}gli eroi di Contigo{line_break}abbiano battuto Moapa...{page_break}Spero che nasca un eroe{line_break}nel villaggio, uno che possa{line_break}spezzare i barbari di Contigo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanMoapaNeverForgetsVictor"
 msgid "11251"
 msgstr "{actor_name:5}, l'eroe di Contigo!{line_break}Non ti dimenticherò,{line_break}sei stato l'unico a battermi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanVictorsNamesOnTrialColumns"
 msgid "11252"
 msgstr "{actor_name:5}, {actor_name:6}, {actor_name:7},{line_break}e {actor_name:8}... Non{line_break}dimenticherò questi nomi...{page_break}Un giorno saranno incisi{line_break}sui totem che portano{line_break}alla Via delle Prove.{end_wait}"
 
@@ -51327,15 +51327,15 @@ msgctxt "message"
 msgid "12829"
 msgstr "Contigo è famosa per i{line_break}biscotti...{page_break}Anche se si ha la{line_break}ricetta, ci vogliono anni{line_break}per imparare a prepararli.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanRoastedRiverFish"
 msgid "12830"
 msgstr "Il pesce che sta arrostendo{line_break}viene dal fiume.{page_break}Il fumo mi va negli occhi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanTraditionalBoneBroth"
 msgid "12831"
 msgstr "Questa è una zuppa{line_break}tradizionale.{page_break}È una ricetta tramandata{line_break}di generazione in{line_break}generazione.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShamanStrangeBoiledVegetables"
 msgid "12832"
 msgstr "Non ho mai visto delle{line_break}verdure così.{page_break}Bleah! Che puzza!{line_break}Ma le mangiano davvero!?{end_wait}"
 

@@ -1,3 +1,16 @@
+/*
+ * Canonical draft API context; no match or adoption is claimed.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six original files fail on absent primitive type context.
+ * The necessary shared API header supplies TYPES and now compiles all six.
+ * That is a context repair, not original-success equality or a native match.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ * The original file provided no includes for its u8/u16/s32 names. Only
+ * the normal API header is added; other missing views or symbols are not
+ * supplied. Successful compilation alone earns no matching credit.
+ */
+#include "OBJDISP.H"
 
 struct BattleEffectVisual {
     u8 unknown_00[9];
@@ -32,9 +45,6 @@ struct BattleEffectLinkedObject *Object_CreateFar(
     s32 x,
     s32 y,
     s32 z);
-void ObjectDispatch_InitializeFar(
-    struct BattleEffectLinkedObject *object,
-    const void *configuration);
 void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);
@@ -58,7 +68,7 @@ void BattleFx_SpawnLinked(
             Object_CreateFar(21, resource->x, resource->y, resource->z);
 
         if (object != 0) {
-            ObjectDispatch_InitializeFar(object, BattleFx_LinkedObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_LinkedObjectScript);
             Object_SetMode(object, flags & 15);
             object->value_55 = 0;
             object->counter = 0;

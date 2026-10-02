@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "HAIDIA.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -14,7 +15,6 @@ void HaidiaDou_ApplyEntryState();
 
 void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
 void WaitFrames(s32 frames);
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void *OverlayObject_CreateConfiguredB(s32 x, s32 y, s32 z, s32 kind);
 void DialogueLayout_ConfigureRowsByFlag301(void);
 s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);

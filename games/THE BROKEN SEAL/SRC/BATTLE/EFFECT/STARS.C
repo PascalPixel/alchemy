@@ -1,3 +1,4 @@
+#include "TRANSFORM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -51,7 +52,6 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
-void Graphics_SaveTransferWorkOnce(void);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPosition(void *position);
 void SceneTransform_ApplyRoll(s32 angle);

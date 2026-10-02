@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
@@ -17,7 +18,6 @@ s32 UiText_MeasureEntryDimensions(s32 start, s32 *width, s32 *count, s32 mode);
 
 /* ui/window/copy_tilemap_region.c */
 extern u8 *gWindowWork;
-s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 extern u8 RomBytes_080310a4[];
 
 /* resource/copy_fixed_block_a.c */

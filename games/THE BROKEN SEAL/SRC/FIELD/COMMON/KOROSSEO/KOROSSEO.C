@@ -1,4 +1,5 @@
 #include "TBS_EDITION.H"
+#include "RUNTIME_MEM.H"
 /* Colosso: decode the portrait sheet into a scratch block, copy portrait
  * id's palette into object palette 15 and its 1 KB of tiles into the cached
  * VRAM slot (claimed on first use). Portrait 8 shares tiles with 4. The same
@@ -18,7 +19,6 @@
 
 extern s16 Korosseo_PortraitSlot;
 extern u8 Korosseo_PortraitPaletteOffsets[];
-u8 *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(u8 *block);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_GetTableEntry(s32 id);
@@ -77,7 +77,7 @@ void Korosseo_LoadPortrait(s32 id)
     u8 *buf;
     s32 off;
 
-    buf = Runtime_BumpAllocateAlternatePool(0x1c00 + KOROSSEO_PALETTE_BYTES);
+    buf = (u8 *)Runtime_BumpAllocateAlternatePool(0x1c00 + KOROSSEO_PALETTE_BYTES);
     if (Korosseo_PortraitSlot == -1)
         Korosseo_PortraitSlot = Resource_FindFreeEntry();
     off = Korosseo_PortraitPaletteOffsets[id];

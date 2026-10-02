@@ -1168,7 +1168,7 @@ Func_0816729c:
 	movs r0, #199
 	lsls r0, r0, #1
 	adds r0, #255
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	ldr r2, [sp, #88]
 	adds r5, r0, #0
 	str r5, [r6, r2]

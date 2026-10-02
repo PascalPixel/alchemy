@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "FIELD_EVENT.H"
@@ -88,7 +89,6 @@ static __inline__ void Actor_OffsetDestination(s32 actor, s32 dx, s32 dz)
     /* FAKEMATCH: a direct call changes FieldScene_RunBranchingFormationPresentation from mov r0, #3 to neg r1, r1 (2674/2674 assembly lines). */
     ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
 }
-void Map_CopyCellAttributeRect(s32 x, s32 z, s32 width, s32 height, s32 dest_x, s32 dest_z);
 void Object_SetPosition(struct Obj *object, s32 x, s32 y, s32 z);
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);

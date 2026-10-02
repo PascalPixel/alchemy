@@ -28,7 +28,7 @@ Func_080df1fc:
 	str r7, [r1, #104]
 	ldr r0, [sp, #28]
 	ldr r1, .L_080df534
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	ldr r3, [sp, #32]
 	movs r2, #36
 	ldr r0, [r3, #4]
@@ -464,7 +464,7 @@ Func_080df1fc:
 	cmp r6, #0
 	beq .L_080df614
 	ldr r1, .L_080df6f0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	bl Random16
 	mov r3, r9
 	adds r2, r6, #0
@@ -507,7 +507,7 @@ Func_080df1fc:
 	ldr r3, [sp, #32]
 	adds r0, r7, #0
 	ldr r1, [r3, #60]
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	ldr r0, [sp, #32]
 	movs r2, #0
 	ldr r3, [r0, #56]

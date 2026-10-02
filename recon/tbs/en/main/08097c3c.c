@@ -7,8 +7,15 @@
    on the stack ([sp+20]) and gives r11 to the loop's copy of 0x100000, with
    that constant in r5 before the loop; here the source takes r11 and the
    constant is rebuilt at each use. The reference also reloads the cell mask
-   after the first cell test and parks it in ip. */
+   after the first cell test and parks it in ip.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six prior successful objects retain every allocated byte and
+ * normalized call/pool operand; no new match or adoption is claimed.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ */
 #include "TYPES.H"
+#include "OBJDISP.H"
 
 struct FxPosition {
     s32 x;
@@ -65,7 +72,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
 void BattleEffect_InitializeSharedScene(void);
-void ObjectDispatch_InitializeFar(struct FxObject *object, const u8 *script);
 struct FxObject *BattleFx_StartItemBreak(struct FxObject *source);
 void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_SnapScaleToFull(struct FxObject *object);
@@ -113,7 +119,7 @@ void FunctionHead_08097c3c(void)
         return;
     BattleEffect_InitializeSharedScene();
     source->linked = target;
-    ObjectDispatch_InitializeFar(source, BattleFx_SourceHoldScript);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)BattleFx_SourceHoldScript);
     preview = BattleFx_StartItemBreak(source);
     if (preview == NULL) {
         BattleFx_PrepareBufferInterpolation();
@@ -219,7 +225,7 @@ void FunctionHead_08097c3c(void)
         break;
     }
     Animation_ApplyChildValuesFar(target, work->palette);
-    ObjectDispatch_InitializeFar(target, work->script);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->script));
     target->callback = work->callback;
     EffectRuntime_StopCurrentObject();
     if (moved == 1)

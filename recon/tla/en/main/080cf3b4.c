@@ -1,4 +1,13 @@
+/*
+ * Canonical draft API context; no match or adoption is claimed.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six original incomplete-context compile failures remain.
+ * No missing view, declaration or physical symbol was supplied.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ */
 #include "OBJECT_LOOKUP.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
@@ -16,7 +25,7 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
         other = ObjectTable_Get(gGameState.object_index);
         if (flags & 1) {
             ObjectDispatch_SetSingleChildField26Far(object, 0);
-            ObjectDispatch_InitializeFar(object, BattleFx_ParticleEmitterScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleEmitterScript);
             FIELD_AT_OFFSET(object, u32 *, 0x28) = 0x20000;
             FIELD_AT_OFFSET(object, u32 *, 0x48) = 0x4000;
             FIELD_AT_OFFSET(object, s32 *, 0x6C) = (s32)&BattleFx_EmitRandomParticleFromEmitter;

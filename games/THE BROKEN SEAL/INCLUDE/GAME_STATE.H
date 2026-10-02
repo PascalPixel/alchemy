@@ -59,20 +59,28 @@ struct GameState {
        ability in the low ten. */
     u16 first_shortcut;
     u16 second_shortcut;
-    u8 unknown_224[8];
+    /* Set once the world map's perspective scene is up. */
+    u8 perspective_scene;
+    u8 unknown_225[6];
+    /* How the next battle begins: 2 when a tile's ambush starts it. */
+    u8 battle_start;
     u16 unknown_22c;
     u16 unknown_22e;
     u16 unknown_230;
     s16 unknown_232;
-    u8 unknown_234[2];
+    /* The Djinni event the field resolves once the scene is up. */
+    s16 pending_djinn_event;
     /* Why the scene is changing: -1 when the party fell in battle. */
     s16 scene_change_reason;
-    u8 unknown_238[6];
+    s32 unknown_238;
+    /* The item the field hands the party once the scene is up. */
+    u16 pending_item;
     s16 unknown_23e;
     /* Where Retreat returns the party. */
     s16 retreat_scene;
     s16 retreat_entrance;
-    u8 unknown_244[8];
+    u8 unknown_244[6];
+    s16 unknown_24a;
     /* Set while Cloak hides the party; no monsters appear. */
     s16 cloaked;
     u8 unknown_24e[0x56];

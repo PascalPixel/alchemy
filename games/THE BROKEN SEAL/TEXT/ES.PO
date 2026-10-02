@@ -10343,7 +10343,7 @@ msgctxt "MsgNothingHappens"
 msgid "02583"
 msgstr "Pero no ocurre nada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTileChecked"
 msgid "02584"
 msgstr "{text_color:16}"
 
@@ -10363,7 +10363,7 @@ msgctxt "message"
 msgid "02588"
 msgstr "{protagonist_name} examinó la pared...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgCheckedGround"
 msgid "02589"
 msgstr "{protagonist_name} examinó el suelo...{page_break}"
 
@@ -10471,7 +10471,7 @@ msgctxt "MsgFieldPeeredWell"
 msgid "02615"
 msgstr "{protagonist_name} investigó el pozo...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgTileResult"
 msgid "02616"
 msgstr "="
 
@@ -10491,7 +10491,7 @@ msgctxt "message"
 msgid "02620"
 msgstr "pero no tiene nada de{line_break}especial.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGroundDidntFindAnything"
 msgid "02621"
 msgstr "pero no encontró nada.{end_wait}"
 
@@ -10599,11 +10599,11 @@ msgctxt "message"
 msgid "02647"
 msgstr "Es muy profundo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFoundItem"
 msgid "02648"
 msgstr "{protagonist_name} encontró{line_break}{argument_item_name:10}.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgGotCoins"
 msgid "02649"
 msgstr "{protagonist_name} obtuvo{line_break}{argument_signed_number} moneda{control:13}.{end_wait}"
 
@@ -10627,11 +10627,11 @@ msgctxt "message"
 msgid "02654"
 msgstr "Aquí hay algo que no cuadra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCantOpenIt"
 msgid "02655"
 msgstr "pero {protagonist_name} no puede abrirlo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGotPsynergyStone"
 msgid "02656"
 msgstr "{protagonist_name} cogió una{line_break}Piedra Psinérgica.{page_break}"
 
@@ -10643,7 +10643,7 @@ msgctxt "message"
 msgid "02658"
 msgstr "La Piedra Psinérgica{line_break}desapareció...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgChestWasMimic"
 msgid "02659"
 msgstr "¡El cofre era en{line_break}realidad un Mimo!{end_wait}"
 
@@ -10655,7 +10655,7 @@ msgctxt "message"
 msgid "02661"
 msgstr "{protagonist_name} lo miró de cerca...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgButFoundNothing"
 msgid "02662"
 msgstr "pero no encontró nada.{end_wait}"
 

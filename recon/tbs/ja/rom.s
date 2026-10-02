@@ -546,8 +546,6 @@ Djinn_DefinitionTable:
 	.thumb_func
 Func_0808c4f8:
 	.incbin "baserom.gba", 0x000834f8, 0x0000097c
-	.section .rom.000849a4, "ax"
-	.incbin "baserom.gba", 0x000849a4, 0x00000414
 	.section .rom.0008652c, "ax"
 	.global DisplayTransition_UpdateScanlineTable
 	.type DisplayTransition_UpdateScanlineTable, %function
@@ -586,12 +584,6 @@ FunctionHead_08097c3c:
 	.thumb_func
 RunBattleEffect05:
 	.incbin "baserom.gba", 0x000909e4, 0x00000328
-	.section .rom.00090d98, "ax"
-	.global Battle_unk3_2
-	.type Battle_unk3_2, %function
-	.thumb_func
-Battle_unk3_2:
-	.incbin "baserom.gba", 0x00090d98, 0x000004f0
 	.section .rom.00091e56, "ax"
 	.incbin "baserom.gba", 0x00091e56, 0x00000002
 	.section .rom.00091e58, "ax"
@@ -636,7 +628,10 @@ gBattleCueTable:
 	.incbin "baserom.gba", 0x0009546c, 0x00000046
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
-	.incbin "baserom.gba", 0x000954b2, 0x000001b8
+	.incbin "baserom.gba", 0x000954b2, 0x000001b2
+	.global Field_TileMessageOffsets
+Field_TileMessageOffsets:
+	.incbin "baserom.gba", 0x00095664, 0x00000006
 	.global BattleFx_TargetRangeByMode
 BattleFx_TargetRangeByMode:
 	.incbin "baserom.gba", 0x0009566a, 0x00000032
@@ -678,7 +673,10 @@ BattleFx_PulseScales:
 	.incbin "baserom.gba", 0x00096088, 0x0000000c
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
-	.incbin "baserom.gba", 0x00096094, 0x00000024
+	.incbin "baserom.gba", 0x00096094, 0x0000000c
+	.global BattleFx_SourceHoldScript
+BattleFx_SourceHoldScript:
+	.incbin "baserom.gba", 0x000960a0, 0x00000018
 	.global BattleFx_FragmentScript
 BattleFx_FragmentScript:
 	.incbin "baserom.gba", 0x000960b8, 0x00000024

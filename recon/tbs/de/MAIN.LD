@@ -71,7 +71,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/SCHEDULER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/MEMORY.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/RENDER/RENDER.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.00005014)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE8.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/INITIALIZE_WORKSPACE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE.o"(.text)

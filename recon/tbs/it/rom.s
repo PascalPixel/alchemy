@@ -7,12 +7,6 @@ Rom_Start:
 	.global Rom_LanguageCode
 Rom_LanguageCode:
 	.incbin "baserom.gba", 0x000000af, 0x00000011
-	.section .rom.00005024, "ax"
-	.global Graphics_PrepareTransfer
-	.type Graphics_PrepareTransfer, %function
-	.thumb_func
-Graphics_PrepareTransfer:
-	.incbin "baserom.gba", 0x00005024, 0x000001f4
 	.section .rom.0000619c, "ax"
 	.global SerialRuntime_CollectReceivedPayloads
 	.type SerialRuntime_CollectReceivedPayloads, %function

@@ -16,6 +16,7 @@ void SceneTransform_RewindStack(void);
 void Graphics_SaveTransferWorkOnce(void);
 void Graphics_SaveTransferWork(void *destination);
 void Graphics_LoadTransferWork(const void *source);
+void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out);
 
 /* Loads the identity into the 12-word transform: coefficients 0, 4 and 8
    are 0x10000; all other coefficients and the three translations are zero.

@@ -1,4 +1,5 @@
-/* Draft, not exact: 81 instructions off (was 201), score 1847.
+/* Draft, not exact: score 1242 (was 1847), 49 register-only, 2 stack-only,
+   2 operand, 12 reordered and 2 inserted instruction differences.
    BattleFormation_BuildEnemyList: picks the formation record (level-matched
    when flag 0x173 is set), spends a budget of 6 slots on each member's
    minimum count (1 slot for a flagged summon entry, 2 otherwise), adds random
@@ -13,18 +14,21 @@
    for (n = 0; n < counts[k]; n++), which the loop pass reverses and which
    reads counts[k] twice as the ROM does. The budget, extras and adjust
    loops are exact.
-   Remaining:
-   - the last loop. The ROM keeps i * 2 in r2 across the back edge (set to 0
-     before the loop, shifted and copied at the bottom) and does not walk a
-     pointer: gcse's partial redundancy insertion without strength reduction,
-     so the loop pass skipped that loop. for (i = 0; i <= 5 && list[i]; i++)
-     has the ROM's block order but the loop pass reduces it; if (list[0])
-     do { } while (i <= 5 && list[i]) is skipped as phony (gcse inserts after
-     the loop note) but keeps the list test above the body with a branch.
-   - reload register choices before the first loop, in the second loop and
-     in the copies (r0, r5, r3 there; r3, r1, r2 here). They follow from how
-     often each hard register is used in the whole function, so they should
-     settle once the last loop matches. */
+   2026-10-02, trial 1, score 1327 (from 1847): the assignment pass uses a
+   named backedge and separate used bound/list tests. This tests the real
+   indexed expression lifetime without a structured-loop strength reduction.
+   The tail now matches from offset initialization through return; its entry
+   reload uses r2 rather than r1. Earlier allocation/order choices remain.
+   2026-10-02, trial 2, score 1242 (from 1327): initialize the budget before
+   the list count, both still used normally; this resolved their initial
+   register/order differences.
+   2026-10-02, trial 3, score unchanged at 1242: declaring maximum before
+   minimum separately from their assignments, preserving their read order,
+   did not change code generation. The compact declarations are restored.
+   Remaining: initial margin/list store order; second-loop and copy-pass
+   register/reload order, including two extra copies; the assignment entry
+   reload uses r2 instead of r1. The genuine indexed assignment backedge
+   keeps i * 2 in r2 and matches the reference through the return. */
 #include "TYPES.H"
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_FORMATION.H"
@@ -94,8 +98,8 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     if (j == 5)
         record = &BattleFormation_Records[1];
 
-    count = 0;
     budget = 6;
+    count = 0;
     for (i = 0; i <= 4; i++) {
         if (record->minimum_counts[i] != 0) {
             s32 size1 = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
@@ -185,7 +189,11 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     for (i = 128; i <= 133; i++)
         Iwram_ClearWords(Owner_GetStateFar(i), 332);
 
-    for (i = 0; i <= 5 && list[i] != 0; i++) {
+    i = 0;
+    if (list[0] == 0)
+        goto assigned;
+assign_enemy:
+    {
         s32 charge = Summon_TakeCharge(list[i], 1);
 
         if (charge & 0x8000)
@@ -195,5 +203,11 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         if (margin != 0)
             Owner_ApplyLevelGains(i + 128, margin);
     }
+    i++;
+    if (i > 5)
+        goto assigned;
+    if (list[i] != 0)
+        goto assign_enemy;
+assigned:
     return i;
 }

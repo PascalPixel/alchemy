@@ -1,3 +1,21 @@
+/* 2026-10-02 bounded list-bank structural trials; original body retained.
+ * EN score 631: 2 register-only, 21 stack-only, 10 reordered; no inserted
+ * or deleted instructions. Native and candidate frames are 300 bytes.
+ * H1, scalar u16 tile halfword at sprite +8, preserving upper six bits:
+ * score 2115 (48 register, 7 operand, 20 reordered, 3 inserted, 2 deleted).
+ * Mask narrowed from fffffc00 to fc00; address/index lowering changed.
+ * H2, named u32 bitfield view of the attribute member, original assignment:
+ * score 2334 (44 register, 19 stack, 5 operand, 18 reordered, 5 inserted,
+ * 4 deleted). Full mask returned; a separate attribute pointer appeared.
+ * H3, complete 12-byte field-only sprite view, base-plus-index tile access:
+ * same score/counts as H2; the glyph load still remained reordered. All
+ * three views rejected. Narrowing this union tile access alone does not
+ * produce the native load order or address expression.
+ * All stack aggregates are used. Existing tagged result=-1 emits no
+ * instruction; it only retains the failed-confirmation branch order.
+ * No new storage, asm, fixed register, option or routing was retained.
+ * Three focused trials exhausted this view hypothesis; no broad search.
+ */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 #include "MENU_LIST.H"
@@ -13,8 +31,8 @@
  * into `actions` or -1 when the caller cancelled. Message 2279, shown for an
  * empty list, has no name in the catalogs yet.
  *
- * Remaining difference (score 691 from 13327: eleven reordered instructions
- * and one rotation of five stack slots, no other difference):
+ * Remaining difference (current EN score 631: ten reordered instructions,
+ * two register choices and one rotation of five stack slots):
  * - sched2 ties in four places: the two stores after the first window, the
  *   move of `row` into r10, the stack argument of the first highlight, and
  *   the two page-arrow calls. Each is decided by which stores and loads the

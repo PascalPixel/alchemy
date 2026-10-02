@@ -81,8 +81,8 @@ Resource_DirectoryTable:
 	resource SlotsFramePicture, Slots_FramePicture
 	resource SlotsIcons, Slots_Icons
 	resource SlotsJackpot, Slots_Jackpot
-	resource , LuckyDice_Board
-	resource , LuckyDice_Sprites
+	resource LuckyDiceBoard, LuckyDice_Board
+	resource LuckyDiceSprites, LuckyDice_Sprites
 	resource TileAnimationMask, BattleFx_TileAnimationMask
 	resource CyanSparkSheet, BattleFx_CyanSparkSheet
 	resource VioletPaletteA, BattleFx_VioletPaletteA

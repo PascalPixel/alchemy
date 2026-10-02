@@ -13,7 +13,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/FUNE3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/STOP_DMA.o"(.text)
-        "*/resource_3ca_overlay.o"(.text.x020091c4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCHEDULE_FADE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.o"(.text)
         "*/resource_3ca_overlay.o"(.rodata.x020094ac)

@@ -1,36 +1,35 @@
-/* 2026-09-29: five minutes of permutation reached 26685 from 32589 through
- * 227 rewrites; not kept, since the owner is far from exact. */
-/* 2026-09-29: Party_GetAverageLevelFar carries the build's name; alchemy
- * permute scores 32589, from 32629. */
-/* NONMATCHING: shared callee return types audited on 2026-09-26.
- * 4632 of 4724 bytes, 2259 differing halfwords, 1550 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
-/* Draft, not exact (2026-09-25): 4632 of 4724 bytes, 2259 differing
-   halfwords; 1810 of the ROM's 2045 instructions line up by opcode.
-   One whole function (Lucky Dice, reached from Runtime_BlankDisplayAndRun);
-   the two bl into 0x080f535e/0x080f44b8 are the compiler's far jumps for
-   the main loop's break and continue, not calls. Every statement, table
-   and constant is in place and in ROM order; the frame is the ROM's 0x300
-   with the arrays at the ROM's relative offsets (palette, depth, results,
-   point, proj, 32 unused bytes, the four volatile affine halfwords, spin,
-   flash, faces, order, matches, highest first), but 28 bytes higher
-   because this version spills seven more pseudos.
-   Remaining, first divergence first: the tilemap fill keeps the column
-   counter in fp and the byte offset in r1 (ROM: the reverse, with the
-   address recomputed each pass); 0x02010000 is CSE'd into r5 where the
-   ROM reloads it per use; the loop hoists sprites+204.. into stack slots
-   where the ROM writes movs rN,#off; str [base, rN]; the affine zeros load
-   as halfword pool entries (ROM: word 0). Strong evidence the four heap
-   block pointers are memory-resident in the ROM (sp+104..116, reloaded
-   after every volatile affine access and between load and store of one
-   OAM word): a local struct { render, sprites, work, obj_palette } placed
-   after matches removes the hoisting but, as tried, turns the OAM stores
-   into adds chains and scores lower (1787 opcodes) - the next idea to
-   pursue, together with the per-statement Value_ spelling of 0x02010000.
-   Fresh pass: 1550 halfword edits. Explicit narrow IO casts leave the
-   binary unchanged; scoped byte-offset tile loops improve only three
-   edits while shortening the owner further, and volatile heap handles
-   regress. WALL: Heap-handle lifetimes and loop/frame source structure. */
+/* Draft, not exact: score 27233, 1016 differing instructions of 2045 (was
+ * 32534 and 1127). One whole function (Lucky Dice, reached from
+ * Runtime_BlankDisplayAndRun); the two bl into its own body are the
+ * compiler's far jumps for the main loop's break and continue.
+ * Found this pass:
+ *  - no link-time constant symbols are needed. The display register values
+ *    are halfword stores, which load their constant from the pool by
+ *    themselves; 0x0c, 0x42 and 0x43 are resource directory rows
+ *    (ResourceId_EffectFarCalls and the two dice rows, now named in
+ *    DIRECTORY.S); 0x910 is a message id and still needs its name
+ *    (MsgLuckyDiceHelp here, undefined).
+ *  - the fixed objects are written through the running count from 0, not
+ *    through literal indices: that is what gives the listing's
+ *    movs rN, #offset; str rM, [sprites, rN] instead of hoisted addresses.
+ *  - the frame is now 12 bytes short of the listing's 0x300 (it was 28 over):
+ *    three more values live in stack slots there.
+ * Remaining, first divergence first:
+ *  - the tilemap fill keeps a byte offset in r11 (the register of i) and
+ *    steps it by 2, with the column in r1, the row in r5, row * 30 in r4
+ *    and a per-row copy of that in r0. i as a byte offset with x as the
+ *    column and base = row * 30 gives that shape (r11 stepped by 2) but the
+ *    other registers differ, and it scores 28325.
+ *  - the listing walks each die loop with a pointer in a different register
+ *    (r5 start-up, r6 throw, r7 physics with the other die in r9, r10 for
+ *    the shadows), so there is not one die pointer for the function; indexing
+ *    work->die[i] everywhere is much worse (50827), and one block-local
+ *    pointer in the start-up loop is no better.
+ *  - the pair count addresses results and matches from the frame top
+ *    (sp + 768 minus a pooled offset).
+ *  - registers and spill slots throughout; with the frame 12 bytes off every
+ *    stack reference differs, so the score moves by hundreds on any change
+ *    and is a poor guide until the frame is right. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIXED_MATH.H"
@@ -96,19 +95,10 @@ extern u8 Data_080f53fc[];
 extern u8 Data_080f5400[];
 extern u8 Data_080f5408[];
 extern s16 Data_080f541a[];
-extern u8 Value_0000000c;
-extern u8 Value_00000042;
-extern u8 Value_00000043;
-extern u8 Value_000000a0;
-extern u8 Value_000000f0;
-extern u8 Value_00000810;
-extern u8 Value_00000910;
-extern u8 Value_00003340;
-extern u8 Value_00000686;
-extern u8 Value_00003737;
-extern u8 Value_00002723;
-extern u8 Value_00003f44;
-extern u8 Value_0000ff60;
+extern char ResourceId_EffectFarCalls;
+extern char ResourceId_LuckyDiceBoard;
+extern char ResourceId_LuckyDiceSprites;
+extern char MsgLuckyDiceHelp;
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void RuntimeDispatch_NoOpHook(s32 value);
@@ -208,26 +198,25 @@ void LuckyDice_Run(void)
     work = Runtime_AllocateBlock(39, 0x782c);
     sprites = Runtime_AllocateBlock(45, 0x618);
     render = Runtime_AllocateBlock(12, 76);
-    RuntimeDispatch_NoOpHook((s32)&Value_0000000c);
+    RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
     Camera_ResetSceneDefaults();
     Scheduler_ResetTaskTable();
     gOamCopyEnabled = 0;
 
-    pos = 0;
+    i = 0;
     for (row = 0; row != 20; row++) {
-        base = row * 30;
-        for (i = 0; i != 32; i++) {
-            ((u16 *)0x06003000)[pos] = i + base;
-            pos++;
+        for (j = 0; j != 32; j++) {
+            ((u16 *)0x06003000)[i] = j + row * 30;
+            i++;
         }
     }
 
-    base = (s32)Resource_GetTableEntry((s32)&Value_00000042);
+    base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
     Dma_Set((void *)base, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, palette, 0x84000080, (volatile u32 *)0x040000d4);
     Resource_DecodeType01((void *)(base + 0x1c0), (void *)0x02010000);
     Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
-    base = (s32)Resource_GetTableEntry((s32)&Value_00000043);
+    base = (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
     Dma_Set((void *)base, obj_palette, 0x84000080, (volatile u32 *)0x040000d4);
     Dma_Set((void *)base, (void *)0x05000200, 0x84000080, (volatile u32 *)0x040000d4);
     Resource_DecodeType01((void *)(base + 0x200), (void *)0x02010000);
@@ -235,22 +224,22 @@ void LuckyDice_Run(void)
     Graphics_ScaleRgb555Buffer(obj_palette, (u16 *)0x05000200, 0, 256);
     Graphics_ScaleRgb555Buffer(palette, (u16 *)0x05000000, 0, 256);
 
-    REG_BG1CNT = (s32)&Value_00000686;
-    REG_WININ = (s32)&Value_00003737;
-    REG_WINOUT = (s32)&Value_00002723;
-    REG_DISPCNT = (s32)&Value_00003340;
-    REG_BLDCNT = (s32)&Value_00003f44;
-    REG_BLDALPHA = (s32)&Value_00000810;
+    REG_BG1CNT = 0x0686;
+    REG_WININ = 0x3737;
+    REG_WINOUT = 0x2723;
+    REG_DISPCNT = 0x3340;
+    REG_BLDCNT = 0x3f44;
+    REG_BLDALPHA = 0x0810;
     gBgScroll.unk04 = 0;
     gBgScroll.unk06 = 0;
     REG_BG1HOFS = 0;
-    REG_BG1VOFS = (s32)&Value_0000ff60;
+    REG_BG1VOFS = 0xff60;
     REG_BG2HOFS = 0;
-    REG_BG2VOFS = (s32)&Value_0000ff60;
-    REG_WIN0H = (s32)&Value_000000f0;
-    REG_WIN0V = (s32)&Value_000000a0;
-    REG_WIN1H = (s32)&Value_000000f0;
-    REG_WIN1V = (s32)&Value_000000a0;
+    REG_BG2VOFS = 0xff60;
+    REG_WIN0H = 0xf0;
+    REG_WIN0V = 0xa0;
+    REG_WIN1H = 0xf0;
+    REG_WIN1V = 0xa0;
 
     state = 0;
     timer = 0;
@@ -302,21 +291,27 @@ void LuckyDice_Run(void)
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(render, (u8 *)render + 12);
 
-        sprites->obj[0].attr01 = 0xc0006000;
-        sprites->obj[0].attr2 = 0x358;
-        sprites->obj[1].attr01 = 0x40102020;
-        sprites->obj[1].attr2 = 0x398;
-        sprites->obj[2].attr01 = 0x40102030;
-        sprites->obj[2].attr2 = 0x3a0;
-        sprites->obj[3].attr01 = 0x40042020;
-        sprites->obj[3].attr2 = 0x3a8;
-        sprites->obj[4].attr01 = 0x40042030;
-        sprites->obj[4].attr2 = 0x3a8;
+        count = 0;
+        sprites->obj[count].attr01 = 0xc0006000;
+        sprites->obj[count].attr2 = 0x358;
+        count++;
+        sprites->obj[count].attr01 = 0x40102020;
+        sprites->obj[count].attr2 = 0x398;
+        count++;
+        sprites->obj[count].attr01 = 0x40102030;
+        sprites->obj[count].attr2 = 0x3a0;
+        count++;
+        sprites->obj[count].attr01 = 0x40042020;
+        sprites->obj[count].attr2 = 0x3a8;
+        count++;
+        sprites->obj[count].attr01 = 0x40042030;
+        sprites->obj[count].attr2 = 0x3a8;
+        count++;
         for (i = 0; i != 2; i++) {
-            sprites->obj[5 + i].attr01 = (32 + i * 16) | 0x40202000;
-            sprites->obj[5 + i].attr2 = faces[i] * 8 + 0x3b0;
+            sprites->obj[count].attr01 = (32 + i * 16) | 0x40202000;
+            sprites->obj[count].attr2 = faces[i] * 8 + 0x3b0;
+            count++;
         }
-        count = 7;
 
         if (state == 2 || state == 3) {
             for (i = 0; i != 4; i++) {
@@ -379,8 +374,8 @@ void LuckyDice_Run(void)
                     state = 0;
                     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                     sprites->help_window = window;
-                    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000910, window, 0, 0);
-                    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000910 + 1, sprites->help_window, 0, 8);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp, window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp + 1, sprites->help_window, 0, 8);
                     reset = 1;
                 }
             }
@@ -396,8 +391,8 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->winnings_window, 1);
                 window = UiWindow_CreateFar(22, 16, 8, 4, 6);
                 sprites->help_window = window;
-                UiText_DrawCharacterAtOffsetFar((s32)&Value_00000910, window, 0, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)&Value_00000910 + 1, sprites->help_window, 0, 8);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp, window, 0, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceHelp + 1, sprites->help_window, 0, 8);
                 reset = 1;
             }
             counter++;

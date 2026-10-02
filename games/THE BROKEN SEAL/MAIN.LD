@@ -371,8 +371,6 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT24.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT25.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000823ea)
-    "*/recon/tbs/ja/rom.o"(.rom.000823ec)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT26.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT5.o"(.text)

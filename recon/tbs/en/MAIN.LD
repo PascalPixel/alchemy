@@ -426,8 +426,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT24.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT25.o"(.text)
-        "*/recon/tbs/raw/0808b3ea.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0808b3ec.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT26.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT5.o"(.text)

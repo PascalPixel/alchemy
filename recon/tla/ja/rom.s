@@ -5,8 +5,16 @@
 Resource_Data000:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00000630, "ax"
+	.global SoundDriver_EnterFrameUpdate
+	.type SoundDriver_EnterFrameUpdate, %function
+	.thumb_func
+SoundDriver_EnterFrameUpdate:
 	.incbin "baserom.gba", 0x00000630, 0x00000088
 	.section .rom.000019f4, "ax"
+	.global Render_BuildOamList
+	.type Render_BuildOamList, %function
+	.thumb_func
+Render_BuildOamList:
 	.incbin "baserom.gba", 0x000019f4, 0x00000020
 	.section .rom.00001c90, "ax"
 	.incbin "baserom.gba", 0x00001c90, 0x00000080
@@ -77,7 +85,12 @@ Resource_LoadCode:
 	.type Func_08013438, %function
 	.thumb_func
 Func_08013438:
-	.incbin "baserom.gba", 0x00013438, 0x00000128
+	.incbin "baserom.gba", 0x00013438, 0x00000078
+	.global System_WaitForFrameInterrupt
+	.type System_WaitForFrameInterrupt, %function
+	.thumb_func
+System_WaitForFrameInterrupt:
+	.incbin "baserom.gba", 0x000134b0, 0x000000b0
 	.section .rom.00013560, "ax"
 	.global WaitFrames
 	.type WaitFrames, %function
@@ -89,7 +102,13 @@ WaitFrames:
 	.type Runtime_SetMainState19, %function
 	.thumb_func
 Runtime_SetMainState19:
-	.incbin "baserom.gba", 0x000138a8, 0x00000288
+	.incbin "baserom.gba", 0x000138a8, 0x0000000c
+	.global Input_UpdateKeyRepeatAndDirection
+	.type Input_UpdateKeyRepeatAndDirection, %function
+	.thumb_func
+Input_UpdateKeyRepeatAndDirection:
+	.incbin "baserom.gba", 0x000138b4, 0x000000e8
+	.incbin "baserom.gba", 0x0001399c, 0x00000194
 	.section .rom.00013b30, "ax"
 	.global Sound_LoadPresetParameters
 	.type Sound_LoadPresetParameters, %function
@@ -181,6 +200,10 @@ Func_08013f3c:
 Func_08013f80:
 	.incbin "baserom.gba", 0x00013f80, 0x0000005c
 	.section .rom.00013ffc, "ax"
+	.global Graphics_ResetFrameState
+	.type Graphics_ResetFrameState, %function
+	.thumb_func
+Graphics_ResetFrameState:
 	.incbin "baserom.gba", 0x00013ffc, 0x00000020
 	.section .rom.0001401c, "ax"
 	.global AffineMatrix_BuildForEffect
@@ -448,7 +471,13 @@ Func_08016180:
 	.type Func_08016348, %function
 	.thumb_func
 Func_08016348:
-	.incbin "baserom.gba", 0x00016348, 0x00000464
+	.incbin "baserom.gba", 0x00016348, 0x000000e8
+	.global SerialRuntime_PollStatus
+	.type SerialRuntime_PollStatus, %function
+	.thumb_func
+SerialRuntime_PollStatus:
+	.incbin "baserom.gba", 0x00016430, 0x000000b8
+	.incbin "baserom.gba", 0x000164e8, 0x000002c4
 	.section .rom.000167ac, "ax"
 	.global SerialRuntime_RemoveIrqHandlers
 	.type SerialRuntime_RemoveIrqHandlers, %function

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080138b4
+	.global Input_UpdateKeyRepeatAndDirection
 	.thumb_func
-Func_080138b4:
+Input_UpdateKeyRepeatAndDirection:
 	push {r5, lr}
 	ldr r2, .L_08013998
 	movs r5, #0

@@ -1,15 +1,30 @@
 /* WaitFrames: TLA frame dispatch, OAM, debug pause and sleep.
- * Current raw extent: 840 bytes including all literal pools.
- * 2026-10-02: best complete native-listing score 240: four reordered
- * instructions, no remaining operand/register changes. EN full linked extent
- * 840/840 bytes, 16 bytes different at +0xd2, +0xe4, +0x17a and +0x244
- * (four adjacent instruction swaps); every scalar/pool/call byte outside
- * those ranges equals the owned EN ROM. Other five native editions pending.
- * Ordinary source 3645; typed I/O writes 1825; ARM restart transfer 965;
- * plain sleep halfword and one-read VCOUNT 240. 1,716 finite rewrites and
- * local comparison/block changes did not improve it. Three additional
- * tagged scheduling boundaries regressed to 3195 and were reverted.
- * No edition links this draft; all six native extents remain scaffolded.
+ * Complete native owner: 840 bytes, including every literal pool.
+ * 2026-10-02: saved draft compiles with the one approved TLA option set.
+ * Independent complete links against the current physical source definitions
+ * match all 840 bytes in JA/EN/DE/ES/FR/IT: all 18 direct calls, 31 symbolic
+ * pool words, six scalar pool words and alignment; no missing names, address
+ * substitutions, masked failures or compiler-output patches.
+ * The first private checkpoint lacked five callee definitions in five
+ * editions. Naming their actual raw/scaffold locations closed those links.
+ * The AST draft scorer still refuses inline assembly; the checks above use
+ * ordinary direct compilation and complete symbolic links.
+ * No edition adopts this draft and it earns no source credit. Production
+ * remains blocked by the numeric cartridge restart target, true allocator
+ * return type and shared record/API ownership, and coherent module placement.
+ * Prior ordinary shaping:3645; typed I/O1825; ARM restart965; one VCOUNT read
+ * and sleep-halfword form240,16 bytes/four adjacent swaps;1,716 finite forms
+ * did not improve that baseline. It was freshly reproduced before this cohort.
+ * New finite cohort:14 first handoffs,9 combinations/address forms,7 direct
+ * store/two-stage forms,4 repeat-read forms,3 result handoffs and4 scratch
+ * holds. The idle reload/shift and held-load/constant boundaries yield840/8;
+ * a short repeat r3 handoff yields840/6. Those41 forms span840..898 and other
+ * schedules regress. Final bounded closure:7 mask/result forms,7 wake-address
+ * forms and their one combination (15 of16 limit). Explicit mask assignment
+ * keeps the actual result in r3 (840/4); the direct halfword wake store with a
+ * short scratch-clobber/address-shift boundary fixes the last pair (840/0).
+ * No pinned value crosses a call, no unread frame owner, and no output patch.
+ * This measured attempt record is for people and does not steer the build.
  */
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -52,12 +67,12 @@ extern u16 Data_030011b8;
 extern volatile u16 Data_02003000;
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Render_BuildOamList(void *work);
-void Func_080134b0(void);
-void Func_080138b4(void);
+void System_WaitForFrameInterrupt(void);
+void Input_UpdateKeyRepeatAndDirection(void);
 void Func_081c0080(void);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08013ffc(void);
-s32 Func_08016430(void);
+void Graphics_ResetFrameState(void);
+s32 SerialRuntime_PollStatus(void);
 void Bios_SoundBiasOff(void);
 void Bios_SoundBiasOn(void);
 
@@ -121,23 +136,46 @@ void WaitFrames(s32 frames)
                 if (gInput.held) Data_03001218 = 0;
                 else {
                     Data_03001218++;
-                    if (Data_03001218 > 0x2a30) Data_030011d0 = 1;
+                    {
+                        /* FAKEMATCH: plain source shifts the idle limit before the volatile counter reload; this short boundary keeps the base and reload ready before the shift. */
+                        u32 idle; u32 limit;
+                        limit = 0x2a30 >> 6;
+                        idle = Data_03001218;
+                        /* FAKEMATCH: preserve the measured idle reload/limit shift order with unchanged live values. */
+                        __asm__ volatile("" : "+r"(idle) : "r"(limit));
+                        if (idle > (limit << 6) + (0x2a30 & 63)) Data_030011d0 = 1;
+                    }
                 }
             }
-            if (gInput.held == 0x304) Data_030011d0 = 1;
+            {
+                /* FAKEMATCH: plain source starts the soft-reset comparison constant before loading held buttons; the short capture puts that load first. */
+                u32 held;
+                held = gInput.held;
+                /* FAKEMATCH: leave held unchanged while preserving its measured comparison-materialization order. */
+                __asm__ volatile("" : : "r"(held));
+                if (held == 0x304) Data_030011d0 = 1;
+            }
         }
         if (Data_03001238) {
             for (;;) {
                 if (Data_03001214) {
-                    if (gInput.repeat & 7) break;
+                    {
+                        /* FAKEMATCH: the plain repeat test loads before preparing its mask; the earlier handoff fixes that order but leaves the result in r2. This short capture and explicit mask assignment preserve native preparation and result register. */
+                        register u32 repeat __asm__("r3");
+                        repeat = gInput.repeat;
+                        /* FAKEMATCH: keep the current measured read/mask preparation boundary. */
+                        __asm__ volatile("" : "+r"(repeat) : "r"(7));
+                        repeat &= 7;
+                        if (repeat) break;
+                    }
                     if (gInput.held & 0xf0) break;
                     if (gInput.repeat & 8) { Data_03001214 = 0; break; }
                 } else {
                     if (gInput.held != 12) break;
                     Data_03001214 = 1;
                 }
-                Func_080134b0();
-                Func_080138b4();
+                System_WaitForFrameInterrupt();
+                Input_UpdateKeyRepeatAndDirection();
                 if (Data_030011c0) {
                     Data_030011c0 = 0;
                     System_Reset();
@@ -146,14 +184,14 @@ void WaitFrames(s32 frames)
         }
         Data_030011d8 = Data_030011d4;
         Data_030011d4 = 0;
-        Func_080134b0();
+        System_WaitForFrameInterrupt();
         Runtime_ReleaseHeapBlock(80);
-        Func_08013ffc();
+        Graphics_ResetFrameState();
         Data_0300122c++;
         Data_0300117c++;
-        Func_080138b4();
+        Input_UpdateKeyRepeatAndDirection();
         if (Data_030011b8) {
-            Func_08016430();
+            SerialRuntime_PollStatus();
             if (gSerialRuntime.active) gSerialRuntime.transfer = 1;
         }
         if (Data_030011d0 && Data_03001180 == 0) {
@@ -162,17 +200,26 @@ void WaitFrames(s32 frames)
             if (Data_030011d0 == 1) {
                 Io_Write16(0, &REG_DISPCNT);
                 Io_Write16(0x7fff, &PLTT_BACKDROP);
-                for (j = 9; j >= 0; j--) Func_080134b0();
-                while (gInput.held) Func_080134b0();
+                for (j = 9; j >= 0; j--) System_WaitForFrameInterrupt();
+                while (gInput.held) System_WaitForFrameInterrupt();
                 Data_02003000 = 1;
-                Io_Write16(0xc304, &REG_KEYCNT);
+                {
+                    u32 high; volatile u16 *key;
+                    /* FAKEMATCH: the prior direct form loads the wake address before the genuine flag store; end its scratch-register reuse first. */
+                    __asm__ volatile("" : : : "r5");
+                    high = 0xc304 >> 8;
+                    key = &REG_KEYCNT;
+                    /* FAKEMATCH: keep the measured address-before-shift handoff, with neither value changed. */
+                    __asm__ volatile("" : "+r"(high) : "r"(key));
+                    *key = (high << 8) + (0xc304 & 255);
+                }
                 Bios_SoundBiasOff();
                 Bios_Stop();
                 Bios_SoundBiasOn();
                 Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
                 Io_Write16(0, &Data_02003000);
-                for (j = 9; j >= 0; j--) Func_080134b0();
-                while (gInput.held) Func_080134b0();
+                for (j = 9; j >= 0; j--) System_WaitForFrameInterrupt();
+                while (gInput.held) System_WaitForFrameInterrupt();
                 Io_Write16(display, &REG_DISPCNT);
                 Io_Write16(backdrop, &PLTT_BACKDROP);
                 Data_030011d0 = 0;

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080134b0
+	.global System_WaitForFrameInterrupt
 	.thumb_func
-Func_080134b0:
+System_WaitForFrameInterrupt:
 	push {lr}
 	ldr r3, .L_08013548
 	ldrb r3, [r3, #2]

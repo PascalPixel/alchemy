@@ -179,7 +179,7 @@ iwram :
     "*/recon/tbs/de/rom.o"(.rom.0000fc24)
     "*/recon/tbs/de/rom.o"(.rom.0000fd60)
     "*/recon/tbs/de/rom.o"(.rom.0000fdd4)
-    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.o"(.text)
+    "*/games/COMMON/SRC/FIELD/COMMON/MAP/MAPCOPY.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000ff88)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SET_WORK_FLAG_BITS9_11.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP6.o"(.text)

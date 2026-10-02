@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
@@ -27,8 +28,6 @@ s32 Math_DivideSigned();
 /* The board's records in the scene state, where the board setup points. */
 extern s16 *gKorimaMagariRecords;
 void Scene_PushBlockAlongRun(s16 *records);
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
-                               s32 dest_y);
 void State_StampRecordCells(s16 *records, s32 value);
 void State_ApplyRectByLayoutSelector(void);
 

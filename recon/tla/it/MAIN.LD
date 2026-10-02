@@ -335,7 +335,7 @@
     "*/recon/tla/it/rom.o"(.rom.0002af9c)
     "*/recon/tla/it/rom.o"(.rom.0002b1a0)
     "*/recon/tla/it/rom.o"(.rom.0002b2d4)
-    "*/recon/tla/it/rom.o"(.rom.0002b344)
+    "*/games/COMMON/SRC/FIELD/COMMON/MAP/MAPCOPY.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0002b38c)
     "*/recon/tla/it/rom.o"(.rom.0002b620)
     "*/recon/tla/it/rom.o"(.rom.0002b828)

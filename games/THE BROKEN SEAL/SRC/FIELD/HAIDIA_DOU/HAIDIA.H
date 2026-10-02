@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_HAIDIA_H
 #define ALCHEMY_HAIDIA_H
 
+#include "MAPCOPY.H"
+
 /* The Vale sanctum (resource_3a6): what its files share. */
 
 #include "TYPES.H"
@@ -64,7 +66,6 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Object_SetModeById(s32 actor, s32 mode);
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
-void Map_CopyCellAttributeRect(s32 x, s32 z, s32 width, s32 height, s32 dest_x, s32 dest_z);
 
 /* Motion and cell services in the shape of the engine header's, through
    those names. */

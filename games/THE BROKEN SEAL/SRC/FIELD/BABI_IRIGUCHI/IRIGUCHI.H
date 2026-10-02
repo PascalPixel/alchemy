@@ -1,6 +1,8 @@
 #ifndef IRIGUCHI_H
 #define IRIGUCHI_H
 
+#include "MAPCOPY.H"
+
 /* The staged-actor code linked here names the imports by the main image's
    names; the entrance's scenes reach them by the same names. */
 #define FIELD_STAGED_ACTOR_IMPORTS
@@ -72,8 +74,6 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Object_SetModeById(s32 actor, s32 mode);
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height,
-                               s32 dest_x, s32 dest_y);
 void Engine_MapCopyCellsLayered(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width,
                                 s32 height);
 void BattleFx_SetPhaseRequest();

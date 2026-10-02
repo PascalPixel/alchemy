@@ -11135,7 +11135,7 @@ msgctxt "MsgSwapForWhat"
 msgid "02781"
 msgstr "Swap it for what?"
 
-msgctxt "message"
+msgctxt "MsgGiveHowMany"
 msgid "02782"
 msgstr "How many?"
 

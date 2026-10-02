@@ -7,6 +7,11 @@
  *    as a constant the loop pass leaves it in (22 instructions, lifetime 1) and
  *    combine folds the OR away. The OR then takes its operands the other way;
  * 3. the actor store in the ACTOR_RESOLVE case is scheduled one instruction early.
+ * The reload registers go round-robin through the whole function, so 1 may only
+ * be the trace of one reload more or fewer somewhere before it; 3 is the one
+ * earlier place where the code differs. Tried without effect: statement and
+ * declaration order, the display work read directly, five spellings of the tile
+ * address, run-once blocks around each statement group.
  * alchemy drafts cannot parse a nested function; compare by compiling and diffing. */
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -311,6 +316,8 @@ void BattleEvent_Playback(void)
                     frame = (state->timer - 0x400) / 8 % 5 + 1;
                 if (frame == 6 || (state->timer & 7) == 0) {
                     struct BattleMotionRecord *record;
+                    /* FAKEMATCH: the variable takes the 0xff out of the loop, where
+                     * the ROM has it; as a constant it stays in and the OR folds away. */
                     s32 redraw = 0xff;
                     s32 n;
 

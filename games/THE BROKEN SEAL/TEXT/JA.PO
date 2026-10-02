@@ -12731,7 +12731,7 @@ msgctxt "MsgSwapForWhat"
 msgid "03180"
 msgstr "どれとこうかん?"
 
-msgctxt "message"
+msgctxt "MsgGiveHowMany"
 msgid "03181"
 msgstr "いくつ?"
 
@@ -13051,7 +13051,7 @@ msgctxt "message"
 msgid "03260"
 msgstr "じぶんにはわたせません"
 
-msgctxt "message"
+msgctxt "MsgItemCounter"
 msgid "03261"
 msgstr "こ"
 

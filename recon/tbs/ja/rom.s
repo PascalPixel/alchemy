@@ -768,34 +768,18 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.00099454, "ax"
-	.global RunAssetSelectionScreen
-	.type RunAssetSelectionScreen, %function
-	.thumb_func
-RunAssetSelectionScreen:
-	.incbin "baserom.gba", 0x00099454, 0x00000138
 	.section .rom.0009b008, "ax"
 	.global Func_080a414c
 	.type Func_080a414c, %function
 	.thumb_func
 Func_080a414c:
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
-	.section .rom.0009bdc0, "ax"
-	.global Func_080a4f08
-Func_080a4f08:
-	.incbin "baserom.gba", 0x0009bdc0, 0x000002e8
 	.section .rom.0009cb94, "ax"
 	.global Menu_ResolveSelectedAction
 	.type Menu_ResolveSelectedAction, %function
 	.thumb_func
 Menu_ResolveSelectedAction:
 	.incbin "baserom.gba", 0x0009cb94, 0x0000032c
-	.section .rom.0009f51c, "ax"
-	.global CharacterMenu_DrawStatusAilments
-	.type CharacterMenu_DrawStatusAilments, %function
-	.thumb_func
-CharacterMenu_DrawStatusAilments:
-	.incbin "baserom.gba", 0x0009f51c, 0x00000300
 	.section .rom.000a1664, "ax"
 	.global Func_080aa768
 Func_080aa768:
@@ -831,7 +815,10 @@ Data_080aed4c:
 	.incbin "baserom.gba", 0x000a5c6c, 0x00000080
 	.global Data_080aedcc
 Data_080aedcc:
-	.incbin "baserom.gba", 0x000a5cec, 0x00000440
+	.incbin "baserom.gba", 0x000a5cec, 0x000002c0
+	.global Data_080af08c
+Data_080af08c:
+	.incbin "baserom.gba", 0x000a5fac, 0x00000180
 	.global Data_080af20c
 Data_080af20c:
 	.incbin "baserom.gba", 0x000a612c, 0x00000004
@@ -990,14 +977,6 @@ Battle_RunEncounter:
 	.incbin "baserom.gba", 0x000ad3c8, 0x00000698
 	.section .rom.000ae738, "ax"
 	.incbin "baserom.gba", 0x000ae738, 0x000001ac
-	.section .rom.000aeb6a, "ax"
-	.incbin "baserom.gba", 0x000aeb6a, 0x00000002
-	.section .rom.000aeb6c, "ax"
-	.global BattleActor_SpawnObjectsForList
-	.type BattleActor_SpawnObjectsForList, %function
-	.thumb_func
-BattleActor_SpawnObjectsForList:
-	.incbin "baserom.gba", 0x000aeb6c, 0x00000264
 	.section .rom.000afc1c, "ax"
 	.global BattlePres_RunUnitAction
 	.type BattlePres_RunUnitAction, %function
@@ -1023,12 +1002,6 @@ Func_080ba6ac:
 	.thumb_func
 Func_080ba978:
 	.incbin "baserom.gba", 0x000b1978, 0x00000264
-	.section .rom.000b1c6c, "ax"
-	.global BattleActor_RemoveFromLists
-	.type BattleActor_RemoveFromLists, %function
-	.thumb_func
-BattleActor_RemoveFromLists:
-	.incbin "baserom.gba", 0x000b1c6c, 0x0000007c
 	.section .rom.000b4422, "ax"
 	.incbin "baserom.gba", 0x000b4422, 0x00000002
 	.section .rom.000b4424, "ax"

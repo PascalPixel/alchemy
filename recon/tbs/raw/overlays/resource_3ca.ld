@@ -7,7 +7,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/FUNE.o"(.text)
-        "*/resource_3ca_overlay.o"(.text.x02008194)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/FUNE2.o"(.text)
         "*/resource_3ca_overlay.o"(.text.x02008b34)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/FUNE3.o"(.text)

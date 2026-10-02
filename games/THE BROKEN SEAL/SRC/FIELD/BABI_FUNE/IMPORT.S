@@ -58,9 +58,9 @@ Object_SetMode:
 	.thumb_func
 Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Object_Create
+	.global Engine_ObjectCreate
 	.thumb_func
-Object_Create:
+Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -70,9 +70,9 @@ Engine_MapRedraw:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
-	.global ObjectDispatch_SetSingleChildField26
+	.global Engine_ObjectSetBlendMode
 	.thumb_func
-ObjectDispatch_SetSingleChildField26:
+Engine_ObjectSetBlendMode:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	.global Runtime_SetWorkTripleIfNonNegative
 	.thumb_func

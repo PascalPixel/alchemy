@@ -10,7 +10,7 @@ s32 Resource_DecodeType01();
 s32 Resource_FindFreeEntry();
 s32 Engine_VramLoad();
 s32 Engine_TaskAddCallback();
-void Func_020018a4(void);
+void RamakanSabaku_RunSandstorm(void);
 
 /* A one-halfword struct keeps the zero a register copy, not a halfword pool
  * constant out of reach. */
@@ -40,7 +40,7 @@ void RamakanSabaku_ClaimSandEffectVram(void)
     zero.v = 0;
     RamakanSabaku_SandCounter = zero.v;
     RamakanSabaku_SandPhase = zero.v;
-    Engine_TaskAddCallback(Func_020018a4, 0xc76);
+    Engine_TaskAddCallback(RamakanSabaku_RunSandstorm, 0xc76);
 }
 
 void SceneState_SetHalfwordB030(u16 value)

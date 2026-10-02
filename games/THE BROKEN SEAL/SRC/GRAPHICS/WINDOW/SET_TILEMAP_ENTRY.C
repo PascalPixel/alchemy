@@ -53,35 +53,27 @@ void UiWindow_SetTilemapEntry(
         break;
     }
 
-    /* FAKEMATCH: the plain write is a separate tail reached by goto so the
-       palette and plain stores keep their own copies of the bounds check,
-       and the byte-offset store keeps map as the strh offset register.
-       2026-10-02: map[index] swaps the encoded base and offset registers
-       in both strh stores; the rest of the generated assembly is equal. */
+    /* FAKEMATCH: byte-offset stores preserve the strh base and offset
+       register order; map[index] reverses them in both stores. */
     switch (mode) {
-    case TILEMAP_ENTRY_PLAIN:
-        goto plain;
     case TILEMAP_ENTRY_NONE:
         return;
     case TILEMAP_ENTRY_PALETTE_14:
     case TILEMAP_ENTRY_PALETTE_15:
     case TILEMAP_ENTRY_PALETTE_1:
-        break;
+        index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
+        if ((u32)index >= TILEMAP_ENTRIES)
+            return;
+        *(u16 *)((u8 *)map + (index << 1)) = palette | value;
+        return;
+    case TILEMAP_ENTRY_PLAIN:
     default:
-        goto plain;
+        index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
+        if ((u32)index >= TILEMAP_ENTRIES)
+            return;
+        *(u16 *)((u8 *)map + (index << 1)) = value;
+        return;
     }
-
-    index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
-    if ((u32)index >= TILEMAP_ENTRIES)
-        return;
-    *(u16 *)((u8 *)map + (index << 1)) = palette | value;
-    return;
-
-plain:
-    index = (window->top + y) * TILEMAP_WIDTH + (window->left + x);
-    if ((u32)index >= TILEMAP_ENTRIES)
-        return;
-    *(u16 *)((u8 *)map + (index << 1)) = value;
 }
 
 struct ScaleEffect {

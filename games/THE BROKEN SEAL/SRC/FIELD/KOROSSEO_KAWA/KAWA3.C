@@ -3,6 +3,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+#include "KAWA.H"
 #include "CALL.H"
 
 /* The mode task's records in the river overlay's data. */
@@ -70,11 +71,6 @@ struct ModeRecord {
     u16 span;
 };
 
-typedef struct Position3 {
-    s32 x;
-    s32 y;
-    s32 z;
-} Position3;
 
 /* The active subject's handle sits 500 bytes into the shared table. */
 typedef struct ActiveSubjectSlot {
@@ -95,7 +91,6 @@ void Korosseo_LoadPortrait();
 s32 AudioCommand_GetStateByte();
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
-s32 *SceneActor_FindOccupantAheadOfSubject(void);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)

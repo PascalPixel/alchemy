@@ -909,8 +909,6 @@ FourObjectMotion_ResourceIds:
 	.thumb_func
 Shop_SelBuy:
 	.incbin "baserom.gba", 0x000a7aac, 0x000004f8
-	.section .rom.000a8278, "ax"
-	.incbin "baserom.gba", 0x000a8278, 0x00000210
 	.section .rom.000aa964, "ax"
 	.global Shop_HandTiles
 Shop_HandTiles:

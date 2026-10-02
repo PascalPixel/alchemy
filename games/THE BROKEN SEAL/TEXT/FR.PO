@@ -12971,7 +12971,7 @@ msgctxt "MsgPriceHeading"
 msgid "03240"
 msgstr "Prix"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03241"
 msgstr "Non utilisable"
 
@@ -13011,7 +13011,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03250"
 msgstr "Vous ne pouvez pas l'enlever!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03251"
 msgstr "ATT"
 

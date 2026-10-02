@@ -14431,7 +14431,7 @@ msgctxt "MsgPriceHeading"
 msgid "03605"
 msgstr "うりね"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03606"
 msgstr "そうびできません"
 
@@ -14471,7 +14471,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03615"
 msgstr "はずせません!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03616"
 msgstr "こうげき"
 

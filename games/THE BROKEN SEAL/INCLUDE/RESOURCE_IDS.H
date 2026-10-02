@@ -30,6 +30,8 @@ extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_SlotsFramePicture;
 extern char ResourceId_SlotsIcons;
 extern char ResourceId_SlotsJackpot;
+extern char ResourceId_LuckyDiceBoard;
+extern char ResourceId_LuckyDiceSprites;
 extern char ResourceId_RevealMaskA;
 extern char ResourceId_RevealMaskB;
 extern char ResourceId_RevealMaskC;

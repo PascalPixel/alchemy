@@ -727,8 +727,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LINKACT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT6.o"(.text)
-        "*/recon/tbs/raw/080b9b2e.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080b9b30.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT13.o"(.text)
         "*/recon/tbs/raw/080b9ec0.o"(.text .rodata .data .padding)
         "*/games/COMMON/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)

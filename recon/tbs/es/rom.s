@@ -1037,14 +1037,25 @@ BattleActor_SpawnObjectsForList:
 	.thumb_func
 BattlePres_RunUnitAction:
 	.incbin "baserom.gba", 0x000bcc34, 0x0000019c
-	.section .rom.000bdb46, "ax"
-	.incbin "baserom.gba", 0x000bdb46, 0x00000206
 	.section .rom.000bded8, "ax"
+	.global BattlePresentation_RunUnitTransition
+	.type BattlePresentation_RunUnitTransition, %function
+	.thumb_func
+BattlePresentation_RunUnitTransition:
 	.incbin "baserom.gba", 0x000bded8, 0x000003bc
 	.section .rom.000be6c4, "ax"
+	.global Func_080ba6ac
+	.type Func_080ba6ac, %function
+	.thumb_func
+Func_080ba6ac:
 	.incbin "baserom.gba", 0x000be6c4, 0x0000026c
 	.section .rom.000be98e, "ax"
-	.incbin "baserom.gba", 0x000be98e, 0x00000266
+	.incbin "baserom.gba", 0x000be98e, 0x00000002
+	.global Func_080ba978
+	.type Func_080ba978, %function
+	.thumb_func
+Func_080ba978:
+	.incbin "baserom.gba", 0x000be990, 0x00000264
 	.section .rom.000bec84, "ax"
 	.global BattleActor_RemoveFromLists
 	.type BattleActor_RemoveFromLists, %function
@@ -1068,8 +1079,17 @@ BattleCommand_SelectAutomatic:
 BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000c18b0, 0x00000754
 	.section .rom.000c21a2, "ax"
-	.incbin "baserom.gba", 0x000c21a2, 0x0000107e
+	.incbin "baserom.gba", 0x000c21a2, 0x000001ee
+	.global BattleCommand_BuildPlan
+	.type BattleCommand_BuildPlan, %function
+	.thumb_func
+BattleCommand_BuildPlan:
+	.incbin "baserom.gba", 0x000c2390, 0x00000e90
 	.section .rom.000c3bbc, "ax"
+	.global BattleUnit_ProcessTurnEnd
+	.type BattleUnit_ProcessTurnEnd, %function
+	.thumb_func
+BattleUnit_ProcessTurnEnd:
 	.incbin "baserom.gba", 0x000c3bbc, 0x00000414
 	.section .rom.000c42bc, "ax"
 	.incbin "baserom.gba", 0x000c42bc, 0x0000045c

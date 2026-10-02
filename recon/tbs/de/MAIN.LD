@@ -617,7 +617,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LINKACT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT6.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000bc146)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT13.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000bc4d8)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)

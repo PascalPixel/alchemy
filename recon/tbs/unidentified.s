@@ -1575,7 +1575,19 @@ ImpactBurst_CellHeights:
 	.incbin "baserom.gba", 0x000eee5e, 0x00000008
 	.global ImpactBurst_CellSourceOffsets
 ImpactBurst_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eee66, 0x00000072
+	.incbin "baserom.gba", 0x000eee66, 0x00000010
+	.global ParticleStreams_OrbitPoints
+ParticleStreams_OrbitPoints:
+	.incbin "baserom.gba", 0x000eee76, 0x0000002a
+	.global ParticleStreams_DropPoints
+ParticleStreams_DropPoints:
+	.incbin "baserom.gba", 0x000eeea0, 0x0000001c
+	.global ParticleStreams_FlashSheetOffsets
+ParticleStreams_FlashSheetOffsets:
+	.incbin "baserom.gba", 0x000eeebc, 0x0000000e
+	.global ParticleStreams_FlashSizes
+ParticleStreams_FlashSizes:
+	.incbin "baserom.gba", 0x000eeeca, 0x0000000e
 	.global CirclingScene_ObjectColumns
 CirclingScene_ObjectColumns:
 	.incbin "baserom.gba", 0x000eeed8, 0x00000008

@@ -2,6 +2,15 @@
 #define ALCHEMY_UI_H
 
 #include "TYPES.H"
+#include "TBS_EDITION.H"
+
+/* The flags the menus set in the window work. */
+struct UiWork {
+    u8 unknown_000[RENDER_DIRTY_OFS];
+    unsigned dirty : 8;
+    u8 unknown_mode[RENDER_MENU_BUSY_OFS - RENDER_DIRTY_OFS - 1];
+    unsigned menu_busy : 8;
+};
 
 /* Window and text services the menus reach through the far-call table at
    0x08015000. */

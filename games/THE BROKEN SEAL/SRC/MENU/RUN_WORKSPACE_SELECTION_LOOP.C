@@ -6,6 +6,9 @@
 #include "TEXT_RENDER_RUNTIME.H"
 #include "RENDER_INPUT.H"
 #include "SOUND_IDS.H"
+#include "DMA.H"
+#include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
 
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
@@ -136,4 +139,92 @@ loop_6:
         var_r5_144 += sp4;
     }
     return var_r5_144;
+}
+
+/* The tile slots of the window work: one in-use byte per tile and the slot
+   the next search starts from. */
+struct UiTileSlotWork {
+    u8 unknown_000[RENDER_TILE_ATTR_OFS];
+    u8 used[0x100];
+    u16 next;
+};
+
+extern struct UiTileSlotWork *gWindowWork;
+
+/* Draws one pattern of the window tile sheet over the tile a map entry shows.
+   The tile is unpacked to one colour per byte, the pattern's pixels replace
+   those whose remapped colour is not transparent, and the result is packed
+   again. A shared tile (slot below 128) is first given a free slot of its
+   own, which both map entries then name. */
+void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern, u8 *remap)
+{
+    struct UiTileSlotWork *work = gWindowWork;
+    u8 pixels[128];
+    u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
+    u32 slot = *(u8 *)entry;
+    u8 *src;
+    u8 *dst;
+    u32 n;
+    u32 i;
+
+    dst = pixels;
+    src = (u8 *)(0x06000000 + 32 * slot);
+    for (i = 0; i < 32; i++) {
+        /* FAKEMATCH: the second byte's address as its own value keeps the
+           two stores on separate address registers. */
+        u8 *high = dst + 1;
+
+        n = *src++;
+        dst[0] = n & 15;
+        *high = n >> 4;
+        dst += 2;
+    }
+
+    dst = pixels;
+    src = sheet + pattern * 32;
+    for (i = 0; i < 32; i++) {
+        u32 value = *src++;
+        u32 color = remap[value & 15];
+
+        if (color != 0)
+            *dst = color;
+        dst++;
+        color = remap[value >> 4];
+        if (color != 0)
+            *dst = color;
+        dst++;
+    }
+
+    {
+        u8 *p;
+
+        dst = pixels;
+        /* FAKEMATCH: counter before pointer, in one statement, orders the
+           two initial moves as the listing has them. */
+        i = 0, p = dst;
+        while (i < 32) {
+            u32 value = p[0] | p[1] << 4;
+
+            p += 2;
+            *dst++ = value;
+            i++;
+        }
+    }
+
+    if ((s8)slot >= 0) {
+        for (n = 0; n < 128; n++) {
+            u32 value = work->next;
+            u32 following = (value + 1) % 128;
+
+            slot = (u8)value;
+            work->next = following;
+            if (work->used[slot] == 0)
+                break;
+        }
+        work->used[slot] = 1;
+        slot |= 0x80;
+        *entry = slot | 0xf000;
+        *mirror = slot | 0xf000;
+    }
+    Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, (volatile u32 *)0x040000d4);
 }

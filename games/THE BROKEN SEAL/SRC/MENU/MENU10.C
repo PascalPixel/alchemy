@@ -7,6 +7,8 @@
 #include "OWNER_STATE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+#include "UI.H"
+#include "DJINN_MENU.H"
 
 /* The tile in character block 1 that holds the window frame. */
 #define FRAME_TILE 150
@@ -16,19 +18,6 @@ extern u8 gMenuWork[];
 extern const u8 Menu_BackdropFrameTile[];
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
-
-struct BackdropSave {
-    u8 unknown_000[0xa8];
-    u8 tiles[0x2000];
-    u16 palette[64];
-};
-
-struct MenuWork {
-    u8 unknown_000[0x30];
-    s32 window;
-    u8 unknown_034[0x150];
-    struct BackdropSave *backdrop;
-};
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {
@@ -46,12 +35,20 @@ s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s3
 void Func_080153d8(void *);
 void *Runtime_GetLowTableAddress(void);
 void Graphics_AdjustPaletteBank(s32);
-s32 Func_080aafb8(struct BackdropSave *);
+void UiWork_SetParamNibbleFar(s32 value);
+void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, u32 mode);
+void UiWindow_DrawDividerLineFar(s32 window, u32 x1, u32 y1, u32 x2, u32 y2);
+void RenderOutput_RedrawSavedRectFar(s32 window);
+s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 djinn);
+s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 djinn);
+extern u8 MsgUnleashEffect[];
+extern u8 MsgDjinnName[];
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
 extern u8 Data_03001f2c[];
 s16 Djinn_ListOwnerEntries(void *, s32, s32);
+void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
 
 /* menu/core/compute_entry_values.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -119,10 +116,10 @@ void Graphics_AdjustPaletteBank(s32 arg0)
    loads the frame tile and palettes, then runs the backdrop screen. */
 s32 Menu_OpenBackdropScreen(void)
 {
-    struct MenuWork *work = *(struct MenuWork **)gMenuWork;
-    struct BackdropSave *backdrop = work->backdrop;
+    struct DjinnMenuWork *work = *(struct DjinnMenuWork **)gMenuWork;
+    struct DjinnMenuBackdrop *backdrop = work->backdrop;
 
-    UiWindow_UpdateOrCreate(&work->window, 0, 5, 30, 15, 2);
+    UiWindow_UpdateOrCreate(&work->list_window, 0, 5, 30, 15, 2);
     WaitFrames(1);
     CopyWords(Iwram_CopyWords, backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
     CopyWords(Iwram_CopyWords, backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
@@ -137,7 +134,9 @@ s32 Menu_OpenBackdropScreen(void)
     Graphics_AdjustPaletteBank(8);
     BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
     BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
-    return Func_080aafb8(backdrop);
+    /* FAKEMATCH: the list drawing returns nothing, but called as a statement
+       its argument is loaded before the last palette store instead of after. */
+    return ((s32 (*)(struct DjinnListTable *))DjinnMenu_DrawElementList)(&backdrop->list);
 }
 
 /* Lists all slots in b, marks those absent from a, then appends slots only in a. */
@@ -207,4 +206,68 @@ s32 Menu_ComputeEntryValues(void *tbl)
             p = (u8 *)p + 0x14;
         } while (i < cnt);
     }
+}
+
+/* Tilemap entry: the element tile in palette 5. */
+#define ELEMENT_TILE 0x5001
+#define ENTRY list[i]
+
+/* Lists every party member's Djinn in the full-width window, a column per
+   member and grouped by element: set Djinn in the second text colour, Djinn
+   that can be neither offered nor used in the fourth. */
+void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
+{
+    struct DjinnMenuWork *menu;
+    s32 i;
+    s32 row;
+    s32 element;
+    struct UiWork *ui;
+    s32 line;
+    s32 usable;
+    u16 *list;
+
+    menu = *(struct DjinnMenuWork **)gMenuWork;
+    ui = *(struct UiWork **)(gMenuWork - 160);
+    ui->menu_busy = 1;
+    i = 0;
+    if (menu->owner_count != 0) {
+        do {
+            tbl->counts[i] = Djinn_ListOwnerEntries(tbl->ids[i], menu->owners[i], -1);
+            i++;
+        } while (i < menu->owner_count);
+    }
+    RenderOutput_RedrawSavedRectFar(menu->list_window);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgUnleashEffect, menu->list_window, 0, 80);
+    for (row = 0; row < menu->owner_count; row++) {
+        list = tbl->ids[row];
+        line = 0;
+        for (element = 0; element < DJINN_ELEMENTS; element++) {
+            for (i = 0; i < tbl->counts[row]; i++) {
+                if (element != (ENTRY & DJINN_ENTRY_ELEMENT) >> 5)
+                    continue;
+                if ((ENTRY & DJINN_ENTRY_IS_SET) == 0)
+                    UiWork_SetParamNibbleFar(2);
+                usable = 0;
+                if (Trade_CanOfferDjinnFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
+                        (ENTRY & DJINN_ENTRY_ELEMENT) >> 5, ENTRY & DJINN_ENTRY_INDEX)
+                    || Djinn_IsActiveFar((ENTRY & DJINN_ENTRY_OWNER) >> 8,
+                        (ENTRY & DJINN_ENTRY_ELEMENT) >> 5, ENTRY & DJINN_ENTRY_INDEX))
+                    usable = 1;
+                if (!usable)
+                    UiWork_SetParamNibbleFar(4);
+                UiWindow_SetTilemapEntryFar(menu->list_window,
+                    ((ENTRY & DJINN_ENTRY_ELEMENT) >> 5) + ELEMENT_TILE,
+                    row * 7 + 1, line + 2, 0);
+                UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnName
+                    + ((ENTRY & DJINN_ENTRY_ELEMENT) >> 5) * DJINN_PER_ELEMENT
+                    + (ENTRY & DJINN_ENTRY_INDEX),
+                    menu->list_window, row * 56 + 16, line * 8 + 16);
+                line++;
+                UiWork_SetParamNibbleFar(15);
+            }
+        }
+    }
+    UiWindow_DrawDividerLineFar(menu->list_window, 0, 10, 28, 10);
+    (*(struct UiWork **)(gMenuWork - 160))->dirty = 1;
+    ui->menu_busy = 0;
 }

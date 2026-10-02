@@ -114,7 +114,7 @@ extern u32 gKeysHeld;
 extern u32 gKeysPressedLatch;
 extern u32 gKeysRepeat;
 extern u32 gKeyState;
-extern const char Data_080af28c[];
+extern const char DjinnMenu_TextLevel[];
 extern u8 gGameState[];
 
 struct DjinnMenuOwner *Runtime_GetObject(s32 owner);
@@ -267,7 +267,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             UiWindow_Commit(window);
             UiText_DrawStringAtOffsetFar(owner->name, window, 0, 0);
             UiText_DrawAt(owner->class_id + 0x741, window, 0, 8);
-            UiText_DrawStringAtOffsetFar(Data_080af28c, window, 48, 0);
+            UiText_DrawStringAtOffsetFar(DjinnMenu_TextLevel, window, 48, 0);
             UiNumber_DrawAt(owner->level, 2, window, 72, 0);
             if (mode == 0)
                 UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_CHARACTER_STATUS), window, 0, 16);

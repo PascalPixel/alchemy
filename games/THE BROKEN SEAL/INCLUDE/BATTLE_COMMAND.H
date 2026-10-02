@@ -7,14 +7,17 @@ extern u8 gDebugMode[];
 extern u8 gKeysHeld[];
 #include "BATTLE_WORK.H"
 
-/* Player/AI command consumed by the battle-command resolver. */
+/* Player/AI command consumed by the battle-command resolver: one of the
+   session's queued action records. */
 struct BattleCommandRequest {
     s16 actor_id;                   /* 0x00 */
     s16 unknown_02;
     s16 unknown_04;
     s16 command;                    /* 0x06: dispatch selector, 0..99 */
-    s16 parameter;                  /* 0x08: action, inventory slot, or position */
-    s16 unknown_0a;
+    s16 parameter;                  /* 0x08: action, inventory slot, or Djinni */
+    s16 target;                     /* 0x0a: position in bits 0-3, bit 7 the enemy side */
+    s16 range;                      /* 0x0c */
+    s16 unknown_0e;
 };
 
 struct BattleSummonDefinition {
@@ -40,7 +43,7 @@ struct BattlePendingActions {
 LAYOUT_SIZE_GUARD(
     BattleCommandRequest_Size,
     struct BattleCommandRequest,
-    0x0c);
+    0x10);
 LAYOUT_OFFSET_GUARD(
     BattleCommandRequest_Command,
     struct BattleCommandRequest,

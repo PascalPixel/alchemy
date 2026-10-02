@@ -3,7 +3,7 @@
 //! its NONMATCHING C beside the assembly it replaced, so a draft's recorded
 //! difference never goes stale. The scores print to stdout; nothing is stored.
 use super::parse::definitions;
-use super::{Config, Problem};
+use super::{score_draft, Config};
 use crate::compiler::routing::root;
 use crate::targets::{decomp_target, TARGET_IDS};
 use std::path::{Path, PathBuf};
@@ -38,6 +38,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     let mut unscored = Vec::new();
     let mut labels = std::collections::HashMap::new();
     let mut unlisted = Vec::new();
+    let mut unresolved = Vec::new();
     for (index, draft) in drafts.iter().enumerate() {
         let shown = draft
             .strip_prefix(&root)
@@ -107,10 +108,27 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             };
             let directory = scratch.path().join(format!("{index}-{name}"));
             std::fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
-            let result = Problem::load(&config, &directory)
-                .and_then(|problem| problem.evaluate(&problem.draft, &directory.join("setup")));
+            let result = score_draft(&config, &directory);
             match result {
-                Ok(score) => scored.push((score.total, score.lines.len(), name, shown.clone())),
+                Ok(result) => {
+                    if !result.unresolved.is_empty() {
+                        unresolved.push(format!(
+                            "{shown}: {name}: {}",
+                            result
+                                .unresolved
+                                .iter()
+                                .cloned()
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        ));
+                    }
+                    scored.push((
+                        result.score.total,
+                        result.score.lines.len(),
+                        name,
+                        shown.clone(),
+                    ));
+                }
                 Err(error) => unscored.push(format!("{shown}: {name}: {}", first_line(&error))),
             }
         }
@@ -131,6 +149,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     );
     for line in &unscored {
         println!("unscored: {line}");
+    }
+    for line in &unresolved {
+        println!("unresolved: {line} (symbol-name comparison only)");
     }
     for line in &unlisted {
         println!("unlisted: {line}");

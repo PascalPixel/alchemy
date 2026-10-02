@@ -168,8 +168,8 @@ Data_08013624:
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x000136e0, 0x000000a4
-	.global Data_08013784
-Data_08013784:
+	.global Map_LayeredScenes
+Map_LayeredScenes:
 	.incbin "baserom.gba", 0x00013784, 0x0000187c
 	.section .unidentified.08029910,"a"
 	.global WorkspaceOptions_SliderTiles
@@ -686,9 +686,12 @@ Data_080af23c:
 	.global Menu_BackdropFrameTile
 Menu_BackdropFrameTile:
 	.incbin "baserom.gba", 0x000af26c, 0x00000020
-	.global Data_080af28c
-Data_080af28c:
-	.incbin "baserom.gba", 0x000af28c, 0x00000008
+	.global DjinnMenu_TextLevel
+DjinnMenu_TextLevel:
+	.incbin "baserom.gba", 0x000af28c, 0x00000004
+	.global DjinnMenu_TextSlash
+DjinnMenu_TextSlash:
+	.incbin "baserom.gba", 0x000af290, 0x00000004
 	.global UiMenu_CursorBobX
 UiMenu_CursorBobX:
 	.incbin "baserom.gba", 0x000af294, 0x00000009

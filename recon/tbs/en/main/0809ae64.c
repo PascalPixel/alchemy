@@ -5,7 +5,9 @@
    which pools its zero as the reference does. Remaining: every reload here
    takes r2 or r3 where the reference cycles r1, r2 and r0, so the origin
    and target pointers are copied from fp and r9 at each store instead of
-   staying in the low register that built them. */
+   staying in the low register that built them. The reference's spill
+   registers are r1 and r2 only, and it forms each address after the first
+   load; a source whose busiest reload leaves r3 free should fix the rest. */
 #include "TYPES.H"
 
 struct EffectVector { s32 x, y, z; };

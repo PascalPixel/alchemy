@@ -55,7 +55,17 @@ void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
 void BattleFx_DispatchModeFar(struct PresentationWork *);
 void Audio_PlayCue(s32);
 
-static inline s32 SameSide(u32 first, u32 second)
+static inline s32 IsParty(u8 id)
+{
+    return id <= 7;
+}
+
+static inline s32 IsEnemy(u8 id)
+{
+    return id > 7;
+}
+
+static inline s32 SameSide(u8 first, u8 second)
 {
     if (second <= 7)
         return first <= 7;
@@ -82,7 +92,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
             current = angle + 0x1800;
         current = (s16)current;
         current += ((primary <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        if (SameSide(primary, input->secondary))
+        if (input->secondary <= 7 ? IsParty(primary) : IsEnemy(primary))
             current = primary <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;

@@ -1,3 +1,48 @@
+/* 2026-10-02 bounded register-lifetime experiment.
+ * Baseline immutable score: 1175 (49 register-only, 2 operand,
+ * 8 reordered, 2 inserted, 2 deleted); the older all-register summary
+ * below is superseded by this normalized diagnostic.
+ * H1: constrain each genuinely used object local to r5 at its definition.
+ * Prediction: icon slot/object become r6/r5 and both priority objects r5;
+ * disjoint later priority lifetimes can reuse r5 without extra instructions.
+ * Accept only complete matching extent/pool/symbols in all six editions,
+ * with the 44-byte frame unchanged and no instruction-presence device.
+ * Budget: H1 plus two localized follow-ups, then record a precise stop.
+ * H1 result: 5022 (41 register, 7 stack, 12 operand, 12 reordered,
+ * 20 inserted, 18 deleted). Object roles improve, but inline constraints
+ * disrupt priority loop optimization and shrink the frame to 36. Rejected.
+ * H2: retain local fixed-register declarations without an inline asm node.
+ * Prediction: preserve ascending/reversed priority loops and the 44-byte
+ * frame while selecting r5 for each used object. Same acceptance gate.
+ * H2 result: identical 5022 diagnostic and 36-byte frame. Fixed-register
+ * object declarations themselves prevent the priority-loop optimization;
+ * the inline asm node was not its cause. This priority pin axis is closed.
+ * H3: restore ordinary priority objects; constrain only the icon object
+ * to r5, motion context to r0 and icon effect to r2. Prediction: preserve
+ * both optimized priority loops/frame and fix only the icon scan roles.
+ * H3 result: 1030 (40 register, 2 operand, 8 reordered, 1 inserted,
+ * 2 deleted); both priority loops and the 44-byte frame stay. The icon
+ * roles now match, but its used context stays r0 for the dirty store,
+ * removing the native r0-to-r2 copy. One new localized fact permits H4.
+ * H4: after the effect store, transfer the genuinely used context into
+ * a dirty-context local in r2. Prediction: restore that copy and the native
+ * dirty store without disturbing the exact icon roles or priority loops.
+ * This is the last trial; no broader lifetime search follows.
+ * H4 first compile refused a declaration after a statement (C89);
+ * the same transfer is corrected into its own declaration block.
+ * H4 result: unchanged 1030 diagnostic. The dirty transfer is optimized
+ * back into r0; rejected and removed. H3 remains the canonical near miss.
+ * STOP: scoped priority pins alter loop shape/frame; icon-only pins fix
+ * call-crossing roles but leave the dirty-store copy wrong. No dead code,
+ * unread storage, instruction template, address alias or new routing used.
+ * Final measurement: each TBS edition scores 1030 with all nine symbolic
+ * relocations resolved (eight calls, one gCameraWork pool word). Ordinary
+ * compiler plus compiler assembler emits complete .text/function 424 bytes
+ * versus native 428, including the pool; missing pointer copy changes the
+ * pool alignment as well. The frame remains 44 bytes. No all-edition byte
+ * credit is earned. no-asm tbs-en: forbidden=0.
+ * The draft remains uncredited; no neighbor files were changed.
+ */
 /* DRAFT (score 1175), rewritten 2026-10-02: same frame and same shape as the
  * ROM, 63 instructions differ, all register choices.
  * 1. In the two priority loops the ROM holds the object in r5 and, inside the
@@ -78,14 +123,17 @@ again:
             struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
 
             if (slot != 0) {
-                struct ActorObject *object = slot->object;
+                /* FAKEMATCH: the icon scan needs its used object in r5. */
+                register struct ActorObject *object asm("r5") = slot->object;
 
                 BattleStatusIcon_Cycle((struct BattleStatusIconRecord *)slot);
                 if (slot->icon_effect != 0) {
-                    struct IconContext *context = GetMotionRecord(object, 0);
+                    /* FAKEMATCH: keep the used call result in r0, as measured. */
+                    register struct IconContext *context asm("r0") = GetMotionRecord(object, 0);
 
                     if (context != 0) {
-                        struct IconEffect *effect;
+                        /* FAKEMATCH: the used icon effect shares r2 after the call. */
+                        register struct IconEffect *effect asm("r2");
                         s32 state = 0;
 
                         if (object->hidden != 0)

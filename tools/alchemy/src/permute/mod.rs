@@ -42,6 +42,7 @@ Scores follow decomp-permuter: per aligned instruction 1 for a stack offset,\n\
 inserted or deleted instruction; 0 only for identical code.\n\
 \n\
   --function NAME   function to match (default: the draft's only definition)\n\
+  --score           score unchanged source only; requires --function\n\
   --listing FILE    target listing (default: recon/GAME/raw/DRAFT-STEM.s)\n\
   --symbol NAME     the function's name in the listing (default: its C name)\n\
   --target ID       build target: routing, edition and build (default: tbs-ja)\n\
@@ -79,6 +80,23 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         .prefix("alchemy-permute-")
         .tempdir()
         .map_err(|error| error.to_string())?;
+    if options.score_only {
+        let result = score_draft(&options.config, scratch.path())?;
+        println!("draft: score {}", result.score.summary());
+        for (class, expected, found) in result.score.lines.iter().take(options.show) {
+            println!("  {class}: {expected} -> {found}");
+        }
+        if result.score.lines.len() > options.show {
+            println!("  ... {} more", result.score.lines.len() - options.show);
+        }
+        if !result.unresolved.is_empty() {
+            println!(
+                "unresolved in the candidate: {} (symbol-name comparison only)",
+                result.unresolved.into_iter().collect::<Vec<_>>().join(", ")
+            );
+        }
+        return Ok(());
+    }
     let problem = Problem::load(&options.config, scratch.path())?;
     if let Some(count) = options.sample {
         let mut rng = Rng::new(options.seed);
@@ -204,6 +222,7 @@ struct Options {
     write: bool,
     show: usize,
     sample: Option<usize>,
+    score_only: bool,
 }
 
 impl Options {
@@ -228,6 +247,7 @@ impl Options {
             write: false,
             show: 12,
             sample: None,
+            score_only: false,
         };
         let mut index = 0;
         while index < arguments.len() {
@@ -262,6 +282,11 @@ impl Options {
                 "--iterations" => options.iterations = Some(number(value()?)?),
                 "--show" => options.show = number(value()?)? as usize,
                 "--sample" => options.sample = Some(number(value()?)? as usize),
+                "--score" => {
+                    options.score_only = true;
+                    index += 1;
+                    continue;
+                }
                 "--write" => {
                     options.write = true;
                     index += 1;
@@ -277,6 +302,14 @@ impl Options {
             index += 2;
         }
         config.draft = draft.ok_or_else(|| USAGE.to_string())?;
+        if options.score_only {
+            if config.function.is_none() {
+                return Err("--score requires --function".into());
+            }
+            if options.write || options.sample.is_some() {
+                return Err("--score cannot write or mutate candidates".into());
+            }
+        }
         options.config = config;
         Ok(options)
     }
@@ -974,6 +1007,66 @@ mod tests {
         let untagged = source.replace("/* FAKEMATCH: an unchanged source-scoring fixture. */", "");
         assert!(!crate::compiler::no_asm::find_forbidden("draft.c", &untagged).is_empty());
         assert_eq!(std::fs::read_to_string(&config.draft).unwrap(), source);
+    }
+
+    #[test]
+    fn scoring_cli_requires_a_function_and_refuses_mutation() {
+        let args = |tail: &[&str]| {
+            std::iter::once("draft.c")
+                .chain(tail.iter().copied())
+                .map(str::to_string)
+                .collect::<Vec<_>>()
+        };
+        assert!(Options::parse(&args(&["--score"])).is_err());
+        for flag in ["--write", "--sample"] {
+            let mut arguments = args(&["--score", "--function", "Helper.0", flag]);
+            if flag == "--sample" {
+                arguments.push("1".into());
+            }
+            assert!(Options::parse(&arguments).is_err());
+        }
+        let options = Options::parse(&args(&[
+            "--score",
+            "--function",
+            "Helper.0",
+            "--symbol",
+            "ReferenceHelper",
+        ]))
+        .unwrap();
+        assert!(options.score_only);
+        assert_eq!(options.config.function.as_deref(), Some("Helper.0"));
+        assert_eq!(options.config.symbol.as_deref(), Some("ReferenceHelper"));
+    }
+
+    #[test]
+    fn scoring_cli_reads_inline_assembly_and_nested_functions_without_rewriting() {
+        let source = "int Draft_Value(int x) {\nint Helper(int y) { return x + y; }\n/* FAKEMATCH: an unchanged source-scoring fixture. */\n__asm__ volatile(\"\");\nreturn Helper(5);\n}\n";
+        let (work, config) = scoring_fixture(source);
+        for function in ["Draft_Value", "Helper.0"] {
+            let mut selected = config.clone();
+            selected.function = Some(function.into());
+            selected.symbol = Some(function.into());
+            let score = score_draft(&selected, &work.path().join(function)).unwrap();
+            assert!(score.score.exact);
+            run(&[
+                config.draft.to_string_lossy().into_owned(),
+                "--score".into(),
+                "--function".into(),
+                function.into(),
+                "--listing".into(),
+                config
+                    .listing
+                    .as_ref()
+                    .unwrap()
+                    .to_string_lossy()
+                    .into_owned(),
+                "--target".into(),
+                "tla-en".into(),
+            ])
+            .unwrap();
+        }
+        assert_eq!(std::fs::read_to_string(&config.draft).unwrap(), source);
+        assert!(!config.draft.with_extension("permute.c").exists());
     }
 
     #[test]

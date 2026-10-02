@@ -1,3 +1,16 @@
+/* 2026-10-02: complete resolver now matches in the neighboring
+ * MENU/OPEN_CONFIRM_PROMPT.C module in all six editions. The fresh linked
+ * baseline scored 130 (six register-only differences plus two trailing
+ * alignment bytes). Binding only the clear address gave 410; binding its
+ * full-width zero restored130 while moving the residual to cancellation.
+ * A cancellation value in r3 plus a shared selection local gave205;
+ * separating that local gave100, entirely trailing alignment. The module's
+ * natural alignment links the exact bytes, including every literal pool.
+ * The Japanese ROM additionally redraws the info window after each shortcut
+ * confirmation; adding those two genuine calls restores its12extra bytes.
+ * Full-ROM comparisons passed in JA, EN, DE, ES, FR andIT. The stale result
+ * declarations for ClearListFar and ShowModalMessage are now void, and the
+ * second parameter agrees with the real caller's pointer. */
 /* NONMATCHING, 2026-09-30 (helper hL): 800/800 bytes with the padding; 6
  * differing halfwords. Its seven messages now carry names in all six
  * catalogs (MsgPsynergyChooseOwner and the rest). An r2 clobber before the mode
@@ -95,12 +108,12 @@ void ItemMenu_PosCategory(void);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 s32 PsynergyMenu_RunList(s32 unused);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
-s32 RenderOutput_ClearListFar(s32 window);
-s32 InventoryMenu_ShowModalMessage(s32 message, s32 arg1, s32 arg2);
+void RenderOutput_ClearListFar(s32 window);
+void InventoryMenu_ShowModalMessage(s32 message, s32 arg1, s32 arg2);
 s32 PsynergyMenu_SelectTarget(s32 unused);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 BattleEffect_ApplyToTargets(s32 action, s32 owner, s32 target, s32 flags);
-void Ability_PlayUseAnimation();
+void Ability_PlayUseAnimation(s32 action);
 void Audio_PlayCue(s32 cue);
 
 /*
@@ -113,7 +126,7 @@ void Audio_PlayCue(s32 cue);
  * a clean finish (state 2's default) the acting owner and the selected
  * action id are written back through the two out-parameters.
  */
-s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
+s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 {
     struct MenuActionWork *work;
     s32 result;
@@ -133,15 +146,34 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         switch (state) {
         case 0:
-            work->field_174 = 0;
+        {
+            /* FAKEMATCH: the ordinary clear swaps address/zero r3/r2 in five instructions; the address belongs in r2. */
+            register u16 *clear asm("r2") = &work->field_174;
+            /* FAKEMATCH: constraining the address alone pools the zero; its full-width value belongs in r3. */
+            register s32 zero asm("r3");
+            /* FAKEMATCH: CSE copies the equal call result from r0; the reference keeps the cancellation constant in r3. */
+            register s32 cancelled asm("r3");
+            s32 chosen;
+
+            /* FAKEMATCH: retain the clear address in r2 until the store, after the ordinary allocation swapped it with zero. */
+            asm("" : : "r"(clear));
+            zero = 0;
+            /* FAKEMATCH: the full-width r3 zero keeps the reference immediate rather than an HImode pool load. */
+            asm("" : : "r"(zero));
+            *clear = zero;
             ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseOwner);
-            if (PsynergyMenu_SelectPartySlot(0) == -1) {
+            chosen = PsynergyMenu_SelectPartySlot(0);
+            cancelled = -1;
+            if (chosen == cancelled) {
                 done = 1;
-                result = -1;
+                /* FAKEMATCH: keep the cancellation copy in r3; CSE otherwise copies the equal call result in r0. */
+                asm("" : "+r"(cancelled));
+                result = cancelled;
             }
             RenderOutput_RedrawSavedRectFar(work->info_window);
             state = 1;
             break;
+        }
 
         case 1:
             WaitFrames(1);

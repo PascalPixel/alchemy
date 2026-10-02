@@ -11,7 +11,12 @@
  * scan's counter is the variable that later holds the best element, and the
  * order is the variable that later holds the gain.
  * The listing calls BattleUnit_Recalculate, Audio_PlayCue and Sys_Free
- * Owner_RecalculateStatsFar, AudioCommand_PlayFar and Runtime_BumpFree. */
+ * Owner_RecalculateStatsFar, AudioCommand_PlayFar and Runtime_BumpFree.
+ * 2026-10-02: a fresh linked baseline remains 120. A 45-second search
+ * (11,592 candidates) did not improve it. A void return plus an r1 clobber
+ * scored 170; binding the first scan counter to r4 scored 7131; a record
+ * for each element's count with the void return scored 130. All discarded.
+ * The declaration's return type still needs to agree with the callers. */
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_MSG.H"

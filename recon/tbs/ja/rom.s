@@ -790,12 +790,6 @@ WorldMap_PlaceMarkers:
 	.thumb_func
 Func_080a414c:
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
-	.section .rom.0009cb94, "ax"
-	.global Menu_ResolveSelectedAction
-	.type Menu_ResolveSelectedAction, %function
-	.thumb_func
-Menu_ResolveSelectedAction:
-	.incbin "baserom.gba", 0x0009cb94, 0x0000032c
 	.section .rom.000a1664, "ax"
 	.global Func_080aa768
 Func_080aa768:

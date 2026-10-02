@@ -230,7 +230,9 @@ void FieldScene_RunFallingRocksWarning(void)
             u8 *record = (u8 *)Actor_Get(ACTOR_GERALD);
             /* FAKEMATCH: a result temporary, not a compound or-assign: the
              * reference merges the byte into the mask's register, which the
-             * two-address ORR does only when the result is its own object. */
+             * two-address ORR does only when the result is its own object.
+             * 2026-10-02: both record[90] |= 1 and the plain assignment
+             * record[90] = record[90] | 1 put the result in r3, not r6. */
             u8 merged = (u8)(record[90] | 1);
 
             record[90] = merged;

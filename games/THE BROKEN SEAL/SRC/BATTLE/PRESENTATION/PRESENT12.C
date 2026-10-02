@@ -4,14 +4,10 @@
 #include "FIXED_MATH.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_TARGET.H"
+#include "BATTLE_COMMAND.H"
+#include "BATTLE_MSG.H"
 #include "SYSTEM.H"
 
-extern u8 MsgBitterBlow[];
-extern u8 MsgDmgP[];
-extern u8 MsgCritical[];
-extern u8 MsgDmgE[];
-extern u8 MsgGoesDown[];
-extern u8 MsgDowned[];
 void Object_SetMode(void *actor, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_ClearValueNameTablesFar(void);
@@ -66,16 +62,16 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
 
     if (unit_id <= 7) {
         if (show_message != 0)
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgBitterBlow);
+            UiText_ShowMessageAndWaitCoreFar((s32)&MsgBitterBlow);
         UiWork_PushValueSlotFar(damage, 5);
         UiWork_PushValueSlotFar(unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgP);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgDmgP);
     } else {
         if (show_message != 0)
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgCritical);
+            UiText_ShowMessageAndWaitCoreFar((s32)&MsgCritical);
         UiWork_PushValueSlotFar(damage, 5);
         UiWork_PushValueSlotFar(unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgDmgE);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgDmgE);
         UiWork_PushValueSlotFar(unit_id, 1);
     }
 
@@ -83,11 +79,11 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     if (unit_id <= 7) {
         if (character->hp <= 0) {
             UiWork_PushValueSlotFar(unit_id, 1);
-            UiText_ShowMessageAndWaitCoreFar((s32)MsgGoesDown);
+            UiText_ShowMessageAndWaitCoreFar((s32)&MsgGoesDown);
         }
     } else if (character->hp <= 0) {
         UiWork_PushValueSlotFar(unit_id, 1);
-        UiText_ShowMessageAndWaitCoreFar((s32)MsgDowned);
+        UiText_ShowMessageAndWaitCoreFar((s32)&MsgDowned);
     }
 
     slot = GetBattleObjectSlot(unit_id);
@@ -117,7 +113,7 @@ s32 BattleTarget_ReplaceDefeated(const u8 *action)
     s32 target_id;
     s32 living_count;
 
-    target_id = ((const s16 *)action)[5];
+    target_id = ((const struct BattleCommandRequest *)action)->target;
     if (Owner_GetStateFar(target_id)->hp != 0) {
         return target_id;
     }

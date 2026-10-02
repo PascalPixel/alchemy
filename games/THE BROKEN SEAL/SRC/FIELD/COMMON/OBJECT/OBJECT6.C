@@ -17,7 +17,7 @@ void Object_SetTargetAndCallback(u32 object_id, s32 target_id, const void *callb
             first->action = 40;
             first->acceleration = second->acceleration * 2;
             first->speed_limit = second->speed_limit;
-            first->unknown_56[3] = 0;
+            first->unknown_59 = 0;
         }
         ObjectDispatch_InitializeFar((struct DispatchObject *)first, (u32)callback);
     }

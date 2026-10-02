@@ -2,22 +2,22 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-#include "INN.H"
+#include "PARTY_STATE.H"
+#include "BATTLE_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "SHOP.H"
-#include "INN_RUNTIME.H"
 #include "UI.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 
-extern struct InnState *Data_03001f2c;
+extern struct ShopRuntime *gMenuWork;
 
 /* ui/ability_menu/build_available_list.c */
 s32 Ability_GetMaximum(s32, s32);
 
-s32 ShopCursor_Advance(s32);
 void Shop_StepCursor(void);
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Battle_ResetEffectCounterFar(void);
@@ -34,24 +34,14 @@ extern u8 MsgFixDamaged[];
 extern u8 MsgAnythingElse[];
 extern u8 MsgShopFarewell[];
 
-struct ShopKeeperSprite {
-    u8 unknown_00[40];
-    u16 *resource;
-};
-
-struct ShopKeeper {
-    u8 unknown_00[80];
-    struct ShopKeeperSprite *sprite;
-};
-
 s32 EventTable_GetRowLimit(void);
 void EventTable_ApplyRowAbilities(s32 row);
 s32 EventTable_GetRowType(s32 row);
 s32 EventTable_CopyRowHeader(s32 row, s16 *items);
 void Shop_InitializeCursorWork(void);
-struct ShopKeeper *Object_GetByIdFar(s32 id);
+struct ObjectRuntime *Object_GetByIdFar(s32 id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
-struct ShopCursorAnchor *RenderOutput_CreateFar(u32 resource, u32 flags, s32 window, s32 x, s32 y);
+struct RenderOutput *RenderOutput_CreateFar(u32 resource, u32 flags, s32 window, s32 x, s32 y);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowAndWait(s32 message);
 s32 Func_08015380(s32 choice);
@@ -64,22 +54,6 @@ void WaitFrames(s32 frames);
 
 void Inventory_EquipFar(s32, s32);
 s32 Inventory_AddItemFar(s32, s32);
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
-/*
- * This owner's view of gGameState, which games/THE BROKEN SEAL/INCLUDE/BATTLE_EFFECT_RUNTIME.H
- * declares as `struct BattleWork`. Two fields are evidence here; the paddings
- * are arithmetic to reach them.
- */
-struct Work_080b0444 {
-    u8 padding0[0x10];
-    s32 value10;
-    u8 padding14[0x108];
-    s8 value11c;
-};
-
-extern struct Work_080b0444 gGameState;
-void *Owner_GetStateFar(s32);
 
 s32 Audio_Check(void);
 
@@ -87,20 +61,19 @@ s32 Shop_Run(s32 row, s32 keeper_id);
 
 s32 AbilityMenu_BuildAvailableList(void)
 {
-    u8 *state;
+    struct ShopRuntime *state;
     s16 *output;
     s32 index;
     s32 count;
-    s32 offset;
     s8 mode;
 
-    state = (u8 *)Data_03001f2c;
+    state = gMenuWork;
     count = 0;
     index = 0;
-    output = (s16 *)(state + 0x26c);
+    output = state->stock_item_ids;
     do {
-        mode = *(s8 *)(state + 0x3a9);
-        if (mode == Item_GetEquipmentGroupFar(index)&&
+        mode = (s8)state->shop_type;
+        if (mode == Item_GetEquipmentGroupFar(index) &&
             Ability_GetMaximum(index, 0) != 0) {
             *output = index;
             count++;
@@ -108,16 +81,14 @@ s32 AbilityMenu_BuildAvailableList(void)
         }
         index++;
     } while (index <= 0x1ff);
-    offset = count << 1;
-    offset += 0x26c;
-    *(u16 *)(state + offset) = 0;
-    *(u8 *)(state + 0x3a6) = count;
+    state->stock_item_ids[count] = 0;
+    state->stock_count = count;
     return count;
 }
 
 void Shop_StepCursor(void)
 {
-    ShopCursor_Advance(*(s32 *)((u32)&Data_03001f2c) + 0x380);
+    ShopCursor_Advance(&gMenuWork->cursor);
 }
 
 /* Shop work block (heap kind 55): clear it, set up the cursor state at
@@ -125,7 +96,7 @@ void Shop_StepCursor(void)
    Shop_StepCursor starts. */
 void Shop_InitializeCursorWork(void)
 {
-    u8 *work;
+    struct ShopRuntime *work;
     volatile s32 zero;
     s32 slot;
 
@@ -133,42 +104,42 @@ void Shop_InitializeCursorWork(void)
     Battle_ResetEffectCounterFar();
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x8500029c, (volatile u32 *)0x040000d4);
-    work[0x3a8] = 12;
-    work[0x3a7] = Party_ListActiveOwnersFar(work + 0x36e);
+    work->mode = 12;
+    work->party_member_count = Party_ListActiveOwnersFar(work->party_member_ids);
     slot = Resource_FindFreeEntry();
-    *(u16 *)(work + 0x390) = slot;
+    work->cursor_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_HandTiles);
     slot = Resource_FindFreeEntry();
-    *(u16 *)(work + 0x392) = slot;
+    work->previous_page_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_UpArrowTiles);
     slot = Resource_FindFreeEntry();
-    *(u16 *)(work + 0x394) = slot;
+    work->next_page_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_DownArrowTiles);
     slot = Resource_FindFreeEntry();
-    *(u16 *)(work + 0x396) = slot;
+    work->gem_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_GemTiles);
     slot = Resource_FindFreeEntry();
-    *(u16 *)(work + 0x39a) = slot;
+    work->stat_down_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_SmallDownArrowTiles);
     slot = Resource_FindFreeEntry();
-    *(u16 *)(work + 0x398) = slot;
+    work->stat_up_icon = slot;
     VramBlock_LoadCached(slot, 128, Shop_SmallUpArrowTiles);
     Scheduler_AddOrUpdateCallback((s32)Shop_StepCursor, 0xc80);
 }
 
 void Inn_Cleanup(void)
 {
-    struct InnRuntimeState *state;
+    struct ShopRuntime *state;
 
     state = gMenuWork;
     Scheduler_RemoveCallback((s32)Shop_StepCursor);
     UiWork_FinalizePendingCoreFar();
-    Resource_ResetEntry(state->resource_entries[0]);
-    Resource_ResetEntry(state->resource_entries[1]);
-    Resource_ResetEntry(state->resource_entries[2]);
-    Resource_ResetEntry(state->resource_entries[3]);
-    Resource_ResetEntry(state->resource_entries[4]);
-    Resource_ResetEntry(state->resource_entries[5]);
+    Resource_ResetEntry(state->cursor_icon);
+    Resource_ResetEntry(state->previous_page_icon);
+    Resource_ResetEntry(state->next_page_icon);
+    Resource_ResetEntry(state->gem_icon);
+    Resource_ResetEntry(state->stat_up_icon);
+    Resource_ResetEntry(state->stat_down_icon);
     Runtime_ReleaseHeapBlock(0x37);
 }
 
@@ -178,7 +149,7 @@ void Inn_Cleanup(void)
 s32 Shop_Run(s32 row, s32 keeper_id)
 {
     struct ShopRuntime *shop;
-    struct ShopCursorAnchor *anchor;
+    struct RenderOutput *anchor;
     s32 window;
     s32 choice = 0;
 
@@ -189,18 +160,18 @@ s32 Shop_Run(s32 row, s32 keeper_id)
     shop = ((struct ShopRuntime *)gMenuWork);
     shop->shop_type = EventTable_GetRowType(row);
     if (row == 16)
-        ((u8 *)shop)[0x3ac] = 1;
+        shop->warrior_shop = 1;
     if (row == 17)
-        ((u8 *)shop)[0x3ac] = 1;
+        shop->warrior_shop = 1;
     if (row == 18)
-        ((u8 *)shop)[0x3ac] = 1;
-    shop->keeper_resource = *Object_GetByIdFar(keeper_id)->sprite->resource;
+        shop->warrior_shop = 1;
+    shop->keeper_resource = *((struct ShopKeeperAnimation *)Object_GetByIdFar(keeper_id)->animation)->resource;
     window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
     if (window == 0)
         window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
     anchor = RenderOutput_CreateFar(shop->cursor_icon, 0x40000000, window, 0, 0);
-    anchor->kind = 1;
-    anchor->unknown_00[4] = 0;
+    anchor->one5 = 1;
+    anchor->one4 = 0;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = anchor;
     UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);
@@ -249,14 +220,14 @@ done:
 /* 固定値を設定し、3つの項目フラグを1にする。 */
 s32 Battle_ApplyPresetItemsAndFlags(void)
 {
-    gGameState.value10 = 0x30d40;
-    gGameState.value11c = 0x1c;
+    gGameState.coins = 0x30d40;
+    gGameState.shop_gifts = 0x1c;
     Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
     Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
     Inventory_AddItemFar(2, 0xe7);
-    FIELD((void *)Owner_GetStateFar(3), s8 *, 0x131) = 1;
-    FIELD((void *)Owner_GetStateFar(5), s8 *, 0x131) = 1;
-    FIELD((void *)Owner_GetStateFar(2), s8 *, 0x140) = 1;
+    Owner_GetStateFar(3)->poison = 1;
+    Owner_GetStateFar(5)->poison = 1;
+    Owner_GetStateFar(2)->evil_spirit = 1;
     Shop_Run(FINAL_ARG, 0x1e);
     return 0;
 }

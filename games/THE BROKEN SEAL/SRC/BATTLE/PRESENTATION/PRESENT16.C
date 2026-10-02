@@ -29,37 +29,13 @@ void UiWork_ResetFreeChannelFar(void);
 /* battle/presentation/misc/msg_field38.c */
 void UiWork_PushValueSlotFar(s32, s32);
 
-struct TransitionContext {
-    s32 kind;
-    s32 side;
-    s32 actor;
-    u8 unknown_0c[8];
-    s32 count;
-    u8 unknown_18[12];
-    s16 actors[14];
-    u8 unknown_40[20];
-};
-
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
 s32 BattleObject_IsValidId(u32);
 
-struct ApproachPresentation {
-    u8 padding00[4];
-    s32 secondary_is_low_id;
-    s32 primary_id;
-    u8 padding0c[8];
-    s32 count;
-    u8 padding18[4];
-    s32 unknown1c;
-    u8 padding20[4];
-    s16 secondary_id;
-    u8 padding26[46];
-};
-
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 void Actor_ResetMotionAtAnchor(s32);
-void BattleFx_DispatchByIdRangeFar(struct ApproachPresentation *);
+void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *);
 
 /* Build the action order from agility: party members start with target
    priority 0x80, enemies with a random party target. Sort by descending
@@ -265,7 +241,7 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
 s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
 {
     u16 visible_units[14];
-    struct TransitionContext context;
+    struct BattlePresentationWork context;
     s32 actor_id;
     s32 target_id;
     u32 side_start;
@@ -371,7 +347,7 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
 
 s32 BattlePres_RunApproachAction(struct BattleCommandRequest *input)
 {
-    struct ApproachPresentation work;
+    struct BattlePresentationWork work;
 
     if (gTransitionWork->target_yaw == 0x2000) {
         gTransitionWork->target_yaw = 0x2000;
@@ -381,33 +357,33 @@ s32 BattlePres_RunApproachAction(struct BattleCommandRequest *input)
         WaitFrames(30);
     }
 
-    work.primary_id = input->actor_id;
-    if (BattleObject_IsValidId(work.primary_id) < 0)
+    work.actor = input->actor_id;
+    if (BattleObject_IsValidId(work.actor) < 0)
         return -1;
 
-    work.secondary_id = ((u16)input->target);
-    if (BattleObject_IsValidId(work.secondary_id) < 0)
+    work.actors[0] = ((u16)input->target);
+    if (BattleObject_IsValidId(work.actors[0]) < 0)
         return -1;
 
-    Owner_GetStateFar(work.primary_id);
-    Owner_GetStateFar(work.secondary_id);
+    Owner_GetStateFar(work.actor);
+    Owner_GetStateFar(work.actors[0]);
     Random16();
-    UiWork_PushValueSlotFar(work.primary_id, 1);
+    UiWork_PushValueSlotFar(work.actor, 1);
     UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
-    BattleMotion_ApproachTarget(work.primary_id, work.secondary_id, 13, 0);
-    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.primary_id)->object, 16);
-    GetBattleObjectSlot(work.secondary_id);
+    BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
+    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(work.actor)->object, 16);
+    GetBattleObjectSlot(work.actors[0]);
 
     work.count = 1;
-    if ((u16)work.secondary_id <= 7)
-        work.secondary_is_low_id = 1;
+    if ((u16)work.actors[0] <= 7)
+        work.side = 1;
     else
-        work.secondary_is_low_id = 0;
-    work.unknown1c = 0;
+        work.side = 0;
+    work.flags = 0;
 
     WaitFrames(4);
     BattleFx_DispatchByIdRangeFar(&work);
-    Actor_ResetMotionAtAnchor(work.secondary_id);
-    Actor_ResetMotionAtAnchor(work.primary_id);
+    Actor_ResetMotionAtAnchor(work.actors[0]);
+    Actor_ResetMotionAtAnchor(work.actor);
     return 0;
 }

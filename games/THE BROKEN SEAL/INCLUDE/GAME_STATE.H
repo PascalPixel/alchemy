@@ -3,6 +3,7 @@
 
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
+#include "BATTLE_UNIT.H"
 
 /* The part of the saved game that records where the party is. */
 struct GameState {
@@ -11,7 +12,11 @@ struct GameState {
     u8 unknown_008[8];
     /* The party's coins. */
     s32 coins;
-    u8 unknown_014[0x118];
+    u8 unknown_014[0x104];
+    /* Purchases earn credit toward the shop's gifts. */
+    s32 shop_credit;
+    s8 shop_gifts;
+    u8 unknown_11d[0x0f];
     /* The prizes the last lucky wheels game won, ended by -1; -2 once handed out. */
     s8 won_prizes[0x10];
     u8 unknown_13c[0x84];
@@ -92,12 +97,18 @@ struct GameState {
     /* The link lobby's tallies, which its rounds count and its attendants
        report (MENU/LINK_LOBBY). */
     u16 link_tallies[8];
+    u8 unknown_2b4[0x0c];
+    struct BattleUnit owners[8];
 };
 
 LAYOUT_OFFSET_GUARD(GameState_BuildStamp, struct GameState, build_stamp, 0);
 LAYOUT_OFFSET_GUARD(GameState_PlayTime, struct GameState, play_time, 4);
 LAYOUT_OFFSET_GUARD(GameState_SavedOptions, struct GameState, saved_options, 0x22a);
 LAYOUT_OFFSET_GUARD(GameState_Coins, struct GameState, coins, 0x10);
+LAYOUT_OFFSET_GUARD(GameState_ShopCredit, struct GameState, shop_credit, 0x118);
+LAYOUT_OFFSET_GUARD(GameState_ShopGifts, struct GameState, shop_gifts, 0x11c);
+LAYOUT_OFFSET_GUARD(GameState_Owners, struct GameState, owners, 0x2c0);
+LAYOUT_SIZE_GUARD(GameState_Size, struct GameState, 0xd20);
 LAYOUT_OFFSET_GUARD(GameState_WonPrizes, struct GameState, won_prizes, 0x12c);
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
 LAYOUT_OFFSET_GUARD(GameState_Special, struct GameState, special, 0x1d6);

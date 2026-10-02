@@ -8,8 +8,10 @@
 #include "TBS_EDITION.H"
 #include "INN_RUNTIME.H"
 #include "UI.H"
+#include "BATTLE_RUNTIME.H"
+#include "PARTY_STATE.H"
+#include "OBJECT_RUNTIME.H"
 
-extern u8 Data_03001f2c[];
 
 /* shop/effect/reset.c */
 void EffectSlot_UpdateFar(s32);
@@ -19,30 +21,22 @@ struct Position { s32 x, y, z; };
 
 union PositionWord { s32 w; s16 h[2]; };
 
-struct Effect_080b2f4c { u8 filler[0x48]; };
-
-struct ShopBurstRuntime {
-    u8 unknown_000[0x134];
-    s16 member_x[8];
-    s16 member_z[8];
-};
-
 u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 void Shop_RestoreSceneTiles(s32 address);
-void Func_0808a528(struct Effect_080b2f4c *effect, s32 mode, s32 x, s32 z);
-void Func_0808a520(
-    struct Effect_080b2f4c *effect,
-    void (*callback)(struct Effect_080b2f4c *));
-void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
+void EffectSlot_InitializeFar(struct EffectSlot *effect, s32 mode, s32 x, s32 z);
+void EffectSlot_SetCallbackFar(
+    struct EffectSlot *effect,
+    void (*callback)(struct EffectSlot *));
+void EffectSlot_SetObjectModeFar(struct EffectSlot *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
 void AudioCommand_WaitForStateByteClear(void);
-void Func_0808a530(struct Effect_080b2f4c *effect);
+void BattleFx_ClearOwnedSlotFar(struct EffectSlot *effect);
 void Func_08009280(s32 object, s32 arg);
 void Shop_InitEffect(void);
 void Shop_ResetEffects(void);
-void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect);
+void BattleFx_UpdateRadialMotion(struct EffectSlot *effect);
 extern s8 Data_080b4ab2[];
 
 struct FieldEffectState {
@@ -52,18 +46,9 @@ struct FieldEffectState {
     s32 delay;
 };
 
-struct FieldObject {
-    u8 padding0[0x34];
-    u16 saved_x;
-    u16 saved_y;
-    s16 x;
-    u16 y;
-};
-
 extern struct FieldEffectState *gEventWork;
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
-struct FieldObject *Owner_GetStateFar(s32);
 void Owner_RecalculateRatiosFar(s32);
 void Event_ClearStatus1c6Far(void);
 void Event_WaitValue1c8FramesFar(void);
@@ -79,22 +64,6 @@ enum InnMessageId {
     INN_MESSAGE_REST_COMPLETE,
 };
 
-struct InnGlobalState {
-    u8 padding_00[0x10];
-    u32 limit;
-};
-
-struct InnObjectComponent {
-    u8 padding_00[0x28];
-    u16 *resource_id;
-};
-
-struct InnObject {
-    u8 padding_00[0x50];
-    struct InnObjectComponent *component;
-};
-
-extern struct InnGlobalState gGameState;
 extern char MsgInnWelcome;
 void Shop_InitializeCursorWork(void);
 void Inn_Cleanup(void);
@@ -105,45 +74,39 @@ void Inn_PlaySleep(s32);
 void UiWork_FinalizeFar(s32, s32);
 s32 UiWindow_CreateWithSideObjectFar(u16, s32, s32, s32);
 void UiWork_PushValueSlotFar(s32, s32);
-struct InnObject *Object_GetByIdFar(s32);
+struct ObjectRuntime *Object_GetByIdFar(s32);
 
 void Shop_ResetEffects(void)
 {
-    s32 p;
-    s32 cnt;
-    s32 work;
-    s8 no;
-    s32 offset;
+    struct ShopRuntime *shop = (struct ShopRuntime *)gMenuWork;
+    struct EffectSlot *effect = shop->effects;
+    s32 count = 23;
+    s8 member;
 
-    work = *(s32 *)((u32)&Data_03001f2c);
-    p = work + 0x3B0;
-    cnt = 0x17;
     do {
-        cnt -= 1;
-        EffectSlot_UpdateFar(p);
-        p += 0x48;
-    } while (cnt >= 0);
-    no = *(s8 *)(work + 0x3AB);
-    if (no != -1) {
-        ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)(work + (offset = (no * 4) + 0x114)), (Random16() * 7) >> 16);
-    }
+        count--;
+        EffectSlot_UpdateFar((s32)effect);
+        effect++;
+    } while (count >= 0);
+    member = shop->burst_member;
+    if (member != -1)
+        ObjectGroup_SetChildValueUnlessFifteenFar(
+            (s32)shop->party_member_icons[member], (Random16() * 7) >> 16);
 }
 
 void Shop_RunPartyMemberIconBurst(s32 member)
 {
     struct ShopRuntime *shop;
-    struct ShopBurstRuntime *burst;
     s8 saved_kind;
     struct Position position;
-    struct Effect_080b2f4c *effect;
+    struct EffectSlot *effect;
     s32 callback_flags;
     s32 i;
 
     shop = ((struct ShopRuntime *)gMenuWork);
-    burst = (struct ShopBurstRuntime *)shop;
-    saved_kind = shop->cursor.anchor->kind;
-    *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
-    shop->cursor.anchor->kind = 13;
+    saved_kind = shop->cursor.anchor->one5;
+    shop->burst_member = 0xff;
+    shop->cursor.anchor->one5 = 13;
     Audio_PlayCue(Data_080b4ab2[shop->party_action]);
     Shop_RestoreSceneTiles(0x00202108);
     Func_08009280((s32)shop->party_member_icons[member], 0);
@@ -153,37 +116,37 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 
     /* FAKEMATCH: the x store goes through a union with a halfword view so it
        may alias the member_z load, which keeps the reference schedule. */
-    ((union PositionWord *)&position.x)->w = (s32)burst->member_x[member] << 16;
-    position.z = ((s32)burst->member_z[member] << 16) + (s32)0xfff40000;
+    ((union PositionWord *)&position.x)->w = (s32)shop->party_member_x[member] << 16;
+    position.z = ((s32)shop->party_member_y[member] << 16) + (s32)0xfff40000;
 
     i = 0;
-    effect = (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
+    effect = shop->effects;
     do {
-        Func_0808a528(effect, 0x11c, position.x, position.z);
-        Func_0808a520(effect, BattleFx_UpdateRadialMotion);
-        Func_0808a518(effect, 7);
+        EffectSlot_InitializeFar(effect, 0x11c, position.x, position.z);
+        EffectSlot_SetCallbackFar(effect, BattleFx_UpdateRadialMotion);
+        EffectSlot_SetObjectModeFar(effect, 7);
         Func_08009248(
-            *(s32 *)((u8 *)effect + 0),
+            (s32)effect->object,
             (Random16() * 7) >> 16);
-        *(s32 *)((u8 *)effect + 44) = 0xb333;
-        *(s32 *)((u8 *)effect + 40) = 0xb333;
+        effect->scale_y = 0xb333;
+        effect->scale_x = 0xb333;
         WaitFrames(3);
         if (i == 5) {
-            *(u8 *)((u8 *)shop + 0x3ab) = (u8)member;
+            shop->burst_member = (u8)member;
         }
         i++;
-        effect = (struct Effect_080b2f4c *)((u8 *)effect + 0x48);
+        effect++;
     } while (i <= 17);
 
     AudioCommand_WaitForStateByteClear();
     {
         u8 active_mode = 2;
-        u8 *entry = (u8 *)shop + 0x3f0;
+        u8 *entry = (u8 *)&shop->effects[0].state;
         for (i = 23; i >= 0; i--) {
             if (*(s8 *)(entry + 5) != 0) {
-                *(u8 *)(entry + 0) = active_mode;
+                *entry = active_mode;
             }
-            entry += 0x48;
+            entry += sizeof(struct EffectSlot);
         }
     }
 
@@ -192,7 +155,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     {
         s32 icon_offset = 0xff;
 
-        *(u8 *)((u8 *)shop + 0x3ab) = icon_offset;
+        shop->burst_member = icon_offset;
         icon_offset += 21;
         icon_offset += member * 4;
         Func_08009248(*(s32 *)((u8 *)shop + icon_offset), 0);
@@ -200,9 +163,9 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     WaitFrames(20);
 
     {
-        u8 *flag_entry = (u8 *)shop + 0x3f5;
-        struct Effect_080b2f4c *entry2 =
-            (struct Effect_080b2f4c *)((u8 *)shop + 0x3b0);
+        u8 *flag_entry = (u8 *)&shop->effects[0].active;
+        struct EffectSlot *entry2 =
+            shop->effects;
         for (i = 23; i >= 0; i--) {
             s32 flag = *flag_entry;
 
@@ -210,9 +173,9 @@ void Shop_RunPartyMemberIconBurst(s32 member)
 
             flag_entry += 0x48;
             if (flag != 0) {
-                Func_0808a530(entry2);
+                BattleFx_ClearOwnedSlotFar(entry2);
             }
-            entry2 = (struct Effect_080b2f4c *)((u8 *)entry2 + 0x48);
+            entry2++;
         }
     }
 
@@ -220,7 +183,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     Func_08009280((s32)shop->party_member_icons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);
-    shop->cursor.anchor->kind = saved_kind;
+    shop->cursor.anchor->one5 = saved_kind;
 }
 
 #if EDITION_INTERNATIONAL
@@ -242,8 +205,7 @@ s32 Inn_RoomPrice(s32 mode)
         base = global + 2;
         offset = 0x36C;
         do {
-            if (*(s16 *)((u8 *)Owner_GetStateFar(
-                    *(s16 *)(base + offset)) + 56) != 0)
+            if (Owner_GetStateFar(*(s16 *)(base + offset))->hp != 0)
                 active++;
             index++;
             offset += 2;
@@ -256,7 +218,7 @@ s32 Inn_RoomPrice(s32 mode)
 s32 Inn_CheckIn(s32 mode, s32 object_id)
 {
     struct InnRuntimeState *state;
-    struct InnObject *object;
+    struct ObjectRuntime *object;
     s32 win;
     s32 amount;
     s32 message_base;
@@ -268,7 +230,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         state->special_active = 1;
 
     object = Object_GetByIdFar(object_id);
-    state->resource_id = *object->component->resource_id;
+    state->resource_id = *((struct ShopKeeperAnimation *)object->animation)->resource;
     win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
 
     amount = Inn_RoomPrice(mode);
@@ -282,7 +244,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
         UiWork_FinalizeFar(state->window, 2);
-    } else if ((u32)amount > gGameState.limit) {
+    } else if ((u32)amount > (u32)gGameState.coins) {
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
         UiWork_FinalizeFar(state->window, 2);
@@ -294,7 +256,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         Inn_PlaySleep(amount);
 
         object = Object_GetByIdFar(object_id);
-        state->resource_id = *object->component->resource_id;
+        state->resource_id = *((struct ShopKeeperAnimation *)object->animation)->resource;
         win = UiWindow_CreateWithSideObjectFar(state->resource_id, 0, 0, 0);
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
@@ -310,7 +272,7 @@ void Inn_PlaySleep(s32 room_price)
     s16 objects[8];
     s32 count;
     s32 index;
-    struct FieldObject *object;
+    struct BattleUnit *object;
     struct FieldEffectState *state;
 
     count = Party_ListActiveOwnersFar(objects);
@@ -318,9 +280,9 @@ void Inn_PlaySleep(s32 room_price)
 
     for (index = 0; index < count; index++) {
         object = Owner_GetStateFar(objects[index]);
-        if (object->x != 0) {
-            object->x = object->saved_x;
-            object->y = object->saved_y;
+        if (object->hp != 0) {
+            object->hp = object->max_hp;
+            object->pp = object->max_pp;
             Owner_RecalculateRatiosFar(objects[index]);
         }
     }

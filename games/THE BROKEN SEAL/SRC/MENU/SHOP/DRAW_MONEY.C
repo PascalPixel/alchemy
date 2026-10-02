@@ -2,7 +2,6 @@
 #include "SHOP.H"
 #include "PARTY_STATE.H"
 extern struct ShopRuntime *gMenuWork;
-extern u8 Data_03001f2c[];
 extern u8 MsgYourCoins[];
 
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);

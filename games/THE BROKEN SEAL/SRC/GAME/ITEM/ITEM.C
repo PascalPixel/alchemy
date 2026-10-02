@@ -61,7 +61,7 @@ s32 Audio_PlayCueReturnOne(s32 cue);
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 /* menu/core/get_modulo_of_sum.c */
-void Ability_PlayUseAnimation(void);
+void Ability_PlayUseAnimation(s32 action);
 
 struct ItemMenuModeState {
     u8 reserved_000[0x20c];
@@ -433,19 +433,19 @@ s32 BattleEffect_ApplyToTargets(
     return 0;
 }
 
-void Item_PlayUseAnimation(void)
+void Item_PlayUseAnimation(u32 item)
 {
-    ((s32 (*)(s32))Ability_PlayUseAnimation)(0x3fff & *(u16 *)((u8 *)((void * (*)())Item_Get)() + 0x28));
+    Ability_PlayUseAnimation(Item_Get(item)->use_ability & 0x3fff);
 }
 
 /* menu/entry/set_first_object_row_coordinates.c */
-void Ability_PlayUseAnimation(void)
+void Ability_PlayUseAnimation(s32 action)
 {
     s32 animation_type;
     u32 target_type;
     void *ability;
 
-    ability = ((void * (*)())BattleAction_Get)();
+    ability = BattleAction_Get(action);
     animation_type = 0xf & FIELD(ability, u8 *, 1);
     switch (animation_type) {
     case 1:

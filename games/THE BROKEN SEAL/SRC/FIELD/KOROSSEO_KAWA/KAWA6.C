@@ -193,7 +193,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     rec0 = (u8 *)Object_GetById(first);
     rec1 = (u8 *)Object_GetById(second);
 
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(0x109) == 0) {
         *(s32 *)(rec1 + 8) =
             (centre << 1) - *(s32 *)(rec0 + 8);
         *(s32 *)(rec1 + 16) = *(s32 *)(rec0 + 16);

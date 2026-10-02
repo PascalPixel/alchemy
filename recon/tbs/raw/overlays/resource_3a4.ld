@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA.o"(.text)
-        "*/resource_3a4_overlay.o"(.text.x02008d2c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SWING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/YAMA3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/IMPORT.o"(.text)

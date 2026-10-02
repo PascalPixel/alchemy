@@ -85,7 +85,7 @@ Func_08118adc:
 	beq .L_08118b72
 	adds r6, r3, #0
 .L_08118b72:
-	bl Func_08014e1c
+	bl SceneTransform_RewindStack
 	movs r3, #54
 	ldrsh r0, [r5, r3]
 	bl Func_080150ac

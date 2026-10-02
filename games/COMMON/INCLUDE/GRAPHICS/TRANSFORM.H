@@ -3,8 +3,8 @@
 
 #include "TYPES.H"
 
-/* The resident runtime's current transform (SYSTEM/RUNTIME_MATRIX.S): three
-   rows of 16.16 coefficients, each followed by its translation. */
+/* The resident runtime's current transform (SYSTEM/RUNTIME_MATRIX.S): nine
+   16.16 coefficients followed by three translation components. */
 extern s32 gTransform[12];
 
 /* The stack the current transform is saved on: how many are saved, and the
@@ -12,8 +12,14 @@ extern s32 gTransform[12];
 extern s32 gTransformStackDepth;
 extern u8 *gTransformStackTop;
 
-/* Loads the identity into a 12-word transform: each row 0x10000, 0, 0 and a
-   zero translation. Eight routines (the transform stack's resets at
+void SceneTransform_RewindStack(void);
+void Graphics_SaveTransferWorkOnce(void);
+void Graphics_SaveTransferWork(void *destination);
+void Graphics_LoadTransferWork(const void *source);
+
+/* Loads the identity into the 12-word transform: coefficients 0, 4 and 8
+   are 0x10000; all other coefficients and the three translations are zero.
+   Eight routines (the transform stack's resets at
    0x080049ac-0x08004d04 and the battle transition entries) store it through
    the same fixed r0-r4, three stmia r0!, {r1, r2, r3, r4} after copying the
    matrix address into r0, and use r4 without saving it. GCC 2.96 emits

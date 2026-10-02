@@ -70,8 +70,8 @@ Data_030011c0:
 	.global Data_030011c4
 Data_030011c4:
 	.space 0x00000008
-	.global Data_030011cc
-Data_030011cc:
+	.global gTransformStackDepth
+gTransformStackDepth:
 	.space 0x00000004
 	.global Data_030011d0
 Data_030011d0:
@@ -118,8 +118,8 @@ Data_03001218:
 	.global Data_0300121c
 Data_0300121c:
 	.space 0x00000004
-	.global Data_03001220
-Data_03001220:
+	.global gTransformStackTop
+gTransformStackTop:
 	.space 0x00000008
 	.global gSchedulerTaskCount
 gSchedulerTaskCount:

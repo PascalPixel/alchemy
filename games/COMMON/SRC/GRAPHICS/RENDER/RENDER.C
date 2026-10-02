@@ -1,7 +1,25 @@
+#include "EDITION.H"
 #include "TYPES.H"
-#include "SYSTEM.H"
 #include "TRANSFORM.H"
 #include "DMA.H"
+
+/* Lost Age source currently covers rewind, push and the two matrix copies.
+   Its reset, pop and identity helpers remain raw until their C matches.
+   These game branches describe source presence; both games retain their
+   ordinary compiler and options, and each native bank keeps its order. */
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#include "RAM_BUFFER.H"
+
+void SceneTransform_RewindStack(void)
+{
+    gTransformStackTop = Ram_HeapSlots->transform_stack;
+    gTransformStackDepth = 0;
+}
+
+#else
+#include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 
 s32 Trig_Sin(s32 angle);
@@ -16,6 +34,8 @@ void Render_ResetTransformState(void)
     /* CAMELOT_ASM: the fixed-register identity store of TRANSFORM.H */
     Transform_SetIdentity(gTransform);
 }
+
+#endif
 
 void Graphics_SaveTransferWorkOnce(void)
 {
@@ -36,6 +56,9 @@ void Graphics_LoadTransferWork(const void *source)
     Dma_Set(source, gTransform, 0x8400000c, (volatile u32 *)0x040000d4);
 }
 
+#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
 void Graphics_RestoreTransferWork(void)
 {
     if (gTransformStackDepth > 0) {
@@ -211,3 +234,4 @@ void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
     m[11] = position[2];
     Iwram_TransformMatrix(m);
 }
+#endif

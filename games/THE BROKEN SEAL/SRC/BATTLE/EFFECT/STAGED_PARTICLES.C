@@ -1,3 +1,4 @@
+#include "TRANSFORM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -46,8 +47,6 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
-void Graphics_SaveTransferWork(void *matrix);
-void Graphics_LoadTransferWork(void *matrix);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, const Scale *scale, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
 void Audio_PlayCue(s32 cue);

@@ -1,44 +1,54 @@
+/* Complete current-source and own-ROM audit, 2026-10-02.
+ * Ordinary TBS flags; all six complete 62-byte functions are exact, with the
+ * Random16 call resolved and one real public definition. The following two
+ * bytes stay in their separate uncredited scaffold; no linker rows change.
+ * EN trials first: plain shape emitted 46 bytes (60 linked differences);
+ * chain-only and r0-memory each differed at 4 bytes; frame-order emitted 64
+ * bytes with 53 differences; r0-order and weights-order emitted 64 bytes
+ * with 55 differences; the short r0/chain handoff was exact.
+ * All private trial assemblies were reproduced from their current sources.
+ */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RUNTIME_1E74.H"
 #include "GLOBAL_CELLS.H"
 extern u8 Data_03001e74[];
 
-/* battle/select_weighted_index.c */
-/*
- * The r9 static-chain setup at the call sites and the callee's matching r9
- * save identify this as a GNU C nested function. The public alias gives the
- * reconstructed entry its address-derived name without changing its code.
- */
-extern s32 Battle_SelectWeightedIndex(u8 *)
-    __attribute__((alias("Select_080bd3e4.0")));
-
-static __inline__ s32 Scope_080bd3e4(void)
+s32 Battle_SelectWeightedIndex(u8 *weights)
 {
-    s32 Select_080bd3e4(u8 *weights)
+    s32 value;
+    s32 total;
+    s32 result;
+    s32 index;
+    /* FAKEMATCH: Retain the native incoming-r9 chain spill before argument setup and Random16; ordinary top-level C omits that ABI save/store. */
+    volatile u32 frame;
+    /* FAKEMATCH: Plain top-level C omits the native r9 save; capture the incoming chain before Random16. */
+    register u32 chain asm("r9");
+
+    /* FAKEMATCH: Read the native chain register without an instruction so GCC preserves r9. */
+    __asm__("" : "=r"(chain));
+    frame = chain;
     {
-        s32 value;
-        s32 total;
-        s32 result;
-        s32 index;
-
-        value = BattleRandom16Far() & 0xFF;
-        total = weights[0];
-        result = 0;
-        index = 0;
-        if (value >= total) {
-loop:
-            index++;
-            if (index <= 7) {
-                total += weights[index];
-                if (value < total)
-                    result = index;
-                else
-                    goto loop;
-            }
-        }
-        return result;
+        /* FAKEMATCH: An unconstrained argument copy precedes the native chain spill; retain incoming r0 through that spill and hand it back. */
+        register u8 *arg asm("r0") = weights;
+        /* FAKEMATCH: The r0/chain tie keeps the spill before the argument copy without extending either pin over Random16. */
+        __asm__("" : "+r"(arg) : "r"(chain));
+        weights = arg;
     }
-
-    return 0;
+    value = BattleRandom16Far() & 0xFF;
+    total = weights[0];
+    result = 0;
+    index = 0;
+    if (value >= total) {
+loop:
+        index++;
+        if (index <= 7) {
+            total += weights[index];
+            if (value < total)
+                result = index;
+            else
+                goto loop;
+        }
+    }
+    return result;
 }

@@ -1,4 +1,4 @@
-/* Draft, not exact: score 873, 122 differing instructions of 831 (was 10457
+/* Draft, not exact: score 863, 120 differing instructions of 831 (was 10457
  * and 447). Rewritten from the listing in plain C: no link-time constants,
  * no permuter temporaries. Same size, same frame, every loop in place.
  * Remaining, all register choice or order:
@@ -7,8 +7,9 @@
  *    needs 128 weighted references (it has 118) or two fewer instructions of
  *    green's life. No natural spelling found that moves it without changing
  *    code elsewhere; this is about 100 of the 122.
- *  - the grey sum (0x10001 and the 0x200000 tint) keeps c and ands into the
- *    0x7c00 register in the listing; here the last term is anded into c.
+ *  - the grey sum (0x10001 and the 0x200000 tint) adds its first two terms
+ *    and then the third in the listing; here the last two are added first.
+ *    (c takes the quotient: that keeps c out of the 0x7c00 and, as listed.)
  *  - 0x10002 computes blue first and copies it to green, and tests blue for
  *    green's lower clamp; here green is computed and tested.
  *  - in the 0x400000 blend the listing spills tr + tg last (sp+4, below the
@@ -53,7 +54,6 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
     s32 r;
     s32 g;
     s32 b;
-    s32 v;
 
     if (mode == 0x8000)
         mode = *src;
@@ -75,19 +75,19 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         case 0x10001:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                v = Iwram_SignedDivide(((c << 11) & 0xf800) + (((c << 7) & 0x1f000) + (c & 0x7c00)), 7);
-                dst[i * 3 + 0] = v;
-                dst[i * 3 + 1] = v;
-                dst[i * 3 + 2] = v;
+                c = Iwram_SignedDivide(((c << 11) & 0xf800) + (((c << 7) & 0x1f000) + (c & 0x7c00)), 7);
+                dst[i * 3 + 0] = c;
+                dst[i * 3 + 1] = c;
+                dst[i * 3 + 2] = c;
             }
             break;
         case 0x10002:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
-                v = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
-                r = v * 4 + 5;
-                g = v * 3 + 5;
+                c = Iwram_SignedDivide(r + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
+                r = c * 4 + 5;
+                g = c * 3 + 5;
                 b = g;
                 if (r < 8)
                     r = 8;
@@ -230,10 +230,10 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         tb = (mode >> 10) & 31;
         for (i = 0; i < cnt; i++) {
             c = *src++;
-            v = Iwram_SignedDivide(((c << 11) & 0xf800) + (((c << 7) & 0x1f000) + (c & 0x7c00)), 96);
-            r = v * tr;
-            g = v * tg;
-            b = v * tb;
+            c = Iwram_SignedDivide(((c << 11) & 0xf800) + (((c << 7) & 0x1f000) + (c & 0x7c00)), 96);
+            r = c * tr;
+            g = c * tg;
+            b = c * tb;
             r = Graphics_ClampRgb555Component(r);
             g = Graphics_ClampRgb555Component(g);
             b = Graphics_ClampRgb555Component(b);
@@ -253,10 +253,10 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         for (i = 0; i < cnt; i++) {
             c = *src++;
             r = c & 31;
-            v = Iwram_SignedDivide((r + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4, tr + tg + tb);
-            r = Iwram_MulQ16(((v * tr) >> 4) << 16, (s32)(tr << 16) >> 4);
-            g = Iwram_MulQ16(((v * tg) >> 4) << 16, (s32)(tg << 16) >> 4);
-            b = Iwram_MulQ16(((v * tb) >> 4) << 16, (s32)(tb << 16) >> 4);
+            c = Iwram_SignedDivide((r + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4, tr + tg + tb);
+            r = Iwram_MulQ16(((c * tr) >> 4) << 16, (s32)(tr << 16) >> 4);
+            g = Iwram_MulQ16(((c * tg) >> 4) << 16, (s32)(tg << 16) >> 4);
+            b = Iwram_MulQ16(((c * tb) >> 4) << 16, (s32)(tb << 16) >> 4);
             r = Graphics_ClampRgb555Channel((u32)r >> 16);
             g = Graphics_ClampRgb555Channel((u32)g >> 16);
             b = Graphics_ClampRgb555Channel((u32)b >> 16);

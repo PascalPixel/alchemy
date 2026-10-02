@@ -61,7 +61,7 @@ struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 u32 BattleEv_DispatchQueued(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);
 u32 BattleEventRuntime_Reset(void);
-void BattleEventRuntime_WaitForReady(void);
+s32 BattleEventRuntime_WaitForReady(void);
 s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 /* End of one unit's turn. The Djinn it summoned with join its side's

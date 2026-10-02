@@ -49,7 +49,6 @@ struct BattleAction *Ability_GetData(s32 action);
 s32 Battle_GetTaggedSlotValue(s32 target);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
-void BattleEventRuntime_Reset(void);
 void UiWork_ClearValueNameTablesFar(void);
 s32 GameFlag_IsSet(s32 flag);
 s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
@@ -72,7 +71,6 @@ void AudioCommand_PlayFar(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
 void BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 flag);
-void BattleEventRuntime_WaitForReady(void);
 s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts);
 /* The standby Djinn of one side, as BattlePlacement_CountValidEntries reads
    them: a state of -1 is ready, 254 is spent by a summon. */

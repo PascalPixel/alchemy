@@ -1073,12 +1073,6 @@ BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000c28bc, 0x0000045c
 	.section .rom.000c3dae, "ax"
 	.incbin "baserom.gba", 0x000c3dae, 0x00000002
-	.section .rom.000c3db0, "ax"
-	.global BattleFx_PlayUnitElementEffect
-	.type BattleFx_PlayUnitElementEffect, %function
-	.thumb_func
-BattleFx_PlayUnitElementEffect:
-	.incbin "baserom.gba", 0x000c3db0, 0x0000027c
 	.section .rom.000c4614, "ax"
 	.incbin "baserom.gba", 0x000c4614, 0x0000036c
 	.section .rom.000c5022, "ax"

@@ -1,4 +1,12 @@
 /* NONMATCHING: 588 of 592 bytes, 226 differing halfwords, 52 aligned edits.
+ * 2026-10-02 (family 4): two leads, not yet in the body below. A slot pointer that
+ * walks with the id (slot++ in the for) gives the reference's loads exactly: indexed x
+ * and z in the guard and the first call, [slot] for the second call's x and the kind.
+ * Reading motion_flags into a word before testing bit 0 keeps the test's 1 out of the
+ * later byte ORs (GCC narrows "field & 1" to a byte AND, whose 1 cse then shares), which
+ * restores the 20-byte frame. With both, what remains is allocation order: the offset
+ * takes r8 before the table base (priorities 0.181 against 0.179) and the id takes r11
+ * where the reference keeps the slot there and the id in the frame.
  * 2026-09-27 pillars H1: exact SETUP's five-word slot table, retaining a
  * typed pointer only for its X/kind consumers, emits identical candidate
  * bytes to the scalar-record baseline. Full normalized diff read: the first

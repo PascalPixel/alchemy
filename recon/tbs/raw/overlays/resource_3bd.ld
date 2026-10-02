@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/DOU.o"(.text)
-        "*/resource_3bd_overlay.o"(.text.x0200909c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ROCK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/DOU2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

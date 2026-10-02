@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
+#include "FIELD_SERVICE.H"
 
 struct ScrollLayer {
     u8 unknown_00[8];
@@ -144,4 +145,166 @@ void VinasuHeya_ExtendBridge(void)
             Engine_EventEnd();
         }
     }
+}
+
+/* The pillar switches and the two effects that open the way. */
+struct SwitchCell {
+    u32 x;
+    u32 z;
+};
+
+struct SwitchEffect {
+    s32 active;
+    u8 unknown_04[0x5f];
+    u8 finished;
+};
+
+extern struct SwitchCell Data_02005164[8];
+extern s32 Data_0200577c[];
+extern s32 Data_020057c8[];
+extern s32 Data_02005ac8[];
+extern u16 Data_02005d3c[];
+
+struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind);
+void OverlayObject_WaitUntilIdle(struct FieldActor *object);
+struct SwitchEffect *SceneEffect_SpawnEffect284AtCell(s32 x, s32 z, const void *script);
+void ObjectDispatch_WaitForValue16(struct SwitchEffect *effect);
+void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 mode);
+void Battle_ResetEffectCounter(void);
+
+/*
+ * A pushed pillar reaches a switch: it sinks into the floor, and once all
+ * four are down the two door effects run and the way opens.
+ */
+void Scene_RunScene3c8SequenceA(void)
+{
+    struct FieldActor *effect;
+    struct FieldActor *actor;
+    struct FieldActor *other;
+    struct FieldActor *leader;
+    struct FieldActor *a;
+    struct FieldActor *b;
+    struct FieldActor *c;
+    struct FieldActor *d;
+    u8 *flags;
+    u8 *motion;
+    u32 id;
+    u32 i;
+    u32 slot;
+    u32 priority;
+
+    effect = 0;
+    leader = Actor_Get(0);
+    Event_Begin();
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Battle_ResetEffectCounter();
+#endif
+    Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
+    Map_CopyCellAttributes(73, 37, 9, 13, 9, 37);
+    for (id = 15; id <= 18; id++) {
+        actor = Object_GetById(id);
+        flags = &actor->priority_flags;
+        if (*flags != 2)
+            Map_CopyCellAttributes(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+        else
+            Map_CopyCellAttributes(73, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+
+        slot = 8;
+        for (i = 0; i < 8; i++) {
+            if ((actor->x.fixed >> 20) == Data_02005164[i].x
+                && (actor->z.fixed >> 20) == Data_02005164[i].z
+                && actor->y.fixed >= 0) {
+                slot = i;
+                break;
+            }
+        }
+        if (slot == 8)
+            continue;
+        for (i = 15; i <= 18; i++) {
+            other = Object_GetById(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) == (other->z.fixed >> 20)) {
+                slot = 8;
+                break;
+            }
+        }
+        if (slot == 8)
+            continue;
+
+        priority = leader->sprite->priority;
+        if ((u32)(leader->z.fixed >> 20) <= Data_02005164[slot].z) {
+            effect = OverlayObject_PrepareObjectWithCommand15(actor->x.fixed, actor->y.fixed,
+                                   actor->z.fixed - 0x40000, 20);
+            Actor_SetSpritePriority(0, 3);
+        }
+        for (i = 15; i <= 18; i++) {
+            other = Object_GetById(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
+                Actor_SetSpritePriority(i, 3);
+        }
+        Actor_SetSpriteFlags(Object_GetById(id), 0);
+        actor->unknown_22 = 0;
+        motion = &actor->motion_flags;
+        *motion = 3;
+        ((union FieldObject *)actor)->effect.velocity_y = 0x1999;
+        ((union FieldObject *)actor)->effect.velocity_x = 0;
+        Map_CopyCellAttributes(6, 44, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
+        OverlayObject_WaitUntilIdle(actor);
+        Audio_PlayCue(188);
+        actor->collision_flags = 0;
+        *motion = 0;
+        actor->y.fixed = -0x100000;
+        Actor_SetSpritePriority(id, 3);
+        *flags = 2;
+        Map_CopyCellAttributes(73, 48, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
+        Actor_SetSpritePriority(0, priority);
+        Object_GetById(0)->priority_flags |= 1;
+        for (i = 15; i <= 18; i++) {
+            other = Object_GetById(i);
+            if (id != i
+                && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
+                && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20)) {
+                Actor_SetSpritePriority(i, 1);
+                Object_GetById(i)->priority_flags |= 1;
+            }
+        }
+        Engine_ObjectDispatchRelease(effect);
+        if (GameFlag_IsSet(0x308)) {
+            Event_End();
+            return;
+        }
+        a = Actor_Get(15);
+        b = Actor_Get(16);
+        c = Actor_Get(17);
+        d = Object_GetById(18);
+        if ((a->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
+            struct SwitchEffect *first;
+            struct SwitchEffect *second;
+
+            Camera_SetSpeed(0x10000, 0x2000);
+            Object_PlaceCurrentWithinCameraBounds(14, 1);
+            Camera_WaitForMove();
+            first = SceneEffect_SpawnEffect284AtCell(136, 0x308, Data_0200577c);
+            Event_Wait(30);
+            Camera_SetSpeed(0x6666, 0xccc);
+            Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
+            ObjectDispatch_WaitForValue16(first);
+            Object_SetScript((struct FieldActor *)first, Data_020057c8);
+            second = SceneEffect_SpawnEffect284AtCell(216, 0x2f8, Data_02005ac8);
+            while (first->active != 0 || second->active != 0) {
+                if (first->finished != 0 || second->finished != 0) {
+                    Event_Wait(30);
+                    Map_AnimateCells(Data_02005d3c, 77, 35);
+                    Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
+                    GameFlag_Set(0x308);
+                    break;
+                }
+                Task_Wait(1);
+            }
+        }
+    }
+    Event_End();
 }

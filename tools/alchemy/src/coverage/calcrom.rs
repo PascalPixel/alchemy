@@ -163,7 +163,11 @@ pub(crate) enum Steered {
 }
 
 /// Read the marks of the maintained source a `games/` object was built from.
-fn source_mark(root: &Path, target: DecompTarget, stem: &str) -> Result<Mark, String> {
+fn source_mark(
+    root: &Path,
+    expansion: &crate::compiler::preprocess::Expansion<'_>,
+    stem: &str,
+) -> Result<Mark, String> {
     let Some((path, text)) = ["C", "c", "S", "s"].iter().find_map(|extension| {
         let path = format!("{stem}.{extension}");
         std::fs::read_to_string(root.join(&path))
@@ -173,7 +177,7 @@ fn source_mark(root: &Path, target: DecompTarget, stem: &str) -> Result<Mark, St
         return Ok(Mark::default());
     };
     let steered = if path.ends_with(".C") || path.ends_with(".c") {
-        let expanded = crate::compiler::preprocess::fresh(root, target, &path)?;
+        let expanded = expansion.fresh(&path)?;
         let analysis = crate::compiler::steering::analyze(&expanded, &path)?;
         if analysis
             .whole_owners
@@ -924,12 +928,13 @@ pub(crate) fn measure(
     };
     let output = target.output_dir;
     let source = |stem: &str| maintained_source(root, stem);
+    let expansion = crate::compiler::preprocess::Expansion::new(root, target)?;
     let marks = std::cell::RefCell::new(std::collections::HashMap::new());
     let mark = |stem: &str| {
         marks
             .borrow_mut()
             .entry(stem.to_string())
-            .or_insert_with(|| source_mark(root, target, stem))
+            .or_insert_with(|| source_mark(root, &expansion, stem))
             .clone()
     };
     let mut measurement = Measurement::default();
@@ -1533,7 +1538,9 @@ Linker script and memory map
         let english_map = native_module(root, en);
         let german_map = native_module(root, de);
         let source = |stem: &str| maintained_source(root, stem);
-        let mark = |stem: &str| source_mark(root, en, stem);
+        let en_expansion = crate::compiler::preprocess::Expansion::new(root, en).unwrap();
+        let de_expansion = crate::compiler::preprocess::Expansion::new(root, de).unwrap();
+        let mark = |stem: &str| source_mark(root, &en_expansion, stem);
         let mut english = Measurement::default();
         let placed = tally(
             &mut english,
@@ -1577,7 +1584,7 @@ Linker script and memory map
             de.output_dir,
             MAIN_IMAGE,
             &source,
-            &|stem| source_mark(root, de, stem),
+            &|stem| source_mark(root, &de_expansion, stem),
         )
         .unwrap();
         let earned = share_edition(&english, &german);
@@ -1591,7 +1598,7 @@ Linker script and memory map
             de.output_dir,
             "36f",
             &source,
-            &|stem| source_mark(root, de, stem),
+            &|stem| source_mark(root, &de_expansion, stem),
         )
         .unwrap();
         assert_eq!(share_edition(&english, &other_image).done.game_c, 0);

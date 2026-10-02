@@ -566,12 +566,6 @@ DisplayTransition_UpdateScanlineTable:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x00095ac8, 0x00000718
-	.section .rom.000995d0, "ax"
-	.global DisplayScroll_BuildAndSwapHBlankPage
-	.type DisplayScroll_BuildAndSwapHBlankPage, %function
-	.thumb_func
-DisplayScroll_BuildAndSwapHBlankPage:
-	.incbin "baserom.gba", 0x000995d0, 0x000001ec
 	.section .rom.0009ccc8, "ax"
 	.global FunctionHead_08097c3c
 	.type FunctionHead_08097c3c, %function
@@ -669,7 +663,10 @@ ObjectMotion_VariantScripts:
 	.incbin "baserom.gba", 0x000a3d54, 0x00000184
 	.global ObjectGroup_BlinkChildValues
 ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x000a3ed8, 0x00000204
+	.incbin "baserom.gba", 0x000a3ed8, 0x00000004
+	.global DisplayScroll_WaveSine
+DisplayScroll_WaveSine:
+	.incbin "baserom.gba", 0x000a3edc, 0x00000200
 	.global FieldFx_GroundParticleFrames
 FieldFx_GroundParticleFrames:
 	.incbin "baserom.gba", 0x000a40dc, 0x000000a0

@@ -451,7 +451,7 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD6.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT7.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT10.o"(.text)
-        "*/recon/tbs/raw/08094544.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_BUILD_HBLANK_PAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_DISARM_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORM_FLASH.o"(.text)

@@ -1288,8 +1288,6 @@ BattlePres_RunBeamSequence:
 	.thumb_func
 Unnamed_080e40a4:
 	.incbin "baserom.gba", 0x000e5ea4, 0x0000064c
-	.section .rom.000e878c, "ax"
-	.incbin "baserom.gba", 0x000e878c, 0x000003b0
 	.section .rom.000e9138, "ax"
 	.incbin "baserom.gba", 0x000e9138, 0x000000cc
 	.section .rom.000e9204, "ax"
@@ -1741,7 +1739,21 @@ CastingImpact_ImageY:
 	.global CastingImpact_OrbitCells
 CastingImpact_OrbitCells:
 	.incbin "baserom.gba", 0x000f0bea, 0x0000000a
-	.incbin "baserom.gba", 0x000f0bf4, 0x0000002a
+	.global FireSwirl_CellWidths
+FireSwirl_CellWidths:
+	.incbin "baserom.gba", 0x000f0bf4, 0x00000007
+	.global FireSwirl_CellHeights
+FireSwirl_CellHeights:
+	.incbin "baserom.gba", 0x000f0bfb, 0x00000007
+	.global FireSwirl_CellSourceOffsets
+FireSwirl_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000f0c02, 0x0000000e
+	.global FireSwirl_CellBiasX
+FireSwirl_CellBiasX:
+	.incbin "baserom.gba", 0x000f0c10, 0x00000007
+	.global FireSwirl_CellBiasY
+FireSwirl_CellBiasY:
+	.incbin "baserom.gba", 0x000f0c17, 0x00000007
 	.global Data_080eee1e
 Data_080eee1e:
 	.incbin "baserom.gba", 0x000f0c1e, 0x0000000c

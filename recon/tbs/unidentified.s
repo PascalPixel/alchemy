@@ -1523,22 +1523,22 @@ CastingImpact_ImageY:
 	.global CastingImpact_OrbitCells
 CastingImpact_OrbitCells:
 	.incbin "baserom.gba", 0x000eedea, 0x0000000a
-	.global Data_080eedf4
-Data_080eedf4:
+	.global FireSwirl_CellWidths
+FireSwirl_CellWidths:
 	.incbin "baserom.gba", 0x000eedf4, 0x00000006
 	.incbin "baserom.gba", 0x000eedfa, 0x00000001
-	.global Data_080eedfb
-Data_080eedfb:
+	.global FireSwirl_CellHeights
+FireSwirl_CellHeights:
 	.incbin "baserom.gba", 0x000eedfb, 0x00000007
-	.global Data_080eee02
-Data_080eee02:
+	.global FireSwirl_CellSourceOffsets
+FireSwirl_CellSourceOffsets:
 	.incbin "baserom.gba", 0x000eee02, 0x0000000e
-	.global Data_080eee10
-Data_080eee10:
+	.global FireSwirl_CellBiasX
+FireSwirl_CellBiasX:
 	.incbin "baserom.gba", 0x000eee10, 0x00000006
 	.incbin "baserom.gba", 0x000eee16, 0x00000001
-	.global Data_080eee17
-Data_080eee17:
+	.global FireSwirl_CellBiasY
+FireSwirl_CellBiasY:
 	.incbin "baserom.gba", 0x000eee17, 0x00000007
 	.global Data_080eee1e
 Data_080eee1e:

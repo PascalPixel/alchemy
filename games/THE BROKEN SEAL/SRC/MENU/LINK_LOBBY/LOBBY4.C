@@ -29,7 +29,6 @@ void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
 void Event_SetPair1d4(s32 scene, s32 entrance);
 void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
-/* FAKEMATCH: the aggregate keeps the shared packet value in halfword mode. */
 struct PacketHalf {
     u16 value;
 };
@@ -83,6 +82,8 @@ fail:
    records and copy what arrived into the map cell buffer's second half. */
 s32 LinkLobby_RunConnectionSequence(void)
 {
+    /* FAKEMATCH: the aggregate keeps the shared packet value in halfword mode. */
+
     struct EventWork *work;
     s32 failed;
     s32 window;
@@ -217,9 +218,10 @@ done:
 
 /* Handle battle applications and reopen the lobby attendant's dialogue. */
 
-/* FAKEMATCH: The unused callback result keeps the last callee's r0 at return. */
 s32 LinkLobby_RunBattleApplication(void)
 {
+    /* FAKEMATCH: The unused callback result keeps the last callee's r0 at return. */
+
     s32 answer;
     s32 msg;
     s32 line;

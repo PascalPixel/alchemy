@@ -387,6 +387,37 @@ mod tests {
     }
 
     #[test]
+    fn an_analysis_run_shares_current_imports_but_freshly_reads_each_source() {
+        let work = tempfile::tempdir().unwrap();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
+        write_catalog(work.path(), target, 7);
+        write_c_imports(
+            &work.path().join(target.output_dir),
+            "#error stale header\n",
+        )
+        .unwrap();
+        let first = work.path().join("FIRST.C");
+        let second = work.path().join("SECOND.C");
+        let source = |name| {
+            format!("#include \"text/MSG_IDS.H\"\nTEXT_MESSAGE_ENUM(MsgImported);\nint {name}(void) {{ return MsgImported; }}\n")
+        };
+        fs::write(&first, source("First")).unwrap();
+        fs::write(&second, source("Second")).unwrap();
+        let expansion = crate::compiler::preprocess::Expansion::new(work.path(), target).unwrap();
+        for path in [&first, &second] {
+            let text = expansion.fresh(&path.to_string_lossy()).unwrap();
+            assert!(text.contains("enum { MsgImported = 7 }"), "{text}");
+        }
+        fs::write(&second, source("Changed")).unwrap();
+        let text = expansion.fresh(&second.to_string_lossy()).unwrap();
+        assert!(text.contains("Changed(void)"), "{text}");
+        write_catalog(work.path(), target, 8);
+        let next = crate::compiler::preprocess::Expansion::new(work.path(), target).unwrap();
+        let text = next.fresh(&first.to_string_lossy()).unwrap();
+        assert!(text.contains("enum { MsgImported = 8 }"), "{text}");
+    }
+
+    #[test]
     fn every_message_name_the_code_uses_is_named_once_in_each_catalog() {
         check_names(crate::compiler::routing::root()).unwrap();
     }

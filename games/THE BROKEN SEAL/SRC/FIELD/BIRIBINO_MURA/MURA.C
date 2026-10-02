@@ -46,7 +46,6 @@ extern s32 BiribinoMura_FacingCellSteps[];
 
 void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 
-/* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
 struct SpawnCounter {
     s16 frames;
 };
@@ -440,6 +439,8 @@ void FieldScene_RunScene38b_02000584(void)
    opening; the third scene also schedules its task. */
 s32 Scene_Initialize(void)
 {
+    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
+
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (gGameState.scene == (s32)&SceneId_BiribinoMura1) {
         FieldScene_RunScene38b_020008f0();
@@ -672,6 +673,8 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
 
 void FieldScene_RunScene38b_02000d10(void)
 {
+    /* FAKEMATCH: the inline halfword cell view remains pending a native field review. */
+
     s32 arg0;
     s32 rec7;
     s32 record;
@@ -713,6 +716,8 @@ s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
  * way, walking the leader along with it. */
 void BiribinoMura_PushFacedBlock(void)
 {
+    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
+
     struct FieldActor *leader;
     struct FieldActor *block;
     s32 zero;
@@ -764,6 +769,8 @@ void BiribinoMura_PushFacedBlock(void)
  * below both coordinate limits. Only the y limit resets the counter. */
 void BiribinoMura_UpdateCornerSpawn(void)
 {
+    /* FAKEMATCH: halfword aggregates retain the short literal-pool reach. */
+
     struct FieldActor *actor;
 
     actor = Object_GetById(gGameState.selected_actor);

@@ -242,6 +242,8 @@ void SceneState_ApplyValues123And11(void)
 /* The entry hook: how the house is set up for the entrance and the story. */
 s32 HaidiaBabi_RestoreEntryState(void)
 {
+    /* FAKEMATCH: retain the cached-cell base shared at +12 and the word
+     * value before the narrow target store, pending native field repair. */
     u32 i;
     s32 record;
     s32 base5_3001ebc;
@@ -329,9 +331,6 @@ extern const u8 gHaidiaBabiSharedAction[];
 extern const u8 gHaidiaBabiActorExitAction[];
 extern const u8 gHaidiaBabiLeaderExitAction[];
 
-/* FAKEMATCH: a one-halfword record keeps the leader-flag zero in a halfword
-   register, which the reference reloads from the literal pool after the
-   actor lookup. */
 struct SceneHalf {
     u16 value;
 };
@@ -374,6 +373,9 @@ void Engine_AudioPlayCue();
    walk out of the house. */
 void FieldScene_RunComplexActorSequence(void)
 {
+    /* FAKEMATCH: a one-halfword record keeps the actor-flag zero in a halfword
+       register, which the reference reloads from the literal pool after the
+       actor lookup. */
     s32 base;
     struct FieldSprite *sprite;
     struct FieldActor *p12;

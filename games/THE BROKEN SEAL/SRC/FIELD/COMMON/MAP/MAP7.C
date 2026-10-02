@@ -1,12 +1,5 @@
 /* Field: show the world map. The map layers are hidden and the map picture
-   is decoded over BG1 until A or B is pressed, then the field comes back.
-
-   FAKEMATCH: two one-pass loops act as scheduling barriers: one around the
-   display-control value 64 so it is built before the register address, one
-   around reloading the layer table so its spilled pointer loads first. The
-   queued blend restore is QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C)
-   written out inline with that function's one-pass loop around the IME read
-   and its count stored through an explicit u16 pointer. */
+   is decoded over BG1 until A or B is pressed, then the field comes back. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -69,6 +62,12 @@ void BattleFx_ScheduleRatioTransition(s32, s32);
 
 void Map_ShowWorldMap(void)
 {
+    /* FAKEMATCH: two one-pass loops act as scheduling barriers: one around
+     * the display-control value 64 so it is built before the register address,
+     * one around reloading the layer table so its spilled pointer loads first.
+     * The queued blend restore is QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C)
+     * written out inline with its one-pass loop around the IME read and its
+     * count stored through an explicit u16 pointer. */
     struct MapWork *map = *(struct MapWork **)(gWorkSlot + 8 * 4);
     struct FieldState *field = Runtime_AllocateBlock(27, 0xccc);
     struct MenuControl *menu = *(struct MenuControl **)(gWorkSlot + 6 * 4);
@@ -165,6 +164,9 @@ void Map_ShowWorldMap(void)
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
 {
+    /* FAKEMATCH: retain the discarded object lookup while its native source
+     * dataflow is unresolved; its result is unused before the runtime object
+     * address is loaded. */
     s32 object;
     s32 x;
     s32 y;

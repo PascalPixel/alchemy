@@ -28,8 +28,53 @@ pub(crate) fn command(
     super::bundle::compiler_command_for_target(compiler, &flags)
 }
 
+#[cfg(test)]
 pub(crate) fn fresh(root: &Path, target: DecompTarget, source: &str) -> Result<String, String> {
-    expansion(root, target, source, &[])
+    Expansion::new(root, target)?.fresh(source)
+}
+
+/// One current edition's imports, shared only within a source analysis run.
+/// Every C file is still freshly preprocessed; nothing saved under out/ is read.
+pub(crate) struct Expansion<'a> {
+    root: &'a Path,
+    target: DecompTarget,
+    imports: Option<tempfile::TempDir>,
+}
+
+impl<'a> Expansion<'a> {
+    pub(crate) fn new(root: &'a Path, target: DecompTarget) -> Result<Self, String> {
+        Ok(Self {
+            root,
+            target,
+            imports: crate::build_text::fresh_c_imports(root, target)?,
+        })
+    }
+
+    pub(crate) fn fresh(&self, source: &str) -> Result<String, String> {
+        self.expand(source, &[])
+    }
+
+    fn expand(&self, source: &str, extra: &[&str]) -> Result<String, String> {
+        let mut command = command(self.target, source, true)?;
+        if let Some(directory) = &self.imports {
+            command.insert(1, format!("-I{}", directory.path().display()));
+        }
+        command.extend(extra.iter().map(|flag| flag.to_string()));
+        command.push(source.into());
+        let output = Command::new(&command[0])
+            .args(&command[1..])
+            .current_dir(self.root)
+            .output()
+            .map_err(|error| format!("{source}: preprocessing: {error}"))?;
+        if !output.status.success() {
+            return Err(format!(
+                "{source}: preprocessing: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            ));
+        }
+        String::from_utf8(output.stdout)
+            .map_err(|error| format!("{source}: preprocessing: {error}"))
+    }
 }
 
 /// Preserve active macro definitions for source-name validation, in memory.
@@ -39,34 +84,7 @@ pub(crate) fn fresh_definitions(
     target: DecompTarget,
     source: &str,
 ) -> Result<String, String> {
-    expansion(root, target, source, &["-dD"])
-}
-
-fn expansion(
-    root: &Path,
-    target: DecompTarget,
-    source: &str,
-    extra: &[&str],
-) -> Result<String, String> {
-    let mut command = command(target, source, true)?;
-    let imports = crate::build_text::fresh_c_imports(root, target)?;
-    if let Some(directory) = &imports {
-        command.insert(1, format!("-I{}", directory.path().display()));
-    }
-    command.extend(extra.iter().map(|flag| flag.to_string()));
-    command.push(source.into());
-    let output = Command::new(&command[0])
-        .args(&command[1..])
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("{source}: preprocessing: {error}"))?;
-    if !output.status.success() {
-        return Err(format!(
-            "{source}: preprocessing: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ));
-    }
-    String::from_utf8(output.stdout).map_err(|error| format!("{source}: preprocessing: {error}"))
+    Expansion::new(root, target)?.expand(source, &["-dD"])
 }
 
 #[cfg(test)]

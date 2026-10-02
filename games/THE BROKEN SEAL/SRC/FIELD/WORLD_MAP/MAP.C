@@ -187,10 +187,10 @@ s32 StoryActor_Initialize(u8 *actor)
     u8 *actor_flags;
     s32 fixed_scale;
 
-    if (GameFlag_IsSet(0x30) != 0) {
+    if (Engine_GameFlagIsSet(0x30) != 0) {
         return 0;
     }
-    if (GameFlag_IsSet(0x16E) != 0) {
+    if (Engine_GameFlagIsSet(0x16E) != 0) {
         return 0;
     }
     *(s32 *)(actor + 0x6C) = (s32)WorldMap_UpdateBobbingMarker;

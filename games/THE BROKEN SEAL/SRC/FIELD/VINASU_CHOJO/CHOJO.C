@@ -46,10 +46,6 @@ void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 void Engine_AudioPlayCue();
 
-/* FAKEMATCH: calls cast through unprototyped function pointers load their
- * arguments in the reference's order.
- * FAKEMATCH: a one-halfword struct keeps the zero in a pool word held in
- * r8, as the reference does. */
 struct Half {
     u16 v;
 };
@@ -453,6 +449,10 @@ void VinasuChojo_FaceActor(s32 actor, s32 facing)
 
 void Scene_RunScriptedActorPresentation(void)
 {
+    /* FAKEMATCH: calls cast through unprototyped function pointers load their
+     * arguments in the reference's order.
+     * FAKEMATCH: a one-halfword struct keeps the zero in a pool word held in
+     * r8, as the reference does. */
     u32 i;
     struct Half zero;
     u8 *rec7;
@@ -1264,6 +1264,8 @@ void SceneEffect_UpdateObjectByFrameParity(s32 a)
 
 void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
+    /* FAKEMATCH: the volatile frame-cell view retains three separate reads
+     * of gFrameCount. */
     volatile u32 *p = (u32 *)&gFrameCount;
 
     if (*p & 1) {

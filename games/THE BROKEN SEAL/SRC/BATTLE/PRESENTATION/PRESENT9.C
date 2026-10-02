@@ -238,11 +238,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
 
 /* BattlePresentation_SetPaletteLevel: with IME off, copy the battle
    palette to BG palette 6 (level 0) or darken it by level/60 into the
-   same place, recording the scale. FAKEMATCH: the IME save sits in a
-   one-pass loop around a pointer to its stack slot (taken before the IME
-   register address), and the scale is assigned inside the call's argument
-   list; the u32 restore temporary loads the saved word before the IME
-   address. */
+   same place, recording the scale. */
 
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 
@@ -258,6 +254,12 @@ void BattlePresentation_BuildTilemap(void *);
 
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
+    /* FAKEMATCH: the IME save sits in a
+     * one-pass loop around a pointer to its stack slot (taken before the IME
+     * register address), and the scale is assigned inside the call's argument
+     * list; the u32 restore temporary loads the saved word before the IME
+     * address. */
+
     struct BattleSession *screen = gBattleWork;
     u16 *palette = screen->palette;
     volatile u32 ime;
@@ -290,12 +292,13 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
    callback on first use and record the mode; mode 1 also queues a BG2
    control write. Copy the backdrop palette, then either copy the battle
    palette to BG palette 6 or darken each channel by fade into it, and
-   rebuild the tile table and tilemap.
-   FAKEMATCH: the IME save sits in one-pass loops, as in the IO write
-   queue, and the green and blue mask is a one-halfword struct, which keeps
-   it a pool constant held across the fade loop as in the ROM. */
+   rebuild the tile table and tilemap. */
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
+    /* FAKEMATCH: the IME save sits in one-pass loops, as in the IO write
+     * queue, and the green and blue mask is a one-halfword struct, which keeps
+     * it a pool constant held across the fade loop as in the ROM. */
+
     s32 *transition = *(s32 **)gTransitionWork;
 
     if (transition[2] == 0) {

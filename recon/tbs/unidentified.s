@@ -898,8 +898,8 @@ RockWall_Heights:
 	.global Data_080eda88
 Data_080eda88:
 	.incbin "baserom.gba", 0x000eda88, 0x00000028
-	.global Data_080edab0
-Data_080edab0:
+	.global RisingWall_UnitScale
+RisingWall_UnitScale:
 	.incbin "baserom.gba", 0x000edab0, 0x00000008
 	.global Data_080edab8
 Data_080edab8:
@@ -1486,27 +1486,27 @@ ShatterRocks_ShardCells:
 	.global BurstScene_Records
 BurstScene_Records:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040
-	.global Data_080eed7e
-Data_080eed7e:
+	.global RisingWall_RowSheetOffsets
+RisingWall_RowSheetOffsets:
 	.incbin "baserom.gba", 0x000eed7e, 0x00000012
-	.global Data_080eed90
-Data_080eed90:
+	.global RisingWall_RowWidths
+RisingWall_RowWidths:
 	.incbin "baserom.gba", 0x000eed90, 0x0000000a
-	.global Data_080eed9a
-Data_080eed9a:
+	.global RisingWall_MoundSheetOffsets
+RisingWall_MoundSheetOffsets:
 	.incbin "baserom.gba", 0x000eed9a, 0x00000006
-	.global Data_080eeda0
-Data_080eeda0:
+	.global RisingWall_MoundWidths
+RisingWall_MoundWidths:
 	.incbin "baserom.gba", 0x000eeda0, 0x00000002
 	.incbin "baserom.gba", 0x000eeda2, 0x00000001
-	.global Data_080eeda3
-Data_080eeda3:
+	.global RisingWall_MoundHeights
+RisingWall_MoundHeights:
 	.incbin "baserom.gba", 0x000eeda3, 0x00000003
-	.global Data_080eeda6
-Data_080eeda6:
+	.global RisingWall_Bg2Shifts
+RisingWall_Bg2Shifts:
 	.incbin "baserom.gba", 0x000eeda6, 0x00000006
-	.global Data_080eedac
-Data_080eedac:
+	.global RisingWall_LateRockColumns
+RisingWall_LateRockColumns:
 	.incbin "baserom.gba", 0x000eedac, 0x00000006
 	.global Data_080eedb2
 Data_080eedb2:

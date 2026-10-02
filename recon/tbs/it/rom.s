@@ -1218,8 +1218,6 @@ BattleFx_InitializeMode12:
 	.incbin "baserom.gba", 0x000e15e8, 0x00000f50
 	.section .rom.000e2972, "ax"
 	.incbin "baserom.gba", 0x000e2972, 0x00000002
-	.section .rom.000e302c, "ax"
-	.incbin "baserom.gba", 0x000e302c, 0x0000088c
 	.section .rom.000e3aa0, "ax"
 	.global BattlePres_RunBeamSequence
 	.type BattlePres_RunBeamSequence, %function
@@ -1259,7 +1257,10 @@ BattleFx10_UnitScale:
 	.incbin "baserom.gba", 0x000eda80, 0x00000008
 	.global RockWall_Heights
 RockWall_Heights:
-	.incbin "baserom.gba", 0x000eda88, 0x00000030
+	.incbin "baserom.gba", 0x000eda88, 0x00000028
+	.global RisingWall_UnitScale
+RisingWall_UnitScale:
+	.incbin "baserom.gba", 0x000edab0, 0x00000008
 	.global Data_080edab8
 Data_080edab8:
 	.incbin "baserom.gba", 0x000edab8, 0x00000008
@@ -1702,7 +1703,27 @@ ShatterRocks_ShardCells:
 	.global BurstScene_Records
 BurstScene_Records:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040
-	.incbin "baserom.gba", 0x000eed7e, 0x00000052
+	.global RisingWall_RowSheetOffsets
+RisingWall_RowSheetOffsets:
+	.incbin "baserom.gba", 0x000eed7e, 0x00000012
+	.global RisingWall_RowWidths
+RisingWall_RowWidths:
+	.incbin "baserom.gba", 0x000eed90, 0x0000000a
+	.global RisingWall_MoundSheetOffsets
+RisingWall_MoundSheetOffsets:
+	.incbin "baserom.gba", 0x000eed9a, 0x00000006
+	.global RisingWall_MoundWidths
+RisingWall_MoundWidths:
+	.incbin "baserom.gba", 0x000eeda0, 0x00000003
+	.global RisingWall_MoundHeights
+RisingWall_MoundHeights:
+	.incbin "baserom.gba", 0x000eeda3, 0x00000003
+	.global RisingWall_Bg2Shifts
+RisingWall_Bg2Shifts:
+	.incbin "baserom.gba", 0x000eeda6, 0x00000006
+	.global RisingWall_LateRockColumns
+RisingWall_LateRockColumns:
+	.incbin "baserom.gba", 0x000eedac, 0x00000024
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000eedd0, 0x00000004

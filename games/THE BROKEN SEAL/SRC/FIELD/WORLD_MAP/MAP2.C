@@ -1,7 +1,7 @@
 #include "EDITION.H"
 #include "STORY.H"
 #include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "FIELD_SERVICE.H"
 #include "SCENE_IDS.H"
 #include "CALL.H"
 #include "TBS_EDITION.H"
@@ -243,4 +243,146 @@ void StoryScene_ShowRewardDialogue(void)
     Battle_ClearObjectFlag5bWhenMode3();
 #endif
     Engine_EventEnd();
+}
+
+extern u8 MsgWorldMapMatter[];
+void ObjectDispatch_InitFromTable6(struct FieldActor *object);
+void Engine_ObjectCommitPosition(struct FieldActor *object);
+void PartyInventory_Discard(s32 item);
+void StoryActor_ConfigureSpawnedObject(u8 *actor);
+
+#define SITE 55
+#define ITEM_BLACK_ORB 242
+
+/* The world map's Black Orb used at the wreck: the leader steps up and holds
+ * the orb out, the guide explains it, the site's figure walks out and back,
+ * and the orb is used up before the party carries on. The step up from the
+ * west reads its height through the site pointer before that is set. */
+void WorldMap_UseBlackOrb(void)
+{
+    struct FieldActor *site;
+    struct FieldActor *orb;
+    struct FieldActor *leader;
+    struct FieldActor *actor;
+    s32 message;
+    struct FieldSprite *sprite;
+    u8 *buffer;
+
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    Event_Begin();
+    Battle_ClearObjectFlag5bWhenMode3();
+    BattleFx_ScheduleRatioTransition(0x16666, 6);
+    Camera_SetSpeed(0x30000, 0x6000);
+    Camera_MoveTo(0x17880000, -1, 0xd680000, 1);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    site = NULL;
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+    leader->unknown_5b = 0;
+    ObjectDispatch_InitFromTable6(leader);
+    if (leader->z.fixed > 0xd680000) {
+        if (leader->x.fixed > 0x176e0000) {
+            FieldObject_SetPosition(leader, 0x176e0000, leader->y.fixed, 0xd7d0000);
+            Engine_ObjectCommitPosition(leader);
+        }
+    } else if (leader->x.fixed > 0x177a0000) {
+        FieldObject_SetPosition(leader, 0x177a0000, site->y.fixed, 0xd480000);
+        Engine_ObjectCommitPosition(leader);
+    }
+    FieldObject_SetPosition(leader, 0x17690000, 0, 0xd680000);
+    Engine_ObjectCommitPosition(leader);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
+    Battle_SetObjectFlag5bWhenMode3();
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Event_Wait(20);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
+    orb = Object_Create(22, leader->x.fixed + 0x20000, 0x260000,
+                        leader->z.fixed);
+    if (orb != NULL) {
+        /* FAKEMATCH: the game clears these bytes from r1 and reaches the first through the created object still in r0; unpinned, the zero takes r3 and the address a copy in r2. */
+        register s32 zero asm("r1") = 0;
+        register u8 *motion asm("r0") = &orb->motion_flags; /* FAKEMATCH: the first address stays in r0, see above. */
+        u8 *attr;
+
+        *motion = zero;
+        sprite = orb->sprite;
+        attr = &sprite->flags;
+        *attr = zero;
+        attr++;
+        *attr = zero;
+        sprite->full_color = 0;
+        sprite->palette = 0;
+        buffer = Heap_Allocate(17, 0x608);
+        Item_LoadIcon(ITEM_BLACK_ORB);
+        Vram_Load(sprite->vram_block, 128, buffer + 0x400);
+        Heap_Release(17);
+        Event_Wait(20);
+        orb->update = (void (*)(union FieldObject *))StoryActor_ConfigureSpawnedObject;
+        Event_Wait(80);
+    }
+    Object_GetById(gWorldMapTriggerActor)->facing = 0x3000;
+    Actor_ShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT, 0);
+    Actor_RunRepeatedMotion(gWorldMapTriggerActor, 2);
+    message = (s32)MsgWorldMapMatter;
+    Event_SetMessage(message);
+    Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 80);
+    if (orb != NULL) {
+        Engine_ObjectDispatchRelease(orb);
+    }
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+    Event_Wait(40);
+    Actor_Jump(gWorldMapTriggerActor, 6, 40);
+    Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xe000, 0);
+    Actor_FaceDirection(gWorldMapTriggerActor, 0xd000, 20);
+    Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x9000, 0, 40);
+    Actor_SetAnimationAndWait(gWorldMapTriggerActor, 4);
+    Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x9000, 0, 20);
+    Actor_FaceDirection(gWorldMapTriggerActor, 0x3000, 20);
+    Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
+    Actor_SetSpeed(gWorldMapTriggerActor, 0xcccc, 0x6666);
+    Actor_SetAnimation(gWorldMapTriggerActor, 2);
+    site = Actor_Get(SITE);
+    FieldObject_SetPosition(site, 0x177a0000, site->y.fixed, 0xd480000);
+    Engine_ObjectCommitPosition(site);
+    FieldObject_SetPosition(site, 0x17710000, 0, 0xd580000);
+    Engine_ObjectCommitPosition(site);
+    Actor_SetAnimation(SITE, 1);
+    Actor_FaceDirection(gWorldMapTriggerActor, 0x5000, 10);
+    Actor_RunRepeatedMotion(gWorldMapTriggerActor, 1);
+    Event_ShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 20);
+    Actor_SetSpeed(gWorldMapTriggerActor, 0x10000, 0x8000);
+    Object_GetById(SITE)->unknown_5a &= ~1;
+    Actor_SetAnimation(SITE, 2);
+    FieldObject_SetPosition(site, 0x176d0000, 0, 0xd600000);
+    Engine_ObjectCommitPosition(site);
+    Actor_SetAnimation(SITE, 1);
+    Event_Wait(10);
+    Actor_SetAnimation(SITE, 2);
+    FieldObject_SetPosition(site, 0x17710000, 0, 0xd580000);
+    Engine_ObjectCommitPosition(site);
+    Actor_SetAnimation(SITE, 1);
+    Message_ShowCentered(message + 6, 1);
+    gEventWork->message++;
+    PartyInventory_Discard(ITEM_BLACK_ORB);
+    Event_Wait(20);
+    Actor_SetAnimation(gWorldMapTriggerActor, 4);
+    Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+    Actor_SetAnimationAndWait(gWorldMapTriggerActor, 3);
+    Actor_SetAnimation(gWorldMapTriggerActor, 2);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    if (actor != NULL) {
+        Actor_SetDestination(gWorldMapTriggerActor, actor->x.part.pixel, actor->z.part.pixel);
+    }
+    Actor_WaitForMove(gWorldMapTriggerActor);
+    Actor_SetPosition(gWorldMapTriggerActor, 0, 0);
+    Battle_ClearObjectFlag5bWhenMode3();
+    BattleFx_ScheduleRatioTransition(0x10000, 6);
+    Event_Wait(20);
+    WorldMap_RestoreExitTrigger();
+    Engine_ActorDestroy(gWorldMapTriggerActor);
+    GameFlag_Clear(0x234);
+    GameFlag_Set(0x85d);
+    Event_End();
 }

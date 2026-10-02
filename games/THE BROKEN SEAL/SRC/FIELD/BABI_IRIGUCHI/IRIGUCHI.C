@@ -899,11 +899,11 @@ void ActorPresentation_SetSceneCellByFlag985(void)
     if (GameFlag_IsSet(0x985) == 0) {
         s32 k5 = 17, k6 = 78;
 
-        Engine_MapCopyCellsTo(36, 78, 1, 2, k5, k6);
+        Engine_MapCopyCellsLayered(36, 78, 1, 2, k5, k6);
     } else {
         s32 k5 = 17, k6 = 78;
 
-        Engine_MapCopyCellsTo(34, 78, 1, 2, k5, k6);
+        Engine_MapCopyCellsLayered(34, 78, 1, 2, k5, k6);
     }
 }
 
@@ -912,7 +912,7 @@ void SceneState_ApplyRectAt32x78(void)
     {
         s32 k5 = 17, k6 = 78;
 
-        Engine_MapCopyCellsTo(32, 78, 1, 2, k5, k6);
+        Engine_MapCopyCellsLayered(32, 78, 1, 2, k5, k6);
     }
 }
 
@@ -978,9 +978,9 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
 
             Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
             Audio_PlayCue(155);
-            Engine_MapCopyCellsTo(35, 78, 1, 2, dest_x, dest_y);
+            Engine_MapCopyCellsLayered(35, 78, 1, 2, dest_x, dest_y);
             Battle_WaitMode0(10);
-            Engine_MapCopyCellsTo(34, 78, 1, 2, dest_x, dest_y);
+            Engine_MapCopyCellsLayered(34, 78, 1, 2, dest_x, dest_y);
             Battle_WaitMode0(10);
             BabiIriguchi_OpenTruthDoor();
         }
@@ -1188,3 +1188,189 @@ void BabiIriguchi_MatchLeaderPriority(void)
     }
 }
 #endif
+
+/* An actor of the antechamber's row, with the frames it waits before it
+   starts to turn. */
+struct RowActor {
+    u8 unknown_00[8];
+    union FieldCoordinate x;
+    union FieldCoordinate y;
+    union FieldCoordinate z;
+    u8 unknown_14[0x0f];
+    u8 priority_flags;
+    u8 unknown_24[0x2c];
+    struct FieldSprite *sprite;
+    u8 unknown_54[5];
+    u8 collision_flags;
+    u8 unknown_5a[4];
+    u16 delay;
+};
+
+/* The scene start of the entrance's four scenes: where Retreat returns to,
+   then what each scene and each way in has to put in place. */
+s32 BabiIriguchi_SetupScene(void)
+{
+    struct FieldActor *actor;
+    struct RowActor *row;
+    s32 scene;
+    /* FAKEMATCH: the game compares the second and third scenes through a copy of the scene in r12, made after Retreat's stores; a plain second variable is folded back into the first. */
+    register s32 copy asm("r12");
+    struct GameState *state;
+    s32 x;
+    s32 z;
+    u8 zero;
+
+    WaitFrames(1);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    state = &gGameState;
+    scene = state->scene;
+    if (scene != (s32)&SceneId_BabiIriguchi4) {
+        state->retreat_entrance = 1;
+        state->retreat_scene = (s32)&SceneId_BabiIriguchi3;
+        copy = scene;
+    }
+    if (scene == (s32)&SceneId_BabiIriguchi4) {
+        row = (struct RowActor *)Object_GetById(12);
+        x = row->x.fixed >> 20;
+        if (x == 20) {
+            z = row->z.fixed >> 20;
+            if (z == 12) {
+                Map_CopyCellAttributes(38, 12, 1, 1, x, z);
+            }
+        }
+    } else if (copy == (s32)&SceneId_BabiIriguchi3) {
+        Actor_SetChildValue(8, 6);
+        Actor_SetChildValue(9, 6);
+#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
+    defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+        ((union FieldObject *)Object_GetById(8))->actor.update =
+            (void (*)(union FieldObject *))BabiIriguchi_MatchLeaderPriority;
+        ((union FieldObject *)Object_GetById(9))->actor.update =
+            (void (*)(union FieldObject *))BabiIriguchi_MatchLeaderPriority;
+#endif
+        if (state->entrance == 5 && GameFlag_IsSet(0x109) == 0) {
+            Actor_SetPosition(9, 0x1380000, 0x1480000);
+        }
+        SceneState_ApplyRectsAtActors8And9();
+        actor = Object_GetById(9);
+        actor->y.fixed = *(s32 *)Object_GetById(9)->unknown_14;
+        if (GameFlag_IsSet(0x300) != 0) {
+            Object_SetModeById(10, 4);
+            Object_GetById(10)->collision_flags = 0xfe;
+            SceneState_ConfigureRegion82_7AndApply768();
+        }
+        row = (struct RowActor *)Object_GetById(11);
+        row->collision_flags = 0;
+        row->priority_flags = 0;
+        row->delay = 0;
+        ((u8 *)row->sprite)[9] |= 12;
+        zero = 0;
+        ((u8 *)row->sprite)[38] = zero;
+        row->sprite->rotation = 0xc000;
+        Object_SetModeById(11, 0);
+        row = (struct RowActor *)Object_GetById(12);
+        row->collision_flags = zero;
+        row->priority_flags = zero;
+        row->delay = 30;
+        ((u8 *)row->sprite)[9] |= 12;
+        ((u8 *)row->sprite)[38] = zero;
+        row->sprite->rotation = 0x4000;
+        Object_SetModeById(12, 0);
+        row = (struct RowActor *)Object_GetById(13);
+        row->collision_flags = zero;
+        row->priority_flags = zero;
+        row->delay = 60;
+        ((u8 *)row->sprite)[9] |= 12;
+        ((u8 *)row->sprite)[38] = zero;
+        row->sprite->rotation = 0x8000;
+        Object_SetModeById(13, 0);
+        row = (struct RowActor *)Object_GetById(14);
+        row->collision_flags = zero;
+        row->priority_flags = zero;
+        row->delay = 90;
+        ((u8 *)row->sprite)[9] |= 12;
+        ((u8 *)row->sprite)[38] = zero;
+        row->sprite->rotation = 0x8000;
+        Object_SetModeById(14, 0);
+    } else if (copy == (s32)&SceneId_BabiIriguchi2) {
+        switch (state->entrance) {
+        case 10:
+            GameFlag_Set(0x980);
+        case 11:
+            if (GameFlag_IsSet(0x980) != 0) {
+                Map_CopyCellsTo(120, 7, 109, 7, 1, 3);
+                Map_CopyCellAttributes(45, 8, 1, 1, 45, 9);
+            }
+            break;
+        case 14:
+            OverlayObject_SpawnConfiguredObject(0x1b80000, 0, 0x1220000, 223);
+            Map_CopyCellAttributes(22, 13, 1, 1, 27, 13);
+            FieldScene_RunScene3c5SequenceA(14);
+            break;
+        case 16:
+            OverlayObject_SpawnConfiguredObject(0x1c00000, 0, 0x1220000, 223);
+            Map_CopyCellAttributes(22, 12, 1, 1, 28, 10);
+            FieldScene_RunScene3c5SequenceA(16);
+            break;
+        case 17:
+            OverlayObject_SpawnConfiguredObject(0xe80000, 0, 0x2520000, 223);
+            Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
+            FieldScene_RunScene3c5SequenceA(17);
+            break;
+        case 12:
+        case 13:
+        case 15:
+            if (GameFlag_IsSet(0x109) == 0) {
+                FieldScene_RunSupplementalSequenceOne();
+            }
+            break;
+        }
+    } else if (scene == (s32)&SceneId_BabiIriguchi1) {
+        Object_GetById(8)->unknown_5a &= 0xfe;
+        Object_GetById(9)->unknown_5a &= 0xfe;
+        Actor_SetSpeed(8, 0x10000, 0x8000);
+        Actor_SetSpeed(9, 0x10000, 0x8000);
+        if (GameFlag_IsSet(0x109) == 0) {
+            if (state->entrance == 1) {
+                GameFlag_Set(0x301);
+            } else {
+                GameFlag_Clear(0x301);
+            }
+        }
+        if (GameFlag_IsSet(0x988) == 0) {
+            Actor_SetPosition(10, -0x400000, -0x400000);
+            Actor_SetPosition(11, 0x1180000, 0x1280000);
+            Actor_SetPosition(12, 0x1380000, 0xf80000);
+            Actor_SetPosition(13, 0x1280000, 0xf80000);
+            Actor_SetPosition(14, 0x1400000, 0x1280000);
+            Actor_FaceDirection(11, 0, 0);
+            Actor_FaceDirection(12, 0xc000, 0);
+            Actor_FaceDirection(13, 0xc000, 0);
+            Actor_FaceDirection(14, 0x8000, 0);
+            Battle_WaitMode0(5);
+        } else if (GameFlag_IsSet(0x989) != 0) {
+            Actor_SetPosition(10, 0x1380000, 0x1380000);
+            Actor_FaceDirection(10, 0xb000, 0);
+            Actor_FaceDirection(11, 0xb000, 0);
+            Actor_FaceDirection(12, 0xb000, 0);
+            Actor_FaceDirection(13, 0xb000, 0);
+            Actor_FaceDirection(14, 0xb000, 0);
+            Battle_WaitMode0(5);
+        }
+        if (GameFlag_IsSet(0x985) != 0) {
+            Actor_SetPosition(8, 0x1180000, 0xf00000);
+            Actor_SetPosition(9, 0x1480000, 0xf00000);
+            Actor_FaceDirection(8, 0x8000, 0);
+            Actor_FaceDirection(9, 0, 0);
+            Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
+        }
+        if (gGameState.entrance == 3) {
+            if (GameFlag_IsSet(0x109) == 0) {
+                FieldScene_RunSupplementalSequenceOne();
+            }
+        }
+    } else {
+        Object_SetModeById(12, 2);
+    }
+    return 0;
+}

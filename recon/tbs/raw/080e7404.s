@@ -1025,11 +1025,11 @@ BattleEffect_RunParticleStreams:
 .L_080e7be8:
 	.4byte 0x0000ffff
 .L_080e7bec:
-	.4byte Data_080eee4e + 0x28
+	.4byte ParticleStreams_OrbitPoints
 .L_080e7bf0:
 	.4byte gMapCellBuffer
 .L_080e7bf4:
-	.4byte Data_080eee4e + 0x52
+	.4byte ParticleStreams_DropPoints
 .L_080e7bf8:
 	cmp r3, #95
 	bgt .L_080e7c10
@@ -1663,9 +1663,9 @@ BattleEffect_RunParticleStreams:
 .L_080e8104:
 	.4byte 0xffffe000
 .L_080e8108:
-	.4byte Data_080eee4e + 0x6e
+	.4byte ParticleStreams_FlashSheetOffsets
 .L_080e810c:
-	.4byte Data_080eee4e + 0x7c
+	.4byte ParticleStreams_FlashSizes
 .L_080e8110:
 	mov r0, r11
 	lsrs r3, r0, #31

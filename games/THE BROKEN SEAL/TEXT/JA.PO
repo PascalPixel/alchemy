@@ -9263,11 +9263,11 @@ msgctxt "message"
 msgid "02313"
 msgstr "しはらい"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "02314"
 msgstr "じょうげで まいすうきりかえ"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "02315"
 msgstr "A スロットスタート Bやめる"
 

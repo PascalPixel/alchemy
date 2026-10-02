@@ -1,847 +1,573 @@
-/*
- * Draft: BattleEffect_RunParticleStreams does not yet match; its raw assembly links in its place.
- * The nested functions it contains match and link as their compiler's own
- * assembly (recon/tbs/raw/080e7338.s).
- */
+/* Draft, complete main:080e7404 [080e7404,080e823c) with its two nested
+   functions main:080e7338 and main:080e73a0, 3844 bytes together, written
+   fresh from the listings in plain C. */
 #include "TYPES.H"
-#include "DMA.H"
+#include "RESOURCE_IDS.H"
+#include "RESOURCE.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "DMA.H"
+#include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "MOTION_OBJECT.H"
+#include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
+#include "MAP_SCROLL.H"
 
-void WaitFrames(s32);
-
-/* Nested particle allocators capture this sequence's work block. */
-
-typedef void (*WordCopy)(void *, const void *, s32);
-
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
-   This owner reads kinds 39 (its work block), 40 (the draw destination)
-   and 46 (the rectangle entry BattleEffect_LoadWork loads), plus kind 44. */
-extern void *gWorkSlot[];
-
-/* Two IWRAM cells the reference addresses through one base register
-   plus a field offset, so each is named as an aggregate rather than
-   as a folded absolute address. */
-struct Cells03001ad0 {
-    u16 unk00;
-    u16 unk02;
-    u16 unk04;
-    u16 unk06;
+struct Projection {
+    s32 unknown_00[4];
+    s32 depth;
 };
-extern struct Cells03001ad0 gBgScroll;
 
-struct Cells03001ce0 {
-    s32 unk00[4];
-    s32 unk10;
+/* The battle presentation block in heap slot 44. */
+struct BattlePresentationWork {
+    u8 unknown_00[16];
+    s32 scroll_enabled;
 };
-extern struct Cells03001ce0 gProjection;
 
-/* Sixteen halfword cell offsets; the reference keeps the table base in
-   a register and indexes it, so it is named rather than folded into a
-   biased literal. */
+/* A scene object: two bits of its tenth byte pick its draw variant. */
+struct SceneObject {
+    u8 reserved_00[9];
+    u8 flags09_0 : 2;
+    u8 variant : 2;
+    u8 flags09_4 : 4;
+    u8 reserved_0a[28];
+    u8 enabled;
+};
+
+struct Scale {
+    s32 x;
+    s32 y;
+};
+
+
+
+extern void *gBattleFxWork[];
+extern void *gTransitionWork[];
+extern DrawRectangle gWorkSlot[];
+extern struct Projection gProjection;
+extern struct BattleCamera *gCameraWork;
+extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
+extern s16 ParticleStreams_OrbitPoints[][3];
+extern s16 ParticleStreams_DropPoints[][2];
+extern u16 ParticleStreams_FlashSheetOffsets[];
+extern u16 ParticleStreams_FlashSizes[];
 
-void *ResourceObject_CreateFar(s32);
-void **GetBattleObjectSlotFar(s32);
-void BattleFx_BeginCanvasLayer(s32);
-void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Audio_PlayCue(s32);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_FlushPendingGraphicsTransfer(void);
+void BattleFx_ArmPaletteHBlankDma(void);
+void Camera_AdvanceBg2Reference(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_EndCanvasLayer(void);
 void BattlePres_ConfigureEffectDisplay(void);
-void BattleEffect_WipeCanvas(s32, s32);
-void AnimationObjects_SelectAnimationFar(void *, s32);
-void BattleFx_SpawnObjects(s32, s32, s32);
-void *Resource_GetTableEntry(s32);
-s32 Random16(void);
-void BattleFx_SelectLivingTargets(s32);
-void Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
-void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(void *);
-void SceneTransform_ApplyRoll(s32);
-void SceneTransform_ApplyYaw(s32);
-void EffectPosition_ApplyBaseAndYOffset(const void *, void *);
-void Runtime_ReleaseHeapBlock(s32);
+void BattleEffect_WipeCanvas(s32 mode, s32 layer);
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleEffect_SetupBlendedDisplay(void);
-void Palette_BrightenBgEntries(s32, s32, s32);
-void ResourceObject_ReleaseFar(s32);
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
+struct SceneObject *GetBattleEffectObject(s32 kind);
+void Object_InitializeMode(struct SceneObject *object, s32 animation);
+void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
+void ResourceObject_ReleaseFar(void *object);
 void BattleActor_CommitPlacementFar(void);
-void BattleEventRuntime_BeginPhaseFar(s32);
-void Graphics_PrepareTransferInIwramWork(s32, s32);
-void EffectStep_AdvanceWithGravity3D(void *, s32, s32);
-void Camera_ApplyShake(s32, s32);
-s32 BattleFx_EndCanvasLayer(void);
+void AudioCommand_PlayFar(s32 cue);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyRoll(s32 angle);
+void SceneTransform_ApplyYaw(s32 angle);
+void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
+void Camera_ApplyShake(s32 x, s32 y);
 
-s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
+#define REG_DMA3 ((volatile u32 *)0x040000d4)
+
+/* The flashes and the embers of the second half live in the map cell buffer. */
+#define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
+#define EMBERS (&FLASHES[128])
+
+/* The whole-pixel half of a 16.16 coordinate. */
+#define HI(v) (((s16 *)&(v))[1])
+#define HALF(p, n) (((s16 *)&(p))[n])
+
+/* Battle effect: a fiery orb is revealed line by line, flies up shedding
+   flames while seven motes circle it, and bursts into embers and flashes.
+   With mode 1 the actor rides it as two objects; otherwise one spawned
+   object does. A or B skips the flight. */
+void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode)
 {
-    s32 sp8;
-    s32 spC;
-    s32 sp10;
-    s32 sp14;
-    void *sp18;
-    void *sp1C;
-    void **sp20;
-    s32 sp24;
-    void **sp28;
-    void *sp30;
-    void *sp2C;
-    s32 sp34;
-    s32 sp38;
-    void **sp3C;
-    s32 sp40;
-    DrawRectangle draw_rectangle;
-    void *draw_destination;
-    s32 sp4C;
-    u8 *var_r7_1383;
-    u8 *var_r7_1551;
-    s16 *var_r5_615;
-    s16 *var_sl_235;
-    s16 temp_r2_941;
-    s16 temp_r3_946;
-    s32 *var_r3_572;
-    s32 temp_r0_1683;
-    s32 temp_r1_1068;
-    s32 temp_r1_1333;
-    s32 temp_r1_434;
-    s32 temp_r1_660;
-    s32 temp_r1_848;
-    s32 temp_r2_1687;
-    s32 temp_r2_668;
-    s32 temp_r3_1001;
-    s32 temp_r3_1093;
-    s32 temp_r3_1534;
-    s32 temp_r3_1580;
-    s32 temp_r3_748;
-    s32 temp_r4_611;
-    s32 temp_r5_1334;
-    s32 temp_r5_1422;
-    s32 temp_r5_1497;
-    s32 temp_r5_314;
-    s32 temp_r6_1503;
-    s32 temp_r6_1570;
-    s32 temp_r6_310;
-    s32 var_fp_590;
-    s32 var_r0_428;
-    s32 var_r1_1643;
-    s32 var_r1_672;
-    s32 var_r2_1397;
-    s32 var_r2_326;
-    s32 var_r2_439;
-    s32 var_r2_737;
-    s32 var_r2_830;
-    s32 var_r2_982;
-    s32 var_r3_1413;
-    s32 var_r3_320;
-    s32 var_r3_445;
-    s32 var_r3_606;
-    s32 var_r3_661;
-    s32 var_r3_671;
-    s32 var_r3_713;
-    s32 var_r3_859;
-    s32 var_r3_875;
-    s32 var_r3_972;
-    s32 var_r5_135;
-    s32 var_r5_410;
-    s32 var_r6_1060;
-    s32 var_r6_1223;
-    s32 var_r6_136;
-    s32 var_r6_408;
-    s32 var_r6_763;
-    s32 var_r7_718;
-    s32 var_r7_979;
-    s32 var_r8_1058;
-    s32 var_r8_1221;
-    s32 var_r8_1246;
-    s32 var_r8_1276;
-    s32 var_r8_137;
-    s32 var_r8_1386;
-    s32 var_r8_1490;
-    s32 var_r8_1552;
-    s32 var_r8_233;
-    s32 var_r8_303;
-    s32 var_r8_570;
-    s32 var_r8_649;
-    s32 var_r8_826;
-    s32 var_r8_912;
-    s32 var_r8_997;
-    s32 var_sl_1491;
-    s32 temp_r1_319;
-    s32 temp_r3_916;
-    s32 temp_r3_926;
-    u16 temp_r4_1585;
-    u32 temp_r0_1420;
-    u32 temp_r0_1587;
-    u32 temp_r2_1572;
-    u32 temp_r3_1597;
-    u32 temp_r4_1501;
-    u32 var_fp_1329;
-    u32 var_r8_409;
-    u8 *var_r5_398;
-    s32 temp_r5_271;
-    s32 temp_r6_269;
-    void *temp_r0_140;
-    void *temp_r0_603;
-    void *temp_r1_1495;
-    void *temp_r1_154;
-    void *temp_r2_1063;
-    void *temp_r2_1122;
-    void *temp_r2_1307;
-    void *temp_r2_365;
-    void *temp_r2_46;
-    void *temp_r2_553;
-    void *temp_r3_1065;
-    void *temp_r3_1499;
-    void *temp_r3_24;
-    void *temp_r3_835;
-    void *temp_r5_1067;
-    void *temp_r5_1230;
-    void *temp_r5_837;
-    void *temp_r7_1505;
-    void *var_r5_1245;
-    void *var_r5_1275;
-    void *var_r5_995;
-    void *var_r7_911;
-    void **cursor;
-    void **display;
-    u8 sp98[132];
-    void *particle_work;
-    void ParticleStream_AddPrimary(s32 x, s32 y, s32 velocity)
+    volatile u32 fill;
+    u8 offsets[128];
+    void **cache;
+    void *canvas;
+    DrawRectangle draw;
+    s32 direction;
+    struct BattleEffectWork *work;
+    void *colors = (void *)0x05000000;
+
+    /* Wake the first free flame of the sixteen kept after the motes. */
+    void AddFlame(s32 x, s32 y, s32 velocity_x)
     {
         s32 i;
-        for (i=0;i!=16;i++) {
-            s32 *particle=(s32 *)((u8 *)particle_work+0x7400+i*28);
-            if(particle[6]==-1) {
-                particle[6]=0;
-                particle[0]=x;
-                particle[1]=y;
-                particle[3]=velocity;
+
+        for (i = 0; i != 16; i++) {
+            struct EffectStep *flame = &work->particles[32 + i];
+
+            if (flame->variant == -1) {
+                flame->variant = 0;
+                flame->x = x;
+                flame->y = y;
+                flame->velocity_x = velocity_x;
                 break;
             }
         }
     }
 
-    void ParticleStream_AddSecondary(s32 x, s32 y)
+    /* Wake the first free mote. */
+    void AddMote(s32 x, s32 y)
     {
         s32 i;
-        for (i=0;i!=32;i++) {
-            s32 *particle=(s32 *)((u8 *)particle_work+0x7080+i*28);
-            if(particle[6]==-1) {
-                particle[6]=0;
-                particle[0]=x;
-                particle[1]=y;
+
+        for (i = 0; i != 32; i++) {
+            struct EffectStep *mote = &work->particles[i];
+
+            if (mote->variant == -1) {
+                mote->variant = 0;
+                mote->x = x;
+                mote->y = y;
                 break;
             }
         }
     }
 
-    s32 sp84[4];
-    s32 sp78[3];
-    s32 sp6C[3];
-    s32 sp60[3];
-    s32 sp58[2];
-    s32 sp50[2];
+    s32 position[4];
+    s32 vector[3];
+    struct EffectPosition spot;
+    struct EffectPosition point;
+    struct Scale scale;
+    s32 frame;
+    s32 i;
 
-    cursor = &gWorkSlot[40];
-    sp4C = arg1;
-    sp3C = &particle_work;
-    draw_destination = *cursor;
-    temp_r3_24 = cursor[-1];
-    *sp3C = temp_r3_24;
-    (*(s32 *)((u8 *)(temp_r3_24) + (0x7828))) = arg0;
+    cache = &gBattleFxWork[1];
+    canvas = cache[0];
+    work = cache[-1];
+    work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2000);
-    (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
-    if (sp4C == 1) {
-        temp_r2_46 = *GetBattleObjectSlotFar((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))));
-        (*(s32 *)((u8 *)(temp_r2_46) + (0x28))) = 0xA0000;
-        (*(s32 *)((u8 *)(temp_r2_46) + (0x48))) = 0x91EB;
-        ObjectGroup_UpdateMembers((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))), -1, 2, -1, 0);
-        Audio_PlayCue(0x91);
-        sp40 = sp4C;
-        if ((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (4))) != 1) {
-            sp40 = -1;
-        }
+    *(volatile u16 *)0x04000020 = 0x100;
+    if (mode == 1) {
+        struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actor)->object;
+
+        object->velocity_y = 0xa0000;
+        object->vertical_motion_strength = 0x91eb;
+        ObjectGroup_UpdateMembers(work->effect->actor, -1, 2, -1, 0);
+        AudioCommand_PlayFar(145);
+        direction = mode;
+        if (work->effect->side != 1)
+            direction = -1;
     } else {
-        sp40 = -1;
+        direction = -1;
     }
     BattlePres_ConfigureEffectDisplay();
-    (*(s16 *)((u8 *)((void *)0x05000000) + (0))) = 0;
-    (*(s16 *)((u8 *)((void *)0x05000000) + (2))) = 0;
-    (*(s32 *)((u8 *)(*sp3C) + (0x7780))) = 0;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    *(u16 *)0x05000000 = 0;
+    *(u16 *)0x05000002 = 0;
+    work->transfer_mode = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(0, 0);
-    Scheduler_RemoveCallback(0x080CD261);
-    if (sp4C == 1) {
-        var_r5_135 = 0x77D8;
-        var_r6_136 = 0x1E3;
-        var_r8_137 = 0;
-        do {
-            temp_r0_140 = ResourceObject_CreateFar(var_r6_136);
-            *(void **)((u8 *)*sp3C + var_r5_135) = temp_r0_140;
-            if (temp_r0_140 != NULL) {
-                (*(s8 *)((u8 *)(temp_r0_140) + (0x26))) = 0;
-                AnimationObjects_SelectAnimationFar(temp_r0_140, 2);
-                temp_r1_154 = *(void **)((u8 *)*sp3C + var_r5_135);
-                (*(u8 *)((u8 *)(temp_r1_154) + (9))) = (u8) ((*(u8 *)((u8 *)(temp_r1_154) + (9))) | 0xC);
-            }
-            var_r8_137 += 1;
-            var_r5_135 += 4;
-            var_r6_136 += 0x2001;
-        } while (var_r8_137 != 2);
-    } else {
-        BattleFx_SpawnObjects(1, 0x17D, 3);
-    }
-    Resource_LoadAndDecompress(0xc1, *sp3C, 1, 1);
-    if (sp4C == 1) {
-        ((WordCopy)0x03001388)(
-            (void *)0x05000000, (void *)Resource_GetTableEntry(0xc4), 0x80);
-    }
-    *(s32 *)(sp98 + 128) = 0x01010101;
-    Dma_Set(sp98 + 128, (void *)0x02010000, 0x85002000, (volatile u32 *)0x040000d4);
-    ((WordCopy)0x03001388)(
-        (void *)0x06008000, (void *)0x02010000, 0x7800);
-    WaitFrames(1);
-    (*(s16 *)((u8 *)((void *)0x04000050) + (0))) = 0;
-    (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
-    (*(s16 *)((u8 *)((void *)0x0400000A) + (0))) = 0x1F80;
-    (*(s16 *)((u8 *)((void *)0x0400000A) + (2))) = 0x2787;
-    var_r8_233 = 0;
-    var_sl_235 = (s16 *)0x05000100;
-    do {
-        temp_r6_269 = Random16();
-        temp_r5_271 = Random16();
-        var_r8_233 += 1;
-        *var_sl_235 = (((Random16() & 0xF) + 0x10) << 0xA) | (((temp_r5_271 & 0xF) + 0x10) << 5) | ((temp_r6_269 & 0xF) + 0x10);
-        var_sl_235 += 1;
-    } while (var_r8_233 != 0x3F);
-    *(s32 *)(sp98 + 128) = 0;
-    Dma_Set(sp98 + 128, draw_destination, 0x85001000, (volatile u32 *)0x040000d4);
-    var_r8_303 = 0;
-    do {
-        temp_r6_310 = Random16() & 0x7F;
-        temp_r5_314 = Random16() & 0x7F;
-        temp_r1_319 = (0x3F & Random16()) + 0x40;
-        var_r3_320 = temp_r5_314;
-        if (temp_r5_314 < 0) {
-            var_r3_320 = temp_r5_314 + 7;
-        }
-        var_r2_326 = temp_r6_310;
-        if (temp_r6_310 < 0) {
-            var_r2_326 = temp_r6_310 + 7;
-        }
-        *((u8 *)draw_destination + (((((((var_r3_320 >> 3) * 0x10)
-            + (var_r2_326 >> 3)) * 8) + (temp_r5_314 & 7)) * 8)
-            + (temp_r6_310 & 7))) = temp_r1_319;
-        var_r8_303 += 1;
-    } while (var_r8_303 != 0x100);
-    ((WordCopy)0x03001388)(
-        (void *)0x06004000, draw_destination, 0x4000);
-    gProjection.unk10 = 0xF0;
-    BattleFx_SelectLivingTargets((*(s32 *)((u8 *)(*sp3C) + (0x7828))));
-    temp_r2_365 = *sp3C;
-    (*(s32 *)((u8 *)(temp_r2_365) + (0x77D0))) = 0;
-    (*(s32 *)((u8 *)(temp_r2_365) + (0x77D4))) = 0;
-    (*(s32 *)((u8 *)(temp_r2_365) + (0x7790))) = 0;
-    (*(s32 *)((u8 *)(temp_r2_365) + (0x7794))) = 2;
-    (*(s32 *)((u8 *)(temp_r2_365) + (0x7798))) = (s32) (sp40 << 7);
-    (*(s32 *)((u8 *)(temp_r2_365) + (0x779C))) = var_r8_303;
-    Scheduler_AddOrUpdateCallback(0x080C9139, 0x4FF);
-    Scheduler_AddOrUpdateCallback(0x080CD359, 0x480);
-    var_r5_398 = sp98;
-    do {
-        *var_r5_398 = Random16() & 0x3F;
-        var_r5_398 += 1;
-    } while (var_r5_398 != sp98 + 128);
-    var_r6_408 = 0;
-    var_r8_409 = 1;
-    var_r5_410 = 0;
-    do {
-        var_r6_408 += (s32) ((var_r8_409 >> 0x1F) + var_r8_409) >> 1;
-        var_r8_409 += 4;
-        if (var_r5_410 != var_r6_408) {
-            do {
-                var_r0_428 = 0;
-loop_33:
-                temp_r1_434 = var_r5_410 - sp98[var_r0_428 & 0x7F];
-                /* Two ordered signed bounds, not one folded unsigned
-                   range test: the reference compares against 0 and 127
-                   separately. */
-                if (temp_r1_434 >= 0) {
-                if (temp_r1_434 <= 0x7F) {
-                    var_r2_439 = temp_r1_434;
-                    if (temp_r1_434 < 0) {
-                        var_r2_439 = temp_r1_434 + 7;
-                    }
-                    var_r3_445 = var_r0_428;
-                    if (var_r0_428 < 0) {
-                        var_r3_445 = var_r0_428 + 7;
-                    }
-                    (*(s8 *)((u8 *)((((((((var_r2_439 >> 3) << 5) + (var_r3_445 >> 3)) * 8) + (temp_r1_434 & 7)) * 8) + (var_r0_428 & 7))) + (0x02010000))) = 0;
-                }
-                }
-                var_r0_428 += 1;
-                if (var_r0_428 != 0x100) {
-                    goto loop_33;
-                }
-                var_r5_410 += 1;
-            } while (var_r5_410 != var_r6_408);
-        }
-        (*(s32 *)((u8 *)(*sp3C) + (0x7824))) = 1;
-        WaitFrames(1);
-    } while (var_r6_408 <= 0xBF);
-    (*(s16 *)((u8 *)((void *)0x04000050) + (0))) = 0x3F42;
-    (*(s16 *)((u8 *)((void *)0x04000050) + (2))) = 0x1010;
-    sp38 = (s32) gBgScroll.unk04;
-    sp34 = (s32) gBgScroll.unk06;
-    display = &gWorkSlot[44];
-    sp30 = display[0];
-    gBgScroll.unk04 = 0U;
-    gBgScroll.unk06 = 0x20U;
-    BattleEffect_LoadWork(0x2E, 8, 7, 3, 2);
-    draw_rectangle = (DrawRectangle) display[2];
-    temp_r2_553 = *sp3C;
-    (*(s32 *)((u8 *)(temp_r2_553) + (0x7780))) = 3;
-    (*(s32 *)((u8 *)(temp_r2_553) + (0x7784))) = 0x02020202;
-    Scheduler_AddOrUpdateCallback(0x080E72E1, 0x4FE);
-    var_r8_570 = 0;
-    var_r3_572 = *sp3C + 0x7098;
-    do {
-        var_r8_570 += 1;
-        *var_r3_572 = -1;
-        var_r3_572 += 7;
-    } while (var_r8_570 != 0x40);
-    (*(s32 *)((u8 *)(sp30) + (0x10))) = 1;
-    (*(s32 *)((u8 *)(*sp3C) + (0x778C))) = 0;
-    var_fp_590 = 0;
-    sp18 = sp84;
-    sp2C = sp58;
-    sp28 = sp3C;
-    sp10 = 0;
-loop_47:
-    temp_r0_603 = *sp3C;
-    var_r3_606 = (*(s32 *)((u8 *)(temp_r0_603) + (0x778C)));
-    if (var_r3_606 < 0) {
-        var_r3_606 += 3;
-    }
-    temp_r4_611 = var_r3_606 >> 2;
-    var_r5_615 = temp_r0_603 + 0x1F80;
-    if (sp4C == 1) {
-        if ((*(s32 *)0x03001B04 & 3) && (var_fp_590 > 0x10)) {
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    if (mode == 1) {
+        for (i = 0; i != 2; i++) {
+            struct SceneObject *object = GetBattleEffectObject(483 + i * 0x2001);
 
-        } else {
-            goto block_56;
+            work->objects[i] = object;
+            if (object != 0) {
+                object->enabled = 0;
+                Object_InitializeMode(object, 2);
+                ((struct SceneObject *)work->objects[i])->variant = 3;
+            }
         }
-    } else if ((*(s32 *)0x03001B04 & 3) && (var_fp_590 > 4)) {
-
     } else {
-block_56:
-        if (var_fp_590 == 0) {
-            sp8 = temp_r4_611;
-            Audio_PlayCue(0x8D);
-        }
-        var_r8_649 = 0;
+        BattleFx_SpawnObjects(1, 381, 3);
+    }
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work, 1, 1);
+    if (mode == 1)
+        Iwram_CopyWords(colors, Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
+    fill = 0x01010101;
+    Dma_Set((void *)&fill, Ram_MapCellBuffer, 0x85002000, REG_DMA3);
+    Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+    WaitFrames(1);
+    *(volatile u16 *)0x04000050 = 0;
+    *(volatile u16 *)0x04000020 = 0x100;
+    *(volatile u16 *)0x0400000a = 0x1f80;
+    *(volatile u16 *)0x0400000c = 0x2787;
+    for (i = 0; i != 63; i++) {
+        s32 red = Random16();
+        s32 green = Random16();
+        s32 blue = Random16();
+
+        ((u16 *)0x05000100)[i] = (((blue & 15) + 16) << 10) | (((green & 15) + 16) << 5)
+            | ((red & 15) + 16);
+    }
+    fill = 0;
+    Dma_Set((void *)&fill, canvas, 0x85001000, REG_DMA3);
+    for (i = 0; i != 256; i++) {
+        s32 x = Random16() & 127;
+        s32 y = Random16() & 127;
+        s32 shade = (Random16() & 63) + 64;
+
+        ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
+    }
+    Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
+    gProjection.depth = 240;
+    BattleFx_SelectLivingTargets(work->effect);
+    work->bg2x = 0;
+    work->bg2y = 0;
+    work->scroll_timer = 0;
+    work->scroll_interval = 2;
+    work->scroll_step_x = direction << 7;
+    work->scroll_step_y = 256;
+    Scheduler_AddOrUpdateCallback((s32)Camera_AdvanceBg2Reference, 0x4ff);
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_FlushPendingGraphicsTransfer, 0x480);
+    for (i = 0; i != 128; i++)
+        offsets[i] = Random16() & 63;
+    {
+        s32 step = 1;
+        s32 limit = 0;
+        s32 row = 0;
+
         do {
-            var_r8_649 += 1;
-            *var_r5_615 = 0;
-            var_r5_615 += 1;
-        } while (var_r8_649 != 0xF);
-        do {
-            temp_r1_660 = var_r8_649 - 0x10;
-            var_r3_661 = temp_r1_660;
-            if (temp_r1_660 < 0) {
-                var_r3_661 = var_r8_649 - 0xD;
-            }
-            temp_r2_668 = (var_r3_661 >> 2) + temp_r4_611;
-            var_r3_671 = temp_r2_668 - 0x20;
-            var_r1_672 = temp_r2_668 - 0x50;
-            if (var_r3_671 < 0) {
-                var_r3_671 = 0;
-            }
-            if (var_r3_671 > 0x1F) {
-                var_r3_671 = 0x1F;
-            }
-            if (var_r1_672 < 0) {
-                var_r1_672 = 0;
-            }
-            if (var_r1_672 > 0x1F) {
-                var_r1_672 = 0x1F;
-            }
-            var_r8_649 += 1;
-            *var_r5_615 = (var_r3_671 << 0xA) | (var_r1_672 << 5) | (var_r1_672 >> 1);
-            var_r5_615 += 1;
-        } while (var_r8_649 != 0x87);
-        do {
-            var_r8_649 += 1;
-            *var_r5_615 = 0;
-            var_r5_615 += 1;
-        } while (var_r8_649 != 0xA0);
-        if (sp40 == 1) {
-            var_r3_713 = var_fp_590;
-            if (var_r3_713 < 0) {
-                var_r3_713 += 3;
-            }
-            var_r7_718 = var_r3_713 >> 2;
-        } else {
-            var_r2_737 = var_fp_590;
-            if (var_r2_737 < 0) {
-                var_r2_737 += 3;
-            }
-            var_r7_718 = 0x40 - (var_r2_737 >> 2);
-        }
-        temp_r3_748 = 0x60 - var_fp_590;
-        (*(s32 *)((u8 *)(sp18) + (0xC))) = 0;
-        (*(s32 *)((u8 *)(sp18) + (4))) = 0xFF0000;
-        if (sp4C == 1) {
-            var_r6_763 = sp10 + 0xA000;
-            sp58[0] = var_r6_763;
-            (*(s32 *)((u8 *)(sp2C) + (4))) = var_r6_763;
-            (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r7_718 << 0x10) + 0x500000);
-            (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x40 - temp_r3_748) << 0x10);
-            Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp28) + (0x77D8))), sp18, sp2C, 0);
-            Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp28) + (0x77DC))), sp18, sp2C, 0);
-        } else {
-            var_r6_763 = sp10 + 0x10000;
-            sp58[0] = var_r6_763;
-            (*(s32 *)((u8 *)(sp2C) + (4))) = var_r6_763;
-            (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r7_718 << 0x10) + 0x600000);
-            (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x60 - temp_r3_748) << 0x10);
-            Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp3C) + (0x77D8))), sp18, sp2C, 0);
-        }
-        var_r8_826 = 0;
-        var_r2_830 = 0;
-loop_84:
-        temp_r3_835 = *sp3C + var_r2_830;
-        temp_r5_837 = temp_r3_835 + 0x7080;
-        if ((*(s32 *)((u8 *)(temp_r5_837) + (0x18))) == -1) {
-            temp_r1_848 = (0x7FFF & Random16()) + 0x4000;
-            (*(s32 *)((u8 *)(temp_r5_837) + (0x18))) = 0;
-            spC = temp_r1_848;
-            var_r3_859 = Trig_Sin(temp_r1_848) * 0x1E;
-            if (var_r3_859 < 0) {
-                var_r3_859 += 0xFFFF;
-            }
-            (*(s32 *)((u8 *)(temp_r3_835) + (0x7080))) = (s32) (((var_r7_718 + 0x60) << 0x10) + ((var_r3_859 >> 0x10) * var_r6_763));
-            var_r3_875 = Trig_Cos(temp_r1_848) * 0x1E;
-            if (var_r3_875 < 0) {
-                var_r3_875 += 0xFFFF;
-            }
-            (*(s32 *)((u8 *)(temp_r5_837) + (4))) = (s32) (((0x20 - temp_r3_748) << 0x10) - ((var_r3_875 >> 0x10) * var_r6_763));
-        } else {
-            var_r8_826 += 1;
-            var_r2_830 += 0x1C;
-            if (var_r8_826 != 0x20) {
-                goto loop_84;
-            }
-        }
-        sp60[0] = 0;
-        sp60[1] = 0;
-        sp60[2] = 0x02000000;
-        Render_ResetTransformState();
-        SceneTransform_ApplyPosition(sp60);
-        SceneTransform_ApplyRoll(0x800);
-        SceneTransform_ApplyYaw(sp10);
-        var_r7_911 = (void *)0x080EEE76;
-        var_r8_912 = 0;
-        do {
-            /* The reference keeps the unsigned halfword load and does the
-               sign extension with the same shifted value the rounding bit
-               comes from, so the halving is spelled out on the shifted
-               word rather than through an s16 cast. */
-            temp_r3_916 = (*(u16 *)((u8 *)(var_r7_911) + (0))) << 0x10;
-            sp78[1] = (s32) (((*(s16 *)((u8 *)(var_r7_911) + (2))) + var_fp_590) << 0x10);
-            temp_r3_926 = (*(u16 *)((u8 *)(var_r7_911) + (4))) << 0x10;
-            sp78[0] = (s32) ((((temp_r3_916 >> 0x10)
-                + (s32) ((u32) temp_r3_916 >> 0x1F)) >> 1) << 0x10);
-            sp78[2] = (s32) ((((temp_r3_926 >> 0x10)
-                + (s32) ((u32) temp_r3_926 >> 0x1F)) >> 1) << 0x10);
-            EffectPosition_ApplyBaseAndYOffset(sp78, sp6C);
-            temp_r2_941 = ((s16 *)sp6C)[1];
-            sp6C[0] = (s32) (temp_r2_941 + 0x80);
-            temp_r3_946 = ((s16 *)sp6C)[3];
-            sp6C[1] = (s32) (temp_r3_946 + 0x3C);
-            draw_rectangle((void *)0x02010000, *sp3C + 0x1F40,
-                temp_r2_941 + 0x7C, temp_r3_946 + 0x38, 8U, 8);
-            var_r8_912 += 1;
-            var_r7_911 += 6;
-        } while (var_r8_912 != 7);
-        if (sp40 == 1) {
-            var_r3_972 = var_fp_590;
-            if (var_r3_972 < 0) {
-                var_r3_972 += 3;
-            }
-            var_r7_979 = (var_r3_972 >> 2) - 0x10;
-        } else {
-            var_r2_982 = var_fp_590;
-            if (var_r2_982 < 0) {
-                var_r2_982 += 3;
-            }
-            var_r7_979 = 0x10 - (var_r2_982 >> 2);
-        }
-        var_r5_995 = (void *)0x080EEEA0;
-        var_r8_997 = 0;
-        do {
-            temp_r3_1001 = (*(s16 *)((u8 *)(var_r5_995) + (2))) + (var_fp_590 - 0x60);
-            if (temp_r3_1001 <= 0x5D) {
-                draw_rectangle((void *)0x02010000, *sp3C + 0x1C80,
-                    ((*(s16 *)((u8 *)(var_r5_995) + (0))) + var_r7_979) - 0xC,
-                    temp_r3_1001 - 0xC, 0x18U, 0x18);
-            } else if (temp_r3_1001 <= 0x5F) {
-                ParticleStream_AddPrimary(((*(s16 *)((u8 *)(var_r5_995) + (0))) + var_r7_979) << 0x10, temp_r3_1001 << 0x10, 1);
-            }
-            var_r8_997 += 1;
-            var_r5_995 += 4;
-        } while (var_r8_997 != 7);
-        var_r8_1058 = 0;
-        var_r6_1060 = 0;
-        do {
-            temp_r2_1063 = *sp3C;
-            temp_r3_1065 = temp_r2_1063 + var_r6_1060;
-            temp_r5_1067 = temp_r3_1065 + 0x7080;
-            temp_r1_1068 = (*(s32 *)((u8 *)(temp_r5_1067) + (0x18)));
-            if (temp_r1_1068 >= 0) {
-                draw_rectangle((void *)0x02010000,
-                    temp_r2_1063 + (temp_r1_1068 << 0xA),
-                    (*(s16 *)((u8 *)(temp_r5_1067) + (2))) - 0x10,
-                    (*(s16 *)((u8 *)(temp_r5_1067) + (6))) - 0x10,
-                    0x20U, 0x20);
-                (*(s32 *)((u8 *)(temp_r3_1065) + (0x7080))) = (s32) ((*(s32 *)((u8 *)(temp_r3_1065) + (0x7080))) - (sp40 * 0x14000));
-                (*(s32 *)((u8 *)(temp_r5_1067) + (4))) = (s32) ((*(s32 *)((u8 *)(temp_r5_1067) + (4))) + 0xFFFB0000);
-                temp_r3_1093 = (*(s32 *)((u8 *)(temp_r5_1067) + (0x18))) + 1;
-                (*(s32 *)((u8 *)(temp_r5_1067) + (0x18))) = temp_r3_1093;
-                if (temp_r3_1093 == 6) {
-                    (*(s32 *)((u8 *)(temp_r5_1067) + (0x18))) = -1;
+            limit += step / 2;
+            step += 4;
+            for (; row != limit; row++) {
+                s32 x;
+
+                for (x = 0; x != 256; x++) {
+                    s32 y = row - offsets[x & 127];
+
+                    if (y >= 0)
+                        if (y <= 127)
+                            Ram_MapCellBuffer[((y / 8 * 32 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = 0;
                 }
             }
-            var_r8_1058 += 1;
-            var_r6_1060 += 0x1C;
-        } while (var_r8_1058 != 0x20);
-        (*(s32 *)((u8 *)(*sp28) + (0x7824))) = 1;
-        WaitFrames(1);
-        sp10 += 0x100;
-        temp_r2_1122 = *sp28;
-        var_fp_590 += 1;
-        (*(s32 *)((u8 *)(temp_r2_1122) + (0x778C))) = (s32) ((*(s32 *)((u8 *)(temp_r2_1122) + (0x778C))) + 1);
-        if (var_fp_590 != 0xC0) {
-            goto loop_47;
-        }
+            work->transfer_pending = 1;
+            WaitFrames(1);
+        } while (limit <= 191);
     }
-    WaitFrames(1);
-    (*(s32 *)((u8 *)(sp30) + (0x10))) = 0;
-    Scheduler_RemoveCallback(0x080C9139);
-    Scheduler_RemoveCallback(0x080E72E1);
-    Scheduler_RemoveCallback(0x080CD359);
-    gBgScroll.unk04 = (u16) sp38;
-    gBgScroll.unk06 = (u16) sp34;
-    Runtime_ReleaseHeapBlock(0x2E);
-    BattleEffect_SetupBlendedDisplay();
-    (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x80;
-    *(s32 *)0x04000028 = 0;
-    (*(s32 *)((u8 *)((void *)0x04000020) + (0xC))) = 0xFFFFF000;
-    (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
-    (*(s16 *)((u8 *)((void *)0x04000020) + (-0x14))) = 0x2784;
-    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
-    draw_rectangle = (DrawRectangle) gWorkSlot[46];
-    Resource_LoadAndDecompress(0xc0, *sp3C, 1, 0);
-    var_r8_1221 = 0;
-    var_r6_1223 = 0;
-    do {
-        temp_r5_1230 = *sp3C + var_r6_1223 + 0x7080;
-        (*(s32 *)((u8 *)(temp_r5_1230) + (0))) = (s32) (Random16() & 0x7F);
-        var_r8_1221 += 1;
-        (*(s32 *)((u8 *)(temp_r5_1230) + (4))) = (s32) ((Random16() & 0x7F) + 0x7F);
-        var_r6_1223 += 0x1C;
-    } while (var_r8_1221 != 0x20);
-    var_r5_1245 = (void *)0x02010000;
-    var_r8_1246 = 0;
-    do {
-        (*(s32 *)((u8 *)(var_r5_1245) + (0))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1245) + (4))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1245) + (8))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1245) + (0xC))) = (s32) (((Random16() & 0xFF) - 0x7F) << 0xC);
-        (*(s32 *)((u8 *)(var_r5_1245) + (0x10))) = (s32) ((Random16() & 0xFF) << 0xB);
-        var_r8_1246 += 1;
-        (*(s32 *)((u8 *)(var_r5_1245) + (0x14))) = (s32) (((Random16() & 0xFF) - 0x7F) << 0xC);
-        (*(s32 *)((u8 *)(var_r5_1245) + (0x18))) = 0;
-        var_r5_1245 += 0x1C;
-    } while (var_r8_1246 != 0x80);
-    var_r5_1275 = (void *)0x02010E00;
-    var_r8_1276 = 0;
-    do {
-        (*(s32 *)((u8 *)(var_r5_1275) + (0))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1275) + (4))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1275) + (8))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1275) + (0xC))) = (s32) (((Random16() & 0xFF) - 0x80) << 0xD);
-        (*(s32 *)((u8 *)(var_r5_1275) + (0x10))) = (s32) ((Random16() & 0xFF) << 0xB);
-        var_r8_1276 += 1;
-        (*(s32 *)((u8 *)(var_r5_1275) + (0x14))) = (s32) (((Random16() & 0xFF) - 0x80) << 0xD);
-        (*(s32 *)((u8 *)(var_r5_1275) + (0x18))) = 0;
-        var_r5_1275 += 0x1C;
-    } while (var_r8_1276 != 0x200);
-    temp_r2_1307 = *sp3C;
-    (*(s32 *)((u8 *)(temp_r2_1307) + (0x7780))) = 1;
-    (*(s32 *)((u8 *)(temp_r2_1307) + (0x7784))) = 0x10101010;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
-    sp20 = sp3C;
-    sp1C = sp50;
-    sp14 = 0x1D000;
-    var_fp_1329 = 0;
-loop_121:
-    temp_r1_1333 = var_fp_1329 - 0x10;
-    temp_r5_1334 = *(s32 *)0x03001E80;
-    sp24 = temp_r1_1333;
-    if (temp_r1_1333 > 0x13) {
-        Palette_BrightenBgEntries(2, 2, 2);
-    }
-    if (var_fp_1329 == 0) {
-        Audio_PlayCue(0x9C);
-    }
-    if (var_fp_1329 == 0x28) {
-        Audio_PlayCue(0x91);
-    }
-    if (var_fp_1329 == 0x30) {
-        if (sp4C == 1) {
-            ResourceObject_ReleaseFar((*(s32 *)((u8 *)(*sp20) + (0x77D8))));
-            ResourceObject_ReleaseFar((*(s32 *)((u8 *)(*sp20) + (0x77DC))));
-            BattleActor_CommitPlacementFar();
-        }
-        BattleEventRuntime_BeginPhaseFar(0x86);
-    }
-    Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(temp_r5_1334, temp_r5_1334 + 0xC);
-    var_r7_1383 = (u8 *)0x02010E00;
-    var_r8_1386 = 0;
-    do {
-        if ((s32) (*(s32 *)((u8 *)(var_r7_1383) + (4))) >= 0) {
-            EffectPosition_ApplyBaseAndYOffset(var_r7_1383, sp60);
-            var_r2_1397 = sp60[2];
-            sp60[0] = (s32) ((s32) sp60[0] >> 1);
-            if (var_r2_1397 <= 0x9F) {
-                sp60[2] = 0xA0;
-                var_r2_1397 = 0xA0;
-            }
-            if (var_r2_1397 > 0x31F) {
-                sp60[2] = 0x31F;
-                var_r2_1397 = 0x31F;
-            }
-            var_r3_1413 = var_r2_1397 - 0xA0;
-            if (var_r3_1413 < 0) {
-                var_r3_1413 += 0x3F;
-            }
-            temp_r0_1420 = 9 - (var_r3_1413 >> 6);
-            temp_r5_1422 = temp_r0_1420 * 2;
-            draw_rectangle(draw_destination,
-                *sp3C + (ParticleStreams_CellOffsets[temp_r0_1420 - 1]
-                    + ((var_r8_1386 & 1) * 0x302)) + 0x3200,
-                sp60[0]
-                    - ((s32)(temp_r0_1420 + (temp_r0_1420 >> 0x1F)) >> 1),
-                sp60[1] - temp_r0_1420,
-                temp_r0_1420, temp_r5_1422);
-            EffectStep_AdvanceWithGravity3D(var_r7_1383, 0x40, 0xFFFFE000);
-            if ((s32) (*(s32 *)((u8 *)(var_r7_1383) + (4))) <= 0x140000) {
-                (*(s32 *)((u8 *)(var_r7_1383) + (0))) = 0;
-                (*(s32 *)((u8 *)(var_r7_1383) + (8))) = 0;
-                (*(s32 *)((u8 *)(var_r7_1383) + (4))) = 0x140000;
-                (*(s32 *)((u8 *)(var_r7_1383) + (0xC))) = (s32) (((Random16() & 0x3F) - 0x20) << 0xF);
-                (*(s32 *)((u8 *)(var_r7_1383) + (0x10))) = (s32) ((Random16() & 0x3F) << 0xD);
-                (*(s32 *)((u8 *)(var_r7_1383) + (0x14))) = (s32) (((Random16() & 0x3F) - 0x20) << 0xF);
-            }
-        }
-        var_r8_1386 += 1;
-        var_r7_1383 += 0x1C;
-    } while (var_r8_1386 != 0x40);
-    var_r8_1490 = 0;
-    var_sl_1491 = 0;
-    do {
-        temp_r1_1495 = *sp3C;
-        temp_r5_1497 = 7 & var_r8_1490;
-        temp_r3_1499 = temp_r1_1495 + var_sl_1491;
-        temp_r4_1501 = temp_r5_1497 + 3;
-        temp_r6_1503 = temp_r4_1501 * 2;
-        temp_r7_1505 = temp_r3_1499 + 0x7080;
-        draw_rectangle(draw_destination,
-            temp_r1_1495 + (ParticleStreams_CellOffsets[temp_r4_1501 - 1]
-                + ((var_r8_1490 & 1) * 0x302)) + 0x3200,
-            (*(s32 *)((u8 *)(temp_r3_1499) + (0x7080)))
-                - (temp_r4_1501 >> 1),
-            (*(s32 *)((u8 *)(temp_r7_1505) + (4))) - temp_r4_1501,
-            temp_r4_1501, temp_r6_1503);
-        temp_r3_1534 = ((*(s32 *)((u8 *)(temp_r7_1505) + (4))) - temp_r5_1497) - 8;
-        (*(s32 *)((u8 *)(temp_r7_1505) + (4))) = temp_r3_1534;
-        if (temp_r3_1534 < -0xA) {
-            (*(s32 *)((u8 *)(temp_r7_1505) + (4))) = 0x80;
-        }
-        var_r8_1490 += 1;
-        var_sl_1491 += 0x1C;
-    } while (var_r8_1490 != 0x40);
-    var_r7_1551 = (u8 *)0x02010000;
-    var_r8_1552 = 0;
-    do {
-        if ((__divsi3(var_r8_1552, 3) < sp24) && ((s32) (*(s32 *)((u8 *)(var_r7_1551) + (4))) >= 0)) {
-            EffectPosition_ApplyBaseAndYOffset(var_r7_1551, sp60);
-            temp_r6_1570 = (s32) sp60[0] >> 1;
-            sp60[0] = temp_r6_1570;
-            temp_r2_1572 = (*(u32 *)((u8 *)(var_r7_1551) + (0x18)));
-            if (temp_r2_1572 <= 0xDU) {
-                temp_r3_1580 = ((s32) (temp_r2_1572 + (temp_r2_1572 >> 0x1F)) >> 1) * 2;
-                temp_r4_1585 = (*(u16 *)((u8 *)(temp_r3_1580) + (0x080EEECA)));
-                temp_r0_1587 = temp_r4_1585 >> 1;
-                draw_rectangle(draw_destination,
-                    *sp3C + (*(u16 *)((u8 *)(temp_r3_1580) + (0x080EEEBC))),
-                    temp_r6_1570 - temp_r0_1587,
-                    sp60[1] - temp_r0_1587,
-                    (u32)temp_r4_1585, (s32)temp_r4_1585);
-            }
-            temp_r3_1597 = (*(u32 *)((u8 *)(var_r7_1551) + (0x18))) + 1;
-            (*(u32 *)((u8 *)(var_r7_1551) + (0x18))) = temp_r3_1597;
-            if (temp_r3_1597 == 0xE) {
-                (*(s32 *)((u8 *)(var_r7_1551) + (4))) = 0x140000;
-                (*(s32 *)((u8 *)(var_r7_1551) + (0))) = 0;
-                (*(s32 *)((u8 *)(var_r7_1551) + (8))) = (s32) (((Random16() & 0xFF) - 0x7F) << 0x10);
-                (*(s32 *)((u8 *)(var_r7_1551) + (0xC))) = 0;
-                (*(s32 *)((u8 *)(var_r7_1551) + (0x10))) = (s32) ((Random16() & 0xFF) << 0xB);
-                (*(s32 *)((u8 *)(var_r7_1551) + (0x14))) = 0;
-                (*(u32 *)((u8 *)(var_r7_1551) + (0x18))) = 0U;
+    *(volatile u16 *)0x04000050 = 0x3f42;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    {
+        u16 saved_x = (u16)gBgScroll[1].x;
+        u16 saved_y = (u16)gBgScroll[1].y;
+        struct BattlePresentationWork *presentation = gTransitionWork[0];
+
+        gBgScroll[1].x = 0;
+        gBgScroll[1].y = 32;
+        BattleEffect_LoadWork(46, 8, 7, 3, 2);
+        draw = gTransitionWork[2];
+        work->transfer_mode = 3;
+        work->transfer_value = (s32)(Ram_MapBlocks + 0x202);
+        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmPaletteHBlankDma, 0x4fe);
+        for (i = 0; i != 64; i++)
+            work->particles[i].variant = -1;
+        presentation->scroll_enabled = 1;
+        work->frame = 0;
+        for (frame = 0; frame != 192; frame++) {
+            s32 time = work->frame;
+            s32 angle = frame << 8;
+            s32 heat = time / 4;
+            u16 *line = (u16 *)((u8 *)work + 0x1f80);
+            s32 size;
+            s32 x;
+            s32 y;
+
+            if (mode == 1) {
+                if ((gKeysRepeat & 3) && frame > 16)
+                    goto skipped;
             } else {
-                EffectStep_AdvanceWithGravity3D(var_r7_1551, 0x40, 1);
+                if ((gKeysRepeat & 3) && frame > 4)
+                    goto skipped;
+            }
+            if (frame == 0)
+                AudioCommand_PlayFar(141);
+            for (i = 0; i != 15; i++)
+                *line++ = 0;
+            for (; i != 135; i++) {
+                s32 green = i - 16;
+                s32 level = green / 4 + heat;
+                s32 red = level - 32;
+
+                green = level - 80;
+
+                if (red < 0)
+                    red = 0;
+                if (red > 31)
+                    red = 31;
+                if (green < 0)
+                    green = 0;
+                if (green > 31)
+                    green = 31;
+                *line++ = (red << 10) | (green << 5) | (green >> 1);
+            }
+            for (; i != 160; i++)
+                *line++ = 0;
+            if (direction == 1)
+                x = frame / 4;
+            else
+                x = 64 - frame / 4;
+            y = 96 - frame;
+            position[3] = 0;
+            position[1] = 0xff0000;
+            if (mode == 1) {
+                size = angle + 0xa000;
+                scale.x = size;
+                scale.y = size;
+                position[0] = (x << 16) + 0x500000;
+                position[2] = (64 - y) << 16;
+                Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
+                Object_ApplyProjectedPlacementFar(work->objects[1], position, &scale, 0);
+            } else {
+                size = angle + 0x10000;
+                scale.x = size;
+                scale.y = size;
+                position[0] = (x << 16) + 0x600000;
+                position[2] = (96 - y) << 16;
+                Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
+            }
+            y = 32 - y;
+            for (i = 0; i != 32; i++) {
+                struct EffectStep *mote = &work->particles[i];
+
+                if (mote->variant == -1) {
+                    s32 angle = (Random16() & 0x7fff) + 0x4000;
+
+                    mote->variant = 0;
+                    mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / 65536 * size;
+                    mote->y = (y << 16) - Trig_Cos(angle) * 30 / 65536 * size;
+                    break;
+                }
+            }
+            point.x = 0;
+            point.y = 0;
+            point.depth = 0x2000000;
+            Render_ResetTransformState();
+            SceneTransform_ApplyPosition(&point.x);
+            SceneTransform_ApplyRoll(0x800);
+            SceneTransform_ApplyYaw(frame << 8);
+            for (i = 0; i != 7; i++) {
+                vector[1] = (ParticleStreams_OrbitPoints[i][1] + frame) << 16;
+                vector[0] = (ParticleStreams_OrbitPoints[i][0] / 2) << 16;
+                vector[2] = (ParticleStreams_OrbitPoints[i][2] / 2) << 16;
+                EffectPosition_ApplyBaseAndYOffset(vector, &spot);
+                spot.x = HALF(spot, 1) + 128;
+                spot.y = HALF(spot, 3) + 60;
+                draw(Ram_MapCellBuffer, (u8 *)work + 0x1f40, spot.x - 4, spot.y - 4, 8, 8);
+            }
+            if (direction == 1)
+                x = frame / 4 - 16;
+            else
+                x = 16 - frame / 4;
+            y = frame - 96;
+            for (i = 0; i != 7; i++) {
+                s16 *point = ParticleStreams_DropPoints[i];
+                s32 drop = point[1] + y;
+
+                if (drop <= 93)
+                    draw(Ram_MapCellBuffer, (u8 *)work + 0x1c80, point[0] + x - 12, drop - 12, 24, 24);
+                else if (drop <= 95)
+                    AddFlame((point[0] + x) << 16, drop << 16, 1);
+            }
+            for (i = 0; i != 32; i++) {
+                struct EffectStep *mote = &work->particles[i];
+
+                if (mote->variant >= 0) {
+                    draw(Ram_MapCellBuffer, (u8 *)work + (mote->variant << 10),
+                        HI(mote->x) - 16, HI(mote->y) - 16, 32, 32);
+                    mote->x -= direction * 0x14000;
+                    mote->y -= 0x50000;
+                    mote->variant++;
+                    if (mote->variant == 6)
+                        mote->variant = -1;
+                }
+            }
+            work->transfer_pending = 1;
+            WaitFrames(1);
+            work->frame++;
+        }
+    skipped:
+        WaitFrames(1);
+        presentation->scroll_enabled = 0;
+        Scheduler_RemoveCallback((u32)Camera_AdvanceBg2Reference);
+        Scheduler_RemoveCallback((u32)BattleFx_ArmPaletteHBlankDma);
+        Scheduler_RemoveCallback((u32)BattleFx_FlushPendingGraphicsTransfer);
+        gBgScroll[1].x = saved_x;
+        gBgScroll[1].y = saved_y;
+    }
+    Runtime_ReleaseHeapBlock(46);
+    BattleEffect_SetupBlendedDisplay();
+    *(volatile u16 *)0x04000020 = 0x80;
+    *(volatile u32 *)0x04000028 = 0;
+    *(volatile u32 *)0x0400002c = 0xfffff000;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    *(volatile u16 *)0x0400000c = 0x2784;
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw = gWorkSlot[46];
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
+    for (i = 0; i != 32; i++) {
+        struct EffectStep *mote = &work->particles[i];
+
+        mote->x = Random16() & 127;
+        mote->y = (Random16() & 127) + 127;
+    }
+    for (i = 0; i != 128; i++) {
+        struct EffectStep *flash = &FLASHES[i];
+
+        flash->x = 0;
+        flash->y = 0;
+        flash->z = 0;
+        flash->velocity_x = ((Random16() & 255) - 127) << 12;
+        flash->velocity_y = (Random16() & 255) << 11;
+        flash->velocity_z = ((Random16() & 255) - 127) << 12;
+        flash->variant = 0;
+    }
+    for (i = 0; i != 512; i++) {
+        struct EffectStep *ember = &EMBERS[i];
+
+        ember->x = 0;
+        ember->y = 0;
+        ember->z = 0;
+        ember->velocity_x = ((Random16() & 255) - 128) << 13;
+        ember->velocity_y = (Random16() & 255) << 11;
+        ember->velocity_z = ((Random16() & 255) - 128) << 13;
+        ember->variant = 0;
+    }
+    work->transfer_mode = 1;
+    work->transfer_value = 0x10101010;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+    for (frame = 0; frame != 54; frame++) {
+        s32 size = (frame << 8) + 0x1d000;
+        struct BattleCamera *camera = gCameraWork;
+        s32 elapsed = frame - 16;
+        struct Scale scale;
+        s32 x;
+        s32 y;
+        s32 grow;
+
+        if (elapsed > 19)
+            Palette_BrightenBgEntries(2, 2, 2);
+        if (frame == 0)
+            AudioCommand_PlayFar(156);
+        if (frame == 40)
+            AudioCommand_PlayFar(145);
+        if (frame == 48) {
+            if (mode == 1) {
+                ResourceObject_ReleaseFar(work->objects[0]);
+                ResourceObject_ReleaseFar(work->objects[1]);
+                BattleActor_CommitPlacementFar();
+            }
+            BattleEventRuntime_BeginPhaseFar(134);
+        }
+        Render_ResetTransformState();
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        for (i = 0; i != 64; i++) {
+            struct EffectStep *ember = &EMBERS[i];
+
+            if (ember->y >= 0) {
+                s32 size;
+
+                EffectPosition_ApplyBaseAndYOffset(&ember->x, &point);
+                point.x >>= 1;
+                if (point.depth <= 159)
+                    point.depth = 160;
+                if (point.depth > 799)
+                    point.depth = 799;
+                size = 9 - (point.depth - 160) / 64;
+                draw(canvas, (u8 *)work + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
+                    point.x - size / 2, point.y - size, size, size * 2);
+                EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
+                if (ember->y <= 0x140000) {
+                    ember->x = 0;
+                    ember->z = 0;
+                    ember->y = 0x140000;
+                    ember->velocity_x = ((Random16() & 63) - 32) << 15;
+                    ember->velocity_y = (Random16() & 63) << 13;
+                    ember->velocity_z = ((Random16() & 63) - 32) << 15;
+                }
             }
         }
-        var_r8_1552 += 1;
-        var_r7_1551 += 0x1C;
-    } while (var_r8_1552 != 0x40);
-    if (sp40 == 1) {
-        var_r1_1643 = ((s32) ((var_fp_1329 >> 0x1F) + var_fp_1329) >> 1) + 0x18;
-    } else {
-        var_r1_1643 = 0x38 - ((s32) ((var_fp_1329 >> 0x1F) + var_fp_1329) >> 1);
+        for (i = 0; i != 64; i++) {
+            struct EffectStep *mote = &work->particles[i];
+            s32 rise = i & 7;
+            u32 size = rise + 3;
+
+            draw(canvas, (u8 *)work + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
+                mote->x - size / 2, mote->y - size, size, size * 2);
+            mote->y = mote->y - rise - 8;
+            if (mote->y < -10)
+                mote->y = 128;
+        }
+        for (i = 0; i != 64; i++) {
+            struct EffectStep *flash = &FLASHES[i];
+
+            if (i / 3 < elapsed && flash->y >= 0) {
+                EffectPosition_ApplyBaseAndYOffset(&flash->x, &point);
+                point.x >>= 1;
+                if ((u32)flash->variant <= 13) {
+                    s32 cell = flash->variant / 2;
+
+                    draw(canvas, (u8 *)work + ParticleStreams_FlashSheetOffsets[cell],
+                        point.x - ParticleStreams_FlashSizes[cell] / 2,
+                        point.y - ParticleStreams_FlashSizes[cell] / 2,
+                        ParticleStreams_FlashSizes[cell], ParticleStreams_FlashSizes[cell]);
+                }
+                flash->variant++;
+                if (flash->variant == 14) {
+                    flash->y = 0x140000;
+                    flash->x = 0;
+                    flash->z = ((Random16() & 255) - 127) << 16;
+                    flash->velocity_x = 0;
+                    flash->velocity_y = (Random16() & 255) << 11;
+                    flash->velocity_z = 0;
+                    flash->variant = 0;
+                } else {
+                    EffectStep_AdvanceWithGravity3D(flash, 64, 1);
+                }
+            }
+        }
+        if (direction == 1)
+            x = frame / 2 + 24;
+        else
+            x = 56 - frame / 2;
+        y = 64 - frame * 2;
+        grow = (frame << 8) + 0x20000;
+        position[3] = 0;
+        position[1] = 0xff0000;
+        if (mode == 1) {
+            scale.x = size;
+            scale.y = size;
+            position[0] = (x << 16) + 0x600000;
+            position[2] = (96 - y) << 16;
+            Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
+            Object_ApplyProjectedPlacementFar(work->objects[1], position, &scale, 0);
+        } else {
+            scale.x = grow;
+            scale.y = grow;
+            position[0] = (x << 16) + 0x600000;
+            position[2] = (96 - y) << 16;
+            Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
+        }
+        work->shake_frames = 1;
+        Camera_ApplyShake(8, 8);
+        work->transfer_pending = 1;
+        WaitFrames(1);
     }
-    temp_r0_1683 = 0x40 - (var_fp_1329 * 2);
-    temp_r2_1687 = (var_fp_1329 << 8) + 0x20000;
-    (*(s32 *)((u8 *)(sp18) + (0xC))) = 0;
-    (*(s32 *)((u8 *)(sp18) + (4))) = 0xFF0000;
-    if (sp4C == 1) {
-        sp50[0] = sp14;
-        (*(s32 *)((u8 *)(sp1C) + (4))) = sp14;
-        (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r1_1643 << 0x10) + 0x600000);
-        (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x60 - temp_r0_1683) << 0x10);
-        Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp20) + (0x77D8))), sp18, sp1C, 0);
-        Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp20) + (0x77DC))), sp18, sp1C, 0);
-    } else {
-        sp50[0] = temp_r2_1687;
-        (*(s32 *)((u8 *)(sp1C) + (4))) = temp_r2_1687;
-        (*(s32 *)((u8 *)(sp18) + (0))) = (s32) ((var_r1_1643 << 0x10) + 0x600000);
-        (*(s32 *)((u8 *)(sp18) + (8))) = (s32) ((0x60 - temp_r0_1683) << 0x10);
-        Object_ApplyProjectedPlacementFar((*(s32 *)((u8 *)(*sp3C) + (0x77D8))), sp18, sp1C, 0);
-    }
-    (*(s32 *)((u8 *)(*sp20) + (0x77A8))) = 1;
-    Camera_ApplyShake(8, 8);
-    (*(s32 *)((u8 *)(*sp20) + (0x7824))) = 1;
-    WaitFrames(1);
-    var_fp_1329 += 1;
-    sp14 += 0x100;
-    if (var_fp_1329 != 0x36) {
-        goto loop_121;
-    }
-    Scheduler_RemoveCallback(0x080CD261);
-    Runtime_ReleaseHeapBlock(0x2E);
-    if (sp4C == 0) {
-        ResourceObject_ReleaseFar((*(s32 *)((u8 *)(*sp3C) + (0x77D8))));
-    }
-    return BattleFx_EndCanvasLayer();
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(46);
+    if (mode == 0)
+        ResourceObject_ReleaseFar(work->objects[0]);
+    BattleFx_EndCanvasLayer();
 }

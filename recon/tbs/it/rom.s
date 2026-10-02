@@ -1173,20 +1173,6 @@ BattleFx_InitializeMode12:
 	.incbin "baserom.gba", 0x000e15e8, 0x00000f50
 	.section .rom.000e2972, "ax"
 	.incbin "baserom.gba", 0x000e2972, 0x00000002
-	.section .rom.000e302c, "ax"
-	.incbin "baserom.gba", 0x000e302c, 0x0000088c
-	.section .rom.000e3aa0, "ax"
-	.global BattlePres_RunBeamSequence
-	.type BattlePres_RunBeamSequence, %function
-	.thumb_func
-BattlePres_RunBeamSequence:
-	.incbin "baserom.gba", 0x000e3aa0, 0x00000604
-	.section .rom.000e40a4, "ax"
-	.global Unnamed_080e40a4
-	.type Unnamed_080e40a4, %function
-	.thumb_func
-Unnamed_080e40a4:
-	.incbin "baserom.gba", 0x000e40a4, 0x0000064c
 	.section .rom.000e7338, "ax"
 	.incbin "baserom.gba", 0x000e7338, 0x000000cc
 	.section .rom.000e7404, "ax"
@@ -1195,12 +1181,6 @@ Unnamed_080e40a4:
 	.thumb_func
 BattleEffect_RunParticleStreams:
 	.incbin "baserom.gba", 0x000e7404, 0x00000e38
-	.section .rom.000e823c, "ax"
-	.global BattleEffect_RunCirclingFallingScene
-	.type BattleEffect_RunCirclingFallingScene, %function
-	.thumb_func
-BattleEffect_RunCirclingFallingScene:
-	.incbin "baserom.gba", 0x000e823c, 0x00000e6c
 	.section .rom.000ea0d8, "ax"
 	.global Unnamed_080ea0d8
 	.type Unnamed_080ea0d8, %function
@@ -1214,13 +1194,19 @@ BattleFx10_UnitScale:
 	.incbin "baserom.gba", 0x000eda80, 0x00000008
 	.global RockWall_Heights
 RockWall_Heights:
-	.incbin "baserom.gba", 0x000eda88, 0x00000030
+	.incbin "baserom.gba", 0x000eda88, 0x00000028
+	.global RisingWall_UnitScale
+RisingWall_UnitScale:
+	.incbin "baserom.gba", 0x000edab0, 0x00000008
 	.global Data_080edab8
 Data_080edab8:
 	.incbin "baserom.gba", 0x000edab8, 0x00000008
 	.global Data_080edac0
 Data_080edac0:
-	.incbin "baserom.gba", 0x000edac0, 0x00000018
+	.incbin "baserom.gba", 0x000edac0, 0x00000008
+	.global CirclingScene_UnitScale
+CirclingScene_UnitScale:
+	.incbin "baserom.gba", 0x000edac8, 0x00000010
 	.global ObjectRow_SweepPair
 ObjectRow_SweepPair:
 	.incbin "baserom.gba", 0x000edad8, 0x00000008
@@ -1740,7 +1726,39 @@ ShatterRocks_ShardCells:
 	.global BurstScene_Records
 BurstScene_Records:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040
-	.incbin "baserom.gba", 0x000eed7e, 0x00000052
+	.global RisingWall_RowSheetOffsets
+RisingWall_RowSheetOffsets:
+	.incbin "baserom.gba", 0x000eed7e, 0x00000012
+	.global RisingWall_RowWidths
+RisingWall_RowWidths:
+	.incbin "baserom.gba", 0x000eed90, 0x0000000a
+	.global RisingWall_MoundSheetOffsets
+RisingWall_MoundSheetOffsets:
+	.incbin "baserom.gba", 0x000eed9a, 0x00000006
+	.global RisingWall_MoundWidths
+RisingWall_MoundWidths:
+	.incbin "baserom.gba", 0x000eeda0, 0x00000003
+	.global RisingWall_MoundHeights
+RisingWall_MoundHeights:
+	.incbin "baserom.gba", 0x000eeda3, 0x00000003
+	.global RisingWall_Bg2Shifts
+RisingWall_Bg2Shifts:
+	.incbin "baserom.gba", 0x000eeda6, 0x00000006
+	.global RisingWall_LateRockColumns
+RisingWall_LateRockColumns:
+	.incbin "baserom.gba", 0x000eedac, 0x00000006
+	.global BeamSequence_CellWidths
+BeamSequence_CellWidths:
+	.incbin "baserom.gba", 0x000eedb2, 0x00000006
+	.global BeamSequence_CellHeights
+BeamSequence_CellHeights:
+	.incbin "baserom.gba", 0x000eedb8, 0x00000006
+	.global BeamSequence_CellSheetOffsets
+BeamSequence_CellSheetOffsets:
+	.incbin "baserom.gba", 0x000eedbe, 0x0000000c
+	.global BeamSequence_CellReaches
+BeamSequence_CellReaches:
+	.incbin "baserom.gba", 0x000eedca, 0x00000006
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000eedd0, 0x00000004
@@ -1794,7 +1812,19 @@ ImpactBurst_CellHeights:
 	.incbin "baserom.gba", 0x000eee5e, 0x00000008
 	.global ImpactBurst_CellSourceOffsets
 ImpactBurst_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eee66, 0x000000a0
+	.incbin "baserom.gba", 0x000eee66, 0x00000072
+	.global CirclingScene_ObjectColumns
+CirclingScene_ObjectColumns:
+	.incbin "baserom.gba", 0x000eeed8, 0x00000009
+	.global CirclingScene_ObjectRows
+CirclingScene_ObjectRows:
+	.incbin "baserom.gba", 0x000eeee1, 0x00000009
+	.global CirclingScene_PuffSheetOffsets
+CirclingScene_PuffSheetOffsets:
+	.incbin "baserom.gba", 0x000eeeea, 0x0000000e
+	.global CirclingScene_PuffSizes
+CirclingScene_PuffSizes:
+	.incbin "baserom.gba", 0x000eeef8, 0x0000000e
 	.global FlameBlade_StrikeColumns
 FlameBlade_StrikeColumns:
 	.incbin "baserom.gba", 0x000eef06, 0x00000006
@@ -1885,14 +1915,14 @@ Title_PromptBlendLevels:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x000f4168, 0x00001e98
 	.section .rom.000f6440, "ax"
-	.incbin "baserom.gba", 0x000f6440, 0x00000eec
-	.section .rom.000f7470, "ax"
-	.global Unnamed_080f7460
-	.type Unnamed_080f7460, %function
+	.global Unnamed_080f6440
+	.type Unnamed_080f6440, %function
 	.thumb_func
-Unnamed_080f7460:
-	.incbin "baserom.gba", 0x000f7470, 0x00000954
+Unnamed_080f6440:
+	.incbin "baserom.gba", 0x000f6440, 0x00000eec
 	.section .rom.000f8708, "ax"
+	.global ReelGame_SparkCellOffsets
+ReelGame_SparkCellOffsets:
 	.incbin "baserom.gba", 0x000f8708, 0x0000003e
 	.global ReelGame_TitleLetterWidths
 ReelGame_TitleLetterWidths:

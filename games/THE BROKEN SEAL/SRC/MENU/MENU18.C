@@ -131,7 +131,8 @@ void Palette_LightenBankHighlight(s32 bank)
     Dma_Set((const void *)0x050001e0, palette, 0x84000008, (volatile u32 *)0x040000d4);
     color = palette[4];
     /* FAKEMATCH: the (u16) casts on an already 16-bit colour produce the
-       reference's shift pair. */
+       reference's shift pair. 2026-10-02: a u16 color local without these
+       casts changes the load to ldrsh and shifts the red mask before use. */
     blue = (u16)color >> 10;
     green = ((u16)color >> 5) & 31;
     red = color & 31;

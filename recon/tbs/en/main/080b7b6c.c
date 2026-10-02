@@ -1,8 +1,23 @@
-/* DRAFT: 604 of 612 bytes. The first loop and the paired-object branch
- * match in shape; the ROM keeps the list index in fp across all three loops
- * and spills the current id (sp+16) and the mode byte (sp+12), and keeps
- * &object->state live across the create call in branch B (sp+4); this
- * compile gives the id fp and spills the index instead. */
+/* EXACT (score 0, 2026-10-02) but not adopted: the last loop is written with
+ * its test at the bottom and a goto, by hand. Pascal's call.
+ *
+ * What the reference shows: the refresh loop is an ordinary rotated loop whose
+ * index stays in fp and whose list address is built from it each time
+ * (lsls, ldrsh [index, list]); loop.c never strength-reduced it, although it
+ * reduced the same list walk in the loop before. Every for, while and
+ * do/while spelling of it is reduced to a pointer walk (4804); compiling with
+ * strength reduction off, for diagnosis only, gives the reference loop from a
+ * plain for. BattleActor_RemoveFromLists (080bac6c.c) has the same unreduced
+ * second scan.
+ *
+ * What was settled on the way and holds for any spelling:
+ * - The slot's resource is read before the paired state is stored, so the
+ *   pointer to the state byte cannot share r5 and is saved around the call.
+ * - The paired table is one expression, not a pointer that is then advanced.
+ * - The state test leaves no variable: the zero stores reuse the tested byte.
+ * - The actor object needs its real s32 members: a byte member is stored with
+ *   its structure's alias set, and without an s32 member the scheduler moves
+ *   the scale load above the link store. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -25,7 +40,9 @@ struct ResourceObject {
 };
 
 struct ActorObject {
-    u8 padding0[0x20];
+    u8 padding0[8];
+    s32 x;
+    u8 padding0c[0x14];
     u16 height;
     u8 padding22[0x50 - 0x22];
     void *link;
@@ -56,14 +73,15 @@ struct PairedObjectTable {
     s32 count;
 };
 
-typedef s32 (*ClearFn)(void *dst, s32 size);
+extern volatile u8 gSchedulerStatus;
+extern u8 *gMenuCtrlWork;
 
 s32 BattlePlacement_ContainsId(s16 *list, s32 id);
 void ReleaseBattleObjectRecords(s32 object_id);
 void WaitFrames(s32 frames);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 id);
 void BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *slot);
-struct ResourceObject *ResourceObject_CreateFar(s32 resource);
+struct ResourceObject *GetBattleEffectObject(s32 resource);
 u8 *Resource_GetMetadataRecordFar(s32 resource);
 struct SpriteEntry *ResourceMetadata_RegisterFar(struct ResourceObject *object, s32 resource);
 void Animation_SetWorkEntryFar(struct SpriteEntry *entry, s32 index);
@@ -80,7 +98,6 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
     struct ResourceObject **objects;
     u8 *table;
     s32 resource;
-    u8 mode;
     s32 object_id;
 
     for (i = 0; i <= 13; i++) {
@@ -91,7 +108,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
             ReleaseBattleObjectRecords(object_id);
         }
     }
-    if (*(u8 *)0x03001a10 == 0)
+    if (gSchedulerStatus == 0)
         WaitFrames(1);
     for (i = 0; i <= 13 && (id = list[i]) != 255; i++) {
         if (id == 254)
@@ -103,33 +120,31 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
         object = slot->object;
         if (object == 0)
             continue;
-        mode = object->state;
-        if (mode != 0)
+        if (object->state != 0)
             continue;
         if ((slot->resource & 0xfff) == 476 || (slot->resource & 0xfff) == 483) {
-            table = *(u8 **)0x03001e68;
-            table += ((struct PairedObjectTable *)table)->count * 4;
+            table = gMenuCtrlWork + ((struct PairedObjectTable *)gMenuCtrlWork)->count * 4;
             objects = ((struct PairedObjectList *)table)->objects;
-            object->state = 2;
             resource = slot->resource;
+            object->state = 2;
             object->link = objects;
-            ((ClearFn)0x03000164)(objects, 16);
-            res = ResourceObject_CreateFar(resource);
+            Iwram_ClearWords(objects, 16);
+            res = GetBattleEffectObject(resource);
             if (res != 0) {
                 res->scale = Iwram_MulQ16(res->scale, slot->scale);
                 object->height = Resource_GetMetadataRecordFar(resource)[9] >> 1;
                 *objects = res;
                 objects = &((struct PairedObjectList *)table)->objects[1];
             }
-            res->layer = mode;
-            res = ResourceObject_CreateFar(resource + 0x2001);
+            res->layer = 0;
+            res = GetBattleEffectObject(resource + 0x2001);
             if (res != 0) {
                 res->scale = Iwram_MulQ16(res->scale, slot->scale);
                 *objects = res;
             }
-            res->layer = mode;
+            res->layer = 0;
         } else {
-            res = ResourceObject_CreateFar(slot->resource);
+            res = GetBattleEffectObject(slot->resource);
             if (res != 0) {
                 object->state = 1;
                 object->link = res;
@@ -152,17 +167,22 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
                         resource = 0x1ff;
                     entry = ResourceMetadata_RegisterFar(res, resource);
                     slot->effect_entry = entry;
-                    entry->mode = mode;
-                    res->layer = mode;
+                    entry->mode = 0;
+                    res->layer = 0;
                 }
             }
         }
         BattlePres_SetActorModeAndAction(id);
     }
     if (refresh) {
-        for (i = 0; i <= 13 && (id = list[i]) != 255; i++) {
-            if (list[i] != 254 && (slot = GetBattleObjectSlot(id)) != 0 && slot->object != 0)
-                BattlePres_SetActorModeAndAction(id);
+        i = 0;
+        if ((resource = list[0]) != 255) {
+again:
+            if (list[i] != 254 && (slot = GetBattleObjectSlot(resource)) != 0 && (object = slot->object) != 0)
+                BattlePres_SetActorModeAndAction(resource);
+            i++;
+            if (i <= 13 && (resource = list[i]) != 255)
+                goto again;
         }
     }
 }

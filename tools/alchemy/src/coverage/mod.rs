@@ -189,9 +189,11 @@ fn write_figures(
     anchor: Option<GameDone>,
     publication: bool,
 ) -> Result<(), String> {
-    let today = history::today();
+    let hour = history::this_hour();
+    let today = hour[..10].to_string();
     let mut history = history::load(root)?;
     history::record(&mut history, &today, sun, anchor);
+    history::record_hour(&mut history, &hour, sun, anchor);
     let models = if publication {
         history::publication_models(root, &history, &today)?
     } else {

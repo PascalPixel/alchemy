@@ -9,7 +9,7 @@ form people can read, change and build on.
 
 **☀️ 90.17% · ⚓️ 4.70%**
 
-<img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
+<img src="PROGRESS_CHART.png" width="838" alt="DONE by hour for The Broken Seal and The Lost Age since 16 July 2026">
 
 <img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
 
@@ -17,8 +17,9 @@ The number is how much of each game has been rewritten, counted across all
 six languages it shipped in. A piece only counts once the rebuilt game is
 identical to the original, so the number can’t be talked into going up.
 
-The chart shows The Broken Seal in gold and The Lost Age in blue. The two
-dips are days I made the count stricter, not lost work.
+The chart shows The Broken Seal in gold and The Lost Age in blue, with hourly
+measurements where available and the older daily records elsewhere. Dips mark
+stricter counts, not lost work.
 
 ## Why Alchemy?
 

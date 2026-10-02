@@ -281,8 +281,6 @@ UiWork_AnimateSpriteSlots:
 	.thumb_func
 MenuSelection_DrawFrame:
 	.incbin "baserom.gba", 0x00019600, 0x00000560
-	.section .rom.0001c9cc, "ax"
-	.incbin "baserom.gba", 0x0001c9cc, 0x00000134
 	.section .rom.0001cb00, "ax"
 	.global UiText_RenderStringTiles
 	.type UiText_RenderStringTiles, %function

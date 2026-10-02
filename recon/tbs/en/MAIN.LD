@@ -534,7 +534,7 @@
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU18.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_WORK_VALUE_WITH_LABEL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU9.o"(.text)
-        "*/recon/tbs/raw/080a24d0.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/SELECT_SCREEN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN_COMMANDS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/USE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/INTERFACE.o"(.text)

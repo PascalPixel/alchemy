@@ -11963,7 +11963,7 @@ msgctxt "message"
 msgid "02988"
 msgstr "{button_icon:1}{button_icon:2}{button_icon:3}{button_icon:4}:Return"
 
-msgctxt "message"
+msgctxt "MsgUnleashEffect"
 msgid "02989"
 msgstr "Effect of unleashing in battle:"
 

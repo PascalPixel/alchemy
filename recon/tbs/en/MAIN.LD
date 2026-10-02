@@ -638,7 +638,6 @@
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/ITEM.o"(.text)
         "*/recon/tbs/raw/080aa768.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU10.o"(.text)
-        "*/recon/tbs/raw/080aafb8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW10.o"(.text)
         "*/recon/tbs/raw/080ab5e4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)

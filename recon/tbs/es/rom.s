@@ -846,10 +846,6 @@ CharacterMenu_DrawStatusAilments:
 	.global Func_080aa768
 Func_080aa768:
 	.incbin "baserom.gba", 0x000aeff0, 0x0000051c
-	.section .rom.000af840, "ax"
-	.global Func_080aafb8
-Func_080aafb8:
-	.incbin "baserom.gba", 0x000af840, 0x0000023c
 	.section .rom.000afe6c, "ax"
 	.incbin "baserom.gba", 0x000afe6c, 0x000012fc
 	.section .rom.000b1324, "ax"

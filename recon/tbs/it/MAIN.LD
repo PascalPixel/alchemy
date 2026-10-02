@@ -542,7 +542,6 @@
     "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/ITEM.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000aa7fc)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU10.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000ab04c)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW10.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000ab678)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)

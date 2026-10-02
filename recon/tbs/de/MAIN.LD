@@ -545,7 +545,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/ITEM.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000ad5e4)
     "*/games/THE BROKEN SEAL/SRC/MENU/MENU10.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000ade34)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW10.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000ae460)
     "*/games/THE BROKEN SEAL/SRC/MENU/DJINN/DJINN.o"(.text)

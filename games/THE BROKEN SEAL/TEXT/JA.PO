@@ -13543,7 +13543,7 @@ msgctxt "message"
 msgid "03383"
 msgstr "ABLR:もどる"
 
-msgctxt "message"
+msgctxt "MsgUnleashEffect"
 msgid "03384"
 msgstr "せんとうで ときはなったときの こうか"
 

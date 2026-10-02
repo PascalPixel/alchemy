@@ -1,3 +1,21 @@
+/* 2026-10-02 bounded list-bank structural trials; original body retained.
+ * EN score 768: 28 stack-only, 4 operand, 11 reordered; no inserted or
+ * deleted instructions. Native and candidate frames are 304 bytes.
+ * H1, scalar u16 tile halfword at sprite +8, preserving upper six bits:
+ * score 3696 (25 register, 76 stack, 14 operand, 15 reordered, 8 inserted,
+ * 15 deleted), frame 296. Mask narrowed from fffffc00 to fc00. Rejected.
+ * H2, named u32 bitfield view of the attribute member, original assignment:
+ * score 3721 (22 register, 76 stack, 11 operand, 15 reordered, 8 inserted,
+ * 16 deleted), frame 296. Full mask returned; loop address model changed.
+ * H3, complete 12-byte field-only sprite view, base-plus-index tile access:
+ * same score/counts/frame as H2; native indexed address became a running
+ * pointer. Rejected. The word/field union relation is needed by this body;
+ * narrowing only its tile access changes allocation beyond the residual.
+ * All aggregate locals are used (text, cursor, handles, sprites, position);
+ * no unread frame filler or missing native dead load was found. No new
+ * storage, asm, fixed register, compiler option or routing was retained.
+ * Three focused trials exhausted this view hypothesis; no broad search.
+ */
 #include "TYPES.H"
 #include "MENU_LIST.H"
 

@@ -1,18 +1,18 @@
-/* DRAFT (43 instructions differ), reworked 2026-10-02: same frame and the
- * same saved registers as the ROM; input, transition, work and the scripted
- * bit sit in the ROM's registers.
- * 1. The ROM reads the primary id once into r4 and copies it into a fresh
- *    register before each of its four tests; here the first copy is reused
- *    and the same-side test reloads the byte. A local for the id, or an
- *    inline predicate per test, both score worse.
- * 2. In both member loops the ROM keeps the index in r4, saved around the
- *    calls, with the row offset in r6 and the child count copied from r3 to
- *    ip after the zero test; here the index takes r6, the offset r8 and the
- *    count r4, and flags and the object trade r8 and r10.
- * Settled: the far target is a conditional expression inside the three-quarter
- * step; the same-side test is an inline function of unsigned ids, which is
- * what materialises its 0/1 result on both arms; the scripted bit and each
- * loop's index are separate variables.
+/* DRAFT (12 instructions differ), reworked 2026-10-02: same frame, same
+ * registers throughout.
+ * Left: the ROM reads the primary id once into r4 and copies it into a fresh
+ * register before each of its three side tests (adds r3, r4, #0; cmp r3, #7);
+ * here the tests compare r4 itself. Passing the id to a byte-parameter inline
+ * predicate gives that copy in the same-side test (kept), but for the three
+ * single tests it compares a shifted copy instead, and reading the field
+ * afresh at each test moves the input out of r7. The cast after the angle
+ * call is also scheduled one instruction later than in the ROM.
+ * Settled: the child count is read in the copy loop's own test (the compiler
+ * hoists it, which is why it sits in r12); one index serves both member
+ * loops, which is what puts it in r4, saved round the calls; the primary id
+ * is a local; the far target is a conditional expression inside the
+ * three-quarter step; the same-side test picks one of two byte predicates
+ * by the secondary's side.
  * Still literal: messages 0x855 "But the Psynergy was blocked!" and 0x856
  * "...But doesn't have enough PP!" need catalogue names, and the callback is
  * BattleEvent_Playback. */
@@ -63,13 +63,6 @@ static inline s32 IsParty(u8 id)
 static inline s32 IsEnemy(u8 id)
 {
     return id > 7;
-}
-
-static inline s32 SameSide(u8 first, u8 second)
-{
-    if (second <= 7)
-        return first <= 7;
-    return first > 7;
 }
 
 s32 Func_080ba978(struct PresentationInput *input, s32 flags)

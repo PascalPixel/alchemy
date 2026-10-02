@@ -868,8 +868,8 @@ BattleMotion_VariantDistancePercent:
 	.global BattlePres_TileVariants
 BattlePres_TileVariants:
 	.incbin "baserom.gba", 0x000c5a30, 0x00000100
-	.global Data_080c5b30
-Data_080c5b30:
+	.global BattlePres_CurtainTiles
+BattlePres_CurtainTiles:
 	.incbin "baserom.gba", 0x000c5b30, 0x000000e0
 	.global Data_080c5c10
 Data_080c5c10:

@@ -27,6 +27,22 @@ use std::path::{Path, PathBuf};
 /// same-name static helper in another module cannot earn the function.
 pub(crate) type Unit = (String, String, Option<String>);
 
+/// A placed object's image and portable build-relative identity.
+pub(crate) type ObjectKey = (String, String);
+
+/// One placed initialized-data input section: image, portable object and
+/// section name. Localized variants keep this identity even when their
+/// lengths differ; another section in the same object earns no credit.
+pub(crate) type DataKey = (String, String, String);
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct ObjectBytes {
+    pub executable: i64,
+    pub data_source: i64,
+    pub data_scaffold: i64,
+    pub source_path: Option<String>,
+}
+
 /// The image every build links first; the others are its code overlays.
 pub(crate) const MAIN_IMAGE: &str = "main";
 
@@ -60,6 +76,11 @@ pub(crate) struct Game {
     /// Each edition by its language, Japanese first: the English bytes of
     /// the credited objects its own build links, out of the English total.
     pub editions: Vec<(&'static str, Counted)>,
+    /// The same verified definitions used to calculate each edition's share.
+    pub edition_credits: BTreeMap<&'static str, BTreeMap<Unit, Counted>>,
+    /// Positive initialized-data sections each verified edition links from
+    /// maintained source, with their own lengths. Reports use English weights.
+    pub edition_data: BTreeMap<&'static str, BTreeMap<DataKey, i64>>,
 }
 impl Game {
     /// The six editions added up: DONE out of six times the English total.
@@ -123,6 +144,9 @@ pub(crate) struct Measurement {
     /// Data the maps place from `games/` sources, as pret's calcrom --data
     /// counts `src` rodata: built assets, tables and C data.
     pub data_source: i64,
+    /// The source input sections behind `data_source`, before object totals
+    /// erase which parts of a partially adopted object are actually linked.
+    pub data_sections: BTreeMap<DataKey, i64>,
     /// Data still placed from scaffolding: baserom ranges and listing data.
     pub data_scaffold: i64,
     /// The main image's symbol names, as pret's calcrom counts them.
@@ -140,6 +164,8 @@ pub(crate) struct Measurement {
     /// DONE by the unit that supplied it, without its own uncredited padding:
     /// what an edition earns when its own build links the unit.
     pub credits: BTreeMap<Unit, Counted>,
+    /// Every placed text/data object, including uncredited raw/listing objects.
+    pub objects: BTreeMap<ObjectKey, ObjectBytes>,
 }
 
 /// What a `games/` source says about its object's bytes.
@@ -680,18 +706,35 @@ fn tally(
         let Placed {
             name, size, object, ..
         } = placed;
+        if size <= 0 || (!is_data(name) && !is_text(&placed)) {
+            continue;
+        }
+        let object_name = unit_object(object, output, overlay)
+            .unwrap_or_else(|| "Unattributed objects outside build directory".into());
+        let bytes = measurement
+            .objects
+            .entry((image.to_string(), object_name.clone()))
+            .or_default();
         if size > 0 && is_data(name) {
             match origin(object, output, overlay, source)? {
                 Origin::CommonC | Origin::CommonAsm | Origin::GameC | Origin::GameAsm => {
-                    measurement.data_source += size
+                    let key = (image.to_string(), object_name, name.to_string());
+                    if measurement.data_sections.insert(key, size).is_some() {
+                        return Err(format!(
+                            "{image}/{object}: duplicate placed data section {name}"
+                        ));
+                    }
+                    measurement.data_source += size;
+                    bytes.data_source += size;
                 }
-                _ => measurement.data_scaffold += size,
+                _ => {
+                    measurement.data_scaffold += size;
+                    bytes.data_scaffold += size;
+                }
             }
             continue;
         }
-        if !is_text(&placed) {
-            continue;
-        }
+        bytes.executable += size;
         let marked = || {
             relative_object(object, output, overlay)
                 .and_then(|(path, _)| path.strip_suffix(".o"))
@@ -970,6 +1013,18 @@ pub(crate) fn measure(
         discredit(&mut measurement, &placed, &uncredited_spans(&listed));
     }
     measurement.done.game_asm -= measurement.stray.min(measurement.done.game_asm);
+    validate_data_sections(&measurement)?;
+    for ((_, object), bytes) in &mut measurement.objects {
+        if !object.starts_with("games/") && !object.starts_with("recon/") {
+            continue;
+        }
+        if let Some(stem) = object.strip_suffix(".o") {
+            bytes.source_path = ["C", "c", "S", "s", "MID"]
+                .into_iter()
+                .map(|extension| format!("{stem}.{extension}"))
+                .find(|path| root.join(path).is_file());
+        }
+    }
     for (object, bytes) in &measurement.other {
         eprintln!(
             "{}: {bytes} text bytes from unclassified {object}",
@@ -977,6 +1032,39 @@ pub(crate) fn measure(
         );
     }
     Ok(Ok(measurement))
+}
+
+/// Keep the section inventory and the existing map/object totals identical.
+/// The report may change a section's weight, never its source provenance.
+fn validate_data_sections(measurement: &Measurement) -> Result<(), String> {
+    let mut source = BTreeMap::<ObjectKey, i64>::new();
+    for ((image, object, section), size) in &measurement.data_sections {
+        if *size <= 0 || !is_data(section) {
+            return Err(format!(
+                "{image}/{object}: invalid source data section {section}"
+            ));
+        }
+        *source.entry((image.clone(), object.clone())).or_default() += size;
+    }
+    let mut total_source = 0;
+    let mut total_scaffold = 0;
+    for (key, bytes) in &measurement.objects {
+        if source.remove(key).unwrap_or_default() != bytes.data_source {
+            return Err(format!(
+                "{}/{}: source data sections do not add up",
+                key.0, key.1
+            ));
+        }
+        total_source += bytes.data_source;
+        total_scaffold += bytes.data_scaffold;
+    }
+    if !source.is_empty()
+        || total_source != measurement.data_source
+        || total_scaffold != measurement.data_scaffold
+    {
+        return Err("data section and object totals do not add up to the measurement".into());
+    }
+    Ok(())
 }
 
 /// A game's DONE in all six editions together, measured on its English
@@ -991,15 +1079,22 @@ pub(crate) fn measure_game(
         Err(reason) => return Ok(Err(reason)),
     };
     let mut editions = Vec::with_capacity(6);
+    let mut edition_credits = BTreeMap::new();
+    let mut edition_data = BTreeMap::new();
     for edition in target.editions() {
         let earned = if edition.id == target.id {
+            edition_credits.insert(edition.language(), english.credits.clone());
+            edition_data.insert(edition.language(), english.data_sections.clone());
             share_edition(&english, &english)
         } else {
             let measurement = match measure(root, edition)? {
                 Ok(measurement) => measurement,
                 Err(reason) => return Ok(Err(reason)),
             };
-            share_edition(&english, &measurement)
+            let earned = share_edition(&english, &measurement);
+            edition_credits.insert(edition.language(), measurement.credits);
+            edition_data.insert(edition.language(), measurement.data_sections);
+            earned
         };
         // The English build links every unit it credits: its share is its
         // own measurement, byte for byte.
@@ -1013,7 +1108,12 @@ pub(crate) fn measure_game(
         }
         editions.push((edition.language(), earned));
     }
-    Ok(Ok(Game { english, editions }))
+    Ok(Ok(Game {
+        english,
+        editions,
+        edition_credits,
+        edition_data,
+    }))
 }
 
 #[cfg(test)]
@@ -1170,6 +1270,59 @@ Linker script and memory map
         .unwrap();
         // DONE is exactly the credits, unit by unit.
         let credits = std::mem::take(&mut measurement.credits);
+        validate_data_sections(&measurement).unwrap();
+        let data_sections = std::mem::take(&mut measurement.data_sections);
+        let objects = std::mem::take(&mut measurement.objects);
+        assert_eq!(
+            data_sections,
+            BTreeMap::from([
+                (
+                    ("main".into(), "games/G/SRC/A.o".into(), ".rodata".into()),
+                    0x80
+                ),
+                (
+                    ("main".into(), "games/G/SRC/A.o".into(), ".data".into()),
+                    0x10
+                ),
+            ])
+        );
+        assert_eq!(
+            objects
+                .values()
+                .map(|object| object.executable)
+                .sum::<i64>(),
+            measurement.done.executable
+        );
+        assert_eq!(
+            objects
+                .values()
+                .map(|object| object.data_source)
+                .sum::<i64>(),
+            measurement.data_source
+        );
+        assert_eq!(
+            objects
+                .values()
+                .map(|object| object.data_scaffold)
+                .sum::<i64>(),
+            measurement.data_scaffold
+        );
+        assert_eq!(
+            objects[&("main".into(), "games/G/SRC/A.o".into())],
+            ObjectBytes {
+                executable: 0x100,
+                data_source: 0x90,
+                ..ObjectBytes::default()
+            }
+        );
+        assert_eq!(
+            objects[&("main".into(), "recon/tbs/raw/080001c0.o".into())].executable,
+            0x200
+        );
+        assert_eq!(
+            objects[&("36f".into(), "resource_36f_overlay.o".into())].executable,
+            0x600
+        );
         let mut sum = Counted::default();
         for credit in credits.values() {
             sum += *credit;
@@ -1239,14 +1392,127 @@ Linker script and memory map
                 // A's rodata and data come from source; the baserom range
                 // is scaffolding.
                 data_source: 0x80 + 0x10,
+                data_sections: BTreeMap::new(),
                 data_scaffold: 0x100,
                 names: Names::default(),
                 steered: 0x100,
                 uncredited: 0,
                 stray: 0,
                 credits: BTreeMap::new(),
+                objects: BTreeMap::new(),
             }
         );
+    }
+
+    #[test]
+    fn data_identity_keeps_partial_sections_images_and_localized_lengths_separate() {
+        let map = |output: &str, rows: &str| {
+            format!("Linker script and memory map\n{rows}").replace("OUT", output)
+        };
+        let english_main = map(
+            "out/tbs-en",
+            " \
+             .rodata 0x08000000 0x80 OUT/obj/games/G/SRC/A.o\n \
+             .data.values 0x03000000 0x10 OUT/obj/games/G/SRC/A.o\n \
+             .unidentified.08000080 0x08000080 0x20 OUT/obj/recon/tbs/raw/scaffold.o\n",
+        );
+        let english_overlay = map(
+            "out/tbs-en",
+            " \
+             .rodata 0x02000000 0x30 OUT/overlays/obj/games/G/SRC/FIELD/F.o\n",
+        );
+        let localized_main = map(
+            "out/tbs-ja",
+            " \
+             .rodata 0x08000010 0x18 OUT/obj/games/G/SRC/A.o\n \
+             .data.values 0x03000000 0x0 OUT/obj/games/G/SRC/A.o\n \
+             .data.other 0x03000000 0x10 OUT/obj/games/G/SRC/A.o\n \
+             .data.values 0x03000010 0x10 OUT/obj/recon/tbs/raw/scaffold.o\n \
+             .rodata 0x08000030 0x30 OUT/obj/games/G/SRC/FIELD/F.o\n",
+        );
+        let mut english = Measurement::default();
+        let mut localized = Measurement::default();
+        let mark = |_: &str| Ok(Mark::default());
+        tally(
+            &mut english,
+            &english_main,
+            "out/tbs-en",
+            MAIN_IMAGE,
+            &language,
+            &mark,
+        )
+        .unwrap();
+        tally(
+            &mut english,
+            &english_overlay,
+            "out/tbs-en",
+            "36f",
+            &language,
+            &mark,
+        )
+        .unwrap();
+        tally(
+            &mut localized,
+            &localized_main,
+            "out/tbs-ja",
+            MAIN_IMAGE,
+            &language,
+            &mark,
+        )
+        .unwrap();
+        validate_data_sections(&english).unwrap();
+        validate_data_sections(&localized).unwrap();
+        let key = |image: &str, object: &str, section: &str| {
+            (image.to_string(), object.to_string(), section.to_string())
+        };
+        assert_eq!(english.data_source, 0xc0);
+        assert_eq!(english.data_scaffold, 0x20);
+        assert_eq!(localized.data_source, 0x58);
+        assert_eq!(
+            localized.data_sections[&key("main", "games/G/SRC/A.o", ".rodata")],
+            0x18
+        );
+        assert!(!localized.data_sections.contains_key(&key(
+            "main",
+            "games/G/SRC/A.o",
+            ".data.values"
+        )));
+        assert!(!localized.data_sections.contains_key(&key(
+            "36f",
+            "games/G/SRC/FIELD/F.o",
+            ".rodata"
+        )));
+        // The smaller complete localized variant earns the English weight;
+        // another section, image, or scaffold cannot substitute for a missing one.
+        let earned: i64 = english
+            .data_sections
+            .iter()
+            .filter(|(key, _)| localized.data_sections.contains_key(*key))
+            .map(|(_, size)| size)
+            .sum();
+        assert_eq!(earned, 0x80);
+        localized
+            .data_sections
+            .insert(key("main", "games/G/SRC/A.o", ".rodata"), 0x19);
+        assert!(validate_data_sections(&localized).is_err());
+    }
+
+    #[test]
+    fn duplicate_source_data_placements_are_ambiguous_and_refused() {
+        let mut measurement = Measurement::default();
+        let map = "Linker script and memory map\n \
+             .rodata 0x08000000 0x20 out/tbs-en/obj/games/G/SRC/A.o\n \
+             .rodata 0x08000020 0x10 out/tbs-en/obj/games/G/SRC/A.o\n";
+        assert!(tally(
+            &mut measurement,
+            map,
+            "out/tbs-en",
+            MAIN_IMAGE,
+            &language,
+            &|_| Ok(Mark::default())
+        )
+        .unwrap_err()
+        .contains("duplicate placed data section .rodata"));
     }
 
     #[test]
@@ -1421,6 +1687,8 @@ Linker script and memory map
                 .map(|(language, units)| (*language, share(&english, units)))
                 .collect(),
             english,
+            edition_credits: BTreeMap::new(),
+            edition_data: BTreeMap::new(),
         };
         let bytes = |language: &str| {
             let edition = game.editions.iter().find(|(name, _)| *name == language);
@@ -2039,7 +2307,8 @@ void After(void) { }
         let from_source = ".text 0x08000030 0x20 OUT/obj/games/G/SRC/B.o";
         let overlay = "Linker script and memory map\n \
              .text 0x02000000 0x20 OUT/overlays/resource_001_overlay.o\n \
-             .text 0x02000020 0x40 OUT/obj/games/G/SRC/F.o\n";
+             .text 0x02000020 0x40 OUT/obj/games/G/SRC/F.o\n \
+             .rodata 0x02000060 0x18 OUT/obj/games/G/SRC/F.o\n";
         let built = [("001", overlay)];
         // Japanese still takes B from its scaffold.
         let japanese = main(
@@ -2060,6 +2329,18 @@ void After(void) { }
         std::fs::write(root.join("rom.sha1"), &digests).unwrap();
         let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
         let game = measure_game(root, target).unwrap().unwrap();
+        let data_key = (
+            "001".to_string(),
+            "games/G/SRC/F.o".to_string(),
+            ".rodata".to_string(),
+        );
+        assert_eq!(game.english.data_source, 0x18);
+        for language in ["ja", "en", "es", "fr", "it"] {
+            assert_eq!(game.edition_data[language][&data_key], 0x18);
+        }
+        // The old German overlay map and built file still exist, but its
+        // main image copies the scaffold. Neither code nor data earns credit.
+        assert!(game.edition_data["de"].is_empty());
         assert_eq!(game.english.done.executable, 0xc0);
         assert_eq!(
             game.editions

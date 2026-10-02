@@ -802,12 +802,6 @@ Func_080aa768:
 	.incbin "baserom.gba", 0x000a1664, 0x0000051c
 	.section .rom.000a24e0, "ax"
 	.incbin "baserom.gba", 0x000a24e0, 0x00001308
-	.section .rom.000a39a4, "ax"
-	.global DjinnMenu_DrawStatPreview
-	.type DjinnMenu_DrawStatPreview, %function
-	.thumb_func
-DjinnMenu_DrawStatPreview:
-	.incbin "baserom.gba", 0x000a39a4, 0x000007f0
 	.section .rom.000a432c, "ax"
 	.global FourObjectMotion_UpdateBottomRow
 	.type FourObjectMotion_UpdateBottomRow, %function

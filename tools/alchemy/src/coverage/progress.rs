@@ -6,9 +6,24 @@ use crate::coverage::jsnum::{commas, floor_percent};
 use crate::coverage::tree::root;
 use std::path::Path;
 
-const USAGE: &str = "usage: alchemy check progress [--target tbs-en|tla-en] [--check|--subject|--write-report|--self-test]\n\
+const USAGE: &str = "usage: alchemy check progress [--target tbs-en|tla-en] [--check|--subject|--write-report|--write-decomp-report|--self-test]\n\
 Reports each game's DONE in all six of its editions together, then each edition's share.\n\
---target names a game by its English build, which gives every byte count.";
+--target names a game by its English build, which supplies the code byte weights.\n\
+--write-decomp-report builds and compares all twelve editions, then exports protobuf reports.\n\
+The combined report exposes twelve versions named by game and flag, with no aggregate versions.\n\
+Individual tbs-ja through tla-it reports keep the build IDs for local inspection.\n\
+Code and initialized data use English byte weights in all twelve versions.\n\
+Data's denominator is the English .data, .rodata and unidentified section inventory.\n\
+An edition earns a source section's English weight only when its verified build links that\n\
+object and input section in the same image; localized sizes may differ. Missing sections,\n\
+unbuilt overlays and scaffolding earn nothing. BSS, packed code overlays and data found only\n\
+in another edition are excluded. Data measures section coverage, not whole-asset completion\n\
+or the edition's native byte total; the report category names the English weighting.\n\
+Treemap units follow placed map objects, split into C, FAKEMATCH, assembly and pending portions.\n\
+Existing source files have links; global padding deductions keep explicitly labeled accounting units.\n\
+Upload only out/reports/decomp/combined_report/report.pb as artifact combined_report.\n\
+decomp.dev splits it into the twelve named versions; choose The Broken Seal 🇯🇵 as the default.\n\
+The artifact contains only report.pb, with counts and no private inputs, game bytes or function claims.";
 
 /// The progress report as TSV rows of field and value.
 fn report_rows(report: &GameDone, target: &str) -> Vec<(&'static str, String)> {
@@ -241,7 +256,11 @@ fn command(argv: &[String]) -> Result<Option<(String, &str)>, String> {
                 };
             }
             "-h" | "--help" => return Ok(None),
-            flag @ ("--check" | "--subject" | "--write-report" | "--self-test") => {
+            flag @ ("--check"
+            | "--subject"
+            | "--write-report"
+            | "--write-decomp-report"
+            | "--self-test") => {
                 if !action.is_empty() {
                     return Err("choose only one progress action".into());
                 }
@@ -262,6 +281,9 @@ fn run(argv: &[String]) -> Result<String, String> {
         return Ok("self-test=ok metric=done-executable-byte-share-in-six-editions".into());
     }
     let root = root();
+    if action == "--write-decomp-report" {
+        return super::decomp::write(&root);
+    }
     if action == "--subject" {
         return crate::verify::verified_subject(&root);
     }
@@ -374,6 +396,8 @@ mod tests {
             ..Counted::default()
         };
         let game = Game {
+            edition_credits: std::collections::BTreeMap::new(),
+            edition_data: std::collections::BTreeMap::new(),
             english: Measurement {
                 raw: 300,
                 listings: 100,

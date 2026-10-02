@@ -21,7 +21,7 @@ Func_0200114c:
 	.global Func_02001154
 	.thumb_func
 Func_02001154:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_0200115c
 	.thumb_func
 Func_0200115c:

@@ -38,7 +38,7 @@ Func_080cf350:
 	bl Object_SetMode
 	ldr r1, .L_080cf3b0
 	adds r0, r6, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	movs r3, #128
 	lsls r3, r3, #7
 	strh r3, [r5, #6]

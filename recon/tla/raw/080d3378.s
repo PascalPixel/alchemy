@@ -29,7 +29,7 @@ Func_080d3378:
 	bl Object_SetMode
 	ldr r1, .L_080d33b8
 	adds r0, r6, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	b .L_080d33cc
 .L_080d33b8:
 	.4byte Data_080f085c
@@ -39,7 +39,7 @@ Func_080d3378:
 	bl Object_SetMode
 	ldr r1, .L_080d344c
 	adds r0, r6, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080d33cc:
 	cmp r5, #0
 	beq .L_080d33d8

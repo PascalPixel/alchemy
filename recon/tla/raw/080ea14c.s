@@ -234,7 +234,7 @@ Func_080ea14c:
 	bl Battle_WaitMode0
 	ldr r1, .L_080ea38c
 	ldr r0, [sp, #40]
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	movs r3, #232
 	ldr r5, .L_080ea374
 	lsls r3, r3, #5
@@ -677,7 +677,7 @@ Func_080ea14c:
 	bne .L_080ea69c
 	ldr r1, .L_080ea7b8
 	ldr r0, [sp, #44]
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080ea69c:
 	movs r5, #3
 	mov r3, r10

@@ -159,7 +159,7 @@ Func_080ddbd8:
 	bl Object_SetMode
 	adds r0, r7, #0
 	ldr r1, .L_080ddd9c
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	adds r0, r7, #0
 	movs r1, #1
 	bl ObjectDispatch_SetSingleChildField26Far

@@ -2,8 +2,14 @@
  * Battle effect 7: two mode-3 item-break anchors fly apart, then
  * twenty-four shards scatter from the scene centre at random speeds and
  * angles.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six prior successful objects retain every allocated byte and
+ * normalized call/pool operand; no new match or adoption is claimed.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
  */
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "SYSTEM.H"
 
 struct BattleEffectScene {
@@ -36,7 +42,6 @@ void Motion_SetTargetPositionFromMagnitudeAngle(
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 struct ScatterShard *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(void *object, const u8 *script);
 extern const u8 BattleFx_FragmentScript[];
 void Object_Destroy(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -75,7 +80,7 @@ void RunBattleEffect07(void)
     for (index = 0; index < 24; index++) {
         obj = SpawnShard(scene, &position);
         if (obj != 0) {
-            ObjectDispatch_InitializeFar(obj, BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_FragmentScript);
             obj->speed = Random16() + 0x20000;
             obj->lift = 0x20000;
             obj->flag = 0;

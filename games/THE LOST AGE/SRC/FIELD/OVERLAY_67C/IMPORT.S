@@ -105,7 +105,7 @@ Func_02003cc4:
 	.global Func_02003ccc
 	.thumb_func
 Func_02003ccc:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_02003cd4
 	.thumb_func
 Func_02003cd4:

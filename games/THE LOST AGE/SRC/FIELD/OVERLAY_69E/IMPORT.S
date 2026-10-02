@@ -113,7 +113,7 @@ ObjectDispatch_ApplyValueToChildren:
 	.global Func_02002820
 	.thumb_func
 Func_02002820:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_02002828
 	.thumb_func
 Func_02002828:

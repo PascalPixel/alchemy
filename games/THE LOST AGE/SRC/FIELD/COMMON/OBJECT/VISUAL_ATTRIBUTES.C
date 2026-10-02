@@ -1,4 +1,5 @@
 #include "OBJECT_RUNTIME.H"
+#include "OBJDISP.H"
 #include "FIELD_SPRITE.H"
 
 extern const u8 ObjectMotion_StepAngleScript[];
@@ -23,7 +24,7 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
 
     if (object != NULL) {
         object->action = angle;
-        Object_SetCallback(object, ObjectMotion_StepAngleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
         Battle_WaitMode0(wait);
     }
 }
@@ -36,7 +37,7 @@ void ObjectMotion_ArmCallbackAndRefresh(s32 object_id, s32 angle)
 
     if (object != NULL) {
         object->action = angle;
-        Object_SetCallback(object, ObjectMotion_StepAngleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
         Object_RefreshSelectorById(object_id);
     }
 }

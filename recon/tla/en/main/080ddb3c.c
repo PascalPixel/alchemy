@@ -1,4 +1,13 @@
+/*
+ * Canonical draft API context; no match or adoption is claimed.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six original incomplete-context compile failures remain.
+ * No missing view, declaration or physical symbol was supplied.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ */
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
@@ -66,7 +75,7 @@ void BattleFx_RunBurstParticles(void)
             p->values[2]
         );
         if (object != 0) {
-            ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleObjectScript);
             *((u8 *)object + 0x55) = 2;
         }
         WaitFrames((((u32)Random16() * 2) >> 16) + 2);

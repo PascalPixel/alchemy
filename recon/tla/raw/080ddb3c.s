@@ -45,7 +45,7 @@ Func_080ddb3c:
 	cmp r5, #0
 	beq .L_080ddba6
 	ldr r1, .L_080ddbd4
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	adds r2, r5, #0
 	adds r2, #85
 	movs r3, #2

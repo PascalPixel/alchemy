@@ -53,7 +53,7 @@ Func_0200145c:
 	.global Func_02001464
 	.thumb_func
 Func_02001464:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_0200146c
 	.thumb_func
 Func_0200146c:

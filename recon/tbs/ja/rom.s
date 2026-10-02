@@ -1242,18 +1242,6 @@ BattleFx_InitializeMode12:
 	.incbin "baserom.gba", 0x000d85e8, 0x00000f50
 	.section .rom.000d9972, "ax"
 	.incbin "baserom.gba", 0x000d9972, 0x00000002
-	.section .rom.000daaa0, "ax"
-	.global BattlePres_RunBeamSequence
-	.type BattlePres_RunBeamSequence, %function
-	.thumb_func
-BattlePres_RunBeamSequence:
-	.incbin "baserom.gba", 0x000daaa0, 0x00000604
-	.section .rom.000db0a4, "ax"
-	.global Unnamed_080e40a4
-	.type Unnamed_080e40a4, %function
-	.thumb_func
-Unnamed_080e40a4:
-	.incbin "baserom.gba", 0x000db0a4, 0x0000064c
 	.section .rom.000de338, "ax"
 	.incbin "baserom.gba", 0x000de338, 0x000000cc
 	.section .rom.000de404, "ax"
@@ -1747,7 +1735,19 @@ RisingWall_Bg2Shifts:
 	.incbin "baserom.gba", 0x000e5da6, 0x00000006
 	.global RisingWall_LateRockColumns
 RisingWall_LateRockColumns:
-	.incbin "baserom.gba", 0x000e5dac, 0x00000024
+	.incbin "baserom.gba", 0x000e5dac, 0x00000006
+	.global BeamSequence_CellWidths
+BeamSequence_CellWidths:
+	.incbin "baserom.gba", 0x000e5db2, 0x00000006
+	.global BeamSequence_CellHeights
+BeamSequence_CellHeights:
+	.incbin "baserom.gba", 0x000e5db8, 0x00000006
+	.global BeamSequence_CellSheetOffsets
+BeamSequence_CellSheetOffsets:
+	.incbin "baserom.gba", 0x000e5dbe, 0x0000000c
+	.global BeamSequence_CellReaches
+BeamSequence_CellReaches:
+	.incbin "baserom.gba", 0x000e5dca, 0x00000006
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:
 	.incbin "baserom.gba", 0x000e5dd0, 0x00000004

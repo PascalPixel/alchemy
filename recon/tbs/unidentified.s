@@ -1508,17 +1508,17 @@ RisingWall_Bg2Shifts:
 	.global RisingWall_LateRockColumns
 RisingWall_LateRockColumns:
 	.incbin "baserom.gba", 0x000eedac, 0x00000006
-	.global Data_080eedb2
-Data_080eedb2:
+	.global BeamSequence_CellWidths
+BeamSequence_CellWidths:
 	.incbin "baserom.gba", 0x000eedb2, 0x00000006
-	.global Data_080eedb8
-Data_080eedb8:
+	.global BeamSequence_CellHeights
+BeamSequence_CellHeights:
 	.incbin "baserom.gba", 0x000eedb8, 0x00000006
-	.global Data_080eedbe
-Data_080eedbe:
+	.global BeamSequence_CellSheetOffsets
+BeamSequence_CellSheetOffsets:
 	.incbin "baserom.gba", 0x000eedbe, 0x0000000c
-	.global Data_080eedca
-Data_080eedca:
+	.global BeamSequence_CellReaches
+BeamSequence_CellReaches:
 	.incbin "baserom.gba", 0x000eedca, 0x00000006
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:

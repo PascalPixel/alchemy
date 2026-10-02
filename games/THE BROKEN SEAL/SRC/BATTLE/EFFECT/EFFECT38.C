@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
@@ -53,7 +54,6 @@ struct BurstParticleVector {
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
-void ObjectDispatch_InitializeFar(void *, const void *);
 extern const u8 BattleFx_BurstParticleObjectScript[];
 
 struct BurstParticleVisual {
@@ -127,7 +127,6 @@ struct EffectChild {
 };
 
 void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
-void ObjectDispatch_InitializeFar(void *object, const void *callback);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
@@ -224,7 +223,7 @@ void BattleFx_RunBurstParticles(void)
             p->values[2]
         );
         if (object != 0) {
-            ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleObjectScript);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleObjectScript);
             *((u8 *)object + 0x55) = 2;
         }
         WaitFrames((((u32)Random16() * 2) >> 16) + 2);
@@ -288,7 +287,7 @@ void BattleEffect_SpawnBurstParticleField(void)
             object->mode = 0;
             Animation_ApplyChildValuesFar(object, 11);
             Object_SetMode(object, 7);
-            ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript + 4);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)(BattleFx_CommonParticleScript + 4));
             ObjectDispatch_SetSingleChildField26Far(object, 1);
 
             position[0] = state->x;
@@ -330,7 +329,7 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     BattleEffect_InitializeSharedScene();
     *(void **)((u8 *)main_object + 0x68) = child;
-    ObjectDispatch_InitializeFar(main_object, BattleFx_CommonParticleScript + 12);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)main_object, (u32)(BattleFx_CommonParticleScript + 12));
 
     x = scene->x;
     position[0] = x;

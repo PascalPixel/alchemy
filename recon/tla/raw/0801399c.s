@@ -82,7 +82,7 @@ Func_0801399c:
 .L_08013a36:
 	movs r0, #200
 	lsls r0, r0, #4
-	bl Func_08014840
+	bl Scheduler_RunCallbacksBeforeBoundary
 	ldr r3, .L_08013a8c
 	ldr r1, .L_08013a90
 	ldrh r2, [r3]

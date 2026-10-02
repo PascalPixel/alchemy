@@ -1954,7 +1954,7 @@ Func_08173aac:
 	adds r0, r0, r2
 	mov r3, r9
 	str r0, [r3, #4]
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	movs r3, #168
 	lsls r3, r3, #5
 	adds r3, #85
@@ -3517,7 +3517,7 @@ Func_08173aac:
 	movs r4, #0
 	mov r8, r4
 .L_0817568a:
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	bl Random16
 	movs r3, #3
 	ldr r5, [sp, #48]

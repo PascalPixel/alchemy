@@ -10239,11 +10239,11 @@ msgctxt "message"
 msgid "02557"
 msgstr "Vincite"
 
-msgctxt "message"
+msgctxt "MsgSlotsChangeBet"
 msgid "02558"
 msgstr "Cambiare valore: premi su e giù"
 
-msgctxt "message"
+msgctxt "MsgSlotsControls"
 msgid "02559"
 msgstr "{button_icon:1}:Aziona      {button_icon:2}:Esci"
 
@@ -12971,7 +12971,7 @@ msgctxt "MsgPriceHeading"
 msgid "03240"
 msgstr "Costo"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03241"
 msgstr "Non attivabile"
 
@@ -13011,7 +13011,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03250"
 msgstr "Non puoi riporre strum.!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03251"
 msgstr "ATT"
 
@@ -43635,12 +43635,12 @@ msgctxt "message"
 msgid "10906"
 msgstr "Parameter"
 
-msgctxt "message"
+msgctxt "MsgDebugSampleName"
 msgid "10907"
 msgstr "Ha hi fu he ho"
 
 #, alchemy-null
-msgctxt "message"
+msgctxt "MsgDebugSecondForm"
 msgid "10908"
 msgstr ""
 

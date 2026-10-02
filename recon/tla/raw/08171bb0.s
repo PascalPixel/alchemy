@@ -1432,7 +1432,7 @@ Func_08171bb0:
 	asrs r0, r0, #16
 	movs r5, #64
 	subs r5, r5, r0
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	mov r2, r8
 	lsls r3, r2, #3
 	subs r5, r5, r3
@@ -1810,7 +1810,7 @@ Func_08171bb0:
 	lsls r6, r6, #9
 	lsls r5, r2, #11
 .L_08172992:
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	ldr r4, [sp, #92]
 	ldr r3, [r4, #4]
 	cmp r3, #1

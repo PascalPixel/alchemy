@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
@@ -7,19 +8,13 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "MOTION_OBJECT.H"
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
 
 struct Point2D {
     s32 x;
     s32 y;
-};
-
-struct BattleObject {
-    u8 unknown_00[40];
-    s32 unknown_28;
-    u8 unknown_2c[28];
-    s32 unknown_48;
 };
 
 extern u8 gWorkSlot[];
@@ -36,15 +31,15 @@ void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
+struct BattleEffectTargetArgument;
+void BattleFx_SelectLivingTargets(struct BattleEffectTargetArgument *argument);
 void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-struct BattleObject **GetBattleObjectSlotFar(s32 id);
-void ResourceObject_ReleaseFar(void *object);
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 extern u8 gBattleFxWork[];
@@ -167,7 +162,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
     for (i = 0; i != 512; i++)
         gDrops[i].variant = -1;
     if (mode == 0) {
-        BattleFx_SelectLivingTargets(work->effect);
+        BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
         WaitFrames(1);
         BattleFx_SpawnObjects(8, 377, 2);
     }
@@ -410,7 +405,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
     if (mode == 0) {
         BattleEffect_RunImpactBurst(3, focus.x, focus.y);
         for (i = 0; i != 8; i++)
-            ResourceObject_ReleaseFar(work->objects[i]);
+            ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
     BattleFx_EndCanvasLayer();
 }
@@ -481,7 +476,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
             life += 7;
         }
         sparks = (struct EffectStep *)gMapCellBuffer;
-        BattleFx_SelectLivingTargets(work->effect);
+        BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
         WaitFrames(1);
         BattleFx_SpawnObjects(12, 380, 2);
 
@@ -594,11 +589,11 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
                         s32 phase = frame % 12;
 
                         if (phase == 0) {
-                            struct BattleObject *object = *GetBattleObjectSlotFar(work->effect->actors[k]);
+                            struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
                             ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, -1, 0);
-                            object->unknown_28 = 0x48000;
-                            object->unknown_48 = 0xab85;
+                            object->velocity_y = 0x48000;
+                            object->vertical_motion_strength = 0xab85;
                         }
                         if (phase == 6)
                             ObjectGroup_UpdateMembers(work->effect->actors[k], 0, 5, -1, 0);
@@ -614,7 +609,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
         Runtime_ReleaseHeapBlock(46);
         BattleEffect_RunImpactBurst(1, focus.x, focus.y);
         for (k = 0; k != 12; k++)
-            ResourceObject_ReleaseFar(((void **)((u8 *)work + 0x77d8))[k]);
+            ResourceObject_ReleaseFar((struct ResourceObjectWork *)((void **)((u8 *)work + 0x77d8))[k]);
     }
     BattleFx_EndCanvasLayer();
 }

@@ -34,7 +34,7 @@ Func_080de154:
 	movs r3, #20
 	strh r3, [r2]
 	ldr r1, .L_080de20c
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080de19a:
 	movs r0, #128
 	lsls r0, r0, #9
@@ -54,7 +54,7 @@ Func_080de154:
 	cmp r6, #0
 	beq .L_080de1f4
 	ldr r1, .L_080de210
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	bl Random16
 	adds r2, r6, #0
 	adds r2, #85

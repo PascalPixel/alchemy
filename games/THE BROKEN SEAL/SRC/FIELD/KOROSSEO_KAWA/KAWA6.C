@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -101,7 +102,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 }
 
 u8 *Runtime_AllocateBlock();
-s32 Runtime_BumpAllocateAlternatePool();
 s32 Resource_FindFreeEntry();
 void Runtime_BumpFree();
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
@@ -186,7 +186,7 @@ void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mo
     s32 pal;
 
     desc = Runtime_AllocateBlock(59, 0x7170);
-    handle = Runtime_BumpAllocateAlternatePool(512);
+    handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
     *(u16 *)(desc + 222) = (u16)first;
     *(u16 *)(desc + 224) = (u16)second;

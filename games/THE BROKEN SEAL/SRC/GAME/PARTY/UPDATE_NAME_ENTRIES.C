@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
@@ -19,7 +20,6 @@ void Party_Do(void *);
 #define APPEND_NAME_SPACE 0
 #endif
 
-void *Runtime_BumpAllocateAlternatePool(s32);
 void Runtime_BumpFree(void *block);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 s32 SerialRuntime_BeginTransferA(void *data, s32 size);
@@ -106,7 +106,7 @@ s32 LinkBattle_SendParty(void)
     u16 owners[8];
 
     size = 340;
-    buffer = Runtime_BumpAllocateAlternatePool(size);
+    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
     mark = 0xff;
     work = gBattleWork;
     for (i = 7; i >= 0; i--)
@@ -130,7 +130,7 @@ s32 LinkBattle_SendParty(void)
     }
     size = 320;
     Runtime_BumpFree(buffer);
-    buffer = Runtime_BumpAllocateAlternatePool(size);
+    buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
     /* FAKEMATCH: a one-pass loop is a sched2 barrier, so the list pointer's
      * copy is emitted before the count's address as in the reference */
     do {

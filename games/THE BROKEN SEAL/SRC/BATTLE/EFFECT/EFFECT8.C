@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 #include "DMA.H"
@@ -13,7 +14,6 @@ void BattleEffect_RunCirclingFallingScene(s32 *);
 void BattleEffect_RunEmberColumns(s32 *);
 void BattleFx_RunObjectRow(s32 *);
 void BattleEffect_RunStagedParticles(s32 *);
-void BattleEffect_RunDitherDissolveScene(s32 *);
 void BattleFx_InitializeMode6(s32 *);
 void BattleFx_RenderAnimationMode0(s32 arg0);
 void Unnamed_080d1714(s32 *);
@@ -55,7 +55,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleEffect_RunStagedParticles(arg0);
             break;
         case 5:
-            BattleEffect_RunDitherDissolveScene(arg0);
+            BattleEffect_RunDitherDissolveScene((struct BattleEffectArgument *)arg0);
             break;
         case 6:
             BattleFx_InitializeMode6(arg0);

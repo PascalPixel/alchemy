@@ -29,7 +29,7 @@ WaitFrames:
 	movs r0, #144
 	strb r1, [r5]
 	lsls r0, r0, #3
-	bl Func_080147d8
+	bl Scheduler_RunCallbacksByKey
 	movs r3, #0
 	strb r3, [r5]
 	ldr r3, .L_0801366c
@@ -178,8 +178,8 @@ WaitFrames:
 	movs r2, #1
 	strb r2, [r5]
 .L_080136a8:
-	bl Func_080134b0
-	bl Func_080138b4
+	bl System_WaitForFrameInterrupt
+	bl Input_UpdateKeyRepeatAndDirection
 	ldr r2, .L_080137cc
 	ldrb r3, [r2]
 	cmp r3, #0
@@ -224,10 +224,10 @@ WaitFrames:
 	strh r3, [r1]
 	mov r3, r10
 	strh r3, [r2]
-	bl Func_080134b0
+	bl System_WaitForFrameInterrupt
 	movs r0, #80
 	bl Runtime_ReleaseHeapBlock
-	bl Func_08013ffc
+	bl Graphics_ResetFrameState
 	ldr r2, .L_080137e8
 	ldr r3, [r2]
 	adds r3, #1
@@ -236,12 +236,12 @@ WaitFrames:
 	ldr r3, [r2]
 	adds r3, #1
 	str r3, [r2]
-	bl Func_080138b4
+	bl Input_UpdateKeyRepeatAndDirection
 	ldr r3, .L_080137f0
 	ldrh r3, [r3]
 	cmp r3, #0
 	beq .L_08013740
-	bl Func_08016430
+	bl SerialRuntime_PollStatus
 	ldr r2, .L_080137f4
 	ldrb r3, [r2]
 	cmp r3, #0
@@ -284,7 +284,7 @@ WaitFrames:
 	movs r5, #9
 .L_0801377e:
 	subs r5, #1
-	bl Func_080134b0
+	bl System_WaitForFrameInterrupt
 	cmp r5, #0
 	bge .L_0801377e
 	mov r1, r11
@@ -293,7 +293,7 @@ WaitFrames:
 	beq .L_0801379c
 	ldr r5, .L_080137dc
 .L_08013792:
-	bl Func_080134b0
+	bl System_WaitForFrameInterrupt
 	ldr r3, [r5]
 	cmp r3, #0
 	bne .L_08013792
@@ -352,7 +352,7 @@ WaitFrames:
 	.4byte 0x04000132
 .L_08013808:
 	subs r5, #1
-	bl Func_080134b0
+	bl System_WaitForFrameInterrupt
 	cmp r5, #0
 	bge .L_08013808
 	mov r1, r11
@@ -361,7 +361,7 @@ WaitFrames:
 	beq .L_08013826
 	ldr r5, .L_08013890
 .L_0801381c:
-	bl Func_080134b0
+	bl System_WaitForFrameInterrupt
 	ldr r3, [r5]
 	cmp r3, #0
 	bne .L_0801381c

@@ -1,5 +1,5 @@
 #include "EDITION.H"
-#include "SCRIPT_OPERANDS.H"
+#include "SCRIPT.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"

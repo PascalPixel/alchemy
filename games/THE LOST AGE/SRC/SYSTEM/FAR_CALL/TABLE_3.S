@@ -32,8 +32,40 @@ Func_080201a8:
 	.global Func_080201b0
 	.thumb_func
 Func_080201b0:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Map_CopyCellsRect
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Map_CopyCellsRect
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Map_CopyCellsRect
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Map_CopyCellsRect
+	.else
 	overlay_veneer Func_0802cea0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_080201b8
 	.thumb_func
 Func_080201b8:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer Map_CopyCellAttributeRect
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Map_CopyCellAttributeRect
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer Map_CopyCellAttributeRect
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Map_CopyCellAttributeRect
+	.else
 	overlay_veneer Func_0802ce4c
+	.endif
+	.endif
+	.endif
+	.endif

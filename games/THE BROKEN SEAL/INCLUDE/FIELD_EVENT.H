@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
+#include "MAPCOPY.H"
+
 #include "LAYOUT_GUARD.H"
 
 /*
@@ -319,6 +321,7 @@ void Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
 void ObjectGroup_SetChildValue(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
 void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+void Engine_ObjectCommitPosition(struct FieldActor *object);
 void Engine_MapAnimateCells(const u16 *steps, s32 dest_x, s32 dest_y);
 void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 void Engine_ItemLoadIcon(s32 item);
@@ -380,8 +383,6 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
 void Object_SetModeById(s32 actor, s32 animation);
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
-                               s32 dest_y);
 void Audio_PlayCue(s32 cue);
 #endif
 

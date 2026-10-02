@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -13,7 +14,6 @@ void Audio_PlayCue(s32);
 
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
-void ObjectDispatch_InitializeFar(struct ObjectRuntime *, const void *);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Battle_WaitMode0(s32);
@@ -295,7 +295,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         object->movement_state = 0;
         Object_SetMode(object, 2);
         ObjectMotion_OffsetPositionAndResetMotion(arg0, arg1, arg2);
-        ObjectDispatch_InitializeFar(object, &ObjectMotion_LaunchScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)&ObjectMotion_LaunchScript);
         object->action = arg3;
     }
 }
@@ -462,8 +462,8 @@ void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
         if (variant > 3) {
             variant = 3;
         }
-        ObjectDispatch_InitializeFar(object,
-            ObjectMotion_VariantScripts + ((3 - variant) << 7));
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+            (u32)(ObjectMotion_VariantScripts + ((3 - variant) << 7)));
     }
 }
 
@@ -517,11 +517,11 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
         switch (Random16() & 1) {
         case 1:
             Object_SetMode(object, 2);
-            ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleScriptA);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleScriptA);
             break;
         default:
             Object_SetMode(object, 1);
-            ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleScriptB);
+            ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_BurstParticleScriptB);
             break;
         }
 

@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Func_08023220
 	.thumb_func
 Func_08023220:
@@ -28,7 +29,7 @@ Func_08023220:
 	lsls r3, r3, #4
 	adds r3, #255
 	ands r7, r3
-	bl Func_080231a4
+	bl ObjectDispatch_FindFreeObject
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_0802325c
@@ -43,7 +44,7 @@ Func_08023220:
 	b .L_0802330a
 .L_0802326a:
 	adds r0, r7, #0
-	bl Func_08022d40
+	bl ResourceObject_Create
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0802328e
@@ -98,7 +99,7 @@ Func_08023220:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	adds r0, r7, #0
-	bl Func_08022d40
+	bl ResourceObject_Create
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_080232fa
@@ -114,7 +115,7 @@ Func_08023220:
 	mov r8, r2
 .L_080232fa:
 	adds r0, r7, #1
-	bl Func_08022d40
+	bl ResourceObject_Create
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0802330a

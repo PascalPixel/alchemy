@@ -295,7 +295,7 @@ Func_080d82e0:
 	strh r3, [r2]
 	adds r0, r6, #0
 	ldr r1, .L_080d85b4
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080d857c:
 	cmp r7, #7
 	bgt .L_080d8594

@@ -113,7 +113,7 @@ Func_08164cc4:
 	adds r6, #126
 .L_08164da4:
 	adds r0, r6, #0
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	ldr r1, [sp, #60]
 	ldr r3, [r1]
 	str r0, [r3, r5]

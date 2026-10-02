@@ -12,7 +12,7 @@ Func_080200c0:
 	.global Object_Destroy
 	.thumb_func
 Object_Destroy:
-	overlay_veneer Func_080231c8
+	overlay_veneer ObjectDispatch_Release
 	.global ObjectDispatch_SetChildField12Far
 	.thumb_func
 ObjectDispatch_SetChildField12Far:

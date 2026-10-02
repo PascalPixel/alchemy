@@ -95,7 +95,7 @@ Func_080df6f4:
 	cmp r6, #0
 	beq .L_080df7ec
 	ldr r1, .L_080df81c
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	bl Random16
 	mov r3, r9
 	adds r2, r6, #0

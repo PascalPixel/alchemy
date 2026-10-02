@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
@@ -87,7 +88,6 @@ u32 Random16(void);
 extern u8 gGameState[];
 
 /* battle/presentation/list/units.c */
-u8 *Runtime_BumpAllocateAlternatePool(s32 unit_id);
 
 struct BattlePresentationUnitEntry {
     u16 unit_id;
@@ -246,8 +246,8 @@ s32 BattleEscape_CheckSuccess(void)
 s32 BattlePres_BuildUnitEntries(
     struct BattlePresentationUnitEntry *entries)
 {
-    u16 *excluded_units = Runtime_BumpAllocateAlternatePool(17);
-    u16 *unit_ids = Runtime_BumpAllocateAlternatePool(9);
+    u16 *excluded_units = (u16 *)Runtime_BumpAllocateAlternatePool(17);
+    u16 *unit_ids = (u16 *)Runtime_BumpAllocateAlternatePool(9);
     s32 unit_count = BattleParty_ListLivingUnits(1, unit_ids);
     s32 excluded_count = 0;
     s32 entry_count = 0;

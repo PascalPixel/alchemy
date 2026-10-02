@@ -6,8 +6,8 @@
 //!
 //! DONE counts a game's six editions together, so 100% means every language
 //! builds all its code from source. The English build gives each credited
-//! object's bytes and the executable total E. An edition earns an object's
-//! English bytes only when its own verified build links that object from
+//! function's bytes and the executable total E. An edition earns a C function's
+//! English bytes only when its own verified build links that definition from
 //! source in the same image: the main image, or the same code overlay built
 //! from source in that edition. DONE is the sum over the six editions out of
 //! 6 × E, and a game is published only while all six builds are verified.
@@ -21,10 +21,11 @@ use sha1::{Digest, Sha1};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
-/// One object in one image of a build: the image (`main`, or a code
-/// overlay's resource id such as `36f`) and the object's path under `obj/`
-/// or its compiler-library member, the same in every edition's build.
-pub(crate) type Unit = (String, String);
+/// One source contribution in one image: its image and object path, and
+/// for C, the actual function definition. Assembly and library members keep
+/// their existing whole-object identity. C names stay object-scoped so a
+/// same-name static helper in another module cannot earn the function.
+pub(crate) type Unit = (String, String, Option<String>);
 
 /// The image every build links first; the others are its code overlays.
 pub(crate) const MAIN_IMAGE: &str = "main";
@@ -179,17 +180,7 @@ fn source_mark(root: &Path, target: DecompTarget, stem: &str) -> Result<Mark, St
 /// The bytes of `names` in one object's text section of `size` bytes: each
 /// function runs to the next function or the section end, including its pool.
 /// Section offsets are local: unrelated .text.* sections must never mix.
-fn function_bytes(
-    object: &str,
-    section_name: &str,
-    names: &std::collections::BTreeSet<String>,
-    size: i64,
-) -> Result<i64, String> {
-    let bytes =
-        std::fs::read(object).map_err(|error| format!("{object}: steering extent: {error}"))?;
-    function_bytes_from_object(&bytes, section_name, names, size)
-        .map_err(|error| format!("{object}: {error}"))
-}
+#[cfg(test)]
 fn function_bytes_from_object(
     bytes: &[u8],
     section_name: &str,
@@ -200,11 +191,31 @@ fn function_bytes_from_object(
     Ok(function_spans(&symbols, names, size))
 }
 
+#[derive(Debug)]
+struct FunctionSymbol<'a> {
+    offset: i64,
+    size: u64,
+    name: &'a str,
+    public: bool,
+}
+
+#[cfg(test)]
 fn section_function_symbols<'a>(
     bytes: &'a [u8],
     section_name: &str,
     size: i64,
 ) -> Result<Vec<(i64, &'a str)>, String> {
+    Ok(section_function_definitions(bytes, section_name, size)?
+        .into_iter()
+        .map(|symbol| (symbol.offset, symbol.name))
+        .collect())
+}
+
+fn section_function_definitions<'a>(
+    bytes: &'a [u8],
+    section_name: &str,
+    size: i64,
+) -> Result<Vec<FunctionSymbol<'a>>, String> {
     let file = object::File::parse(bytes).map_err(|error| error.to_string())?;
     let section = file
         .section_by_name(section_name)
@@ -215,12 +226,104 @@ fn section_function_symbols<'a>(
     let mut symbols = file.symbols().filter(|symbol| symbol.section_index() == Some(section.index()) && (
         symbol.kind() == SymbolKind::Text || matches!(symbol.flags(), object::SymbolFlags::Elf { st_info, .. } if st_info & 0xf == 13)
     ))
-        .filter_map(|symbol| symbol.name().ok().map(|name| ((symbol.address() & !1) as i64, name)))
+        .filter_map(|symbol| symbol.name().ok().map(|name| FunctionSymbol {
+            offset: (symbol.address() & !1) as i64,
+            size: symbol.size(),
+            name,
+            public: symbol.is_global(),
+        }))
         .collect::<Vec<_>>();
-    symbols.sort_by_key(|(address, _)| *address);
+    symbols.sort_by_key(|symbol| symbol.offset);
     Ok(symbols)
 }
 
+/// The C definitions in a placed section, with their complete spans including
+/// pools and alignment through the next function or section end. A positive
+/// C section without usable definition metadata cannot earn object credit.
+#[derive(Debug, PartialEq, Eq)]
+struct CFunction {
+    offset: i64,
+    bytes: i64,
+    name: String,
+    /// Compiler-local and exported names of the same physical definition.
+    names: BTreeSet<String>,
+}
+
+fn placed_c_functions(placed: &Placed<'_>) -> Result<Vec<CFunction>, String> {
+    let bytes = std::fs::read(placed.object)
+        .map_err(|error| format!("{}: function metadata: {error}", placed.object))?;
+    c_functions_from_object(&bytes, placed.name, placed.size)
+        .map_err(|error| format!("{}: {error}", placed.object))
+}
+
+fn c_functions_from_object(
+    bytes: &[u8],
+    section: &str,
+    size: i64,
+) -> Result<Vec<CFunction>, String> {
+    let symbols = section_function_definitions(bytes, section, size)?;
+    if symbols.first().map(|symbol| symbol.offset) != Some(0) {
+        return Err(format!(
+            "{section}: missing C function definition at section start"
+        ));
+    }
+    let mut functions = Vec::with_capacity(symbols.len());
+    let mut index = 0;
+    while index < symbols.len() {
+        let first = &symbols[index];
+        let after = symbols[index..]
+            .iter()
+            .position(|symbol| symbol.offset != first.offset)
+            .map_or(symbols.len(), |offset| index + offset);
+        let group = &symbols[index..after];
+        let end = symbols.get(after).map_or(size, |symbol| symbol.offset);
+        let span = end - first.offset;
+        if first.offset < 0
+            || end > size
+            || span <= 0
+            || group
+                .iter()
+                .any(|symbol| symbol.name.is_empty() || symbol.size > span as u64)
+        {
+            return Err(format!(
+                "{section}: ambiguous C function extent for {}",
+                first.name
+            ));
+        }
+        // GCC's nested definition has a local assembler name and can also
+        // export one public name for its same body. It is one extent, not two
+        // C functions. Only identical nonzero symbol extents and one public
+        // identity are usable; conflicting public definitions stay refused.
+        let definition = if group.len() == 1 {
+            first
+        } else {
+            let public = group
+                .iter()
+                .filter(|symbol| symbol.public)
+                .collect::<Vec<_>>();
+            if first.size == 0
+                || group.iter().any(|symbol| symbol.size != first.size)
+                || public.len() != 1
+            {
+                return Err(format!(
+                    "{section}: ambiguous C function extent for {}",
+                    first.name
+                ));
+            }
+            public[0]
+        };
+        functions.push(CFunction {
+            offset: first.offset,
+            bytes: span,
+            name: definition.name.to_string(),
+            names: group.iter().map(|symbol| symbol.name.to_string()).collect(),
+        });
+        index = after;
+    }
+    Ok(functions)
+}
+
+#[cfg(test)]
 /// Sum the spans of `names` among `symbols`, sorted by offset in a section
 /// of `size` bytes.
 fn function_spans(
@@ -282,28 +385,35 @@ pub(crate) fn uncredited_spans(nm: &str) -> Vec<(i64, i64)> {
 fn discredit(measurement: &mut Measurement, placed: &[(i64, i64, Unit)], spans: &[(i64, i64)]) {
     for (start, bytes) in spans {
         measurement.uncredited += bytes;
-        let Some(credit) = placed
-            .iter()
-            .find(|(address, size, _)| (*address..address + size).contains(start))
-            .and_then(|(_, _, unit)| measurement.credits.get_mut(unit))
-        else {
-            measurement.stray += bytes;
-            continue;
-        };
-        credit.uncredited += bytes;
-        let mut left = *bytes;
-        let done = &mut measurement.done;
-        for (unit, total) in [
-            (&mut credit.done.game_asm, &mut done.game_asm),
-            (&mut credit.done.common_asm, &mut done.common_asm),
-            (&mut credit.done.game_c, &mut done.game_c),
-            (&mut credit.done.common_c, &mut done.common_c),
-        ] {
-            let taken = left.min(*unit);
-            *unit -= taken;
-            *total -= taken;
-            left -= taken;
+        let mut stray = *bytes;
+        for (address, size, unit) in placed {
+            let overlap = (start + bytes).min(address + size) - start.max(address);
+            if overlap <= 0 {
+                continue;
+            }
+            let Some(credit) = measurement.credits.get_mut(unit) else {
+                continue;
+            };
+            stray -= overlap;
+            credit.uncredited += overlap;
+            let mut left = overlap;
+            let done = &mut measurement.done;
+            for (part, total) in [
+                (&mut credit.done.game_asm, &mut done.game_asm),
+                (&mut credit.done.common_asm, &mut done.common_asm),
+                (&mut credit.done.game_c, &mut done.game_c),
+                (&mut credit.done.common_c, &mut done.common_c),
+            ] {
+                let taken = left.min(*part);
+                *part -= taken;
+                *total -= taken;
+                left -= taken;
+            }
+            let steered = overlap.min(credit.steered);
+            credit.steered -= steered;
+            measurement.steered -= steered;
         }
+        measurement.stray += stray;
     }
 }
 
@@ -567,16 +677,30 @@ fn tally(
         let mut credit = Counted::default();
         match origin(object, output, overlay, source)? {
             origin @ (Origin::CommonC | Origin::GameC) => {
-                if origin == Origin::CommonC {
-                    credit.done.common_c = size;
-                } else {
-                    credit.done.game_c = size;
+                let object_name = unit_object(object, output, overlay)
+                    .ok_or_else(|| format!("{object}: credited outside the build directory"))?;
+                let steered = marked()?.steered;
+                for function in placed_c_functions(&placed)? {
+                    let bytes = function.bytes;
+                    let mut credit = Counted::default();
+                    if origin == Origin::CommonC {
+                        credit.done.common_c = bytes;
+                    } else {
+                        credit.done.game_c = bytes;
+                    }
+                    credit.steered = match &steered {
+                        Steered::None => 0,
+                        Steered::Whole => bytes,
+                        Steered::Functions(names) if !names.is_disjoint(&function.names) => bytes,
+                        Steered::Functions(_) => 0,
+                    };
+                    let unit = (image.to_string(), object_name.clone(), Some(function.name));
+                    measurement.done += credit.done;
+                    measurement.steered += credit.steered;
+                    *measurement.credits.entry(unit.clone()).or_default() += credit;
+                    credited.push((placed.address + function.offset, bytes, unit));
                 }
-                credit.steered = match marked()?.steered {
-                    Steered::None => 0,
-                    Steered::Whole => size,
-                    Steered::Functions(names) => function_bytes(object, name, &names, size)?,
-                };
+                continue;
             }
             origin @ (Origin::CommonAsm | Origin::GameAsm) => {
                 if origin == Origin::CommonAsm {
@@ -616,6 +740,7 @@ fn tally(
             image.to_owned(),
             unit_object(object, output, overlay)
                 .ok_or_else(|| format!("{object}: credited outside the build directory"))?,
+            None,
         );
         measurement.done += credit.done;
         measurement.library += credit.library;
@@ -637,14 +762,21 @@ fn links(
     let overlay = image != MAIN_IMAGE;
     let mut units = BTreeSet::new();
     for placed in sections(map).into_iter().filter(is_text) {
-        if matches!(
-            origin(placed.object, output, overlay, source)?,
-            Origin::Raw | Origin::Listing | Origin::Other
-        ) {
-            continue;
-        }
-        if let Some(object) = unit_object(placed.object, output, overlay) {
-            units.insert((image.to_owned(), object));
+        match origin(placed.object, output, overlay, source)? {
+            Origin::Raw | Origin::Listing | Origin::Other => continue,
+            Origin::CommonC | Origin::GameC => {
+                let object = unit_object(placed.object, output, overlay).ok_or_else(|| {
+                    format!("{}: credited outside the build directory", placed.object)
+                })?;
+                for function in placed_c_functions(&placed)? {
+                    units.insert((image.to_string(), object.clone(), Some(function.name)));
+                }
+            }
+            _ => {
+                if let Some(object) = unit_object(placed.object, output, overlay) {
+                    units.insert((image.to_owned(), object, None));
+                }
+            }
         }
     }
     Ok(units)
@@ -959,6 +1091,43 @@ Linker script and memory map
  .text          0x0000000002000630       0x22 /r/tools/out/compiler-runtime/libgcc.a(_lshrdi3.o)
 ";
 
+    fn fixture_object(path: &Path, function: &str, size: i64) {
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        let source = path.with_extension("s");
+        std::fs::write(&source, format!(".syntax unified\n.thumb\n.text\n.global {function}\n.type {function},%function\n.thumb_func\n{function}:\n bx lr\n .space {}\n", size - 2)).unwrap();
+        let assembler = crate::compiler::routing::binutils_prefix().join("bin/arm-none-eabi-as");
+        let output = std::process::Command::new(assembler)
+            .args(["-mcpu=arm7tdmi", "-meabi=gnu"])
+            .arg(source)
+            .arg("-o")
+            .arg(path)
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
+    fn fixture_c_objects(map: &str, output: &str, source: &dyn Fn(&str) -> Option<Language>) {
+        for placed in sections(map).into_iter().filter(is_text) {
+            let Some((relative, _)) = relative_object(placed.object, output, true) else {
+                continue;
+            };
+            let Some(stem) = relative.strip_suffix(".o") else {
+                continue;
+            };
+            if source(stem) == Some(Language::C) {
+                fixture_object(
+                    Path::new(placed.object),
+                    stem.rsplit('/').next().unwrap(),
+                    placed.size,
+                );
+            }
+        }
+    }
+
     fn language(stem: &str) -> Option<Language> {
         match stem {
             "games/G/SRC/A" | "games/COMMON/SRC/C" | "games/G/SRC/FIELD/F" => Some(Language::C),
@@ -971,6 +1140,11 @@ Linker script and memory map
 
     #[test]
     fn placed_text_is_counted_by_its_object_and_nothing_else() {
+        let work = tempfile::tempdir().unwrap();
+        let main = MAIN.replace("/r/", &format!("{}/", work.path().display()));
+        let overlay = OVERLAY.replace("/r/", &format!("{}/", work.path().display()));
+        fixture_c_objects(&main, "out/tbs-en", &language);
+        fixture_c_objects(&overlay, "out/tbs-en", &language);
         let mut measurement = Measurement::default();
         let mark = |stem: &str| {
             Ok(Mark {
@@ -984,7 +1158,7 @@ Linker script and memory map
         };
         let placed = tally(
             &mut measurement,
-            MAIN,
+            &main,
             "out/tbs-en",
             MAIN_IMAGE,
             &language,
@@ -992,7 +1166,12 @@ Linker script and memory map
         )
         .unwrap();
         // Each credited unit's text, where the map places it.
-        let unit = |image: &str, object: &str| (image.to_string(), object.to_string());
+        let unit = |image: &str, object: &str| {
+            let stem = object.strip_suffix(".o").unwrap_or(object);
+            let function = (language(stem) == Some(Language::C))
+                .then(|| stem.rsplit('/').next().unwrap().to_string());
+            (image.to_string(), object.to_string(), function)
+        };
         assert_eq!(
             placed,
             [
@@ -1005,7 +1184,7 @@ Linker script and memory map
         );
         tally(
             &mut measurement,
-            OVERLAY,
+            &overlay,
             "out/tbs-en",
             "36f",
             &language,
@@ -1076,7 +1255,10 @@ Linker script and memory map
                 library: 0x3c + 0x22,
                 raw: 0x240,
                 listings: 0x600,
-                other: vec![("/r/out/tbs-en/obj/recon/tbs/stray.o".into(), 4)],
+                other: vec![(
+                    format!("{}/out/tbs-en/obj/recon/tbs/stray.o", work.path().display()),
+                    4
+                )],
                 // A's rodata and data come from source; the baserom range
                 // is scaffolding.
                 data_source: 0x80 + 0x10,
@@ -1105,7 +1287,7 @@ Linker script and memory map
         assert_eq!(spans, [(0x0800_9bd4, 6), (0x080f_0100, 4)]);
         // Each span leaves the credit of the unit whose text holds it, so an
         // edition that links the unit earns it without the padding.
-        let unit = |object: &str| (MAIN_IMAGE.to_string(), object.to_string());
+        let unit = |object: &str| (MAIN_IMAGE.to_string(), object.to_string(), None);
         let assembly = |bytes| Counted {
             done: GameDone {
                 game_asm: bytes,
@@ -1150,7 +1332,7 @@ Linker script and memory map
 
     #[test]
     fn an_object_linked_in_four_of_six_editions_earns_four_sixths() {
-        let unit = |image: &str, object: &str| (image.to_string(), object.to_string());
+        let unit = |image: &str, object: &str| (image.to_string(), object.to_string(), None);
         let c = |bytes, steered| Counted {
             done: GameDone {
                 game_c: bytes,
@@ -1232,6 +1414,297 @@ Linker script and memory map
         let (c, assembly, stubs) = all.done.parts();
         assert_eq!((c, assembly, stubs), (49.0, 0.0, 0.8));
         assert_eq!(all.done.percent(), 49.8);
+    }
+
+    fn native_module(root: &Path, target: DecompTarget) -> String {
+        use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
+        let source = root.join("games/G/SRC/MODULE.C");
+        let object = root
+            .join(target.output_dir)
+            .join("obj/games/G/SRC/MODULE.o");
+        std::fs::create_dir_all(object.parent().unwrap()).unwrap();
+        let assembly = object.with_extension("s");
+        let mut options = SourceToAssemblyPlanOptions::new(
+            target.compiler,
+            "games/G/SRC/MODULE.C",
+            source.to_string_lossy(),
+            assembly.to_string_lossy(),
+        );
+        options
+            .preprocessor_flags
+            .push(format!("-D{}=1", target.edition_define));
+        for step in source_to_assembly_plan(&options).unwrap() {
+            psynergy::process::run(&step, root).unwrap();
+        }
+        let mut assemble = crate::compiler::routing::assembly_command(
+            &assembly.to_string_lossy(),
+            &object.to_string_lossy(),
+        );
+        assemble[0] = crate::compiler::routing::binutils_prefix()
+            .join("bin/arm-none-eabi-as")
+            .to_string_lossy()
+            .into_owned();
+        psynergy::process::run(&assemble, root).unwrap();
+
+        let scaffold = root
+            .join(target.output_dir)
+            .join("obj/recon/tbs/raw/scaffold.o");
+        std::fs::create_dir_all(scaffold.parent().unwrap()).unwrap();
+        let raw = scaffold.with_extension("s");
+        let pending = if target.language() == "en" {
+            ""
+        } else {
+            ".text\n.global Module_Pending\n.type Module_Pending,%function\n.thumb_func\nModule_Pending:\n bx lr\n.align 2\n"
+        };
+        std::fs::write(&raw, format!(".syntax unified\n.thumb\n{pending}.data\n.global gModulePendingValue\ngModulePendingValue:\n.word 7\n")).unwrap();
+        let mut assemble = crate::compiler::routing::assembly_command(
+            &raw.to_string_lossy(),
+            &scaffold.to_string_lossy(),
+        );
+        assemble[0] = crate::compiler::routing::binutils_prefix()
+            .join("bin/arm-none-eabi-as")
+            .to_string_lossy()
+            .into_owned();
+        psynergy::process::run(&assemble, root).unwrap();
+        let script = root.join("fixture.ld");
+        std::fs::write(
+            &script,
+            "SECTIONS { . = 0x08000000; .text : { *(.text) } .data : { *(.data) } }\n",
+        )
+        .unwrap();
+        let map = root.join(target.output_dir).join("fixture.map");
+        let elf = map.with_extension("elf");
+        let linker = crate::compiler::routing::binutils_prefix().join("bin/arm-none-eabi-ld");
+        psynergy::process::run(
+            &[
+                linker.to_string_lossy().into_owned(),
+                "-T".into(),
+                script.to_string_lossy().into_owned(),
+                "-Map".into(),
+                map.to_string_lossy().into_owned(),
+                "-o".into(),
+                elf.to_string_lossy().into_owned(),
+                object.to_string_lossy().into_owned(),
+                scaffold.to_string_lossy().into_owned(),
+            ],
+            root,
+        )
+        .unwrap();
+        let bytes = std::fs::read(elf).unwrap();
+        let file = object::File::parse(bytes.as_slice()).unwrap();
+        assert!(file
+            .symbols()
+            .any(|symbol| symbol.name() == Ok("Module_Pending") && symbol.is_definition()));
+        std::fs::read_to_string(map).unwrap()
+    }
+
+    #[test]
+    fn a_partial_c_module_earns_only_its_source_definitions_in_the_same_image() {
+        let work = tempfile::tempdir().unwrap();
+        let root = work.path();
+        std::fs::create_dir_all(root.join("games/G/SRC")).unwrap();
+        std::fs::write(root.join("games/G/SRC/MODULE.C"),
+            "int Module_Always(int x) { return x + 1; }\n#if defined(TBS_EDITION_EN)\nextern int gModulePendingValue;\nint Module_Pending(int x) { return gModulePendingValue + x; }\n#endif\n").unwrap();
+        let en = crate::targets::decomp_target(Some("tbs-en")).unwrap();
+        let de = crate::targets::decomp_target(Some("tbs-de")).unwrap();
+        let english_map = native_module(root, en);
+        let german_map = native_module(root, de);
+        let source = |stem: &str| maintained_source(root, stem);
+        let mark = |_: &str| {
+            Ok(Mark {
+                steered: Steered::Functions(["Module_Pending".to_string()].into()),
+                ..Mark::default()
+            })
+        };
+        let mut english = Measurement::default();
+        let placed = tally(
+            &mut english,
+            &english_map,
+            en.output_dir,
+            MAIN_IMAGE,
+            &source,
+            &mark,
+        )
+        .unwrap();
+        let always = english
+            .credits
+            .iter()
+            .find(|(unit, _)| unit.2.as_deref() == Some("Module_Always"))
+            .unwrap()
+            .1
+            .done
+            .bytes();
+        let pending = english
+            .credits
+            .iter()
+            .find(|(unit, _)| unit.2.as_deref() == Some("Module_Pending"))
+            .unwrap()
+            .1
+            .done
+            .bytes();
+        // Pending loads a global through its literal pool; its credited span
+        // includes the complete compiler-emitted pool and section alignment.
+        let object = root.join(en.output_dir).join("obj/games/G/SRC/MODULE.o");
+        let bytes = std::fs::read(object).unwrap();
+        let file = object::File::parse(bytes.as_slice()).unwrap();
+        assert_eq!(
+            always + pending,
+            file.section_by_name(".text").unwrap().size() as i64
+        );
+        assert!(pending >= 8);
+        let german = links(&german_map, de.output_dir, MAIN_IMAGE, &source).unwrap();
+        let earned = share(&english, &german);
+        assert_eq!(earned.done.game_c, always);
+        assert_eq!(earned.steered, 0);
+        assert_eq!(earned.done.executable, always + pending);
+        let other_image = links(&german_map, de.output_dir, "36f", &source).unwrap();
+        assert_eq!(share(&english, &other_image).done.game_c, 0);
+        let all = links(&english_map, en.output_dir, MAIN_IMAGE, &source).unwrap();
+        assert_eq!(share(&english, &all).done.game_c, always + pending);
+
+        // A source mark spanning two contributions is removed from both,
+        // including the steered part, rather than from just the first one.
+        let pending_start = placed
+            .iter()
+            .find(|(_, _, unit)| unit.2.as_deref() == Some("Module_Pending"))
+            .unwrap()
+            .0;
+        discredit(&mut english, &placed, &[(pending_start - 2, 4)]);
+        assert_eq!(share(&english, &german).done.game_c, always - 2);
+        assert_eq!(share(&english, &all).done.game_c, always + pending - 4);
+        assert_eq!(english.steered, pending - 2);
+    }
+
+    #[test]
+    fn a_native_nested_definition_and_its_single_export_earn_one_extent() {
+        let work = tempfile::tempdir().unwrap();
+        let root = work.path();
+        std::fs::create_dir_all(root.join("games/G/SRC")).unwrap();
+        // The current compiler emits the nested body's local name as well
+        // as the requested public definition. This fixture tests metadata,
+        // without approving such aliases as game source under O2.
+        std::fs::write(root.join("games/G/SRC/MODULE.C"),
+            "extern int gModulePendingValue;\nextern void Module_Pending(void) __attribute__((alias(\"Nested.0\")));\nstatic __inline__ int Scope(void) { void Nested(void) { gModulePendingValue += 1; } return 0; }\n").unwrap();
+        let target = crate::targets::decomp_target(Some("tbs-en")).unwrap();
+        let map = native_module(root, target);
+        let object = root
+            .join(target.output_dir)
+            .join("obj/games/G/SRC/MODULE.o");
+        let bytes = std::fs::read(&object).unwrap();
+        let file = object::File::parse(bytes.as_slice()).unwrap();
+        let size = file.section_by_name(".text").unwrap().size() as i64;
+        let functions = c_functions_from_object(&bytes, ".text", size).unwrap();
+        assert_eq!(functions.len(), 1);
+        assert_eq!(functions[0].name, "Module_Pending");
+        assert_eq!(functions[0].bytes, size);
+        assert_eq!(
+            functions[0].names,
+            ["Module_Pending".to_string(), "Nested.0".to_string()].into()
+        );
+        let source = |stem: &str| maintained_source(root, stem);
+        let mut english = Measurement::default();
+        tally(
+            &mut english,
+            &map,
+            target.output_dir,
+            MAIN_IMAGE,
+            &source,
+            &|_| {
+                Ok(Mark {
+                    steered: Steered::Functions(["Nested.0".to_string()].into()),
+                    ..Mark::default()
+                })
+            },
+        )
+        .unwrap();
+        assert_eq!(english.credits.len(), 1);
+        assert_eq!(english.done.game_c, size);
+        assert_eq!(english.steered, size);
+        let linked = links(&map, target.output_dir, MAIN_IMAGE, &source).unwrap();
+        assert_eq!(share(&english, &linked).done.game_c, size);
+        assert_eq!(share(&english, &linked).steered, size);
+    }
+
+    #[test]
+    fn conflicting_native_public_names_or_function_extents_stay_refused() {
+        let work = tempfile::tempdir().unwrap();
+        for (name, metadata) in [
+            (
+                "two_public",
+                ".global Other\n.thumb_set Other,Local\n.type Other,%function\n.size Other,8\n",
+            ),
+            ("different_size", ".size Public,4\n"),
+            ("zero_size", ".size Public,0\n.size Local,0\n"),
+            ("oversized", ".size Public,12\n.size Local,12\n"),
+        ] {
+            let source = work.path().join(format!("{name}.s"));
+            let object = source.with_extension("o");
+            std::fs::write(&source, format!(".syntax unified\n.thumb\n.text\n.type Local,%function\n.thumb_func\nLocal:\n bx lr\n .space 6\n.size Local,8\n.global Public\n.thumb_set Public,Local\n.type Public,%function\n.size Public,8\n{metadata}")).unwrap();
+            let mut command = crate::compiler::routing::assembly_command(
+                &source.to_string_lossy(),
+                &object.to_string_lossy(),
+            );
+            command[0] = crate::compiler::routing::binutils_prefix()
+                .join("bin/arm-none-eabi-as")
+                .to_string_lossy()
+                .into_owned();
+            psynergy::process::run(&command, work.path()).unwrap();
+            let bytes = std::fs::read(object).unwrap();
+            assert!(
+                c_functions_from_object(&bytes, ".text", 8)
+                    .unwrap_err()
+                    .contains("ambiguous C function extent"),
+                "{name}"
+            );
+        }
+    }
+
+    #[test]
+    fn c_credit_requires_complete_unambiguous_placed_function_metadata() {
+        let work = tempfile::tempdir().unwrap();
+        let object = work.path().join("fixture.o");
+        fixture_object(&object, "Present", 8);
+        let bytes = std::fs::read(&object).unwrap();
+        assert_eq!(
+            c_functions_from_object(&bytes, ".text", 8).unwrap(),
+            [CFunction {
+                offset: 0,
+                bytes: 8,
+                name: "Present".to_string(),
+                names: ["Present".to_string()].into(),
+            }]
+        );
+        assert!(c_functions_from_object(&bytes, ".text", 12)
+            .unwrap_err()
+            .contains("map/object extent differs"));
+        assert!(c_functions_from_object(&bytes, ".text.absent", 8).is_err());
+        let missing_path = work.path().join("missing.o");
+        let missing = Placed {
+            name: ".text",
+            address: 0,
+            size: 8,
+            object: missing_path.to_str().unwrap(),
+        };
+        assert!(placed_c_functions(&missing).is_err());
+        let no_functions = work.path().join("data.o");
+        let source = no_functions.with_extension("s");
+        std::fs::write(&source, ".text\n.word 0\n.word 0\n").unwrap();
+        let assembler = crate::compiler::routing::binutils_prefix().join("bin/arm-none-eabi-as");
+        psynergy::process::run(
+            &[
+                assembler.to_string_lossy().into_owned(),
+                source.to_string_lossy().into_owned(),
+                "-o".into(),
+                no_functions.to_string_lossy().into_owned(),
+            ],
+            work.path(),
+        )
+        .unwrap();
+        assert!(
+            c_functions_from_object(&std::fs::read(no_functions).unwrap(), ".text", 8)
+                .unwrap_err()
+                .contains("missing C function definition")
+        );
     }
 
     #[test]
@@ -1418,11 +1891,14 @@ void After(void) { }
              .overlays 0x08000040 0x20 /x/out/tla-en/obj/recon/tla/overlays.o\n";
         let overlay = "Linker script and memory map\n \
              .text 0x02000000 0x40 /x/out/tla-en/overlays/resource_001_overlay.o\n";
-        std::fs::write(output.join("tla-en.map"), main).unwrap();
-        std::fs::write(output.join("overlays/resource_001.map"), overlay).unwrap();
+        let main = main.replace("/x/", &format!("{}/", root.display()));
+        let overlay = overlay.replace("/x/", &format!("{}/", root.display()));
+        fixture_c_objects(&main, "out/tla-en", &|stem| maintained_source(root, stem));
+        std::fs::write(output.join("tla-en.map"), &main).unwrap();
+        std::fs::write(output.join("overlays/resource_001.map"), &overlay).unwrap();
         std::fs::write(output.join("overlays/resource_001.lz"), b"stream").unwrap();
         // A map an older build left beside an overlay no stream reads.
-        std::fs::write(output.join("overlays/resource_002.map"), overlay).unwrap();
+        std::fs::write(output.join("overlays/resource_002.map"), &overlay).unwrap();
         std::fs::write(output.join("tla-en.gba"), b"another image").unwrap();
         assert_eq!(
             measure(root, target).unwrap().unwrap_err(),
@@ -1442,7 +1918,7 @@ void After(void) { }
         assert_eq!(measured.done.percent(), 37.5);
         // A map rewritten by a link that did not produce a new image.
         std::thread::sleep(std::time::Duration::from_millis(20));
-        std::fs::write(output.join("tla-en.map"), main).unwrap();
+        std::fs::write(output.join("tla-en.map"), &main).unwrap();
         assert!(measure(root, target)
             .unwrap()
             .unwrap_err()
@@ -1454,12 +1930,20 @@ void After(void) { }
     /// image. `OUT` in a map stands for the build's own directory.
     fn write_build(root: &Path, id: &str, main: &str, overlays: &[(&str, &str)]) -> String {
         let output = root.join(format!("out/{id}"));
-        let own = |map: &str| map.replace("OUT", &format!("/x/out/{id}"));
+        let own = |map: &str| map.replace("OUT", &format!("{}/out/{id}", root.display()));
         std::fs::create_dir_all(output.join("overlays")).unwrap();
-        std::fs::write(output.join(format!("{id}.map")), own(main)).unwrap();
+        let main = own(main);
+        fixture_c_objects(&main, &format!("out/{id}"), &|stem| {
+            maintained_source(root, stem)
+        });
+        std::fs::write(output.join(format!("{id}.map")), main).unwrap();
         for (overlay, map) in overlays {
             let path = output.join(format!("overlays/resource_{overlay}"));
-            std::fs::write(path.with_extension("map"), own(map)).unwrap();
+            let map = own(map);
+            fixture_c_objects(&map, &format!("out/{id}"), &|stem| {
+                maintained_source(root, stem)
+            });
+            std::fs::write(path.with_extension("map"), map).unwrap();
             std::fs::write(path.with_extension("lz"), b"stream").unwrap();
         }
         let image = format!("linked image of {id}");

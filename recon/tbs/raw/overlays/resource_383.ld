@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/HEYA.o"(.text)
-        "*/resource_383_overlay.o"(.text.x02008690)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/RESPOND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/HEYA2.o"(.text)
         "*/resource_383_overlay.o"(.text.x0200c8c6)
         "*/resource_383_overlay.o"(.text.x0200c8c8)

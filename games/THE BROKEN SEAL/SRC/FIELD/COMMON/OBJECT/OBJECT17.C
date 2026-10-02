@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "IWRAM_CALL.H"
 #include "OBJECT_RUNTIME.H"
 #include "FIXED_MATH.H"
@@ -42,7 +43,6 @@ extern u8 gObjectSlots[];
 s32 ObjectDispatch_SetSingleChildField26Far(void *, s32);
 u16 ArcTan2(s32, s32);
 void *Object_GetById(u32);
-void ObjectDispatch_InitializeFar(void *, void *);
 extern s16 gGameState[];
 extern const u8 ObjectMotion_ActionKind1Script[];
 extern const u8 ObjectMotion_ActionKind2Script[];
@@ -246,7 +246,7 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
     default:
         break;
     }
-    ObjectDispatch_InitializeFar(object, (void *)kind);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)kind);
 }
 
 struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32 id)

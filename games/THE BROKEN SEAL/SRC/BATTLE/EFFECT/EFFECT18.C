@@ -1,3 +1,4 @@
+#include "TRANSFORM.H"
 #include "DMA.H"
 #include "BATTLE_PRESENTATION.H"
 #include "IWRAM_CALL.H"
@@ -67,7 +68,6 @@ void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
-void Graphics_SaveTransferWorkOnce(void);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);

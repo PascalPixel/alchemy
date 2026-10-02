@@ -72,7 +72,7 @@ Func_08023e18:
 	bl Func_080156f8
 	b .L_08023eb2
 .L_08023ea6:
-	bl Func_08014e1c
+	bl SceneTransform_RewindStack
 	adds r0, r5, #0
 	adds r1, r6, #0
 	bl Graphics_PrepareTransferInIwramWork

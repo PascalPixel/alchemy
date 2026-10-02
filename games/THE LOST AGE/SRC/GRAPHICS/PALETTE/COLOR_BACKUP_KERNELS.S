@@ -13,9 +13,6 @@
 	.thumb
 	.global ColorBuffer_ScaleThreeQuartersKernelCode
 ColorBuffer_ScaleThreeQuartersKernelCode:
-	.global ColorBuffer_ScaleThreeQuartersKernel
-	.thumb_func
-ColorBuffer_ScaleThreeQuartersKernel:
 .L_08001a14:
 AlchemyUncredited_08001a14:
 	bx	pc
@@ -73,9 +70,6 @@ AlchemyUncreditedEnd_08001a14:
 	.thumb
 	.global ColorBuffer_HalveKernelCode
 ColorBuffer_HalveKernelCode:
-	.global ColorBuffer_HalveKernel
-	.thumb_func
-ColorBuffer_HalveKernel:
 .L_08001ad4:
 AlchemyUncredited_08001ad4:
 	bx	pc
@@ -117,9 +111,6 @@ AlchemyUncreditedEnd_08001ad4:
 	.thumb
 	.global ColorBuffer_DarkenKernelCode
 ColorBuffer_DarkenKernelCode:
-	.global ColorBuffer_DarkenKernel
-	.thumb_func
-ColorBuffer_DarkenKernel:
 .L_08001b54:
 AlchemyUncredited_08001b54:
 	bx	pc

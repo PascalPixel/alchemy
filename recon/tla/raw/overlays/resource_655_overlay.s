@@ -358,7 +358,7 @@ Func_020001d0:
 .L_020082ec:
 	.4byte 0xfdff0000
 .L_020082f0:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_020082f4:
 	.4byte gPartyState
 	.section .text.x020082f8,"ax",%progbits
@@ -810,7 +810,7 @@ Func_02000584:
 .L_020086e4:
 	.4byte 0xfdff0000
 .L_020086e8:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 	.section .text.x020086ec,"ax",%progbits
 	.global Func_020006ec
 	.thumb_func
@@ -1456,7 +1456,7 @@ Func_02000bc0:
 .L_02008c40:
 	.4byte 0xfdff0000
 .L_02008c44:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_02008c48:
 	.4byte 0x000fffff
 	.section .text.x02008c4c,"ax",%progbits
@@ -1608,7 +1608,7 @@ Func_02000c64:
 .L_02008d6c:
 	.4byte 0xfdff0000
 .L_02008d70:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_02008d74:
 	.4byte gPartyState
 	.section .text.x02008d78,"ax",%progbits
@@ -1754,7 +1754,7 @@ Func_02000d78:
 .L_02008e90:
 	.4byte gPartyState
 .L_02008e94:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_02008e98:
 	.4byte 0xfdff0000
 	.section .text.x02008e9c,"ax",%progbits
@@ -1839,7 +1839,7 @@ Func_02000e9c:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008f3c:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_02008f40:
 	.4byte 0xfdff0000
 	.section .text.x02008f8a,"ax",%progbits

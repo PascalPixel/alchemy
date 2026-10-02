@@ -72,7 +72,7 @@ BattleFx_StartItemBreak:
 	cmp r7, #0
 	beq .L_080dd614
 	ldr r1, .L_080dd638
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	bl Random16
 	movs r3, #128
 	lsls r3, r3, #9

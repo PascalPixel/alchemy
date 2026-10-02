@@ -8,6 +8,7 @@
 
 void WaitFrames(s32 frames);
 u32 Random16(void);
+extern u32 gRandomState;
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 

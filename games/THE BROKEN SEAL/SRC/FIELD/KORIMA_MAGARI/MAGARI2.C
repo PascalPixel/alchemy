@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
@@ -32,8 +33,6 @@ s32 Math_DivideSigned();
    setup points; the layout is 0 or 1. */
 extern s16 *gKorimaMagariRecords;
 extern s16 *gKorimaMagariLayout;
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
-                               s32 dest_y);
 void State_StampRecordCells(s16 *records, s32 value);
 void State_ApplyRectByLayoutSelector(void);
 extern u8 gBgScroll[];
@@ -61,7 +60,6 @@ extern u16 *gKorimaMagariReturned;
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
 void Engine_ActorSetDestination();
-void Map_CopyCellAttributeRect();
 void Engine_ActorSetDestinationOffset();
 void Engine_ActorWaitForMove();
 void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);

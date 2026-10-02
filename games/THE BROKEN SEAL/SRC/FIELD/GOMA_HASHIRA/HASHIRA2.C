@@ -1,3 +1,4 @@
+#include "MAPCOPY.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "STAGED_ACTOR.H"
@@ -29,7 +30,6 @@ void Engine_MapRenderWaitForValues(void);
 #if EDITION_INTERNATIONAL
 s32 Engine_GameFlagSet(s32 flag);
 #endif
-void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Audio_PlayCue(s32 cue);
 #if EDITION_INTERNATIONAL
 u8 *Object_GetById();

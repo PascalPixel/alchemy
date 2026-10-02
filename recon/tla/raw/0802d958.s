@@ -104,7 +104,7 @@ Func_0802d958:
 .L_0802da10:
 	.4byte gMapCellBuffer
 .L_0802da14:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0802da18:
 	.4byte gMapCollision
 .L_0802da1c:

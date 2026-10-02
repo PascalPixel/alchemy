@@ -52,4 +52,4 @@ Func_08020170:
 	.global Func_08020178
 	.thumb_func
 Func_08020178:
-	overlay_veneer Func_0802b1a0
+	overlay_veneer Map_CopyMetatileIndicesRect

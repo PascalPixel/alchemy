@@ -250,7 +250,7 @@ Func_0814b350:
 	ldr r3, [r6, #24]
 	cmp r3, #0
 	bne .L_0814b64a
-	bl Func_08014e38
+	bl Graphics_SaveTransferWorkOnce
 	mov r5, r10
 	movs r3, #3
 	ands r3, r5

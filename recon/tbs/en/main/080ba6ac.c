@@ -126,17 +126,14 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     else
         work.field_04 = 0;
 
-    {
-        s32 i1;
-        for (i1 = 0; i1 != work.count; i1++) {
-            struct MotionEntry *entry = GetMotionRecord(
-                GetBattleObjectSlot(work.table[i1])->object, 0);
-            s32 count = entry->count - 1;
-            s32 j;
-            for (j = 0; j != count; j++)
-                work.values[i1 * 4 + j] =
-                    ((struct MotionChild *)entry->children[j])->value;
-        }
+    for (i = 0; i != work.count; i++) {
+        struct MotionEntry *entry = GetMotionRecord(
+            GetBattleObjectSlot(work.table[i])->object, 0);
+        s32 j;
+
+        for (j = 0; j != entry->count - 1; j++)
+            work.values[i * 4 + j] =
+                ((struct MotionChild *)entry->children[j])->value;
     }
 
     Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);

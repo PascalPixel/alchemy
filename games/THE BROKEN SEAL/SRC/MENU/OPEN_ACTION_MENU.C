@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
@@ -58,7 +59,6 @@ struct ActionMenuState {
 };
 
 struct ActionMenuState *Runtime_AllocateHeapBlock(s32, s32);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *block);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);

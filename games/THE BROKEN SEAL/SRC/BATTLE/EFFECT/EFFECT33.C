@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
 #include "EFFECT_0809B11C.H"
@@ -126,7 +127,6 @@ void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 struct CaptureObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);
-void ObjectDispatch_InitializeFar(struct CaptureObject *object, const void *script);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -591,7 +591,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
         Animation_ApplyChildValuesFar(djinni, 11);
         djinni->lifetime = 8;
-        ObjectDispatch_InitializeFar(djinni, (void *)BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, (u32)BattleFx_CommonParticleScript);
     }
 
     WaitFrames(15);

@@ -251,7 +251,7 @@ Func_080de21c:
 	bl Object_SetPosition
 	ldr r1, .L_080de548
 	adds r0, r6, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	ldr r1, [sp, #4]
 	movs r2, #2
 	str r1, [sp, #0]
@@ -273,7 +273,7 @@ Func_080de21c:
 	bl Object_SetPosition
 	adds r0, r5, #0
 	ldr r1, .L_080de54c
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080de45a:
 	movs r0, #1
 	negs r0, r0

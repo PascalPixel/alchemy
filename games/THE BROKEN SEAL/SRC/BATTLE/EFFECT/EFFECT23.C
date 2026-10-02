@@ -8,7 +8,7 @@ extern u8 Data_03001cb4[];
 
 /* runtime/blank_display_load_value_and_run.c */
 s32 Audio_PlayCue(s32);
-s32 Unnamed_080f7460(void);
+void ReelGame_Run(void);
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
@@ -34,7 +34,7 @@ s32 Runtime_BlankDisplayLoadValueAndRun(void)
     *p = *((s32 *)(src + 4));
   }
   Audio_PlayCue(9);
-  Unnamed_080f7460();
+  ReelGame_Run();
   return 0;
 }
 

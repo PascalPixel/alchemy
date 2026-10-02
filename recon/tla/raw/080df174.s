@@ -58,7 +58,7 @@ Func_080df174:
 	strh r3, [r2]
 	ldr r1, .L_080df1f8
 	adds r0, r5, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080df1f2:
 	add sp, #12
 	pop {r5, r6, pc}

@@ -53,7 +53,6 @@ void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_CommitPosition(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Object_SetAction(struct ObjectRuntime *, s32);
-void Object_SetCallback(struct ObjectRuntime *, const void *);
 void Object_RefreshSelector(struct ObjectRuntime *);
 void Object_SetActionCallback(struct ObjectRuntime *, s32);
 void ObjectMotion_SetActionVariant(u32, s32);

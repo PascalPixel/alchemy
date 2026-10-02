@@ -72,32 +72,32 @@ Object_ShadowTiles:
 	.global ResourceSlot_NumberTable
 ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x00012fa0, 0x000000dc
-	.global Data_0801307c
-Data_0801307c:
+	.global AnimationFacing_Kind1
+AnimationFacing_Kind1:
 	.incbin "baserom.gba", 0x0001307c, 0x00000010
-	.global Data_0801308c
-Data_0801308c:
+	.global AnimationFacing_Kind22
+AnimationFacing_Kind22:
 	.incbin "baserom.gba", 0x0001308c, 0x00000008
-	.global Data_08013094
-Data_08013094:
+	.global AnimationFacing_Kind2
+AnimationFacing_Kind2:
 	.incbin "baserom.gba", 0x00013094, 0x00000008
-	.global Data_0801309c
-Data_0801309c:
+	.global AnimationFacing_Kind3
+AnimationFacing_Kind3:
 	.incbin "baserom.gba", 0x0001309c, 0x00000010
-	.global Data_080130ac
-Data_080130ac:
+	.global AnimationFacing_Kind5
+AnimationFacing_Kind5:
 	.incbin "baserom.gba", 0x000130ac, 0x00000010
-	.global Data_080130bc
-Data_080130bc:
+	.global AnimationFacing_Kind8
+AnimationFacing_Kind8:
 	.incbin "baserom.gba", 0x000130bc, 0x00000008
-	.global Data_080130c4
-Data_080130c4:
+	.global AnimationFacing_Kind88
+AnimationFacing_Kind88:
 	.incbin "baserom.gba", 0x000130c4, 0x00000008
-	.global Data_080130cc
-Data_080130cc:
+	.global AnimationFacing_Kind4
+AnimationFacing_Kind4:
 	.incbin "baserom.gba", 0x000130cc, 0x00000040
-	.global Data_0801310c
-Data_0801310c:
+	.global AnimationFacing_Kind6
+AnimationFacing_Kind6:
 	.incbin "baserom.gba", 0x0001310c, 0x00000040
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
@@ -105,8 +105,8 @@ Map_TileDissolveOrder:
 	.global Camera_FixedViewMatrix
 Camera_FixedViewMatrix:
 	.incbin "baserom.gba", 0x00013190, 0x00000030
-	.global Data_080131c0
-Data_080131c0:
+	.global ScriptObject_CycleTable
+ScriptObject_CycleTable:
 	.incbin "baserom.gba", 0x000131c0, 0x00000080
 	.global Script_MainScript
 Script_MainScript:
@@ -162,8 +162,8 @@ ObjectDispatch_Table5Script:
 	.global ObjectDispatch_Table6Script
 ObjectDispatch_Table6Script:
 	.incbin "baserom.gba", 0x00013620, 0x00000004
-	.global Data_08013624
-Data_08013624:
+	.global ScriptObject_CommandTable
+ScriptObject_CommandTable:
 	.incbin "baserom.gba", 0x00013624, 0x000000bc
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
@@ -517,7 +517,10 @@ ObjectMotion_VariantScripts:
 	.incbin "baserom.gba", 0x0009ebfc, 0x00000184
 	.global ObjectGroup_BlinkChildValues
 ObjectGroup_BlinkChildValues:
-	.incbin "baserom.gba", 0x0009ed80, 0x00000204
+	.incbin "baserom.gba", 0x0009ed80, 0x00000004
+	.global DisplayScroll_WaveSine
+DisplayScroll_WaveSine:
+	.incbin "baserom.gba", 0x0009ed84, 0x00000200
 	.global FieldFx_GroundParticleFrames
 FieldFx_GroundParticleFrames:
 	.incbin "baserom.gba", 0x0009ef84, 0x000000a0
@@ -901,8 +904,8 @@ RockWall_Heights:
 	.global Data_080eda88
 Data_080eda88:
 	.incbin "baserom.gba", 0x000eda88, 0x00000028
-	.global Data_080edab0
-Data_080edab0:
+	.global RisingWall_UnitScale
+RisingWall_UnitScale:
 	.incbin "baserom.gba", 0x000edab0, 0x00000008
 	.global Data_080edab8
 Data_080edab8:
@@ -910,8 +913,8 @@ Data_080edab8:
 	.global Data_080edac0
 Data_080edac0:
 	.incbin "baserom.gba", 0x000edac0, 0x00000008
-	.global Data_080edac8
-Data_080edac8:
+	.global CirclingScene_UnitScale
+CirclingScene_UnitScale:
 	.incbin "baserom.gba", 0x000edac8, 0x00000010
 	.global ObjectRow_SweepPair
 ObjectRow_SweepPair:
@@ -1510,39 +1513,39 @@ ShatterRocks_ShardCells:
 	.global BurstScene_Records
 BurstScene_Records:
 	.incbin "baserom.gba", 0x000eed3e, 0x00000040
-	.global Data_080eed7e
-Data_080eed7e:
+	.global RisingWall_RowSheetOffsets
+RisingWall_RowSheetOffsets:
 	.incbin "baserom.gba", 0x000eed7e, 0x00000012
-	.global Data_080eed90
-Data_080eed90:
+	.global RisingWall_RowWidths
+RisingWall_RowWidths:
 	.incbin "baserom.gba", 0x000eed90, 0x0000000a
-	.global Data_080eed9a
-Data_080eed9a:
+	.global RisingWall_MoundSheetOffsets
+RisingWall_MoundSheetOffsets:
 	.incbin "baserom.gba", 0x000eed9a, 0x00000006
-	.global Data_080eeda0
-Data_080eeda0:
+	.global RisingWall_MoundWidths
+RisingWall_MoundWidths:
 	.incbin "baserom.gba", 0x000eeda0, 0x00000002
 	.incbin "baserom.gba", 0x000eeda2, 0x00000001
-	.global Data_080eeda3
-Data_080eeda3:
+	.global RisingWall_MoundHeights
+RisingWall_MoundHeights:
 	.incbin "baserom.gba", 0x000eeda3, 0x00000003
-	.global Data_080eeda6
-Data_080eeda6:
+	.global RisingWall_Bg2Shifts
+RisingWall_Bg2Shifts:
 	.incbin "baserom.gba", 0x000eeda6, 0x00000006
-	.global Data_080eedac
-Data_080eedac:
+	.global RisingWall_LateRockColumns
+RisingWall_LateRockColumns:
 	.incbin "baserom.gba", 0x000eedac, 0x00000006
-	.global Data_080eedb2
-Data_080eedb2:
+	.global BeamSequence_CellWidths
+BeamSequence_CellWidths:
 	.incbin "baserom.gba", 0x000eedb2, 0x00000006
-	.global Data_080eedb8
-Data_080eedb8:
+	.global BeamSequence_CellHeights
+BeamSequence_CellHeights:
 	.incbin "baserom.gba", 0x000eedb8, 0x00000006
-	.global Data_080eedbe
-Data_080eedbe:
+	.global BeamSequence_CellSheetOffsets
+BeamSequence_CellSheetOffsets:
 	.incbin "baserom.gba", 0x000eedbe, 0x0000000c
-	.global Data_080eedca
-Data_080eedca:
+	.global BeamSequence_CellReaches
+BeamSequence_CellReaches:
 	.incbin "baserom.gba", 0x000eedca, 0x00000006
 	.global CastingImpact_GlintDrawFlags
 CastingImpact_GlintDrawFlags:
@@ -1599,19 +1602,31 @@ ImpactBurst_CellHeights:
 	.incbin "baserom.gba", 0x000eee5e, 0x00000008
 	.global ImpactBurst_CellSourceOffsets
 ImpactBurst_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000eee66, 0x00000072
-	.global Data_080eeed8
-Data_080eeed8:
+	.incbin "baserom.gba", 0x000eee66, 0x00000010
+	.global ParticleStreams_OrbitPoints
+ParticleStreams_OrbitPoints:
+	.incbin "baserom.gba", 0x000eee76, 0x0000002a
+	.global ParticleStreams_DropPoints
+ParticleStreams_DropPoints:
+	.incbin "baserom.gba", 0x000eeea0, 0x0000001c
+	.global ParticleStreams_FlashSheetOffsets
+ParticleStreams_FlashSheetOffsets:
+	.incbin "baserom.gba", 0x000eeebc, 0x0000000e
+	.global ParticleStreams_FlashSizes
+ParticleStreams_FlashSizes:
+	.incbin "baserom.gba", 0x000eeeca, 0x0000000e
+	.global CirclingScene_ObjectColumns
+CirclingScene_ObjectColumns:
 	.incbin "baserom.gba", 0x000eeed8, 0x00000008
 	.incbin "baserom.gba", 0x000eeee0, 0x00000001
-	.global Data_080eeee1
-Data_080eeee1:
+	.global CirclingScene_ObjectRows
+CirclingScene_ObjectRows:
 	.incbin "baserom.gba", 0x000eeee1, 0x00000009
-	.global Data_080eeeea
-Data_080eeeea:
+	.global CirclingScene_PuffSheetOffsets
+CirclingScene_PuffSheetOffsets:
 	.incbin "baserom.gba", 0x000eeeea, 0x0000000e
-	.global Data_080eeef8
-Data_080eeef8:
+	.global CirclingScene_PuffSizes
+CirclingScene_PuffSizes:
 	.incbin "baserom.gba", 0x000eeef8, 0x0000000e
 	.global FlameBlade_StrikeColumns
 FlameBlade_StrikeColumns:
@@ -1706,8 +1721,8 @@ Data_080f5408:
 Data_080f541a:
 	.incbin "baserom.gba", 0x000f541a, 0x00000be6
 	.section .unidentified.080f86f8,"a"
-	.global Data_080f86f8
-Data_080f86f8:
+	.global ReelGame_SparkCellOffsets
+ReelGame_SparkCellOffsets:
 	.incbin "baserom.gba", 0x000f86f8, 0x00000014
 	.global Data_080f870c
 Data_080f870c:

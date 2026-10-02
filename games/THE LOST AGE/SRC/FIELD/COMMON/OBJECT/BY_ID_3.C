@@ -1,4 +1,5 @@
 #include "OBJECT_RUNTIME.H"
+#include "OBJDISP.H"
 
 void ObjectMotion_OffsetPositionAndResetMotion(u32 object_id, s32 x_offset, s32 z_offset)
 {
@@ -18,7 +19,7 @@ void ObjectMotion_OffsetPositionAndReset(u32 object_id, s32 x_offset, s32 z_offs
 
     if (object != NULL) {
         object->movement_state = 0;
-        Object_SetCallback(object, Object_OffsetMotionScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)Object_OffsetMotionScript);
         Object_SetMode(object, 2);
         Object_SetPosition(object, object->x + (x_offset << 16),
             object->y, object->z + (z_offset << 16));

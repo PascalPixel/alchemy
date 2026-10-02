@@ -69,7 +69,7 @@ Func_080d489c:
 	bl Object_SetMode
 	ldr r1, .L_080d4968
 	adds r0, r5, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	adds r2, r5, #0
 	adds r2, #100
 	movs r3, #1

@@ -556,8 +556,6 @@ Djinn_DefinitionTable:
 	.thumb_func
 Func_0808c4f8:
 	.incbin "baserom.gba", 0x0008fb00, 0x0000097c
-	.section .rom.00090fac, "ax"
-	.incbin "baserom.gba", 0x00090fac, 0x00000414
 	.section .rom.00092b98, "ax"
 	.global DisplayTransition_UpdateScanlineTable
 	.type DisplayTransition_UpdateScanlineTable, %function
@@ -646,7 +644,10 @@ gBattleCueTable:
 	.incbin "baserom.gba", 0x000a1bf0, 0x00000046
 	.global Debug_PaletteSwatchTiles
 Debug_PaletteSwatchTiles:
-	.incbin "baserom.gba", 0x000a1c36, 0x000001b8
+	.incbin "baserom.gba", 0x000a1c36, 0x000001b2
+	.global Field_TileMessageOffsets
+Field_TileMessageOffsets:
+	.incbin "baserom.gba", 0x000a1de8, 0x00000006
 	.global BattleFx_TargetRangeByMode
 BattleFx_TargetRangeByMode:
 	.incbin "baserom.gba", 0x000a1dee, 0x00000032

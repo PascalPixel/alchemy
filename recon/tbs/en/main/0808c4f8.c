@@ -143,7 +143,7 @@ void BattleFx_RunDescriptorAction(s32 descriptor);
 void BattleFx_RunKind6DescriptorAction(s32 event);
 void BattleAction_RunDescriptor(s32 action);
 void Battle_DispatchInputEvent(s32 input);
-void Func_0808d9a4(s32 tile);
+void Field_RunTileAction(s32 tile);
 s32 BattleEffect_SelectNearbyObject(s32 actor);
 void Battle_ResetEffectCounter(void);
 void BattleCommand_ExecuteSelectedItem(s32 item, s32 argument);
@@ -208,7 +208,7 @@ s32 Func_0808c4f8(void)
     Djinn_ResolvePendingEvent(0);
     if ((s16)gGameState.map == 1) {
         Map_InitializePerspectiveSceneFar();
-        gGameState.unknown_224[0] = 1;
+        gGameState.perspective_scene = 1;
         mode = 3;
         BattleFx_SelectLocationRule(0);
     } else {
@@ -429,7 +429,7 @@ s32 Func_0808c4f8(void)
                 work->descriptor = 0;
             } else if (work->tile != 0) {
                 Battle_SetObjectFlag5bWhenMode3();
-                Func_0808d9a4(work->tile);
+                Field_RunTileAction(work->tile);
                 Battle_ClearObjectFlag5bWhenMode3();
                 work->tile = 0;
             } else if (work->command != 0) {

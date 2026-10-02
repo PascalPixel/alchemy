@@ -366,7 +366,7 @@
     "*/recon/tbs/es/rom.o"(.rom.00091500)
     "*/games/THE BROKEN SEAL/SRC/DEBUG/DEBUG2.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT27.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.000929ac)
+    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/TILEACT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT11.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE6.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE7.o"(.text)

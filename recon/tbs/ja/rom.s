@@ -1192,12 +1192,6 @@ BattleFx_RunSevenMode:
 	.thumb_func
 Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000c8714, 0x00000d38
-	.section .rom.000c9464, "ax"
-	.global BattleEffect_RunPaletteParticles
-	.type BattleEffect_RunPaletteParticles, %function
-	.thumb_func
-BattleEffect_RunPaletteParticles:
-	.incbin "baserom.gba", 0x000c9464, 0x00000934
 	.section .rom.000cd970, "ax"
 	.global BattleEffect_RunDitherDissolveScene
 	.type BattleEffect_RunDitherDissolveScene, %function
@@ -1421,7 +1415,28 @@ RingBolts_Points:
 	.global SpinningStars_Radii
 SpinningStars_Radii:
 	.incbin "baserom.gba", 0x000e5158, 0x00000002
-	.incbin "baserom.gba", 0x000e515a, 0x00000052
+	.incbin "baserom.gba", 0x000e515a, 0x0000002a
+	.global PaletteParticles_DropSpeeds
+PaletteParticles_DropSpeeds:
+	.incbin "baserom.gba", 0x000e5184, 0x00000004
+	.global PaletteParticles_SparkPixels
+PaletteParticles_SparkPixels:
+	.incbin "baserom.gba", 0x000e5188, 0x00000002
+	.global PaletteParticles_DropSizes
+PaletteParticles_DropSizes:
+	.incbin "baserom.gba", 0x000e518a, 0x00000004
+	.global PaletteParticles_StreakWidths
+PaletteParticles_StreakWidths:
+	.incbin "baserom.gba", 0x000e518e, 0x00000006
+	.global PaletteParticles_StreakHeights
+PaletteParticles_StreakHeights:
+	.incbin "baserom.gba", 0x000e5194, 0x00000006
+	.global PaletteParticles_StreakDrops
+PaletteParticles_StreakDrops:
+	.incbin "baserom.gba", 0x000e519a, 0x00000006
+	.global PaletteParticles_StreakOffsets
+PaletteParticles_StreakOffsets:
+	.incbin "baserom.gba", 0x000e51a0, 0x0000000c
 	.global EmberColumns_Columns
 EmberColumns_Columns:
 	.incbin "baserom.gba", 0x000e51ac, 0x00000008

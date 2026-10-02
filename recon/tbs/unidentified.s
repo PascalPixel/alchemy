@@ -1099,7 +1099,28 @@ Data_080ee17a:
 	.incbin "baserom.gba", 0x000ee17a, 0x00000004
 	.global Data_080ee17e
 Data_080ee17e:
-	.incbin "baserom.gba", 0x000ee17e, 0x0000002e
+	.incbin "baserom.gba", 0x000ee17e, 0x00000006
+	.global PaletteParticles_DropSpeeds
+PaletteParticles_DropSpeeds:
+	.incbin "baserom.gba", 0x000ee184, 0x00000004
+	.global PaletteParticles_SparkPixels
+PaletteParticles_SparkPixels:
+	.incbin "baserom.gba", 0x000ee188, 0x00000002
+	.global PaletteParticles_DropSizes
+PaletteParticles_DropSizes:
+	.incbin "baserom.gba", 0x000ee18a, 0x00000004
+	.global PaletteParticles_StreakWidths
+PaletteParticles_StreakWidths:
+	.incbin "baserom.gba", 0x000ee18e, 0x00000006
+	.global PaletteParticles_StreakHeights
+PaletteParticles_StreakHeights:
+	.incbin "baserom.gba", 0x000ee194, 0x00000006
+	.global PaletteParticles_StreakDrops
+PaletteParticles_StreakDrops:
+	.incbin "baserom.gba", 0x000ee19a, 0x00000006
+	.global PaletteParticles_StreakOffsets
+PaletteParticles_StreakOffsets:
+	.incbin "baserom.gba", 0x000ee1a0, 0x0000000c
 	.global EmberColumns_Columns
 EmberColumns_Columns:
 	.incbin "baserom.gba", 0x000ee1ac, 0x00000008

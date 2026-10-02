@@ -52,6 +52,12 @@ static inline void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags)
     Engine_ActorSetSpriteFlags(actor, flags);
 }
 
+static inline void Actor_SetSpritePriority(s32 actor, s32 priority)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_ActorSetSpritePriority(actor, priority);
+}
+
 static inline void Actor_StartRepeatedMotion(s32 actor, s32 repeats)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
@@ -76,6 +82,12 @@ static inline void Camera_WaitForMove(void)
     Engine_CameraWaitForMove();
 }
 
+static inline void ColorBuffer_Interpolate(s32 frames)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_ColorBufferInterpolate(frames);
+}
+
 static inline void Event_Begin(void)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
@@ -94,6 +106,18 @@ static inline void Event_End(void)
     Engine_EventEnd();
 }
 
+static inline struct FieldActor *Event_GetViewCenter(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    return Engine_EventGetViewCenter();
+}
+
+static inline void Event_OpenScreen(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_EventOpenScreen();
+}
+
 static inline void Event_RequestExit(s32 exit)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
@@ -110,6 +134,19 @@ static inline void Event_Wait(s32 frames)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
     Engine_EventWait(frames);
+}
+
+static inline void Event_WaitForScreen(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_EventWaitForScreen();
+}
+
+/* Carries out the move FieldObject_SetPosition set, and waits for it. */
+static inline void FieldObject_CommitPosition(struct FieldActor *object)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_ObjectCommitPosition(object);
 }
 
 /* Moves an object to a fixed-point position; committing it follows. */
@@ -144,6 +181,24 @@ static inline void Item_ShowFound(s32 item, s32 height)
     Engine_ItemShowFound(item, height);
 }
 
+static inline void Map_Redraw(void)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    Engine_MapRedraw();
+}
+
+static inline s32 Math_Cos(s32 angle)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    return Engine_MathCos(angle);
+}
+
+static inline s32 Math_Sin(s32 angle)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    return Engine_MathSin(angle);
+}
+
 static inline void Message_ShowCentered(s32 message, s32 flags)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
@@ -166,6 +221,12 @@ static inline void Shop_Open(s32 shop, s32 keeper)
 {
     /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
     Engine_ShopOpen(shop, keeper);
+}
+
+static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
+{
+    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
+    return Engine_TaskAddCallback(callback, priority);
 }
 
 static inline void Task_Wait(s32 frames)

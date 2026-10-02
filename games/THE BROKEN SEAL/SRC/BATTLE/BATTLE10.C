@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
 #include "BATTLE_WORK.H"
@@ -69,7 +70,6 @@ void UiWork_ClearValueNameTablesFar(void);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
-struct SpoilsUnit *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *block);
 s32 Func_080770b8(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
@@ -207,7 +207,7 @@ void Battle_AwardSpoils(void)
     }
     list = units;
     count = BattleParty_ListLivingUnits(1, list);
-    backup = Runtime_BumpAllocateAlternatePool(sizeof(struct SpoilsUnit));
+    backup = (struct SpoilsUnit *)Runtime_BumpAllocateAlternatePool(sizeof(struct SpoilsUnit));
     for (i = 0; i < count; i++) {
         unit_id = list[i];
         unit = (struct SpoilsUnit *)Owner_GetStateFar(unit_id);

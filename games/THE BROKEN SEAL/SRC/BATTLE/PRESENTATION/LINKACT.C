@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "SYSTEM.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_RANDOM.H"
@@ -8,7 +9,6 @@ extern s32 Data_03001cb4;
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *block);
 s32 SerialRuntime_BeginTransferA(void *data, s32 size);
 s32 SerialRuntime_BeginTransferB(void *data);
@@ -47,7 +47,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
     struct BattleSession *battle = gBattleWork;
     s32 result = 0;
     s32 allocation_size = (u32)(count * 16 + 19) / 20 * 20;
-    struct BattleLinkedActionState *state = Runtime_BumpAllocateAlternatePool(40);
+    struct BattleLinkedActionState *state = (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
     /* Send the header, then the actions; give up after 300 frames or 25

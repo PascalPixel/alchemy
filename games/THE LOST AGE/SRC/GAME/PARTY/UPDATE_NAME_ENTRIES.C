@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "OWNER_STATE.H"
 #include "TLA_EDITION.H"
 
@@ -6,7 +7,6 @@ s32 Party_Check(void);
 void SerialRuntime_WaitForTransferB(void);
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
 void Sys_Free(void *);
-void *Runtime_BumpAllocateAlternatePool(s32);
 void WaitFrames(s32);
 void *Resource_FarCall005(s32);
 

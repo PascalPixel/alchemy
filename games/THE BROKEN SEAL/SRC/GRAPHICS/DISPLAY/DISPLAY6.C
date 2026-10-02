@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -13,7 +14,6 @@ extern const void *DisplayScroll_LineTable[];
 
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Func_080f07f0(const void *resource, s32 offset, s32 mode);
 
 /* Lay the 16 x 6 grid of wide text objects over the scroll position: each

@@ -1,4 +1,5 @@
 #include "STORY.H"
+#include "RUNTIME_MEM.H"
 #include "CALL.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -66,7 +67,6 @@ u16 gWorldMapBlend;
 extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
 extern const u8 gWorldMapPackedFrames[];
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *buffer);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_ResumeAnimation(void);
@@ -618,7 +618,7 @@ void Scene_RunScene371SequenceA(s32 palette)
 {
     struct DisplayTransferQueue *q;
     volatile u16 *ime;
-    u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
+    u8 *buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x4000);
 
     Engine_TaskWait(1);
     Engine_GameFlagClear(0x109);

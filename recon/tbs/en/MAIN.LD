@@ -575,7 +575,7 @@
         "*/recon/tbs/raw/080a7a32.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/MENU8.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOW_OWNER_PROGRESS_MESSAGE.o"(.text)
-        "*/recon/tbs/raw/080a8604.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_STATUS_AILMENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RUN_BUSY_WAIT_DELAY.o"(.text)
         "*/recon/tbs/raw/080a8912.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/DRAW_OWNER_STATUS.o"(.text)

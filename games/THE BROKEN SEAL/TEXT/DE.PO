@@ -9279,15 +9279,15 @@ msgctxt "MsgActorDefends"
 msgid "02317"
 msgstr "{argument_actor_name:1} schützt sich!"
 
-msgctxt "message"
+msgctxt "MsgActorUsesBattleItem"
 msgid "02318"
 msgstr "{argument_actor_name:1} setzt {argument_item_name:1} ein!"
 
-msgctxt "message"
+msgctxt "MsgActorRaisesItem"
 msgid "02319"
 msgstr "{argument_actor_name:1} hält {argument_item_name:1} zum Himmel!"
 
-msgctxt "message"
+msgctxt "MsgWeaponHowls"
 msgid "02320"
 msgstr "{argument_actor_name:1}{possessive_suffix} {argument_item_name:1}{line_break}heult auf! "
 
@@ -9295,7 +9295,7 @@ msgctxt "message"
 msgid "02321"
 msgstr "{argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgItemAlreadyUsed"
 msgid "02322"
 msgstr "{argument_actor_name:1}{possessive_suffix} Item wurde{line_break}bereits eingesetzt!"
 
@@ -9435,11 +9435,11 @@ msgctxt "message"
 msgid "02356"
 msgstr "{argument_actor_name:1} erleidet eine Niederlage..."
 
-msgctxt "message"
+msgctxt "MsgActorCasts"
 msgid "02357"
 msgstr "{argument_actor_name:1} bewirkt {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesDjinn"
 msgid "02358"
 msgstr "{argument_actor_name:1} entfesselt {argument_ability_name}!"
 
@@ -9447,11 +9447,11 @@ msgctxt "message"
 msgid "02359"
 msgstr "{argument_actor_name:1} verbündet sich mit {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorSummons"
 msgid "02360"
 msgstr "{argument_actor_name:1} beschwört {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgSummonLacksDjinn"
 msgid "02361"
 msgstr "{argument_actor_name:1} beschwört {argument_ability_name}, hat{line_break}aber nicht genug Verbündete!"
 
@@ -9467,7 +9467,7 @@ msgctxt "MsgNoTimeToRun"
 msgid "02364"
 msgstr "Du kannst jetzt nicht aufgeben!"
 
-msgctxt "message"
+msgctxt "MsgActorRuns"
 msgid "02365"
 msgstr "{argument_actor_name:1} flüchtet!"
 
@@ -9535,15 +9535,15 @@ msgctxt "message"
 msgid "02381"
 msgstr "Aber die Psynergy wird blockiert!"
 
-msgctxt "message"
+msgctxt "MsgIsParalyzed"
 msgid "02382"
 msgstr "{argument_actor_name:1} ist paralysiert!"
 
-msgctxt "message"
+msgctxt "MsgIsAsleep"
 msgid "02383"
 msgstr "{argument_actor_name:1} schläft!"
 
-msgctxt "message"
+msgctxt "MsgIsBound"
 msgid "02384"
 msgstr "{argument_actor_name:1} ist gefesselt!"
 
@@ -9551,7 +9551,7 @@ msgctxt "message"
 msgid "02385"
 msgstr "{argument_actor_name:1}{possessive_suffix} Attacke ging daneben!"
 
-msgctxt "message"
+msgctxt "MsgDjinnInRecovery"
 msgid "02386"
 msgstr "{argument_ability_name} erholt sich noch!"
 
@@ -9699,7 +9699,7 @@ msgctxt "MsgImmobile"
 msgid "02422"
 msgstr "{argument_actor_name:1} wurde bewegungsunfähig!"
 
-msgctxt "message"
+msgctxt "MsgUnableToMove"
 msgid "02423"
 msgstr "{argument_actor_name:1} ist bewegungsunfähig!"
 
@@ -10147,15 +10147,15 @@ msgctxt "message"
 msgid "02534"
 msgstr "Dschinn nicht 2 x einsetzbar."
 
-msgctxt "message"
+msgctxt "MsgActorUsesAbility"
 msgid "02535"
 msgstr "{argument_actor_name:1} setzt {argument_ability_name} ein!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesAbility"
 msgid "02536"
 msgstr "{argument_actor_name:1} entfesselt {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgEmitsUltrasonicWaves"
 msgid "02537"
 msgstr "{argument_actor_name:1} sendet Ultraschall aus!"
 
@@ -10175,51 +10175,51 @@ msgctxt "MsgNoOneCame"
 msgid "02541"
 msgstr "Aber niemand erschien!"
 
-msgctxt "message"
+msgctxt "MsgGlowersFerociously"
 msgid "02542"
 msgstr "{argument_actor_name:1} funkelt böse!"
 
-msgctxt "message"
+msgctxt "MsgIsIntimidated"
 msgid "02543"
 msgstr "{argument_actor_name:1} ist eingeschüchtert{line_break}und zittert vor Angst!"
 
-msgctxt "message"
+msgctxt "MsgBalefulGaze"
 msgid "02544"
 msgstr "{argument_actor_name:1}{possessive_suffix} böser Blick{line_break}legt sich auf dich!"
 
-msgctxt "message"
+msgctxt "MsgEatsWorms"
 msgid "02545"
 msgstr "{argument_actor_name:1} frisst Würmer!"
 
-msgctxt "message"
+msgctxt "MsgLetsOutAbility"
 msgid "02546"
 msgstr "{argument_actor_name:1} setzt {argument_ability_name} frei!"
 
-msgctxt "message"
+msgctxt "MsgEnemyUnleashesAbility"
 msgid "02547"
 msgstr "{argument_actor_name:1} entfesselt {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgGlowersMiserably"
 msgid "02548"
 msgstr "{argument_actor_name:1} funkelt dich kläglich an."
 
-msgctxt "message"
+msgctxt "MsgFuriousRage"
 msgid "02549"
 msgstr "{argument_actor_name:1} bricht in Wut aus!"
 
-msgctxt "message"
+msgctxt "MsgSmellOfDecay"
 msgid "02550"
 msgstr "{argument_actor_name:1} sondert den Gestank des{line_break}Verfalls ab!"
 
-msgctxt "message"
+msgctxt "MsgAttemptsToDivide"
 msgid "02551"
 msgstr "{argument_actor_name:1} versucht sich zu teilen!"
 
-msgctxt "message"
+msgctxt "MsgLooksForAllies"
 msgid "02552"
 msgstr "{argument_actor_name:1} sucht nach Freunden!"
 
-msgctxt "message"
+msgctxt "MsgLooksForHelp"
 msgid "02553"
 msgstr "{argument_actor_name:1} sucht nach Hilfe."
 

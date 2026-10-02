@@ -1070,13 +1070,6 @@ BattleCommand_SelectAutomatic:
 	.thumb_func
 BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000bfeb0, 0x00000754
-	.section .rom.000c07a2, "ax"
-	.incbin "baserom.gba", 0x000c07a2, 0x000001ee
-	.global BattleCommand_BuildPlan
-	.type BattleCommand_BuildPlan, %function
-	.thumb_func
-BattleCommand_BuildPlan:
-	.incbin "baserom.gba", 0x000c0990, 0x00000e90
 	.section .rom.000c21bc, "ax"
 	.global BattleUnit_ProcessTurnEnd
 	.type BattleUnit_ProcessTurnEnd, %function
@@ -1147,7 +1140,13 @@ PpHealFalloff:
 	.incbin "baserom.gba", 0x000c5168, 0x00000018
 	.global HpDmgFalloff
 HpDmgFalloff:
-	.incbin "baserom.gba", 0x000c5180, 0x00000a54
+	.incbin "baserom.gba", 0x000c5180, 0x00000030
+	.global Battle_ActionStatus
+Battle_ActionStatus:
+	.incbin "baserom.gba", 0x000c51b0, 0x00000208
+	.global Battle_ActionFlags
+Battle_ActionFlags:
+	.incbin "baserom.gba", 0x000c53b8, 0x0000081c
 	.global BattleParty_RoundEndGroupOrder
 BattleParty_RoundEndGroupOrder:
 	.incbin "baserom.gba", 0x000c5bd4, 0x00000048

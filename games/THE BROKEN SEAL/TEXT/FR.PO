@@ -9279,15 +9279,15 @@ msgctxt "MsgActorDefends"
 msgid "02317"
 msgstr "{argument_actor_name:1} se défend!"
 
-msgctxt "message"
+msgctxt "MsgActorUsesBattleItem"
 msgid "02318"
 msgstr "{argument_actor_name:1} utilise: {argument_item_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgActorRaisesItem"
 msgid "02319"
 msgstr "{argument_actor_name:1} brandit: {argument_item_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgWeaponHowls"
 msgid "02320"
 msgstr "{argument_item_name:1} de {argument_actor_name:1}{line_break}pousse un hurlement! "
 
@@ -9295,7 +9295,7 @@ msgctxt "message"
 msgid "02321"
 msgstr "{argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgItemAlreadyUsed"
 msgid "02322"
 msgstr "L'objet de {argument_actor_name:1}{line_break}a déjà été utilisé!"
 
@@ -9435,11 +9435,11 @@ msgctxt "message"
 msgid "02356"
 msgstr "{argument_actor_name:1} connaît une amère défaite..."
 
-msgctxt "message"
+msgctxt "MsgActorCasts"
 msgid "02357"
 msgstr "{argument_actor_name:1} lance {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesDjinn"
 msgid "02358"
 msgstr "{argument_actor_name:1} déchaîne {argument_ability_name}!"
 
@@ -9447,11 +9447,11 @@ msgctxt "message"
 msgid "02359"
 msgstr "{argument_actor_name:1} lie {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorSummons"
 msgid "02360"
 msgstr "{argument_actor_name:1} invoque {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgSummonLacksDjinn"
 msgid "02361"
 msgstr "{argument_actor_name:1} invoque {argument_ability_name} sans{line_break}avoir assez de Djinn en attente!"
 
@@ -9467,7 +9467,7 @@ msgctxt "MsgNoTimeToRun"
 msgid "02364"
 msgstr "Ce n'est pas le moment de fuir!"
 
-msgctxt "message"
+msgctxt "MsgActorRuns"
 msgid "02365"
 msgstr "{argument_actor_name:1} fuit!"
 
@@ -9535,15 +9535,15 @@ msgctxt "message"
 msgid "02381"
 msgstr "Mais la Psynergie est bloquée!"
 
-msgctxt "message"
+msgctxt "MsgIsParalyzed"
 msgid "02382"
 msgstr "{argument_actor_name:1} ne peut plus bouger!"
 
-msgctxt "message"
+msgctxt "MsgIsAsleep"
 msgid "02383"
 msgstr "{argument_actor_name:1} s'endort!"
 
-msgctxt "message"
+msgctxt "MsgIsBound"
 msgid "02384"
 msgstr "{argument_actor_name:1} ne peut pas bouger!"
 
@@ -9551,7 +9551,7 @@ msgctxt "message"
 msgid "02385"
 msgstr "L'attaque de {argument_actor_name:1} manque sa cible!"
 
-msgctxt "message"
+msgctxt "MsgDjinnInRecovery"
 msgid "02386"
 msgstr "{argument_ability_name} est en rétablissement!"
 
@@ -9699,7 +9699,7 @@ msgctxt "MsgImmobile"
 msgid "02422"
 msgstr "{argument_actor_name:1} devient incapable de bouger!"
 
-msgctxt "message"
+msgctxt "MsgUnableToMove"
 msgid "02423"
 msgstr "{argument_actor_name:1} est incapable de bouger!"
 
@@ -10147,15 +10147,15 @@ msgctxt "message"
 msgid "02534"
 msgstr "Réutilisation Djinn impossible."
 
-msgctxt "message"
+msgctxt "MsgActorUsesAbility"
 msgid "02535"
 msgstr "{argument_actor_name:1} utilise {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesAbility"
 msgid "02536"
 msgstr "{argument_actor_name:1} lance {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgEmitsUltrasonicWaves"
 msgid "02537"
 msgstr "{argument_actor_name:1} émet des ultrasons!"
 
@@ -10175,51 +10175,51 @@ msgctxt "MsgNoOneCame"
 msgid "02541"
 msgstr "Mais personne n'est venu!"
 
-msgctxt "message"
+msgctxt "MsgGlowersFerociously"
 msgid "02542"
 msgstr "{argument_actor_name:1} toise férocement!"
 
-msgctxt "message"
+msgctxt "MsgIsIntimidated"
 msgid "02543"
 msgstr "{argument_actor_name:1} a peur et ne{line_break}peut s'empêcher de trembler!"
 
-msgctxt "message"
+msgctxt "MsgBalefulGaze"
 msgid "02544"
 msgstr "Le regard maléfique de{line_break}{argument_actor_name:1} se pose sur vous!"
 
-msgctxt "message"
+msgctxt "MsgEatsWorms"
 msgid "02545"
 msgstr "{argument_actor_name:1} mange des vers!"
 
-msgctxt "message"
+msgctxt "MsgLetsOutAbility"
 msgid "02546"
 msgstr "{argument_actor_name:1} lance {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgEnemyUnleashesAbility"
 msgid "02547"
 msgstr "{argument_actor_name:1} lance {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgGlowersMiserably"
 msgid "02548"
 msgstr "{argument_actor_name:1} vous lance un regard noir."
 
-msgctxt "message"
+msgctxt "MsgFuriousRage"
 msgid "02549"
 msgstr "{argument_actor_name:1} entre en frénésie!"
 
-msgctxt "message"
+msgctxt "MsgSmellOfDecay"
 msgid "02550"
 msgstr "{argument_actor_name:1} empeste la pourriture!"
 
-msgctxt "message"
+msgctxt "MsgAttemptsToDivide"
 msgid "02551"
 msgstr "{argument_actor_name:1} essaie de se diviser!"
 
-msgctxt "message"
+msgctxt "MsgLooksForAllies"
 msgid "02552"
 msgstr "{argument_actor_name:1} cherche un allié!"
 
-msgctxt "message"
+msgctxt "MsgLooksForHelp"
 msgid "02553"
 msgstr "{argument_actor_name:1} appelle à l'aide."
 

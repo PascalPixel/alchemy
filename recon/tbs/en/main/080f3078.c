@@ -1,4 +1,4 @@
-/* Draft, not exact: score 363, 20 differing instructions of 831 (was 10457
+/* Draft, not exact: score 223, 15 differing instructions of 831 (was 10457
  * and 447). Rewritten from the listing in plain C: no link-time constants,
  * no permuter temporaries. Same size, same frame, every loop in place.
  * Green and blue have the listing's registers (b r5, g r6) because the
@@ -6,14 +6,20 @@
  * The allocator's priorities for g and b are 1% apart, so most edits to any
  * loop swap them back (about 100 instructions): check that first.
  * Remaining, all register choice or order:
- *  - the grey sum (0x10001 and the 0x200000 tint) adds its first two terms
- *    and then the third in the listing; here the last two are added first.
- *    (c takes the quotient: that keeps c out of the 0x7c00 and, as listed.)
  *  - 0x10002 computes blue first and copies it to green, and tests blue for
- *    green's lower clamp; here green is computed and tested.
+ *    green's lower clamp; here green is computed and tested. Every spelling
+ *    of the two assignments compiles to the same code or swaps g and b back
+ *    (b = g = x computes blue first but loses the registers).
  *  - in the 0x400000 blend the listing spills tr + tg last (sp+4, below the
- *    three shifted tints); here it is spilled first (sp+16).
- * The permuter reaches 196 from here only with pointless temporaries. */
+ *    three shifted tints); here it is spilled first (sp+16). The four are
+ *    GCSE's hoisted temporaries (regs 475..478 in the .gcse dump), numbered
+ *    in hash order of their expressions, which depends on the pseudo numbers
+ *    of tr, tg and tb: so on how many pseudos the code above the blend
+ *    makes, not on the order the blend is written in. Shifted tints in
+ *    variables, a sum variable and other operand orders leave it unchanged.
+ *  - three reordered instructions that follow from those two.
+ * The grey sum is exact now: its three terms go into r, g and b and are
+ * added from there (c takes the quotient). */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
@@ -74,7 +80,10 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         case 0x10001:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
-                c = Iwram_SignedDivide(((c << 11) & 0xf800) + (((c << 7) & 0x1f000) + (c & 0x7c00)), 7);
+                r = ((c << 11) & 0xf800);
+                g = ((c << 7) & 0x1f000);
+                b = (c & 0x7c00);
+                c = Iwram_SignedDivide(r + g + b, 7);
                 dst[i * 3 + 0] = c;
                 dst[i * 3 + 1] = c;
                 dst[i * 3 + 2] = c;
@@ -229,7 +238,10 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         tb = (mode >> 10) & 31;
         for (i = 0; i < cnt; i++) {
             c = *src++;
-            c = Iwram_SignedDivide(((c << 11) & 0xf800) + (((c << 7) & 0x1f000) + (c & 0x7c00)), 96);
+            r = ((c << 11) & 0xf800);
+            g = ((c << 7) & 0x1f000);
+            b = (c & 0x7c00);
+            c = Iwram_SignedDivide(r + g + b, 96);
             r = c * tr;
             g = c * tg;
             b = c * tb;

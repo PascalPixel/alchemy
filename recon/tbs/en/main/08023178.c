@@ -1,3 +1,7 @@
+/* Draft, not exact: current EN score14696, all external symbols resolve.
+ * Native3320/candidate3352 bytes including pools; frames352/344.
+ * Every retained aggregate and bound pointer has real uses.
+ */
 /* Not-yet-C: complete 3320-byte owner.
  * 2026-10-02 unchanged draft: score23698 (347 register, 93 stack,
  * 70 operand, 107 reordered, 76 inserted, 61 deleted), frame372 versus352;
@@ -23,6 +27,31 @@
  * cursor sprite12 at328 and face sprite12 at340. Sp+0..95 is arguments and
  * compiler spills, never source storage. Every array element is consumed.
  * The three delta locals hold attack/defense/agility changes.
+ * Formation trial5 consumed pointer bases: score14745 (322 register,
+ * 70 stack, 65 operand, 85 reordered, 37 inserted, 27 deleted),
+ * frame348 and complete compiled extent3348 versus native3320.
+ * Trial6 natural redraw with pointer bases: score15510 (314 register,
+ * 70 stack, 64 operand, 87 reordered, 41 inserted, 30 deleted), frame348;
+ * measured redraw binding remains better.
+ * Trial7 face lookup before stores: score14780 (322 register, 70 stack,
+ * 66 operand, 82 reordered, 38 inserted, 28 deleted), frame348; reverted.
+ * Trial8 owned IWRAM bank expression: unchanged14745/frame348; reverted.
+ * Trial9 used-pointer inline wrapper: unchanged14745/frame348; reverted.
+ * Trial10 scoped real copier pointer in r3: score14696 (326 register,
+ * 106 stack, 61 operand, 83 reordered, 39 inserted, 26 deleted),
+ * frame344 and extent3352; attack spill removed by the real register choice.
+ * Trial11 plain shared owner-copy size: unchanged14696/frame344; reverted.
+ * Trial12 consumed size in r8: score15041 (332 register, 71 stack,
+ * 61 operand, 97 reordered, 36 inserted, 24 deleted), frame348; reverted.
+ * Trial13 scoped condition value: score16016 (346 register, 101 stack,
+ * 66 operand, 93 reordered, 39 inserted, 31 deleted), frame344; reverted.
+ * Trial14 final redraw ablation with r3 copies: score14890 (348 register,
+ * 110 stack, 60 operand, 83 reordered, 39 inserted, 27 deleted), frame344;
+ * retained redraw binding improves the current body by194.
+ * Final retained trial10: score14696, all external symbols resolved,
+ * native3320/candidate3352 including pools; native frame352/candidate344.
+ * Pointer/spill residual: native pixel coordinates occupy56/60; generated
+ * x lives in r9 and y in outgoing sp+4, accounting for eight fewer spill bytes.
  * Remaining: compiler spills/lifetimes, register order, branch/layout and
  * literal-pool extent. Native frame352 versus retained344. */
 #include "BATTLE_RUNTIME.H"
@@ -89,7 +118,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s32 handleFrame;
     s32 handleCursor;
     s32 extended;
-    /* FAKEMATCH: native redraw stays in r10 across calls; source sharing failed, and pinning the used flag lowers score15840 to15792. */
+    /* FAKEMATCH: native redraw uses r10 across calls; final ablation scores14890 versus14696 with this consumed flag bound. */
     register s32 redraw asm("r10");
     s32 keys;
     s32 cnt;
@@ -106,6 +135,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     s8 *out;
     struct BattleUnit *saved;
     struct MenuSprite *p;
+    struct MenuSprite *face;
+    struct MenuSprite *cursor;
+    struct MenuSprite *name;
+    struct MenuSprite *icons;
+    s32 *handles;
+    s8 *codes;
 
     base = (struct UiRenderWork *)gWindowWork[0];
     idx = -1;
@@ -131,8 +166,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     cur.mode = 0;
 
     handleCursor = Resource_LoadIntoFreeSlot(0x80);
-    q = tbl;
-    out = sel;
+    handles = tbl;
+    codes = sel;
+    q = handles;
+    out = codes;
     for (i = 10; i >= 0; i--) {
         *q++ = Resource_LoadIntoFreeSlot(0x80);
         *out++ = -1;
@@ -159,16 +196,20 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     winDesc = UiWindow_Create(0, 14, 30, 6, 10);
     UiWindow_MarkVisibleTileAttributes();
 
+    name = &objName;
+    face = &objFace;
+    cursor = &objCursor;
+    icons = objIcon;
     for (;;) {
         keys = gKeysRepeat;
 
-        objName.oam.word.attr01 = 0x80000400;
-        objName.oam.word.attr23 = 0;
-        objName.oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame) & 0x3FF;
-        objName.oam.f.x = 8;
-        objName.oam.f.y = 24;
-        objName.oam.f.palette = 14;
-        Runtime_PushSlotEntry((s32 *)&objName, 240);
+        name->oam.word.attr01 = 0x80000400;
+        name->oam.word.attr23 = 0;
+        name->oam.f.tile = Ui_LoadEntryForKind(owner, handleFrame) & 0x3FF;
+        name->oam.f.x = 8;
+        name->oam.f.y = 24;
+        name->oam.f.palette = 14;
+        Runtime_PushSlotEntry((s32 *)name, 240);
 
         switch (cur.entry) {
         case 0:
@@ -314,25 +355,25 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         colPixels = cur.col * 8;
         rowPixels = cur.row * 8;
 
-        objFace.oam.word.attr01 = 0xC0002400;
-        objFace.oam.word.attr23 = 0;
-        objFace.oam.f.tile = ((struct MenuSprite *)GetBattleObjectSlotFar(owner)->object->records)->oam.f.tile;
-        objFace.oam.f.x = 0xAC;
-        objFace.oam.f.y = 56;
-        Runtime_PushSlotEntry((s32 *)&objFace, 240);
+        face->oam.word.attr01 = 0xC0002400;
+        face->oam.word.attr23 = 0;
+        face->oam.f.tile = ((struct MenuSprite *)GetBattleObjectSlotFar(owner)->object->records)->oam.f.tile;
+        face->oam.f.x = 0xAC;
+        face->oam.f.y = 56;
+        Runtime_PushSlotEntry((s32 *)face, 240);
 
-        objCursor.oam.word.attr01 = 0x40000400;
-        objCursor.oam.word.attr23 = 0;
-        objCursor.oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles)
+        cursor->oam.word.attr01 = 0x40000400;
+        cursor->oam.word.attr23 = 0;
+        cursor->oam.f.tile = Resource_GetBuffer(handleCursor, (s32)Resource_FixedBlockBTiles)
             & 0x3FF;
-        objCursor.oam.f.x = (colPixels + winMain->x * 8
+        cursor->oam.f.x = (colPixels + winMain->x * 8
                           - ((gFrameCount & 4) >> 2))
             + 16;
-        objCursor.oam.f.y = (u8)((rowPixels + winMain->y * 8
+        cursor->oam.f.y = (u8)((rowPixels + winMain->y * 8
                                - ((gFrameCount & 4) >> 2))
             + 16);
-        objCursor.oam.f.affine_index = 8;
-        Runtime_PushSlotEntry((s32 *)&objCursor, 241);
+        cursor->oam.f.affine_index = 8;
+        Runtime_PushSlotEntry((s32 *)cursor, 241);
 
         if (redraw != 0) {
             object = Owner_GetStateFar(owner);
@@ -414,10 +455,10 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 n = 0;
                 if (object->hp == 0) {
-                    sel[0] = 16;
+                    codes[0] = 16;
                     n = 1;
                 }
-                out = &sel[n];
+                out = &codes[n];
                 do {
                     if (object->restraint != 0) {
                         *out++ = 15;
@@ -533,8 +574,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 if (n > 0) {
                     i = n;
-                    out = sel;
-                    q = tbl;
+                    out = codes;
+                    q = handles;
                     do {
                         Resource_LoadTableEntryToBuffer(*out, *q++);
                         i--;
@@ -542,16 +583,16 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     } while (i != 0);
                 }
                 if (n == 0) {
-                    sel[0] = 0;
+                    codes[0] = 0;
                     n = 1;
                 }
                 if (n <= 10) {
                     for (i = n; i < 11; i++) {
-                        sel[i] = -1;
+                        codes[i] = -1;
                     }
                 }
                 cnt = n;
-                if (sel[0] == 0) {
+                if (codes[0] == 0) {
                     if (object->hp != 0) {
                         code = (s32)&MsgOwnerStatusNormal;
                     } else {
@@ -563,14 +604,19 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
             text = (u16 *)Runtime_BumpAllocate(0x100);
             if ((u32)cur.entry > 13) {
-                iconIdx = sel[cur.entry - 14];
+                iconIdx = codes[cur.entry - 14];
                 if (iconIdx == 0 && object->hp == 0) {
                     iconIdx = 16;
                 }
 
                 saved = (struct BattleUnit *)Runtime_BumpAllocate(sizeof(*object));
                 code = 0;
-                Iwram_CopyWords(saved, object, sizeof(*object));
+                {
+                    /* FAKEMATCH: direct and wrapper trials hoist the used copier to r10; native reloads its consumed pointer in r3 for this call. */
+                    register s32 (*copy)(void *, const void *, s32) asm("r3") = Iwram_CopyWords;
+
+                    copy(saved, object, sizeof(*object));
+                }
 
                 atkDelta = object->attack;
                 defDelta = object->defense;
@@ -582,7 +628,12 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 atkDelta -= object->attack;
                 defDelta -= object->defense;
                 agiDelta -= object->agility;
-                Iwram_CopyWords(object, saved, sizeof(*object));
+                {
+                    /* FAKEMATCH: the second native copy also uses the real routine pointer in r3; intervening calls clobber that register. */
+                    register s32 (*copy)(void *, const void *, s32) asm("r3") = Iwram_CopyWords;
+
+                    copy(object, saved, sizeof(*object));
+                }
                 Sys_Free(saved);
 
                 switch (iconIdx) {
@@ -632,8 +683,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             redraw = 0;
         }
 
-        q = tbl;
-        p = objIcon;
+        q = handles;
+        p = icons;
         colPixels = 112;
         for (i = 0; i <= 10; i++) {
             p->oam.word.attr01 = 0x40000400;
@@ -641,7 +692,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             p->oam.f.tile = gVramBlockCache[*q++].offset >> 5;
             p->oam.f.x = colPixels;
             p->oam.f.y = (u8)(winMain->y * 8 + 8);
-            if (sel[i] > 0) {
+            if (codes[i] > 0) {
                 Runtime_PushSlotEntry((s32 *)p, 240);
             }
             colPixels += 15;
@@ -677,7 +728,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         WaitFrames(1);
     }
 
-    q = tbl;
+    q = handles;
     for (i = 10; i >= 0; i--) {
         Resource_ResetEntry(*q++);
     }

@@ -530,8 +530,8 @@ BattleFx_PulseScales:
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x0009f0b0, 0x0000000c
-	.global Data_0809f0bc
-Data_0809f0bc:
+	.global BattleFx_SourceHoldScript
+BattleFx_SourceHoldScript:
 	.incbin "baserom.gba", 0x0009f0bc, 0x00000018
 	.global BattleFx_FragmentScript
 BattleFx_FragmentScript:

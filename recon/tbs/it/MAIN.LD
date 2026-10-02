@@ -440,7 +440,7 @@
     "*/recon/tbs/it/rom.o"(.rom.00099a86)
     "*/recon/tbs/it/rom.o"(.rom.00099a88)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLES.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.00099e3c)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/LIFT_DROP.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT16.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_OBJECT_MOTION_SCALE_AND_LINKED_ANGLE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text.effect_spawn_resident)

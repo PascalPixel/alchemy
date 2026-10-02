@@ -576,12 +576,6 @@ FunctionHead_08097c3c:
 	.thumb_func
 RunBattleEffect05:
 	.incbin "baserom.gba", 0x00099a88, 0x00000328
-	.section .rom.00099e3c, "ax"
-	.global Battle_unk3_2
-	.type Battle_unk3_2, %function
-	.thumb_func
-Battle_unk3_2:
-	.incbin "baserom.gba", 0x00099e3c, 0x000004f0
 	.section .rom.0009aefa, "ax"
 	.incbin "baserom.gba", 0x0009aefa, 0x00000002
 	.section .rom.0009aefc, "ax"
@@ -677,7 +671,10 @@ BattleFx_PulseScales:
 	.incbin "baserom.gba", 0x0009f1fc, 0x0000000c
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
-	.incbin "baserom.gba", 0x0009f208, 0x00000024
+	.incbin "baserom.gba", 0x0009f208, 0x0000000c
+	.global BattleFx_SourceHoldScript
+BattleFx_SourceHoldScript:
+	.incbin "baserom.gba", 0x0009f214, 0x00000018
 	.global BattleFx_FragmentScript
 BattleFx_FragmentScript:
 	.incbin "baserom.gba", 0x0009f22c, 0x00000024

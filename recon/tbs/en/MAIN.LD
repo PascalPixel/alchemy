@@ -158,7 +158,7 @@
         "*/games/COMMON/SRC/FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT13.o"(.text)
         "*/recon/tbs/raw/0800caca.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0800cacc.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/UPDATE_ALL_THUMB.o"(.text)
         "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/MOTION_SET_POSITION_AND_RESET_MOTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT14.o"(.text)
         "*/recon/tbs/raw/0800daf0.o"(.text .rodata .data .padding)

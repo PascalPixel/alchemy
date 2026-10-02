@@ -159,7 +159,7 @@
     "*/games/COMMON/SRC/FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT13.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.0000caca)
-    "*/recon/tbs/it/rom.o"(.rom.0000cacc)
+    "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/UPDATE_ALL_THUMB.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/MOTION_SET_POSITION_AND_RESET_MOTION.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT14.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.0000daf0)

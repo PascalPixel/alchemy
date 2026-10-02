@@ -21,6 +21,7 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_PRESENTATION.H"
+#include "RAM_BUFFER.H"
 
 void WaitFrames(s32 frames);
 
@@ -298,6 +299,188 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Scheduler_RemoveCallback((u32)BattleFx_ArmWin0HBlankDma);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+    BattlePres_ConfigureEffectDisplay();
+}
+
+extern u16 BattleFx6_FlareCells[];
+/* For each variant: how many bolts fall, how many sparks each throws off
+   where it lands, how far apart the bolts start and how many frames the
+   effect lasts. */
+extern u8 FallingBolts_Counts[];
+
+/* The map cell buffer as this effect uses it: WIN0H for every screen line,
+   then the sparks. */
+struct BoltSparkBuffer {
+    u16 lines[160];
+    struct EffectStep sparks[512];
+};
+
+#define gBoltSparks ((struct BoltSparkBuffer *)Ram_MapCellBuffer)
+
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+
+/*
+ * Battle effect: bolts fall in a slanted line towards the targets' side;
+ * each bursts where it lands, shakes the targets and throws off sparks that
+ * fall away under gravity.
+ */
+void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
+{
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 frame;
+    DrawRectangle draw_spark;
+    DrawRectangle draw_bolt;
+    struct EffectStep *bolt;
+    struct EffectStep *spark;
+    u16 *line;
+    s32 i;
+    s32 k;
+
+    heap_cache = (void **)&gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0x2001);
+    REG_BG2PA = 0x100;
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, (u8 *)work + 0x604, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work, 0, 0);
+    BattlePres_ConfigureEffectDisplay();
+    REG_BLDCNT = 0x3f44;
+    REG_WININ = 0x3337;
+
+    BattleEffect_LoadWork(46, 7, 7, 2, 2);
+    draw_bolt = heap_cache[7];
+    BattleEffect_LoadWork(47, 7, 7, 2, 3);
+    draw_spark = heap_cache[8];
+
+    for (i = 0; i != 512; i++)
+        gBoltSparks->sparks[i].variant = -1;
+
+    for (i = 0; i != 64; i++) {
+        s32 x;
+        s32 y;
+
+        bolt = &work->particles[i];
+        x = Random16() & 63;
+        y = -(i * FallingBolts_Counts[work->effect->variant * 4 + 2] + 16);
+        if (work->effect->side == 1)
+            x = x + y / 2 - 48;
+        else
+            x = x - y / 2 + 72;
+        bolt->x = x << 3;
+        bolt->y = y << 3;
+        bolt->variant = -1;
+    }
+
+    if (work->effect->side == 0) {
+        line = (u16 *)gMapCellBuffer;
+        for (i = 0; i != 160; i++) {
+            if ((u32)(i - 8) <= 95)
+                line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);
+            else if (i <= 135)
+                line[i] = 0x80;
+            else
+                line[i] = 0x100;
+        }
+    } else {
+        line = (u16 *)gMapCellBuffer;
+        for (i = 0; i != 160; i++) {
+            if ((u32)(i - 8) <= 95)
+                line[i] = ((i / 2 + 60) << 8) | (i / 2 + 188);
+            else if (i <= 135)
+                line[i] = 0x70f0;
+            else
+                line[i] = 0x100;
+        }
+    }
+
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmWin0HBlankDma, 0x480);
+    if (work->effect->variant == 0) {
+        work->transfer_mode = 1;
+        work->transfer_value = 0;
+    } else if (work->effect->variant == 1) {
+        work->transfer_mode = 2;
+        work->transfer_value = 50;
+    } else {
+        work->transfer_mode = 2;
+        work->transfer_value = 75;
+    }
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+    for (frame = 0; frame != FallingBolts_Counts[work->effect->variant * 4 + 3]; frame++) {
+        if (frame == FallingBolts_Counts[work->effect->variant * 4 + 3] - 64)
+            BattleEventRuntime_BeginPhaseFar(132);
+        for (i = 0; i != FallingBolts_Counts[work->effect->variant * 4]; i++) {
+            s32 x;
+            s32 y;
+
+            bolt = &work->particles[i];
+            x = bolt->x / 8;
+            y = bolt->y / 8;
+            if (bolt->variant == -1) {
+                draw_bolt(canvas, (u8 *)work + 0x604, x, y, 24, 24);
+                if (bolt->y <= 0x27f) {
+                    if (work->effect->side == 0)
+                        bolt->x -= 32;
+                    else
+                        bolt->x += 32;
+                    bolt->y += 64;
+                } else {
+                    bolt->variant = 0;
+                    for (k = 0; k != FallingBolts_Counts[work->effect->variant * 4 + 1]; k++) {
+                        spark = &gBoltSparks->sparks[
+                            i * FallingBolts_Counts[work->effect->variant * 4 + 1] + k];
+                        spark->x = (x + 12) << 16;
+                        spark->y = y << 16;
+                        spark->velocity_x = ((Random16() & 255) - 128) << 9;
+                        if (work->effect->variant == 2)
+                            spark->velocity_y = ((Random16() & 0x1ff) - 0x180) << 10;
+                        else
+                            spark->velocity_y = ((Random16() & 255) - 255) << 10;
+                        spark->variant = (Random16() & 15) + 16;
+                    }
+                    if ((i & 3) == 0)
+                        AudioCommand_PlayFar(132);
+                    for (k = 0; k != work->effect->count; k++)
+                        ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 2);
+                }
+            } else {
+                if ((u32)bolt->variant <= 3)
+                    draw_bolt(canvas, (u8 *)work + 0x844, x, y, 24, 24);
+                else if (bolt->variant <= 7)
+                    draw_bolt(canvas, (u8 *)work + 0xa84, x - 9, y - 9, 42, 42);
+                if (bolt->variant <= 14)
+                    bolt->variant++;
+            }
+        }
+        for (i = 0; i != 512; i++) {
+            spark = &gBoltSparks->sparks[i];
+            if (spark->variant != -1) {
+                s32 size = spark->variant + 1;
+
+                if (size > 6)
+                    size = 6;
+                draw_spark(canvas, (u8 *)work + BattleFx6_FlareCells[size - 1],
+                    ((s16 *)&spark->x)[1] - size, ((s16 *)&spark->y)[1] - size,
+                    size * 2, size * 2);
+                EffectStep_AdvanceWithGravity2D(spark, 60, 0x2000);
+                spark->variant--;
+            }
+        }
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Scheduler_RemoveCallback((u32)BattleFx_ArmWin0HBlankDma);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

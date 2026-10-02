@@ -1,15 +1,20 @@
-/* DRAFT (score 2343), rewritten 2026-10-02: 74 instructions differ, from two
- * causes.
- * 1. The ROM keeps both sprite priorities on the stack (sp+8, sp+12) and masks
- *    each with 3 before shifting it into the record; here the near one stays in
- *    r5 and, both being known to be 1 or 2, the mask is dropped. As a two-word
- *    array they are on the stack and masked, but then the second case reloads
- *    the word where the ROM reuses the masked value it holds in r11.
+/* DRAFT (score 1175), rewritten 2026-10-02: same frame and same shape as the
+ * ROM, 63 instructions differ, all register choices.
+ * 1. In the two priority loops the ROM holds the object in r5 and, inside the
+ *    four-record loop, reuses r5 for the shifted priority; here the object is
+ *    in r0. With one object variable for the whole function the object is in
+ *    r5, but the shifted priority is then set before the record list is read,
+ *    conflicts with it and pushes the loop counter out of r7.
  * 2. In the icon scan the ROM leaves the motion record in r0 and loads the icon
- *    effect into r2; here they are the other way round.
- * Settled: the icon scan is not strength-reduced in the ROM (kept as a goto
- * loop, tagged); the slot is a variable of each loop, not of the function;
- * the four-record loops are ascending loops the compiler reverses. */
+ *    effect into r2; here they are the other way round, and the slot and the
+ *    object trade r5 and r6.
+ * Settled: the priorities are a two-word array copied into a variable for
+ * each loop (which is why the ROM masks them with 3 and shares the masked
+ * value between the two cases); the icon scan is not strength-reduced (kept
+ * as a goto loop, tagged); the slot belongs to each loop; the four-record
+ * loops are ascending loops the compiler reverses. Walking the record list
+ * with a pointer lets the compiler reverse the outer loop, which the ROM
+ * does not. */
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 
@@ -58,9 +63,7 @@ struct IconContext *GetMotionRecord(struct ActorObject *object, s32 record_index
 void Func_080b7738(void)
 {
     u16 ids[14];
-    s32 near_priority;
-    s32 far_priority;
-    struct ActorObject *object;
+    s32 priority[2];
     s32 i;
     s32 j;
     s32 count;
@@ -75,7 +78,8 @@ again:
             struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
 
             if (slot != 0) {
-                object = slot->object;
+                struct ActorObject *object = slot->object;
+
                 BattleStatusIcon_Cycle((struct BattleStatusIconRecord *)slot);
                 if (slot->icon_effect != 0) {
                     struct IconContext *context = GetMotionRecord(object, 0);
@@ -100,51 +104,63 @@ again:
             goto again;
     }
     if (gCameraWork->angle >= 0) {
-        near_priority = 1;
-        far_priority = 2;
-    } else if (gCameraWork->angle < 0) {
-        near_priority = 2;
-        far_priority = 1;
+        priority[0] = 1;
+        priority[1] = 2;
+    } else {
+        priority[0] = 2;
+        priority[1] = 1;
     }
-    count = BattleParty_ListActorIds(1, ids);
-    for (i = 0; i < count; i++) {
-        struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+    {
+        s32 value;
 
-        if (slot != 0) {
-            object = slot->object;
-            switch (object->record_kind & 15) {
-            case 1:
-                ((struct SpriteRecord *)object->records)->priority = near_priority;
-                break;
-            case 2:
-                for (j = 0; j < 4; j++) {
-                    struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+        count = BattleParty_ListActorIds(1, ids);
+        value = priority[0];
+        for (i = 0; i < count; i++) {
+            struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
 
-                    if (record != 0)
-                        record->priority = near_priority;
+            if (slot != 0) {
+                struct ActorObject *object = slot->object;
+
+                switch (object->record_kind & 15) {
+                case 1:
+                    ((struct SpriteRecord *)object->records)->priority = value;
+                    break;
+                case 2:
+                    for (j = 0; j < 4; j++) {
+                        struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+
+                        if (record != 0)
+                            record->priority = value;
+                    }
+                    break;
                 }
-                break;
             }
         }
     }
-    count = BattleParty_ListActorIds(2, ids);
-    for (i = 0; i < count; i++) {
-        struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+    {
+        s32 value;
 
-        if (slot != 0) {
-            object = slot->object;
-            switch (object->record_kind & 15) {
-            case 1:
-                ((struct SpriteRecord *)object->records)->priority = far_priority;
-                break;
-            case 2:
-                for (j = 0; j < 4; j++) {
-                    struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+        count = BattleParty_ListActorIds(2, ids);
+        value = priority[1];
+        for (i = 0; i < count; i++) {
+            struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
 
-                    if (record != 0)
-                        record->priority = far_priority;
+            if (slot != 0) {
+                struct ActorObject *object = slot->object;
+
+                switch (object->record_kind & 15) {
+                case 1:
+                    ((struct SpriteRecord *)object->records)->priority = value;
+                    break;
+                case 2:
+                    for (j = 0; j < 4; j++) {
+                        struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+
+                        if (record != 0)
+                            record->priority = value;
+                    }
+                    break;
                 }
-                break;
             }
         }
     }

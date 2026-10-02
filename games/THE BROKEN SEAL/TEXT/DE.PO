@@ -12971,7 +12971,7 @@ msgctxt "MsgPriceHeading"
 msgid "03240"
 msgstr "Preis"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "03241"
 msgstr "Nicht anlegbar"
 
@@ -13011,7 +13011,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "03250"
 msgstr "Nicht ablegbar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "03251"
 msgstr "ATK"
 
@@ -43635,6 +43635,6 @@ msgctxt "message"
 msgid "10906"
 msgstr "Parameter"
 
-msgctxt "message"
+msgctxt "MsgDebugSampleName"
 msgid "10907"
 msgstr "Ha hi fu he ho"

@@ -21,7 +21,7 @@ void Resource_LoadAndDecompress(s32, void *, s32, s32);
 #include "FIXED_MATH.H"
 
 void WaitFrames(s32);
-s32 Unnamed_080ed408(s32, s32, s32, s32, s32);
+s32 BattleEffect_LoadWork(s32, s32, s32, s32, s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
 void BattleFx_BeginCanvasLayer(s32);
@@ -228,7 +228,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     BattlePres_ConfigureEffectDisplay();
     *(u16 *)0x05000000 = 0;
     *(u16 *)0x05000002 = 0;
-    Unnamed_080ed408(46, 7, 7, 3, 3);
+    BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 40];
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
@@ -414,16 +414,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             high = BattleFx9_BurstHeights[n];
             cell = work->sheet + BattleFx9_BurstCells[n] + 0x600;
 
-            Unnamed_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
-            Unnamed_080ed408(47, 7, 7, 7, 2);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60, 80 - high * 2, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
-            Unnamed_080ed408(47, 7, 7, 11, 2);
+            BattleEffect_LoadWork(47, 7, 7, 11, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60 - high, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
-            Unnamed_080ed408(47, 7, 7, 15, 2);
+            BattleEffect_LoadWork(47, 7, 7, 15, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, cell, 60, 80, high, high * 2);
             Runtime_ReleaseHeapBlock(47);
 
@@ -440,10 +440,10 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
         if (frame > 143) {
             s32 top = (frame << 4) - 2272;
             s32 n;
-            Unnamed_080ed408(47, 7, 7, 3, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3, 3);
             (slots[47])(canvas, work, 36, top, 24, 64);
             Runtime_ReleaseHeapBlock(47);
-            Unnamed_080ed408(47, 7, 7, 7, 3);
+            BattleEffect_LoadWork(47, 7, 7, 7, 3);
             (slots[47])(canvas, work, 60, top, 24, 64);
             Runtime_ReleaseHeapBlock(47);
 
@@ -452,7 +452,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             if (n <= 6) {
                 u8 *cell = work->sheet + n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
                 high = 8;
-                Unnamed_080ed408(47, 7, 7, 3, 2);
+                BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit = slots[47];
                 for (i10 = 0; i10 != 128; i10++) {
                     s32 angle = i10 << 9;
@@ -485,7 +485,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     }
 
     Runtime_ReleaseHeapBlock(46);
-    Unnamed_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw = ((DrawRectangle *)gWorkSlot)[46];
     Resource_LoadAndDecompress((s32)&Value_00000064, work->sheet + 0x4000, 1, 1);
 
@@ -659,16 +659,16 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             if ((frame & 7) > 3) {
                 sheet = work->sheet + 0x4240;
             }
-            Unnamed_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 36, top - 24 + 24, 24, 24);
             Runtime_ReleaseHeapBlock(47);
-            Unnamed_080ed408(47, 7, 7, 7, 2);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 59, top, 24, 24);
             Runtime_ReleaseHeapBlock(47);
-            Unnamed_080ed408(47, 7, 7, 11, 2);
+            BattleEffect_LoadWork(47, 7, 7, 11, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 36, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
-            Unnamed_080ed408(47, 7, 7, 15, 2);
+            BattleEffect_LoadWork(47, 7, 7, 15, 2);
             (*(DrawRectangle *)0x03001f0c)(canvas, sheet, 59, top + 23, 24, 24);
             Runtime_ReleaseHeapBlock(47);
         }
@@ -811,7 +811,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             }
         }
 
-        Unnamed_080ed408(47, 7, 7, 3, 3);
+        BattleEffect_LoadWork(47, 7, 7, 3, 3);
         draw2 = ((DrawRectangle *)gWorkSlot)[47];
         if (frame > 85) {
             draw2(canvas, work, 0, 0, 120, 120);

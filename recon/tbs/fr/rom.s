@@ -1166,12 +1166,6 @@ Unnamed_080cb7f8:
 	.thumb_func
 BattleEffect_RunTileAndPaletteAnimation:
 	.incbin "baserom.gba", 0x000cf40c, 0x000009cc
-	.section .rom.000cfdd8, "ax"
-	.global Func_080cc5d8
-	.type Func_080cc5d8, %function
-	.thumb_func
-Func_080cc5d8:
-	.incbin "baserom.gba", 0x000cfdd8, 0x00000388
 	.section .rom.000d30e0, "ax"
 	.global BattleFx_RunSevenMode
 	.type BattleFx_RunSevenMode, %function
@@ -1346,7 +1340,16 @@ BladeRain_CellHeights:
 	.incbin "baserom.gba", 0x000f1783, 0x00000005
 	.global BladeRain_CellSourceOffsets
 BladeRain_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000f1788, 0x000000dc
+	.incbin "baserom.gba", 0x000f1788, 0x000000d0
+	.global CornerSparks_X
+CornerSparks_X:
+	.incbin "baserom.gba", 0x000f1858, 0x00000004
+	.global CornerSparks_Y
+CornerSparks_Y:
+	.incbin "baserom.gba", 0x000f185c, 0x00000004
+	.global CornerSparks_DrawFlags
+CornerSparks_DrawFlags:
+	.incbin "baserom.gba", 0x000f1860, 0x00000004
 	.global TwoResource_CellWidths
 TwoResource_CellWidths:
 	.incbin "baserom.gba", 0x000f1864, 0x00000006

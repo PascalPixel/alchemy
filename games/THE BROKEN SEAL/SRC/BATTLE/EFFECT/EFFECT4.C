@@ -5,6 +5,13 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "SCENE.H"
+#include "RESOURCE.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
+#include "EFFECT_STEP.H"
+#include "MOTION_OBJECT.H"
+#include "RAM_BUFFER.H"
 
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
@@ -24,11 +31,10 @@ u32 Resource_DecodeType01(const void *source, void *destination);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
-void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 s32 BattleFx_EndCanvasLayer(void);
 
-s32 BattleFx_RunMemberBurst(s32, s32);
+void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
 
 /* A small absolute link-time constant.  The resource id must be built from a
  * literal pool word, which an ordinary integer literal cannot produce. */
@@ -138,7 +144,7 @@ void BattleFx_RunMemberOrbit(void *object)
                     record_slot[0] = FIELD_AT_OFFSET(member_object, s32 *, 8);
                     record_slot[1] = 0x280000;
                     record_slot[2] = FIELD_AT_OFFSET(member_object, s32 *, 16);
-                    EffectPosition_ApplyBaseAndYOffset(record_slot, screen);
+                    EffectPosition_ApplyBaseAndYOffset(record_slot, (struct EffectPosition *)screen);
                     for (i = 0; i != 4; i++) {
                         s32 x;
                         s32 y;
@@ -169,17 +175,150 @@ void BattleFx_RunMemberOrbit(void *object)
     BattleFx_EndCanvasLayer();
 }
 
-void BattleFx_RunMemberBurstMode0(s32 arg0)
+void BattleFx_RunMemberBurstMode0(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunMemberBurst(arg0, 0);
+    BattleFx_RunMemberBurst(effect, 0);
 }
 
-void BattleFx_RunMemberBurstMode1(s32 arg0)
+void BattleFx_RunMemberBurstMode1(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunMemberBurst(arg0, 1);
+    BattleFx_RunMemberBurst(effect, 1);
 }
 
-void BattleFx_RunMemberBurstMode2(s32 arg0)
+void BattleFx_RunMemberBurstMode2(struct BattleEffectArgument *effect)
 {
-    BattleFx_RunMemberBurst(arg0, 2);
+    BattleFx_RunMemberBurst(effect, 2);
+}
+
+/* For each mode: how many motes burst from each member and how many frames
+   the effect runs after the last member's turn. */
+extern u8 MemberBurst_Counts[];
+
+#define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
+
+u32 Battle_GetObjectTableValueFar(s32 actor_id);
+void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void AudioCommand_PlayFar(s32 value);
+void ObjectGroup_TickMemberTimers(void);
+
+/* Battle effect: motes burst out of the actor, hang in the air and then
+   home in on each target in turn. */
+void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
+{
+    struct EffectPosition position;
+    DrawRectangle draw[2];
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    s32 frame;
+    s32 k;
+    struct BattleCamera *camera;
+    s32 resource;
+    s32 i;
+
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(1);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage), work);
+    if (mode == 0)
+        resource = (s32)&ResourceId_PinkBurstSheet;
+    else if (mode == 1)
+        resource = (s32)&ResourceId_MarsDjinnSheet;
+    else
+        resource = (s32)&ResourceId_MercuryDjinnSheet;
+    Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(resource), 128);
+    BattleFx_FetchRectangleBlitters(work->effect->side, draw);
+
+    for (i = 0; i != 1024; i++)
+        gMotes[i].variant = -1;
+    for (k = 0; k != work->effect->count; k++) {
+        struct MotionObject *source = *GetBattleObjectSlotFar(work->effect->actor);
+        s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
+
+        for (i = 0; i != 128; i++) {
+            struct EffectStep *mote = &gMotes[k * 128 + i];
+
+            mote->x = source->x;
+            mote->y = height;
+            mote->z = source->z;
+            mote->velocity_x = ((Random16() & 255) - 128) << 10;
+            mote->velocity_y = ((Random16() & 255) - 128) << 10;
+            mote->velocity_z = ((Random16() & 255) - 128) << 10;
+            mote->variant = 0;
+        }
+    }
+
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    AudioCommand_PlayFar(146);
+
+    for (frame = 0; frame != MemberBurst_Counts[mode * 2 + 1] + work->effect->count * 20; frame++) {
+        s32 *row;
+
+        if (frame == 80) {
+            if (mode == 0)
+                BattleEventRuntime_BeginPhaseFar(134);
+            else
+                BattleEventRuntime_BeginPhaseFar(133);
+        }
+        Render_ResetTransformState();
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        row = work->bg2_x;
+        for (i = 0; i != 160; i++)
+            *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
+        for (k = 0; k != work->effect->count; k++) {
+            struct MotionObject *target = *GetBattleObjectSlotFar(work->effect->actors[k]);
+            s32 half = (s32)Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
+
+            if (frame == k * 20 + 71) {
+                if (mode == 0)
+                    AudioCommand_PlayFar(134);
+                else
+                    AudioCommand_PlayFar(133);
+            }
+            if (frame == k * 20 + 70)
+                ObjectGroup_UpdateMembers(work->effect->actors[k], 7, 5, k, 26);
+            if (frame > k * 20) {
+                for (i = 0; i != MemberBurst_Counts[mode * 2]; i++) {
+                    struct EffectStep *mote = &gMotes[k * 128 + i];
+
+                    if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)mote, &position);
+                        position.x >>= 1;
+                        draw[0](canvas, work->sheet + i % 3 * 640,
+                            position.x - 10, position.y - 16, 20, 32);
+                        EffectStep_AdvanceWithGravity3D(mote, 62, 0);
+                        if (frame > k * 20 + i + 30) {
+                            s32 dx = (target->x - mote->x) >> 9;
+                            s32 dy = (target->y + half - mote->y) >> 9;
+                            s32 dz = (target->z - mote->z) >> 9;
+
+                            mote->velocity_x += dx;
+                            mote->velocity_y += dy;
+                            mote->velocity_z += dz;
+                            if ((u32)(dx + 0xfff) <= 0x1ffe && (u32)(dz + 0xfff) <= 0x1ffe)
+                                mote->variant = -1;
+                        }
+                    }
+                }
+            }
+        }
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
+    BattleFx_EndCanvasLayer();
 }

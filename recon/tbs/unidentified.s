@@ -1022,8 +1022,8 @@ TwoResource_CellX:
 	.global TwoResource_CellBiasY
 TwoResource_CellBiasY:
 	.incbin "baserom.gba", 0x000ee088, 0x00000008
-	.global Data_080ee090
-Data_080ee090:
+	.global MemberBurst_Counts
+MemberBurst_Counts:
 	.incbin "baserom.gba", 0x000ee090, 0x00000006
 	.global EarthWall_CellSourceOffsets
 EarthWall_CellSourceOffsets:

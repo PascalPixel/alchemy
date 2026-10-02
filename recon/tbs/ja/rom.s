@@ -774,10 +774,6 @@ WorldMap_PlaceMarkers:
 	.thumb_func
 Func_080a414c:
 	.incbin "baserom.gba", 0x0009b008, 0x00000330
-	.section .rom.0009bdc0, "ax"
-	.global Func_080a4f08
-Func_080a4f08:
-	.incbin "baserom.gba", 0x0009bdc0, 0x000002e8
 	.section .rom.0009cb94, "ax"
 	.global Menu_ResolveSelectedAction
 	.type Menu_ResolveSelectedAction, %function
@@ -819,7 +815,10 @@ Data_080aed4c:
 	.incbin "baserom.gba", 0x000a5c6c, 0x00000080
 	.global Data_080aedcc
 Data_080aedcc:
-	.incbin "baserom.gba", 0x000a5cec, 0x00000440
+	.incbin "baserom.gba", 0x000a5cec, 0x000002c0
+	.global Data_080af08c
+Data_080af08c:
+	.incbin "baserom.gba", 0x000a5fac, 0x00000180
 	.global Data_080af20c
 Data_080af20c:
 	.incbin "baserom.gba", 0x000a612c, 0x00000004

@@ -511,7 +511,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OPEN_ITEM_DETAILS.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM9.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/WINDOW.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.0009bdc0)
+    "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GIVE_QUANTITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/OPEN_CONFIRM_PROMPT.o"(.text)

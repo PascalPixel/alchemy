@@ -1,3 +1,15 @@
+/* 2026-10-02: 2175 of 2181 instructions, 1177 lines differ, nearly all of them
+ * the same thing: the ROM's reloads rotate through r7 (and r6) as well, here
+ * only through r0-r3 and r5, and the list pointer is in r9 there, r10 here.
+ * Settled: the declarations in the order below with their initialisers put
+ * every stack slot where the ROM has it; the mode 1 message loop has its own
+ * counter in a register; the set-all loop walks a pointer. Open: the ROM keeps
+ * the usable flag of the A and select handlers in i's slot (sp+68); using i
+ * for it here moves i into r11 and pushes repeat out, so i must live longer
+ * or weigh less than this spelling makes it.
+ * The listing's names for the callees (RenderOutput_RedrawSavedRectFar,
+ * Owner_GetStateFar, UiText_DrawCharacterAtOffsetFar, AudioCommand_PlayFar,
+ * gCell) and the message symbols still have to replace the draft's. */
 /* 2026-09-29: five minutes of permutation reached 7394 from 16667 through
  * 71 rewrites; not kept, since the owner (4888 bytes) is far from exact and
  * its messages 0xb98 and 0xc40 are still Value_ symbols. */
@@ -158,22 +170,21 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
 {
     s8 buf[8];
     u8 balanced[16];
-    struct DjinnMenuState *state;
-    struct DjinnMenuLists *lists;
+    struct DjinnMenuState *state = gMenuWork;
+    struct DjinnMenuLists *lists = state->lists;
     struct DjinnMenuOwner *owner;
     s32 window;
-    s32 redraw;
+    s32 redraw = 1;
     u32 refresh;
-    s32 x;
-    s32 y;
-    s32 savedY;
-    u16 cursor;
-    s32 sel;
-    u32 djinn;
-    s32 groupMode;
-    s32 setAll;
     s32 i;
     s32 j;
+    s32 sel;
+    s32 x = (u16)(state->cursor[mode] % 10);
+    s32 y = (u16)(state->cursor[mode] / 10);
+    s32 savedY = 0;
+    u32 djinn = 0;
+    s32 groupMode = 0;
+    s32 setAll = 0;
     s32 ok;
     s32 result;
     s32 count;
@@ -182,19 +193,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     u32 repeat;
     s32 work;
     s32 step;
-    s8 *status;
+    s8 *status = buf;
 
-    state = gMenuWork;
-    lists = state->lists;
-    redraw = 1;
-    cursor = state->cursor[mode];
-    x = (u16)__umodsi3(cursor, 10);
-    y = (u16)__udivsi3(cursor, 10);
-    status = buf;
-    savedY = 0;
-    djinn = 0;
-    groupMode = 0;
-    setAll = 0;
     sel = -1;
     for (i = 7; i >= 0; i--)
         status[i] = 0;
@@ -231,24 +231,25 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         s32 fromX;
         s32 fromY;
         u16 source_cursor;
+        s32 n;
 
         source_cursor = state->cursor[0];
         fromX = (u16)__umodsi3(source_cursor, 10);
-        fromY = __udivsi3(source_cursor, 10);
+        fromY = (u16)__udivsi3(source_cursor, 10);
         Menu_DrawAtWindowOffset(state->djinn_window, fromX * 7 + 1, fromY + 2, 6, 1, 14);
         UiWindow_ApplyRectAtObjectOrigin(state->djinn_window, fromX * 7 + 1, 2, 6, 7, 6);
-        for (i = 0; i < state->party_count; i++) {
-            if (i == state->column[0]) {
+        for (n = 0; n < state->party_count; n++) {
+            if (n == state->column[0]) {
                 if (state->djinn[0] & 0x8000)
                     message = DJINN_MESSAGE(DJINN_MSG_STANDBY);
                 else
                     message = DJINN_MESSAGE(DJINN_MSG_SET);
-            } else if (buf[i] & 2) {
+            } else if (buf[n] & 2) {
                 message = DJINN_MESSAGE(DJINN_MSG_GIVE);
             } else {
                 message = DJINN_MESSAGE(DJINN_MSG_TRADE);
             }
-            UiText_DrawAt(message, state->djinn_window, i * 56 + 8, 8);
+            UiText_DrawAt(message, state->djinn_window, n * 56 + 8, 8);
         }
     }
 
@@ -620,8 +621,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 else
                     Audio_PlayCue(175);
                 for (i = 0; i < state->party_count; i++) {
+                    u16 *p = lists->djinn[i];
+
                     for (j = 0; j < lists->counts[i]; j++) {
-                        u32 entry = lists->djinn[i][j];
+                        u32 entry = *p++;
                         s32 usable;
 
                         usable = 0;

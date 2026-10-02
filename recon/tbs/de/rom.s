@@ -1287,8 +1287,6 @@ BattlePres_RunBeamSequence:
 	.thumb_func
 Unnamed_080e40a4:
 	.incbin "baserom.gba", 0x000e5ea4, 0x0000064c
-	.section .rom.000e8438, "ax"
-	.incbin "baserom.gba", 0x000e8438, 0x00000310
 	.section .rom.000e878c, "ax"
 	.incbin "baserom.gba", 0x000e878c, 0x000003b0
 	.section .rom.000e9138, "ax"

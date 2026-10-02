@@ -658,9 +658,9 @@ BattleFx_RunFiveMode:
 	pop {r0}
 	bx r0
 .L_080ca1cc:
-	.4byte Data_080ededc + 0xc
+	.4byte Data_080edee8
 .L_080ca1d0:
-	.4byte Data_080ededc + 0x20
+	.4byte Data_080edee8 + 0x14
 .L_080ca1d4:
 	.4byte 0xffff8000
 .L_080ca1d8:

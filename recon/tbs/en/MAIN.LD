@@ -803,7 +803,6 @@
         "*/recon/tbs/unidentified.o"(.unidentified.080c2a0a)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/EFFECT.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT7.o"(.text)
-        "*/recon/tbs/raw/080c972c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_FIVE_MODE_MODE0.o"(.text)
         "*/recon/tbs/raw/080c9ca8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_POOL.o"(.text)

@@ -20,10 +20,10 @@ extern u8 Clear_EffectTable[];
 extern u16 gBgScroll[];
 void Resource_DecodeType01(const u8 *source, void *destination);
 
-/* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and
-   reloads the cell buffer's address after it, as the game does. */
 static __inline__ void DecodeBackground(const u8 *res)
 {
+    /* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and
+       reloads the cell buffer's address after it, as the game does. */
     Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
 }
 
@@ -47,8 +47,6 @@ static __inline__ void RestoreInterrupts(u32 saved)
     REG_IME = saved;
 }
 
-/* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
- * the count cast preserves the queue's original publication order. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -72,7 +70,6 @@ static __inline__ void RestoreInterrupts(u32 saved)
         RestoreInterrupts(saved);                                          \
     } while (0)
 
-/* FAKEMATCH: volatile keys make each test read them again, as the game does. */
 extern volatile u32 gKeysHeld;
 extern s16 Clear_CodeUnlocked;
 extern s16 Clear_ExtraCodeUnlocked;
@@ -180,6 +177,8 @@ col:
 /* Fade the blend in step by step each frame; remove itself once full. */
 void Clear_UpdateBlend(void)
 {
+    /* FAKEMATCH: the one-pass IME read keeps the saved copy before masking;
+     * the count cast preserves the queue's original publication order. */
     struct IoWriteQueue *q;
     s32 frame;
     s32 level;
@@ -199,6 +198,7 @@ void Clear_UpdateBlend(void)
  * zero entry unlocks the code with a chime. A held press counts once. */
 void Clear_CheckButtonCodes(void)
 {
+    /* FAKEMATCH: volatile keys make each test read them again, as the game does. */
     if (Clear_CodeUnlocked == 0) {
         if (Clear_CodeHeld != 0) {
             if (gKeysHeld == 0)

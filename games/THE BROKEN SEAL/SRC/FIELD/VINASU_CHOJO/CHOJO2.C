@@ -32,12 +32,6 @@ void SceneActor_ParkRecord();
 void Event_SetPairWork1c0();
 void ObjectTable_Snapshot();
 
-/* FAKEMATCH: the shared zero lives in a one-halfword struct so it is a
- * HImode register; its pool load then has the movhi reach of 64 bytes the
- * reference pool placement needs. */
-struct Half {
-    u16 v;
-};
 
 extern u8 MsgVinasuNoooo[];
 
@@ -508,6 +502,12 @@ void FieldScene_RunMultiActorPresentation(void)
 
 void VinasuChojo_RunActorTransition(void)
 {
+    /* FAKEMATCH: the shared zero lives in a one-halfword struct so it is a
+     * HImode register; its pool load then has the movhi reach of 64 bytes the
+     * reference pool placement needs. */
+    struct Half {
+        u16 v;
+    };
     struct Half zero;
     struct FieldActor *actor26;
     struct FieldActor *actor27;

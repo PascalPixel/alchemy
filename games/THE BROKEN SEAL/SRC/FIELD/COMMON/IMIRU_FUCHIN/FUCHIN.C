@@ -9,12 +9,6 @@ extern u8 MsgFuchinSecretKiRevealed[];
 extern u8 MsgFuchinLightRevealsShadows[];
 extern u8 MsgFuchinEyelessDragon[];
 extern u8 MsgFuchinDragonRedEyes[];
-/* Spawn a scripted effect with optional palette, priority and scale rates.
- * Complete 352-byte owner, including its three-word pool, matches exactly.
- * FAKEMATCH: retain the local script-table copy and branch-local divide
- * tails so the compiler reloads the script and prepares both call arguments
- * in the observed lifetime. Shared FIELD_EFFECT types recover the remaining
- * object, sprite and options layout without private byte-offset casts. */
 #include "FIELD_EFFECT.H"
 
 extern const struct SceneEntrance gImiruFuchinEntrances1[];
@@ -1358,6 +1352,12 @@ s32 OverlayObject_ApplyValue15(s32 obj)
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, u32 flags,
                   const struct EffectOptions *extra)
 {
+    /* Spawn a scripted effect with optional palette, priority and scale rates.
+     * Complete 352-byte owner, including its three-word pool, matches exactly.
+     * FAKEMATCH: retain the local script-table copy and branch-local divide
+     * tails so the compiler reloads the script and prepares both call arguments
+     * in the observed lifetime. Shared FIELD_EFFECT types recover the remaining
+     * object, sprite and options layout without private byte-offset casts. */
     struct ScriptTable table;
     struct FieldEffect *obj;
     struct FieldSprite *spr;
@@ -1412,6 +1412,7 @@ void ImiruFuchin_BlowCaveMouthDust(void)
     s32 dx;
     s32 dy;
 
+    /* FAKEMATCH: retain both volatile frame-count loads in this callback. */
     phase = *(volatile s32 *)&gFrameCount & 3;
     if (phase != 0)
         return;
@@ -1444,7 +1445,7 @@ void FieldScene_RunFourPassCallbackSequence(void)
     Engine_EventBegin();
     Battle_ResetEffectCounter();
 
-    /* 8, 7 and 1 are locals held across the loop, not literals: the first
+    /* FAKEMATCH: 8, 7 and 1 are locals held across the loop, not literals: the first
      * call takes 8 as an immediate for argument 4 and from a register for
      * argument 5, which a literal cannot produce. */
     pass = 0;
@@ -1530,7 +1531,7 @@ void SceneState_SetWorkspace370ByFlag820(void)
 
             /* movs r1,#0xb9 / lsls r1,#1 gives the byte offset 370. */
             /*
-             * The store goes through a pointer local and an s32 value local,
+             * FAKEMATCH: the store goes through a pointer local and an s32 value local,
              * in that order. Storing the literal directly builds the constant
              * in HImode and loads it from the literal pool, costing a pool
              * word; splitting the address out first also fixes which register
@@ -1580,6 +1581,8 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     u16 prev;
     s32 n;
 
+    /* FAKEMATCH: retain the argument reused as the timer index, zero and -1
+     * so the signed halfword view and its values keep their lifetime. */
     o = (T *)z;
     n = o->unk64;
     z = 0;
@@ -1627,6 +1630,9 @@ void SceneActor_StepSubjectAlongHeading(void)
     s32 x;
     u8 *subject_id;
 
+    /* FAKEMATCH: retain the x/z assignment order and AdvanceProbe inline
+     * boundary so sp+8 is rematerialized before the split 0x100000 constant
+     * is completed for its second argument. */
     subject = ObjectTable_Get(gGameState.selected_actor);
 
     for (;;) {

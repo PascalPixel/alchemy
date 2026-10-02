@@ -37,9 +37,6 @@ void ToretoHeya_RunLandingDustScene(void);
 
 extern struct BattleEffectBuffers *Data_03001ed0;
 
-/* FAKEMATCH: reading the event work and the palette work through the
- * engine's table of work pointers keeps one address base for both cells,
- * where their own names would each take a pool word. */
 extern u8 *gWork[];
 
 /* Current entry in the RGB tint list; a red of 99 ends the list. */
@@ -552,15 +549,15 @@ void SceneState_ApplyRectsByFlag844(s32 flag)
     }
 }
 
-/* FAKEMATCH: the map work and the event work are read as cells of one
- * pointer array based at gMapWork (the event work is its twentieth), which
- * keeps one pool address for both. */
 
 /* Enter the room: hide the lamps, drift the camera, set the room flags, and
  * finish the fall from the floor above when entered through entrance 20 to
  * 50 (the leader lands on the entrance ten below it). */
 s32 ToretoHeya_EnterRoom(void)
 {
+    /* FAKEMATCH: the map work and the event work are read as cells of one
+     * pointer array based at gMapWork (the event work is its twentieth), which
+     * keeps one pool address for both. */
     struct FieldActor *lamp;
     struct FieldActor *actor;
     u8 **globals;
@@ -648,6 +645,9 @@ void ToretoPalette_CaptureBank(void)
 /* Every 32 frames, tint the background palette, weaker for later colours. */
 void ToretoPalette_ApplyTint(void)
 {
+    /* FAKEMATCH: reading the event work and the palette work through the
+     * engine's table of work pointers keeps one address base for both cells,
+     * where their own names would each take a pool word. */
     u16 *src;
     u16 *dst;
     u32 i;

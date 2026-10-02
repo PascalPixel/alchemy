@@ -83,13 +83,9 @@ struct MapWork {
     s32 camera_z;
 };
 
-/* FAKEMATCH: the map work pointer is reached 84 bytes below the sparkle work
-   pointer, so both loads share one pool address. */
 extern struct SparkleWork *gParticleWork;
 #define SparkleMap (*(struct MapWork **)((u8 *)&gParticleWork - 84))
 
-/* The frame counter is an unsigned long: a type no sparkle field shares, so
-   reading it does not keep the size store apart from the flip store. */
 extern unsigned long Data_03001e40;
 extern const struct SparkleFrame Data_0809f024[];
 s32 GameFlag_TestFar(s32 flag);
@@ -161,6 +157,10 @@ struct EffectBlockState {
    mote on its frame. */
 void Unnamed_08094bbc(void)
 {
+    /* FAKEMATCH: the map work pointer is reached 84 bytes below the sparkle
+     * work pointer, so both loads share one pool address. The frame counter
+     * stays an unsigned long, a type no sparkle field shares, so its read
+     * does not keep the size store apart from the flip store. */
     struct SparkleWork *work = gParticleWork;
     struct MapWork *map = SparkleMap;
     u32 spawned = 0;
@@ -267,6 +267,10 @@ void FieldMotes_Start(void)
    start a burst of four at a random spot nearby. */
 void FieldEffect_UpdateSparkles(void)
 {
+    /* FAKEMATCH: the map work pointer is reached 84 bytes below the sparkle
+     * work pointer, so both loads share one pool address. The frame counter
+     * stays an unsigned long, a type no sparkle field shares, so its read
+     * does not keep the size store apart from the flip store. */
     struct SparkleWork *work;
     u32 spawned;
     u32 i;

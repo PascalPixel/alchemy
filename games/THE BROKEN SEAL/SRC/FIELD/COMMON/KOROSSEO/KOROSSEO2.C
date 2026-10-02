@@ -12,8 +12,6 @@ extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
 
-/* FAKEMATCH: the loop around the IME read preserves its saved-copy order;
- * the count store's cast preserves the queue entry scheduling. */
 #define QUEUE_IO_WRITE(address, value, delay)                                \
     do { \
         /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
@@ -50,6 +48,8 @@ void Engine_TaskWait();
 /* Save the competitor's starting position and fade in its sprite. */
 void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
 {
+    /* FAKEMATCH: the loop around the IME read preserves its saved-copy order;
+     * the count store's cast preserves the queue entry scheduling. */
     struct CompetitorState {
         u8 unknown_00[6];
         u8 mode;

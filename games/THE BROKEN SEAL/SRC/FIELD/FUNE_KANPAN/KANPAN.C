@@ -184,13 +184,6 @@ void Event_WaitValue1c8FramesFar();
 
 extern struct GameState gGameState;
 
-/* FAKEMATCH: the game state written as rows of halfwords keeps the
- * base-plus-index address form, where its fields fold the offsets into the
- * pool. */
-union GameStateRows {
-    u8 bytes[512][2];
-    u16 halves[512][1];
-};
 
 void OverlayObject_DecayFields24And28();
 void Party_SetFields1ceAnd1d0();
@@ -451,6 +444,8 @@ void OverlayObject_DecayFields24And28(struct FieldActor *actor)
 /* Counts down the wait timer; when it runs out, turns to a random heading and waits again. */
 s32 FuneKanpan_IdleTurn(u8 *actor)
 {
+    /* FAKEMATCH: word heading temporaries retain movs/lsls formation before the halfword stores. */
+
     if (actor[98] != 0) {
         actor[98]--;
     } else {
@@ -932,6 +927,8 @@ s32 FuneKanpan_ResetDeck(void)
 /* Ship deck entry: record the arrival, set the deck by the voyage flags, then run the entrance's scene or place the deck crew. */
 void FuneKanpan_ApplyEntryState(void)
 {
+    /* FAKEMATCH: retained return/prototype call casts preserve the current call lowering. */
+
     s32 flag;
 
     Engine_GameFlagSet(0x144);
@@ -1709,10 +1706,17 @@ void FieldScene_RunActorSequence(void)
 
 /* Runs the deck scene: the leader jumps and walks, actors 22 and 25 move
  * into place, and the scene sets where the party returns. The game state's
- * rows are written through a halfword row view (FAKEMATCH: it keeps the
- * base-plus-index address form the fields would fold away). */
+ * rows are written through a halfword row view. */
 void FuneKanpan_RunJumpScene(void)
 {
+    /* FAKEMATCH: the game state written as rows of halfwords keeps the
+     * base-plus-index address form, where its fields fold the offsets into the
+     * pool. */
+    union GameStateRows {
+        u8 bytes[512][2];
+        u16 halves[512][1];
+    };
+
     u32 i;
     s32 record;
 
@@ -1900,6 +1904,8 @@ void FieldScene_ConfigureLeadActors(void)
  * advances the shared scene phase before the scene runs. */
 void FieldScene_ConfigureThreeActors(void)
 {
+    /* FAKEMATCH: retained volatile pointer and halfword accesses preserve the current access ordering. */
+
     extern u8 Data_03001ebc[];
 
     u32 i;
@@ -2205,6 +2211,8 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
  * wrapping the scroll within two cells. */
 void FuneKanpan_RockDeck(void)
 {
+    /* FAKEMATCH: the second angle sum is held across the first angle mask to retain the current store order. */
+
     struct MapWork *map = ((struct MapWork *)gMapWork[0]);
     s32 *camera = map->camera;
     s32 dx = Engine_MathCos(FuneKanpan_WaveAngleX);

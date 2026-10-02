@@ -4,8 +4,6 @@
 #include "STAGED_ACTOR.H"
 #include "KAWA.H"
 
-/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
- * this file's code made before it shared the header's declaration. */
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -126,6 +124,8 @@ static __inline__ void AdvanceMessage(s32 amount)
 
 void OverlayObject_ResetMotionFields(void)
 {
+    /* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
+     * this file's code made before it shared the header's declaration. */
     struct FieldActor *o = ((struct FieldActor * (*)(void))Object_GetById)();
 
     ObjectDispatch_InitFromTable6(o);

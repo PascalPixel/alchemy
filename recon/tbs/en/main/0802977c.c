@@ -1,15 +1,16 @@
-/* NONMATCHING: main [0802977c,08029910), 404 bytes with its pool.
- * 2026-10-01 (☀️ matcher 1): 404 of 404 bytes, permuter score 975 (the
- * goto-loop draft scored 2678). The frame loop is a while (1) with the A
- * and B exits as breaks, which keeps the reference's block order and lets
- * loop.c hoist &gKeysRepeat; the wrap is the % operator (__modsi3), and the
- * two id tables are s16 pairs read as [index][1], which gives the
- * reference's index * 4 + 2 offset with a register base.
- * Remaining: the reference also hoists the B mask 2 into r9, which pushes
- * work into fp and spills redraw and the portrait window (24-byte frame);
- * here 2 stays a movs inside the loop (loop.c: "not desirable"), so work
- * takes r9, the portrait fp, and the frame is 16 + 4. or-ing the A/B tests,
- * while (!0) and a (u16) mask do not change it. */
+/* Draft, not exact: 404 of 404 bytes, score 485 (was 975), 12 rows off.
+ * The frame loop is a while (1) with the A and B exits as breaks; the wrap
+ * is the % operator, and the two id tables are s16 pairs read as
+ * [index][1]. The B mask is a variable set to 2 before the loop: that is
+ * what puts it in a register (the reference's r9) and spills redraw and the
+ * portrait window as the reference does; portrait is declared before
+ * redraw, which orders their two slots.
+ * Remaining: the reference keeps the work pointer in fp and the mask in r9,
+ * here they are swapped (the mask is a constant to the allocator, so it
+ * ranks last), and with it the slot read is ldrh [fp, r1] there and an
+ * add here. Setting the mask at the top of the loop body, a second set, a
+ * narrower type and moving the work read do not turn it; 110,000 permuter
+ * candidates reached 345. */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
@@ -36,8 +37,8 @@ void UiWork_Finalize(struct RenderInput *, s32);
 s32 DebugMenu_BrowseEntryGlyphs(void)
 {
     struct GlyphWork *work;
-    s32 redraw;
     struct RenderInput *portrait;
+    s32 redraw;
     struct RenderInput *window;
     s32 count;
     s32 total;
@@ -46,6 +47,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     s32 glyph;
     s32 tile;
     s32 slot;
+    s32 cancel;
 
     work = gWindowWork;
     redraw = 1;
@@ -57,6 +59,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     for (i = 0; SideObject_ActorKindIdMap[i][0] != -1; i++) {}
     total = count + i;
 
+    cancel = 2;
     while (1) {
         if (gKeysRepeat & 0x20) {
             redraw = 1;
@@ -76,7 +79,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
         }
         if (gKeysRepeat & 1)
             break;
-        if (gKeysRepeat & 2)
+        if (gKeysRepeat & cancel)
             break;
         if (redraw) {
             redraw = 0;

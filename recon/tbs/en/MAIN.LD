@@ -470,7 +470,6 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT6.o"(.text)
         "*/recon/tbs/raw/08092b92.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT9.o"(.text)
-        "*/recon/tbs/raw/08092c40.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT14.o"(.text)
         "*/recon/tbs/raw/080930ba.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD3.o"(.text)

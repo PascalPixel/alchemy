@@ -595,12 +595,6 @@ DisplayTransition_Start:
 	.thumb_func
 BattleFx_BuildBuffer:
 	.incbin "baserom.gba", 0x000940c8, 0x00000718
-	.section .rom.000962dc, "ax"
-	.global UiText_OpenMessageAtObject
-	.type UiText_OpenMessageAtObject, %function
-	.thumb_func
-UiText_OpenMessageAtObject:
-	.incbin "baserom.gba", 0x000962dc, 0x00000344
 	.section .rom.00097be0, "ax"
 	.global DisplayScroll_BuildAndSwapHBlankPage
 	.type DisplayScroll_BuildAndSwapHBlankPage, %function

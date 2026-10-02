@@ -9235,7 +9235,7 @@ msgctxt "MsgLooksForHelp"
 msgid "02306"
 msgstr "{argument_actor_name:1} looks for help."
 
-msgctxt "message"
+msgctxt "MsgDebugSampleName"
 msgid "02307"
 msgstr "Ha hi fu he ho"
 

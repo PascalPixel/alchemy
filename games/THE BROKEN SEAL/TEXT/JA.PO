@@ -9243,7 +9243,7 @@ msgctxt "MsgLooksForHelp"
 msgid "02308"
 msgstr "{argument_actor_name:234} たすけをさがした!"
 
-msgctxt "message"
+msgctxt "MsgDebugSampleName"
 msgid "02309"
 msgstr "ハヒフヘホ"
 
@@ -11307,7 +11307,7 @@ msgctxt "message"
 msgid "02824"
 msgstr "MENU"
 
-msgctxt "message"
+msgctxt "MsgDebugSecondForm"
 msgid "02825"
 msgstr "お おそろしいヤツらだ{line_break}オレたちには とても{line_break}はが 立たない・・・。{end_wait}"
 

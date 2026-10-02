@@ -7559,7 +7559,7 @@ Func_02003a64:
 .L_0200bdec:
 	.4byte gSceneState
 .L_0200bdf0:
-	.4byte Data_030011bc
+	.4byte gRandomState
 .L_0200bdf4:
 	.4byte IwramClearWords
 .L_0200bdf8:

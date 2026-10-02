@@ -234,10 +234,10 @@ Func_02001564:
 	.thumb_func
 Field_BeginPaletteTransition:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Func_080c87f0
+	overlay_veneer Field_BeginPaletteTransitionFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Func_080c87f0
+	overlay_veneer Field_BeginPaletteTransitionFar
 	.else
 	overlay_veneer Field_BeginPaletteTransitionFar
 	.endif
@@ -258,10 +258,10 @@ Func_02001574:
 	.thumb_func
 Func_0200157c:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Field_BeginPaletteTransitionFar
+	overlay_veneer Field_EndActorSpriteEffectFar
 	.else
 	overlay_veneer Func_080c8810
 	.endif

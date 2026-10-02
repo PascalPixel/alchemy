@@ -244,18 +244,6 @@ Resource_GetBuffer:
 	.thumb_func
 Scheduler_SetCallbackMask:
 	.incbin "baserom.gba", 0x0001471c, 0x00000040
-	.section .rom.000147d8, "ax"
-	.global Func_080147d8
-	.type Func_080147d8, %function
-	.thumb_func
-Func_080147d8:
-	.incbin "baserom.gba", 0x000147d8, 0x000000a0
-	.section .rom.00014878, "ax"
-	.global Random16
-	.type Random16, %function
-	.thumb_func
-Random16:
-	.incbin "baserom.gba", 0x00014878, 0x00000024
 	.section .rom.0001489c, "ax"
 	.global Vector_AddPolarOffset
 	.type Vector_AddPolarOffset, %function
@@ -340,12 +328,12 @@ Func_08014ca0:
 	.thumb_func
 Func_08014cb0:
 	.incbin "baserom.gba", 0x00014cb0, 0x00000010
-	.section .rom.00014d00, "ax"
-	.global Runtime_AllocateBlock
-	.type Runtime_AllocateBlock, %function
+	.section .rom.00014d40, "ax"
+	.global Func_08014d40
+	.type Func_08014d40, %function
 	.thumb_func
-Runtime_AllocateBlock:
-	.incbin "baserom.gba", 0x00014d00, 0x00000078
+Func_08014d40:
+	.incbin "baserom.gba", 0x00014d40, 0x00000038
 	.section .rom.00014d78, "ax"
 	.global Runtime_BumpAllocate
 	.type Runtime_BumpAllocate, %function

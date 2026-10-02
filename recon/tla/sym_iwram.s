@@ -61,8 +61,8 @@ gBlendTargetLevel:
 	.global Data_030011b8
 Data_030011b8:
 	.space 0x00000004
-	.global Data_030011bc
-Data_030011bc:
+	.global gRandomState
+gRandomState:
 	.space 0x00000004
 	.global Data_030011c0
 Data_030011c0:

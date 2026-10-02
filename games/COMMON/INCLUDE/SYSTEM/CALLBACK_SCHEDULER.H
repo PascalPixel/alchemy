@@ -32,4 +32,8 @@ s32 Scheduler_DisableOverlayCallbacks(void);
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void);
 
+void Scheduler_RunCallbacksByKey(s32 key);
+s32 Scheduler_CountCallbacksByKey(s32 key);
+void Scheduler_RunCallbacksBeforeBoundary(s32 key);
+
 #endif

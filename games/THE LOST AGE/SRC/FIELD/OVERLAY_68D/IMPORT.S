@@ -274,10 +274,24 @@ Func_0200210c:
 	.thumb_func
 Func_02002114:
 	overlay_veneer Func_080c87f8
+	.ifdef TLA_EDITION_ES
+	.global Field_EndActorSpriteEffect
+	.thumb_func
+Field_EndActorSpriteEffect:
+	overlay_veneer Field_EndActorSpriteEffectFar
+	.else
+	.ifdef TLA_EDITION_IT
+	.global Field_EndActorSpriteEffect
+	.thumb_func
+Field_EndActorSpriteEffect:
+	overlay_veneer Field_EndActorSpriteEffectFar
+	.else
 	.global Field_BeginPaletteTransition
 	.thumb_func
 Field_BeginPaletteTransition:
 	overlay_veneer Field_BeginPaletteTransitionFar
+	.endif
+	.endif
 	.global Func_02002124
 	.thumb_func
 Func_02002124:

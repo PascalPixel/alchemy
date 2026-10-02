@@ -1,12 +1,33 @@
 @ Shaman village: message ids are owned by the editable catalogs.
 @ Trial: the unlocalized source matched EN 25,420 completely; JA 280 and DE 283
 @ differing byte positions remained in full 25,420-byte loaded scenes.
-@ Current JA/EN/DE scenes match completely; FR's extra graphic branch and
-@ ES/IT's unresolved status/delay imports remain on their terminal scaffold.
+@ Trial: ES/IT status repairs built 25,420 bytes with nine differences in
+@ neighboring imports and one scale; the FR two-sprite worker built 25,452
+@ bytes with 16 animation-parameter differences before its measured scales.
+@ Current all-six scenes and encoded prefixes match completely. The raw
+@ worker and animation tables remain uncredited; only existing C and veneers
+@ are adopted in the final three editions.
 
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 @ The palette selector table below supplies five 32-byte banks in JA/EN.
 @ DE/ES/FR/IT give the eighth graphic its own sixth bank; tiles follow it.
+@ Graphics script command 0x1000 sets the horizontal 8.8 scale; each value
+@ below belongs to this scene animation, independent of its loaded position.
+	.set SHAMAN_GRAPHIC1_SCALE, 256
+	.set SHAMAN_GRAPHIC4_START_SCALE, 512
+	.set SHAMAN_GRAPHIC4_SMALL_SCALE, 256
+	.set SHAMAN_GRAPHIC4_LARGE_SCALE, 384
+	.ifdef TLA_EDITION_ES
+	.set SHAMAN_GRAPHIC4_START_SCALE, 384
+	.endif
+	.ifdef TLA_EDITION_IT
+	.set SHAMAN_GRAPHIC4_START_SCALE, 384
+	.endif
+	.ifdef TLA_EDITION_FR
+	.set SHAMAN_GRAPHIC1_SCALE, 384
+	.set SHAMAN_GRAPHIC4_SMALL_SCALE, 384
+	.set SHAMAN_GRAPHIC4_LARGE_SCALE, 512
+	.endif
 	.set SHAMAN_PALETTE_ROWS, 5
 	.set SHAMAN_GRAPHIC7_PALETTE, (2 * 32)
 	.ifdef TLA_EDITION_DE
@@ -5335,6 +5356,76 @@ Func_02002a20:
 	ble .L_0200ad5c
 	b .L_0200ae8e
 .L_0200adda:
+	@ French uses two 32x16 sprites for graphic 4; other editions
+	@ use one 64x32 sprite. Both forms use the existing graphic tile bank.
+	.ifdef TLA_EDITION_FR
+	movs r5, #0
+.L_shaman_french_graphic_loop:
+	ldr r4, [sp, #0]
+	lsls r3, r5, #5
+	subs r3, #16
+	muls r3, r4
+	movs r1, #64
+	ldr r0, .L_0200af0c
+	cmp r3, #0
+	bge .L_shaman_french_graphic_position
+	adds r3, #255
+.L_shaman_french_graphic_position:
+	asrs r3, r3, #8
+	adds r3, r6, r3
+	movs r7, #48
+	adds r2, r3, #0
+	adds r7, #255
+	adds r3, #152
+	adds r2, #88
+	cmp r3, r7
+	bhi .L_shaman_french_graphic_next
+	movs r3, #128
+	ldr r7, [sp, #12]
+	lsls r3, r3, #1
+	adds r3, #255
+	ands r2, r3
+	movs r3, #0
+	stmia r7!, {r3}
+	lsls r3, r2, #16
+	orrs r3, r1
+	orrs r3, r0
+	mov r0, r8
+	lsls r2, r0, #25
+	orrs r3, r2
+	movs r2, #224
+	lsls r2, r2, #3
+	adds r4, r7, #0
+	orrs r3, r2
+	adds r2, r7, #0
+	str r4, [sp, #12]
+	stmia r2!, {r3}
+	ldr r3, .L_0200af10
+	adds r1, r2, #0
+	movs r4, #0
+	ldrsh r3, [r3, r4]
+	movs r2, #244
+	add r3, r10
+	lsls r2, r2, #8
+	adds r0, r1, #0
+	orrs r3, r2
+	stmia r0!, {r3}
+	adds r7, r0, #0
+	ldr r0, [sp, #8]
+	str r7, [sp, #12]
+	adds r1, r0, #0
+	adds r1, #12
+	str r1, [sp, #8]
+	movs r1, #236
+	bl Func_020047cc
+.L_shaman_french_graphic_next:
+	movs r2, #8
+	adds r5, #1
+	add r10, r2
+	cmp r5, #1
+	ble .L_shaman_french_graphic_loop
+	b .L_0200ae8e
+	.else
 	adds r3, r6, #0
 	movs r4, #152
 	adds r2, r6, #0
@@ -5379,6 +5470,7 @@ Func_02002a20:
 	movs r1, #236
 	bl Func_020047cc
 	b .L_0200ae8e
+	.endif
 .L_0200ae34:
 	adds r3, r6, #0
 	movs r4, #152
@@ -5488,15 +5580,19 @@ Func_02002a20:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
+	.ifndef TLA_EDITION_FR
 	.2byte 0x0000
+	.endif
 .L_0200af08:
 	.4byte Data_020064b0
 .L_0200af0c:
 	.4byte 0x80004000
 .L_0200af10:
 	.4byte Data_02006494
+	.ifndef TLA_EDITION_FR
 .L_0200af14:
 	.4byte 0xc0004000
+	.endif
 .L_0200af18:
 	.4byte gIoWriteQueue
 .L_0200af1c:
@@ -8708,7 +8804,7 @@ Data_02005158:
 Data_0200515a:
 	.2byte 0x4000
 	.4byte 0x0800ff44
-	.4byte 0x01001000
+	.4byte ((SHAMAN_GRAPHIC1_SCALE << 16) | 0x1000)
 	.4byte 0x20000001
 	.4byte 0x00010010
 	.4byte 0x000e7fff
@@ -8721,35 +8817,35 @@ Data_0200515a:
 	.global Data_02005186
 Data_02005186:
 	.2byte 0x1000
-	.4byte 0x00010200
+	.4byte ((1 << 16) | SHAMAN_GRAPHIC4_START_SCALE)
 	.4byte 0x00002000
 	.4byte 0x10000001
-	.4byte 0x00060100
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
 	.4byte 0x00102000
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060180
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_LARGE_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01001000
+	.4byte ((SHAMAN_GRAPHIC4_SMALL_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060180
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_LARGE_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01001000
+	.4byte ((SHAMAN_GRAPHIC4_SMALL_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x20000006
 	.4byte 0x001e0000
-	.4byte 0x01801000
+	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060100
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01801000
+	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0x10000006
-	.4byte 0x00060100
+	.4byte ((6 << 16) | SHAMAN_GRAPHIC4_SMALL_SCALE)
 	.4byte 0x00067fff
-	.4byte 0x01801000
+	.4byte ((SHAMAN_GRAPHIC4_LARGE_SCALE << 16) | 0x1000)
 	.4byte 0x7fff0006
 	.4byte 0xffff0006
 	.global Data_02005204

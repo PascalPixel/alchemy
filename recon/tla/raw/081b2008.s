@@ -24,7 +24,7 @@ Func_081b2008:
 .L_081b2030:
 	.4byte gPartyState
 .L_081b2034:
-	.4byte Data_030011bc
+	.4byte gRandomState
 .L_081b2038:
 	pop {pc}
 	.2byte 0x0000

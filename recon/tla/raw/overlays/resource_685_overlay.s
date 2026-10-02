@@ -1670,7 +1670,15 @@ Func_02000a34:
 	movs r0, #10
 	bl ObjectMotion_Launch
 	movs r0, #8
+	.ifdef TLA_EDITION_ES
+	bl Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	bl Field_EndActorSpriteEffect
+	.else
 	bl Field_BeginPaletteTransition
+	.endif
+	.endif
 	bl Func_020032a4
 	movs r2, #230
 	movs r0, #1

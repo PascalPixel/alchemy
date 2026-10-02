@@ -174,7 +174,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/FIELD.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE2.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0000f338)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000fc24)
     "*/recon/tbs/de/rom.o"(.rom.0000fd60)

@@ -109,12 +109,6 @@ Object_UpdateAllThumb:
 	.incbin "baserom.gba", 0x0000d2f0, 0x000001ec
 	.section .rom.0000e3ec, "ax"
 	.incbin "baserom.gba", 0x0000e3ec, 0x0000070c
-	.section .rom.0000f338, "ax"
-	.global Map_LoadLayeredScene
-	.type Map_LoadLayeredScene, %function
-	.thumb_func
-Map_LoadLayeredScene:
-	.incbin "baserom.gba", 0x0000f338, 0x00000364
 	.section .rom.0000fc24, "ax"
 	.global Map_CopyMetatileIndicesRect
 	.type Map_CopyMetatileIndicesRect, %function
@@ -224,7 +218,10 @@ ObjectDispatch_Table6Script:
 	.incbin "baserom.gba", 0x00012e20, 0x000000c0
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
-	.incbin "baserom.gba", 0x00012ee0, 0x00001120
+	.incbin "baserom.gba", 0x00012ee0, 0x000000a4
+	.global Map_LayeredScenes
+Map_LayeredScenes:
+	.incbin "baserom.gba", 0x00012f84, 0x0000107c
 	.section .rom.000145d0, "ax"
 	.incbin "baserom.gba", 0x000145d0, 0x000002f4
 	.global Tile_BuildMetatiles

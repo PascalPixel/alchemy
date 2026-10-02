@@ -805,12 +805,6 @@ gEffectScripts:
 	.thumb_func
 Func_080a414c:
 	.incbin "baserom.gba", 0x000a8940, 0x00000340
-	.section .rom.000aa530, "ax"
-	.global Menu_ResolveSelectedAction
-	.type Menu_ResolveSelectedAction, %function
-	.thumb_func
-Menu_ResolveSelectedAction:
-	.incbin "baserom.gba", 0x000aa530, 0x00000320
 	.section .rom.000aeff0, "ax"
 	.global Func_080aa768
 Func_080aa768:

@@ -1,7 +1,11 @@
 /* Draft, same instructions, two swaps left: the ROM keeps the work block in
    r9 and the pillar picture quotient in r11 (their allocation priorities are
    0.197 and 0.200 here, one reference apart), and it spills the camera
-   position pointer above the ground position pointer, not below. */
+   position pointer above the ground position pointer, not below.
+   2026-10-02: 14,372 source permutations left score 89 (16 register-only,
+   9 stack-only). Pinning work to r9 scored 5325; an r11 clobber just after
+   allocation scored 189, after camera setup 409. Naming the camera's pos
+   pointer scored 152 and moved the effect pointer's spill too. None kept. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"

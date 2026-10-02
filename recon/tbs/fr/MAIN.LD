@@ -506,7 +506,6 @@
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/OPEN_CONFIRM_PROMPT.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000aa54c)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/CLASSIFY_SELECTED_PSYNERGY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ABILITY.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ENTRY_GRID.o"(.text)

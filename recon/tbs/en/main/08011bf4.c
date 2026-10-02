@@ -20,7 +20,14 @@
    takes r6 before the length shift, and start r4. Computing pos after the
    second loop and the control word before it scores 185 on the scorer
    (24 register-only, 1 reordered), the same allocation problem; 520,000
-   permuter candidates from 335, 185 and 300 found nothing lower. */
+   permuter candidates from 335, 185 and 300 found nothing lower.
+   2026-10-02: fresh baseline 300. Binding only the color cursor to r4 gives
+   220 (18 register-only, 2 reordered), retained below. Binding start to r7
+   gives 1110, for either signed or unsigned halfword spelling; binding the
+   stepped position to r7 gives 110 but overlaps the live cycle pointer,
+   so is rejected rather than treated as an improvement. Also binding the
+   cycle pointer to r5 gives 620. An explicit shifted length constrained
+   to r6 gives 1795. Those additional devices were all discarded. */
 /* 2026-09-30 (Mercury): 30 differing halfwords, 236 of 236 bytes, no
    FAKEMATCH (was 65). The position steps in 16.16: pos = start << 16 before
    the second copy loop, next = pos + 0x10000, next = 0 when it reaches len
@@ -60,12 +67,12 @@ void Func_08011bf4(void)
             u16 start = cycle->pos;
             u16 len = cycle->len;
             void *dest = cycle->dest;
-            u16 *src = cycle->colors;
+            /* FAKEMATCH: 520,000 ordinary permutations still exchange r1/r4 for the color cursor and buffer; bind the cursor to r4. */
+            register u16 *src asm("r4") = cycle->colors;
             u8 j;
             u32 pos;
             u32 next;
             u32 value;
-
             for (j = len - start; j < len; j++)
                 buf[j] = *src++;
             pos = (s16)start << 16;

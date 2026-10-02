@@ -1,6 +1,15 @@
 /* Draft, complete main:080e7404 [080e7404,080e823c) with its two nested
    functions main:080e7338 and main:080e73a0, 3844 bytes together, written
-   fresh from the listings in plain C. */
+   fresh from the listings in plain C.
+   2026-10-02: removed the stale ResourceObject_ReleaseFar declaration in
+   favor of RESOURCE.H; the draft now compiles, scoring 9394 (405 differing
+   instructions). Signed halfword register pointers give the same score.
+   Reusing the first projection scale in the second phase scored 11343
+   (429 differing instructions), so separate phase locals were restored.
+   AddFlame and AddMote reproduce their instruction bodies; each score is
+   100 only because the listing includes two trailing alignment bytes that
+   the compiler's function size excludes. The outer function remains a
+   draft, and none of this bank can yet be credited. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -72,7 +81,6 @@ struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 struct SceneObject *GetBattleEffectObject(s32 kind);
 void Object_InitializeMode(struct SceneObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
 void BattleActor_CommitPlacementFar(void);
 void AudioCommand_PlayFar(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);

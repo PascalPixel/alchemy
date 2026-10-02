@@ -804,7 +804,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_COMMANDS.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
-    "*/recon/tbs/ja/rom.o"(.rom.000e77f0)
+    "*/recon/tbs/ja/rom.o"(.rom.000e7a5c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
     "*/recon/tbs/ja/rom.o"(.rom.000e9028)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)

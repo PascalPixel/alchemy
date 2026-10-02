@@ -799,7 +799,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_COMMANDS.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TILE3.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY6.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000f1df0)
+    "*/recon/tbs/de/rom.o"(.rom.000f205c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/PALETTE.o"(.text .rodata .data .padding)
     "*/recon/tbs/de/rom.o"(.rom.000f3628)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/INTRO.o"(.text)

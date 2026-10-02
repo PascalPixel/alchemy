@@ -1820,16 +1820,19 @@ RisingBurst_SparkSizes:
 	.global SentouKouka_BitOperands
 SentouKouka_BitOperands:
 	.incbin "baserom.gba", 0x000e6034, 0x00000fcc
-	.section .rom.000e77f0, "ax"
-	.global Func_080f07f0
-Func_080f07f0:
-	.incbin "baserom.gba", 0x000e77f0, 0x0000026c
+	.section .rom.000e7a5c, "ax"
 	.global DisplayScroll_SlideResources
 DisplayScroll_SlideResources:
-	.incbin "baserom.gba", 0x000e7a5c, 0x0000096c
+	.incbin "baserom.gba", 0x000e7a5c, 0x00000909
+	.global DisplayScroll_GlyphWidths
+DisplayScroll_GlyphWidths:
+	.incbin "baserom.gba", 0x000e8365, 0x00000063
 	.global DisplayScroll_LineTable
 DisplayScroll_LineTable:
-	.incbin "baserom.gba", 0x000e83c8, 0x00000c38
+	.incbin "baserom.gba", 0x000e83c8, 0x00000540
+	.global DisplayScroll_Font
+DisplayScroll_Font:
+	.incbin "baserom.gba", 0x000e8908, 0x000006f8
 	.section .rom.000e9028, "ax"
 	.global Func_080f2028
 	.type Func_080f2028, %function

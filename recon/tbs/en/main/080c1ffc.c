@@ -1,4 +1,26 @@
-/* Draft, not exact: score 1242 (was 1847), 49 register-only, 2 stack-only,
+/* Draft, not exact: current EN score1112 (48 register-only,2 stack-only,
+ * 2 operand,10 reordered,2 inserted), no unresolved symbols. Native complete
+ * extent876 includes all pools; frame124 and every local array has uses.
+ * 2026-10-02 fallback, bounded to three source trials:
+ * H0: actual BattleSession fields/BattleUnit prototype and size, no private
+ * global view, unused locals or member macro. Score stays1242; retained.
+ * H1: initialize margin and session count before the used list pointer.
+ * Score1112; native prologue stores now match. Retained without devices.
+ * H2: spell both copy stores before count++, instead of post-increment.
+ * Identical score/counts to H1; compact form restored.
+ * H3: expose used walking minimum/maximum byte pointers in the second loop.
+ * Score1557 (71 register,2 stack,5 operand,11 reordered,2 inserted,2 deleted).
+ * It loses the native scan/budget pointer save/reload and does not repair the
+ * copy passes. Rejected; arrays and indexed expressions restored.
+ * Remaining: second-loop allocation; copy-pass count/list reload order and
+ * two extra register copies; assignment entry reload r2 instead of r1.
+ * Native second-loop minimum pointer reuses the scan/budget lifetime; merely
+ * deriving another pointer from the record at that loop loses this relation.
+ * No new asm, register bindings, unused storage, dead instructions, options,
+ * aliases or output changes remain. No adoption or edition credit claimed.
+ */
+/* Previous baseline before this fallback: score 1242 (was 1847),
+   49 register-only, 2 stack-only,
    2 operand, 12 reordered and 2 inserted instruction differences.
    BattleFormation_BuildEnemyList: picks the formation record (level-matched
    when flag 0x173 is set), spends a budget of 6 slots on each member's
@@ -32,38 +54,23 @@
 #include "TYPES.H"
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_FORMATION.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_RUNTIME.H"
+#include "FIXED_MATH.H"
 #include "BATTLE_CALC.H"
 #include "IWRAM_CALL.H"
 
-struct BattleSetup {
-    u8 unknown_00[60];
-    u16 unknown_3c;
-    u16 unknown_3e;
-    u8 unknown_40;
-    u8 unknown_41;
-    u8 battle_type;
-};
-
-extern struct BattleSetup *gBattleWork;
-
-s32 GameFlag_TestFar(s32 flag);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin);
 s32 Summon_IsEntryFlagged(s32 id);
-s32 __divsi3(s32 a, s32 b);
 u32 Random16(void);
-void *Owner_GetStateFar(s32 unit);
-s32 BattleUnit_AssignFar(s32 unit, s32 id, s32 charge);
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels);
-
-typedef void (*ClearFn)(void *destination, s32 size);
 
 s32 BattleFormation_BuildEnemyList(s32 record_id)
 {
     u16 *list;
-    struct BattleSetup *work;
+    struct BattleSession *work;
     struct BattleFormationRecord *record;
     s32 count;
-#define member_ids record->member_ids
     s32 margin;
     u16 list_buffer[14];
     s32 extra[5];
@@ -80,14 +87,13 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     s32 a;
     s32 b;
     s32 t;
-    s32 charge;
     u32 i;
     s32 j;
 
     work = gBattleWork;
-    list = list_buffer;
     margin = 0;
-    work->unknown_40 = 0;
+    work->summon_count = 0;
+    list = list_buffer;
     if (GameFlag_TestFar(0x173))
         record_id = BattleFormation_SelectLevelMatchedCandidate(&margin);
     if ((u32)record_id >= 380)
@@ -102,7 +108,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     count = 0;
     for (i = 0; i <= 4; i++) {
         if (record->minimum_counts[i] != 0) {
-            s32 size1 = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
+            s32 size1 = 2 - (Summon_IsEntryFlagged(record->member_ids[i] + 8) != 0);
 
             budget -= size1 * record->minimum_counts[i];
         }
@@ -115,7 +121,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         counts[i] = minimum;
         room = maximum - minimum;
         if (room > 0) {
-            s32 size2 = 2 - (Summon_IsEntryFlagged(member_ids[i] + 8) != 0);
+            s32 size2 = 2 - (Summon_IsEntryFlagged(record->member_ids[i] + 8) != 0);
 
             fit = budget / size2;
             if (fit < room)
@@ -129,7 +135,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     do {
         changed = 0;
         for (i = 0; i <= 4; i++) {
-            id = member_ids[i] + 8;
+            id = record->member_ids[i] + 8;
             if (extra[i] != 0) {
                 size = 2 - (Summon_IsEntryFlagged(id) != 0);
                 if (size > budget) {
@@ -144,8 +150,8 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         }
     } while (changed);
 
-    work->battle_type = record->battle_type;
-    switch (work->battle_type) {
+    work->unknown_042 = record->battle_type;
+    switch (work->unknown_042) {
     case 0:
         for (i = 0; i <= 4; i++)
             order[i] = i;
@@ -159,7 +165,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         for (i = 0; i <= 4; i++) {
             k = order[i];
             for (n = 0; n < counts[k]; n++)
-                list[count++] = member_ids[k] + 8;
+                list[count++] = record->member_ids[k] + 8;
         }
         break;
     case 1:
@@ -172,22 +178,22 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
             if (n == 0)
                 break;
             k = order[(n * Random16()) >> 16];
-            list[count++] = member_ids[k] + 8;
+            list[count++] = record->member_ids[k] + 8;
             counts[k]--;
         }
         break;
     default:
         for (i = 0; i <= 4; i++) {
             for (n = 0; n < counts[i]; n++)
-                list[count++] = member_ids[i] + 8;
+                list[count++] = record->member_ids[i] + 8;
         }
         break;
     }
     list[count] = 0;
-    work->unknown_3c = 6;
-    work->unknown_3e = 0;
+    work->first_defeated = 6;
+    work->defeat_state = 0;
     for (i = 128; i <= 133; i++)
-        Iwram_ClearWords(Owner_GetStateFar(i), 332);
+        Iwram_ClearWords(Owner_GetStateFar(i), BATTLE_UNIT_SIZE);
 
     i = 0;
     if (list[0] == 0)

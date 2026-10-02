@@ -406,8 +406,8 @@ Menu_CursorLeftObjectTiles:
 	.global Menu_CursorObjectTiles
 Menu_CursorObjectTiles:
 	.incbin "baserom.gba", 0x000335c0, 0x00000400
-	.global Data_080346f8
-Data_080346f8:
+	.global Menu_AnimatedCursorTiles
+Menu_AnimatedCursorTiles:
 	.incbin "baserom.gba", 0x000339c0, 0x00002000
 	.global Data_080366f8
 Data_080366f8:
@@ -471,7 +471,41 @@ Graphics_ExpandNibbleTable:
 	.incbin "baserom.gba", 0x00036590, 0x00000040
 	.global Link_TimeLabelString
 Link_TimeLabelString:
-	.incbin "baserom.gba", 0x000365d0, 0x000000ff
+	.incbin "baserom.gba", 0x000365d0, 0x00000008
+	.incbin "baserom.gba", 0x000365d8, 0x00000020
+	.global OwnerStatus_StatCursors
+OwnerStatus_StatCursors:
+	.incbin "baserom.gba", 0x000365f8, 0x00000080
+	.global OwnerStatus_EquipmentCursors
+OwnerStatus_EquipmentCursors:
+	.incbin "baserom.gba", 0x00036678, 0x00000010
+	.global OwnerStatus_ConditionCursors
+OwnerStatus_ConditionCursors:
+	.incbin "baserom.gba", 0x00036688, 0x00000020
+	.global OwnerStatus_NivString
+OwnerStatus_NivString:
+	.incbin "baserom.gba", 0x000366a8, 0x00000004
+	.global OwnerStatus_NvString
+OwnerStatus_NvString:
+	.incbin "baserom.gba", 0x000366ac, 0x00000004
+	.global OwnerStatus_LevelString
+OwnerStatus_LevelString:
+	.incbin "baserom.gba", 0x000366b0, 0x00000004
+	.global OwnerStatus_KpString
+OwnerStatus_KpString:
+	.incbin "baserom.gba", 0x000366b4, 0x00000004
+	.global OwnerStatus_PvString
+OwnerStatus_PvString:
+	.incbin "baserom.gba", 0x000366b8, 0x00000004
+	.global OwnerStatus_HpString
+OwnerStatus_HpString:
+	.incbin "baserom.gba", 0x000366bc, 0x00000004
+	.global OwnerStatus_SlashString
+OwnerStatus_SlashString:
+	.incbin "baserom.gba", 0x000366c0, 0x00000004
+	.global OwnerStatus_PpString
+OwnerStatus_PpString:
+	.incbin "baserom.gba", 0x000366c4, 0x0000000b
 	.global Menu_SelectionStepDelays
 Menu_SelectionStepDelays:
 	.incbin "baserom.gba", 0x000366cf, 0x00000008

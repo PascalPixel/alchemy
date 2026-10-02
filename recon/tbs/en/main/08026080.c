@@ -1,4 +1,48 @@
+/* Bounded trials closed; H0 real-owner body retained, no register devices.
+ * H1: five pointers scoped inside case 4; identical score/counts/frame to H0.
+ * H2: actual sleep/psy_seal pair as unsigned16 bitfield; identical to H0,
+ * still no native mask/spill; removed the exploratory view.
+ * H3: case-owned used pointer registers r7/r8/r10/r6, after scope failed:
+ * score 21188 (442 register, 48 stack, 85 operand, 80 reordered,
+ * 70 inserted, 51 deleted), frame still 320. Worse; all bindings removed.
+ * No unused storage, dead instructions, compiler options or output edits.
+ * Native complete English listing is 3584 bytes, including all pools.
+ * The current candidate is not exact; no adoption or six-edition credit.
+ */
+/* H0 result: score 21123 (450 register, 48 stack, 85 operand,
+ * 80 reordered, 70 inserted, 50 deleted), frame 320; all symbols resolve.
+ * The real-owner/interface repair is retained regardless of matching score.
+ * EN status literals now use the existing physical OwnerStatus string names.
+ */
+/* Current uncorrected EN baseline: score 21249 (446 register, 49 stack,
+ * 89 operand, 78 reordered, 73 inserted, 49 deleted); frame 320 vs native
+ * 324. Modulo was unresolved. H0 removes fabricated global/record owners,
+ * imports shared declarations, uses real signed remainder and explicit
+ * window/text/sprite boundary casts. No storage or steering device added.
+ */
+/* 2026-10-02 source ownership and frame audit, before new scoring:
+ * BATTLE_WORK.H owns the BattleSession pointer and its party_units/enemy_units
+ * at +58/+66. The former bundled BattleGlobals conflates two named pointer
+ * cells: the target-selection menu view belongs behind gLinkCountdownWork,
+ * with slide offset +28, countdown +4c and auto input +d8/+dc.
+ * BATTLE_UNIT.H owns the combatant/status fields; TEXT_RENDER_RUNTIME.H owns
+ * byte-string render input. Shared declaration repairs are root-owned.
+ * Native frame 324: efx 8; four projected positions 48; name 30 plus alignment
+ * 2; selection slots 8 and ids 28; cursor records 24; sprites 72; base ids 16;
+ * remaining 88 bytes are compiler spills. Each aggregate has a real use.
+ * Case 4 keeps five used status pointers across UiWindow_Create: delusion r7,
+ * stun r8, sleep r10, psy_seal at spill+40, death_count r6. The old candidate
+ * header reports recomputation and one extra spill; remeasure after the
+ * compiler cache is ready. Try actual used lifetimes, never frame filler.
+ * Modulo has no current definition; native calls the signed remainder helper
+ * __modsi3 at all three sites, which should be written as C remainder.
+ */
 #include "TYPES.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_RUNTIME.H"
+#include "MENU_LIST.H"
+#include "FIXED_MATH.H"
+#include "UI.H"
 
 /* Select a combatant, display its condition and animate the target markers.
  * Confirmation returns an encoded side/index; cancellation returns -1.
@@ -6,7 +50,7 @@
  * Draft, not exact: `alchemy drafts` scores it 784 instructions off of
  * 1,585 (the field macro with a type argument kept it from scoring before).
  * Every call site is in the ROM's order. Proven from the ROM:
- * the id copies read runtime->first_ids[i] directly (movs r3, #88; ldrsh);
+ * the id copies read runtime->party_units[i] directly (movs r3, #88; ldrsh);
  * the status search and the sel lookup both sit inside if (mode == 2), with
  * case 5 setting sel itself; the two per-frame tbl loops ascend (GCC counts
  * r7 down while the pointer walks up); the frame is 88 bytes of spills
@@ -61,90 +105,15 @@ struct Effect {
     unsigned unused : 16;
 };
 
-struct BattleRuntime {
-    u8 unknown_00[0x58];
-    s16 first_ids[6];            /* 0x58 terminated by 0xFF */
-    s16 unknown_64;              /* 0x64 */
-    s16 second_ids[6];           /* 0x66 terminated by 0xFF */
-};
-
-struct SessionState {
-    u8 unknown_00[0x28];
-    s32 slide_offset;            /* 0x28 */
-    u8 unknown_2c[0x20];
-    s32 timer;                   /* 0x4c */
-    u8 unknown_50[0x88];
-    s32 auto_enabled;            /* 0xd8 */
-    s32 auto_delay;              /* 0xdc */
-};
-
-struct BattleUnit {
-    u8 name[14];
-    u8 unknown_00e[0x26];
-    s16 max_hp;                  /* 0x034 */
-    s16 max_pp;                  /* 0x036 */
-    s16 hp;                      /* 0x038 */
-    s16 pp;                      /* 0x03a */
-    u8 unknown_03c[0xec];
-    u8 class_id;                 /* 0x128 */
-    u8 unknown_129[8];
-    s8 poison;                   /* 0x131 */
-    u8 unknown_132[6];
-    u8 delusion;                 /* 0x138 */
-    u8 confusion;                /* 0x139 */
-    u8 charm;                    /* 0x13a */
-    u8 stun;                     /* 0x13b */
-    u8 sleep;                    /* 0x13c */
-    u8 psy_seal;                 /* 0x13d */
-    u8 unknown_13e[2];
-    u8 evil_spirit;              /* 0x140 */
-    u8 death_count;              /* 0x141 */
-};
-
-/*
- * The reference derives 0x03001F34 from the 0x03001E74 pool word already in a
- * register ("adds r3, r5, #0 / adds r3, #192") at both prologue sites, so the
- * two pointers are members of one record rather than independent globals.
- */
-struct BattleGlobals {
-    struct BattleRuntime *runtime;   /* 0x03001e74 */
-    u8 unknown_04[0xbc];
-    struct SessionState *session;    /* 0x03001f34 */
-};
-
-extern struct BattleGlobals gBattleWork;
-/*
- * Read twice inside one frame (0x080263aa and 0x080263cc) without CSE, so it
- * is volatile; the ">> 2" at 0x080263ae is "lsrs", so it is unsigned.
- */
-extern volatile u32 gFrameCount;
-
-s32 Resource_LoadIntoFreeSlot(s32 id);
-s32 Resource_GetBuffer(s32 slot, s32 source);
-void Runtime_PushSlotEntry(struct DisplayEntry *entry, s32 slot);
+/* Views whose callee declarations have no shared owner yet. */
 s32 AffineMatrix_BuildForEffect(struct Effect *source);
-s32 Modulo(s32 numerator, s32 denominator);
-s32 Trig_Sin(s32 angle);
-s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWork_Finalize(s32 work, s32 release);
-void UiText_DrawCharacterAtOffset(s32 text, s32 work, s32 x, s32 y);
-void UiText_DrawStringAtOffset(s32 text, s32 work, s32 x, s32 y);
-void UiText_DrawNumberInWindow(s32 value, s32 digits, s32 work, s32 x, s32 y);
-
-void UiWork_SetParamNibble(s32 value);
-struct BattleUnit *Owner_GetStateFar(s32 id);
-s32 GameFlag_TestFar(s32 flag);
-void BattleMotion_ProjectConditionalPositionFar(s32 id, struct ScreenPos *out);
+s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *out);
 void BattlePres_SetActorModesFar(u16 *ids, s32 highlight);
-void UiText_CopyMessageString(s32 message, u16 *text, s32 limit);
 s32 UiText_GetWideStringWidth(u16 *text);
-void UiText_RenderWideStringAtOffset(u16 *text, s32 work, s32 x, s32 y);
+void UiText_DrawNumberInWindow(
+    s32 value, s32 digits, s32 work, s32 x, s32 y);
 void Ui_ClearVramBlock(void);
-void Resource_ResetEntry(s32 slot);
-void WaitFrames(s32 frames);
-void Audio_PlayCue(s32 cue);
-extern volatile u32 gKeyState;
-extern volatile u32 gKeysRepeat; extern u8 Data_080346f8[]; extern u8 Data_080373dc[]; extern u8 Data_080373e0[]; extern u8 Data_080373e4[];
+
 
 s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
 {
@@ -160,16 +129,15 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     struct ScreenPos targetPos;
     struct Effect efx;
 
-    struct BattleRuntime *runtime;
+    struct BattleSession *runtime;
     struct BattleUnit *unit;
     struct CursorSlot *slot;
     struct DisplayEntry *entry;
     struct DisplayEntry *head;
-    s16 *src;
     s32 sel;
     s32 slotId;
-    s32 window;
-    s32 infoWin;
+    struct UiWindow *window;
+    struct UiWindow *infoWin;
     s32 matrix;
     s32 cursor;
     s32 cnt;
@@ -195,7 +163,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     u8 *pp;
     u8 *pc;
 
-    runtime = gBattleWork.runtime;
+    runtime = gBattleWork;
     cnt = 0;
     redraw = 0xFFFF;
     slotId = Resource_LoadIntoFreeSlot(256);
@@ -204,9 +172,9 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     if (spread == 0)
         spread = 1;
     if (mode == 2 || mode == 4)
-        gBattleWork.session->slide_offset = -2;
+        gLinkCountdownWork->slide_offset = -2;
     else
-        gBattleWork.session->slide_offset = 16;
+        gLinkCountdownWork->slide_offset = 16;
 
     for (i = 5; i >= 0; i--)
         tbl[i].flags = 0;
@@ -214,28 +182,28 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     cursor = -1;
     if (mode == 2) {
         i = 0;
-        if (runtime->first_ids[0] != 0xFF) {
+        if (runtime->party_units[0] != 0xFF) {
             do {
-                ids[cnt] = runtime->first_ids[i];
+                ids[cnt] = runtime->party_units[i];
                 cnt++;
                 i++;
                 if (i > 5)
                     break;
-            } while (runtime->first_ids[i] != 0xFF);
+            } while (runtime->party_units[i] != 0xFF);
         }
     } else if (mode == 4) {
         ids[0] = (u16)sel;
         cnt = 1;
     } else {
         i = 0;
-        if (runtime->second_ids[0] != 0xFF) {
+        if (runtime->enemy_units[0] != 0xFF) {
             do {
-                ids[cnt] = runtime->second_ids[i];
+                ids[cnt] = runtime->enemy_units[i];
                 cnt++;
                 i++;
                 if (i > 5)
                     break;
-            } while (runtime->second_ids[i] != 0xFF);
+            } while (runtime->enemy_units[i] != 0xFF);
         }
     }
     ids[cnt] = 0xFF;
@@ -306,11 +274,11 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
         break;
 step_back:
         cursor = cursor + cnt - 1;
-        cursor = Modulo(cursor, cnt);
+        cursor %= cnt;
     }
 
     if (mode != 2) {
-        BattleMotion_ProjectConditionalPositionFar(sel, &markPos);
+        BattleMotion_ProjectConditionalPositionFar(sel, (s32 *)&markPos);
         tbl[0].flags = 8;
         tbl[0].x = (u8)markPos.x;
         tbl[0].y = 0x80;
@@ -321,11 +289,11 @@ step_back:
 
     for (;;) {
         pending = 0;
-        BattleMotion_ProjectConditionalPositionFar(ids[cursor], &pos);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
         ((s32 *)head)[1] = 0x40002000;
         ((s32 *)head)[2] = pending;
         head->tile = Resource_GetBuffer(
-            slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Data_080346f8);
+            slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Menu_AnimatedCursorTiles);
         i = Trig_Sin(gFrameCount << 12);
         if (i < 0)
             i += 0x7FFF;
@@ -355,7 +323,7 @@ step_back:
         }
         head->x = pos.x - 8;
         head->y = (u8)(pos.y - 16);
-        Runtime_PushSlotEntry(head, 240);
+        Runtime_PushSlotEntry((s32 *)head, 240);
 
         if (spread == 0xFF) {
             efx.x = 256;
@@ -415,7 +383,7 @@ step_back:
             goto frame_tail;
 
         unit = Owner_GetStateFar(ids[cursor]);
-        BattleMotion_ProjectConditionalPositionFar(ids[cursor], &pos);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
         if (infoWin != 0)
             UiWork_Finalize(infoWin, 1);
 
@@ -426,7 +394,7 @@ step_back:
                 column = 22;
             infoWin = UiWindow_Create(column, 8, 9, 3, 6);
             UiWork_SetParamNibble(2);
-            UiText_DrawCharacterAtOffset(0x8AC, infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8AC, (struct TextRenderWork *)infoWin, 0, 0);
             UiWork_SetParamNibble(15);
             goto frame_tail;
         case 1:
@@ -434,20 +402,20 @@ step_back:
             if (pos.x / 8 + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-            UiText_DrawStringAtOffset((s32)Data_080373dc, infoWin, 0, 0);
-            UiText_DrawNumberInWindow(unit->hp, 4, infoWin, 16, 0);
-            UiText_DrawStringAtOffset((s32)Data_080373e0, infoWin, 48, 0);
-            UiText_DrawNumberInWindow(unit->max_hp, 4, infoWin, 56, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct TextRenderWork *)infoWin, 0, 0);
+            UiText_DrawNumberInWindow(unit->hp, 4, (s32)infoWin, 16, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct TextRenderWork *)infoWin, 48, 0);
+            UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 2:
             column = pos.x / 8 - 7;
             if (pos.x / 8 + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-            UiText_DrawStringAtOffset((s32)Data_080373e4, infoWin, 0, 0);
-            UiText_DrawNumberInWindow(unit->pp, 4, infoWin, 16, 0);
-            UiText_DrawStringAtOffset((s32)Data_080373e0, infoWin, 48, 0);
-            UiText_DrawNumberInWindow(unit->max_pp, 4, infoWin, 56, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct TextRenderWork *)infoWin, 0, 0);
+            UiText_DrawNumberInWindow(unit->pp, 4, (s32)infoWin, 16, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct TextRenderWork *)infoWin, 48, 0);
+            UiText_DrawNumberInWindow(unit->max_pp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 5:
             column = pos.x / 8 - 7;
@@ -456,7 +424,7 @@ step_back:
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->hp != 0)
                 goto no_condition;
-            UiText_DrawCharacterAtOffset(0x8AB, infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8AB, (struct TextRenderWork *)infoWin, 0, 0);
             goto frame_tail;
         case 3:
             column = pos.x / 8 - 7;
@@ -465,7 +433,7 @@ step_back:
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->poison == 0)
                 goto no_condition;
-            UiText_DrawCharacterAtOffset(0x8A4, infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8A4, (struct TextRenderWork *)infoWin, 0, 0);
             /* 0x080267f6: b sub_08026b8c. */
             goto frame_tail;
         case 4:
@@ -491,23 +459,23 @@ step_back:
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
             if (*pd != 0) {
-                UiText_DrawCharacterAtOffset(0x8A5, infoWin, 0, 0);
+                UiText_DrawCharacterAtOffset(0x8A5, (struct TextRenderWork *)infoWin, 0, 0);
                 count = 1;
             }
             if (*ps != 0) {
-                UiText_DrawCharacterAtOffset(0x8A6, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A6, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (*pl != 0) {
-                UiText_DrawCharacterAtOffset(0x8A7, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A7, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (*pp != 0) {
-                UiText_DrawCharacterAtOffset(0x8A8, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A8, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (*pc != 0) {
-                UiText_DrawCharacterAtOffset(0x8A9, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A9, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (count == 0)
@@ -540,31 +508,31 @@ step_back:
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
             if (unit->poison != 0) {
-                UiText_DrawCharacterAtOffset(0x8A4, infoWin, 0, 0);
+                UiText_DrawCharacterAtOffset(0x8A4, (struct TextRenderWork *)infoWin, 0, 0);
                 count = 1;
             }
             if (unit->delusion != 0) {
-                UiText_DrawCharacterAtOffset(0x8A5, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A5, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->stun != 0) {
-                UiText_DrawCharacterAtOffset(0x8A6, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A6, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->sleep != 0) {
-                UiText_DrawCharacterAtOffset(0x8A7, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A7, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->psy_seal != 0) {
-                UiText_DrawCharacterAtOffset(0x8A8, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A8, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->death_count != 0) {
-                UiText_DrawCharacterAtOffset(0x8A9, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A9, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->evil_spirit != 0) {
-                UiText_DrawCharacterAtOffset(0x8AA, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8AA, (struct TextRenderWork *)infoWin, 0, count * 8);
                 count++;
             }
             if (count == 0)
@@ -577,7 +545,7 @@ step_back:
 
 no_condition:
         UiWork_SetParamNibble(2);
-        UiText_DrawCharacterAtOffset(0x8A3, infoWin, 0, 0);
+        UiText_DrawCharacterAtOffset(0x8A3, (struct TextRenderWork *)infoWin, 0, 0);
         UiWork_SetParamNibble(15);
         goto frame_tail;
 
@@ -585,7 +553,7 @@ draw_name:
         if (spread == 0xFF)
             goto frame_tail;
         unit = Owner_GetStateFar(ids[cursor]);
-        BattleMotion_ProjectConditionalPositionFar(ids[cursor], &namePos);
+        BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&namePos);
         namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
         if (unit->class_id == 125 || unit->class_id == 122) {
             width = 0x80E;
@@ -608,7 +576,7 @@ draw_name:
         if (namePos.x < 0)
             namePos.x = 0;
         Ui_ClearVramBlock();
-        UiText_RenderWideStringAtOffset(name, window, namePos.x, 4);
+        UiText_RenderWideStringAtOffset(name, (struct TextWindow *)window, namePos.x, 4);
 
 frame_tail:
         redraw &= ~1;
@@ -617,7 +585,7 @@ frame_end:
             entry = head + 1;
             for (i = 1; i < cnt; i++, entry++) {
                 slot = &tbl[selSlot[i]];
-                BattleMotion_ProjectConditionalPositionFar(selIds[i], &targetPos);
+                BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
                 targetPos.y += Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;
                 if (slot->flags & 1) {
@@ -640,36 +608,36 @@ frame_end:
                 else
                     entry->object_mode = 1;
                 entry->matrix = matrix;
-                Runtime_PushSlotEntry(entry, 240);
+                Runtime_PushSlotEntry((s32 *)entry, 240);
             }
         }
 
         pressed = gKeyState;
         repeat = gKeysRepeat;
-        if (gBattleWork.session->auto_enabled != 0) {
+        if (gLinkCountdownWork->auto_enabled != 0) {
             pressed = 0;
             repeat = 0;
-            if (gBattleWork.session->auto_delay == 0) {
-                gBattleWork.session->auto_delay = 60;
+            if (gLinkCountdownWork->auto_delay == 0) {
+                gLinkCountdownWork->auto_delay = 60;
                 pressed = 1;
                 repeat = 1;
             } else {
-                gBattleWork.session->auto_delay--;
+                gLinkCountdownWork->auto_delay--;
             }
         }
         if (pressed & 1) {
             sel = ids[cursor];
             redraw = 0;
             result = -1;
-            for (i = 0; i <= 5 && runtime->first_ids[i] != 0xFF; i++) {
-                if (runtime->first_ids[i] == sel) {
+            for (i = 0; i <= 5 && runtime->party_units[i] != 0xFF; i++) {
+                if (runtime->party_units[i] == sel) {
                     result = 0x100 | i;
                     break;
                 }
             }
             if (result < 0) {
-                for (i = 0; i <= 5 && runtime->second_ids[i] != 0xFF; i++) {
-                    if (runtime->second_ids[i] == sel) {
+                for (i = 0; i <= 5 && runtime->enemy_units[i] != 0xFF; i++) {
+                    if (runtime->enemy_units[i] == sel) {
                         result = 0x180 | i;
                         break;
                     }
@@ -678,24 +646,24 @@ frame_end:
             cursor = result;
         } else if (spread != 0xFF) {
             if (repeat & 0x90) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 do {
                     cursor++;
-                    cursor = Modulo(cursor, total);
+                    cursor %= total;
                 } while (ids[cursor] == 0xFE);
                 redraw |= 1;
             }
             if (repeat & 0x60) {
-                Audio_PlayCue(111);
+                AudioCommand_PlayFar(111);
                 do {
                     cursor = cursor + total - 1;
-                    cursor = Modulo(cursor, total);
+                    cursor %= total;
                 } while (ids[cursor] == 0xFE);
                 redraw |= 1;
             }
         }
-        if (gBattleWork.session->timer == 0 || (pressed & 2)) {
-            Audio_PlayCue(113);
+        if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
+            AudioCommand_PlayFar(113);
             cursor = -1;
             break;
         }
@@ -710,7 +678,7 @@ frame_end:
         UiWork_Finalize(infoWin, 1);
     UiWork_Finalize(window, 1);
     BattlePres_SetActorModesFar(ids, 0);
-    gBattleWork.session->slide_offset = 0;
+    gLinkCountdownWork->slide_offset = 0;
     WaitFrames(1);
     return cursor;
 }

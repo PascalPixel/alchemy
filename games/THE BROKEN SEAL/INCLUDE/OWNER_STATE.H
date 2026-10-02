@@ -42,8 +42,9 @@ struct OwnerTransferState {
 struct OwnerDjinnState {
     u8 unknown_000[0xf8];
     u32 available[4];
-    u32 active[5];
-    u8 active_counts[5];
+    u32 active[4];
+    u8 owned_counts[4];
+    u8 active_counts[4];
 };
 
 struct OwnerValueState {

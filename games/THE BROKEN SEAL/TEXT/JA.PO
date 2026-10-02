@@ -8951,7 +8951,7 @@ msgctxt "message"
 msgid "02235"
 msgstr "ジン"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02236"
 msgstr "けいけんち"
 
@@ -8963,19 +8963,19 @@ msgctxt "message"
 msgid "02238"
 msgstr "さいだいEP"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02239"
 msgstr "せいじょう"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02240"
 msgstr "せんとうふのう"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02241"
 msgstr "げんざいの けいけんちです{line_break}つぎのレベルまであと{argument_signed_number}ひつようです"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02242"
 msgstr "ひょうじする キャラクターは{line_break}LRボタンできりかえられます"
 
@@ -9047,7 +9047,7 @@ msgctxt "message"
 msgid "02259"
 msgstr "かいじょするのかな?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02260"
 msgstr "ステータスは せいじょうです"
 

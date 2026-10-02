@@ -9931,7 +9931,7 @@ msgctxt "message"
 msgid "02480"
 msgstr "Djinn"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusExp"
 msgid "02481"
 msgstr "Exp."
 
@@ -9943,19 +9943,19 @@ msgctxt "message"
 msgid "02483"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNormal"
 msgid "02484"
 msgstr "Normal"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusDowned"
 msgid "02485"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusNextLevel"
 msgid "02486"
 msgstr "Puntos de experiencia. Necesita{line_break}{argument_signed_number} más para subir de nivel."
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusEntryHelp"
 msgid "02487"
 msgstr "Usa los Botones L y R para{line_break}cambiar de personaje."
 
@@ -10027,7 +10027,7 @@ msgctxt "message"
 msgid "02504"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgOwnerStatusConditionHelp"
 msgid "02505"
 msgstr "Estado normal."
 

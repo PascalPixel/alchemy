@@ -616,7 +616,7 @@ void FieldScene_RunMiddleSequence(void)
         }
         if ((((struct FieldActor *)Object_GetById(i + 12))->z.fixed >> 20) == 9
             && GameFlag_IsSet(i + 0x200) == 0) {
-            *(s32 *)(Value1(Object_GetById, i + 12) + 20) = 0;
+            *(s32 *)((u8 *)Object_GetById(i + 12) + 20) = 0;
             ((struct FieldActor *)Object_GetById(i + 12))->velocity_y = 0;
             *(s32 *)(((s32 (*)())Object_GetById)(i + 12) + 60) = -0x80000000;
             ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
@@ -746,31 +746,31 @@ void FieldScene_RunScene3c4SequenceA(void)
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
     record = Object_GetById(19);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Object_GetById, 19) + 16);
+    q = Object_GetById(19)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(20);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Object_GetById, 20) + 16);
+    q = Object_GetById(20)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(21);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Object_GetById, 21) + 16);
+    q = Object_GetById(21)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(22);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Object_GetById, 22) + 16);
+    q = Object_GetById(22)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
     record = Object_GetById(23);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Object_GetById, 23) + 16);
+    q = Object_GetById(23)->z.fixed;
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);

@@ -1186,12 +1186,6 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000be420, 0x00001be0
-	.section .rom.000c160c, "ax"
-	.global BattleFx_RunTwelveMode
-	.type BattleFx_RunTwelveMode, %function
-	.thumb_func
-BattleFx_RunTwelveMode:
-	.incbin "baserom.gba", 0x000c160c, 0x00000b98
 	.section .rom.000c27f8, "ax"
 	.global Unnamed_080cb7f8
 	.type Unnamed_080cb7f8, %function
@@ -1368,7 +1362,28 @@ FiveMode_Records:
 	.incbin "baserom.gba", 0x000e4ee8, 0x00000014
 	.global FiveMode_Tremble
 FiveMode_Tremble:
-	.incbin "baserom.gba", 0x000e4efc, 0x00000083
+	.incbin "baserom.gba", 0x000e4efc, 0x00000008
+	.global TwelveMode_Records
+TwelveMode_Records:
+	.incbin "baserom.gba", 0x000e4f04, 0x00000054
+	.global TwelveMode_StrikeWidths
+TwelveMode_StrikeWidths:
+	.incbin "baserom.gba", 0x000e4f58, 0x00000006
+	.global TwelveMode_StrikeHeights
+TwelveMode_StrikeHeights:
+	.incbin "baserom.gba", 0x000e4f5e, 0x00000006
+	.global TwelveMode_StrikeOffsets
+TwelveMode_StrikeOffsets:
+	.incbin "baserom.gba", 0x000e4f64, 0x0000000c
+	.global TwelveMode_StrikeReach
+TwelveMode_StrikeReach:
+	.incbin "baserom.gba", 0x000e4f70, 0x00000006
+	.global TwelveMode_ColumnStages
+TwelveMode_ColumnStages:
+	.incbin "baserom.gba", 0x000e4f76, 0x00000005
+	.global TwelveMode_GlintDrawFlags
+TwelveMode_GlintDrawFlags:
+	.incbin "baserom.gba", 0x000e4f7b, 0x00000004
 	.global BladeRain_CellWidths
 BladeRain_CellWidths:
 	.incbin "baserom.gba", 0x000e4f7f, 0x00000004

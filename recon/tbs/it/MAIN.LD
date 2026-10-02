@@ -676,7 +676,6 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_FIVE_MODE_MODE0.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_POOL.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TWELVE_MODE.o"(.text)
-    "*/recon/tbs/it/rom.o"(.rom.000ca60c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/FLIPPING_BURST.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000cb7f8)
     "*/recon/tbs/it/rom.o"(.rom.000cbc0c)

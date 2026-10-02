@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
@@ -23,7 +24,6 @@ struct MapState {
     struct MapAnimation anim[16];
 };
 
-extern struct MapState *gCam;
 
 /* Steps the sixteen tile-animation channels. A channel whose timer has run
    out reads commands until one copies characters: 0xffff restarts the
@@ -35,7 +35,7 @@ extern struct MapState *gCam;
    0xffff sentinel is hoisted only in the rerun, as in the game. */
 void MapAnimation_Update(void)
 {
-    struct MapState *state = gCam;
+    struct MapState *state = gMapWork[0];
     u32 i;
 
     for (i = 0; i <= 15; i++) {
@@ -86,7 +86,7 @@ void MapAnimation_Update(void)
 
 void Map_ClearLayerEntryFlag(u32 no)
 {
-    u8 *base = (*(u8 *volatile *)&gMapWork);
+    u8 *base = ((void *volatile *)gMapWork)[0];
     u8 *entry = base + no * 12;
     u32 value = 0;
     *(u16 *)(entry + 0x22) = value;
@@ -94,7 +94,7 @@ void Map_ClearLayerEntryFlag(u32 no)
 
 void Map_SetLayerEntryFlag(u32 no)
 {
-    u8 *base = (*(u8 *volatile *)&gMapWork);
+    u8 *base = ((void *volatile *)gMapWork)[0];
     u8 *entry = base + no * 12;
     u32 value = 1;
     *(u16 *)(entry + 0x22) = value;
@@ -111,7 +111,7 @@ void MapAnimation_StartChannels(const u16 *script)
     u32 command;
     volatile u32 zero;
 
-    state = gCam;
+    state = gMapWork[0];
     count = 0;
     zero = 0;
     Dma_Set((const void *)&zero, state->anim, 0x85000030, (volatile u32 *)0x040000d4);
@@ -138,12 +138,12 @@ void MapAnimation_StartChannels(const u16 *script)
 
 void Map_EnableUpdateCallback(void)
 {
-    if (gMapWork->active == 0)
+    if (((struct MapRenderWork *)gMapWork[0])->active == 0)
         Scheduler_EnableCallbacks((u32)MapAnimation_Update);
 }
 
 void Map_DisableUpdateCallback(void)
 {
-    if (gMapWork->active == 0)
+    if (((struct MapRenderWork *)gMapWork[0])->active == 0)
         Scheduler_DisableCallbacks((u32)MapAnimation_Update);
 }

@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
@@ -162,7 +163,6 @@ struct WaveMap {
     struct WaveMapLayer layers[8];
 };
 
-extern struct WaveMap *gMapWork;
 extern s32 BabiFune_ShimmerActive;
 extern s32 BabiFune_ShimmerPhase;
 extern s32 BabiFune_DriftActive;
@@ -192,7 +192,7 @@ void BabiFune_UpdateWaves(void)
     s32 swell;
     s32 x, z;
 
-    map = gMapWork;
+    map = gMapWork[0];
     if (BabiFune_ShimmerActive != 0) {
         swell = Iwram_MulQ16(Engine_MathSin(BabiFune_ShimmerPhase << 9), 3);
         blend = BabiFune_Count + ((swell + 8) << 8);

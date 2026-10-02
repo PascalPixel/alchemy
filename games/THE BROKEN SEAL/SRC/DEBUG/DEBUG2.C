@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "RAM_BUFFER.H"
@@ -49,7 +50,6 @@ struct MapScrollWork {
     s32 bottom;                     /* 0x0f8 */
 };
 
-extern struct MapScrollWork *gMapWork;
 extern struct ViewServices gOverlayArea;
 s32 GameFlag_TestFar(s32 flag);
 extern volatile u32 gKeysRepeat;
@@ -134,7 +134,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
  */
 void BattleMap_ApplyEntranceView(void)
 {
-    struct MapScrollWork *work = gMapWork;
+    struct MapScrollWork *work = gMapWork[0];
     s32 entrance = gGameState.entrance;
     struct EntranceView *view = gOverlayArea.entrance_views();
     s32 found = 0;

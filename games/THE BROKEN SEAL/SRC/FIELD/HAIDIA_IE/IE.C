@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 /* Facing, scene tables and the villagers' first lines. */
 #include "HAIDIA.H"
 #include "MAP_SCROLL.H"
@@ -184,7 +185,7 @@ void Villager_ShowOffPsynergy(void)
         }
         Event_ShowMessage(17, 0);
     } else {
-        origin = gCam->origin;
+        origin = ((struct MapScrollWork *)gMapWork[0])->origin;
         Engine_EventSetMessage((s32)MsgHaidiaShownNewAbility);
         Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 0);
         Event_AskYesNo(17, 0);

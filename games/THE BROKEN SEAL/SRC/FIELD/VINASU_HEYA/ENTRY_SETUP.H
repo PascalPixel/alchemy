@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #ifndef GUARD_ENTRY_SETUP_H
 #define GUARD_ENTRY_SETUP_H
 
@@ -320,7 +321,6 @@ typedef struct {
 } Struct_18f8;
 
 extern u32 StagedActor_DirectionSteps[];
-extern u8 *gMapWork;
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
 extern u8 gVinasuHeyaPrimaryTable[];

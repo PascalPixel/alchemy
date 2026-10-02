@@ -192,8 +192,6 @@ gMenuCtrlWork:
 	.global gMapAnimationPages
 gMapAnimationPages:
 	.space 0x00000004
-	.global gCam
-gCam:
 	.global gMapWork
 gMapWork:
 	.space 0x00000004

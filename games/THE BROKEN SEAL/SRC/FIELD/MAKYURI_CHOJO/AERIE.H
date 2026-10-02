@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #ifndef MAKYURI_CHOJO_AERIE_H
 #define MAKYURI_CHOJO_AERIE_H
 extern struct EventWork *gEventWork;
@@ -20,7 +21,6 @@ s32 UiText_OpenMessageAtObjectFar();
 s32 FixedPoint_Distance(s32 *first_position, s32 *second_position);
 
 extern u8 *gWork;
-extern u8 *gCam;
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 #define EVENT_TRANSITION(workspace) FIELD((workspace), s32 *, 0x1C0)

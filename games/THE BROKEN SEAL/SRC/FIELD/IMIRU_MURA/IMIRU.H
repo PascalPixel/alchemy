@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 /* Declarations shared by Imil's village sources (resource_399). */
 #ifndef IMIRU_H
 #define IMIRU_H
@@ -7,7 +8,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
-extern struct MapRenderWork *gMapWork;
 extern u8 gEffectWork[];
 extern u8 gKeysHeld[];
 

@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "HASHIRA.H"
 /* Query the sprite footprint and translate its probe into map cells.
  * The extent temporary is reused for the translated z coordinate; keep
@@ -9,11 +10,9 @@
 #include "TYPES.H"
 #include "DMA.H"
 
-extern u8 *gCam;
 extern s32 StagedActor_FootprintKinds[];
 extern struct StagedActorFootprint StagedActor_FootprintBounds[];
 
-extern u8 *gMapWork;
 
 struct MapLayer {
     u32 *cells;
@@ -106,7 +105,7 @@ void SceneActor_WaitHeightBelowLimit(u8 *obj, s32 limit)
 
 s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth, struct StagedActorProbe *probe, s32 *left, s32 *top)
 {
-    u8 *map = gCam;
+    u8 *map = gMapWork[0];
     struct StagedActor *actor = (struct StagedActor *)Object_GetById(id);
     u32 i;
     s32 a;
@@ -221,7 +220,7 @@ s32 SceneActor_ApplyPlacementQuery(u8 *no)
 /* Copy the map cell at x, y of a layer to dst with DMA 3 and wait for it. */
 void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 {
-    struct MapState *map = *(struct MapState **)&gMapWork;
+    struct MapState *map = gMapWork[0];
 
     if (map != 0) {
         u32 *cell = map->layers[layer].cells;

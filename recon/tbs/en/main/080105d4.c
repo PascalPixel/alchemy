@@ -57,7 +57,7 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
     u32 *src = (u32 *)0x02010000 + ((u32)src_y * 128 + src_x);
     u32 *dst = (u32 *)0x02010000 + (dst_y * 128 + dst_x);
     struct TilePos tile[3];
-    register struct MapLayerScroll *layer = gCam->layers;
+    register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
     struct TilePos *pos = tile;
     s32 i;
     s32 y;

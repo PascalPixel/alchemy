@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #ifndef ALCHEMY_MAP_RENDER_WORK_H
 #define ALCHEMY_MAP_RENDER_WORK_H
 
@@ -14,6 +15,5 @@ struct MapRenderWork {
     u16 rotation;
 };
 
-extern struct MapRenderWork *gMapWork;
 
 #endif

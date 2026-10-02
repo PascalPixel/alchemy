@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #ifndef ALCHEMY_STATUE_HALL_H
 #define ALCHEMY_STATUE_HALL_H
 
@@ -40,7 +41,6 @@ extern u8 SceneEventRuntime_ScriptData[];
 extern u8 SceneEventRuntime_MessageData[];
 extern u8 SceneEventRuntime_ActorData[];
 extern u8 SceneEventRuntime_EffectData[];
-extern struct Cam *gMapWork;
 extern s32 SoruSekizo_ScrollPhase;
 /* The saved game as halfwords. */
 extern u16 gCell[][1];

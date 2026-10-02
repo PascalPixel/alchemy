@@ -5,7 +5,6 @@
 #include "IWRAM_CALL.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
-extern u8 gCam[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -16,7 +15,7 @@ void DisplayTransition_UpdateScanline(void)
     u16 value;
 
     line = *(volatile u16 *)0x04000006;
-    state = *(u8 **)((u32)&gCam);
+    state = gMapWork[0];
 
 again:
     switch (FIELD(state, u16, 0x108)) {

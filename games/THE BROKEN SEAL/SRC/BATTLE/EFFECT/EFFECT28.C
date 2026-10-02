@@ -188,7 +188,6 @@ extern struct Object_0808f28c *Object_Spawn(s32, u32, u32, u32);
 
 extern u8 Data_03001ebc[];
 extern const u8 BattleFx_MarkerParticleScript[];
-extern struct MapRenderWork *gMapWork;
 
 struct FieldActor {
     u8 unknown_00[8];
@@ -606,7 +605,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
     s32 z;
     s32 id;
 
-    list = *(u8 **)(*(u8 **)&gMapWork + 16);
+    list = *(u8 **)(((u8 *)gMapWork[0]) + 16);
     actor = ObjectTable_Get(gGameState.selected_actor);
     actor_x = actor->x >> 20;
     actor_z = actor->z >> 20;

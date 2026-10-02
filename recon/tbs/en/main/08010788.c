@@ -39,7 +39,7 @@ void Func_08010788(s32 src_x, s32 src_y,
 {
     u32 *src = (u32 *)0x02010000 + (src_y * 128 + src_x);
     u32 *dst = (u32 *)0x02010000 + (dst_y * 128 + dst_x);
-    struct MapLayerScroll *layer = gCam->layers;
+    struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
     struct TilePos tile[3];
     struct TilePos *pos = tile;
     s32 i;

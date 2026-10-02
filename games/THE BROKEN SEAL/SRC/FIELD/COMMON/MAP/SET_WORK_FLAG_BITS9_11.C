@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 
 struct State_080108c4 {
@@ -5,11 +6,10 @@ struct State_080108c4 {
     u16 flags;
 };
 
-extern struct State_080108c4 *volatile gMapWork;
 
 void Map_SetWorkFlagBits9To11(u32 v)
 {
-    struct State_080108c4 *state = gMapWork;
+    struct State_080108c4 *state = ((void *volatile *)gMapWork)[0];
     u32 mask = v & 0xe00;
     u32 flags = state->flags;
 

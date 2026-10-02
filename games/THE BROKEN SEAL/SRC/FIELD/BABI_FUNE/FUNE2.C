@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "TYPES.H"
 #include "SCENE_IDS.H"
@@ -15,7 +16,6 @@ extern s32 BabiFune_StoredRecord2;
 T *Object_GetById(s32);
 
 extern u8 MsgFieldLooksLikeFinally[];
-extern u8 gMapWork[];
 extern u8 *gEventWork;
 extern const s32 BabiFune_ActionScriptA[];
 extern const s32 BabiFune_ActionScriptB[];
@@ -296,7 +296,7 @@ void Scene_RunExtendedPresentationSequence(void)
 #else
     Engine_EventWait(80);
 #endif
-    scene = *(u8 **)gMapWork;
+    scene = gMapWork[0];
     p176 = (void *)Object_GetById(8);
     *(s32 *)(p176 + 52) = 131;
     *(s32 *)(p176 + 48) = 131072;
@@ -309,7 +309,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_CameraSetSpeed(144179, 655);
     Engine_CameraMoveTo(52953088, -1, 11010048, 1);
     Engine_EventWait(300);
-    runtime = *(u8 **)(gMapWork + 76);
+    runtime = *(u8 **)(((u8 *)gMapWork) + 76);
     *(u32 *)(runtime + 448) = 256;
     /* FAKEMATCH: keep the backdrop zero before its address calculation. */
     do {

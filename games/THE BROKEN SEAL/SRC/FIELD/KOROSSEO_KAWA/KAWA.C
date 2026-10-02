@@ -7,8 +7,6 @@
 #include "CALL.H"
 #include "RESOURCE_IDS.H"
 
-/* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
-struct FieldActor *Object_GetById();
 
 enum CoordinatorMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -132,13 +130,7 @@ void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void SceneState_SetStateHalfword386To99WhenMatched(void);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-};
 
-/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
- * this file's code made before it shared the header's declaration. */
 extern u8 MsgKorosseoAskAttendantsForExplanationsStages[];
 extern u8 MsgKorosseoRobinYoureContestantInFinals[];
 extern u8 MsgKorosseoSiteFirstFinalsBattle[];
@@ -677,8 +669,6 @@ void KorosseoKawa_RunStageStart(void)
     GameFlag_Set(0x11a);
 }
 
-/* FAKEMATCH: calls through a cast of Object_GetById keep the unprototyped call
- * this file's code made before it shared the header's declaration. */
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
 
@@ -770,6 +760,12 @@ void SceneActor_MarkObjectAtTiles94To95(s32 actor)
 /* River arena entry: record the arrival, set the logs, ledges and item icons by the story flags, then start the entrance's opening scene. */
 s32 KorosseoKawa_ApplyEntryState(void)
 {
+    /* FAKEMATCH: the halfword row view retains the base-plus-index
+     * entrance address form also used by the wall stage. */
+    union GameStateRows {
+        u8 bytes[512][2];
+        s16 halves[512][1];
+    };
     struct FieldActor *actor;
     s32 hit;
     s32 x;

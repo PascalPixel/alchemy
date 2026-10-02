@@ -1,3 +1,4 @@
+#include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "FORTRESS.H"
 #include "SCENE_IDS.H"
@@ -405,7 +406,7 @@ s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
         Actor_SetAnimation(actor_id, 5);
     }
     ObjectDispatch_Release(interaction);
-    Event_End();
+    Engine_EventEnd();
     return started;
 }
 
@@ -473,8 +474,8 @@ void FieldScene_UpdateActorPairInteraction(void)
 {
     struct ObjectRuntime *actor = Actor_Get(9);
     struct ObjectRuntime *other = Actor_Get(10);
-    s32 *work = (s32 *)(*(u8 **)gCam + 0x164);
-    s16 *scene = *(s16 **)(gCam + 0x4c);
+    s32 *work = (s32 *)(((u8 *)gMapWork[0]) + 0x164);
+    s16 *scene = *(s16 **)(((u8 *)gMapWork) + 0x4c);
 
     if (gFrameCount & 1) {
         work[6] = 1;
@@ -530,7 +531,7 @@ void ConfigureSceneActor9(void)
     Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
     Actor_ShowEmote(9, 256, 0);
     RunActorScriptedSequenceA(10);
-    Event_End();
+    Engine_EventEnd();
 }
 
 s32 AreSceneActorsInPassingLane(void)
@@ -569,8 +570,8 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 {
 
     struct ObjectRuntime *actor = Actor_Get(17);
-    s32 *work = (s32 *)(*(u8 **)gCam + 0x164);
-    s16 *scene = *(s16 **)(gCam + 0x4c);
+    s32 *work = (s32 *)(((u8 *)gMapWork[0]) + 0x164);
+    s16 *scene = *(s16 **)(((u8 *)gMapWork) + 0x4c);
 
     Event_GetViewCenter();
     if (gFrameCount & 1) {
@@ -610,7 +611,7 @@ void FieldScene_UpdateActorSeventeenInteraction(void)
 void ActivateSceneActor17(void)
 {
     RunActorScriptedSequenceA(17);
-    Event_End();
+    Engine_EventEnd();
 }
 
 s32 IsPlayerInSecondaryTriggerArea(void)
@@ -635,8 +636,8 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 {
 
     struct ObjectRuntime *actor = Actor_Get(18);
-    s32 *work = (s32 *)(*(u8 **)gCam + 0x164);
-    s16 *scene = *(s16 **)(gCam + 0x4c);
+    s32 *work = (s32 *)(((u8 *)gMapWork[0]) + 0x164);
+    s16 *scene = *(s16 **)(((u8 *)gMapWork) + 0x4c);
 
     if (gFrameCount & 1) {
         work[6] = 1;
@@ -674,7 +675,7 @@ void FieldScene_UpdateActorEighteenInteraction(void)
 void ActivateSceneActor18(void)
 {
     RunActorScriptedSequenceA(18);
-    Event_End();
+    Engine_EventEnd();
 }
 
 s32 IsPlayerOutsideSceneRectangle(void)
@@ -713,7 +714,7 @@ void FieldScene_RunScene3bfSequenceA(void)
 void RunActor17SceneStep(void)
 {
     RunActorScriptedSequenceA(17);
-    Event_End();
+    Engine_EventEnd();
 }
 
 void TriggerSceneStage95FromActor12(void)
@@ -928,7 +929,7 @@ void RunActor9ScriptedSequence(void)
     Event_ShowMessage(9, 0);
     Event_RequestExit(60);
     Event_CloseScreen();
-    Event_End();
+    Engine_EventEnd();
 }
 
 void RunActorScriptedSequenceA(s32 actor_id)
@@ -959,7 +960,7 @@ void RunActorScriptedSequenceA(s32 actor_id)
     Event_CloseScreen();
     Event_Wait(60);
     Event_RequestExit(60);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The Lunpa fortress: a guard turns to the party and says one of his lines. */
@@ -1068,7 +1069,7 @@ void InspectOrdinaryObject(void)
     gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(15, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(2380);
 }
 
@@ -1083,7 +1084,7 @@ void InspectEmptyChest(void)
     gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(11, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(2377);
 }
 
@@ -1148,7 +1149,7 @@ void RunpaJo_RunGuardChallenge(void)
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
     Actor_SetPosition(14, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(0x94a);
 }
 
@@ -1163,7 +1164,7 @@ void FieldScene_RunSequenceTail(void)
     Actor_SetAnimation(13, 5); /* object_id 13, action 5 */
     Actor_SetAnimation(14, 5); /* object_id 14, action 5 */
     Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
-    Event_End();
+    Engine_EventEnd();
     Event_OpenScreen(); /* main:0808a360 */
 }
 
@@ -1178,7 +1179,7 @@ void InspectEmptySceneObject(void)
     gGameState.unknown_200[0x22b - 0x200] = 3;
     BattleFx_SetWeightedResult(98, 2);
     Actor_SetPosition(16, 0, 0);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(2379);
 }
 
@@ -1205,7 +1206,7 @@ void RunActor12InteractionSequence(void)
     Event_CloseScreen();
     Event_Wait(60);
     Event_RequestExit(60);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(548);
 }
 
@@ -1233,7 +1234,7 @@ void RunActors13And21InteractionSequence(void)
     Event_CloseScreen();
     Event_Wait(60);
     Event_RequestExit(60);
-    Event_End();
+    Engine_EventEnd();
     GameFlag_Set(0x225);
 }
 
@@ -1695,7 +1696,7 @@ void PlayStoryScene(void)
         Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
         BattleFx_SetWeightedResult(98, 4);
     }
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The Lunpa fortress: Dodonpa freed and reunited with his father. */
@@ -2364,7 +2365,7 @@ void FieldScene_RunMainScriptSequence(void)
     Event_Wait(1);
     Event_Wait(210);
     Event_RequestExit(4);
-    Event_End();
+    Engine_EventEnd();
 }
 
 /* The Lunpa fortress: actor 21's line by the day's draw, and the guard who
@@ -2450,12 +2451,12 @@ void FieldScene_RunDonpaSleepingSequence(void)
     if (GameFlag_IsSet(0x941) != 0) {
         Event_SetMessage((s32)MsgRunpaDonpaGrateful);
         Event_ShowMessage(18, 0);
-        Event_End();
+        Engine_EventEnd();
     } else {
         if (GameFlag_IsSet(0x313) != 0) {
             Event_SetMessage((s32)MsgRunpaMaybeDodonpasEyes);
             Event_OpenMessage(25, 0);
-            Event_End();
+            Engine_EventEnd();
         } else {
             Actor_ShowEmote(25, 0x102, 30);
             Actor_FaceActor(25, ACTOR_PARTY_LEADER, 0);
@@ -2498,7 +2499,7 @@ void FieldScene_RunDonpaSleepingSequence(void)
             Event_SetMessage(msg2 + 2);
             Event_OpenMessage(25, 0);
             GameFlag_Set(0x313);
-            Event_End();
+            Engine_EventEnd();
         }
     }
 }
@@ -2666,7 +2667,7 @@ void RunActor20SceneSequence(void)
             Event_OpenMessage(20, 0);
         }
         GameFlag_Set(0x227);
-        Event_End();
+        Engine_EventEnd();
     }
 }
 
@@ -2954,7 +2955,7 @@ void FieldScene_RestoreActorsFromFlags(void)
         actor->unknown_56[3] |= 0x10;
     }
     Actor_SetSpriteFlags(Actor_Get(11), 0);
-    Event_End();
+    Engine_EventEnd();
     Map_SetWorkFlagBits9To11(0xe00);
 }
 

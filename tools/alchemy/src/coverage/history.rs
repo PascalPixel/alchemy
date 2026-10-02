@@ -1,7 +1,8 @@
-//! The tracked daily DONE history behind PROGRESS_CHART.png: one row per
-//! calendar day, the last measurement of the day winning. Early rows were
-//! seeded once from main's first-parent history and hold only the published
-//! percentage; later rows retain bytes as published at the time: the English
+//! The tracked DONE history behind PROGRESS_CHART.png: daily summaries and
+//! hourly measurements, the last measurement of the hour winning. Historical
+//! hourly rows use main's published percentages where the day's closing value
+//! agrees with its maintained summary. Daily summaries and correction notes
+//! remain intact. Later rows retain bytes as published at the time: the English
 //! build's alone at first, and from the row whose note says so the sum over
 //! a game's six editions out of six times the English executable bytes.
 //! Current verification status is recorded separately from those historical
@@ -93,6 +94,7 @@ pub(crate) struct History {
     pub began: String,
     pub current: Option<Current>,
     pub days: Vec<Day>,
+    pub hours: Vec<Day>,
     pub figures: Option<Day>,
 }
 impl History {
@@ -144,7 +146,13 @@ pub(crate) fn text(history: &History) -> String {
     }
     text.push_str(HEADER);
     text.push('\n');
-    for day in &history.days {
+    let mut rows = history
+        .days
+        .iter()
+        .chain(&history.hours)
+        .collect::<Vec<_>>();
+    rows.sort_by_key(|row| &row.date);
+    for day in rows {
         let fields = |measure: Option<&Measure>| {
             let show = |value: Option<String>| value.unwrap_or_else(|| "-".into());
             [
@@ -183,6 +191,7 @@ fn parse(text: &str) -> Result<History, String> {
     let mut began = None;
     let mut header = false;
     let mut days: Vec<Day> = Vec::new();
+    let mut hours = Vec::new();
     let mut current = None;
     let mut previous = String::new();
     for (index, line) in text.lines().enumerate() {
@@ -225,12 +234,7 @@ fn parse(text: &str) -> Result<History, String> {
             return Err(problem("expected nine progress columns"));
         }
         let date = fields[0];
-        let valid_date = day_number(date)
-            .map(|day| {
-                let (year, month, day) = civil(day);
-                format!("{year:04}-{month:02}-{day:02}") == date
-            })
-            .unwrap_or(false);
+        let valid_date = hour_number(date).is_some();
         if !valid_date || date <= previous.as_str() {
             return Err(problem("dates must be valid and strictly increasing"));
         }
@@ -285,7 +289,16 @@ fn parse(text: &str) -> Result<History, String> {
         if fields[8] != "-" {
             row.correction = Some(fields[8].to_string());
         }
-        days.push(row);
+        if date.len() == 13 {
+            if !row.models.is_empty() || row.correction.is_some() {
+                return Err(problem(
+                    "hourly rows hold measurements; attribution and notes stay daily",
+                ));
+            }
+            hours.push(row);
+        } else {
+            days.push(row);
+        }
     }
     if !header {
         return Err("missing progress columns".into());
@@ -298,6 +311,7 @@ fn parse(text: &str) -> Result<History, String> {
         began,
         current,
         days,
+        hours,
         figures,
     })
 }
@@ -305,6 +319,81 @@ fn parse(text: &str) -> Result<History, String> {
 fn measured(done: Option<GameDone>) -> Option<Measure> {
     done.filter(|done| done.executable > 0)
         .map(|done| Measure::bytes(done.bytes() as u64, done.executable as u64))
+}
+
+/// Store the last verified measurement in a local calendar hour.
+pub(crate) fn record_hour(
+    history: &mut History,
+    hour: &str,
+    sun: Option<GameDone>,
+    anchor: Option<GameDone>,
+) {
+    let at = history
+        .hours
+        .partition_point(|row| row.date.as_str() < hour);
+    if history.hours.get(at).map(|row| row.date.as_str()) != Some(hour) {
+        history.hours.insert(at, Day::new(hour));
+    }
+    let row = &mut history.hours[at];
+    if let Some(value) = measured(sun) {
+        row.tbs = Some(value);
+    }
+    if let Some(value) = measured(anchor) {
+        row.tla = Some(value);
+    }
+    if row.is_empty() {
+        history.hours.remove(at);
+    }
+}
+
+/// Hourly samples replace the daily summary only for games with samples that day.
+pub(crate) fn points(history: &History, game: &str) -> Vec<(i64, f64)> {
+    let mut points = history
+        .hours
+        .iter()
+        .filter_map(|row| Some((hour_number(&row.date)?, row.game(game)?.percent()?)))
+        .collect::<Vec<_>>();
+    for row in &history.days {
+        let Some(value) = row.game(game).and_then(Measure::percent) else {
+            continue;
+        };
+        if !history
+            .hours
+            .iter()
+            .any(|hour| hour.date.starts_with(&row.date) && hour.game(game).is_some())
+        {
+            if let Some(hour) = hour_number(&row.date) {
+                points.push((hour, value));
+            }
+        }
+    }
+    points.sort_by_key(|(hour, _)| *hour);
+    points
+}
+
+/// Calendar hours from the epoch; legacy daily rows retain their original position.
+pub(crate) fn hour_number(date: &str) -> Option<i64> {
+    if !matches!(date.len(), 10 | 13) || !date.is_ascii() {
+        return None;
+    }
+    let day = day_number(&date[..10])?;
+    let (year, month, number) = civil(day);
+    if format!("{year:04}-{month:02}-{number:02}") != date[..10] {
+        return None;
+    }
+    let hour = if date.len() == 13 {
+        if date.as_bytes()[10] != b'T' {
+            return None;
+        }
+        let hour = date[11..].parse::<i64>().ok()?;
+        if !(0..24).contains(&hour) || !date[11..].bytes().all(|b| b.is_ascii_digit()) {
+            return None;
+        }
+        hour
+    } else {
+        0
+    };
+    Some(day * 24 + hour)
 }
 
 /// Record `date`'s verified counts, replacing any earlier row of that day.
@@ -430,6 +519,10 @@ pub(crate) fn mark_drawn(history: &mut History, date: &str) {
 
 /// Today's calendar date on this machine, `YYYY-MM-DD`.
 pub(crate) fn today() -> String {
+    this_hour()[..10].to_string()
+}
+
+pub(crate) fn this_hour() -> String {
     let now = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(0, |elapsed| elapsed.as_secs() as libc::time_t);
@@ -437,10 +530,11 @@ pub(crate) fn today() -> String {
     let mut tm: libc::tm = unsafe { std::mem::zeroed() };
     unsafe { libc::localtime_r(&now, &mut tm) };
     format!(
-        "{:04}-{:02}-{:02}",
+        "{:04}-{:02}-{:02}T{:02}",
         tm.tm_year + 1900,
         tm.tm_mon + 1,
-        tm.tm_mday
+        tm.tm_mday,
+        tm.tm_hour
     )
 }
 /// Days from the civil date `YYYY-MM-DD` to 1970-01-01.
@@ -483,6 +577,71 @@ pub(crate) fn day_label(day: i64) -> (String, bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn hourly_measurements_replace_only_their_hour_and_round_trip() {
+        let mut history = History {
+            began: "2026-10-01".into(),
+            days: vec![day(
+                "2026-10-01",
+                Some(Measure::published(50.0)),
+                Some(Measure::published(2.0)),
+            )],
+            ..History::default()
+        };
+        record_hour(&mut history, "2026-10-01T08", Some(done(510)), None);
+        record_hour(
+            &mut history,
+            "2026-10-01T09",
+            Some(done(520)),
+            Some(done(30)),
+        );
+        record_hour(&mut history, "2026-10-01T08", Some(done(515)), None);
+        record_hour(&mut history, "2026-10-01T10", None, None);
+        assert_eq!(history.hours.len(), 2);
+        assert_eq!(
+            points(&history, "tbs"),
+            vec![
+                (hour_number("2026-10-01T08").unwrap(), 51.5),
+                (hour_number("2026-10-01T09").unwrap(), 52.0),
+            ]
+        );
+        let loaded = parse(&text(&history)).unwrap();
+        assert_eq!(loaded.hours, history.hours);
+        assert_eq!(loaded.days, history.days);
+        assert_eq!(text(&loaded), text(&history));
+        assert_eq!(
+            hour_number("2026-10-02T00").unwrap() - hour_number("2026-10-01T23").unwrap(),
+            1
+        );
+        for invalid in [
+            "2026-02-30T12",
+            "2026-10-01T24",
+            "2026-10-01T-1",
+            "2026-10-01T+1",
+            "2026-10-01T1",
+            "2026-10-01X12",
+        ] {
+            assert!(hour_number(invalid).is_none(), "{invalid}");
+        }
+    }
+
+    #[test]
+    fn games_without_hourly_samples_keep_their_daily_measurements() {
+        let mut history = History {
+            days: vec![day(
+                "2026-10-01",
+                Some(Measure::published(50.0)),
+                Some(Measure::published(2.0)),
+            )],
+            ..History::default()
+        };
+        record_hour(&mut history, "2026-10-01T08", Some(done(510)), None);
+        assert_eq!(
+            points(&history, "tla"),
+            vec![(hour_number("2026-10-01").unwrap(), 2.0)]
+        );
+    }
 
     fn day(date: &str, tbs: Option<Measure>, tla: Option<Measure>) -> Day {
         Day {

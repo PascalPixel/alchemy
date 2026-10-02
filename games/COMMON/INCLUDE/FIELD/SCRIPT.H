@@ -1,7 +1,28 @@
-#ifndef ALCHEMY_SCRIPT_OPERANDS_H
-#define ALCHEMY_SCRIPT_OPERANDS_H
+#ifndef GUARD_FIELD_SCRIPT_H
+#define GUARD_FIELD_SCRIPT_H
 
+#include "EDITION.H"
 #include "TYPES.H"
+
+/* Command callbacks observe the current script, its signed cursor and
+   condition/repeat state. The operand view below exposes the same work
+   cells for the existing mixed-width set/add/compare operations. */
+struct ScriptInterpreter;
+
+typedef s32 (*ScriptCommand)(struct ScriptInterpreter *);
+
+struct ScriptInterpreter {
+    const s32 *script;
+    s16 cursor;
+    u8 padding_06[0x4e];
+    u8 byte_54;
+    u8 padding_55[2];
+    u8 condition_result;
+    u8 padding_58[5];
+    u8 repeat_count;
+    s16 lookup_result;
+    u8 delay;
+};
 
 /* Script operand work. Mixed widths stay as placed in the image. */
 struct ScriptOperands {
@@ -73,7 +94,14 @@ typedef char ScriptOperands_size[
 
 #undef SCRIPT_OPERANDS_OFFSET
 
-s32 Script_ClearByte54(struct ScriptOperands *work);
-s32 Script_SetByte54(struct ScriptOperands *work);
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *interpreter);
+#else
+s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter);
+#endif
+s32 Script_ClearByte54(struct ScriptInterpreter *interpreter);
+s32 Script_SetByte54(struct ScriptInterpreter *interpreter);
 
 #endif

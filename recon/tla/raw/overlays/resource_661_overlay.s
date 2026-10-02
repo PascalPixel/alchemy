@@ -1002,7 +1002,7 @@ Func_020006ac:
 .L_020087d8:
 	.4byte 0xfdff0000
 .L_020087dc:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 	.section .text.x020087e0,"ax",%progbits
 	.global Func_020007e0
 	.thumb_func
@@ -1162,7 +1162,7 @@ Func_020007e0:
 .L_02008910:
 	.4byte 0xfdff0000
 .L_02008914:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 	.section .text.x02008918,"ax",%progbits
 	.global Func_02000918
 	.thumb_func

@@ -4427,7 +4427,7 @@ Func_0200217c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a22c:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0200a230:
 	.4byte gMapCellBuffer
 .L_0200a234:
@@ -5301,7 +5301,7 @@ Func_0200242c:
 .L_0200a914:
 	.4byte gMapCellBuffer
 .L_0200a918:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0200a91c:
 	.4byte IwramMulQ16
 .L_0200a920:
@@ -8374,7 +8374,7 @@ Func_020042f0:
 .L_0200c40c:
 	.4byte 0xfdff0000
 .L_0200c410:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0200c414:
 	.4byte gPartyState
 	.section .text.x0200c418,"ax",%progbits
@@ -8826,7 +8826,7 @@ Func_020046a4:
 .L_0200c804:
 	.4byte 0xfdff0000
 .L_0200c808:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 	.section .text.x0200c80c,"ax",%progbits
 	.global Func_0200480c
 	.thumb_func
@@ -9472,7 +9472,7 @@ Func_02004ce0:
 .L_0200cd60:
 	.4byte 0xfdff0000
 .L_0200cd64:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0200cd68:
 	.4byte 0x000fffff
 	.section .text.x0200cd6c,"ax",%progbits

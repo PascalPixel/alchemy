@@ -150,7 +150,7 @@ Func_0811b75c:
 	mov lr, r3
 	.2byte 0xf800
 	adds r0, r5, #0
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_0811b89e
@@ -178,7 +178,7 @@ Func_0811b75c:
 	adds r2, #1
 	strb r1, [r6, #26]
 	adds r0, r5, r2
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	adds r6, r0, #0
 	cmp r6, #0
 	beq .L_0811b8c4
@@ -196,7 +196,7 @@ Func_0811b75c:
 .L_0811b8c8:
 	ldrh r0, [r7, #4]
 	str r1, [sp, #0]
-	bl GetBattleEffectObject
+	bl ResourceObject_CreateFar
 	adds r6, r0, #0
 	ldr r1, [sp, #0]
 	cmp r6, #0

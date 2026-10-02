@@ -1,4 +1,4 @@
-#include "SCRIPT_INTERPRETER.H"
+#include "SCRIPT.H"
 extern u8 gObjectSlots[];
 
 s32 GameFlag_TestFar(s32);

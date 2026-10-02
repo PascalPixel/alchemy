@@ -3,6 +3,14 @@
 
 #include "TYPES.H"
 
+/* The resource implementations own the game-specific record layouts. */
+struct ResourceObject;
+struct ResourceObjectWork;
+struct ResourceObject *ResourceObject_Create(s32 resource);
+void ResourceObject_Release(struct ResourceObjectWork *work);
+struct ResourceObject *ResourceObject_CreateFar(s32 resource);
+void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
+
 void *Resource_GetTableEntry(s32 resource_id);
 
 /* Index of a free resource table entry. */

@@ -703,8 +703,8 @@ Data_02020004:
 	.global Data_02020202
 Data_02020202:
 	.space 0x00003dfe
-	.global Data_02024000
-Data_02024000:
+	.global gMapShapeGrid
+gMapShapeGrid:
 	.space 0x00002800
 	.global Data_02026800
 Data_02026800:

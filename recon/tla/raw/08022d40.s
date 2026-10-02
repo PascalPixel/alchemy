@@ -1,8 +1,9 @@
 .syntax unified
 	.thumb
-	.global Func_08022d40
+	.global ResourceObject_Create
+	.type ResourceObject_Create, %function
 	.thumb_func
-Func_08022d40:
+ResourceObject_Create:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -179,3 +180,4 @@ Func_08022d40:
 	.4byte 0xc0004000
 .L_08022e8c:
 	.4byte ResourceTableEntries
+	.size ResourceObject_Create, .-ResourceObject_Create

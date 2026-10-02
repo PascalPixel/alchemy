@@ -3982,7 +3982,7 @@ Func_02001ff0:
 .L_0200a078:
 	.4byte gMapCellBuffer
 .L_0200a07c:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid
 .L_0200a080:
 	.4byte IwramMulQ16
 	.section .text.x0200a084,"ax",%progbits

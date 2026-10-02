@@ -176,4 +176,4 @@ Func_080eaa14:
 .L_080eab68:
 	.4byte 0xfdff0000
 .L_080eab6c:
-	.4byte Data_02024000
+	.4byte gMapShapeGrid

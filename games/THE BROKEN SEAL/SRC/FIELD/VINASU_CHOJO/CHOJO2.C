@@ -88,7 +88,8 @@ void VinasuChojo_UpdateBeamActors(void)
     first = Object_GetById(ACTOR_FIRST_OF_PAIR);
     second = Object_GetById(ACTOR_SECOND_OF_PAIR);
     /* FAKEMATCH: the dead first test and the word temporaries below reproduce the
-     * reference's leftover loads and stores. */
+     * reference's leftover loads and stores. 2026-10-02: removing only the
+     * overwritten first test removes real loads and exchanges r5/r6 roles. */
     stopped = first->target_x == ACTOR_NO_TARGET && first->target_y == first->target_x && first->target_z == first->target_y;
     if (second->target_x == ACTOR_NO_TARGET && second->target_y == second->target_x && second->target_z == second->target_y) {
         stopped = 1;

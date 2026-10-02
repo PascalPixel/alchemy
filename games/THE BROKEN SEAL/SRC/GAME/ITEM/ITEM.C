@@ -200,7 +200,9 @@ s32 BattleEffect_ApplyToTargets(
     else
         target = Owner_GetStateFar(0);
 
-    /* FAKEMATCH: dead range test; gcse reuses its read at the loop top */
+    /* FAKEMATCH: dead range test; gcse reuses its read at the loop top.
+       2026-10-02: deleting this test delays the range load until after the
+       count guard and changes the target-index and power-load registers. */
     if (effect->range == 0xff && later_target != 0)
         result_code = 3;
 

@@ -765,7 +765,6 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP_CANVAS_TILE_MAP.o"(.text)
         "*/recon/tbs/raw/080cde8e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CANVAS_DRAW_CLIPPED_LINE.o"(.text)
-        "*/recon/tbs/raw/080ce034.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/EFFECT5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_BEAM.o"(.text)

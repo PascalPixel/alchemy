@@ -36,6 +36,193 @@ s32 BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
 
+extern u16 ParticleStreams_CellOffsets[];
+
+/* A chip of debris: it flies on its own speed, slows, falls and bounces. */
+struct Chip {
+    s32 x;
+    s32 y;
+    s32 velocity_x;
+    s32 unused_0c;
+    s32 velocity_y;
+    s32 unused_14;
+    s32 life;
+};
+
+#define gChips ((struct Chip *)Ram_MapCellBuffer)
+
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void AudioCommand_PlayFar(s32 value);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
+void Camera_ApplyShake(s32 x, s32 y);
+void ObjectGroup_TickMemberTimers(void);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
+u32 Resource_DecodeType01(const void *source, void *destination);
+void Object_SetMode(struct MotionObject *object, s32 mode);
+void Object_ResetMotion(struct MotionObject *object);
+void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
+
+/* Battle effect: the actor flares, leaps high across the field and comes
+   down on the target, which bursts into chips. */
+void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
+{
+    struct EffectPosition position;
+    DrawRectangle draw[2];
+    void **heap_cache;
+    void **cursor;
+    struct BattleEffectWork *work;
+    void *canvas;
+    u8 *sheet;
+    struct MotionObject *target;
+    s32 step;
+    struct MotionObject *actor;
+    u8 *palette;
+    s32 frame;
+    s32 i;
+
+    heap_cache = (void **)gBattleFxWork;
+    cursor = heap_cache;
+    work = *cursor++;
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    work->effect = effect;
+    BattleFx_BeginCanvasLayer(0);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
+    palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
+    Iwram_CopyWords((void *)0x05000000, palette, 128);
+    palette += 128;
+    Resource_DecodeType01(palette, work);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    draw[0] = heap_cache[7];
+    BattleEffect_LoadWork(47, 7, 7, 7, 2);
+    draw[1] = heap_cache[8];
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+
+    for (i = 0; i != 1024; i++)
+        gChips[i].life = 0;
+    actor = *GetBattleObjectSlotFar(work->effect->actor);
+    target = *GetBattleObjectSlotFar(work->effect->actors[0]);
+    if (actor->x > 0)
+        step = -0xf0000;
+    else
+        step = 0xf0000;
+
+    for (frame = 0; frame != 88; frame++) {
+        struct BattleCamera *camera = *(struct BattleCamera **)gCameraWork;
+
+        Render_ResetTransformState();
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
+        if (frame > 17 || frame == 0) {
+            EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &position);
+            position.x /= 2;
+        }
+        if ((u32)(frame - 2) <= 1)
+            draw[0](canvas, work, position.x - 16, position.y - 64, 32, 64);
+        if ((u32)(frame - 4) <= 11) {
+            for (i = 0; i != 16; i++) {
+                s32 x = position.x + (frame * Trig_Sin(i << 12) >> 16);
+                s32 y = position.y + (frame * Trig_Cos(i << 12) >> 16) - frame;
+
+                draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16, y - 64, 32, 64);
+            }
+        }
+        if (frame == 4) {
+            actor->velocity_y = 0x140000;
+            actor->acceleration = 0x10000;
+            actor->speed_limit = 0x30000;
+            actor->vertical_motion_strength = 0xab85;
+            actor->auto_face_motion = 0;
+            actor->snap_to_target = 0;
+            Object_SetMoveTargetFar(actor, actor->x * 3, 0, actor->z);
+            Object_SetMode(actor, 2);
+            work->shake_frames = frame;
+            AudioCommand_PlayFar(136);
+        }
+        if (frame == 16) {
+            palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
+            Iwram_CopyWords((void *)0x05000000, palette, 128);
+            palette += 128;
+            Resource_DecodeType01(palette, work);
+            actor->vertical_motion_strength = 0;
+            actor->velocity_x = 0;
+            actor->velocity_y = 0;
+            actor->z = target->z;
+            Object_ResetMotion(actor);
+        }
+        if (frame > 17) {
+            if (actor->y > 0) {
+                actor->x += step;
+                actor->y -= 0x80000;
+                if (work->effect->side == 0) {
+                    draw[0](canvas, work, position.x - 20, position.y - 52, 40, 64);
+                    position.x -= 8;
+                } else {
+                    draw[1](canvas, work, position.x - 26, position.y - 52, 40, 64);
+                    position.y += 8;
+                }
+            }
+            if (actor->y < 0) {
+                actor->y = 0;
+                for (i = 0; i != 256; i++) {
+                    struct Chip *chip = &gChips[i];
+                    s32 speed;
+                    s32 angle;
+
+                    speed = 0x3ff;
+                    speed &= Random16();
+                    angle = Random16() & 0xffff;
+                    chip->x = position.x << 16;
+                    chip->y = (position.y - 24) << 16;
+                    chip->velocity_x = Trig_Sin(angle) * (speed + 32) >> 6;
+                    chip->velocity_y = -(Trig_Cos(angle) * (speed + 32) << 1) >> 6;
+                    chip->life = (Random16() & 7) + 32;
+                }
+                work->shake_frames = 8;
+                BattleEventRuntime_BeginPhaseFar(145);
+                BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
+                ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+            }
+        }
+        for (i = 0; i != 256; i++) {
+            struct Chip *chip = &gChips[i];
+            s32 y;
+
+            if (chip->life > 0) {
+                chip->x += chip->velocity_x;
+                y = chip->y + chip->velocity_y;
+                chip->life--;
+                chip->y = y;
+                chip->velocity_x = chip->velocity_x * 56 / 64;
+                chip->velocity_y = chip->velocity_y * 56 / 64 + 0x2000;
+                if (chip->y > 0x700000) {
+                    chip->velocity_y = -chip->velocity_y / 2;
+                } else if ((u32)chip->x <= 0x7effff && chip->y >= 0) {
+                    s32 size = chip->life / 8 + 1;
+
+                    draw[i & 1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                        (chip->x >> 16) - size / 2, (chip->y >> 16) - size, size, size * 2);
+                }
+            }
+        }
+        Camera_ApplyShake(16, 16);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+    }
+
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
+}
+
 #define gSkulls ((struct EffectStep *)Ram_MapCellBuffer)
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);

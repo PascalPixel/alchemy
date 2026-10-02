@@ -146,7 +146,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/COPY_STRIDED.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0800a494.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DECOMPRESS_LZ.o"(.text)
-        "*/recon/tbs/raw/0800aa0c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/COMPOSE_ANIMATION_FRAME.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_SPRITE_PART_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/PLACE_PROJECTED_SPRITE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_SET_CHILD_VALUE_UNLESS_FIFTEEN.o"(.text)

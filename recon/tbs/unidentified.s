@@ -72,32 +72,32 @@ Object_ShadowTiles:
 	.global ResourceSlot_NumberTable
 ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x00012fa0, 0x000000dc
-	.global Data_0801307c
-Data_0801307c:
+	.global AnimationFacing_Kind1
+AnimationFacing_Kind1:
 	.incbin "baserom.gba", 0x0001307c, 0x00000010
-	.global Data_0801308c
-Data_0801308c:
+	.global AnimationFacing_Kind22
+AnimationFacing_Kind22:
 	.incbin "baserom.gba", 0x0001308c, 0x00000008
-	.global Data_08013094
-Data_08013094:
+	.global AnimationFacing_Kind2
+AnimationFacing_Kind2:
 	.incbin "baserom.gba", 0x00013094, 0x00000008
-	.global Data_0801309c
-Data_0801309c:
+	.global AnimationFacing_Kind3
+AnimationFacing_Kind3:
 	.incbin "baserom.gba", 0x0001309c, 0x00000010
-	.global Data_080130ac
-Data_080130ac:
+	.global AnimationFacing_Kind5
+AnimationFacing_Kind5:
 	.incbin "baserom.gba", 0x000130ac, 0x00000010
-	.global Data_080130bc
-Data_080130bc:
+	.global AnimationFacing_Kind8
+AnimationFacing_Kind8:
 	.incbin "baserom.gba", 0x000130bc, 0x00000008
-	.global Data_080130c4
-Data_080130c4:
+	.global AnimationFacing_Kind88
+AnimationFacing_Kind88:
 	.incbin "baserom.gba", 0x000130c4, 0x00000008
-	.global Data_080130cc
-Data_080130cc:
+	.global AnimationFacing_Kind4
+AnimationFacing_Kind4:
 	.incbin "baserom.gba", 0x000130cc, 0x00000040
-	.global Data_0801310c
-Data_0801310c:
+	.global AnimationFacing_Kind6
+AnimationFacing_Kind6:
 	.incbin "baserom.gba", 0x0001310c, 0x00000040
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:

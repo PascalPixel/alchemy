@@ -1,4 +1,5 @@
 #include "FIXED_MATH.H"
+#include "OBJDISP.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OBJECT_EFFECT.H"
@@ -41,7 +42,6 @@ extern struct State_08099d18 *gEffectWork;
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Vector_08099d18 *);
 void Object_SetMode(u8 *, s32);
-void ObjectDispatch_InitializeFar(u8 *, void *);
 
 void BattleFx_SpawnFallingParticles(void)
 {
@@ -73,6 +73,6 @@ void BattleFx_SpawnFallingParticles(void)
         timer = (u16 *)(object + 94);
         timer_value = 12;
         *timer = timer_value;
-        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_CommonParticleScript);
     }
 }

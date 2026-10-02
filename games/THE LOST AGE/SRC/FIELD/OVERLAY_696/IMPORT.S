@@ -117,7 +117,7 @@ Engine_ObjectSetMode:
 	.global Engine_ObjectSetScript
 	.thumb_func
 Engine_ObjectSetScript:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Engine_ObjectCreate
 	.thumb_func
 Engine_ObjectCreate:

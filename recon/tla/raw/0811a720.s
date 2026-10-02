@@ -69,7 +69,7 @@ Func_0811a720:
 	strb r3, [r2]
 	ldr r1, .L_0811a7a8
 	adds r0, r6, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	pop {r5, r6, r7, pc}
 .L_0811a7a8:
 	.4byte Data_0812cacc

@@ -50,7 +50,7 @@ Func_080d3070:
 	bl ObjectMotion_OffsetPositionAndResetMotion
 	ldr r1, .L_080d30f8
 	adds r0, r5, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	adds r3, r5, #0
 	adds r3, #100
 	mov r2, r10

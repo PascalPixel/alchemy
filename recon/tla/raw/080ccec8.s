@@ -782,7 +782,7 @@ Func_080ccec8:
 	strh r1, [r3]
 	ldr r0, [sp, #24]
 	ldr r1, .L_080cd580
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080cd532:
 	ldr r2, [sp, #24]
 	movs r3, #0

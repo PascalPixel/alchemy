@@ -80,7 +80,7 @@ Func_080dfb88:
 	bne .L_080dfc2c
 	ldr r1, .L_080dfc38
 	adds r0, r7, #0
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 .L_080dfc2c:
 	pop {r3, r5}
 	mov r8, r3

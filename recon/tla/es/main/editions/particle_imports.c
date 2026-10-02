@@ -1,7 +1,14 @@
 /* Draft: the complete 116-byte ES output has 2 differing import bytes.
  * All non-relocation instructions match; callee ownership must be proved
- * before a source call-target change. Preserved at the Japanese-base pivot. */
+ * before a source call-target change. Preserved at the Japanese-base pivot.
+ * API context measured 2026-10-02 with ordinary target flags:
+ * all six prior successful objects retain every allocated byte and
+ * normalized call/pool operand; no new match or adoption is claimed.
+ * The shared void DispatchObject/u32 contract uses ordinary data casts;
+ * every original matching-body and trial annotation is retained.
+ */
 #include "TYPES.H"
+#include "OBJDISP.H"
 
 struct ParticlePosition {
     s32 x;
@@ -27,7 +34,6 @@ struct ParticleEffectObject {
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
-void Object_SetCallback(struct ParticleEffectObject *, const void *);
 void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 BattleFx_ParticleScript[];
 
@@ -51,7 +57,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct ParticleSource *source)
         s32 mask;
         u8 flags;
 
-        Object_SetCallback(object, BattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

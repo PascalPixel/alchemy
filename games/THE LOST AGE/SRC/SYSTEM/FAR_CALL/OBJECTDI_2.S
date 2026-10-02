@@ -5,10 +5,6 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Object_SetCallback
-	.thumb_func
-Object_SetCallback:
-	.thumb_func
 	.global ObjectDispatch_InitializeFar
 	.thumb_func
 ObjectDispatch_InitializeFar:

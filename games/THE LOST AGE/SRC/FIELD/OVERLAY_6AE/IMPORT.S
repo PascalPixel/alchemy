@@ -73,7 +73,7 @@ GameFlag_ClearBit:
 	.global Func_0200556c
 	.thumb_func
 Func_0200556c:
-	overlay_veneer Object_SetCallback
+	overlay_veneer ObjectDispatch_InitializeFar
 	.global Func_02005574
 	.thumb_func
 Func_02005574:

@@ -17,7 +17,7 @@ Func_080dc044:
 	cmp r6, #0
 	beq .L_080dc0b0
 	ldr r1, .L_080dc0b4
-	bl Object_SetCallback
+	bl ObjectDispatch_InitializeFar
 	bl Random16
 	movs r3, #128
 	lsls r3, r3, #9

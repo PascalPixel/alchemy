@@ -3,6 +3,7 @@
  * player steers it, drop it where it fits, and break into twenty shards.
  */
 #include "TYPES.H"
+#include "OBJDISP.H"
 
 struct FxPosition {
     s32 x;
@@ -60,7 +61,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gFrameCount;
 
 void BattleEffect_InitializeSharedScene(void);
-void ObjectDispatch_InitializeFar(struct FxObject *object, const u8 *script);
 struct FxObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
@@ -122,7 +122,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         return;
     BattleEffect_InitializeSharedScene();
     source->linked = target;
-    ObjectDispatch_InitializeFar(source, BattleFx_SourceHoldScript);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)source, (u32)BattleFx_SourceHoldScript);
     /* FAKEMATCH: the position is reached through this pointer everywhere but
        in the steering loop's first part, which names the position itself;
        that keeps the pointer in r10 and gives the loop its own copy. */
@@ -259,7 +259,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
             object = Object_Spawn(0x11d, p->x, p->y, p->z);
             *walk++ = object;
             if (object != NULL) {
-                ObjectDispatch_InitializeFar(object, BattleFx_FragmentScript);
+                ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_FragmentScript);
                 object->speed = Random16() + 0x20000;
                 object->lift = 0x20000;
                 object->flag = 0;
@@ -272,7 +272,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     ObjectDispatch_ReleaseFar(anchors[0]);
     ObjectDispatch_ReleaseFar(anchors[1]);
     Animation_ApplyChildValuesFar(target, work->palette);
-    ObjectDispatch_InitializeFar(target, work->script);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->script));
     {
         /* FAKEMATCH: one zero, set before these stores, clears the mode
            byte and the source's callback from the same register. */

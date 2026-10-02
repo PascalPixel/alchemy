@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "OBJDISP.H"
 
 struct ParticlePosition {
     s32 x;
@@ -28,7 +29,6 @@ struct ParticleEffectObject {
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
 struct ParticleEffectObject *Object_Spawn(s32, s32, s32, s32);
-void Object_SetCallback(struct ParticleEffectObject *, const void *);
 void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 BattleFx_ParticleScript[];
 
@@ -55,7 +55,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
         s32 mask;
         u8 flags;
 
-        Object_SetCallback(object, BattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

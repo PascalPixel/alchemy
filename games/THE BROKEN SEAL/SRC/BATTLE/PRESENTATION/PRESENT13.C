@@ -16,7 +16,7 @@ void BattleMotion_SetupEscapeObject(s32 unit_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
 s32 ActivateBattleObjectSlot(s32 unit_id);
 extern u8 gTransitionWork[];
-void BattleCommand_SelectAutomatic(struct BattleCommandRequest *request, s32 mode);
+void BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_StoreSceneParameters(s32, u32, s32);
@@ -24,7 +24,7 @@ void BattlePres_RunActorEntries(struct BattlePlan *plan, s32 mode);
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
 void BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
 void Func_080ba978(struct BattlePlan *plan, s32 mode);
-void Func_080ba6ac(struct BattlePlan *plan, s32 mode, struct BattleCommandRequest *request);
+void Func_080ba6ac(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
@@ -43,7 +43,7 @@ static __inline__ s32 DivQ16(s32 divisor, s32 value)
 /* Plays one queued action: resolves it into the session plan, runs the
    presentation its outcome selects, then ends the turn. Returns 1 when the
    action stays queued, -1 when its actor is down. */
-s32 BattlePresentation_DispatchAction(struct BattleCommandRequest *request, s32 delay)
+s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 delay)
 {
     struct BattlePresentationTransition *view;
     struct BattleSession *battle;
@@ -58,9 +58,9 @@ s32 BattlePresentation_DispatchAction(struct BattleCommandRequest *request, s32 
     s32 i;
 
     kept = 0;
-    if (request->actor_id == 0xff)
+    if (request->unit_id == 0xff)
         return 0;
-    unit = Owner_GetStateFar(request->actor_id);
+    unit = Owner_GetStateFar(request->unit_id);
     if (unit->hp == 0)
         return -1;
     if (unit->class_index == 0)
@@ -79,7 +79,7 @@ s32 BattlePresentation_DispatchAction(struct BattleCommandRequest *request, s32 
         view->target_yaw = 0x2000;
         WaitFrames(delay);
     }
-    actor[0] = request->actor_id;
+    actor[0] = request->unit_id;
     actor[1] = 0xff;
     BattlePres_SetActorModes(actor, 1);
     result = BattleCommand_BuildPlan(request, &battle->plan);
@@ -129,12 +129,11 @@ s32 BattlePresentation_DispatchAction(struct BattleCommandRequest *request, s32 
     count = BattleParty_ListActorIds(3, ids);
     for (i = 0; i < count; i++)
         Actor_ResetMotionAtAnchor(ids[i]);
-    request->actor_id = 0xff;
+    request->unit_id = 0xff;
 finish:
     BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
     return kept;
 }
-
 
 s32 BattlePres_BuildTargetList(
     struct BattlePlan *plan, struct BattlePresentationWork *work)

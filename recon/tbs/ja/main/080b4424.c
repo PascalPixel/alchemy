@@ -19,7 +19,7 @@ s32 Func_080bd3e4(s32 table);
  * +0x37, and the candidate action IDs beginning at +0x38.
  */
 void BattleCommand_SelectAutomatic(
-    struct BattleCommandRequest *request,
+    struct BattleActionRecord *request,
     s32 retry)
 {
     register u32 selected;
@@ -51,7 +51,7 @@ void BattleCommand_SelectAutomatic(
     void *item;
     selected = -1U;
     retry_mode = retry;
-    actor = Func_08077008(request->actor_id);
+    actor = Func_08077008(request->unit_id);
     attempt = 0;
     allow_item = 1;
     keep_going = 1;
@@ -143,7 +143,7 @@ disable_item:
     case 46:
         request->command = 3;
 set_actor_target:
-        request->unknown_0a = Func_080b9a70(request->actor_id);
+        request->target = Func_080b9a70(request->unit_id);
         break;
     case 47:
         request->command = 7;
@@ -204,38 +204,38 @@ prepare_target:
                 switch (target_mode) {
                 case 2:
                 case 4:
-                    target = Func_080bae40(request->actor_id, action);
+                    target = Func_080bae40(request->unit_id, action);
                     if (target == -2) {
                         side = 0;
-                        if ((u32)(u16)request->actor_id <= 7U)
+                        if ((u32)(u16)request->unit_id <= 7U)
                             side = 1;
                         target = Func_080bad7c(side);
                     }
                     if (target != -1) {
-                        request->unknown_0a = target;
+                        request->target = target;
                         keep_going = 0;
                     }
                     break;
                 case 1:
                     alternate_target =
-                        Func_080bae40(request->actor_id, action);
+                        Func_080bae40(request->unit_id, action);
                     if (alternate_target == -2) {
                         alternate_side = 0;
-                        if ((u32)(u16)request->actor_id <= 7U)
+                        if ((u32)(u16)request->unit_id <= 7U)
                             alternate_side = 1;
                         alternate_target = Func_080bad7c(alternate_side);
                     }
                     if (alternate_target != -1) {
 set_target:
-                        request->unknown_0a = alternate_target;
+                        request->target = alternate_target;
                         keep_going = 0;
                     }
                     break;
                 case 3:
-                    request->unknown_0a = Func_080b9a70(request->actor_id);
+                    request->target = Func_080b9a70(request->unit_id);
                     break;
                 default:
-                    alternate_target = Func_080b9a70(request->actor_id);
+                    alternate_target = Func_080b9a70(request->unit_id);
                     goto set_target;
                 }
 finish_target:

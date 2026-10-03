@@ -1,3 +1,4 @@
+#include "VRAM_BLOCK.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLYPH.H"
@@ -14,7 +15,7 @@ extern u8 *UiIcon_ItemIconPointers[];
 void UiIcon_BuildAbilityIconTiles(u32, s32, s32 *, s32 *, s32);
 struct BattleAction *BattleAction_Get(s32);
 
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
+s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot)
 {
     void *source;
     switch (value) {
@@ -36,7 +37,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
         asm volatile("ldr %0, .LPairSourceDefault" : "=r"(source));
         break;
     }
-    VramBlock_LoadCached((u32)destination, 32, source);
+    VramBlock_LoadCached(slot, 32, source);
     return 1;
 }
 

@@ -2,7 +2,6 @@
 #include "RESOURCE.H"
 
 extern char ResourceId_CommandIcons;
-void *Resource_GetTableEntry(s32 resource_id);
 u32 Runtime_BumpAllocate(s32 size);
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 void VramBlock_LoadCached(s32, s32, void *);

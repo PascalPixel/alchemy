@@ -33,8 +33,8 @@ struct BattleObjectSlot {
 struct BattleActionRecord {
     s16 unit_id;                    /* 0x00 */
     u8 unknown_02[2];
-    u16 value;                      /* 0x04 */
-    s16 kind;                       /* 0x06 */
+    u16 priority;                   /* 0x04, signed when ordering turns */
+    s16 command;                    /* 0x06, command dispatch selector */
     s16 parameter;                  /* 0x08 */
     s16 target;                     /* 0x0a */
     s16 range;                      /* 0x0c */
@@ -56,6 +56,8 @@ LAYOUT_OFFSET_GUARD(BattleObjectSlot_CycleTimer, struct BattleObjectSlot, cycle_
 LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BattleObjectSlot, active, 0x28);
 
 LAYOUT_SIZE_GUARD(BattleActionRecord_Size, struct BattleActionRecord, 0x10);
+LAYOUT_OFFSET_GUARD(BattleActionRecord_Priority, struct BattleActionRecord, priority, 0x04);
+LAYOUT_OFFSET_GUARD(BattleActionRecord_Command, struct BattleActionRecord, command, 0x06);
 LAYOUT_OFFSET_GUARD(BattleActionRecord_Parameter, struct BattleActionRecord, parameter, 0x08);
 LAYOUT_OFFSET_GUARD(BattleActionRecord_Target, struct BattleActionRecord, target, 0x0a);
 LAYOUT_SIZE_GUARD(BattleSpoils_Size, struct BattleSpoils, 0x14);

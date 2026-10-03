@@ -1,3 +1,7 @@
+#include "CHARACTER_MENU.H"
+#include "INVENTORY_MENU.H"
+#include "BATTLE_UNIT.H"
+#include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 
@@ -11,41 +15,9 @@
 /* The status panel beside the item and ability lists: the owner's name,
    ailments or level, then a page chosen by the low byte of mode (class and
    stats, the stat change of equipping the selected item, whether its
-   Psynergy is already known, or the four base stats). Bit 8 redraws the
+   Psynergy is already known, or the four current stats). Bit 8 redraws the
    page without the window, name and side portrait. */
 
-struct PanelPsynergy {
-    u16 id;
-    u16 unk_02;
-};
-
-struct PanelOwner {
-    u8 name[15];
-    u8 level;
-    u8 unk_10[0x48];
-    struct PanelPsynergy psynergy[32];
-    u16 inventory[15];
-    u8 unk_f6[0x2e];
-    s32 experience;
-    u8 unk_128;
-    u8 klass;
-};
-
-struct PanelItem {
-    u8 unk_00[40];
-    u16 psynergy;
-};
-
-struct PanelState {
-    u8 unk_000[36];
-    s32 window;
-    u8 unk_028[0x154];
-    s32 side_object;
-    u8 unk_180[0xdc];
-    s8 unequip;
-};
-
-extern struct PanelState *Data_03001f2c;
 extern u8 IwramCopyWords[];
 extern u8 Data_080af20c[];
 extern u8 MsgClassName[], MsgAbilityName[];
@@ -53,25 +25,23 @@ extern u8 MsgPoisonLabel[], MsgVenomLabel[], MsgCurseLabel[], MsgHauntLabel[];
 extern u8 MsgExpLabel[], MsgCannotEquip[], MsgWillLearn[], MsgLearned[];
 extern u8 MsgPanelStatLabel[];
 
-struct PanelOwner *Owner_GetStateFar(s32 owner);
-struct PanelItem *Item_Get(s32 item);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void WaitFrames(s32 frames);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(const void *text, s32 window, s32 x, s32 y);
-void CharacterMenu_BuildAvailability(u8 *out, s32 kind, s32 owner);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void RenderOutput_ClearListFar(s32 window);
-s32 SideObject_CreateFar(s32 owner, s32 a, s32 b, s32 window, s32 c, s32 d);
-void Ui_DrawValuePairRows(struct PanelOwner *unit, s32 window);
+struct RenderOutput *SideObject_CreateFar(s32 owner, s32 position, s32 side, s32 window, s32 x, s32 y);
+void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 void *Runtime_BumpAllocate(s32 size);
 s32 _call_via_r3(void *, void *, s32, void *);
 void Inventory_EquipFar(s32 owner, s32 slot);
 void Owner_RecalculateStatsFar(s32 owner);
-void UiText_DrawStatComparison(struct PanelOwner *unit, void *backup, s32 window);
+void UiText_DrawStatComparison(const struct BattleUnit *unit, const struct BattleUnit *backup, s32 window);
 void Runtime_BumpFree(void *block);
 
 static inline void Owner_Copy(void *dst, void *src)
@@ -82,44 +52,44 @@ static inline void Owner_Copy(void *dst, void *src)
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
 {
     s32 created;
-    struct PanelItem *def;
+    struct ItemDefinition *def;
     u32 item;
-    struct PanelState *state;
-    struct PanelOwner *unit;
+    struct InventoryMenuState *state;
+    struct BattleUnit *unit;
     s32 window;
     s32 cnt;
     s32 value;
     u8 avail[8];
 
     created = 0;
-    state = Data_03001f2c;
+    state = gMenuWork;
     unit = Owner_GetStateFar(owner);
     item = unit->inventory[slot];
     def = Item_Get(item & 0x1ff);
     if (!(mode & 0x100))
-        created = UiWindow_UpdateOrCreate(&state->window, 0, 5, 13, 12, 258);
-    window = state->window;
+        created = UiWindow_UpdateOrCreate((s32 *)&state->status_window, 0, 5, 13, 12, 258);
+    window = (s32)state->status_window;
     if (!(mode & 0x100)) {
         if (!created) {
             WaitFrames(1);
-            UiWindow_ClearInteriorTilesFar(state->window, 0, 0, 88, 32);
+            UiWindow_ClearInteriorTilesFar((s32)state->status_window, 0, 0, 88, 32);
         }
-        UiText_DrawStringAtOffsetFar(unit, window, STATUS_X, 0);
+        UiText_DrawStringAtOffsetFar(unit->name, window, STATUS_X, 0);
         CharacterMenu_BuildAvailability(avail, 1, owner);
         cnt = 0;
-        if (avail[1]) {
+        if (avail[CHARACTER_POISON]) {
             UiText_DrawCharacterAtOffsetFar((s32)MsgPoisonLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
-        if (avail[2]) {
+        if (avail[CHARACTER_VENOM]) {
             UiText_DrawCharacterAtOffsetFar((s32)MsgVenomLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
-        if (avail[3]) {
+        if (avail[CHARACTER_CURSE]) {
             UiText_DrawCharacterAtOffsetFar((s32)MsgCurseLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
-        if (avail[4]) {
+        if (avail[CHARACTER_HAUNT]) {
             UiText_DrawCharacterAtOffsetFar((s32)MsgHauntLabel, window, STATUS_X, cnt * 8 + 8);
             cnt++;
         }
@@ -135,14 +105,14 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
     }
     if (!created) {
         WaitFrames(1);
-        UiWindow_ClearInteriorTilesFar(state->window, 0, 32, 88, 80);
+        UiWindow_ClearInteriorTilesFar((s32)state->status_window, 0, 32, 88, 80);
     }
     RenderOutput_ClearListFar(window);
     if (!(mode & 0x100))
-        state->side_object = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
+        state->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
     switch (mode & 0xff) {
     case 0:
-        value = unit->klass + (s32)MsgClassName;
+        value = unit->class_index + (s32)MsgClassName;
         UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
         Ui_DrawValuePairRows(unit, window);
         value = unit->experience;
@@ -150,7 +120,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         UiText_DrawNumberInWindowFar(value, 8, window, 24, 72);
         break;
     case 6:
-        value = unit->klass + (s32)MsgClassName;
+        value = unit->class_index + (s32)MsgClassName;
         UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
         Ui_DrawValuePairRows(unit, window);
         break;
@@ -168,7 +138,9 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         }
         backup = Runtime_BumpAllocate(0x14c);
         Owner_Copy(backup, unit);
-        if (state->unequip)
+        /* FAKEMATCH: retain the original signed byte read at this field.
+           A cast of its unsigned value removes the two sign-extension instructions. */
+        if (*(s8 *)&state->equip_preview)
             unit->inventory[slot] &= 0xfdff;
         else
             Inventory_EquipFar(owner, slot);
@@ -179,12 +151,12 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         break;
     }
     case 4: {
-        s32 id = def->psynergy;
+        s32 id = def->action_id;
         s32 found = 0;
         s32 i;
 
         for (i = 0; i < 32; i++) {
-            if ((unit->psynergy[i].id & 0x3fff) == id) {
+            if ((unit->action_slots[i].encoded_action & 0x3fff) == id) {
                 found = 1;
                 break;
             }
@@ -213,16 +185,16 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         u8 *base = MsgPanelStatLabel;
 
         UiText_DrawCharacterAtOffsetFar((s32)base, window, 0, 40);
-        value = *(u16 *)((u8 *)unit + 60);
+        value = unit->attack;
         UiText_DrawNumberInWindowFar(value, 3, window, 64, 40);
         UiText_DrawCharacterAtOffsetFar((s32)base + 1, window, 0, 48);
-        value = *(u16 *)((u8 *)unit + 62);
+        value = unit->defense;
         UiText_DrawNumberInWindowFar(value, 3, window, 64, 48);
         UiText_DrawCharacterAtOffsetFar((s32)base + 4, window, 0, 56);
-        value = *(u16 *)((u8 *)unit + 64);
+        value = unit->agility;
         UiText_DrawNumberInWindowFar(value, 3, window, 64, 56);
         UiText_DrawCharacterAtOffsetFar((s32)base + 3, window, 0, 64);
-        value = *((u8 *)unit + 66);
+        value = unit->luck;
         UiText_DrawNumberInWindowFar(value, 3, window, 64, 64);
         break;
     }

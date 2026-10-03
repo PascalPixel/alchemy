@@ -6,7 +6,8 @@
 #include "FIELD_SPRITE.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJECT_DISPATCH.H"
-#include "FIELD_EVENT.H"
+#include "FIELDOBJ.H"
+#include "FIELDRUN.H"
 #include "MAP_SCROLL.H"
 #include "ANIMSPR.H"
 
@@ -14,18 +15,17 @@ extern struct ObjectRuntime Data_02001124[32];
 
 void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, s32 value);
 void Object_ResetMotion(struct ObjectRuntime *object);
+void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 
 /* object/table/ObjectTable_ClearBattleSlots.c */
 void ObjectTable_ClearBattleSlots(void)
 {
     s32 *current;
-    s32 offset;
     s32 zero;
     s32 count;
-    offset = 0x8C;
     zero = 0;
     count = 0x41;
-    current = (s32 *)((u8 *)gWork + offset * 2);
+    current = (s32 *)&((struct FieldStepWork *)gWork)->actors[65];
     do {
         count--;
         *current = zero;
@@ -33,8 +33,8 @@ void ObjectTable_ClearBattleSlots(void)
     } while (count >= 0);
 }
 
-/* The object pointer in slot index of the 192-entry table at gWork + 0x14,
-   or NULL for an index past the table. */
+/* Generic word lookup at +0x14. Field mode uses 66 actor slots; the
+   0xbf limit is this accessor's contract, not a field allocation extent. */
 void *ObjectTable_Get(u32 index)
 {
     u8 *base = (u8 *)gWork;
@@ -130,7 +130,7 @@ void ObjectTable_Restore(void)
                     (volatile u32 *)0x040000d4);
             frame = *frames;
             if (frame != 0)
-                Object_SetMode((struct FieldActor *)object, frame);
+                Object_SetMode(object, frame);
             ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)object, *next_frames);
             priority = *priorities;
             sprite->priority = priority;

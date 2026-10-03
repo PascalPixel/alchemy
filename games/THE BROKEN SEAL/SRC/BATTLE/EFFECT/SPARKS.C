@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -24,7 +25,6 @@ extern u16 SparkGroups_Shapes[];
 extern u8 SparkGroups_FlashCells[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 id);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);

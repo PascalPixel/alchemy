@@ -1,41 +1,18 @@
+#include "CHARACTER_MENU.H"
+#include "BATTLE_UNIT.H"
 #include "EDITION.H"
 #include "TYPES.H"
 
 extern u8 MsgPowerLabel[];
 extern u8 MsgNormalLabel, MsgDownLabel, MsgPoisonLabel, MsgVenomLabel, MsgCurseLabel, MsgHauntLabel, MsgDjinnLabel;
 
-struct StatusCursor {
-    u8 unknown_00[5];
-    u8 state;
-};
-
-struct ElementStat {
-    s16 power;
-    s16 resistance;
-};
-
-struct MenuState {
-    u8 unknown_000[380];
-    struct StatusCursor *cursor;
-    u8 unknown_180[160];
-    u16 mode;
-};
-
-struct StatusUnit {
-    u8 unknown_000[72];
-    struct ElementStat element_stats[4];
-    u8 unknown_058[192];
-    u8 djinn_set[4];
-    u8 djinn_total[4];
-};
-
-extern struct MenuState *gMenuWork;
+extern struct CharacterMenuState *gMenuWork;
 extern const u8 Menu_LvString[];
 extern const u8 Data_080af230[];
 
 s32 Party_SumDjinnCountsFar(s32 side);
-struct StatusUnit *Owner_GetStateFar(s32 unit);
-void ItemMenu_DrawOwnerStatus(void *window, s32 unit, s32 mode);
+struct BattleUnit *Owner_GetStateFar(s32 unit);
+void ItemMenu_DrawOwnerStatus(s32 window, s32 unit, s32 mode);
 s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 flags, s32 unit);
 s32 CharacterMenu_UpdateSelectionIcons(const u8 *ailments);
 void ItemMenu_ApplyFlags(const u8 *ailments);
@@ -52,10 +29,10 @@ s32 Owner_GetResistanceValueFar(s32 unit, s32 element);
 /* Draws a unit's page of the status screen: the ailments it suffers and,
  * outside the short mode, the Djinn it holds and its power and resistance in
  * each element. */
-void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
+void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 unit, s32 mode)
 {
-    struct MenuState *state = gMenuWork;
-    struct StatusUnit *status;
+    struct CharacterMenuState *state = gMenuWork;
+    struct BattleUnit *status;
     s32 row;
     s32 has_djinn;
     s32 keep;
@@ -71,31 +48,31 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         row = 7;
     else
         row = 10;
-    state->cursor->state = 1;
-    ItemMenu_DrawOwnerStatus(window, unit, mode);
+    state->status_cursor->active = 1;
+    ItemMenu_DrawOwnerStatus((s32)window, unit, mode);
     CharacterMenu_BuildAvailability(ailments, 1, unit);
     CharacterMenu_UpdateSelectionIcons(ailments);
     keep = mode & 0x100;
     if (keep == 0)
         UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
     i = 0;
-    if (ailments[0] != 0) {
+    if (ailments[CHARACTER_DOWN] != 0) {
         UiText_DrawCharacterAtOffsetFar((s32)&MsgDownLabel, window, 16, 40);
         i = 1;
     }
-    if (ailments[1] != 0) {
+    if (ailments[CHARACTER_POISON] != 0) {
         UiText_DrawCharacterAtOffsetFar((s32)&MsgPoisonLabel, window, 16, i * 16 + 40);
         i++;
     }
-    if (ailments[2] != 0) {
+    if (ailments[CHARACTER_VENOM] != 0) {
         UiText_DrawCharacterAtOffsetFar((s32)&MsgVenomLabel, window, 16, i * 16 + 40);
         i++;
     }
-    if (ailments[3] != 0) {
+    if (ailments[CHARACTER_CURSE] != 0) {
         UiText_DrawCharacterAtOffsetFar((s32)&MsgCurseLabel, window, 16, i * 16 + 40);
         i++;
     }
-    if (ailments[4] != 0) {
+    if (ailments[CHARACTER_HAUNT] != 0) {
         UiText_DrawCharacterAtOffsetFar((s32)&MsgHauntLabel, window, 16, i * 16 + 40);
         i++;
     }
@@ -103,7 +80,7 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiText_DrawCharacterAtOffsetFar((s32)&MsgNormalLabel, window, 0, 40);
     CharacterMenu_UpdateSelectionIcons(ailments);
     ItemMenu_ApplyFlags(ailments);
-    if (state->mode == 3)
+    if (state->page == 3)
         return;
     if (keep == 0) {
         WaitFrames(1);
@@ -131,15 +108,15 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
     }
     for (i = 0; i <= 3; i++) {
         if (has_djinn)
-            UiNumber_DrawAt(status->djinn_set[i], 1, window, i * 32 + 120, row * 8 + 8);
+            UiNumber_DrawAt(status->djinn_owned_counts[i], 1, window, i * 32 + 120, row * 8 + 8);
         if ((mode & 0xff) == 1) {
             if (has_djinn) {
-                UiNumber_DrawAt(status->djinn_total[i], 1, window, i * 32 + 104, row * 8 + 8);
+                UiNumber_DrawAt(status->djinn_active_counts[i], 1, window, i * 32 + 104, row * 8 + 8);
                 UiText_DrawStringInWindowFar(Data_080af230, window, i * 32 + 112, row * 8 + 8);
             }
             UiNumber_DrawAt(Owner_GetResistanceValueFar(unit, i), 2, window, i * 32 + 112, row * 8 + 16);
-            UiNumber_DrawAt(status->element_stats[i].power, 3, window, i * 32 + 104, row * 8 + 24);
-            UiNumber_DrawAt(status->element_stats[i].resistance, 3, window, i * 32 + 104, row * 8 + 32);
+            UiNumber_DrawAt(status->elements[i].power, 3, window, i * 32 + 104, row * 8 + 24);
+            UiNumber_DrawAt(status->elements[i].resist, 3, window, i * 32 + 104, row * 8 + 32);
         }
     }
 }

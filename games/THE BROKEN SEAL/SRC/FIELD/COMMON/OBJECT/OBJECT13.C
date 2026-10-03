@@ -22,18 +22,14 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 
     if (object->flags == 0) {
         second = object->target_x;
-        if (second == 0x80000000) {
-            first = object->target_y;
-            goto block_4;
-        }
-        goto block_6;
+        if (second != (s32)0x80000000)
+            return 0;
+        first = object->target_y;
+    } else {
+        first = object->target_x;
+        second = (s32)0x80000000;
     }
-    first = object->target_x;
-    second = 0x80000000;
-block_4:
-    if ((first != second) || (object->target_z != first)) {
-block_6:
+    if (first != second || object->target_z != first)
         return 0;
-    }
     return 1;
 }

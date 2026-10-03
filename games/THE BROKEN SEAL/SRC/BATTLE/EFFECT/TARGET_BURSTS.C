@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -13,7 +14,6 @@ extern u8 gWorkSlot[];
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
@@ -131,7 +131,6 @@ extern u8 gBattleFxWork[];
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void *Resource_GetTableEntry(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);

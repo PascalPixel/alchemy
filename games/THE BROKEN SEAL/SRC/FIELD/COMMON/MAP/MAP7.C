@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Field: show the world map. The map layers are hidden and the map picture
    is decoded over BG1 until A or B is pressed, then the field comes back. */
 #include "TYPES.H"
@@ -29,7 +30,6 @@ void Event_ClearStatus1c6(void);
 void Event_SetStatus1c6(void);
 void Event_WaitValue1c8Frames(void);
 void WaitFrames(s32 frames);
-u8 *Resource_GetTableEntry(s32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void BattleFx_SetupResourcesAndWindow(void);
 void BattleFx_CleanupResourcesAndWindow(void);

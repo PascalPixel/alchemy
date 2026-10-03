@@ -1,8 +1,8 @@
+#include "RESOURCE.H"
 /* Setting up the stage's scene descriptor. */
 #include "LOG_ROLLING.H"
 #include "RUNTIME_MEM.H"
 
-u8 *Resource_GetTableEntry(s32 resource);
 void Korosseo_UpdatePathRival(void);
 
 void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor,

@@ -1,10 +1,11 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
 #include "METADATA_LOOKUP.H"
 #include "DMA.H"
 
-extern u8 gMenuCtrlWork[];
+extern struct ObjectSystemWork *gMenuCtrlWork;
 
 void ResourceMetadata_ClearRecord(void *);
 
@@ -31,24 +32,13 @@ struct ResourceSlotNumber {
     s16 number;
 };
 
-struct ResourceSlot {
-    s32 tag;
-    void *buffer;
-};
-
 enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
-
-struct ResourceSlotWork {
-    u8 unknown_00[0x1c];
-    struct ResourceSlot slots[RESOURCE_SLOT_COUNT];
-};
 
 /* Up to 256 numbers, ended by number zero. */
 extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
 /* Five tables that map a script's bytes below 0xe0 for a text variant. */
 extern u8 ResourceSlot_ConversionTables[][256];
 
-void *Resource_GetTableEntry(s32 resource_id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 
 /*
@@ -61,7 +51,7 @@ u32 Resource_DecodeType01(const void *source, void *destination);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 {
     struct AnimationMetadata *metadata;
-    struct ResourceSlotWork *work;
+    struct ObjectSystemWork *work;
     struct ResourceSlot *record;
     struct ResourceSlotNumber *entry;
     u32 *offset;
@@ -76,7 +66,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 
     if (slot >= RESOURCE_SLOT_COUNT)
         return 0;
-    work = *(struct ResourceSlotWork **)gMenuCtrlWork;
+    work = gMenuCtrlWork;
     record = &work->slots[slot];
     metadata = Resource_GetMetadataRecordFar(number);
     record->tag = (slot << 12) | number;
@@ -125,24 +115,15 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 s32 Animation_LookupValueByKey(s32 key)
 {
     u32 no;
-    struct ResourceSlot *p;
+    struct ResourceSlot *p = gMenuCtrlWork->slots;
 
-    p = (*(struct ResourceSlotWork **)gMenuCtrlWork)->slots;
-    no = 0;
-loop_1:
-    if (p->tag == key) {
-        return (s32)p->buffer;
+    for (no = 0; no < RESOURCE_SLOT_COUNT; no++, p++) {
+        if (p->tag == key)
+            return (s32)p->buffer;
     }
-    no++;
-    p++;
-    if (no >= RESOURCE_SLOT_COUNT) {
-        return 0;
-    }
-    goto loop_1;
+    return 0;
 }
 
-/* Pointer assignments reordered the 168/68/134-byte initializers.
-   Keep scalar address words at the metadata boundary. */
 s32 Animation_InitializeObjects(struct AnimationObject *state)
 {
     s32 index;
@@ -168,10 +149,13 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
         if (frames == 0)
             frames = Animation_LookupValueByKey(object->anim_id);
 
+        /* FAKEMATCH: the existing metadata address-word stores keep frames
+           before script/codec stores. Pointer stores move frames later in
+           the complete 168-byte native initializer. */
         object->kind = metadata->draw_kind;
         animation = metadata->animation;
         *(s32 *)&object->frames = frames;
-        *(s32 *)&object->field_0c = animation;
+        *(s32 *)&object->scripts = animation;
         object->mode = metadata->frame_codec;
         object->frame = 0xff;
         object->script = 0;
@@ -194,8 +178,10 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
             value = info->frames;
             if (value == 0)
                 value = Animation_LookupValueByKey(work->anim_id);
+            /* FAKEMATCH: pointer assignments move the existing frames store
+               after the codec/zero setup in this 68-byte initializer. */
             work->kind = info->draw_kind;
-            *(s32 *)&work->field_0c = info->animation;
+            *(s32 *)&work->scripts = info->animation;
             *(s32 *)&work->frames = value;
             work->mode = info->frame_codec;
             z = 0;
@@ -324,10 +310,10 @@ void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
     s32 value;
 
     hi = 0x80 & no;
-    if (work->field_0c != 0) {
+    if (work->scripts != 0) {
         info = Resource_GetMetadataRecordFar(work->anim_id);
         if (no < (s32)info->animation_count) {
-            value = ((s32 *)work->field_0c)[no];
+            value = (s32)work->scripts[no];
             work->kind = info->draw_kind;
             work->script = (u8 *)value;
             work->step = 0x10;
@@ -347,6 +333,9 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
     high_bit = flags & 0x80;
     flags &= 0x7f;
 
+    /* FAKEMATCH: the existing index/test loop keeps the 8-byte frame and
+       154-byte function. A for loop creates a spilled entry cursor, a
+       12-byte frame and a 166-byte extent with the same real records. */
     if (state->last_no != flags) {
         index = 0;
         goto test_entry;
@@ -358,14 +347,14 @@ entry_loop:
 
             if (entry == 0)
                 goto next_entry;
-            if (entry->field_0c == 0)
+            if (entry->scripts == 0)
                 goto next_entry;
 
             metadata = Resource_GetMetadataRecordFar(entry->anim_id);
             if (flags >= metadata->animation_count)
                 goto next_entry;
 
-            selected_animation = ((s32 *)entry->field_0c)[flags];
+            selected_animation = (s32)entry->scripts[flags];
             entry->kind = metadata->draw_kind;
             entry->script = (u8 *)selected_animation;
             entry->step = 0x10;
@@ -401,7 +390,7 @@ s32 AnimationObjects_SetHalfword02OnActive(struct AnimationObject *group, s32 va
         cnt = n;
         do {
             struct AnimationEntry *entry = *p++;
-            if (entry != 0 && entry->field_0c != 0)
+            if (entry != 0 && entry->scripts != 0)
                 entry->timer = val;
             cnt--;
         } while (cnt != 0);
@@ -417,7 +406,7 @@ void AnimationObjects_SetField15OnActive(struct AnimationObject *group, s32 val)
         s32 cnt = n;
         do {
             struct AnimationEntry *entry = *p++;
-            if (entry != 0 && entry->field_0c != 0)
+            if (entry != 0 && entry->scripts != 0)
                 entry->step = val;
             cnt--;
         } while (cnt != 0);
@@ -493,8 +482,11 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
             object->anim_id = (s16)id;
             if (frames == 0)
                 frames = Animation_LookupValueByKey(id);
+            /* FAKEMATCH: the original address-word boundary keeps the two
+               list stores before codec/frame setup; pointer assignments
+               reorder them in the complete 134-byte allocation path. */
             animation = metadata->animation;
-            *(s32 *)&object->field_0c = animation;
+            *(s32 *)&object->scripts = animation;
             *(s32 *)&object->frames = frames;
             object->mode = metadata->frame_codec;
             object->frame = 0xff;

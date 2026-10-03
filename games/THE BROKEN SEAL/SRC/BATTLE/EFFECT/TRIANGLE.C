@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -32,7 +33,6 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 a, s32 b, s32 c, s32 *x, s32 *y);
 void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 a, s32 b);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);

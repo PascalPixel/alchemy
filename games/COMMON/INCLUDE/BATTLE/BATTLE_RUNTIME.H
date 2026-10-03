@@ -13,5 +13,6 @@ s32 GameFlag_TestFar(s32 flag_id);
 void Owner_RecalculateRatiosFar(s32 unit_id);
 s32 BattleRandom16Far(void);
 s32 BattleFx_IsReviveFar(s32 effect_id);
+s32 Battle_ClassifyEntryKind(const struct BattleAction *entry);
 
 #endif

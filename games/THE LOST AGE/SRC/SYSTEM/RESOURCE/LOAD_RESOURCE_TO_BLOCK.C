@@ -1,6 +1,6 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 
-void *Resource_GetTableEntry(s32 resource_id);
 void *Runtime_BumpAllocate(s32 size);
 void Resource_DecodeByteLzInRam(void *source, void *destination);
 s32 VramBlock_LoadCached(s32 entry_no, s32 mode, void *data);

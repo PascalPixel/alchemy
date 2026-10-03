@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 /* The title overlay: its scene tables. */
 #include "TYPES.H"
@@ -33,7 +34,6 @@ void PaletteFar_Entry20(s32 mode);
 
 void Sys_Free(void *buffer);
 s32 Resource_FindFreeEntry(void);
-u8 *Resource_GetTableEntry(s32 resource);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 VramBlock_LoadCached(s32 block, s32 size, const void *data);
 #define DMA3 ((volatile u32 *)0x040000d4)

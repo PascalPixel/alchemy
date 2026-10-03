@@ -1,13 +1,5 @@
+#include "BATTLE_SUMMON.H"
 #include "TYPES.H"
-
-struct Entry {
-    u16 value;
-    u8 flags0;
-    u8 flatbs;
-    u8 rest[4];
-};
-
-extern struct Entry Summon_EntryTable[];
 
 u32 Battle_GetEntryField2HighBits(u32 no)
 {

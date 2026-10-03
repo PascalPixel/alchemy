@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -111,8 +112,6 @@ struct PathRecorder {
     u16 pos;
     s16 still;
 };
-
-void *Resource_GetTableEntry(s32 resource);
 
 /*
  * Scene setup for resource_3ba: allocates a scene descriptor, stamps its

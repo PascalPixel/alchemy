@@ -138,10 +138,10 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s
         /* The side is read through a byte pointer each pass, as the
          * reference reads it. */
         if (*(u8 *)&battle->link_side == 0) {
-            if (action->value & 1)
-                action->value++;
+            if (action->priority & 1)
+                action->priority++;
         } else {
-            action->value |= 1;
+            action->priority |= 1;
         }
     }
 

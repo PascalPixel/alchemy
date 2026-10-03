@@ -25,7 +25,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);

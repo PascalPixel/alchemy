@@ -1,3 +1,4 @@
+#include "FIELDOBJ.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_TYPES.H"
@@ -9,8 +10,8 @@
 #include "OBJECT_RUNTIME.H"
 
 s32 Party_CountActiveOwnersFar();
-void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
-void Owner_AdjustSecondValueFar(s32 owner, s32 amount);
+s16 Owner_AdjustFirstValueFar(s32 owner, s32 amount);
+s16 Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -28,6 +29,8 @@ void BattleParty_ApplyDrain(s32 amount)
     s32 target_count = Party_CountActiveOwnersFar();
 
     if (target_count > 0) {
+        /* FAKEMATCH: the existing base-plus-offset cursor retains the address
+           setup and operand order; a direct array address folds into the pool. */
         u8 *base = (u8 *)&gGameState;
         s32 offset = (u32)&((struct GameState *)0)->active_owners;
         u8 *target_id = base + offset;
@@ -86,6 +89,8 @@ s32 BattleParty_ApplyStatusDamage(void)
     s32 count = Party_CountActiveOwnersFar();
 
     if (result < count) {
+        /* FAKEMATCH: preserve the existing member-offset cursor setup; the
+           direct array address changes the pool addend and saved registers. */
         s32 offset = (u32)&((struct GameState *)0)->active_owners / 2;
         u8 *entry;
         s32 remaining;
@@ -147,18 +152,18 @@ void Battle_SetObjectFlag5bWhenMode3(void)
             FIELD_AT_OFFSET(blk, s8 *, 0x53C) = 1;
             FIELD_AT_OFFSET(blk, s8 *, 0x53D) = 0;
         }
-        ((struct ObjectRuntime *)FIELD_AT_OFFSET(work, void **, 0x1E0))->movement_state = 1;
+        ((struct ObjectRuntime *)((struct EventWork *)work)->view_center)->movement_state = 1;
         Map_ResumeAnimationFar();
     }
 }
 
 void Battle_ClearObjectFlag5bWhenMode3(void)
 {
-    void *work;
+    struct EventRuntime *work;
 
     work = Runtime_AllocateBlock(0x1B, 0xCCC);
-    if (FIELD_AT_OFFSET(work, s16 *, 0x19E) == 3) {
+    if (work->mode_19e == 3) {
         Map_LoadAreaGraphicsFar();
-        FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x1E0), s8 *, 0x5B) = 0;
+        ((struct ObjectRuntime *)((struct EventWork *)work)->view_center)->movement_state = 0;
     }
 }

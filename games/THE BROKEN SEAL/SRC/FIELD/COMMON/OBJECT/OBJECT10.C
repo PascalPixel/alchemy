@@ -8,9 +8,8 @@
 #include "SCROLL.H"
 #include "ANIMSPR.H"
 
-/* Object table: 192 pointers at gEventWork + 0x14 (see ObjectTable_Get). */
-void *ResourceMetadata_RegisterFar(void *, s32);
-void Object_SetMode(void *, s32);
+s32 ResourceMetadata_RegisterFar(struct AnimationObject *, s32);
+void Object_SetMode(struct ObjectRuntime *, s32);
 s32 GameFlag_SetBitFar(s32);
 void ObjectEffect_PrepareContextEffect(s32);
 
@@ -84,7 +83,7 @@ void ObjectEffect_PrepareContextEffect(s32 value)
 
     object = ObjectTable_Get(gGameState.selected_actor);
     context = object->animation;
-    effect = ResourceMetadata_RegisterFar(context, 27);
+    effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, 27);
     zero = 0;
     kind = 15;
 
@@ -118,7 +117,8 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     s32 mask;
     struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selected_actor);
     struct AnimationObject *ctx = obj->animation;
-    struct AnimationEntry *eff = ResourceMetadata_RegisterFar(ctx, 27);
+    struct AnimationEntry *eff = (struct AnimationEntry *)
+        ResourceMetadata_RegisterFar(ctx, 27);
 
     zero = 0;
     mask = 0xfff00000;
@@ -144,19 +144,19 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
     s32 result = 0;
     s32 flag = 0x120;
 
-    if (GameFlag_TestFar(flag)!= 0) {
+    if (GameFlag_TestFar(flag) != 0) {
         ObjectEffect_EndContextEffect(24);
         GameFlag_ClearBitFar(flag);
         result = 1;
     } else {
         flag = 0x121;
-        if (GameFlag_TestFar(flag)!= 0) {
+        if (GameFlag_TestFar(flag) != 0) {
             ObjectEffect_EndContextEffect(23);
             GameFlag_ClearBitFar(flag);
             result = 2;
         } else {
             flag = 0x122;
-            if (GameFlag_TestFar(flag)!= 0) {
+            if (GameFlag_TestFar(flag) != 0) {
                 s32 id;
                 struct ObjectRuntime *obj;
 

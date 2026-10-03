@@ -1,3 +1,4 @@
+#include "BATTLE_UNIT.H"
 /*
  * Draft: the parent matches but its nested arrow renderer does not yet, so the
  * unit links as assembly (recon/tbs/raw/08022a7c.s and 08022b44.s).
@@ -117,7 +118,7 @@ extern u8 Value_00000333[];
 extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
-s32 DjinnMenu_ListChangedDjinn(u8 *oldGrid, u8 *newGrid, u16 *out, s32 *gained, s32 *lost);
+s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost);
 s32 Djinn_IsActiveFar(s32 owner, s32 col, s32 row);
 void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
 void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
@@ -207,7 +208,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         Djinn_ActivateFar(owner, col, row);
     BattleUnit_Recalculate(owner);
 
-    total = DjinnMenu_ListChangedDjinn(snap->grid, unit->grid, list, &gained, &lost);
+    total = DjinnMenu_ListChangedDjinn((const struct OwnerActionSlot *)snap->grid, (const struct OwnerActionSlot *)unit->grid, list, &gained, &lost);
     pages = __divsi3(total - 1, 5) + 1;
     *pageCount = pages;
     if (page * 5 - 5 >= total)

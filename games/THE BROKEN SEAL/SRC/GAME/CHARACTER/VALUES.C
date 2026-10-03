@@ -1,7 +1,7 @@
+#include "OWNER_STATE.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
 
-void *Owner_GetState(s32);
 void Owner_RecalculateRatios(s32);
 
 s16 Owner_AdjustFirstValue(s32 owner, s32 delta)

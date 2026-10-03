@@ -1,3 +1,6 @@
+#include "CHARACTER_MENU.H"
+#include "INVENTORY_MENU.H"
+#include "WINDOW.H"
 #include "TYPES.H"
 #include "MENU_RESULT.H"
 #include "FIXED_MATH.H"
@@ -19,24 +22,7 @@ void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
-extern u8 Data_03001e8c[];
-
-struct MenuPageIcon {
-    u8 reserved_00[5];
-    u8 state;
-    u16 x;
-    u16 y;
-};
-
-struct MenuPageWork {
-    u8 reserved_000[0x48];
-    struct MenuPageIcon *icons[32];
-    u8 reserved_0c8[0x150];
-    u8 entry_count;
-};
-
-extern struct MenuPageWork *gMenuWork;
-void UiIcon_PrepareObject(struct MenuPageIcon *icon);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s32 *page)
 {
@@ -185,12 +171,13 @@ void Menu_DrawPageIndicator(
 }
 
 void Render_SetTilemapFlagRect(
-    const u8 *object, s32 x, s32 y, s32 width, s32 height, u32 field)
+    const struct UiWindow *object, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    u8 *base = (u8 *)work->tilemap;
 
-    x += *(u16 *)(object + 12) + 1;
-    y += *(u16 *)(object + 14) + 1;
+    x += object->x + 1;
+    y += object->y + 1;
     field <<= 12;
     if (x < 0) {
         width += x;
@@ -223,7 +210,7 @@ void Render_SetTilemapFlagRect(
             height--;
             x += 64;
         } while (height != 0);
-        base[RENDER_DIRTY_OFS] = 1;
+        work->dirty = 1;
     }
 }
 
@@ -242,20 +229,20 @@ void Palette_CopyObjectBankToBackground14(void)
  */
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y)
 {
-    struct MenuPageWork *menu = gMenuWork;
-    struct MenuPageIcon *icon;
+    struct InventoryMenuState *menu = gMenuWork;
+    struct RenderOutput *icon;
     s32 i;
 
     for (i = 0; i < 32; i++) {
-        icon = menu->icons[i];
+        icon = menu->entry_icons[i];
         if (icon != NULL)
-            icon->state = 13;
+            icon->active = 13;
     }
-    for (i = first; i < page_size + first && (icon = menu->icons[i]) != NULL
-         && i <= menu->entry_count - 1; i++) {
+    for (i = first; i < page_size + first && (icon = menu->entry_icons[i]) != NULL
+         && i <= menu->item_count - 1; i++) {
         icon->x = x;
         icon->y = y + (i - first) * 16;
         UiIcon_PrepareObject(icon);
-        icon->state = 1;
+        icon->active = 1;
     }
 }

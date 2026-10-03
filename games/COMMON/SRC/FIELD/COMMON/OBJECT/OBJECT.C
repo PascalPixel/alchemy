@@ -21,20 +21,15 @@
 #include "SCRIPT.H"
 #include "ANIMSPR.H"
 #include "FIELD_SPRITE.H"
+#include "FIELDOBJ.H"
+#include "SCRIPT_OBJECT_RUNTIME.H"
+#include "SCRIPT_MOTION.H"
 #include "VRAM_BLOCK.H"
 
 extern u8 Map_TileDissolveOrder[];
 
 /* map/shared/render_animated_tile_frames_for_object.c */
 void Map_RenderAnimatedTileFrame(u8 *object, u32 position);
-
-/* The object system state block (92 bytes). */
-struct ObjectSystem {
-    u8 unk_00[6];
-    u8 priority;
-    u8 flag;
-    u8 unk_08[84];
-};
 
 void ObjectSystem_Configure(s32 mode);
 void Object_UpdateAllMotion(void);
@@ -45,50 +40,17 @@ extern s32 Data_03001d1c;
 extern s32 Data_03001cc0;
 
 /* object/dispatch/find_free_object.c */
-extern u8 *gObjectSlots;
+extern struct ObjectRuntime *gObjectSlots;
 
-struct FieldObject {
-    u32 script;
-    u16 unknown_04;
-    u16 unknown_06;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u16 radius;
-    u8 unknown_22[14];
-    s32 speed_limit;
-    s32 acceleration;
-    u8 unknown_38[12];
-    s32 unknown_44;
-    s32 unknown_48;
-    s32 unknown_4c;
-    void *animation;
-    u8 animation_kind;
-    u8 unknown_55;
-    u8 unknown_56[3];
-    u8 unknown_59;
-    u8 unknown_5a;
-    u8 unknown_5b[9];
-    s16 tile_x;
-    s16 tile_z;
-};
-
-struct ObjectSpriteList {
-    u8 unknown_00[24];
-    s32 count;
-};
-
-extern struct ObjectSpriteList *gMenuCtrlWork;
+extern struct ObjectSystemWork *gMenuCtrlWork;
 extern const u32 ObjectDispatch_DefaultScript[];
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-s32 AnimationObjects_SelectAnimation(void *, s32);
-void AnimationObjects_SetField15OnActive(void *, s32);
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
+void AnimationObjects_SetField15OnActive(struct AnimationObject *, s32);
 s32 Animation_InitializeObjects(struct AnimationObject *);
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
+/* The existing packed lane of the animation child, used only by its bit setter. */
 struct ChildDisplayFlags {
     u8 padding[29];
     u8 unk_0 : 1;
@@ -217,12 +179,12 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *obj, s32 *out)
    motion-only one in mode 4) and the camera (fixed in modes 3 and 4). */
 void ObjectSystem_Initialize(s32 mode)
 {
-    struct ObjectSystem *state;
-    u8 *objects;
+    struct ObjectSystemWork *state;
+    struct ObjectRuntime *objects;
     volatile u32 fill;
 
-    state = (struct ObjectSystem *)Runtime_AllocateBlock(6, 92);
-    objects = Runtime_AllocateBlock(5, 0x1c00);
+    state = Runtime_AllocateBlock(6, sizeof(*state));
+    objects = Runtime_AllocateBlock(5, 64 * sizeof(*objects));
     ObjectSystem_Configure(mode);
     fill = 0;
     Dma_Set((const void *)&fill, objects, 0x85000700, (volatile u32 *)0x040000d4);
@@ -239,8 +201,8 @@ void ObjectSystem_Initialize(s32 mode)
         Data_03001d1c = 0;
         Data_03001cc0 = 0;
     }
-    state->priority = 15;
-    state->flag = 0;
+    state->edge = 15;
+    state->fill = 0;
 }
 
 void ResourceTable_ReservedNoOpC0C4(void)
@@ -261,7 +223,7 @@ void *ObjectDispatch_FindFreeObject(void)
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     struct ObjectRuntime *entry = Ram_HeapSlots->script_objects;
 #else
-    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
+    struct ObjectRuntime *entry = gObjectSlots;
 #endif
     void *ret = 0;
     s32 index = 0;
@@ -323,9 +285,12 @@ void ObjectDispatch_Release(struct DispatchObject *work)
    Object_CreateFar: takes a free object slot, attaches the sprite or the
    two-sprite list the descriptor id names (its top nibble is the kind), and
    resets position, scale, speed and script to their defaults. */
-struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
+struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
 {
-    struct FieldObject *object;
+    struct ObjectRuntime *object;
+    struct FieldActor *actor;
+    struct ScriptMotionObject *motion;
+    struct ScriptObjectRuntime *script;
     void *sprite;
     s32 kind;
     u32 *list;
@@ -335,16 +300,17 @@ struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
     ObjectDispatch_FindFreeObject();
     kind = id / 4096;
     id &= 0xfff;
-    object = (struct FieldObject *)ObjectDispatch_FindFreeObject();
+    object = ObjectDispatch_FindFreeObject();
     if (object != NULL) {
-        object->radius = 16;
+        actor = (struct FieldActor *)object;
+        actor->radius = 16;
         switch (kind) {
         case 0:
             sprite = ResourceObject_Create(id);
             if (sprite != NULL) {
                 object->animation_kind = 1;
                 object->animation = sprite;
-                object->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
+                actor->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
             } else {
                 object->animation_kind = 0;
             }
@@ -360,7 +326,7 @@ struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
                 /* FAKEMATCH: stored as a plain halfword, outside the object
                    record's alias set, so the entry copy schedules above it
                    as in the reference. */
-                *(u16 *)&object->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
+                *(u16 *)&actor->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
                 *entry++ = (u32)sprite;
             }
             sprite = ResourceObject_Create(id + 1);
@@ -370,22 +336,24 @@ struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
         }
     }
     if (object != NULL) {
-        Object_SetPositionAndResetMotion((struct ObjectRuntime *)object, x, y, z);
-        object->script = (u32)ObjectDispatch_DefaultScript;
+        motion = (struct ScriptMotionObject *)object;
+        script = (struct ScriptObjectRuntime *)object;
+        Object_SetPositionAndResetMotion(object, x, y, z);
+        object->script = (s32 *)ObjectDispatch_DefaultScript;
         object->speed_limit = 0x20000;
-        object->unknown_04 = 0;
-        object->scale_x = 0x10000;
-        object->scale_y = 0x10000;
+        object->step = 0;
+        actor->scale_x = 0x10000;
+        actor->scale_y = 0x10000;
         object->acceleration = 0x10000;
-        object->unknown_55 = 3;
-        object->unknown_48 = 0x10000;
-        object->unknown_44 = 0x4000;
+        object->flags = 3;
+        motion->gravity = 0x10000;
+        motion->vertical.bounce = 0x4000;
         object->unknown_59 = 0;
-        object->unknown_5a = 1;
-        object->unknown_4c = 0;
-        object->unknown_06 = 0x4000;
-        object->tile_x = x / 65536;
-        object->tile_z = z / 65536;
+        object->action_flags = 1;
+        *(s32 *)((u8 *)motion + 0x4c) = 0;
+        object->angle = 0x4000;
+        script->home_x = x / 65536;
+        script->home_z = z / 65536;
     }
     return object;
 }
@@ -587,7 +555,9 @@ void Animation_SetStateField5Bits2To3(struct DispatchObject *obj, u32 v)
 void Animation_SetStateField1dBit1(struct DispatchObject *obj, u32 v)
 {
     if (obj != 0 && obj->kind == 1) {
-        struct ChildDisplayFlags *state = (struct ChildDisplayFlags *)obj->target.child;
+        /* FAKEMATCH: the ordinary canonical byte mask keeps 40 bytes but
+           changes the mask/register order; retain the existing packed bit lane. */
+        struct ChildDisplayFlags *state = obj->target.child;
         state->field_1 = v;
     }
 }

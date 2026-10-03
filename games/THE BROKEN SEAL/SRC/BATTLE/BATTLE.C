@@ -4,12 +4,12 @@
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
 
-struct SpriteEntry *ResourceMetadata_RegisterFar(struct AnimationObject *context, s32 effect_id);
-void ResourceMetadata_UnregisterFar(struct AnimationObject *context, struct SpriteEntry *effect);
-void Animation_SetWorkEntryFar(struct SpriteEntry *effect, s32 entry_index);
+s32 ResourceMetadata_RegisterFar(struct AnimationObject *context, s32 effect_id);
+void ResourceMetadata_UnregisterFar(struct AnimationObject *context, s32 entry_handle);
+void Animation_SetWorkEntryFar(struct AnimationEntry *effect, s32 entry_index);
 
-void Object_SetMode(s32, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
+void Object_SetMode(struct MotionObject *, s32);
+void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *, s32);
 
 s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
 {
@@ -49,8 +49,8 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
  */
 s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
 {
-    struct SpriteEntry *old_effect;
-    struct SpriteEntry *effect;
+    struct AnimationEntry *old_effect;
+    struct AnimationEntry *effect;
     struct AnimationObject *context;
     struct MotionObject *owner;
     s32 effect_id;
@@ -60,7 +60,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
     if (record->cycle_timer >= 0)
         record->cycle_timer--;
 
-    old_effect = record->animation_entry;
+    old_effect = (struct AnimationEntry *)record->animation_entry;
     if (old_effect == 0) {
         if ((s16)record->active_conditions == 0)
             goto cooldown_expired;
@@ -106,16 +106,16 @@ update:
     }
 
     if (record->animation_entry != 0 && changed != 0) {
-        ResourceMetadata_UnregisterFar(context, record->animation_entry);
+        ResourceMetadata_UnregisterFar(context, (s32)record->animation_entry);
         record->animation_entry = 0;
     }
 
     if (effect_id >= 0 && changed != 0) {
-        effect = ResourceMetadata_RegisterFar(context, effect_id);
-        record->animation_entry = effect;
-        if (effect == (struct SpriteEntry *)-1)
+        effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, effect_id);
+        record->animation_entry = (struct SpriteEntry *)effect;
+        if (effect == (struct AnimationEntry *)-1)
             record->animation_entry = 0;
-        effect = record->animation_entry;
+        effect = (struct AnimationEntry *)record->animation_entry;
         if (effect != 0) {
             effect->priority = 3;
             Animation_SetWorkEntryFar(effect, 0);
@@ -148,6 +148,6 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
         value = 5 - value;
     }
 
-    Object_SetMode((s32)GetBattleObjectSlot(id)->object, value);
-    ObjectDispatch_ApplyValueToChildrenFar((s32)GetBattleObjectSlot(id)->object, (id & 3) + 14);
+    Object_SetMode(GetBattleObjectSlot(id)->object, value);
+    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, (id & 3) + 14);
 }

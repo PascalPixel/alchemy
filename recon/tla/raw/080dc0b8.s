@@ -20,4 +20,4 @@ Func_080dc0b8:
 	bne .L_080dc0c2
 	pop {pc}
 .L_080dc0d4:
-	.4byte Data_02003410
+	.4byte ResourceBlockOwners

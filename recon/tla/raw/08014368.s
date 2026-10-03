@@ -25,7 +25,7 @@ Func_08014368:
 .L_0801438c:
 	.4byte 0x0000ffff
 .L_08014390:
-	.4byte Data_02003410
+	.4byte ResourceBlockOwners
 .L_08014394:
 	.4byte ResourceTableEntries
 .L_08014398:

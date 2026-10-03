@@ -33,4 +33,4 @@ Resource_ClearSlotReferences:
 .L_0801426e:
 	pop {r5, pc}
 .L_08014270:
-	.4byte Data_02003410
+	.4byte ResourceBlockOwners

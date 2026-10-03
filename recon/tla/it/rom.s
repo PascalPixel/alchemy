@@ -233,7 +233,14 @@ AffineMatrix_BuildForEffect:
 	.type Func_080140d8, %function
 	.thumb_func
 Func_080140d8:
-	.incbin "baserom.gba", 0x00014104, 0x00000148
+	.incbin "baserom.gba", 0x00014104, 0x0000009c
+	.global ResourceTable_AllocateBlocks
+	.type ResourceTable_AllocateBlocks, %function
+	.thumb_func
+ResourceTable_AllocateBlocks:
+	.incbin "baserom.gba", 0x000141a0, 0x00000080
+	.size ResourceTable_AllocateBlocks, . - ResourceTable_AllocateBlocks
+	.incbin "baserom.gba", 0x00014220, 0x0000002c
 	.section .rom.0001424c, "ax"
 	.global Func_08014220
 	.type Func_08014220, %function

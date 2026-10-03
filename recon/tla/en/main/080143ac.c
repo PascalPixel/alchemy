@@ -1,48 +1,26 @@
-/* 2026-10-03 resource-record ownership closure: use COMMON VRAM_TAB.H's
-   two-halfword size/state and byte-offset record. Native VramBlock_LoadCached
-   writes the requested byte size at +0 and VRAM byte offset at +2; initialize
-   and reset retain their existing zero/0xffff state policies. Current EN
-   score 120/2; the prior load-order gap remains. This is a draft, with no new byte credit. */
-#include "RESOURCE.H"
-/*
- * Draft: Resource_FindFreeEntry does not yet match; ☀️'s C leaves two load
- * swaps (ldrh of the entry state before lsls of 0xffff).
- * Links as recon/tla/raw/080143ac.s.
+/* Draft: Resource_FindFreeEntry, complete EN extent 52 bytes.
+ * The 2026-10-03 record-ownership baseline scored 120/2 rows and retained
+ * load-order differences. Its private byte-offset/goto view was the same
+ * first-entry shaping now explicitly tagged FAKEMATCH in the maintained TBS
+ * implementation. That shape is not silently carried into this ordinary pass.
+ * One indexed scan uses the canonical record and free-offset sentinel.
+ * Retained ordinary score 1705/26: the single loop replaces the native
+ * separate first-entry test and subsequent scan, changing control flow,
+ * register allocation and extent. All six edition objects are identical:
+ * 40 bytes here versus the complete 52-byte native listing. The TBS header's
+ * 36-byte ordinary result is specific to that game's flags. No device was
+ * added; this semantic draft has no byte credit.
  */
-#include "TYPES.H"
-
+#include "RESOURCE.H"
 #include "VRAM_TAB.H"
 
 s32 Resource_FindFreeEntry(void)
 {
-  s32 free_slot;
-  s32 slot_index;
-  void *table_base;
-  int first_slot;
-  void *entry_cursor;
-  entry_cursor = (void *)((u32)ResourceTableEntries);
-  free_slot = 0x60;
-  first_slot = 0;
-  slot_index = first_slot;
-  table_base = (void *)((u32)ResourceTableEntries);
-  if ((*((u16 *)(((u8 *)table_base) + 2))) == 0xFFFF)
-  {
-    return first_slot;
-  }
-  loop_2:
-  slot_index += 1;
+    s32 slot;
 
-  entry_cursor += 4;
-  if (slot_index <= 0x5F)
-  {
-    if ((*((u16 *)(((u8 *)entry_cursor) - -2))) == 0xFFFF)
-    {
-      free_slot = slot_index;
-    } else
-    {
-      goto loop_2;
+    for (slot = 0; slot < VRAM_CACHE_ENTRY_COUNT; slot++) {
+        if (ResourceTableEntries[slot].offset == VRAM_CACHE_OFFSET_FREE)
+            return slot;
     }
-  }
-  return free_slot;
+    return VRAM_CACHE_ENTRY_COUNT;
 }
-

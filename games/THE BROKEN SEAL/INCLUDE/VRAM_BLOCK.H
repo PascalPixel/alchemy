@@ -5,16 +5,6 @@
 #include "RESOURCE.H"
 #include "VRAM_TAB.H"
 
-enum VramBlockLimits {
-    VRAM_CACHE_ENTRY_COUNT = 96,
-    VRAM_BLOCK_COUNT = 512,
-    VRAM_BLOCK_BYTES = 64,
-    VRAM_BLOCK_OWNER_FREE = 0xff,
-    VRAM_CACHE_OFFSET_FREE = 0xffff
-};
-
-extern u8 ResourceBlockOwners[VRAM_BLOCK_COUNT];
-
 /* Loads a table graphic into a VRAM cache slot, not a RAM destination. */
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot);
 

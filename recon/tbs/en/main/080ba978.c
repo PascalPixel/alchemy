@@ -1,132 +1,118 @@
-/* DRAFT (12 instructions differ), reworked 2026-10-02: same frame, same
- * registers throughout.
- * Left: the ROM reads the primary id once into r4 and copies it into a fresh
- * register before each of its three side tests (adds r3, r4, #0; cmp r3, #7);
- * here the tests compare r4 itself. Passing the id to a byte-parameter inline
- * predicate gives that copy in the same-side test (kept), but for the three
- * single tests it compares a shifted copy instead, and reading the field
- * afresh at each test moves the input out of r7. The cast after the angle
- * call is also scheduled one instruction later than in the ROM.
- * Settled: the child count is read in the copy loop's own test (the compiler
- * hoists it, which is why it sits in r12); one index serves both member
- * loops, which is what puts it in r4, saved round the calls; the primary id
- * is a local; the far target is a conditional expression inside the
- * three-quarter step; the same-side test picks one of two byte predicates
- * by the secondary's side.
- * Still literal: messages 0x855 "But the Psynergy was blocked!" and 0x856
- * "...But doesn't have enough PP!" need catalogue names, and the callback is
- * BattleEvent_Playback. */
+/* Draft: complete native extent [080ba978,080babdc), 612 bytes.
+ * Earlier 2026-10-02 work recorded 12 differing instructions with the native
+ * frame/register allocation. Byte predicates recovered the same-side copy
+ * but made shifted copies in three single side tests; rereading the actor
+ * moved the plan from r7. The post-angle cast was also scheduled late.
+ * The prior form kept one actor local, one index for both target loops,
+ * the child-count test in its loop and a conditional three-quarter target.
+ * Those are attempt history, not fresh proof. Scheduling-only byte wrappers
+ * are removed. The unsigned low-16 angle and signed-16 adjustment remain.
+ * EN message 0x855 is insufficient PP; 0x856 is blocked Psynergy. They still
+ * need catalogue names before edition adoption; no symbol is invented here.
+ * 2026-10-03 typed baseline: 612/612 bytes, local frame 88 and work sp+4;
+ * saved-register area 28/24 bytes (extra r9), total stack 116/112. Plan
+ * uses r8/r7 and mode r7/r10. Full relocation-normalized comparison has
+ * 540 differing bytes, not an aligned instruction score. All 25 call targets
+ * and their order agree. Both have 28 relocations; all eight pool words
+ * and their relocation positions agree.
+ * Instructions total 264 in both; stores are 9/10 and branches 62/63.
+ * The natural byte-view loop rereads count instead of caching count - 1;
+ * its first actor-index spill disappears. Direct side tests omit native
+ * boolean/copy sequences, and register allocation and scheduling differ.
+ * Native zero return is retained; production's discarded void declaration
+ * still needs closure before adoption. Stopped after this single baseline,
+ * with no device, scheduling follow-up or matching-C credit.
+ */
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
+#include "BATTLE_WORK.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_PRESENTATION.H"
+#include "ANIMSPR.H"
+#include "OBJDISP.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "FIXED_MATH.H"
 
-struct PresentationInput { u8 primary; u8 reserved_01; u8 secondary; u8 reserved_03[0x4d]; s32 coordinate; u8 reserved_54[4]; u32 flags; s32 script; };
-struct PresentationWork {
-    s32 flags;
-    s32 secondary_is_low_id;
-    s32 primary_id;
-    s32 secondary_id;
-    s32 initial_value;
-    s32 entry_count;
-    s32 battle_mode;
-    s32 scripted;
-    s32 reserved_20;
-    s16 members[8];
-    u8 values[8][4];
-};
-struct MotionEntry { u8 reserved_00[39]; u8 count; void *children[1]; };
-struct MotionChild { u8 reserved_00[5]; u8 value; };
 extern struct BattlePresentationTransition *gTransitionWork;
-extern u8 *gBattleWork;
-s32 Scheduler_AddOrUpdateCallback(void *, s32);
-void Object_SetMode(void *, s32);
-void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
-void UiWindow_DrawPartyStatusContentsFar(s32);
-void Actor_ResetMotionAtAnchor(s32);
-s32 BattlePres_BuildTargetList(void *, struct PresentationWork *);
-u32 BattleEv_Push(u32, u32);
-s32 BattleEventRuntime_WaitForReady(void);
-void BattlePres_SetActorModes(u16 *, s32);
-void BattleFx_PlayUnitElementEffect(s32, s32, s32, s32);
+u16 ArcTan2(s32 x, s32 y);
+void Object_SetMode(void *object, s32 mode);
+void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 value);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
+void Actor_ResetMotionAtAnchor(s32 actor);
+void BattlePres_SetActorModes(u16 *actors, s32 mode);
+void BattleFx_PlayUnitElementEffect(s32 actor, s32 kind, s32 mode, s32 variant);
 void BattlePres_RunWithZeroArguments(void);
-void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
-void BattleFx_DispatchModeFar(struct PresentationWork *);
-void Audio_PlayCue(s32);
+void BattleFx_DispatchByIdRangeFar(s32 *work);
+void BattleFx_DispatchModeFar(s32 *work);
+void AudioCommand_PlayFar(s32 cue);
+void BattleEvent_Playback(void);
 
-static inline s32 IsParty(u8 id)
+s32 Func_080ba978(struct BattlePlan *plan, s32 mode)
 {
-    return id <= 7;
-}
-
-static inline s32 IsEnemy(u8 id)
-{
-    return id > 7;
-}
-
-s32 Func_080ba978(struct PresentationInput *input, s32 flags)
-{
-    struct PresentationWork work;
+    struct BattlePresentationWork work;
     struct BattlePresentationTransition *transition = gTransitionWork;
     struct MotionObject *object;
     s32 scripted;
     s32 i;
 
-    if (input->flags & 0x40000) {
-        transition->target_yaw = input->primary <= 7 ? -0x2000 : 0x5000;
+    if (plan->presentation_flags & 0x40000) {
+        transition->target_yaw = plan->actor_id <= 7 ? -0x2000 : 0x5000;
         transition->frames = 60;
     } else {
-        struct MotionObject *actor = GetBattleObjectSlot(input->primary)->object;
+        struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
-        u32 primary = input->primary;
+        u32 primary = plan->actor_id;
         s32 current = angle - 0x1800;
         if (primary > 7)
             current = angle + 0x1800;
         current = (s16)current;
         current += ((primary <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        if (input->secondary <= 7 ? IsParty(primary) : IsEnemy(primary))
+        if (plan->target_ids[0] <= 7 ? primary <= 7 : primary > 7)
             current = primary <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;
     }
-    if (input->flags & 0x80000) {
-        transition->target_yaw = input->primary <= 7 ? -0x2000 : 0x2000;
+    if (plan->presentation_flags & 0x80000) {
+        transition->target_yaw = plan->actor_id <= 7 ? -0x2000 : 0x2000;
         transition->frames = 60;
     }
 
-    BattlePres_BuildTargetList(input, &work);
-    scripted = flags & 1;
+    BattlePres_BuildTargetList(plan, &work);
+    scripted = mode & 1;
     if (scripted)
-        work.scripted = 1;
+        work.flags = 1;
     BattlePres_SetActorModes(0, 0);
-    UiWindow_DrawPartyStatusContentsFar(gBattleWork[65] & ~1);
-    object = GetBattleObjectSlot(work.primary_id)->object;
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode & ~1);
+    object = GetBattleObjectSlot(work.actor)->object;
     Object_SetMode(object, 3);
-    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-    Audio_PlayCue(0x9a);
-    if (flags & 2)
-        BattleFx_PlayUnitElementEffect(work.primary_id, input->coordinate, 1, 0);
+    ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)object, 16);
+    AudioCommand_PlayFar(0x9a);
+    if (mode & 2)
+        BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 1, 0);
     else if (!scripted)
-        BattleFx_PlayUnitElementEffect(work.primary_id, input->coordinate, 0, 0);
-    if (input->secondary <= 7)
-        work.secondary_is_low_id = 1;
+        BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
+    if (plan->target_ids[0] <= 7)
+        work.side = 1;
     else
-        work.secondary_is_low_id = 0;
+        work.side = 0;
 
     {
-    for (i = 0; i != work.entry_count; i++) {
-        struct MotionEntry *entry = GetMotionRecord(
-            GetBattleObjectSlot(work.members[i])->object, 0);
-        s32 j;
-        for (j = 0; j != entry->count - 1; j++)
-            work.values[i][j] =
-                ((struct MotionChild *)entry->children[j])->value;
+        /* Child parameters reuse the tail of the actor storage, starting
+           at work + 0x34, with four bytes reserved per target. */
+        u8 *params = (u8 *)&work.actors[8];
+
+        for (i = 0; i != work.count; i++) {
+            struct AnimationObject *animation = GetMotionRecord(
+                GetBattleObjectSlot(work.actors[i])->object, 0);
+            s32 j;
+
+            for (j = 0; j != animation->count - 1; j++)
+                params[i * 4 + j] = animation->entries[j]->param;
+        }
     }
-    }
-    if (input->script != 0) {
-        if (input->script == 1) {
-            BattleEv_Push(0, input->primary);
+    if (plan->failure != 0) {
+        if (plan->failure == 1) {
+            BattleEv_Push(0, plan->actor_id);
             BattleEv_Push(4, 0x856);
         } else {
             BattleEv_Push(4, 0x855);
@@ -134,21 +120,19 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();
     } else {
-        Scheduler_AddOrUpdateCallback((void *)0x080bd899, 0xc80);
-        if (work.flags) {
-            if (input->flags & 0x4000)
-                BattleFx_DispatchByIdRangeFar(&work);
+        Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+        if (work.kind) {
+            if (plan->presentation_flags & 0x4000)
+                BattleFx_DispatchByIdRangeFar((s32 *)&work);
             else
-                BattleFx_DispatchModeFar(&work);
+                BattleFx_DispatchModeFar((s32 *)&work);
         } else {
             BattlePres_RunWithZeroArguments();
         }
         BattleEventRuntime_WaitForReady();
         Object_SetMode(object, 1);
-        {
-        for (i = 0; i != work.entry_count; i++)
-            Actor_ResetMotionAtAnchor(work.members[i]);
-        }
+        for (i = 0; i != work.count; i++)
+            Actor_ResetMotionAtAnchor(work.actors[i]);
     }
     return 0;
 }

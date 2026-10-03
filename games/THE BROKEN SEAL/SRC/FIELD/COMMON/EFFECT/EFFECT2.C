@@ -6,6 +6,8 @@
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#include "MAP_SCROLL.H"
+#include "FXBLEND.H"
 
 void Resource_DecodeByteLz(const void *src, void *dst);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
@@ -19,7 +21,7 @@ struct Mote {
     s32 x;
     s32 y;
     s32 z;
-    s32 unused;
+    s32 unknown_18;
     u16 phase;
     u16 pad;
 };
@@ -28,9 +30,8 @@ struct MoteWork {
     s32 resource;
     s32 vram;
     struct Mote motes[32];
+    u8 unknown_408[8];
 };
-
-struct Blend { u16 cnt; u16 alpha; u16 y; };
 
 extern const u8 FieldFx_MoteTiles[];
 
@@ -65,26 +66,16 @@ struct SparkleWork {
     s32 stopped;
 };
 
+LAYOUT_SIZE_GUARD(MoteWork_Size, struct MoteWork, 0x410);
+LAYOUT_SIZE_GUARD(SparkleWork_Size, struct SparkleWork, 0x410);
+
 struct SparkleFrame {
     s16 dy;
     u16 tile;
 };
 
-struct MapPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct MapWork {
-    struct MapPosition *leader;
-    u8 padding04[0xe0];
-    s32 camera_x;
-    s32 camera_z;
-};
-
 extern struct SparkleWork *gParticleWork;
-#define SparkleMap (*(struct MapWork **)((u8 *)&gParticleWork - 84))
+#define SparkleMap (*(struct MapScrollWork **)((u8 *)&gParticleWork - 84))
 
 extern unsigned long Data_03001e40;
 extern const struct SparkleFrame Data_0809f024[];
@@ -117,10 +108,6 @@ struct DustWork {
     u8 pad408[8];
 };
 
-struct FieldView {
-    s32 *leader;
-};
-
 extern const u8 Data_080a00b8[];
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Resource_DecodeByteLz(const void *source, void *destination);
@@ -128,6 +115,8 @@ s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void FieldEffect_UpdateSparkles(void);
+
+LAYOUT_SIZE_GUARD(DustWork_Size, struct DustWork, 0x410);
 
 static __inline__ void ClearDustWork(struct DustWork *work)
 {
@@ -145,12 +134,6 @@ void BattleFx_UpdateStormFlash(void);
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
-struct EffectBlockState {
-    u8 filler[0x1F80];
-    u16 field_1f80;
-    u16 field_1f82;
-};
-
 /* Each frame, draws the motes that are on screen, rising as they age and
    shrinking through three sizes, and sets up to eight spent ones down again
    at random spots on the ground around the leader. Flag 0x166 holds every
@@ -162,7 +145,7 @@ void Unnamed_08094bbc(void)
      * stays an unsigned long, a type no sparkle field shares, so its read
      * does not keep the size store apart from the flip store. */
     struct SparkleWork *work = gParticleWork;
-    struct MapWork *map = SparkleMap;
+    struct MapScrollWork *map = SparkleMap;
     u32 spawned = 0;
     u32 i;
     struct Sparkle *mote = work->sparkles;
@@ -172,7 +155,7 @@ void Unnamed_08094bbc(void)
         s32 y;
 
         if (--mote->timer != 0xffff) {
-            s32 *camera = &map->camera_x;
+            s32 *camera = &map->view_x;
             s32 camera_x = camera[0];
             s32 camera_z = camera[1];
             u16 age = mote->timer;
@@ -209,10 +192,10 @@ void Unnamed_08094bbc(void)
             }
         }
         if (spawned < 8 && mote->timer == 0) {
-            struct MapPosition *leader = map->leader;
+            s32 *leader = map->origin;
 
-            x = leader->x + (Random16() << 8) - 0x800000;
-            y = leader->z + (Random16() << 8) - 0x800000;
+            x = leader[0] + (Random16() << 8) - 0x800000;
+            y = leader[2] + (Random16() << 8) - 0x800000;
             mote->pos_z = y;
             mote->pos_x = x;
             mote->height = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
@@ -243,7 +226,7 @@ void FieldMotes_Start(void)
     work->vram = VramBlock_LoadCached(work->resource, 0x300, tiles);
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
-        s32 *pos = *((s32 **)gMapWork[0]);
+        s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
         register s32 *p asm("r1") = &mote->state; /* FAKEMATCH: steps the fields through r1 */
         s32 x, z;
         *p++ = 0;
@@ -274,13 +257,13 @@ void FieldEffect_UpdateSparkles(void)
     struct SparkleWork *work;
     u32 spawned;
     u32 i;
-    struct MapWork *map;
+    struct MapScrollWork *map;
     s32 *camera;
     s32 spawn_x;
     s32 spawn_z;
     struct Sparkle *sparkle;
     const u16 *frame;
-    struct MapPosition *leader;
+    s32 *leader;
     s32 camera_x;
     s32 camera_z;
     s32 sx;
@@ -294,7 +277,7 @@ void FieldEffect_UpdateSparkles(void)
     work = gParticleWork;
     spawned = 0;
     map = SparkleMap;
-    camera = &map->camera_x;
+    camera = &map->view_x;
     spawn_x = 0;
     spawn_z = 0;
     i = 0;
@@ -337,9 +320,9 @@ void FieldEffect_UpdateSparkles(void)
                 spawned++;
                 delay += 4;
             } else if ((Random16() & 255) == 0) {
-                leader = map->leader;
-                spawn_x = leader->x + (Random16() << 8) - 0x800000;
-                spawn_z = leader->z + (Random16() << 8) - 0x800000;
+                leader = map->origin;
+                spawn_x = leader[0] + (Random16() << 8) - 0x800000;
+                spawn_z = leader[2] + (Random16() << 8) - 0x800000;
                 sparkle->pos_x = spawn_x;
                 sparkle->pos_z = spawn_z;
                 sparkle->height = Map_GetTerrainHeightFar(0, sx >> 16, sy >> 16) << 16;
@@ -376,7 +359,7 @@ void FieldEffect_InitSparkles(void)
     clear = 0;
 loop:
     {
-        struct FieldView *view = gMapWork[0];
+        struct MapScrollWork *view = gMapWork[0];
         /* FAKEMATCH: keeps the leader pointer in r2 */
         register s32 *leader asm("r2");
         union DustWord *attr;
@@ -387,7 +370,7 @@ loop:
         asm volatile ("" : : "r"(view));
         attr = &p->link;
         (attr++)->link = (void *)clear;
-        leader = view->leader;
+        leader = view->origin;
         (attr++)->value = 0x40000400;
         attr->value = 0xd400;
         x = leader[0];
@@ -408,53 +391,52 @@ loop:
    twelve-frame blend, then schedules the blend. */
 void BattleFx_StartTwelveFrameBlend(void)
 {
-    u8 *work;
+    struct FieldBlendWork *work;
     struct BattleEffectBuffers *buffers;
     volatile u32 zero;
     s32 value;
     s32 one;
-    u8 *target;
     u16 *frames;
 
-    work = Runtime_AllocateBlock(30, 0x1f88);
+    work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
     buffers = Data_03001ed0;
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x850007e2, (volatile u32 *)0x040000d4);
     BattleFx_BuildBuffer(0x10003, buffers, work, 1);
-    BattleFx_BuildBuffer(0x10005, buffers, work + 0xa80, 1);
-    BattleFx_InterpolateBuffers((s16 *)(work + 0xa80), (s16 *)work, (s16 *)(work + 0x1500), 12);
+    BattleFx_BuildBuffer(0x10005, buffers, work->to, 1);
+    BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
     /* FAKEMATCH: the halfword constants pass through an int so GCC builds them
-       with mov instead of loading them from the pool, and the block pointer
-       itself is advanced to the second count. */
-    frames = (u16 *)(work + 0x1f80);
+       with mov instead of loading them from the pool, and the halfword pointer
+       itself is advanced to the enabled field. */
+    frames = (u16 *)&work->timer;
     value = 600;
     *frames = value;
-    work += 0x1f82;
+    frames = (u16 *)&work->enabled;
     one = 1;
-    *(u16 *)work = one;
+    *frames = one;
     Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }
 
 void BattleFx_SetBlock30ValuesMaxZero(void)
 {
-    struct EffectBlockState *state = Runtime_AllocateBlock(30, 0x1F88);
-    state->field_1f80 = 0x7FFF;
-    state->field_1f82 = 0;
+    struct FieldBlendWork *state = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+    state->timer = 0x7FFF;
+    state->enabled = 0;
 }
 
 void BattleFx_SetBlock30Values12Zero(void)
 {
-    struct EffectBlockState *state = Runtime_AllocateBlock(30, 0x1F88);
-    state->field_1f80 = 12;
-    state->field_1f82 = 0;
+    struct FieldBlendWork *state = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+    state->timer = 12;
+    state->enabled = 0;
 }
 
 void BattleFx_SetBlock30Values128One(void)
 {
-    struct EffectBlockState *state = Runtime_AllocateBlock(30, 0x1F88);
-    state->field_1f80 = 128;
-    state->field_1f82 = 1;
+    struct FieldBlendWork *state = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
+    state->timer = 128;
+    state->enabled = 1;
 }
 
 /* Builds the buffers for two effect sources and the per-frame step between
@@ -463,28 +445,28 @@ void BattleFx_SetBlock30Values128One(void)
    the frame count and position at +0x1f80. */
 void BattleFx_StartBufferBlend(s32 from, s32 to)
 {
-    u8 *work;
+    struct FieldBlendWork *work;
     struct BattleEffectBuffers *buffers;
     volatile u32 zero;
     s32 value;
-    u8 *target;
+    s16 *target;
     u16 *frames;
 
-    work = Runtime_AllocateBlock(30, 0x1f88);
+    work = Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
     buffers = Data_03001ed0;
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x850007e2, (volatile u32 *)0x040000d4);
     BattleFx_BuildBuffer(from, buffers, work, 1);
-    target = work + 0xa80;
+    target = work->to;
     BattleFx_BuildBuffer(to, buffers, target, 1);
-    BattleFx_InterpolateBuffers((s16 *)target, (s16 *)work, (s16 *)(work + 0x1500), 12);
+    BattleFx_InterpolateBuffers(target, work->from, work->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
-    frames = (u16 *)(work + 0x1f80);
+    frames = (u16 *)&work->timer;
     /* FAKEMATCH: the halfword constants pass through an int so GCC builds
        them with mov instead of loading them from the pool. */
     value = 120;
     *frames = value;
     value = 0;
-    *(u16 *)(work + 0x1f82) = value;
+    work->enabled = value;
     Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }

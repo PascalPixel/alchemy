@@ -1,3 +1,5 @@
+#include "ANIMSPR.H"
+#include "FIELD_EVENT.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "GLOBAL_CELLS.H"
@@ -14,25 +16,12 @@ void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 extern u8 gPlayerObjectId[];
 
-struct ArcObject {
-    u8 pad00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 pad14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 pad20[0x44];
-    u16 step;
-    u8 pad66[2];
-    struct ArcObject *link;
-};
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
     struct BattleFxScene *scene = gEffectWork;
     struct ObjectRuntime *object;
-    u8 *child;
+    struct AnimationObject *child;
     u8 flag;
 
     object = Object_CreateFar(kind, x, y, z);
@@ -46,7 +35,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
         object->flags = flag;
         object->unknown_23 = flag;
         child = object->animation;
-        child[9] &= ~(flag + 8);
+        child->part[0].attr &= ~((flag + 8) >> 2);
         ObjectDispatch_SetSingleChildField26Far(object, 0);
         Object_SetMode(object, 1);
     }
@@ -72,13 +61,13 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
     } while (object_id <= 0x42);
 }
 
-void BattleFx_UpdateScaledArcObjectA(struct ArcObject *obj)
+void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 {
-    struct ArcObject *link;
+    struct FieldActor *link;
     s32 v;
 
-    link = obj->link;
-    v = (s16)++obj->step;
+    link = *(struct FieldActor **)&obj->unknown_68[0];
+    v = (s16)++obj->unknown_64;
     if (v > 31) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
         return;
@@ -86,18 +75,18 @@ void BattleFx_UpdateScaledArcObjectA(struct ArcObject *obj)
     v = Trig_Sin(v << 10);
     obj->scale_x = v;
     obj->scale_y = v;
-    obj->x = link->x;
-    obj->y += 0x10000;
-    obj->z = link->z + (0x10000 - v) * 5 + 0x90000;
+    obj->x.fixed = link->x.fixed;
+    obj->y.fixed += 0x10000;
+    obj->z.fixed = link->z.fixed + (0x10000 - v) * 5 + 0x90000;
 }
 
-void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj)
+void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj)
 {
-    struct ArcObject *link;
+    struct FieldActor *link;
     s32 v;
 
-    link = obj->link;
-    v = (s16)++obj->step;
+    link = *(struct FieldActor **)&obj->unknown_68[0];
+    v = (s16)++obj->unknown_64;
     if (v > 31) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
         return;
@@ -105,7 +94,7 @@ void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj)
     v = Trig_Sin(v << 10);
     obj->scale_x = v;
     obj->scale_y = -v;
-    obj->x = link->x;
-    obj->y += 0x10000;
-    obj->z = link->z - (0x10000 - v) * 5 + 0x100000;
+    obj->x.fixed = link->x.fixed;
+    obj->y.fixed += 0x10000;
+    obj->z.fixed = link->z.fixed - (0x10000 - v) * 5 + 0x100000;
 }

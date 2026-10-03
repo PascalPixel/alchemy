@@ -7,8 +7,6 @@
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
 #include "FLASH.H"
-#include "GLOBAL_CELLS.H"
-
 
 struct DmaRegisters {
     u32 source;
@@ -64,6 +62,13 @@ LAYOUT_OFFSET_GUARD(SaveSummary_Checksum, struct SaveSummary, checksum, 0x3c);
 LAYOUT_OFFSET_GUARD(SaveWorkspace_Slot, struct SaveWorkspace, slot, 0x40);
 LAYOUT_OFFSET_GUARD(SaveWorkspace_Summary, struct SaveWorkspace, summary, 0x1040);
 
+LAYOUT_SIZE_GUARD(SaveSlotHeader_Size, struct SaveSlotHeader, 0x10);
+LAYOUT_SIZE_GUARD(SaveWorkspace_Size, struct SaveWorkspace, 0x1100);
+LAYOUT_OFFSET_GUARD(SaveWorkspace_Records, struct SaveWorkspace, record_id, 0x10);
+LAYOUT_OFFSET_GUARD(SaveWorkspace_Sequences, struct SaveWorkspace, sequence, 0x20);
+LAYOUT_OFFSET_GUARD(SaveSummary_FlagCount, struct SaveSummary, flag_count, 0x32);
+LAYOUT_OFFSET_GUARD(SaveSummary_Unknown38, struct SaveSummary, unknown_38, 0x38);
+
 extern struct SaveWorkspace *gSaveWorkspace;
 
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
@@ -88,20 +93,33 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
    and Left are held; the title menu then offers Send. */
 extern s16 gTitleSendOptionEnabled;
 
-void *Func_080048f4(s32 kind, s32 size);
-void WaitFrames(s32 frames);
-s32 _call_via_r3(s32, s32, s32, s32);
-s32 Flash_VerifySector(u16 sector, s32 source);
-s32 Func_080058ac(s32 index);
-u32 Func_08005810(s32 record_id);
-s32 Func_08005920(s32 record_id, void *source);
-u32 Func_08005a78(s32 record_id, void *destination);
-u32 Func_08005ac0(s32 record_id);
-s32 Func_08005ae0(void);
-u32 Func_08005b24(s32 record_id);
-s32 Func_08005b64(s32 index);
-s32 Func_08005c08(u8 *left, u8 *right, s32 count);
-u32 Func_08005c2c(s32 record_id);
-s32 Func_08005c68(void);
+/* Save records share sixteen flash sectors and three visible summaries. */
+s32 SaveState_InitializeWorkspace(void);
+void SaveState_ReleaseWorkspace(void);
+u32 SaveState_SelectWriteSlot(s32 record_id);
+u32 SaveState_WriteWorkspaceSlot(u16 sector);
+s32 SaveState_ReadSlotAndCheckChecksum(s32 sector);
+u16 SaveState_EraseSlotSector(u16 sector);
+s32 SaveState_WriteRecord(s32 record_id, void *source);
+u32 SaveState_ReadRecordPayload(s32 record_id, void *destination);
+u32 SaveState_DeleteRecord(s32 record_id);
+s32 SaveState_ChecksumWorkspace(void);
+u32 SaveState_FindLatestSlot(s32 record_id);
+s32 SaveState_InvalidateSlot(s32 sector);
+s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
+u32 SaveState_GetLatestSequence(s32 record_id);
+s32 SaveState_LoadSummaryRecords(void);
+u32 SaveState_FindFreeSummarySlot(void);
+s32 SaveState_CountRecordsExcludingFlagged(s32 exclude_flagged);
+s32 SaveState_ScanRecordFlags(void);
+u32 SaveState_BuildSummaryHeader(void);
+s16 SaveState_WriteCurrentSlotPair(void);
+s32 SaveState_WriteSlotPair(s32 slot);
+s32 SaveState_ProcessSelectedSlot(void);
+s32 SaveState_ConfirmAndProcessSelectedSlot(void);
+s32 SaveState_CopySlotPair(void);
+s32 SaveState_DeleteSelectedSlot(void);
+s32 SaveState_LoadRecordIntoWork(s32 mode);
+s32 Save_WriteSelectedSlot(void);
 
 #endif

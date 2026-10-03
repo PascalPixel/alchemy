@@ -1,5 +1,6 @@
 #include "TIMED_EVENTS.H"
 #include "CALL.H"
+#include "FXBLEND.H"
 
 extern u8 MsgHaidiaDidYouHearAboutDora[];
 extern u8 MsgHaidiaLetsScareSukuretasVisitors[];
@@ -20,11 +21,6 @@ extern u8 MsgHaidiaValeFeelsEmpty[];
 extern u8 MsgHaidiaWhenDidYouComeBack[];
 extern u8 MsgHaidiaYouCameBack[];
 extern u8 MsgHaidiaYoureLeavingAgainSoon[];
-
-struct FlashCueWork {
-    u8 unknown_0000[0x1f84];
-    s16 alternate_cue;
-};
 
 s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
@@ -256,7 +252,7 @@ s32 Scene_RunSupplementalSequenceOne(void)
         Actor_SetPosition(21, 0, 0);
         Actor_SetPosition(22, 0, 0);
         BattleFx_StartTwelveFrameBlend();
-        ((struct FlashCueWork *)scene[3])->alternate_cue = 1;
+        ((struct FieldBlendWork *)scene[3])->loud = 1;
         BattleFx_SetBlock30Values12Zero();
         Engine_TaskWait(30);
         Engine_EventOpenScreen();

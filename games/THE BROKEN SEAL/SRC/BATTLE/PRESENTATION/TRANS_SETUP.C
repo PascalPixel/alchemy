@@ -4,15 +4,13 @@
 #include "SCENE.H"
 #include "BATTLE_PRESENTATION.H"
 
-extern u8 gCameraWork[];
 
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
 {
-    struct BattleCamera *scene = *(struct BattleCamera **)gCameraWork;
+    struct BattleCamera *scene = gCameraWork;
     s32 *pos = scene->pos;
-    s32 *hud = (s32 *)&gProjection;
     s32 scale = (zoom << 16) / 100;
     s32 render_bounds[3];
     s32 measured_bounds[3];
@@ -43,8 +41,8 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom)
     render_bounds[1] = 0;
     render_bounds[2] = span;
     Iwram_TransformVector(render_bounds, (s32 *)scene);
-    hud[3] = 120;
-    hud[4] = 120;
+    gProjection.center_x = 120;
+    gProjection.center_y = 120;
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)scene, (s32)pos);
     Render_ProjectPoint(source_bounds, measured_bounds);

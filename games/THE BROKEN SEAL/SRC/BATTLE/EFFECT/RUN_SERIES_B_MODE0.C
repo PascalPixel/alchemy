@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -186,7 +187,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     Audio_PlayCue(142);
 
     for (frame = 0; frame != work->effect->count * 8 + 108; frame++) {
-        s32 facing = (s32)WORK_SLOT(12);
+        struct BattleCamera *camera = WORK_SLOT(12);
 
         if (frame == 80)
             BattleEventRuntime_BeginPhaseFar(0);
@@ -215,7 +216,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
             if (frame == member * 8 + 80)
                 Audio_PlayCue(212);
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             point[0] = object->x;
             point[1] = height;
             point[2] = object->z;

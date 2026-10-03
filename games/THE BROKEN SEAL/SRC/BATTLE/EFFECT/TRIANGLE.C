@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -66,7 +67,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     void *canvas;
     s32 frame;
     s32 member;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 shift;
     u8 *graphics;
     u8 *palette;
@@ -82,7 +83,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    facing = *(s32 *)(gWorkSlot + 12);
+    camera = gWorkSlot[12];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     if (work->effect->unknown_001c == 1)
@@ -135,7 +136,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
             object = *GetBattleObjectSlotFar(work->effect->actors[member]);
             if (tick >= 0 && tick < 96) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
                 vector.x = object->x;
                 vector.y = object->y;
                 vector.z = object->z;
@@ -207,7 +208,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     s32 frame;
     DrawRectangle draw[2];
     s32 member;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 shift;
     u8 *graphics;
     u8 *palette;
@@ -223,7 +224,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    facing = *(s32 *)(gWorkSlot + 12);
+    camera = gWorkSlot[12];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000020 = 0x100;
@@ -259,7 +260,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
             object = *GetBattleObjectSlotFar(work->effect->actors[member]);
             if (tick >= 0 && tick < 96) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
                 vector.x = object->x;
                 vector.y = object->y;
                 vector.z = object->z;

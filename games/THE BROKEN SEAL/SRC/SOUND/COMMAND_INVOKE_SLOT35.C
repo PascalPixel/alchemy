@@ -1,9 +1,8 @@
-#include "TYPES.H"
+#include "AUDIO_ENGINE.H"
 
-/* Sound_CommandTable (0x02004000) slot 35 */
-extern void (*Data_0200408c)(s32);
+/* These table entries use the library's one-word work-block transport. */
 
 void AudioCommand_InvokeSlot35(s32 argument)
 {
-    Data_0200408c(argument);
+    ((void (*)(s32))Sound_CommandTable[35])(argument);
 }

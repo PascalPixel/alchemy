@@ -1,3 +1,6 @@
+#include "MAP_SCROLL.H"
+#include "EVENT_RUNTIME.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
 #include "TYPES.H"
 #include "SCRIPT_MOTION.H"
 #include "FX_SCENE.H"
@@ -41,13 +44,7 @@ void BattleFx_CycleObjectValueByCounter();
 #define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 extern u8 MsgAbilityAnnounce[];
 
-struct BattleSceneBuffers {
-    u8 *scene;
-    u8 unknown_04[16];
-    u8 *work;
-};
 
-extern struct BattleSceneBuffers Data_03001ebc;
 extern s32 Data_03001e40;
 extern const s32 Data_080a0108[];
 s32 GameFlag_TestFar(s32);
@@ -145,14 +142,14 @@ void EventObject_Initialize(void)
     s32 event_value;
     s32 event_index;
     void *event_object;
-    void *event_state;
+    struct BattleFxScene *event_state;
     void *render_state;
 
     event_state = *(void **)Ram_EffectWork;
     render_state = *(void **)Ram_EventWork;
     zero = 0;
-    event_object = *(void **)((u8 *)event_state + 0x10);
-    event_value = (s32)(*(s16 *)((u8 *)(event_state) + 0x1C));
+    event_object = event_state->main_object;
+    event_value = (s16)event_state->action;
     event_index = event_value;
     Object_SetMode(event_object, 0x14);
     FIELD_AT_OFFSET(event_object, u32 *, 0x38) = (s32)*(s32 *)((u8 *)(event_object) + 8);
@@ -161,22 +158,22 @@ void EventObject_Initialize(void)
     FIELD_AT_OFFSET(event_object, u32 *, 0x24) = 0;
     FIELD_AT_OFFSET(event_object, u32 *, 0x28) = 0;
     *(s32 *)((u8 *)(event_object) + 0x2C) = 0;
-    if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x22) != 0) {
+    if ((s8)event_state->visible != 0) {
         Audio_PlayCue(212);
         FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_1;
     }
-    if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x23) != 0) {
+    if ((s8)event_state->active != 0) {
         ObjectGroup_SetActionForOthers(event_object, 1, 0);
         UiWork_PushValueSlotFar((s32)event_index, 4);
-        if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x21) != 0) {
-            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+        if ((s8)event_state->mode != 0) {
+            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)event_state->message_mode);
         } else {
-            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)*(s8 *)((u8 *)(event_state) + 0x71C));
+            UiText_ShowPositionedMessageAndWaitFar((void *)MsgAbilityAnnounce, (s32)event_state->message_mode);
         }
         ObjectGroup_SetActionForOthers(event_object, 0, 0x10);
     }
     if (GameFlag_TestFar(0x140) != 0) {
-        if ((s8)FIELD_AT_OFFSET(event_state, s8 *, 0x22) != 0) {
+        if ((s8)event_state->visible != 0) {
             FIELD_AT_OFFSET(event_object, s32 *, 0x6C) = CALLBACK_2;
         }
         Object_SetMode(event_object, 0x15);
@@ -189,15 +186,15 @@ void EventObject_Initialize(void)
 void BattleEffect_InitializeSharedScene(void)
 {
     u8 *scene;
-    u8 *work;
+    struct BattleEffectBuffers *work;
     s32 no;
 
-    scene = Data_03001ebc.scene;
-    work = Data_03001ebc.work;
-    Dma_Set(work + 0x1340, scene + 0x776, 0x84000150, (volatile u32 *)0x040000d4);
+    scene = (u8 *)Data_03001ebc;
+    work = Data_03001ed0;
+    Dma_Set(&work->target[0x2a0], scene + 0x776, 0x84000150, (volatile u32 *)0x040000d4);
     if (*(s16 *)(scene + 0xcb8) == 0)
-        Dma_Set(work + 0xe00, scene + 0x236, 0x84000150, (volatile u32 *)0x040000d4);
-    Dma_Set(work + 0xe00, work + 0x380, 0x840002a0, (volatile u32 *)0x040000d4);
+        Dma_Set(work->target, scene + 0x236, 0x84000150, (volatile u32 *)0x040000d4);
+    Dma_Set(work->target, work->current, 0x84000000 | (sizeof work->current / 4), (volatile u32 *)0x040000d4);
 
     no = Data_03001e40 & 7;
     if (GameFlag_TestFar(0x148)) no = 0;
@@ -217,7 +214,7 @@ void BattleFx_PrepareBufferInterpolation(void)
     s32 value;
     u8 *state;
 
-    state = *(u8 **)((u32)&Data_03001ebc);
+    state = (u8 *)Data_03001ebc;
     value = (s32)(state + 0x236);
     BattleFx_ApplyColorToTargetBuffer(value, 2);
     if (FIELD_AT_OFFSET(state, s16 *, 0xCB8) != 0) {
@@ -234,9 +231,9 @@ void BattleFx_PrepareBufferInterpolation(void)
    into z. Either way the height is cleared. */
 void Camera_WorldToScreen(struct EffectVector *position)
 {
-    u8 **data = &Data_03001ebc;
+    struct EventRuntime **data = (struct EventRuntime **)&Data_03001ebc;
 
-    if (*(s16 *)(*data + 0x19e) == 3) {
+    if ((*data)->mode_19e == 3) {
         struct EffectVector result;
 
         Render_ProjectPoint(position, &result);
@@ -244,9 +241,9 @@ void Camera_WorldToScreen(struct EffectVector *position)
         position->z = result.y << 16;
         position->y = 0;
     } else {
-        u8 *state = *(u8 **)((u8 *)data - 76);
-        s32 x = *(s32 *)(state + 228) & 0xffff0000;
-        s32 z = *(s32 *)(state + 232) & 0xffff0000;
+        struct MapScrollWork *state = *(struct MapScrollWork **)((u8 *)data - 76);
+        s32 x = state->view_x & 0xffff0000;
+        s32 z = state->view_y & 0xffff0000;
 
         position->x -= x;
         position->z -= position->y;

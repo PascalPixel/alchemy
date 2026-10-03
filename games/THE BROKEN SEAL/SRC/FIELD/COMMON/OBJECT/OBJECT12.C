@@ -1,11 +1,13 @@
-#include "B5_CONTEXT.H"
+#include "BATTLE_SESSION.H"
+#include "BATTLE_EFFECT_WORK.H"
 #include "TYPES.H"
 #include "ANIMSPR.H"
 
 void *GetMotionRecordFar(void *, s32);
 s32 BattleMotion_GetSlotField14Far(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
-extern u32 gBattleFxWork;
+extern struct BattleEffectWork *gBattleFxWork;
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32);
 
 s32 BattleFx_BeginTiledCanvas(s32);
 s32 BattleFx_EndCanvasLayer();
@@ -13,22 +15,20 @@ s32 BattleFx_EndCanvasLayer();
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)
 {
-    struct B5Context *set;
+    struct BattleObjectSlot *set;
     struct AnimationObject *group;
-    u8 *state;
+    struct BattleEffectWork *state;
     s32 group_index;
 
-    set = (struct B5Context *)GetBattleObjectSlotFar(set_id);
-    state = (u8 *)gBattleFxWork;
+    set = GetBattleObjectSlotFar(set_id);
+    state = gBattleFxWork;
     group_index = 0;
 
     while ((group = GetMotionRecordFar(set->object, group_index)) != NULL) {
         if (state_slot != -1) {
-            s32 state_offset = state_slot + 0x7818;
-
-            state[state_offset] = ((u8 *)&state_value)[0];
+            state->actor_timers[state_slot] = ((u8 *)&state_value)[0];
         }
-        if (set->suppress_updates == 0) {
+        if (set->fading == 0) {
             if (object_value != -1) {
                 s32 object_index;
 
@@ -41,8 +41,8 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                         struct AnimationEntry *object;
 
                         object = *objects++;
-                        if (object != NULL && object != set->excluded_24
-                            && object != set->excluded_20) {
+                        if (object != NULL && object != (struct AnimationEntry *)set->effect_entry
+                            && object != (struct AnimationEntry *)set->animation_entry) {
                             if (object_value == 0)
                                 object->param = BattleMotion_GetSlotField14Far(set_id);
                             else

@@ -74,10 +74,11 @@ struct SoundTrack {
     s8 pan;                         /* 0x14 */
     s8 pan_offset;                  /* 0x15 */
     s8 mod_amount;                  /* 0x16 */
-    u8 unk17;
+    u8 mod_depth;                   /* 0x17 */
     u8 mod_target;                  /* 0x18 */
     u8 lfo_speed;                   /* 0x19 */
-    u8 unk1a[4];
+    u8 lfo_phase;                   /* 0x1a */
+    u8 unk1b[3];
     u8 tail_level;                  /* 0x1e */
     u8 tail_length;                 /* 0x1f */
     struct SoundNote *notes;        /* 0x20 */
@@ -165,5 +166,20 @@ struct SongEntry {
     u16 slot;                       /* 0x04 */
     u16 unk06;
 };
+
+/* Music-player controls use the same track records as the sequence driver. */
+void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHeader *header);
+void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
+void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player, u16 scale);
+void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume);
+void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch);
+void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan);
+void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask, s32 value);
+void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 mask, u32 value);
+void MusicTrack_ClearModulation(struct SoundTrack *track);
+
+extern const struct PlayerSlot Sound_PlayerSlots[];
+extern const struct SongEntry Sound_SongTable[];
+extern SoundCommand Sound_CommandTable[36];
 
 #endif

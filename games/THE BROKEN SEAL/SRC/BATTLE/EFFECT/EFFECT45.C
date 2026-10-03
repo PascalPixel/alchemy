@@ -1,3 +1,7 @@
+#include "MAP_SCROLL.H"
+#include "BATTLE_PRESENTATION.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_EFFECT_WORK.H"
 #include "PROJECT.H"
 /* Battle effect: open the canvas layer an effect draws into, the counterpart
    of BattleFx_EndCanvasLayer. Save the scroll pair in the work block, fade
@@ -19,14 +23,7 @@ void Func_080b5028(s32, s32, s32, s32);
 void Palette_StepFadeTransfer(void);
 extern u8 gWorkSlot[];
 
-struct Cells03001ad0 {
-    u16 unk00;
-    u16 unk02;
-    u16 unk04;
-    u16 unk06;
-};
 
-extern struct Cells03001ad0 gBgScroll;
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
 
 static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 size)
@@ -76,10 +73,10 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
      * the whole function as the ROM keeps them. */
 
     void **cache = (void **)(gWorkSlot + 39 * 4);
-    u8 *work = cache[0];
-    u8 *battle = *(u8 **)(gWorkSlot + 9 * 4);
+    struct BattleEffectWork *work = cache[0];
+    struct BattleSession *battle = *(struct BattleSession **)(gWorkSlot + 9 * 4);
     void *canvas = cache[1];
-    u8 *display = cache[5];
+    struct BattleBackgroundView *display = cache[5];
     volatile u16 *ime;
     struct IoWriteQueue *q;
     s32 row;
@@ -87,24 +84,24 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
     s32 offset;
 
     Runtime_ApplyValueToWork7818();
-    *(s32 *)(display + 12) = 1;
+    display->second_mode = 1;
     WaitFrames(1);
     REG_BLDCNT = 0;
     q = &gIoWriteQueue;
     ime = &REG_IME;
     QUEUE_DISPLAY_CONTROL(0x7741);
-    gBgScroll.unk06 = 32;
+    gBgScroll[1].y = 32;
     WaitFrames(1);
-    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)(battle + 0x648), 0);
-    *(s32 *)(work + 0x77b4) = 0;
-    *(s32 *)(work + 0x77b8) = 0;
+    BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
+    work->fade_frames = 0;
+    work->fade_step = 0;
     Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
     QUEUE_DISPLAY_CONTROL(0x7341);
     WaitFrames(1);
     REG_BG2CNT = bg_control | 0x784;
     QUEUE_DISPLAY_CONTROL(0x7341);
     Func_080b5028(0, 0, 0, 100);
-    *(s32 *)(display + 12) = 0;
+    display->second_mode = 0;
     WaitFrames(1);
 
     REG_BLDCNT = 0x3f44;
@@ -137,9 +134,9 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
 
     ClearWords(Iwram_ClearWords, canvas, 0x4000);
     ClearWords(Iwram_ClearWords, (void *)0x06004000, 0x4000);
-    *(s32 *)(work + 0x77a8) = 0;
-    *(s32 *)(work + 0x77a0) = gBgScroll.unk04;
-    *(s32 *)(work + 0x77a4) = gBgScroll.unk06;
+    work->shake_frames = 0;
+    work->saved_bg1_x = gBgScroll[1].x;
+    work->saved_bg1_y = gBgScroll[1].y;
     WaitFrames(1);
 }
 
@@ -180,10 +177,10 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
      * the whole function as the ROM keeps them. */
 
     void **cache = (void **)(gWorkSlot + 39 * 4);
-    u8 *work = cache[0];
-    u8 *battle = *(u8 **)(gWorkSlot + 9 * 4);
+    struct BattleEffectWork *work = cache[0];
+    struct BattleSession *battle = *(struct BattleSession **)(gWorkSlot + 9 * 4);
     void *canvas = cache[1];
-    u8 *display = cache[5];
+    struct BattleBackgroundView *display = cache[5];
     volatile u16 *ime;
     struct IoWriteQueue *q;
     s32 row;
@@ -191,24 +188,24 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
     s32 offset;
 
     Runtime_ApplyValueToWork7818();
-    *(s32 *)(display + 12) = 1;
+    display->second_mode = 1;
     WaitFrames(1);
     *(volatile u16 *)0x04000050 = 0;
     q = &gIoWriteQueue;
     ime = &REG_IME;
     QUEUE_DISPLAY_CONTROL(0x1741);
-    gBgScroll.unk06 = 32;
+    gBgScroll[1].y = 32;
     WaitFrames(1);
-    BattlePresentation_ConfigurePaletteFadeFar(1, *(u16 *)(battle + 0x648), 128);
-    *(s32 *)(work + 0x77b4) = 24;
-    *(s32 *)(work + 0x77b8) = 0;
+    BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 128);
+    work->fade_frames = 24;
+    work->fade_step = 0;
     Scheduler_AddOrUpdateCallback((s32)Palette_StepFadeTransfer, 0xc80);
     QUEUE_DISPLAY_CONTROL(0x1341);
     WaitFrames(1);
     *(volatile u16 *)0x0400000c = bg_control | 0x784;
     QUEUE_DISPLAY_CONTROL(0x1341);
     Func_080b5028(0, 0, 0, 100);
-    *(s32 *)(display + 12) = 0;
+    display->second_mode = 0;
     WaitFrames(1);
 
     *(volatile u16 *)0x04000050 = 0x3f44;
@@ -315,29 +312,29 @@ void BattleFx_EndCanvasLayer(void)
      * after the queue pointer so the queue literal loads ahead of the store
      * before it. */
 
-    struct Cells03001ad0 *scroll;
-    u8 *work = *(u8 **)(gWorkSlot + 39 * 4);
-    u8 *battle = *(u8 **)(gWorkSlot + 9 * 4);
+    struct BgScroll *scroll;
+    struct BattleEffectWork *work = *(struct BattleEffectWork **)(gWorkSlot + 39 * 4);
+    struct BattleSession *battle = *(struct BattleSession **)(gWorkSlot + 9 * 4);
     s32 i;
 
     Audio_PlayCue(0x121);
-    scroll = &gBgScroll;
-    scroll->unk04 = *(s32 *)(work + 0x77a0);
-    scroll->unk06 = *(s32 *)(work + 0x77a4);
+    scroll = &gBgScroll[1];
+    scroll->x = work->saved_bg1_x;
+    scroll->y = work->saved_bg1_y;
     gProjection.center_x = 120;
     gProjection.center_y = 120;
     *(volatile u16 *)0x0400000c = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
     Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);
-    scroll->unk06 = 32;
+    scroll->y = 32;
     QUEUE_DISPLAY_CONTROL(0x7341);
     *(volatile u16 *)0x04000050 = 0;
     WaitFrames(1);
 
-    BattlePresentation_ConfigurePaletteFadeFar(2, *(u16 *)(battle + 0x648), 7);
+    BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 7);
     WaitFrames(1);
     for (i = 0; i != 8; i++) {
-        Func_080b5048(*(u16 *)(battle + 0x648), 21 - i * 3);
+        Func_080b5048(battle->background, 21 - i * 3);
         WaitFrames(1);
     }
 
@@ -349,19 +346,19 @@ void BattleFx_EndCanvasLayer(void)
 
 void BattleFx_SetTransitionFlagAndDisplay(void)
 {
-  u8 *state;
+  struct BattleSession *state;
   s32 one;
   s32 transfer;
   s32 *flag;
 
-  flag = (s32 *)((u8 *)Ram_WorkSlot[44] + 0xC);
-  state = (u8 *)Ram_WorkSlot[9];
+  flag = &((struct BattleBackgroundView *)Ram_WorkSlot[44])->second_mode;
+  state = Ram_WorkSlot[9];
   *flag = 1;
   transfer = 0x1541;
   QueueIoWriteDelay2(0x04000000, transfer);
   one = 1;
   WaitFrames(one);
-  BattlePresentation_ConfigurePaletteFadeFar(2, *((u16 *)(state + 0x648)), 0);
+  BattlePresentation_ConfigurePaletteFadeFar(2, state->background, 0);
   transfer = one;
   WaitFrames(transfer);
 }

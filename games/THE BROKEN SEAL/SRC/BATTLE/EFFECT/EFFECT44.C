@@ -14,7 +14,6 @@ extern u8 gWorkSlot[];
 u32 Random16(void);
 
 extern u8 gBattleFxWork[];
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
@@ -34,7 +33,7 @@ void ColorBuffer_BackupAndDarken(void *source, s32 amount, void *destination, s3
 void ColorBuffer_BackupAndBrighten(void *source, s32 amount, void *destination, s32 size);
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
+void BattleFx_EndCanvasLayer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -120,7 +119,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
    passes. */
 void BattleEffect_WipeCanvas(s32 mode, s32 value)
 {
-    u8 *work;
+    struct BattleEffectWork *work;
     u8 *canvas;
     u8 delay[128];
     s32 x;
@@ -128,7 +127,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
     s32 pos;
 
     canvas = *(u8 **)(gWorkSlot + 40 * 4);
-    work = *(u8 **)(gWorkSlot + 39 * 4);
+    work = *(struct BattleEffectWork **)(gWorkSlot + 39 * 4);
     for (x = 0; x != 128; x++)
         delay[x] = Random16() & 0x3f;
 
@@ -149,7 +148,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
                         canvas[(((y / 8) * 16 + pos / 8) * 8 + (y & 7)) * 8 + (pos & 7)] = 1 - value;
                 }
             }
-            *(s32 *)(work + 0x7824) = 1;
+            work->transfer_pending = 1;
             WaitFrames(1);
         } while (front <= 256);
     } else {
@@ -169,7 +168,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
                         canvas[(((pos / 8) * 16 + x / 8) * 8 + (pos & 7)) * 8 + (x & 7)] = 1 - value;
                 }
             }
-            *(s32 *)(work + 0x7824) = 1;
+            work->transfer_pending = 1;
             WaitFrames(1);
         } while (front <= 191);
     }
@@ -182,42 +181,42 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
 void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
     void **heap_cache = (void **)gBattleFxWork;
-    void *work = heap_cache[0];
+    struct BattleEffectWork *work = heap_cache[0];
     void *source;
     s32 *counter;
     s32 next_counter;
 
-    if (FIELD(work, s32, 0x7824) == 1) {
+    if (work->transfer_pending == 1) {
         source = heap_cache[1];
-        switch (FIELD(work, u32, 0x7780)) {
+        switch ((u32)work->transfer_mode) {
         case 0:
             CopyWords((void *)0x06004000, source, 0x4000);
             break;
         case 1:
             CopyWords((void *)0x06004000, source, 0x4000);
-            FillWords(source, 0x4000, FIELD(work, s32, 0x7784));
+            FillWords(source, 0x4000, work->transfer_value);
             break;
         case 2:
-            if (FIELD(work, s32, 0x7784) == 50) {
+            if (work->transfer_value == 50) {
                 ColorBuffer_BackupAndHalve(source, (void *)0x06004000, 0x4000);
             } else {
                 ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
             }
             break;
         case 3:
-            ColorBuffer_BackupAndDarken(source, FIELD(work, s32, 0x7784),
+            ColorBuffer_BackupAndDarken(source, work->transfer_value,
                 (void *)0x06004000, 0x4000);
             break;
         case 4:
-            ColorBuffer_BackupAndBrighten(source, FIELD(work, s32, 0x7784),
+            ColorBuffer_BackupAndBrighten(source, work->transfer_value,
                 (void *)0x06004000, 0x4000);
             break;
         }
-        FIELD(work, s32, 0x7824) = 0;
-        counter = (s32 *)((u8 *)work + 0x7820);
+        work->transfer_pending = 0;
+        counter = &work->frames_since_transfer;
         next_counter = 1;
     } else {
-        counter = (s32 *)((u8 *)work + 0x7820);
+        counter = &work->frames_since_transfer;
         next_counter = *counter + 1;
     }
     *counter = next_counter;

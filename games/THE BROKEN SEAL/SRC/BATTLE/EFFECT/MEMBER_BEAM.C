@@ -16,7 +16,6 @@
 
 extern u8 gBattleFxWork[];
 extern DrawRectangle gWorkSlot[];
-extern struct BattleCamera *gCameraWork;
 
 /* Which crescent picture each of a mote's eight steps shows. */
 extern u8 MemberBeam_MotePictures[];

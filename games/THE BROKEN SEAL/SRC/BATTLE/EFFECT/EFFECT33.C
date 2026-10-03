@@ -1,3 +1,6 @@
+#include "ANIMSPR.H"
+#include "MOTION_OBJECT.H"
+#include "OBJECT_RUNTIME.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "OBJDISP.H"
@@ -17,21 +20,9 @@ struct EffectVector {
     s32 z;
 };
 
-struct EffectSprite {
-    u8 unknown_00[9];
-    s8 flags;                       /* 0x09; bits 2-3 are the draw priority */
-    u8 unknown_0a[0x0e];
-    s32 scale;                      /* 0x18 */
-};
 
-struct EffectOwner {
-    u8 unknown_00[8];
-    struct EffectVector position;   /* 0x08 */
-    u8 unknown_14[0x3c];
-    struct EffectSprite *sprite;    /* 0x50 */
-};
 
-struct EffectOwner *Object_GetById(s32 actor);
+struct ObjectRuntime *Object_GetById(s32 actor);
 u32 BattleFx_HasReachedTarget(struct EffectSlot *effect);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *effect);
 u32 Random16(void);
@@ -81,10 +72,6 @@ struct SpreadPosition {
     s32 z;
 };
 
-struct SpreadSource {
-    u8 padding00[8];
-    struct SpreadPosition position;
-};
 
 void Audio_PlayCue(s32);
 
@@ -131,10 +118,6 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s3
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
-struct EffectPositionSource {
-    u8 unknown_00[8];
-    struct EffectVector position;
-};
 
 struct LinkedCaptureObject {
     u8 padding000[8];
@@ -159,8 +142,8 @@ void BattleFx_SetObjectAlternatingWords(u8 *object)
     u32 *table = BattleFx_PulseScales;
     u32 index = (gFrameTick >> 2) & 1;
     u32 value = index[table];
-    *(u32 *)(object + 0x18) = value;
-    *(u32 *)(object + 0x1C) = value;
+    ((struct MotionObject *)object)->scale_x = value;
+    ((struct MotionObject *)object)->scale_y = value;
 }
 
 void BattleFx_AdvanceObjectField6WithRamp(void *obj)
@@ -168,7 +151,7 @@ void BattleFx_AdvanceObjectField6WithRamp(void *obj)
     u32 step;
 
     step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
-    FIELD_AT_OFFSET(obj, u16 *, 6) = (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + step + 0x1000);
+    ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + step + 0x1000);
     if (step < 0x1000U) {
         FIELD_AT_OFFSET(obj, s16 *, 0x64) = (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);
     }
@@ -178,10 +161,10 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
 {
     s32 scale;
 
-    scale = FIELD_AT_OFFSET(obj, s32 *, 0x18) + 0xFFFFFE40;
-    FIELD_AT_OFFSET(obj, s32 *, 0x1C) = (s32)(FIELD_AT_OFFSET(obj, s32 *, 0x1C) + 0xFFFFFE40);
-    FIELD_AT_OFFSET(obj, u16 *, 6) = (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + 0x2000);
-    FIELD_AT_OFFSET(obj, s32 *, 0x18) = scale;
+    scale = ((struct MotionObject *)obj)->scale_x + 0xFFFFFE40;
+    ((struct MotionObject *)obj)->scale_y = (s32)(((struct MotionObject *)obj)->scale_y + 0xFFFFFE40);
+    ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + 0x2000);
+    ((struct MotionObject *)obj)->scale_x = scale;
     if (scale < 0x3000) {
         Object_Destroy();
     }
@@ -196,7 +179,7 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
  */
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
 {
-    struct EffectOwner *owner;
+    struct ObjectRuntime *owner;
     struct EffectVector position;
     s32 state;
     u8 priority;
@@ -223,17 +206,17 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
         effect->flag42 = state;
         effect->state++;
 
-        priority = owner->sprite->flags & 0xc;
-        flags = ((struct EffectSprite *)effect->object)->flags & -13;
+        priority = ((u8 *)&((struct AnimationObject *)owner->animation)->part[0])[9] & 0xc;
+        flags = ((u8 *)&((struct AnimationObject *)effect->object)->part[0])[9] & -13;
         flags |= priority;
-        ((struct EffectSprite *)effect->object)->flags = flags;
+        ((u8 *)&((struct AnimationObject *)effect->object)->part[0])[9] = flags;
         effect->flags = 0;
         effect->age = 0;
         if ((gFrameTick & 1) != 0)
             Audio_PlayCue(134);
     } else if (state == 1) {
         if ((s16)effect->age == 3) {
-            ((struct EffectSprite *)effect->object)->flags &= -13;
+            ((u8 *)&((struct AnimationObject *)effect->object)->part[0])[9] &= -13;
             effect->flags = 4;
         }
         if (BattleFx_HasReachedTarget(effect) == 0)
@@ -242,7 +225,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
         if (BattleFx_HasReachedTarget(effect) == 0) {
             effect->origin_x = effect->x;
             effect->origin_z = effect->z;
-            ((struct EffectSprite *)effect->object)->flags &= -13;
+            ((u8 *)&((struct AnimationObject *)effect->object)->part[0])[9] &= -13;
             effect->flags = 4;
             effect->render = 0;
             effect->state++;
@@ -252,9 +235,9 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
         effect->render = 1;
         effect->x = effect->origin_x;
         effect->z = effect->origin_z;
-        position.x = owner->position.x;
-        position.y = owner->position.y + 0x140000;
-        position.z = owner->position.z;
+        position.x = owner->x;
+        position.y = owner->y + 0x140000;
+        position.z = owner->z;
         Camera_WorldToScreen(&position);
         Vector_AddPolarOffset(0x40000, Random16(), &position);
         effect->target_x = position.x;
@@ -389,10 +372,10 @@ void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
 {
     s32 scale;
 
-    scale = FIELD_AT_OFFSET(obj, s32 *, 0x18) + 0xFFFFFC00;
-    FIELD_AT_OFFSET(obj, s32 *, 0x1C) = (s32)(FIELD_AT_OFFSET(obj, s32 *, 0x1C) + 0xFFFFFC00);
-    FIELD_AT_OFFSET(obj, u16 *, 6) = (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + 0x2000);
-    FIELD_AT_OFFSET(obj, s32 *, 0x18) = scale;
+    scale = ((struct MotionObject *)obj)->scale_x + 0xFFFFFC00;
+    ((struct MotionObject *)obj)->scale_y = (s32)(((struct MotionObject *)obj)->scale_y + 0xFFFFFC00);
+    ((struct MotionObject *)obj)->angle = (u16)(((struct MotionObject *)obj)->angle + 0x2000);
+    ((struct MotionObject *)obj)->scale_x = scale;
     if (scale < 0x3000) {
         Object_Destroy();
     }
@@ -426,18 +409,18 @@ void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg)
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 {
     struct SpreadPosition position;
-    struct SpreadSource *source;
+    struct ObjectRuntime *source;
     s32 state;
     u32 random;
 
-    source = (struct SpreadSource *)
+    source = (struct ObjectRuntime *)
         Object_GetById(gGameState.selected_actor);
     state = effect->state;
 
     if (state == 0) {
-        position.x = source->position.x;
-        position.y = source->position.y;
-        position.z = source->position.z;
+        position.x = source->x;
+        position.y = source->y;
+        position.z = source->z;
 
         random = Random16() * 10 + 0xa0000;
         Vector_AddPolarOffset(
@@ -602,7 +585,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
 
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
 {
-    struct EffectPositionSource *source;
+    struct ObjectRuntime *source;
     struct EffectVector position;
     s8 *state_pointer;
     s32 state;
@@ -612,9 +595,9 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
     state = *state_pointer;
 
     if (state == 0) {
-        position.x = source->position.x;
-        position.y = source->position.y + Random16() * 5 + 0xf0000;
-        position.z = source->position.z;
+        position.x = source->x;
+        position.y = source->y + Random16() * 5 + 0xf0000;
+        position.z = source->z;
         Camera_WorldToScreen(&position);
         Vector_AddPolarOffset(
             Random16() * 6 + 0x20000,

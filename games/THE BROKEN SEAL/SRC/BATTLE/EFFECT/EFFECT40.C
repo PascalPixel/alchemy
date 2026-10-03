@@ -1,3 +1,7 @@
+#include "ANIMSPR.H"
+#include "OBJECT_RUNTIME.H"
+#include "SCRIPT_MOTION.H"
+#include "FIELD_EVENT.H"
 /*
  * Battle effect 4: a ring of twelve screen-space particles, then a growing
  * burst object and three copies launched at the target, which share one
@@ -18,45 +22,23 @@
 
 struct BurstPosition { s32 x, y, z; };
 
-struct BurstResource {
-    u8 unknown_00[28];
-    u8 id;
-};
 
-struct BurstObject {
-    void *script;
-    s16 step;
-    u16 heading;
-    struct BurstPosition pos;
-    s32 terrain_height;
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[8];
-    s32 velocity_z;
-    s32 unknown_2c;
-    s32 speed_limit;
-    s32 acceleration;
-    u8 unknown_38[24];
-    struct BurstResource *sprite;
-    u8 unknown_54;
-    u8 mode;
-};
 
 void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 slot);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BurstPosition *pos);
-void Object_SetMode(struct BurstObject *object, s32 mode);
+void Object_SetMode(struct FieldActor *object, s32 mode);
 extern const u8 BattleFx_BurstParticleObjectScript[];
 extern struct BattleFxScene *gEffectWork;
-void Object_SetPosition(struct BurstObject *object, s32 x, s32 y, s32 z);
-s32 Object_CheckMovementCollision(struct BurstObject *object, struct BurstPosition *pos);
-void Animation_ApplyChildValuesFar(struct BurstObject *object, s32 value);
+void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
+s32 Object_CheckMovementCollision(struct FieldActor *object, struct BurstPosition *pos);
+void Animation_ApplyChildValuesFar(struct FieldActor *object, s32 value);
 void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
-s32 ScriptObject_CheckOverlapFar(struct BurstObject *object, struct BurstPosition *pos);
+s32 ScriptObject_CheckOverlapFar(struct FieldActor *object, struct BurstPosition *pos);
 s32 BattleFx_FindMatchingEvent(s32 flags, s32 group, s32 *context);
 s32 BattleFx_RunEventAction(void *event, s32 object, s32 context);
-struct BurstResource *Object_ReplaceResourceEntry(struct BurstResource *sprite, struct BurstResource *resource);
-struct BurstObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct AnimationObject *Object_ReplaceResourceEntry(struct AnimationObject *sprite, struct AnimationObject *resource);
+struct FieldActor *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
 void Camera_WorldToScreen(struct BurstPosition *pos);
@@ -64,11 +46,11 @@ void EffectSlot_Initialize(struct EffectSlot *slot, s32 kind, s32 x, s32 z);
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot);
 void Audio_PlayCue(s32 cue);
 
-static __inline__ void RaisedPosition(struct BurstObject *object, struct BurstPosition *pos)
+static __inline__ void RaisedPosition(struct FieldActor *object, struct BurstPosition *pos)
 {
-    pos->x = object->pos.x;
-    pos->y = object->pos.y + 0x100000;
-    pos->z = object->pos.z;
+    pos->x = object->x.fixed;
+    pos->y = object->y.fixed + 0x100000;
+    pos->z = object->z.fixed;
 }
 
 extern u8 Data_03001e40[];
@@ -161,16 +143,16 @@ void BattleFx_SwayParticle(u8 *object);
    copies. All copies share one resource entry until their scripts finish. */
 void RunBattleEffect04(void)
 {
-    struct BurstObject *child;
+    struct FieldActor *child;
     s32 event_context;
-    struct BurstObject *spawned[4];
+    struct FieldActor *spawned[4];
     struct BurstPosition pos;
-    struct BurstObject *object;
-    struct BurstObject *copy;
-    struct BurstObject *target;
+    struct FieldActor *object;
+    struct FieldActor *copy;
+    struct FieldActor *target;
     struct BattleFxScene *scene;
     struct EffectSlot *slot;
-    struct BurstResource *resource;
+    struct AnimationObject *resource;
     s32 event;
     s32 scale;
     s32 index;
@@ -197,9 +179,9 @@ void RunBattleEffect04(void)
     }
 
     target = scene->main_object;
-    pos.x = target->pos.x;
-    pos.y = target->pos.y + 0x100000;
-    pos.z = target->pos.z;
+    pos.x = target->x.fixed;
+    pos.y = target->y.fixed + 0x100000;
+    pos.z = target->z.fixed;
     Vector_AddPolarOffset(0x80000, scene->angle, &pos);
     object = Object_Spawn(0xd7, pos.x, pos.y, pos.z);
     if (object == NULL) {
@@ -208,10 +190,10 @@ void RunBattleEffect04(void)
     }
     object->scale_y = 0x4000;
     object->scale_x = 0x4000;
-    object->heading = scene->angle;
-    object->speed_limit = 0x40000;
+    object->facing = scene->angle;
+    object->speed = 0x40000;
     object->acceleration = 0x40000;
-    object->mode = 0;
+    object->motion_flags = 0;
     Object_SetMode(object, 5);
     Animation_ApplyChildValuesFar(object, 3);
     scale = object->scale_x;
@@ -227,25 +209,25 @@ void RunBattleEffect04(void)
     WaitFrames(3);
     resource = NULL;
     for (index = 2; index >= 0; index--) {
-        copy = spawned[index] = Object_Spawn(0xd7, object->pos.x, object->pos.y, object->pos.z);
+        copy = spawned[index] = Object_Spawn(0xd7, object->x.fixed, object->y.fixed, object->z.fixed);
         if (copy != NULL) {
             copy->scale_y = 0xf000;
             copy->scale_x = 0xf000;
-            copy->heading = scene->angle;
-            copy->speed_limit = 0x40000;
+            copy->facing = scene->angle;
+            copy->speed = 0x40000;
             copy->acceleration = 0x40000;
-            copy->mode = 0;
+            copy->motion_flags = 0;
             Object_SetMode(copy, 5);
             Animation_ApplyChildValuesFar(copy, 2);
-            resource = Object_ReplaceResourceEntry(copy->sprite, resource);
+            resource = Object_ReplaceResourceEntry((struct AnimationObject *)copy->sprite, resource);
         }
     }
-    resource_id = resource->id;
+    resource_id = resource->slot;
     if (scene->enabled != 0) {
         target = scene->main_object;
-        pos.x = target->pos.x;
-        pos.y = target->pos.y + 0x100000;
-        pos.z = target->pos.z;
+        pos.x = target->x.fixed;
+        pos.y = target->y.fixed + 0x100000;
+        pos.z = target->z.fixed;
         Vector_AddPolarOffset(0x380000, scene->angle, &pos);
     } else {
         pos.x = scene->x;
@@ -263,23 +245,23 @@ void RunBattleEffect04(void)
         }
         }
     index = 0;
-    if (object->script != NULL) {
+    if (((struct ScriptMotionObject *)object)->script != NULL) {
 wait_script:
         WaitFrames(1);
         index++;
-        if (index <= 59 && object->script != NULL)
+        if (index <= 59 && ((struct ScriptMotionObject *)object)->script != NULL)
             goto wait_script;
     }
     if (child != NULL && scene->child_mode == 0) {
         if (scene->child_option != 0)
-            child->velocity_z = 0x80000;
-        pos.x = child->pos.x;
-        pos.y = child->pos.y;
-        pos.z = child->pos.z;
+            child->velocity_y = 0x80000;
+        pos.x = child->x.fixed;
+        pos.y = child->y.fixed;
+        pos.z = child->z.fixed;
         Vector_AddPolarOffset(0x100000, scene->angle, &pos);
         if (Object_CheckMovementCollision(child, &pos) == 0 && ScriptObject_CheckOverlapFar(child, &pos) == 0) {
             child->acceleration = 0x10000;
-            child->speed_limit = 0x10000;
+            child->speed = 0x10000;
             Object_SetPosition(child, pos.x, pos.y, pos.z);
         }
     }

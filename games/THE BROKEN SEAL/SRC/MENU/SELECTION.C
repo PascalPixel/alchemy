@@ -6,7 +6,6 @@ extern u8 gTitleExtraOptionEnabled[];
 
 extern u8 MsgPasswordLevel[];
 
-
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 {
     struct ResourceMenuWork *work;
@@ -110,7 +109,6 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     return arg1;
 }
 
-extern s32 SaveState_ScanRecordFlags(void);
 extern s8 Menu_SaveSlotActionByPosition[];
 
 s32 Menu_SelectSaveSlotAction(void)

@@ -112,13 +112,13 @@ s32 FieldScene_QueryActorFootprint(s32 id, s32 *width, s32 *depth, struct Staged
     s32 b;
 
     i = 0;
-    if (*STAGED_ACTOR_PROBE_DETAILS(actor)->unknown_28 != StagedActor_FootprintKinds[i]) {
+    if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i]) {
     miss:
         probe->footprint_index = 7;
         if (++i > 5) {
             goto check;
         }
-        if (*STAGED_ACTOR_PROBE_DETAILS(actor)->unknown_28 != StagedActor_FootprintKinds[i]) {
+        if (actor->animation->entries[0]->anim_id != StagedActor_FootprintKinds[i]) {
             goto miss;
         }
     }

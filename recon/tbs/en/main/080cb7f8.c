@@ -23,7 +23,6 @@
 #include "RAM_BUFFER.H"
 
 extern DrawRectangle gWorkSlot[];
-extern struct BattleCamera *gCameraWork;
 extern u16 BattleFx6_FlareCells[];
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)

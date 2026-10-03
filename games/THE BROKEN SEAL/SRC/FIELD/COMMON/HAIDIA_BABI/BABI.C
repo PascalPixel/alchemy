@@ -1,3 +1,5 @@
+#include "FXBLEND.H"
+#include "MAP_SCROLL.H"
 #include "HAIDIA_BABI.H"
 #include "RAM_BUFFER.H"
 
@@ -243,10 +245,10 @@ void SceneState_ApplyValues123And11(void)
 s32 HaidiaBabi_RestoreEntryState(void)
 {
     /* FAKEMATCH: retain the cached-cell base shared at +12 and the word
-     * value before the narrow target store, pending native field repair. */
+     * value before the narrow target store. */
     u32 i;
     s32 record;
-    s32 base5_3001ebc;
+    struct EventWork **control;
 
     if (gGameState.entrance == 19) {
         Engine_GameFlagClear(0x12f);
@@ -292,12 +294,13 @@ s32 HaidiaBabi_RestoreEntryState(void)
                     if (gGameState.entrance == 22) {
                         FieldScene_RunSupplementalSequenceOne();
                     } else {
-                        base5_3001ebc = (u32)&gEventWork;
-                        *(s32 *)((*(s32 *)base5_3001ebc + 0x1c0)) = 0x209;
+                        control = &gEventWork;
+                        (*control)->start_transition = 0x209;
                         if (Engine_GameFlagIsSet(0x834) != 0) {
                             BattleFx_StartTwelveFrameBlend();
                             {
-                                u16 *target = (u16 *)((*(s32 *)(base5_3001ebc + 12) + 0x1f84));
+                                struct FieldBlendWork *blend = *(struct FieldBlendWork **)((u8 *)control + 12);
+                                u16 *target = (u16 *)&blend->loud;
                                 s32 shown = 1;
 
                                 *target = shown;
@@ -321,11 +324,6 @@ s32 HaidiaBabi_RestoreEntryState(void)
 }
 
 extern u8 MsgHaidiaWake[];
-
-struct SceneMapState {
-    u8 unknown_0000[0x1f84];
-    u16 active;
-};
 
 extern const u8 gHaidiaBabiSharedAction[];
 extern const u8 gHaidiaBabiActorExitAction[];
@@ -380,7 +378,7 @@ void FieldScene_RunComplexActorSequence(void)
     struct FieldSprite *sprite;
     struct FieldActor *p12;
     struct FieldActor *p89;
-    u8 *work;
+    struct MapScrollWork *work;
     struct FieldActor *scene_actor;
     struct EventWork **control;
     struct SceneHalf stopped;
@@ -391,7 +389,7 @@ void FieldScene_RunComplexActorSequence(void)
     {
         struct EventWork *event = *control;
 
-        work = *(u8 **)Ram_MapWork;
+        work = *(struct MapScrollWork **)Ram_MapWork;
         scene_actor = event->view_center;
     }
     sprite = Object_GetById(17)->sprite;
@@ -423,10 +421,10 @@ void FieldScene_RunComplexActorSequence(void)
     UiText_ShowCenteredMessage(base + 1, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventWait(40);
-    *(u32 *)(work + 236) = 0x01480000;
-    *(u32 *)(work + 240) = 0x02580000;
-    *(u32 *)(work + 244) = 0x02700000;
-    *(u32 *)(work + 248) = 0x03300000;
+    work->min_x = 0x01480000;
+    work->min_y = 0x02580000;
+    work->max_x = 0x02700000;
+    work->max_y = 0x03300000;
     scene_actor->x.fixed = 0x02340000;
     scene_actor->y.fixed = ground;
     scene_actor->z.fixed = 0x02b30000;
@@ -435,7 +433,7 @@ void FieldScene_RunComplexActorSequence(void)
     (*control)->start_transition = 521;
     (*control)->transition_frames = 64;
     BattleFx_StartTwelveFrameBlend();
-    (*(struct SceneMapState **)((u8 *)control + Ram_SceneMapStateOffset))->active = 1;
+    (*(struct FieldBlendWork **)((u8 *)control + Ram_SceneMapStateOffset))->loud = 1;
     BattleFx_SetBlock30Values12Zero();
     Engine_TaskWait(30);
     Engine_EventOpenScreen();

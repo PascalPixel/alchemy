@@ -8,7 +8,6 @@
 #include "BATTLE_PARTY.H"
 #include "SYSTEM.H"
 void UiWork_ClearValueNameTablesFar(void);
-extern u8 gCameraWork[];
 extern u8 Data_03001ae8[];
 s32 BattlePres_ShowMessageWhenField38Positive(s16 *);
 s32 BattlePres_RunUnitAction(s16 *);
@@ -17,7 +16,7 @@ void BattleMotion_SetupEscapeObject(s32);
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
-    void **slot = (void **)((u32)&gCameraWork);
+    void **slot = (void **)&gCameraWork;
     struct BattleCamera *cam = slot[0];
     struct BattlePresentationTransition *trans = slot[32];
     volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);

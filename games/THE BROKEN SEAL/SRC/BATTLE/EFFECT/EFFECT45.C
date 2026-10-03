@@ -318,15 +318,17 @@ void BattleFx_EndCanvasLayer(void)
     s32 i;
 
     Audio_PlayCue(0x121);
-    scroll = &gBgScroll[1];
-    scroll->x = work->saved_bg1_x;
-    scroll->y = work->saved_bg1_y;
+    /* FAKEMATCH: retain the original array-base scroll transport. Taking
+       BG1 as the base moves four bytes into the literal instead of the stores. */
+    scroll = gBgScroll;
+    scroll[1].x = work->saved_bg1_x;
+    scroll[1].y = work->saved_bg1_y;
     gProjection.center_x = 120;
     gProjection.center_y = 120;
     *(volatile u16 *)0x0400000c = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
     Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);
-    scroll->y = 32;
+    scroll[1].y = 32;
     QUEUE_DISPLAY_CONTROL(0x7341);
     *(volatile u16 *)0x04000050 = 0;
     WaitFrames(1);

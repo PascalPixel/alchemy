@@ -1,5 +1,5 @@
 #include "ANIMSPR.H"
-#include "FIELD_EVENT.H"
+#include "FIELDOBJ.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "GLOBAL_CELLS.H"
@@ -17,13 +17,31 @@ void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 extern u8 gPlayerObjectId[];
 
 
+/* The existing arc-mode counter/link alias view. The callbacks otherwise
+   use the shared FieldActor geometry and true object API transports. */
+struct ArcObject {
+    u8 pad00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 pad14[4];
+    s32 scale_x;
+    s32 scale_y;
+    u8 pad20[0x44];
+    u16 counter;
+    u8 pad66[2];
+    struct ArcObject *linked_object;
+};
+
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
     struct BattleFxScene *scene = gEffectWork;
     struct ObjectRuntime *object;
-    struct AnimationObject *child;
+    u8 *child;
     u8 flag;
 
+    /* FAKEMATCH: the existing packed OAM byte clear is retained over the
+       real animation part; a bitfield clear adds six native instructions. */
     object = Object_CreateFar(kind, x, y, z);
     if (object != NULL) {
         if (object->animation_kind == 0) {
@@ -34,8 +52,8 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
         flag = 4;
         object->flags = flag;
         object->unknown_23 = flag;
-        child = object->animation;
-        child->part[0].attr &= ~((flag + 8) >> 2);
+        child = (u8 *)&((struct AnimationObject *)object->animation)->part[0];
+        child[9] &= ~(flag + 8);
         ObjectDispatch_SetSingleChildField26Far(object, 0);
         Object_SetMode(object, 1);
     }
@@ -63,11 +81,15 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *excluded_object,
 
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 {
+    /* FAKEMATCH: retain the existing unsigned arc-counter/link view here;
+       canonical mixed views move the link load after the counter store
+       and sign extension in all six editions. */
+    struct ArcObject *arc = (struct ArcObject *)obj;
     struct FieldActor *link;
     s32 v;
 
-    link = *(struct FieldActor **)&obj->unknown_68[0];
-    v = (s16)++obj->unknown_64;
+    link = (struct FieldActor *)arc->linked_object;
+    v = (s16)++arc->counter;
     if (v > 31) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
         return;
@@ -82,11 +104,15 @@ void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj)
 
 void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj)
 {
+    /* FAKEMATCH: retain the existing unsigned arc-counter/link view here;
+       canonical mixed views move the link load after the counter store
+       and sign extension in all six editions. */
+    struct ArcObject *arc = (struct ArcObject *)obj;
     struct FieldActor *link;
     s32 v;
 
-    link = *(struct FieldActor **)&obj->unknown_68[0];
-    v = (s16)++obj->unknown_64;
+    link = (struct FieldActor *)arc->linked_object;
+    v = (s16)++arc->counter;
     if (v > 31) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_CommonParticleScript);
         return;

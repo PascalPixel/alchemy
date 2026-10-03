@@ -10,7 +10,7 @@ extern struct BattleEffectWork *gBattleFxWork;
 struct BattleObjectSlot *GetBattleObjectSlotFar(s32);
 
 s32 BattleFx_BeginTiledCanvas(s32);
-s32 BattleFx_EndCanvasLayer();
+void BattleFx_EndCanvasLayer(void);
 
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)

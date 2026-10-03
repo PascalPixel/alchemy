@@ -1,7 +1,7 @@
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
 #include "SCRIPT_MOTION.H"
-#include "FIELD_EVENT.H"
+#include "FIELDOBJ.H"
 /*
  * Battle effect 4: a ring of twelve screen-space particles, then a growing
  * burst object and three copies launched at the target, which share one

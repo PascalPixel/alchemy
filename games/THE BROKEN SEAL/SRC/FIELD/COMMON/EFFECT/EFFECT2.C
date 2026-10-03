@@ -391,7 +391,7 @@ loop:
    twelve-frame blend, then schedules the blend. */
 void BattleFx_StartTwelveFrameBlend(void)
 {
-    struct FieldBlendWork *work;
+    u8 *work;
     struct BattleEffectBuffers *buffers;
     volatile u32 zero;
     s32 value;
@@ -403,18 +403,20 @@ void BattleFx_StartTwelveFrameBlend(void)
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x850007e2, (volatile u32 *)0x040000d4);
     BattleFx_BuildBuffer(0x10003, buffers, work, 1);
-    BattleFx_BuildBuffer(0x10005, buffers, work->to, 1);
-    BattleFx_InterpolateBuffers(work->to, work->from, work->delta, 12);
+    BattleFx_BuildBuffer(0x10005, buffers, ((struct FieldBlendWork *)work)->to, 1);
+    BattleFx_InterpolateBuffers(((struct FieldBlendWork *)work)->to, ((struct FieldBlendWork *)work)->from,
+        ((struct FieldBlendWork *)work)->delta, 12);
     BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
     /* FAKEMATCH: the halfword constants pass through an int so GCC builds them
-       with mov instead of loading them from the pool, and the halfword pointer
-       itself is advanced to the enabled field. */
-    frames = (u16 *)&work->timer;
+       with mov instead of loading them from the pool, and the block pointer
+       itself advances to the enabled field. The typed halfword-pointer form
+       in 8f4c57e6 changes the final add/store from r5 to r2 in all six editions. */
+    frames = (u16 *)&((struct FieldBlendWork *)work)->timer;
     value = 600;
     *frames = value;
-    frames = (u16 *)&work->enabled;
+    work = (u8 *)&((struct FieldBlendWork *)work)->enabled;
     one = 1;
-    *frames = one;
+    *(u16 *)work = one;
     Scheduler_AddOrUpdateCallback((s32)(BattleFx_UpdateStormFlash), 0xc80);
 }
 

@@ -1,7 +1,7 @@
 #include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "FIELDOBJ.H"
 #include "MAP_SCROLL.H"
 
 /* One entry of a scene's region table, which ends at id -1. */
@@ -23,6 +23,13 @@ void Object_Destroy(struct FieldActor *object);
 
 
 
+
+/* Existing packed display-flag lane; the owner is AnimationObject. */
+struct EffectSprite {
+    u8 unknown_00[29];
+    u8 enabled : 1;
+    u8 flags : 7;
+};
 
 void Func_080090d0(struct FieldActor *object);
 s32 ObjectTable_FindLastActiveId(void);
@@ -119,6 +126,8 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
    event and respawns its object table if one was set. */
 void BattleEffect_ClearAllObjects(void)
 {
+    /* FAKEMATCH: the original one-bit display flag clear keeps the signed
+       mask and saved loop registers; a full-byte owner mask changes the frame. */
     struct EventWork *runtime = gEventWork;
     s32 event_id;
     s32 i;
@@ -128,7 +137,7 @@ void BattleEffect_ClearAllObjects(void)
 
         if (object != 0) {
             object->active = 1;
-            ((struct AnimationObject *)object->sprite)->display_flags &= ~1;
+            ((struct EffectSprite *)object->sprite)->enabled = 0;
             Func_080090d0(object);
             runtime->placed_actors[i] = 0;
         }

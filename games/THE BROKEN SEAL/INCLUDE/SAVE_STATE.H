@@ -95,9 +95,10 @@ extern s16 gTitleSendOptionEnabled;
 
 /* Save records share sixteen flash sectors and three visible summaries. */
 s32 SaveState_InitializeWorkspace(void);
-void SaveState_ReleaseWorkspace(void);
+/* Legacy ignored-result boundary; no caller consumes a word. */
+u32 SaveState_ReleaseWorkspace(void);
 u32 SaveState_SelectWriteSlot(s32 record_id);
-u32 SaveState_WriteWorkspaceSlot(u16 sector);
+u32 SaveState_WriteWorkspaceSlot(s32 sector);
 s32 SaveState_ReadSlotAndCheckChecksum(s32 sector);
 u16 SaveState_EraseSlotSector(u16 sector);
 s32 SaveState_WriteRecord(s32 record_id, void *source);

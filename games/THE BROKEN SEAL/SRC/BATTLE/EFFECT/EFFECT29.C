@@ -1,5 +1,5 @@
 #include "ANIMSPR.H"
-#include "FIELD_EVENT.H"
+#include "FIELDOBJ.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"

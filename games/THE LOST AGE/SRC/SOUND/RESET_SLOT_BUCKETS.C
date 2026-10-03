@@ -2,19 +2,30 @@
 
 void AudioTrack_ResetSlotBuckets(void)
 {
-    struct AudioSlotNode *node;
-    struct AudioSlotNode **bucket;
+    /* FAKEMATCH: retain the original signed word stores at the node back-link
+       and slot lanes. Direct node fields change register allocation at the
+       same 60-byte TBS extent and shorten the TLA body from 60 to 56. */
     s32 index;
+    s32 limit;
+    s32 zero;
+    u8 *record;
+    s32 *slot;
 
-    node = Flash_Handler3->nodes;
     index = 0;
+    limit = 0x3FF;
+    zero = 0;
+    record = (u8 *)&Flash_Handler3->nodes[0].back;
     do {
-        node->slot = index;
+        *(s32 *)(record + sizeof(struct AudioSlotNode *)) = index;
         index++;
-        node->back = NULL;
-        node++;
-    } while (index <= 0x3ff);
-    bucket = Flash_Handler3->bucket;
-    for (index = 0xff; index >= 0; index--)
-        *bucket++ = NULL;
+        *(s32 *)record = zero;
+        record += sizeof(struct AudioSlotNode);
+    } while (index <= limit);
+    slot = (s32 *)Flash_Handler3->bucket;
+    {
+        s32 zero2 = 0;
+        for (index = 0xFF; index >= 0; index--) {
+            *slot++ = zero2;
+        }
+    }
 }

@@ -46,7 +46,9 @@ u32 SaveState_SelectWriteSlot(s32 mode)
 s32 _call_via_r3(s32, s32, s32, s32);
 s32 Flash_VerifySector(u16, s32);
 
-u32 SaveState_WriteWorkspaceSlot(u16 code)
+/* The old-style u16 formal receives an int-promoted incoming word. */
+u32 SaveState_WriteWorkspaceSlot(code)
+u16 code;
 {
     s32 *param = &Flash_Handler0;
     s32 result;
@@ -192,26 +194,35 @@ s32 SaveState_ChecksumWorkspace(void)
 
 u32 SaveState_FindLatestSlot(s32 record_id)
 {
-    struct SaveWorkspace *work;
-    u32 latest_sequence;
-    u32 latest_slot;
-    u32 index;
+    /* FAKEMATCH: retain the existing byte and halfword cursors over the real
+       workspace arrays. Direct indexed fields change saved registers and
+       instruction order at the same complete 64/60-byte extents. */
+    u16 *sequence_cursor;
     u16 sequence;
+    u32 latest_sequence;
+    u32 slot_index;
+    u32 latest_slot;
+    struct SaveWorkspace *save_state;
+    u8 *slot_cursor;
 
-    work = gSaveWorkspace;
-    latest_slot = 16;
+    save_state = gSaveWorkspace;
+    latest_slot = 0x10;
     latest_sequence = 0;
-    index = 0;
+    slot_index = 0;
+    sequence_cursor = save_state->sequence;
+    slot_cursor = (u8 *)save_state;
     do {
-        if (work->occupied[index] != 0 && record_id == work->record_id[index]) {
-            sequence = work->sequence[index];
+        if ((slot_cursor[0] != 0) && (record_id == slot_cursor[sizeof(save_state->occupied)])) {
+            sequence = *sequence_cursor;
             if (latest_sequence < (u32)sequence) {
-                latest_sequence = sequence;
-                latest_slot = index;
+                latest_sequence = (u32)sequence;
+                latest_slot = slot_index;
             }
         }
-        index++;
-    } while (index <= 15);
+        slot_index += 1;
+        sequence_cursor += 1;
+        slot_cursor += 1;
+    } while (slot_index <= 0xFU);
     return latest_slot;
 }
 
@@ -256,22 +267,32 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
 
 u32 SaveState_GetLatestSequence(s32 record_id)
 {
-    struct SaveWorkspace *work;
-    u32 latest_sequence;
-    u32 index;
+    /* FAKEMATCH: retain the existing byte and halfword cursors over the real
+       workspace arrays. Direct indexed fields change saved registers and
+       instruction order at the same complete 64/60-byte extents. */
+    u16 *sequence_cursor;
     u16 sequence;
+    u32 latest_sequence;
+    u32 slot_index;
+    struct SaveWorkspace *save_state;
+    u8 *slot_cursor;
 
-    work = gSaveWorkspace;
-    index = 0;
+    save_state = gSaveWorkspace;
+    slot_index = 0;
     latest_sequence = 0;
+    sequence_cursor = save_state->sequence;
+    slot_cursor = (u8 *)save_state;
     do {
-        if (work->occupied[index] != 0 && record_id == work->record_id[index]) {
-            sequence = work->sequence[index];
-            if (latest_sequence < (u32)sequence)
-                latest_sequence = sequence;
+        if ((slot_cursor[0] != 0) && (record_id == slot_cursor[sizeof(save_state->occupied)])) {
+            sequence = *sequence_cursor;
+            if (latest_sequence < (u32)sequence) {
+                latest_sequence = (u32)sequence;
+            }
         }
-        index++;
-    } while (index <= 15);
+        slot_index += 1;
+        sequence_cursor += 1;
+        slot_cursor += 1;
+    } while (slot_index <= 0xFU);
     return latest_sequence;
 }
 
@@ -313,8 +334,11 @@ typedef void (*InterruptHandler)(void);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
 
-void SaveState_ReleaseWorkspace(void)
+u32 SaveState_ReleaseWorkspace(void)
 {
+    /* FAKEMATCH: retain only the existing ignored-result definition. No
+       caller consumes a result; true void changes the return-address pop
+       from r1 to r0. The actual heap helper is void; no word is returned. */
     Runtime_SetIrqHandler(5, 0, NULL);
-    Runtime_ReleaseHeapBlock(0x33);
+    Runtime_ReleaseHeapBlock(51);
 }

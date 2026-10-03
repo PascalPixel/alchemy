@@ -2,7 +2,7 @@
 #include "ANIMSPR.H"
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
-#include "FIELD_EVENT.H"
+#include "FIELDOBJ.H"
 #include "OBJECT_LOOKUP.H"
 #include "OBJDISP.H"
 #include "TYPES.H"

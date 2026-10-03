@@ -9,27 +9,6 @@
 
 enum { UI_OUTPUT_COUNT = 64 };
 
-/* One of the three window text channels. Positions are 8.8 fixed point;
-   entry names a built text entry, and colours hold its four palette values. */
-struct UiChannelSlot {
-    struct UiWindow *work;
-    u16 x;
-    u16 y;
-    u16 colours[4];
-    u16 unknown_10;
-    u16 entry;
-    u16 countdown;
-    u16 colour;
-    u16 outline;
-    u16 line_spacing;
-    u16 transition;
-    u16 start_x;
-    u16 unknown_20;
-    u16 unknown_22;
-    u16 flags;
-    u16 unknown_26;
-};
-
 /* Window tilemap, records, text channels and render queues. Japanese text
    uses twelve windows and a 256-entry ring; other editions use eight and 512. */
 struct UiRenderWork {
@@ -94,11 +73,6 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_Busy, struct UiRenderWork, busy, RENDER_BUSY_OF
 LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingBefore, struct UiRenderWork, spacing_before, RENDER_BUSY_OFS + 1);
 LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingAfter, struct UiRenderWork, spacing_after, RENDER_BUSY_OFS + 2);
 LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
-LAYOUT_SIZE_GUARD(UiChannelSlot_Size, struct UiChannelSlot, 0x28);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Entry, struct UiChannelSlot, entry, 0x12);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Countdown, struct UiChannelSlot, countdown, 0x14);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Transition, struct UiChannelSlot, transition, 0x1c);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Flags, struct UiChannelSlot, flags, 0x24);
 
 extern u8 *gWindowWork[];
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);

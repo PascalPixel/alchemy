@@ -423,7 +423,7 @@
     "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/RENDER3.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0003972a)
     "*/recon/tla/fr/rom.o"(.rom.0003a050)
-    "*/recon/tla/fr/rom.o"(.rom.0003a384)
+    "*/games/COMMON/SRC/GRAPHICS/RENDER/IS_COMPLETE.o"(.text)
     "*/recon/tla/fr/rom.o"(.rom.0003a3b0)
     "*/recon/tla/fr/rom.o"(.rom.0003a4fc)
     "*/recon/tla/fr/rom.o"(.rom.0003a518)

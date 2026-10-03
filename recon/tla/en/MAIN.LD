@@ -607,7 +607,7 @@
         "*/recon/tla/raw/0803a084.o"(.text)
         "*/recon/tla/raw/0803a1c0.o"(.text)
         "*/recon/tla/raw/0803a2b0.o"(.text)
-        "*/recon/tla/raw/0803a3b8.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/RENDER/IS_COMPLETE.o"(.text)
         "*/recon/tla/raw/0803a3e4.o"(.text)
         "*/recon/tla/raw/0803a404.o"(.text)
         "*/recon/tla/raw/0803a448.o"(.text)

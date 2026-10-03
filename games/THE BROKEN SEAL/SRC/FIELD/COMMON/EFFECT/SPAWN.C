@@ -6,15 +6,19 @@
 extern const s32 *const gEffectScripts[];
 struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
 
+/* The local body uses the existing overlay imports and their measured
+   inline call boundary. The resident script dispatcher takes an address word. */
 static inline struct FieldActor *Effect_CreateResident(s32 type, s32 x, s32 y, s32 z)
 {
-    /* FAKEMATCH: the inline result copy preserves the resident spawn's allocation. */
+    /* FAKEMATCH: retain the existing inline result-copy lifetime; direct
+       create/script calls reduce the spawn frame from eight bytes to four. */
     return Object_CreateFar(type, x, y, z);
 }
 
 static inline void Effect_SetResidentScript(struct FieldActor *object, const s32 *script)
 {
-    /* FAKEMATCH: retain the inline call shape of the resident spawn's script setup. */
+    /* FAKEMATCH: the inline script boundary keeps the table offset live
+       until scale setup; direct calls cache the script in a different register. */
     ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)script);
 }
 
@@ -31,7 +35,7 @@ enum {
 void __attribute__((section(section_name))) name( \
     s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, \
     u32 flags, const struct EffectOptions *options) \
-{ /* FAKEMATCH: the inline calls retain allocation in both shared spawn variants. */ \
+{ /* FAKEMATCH: the existing inline create/script calls preserve the eight-byte spawn frame and script-table load order; direct calls use four bytes. */ \
     struct FieldActor *party = Actor_Get(ACTOR_PARTY_LEADER); \
     struct FieldEffect *effect; \
     struct FieldSprite *sprite; \

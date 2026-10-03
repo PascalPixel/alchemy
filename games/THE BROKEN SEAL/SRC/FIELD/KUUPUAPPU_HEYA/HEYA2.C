@@ -22,7 +22,7 @@ void SceneActor_SetPairZeroAndValue();
 void Audio_PlayCueFromEventWork();
 void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
-s32 ArcTan2();
+s32 ArcTan2(s32, s32);
 void FieldScene_RunSplitTripleSteps();
 void SceneState_SetWord1c0To209AndRun();
 void SceneEffect_ApplyPairWithValue141();
@@ -508,7 +508,7 @@ void FieldScene_RunScene383_0200091c(void)
 void SceneDialogue_RunActorNineFlaggedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuOkMisterLetMeSee);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuIfRockWorthlessMaybeThats);
@@ -520,7 +520,7 @@ void SceneDialogue_RunActorNineFlaggedDialogue(void)
 void SceneDialogue_RunActorElevenFlaggedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuWonderOutsideWorldLike);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuFatherLooksSadWorryingLike);
@@ -532,7 +532,7 @@ void SceneDialogue_RunActorElevenFlaggedDialogue(void)
 void SceneDialogue_ShowLine124EOr135E(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuCouldTheyThievesGoodDont);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuGuessNothingInOurHouse);
@@ -544,7 +544,7 @@ void SceneDialogue_ShowLine124EOr135E(void)
 void SceneDialogue_RunActor16FlaggedLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuTicklesBeingTickledByBoy);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuCaveInGomaRangeDangerous);
@@ -556,9 +556,9 @@ void SceneDialogue_RunActor16FlaggedLine(void)
 void SceneDialogue_RunActorEighteenBranchedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuMasterHisWifeBlindedBy);
-    } else if (GameFlag_IsSet(0x85b) == 0) {
+    } else if (Engine_GameFlagIsSet(0x85b) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuGeeAlwaysGetHungryWhen);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuHeReallyLikesBonesWonder);
@@ -1055,7 +1055,7 @@ void FieldScene_RunVaultClosingSequence(void)
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 void SceneState_SetValue123Mode11(void)
 {
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     Engine_EventRequestExit(11);
 }
 
@@ -1269,8 +1269,8 @@ void FieldScene_RunScene383SequenceB(void)
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 void FieldScene_RunSteps107And250(void)
 {
-    GameFlag_Set(0x107);
-    GameFlag_Set(0x250);
+    Engine_GameFlagSet(0x107);
+    Engine_GameFlagSet(0x250);
     KuupuappuHeya_StartActorStops();
 }
 
@@ -1624,9 +1624,9 @@ void SceneState_SetFlagByActorPosition(void)
     z = z >> 20;
 
     if ((u32)x <= 1 && z > 40 && z <= 42) {
-        GameFlag_Set(148 << 2);
+        Engine_GameFlagSet(148 << 2);
     } else {
-        GameFlag_Clear(148 << 2);
+        Engine_GameFlagClear(148 << 2);
     }
 }
 
@@ -1954,7 +1954,7 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
     state = Owner_GetState(2);
     if (*(s32 *)(state + 0xf8) & 1) {
         Djinn_Transfer(2, 0, 0, 0);
-        Audio_PlayCue(126);
+        Engine_AudioPlayCue(126);
         Owner_RecalculateStats(0);
         Owner_RecalculateStats(2);
     }
@@ -2695,13 +2695,13 @@ void SceneState_SetWord1c0To209AndRun(void)
 
 void SceneActor_SetModeZeroAndValue(s32 a, s32 b)
 {
-    Event_ShowMessage(a, 0);
+    Engine_EventShowMessage(a, 0);
     Engine_EventWait(b);
 }
 
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c)
 {
-    Actor_FaceActor(a, b, 0);
+    Engine_ActorFaceActor(a, b, 0);
     Engine_EventWait(c);
 }
 

@@ -79,7 +79,7 @@ u8 *SceneData_GetPreparedRecords(void)
 {
     u8 *buf;
 
-    if (GameFlag_IsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(0x845) == 0) {
         SceneData_InitRecordTable((struct Resource390TableEntry *)EntryLayout_Records);
     }
     buf = EntryLayout_Records;
@@ -93,7 +93,7 @@ void FieldScene_RunActor16MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
+    u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
 
@@ -101,7 +101,7 @@ void FieldScene_RunActor16MessageBranch(void)
         Engine_ShopOpen(13, 16);
     } else {
         Engine_EventSetMessage((s32)MsgKorimaFuchinTempleOnOtherSide);
-        Event_ShowMessage(16, 0);
+        Engine_EventShowMessage(16, 0);
     }
 
     Engine_EventEnd();
@@ -113,7 +113,7 @@ void FieldScene_RunActor17MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
+    u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
 
@@ -121,7 +121,7 @@ void FieldScene_RunActor17MessageBranch(void)
         Engine_ShopOpen(14, 17);
     } else {
         Engine_EventSetMessage((s32)MsgKorimaGrandBridgeAcrossRiverPride);
-        Event_ShowMessage(17, 0);
+        Engine_EventShowMessage(17, 0);
     }
 
     Engine_EventEnd();
@@ -133,7 +133,7 @@ void FieldScene_RunActor18MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
+    u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
 
@@ -141,7 +141,7 @@ void FieldScene_RunActor18MessageBranch(void)
         Engine_ShopOpen(15, 18);
     } else {
         Engine_EventSetMessage((s32)MsgKorimaWhenWasTreeLearnedAppreciate);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     }
 
     Engine_EventEnd();
@@ -156,7 +156,7 @@ void FieldScene_RunActor19MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
+    u32 dir = ((struct Approach390Subject *)Object_GetById(0))->dir;
 
     Engine_EventBegin();
 
@@ -164,7 +164,7 @@ void FieldScene_RunActor19MessageBranch(void)
         Engine_InnOpen(3, 19);
     } else {
         Engine_EventSetMessage((s32)MsgKorimaTheySayMccoyHaltedConstruction);
-        Event_ShowMessage(19, 0);
+        Engine_EventShowMessage(19, 0);
     }
 
     Engine_EventEnd();
@@ -200,10 +200,10 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
     *(s32 *)(work + 448) = 0x209;
 
-    if (GameFlag_IsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(0x845) == 0) {
         id = 8;
         do {
-            struct FieldActor *record = Actor_Get(id);
+            struct FieldActor *record = Object_GetById(id);
 
             id++;
             Engine_ActorSetSpriteFlags(record, 0);
@@ -221,21 +221,21 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
         s32 arg4;
         arg4 = 13;
         arg5 = 8;
-        Map_CopyCellsTo(34, 34, 18, 16, arg4, arg5);
-        Map_CopyCellsTo(34, 94, 18, 76, arg4, arg5);
-        Map_CopyCellsTo(94, 34, 78, 16, arg4, arg5);
+        Engine_MapCopyCellsTo(34, 34, 18, 16, arg4, arg5);
+        Engine_MapCopyCellsTo(34, 94, 18, 76, arg4, arg5);
+        Engine_MapCopyCellsTo(94, 34, 78, 16, arg4, arg5);
     } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {
         /* Shifted window test: the selector set is {8, 9}. */
         s32 arg5;
         s32 arg4;
         arg4 = 11;
         arg5 = 8;
-        Map_CopyCellsTo(34, 43, 19, 23, arg4, arg5);
-        Map_CopyCellsTo(34, 94, 19, 83, arg4, arg5);
-        Map_CopyCellsTo(94, 34, 79, 23, arg4, arg5);
-        Actor_SetPosition(10, 0, 0);
-        Actor_SetPosition(11, 0, 0);
-        Actor_SetPosition(12, 0, 0);
+        Engine_MapCopyCellsTo(34, 43, 19, 23, arg4, arg5);
+        Engine_MapCopyCellsTo(34, 94, 19, 83, arg4, arg5);
+        Engine_MapCopyCellsTo(94, 34, 79, 23, arg4, arg5);
+        Engine_ActorSetPosition(10, 0, 0);
+        Engine_ActorSetPosition(11, 0, 0);
+        Engine_ActorSetPosition(12, 0, 0);
     }
     return 0;
 }

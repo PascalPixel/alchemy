@@ -1,9 +1,7 @@
 #include "RUNTIME_MEM.H"
 #include "SAVE_STATE.H"
 #include "SYSTEM.H"
-
-typedef void (*InterruptHandler)(void);
-extern InterruptHandler Data_030000e0[];
+#include "IRQ.H"
 
 /* Allocates the save workspace, waits for the flash chip to identify itself
    (eight tries, a frame apart; returns 1 if it never does), then reads all
@@ -21,7 +19,7 @@ s32 SaveState_InitializeWorkspace(void)
     work = Runtime_AllocateBlock(0x33, sizeof(*work));
     zero = 0;
     START_DMA(&zero, work, 0x85000440);
-    SetFlashTimerIntr(2, &Data_030000e0[5]);
+    SetFlashTimerIntr(2, &gIrqHandlers[5]);
 
     for (index = 0; index < 8; index++) {
         if ((u16)IdentifyFlash() == 0)

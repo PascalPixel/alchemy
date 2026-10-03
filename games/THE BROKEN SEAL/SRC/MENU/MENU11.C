@@ -6,7 +6,6 @@
 #include "SYSTEM.H"
 
 
-s32 BattleFx_FindConditionResourceFar(s16, s16);
 void Event_SetPairWork1c0Far(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
 
@@ -53,7 +52,7 @@ void Scheduler_ScheduleCallbackCAfterFrames(void)
 void Menu_DrawSelectionRow(struct Work *work, s16 first, const s16 *second)
 {
     s16 selected = first;
-    s32 label = BattleFx_FindConditionResourceFar(selected, *second) + (s32)MsgDebugEntryName;
+    s32 label = Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugEntryName;
     RenderOutput_PrepareForRedraw(work);
     UiText_DrawNumber(selected, 3, (s32)work, 0, 14);
     UiText_DrawNumber(*second, 3, (s32)work, MENU_LABEL_X, 14);

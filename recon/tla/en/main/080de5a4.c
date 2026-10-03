@@ -1,3 +1,5 @@
+/* 2026-10-03: removed the unused competing ApplyChildValuesFar declaration.
+   Complete EN object unchanged; fresh score remains 60/1. */
 /* Near miss: score 60. ⚓️ shifts life << 17 into r0 between loading and
    storing the middle coordinate, a load-delay fill that differs with the
    approved game flags. It would join
@@ -22,7 +24,6 @@ struct OrbitingParticleVector {
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct OrbitingParticleVector *position);
 void BattleFx_UpdateOrbitingParticleFade(void *object);
-void Animation_ApplyChildValuesFar(struct OrbitingParticle *particle, s32 battle_mode);
 
 void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle)
 {

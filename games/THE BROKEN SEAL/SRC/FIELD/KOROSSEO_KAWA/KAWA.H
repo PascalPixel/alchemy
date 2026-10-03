@@ -5,6 +5,8 @@
 
 struct FieldActor;
 
+void *Owner_GetState(u32 owner);
+
 typedef struct Position3 {
     s32 x;
     s32 y;

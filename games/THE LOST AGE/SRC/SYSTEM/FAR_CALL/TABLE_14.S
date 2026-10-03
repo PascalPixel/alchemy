@@ -28,7 +28,7 @@ UiWork_ClearValueNameTablesFar:
 	.global UiText_DrawQuantity
 	.thumb_func
 UiText_DrawQuantity:
-	overlay_veneer Func_0803ccd0
+	overlay_veneer UiWork_PushValueSlot
 	.global Func_08038128
 	.thumb_func
 Func_08038128:

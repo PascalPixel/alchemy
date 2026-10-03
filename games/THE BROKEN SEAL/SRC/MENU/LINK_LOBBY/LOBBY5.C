@@ -56,7 +56,6 @@ extern u8 MsgLobbyWonNumberBattle[];
 extern u8 MsgLobbyWonNumberBattleBroke[];
 extern u8 MsgLobbyWonNumberBattleTold[];
 extern u8 gOptionMirror[];
-u32 State_RunQueryWithInterruptMasterSaved(void);
 s32 LinkLobby_DrawThreeDigitValue(s32 value);
 s32 LinkLobby_SaveBattleResults(void);
 s32 LinkLobby_SaveMonsterBattleResults(void);
@@ -375,7 +374,7 @@ s32 LinkLobby_RunRoundResult(void)
     Map_SetLayerEntryFlag(5);
     /* Through a pointer the halfword letters load from the literal pool. */
     {
-        u16 *name = (u16 *)gSerialTransfer.reserved;
+        u16 *name = (u16 *)gSerialTransfer.payload;
 
         name[4] = 'T';
         name[5] = 'A';
@@ -488,7 +487,7 @@ s32 LinkLobby_RunRoundResult(void)
             ew->raised_trigger = 2;
             Engine_GameFlagClear(0x304);
             Engine_TaskWait(20);
-            State_RunQueryWithInterruptMasterSaved();
+            LinkLobby_InitializeSerial();
             LinkLobby_WriteSlotValue(0);
             LinkLobby_WriteSlotValue(4);
         } else {

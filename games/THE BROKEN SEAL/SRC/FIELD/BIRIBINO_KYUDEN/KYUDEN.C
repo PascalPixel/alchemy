@@ -125,7 +125,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
         p = gBiribinoKyudenPlacements;
         FieldScene_PrepareActors(p);
 
-        if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
             struct SceneRecord *rec = (struct SceneRecord *)p;
 
             rec->field_166 = 2;
@@ -153,7 +153,7 @@ void Kyuden_AskAboutKolima(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoYouWillingGoKolimaForest);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -194,7 +194,7 @@ void SceneDialogue_RunActor16Message1769(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoWasWatchingFromHereAfter);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
@@ -202,18 +202,18 @@ void FieldScene_RunActorSeventeenFlaggedDialogue(void)
 {
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x202) != 0) {
+    if (Engine_GameFlagIsSet(0x202) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoMayChooseOnlyOneItem);
-    } else if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoRewardReceivedWasIndeedGreatest);
     } else {
         Engine_EventSetMessage((s32)MsgBiribinoDoThinkTheseBilibinsGreat);
-        if (GameFlag_IsSet(0x84d) != 0) {
+        if (Engine_GameFlagIsSet(0x84d) != 0) {
             gEventWork->message++;
         }
     }
 
-    Event_ShowMessage(17, 0);
+    Engine_EventShowMessage(17, 0);
     Engine_EventEnd();
 }
 
@@ -236,18 +236,18 @@ void FieldScene_RunActorSeventeenFlagDialogue(void)
 {
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x202) != 0) {
+    if (Engine_GameFlagIsSet(0x202) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoNonethelessIfYourLuckSour);
-    } else if (GameFlag_IsSet(0x845) == 0) {
+    } else if (Engine_GameFlagIsSet(0x845) == 0) {
         Engine_EventSetMessage((s32)MsgBiribinoGoodTreasureIfGetTurned);
     } else {
         Engine_EventSetMessage((s32)MsgBiribinoWeReallyGivingOurTreasure);
-        if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
             Engine_EventSetMessage((s32)MsgBiribinoGotPrettyNiceRewardBut);
         }
     }
 
-    Event_ShowMessage(17, 0);
+    Engine_EventShowMessage(17, 0);
     Engine_EventEnd();
 }
 
@@ -311,7 +311,7 @@ void FieldScene_RunChestStep(s32 flag)
 
 void FieldScene_RunStep210ByFlag84e(void)
 {
-    if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
         FieldScene_RunChestStep(0x210);
     } else {
         FieldScene_RunSlotSubjectBranch(21, 182, 0x210);
@@ -320,7 +320,7 @@ void FieldScene_RunStep210ByFlag84e(void)
 
 void FieldScene_RunStep211ByFlag84e(void)
 {
-    if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
         FieldScene_RunChestStep(0x211);
     } else {
         FieldScene_RunSlotSubjectBranch(22, 183, 0x211);
@@ -329,7 +329,7 @@ void FieldScene_RunStep211ByFlag84e(void)
 
 void FieldScene_RunStep212ByFlag84e(void)
 {
-    if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
         FieldScene_RunChestStep(0x212);
     } else {
         FieldScene_RunSlotSubjectBranch(23, 186, 0x212);
@@ -338,7 +338,7 @@ void FieldScene_RunStep212ByFlag84e(void)
 
 void FieldScene_RunStep213ByFlag84e(void)
 {
-    if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_REWARD_TAKEN) != 0) {
         FieldScene_RunChestStep(0x213);
     } else {
         FieldScene_RunSlotSubjectBranch(24, 189, 0x213);
@@ -355,12 +355,12 @@ void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag)
 
     if (Engine_PartyGiveItem(item, 0) != -1) {
         Engine_ActorSetAnimation(actor, 2);
-        GameFlag_Set(FLAG_REWARD_TAKEN);
-        GameFlag_Set(flag);
-        GameFlag_Clear(0x322);
-        GameFlag_Clear(0x202);
+        Engine_GameFlagSet(FLAG_REWARD_TAKEN);
+        Engine_GameFlagSet(flag);
+        Engine_GameFlagClear(0x322);
+        Engine_GameFlagClear(0x202);
     } else {
-        Audio_PlayCue(125);
+        Engine_AudioPlayCue(125);
         Engine_ActorSetAnimation(actor, 5);
     }
 

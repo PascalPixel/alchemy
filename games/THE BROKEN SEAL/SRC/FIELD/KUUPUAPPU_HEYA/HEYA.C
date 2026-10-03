@@ -313,7 +313,7 @@ void ActorPresentation_SetSceneCellByAngle(void)
 #endif
         x = 42;
         z = 85;
-        Map_CopyCellAttributes(41, 85, 1, 1, x, z);
+        Engine_MapCopyCellAttributes(41, 85, 1, 1, x, z);
     } else if (Object_GetById(0)->facing >= 0x2000
                && Object_GetById(0)->facing <= 0x6000) {
 #if EDITION_INTERNATIONAL
@@ -328,7 +328,7 @@ void ActorPresentation_SetSceneCellByAngle(void)
 #endif
         x = 42;
         z = 85;
-        Map_CopyCellAttributes(43, 85, 1, 1, x, z);
+        Engine_MapCopyCellAttributes(43, 85, 1, 1, x, z);
     }
 }
 
@@ -343,8 +343,8 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
     if ((obj->x.fixed >> 20) == 42) {
         x = 41;
         z = 24;
-        Map_CopyCellAttributes(101, 24, 3, 4, x, z);
-        GameFlag_Set(0x859);
+        Engine_MapCopyCellAttributes(101, 24, 3, 4, x, z);
+        Engine_GameFlagSet(0x859);
     }
     Engine_EventEnd();
 }
@@ -359,12 +359,12 @@ void FieldScene_RunActorNineteenAngleDialogue(void)
     if (v >= 0xa001 && v <= 0xdfff) {
         Engine_ShopOpen(4, 19);
     } else {
-        if (GameFlag_IsSet(0x855) == 0) {
+        if (Engine_GameFlagIsSet(0x855) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuMasterHammetIsntOnlyOne);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuWeFoundOurStolenWeapons);
         }
-        Event_ShowMessage(19, 0);
+        Engine_EventShowMessage(19, 0);
     }
     Engine_EventEnd();
 }
@@ -399,12 +399,12 @@ void FieldScene_RunActorTwentyAngleDialogue(void)
     if (v >= 0xa001 && v <= 0xdfff) {
         Engine_ShopOpen(5, 20);
     } else {
-        if (GameFlag_IsSet(0x855) == 0) {
+        if (Engine_GameFlagIsSet(0x855) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuThievesDidntHitOurHouse);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuIfYoureGonnaHeadInto);
         }
-        Event_ShowMessage(20, 0);
+        Engine_EventShowMessage(20, 0);
     }
     Engine_EventEnd();
 }
@@ -417,12 +417,12 @@ void FieldScene_RunActorTwentyThreeAngleDialogue(void)
     if (v >= 0xa001 && v <= 0xdfff) {
         Engine_InnOpen(1, 23);
     } else {
-        if (GameFlag_IsSet(0x855) == 0) {
+        if (Engine_GameFlagIsSet(0x855) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuEveryoneThinksOurGuestsThieves);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuTheyHidThoseStolenGoods);
         }
-        Event_ShowMessage(23, 0);
+        Engine_EventShowMessage(23, 0);
     }
     Engine_EventEnd();
 }
@@ -434,7 +434,7 @@ void FieldScene_RunActorEighteenConditionalScene(void)
         Engine_ActorSetAnimationAndWait(18, 4);
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     } else {
         Engine_ItemShowFound(ITEM_BONE, 3);
         Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -448,7 +448,7 @@ void SceneDialogue_ShowLine12BB(void)
     Battle_InitializeRenderObject();
 #endif
     Engine_EventSetMessage((s32)MsgKuupuappuWeDontHaveTimeFor);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
 }
 
 void SceneDialogue_ShowEmptyBarrel(void)
@@ -480,7 +480,7 @@ const struct SceneEvent *Scene_GetEvents(void)
             return gKuupuappuHeyaEventsEntrances15To17;
         }
     }
-    if (GameFlag_IsSet(0x855) != 0) {
+    if (Engine_GameFlagIsSet(0x855) != 0) {
         return gKuupuappuHeyaEventsFlag855;
     }
     return gKuupuappuHeyaEvents;
@@ -512,7 +512,7 @@ void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 {
     Engine_ActorSetAnimation(x, 1);
     SceneActor_SetPairZeroAndValue(x, 0, 2);
-    Event_ShowMessage(x, 0);
+    Engine_EventShowMessage(x, 0);
 }
 
 void SceneState_RunGuardedActorStep(s32 x)
@@ -524,7 +524,7 @@ void SceneState_RunGuardedActorStep(s32 x)
     Engine_EventBegin();
     Engine_ActorSetAnimation(x, 1);
     Engine_EventWait(2);
-    Event_ShowMessage(x, 0);
+    Engine_EventShowMessage(x, 0);
     Engine_EventEnd();
     *flag = zero;
 }
@@ -532,11 +532,11 @@ void SceneState_RunGuardedActorStep(s32 x)
 void SceneDialogue_PromptAndCountSkip(s32 x)
 {
     SceneActor_SetPairZeroAndValue(x, 0, 2);
-    Event_OpenMessage(x, 0);
+    Engine_EventOpenMessage(x, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         gEventWork->message += 1;
     }
-    Event_ShowMessage(x, 0);
+    Engine_EventShowMessage(x, 0);
 }
 
 void SceneDialogue_RunActorElevenDialogue(void)
@@ -567,12 +567,12 @@ void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
     Engine_EventBegin();
     if (value >= 0xa001 && value <= 0xdfff) {
         Engine_ShopOpen(6, 21);
-    } else if (GameFlag_IsSet(0x855) == 0) {
+    } else if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuDidJustArriveInTown);
         SceneDialogue_PromptAndCountSkip(21);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuWithBridgeOutWillQuite);
-        Event_ShowMessage(21, 0);
+        Engine_EventShowMessage(21, 0);
     }
     Engine_EventEnd();
 }
@@ -580,7 +580,7 @@ void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
 void SceneDialogue_RunActor9FlaggedLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuIfOnlyTheseRocksWere);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuThankGoodnessThoseThievesWere);
@@ -592,7 +592,7 @@ void SceneDialogue_RunActor9FlaggedLine(void)
 void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x855) != 0) {
+    if (Engine_GameFlagIsSet(0x855) != 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuThievesHidStolenTreasureIn);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuJustMeOrAmMissing);
@@ -606,13 +606,13 @@ void FieldScene_RunFlag856DialogueBranch(void)
     s32 g;
     g = 0x851;
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x856) != 0) {
-        if (GameFlag_IsSet(g) == 0) {
+    if (Engine_GameFlagIsSet(0x856) != 0) {
+        if (Engine_GameFlagIsSet(g) == 0) {
             Engine_EventSetMessage((s32)MsgKuupuappuYoureGoingHelpIvan);
             ActorPresentation_RunActorModeOneThenZeroWithStep(16);
             Engine_EventWait(10);
             SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
-            GameFlag_Set(g);
+            Engine_GameFlagSet(g);
         } else {
             Engine_EventSetMessage((s32)MsgKuupuappuPleaseLookAfterIvan);
         }
@@ -642,8 +642,8 @@ void SceneActor_StepActor24AnimationByFacing(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(24, 2);
     Engine_EventSetMessage((s32)MsgKuupuappuOwStop);
-    Event_ShowMessage(24, 0);
-    Actor_SetSpeed(24, 0x40000, 0x20000);
+    Engine_EventShowMessage(24, 0);
+    Engine_ActorSetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
         q = (s16 *)((u8 *)p + 100);
         v = *q;

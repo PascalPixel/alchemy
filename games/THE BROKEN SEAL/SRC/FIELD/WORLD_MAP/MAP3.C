@@ -186,33 +186,33 @@ void FieldScene_RunActorPresentationSequence(void)
 void StoryScene_StartTransition(void)
 {
     Engine_EventBegin();
-    Audio_PlayCue(141);
-    ColorBuffer_ApplySource(0, 0);
-    ColorBuffer_ApplyTarget(0, 0);
+    Engine_AudioPlayCue(141);
+    Engine_ColorBufferApplySource(0, 0);
+    Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(2);
     gEventWork->transition_frames = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     Engine_TaskWait(1);
-    Camera_SetSpeed(0x40000, 0x8000);
+    Engine_CameraSetSpeed(0x40000, 0x8000);
     {
         s32 transition_delay = 3200;
         void *transition_callback = (void *)StoryScene_UpdateTransitionEffect;
         Engine_TaskAddCallback(transition_callback, transition_delay);
     }
-    ColorBuffer_ApplySource(0, 0);
-    ColorBuffer_ApplyTarget(0x10004, 1);
-    ColorBuffer_ApplyTarget(0x10000, 2);
+    Engine_ColorBufferApplySource(0, 0);
+    Engine_ColorBufferApplyTarget(0x10004, 1);
+    Engine_ColorBufferApplyTarget(0x10000, 2);
     Engine_ColorBufferInterpolate(40);
     Engine_EventWait(240);
-    ColorBuffer_ApplyTarget(0, 0);
+    Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(80);
     Engine_TaskWait(90);
     Engine_EventRequestExit(109);
-    GameFlag_Set(282);
+    Engine_GameFlagSet(282);
     Engine_EventEnd();
 }
 
@@ -223,15 +223,15 @@ void StoryScene_StartTransition(void)
  */
 void StoryScene_UpdateTransitionEffect(void)
 {
-    u32 x = (u32)Random_Next() * TRANSITION_EFFECT_WIDTH >> 16;
-    u32 z = (u32)Random_Next() * TRANSITION_EFFECT_DEPTH >> 16;
+    u32 x = (u32)Engine_RandomNext() * TRANSITION_EFFECT_WIDTH >> 16;
+    u32 z = (u32)Engine_RandomNext() * TRANSITION_EFFECT_DEPTH >> 16;
     struct FieldActor *object;
 
-    object = Object_Create(TRANSITION_EFFECT_TYPE, PIXELS(x) + PIXELS(TRANSITION_EFFECT_LEFT), 0,
+    object = Engine_ObjectCreate(TRANSITION_EFFECT_TYPE, PIXELS(x) + PIXELS(TRANSITION_EFFECT_LEFT), 0,
                            PIXELS(z) + PIXELS(TRANSITION_EFFECT_TOP));
     if (object != NULL) {
         struct FieldSprite *sprite = object->sprite;
-        s32 scale = (((u32)Random_Next() << 15) >> 16) + 0x13333;
+        s32 scale = (((u32)Engine_RandomNext() << 15) >> 16) + 0x13333;
 
         sprite->flags = 0;
         sprite->priority = 2;
@@ -239,21 +239,21 @@ void StoryScene_UpdateTransitionEffect(void)
         object->scale_x = scale;
         object->scale_y = scale;
         Object_SetMode(object, 1);
-        Object_SetScript(object, gTransitionSparkScript);
+        Engine_ObjectSetScript(object, gTransitionSparkScript);
     }
     if (gFrameCount % 3 == 0) {
-        switch (((u32)Random_Next() << 2) >> 16) {
+        switch (((u32)Engine_RandomNext() << 2) >> 16) {
         case 0:
-            Camera_MoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c69), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c69), 1);
             break;
         case 1:
-            Camera_MoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c67), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c67), 1);
             break;
         case 2:
-            Camera_MoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c69), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c69), 1);
             break;
         case 3:
-            Camera_MoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c67), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c67), 1);
             break;
         }
     }
@@ -335,7 +335,7 @@ s32 StoryReward_LookupBySelection(u32 selection)
         break;
     }
     for (offset = 0; offset < 9; offset++) {
-        if (GameFlag_IsSet(flag_base + offset) != 0) return gWorldMapRewards[offset];
+        if (Engine_GameFlagIsSet(flag_base + offset) != 0) return gWorldMapRewards[offset];
     }
     return 0;
 }
@@ -420,7 +420,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
     struct EventWork *scene;
     s32 progress;
 
-    actor = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
     scene = gEventWork;
     actor->facing = (u16)(*(volatile s32 *)&gFrameCount << 12);
 
@@ -428,7 +428,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
     if (progress != 0) {
         if (progress == 1) {
             scene->raised_trigger = 99;
-        } else if (GameFlag_IsSet(0x106) == 0) {
+        } else if (Engine_GameFlagIsSet(0x106) == 0) {
             progress -= 1;
         }
     }
@@ -487,13 +487,13 @@ void StoryScene_CompleteActor98(void)
     if (gEventWork->raised_trigger == 99) {
         gEventWork->raised_trigger = 0;
     }
-    GameFlag_Clear(0x2f0);
-    GameFlag_Set(0x2f1);
+    Engine_GameFlagClear(0x2f0);
+    Engine_GameFlagSet(0x2f1);
     GameFlag_SetByte(0x2f8, 0);
     BattleFx_SetWeightedResult(98, 5);
     gGameState.battle_start = 3;
     BattleFx_SetWeightedResult(98, 7);
-    selected_actor = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    selected_actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
     selected_actor->motion_flags = 2;
 }
 

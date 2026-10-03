@@ -109,13 +109,13 @@ void Camera_ConfigureScene(s32 pos)
     secondary->active = 0;
 }
 
-void BattleUnit_ClearField12bForGroup(void)
+void BattleUnit_ResetGuardLevels(void)
 {
     u16 ids[14];
     s32 count;
     s32 index;
 
-    count = BattleParty_ListActorIds(3, (u16 *)ids);
+    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
     for (index = 0; index < count; index++) {
         struct BattleUnit *actor;
 

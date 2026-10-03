@@ -20,7 +20,7 @@ void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourt
     struct FieldActor *obj;
     struct FieldSprite *rec;
 
-    obj = Object_Create(fourth, first, second, third);
+    obj = Engine_ObjectCreate(fourth, first, second, third);
     if (obj != NULL) {
         rec = obj->sprite;
         rec->priority = 0;
@@ -36,7 +36,7 @@ void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourt
 
 void *OverlayObject_CreateConfiguredObjectB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    struct FieldActor *result = Object_Create(arg3, arg0, arg1, arg2);
+    struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
 
     if (result != NULL) {
         struct FieldSprite *object = result->sprite;

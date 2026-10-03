@@ -17,7 +17,7 @@ s32 BattlePres_WaitSync(void)
 
         /* The serial state occupies the first four bytes of each payload. */
         peer = (u16 *)(gSerialPeerPayloads[other] + 4);
-        sync = (u16 *)gSerialTransfer.reserved;
+        sync = (u16 *)gSerialTransfer.payload;
         if (work->link_paused == 0) {
             sync[0] = 'E';
             sync[1] = 'X';

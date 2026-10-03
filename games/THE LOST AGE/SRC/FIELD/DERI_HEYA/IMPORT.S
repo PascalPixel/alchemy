@@ -218,9 +218,9 @@ Func_02000dac:
 	overlay_veneer Func_080c8480
 	.endif
 	.endif
-	.global Engine_EventPrepareSpeakers
+	.global Engine_EventResolvePendingActions
 	.thumb_func
-Engine_EventPrepareSpeakers:
+Engine_EventResolvePendingActions:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else

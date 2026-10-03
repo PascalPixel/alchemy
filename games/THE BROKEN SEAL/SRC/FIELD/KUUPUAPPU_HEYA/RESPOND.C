@@ -25,7 +25,7 @@ struct Responder {
    the turn, within the pair of stops it is in. */
 static inline void KuupuappuHeya_WalkOn(struct Responder *actor, s32 row, s32 half, u16 turn)
 {
-    Actor_EnableActionCallback(25, KuupuappuHeya_ResponseScripts[row][actor->stop]);
+    Engine_ActorEnableActionCallback(25, KuupuappuHeya_ResponseScripts[row][actor->stop]);
     actor->stop = actor->stop - half * 2 + turn;
 }
 
@@ -40,21 +40,21 @@ void KuupuappuHeya_RunActor25Response(void)
     u32 facing;
     s32 half;
 
-    actor = (struct Responder *)Actor_Get(25);
+    actor = (struct Responder *)Object_GetById(25);
     facing = actor->facing & 0xf000;
     half = actor->stop >> 1;
-    Event_Begin();
-    Actor_RunRepeatedMotion(25, 2);
-    Event_SetMessage((s32)MsgKuupuappuNoLeaveAlone);
-    Event_ShowMessage(25, 0);
-    Actor_SetSpeed(25, 0x38000, 0x1c000);
+    Engine_EventBegin();
+    Engine_ActorRunRepeatedMotion(25, 2);
+    Engine_EventSetMessage((s32)MsgKuupuappuNoLeaveAlone);
+    Engine_EventShowMessage(25, 0);
+    Engine_ActorSetSpeed(25, 0x38000, 0x1c000);
     switch (actor->stop) {
     case 4:
         if (facing > 0x2000 && facing < 0xa000) {
-            Actor_EnableActionCallback(25, KuupuappuHeya_PairScriptR);
+            Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptR);
             actor->stop = 2;
         } else {
-            Actor_EnableActionCallback(25, KuupuappuHeya_PairScriptP);
+            Engine_ActorEnableActionCallback(25, KuupuappuHeya_PairScriptP);
             actor->stop = 3;
         }
         break;
@@ -77,5 +77,5 @@ void KuupuappuHeya_RunActor25Response(void)
     }
     actor->stop &= 3;
     Object_RefreshSelectorById(25);
-    Event_End();
+    Engine_EventEnd();
 }

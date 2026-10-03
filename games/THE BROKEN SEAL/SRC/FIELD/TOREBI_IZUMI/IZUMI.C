@@ -77,28 +77,28 @@ void TorebiIzumi_AskForLuckyMedal(s32 object)
 {
     s32 question = (s32)MsgTorebiLuckyMedal;
     Engine_EventSetMessage(question);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(question + 1);
     } else {
         Engine_EventSetMessage(question + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
 void TorebiIzumi_AskIfFirstTime(s32 object)
 {
     s32 question = (s32)MsgTorebiYerFirstTime;
     Engine_EventSetMessage(question);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(question + 1);
     } else {
         Engine_EventSetMessage(question + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
 /* The saved game as words: word 125 is the selected actor. */
@@ -121,7 +121,7 @@ void SceneDialogue_RunMessage0e34(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
-    Event_OpenMessage(-1, 0);
+    Engine_EventOpenMessage(-1, 0);
     Engine_EventEnd();
 }
 
@@ -129,7 +129,7 @@ void SceneDialogue_RunMessage0e35(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
-    Event_OpenMessage(-1, 0);
+    Engine_EventOpenMessage(-1, 0);
     Engine_EventEnd();
 }
 

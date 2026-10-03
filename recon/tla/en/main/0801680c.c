@@ -1,17 +1,31 @@
+/*
+ * SerialRuntime_BeginTransferA: start a byte-counted send from its source.
+ * Reference and complete candidate object: 72 bytes, literal pool included.
+ * Immutable refresh after physical-name closure: score 120, two reordered
+ * instructions. The transfer argument move follows the busy-cursor read;
+ * the source-cursor store follows the size/sequence stores.
+ * Refreshed against the rebuilt English ELF: every physical name resolves;
+ * no unresolved-symbol comparisons remain.
+ * Existing body and its measured FAKEMATCH devices are unchanged.
+ */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
-extern u8 gSerialExchangeActive[];
 
-s32 SerialRuntime_BeginTransferA(s32 value, s32 transfer_value)
+s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
     volatile u16 *ime;
     u32 saved_interrupt_master;
     s32 busy;
+    s32 value;
     s32 transfer;
 
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps
+       the source in r0 through the busy check. A separate result is hoisted
+       into r0 and moves the source to another register. */
+    value = (s32)source;
     active = &SERIAL_ACTIVE_A;
     busy = *active;
     transfer = transfer_value;

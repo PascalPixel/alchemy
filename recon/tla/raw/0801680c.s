@@ -32,12 +32,12 @@ Func_0801680c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08016840:
-	.4byte Data_020038d0
+	.4byte gSerialSendSource
 .L_08016844:
-	.4byte Data_02003a70
+	.4byte gSerialTransfer
 .L_08016848:
 	.4byte 0x04000208
 .L_0801684c:
-	.4byte Data_020036d4
+	.4byte gSerialSendSize
 .L_08016850:
-	.4byte Data_020054c4
+	.4byte gSerialBlockSequence

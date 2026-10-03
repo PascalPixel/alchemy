@@ -99,9 +99,9 @@ void ColossoLogRollingStage_PushStagedActor(void)
     subject->rate_z = 0x3333;
     Object_SetPosition(subject, position.x, position.y, position.z);
 
-    Audio_PlayCue(0xee);
+    Engine_AudioPlayCue(0xee);
     Object_CommitPosition(target);
-    Audio_PlayCue(0x120);                                /* 144 << 1 */
+    Engine_AudioPlayCue(0x120);                                /* 144 << 1 */
 
     target->x = position.x;
     target->z = position.z;

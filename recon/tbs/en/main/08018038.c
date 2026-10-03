@@ -2,91 +2,53 @@
 #include "TEXT_READER.H"
 #include "TYPES.H"
 #include "DMA.H"
-#include "GLOBAL_CELLS.H"
-#include "TBS_EDITION.H"
-extern u8 gWindowWork[];
+#include "WINDOW.H"
+#include "HEAP_STATE.H"
+#include "GAME_STATE.H"
+#include "BATTLE_RUNTIME.H"
 
 /*
- * UiText_BuildRenderEntries (UiText_BuildRenderEntries)
+ * Expands message glyphs, names, numbers and control codes into the render
+ * ring. A message of -1 returns the previous message's starting position.
+ * The cached decoder is an ARM routine called through a function pointer;
+ * the compiler emits the interworking call. The native r9 load is that
+ * callable target, not a dead value or a direct call to _call_via_r9.
  *
- * 会話用スクリプトを描画待ち行列へ展開する。
- *
- * Reads a message script one byte at a time through the stream reader opened
- * by UiText_LookupMessage and appends render entries to the 512-halfword ring at
- * work + RENDER_ENTRY_TBL_OFS.  Codes 0x20 and above are glyphs and are stored
- * directly; codes below 0x20 are control codes that either stop the scan,
- * splice in a looked-up name or number, or emit a fixed pair of entries.
- *
- * The write cursor lives at RENDER_ENTRY_COUNT_OFS and the position where the
- * current message started at the halfword after it, so a call with
- * script == -1 reports the previous start without expanding anything.
- *
- * Returns the ring index at which this message begins.
- *
- * Uncertain: the roles of the two flag bytes after RENDER_BUSY_OFS (here
- * spelled "spaced" and "wide gap") and of the fixed table bases 0x741, 0x182
- * and 0x333 are inferred from their use only.  Codes 222 and 223 are excluded
- * by every spacing guard below; 222 is the wide spacing entry this routine
- * emits itself, while what 223 stands for is not established here.
- *
- * Both dispatches carry a `case -1:` with an empty body.  That is not a
- * spelling device: the reference tests the value explicitly (movs r2, #1 /
- * negs r2, r2 / cmp r7, r2 at 0x0801830e) before falling through to the
- * default, so the source it was compiled from named -1 as a case of its own.
- * The likeliest reading is an end-of-stream sentinel from _call_via_r9 that
- * the code below deliberately ignores, but that is inference.
- *
- * Known divergence from the reference: at the stream-open call the reference
- * loads *(u32 *)(ADDR_03001E8C + 140) and keeps it in a callee-saved register
- * for the rest of the body without ever reading it back.  No ordinary C
- * spelling reproduces a load that is dead yet retained, so it is not written
- * here; because of it the reference has one more live value than this draft,
- * spills the script argument, and reloads the ring mask from the literal pool
- * at every use instead of holding it in a register.
- * 2026-09-29 slice 4: the draft does not compile against the current
- * headers (undeclared identifiers in UiText_BuildRenderEntries), so alchemy
- * permute could not score it.
+ * Earlier trial, 2026-09-29: did not compile against then-current headers.
+ * Before this ownership repair, EN 2026-10-03 scored 10163 with 296 differing
+ * instructions and unresolved Text_FormatNumber (symbol-name comparison).
+ * The decoder/field repair scored 6975/254. One ordinary local-declaration
+ * reorder scored 6959/253 and is retained. The complete draft is 1608 bytes;
+ * the current native owner is 1620, including its literal pools. Stack
+ * locals, initial stores, cached-decoder addressing and branch scheduling
+ * still differ. No unresolved calls, new matching device or byte credit.
+ * The control-code meanings and message-table bases are only partly known;
+ * this remains an English draft, with no new linked source or byte credit.
  */
-
-/* Companion of the ring write cursor: where the current message started. */
-#define RENDER_ENTRY_START_OFS (RENDER_ENTRY_COUNT_OFS + 2)
-/* Two flag bytes follow the busy byte.  The first asks for a narrow spacing
-   entry before every glyph, the second for a wide one after a wide glyph. */
-#define RENDER_SPACED_OFS   (RENDER_BUSY_OFS + 1)
-#define RENDER_WIDE_GAP_OFS (RENDER_BUSY_OFS + 2)
 
 /* The two spacing entries themselves. */
 #define ENTRY_NARROW_GAP 5
 #define ENTRY_WIDE_GAP   222
 
-/* DMA3 source/destination/control triple, and the 0x140-byte table the
-   expander needs resident while it runs. */
+/* The decoder is copied into its cached heap block by DMA3. */
 #define DMA3_REGS   0x040000D4
 #define DMA_ENABLE  0x84000000
 #define TEXT_WORK_BLOCK 50
-#define TEXT_WORK_SIZE  0x140
-#define TEXT_TABLE_SRC  0x08015430
 
-/* alchemy inspect names this callee Runtime_ReleaseHeapBlock; the project has
-   no header alias for it yet, so declare the alias beside the prototype. */
+extern const u8 Func_08015430[];
+extern u8 Text_DecodeSymbolCodeSize[];
 
-s32 _call_via_r9(struct TextReader *st);
-u8 *Text_FormatNumber(u8 *buf, s32 input, s32 width);
-u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
-                  s32 *suffix);
-void UiText_DecodeMessage(s32 res, u16 *dst, s32 cnt);
-s32 UiRender_LookupNamedValue(s32 kind, s32 clear);
-void UiWork_ClearValueNameTables(void);
-u8 *Runtime_GetObject(s32 no);
-s32 BattleFx_FindConditionResourceFar(s32 no, s32 kind);
+/* The maintained callee exposes a pointer word; this consumer interprets
+   that word as a message index. Its wider interface remains unresolved. */
+void *BattleFx_FindConditionResourceFar(s32 no, s32 kind);
 
-extern u8 gGameState[];
-
-u32 UiText_BuildRenderEntries(s32 script, s32 clear)
+s32 UiText_BuildRenderEntries(s32 script, s32 clear)
 {
-    u8 *work;
+    struct UiRenderWork *work;
     u16 *entry;
-    s32 buf;
+    void *buf;
+    u32 size;
+    s32 (*decode)(struct TextReader *);
     u32 start;
     u32 pos;
     u32 next;
@@ -106,13 +68,13 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
     u8 *num;
     u8 *src;
     u16 *dst;
-    struct TextReader st;
-    u8 numbuf[16];
     u16 name[24];
+    u8 numbuf[16];
+    struct TextReader st;
 
-    work = *(u8 **)gWindowWork;
-    start = *(u16 *)(work + RENDER_ENTRY_COUNT_OFS);
-    entry = (u16 *)(work + RENDER_ENTRY_TBL_OFS);
+    work = (struct UiRenderWork *)gWindowWork[0];
+    start = work->count;
+    entry = work->entries;
     pos = start;
     ch = 0;
     prev = 0;
@@ -125,18 +87,20 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
     suffix = 0;
 
     if (script == -1) {
-        start = *(u16 *)(work + RENDER_ENTRY_START_OFS);
+        start = work->message_start;
     } else {
-        buf = (s32)Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, TEXT_WORK_SIZE);
-        Dma_Set((void *)TEXT_TABLE_SRC, buf,
-                DMA_ENABLE | (TEXT_WORK_SIZE >> 2),
+        size = (u32)Text_DecodeSymbolCodeSize;
+        buf = Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size);
+        Dma_Set((const void *)Func_08015430, buf,
+                DMA_ENABLE | (size >> 2),
                 (volatile u32 *)DMA3_REGS);
-
+        decode = (s32 (*)(struct TextReader *))
+            ((union HeapState *)&gWorkSlot)->slots[TEXT_WORK_BLOCK];
         UiText_LookupMessage(&st, script);
 
         do {
             prev = ch;
-            ch = (u32)_call_via_r9(&st);
+            ch = (u32)decode(&st);
             if (ch > 255)
                 ch = 64;
 
@@ -145,7 +109,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 if (ch < 32) {
                     switch (ch) {
                     case 19:
-                        _call_via_r9(&st);
+                        decode(&st);
                         UiRender_LookupNamedValue(3, clear);
                         break;
                     case 0:
@@ -157,7 +121,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         UiRender_LookupNamedValue(5, clear);
                         break;
                     case 20:
-                        _call_via_r9(&st);
+                        decode(&st);
                         UiRender_LookupNamedValue(2, clear);
                         break;
                     case 21:
@@ -168,16 +132,16 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 8:
                     case 9:
-                        _call_via_r9(&st);
+                        decode(&st);
                         break;
                     case 17:
-                        _call_via_r9(&st);
+                        decode(&st);
                         break;
                     case 18:
-                        _call_via_r9(&st);
+                        decode(&st);
                         break;
                     case 29:
-                        _call_via_r9(&st);
+                        decode(&st);
                         break;
                     case 1:
                         running = 0;
@@ -192,13 +156,13 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     }
                 }
             } else {
-                if (work[RENDER_SPACED_OFS] != 0 && head == 0 &&
+                if (work->spacing_before != 0 && head == 0 &&
                     ch != 222 && ch != 223) {
                     entry[pos] = ENTRY_NARROW_GAP;
                     pos = (pos + 1) & RENDER_ENTRY_MASK;
                 }
 
-                if (work[RENDER_WIDE_GAP_OFS] != 0 && head == 0 &&
+                if (work->spacing_after != 0 && head == 0 &&
                     ch != 222 && ch != 223 &&
                     prev <= 256 && prev > 127 &&
                     prev != 222 && prev != 223 && prev != 32 &&
@@ -208,7 +172,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 }
 
                 if (ch > 31) {
-                    if (work[RENDER_SPACED_OFS] != 0 &&
+                    if (work->spacing_before != 0 &&
                         (ch == 32 || cnt > 10)) {
                         /* 収まらない行は三点リーダで打ち切る。 */
                         entry[pos] = '.';
@@ -241,18 +205,18 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 29:
                         entry[pos] = (u16)ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
-                        entry[pos] = (u16)(_call_via_r9(&st) + 0xFFFF);
+                        entry[pos] = (u16)(decode(&st) + 0xFFFF);
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 22:
-                        value = UiRender_LookupNamedValue(5, clear);
+                        value = (s32)UiRender_LookupNamedValue(5, clear);
                         mag = value;
                         if (value < 0)
                             mag = -value;
                         plural = 1;
                         if (mag <= 1)
                             plural = 0;
-                        num = Text_FormatNumber(numbuf, value, 0);
+                        num = UiText_FormatNumber(numbuf, value, 0);
                         off = num - numbuf;
                         while (off != 16 && numbuf[off] != 0) {
                             entry[pos] = numbuf[off];
@@ -261,7 +225,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         }
                         break;
                     case 19:
-                        no = _call_via_r9(&st) - 1;
+                        no = decode(&st) - 1;
                         UiText_DecodeMessage(
                             UiRender_LookupNamedValue(3, clear) + 0x741,
                             name, 24);
@@ -269,7 +233,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 20:
-                        no = _call_via_r9(&st) - 1;
+                        no = decode(&st) - 1;
                         UiText_DecodeMessage(
                             (UiRender_LookupNamedValue(2, clear) &
                              RENDER_ENTRY_MASK) + 0x182,
@@ -290,7 +254,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 23:
                         UiText_DecodeMessage(
-                            BattleFx_FindConditionResourceFar(
+                            (s32)BattleFx_FindConditionResourceFar(
                                 UiRender_LookupNamedValue(6, clear), 1) +
                                 RENDER_RESOURCE_BASE,
                             name, 24);
@@ -302,8 +266,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         }
                         break;
                     case 16:
-                        src = Runtime_GetObject(
-                            *(s32 *)(gGameState + 500));
+                        src = Owner_GetStateFar(gGameState.selected_actor)->name;
                         dst = name;
                         no = 0;
                         do {
@@ -316,9 +279,9 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 18:
-                        no = _call_via_r9(&st) - 1;
-                        src = Runtime_GetObject(
-                            UiRender_LookupNamedValue(1, clear));
+                        no = decode(&st) - 1;
+                        src = Owner_GetStateFar(
+                            UiRender_LookupNamedValue(1, clear))->name;
                         dst = name;
                         off = 0;
                         do {
@@ -331,8 +294,8 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 17:
-                        no = _call_via_r9(&st) - 1;
-                        src = Runtime_GetObject(no);
+                        no = decode(&st) - 1;
+                        src = Owner_GetStateFar(no)->name;
                         dst = name;
                         no = 0;
                         do {
@@ -345,7 +308,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 26:
-                        no = (_call_via_r9(&st) - 1) * 2;
+                        no = (decode(&st) - 1) * 2;
                         entry[pos] = (u16)(no + 128);
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = (u16)(no + 129);
@@ -399,9 +362,9 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
         pos = (pos + 1) & RENDER_ENTRY_MASK;
         entry[pos] = 0;
         next = (pos + 1) & RENDER_ENTRY_MASK;
-        *(u16 *)(work + RENDER_ENTRY_COUNT_OFS) = (u16)next;
+        work->count = (u16)next;
         Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
-        *(u16 *)(work + RENDER_ENTRY_START_OFS) = (u16)start;
+        work->message_start = (u16)start;
     }
 
     if (clear != 0)

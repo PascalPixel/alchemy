@@ -140,7 +140,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
  */
 void StagedActor_StepDownUntilClamp(s32 index)
 {
-    u8 *obj = Actor_Get(index);
+    u8 *obj = Object_GetById(index);
     u32 cnt;
 
     obj[0x55] = 0;
@@ -174,18 +174,18 @@ void FieldScene_RunPrimarySequence(void)
     u8 *base;
     u8 slot16[40];
 
-    rec = Actor_Get(ACTOR_PARTY_LEADER);
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
     flag = gFrameCount & 3;
     if (flag == 0) {
         base = slot16;
         *(s32 *)(base + 4) = 10;
         *(s32 *)(base + 8) = 0xb333;
         *(s32 *)(base + 12) = 0xb333;
-        v1 = Random_Next();
+        v1 = Engine_RandomNext();
         p6 = *(s32 *)(rec + 8) + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
-        v2 = Random_Next();
+        v2 = Engine_RandomNext();
         p5 = *(s32 *)(rec + 16) + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
-        v3 = Random_Next();
+        v3 = Engine_RandomNext();
         record = Math_Divide((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
         Effect_Spawn(p6, *(s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
     }
@@ -205,7 +205,7 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     s32 *p;
     s32 buf[3];
 
-    rec = Actor_Get(ACTOR_PARTY_LEADER);
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
     pflag = rec + 85;
     saved = *pflag;
 #if EDITION_INTERNATIONAL
@@ -255,14 +255,14 @@ s32 FieldScene_RunScene3b3SequenceD(void)
     Engine_EventBegin();
     Object_SetMode((s32)rec, 6);
     WaitFrames(6);
-    Audio_PlayCue(152);
+    Engine_AudioPlayCue(152);
     Object_SetMode((s32)rec, 7);
     *(s32 *)(rec + 48) = 0x30000;
     *(s32 *)(rec + 52) = 0x20000;
     *(s32 *)(rec + 40) = 0x40000;
     *pflag &= 126;
     Engine_ActorSetSpriteFlags((s32)rec, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
     Object_SetMode((s32)rec, 6);
     Engine_ActorSetSpriteFlags((s32)rec, 1);
     *pflag = saved;

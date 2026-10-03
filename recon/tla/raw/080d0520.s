@@ -202,7 +202,7 @@ DisplayTransition_Finish:
 	ldr r2, .L_080d0724
 	movs r0, #1
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #160
 	lsls r0, r0, #3
 	adds r0, #58
@@ -222,7 +222,7 @@ DisplayTransition_Finish:
 	ldr r2, .L_080d0724
 	movs r0, #1
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r2, #160
 	lsls r2, r2, #3
 	adds r2, #58

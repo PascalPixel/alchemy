@@ -167,11 +167,11 @@ void ConfigureSceneActor12(void)
     s32 actor_slot = 15;
     u8 *actor;
 
-    Map_CopyCellAttributes(15, 20, 1, 1, actor_slot, 22);
-    Map_CopyCellAttributes(17, 23, 1, 3, actor_slot, 23);
-    actor = Actor_Get(12);
+    Map_CopyCellAttributeRect(15, 20, 1, 1, actor_slot, 22);
+    Map_CopyCellAttributeRect(17, 23, 1, 3, actor_slot, 23);
+    actor = Object_GetById(12);
     if (actor != 0) {
-        Actor_SetSpriteFlags(actor, 0);
+        Engine_ActorSetSpriteFlags(actor, 0);
         actor[0x55] = 0;
         actor[0x23] = 2;
     }
@@ -227,9 +227,9 @@ void PlaceSceneObjectPairFromTableA(s32 table_index)
     s32 position_x = gRunpaJoPairTableA[table_index * 2];
     s32 position_z = gRunpaJoPairTableA[table_index * 2 + 1];
 
-    Map_CopyCells(0, 0x4d, 1, 3, position_x, position_z);
-    Map_CopyCells(1, 0x4d, 1, 1, position_x + 1, position_z);
-    Map_CopyCells(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
+    Engine_MapCopyCells(0, 0x4d, 1, 3, position_x, position_z);
+    Engine_MapCopyCells(1, 0x4d, 1, 1, position_x + 1, position_z);
+    Engine_MapCopyCells(position_x, position_z - 0x30, 1, 1, position_x, position_z - 0x2e);
 }
 
 void FieldScene_UpdateObjectPairA(void)
@@ -301,9 +301,9 @@ void PlaceSceneObjectPairFromTableB(s32 table_index)
     s32 position_x = gRunpaJoPairTableB[table_index * 2];
     s32 position_z = gRunpaJoPairTableB[table_index * 2 + 1];
 
-    Map_CopyCells(0x37, 0x79, 1, 3, position_x, position_z);
-    Map_CopyCells(0x38, 0x79, 1, 1, position_x + 1, position_z);
-    Map_CopyCells(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Engine_MapCopyCells(0x37, 0x79, 1, 3, position_x, position_z);
+    Engine_MapCopyCells(0x38, 0x79, 1, 1, position_x + 1, position_z);
+    Engine_MapCopyCells(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
 void FieldScene_UpdateTableBObjectPair(void)
@@ -329,9 +329,9 @@ void PlaceSceneObjectPairFromTableC(s32 table_index)
     s32 position_x = gRunpaJoPairTableC[table_index * 2];
     s32 position_z = gRunpaJoPairTableC[table_index * 2 + 1];
 
-    Map_CopyCells(1, 0x50, 1, 3, position_x, position_z);
-    Map_CopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
-    Map_CopyCellAttributes(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
+    Engine_MapCopyCells(1, 0x50, 1, 3, position_x, position_z);
+    Engine_MapCopyCells(2, 0x50, 1, 1, position_x + 1, position_z);
+    Map_CopyCellAttributeRect(position_x, position_z - 0x3f, 1, 1, position_x, position_z - 0x3e);
 }
 
 void FieldScene_UpdateObjectPairC(void)
@@ -353,41 +353,41 @@ void FieldScene_UpdateObjectPairC(void)
 
 void CellDoor_Touch(void)
 {
-    if (PartyInventory_FindOwner(ITEM_CELL_KEY) == -1) {
-        Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+    if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) == -1) {
+        Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
     }
 }
 
 void LockedDoor_Touch(void)
 {
-    Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
+    Engine_MessageShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
 }
 
 void Actor8_Interact(void)
 {
     if (TryStartActorInteraction(8, 8) != 0) {
-        GameFlag_Set(0xf2a);
+        Engine_GameFlagSet(0xf2a);
     }
 }
 
 void Actor9_Interact(void)
 {
     if (TryStartActorInteraction(9, 7) != 0) {
-        GameFlag_Set(0xf2b);
+        Engine_GameFlagSet(0xf2b);
     }
 }
 
 void Actor10_Interact(void)
 {
     if (TryStartActorInteraction(10, 6) != 0) {
-        GameFlag_Set(0xf2c);
+        Engine_GameFlagSet(0xf2c);
     }
 }
 
 void Actor11_Interact(void)
 {
     if (TryStartActorInteraction(11, 5) != 0) {
-        GameFlag_Set(0xf2d);
+        Engine_GameFlagSet(0xf2d);
     }
 }
 
@@ -396,16 +396,16 @@ s32 TryStartActorInteraction(s32 actor_id, s32 interaction_id)
     s32 started = 0;
     s32 interaction;
 
-    Event_Begin();
-    interaction = BattleFx_PlayCueAndStartEmitterOnTarget(0, actor_id, interaction_id);
-    if (Party_GiveItem(interaction_id, 0) != -1) {
-        Actor_SetAnimation(actor_id, 2);
+    Engine_EventBegin();
+    interaction = Engine_BattleFxPlayCueAndStartEmitterOnTarget(0, actor_id, interaction_id);
+    if (Engine_PartyGiveItem(interaction_id, 0) != -1) {
+        Object_SetModeById(actor_id, 2);
         started = 1;
     } else {
-        Sound_PlayCue(0x7d);
-        Actor_SetAnimation(actor_id, 5);
+        Audio_PlayCue(0x7d);
+        Object_SetModeById(actor_id, 5);
     }
-    ObjectDispatch_Release(interaction);
+    Engine_ObjectDispatchRelease(interaction);
     Engine_EventEnd();
     return started;
 }
@@ -429,21 +429,21 @@ void NoOpSceneCallbackD(void)
 void CellKey_PickUp(void)
 {
 
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Event_Wait(10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Item_ShowFound(ITEM_CELL_KEY, 3);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Party_GiveItem(ITEM_CELL_KEY, 0);
-    GameFlag_Set(0xf2e);
-    Actor_SetPosition(8, 0, 0);
+    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x108, 0x318);
+    ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Battle_WaitMode0(10);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_ItemShowFound(ITEM_CELL_KEY, 3);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_PartyGiveItem(ITEM_CELL_KEY, 0);
+    Engine_GameFlagSet(0xf2e);
+    Engine_ActorSetPosition(8, 0, 0);
 }
 
 s32 IsPlayerInAccidentTriggerArea(void)
 {
-    SceneActor *player = Actor_Get(0);
+    SceneActor *player = Object_GetById(0);
     s32 z = player->z;
     s32 x;
     s32 zz, xx;
@@ -524,20 +524,20 @@ void FieldScene_UpdateActorPairInteraction(void)
 /* The Lunpa fortress: the patrolling guards and the village path triggers. */
 void ConfigureSceneActor9(void)
 {
-    Event_Begin();
-    Actor_Stop(9);
-    Actor_SetDestinationOffset(9, 0, 0);
-    Actor_SetAnimation(9, 0);
-    Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
-    Actor_ShowEmote(9, 256, 0);
+    Engine_EventBegin();
+    Engine_ActorStop(9);
+    ObjectMotion_OffsetPositionAndResetMotion(9, 0, 0);
+    Object_SetModeById(9, 0);
+    Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorShowEmote(9, 256, 0);
     RunActorScriptedSequenceA(10);
     Engine_EventEnd();
 }
 
 s32 AreSceneActorsInPassingLane(void)
 {
-    SceneActor *player = Actor_Get(0);
-    SceneActor *passing_actor = Actor_Get(17);
+    SceneActor *player = Object_GetById(0);
+    SceneActor *passing_actor = Object_GetById(17);
     s32 ox = player->x;
     s32 pz;
     s32 px;
@@ -616,7 +616,7 @@ void ActivateSceneActor17(void)
 
 s32 IsPlayerInSecondaryTriggerArea(void)
 {
-    SceneActor *player = Actor_Get(0);
+    SceneActor *player = Object_GetById(0);
     s32 zz = player->z / 0x100000;
     s32 xx = player->x / 0x100000;
 
@@ -680,7 +680,7 @@ void ActivateSceneActor18(void)
 
 s32 IsPlayerOutsideSceneRectangle(void)
 {
-    SceneActor *player = Actor_Get(0);
+    SceneActor *player = Object_GetById(0);
     s32 zz = player->z / 0x100000;
     s32 xx = player->x / 0x100000;
 
@@ -726,7 +726,7 @@ void TriggerSceneStage95FromActor12(void)
         s16 *scene_stage;
         s32 next_stage;
 
-        Task_RemoveCallback(TriggerSceneStage95FromActor12);
+        Engine_TaskRemoveCallback(TriggerSceneStage95FromActor12);
         scene_stage = (s16 *)(scene_state + 386);
         next_stage = 95;
         *scene_stage = next_stage;
@@ -771,8 +771,8 @@ void FieldScene_RunScene3bfSequenceC(void)
 
 s32 IsSceneActorVerticallyNearPlayer(s32 actor_id)
 {
-    SceneActor *scene_actor = Actor_Get(actor_id);
-    SceneActor *player = Actor_Get(0);
+    SceneActor *scene_actor = Object_GetById(actor_id);
+    SceneActor *player = Object_GetById(0);
     s32 actor_z = scene_actor->z / 0x100000;
     s32 actor_x = scene_actor->x / 0x100000;
     s32 player_z = player->z / 0x100000;
@@ -787,8 +787,8 @@ s32 IsSceneActorVerticallyNearPlayer(s32 actor_id)
 
 s32 IsSceneActorHorizontallyNearPlayer(s32 actor_id)
 {
-    SceneActor *scene_actor = Actor_Get(actor_id);
-    SceneActor *player = Actor_Get(0);
+    SceneActor *scene_actor = Object_GetById(actor_id);
+    SceneActor *player = Object_GetById(0);
     s32 actor_z = scene_actor->z / 0x100000;
     s32 actor_x = scene_actor->x / 0x100000;
     s32 player_z = player->z / 0x100000;
@@ -822,8 +822,8 @@ s32 IsActorInteractionAvailable(s32 actor_id)
 
 s32 IsSceneActorWithinFourSteps(s32 actor_id)
 {
-    SceneActor *scene_actor = Actor_Get(actor_id);
-    SceneActor *player = Actor_Get(0);
+    SceneActor *scene_actor = Object_GetById(actor_id);
+    SceneActor *player = Object_GetById(0);
     s32 actor_z = scene_actor->z / 0x100000;
     s32 actor_x = scene_actor->x / 0x100000;
     s32 player_z = player->z / 0x100000;
@@ -847,8 +847,8 @@ s32 IsSceneActorWithinFourSteps(s32 actor_id)
 
 s32 IsSceneActorWithinTriggerBox(s32 actor_id)
 {
-    SceneActor *scene_actor = Actor_Get(actor_id);
-    SceneActor *player = Event_GetViewCenter();
+    SceneActor *scene_actor = Object_GetById(actor_id);
+    SceneActor *player = Engine_EventGetViewCenter();
     s32 actor_x = scene_actor->x / 0x100000;
     s32 actor_z = scene_actor->z / 0x100000;
     s32 player_x = player->x / 0x100000;
@@ -872,9 +872,9 @@ s32 IsSceneActorWithinTriggerBox(s32 actor_id)
 void TriggerScene41AtVillagePath(void)
 {
 
-    SceneActor *player = Actor_Get(0);
+    SceneActor *player = Object_GetById(0);
 
-    if (GameFlag_IsSet(859) == 0) {
+    if (Engine_GameFlagIsSet(859) == 0) {
         s32 player_x = player->x / 0x100000;
         s32 player_z = player->z / 0x100000;
 
@@ -891,9 +891,9 @@ void TriggerScene41AtVillagePath(void)
 void TriggerScene40AtVillagePath(void)
 {
 
-    DirectionalSceneActor *player = Actor_Get(0);
+    DirectionalSceneActor *player = Object_GetById(0);
 
-    if (GameFlag_IsSet(856) == 0) {
+    if (Engine_GameFlagIsSet(856) == 0) {
         s32 player_x = player->x / 0x100000;
         s32 player_z = player->z / 0x100000;
 
@@ -912,54 +912,54 @@ void TriggerScene40AtVillagePath(void)
  * the party is put out of the fortress. */
 void RunActor9ScriptedSequence(void)
 {
-    Event_Begin();
-    Actor_SetDestinationOffset(9, 0, 0);
-    Actor_EnableActionCallback(9, 1);
-    Actor_Stop(9);
-    Actor_SetAnimation(9, 0);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
+    Engine_EventBegin();
+    ObjectMotion_OffsetPositionAndResetMotion(9, 0, 0);
+    Engine_ActorEnableActionCallback(9, 1);
+    Engine_ActorStop(9);
+    Object_SetModeById(9, 0);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
     {
         s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage(t);
-        Event_ShowMessage(9, 0);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Event_SetMessage(t + 1);
+        Engine_EventSetMessage(t);
+        Engine_EventShowMessage(9, 0);
+        Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+        Engine_EventSetMessage(t + 1);
     }
-    Event_ShowMessage(9, 0);
-    Event_RequestExit(60);
-    Event_CloseScreen();
+    Engine_EventShowMessage(9, 0);
+    Engine_EventRequestExit(60);
+    Engine_EventCloseScreen();
     Engine_EventEnd();
 }
 
 void RunActorScriptedSequenceA(s32 actor_id)
 {
-    Event_Begin();
-    Event_Begin();
-    Actor_ShowEmote(actor_id, 256, 1);
-    Actor_SetDestinationOffset(actor_id, 0, 0);
-    Actor_EnableActionCallback(actor_id, 1);
-    Actor_SetAnimation(actor_id, 0);
-    Actor_FaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Actor_SetDestinationOffset(actor_id, 0, 0);
-    Actor_EnableActionCallback(actor_id, 1);
-    Actor_Stop(actor_id);
-    Actor_SetAnimation(actor_id, 0);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
+    Engine_EventBegin();
+    Engine_EventBegin();
+    Engine_ActorShowEmote(actor_id, 256, 1);
+    ObjectMotion_OffsetPositionAndResetMotion(actor_id, 0, 0);
+    Engine_ActorEnableActionCallback(actor_id, 1);
+    Object_SetModeById(actor_id, 0);
+    Engine_ActorFaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    ObjectMotion_OffsetPositionAndResetMotion(actor_id, 0, 0);
+    Engine_ActorEnableActionCallback(actor_id, 1);
+    Engine_ActorStop(actor_id);
+    Object_SetModeById(actor_id, 0);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
     {
         s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage(t);
-        Event_ShowMessage(actor_id, 0);
-        Actor_FaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Event_SetMessage(t + 1);
+        Engine_EventSetMessage(t);
+        Engine_EventShowMessage(actor_id, 0);
+        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
+        Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+        Engine_EventSetMessage(t + 1);
     }
-    Event_ShowMessage(actor_id, 0);
-    Event_CloseScreen();
-    Event_Wait(60);
-    Event_RequestExit(60);
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_EventCloseScreen();
+    Battle_WaitMode0(60);
+    Engine_EventRequestExit(60);
     Engine_EventEnd();
 }
 
@@ -967,8 +967,8 @@ void RunActorScriptedSequenceA(s32 actor_id)
 void TurnActorToSceneDirection(s32 actor_id)
 {
 
-    Actor_FaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
+    Engine_ActorFaceActor(actor_id, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
     switch ((s32)gRunpaJoRandomPick & 3) {
     case 0:
         RunActorScriptedSequenceB(actor_id);
@@ -1010,14 +1010,14 @@ void RunActorScriptedSequenceC(s32 actor_id)
 {
     u8 *t = MsgRunpaGuardWhosThat;
 
-    Event_SetMessage((s32)t);
-    Event_ShowMessage(actor_id, 0);
-    Actor_RunRepeatedMotion(actor_id, 1);
-    Event_SetMessage((s32)(t + 1));
-    Event_ShowMessage(actor_id, 0);
-    Actor_SetAnimationAndWait(actor_id, 4);
-    Event_SetMessage((s32)(t + 2));
-    Event_ShowMessage(actor_id, 0);
+    Engine_EventSetMessage((s32)t);
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorRunRepeatedMotion(actor_id, 1);
+    Engine_EventSetMessage((s32)(t + 1));
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorSetAnimationAndWait(actor_id, 4);
+    Engine_EventSetMessage((s32)(t + 2));
+    Engine_EventShowMessage(actor_id, 0);
 }
 
 void FieldScene_RunScene3bf_02001cf0(s32 a0)
@@ -1045,47 +1045,47 @@ void RunActorScriptedSequenceD(s32 actor_id)
 {
     u8 *t = (s32)MsgRunpaScoundrel;
 
-    Event_SetMessage((s32)t);
-    Event_ShowMessage(actor_id, 0);
-    Actor_SetAnimationAndWait(actor_id, 4);
-    Event_SetMessage((s32)(t + 1));
-    Event_ShowMessage(actor_id, 0);
-    Actor_RunRepeatedMotion(actor_id, 1);
-    Event_SetMessage((s32)(t + 2));
-    Event_ShowMessage(actor_id, 0);
-    Actor_SetAnimationAndWait(actor_id, 3);
-    Event_SetMessage((s32)(t + 3));
-    Event_ShowMessage(actor_id, 0);
+    Engine_EventSetMessage((s32)t);
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorSetAnimationAndWait(actor_id, 4);
+    Engine_EventSetMessage((s32)(t + 1));
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorRunRepeatedMotion(actor_id, 1);
+    Engine_EventSetMessage((s32)(t + 2));
+    Engine_EventShowMessage(actor_id, 0);
+    Engine_ActorSetAnimationAndWait(actor_id, 3);
+    Engine_EventSetMessage((s32)(t + 3));
+    Engine_EventShowMessage(actor_id, 0);
 }
 
 void InspectOrdinaryObject(void)
 {
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Sound_PlayCue(113);
-    Actor_ShowEmote(15, 256, 60);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Audio_PlayCue(113);
+    Engine_ActorShowEmote(15, 256, 60);
     TurnActorToSceneDirection(15);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gGameState.unknown_200[0x22b - 0x200] = 3;
-    BattleFx_SetWeightedResult(98, 2);
-    Actor_SetPosition(15, 0, 0);
+    Engine_BattleFxSetWeightedResult(98, 2);
+    Engine_ActorSetPosition(15, 0, 0);
     Engine_EventEnd();
-    GameFlag_Set(2380);
+    Engine_GameFlagSet(2380);
 }
 
 void InspectEmptyChest(void)
 {
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Sound_PlayCue(113);
-    Actor_ShowEmote(11, 256, 60);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Audio_PlayCue(113);
+    Engine_ActorShowEmote(11, 256, 60);
     TurnActorToSceneDirection(11);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gGameState.unknown_200[0x22b - 0x200] = 3;
-    BattleFx_SetWeightedResult(98, 2);
-    Actor_SetPosition(11, 0, 0);
+    Engine_BattleFxSetWeightedResult(98, 2);
+    Engine_ActorSetPosition(11, 0, 0);
     Engine_EventEnd();
-    GameFlag_Set(2377);
+    Engine_GameFlagSet(2377);
 }
 
 /* Lunpa fortress: the guards challenge the party ("Who are you!?"),
@@ -1171,43 +1171,43 @@ void FieldScene_RunSequenceTail(void)
 void InspectEmptySceneObject(void)
 {
 
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Sound_PlayCue(113);
-    Actor_ShowEmote(16, 256, 60);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Audio_PlayCue(113);
+    Engine_ActorShowEmote(16, 256, 60);
     TurnActorToSceneDirection(16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     gGameState.unknown_200[0x22b - 0x200] = 3;
-    BattleFx_SetWeightedResult(98, 2);
-    Actor_SetPosition(16, 0, 0);
+    Engine_BattleFxSetWeightedResult(98, 2);
+    Engine_ActorSetPosition(16, 0, 0);
     Engine_EventEnd();
-    GameFlag_Set(2379);
+    Engine_GameFlagSet(2379);
 }
 
 /* The Lunpa fortress: the other guards' challenges, which also put the party
  * out and set a flag. */
 void RunActor12InteractionSequence(void)
 {
-    Event_Begin();
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-    Sound_PlayCue(113);
-    Actor_ShowEmote(12, 256, 60);
+    Engine_EventBegin();
+    ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, 1);
+    Object_SetModeById(ACTOR_PARTY_LEADER, 1);
+    Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 0);
+    Audio_PlayCue(113);
+    Engine_ActorShowEmote(12, 256, 60);
     {
         s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage(t);
-        Event_ShowMessage(12, 0);
-        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 50);
-        Event_SetMessage(t + 1);
+        Engine_EventSetMessage(t);
+        Engine_EventShowMessage(12, 0);
+        Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 50);
+        Engine_EventSetMessage(t + 1);
     }
-    Event_ShowMessage(12, 0);
-    Event_CloseScreen();
-    Event_Wait(60);
-    Event_RequestExit(60);
+    Engine_EventShowMessage(12, 0);
+    Engine_EventCloseScreen();
+    Battle_WaitMode0(60);
+    Engine_EventRequestExit(60);
     Engine_EventEnd();
-    GameFlag_Set(548);
+    Engine_GameFlagSet(548);
 }
 
 void RunActors13And21InteractionSequence(void)
@@ -1241,20 +1241,20 @@ void RunActors13And21InteractionSequence(void)
 /* The Lunpa fortress: the interaction regions and the searchable objects. */
 void ConfigureInteractionRegionA(void)
 {
-    Map_CopyCells(2, 82, 1, 2, 21, 81);
-    Map_CopyCellAttributes(21, 32, 1, 1, 21, 34);
+    Engine_MapCopyCells(2, 82, 1, 2, 21, 81);
+    Map_CopyCellAttributeRect(21, 32, 1, 1, 21, 34);
 }
 
 void ConfigureInteractionRegionB(void)
 {
-    Map_CopyCells(2, 84, 1, 2, 6, 55);
-    Map_CopyCellAttributes(5, 9, 1, 1, 6, 10);
+    Engine_MapCopyCells(2, 84, 1, 2, 6, 55);
+    Map_CopyCellAttributeRect(5, 9, 1, 1, 6, 10);
 }
 
 void ConfigureInteractionRegionC(void)
 {
-    Map_CopyCells(2, 86, 1, 2, 27, 62);
-    Map_CopyCellAttributes(26, 16, 1, 1, 27, 17);
+    Engine_MapCopyCells(2, 86, 1, 2, 27, 62);
+    Map_CopyCellAttributeRect(26, 16, 1, 1, 27, 17);
 }
 
 void InspectVillageWell(void)
@@ -1295,39 +1295,39 @@ void RunSecondaryMapInteraction(void)
 
 void ConfigurePrimaryInteractionRegions(void)
 {
-    Map_CopyCells(5, 77, 1, 2, 17, 82);
-    Map_CopyCells(5, 77, 1, 2, 3, 55);
-    Map_CopyCellAttributes(15, 33, 1, 1, 17, 35);
-    Map_CopyCellAttributes(3, 8, 1, 1, 3, 10);
+    Engine_MapCopyCells(5, 77, 1, 2, 17, 82);
+    Engine_MapCopyCells(5, 77, 1, 2, 3, 55);
+    Map_CopyCellAttributeRect(15, 33, 1, 1, 17, 35);
+    Map_CopyCellAttributeRect(3, 8, 1, 1, 3, 10);
 }
 
 void ConfigureSecondaryInteractionRegions(void)
 {
-    Map_CopyCells(8, 77, 1, 2, 17, 82);
-    Map_CopyCells(8, 77, 1, 2, 3, 55);
-    Map_CopyCellAttributes(18, 35, 1, 1, 17, 35);
-    Map_CopyCellAttributes(2, 10, 1, 1, 3, 10);
+    Engine_MapCopyCells(8, 77, 1, 2, 17, 82);
+    Engine_MapCopyCells(8, 77, 1, 2, 3, 55);
+    Map_CopyCellAttributeRect(18, 35, 1, 1, 17, 35);
+    Map_CopyCellAttributeRect(2, 10, 1, 1, 3, 10);
 }
 
 void InspectWardrobe(void)
 {
-    GameFlag_Set(2372);
-    GameFlag_Clear(535);
-    Actor_SetPosition(8, 0, 0);
+    Engine_GameFlagSet(2372);
+    Engine_GameFlagClear(535);
+    Engine_ActorSetPosition(8, 0, 0);
 }
 
 void InspectFirewood(void)
 {
-    GameFlag_Set(2373);
+    Engine_GameFlagSet(2373);
     ConfigureInteractionRegionC();
-    Actor_SetPosition(9, 0, 0);
+    Engine_ActorSetPosition(9, 0, 0);
 }
 
 void InspectBooks(void)
 {
-    GameFlag_Set(2374);
-    GameFlag_Clear(536);
-    Actor_SetPosition(10, 0, 0);
+    Engine_GameFlagSet(2374);
+    Engine_GameFlagClear(536);
+    Engine_ActorSetPosition(10, 0, 0);
 }
 
 void NoOpInteractionCallback(void)
@@ -2506,23 +2506,23 @@ void FieldScene_RunDonpaSleepingSequence(void)
 
 void SelectActor25SceneVariant(void)
 {
-    if (GameFlag_IsSet(0x941)) {
-        Event_SetMessage((s32)MsgRunpaDifficultDonpaRight);
-        Event_ShowMessage(25, 0);
+    if (Engine_GameFlagIsSet(0x941)) {
+        Engine_EventSetMessage((s32)MsgRunpaDifficultDonpaRight);
+        Engine_EventShowMessage(25, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaSomeonePunishDodonpa);
-        Event_ShowMessage(25, 0);
+        Engine_EventSetMessage((s32)MsgRunpaSomeonePunishDodonpa);
+        Engine_EventShowMessage(25, 0);
     }
 }
 
 void SelectActor24SceneVariant(void)
 {
-    if (GameFlag_IsSet(0x941)) {
-        Event_SetMessage((s32)MsgRunpaFatherStayAngry);
-        Event_ShowMessage(24, 0);
+    if (Engine_GameFlagIsSet(0x941)) {
+        Engine_EventSetMessage((s32)MsgRunpaFatherStayAngry);
+        Engine_EventShowMessage(24, 0);
     } else {
-        Event_SetMessage((s32)MsgRunpaFatherSorryDodonpa);
-        Event_ShowMessage(24, 0);
+        Engine_EventSetMessage((s32)MsgRunpaFatherSorryDodonpa);
+        Engine_EventShowMessage(24, 0);
     }
 }
 
@@ -2591,36 +2591,36 @@ void FieldScene_RunSupplementalSequenceTwo(void)
 
 void ConfigureSceneActor26(void)
 {
-    BattleFx_RunPageEffectForSlot(26, 1, 5);
-    GameFlag_Set(0x94e);
+    Engine_BattleFxRunPageEffectForSlot(26, 1, 5);
+    Engine_GameFlagSet(0x94e);
 }
 
 void ConfigureSceneActor14(void)
 {
-    Actor_RunRepeatedMotion(14, 2);
-    Event_SetMessage((s32)MsgRunpaOwwwDontHurt);
-    Event_ShowMessage(14, 0);
+    Engine_ActorRunRepeatedMotion(14, 2);
+    Engine_EventSetMessage((s32)MsgRunpaOwwwDontHurt);
+    Engine_EventShowMessage(14, 0);
 }
 
 /* The Lunpa fortress: three actors' lines. */
 void ConfigureSceneActor13(void)
 {
-    Actor_RunRepeatedMotion(13, 2);
-    Event_SetMessage((s32)MsgRunpaRightRightGive);
-    Event_ShowMessage(13, 0);
+    Engine_ActorRunRepeatedMotion(13, 2);
+    Engine_EventSetMessage((s32)MsgRunpaRightRightGive);
+    Engine_EventShowMessage(13, 0);
 }
 
 void ConfigureSceneActor12Variant(void)
 {
-    Actor_RunRepeatedMotion(12, 2);
-    Event_SetMessage((s32)MsgRunpaGuysTougherThought);
-    Event_ShowMessage(12, 0);
+    Engine_ActorRunRepeatedMotion(12, 2);
+    Engine_EventSetMessage((s32)MsgRunpaGuysTougherThought);
+    Engine_EventShowMessage(12, 0);
 }
 
 void ConfigureSceneActor18(void)
 {
-    Event_SetMessage((s32)MsgRunpaKnowWhereDodonpa);
-    Event_AskYesNo(18, 0);
+    Engine_EventSetMessage((s32)MsgRunpaKnowWhereDodonpa);
+    Engine_EventAskYesNo(18, 0);
 }
 
 /* The Lunpa fortress: actor 20's sequence and its end. */
@@ -2674,14 +2674,14 @@ void RunActor20SceneSequence(void)
 void FinishActor20SceneSequence(void)
 {
 
-    if (GameFlag_IsSet(0x226)) {
-        Event_SetMessage((s32)MsgRunpaMaybeMerchantReason);
-        Event_ShowMessage(20, 0);
+    if (Engine_GameFlagIsSet(0x226)) {
+        Engine_EventSetMessage((s32)MsgRunpaMaybeMerchantReason);
+        Engine_EventShowMessage(20, 0);
     } else {
         s16 *q = (s16 *)(((u8*)gEventWork) + 382);
 
         *q = 0;
-        Psynergy_Cancel();
+        Engine_PsynergyCancel();
         RunActor20SceneSequence();
     }
 }
@@ -2695,17 +2695,17 @@ void ConfigureActor13Interaction(void)
 {
     s32 msg = (s32)MsgRunpaWrongTurnOver;
 
-    Event_SetMessage(msg);
-    Event_ShowMessage(0x800d, 0);
-    if (PartyInventory_FindOwner(234) != -1) {
-        Message_ShowCentered(msg + 2, 1);
+    Engine_EventSetMessage(msg);
+    Engine_EventShowMessage(0x800d, 0);
+    if (Engine_PartyInventoryFindOwner(234) != -1) {
+        Engine_MessageShowCentered(msg + 2, 1);
     }
 }
 
 void ConfigureActor13SceneResource(void)
 {
-    Event_SetMessage((s32)MsgRunpaCantBelieveWhen);
-    Event_ShowMessage(13, 0);
+    Engine_EventSetMessage((s32)MsgRunpaCantBelieveWhen);
+    Engine_EventShowMessage(13, 0);
 }
 
 /* The fortress scene start: pick the random guard, then set up each floor.
@@ -2961,55 +2961,55 @@ void FieldScene_RestoreActorsFromFlags(void)
 
 void FieldScene_ActivateThreeActorGroup(void)
 {
-    if (GameFlag_IsSet(0x35a)) {
+    if (Engine_GameFlagIsSet(0x35a)) {
         PlaceSceneObjectPairFromTableC(0);
     }
-    if (GameFlag_IsSet(0x35b)) {
+    if (Engine_GameFlagIsSet(0x35b)) {
         PlaceSceneObjectPairFromTableC(1);
     }
-    if (GameFlag_IsSet(0x35c)) {
+    if (Engine_GameFlagIsSet(0x35c)) {
         PlaceSceneObjectPairFromTableC(2);
     }
 }
 
 void FieldScene_ActivateTwoActorGroup(void)
 {
-    if (GameFlag_IsSet(0x358)) {
+    if (Engine_GameFlagIsSet(0x358)) {
         PlaceSceneObjectPairFromTableB(0);
     }
-    if (GameFlag_IsSet(0x359)) {
+    if (Engine_GameFlagIsSet(0x359)) {
         PlaceSceneObjectPairFromTableB(1);
     }
 }
 
 void FieldScene_ActivateAlternateActorGroup(void)
 {
-    if (GameFlag_IsSet(0x355)) {
+    if (Engine_GameFlagIsSet(0x355)) {
         FieldScene_SetPositionPairs(0);
     }
-    if (GameFlag_IsSet(0x356)) {
+    if (Engine_GameFlagIsSet(0x356)) {
         FieldScene_SetPositionPairs(1);
     }
-    if (GameFlag_IsSet(0x357)) {
+    if (Engine_GameFlagIsSet(0x357)) {
         FieldScene_SetPositionPairs(2);
     }
 }
 
 void ActivateFiveActorGroupFromFlags(void)
 {
-    if (GameFlag_IsSet(0x350)) {
+    if (Engine_GameFlagIsSet(0x350)) {
         PlaceSceneObjectPairFromTableA(0);
     }
-    if (GameFlag_IsSet(0x351)) {
+    if (Engine_GameFlagIsSet(0x351)) {
         PlaceSceneObjectPairFromTableA(1);
     }
-    if (GameFlag_IsSet(0x352)) {
+    if (Engine_GameFlagIsSet(0x352)) {
         PlaceSceneObjectPairFromTableA(2);
     }
-    if (GameFlag_IsSet(0x353)) {
+    if (Engine_GameFlagIsSet(0x353)) {
         PlaceSceneObjectPairFromTableA(3);
     }
-    if (GameFlag_IsSet(0x354)) {
+    if (Engine_GameFlagIsSet(0x354)) {
         PlaceSceneObjectPairFromTableA(4);
     }
 }

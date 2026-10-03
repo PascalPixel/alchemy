@@ -74,7 +74,7 @@ UiText_DrawPrefixedNumberAtOffset:
 	adds r1, #8
 	ands r3, r7
 	adds r0, r4, #0
-	bl Func_080416cc
+	bl UiText_RenderStringTiles
 .L_08042302:
 	add sp, #32
 	pop {r3, r5}

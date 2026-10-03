@@ -7,13 +7,13 @@ void OverlayObject_SpawnKind24AtObject(u8 *src)
     u8 *obj;
     u8 *rec;
 
-    obj = Object_Create(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
+    obj = Engine_ObjectCreate(24, *(s32 *)(src + 8), *(s32 *)(src + 12), *(s32 *)(src + 16));
     if (obj == 0) {
         return;
     }
 
     rec = *(u8 **)(obj + 0x50);
-    Object_SetScript(obj, MakyuriHeya_RiseScript);
+    Engine_ObjectSetScript(obj, MakyuriHeya_RiseScript);
 
     obj[0x55] = 0;
     obj[0x22] = 1;

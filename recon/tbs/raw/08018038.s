@@ -569,7 +569,7 @@ Func_08018038:
 	movs r0, #6
 	bl UiRender_LookupNamedValue
 	movs r1, #1
-	bl BattleFx_FindConditionResourceFar
+	bl Scene_GetAreaNameIndexFar
 	ldr r3, .L_08018580
 	ldr r1, [sp, #12]
 	adds r0, r0, r3

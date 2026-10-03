@@ -109,7 +109,7 @@ void *SceneData_GetTableb9c8(void)
 void *SceneData_GetTableB9d4AfterStateCheck(void)
 {
     if (gGameState.entrance != 1) {
-        GameFlag_Set(0x253);
+        Engine_GameFlagSet(0x253);
     }
     return MakyuriChojo_ActorTable;
 }
@@ -388,14 +388,14 @@ void FieldScene_RunScene39d_020009fc(void)
     s32 record;
     s32 nearest;
 
-    rec = Actor_Get(ACTOR_PARTY_LEADER);
+    rec = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
     record = FindNearestF2Actor();
     nearest = (s32)MakyuriChojo_NearestActor;
     *(s32 *)nearest = record;
     if (record != 0) {
-        GameFlag_Set(0x250);
-        rec8 = Actor_Get(*(s32 *)nearest);
+        Engine_GameFlagSet(0x250);
+        rec8 = Object_GetById(*(s32 *)nearest);
         rec8[85] = 0;
         rec[85] &= 254;
         *(s32 *)((s32)rec8 + 12) += -0x30000;

@@ -132,7 +132,7 @@ extern u8 MsgKorosseoYourGoalInStageSimple[];
 
 extern u8 MsgKorosseoOperatorWallsCheer[];
 extern u8 MsgKorosseoPlaceCalledWall[];
-s32 Korosseo_FadeInCompetitor();
+void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Korosseo_RestoreCompetitor();
 
 void ColossoLogRollingStage_ResetAndRunSceneTask(void)
@@ -344,9 +344,9 @@ void FieldScene_RunFinalAuxiliarySequence(void)
             *(s32 *)((s32)b3 + 52) = 0x6666;
             *(s32 *)((s32)b3 + 48) = 0xcccc;
             Object_SetPosition((s32)b3, *(s32 *)((s32)b3 + 8), 0x40000, *(s32 *)((s32)b3 + 16));
-            GameFlag_Set(0x368);
-            Map_CopyCellAttributes(15, 12, 1, 1, 13, b);
-            Map_CopyCellAttributes(1, 25, 1, 1, a, b);
+            Engine_GameFlagSet(0x368);
+            Engine_MapCopyCellAttributes(15, 12, 1, 1, 13, b);
+            Engine_MapCopyCellAttributes(1, 25, 1, 1, a, b);
         }
     }
 }
@@ -704,13 +704,13 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
         msg = (s32)MsgKorosseoDidntThinkBattles;
         lines = a0 * 3;
         Engine_EventSetMessage(lines + msg);
-        Event_OpenMessage(a0, 0);
+        Engine_EventOpenMessage(a0, 0);
         if (Engine_EventChooseYesNo(owner, 0) == 0) {
             /* FAKEMATCH: each answer's line goes through its own local, here
              * and below, which keeps the reference's addition order. */
             s32 yes = msg + 1;
             Engine_EventSetMessage(lines + yes);
-            Event_ShowMessage(a0, 0);
+            Engine_EventShowMessage(a0, 0);
             *(s32 *)(work + 0x1c0) = 0x200;
             *(s32 *)(work + 0x1c8) = 15;
             Engine_EventCloseScreen();
@@ -721,7 +721,7 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
         } else {
             s32 no = msg + 2;
             Engine_EventSetMessage(lines + no);
-            Event_ShowMessage(a0, 0);
+            Engine_EventShowMessage(a0, 0);
         }
         Engine_EventEnd();
     }
@@ -1401,16 +1401,16 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
     state = ColossoLogRollingStage_RunStateInteraction(scene, 1);
     if (state == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoStageCalledScales);
-        Camera_SetSpeed(196608, 24576);
-        Camera_MoveTo(9961472, -1, 13107200, 1);
+        Engine_CameraSetSpeed(196608, 24576);
+        Engine_CameraMoveTo(9961472, -1, 13107200, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
-        Event_ShowMessage(scene, 0);
+        Engine_EventShowMessage(scene, 0);
         ColossoLogRollingStage_StartPaletteTask(104, 68, 0);
         Engine_EventWait(60);
         ColossoLogRollingStage_StartPaletteTaskFromState(168, 96, 10);
         Engine_EventWait(70);
-        Event_ShowMessage(scene, 0);
+        Engine_EventShowMessage(scene, 0);
         ColossoLogRollingStage_StopPaletteTask();
         Engine_TaskWait(2);
         p17 = Object_GetById(10);
@@ -1437,21 +1437,21 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
         Object_SetPosition((s32)p25, *(s32 *)(p25 + 8), 262144, *(s32 *)(p25 + 16));
         Object_CommitPosition(p25);
         Engine_EventWait(15);
-        Event_ShowMessage(scene, 0);
+        Engine_EventShowMessage(scene, 0);
         ColossoLogRollingStage_StartPaletteTask(104, 68, 0);
         Engine_EventWait(30);
         ColossoLogRollingStage_StartPaletteTaskFromState(168, 96, 10);
         Engine_EventWait(40);
         ColossoLogRollingStage_StartPaletteTaskFromState(104, 68, 10);
         Engine_EventWait(70);
-        Event_ShowMessage(scene, 0);
+        Engine_EventShowMessage(scene, 0);
         ColossoLogRollingStage_StopPaletteTask();
         Engine_TaskWait(2);
         Engine_CameraFollowActor(0, 0);
         ColossoLogRollingStage_InitializeStateInteraction(scene, 1);
     } else if (state == 1) {
         Engine_EventSetMessage((s32)MsgKorosseoObjectiveGetAcross);
-        Event_ShowMessage(scene, 0);
+        Engine_EventShowMessage(scene, 0);
     }
     /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(FieldScene_RunMiddleSequence, state, scene, 1);
@@ -1461,9 +1461,10 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
 /* The second competitor's arrival. */
 void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
+    s32 x;
     extern void Korosseo_FinishSoloRound();
     extern void FieldScene_RunMiddleSequence();
-    extern s32 Korosseo_FadeInCompetitor();
+    extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
     extern void Korosseo_RestoreCompetitor();
 
     s32 state;
@@ -1477,14 +1478,49 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     if (state == 0) {
     Engine_EventSetMessage((s32)MsgKorosseoSteppingStoneStage);
     Camera_SetSpeed(196608, 24576);
-    Camera_MoveTo(24641536, -1, 9961472, 1);
+    {
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        register s32 cx asm("r0") = 24641536 >> 17;
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        register s32 cy asm("r1") = 1;
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        register s32 cz asm("r2") = 9961472 >> 16;
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        register s32 cm asm("r3");
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+        cm = 1;
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+        cz <<= 16;
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+        cy = -cy;
+        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+        asm("" : "+r"(cx) : "r"(cy), "r"(cz), "r"(cm));
+        Camera_MoveTo(cx << 17, cy, cz, cm);
+    }
+    x = 140;
+    /* FAKEMATCH: retain the used coordinate component across the native wait. */
+    asm("" : "+r"(x));
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Event_ShowMessage(scene, 0);
-    Korosseo_FadeInCompetitor(0, 280, 200);
+    /* FAKEMATCH: native scales the reused coordinate after the message call. */
+    asm("" : "+r"(x));
+    x <<= 1;
+    {
+        /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+        register s32 fx asm("r1") = x;
+        /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+        register s32 fz asm("r2") = 200;
+        /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+        asm("" : : "r"(fx), "r"(fz) : "r0");
+        Korosseo_FadeInCompetitor(0, fx, fz);
+    }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
     /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-    Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, 280, 152);
+    Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, x, 152);
     ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
     Engine_EventWait(10);
     Engine_LeaderCheckAhead();
@@ -1537,14 +1573,43 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledWall);
             ColossoLogRollingStage_ResetAndRunSceneTask();
             Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x2680000, -1, 0xb80000, 1);
+            {
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
+                register s32 cx asm("r0") = 0x2680000 >> 18;
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
+                register s32 cz asm("r2") = 0xb80000 >> 16;
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
+                register s32 cm asm("r3") = 1;
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz), "+r"(cm));
+                cz <<= 16;
+                cy = -cy;
+                cx <<= 18;
+                Engine_CameraMoveTo(cx, cy, cz, cm);
+            }
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
-            Engine_EventShowMessage(a0, 0);
+            {
+                /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
+                register s32 mode asm("r1") = 0;
+                /* FAKEMATCH: the direct void form reverses the two argument moves. */
+                asm("" : : "r"(mode) : "r0");
+                Engine_EventShowMessage(a0, mode);
+            }
             ColossoLogRollingStage_StartSceneTask();
             Engine_EventWait(60);
             Engine_EventShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x1f8, 200);
+            {
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fx asm("r1") = 0x1f8;
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fz asm("r2") = 200;
+                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+                asm("" : : "r"(fx), "r"(fz) : "r0");
+                Korosseo_FadeInCompetitor(0, fx, fz);
+            }
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             ColossoLogRollingStage_WaitForSceneTask();

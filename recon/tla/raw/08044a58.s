@@ -74,7 +74,7 @@ Func_08044a58:
 	strh r2, [r3]
 	mov r0, r11
 	movs r1, #1
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	lsls r0, r6, #2
 	ldr r3, [sp, #8]
 	adds r0, r0, r6
@@ -84,7 +84,7 @@ Func_08044a58:
 	lsls r1, r1, #1
 	adds r0, r0, r1
 	movs r1, #4
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_08044b78
 	movs r5, #129
 	adds r0, r6, r0

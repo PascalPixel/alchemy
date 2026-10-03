@@ -79,7 +79,7 @@ s32 Func_02000090(void)
 
 void *SceneData_SelectTableByFlag834(void)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return Data_0200b144;
     }
     return Data_0200b108;
@@ -87,13 +87,13 @@ void *SceneData_SelectTableByFlag834(void)
 
 void *SceneData_SelectTableByFlags834And87a(void)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return Data_0200b380;
     }
     if (gGameState.entrance == 12) {
         return Data_0200b560;
     }
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         return Data_0200b7d0;
     }
     return Data_0200b170;
@@ -103,27 +103,27 @@ void Scene_CheckPsynergyStone(void)
 {
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgHaidiaCheckedThePsynergyStone, 1);
-    Audio_PlayCue(126);
+    Engine_AudioPlayCue(126);
     BattleParty_ApplyDrain(0x3e7, 0);
     Engine_EventWait(10);
     Engine_MessageShowCentered((s32)MsgHaidiaPartyPpRestored, 1);
     UiWork_FinalizePendingCore();
-    GameFlag_Clear(322);
+    Engine_GameFlagClear(322);
     Engine_EventEnd();
 }
 
 void *SceneData_SelectTableByFlags87a_815_834(void)
 {
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         return Data_0200bcec;
     }
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return Data_0200bb3c;
     }
     if (gGameState.entrance == 12) {
         return Data_0200bb30;
     }
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return Data_0200ba64;
     }
     return Data_0200b938;
@@ -134,7 +134,7 @@ void Villager_AskAboutMeditation(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaMeditateOnMtAlephDaily);
     Engine_ActorFaceEachOther(23, ACTOR_PARTY_LEADER, 2);
-    Event_AskYesNo(23, 0);
+    Engine_EventAskYesNo(23, 0);
     Engine_EventEnd();
 }
 
@@ -143,7 +143,7 @@ void Villager_RecallThreeYearsAgo(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaADifficultTimeThreeYears);
     Engine_ActorFaceEachOther(24, ACTOR_PARTY_LEADER, 2);
-    Event_AskYesNo(24, 0);
+    Engine_EventAskYesNo(24, 0);
     Engine_EventEnd();
 }
 
@@ -152,7 +152,7 @@ void Villager_AskAboutTheTravelers(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaDidTheTravelersMeetThe);
     Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
-    Event_AskYesNo(15, 0);
+    Engine_EventAskYesNo(15, 0);
     Engine_EventEnd();
 }
 
@@ -169,27 +169,27 @@ void Villager_ShowOffPsynergy(void)
     s32 *origin;
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         message = (s32)MsgHaidiaArentWorriedCrossing;
         Engine_EventSetMessage(message);
-        if (GameFlag_IsSet(2) != 0) {
+        if (Engine_GameFlagIsSet(2) != 0) {
             bump_step(1);
         }
-        if (GameFlag_IsSet(3) != 0) {
+        if (Engine_GameFlagIsSet(3) != 0) {
             bump_step(1);
         }
-        Event_OpenMessage(17, 0);
+        Engine_EventOpenMessage(17, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             Engine_EventSetMessage(message + 3);
         } else {
             Engine_EventSetMessage(message + 4);
         }
-        Event_ShowMessage(17, 0);
+        Engine_EventShowMessage(17, 0);
     } else {
         origin = ((struct MapScrollWork *)gMapWork[0])->origin;
         Engine_EventSetMessage((s32)MsgHaidiaShownNewAbility);
         Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 0);
-        Event_AskYesNo(17, 0);
+        Engine_EventAskYesNo(17, 0);
         Engine_EventWait(20);
         Engine_ActorStartRepeatedMotion(17, 2);
         Engine_EventWait(15);
@@ -200,7 +200,7 @@ void Villager_ShowOffPsynergy(void)
             Engine_TaskWait(1);
         }
         Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep17, 0xc80);
-        Audio_PlayCue(107);
+        Engine_AudioPlayCue(107);
         for (i = 0; i != 180; i++) {
             if (Math_RemainderUnsigned(i, 10) == 0) {
                 if ((1 & shakes) != 0) {
@@ -212,14 +212,14 @@ void Villager_ShowOffPsynergy(void)
             }
             Engine_EventWait(1);
         }
-        Audio_PlayCue(0x121);
+        Engine_AudioPlayCue(0x121);
         Scheduler_RemoveCallback((s32)FieldScene_RunStep17);
         Engine_TaskWait(1);
         FieldScene_Forward4dac();
-        Actor_SetChildValue(17, 0);
+        Engine_ActorSetChildValue(17, 0);
         Engine_EventWait(40);
         Engine_EventSetMessage((s32)MsgHaidiaBeholdPowerPsynergy);
-        Event_ShowMessage(17, 0);
+        Engine_EventShowMessage(17, 0);
     }
     Engine_EventEnd();
 }
@@ -228,22 +228,22 @@ void Villager_ShowOffPsynergy(void)
 void SceneDialogue_RunFlagGatedMessageStep(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         Engine_EventSetMessage((s32)MsgHaidiaAnythingInterestingOnYourTrip);
-        Event_OpenMessage(15, 0);
+        Engine_EventOpenMessage(15, 0);
         if (Engine_EventChooseYesNo(0, 0) == 1) {
-            Event_ShowMessage(15, 0);
+            Engine_EventShowMessage(15, 0);
         } else {
             u8 *p = (u8 *)gEventWork;
             *(u16 *)(p + 472) = *(u16 *)(p + 472) + 1;
-            Event_AskYesNo(15, 0);
+            Engine_EventAskYesNo(15, 0);
         }
-    } else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Engine_EventSetMessage((s32)MsgHaidiaYouSawTheWiseOne);
-        Event_AskYesNo(11, 0);
+        Engine_EventAskYesNo(11, 0);
     } else {
         Engine_EventSetMessage((s32)MsgHaidiaCanIUsePsynergy);
-        Event_AskYesNo(11, 0);
+        Engine_EventAskYesNo(11, 0);
     }
     Engine_EventEnd();
 }
@@ -252,16 +252,16 @@ void Scene_StoneFellOnTheHut(void)
 {
     Engine_EventBegin();
     Engine_ActorSetAnimation(26, 1);
-    Actor_FaceActor(26, ACTOR_PARTY_LEADER, 20);
-    Actor_FaceActor(26, 21, 40);
+    Engine_ActorFaceActor(26, ACTOR_PARTY_LEADER, 20);
+    Engine_ActorFaceActor(26, 21, 40);
     Engine_EventSetMessage((s32)MsgHaidiaTheStoneFellOnThe);
     Event_SayThenWait(26, 20);
-    Camera_SetSpeed(0x19999, 0x3333);
-    Camera_MoveTo(0x1510000, -1, 0x1100000, 1);
+    Engine_CameraSetSpeed(0x19999, 0x3333);
+    Engine_CameraMoveTo(0x1510000, -1, 0x1100000, 1);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(26, 2);
     Engine_EventWait(20);
-    Actor_FaceActor(26, ACTOR_PARTY_LEADER, 10);
+    Engine_ActorFaceActor(26, ACTOR_PARTY_LEADER, 10);
     Event_SayThenWait(26, 40);
     Engine_ActorEnableActionCallback(26, 2);
     Engine_EventEnd();
@@ -318,12 +318,12 @@ void Villager_PointTheWay(void)
 {
     Engine_EventBegin();
     Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 10);
-    if (GameFlag_IsSet(0x840) != 0) {
+    if (Engine_GameFlagIsSet(0x840) != 0) {
         Engine_EventSetMessage((s32)MsgHaidiaSureHelp);
-        Event_ShowMessage(16, 0);
+        Engine_EventShowMessage(16, 0);
     } else {
         Engine_EventSetMessage((s32)MsgHaidiaWentOffWay);
-        Event_ShowMessage(16, 0);
+        Engine_EventShowMessage(16, 0);
     }
     Engine_EventEnd();
 }
@@ -354,16 +354,16 @@ void Scene_PsynergyStoneIsGone(void)
     p->f40 = 0x80000000;
     Engine_ActorSetAnimation(21, 1);
     Engine_ActorStop(21);
-    Actor_ShowEmote(21, 256, 40);
+    Engine_ActorShowEmote(21, 256, 40);
     p->f06 = 0xb000;
     Engine_EventWait(20);
     Engine_ActorStartRepeatedMotion(21, 2);
     Engine_EventSetMessage((s32)MsgHaidiaThePsynergyStoneIsGone);
-    Event_ShowMessageAndWait(21, 0, 40);
-    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 20);
+    Engine_EventShowMessageAndWait(21, 0, 40);
+    Engine_ActorFaceActor(21, ACTOR_PARTY_LEADER, 20);
     Engine_ActorStartRepeatedMotion(21, 2);
-    Event_ShowMessage(21, 0);
-    GameFlag_Set(0x306);
+    Engine_EventShowMessage(21, 0);
+    Engine_GameFlagSet(0x306);
     Engine_ActorStop(21);
     Engine_TaskWait(1);
     Engine_ActorEnableActionCallback(21, Data_0200ae34);
@@ -373,7 +373,7 @@ void Scene_PsynergyStoneIsGone(void)
 void SceneState_SetWork1c0AndRun(s32 no)
 {
     u8 *p;
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
     }
     p = (u8 *)gEventWork;
@@ -465,31 +465,31 @@ void FieldScene_RunSupplementalSequenceSeven(void)
 
 void FieldScene_RunStep7BThen8(void)
 {
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     SceneState_SetWork1c0AndRun(8);
 }
 
 void SceneState_ApplyFlag815Branch(void)
 {
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Audio_PlayCue(123);
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+        Engine_AudioPlayCue(123);
         SceneState_SetWork1c0AndRun(10);
     }
 }
 
 void SceneState_ApplyFlag90b(void)
 {
-    GameFlag_Set(0x90b);
+    Engine_GameFlagSet(0x90b);
 }
 
 void SceneState_ApplyFlag90c(void)
 {
-    GameFlag_Set(0x90c);
+    Engine_GameFlagSet(0x90c);
 }
 
 void SceneState_ApplyFlag90d(void)
 {
-    GameFlag_Set(0x90d);
+    Engine_GameFlagSet(0x90d);
 }
 
 s32 HaidiaIe_RestoreEntryState(void)
@@ -623,7 +623,7 @@ void FieldScene_RunElderAidEvent(void)
     if (Engine_GameFlagIsSet(0x834) != 0 && Engine_GameFlagIsSet(0x840) == 0) {
         Engine_EventBegin();
         Call2(Engine_CameraSetSpeed, 0x19999, 0x3333);
-        Camera_MoveTo(0xc50000, -1, 0x3000000, 1);
+        Engine_CameraMoveTo(0xc50000, -1, 0x3000000, 1);
         BattleFx_CommitObjectPositionAndWait();
         Engine_EventSetMessage((s32)MsgHaidiaGoAidElders);
         Engine_ActorRunRepeatedMotion(19, 2);
@@ -638,7 +638,7 @@ void FieldScene_RunElderAidEvent(void)
         Call3(Engine_ActorWalkToAndWait, 25, 179, 0x324);
         Engine_ActorFaceEachOther(0, 25, 40);
         Engine_ActorFaceDirection(0, 0, 0);
-        Actor_FaceDirection(25, 0, 0);
+        Engine_ActorFaceDirection(25, 0, 0);
         Engine_ActorSetAnimation(17, 3);
         Engine_ActorSetAnimationAndWait(18, 3);
         Engine_ActorFaceEachOther(17, 18, 0);
@@ -724,7 +724,7 @@ void FieldScene_RunElderAidEvent(void)
         Engine_ActorRunRepeatedMotion(19, 2);
         Event_SayThenWait(unk + 19, 10);
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 25, 40);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
         SceneActor_SetPairZeroAndValue(25, 0, 20);
         SceneActor_SetPairZeroAndValue(26, 0x8000, 30);
         Engine_ActorSetAnimationAndWait(26, 3);
@@ -738,18 +738,18 @@ void FieldScene_RunElderAidEvent(void)
             Engine_ActorSetDestination(25, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(25);
-        Actor_SetPosition(25, 0, 0);
+        Engine_ActorSetPosition(25, 0, 0);
         Engine_ActorSetAnimation(26, 2);
         record = Object_GetById(0);
         if (record != 0) {
-            Actor_SetDestination(26, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(26, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(26);
-        Actor_SetPosition(26, 0, 0);
+        Engine_ActorSetPosition(26, 0, 0);
         Engine_ActorSetAnimation(22, 2);
         record = Object_GetById(0);
         if (record != 0) {
-            Actor_SetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(22);
         Engine_ActorSetPosition(22, 0, 0);
@@ -849,13 +849,13 @@ void FieldScene_RunGroupChoreography(void)
     Engine_EventWait(40);
     Call3(Engine_ActorFaceDirection, 23, 0xe000, 0);
     SceneActor_SetPairZeroAndValue(24, 0x7000, 40);
-    Camera_SetSpeed(0xcccc, 0x1999);
+    Engine_CameraSetSpeed(0xcccc, 0x1999);
     Engine_CameraMoveTo(0x640000, 0x900000, 0x14d0000, 1);
     Call3(Engine_ActorSetSpeed, 23, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 24, 0x10000, 0x8000);
     Call3(Engine_ActorWalkTo, 23, 105, 0x149);
     Engine_EventWait(10);
-    Actor_WalkTo(24, 124, 0x149);
+    Engine_ActorWalkTo(24, 124, 0x149);
     Engine_ActorWaitForMove(23);
     Engine_ActorSetAnimation(23, 1);
     Engine_ActorFaceDirection(23, walk_speed, 0);
@@ -867,7 +867,7 @@ void FieldScene_RunGroupChoreography(void)
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorSetPosition, 25, 0, 0x14b0000);
     Call3(Engine_ActorSetSpeed, 25, 0x13333, 0x9999);
-    Actor_WalkToAndWait(25, 37, 0x153);
+    Engine_ActorWalkToAndWait(25, 37, 0x153);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(23, 3);
     Engine_EventOpenMessage(23, 0);
@@ -1336,13 +1336,13 @@ void Scene_RunExtendedActorSequence(void)
 /* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
-    Event_ShowMessage(speaker, 0);
+    Engine_EventShowMessage(speaker, 0);
     Engine_EventWait(frames);
 }
 
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
-    Actor_FaceDirection(a, b, 0);
+    Engine_ActorFaceDirection(a, b, 0);
     Engine_EventWait(c);
 }
 
@@ -1459,7 +1459,7 @@ void HaidiaIe_SpawnEffectPair(union PairObject *parent)
                  * leaves a dead QImode zero that takes r3 from the +85
                  * address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
-                sprite->tile = (ResourceTableEntries[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;
@@ -1511,61 +1511,61 @@ void FieldScene_RunStep20(void)
 
 void SceneState_SetValues352_365_2116_2117_40(void)
 {
-    GameFlag_Set(352);
-    GameFlag_Set(0x16d);
+    Engine_GameFlagSet(352);
+    Engine_GameFlagSet(0x16d);
 #if defined(TBS_EDITION_FR) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_IT)
-    GameFlag_Set(0x830);
-    GameFlag_Set(0x831);
-    GameFlag_Set(0x832);
-    GameFlag_Set(0x833);
-    GameFlag_Set(0x835);
-    GameFlag_Set(0x836);
-    GameFlag_Set(0x837);
-    GameFlag_Set(0x838);
-    GameFlag_Set(0x839);
-    GameFlag_Set(0x83a);
-    GameFlag_Set(0x840);
-    GameFlag_Set(0x841);
-    GameFlag_Set(0x842);
-    GameFlag_Set(0x806);
-    GameFlag_Set(0x807);
-    GameFlag_Set(0x808);
-    GameFlag_Set(0x800);
-    GameFlag_Set(0x801);
-    GameFlag_Set(0x823);
-    GameFlag_Set(0x802);
-    GameFlag_Set(0xf01);
-    GameFlag_Set(0x81a);
-    GameFlag_Set(0x804);
-    GameFlag_Set(0xf02);
-    GameFlag_Set(0x821);
-    GameFlag_Set(0x825);
-    GameFlag_Set(0x809);
-    GameFlag_Set(0x80a);
-    GameFlag_Set(0x818);
-    GameFlag_Set(0x80b);
-    GameFlag_Set(0x80c);
-    GameFlag_Set(0x80d);
-    GameFlag_Set(0x80e);
-    GameFlag_Set(0x80f);
-    GameFlag_Set(0x813);
-    GameFlag_Set(0x810);
-    GameFlag_Set(0x811);
-    GameFlag_Set(0x819);
-    GameFlag_Set(0x83b);
-    GameFlag_Set(0x83c);
-    GameFlag_Set(0x83d);
-    GameFlag_Set(0x83e);
-    GameFlag_Set(0x83f);
-    GameFlag_Set(0x814);
-    GameFlag_Set(0x879);
-    GameFlag_Set(0x815);
-    GameFlag_Set(0x81b);
-    GameFlag_Set(0x81d);
-    GameFlag_Set(0x87a);
+    Engine_GameFlagSet(0x830);
+    Engine_GameFlagSet(0x831);
+    Engine_GameFlagSet(0x832);
+    Engine_GameFlagSet(0x833);
+    Engine_GameFlagSet(0x835);
+    Engine_GameFlagSet(0x836);
+    Engine_GameFlagSet(0x837);
+    Engine_GameFlagSet(0x838);
+    Engine_GameFlagSet(0x839);
+    Engine_GameFlagSet(0x83a);
+    Engine_GameFlagSet(0x840);
+    Engine_GameFlagSet(0x841);
+    Engine_GameFlagSet(0x842);
+    Engine_GameFlagSet(0x806);
+    Engine_GameFlagSet(0x807);
+    Engine_GameFlagSet(0x808);
+    Engine_GameFlagSet(0x800);
+    Engine_GameFlagSet(0x801);
+    Engine_GameFlagSet(0x823);
+    Engine_GameFlagSet(0x802);
+    Engine_GameFlagSet(0xf01);
+    Engine_GameFlagSet(0x81a);
+    Engine_GameFlagSet(0x804);
+    Engine_GameFlagSet(0xf02);
+    Engine_GameFlagSet(0x821);
+    Engine_GameFlagSet(0x825);
+    Engine_GameFlagSet(0x809);
+    Engine_GameFlagSet(0x80a);
+    Engine_GameFlagSet(0x818);
+    Engine_GameFlagSet(0x80b);
+    Engine_GameFlagSet(0x80c);
+    Engine_GameFlagSet(0x80d);
+    Engine_GameFlagSet(0x80e);
+    Engine_GameFlagSet(0x80f);
+    Engine_GameFlagSet(0x813);
+    Engine_GameFlagSet(0x810);
+    Engine_GameFlagSet(0x811);
+    Engine_GameFlagSet(0x819);
+    Engine_GameFlagSet(0x83b);
+    Engine_GameFlagSet(0x83c);
+    Engine_GameFlagSet(0x83d);
+    Engine_GameFlagSet(0x83e);
+    Engine_GameFlagSet(0x83f);
+    Engine_GameFlagSet(0x814);
+    Engine_GameFlagSet(0x879);
+    Engine_GameFlagSet(0x815);
+    Engine_GameFlagSet(0x81b);
+    Engine_GameFlagSet(0x81d);
+    Engine_GameFlagSet(0x87a);
 #else
-    GameFlag_Set(0x844);
-    GameFlag_Set(0x845);
+    Engine_GameFlagSet(0x844);
+    Engine_GameFlagSet(0x845);
 #endif
     Engine_EventRequestExit(40);
 }

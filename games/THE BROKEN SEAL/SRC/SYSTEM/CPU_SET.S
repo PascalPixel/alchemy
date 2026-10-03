@@ -11,9 +11,9 @@
 Bios_CpuSet:
 	svc	11
 	bx	lr
-	.global Func_08006868
+	.global Bios_SoundBiasOff
 	.thumb_func
-Func_08006868:
+Bios_SoundBiasOff:
 	movs	r0, #0
 	svc	25
 	bx	lr

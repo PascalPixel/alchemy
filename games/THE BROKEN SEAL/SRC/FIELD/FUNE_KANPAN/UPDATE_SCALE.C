@@ -36,7 +36,7 @@ s32 SceneActor_UpdateScalePulse(struct FieldActor *actor)
         actor->scale_x = 0x10000;
         actor->scale_y = 0x10000;
         (*(s16 *)&actor->unknown_64) =
-            (s16)(Math_RemainderUnsigned(Random_Next(), 90) + 60);
+            (s16)(Math_RemainderUnsigned(Engine_RandomNext(), 90) + 60);
         break;
     }
     (*(s16 *)&actor->unknown_64)--;

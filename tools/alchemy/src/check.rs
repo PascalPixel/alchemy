@@ -4,6 +4,8 @@ mod commit_progress;
 mod layout;
 mod no_asm;
 mod publication;
+#[cfg(test)]
+pub(crate) use publication::figure_test_reason;
 
 const USAGE: &str =
     "usage: alchemy check <publication|commit-progress|coverage|layout|no-asm|progress|routes> [args]";

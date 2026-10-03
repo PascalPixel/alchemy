@@ -7,8 +7,6 @@
 #include "GAME_STATE.H"
 
 
-s32 UiText_BuildRenderEntries(s32 message, s32 mode);
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 Object_GetScreenPositionFar(s32 object, s32 *out);
@@ -60,7 +58,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed)
     entry = UiText_BuildRenderEntries(message, 1);
     if (work->entries[entry] == 0)
         return NULL;
-    UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (s32)(out = bounds), (u32)window);
+    UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), (u32)window);
     if (width == 0 && height == 0)
         return NULL;
     if (!(packed & 1))

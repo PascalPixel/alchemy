@@ -42,11 +42,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -72,7 +67,6 @@ void Korosseo_DrawGauge(void);
 s32 Resource_GetTableEntryFar(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 
 void Vector_AddPolarOffset();
 
@@ -112,12 +106,12 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -244,9 +238,9 @@ void StagedActor_PushActorAhead(void)
     subject->acceleration = 0x3333;
     Object_SetMoveTarget(subject, pos.x, pos.y, pos.z);
 
-    Audio_PlayCue(0xee);
+    Engine_AudioPlayCue(0xee);
     Script_WaitForEventTimeout(target);
-    Audio_PlayCue(0x120);                                /* 144 << 1 */
+    Engine_AudioPlayCue(0x120);                                /* 144 << 1 */
 
     target->x.fixed = pos.x;
     target->z.fixed = pos.z;

@@ -2243,7 +2243,7 @@ Func_08046b08:
 	beq .L_08047c54
 	lsrs r0, r0, #17
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	b .L_08047c58
 .L_08047c54:
 	ldr r0, .L_08047cd8
@@ -3213,7 +3213,7 @@ Func_08046b08:
 .L_080483de:
 	adds r0, r7, #0
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_0804843c
 	movs r2, #128
 	ldr r1, [sp, #48]
@@ -3239,7 +3239,7 @@ Func_08046b08:
 	ldr r3, [r3]
 	movs r1, #5
 	subs r0, r0, r3
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_08048440
 	ldr r1, [sp, #52]
 	movs r2, #128

@@ -3,11 +3,11 @@
 
 void VinasuChojo_FlashScreen(void)
 {
-    Audio_PlayCue(187);
-    ColorBuffer_ApplyTarget(0x7fff, 1);
+    Engine_AudioPlayCue(187);
+    Engine_ColorBufferApplyTarget(0x7fff, 1);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(4);
-    ColorBuffer_ApplyTarget(0x40250d, 1);
+    Engine_ColorBufferApplyTarget(0x40250d, 1);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(1);
 }
@@ -43,7 +43,7 @@ enum {
  */
 void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
 {
-    struct FieldActor *center = Actor_Get(ORBIT_CENTER_ACTOR);
+    struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
     u16 angle = effect->orbit.angle;
 
     effect->orbit.x = center->x.fixed + Engine_MathCos(angle) * (effect->orbit.radius + 3);
@@ -63,7 +63,7 @@ void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
  */
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 {
-    u8 *anchor = Actor_Get(23);
+    u8 *anchor = Object_GetById(23);
     u16 *pangle = (u16 *)(actor + 100);
     s32 angle = *pangle;
     s32 cosine;

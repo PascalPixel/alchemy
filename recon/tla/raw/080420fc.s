@@ -65,7 +65,7 @@ UiText_DrawStringAtOffset:
 .L_08042170:
 	.4byte 0x06002000
 .L_08042174:
-	bl Func_080416cc
+	bl UiText_RenderStringTiles
 	adds r0, r6, #0
 	bl Sys_Free
 .L_0804217e:

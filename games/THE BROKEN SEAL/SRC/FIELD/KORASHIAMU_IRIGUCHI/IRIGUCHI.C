@@ -139,12 +139,12 @@ const struct SceneEvent *Scene_GetEvents(void)
 void SceneDialogue_RunActor10MessageByFlag962(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x962)) {
+    if (Engine_GameFlagIsSet(0x962)) {
         Engine_EventSetMessage((s32)MsgKorashiamuColosseumAlreadyFullIfReally);
-        Event_ShowMessage(10, 0);
+        Engine_EventShowMessage(10, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKorashiamuHopingGetInSeeColosso);
-        Event_AskYesNo(10, 0);
+        Engine_EventAskYesNo(10, 0);
     }
     Engine_EventEnd();
 }
@@ -152,13 +152,13 @@ void SceneDialogue_RunActor10MessageByFlag962(void)
 void SceneDialogue_RunActor13MessageByFlag962(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x962)) {
-        Actor_ShowEmote(13, 258, 40);
+    if (Engine_GameFlagIsSet(0x962)) {
+        Engine_ActorShowEmote(13, 258, 40);
         Engine_EventSetMessage((s32)MsgKorashiamuWantWatchFinalsFromGood);
-        Event_ShowMessage(13, 0);
+        Engine_EventShowMessage(13, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKorashiamuColossosLuckyGuessMakesBattles);
-        Event_ShowMessage(13, 0);
+        Engine_EventShowMessage(13, 0);
     }
     Engine_EventEnd();
 }
@@ -169,17 +169,17 @@ void FieldScene_RunScene3b9_02000334(void)
     s32 record;
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x962) != 0) {
+    if (Engine_GameFlagIsSet(0x962) != 0) {
         Engine_ActorRunRepeatedMotion(14, 2);
         Engine_EventSetMessage((s32)MsgKorashiamuHoldOnSecond);
         FieldScene_CallPairWith10(14);
         Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 0);
         Engine_EventWait(20);
-        Event_AskYesNo(14, 0);
+        Engine_EventAskYesNo(14, 0);
         SceneState_ForwardMaskedHalfwordWith10(14, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKorashiamuWantWinBigPutOn);
-        Event_ShowMessage(14, 0);
+        Engine_EventShowMessage(14, 0);
     }
     Engine_EventEnd();
 }
@@ -231,7 +231,7 @@ void FieldScene_RunScene3b9_02000468(void)
     Engine_EventSetMessage((s32)MsgKorashiamuImRatedAsSecondBest);
     FieldScene_CallPairWith10(13);
     Engine_ActorRunRepeatedMotion(13, 1);
-    Event_ShowMessage(13, 0);
+    Engine_EventShowMessage(13, 0);
     {
         u16 *target = (u16 *)(rec7 + 100);
         s32 shown = 0x2d0;
@@ -343,9 +343,9 @@ void FieldScene_RunScene3b9_020006bc(void)
     Engine_EventBegin();
     Engine_ActorFaceEachOther(8, ACTOR_PARTY_LEADER, 20);
     Engine_EventSetMessage((s32)MsgKorashiamuYouReadyForFinals);
-    Event_OpenMessage(8, 0);
+    Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0)
         bump_step_now(1);
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }

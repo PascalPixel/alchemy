@@ -105,9 +105,9 @@ void StagedActor_PushActorAhead(void)
     subject->rate_z = 0x3333;
     Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
 
-    Audio_PlayCue(0xee);
+    Engine_AudioPlayCue(0xee);
     Object_CommitPosition(target);
-    Audio_PlayCue(0x120);
+    Engine_AudioPlayCue(0x120);
 
     target->x = pos.x;
     target->z = pos.z;

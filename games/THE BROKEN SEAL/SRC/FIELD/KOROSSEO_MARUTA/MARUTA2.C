@@ -31,20 +31,20 @@ void RunPartyCountInteractionCopyB(s32 actorId)
 
     if (GetPartyMemberCount() <= 1) {
         Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
-        if (Event_AskYesNo(actorId, 0) == 0) {
+        if (Engine_EventAskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
-            Actor_WalkTo(actorId, x, y + 0x40);
+            Engine_ActorWalkTo(actorId, x, y + 0x40);
             Engine_EventWait(15);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
             Engine_EventCloseScreen();
             Engine_EventWaitForScreen();
             Engine_EventRequestExit(11);
         }
     } else {
         Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
-        Event_ShowMessage(actorId, 0);
+        Engine_EventShowMessage(actorId, 0);
     }
 
     Engine_EventEnd();
@@ -82,11 +82,11 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
         msg = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Engine_EventSetMessage(msg);
-    Event_ShowMessage(actor, 0);
-    if (GameFlag_IsSet(flags + 512) != 0) {
+    Engine_EventShowMessage(actor, 0);
+    if (Engine_GameFlagIsSet(flags + 512) != 0) {
         return 2;
     }
-    if (GameFlag_IsSet(flags + 520) != 0) {
+    if (Engine_GameFlagIsSet(flags + 520) != 0) {
         result = PartyTalkMenu_Choose(0);
         if (result == 1) {
             return 2;
@@ -96,9 +96,9 @@ s32 ColossoLogRollingStage_RunStateInteraction(s32 actor, s32 flags)
         }
         return result;
     }
-    GameFlag_Set(flags + 520);
+    Engine_GameFlagSet(flags + 520);
     Engine_EventSetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
-    Event_OpenMessage(actor, 0);
+    Engine_EventOpenMessage(actor, 0);
     return Engine_EventChooseYesNo(0, 0);
 }
 
@@ -117,7 +117,7 @@ void ColossoLogRollingStage_InitializeStateInteraction(s32 actor, s32 flags)
         msg = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Engine_EventSetMessage(msg + 1);
-    Event_ShowMessage(actor, 0);
+    Engine_EventShowMessage(actor, 0);
 }
 
 /* Choosing a friend to cheer, and equipping a prize item. */

@@ -4,6 +4,7 @@
 #include "TYPES.H"
 #include "SAVE_STATE.H"
 #include "IWRAM_CALL.H"
+#include "IRQ.H"
 #include "RUNTIME_MEM.H"
 #include "SCENE.H"
 #include "RUNTIME_INTERFACES.H"

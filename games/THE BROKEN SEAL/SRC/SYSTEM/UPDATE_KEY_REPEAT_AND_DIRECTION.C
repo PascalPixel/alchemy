@@ -1,25 +1,18 @@
 #include "TYPES.H"
 #include "IO_REG.H"
-#include "GLOBAL_CELLS.H"
-
+#include "KEYSTATE.H"
+#include "INPUT.H"
 
 #define KEY_REPEAT_FIRST 19
 #define KEY_REPEAT_NEXT  6
 
-/* FAKEMATCH: volatile on plain RAM keeps every re-read of the input cells */
-extern volatile s32 Data_03001b00; /* key repeat delay */
-extern volatile u32 gKeysRepeat; /* keys repeating this frame */
-extern volatile u32 gKeysHeld; /* keys held */
-extern volatile u32 Data_03001afc; /* repeated keys, one direction only */
-extern volatile u32 Data_03001d04; /* axis last chosen */
-extern volatile u32 gKeyState; /* keys newly pressed */
-extern volatile u32 Data_03001cf4; /* keys held last update */
-
-/* Repeats held keys after a delay and reduces diagonal input to one axis,
-   keeping the axis that was pressed most recently. */
+/* Repeats held keys after a delay and resolves diagonal input using the
+   previous direction mask. */
 void Input_UpdateKeyRepeatAndDirection(void)
 {
-    s32 delay = Data_03001b00;
+    /* FAKEMATCH: the volatile accesses preserve the measured input-cell
+       rereads without giving the shared declarations conflicting types. */
+    s32 delay = *(volatile s32 *)&Data_03001b00;
     u32 keys;
     u32 axis = 0;
     u32 dirs;
@@ -27,15 +20,15 @@ void Input_UpdateKeyRepeatAndDirection(void)
     volatile u32 *repeat;
 
     if (delay <= 0) {
-        gKeysRepeat = gKeysHeld;
-        keys = gKeysRepeat;
+        *(volatile u32 *)&gKeysRepeat = *(volatile u32 *)&gKeysHeld;
+        keys = *(volatile u32 *)&gKeysRepeat;
         if (delay == 0)
-            Data_03001b00 = KEY_REPEAT_NEXT;
+            *(volatile s32 *)&Data_03001b00 = KEY_REPEAT_NEXT;
         else
-            Data_03001b00 = KEY_REPEAT_FIRST;
+            *(volatile s32 *)&Data_03001b00 = KEY_REPEAT_FIRST;
     } else {
-        gKeysRepeat = 0;
-        keys = gKeysRepeat;
+        *(volatile u32 *)&gKeysRepeat = 0;
+        keys = *(volatile u32 *)&gKeysRepeat;
     }
 
     if (keys != 0) {
@@ -49,39 +42,41 @@ void Input_UpdateKeyRepeatAndDirection(void)
         if (keys & KEY_RIGHT)
             dirs++;
 
-        repeat = &Data_03001afc;
+        repeat = (volatile u32 *)&Data_03001afc;
         *repeat = keys;
         switch (dirs) {
         default:
-            Data_03001d04 = KEYS_HORIZONTAL;
+            *(volatile u32 *)&Data_03001d04 = KEYS_HORIZONTAL;
             mask = 0xffff & ~KEYS_DPAD;
             *repeat &= mask;
             break;
         case 0:
-            Data_03001d04 = KEYS_HORIZONTAL;
+            *(volatile u32 *)&Data_03001d04 = KEYS_HORIZONTAL;
             break;
         case 1:
-            Data_03001d04 = keys & KEYS_DPAD;
+            *(volatile u32 *)&Data_03001d04 = keys & KEYS_DPAD;
             break;
         case 2:
-            if ((Data_03001d04 & *repeat) == 0)
-                Data_03001d04 = KEYS_HORIZONTAL;
-            *repeat &= Data_03001d04 ^ 0xffff;
+            if ((*(volatile u32 *)&Data_03001d04 & *repeat) == 0)
+                *(volatile u32 *)&Data_03001d04 = KEYS_HORIZONTAL;
+            *repeat &= *(volatile u32 *)&Data_03001d04 ^ 0xffff;
             break;
         case 3:
-            if (Data_03001d04 & KEYS_HORIZONTAL)
+            if (*(volatile u32 *)&Data_03001d04 & KEYS_HORIZONTAL)
                 axis = KEYS_HORIZONTAL;
-            if (Data_03001d04 & KEYS_VERTICAL)
+            if (*(volatile u32 *)&Data_03001d04 & KEYS_VERTICAL)
                 axis = KEYS_VERTICAL;
             mask = 0xffff ^ axis;
-            Data_03001d04 = keys & mask;
+            *(volatile u32 *)&Data_03001d04 = keys & mask;
             *repeat &= mask;
             break;
         }
     } else {
-        Data_03001afc = keys;
+        *(volatile u32 *)&Data_03001afc = keys;
     }
 
-    gKeyState = (gKeysHeld ^ Data_03001cf4) & gKeysHeld;
-    Data_03001cf4 = gKeysHeld;
+    *(volatile u32 *)&gKeyState =
+        (*(volatile u32 *)&gKeysHeld ^ *(volatile u32 *)&Data_03001cf4)
+        & *(volatile u32 *)&gKeysHeld;
+    *(volatile u32 *)&Data_03001cf4 = *(volatile u32 *)&gKeysHeld;
 }

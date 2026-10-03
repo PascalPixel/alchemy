@@ -23,8 +23,8 @@ extern u8 MsgKorashiamuWonBothMatches[];
  */
 void SceneState_ApplyFlags565And564(void)
 {
-    GameFlag_Clear(0x235);
-    GameFlag_Set(564);
+    Engine_GameFlagClear(0x235);
+    Engine_GameFlagSet(564);
 }
 
 /* Reads flag record 0x8a4; when set, runs one short setup on record 17.
@@ -417,13 +417,13 @@ void FieldScene_DispatchBySelector(void)
 
 void FieldScene_CallPairWith10(s32 no)
 {
-    Event_ShowMessage(no, 0);
+    Engine_EventShowMessage(no, 0);
     Engine_EventWait(10);
 }
 
 void SceneState_ForwardMaskedHalfwordWith10(s32 arg0, s32 arg1)
 {
-    Actor_FaceDirection(arg0, (u16)arg1, 10);
+    Engine_ActorFaceDirection(arg0, (u16)arg1, 10);
 }
 
 /* Two alternative layouts. */
@@ -432,18 +432,18 @@ void SceneState_ApplyRectsByFlatla384And962(void)
     s32 pair;
     s32 a, b;
 
-    if (GameFlag_IsSet(2384) != 0) {
+    if (Engine_GameFlagIsSet(2384) != 0) {
         pair = 2;
-        Map_CopyCellsTo(64, 0, 48, 5, pair, pair);
+        Engine_MapCopyCellsTo(64, 0, 48, 5, pair, pair);
         a = 16;
         b = 8;
-        Map_CopyCellAttributes(14, 8, 2, 1, a, b);
+        Engine_MapCopyCellAttributes(14, 8, 2, 1, a, b);
     } else {
-        Actor_SetChildValue(16, 2);
-        if (GameFlag_IsSet(0x962) != 0) {
+        Engine_ActorSetChildValue(16, 2);
+        if (Engine_GameFlagIsSet(0x962) != 0) {
             a = 14;
             b = 11;
-            Map_CopyCellAttributes(30, 22, 1, 2, a, b);
+            Engine_MapCopyCellAttributes(30, 22, 1, 2, a, b);
         }
     }
 }
@@ -910,13 +910,13 @@ void FieldScene_RunScene3b9_02002964(void)
 
 void ActorPresentation_SetActorsTwelveToEighteen(void)
 {
-    Actor_SetChildValue(12, 3);
-    Actor_SetChildValue(13, 0);
-    Actor_SetChildValue(14, 4);
-    Actor_SetChildValue(15, 1);
-    Actor_SetChildValue(16, 5);
-    Actor_SetChildValue(17, 2);
-    Actor_SetChildValue(18, 6);
+    Engine_ActorSetChildValue(12, 3);
+    Engine_ActorSetChildValue(13, 0);
+    Engine_ActorSetChildValue(14, 4);
+    Engine_ActorSetChildValue(15, 1);
+    Engine_ActorSetChildValue(16, 5);
+    Engine_ActorSetChildValue(17, 2);
+    Engine_ActorSetChildValue(18, 6);
     Object_SetActionById(13, 10);
     Object_SetActionById(14, 20);
     Engine_ActorSetAnimation(15, 0);

@@ -72,12 +72,12 @@ void FieldScene_RunActor16MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Engine_ShopOpen(7, 16);
     } else {
-        if (GameFlag_IsSet(0x845) == 0) {
+        if (Engine_GameFlagIsSet(0x845) == 0) {
             Engine_EventSetMessage((s32)MsgBiribinoThereWasAbleHealerIn);
         } else {
             Engine_EventSetMessage((s32)MsgBiribinoOurWeaponsBestCanFind);
         }
-        Event_ShowMessage(16, 0);
+        Engine_EventShowMessage(16, 0);
     }
 
     Engine_EventEnd();
@@ -94,12 +94,12 @@ void FieldScene_RunActor18MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Engine_ShopOpen(9, 18);
     } else {
-        if (GameFlag_IsSet(0x845) == 0) {
+        if (Engine_GameFlagIsSet(0x845) == 0) {
             Engine_EventSetMessage((s32)MsgBiribinoMustUsedTypesDangerBeing);
         } else {
             Engine_EventSetMessage((s32)MsgBiribinoTurnedOutWarriorsHiredBy);
         }
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     }
 
     Engine_EventEnd();
@@ -186,7 +186,7 @@ void FieldScene_RunActor8Message(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoDoKnowIfHolyTree);
-    Event_AskYesNo(8, 0);
+    Engine_EventAskYesNo(8, 0);
     Engine_EventEnd();
 }
 
@@ -194,7 +194,7 @@ void FieldScene_RunActor13Message(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoDoKnowSilk);
-    Event_AskYesNo(13, 0);
+    Engine_EventAskYesNo(13, 0);
     Engine_EventEnd();
 }
 
@@ -209,12 +209,12 @@ void FieldScene_RunActor19MessageBranch(void)
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Engine_InnOpen(2, 19);
-    } else if (GameFlag_IsSet(0x845) != 0) {
+    } else if (Engine_GameFlagIsSet(0x845) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoWasntCurseInKolimaHorrifying);
-        Event_AskYesNo(19, 0);
+        Engine_EventAskYesNo(19, 0);
     } else {
         Engine_EventSetMessage((s32)MsgBiribinoCurseOnKolimaScaryDevelopment);
-        Event_ShowMessage(19, 0);
+        Engine_EventShowMessage(19, 0);
     }
 
     Engine_EventEnd();
@@ -253,10 +253,10 @@ void FieldScene_ConfigureActor22Scene(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoReallyThinkHeadChefHas);
-    Event_ShowMessage(0x16, 0);
-    Actor_FaceActor(0x16, ACTOR_PARTY_LEADER, 0);
-    Event_ShowMessage(0x16, 0);
-    Actor_FaceDirection(0x16, 0, 0xA);
+    Engine_EventShowMessage(0x16, 0);
+    Engine_ActorFaceActor(0x16, ACTOR_PARTY_LEADER, 0);
+    Engine_EventShowMessage(0x16, 0);
+    Engine_ActorFaceDirection(0x16, 0, 0xA);
     Engine_EventEnd();
 }
 
@@ -278,7 +278,7 @@ void FieldScene_RunActor27Message(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoWasSomeMealDontJust);
-    Event_AskYesNo(27, 0);
+    Engine_EventAskYesNo(27, 0);
     Engine_EventEnd();
 }
 
@@ -289,12 +289,12 @@ void FieldScene_RunActor10MessageBranch(void)
     void Event_ShowMessage(s32, s32);
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(3) != 0) {
+    if (Engine_GameFlagIsSet(3) != 0) {
         Engine_EventSetMessage((s32)MsgBiribinoEvenFrozenImilMustFeel);
     } else {
         Engine_EventSetMessage((s32)MsgBiribinoWhenSpringComesWantGo);
     }
-    Event_ShowMessage(10, 0);
+    Engine_EventShowMessage(10, 0);
     Engine_EventEnd();
 }
 

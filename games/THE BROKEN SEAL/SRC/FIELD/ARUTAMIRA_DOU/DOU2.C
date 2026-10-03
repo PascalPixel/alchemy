@@ -1158,36 +1158,36 @@ void ArutamiraDou_AskAboutRockOrder(void)
     Engine_EventBegin();
     question = (s32)MsgArutamiraForgetOrderRock;
     Engine_EventSetMessage(question);
-    Event_OpenMessage(8, 0);
+    Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
         Engine_EventSetMessage(question + 1);
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
     } else {
         Engine_EventWait(20);
         Engine_EventSetMessage(question + 2);
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
     }
     Engine_EventEnd();
 }
 
 void FieldScene_RunFlagGatedActorEightDialogue(void)
 {
-    if (GameFlag_IsSet(0x960) == 0)
+    if (Engine_GameFlagIsSet(0x960) == 0)
         return;
-    if (GameFlag_IsSet(0x962) != 0)
+    if (Engine_GameFlagIsSet(0x962) != 0)
         return;
 
-    GameFlag_Set(0x961);
+    Engine_GameFlagSet(0x961);
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutamiraWait);
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_EventWait(30);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 8, 0);
     Engine_EventWait(30);
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(20);
     Engine_EventEnd();
@@ -1377,7 +1377,7 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
         position[2] = z;
         FIELD(obj, s32, 4) = x;
         position[0] = x;
-        Vector_AddPolarOffset(0x780000, Random_Next(), position);
+        Vector_AddPolarOffset(0x780000, Engine_RandomNext(), position);
         FIELD(obj, s32, 0xC) = position[0];
         FIELD(obj, s32, 0x10) = position[2];
         FIELD(obj, s32, 0x24) = 0x50000;
@@ -1385,7 +1385,7 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
         FIELD(obj, u8, 0x42) = state;
         (*p)++;
         if ((*(s32 *)gFrameTick & 3) == 0)
-            Audio_PlayCue(0x86);
+            Engine_AudioPlayCue(0x86);
     } else if (state == 1) {
         if (BattleFx_HasReachedTarget(obj) == 0) {
             s32 value = *p;

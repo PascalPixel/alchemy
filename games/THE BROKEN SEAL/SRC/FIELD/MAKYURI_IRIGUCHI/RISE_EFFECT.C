@@ -3,11 +3,11 @@
 /* Spawn and configure the compact companion object at a source position. */
 void OverlayObject_SpawnKind24AtObject(u8 *src)
 {
-    u8 *obj = Object_Create(24, *(int *)(src + 8),
+    u8 *obj = Engine_ObjectCreate(24, *(int *)(src + 8),
                               *(int *)(src + 12), *(int *)(src + 16));
     if (obj != 0) {
         u8 *rec = *(u8 **)(obj + 80);
-        Object_SetScript(obj, MakyuriIriguchi_RiseScript);
+        Engine_ObjectSetScript(obj, MakyuriIriguchi_RiseScript);
         obj[85] = 0;
         obj[34] = 1;
         obj[35] = 2;

@@ -1,6 +1,11 @@
 #include "TYPES.H"
-#include "IO_REG.H"
 #include "WINDOW.H"
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+#include "RAM_BUFFER.H"
+#else
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -123,9 +128,18 @@ void UiWork_ClearValueNameTables(void)
     } while (no != 8);
 }
 
+#endif
+
 void UiWork_PushValueSlot(u32 value, u32 flag)
 {
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    struct UiRenderWork *work =
+        (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+#else
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+#endif
     u32 no = 0;
     u32 limit = 8;
 
@@ -139,6 +153,9 @@ void UiWork_PushValueSlot(u32 value, u32 flag)
     } while (no != limit);
 }
 
+#if !(defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || \
+    defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
+    defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT))
 u32 UiRender_LookupNamedValue(u32 name, u32 clear)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
@@ -219,3 +236,5 @@ void UiWork_FinalizePendingCore(void)
     } while (slot_index != 3);
     WaitFrames(10);
 }
+
+#endif

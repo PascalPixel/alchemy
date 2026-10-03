@@ -152,7 +152,7 @@ struct SceneActor {
 };
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
-u32 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 
 s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor, struct SceneActor *target, s32 range, s32 force);
 

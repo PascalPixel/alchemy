@@ -1,7 +1,10 @@
+/* Trial 2026-10-03: removed the duplicate Owner_GetState declaration.
+ * Still unscored: owner/template views are incomplete and setup symbols
+ * lack declarations in this draft. The body is unchanged.
+ */
 #include "OWNER_STATE.H"
 s32 Inventory_AddItem(s32 owner, s32 item);
 
-void *Owner_GetState(s32);
 void Owner_RefreshClassActions(s32);
 s32 Owner_GetValueIfLevelThresholdReached(s32, s32);
 

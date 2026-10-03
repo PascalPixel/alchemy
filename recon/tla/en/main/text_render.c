@@ -23,44 +23,6 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     UiText_DrawWideString(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
 }
 
-void UiText_DrawCharacterAtOffset(
-    s32 character,
-    struct RenderInput *position,
-    u32 offset_x,
-    u32 offset_y)
-{
-    s32 byte_offset;
-    s32 vram_address;
-    u16 *text;
-    s32 zero;
-    u32 cell;
-    u8 *base;
-    u16 *counter;
-
-    base = TEXT_IWRAM->work;
-    counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
-    zero = 0;
-    *counter = zero;
-    UiText_BuildRenderEntries(character, 1);
-
-    byte_offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-    *(u16 *)(base + byte_offset) = zero;
-    *counter = (u16)((*counter + 1) & RENDER_ENTRY_MASK);
-
-    cell = ((position->y + (offset_y >> 3) + 1) << 5)
-        + (position->x + (offset_x >> 3)) + 1;
-    if (cell < 0x280U) {
-        byte_offset = cell * 2;
-        vram_address = byte_offset + 0x06002000;
-        text = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
-        UiText_RenderTileRow(
-            text,
-            (s32)(base + byte_offset + 8),
-            vram_address,
-            7 & offset_x);
-    }
-}
-
 void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
 {
     s16 *buffer;

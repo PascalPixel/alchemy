@@ -94,7 +94,7 @@ void FieldScene_RunStepWithValue1632(void)
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
-    u8 *v = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *v = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
     Audio_PlayCue(0xe4);
     F(v, s32, 0x6c) = (s32)MakyuriIriguchi_TrailSparks;
@@ -102,8 +102,8 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
     Object_SetModeById(ACTOR_PARTY_LEADER, 2);
     ObjectMotion_OffsetPositionAndResetMotion(ACTOR_PARTY_LEADER, 0, -6);
     ObjectMotion_CommitCurrentPositionAndActivate(ACTOR_PARTY_LEADER);
-    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     F(v, s32, 0x6c) = 0;
     Battle_WaitMode0(30);
     Engine_EventCloseScreen();
@@ -212,7 +212,7 @@ void FieldScene_RunIndexedStep63(void)
 
 void FieldScene_RunActor8StepWithTableA820(void)
 {
-    GameFlag_Clear(0x205);
+    Engine_GameFlagClear(0x205);
     Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path1);
 }
 
@@ -225,7 +225,7 @@ void MakyuriIriguchi_SendActor8ByLeaderColumn(void)
     record = Object_GetById(ACTOR_PARTY_LEADER);
     field8 = *(s32 *)(record + 8);
     quotient = field8 / 0x100000;
-    GameFlag_Set(0x205);
+    Engine_GameFlagSet(0x205);
     if (quotient == 7) {
         Engine_ActorEnableActionCallback(8, MakyuriIriguchi_Actor8Path2);
     } else {

@@ -89,7 +89,7 @@ u8 *RariberoHeya_GetExits(void)
 u8 *RariberoHeya_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
-        if (GameFlag_IsSet(0x9A7) != 0) {
+        if (Engine_GameFlagIsSet(0x9A7) != 0) {
             return gRariberoHeyaPlacements9a7;
         }
         return gRariberoHeyaPlacements;
@@ -238,17 +238,17 @@ void RariberoScene_PlayPoseSequence(void)
 void FieldScene_RunSequenceA(void)
 {
 
-    GameFlag_Set(0x9BC);
+    Engine_GameFlagSet(0x9BC);
     Engine_EventBegin();
     Engine_ResetSceneEffectCounter();
     Engine_EventWait(0xA);
-    Camera_MoveTo(0x780000, -1, 0x600000, 1);
+    Engine_CameraMoveTo(0x780000, -1, 0x600000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(0x1E);
     Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
-    Event_ShowMessage(0xC, 0);
+    Engine_EventShowMessage(0xC, 0);
     Engine_EventWait(0xA);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
     Engine_EventWait(0x1E);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(0x1E);
@@ -259,9 +259,9 @@ void FieldScene_RunThreeCallSequence(void)
 {
     void Event_ShowMessage(s32, s32);
 
-    GameFlag_Set(0x9BC);
+    Engine_GameFlagSet(0x9BC);
     Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
-    Event_ShowMessage(0xC, 0);
+    Engine_EventShowMessage(0xC, 0);
 }
 
 void SceneState_ForwardWord16cAndApply7b(void)
@@ -270,19 +270,19 @@ void SceneState_ForwardWord16cAndApply7b(void)
     s16 *p = (s16 *)(work + 0x16C);
 
     Engine_EventRequestExit(*p);
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
 }
 
 /* Both interiors answer differently once the aerie's events are done. */
 u8 *RariberoHeya_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
-        if (GameFlag_IsSet(0x9a7) != 0) {
+        if (Engine_GameFlagIsSet(0x9a7) != 0) {
             return gRariberoHeyaEvents9a7;
         }
         return gRariberoHeyaEvents;
     }
-    if (GameFlag_IsSet(0x9a7) != 0) {
+    if (Engine_GameFlagIsSet(0x9a7) != 0) {
         return gRariberoEvents9a7;
     }
     return gRariberoEvents;
@@ -636,30 +636,30 @@ void FieldScene_RunSecondaryScript(void)
 
     Engine_ActorRunRepeatedMotion(11, 2);
     Engine_EventWait(20);
-    Event_ShowMessage(11, 0);
+    Engine_EventShowMessage(11, 0);
     Engine_EventWait(10);
 
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 50);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Engine_ActorFaceDirection(ACTOR_GERALD, 0xc000, 0);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(10);
 
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Engine_EventShowMessage(ACTOR_MIA, 0);
     Engine_EventWait(10);
 
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
     Engine_EventWait(10);
 
     Engine_ActorRunRepeatedMotion(12, 2);
     Engine_EventWait(20);
-    Event_ShowMessage(12, 0);
+    Engine_EventShowMessage(12, 0);
     Engine_EventWait(20);
 
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -668,26 +668,26 @@ void FieldScene_RunSecondaryScript(void)
 
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
     Engine_EventWait(30);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(30);
 
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_GERALD, 0);
+    Engine_EventShowMessage(ACTOR_GERALD, 0);
     Engine_EventWait(10);
 
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 4);
     Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_MIA, 0);
+    Engine_EventShowMessage(ACTOR_MIA, 0);
     Engine_EventWait(10);
 
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(30);
-    Event_ShowMessage(ACTOR_IVAN, 0);
+    Engine_EventShowMessage(ACTOR_IVAN, 0);
     Engine_EventWait(10);
 
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
-    Event_OpenMessage(0x2002, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
+    Engine_EventOpenMessage(0x2002, 0);
 }
 
 /* The action table actor 14 takes while flag 0x300 is set. */
@@ -707,20 +707,20 @@ s32 Scene_Initialize(void)
     struct FieldActor *actor;
 
     if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
-        GameFlag_Set(FLAG_AERIE_EVENTS_DONE);
+        Engine_GameFlagSet(FLAG_AERIE_EVENTS_DONE);
     }
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     scene = gGameState.scene;
     if (scene == (s32)&SceneId_RariberoHeya1) {
-        actor = Actor_Get(ACTOR_SANCTUM_FIRST);
+        actor = Object_GetById(ACTOR_SANCTUM_FIRST);
         actor->priority_flags = 0;
         actor->collision_flags |= 4;
         actor->sprite->priority = 2;
-        actor = Actor_Get(ACTOR_SANCTUM_SECOND);
+        actor = Object_GetById(ACTOR_SANCTUM_SECOND);
         actor->priority_flags = 0;
         actor->collision_flags |= 4;
         actor->sprite->priority = 2;
-        actor = Actor_Get(ACTOR_SANCTUM_THIRD);
+        actor = Object_GetById(ACTOR_SANCTUM_THIRD);
         actor->collision_flags |= 4;
         actor->priority_flags = 0;
         actor->sprite->priority = 2;
@@ -732,17 +732,17 @@ s32 Scene_Initialize(void)
         }
     }
     if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
-        actor = Actor_Get(ACTOR_HOUSE_RESIDENT);
+        actor = Object_GetById(ACTOR_HOUSE_RESIDENT);
         actor->collision_flags |= 4;
         actor->priority_flags = 0;
         actor->sprite->priority = 2;
-        if (GameFlag_IsSet(0x300) != 0) {
+        if (Engine_GameFlagIsSet(0x300) != 0) {
             Engine_ActorEnableActionCallback(14, gRariberoPoseAction);
         }
         if (gGameState.entrance == ENTRANCE_HOUSE_REPORT) {
             FieldScene_RunPrimaryScript();
-            Engine_ActorSetActionCallback(Actor_Get(ACTOR_HOUSE_REPORT_FIRST), 6);
-            Engine_ActorSetActionCallback(Actor_Get(ACTOR_HOUSE_REPORT_SECOND), 6);
+            Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_FIRST), 6);
+            Engine_ActorSetActionCallback(Object_GetById(ACTOR_HOUSE_REPORT_SECOND), 6);
             gGameState.entrance = ENTRANCE_HOUSE_AFTER_REPORT;
         }
     }

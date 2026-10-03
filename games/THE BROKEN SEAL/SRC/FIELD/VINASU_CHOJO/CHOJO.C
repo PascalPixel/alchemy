@@ -3,6 +3,7 @@
 #include "CHOJO.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"
+#include "VRAM_BLOCK.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
@@ -96,12 +97,6 @@ LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *Data_03001f30;
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
-extern struct WorldMapVramBlock ResourceTableEntries[];
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
@@ -187,11 +182,11 @@ s32 OverlayObject_UpdateHeadingTimer(Spr_02000424 *s)
 
     if (v == 0) {
         {
-            s32 t = ((u32)(Random_Next() << 15)) >> 16;
+            s32 t = ((u32)(Engine_RandomNext() << 15)) >> 16;
             s->unk06 = s->unk06 + t;
         }
         {
-            s32 n = ((u32)(Random_Next() * 80)) >> 16;
+            s32 n = ((u32)(Engine_RandomNext() * 80)) >> 16;
             *q = n;
             if (n == 0) {
                 goto out;
@@ -247,7 +242,7 @@ s32 SceneActor_FindNearestSlotOfKindF2(void)
     u32 i;
 
     limit = 640;
-    ref = Actor_Get(ACTOR_PARTY_LEADER);
+    ref = Object_GetById(ACTOR_PARTY_LEADER);
     i = 8;
     p = (Spr_020004bc **)(work + 0x34);
     do {
@@ -273,7 +268,7 @@ void InitializeActorZeroMotion(void)
     s32 angle;
     u8 flags;
 
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     angle = (actor->angle + 0x1000) & 0xe000;
     flags = actor->flags55;
     position[0] = (actor->x & 0xfff00000) + 0x80000;
@@ -281,18 +276,18 @@ void InitializeActorZeroMotion(void)
     position[2] = (actor->z & 0xfff00000) + 0x80000;
     Vector_AddPolarOffset(0x200000, angle, position);
     if (Object_CheckMovementCollision(actor, position) == 0) {
-        GameFlag_Clear(592);
+        Engine_GameFlagClear(592);
         SceneActor_SetByte55ForActorZeroAnd12To17();
         Object_SetMode(actor, 6);
         Engine_TaskWait(6);
         Object_SetMode(actor, 7);
         actor->motion30 = 0x30000;
         actor->motion34 = 0x20000;
-        Audio_PlayCue(152);
+        Engine_AudioPlayCue(152);
         actor->motion28 = 0x40000;
         actor->flags55 &= 0x7e;
         Engine_ActorSetSpriteFlags(actor, 0);
-        Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)(position[0] >> 16),
+        Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, (s16)(position[0] >> 16),
                          (s16)(position[2] >> 16));
         Object_SetMode(actor, 6);
         Engine_ActorSetSpriteFlags(actor, 1);
@@ -302,7 +297,7 @@ void InitializeActorZeroMotion(void)
 
 void SceneEffect_SpawnAndBobWithActorZero(void)
 {
-    Spr_020005ec *a = Actor_Get(ACTOR_PARTY_LEADER);
+    Spr_020005ec *a = Object_GetById(ACTOR_PARTY_LEADER);
     Spr_020005ec *b;
     Spr_020005ec *r;
     s32 k;
@@ -311,8 +306,8 @@ void SceneEffect_SpawnAndBobWithActorZero(void)
     r = SceneActor_FindNearestSlotOfKindF2();
     Data_0200e6e8 = r;
     if (r != 0) {
-        GameFlag_Set(592);
-        b = Actor_Get(Data_0200e6e8);
+        Engine_GameFlagSet(592);
+        b = Object_GetById(Data_0200e6e8);
         b->unk55 = 0;
         a->unk55 &= 0xfe;
         b->unk0c += (s32)0xfffd0000;
@@ -366,21 +361,21 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
     s16 mode;
     Spr_0200071c *obj;
 
-    GameFlag_Set(324);
+    Engine_GameFlagSet(324);
     Engine_TaskWait(1);
-    GameFlag_Set(272);
-    Engine_ActorSetSpriteFlags(Actor_Get(8), 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(9), 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(11), 0);
+    Engine_GameFlagSet(272);
+    Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(11), 0);
     v = (s32)0xffff0000;
     Object_GetById(10)->scale_x = v;
     Object_GetById(11)->scale_x = v;
     i = 12;
     z = 0;
     do {
-        obj = Actor_Get(i);
-        Engine_ActorSetSpriteFlags(Actor_Get(i), z);
+        obj = Object_GetById(i);
+        Engine_ActorSetSpriteFlags(Object_GetById(i), z);
         Engine_ActorSetSpritePriority(i, 1);
         obj->unk55 = 4;
         obj->unk23 |= 2;
@@ -392,7 +387,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
 
     switch (mode) {
     case 1:
-        if (GameFlag_IsSet(0x109) == 0) {
+        if (Engine_GameFlagIsSet(0x109) == 0) {
             Scene_RunScriptedActorPresentation();
         }
         break;
@@ -410,11 +405,11 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
         break;
     case 9:
         Engine_EventBegin();
-        if (GameFlag_IsSet(0x345) != 0) {
+        if (Engine_GameFlagIsSet(0x345) != 0) {
             Inventory_AddItem(0, 65);
-        } else if (GameFlag_IsSet(0x346) != 0) {
+        } else if (Engine_GameFlagIsSet(0x346) != 0) {
             Inventory_AddItem(1, 65);
-        } else if (GameFlag_IsSet(0x347) != 0) {
+        } else if (Engine_GameFlagIsSet(0x347) != 0) {
             Inventory_AddItem(2, 65);
         } else {
             Inventory_AddItem(3, 65);
@@ -423,7 +418,7 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
         break;
     }
 
-    if (GameFlag_IsSet(0x109) != 0) {
+    if (Engine_GameFlagIsSet(0x109) != 0) {
         s32 slot = SceneActor_FindNearestSlotOfKindF2();
 
         if (slot != 0) {
@@ -438,13 +433,13 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
 
 void VinasuChojo_ShowMessage(s32 speaker)
 {
-    Event_ShowMessage(speaker, 0);
+    Engine_EventShowMessage(speaker, 0);
     Engine_EventWait(10);
 }
 
 void VinasuChojo_FaceActor(s32 actor, s32 facing)
 {
-    Actor_FaceDirection(actor, facing, 10);
+    Engine_ActorFaceDirection(actor, facing, 10);
 }
 
 void Scene_RunScriptedActorPresentation(void)
@@ -1344,7 +1339,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
                  * leaves a dead QImode zero that takes r3 from the +85
                  * address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
-                sprite->tile = (ResourceTableEntries[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;
@@ -1382,7 +1377,7 @@ void FieldScene_ForwardValue81fc(s32 a)
 
 void FieldScene_RunStep6(void)
 {
-    SceneState_ForwardByRuntimeWordBits((s32)Actor_Get(6));
+    SceneState_ForwardByRuntimeWordBits((s32)Object_GetById(6));
 }
 
 /* The scene after the pair fall. */
@@ -1400,9 +1395,9 @@ static inline void VinasuChojo_AimBurst(s32 velocity[3], s32 angle)
     s32 sine;
     s32 cosine;
 
-    velocity[0] = Math_Cos(angle);
+    velocity[0] = Engine_MathCos(angle);
     velocity[1] = 0;
-    sine = Math_Sin(angle);
+    sine = Engine_MathSin(angle);
     cosine = velocity[0];
     cosine += cosine * 2;
     sine *= 2;

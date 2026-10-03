@@ -7,9 +7,9 @@
 extern u8 gEventWork[];
 extern volatile u32 gKeysHeld;
 
-/* The wait calls it with the action still in r0, as the ROM does, so it is
-   declared without a prototype. */
-s32 UiText_OpenMessageAtObject();
+struct UiWindow;
+struct UiWindow *UiText_OpenMessageAtObject(s32 actor_and_flags);
+s32 UiWork_IsIdleFar(struct UiWindow *window);
 
 void Battle_WaitMode0(s32 mode);
 void BattleEv_RunWait(s32 action, s32 flag);
@@ -18,15 +18,20 @@ s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force);
 
 void BattleEv_RunWait(s32 action, s32 flag)
 {
+    s32 masked_action;
     struct EventRuntime *runtime = *(struct EventRuntime **)gEventWork;
-    s32 wait_token = UiText_OpenMessageAtObject();
+    struct UiWindow *window = UiText_OpenMessageAtObject(action);
     s32 message_id;
-    u32 frames = 0;
+    u32 frames;
 
+    /* FAKEMATCH: the later boundary swaps window r8/message sl; exclude r8 before message is defined. */
+    asm("" : "+r"(action) : : "r5", "r6", "r8");
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
+    /* FAKEMATCH: the earlier counter zero lives across the clobber in r8; seed it afterwards. */
+    frames = 0;
     if (action <= 7) {
-        s32 masked_action = action & 0x0fff;
+        masked_action = action & 0x0fff;
 
         if (BattleAction_FindDescriptor(masked_action) == 0) {
             message_id = masked_action;
@@ -35,7 +40,7 @@ void BattleEv_RunWait(s32 action, s32 flag)
     UiWork_FinalizeEntityMatchingLocalizedIdFar(message_id);
 
     if (runtime->message_busy == 0) {
-        while (UiWork_IsIdleFar(wait_token) == 0) {
+        while (UiWork_IsIdleFar(window) == 0) {
             WaitFrames(1);
             frames++;
             if (frames > 600 ||

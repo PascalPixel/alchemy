@@ -1,3 +1,49 @@
+/* T2: canonical OWNERVAL.H HP API, one compile, body unchanged.
+ * Native EN and produced complete extents are both 1044 bytes. The full
+ * 40-byte literal pool matches after relocation; the local frame remains
+ * 32 bytes, with 32 bytes of saved registers, in both native and produced C.
+ * All 65 relocations resolve (58 calls, 7 literal addresses), and all 58
+ * call targets and their order match our EN ROM. No compilation blocker.
+ *
+ * The assembly differs from T1 only by removing the three HP-result
+ * lsl r0,#16 narrowings. Against native code, 25 bytes still differ, first
+ * at offset 0xcd: 13 register-only instructions and two reordered
+ * instructions (one also changes a register), with no added or deleted
+ * instructions. The recovering-Djinn scans, call setup and void epilogue
+ * retain their previously measured differences. No body follow-up.
+ * This is still an unlinked, uncredited near miss; no edition claim.
+ * Earlier attempts and their separate measurements remain below.
+ */
+/* 2026-10-03 earlier typed-owner attempt; this superseded score 120 below.
+ * Native EN [080bfba4,080bffb8): 1044 bytes including its literal pools.
+ * Earlier draft: 1052 bytes, native 32-byte frame preserved, score 490
+ * (13 register-only, 2 reordered, 3 inserted). All call and pool symbols
+ * resolve against the current linked EN build; complete extent is not exact.
+ *
+ * Three inserted lsl r0,#16 instructions narrow the then-declared s16 HP result
+ * before its zero tests. Natural void agrees with the sole PRESENT13 caller
+ * and changes the final pop/bx from r1 to r0; no meaningful result exists.
+ * The recovering-Djinn scans still choose r1 where native chooses r4/r3,
+ * and the order/call-argument setup retains its scheduling difference.
+ *
+ * Replaced the private UnitBoosts, BattleState and BattleMotionSlot views
+ * with BattleUnit.element_modifier (s8), BattleSession.events.pending_cue
+ * (s32) and BattleObjectSlot. DjinnRecoveryEntry.turns remains signed: -1
+ * standby, -2 spent by summoning, then its assigned recovery countdown.
+ * Callee contracts then matched the producer declarations: HP adjustment s16,
+ * Djinn deactivation u32, element effect void, trade state void*. Only
+ * the Djinn table lookup and the real DispatchObject child-value boundary
+ * cast pointers. Shared headers supply the getter and event-runtime APIs.
+ *
+ * T0: typed owners/prototypes plus natural void, explicit __divsi3: 1052
+ * bytes, score 490. T1: ordinary signed /10 emits identical complete .text
+ * and relocations, including pools; retained as the clearer arithmetic.
+ * Measured with the approved TBS compiler/options and era assembler.
+ * STOP after this single ordinary follow-up. Closed counter sharing,
+ * permutations, r4 binding, void+r1 clobber and counts-record reshaping
+ * were not repeated. No new asm, pins, storage, header, routing or output
+ * modification. This remains an uncredited draft, with no edition claim.
+ */
 #include "RUNTIME_MEM.H"
 /* DRAFT (score 120): 12 of 454 instructions differ, register names only. In the
  * loop that orders the recovering Djinn the ROM keeps the counter of the owner
@@ -19,27 +65,15 @@
  * for each element's count with the void return scored 130. All discarded.
  * The declaration's return type still needs to agree with the callers. */
 #include "TYPES.H"
+#include "OWNERVAL.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_MSG.H"
 #include "BATTLE_PARTY.H"
-#include "BATTLE_TYPES.H"
+#include "BATTLE_WORK.H"
+#include "BATTLE_RUNTIME.H"
+#include "MOTION_OBJECT.H"
+#include "OBJDISP.H"
 #include "IWRAM_CALL.H"
-
-struct UnitBoosts {
-    u8 unknown_000[0x12c];
-    s8 boost[4];
-};
-
-struct BattleMotionSlot {
-    void *object;
-};
-
-struct BattleState {
-    u8 unknown_000[0x820];
-    s32 poison_cue;
-};
-
-extern struct BattleState *gBattleWork;
 
 /* The KO messages link as offsets from "goes down": the Grim Reaper's
    call three after it, the enemy's "strength is exhausted" three after
@@ -47,27 +81,18 @@ extern struct BattleState *gBattleWork;
 #define MSG_REAPER_CALLS ((s32)&MsgGoesDown + 3)
 #define MSG_EXHAUSTED ((s32)&MsgGoesDown + 6)
 
-struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
-void BattleUnit_Recalculate(s32 unit_id);
-s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
-void Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
-void Sys_Free(void *block);
-s32 __divsi3(s32 numerator, s32 denominator);
+void *Trade_GetOfferStateFar(s32 side);
+u32 Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 void Object_SetMode(void *object, s32 animation);
-void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 flags);
+void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 flags);
 void Audio_PlayCue(s32 cue);
-struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
-s32 BattleEventRuntime_SchedulePhase(s32 frames);
-u32 BattleEventRuntime_Reset(void);
-s32 BattleEventRuntime_WaitForReady(void);
-s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
+void BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 /* End of one unit's turn. The Djinn it summoned with join its side's
    recovery order and raise their element's level; the power each element
    gains is announced. When both sides still stand, curse, poison and the
    Grim Reaper's count then take their toll. */
-s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
+void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 {
     s32 id;
     struct BattleUnit *unit;
@@ -80,7 +105,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
     id = plan->actor_id;
     both_sides = 0;
     unit = Owner_GetStateFar(id);
-    list = &Trade_GetOfferStateFar((u32)id > 7)->list;
+    list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((u32)id > 7))->list;
     for (best = 0; best < list->count; best++) {
         if (list->entries[best].unit_id == id && list->entries[best].turns == -1) {
             Djinn_DeactivateFar(id, list->entries[best].element, list->entries[best].index);
@@ -96,7 +121,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         s32 j;
         s32 owner;
 
-        list = &Trade_GetOfferStateFar((u32)id > 7)->list;
+        list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((u32)id > 7))->list;
         for (i = 0; i < 4; i++) {
             counts[i] = 0;
         }
@@ -146,8 +171,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 best = i;
             }
         }
-        if (best >= 0 && ((struct UnitBoosts *)unit)->boost[best] < most) {
-            ((struct UnitBoosts *)unit)->boost[best] = most;
+        if (best >= 0 && unit->element_modifier[best] < most) {
+            unit->element_modifier[best] = most;
         }
         BattleUnit_Recalculate(id);
         for (i = 0; i <= 3; i++) {
@@ -162,7 +187,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                 Audio_PlayCue(212);
                 Object_SetMode(GetBattleObjectSlot(id)->object, 3);
-                ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(id)->object, 32);
+                ObjectDispatch_ApplyValueToChildrenFar(
+                    (struct DispatchObject *)GetBattleObjectSlot(id)->object, 32);
                 BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
                 BattleEventRuntime_WaitForReady();
             }
@@ -199,17 +225,17 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         BattleEventRuntime_Reset();
         poison = &unit->poison;
         if (*poison != 0) {
-            s32 damage = __divsi3(unit->max_hp * *poison, 10);
-            struct BattleState *state = gBattleWork;
+            s32 damage = unit->max_hp * *poison / 10;
+            struct BattleSession *state = gBattleWork;
 
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, damage);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPoisonDamage);
             if (*poison != 0) {
-                state->poison_cue = 134;
+                state->events.pending_cue = 134;
             } else {
-                state->poison_cue = 133;
+                state->events.pending_cue = 133;
             }
             if (Owner_AdjustFirstValueFar(id, -damage) == 0) {
                 s32 text;

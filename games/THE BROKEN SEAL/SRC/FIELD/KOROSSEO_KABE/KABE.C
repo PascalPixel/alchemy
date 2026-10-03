@@ -71,7 +71,7 @@ s32 KorosseoKabe_RunStateInteraction();
 void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
-s32 Korosseo_FadeInCompetitor();
+void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Engine_ActorSetAttachedEffect();
 void Korosseo_RestoreCompetitor();
 void KorosseoKabe_ShowFollowUpPrompt();
@@ -88,7 +88,7 @@ extern u8 MsgKorosseoFocusRollingLogs[];
 extern u8 MsgKorosseoPlaceCalledBoard[];
 void Korosseo_FinishSoloRound(void);
 s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
-s32 Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
+void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row);
 void Korosseo_RestoreCompetitor(s32 actor);
 void KorosseoKabe_ShowFollowUpPrompt(s32 speaker, s32 base);
@@ -135,15 +135,15 @@ void SceneState_ConfigureRegionByActorElevenColumn(void)
 
     work = (u8 *)Object_GetById(11);
     if ((*(s32 *)(work + 8) >> 20) == 36) {
-        GameFlag_Set(0x335);
+        Engine_GameFlagSet(0x335);
         v0 = 0x23;
         v1 = 0x4D;
-        Map_CopyCellAttributes(0x23, 0x4E, 1, 1, v0, v1);
+        Engine_MapCopyCellAttributes(0x23, 0x4E, 1, 1, v0, v1);
     } else {
-        GameFlag_Clear(0x335);
+        Engine_GameFlagClear(0x335);
         v0 = 0x23;
         v1 = 0x4D;
-        Map_CopyCellAttributes(0x22, 0x4D, 1, 1, v0, v1);
+        Engine_MapCopyCellAttributes(0x22, 0x4D, 1, 1, v0, v1);
     }
 }
 
@@ -163,22 +163,22 @@ void SceneState_StoreSlotTileXToWork832To848(void)
     s32 *record;
     s32 value;
 
-    Map_CopyCellAttributes(100, 11, 12, 4, fifth, sixth);
+    Engine_MapCopyCellAttributes(100, 11, 12, 4, fifth, sixth);
 
     record = (s32 *)Object_GetById(12);
     value = record[2] >> 20;
     GameFlag_SetByte(832, value);
-    Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
+    Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 
     record = (s32 *)Object_GetById(13);
     value = record[2] >> 20;
     GameFlag_SetByte(840, value);
-    Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
+    Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 
     record = (s32 *)Object_GetById(14);
     value = record[2] >> 20;
     GameFlag_SetByte(848, value);
-    Map_CopyCellAttributes(71, 16, 1, 1, value, 16);
+    Engine_MapCopyCellAttributes(71, 16, 1, 1, value, 16);
 }
 
 void SceneState_SetWorkByte35(void)
@@ -237,14 +237,14 @@ void SceneState_SetFlag331AndConfigureRegion46_17(void)
 {
     u8 *p;
 
-    GameFlag_Set(0x331);
+    Engine_GameFlagSet(0x331);
     p = (u8 *)Object_GetById(20) + 85;
     *p = 0;
     {
         s32 p5 = 44;
         s32 p6 = 17;
 
-        Map_CopyCellAttributes(46, 17, 1, 1, p5, p6);
+        Engine_MapCopyCellAttributes(46, 17, 1, 1, p5, p6);
     }
 }
 
@@ -252,25 +252,25 @@ void FieldScene_SetFlag332AndDrawTiles(void)
 {
     u8 *slot;
 
-    GameFlag_Set(0x332);
+    Engine_GameFlagSet(0x332);
     slot = (u8 *)Object_GetById(21) + 85;
     *slot = 0;
     {
         s32 v5 = 50;
         s32 v6 = 17;
 
-        Map_CopyCellAttributes(46, 17, 1, 1, v5, v6);
+        Engine_MapCopyCellAttributes(46, 17, 1, 1, v5, v6);
     }
 }
 
 void FieldScene_SetFlag333AndDrawTiles(void)
 {
-    GameFlag_Set(0x333);
+    Engine_GameFlagSet(0x333);
     {
         s32 width = 32;
         s32 height = 77;
 
-        Map_CopyCellAttributes(32, 37, 1, 4, width, height);
+        Engine_MapCopyCellAttributes(32, 37, 1, 4, width, height);
     }
 }
 
@@ -319,9 +319,9 @@ void SceneActor_MovePairByTileOffset(s32 a0, s32 a1, s32 a2)
     } else {
         Object_SetMode(q, 3);
     }
-    Audio_PlayCue(226);
+    Engine_AudioPlayCue(226);
     Object_CommitPosition(p);
-    Audio_PlayCue(288);
+    Engine_AudioPlayCue(288);
     Object_SetMode(q, 2);
     Engine_EventEnd();
 }
@@ -417,16 +417,16 @@ void SceneState_ApplyRectsForActors15To17(void)
 {
     s32 field;
 
-    Map_CopyCellAttributes(100, 11, 12, 4, 14, 11);
+    Engine_MapCopyCellAttributes(100, 11, 12, 4, 14, 11);
 
     field = ((s32 *)Object_GetById(15))[2] >> 20;
-    Map_CopyCellAttributes(13, 28, 1, 4, field, 11);
+    Engine_MapCopyCellAttributes(13, 28, 1, 4, field, 11);
 
     field = ((s32 *)Object_GetById(16))[2] >> 20;
-    Map_CopyCellAttributes(13, 28, 1, 4, field, 11);
+    Engine_MapCopyCellAttributes(13, 28, 1, 4, field, 11);
 
     field = ((s32 *)Object_GetById(17))[4] >> 20;
-    Map_CopyCellAttributes(13, 28, 4, 1, 18, field);
+    Engine_MapCopyCellAttributes(13, 28, 4, 1, 18, field);
 }
 
 void FieldScene_RunStep15At29By26(void)
@@ -575,7 +575,7 @@ void FieldScene_PlaceSpectatorRow(void)
 void SceneState_ApplyTable8715AndValue104(void)
 {
     Engine_TaskAddCallback(FieldScene_RunSupplementalSequenceOne, 0xC85);
-    GameFlag_Clear(0x104);
+    Engine_GameFlagClear(0x104);
 }
 
 /*
@@ -606,7 +606,7 @@ void SceneState_WaitForStatusWords(void)
 void SceneState_InstallTask8714AndApplyTwoRects(void)
 {
     BattleEffect_PauseObject(31);
-    GameFlag_Set(820);                 /* 205 << 2 */
+    Engine_GameFlagSet(820);                 /* 205 << 2 */
 
     if (KorosseoKabe_SpectatorPhase != 0) {
         KorosseoKabe_SpectatorTimer = 0;
@@ -620,8 +620,8 @@ void SceneState_InstallTask8714AndApplyTwoRects(void)
      * bit 0, so adding it again here overshoots by one. */
     Engine_TaskRemoveCallback((s32)FieldScene_RunSupplementalSequenceOne);
 
-    Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
-    Map_CopyCellAttributes(57, 11, 1, 1, 58, 11);
+    Engine_MapCopyCellAttributes(58, 28, 7, 1, 58, 13);
+    Engine_MapCopyCellAttributes(57, 11, 1, 1, 58, 11);
 }
 
 /* The wall stage's start: the party walks up to the guide, the two face each
@@ -975,10 +975,39 @@ void KorosseoKabe_RunStageIntro(s32 a0)
         if (rec == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoStageDubbedMini);
             Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x4c80000, -1, 0xb80000, 1);
+            {
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cx asm("r0") = 0x4c80000 >> 19;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cz asm("r2") = 0xb80000 >> 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cm asm("r3");
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+                cm = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                cz <<= 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+                cx <<= 19;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+                Engine_CameraMoveTo(cx, -cy, cz, cm);
+            }
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x4f8, 168);
+            {
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fx asm("r1") = 0x4f8;
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fz asm("r2") = 168;
+                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+                asm("" : : "r"(fx), "r"(fz) : "r0");
+                Korosseo_FadeInCompetitor(0, fx, fz);
+            }
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
             ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x508, 184);
             ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x508, 216);
@@ -1118,6 +1147,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
  * coordinator tail. */
 void FieldScene_RunLiftedActorCoordinator(s32 scene)
 {
+    s32 z;
     void *actor;
     s32 path;
 
@@ -1130,16 +1160,72 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoFansJustCallWall);
         Engine_CameraSetSpeed(196608, 24576);
-        Call4(Engine_CameraMoveTo, 35127296, -1, 15728640, 1);
+        {
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cx asm("r0") = 35127296 >> 18;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cz asm("r2") = 15728640 >> 16;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cz <<= 16;
+            /* FAKEMATCH: native X/Y components precede Z scaling and mode setup. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz) : "r3");
+            cm = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cm), "r"(cz));
+            cy = -cy;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx) : "r"(cy), "r"(cz), "r"(cm));
+            Call4(Engine_CameraMoveTo, cx << 18, cy, cz, cm);
+        }
         Engine_CameraWaitForMove();
         Engine_EventWait(45);
         Call2(Engine_CameraSetSpeed, 65536, 8192);
-        Call4(Engine_CameraMoveTo, 35127296, -1, 12582912, 1);
+        {
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cx asm("r0") = 35127296 >> 18;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cz asm("r2") = 12582912 >> 16;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cm = 1;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+            cz <<= 16;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+            cx <<= 18;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+            Call4(Engine_CameraMoveTo, cx, -cy, cz, cm);
+        }
+        z = 132;
+        /* FAKEMATCH: retain the used coordinate component across the native wait. */
+        asm("" : "+r"(z));
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(scene, 0);
-        Korosseo_FadeInCompetitor(0, 632, 264);
+        /* FAKEMATCH: native scales the reused coordinate after the message call. */
+        asm("" : "+r"(z));
+        z <<= 1;
+        {
+            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+            register s32 fx asm("r1") = 632;
+            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+            register s32 fz asm("r2") = z;
+            /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+            asm("" : : "r"(fx), "r"(fz) : "r0");
+            Korosseo_FadeInCompetitor(0, fx, fz);
+        }
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
-        Call3(Engine_ActorWalkToAndWait, 0, 616, 264);
+        Call3(Engine_ActorWalkToAndWait, 0, 616, z);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(Engine_ActorFaceDirection, 0, 49152, 20);
         battle_owner_69();
@@ -1231,21 +1317,83 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
     Engine_EventBegin();
     result = KorosseoKabe_RunStateInteraction(speaker, 5);
     if (result == 0) {
-        s32 x;
-        s32 z;
+        /* FAKEMATCH: native keeps the used coordinates in r5/r6 across calls. */
+        register s32 x asm("r5");
+        /* FAKEMATCH: native keeps the used coordinates in r5/r6 across calls. */
+        register s32 z asm("r6");
 
         Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledBoard);
         Engine_CameraSetSpeed(0x20000, 0x4000);
-        Call4((void (*)())Engine_CameraMoveTo, 0x1480000, -1, 0x1080000, 1);
+        {
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cx asm("r0") = 0x1480000 >> 17;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cz asm("r2") = 0x1080000 >> 17;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cz <<= 17;
+            /* FAKEMATCH: native X/Y components precede Z scaling and mode setup. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz) : "r3");
+            cm = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cm), "r"(cz));
+            cy = -cy;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx) : "r"(cy), "r"(cz), "r"(cm));
+            Call4((void (*)())Engine_CameraMoveTo, cx << 17, cy, cz, cm);
+        }
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Call2((void (*)())Engine_CameraSetSpeed, 0x18000, 0x3000);
-        x = 408;
-        z = 264;
-        Engine_CameraMoveTo(0x1380000, -1, 0xb00000, 1);
+        {
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cx asm("r0") = 0x1380000 >> 17;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cz asm("r2") = 0xb00000 >> 16;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cm = 1;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+            cz <<= 16;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+            cx <<= 17;
+            /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+            asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm) : "r5", "r6");
+            x = 408 >> 1;
+            z = 264 >> 1;
+            Engine_CameraMoveTo(cx, -cy, cz, cm);
+        }
+        /* FAKEMATCH: native scales the used X after moving the camera. */
+        asm("" : "+r"(x));
+        x <<= 1;
+        /* FAKEMATCH: native X scaling precedes the camera wait. */
+        asm("" : : "r"(x));
         Engine_CameraWaitForMove();
+        /* FAKEMATCH: native scales the used Z after the camera wait. */
+        asm("" : "+r"(z));
+        z <<= 1;
+        /* FAKEMATCH: native Z scaling precedes the message call. */
+        asm("" : : "r"(z));
         Engine_EventShowMessage(speaker, 0);
-        Korosseo_FadeInCompetitor(0, x, z);
+        {
+            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+            register s32 fx asm("r1") = x;
+            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+            register s32 fz asm("r2") = z;
+            /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+            asm("" : : "r"(fx), "r"(fz) : "r0");
+            Korosseo_FadeInCompetitor(0, fx, fz);
+        }
         Call3((void (*)())Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
         ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, x, 216);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0x8000, 10);
@@ -1280,7 +1428,7 @@ void SceneActor_PlacePartyAtSavedTiles(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(ACTOR_GERALD, x, y);
+        Engine_ActorSetPosition(ACTOR_GERALD, x, y);
     }
     {
         s32 x = GameFlag_GetByte(912);
@@ -1290,7 +1438,7 @@ void SceneActor_PlacePartyAtSavedTiles(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(ACTOR_IVAN, x, y);
+        Engine_ActorSetPosition(ACTOR_IVAN, x, y);
     }
     {
         s32 x = GameFlag_GetByte(928);
@@ -1300,6 +1448,6 @@ void SceneActor_PlacePartyAtSavedTiles(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(ACTOR_MIA, x, y);
+        Engine_ActorSetPosition(ACTOR_MIA, x, y);
     }
 }

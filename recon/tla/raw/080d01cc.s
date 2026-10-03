@@ -318,7 +318,7 @@ DisplayTransition_Start:
 .L_080d0454:
 	.4byte Func_080d0954
 .L_080d0458:
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r2, #160
 	lsls r2, r2, #3
 	movs r1, #160
@@ -352,7 +352,7 @@ DisplayTransition_Start:
 	ldr r2, .L_080d0514
 	movs r0, #1
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r1, #160
 	lsls r1, r1, #3
 	movs r0, #160

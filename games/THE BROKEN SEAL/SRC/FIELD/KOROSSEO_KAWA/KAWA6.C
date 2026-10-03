@@ -44,11 +44,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -73,7 +68,6 @@ void Korosseo_DrawGauge(void);
 s32 Resource_GetTableEntryFar(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 void Vector_AddPolarOffset();
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
@@ -81,12 +75,12 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -217,7 +211,7 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
     struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
     Resource_DecodeType01(Resource_GetTableEntry(resource), work + 240);
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(0x109) == 0) {
         recorder->mode = 1;
         recorder->mirror = 1;
         recorder->actor = *(u16 *)(work + 224);

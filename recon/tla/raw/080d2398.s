@@ -10,7 +10,7 @@ Event_RunObjectHookAndWait:
 	bl Func_080caa4c
 	movs r0, #1
 	bl WaitFrames
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	pop {r5, pc}
 	.2byte 0x0000

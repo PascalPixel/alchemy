@@ -201,19 +201,35 @@ Func_02001c54:
 	.global Event_SetStatus1c6
 	.thumb_func
 Event_SetStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8398
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8398
+	.else
 	overlay_veneer Event_SetStatus1c6Far
+	.endif
+	.endif
 	.global Event_ClearStatus1c6
 	.thumb_func
 Event_ClearStatus1c6:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c83a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c83a0
+	.else
 	overlay_veneer Event_ClearStatus1c6Far
+	.endif
+	.endif
 	.global Event_WaitValue1c8Frames
 	.thumb_func
 Event_WaitValue1c8Frames:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.endif
@@ -221,11 +237,27 @@ Event_WaitValue1c8Frames:
 	.global Field_DispatchTypeHandler
 	.thumb_func
 Field_DispatchTypeHandler:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8488
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8488
+	.else
 	overlay_veneer Field_DispatchTypeHandlerFar
+	.endif
+	.endif
 	.global Func_02001c7c
 	.thumb_func
 Func_02001c7c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8490
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8490
+	.else
 	overlay_veneer Func_080c84a0
+	.endif
+	.endif
 	.global Func_02001c84
 	.thumb_func
 Func_02001c84:
@@ -241,19 +273,51 @@ Func_02001c84:
 	.global Func_02001c8c
 	.thumb_func
 Func_02001c8c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c84a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c84a0
+	.else
 	overlay_veneer Func_080c84b0
+	.endif
+	.endif
 	.global Func_02001c94
 	.thumb_func
 Func_02001c94:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c84a8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c84a8
+	.else
 	overlay_veneer Func_080c84b8
+	.endif
+	.endif
 	.global Func_02001c9c
 	.thumb_func
 Func_02001c9c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c84b0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c84b0
+	.else
 	overlay_veneer Func_080c84c0
+	.endif
+	.endif
 	.global Engine_EventPrepareSpeakers
 	.thumb_func
 Engine_EventPrepareSpeakers:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer Func_080c84e0
+	.endif
+	.endif
 	.global ObjectMotion_CommitPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitPositionAndActivate:
@@ -289,11 +353,27 @@ Engine_PartyGetLeaderActor:
 	.global Func_02001ccc
 	.thumb_func
 Func_02001ccc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8788
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8788
+	.else
 	overlay_veneer Func_080c8798
+	.endif
+	.endif
 	.global Func_02001cd4
 	.thumb_func
 Func_02001cd4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8790
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8790
+	.else
 	overlay_veneer Func_080c87a0
+	.endif
+	.endif
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:

@@ -74,7 +74,7 @@ Func_080d2b4c:
 	asrs r3, r3, #24
 	cmp r3, #3
 	bne .L_080d2bec
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	adds r0, #8
 	bl BattleFx_LookupResult

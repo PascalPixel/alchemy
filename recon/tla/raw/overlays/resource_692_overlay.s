@@ -4468,7 +4468,7 @@ Func_02002364:
 .L_0200a3de:
 	pop {r5, pc}
 .L_0200a3e0:
-	.4byte 0x000028cc
+	.4byte MsgBlazeStoneEmber
 .L_0200a3e4:
 	.4byte gPartyState
 	.section .text.x0200a3e8,"ax",%progbits
@@ -6258,7 +6258,7 @@ Func_020030cc:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b2cc:
-	.4byte 0x000028cf
+	.4byte MsgBlazeTabletInscription
 .L_0200b2d0:
 	.4byte gPartyState
 .L_0200b2d4:
@@ -6311,7 +6311,7 @@ Func_020032d8:
 .L_0200b33e:
 	pop {r5, pc}
 .L_0200b340:
-	.4byte 0x000028cf
+	.4byte MsgBlazeTabletInscription
 .L_0200b344:
 	.4byte gPartyState
 	.section .text.x0200b348,"ax",%progbits
@@ -6359,7 +6359,7 @@ Func_02003348:
 .L_0200b3a6:
 	pop {r5, pc}
 .L_0200b3a8:
-	.4byte 0x000028cf
+	.4byte MsgBlazeTabletInscription
 .L_0200b3ac:
 	.4byte gPartyState
 	.section .text.x0200b3b0,"ax",%progbits
@@ -6407,7 +6407,7 @@ Func_020033b0:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200b410:
-	.4byte 0x000028cf
+	.4byte MsgBlazeTabletInscription
 .L_0200b414:
 	.4byte gPartyState
 	.section .text.x0200b418,"ax",%progbits

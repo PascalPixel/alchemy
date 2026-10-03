@@ -48,7 +48,15 @@ Func_080c82e0:
 	.global Func_080c82e8
 	.thumb_func
 Func_080c82e8:
+.ifdef TLA_EDITION_ES
+	overlay_veneer EventRuntime_PrepareCurrentObject
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer EventRuntime_PrepareCurrentObject
+.else
 	overlay_veneer Func_080d50f8
+.endif
+.endif
 	.global Func_080c82f0
 	.thumb_func
 Func_080c82f0:
@@ -56,7 +64,15 @@ Func_080c82f0:
 	.global Func_080c82f8
 	.thumb_func
 Func_080c82f8:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d2260
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d2260
+.else
+	overlay_veneer EventRuntime_PrepareCurrentObject
+.endif
+.endif
 	.global Func_080c8300
 	.thumb_func
 Func_080c8300:
@@ -92,19 +108,51 @@ Func_080c8338:
 	.global Func_080c8340
 	.thumb_func
 Func_080c8340:
+.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayTransition_Start
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayTransition_Start
+.else
 	overlay_veneer Func_080d00f8
+.endif
+.endif
 	.global Func_080c8348
 	.thumb_func
 Func_080c8348:
+.ifdef TLA_EDITION_ES
+	overlay_veneer DisplayTransition_Finish
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer DisplayTransition_Finish
+.else
 	overlay_veneer Func_080d0bec
+.endif
+.endif
 	.global Func_080c8350
 	.thumb_func
 Func_080c8350:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d01cc
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d01cc
+.else
+	overlay_veneer DisplayTransition_Start
+.endif
+.endif
 	.global Func_080c8358
 	.thumb_func
 Func_080c8358:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080d0520
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080d0520
+.else
+	overlay_veneer DisplayTransition_Finish
+.endif
+.endif
 	.global Func_080c8360
 	.thumb_func
 Func_080c8360:

@@ -169,11 +169,7 @@ Func_0200200c:
 	.global Func_02002014
 	.thumb_func
 Func_02002014:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080ad2f8
-	.else
 	overlay_veneer Func_080ad318
-	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:

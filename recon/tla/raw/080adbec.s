@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080adbec
+	.global GameFlag_RefreshLureCap
 	.thumb_func
-Func_080adbec:
+GameFlag_RefreshLureCap:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

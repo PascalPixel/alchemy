@@ -16,11 +16,11 @@ Event_FindFacingTrigger:
 	sub sp, #4
 	ldr r6, [r3, #16]
 	mov r8, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldrh r0, [r0, #6]
 	mov r11, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Func_080cd91c
 	movs r3, #128
 	lsls r3, r3, #1

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080cdf5c
+	.global EventRuntime_GetControlledOwner
 	.thumb_func
-Func_080cdf5c:
+EventRuntime_GetControlledOwner:
 	push {lr}
 	ldr r2, .L_080cdf7c
 	movs r1, #128

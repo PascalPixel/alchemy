@@ -16,13 +16,13 @@ Func_080ceafc:
 	lsls r2, r2, #9
 	cmp r3, r2
 	bge .L_080ceb2e
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	ldr r0, [r5, #8]
-	bl Func_080d3be8
+	bl EventRuntime_SetMessage
 	adds r0, r6, #0
 	movs r1, #0
-	bl Func_080d407c
-	bl Func_080d2350
+	bl EventRuntime_ShowMessageAndWait
+	bl EventRuntime_End
 	b .L_080ceb34
 .L_080ceb2e:
 	adds r1, r6, #0
@@ -34,11 +34,11 @@ Func_080ceafc:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_080ceb50
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	ldr r0, .L_080ceb54
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWaitFar
-	bl Func_080d2350
+	bl EventRuntime_End
 .L_080ceb50:
 	movs r0, #0
 	pop {r5, r6, pc}

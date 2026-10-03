@@ -137,19 +137,35 @@ Engine_EventRequestExit:
 	.global Func_02000d18
 	.thumb_func
 Func_02000d18:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c82d0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c82d0
+	.else
 	overlay_veneer Func_080c82e0
+	.endif
+	.endif
 	.global Engine_EventCloseScreen
 	.thumb_func
 Engine_EventCloseScreen:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c83a0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c83a0
+	.else
 	overlay_veneer Event_ClearStatus1c6Far
+	.endif
+	.endif
 	.global Engine_EventWaitForScreen
 	.thumb_func
 Engine_EventWaitForScreen:
 	.ifdef TLA_EDITION_ES
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	.ifdef TLA_EDITION_IT
-	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_DelayEffectFramesFar
 	.else
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.endif
@@ -157,15 +173,39 @@ Engine_EventWaitForScreen:
 	.global Object_SetWideSprite
 	.thumb_func
 Object_SetWideSprite:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8410
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8410
+	.else
 	overlay_veneer Object_SetWideSpriteFar
+	.endif
+	.endif
 	.global Engine_ActorReturnHome
 	.thumb_func
 Engine_ActorReturnHome:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8418
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8418
+	.else
 	overlay_veneer Func_080c8428
+	.endif
+	.endif
 	.global Engine_EventPrepareSpeakers
 	.thumb_func
 Engine_EventPrepareSpeakers:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer Func_080c84e0
+	.endif
+	.endif
 	.global Func_02000d48
 	.thumb_func
 Func_02000d48:
@@ -173,11 +213,27 @@ Func_02000d48:
 	.global Func_02000d50
 	.thumb_func
 Func_02000d50:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86e8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86e8
+	.else
 	overlay_veneer Func_080c86f8
+	.endif
+	.endif
 	.global Func_02000d58
 	.thumb_func
 Func_02000d58:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86f8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86f8
+	.else
 	overlay_veneer Func_080c8708
+	.endif
+	.endif
 	.global Engine_PartyGetLeaderActor
 	.thumb_func
 Engine_PartyGetLeaderActor:

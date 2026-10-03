@@ -7,7 +7,7 @@ Func_080d4084:
 	adds r6, r1, #0
 	adds r5, r0, #0
 	bl UiText_OpenMessageAtObject
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	movs r1, #0
 	bl Inventory_PromptAndSetObjectMode
 	adds r7, r0, #0

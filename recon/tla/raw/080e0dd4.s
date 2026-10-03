@@ -13,7 +13,7 @@ Func_080e0dd4:
 	ldr r6, [r3]
 	sub sp, #12
 	ldr r7, [r6, #16]
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r2, #1
 	negs r2, r2
 	movs r3, #0

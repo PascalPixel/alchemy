@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d21f4
+	.global EventRuntime_UpdateWaitMode
 	.thumb_func
-Func_080d21f4:
+EventRuntime_UpdateWaitMode:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

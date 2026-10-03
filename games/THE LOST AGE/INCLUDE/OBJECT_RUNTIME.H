@@ -3,6 +3,11 @@
 
 #include "TYPES.H"
 
+struct BattleAnimationState {
+    u8 unknown_00[0x28];
+    s16 *value_28;
+};
+
 /* Position and movement values are 16.16 fixed point. */
 struct ObjectRuntime {
     s32 *script;
@@ -59,7 +64,6 @@ void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_WaitForAnimationChange(u32);
 void Object_SetModeById(u32, s32);
 void Object_RefreshSelectorById(u32);
-void Battle_WaitMode0(s32);
 void Audio_PlayCue(s32);
 
 extern const u8 Object_LinkedMotionScript[];

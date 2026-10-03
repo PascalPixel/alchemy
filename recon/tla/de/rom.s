@@ -1660,7 +1660,14 @@ Func_0803f9c0:
 	.type Func_080400e8, %function
 	.thumb_func
 Func_080400e8:
-	.incbin "baserom.gba", 0x0004013c, 0x00001a80
+	.incbin "baserom.gba", 0x0004013c, 0x000015e4
+	.global UiText_RenderStringTiles
+	.type UiText_RenderStringTiles, %function
+	.thumb_func
+UiText_RenderStringTiles:
+	.incbin "baserom.gba", 0x00041720, 0x000003f0
+	.size UiText_RenderStringTiles, .-UiText_RenderStringTiles
+	.incbin "baserom.gba", 0x00041b10, 0x000000ac
 	.section .rom.00041bbc, "ax"
 	.global Func_08041b68
 	.type Func_08041b68, %function

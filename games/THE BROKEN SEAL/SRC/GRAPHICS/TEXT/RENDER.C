@@ -9,7 +9,6 @@ s32 UiText_BuildRenderEntries(s32 character, s32 count);
 u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y);
-s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

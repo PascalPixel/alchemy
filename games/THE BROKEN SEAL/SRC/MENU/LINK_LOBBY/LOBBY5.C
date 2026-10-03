@@ -375,7 +375,7 @@ s32 LinkLobby_RunRoundResult(void)
     Map_SetLayerEntryFlag(5);
     /* Through a pointer the halfword letters load from the literal pool. */
     {
-        u16 *name = (u16 *)gSerialTransfer.reserved;
+        u16 *name = (u16 *)gSerialTransfer.payload;
 
         name[4] = 'T';
         name[5] = 'A';

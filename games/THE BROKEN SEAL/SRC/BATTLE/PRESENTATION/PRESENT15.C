@@ -44,7 +44,7 @@ s32 BattlePres_SyncTurn(void)
         side += other;
         side <<= 3;
         peer = (u16 *)(LINK_REC + side);
-        sync = (u16 *)gSerialTransfer.reserved;
+        sync = (u16 *)gSerialTransfer.payload;
         if (work->link_paused != 0) {
             goto fail;
         }
@@ -181,7 +181,7 @@ char Battle_ApplyValueToWork2224(s16 arg2)
 {
   s16 val;
   s16 val2;
-  _call_via_r3((s32)gSerialTransfer.reserved, 0x10, val, (u32)IwramClearWords);
+  _call_via_r3((s32)gSerialTransfer.payload, 0x10, val, (u32)IwramClearWords);
   val2 = arg2;
   val = val2;
 }

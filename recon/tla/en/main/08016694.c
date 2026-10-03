@@ -1,3 +1,12 @@
+/* Current retained draft: complete candidate/reference 280/280 bytes,
+ * including the pool; score 120, two reordered instructions (the SIOCNT
+ * address load and send-index read). All physical names resolve.
+ * Plain local union snapshot trial: complete 276/280 bytes, score 430
+ * (2 register-only, 4 operand, 4 reordered, 1 deleted). It delays stack
+ * allocation and the snapshot pointer in lr, uses SP-relative stores,
+ * and reverses the indexed halfword operands. Retained the closer body
+ * with its measured TLA steering tagged inside the function.
+ */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
@@ -7,6 +16,11 @@ void SerialRuntime_HandleTransferInterrupt(void)
     struct SerialRuntime *send_state;
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;
+    /* FAKEMATCH: the plain TLA union snapshot scores 430 at 276 bytes;
+       it delays stack allocation and the snapshot pointer in lr, uses
+       SP-relative stores, and reverses indexed halfword operands.
+       This volatile local/restricted view retains the closer order and
+       register choices: score 120 at the complete 280-byte extent. */
     volatile union SerialDataRegisters serial_data;
     union SerialDataRegisters *const __restrict serial_snapshot =
         (union SerialDataRegisters *)&serial_data;
@@ -14,7 +28,7 @@ void SerialRuntime_HandleTransferInterrupt(void)
     s32 channel;
 
     sio_control = (volatile u32 *)0x04000128;
-    /* Capture volatile I/O through one stable, restricted local view. */
+    /* Capture the volatile hardware once for this interrupt. */
     *serial_snapshot =
         *(volatile union SerialDataRegisters *)REG_SIODATA32;
     send_state = &gSerialRuntime;

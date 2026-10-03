@@ -1245,9 +1245,8 @@ Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f258, 0x00008da8
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000528
-	.section .rom.00038ea4, "ax"
-	.incbin "baserom.gba", 0x00038ea4, 0x00000090
 	.section .rom.00038f34, "ax"
+	.balign 4
 	.global UiWork_InitializeWithResourceCounters
 	.type UiWork_InitializeWithResourceCounters, %function
 	.thumb_func
@@ -1273,12 +1272,6 @@ UiWindow_Create:
 	.incbin "baserom.gba", 0x00039254, 0x00000114
 	.section .rom.0003938e, "ax"
 	.incbin "baserom.gba", 0x0003938e, 0x00000002
-	.section .rom.00039390, "ax"
-	.global UiWork_Finalize
-	.type UiWork_Finalize, %function
-	.thumb_func
-UiWork_Finalize:
-	.incbin "baserom.gba", 0x00039390, 0x00000060
 	.section .rom.0003940a, "ax"
 	.incbin "baserom.gba", 0x0003940a, 0x00000002
 	.section .rom.0003940c, "ax"

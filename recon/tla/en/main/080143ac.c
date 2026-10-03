@@ -1,3 +1,8 @@
+/* 2026-10-03 resource-record ownership closure: use COMMON VRAM_TAB.H's
+   two-halfword size/state and byte-offset record. Native VramBlock_LoadCached
+   writes the requested byte size at +0 and VRAM byte offset at +2; initialize
+   and reset retain their existing zero/0xffff state policies. Current EN
+   score 120/2; the prior load-order gap remains. This is a draft, with no new byte credit. */
 #include "RESOURCE.H"
 /*
  * Draft: Resource_FindFreeEntry does not yet match; ☀️'s C leaves two load
@@ -6,7 +11,7 @@
  */
 #include "TYPES.H"
 
-extern u8 ResourceTableEntries[];
+#include "VRAM_TAB.H"
 
 s32 Resource_FindFreeEntry(void)
 {

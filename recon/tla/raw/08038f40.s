@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global UiWork_InitializeWithResourceCounters
 	.thumb_func
 UiWork_InitializeWithResourceCounters:
@@ -33,7 +34,7 @@ UiWork_InitializeWithResourceCounters:
 	adds r0, r5, #0
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08038f08
+	bl UiWork_InitFreeList
 	bl Func_0803d2d0
 	movs r1, #200
 	lsls r1, r1, #4

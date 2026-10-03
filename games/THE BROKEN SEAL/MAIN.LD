@@ -215,7 +215,7 @@ SECTIONS
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/EXPAND_MASKED_MASKS.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/EXPAND_OPAQUE.o"(.text .rodata .data .padding)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/EXPAND_OPAQUE_MASKS.o"(.text .rodata .data .padding)
-    "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/OUTPUT_ACQUIRE_FREE.o"(.text)
+    "*/games/COMMON/SRC/GRAPHICS/RENDER/OUTPUT_ACQUIRE_FREE.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW.o"(.text)
     "*/recon/tbs/ja/rom.o"(.rom.00016482)

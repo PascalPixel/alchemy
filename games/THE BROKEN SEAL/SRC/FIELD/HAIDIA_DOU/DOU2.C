@@ -56,7 +56,7 @@ void SceneAudio_PlayCue123AndDispatchWork364(void)
 {
     s32 val = gEventWork->touched_trigger;
 
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     Engine_EventRequestExit(val);
 }
 
@@ -64,7 +64,7 @@ void DialogueLayout_ConfigureRowsByFlag301(void)
 {
     Map_CopyCellAttributeRect(0, 34, 13, 3, 23, 34);
 
-    if (GameFlag_IsSet(0x301) != 0) {
+    if (Engine_GameFlagIsSet(0x301) != 0) {
         SceneActor_PlaceAtTile(11, 35, 35);
         Map_CopyCellAttributeRect(24, 34, 1, 3, 23, 34);
     } else {
@@ -113,30 +113,30 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
 void FieldScene_RunShiftAndSetFlag301(void)
 {
 
-    Audio_PlayCue(241);
+    Engine_AudioPlayCue(241);
     SceneActor_PositionPair(11, 112, 0);
     SceneActor_PositionPair(11, 80, 0);
-    GameFlag_Set(0x301);
+    Engine_GameFlagSet(0x301);
     WaitFrames(2);
     DialogueLayout_ConfigureRowsByFlag301();
-    Audio_PlayCue(0x121);
+    Engine_AudioPlayCue(0x121);
 }
 
 void FieldScene_RunActor11Transition301(void)
 {
 
-    Audio_PlayCue(241);
+    Engine_AudioPlayCue(241);
     SceneActor_PositionPair(11, -112, 0);
     SceneActor_PositionPair(11, -80, 0);
-    GameFlag_Clear(0x301);
+    Engine_GameFlagClear(0x301);
     WaitFrames(2);
     DialogueLayout_ConfigureRowsByFlag301();
-    Audio_PlayCue(0x121);
+    Engine_AudioPlayCue(0x121);
 }
 
 void SceneActor_PlaceAtTile(s32 id, s32 x, s32 y)
 {
-    struct Rec_3a6 *rec = Actor_Get(id);
+    struct Rec_3a6 *rec = Object_GetById(id);
 
     if (rec != 0) {
         Engine_ActorSetSpritePriority(id, 3);

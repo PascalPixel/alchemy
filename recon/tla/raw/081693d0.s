@@ -39,7 +39,7 @@ Func_081693d0:
 	ldr r2, .L_08169450
 	movs r0, #2
 	movs r1, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	ldr r4, [sp, #60]
 	movs r7, #239
 	lsls r7, r7, #7
@@ -737,7 +737,7 @@ Func_081693d0:
 	ldr r2, .L_08169a7c
 	movs r0, #2
 	movs r1, #96
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r6, #238
 	ldr r5, [sp, #60]
 	lsls r6, r6, #7
@@ -1370,7 +1370,7 @@ Func_081693d0:
 	movs r1, #0
 	str r2, [r0, #16]
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	bl Func_0814cca8
 	bl Func_08014c4c
 	movs r3, #128

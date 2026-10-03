@@ -159,7 +159,7 @@ void FieldScene_RunBracketedSceneWithFlag282(void)
     FieldScene_RestageParty();
     FieldScene_RunScene3c9_02004b28();
     /* The flag id is built as 141 << 1 rather than folded. */
-    GameFlag_Set(141 << 1);
+    Engine_GameFlagSet(141 << 1);
 
     workspace = ((u8 *)Data_03001ebc);
     *(s32 *)(workspace + 448) = 512;

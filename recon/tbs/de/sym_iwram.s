@@ -56,8 +56,6 @@ Data_03001b00:
 	.global gKeysRepeat
 gKeysRepeat:
 	.space 0x0000000c
-	.global ResourceTableEntries
-ResourceTableEntries:
 	.global gVramBlockCache
 gVramBlockCache:
 	.space 0x00000180
@@ -90,8 +88,8 @@ gSerialExchangeActive:
 	.global Data_03001cb4
 Data_03001cb4:
 	.space 0x00000004
-	.global Data_03001cb8
-Data_03001cb8:
+	.global gResetRequested
+gResetRequested:
 	.space 0x00000004
 	.global gDebugTextCursor
 gDebugTextCursor:

@@ -83,6 +83,9 @@ LAYOUT_OFFSET_GUARD(BattleAffineHdma_Affine, struct BattleAffineHdma, affine, 0x
 LAYOUT_OFFSET_GUARD(BattleAffineHdma_Lines, struct BattleAffineHdma, lines, 0x20);
 
 struct BattlePlan;
+/* The second argument is unused. The result has no contract and must be discarded. */
+s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused);
+
 s32 BattlePres_BuildTargetList(
     struct BattlePlan *plan, struct BattlePresentationWork *work);
 

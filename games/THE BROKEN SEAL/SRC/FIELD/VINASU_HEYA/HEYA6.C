@@ -33,7 +33,7 @@ void FieldScene_RunGuardedRectStep(void)
     if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
         x = 45;
         y = 43;
-        Map_CopyCellAttributes(109, 43, 7, 5, x, y);
+        Engine_MapCopyCellAttributes(109, 43, 7, 5, x, y);
         RunStagedActorTransition();
     }
     Engine_EventEnd();
@@ -156,7 +156,7 @@ void SceneState_RunConditionalStep(void)
     Engine_EventBegin();
     if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
         s32 k5 = 44, k6 = 39;
-        Map_CopyCellAttributes(108, 39, 13, 7, k5, k6);
+        Engine_MapCopyCellAttributes(108, 39, 13, 7, k5, k6);
         RunStagedActorTransition();
     }
     Engine_EventEnd();
@@ -167,7 +167,7 @@ s32 SceneActor_SetHeightAboveLinkedRecord(Struct_22a4 *obj)
 {
     Struct_22a4b *rec;
 
-    rec = Actor_Get(((s16 *)obj)[50]);
+    rec = Object_GetById(((s16 *)obj)[50]);
     ((s32 *)obj)[3] = rec->unkC + 0x100000;
     return 0;
 }
@@ -232,8 +232,8 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
             continue;
         }
 
-        cand = Actor_Get(no);
-        sel = Actor_Get(selector);
+        cand = Object_GetById(no);
+        sel = Object_GetById(selector);
 
         if ((*(s32 *)(cand + 8) >> 20)
                 != (*(s32 *)(sel + 8) >> 20)
@@ -249,13 +249,13 @@ void SceneActor_PickHighestSlotAtSameTileAndRelease(s32 selector)
         }
     }
 
-    Actor_SetSpeed(selector, 0x40000, 0x20000);
+    Engine_ActorSetSpeed(selector, 0x40000, 0x20000);
     Engine_ObjectSetPosition(sel,
                   *(s32 *)(sel + 8),
                   highest,
                   *(s32 *)(sel + 16));
     Engine_ActorWaitForMove(selector);
-    Audio_PlayCue(188);
+    Engine_AudioPlayCue(188);
     SceneEffect_SpawnNineRadialEffects(selector);
     Engine_EventWait(30);
 }

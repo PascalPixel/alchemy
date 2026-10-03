@@ -295,7 +295,6 @@ fn run_waves(root: &Path, executable: &Path, pre_commit: bool, main: bool) -> Re
     };
     for wave in waves {
         if pre_commit && wave.contains(&"coverage-check") {
-            println!("publication: {}", verified_subject(root)?);
             let arguments = make_arguments(&executable, &finished, "coverage", true);
             let outcome = run_gate(root, "coverage", &arguments, logs.join("coverage.log"))?;
             if !report(&[outcome], root) {

@@ -48,7 +48,7 @@ void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a)
     if (a->f28 >= -255 && a->f28 <= 255) {
         a->f55 = 0;
     }
-    n = Random_Next();
+    n = Engine_RandomNext();
     if (n * 100 >> 16 <= 9) {
         SparkSource *o;
         s32 u;
@@ -57,8 +57,8 @@ void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a)
         t[0] = a->f08;
         t[1] = a->f0c;
         t[2] = a->f10;
-        u = Random_Next();
-        w = Random_Next();
+        u = Engine_RandomNext();
+        w = Engine_RandomNext();
         Vector_AddPolarOffset(u << 4, w, t);
         {
             s32 x = t[0];
@@ -70,7 +70,7 @@ void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a)
         if (o != 0) {
             o->f55 = 0;
             Engine_ActorSetSpriteFlags(o, 0);
-            Object_SetScript(o, KorosseoKabe_SparkScript);
+            Engine_ObjectSetScript(o, KorosseoKabe_SparkScript);
             Object_SetMode(o, 1);
             Object_SetMode(o, 0);
         }
@@ -83,8 +83,8 @@ s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a)
 
     Engine_ObjectSetPosition(o, a->f08, a->f0c + 0x240000, a->f10);
     o->f55 = 0;
-    Object_SetScript(o, KorosseoKabe_RaiseScript);
-    Audio_PlayCue(83);
+    Engine_ObjectSetScript(o, KorosseoKabe_RaiseScript);
+    Engine_AudioPlayCue(83);
     a->f64 = 0;
     return 0;
 }
@@ -100,7 +100,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
     u16 *cuep;
     s16 *waitp;
 
-    flag = GameFlag_IsSet(0x211);
+    flag = Engine_GameFlagIsSet(0x211);
 
     shared = (u8 *)gCell;
     record = (u8 *)Object_GetById(*(s32 *)(shared + 500));
@@ -125,8 +125,8 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
     *(s32 *)(record + 48) = 0x10000;
 
     Engine_ObjectSetPosition(record, x, 0, z);
-    GameFlag_Set(0x211);
-    Object_SetScript(record, KorosseoKabe_ApproachScript);
+    Engine_GameFlagSet(0x211);
+    Engine_ObjectSetScript(record, KorosseoKabe_ApproachScript);
 
     while (*waitp != 0) {
         Engine_TaskWait(1);

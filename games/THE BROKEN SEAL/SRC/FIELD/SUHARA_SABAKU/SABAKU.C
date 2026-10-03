@@ -148,7 +148,7 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
     struct SceneWork_02000400 *scene;
     s32 progress;
 
-    actor = Actor_Get(((struct Selection_02000400 *)((s16 *)&gGameState))->actor_id);
+    actor = Object_GetById(((struct Selection_02000400 *)((s16 *)&gGameState))->actor_id);
     scene = *(struct SceneWork_02000400 **)((u8 *)&gEventWork);
     actor->presentation = (u16)(gFrameCount << 12);
 
@@ -156,7 +156,7 @@ void SuharaSabaku_SyncSelectedActorProgress(void)
     if (progress != 0) {
         if (progress == 1) {
             scene->state_one_marker = 99;
-        } else if (GameFlag_IsSet(0x106) == 0) {
+        } else if (Engine_GameFlagIsSet(0x106) == 0) {
             progress -= 1;
         }
     }
@@ -632,7 +632,7 @@ s32 SuharaSabaku_RunSceneScript(void)
     } else if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
         SuharaSabaku_ApplyAltarFlagBlend();
     } else {
-        Audio_PlayCue(0x120);
+        Engine_AudioPlayCue(0x120);
     }
     if (gGameState.entrance == 0) {
         *(u16 *)(map + 20) &= ~0x200;

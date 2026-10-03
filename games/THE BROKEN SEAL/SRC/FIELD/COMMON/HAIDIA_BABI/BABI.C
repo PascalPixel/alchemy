@@ -59,7 +59,7 @@ s32 SceneData_ReturnZero(void)
 
 s32 HaidiaBabi_SelectExits(void)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return (s32)gHaidiaBabiExits2;
     }
     return (s32)gHaidiaBabiExits;
@@ -72,9 +72,9 @@ s32 HaidiaBabi_SelectPlacements(void)
 
     if (*(s16 *)(b + 0x1c2) == 19)
         return (s32)gHaidiaBabiPlacements4;
-    if (GameFlag_IsSet(0x87a) != 0)
+    if (Engine_GameFlagIsSet(0x87a) != 0)
         tbl = gHaidiaBabiPlacements3;
-    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
+    else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
         tbl = gHaidiaBabiPlacements2;
     else
         tbl = gHaidiaBabiPlacements;
@@ -88,33 +88,33 @@ void HaidiaBabi_AskAboutKraden(s32 object)
     s32 msg = (s32)MsgHaidiaFolksSeemKnow;
 
     Engine_EventSetMessage(msg);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(msg + 1);
     } else {
         Engine_EventSetMessage(msg + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
 /* The events hook, the villagers' scenes and the house's exits. */
 s32 HaidiaBabi_SelectEvents(void)
 {
     if (gGameState.entrance == 19) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return (s32)gHaidiaBabiEvents6;
         }
         return (s32)gHaidiaBabiEvents5;
     }
 
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return (s32)gHaidiaBabiEvents4;
     }
-    if (GameFlag_IsSet(0x87A) != 0) {
+    if (Engine_GameFlagIsSet(0x87A) != 0) {
         return (s32)gHaidiaBabiEvents3;
     }
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return (s32)gHaidiaBabiEvents2;
     }
     return (s32)gHaidiaBabiEvents;
@@ -151,22 +151,22 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     void *work;
 
     Engine_EventBegin();
-    Actor_FaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
+    Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
     Engine_EventSetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
-    Event_OpenMessage(0xE, 0);
+    Engine_EventOpenMessage(0xE, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Event_ShowMessage(0xE, 0);
+        Engine_EventShowMessage(0xE, 0);
     } else {
         work = *(void **)&gEventWork;
         FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16)(FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
-        Event_AskYesNo(0xE, 0);
+        Engine_EventAskYesNo(0xE, 0);
     }
     Engine_EventEnd();
 }
 
 void SceneState_SetWork448To521AndRun(s32 object)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
     }
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -177,67 +177,67 @@ void SceneState_SetWork448To521AndRun(s32 object)
 
 void SceneState_SetValue123Mode1(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
-    Audio_PlayCue(0x80);
+    Engine_AudioPlayCue(0x80);
     SceneState_SetWork448To521AndRun(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
-    Audio_PlayCue(0x80);
+    Engine_AudioPlayCue(0x80);
     SceneState_SetWork448To521AndRun(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
-    Audio_PlayCue(0x81);
+    Engine_AudioPlayCue(0x81);
     SceneState_SetWork448To521AndRun(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
-    Audio_PlayCue(0x81);
+    Engine_AudioPlayCue(0x81);
     SceneState_SetWork448To521AndRun(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(11);
 }
 

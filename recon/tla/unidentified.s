@@ -5,9 +5,10 @@
 Cartridge_Restart:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .unidentified.080178b4,"a"
-	.global Data_080178b4
-Data_080178b4:
-	.incbin "baserom.gba", 0x000178b4, 0x00000136
+	.global Runtime_IrqHandlers
+Runtime_IrqHandlers:
+	.incbin "baserom.gba", 0x000178b4, 0x00000038
+	.incbin "baserom.gba", 0x000178ec, 0x000000fe
 	.global Data_080179ea
 Data_080179ea:
 	.incbin "baserom.gba", 0x000179ea, 0x00000106

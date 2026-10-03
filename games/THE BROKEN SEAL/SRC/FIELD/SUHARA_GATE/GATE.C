@@ -69,7 +69,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
         return gSuharaGatePlacements2;
     }
     if (scene == (s32)&SceneId_SuharaGate1) {
-        if (GameFlag_IsSet(0x96f) != 0) {
+        if (Engine_GameFlagIsSet(0x96f) != 0) {
             return gSuharaGatePlacements1Flagged;
         }
         return gSuharaGatePlacements1;
@@ -175,9 +175,9 @@ void Dialogue_ShowMessages8fbAnd8fc(void)
 
     s16 token = *(s16 *)(gWork + 364);
 
-    Audio_PlayCue(123);
-    GameFlag_Clear(0x8FB);
-    GameFlag_Clear(0x8FC);
+    Engine_AudioPlayCue(123);
+    Engine_GameFlagClear(0x8FB);
+    Engine_GameFlagClear(0x8FC);
     Engine_EventRequestExit(token);
 }
 
@@ -324,7 +324,7 @@ void Scene_RunActorNinePromptDialogue(void)
 
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x89f) != 0) {
+    if (Engine_GameFlagIsSet(0x89f) != 0) {
         Engine_EventSetMessage((s32)MsgSuharaPityColossoVictor);
         goto close;
     }
@@ -334,25 +334,25 @@ void Scene_RunActorNinePromptDialogue(void)
         s32 mode = 0;
         s32 no = 9;
 
-        Event_OpenMessage(no, mode);
+        Engine_EventOpenMessage(no, mode);
     }
 
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         goto skip;
     }
 
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     Engine_ActorSetAnimationAndWait(9, 4);
 
 close:
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     goto done;
 
 skip:
     /* Skip-beat counter, two beats' worth. */
     work = gWork;
     *(u16 *)(work + 472) += 2;
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
 
 done:
     Engine_EventEnd();

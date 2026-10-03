@@ -2,6 +2,7 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "IRQ.H"
 #include "ITEM.H"
 #include "BATTLE_RUNTIME.H"
 #include "INVENTORY_MENU.H"

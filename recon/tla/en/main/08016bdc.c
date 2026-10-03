@@ -6,9 +6,6 @@ extern u8 gKeysHeld[];
 
 void Audio_PlayCue(s32 cue);
 void SerialRuntime_Initialize(void);
-void SerialRuntime_WaitForStatusMask(s32 mask);
-void SerialRuntime_BeginTransferA(const void *source, s32 size);
-void SerialRuntime_BeginTransferB(void *destination);
 
 #define KEYS_HELD (*(volatile u32 *)gKeysHeld)
 
@@ -38,9 +35,9 @@ restart:
     SerialRuntime_BeginTransferB((void *)gMapCellBuffer);
     for (;;) {
         if (KEYS_HELD & 1)
-            SerialRuntime_BeginTransferA((const void *)0x08000000, 0x280);
+            SerialRuntime_BeginTransferA((void *)0x08000000, 0x280);
         if (KEYS_HELD & 2)
-            SerialRuntime_BeginTransferA((const void *)0x08001000, 0x280);
+            SerialRuntime_BeginTransferA((void *)0x08001000, 0x280);
         if (KEYS_HELD & 8) {
             tick = 9999;
             do {

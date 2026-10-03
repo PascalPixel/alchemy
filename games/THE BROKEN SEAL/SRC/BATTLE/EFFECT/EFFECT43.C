@@ -41,7 +41,7 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 
 
 void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
-u16 ArcTan2(s32 x, s32 y);
+s32 ArcTan2(s32 x, s32 y);
 s32 FixedSqrt(s32 value);
 
 void AnimationObjects_SelectAnimationFar(void *, s32);

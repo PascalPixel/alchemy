@@ -4,7 +4,7 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-s16 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 
 extern const struct SceneEntrance YamaRama_TempleEntrances[];
 extern const struct SceneEntrance YamaRama_Entrances[];
@@ -47,7 +47,7 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
     void Actor_SetPosition(s32, s32, s32);
 
-    Actor_SetPosition(actor, x, y);
+    Engine_ActorSetPosition(actor, x, y);
 }
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
@@ -135,15 +135,15 @@ void SceneDialogue_RunMessage1958Step(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgYamaYoungWarriorsDoComeFrom);
-    Event_OpenMessage(10, 0);
+    Engine_EventOpenMessage(10, 0);
 
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         Engine_EventWait(20);
-        Event_ShowMessage(10, 0);
+        Engine_EventShowMessage(10, 0);
     } else {
         work = (u8 *)gEventWork;
         *(u16 *)(work + 472) += 1;
-        Event_AskYesNo(10, 0);
+        Engine_EventAskYesNo(10, 0);
     }
 
     Engine_EventEnd();
@@ -153,7 +153,7 @@ void SceneDialogue_RunActor11Message195d(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgYamaDoKnowMeditation);
-    Event_AskYesNo(11, 0);
+    Engine_EventAskYesNo(11, 0);
     Engine_EventEnd();
 }
 
@@ -161,7 +161,7 @@ void SceneDialogue_RunActor13Message1961(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgYamaDidKnowMasterHamaGreatest);
-    Event_AskYesNo(13, 0);
+    Engine_EventAskYesNo(13, 0);
     Engine_EventEnd();
 }
 
@@ -377,8 +377,8 @@ void ConfigureAndPlaceActorFourteen(void)
     void Actor_SetPosition(s32, s32, s32);
 
     s32 a = 21, b = 9;
-    Map_CopyCellAttributes(85, 9, 1, 1, a, b);
-    MapObject_SetPosition(100, 0, 0);
+    Engine_MapCopyCellAttributes(85, 9, 1, 1, a, b);
+    Engine_MapObjectSetPosition(100, 0, 0);
     PlaceActor(14, 0x01580000, 0x00980000);
 }
 
@@ -402,7 +402,7 @@ void SceneDialogue_RunActorFifteenByLeaderHeading(void)
         Engine_SanctumOpen(15);
     } else {
         Engine_EventSetMessage((s32)MsgYamaAmTravelingAroundWorldSpread);
-        Event_ShowMessage(15, 0);
+        Engine_EventShowMessage(15, 0);
     }
     Engine_EventEnd();
 }
@@ -654,13 +654,13 @@ void FieldScene_RunPairedLayoutStepsThenSetOne(void)
         s32 fifth = 1;
         s32 sixth = 2;
 
-        Map_CopyCellsTo(5, 28, 5, 13, fifth, sixth);
+        Engine_MapCopyCellsTo(5, 28, 5, 13, fifth, sixth);
     }
     {
         s32 fifth = 5;
         s32 sixth = 13;
 
-        Map_CopyCellAttributes(5, 28, 1, 2, fifth, sixth);
+        Engine_MapCopyCellAttributes(5, 28, 1, 2, fifth, sixth);
     }
     Engine_EventWait(1);
 }
@@ -671,13 +671,13 @@ void SceneState_RunRect6x28Step(void)
         s32 fifth = 1;
         s32 sixth = 2;
 
-        Map_CopyCellsTo(6, 28, 5, 13, fifth, sixth);
+        Engine_MapCopyCellsTo(6, 28, 5, 13, fifth, sixth);
     }
     {
         s32 fifth = 5;
         s32 sixth = 13;
 
-        Map_CopyCellAttributes(6, 28, 1, 2, fifth, sixth);
+        Engine_MapCopyCellAttributes(6, 28, 1, 2, fifth, sixth);
     }
     Engine_EventWait(1);
 }
@@ -713,11 +713,11 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     ((u8 *)Object_GetById(14))[85] = zero;
     *(void **)((void *)Object_GetById(14) + 108) = (void *)SceneActor_SetFlagBitByRankAgainstActorZero;
 
-    Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
-    Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);
+    Engine_MapCopyCellAttributes(55, 16, 1, 1, 56, 18);
+    Engine_MapCopyCellAttributes(55, 16, 1, 1, 20, 18);
 
     Engine_TaskWait(1);
-    GameFlag_Set(512);
+    Engine_GameFlagSet(512);
     Engine_ActorSetSpritePriority(14, 2);
     Engine_EventEnd();
 }
@@ -731,11 +731,11 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
         s32 fifth = 21;
         s32 sixth = 11;
 
-        Map_CopyCellAttributes(14, 6, 1, 2, fifth, sixth);
+        Engine_MapCopyCellAttributes(14, 6, 1, 2, fifth, sixth);
     }
     slot = (void *)Object_GetById(15) + 89;
     *slot = 254;
-    GameFlag_Set(0x201);
+    Engine_GameFlagSet(0x201);
     Engine_EventEnd();
 }
 

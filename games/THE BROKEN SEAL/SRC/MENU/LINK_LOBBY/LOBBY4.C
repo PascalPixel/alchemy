@@ -34,7 +34,7 @@ struct PacketHalf {
 
 extern u8 MsgLobbyOpponentArrived[];
 extern u8 MsgLobbyPleaseSpeakWhen[];
-u32 State_RunQueryWithInterruptMasterSaved(void);
+s32 LinkLobby_InitializeSerial(void);
 
 s32 LinkLobby_ExchangePartyRecords(void)
 {
@@ -195,7 +195,7 @@ s32 LinkLobby_RunConnectionSequence(void)
         }
         gGameState.unknown_200[0x22b - 0x200] = 4;
         BattleFx_SetWeightedResult(1, 1);
-        tbl = (u16 *)gSerialTransfer.reserved;
+        tbl = (u16 *)gSerialTransfer.payload;
         value.value = 0x45;
         tbl[1] = 0x58;
         tbl[0] = value.value;
@@ -233,7 +233,7 @@ s32 LinkLobby_RunBattleApplication(void)
     }
     if (LinkLobby_PeerSlotMatches(0) == 0) {
         LinkLobby_WriteSlotValue(5);
-        State_RunQueryWithInterruptMasterSaved();
+        LinkLobby_InitializeSerial();
         if (!Value1(Engine_GameFlagIsSet, 0x173)) {
             Engine_EventSetMessage(msg + 5);
             Engine_EventOpenMessage(8, 0);

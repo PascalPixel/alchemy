@@ -1,10 +1,14 @@
+/* Trial 2026-10-03: use OWNER_STATE.H for the getter contract.
+ * Complete object unchanged; fresh EN score 230, 5 differing rows.
+ */
+#include "OWNER_STATE.H"
 #include "RUNTIME_MEM.H"
 /*
  * Draft: Owner_LevelUp does not yet match; ported from its ☀️ twin. Two
  * scheduling differences remain: mov r8,r0 (band*2) and mov r3,r9 are
  * swapped before the first growth load, and the store of res->luck sinks
  * below the base-statistic updates instead of following base_pp.
- * Links as recon/tla/raw/080af8d0.s.
+ * Links as recon/tla/raw/080af91c.s.
  */
 #include "TYPES.H"
 
@@ -58,7 +62,6 @@ struct LevelUpWork {
 };
 
 void Sys_Free(void *buffer);
-struct OwnerLevelState *Owner_GetState(s32 owner);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 struct OwnerGrowth *Owner_GetRecordStride180(s32 owner);
 s32 Owner_RefreshClassActions(s32 owner);

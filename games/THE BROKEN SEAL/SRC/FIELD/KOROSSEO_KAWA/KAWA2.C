@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -22,11 +23,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -46,19 +42,18 @@ typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 void GameFlag_SetByte(s32, s32);
-Rec *Owner_GetState(s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -131,20 +126,20 @@ void RunPartyCountInteraction(s32 actorId)
 
     if (GetPartyMemberCount() <= 1) {
         Engine_EventSetMessage((s32)MsgKorosseoRobinDidGetGoodLook);
-        if (Event_AskYesNo(actorId, 0) == 0) {
+        if (Engine_EventAskYesNo(actorId, 0) == 0) {
             InitializeActorZero();
             InitializeSelectedActor(actorId);
-            Actor_WalkTo(actorId, x, y + 0x40);
+            Engine_ActorWalkTo(actorId, x, y + 0x40);
             Engine_EventWait(15);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y);
-            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y);
+            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, x, y + 0x20);
             Engine_EventCloseScreen();
             Engine_EventWaitForScreen();
             Engine_EventRequestExit(11);
         }
     } else {
         Engine_EventSetMessage((s32)MsgKorosseoWaitShouldntDecideWhereBest);
-        Event_ShowMessage(actorId, 0);
+        Engine_EventShowMessage(actorId, 0);
     }
 
     Engine_EventEnd();
@@ -182,11 +177,11 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
         message = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Engine_EventSetMessage(message);
-    Event_ShowMessage(speaker, 0);
-    if (GameFlag_IsSet(competitor + 512) != 0) {
+    Engine_EventShowMessage(speaker, 0);
+    if (Engine_GameFlagIsSet(competitor + 512) != 0) {
         return 2;
     }
-    if (GameFlag_IsSet(competitor + 520) != 0) {
+    if (Engine_GameFlagIsSet(competitor + 520) != 0) {
         choice = PartyTalkMenu_Choose(0);
         if (choice == 1) {
             return 2;
@@ -196,9 +191,9 @@ s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 speaker, s32 competitor)
         }
         return choice;
     }
-    GameFlag_Set(competitor + 520);
+    Engine_GameFlagSet(competitor + 520);
     Engine_EventSetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
-    Event_OpenMessage(speaker, 0);
+    Engine_EventOpenMessage(speaker, 0);
     return Engine_EventChooseYesNo(0, 0);
 }
 
@@ -218,7 +213,7 @@ void SceneState_SendIdBySceneId(s32 speaker, s32 competitor)
         message = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Engine_EventSetMessage(message + 1);
-    Event_ShowMessage(speaker, 0);
+    Engine_EventShowMessage(speaker, 0);
 }
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
@@ -359,12 +354,12 @@ L_main:
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
 {
-    Rec *t = Owner_GetState(a);
+    struct BattleUnit *t = Owner_GetState(a);
     s32 i;
 
     Inventory_AddItem(a, b);
     for (i = 0; i <= 14; i++) {
-        if (t->fd8[i] == b) {
+        if (t->inventory[i] == b) {
             Inventory_EquipFar(a, i);
         }
     }

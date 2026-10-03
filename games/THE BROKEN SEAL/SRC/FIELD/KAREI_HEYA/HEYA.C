@@ -136,8 +136,8 @@ void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
-    Event_ShowMessage(0xC, 0);
-    GameFlag_Set(0x910);
+    Engine_EventShowMessage(0xC, 0);
+    Engine_GameFlagSet(0x910);
     Engine_EventEnd();
 }
 
@@ -145,7 +145,7 @@ void SceneDialogue_RunActor16Dialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
@@ -160,13 +160,13 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
     } else {
         Engine_EventBegin();
 
-        if (GameFlag_IsSet(0x911) != 0) {
+        if (Engine_GameFlagIsSet(0x911) != 0) {
             Engine_EventSetMessage((s32)MsgKareiOurInnFeelsEmptyNow);
-            Event_ShowMessage(8, 0);
+            Engine_EventShowMessage(8, 0);
         } else {
             Engine_EventSetMessage((s32)MsgKareiGoingTolbiAlso);
-            Event_AskYesNo(8, 0);
-            GameFlag_Set(0x910);           /* 145 << 4 */
+            Engine_EventAskYesNo(8, 0);
+            Engine_GameFlagSet(0x910);           /* 145 << 4 */
         }
 
         Engine_EventEnd();
@@ -186,7 +186,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgKareiCanLiveInPeaceIn);
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
         Engine_EventEnd();
     }
 }
@@ -227,22 +227,22 @@ void FieldScene_RunArrivalPlacement(void)
     default: return;
     }
 
-    Audio_PlayCue(158);
+    Engine_AudioPlayCue(158);
 
     {
         u32 x = KareiHeya_ArrivalPlacements[idx].x;
         u32 y = KareiHeya_ArrivalPlacements[idx].y;
 
-        Map_AnimateCells(KareiHeya_ArrivalPlacements[idx].destination, x, y);
+        Engine_MapAnimateCells(KareiHeya_ArrivalPlacements[idx].destination, x, y);
     }
 
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
     p = (u8 *)Object_GetById(0);
     p[85] = 0;
 
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
+    Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
     Engine_EventWait(10);
 
     Engine_EventRequestExit(*(s16 *)(work + 364));
@@ -279,7 +279,7 @@ void SceneState_ClearSlotsBySubState(void)
         /* The last two arguments travel on the stack. */
         s32 fifth = 4;
         s32 sixth = 2;
-        Map_CopyCellsTo(30, 14, 30, 16, fifth, sixth);
+        Engine_MapCopyCellsTo(30, 14, 30, 16, fifth, sixth);
         return;
     }
     case 9:
@@ -296,7 +296,7 @@ void SceneState_ClearSlotsBySubState(void)
     }
 
     /* sub is 9..15 or 17. */
-    if (GameFlag_IsSet(0x911) != 0) {
+    if (Engine_GameFlagIsSet(0x911) != 0) {
         /* Nine distinct call sites, not a loop; the trailing 15 is out of
          * order and is kept that way. */
         Engine_ActorDestroy(10);
@@ -309,12 +309,12 @@ void SceneState_ClearSlotsBySubState(void)
         Engine_ActorDestroy(19);
         Engine_ActorDestroy(15);
     } else {
-        Actor_SetChildValue(13, 2);
+        Engine_ActorSetChildValue(13, 2);
     }
     return;
 
 other:
-    if (GameFlag_IsSet(0x911) != 0) {
+    if (Engine_GameFlagIsSet(0x911) != 0) {
         Engine_ActorDestroy(16);
         Engine_ActorDestroy(17);
     }

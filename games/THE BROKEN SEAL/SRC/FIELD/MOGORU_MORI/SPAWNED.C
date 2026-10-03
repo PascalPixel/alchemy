@@ -12,7 +12,7 @@ void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
 u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *ret;
-    struct FieldActor *obj = Object_Create(kind, x, y, z);
+    struct FieldActor *obj = Engine_ObjectCreate(kind, x, y, z);
 
     if (obj != 0) {
         struct FieldSprite *rec = obj->sprite;
@@ -32,7 +32,7 @@ u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind)
 {
     struct FieldActor *ret;
-    struct FieldActor *obj = Object_Create(kind, x, y, z);
+    struct FieldActor *obj = Engine_ObjectCreate(kind, x, y, z);
 
     if (obj != 0) {
         struct FieldSprite *rec = obj->sprite;

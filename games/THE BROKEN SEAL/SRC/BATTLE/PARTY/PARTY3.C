@@ -1,6 +1,7 @@
 #include "RUNTIME_MEM.H"
 #include "FIELDOBJ.H"
 #include "TYPES.H"
+#include "OWNERVAL.H"
 #include "SCENE.H"
 #include "BATTLE_TYPES.H"
 #include "BATTLE_RUNTIME.H"
@@ -11,7 +12,6 @@
 #include "OBJECT_RUNTIME.H"
 
 s32 Party_CountActiveOwnersFar(void);
-s16 Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 s16 Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);

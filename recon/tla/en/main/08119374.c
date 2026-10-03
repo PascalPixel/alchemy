@@ -43,7 +43,7 @@ s32 BattlePres_SyncTurn(void)
         side += other;
         side <<= 3;
         peer = (u16 *)(LINK_REC + side);
-        sync = (u16 *)gSerialTransfer.reserved;
+        sync = (u16 *)gSerialTransfer.payload;
         if (work->paused != 0) {
             goto fail;
         }

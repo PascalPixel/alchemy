@@ -516,8 +516,8 @@ const struct SceneEvent *Scene_GetEvents(void)
 void StartScriptedSceneMessage(s32 message_id)
 {
     Battle_Reset(message_id);
-    Actor_SetPosition(8, 0, 0);
-    GameFlag_Set(4055);
+    Engine_ActorSetPosition(8, 0, 0);
+    Engine_GameFlagSet(4055);
     Engine_ItemShowFound(ITEM_NUT, 3);
     Engine_PartyGiveItem(ITEM_NUT, 0);
     Engine_EventEnd();
@@ -731,8 +731,8 @@ void RunPrologueSceneSetup(void)
 
 void StartSceneScript37(void)
 {
-    Map_AnimateCells(TakaraShima_EntranceCells, 37, 7);
-    Audio_PlayCue(183);
+    Engine_MapAnimateCells(TakaraShima_EntranceCells, 37, 7);
+    Engine_AudioPlayCue(183);
     Engine_EventRequestExit(4);
 }
 
@@ -833,42 +833,42 @@ void ConfigureSceneActor11(s32 actor_id)
 {
     s32 a = 0x1300000;
     s32 b = 0x1700000;
-    u8 *p = Actor_Get(11);
+    u8 *p = Object_GetById(11);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
-    GameFlag_Set(576);
+    Engine_GameFlagSet(576);
 }
 
 void ConfigureSceneActor12(s32 actor_id)
 {
     s32 a = 0x500000;
     s32 b = 0x1700000;
-    u8 *p = Actor_Get(12);
+    u8 *p = Object_GetById(12);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
-    GameFlag_Set(577);
+    Engine_GameFlagSet(577);
 }
 
 void ConfigureSceneActor13(s32 actor_id)
 {
     s32 a = 0x600000;
     s32 b = 0x1500000;
-    u8 *p = Actor_Get(13);
+    u8 *p = Object_GetById(13);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
-    GameFlag_Set(578);
+    Engine_GameFlagSet(578);
 }
 
 void ConfigureSceneActor14(s32 actor_id)
@@ -877,40 +877,40 @@ void ConfigureSceneActor14(s32 actor_id)
     s32 b = 0x1400000;
     s32 c = 0x2f00000;
     s32 d = 0x1400000;
-    u8 *p = Actor_Get(14);
+    u8 *p = Object_GetById(14);
 
     if (p != 0) {
         p[89] = 0;
     }
-    Engine_ActorSetSpriteFlags(Actor_Get(actor_id), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(actor_id), 0);
     SetMapCellCollision(0, a, b, 253);
     SetMapCellCollision(0, c, d, 253);
-    GameFlag_Set(579);
+    Engine_GameFlagSet(579);
 }
 
 void ShowForgetEverythingMessage(void)
 {
-    GameFlag_Set(2244);
+    Engine_GameFlagSet(2244);
     {
         s32 k4 = 8, k5 = 21;
 
-        Map_CopyCellAttributes(0, 0, 1, 1, k4, k5);
+        Engine_MapCopyCellAttributes(0, 0, 1, 1, k4, k5);
     }
 }
 
 void ShowHelpYouForgetMessage(void)
 {
-    GameFlag_Set(2245);
+    Engine_GameFlagSet(2245);
 }
 
 void ShowDamagedDoorMessage(void)
 {
-    GameFlag_Set(2246);
+    Engine_GameFlagSet(2246);
 }
 
 void ShowSaveMyLifeMessage(void)
 {
-    GameFlag_Set(2247);
+    Engine_GameFlagSet(2247);
 }
 
 void FieldScene_RunScene3b2_0200167c(void)
@@ -962,8 +962,8 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
     s32 x;
     s32 y;
 
-    p = Actor_Get(gGameState.selected_actor);
-    q = Actor_Get(actor_id);
+    p = Object_GetById(gGameState.selected_actor);
+    q = Object_GetById(actor_id);
     Engine_EventBegin();
     {
         x = ((p->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
@@ -987,9 +987,9 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
     } else {
         Object_SetMode(q, 3);
     }
-    Audio_PlayCue(226);
+    Engine_AudioPlayCue(226);
     Object_CommitPosition(p);
-    Audio_PlayCue(288);
+    Engine_AudioPlayCue(288);
     Engine_EventEnd();
 }
 
@@ -1008,7 +1008,7 @@ void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute
             s32 k5 = p->f10 >> 20;
             s32 k4 = (p->f08 >> 20) - 1;
 
-            Map_CopyCellAttributes(grid_value, grid_attribute, 3, 1, k4, k5);
+            Engine_MapCopyCellAttributes(grid_value, grid_attribute, 3, 1, k4, k5);
         }
     }
 }
@@ -1028,7 +1028,7 @@ void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute,
             s32 k4 = p->f08 >> 20;
             s32 k5 = (p->f10 >> 20) - 1;
 
-            Map_CopyCellAttributes(grid_value, grid_attribute, 1, 3, k4, k5);
+            Engine_MapCopyCellAttributes(grid_value, grid_attribute, 1, 3, k4, k5);
         }
     }
 }
@@ -1139,7 +1139,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
         Engine_EventBegin();
         Object_SetMode(actor, 6);
         Engine_TaskWait(6);
-        Audio_PlayCue(152);
+        Engine_AudioPlayCue(152);
         Object_SetMode(actor, 7);
         actor->f30 = 0x30000;
         actor->f34 = 0x20000;
@@ -1155,7 +1155,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
             s16 *coordinates = (s16 *)requested;
 #endif
 
-            Actor_MoveToAndWait(ACTOR_PARTY_LEADER, coordinates[1], coordinates[5]);
+            Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, coordinates[1], coordinates[5]);
         }
         Object_SetMode(actor, 6);
         Engine_ActorSetSpriteFlags(actor, 1);
@@ -1168,7 +1168,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor, struct V *requested)
 
 s32 CheckActorPathSouth(void)
 {
-    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08;
@@ -1179,7 +1179,7 @@ s32 CheckActorPathSouth(void)
 
 s32 CheckActorPathNorth(void)
 {
-    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08;
@@ -1190,7 +1190,7 @@ s32 CheckActorPathNorth(void)
 
 s32 CheckActorPathWest(void)
 {
-    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08 + -0x200000;
@@ -1201,7 +1201,7 @@ s32 CheckActorPathWest(void)
 
 s32 CheckActorPathEast(void)
 {
-    struct S_02001b14 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct S_02001b14 *actor = Object_GetById(ACTOR_PARTY_LEADER);
     struct V destination;
 
     destination.a = actor->f08 + 0x200000;
@@ -1250,9 +1250,9 @@ void UpdateEscapeRouteForActorPositions(void)
         s32 route_end_z = ((Obj *)Object_GetByIdFar(8))->f10 >> 20;
         s32 route_x = actor_x - 1;
 
-        Map_CopyCellAttributes(route_x, actor_z, 3, 1, route_x, route_end_z);
+        Engine_MapCopyCellAttributes(route_x, actor_z, 3, 1, route_x, route_end_z);
     }
-    Map_CopyCellAttributes(0, 0, 3, 1, actor_x - 1, actor_z);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, actor_x - 1, actor_z);
 }
 
 void UpdateActor8ReturnRoute(void)
@@ -1283,9 +1283,9 @@ void UpdateActor8ReturnRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(8))->f10 >> 20;
         s32 m = x - 1;
 
-        Map_CopyCellAttributes(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor10RetreatRoute(void)
@@ -1320,9 +1320,9 @@ void UpdateActor10RetreatRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(10))->f10 >> 20;
         s32 m = x - 1;
 
-        Map_CopyCellAttributes(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor10AdvanceRoute(void)
@@ -1342,9 +1342,9 @@ void UpdateActor10AdvanceRoute(void)
             s32 k = ((Obj *)Object_GetByIdFar(10))->f10 >> 20;
             s32 m = x - 1;
 
-            Map_CopyCellAttributes(m, y, 3, 1, m, k);
+            Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
         }
-        Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
+        Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
     }
 }
 
@@ -1371,9 +1371,9 @@ void UpdateActor11WestRoute(void)
             s32 k = ((Obj *)Object_GetByIdFar(11))->f08 >> 20;
             s32 m = y - 1;
 
-            Map_CopyCellAttributes(x, m, 1, 3, k, m);
+            Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
         }
-        Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+        Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
     }
 }
 
@@ -1396,9 +1396,9 @@ void UpdateActor11EastRoute(void)
             s32 k = ((Obj *)Object_GetByIdFar(11))->f08 >> 20;
             s32 m = y - 1;
 
-            Map_CopyCellAttributes(x, m, 1, 3, k, m);
+            Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
         }
-        Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+        Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
     }
 }
 
@@ -1421,9 +1421,9 @@ void UpdateActor12WestRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(12))->f08 >> 20;
         s32 m = y - 1;
 
-        Map_CopyCellAttributes(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor12EastRoute(void)
@@ -1444,9 +1444,9 @@ void UpdateActor12EastRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(12))->f08 >> 20;
         s32 m = y - 1;
 
-        Map_CopyCellAttributes(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor13WestRoute(void)
@@ -1500,9 +1500,9 @@ void UpdateActor13WestRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(13))->f08 >> 20;
         s32 m = y - 1;
 
-        Map_CopyCellAttributes(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor13EastRoute(void)
@@ -1510,7 +1510,7 @@ void UpdateActor13EastRoute(void)
     s32 x = ((Obj *)Object_GetByIdFar(13))->f08 >> 20;
     s32 y = ((Obj *)Object_GetByIdFar(13))->f10 >> 20;
 
-    Actor_Get(15);
+    Object_GetById(15);
     if (x == 25) {
         PositionSceneActorPair(13, 96, 0);
         PositionSceneActorPair(13, 80, 0);
@@ -1528,9 +1528,9 @@ void UpdateActor13EastRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(13))->f08 >> 20;
         s32 m = y - 1;
 
-        Map_CopyCellAttributes(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor15WestRoute(void)
@@ -1569,9 +1569,9 @@ void UpdateActor15WestRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(15))->f08 >> 20;
         s32 m = y - 1;
 
-        Map_CopyCellAttributes(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor15EastRoute(void)
@@ -1624,9 +1624,9 @@ void UpdateActor15EastRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(15))->f08 >> 20;
         s32 m = y - 1;
 
-        Map_CopyCellAttributes(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Map_CopyCellAttributes(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor17SouthRoute(void)
@@ -1654,9 +1654,9 @@ void UpdateActor17SouthRoute(void)
         s32 k = ((Obj *)Object_GetByIdFar(17))->f10 >> 20;
         s32 m = x - 1;
 
-        Map_CopyCellAttributes(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor17NorthRoute(void)
@@ -1677,9 +1677,9 @@ void UpdateActor17NorthRoute(void)
 
         s32 m = x - 1;
 
-        Map_CopyCellAttributes(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Map_CopyCellAttributes(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 #define IN_COLUMNS(x) ((x) >= 6 && (x) <= 8)
@@ -1815,9 +1815,9 @@ transition80:
     Engine_TaskWait(2);
 
     column -= 1;
-    Map_CopyCellAttributes(column, row, 3, 1,
+    Engine_MapCopyCellAttributes(column, row, 3, 1,
                   column, *(s32 *)(Object_GetByIdFar(18) + 16) >> 20);
-    Map_CopyCellAttributes(0, 0, 3, 1, column, row);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
 #define IN_COLUMNS(x) ((x) >= 9 && (x) <= 11)
@@ -1958,9 +1958,9 @@ transition48:
     Engine_TaskWait(2);
 
     column -= 1;
-    Map_CopyCellAttributes(column, row, 3, 1,
+    Engine_MapCopyCellAttributes(column, row, 3, 1,
                   column, *(s32 *)(Object_GetByIdFar(9) + 16) >> 20);
-    Map_CopyCellAttributes(0, 0, 3, 1, column, row);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
 /* Crossbone Isle push block, westward: by the column actor 19 stopped in and where actors 17, 18 and 9 stand, slide its pair back to the matching offset, then move the block's cell attributes. */
@@ -2133,9 +2133,9 @@ void RetreatActor14AlongEscapeRoute(void)
     Engine_TaskWait(2);
 
     rowM1 = row - 1;
-    Map_CopyCellAttributes(column, rowM1, 1, 3,
+    Engine_MapCopyCellAttributes(column, rowM1, 1, 3,
                   *(s32 *)(Object_GetByIdFar(14) + 8) >> 20, rowM1);
-    Map_CopyCellAttributes(0, 0, 1, 3, column, rowM1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 void AdvanceActor14AlongEscapeRoute(void)
@@ -2180,9 +2180,9 @@ void AdvanceActor14AlongEscapeRoute(void)
     Engine_TaskWait(2);
 
     rowM1 = row - 1;
-    Map_CopyCellAttributes(column, rowM1, 1, 3,
+    Engine_MapCopyCellAttributes(column, rowM1, 1, 3,
                   *(s32 *)(Object_GetByIdFar(14) + 8) >> 20, rowM1);
-    Map_CopyCellAttributes(0, 0, 1, 3, column, rowM1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 void RetreatActor16AlongEscapeRoute(void)
@@ -2231,9 +2231,9 @@ void RetreatActor16AlongEscapeRoute(void)
     Engine_TaskWait(2);
 
     rowM1 = row - 1;
-    Map_CopyCellAttributes(column, rowM1, 1, 3,
+    Engine_MapCopyCellAttributes(column, rowM1, 1, 3,
                   *(s32 *)(Object_GetByIdFar(16) + 8) >> 20, rowM1);
-    Map_CopyCellAttributes(0, 0, 1, 3, column, rowM1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 void AdvanceActor16AlongEscapeRoute(void)
@@ -2270,9 +2270,9 @@ void AdvanceActor16AlongEscapeRoute(void)
     Engine_TaskWait(2);
 
     row -= 1;
-    Map_CopyCellAttributes(column, row, 1, 3,
+    Engine_MapCopyCellAttributes(column, row, 1, 3,
                   *(s32 *)(Object_GetByIdFar(16) + 8) >> 20, row);
-    Map_CopyCellAttributes(0, 0, 1, 3, column, row);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, row);
 }
 
 s32 UpdateSwayingSceneObject(struct S *object)
@@ -2289,8 +2289,8 @@ s32 UpdateSwayingSceneObject(struct S *object)
     object->f08 = object->f38 + Engine_MathCos(object->f30) * 2;
     object->f0c = object->f3c + vertical_offset;
     sprite->f1e = (u16)(Engine_MathCos(object->f30 + 0x8000) / 8);
-    random_a = Random_Next();
-    random_b = Random_Next();
+    random_a = Engine_RandomNext();
+    random_b = Engine_RandomNext();
     object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 0x400;
     return 0;
 }
@@ -2314,7 +2314,7 @@ void InitializeSwayingSceneObject(void)
     actor->active = zero;
     actor->mode = zero;
 
-    if (GameFlag_IsSet(0x109) == 0)
+    if (Engine_GameFlagIsSet(0x109) == 0)
         actor->y += 0x200000;
 
     actor->flags_23 &= 0xfe;

@@ -19,7 +19,7 @@ struct MapActor {
     s16 tracking_mode;
 };
 
-u16 ArcTan2(s32 z_delta, s32 x_delta);
+s32 ArcTan2(s32 z_delta, s32 x_delta);
 
 extern u8 MsgShianDoingMadeMeSpillMy[];
 extern u8 MsgShianNowMustGetWaterAgain[];
@@ -105,14 +105,14 @@ void Actor_UpdatePresentationFlag(void)
 /* Complete entity-19 sprite-counter adjustment. */
 void SceneEffect_AdvanceRotatingSprite(void)
 {
-    u8 *entity = Actor_Get(19);
+    u8 *entity = Object_GetById(19);
     u8 *sprite = *(u8 **)(entity + 80);
     *(u16 *)(sprite + 30) += 0x1400;
 }
 
 void SceneEffect_SpawnPeriodicEffect(void)
 {
-    u8 *entity = Actor_Get(14);
+    u8 *entity = Object_GetById(14);
 
     if ((gFrameCount & 3) == 0) {
         struct PeriodicEffectConfig config;
@@ -245,7 +245,7 @@ u8 *SceneEffect_GetSecondaryData(void)
 
 s32 SceneEffect_PrepareState(void)
 {
-    if (GameFlag_IsSet(0x895) != 0)
+    if (Engine_GameFlagIsSet(0x895) != 0)
         gShianMuraPlacements[0xbe] = 0;
     return (s32)gShianMuraPlacements;
 }
@@ -254,7 +254,7 @@ void SceneEffect_ShowActorSetupMessage(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianYoungWarriorsVeryGallantCame);
-    Event_AskYesNo(9, 0);
+    Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
 
@@ -402,7 +402,7 @@ void FieldScene_RunPrimarySequence(void)
 
 void SceneEffect_ActivateNearbyActor(void)
 {
-    u8 *leader = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *leader = Object_GetById(ACTOR_PARTY_LEADER);
     if ((*(s32 *)(leader + 16) >> 20) <= 13)
         Engine_ActorSetSpritePriority(20, 1);
 }
@@ -521,7 +521,7 @@ void SceneEffect_RunActorSceneMessage(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianWarriorsFromSchoolStrongWarriors);
-    Event_AskYesNo(17, 0);
+    Engine_EventAskYesNo(17, 0);
     Engine_EventEnd();
 }
 

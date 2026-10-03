@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "OWNER_STATE.H"
 
 s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
-s32 Owner_GetState(void);
 s32 Party_AddActiveOwnerFar(s32 event_id);
 s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 
@@ -12,7 +12,7 @@ s32 Event_ValidatePackedId(u32 packed_id);
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)
 {
-    Owner_GetState();
+    Owner_GetState(event_id);
     Party_AddActiveOwnerFar(event_id);
     if (value != 0) {
         Party_ShowJoinedMessageFar(event_id, value);

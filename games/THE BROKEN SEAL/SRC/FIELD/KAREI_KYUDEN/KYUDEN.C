@@ -101,7 +101,7 @@ void SceneDialogue_RunActor13Message1b83(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiLordHammetWillReleasedSoon);
-    Event_AskYesNo(13, 0);
+    Engine_EventAskYesNo(13, 0);
     Engine_EventEnd();
 }
 
@@ -109,7 +109,7 @@ void SceneDialogue_RunActor16Message1b88(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiHasLegacyLordHammetsSilk);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
@@ -118,16 +118,16 @@ void FieldScene_RunActorEightTurnDialogue(void)
     void Engine_EventEnd(void);
 
     Engine_EventBegin();
-    Actor_ShowEmote(8, 0x100, 0x3C);
+    Engine_ActorShowEmote(8, 0x100, 0x3C);
     Engine_EventSetMessage((s32)MsgKareiRobinSneakedIntoLunpaThats);
-    Event_ShowMessageAndWait(8, 0, 0xA);
+    Engine_EventShowMessageAndWait(8, 0, 0xA);
     Engine_ActorRunRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(8, 0, 0xA);
+    Engine_EventShowMessageAndWait(8, 0, 0xA);
     Engine_ActorSetAnimationAndWait(8, 4);
-    Event_ShowMessageAndWait(8, 0, 0xA);
+    Engine_EventShowMessageAndWait(8, 0, 0xA);
     Engine_ActorSetAnimationAndWait(8, 3);
-    Event_ShowMessageAndWait(8, 0, 0xA);
-    GameFlag_Set(0x913);
+    Engine_EventShowMessageAndWait(8, 0, 0xA);
+    Engine_GameFlagSet(0x913);
     Engine_EventEnd();
 }
 
@@ -188,18 +188,18 @@ void FieldScene_DispatchSceneByIndex(void)
 
     switch (gGameState.entrance) {
     case 9:
-        if (GameFlag_IsSet(0x941) != 0) {
+        if (Engine_GameFlagIsSet(0x941) != 0) {
             rec = (u8 *)Object_GetById(8);
             h = 0x1000;
             *(u16 *)(rec + 6) = h;
 
-            if (GameFlag_IsSet(0x914) == 0) {
+            if (Engine_GameFlagIsSet(0x914) == 0) {
                 Scene_RunPartySequence();
             }
         } else {
-            Actor_SetPosition(9, 0, 0);
-            if (GameFlag_IsSet(0x321) != 0) {
-                Actor_SetPosition(8, x1, z1);
+            Engine_ActorSetPosition(9, 0, 0);
+            if (Engine_GameFlagIsSet(0x321) != 0) {
+                Engine_ActorSetPosition(8, x1, z1);
                 rec = (u8 *)Object_GetById(8);
                 h = 0xd000;
                 *(u16 *)(rec + 6) = h;
@@ -209,14 +209,14 @@ void FieldScene_DispatchSceneByIndex(void)
 
     case 10:
     case 11:
-        if (GameFlag_IsSet(0x915) != 0) {
+        if (Engine_GameFlagIsSet(0x915) != 0) {
             s32 a5 = 4;
             s32 a6 = 3;
-            Map_CopyCellsTo(58, 70, 54, 70, a5, a6);
+            Engine_MapCopyCellsTo(58, 70, 54, 70, a5, a6);
             {
                 s32 b5 = 55;
                 s32 b6 = 8;
-                Map_CopyCellAttributes(55, 9, 2, 1, b5, b6);
+                Engine_MapCopyCellAttributes(55, 9, 2, 1, b5, b6);
             }
             Engine_MapRedraw();
             Engine_TaskWait(1);
@@ -224,8 +224,8 @@ void FieldScene_DispatchSceneByIndex(void)
         break;
 
     case 20:
-        Actor_SetPosition(9, 0, 0);
-        if (GameFlag_IsSet(0x109) == 0) {
+        Engine_ActorSetPosition(9, 0, 0);
+        if (Engine_GameFlagIsSet(0x109) == 0) {
             RunEventScript01();
         }
         break;

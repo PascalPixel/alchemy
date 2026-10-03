@@ -1,208 +1,161 @@
+/*
+ * Draft: UiText_DrawGlyph, complete English owner [08018cac, 08018efc).
+ * The 2026-09-29 permuter trial reduced its score from 7965 to 6875 with
+ * allocation and scheduling rewrites. The current approved compiler scored
+ * that retained draft 6855 (152 differing rows) before this correction.
+ *
+ * 2026-10-03: replace its private window/work/output records with maintained
+ * owners, use physical labels for the copied ARM routine and display work,
+ * and call the allocated code buffer through its actual five-argument type.
+ * The old permuter temporaries, register hints and operand shuffles are
+ * removed. That correction scored 8270 (45 register-only, 29 operand, 22
+ * reordered, 25 inserted, 36 deleted rows). A shared width-result local
+ * gives the same score as direct space-width returns. The initial six-byte
+ * OAM view failed layout guards because this compiler rounds nested records
+ * to words; the eight-byte packed/table union below passes without packing.
+ * Remaining: register allocation, stack/branch layout and literal addressing
+ * still differ, including the separately named display-work cell load.
+ *
+ * Bounded lifetime trials later that day: keep copied-code/resource locals
+ * inside their branch and tile/output locals inside the normal branch, with
+ * direct space-width returns. Separate allocation and callback pointers score
+ * 8065/151; one typed callback handle scores the same and is retained. Entry
+ * work/spacing snapshots and resource lookup order are unchanged. The whole
+ * owner still differs in 151 instruction rows; no new matching device is used.
+ * The ARM routine remains uncredited disassembly; this draft is not adopted.
+ */
+#include "WINDOW.H"
+#include "BATTLE_WORK.H"
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
-/* 2026-09-29 alchemy permute: score 7965 to 6875 on the permuter's scorer
-   (0 is exact); remaining 52 register-only, 32 operand, 25 reordered, 18
-   inserted, 26 deleted. Kept rewrites: 11x swap commutative operands, 11x
-   introduce a temporary, 8x reorder local declarations, 7x reorder
-   independent statements, 6x pointer arithmetic or indexing, 6x test truth
-   or compare with zero, 5x add a same-width cast, 4x drop a same-width
-   cast, 3x move an assignment into or out of a condition, 1x remove a
-   temporary, 1x toggle register. FAKEMATCH: the permuter's temporaries,
-   register hints and swapped operand orders below only steer allocation
-   and scheduling; no programmer would write them, so they stay tagged
-   until a natural spelling replaces them. */
-/* Draft, not exact: 562 of 592 bytes, 274 differing halfwords.
-   Complete owner: [0x08018cac, 0x08018efc). Recovered glyph allocation,
-   DMA transfer and sprite attributes. Branch layout, pointer arithmetic,
-   literal pools and live ranges still differ across the owner. */
-#include "TYPES.H"
 #include "DMA.H"
+#include "IO_REG.H"
 
-union UiTextWindowFlags {
-    u16 value;
+extern const u8 Func_080155d0[];
+
+/* Glyph outputs interpret the packed words as the three OAM attributes.
+ * Cursor placement changes only Y, retaining the other byte of attr0. */
+union GlyphSpriteAttributes {
     struct {
-        unsigned short unused : 3;
-        unsigned short special : 1;
-        unsigned short unknown : 12;
-    } bits;
-};
-
-struct UiTextWindow {
-    u8 unknown_00[8];
-    u16 width;
-    u8 height;
-    u8 unknown_0b;
-    u16 x;
-    u16 y;
-    u8 unknown_10[6];
-    union UiTextWindowFlags flags;
-};
-
-struct UiTextWork {
-    u8 unknown_00[0xea8];
-    u16 color_a;
-    u16 unknown_eaa;
-    u16 color_b;
-    u16 color_c;
-    u16 entries[0x200];
-    u16 free_count;
-    u16 entry_count;
-};
-
-union UiRenderTable {
-    u32 value;
-    struct {
-        u16 low;
+        u16 vertical;
+        u16 horizontal;
+        u16 tile;
         u16 high;
-    } half;
+    } attributes;
     struct {
-        unsigned short index : 10;
-        unsigned short reserved : 6;
-        u16 high;
-    } bits;
+        u8 y;
+        u8 flags;
+    } bytes;
 };
 
-struct UiRenderOutput {
-    s32 next;
-    u8 one4;
-    u8 one5;
-    u16 x;
-    u16 y;
-    u8 unknown_0a[4];
-    u8 index;
-    u8 sentinel;
-    u8 unknown_10[4];
-    s32 packed;
-    union UiRenderTable table;
-};
+LAYOUT_SIZE_GUARD(GlyphSpriteAttributes_Size, union GlyphSpriteAttributes,
+    sizeof(((struct RenderOutput *)0)->packed) +
+    sizeof(((struct RenderOutput *)0)->table));
+LAYOUT_OFFSET_GUARD(GlyphSpriteAttributes_Horizontal,
+    union GlyphSpriteAttributes, attributes.horizontal, 2);
+LAYOUT_OFFSET_GUARD(GlyphSpriteAttributes_Tile,
+    union GlyphSpriteAttributes, attributes.tile,
+    (u32)&((struct RenderOutput *)0)->table -
+    (u32)&((struct RenderOutput *)0)->packed);
 
-struct UiGlyphMetrics {
-    u8 bytes[128];
-};
-
-extern struct UiTextWork *gWindowWork;
-extern void *RenderOutput_AcquireFree(void);
-extern void RenderOutput_AppendToList(void *window, void *output);
-extern s32 UiText_RenderGlyphPair(s32 character, struct UiGlyphMetrics *metrics);
-extern s32 _call_via_r6(void *window, s32 character, s32 x, s32 y, u8 *resource);
-
-s32 UiText_DrawGlyph(
-    struct UiTextWindow *window,
-    s32 character,
-    s32 x,
-    s32 y,
-    s32 mode)
+s32 UiText_DrawGlyph(struct UiWindow *window, s32 character,
+    s32 x, s32 y, s32 mode)
 {
-    struct UiTextWork *work;
-    struct UiGlyphMetrics metrics;
-    struct UiRenderOutput *output;
-    u8 *resource;
-    s32 glyph;
-    u8 *buffer;
-    s32 size;
-    s32 saved_x;
-    u16 global_x;
-    s32 saved_y;
-    u16 global_y;
-    s32 result;
-    s32 index;
-    u16 tmp8;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    u16 offset_x = work->unknown_before_count;
+    u16 offset_y = work->line_spacing;
 
-    saved_x = x;
-    glyph = character;
-    work = gWindowWork;
-    global_x = work->free_count;
-    saved_y = y;
-    global_y = work->color_a;
-    if (mode != 1 && window->flags.bits.special != 0) {
-        if (*((struct UiTextWindow ***)0x03001ee4)[0] == window) {
+    if (mode != 1 && (window->flags & 8) != 0) {
+        u8 *resource;
+        s32 (*draw)(struct UiWindow *, s32, s32, s32, u8 *);
+        s32 size;
+        s32 width;
+
+        if (gBattleDisplayWork->window == window) {
             Resource_GetTableEntry(0x14);
             Resource_GetTableEntry(0x13);
-            if (glyph == 32)
+            if (character == 32)
                 return 3;
         }
         resource = Resource_GetTableEntry(0x13);
-        if (glyph == 32)
+        if (character == 32)
             return 4;
         size = 0x318;
-        buffer = Runtime_BumpAllocate(size);
-        Dma_Set((void *)0x080155d0, buffer, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
-        result = _call_via_r6(window, glyph, saved_x, saved_y, resource);
-        Runtime_BumpFree(buffer);
-        return result;
+        draw = (s32 (*)(struct UiWindow *, s32, s32, s32, u8 *))
+            Runtime_BumpAllocate(size);
+        Dma_Set(Func_080155d0, (void *)draw, 0x84000000 | (size >> 2),
+            REG_DMA3);
+        width = draw(window, character, x, y, resource);
+        Runtime_BumpFree((void *)draw);
+        return width;
     }
-    result = 5;
-    if (glyph == 32)
-        return result;
-    if ((output = RenderOutput_AcquireFree()) != 0 == 0)
-        return 0;
-    output->one4 = 0;
-    index = (output - (struct UiRenderOutput *)((u8 *)work + 0x698)) * 4;
-    output->one5 = 1;
-    if (1 == mode) {
-        result = 1;
-        output->one5 = 2;
-    } else {
-        switch (work->color_b) {
-        case 3:
-            output->one5 = 5;
-            break;
-        case 4:
-            output->one5 = 6;
-            *(u16 *)&((u8 *)output)[12] = 8;
-            break;
-        case 5:
-            output->one5 = 7;
-            *(u16 *)((s32)12 + (u8 *)output) = 0;
-            break;
-        case 2:
-            (*output).one5 = 4;
-            *(u16 *)((u8 *)output + 12) = 0;
-            break;
+
+    if (character == 32)
+        return 5;
+    {
+        u32 tiles[32];
+        struct RenderOutput *output;
+        union GlyphSpriteAttributes *sprite;
+        s32 width;
+        s32 index;
+        s32 tile;
+
+        output = RenderOutput_AcquireFree();
+        if (output == NULL)
+            return 0;
+        index = (output - work->outputs) * 4;
+        output->active = 1;
+        output->kind = 0;
+        if (mode == 1) {
+            width = 1;
+            output->active = 2;
+        } else {
+            switch (work->outline) {
+            case 3:
+                output->active = 5;
+                break;
+            case 4:
+                output->active = 6;
+                output->unknown_0c = 8;
+                break;
+            case 5:
+                output->active = 7;
+                output->unknown_0c = 0;
+                break;
+            case 2:
+                output->active = 4;
+                output->unknown_0c = 0;
+                break;
+            }
+            width = UiText_RenderGlyphPair(character, tiles);
+            if (width == 0)
+                width = 1;
         }
-        if ((u32)!(result = UiText_RenderGlyphPair(glyph, &metrics)))
-            result = 1;
-    }
-    if ((u8)output->one5 == 2) {
-        u16 *entry = (u16 *)(0x12b6 + (u8 *)work);
-        u16 slot;
-        u8 tmp;
-        s32 tmp2;
-        register s32 tmp4;
-        s32 tmp6;
-        u16 tmp9;
-        if (99 == (slot = *entry)) {
-            slot = Resource_FindFreeEntry();
-            *entry = slot;
+
+        sprite = (union GlyphSpriteAttributes *)&output->packed;
+        if ((u8)output->active == 2) {
+            if (work->glyph_resource == 99)
+                work->glyph_resource = Resource_FindFreeEntry();
+            sprite->attributes.horizontal = (sprite->attributes.horizontal & ~0x1ff) |
+                ((((window->x + window->width + 0xfffe) << 3) + 4) & 0x1ff);
+            sprite->bytes.y =
+                (((u8)window->y + (u8)window->height + 254) << 3) - 1;
+        } else {
+            tile = work->glyph_tiles + index;
+            Dma_Set(tiles, (void *)(0x06010000 + (tile << 5)), 0x84000020,
+                REG_DMA3);
+            sprite->attributes.vertical =
+                y + (offset_y >> 1) + (window->y << 3) + 0xfffe;
+            sprite->attributes.horizontal =
+                ((window->x << 3) + x + (offset_x >> 1) + 2) | 0x4000;
+            sprite->attributes.tile = tile;
         }
-        tmp2 = window->x + window->width + 0xfffe;
-        tmp6 = -0x200;
-        tmp9 = *(u16 *)((u8 *)output + 22);
-        *(u16 *)((u8 *)output + 22) = ((((u32)tmp2 << 3) + 4) & 0x1ff) | (tmp6 & tmp9);
-        tmp = (u8)window->y;
-        tmp4 = window->height + tmp + 254;
-        *(u8 *)((u8 *)output + 20) = (u8)(tmp4 << 3) - 1;
-    } else {
-        s32 slot = *(u16 *)((u8 *)work + 0x12b8) + index;
-        s32 tmp3;
-        s32 tmp5;
-        u8 *tmp7;
-        s32 tmp10;
-        Dma_Set(&metrics, (void *)(0x06010000 + (slot << 5)), 0x84000020, (volatile u32 *)0x040000d4);
-        tmp10 = global_y >> 1;
-        tmp3 = window->y << 3;
-        tmp5 = saved_y + tmp10 + tmp3 + 0xfffe;
-        *(u16 *)((u8 *)output + 20) = tmp5;
-        tmp7 = (u8 *)output + 22;
-        *(u16 *)tmp7 = (((*window).x << 3) + (saved_x + (global_x >> 1)) + 2) | 0x4000;
-        output[0].table.half.low = slot;
+        output->sentinel = 254;
+        output->x = sprite->attributes.horizontal & 0x1ff;
+        output->y = sprite->bytes.y;
+        output->index = index;
+        output->next = NULL;
+        RenderOutput_AppendToList(&window->output, output);
+        return width;
     }
-    output->sentinel = 254;
-    tmp8 = *(u16 *)((u8 *)output + 22);
-    output->x = 0x1ff & tmp8;
-    output->y = *((u8 *)output + 20);
-    output->index = index;
-    output->next = 0;
-    RenderOutput_AppendToList(window, output);
-    return result;
 }

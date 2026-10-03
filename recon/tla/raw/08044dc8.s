@@ -44,7 +44,7 @@ Func_08044dc8:
 	lsls r3, r3, #1
 	ldrh r0, [r2, r3]
 	movs r1, #4
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_08044f3c
 	bl Func_0803cf60
 	mov r10, r0
@@ -92,7 +92,7 @@ Func_08044dc8:
 	lsls r3, r3, #1
 	ldrh r0, [r2, r3]
 	movs r1, #4
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_08044f44
 	bl Func_0803cf60
 	mov r10, r0
@@ -128,7 +128,7 @@ Func_08044dc8:
 	cmp r1, #3
 	ble .L_08044ebc
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r6, .L_08044f48
 	adds r0, r5, r6
 	bl Func_0803cf6c

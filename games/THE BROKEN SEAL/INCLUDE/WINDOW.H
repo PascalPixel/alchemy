@@ -4,30 +4,10 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "LAYOUT_GUARD.H"
-#include "UIWINDOW.H"
+#include "UIFLOW.H"
+#include "OUTPUT.H"
 
 enum { UI_OUTPUT_COUNT = 64 };
-
-/* One of the three window text channels. Positions are 8.8 fixed point;
-   entry names a built text entry, and colours hold its four palette values. */
-struct UiChannelSlot {
-    struct UiWindow *work;
-    u16 x;
-    u16 y;
-    u16 colours[4];
-    u16 unknown_10;
-    u16 entry;
-    u16 countdown;
-    u16 colour;
-    u16 outline;
-    u16 line_spacing;
-    u16 transition;
-    u16 start_x;
-    u16 unknown_20;
-    u16 unknown_22;
-    u16 flags;
-    u16 unknown_26;
-};
 
 /* Window tilemap, records, text channels and render queues. Japanese text
    uses twelve windows and a 256-entry ring; other editions use eight and 512. */
@@ -52,7 +32,7 @@ struct UiRenderWork {
     u16 entries[RENDER_ENTRY_MASK + 1];
     u16 unknown_before_count;
     u16 count;
-    u16 unknown_after_count;
+    u16 message_start;
     u16 glyph_resource;
     u16 glyph_tiles;
     u8 unknown_before_values[RENDER_VALUE_TBL_OFS - RENDER_COUNTER_OFS - 4];
@@ -80,6 +60,7 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_LineSpacing, struct UiRenderWork, line_spacing,
 LAYOUT_OFFSET_GUARD(UiRenderWork_Outline, struct UiRenderWork, outline, RENDER_WORD_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Colour, struct UiRenderWork, colour, RENDER_PARAM_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Entries, struct UiRenderWork, entries, RENDER_ENTRY_TBL_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_MessageStart, struct UiRenderWork, message_start, RENDER_ENTRY_COUNT_OFS + 2);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, RENDER_ENTRY_COUNT_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphResource, struct UiRenderWork, glyph_resource, RENDER_COUNTER_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphTiles, struct UiRenderWork, glyph_tiles, RENDER_COUNTER_OFS + 2);
@@ -92,14 +73,24 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_Busy, struct UiRenderWork, busy, RENDER_BUSY_OF
 LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingBefore, struct UiRenderWork, spacing_before, RENDER_BUSY_OFS + 1);
 LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingAfter, struct UiRenderWork, spacing_after, RENDER_BUSY_OFS + 2);
 LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
-LAYOUT_SIZE_GUARD(UiChannelSlot_Size, struct UiChannelSlot, 0x28);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Entry, struct UiChannelSlot, entry, 0x12);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Countdown, struct UiChannelSlot, countdown, 0x14);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Transition, struct UiChannelSlot, transition, 0x1c);
-LAYOUT_OFFSET_GUARD(UiChannelSlot_Flags, struct UiChannelSlot, flags, 0x24);
 
 extern u8 *gWindowWork[];
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWork_Finalize(struct UiWindow *window, s32 release);
+
+void UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, u16 *spacing);
+void UiText_MeasureStringVariant(s32 start, u32 *width, u32 *height, u16 *spacing);
+void UiWindow_FitOnScreen(s32 entry, s32 *x, s32 *y, u32 *width, u32 *height, u16 *spacing, u32 flags);
+s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 mode);
+#if EDITION_INTERNATIONAL
+s32 UiText_RenderGlyphPair(s32 code, u32 *tiles);
+#else
+s32 UiText_RenderGlyphPair(u32 code, u32 *tiles);
+#endif
+s32 UiText_BuildRenderEntries(s32 message, s32 mode);
+u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
+u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural, s32 *suffix);
+void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity);
+u32 UiRender_LookupNamedValue(u32 name, u32 clear);
+void UiWork_ClearValueNameTables(void);
 
 #endif

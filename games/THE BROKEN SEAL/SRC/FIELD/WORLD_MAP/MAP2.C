@@ -235,7 +235,7 @@ void StoryScene_ShowRewardDialogue(void)
     Battle_SetObjectFlag5bWhenMode3();
 #endif
     Engine_MessageShowCentered((s32)MsgWorldMapWreckageShipScuttledOffCoast, 1);
-    if (GameFlag_IsSet(0x234) != 0) {
+    if (Engine_GameFlagIsSet(0x234) != 0) {
         ((struct StoryDialogueWork *)gEventWork)->story_result = 1;
     }
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

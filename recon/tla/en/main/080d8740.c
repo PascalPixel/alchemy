@@ -1,5 +1,19 @@
+/* 2026-10-03 child-call ownership correction: the native call at 080d8920
+   reads the slot's first-word child pointer and passes value 9 to
+   Animation_ApplyChildValuesToRecordFar. Removed the stale unresolved
+   ObjectGroup_SetChildValueUnlessFifteenFar declaration and use the
+   maintained DispatchChild/u32 contract. EN score improves 1770/37 to
+   1750/36 solely by resolving that target name. All six candidate .text
+   sections remain identical at 568 bytes, and instruction/relocation
+   comparisons differ only in that target name; whole objects differ in
+   symbol metadata. Other unresolved names and matching gaps remain. */
+/* Earlier 2026-10-03 trial: ApplyChildValuesFar and the adjacent child setter now use
+   OBJECT_DISPATCH.H and explicit DispatchObject views. The complete EN
+   object and score 1770/37 are unchanged. The same unresolved effect,
+   slot, object, resource and global names remain; no adoption is claimed. */
 #include "RESOURCE.H"
 #include "TYPES.H"
+#include "OBJECT_DISPATCH.H"
 
 extern u8 gEffectWork[];
 
@@ -53,9 +67,7 @@ void Audio_PlayCue(s32 cue);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void ObjectMotion_Launch(s32 id, s32 height, s32 frames);
 struct CaptureObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Object_SetMode(struct CaptureObject *object, s32 mode);
-void ObjectDispatch_SetSingleChildField26Far(struct CaptureObject *object, s32 value);
 struct CaptureResource *Object_ReplaceResourceEntry(struct CaptureSprite *sprite, struct CaptureResource *resource);
 void Func_080090d0(struct CaptureObject *object);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
@@ -63,7 +75,6 @@ void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 void EffectSlot_SetCallback(void *slot, void *callback);
 void EffectSlot_SetObjectMode(void *slot, s32 mode);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -125,9 +136,9 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
             copy->collision_flags |= 1;
             copy->callback = (void *)BattleFx_HalveDistanceToTarget;
             copy->facing = djinni->facing;
-            Animation_ApplyChildValuesFar(copy, 9);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)copy, 9);
             Object_SetMode(copy, 0);
-            ObjectDispatch_SetSingleChildField26Far(copy, 0);
+            ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)copy, 0);
             resource = Object_ReplaceResourceEntry(copy->sprite, resource);
             copy->linked = previous;
             previous = copy;
@@ -164,7 +175,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         EffectSlot_Initialize(slot, 240, position.x, position.z);
         EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRandomTargetParticle);
         EffectSlot_SetObjectMode(slot, 7);
-        ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 9);
+        Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 9);
         remaining--;
         WaitFrames(1);
         slot += 72;

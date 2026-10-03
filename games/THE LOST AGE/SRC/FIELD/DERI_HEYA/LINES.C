@@ -11,7 +11,7 @@ extern u8 MsgDeriHeyaMazeTreasure[];
 s32 DeriHeya_TalkScamps(void)
 {
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     Engine_EventSetMessage((s32)MsgDeriHeyaScamps);
     Engine_EventShowMessage(19, 0);
     Engine_EventEnd();
@@ -21,7 +21,7 @@ s32 DeriHeya_TalkScamps(void)
 s32 DeriHeya_TalkMazeTreasure(void)
 {
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     Engine_EventSetMessage((s32)MsgDeriHeyaMazeTreasure);
     Engine_EventShowMessage(19, 0);
     Engine_EventEnd();
@@ -32,6 +32,6 @@ s32 DeriHeya_TalkMazeTreasure(void)
 void DeriHeya_BeginLeaderEvent(void)
 {
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     Engine_ActorSetSpritePriority(gPartyState.current_owner, 1);
 }

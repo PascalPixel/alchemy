@@ -26,8 +26,8 @@ Func_080168f8:
 .L_0801691e:
 	pop {r5, pc}
 .L_08016920:
-	.4byte Data_020038d0
+	.4byte gSerialSendSource
 .L_08016924:
 	.4byte 0x000927bf
 .L_08016928:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest

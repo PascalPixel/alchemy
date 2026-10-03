@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08013438
+	.global Runtime_SetIrqHandler
 	.thumb_func
-Func_08013438:
+Runtime_SetIrqHandler:
 	push {r5, r6, lr}
 	adds r5, r1, #0
 	adds r1, r2, #0
@@ -67,6 +67,6 @@ Func_08013438:
 .L_080134a4:
 	.4byte 0x04000200
 .L_080134a8:
-	.4byte Data_030001e4
+	.4byte gIrqHandlers
 .L_080134ac:
-	.4byte Data_080133c0 + 0x1
+	.4byte Runtime_IgnoreInterrupt

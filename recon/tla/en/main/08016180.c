@@ -1,10 +1,19 @@
+/* 2026-10-03: complete candidate is 346/348 bytes including its pools;
+ * fresh score 280 (3 reordered, 1 deleted), with all names now resolved.
+ * Stack allocation, the fill-source address and a zero load are reordered.
+ * The raw extent also includes two post-return zero bytes. After adopting
+ * the enable wrapper, the next owner is normal 4-aligned SIO_TIME.o; a fresh
+ * scratch link supplies those two bytes and preserves its start at +348.
+ * Three instruction reorderings still prevent adoption. Including DMA.H
+ * fixed an accidental external Dma_Set call (1960); before name closure this body
+ * scored 440 with seven unresolved names. Trials: initialize ime_reg before
+ * reading the saved IME through it, 625 at 346 bytes; assign the fill pointer
+ * while writing zero and reuse it for DMA, 280 at 346 bytes. The fill trial
+ * adds no instruction improvement, so retain the simpler original form.
+ * Correct DMA semantics retained; no production adoption. */
 #include "SERIAL_RUNTIME.H"
+#include "DMA.H"
 
-void Runtime_SetIrqHandler(s32 irq, s32 vcount, InterruptHandler handler);
-void SerialRuntime_HandleTransferInterrupt(void);
-void BattleLink_ResetTransferState(void);
-
-extern volatile u16 gSerialExchangeActive;
 
 /* Starts the serial runtime: installs the serial and timer interrupt
  * handlers, resets the SIO registers into multiplayer mode, clears the
@@ -54,7 +63,7 @@ void SerialRuntime_Initialize(void)
     REG_IME = 0;
     REG_IE |= 0x80;
     REG_IME = 1;
-    gSerialExchangeActive = 1;
+    *(volatile u16 *)&gSerialExchangeActive = 1;
     gLinkExchangeState = 0;
     gSerialSendSource = 0;
     gSerialSendSize = 0;

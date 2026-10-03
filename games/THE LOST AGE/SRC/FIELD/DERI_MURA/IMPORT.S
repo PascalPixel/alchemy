@@ -130,9 +130,9 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Func_02000d08:
 	overlay_veneer Func_080c8210
-	.global Engine_EventRequestExit
+	.global Engine_EventSetCountdown
 	.thumb_func
-Engine_EventRequestExit:
+Engine_EventSetCountdown:
 	overlay_veneer Func_080c8278
 	.global Func_02000d18
 	.thumb_func
@@ -158,9 +158,9 @@ Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
 	.endif
 	.endif
-	.global Engine_EventWaitForScreen
+	.global Engine_EventWaitDelay
 	.thumb_func
-Engine_EventWaitForScreen:
+Engine_EventWaitDelay:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer Event_DelayEffectFramesFar
 	.else
@@ -194,9 +194,9 @@ Engine_ActorReturnHome:
 	overlay_veneer Func_080c8428
 	.endif
 	.endif
-	.global Engine_EventPrepareSpeakers
+	.global Engine_EventResolvePendingActions
 	.thumb_func
-Engine_EventPrepareSpeakers:
+Engine_EventResolvePendingActions:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else

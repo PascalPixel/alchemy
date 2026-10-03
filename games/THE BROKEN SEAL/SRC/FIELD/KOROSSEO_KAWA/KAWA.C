@@ -44,11 +44,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -80,19 +75,18 @@ void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -145,7 +139,7 @@ void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
 void Engine_EventShowMessage();
-s32 Korosseo_FadeInCompetitor();
+void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Engine_ActorSetSpeed();
 void Engine_ActorWalkToAndWait();
 void Engine_EventWait();
@@ -247,7 +241,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     case 60:
         Map_UpdateCellRect(92, 33, 2, 2, 50, 38); /* main:080091c8 */
         Map_UpdateCellRect(92, 33, 2, 2, 54, 38); /* main:080091c8 */
-        Map_CopyCellAttributes(50, 25, 6, 1, 50, 12); /* main:080091c0 */
+        Engine_MapCopyCellAttributes(50, 25, 6, 1, 50, 12); /* main:080091c0 */
         Engine_ActorSetAnimation(16, 11); /* object 16, action 11 */
         break;
     case 6:
@@ -259,7 +253,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Map_UpdateCellRect(92, 29, 2, 2, 50, 38); /* main:080091c8 */
         Map_UpdateCellRect(92, 29, 2, 2, 54, 38); /* main:080091c8 */
         Engine_ActorSetAnimation(16, 12); /* object 16, action 12 */
-        Map_CopyCellAttributes(50, 24, 6, 1, 50, 12); /* main:080091c0 */
+        Engine_MapCopyCellAttributes(50, 24, 6, 1, 50, 12); /* main:080091c0 */
         KorosseoKawa_Countdown = 120;
         break;
     }
@@ -318,7 +312,7 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
         s32 x = 23;
         s32 y = 12;
 
-        Map_CopyCellAttributes(27, 13, 3, 1, x, y);
+        Engine_MapCopyCellAttributes(27, 13, 3, 1, x, y);
     }
     actor = Object_GetById(9);
     blocked = Map_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
@@ -329,7 +323,7 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
             s32 x = actor->x.fixed >> 20;
             s32 y = actor->z.fixed >> 20;
 
-            Map_CopyCellAttributes(14, 13, 1, 1, x, y);
+            Engine_MapCopyCellAttributes(14, 13, 1, 1, x, y);
         }
     }
     actor = Object_GetById(10);
@@ -342,7 +336,7 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
         s32 x = actor->x.fixed >> 20;
         s32 y = actor->z.fixed >> 20;
 
-        Map_CopyCellAttributes(14, 13, 1, 1, x, y);
+        Engine_MapCopyCellAttributes(14, 13, 1, 1, x, y);
     }
 }
 
@@ -361,9 +355,9 @@ void SceneState_ApplyRectAndSend303(void)
         s32 x = 47;
         s32 y = 12;
 
-        Map_CopyCellAttributes(47, 24, 1, 1, x, y);
+        Engine_MapCopyCellAttributes(47, 24, 1, 1, x, y);
     }
-    GameFlag_Set(0x303);
+    Engine_GameFlagSet(0x303);
 }
 
 void FieldScene_RunScene3ba_02000270(void)
@@ -430,10 +424,10 @@ void StagedActor_PlacePairAtOffsetAndRun(s32 actor_id, s32 dx, s32 dz)
     } else {
         Object_SetMode(actor, 3);
     }
-    Audio_PlayCue(226);
+    Engine_AudioPlayCue(226);
     Script_WaitForEventTimeout(leader);
     Object_SetMode(actor, 2);
-    Audio_PlayCue(288);
+    Engine_AudioPlayCue(288);
     Engine_EventEnd();
 }
 
@@ -449,11 +443,11 @@ void SceneActor_ShiftActorSeventeenByLeaderRow(void)
     if (row <= 8) {
         offset = 48;
     }
-    Map_CopyCellAttributes(67, 8, 3, 1, 64, row);
+    Engine_MapCopyCellAttributes(67, 8, 3, 1, 64, row);
     StagedActor_PlacePairAtOffsetAndRun(17, 0, offset);
     actor = Object_GetById(17);
     row = actor->z.fixed >> 20;
-    Map_CopyCellAttributes(64, 24, 3, 1, 64, row);
+    Engine_MapCopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
 void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
@@ -491,11 +485,11 @@ void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
         }
         offset = -offset;
     }
-    Map_CopyCellAttributes(72, 9, 1, 3, column, 9);
+    Engine_MapCopyCellAttributes(72, 9, 1, 3, column, 9);
     StagedActor_PlacePairAtOffsetAndRun(18, offset, 0);
     actor = Object_GetById(18);
     column = actor->x.fixed >> 20;
-    Map_CopyCellAttributes(63, 25, 1, 3, column, 9);
+    Engine_MapCopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
 void KorosseoKawa_RaisePipes(void)
@@ -613,7 +607,7 @@ void KorosseoKawa_RaisePipes(void)
 void SceneState_ApplyValue768(void)
 {
 
-    GameFlag_Set(768);
+    Engine_GameFlagSet(768);
 }
 
 /* The river stage's start: after the approach scene and once the stage is
@@ -1055,10 +1049,39 @@ void KorosseoKawa_RunStageIntro(s32 a0)
         } else {
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
             Camera_SetSpeed(0x30000, 0x6000);
-            Camera_MoveTo(0x1480000, -1, 0xa80000, 1);
+            {
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cx asm("r0") = 0x1480000 >> 17;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cz asm("r2") = 0xa80000 >> 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cm asm("r3");
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+                cm = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                cz <<= 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+                cx <<= 17;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+                Camera_MoveTo(cx, -cy, cz, cm);
+            }
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x118, 200);
+            {
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fx asm("r1") = 0x118;
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fz asm("r2") = 200;
+                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+                asm("" : : "r"(fx), "r"(fz) : "r0");
+                Korosseo_FadeInCompetitor(0, fx, fz);
+            }
             Actor_SetSpeed(0, 0x10000, 0x8000);
             Actor_WalkToAndWait(0, 0x168, 200);
             Engine_EventWait(30);
@@ -1224,13 +1247,48 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
-            Camera_MoveTo(0x3480000, -1, 0xd80000, 1);
+            {
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cx asm("r0") = 0x3480000 >> 18;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cz asm("r2") = 0xd80000 >> 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cm asm("r3");
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+                cm = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                cz <<= 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+                cx <<= 18;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+                Camera_MoveTo(cx, -cy, cz, cm);
+            }
             Engine_CameraWaitForMove();
-            Event_ShowMessage(a0, 0);
+            {
+                /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
+                register s32 mode asm("r1") = 0;
+                /* FAKEMATCH: the direct void form reverses the two argument moves. */
+                asm("" : : "r"(mode) : "r0");
+                Event_ShowMessage(a0, mode);
+            }
             SceneState_SetMode66AndPassOpeningSequence();
             Engine_EventWait(60);
             Event_ShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x2e0, 200);
+            {
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fx asm("r1") = 0x2e0;
+                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+                register s32 fz asm("r2") = 200;
+                /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+                asm("" : : "r"(fx), "r"(fz) : "r0");
+                Korosseo_FadeInCompetitor(0, fx, fz);
+            }
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
@@ -1268,15 +1326,56 @@ void Scene_RunSceneFourCoordinator(s32 scene)
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
         Camera_SetSpeed(196608, 24576);
-        Camera_MoveTo(71303168, -1, 11010048, 1);
+        {
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cx asm("r0") = 71303168 >> 19;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cz asm("r2") = 11010048 >> 16;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cm = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+            cz <<= 16;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+            cx <<= 19;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+            Camera_MoveTo(cx, -cy, cz, cm);
+        }
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
-        Event_ShowMessage(scene, 0);
+        {
+            /* FAKEMATCH: native parameter zero in r2 precedes r1/r0 setup. */
+            register s32 zero asm("r2") = 0;
+            /* FAKEMATCH: the measured message boundary moved r1 ahead of r2. */
+            asm("" : : "r"(zero) : "r0", "r1");
+            Value3(SceneState_StoreParamsAndInitTable, 120, 72, zero);
+        }
+        {
+            /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
+            register s32 mode asm("r1") = 0;
+            /* FAKEMATCH: the direct void form reverses the two argument moves. */
+            asm("" : : "r"(mode) : "r0");
+            Event_ShowMessage(scene, mode);
+        }
         SceneState_ReleaseTableAndResetC6a6();
         Engine_EventWait(15);
-        Korosseo_FadeInCompetitor(0, 984, 200);
+        {
+            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+            register s32 fx asm("r1") = 984;
+            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
+            register s32 fz asm("r2") = 200;
+            /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
+            asm("" : : "r"(fx), "r"(fz) : "r0");
+            Korosseo_FadeInCompetitor(0, fx, fz);
+        }
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
@@ -1320,7 +1419,7 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(ACTOR_GERALD, x, y);
+        Engine_ActorSetPosition(ACTOR_GERALD, x, y);
     }
     {
         s32 x = GameFlag_GetByteFar(912);
@@ -1330,7 +1429,7 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(ACTOR_IVAN, x, y);
+        Engine_ActorSetPosition(ACTOR_IVAN, x, y);
     }
     {
         s32 x = GameFlag_GetByteFar(928);
@@ -1340,6 +1439,6 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         x += 0x80000;
         y <<= 20;
         y += 0x80000;
-        Actor_SetPosition(ACTOR_MIA, x, y);
+        Engine_ActorSetPosition(ACTOR_MIA, x, y);
     }
 }

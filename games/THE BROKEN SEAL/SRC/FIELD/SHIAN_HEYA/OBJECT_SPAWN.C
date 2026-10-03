@@ -26,7 +26,7 @@ void OverlayObject_SetEntryField(void *arg0, s32 arg1)
 void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 
-    u8 *ret = Object_Create(arg3, arg0, arg1, arg2);
+    u8 *ret = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);
@@ -49,7 +49,7 @@ void *OverlayObject_SpawnWithMode14(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
 void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *ret = Object_Create(arg3, arg0, arg1, arg2);
+    u8 *ret = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
 
     if (ret != NULL) {
         u8 *obj = *(u8 **)(ret + 0x50);

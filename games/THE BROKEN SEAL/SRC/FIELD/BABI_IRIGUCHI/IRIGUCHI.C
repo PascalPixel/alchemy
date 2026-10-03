@@ -263,10 +263,10 @@ void FieldScene_RunFourCallSequence(void)
 
 void SceneState_BranchOnActorEightOrNineTile(void)
 {
-    s32 *p = Actor_Get(9);
+    s32 *p = Object_GetById(9);
 
     if ((((s32 *)Object_GetById(0))[2] >> 20) <= 12) {
-        p = Actor_Get(8);
+        p = Object_GetById(8);
         if ((p[2] >> 20) == 6) {
             if ((p[4] >> 20) == 20) {
                 FieldScene_RunFourCallSequence();
@@ -896,7 +896,7 @@ void FieldScene_RunActorEventSequence(void)
 
 void ActorPresentation_SetSceneCellByFlag985(void)
 {
-    if (GameFlag_IsSet(0x985) == 0) {
+    if (Engine_GameFlagIsSet(0x985) == 0) {
         s32 k5 = 17, k6 = 78;
 
         Engine_MapCopyCellsLayered(36, 78, 1, 2, k5, k6);
@@ -970,7 +970,7 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
     Engine_EventBegin();
     seeing = (s16 *)(work + 0xcb8);
     if (seeing[0] != 0) {
-        if (GameFlag_IsSet(0x985) == 0) {
+        if (Engine_GameFlagIsSet(0x985) == 0) {
             /* FAKEMATCH: forced temporaries; the destination stays in two
                saved registers across both copies, where plain constants
                are built again for each call. */
@@ -986,7 +986,7 @@ void BabiIriguchi_FlipTruthDoorSwitch(void)
         }
     } else {
         Engine_EventSetMessage((s32)MsgBabiTruthDoorOpenThoseSeeing);
-        Event_ShowMessage(-1, 0);
+        Engine_EventShowMessage(-1, 0);
     }
     Engine_EventEnd();
 }
@@ -1020,7 +1020,7 @@ void SceneState_SetRuntimeByte34(void)
 
 void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 {
-    s32 *p = Actor_Get(12);
+    s32 *p = Object_GetById(12);
     s32 a = p[2] >> 20;
 
     if (a == 20) {
@@ -1041,7 +1041,7 @@ void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
 
 void SceneActor_PushObjectAheadIfLevel(void)
 {
-    struct StagedActor *p = (struct StagedActor *)Actor_Get(ACTOR_PARTY_LEADER);
+    struct StagedActor *p = (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
     struct StagedActor *q = BabiIriguchi_FindActorAhead(p);
     s32 diff;
 
@@ -1123,12 +1123,12 @@ void SceneState_ConfigureRegion82_7AndApply768(void)
 
     Iriguchi_CopyCellAttributes(82, 7, 1, 2, a, b);
     WaitFrames(1);
-    GameFlag_Set(768);
+    Engine_GameFlagSet(768);
 }
 
 void SceneState_ApplyRectsAtActors8And9(void)
 {
-    s32 *p = Actor_Get(8);
+    s32 *p = Object_GetById(8);
 
     Engine_ActorSetSpritePriority(8, 1);
     Engine_ActorSetSpritePriority(9, 1);
@@ -1148,7 +1148,7 @@ void SceneState_ApplyRectsAtActors8And9(void)
         Iriguchi_CopyCellAttributes(3, 3, 1, 1, k5, k6);
     }
     {
-        s32 *q = Actor_Get(9);
+        s32 *q = Object_GetById(9);
         s32 k5 = q[2] >> 20, k6 = q[4] >> 20;
 
         Iriguchi_CopyCellAttributes(3, 3, 1, 1, k5, k6);

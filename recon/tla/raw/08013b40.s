@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08013b40
+	.global Input_HandleKeyInterrupt
 	.thumb_func
-Func_08013b40:
+Input_HandleKeyInterrupt:
 	push {lr}
 	ldr r3, .L_08013b5c
 	ldrh r3, [r3]

@@ -32,7 +32,7 @@ Func_080d0788:
 	movs r1, #0
 	movs r2, #0
 	movs r0, #1
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r1, #151
 	lsls r1, r1, #4
 	adds r2, r7, r1

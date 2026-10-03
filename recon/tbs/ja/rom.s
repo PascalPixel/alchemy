@@ -16,6 +16,13 @@ SerialRuntime_CollectReceivedPayloads:
 	.thumb_func
 SerialRuntime_StepBlockTransfer:
 	.incbin "baserom.gba", 0x0000655c, 0x0000023c
+	.section .rom.0000679c, "ax"
+	.balign 4
+	.global SerialTest_Run
+	.type SerialTest_Run, %function
+	.thumb_func
+SerialTest_Run:
+	.incbin "baserom.gba", 0x0000679c, 0x000000c8
 	.section .rom.0000686e, "ax"
 	.incbin "baserom.gba", 0x0000686e, 0x00000002
 	.section .rom.00007320, "ax"
@@ -268,8 +275,8 @@ UiText_MeasureEntryDimensions:
 	.thumb_func
 UiText_MeasureStringVariant:
 	.incbin "baserom.gba", 0x0001898c, 0x000002c0
-	.global Func_08018cac
-Func_08018cac:
+	.global UiText_DrawGlyph
+UiText_DrawGlyph:
 	.incbin "baserom.gba", 0x00018c4c, 0x00000268
 	.section .rom.000191c8, "ax"
 	.global UiWork_AnimateSpriteSlots
@@ -645,8 +652,8 @@ Encounter_AreaEntryTable:
 	.global Scene_InteractionRuleTable
 Scene_InteractionRuleTable:
 	.incbin "baserom.gba", 0x000949e4, 0x000003e8
-	.global BattleFx_ConditionResources
-BattleFx_ConditionResources:
+	.global Scene_AreaNameRules
+Scene_AreaNameRules:
 	.incbin "baserom.gba", 0x00094dcc, 0x000003f0
 	.global Party_PairResolveRules
 Party_PairResolveRules:

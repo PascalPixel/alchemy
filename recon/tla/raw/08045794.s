@@ -12,7 +12,7 @@ Func_08045794:
 	ldr r2, .L_080457ac
 	movs r0, #2
 	movs r1, #136
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	pop {pc}
 .L_080457ac:
 	.4byte Func_08045780

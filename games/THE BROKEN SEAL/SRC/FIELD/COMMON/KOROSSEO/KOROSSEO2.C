@@ -1,8 +1,11 @@
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 #include "TYPES.H"
 #include "CALL.H"
+#include "ANIMSPR.H"
+#include "OBJECT_RUNTIME.H"
 
 extern u8 gMenuCtrlWork[];
 
@@ -12,30 +15,35 @@ extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
 
-#define QUEUE_IO_WRITE(address, value, delay)                                \
+struct CompetitorState {
+    u8 unknown_00[6];
+    u8 mode;
+    u8 stage;
+};
+
+#define QUEUE_IO_WRITE(address, value, delay) \
     do { \
-        /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-        volatile u16 *ime;                                                   \
-        struct IoWriteQueue *q;                                              \
-        u32 saved;                                                           \
-        s32 count;                                                           \
-                                                                             \
-        q = &gIoWriteQueue;                                                  \
+        /* FAKEMATCH: retain the measured one-pass pointer/read lifetime; direct IME access loads a separate 520 constant. */ \
+        volatile u16 *ime; \
+        struct IoWriteQueue *queue = &gIoWriteQueue; \
+        u32 saved; \
+        s32 count; \
         do { \
-            /* FAKEMATCH: removing this one-pass boundary changes measured instruction scheduling. */ \
-            ime = &REG_IME;                                                  \
-            saved = *ime;                                                    \
-        } while (0);                                                         \
-        *ime = (u16)(u32)ime;                                                \
-        count = q->count;                                                    \
-        if (count <= 31) {                                                   \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);            \
-            *(u16 *)&q->count = count + 1;                                    \
-            *destination++ = (value);                                        \
-            *destination++ = (address);                                      \
-            *destination = (delay);                                          \
-        }                                                                    \
-        *ime = saved;                                                        \
+            /* FAKEMATCH: retain the existing IME pointer/read initialization boundary. */ \
+            ime = &REG_IME; \
+            saved = *ime; \
+        } while (0); \
+        *ime = (u16)(u32)ime; \
+        count = queue->count; \
+        if (count < 32) { \
+            u32 *entry = (u32 *)((u8 *)queue + count * (s32)sizeof(queue->entries[0]) \
+                + (s32)&((struct IoWriteQueue *)0)->entries); \
+            *(u16 *)&queue->count = count + 1; \
+            *entry++ = (value); \
+            *entry++ = (address); \
+            *entry = (delay); \
+        } \
+        *ime = saved; \
     } while (0)
 
 void Engine_ActorSetAnimation();
@@ -48,62 +56,33 @@ void Engine_TaskWait();
 /* Save the competitor's starting position and fade in its sprite. */
 void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
 {
-    /* FAKEMATCH: the loop around the IME read preserves its saved-copy order;
-     * the count store's cast preserves the queue entry scheduling. */
-    struct CompetitorState {
-        u8 unknown_00[6];
-        u8 mode;
-        u8 stage;
-    } *state;
+    struct CompetitorState *state;
     struct FieldActor *actor;
-    struct CompetitorSprite {
-        u8 unknown_00[4];
-        u16 y : 8;
-        u16 affine : 2;
-        u16 blend : 2;
-        u16 unused : 4;
-        u8 unknown_06[10];
-        u16 second_y : 8;
-        u16 second_affine : 2;
-        u16 second_blend : 2;
-        u16 second_unused : 4;
-    } *sprite;
+    struct AnimationObject *sprite;
     s32 i;
 
     state = *(struct CompetitorState **)gMenuCtrlWork;
     actor = Object_GetById(id);
-    {
-        /* FAKEMATCH: a word temporary keeps 1 out of a halfword pool. */
-        s32 one = 1;
-
-        state->mode = one;
-    }
+    state->mode = 1;
     state->stage = 4;
     Korosseo_CompetitorStartX = actor->x.fixed;
     Korosseo_CompetitorStartZ = actor->z.fixed;
-    sprite = (struct CompetitorSprite *)actor->sprite;
+    sprite = (struct AnimationObject *)actor->sprite;
     Korosseo_CompetitorStartAngle = actor->facing;
     Engine_ActorSetSpritePriority(id, 2);
-    {
-        /* FAKEMATCH: the byte view prevents sharing a dead bitfield value. */
-        u8 value = *(volatile u8 *)&actor->priority_flags;
-
-        *(u8 *)&actor->priority_flags = (u8)(value | 1);
-    }
-    {
-        /* FAKEMATCH: a word temporary keeps the facing value immediate. */
-        s32 facing = 0x4000;
-
-        actor->facing = facing;
-    }
+    actor->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+    actor->facing = FACING_SOUTH;
     Engine_ActorSetSpriteFlags(actor, 3);
     Object_SetMode(actor, 0);
     Object_SetMode(actor, 1);
     Engine_ActorSetPosition(id, x << 16, z << 16);
     Engine_ActorFaceActor(0, 0x4000, 0);
+    /* FAKEMATCH: retain the queue cursor/count halfword view and IME
+       pointer lifetime; direct count-field stores swap row-address setup
+       with the count write twice at the same 476-byte extent. */
     QUEUE_IO_WRITE(0x4000050, 0xf00, 0x20000);
-    sprite->blend = 1;
-    sprite->second_blend = 1;
+    sprite->part[0].object_mode = 1;
+    sprite->part[1].object_mode = 1;
     Engine_AudioPlayCue(252);
     for (i = 0; i <= 15; i += 2) {
         actor->scale_x = (i << 12) + 0x1000;
@@ -118,56 +97,55 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     actor->scale_x = 0x10000;
     actor->scale_y = 0x10000;
     Engine_EventWait(13);
-    sprite->blend = 0;
-    sprite->second_blend = 0;
+    sprite->part[0].object_mode = 0;
+    sprite->part[1].object_mode = 0;
     Engine_ActorSetAnimationAndWait(id, 3);
     Engine_EventWait(20);
 }
 
-/* The game state, read here as bytes: the byte at 498 is the retry flag. */
-
 /* Colosso: put the competitor back at its stored start position and facing
  * after a round, replaying the fall animation unless the retry flag is set.
  * The same function sits in each of the three Colosso trial overlays. */
-void Korosseo_RestoreCompetitor(s32 a0)
+void Korosseo_RestoreCompetitor(s32 id)
 {
-    u8 *rec7;
-    u8 *p7;
+    struct CompetitorState *state;
+    struct FieldActor *actor;
     s32 zero;
-    /* FAKEMATCH: a one-halfword aggregate holds the zero stored at +34, so
-     * it loads as a halfword pool constant whose short range places the
-     * literal pool before the epilogue. */
-    struct Half {
-        u16 v;
-    } fall;
+    u8 *control;
+    /* FAKEMATCH: retain the existing halfword zero carrier for the layer
+       byte; direct zero changes the earlier stage and later word registers. */
+    struct { u16 value; } layer;
 
-    p7 = *(u8 **)gMenuCtrlWork;
-    rec7 = (u8 *)Object_GetById(a0);
+    state = *(struct CompetitorState **)gMenuCtrlWork;
+    actor = Object_GetById(id);
     if (gGameState.movement_mode == 1) {
         gGameState.movement_mode = 0;
-        Engine_ActorSetAnimation(a0, 1);
+        Engine_ActorSetAnimation(id, 1);
     } else {
-        Call3(Engine_ActorFaceDirection, a0, 0x4000, 30);
-        Engine_ActorSetAnimation(a0, 3);
+        Call3(Engine_ActorFaceDirection, id, FACING_SOUTH, 30);
+        Engine_ActorSetAnimation(id, 3);
         Engine_EventWait(30);
     }
     zero = 0;
-    p7[7] = zero;
-    p7[6] = 15;
-    *(s32 *)((s32)rec7 + 8) = Korosseo_CompetitorStartX;
-    *(s32 *)((s32)rec7 + 16) = Korosseo_CompetitorStartZ;
-    *(u16 *)((s32)rec7 + 6) = Korosseo_CompetitorStartAngle;
-    *(s32 *)((s32)rec7 + 56) = -0x80000000;
-    *(s32 *)((s32)rec7 + 64) = -0x80000000;
-    *(s32 *)((s32)rec7 + 36) = zero;
-    *(s32 *)((s32)rec7 + 44) = zero;
-    fall.v = 0;
-    rec7[85] = 3;
-    rec7[34] = fall.v;
-    *(s32 *)((s32)rec7 + 12) = zero;
-    *(s32 *)((s32)rec7 + 20) = zero;
-    Engine_ActorSetSpriteFlags((s32)rec7, 1);
-    Object_SetMode((s32)rec7, 0);
-    Object_SetMode((s32)rec7, 1);
+    /* FAKEMATCH: retain the existing byte protocol for these two cells;
+       direct field writes move stage zero after the start-position load. */
+    control = (u8 *)state;
+    control[(u32)&((struct CompetitorState *)0)->stage] = zero;
+    control[(u32)&((struct CompetitorState *)0)->mode] = 15;
+    actor->x.fixed = Korosseo_CompetitorStartX;
+    actor->z.fixed = Korosseo_CompetitorStartZ;
+    actor->facing = Korosseo_CompetitorStartAngle;
+    actor->target_x = ACTOR_NO_TARGET;
+    actor->target_z = ACTOR_NO_TARGET;
+    actor->velocity_x = zero;
+    actor->velocity_z = zero;
+    layer.value = 0;
+    actor->motion_flags = 3;
+    actor->unknown_22 = layer.value;
+    actor->y.fixed = zero;
+    ((struct ObjectRuntime *)actor)->terrain_height = zero;
+    Engine_ActorSetSpriteFlags(actor, 1);
+    Object_SetMode(actor, 0);
+    Object_SetMode(actor, 1);
     Engine_TaskWait(1);
 }

@@ -117,7 +117,7 @@ s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 {
     u16 *counter = (u16 *)(object + 100);
-    *counter = (u16)(*counter + (((u32)Random_Next() * 100) >> 16));
+    *counter = (u16)(*counter + (((u32)Engine_RandomNext() * 100) >> 16));
     if ((s16)*counter > 1000) ObjectGroup_SetChildValue(object, 7);
     else ObjectGroup_SetChildValue(object, 10);
     if (*(s16 *)counter > 1200) { u16 z = 0; *counter = z; }
@@ -147,13 +147,13 @@ void FieldScene_RunTile10x20Transition(void)
             Object_SetModeById(10, 3);
             Actor_OffsetDestination(10, -18, 6);
             Battle_WaitMode0(30);
-            Audio_PlayCue(240);
+            Engine_AudioPlayCue(240);
             Object_SetModeById(10, 8);
             ((u8 *)Object_GetById(10))[35] = 2;
             zero = 0;
             DrawPlacement(0, 17, 2, 4, 19, 17);
             StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);
-            GameFlag_Set(0x200);
+            Engine_GameFlagSet(0x200);
             actor = (void *)Object_GetById(10);
             Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 0);
         }
@@ -173,14 +173,14 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         Engine_EventBegin();
         Object_SetMode((struct FieldActor *)actor, 6);
         WaitFrames(6);
-        Audio_PlayCue(152);
+        Engine_AudioPlayCue(152);
         Object_SetMode((struct FieldActor *)actor, 7);
         actor->move_rate_x = 0x30000;
         actor->move_rate_z = 0x20000;
         actor->elevation_rate = 0x40000;
         *flags &= 0x7e;
         Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 0);
-        Actor_MoveToAndWait(ACTOR_PARTY_LEADER, request->cell_x, request->cell_z);
+        Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, request->cell_x, request->cell_z);
         Object_SetMode((struct FieldActor *)actor, 6);
         Engine_ActorSetSpriteFlags((struct FieldActor *)actor, 1);
         *flags = (u8)ret;
@@ -235,7 +235,7 @@ s32 Scene_Initialize(void)
     s32 zero;
 
     FieldScene_RedrawActorFootprint(10);
-    if (GameFlag_IsSet(0x200) != 0) {
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         zero = 0;
         *((u8 *)Object_GetById(10) + 35) = 2;
         DrawPlacement(0, 17, 2, 4, 19, 17);
@@ -246,16 +246,16 @@ s32 Scene_Initialize(void)
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
     if (gGameState.entrance == 4) {
-        if (GameFlag_IsSet(0x843) == 0) {
+        if (Engine_GameFlagIsSet(0x843) == 0) {
             FieldScene_RunBranchingFormationPresentation();
         }
     }
-    if (GameFlag_IsSet(0x845) != 0) {
-        Actor_SetPosition(17, 0, 0);
-        Actor_SetPosition(18, 0, 0);
-        Actor_SetPosition(19, 0, 0);
-        Actor_SetPosition(20, 0, 0);
-        Actor_SetPosition(21, 0, 0);
+    if (Engine_GameFlagIsSet(0x845) != 0) {
+        Engine_ActorSetPosition(17, 0, 0);
+        Engine_ActorSetPosition(18, 0, 0);
+        Engine_ActorSetPosition(19, 0, 0);
+        Engine_ActorSetPosition(20, 0, 0);
+        Engine_ActorSetPosition(21, 0, 0);
     }
     return 0;
 }
@@ -1130,13 +1130,13 @@ void FieldScene_RunBranchingFormationPresentation(void)
 /* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
-    Event_ShowMessage(speaker, 0);
+    Engine_EventShowMessage(speaker, 0);
     Battle_WaitMode0(frames);
 }
 
 void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
 {
-    Actor_FaceDirection(a, b, 0);
+    Engine_ActorFaceDirection(a, b, 0);
     Battle_WaitMode0(c);
 }
 
@@ -1166,8 +1166,8 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
 
     phase = gFrameCount & 7;
     if (phase != 0) return;
-    if (KorimaHashi_SparkleSound != 0) Audio_PlayCue(200);
-    obj = (struct Obj *)Object_Create(26, c1, 0, c2);
+    if (KorimaHashi_SparkleSound != 0) Engine_AudioPlayCue(200);
+    obj = (struct Obj *)Engine_ObjectCreate(26, c1, 0, c2);
     if (obj == 0) return;
     sprite = obj->f50;
     sprite->f26 = phase;
@@ -1184,7 +1184,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
     obj->f55 = phase;
     Object_SetMode((struct FieldActor *)obj, 2);
     Object_SetPosition(obj, c3, 0, c4);
-    Object_SetScript((struct FieldActor *)obj, (const s32 *)KorimaHashi_Object26Script);
+    Engine_ObjectSetScript((struct FieldActor *)obj, (const s32 *)KorimaHashi_Object26Script);
 }
 
 s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
@@ -1229,7 +1229,7 @@ s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0)
     }
     return 0;
 hit:
-    Audio_PlayCue(106);
+    Engine_AudioPlayCue(106);
     ((s32 (*)())Engine_ObjectSetScript)((s32)arg0, (s32)KorimaHashi_TriggerScript);
     KorimaHashi_TriggerPending = 1;
     return 0;

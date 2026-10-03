@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
@@ -85,12 +86,10 @@ void Battle_UpdateModeFromShoulderButtons(void)
     }
 }
 
-void WaitFrames(void);
-
-void Battle_WaitMode0(s32 should_wait)
+void Battle_WaitMode0(s32 frames)
 {
-    if (Data_03001ebc->mode_1cc == 0 && should_wait != 0) {
-        WaitFrames();
+    if (Data_03001ebc->mode_1cc == 0 && frames != 0) {
+        WaitFrames(frames);
     }
 }
 

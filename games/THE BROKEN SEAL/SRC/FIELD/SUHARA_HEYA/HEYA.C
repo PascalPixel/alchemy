@@ -31,7 +31,7 @@ u8 *SuharaHeya_GetExits(void)
 /* Flag 0x96f selects the later placements. */
 s32 SuharaHeya_SelectPlacements(void)
 {
-    if (GameFlag_IsSet(0x96f) != 0) {
+    if (Engine_GameFlagIsSet(0x96f) != 0) {
         return (s32)gSuharaHeyaPlacements96f;
     }
     return (s32)gSuharaHeyaPlacements;
@@ -41,51 +41,51 @@ s32 SuharaHeya_SelectPlacements(void)
  * otherwise a line chosen by flag 0x96f. */
 void Dialogue_HandleFacingChoice(s32 no)
 {
-    u16 facing = (Actor_Get(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
+    u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
-        Shop_Open(31, no);
-    } else if (GameFlag_IsSet(0x96f)) {
+        Engine_ShopOpen(31, no);
+    } else if (Engine_GameFlagIsSet(0x96f)) {
         s32 msg = (s32)MsgSuharaArentSurprisedFind;
-        Event_SetMessage(msg);
-        Event_OpenMessage(no, 0);
-        if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-            Event_Wait(10);
-            Event_SetMessage(msg + 1);
+        Engine_EventSetMessage(msg);
+        Engine_EventOpenMessage(no, 0);
+        if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+            Engine_EventWait(10);
+            Engine_EventSetMessage(msg + 1);
         } else {
-            Event_SetMessage(msg + 2);
+            Engine_EventSetMessage(msg + 2);
         }
-        Event_ShowMessage(no, 0);
+        Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaOursOnlyStore);
-        Event_ShowMessage(no, 0);
+        Engine_EventSetMessage((s32)MsgSuharaOursOnlyStore);
+        Engine_EventShowMessage(no, 0);
     }
 }
 
 void Dialogue_HandleFacingBranch(s32 no)
 {
-    u16 facing = (((u16 *)Actor_Get(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Inn_CheckIn(10, no);
-    } else if (GameFlag_IsSet(0x96f)) {
-        Event_SetMessage((s32)MsgSuharaBusyEverSince);
-        Event_ShowMessage(no, 0);
+    } else if (Engine_GameFlagIsSet(0x96f)) {
+        Engine_EventSetMessage((s32)MsgSuharaBusyEverSince);
+        Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaSighNothinMaybe);
-        Event_ShowMessage(no, 0);
+        Engine_EventSetMessage((s32)MsgSuharaSighNothinMaybe);
+        Engine_EventShowMessage(no, 0);
     }
 }
 
 void Dialogue_HandleFacingAction(s32 no)
 {
-    u16 facing = (((u16 *)Actor_Get(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Shop_ConfirmAct(no);
-    } else if (GameFlag_IsSet(0x96f)) {
-        Event_SetMessage((s32)MsgSuharaWonderWhySandstorms);
-        Event_ShowMessage(no, 0);
+    } else if (Engine_GameFlagIsSet(0x96f)) {
+        Engine_EventSetMessage((s32)MsgSuharaWonderWhySandstorms);
+        Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
-        Event_ShowMessage(no, 0);
+        Engine_EventSetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
+        Engine_EventShowMessage(no, 0);
     }
 }
 
@@ -94,15 +94,15 @@ void Dialogue_HandleFacingAction(s32 no)
 void SuharaHeya_AskBlownHere(s32 obj)
 {
     s32 msg = (s32)MsgSuharaSupposeFolkBlown;
-    Event_SetMessage(msg);
-    Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(msg + 1);
+    Engine_EventSetMessage(msg);
+    Engine_EventOpenMessage(obj, 0);
+    if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_EventSetMessage(msg + 1);
     } else {
-        Event_SetMessage(msg + 2);
+        Engine_EventSetMessage(msg + 2);
     }
-    Event_ShowMessage(obj, 0);
+    Engine_EventShowMessage(obj, 0);
 }
 
 void State_ApplyCounter16cThenCall7b(void)
@@ -110,8 +110,8 @@ void State_ApplyCounter16cThenCall7b(void)
     u8 *state = (u8 *)gEventWork;
     s16 *cnt = (s16 *)(state + 0x16C);
 
-    Event_RequestExit(*cnt);
-    Audio_PlayCue(0x7B);
+    Engine_EventRequestExit(*cnt);
+    Engine_AudioPlayCue(0x7B);
 }
 
 /*
@@ -385,7 +385,7 @@ void Scene_RunPrimaryScript(void)
 
 s32 SuharaHeya_SelectEvents(void)
 {
-    if (GameFlag_IsSet(0x96F) != 0) {
+    if (Engine_GameFlagIsSet(0x96F) != 0) {
         return (s32)gSuharaHeyaEvents96f;
     }
     return (s32)gSuharaHeyaEvents;
@@ -395,12 +395,12 @@ s32 Scene_InitActorRecords(void)
 {
     union SceneActor *work;
     if (gGameState.entrance == 90)
-        GameFlag_Set(0x96f);
+        Engine_GameFlagSet(0x96f);
     ((s32 *)gEventWork)[112] = 521;
     ((s32 *)gEventWork)[114] = 24;
-    ((union SceneActor *)Actor_Get(12))->bytes[89] |= 4;
-    ((union SceneActor *)Actor_Get(13))->bytes[89] |= 4;
-    work = (union SceneActor *)Actor_Get(20);
+    ((union SceneActor *)Object_GetById(12))->bytes[89] |= 4;
+    ((union SceneActor *)Object_GetById(13))->bytes[89] |= 4;
+    work = (union SceneActor *)Object_GetById(20);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     {
@@ -411,7 +411,7 @@ s32 Scene_InitActorRecords(void)
         flags = flags & record->flags;
         record->flags = flags | 4;
     }
-    work = (union SceneActor *)Actor_Get(21);
+    work = (union SceneActor *)Object_GetById(21);
     work->fields.record->field_26 = 0;
     work->fields.record->angle = 0x4000;
     work->bytes[85] = 2;

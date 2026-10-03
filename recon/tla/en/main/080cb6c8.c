@@ -9,7 +9,6 @@
 
 s32 Party_CountActiveOwnersFar();
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
-void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 void Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);

@@ -113,9 +113,9 @@ u8 *SceneData_GetMessageTable(void)
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
     if (gGameState.scene == (s32)&SceneId_BiribinoNiwa) {
-        if (GameFlag_IsSet(0x84f) != 0)
+        if (Engine_GameFlagIsSet(0x84f) != 0)
             gBiribinoNiwaPlacements[118] = 1;
-        if (GameFlag_IsSet(0x845) != 0)
+        if (Engine_GameFlagIsSet(0x845) != 0)
             gBiribinoNiwaPlacements[70] = 0;
         return (const struct ScenePlacement *)gBiribinoNiwaPlacements;
     }
@@ -125,8 +125,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 void FieldScene_RunStepWithValueFd2(void)
 {
     Engine_EventBegin();
-    Actor_SetPosition(0xD, 0, 0);
-    GameFlag_Set(0xFD2);
+    Engine_ActorSetPosition(0xD, 0, 0);
+    Engine_GameFlagSet(0xFD2);
     Engine_ItemShowFound(ITEM_NUT, 3);
     Engine_PartyGiveItem(ITEM_NUT, 0);
     Engine_EventEnd();
@@ -153,7 +153,7 @@ void SceneDialogue_AskAboutBarricade(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
-    Event_AskYesNo(9, 0);
+    Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
 
@@ -161,7 +161,7 @@ void SceneDialogue_AskIfResponsible(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -169,7 +169,7 @@ void SceneDialogue_AskIfFineWarrior(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);
-    Event_AskYesNo(11, 0);
+    Engine_EventAskYesNo(11, 0);
     Engine_EventEnd();
 }
 
@@ -436,9 +436,9 @@ void BiribinoNiwa_RunGardenScene(void)
 
 void FieldScene_OpenGate(void)
 {
-    Audio_PlayCue(0xBC);
-    Map_AnimateCells(Niwa_GateCells, 0x34, 0xB);
-    GameFlag_Set(0x200);
+    Engine_AudioPlayCue(0xBC);
+    Engine_MapAnimateCells(Niwa_GateCells, 0x34, 0xB);
+    Engine_GameFlagSet(0x200);
 }
 
 /*
@@ -468,8 +468,8 @@ s32 SceneEffect_UpdateLobeOrbitEntity(struct SceneEntity_0200090c *entity)
     handle->field1e = (s16)(tilt >> 3);
 
     /* The shift pair extracts a field, unsigned; it is not a scale. */
-    step = (s32)(((u32)Random_Next() << 9) >> 16)
-         + (s32)(((u32)Random_Next() << 9) >> 16);
+    step = (s32)(((u32)Engine_RandomNext() << 9) >> 16)
+         + (s32)(((u32)Engine_RandomNext() << 9) >> 16);
     entity->phase = entity->phase + step + 1024;
 
     return 0;

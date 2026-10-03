@@ -1508,7 +1508,7 @@ Ui_RunOwnerStatusScreen:
 .L_08023d54:
 	.4byte 0x00000ea3
 .L_08023d58:
-	.4byte ResourceTableEntries
+	.4byte gVramBlockCache
 .L_08023d5c:
 	.4byte 0x40000400
 .L_08023d60:

@@ -1,4 +1,5 @@
 #include "RESOURCE.H"
+#include "GLYPH.H"
 #include "ANIMSPR.H"
 #include "VRAM_BLOCK.H"
 /* Haidia village: the boulder scene. The actors are placed and the
@@ -26,16 +27,6 @@ extern const s32 gHaidiaBabiRampLeaderActionB[];
 extern const s32 gHaidiaBabiRampFinalAction[];
 extern const s32 gHaidiaBabiRampActor10Action[];
 extern const s32 gHaidiaBabiRampActor10ActionB[];
-
-static __inline__ void SetBlendTarget(u32 value)
-{
-    REG_BLDCNT = value;
-}
-
-static __inline__ void SetBlendAlpha(u32 value)
-{
-    REG_BLDALPHA = value;
-}
 
 extern u8 MsgHaidiaCameBack2[];
 extern u8 MsgHaidiaDoraWasStruckWithIllness[];
@@ -78,29 +69,11 @@ void Object_SetTargetAndCallback();
 /* Actor 8's departure, in the overlay's read-only data. */
 extern s32 gHaidiaBabiActor8Departure[];
 
-/* A sparkle that follows its anchor while it rises. The anchor pointer is
- * read before the frame counter is stored: the reference hoists
- * `ldr r6,[r5,#104]` above the `strh`, and only that source order
- * reproduces it. */
-struct Sparkle {
-    u8 filler00[8];
-    s32 x;                          /* 0x08 */
-    s32 y;                          /* 0x0c, only ever advanced by 0x10000 */
-    s32 z;                          /* 0x10 */
-    u8 filler14[4];
-    s32 amplitude_x;                /* 0x18 */
-    s32 amplitude_y;                /* 0x1c */
-    u8 filler20[0x44];
-    u16 frame;                      /* 0x64 */
-    u8 filler66[2];
-    struct Sparkle *anchor;         /* 0x68 */
-};
-
 /* The bag's two motion scripts, in the overlay's read-only data. */
 extern s32 gHaidiaBabiBagLiftScript[];
 extern s32 gHaidiaBabiBagShowScript[];
 void ObjectDispatch_WaitForValue16();
-void HaidiaBabi_SpawnEffectPair();
+void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 
 /* The overlay's veneer into the resident unsigned remainder. */
 u32 __umodsi3();
@@ -122,31 +95,22 @@ struct PairWork {
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *gEffectWork;
 
-s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
-
-/* The OAM view with attribute 1 ending in the two-bit size field. */
-struct WorldMapOam {
-    u8 unknown_00[4];
-    u16 attr0;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 size : 2;
-};
+s32 Object_InitializeMode(struct AnimationObject *object, s32 animation);
 
 void BattleEffect_CleanupSceneObjects(void);
-void OverlayObject_UpdateOnFrameParity();
-void OverlayObject_ApplyRandomSlotOnOddFrames();
+void OverlayObject_UpdateOnFrameParity(union FieldObject *object);
+void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object);
 
-void SceneEffect_UpdateAnchoredRiseFrame(struct Sparkle *self);
-void OverlayObject_UpdateArcFromAnchor(struct Sparkle *obj);
+void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
+void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
 
 void FieldScene_RunPaletteRampSequence(void)
 {
-    s32 base;
     struct FieldActor *p1;
     struct FieldSprite *sprite;
     u32 i1;
-    volatile u16 *alpha;
+    /* FAKEMATCH: keep the alpha port in r5; the ordinary loops use r7. */
+    register volatile u16 *alpha_port asm("r5");
 
     p1 = Object_GetById(10);
     sprite = p1->sprite;
@@ -179,12 +143,27 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_MapCopyCellsTo(92, 28, 87, 23, 4, 4);
     Engine_MapCopyCellsTo(65, 53, 88, 24, 2, 2);
     DisplayBlend_EnableRunScript();
-    SetBlendTarget(0x3f42);
-    /* FAKEMATCH: keep the initial value/port publication boundary. */
-    do {
-        s32 value = 0x100c;
+    /* FAKEMATCH: retain the existing word/register carriers for these
+       halfword IO stores and the ramp add. Ordinary direct stores use
+       halfword literals, split the pool and enlarge this extent by 16 bytes. */
+    {
+        /* FAKEMATCH: keep the control word in r2; direct stores use ldrh. */
+        register u32 value asm("r2") = 0x3f42;
+        /* FAKEMATCH: retain control port r3; the direct store uses r2. */
+        register volatile u16 *port asm("r3") = &REG_BLDCNT;
 
-        SetBlendAlpha(value);
+        /* FAKEMATCH: retain the word/port dependency instead of a halfword literal. */
+        __asm__("" : "+r"(value), "+r"(port));
+        *port = value;
+    }
+    do {
+        /* FAKEMATCH: retain initial alpha word r3; direct stores use ldrh. */
+        register u32 value asm("r3") = 0x100c;
+
+        alpha_port = &REG_BLDALPHA;
+        /* FAKEMATCH: retain initial word/port dependency and its single pool. */
+        __asm__("" : "+r"(value), "+r"(alpha_port));
+        *alpha_port = value;
     } while (0);
     BattleFx_StartTwelveFrameBlend();
     (*(struct FieldBlendWork **)((u8 *)&gEventWork + 12))->loud = 1;
@@ -224,32 +203,32 @@ void FieldScene_RunPaletteRampSequence(void)
     Engine_AudioPlayCue(234);
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(10, (s32)gHaidiaBabiRampActor10ActionB);
-    alpha = &REG_BLDALPHA;
-    i1 = 0;
-ramp:
-    {
-        register s32 start asm("r2") = 0x100e; /* FAKEMATCH: pins the ramp start to r2 */
+    for (i1 = 0; i1 < 4; i1++) {
+        /* FAKEMATCH: retain the per-step word load in r2; plain C hoists it to r5. */
+        register u32 base asm("r2") = 0x100e;
+        /* FAKEMATCH: retain ramp-add result r3 with its existing word operands. */
+        register u32 value asm("r3");
 
-        asm("" : "+l"(start)); /* FAKEMATCH: reloads the ramp start every step */
-        {
-            register s32 level asm("r3"); /* FAKEMATCH: pins the level to r3 */
-
-            asm("add %0, %1, %2" : "=l"(level) : "l"(i1), "l"(start)); /* FAKEMATCH: adds the step into a fresh register */
-            *alpha = level;
-        }
+        /* FAKEMATCH: retain the measured add r3,r6,r2; ordinary C changes its registers. */
+        __asm__("add %0, %1, %2" : "=r"(value) : "r"(i1), "r"(base));
+        *alpha_port = value;
+        Engine_TaskWait(1);
     }
-    Engine_TaskWait(1);
-    if (++i1 <= 3)
-        goto ramp;
     Engine_AudioPlayCue(202);
     Engine_TaskWait(10);
-    base = 0x100f;
     {
-        u32 cnt;
-        register volatile u16 *port asm("r5") = &REG_BLDALPHA; /* FAKEMATCH: pins the port to r5 */
+        /* FAKEMATCH: retain ramp-base/port/counter initialization order;
+           loading the port inside the loop moves it after the counter zero. */
+        u32 start = 0x100f;
 
-        for (cnt = 0; cnt <= 15; cnt++) {
-            *port = base - cnt;
+        alpha_port = &REG_BLDALPHA;
+        for (i1 = 0; i1 < 16; i1++) {
+            /* FAKEMATCH: retain ramp-down word r3; ordinary C changes its operand registers. */
+            register u32 value asm("r3") = start - i1;
+
+            /* FAKEMATCH: retain word arithmetic; direct halfword folding splits the pool (+16 bytes). */
+            __asm__("" : "+r"(value));
+            *alpha_port = value;
             Engine_TaskWait(1);
         }
     }
@@ -286,11 +265,10 @@ ramp:
 /* The innkeeper's and the villagers' talk about the house. */
 void HaidiaBabi_RunInnkeeperTalk(void)
 {
-    u32 i;
-    s32 record;
+    struct FieldActor *actor;
 
-    record = (s32)Object_GetById(0);
-    if ((u32)(*(u16 *)(record + 6) + -0x2000) > 0x9000) {
+    actor = Object_GetById(0);
+    if ((u32)(actor->facing + -0x2000) > 0x9000) {
         Engine_InnOpen(0, 13);
     } else {
         Engine_EventBegin();
@@ -348,7 +326,7 @@ void SceneDialogue_RunActor16LineAndFlag81c(void)
 
 void HaidiaBabi_RunSickbedVisit(void)
 {
-    u8 *record;
+    struct FieldActor *record;
     s32 msg;
 
     Engine_EventBegin();
@@ -389,7 +367,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorSetAnimation(8, 13);
     Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+        gEventWork->message += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
@@ -401,7 +379,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+        gEventWork->message += 1;
     }
     if (Engine_GameFlagIsSet(0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
@@ -421,17 +399,10 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventShowMessageAndWait(8, 0, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(40);
-    record = (u8 *)Object_GetById(0);
-    {
-        /* FAKEMATCH: the facing is parked in a word-sized local before its
-         * halfword store, so its constant is a word; the direct store makes
-         * a halfword constant whose short pool reach moves the literal pools. */
-        s32 shown = 0;
-
-        *(u16 *)(record + 6) = shown;
-    }
+    record = Object_GetById(0);
+    record->facing = 0;
     Engine_TaskWait(1);
-    ((u8 *)Object_GetById(0))[90] &= 254;
+    Object_GetById(0)->unknown_5a &= ~1;
     Call3(Engine_ActorSetDestination, 0, 0x22e, 0x184);
     Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);
@@ -439,15 +410,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventWait(40);
     Call3(Engine_ActorWalkToAndWait, 8, 0x244, 0x17e);
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 40);
-    {
-        u8 *record = (u8 *)Object_GetById(0);
-        /* FAKEMATCH: a result temporary, not a compound or-assign: the
-         * reference merges the byte into the mask's register, which the
-         * two-address ORR does only when the result is its own object. */
-        u8 merged = (u8)(record[90] | 1);
-
-        record[90] = merged;
-    }
+    Object_GetById(0)->unknown_5a |= 1;
     Engine_ActorFaceDirection(8, 0xc000, 8);
     Engine_ActorFaceDirection(8, 0, 8);
     Call3(Engine_ActorFaceDirection, 8, 0x4000, 8);
@@ -473,8 +436,7 @@ void HaidiaBabi_RunSickbedVisit(void)
  * otherwise it turns, shows MsgHaidiaUnnOhhKyle and then 0x1c7a. */
 void HaidiaBabi_RunActorEightMessageScene(void)
 {
-    s32 record;
-    s32 dream;
+    s32 message;
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x203) != 0) {
@@ -485,10 +447,10 @@ void HaidiaBabi_RunActorEightMessageScene(void)
     } else {
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(40);
-        dream = (s32)MsgHaidiaUnnOhhKyle;
-        Engine_EventSetMessage(dream);
+        message = (s32)MsgHaidiaUnnOhhKyle;
+        Engine_EventSetMessage(message);
         Engine_EventShowMessageAndWait(8, 0, 40);
-        Engine_MessageShowCentered((dream + 1), 1);
+        Engine_MessageShowCentered((message + 1), 1);
     }
     Engine_EventEnd();
 }
@@ -497,14 +459,14 @@ void HaidiaBabi_RunActorEightMessageScene(void)
 void ActorPresentation_SetTwoSceneCells(void)
 {
     {
-        s32 extent = 2;
+        s32 size = 2;
 
-        Map_CopyCellsTo(22, 85, 25, 85, extent, extent);
+        Map_CopyCellsTo(22, 85, 25, 85, size, size);
     }
     {
-        s32 extent = 25;
+        s32 destination = 25;
 
-        Map_CopyCellAttributes(25, 15, 2, 2, extent, extent);
+        Map_CopyCellAttributes(25, 15, 2, 2, destination, destination);
     }
 }
 
@@ -512,7 +474,10 @@ void FieldScene_RunSupplementalSequenceOne(void)
 {
     struct FieldActor *actor;
     struct FieldSprite *sprite;
-    s32 rec7;
+    GlyphTransfer *glyph;
+    /* FAKEMATCH: separate immediate clears select r2 instead of the
+       native r5 zero value before the glyph allocation. */
+    s32 clear;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -521,17 +486,17 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetPosition(18, 0x1e00000, 0xca0000);
     Engine_TaskWait(1);
     Engine_CameraFollowActor(18, 1);
-    rec7 = 0;
+    clear = 0;
     actor = (struct FieldActor *)Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
-    actor->motion_flags = rec7;
+    actor->motion_flags = clear;
     sprite = actor->sprite;
     actor->y.fixed = 0x50000;
-    sprite->part_count = rec7;
+    sprite->part_count = clear;
     sprite->full_color = 0;
     sprite->palette = 0;
-    rec7 = Value2(Engine_HeapAllocate, 17, 0x608);
+    glyph = Engine_HeapAllocate(17, sizeof(*glyph));
     Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
-    Engine_VramLoad(sprite->vram_block, 128, rec7 + 0x400);
+    Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
     Engine_HeapRelease(17);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();
@@ -553,50 +518,57 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_EventRequestExit(22);
 }
 
-void SceneEffect_UpdateObjectByFrameParity(u8 *obj)
+void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object)
 {
     if ((gFrameCount & 2) != 0) {
-        Engine_ObjectSetPartPalettes(obj, 7);
+        Engine_ObjectSetPartPalettes(&object->actor, 7);
     } else {
-        Engine_ObjectSetPartPalettes(obj, 0);
+        Engine_ObjectSetPartPalettes(&object->actor, 0);
     }
     if ((gFrameCount & 15) == 0) {
-        HaidiaBabi_SpawnEffectPair(obj);
+        HaidiaBabi_SpawnEffectPair(object);
     }
 }
 
-void OverlayObject_UpdateOnFrameParity(u8 *obj)
+void OverlayObject_UpdateOnFrameParity(union FieldObject *object)
 {
-    volatile s32 *frames = (volatile s32 *)&gFrameCount;
+    /* FAKEMATCH: retain the existing volatile frame reads; ordinary
+       reads merge the odd-frame test and palette value loads and change
+       their argument registers at the same function extent. */
+    volatile u32 *frame = (volatile u32 *)&gFrameCount;
 
-    if ((*frames & 1) != 0) {
-        Engine_ObjectSetPartPalettes(obj, __umodsi3((s32)((u32)*frames >> 1), 6));
+    if ((*frame & 1) != 0) {
+        Engine_ObjectSetPartPalettes(&object->actor, __umodsi3((s32)(*frame >> 1), 6));
     }
-    if ((*frames & 15) == 0) {
-        HaidiaBabi_SpawnEffectPair(obj);
-    }
-}
-
-void OverlayObject_ApplyRandomSlotOnOddFrames(s32 obj)
-{
-    volatile s32 *frames = (volatile s32 *)&gFrameCount;
-
-    if ((*frames & 1) != 0) {
-        s32 slot = ((u32)*frames >> 1) % 6;
-
-        Engine_ObjectSetPartPalettes(obj, slot);
+    if ((*frame & 15) == 0) {
+        HaidiaBabi_SpawnEffectPair(object);
     }
 }
 
-void SceneEffect_UpdateAnchoredRiseFrame(struct Sparkle *self)
+void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 {
-    struct Sparkle *anchor;
+    /* FAKEMATCH: retain the existing volatile frame reads; ordinary
+       reads merge the odd-frame test and palette value loads and change
+       their argument registers at the same function extent. */
+    volatile u32 *frame = (volatile u32 *)&gFrameCount;
+
+    if ((*frame & 1) != 0) {
+        s32 slot = (*frame >> 1) % 6;
+
+        Engine_ObjectSetPartPalettes(&object->actor, slot);
+    }
+}
+
+void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object)
+{
+    struct FieldActor *self = &object->actor;
+    struct FieldActor *anchor;
     s32 frame;
     s32 amplitude;
 
-    anchor = self->anchor;
-    self->frame = (u16)(self->frame + 1);
-    frame = (s16)self->frame;
+    anchor = &((union PairObject *)object)->link.parent->object.actor;
+    self->unknown_64 = (u16)(self->unknown_64 + 1);
+    frame = (s16)self->unknown_64;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(self);
@@ -604,22 +576,23 @@ void SceneEffect_UpdateAnchoredRiseFrame(struct Sparkle *self)
     }
 
     amplitude = Engine_MathSin(frame << 10);
-    self->amplitude_x = amplitude;
-    self->amplitude_y = amplitude;
-    self->x = anchor->x;
-    self->y += 0x10000;
-    self->z = anchor->z + (0x10000 - amplitude) * 5 + 0x80000;
+    self->scale_x = amplitude;
+    self->scale_y = amplitude;
+    self->x.fixed = anchor->x.fixed;
+    self->y.fixed += 0x10000;
+    self->z.fixed = anchor->z.fixed + (0x10000 - amplitude) * 5 + 0x80000;
 }
 
-void OverlayObject_UpdateArcFromAnchor(struct Sparkle *obj)
+void OverlayObject_UpdateArcFromAnchor(union FieldObject *object)
 {
-    struct Sparkle *anchor;
+    struct FieldActor *obj = &object->actor;
+    struct FieldActor *anchor;
     s32 frame;
     s32 amp;
 
-    anchor = obj->anchor;
-    obj->frame = (u16)(obj->frame + 1);
-    frame = (s16)obj->frame;
+    anchor = &((union PairObject *)object)->link.parent->object.actor;
+    obj->unknown_64 = (u16)(obj->unknown_64 + 1);
+    frame = (s16)obj->unknown_64;
 
     if (frame > 31) {
         Engine_ObjectDispatchRelease(obj);
@@ -627,16 +600,17 @@ void OverlayObject_UpdateArcFromAnchor(struct Sparkle *obj)
     }
 
     amp = Engine_MathSin(frame << 10);
-    obj->amplitude_x = amp;
-    obj->amplitude_y = -amp;
-    obj->x = anchor->x;
-    obj->y += 0x10000;
-    obj->z = anchor->z - (0x10000 - amp) * 5 + 0x100000;
+    obj->scale_x = amp;
+    obj->scale_y = -amp;
+    obj->x.fixed = anchor->x.fixed;
+    obj->y.fixed += 0x10000;
+    obj->z.fixed = anchor->z.fixed - (0x10000 - amp) * 5 + 0x100000;
 }
 
 /* Spawns the linked pair of effect objects above the parent actor and gives the two their update routines and priorities. */
-void HaidiaBabi_SpawnEffectPair(union PairObject *parent)
+void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
 {
+    union PairObject *parent = (union PairObject *)object;
     union PairObject *pair[2];
     union PairObject *child;
     struct AnimationObject *part;
@@ -657,18 +631,18 @@ void HaidiaBabi_SpawnEffectPair(union PairObject *parent)
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = (struct FieldSprite *)part;
-                Object_InitializeMode(sprite, 0);
+                Object_InitializeMode(part, 0);
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                /* FAKEMATCH: a plain byte access; the struct field store
-                 * leaves a dead QImode zero that takes r3 from the +85
-                 * address. */
-                *(u8 *)&sprite->unknown_1d |= 1;
+                /* FAKEMATCH: retain the existing byte view of this lane;
+                   the field store leaves a dead byte zero and moves the
+                   earlier motion/spin zero and address registers. */
+                *(u8 *)&part->display_flags |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
-                ((struct WorldMapOam *)sprite)->size = 2;
+                part->part[0].size = 2;
                 part->entries[0]->frame = 0;
             }
         }
@@ -703,12 +677,12 @@ void FieldScene_RunSingleStep(void)
 
 void FieldScene_RunActor8TwoStep(void)
 {
-    OverlayObject_UpdateOnFrameParity(Object_GetById(8));
+    OverlayObject_UpdateOnFrameParity((union FieldObject *)Object_GetById(8));
 }
 
 void FieldScene_RunStep17(void)
 {
-    OverlayObject_ApplyRandomSlotOnOddFrames(Object_GetById(17));
+    OverlayObject_ApplyRandomSlotOnOddFrames((union FieldObject *)Object_GetById(17));
 }
 
 void FieldScene_RunSixStepSequence17e4(void)

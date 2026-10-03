@@ -28,7 +28,7 @@ Func_08016bdc:
 	bl Func_080167d8
 .L_08016c10:
 	ldr r0, .L_08016c8c
-	bl Party_Check
+	bl SerialRuntime_BeginTransferB
 	ldr r6, .L_08016c94
 .L_08016c18:
 	ldr r3, [r6]
@@ -99,6 +99,6 @@ Func_08016bdc:
 .L_08016c98:
 	.4byte IwramRuntime_Rom + 0x948
 .L_08016c9c:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_08016ca0:
 	.4byte 0x06001000

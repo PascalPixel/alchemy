@@ -1,3 +1,4 @@
+#include "OWNER_STATE.H"
 /* Battle: clear the active and reserve party members' status bytes and stat
    modifiers; ⚓️ adds the reserve members ☀️ does not have.
    Returns int: its epilogue returns through r1. */
@@ -6,7 +7,6 @@
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
 s32 BattleParty_PrepareReserveOwners(u16 *owners);
-struct BattleUnit *Owner_GetState(s32 owner);
 void BattleUnit_Recalculate(s32 owner);
 
 s32 BattleParty_ResetActiveRuntimeFields(void)

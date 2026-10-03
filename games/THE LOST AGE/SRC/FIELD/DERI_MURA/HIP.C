@@ -10,7 +10,7 @@ void DeriMura_TalkHip(void)
     s32 msg;
 
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     msg = (s32)MsgDeriHurtHip;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(12, 0);

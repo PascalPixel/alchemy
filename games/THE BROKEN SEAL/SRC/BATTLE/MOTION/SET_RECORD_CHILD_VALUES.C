@@ -15,20 +15,23 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
     struct AnimationObject *record;
     struct AnimationEntry *child;
     struct AnimationEntry **children;
+    /* Attempts: direct stores or |= 0xff shrink this extent from 94 to 82 bytes. */
+    /* FAKEMATCH: cached compound assignment keeps 94 bytes but changes
+       registers and store order. The cached byte read preserves allocation. */
     u8 mask = 0xff;
-    u8 flags;
+    u8 frame;
 
     while ((record = GetMotionRecord(object, index)) != NULL) {
         children = &record->entries[1];
         child = record->entries[0];
-        flags = child->frame;
-        child->frame = flags | mask;
+        frame = child->frame;
+        child->frame = frame | mask;
         count = record->count;
         child->param = value;
         for (child_index = 1; child_index < count; child_index++) {
             child = *children++;
             child->param = 0;
-            child->frame |= 0xff;
+            child->frame = 0xff;
         }
         index++;
     }

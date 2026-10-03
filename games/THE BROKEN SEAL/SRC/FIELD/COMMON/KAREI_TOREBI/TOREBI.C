@@ -118,24 +118,24 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     s16 room = gGameState.scene;
 
     if (room == (s32)&SceneId_KareiTorebi1) {
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return gKareiTorebiPlacements1Flag93e;
         }
         return gKareiTorebiPlacements1;
     }
 
     if (room == (s32)&SceneId_KareiTorebi3) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return gKareiTorebiPlacements3Flag950;
         }
         return gKareiTorebiPlacements3;
     }
 
     if (room == (s32)&SceneId_KareiTorebi2) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return gKareiTorebiPlacements2Flag950;
         }
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return gKareiTorebiPlacements2Flag93e;
         }
         return gKareiTorebiPlacements2;
@@ -165,24 +165,24 @@ const struct SceneEvent *Scene_GetEvents(void)
     s16 scene = gGameState.scene;
 
     if (scene == (s32)&SceneId_KareiTorebi1) {
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return gKareiTorebiEvents1Flag93e;
         }
         return gKareiTorebiEvents1;
     }
 
     if (scene == (s32)&SceneId_KareiTorebi3) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return gKareiTorebiEvents3Flag950;
         }
         return gKareiTorebiEvents3;
     }
 
     if (scene == (s32)&SceneId_KareiTorebi2) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return gKareiTorebiEvents2Flag950;
         }
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             return gKareiTorebiEvents2Flag93e;
         }
         return gKareiTorebiEvents2;
@@ -195,7 +195,7 @@ void KareiTorebi_AskGoToTolbi(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiWantGoToTolbi);
-    Event_AskYesNo(8, 0);
+    Engine_EventAskYesNo(8, 0);
     Engine_EventEnd();
 }
 
@@ -314,15 +314,15 @@ void FieldScene_RunActorThirteenFlagDialogue(void)
 {
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x8A7) != 0) {
+    if (Engine_GameFlagIsSet(0x8A7) != 0) {
         Engine_EventSetMessage((s32)MsgKareiBoardWaitSetSail);
         Engine_EventOpenMessage(13, 0);
-    } else if (GameFlag_IsSet(0x8A5) != 0) {
+    } else if (Engine_GameFlagIsSet(0x8A5) != 0) {
         Engine_EventSetMessage((s32)MsgKareiHaveTicketsGiveHim);
-        Event_ShowMessage(13, 0);
+        Engine_EventShowMessage(13, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKareiAfterHandingOverTicket);
-        Event_ShowMessage(13, 0);
+        Engine_EventShowMessage(13, 0);
     }
 
     Engine_EventEnd();
@@ -409,7 +409,7 @@ void KareiTorebi_TalkScaryTrip(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiHearScaryTrip);
-    Event_AskYesNo(8, 0);
+    Engine_EventAskYesNo(8, 0);
     Engine_EventEnd();
 }
 
@@ -417,7 +417,7 @@ void KareiTorebi_TalkSeasickTourists(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiTouristsLookUpset);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -585,7 +585,7 @@ void SceneState_SetRuntimeWord448To521AndSend303(void)
     s32 *slot = (s32 *)(state + 0x1C0);
 
     *slot = 0x209;
-    GameFlag_Clear(0x12F);
+    Engine_GameFlagClear(0x12F);
 }
 
 void FieldScene_PlaceSlots14And15(void)
@@ -596,9 +596,9 @@ void FieldScene_PlaceSlots14And15(void)
     pos14 = ((s32 *)Object_GetById(14))[2] >> 20;   /* [r0,#8], asrs #20 */
     pos15 = ((s32 *)Object_GetById(15))[2] >> 20;
 
-    Map_CopyCellAttributes(5, 12, 5, 1, 5, 11);
-    Map_CopyCellAttributes(1, 0, 1, 1, pos15, 11);
-    Map_CopyCellAttributes(1, 0, 1, 1, pos14, 11);
+    Engine_MapCopyCellAttributes(5, 12, 5, 1, 5, 11);
+    Engine_MapCopyCellAttributes(1, 0, 1, 1, pos15, 11);
+    Engine_MapCopyCellAttributes(1, 0, 1, 1, pos14, 11);
 
     SceneActor_SetMode3AndFlagBit1(14);
     SceneActor_SetMode3AndFlagBit1(15);

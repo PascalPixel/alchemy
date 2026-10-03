@@ -1,26 +1,29 @@
 /*
- * Draft: UiWindow_ClearSlots does not yet match; ⚓️ keeps the tilemap offset in r4, the counter in r1 and zero in r0, and stores the word before the halfword.
- * Links as recon/tla/raw/0803cba8.s.
+ * Draft: UiWork_ClearValueNameTables; raw/0803cca8.s spans 40 bytes.
+ * The eight u32 values and u16 names are cleared together, value first.
+ * Native arrays: JA 0x114c/0x116c; international 0x134c/0x136c. All six checked.
+ * Prior private-pointer UiWindow_ClearSlots form: EN 510/16; its old header
+ * incorrectly named raw/0803cba8.s. Retained trial; not a match claim.
+ * Initial maintained-model/TBS loop: EN 160/2, 38-byte body versus 40-byte
+ * listing. Root load and offset-constant load are reversed; native has two
+ * trailing alignment bytes. Sole named-array cursor retry: 495/14; retained
+ * the initial indexed form. All six have the same remaining order changes
+ * and extent difference. No new device or complete-extent match.
  */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
+#include "WINDOW.H"
 
-/* Clears the eight window slots kept after the window tilemap: a word and a
-   halfword each. */
-void UiWindow_ClearSlots(void)
+void UiWork_ClearValueNameTables(void)
 {
-    u8 *tiles;
-    u16 *flags;
-    u32 *words;
-    s32 i;
+    s32 no;
+    struct UiRenderWork *work;
 
-    tiles = Ram_HeapSlots->window_tiles;
-    flags = (u16 *)(tiles + 0x136c);
-    i = 0;
-    words = (u32 *)(tiles + 0x134c);
+    work = (struct UiRenderWork *)Ram_HeapSlots->window_tiles;
+    no = 0;
     do {
-        i++;
-        *words++ = 0;
-        *flags++ = 0;
-    } while (i != 8);
+        work->values[no] = 0;
+        work->names[no] = 0;
+        no++;
+    } while (no != 8);
 }

@@ -513,7 +513,7 @@ void ArutinYama_RunLeapSequence(void)
     struct FieldActor *record;
     u32 n;
 
-    actor = (union TimedActor *)Actor_Get(10);
+    actor = (union TimedActor *)Object_GetById(10);
     Engine_EventBegin();
     ObjectMotion_EnableActionAndResetMotion(10);
     Call2(Engine_CameraSetSpeed, 0x26666, 0x4ccc);

@@ -58,9 +58,9 @@ Sound_LoadPresetParameters:
 	.thumb_func
 Func_0200192c:
 	overlay_veneer Func_08000380
-	.global Party_Check
+	.global SerialRuntime_BeginTransferB
 	.thumb_func
-Party_Check:
+SerialRuntime_BeginTransferB:
 	overlay_veneer Party_CheckFar
 	.global Func_0200193c
 	.thumb_func

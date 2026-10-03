@@ -1,25 +1,17 @@
-/*
- * Draft: SerialRuntime_RemoveIrqHandlers does not yet match; 3 halfwords differ from ☀️'s C, first at +0x26 (data).
- * Links as recon/tla/raw/080164e8.s.
+/* The ordinary three-statement remover retains the old standalone result:
+ * 42/44 bytes including the pool, score 100; only the final zero halfword
+ * at +0x2a is absent. The empty blocks and temporary casts were redundant.
+ * In an ordinary SIO_INTR translation unit followed by the exact status
+ * wait, the compiler aligns that function to +44 and emits the missing
+ * halfword naturally. Complete 96-byte pair and relocations match the raw
+ * owners under all six edition routes; all six own-ROM spans also agree.
+ * No explicit padding or steering is needed. Adoption is pending.
  */
 #include "SERIAL_RUNTIME.H"
 
-extern u8 gSerialExchangeActive[];
-
-void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
-
 void SerialRuntime_RemoveIrqHandlers(void)
 {
-    s16 *work;
-    s32 handler;
-
-    work = (s16 *)((u32)&gSerialExchangeActive);
-    do {
-        do {
-        } while (0);
-        *work = 0;
-        Runtime_SetIrqHandler(7, 0, (InterruptHandler)(handler = 0));
-    } while (0);
-    handler = 6;
-    Runtime_SetIrqHandler(handler, 0, 0);
+    gSerialExchangeActive = 0;
+    Runtime_SetIrqHandler(7, 0, 0);
+    Runtime_SetIrqHandler(6, 0, 0);
 }

@@ -7,6 +7,7 @@
    public hardware documentation names them. */
 
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)
+#define REG_DISPSTAT (*(volatile u16 *)0x04000004)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006)
 #define REG_BG2CNT (*(volatile u16 *)0x0400000c)
 

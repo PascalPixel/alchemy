@@ -225,11 +225,11 @@ void FieldScene_CallHelper14d0(void)
 
 void FieldScene_RunActor232SceneWhenFlag923Or922(void)
 {
-    if (GameFlag_IsSet(FLAG_MAST_923) != 0 || GameFlag_IsSet(FLAG_MAST_922) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_MAST_923) != 0 || Engine_GameFlagIsSet(FLAG_MAST_922) != 0) {
         Engine_EventBegin();
         Engine_ItemShowFound(ITEM_ANCHOR_CHARM, 3);
         Engine_PartyGiveItem(ITEM_ANCHOR_CHARM, 0);
-        GameFlag_Set(FLAG_MAST_924);
+        Engine_GameFlagSet(FLAG_MAST_924);
         Engine_EventEnd();
     }
 }
@@ -825,7 +825,7 @@ s32 SceneData_GetValueByFirstSetFlag(u32 a)
         break;
     }
     for (i = 0; i <= 8; i++) {
-        if (GameFlag_IsSet(base + i) != 0)
+        if (Engine_GameFlagIsSet(base + i) != 0)
             return FuneHobashira_FlagValues[i];
     }
     return 0;

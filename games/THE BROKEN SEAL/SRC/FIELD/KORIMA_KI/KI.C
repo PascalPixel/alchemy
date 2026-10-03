@@ -73,7 +73,7 @@ void PaletteScene_Initialize(void)
 
     scene = *(void **)&gEventWork;
     Engine_EventBegin();
-    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
     Engine_EventRequestExit(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
     Engine_EventEnd();
 }
@@ -162,24 +162,24 @@ void FieldScene_RunScene395_02000158(void)
 void PaletteScene_RunActorNineBranch(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x845) != 0) {
+    if (Engine_GameFlagIsSet(0x845) != 0) {
         Engine_EventSetMessage((s32)MsgKorimaMustHorribleBeyondRiverAm);
     } else {
         Engine_EventSetMessage((s32)MsgKorimaHealingWatersMercuryLighthouseMight);
     }
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     Engine_EventEnd();
 }
 
 void PaletteScene_RunActorEightBranch(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x845) != 0) {
+    if (Engine_GameFlagIsSet(0x845) != 0) {
         Engine_EventSetMessage((s32)MsgKorimaKnowCannotStopButPlease);
     } else {
         Engine_EventSetMessage((s32)MsgKorimaPeopleKolimaForgiveMe);
     }
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }
 
@@ -187,7 +187,7 @@ void PaletteScene_RunFlaggedBranch(void)
 {
     Engine_EventBegin();
     Battle_ResetEffectCounter();
-    if (GameFlag_IsSet(0x844) == 0) {
+    if (Engine_GameFlagIsSet(0x844) == 0) {
         RunEventScript01();
     } else {
         PaletteScene_RunActorTransitionSequence();
@@ -722,7 +722,7 @@ void PaletteScene_SpawnEffect(void)
 
     phase = gFrameCount & 3;
     if (phase != 0) return;
-    if (gKorimaKiSparkSound != 0) Audio_PlayCue(200);
+    if (gKorimaKiSparkSound != 0) Engine_AudioPlayCue(200);
     effect = (struct PaletteEffect *)Engine_ObjectCreate(26, spawn_x, spawn_y, spawn_z);
     if (effect == 0) return;
     sprite = effect->sprite;
@@ -740,7 +740,7 @@ void PaletteScene_SpawnEffect(void)
     effect->mode = phase;
     Object_SetMode(effect, 2);
     Engine_ObjectSetPosition((struct FieldActor *)effect, target_x, 0, target_z);
-    Object_SetScript(effect, gKorimaKiEffectScript);
+    Engine_ObjectSetScript(effect, gKorimaKiEffectScript);
 }
 
 /* Steps the shared transition counter, firing at 0 and at 20 and wrapping at
@@ -973,7 +973,7 @@ void PaletteScene_AdjustPaletteWindow(s32 adjustment)
         next_phase = phase + 0x10000;
         phase = next_phase;
     } while (next_phase <= 0x00df0000);
-    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); ColorBuffer_ApplyTarget(0x10000, 0);
+    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
 /*

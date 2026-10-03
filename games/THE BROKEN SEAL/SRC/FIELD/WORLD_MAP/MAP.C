@@ -63,7 +63,7 @@ void StoryProgress_TriggerEvent0808(void)
     s32 *level = (s32 *)(workspace + 428);
 
     if (*progress >= Math_Divide(*level * 9, 10)) {
-        if ((u32)Random_Next() < 0x8000) {
+        if ((u32)Engine_RandomNext() < 0x8000) {
             BattleFx_SetPhaseRequest(0x808, 3);
             *(s32 *)(workspace + 424) = 0;
         } else {
@@ -140,9 +140,9 @@ void StoryActor_ConfigureSpawnedObject(u8 *actor)
         s32 x = *(s32 *)(actor + 0x08);
         s32 y = *(s32 *)(actor + 0x0c);
         s32 z = *(s32 *)(actor + 0x10);
-        spawned_actor = Object_Create(0x11d, x, y, z);
+        spawned_actor = Engine_ObjectCreate(0x11d, x, y, z);
     }
-    Audio_PlayCue(0xf6);
+    Engine_AudioPlayCue(0xf6);
     if (spawned_actor == 0) {
         return;
     }
@@ -224,7 +224,7 @@ u8 *WorldMap_GetExits(void)
 s32 StoryActor_ApplyFlaggedMode(u8 *actor)
 {
     StoryActor_ApplyMapRotation();
-    if (GameFlag_IsSet(0x847) != 0) {
+    if (Engine_GameFlagIsSet(0x847) != 0) {
         Object_SetMode(actor, 2);
     }
     return 1;
@@ -262,8 +262,8 @@ s32 StoryActor_ResetPosition(u8 *actor)
         zero = 0;
         *mode_flags = zero;
     }
-    if (GameFlag_IsSet(0x8A0) != 0) {
-        GameFlag_Set(0x2f1);
+    if (Engine_GameFlagIsSet(0x8A0) != 0) {
+        Engine_GameFlagSet(0x2f1);
         *(s32 *)(actor + 8) = zero;
         *(s32 *)(actor + 12) = zero;
     }
@@ -360,16 +360,16 @@ void StoryScene_SetBranchValueFromX(
     struct Object *subject_actor;
     struct Object *other_actor;
 
-    subject_actor = Actor_Get(actor_object - 0x64);
+    subject_actor = Object_GetById(actor_object - 0x64);
     scene_table = (s16 *)&gGameState;
-    other_actor = Actor_Get(*(s32 *)&scene_table[250]);
+    other_actor = Object_GetById(*(s32 *)&scene_table[250]);
     scene_state = *(u8 **)&gEventWork;
     if (other_actor->x < subject_actor->x) {
         *(u16 *)(scene_state + 0x170) = val_lower;
     } else {
         *(u16 *)(scene_state + 0x170) = val_other;
     }
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
 }
 
 /* The same branch value, chosen on z instead of x. */
@@ -383,16 +383,16 @@ void StoryScene_SetBranchValueFromZ(
     struct Object *subject_actor;
     struct Object *other_actor;
 
-    subject_actor = Actor_Get(actor_object - 0x64);
+    subject_actor = Object_GetById(actor_object - 0x64);
     scene_table = (s16 *)&gGameState;
-    other_actor = Actor_Get(*(s32 *)&scene_table[250]);
+    other_actor = Object_GetById(*(s32 *)&scene_table[250]);
     scene_state = *(u8 **)&gEventWork;
     if (other_actor->z < subject_actor->z) {
         *(u16 *)(scene_state + 0x170) = val_lower;
     } else {
         *(u16 *)(scene_state + 0x170) = val_other;
     }
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
 }
 
 void SceneState_SetValues130_6_47(void)
@@ -445,7 +445,7 @@ void MapActor_UpdateContact(void)
     s32 leader_reach;
     u32 i;
 
-    leader = Actor_Get(gGameState.selected_actor);
+    leader = Object_GetById(gGameState.selected_actor);
     leader_reach = leader->sprite->scale * leader->radius;
     work = gEventWork;
     actor = work->view_center;
@@ -472,7 +472,7 @@ void MapActor_UpdateContact(void)
             continue;
         }
         actor->active = 1;
-        if (gDebugMode[0] != 0 && GameFlag_IsSet(FLAG_CONTACT_PAUSED) != 0) {
+        if (gDebugMode[0] != 0 && Engine_GameFlagIsSet(FLAG_CONTACT_PAUSED) != 0) {
             continue;
         }
         scale = actor->sprite->scale;
@@ -484,7 +484,7 @@ void MapActor_UpdateContact(void)
         if (dx + (actor->z.fixed - leader->z.fixed < 0 ? leader->z.fixed - actor->z.fixed
                                                        : actor->z.fixed - leader->z.fixed)
                 < reach
-            && GameFlag_IsSet(FLAG_CONTACT_BLOCKED) == 0) {
+            && Engine_GameFlagIsSet(FLAG_CONTACT_BLOCKED) == 0) {
             work->touched_trigger = i + CONTACT_TRIGGER_BASE;
         }
     }
@@ -492,10 +492,10 @@ void MapActor_UpdateContact(void)
 
 void SceneState_ApplyFlag85aBranch(void)
 {
-    if (GameFlag_IsSet(0x85a) == 0) {
+    if (Engine_GameFlagIsSet(0x85a) == 0) {
         Engine_EventRequestExit(101);
     } else {
-        Audio_PlayCue(123);
+        Engine_AudioPlayCue(123);
         Engine_EventRequestExit(3);
     }
 }

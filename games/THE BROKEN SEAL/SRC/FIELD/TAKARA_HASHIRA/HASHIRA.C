@@ -13,7 +13,7 @@ void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 /* Declared without a prototype; the call site passes one argument. */
 void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    struct FieldActor *obj = Object_Create(arg3, arg0, arg1, arg2);
+    struct FieldActor *obj = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
 
     if (obj != NULL) {
         struct FieldSprite *rec = obj->sprite;
@@ -34,7 +34,7 @@ void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
  * object's draw bits select the second layer. */
 void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
 {
-    struct FieldActor *effect = Object_Create(kind, x, y, z);
+    struct FieldActor *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         struct FieldSprite *sprite = effect->sprite;

@@ -5,7 +5,7 @@
 
 void Owner_RecalculateRatios(s32);
 
-s16 Owner_AdjustFirstValue(s32 owner, s32 delta)
+s32 Owner_AdjustFirstValue(s32 owner, s32 delta)
 {
     struct BattleUnit *state = Owner_GetState(owner);
     s32 cur = state->hp;

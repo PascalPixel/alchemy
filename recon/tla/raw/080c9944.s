@@ -152,11 +152,11 @@ Game_ResetForNewGame:
 	movs r0, #1
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	bl Func_08014c6c
 	bl Func_08014b70
 	b .L_080c9a98

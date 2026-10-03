@@ -1,5 +1,38 @@
+/* 2026-10-03 typed-owner attempt; this supersedes the old matching scores.
+ * Native EN extent [080b7738,080b78e4): 428 bytes including the pool.
+ * Retained ordinary typed draft: 420 bytes, frame 36 versus native 44;
+ * score 5737 (52 register, 7 stack, 14 operand, 6 reordered, 22 inserted,
+ * 26 deleted). All eight call relocations and the gCameraWork pool word
+ * resolve to the native targets; complete .text is not byte-identical.
+ *
+ * Replaced five private views with BattleObjectSlot, MotionObject,
+ * AnimationObject and SpriteEntry. The old hidden word is MotionObject.y.
+ * Effect-entry byte 6 and AnimationObject.dirty retain their byte widths;
+ * camera yaw is still tested as signed s16. The hardware priority update
+ * uses a byte view anchored in the existing first AnimationSpritePart.
+ * Only its attribute-2 priority bits change; tile and palette bits survive.
+ * Canonical getter, list and cycle declarations come from their owners.
+ * Battle_RunEncounter schedules this void(void) callback and uses no result.
+ *
+ * Bounded ordinary forms, approved TBS compiler and era assembler, EN:
+ * T0 typed six-bit attr, mask ~3: 484 bytes, score 6757, frame 36.
+ * T1 finite six-bit mask 0x3c: 474 bytes, score 6792, frame 36.
+ * T2 byte attribute view and slot-owned SpriteEntry: 416 bytes, score 5592.
+ * T0-T2 carried the old icon register bindings; no new bindings were added.
+ * T3 requested check without those bindings: 420 bytes, score 5737.
+ * T3 is retained: old pin evidence does not establish a matching typed
+ * model, and the new pins also remove an instruction. No pin remains.
+ *
+ * STOP: remaining differences include the smaller real frame, icon-context
+ * dirty-store setup/order, priority-value lifetimes and side-loop allocation.
+ * No unread storage, replacement object, shared-header edit, new compiler
+ * option or routing was introduced. The older attempts below remain S4
+ * evidence only; no adoption or all-edition matching credit is claimed.
+ */
 #include "BATTLE_PRESENTATION.H"
 #include "BATTLE_PARTY.H"
+#include "MOTION_OBJECT.H"
+#include "ANIMSPR.H"
 /* 2026-10-02 bounded register-lifetime experiment.
  * Baseline immutable score: 1175 (49 register-only, 2 operand,
  * 8 reordered, 2 inserted, 2 deleted); the older all-register summary
@@ -65,41 +98,8 @@
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 
-struct SpriteRecord {
-    u8 unknown_00[9];
-    u8 unknown_09_0 : 2;
-    u8 priority : 2;
-    u8 unknown_09_4 : 4;
-};
-
-struct ActorObject {
-    u8 unknown_00[0x0c];
-    s32 hidden;
-    u8 unknown_10[0x40];
-    void *records;
-    u8 record_kind;
-};
-
-struct IconEffect {
-    u8 unknown_00[6];
-    u8 state;
-};
-
-struct IconContext {
-    u8 unknown_00[0x25];
-    u8 dirty;
-};
-
-struct ActorSlot {
-    struct ActorObject *object;
-    u8 unknown_04[0x20];
-    struct IconEffect *icon_effect;
-};
-
-
-struct ActorSlot *GetBattleObjectSlot(s32 object_id);
-struct IconContext *GetMotionRecord(struct ActorObject *object, s32 record_index);
-
+/* Cycle status icons, update the effect entry from a unit's vertical
+ * position, and order the two sides around the camera. */
 void Func_080b7738(void)
 {
     u16 ids[14];
@@ -108,34 +108,31 @@ void Func_080b7738(void)
     s32 j;
     s32 count;
 
-    BattleParty_ListActorIds(3, (u16 *)ids);
+    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
     /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop
      * pass off it; as a for loop it becomes a pointer walk. */
     i = 0;
-    if (ids[i] != 0xff) {
+    if (ids[i] != BATTLE_UNIT_LIST_END) {
 again:
         {
-            struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
 
             if (slot != 0) {
-                /* FAKEMATCH: the icon scan needs its used object in r5. */
-                register struct ActorObject *object asm("r5") = slot->object;
+                struct MotionObject *object = slot->object;
 
-                BattleStatusIcon_Cycle((struct BattleObjectSlot *)slot);
-                if (slot->icon_effect != 0) {
-                    /* FAKEMATCH: keep the used call result in r0, as measured. */
-                    register struct IconContext *context asm("r0") = GetMotionRecord(object, 0);
+                BattleStatusIcon_Cycle(slot);
+                if (slot->effect_entry != 0) {
+                    struct AnimationObject *context = GetMotionRecord(object, 0);
 
                     if (context != 0) {
-                        /* FAKEMATCH: the used icon effect shares r2 after the call. */
-                        register struct IconEffect *effect asm("r2");
+                        struct SpriteEntry *effect;
                         s32 state = 0;
 
-                        if (object->hidden != 0)
+                        if (object->y != 0)
                             state = 9;
-                        effect = slot->icon_effect;
-                        if (effect->state != state) {
-                            effect->state = state;
+                        effect = slot->effect_entry;
+                        if (effect->priority != state) {
+                            effect->priority = state;
                             context->dirty = 1;
                         }
                     }
@@ -143,7 +140,7 @@ again:
             }
         }
         i++;
-        if (i <= 13 && ids[i] != 0xff)
+        if (i <= 13 && ids[i] != BATTLE_UNIT_LIST_END)
             goto again;
     }
     if ((s16)gCameraWork->yaw >= 0) {
@@ -156,24 +153,33 @@ again:
     {
         s32 value;
 
-        count = BattleParty_ListActorIds(1, (u16 *)ids);
+        count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
         value = priority[0];
         for (i = 0; i < count; i++) {
-            struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
 
             if (slot != 0) {
-                struct ActorObject *object = slot->object;
+                struct MotionObject *object = slot->object;
 
-                switch (object->record_kind & 15) {
+                switch (object->record_storage_kind & 15) {
                 case 1:
-                    ((struct SpriteRecord *)object->records)->priority = value;
+                {
+                    struct AnimationObject *record = object->records;
+                    u8 *attributes = (u8 *)&record->part[0];
+
+                    /* Attribute 2: priority is bits 2-3 of its high byte. */
+                    attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
                     break;
+                }
                 case 2:
                     for (j = 0; j < 4; j++) {
-                        struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+                        struct AnimationObject *record = ((struct AnimationObject **)object->records)[j];
 
-                        if (record != 0)
-                            record->priority = value;
+                        if (record != 0) {
+                            u8 *attributes = (u8 *)&record->part[0];
+
+                            attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
+                        }
                     }
                     break;
                 }
@@ -183,24 +189,33 @@ again:
     {
         s32 value;
 
-        count = BattleParty_ListActorIds(2, (u16 *)ids);
+        count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
         value = priority[1];
         for (i = 0; i < count; i++) {
-            struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
 
             if (slot != 0) {
-                struct ActorObject *object = slot->object;
+                struct MotionObject *object = slot->object;
 
-                switch (object->record_kind & 15) {
+                switch (object->record_storage_kind & 15) {
                 case 1:
-                    ((struct SpriteRecord *)object->records)->priority = value;
+                {
+                    struct AnimationObject *record = object->records;
+                    u8 *attributes = (u8 *)&record->part[0];
+
+                    /* Attribute 2: priority is bits 2-3 of its high byte. */
+                    attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
                     break;
+                }
                 case 2:
                     for (j = 0; j < 4; j++) {
-                        struct SpriteRecord *record = ((struct SpriteRecord **)object->records)[j];
+                        struct AnimationObject *record = ((struct AnimationObject **)object->records)[j];
 
-                        if (record != 0)
-                            record->priority = value;
+                        if (record != 0) {
+                            u8 *attributes = (u8 *)&record->part[0];
+
+                            attributes[9] = (attributes[9] & ~0x0c) | ((value & 3) << 2);
+                        }
                     }
                     break;
                 }

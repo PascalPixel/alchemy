@@ -703,12 +703,10 @@ BattleFx_ScheduleRatioTransitionFar:
 	.thumb_func
 Event_WaitForDisplayField358ClearFar:
 	overlay_veneer Event_WaitForDisplayField358Clear
-	.global BattleFx_FindConditionResourceFar
-	.global Func_0808a5d0
+	.global Scene_GetAreaNameIndexFar
 	.thumb_func
-BattleFx_FindConditionResourceFar:
-Func_0808a5d0:
-	overlay_veneer BattleFx_FindConditionResource
+Scene_GetAreaNameIndexFar:
+	overlay_veneer Scene_GetAreaNameIndex
 	.global ObjectMotion_SetActionCallbackFar
 	.thumb_func
 ObjectMotion_SetActionCallbackFar:

@@ -2,11 +2,7 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
 #include "TYPES.H"
-
-struct ObjectValueSource {
-    u8 unknown_00[0x28];
-    const s16 *value;
-};
+#include "ANIMSPR.H"
 
 struct ObjectValueTable {
     u8 unknown_00[0x14];
@@ -27,7 +23,7 @@ s32 ObjectTable_ReadActiveValue(s32 key)
         gEventWork->objects[(u32)key & 0x0fff];
 
     if (entry != 0 && entry->animation_kind == 1)
-        result = *((struct ObjectValueSource *)entry->animation)->value;
+        result = ((struct AnimationObject *)entry->animation)->entries[0]->anim_id;
     return result;
 }
 
@@ -38,7 +34,7 @@ s32 ObjectTable_FindActiveByValue(s32 value)
     s32 index = 8;
     struct ObjectRuntime *object = state->objects[index];
 
-    if (object != 0 && object->animation_kind == 1 && *((struct ObjectValueSource *)object->animation)->value == value) {
+    if (object != 0 && object->animation_kind == 1 && ((struct AnimationObject *)object->animation)->entries[0]->anim_id == value) {
         result = index;
     } else {
     next:
@@ -46,7 +42,7 @@ s32 ObjectTable_FindActiveByValue(s32 value)
         if (index <= 65) {
             object = state->objects[index];
             if (object == 0 || object->animation_kind != 1 ||
-                *((struct ObjectValueSource *)object->animation)->value != value)
+                ((struct AnimationObject *)object->animation)->entries[0]->anim_id != value)
                 goto next;
             result = index;
         }

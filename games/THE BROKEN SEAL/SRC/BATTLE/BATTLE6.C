@@ -8,27 +8,7 @@
 #include "GAME_STATE.H"
 #include "BATTLE_UNIT.H"
 #include "MOTION_OBJECT.H"
-
-struct Item0808e0b0 {
-    u8 padding0[5];
-    u8 value;
-    u8 padding6[10];
-    void *field_10;
-};
-
-struct Inner0808e0b0 {
-    u8 padding0[37];
-    u8 dirty;
-    u8 padding26;
-    u8 cnt;
-    struct Item0808e0b0 *items[1];
-};
-
-struct Outer0808e0b0 {
-    u8 padding0[80];
-    struct Inner0808e0b0 *state;
-    u8 mode;
-};
+#include "ANIMSPR.H"
 
 extern u32 gFrameCount;
 extern u8 Animation_ChildPaletteCycle[];
@@ -127,30 +107,30 @@ s32 BattleFx_RunEventAction(void *, s32, s32);
 void FieldEvent_RunTypeHandler(void);
 void EffectRuntime_StopCurrentObject(void);
 
-void Animation_ApplyChildPalette(struct Outer0808e0b0 *obj, s32 palette)
+void Animation_ApplyChildPalette(struct MotionObject *obj, s32 palette)
 {
-    struct Inner0808e0b0 *state;
-    struct Item0808e0b0 **p;
-    struct Item0808e0b0 *current;
+    struct AnimationObject *state;
+    struct AnimationEntry **p;
+    struct AnimationEntry *current;
     s32 cnt;
     s32 replacement;
     u8 n;
 
-    if ((obj->mode & 15) == 1) {
-        state = obj->state;
+    if ((obj->record_storage_kind & 15) == 1) {
+        state = obj->records;
         replacement = palette - 1;
         if (palette == 0)
             replacement = Animation_ChildPaletteCycle[(gFrameCount >> 1) & 7];
 
-        n = state->cnt;
+        n = state->count;
         if (n != 0) {
-            p = state->items;
+            p = state->entries;
             cnt = n;
             do {
                 current = *p++;
-                if (current != 0 && current->field_10 != 0 &&
-                    current->value != 15)
-                    current->value = replacement;
+                if (current != 0 && current->script != 0 &&
+                    current->param != 15)
+                    current->param = replacement;
                 cnt--;
             } while (cnt != 0);
         }

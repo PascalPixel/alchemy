@@ -5,6 +5,7 @@
 #include "DMA.H"
 #include "GAME_STATE.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
 
 struct BattleTargetCandidate { u8 pad00[4]; u16 flags; };
 
@@ -250,12 +251,12 @@ u32 BattleFx_HasTrigger(u16 effectId)
 
 void ObjectMotion_SnapToTerrain(void *object)
 {
+    struct ObjectRuntime *state = object;
     s32 height;
 
-    height = Map_GetTerrainHeightFar(0, *(s32 *)((u8 *)object + 8),
-        *(s32 *)((u8 *)object + 0x10));
-    *(s32 *)((u8 *)object + 0x0c) = height;
-    *(s32 *)((u8 *)object + 0x14) = height;
+    height = Map_GetTerrainHeightFar(0, state->x, state->z);
+    state->y = height;
+    state->terrain_height = height;
 }
 
 /*

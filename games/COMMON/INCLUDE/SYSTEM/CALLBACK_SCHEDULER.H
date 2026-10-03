@@ -2,6 +2,13 @@
 #define ALCHEMY_CALLBACK_SCHEDULER_H
 
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
+
+/* TLA expanded the same task record to twenty-four entries. */
+enum SchedulerTaskLimits {
+    SCHEDULER_TBS_TASK_COUNT = 20,
+    SCHEDULER_TLA_TASK_COUNT = 24
+};
 
 struct SchedulerTask {
     u32 callback;
@@ -10,11 +17,19 @@ struct SchedulerTask {
     u8 reserved;
 };
 
+LAYOUT_SIZE_GUARD(SchedulerTask_Size, struct SchedulerTask, 8);
+LAYOUT_OFFSET_GUARD(SchedulerTask_State, struct SchedulerTask, state, 4);
+LAYOUT_OFFSET_GUARD(SchedulerTask_Mask, struct SchedulerTask, mask, 6);
+
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
 
 extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerTaskCount;
 extern struct SchedulerTask gSchedulerTaskTable[];
+
+void Runtime_InvokeCallbacksByKey(s32 key);
+void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
+void Scheduler_ScheduleCallbackBAfterFrames(void);
 
 void Scheduler_ResetTaskTable(void);
 void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count);

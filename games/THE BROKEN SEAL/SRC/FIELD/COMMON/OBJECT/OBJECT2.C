@@ -85,11 +85,9 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries)
 {
-    /* FAKEMATCH: the first shortcut is read through a volatile field. That keeps
-       its read one zero-extended ldrh from the state base plus 0x220; a plain
-       read is folded into the address and combined into sign-extending shifts.
-       Taking its volatile member address shrinks this module by eight bytes
-       in all six TBS editions, so the existing view is kept. */
+    /* FAKEMATCH: keep the existing volatile shortcut view. The canonical
+       member-address attempt changes this module from 306 to 298 bytes and
+       the shortcut function from 132 to 124 bytes in all six editions. */
     s32 i;
     u16 first;
 

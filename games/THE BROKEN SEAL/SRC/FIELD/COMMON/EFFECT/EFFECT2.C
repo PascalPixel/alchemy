@@ -423,7 +423,7 @@ void BattleFx_StartTwelveFrameBlend(void)
     BattleFx_BuildBuffer(0x10003, buffers, work, 1);
     BattleFx_BuildBuffer(0x10005, buffers, work + 0xa80, 1);
     BattleFx_InterpolateBuffers((s16 *)(work + 0xa80), (s16 *)work, (s16 *)(work + 0x1500), 12);
-    BattleFx_BuildBuffer((s32)work, 0, buffers->buffer_e00, 1);
+    BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
     /* FAKEMATCH: the halfword constants pass through an int so GCC builds them
        with mov instead of loading them from the pool, and the block pointer
        itself is advanced to the second count. */
@@ -478,7 +478,7 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     target = work + 0xa80;
     BattleFx_BuildBuffer(to, buffers, target, 1);
     BattleFx_InterpolateBuffers((s16 *)target, (s16 *)work, (s16 *)(work + 0x1500), 12);
-    BattleFx_BuildBuffer((s32)work, 0, buffers->buffer_e00, 1);
+    BattleFx_BuildBuffer((s32)work, 0, buffers->target, 1);
     frames = (u16 *)(work + 0x1f80);
     /* FAKEMATCH: the halfword constants pass through an int so GCC builds
        them with mov instead of loading them from the pool. */

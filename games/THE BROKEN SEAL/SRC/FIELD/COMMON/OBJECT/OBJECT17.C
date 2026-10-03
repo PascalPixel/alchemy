@@ -7,6 +7,7 @@
 #include "GAME_STATE.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "FIELD_SPRITE.H"
+#include "ANIMSPR.H"
 
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 void *ObjectTable_Get(u32 object);
@@ -47,11 +48,6 @@ extern const u8 ObjectMotion_TurnTowardLinkedScript[];
 extern const u8 ObjectMotion_ResetActionScript[];
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
-
-struct FacingRecord {
-    u8 unknown_00[0x28];
-    s16 *id;
-};
 
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 {
@@ -277,7 +273,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
     }
     if (found == NULL)
         return NULL;
-    if (*((struct FacingRecord *)found->animation)->id != id)
+    if (((struct AnimationObject *)found->animation)->entries[0]->anim_id != id)
         return NULL;
     return found;
 }

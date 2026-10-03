@@ -1,7 +1,8 @@
 #include "TYPES.H"
 #include "DMA.H"
 
-extern u8 Data_030000e0[];
+/* Same fourteen handler pointers written by Runtime_SetIrqHandler. */
+extern void (*Data_030000e0[14])(void);
 
 /* IWRAM start, where the runtime (SYSTEM/RUNTIME.S) is copied and the
    interrupt vector points. */

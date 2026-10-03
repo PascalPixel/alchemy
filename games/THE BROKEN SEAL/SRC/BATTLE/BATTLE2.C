@@ -10,6 +10,7 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_PRESENTATION.H"
 #include "GAME_STATE.H"
+#include "PROJECT.H"
 
 s32 Trig_Cos(s32);
 extern s32 gFrameCount;
@@ -33,16 +34,7 @@ struct SceneCameraTransfer {
     s32 third;
 };
 
-struct SceneCameraObject {
-    u32 field00;
-    u32 field04;
-    u32 field08;
-    u32 field0c;
-    s32 anchor;
-};
-
 extern struct SceneCameraRuntime gCameraWork;
-extern struct SceneCameraObject gProjection;
 
 s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
 void Runtime_BumpFree(void *ptr);
@@ -124,7 +116,7 @@ void Camera_ConfigureScene(s32 pos)
     result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);
     Camera_StoreSceneParameters(0, result, 0x07920000);
 
-    gProjection.anchor = pos + 120;
+    gProjection.center_y = pos + 120;
     secondary->active = 1;
     BattleCamera_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
     secondary->flag = 1;

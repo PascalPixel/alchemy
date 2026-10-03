@@ -8,19 +8,6 @@
 #include "RAM_BUFFER.H"
 #include "DISPTRAN.H"
 
-struct DisplayTransitionState {
-    u8 data[0x528];
-    s16 value;
-    s16 timer;
-    u8 unknown_52c[8];
-    s16 level;
-    s16 step;
-    u8 unknown_538[2];
-    u8 start;
-    u8 end;
-    u8 frames;
-    u8 phase;
-};
 
 void *DisplayTransition_AllocateAndClearState(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);
@@ -42,18 +29,6 @@ void DisplayTransition_UpdateScanline(void);
 
 extern volatile u32 gFrameCount;
 
-/* The display work the transitions reach through the map work pointer: the
-   display control value the frame's register write is made from, and the
-   two lines the scanline split is drawn between. */
-struct DisplayWork {
-    u32 unknown_00[5];
-    u16 dispcnt;
-    u8 unknown_16[0xea];
-    u16 split_top;
-    u16 split_bottom;
-};
-
-
 /* QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C) written out: the display
    control write for the next frame, its value read only once a queue entry
    is free. */
@@ -72,7 +47,7 @@ struct DisplayWork {
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
+            u32 *destination = q->entries[count];           \
             *(u16 *)&q->count = count + 1;                                  \
             *destination++ = (value);                                       \
             *destination++ = 0x04000000;                                    \
@@ -88,7 +63,7 @@ struct DisplayWork {
 void DisplayTransition_Start(s32 mode, s32 frames)
 {
     void **work;
-    struct DisplayWork *display;
+    struct DisplayTransitionWindow *display;
     s32 value;
     s32 kind;
 
@@ -96,10 +71,11 @@ void DisplayTransition_Start(s32 mode, s32 frames)
        QUEUE_DISPLAY_CONTROL keep the saved IME move before disabling IME
        and the final queue/IME loads in native order. The ordinary block
        and member store keep 708 bytes but change 24 instruction bytes in EN;
-       both spellings store the count as a halfword. */
+       both spellings store the count as a halfword. The word prefix of
+       the map-work view preserves its existing load/address ordering. */
     kind = (mode >> 8) & 0xff;
     work = Ram_MapWork;
-    display = *(struct DisplayWork **)work;
+    display = *(struct DisplayTransitionWindow **)work;
     value = mode & 0xff;
     switch (kind) {
     case 0:
@@ -116,57 +92,57 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         return;
     case 2: {
         struct DisplayTransitionState *state = DisplayTransition_AllocateAndClearState();
-        state->value = value;
-        state->timer = 0;
-        state->level = 63;
-        state->step = 1;
+        state->mode = value;
+        state->value = 0;
+        state->mask = 63;
+        state->active = 1;
         Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateScanlineTable), 0xc80);
         Scheduler_AddOrUpdateCallback((s32)(BattleFx_StartWindowHBlankDma), 0x480);
         WaitFrames(1);
         QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
         state->start = 0;
         state->end = 32;
-        state->frames = frames;
-        state->phase = 0;
+        state->duration = frames;
+        state->step = 0;
         return;
     }
     case 3: {
         struct DisplayTransitionState *state = DisplayTransition_AllocateAndClearState();
-        state->value = value;
-        state->timer = 32;
+        state->mode = value;
+        state->value = 32;
         DisplayTransition_FillTilemapAndSolidTile(15);
         WaitFrames(1);
         Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
         QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
         state->start = 0;
         state->end = 32;
-        state->frames = frames;
-        state->phase = 0;
+        state->duration = frames;
+        state->step = 0;
         return;
     }
     case 4: {
         struct DisplayTransitionState *state;
 
         /* The map work pointer is read again here, as a plain pointer. */
-        display = (struct DisplayWork *)*work;
+        display = (struct DisplayTransitionWindow *)*work;
         state = DisplayTransition_AllocateAndClearState();
-        display->split_top = 80;
-        display->split_bottom = 80;
+        display->first_line = 80;
+        display->second_line = 80;
         WaitFrames(1);
         if (value == 0) {
             Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_Update), 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 80;
             state->end = 0;
-            state->frames = frames;
-            state->phase = 0;
+            state->duration = frames;
+            state->step = 0;
         } else {
             Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFromCentre), 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 80;
             state->end = 0;
-            state->frames = frames;
-            state->phase = 0;
+            state->duration = frames;
+            state->step = 0;
         }
         break;
     }
@@ -195,30 +171,30 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
         break;
     case 2: {
         struct DisplayTransitionState *state = DisplayTransition_AllocateAndClearState();
-        state->value = value;
-        state->timer = 32;
-        state->level = 63;
-        state->step = 1;
+        state->mode = value;
+        state->value = 32;
+        state->mask = 63;
+        state->active = 1;
         Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateScanlineTable), 0xc80);
         Scheduler_AddOrUpdateCallback((s32)(BattleFx_StartWindowHBlankDma), 0x480);
         WaitFrames(1);
         state->start = 32;
         state->end = 64;
-        state->frames = frames;
-        state->phase = 0;
+        state->duration = frames;
+        state->step = 0;
         break;
     }
     case 3: {
         struct DisplayTransitionState *state = DisplayTransition_AllocateAndClearState();
-        state->value = value;
-        state->timer = 32;
+        state->mode = value;
+        state->value = 32;
         DisplayTransition_FillTilemapAndSolidTile(0);
         WaitFrames(1);
         Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
         state->start = 32;
         state->end = 64;
-        state->frames = frames;
-        state->phase = 0;
+        state->duration = frames;
+        state->step = 0;
         break;
     }
     case 4: {
@@ -228,15 +204,15 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 0;
             state->end = 80;
-            state->frames = frames;
-            state->phase = 0;
+            state->duration = frames;
+            state->step = 0;
         } else {
             Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFromCentre), 0xc80);
             Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
             state->start = 0;
             state->end = 80;
-            state->frames = frames;
-            state->phase = 0;
+            state->duration = frames;
+            state->step = 0;
         }
         break;
     }
@@ -245,7 +221,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames)
 
 void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
 {
-    struct DisplayWork *state;
+    struct DisplayTransitionWindow *state;
 
     state = gMapWork[0];
     if (state != NULL) {

@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 /* Battle effect: open the canvas layer an effect draws into, the counterpart
    of BattleFx_EndCanvasLayer. Save the scroll pair in the work block, fade
    the battle palette out, start the palette fade transfer, switch BG2 to the
@@ -40,12 +41,8 @@ void Audio_PlayCue(s32);
 void WaitFrames(s32);
 void Func_080b5048(u16, s32);
 
-struct Cells03001ce0 {
-    s32 unk00[4];
-    s32 unk10;
-};
 
-extern struct Cells03001ce0 gProjection;
+
 
 void QueueIoWriteDelay2(u32 first, u32 second);
 
@@ -327,8 +324,8 @@ void BattleFx_EndCanvasLayer(void)
     scroll = &gBgScroll;
     scroll->unk04 = *(s32 *)(work + 0x77a0);
     scroll->unk06 = *(s32 *)(work + 0x77a4);
-    gProjection.unk00[3] = 120;
-    gProjection.unk10 = 120;
+    gProjection.center_x = 120;
+    gProjection.center_y = 120;
     *(volatile u16 *)0x0400000c = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
     Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);

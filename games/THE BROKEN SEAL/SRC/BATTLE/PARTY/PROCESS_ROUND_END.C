@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_STATUS_ICON.H"
 #include "BATTLE_MSG.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_TYPES.H"
@@ -26,7 +27,6 @@ void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void Audio_PlayCue(s32 cue);
 s32 BattleParty_ListActorIds(s32 group, u16 *ids);
-void BattleUnit_BuildStatusFlags(s32 unit_id, void *slot);
 void BattlePres_SetActorModeAndAction(s32 unit_id);
 void BattlePresentation_WaitForAdvance(void);
 void BattleEventRuntime_SchedulePhase(s32 phase);

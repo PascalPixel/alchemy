@@ -1,3 +1,4 @@
+#include "EVENTWRK.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "OBJECT_RUNTIME.H"
@@ -44,7 +45,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 Audio_PlayCue(159);
                 object->y = object->terrain_height;
                 Object_SetMode(object, 22);
-                Battle_WaitMode0(15);
+                EventRuntime_Wait(15);
                 Object_AttachWorkTargetToObject(id, 1);
                 result = 3;
             }

@@ -5,16 +5,16 @@
 Func_080d2cc4:
 	push {r5, lr}
 	adds r5, r0, #0
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r0, #0
-	bl Func_080cded4
+	bl EventRuntime_ResolvePendingActions
 	movs r1, #1
 	adds r0, r5, #0
 	bl UiText_ShowPositionedMessageAndWaitFar
 	movs r0, #161
 	lsls r0, r0, #1
 	bl GameFlag_ClearBit
-	bl Func_080d2350
+	bl EventRuntime_End
 	movs r0, #136
 	bl Func_080ad2e8
 	movs r1, #1

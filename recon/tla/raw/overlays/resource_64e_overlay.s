@@ -1,3 +1,7 @@
+@ VINASU_CHOJO: Japanese startup leaves the two PartyState halfwords after
+@ entrance untouched; all five international releases store 5/22 before the
+@ entrance 99 sequence. The 28-byte complete raw difference is uncredited.
+	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
 	.section .text.x0200807e,"ax",%progbits
@@ -1054,6 +1058,7 @@ Func_02000a54:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]
+	.if EDITION_INTERNATIONAL
 	movs r0, #214
 	lsls r0, r0, #1
 	movs r2, #129
@@ -1065,8 +1070,21 @@ Func_02000a54:
 	adds r3, r1, r2
 	movs r0, #0
 	ldrsh r3, [r3, r0]
+	.else
+	movs r2, #214
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	adds r2, #88
+	str r2, [r3]
+	ldr r3, .L_02008b20
+	subs r2, #34
+	adds r3, r3, r2
+	movs r2, #0
+	ldrsh r3, [r3, r2]
+	.endif
 	cmp r3, #99
 	bne .L_02008aa2
+	.if EDITION_INTERNATIONAL
 	ldr r3, .L_02008b24
 	movs r0, #242
 	lsls r0, r0, #1
@@ -1077,6 +1095,7 @@ Func_02000a54:
 	adds r2, r1, r3
 	movs r3, #22
 	strh r3, [r2]
+	.endif
 	bl Engine_EventBegin
 	movs r0, #0
 	bl Engine_EventPrepareSpeakers
@@ -1128,11 +1147,15 @@ Func_02000a54:
 .L_02008b1a:
 	movs r0, #0
 	pop {pc}
+	.if EDITION_INTERNATIONAL
 	.2byte 0x0000
+	.endif
 .L_02008b20:
 	.4byte gPartyState
+	.if EDITION_INTERNATIONAL
 .L_02008b24:
 	.4byte 0x00000005
+	.endif
 	.section .text.x02008b2c,"ax",%progbits
 	.global Func_02000b2c
 	.thumb_func
@@ -1747,7 +1770,7 @@ Func_02000d30:
 	b .L_02009134
 	.2byte 0x0000
 .L_02009130:
-	.4byte 0x00001570
+	.4byte MsgVinasuChojoAreYouSureWeShouldBeLeaving
 .L_02009134:
 	bl Func_02001c34
 	movs r0, #128

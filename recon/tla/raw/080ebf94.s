@@ -12,7 +12,7 @@ Func_080ebf94:
 	adds r1, r7, #0
 	adds r1, #32
 	str r1, [sp, #4]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	movs r5, #0
 	str r5, [sp, #12]

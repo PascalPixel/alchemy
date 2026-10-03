@@ -47,7 +47,7 @@ struct BattleEffectLinkedObject *Object_CreateFar(
     s32 z);
 void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
 void Audio_PlayCue(s32 cue);
-void Battle_WaitMode0(s32 state);
+void EventRuntime_Wait(s32 state);
 void BattleFx_CopyLinkedObjectPosition(void);
 extern const u8 BattleFx_LinkedObjectScript[];
 
@@ -99,6 +99,6 @@ void BattleFx_SpawnLinked(
                 object->visual->flags = clear_mask;
             }
         }
-        Battle_WaitMode0(state);
+        EventRuntime_Wait(state);
     }
 }

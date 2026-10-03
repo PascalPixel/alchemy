@@ -23,7 +23,7 @@ Func_080e25e8:
 	ldr r7, [sp, #68]
 	mov r11, r3
 	ldr r5, [r6, #108]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	ldr r3, [r0, #20]
 	movs r2, #204

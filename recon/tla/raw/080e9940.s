@@ -12,7 +12,7 @@ Func_080e9940:
 	lsls r5, r5, #18
 	sub sp, #12
 	ldr r7, [r5, #92]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	mov r10, r0
 	ldr r5, [r5, #108]

@@ -32,7 +32,7 @@ Func_080ce61c:
 	movs r3, #0
 	str r0, [sp, #4]
 	str r3, [sp, #0]
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	ldr r0, [sp, #12]
 	movs r1, #211
 	lsls r1, r1, #4
@@ -257,7 +257,7 @@ Func_080ce61c:
 	ands r3, r0
 	cmp r3, #0
 	beq .L_080ce840
-	bl Func_080ce574
+	bl EventRuntime_ExecutePackedAction
 	b .L_080ceaee
 .L_080ce840:
 	ldr r0, [sp, #4]
@@ -366,7 +366,7 @@ Func_080ce61c:
 	ldr r2, [sp, #4]
 	cmp r2, #23
 	bne .L_080ce948
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldr r3, [r0, #8]
 	ldr r1, [r0, #16]
@@ -504,7 +504,7 @@ Func_080ce61c:
 	strb r2, [r1]
 	strb r2, [r3]
 .L_080cea3e:
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	mov r1, r10
 	bl Func_080dc62c
 	bl Func_080dc6d8

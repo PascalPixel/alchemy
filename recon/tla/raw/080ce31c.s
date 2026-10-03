@@ -16,7 +16,7 @@ Func_080ce31c:
 	sub sp, #20
 	ldr r5, [r3, #16]
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldrh r0, [r0, #6]
 	str r0, [sp, #16]
@@ -102,7 +102,7 @@ Func_080ce31c:
 	ands r3, r2
 	cmp r3, #0
 	beq .L_080ce410
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	adds r2, r7, #0
 	adds r1, r0, #0
 	mov r0, r9

@@ -43,7 +43,7 @@ Func_080d296c:
 	movs r2, #0
 	bl ObjectMotion_SetAngleToward
 	movs r0, #20
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	movs r0, #1
 	negs r0, r0
 	b .L_080d2a00

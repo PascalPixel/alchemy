@@ -9,7 +9,7 @@ Func_080cd808:
 	subs r6, #242
 	cmp r6, #5
 	bhi .L_080cd832
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	ldr r3, .L_080cd8fc
 	ldr r0, .L_080cd900
 	ldrb r5, [r3, r6]
@@ -42,7 +42,7 @@ Func_080cd808:
 	bne .L_080cd874
 	cmp r6, #0
 	beq .L_080cd874
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	ldr r0, .L_080cd900
 	movs r1, #1
 	adds r0, r6, r0

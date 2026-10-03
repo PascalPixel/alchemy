@@ -148,64 +148,6 @@ Func_02000128:
 	.4byte Data_02001664
 .L_02008150:
 	.4byte Data_02001490
-	.section .text.x02008154,"ax",%progbits
-	.global Func_02000154
-	.thumb_func
-Func_02000154:
-	push {r5, lr}
-	movs r0, #128
-	lsls r0, r0, #4
-	adds r0, #67
-	bl Engine_GameFlagIsSet
-	cmp r0, #0
-	bne .L_020081be
-	bl Engine_EventBegin
-	movs r0, #0
-	bl Engine_EventPrepareSpeakers
-	ldr r5, .L_020081d0
-	adds r0, r5, #0
-	bl Engine_EventSetMessage
-	movs r1, #0
-	movs r0, #8
-	bl Engine_EventOpenMessage
-	bl Engine_PartyGetLeaderActor
-	movs r1, #0
-	bl Engine_EventChooseYesNo
-	cmp r0, #0
-	bne .L_0200819a
-	movs r0, #10
-	bl Engine_EventWait
-	adds r0, r5, #1
-	bl Engine_EventSetMessage
-	b .L_020081a6
-.L_0200819a:
-	movs r0, #20
-	bl Engine_EventWait
-	adds r0, r5, #2
-	bl Engine_EventSetMessage
-.L_020081a6:
-	movs r0, #8
-	movs r1, #0
-	bl Engine_EventShowMessage
-	movs r0, #128
-	lsls r0, r0, #4
-	adds r0, #67
-	bl Engine_GameFlagSet
-	bl Engine_EventEnd
-	b .L_020081cc
-.L_020081be:
-	ldr r0, .L_020081d4
-	bl Engine_EventSetMessage
-	movs r0, #8
-	movs r1, #0
-	bl Engine_EventShowMessage
-.L_020081cc:
-	pop {r5, pc}
-	.2byte 0x0000
-.L_020081d0:
-	.4byte 0x00001712
-.L_020081d4:
-	.4byte 0x00001715
 	.section .text.x02008288,"ax",%progbits
 	.global Func_02000288
 	.thumb_func
@@ -252,7 +194,7 @@ Func_02000288:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020082e4:
-	.4byte 0x0000174b
+	.4byte MsgDeriTaviRikiWorry
 	.section .text.x02008340,"ax",%progbits
 	.global Func_02000340
 	.thumb_func
@@ -299,7 +241,7 @@ Func_02000340:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200839c:
-	.4byte 0x00001837
+	.4byte MsgDeriTaviRikiHome
 	.section .text.x020083a0,"ax",%progbits
 	.global Func_020003a0
 	.thumb_func
@@ -576,7 +518,7 @@ Func_020003a0:
 	b .L_02008696
 	.2byte 0x0000
 .L_02008658:
-	.4byte 0x00001812
+	.4byte MsgDeriGarciaCall
 .L_0200865c:
 	.4byte gPartyState
 .L_02008660:
@@ -1744,7 +1686,7 @@ Data_02001490:
 	.4byte 0x00000009
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte Func_02000154
+	.4byte DeriMura_TalkBeenBefore
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte DeriMura_TalkIndraMoved
@@ -1828,7 +1770,9 @@ Data_02001490:
 	.4byte MsgFieldImSureThoseTwoWentTo
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x0040303c
+	@ The whole message id, then the event flags halfword.
+	.2byte MsgDeriWellSeawater
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1959,7 +1903,7 @@ Data_02001664:
 	.4byte MsgFieldICaughtMyFootOnSomething
 	.4byte 0x00008d15
 	.4byte 0xffff0015
-	.4byte 0x00001838
+	.4byte MsgDeriTaviRikiPunishment
 	.4byte 0x50008a05
 	.4byte 0x0210003c
 	.4byte Func_02000924
@@ -2001,7 +1945,9 @@ Data_02001664:
 	.4byte Func_02000118
 	.4byte 0x000001f3
 	.4byte 0xffff00c8
-	.4byte 0x0040303c
+	@ The whole message id, then the event flags halfword.
+	.2byte MsgDeriWellSeawater
+	.2byte 0x0040
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

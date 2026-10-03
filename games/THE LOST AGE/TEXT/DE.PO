@@ -16255,11 +16255,11 @@ msgctxt "message"
 msgid "04061"
 msgstr "{protagonist_name} erhält{line_break}{argument_signed_number} {control:13}{end_wait}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItemReceived"
 msgid "04062"
 msgstr "{protagonist_name} erhält{line_break}{argument_item_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItemGiven"
 msgid "04063"
 msgstr "{protagonist_name} gab {argument_item_name:1}{line_break}an {argument_actor_name:1}.{end_wait}"
 
@@ -16315,11 +16315,11 @@ msgctxt "message"
 msgid "04076"
 msgstr "kann aber nichts finden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItemCannotCarry"
 msgid "04077"
 msgstr "Aber du kannst nichts{line_break}mehr tragen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgItemDropPrompt"
 msgid "04078"
 msgstr "Was willst du wegwerfen?{end_wait}"
 
@@ -23923,19 +23923,19 @@ msgctxt "message"
 msgid "05978"
 msgstr "61"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaGah"
 msgid "05979"
 msgstr "{text_effect:4}UAH!{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaYarg"
 msgid "05980"
 msgstr "{text_effect:4}ARGH!{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaWhatAreYouDoing"
 msgid "05981"
 msgstr "{text_effect:4}Was machst du denn???{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVinasuChojoAreYouSureWeShouldBeLeaving"
 msgid "05982"
 msgstr "Ist es auch in Ordnung, dass{line_break}wir einfach so gehen?{end_wait}"
 
@@ -25819,7 +25819,7 @@ msgctxt "MsgFieldNowThatBriggsIsLockedAway"
 msgid "06452"
 msgstr "Nachdem der Anführer der{line_break}Piraten jetzt hinter Gittern sitzt,{page_break}sollten wir dieses Jahr keine{line_break}Probleme mehr mit Piraten{line_break}haben.{page_break}Andererseits hat diese{line_break}Flutwelle mehr Schaden{line_break}angerichtet,{page_break}als die Piraten in all den Jahren{line_break}zuvor.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaSouthRoadDanger"
 msgid "06453"
 msgstr "Ihr habt doch nicht etwa vor,{line_break}in Richtung Süden aufzubrechen,{line_break}oder?{page_break}Die Straße dorthin ist seit dem{line_break}Erdbeben nicht mehr passierbar{line_break}und noch dazu gefährlich!{end_wait}"
 
@@ -25827,7 +25827,7 @@ msgctxt "MsgFieldImGladImNotGoingTo"
 msgid "06454"
 msgstr "Ich bin froh, dass ich jetzt{line_break}nicht nach Madra muss.{page_break}Die Stadt leidet schon lange{line_break}unter dieser schrecklichen Dürre.{page_break}Und jetzt nach dem Erdbeben{line_break}ist dort sicher alles voller{line_break}Spalten, Risse und Klüfte...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaNewTravelers"
 msgid "06455"
 msgstr "Ihr seid sicher neu hier in der{line_break}Gegend. Was führt euch hierher?{page_break}Auf diesem gottverlassenen{line_break}Kontinent gibt es nicht viel{line_break}zu sehen.{page_break}Ihr müsst ja wirklich{line_break}merkwürdige Vögel sein!{end_wait}"
 
@@ -25843,7 +25843,7 @@ msgctxt "MsgFieldImSureThoseTwoWentTo"
 msgid "06458"
 msgstr "Ich bin mir sicher, dass die{line_break}beiden zum Schrein des Meeres-{line_break}gottes gegangen sind!{page_break}Ich habe ihnen doch gesagt,{line_break}dass sie noch viel zu klein{line_break}sind,{page_break}um über diese steilen{line_break}Klippen zu klettern!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaDinnerChoice"
 msgid "06459"
 msgstr "Was soll ich heute Abend für{line_break}unsere Gäste zubereiten? Ich{line_break}kann mich nicht entscheiden!{end_wait}"
 
@@ -25875,7 +25875,7 @@ msgctxt "MsgFieldImSoTornDoILike"
 msgid "06466"
 msgstr "Ich bin so zerrissen...{line_break}Soll ich den Fisch grillen?{page_break}Oder soll ich ihn besser{line_break}dünsten?{page_break}Fragen über Fragen...{line_break}Warum ist das Leben nur{line_break}so kompliziert?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaTravelersFreeTime"
 msgid "06467"
 msgstr "Reisende! Sieh mal einer an!{line_break}Habt ihr zu viel Zeit und wisst{line_break}nicht, wohin ihr gehen sollt?{end_now}"
 
@@ -26607,7 +26607,7 @@ msgctxt "MsgFieldImSureGladIMadeIt"
 msgid "06649"
 msgstr "Ich bin total froh, dass ich{line_break}von dieser Klippe runter bin!{page_break}Ich hätte dort oben verhungern{line_break}können!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaGoingToMadora"
 msgid "06650"
 msgstr "Seid ihr auf dem Weg nach Madra?{end_now}"
 
@@ -26631,7 +26631,7 @@ msgctxt "MsgFieldSomeoneShouldSeeHowTheRoad"
 msgid "06655"
 msgstr "Man sollte überprüfen, in{line_break}welchem Zustand sich die{line_break}Straße nach Madra nach{page_break}diesem schrecklichen Beben{line_break}befindet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriGarciaCall"
 msgid "06656"
 msgstr "{actor_name:5}...{end_wait}"
 
@@ -26723,7 +26723,7 @@ msgctxt "message"
 msgid "06678"
 msgstr "Dann lasst uns gehen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaLookingForBoat"
 msgid "06679"
 msgstr "Sagt nicht, ihr seid auch auf{line_break}der Suche nach einem Boot!{end_now}"
 
@@ -26763,7 +26763,7 @@ msgctxt "MsgFieldBriggsProbablyHasLotsOfMen"
 msgid "06688"
 msgstr "Briggs hat sicherlich viele{line_break}Männer unter sich.{page_break}Würde ich in Madra leben, würde{line_break}ich mir Sorgen machen, dass sie{line_break}alle kommen, um ihn zu retten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaPirateTreasure"
 msgid "06689"
 msgstr "Vor langer Zeit, als Daila noch{line_break}als Versteck für eine Bande{line_break}von Piraten diente,{page_break}wurden sie alle gefangen. Doch{line_break}man hat niemals all die Schätze{line_break}gefunden,{page_break}die sie während ihrer{line_break}Schreckensherrschaft{line_break}zusammengerafft haben.{end_wait}"
 
@@ -26771,7 +26771,7 @@ msgctxt "MsgFieldThisTownMayBeDirtPoor"
 msgid "06690"
 msgstr "Diese Stadt mag zwar völlig{line_break}verarmt sein, dennoch findet{line_break}man hier Reisende aus aller{page_break}Herren Länder. Jede Wette,{line_break}dass sie alle auf Schatzsuche{line_break}sind!{page_break}Ich habe gehört, dass selbst{line_break}Briggs hinter dem Schatz her{line_break}war!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaSpaciousVillage"
 msgid "06691"
 msgstr "Zwar leben nicht viele Menschen{line_break}in Daila, dennoch ist die Stadt{line_break}sehr weitläufig.{page_break}Manchmal verwirrt mich der{line_break}Grundriss aber ein wenig...{end_wait}"
 
@@ -26783,19 +26783,19 @@ msgctxt "MsgDeriTaviRikiHome"
 msgid "06693"
 msgstr "Tavi und Riki sind wieder{line_break}wohlbehalten nach Hause{line_break}zurückgekehrt.{page_break}Sie haben sogar kurz hier{line_break}angehalten, um uns zu{line_break}begrüßen!{page_break}Was für entzückende Kinder.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiPunishment"
 msgid "06694"
 msgstr "Ich hoffe, ihre Eltern waren nicht{line_break}zu streng mit ihnen.{page_break}Andererseits: Sie waren ja{line_break}auch wirklich fast vor Sorge{line_break}gestorben!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaFishermenWaiting"
 msgid "06695"
 msgstr "Unsere Fischer können immer{line_break}noch nicht wieder in See{line_break}stechen...{page_break}Wann beginnen endlich die{line_break}Reparaturen an den Booten?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaDinnerShowPractice"
 msgid "06696"
 msgstr "Oh, ich war gerade beim Üben{line_break}für unsere Dinner-Show für die{line_break}Gäste!{page_break}Wir müssen das tun, weil... nun ja,{line_break}weil unser Essen nicht besonders{line_break}gut ist...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaWatchingPractice"
 msgid "06697"
 msgstr "Äh... Ähehehe... Du... hast doch{line_break}nicht etwa zugesehen, oder?{end_wait}"
 
@@ -26803,39 +26803,39 @@ msgctxt "message"
 msgid "06698"
 msgstr "Ich habe nur für die Show geprobt,{line_break}die wir heute Abend geben wollen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaSeafoodWhen"
 msgid "06699"
 msgstr "Wann können wir endlich{line_break}Dailas berühmte Meeresfrüchte{line_break}probieren?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaVegetablesAgain"
 msgid "06700"
 msgstr "Ich hab die Schnauze voll davon,{line_break}ständig Gemüse vorgesetzt zu{line_break}bekommen!{page_break}Und der Service ist auch zum{line_break}Speien!{page_break}Wenigstens gibt es hier eine{line_break}Show. Was heute Abend wohl{line_break}auf dem Programm steht?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaTiredPerformer"
 msgid "06701"
 msgstr "Solange wir keine Meeresfrüchte{line_break}anbieten können, müssen wir{line_break}unseren Gästen eine Show bieten.{page_break}Meine Füße tun weh... Ob ich{line_break}heute Abend wohl mal aus-{line_break}setzen darf?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaDragonKingLine"
 msgid "06702"
 msgstr "Verdammt! Wie war doch noch{line_break}gleich die erste Zeile?{line_break}Ach ja!{page_break}Willkommen im Palast des{line_break}Drachenkönigs!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaSeafoodStory"
 msgid "06703"
 msgstr "Gute Shows anstatt guten{line_break}Essens darzubieten ist schon{line_break}in Ordnung... denke ich...{page_break}Aber lassen die Geschichten{line_break}über Seedrachen die Leute{line_break}nicht an Meeresfrüchte denken?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaBadShows"
 msgid "06704"
 msgstr "Hoffentlich müssen wir heute{line_break}nicht schon wieder eine dieser{line_break}schrecklichen Shows ertragen!{page_break}Eher würde ich einen Berg{line_break}gedünsteten Kohl verdrücken,{page_break}als mir so etwas noch einmal{line_break}anzutun!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaGuestDance"
 msgid "06705"
 msgstr "Vielleicht schwinge ich mich{line_break}heute auf die Bühne und{line_break}tanze selbst ein wenig.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaLeaveForMadora"
 msgid "06706"
 msgstr "Für euch bleibt in Daila nichts{line_break}mehr zu tun...{page_break}Seid bitte vorsichtig auf eurer{line_break}Reise nach Madra.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaBoringVillage"
 msgid "06707"
 msgstr "Für Reisende hat Daila{line_break}sicher nicht viel zu bieten.{end_wait}"
 
@@ -36399,15 +36399,15 @@ msgctxt "message"
 msgid "09097"
 msgstr "Das Meer der Zeit... Eine massive{line_break}Nebelbank liegt über ihm...{page_break}Es wird zu Recht von allen{line_break}Seeleuten gefürchtet!{page_break}Ich weiß nicht, ob ich dieses{line_break}Geheimnis jemals ergründen{line_break}werde.{page_break}Aber ich bin mir sicher, dass{line_break}es meinem Sohn eines Tages{line_break}gelingen wird.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeaOfTimeCurrents"
 msgid "09098"
 msgstr "Die Seeleute berichten von{line_break}starken Strömungen und{line_break}Strudeln im Meer der Zeit,{page_break}die ein Schiff in Stücke reißen{line_break}können.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeaOfTimeRedRocks"
 msgid "09099"
 msgstr "Wenn ihr das Meer der Nebel{line_break}erreicht, folgt der Strömung von{line_break}den roten Felsen aus.{page_break}Auf diese Weise bleibt euer{line_break}Schiff heil.{pause_20_skippable} Mehr weiß ich{line_break}allerdings auch nicht...{page_break}Und vielleicht ist diese{line_break}Information auch gar nicht{line_break}richtig!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeaOfTimeThreeGenerations"
 msgid "09100"
 msgstr "Viel Kummer und Trauer zieht{line_break}sich durch unseren Stammbaum.{page_break}Drei Generationen von Söhnen{line_break}haben es sich geschworen, das{line_break}Meer des Nebels zu durchqueren.{end_wait}"
 
@@ -36419,15 +36419,15 @@ msgctxt "message"
 msgid "09102"
 msgstr "Ich erinnere mich, wie einst eine{line_break}ganze Flotte das Meer der Zeit{line_break}erreicht hat.{page_break}Sie verschwanden in den Nebeln{line_break}und jedes einzelne Schiff wurde{line_break}zum Opfer der Strömungen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeaOfTimeHusbandDizzy"
 msgid "09103"
 msgstr "Einst, vor langer Zeit, drang mein{line_break}Mann ins Meer der Zeit vor, ohne{line_break}dabei sein Boot einzubüßen.{page_break}Die Strudel wirbelten ihn im{line_break}Kreis und ihm wurde dabei{line_break}so schwindlig,{page_break}dass er nicht mehr gerade{line_break}stehen konnte. Vielleicht{line_break}erinnert er sich noch daran.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeaOfTimeYeppToldMe"
 msgid "09104"
 msgstr "Ich habe das Geheimnis der{line_break}roten Felsen niemals selbst{line_break}gelüftet.{page_break}Es war Yepp, der große Forscher{line_break}aus Yallam, der es mir verraten{line_break}hat. Ich sollte es wohl beichten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSeaOfTimeGiveUp"
 msgid "09105"
 msgstr "Und was steht ihnen bevor, wenn{line_break}sie das Meer des Nebels durch-{line_break}quert haben?{page_break}Ich wünschte, sie würden von{line_break}ihrem Vorhaben ablassen.{end_wait}"
 
@@ -51375,7 +51375,7 @@ msgctxt "message"
 msgid "12841"
 msgstr "Gut, ich begleite dich jetzt.{line_break}Nochmals vielen Dank!{page_break}Bitte setze uns Dschinns{line_break}mit Bedacht ein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWellSeawater"
 msgid "12842"
 msgstr "Es scheint, als wäre Salzwasser{line_break}in den Brunnen geschwappt.{page_break}Er wird wohl für eine Weile{line_break}nicht benutzt werden können.{end_wait}"
 

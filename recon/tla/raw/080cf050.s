@@ -7,7 +7,7 @@ Func_080cf050:
 	mov r7, r10
 	mov r6, r8
 	push {r6, r7}
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldr r2, .L_080cf0c8
 	movs r3, #128

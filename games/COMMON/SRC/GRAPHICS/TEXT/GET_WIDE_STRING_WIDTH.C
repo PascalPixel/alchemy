@@ -1,9 +1,5 @@
 #include "EDITION.H"
-#include "TYPES.H"
-
-extern const u8 UiText_Glyphs[];
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+#include "GLYPH.H"
 
 /* The European editions give every single-byte character the full ten
    pixels and count nothing for the rest. */
@@ -12,14 +8,6 @@ extern const u8 UiText_Glyphs[];
     defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || \
     defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
 #define WIDE_WIDTH_FIXED 1
-#endif
-
-/* The bytes of one glyph record, its width first: both Japanese fonts
-   pack their records into 26 bytes. */
-#if !EDITION_INTERNATIONAL
-#define GLYPH_RECORD_SIZE 26
-#else
-#define GLYPH_RECORD_SIZE 32
 #endif
 
 s32 UiText_GetWideStringWidth(u16 *text)
@@ -45,7 +33,9 @@ s32 UiText_GetWideStringWidth(u16 *text)
                 idx = c - 0xDE;
                 if (idx > 1U) {
                     idx += 0xBE;
-                    width += FIELD_AT_OFFSET(idx * GLYPH_RECORD_SIZE, u16, (s32)UiText_Glyphs);
+                    width += ((const struct FontGlyph *)
+                        (idx * sizeof(struct FontGlyph) +
+                        (const u8 *)UiText_Glyphs))->width;
                 }
             } else {
                 width += 0xA;

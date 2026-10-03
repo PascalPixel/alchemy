@@ -66,7 +66,7 @@ Func_0200009c:
 	ldr r6, [r3, #108]
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_02008114
 	movs r3, #133
 	lsls r3, r3, #2
@@ -102,9 +102,9 @@ Func_0200009c:
 	adds r6, r6, r3
 	movs r3, #0
 	ldrsh r0, [r6, r3]
-	bl Engine_EventRequestExit
+	bl Engine_EventSetCountdown
 	bl Engine_EventCloseScreen
-	bl Engine_EventWaitForScreen
+	bl Engine_EventWaitDelay
 	bl Engine_EventEnd
 	pop {r5, r6, pc}
 .L_02008114:
@@ -183,7 +183,7 @@ Func_02000288:
 .L_020082c4:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_020082e4
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -230,7 +230,7 @@ Func_02000340:
 .L_0200837c:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_0200839c
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -270,7 +270,7 @@ Func_020003a0:
 .L_020083cc:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r6, .L_02008658
 	adds r0, r6, #0
 	bl Engine_EventSetMessage
@@ -808,7 +808,7 @@ Func_02000924:
 	sub sp, #8
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r3, #11
 	movs r2, #19
 	str r3, [sp, #0]
@@ -836,7 +836,7 @@ Func_02000960:
 	sub sp, #8
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r3, #26
 	movs r2, #20
 	str r3, [sp, #0]
@@ -866,7 +866,7 @@ Func_020009a0:
 	sub sp, #8
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r3, #29
 	movs r2, #23
 	str r3, [sp, #0]
@@ -896,7 +896,7 @@ Func_020009e0:
 	sub sp, #8
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r3, #18
 	movs r2, #11
 	str r3, [sp, #0]
@@ -926,7 +926,7 @@ Func_02000a20:
 	sub sp, #8
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r3, #31
 	movs r2, #17
 	str r3, [sp, #0]
@@ -954,7 +954,7 @@ Func_02000a5c:
 	sub sp, #8
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r3, #17
 	movs r2, #23
 	str r3, [sp, #0]

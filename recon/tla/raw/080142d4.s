@@ -33,7 +33,7 @@ VramBlock_LoadCached:
 .L_0801430a:
 	adds r0, r5, #0
 	adds r1, r6, #0
-	bl Func_08014174
+	bl ResourceTable_AllocateBlocks
 	adds r5, r0, #0
 .L_08014314:
 	movs r3, #1

@@ -2,13 +2,7 @@
 #include "SCENE.H"
 #include "SYSTEM.H"
 
-/* map/shared/Map_RenderAnimatedTileFrame.c */
-struct MapBase {
-    u16 unused;
-    u16 offset;
-};
-
-extern u8 ResourceTableEntries[];
+#include "VRAM_TAB.H"
 extern u8 Map_TileDissolveOrder[];
 
 /* ☀️'s, reading the object's resource and size where ⚓️'s object keeps
@@ -24,7 +18,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     u8 offset_mask;
 
     destination = (u16 *)(0x06010000
-        + ((struct MapBase *)((u32)&ResourceTableEntries))[object[0x10]].offset);
+        + ResourceTableEntries[object[0x10]].offset);
     count = (object[0x14] * object[0x15]) / 64;
     row = 0;
 

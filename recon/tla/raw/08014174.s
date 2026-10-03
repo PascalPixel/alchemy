@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014174
+	.global ResourceTable_AllocateBlocks
 	.thumb_func
-Func_08014174:
+ResourceTable_AllocateBlocks:
 	push {r5, r6, r7, lr}
 	adds r5, r0, #0
 	lsrs r1, r1, #6
@@ -72,6 +72,6 @@ Func_08014174:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080141ec:
-	.4byte Data_02003410
+	.4byte ResourceBlockOwners
 .L_080141f0:
 	.4byte ResourceTableEntries

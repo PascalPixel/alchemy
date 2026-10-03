@@ -1,3 +1,8 @@
+/* Trial 2026-10-03: use OWNER_STATE.H for the getter contract.
+ * Complete object unchanged for this edition. Fresh scoring is unavailable:
+ * Inn_PlaySleep has no unresolved raw listing in the current tree.
+ */
+#include "OWNER_STATE.H"
 /* Draft: the shared 164-byte Inn_PlaySleep body is instruction-identical.
  * This edition still differs in 4 bytes at its screen-effect entry calls;
  * its native table exposes the set/clear/delay helpers through other entries.
@@ -26,7 +31,6 @@ struct FieldObject {
 
 s32 Party_ListActiveOwnersFar(s16 *);
 void Party_AdjustSixDigitCounterAFar(s32);
-struct FieldObject *Owner_GetState(s32);
 void Owner_RecalculateRatiosFar(s32);
 void Event_ClearStatus1c6Far(void);
 void Event_WaitValue1c8FramesFar(void);

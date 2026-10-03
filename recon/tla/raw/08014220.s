@@ -20,4 +20,4 @@ Func_08014220:
 	bne .L_0801422a
 	pop {pc}
 .L_0801423c:
-	.4byte Data_02003410
+	.4byte ResourceBlockOwners

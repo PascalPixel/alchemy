@@ -82,8 +82,8 @@ gSleepActive:
 	.global gOamBuckets
 gOamBuckets:
 	.space 0x00000400
-	.global Data_02003410
-Data_02003410:
+	.global ResourceBlockOwners
+ResourceBlockOwners:
 	.space 0x00000200
 	.global gSchedulerTaskTable
 gSchedulerTaskTable:

@@ -1,3 +1,7 @@
+/* 2026-10-03: removed the unused competing ApplyChildValuesFar declaration.
+   Still cannot compile: OrbitingParticleVector is incomplete and
+   BattleFx_UpdateOrbitingParticleFade is undeclared. These prior blockers
+   are unchanged; no new byte comparison is possible. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OBJECT_EFX.H"
@@ -9,7 +13,6 @@ s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
-void Animation_ApplyChildValuesFar(struct OrbitingParticle *particle, s32 battle_mode);
 
 void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
 {

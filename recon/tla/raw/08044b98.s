@@ -59,7 +59,7 @@ Func_08044b98:
 	strh r6, [r3]
 	movs r1, #1
 	mov r0, r10
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	ldr r0, .L_08044c78
 	bl Func_0803cf60
 	movs r2, #36

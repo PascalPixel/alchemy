@@ -55,21 +55,21 @@ void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 des
 void Audio_PlayCue(s32 cue);
 
 /*
- * The engine entry points a scene overlay imports, named as The Broken
- * Seal's scenes name them. Each is one of the overlay's import veneers.
+ * The engine entry points a scene overlay imports. Each is one of the
+ * overlay's import veneers.
  */
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
-/* Readies the party members who may speak in the event; 0 for all. */
-void Engine_EventPrepareSpeakers(s32 flags);
+/* Bits 0-2 skip the corresponding pending actions; 0 resolves all. */
+void Engine_EventResolvePendingActions(s32 skip);
 void Engine_EventSetMessage(s32 message);
 s32 Engine_EventOpenMessage(s32 speaker, s32 flags);
 void Engine_EventShowMessage(s32 speaker, s32 flags);
 s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
-void Engine_EventRequestExit(s32 exit);
+void Engine_EventSetCountdown(u16 countdown);
 void Engine_EventCloseScreen(void);
-void Engine_EventWaitForScreen(void);
+void Engine_EventWaitDelay(void);
 /* The actor that stands for the party: its leader. */
 s32 Engine_PartyGetLeaderActor(void);
 struct FieldActor *Engine_ActorGet(s32 actor);

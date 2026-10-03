@@ -3,9 +3,9 @@
 #include "IWRAM_CALL.H"
 #include "TBS_EDITION.H"
 #include "TEXT_FONT.H"
+#include "GLYPH.H"
 #include "WINDOW.H"
 
-extern u8 UiText_Glyphs[];
 extern u8 UiText_SecondGlyphs[];
 
 /* The Japanese canvas combines a kana or fixed-width kanji with its voicing
@@ -20,6 +20,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     s32 length;
     s32 colour;
     s32 transparent;
+    s32 first_index;
     s32 second_index;
     s32 second_width;
     u8 *digits;
@@ -40,9 +41,10 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         transparent = 1;
         colour = work->colour;
     }
-    input = UiText_Glyphs + ((code - 32) << 5);
-    length = *(const u16 *)input;
-    input += 2;
+    first_index = code - 32;
+    input = first_index * sizeof(struct FontGlyph) + (const u8 *)UiText_Glyphs;
+    length = ((const struct FontGlyph *)input)->width;
+    input = (const u8 *)((const struct FontGlyph *)input)->rows;
     if (work->outline == 1) {
         Iwram_ExpandBitRuns(input, buf + 49, transparent);
         Iwram_ExpandBitRuns(input, buf + 50, transparent);
@@ -125,12 +127,15 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
     mark = 0;
     mark_code = UiText_MarkGlyphCodes[code >> 14];
     if (mark_code != 0)
-        mark = UiText_Glyphs + (mark_code - 32) * 26 + 2;
+        mark = (const u8 *)((const struct FontGlyph *)
+            ((const u8 *)UiText_Glyphs +
+            (mark_code - 32) * sizeof(struct FontGlyph)))->rows;
     code &= 0x3fff;
     if (code <= 0xff) {
-        input = UiText_Glyphs + (code - 32) * 26;
-        length = *(const u16 *)input;
-        input += 2;
+        input = (const u8 *)UiText_Glyphs +
+            (code - 32) * sizeof(struct FontGlyph);
+        length = ((const struct FontGlyph *)input)->width;
+        input = (const u8 *)((const struct FontGlyph *)input)->rows;
     } else {
         input = UiText_KanjiGlyphs + (code - 256) * 24;
         length = 10;

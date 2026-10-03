@@ -544,7 +544,7 @@ Func_0200039c:
 	adds r0, #128
 	bl Owner_GetState
 	adds r6, r0, #0
-	bl Party_Check
+	bl SerialRuntime_BeginTransferB
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0
@@ -605,7 +605,7 @@ Func_0200039c:
 	mov r9, r0
 	movs r0, #1
 	bl Trade_GetOfferState
-	bl Party_Check
+	bl SerialRuntime_BeginTransferB
 	movs r3, #1
 	negs r3, r3
 	movs r5, #0

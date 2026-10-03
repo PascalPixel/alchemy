@@ -72,7 +72,7 @@ UiText_DrawCharacterAtOffset:
 	mov r4, r9
 	adds r1, #8
 	ands r3, r4
-	bl Func_080416cc
+	bl UiText_RenderStringTiles
 .L_0804209e:
 	pop {r3, r5, r6}
 	mov r8, r3

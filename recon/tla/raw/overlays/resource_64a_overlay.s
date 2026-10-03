@@ -1495,7 +1495,7 @@ Func_02000b24:
 	movs r0, #10
 	bl WaitFrames
 	ldr r0, .L_02008d7c
-	bl Party_Check
+	bl SerialRuntime_BeginTransferB
 	movs r0, #10
 	bl WaitFrames
 	movs r1, #3

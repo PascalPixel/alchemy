@@ -11,8 +11,6 @@
 
 extern u8 Resource_FixedBlockBTiles[];
 
-s32 UiText_MeasureEntryDimensions(s32 start, s32 *width, s32 *count, s32 mode);
-
 /* ui/window/copy_tilemap_region.c */
 extern u8 RomBytes_080310a4[];
 
@@ -173,8 +171,8 @@ s32 UiText_SetRenderString(const u8 *str)
     struct UiRenderWork *work;
     u16 *dst;
     s32 count;
-    s32 count_out;
-    s32 width_out;
+    u32 width;
+    u32 height;
 
     work = (struct UiRenderWork *)gWindowWork[0];
     count = 0;
@@ -188,8 +186,8 @@ s32 UiText_SetRenderString(const u8 *str)
         } while (*str != 0);
     }
     work->entries[count] = 0;
-    UiText_MeasureEntryDimensions(0, &count_out, &width_out, 0);
-    return count_out;
+    UiText_MeasureEntryDimensions(0, &width, &height, 0);
+    return width;
 }
 
 void UiText_DrawPaddedLabel(s32 output, u8 *input)

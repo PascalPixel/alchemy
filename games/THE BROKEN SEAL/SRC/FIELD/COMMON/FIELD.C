@@ -10,6 +10,8 @@
 #include "GAME_STATE.H"
 #include "FIELD_SPRITE.H"
 #include "FIELDRUN.H"
+#include "OBJECT_DISPATCH.H"
+#include "ANIMSPR.H"
 
 struct KeyMoveEventWork {
     u8 unknown_000[0x19c];
@@ -33,9 +35,8 @@ extern const u8 Data_08013274[];
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
 s32 Func_08011f54(u32 layer, s32 x, s32 z);
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
-void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object, s32 value);
-void ObjectDispatch_Initialize(void *, const void *);
-s32 AnimationObjects_SelectAnimation(void *, s32);
+void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 value);
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *, s32);
 s32 Field_CheckConfiguredKeys(void);
 s32 FixedSqrt(s32);
 struct ObjectRuntime *FieldObject_Create(s32, s32, s32, s32);
@@ -244,11 +245,11 @@ movement_done:
             effect = FieldObject_Create(24, object->x, object->y, object->z);
             if (effect != 0) {
                 animation = effect->animation;
-                ObjectDispatch_Initialize(effect, Data_08013274 + 12);
+                ObjectDispatch_Initialize((struct DispatchObject *)effect, (u32)(Data_08013274 + 12));
                 effect->flags = collision;
                 effect->terrain_id = 1;
                 if (animation != 0) {
-                    AnimationObjects_SelectAnimation(animation, 1);
+                    AnimationObjects_SelectAnimation((struct AnimationObject *)animation, 1);
                     animation->flags = collision;
                     animation->blend_mode = 1;
                     animation->priority = 2;
@@ -266,8 +267,10 @@ movement_done:
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {
+    struct ObjectRuntime *object = work;
+
     Field_CheckConfiguredKeys();
-    FIELD_AT_OFFSET(work, u16 *, 4) = (u16)(FIELD_AT_OFFSET(work, u16 *, 4) + 1);
+    object->step = (u16)object->step + 1;
     return 1;
 }
 

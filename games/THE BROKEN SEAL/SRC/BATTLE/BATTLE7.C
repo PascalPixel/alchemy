@@ -1,3 +1,4 @@
+#include "FIELDRUN.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
@@ -6,8 +7,6 @@
 #include "GAME_STATE.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
-
-struct BattleTargetCandidate { u8 pad00[4]; u16 flags; };
 
 struct BattleCommandRuntime {
     u8 pad000[0x170]; s16 result_code; u8 pad172[0x2c]; s16 battle_mode;
@@ -36,11 +35,11 @@ void UiWork_FinalizePendingCoreFar(void);
 
 /* Takes an s32 to match the definition of the packed effect argument. */
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
-void Owner_AdjustSecondValueFar(s32, s32);
+s16 Owner_AdjustSecondValueFar(s32, s32);
 
 /*
  * Matches the shared prototype: s32-returning, with a void * out parameter.
- * Results are cast back to struct BattleTargetCandidate * here.
+ * Results are cast back to const struct SceneEvent * here.
  */
 s32 BattleFx_FindMatchingEvent(s32, s32, void *);
 void GameFlag_SetBitFar(s32);
@@ -77,19 +76,12 @@ void BattleEffect_ClearAllObjects(void);
     (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((action), 4), \
      UiText_ShowPositionedMessageAndWaitFar((s32)(msg), 1))
 
-s32 Event_FindFacingTrigger(u16);
+s32 Event_FindFacingTrigger(s32);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
 struct MarkerMap {
     u8 unknown_00[0x10];
     u8 *markers;                    /* 0x10 */
-};
-
-struct MarkerEvent {
-    u32 kind;                       /* 0x00; low nine bits, -1 ends the table */
-    s16 id;                         /* 0x04 */
-    s16 flag;                       /* 0x06 */
-    u32 mode;                       /* 0x08; top twelve bits */
 };
 
 struct MarkerSlot {
@@ -105,18 +97,6 @@ struct MarkerWork {
     struct MarkerSlot slots[10];    /* 0x11c */
 };
 
-struct MarkerGlobals {
-    struct MarkerMap *map;          /* 0x03001e70 */
-    u8 unknown_04[0x48];
-    struct MarkerWork *work;        /* 0x03001ebc */
-};
-
-struct MarkerServices {
-    u8 unknown_00[0x24];
-    struct MarkerEvent *(*events)(void);
-};
-
-extern struct MarkerServices gOverlayArea;
 struct ScriptObjectRuntime *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_SetSingleChildField26Far(struct ScriptObjectRuntime *object, s32 value);
 s32 GameFlag_TestFar(s32 flag);
@@ -128,9 +108,9 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
     s32 actionId = ACTION_ID(encodedAction);
     struct BattleCommandRuntime *runtime = (struct BattleCommandRuntime *)gEventWork;
-    struct BattleTargetCandidate *primary;
-    struct BattleTargetCandidate *secondary;
-    struct BattleTargetCandidate *tertiary;
+    const struct SceneEvent *primary;
+    const struct SceneEvent *secondary;
+    const struct SceneEvent *tertiary;
     s32 actor;
     s32 targetId;
     s32 specialResult;
@@ -192,15 +172,15 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         Owner_AdjustSecondValueFar(actor, -cost);
     }
 
-    primary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(0x10000005, targetMode, &targetId);
-    secondary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(5, targetMode, &targetId);
-    tertiary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(0x50000005, targetMode, &targetId);
+    primary = (const struct SceneEvent *)BattleFx_FindMatchingEvent(0x10000005, targetMode, &targetId);
+    secondary = (const struct SceneEvent *)BattleFx_FindMatchingEvent(5, targetMode, &targetId);
+    tertiary = (const struct SceneEvent *)BattleFx_FindMatchingEvent(0x50000005, targetMode, &targetId);
     targetId = -1;
     GameFlag_SetBitFar(FLAG_EFFECT_RUN);
     GameFlag_SetBitFar(FLAG_EFFECT_DISPATCH);
     if (primary || secondary || tertiary) {
         targetId = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, targetMode);
-        if (secondary && (secondary->flags & 0x400)) {
+        if (secondary && ((u16)secondary->trigger & 0x400)) {
             GameFlag_ClearBitFar(FLAG_EFFECT_RUN);
             GameFlag_ClearBitFar(FLAG_EFFECT_DISPATCH);
         }
@@ -269,13 +249,13 @@ void ObjectMotion_SnapToTerrain(void *object)
 void Battle_PlaceMapMarkers(void)
 {
     u32 id;
-    struct MarkerMap *map = (*(struct MarkerGlobals *)gMapWork).map;
-    struct MarkerWork *work = (*(struct MarkerGlobals *)gMapWork).work;
+    struct MarkerMap *map = gMapWork[0];
+    struct MarkerWork *work = gMapWork[27 - 8];
     s32 count = 0;
     u8 *list = map->markers;
     struct MarkerSlot *slot = work->slots;
     volatile u32 fill;
-    struct MarkerEvent *event;
+    const struct SceneEvent *event;
     struct ScriptObjectRuntime *object;
     u32 column;
     u32 row;
@@ -292,17 +272,17 @@ void Battle_PlaceMapMarkers(void)
         if (id < 100 || id > 239)
             goto next;
         event = gOverlayArea.events();
-        for (; event->kind != -1; event++) {
-            if (event->id != id)
+        for (; event->control != -1; event++) {
+            if (event->trigger != id)
                 continue;
-            if ((event->kind & 0x1ff) == 19) {
+            if ((event->control & 0x1ff) == 19) {
                 object = Object_CreateFar(20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
                 if (object == NULL)
                     continue;
                 ObjectMotion_SnapToTerrain(object);
                 ObjectDispatch_SetSingleChildField26Far(object, 0);
-                if (GameFlag_TestFar(event->flag)) {
-                    if ((event->mode & 0xfff00000) == 0x500000) {
+                if (GameFlag_TestFar(event->condition)) {
+                    if ((event->value & 0xfff00000) == 0x500000) {
                         Object_Destroy(object);
                         continue;
                     }
@@ -313,7 +293,7 @@ void Battle_PlaceMapMarkers(void)
                 object->home_z = object->z / 0x10000;
                 object->unknown_23 = 1;
                 object->flags_59 = 1;
-                slot->id = event->id;
+                slot->id = event->trigger;
                 slot->object = object;
                 slot->column = object->x / 0x100000;
                 slot->row = object->z / 0x100000;
@@ -321,10 +301,10 @@ void Battle_PlaceMapMarkers(void)
                 count++;
                 if (count > 9)
                     return;
-            } else if ((event->kind & 0x1ff) == 3) {
-                if ((event->mode & 0xfff00000) != 0x300000)
+            } else if ((event->control & 0x1ff) == 3) {
+                if ((event->value & 0xfff00000) != 0x300000)
                     continue;
-                if (GameFlag_TestFar(event->flag))
+                if (GameFlag_TestFar(event->condition))
                     continue;
                 object = Object_CreateFar(28, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
                 if (object == NULL)
@@ -338,7 +318,7 @@ void Battle_PlaceMapMarkers(void)
                 object->flags_59 = 1;
                 object->unknown_23 = 1;
                 slot->object = object;
-                slot->id = event->id;
+                slot->id = event->trigger;
                 slot->column = object->x / 0x100000;
                 slot->row = object->z / 0x100000;
                 slot++;

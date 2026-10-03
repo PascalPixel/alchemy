@@ -3,6 +3,8 @@
 
 #include "LAYOUT_GUARD.H"
 
+struct BattleUnit;
+
 struct ItemEffect {
     u8 kind;                        /* 0x00 */
     s8 amount;                      /* 0x01 */
@@ -101,8 +103,8 @@ LAYOUT_OFFSET_GUARD(
 
 struct ItemDefinition *Item_Get(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
-s32 Equipment_GetUnleashRateBonus(s32 owner);
-u16 RollWeaponUnleash(void *owner);
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
+u16 RollWeaponUnleash(struct BattleUnit *owner);
 
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);

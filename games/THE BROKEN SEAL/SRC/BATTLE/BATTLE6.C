@@ -1,3 +1,5 @@
+#include "BATTLE_RUNTIME.H"
+#include "FIELDRUN.H"
 #include "SCENE.H"
 #include "EFFECT_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
@@ -22,18 +24,6 @@ s32 BattleEffect_SelectNearbyObject(u32 object_id);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 GetFocusedObjectCollision(void);
 
-struct FacingTrigger {
-    s32 flags;
-    u16 metadata;
-    s16 condition;
-    u8 unknown_08[4];
-};
-
-struct FacingTriggerRuntime {
-    u8 unknown_00[16];
-    struct FacingTrigger *triggers;
-};
-
 extern struct BattleRuntime *gEventWork;
 
 struct ItemCommandRuntime {
@@ -44,18 +34,6 @@ struct ItemCommandRuntime {
 };
 
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
-
-union BattleItemEffect {
-    s32 id;
-    BattleItemCallback callback;
-};
-
-struct BattleItemEventRecord {
-    s32 flags;
-    u16 metadata;
-    s16 unknown_06;
-    union BattleItemEffect effect; /* The ID/pointer threshold is signed. */
-};
 
 struct BattleUnit *Owner_GetStateFar(s32 actor);
 s32 Party_CountActiveOwnersFar(void);
@@ -77,31 +55,7 @@ void BattleFx_Run(void);
 void BattleEffect_CleanupSceneObjects(void);
 u8 Inventory_RemoveFar(s32 actor, s32 slot);
 
-u8 *BattleAction_Get(s32);
-
-struct BattleEffectEventRecord {
-    s32 flags;
-    u16 metadata;
-    s16 action_id;
-    u8 unknown_08[4];
-};
-
-struct BattleEffectCharacter {
-    u8 unknown_00[12];
-    u8 group;
-};
-
-struct BattleEffectRuntime {
-    u8 unknown_00[16];
-    struct BattleEffectEventRecord *events;
-};
-
-struct BattleEffectValueRecord {
-    u8 unknown_00[6];
-    u16 value;
-};
-
-u8 *Ability_GetData(s32);
+struct BattleAction *Ability_GetData(s32);
 void BattleFx_SetupObjectPair(s32, s32);
 s32 BattleFx_RunEventAction(void *, s32, s32);
 void FieldEvent_RunTypeHandler(void);
@@ -146,10 +100,10 @@ void Battle_ResetEffectCounter(void)
   int zero;
   cell = (void **)((u32)&Data_03001ebc);
   runtime = *cell;
-  counter = ((u8 *)runtime) + 0xCB6;
+  counter = (u8 *)&((struct BattleRuntime *)runtime)->unknown_cb6;
   zero = 0;
   *((s16 *)counter) = zero;
-  if ((*((s16 *)(((u8 *)runtime) + 0xCB8))) != 0)
+  if ((*((s16 *)((struct BattleRuntime *)runtime)->unknown_cb8)) != 0)
   {
     BattleFx_ExecutePackedAbilityEffect(0x2090);
   }
@@ -157,9 +111,8 @@ void Battle_ResetEffectCounter(void)
 
 s32 Event_FindFacingTrigger(s32 source)
 {
-    struct FacingTriggerRuntime *runtime =
-        (struct FacingTriggerRuntime *)Data_03001ebc;
-    struct FacingTrigger *trigger = runtime->triggers;
+    struct FieldStepWork *runtime = (struct FieldStepWork *)Data_03001ebc;
+    const struct SceneEvent *trigger = runtime->events;
     s32 facing = ((struct MotionObject *)ObjectTable_Get(
         gGameState.selected_actor))->angle;
     s32 selected = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
@@ -168,17 +121,17 @@ s32 Event_FindFacingTrigger(s32 source)
     source &= 0x1ff;
     collision = GetFocusedObjectCollision();
 
-    while (trigger->flags != -1) {
-        s32 high_value = (s16)trigger->metadata & 0xf000;
-        s16 has_facing = trigger->metadata & 0x0800;
-        s32 low_value = trigger->metadata & 0xff;
+    while (trigger->control != -1) {
+        s32 high_value = (s16)(u16)trigger->trigger & 0xf000;
+        s16 has_facing = (u16)trigger->trigger & 0x0800;
+        s32 low_value = (u16)trigger->trigger & 0xff;
 
-        if ((trigger->flags & 0x0f) == 4 &&
+        if ((trigger->control & 0x0f) == 4 &&
             GameFlag_IsConditionActive(trigger->condition) != 0 &&
             (has_facing == 0 ||
              (u16)(high_value - facing + 0x17ff) <= 0x2ffe)) {
-            s32 flags = trigger->flags;
-            s32 owner = ((u8 *)&trigger->flags)[1];
+            u32 flags = trigger->control;
+            s32 owner = ((const u8 *)&trigger->control)[1];
 
             if (source == 0 || owner == source) {
                 if ((flags & 0x10) != 0) {
@@ -204,7 +157,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     s32 item_id;
     s32 actor;
     struct BattleUnit *obj;
-    struct BattleItemEventRecord *event;
+    const struct SceneEvent *event;
     u16 *p;
     s32 j;
     s32 i;
@@ -260,23 +213,23 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         }
     }
 
-    event = (struct BattleItemEventRecord *)Event_FindFacingTrigger((u16)item_id);
-    if (event != 0 && event->effect.id != 0) {
+    event = (const struct SceneEvent *)Event_FindFacingTrigger((u16)item_id);
+    if (event != 0 && (s32)event->value != 0) {
         GameFlag_ClearBitFar(0x143);
         GameFlag_ClearBitFar(0x142);
-        if (!(event->metadata & 0x400)) {
+        if (!((u16)event->trigger & 0x400)) {
             UiWork_PushValueSlotFar(actor, 1);
             UiWork_PushValueSlotFar(item_id, 2);
             UiText_ShowPositionedMessageAndWaitFar((s32)&MsgActorUsesItem, 1);
         }
-        if (event->effect.id < 0x10000) {
+        if ((s32)event->value < 0x10000) {
             s32 objref = BattleEffect_SelectNearbyObject(gGameState.selected_actor);
             Battle_Reset();
-            Event_SetValue1d8(event->effect.id);
+            Event_SetValue1d8((s32)event->value);
             BattleEv_RunWait(objref, 0);
             BattleFx_FinishAction();
         } else {
-            event->effect.callback(item_id, actor, slot);
+            ((BattleItemCallback)event->value)(item_id, actor, slot);
         }
         result = 0;
     } else {
@@ -337,11 +290,10 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
 
 s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
 {
-    struct BattleEffectRuntime *runtime =
-        (struct BattleEffectRuntime *)Data_03001ebc;
-    struct BattleEffectEventRecord *event = runtime->events;
-    s32 reference = ((struct BattleEffectValueRecord *)ObjectTable_Get(
-        gGameState.selected_actor))->value;
+    struct FieldStepWork *runtime = (struct FieldStepWork *)Data_03001ebc;
+    const struct SceneEvent *event = runtime->events;
+    s32 reference = ((struct MotionObject *)ObjectTable_Get(
+        gGameState.selected_actor))->angle;
     s32 selected = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, group);
     s32 alternate;
     s32 ignore_flags = 0;
@@ -351,22 +303,21 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
     if (requested_flags == 0x70000005)
         ignore_flags = 1;
 
-    while (event->flags != -1) {
-        s32 high_value = (s16)event->metadata & 0xf000;
-        s16 has_reference = event->metadata & 0x0800;
-        s32 low_value = event->metadata & 0xff;
+    while (event->control != -1) {
+        s32 high_value = (s16)(u16)event->trigger & 0xf000;
+        s16 has_reference = (u16)event->trigger & 0x0800;
+        s32 low_value = (u16)event->trigger & 0xff;
 
-        if ((event->flags & 0x0f) == 5 &&
-            GameFlag_IsConditionActive(event->action_id) != 0 &&
+        if ((event->control & 0x0f) == 5 &&
+            GameFlag_IsConditionActive(event->condition) != 0 &&
             (has_reference == 0 ||
              (u16)(high_value - reference + 0x17ff) <= 0x2ffe) &&
-            ((struct BattleEffectCharacter *)(void *)BattleAction_Get(
-                ((u8 *)&event->flags)[1]))->group == group &&
+            BattleAction_Get(((const u8 *)&event->control)[1])->type_0c == group &&
             (ignore_flags ||
-             (event->flags & 0x7000000f) == requested_flags)) {
-            if ((event->flags & 0x80) != 0)
+             (event->control & 0x7000000f) == requested_flags)) {
+            if ((event->control & 0x80) != 0)
                 return (s32)event;
-            if ((event->flags & 0x10) != 0) {
+            if ((event->control & 0x10) != 0) {
                 if (low_value == selected)
                     return (s32)event;
             } else if (low_value == alternate) {
@@ -392,7 +343,7 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 
     index = packed & 0x3FF;
     mode = ((u32)packed >> 10) & 0xF;
-    object = Ability_GetData(index)[0xC];
+    object = Ability_GetData(index)->type_0c;
     ObjectTable_Get(gGameState.selected_actor);
     first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
     second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);

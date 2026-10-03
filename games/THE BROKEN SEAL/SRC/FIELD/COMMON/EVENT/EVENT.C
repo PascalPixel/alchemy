@@ -47,7 +47,9 @@ void Event_CallWithLastActiveObjectId(struct ScenePlacement *table)
 
 void Event_SetWorkWord10(s32 value)
 {
-    ((struct FieldStepWork *)gEventWork)->events = (const struct SceneEvent *)value;
+    struct FieldStepWork *work = (struct FieldStepWork *)gEventWork;
+
+    work->events = (const struct SceneEvent *)value;
 }
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)

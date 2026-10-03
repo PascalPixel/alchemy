@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "DMA.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -9,7 +10,6 @@
 extern const u8 SentouKouka_Tenkai[];
 extern u8 SentouKouka_TenkaiCodeSize[];
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
-u8 *Resource_GetTableEntry(u32 resource);
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 

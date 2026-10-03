@@ -9,6 +9,7 @@ void BattleEv_SetRuntimeField8(void)
 }
 
 s32 Object_Destroy(s32);
+/* This legacy call consumes the owner id already carried in r0. */
 struct BattleUnit *Owner_GetStateFar();
 s32 Owner_UpdateRatioPairFar(void *, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
@@ -43,10 +44,6 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-
-
-
-
 void UiWork_PushValueSlotFar(u32, u32);
 void UiText_ShowMessageAndWaitCoreFar(u32);
 void BattlePresentation_WaitForAdvance(void);
@@ -67,29 +64,29 @@ u32 BattleEv_DispatchQueued(void)
 
     for (i = 0; i < queue->count; i++) {
         u8 opcode = queue->opcodes[i];
-        if (opcode <= 13) switch (opcode) {
-        case 13: Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]); break;
-        case 12: BattleActor_DestroyTemporaryObject(queue->operands[i]); break;
-        case 0: UiWork_PushValueSlotFar(queue->operands[i], 1); break;
-        case 1: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
-        case 2: UiWork_PushValueSlotFar(queue->operands[i] & 0x1ff, 2); break;
-        case 3: UiWork_PushValueSlotFar(queue->operands[i] & 0x3fff, 4); break;
-        case 6: gBattleDisplayWork->marked = 1; break;
-        case 7: UiWork_ClearValueNameTablesFar(); break;
-        case 4:
+        if (opcode <= BATTLE_EVENT_SCRIPT_UPDATE) switch (opcode) {
+        case BATTLE_EVENT_SCRIPT_UPDATE: Battle_SetRuntimeFlagBit0(runtime, queue->operands[i]); break;
+        case BATTLE_EVENT_ACTOR_EFFECT: BattleActor_DestroyTemporaryObject(queue->operands[i]); break;
+        case BATTLE_EVENT_UNIT: UiWork_PushValueSlotFar(queue->operands[i], 1); break;
+        case BATTLE_EVENT_VALUE: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
+        case BATTLE_EVENT_ITEM: UiWork_PushValueSlotFar(queue->operands[i] & 0x1ff, 2); break;
+        case BATTLE_EVENT_ACTION: UiWork_PushValueSlotFar(queue->operands[i] & 0x3fff, 4); break;
+        case BATTLE_EVENT_MARK: gBattleDisplayWork->marked = 1; break;
+        case BATTLE_EVENT_RESET: UiWork_ClearValueNameTablesFar(); break;
+        case BATTLE_EVENT_TEXT:
             if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
             BattlePresentation_WaitForAdvance();
             UiWork_ClearValueNameTablesFar();
             break;
-        case 5:
+        case BATTLE_EVENT_TEXT_CONTINUE:
             if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWaitCoreFar(queue->operands[i]);
             UiWork_ClearValueNameTablesFar();
             break;
-        case 8:
+        case BATTLE_EVENT_ACTOR_BEGIN:
             if (runtime->pending_cue > 0) Audio_PlayCue(runtime->pending_cue);
             BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
             break;
-        case 9:
+        case BATTLE_EVENT_ACTOR_RESOLVE:
         {
             /* FAKEMATCH: the operand's byte offset is formed before the
                flags are read, as the ROM schedules it. */
@@ -101,8 +98,8 @@ u32 BattleEv_DispatchQueued(void)
             BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
             break;
         }
-        case 10: UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode); break;
-        case 11:
+        case BATTLE_EVENT_REFRESH: UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode); break;
+        case BATTLE_EVENT_ACTOR_FINISH:
             BattleUnit_BuildStatusFlags(queue->operands[i], GetBattleObjectSlot(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);
             break;
@@ -110,7 +107,6 @@ u32 BattleEv_DispatchQueued(void)
     }
     return BattleEventRuntime_Reset();
 }
-
 
 u32 BattleEv_Push(u32 opcode, u32 operand)
 {

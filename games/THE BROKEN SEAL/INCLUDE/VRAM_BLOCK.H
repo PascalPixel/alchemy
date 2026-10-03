@@ -23,4 +23,7 @@ LAYOUT_OFFSET_GUARD(VramBlockCacheEntry_Offset, struct VramBlockCacheEntry, offs
 extern struct VramBlockCacheEntry gVramBlockCache[];
 extern u8 ResourceBlockOwners[VRAM_BLOCK_COUNT];
 
+/* Loads a table graphic into a VRAM cache slot, not a RAM destination. */
+s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot);
+
 #endif

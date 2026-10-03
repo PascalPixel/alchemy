@@ -98,10 +98,10 @@ void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
 void BattleFx_DispatchModeFar(struct PresentationWork *);
 
 s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
-                  struct BattleCommandRequest *selection)
+                  struct BattleActionRecord *selection)
 {
     register struct BattlePlan *saved_input = input;
-    register struct BattleCommandRequest *saved_selection = selection;
+    register struct BattleActionRecord *saved_selection = selection;
     struct PresentationWork work;
     struct MotionObject *object;
     s32 i;
@@ -162,10 +162,10 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     for (i = 0; i != work.count; i++)
         Actor_ResetMotionAtAnchor(work.table[i]);
 
-    unit = Owner_GetStateFar(saved_selection->actor_id);
+    unit = Owner_GetStateFar(saved_selection->unit_id);
     ability = ((u16 *)unit->inventory)[saved_selection->parameter];
     if ((kind = Item_Get(ability)->use_type) == 1) {
-        s32 result = Inventory_RemoveFar(saved_selection->actor_id, saved_selection->parameter);
+        s32 result = Inventory_RemoveFar(saved_selection->unit_id, saved_selection->parameter);
         s32 index = saved_selection->parameter;
         if (result == 2) {
             struct PresentationBattleWork *battle = Data_03001e74;
@@ -175,7 +175,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
                 struct QueuedItemAction *command = &battle->actions[row];
                 row++;
                 if (QueuedCommand_GetKind(&command->dispatch) == 2 &&
-                    command->actor_id == saved_selection->actor_id) {
+                    command->actor_id == saved_selection->unit_id) {
                     s16 current = command->parameter;
                     if (current == index)
                         command->parameter = 0xffff;
@@ -188,7 +188,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         if ((BattleRandom16Far() & 7) == 0) {
             BattleEv_Push(2, unit->inventory[saved_selection->parameter]);
             BattleEv_Push(4, 0x81c);
-            Inventory_BreakFar(saved_selection->actor_id, saved_selection->parameter);
+            Inventory_BreakFar(saved_selection->unit_id, saved_selection->parameter);
             BattleEv_DispatchQueued();
         }
     } else if ((u8)kind == 4) {

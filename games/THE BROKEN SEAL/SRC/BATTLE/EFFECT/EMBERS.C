@@ -28,7 +28,6 @@ extern s32 EmberColumns_Gravity[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 struct BattleEffectTargetArgument;

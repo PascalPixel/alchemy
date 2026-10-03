@@ -1,3 +1,4 @@
+#include "BATTLE_SUMMON.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -5,46 +6,27 @@
 #include "GAME_STATE.H"
 #include "ITEM.H"
 
-struct Entry {
-    u16 value;
-    u8 flags0;
-    u8 flatbs;
-    u8 rest[4];
-};
-
-extern struct Entry Summon_EntryTable[];
-
-/* battle/summon/clear_work_fields.c */
-
-union Word {
-    s32 value;
-};
-
-u32 Summon_GetEntryByte3Kind(s32 arg0)
+u32 Summon_GetEntryByte3Kind(s32 index)
 {
-  u32 kind;
-  u8 *p;
-  p = (u8 *)((arg0 * 8) + (s32)Summon_EntryTable);
-  kind = ((u8)(*((u8 *)(p + 3)))) >> 5;
-  if (((s32)kind) > 4)
-  {
-    kind = -1U;
-  }
-  return kind;
+    u32 kind = Summon_EntryTable[index].layout_flags >> 5;
+
+    if ((s32)kind > 4)
+        kind = -1U;
+    return kind;
 }
 
 s32 Summon_GetEntryValue(s32 index)
 {
     if ((u32)index > 171)
-        return Summon_EntryTable[0].value;
-    return Summon_EntryTable[index].value;
+        return Summon_EntryTable[0].animation;
+    return Summon_EntryTable[index].animation;
 }
 
 s32 Summon_GetEntryFlag1Field(s32 index)
 {
     if ((u32)index > 171)
-        return Summon_EntryTable[0].value;
-    return ((u32)Summon_EntryTable[index].flatbs << 27) >> 28;
+        return Summon_EntryTable[0].animation;
+    return ((u32)Summon_EntryTable[index].layout_flags << 27) >> 28;
 }
 
 s32 Summon_IsEntryFlagged(s32 index)
@@ -54,67 +36,40 @@ s32 Summon_IsEntryFlagged(s32 index)
     if ((u32)index > 171)
         return 0;
     result = 0;
-    if ((u32)Summon_EntryTable[index].flags0 << 31)
+    if ((u32)Summon_EntryTable[index].sprite_flags << 31)
         result = 1;
     return result;
 }
 
-u32 Battle_GetEntryField2LowBits(u32 no)
+u32 Battle_GetEntryField2LowBits(u32 index)
 {
-    u8 *tbl;
-    u8 *p;
-    u32 bits;
-    u32 val;
+    u32 value;
 
-    if (no > 0xABU) {
-        return 1U;
-    }
-    tbl = (u8 *)Summon_EntryTable;
-    p = tbl + (no * 8);
-    bits = (u32)p[2] << 0x1B;
-    val = bits >> 0x1C;
-    {
-        u32 ret;
-        if (val != 0U) {
-            ret = val;
-        } else {
-            ret = 1U;
-        }
-        return ret;
-    }
+    if (index > 171)
+        return 1;
+    value = ((u32)Summon_EntryTable[index].sprite_flags << 27) >> 28;
+    return value != 0 ? value : 1;
 }
 
-u32 Battle_GetEntryField2HighBits(u32 no)
+u32 Battle_GetEntryField2HighBits(u32 index)
 {
-    u32 bits;
-    u32 ret;
-    u8 *tbl;
-
-    if (no > 0xABU) {
-        return 0U;
-    }
-    tbl = (u8 *)Summon_EntryTable;
-    bits = tbl[(no * 8) + 2] >> 5;
-    if (bits != 0) {
-        ret = bits;
-    } else {
-        ret = 0;
-    }
-    return ret;
+    if (index > 171)
+        return 0;
+    return Summon_EntryTable[index].sprite_flags >> 5;
 }
 
 s32 Summon_IsEntrySecondaryFlagged(s32 index)
 {
     if ((u32)index > 171)
         return 0;
-    return ((u32)Summon_EntryTable[index].flatbs << 31) >> 31;
+    return ((u32)Summon_EntryTable[index].layout_flags << 31) >> 31;
 }
 
 s32 Summon_GetEntryByte4(s32 index)
 {
     if ((u32)index > 171)
         return 0;
-    return Summon_EntryTable[index].rest[0];
+    return Summon_EntryTable[index].unknown_04[0];
 }
 
 u32 Item_EncodeBankedId(u32 value)
@@ -139,18 +94,13 @@ u32 Item_EncodeBankedId(u32 value)
 
 void Summon_ClearWorkFields(void)
 {
-    struct BattleSession *work;
-    union Word *words;
-    s16 *slots;
+    struct BattleSession *work = gBattleWork;
     s32 index;
 
-    work = gBattleWork;
-    words = (union Word *)&work->spoils;
     gGameState.pending_item = 0;
-    words[0].value = 0;
-    words[1].value = 0;
-    words[2].value = 0;
-    slots = (s16 *)work->spoils.items;
+    work->spoils.coins = 0;
+    work->spoils.experience = 0;
+    work->spoils.defeated = 0;
     for (index = 3; index >= 0; index--)
-        slots[index] = 0;
+        work->spoils.items[index] = 0;
 }

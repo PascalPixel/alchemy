@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -21,7 +22,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
-void *Resource_GetTableEntry(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);

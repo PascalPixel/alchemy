@@ -1,3 +1,6 @@
+#include "CHARACTER_MENU.H"
+#include "PSYNERGY_MENU.H"
+#include "HEAP_STATE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -11,17 +14,12 @@
 
 #define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
-struct MenuObjectControl {
-    u8 padding00[4];
-    u16 suspended;
-};
-
-extern struct MenuObjectControl *gMenuCtrlWork;
+extern struct ObjectSystemWork *gMenuCtrlWork;
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 unused);
-s32 Party_ListActiveOwnersFar(const u16 *ids);
+s32 Party_ListActiveOwnersFar(u16 *ids);
 void ItemMenu_Init(s32, s32, s32, s32);
 void Palette_LightenBankHighlight(s32 index);
 void Link_DrawShiftedTilePairFar(s32 addr);
@@ -63,17 +61,15 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 /*
  * Open a modal menu screen and run its blocking interaction body.
  *
- * The address of gMenuCtrlWork, not the pointer it holds, is the base for the
- * two fixed-address fields at +0x24 and +0x54; only "suspended" is reached
- * through the pointer itself.  The field read at +0x178 is named by position
- * only and is not otherwise confirmed.
+ * The saved event word at +0x17e remains unnamed; its producer is not
+ * established by this menu. Renderer and event cells are real heap slots.
  */
 s32 Menu_OpenConfirmPrompt(void)
 {
 #if defined(PROMPT_SAVES_TILES)
     void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif
-    void *state = (void *)Runtime_AllocateHeapBlock(0x37, 0xa70);
+    struct PsynergyMenuState *state = (struct PsynergyMenuState *)Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
     s32 high;
     s32 unused;
     s32 low;
@@ -83,9 +79,9 @@ s32 Menu_OpenConfirmPrompt(void)
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
-    FIELD(state, u8, 0x219) = (u8)Party_ListActiveOwnersFar((const u16 *)((u8 *)state + 0x208));
+    state->owner_count = (u8)Party_ListActiveOwnersFar(state->owner_table);
     ItemMenu_Init(0, 3, 0, 7);
-    FIELD(state, s32, 0x10c) = UiWindow_CreateFar(13, 0, 17, 3, 2);
+    state->message_window = UiWindow_CreateFar(13, 0, 17, 3, 2);
     Palette_LightenBankHighlight(14);
     Link_DrawShiftedTilePairFar(0x06002500);
 #if defined(PROMPT_SAVES_TILES)
@@ -99,14 +95,14 @@ s32 Menu_OpenConfirmPrompt(void)
         &high, &unused, &low);
     Menu_EnsureCancelSound();
     if (result == 1) {
-        void *target = FIELD(&gMenuCtrlWork, void *, 0x54);
+        void *target = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_EVENT];
         u16 flags;
-        BattleAction_Get(0x3fff & FIELD(state, u16, 0x178));
+        BattleAction_Get(0x3fff & state->pane_action[0]);
         flags = (u16)(low | (high << 10));
         FIELD(target, u16, 0x17e) = flags;
     }
-    RenderOutput_ClearListFar(FIELD(state, s32, 0x24));
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 1;
+    RenderOutput_ClearListFar(state->status_window);
+    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
@@ -115,53 +111,19 @@ s32 Menu_OpenConfirmPrompt(void)
     UiWindow_MarkVisibleTileAttributesFar();
     UiWork_SetAltFlagAndClearTableFar(0);
     CopyWords(Iwram_CopyWords, PROMPT_TILES, saved, PROMPT_TILES_SIZE);
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 0;
+    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 0;
     Runtime_BumpFree(saved);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
 #endif
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 0;
+    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 0;
     Event_ClearInvalidPackedValuesFar();
     return result;
 }
 
-/*
- * gMenuWork is the polymorphic menu-runtime cell (see item_menu.h /
- * psynergy_menu.h). This owner reads and writes fields shared by both the
- * Inventory and Psynergy menu views (item_owner/target_owner at 0x21a/0x21b,
- * info_window at 0x2c, the selected id at 0x178, entry_count at 0x218), plus
- * two fields not yet named in either shared header (a byte "mode" at 0x268
- * that selects between three confirmation messages, and a u16 flags word at
- * 0x220). A local view is used here instead of extending the shared structs,
- * matching the project's convention for an owner-specific field range
- * (compare games/THE BROKEN SEAL/SRC/GAME/ITEM/USE.C's local ItemUseWork).
- */
-struct MenuActionWork {
-    u8 unknown_000[0x24];
-    s32 field_024;             /* 0x024 */
-    u8 unknown_028[4];
-    s32 info_window;           /* 0x02c */
-    u8 unknown_030[0x144];
-    u16 field_174;             /* 0x174, cleared before party selection */
-    u8 unknown_176[2];
-    u16 selected_action;       /* 0x178 */
-    u8 unknown_17a[0x9e];
-    u8 entry_count;            /* 0x218 */
-    u8 unknown_219;
-    u8 item_owner;             /* 0x21a */
-    u8 target_owner;           /* 0x21b */
-    u8 unknown_21c[4];
-    u16 flags_220;             /* 0x220 */
-    s16 completion_flag;       /* 0x222 */
-    u8 unknown_224[0x36];
-    s16 message_offset;        /* 0x25a */
-    u8 unknown_25c[0x0c];
-    u8 mode;                   /* 0x268 */
-};
-
-extern struct MenuActionWork *gMenuWork;
+/* ItemMenu_Init seeds this Psynergy confirmation mode before its selectors run. */
 
 extern char MsgShortcutSetL;
 extern char MsgShortcutSetR;
@@ -176,7 +138,6 @@ void WaitFrames(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
 s32 PsynergyMenu_SelectPartySlot(s32 unused);
 void ItemMenu_PosCategory(void);
-void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 s32 PsynergyMenu_RunList(s32 unused);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void InventoryMenu_ShowModalMessage(s32 message, s32 arg1, s32 arg2);
@@ -198,7 +159,7 @@ void Audio_PlayCue(s32 cue);
  */
 s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
 {
-    struct MenuActionWork *work;
+    struct PsynergyMenuState *work;
     s32 result;
     s32 state;
     s32 done;
@@ -218,7 +179,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
         case 0:
         {
             /* FAKEMATCH: the ordinary clear swaps address/zero r3/r2 in five instructions; the address belongs in r2. */
-            register u16 *clear asm("r2") = &work->field_174;
+            register u16 *clear asm("r2") = &work->pane_row[0];
             /* FAKEMATCH: constraining the address alone pools the zero; its full-width value belongs in r3. */
             register s32 zero asm("r3");
             /* FAKEMATCH: CSE copies the equal call result from r0; the reference keeps the cancellation constant in r3. */
@@ -240,16 +201,16 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 asm("" : "+r"(cancelled));
                 result = cancelled;
             }
-            RenderOutput_RedrawSavedRectFar(work->info_window);
+            RenderOutput_RedrawSavedRectFar((s32)work->info_window);
             state = 1;
             break;
         }
 
         case 1:
             WaitFrames(1);
-            Owner_GetStateFar(work->item_owner);
+            Owner_GetStateFar(work->owner_ids[0]);
             state = 0;
-            if (work->entry_count != 0) {
+            if (work->psynergy_count != 0) {
                 /* FAKEMATCH: clobbering r2 hides the 0x218 it holds from reload_cse_move2add, so the 0x268 mode offset is built from its own constant (movs/lsls) instead of adds r2, #80. */
                 asm("" : : : "r2");
                 switch (work->mode) {
@@ -264,7 +225,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                     break;
                 }
                 ItemMenu_PosCategory();
-                Menu_DrawOwnerStatusPanel(work->field_024, work->item_owner, 0, 0);
+                Menu_DrawOwnerStatusPanel(work->status_window, work->owner_ids[0], 0, 0);
                 selection = PsynergyMenu_RunList(0);
                 state = 0;
                 if (selection != -1) {
@@ -272,21 +233,21 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                     if (work->mode != 0) {
                         if (work->mode == 1) {
                             PsynergyMenu_SetShortcut(
-                                work->item_owner, selection, 0);
-                            RenderOutput_ClearListFar(work->info_window);
+                                work->owner_ids[0], selection, 0);
+                            RenderOutput_ClearListFar((s32)work->info_window);
                             InventoryMenu_ShowModalMessage(
                                 (s32)&MsgShortcutSetL, -1, -1);
 #if !EDITION_INTERNATIONAL
-                            RenderOutput_RedrawSavedRectFar(work->info_window);
+                            RenderOutput_RedrawSavedRectFar((s32)work->info_window);
 #endif
                         } else {
                             PsynergyMenu_SetShortcut(
-                                work->item_owner, selection, 1);
-                            RenderOutput_ClearListFar(work->info_window);
+                                work->owner_ids[0], selection, 1);
+                            RenderOutput_ClearListFar((s32)work->info_window);
                             InventoryMenu_ShowModalMessage(
                                 (s32)&MsgShortcutSetR, -1, -1);
 #if !EDITION_INTERNATIONAL
-                            RenderOutput_RedrawSavedRectFar(work->info_window);
+                            RenderOutput_RedrawSavedRectFar((s32)work->info_window);
 #endif
                         }
                         state = 0;
@@ -300,7 +261,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
             self_flag = PsynergyMenu_SelectTarget(0);
             state = 4;
             if (self_flag == -1) {
-                work->flags_220 |= 1;
+                work->flags |= 1;
                 state = 1;
             }
             break;
@@ -312,39 +273,39 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 break;
             }
             if (classification == 2) {
-                work->target_owner = 9;
+                work->owner_ids[1] = 9;
                 state = 4;
                 break;
             }
             done = 1;
             result = 1;
-            *out_owner = work->item_owner;
-            *out_action = work->selected_action & 0x3fff;
+            *out_owner = work->owner_ids[0];
+            *out_action = work->pane_action[0] & 0x3fff;
             break;
 
         case 4:
             self_flag = 0;
-            raw = work->selected_action;
+            raw = work->pane_action[0];
             result = BattleEffect_ApplyToTargets(
-                raw, work->item_owner, work->target_owner, 0);
-            if (work->target_owner == 9) {
-                work->target_owner = work->item_owner;
+                raw, work->owner_ids[0], work->owner_ids[1], 0);
+            if (work->owner_ids[1] == 9) {
+                work->owner_ids[1] = work->owner_ids[0];
                 self_flag = 9;
             }
             if (result != -1) {
-                action = BattleAction_Get(work->selected_action & 0x3fff);
-                Owner_AdjustSecondValueFar(work->item_owner, -action->pp_cost);
+                action = BattleAction_Get(work->pane_action[0] & 0x3fff);
+                Owner_AdjustSecondValueFar(work->owner_ids[0], -action->pp_cost);
             }
-            BattleUnit_Recalculate(work->item_owner);
+            BattleUnit_Recalculate(work->owner_ids[0]);
             if (result != -1) {
-                Menu_DrawOwnerStatusPanel(work->field_024, work->target_owner, 0, 0);
-                Ability_PlayUseAnimation(work->selected_action & 0x3fff);
-                RenderOutput_ClearListFar(work->info_window);
+                Menu_DrawOwnerStatusPanel(work->status_window, work->owner_ids[1], 0, 0);
+                Ability_PlayUseAnimation(work->pane_action[0] & 0x3fff);
+                RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    work->message_offset + (s32)&MsgItemUseResult, 0, -1);
+                    *(s16 *)((u8 *)work + 0x25a) + (s32)&MsgItemUseResult, 0, -1);
             } else {
                 Audio_PlayCue(114);
-                RenderOutput_ClearListFar(work->info_window);
+                RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
                     work->message_offset + (s32)&MsgItemUseResult,
                     result,
@@ -352,12 +313,12 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
             }
             if (result != -1) {
                 result = 1;
-                work->flags_220 |= 1;
+                work->flags |= 1;
                 state = 1;
             } else {
-                work->completion_flag = 1;
+                work->skip_slide = 1;
                 if (self_flag == 9) {
-                    work->flags_220 |= 1;
+                    work->flags |= 1;
                     state = 1;
                 } else {
                     state = 3;

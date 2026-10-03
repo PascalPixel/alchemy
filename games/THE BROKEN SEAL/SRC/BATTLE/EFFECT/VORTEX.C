@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -32,7 +33,6 @@ extern u8 BattleFx_GlintCellWidths[];
 extern u8 BattleFx_GlintCellHeights[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Camera_ApplyPhasedDelta(void);

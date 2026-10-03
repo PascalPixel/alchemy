@@ -11,7 +11,7 @@
 #include "IWRAM_CALL.H"
 
 s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
-void BattleCommand_SelectAutomatic(struct BattleCommandRequest *entry, s32 mode);
+void BattleCommand_SelectAutomatic(struct BattleActionRecord *entry, s32 mode);
 
 s32 Func_080771e8(s32 group, s32 index);
 
@@ -71,17 +71,17 @@ s32 BattlePres_BuildOpponentEntries(
 
             entry->unit_id = unit_id;
             value = unit->agility;
-            entry->value = value;
+            entry->priority = value;
             if (copy_index != 0) {
-                entry->value = (s16)value / 2;
+                entry->priority = (s16)value / 2;
             }
 
             if (unit->sleep != 0 || unit->stun != 0) {
-                entry->kind = 8;
+                entry->command = 8;
                 entry->parameter = 0;
                 entry->target = 0x100;
             } else {
-                BattleCommand_SelectAutomatic((struct BattleCommandRequest *)entry, 0);
+                BattleCommand_SelectAutomatic(entry, 0);
             }
 
             entry_count++;
@@ -104,14 +104,14 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
     for (i = 0; i < count; i++) {
         struct BattleActionRecord *entry = &entries[i];
 
-        if (entry->kind == 5) {
+        if (entry->command == 5) {
             struct BattleAction *action;
 
             Owner_GetStateFar(entry->unit_id);
             action = BattleAction_Get(Func_080771e8(
                 (s16)((u16)entry->parameter) >> 8 & 15, ((u16)entry->parameter) & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {
-                entry->value += 10000;
+                entry->priority += 10000;
             }
         }
     }
@@ -119,12 +119,12 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count)
     do {
         swapped = 0;
         for (j = count - 1; j > 0; j--) {
-            if ((s16)entries[j].value > (s16)entries[j - 1].value) {
+            if ((s16)entries[j].priority > (s16)entries[j - 1].priority) {
                 struct BattleActionRecord temporary;
 
-                CopyWords(&temporary, &entries[j], 16);
-                CopyWords(&entries[j], &entries[j - 1], 16);
-                CopyWords(&entries[j - 1], &temporary, 16);
+                CopyWords(&temporary, &entries[j], sizeof(struct BattleActionRecord));
+                CopyWords(&entries[j], &entries[j - 1], sizeof(struct BattleActionRecord));
+                CopyWords(&entries[j - 1], &temporary, sizeof(struct BattleActionRecord));
                 swapped++;
             }
         }

@@ -4,6 +4,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "OBJECT_DISPATCH.H"
 #include "ANIMSPR.H"
+#include "SCRIPT_MOTION.H"
 
 s32 ArcTan2(s32, s32);
 void Battle_WaitMode0(s32);
@@ -44,8 +45,10 @@ void Object_LinkPair(s32 first_id, s32 second_id, s32 wait)
 
 /* Turns two objects toward each other by at most 0x1000 per frame, for up
    to sixty frames, until both face along the line between them. */
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct FacingObject *second)
+void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first, struct FacingObject *raw_second)
 {
+    struct ObjectRuntime *first = (struct ObjectRuntime *)raw_first;
+    struct ObjectRuntime *second = (struct ObjectRuntime *)raw_second;
     s32 toward;
     s32 away;
     s32 frame;
@@ -54,28 +57,28 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first, struct Fac
 
     if (first == NULL || second == NULL)
         return;
-    toward = (u16)ArcTan2(second->position_z - first->position_z,
-        second->position_x - first->position_x);
+    toward = (u16)ArcTan2(second->z - first->z,
+        second->x - first->x);
     away = toward + 0x8000;
     for (frame = 0; frame < 60; frame++) {
         turning = 2;
-        delta = (s16)(toward - first->facing);
+        delta = (s16)(toward - first->angle);
         if (delta != 0) {
             if (delta > 0x1000)
                 delta = 0x1000;
             if (delta < -0x1000)
                 delta = -0x1000;
-            first->facing += delta;
+            first->angle += delta;
         } else {
             turning = 1;
         }
-        delta = (s16)(away - second->facing);
+        delta = (s16)(away - second->angle);
         if (delta != 0) {
             if (delta > 0x1000)
                 delta = 0x1000;
             if (delta < -0x1000)
                 delta = -0x1000;
-            second->facing += delta;
+            second->angle += delta;
         } else {
             turning--;
         }
@@ -112,11 +115,11 @@ void ObjectGroup_ConfigureChildValue(s32 object_id, s32 value)
     if (object != NULL) {
         flags = 0x100 & value;
         if (flags != 0) {
-            *(void (**)(struct DispatchObject *))((u8 *)object + 0x6c) =
-                ObjectGroup_ApplyIndexedChildValue;
+            ((struct ScriptMotionObject *)object)->hook =
+                (void (*)(struct ScriptMotionObject *))ObjectGroup_ApplyIndexedChildValue;
             return;
         }
-        *(s32 *)((u8 *)object + 0x6c) = flags;
+        ((struct ScriptMotionObject *)object)->hook = NULL;
         ObjectGroup_SetChildValue(object, value);
     }
 }

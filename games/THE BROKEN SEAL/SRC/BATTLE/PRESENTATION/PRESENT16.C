@@ -15,9 +15,9 @@
 #include "BATTLE_COMMAND.H"
 
 void UiWork_ClearValueNameTablesFar(void);
-s32 BattlePres_ShowMessageWhenField38Positive(s16 *);
+s32 BattlePres_ShowMessageWhenField38Positive(const struct BattleActionRecord *);
 s32 BattlePres_RunUnitAction(s16 *);
-s32 BattlePresentation_RunPairedUnitTransition(s16 *);
+s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *);
 void BattleMotion_SetupEscapeObject(s32);
 
 /* battle/presentation/act/run.c */
@@ -40,16 +40,16 @@ void BattleFx_DispatchByIdRangeFar(struct BattlePresentationWork *);
    priority 0x80, enemies with a random party target. Sort by descending
    agility, moving the complete command records through DMA. */
 s32 BattlePresentation_BuildSortedUnitEntries(
-    struct BattleCommandRequest *entries)
+    struct BattleActionRecord *entries)
 {
-    struct BattleCommandRequest swap;
+    struct BattleActionRecord swap;
     u16 unit_ids[14];
     s32 first_count;
     s32 count = 0;
     s32 second_count;
     s32 priority_range;
     s32 index;
-    struct BattleCommandRequest *entry;
+    struct BattleActionRecord *entry;
     struct BattleUnit *unit;
 
     first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
@@ -60,7 +60,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
         unit = Owner_GetStateFar(unit_id);
         entry = &entries[index];
-        entry->actor_id = unit_id;
+        entry->unit_id = unit_id;
         entry->priority = unit->agility;
         entry->command = 0;
         entry->parameter = 0;
@@ -74,7 +74,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         s32 unit_id = unit_ids[index];
 
         unit = Owner_GetStateFar(unit_id);
-        entry->actor_id = unit_id;
+        entry->unit_id = unit_id;
         entry->priority = unit->agility >> 1;
         if (entry->priority != 0)
             entry->priority += (u32)(Random16() * unit->agility) >> 16;
@@ -89,7 +89,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         s32 pos;
 
         for (pos = count - 1; pos > 0; pos--) {
-            if (entries[pos].priority > entries[pos - 1].priority) {
+            if ((s16)entries[pos].priority > (s16)entries[pos - 1].priority) {
                 Dma_Set(&entries[pos], &swap, 0x84000004, (volatile u32 *)0x040000d4);
                 Dma_Set(&entries[pos - 1], &entries[pos], 0x84000004, (volatile u32 *)0x040000d4);
                 Dma_Set(&swap, &entries[pos - 1], 0x84000004, (volatile u32 *)0x040000d4);
@@ -120,21 +120,21 @@ void BattlePres_AdjustCameraByShoulderKeys(void)
     }
 }
 
-s32 BattlePres_RunAction(s16 *action)
+s32 BattlePres_RunAction(struct BattleActionRecord *action)
 {
     struct BattlePresentationTransition *transition;
     s32 actor_id;
     s32 battle_mode;
     struct BattleUnit *actor;
 
-    actor_id = action[0];
+    actor_id = action->unit_id;
     actor = Owner_GetStateFar(actor_id);
     if (actor->hp == 0)
         return -1;
 
-    action[5] = BattleTarget_ReplaceDefeated((u8 *)action);
+    action->target = BattleTarget_ReplaceDefeated(action);
     transition = gTransitionWork;
-    if (action[0] > 4)
+    if (action->unit_id > 4)
         battle_mode = -0x2000;
     else
         battle_mode = 0x2000;
@@ -142,7 +142,7 @@ s32 BattlePres_RunAction(s16 *action)
     transition->frames = 60;
     UiWork_ClearValueNameTablesFar();
 
-    switch (action[3]) {
+    switch (action->command) {
     case 99:
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
         if (BattleEscape_PlayRun(action)!= 0)
@@ -154,13 +154,13 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     case 2:
         WaitFrames(45);
-        BattlePres_RunUnitAction(action);
+        BattlePres_RunUnitAction((s16 *)action);
         break;
     case 0:
     default: {
         struct BattlePresentationTransition *tr = gTransitionWork;
         tr->flag = 0;
-        BattlePres_RunUnitAction(action);
+        BattlePres_RunUnitAction((s16 *)action);
         tr->flag = 0;
         break;
     }
@@ -187,7 +187,7 @@ s32 BattleObject_IsValidId(u32 object_id)
 
 /* battle/escape/play_run.c */
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-s32 BattleEscape_PlayRun(s16 *action)
+s32 BattleEscape_PlayRun(struct BattleActionRecord *action)
 {
     s16 party_members[14];
     s32 party_size;
@@ -216,13 +216,13 @@ s32 BattleEscape_PlayRun(s16 *action)
     return 0;
 }
 
-s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
+s32 BattlePres_ShowMessageWhenField38Positive(const struct BattleActionRecord *action)
 {
     s32 object_id;
     s32 result;
     struct BattleUnit *unit;
 
-    object_id = *script;
+    object_id = action->unit_id;
     unit = Owner_GetStateFar(object_id);
     if (BattleObject_IsValidId(object_id) < 0) {
         return -1;
@@ -237,7 +237,7 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
     return 0;
 }
 
-s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
+s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action)
 {
     u16 visible_units[14];
     struct BattlePresentationWork context;
@@ -250,11 +250,11 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     u32 index;
 
     living_count = 0;
-    actor_id = action[0];
+    actor_id = action->unit_id;
     if (BattleObject_IsValidId(actor_id) < 0) {
         return -1;
     }
-    target_id = action[5];
+    target_id = action->target;
     if (BattleObject_IsValidId(target_id) < 0) {
         return -1;
     }
@@ -262,7 +262,7 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     {
         struct BattlePresentationTransition *transition =
             gTransitionWork;
-        transition->target_yaw = action[0] > 4 ? 0x5000 : 0x2000;
+        transition->target_yaw = action->unit_id > 4 ? 0x5000 : 0x2000;
         transition->frames = 60;
     }
     WaitFrames(10);
@@ -313,7 +313,7 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     visible_units[living_count] = 0xff;
     BattleActor_SpawnObjectsForList(visible_units, 0);
 
-    context.kind = action[4];
+    context.kind = action->parameter;
     context.actor = actor_id;
     for (index = 0; index != living_count; index++) {
         context.actors[index] = visible_units[index];
@@ -344,7 +344,7 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     return 0;
 }
 
-s32 BattlePres_RunApproachAction(struct BattleCommandRequest *input)
+s32 BattlePres_RunApproachAction(struct BattleActionRecord *input)
 {
     struct BattlePresentationWork work;
 
@@ -356,7 +356,7 @@ s32 BattlePres_RunApproachAction(struct BattleCommandRequest *input)
         WaitFrames(30);
     }
 
-    work.actor = input->actor_id;
+    work.actor = input->unit_id;
     if (BattleObject_IsValidId(work.actor) < 0)
         return -1;
 

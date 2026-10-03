@@ -54,7 +54,7 @@ s32 GameFlag_IsSet(s32 flag);
 s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
 u32 BattleEv_Push(u32 opcode, u32 operand);
 void BattleEv_DispatchQueued(void);
-s32 RollWeaponUnleashFar(struct BattleUnit *unit);
+u16 RollWeaponUnleashFar(struct BattleUnit *unit);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 void BattleEv_SetRuntimeField8(void);
 struct ItemDefinition *Item_Get(s32 item);
@@ -66,7 +66,7 @@ void Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
 void Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 void Trade_AddOfferFar(s32 unit_id, s32 element, s32 index);
 void Owner_RecalculateStatsFar(s32 unit_id);
-void BattleEventRuntime_SchedulePhase(s32 phase);
+s32 BattleEventRuntime_SchedulePhase(s32 frames);
 void AudioCommand_PlayFar(s32 cue);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
@@ -102,9 +102,9 @@ void BattlePresentation_WaitForAdvance(void);
 /* Resolve a queued command into the plan its presentation plays: who acts,
  * with what, on whom, and how the first rolls fall. Returns -1 when the
  * command comes to nothing after a message, -2 when it was played out here. */
-s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattlePlan *plan)
+s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePlan *plan)
 {
-    struct BattleUnit *actor = Owner_GetStateFar(command->actor_id);
+    struct BattleUnit *actor = Owner_GetStateFar(command->unit_id);
     struct BattleSession *battle = gBattleWork;
     s32 target;
     s32 action;
@@ -192,7 +192,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             }
             plan->target_count = count;
             if (count <= 0) {
-                UiText_DrawQuantity(command->actor_id, 1);
+                UiText_DrawQuantity(command->unit_id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
                 if (actor->guard_level == 0)
                     actor->guard_level = 1;
@@ -204,7 +204,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
     target = Battle_GetTaggedSlotValue(command->target);
     BattleEventRuntime_Reset();
     plan->pending_amount_60 = 0;
-    plan->actor_id = command->actor_id;
+    plan->actor_id = command->unit_id;
     plan->target_count = 0;
     plan->presentation_flags = 0;
     plan->failure = 0;
@@ -239,22 +239,22 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
     UiWork_ClearValueNameTablesFar();
     if (actor->cannot_move) {
         actor->cannot_move = 0;
-        UiText_DrawQuantity(command->actor_id, 1);
+        UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgUnableToMove);
         return -1;
     }
     if (actor->sleep) {
-        UiText_DrawQuantity(command->actor_id, 1);
+        UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsAsleep);
         return -1;
     }
     if (actor->stun) {
-        UiText_DrawQuantity(command->actor_id, 1);
+        UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsParalyzed);
         return -1;
     }
     if ((actor->restraint & 1) && command->command != 3 && (BattleRandom16Far() & 3) == 0) {
-        UiText_DrawQuantity(command->actor_id, 1);
+        UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgIsBound);
         return -1;
     }
@@ -271,10 +271,10 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
     }
     switch (command->command) {
     case 99:
-        if ((u16)command->actor_id <= 7) {
+        if ((u16)command->unit_id <= 7) {
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
         } else {
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorRuns);
         }
         BattlePresentation_WaitForAdvance();
@@ -285,7 +285,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
         if (BattleCommand_SelectTargets(action) == -1)
             return -1;
         if (action != 1) {
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(Inventory_GetEquippedItemFar(actor, 1), 2);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgWeaponHowls);
             BattleEv_SetRuntimeField8();
@@ -302,7 +302,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             ability = Ability_GetData(action);
             if (BattleCommand_SelectTargets(action) == -1)
                 return -1;
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorCasts);
             if (actor->pp < ability->pp_cost) {
@@ -316,7 +316,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             if (ok) {
                 plan->failure = 0;
                 actor->pp -= ability->pp_cost;
-                Owner_RecalculateRatiosFar(command->actor_id);
+                Owner_RecalculateRatiosFar(command->unit_id);
                 if (actor->pp < 0)
                     actor->pp = 0;
                 if (actor->pp > actor->max_pp)
@@ -329,14 +329,14 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             struct ItemDefinition *item;
 
             if (command->parameter < 0) {
-                UiText_DrawQuantity(command->actor_id, 1);
+                UiText_DrawQuantity(command->unit_id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgItemAlreadyUsed);
                 return -1;
             }
             item = Item_Get(actor->inventory[command->parameter]);
             action = item->action_id;
             if (action == 0 || (actor->inventory[command->parameter] & 0x400)) {
-                UiText_DrawQuantity(command->actor_id, 1);
+                UiText_DrawQuantity(command->unit_id, 1);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
                 if (actor->guard_level == 0)
                     actor->guard_level = 1;
@@ -344,7 +344,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             }
             if (BattleCommand_SelectTargets(action) == -1)
                 return -1;
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(actor->inventory[command->parameter], 2);
             if (item->use_type == 2 || item->use_type == 0) {
                 switch (item->type) {
@@ -362,7 +362,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
         break;
     case 3:
     case 7:
-        UiText_DrawQuantity(command->actor_id, 1);
+        UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorDefends);
         return -1;
     case 8:
@@ -374,7 +374,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             action = command->parameter;
             if (BattleCommand_SelectTargets(action) == -1)
                 return -1;
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             if ((Ability_GetData(action)->target_flags & 15) == 6)
                 message = (s32)&MsgActorUnleashesAbility;
@@ -439,29 +439,29 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
         break;
     case 5:
         action = Djinn_GetDefinitionHeaderFar(DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
-        if (!Djinn_IsActiveFar(command->actor_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter))) {
-            if (Trade_CanOfferDjinnFar(command->actor_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter))) {
+        if (!Djinn_IsActiveFar(command->unit_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter))) {
+            if (Trade_CanOfferDjinnFar(command->unit_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter))) {
                 Ability_GetData(action);
                 BattlePres_SetActorModes(0, 0);
-                Djinn_ActivateFar(command->actor_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
-                Trade_RemoveOfferFar(command->actor_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
-                Owner_RecalculateStatsFar(command->actor_id);
+                Djinn_ActivateFar(command->unit_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
+                Trade_RemoveOfferFar(command->unit_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
+                Owner_RecalculateStatsFar(command->unit_id);
                 BattleEventRuntime_Reset();
                 BattleEventRuntime_SchedulePhase(30);
-                BattleEv_Push(0, command->actor_id);
+                BattleEv_Push(0, command->unit_id);
                 BattleEv_Push(3, DJINN_ELEMENT(command->parameter) * 20 + DJINN_INDEX(command->parameter) + 300);
                 BattleEv_Push(14, 175);
                 BattleEv_Push(10, 0);
                 BattleEv_Push(4, (s32)&MsgDjinnSet);
-                BattleEv_Push(11, command->actor_id);
+                BattleEv_Push(11, command->unit_id);
                 AudioCommand_PlayFar(212);
-                Object_SetMode(GetBattleObjectSlot(command->actor_id)->object, 3);
-                ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(command->actor_id)->object, 32);
-                BattleFx_PlayUnitElementEffect(command->actor_id, DJINN_ELEMENT(command->parameter), 3, 0);
+                Object_SetMode(GetBattleObjectSlot(command->unit_id)->object, 3);
+                ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(command->unit_id)->object, 32);
+                BattleFx_PlayUnitElementEffect(command->unit_id, DJINN_ELEMENT(command->parameter), 3, 0);
                 BattleEventRuntime_WaitForReady();
                 return -2;
             }
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             AudioCommand_PlayFar(114);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgDjinnInRecovery);
@@ -473,9 +473,9 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
 
             if (BattleCommand_SelectTargets(action) == -1)
                 return -1;
-            Trade_AddOfferFar(command->actor_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
+            Trade_AddOfferFar(command->unit_id, DJINN_ELEMENT(command->parameter), DJINN_INDEX(command->parameter));
             ability = Ability_GetData(action);
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorUnleashesDjinn);
             plan->range_index = ability->damage_class;
@@ -490,9 +490,9 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             s32 i;
 
             summon = SummonDefinition_Get(command->parameter);
-            BattlePlacement_CountValidEntries(command->actor_id, counts);
+            BattlePlacement_CountValidEntries(command->unit_id, counts);
             side = 0;
-            if ((u16)command->actor_id > 7)
+            if ((u16)command->unit_id > 7)
                 side = 1;
             list = &Trade_GetOfferStateFar(side)->list;
             for (i = 0; i < 4 && counts[i] >= summon->djinn_required[i]; i++)
@@ -501,12 +501,12 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *command, struct BattleP
             if (BattleCommand_SelectTargets(action) == -1)
                 return -1;
             if (i != 4) {
-                UiText_DrawQuantity(command->actor_id, 1);
+                UiText_DrawQuantity(command->unit_id, 1);
                 UiText_DrawQuantity(action, 4);
                 UiText_ShowMessageAndWaitCoreFar((s32)&MsgSummonLacksDjinn);
                 return -1;
             }
-            UiText_DrawQuantity(command->actor_id, 1);
+            UiText_DrawQuantity(command->unit_id, 1);
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorSummons);
             for (i = 0; i != list->count; i++) {
@@ -525,7 +525,7 @@ resolve:
         struct BattleUnit *defender = Owner_GetStateFar(plan->target_ids[0]);
 
         plan->action_id = 1;
-        plan->range_index = Item_GetEquippedElementFar(command->actor_id);
+        plan->range_index = Item_GetEquippedElementFar(command->unit_id);
         plan->outcome = 2;
         if (actor->class_index == 0) {
             plan->presentation_flags = Battle_GetEntryField2LowBits(actor->class_id) | 0x4000;
@@ -549,7 +549,7 @@ resolve:
                 break;
             }
         }
-        UiText_DrawQuantity(command->actor_id, 1);
+        UiText_DrawQuantity(command->unit_id, 1);
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorAttacks);
         do {
             if (defender->hp == 0 || defender->sleep != 0 || defender->stun != 0
@@ -626,7 +626,7 @@ resolve:
             s32 i;
 
             for (i = 0; i < plan->target_count; i++)
-                plan->target_results[i] = Battle_HitCheck(command->actor_id, plan->target_ids[i],
+                plan->target_results[i] = Battle_HitCheck(command->unit_id, plan->target_ids[i],
                     ability->damage_class, ability->effect, 100);
         }
         if ((u32)action <= 0x206) {

@@ -66,11 +66,11 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
     index = 0;
     do {
         entry = *(struct AnimationEntry **)((u8 *)object + offset);
-        if (entry->field_0c != 0) {
+        if (entry->scripts != 0) {
             metadata = Resource_GetMetadataRecordFar(entry->anim_id);
             if (value < metadata->animation_count) {
                 entry->kind = metadata->draw_kind;
-                entry->script = ((u8 **)entry->field_0c)[value];
+                entry->script = entry->scripts[value];
                 entry->timer = count * 0x10;
                 entry->step = 0x10;
                 entry->pos = index;

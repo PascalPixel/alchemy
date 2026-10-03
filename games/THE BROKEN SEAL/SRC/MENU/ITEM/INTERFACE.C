@@ -1,3 +1,4 @@
+#include "CHARACTER_MENU.H"
 #include "EDITION.H"
 #include "INVENTORY_MENU.H"
 #include "OBJECT_FACTORY.H"

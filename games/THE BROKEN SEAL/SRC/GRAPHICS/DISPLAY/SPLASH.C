@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -15,7 +16,6 @@ void Blend_SetDarkenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
-u8 *Resource_GetTableEntry(s32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
 
 /* Title: show the splash picture, fade it in and wait for A or START (or

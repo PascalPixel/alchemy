@@ -3,6 +3,8 @@
 #include "RAM_BUFFER.H"
 #include "MAP.H"
 #include "OBJECT_RUNTIME.H"
+#include "FIELDRUN.H"
+#include "FIELDOBJ.H"
 
 extern u8 gMapCellBuffer[];
 
@@ -97,23 +99,13 @@ s32 Map_GetCellHighFlags(s32 x, s32 y)
     return cell[1] >> 6;
 }
 
-/* The fields of a field object the terrain test reads. */
-
-/* A 16.16 position: the terrain test reads only its whole x and z. */
-struct TerrainPosition {
-    u8 unknown_00[2];
-    s16 x;
-    u8 unknown_04[6];
-    s16 z;
-};
-
 /*
  * Compare the terrain at a position with an object's height: 2 when the
  * cell is closed to walking, 1 when the terrain is more than half a tile
  * above the object, -1 when it is more than three quarters of a tile
  * below, 0 when the object can step there or no map is loaded.
  */
-s32 Func_080120dc(struct ObjectRuntime *object, struct TerrainPosition *position)
+s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position)
 {
     struct MapState *state;
     s32 x;
@@ -123,8 +115,9 @@ s32 Func_080120dc(struct ObjectRuntime *object, struct TerrainPosition *position
     s32 height;
     s32 delta;
 
-    x = position->x;
-    z = position->z;
+    /* Terrain probes read the signed whole-pixel lanes of the 16.16 vector. */
+    x = ((union FieldCoordinate *)&position->x)->part.pixel;
+    z = ((union FieldCoordinate *)&position->z)->part.pixel;
     state = gMapWork[0];
     if (state == NULL)
         return 0;

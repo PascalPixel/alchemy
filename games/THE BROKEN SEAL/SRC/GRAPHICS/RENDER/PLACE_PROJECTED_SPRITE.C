@@ -18,10 +18,6 @@ struct ProjectedEffect {
     unsigned unused : 16;
 };
 
-struct RenderState {
-    u8 unknown_00[4];
-    s16 frozen;
-};
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *sprite, u16 mode);
@@ -128,7 +124,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32
     s32 slot;
 
     affine = 1;
-    if ((*(struct RenderState **)gMenuCtrlWork)->frozen != 0)
+    if ((*(struct ObjectSystemWork **)gMenuCtrlWork)->suspended != 0)
         goto hide;
     z = Render_ProjectPoint(point, screen);
     if (screen[2] == 0)

@@ -1,3 +1,4 @@
+#include "GLYPH.H"
 #include "SELECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -7,14 +8,9 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-struct ResourceBuffer_0801c188 {
-    u8 payload[0x604];
-    void *resource;
-};
-
 extern struct SelectionScreen *gResQueueWork;
 struct SelectionNode *NodeChain_GetNodeAtCount(void *state);
-struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
+s32 Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
 u16 VramBlock_LoadCached(s32 handle, s32 size, void *buffer);
 
@@ -40,7 +36,7 @@ void Menu_LoadSelectedResource(void)
     struct SelectionScreen *state = gResQueueWork;
     struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
     struct SelectionNode *transfer;
-    struct ResourceBuffer_0801c188 *buffer;
+    GlyphTransfer *buffer;
     u8 *tbl;
     void *resource;
     s32 no;
@@ -48,12 +44,12 @@ void Menu_LoadSelectedResource(void)
     if (selection->kind != 1 && selection->kind != 6)
         return;
 
-    buffer = Runtime_AllocateHeapBlock(17, 0x608);
+    buffer = (GlyphTransfer *)Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
     transfer = &state->records[15];
     no = selection->base;
     tbl = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
     {
-        void **destination = &buffer->resource;
+        u8 **destination = &buffer->encoded;
         resource = tbl
             + *(u16 *)(tbl + selection->base * 2);
         *destination = resource;

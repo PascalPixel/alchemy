@@ -11,7 +11,7 @@
 #include "CHARACTER.H"
 #include "ANIMSPR.H"
 
-void AnimationObjects_SelectAnimationFar(void *, s32);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 
 /* The native scan reads the session through its original halfword view. */

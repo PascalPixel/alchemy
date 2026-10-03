@@ -10,27 +10,11 @@
 #include "OBJECT_RUNTIME.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "ANIMSPR.H"
+#include "FIELDRUN.H"
+#include "FIELDOBJ.H"
+#include "OBJECT_DISPATCH.H"
 
-struct ObjectTableWork {
-    u8 unknown_00[0x14];
-    void *objects[192];
-};
-
-extern struct ObjectTableWork *gEventWork;
-void *ObjectTable_Get(s32);
 void Object_Destroy(void *);
-
-struct ObjectWork {
-    s32 header[4];                          /* 0x000 */
-    u8 unknown_010[4];
-    struct ObjectRuntime *objects[0x62];      /* 0x014 */
-    u8 unknown_19c[2];
-    s16 scene_mode;                         /* 0x19e */
-    u8 unknown_1a0[0x40];
-    struct ObjectRuntime *camera_object;      /* 0x1e0 */
-    u8 unknown_1e4[0x1c];
-    struct ScenePlacement player[2];      /* 0x200 */
-};
 
 /* One cell of the field map's 128-cell-wide collision grid in EWRAM. */
 
@@ -40,27 +24,22 @@ extern const struct ScenePlacement Data_0809f810[2];
 void ObjectTable_ClearBattleSlots(void);
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *object, s32 value);
+void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, u32 value);
 void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 struct ObjectRuntime *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitFromTable4WithArgumentFar(struct ObjectRuntime *object, struct ObjectRuntime *source);
-struct AnimationEntry *ResourceMetadata_RegisterFar(void *sprite, s32 kind);
+void ObjectDispatch_InitFromTable4WithArgumentFar(struct DispatchObject *object, s32 argument);
+s32 ResourceMetadata_RegisterFar(struct AnimationObject *sprite, s32 kind);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 Party_RemapCharacterIdByFlags(s32 id);
 void Resource_ResetEntry(s32 entry);
 s32 GameFlag_TestFar(s32 flag);
-void ObjectDispatch_RegisterChildMetadataFar(struct ObjectRuntime *object, s32 value);
+void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object, s32 value);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 u32 Random16(void);
 u32 __umodsi3(u32 numerator, u32 denominator);
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action);
 
-struct State_0808b824 {
-    u8 padding[0x34];
-    s32 values[58];
-};
-
-extern struct State_0808b824 *gWork;
+extern struct FieldStepWork *gWork;
 
 /* Registers a scene's object table in the first free of the work's four
    table slots, then makes an object for each of its rows whose condition
@@ -69,24 +48,23 @@ extern struct State_0808b824 *gWork;
    to its place instead. */
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 {
-    struct ObjectWork *work;
+    struct FieldStepWork *work;
     struct ObjectRuntime *object;
     struct ObjectRuntime *previous;
     struct AnimationObject *sprite;
     s32 i;
     s32 index;
-    u32 offset;
     s32 character;
     s32 condition;
     u8 resource;
     u16 id;
 
-    work = (struct ObjectWork *)gEventWork;
+    work = (struct FieldStepWork *)gEventWork;
     for (i = 0; i < 4; i++) {
-        if (work->header[i] == (s32)entry)
+        if (work->tables[i] == entry)
             break;
-        if (work->header[i] == 0) {
-            work->header[i] = (s32)entry;
+        if (work->tables[i] == 0) {
+            work->tables[i] = entry;
             break;
         }
     }
@@ -102,7 +80,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
         condition = entry->condition;
         if (!GameFlag_IsConditionActive(condition))
             continue;
-        if ((u32)(condition - 48) <= 79 && work->scene_mode != 3
+        if ((u32)(condition - 48) <= 79 && work->mode != 3
             && !GameFlag_IsConditionActive(condition + 80))
             continue;
         character = Party_RemapCharacterIdByFlags(entry->sprite);
@@ -122,7 +100,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
                 }
             }
             if (GameFlag_TestFar(33) && (u32)(character - 18) <= 1)
-                ObjectDispatch_RegisterChildMetadataFar(object, 226);
+                ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object, 226);
         } else if (!GameFlag_TestFar(0x109)) {
             Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
         }
@@ -140,7 +118,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
                 object->flags = 4;
                 object->y += 0x8000;
             }
-            if (work->scene_mode == 3) {
+            if (work->mode == 3) {
                 object->flags &= 0xfe;
                 if (!GameFlag_TestFar(33))
                     sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
@@ -150,19 +128,18 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
             }
             object->unknown_23 = 1;
         }
-        offset = index * 4 + 0x14;
-        *(struct ObjectRuntime **)((u8 *)work + offset) = object;
+        work->actors[index] = object;
     }
 }
 
 void ObjectTable_DestroyAtIndex(s32 index)
 {
-    struct ObjectTableWork *state = gEventWork;
+    u8 *state = (u8 *)gEventWork;
     void *object = ObjectTable_Get(index);
 
     if (object != NULL) {
         Object_Destroy(object);
-        state->objects[index] = NULL;
+        *(void **)(state + 0x14 + index * sizeof(void *)) = NULL;
     }
 }
 
@@ -172,7 +149,7 @@ void ObjectTable_DestroyAtIndex(s32 index)
  * and create the camera object that follows it. */
 void ObjectTable_ResetForObject(struct ScenePlacement *table)
 {
-    struct ObjectWork *work;
+    struct FieldStepWork *work;
     struct ScenePlacement *entry;
     struct ObjectRuntime *object;
     struct ObjectRuntime *camera;
@@ -182,13 +159,14 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
     s32 pos;
     s32 hgt;
 
-    work = (struct ObjectWork *)gEventWork;
+    work = (struct FieldStepWork *)gEventWork;
     leader = gGameState.selected_actor;
-    entry = &work->player[0];
-    work->player[0] = Data_0809f810[0];
-    work->player[1] = Data_0809f810[1];
+    /* The scene loader keeps its two mutable player rows at +0x200. */
+    entry = (struct ScenePlacement *)((u8 *)work + 0x200);
+    entry[0] = Data_0809f810[0];
+    entry[1] = Data_0809f810[1];
     for (pos = 0; pos < 4; pos++)
-        work->header[pos] = 0;
+        work->tables[pos] = 0;
     ObjectTable_ClearBattleSlots();
     entry->condition = -1;
     entry->sprite = leader;
@@ -199,7 +177,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
     Event_SpawnObjectTable(entry, leader);
     Event_SpawnObjectTable(table, 8);
 
-    object = work->objects[leader];
+    object = work->actors[leader];
     object->terrain_id = gGameState.turn;
     pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
     cell = &MAP_CELLS[pos];
@@ -210,7 +188,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
         object->y += hgt;
         object->terrain_height = object->y;
         object->flags = 0;
-        ObjectDispatch_SetSingleChildField26Far(object, 0);
+        ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)object, 0);
         Object_SetMode(object, 12);
     } else {
         gGameState.movement_mode = 0;
@@ -218,25 +196,26 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
 
     camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
     camera->terrain_height = object->terrain_height;
-    ObjectDispatch_InitFromTable4WithArgumentFar(camera, object);
-    if (work->scene_mode == 3) {
-        struct AnimationEntry *meta = ResourceMetadata_RegisterFar(object->animation, 23);
+    ObjectDispatch_InitFromTable4WithArgumentFar((struct DispatchObject *)camera, (s32)object);
+    if (work->mode == 3) {
+        struct AnimationEntry *meta = (struct AnimationEntry *)
+            ResourceMetadata_RegisterFar(object->animation, 23);
         meta->param = 15;
         meta->priority = 9;
     }
     ((struct MapScrollWork *)gMapWork[0])->origin = &camera->x;
-    work->camera_object = camera;
+    gEventWork->view_center = (struct FieldActor *)camera;
 }
 
 s32 ObjectTable_FindLastActiveId(void)
 {
-    struct State_0808b824 *state = gWork;
+    struct FieldStepWork *state = gWork;
     s32 result = 7;
     s32 index = 8;
-    s32 *value = state->values;
+    struct ObjectRuntime **value = &state->actors[ACTOR_FIRST_PLACED];
 
     do {
-        s32 current = *value++;
+        struct ObjectRuntime *current = *value++;
 
         if (current != 0) {
             result = index;
@@ -252,5 +231,5 @@ s32 ObjectTable_FindLastActiveId(void)
 
 void *ObjectTable_GetSlotAddress(u32 index)
 {
-    return &gEventWork->objects[index];
+    return (u8 *)gEventWork + 0x14 + index * sizeof(void *);
 }

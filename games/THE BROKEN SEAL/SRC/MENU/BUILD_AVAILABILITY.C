@@ -1,3 +1,6 @@
+#include "CHARACTER_MENU.H"
+#include "BATTLE_UNIT.H"
+#include "INVENTORY_MENU.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -5,14 +8,13 @@
 #include "TBS_EDITION.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
-extern u8 Data_03001f2c[];
 
 /* menu/character_menu/build_availability.c */
-u8 *Owner_GetStateFar(s32 owner);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
 
 s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 {
-    u8 *state;
+    struct BattleUnit *state;
     s32 i;
     s32 zero;
     s32 count;
@@ -24,25 +26,25 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
         output[i] = zero;
 
     count = 0;
-    if (*(s16 *)(state + 56) == 0 && requested == 1) {
-        output[0] = requested;
+    if (state->hp == 0 && requested == 1) {
+        output[CHARACTER_DOWN] = requested;
         count = 1;
     }
 
-    mode = *(s8 *)(state + 0x131);
+    mode = state->poison;
     if (mode != 0) {
         if (mode == 1)
-            output[1] = mode;
+            output[CHARACTER_POISON] = mode;
         else
-            output[2] = 1;
+            output[CHARACTER_VENOM] = 1;
         count++;
     }
-    if (*(s8 *)(state + 304) != 0) {
-        output[3] = 1;
+    if (state->restraint != 0) {
+        output[CHARACTER_CURSE] = 1;
         count++;
     }
-    if (state[320] != 0) {
-        output[4] = 1;
+    if (state->evil_spirit != 0) {
+        output[CHARACTER_HAUNT] = 1;
         count++;
     }
     return count;
@@ -55,31 +57,19 @@ s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id)
 #define GROUP_LEN 6
 #endif
 
-static __inline__ u8 LoadByte(s32 base, s32 offset)
-{
-    return *(u8 *)(base + offset);
-}
-
-static __inline__ s8 LoadSignedByte(s32 base, s32 offset)
-{
-    return *(s8 *)(base + offset);
-}
-
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
 {
     s32 encoded;
-    s32 base = *(s32 *)((u32)&Data_03001f2c);
-    s32 offset = index + 0x218;
-    s32 entries = base + 2;
+    struct InventoryMenuState *menu = gMenuWork;
     s32 limit;
     s32 remainder;
     s32 quotient;
     s32 groups;
     s32 value;
 
-    encoded = (s32)Owner_GetStateFar(LoadByte(entries, offset));
-    limit = LoadByte(base, 0x218);
-    value = LoadSignedByte(base, LoadByte(entries, offset) + 0x260);
+    encoded = (s32)Owner_GetStateFar(menu->pane_owner[index]);
+    limit = menu->item_count;
+    value = menu->selected_index_by_owner[menu->pane_owner[index]];
     if ((s32)(value + 1) > limit) {
         value = limit - 1;
     }

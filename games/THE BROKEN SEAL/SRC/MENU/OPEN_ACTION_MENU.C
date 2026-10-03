@@ -1,3 +1,6 @@
+#include "CHARACTER_MENU.H"
+#include "HEAP_STATE.H"
+#include "WINDOW.H"
 #include "EDITION.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
@@ -23,14 +26,9 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
     return fill(dst, size, value);
 }
 
-struct MenuObjectControl {
-    u8 padding00[4];
-    u16 suspended;
-};
+s32 Runtime_AllocateHeapBlock(s32 slot, s32 size);
+extern struct ObjectSystemWork *gMenuCtrlWork;
 
-extern struct MenuObjectControl *gMenuCtrlWork;
-
-#define FIELD(ptr, type, offset) (*(type *)((u8 *)(ptr) + (offset)))
 
 /* The bytes of BG character block 1 the menu saves and restores: the
    Japanese menu keeps 0x800 and leaves the block as it was. */
@@ -40,36 +38,17 @@ extern struct MenuObjectControl *gMenuCtrlWork;
 #define SAVED_TILE_BYTES 0x800
 #endif
 
-struct ActionMenuState {
-    u8 padding000[0x24];
-    s32 screen_handle;
-    u8 padding028[0x0e4];
-    s32 selector_window;
-    u8 padding110[0x34];
-    u16 row_positions[8];
-    u8 padding154[0x0b4];
-    u16 character_ids[8];
-    u8 padding218;
-    u8 character_count;
-    u8 padding21a[6];
-    u16 flags;
-    u8 padding222[0x12];
-    u16 icon_x[4];
-    u16 icon_y[4];
-};
-
-struct ActionMenuState *Runtime_AllocateHeapBlock(s32, s32);
 void Runtime_BumpFree(void *block);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32);
-s32 Party_ListActiveOwnersFar(const u16 *);
-void Menu_InitSelectorCursorAndEntries(s32, s32, s32, s32);
+s32 Party_ListActiveOwnersFar(u16 *);
 void Palette_LightenBankHighlight(s32 index);
 void Func_080153e0(s32);
 void Func_080152a8(void);
 s32 Party_SumDjinnCountsFar(s32);
-void FourObjectMotion_InitializeTopRow(s32, s32);
+/* The zero-argument definition ignores the extra words at this call boundary. */
+void FourObjectMotion_InitializeTopRow();
 void Link_DrawShiftedTilePairFar(s32 addr);
 void Menu_CancelSoundReset(void);
 s32 Menu_RunActionFlow(void);
@@ -84,7 +63,7 @@ void ItemMenu_Close(void);
    saved palette and tiles and close the screen. Returns the flow result. */
 s32 ActionMenu_Open(void)
 {
-    struct ActionMenuState *state = Runtime_AllocateHeapBlock(55, 0x0a70);
+    struct CharacterMenuState *state = (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 0x0a70);
     void *palette = Runtime_BumpAllocateAlternatePool(64);
     void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
     s32 result;
@@ -95,8 +74,8 @@ s32 ActionMenu_Open(void)
     WaitFrames(1);
     Scheduler_EnableOverlayCallbacksWithFlags();
     UiWindow_InitializeWork(0);
-    state->flags = 0;
-    state->character_count = Party_ListActiveOwnersFar(state->character_ids);
+    state->page = 0;
+    state->party_count = Party_ListActiveOwnersFar(state->owner_ids);
     Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
     CopyWords(Iwram_CopyWords, palette, (void *)0x05000000, 64);
 #if !EDITION_INTERNATIONAL
@@ -112,23 +91,23 @@ s32 ActionMenu_Open(void)
     FillWords(Iwram_FillWords, (void *)0x06004000, SAVED_TILE_BYTES, 0x33333333);
     Func_080153e0(1);
 #endif
-    state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
+    state->selector_window = (struct UiWindow *)UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < MENU_ROW_COUNT; index++)
-        state->row_positions[index] = 30;
+        state->owner_y[index] = 30;
     if (Party_SumDjinnCountsFar(-1) != 0)
-        FourObjectMotion_InitializeTopRow(state->selector_window, 0);
+        FourObjectMotion_InitializeTopRow((s32)state->selector_window, 0);
     for (index = 0; index < 4; index++) {
-        state->icon_x[index] = 130 + index * 32;
-        state->icon_y[index] = 0x80;
+        state->row_x[index] = 130 + index * 32;
+        state->row_y[index] = 0x80;
     }
     Link_DrawShiftedTilePairFar(0x06002500);
     Menu_CancelSoundReset();
-    state->flags = 0;
+    state->page = 0;
 
     result = Menu_RunActionFlow();
 
     Menu_EnsureCancelSound();
-    RenderOutput_ClearListFar(state->screen_handle);
+    RenderOutput_ClearListFar((s32)state->status_window);
     FourObjectMotion_ClearSlotsAndSchedule();
     Scheduler_DisableOverlayCallbacksWithFlags();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
@@ -142,13 +121,13 @@ s32 ActionMenu_Open(void)
     CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, SAVED_TILE_BYTES);
     Runtime_BumpFree(tiles);
     Runtime_BumpFree(palette);
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 1;
+    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(55);
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    FIELD(FIELD(&gMenuCtrlWork, void *, 0x24), u8, RENDER_MENU_BUSY_OFS) = 0;
+    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 0;
     return result;
 }

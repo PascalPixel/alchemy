@@ -1012,7 +1012,6 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     BattleFx_EndCanvasLayer();
 }
 
-void *Resource_GetTableEntry(s32 id);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void ObjectGroup_TickMemberTimers(void);

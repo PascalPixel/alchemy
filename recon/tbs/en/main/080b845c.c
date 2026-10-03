@@ -1,7 +1,15 @@
 /* DRAFT audit, 2026-10-03: BattleMotion_ProjectScaledPosition.
  * The complete owned-English-ROM extent is 100 bytes at 080b845c..080b84c0,
- * including the four-byte IWRAM multiplier literal. The fresh unlinked raw
- * listing reproduces all 100 bytes; the current MOTION3.C function scores 0.
+ * including the four-byte IWRAM multiplier literal. A temporary audit listing
+ * reproduces all 100 bytes; the current MOTION3.C function scores 0.
+ * Regenerate the reference from roms/tbs-en.gba with a bounded Thumb decode
+ * of that extent, continuing past the two fixed-entry calls that return via
+ * ip. Name the five BL targets from the current linker map, and name the
+ * literal IwramMulQ16ReturnIp. Assemble with the normal scaffold command,
+ * resolve against the current build solely for comparison, and compare the
+ * complete extent with the owned ROM. Keep this verification-only listing
+ * outside recon/raw until a production demotion transfers source ownership.
+ * Scoring this draft requires --listing pointing to that temporary listing.
  *
  * The production position[3] declaration is explicitly unused. Native code
  * subtracts/adds 12 from SP, but never addresses those slots or passes their

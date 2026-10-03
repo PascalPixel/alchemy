@@ -27,7 +27,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     s32 top;
     s32 left;
 
-    menu->pane_icons[0]->state = 13;
+    menu->pane_icons[0]->active = 13;
     if (y != -1) {
         Func_08015108(message, &left, &top, &width, &height);
         if (UiWindow_UpdateOrCreate((s32 *)&menu->modal_window, x, y, width, height, 0x102) == 0)
@@ -62,7 +62,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
         GameFlag_SetBitFar(0x151);
     }
     menu->completion_flag = 1;
-    menu->pane_icons[0]->state = 1;
+    menu->pane_icons[0]->active = 1;
 #if EDITION_INTERNATIONAL
     if (y != -1)
         UiWindow_CloseIfOpen((s32 *)&menu->modal_window, 1);

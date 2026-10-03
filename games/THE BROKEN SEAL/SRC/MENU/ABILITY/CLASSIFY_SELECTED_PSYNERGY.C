@@ -80,7 +80,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
     obj_id = *(u16 *)(menu + obj_off);
     obj_ptr = Owner_GetStateFar(obj_id);
     p456 = menu + 456;
-    badge = PsynergyMenu_CollectActions(obj_ptr, p456, 2);
+    badge = (u8)PsynergyMenu_CollectActions(obj_ptr, p456, 2);
     *(u8 *)(menu + 536) = (u8)badge;
     result = PsynergyMenu_SetupActionIcons(menu + 520, p456);
 

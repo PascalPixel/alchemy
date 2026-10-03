@@ -30,17 +30,16 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page, s32 style);
 void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
 s32 GameFlag_IsSet(s32 message);
-void Object_InitializeMode(s32 object, s32 mode);
+s32 Object_InitializeMode(struct AnimationObject *object, s32 mode);
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 struct BattleAction *BattleAction_Get(s32 action);
 s32 GameFlag_TestFar(s32 message);
 void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void UiIcon_PrepareObject(struct InventoryMenuIcon *icon);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
@@ -231,7 +230,7 @@ s32 ItemMenu_RunList(s32 pane)
     s32 done;
     struct BattleUnit *owner;
     s32 prev;
-    struct InventoryMenuIcon *icon;
+    struct RenderOutput *icon;
     s32 work[5];
     struct MenuResult state;
 
@@ -247,7 +246,7 @@ s32 ItemMenu_RunList(s32 pane)
         owner = Owner_GetStateFar(menu->pane_owner[pane]);
         menu->item_count = (u8)ItemMenu_Collect(owner, menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
-        menu->selected_item_icon->state = 13;
+        menu->selected_item_icon->active = 13;
         ItemMenu_PageResult(&state, pane);
         UiMenu_PositionCursor(98, state.selected_index * 16 + 36);
         changed = 1;
@@ -275,12 +274,12 @@ s32 ItemMenu_RunList(s32 pane)
                 ItemMenu_DrawEquipPreview(menu->pane_owner[pane], state.selected_index, 0, menu->pane_owner[pane]);
                 if (menu->items[state.selected_index] != 0) {
                     icon = menu->entry_icons[state.selected_index];
-                    icon->state = 9;
+                    icon->active = 9;
                     icon->unknown_0c = 0;
                     icon->sentinel = 250;
                 }
                 for (i = 0; i < menu->party_count; i++) {
-                    Object_InitializeMode((s32)menu->owner_objects[i], 1);
+                    Object_InitializeMode(menu->owner_objects[i], 1);
                 }
             }
 
@@ -288,7 +287,7 @@ s32 ItemMenu_RunList(s32 pane)
                 for (i = 0; i < menu->party_count; i++) {
                     if (Item_CanOwnerEquip(menu->owner_ids[i],
                             ITEM_ID_MASK & menu->items[state.selected_index]) != 0) {
-                        Object_InitializeMode((s32)menu->owner_objects[i], 3);
+                        Object_InitializeMode(menu->owner_objects[i], 3);
                     }
                 }
             }

@@ -5,10 +5,10 @@
 #include "OWNER_STATE.H"
 
 extern s32 gFrameCount;
-void AnimationObjects_SelectAnimationFar(void *, s32);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 s32 UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-void UiIcon_PrepareObject(void *icon);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void)
 {
@@ -21,10 +21,10 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void)
         do {
             if (Item_CanOwnerEquip(menu->owner_ids[member_index],
                                    menu->selected_items[0] & 0x1FF) != 0) {
-                void *indicator = menu->owner_objects[member_index];
+                struct AnimationObject *indicator = menu->owner_objects[member_index];
                 AnimationObjects_SelectAnimationFar(indicator, 3);
             } else {
-                void *indicator = menu->owner_objects[member_index];
+                struct AnimationObject *indicator = menu->owner_objects[member_index];
                 AnimationObjects_SelectAnimationFar(indicator, 1);
             }
             member_index++;
@@ -41,7 +41,7 @@ void EquipmentMenu_StartCompatibilityIndicators(void)
     if (menu->party_count != 0) {
         member_index = 0;
         do {
-            void *indicator = menu->owner_objects[member_index];
+            struct AnimationObject *indicator = menu->owner_objects[member_index];
             AnimationObjects_SelectAnimationFar(indicator, 1);
             member_index++;
         } while (member_index < menu->party_count);
@@ -85,7 +85,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items)
     for (slot = 0; slot < 32; slot++) {
         if (items[slot] == 0) {
             UiIcon_PrepareObject(menu->entry_icons[slot]);
-            menu->entry_icons[slot]->state = 13;
+            menu->entry_icons[slot]->active = 13;
         }
     }
 }

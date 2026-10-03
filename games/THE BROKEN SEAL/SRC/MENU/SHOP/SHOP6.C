@@ -45,7 +45,8 @@ void UiMessage_ShowResolvedAndRestoreState(s32 message);
 s32 UiMessage_ShowChoiceVariant(s32 arg0);
 void Shop_RunPartyMemberIconBurst(s32 member);
 s32 Party_AdjustSixDigitCounterAFar(s32 amount);
-void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
+/* Four-word void helper; this caller keeps its legacy extra word. */
+void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 extern char MsgReviveDonation;
 extern u8 MsgWhoToRevive[];
@@ -85,24 +86,14 @@ s32 Shop_CanServe(s32 entry_no, s32 kind)
 
 s32 Shop_CountUnits(void)
 {
-    u8 *work = (u8 *)gMenuWork;
-    u8 *base;
+    struct ShopRuntime *shop = gMenuWork;
     s32 active = 0;
-    s32 variant = (s8)work[0x3AA];
-    s32 index = 0;
-    s32 offset;
+    s32 index;
 
-    if (active < *(s8 *)(work + 0x3A7)) {
-        base = work + 2;
-        offset = 0x36C;
-        do {
-            if (Shop_CanServe(*(s16 *)(base + offset), variant) != 0)
-                active++;
-            index++;
-            offset += 2;
-        } while (index < *(s8 *)(work + 0x3A7));
+    for (index = 0; index < shop->party_member_count; index++) {
+        if (Shop_CanServe(shop->party_member_ids[index], shop->party_action))
+            active++;
     }
-
     return active;
 }
 
@@ -171,7 +162,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
 
     {
         s32 shown =
-            *((struct ShopKeeperAnimation *)Object_GetByIdFar(unit_id)->animation)->resource;
+            (u16)((struct AnimationObject *)Object_GetByIdFar(unit_id)->animation)->entries[0]->anim_id;
         shop->keeper_resource = shown;
     }
 

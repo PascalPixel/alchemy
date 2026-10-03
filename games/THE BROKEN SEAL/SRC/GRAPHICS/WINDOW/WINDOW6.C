@@ -1,3 +1,4 @@
+#include "SELECT.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -10,14 +11,7 @@ s32 WaitFrames(s32);
 s32 UiGlyph_ResetWorkState();
 void Resource_ClearOwnerListAndCounters(void);
 
-struct State_0801c304 {
-    u8 filler0[0x39e];
-    u16 value;
-    u8 filler3a0[0x18];
-    u16 active;
-};
-
-extern struct State_0801c304 *gResQueueWork;
+extern struct SelectionScreen *gResQueueWork;
 void MenuSelection_BuildEntries(u32);
 void Menu_SetupSelectionBothSides(void);
 void Menu_OpenSelectionWindow(u32, u32);
@@ -49,12 +43,12 @@ void Ui_ClearWorkStateAndWaitFrame(void)
 
 u32 Menu_RunSelectionForValue(u32 value)
 {
-    struct State_0801c304 *state = gResQueueWork;
+    struct SelectionScreen *state = gResQueueWork;
     u32 result;
 
     /* 値、使用中フラグの順に設定する。 */
-    state->value = value;
-    state->active = 1;
+    state->cursor_index = value;
+    state->locked = 1;
     MenuSelection_BuildEntries(value);
     Menu_SetupSelectionBothSides();
     Menu_OpenSelectionWindow(0, 5);

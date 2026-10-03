@@ -27,7 +27,8 @@ struct GameState {
     /* Where a scene change goes when it names no scene or entrance. */
     s16 default_scene;
     s16 default_entrance;
-    u8 unknown_1cc[2];
+    /* The area of the last scene, used to keep its local story flags. */
+    s16 scene_group;
     /* The scene and entrance a scene change asked for, -1 for the default. */
     s16 next_scene;
     s16 next_entrance;
@@ -61,7 +62,9 @@ struct GameState {
     u8 palette_glow[2];
     u8 unknown_207[8];
     u8 unknown_20f;
-    u8 unknown_210[0xe];
+    u8 unknown_210[0xc];
+    /* Keys that make the leader dash on the world map. */
+    u16 dash_keys;
     /* The cue a scene the party returns to plays, -1 for the scene's own. */
     s16 return_cue;
     /* The two Psynergy shortcuts: the owner in the top six bits, the
@@ -89,7 +92,8 @@ struct GameState {
     /* Where Retreat returns the party. */
     s16 retreat_scene;
     s16 retreat_entrance;
-    u8 unknown_244[6];
+    s32 unknown_244;
+    u8 unknown_248[2];
     s16 unknown_24a;
     /* Set while Cloak hides the party; no monsters appear. */
     s16 cloaked;
@@ -110,6 +114,9 @@ LAYOUT_OFFSET_GUARD(GameState_ShopGifts, struct GameState, shop_gifts, 0x11c);
 LAYOUT_OFFSET_GUARD(GameState_Owners, struct GameState, owners, 0x2c0);
 LAYOUT_SIZE_GUARD(GameState_Size, struct GameState, 0xd20);
 LAYOUT_OFFSET_GUARD(GameState_WonPrizes, struct GameState, won_prizes, 0x12c);
+LAYOUT_OFFSET_GUARD(GameState_SceneGroup, struct GameState, scene_group, 0x1cc);
+LAYOUT_OFFSET_GUARD(GameState_DashKeys, struct GameState, dash_keys, 0x21c);
+LAYOUT_OFFSET_GUARD(GameState_Unknown244, struct GameState, unknown_244, 0x244);
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
 LAYOUT_OFFSET_GUARD(GameState_Special, struct GameState, special, 0x1d6);
 LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);

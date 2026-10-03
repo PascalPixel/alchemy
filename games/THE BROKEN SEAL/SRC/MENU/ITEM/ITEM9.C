@@ -38,7 +38,7 @@ s32 Menu_SelectQuantity(s32 value)
 #if EDITION_INTERNATIONAL
     s32 changed = 1;
     struct InventoryMenuState *menu = gMenuWork;
-    struct InventoryMenuIcon *confirmState = menu->selected_item_icon;
+    struct RenderOutput *confirmState = menu->selected_item_icon;
 #else
     struct InventoryMenuState *menu = gMenuWork;
     s32 changed = 1;
@@ -47,7 +47,7 @@ s32 Menu_SelectQuantity(s32 value)
     s32 quantity = 0;
 
 #if EDITION_INTERNATIONAL
-    confirmState->state = 13;
+    confirmState->active = 13;
     window = UiWindow_CreateFar(0, 0, 30, 10, 2);
 #else
     /* The Japanese window covers only the left of the screen. */
@@ -56,8 +56,8 @@ s32 Menu_SelectQuantity(s32 value)
     Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
 
     {
-        struct InventoryMenuIcon *iconState = menu->cursor;
-        iconState->state = 13;
+        struct RenderOutput *iconState = menu->cursor;
+        iconState->active = 13;
     }
     Palette_CopyObjectBankToBackground14();
     WaitFrames(1);
@@ -114,16 +114,16 @@ done:
     }
 
     {
-        struct InventoryMenuIcon *iconState = menu->cursor;
+        struct RenderOutput *iconState = menu->cursor;
 #if EDITION_INTERNATIONAL
-        iconState->state = 1;
+        iconState->active = 1;
 #else
         /* The Japanese menu marks itself for a redraw instead of framing
            the right-hand windows again. */
         /* FAKEMATCH: one register carries the 1 both stores write. */
         s32 one = 1;
 
-        iconState->state = one;
+        iconState->active = one;
         menu->flags = one;
 #endif
     }

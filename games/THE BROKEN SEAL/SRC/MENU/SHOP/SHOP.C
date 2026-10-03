@@ -50,27 +50,8 @@ struct SpriteAttr {
     unsigned size : 2;
 };
 
-struct ShopCursorSprite {
-    u8 unknown_00[6];
-    u16 x;
-    u16 y;
-    u8 unknown_0a[0x0a];
-    struct SpriteAttr oam;
-};
-
 struct Half {
     u16 v;
-};
-
-struct ShopCursorSprite2 {
-    u8 unknown_00[6];
-    u16 x;
-    u16 y;
-    u8 unknown_0a[0x0a];
-    u8 screen_y;
-    u8 unknown_15;
-    u16 attr_x : 9;
-    u16 attr_rest : 7;
 };
 
 struct SpriteAttr2 {
@@ -83,17 +64,6 @@ struct SpriteAttr2 {
     u16 x : 9;
     u16 affine_index : 5;
     u16 size : 2;
-};
-
-/* The render output the cursor is anchored to: it links to the next one
-   like the anchor, then keeps its position and its OAM attributes. */
-struct ShopCursorSprite3 {
-    struct RenderOutput *next;
-    u8 unknown_04[2];
-    u16 x;
-    u16 y;
-    u8 unknown_0a[0x0a];
-    struct SpriteAttr2 oam;
 };
 
 extern struct ShopRuntime *gMenuWork;
@@ -304,15 +274,16 @@ void Shop_InitEffect(void)
 /* ShopCursor_Advance: step the cursor sprite one frame of a linear tween
    from its position toward its target over kind frames, refreshing the
    sprite's position and OAM coordinates, and stop when the tween ends.
-   FAKEMATCH: the zero that ends the tween is a one-halfword struct, which
-   keeps it a pool constant loaded before the second division as in the ROM. */
+ */
 void ShopCursor_Advance(struct ShopCursor *cursor)
 {
-    struct ShopCursorSprite *sprite;
+    struct RenderOutput *sprite;
     s32 kind;
     s32 step;
     s32 x;
     s32 y;
+    /* FAKEMATCH: the existing halfword zero keeps its pool load before
+       the second division, as in the native cursor tween. */
     struct Half zero;
 
     if (cursor == NULL)
@@ -320,15 +291,15 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     kind = cursor->kind;
     if (kind == 0)
         return;
-    sprite = (struct ShopCursorSprite *)cursor->anchor;
+    sprite = cursor->anchor;
     step = (s8)++cursor->active;
     x = cursor->x + (cursor->target_x - (s16)cursor->x) * step / kind;
     sprite->x = x;
     zero.v = 0;
-    sprite->oam.x = x;
+    ((struct SpriteAttr *)&sprite->packed)->x = x;
     y = cursor->y + (cursor->target_y - (s16)cursor->y) * step / kind;
     sprite->y = y;
-    sprite->oam.y = y;
+    ((struct SpriteAttr *)&sprite->packed)->y = y;
     if (step == kind) {
         cursor->kind = zero.v;
         cursor->active = zero.v;
@@ -340,50 +311,50 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
  * screen coordinate of each axis that moved. */
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 {
-    struct ShopCursorSprite2 *sprite;
+    struct RenderOutput *sprite;
     s32 delta;
     s32 step;
 
-    sprite = (struct ShopCursorSprite2 *)cursor->anchor;
+    sprite = cursor->anchor;
     if (sprite != NULL) {
-        delta = sprite->x - cursor->target_x;
+        delta = (u16)sprite->x - cursor->target_x;
         step = delta / 4;
         if (step < 0)
             step = -step;
         if (delta > 0) {
             if (step != 0)
-                sprite->x -= step;
+                sprite->x = (u16)sprite->x - step;
             else
-                sprite->x += (u16)-1;
+                sprite->x = (u16)sprite->x - 1;
         } else {
             if (delta >= 0)
                 goto move_y;
             if (step != 0)
-                sprite->x += step;
+                sprite->x = (u16)sprite->x + step;
             else
-                sprite->x += 1;
+                sprite->x = (u16)sprite->x + 1;
         }
-        sprite->attr_x = sprite->x;
+        ((struct SpriteAttr2 *)&sprite->packed)->x = (u16)sprite->x;
 
 move_y:
-        delta = sprite->y - cursor->target_y;
+        delta = (u16)sprite->y - cursor->target_y;
         step = delta / 4;
         if (step < 0)
             step = -step;
         if (delta > 0) {
             if (step != 0)
-                sprite->y -= step;
+                sprite->y = (u16)sprite->y - step;
             else
-                sprite->y += (u16)-1;
+                sprite->y = (u16)sprite->y - 1;
         } else {
             if (delta >= 0)
                 return;
             if (step != 0)
-                sprite->y += step;
+                sprite->y = (u16)sprite->y + step;
             else
-                sprite->y += 1;
+                sprite->y = (u16)sprite->y + 1;
         }
-        sprite->screen_y = sprite->y;
+        *(u8 *)&sprite->packed = (u8)sprite->y;
     }
 }
 
@@ -408,21 +379,21 @@ void Shop_SetCursor(
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
 {
     {
-        struct ShopCursorSprite3 *sprite = (struct ShopCursorSprite3 *)cursor->anchor;
+        struct RenderOutput *sprite = cursor->anchor;
 
         cursor->target_x = x;
         cursor->kind = 1;
         cursor->active = 0;
         cursor->x = x;
-        sprite->oam.x = sprite->x = x;
+        ((struct SpriteAttr2 *)&sprite->packed)->x = (u16)(sprite->x = x);
     }
     {
-        struct ShopCursorSprite3 *sprite;
+        struct RenderOutput *sprite;
 
         cursor->target_y = y;
         cursor->y = y;
-        sprite = (struct ShopCursorSprite3 *)cursor->anchor;
-        sprite->oam.y = sprite->y = y;
+        sprite = cursor->anchor;
+        ((struct SpriteAttr2 *)&sprite->packed)->y = (u16)(sprite->y = y);
     }
 }
 

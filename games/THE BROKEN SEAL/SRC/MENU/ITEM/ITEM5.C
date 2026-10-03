@@ -4,7 +4,9 @@
 #include "OBJECT_FACTORY.H"
 #include "GLOBAL_CELLS.H"
 
-void UiIcon_PrepareObject(void *obj);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(
+    s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void ItemMenu_ResetCategory(void);
 
 void Palette_CopyObjectBankToBackground14(void);
@@ -14,12 +16,12 @@ void ItemMenu_PosCategory(void)
 {
     struct InventoryMenuState *state = gMenuWork;
     s32 x = 248;
-    struct InventoryMenuIcon **entry = state->entry_icons;
+    struct RenderOutput **entry = state->entry_icons;
     s32 y = 168;
     s32 remaining = 31;
 
     do {
-        struct InventoryMenuIcon *object = *entry++;
+        struct RenderOutput *object = *entry++;
 
         if (object != 0) {
             object->x = x;
@@ -32,8 +34,8 @@ void ItemMenu_PosCategory(void)
 
 s32 Menu_CreateEightEntryObjects(s32 resource)
 {
-    struct InventoryMenuIcon **slot;
-    struct InventoryMenuIcon *obj;
+    struct RenderOutput **slot;
+    struct RenderOutput *obj;
     s32 i;
     struct InventoryMenuState *state;
     s32 param;
@@ -43,7 +45,7 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
     param = 0xA8;
     slot = state->category_icons;
     do {
-        obj = (struct InventoryMenuIcon *)RenderOutput_CreateFromResourceFar(2, i, resource, 0xF8, param);
+        obj = RenderOutput_CreateFromResourceFar(2, i, (struct RenderInput *)resource, 0xF8, param);
         i += 1;
         *slot = obj;
         slot += 1;
@@ -53,15 +55,14 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
 
 /* Item menu: after resetting the category, place the flagged entries of
    the five category sprites in a column 16 pixels apart, starting at 88.
-
-   FAKEMATCH: the y store goes through its own pointer, which is what keeps
-   the flag index as a counter over the flags base (loop.c otherwise turns
-   flags[index] into a walking pointer). */
+ */
 void ItemMenu_ApplyFlags(const u8 *flags)
 {
+    /* FAKEMATCH: the existing y-field pointer keeps the flag index as a
+       counter rather than a walking pointer in the native category loop. */
     struct InventoryMenuState *base;
-    struct InventoryMenuIcon **slot;
-    struct InventoryMenuIcon *entry;
+    struct RenderOutput **slot;
+    struct RenderOutput *entry;
     s32 index;
     s32 value;
     u16 kind;
@@ -95,7 +96,7 @@ void ItemMenu_ResetCategory(void)
     s32 index;
 
     for (index = 0; index < 5; index++) {
-        struct InventoryMenuIcon *object = state->category_icons[index];
+        struct RenderOutput *object = state->category_icons[index];
 
         if (object != 0) {
             object->x = 248;
@@ -122,7 +123,7 @@ s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled)
             case 4: kind = 7; break;
             default: kind = 0; break;
             }
-            Resource_LoadByModeIntoSlotFar(8, kind, state->category_icons[index]->render_target, 0);
+            Resource_LoadByModeIntoSlotFar(8, kind, (u8)state->category_icons[index]->index, 0);
         }
         index++;
     } while (index <= 4);

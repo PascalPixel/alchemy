@@ -33,7 +33,8 @@ extern u8 MsgBecameCursed[];
 void Shop_SellItem(s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
 s32 Inventory_CountFar(s32);
-void PsynergyMenu_InitializeEntryObjectsFar(s32, s32, s32, s32, s32);
+/* Four-word void helper; this caller keeps its legacy extra word. */
+void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 s32 Shop_SelSell(s32);
 void UiMessage_ShowAndWait(s32);
@@ -52,7 +53,6 @@ extern char MsgHowManyToSell;
 extern u8 MsgCannotSellEquipped[], MsgWeDoNotBuy[], MsgSellOffer[], MsgRareSellOffer[];
 extern u8 MsgSellTotal[], MsgDamagedSellOffer[], MsgOldItemSellOffer[], MsgDeal[];
 extern u8 MsgChangedMind[], MsgSold[], MsgKeepIt[];
-struct ItemDefinition *Item_Get(s32 item);
 void Func_080772b0(s32 unit_id, s32 slot);
 
 void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)

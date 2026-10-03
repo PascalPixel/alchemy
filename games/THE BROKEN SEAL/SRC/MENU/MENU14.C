@@ -1,11 +1,10 @@
+#include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "DMA.H"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-extern u8 *gSelectionWork;
 void ShopCursor_AdvanceFar(void *);
 void ShopCursor_MoveTowardTargetFar(void *);
 s32 VramBlock_LoadCached(s32, s32, s32);
@@ -27,12 +26,6 @@ struct Options {
     u8 e;       /* 0x22a */
 };
 
-struct OptionWork {
-    u8 unk_000[0x594];
-    u8 value[5];
-    u8 choices[5];
-};
-
 extern struct Options Data_02000240;
 
 s32 Runtime_ReleaseHeapBlock(s32);
@@ -42,47 +35,42 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     s32 src0;
     s32 src1;
     s32 sel;
-    void *base;
+    struct WorkspaceWork *work;
 
-    base = gSelectionWork;
-    sel = FIELD(base, u16, 0x574);
-    ShopCursor_AdvanceFar(base + 0x5A4);
-    ShopCursor_MoveTowardTargetFar(base + 0x5B4);
-    ShopCursor_MoveTowardTargetFar(base + 0x5C4);
+    work = gSelectionWork;
+    sel = work->page;
+    ShopCursor_AdvanceFar(&work->cursor);
+    ShopCursor_MoveTowardTargetFar(&work->marker[0]);
+    ShopCursor_MoveTowardTargetFar(&work->marker[1]);
 
     if (sel == 0) {
-        src0 = (FIELD(base, u16, 0x57C) & 7) +
+        src0 = (work->cursor_frame & 7) +
             (s32)&ResourceId_ShopCursorFrames;
     } else {
         src0 = (s32)&ResourceId_ShopCursorFrames;
     }
     VramBlock_LoadCached(
-        FIELD(FIELD(base, void *, 0x5B4), u8, 14),
+        (u8)work->marker[0].output->index,
         0x100,
         (s32)Resource_GetTableEntry(src0));
 
     if (sel == 1) {
-        src1 = (FIELD(base, u16, 0x57C) & 7) +
+        src1 = (work->cursor_frame & 7) +
             (s32)&ResourceId_ShopCursorFrames;
     } else {
         src1 = (s32)&ResourceId_ShopCursorFrames;
     }
     VramBlock_LoadCached(
-        FIELD(FIELD(base, void *, 0x5C4), u8, 14),
+        (u8)work->marker[1].output->index,
         0x100,
         (s32)Resource_GetTableEntry(src1));
 
     if (sel > 1) {
-        s32 idx = sel * 3;
-        s32 adj = 0x594 + sel;
-        s32 off;
+        s32 value = work->option[sel];
 
-        adj = ((s8 *)base)[adj];
-        idx += adj;
-        off = 0x5D4 + idx * 4;
-        Ui_ApplyTableScaleToObject(*(void **)((u8 *)base + off));
+        Ui_ApplyTableScaleToObject(work->frame[sel - 2][value]);
     }
-    FIELD(base, u16, 0x57C)++;
+    work->cursor_frame++;
 }
 
 /* Allocates and clears the option menu work block, copies the five option
@@ -90,22 +78,22 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
    menu. */
 void OptionMenu_InitializeWork(void)
 {
-    struct OptionWork *work;
+    struct WorkspaceWork *work;
     volatile u32 zero;
 
-    work = (struct OptionWork *)Runtime_AllocateBlock(20, 0x628);
+    work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 0x628);
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x8500018a, (volatile u32 *)0x040000d4);
-    work->value[0] = Data_02000240.a;
-    work->choices[0] = 24;
-    work->value[1] = Data_02000240.b;
-    work->choices[1] = 15;
-    work->value[2] = Data_02000240.c;
-    work->choices[2] = 3;
-    work->value[3] = Data_02000240.d;
-    work->choices[3] = 2;
-    work->value[4] = Data_02000240.e;
-    work->choices[4] = 2;
+    work->option[0] = Data_02000240.a;
+    work->option_count[0] = 24;
+    work->option[1] = Data_02000240.b;
+    work->option_count[1] = 15;
+    work->option[2] = Data_02000240.c;
+    work->option_count[2] = 3;
+    work->option[3] = Data_02000240.d;
+    work->option_count[3] = 2;
+    work->option[4] = Data_02000240.e;
+    work->option_count[4] = 2;
     Scheduler_AddOrUpdateCallback((s32)(GraphicsPalette_LoadSelectionResourcesAndAdvance), 0xc80);
 }
 

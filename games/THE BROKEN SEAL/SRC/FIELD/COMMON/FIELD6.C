@@ -8,28 +8,13 @@
 #include "GAME_STATE.H"
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
+#include "FIELD_SPRITE.H"
+#include "FIELDRUN.H"
 
-struct JumpSprite {
-    u8 unknown_00[38];
-    u8 child_mode;
-};
-
-struct JumpWork {
-    u8 unknown_000[432];
-    s32 step_rate;
-    s32 steps;
-};
-
-struct JumpPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-extern struct JumpWork *gEventWork;
+extern struct FieldStepWork *gEventWork;
 struct ObjectRuntime *Object_GetById(s32 id);
-void Vector_AddPolarOffset(s32 distance, s32 angle, struct JumpPosition *position);
-s32 Object_CheckMovementCollision(struct ObjectRuntime *actor, struct JumpPosition *position);
+void Vector_AddPolarOffset(s32 distance, s32 angle, struct FieldPosition *position);
+s32 Object_CheckMovementCollision(struct ObjectRuntime *actor, struct FieldPosition *position);
 void Battle_Reset(void);
 void Object_SetMode(struct ObjectRuntime *actor, s32 mode);
 void WaitFrames(s32 frames);
@@ -40,14 +25,12 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *actor
 void BattleFx_FinishAction(void);
 s32 Func_080091b0(s32 layer, s32 x, s32 z);
 
-#define TILE_HI(ptr, offset) (*(s16 *)((u8 *)(ptr) + (offset) + 2))
 
 /* The two tile-kind planes are addressed as fixed EWRAM tables. */
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_TARGET ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_ABOVE ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
 s32 CheckMapPositionCellOccupiedFar(const s32 *position);
-void ObjectMotion_SetPositionAndCommit(s32, s32, s32);
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void Object_RefreshSelectorById(s32);
 void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
@@ -61,10 +44,10 @@ s32 Field_TryJumpForward(void)
     s32 angle = (leader->angle + 0x2000) & 0xc000;
     u8 *flags = &leader->flags;
     u8 saved = *flags;
-    struct JumpWork *work = gEventWork;
+    struct FieldStepWork *work = gEventWork;
     s32 child_mode = 1;
-    struct JumpPosition position;
-    struct JumpPosition *pos;
+    struct FieldPosition position;
+    struct FieldPosition *pos;
     struct ObjectRuntime *target;
     /* FAKEMATCH: one local holds the tile mask and then the descent step,
        a second the lift; that split gives the reference its registers. */
@@ -87,7 +70,7 @@ again:
     if (Object_CheckMovementCollision(leader, pos) != 0)
         goto done;
     if (leader->animation_kind == 1)
-        child_mode = ((struct JumpSprite *)leader->animation)->child_mode;
+        child_mode = ((struct FieldSprite *)leader->animation)->flags;
     Battle_Reset();
     Object_SetMode(leader, 6);
     WaitFrames(6);
@@ -98,7 +81,7 @@ again:
     leader->velocity_y = 0x40000;
     *flags &= 0x7e;
     ObjectDispatch_SetSingleChildField26Far(leader, child_mode & 0xfe);
-    ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, *(s16 *)((u8 *)pos + 2), *(s16 *)((u8 *)pos + 10));
+    ObjectMotion_SetPositionAndCommit(gGameState.selected_actor, *(s16 *)((u8 *)&pos->x + 2), *(s16 *)((u8 *)&pos->z + 2));
     Object_SetMode(leader, 6);
     ObjectDispatch_SetSingleChildField26Far(leader, child_mode);
     if ((target = Object_FindNearestFacingTarget(leader, 207)) != NULL
@@ -123,7 +106,7 @@ again:
     *flags = saved;
     BattleFx_FinishAction();
     if (work != NULL)
-        work->steps += Iwram_MulQ16(work->step_rate, 0x200000);
+        work->encounter_steps += Iwram_MulQ16(work->encounter_rate, 0x200000);
     if (Func_080091b0(leader->terrain_id, pos->x, pos->z) == 0xf9) {
         Object_SetMode(leader, 1);
         WaitFrames(6);
@@ -137,8 +120,8 @@ done:
 s32 FieldEffect_UpdateGridPlacement(void)
 {
     struct ObjectRuntime *object = Object_GetById(gGameState.selected_actor);
-    s32 grid_x = 8 + (TILE_HI(object, 8) & 0xfff0);
-    s32 grid_z = 8 + (TILE_HI(object, 16) & 0xfff0);
+    s32 grid_x = 8 + ((*(s16 *)((u8 *)&object->x + 2)) & 0xfff0);
+    s32 grid_z = 8 + ((*(s16 *)((u8 *)&object->z + 2)) & 0xfff0);
     s32 tile_x = grid_x - 8;
     s32 tile_z = grid_z - 8;
     s32 result;
@@ -202,8 +185,8 @@ s32 battle_owner_69(void)
 {
     struct ObjectRuntime *object = Object_GetById(gGameState.selected_actor);
     s16 child_mode = 1;
-    s32 grid_x = 8 + (TILE_HI(object, 8) & 0xfff0);
-    s32 grid_z = 8 + (TILE_HI(object, 16) & 0xfff0);
+    s32 grid_x = 8 + ((*(s16 *)((u8 *)&object->x + 2)) & 0xfff0);
+    s32 grid_z = 8 + ((*(s16 *)((u8 *)&object->z + 2)) & 0xfff0);
     s32 tile_x = grid_x - 8;
     s32 tile_z = grid_z - 8;
     s32 result;
@@ -211,7 +194,7 @@ s32 battle_owner_69(void)
     Battle_Reset();
 
     if (object->animation_kind == 1)
-        child_mode = ((struct JumpSprite *)object->animation)->child_mode;
+        child_mode = ((struct FieldSprite *)object->animation)->flags;
 
     if (gGameState.movement_mode == 0) {
         s32 index = grid_x / 16 + (grid_z / 16) * 128;

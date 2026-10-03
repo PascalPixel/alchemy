@@ -63,7 +63,7 @@ s32 ItemMenu_SelectItem(void)
     ItemMenu_PosCategory();
 
     for (i = 0; i < 32; i++) {
-        struct InventoryMenuIcon *icon = menu->entry_icons[i];
+        struct RenderOutput *icon = menu->entry_icons[i];
 
         if (icon != 0)
             icon->sentinel = 240;
@@ -103,7 +103,7 @@ s32 ItemMenu_SelectItem(void)
                 }
                 ItemMenu_DrawEquipPage((s32)menu->status_window, 0, &state);
             }
-            menu->pane_icons[0]->state = 1;
+            menu->pane_icons[0]->active = 1;
             UiMenu_PositionCursor(96, state.row * 16 + 52);
             WaitFrames(1);
 

@@ -5,7 +5,7 @@
 #define ACTION_ID_MASK 0x3FFF
 
 /* PsynergyMenu_CollectActions per games/THE BROKEN SEAL/INCLUDE/PSYNERGY_MENU.H. */
-s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s32 mode)
+s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode)
 {
     s32 n;
     u16 *out;
@@ -13,7 +13,6 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s3
     s32 count;
     s32 i;
     s32 j;
-    s32 off;
 
     outerCount = (mode != 2) ? 4 : 3;
     for (n = 62; n >= 0; n -= 2) {
@@ -24,10 +23,10 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s3
     count = 0;
 
     if (mode == 1) {
-        for (i = 0, off = 88, out = actions; i <= 31; i++, off += 4) {
-            if (*(u16 *)(off + (s32)owner) != 0) {
-                if (BattleAction_Get(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)->type_0c != 0) {
-                    *out = *(u16 *)((s32)owner + off);
+        for (i = 0, out = actions; i <= 31; i++) {
+            if (owner->action_slots[i].encoded_action != 0) {
+                if (BattleAction_Get(owner->action_slots[i].encoded_action & ACTION_ID_MASK)->type_0c != 0) {
+                    *out = owner->action_slots[i].encoded_action;
                     out++;
                     count++;
                 }

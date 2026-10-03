@@ -8,32 +8,17 @@
 #include "RESOURCE_IDS.H"
 #include "OBJECT_LOOKUP.H"
 #include "GLOBAL_CELLS.H"
+#include "MAP.H"
+#include "FIELD_EVENT.H"
+#include "EVENT_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
 
 void Map_UpdateWorldMapMarkers(void);
 extern u8 gMapCellBuffer[];
 
-struct MapLayerEntry {
-    u8 padding00[10];
-    u16 flag;
-};
-
-struct MapWork {
-    u8 padding00[0x18];
-    struct MapLayerEntry layers[16];
-};
-
 struct MenuControl {
     u8 padding00[4];
     u16 suspended;
-};
-
-struct FieldState {
-    u8 padding000[0x19e];
-    s16 mode;
-    u8 padding1a0[0x28];
-    s32 status;
-    u8 padding1cc[0x14];
-    u8 *actor;
 };
 
 extern u8 gWorkSlot[];
@@ -52,10 +37,7 @@ s32 GameFlag_TestFar(s32 flag);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void Map_LoadAreaGraphicsFar(void);
 
-extern u8 Data_03001ae8[];
-s32 Object_GetById(u32);
-extern s32 gGameState[];
-extern u8 gEventWork[];
+extern u32 gKeysHeld;
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Battle_InitializeRenderObject(void);
 void BattleFx_ScheduleRatioTransition(s32, s32);
@@ -68,28 +50,28 @@ void Map_ShowWorldMap(void)
      * The queued blend restore is QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C)
      * written out inline with its one-pass loop around the IME read and its
      * count stored through an explicit u16 pointer. */
-    struct MapWork *map = *(struct MapWork **)(gWorkSlot + 8 * 4);
-    struct FieldState *field = Runtime_AllocateBlock(27, 0xccc);
+    struct MapState *map = *(struct MapState **)(gWorkSlot + 8 * 4);
+    struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
     struct MenuControl *menu = *(struct MenuControl **)(gWorkSlot + 6 * 4);
     s32 resource = (s32)&ResourceId_WorldMapPicture;
-    struct MapLayerEntry *layer;
+    struct MapAnimation *layer;
     u8 saved_flags[16];
     s32 i;
     u8 *graphics;
     s32 saved_status;
     s16 blend;
 
-    if (field->mode != 3)
+    if (((struct EventRuntime *)field)->mode_19e != 3)
         return;
-    field->actor[91] = 1;
-    saved_status = field->status;
-    field->status = 6;
+    ((struct ObjectRuntime *)field->view_center)->movement_state = 1;
+    saved_status = field->transition_frames;
+    field->transition_frames = 6;
     Event_ClearStatus1c6();
     Event_WaitValue1c8Frames();
-    layer = map->layers;
+    layer = map->anim;
     for (i = 0; i < 16; i++) {
-        saved_flags[i] = layer->flag;
-        layer->flag = 1;
+        saved_flags[i] = layer->paused;
+        layer->paused = 1;
         layer++;
     }
     menu->suspended = 1;
@@ -149,17 +131,17 @@ void Map_ShowWorldMap(void)
     }
     /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
     do {
-        layer = map->layers;
+        layer = map->anim;
     } while (0);
     for (i = 0; i < 16; i++) {
-        layer->flag = saved_flags[i];
+        layer->paused = saved_flags[i];
         layer++;
     }
     menu->suspended = 0;
     Event_SetStatus1c6();
     Event_WaitValue1c8Frames();
-    field->status = saved_status;
-    field->actor[91] = 0;
+    field->transition_frames = saved_status;
+    ((struct ObjectRuntime *)field->view_center)->movement_state = 0;
 }
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
@@ -167,7 +149,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
     /* FAKEMATCH: retain the discarded object lookup while its native source
      * dataflow is unresolved; its result is unused before the runtime object
      * address is loaded. */
-    s32 object;
+    struct ObjectRuntime *object;
     s32 x;
     s32 y;
     s32 left;
@@ -176,13 +158,12 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
     s32 bottom;
     u32 id;
 
-    object = gGameState[125];
-    Object_GetById(object);
-    object = *(s32 *)(*(u8 **)gEventWork + 480);
-    x = *(s32 *)(object + 8);
+    Object_GetById(gGameState.selected_actor);
+    object = (struct ObjectRuntime *)gEventWork->view_center;
+    x = object->x;
     left = x + 0xFEC00000;
     right = x + 0x01400000;
-    y = *(s32 *)(object + 16);
+    y = object->z;
     top = y + 0xFDA80000;
     bottom = y + 0x01900000;
 
@@ -191,12 +172,12 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
         object = ObjectTable_Get(id);
 
         if (object != 0) {
-            s32 ox = *(s32 *)(object + 8);
-            s32 oy = *(s32 *)(object + 16);
+            s32 ox = object->x;
+            s32 oy = object->z;
 
             if (ox < left || ox > right ||
                 oy < top || oy > bottom) {
-                *(u8 *)(object + 84) = 0;
+                object->animation_kind = 0;
             } else {
                 *(u8 *)(object + 84) = 1;
             }
@@ -207,19 +188,19 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
 
 void BattleFx_RunVisibilityTransition(void)
 {
-  if ((*(s16 *)(((u8 *)Runtime_AllocateBlock(0x1B, 0xCCC)) + 0x19E)) == 3)
+  if (((struct EventRuntime *)Runtime_AllocateBlock(27, 0xccc))->mode_19e == 3)
   {
     Scheduler_EnableUnmaskedOverlayCallbacks();
     BattleFx_UpdateObjectVisibilityBounds();
     Battle_InitializeRenderObject();
     BattleFx_ScheduleRatioTransition(0x9D89, 6);
-    if ((*((volatile u32 *) ((u32)&Data_03001ae8))) & 0x200)
+    if ((*((volatile u32 *) ((u32)&gKeysHeld))) & 0x200)
     {
       do
       {
         WaitFrames(1);
       }
-      while ((*((volatile u32 *) ((u32)&Data_03001ae8))) & 0x200);
+      while ((*((volatile u32 *) ((u32)&gKeysHeld))) & 0x200);
     }
     BattleFx_ScheduleRatioTransition(0x10000, 6);
     Scheduler_DisableOverlayCallbacks();

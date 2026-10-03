@@ -7,12 +7,12 @@ extern u8 Data_03001f2c[];
 void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
 {
     s32 i;
-    struct Object080a9bd8 *obj;
-    struct Object080a9bd8 **tbl;
+    struct RenderOutput *obj;
+    struct RenderOutput **tbl;
 
     i = 0;
     tbl =
-        (struct Object080a9bd8 **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
+        (struct RenderOutput **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
     do {
         obj = *tbl++;
         if (obj != NULL) {

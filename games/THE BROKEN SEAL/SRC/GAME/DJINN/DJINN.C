@@ -8,36 +8,12 @@
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "CHARACTER.H"
+#include "BATTLE_PARTY.H"
 
 s32 Owner_GetResistanceValue(s32, s32);
 s32 BattleRandomPercent(void);
 
 extern const u16 Djinn_DefinitionTable[];
-
-struct OwnerState_0807a0f4 {
-    u8 padding[280];
-    u8 values[4];
-};
-
-struct OwnerTradeState {
-    u8 unknown_000[0xf8];
-    u32 owned[4];
-    u32 pledged[4];
-    u8 owned_counts[4];
-    u8 offer_counts[4];
-};
-
-struct TradeOffer {
-    u8 index;
-    u8 bit;
-    u8 unknown_02;
-    u8 status;
-};
-
-struct TradeOfferTable {
-    struct TradeOffer offers[64];
-    s32 count;
-};
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
 u32 GameFlag_SetBit(u32 flag);
@@ -57,20 +33,20 @@ u16 RollWeaponUnleash(void *owner)
     struct ItemDefinition *item;
     s32 rate;
 
-    if (FIELD_AT_OFFSET(owner, u8, 0x129) == 0) {
+    if (((struct BattleUnit *)owner)->class_index == 0) {
         return 1;
     }
     item = Inventory_GetEquippedDefinition(owner, 1);
     if (item == NULL) {
         return 1;
     }
-    if (FIELD_AT_OFFSET(item, u16, 0xE) == 0) {
+    if (item->description_message == 0) {
         return 1;
     }
     rate = ((Equipment_GetUnleashRateBonus((s32)owner) +
-         (FIELD_AT_OFFSET(item, u8, 0xB) * 5)) << 0x10) / 100;
+         (item->secondary_flags * 5)) << 0x10) / 100;
     if (rate > (s32)(BattleRandom16() & 0xFFFF)) {
-        return FIELD_AT_OFFSET(item, u16, 0xE);
+        return item->description_message;
     }
     return 1;
 }
@@ -136,13 +112,12 @@ s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
     u8 *entries;
     const u8 *field;
     s32 entry_index;
-    s32 offset = 0x129;
+    const struct BattleUnit *unit = (const struct BattleUnit *)state;
     s32 battle_value;
 
-    field = state + offset;
+    field = &unit->class_index;
     if (*field == 0) {
-        offset--;
-        field = state + offset;
+        field = &unit->class_id;
         entries = (u8 *)Owner_GetRecord(*field) + 0x48;
         entry_index = 0;
 first_loop:
@@ -157,8 +132,7 @@ first_loop:
         goto found;
     }
 
-    offset = 0x129;
-    field = state + offset;
+    field = &unit->class_index;
     entries = (u8 *)Owner_GetRecordStride84(*field) + 0x50;
     entry_index = 0;
 second_loop:
@@ -191,7 +165,7 @@ s32 BattleFx_RollSuccess(
     s32 resistance_category,
     s32 effect_id,
     s32 success_scale) {
-    u8 *state = Owner_GetState(target);
+    struct BattleUnit *state = Owner_GetState(target);
     s32 attempts = 1;
     s32 score;
     s32 attempt;
@@ -203,35 +177,35 @@ s32 BattleFx_RollSuccess(
     u8 *flag_13c;
 
     if (BattleFx_IsRevive(effect_id)!= 0 &&
-        FIELD_AT_OFFSET(state, s16 *, 0x38) != 0) {
+        state->hp != 0) {
         return 0;
     }
 
-    if (effect_id == 3 && FIELD_AT_OFFSET(state, s8 *, 0x131) == 0) {
+    if (effect_id == 3 && state->poison == 0) {
         goto fail;
     }
 
     goto action4_check;
 action4_tail:
-    if (state[0x13B] == 0 && state[0x13C] == 0 &&
-        state[0x13D] == 0 && state[0x141] == 0) {
+    if (state->stun == 0 && state->sleep == 0 &&
+        state->psy_seal == 0 && state->death_count == 0) {
         goto fail;
     }
     goto action4_done;
 action4_check:
     if (effect_id == 4) {
-        if (state[0x138] == 0 && state[0x139] == 0 && state[0x13A] == 0) {
+        if (state->delusion == 0 && (u8)state->confusion == 0 && state->charm == 0) {
             goto action4_tail;
         }
     }
 
 action4_done:
-    flag131 = (s8 *)(state + 0x131);
-    flag138 = state + 0x138;
-    flag139 = state + 0x139;
-    flag_13a = state + 0x13A;
-    flag_13b = state + 0x13B;
-    flag_13c = state + 0x13C;
+    flag131 = &state->poison;
+    flag138 = (u8 *)&state->delusion;
+    flag139 = (u8 *)&state->confusion;
+    flag_13a = (u8 *)&state->charm;
+    flag_13b = (u8 *)&state->stun;
+    flag_13c = (u8 *)&state->sleep;
     if (effect_id == 0x40 &&
         *flag131 == 0 &&
         *flag138 == 0 &&
@@ -239,13 +213,13 @@ action4_done:
         *flag_13a == 0 &&
         *flag_13b == 0 &&
         *flag_13c == 0 &&
-        FIELD_AT_OFFSET(state, u8 *, 0x13D) == 0 &&
-        FIELD_AT_OFFSET(state, u8 *, 0x141) == 0 &&
-        FIELD_AT_OFFSET(state, u8 *, 0x140) == 0) {
+        state->psy_seal == 0 &&
+        state->death_count == 0 &&
+        state->evil_spirit == 0) {
         return 0;
     }
 
-    if (effect_id == 0x1C && FIELD_AT_OFFSET(state, u8 *, 0x141) == 1) {
+    if (effect_id == 0x1C && state->death_count == 1) {
         return 0;
     }
 
@@ -253,9 +227,9 @@ action4_done:
     if (score > 0) {
         s32 difference = Owner_GetResistanceValue(caster, resistance_category) -
             Owner_GetResistanceValue(target, resistance_category) -
-            (FIELD_AT_OFFSET(state, u8 *, 0x42) >> 1);
+            (state->luck >> 1);
         score += difference * 3;
-        if (BattleTarget_IsWeakToEffect(state, effect_id) != 0) {
+        if (BattleTarget_IsWeakToEffect((const u8 *)state, effect_id) != 0) {
             score += 25;
         }
     } else {
@@ -304,13 +278,13 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
     if (best_no < result) {
         s32 off = 252;
 
-        owners = (u8 *)&gGameState + off * 2;
+        owners = gGameState.active_owners;
         count = result;
         do {
-            u8 *p = Owner_GetState(*owners);
+            struct BattleUnit *unit = Owner_GetState(*owners);
+            u8 *p = unit->djinn_owned_counts;
 
-            if (((struct OwnerState_0807a0f4 *)p)->values[index] <= 9 &&
-                (p += 280, 1)) {
+            if (unit->djinn_owned_counts[index] <= 9) {
                 s32 value = 0;
                 s32 i = 3;
 
@@ -342,43 +316,43 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerBitState *state = Owner_GetState(owner);
+    struct BattleUnit *state = Owner_GetState(owner);
 
-    if (state->bit_counts[index] > 9)
+    if (state->djinn_owned_counts[index] > 9)
         return -1;
-    if ((state->bits[index] & (1 << bit)) != 0)
+    if ((state->djinn_available[index] & (1 << bit)) != 0)
         return -1;
-    state->bit_counts[index]++;
-    state->bits[index] |= 1 << bit;
+    state->djinn_owned_counts[index]++;
+    state->djinn_available[index] |= 1 << bit;
     return 0;
 }
 
 s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerTradeState *state =
-        (struct OwnerTradeState *)Owner_GetState(owner);
-    struct TradeOfferTable *table;
+    struct BattleUnit *state =
+        (struct BattleUnit *)Owner_GetState(owner);
+    struct DjinnRecoveryList *table;
     s32 i;
     s32 status;
 
-    if (state->owned_counts[index] == 0)
+    if (state->djinn_owned_counts[index] == 0)
         return 0;
-    if (state->offer_counts[index] > 9) {
-        state->offer_counts[index] = 10;
+    if (state->djinn_active_counts[index] > 9) {
+        state->djinn_active_counts[index] = 10;
         return 0;
     }
-    if ((state->owned[index] & (1 << bit)) == 0)
+    if ((state->djinn_available[index] & (1 << bit)) == 0)
         return 0;
-    if ((state->pledged[index] & (1 << bit)) != 0)
+    if ((state->djinn_active[index] & (1 << bit)) != 0)
         return 0;
 
-    table = (struct TradeOfferTable *)((u8 *)Trade_GetOfferState((u32)owner > 7) + 8);
+    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((u32)owner > 7))->list;
     for (i = 0; i < table->count; i++) {
-        if (index == table->offers[i].index && bit == table->offers[i].bit)
+        if (index == table->entries[i].element && bit == table->entries[i].index)
             break;
     }
     if (i == table->count ||
-        ((status = (s8)table->offers[i].status) <= 0 && status != -2))
+        ((status = (s8)table->entries[i].turns) <= 0 && status != -2))
         return 1;
     return 0;
 }
@@ -386,7 +360,7 @@ s32 Trade_CanOfferDjinn(s32 owner, s32 index, s32 bit)
 u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 {
     s32 value =
-        ((struct OwnerLearnedState *)Owner_GetState(owner))->learned[index] &
+        ((struct BattleUnit *)Owner_GetState(owner))->djinn_active[index] &
         (1 << bit);
 
     return (u32)(-value | value) >> 31;
@@ -394,17 +368,17 @@ u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
 
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerDjinnState *state =
-        (struct OwnerDjinnState *)Owner_GetState(owner);
+    struct BattleUnit *state =
+        (struct BattleUnit *)Owner_GetState(owner);
     s32 result = Trade_CanOfferDjinn(owner, index, bit);
 
     if (result != 0) {
-        if (state->available[index] & (1 << bit)) {
-            state->active[index] |= 1 << bit;
+        if (state->djinn_available[index] & (1 << bit)) {
+            state->djinn_active[index] |= 1 << bit;
         } else {
             return 0;
         }
-        state->active_counts[index]++;
+        state->djinn_active_counts[index]++;
         Owner_RefreshDerivedData(owner);
     }
     return result;
@@ -412,13 +386,13 @@ s32 Djinn_Activate(s32 owner, s32 index, s32 bit)
 
 u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 {
-    struct OwnerDjinnState *state =
-        (struct OwnerDjinnState *)Owner_GetState(owner);
+    struct BattleUnit *state =
+        (struct BattleUnit *)Owner_GetState(owner);
     u32 present = Djinn_IsActive(owner, index, bit);
 
     if (present != 0) {
-        state->active_counts[index]--;
-        state->active[index] &= ~(1 << bit);
+        state->djinn_active_counts[index]--;
+        state->djinn_active[index] &= ~(1 << bit);
         Owner_RefreshDerivedData(owner);
     }
     return present;
@@ -426,62 +400,61 @@ u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit)
 
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit)
 {
-    struct TradeOfferTable *table;
+    struct DjinnRecoveryList *table;
     s32 found = 0;
     s32 i;
 
-    table = (struct TradeOfferTable *)((u8 *)Trade_GetOfferState((u32)owner > 7) + 8);
+    table = &((struct DjinnRecoveryTable *)Trade_GetOfferState((u32)owner > 7))->list;
     for (i = 0; i < table->count; i++) {
-        if (index == table->offers[i].index && bit == table->offers[i].bit) {
+        if (index == table->entries[i].element && bit == table->entries[i].index) {
             table->count--;
             found = 1;
             break;
         }
     }
     for (; i < table->count; i++) {
-        table->offers[i] = table->offers[i + 1];
+        table->entries[i] = table->entries[i + 1];
     }
     return found;
 }
 
 u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 {
-    u8 *state;
-    u8 *entries;
-    u8 *entry;
+    struct DjinnRecoveryTable *state;
+    struct DjinnRecoveryEntry *entries;
+    struct DjinnRecoveryEntry *entry;
     u32 *count_p;
     u32 count;
     u32 offset;
 
     Trade_RemoveOffer(kind, first, second);
     state = Trade_GetOfferState(kind > 7);
-    entries = state + 8;
-    count_p = (u32 *)(state + 0x108);
+    entries = state->list.entries;
+    count_p = (u32 *)&state->list.count;
     count = *count_p;
-    offset = count * 4;
-    entries[offset] = first;
+    offset = count;
+    entries[offset].element = first;
     count++;
     entry = entries + offset;
-    entry[1] = second;
-    entry[2] = kind;
-    entry[3] = 0xFF;
+    entry->index = second;
+    entry->unit_id = kind;
+    entry->turns = 0xFF;
     *count_p = count;
     return count_p;
 }
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
-    struct OwnerTransferState *state = Owner_GetState(source);
-    s32 avail_off = index * 4 + 0xf8;
+    struct BattleUnit *state = Owner_GetState(source);
     u32 mask = 1U << bit;
     u32 present;
 
-    if ((*(u32 *)((u8 *)state + avail_off) & mask) != 0) {
+    if ((state->djinn_available[index] & mask) != 0) {
         present = Djinn_IsActive(source, index, bit);
         if (Djinn_AddToOwner(target, index, bit) == 0) {
             Djinn_Deactivate(source, index, bit);
-            *(u32 *)((u8 *)state + avail_off) &= ~mask;
-            state->owned_counts[index]--;
+            state->djinn_available[index] &= ~mask;
+            state->djinn_owned_counts[index]--;
 
             if (present != 0) {
                 Djinn_Activate(target, index, bit);
@@ -498,8 +471,8 @@ s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 s32 Trade_CountPendingOffers(u8 *counts)
 {
     s32 found = 0;
-    u8 *base = Trade_GetOfferState(0);
-    u8 *entry = base + 8;
+    struct DjinnRecoveryTable *base = Trade_GetOfferState(0);
+    struct DjinnRecoveryEntry *entry = base->list.entries;
     s32 index;
 
     if (counts != 0) {
@@ -514,16 +487,16 @@ s32 Trade_CountPendingOffers(u8 *counts)
         counts[0] = found;
     }
     index = 0;
-    if (*((u32 *)(base + 264)) != 0) {
+    if (*(u32 *)&base->list.count != 0) {
         do {
-            if (*(s8 *)(entry + 3) == -1) {
+            if (entry->turns == -1) {
                 if (counts != 0)
-                    counts[entry[0]]++;
+                    counts[entry->element]++;
                 found++;
             }
             index++;
-            entry += 4;
-        } while (index != (s32)*((u32 *)(base + 264)));
+            entry++;
+        } while (index != (s32)*(u32 *)&base->list.count);
     }
     return found;
 }
@@ -544,15 +517,15 @@ s32 Party_SumDjinnCounts(s32 index)
         s32 remaining = count;
 
         do {
-            struct OwnerValueState *state = Owner_GetState(*owner++);
+            struct BattleUnit *state = Owner_GetState(*owner++);
 
             if (index == -1) {
-                result += state->values[0];
-                result += state->values[1];
-                result += state->values[2];
-                result += state->values[3];
+                result += state->djinn_owned_counts[0];
+                result += state->djinn_owned_counts[1];
+                result += state->djinn_owned_counts[2];
+                result += state->djinn_owned_counts[3];
             } else {
-                result += state->values[index];
+                result += state->djinn_owned_counts[index];
             }
             remaining--;
         } while (remaining != 0);

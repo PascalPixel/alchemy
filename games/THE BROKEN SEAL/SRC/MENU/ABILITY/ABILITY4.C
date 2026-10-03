@@ -11,7 +11,7 @@
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
 
-struct OwnerActionState;
+struct BattleUnit;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 MsgSwitchCharacterHelp;
@@ -53,10 +53,10 @@ s32 PsynergyMenu_SelectAction(void)
         menu->slot_y[i] = -16;
     {
         s32 priority = 245;
-        struct PsynergyMenuIcon **icons = menu->entry_icons;
+        struct RenderOutput **icons = menu->entry_icons;
 
         for (i = 31; i >= 0; i--) {
-            struct PsynergyMenuIcon *icon = *icons++;
+            struct RenderOutput *icon = *icons++;
 
             if (icon != 0)
                 icon->sentinel = priority;
@@ -71,7 +71,7 @@ s32 PsynergyMenu_SelectAction(void)
         ItemMenu_PosCategory();
         RenderOutput_RedrawSavedRectFar(menu->status_window);
         menu->psynergy_count = (s32)PsynergyMenu_CollectActions(
-            (struct OwnerActionState *)Owner_GetStateFar(menu->owner_ids[0]), menu->psynergies, 0);
+            (struct BattleUnit *)Owner_GetStateFar(menu->owner_ids[0]), menu->psynergies, 0);
         WaitFrames(1);
         Menu_BuildPageResult(&state, 0);
         PsynergyMenu_DrawPreparedPsynergyIcons(menu->status_window, menu->owner_ids[0]);
@@ -90,7 +90,7 @@ s32 PsynergyMenu_SelectAction(void)
             }
             WaitFrames(1);
             nav = Menu_HandlePageInput(0, state.entry_count, PAGE_ROWS, &state.row, &state.page);
-            menu->pane_icon[0]->state = 1;
+            menu->pane_icon[0]->active = 1;
 #if EDITION_INTERNATIONAL
             UiMenu_PositionCursor(55, state.row * 16 + 60);
 #else

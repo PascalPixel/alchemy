@@ -1,3 +1,4 @@
+#include "SELECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 
@@ -6,36 +7,6 @@ extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 extern s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
 extern void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);
-
-struct Object_0801c0dc {
-    u8 filler0[5];
-    u8 field_50 : 2;
-    u8 field_52 : 2;
-    u8 field_54 : 1;
-    u8 field_55 : 1;
-    u8 field_56 : 2;
-    u8 filler6;
-    u8 field_70 : 1;
-    u8 field_71 : 5;
-    u8 field_76 : 2;
-    u16 field_80 : 10;
-    u16 field_8a : 2;
-    u16 field_8c : 4;
-};
-
-struct ListNode {
-    u8 unk_00[8];
-    s16 base;
-    s16 kind;
-    u16 src;
-    s16 tile;
-    u8 unk_10[16];
-    s16 end;
-    s16 field_22;
-    u8 unk_24[2];
-    s16 field_26;
-    struct Object_0801c0dc obj;
-};
 
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
@@ -120,53 +91,53 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
  * register.  The per-kind tile counts are link-time constants; an integer
  * literal cannot produce 0x1f here.
  */
-void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node, s32 reuse)
+void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse)
 {
     s32 src;
     s32 tile;
-    struct Object_0801c0dc *obj;
+    struct SelectionSprite *obj;
 
     switch (kind) {
     case 1:
     case 6:
         if (reuse != 0)
-            src = node->src;
+            src = node->slot;
         Ui_BuildPairedPatternsToSlot(base, 0, &src, &tile, reuse);
-        node->end = base + (s32)&MsgCommandName;
+        node->message = base + (s32)&MsgCommandName;
         break;
     case 2:
         if (reuse != 0)
-            src = node->src;
+            src = node->slot;
         UiIcon_BuildItemIconTiles(base, 1, &src, &tile, reuse);
-        node->end = base + (s32)&MsgItemName;
+        node->message = base + (s32)&MsgItemName;
         break;
     case 4:
         if (reuse != 0)
-            src = node->src;
+            src = node->slot;
         Ability_LoadGlyph(base, 1, (s32)&src, (s32)&tile, reuse);
-        node->end = base + (s32)&MsgAbilityName;
+        node->message = base + (s32)&MsgAbilityName;
         break;
     }
 
     node->base = base;
-    node->src = src;
+    node->slot = src;
     node->tile = tile;
     node->kind = kind;
-    node->field_22 = 0x100;
-    node->field_26 = 0x100;
+    node->scale = 0x100;
+    node->scale_end = 0x100;
 
-    obj = &node->obj;
-    obj->field_52 = 0;
-    obj->field_55 = 0;
-    obj->field_54 = 0;
+    obj = &node->sprite;
+    obj->mode = 0;
+    obj->colors = 0;
+    obj->mosaic = 0;
     /*
-     * field_76 = 1 stays before field_56 = 0: both mask with 0x3f, and the
+     * size = 1 stays before shape = 0: both mask with 0x3f, and the
      * mask is copied before the byte-7 store because the byte-5 store still
      * needs it.
      */
-    obj->field_76 = 1;
-    obj->field_56 = 0;
-    obj->field_8c = 0;
-    obj->field_80 = tile;
-    obj->field_8a = 0;
+    obj->size = 1;
+    obj->shape = 0;
+    obj->palette = 0;
+    obj->tile = tile;
+    obj->priority = 0;
 }

@@ -1,15 +1,9 @@
 #ifndef ALCHEMY_A9_MOTION_H
 #define ALCHEMY_A9_MOTION_H
 
-#include "TYPES.H"
-
-struct Object080a9bd8 {
-    u8 padding_00[6];
-    s16 x;
-    s16 y;
-};
+#include "RENDER_INPUT.H"
 
 void Menu_PlaceEntryObjectInGrid(
-    struct Object080a9bd8 *, s32, s32, s32, s32);
+    struct RenderOutput *, s32, s32, s32, s32);
 
 #endif

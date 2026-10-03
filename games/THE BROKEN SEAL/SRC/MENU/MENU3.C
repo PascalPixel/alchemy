@@ -33,14 +33,12 @@ void Menu_RunSelectedWorkspaceEntry(void);
 
 void Menu_RunSelectedWorkspaceEntry(void)
 {
-    u8 *base = (u8 *)gSelectionWork;
+    struct WorkspaceWork *work = gSelectionWork;
     u32 index;
 
-    ShopCursor_AdvanceFar(base + 0x5a4);
-    index = *(u16 *)(base + 0x574);
-    index *= 4;
-    index += 0x610;
-    Ui_ApplyTableScaleToObject(*(void **)(base + index));
+    ShopCursor_AdvanceFar(&work->cursor);
+    index = work->page;
+    Ui_ApplyTableScaleToObject(work->icon[index]);
 }
 
 void Menu_InitializeSelectedWorkspace(void)

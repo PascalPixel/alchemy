@@ -1,54 +1,30 @@
+#include "SELECT.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 *gResQueueWork;
+extern struct SelectionScreen *gResQueueWork;
 
 /* resource/transfer/find_free_entry.c */
-s32 Resource_FindFreeTransferEntry(s32 kind)
+struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
 {
-    s32 state;
-    s32 off;
+    struct SelectionScreen *screen = gResQueueWork;
+    struct SelectionNode *node;
     s32 i;
-    s32 j;
-    u32 ret;
-    u16 *q;
-    u16 *p;
-    u32 v;
+    s32 count;
 
-    state = (s32)gResQueueWork;
     if (kind != 0) {
-        i = 0;
-        p = (u16 *)(state + 0x1DE);
-        off = 0;
-loop_2:
-        if (*p == 0) {
-            return state + off + 0x1D4;
-        }
-        i = i + 1;
-        p += 0x1A;
-        off = off + 0x34;
-        if (i == 5) {
-            goto block_10;
-        }
-        goto loop_2;
+        node = &screen->records[9];
+        count = 5;
+    } else {
+        node = &screen->records[2];
+        count = 7;
     }
-    j = 0;
-    ret = state + 0x68;
-    q = (u16 *)(state + 0x72);
-loop_7:
-    v = *q;
-    q += 0x1A;
-    if (v == 0) {
-        return ret;
+    for (i = 0; i < count; i++, node++) {
+        if (node->kind == 0)
+            return node;
     }
-    ret += 0x34;
-    j += 1;
-    if (j == 7) {
-block_10:
-        return 0;
-    }
-    goto loop_7;
+    return NULL;
 }
 
 /* resource/Resource_ScheduleOwnerResetDelayed.c */

@@ -1,3 +1,4 @@
+#include "SELECT.H"
 /* DRAFT checkpoint 2026-09-26: its complete owner now ends at 0801aeec,
  * before the separately registered MenuSelection_DrawSideMarker.
  * Explicit --size 1376: 1376/1376 bytes, 415 differing halfwords and 259
@@ -29,7 +30,7 @@
  * 何を描くかはここからは分からない。最後に +0x3a2 の u16 を一つ進める。
  *
  * 判明していない点:
- *   - 状態ブロックの全体像。ここでは既知の相対位置だけを直接参照する。
+ *   - 選択状態ブロックは SELECT.H に共有した。描画の試作は未一致。
  *   - 節点 +0x00 と +0x1c..+0x21 の役割。
  *   - BattleMotion_ProjectScaledPositionFar は項目番号から座標を引く照会。既存の
  *     games/THE BROKEN SEAL/src/effects/position/apply_step_and_y_offset.c は同じ
@@ -45,22 +46,6 @@
 /* 表示スロット一件。先頭語はランタイムが繋ぎ替える次要素へのリンク。
    残りは GBA のオブジェクト属性と同じ並びで、+4 が縦位置、+5 が属性 0 の
    上位バイト、+6 が属性 1、+8 が属性 2 に相当する。 */
-struct SlotEntry {
-    struct SlotEntry *next;
-    u8 y;
-    u8 affine : 2;
-    u8 mode : 2;
-    u8 mosaic : 1;
-    u8 colors : 1;
-    u8 shape : 2;
-    u16 x : 9;
-    u16 param : 5;
-    u16 size : 2;
-    u16 tile : 10;
-    u16 prio : 2;
-    u16 pal : 4;
-};
-
 /* 効果位置。既存の games/THE BROKEN SEAL/src/battle/effects/radial_camera/update.c と
    同じ三語の並び。BattleMotion_ProjectScaledPositionFar は三語すべてを書き、ここでは x と y だけを読む。 */
 struct EffectPosition {
@@ -70,26 +55,6 @@ struct EffectPosition {
 };
 
 /* 選択鎖の節点。カーソル (+0x2d8) と転送枠 (+0x30c) も同じ並びを使う。 */
-struct MenuNode {
-    s32 unk_00;
-    struct MenuNode *next;
-    u16 no;
-    u16 active;
-    u16 handle;
-    u16 tile_id;
-    s16 x;
-    s16 y;
-    s16 dx;
-    s16 dy;
-    s16 x_end;
-    s16 y_end;
-    u8 unk_1c[6];
-    s16 scale;
-    s16 scale_step;
-    s16 scale_end;
-    struct SlotEntry entry;
-};
-
 extern u8 *gResQueueWork;
 extern volatile u32 gFrameTick;
 extern s8 Data_08036740[];
@@ -98,7 +63,7 @@ extern u8 Menu_AnimatedCursorTiles[];
 extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);
 extern s32 GameFlag_IsSet(s32 flag);
 extern void MenuSelection_DrawSideMarker(u8 *state, s32 index);
-extern struct MenuNode *NodeChain_GetNodeAtCount(u8 *state);
+extern struct SelectionNode *NodeChain_GetNodeAtCount(u8 *state);
 extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 extern s32 AffineMatrix_BuildForEffect(u16 *efx);
 extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
@@ -107,11 +72,11 @@ void MenuSelection_DrawFrame(void)
 {
     u8 *state = gResQueueWork;
     /* +0x300 はカーソル節点 (+0x2d8) 自身の表示スロットに当たる。 */
-    struct SlotEntry *cursor_entry = (struct SlotEntry *)(state + 0x300);
-    struct MenuNode *cursor = (struct MenuNode *)(state + 0x2d8);
-    struct MenuNode *transfer = (struct MenuNode *)(state + 0x30c);
-    struct MenuNode *node;
-    struct SlotEntry *e;
+    struct SelectionSprite *cursor_entry = (struct SelectionSprite *)(state + 0x300);
+    struct SelectionNode *cursor = (struct SelectionNode *)(state + 0x2d8);
+    struct SelectionNode *transfer = (struct SelectionNode *)(state + 0x30c);
+    struct SelectionNode *node;
+    struct SelectionSprite *e;
     s32 cnt = 0;
     s32 slot;
     struct EffectPosition pos;
@@ -119,9 +84,9 @@ void MenuSelection_DrawFrame(void)
     u32 y;
 
     /* 一列目: 項目の横移動と、選択中項目からのカーソル座標配布。 */
-    node = *(struct MenuNode **)(state + 0x348);
+    node = *(struct SelectionNode **)(state + 0x348);
     while (node != 0) {
-        e = &node->entry;
+        e = &node->sprite;
         e->affine = 0;
         e->param = 0;
         e->x = node->x;
@@ -131,16 +96,16 @@ void MenuSelection_DrawFrame(void)
         if (*(u16 *)(state + 0x3a0) != 0) {
             /* 画面全体の縦送りが有効な間は移動を止め、そのまま描く。 */
             e->y = *(u16 *)(state + 0x3a0) + y;
-        } else if (node->x != node->x_end) {
+        } else if (node->x != node->target_x) {
             if (node->dx > 0) {
-                if (node->x + node->dx > node->x_end) {
-                    node->x = node->x_end;
+                if (node->x + node->dx > node->target_x) {
+                    node->x = node->target_x;
                 } else {
                     node->x = node->x + node->dx;
                 }
             } else {
-                if (node->x + node->dx < node->x_end) {
-                    node->x = node->x_end;
+                if (node->x + node->dx < node->target_x) {
+                    node->x = node->target_x;
                 } else {
                     node->x = node->x + node->dx;
                 }
@@ -148,10 +113,10 @@ void MenuSelection_DrawFrame(void)
             e->x = node->x;
         } else if (cnt == *(u16 *)(state + 0x39e)) {
             slot = 241;
-            if (cursor->active != 0) {
-                if (BattleMotion_ProjectScaledPositionFar(node->no, &pos) != -1) {
-                    cursor->x_end = pos.x;
-                    cursor->y_end = pos.y;
+            if (cursor->kind != 0) {
+                if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
+                    cursor->target_x = pos.x;
+                    cursor->target_y = pos.y;
                     if (cursor->scale == 0) {
                         cursor->x = pos.x;
                         cursor->y = pos.y;
@@ -167,7 +132,7 @@ void MenuSelection_DrawFrame(void)
                 } else {
                     e->mode = 0;
                 }
-                if (node->active == 1) {
+                if (node->kind == 1) {
                     e->mode = 1;
                 }
             }
@@ -178,10 +143,10 @@ void MenuSelection_DrawFrame(void)
     }
 
     /* 二列目: 転送枠。選択中の節点に合わせて拡大縮小しながら描く。 */
-    if (transfer->active != 0) {
-        struct MenuNode *sel = NodeChain_GetNodeAtCount(state);
+    if (transfer->kind != 0) {
+        struct SelectionNode *sel = NodeChain_GetNodeAtCount(state);
 
-        e = &transfer->entry;
+        e = &transfer->sprite;
         e->mode = 0;
         e->affine = 0;
         e->param = 0;
@@ -189,8 +154,8 @@ void MenuSelection_DrawFrame(void)
         e->colors = 1;
         e->shape = 0;
         e->size = 2;
-        e->prio = 0;
-        e->tile = transfer->tile_id;
+        e->priority = 0;
+        e->tile = transfer->tile;
         e->x = sel->x - 4;
         e->y = sel->y + (Data_08036740[(gFrameTick >> 1) & 15] >> 1) - 4;
         if (transfer->scale != transfer->scale_end) {
@@ -213,13 +178,13 @@ void MenuSelection_DrawFrame(void)
     MenuSelection_DrawSideMarker(state, 1);
 
     /* 三列目: 縦横の移動と倍率を同時に進める節点鎖。 */
-    node = *(struct MenuNode **)(state + 0x34c);
+    node = *(struct SelectionNode **)(state + 0x34c);
     while (node != 0) {
-        e = &node->entry;
-        if (node->x != node->x_end) {
+        e = &node->sprite;
+        if (node->x != node->target_x) {
             node->x = node->x + node->dx;
         }
-        if (node->y != node->y_end) {
+        if (node->y != node->target_y) {
             node->y = node->y + node->dy;
         }
         e->x = node->x;
@@ -243,7 +208,7 @@ void MenuSelection_DrawFrame(void)
             } else {
                 e->mode = 0;
             }
-            if (node->active == 1) {
+            if (node->kind == 1) {
                 e->mode = 1;
             }
         }
@@ -252,24 +217,24 @@ void MenuSelection_DrawFrame(void)
     }
 
     /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
-    if (cursor->active != 0) {
+    if (cursor->kind != 0) {
         cursor_entry->tile = VramBlock_LoadCached(
-            cursor->handle, 0x100,
+            cursor->slot, 0x100,
             &Menu_AnimatedCursorTiles[((gFrameTick >> 2) & 15) << 8]);
-        if (cursor->x_end != cursor->x) {
-            tmp = (cursor->x_end - cursor->x) >> 1;
+        if (cursor->target_x != cursor->x) {
+            tmp = (cursor->target_x - cursor->x) >> 1;
             if (tmp != 0) {
                 cursor->x = cursor->x + tmp;
             } else {
-                cursor->x = cursor->x_end;
+                cursor->x = cursor->target_x;
             }
         }
-        if (cursor->y_end != cursor->y) {
-            tmp = (cursor->y_end - cursor->y) >> 1;
+        if (cursor->target_y != cursor->y) {
+            tmp = (cursor->target_y - cursor->y) >> 1;
             if (tmp != 0) {
                 cursor->y = cursor->y + tmp;
             } else {
-                cursor->y = cursor->y_end;
+                cursor->y = cursor->target_y;
             }
         }
         cursor_entry->y = Data_08036740[(gFrameTick >> 2) & 15]

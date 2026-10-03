@@ -24,10 +24,10 @@ void BattleEv_RunWait(s32 action, s32 flag)
     s32 message_id;
     u32 frames;
 
+    /* FAKEMATCH: the later boundary swaps window r8/message sl; exclude r8 before message is defined. */
+    asm("" : "+r"(action) : : "r5", "r6", "r8");
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
-    /* FAKEMATCH: ordinary forms miss native r7 action; an r6-only clobber instead selects r5. */
-    asm("" : "+r"(action) : : "r5", "r6");
     /* FAKEMATCH: the earlier counter zero lives across the clobber in r8; seed it afterwards. */
     frames = 0;
     if (action <= 7) {

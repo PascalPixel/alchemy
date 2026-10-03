@@ -1056,17 +1056,26 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 register s32 cx asm("r0") = 0x1480000 >> 17;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 register s32 cz asm("r2") = 0xa80000 >> 16;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
-                register s32 cm asm("r3") = 1;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cm asm("r3");
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+                cm = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-                Camera_MoveTo(cx << 17, -cy, cz << 16, cm);
+                cz <<= 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+                cx <<= 17;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+                Camera_MoveTo(cx, -cy, cz, cm);
             }
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
@@ -1245,17 +1254,26 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 register s32 cx asm("r0") = 0x3480000 >> 18;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 register s32 cz asm("r2") = 0xd80000 >> 16;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
-                register s32 cm asm("r3") = 1;
-                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                register s32 cm asm("r3");
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+                cm = 1;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
-                Camera_MoveTo(cx << 18, -cy, cz << 16, cm);
+                cz <<= 16;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+                cx <<= 18;
+                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+                Camera_MoveTo(cx, -cy, cz, cm);
             }
             Engine_CameraWaitForMove();
             {
@@ -1318,7 +1336,13 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-        Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
+        {
+            /* FAKEMATCH: native parameter zero in r2 precedes r1/r0 setup. */
+            register s32 zero asm("r2") = 0;
+            /* FAKEMATCH: the measured message boundary moved r1 ahead of r2. */
+            asm("" : : "r"(zero) : "r0", "r1");
+            Value3(SceneState_StoreParamsAndInitTable, 120, 72, zero);
+        }
         {
             /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
             register s32 mode asm("r1") = 0;

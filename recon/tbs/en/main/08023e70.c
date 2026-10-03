@@ -1,3 +1,6 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
 /*
@@ -129,11 +132,6 @@ s32 __divsi3(s32 numerator, s32 denominator);
 void Sys_Free(void *buf);
 void WaitFrames(s32 frames);
 void Runtime_SetMainState19(void);
-void Runtime_PushSlotEntry(void *slot, s32 kind);
-void Resource_ResetEntry(s32 resource);
-s32 Resource_LoadIntoFreeSlot(s32 kind);
-s32 Resource_GetBuffer(s32 resource, u8 *data);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 pal);
 void UiWork_Finalize(struct UiWindow *win, s32 mode);
 void RenderOutput_RedrawSavedRect(struct UiWindow *win);

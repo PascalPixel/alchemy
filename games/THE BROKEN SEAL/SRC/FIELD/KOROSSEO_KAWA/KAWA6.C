@@ -71,7 +71,6 @@ extern u32 KorosseoKawa_DirectionSteps[];
 typedef void(*SceneTask)(void);
 void Korosseo_DrawGauge(void);
 s32 Resource_GetTableEntryFar(void);
-void Resource_DecodeType01(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -96,9 +95,6 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-u8 *Runtime_AllocateBlock();
-s32 Resource_FindFreeEntry();
-void Runtime_BumpFree();
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);
 void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);

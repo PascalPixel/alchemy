@@ -4,9 +4,7 @@
 #include "RENDER_INPUT.H"
 
 
-/* Value-returning here: the reference loads r0 last of the four arguments,
-   as it does when the call itself sets r0. */
-s32 UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 /* Blanks the tiles inside a window's frame over a rectangle given in pixels
    from the window's corner, rounded out to whole tiles, releases the glyph
@@ -14,7 +12,7 @@ s32 UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     u32 left, u32 top, u32 right, u32 bottom)
 {
-    u8 *work;
+    struct UiRenderWork *work;
     u32 x;
     u32 y;
     u32 width;
@@ -27,7 +25,7 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     right >>= 3;
     bottom >>= 3;
     x = left >> 3;
-    work = gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     y = top >> 3;
     x += window->x;
     y += window->y;
@@ -38,11 +36,11 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     width = right - x;
     height = bottom - y;
     UiWindow_ClearTileAttributesInRect(left, top, width, height);
-    tiles = (u16 *)work + top * 32 + left;
+    tiles = work->tilemap + top * 32 + left;
     for (row = 0; row < height; row++) {
         for (left = 0; left < width; left++)
             *tiles++ = 0xf020;
         tiles += 32 - width;
     }
-    ((struct UiRenderWork *)work)->dirty = 1;
+    work->dirty = 1;
 }

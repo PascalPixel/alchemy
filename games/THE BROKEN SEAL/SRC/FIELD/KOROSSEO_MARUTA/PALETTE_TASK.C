@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* The palette task and positioning scaled objects. */
 #include "LOG_ROLLING.H"
 
@@ -37,7 +38,6 @@ void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 secon
 void ColossoLogRollingStage_StopPaletteTask(void)
 {
     extern void Korosseo_UpdateMarker(void);
-    extern void Resource_ResetEntry(s32 slot);
 
     Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
     Resource_ResetEntry(Korosseo_MarkerSlot);

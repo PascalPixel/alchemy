@@ -1,3 +1,4 @@
+#include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
@@ -45,7 +46,6 @@ extern struct LinkCountdownState *gLinkCountdownWork;
 extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gLinkPeerSignatures[];
 
-void Runtime_PushSlotEntry(struct CountdownDisplayEntry *entry, s32 value);
 
 void UiText_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4);
 

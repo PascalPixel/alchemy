@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "ANIMSPR.H"
 #include "MOTION_OBJECT.H"
 #include "OBJECT_RUNTIME.H"
@@ -87,9 +89,7 @@ extern u8 *gEventWork;
 extern const u8 BattleFx_ParticleEmitterScript[];
 struct EfxObj *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void Object_Destroy(void *object);
-void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void ItemIcon_LoadTilesFar(s32 item);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 #define EfxPool (*(struct EfxObj **)((u8 *)&gEventWork - 88))
 #define BATTLE_ACTIVE_OFS 0xcb8
 void WaitFrames(s32);
@@ -131,10 +131,7 @@ struct EffectObject_0808f1c0 {
     void (*callback)(void);
 };
 
-void *Runtime_AllocateHeapBlock(s32 asset_id, s32 size);
 void ItemIcon_LoadTilesFar(s32);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-void Runtime_ReleaseHeapBlock(s32);
 void BattleFx_EmitRandomParticleFromEmitter(struct ObjectRuntime *emitter);
 
 struct Values_0808f28c {

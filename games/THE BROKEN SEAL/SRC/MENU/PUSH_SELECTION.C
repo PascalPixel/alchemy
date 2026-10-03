@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "SELECT.H"
 #include "TYPES.H"
 
@@ -11,7 +12,6 @@ void WaitFrames(s32 frames);
 void Menu_SendNodeCountList(struct SelectionScreen *screen);
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
 void Resource_ResetPendingTransfer(void);
-s32 Resource_ResetEntry(u32 index);
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 
 /* Confirm the entry under the cursor. The other entries slide onto it and

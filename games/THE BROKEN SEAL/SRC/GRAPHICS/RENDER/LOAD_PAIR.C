@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "SYSTEM.H"
@@ -17,10 +19,8 @@ s32 UiText_BuildRenderEntriesMode1(s32);
 /* This native caller passes five words; keep its legacy call boundary. */
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
-void Runtime_PushSlotEntry(s32 *, s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
-void Resource_ResetEntry(s32);
 
 extern volatile u32 gKeyState;
 
@@ -85,7 +85,6 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
     }
 }
 u32 Resource_DecodeByteLz(const void *, void *);
-void Runtime_ReleaseHeapBlock(s32);
 
 /* graphics/resource/RenderOutput_LoadPair.c */
 extern const u8 *RenderResource_PairSourceTable[];

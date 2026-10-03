@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #ifndef ALCHEMY_ENTRANCE_H
 #define ALCHEMY_ENTRANCE_H
 
@@ -73,7 +74,6 @@ void Makyuri_CyclePalette(void);
 void Effect_Spawn();
 
 void AnimationObjects_SelectAnimation();
-u8 **Runtime_AllocateBlock(s32, s32);
 void BattleFx_PlayQueuedSound();
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
 void Makyuri_TickSpawnTimer(void);

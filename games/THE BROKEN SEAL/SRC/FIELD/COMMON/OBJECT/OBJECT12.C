@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "MOTION_OBJECT.H"
 #include "BATTLE_SESSION.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "TYPES.H"
@@ -7,10 +9,7 @@ void *GetMotionRecordFar(void *, s32);
 s32 BattleMotion_GetSlotField14Far(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 extern struct BattleEffectWork *gBattleFxWork;
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32);
 
-s32 BattleFx_BeginTiledCanvas(s32);
-void BattleFx_EndCanvasLayer(void);
 
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)

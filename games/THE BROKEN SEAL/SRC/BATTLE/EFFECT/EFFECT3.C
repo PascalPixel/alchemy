@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -277,8 +278,6 @@ u32 Graphics_UploadVramBlock(void)
 }
 
 extern s32 *gTransitionWork;
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-s32 Resource_DecodeType01(const void *source, void *destination);
 s32 FarCall_EffectTable(s32 kind, s32 width, s32 height, s32 count, s32 mode);
 
 /* Battle effect: set up the star field. Sixteen sparks start on a random

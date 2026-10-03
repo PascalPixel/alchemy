@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
@@ -17,8 +19,6 @@ extern u8 ShatterRocks_ShardWidths[];
 extern u8 ShatterRocks_ShardHeights[];
 extern u16 ShatterRocks_ShardCells[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"

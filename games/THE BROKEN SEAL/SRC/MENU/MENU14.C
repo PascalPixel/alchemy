@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -7,10 +8,8 @@
 
 void ShopCursor_AdvanceFar(void *);
 void ShopCursor_MoveTowardTargetFar(void *);
-s32 VramBlock_LoadCached(s32, s32, s32);
 void Ui_ApplyTableScaleToObject(void *);
 
-u8 *Runtime_AllocateBlock(s32 slot, u32 size);
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
 
 /* The saved option bytes the option menu edits. */
@@ -28,7 +27,6 @@ struct Options {
 
 extern struct Options Data_02000240;
 
-s32 Runtime_ReleaseHeapBlock(s32);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {

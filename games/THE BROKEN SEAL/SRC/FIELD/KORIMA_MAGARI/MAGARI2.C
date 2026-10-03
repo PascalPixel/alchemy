@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "MAPCOPY.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -98,7 +99,6 @@ extern const s8 KorimaMagari_PushStepX[];
 extern const s8 KorimaMagari_PushStepZ[];
 s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *point);
-u8 *Runtime_AllocateBlock(s32 block, s32 size);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
 void Object_SetPosition(struct FieldActor *object, s32 x, s32 y, s32 z);
 void Object_CommitPosition(struct FieldActor *object);

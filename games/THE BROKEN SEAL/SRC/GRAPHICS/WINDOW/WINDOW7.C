@@ -12,7 +12,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
    swaps the tile under it for the matching junction piece. */
 void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u32 y2)
 {
-    u8 *base = gWindowWork[0];
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     u16 *cursor;
     u32 pos;
     u32 tile;
@@ -26,7 +26,7 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u
             y2 = pos;
         }
         UiWindow_ClearTileAttributesInRect(win->x + x2, win->y + y1, 1, y2 - y1);
-        cursor = (u16 *)((((win->y + y1) << 5) + win->x + x2) * 2 + (u32)base);
+        cursor = (u16 *)((((win->y + y1) << 5) + win->x + x2) * 2 + (u32)work->tilemap);
         for (pos = y1; pos <= y2; pos++) {
             tile = *cursor;
             if (pos == y1) {
@@ -99,7 +99,7 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u
             x2 = pos;
         }
         UiWindow_ClearTileAttributesInRect(win->x + x1, win->y + y1, x2 - x1, 1);
-        cursor = (u16 *)((((win->y + y1) << 5) + win->x + x1) * 2 + (u32)base);
+        cursor = (u16 *)((((win->y + y1) << 5) + win->x + x1) * 2 + (u32)work->tilemap);
         for (pos = x1; pos <= x2; pos++) {
             tile = *cursor;
             if (pos == x1) {

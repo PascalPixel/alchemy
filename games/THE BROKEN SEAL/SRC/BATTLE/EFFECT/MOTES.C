@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -14,9 +16,6 @@
 extern void *gWorkSlot[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);

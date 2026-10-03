@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "SELECT.H"
 #include "GLYPH.H"
 #include "TYPES.H"
@@ -9,8 +10,6 @@
 
 extern u8 RomBytes_080308a0[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 extern u8 *RomBytes_08029a10[];
 extern u8 *UiIcon_PsynergyIconPointers[];
 
@@ -18,7 +17,6 @@ extern GlyphTransfer *gGlyphWork;
 extern u8 *UiIcon_MiscIconPointers[];
 
 
-void Runtime_ReleaseHeapBlock(s32 kind);
 extern const u8 Tile_Decompress4bpp[];
 extern const u8 Tile_ExpandMasked[];
 extern const u8 Tile_ExpandOpaque[];
@@ -35,8 +33,6 @@ extern u8 Tile_ExpandOpaqueCodeSize[];
 struct GlyphCursor { u16 unused; u16 cursor; };
 
 extern const u8 Menu_AnimatedCursorTiles[];
-void *Runtime_AllocateBlock(s32 kind, s32 size);
-s32 Resource_FindFreeEntry(void);
 
 static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 {

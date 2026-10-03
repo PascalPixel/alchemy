@@ -1,8 +1,7 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
-s32 Runtime_ReleaseHeapBlock(s32);
-s32 Resource_GetBuffer(s32 index, s32 value);
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Ui_PrepareTransferFromTableEntry(u32 index);
 
 s32 ItemIcon_Compose(s32, s32);

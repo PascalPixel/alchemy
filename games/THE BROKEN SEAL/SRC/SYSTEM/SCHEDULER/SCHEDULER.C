@@ -1,3 +1,5 @@
+#include "AFFINE.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "IWRAM_CALL.H"
@@ -11,30 +13,16 @@
 #include "IO_REG.H"
 #include "LOW_RUNTIME.H"
 
-struct Effect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
-
-union AffineMatrix {
-    s16 coefficients[4];
-    u32 rows[2];
-};
-
-extern u8 gObjAffineCount;
-extern union AffineMatrix gObjAffineMatrices[];
 
 /* Each of the 256 render priorities owns a linked-list head. */
-extern s32 *Data_03001400[256];
+extern void *Data_03001400[256];
 extern const u8 Render_BuildOamList[];
 typedef void (*LoadedRoutine)(void *argument);
 
 /* Linker-resolved absolute size of the routine copied into the heap. */
 extern u8 LoadedRuntime_Size[];
 
-typedef s32 (*KeyCallbackFn)(void);
+typedef void (*KeyCallbackFn)(void);
 
 /* The linear-congruential generator updates one unsigned word. */
 extern u32 Data_03001cb4;
@@ -53,9 +41,8 @@ extern u8 Text_PowersOfTen[];
 /* graphics/fill_word_stream_with_f000.c */
 extern u16 *gDebugTextCursor;
 
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
-s32 AffineMatrix_BuildForEffect(struct Effect *source)
+s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 {
     union AffineMatrix *matrix;
     s16 *coefficient;
@@ -65,8 +52,8 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     u8 index;
 
     index = gObjAffineCount;
-    x_scale = (s16)source->x;
-    y_scale = (s16)source->y;
+    x_scale = (s16)source->scale_x;
+    y_scale = (s16)source->scale_y;
     angle = source->angle;
     if (index > 31)
         return 0;
@@ -105,25 +92,18 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     return index;
 }
 
-/* The direct named-bank index measured 32 bytes versus the native 36.
-   Keep the existing integer-address transport for this word-linked list. */
-void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
+/* Each priority has a head; an entry contributes only its first-word link. */
+void Runtime_PushSlotEntry(void *entry, s32 priority)
 {
-    s32 *previous_head;
-    s32 slot_offset;
-    s32 clamped_slot;
+    void *previous;
 
-    clamped_slot = slot;
-    if (clamped_slot > 0xFF) {
-        clamped_slot = 0xFF;
-    }
-    if (clamped_slot < 0) {
-        clamped_slot = 0;
-    }
-    slot_offset = clamped_slot * 4;
-    previous_head = *(s32 **)((u8 *)slot_offset + (u32)Data_03001400);
-    *(s32 **)((u8 *)slot_offset + (u32)Data_03001400) = slot_entry;
-    *slot_entry = (s32)previous_head;
+    if (priority > 255)
+        priority = 255;
+    if (priority < 0)
+        priority = 0;
+    previous = Data_03001400[priority];
+    Data_03001400[priority] = entry;
+    *(void **)entry = previous;
 }
 
 void Runtime_CopyAndCallRoutine(void *argument)
@@ -305,9 +285,6 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
     return 0;
 }
 
-/* resource/table/initialize.c */
-/* resource/load_into_free_slot.c */
-/* resource/initialize.c */
 void Resource_InitializeTable(void)
 {
     u32 limit = VRAM_BLOCK_COUNT - 1;
@@ -333,47 +310,31 @@ void Resource_InitializeTable(void)
     }
 }
 
-/* An unused cache entry has no assigned VRAM byte offset. The structured
-   scan measured 36 bytes versus the native 52; retain its leading-entry test. */
+/* An unused cache entry has no assigned VRAM byte offset. */
 s32 Resource_FindFreeEntry(void)
 {
-    s32 free_slot;
+    struct VramBlockCacheEntry *entry = gVramBlockCache;
     s32 slot;
-    struct VramBlockCacheEntry *table;
-    s32 first;
-    struct VramBlockCacheEntry *entry;
 
-    entry = gVramBlockCache;
-    free_slot = VRAM_CACHE_ENTRY_COUNT;
-    first = 0;
-    slot = first;
-    table = gVramBlockCache;
-    if (table->offset == VRAM_CACHE_OFFSET_FREE)
-        return first;
-next_entry:
-    slot++;
-    entry++;
-    if (slot < VRAM_CACHE_ENTRY_COUNT) {
+    for (slot = 0; slot < VRAM_CACHE_ENTRY_COUNT; slot++, entry++) {
         if (entry->offset == VRAM_CACHE_OFFSET_FREE)
-            free_slot = slot;
-        else
-            goto next_entry;
+            return slot;
     }
-    return free_slot;
+    return VRAM_CACHE_ENTRY_COUNT;
 }
 
-s32 Resource_LoadIntoFreeSlot(s32 arg0)
+s32 Resource_LoadIntoFreeSlot(s32 size)
 {
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    VramBlock_LoadCached(slot, arg0, 0);
+    VramBlock_LoadCached(slot, size, 0);
     return slot;
 }
 
-s32 Resource_GetBuffer(s32 index, s32 value)
+s32 Resource_GetBuffer(s32 index, s32 source)
 {
-    return VramBlock_LoadCached(index, gVramBlockCache[index].size, (const void *)value);
+    return VramBlock_LoadCached(index, gVramBlockCache[index].size, (const void *)source);
 }
 
 /*
@@ -409,33 +370,20 @@ void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count)
 void Scheduler_SortTasks(void)
 {
     struct SchedulerTask saved;
-    struct SchedulerTask *base = gSchedulerTaskTable;
     struct SchedulerTask *task;
-    s32 pass = SCHEDULER_TBS_TASK_COUNT - 1;
-    s32 remaining;
-    goto sort_pass;
-next_pass:
-    base = gSchedulerTaskTable;
-sort_pass:
-    task = base;
-    if (pass <= 0)
-        goto finish_pass;
-    remaining = pass;
-next_task:
-    if ((s16)task[1].state > (s16)task->state) {
-        memcpy(&saved, task, sizeof(saved));
-        base = task;
-        task++;
-        memcpy(base, task, sizeof(saved));
-        memcpy(task, &saved, sizeof(saved));
-    } else {
-        task++;
+    s32 pass;
+    s32 i;
+
+    for (pass = SCHEDULER_TBS_TASK_COUNT - 1; pass > 1; pass--) {
+        task = gSchedulerTaskTable;
+        for (i = 0; i < pass; i++, task++) {
+            if ((s16)task[1].state > (s16)task->state) {
+                memcpy(&saved, task, sizeof(saved));
+                memcpy(task, task + 1, sizeof(saved));
+                memcpy(task + 1, &saved, sizeof(saved));
+            }
+        }
     }
-    if (--remaining != 0)
-        goto next_task;
-finish_pass:
-    if (--pass > 1)
-        goto next_pass;
 }
 
 s32 Scheduler_FindCallback(u32 callback)
@@ -488,44 +436,22 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
             *ime = (u16)(u32)ime;
         }
         do {
-            i = 0;
-            if (task->callback == callback) {
-                task->state = order;
-                index = 0;
-            } else {
-            find_existing:
-                i++;
-                task++;
-                if (i < SCHEDULER_TBS_TASK_COUNT) {
-                    if (task->callback == callback) {
-                        task->state = order;
-                        index = i;
-                    } else {
-                        goto find_existing;
-                    }
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+                if (task->callback == (u32)callback) {
+                    task->state = order;
+                    index = i;
+                    break;
                 }
             }
             task = gSchedulerTaskTable;
             if (index == -1) {
-                i = 0;
-                if (task->callback == 0) {
-                    task->callback = callback;
-                    task->state = order;
-                    task->mask = 0;
-                    index = 0;
-                } else {
-                find_empty:
-                    i++;
-                    task++;
-                    if (i < SCHEDULER_TBS_TASK_COUNT) {
-                        if (task->callback == 0) {
-                            task->callback = callback;
-                            task->state = order;
-                            task->mask = 0;
-                            index = i;
-                        } else {
-                            goto find_empty;
-                        }
+                for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+                    if (task->callback == 0) {
+                        task->callback = callback;
+                        task->state = order;
+                        task->mask = 0;
+                        index = i;
+                        break;
                     }
                 }
             }

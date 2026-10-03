@@ -1,3 +1,6 @@
+#include "CANVAS.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "PROJECT.H"
 /* NONMATCHING: 5756 bytes, candidate 5728, 2604 differing halfwords,
  * 1472 halfword edits (2026-09-25). Battle effect mode 9: receding sprites,
@@ -25,14 +28,10 @@ void WaitFrames(s32);
 s32 BattleEffect_LoadWork(s32, s32, s32, s32, s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
-void BattleFx_BeginCanvasLayer(s32);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32, s32);
-void BattleFx_SelectLivingTargets(s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, s32, s32);
-void BattleFx_SpawnObjects(s32, s32, s32);
-void *Resource_GetTableEntry(s32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyRoll(s32);
 void SceneTransform_ApplyPitch(s32);
@@ -45,8 +44,6 @@ void ResourceObject_ReleaseFar(void *);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Runtime_ReleaseHeapBlock(s32);
-void BattleFx_EndCanvasLayer(void);
 
 extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;

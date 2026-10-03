@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFX.H"
@@ -25,7 +26,6 @@
 #define BRANCH_FIELD(site, target) \
     ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 
 extern const u32 SentouKouka_YomiGyaku[];
 extern const u32 SentouKouka_YomiJun[];

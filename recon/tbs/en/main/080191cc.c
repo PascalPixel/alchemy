@@ -1,3 +1,9 @@
+/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
+ * and canonical resource/allocator contracts. Earlier measurements are
+ * prior checkpoints; fresh complete-object comparison is pending. */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 /* DRAFT: whole Thumb owner [080191cc,0801964c), 1152 bytes with its
  * switch table and all literal pools. Split and byte-verified on main.
  * Baseline: transfer the proven 8-byte Effect bitfields and sprite attributes
@@ -50,13 +56,6 @@
  */
 #include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
-
-struct UiEffect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
 
 union UiTileAttribute {
     u16 value;
@@ -127,7 +126,7 @@ typedef char UiAnimatedItem_size[
     sizeof(struct UiAnimatedItem) == sizeof(struct RenderOutput) ? 1 : -1];
 typedef char UiAnimatedItem_sprite[
     (u32)&((struct UiAnimatedItem *)0)->sprite == 16 ? 1 : -1];
-typedef char UiEffect_size[sizeof(struct UiEffect) == 8 ? 1 : -1];
+typedef char UiEffect_size[sizeof(struct AffineTransform) == 8 ? 1 : -1];
 
 extern struct UiAnimationWork *gWindowWork;
 extern u32 gFrameTick;
@@ -138,17 +137,14 @@ extern const u8 Data_08033ee8[];
 
 u32 __umodsi3(u32 numerator, u32 denominator);
 u32 Random16(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-s32 AffineMatrix_BuildForEffect(struct UiEffect *effect);
 void RenderOutput_UpdateScaleAnimation(struct UiAnimatedItem *item);
-void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 
 void UiWork_AnimateSpriteSlots(void)
 {
     struct UiAnimationWork *work = gWindowWork;
     struct UiAnimationSlot *slot = work->slots;
     s32 no;
-    struct UiEffect effect;
+    struct AffineTransform effect;
 
     for (no = 0; no != 8; no++, slot++) {
         struct UiAnimatedItem *item;
@@ -207,8 +203,8 @@ void UiWork_AnimateSpriteSlots(void)
             case 6:
                 if (item->frame == 0)
                     goto reset;
-                effect.x = 512;
-                effect.y = 512;
+                effect.scale_x = 512;
+                effect.scale_y = 512;
                 effect.angle = 0;
                 sprite->fields.affine_index = AffineMatrix_BuildForEffect(&effect);
                 sprite->fields.affine = 3;
@@ -218,8 +214,8 @@ void UiWork_AnimateSpriteSlots(void)
                 item->frame += 0xffff;
                 break;
             case 7:
-                effect.x = 256;
-                effect.y = 256;
+                effect.scale_x = 256;
+                effect.scale_y = 256;
                 item->frame += 768;
                 effect.angle = item->frame;
                 sprite->fields.affine_index = AffineMatrix_BuildForEffect(&effect);
@@ -253,8 +249,8 @@ void UiWork_AnimateSpriteSlots(void)
             case 8:
                 if (item->frame == 0)
                     goto reset;
-                effect.x = 320;
-                effect.y = 320;
+                effect.scale_x = 320;
+                effect.scale_y = 320;
                 effect.angle = 0;
                 sprite->fields.affine_index = AffineMatrix_BuildForEffect(&effect);
                 sprite->fields.affine = 3;

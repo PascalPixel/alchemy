@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 /* 2026-09-30: the European Map_UpdateWorldMapMarkers (DE, ES, FR and IT
    share it), written as edition branches of games/THE BROKEN SEAL/SRC/BATTLE/
    EFFECT/CLEANUP_RESOURCES_AND_WINDOW.C. The logic matches the reference:
@@ -30,7 +32,6 @@
 
 extern u8 gMapCellBuffer[];
 
-extern s32 Resource_ResetEntry(u32 index);
 extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 
 void BattleFx_CleanupResourcesAndWindow(void)
@@ -115,7 +116,6 @@ s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 u16 ArcTan2(s32 dz, s32 dx);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 BattleFx_FindConditionResource(s32 id, s32 kind);
 void UiWindow_Clear(s32 window);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);

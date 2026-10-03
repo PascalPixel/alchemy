@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "BATTLE_UNIT.H"
 /*
  * Draft: the parent matches but its nested arrow renderer does not yet, so the
@@ -111,8 +113,6 @@ struct PreviewSprite {
     union RenderTableValue tile;
 };
 struct RenderOutput *RenderOutput_AcquireFree(void);
-s32 Resource_LoadIntoFreeSlot(s32);
-s32 Resource_GetBuffer(s32, const void *);
 void RenderOutput_AppendToList(struct RenderInput *, struct RenderOutput *);
 extern u8 Value_00000333[];
 extern u8 Data_080313a4[];
@@ -124,8 +124,6 @@ void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
 void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 
 s32 __divsi3(s32 numerator, s32 denominator);
-void *Runtime_BumpAllocate(s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct BattleUnitRecord *Runtime_GetObject(s32 owner);
 struct AbilityData *Ability_GetData(s32 code);
 void BattleUnit_Recalculate(s32 owner);

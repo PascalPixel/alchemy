@@ -1,9 +1,8 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 void Resource_DecodeByteLzInRam(void *source, void *destination);
-s32 VramBlock_LoadCached(s32 entry_no, s32 mode, void *data);
 
 extern s32 RenderResource_PairSourceTable[];
 

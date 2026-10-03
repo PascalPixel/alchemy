@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Declarations shared by the Vale house scene's sources (resource_374). The
  * calls reach this overlay's import veneers by the names IMPORT.S gives
  * them, and its tables by the labels on the listing's data rows. */
@@ -179,7 +180,6 @@ void BattleFx_SetBlock30Values12Zero();
 void Engine_EventCloseScreen();
 void Engine_GameFlagClear();
 void Engine_EventEnd();
-void Resource_ResetEntry(s32 block);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 void Object_LinkObjectAndSetCallback();
 void ObjectMotion_Launch();

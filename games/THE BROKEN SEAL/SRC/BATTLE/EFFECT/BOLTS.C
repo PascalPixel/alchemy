@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -14,8 +16,6 @@
 extern void *gWorkSlot[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-s32 BattleFx_BeginTiledCanvas(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,

@@ -16,7 +16,6 @@
 
 extern struct ObjectSystemWork *gMenuCtrlWork;
 
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(u16 *ids);
@@ -38,7 +37,6 @@ void Event_ClearInvalidPackedValuesFar(void);
 #define PROMPT_SAVES_TILES 1
 #define PROMPT_TILES ((void *)0x06004000)
 #define PROMPT_TILES_SIZE 0x2000
-void Runtime_BumpFree(void *buffer);
 void UiWork_SetAltFlagAndClearTableFar(s32 enable);
 void UiWindow_MarkVisibleTileAttributesFar(void);
 

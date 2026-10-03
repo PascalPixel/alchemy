@@ -5,7 +5,6 @@
    its own runner and mode numbering. */
 
 s32 Object_SetMode(s32, s32);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32);
 s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 s32 BattleFx_RunProjectileVolleyB(void *effect, s32 mode);
 

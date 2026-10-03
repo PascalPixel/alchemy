@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
@@ -12,14 +13,11 @@ struct UiSprite {
     u16 flags : 6;
 };
 
-void *Runtime_AllocateBlock(s32 kind, s32 size);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Audio_PlayCue(s32 cue);
 void Shop_FillSelector(s32 value, s32 x, void *buffer);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 s32 WaitFrames(s32 frames);
 void UiWork_FinalizeFar(s32 window, s32 mode);
-void Runtime_ReleaseHeapBlock(s32 kind);
 
 /* Spins a quantity from minimum + 1 to maximum with left and right, redrawing
    the count and its total price; returns the chosen count, or -1 when

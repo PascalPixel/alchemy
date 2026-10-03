@@ -2,6 +2,8 @@
 #define ALCHEMY_MENU_LIST_H
 
 #include "TYPES.H"
+#include "RESOURCE.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "TEXT_RENDER_RUNTIME.H"
 #include "WINDOW.H"
@@ -86,10 +88,6 @@ extern const u8 Menu_AnimatedCursorTiles[];
 
 void WaitFrames(s32 frames);
 void Runtime_SetMainState19(void);
-void Runtime_PushSlotEntry(s32 *entry, s32 slot);
-void Resource_ResetEntry(s32 handle);
-s32 Resource_LoadIntoFreeSlot(s32 kind);
-s32 Resource_GetBuffer(s32 handle, s32 source);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 s32 UiText_CopyMessageString(s32 message, u16 *buffer, u32 count);
 void UiText_RenderWideStringAtOffset(

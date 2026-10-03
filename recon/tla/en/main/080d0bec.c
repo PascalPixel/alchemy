@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "SYSTEM.H"
 
 struct DisplayTransitionState {

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
@@ -28,9 +29,7 @@ struct ResourceBuffer_0801c188 {
 extern u8 *gResQueueWork;
 
 struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
-struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
-u16 VramBlock_LoadCached(s32 handle, s32 size, void *buffer);
 
 void Menu_LoadSelectedResource(void)
 {

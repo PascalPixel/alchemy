@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* NONMATCHING: 2043 differing halfwords; 1619 halfword edits.
  * Compiles to 4176 bytes against the complete 4224-byte owner.
  * WALL: reference indirect dispatch and later block topology still differ.
@@ -137,11 +139,6 @@ extern u8 *gWindowWork;
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-s32 Resource_LoadIntoFreeSlot(s32 id);
-void Resource_ResetEntry(s32 handle);
-void *Runtime_AllocateBlock(s32 pool, s32 size);
-void *Runtime_BumpAllocate(s32 size);
-void Runtime_ReleaseHeapBlock(s32 pool);
 s32 Resource_LoadIndexedIntoBuffer(s32 handle, s32 index);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 handle);
 s32 Resource_LoadKind26EntryToBuffer(s32 id, s32 handle);

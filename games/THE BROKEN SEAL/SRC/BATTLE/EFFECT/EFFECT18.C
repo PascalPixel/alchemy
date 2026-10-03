@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "TRANSFORM.H"
 #include "DMA.H"
@@ -12,7 +15,6 @@
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
-extern u8 gBattleFxWork[];
 
 void WaitFrames(s32);
 
@@ -22,9 +24,6 @@ typedef s32 (*CopyWords)(void *, const void *, s32);
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40, 41, 46 and 47. */
-extern u8 gWorkSlot[];
-void BattleFx_BeginCanvasLayer(s32);
-void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);
@@ -32,8 +31,6 @@ void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
-void Runtime_ReleaseHeapBlock(s32);
-s32 BattleFx_EndCanvasLayer(void);
 typedef struct BattleEffectArgument Efx;
 
 /* One 28-byte record; the array starts at work + 0x7080.  x and y are
@@ -50,7 +47,7 @@ typedef struct Spark {
 
 #define WORK_EFX ((Efx *)work->effect)
 #define SHEET ((u8 *)work + 0xC56)
-#define SPARKS ((Spark *)((u8 *)work + 0x7080))
+#define SPARKS ((Spark *)work->particles)
 
 static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
 {
@@ -61,9 +58,6 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
 
 /* Resource id the reference loads from its literal pool. */
 extern const u16 ParticleStreams_CellOffsets[];
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
@@ -76,12 +70,12 @@ void SceneTransform_ApplyRoll(s32 angle);
    area to the BG2 affine reference point. */
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {
-    u8 *work = *(u8 **)gBattleFxWork;
+    struct BattleEffectWork *work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     volatile u16 *channel = (volatile u16 *)0x040000b0;
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];
-    Dma_Set(work + 0x6980, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
+    Dma_Set(work->bg2_x, (void *)0x04000028, 0xa6600001, (volatile u32 *)channel);
 }
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
@@ -133,7 +127,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     struct BattleEffectWork *work;
     void *dst;
     u8 *aux;
-    void *blit[2];
+    DrawRectangle blit[2];
     s32 pos[3];
     s32 seat[8][3];
     s32 aim[3];
@@ -146,7 +140,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     s32 width;
     s32 height;
 
-    cache = (u32 *)(gWorkSlot + 40 * 4);
+    cache = (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
     dst = (void *)cache[40 - 40];
     work = (struct BattleEffectWork *)cache[39 - 40];
     aux = (u8 *)cache[41 - 40];
@@ -155,12 +149,12 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     *(s16 *)0x04000052 = 0x1010;
 
     if (mode == 7) {
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        blit[0] = (void *)cache[46 - 40];
-        BattleEffect_LoadWork(47, 7, 7, 7, 2);
-        blit[1] = (void *)cache[47 - 40];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+        blit[0] = (DrawRectangle)cache[46 - 40];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+        blit[1] = (DrawRectangle)cache[47 - 40];
     } else {
-        BattleFx_FetchRectangleBlitters(WORK_EFX->side, (u32 *)blit);
+        BattleFx_FetchRectangleBlitters(WORK_EFX->side, blit);
     }
 
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
@@ -329,7 +323,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             i = 0;
             while (i != WORK_EFX->count) {
                 if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
-                    *(s32 *)((u8 *)work + 0x77A8) = 8;
+                    work->shake_frames = 8;
                     ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
                 }
                 i += 1;
@@ -338,7 +332,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             i = 0;
             while (i != WORK_EFX->count) {
                 if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
-                    *(s32 *)((u8 *)work + 0x77A8) = 8;
+                    work->shake_frames = 8;
                     if (mode == 6) {
                         ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 14, 5, i, 4);
                     } else {
@@ -360,8 +354,8 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     } while (frame != 64);
 
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
 
@@ -386,14 +380,14 @@ void BattleFx_RunSwirlingStars(void *object)
     s32 i;
     s32 frame;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work, 1, 1);
-    BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, (u32 *)draw);
+    BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw);
     for (i = 0; i != 256; i++) {
         star = &((struct EffectStep *)Ram_MapCellBuffer)[i];
         star->x = ((Random16() & 0xff) - 127) << 16;
@@ -465,7 +459,7 @@ void BattleFx_RunSwirlingStars(void *object)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

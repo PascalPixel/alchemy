@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -25,11 +26,9 @@ struct OwnerState {
     struct OwnerStats stats;
 };
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct OwnerState *Owner_GetStateFar(s32 owner);
 s32 __divsi3(s32 numerator, s32 denominator);
 void Owner_RecalculateStatsFar(s32 owner);
-void Runtime_BumpFree(void *block);
 
 /* Raise an owner by levels: each stat grows by a fixed tenth-step per level,
    never below 70% of its value before the change and never past its cap.

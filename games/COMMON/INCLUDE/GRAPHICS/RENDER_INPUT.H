@@ -55,6 +55,15 @@ struct RenderOutput {
     union RenderTableValue table;
 };
 
+/* The tail points at the next link to fill, or head when the list is empty. */
+struct RenderOutputList {
+    struct RenderOutput *head;
+    struct RenderOutput **tail_link;
+};
+
+LAYOUT_SIZE_GUARD(RenderOutputList_Size, struct RenderOutputList, 8);
+LAYOUT_OFFSET_GUARD(RenderOutputList_Tail, struct RenderOutputList, tail_link, 4);
+
 struct RenderOutput *RenderOutput_Create(
     s32 no,
     s32 flags,

@@ -1,10 +1,9 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 
 extern char ResourceId_CommandIcons;
-u32 Runtime_BumpAllocate(s32 size);
 void Resource_DecodeByteLzInRam(void *source, void *destination);
-void VramBlock_LoadCached(s32, s32, void *);
 void Sys_Free(void *);
 
 void Menu_LoadResourceSlot(s32 slot, s32 index)

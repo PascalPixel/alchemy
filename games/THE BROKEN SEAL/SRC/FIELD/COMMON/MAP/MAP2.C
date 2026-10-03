@@ -20,7 +20,6 @@ void MapAnimation_PresentFrame(void);
 void WaitFrames(s32 frames);
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
-s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
 void Map_ShowBg1FromBuffer(void);
 #define BG_PALETTE ((s16 *)0x05000000)

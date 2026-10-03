@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "SCENE.H"

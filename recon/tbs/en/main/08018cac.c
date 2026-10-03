@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* 2026-09-29 alchemy permute: score 7965 to 6875 on the permuter's scorer
    (0 is exact); remaining 52 register-only, 32 operand, 25 reordered, 18
    inserted, 26 deleted. Kept rewrites: 11x swap commutative operands, 11x
@@ -79,12 +81,8 @@ struct UiGlyphMetrics {
 };
 
 extern struct UiTextWork *gWindowWork;
-extern u8 *Resource_GetTableEntry(u32 resource);
-extern void *Runtime_BumpAllocate(s32 size);
-extern void Runtime_BumpFree(void *buffer);
 extern void *RenderOutput_AcquireFree(void);
 extern void RenderOutput_AppendToList(void *window, void *output);
-extern s32 Resource_FindFreeEntry(void);
 extern s32 UiText_RenderGlyphPair(s32 character, struct UiGlyphMetrics *metrics);
 extern s32 _call_via_r6(void *window, s32 character, s32 x, s32 y, u8 *resource);
 

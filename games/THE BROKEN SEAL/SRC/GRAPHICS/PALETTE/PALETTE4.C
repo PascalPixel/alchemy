@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "PALBUF.H"
 #include "DMA.H"
 #include "TYPES.H"
@@ -5,10 +6,8 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 
-void *Runtime_AllocateBlock(s32, u32);
 void Unnamed_080f3078(u32, void *, void *, s32);
 
-s32 Runtime_ReleaseHeapBlock(s32);
 
 
 extern struct TitlePaletteWork *Data_03001ed0;

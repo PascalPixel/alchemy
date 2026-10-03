@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* WaitFrames: TLA frame dispatch, OAM, debug pause and sleep.
  * Complete native owner: 840 bytes, including every literal pool.
  * 2026-10-02: saved draft compiles with the one approved TLA option set.
@@ -66,12 +67,10 @@ extern u32 Data_0300122c;
 extern u32 Data_0300117c;
 extern u16 Data_030011b8;
 extern volatile u16 Data_02003000;
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Render_BuildOamList(void *work);
 void System_WaitForFrameInterrupt(void);
 void Input_UpdateKeyRepeatAndDirection(void);
 void Func_081c0080(void);
-void Runtime_ReleaseHeapBlock(s32 slot);
 void Graphics_ResetFrameState(void);
 s32 SerialRuntime_PollStatus(void);
 void Bios_SoundBiasOff(void);

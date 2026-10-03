@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 
 /* A text window's glyph palette: the slot each font colour was given, 0xff
    while unassigned, and the number of slots used. */
@@ -6,12 +8,7 @@ struct GlyphPalette {
     s32 count;
 };
 
-u8 *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-u8 *Resource_GetTableEntry(u32 index);
 s32 Resource_DecodeByteLz(const void *source, void *destination);
-u8 *Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *block);
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 /* Decodes one glyph of the font resource, remaps its colours through the
    window's glyph palette (assigning and uploading new colours while slots

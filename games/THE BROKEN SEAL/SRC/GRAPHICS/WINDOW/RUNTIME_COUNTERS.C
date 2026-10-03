@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "WINDOW.H"
@@ -8,7 +9,6 @@
 
 void UiWork_ProcessAll(void);
 
-s32 VramBlock_LoadCached(s32, s32, s32);
 
 s32 UiWork_IsIdle(struct UiWindow *window)
 {

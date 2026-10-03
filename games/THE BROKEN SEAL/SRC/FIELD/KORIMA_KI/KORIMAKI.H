@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #ifndef KORIMAKI_H
 #define KORIMAKI_H
 
@@ -85,7 +86,6 @@ void Battle_ResetEffectCounter();
 void Object_RefreshSelectorById();
 void Object_SetActionCallbackAndRefreshById();
 void Vector_AddPolarOffset();
-void Resource_ResetEntry();
 s32 PartyInventory_FindOwner();
 s32 Inventory_Find();
 struct PaletteSceneRecord *Owner_GetState();

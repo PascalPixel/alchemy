@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "CHARACTER_MENU.H"
 #include "INVENTORY_MENU.H"
 #include "BATTLE_UNIT.H"
@@ -37,12 +38,10 @@ void RenderOutput_ClearListFar(s32 window);
 struct RenderOutput *SideObject_CreateFar(s32 owner, s32 position, s32 side, s32 window, s32 x, s32 y);
 void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
-void *Runtime_BumpAllocate(s32 size);
 s32 _call_via_r3(void *, void *, s32, void *);
 void Inventory_EquipFar(s32 owner, s32 slot);
 void Owner_RecalculateStatsFar(s32 owner);
 void UiText_DrawStatComparison(const struct BattleUnit *unit, const struct BattleUnit *backup, s32 window);
-void Runtime_BumpFree(void *block);
 
 static inline void Owner_Copy(void *dst, void *src)
 {

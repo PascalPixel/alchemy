@@ -1,3 +1,6 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -47,13 +50,10 @@ struct GroundParticleWork {
 LAYOUT_SIZE_GUARD(GroundParticle_Size, struct GroundParticle, 0x20);
 LAYOUT_SIZE_GUARD(GroundParticleWork_Size, struct GroundParticleWork, 0x410);
 
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
-s32 Resource_FindFreeEntry(void);
 void Resource_DecodeByteLz(const void *source, void *destination);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
-void Runtime_PushSlotEntry(void *entry, s32 value);
 
 extern const u8 FieldFx_GroundParticleTiles[];
 /* Per frame left: the sprite's offset from its place, its tile, shape and size. */

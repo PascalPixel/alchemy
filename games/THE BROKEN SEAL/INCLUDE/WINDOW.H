@@ -4,28 +4,9 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "LAYOUT_GUARD.H"
-#include "RENDER_INPUT.H"
+#include "UIWINDOW.H"
 
-/* One window record, as UiWindow_Create returns it; positions and sizes are
-   in tiles. */
-struct UiWindow {
-    s32 unknown_00;
-    s32 unknown_04;
-    u16 width;                  /* 0x08 */
-    u16 height;                 /* 0x0a */
-    u16 x;                      /* 0x0c */
-    u16 y;                      /* 0x0e */
-    u16 unknown_10;
-    u16 unknown_12;
-    u16 state;                  /* 0x14 */
-    u16 flags;                  /* 0x16 */
-    u16 frame;                  /* 0x18 */
-    s16 duration;               /* 0x1a */
-    u16 previous_x;             /* 0x1c */
-    u16 previous_y;             /* 0x1e */
-    u16 previous_width;         /* 0x20 */
-    u16 previous_height;        /* 0x22 */
-};
+enum { UI_OUTPUT_COUNT = 64 };
 
 /* One of the three window text channels. Positions are 8.8 fixed point;
    entry names a built text entry, and colours hold its four palette values. */
@@ -54,9 +35,8 @@ struct UiRenderWork {
     u16 tilemap[640];
     struct UiWindow windows[WINDOW_COUNT];
     struct UiChannelSlot channels[3];
-    struct RenderOutput outputs[64];
-    struct RenderOutput *free_head;
-    struct RenderOutput *free_tail;
+    struct RenderOutput outputs[UI_OUTPUT_COUNT];
+    struct RenderOutputList free_outputs;
     u8 tile_attributes[256];
     u8 unknown_before_flags[RENDER_ALT_OFS - RENDER_TILE_ATTR_OFS - 256];
     u8 alt;                     /* alternate text-canvas tiles are in use */
@@ -88,13 +68,11 @@ struct UiRenderWork {
 };
 
 
-LAYOUT_SIZE_GUARD(UiWindow_Size, struct UiWindow, 0x24);
-LAYOUT_OFFSET_GUARD(UiWindow_Frame, struct UiWindow, frame, 0x18);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Windows, struct UiRenderWork, windows, 0x500);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Channels, struct UiRenderWork, channels, RENDER_CHANNEL_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Outputs, struct UiRenderWork, outputs, RENDER_OUTPUT_TBL_OFS);
-LAYOUT_OFFSET_GUARD(UiRenderWork_FreeHead, struct UiRenderWork, free_head, RENDER_FREE_HEAD_OFS);
-LAYOUT_OFFSET_GUARD(UiRenderWork_FreeTail, struct UiRenderWork, free_tail, RENDER_FREE_TAIL_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_FreeHead, struct UiRenderWork, free_outputs.head, RENDER_FREE_HEAD_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_FreeTail, struct UiRenderWork, free_outputs.tail_link, RENDER_FREE_TAIL_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_TileAttributes, struct UiRenderWork, tile_attributes, RENDER_TILE_ATTR_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Alt, struct UiRenderWork, alt, RENDER_ALT_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Dirty, struct UiRenderWork, dirty, RENDER_DIRTY_OFS);

@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
@@ -9,12 +12,8 @@
 #include "EFFECT_STEP.H"
 #include "B5_CONTEXT.H"
 
-extern u8 gBattleFxWork[];
 extern u8 gMapCellBuffer[];
 extern BattleEffectDrawRectangle Data_03001e50[];
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -24,7 +23,6 @@ void Audio_PlayCue(s32 cue);
 
 extern const u16 RisingBurst_SparkCells[];
 extern const u16 RisingBurst_SparkSizes[];
-void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 #define HI(v) (((s16 *)&(v))[1])
@@ -56,7 +54,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     BattleEffectDrawRectangle draw[2];
     s32 frame;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     work = *heap_cache++;
     canvas = *heap_cache;
     work->effect = effect;
@@ -81,9 +79,9 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16, 0);
     WaitFrames(16);
     if (work->effect->side == 1)
-        BattleEffect_LoadWork(46, 7, 7, 7, 0);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 0);
     else
-        BattleEffect_LoadWork(46, 7, 7, 3, 0);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 0);
     draw[0] = Data_03001e50[46];
     Audio_PlayCue(212);
     for (frame = 0; frame != 21; frame++) {
@@ -108,7 +106,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         work->transfer_pending = 1;
         WaitFrames(1);
     }
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
@@ -142,7 +140,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     s32 cell;
     s32 size;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -191,12 +189,12 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
                 }
                 for (i = 0, x = 50; i != 2; i++, x += 14) {
                     if (i == 0)
-                        BattleEffect_LoadWork(46, 7, 7, 3, kind);
+                        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, kind);
                     else
-                        BattleEffect_LoadWork(46, 7, 7, 7, kind);
-                    draw[0] = ((DrawRectangleFn *)gBattleFxWork)[7];
-                    ((DrawRectangleFn *)gBattleFxWork)[7](canvas, work, x, 112 - height, 14, height);
-                    Runtime_ReleaseHeapBlock(46);
+                        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, kind);
+                    draw[0] = ((DrawRectangleFn)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER]);
+                    ((DrawRectangleFn)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER])(canvas, work, x, 112 - height, 14, height);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 }
             }
         }
@@ -219,8 +217,8 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
             }
             p++;
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         if (frame <= 7)
             Camera_ApplyShake(2, 2);
         else

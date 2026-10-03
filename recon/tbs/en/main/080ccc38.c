@@ -1,3 +1,6 @@
+#include "CANVAS.H"
+#include "MOTION_OBJECT.H"
+#include "RUNTIME_MEM.H"
 /*
  * BattleFx_RunTwoResource — canonical plain draft, 2026-10-02.
  * ONE closed ordinary trial replaced the unread DrawRectangle draw[2]
@@ -29,9 +32,6 @@
 #include "RESOURCE.H"
 
 extern u8 gBattleFxWork[];
-void **GetBattleObjectSlotFar(s32 member_id);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 void Audio_PlayCue(s32 cue);
@@ -84,7 +84,7 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    object = *GetBattleObjectSlotFar(work->effect->actors[0]);
+    object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &position);
     if (work->effect->side == 0)
         *(s32 *)0x04000028 = (16 - position.x) << 8;

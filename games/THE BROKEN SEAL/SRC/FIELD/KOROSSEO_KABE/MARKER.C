@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TASK.H"
 
 void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)

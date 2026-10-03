@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 /* 2026-10-02 bounded list-bank structural trials; original body retained.
  * EN score 631: 2 register-only, 21 stack-only, 10 reordered; no inserted
  * or deleted instructions. Native and candidate frames are 300 bytes.

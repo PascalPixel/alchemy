@@ -21,7 +21,6 @@ struct EnemyDefinition *Owner_GetRecordFar(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 
 s32 GameFlag_ClearBitFar(s32 id);
-void Runtime_BumpFree(void *ptr);
 s32 BattleParty_PrepareActiveOwners(u16 *out_units);
 
 struct FormationCandidate {
@@ -60,7 +59,6 @@ struct OwnerState {
 };
 
 void Owner_RecalculateStatsFar(s32 owner);
-void Runtime_BumpFree(void *block);
 
 void Runtime_RemoveIrqHandlerSlot2(void)
 {

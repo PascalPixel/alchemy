@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"
@@ -14,8 +17,6 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 
-extern u8 gBattleFxWork[];
-extern u8 gWorkSlot[];
 extern u16 ParticleStreams_CellOffsets[];
 extern u16 BattleFx_GlintCellOffsets[];
 extern u8 BattleFx_GlintCellWidths[];
@@ -46,10 +47,6 @@ extern const u8 TwelveMode_GlintDrawFlags[];
 #define gSparks ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 #define HI(v) (((s16 *)&(v))[1])
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);
@@ -154,12 +151,12 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
     s32 wisp_sheet = 0x3200;
     DrawRectangle *lower = &gBlitters[47];
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
     sheet = heap_cache[2];
-    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    camera = gCameraWork;
     work->effect = effect;
     if (mode == 8)
         BattleFx_BeginCanvasLayer(0);
@@ -263,20 +260,20 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                 s32 picture = frame / TwelveMode_Records[mode * 7 + 4] % 6;
 
                 if (work->effect->side == 1) {
-                    BattleEffect_LoadWork(46, 7, 7, 7, 2);
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
                     gBlitters[46](canvas, work->sheet + TwelveMode_StrikeOffsets[picture],
                         target_position.x / 2 - (TwelveMode_StrikeReach[picture] / 2)
                             - TwelveMode_StrikeWidths[picture] + 8,
                         target_position.y - (TwelveMode_StrikeHeights[picture] / 2),
                         TwelveMode_StrikeWidths[picture], TwelveMode_StrikeHeights[picture]);
                 } else {
-                    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
                     gBlitters[46](canvas, work->sheet + TwelveMode_StrikeOffsets[picture],
                         target_position.x / 2 + (TwelveMode_StrikeReach[picture] / 2) - 8,
                         target_position.y - (TwelveMode_StrikeHeights[picture] / 2),
                         TwelveMode_StrikeWidths[picture], TwelveMode_StrikeHeights[picture]);
                 }
-                Runtime_ReleaseHeapBlock(46);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
                 if (frame % (TwelveMode_Records[mode * 7 + 4] * 6)
                     == TwelveMode_Records[mode * 7 + 4] * 4) {
                     if (mode == 8) {
@@ -321,12 +318,12 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
             } else {
                 stage = 3;
             }
-            BattleEffect_LoadWork(46, 7, 7, 3, TwelveMode_Records[mode * 7 + 5]);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, TwelveMode_Records[mode * 7 + 5]);
             gBlitters[46](canvas, work->sheet + stage * 864 + 0xc80, target_position.x / 2 - 18, 56, 18, 48);
-            Runtime_ReleaseHeapBlock(46);
-            BattleEffect_LoadWork(46, 7, 7, 7, TwelveMode_Records[mode * 7 + 5]);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, TwelveMode_Records[mode * 7 + 5]);
             gBlitters[46](canvas, work->sheet + stage * 864 + 0xc80, target_position.x / 2, 56, 18, 48);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             if (frame % (TwelveMode_Records[mode * 7 + 4] * 4)
                 == TwelveMode_Records[mode * 7 + 4] * 3) {
                 ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
@@ -366,18 +363,18 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                     - (BattleFx_GlintCellWidths[image] / 2);
                 y = target_position.y - (Trig_Cos(angle) * (radius + 4) >> 17)
                     - (BattleFx_GlintCellHeights[image] / 2);
-                BattleEffect_LoadWork(47, 7, 7, TwelveMode_GlintDrawFlags[Random16() & 3] | 3, 3);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, TwelveMode_GlintDrawFlags[Random16() & 3] | 3, 3);
                 (*lower)(canvas, work->sheet + BattleFx_GlintCellOffsets[image], x, y,
                     BattleFx_GlintCellWidths[image], BattleFx_GlintCellHeights[image]);
-                Runtime_ReleaseHeapBlock(47);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
         }
 
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
         draw[0] = gBlitters[46];
-        BattleEffect_LoadWork(47, 7, 7, 3, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
         draw[1] = *lower;
         for (k = 0; k != 1; k++) {
             source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -446,8 +443,8 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
                 }
             }
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         if (TwelveMode_Records[mode * 7 + 2] & 16)
             Camera_ApplyShake(8, 8);
         else

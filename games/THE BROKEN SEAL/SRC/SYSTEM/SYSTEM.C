@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
@@ -7,10 +8,7 @@
 typedef void (*InterruptHandler)(void);
 extern InterruptHandler Data_030000e0[];
 void RuntimeDispatch_ReservedNoOp03008(void);
-/* The allocator exposes a legacy integer address handle. */
-s32 Runtime_AllocateHeapBlock(s32, s32);
 void Runtime_CopyAndCallRoutine(void *argument);
-void Runtime_ReleaseHeapBlock(s32 slot);
 void Graphics_ResetFrameState(void);
 s32 SerialRuntime_PollStatus(void);
 void Input_UpdateKeyRepeatAndDirection(void);
@@ -157,7 +155,7 @@ void WaitFrames(s32 frames)
         gSchedulerStatus = 1;
         Runtime_InvokeCallbacksByKey(0xc80);
         gSchedulerStatus = 0;
-        Runtime_CopyAndCallRoutine((void *)Runtime_AllocateHeapBlock(52, 0x400));
+        Runtime_CopyAndCallRoutine(Runtime_AllocateHeapBlock(52, 0x400));
         Data_03001e44 = 1;
         if (Data_03001f58) {
             line = *(u16 *)0x04000006;

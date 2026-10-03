@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "TRANSFORM.H"

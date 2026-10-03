@@ -1,3 +1,6 @@
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 /* Projects a sprite part pair to the screen. The four spill slots (flip,
    half height, size, affine mode) are declared in reverse; the screen bounds
    are four separate tests so GCC does not fold them into one unsigned range
@@ -11,20 +14,8 @@
 
 extern u8 gMenuCtrlWork[];
 
-struct ProjectedEffect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
-
-
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *sprite, u16 mode);
-s32 AffineMatrix_BuildForEffect(struct ProjectedEffect *source);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
-s32 Resource_ActivateEntry(u32 resource_index);
-
 /* Places a sprite and its optional shadow from a four-word screen position
    (x, shadow height, depth, ground) and a two-word scale. */
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
@@ -47,7 +38,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
        and release from 68 to 44 bytes; the complete function then differs. */
     s32 ground[3];
     s32 screen[3];
-    struct ProjectedEffect effect;
+    struct AffineTransform effect;
     s32 flip;
     s32 x;
     s32 y;
@@ -61,10 +52,10 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s3
     } else {
         affine = 1;
         effect.angle = sprite->rotation;
-        effect.x = scale_x >> 8;
-        effect.y = scale_y >> 8;
+        effect.scale_x = scale_x >> 8;
+        effect.scale_y = scale_y >> 8;
         if (flip != 0)
-            effect.x = -effect.x;
+            effect.scale_x = -effect.scale_x;
         matrix = AffineMatrix_BuildForEffect(&effect);
     }
     if (scale_x > 0x10000 || scale_y > 0x10000) {
@@ -114,7 +105,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32
     s32 half_width;
     s32 ground[3];
     s32 screen[3];
-    struct ProjectedEffect effect;
+    struct AffineTransform effect;
     s32 z;
     s32 base;
     s32 scale_x;
@@ -164,12 +155,12 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32
     }
     if (affine != 0) {
         effect.angle = sprite->rotation;
-        effect.x = scale_x >> 8;
+        effect.scale_x = scale_x >> 8;
         if (flip != 0) {
-            effect.x = -effect.x;
+            effect.scale_x = -effect.scale_x;
             offset_x = -offset_x;
         }
-        effect.y = scale_y >> 8;
+        effect.scale_y = scale_y >> 8;
         z = AffineMatrix_BuildForEffect(&effect);
     } else if (flip != 0) {
         z = 8;

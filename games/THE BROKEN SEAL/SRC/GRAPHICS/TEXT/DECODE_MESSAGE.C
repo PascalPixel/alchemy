@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TEXT_READER.H"
 #include "HEAP_STATE.H"
 #include "DMA.H"
@@ -6,8 +7,6 @@ extern const u8 Func_08015430[];
 
 extern u8 Text_DecodeSymbolCodeSize[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, u32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 /* The European decoder also passes code 29's one argument through, and
    biases each argument by a plain constant. */

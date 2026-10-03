@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -16,19 +19,15 @@
 #define DUST ((struct EffectStep *)Ram_MapCellBuffer)
 #define SPARK ((struct EffectStep *)(Ram_MapCellBuffer + 684 * sizeof(struct EffectStep)))
 
-extern void *gBattleFxWork[];
 extern u16 ParticleStreams_CellOffsets[];
 extern const u8 FallingSword_FlashCells[];
 extern const s32 FallingSword_DustGravity[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
@@ -56,7 +55,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
 
     /* The first two heap slots are read through a walking pointer; the
        base itself serves the sheet and the two blitters. */
-    heap = gBattleFxWork;
+    heap = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     p = heap;
     work = *p++;
     canvas = *p;
@@ -68,9 +67,9 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
     EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &pos);
     half = pos.x / 2;
 
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     routine[0] = heap[7];
-    BattleEffect_LoadWork(47, 7, 7, 3, 1);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 1);
     routine[1] = heap[8];
 
     Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet, (u8 *)work + 20000, 1, 1);
@@ -379,7 +378,7 @@ void BattleFx_RunFallingSword(struct BattleEffectArgument *effect)
     } while (frame != 102);
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

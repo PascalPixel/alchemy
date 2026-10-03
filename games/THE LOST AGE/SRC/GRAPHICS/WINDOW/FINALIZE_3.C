@@ -1,21 +1,19 @@
-#include "TYPES.H"
+#include "RENDER_INPUT.H"
 
-void RenderOutput_ClearList(void *work);
-void RenderOutput_Release(void *node);
+void RenderOutput_Release(struct RenderOutput *node);
 
-void RenderOutput_ClearList(void *arg0)
+void RenderOutput_ClearList(void *work)
 {
-    void *next;
-    void *node;
+    struct RenderOutputList *list = work;
+    struct RenderOutput *node;
+    struct RenderOutput *next;
 
-    next = NULL;
-    /* 単方向リストを先頭から解放する。 */
-    if (arg0 != NULL) {
-        node = *(void **)arg0;
-        *(void **)((u8 *)arg0 + 4) = arg0;
-        *(void **)arg0 = next;
+    if (list != NULL) {
+        node = list->head;
+        list->tail_link = &list->head;
+        list->head = NULL;
         while (node != NULL) {
-            next = *(void **)node;
+            next = node->next;
             RenderOutput_Release(node);
             node = next;
         }

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* Complete 268-byte glyph-work initializer, including its literal pool.
  * The cursor subrecord is shared by the paired row resets. */
 #include "TYPES.H"
@@ -60,9 +62,6 @@ struct GlyphWork {
 };
 
 extern const u8 Data_080346f8[];
-struct GlyphWork *Runtime_AllocateBlock(s32 kind, s32 size);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 
 void UiGlyph_ResetWorkState(void)
 {

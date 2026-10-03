@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 /* Not-yet-C: complete 2124-byte summon picker, including literal pools.
  * Current EN score15925: 219 register,75 stack,50 operand,84 reordered,
  * 41 inserted,44 deleted instruction differences; no unresolved symbols.

@@ -7,7 +7,6 @@
 #include "RUNTIME_MEM.H"
 #include "UI.H"
 
-s32 Runtime_AllocateHeapBlock(s32 slot, s32 size);
 extern struct ObjectSystemWork *gMenuCtrlWork;
 extern struct CharacterMenuState *gMenuWork;
 void ItemMenu_Close(void);

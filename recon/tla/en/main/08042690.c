@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 extern u8 Data_03001e90[];
 extern u8 Data_03001e8c[];

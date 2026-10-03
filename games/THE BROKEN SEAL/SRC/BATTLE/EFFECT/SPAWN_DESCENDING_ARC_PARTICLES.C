@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Battle effect: spawn the two particles that fall in arcs either side of
    the source object, one for each of the descending-arc update callbacks. */
 #include "TYPES.H"
@@ -154,7 +155,6 @@ extern struct ResourceSlot ResourceTableEntries[];
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
-void Resource_ResetEntry(s32 id);
 
 void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
 {

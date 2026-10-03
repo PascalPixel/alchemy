@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
 struct Particle {
@@ -225,8 +227,6 @@ void Func_08014c4c(void);
 void Func_08118040(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void Func_08144aac(s32, DrawRectangleFn *);
-u16 *Resource_GetTableEntry(s32);
-void Resource_DecodeType01(const void *, void *);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -238,7 +238,6 @@ s32 Func_08002096(s32);
 s32 Func_08002090(s32);
 s32 __divsi3(s32, s32);
 void ResourceObject_ReleaseFar(struct SpriteObject *);
-void *Runtime_BumpAllocateAlternatePool(s32);
 struct Model *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_080151e4(s32, s32, s32);

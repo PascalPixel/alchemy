@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
  * DRAFT (52 of 754 instructions differ), reworked 2026-10-02: same frame.
@@ -88,7 +90,6 @@ void Func_080b7738(void);
 /* The relocated IWRAM block clear this owner reaches through __call_via_r3. */
 #include "IWRAM_CALL.H"
 
-void *Runtime_AllocateBlock(s32 tag, s32 size);
 void Scheduler_ResetTaskTable(void);
 void Render_ResetTransformState(void);
 void GameFlag_SetBitFar(s32 id);
@@ -117,12 +118,10 @@ void BattleCamera_SetRange(s32 a, s32 b, s32 c, s32 d, s32 e);
 void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 d);
 void Party_ReservedNoOp5B14(s32 value);
 void Summon_ClearWorkFields(void);
-s32 Resource_LoadIntoFreeSlot(s32 size);
 s32 BattleRandom16Far(void);
 void Func_080c02a4(s32 object, s32 arg);
 void Battle_ReservedNoOp9B2C(void);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-void Resource_ResetEntry(s32 entry);
 void Runtime_GetRemainingIwram(void);
 void Runtime_GetRemainingEwram(void);
 s32 BattlePresentation_BuildActions(struct BattleActionSlot *slots);

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /*
  * Draft: Owner_RecalculateStats from the ☀️ source does not yet match ⚓️;
  * the ⚓️ body is about a quarter different (other stat offsets and a
@@ -103,8 +104,6 @@ struct StatWork {
     s32 unused_5c;
 };
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_BumpFree(void *buffer);
 struct OwnerStats *Owner_GetState(s32 owner);
 struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
 struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);

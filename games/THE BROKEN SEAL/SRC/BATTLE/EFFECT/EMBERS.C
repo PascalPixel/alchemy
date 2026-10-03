@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "IWRAM_CALL.H"
@@ -26,20 +28,13 @@ extern u8 EmberColumns_Columns[];
 /* By ember index modulo four: how fast it is pulled down. */
 extern s32 EmberColumns_Gravity[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-u32 Resource_DecodeType01(const void *source, void *destination);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 struct BattleEffectTargetArgument;
-void BattleFx_SelectLivingTargets(struct BattleEffectTargetArgument *argument);
-void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
-s32 BattleFx_EndCanvasLayer(void);
 
 extern u8 gBattleFxWork[];
 /* By drop index modulo four: how fast a drop leaves the ground. */

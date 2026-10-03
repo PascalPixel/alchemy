@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "DISPTRAN.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -7,7 +8,6 @@
 /* The battle-effect display transition state: the per-scanline window
    tables fill the block and the control fields follow them. */
 
-void *Runtime_AllocateBlock(s32 kind, s32 size);
 
 
 /* Allocates and clears the transition state for a battle effect, arms the

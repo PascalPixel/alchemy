@@ -21,7 +21,6 @@ struct LevelUpWork {
     u8 unknown_0c[0x20];
 };
 
-void Runtime_BumpFree(void *buffer);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 void Owner_RecalculateStats(s32 owner);
 u32 Random16(void);

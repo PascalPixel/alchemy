@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 #include "RAM_BUFFER.H"
@@ -10,7 +13,6 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
-extern u8 gBattleFxWork[];
 u32 Random16(void);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyRoll(s32 angle);
@@ -34,14 +36,11 @@ struct StreakPoint {
     s32 z;
 };
 
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void BattlePresentation_DrawStreaks(void);
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 
-extern DrawRectangle gWorkSlot[];
 extern u16 BattleFx6_FlareCells[];
 /* The four corner sparks: where each sits and how it is flipped. */
 extern s8 CornerSparks_X[];
@@ -50,13 +49,9 @@ extern u8 CornerSparks_DrawFlags[];
 
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void AudioCommand_PlayFar(s32 value);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
 struct BlitterPair {
     DrawRectangle upper;
@@ -77,9 +72,9 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(39, sizeof *work);
-    canvas = (void *)Runtime_AllocateHeapBlock(40, 0x4000);
-    sheet = (u8 *)Runtime_AllocateHeapBlock(41, 0x60e);
+    work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+    canvas = (void *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
+    sheet = (u8 *)Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     work->fade_frames = 24;
@@ -122,8 +117,8 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    BattleEffect_LoadWork(46, 7, 7, 7, 3);
-    draw.upper = gWorkSlot[46];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
+    draw.upper = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     AudioCommand_PlayFar(140);
 
     for (frame = 0; frame != 56; frame++) {
@@ -142,11 +137,11 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
             DrawRectangle *slot = &((DrawRectangle *)Ram_WorkSlot)[47];
 
             for (i = 0; i != 4; i++) {
-                BattleEffect_LoadWork(47, 7, 7, CornerSparks_DrawFlags[i] | 3, 2);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, CornerSparks_DrawFlags[i] | 3, 2);
                 draw.lower = *slot;
                 draw.lower(canvas, work->sheet + (picture << 10), CornerSparks_X[i] + 32,
                     ground.y + CornerSparks_Y[i] - 32, 32, 32);
-                Runtime_ReleaseHeapBlock(47);
+                Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
         }
         if (frame >= 0) {
@@ -172,12 +167,12 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
 
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
-    Runtime_ReleaseHeapBlock(41);
-    Runtime_ReleaseHeapBlock(40);
-    Runtime_ReleaseHeapBlock(39);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 
@@ -191,7 +186,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
  */
 void BattlePresentation_DrawStreaks(void)
 {
-    u8 *work = *(u8 **)gBattleFxWork;
+    struct BattleEffectWork *work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     s32 frame;
     s32 i;
     struct Streak *streak;
@@ -199,7 +194,7 @@ void BattlePresentation_DrawStreaks(void)
     struct EffectPosition head;
     struct EffectPosition tail;
 
-    frame = (*(s32 *)(work + 0x778c))++;
+    frame = (work->frame)++;
     if (frame == 0) {
         for (i = 0; i != 256; i++) {
             struct Streak *seed = &((struct Streak *)Ram_MapCellBuffer)[i];
@@ -242,7 +237,7 @@ void BattlePresentation_DrawStreaks(void)
             BattleFx_DrawClippedCanvasLine(tail.x, tail.y, head.x, head.y, fade + 56);
         }
     }
-    *(s32 *)(work + 0x7824) = 1;
+    work->transfer_pending = 1;
 }
 
 /* battle/presentation/misc/prepare.c */
@@ -251,8 +246,8 @@ void BattlePresentation_DrawStreaks(void)
  * work blocks, reset the presentation, write the BG2PA identity scale and the
  * blend coefficients, stream the palette selected by the caller's kind into
  * palette RAM through the IWRAM word-copy kernel, seed three work-block
- * fields, then schedule two frame callbacks.  The work-block offsets are
- * taken by position and are not verified.
+ * fields, then schedule two frame callbacks.  The allocated block is the shared
+ * canvas and particle work used by both frame callbacks.
  */
 
 /*
@@ -265,14 +260,14 @@ void BattlePresentation_DrawStreaks(void)
  */
 void BattlePresentation_PrepareScene(s32 kind)
 {
-    u8 *work;
+    struct BattleEffectWork *work;
     void *palette;
     s32 id;
 
-    work = (u8 *)Runtime_AllocateHeapBlock(39, 0x782c);
-    Runtime_AllocateHeapBlock(40, 0x4000);
+    work = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
     BattleFx_BeginCanvasLayer(0);
-    *(s32 *)(work + 0x77b4) = 24;
+    work->fade_frames = 24;
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000052 = 0x1010;
     switch (kind) {
@@ -295,9 +290,9 @@ void BattlePresentation_PrepareScene(s32 kind)
     }
     palette = Resource_GetTableEntry(id);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
-    *(s32 *)(work + 0x778c) = 0;
-    *(s32 *)(work + 0x7780) = 3;
-    *(s32 *)(work + 0x7784) = 0x06060606;
+    work->frame = 0;
+    work->transfer_mode = 3;
+    work->transfer_value = 0x06060606;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_DrawStreaks, 0xC80);
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 }
@@ -312,8 +307,8 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
         transfer((void *)0x06004000, 0x4000);
     }
     Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
-    Runtime_ReleaseHeapBlock(40);
-    Runtime_ReleaseHeapBlock(39);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /* battle/effects/two_resource/run_mode0.c */

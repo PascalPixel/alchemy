@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -78,7 +79,6 @@ extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
 void Scheduler_RemoveCallbackFar(u8 *);
-void Resource_ResetEntry(s16);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);

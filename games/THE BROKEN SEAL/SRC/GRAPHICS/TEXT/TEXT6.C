@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
+#include "VRAM_BLOCK.H"
 #include "RENDER_INPUT.H"
 #include "BATTLE_UNIT.H"
 
@@ -12,10 +13,6 @@ void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();
 
 extern u8 UiIcon_ResourceTiles[];
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-struct UiIconObject { u8 unknown_00[0x16]; u16 value_16 : 9; u16 unknown_16b : 7; };
 
 /* menu/psynergy_menu/call_icon_routine_with_value.c */
 void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
@@ -88,11 +85,14 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
 void UiIcon_PrepareObject(struct RenderOutput *object)
 {
     if (object != NULL) {
+        u8 *attributes = (u8 *)&object->packed;
+        u16 *position = (u16 *)(attributes + 2);
+
         object->active = 1;
-        ((struct UiIconObject *) object)->value_16 = (u16)object->x;
-        FIELD_AT_OFFSET(object, s8, 0x14) = (u16)object->y;
-        FIELD_AT_OFFSET(object, s8, 0x17) = -0x3F & FIELD_AT_OFFSET(object, s8, 0x17);
-        FIELD_AT_OFFSET(object, s8, 0x15) = -4 & FIELD_AT_OFFSET(object, s8, 0x15);
+        *position = (*position & 0xfe00) | ((u16)object->x & 0x1ff);
+        attributes[0] = (u16)object->y;
+        attributes[3] &= 0xc1;
+        attributes[1] &= 0xfc;
     }
 }
 

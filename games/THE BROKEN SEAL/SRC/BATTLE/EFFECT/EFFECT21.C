@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -11,39 +15,8 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 
-struct ParticleTarget {
-    u32 reserved_00;
-    s32 side;
-    s32 object_id;
-    u8 reserved_0c[24];
-    s16 target_id;
-};
-
-struct ParticleWork {
-    u8 reserved_0000[0x7080];
-    struct EffectStep particles[64];
-    s32 phase;
-    s32 timer;
-    u8 reserved_7788[0x20];
-    s32 flash;
-    u8 reserved_77ac[0x78];
-    s32 dirty;
-    struct ParticleTarget *target;
-};
-
-struct ParticleRuntime {
-    struct ParticleWork *work;
-    void *canvas;
-    u8 *source;
-};
-
-extern struct ParticleRuntime gBattleFxWork;
-extern BattleEffectDrawRectangle gWorkSlot[];
 extern u16 ParticleStreams_CellOffsets[];
-void BattleFx_BeginCanvasLayer(s32 mode);
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
 void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
@@ -52,29 +25,28 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_EndCanvasLayer(void);
 
-void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant);
+void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant);
 
 /* Variant entries of the particle field variant effect. */
 void BattleFx_RunParticleFieldVariant0(s32 effect)
 {
-    BattleFx_RunParticleFieldVariant(effect, 0);
+    BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 0);
 }
 
 void BattleFx_RunParticleFieldVariant1(s32 effect)
 {
-    BattleFx_RunParticleFieldVariant(effect, 1);
+    BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 1);
 }
 
 void BattleFx_RunParticleFieldVariant2(s32 effect)
 {
-    BattleFx_RunParticleFieldVariant(effect, 2);
+    BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 2);
 }
 
 void BattleFx_RunParticleFieldVariant3(s32 effect)
 {
-    BattleFx_RunParticleFieldVariant(effect, 3);
+    BattleFx_RunParticleFieldVariant((struct BattleEffectArgument *)effect, 3);
 }
 
 /* BattleFx_RunParticleFieldVariant: draw the target's two panels, then a
@@ -85,11 +57,11 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
    and the permuter's reorder of two independent statements is kept, to
    give the ROM's spill slots and preheader order. */
 /* Draw the target's two panels, then a 64-particle burst and expanding rings. */
-void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant)
+void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant)
 {
     void **cache;
     void **cursor;
-    struct ParticleWork *work;
+    struct BattleEffectWork *work;
     void *canvas;
     BattleEffectDrawRectangle rectangle[2];
     struct BattleCamera *camera;
@@ -108,23 +80,23 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
     u8 *cells;
 
     cells = Ram_MapCellBuffer;
-    cache = (void **)&gBattleFxWork;
+    cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)cache - 108);
+    camera = gCameraWork;
     source = cache[2];
-    work->target = object;
+    work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    if (work->target->side == 0) {
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        BattleEffect_LoadWork(47, 7, 7, 11, 2);
+    if (work->effect->side == 0) {
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
     } else {
-        BattleEffect_LoadWork(46, 7, 7, 7, 2);
-        BattleEffect_LoadWork(47, 7, 7, 15, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
     }
-    rectangle[0] = gWorkSlot[46];
-    rectangle[1] = gWorkSlot[47];
+    rectangle[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    rectangle[1] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
     Graphics_PackTileRows(work, cells, 40, 288);
@@ -144,11 +116,11 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
         break;
     }
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(palette), 128);
-    work->phase = 2;
-    work->timer = 75;
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)(BattlePresentation_ProcessPendingGraphicsTransfer), 0x480);
-    BattleFx_SetApproachMotion(work->target->object_id, work->target->target_id, 10);
-    actor = GetBattleObjectSlotFar(work->target->target_id)->object;
+    BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
+    actor = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (cnt = 0; cnt != 64; cnt++) {
         step = &work->particles[cnt];
         step->x = actor->x;
@@ -161,18 +133,18 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
             step->velocity_x = -step->velocity_x;
         step->variant = cnt / 2 + 16;
     }
-    EffectPosition_ApplyAlternateStepAndYOffset(work->target->target_id, &origin);
+    EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actors[0], &origin);
     for (frame = 0; frame != 60; frame++) {
         if (frame <= 14) {
-            EffectPosition_ApplyAlternateStepAndYOffset(work->target->object_id, &screen);
+            EffectPosition_ApplyAlternateStepAndYOffset(work->effect->actor, &screen);
             rectangle[0](canvas, work, screen.x / 2 - 16, screen.y - 48, 40, 32);
             rectangle[1](canvas, work, screen.x / 2 - 16, screen.y - 16, 40, 32);
         }
         if (frame == 10) {
-            ObjectGroup_UpdateMembers(work->target->target_id, 7, 5, 0, 8);
-            BattleMotion_ApplyVariantMotionFar(work->target->target_id, 4);
+            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 8);
+            BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
             BattleEventRuntime_BeginPhaseFar(134);
-            work->flash = 8;
+            work->shake_frames = 8;
         }
         offset = frame - 8;
         if ((u32)offset <= 11) {
@@ -198,11 +170,11 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
         }
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
-        work->dirty = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)(BattlePresentation_ProcessPendingGraphicsTransfer));
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

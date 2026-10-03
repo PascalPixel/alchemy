@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -19,11 +20,8 @@ extern struct ShopRuntime *gMenuWork;
 s32 Ability_GetMaximum(s32, s32);
 
 void Shop_StepCursor(void);
-void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Battle_ResetEffectCounterFar(void);
 u8 Party_ListActiveOwnersFar(void *);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
-s32 Resource_ResetEntry(u16);
 s32 UiWork_FinalizePendingCoreFar();
 extern u8 MsgWeaponShopWelcome[];
 extern u8 MsgWhatWouldYouLike[];

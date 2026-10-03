@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* The party-record exchange with the other console: the parent sends
    first and the child receives first; the received count is kept in flag
    byte 0x3f0, and any failure resets the serial transfer. */
@@ -21,8 +22,6 @@ s32 LinkLobby_ExchangePartyRecords(void);
 void LinkLobby_PollPeerReady(void);
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 void UiWork_Finalize(s32 window, s32 flags);
-u8 *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 void Map_ClearLayerEntryFlag(s32 layer);
 void Map_SetLayerEntryFlag(s32 layer);
 void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);

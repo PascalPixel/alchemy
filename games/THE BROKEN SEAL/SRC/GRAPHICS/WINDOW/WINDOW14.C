@@ -9,11 +9,8 @@
 #include "TBS_EDITION.H"
 #include "RUNTIME_INTERFACES.H"
 
-s32 VramBlock_LoadCached(s32, s32, s32);
 extern u8 Resource_FixedBlockBTiles[];
 
-void Runtime_BumpFree(void *buffer);
-u32 Resource_DecodeType01(const void *source, void *destination);
 s32 UiText_MeasureEntryDimensions(s32 start, s32 *width, s32 *count, s32 mode);
 
 /* ui/window/copy_tilemap_region.c */

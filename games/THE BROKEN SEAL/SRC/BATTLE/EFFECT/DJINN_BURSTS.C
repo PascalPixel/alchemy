@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
@@ -12,9 +14,6 @@
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-void BattleFx_EndCanvasLayer(void);
 void Graphics_TransposeCopy(const u8 *source_base, u8 *destination_base,
     s32 row_size, s32 column_count);
 void Audio_PlayCue(s32 cue);

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -68,7 +70,6 @@ extern u32 KorosseoKawa_DirectionSteps[];
 typedef void(*SceneTask)(void);
 void Korosseo_DrawGauge(void);
 s32 Resource_GetTableEntryFar(void);
-void Resource_DecodeType01(s32, s32);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
@@ -125,15 +126,11 @@ static __inline__ void AdvanceMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-u8 *Runtime_AllocateBlock();            /* allocate a record by (id, size) */
 
 
-void Resource_DecodeType01();           /* upload image data to a handle */
-
-s32 Resource_FindFreeEntry();            /* next palette slot index */
 
 
-void Runtime_BumpFree();           /* release a graphics handle */
+
 
 s32 Object_CheckMovementCollision(struct FieldActor *, Position3 *);  /* terrain probe */
 

@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "MOTION_OBJECT.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -13,25 +17,19 @@
 /* Three tables of 340 sparks fill the map cell buffer. */
 #define SPARK ((struct EffectStep *)Ram_MapCellBuffer)
 
-extern void *gBattleFxWork[];
 extern u16 ParticleStreams_CellOffsets[];
 /* The strike column of each of the three strikes, for either side. */
 extern const u8 FlameBlade_StrikeColumns[];
 /* The flash cell for each third of a flash's life. */
 extern const u8 FlameBlade_FlashCells[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-void **GetBattleObjectSlotFar(s32 unit);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
@@ -49,20 +47,20 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
     void *canvas;
     s32 n;
     void *sheet;
-    void *object;
+    struct MotionObject *object;
     DrawRectangle routine[2];
     s32 frame;
     s32 i;
 
     /* The first two heap slots are read through a walking pointer; the
        base itself serves the sheet. */
-    heap = gBattleFxWork;
+    heap = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     p = heap;
     work = *p++;
     canvas = *p;
     sheet = heap[2];
 
-    object = *GetBattleObjectSlotFar(effect->actor);
+    object = GetBattleObjectSlotFar(effect->actor)->object;
     effect->variant = 1;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
@@ -263,7 +261,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

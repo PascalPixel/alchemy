@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "MOTION_OBJECT.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
@@ -10,12 +14,6 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-struct BattleObject {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 struct Vector3 {
     s32 x;
@@ -23,18 +21,13 @@ struct Vector3 {
     s32 z;
 };
 
-extern void *gWorkSlot[];
 extern u16 BattleFx6_FlareCells[];
 /* One corner of the triangle before it is rolled into place. */
 extern struct Vector3 SpinningTriangle_Vertex[];
 extern struct Vector3 TriangleStrike_Vertex[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 a, s32 b, s32 c, s32 *x, s32 *y);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 a, s32 b);
-u32 Resource_DecodeType01(const void *source, void *destination);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
@@ -43,8 +36,6 @@ void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyScale(struct Vector3 *scale);
 void AudioCommand_PlayFar(s32 value);
-s32 BattleFx_EndCanvasLayer(void);
-struct BattleObject **GetBattleObjectSlotFar(s32 id);
 
 /*
  * A triangle of flare dots spins down onto each affected unit, shrinking for
@@ -71,7 +62,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     s32 shift;
     u8 *graphics;
     u8 *palette;
-    struct BattleObject *object;
+    struct MotionObject *object;
     s32 tick;
     struct EffectStep *point;
     s32 size;
@@ -124,18 +115,18 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
             draw[0](canvas, (u8 *)work + 0x2000, x, y, 40, 40);
             if (frame <= 3)
                 draw[1](canvas, (u8 *)work + 0x2000, x, y, 40, 40);
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        draw[0] = (DrawRectangle)gWorkSlot[46];
-        BattleEffect_LoadWork(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+        draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
         draw[1] = *(DrawRectangle *)(gWorkSlot + 47);
         if (frame > 16 && (frame & 15) == 0)
             work->transfer_value += 0x01010101;
         for (member = 0; member != 1; member++) {
             tick = frame - member * 8;
-            object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+            object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             if (tick >= 0 && tick < 96) {
                 Render_ResetTransformState();
                 Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
@@ -183,8 +174,8 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
                 }
             }
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         work->transfer_pending = 1;
         WaitFrames(1);
     }
@@ -214,7 +205,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     s32 shift;
     u8 *graphics;
     u8 *palette;
-    struct BattleObject *object;
+    struct MotionObject *object;
     s32 tick;
     struct EffectStep *point;
     s32 size;
@@ -253,15 +244,15 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
         if (frame == 46)
             BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0], 16, 0);
         Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        draw[0] = (DrawRectangle)gWorkSlot[46];
-        BattleEffect_LoadWork(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+        draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
         draw[1] = *(DrawRectangle *)(gWorkSlot + 47);
         if (frame > 16 && (frame & 15) == 0)
             work->transfer_value += 0x01010101;
         for (member = 0; member != 1; member++) {
             tick = frame - member * 8;
-            object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+            object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             if (tick >= 0 && tick < 96) {
                 Render_ResetTransformState();
                 Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
@@ -309,8 +300,8 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
                 }
             }
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         work->transfer_pending = 1;
         WaitFrames(1);
     }

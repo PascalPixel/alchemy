@@ -1,9 +1,9 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 
 extern u8 *gWindowWork;
 
 void *RenderOutput_AcquireFree(void);
-s32 Resource_FindFreeEntry(void);
 void RenderOutput_AppendToList(void *, s8 *);
 
 struct UiWindow {

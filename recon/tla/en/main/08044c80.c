@@ -1,3 +1,4 @@
+#include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
@@ -20,11 +21,9 @@ void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
 s32 UiText_QueueRenderEntries(struct MessageWindow *, s32, s32, s32, s32);
 void Audio_PlayCue(s32);
-void Runtime_PushSlotEntry(s32 *, s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
 void UiWork_Finalize(struct MessageWindow *, s32);
-void Resource_ResetEntry(s32);
 
 extern volatile u32 gKeyState;
 

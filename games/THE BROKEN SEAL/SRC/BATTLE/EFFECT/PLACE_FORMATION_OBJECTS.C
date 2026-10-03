@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -10,7 +13,6 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-extern u8 gBattleFxWork[];
 
 struct Scale { s32 x; s32 y; };
 struct Placement { s32 x; s32 y; s32 z; s32 w; };
@@ -24,10 +26,6 @@ extern const u8 Data_080eee3e[];
 extern const u8 Data_080eee46[];
 extern const u8 Data_080eee4e[];
 
-struct FormationWork {
-    u8 unknown_0000[0x77d8];
-    void *objects[12];
-};
 
 void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, struct Scale *scale, s32 flags);
 
@@ -35,7 +33,7 @@ void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, stru
    3x3 grid, or the twelve- and eight-object layouts from the offset tables. */
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
-    struct FormationWork *work = *(struct FormationWork **)gBattleFxWork;
+    struct BattleEffectWork *work = (struct BattleEffectWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     struct Scale normal = Data_080edab8;
     struct Scale small = Data_080edac0;
     struct Placement pos;
@@ -75,7 +73,6 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
     }
 }
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Audio_PlayCue(s32 cue);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
@@ -106,7 +103,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -117,9 +114,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     REG_BG2PA = 0x80;
     REG_BG2X = 0;
     REG_BLDCNT = 0x3f46;
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     flare = heap_cache[7];
-    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     spark = heap_cache[8];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work, 1, 0);
@@ -238,6 +235,6 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
 
         clear(BG_CHAR_BLOCK(1), 0x4000);
     }
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
 }

@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 /* Draft, 342 rows off, nearly all register and stack-slot numbers. Two causes
    remain: the ROM keeps the 0x40000 shot height in a stack slot (r4 is then
    free as a reload register from the palette chain on), and in the frame loop
@@ -35,9 +37,6 @@ extern u16 SevenMode_ShardOffsets[];
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
@@ -45,7 +44,6 @@ void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-u32 Resource_DecodeType01(const void *source, void *destination);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {

@@ -25,6 +25,7 @@
    the marker pointer, computed from it at once, in r8, and computes each
    squared distance's two products after storing the place's x and y. */
 #include "TYPES.H"
+#include "SCENE.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"
@@ -116,7 +117,6 @@ s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 u16 ArcTan2(s32 dz, s32 dx);
-s32 BattleFx_FindConditionResource(s32 id, s32 kind);
 void UiWindow_Clear(s32 window);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
@@ -302,7 +302,7 @@ markers:
             if (best == 0)
                 best_message = (s32)MsgPresentLocation;
             else
-                best_message = BattleFx_FindConditionResource(best_message, 1) + (s32)MsgDebugEntryName;
+                best_message = Scene_GetAreaNameIndex(best_message, 1) + (s32)MsgDebugEntryName;
             UiText_MeasureResourceEntriesFar(best_message, &width, &height);
             cursor_x = best_x;
             cursor_y = best_y;

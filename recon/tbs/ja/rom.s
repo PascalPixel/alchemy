@@ -645,8 +645,8 @@ Encounter_AreaEntryTable:
 	.global Scene_InteractionRuleTable
 Scene_InteractionRuleTable:
 	.incbin "baserom.gba", 0x000949e4, 0x000003e8
-	.global BattleFx_ConditionResources
-BattleFx_ConditionResources:
+	.global Scene_AreaNameRules
+Scene_AreaNameRules:
 	.incbin "baserom.gba", 0x00094dcc, 0x000003f0
 	.global Party_PairResolveRules
 Party_PairResolveRules:

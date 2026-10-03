@@ -26,6 +26,8 @@ void BattleEv_RunWait(s32 action, s32 flag)
 
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
+    /* FAKEMATCH: ordinary forms swap native r7 action/r6 mask at the same 188-byte extent. */
+    asm("" : "+r"(action) : : "r6");
     if (action <= 7) {
         masked_action = action & 0x0fff;
 

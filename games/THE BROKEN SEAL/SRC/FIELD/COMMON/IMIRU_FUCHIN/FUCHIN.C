@@ -1304,11 +1304,13 @@ void ImiruFuchin_PlaceDragonsEye(void)
     register s32 id asm("r0") = 22;
     /* FAKEMATCH: the ID-only constraint orders coordinate setup r2,r3,r1 instead of r1,r2,r3. */
     register s32 x asm("r1") = 0xf80000;
+    /* FAKEMATCH: the two-lane constraint leaves coordinate setup r1,r3,r2 instead of r1,r2,r3. */
+    register s32 y asm("r2") = 0x80000;
     /* FAKEMATCH: separate immediate clears select r1 instead of the
        native r5 zero value at the same 128-byte extent. */
     s32 clear = 0;
 
-    actor = Engine_ObjectCreate(id, x, 0x80000, 0x980000);
+    actor = Engine_ObjectCreate(id, x, y, 0x980000);
     if (actor != NULL) {
         sprite = actor->sprite;
         sprite->flags = clear;

@@ -6,6 +6,7 @@
 #define HAIDIA_H
 
 #include "TYPES.H"
+#include "VRAM_BLOCK.H"
 #include "CALLBACK_SCHEDULER.H"
 
 #define NULL ((void *)0)
@@ -94,11 +95,6 @@ struct PairWork {
     u16 vram_block;
 };
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
     u8 unknown_00[4];
@@ -135,7 +131,6 @@ extern const u8 Data_0200ac90[];
 extern const u8 Data_0200adf0[];
 extern u8 Data_03001ebc[];
 extern struct PairWork *Data_03001f30;
-extern struct WorldMapVramBlock ResourceTableEntries[];
 
 void BattleEffect_CleanupSceneObjects(void);
 void BattleFx_SetBlock30ValuesMaxZero(void);

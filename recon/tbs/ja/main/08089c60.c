@@ -11,8 +11,11 @@
    Canonical-owner/pointer ordinary trial: 776 bytes for JA and 836 under
    international defines; JA weighted diagnostic 2366 (83 rows) against the
    native 780 bytes, with no unresolved calls. The identical side-window
-   branch was removed instead of forcing a mode reload. Current 64-slot
-   window/event bank trial: unmeasured. */
+   branch was removed instead of forcing a mode reload. Measured 64-slot
+   window/event bank trial: 772 bytes against native 780; weighted diagnostic
+   2165 (53 rows: 27 register-only, 3 operand, 9 reordered, 5 inserted,
+   9 deleted), with no unresolved calls. Deleted mode/stack reloads and
+   register/argument ordering remain. No exact match. */
 #include "EDITION.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"

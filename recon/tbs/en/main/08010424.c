@@ -1,3 +1,21 @@
+/* 2026-10-04: another31848 ordinary candidates/seed4004 retain70;
+ * no better allocation/order found. Independent review confirms both
+ * consumed bindings, copy semantics, frame36 and complete316B extent. */
+/* 2026-10-04: a third first-base r2 binding alone repeats70; forcing that
+ * constant through a read-write barrier regresses975 across the function
+ * and is rejected. No third binding/barrier retained. */
+/* 2026-10-04: byte-offset lifetime in r3 plus an ordinary shared
+ * destination temporary improves120 to70 (2 register,1 reordered).
+ * Seed3004 searched34039 candidates; full316B/frame36 is preserved with
+ * no inserted/deleted instructions. Remaining difference is the first
+ * drawing base allocation/load order. Both tile stores and row updates
+ * were reviewed against the current listing; still uncredited. */
+/* alchemy permute: Map_CopyMetatileIndicesRect against recon/tbs/raw/08010424.s: score 70 (2 register-only, 1 reordered).
+   Job 0, iteration 522; rewrites: 1x share one temporary between two statements. */
+/* 2026-10-04: fixed declarator printing enables another ordinary search;
+ * 32342 candidates/seed2004 improve155 to120 by moving the second source
+ * pointer addition before the independent destination calculation.
+ * Retained full316B: 11 register differences and one reordered shift. */
 /* 2026-10-04: a cell-only r5 binding after the ordinary rewrites improves
  * score210 to155: 10 register,2 literal-load operand,1 reordered differences.
  * No instruction insertion/deletion, frame or extent changes. Moving the
@@ -93,7 +111,7 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
             x = dst_x;
             while (x < dst_x + width) {
                 /* FAKEMATCH: the cell value remains live in r5 while layers are tested. */
-                register u32 cell __asm__("r5") = 0xfff & *src++;
+                register u32 cell __asm__ ("r5") = 0xfff & *src++;
                 u32 *dest;
                 u32 offset;
                 u32 tmp3;
@@ -133,23 +151,27 @@ void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
                         u32 tmp14;
                         u32 tmp18;
                         u32 tmp21;
-                        n = cell * 2;
+                        /* FAKEMATCH: consumed offset in r3 changes only registers/order, preserving all instructions. */
+                        register u32 bytes __asm__ ("r3") = cell * 8;
+                        u32 tmp16;
                         tmp = (u32 *)Ram_MapBlocks;
                         tiles = tmp;
-                        tmp21 = 0x06002800 + offset;
+                        tmp16 = 0x06002800 + offset;
+                        tmp21 = tmp16;
                         tmp18 = tmp21;
                         tmp2 = tmp18;
                         tmp = (u32 *)tmp2;
                         dest = tmp;
-                        tiles += (s32)n;
+                        tiles = (u32 *)((u8 *)tiles + bytes);
                         tmp14 = *tiles;
                         tmp10 = tmp14;
                         *dest = tmp10;
                         tmp7 = (u32 *)(Ram_MapBlocks + 4);
                         tiles = tmp7;
-                        tmp18 = 0x06002840 + offset;
+                        tiles = (u32 *)((u8 *)tiles + bytes);
+                        tmp16 = 0x06002840 + offset;
+                        tmp18 = tmp16;
                         tmp14 = tmp18;
-                        tiles += n;
                         tmp21 = *tiles;
                         tmp10 = tmp21;
                         tmp4 = tmp10;

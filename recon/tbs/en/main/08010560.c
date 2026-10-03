@@ -1,3 +1,11 @@
+/* 2026-10-04 S2 audit: removing the four-output conversion barrier gives
+ * score1130 (6 register,2 operand,1 reordered,2 inserted,8 deleted).
+ * Independent source/assembly review confirms that barrier prevented two
+ * ldrsh/extension chains from becoming ldrh, retaining six instructions
+ * with no intervening source consumer. Its score0 was therefore outside
+ * S2's register/order-only permission. Barrier removed; this owner stays
+ * uncredited until genuine source lifetimes explain the signed loads.
+ * The remaining sentinel/cursor devices require review before adoption. */
 /* 2026-10-02 conversion trial 6: read-write initial ip/r3 snapshots
  * recover their prologue scheduling; complete 116-byte extent scores 0 exact,
  * literal pool and alignment included. Awaiting contiguous module ownership. */
@@ -76,9 +84,6 @@ void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destinati
             s32 height = args[2];
             s32 delay = args[3];
 
-            /* FAKEMATCH: combine otherwise folds the four signed loads. */
-            __asm__ ("" : "+r" (source_y), "+r" (width),
-                "+r" (height), "+r" (delay));
             Map_CopyMetatileIndicesRect(source, (u16)source_y,
                           destination_x, destination_y,
                           (u16)width, (u16)height);

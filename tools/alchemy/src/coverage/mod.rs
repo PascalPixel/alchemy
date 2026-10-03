@@ -80,7 +80,6 @@ mod tests {
     use super::{status_line, update_readme};
     use crate::coverage::progress::GameDone;
     #[test]
-    #[ignore = "slow: writes and compresses both figures twice"]
     fn figures_are_redrawn_with_each_count_and_match_the_readme() {
         use super::{check_figures, figure, figure_date_current, history, write_figures};
         let root = tempfile::tempdir().unwrap();
@@ -112,6 +111,22 @@ mod tests {
         write_figures(root, Some(done(600)), None, false).unwrap();
         let chart = std::fs::read(root.join(figure::CHART)).unwrap();
         let map = std::fs::read(root.join(figure::MAP)).unwrap();
+        let mut publication_figures =
+            vec![(figure::CHART, chart.clone()), (figure::MAP, map.clone())];
+        // A compressor benchmark can exercise this same gate with fixed real figures.
+        if let Some(directory) = std::env::var_os("ALCHEMY_FIGURE_FIXTURES") {
+            let directory = std::path::PathBuf::from(directory);
+            for name in [figure::CHART, figure::MAP] {
+                publication_figures.push((name, std::fs::read(directory.join(name)).unwrap()));
+            }
+        }
+        for (name, bytes) in &publication_figures {
+            assert_eq!(crate::check::figure_test_reason(name, bytes, None), None);
+            assert!(
+                crate::check::figure_test_reason(name, &bytes[..bytes.len() - 1], None,).is_some(),
+                "truncated {name} accepted"
+            );
+        }
         check_figures(root).unwrap();
         // A later count the same day redraws the chart with it.
         write_figures(root, Some(done(610)), None, false).unwrap();

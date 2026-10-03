@@ -1273,6 +1273,14 @@ fn diff_reason(text: &str) -> Option<&'static str> {
     });
     hunk.then_some(DIFF_REASON)
 }
+#[cfg(test)]
+pub(crate) fn figure_test_reason(
+    path: &str,
+    data: &[u8],
+    logo: Option<&[u8]>,
+) -> Option<&'static str> {
+    publication_data_reason(path, data, logo)
+}
 fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
     if json_path(path) {
         return Some(JSON_REASON);

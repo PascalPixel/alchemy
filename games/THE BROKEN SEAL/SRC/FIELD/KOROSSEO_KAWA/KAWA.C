@@ -1332,7 +1332,28 @@ void Scene_RunSceneFourCoordinator(s32 scene)
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
         Camera_SetSpeed(196608, 24576);
-        Camera_MoveTo(71303168, -1, 11010048, 1);
+        {
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cx asm("r0") = 71303168 >> 19;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cz asm("r2") = 11010048 >> 16;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cm = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+            cz <<= 16;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
+            cx <<= 19;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cy) : "r"(cx), "r"(cz), "r"(cm));
+            Camera_MoveTo(cx, -cy, cz, cm);
+        }
         Engine_CameraWaitForMove();
         Event_ShowMessage(scene, 0);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */

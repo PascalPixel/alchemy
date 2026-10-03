@@ -4,7 +4,8 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-extern u8 gWorkSlot[];
+/* The constructor clears all 64 pointer words, including the two cursors. */
+extern void *gWorkSlot[64];
 
 /* The first two slots are heap cursors; the others cache allocated blocks. */
 union HeapState {

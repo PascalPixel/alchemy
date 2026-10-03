@@ -709,7 +709,7 @@ next_task:
         if (remaining != 0) {
             task++;
             if (TASK_STATE_HIGH(task) == key) {
-                KeyCallbackFn callback = (KeyCallbackFn)task->callback;
+                KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
                 callback();
             }

@@ -315,9 +315,9 @@ void BattleFx_EndCanvasLayer(void)
      * before it. */
 
     struct BgScroll *scroll;
-    struct BattleEffectWork *work = *(struct BattleEffectWork **)(gWorkSlot +
+    struct BattleEffectWork *work = *(struct BattleEffectWork **)((u8 *)gWorkSlot +
         HEAP_SLOT_BATTLE_EFFECT * sizeof(void *));
-    struct BattleSession *battle = *(struct BattleSession **)(gWorkSlot +
+    struct BattleSession *battle = *(struct BattleSession **)((u8 *)gWorkSlot +
         HEAP_SLOT_BATTLE * sizeof(void *));
     s32 i;
 

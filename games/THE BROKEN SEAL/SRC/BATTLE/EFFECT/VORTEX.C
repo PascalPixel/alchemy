@@ -112,7 +112,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     AudioCommand_PlayFar(164);
 
     for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++) {
-        camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+        camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
         if (frame >= 17 && frame < 64)
             WORK_FIELD(work, 0x77ac) = 0x180;
         else

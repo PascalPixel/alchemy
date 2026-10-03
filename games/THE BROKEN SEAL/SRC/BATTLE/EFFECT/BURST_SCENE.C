@@ -53,7 +53,6 @@ extern u16 ParticleStreams_CellOffsets[];
    motes fall, bounce and shrink until their life in variant runs out. */
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 {
-    /* FAKEMATCH: the existing address-word blitter cells retain the base-plus-slot loads; pointer indexing folds the offsets into literals and changes instruction order. */
     /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition actor_position;
     struct EffectPosition target_position;
@@ -151,8 +150,8 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
         }
-        draw[0] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
-        draw[1] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+        draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+        draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != bursts; i++) {
             s32 start = i * BurstScene_Records[variant * 7 + 4];
 
@@ -202,8 +201,8 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
         Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
-        draw[0] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
-        draw[1] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+        draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+        draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != 512; i++) {
             struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
@@ -275,7 +274,6 @@ extern const struct WallScale RisingWall_UnitScale;
    cell is its own variable: each is what the code's register use shows. */
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing address-word blitter cells retain the base-plus-slot loads; pointer indexing folds the offsets into literals and changes instruction order. */
     /* FAKEMATCH: the existing packed byte9 field keeps its mask across object creation; the ordinary byte mask shortened the wall scene by four bytes and reordered stores. */
     void **heap_cache;
     void **cursor;
@@ -377,9 +375,9 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         }
     }
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-    draw[0] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
+    draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-    draw[1] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+    draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     *(volatile u16 *)0x04000050 = 0x3f46;
     *(volatile u16 *)0x04000052 = 0x1010;
     work->transfer_mode = 2;

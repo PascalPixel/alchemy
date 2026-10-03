@@ -64,8 +64,6 @@ extern u16 ThornVines_EmberSizes[];
    rings burst on every affected unit. */
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing address-word blitter cells retain the base-plus-slot loads; pointer indexing folds the offsets into literals and changes instruction order. */
-    /* FAKEMATCH: the existing function-pointer cell reads preserve the two blitter loads and stores; ordinary void-pointer slot reads reorder those independent instructions. */
     void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
@@ -108,9 +106,9 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     REG_BLDCNT = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work, 1, 1);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
-    draw[0] = *(DrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
+    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 1);
-    draw[1] = *(DrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -415,9 +413,9 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
             Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work, 1, 0);
             Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, (u8 *)work + 0x1680, 1, 1);
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-            draw[0] = *(DrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
+            draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-            draw[1] = *(DrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
             REG_BLDCNT = 0x3f46;
             REG_BG2PA = 0x80;
             REG_BG2X = 0;

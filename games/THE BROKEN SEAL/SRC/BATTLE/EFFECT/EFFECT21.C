@@ -54,15 +54,13 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
 /* BattleFx_RunParticleFieldVariant: draw the target's two panels, then a
    64-particle burst and expanding rings from the map cell buffer, in one of
    four palettes. The buffer is the checked constant Ram_MapCellBuffer,
-   held in a local, so each use reloads it from the pool as the ROM does.
-   FAKEMATCH: the blitter pair and camera are declared before the sheet,
-   and the permuter's reorder of two independent statements is kept, to
-   give the ROM's spill slots and preheader order. */
+   held in a local, so each use reloads it from the pool. */
 /* Draw the target's two panels, then a 64-particle burst and expanding rings. */
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant)
 {
-    /* FAKEMATCH: the existing address-word blitter cells retain the base-plus-slot loads; pointer indexing folds the offsets into literals and changes instruction order. */
-    /* FAKEMATCH: the existing function-pointer cell reads preserve the two blitter loads and stores; ordinary void-pointer slot reads reorder those independent instructions. */
+    /* FAKEMATCH: the existing blitter-pair and camera declaration order,
+       and the ordering of two independent stores, retain the measured
+       spill slots and loop preheader order. */
     void **cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -100,8 +98,8 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
     }
-    rectangle[0] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
-    rectangle[1] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+    rectangle[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    rectangle[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
     Graphics_PackTileRows(work, cells, 40, 288);

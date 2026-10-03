@@ -21,12 +21,13 @@ void BattleEv_RunWait(s32 action, s32 flag)
     struct EventRuntime *runtime = *(struct EventRuntime **)gEventWork;
     struct UiWindow *window = UiText_OpenMessageAtObject(action);
     s32 message_id;
+    s32 masked_action;
     u32 frames = 0;
 
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
     if (action <= 7) {
-        s32 masked_action = action & 0x0fff;
+        masked_action = action & 0x0fff;
 
         if (BattleAction_FindDescriptor(masked_action) == 0) {
             message_id = masked_action;

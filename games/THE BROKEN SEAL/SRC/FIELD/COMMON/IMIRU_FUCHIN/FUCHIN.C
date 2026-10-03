@@ -1300,15 +1300,18 @@ void ImiruFuchin_PlaceDragonsEye(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
+    /* FAKEMATCH: separate immediate clears select r1 instead of the
+       native r5 zero value at the same 128-byte extent. */
+    s32 clear = 0;
 
     actor = Engine_ObjectCreate(22, 0xf80000, 0x80000, 0x980000);
     if (actor != NULL) {
         sprite = actor->sprite;
-        sprite->flags = 0;
-        sprite->part_count = 0;
+        sprite->flags = clear;
+        sprite->part_count = clear;
         sprite->full_color = 0;
         sprite->palette = 0;
-        actor->motion_flags = 0;
+        actor->motion_flags = clear;
         actor->unknown_5c = 1;
         glyph = Engine_HeapAllocate(17, sizeof(*glyph));
         Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);

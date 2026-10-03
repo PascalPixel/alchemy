@@ -792,20 +792,30 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 s32 Field_CheckConfiguredKeys(void)
 {
     struct EventRuntime *work = gWork;
-    s16 *flags;
+    /* FAKEMATCH: indexed immediate stores introduce two literal-1 loads
+       and grow this service from 168 to 192 bytes. Keep the selected
+       halfword address and signed word value local to each store. */
     s32 result = 0;
 
     if (work == NULL)
         return 0;
-    flags = (s16 *)work->unknown_172;
     if (gKeyState & gGameState.unknown_214) {
-        flags[0] = 1;
+        s16 *flag = (s16 *)work->unknown_172;
+        s32 value = 1;
+
+        *flag = value;
         result = 1;
     } else if (gKeyState & gGameState.unknown_210) {
-        flags[1] = 1;
+        s16 *flag = (s16 *)(work->unknown_172 + 2);
+        s32 value = 1;
+
+        *flag = value;
         result = 1;
     } else if (gKeyState & gGameState.unknown_216) {
-        flags[2] = 1;
+        s16 *flag = (s16 *)(work->unknown_172 + 4);
+        s32 value = 1;
+
+        *flag = value;
         result = 1;
     } else if (gKeyState & gGameState.first_shortcut_keys) {
         result = Field_StoreAssignedKeyValue(gGameState.first_shortcut);
@@ -819,9 +829,11 @@ s32 Runtime_CheckRadiusOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b)
 {
     const struct FieldPosition *first = (const struct FieldPosition *)a;
     const struct FieldPosition *second = (const struct FieldPosition *)b;
-    s32 dx = (first->x - second->x) >> 16;
-    s32 dy = (first->y - second->y) >> 16;
-    s32 dz = (first->z - second->z) >> 16;
+    const s32 *first_word = &first->x;
+    const s32 *second_word = &second->x;
+    s32 dx = (*first_word++ - *second_word++) >> 16;
+    s32 dy = (*first_word++ - *second_word++) >> 16;
+    s32 dz = (*first_word - *second_word) >> 16;
     s32 radius = radius_a + radius_b;
 
     if (!(dx > 0x400000) && !(dz > 0x400000) &&

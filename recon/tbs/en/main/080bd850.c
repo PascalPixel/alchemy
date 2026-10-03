@@ -1,3 +1,4 @@
+#include "BATTLE_STATUS_ICON.H"
 /*
  * Draft: BattleEvent_Playback does not yet match; its raw assembly links in its place.
  * The nested functions it contains match and link as their compiler's own
@@ -92,7 +93,6 @@ void UiWork_PushValueSlotFar(s32 value, s32 style);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiText_PrepareMessageWorkFar(void);
 void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
-void BattleUnit_BuildStatusFlags(s32 actor_id, void *slot);
 s32 BattleMotion_GetSlotField14(s32 actor_id);
 void BattlePres_SetActorModeAndAction(s32 actor_id);
 s32 ActivateBattleObjectSlot(s32 actor_id);

@@ -1,6 +1,6 @@
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_PARTY.H"
-#include "OWNER_STATE.H"
+#include "BATTLE_RUNTIME.H"
 
 struct PartyDjinnTotals {
     u8 by_element[4];
@@ -26,10 +26,10 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
             s32 party_slot;
 
             for (party_slot = 0; party_slot < party_size; party_slot++) {
-                struct OwnerValueState *member =
+                struct BattleUnit *member =
                     Owner_GetStateFar(party_members[party_slot]);
 
-                totals.by_element[element] += member->values[element];
+                totals.by_element[element] += member->djinn_owned_counts[element];
             }
         }
         element++;

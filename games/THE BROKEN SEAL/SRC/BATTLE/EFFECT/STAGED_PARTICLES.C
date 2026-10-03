@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -16,11 +17,7 @@ extern u8 gTransitionWork[];
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
 
-struct Projection {
-    s32 unknown_00[4];
-    s32 depth;
-};
-extern struct Projection gProjection;
+
 
 /* The battle presentation block in heap slot 44. */
 struct BattlePresentationWork {
@@ -125,7 +122,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     do {
         draw[1] = cache[3];
     } while (0);
-    gProjection.depth = 240;
+    gProjection.center_y = 240;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
     *(s32 *)((u8 *)work + 0x7790) = 0;

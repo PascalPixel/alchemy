@@ -3,6 +3,7 @@
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJECT_DISPATCH.H"
+#include "ANIMSPR.H"
 
 s32 ArcTan2(s32, s32);
 void Battle_WaitMode0(s32);
@@ -124,44 +125,44 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
 {
     if ((object->kind & 0xf) == 1) {
         u8 child_value;
-        u8 *container;
+        struct AnimationObject *container;
         u8 child_count;
 
         child_value = ObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
         container = object->target.child;
-        child_count = *(container + 0x27);
+        child_count = container->count;
         if (child_count != 0) {
-            u8 **entries = (u8 **)(container + 0x28);
+            struct AnimationEntry **entries = container->entries;
             s32 remaining = child_count;
             do {
-                u8 *entry = *entries++;
-                if (entry != 0 && *(u32 *)(entry + 0x10) != 0) {
-                    *(entry + 5) = child_value;
+                struct AnimationEntry *entry = *entries++;
+                if (entry != 0 && entry->script != 0) {
+                    entry->param = child_value;
                 }
                 remaining--;
             } while (remaining != 0);
         }
-        *(container + 0x25) = 1;
+        container->dirty = 1;
     }
 }
 
 void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value)
 {
     if ((object->kind & 0xf) == 1) {
-        u8 *container = object->target.child;
-        u8 raw_count = container[0x27];
+        struct AnimationObject *container = object->target.child;
+        u8 raw_count = container->count;
 
         if (raw_count != 0) {
-            void **entry = (void **)(container + 0x28);
+            struct AnimationEntry **entry = container->entries;
             u32 count = raw_count;
             do {
-                void *item = *entry++;
-                if (item != NULL && *(s32 *)((u8 *)item + 0x10) != 0) {
-                    *((s8 *)item + 5) = value;
+                struct AnimationEntry *item = *entry++;
+                if (item != NULL && item->script != 0) {
+                    item->param = value;
                 }
                 count--;
             } while (count != 0);
         }
-        container[0x25] = 1;
+        container->dirty = 1;
     }
 }

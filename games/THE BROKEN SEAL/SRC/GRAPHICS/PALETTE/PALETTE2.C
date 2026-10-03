@@ -1,3 +1,4 @@
+#include "PALBUF.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
@@ -18,7 +19,7 @@ extern u8 gWorkSlot[];
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 *entry = (u32 *)((u8 *)q + count * 12 + 4);                 \
+            u32 *entry = q->entries[count];                 \
             *(u16 *)&q->count = count + 1;                                  \
             *entry++ = (u32)(source);                                       \
             *entry++ = (destination);                                       \
@@ -49,51 +50,46 @@ void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n)
     }
 }
 
-/* Title palette fade: step the 8.8 colour channels toward the target, pack
-   them into the back palette buffer and queue both banks for the next frame.
-
-   FAKEMATCH: each queued write is QueueIoWriteDelay-style inline code with
-   function-level queue and IME pointers and the one-pass loop around the
-   IME read (as in SYSTEM/IO_WRITE_QUEUE.C); the front bank address passes
-   through a block local, and the packing loop counts down from an explicit
-   512 set before the source pointer. */
+/* Step the title palette channels toward the target and queue both banks. */
 void TitlePalette_UpdateFade(void)
 {
-    u8 *buffer = *(u8 **)(gWorkSlot + 32 * 4);
-    u16 *delta = (u16 *)(buffer + 0x1c00);
+    /* FAKEMATCH: retain the existing one-pass IME scopes, halfword queue
+       count stores, front-bank block and packing-loop pointer lifetime. */
+    struct TitlePaletteWork *work = *(struct TitlePaletteWork **)(gWorkSlot + 32 * 4);
+    u16 *delta = work->delta;
     u16 *current;
     u16 *packed;
     s32 i;
-    u8 *bank;
+    u16 *bank;
     s32 blue;
     volatile u16 *ime;
     struct IoWriteQueue *q;
     s32 count;
 
-    if (*(s8 *)(buffer + 0x3001) == 0)
+    if (work->duration == 0)
         return;
-    if ((s8)++*(u8 *)(buffer + 0x3002) < *(s8 *)(buffer + 0x3001)) {
-        current = (u16 *)(buffer + 0x400);
+    if ((s8)++work->step < work->duration) {
+        current = work->current;
         for (i = 0; i <= 0x5ff; i++)
             *current++ += *delta++;
     } else {
-        Dma_Set(buffer + 0x1000, buffer + 0x400, 0x84000300, (volatile u32 *)0x040000d4);
-        *(u8 *)(buffer + 0x3001) = 0;
+        Dma_Set(work->target, work->current, 0x84000300, (volatile u32 *)0x040000d4);
+        work->duration = 0;
     }
-    packed = (u16 *)(buffer + ((*(u8 *)(buffer + 0x3000) ^ 1) << 10) + 0x2800);
+    packed = work->packed[work->page ^ 1];
     blue = 0x7c00;
     i = 512;
-    current = (u16 *)(buffer + 0x400);
+    current = work->current;
     for (; i != 0; i--) {
         *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0) | (((s16)current[2] >> 10) & 0x1f);
         current += 3;
     }
-    *(u8 *)(buffer + 0x3000) ^= 1;
-    bank = buffer + (*(u8 *)(buffer + 0x3000) << 10);
+    work->page ^= 1;
+    bank = work->packed[work->page];
     {
-        u8 *front = bank + 0x2800;
+        u16 *front = bank;
 
         QUEUE_PALETTE(front, 0x05000000);
     }
-    QUEUE_PALETTE(bank + 0x2a00, 0x05000200);
+    QUEUE_PALETTE(bank + 256, 0x05000200);
 }

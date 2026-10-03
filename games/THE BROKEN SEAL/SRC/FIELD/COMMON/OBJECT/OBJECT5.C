@@ -6,43 +6,12 @@
 #include "FIELD_SPRITE.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJECT_DISPATCH.H"
+#include "FIELD_EVENT.H"
+#include "MAP_SCROLL.H"
+#include "ANIMSPR.H"
 
-struct SnapshotObject {
-    u8 unknown_00[0xc];
-    s32 y;                          /* 0x0c */
-    u8 unknown_10[0x40];
-    struct FieldSprite *sprite;       /* 0x50 */
-    u8 visible;                     /* 0x54 */
-    u8 unknown_55[0x70 - 0x55];
-};
+extern struct ObjectRuntime Data_02001124[32];
 
-struct SnapshotCamera {
-    u8 unknown_00[0xc];
-    s32 y;                          /* 0x0c */
-    u8 unknown_10[4];
-    s32 target_y;                   /* 0x14 */
-};
-
-struct SnapshotWork {
-    u8 unknown_000[0x19e];
-    s16 mode;                       /* 0x19e */
-    u8 unknown_1a0[0x40];
-    struct SnapshotCamera *camera;  /* 0x1e0 */
-};
-
-struct SnapshotView {
-    u8 unknown_00[4];
-    s32 y;                          /* 0x04 */
-};
-
-struct SnapshotMapWork {
-    struct SnapshotView *view;      /* 0x00 */
-};
-
-extern struct SnapshotObject Data_02001124[32];
-extern struct SnapshotWork *gEventWork;
-
-void Object_SetMode(struct ObjectRuntime *object, s32 mode);
 void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *object, s32 value);
 void Object_ResetMotion(struct ObjectRuntime *object);
 
@@ -83,31 +52,31 @@ void *ObjectTable_Get(u32 index)
  */
 void ObjectTable_Snapshot(void)
 {
-    struct SnapshotObject *copy = Data_02001124;
+    struct ObjectRuntime *copy = Data_02001124;
     u8 *frames = (u8 *)&Data_02001124[32];
     u8 *next_frames = frames + 32;
     u8 *priorities = frames + 64;
     u8 *indices = (u8 *)Data_02001124 - 32;
     u32 count = 0;
     s32 limit = 66;
-    struct SnapshotObject *object;
+    struct ObjectRuntime *object;
     s32 i;
     u32 frame;
     u32 next;
     u32 priority;
 
-    if (gEventWork->mode == 3)
+    if (((struct EventRuntime *)gEventWork)->mode_19e == 3)
         limit = 8;
     for (i = 0; i < limit; i++) {
-        object = (struct SnapshotObject *)ObjectTable_Get(i);
+        object = (struct ObjectRuntime *)ObjectTable_Get(i);
         if (object == NULL)
             continue;
         *indices++ = i;
-        Dma_Set(object, copy, 0x84000000 | (sizeof(struct SnapshotObject) / 4), (volatile u32 *)0x040000d4);
-        if (object->visible == 1) {
-            frame = ((u8 *)object->sprite)[0x24];
-            next = object->sprite->flags;
-            priority = object->sprite->priority;
+        Dma_Set(object, copy, 0x84000000 | (sizeof(struct ObjectRuntime) / 4), (volatile u32 *)0x040000d4);
+        if (object->animation_kind == 1) {
+            frame = ((struct AnimationObject *)object->animation)->last_no;
+            next = ((struct FieldSprite *)object->animation)->flags;
+            priority = ((struct FieldSprite *)object->animation)->priority;
         } else {
             frame = 0;
             next = 0;
@@ -133,48 +102,48 @@ void ObjectTable_Snapshot(void)
  */
 void ObjectTable_Restore(void)
 {
-    struct SnapshotObject *copy = Data_02001124;
+    struct ObjectRuntime *copy = Data_02001124;
     u8 *indices = (u8 *)Data_02001124 - 32;
     u8 *frames = (u8 *)&Data_02001124[32];
     u8 *next_frames = frames + 32;
     u8 *priorities = frames + 64;
     s32 count;
-    struct SnapshotObject *object;
+    struct ObjectRuntime *object;
     struct FieldSprite *sprite;
-    struct SnapshotCamera *camera;
-    struct SnapshotView *view;
+    struct ObjectRuntime *camera;
+    s32 *view;
     s32 index;
     s32 frame;
     s32 priority;
     s32 y;
     s32 *selected = &gGameState.selected_actor;
-    struct SnapshotWork **work = &gEventWork;
-    struct SnapshotMapWork **map = ((struct SnapshotMapWork * *)gMapWork);
+    struct EventWork **work = &gEventWork;
+    struct MapScrollWork **map = (struct MapScrollWork **)gMapWork;
 
     count = 0;
     index = *indices++;
     while (index != 255) {
         object = ObjectTable_Get(index);
         if (object != NULL) {
-            sprite = object->sprite;
-            Dma_Set(copy, object, 0x84000000 | (sizeof(struct SnapshotObject) / 4),
+            sprite = object->animation;
+            Dma_Set(copy, object, 0x84000000 | (sizeof(struct ObjectRuntime) / 4),
                     (volatile u32 *)0x040000d4);
             frame = *frames;
             if (frame != 0)
-                Object_SetMode((struct ObjectRuntime *)object, frame);
+                Object_SetMode((struct FieldActor *)object, frame);
             ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)object, *next_frames);
             priority = *priorities;
             sprite->priority = priority;
             sprite->second_priority = priority;
-            object->sprite = sprite;
+            object->animation = sprite;
             if (index == *selected) {
-                camera = (*work)->camera;
-                view = (*map)->view;
+                camera = (struct ObjectRuntime *)(*work)->view_center;
+                view = (*map)->origin;
                 y = object->y;
-                camera->target_y = y;
+                camera->terrain_height = y;
                 camera->y = y;
-                view->y = y;
-                Object_ResetMotion((struct ObjectRuntime *)object);
+                view[1] = y;
+                Object_ResetMotion(object);
             }
         }
         copy++;

@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "BATTLE_WORK.H"
+#include "GAME_STATE.H"
+#include "ITEM.H"
 
 struct Entry {
     u16 value;
@@ -11,12 +14,9 @@ struct Entry {
 
 extern struct Entry Summon_EntryTable[];
 
-u8 *Item_Get(u32);
 
-extern u8 Data_03001e74[];
 
 /* battle/summon/clear_work_fields.c */
-extern s16 gGameState[];
 
 union Word {
     s32 value;
@@ -126,7 +126,7 @@ u32 Item_EncodeBankedId(u32 value)
     if (base == 0)
         return 0;
     {
-        u8 flags = Item_Get(base)[3];
+        u8 flags = Item_Get(base)->flags;
 
         if (flags & 8)
             bank = 1;
@@ -141,18 +141,18 @@ u32 Item_EncodeBankedId(u32 value)
 
 void Summon_ClearWorkFields(void)
 {
-    u8 *base;
+    struct BattleSession *work;
     union Word *words;
     s16 *slots;
     s32 index;
 
-    base = *(u8 **)((u32)&Data_03001e74);
-    words = (union Word *)(base + 0x530);
-    gGameState[286] = 0;
+    work = gBattleWork;
+    words = (union Word *)&work->spoils;
+    gGameState.pending_item = 0;
     words[0].value = 0;
     words[1].value = 0;
     words[2].value = 0;
-    slots = (s16 *)(base + 0x53C);
+    slots = (s16 *)work->spoils.items;
     for (index = 3; index >= 0; index--)
         slots[index] = 0;
 }

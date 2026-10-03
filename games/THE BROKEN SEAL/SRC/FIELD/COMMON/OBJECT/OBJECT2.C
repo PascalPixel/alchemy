@@ -14,12 +14,6 @@ struct AbilityListEntry {
 struct OwnerActionState *Runtime_GetObject(s32 object_id);
 void *Ability_GetData(s32 resource_id);
 
-struct ShortcutState {
-    u32 unknown_000[0x220 / 4];
-    volatile u16 first;
-    u16 second;
-};
-
 void Debug_SelectAbilityPair(void);
 
 s32 Object_CollectResources(struct AbilityListEntry *output)
@@ -85,18 +79,16 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct AbilityListEntry *entries)
 {
-    /* FAKEMATCH: the first shortcut is read through a volatile field. That keeps
-       its read one zero-extended ldrh from the state base plus 0x220; a plain
-       read is folded into the address and combined into sign-extending shifts.
-       Taking its volatile member address shrinks this module by eight bytes
-       in all six TBS editions, so the existing view is kept. */
+    /* FAKEMATCH: preserve the existing volatile first-shortcut read.
+       The canonical member-address attempt compiles to298 bytes rather
+       than306 in all six editions; the scheduling boundary remains unresolved. */
     s32 i;
     u16 first;
 
     *first_index = 0;
     *second_index = 0;
 
-    first = ((struct ShortcutState *)&gGameState)->first;
+    first = *(volatile u16 *)&gGameState.first_shortcut;
     for (i = 0; i <= 447; i++) {
         if (entries[i].ability == (first & 0x3ff) &&
             entries[i].owner == (first >> 10)) {

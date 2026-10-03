@@ -7,8 +7,8 @@
 typedef void (*InterruptHandler)(void);
 extern InterruptHandler Data_030000e0[];
 void RuntimeDispatch_ReservedNoOp03008(void);
-void Runtime_InvokeCallbacksByKey(s32 key);
-u8 *Runtime_AllocateHeapBlock(s32, s32);
+/* The allocator exposes a legacy integer address handle. */
+s32 Runtime_AllocateHeapBlock(s32, s32);
 void Runtime_CopyAndCallRoutine(void *argument);
 void Runtime_ReleaseHeapBlock(s32 slot);
 void Graphics_ResetFrameState(void);
@@ -78,7 +78,7 @@ struct DmaChannel {
         } while (!(Data_03001d28 & 1));                                        \
     }
 
-extern u8 Data_03001b00[];
+extern s32 Data_03001b00;
 
 /* Installs or removes the handler for one interrupt with IME off: sets
    the IE bit, the DISPSTAT enable (and the VCOUNT target for IRQ 2), and
@@ -157,7 +157,7 @@ void WaitFrames(s32 frames)
         gSchedulerStatus = 1;
         Runtime_InvokeCallbacksByKey(0xc80);
         gSchedulerStatus = 0;
-        Runtime_CopyAndCallRoutine(Runtime_AllocateHeapBlock(52, 0x400));
+        Runtime_CopyAndCallRoutine((void *)Runtime_AllocateHeapBlock(52, 0x400));
         Data_03001e44 = 1;
         if (Data_03001f58) {
             line = *(u16 *)0x04000006;
@@ -282,5 +282,5 @@ void WaitFrames(s32 frames)
 
 void Runtime_SetMainState19(void)
 {
-    *(s32 *)((u32)&Data_03001b00) = 0x13;
+    Data_03001b00 = 19;
 }

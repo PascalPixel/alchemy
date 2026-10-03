@@ -51,7 +51,7 @@ void Object_ResetTargetAndSetMode1(u32 object_id)
         object->target_y = 0x80000000;
         object->target_z = 0x80000000;
         Object_ResetMotion(object);
-        Object_SetMode(object, 1);
+        Object_SetMode((struct FieldActor *)object, 1);
     }
 }
 
@@ -81,27 +81,25 @@ void ObjectMotion_SetActionVariant(s32 object_id, s32 priority)
 
 void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
 {
-    void *p;
+    struct FieldSprite *sprite;
     u8 flags;
     u32 shape;
     u32 dst_attr;
     u32 merged;
 
-    p = Object_GetById(source_id);
-    p = ((struct ObjectRuntime *)p)->animation;
-    flags = ((struct FieldSprite *)p)->vram_block;
-    shape = *(u16 *)((u8 *)p + 0x8);
+    sprite = ((struct ObjectRuntime *)Object_GetById(source_id))->animation;
+    flags = sprite->vram_block;
+    shape = *(u16 *)((u8 *)sprite + 0x8);
 
-    p = Object_GetById(target_id);
-    p = ((struct ObjectRuntime *)p)->animation;
-    dst_attr = *(u16 *)((u8 *)p + 0x8);
-    ((struct FieldSprite *)p)->vram_block = flags;
+    sprite = ((struct ObjectRuntime *)Object_GetById(target_id))->animation;
+    dst_attr = *(u16 *)((u8 *)sprite + 0x8);
+    sprite->vram_block = flags;
     shape <<= 22;
     shape >>= 22;
     merged = 0xfffffc00;
     merged &= dst_attr;
     merged |= shape;
-    *(u16 *)((u8 *)p + 0x8) = merged;
+    *(u16 *)((u8 *)sprite + 0x8) = merged;
 }
 
 void ObjectVisual_ReservedNoOp(void)

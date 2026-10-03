@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -60,7 +61,7 @@ struct FxControl {
 
 extern void *gBattleFxWork[];
 extern void *gWorkSlot[];
-extern s32 gProjection[];
+
 extern u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
 /* Each object's column and row in the formation. */
@@ -130,7 +131,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     BattleEffect_WipeCanvas(1, 0);
     BattleFx_SpawnObjects(9, 0x175, 1);
-    gProjection[4] = 240;
+    gProjection.center_y = 240;
     BattleFx_SelectLivingTargets(work->effect);
     REG16(0x04000048) = 0x2737;
     REG16(0x04000040) = 0xca;

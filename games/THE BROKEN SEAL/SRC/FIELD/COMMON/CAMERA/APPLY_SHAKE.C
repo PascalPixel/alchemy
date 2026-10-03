@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
@@ -5,7 +6,7 @@
 #include "SYSTEM.H"
 extern u8 gBattleFxWork[];
 extern u8 gBgScroll[];
-extern u8 gProjection[];
+
 
 void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 {

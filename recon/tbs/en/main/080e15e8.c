@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 /* Draft, 664 rows off, most of them from one cause: the frame is 4 bytes
    short. The ROM spills count itself (sp+100, between size and sc) as a copy
    of the frame * 2 induction; here count is replaced by the temporary of its
@@ -48,11 +49,7 @@ void BattleFx_EndCanvasLayer(void);
 extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;
 
-struct Cells03001ce0 {
-    s32 unk00[4];
-    s32 unk10;
-};
-extern struct Cells03001ce0 gProjection;
+
 
 extern s16 Mode12_Points[][2];
 extern u16 ParticleStreams_CellOffsets[];
@@ -146,7 +143,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     work->transfer_mode = 0;
     BattleEffect_WipeCanvas(0, 0);
     BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
-    gProjection.unk10 = 240;
+    gProjection.center_y = 240;
     BattleEffect_WipeCanvas(0, 1);
     *(u16 *)0x04000020 = 0x80;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);

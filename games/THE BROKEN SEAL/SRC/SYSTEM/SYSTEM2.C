@@ -2,6 +2,9 @@
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
 #include "IO_REG.H"
+#include "HEAP_STATE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "IO_WRITE_QUEUE.H"
 
 extern u16 gSerialExchangeActive;
 
@@ -15,15 +18,14 @@ extern u8 Data_03001e44;
 extern u8 gOamCopyEnabled;
 
 /* OAM buffer pending */
-extern u8 *Data_03001e50[];
 extern u8 gBgScroll[];
 extern void (*Data_03001cfc)(void);
 
 /* one-shot VBlank hook */
-extern volatile u32 Data_03001ae8;
+extern volatile u32 gKeysHeld;
 
 /* keys held */
-extern u32 Data_03001c94;
+extern u32 gKeyState;
 
 /* keys newly pressed */
 extern u32 gKeysPressedLatch;
@@ -47,8 +49,6 @@ u16 SerialRuntime_ExchangePayloads(void *send, void *receive);
 void SerialRuntime_StepBlockTransfer(void);
 void Func_080f9018(void);
 void BlendTransition_Update(void);
-void IoWriteQueue_FlushPending(void);
-void Runtime_InvokeCallbacksByKey(s32 key);
 void Func_080006fc(void);
 
 #define SOUND_PRESET_COUNT 5
@@ -85,7 +85,7 @@ void System_VBlankHandler(void)
     BlendTransition_Update();
     if (Data_03001e44 != 0) {
         if (gOamCopyEnabled != 0)
-            Dma_Set(Data_03001e50[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
+            Dma_Set(((union HeapState *)gWorkSlot)->slots[52], OAM, DMA_ENABLE32 | DMA_32BIT | 0x100, REG_DMA3);
         Dma_Set(gBgScroll, REG_BG0HOFS, DMA_ENABLE32 | DMA_32BIT | 4, REG_DMA3);
         IoWriteQueue_FlushPending();
         Data_03001e44 = 0;
@@ -98,16 +98,16 @@ void System_VBlankHandler(void)
     Runtime_InvokeCallbacksByKey(0x480);
     keys = REG_KEYINPUT ^ KEYS_MASK;
     {
-        u32 pressed = keys & ~Data_03001ae8;
+        u32 pressed = keys & ~gKeysHeld;
 
-        Data_03001c94 = pressed;
+        gKeyState = pressed;
         gKeysPressedLatch |= pressed;
     }
-    Data_03001ae8 = keys;
+    gKeysHeld = keys;
     if (keys == 0) {
         Data_03001b00 = 19;
         gKeysRepeat = keys;
-    } else if (Data_03001ae8 & (Data_03001d0c ^ 0xffff)) {
+    } else if (gKeysHeld & (Data_03001d0c ^ 0xffff)) {
         Data_03001b00 = -1;
         gKeysRepeat = keys;
     } else if (Data_03001b00 > 0) {

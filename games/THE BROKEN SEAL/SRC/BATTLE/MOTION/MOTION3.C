@@ -3,15 +3,12 @@
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
+#include "ANIMSPR.H"
 
 s32 WaitFrames(s32);
 struct SpriteEntry *ResourceMetadata_RegisterFar(void *, s32);
 s32 Animation_SetWorkEntryFar(void *, s32);
 
-struct BattleMotionRecord {
-    u8 unknown_00[0x18];
-    s32 scale_18;
-};
 
 void Camera_ApplyTransformByFlag(void);
 s32 Render_ProjectPoint(const s32 *, s32 *);
@@ -37,14 +34,14 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 {
     struct MotionObject *object = GetBattleObjectSlot(id)->object;
-    struct BattleMotionRecord *record = GetMotionRecord(object, 0);
+    struct AnimationObject *record = GetMotionRecord(object, 0);
     s32 position[3]; /* FAKEMATCH: unused; it only reserves the 12-byte frame the reference allocates. */
     s32 scaled;
     s32 factor;
 
     Camera_ApplyTransformByFlag();
     scaled = Render_ProjectPoint(&object->x, projected);
-    factor = Iwram_MulQ16(scaled, record->scale_18);
+    factor = Iwram_MulQ16(scaled, record->scale);
     scaled = Iwram_MulQ16(factor, (s32)Battle_GetObjectTableValue(id) >> 16);
     projected[1] -= scaled;
     return 0;
@@ -53,13 +50,13 @@ s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
 s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
 {
     struct MotionObject *object = GetBattleObjectSlot(id)->object;
-    struct BattleMotionRecord *record = GetMotionRecord(object, 0);
+    struct AnimationObject *record = GetMotionRecord(object, 0);
     s32 scaled;
     s32 factor;
 
     Camera_ApplyTransformByFlag();
     scaled = Render_ProjectPoint(&object->x, projected);
-    factor = Iwram_MulQ16(scaled, record->scale_18);
+    factor = Iwram_MulQ16(scaled, record->scale);
     if (Summon_IsEntryFlagged(Owner_GetStateFar(id)->class_id) != 0)
         scaled = Iwram_MulQ16(factor, 24);
     else

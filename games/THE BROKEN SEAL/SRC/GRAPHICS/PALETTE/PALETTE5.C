@@ -1,3 +1,5 @@
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "DISPTRAN.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
@@ -9,17 +11,11 @@
 
 extern u8 Data_03001ecc[];
 
-struct DisplayTransitionState {
-    u8 data[0x528];
-    s16 value;
-    s16 timer;
-};
 
 void DisplayTransition_FillTilemapAndSolidTile(s32);
 void DisplayTransition_UpdateFrame(void);
 
 s32 GameFlag_IsSet(s32 flag);
-extern u8 *Data_03001ed0;
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 /* FAKEMATCH: SYSTEM/IO_WRITE_QUEUE.C's queue idiom, for that file's reasons:
@@ -37,7 +33,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);           \
+            u32 *destination = q->entries[count];           \
             *(u16 *)&q->count = count + 1;                                  \
             *destination++ = (value);                                       \
             *destination++ = (address);                                     \
@@ -71,8 +67,8 @@ void DisplayTransition_InitializeState(s32 value)
     zero = 0;
     Dma_Set(&zero, state, 0x85000150, (volatile u32 *)0x040000d4);
     DisplayTransition_FillTilemapAndSolidTile(0);
-    state->value = value;
-    state->timer = 0;
+    state->mode = value;
+    state->value = 0;
     Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
     WaitFrames(0x78);
 }
@@ -106,50 +102,52 @@ void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3)
    The packing loop follows GRAPHICS/PALETTE/TITLE_UPDATE_FADE.C. */
 void BattlePalette_UpdateBlend(void)
 {
-    u8 *p = Data_03001ed0;
-    u16 *add = (u16 *)(p + 0x1880);
+    /* FAKEMATCH: retain the existing one-pass IME scopes and halfword
+       queue-count stores used by the other palette queue writers. */
+    struct BattleEffectBuffers *work = Data_03001ed0;
+    u16 *add = work->delta;
     volatile u16 *ime;
     struct IoWriteQueue *q;
-    u8 *base;
+    u16 *bank;
     s32 i;
 
     if (GameFlag_IsSet(0x152) != 0) {
         return;
     }
-    if (*(s8 *)(p + 0x2a01) == 0) {
+    if (work->duration == 0) {
         return;
     }
-    if (++*(s8 *)(p + 0x2a02) < *(s8 *)(p + 0x2a01)) {
-        u16 *sum = (u16 *)(p + 0x380);
+    if (++work->step < work->duration) {
+        u16 *sum = work->current;
         for (i = 0; i < 0x540; i++) {
             *sum++ += *add++;
         }
     } else {
         CopyWordsFn copy = Iwram_CopyWords;
 
-        copy(p + 0x380, p + 0xe00, 0xa80);
-        *(s8 *)(p + 0x2a01) = 0;
+        copy(work->current, work->target, sizeof(work->current));
+        work->duration = 0;
     }
 
     {
-        u16 *packed = (u16 *)(p + (1 ^ p[0x2a00]) * 0x380 + 0x2300);
+        u16 *packed = work->packed[1 ^ work->page];
         s32 blue = 0x7c00;
         u16 *current;
 
         i = 0x1c0;
-        current = (u16 *)(p + 0x380);
+        current = work->current;
         for (; i != 0; i--) {
             *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0) | (((s16)current[2] >> 10) & 0x1f);
             current += 3;
         }
     }
 
-    p[0x2a00] ^= 1;
-    base = p + p[0x2a00] * 0x380;
+    work->page ^= 1;
+    bank = work->packed[work->page];
     q = &gIoWriteQueue;
     {
-        u32 bg = (u32)(base + 0x2300);
+        u32 bg = (u32)bank;
         QUEUE_WRITE(bg, 0x05000000, 0x84000070);
     }
-    QUEUE_WRITE((u32)(base + 0x24c0), 0x05000200, 0x84000070);
+    QUEUE_WRITE((u32)(bank + 224), 0x05000200, 0x84000070);
 }

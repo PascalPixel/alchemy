@@ -13,15 +13,15 @@ void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3);
 void BattleEffect_InitializeBuffers(void)
 {
     volatile s32 zero;
-    void *buffer;
+    struct BattleEffectBuffers *buffer;
 
-    buffer = Runtime_AllocateBlock(0x20, 0x2a04);
+    buffer = Runtime_AllocateBlock(0x20, sizeof(*buffer));
     zero = 0;
     Dma_Set(&zero, buffer, 0x85000a81, (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000000, buffer, 0x84000070, (volatile u32 *)0x040000d4);
-    Dma_Set((void *)0x05000200, (u8 *)buffer + 0x1c0, 0x84000070,
+    Dma_Set((void *)0x05000200, (u8 *)buffer->palette + 0x1c0, 0x84000070,
             (volatile u32 *)0x040000d4);
-    BattleFx_BuildBuffer(0x10000, (s32)buffer, (s32)buffer + 0xe00, 0);
+    BattleFx_BuildBuffer(0x10000, (s32)buffer, (s32)buffer->target, 0);
     Scheduler_AddOrUpdateCallback((void (*)(void))BattlePalette_UpdateBlend, 0xc8f);
 }
 
@@ -36,7 +36,7 @@ void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode)
     struct BattleEffectBuffers *buffers = Data_03001ed0;
 
     if (buffers != NULL) {
-        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->buffer_e00, mode);
+        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->target, mode);
     }
 }
 
@@ -45,18 +45,17 @@ void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode)
     struct BattleEffectBuffers *buffers = Data_03001ed0;
 
     if (buffers != NULL) {
-        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->buffer_380, mode);
+        BattleFx_BuildBuffer(value, (s32)buffers, (s32)buffers->current, mode);
     }
 }
 
-void BattleFx_SetPrimaryBufferValue(unsigned int value)
+void BattleFx_SetPrimaryBufferValue(u32 value)
 {
-  s16 *primary_buffer;
-  primary_buffer = *((s16 **)((u32)&Data_03001ed0));
-  if (0 != primary_buffer)
-  {
-    *primary_buffer = value;
-  }
+    struct BattleEffectBuffers *buffers = Data_03001ed0;
+
+    if (buffers != NULL) {
+        buffers->palette[0] = value;
+    }
 }
 
 void BattleFx_StartBufferInterpolation(s32 mode)
@@ -64,11 +63,11 @@ void BattleFx_StartBufferInterpolation(s32 mode)
     struct BattleEffectBuffers *buffers = Data_03001ed0;
 
     if (buffers != NULL) {
-        buffers->mode_2a01 = mode;
-        buffers->unknown_2a02 = 0;
-        BattleFx_InterpolateBuffers((s16 *)buffers->buffer_380,
-                                        (s16 *)buffers->buffer_e00,
-                                        (s16 *)buffers->buffer_1880,
+        buffers->duration = mode;
+        buffers->step = 0;
+        BattleFx_InterpolateBuffers((s16 *)buffers->current,
+                                        (s16 *)buffers->target,
+                                        (s16 *)buffers->delta,
                                         mode);
     }
 }

@@ -20,7 +20,9 @@ struct BattleObjectSlot {
     s32 anchor_z;
     s32 palette;
     s32 scale;
-    u8 unknown_1c[0x04];
+    u16 active_conditions; /* the status icons this unit can display */
+    u8 selected_condition;
+    s8 cycle_timer;
     struct SpriteEntry *animation_entry; /* of the animation and effect resources */
     struct SpriteEntry *effect_entry;
     s16 active;
@@ -49,6 +51,8 @@ struct BattleSpoils {
 
 LAYOUT_SIZE_GUARD(BattleObjectSlot_Size, struct BattleObjectSlot, 0x2c);
 LAYOUT_OFFSET_GUARD(BattleObjectSlot_AnchorX, struct BattleObjectSlot, anchor_x, 0x0c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_Conditions, struct BattleObjectSlot, active_conditions, 0x1c);
+LAYOUT_OFFSET_GUARD(BattleObjectSlot_CycleTimer, struct BattleObjectSlot, cycle_timer, 0x1f);
 LAYOUT_OFFSET_GUARD(BattleObjectSlot_Active, struct BattleObjectSlot, active, 0x28);
 
 LAYOUT_SIZE_GUARD(BattleActionRecord_Size, struct BattleActionRecord, 0x10);

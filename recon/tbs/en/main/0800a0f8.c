@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 /* Transform_UpdateVertices draft (2026-09-29), not exact: 161 of 161 words,
  * branches and pool line up, remaining differences are register choice and
  * scheduling in the first loop and prologue.
@@ -67,15 +68,10 @@ struct VertexOut {
     struct VertexPair prev;
 };
 
-struct Projection {
-    s32 unk00[3];
-    s32 scale;
-    s32 unk10;
-};
 
 extern struct FarCallStub WaitFramesFar[];
 extern u32 Data_03001f60;
-extern struct Projection gProjection;
+
 extern u32 gFrameCount;
 
 static __inline__ s32 FixedMul(s32 a, s32 b)

@@ -126,7 +126,7 @@ again:
                 /* FAKEMATCH: the icon scan needs its used object in r5. */
                 register struct ActorObject *object asm("r5") = slot->object;
 
-                BattleStatusIcon_Cycle((struct BattleStatusIconRecord *)slot);
+                BattleStatusIcon_Cycle((struct BattleObjectSlot *)slot);
                 if (slot->icon_effect != 0) {
                     /* FAKEMATCH: keep the used call result in r0, as measured. */
                     register struct IconContext *context asm("r0") = GetMotionRecord(object, 0);

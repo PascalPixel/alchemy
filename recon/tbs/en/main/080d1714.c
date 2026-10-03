@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "B5_CONTEXT.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
@@ -107,12 +108,6 @@ struct ScalePair {
     s32 y;
 };
 
-struct SceneCameraObject {
-    s32 field_00;
-    s32 field_04;
-    s32 field_08;
-    s32 field_0c;
-};
 
 struct EffectRuntime {
     u8 unknown_0000[0x7080];
@@ -137,7 +132,7 @@ struct EffectRuntime {
  * window from cell[-1] instead.
  */
 extern void *gBattleFxWork[];
-extern struct SceneCameraObject gProjection;
+
 extern u32 gKeysRepeat;
 extern struct Particle gMapCellBuffer[];
 extern u8 Value_00000073;
@@ -475,7 +470,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
                 } while (index != runtime->argument->target_count);
             }
 
-            gProjection.field_0c = 72;
+            gProjection.center_x = 72;
 
             point = runtime->points;
             index = 0;
@@ -747,7 +742,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
         } while (index != runtime->argument->target_count);
     }
 
-    gProjection.field_0c = 120;
+    gProjection.center_x = 120;
 
     BattleEffect_SetupBlendedDisplay();
 

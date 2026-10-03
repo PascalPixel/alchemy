@@ -60,5 +60,6 @@ enum BattleEventOpcode {
 };
 
 u32 BattleEv_Push(u32 opcode, u32 operand);
+u32 BattleEv_DispatchQueued(void);
 
 #endif

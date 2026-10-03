@@ -5,6 +5,7 @@
 #include "PSYNERGY_MENU.H"
 #include "GAME_STATE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
@@ -84,7 +85,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
         }
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         WaitFrames(1);
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             if (menu->psynergy_count) {
                 Audio_PlayCue(112);
                 result = owner_ids[selection];
@@ -92,9 +93,9 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
             }
             Audio_PlayCue(114);
         }
-        if ((gKeyState & 0x200) || (gKeyState & 0x100)) {
+        if ((gKeyState & KEY_L) || (gKeyState & KEY_R)) {
             result = owner_ids[selection];
-            if (gKeyState & 0x200)
+            if (gKeyState & KEY_L)
                 menu->mode = 1;
             else
                 menu->mode = 2;
@@ -110,17 +111,17 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
                 break;
             }
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             result = -1;
             break;
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             Audio_PlayCue(111);
             selection--;
             pending = 1;
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             Audio_PlayCue(111);
             selection++;
             pending = 1;
@@ -261,22 +262,22 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
         }
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         WaitFrames(1);
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             Audio_PlayCue(112);
             result = menu->owner_table[selection];
             break;
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             result = -1;
             break;
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             Audio_PlayCue(111);
             selection--;
             pending = 1;
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             Audio_PlayCue(111);
             selection++;
             pending = 1;

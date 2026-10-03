@@ -4,6 +4,7 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "GLOBAL_CELLS.H"
 
@@ -71,26 +72,26 @@ redraw:
     UiText_DrawCharacterAtOffset(resource, work->window, 0, 0);
     for (;;) {
         WaitFrames(1);
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             Audio_PlayCue(112);
             return work->selection;
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             return -1;
         }
-        if (gKeyState & 8) {
+        if (gKeyState & KEY_START) {
             Audio_PlayCue(113);
             return -1;
         }
-        if ((gKeysRepeat & 32) || (gKeysRepeat & 64)) {
+        if ((gKeysRepeat & KEY_LEFT) || (gKeysRepeat & KEY_UP)) {
             Audio_PlayCue(111);
             work->selection--;
             if (work->selection < 0)
                 work->selection = work->count - 1;
             goto redraw;
         }
-        if ((gKeysRepeat & 16) || (gKeysRepeat & 128)) {
+        if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN)) {
             Audio_PlayCue(111);
             work->selection++;
             if (work->selection >= work->count)

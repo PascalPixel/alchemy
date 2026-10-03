@@ -21,69 +21,69 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *t
     track->cursor++;
 
     switch (op) {
-    case 0:
+    case SOUND_WORK_SET:
         *byte = value;
         return;
-    case 1:
+    case SOUND_WORK_ADD:
         *byte += value;
         return;
-    case 2:
+    case SOUND_WORK_SUBTRACT:
         *byte -= value;
         return;
-    case 3:
+    case SOUND_WORK_COPY:
         *byte = player->work_bytes[value];
         return;
-    case 4:
+    case SOUND_WORK_ADD_BYTE:
         *byte += player->work_bytes[value];
         return;
-    case 5:
+    case SOUND_WORK_SUBTRACT_BYTE:
         *byte -= player->work_bytes[value];
         return;
-    case 6:
+    case SOUND_WORK_EQUAL:
         if (*byte == value)
             goto jump;
         goto skip;
-    case 7:
+    case SOUND_WORK_NOT_EQUAL:
         if (*byte != value)
             goto jump;
         goto skip;
-    case 8:
+    case SOUND_WORK_GREATER:
         if (*byte > value)
             goto jump;
         goto skip;
-    case 9:
+    case SOUND_WORK_GREATER_EQUAL:
         if (*byte >= value)
             goto jump;
         goto skip;
-    case 10:
+    case SOUND_WORK_LESS_EQUAL:
         if (*byte <= value)
             goto jump;
         goto skip;
-    case 11:
+    case SOUND_WORK_LESS:
         if (*byte < value)
             goto jump;
         goto skip;
-    case 12:
+    case SOUND_WORK_EQUAL_BYTE:
         if (*byte == player->work_bytes[value])
             goto jump;
         goto skip;
-    case 13:
+    case SOUND_WORK_NOT_EQUAL_BYTE:
         if (*byte != player->work_bytes[value])
             goto jump;
         goto skip;
-    case 14:
+    case SOUND_WORK_GREATER_BYTE:
         if (*byte > player->work_bytes[value])
             goto jump;
         goto skip;
-    case 15:
+    case SOUND_WORK_GREATER_EQUAL_BYTE:
         if (*byte >= player->work_bytes[value])
             goto jump;
         goto skip;
-    case 16:
+    case SOUND_WORK_LESS_EQUAL_BYTE:
         if (*byte <= player->work_bytes[value])
             goto jump;
         goto skip;
-    case 17:
+    case SOUND_WORK_LESS_BYTE:
         if (*byte < player->work_bytes[value])
             goto jump;
         goto skip;

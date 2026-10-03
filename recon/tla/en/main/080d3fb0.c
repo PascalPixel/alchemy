@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 
 extern u8 gEventWork[];
 
@@ -27,8 +28,8 @@ void BattleEv_RunWait(s32 action)
             WaitFrames(1);
             frames++;
             if (frames > 600 ||
-                ((gKeysHeld & 4) && (gKeysHeld & 0x100) &&
-                 (gKeysHeld & 0x200) && (gKeysHeld & 1))) {
+                ((gKeysHeld & KEY_SELECT) && (gKeysHeld & KEY_R) &&
+                 (gKeysHeld & KEY_L) && (gKeysHeld & KEY_A))) {
                 UiWork_FinalizePendingCoreFar();
             }
         }

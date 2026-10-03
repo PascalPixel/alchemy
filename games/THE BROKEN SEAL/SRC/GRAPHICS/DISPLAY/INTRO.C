@@ -273,7 +273,7 @@ s32 Title_ShowIntro(s32 prompt)
         s32 tick;
 
         frame = work->frame;
-        if ((u32)(frame - 21) <= 217 && (gKeyState & 9) != 0) {
+        if ((u32)(frame - 21) <= 217 && (gKeyState & (KEY_A | KEY_START)) != 0) {
             work->state = 1;
             work->frame = 239;
             frame = 239;
@@ -407,7 +407,7 @@ s32 Title_ShowIntro(s32 prompt)
             inverse = 16 - level;
             *(volatile u16 *)0x04000052 = (inverse << 8) + level;
         }
-        if ((gKeyState & 9) != 0) {
+        if ((gKeyState & (KEY_A | KEY_START)) != 0) {
             result = 1;
             break;
         }

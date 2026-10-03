@@ -10,6 +10,7 @@
  * first test, i <= 5, i - 6 < 0, (u32)i < 6, a goto loop.
  */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "IWRAM_CALL.H"
 
 /* One 0x70-byte field object: the player's actor and the entries of the
@@ -171,7 +172,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
         actor->accel = 0x4000;
         mode = 2;
     }
-    if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & 2)) {
+    if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & KEY_B)) {
         actor->speed = 0x40000;
         actor->accel = 0x10000;
         mode = 5;
@@ -188,7 +189,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     Vector_AddPolarOffset(0x80000, (u16)angle, posA);
     if (gDebugMode != 0) {
         facing = (s16)angle;
-        if (gKeysHeld & 0x200)
+        if (gKeysHeld & KEY_L)
             goto tail;
     }
     if (Func_080120dc(actor, posA) != 0)

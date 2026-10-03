@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "ITEM.H"
+#include "BATTLE_RUNTIME.H"
 #include "BATTLE_STATUS_ICON.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EVENT.H"
@@ -9,20 +11,20 @@ void BattleEv_SetRuntimeField8(void)
 }
 
 s32 Object_Destroy(s32);
-/* This legacy call consumes the owner id already carried in r0. */
-struct BattleUnit *Owner_GetStateFar();
-s32 Owner_UpdateRatioPairFar(void *, s32);
+void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-s32 BattleActor_RemoveFromLists(s32);
+void BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
+    /* FAKEMATCH: the existing used word result crosses the void object-release
+       veneer; the native cleanup epilogue returns its live r0 unchanged. */
     s32 result;
     struct BattleUnit *creature;
     struct BattleObjectSlot *runtime;
 
-    creature = Owner_GetStateFar();
+    creature = Owner_GetStateFar(arg0);
     if (creature->status_12a == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
@@ -49,12 +51,14 @@ void UiText_ShowMessageAndWaitCoreFar(u32);
 void BattlePresentation_WaitForAdvance(void);
 void UiWork_ClearValueNameTablesFar(void);
 void Audio_PlayCue(u32);
-void BattleMotion_RunValueSequence(u32, u32, u32);
-void BattleEnemy_RecordDefeat(u32, u32);
-void BattleActor_ResetRuntimeFields(u32);
-void BattleMotion_InitializeActorRecords(u32);
+/* The actual routine takes one actor id. This legacy call transports two
+   extra zero words; the definition and its argument count stay unchanged. */
+void BattleMotion_RunValueSequence();
+s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned);
+s32 BattleActor_ResetRuntimeFields(s32 unit_id);
+void BattleMotion_InitializeActorRecords(s32 unit_id);
 void UiWindow_DrawPartyStatusContentsFar(u32);
-void BattlePres_SetActorModeAndAction(u32);
+s32 BattlePres_SetActorModeAndAction(s32 unit_id);
 
 u32 BattleEv_DispatchQueued(void)
 {
@@ -69,8 +73,8 @@ u32 BattleEv_DispatchQueued(void)
         case BATTLE_EVENT_ACTOR_EFFECT: BattleActor_DestroyTemporaryObject(queue->operands[i]); break;
         case BATTLE_EVENT_UNIT: UiWork_PushValueSlotFar(queue->operands[i], 1); break;
         case BATTLE_EVENT_VALUE: UiWork_PushValueSlotFar(queue->operands[i], 5); break;
-        case BATTLE_EVENT_ITEM: UiWork_PushValueSlotFar(queue->operands[i] & 0x1ff, 2); break;
-        case BATTLE_EVENT_ACTION: UiWork_PushValueSlotFar(queue->operands[i] & 0x3fff, 4); break;
+        case BATTLE_EVENT_ITEM: UiWork_PushValueSlotFar(queue->operands[i] & ITEM_ID_MASK, 2); break;
+        case BATTLE_EVENT_ACTION: UiWork_PushValueSlotFar(queue->operands[i] & OWNER_ACTION_ID_MASK, 4); break;
         case BATTLE_EVENT_MARK: gBattleDisplayWork->marked = 1; break;
         case BATTLE_EVENT_RESET: UiWork_ClearValueNameTablesFar(); break;
         case BATTLE_EVENT_TEXT:
@@ -111,11 +115,10 @@ u32 BattleEv_DispatchQueued(void)
 u32 BattleEv_Push(u32 opcode, u32 operand)
 {
     struct BattleEventQueue *queue = &gBattleWork->events.queue;
-    u32 *count = (u32 *)&queue->count;
-    u32 index = *count;
+    u32 index = queue->count;
 
     queue->opcodes[index] = opcode;
     queue->operands[index] = operand;
-    *count = index + 1;
+    queue->count = index + 1;
     return opcode;
 }

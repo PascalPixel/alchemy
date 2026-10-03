@@ -10,6 +10,7 @@
 #include "../../../../games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/MENU_TEST.H"
 #include "CALL.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
@@ -619,43 +620,43 @@ void DebugMenu_SelectItem(void)
                 UiText_DrawStringInWindow(gDebugItemFullLabel, window, 0, 32);
             }
         }
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             if (PartyInventory_Add(item) == -1) {
                 Engine_AudioPlayCue(113);
                 goto done;
             }
             Engine_AudioPlayCue(175);
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Engine_AudioPlayCue(113);
             goto done;
         }
-        if (gKeysRepeat & 64) {
+        if (gKeysRepeat & KEY_UP) {
             item--;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 128) {
+        if (gKeysRepeat & KEY_DOWN) {
             item++;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             item += 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             item -= 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 256) {
+        if (gKeysRepeat & KEY_R) {
             item += 30;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 512) {
+        if (gKeysRepeat & KEY_L) {
             item -= 30;
             redraw = 1;
             Engine_AudioPlayCue(111);

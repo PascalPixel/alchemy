@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
@@ -10,7 +11,7 @@ extern volatile u32 gKeysHeld;
    declared without a prototype. */
 s32 UiText_OpenMessageAtObject();
 
-void Battle_WaitMode0(s32 arg0);
+void Battle_WaitMode0(s32 mode);
 void BattleEv_RunWait(s32 action, s32 flag);
 extern u8 Data_03001ebc[];
 s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force);
@@ -19,27 +20,27 @@ void BattleEv_RunWait(s32 action, s32 flag)
 {
     struct EventRuntime *runtime = *(struct EventRuntime **)gEventWork;
     s32 wait_token = UiText_OpenMessageAtObject();
-    s32 resolved_action;
+    s32 message_id;
     u32 frames = 0;
 
     WaitFrames(1);
-    resolved_action = ObjectTable_ReadActiveValue(action);
+    message_id = ObjectTable_ReadActiveValue(action);
     if (action <= 7) {
         s32 masked_action = action & 0x0fff;
 
         if (BattleAction_FindDescriptor(masked_action) == 0) {
-            resolved_action = masked_action;
+            message_id = masked_action;
         }
     }
-    UiWork_FinalizeEntityMatchingLocalizedIdFar(resolved_action);
+    UiWork_FinalizeEntityMatchingLocalizedIdFar(message_id);
 
     if (runtime->message_busy == 0) {
         while (UiWork_IsIdleFar(wait_token) == 0) {
             WaitFrames(1);
             frames++;
             if (frames > 600 ||
-                ((gKeysHeld & 4) && (gKeysHeld & 0x100) &&
-                 (gKeysHeld & 0x200) && (gKeysHeld & 1))) {
+                ((gKeysHeld & KEY_SELECT) && (gKeysHeld & KEY_R) &&
+                 (gKeysHeld & KEY_L) && (gKeysHeld & KEY_A))) {
                 UiWork_FinalizePendingCoreFar();
             }
         }

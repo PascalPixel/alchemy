@@ -15,6 +15,7 @@
  * every original matching-body and trial annotation is retained.
  */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "OBJDISP.H"
 
 struct FxPosition {
@@ -143,7 +144,7 @@ void FunctionHead_08097c3c(void)
     target->mode = 2;
     for (;;) {
         WaitFrames(1);
-        keys = gKeyState & 0x303;
+        keys = gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS);
         if (keys != 0)
             break;
         direction = (u16)BattleFx_GetCycledTableWord(gKeysHeld);

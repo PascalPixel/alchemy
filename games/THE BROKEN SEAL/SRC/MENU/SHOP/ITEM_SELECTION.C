@@ -64,7 +64,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         }
 
         WaitFrames(1);
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             if (Inventory_CountFar(unit_id) == 0) {
                 Audio_PlayCue(0x71);
                 continue;
@@ -84,7 +84,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(0x71);
             *selected_unit = -1;
             *selected_item = -1;
@@ -92,12 +92,12 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((gKeysRepeat & 0x20) != 0) {
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
             Audio_PlayCue(0x6f);
             selected_index--;
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x10) != 0) {
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
             Audio_PlayCue(0x6f);
             selected_index++;
             redraw = 1;
@@ -114,6 +114,7 @@ done:
 }
 
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_CALC.H"
 #include "SYSTEM.H"
@@ -184,7 +185,7 @@ s32 Shop_SelUse(s32 actor)
 
         WaitFrames(1);
 
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             status = Inventory_CheckDiscardFar(actor, selection);
             if (status == 0) {
                 Audio_PlayCue(112);
@@ -202,7 +203,7 @@ s32 Shop_SelUse(s32 actor)
             continue;
         }
 
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(113);
             result = -1;
             goto exit_loop;
@@ -214,19 +215,19 @@ s32 Shop_SelUse(s32 actor)
          * ahead of the add; folding it into one `selection +- 1 + count`
          * expression instead subtracts/adds 1 from the sum register after
          * the add, which is a different (non-matching) instruction order. */
-        if ((gKeysRepeat & 0x20) != 0) {
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
             Audio_PlayCue(111);
             selection -= 1;
             selection = (selection + count) % count;
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x10) != 0) {
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
             Audio_PlayCue(111);
             selection += 1;
             selection = (selection + count) % count;
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x40) != 0) {
+        if ((gKeysRepeat & KEY_UP) != 0) {
             selection -= 5;
             if (selection < 0)
                 selection += 15;
@@ -235,7 +236,7 @@ s32 Shop_SelUse(s32 actor)
             Audio_PlayCue(111);
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x80) != 0) {
+        if ((gKeysRepeat & KEY_DOWN) != 0) {
             selection += 5;
             if (selection >= count)
                 selection -= 15;

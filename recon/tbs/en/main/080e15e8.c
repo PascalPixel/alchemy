@@ -10,6 +10,7 @@
    here that value lives too briefly to be worth one. And the ROM keeps j in
    r8 and n in r10 where this has them the other way round. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -179,7 +180,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
         if (frame == 151) {
             AudioCommand_PlayFar(145);
         }
-        if (gKeysRepeat & 3) {
+        if (gKeysRepeat & (KEY_A | KEY_B)) {
             break;
         }
         Graphics_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);

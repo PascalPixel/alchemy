@@ -2,15 +2,11 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 
-struct PartyDjinnTotals {
-    u8 by_element[4];
-};
-
 struct BattleSummonState *Trade_GetOfferStateFar(s32 side);
 
 struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 {
-    struct PartyDjinnTotals totals;
+    u8 totals[4];
     u16 party_members[10];
     s32 party_size;
     s32 element;
@@ -21,7 +17,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 
     element = 0;
     do {
-        totals.by_element[element] = 0;
+        totals[element] = 0;
         {
             s32 party_slot;
 
@@ -29,7 +25,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
                 struct BattleUnit *member =
                     Owner_GetStateFar(party_members[party_slot]);
 
-                totals.by_element[element] += member->djinn_owned_counts[element];
+                totals[element] += member->djinn_owned_counts[element];
             }
         }
         element++;
@@ -45,8 +41,8 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
             const u8 *required = summon->djinn_required;
 
             elements_met = 0;
-            if (totals.by_element[0] >= required[0]) {
-                u8 *total = totals.by_element;
+            if (totals[0] >= required[0]) {
+                u8 *total = totals;
 
                 do {
                     elements_met++;

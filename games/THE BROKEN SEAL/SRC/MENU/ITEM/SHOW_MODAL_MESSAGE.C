@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY_MENU.H"
 #include "M7_INTERFACES.H"
 #include "SYSTEM.H"
@@ -53,7 +54,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
         WaitFrames(1);
         do {
             WaitFrames(1);
-        } while (!(gKeyState & 1) && !(gKeyState & 2) && !(gKeyState & 8));
+        } while (!(gKeyState & KEY_A) && !(gKeyState & KEY_B) && !(gKeyState & KEY_START));
 #if EDITION_INTERNATIONAL
         if (y == -1)
             RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);

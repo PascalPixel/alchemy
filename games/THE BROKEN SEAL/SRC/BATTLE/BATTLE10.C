@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "RUNTIME_MEM.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
@@ -51,13 +52,11 @@ void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
-s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
 s32 Func_080770b8(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
 s32 PartyInventory_AddFar(s32 item);
-#define PSYNERGY_MASK 0x3fff
 
 /* Counts one defeated enemy toward the battle spoils: its coins and
    experience (randomly raised in proportion to the enemy's level when the
@@ -76,7 +75,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     s32 lowest_slot;
     s32 value;
 
-    unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
+    unit = Owner_GetStateFar(unit_id);
     formation = gBattleWork;
     spoils = &formation->spoils;
     if ((u32)unit_id < 8)
@@ -193,7 +192,7 @@ void Battle_AwardSpoils(void)
             BattlePresentation_WaitForAdvance();
             for (cnt = 0; cnt < 32; cnt++) {
                 learned = unit->action_slots[cnt].encoded_action;
-                if ((learned & PSYNERGY_MASK) && (learned >> 15)) {
+                if ((learned & OWNER_ACTION_ID_MASK) && (learned >> 15)) {
                     for (j = 0; j < 32; j++) {
                         if (learned == backup->action_slots[j].encoded_action)
                             break;
@@ -202,7 +201,7 @@ void Battle_AwardSpoils(void)
                         UiWork_ClearValueNameTablesFar();
                         UiWork_PushValueSlotFar(unit->class_index, 3);
                         UiWork_PushValueSlotFar(unit_id, 1);
-                        UiWork_PushValueSlotFar(learned & PSYNERGY_MASK, 4);
+                        UiWork_PushValueSlotFar(learned & OWNER_ACTION_ID_MASK, 4);
                         Audio_PlayCue(0x9a);
                         UiText_ShowMessageAndWaitCoreFar((s32)&MsgAbilityMastered);
                         BattlePresentation_WaitForAdvance();

@@ -38,6 +38,7 @@
  * a u16 view with the use type assigned in the test.
  */
 #include "TYPES.H"
+#include "BATTLE_EVENT.H"
 #include "BATTLE_COMMAND.H"
 #include "MOTION_OBJECT.H"
 #include "SYSTEM.H"
@@ -90,7 +91,6 @@ s32 Inventory_RemoveFar(s32, s32);
 s32 Inventory_BreakFar(s32, s32);
 void Actor_ResetMotionAtAnchor(s32);
 s32 BattlePres_BuildTargetList(void *, struct PresentationWork *);
-u32 BattleEv_DispatchQueued(void);
 u32 BattleEv_Push(u32, u32);
 void BattlePres_SetActorModes(u16 *, s32);
 s32 Graphics_ScaleRgb555Clamped(u16 *, u16 *, s32, s32);

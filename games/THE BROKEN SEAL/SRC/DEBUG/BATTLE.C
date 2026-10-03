@@ -1,22 +1,11 @@
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "GAME_STATE.H"
 #include "RESOURCE_IDS.H"
 #include "CALLBACK_SCHEDULER.H"
 
-enum {
-    KEY_A = 0x001,
-    KEY_B = 0x002,
-    KEY_SELECT = 0x004,
-    KEY_START = 0x008,
-    KEY_RIGHT = 0x010,
-    KEY_LEFT = 0x020,
-    KEY_UP = 0x040,
-    KEY_DOWN = 0x080,
-    KEY_R = 0x100,
-    KEY_L = 0x200
-};
 
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;

@@ -6,34 +6,28 @@
    for a silent start. */
 #include "AUDIO_ENGINE.H"
 
-extern u8 gMusicRestoreDelay;
-extern u16 gMusicVolume;
-extern u16 gMusicVolumeStep;
-extern u16 gMusicVolumeTarget;
 extern u8 Data_02003014;
-extern u8 gAudioSecondaryState;
 
 void Audio_PlaySound(u16 id);
-void Sound_LoadPresetParameters(s32 preset);
 
 void AudioCommand_Play(s32 id)
 {
     s32 flags;
     s32 player;
 
-    flags = id & 0xf000;
-    id &= 0xfff;
+    flags = id & AUDIO_CUE_FLAGS_MASK;
+    id &= AUDIO_CUE_ID_MASK;
 
-    if (id == 17) {
+    if (id == AUDIO_CUE_FADE_BGM) {
         if (Data_02003014 != 0)
             return;
         MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
         Data_02003014++;
         gAudioSecondaryState = 19;
-    } else if (id == 0x121) {
+    } else if (id == AUDIO_CUE_FADE_SLOT3) {
         gMusicPlayerVolumes[3] = 0;
         MusicPlayer_FadeOut(&Data_02004360, 3);
-    } else if (id > 99) {
+    } else if (id >= AUDIO_SONG_FIRST) {
         player = Sound_SongTable[id].slot;
         if (player == 7) {
         next:
@@ -46,21 +40,21 @@ void AudioCommand_Play(s32 id)
         }
         MusicPlayer_StartSong(Sound_PlayerSlots[player].player, Sound_SongTable[id].header);
         gMusicPlayerVolumes[player] = id;
-    } else if (id > 79) {
+    } else if (id >= AUDIO_JINGLE_FIRST) {
         MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
         gMusicVolumeTarget = 0;
         gMusicVolume = 0;
         Audio_PlaySound(id);
         gMusicRestoreDelay = 10;
     } else {
-        if (id == 18)
+        if (id == AUDIO_CUE_KEEP_BGM)
             return;
         if (id == gAudioSecondaryState)
             return;
         gAudioSecondaryState = id;
         Sound_LoadPresetParameters((id == 70 || id == 75 || id == 67) ? 3 : 2);
         Audio_PlaySound(id);
-        if (flags & 0x1000)
+        if (flags & AUDIO_CUE_START_SILENT)
             gMusicVolume = 0;
         else
             gMusicVolume = 0x100;

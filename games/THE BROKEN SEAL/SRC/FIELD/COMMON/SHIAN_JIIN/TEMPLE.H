@@ -8,17 +8,6 @@ extern struct EventWork *gEventWork;
 #define ObjectMotion_CallThenWaitForAnimationChange_9(args...) ((void (*)())Engine_ActorSetAnimationAndWait)(args)
 #define ACTOR_FIELD_108(rec) (*(s32 *)((rec) + 108))
 
-struct EffectRec {
-    u8 pad[9];
-    u8 f0 : 2;
-    u8 f1 : 2;
-};
-
-struct EffectWork {
-    u8 pad[0x50];
-    struct EffectRec *rec;
-};
-
 struct SceneRecordHeading {
     u8 pad[6];
     u16 heading;

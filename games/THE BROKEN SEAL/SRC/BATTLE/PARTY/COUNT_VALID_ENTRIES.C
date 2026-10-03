@@ -1,29 +1,28 @@
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
 
-s32 BattleParty_ListActorIds(s32, u16 *);
-struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 owner);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 
-s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
+s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts)
 {
-    u16 values[8];
+    u16 unit_ids[8];
     struct DjinnRecoveryList *list;
     s32 total;
-    s32 found;
+    s32 count;
     s32 i;
     s32 j;
-    s32 kind;
-    s32 owner;
+    s32 side_mask;
+    s32 side;
 
-    found = 0;
-    kind = 1;
-    if (arg0 > 7)
-        kind = 2;
-    total = BattleParty_ListActorIds(kind, values);
-    owner = 0;
-    if (arg0 > 7)
-        owner = 1;
-    list = &Trade_GetOfferStateFar(owner)->list;
+    count = 0;
+    side_mask = BATTLE_SIDE_PARTY;
+    if (unit_id > 7)
+        side_mask = BATTLE_SIDE_ENEMIES;
+    total = BattleParty_ListActorIds(side_mask, unit_ids);
+    side = 0;
+    if (unit_id > 7)
+        side = 1;
+    list = &Trade_GetOfferStateFar(side)->list;
     if (counts != 0)
         for (j = 3; j >= 0; j--)
             counts[j] = 0;
@@ -32,16 +31,16 @@ s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
         do {
             if (list->entries[i].turns == -1) {
                 for (j = 0; j < total; j++)
-                    if (values[j] == list->entries[i].unit_id)
+                    if (unit_ids[j] == list->entries[i].unit_id)
                         break;
                 if (j != total) {
                     if (counts != 0)
                         counts[list->entries[i].element]++;
-                    found++;
+                    count++;
                 }
             }
             i++;
         } while (i != list->count);
     }
-    return found;
+    return count;
 }

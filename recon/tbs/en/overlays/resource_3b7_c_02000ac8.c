@@ -10,6 +10,7 @@
  * the Japanese one before it; choice and message then trade r9/r10, coins and tickets
  * r7/r8; the sum loop counts down; state + 1 is kept across the prize call. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
@@ -139,12 +140,12 @@ play:
     Task_Wait(5);
     Audio_PlayCue(116);
     for (;;) {
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             Audio_PlayCue(112);
             result = 0;
             break;
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             result = -1;
             break;

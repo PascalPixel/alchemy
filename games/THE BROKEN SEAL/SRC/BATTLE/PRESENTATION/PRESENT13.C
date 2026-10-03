@@ -15,7 +15,7 @@ void BattlePresentation_WaitForAdvance(void);
 void BattleMotion_SetupEscapeObject(s32 unit_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
 s32 ActivateBattleObjectSlot(s32 unit_id);
-extern u8 gTransitionWork[];
+extern struct BattlePresentationTransition *gTransitionWork;
 void BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
@@ -29,7 +29,6 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
 void BattleActor_CommitPlacement(void);
-s32 BattleParty_ListActorIds(s32 mode, u16 *ids);
 void Actor_ResetMotionAtAnchor(s32 id);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 background, s32 level);
 
@@ -48,7 +47,6 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     struct BattlePresentationTransition *view;
     struct BattleSession *battle;
     struct BattleCamera *camera;
-    void **cache;
     struct BattleUnit *unit;
     u16 actor[2];
     u16 ids[14];
@@ -65,13 +63,12 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
         return -1;
     if (unit->class_index == 0)
         BattleCommand_SelectAutomatic(request, 1);
-    cache = (void **)gTransitionWork;
-    view = cache[0];
+    view = gTransitionWork;
     view->frames = 60;
-    battle = cache[9 - 44];
+    battle = gBattleWork;
     view->flag = 0;
     battle->brightness = 0x10000;
-    camera = cache[12 - 44];
+    camera = gCameraWork;
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
     Camera_StoreSceneParameters(0x01fe0000, DivQ16(0x01fe0000, 0xc000), 0x7fff0000);
@@ -126,7 +123,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     BattleMotion_DestroyAllSlotObjects();
     BattleUnit_ProcessTurnEnd(&battle->plan);
     BattleActor_CommitPlacement();
-    count = BattleParty_ListActorIds(3, ids);
+    count = BattleParty_ListActorIds(3, (u16 *)ids);
     for (i = 0; i < count; i++)
         Actor_ResetMotionAtAnchor(ids[i]);
     request->unit_id = 0xff;
@@ -175,10 +172,8 @@ s32 BattlePres_BuildTargetList(
 
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 {
-    u8 *presentation_addr = gTransitionWork;
-    void **cache = (void **)presentation_addr;
-    struct BattlePresentationTransition *presentation = cache[0];
-    struct BattleSession *scene = cache[9 - 44];
+    struct BattlePresentationTransition *presentation = gTransitionWork;
+    struct BattleSession *scene = gBattleWork;
     s32 completed = 0;
     s32 party_mode;
 

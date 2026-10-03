@@ -10,6 +10,7 @@
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
@@ -109,7 +110,7 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
         object->speed_limit = 0x8000;
         object->acceleration = 0x4000;
     }
-    if ((gKeysRepeat & 0x200) != 0)
+    if ((gKeysRepeat & KEY_L) != 0)
         object->speed_limit = 0x40000;
 
     angle = Data_08013254[(gKeysHeld >> 4) & 15];
@@ -124,7 +125,7 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset(0x80000, direction, &position);
-    if (gDebugMode != 0 && (gKeysHeld & 0x200) != 0)
+    if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
         goto update_object;
     left_position.x = object->x;
     left_position.y = object->y;

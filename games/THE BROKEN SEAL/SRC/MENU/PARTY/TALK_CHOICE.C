@@ -1,3 +1,4 @@
+#include "IO_REG.H"
 #include "RESOURCE.H"
 #include "EDITION.H"
 #include "DMA.H"
@@ -68,26 +69,26 @@ s32 PartyTalkMenu_Choose(void)
             Shop_SetCursorFar(&cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
         }
         ShopCursor_AdvanceFar(&cursor);
-        if (gKeysRepeat & 0x40) {
+        if (gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111);
             row--;
             moved = 1;
             if (row == -1)
                 row = 2;
         }
-        if (gKeysRepeat & 0x80) {
+        if (gKeysRepeat & KEY_DOWN) {
             Audio_PlayCue(111);
             row++;
             moved = 1;
             if (row == 3)
                 row = 0;
         }
-        if (gKeysRepeat & 2) {
+        if (gKeysRepeat & KEY_B) {
             Audio_PlayCue(113);
             row = -1;
             goto close;
         }
-    } while (!(gKeysRepeat & 1));
+    } while (!(gKeysRepeat & KEY_A));
     Audio_PlayCue(112);
 close:
     UiWork_Finalize(window, 2);

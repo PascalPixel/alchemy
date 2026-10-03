@@ -10,7 +10,6 @@
 
 void Sound_Mixer(void);
 void AudioEngine_Initialize(struct SoundWork *work);
-void CgbAudio_Initialize(struct SoundNote *notes);
 void AudioEngine_SetMode(u32 mode);
 void AudioEngine_RunMixerTick(void);
 void MusicPlayer_Initialize(struct SoundPlayer *player, struct SoundTrack *tracks, u8 count);
@@ -18,9 +17,8 @@ void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHead
 void MusicPlayer_Stop(struct SoundPlayer *player);
 void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
-void AudioCommand_InvokeSlot35(void *block);
 extern struct SoundWork Sound_Work;
-extern struct SoundNote Sound_CgbNotes[4];
+extern struct CgbNote Sound_CgbNotes[4];
 extern u8 Sound_WorkBytes[];
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];
@@ -28,7 +26,6 @@ extern const struct SongEntry Sound_SongTable[];
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_SetLfoSpeedFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_SetModulationFromCommand(struct SoundPlayer *player, struct SoundTrack *track);
-void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player, struct SoundTrack *track);
 void MusicTrack_ReleaseKey(struct SoundPlayer *player, struct SoundTrack *track);
 void AudioEngine_SetPcmRate(u32 mode);
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
@@ -43,7 +40,7 @@ void Audio_ResumePlayer(struct SoundPlayer *player)
 {
     if (player->lock == SOUND_LOCK) {
         player->lock++;
-        player->status &= 0x7fffffff;
+        player->status &= ~SOUND_PLAYER_PAUSED;
         player->lock = SOUND_LOCK;
     }
 }
@@ -125,7 +122,7 @@ void Audio_PlaySoundIfInactive(u16 id)
 
     if (player->header != song->header)
         MusicPlayer_StartSong(player, song->header);
-    else if ((player->status & 0xFFFF) == 0 || (player->status & 0x80000000))
+    else if ((player->status & 0xFFFF) == 0 || (player->status & SOUND_PLAYER_PAUSED))
         MusicPlayer_StartSong(player, song->header);
 }
 
@@ -140,7 +137,7 @@ void Audio_PlayOrResumeSound(u16 id)
         MusicPlayer_StartSong(player, song->header);
     else if ((player->status & 0xFFFF) == 0)
         MusicPlayer_StartSong(player, song->header);
-    else if (player->status & 0x80000000)
+    else if (player->status & SOUND_PLAYER_PAUSED)
         Audio_ResumePlayer(player);
 }
 
@@ -254,7 +251,7 @@ void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed)
         player->fade_counter = speed;
         player->fade_period = speed;
         player->fade_volume = 2;
-        player->status &= 0x7FFFFFFF;
+        player->status &= ~SOUND_PLAYER_PAUSED;
         player->lock = SOUND_LOCK;
     }
 }
@@ -265,10 +262,10 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
     struct SoundTrack *track = player->tracks;
 
     while (count > 0) {
-        if (track->flags & 0x80) {
-            if (track->flags & 0x40) {
+        if (track->flags & SOUND_TRACK_ACTIVE) {
+            if (track->flags & SOUND_TRACK_RESET) {
                 AudioCommand_InvokeSlot35(track);
-                track->flags = 0x80;
+                track->flags = SOUND_TRACK_ACTIVE;
                 track->bend_range = 2;
                 track->volume_scale = 0x40;
                 track->lfo_speed = 22;
@@ -280,7 +277,7 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
     }
 }
 
-void CgbAudio_Initialize(struct SoundNote *notes)
+void CgbAudio_Initialize(struct CgbNote *notes)
 {
     struct SoundWork *work;
     u32 lock;

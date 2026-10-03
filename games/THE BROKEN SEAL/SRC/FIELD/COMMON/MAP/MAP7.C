@@ -91,7 +91,7 @@ void Map_ShowWorldMap(void)
         UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotOnMap, 1);
     do {
         WaitFrames(1);
-    } while ((gKeysRepeat & 3) == 0);
+    } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
     Scheduler_RemoveCallback((u32)Map_UpdateWorldMapMarkers);
     BattleFx_CleanupResourcesAndWindow();
     {
@@ -191,13 +191,13 @@ void BattleFx_RunVisibilityTransition(void)
     BattleFx_UpdateObjectVisibilityBounds();
     Battle_InitializeRenderObject();
     BattleFx_ScheduleRatioTransition(0x9D89, 6);
-    if ((*((volatile u32 *) ((u32)&gKeysHeld))) & 0x200)
+    if ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L)
     {
       do
       {
         WaitFrames(1);
       }
-      while ((*((volatile u32 *) ((u32)&gKeysHeld))) & 0x200);
+      while ((*((volatile u32 *) ((u32)&gKeysHeld))) & KEY_L);
     }
     BattleFx_ScheduleRatioTransition(0x10000, 6);
     Scheduler_DisableOverlayCallbacks();

@@ -1,9 +1,9 @@
 #include "TYPES.H"
+#include "BATTLE_EVENT.H"
 #include "SCENE.H"
 void BattlePres_SetActorModes(u16 *, s32);
 void BattlePresentation_WaitForAdvance(void);
 s32 Battle_ResolveTargetAction(void *, s32);
-s32 BattleEv_DispatchQueued();
 
 s32 WaitFrames(s32);
 

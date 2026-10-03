@@ -1,6 +1,7 @@
 #include "WORKSPACE_OPTIONS.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
@@ -111,18 +112,18 @@ redraw_menu:
     }
     Ui_ApplyTableOffsetToPair(pair);
     WaitFrames(1);
-    if (*(volatile s32 *)gKeyState & 1) {
+    if (*(volatile s32 *)gKeyState & KEY_A) {
         result = page;
         Audio_PlayCue(SOUND_MENU_CONFIRM);
-    } else if (*(volatile s32 *)gKeyState & 0xA) {
+    } else if (*(volatile s32 *)gKeyState & (KEY_B | KEY_START)) {
         result = -1;
         Audio_PlayCue(SOUND_MENU_CANCEL);
     } else {
-        if (*(volatile s32 *)gKeysRepeat & 0x40) {
+        if (*(volatile s32 *)gKeysRepeat & KEY_UP) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             page -= 1;
             redraw = 1;
-        } else if (*(volatile s32 *)gKeysRepeat & 0x80) {
+        } else if (*(volatile s32 *)gKeysRepeat & KEY_DOWN) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             page += 1;
             redraw = 1;

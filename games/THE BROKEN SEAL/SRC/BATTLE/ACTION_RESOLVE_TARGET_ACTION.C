@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_ACTOR.H"
 #include "BATTLE_CALC.H"
@@ -15,7 +16,6 @@
 
 void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
 void BattleActor_CommitPlacement(void);
-s32 BattleParty_ListPresentEnemies(s16 *entries);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 /* 行動1件の対象解決。コピーを取り、命中とダメージ種別を決めて効果を出す。 */
@@ -1107,7 +1107,7 @@ pp_store:
     case EFX_INSTANT_DOWN:
 
         BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
-        if (target->status_12a == 2)
+        if (target->status_12a == BATTLE_UNIT_PARTY)
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgKoDown);
         else if (action_id == 219)
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgSuffocate);

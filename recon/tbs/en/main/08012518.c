@@ -56,6 +56,7 @@
  */
 
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 #include "METADATA_LOOKUP.H"
 #include "DMA.H"
@@ -216,7 +217,7 @@ restart:
             }
         }
 
-        if ((*(s32 *)gKeyState & 8) != 0) {
+        if ((*(s32 *)gKeyState & KEY_START) != 0) {
             tbl = *(u8 **)gSpriteObjects;
             flag = flag ^ 1;
             tbl += 38;

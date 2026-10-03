@@ -4,15 +4,6 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-struct EventActor {
-    u8 reserved_00[0x23];
-    u8 flags;
-    u8 reserved_24[0x2c];
-    u8 *render_state;
-};
-
 s16 ArcTan2(s32, s32);
 
 extern const struct SceneEntrance YamaRama_TempleEntrances[];
@@ -35,26 +26,6 @@ extern u8 MsgYamaRobinDidLiftBoulder[];
 extern u8 MsgYamaYahhSilkRoadBouldersBlock[];
 extern u8 MsgYamaYoungWarriorsDoComeFrom[];
 
-struct Slot020008e0 {
-    u8 head[6];
-    u16 heading;
-};
-
-struct Actor02001060 {
-    u8 head[12];
-    s32 rank;
-    u8 body[19];
-    u8 flags;
-};
-
-struct Actor {
-    s32 f00;
-    s32 f04;
-    s32 f08;
-    s32 f0c;
-    s32 f10;
-};
-
 /* Tables laid out after the code. */
 extern const u16 YamaRama_BoulderCells[];
 extern const u16 YamaRama_BoulderCellsBack[];
@@ -62,7 +33,7 @@ extern const u8 YamaRama_HsuAction[];
 extern const u8 YamaRama_LeaderAction[];
 void Object_RefreshSelectorById();
 void BattleFx_PlayQueuedSound(void);
-s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor);
+s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor);
 s32 OverlayObject_SetFacingTowardObject10(void *self);
 
 /* Two sites reach this one symbol with different arities; old-style so both
@@ -96,20 +67,22 @@ void FieldScene_SetSlot15Byte89AndRunStep(void);
 void Scene_RunActorExchange(void);
 
 /* Actor callbacks that open the mountain overlay. */
-s32 EventScript_PrepareActorRenderFlags(struct EventActor *actor)
+s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
 {
-    actor->flags &= ~1;
-    actor->render_state[9] |= 0xc;
-    actor->render_state[21] |= 0xc;
+    actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    actor->sprite->priority = 3;
+    actor->sprite->second_priority = 3;
     return 0;
 }
 
 s32 OverlayObject_SetFacingTowardObject10(void *self)
 {
-    void *obj;
+    struct FieldActor *actor = self;
+    struct FieldActor *obj;
 
-    obj = (void *)Object_GetById(0xA);
-    FIELD_AT_OFFSET(self, s16 *, 6) = ArcTan2(FIELD_AT_OFFSET(obj, s32 *, 0x10) - FIELD_AT_OFFSET(self, s32 *, 0x10), FIELD_AT_OFFSET(obj, s32 *, 8) - FIELD_AT_OFFSET(self, s32 *, 8));
+    obj = Object_GetById(0xA);
+    actor->facing = ArcTan2(obj->z.fixed - actor->z.fixed,
+        obj->x.fixed - actor->x.fixed);
     return 0;
 }
 
@@ -420,7 +393,7 @@ void FieldScene_RunScene3a2_020008a8(void)
 void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 {
 
-    u32 heading = ((struct Slot020008e0 *)Object_GetById(0))->heading;
+    u32 heading = ((struct FieldActor *)Object_GetById(0))->facing;
 
     Engine_EventBegin();
     if (heading - 0xA001 <= 0x3FFE) {
@@ -707,21 +680,21 @@ void SceneState_RunRect6x28Step(void)
     Engine_EventWait(1);
 }
 
-s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor)
+s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct FieldActor *actor)
 {
-    if (((struct Actor02001060 *)Object_GetById(0))->rank > actor->rank) {
-        actor->flags |= 2;
+    if (((struct FieldActor *)Object_GetById(0))->y.fixed > actor->y.fixed) {
+        actor->priority_flags |= 2;
     } else {
-        actor->flags &= 0xFD;
+        actor->priority_flags &= 0xFD;
     }
 }
 
 void SceneActor_UpdateActorFourteenByDepth(void)
 {
-    struct Actor *current = (void *)Object_GetById(0);
-    struct Actor *other = (void *)Object_GetById(14);
+    struct FieldActor *current = (void *)Object_GetById(0);
+    struct FieldActor *other = (void *)Object_GetById(14);
 
-    if (current->f10 <= other->f10) {
+    if (current->z.fixed <= other->z.fixed) {
         Engine_ActorSetSpritePriority(14, 1);
     }
 }

@@ -2,6 +2,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
+#include "FIELDRUN.H"
 #include "OBJECT_DISPATCH.H"
 #include "ANIMSPR.H"
 #include "SCRIPT_MOTION.H"
@@ -91,14 +92,11 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *raw_first, struct
 void ObjectTable_DestroyById(s32 index)
 {
     void *object = ObjectTable_Get(index);
-    u8 *base = gEventWork;
-    s32 offset;
+    struct ObjectSlotTable *table = (struct ObjectSlotTable *)gEventWork;
 
     if (object != 0) {
         Object_Destroy(object);
-        offset = index * 4;
-        offset += 20;
-        *(s32 *)(base + offset) = 0;
+        table->slots[index] = NULL;
     }
 }
 

@@ -5,6 +5,7 @@
  * WALL: reference indirect dispatch and later block topology still differ.
  */
 #include "TYPES.H"
+#include "IO_REG.H"
 
 /*
  * Battle_CollectPartyCommands (main:08027114, 4224 bytes).
@@ -334,7 +335,7 @@ handshake_done:
         }
         if (mode == 7) {
             block = Runtime_BumpAllocate(12);
-            if (gDebugMode != 0 && (gKeysHeld & 8) != 0) {
+            if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
                 sel = 2;
             } else {
                 sel = 1;

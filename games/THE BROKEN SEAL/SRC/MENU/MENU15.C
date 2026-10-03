@@ -284,21 +284,21 @@ s32 Menu_RunWorkspaceOptions(void)
             Audio_PlayCue(113);
             break;
         }
-        if (gKeysRepeat & 64) {
+        if (gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111);
             page--;
             redraw = 1;
-        } else if (gKeysRepeat & 128) {
+        } else if (gKeysRepeat & KEY_DOWN) {
             Audio_PlayCue(111);
             page++;
             redraw = 1;
         } else {
-            if (gKeysRepeat & 32) {
+            if (gKeysRepeat & KEY_LEFT) {
                 Audio_PlayCue(111);
                 work->option[page]--;
                 redraw = 1;
             }
-            if (gKeysRepeat & 16) {
+            if (gKeysRepeat & KEY_RIGHT) {
                 Audio_PlayCue(111);
                 work->option[page]++;
                 redraw = 1;

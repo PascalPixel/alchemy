@@ -1,6 +1,7 @@
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY_MENU.H"
 #include "SYSTEM.H"
 
@@ -87,8 +88,8 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
             menu->owner_y[selection] = 26;
         }
         WaitFrames(1);
-        if (gKeyState & 1) {
-            if (gKeysHeld & 0x200) {
+        if (gKeyState & KEY_A) {
+            if (gKeysHeld & KEY_L) {
                 sort_mode = (sort_mode + 4) % 4;
                 InventoryMenu_SortByListOrder(owner->inventory, sort_mode);
                 sort_mode++;
@@ -102,25 +103,25 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
                 Audio_PlayCue(114);
             }
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             result = -1;
             break;
         }
-        if (gKeyState & 0x100) {
+        if (gKeyState & KEY_R) {
             by_category = 1;
             pending = 1;
         }
-        if (!(gKeysHeld & 0x100) && by_category == 1) {
+        if (!(gKeysHeld & KEY_R) && by_category == 1) {
             by_category = 0;
             pending = 1;
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             Audio_PlayCue(111);
             selection--;
             pending = 1;
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             Audio_PlayCue(111);
             selection++;
             pending = 1;

@@ -183,7 +183,7 @@ void WaitFrames(s32 frames)
                         gSleepRequested = 1;
                 }
             }
-            if (gKeysHeld == 0x300) {
+            if (gKeysHeld == KEYS_SHOULDERS) {
                 gSleepComboFrames++;
                 if (gSleepComboFrames >= 180) {
                     gSleepComboFrames = 0;
@@ -196,11 +196,11 @@ void WaitFrames(s32 frames)
         if (gDebugMode) {
             for (;;) {
                 if (gDebugPaused) {
-                    if (gKeysRepeat & 7)
+                    if (gKeysRepeat & (KEY_A | KEY_B | KEY_SELECT))
                         break;
-                    if (gKeysHeld & 0xf0)
+                    if (gKeysHeld & KEYS_DPAD)
                         break;
-                    if (gKeysRepeat & 8) {
+                    if (gKeysRepeat & KEY_START) {
                         gDebugPaused = 0;
                         break;
                     }

@@ -1,23 +1,22 @@
+#include "FIELDOBJ.H"
 #include "HEYA.H"
 
-void SetEffectRecordMode(struct EffectWork *work, s32 mode)
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
-    work->record->mode = mode;
+    work->sprite->priority = mode;
 }
 
 void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 {
-    void *obj;
-    void *rec;
-    s32 mask;
+    struct FieldActor *obj;
+    struct FieldSprite *rec;
 
     obj = Object_Create(kind, x, y, z);
     if (obj != NULL) {
-        rec = FIELD_AT_OFFSET(obj, void *, 0x50);
-        mask = -0xD;
-        FIELD_AT_OFFSET(rec, u8, 9) = (u8)(mask & FIELD_AT_OFFSET(rec, u8, 9));
-        FIELD_AT_OFFSET(obj, u8, 0x55) = 0;
-        FIELD_AT_OFFSET(obj, u8, 0x59) = 8;
+        rec = obj->sprite;
+        rec->priority = 0;
+        obj->motion_flags = 0;
+        obj->collision_flags = 8;
         Engine_ActorSetSpriteFlags(obj, 0);
         ObjectGroup_SetChildValue(obj, 0xE);
         Engine_ObjectSetBlendMode(obj, 1);
@@ -27,27 +26,21 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 }
 
 /* Creates an object of the given kind at (x, y, z) and configures it: the
- * sprite's blend bits become mode 1, its flags clear, palette 15, and the
+ * sprite's priority becomes 1, its flags clear, palette 15, and the
  * object's draw bits select the second layer. */
 void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = (u8 *)Object_Create(kind, x, y, z);
+    struct FieldActor *effect = Object_Create(kind, x, y, z);
 
     if (effect != NULL) {
-        u8 *sprite = *(u8 **)(effect + 0x50);
-        s32 flags;
-        s32 mask = 13;
+        struct FieldSprite *sprite = effect->sprite;
 
-        flags = sprite[9];
-        mask = -mask;
-        mask &= flags;
-        mask |= 4;
-        sprite[9] = mask;
-        effect[0x55] = 0;
-        effect[0x59] = 8;
-        Engine_ActorSetSpriteFlags((struct FieldActor *)effect, 0);
-        ObjectGroup_SetChildValue((struct FieldActor *)effect, 15);
-        effect[0x23] = (effect[0x23] & 0xfe) | 2;
+        sprite->priority = 1;
+        effect->motion_flags = 0;
+        effect->collision_flags = 8;
+        Engine_ActorSetSpriteFlags(effect, 0);
+        ObjectGroup_SetChildValue(effect, 15);
+        effect->priority_flags = (effect->priority_flags & 0xfe) | 2;
         return effect;
     }
     return NULL;

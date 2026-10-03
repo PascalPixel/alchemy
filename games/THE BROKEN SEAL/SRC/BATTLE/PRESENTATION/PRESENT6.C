@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_WORK.H"
@@ -161,24 +162,22 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 }
 
 /* Removed members are skipped; the end marker means no matching slot. */
-/* Combining the two named-array scans reduced the complete extent from
-   92 to 68 bytes in all six editions. Keep the separate byte-offset scans. */
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
     s32 index;
     s32 tag;
     s32 offset;
-    char *base;
+    s16 *units;
     s16 item;
 
-    base = (char *)gBattleWork;
     if (value <= 7) {
         tag = 0x80;
         index = 0;
         tag <<= 1;
-        offset = 0x58;
+        units = gBattleWork->party_units;
+        offset = 0;
 first:
-        item = *(s16 *)(offset + (u32)base);
+        item = units[offset];
         if (item == 0xff)
             return -1;
         if (item == 0xfe)
@@ -186,18 +185,18 @@ first:
         if (item == value)
             return index | tag;
 next_first:
-        offset += 2;
+        offset++;
         index++;
         goto first;
     }
 
     tag = 0xc0;
     index = 0;
-    base += 2;
+    units = gBattleWork->enemy_units;
     tag <<= 1;
-    offset = 0x64;
+    offset = 0;
 second:
-    item = *(s16 *)(offset + (u32)base);
+    item = units[offset];
     if (item == 0xff)
         return -1;
     if (item == 0xfe)
@@ -205,7 +204,7 @@ second:
     if (item == value)
         return index | tag;
 next_second:
-    offset += 2;
+    offset++;
     index++;
     goto second;
 }
@@ -213,9 +212,8 @@ next_second:
 /* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-    void **slot = (void **)&gCameraWork;
-    struct BattleCamera *cam = slot[0];
-    struct BattlePresentationTransition *trans = slot[32];
+    struct BattleCamera *cam = gCameraWork;
+    struct BattlePresentationTransition *trans = gTransitionWork;
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {

@@ -46,13 +46,6 @@ void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *object);
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "OVERLAY_OBJECT.H"
 
-typedef struct {
-    u8 pad[9];
-    u8 f0 : 2;
-    u8 f1 : 2;
-    u8 f2 : 4;
-} S;
-
 union MotionWork {
     struct {
         u32 unk_00[2];

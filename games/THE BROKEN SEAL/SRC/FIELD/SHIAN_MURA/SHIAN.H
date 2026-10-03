@@ -7,19 +7,6 @@
 #include "SCENE_EFFECT_SEQUENCE.H"
 #include "IWRAM_CALL.H"
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
 struct PeriodicEffectConfig {
     s32 kind;
     s32 variant;

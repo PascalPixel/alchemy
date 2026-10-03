@@ -104,9 +104,8 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
-    void **slot = (void **)&gCameraWork;
-    struct BattleCamera *cam = slot[0];
-    struct BattlePresentationTransition *trans = slot[32];
+    struct BattleCamera *cam = gCameraWork;
+    struct BattlePresentationTransition *trans = gTransitionWork;
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {

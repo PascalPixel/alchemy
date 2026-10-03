@@ -24,7 +24,6 @@ void Camera_StoreSceneParameters(u32, u32, u32);
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
 s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
-s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 
 void Owner_RecalculateStatsFar(u16 id);
 
@@ -116,7 +115,7 @@ void BattleUnit_ClearField12bForGroup(void)
     s32 count;
     s32 index;
 
-    count = BattleParty_ListActorIds(3, ids);
+    count = BattleParty_ListActorIds(3, (u16 *)ids);
     for (index = 0; index < count; index++) {
         struct BattleUnit *actor;
 

@@ -1,6 +1,4 @@
-#include "TYPES.H"
-
-extern u8 gMusicRestoreDelay[];
+#include "AUDIO_ENGINE.H"
 
 s32 WaitFrames(s32);
 
@@ -10,7 +8,7 @@ void AudioCommand_WaitForCompletion(void)
     s32 wait_count = 0;
 
     do {
-        if (*(u8 *)gMusicRestoreDelay == 0)
+        if (gMusicRestoreDelay == 0)
             break;
         WaitFrames(1);
         wait_count++;

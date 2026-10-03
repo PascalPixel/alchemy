@@ -1,18 +1,19 @@
-/* Draft, not exact: 572 of 572 bytes. Moves one 20-byte block of a bulk link
-   transfer per frame. The pooled 1 in r8 and the early literal pool come from
-   a one kept in a one-halfword record (a HImode value); the 0x7f, the zero and
-   the peer flag in lr come from writing the tests without a kind variable.
-   Remaining: the ROM keeps the peer payload pointer in ip and the transfer
-   cursor address in r7 in both halves; here the two are swapped (the peer
-   pointer has 11 uses against the cursor pointer 10 over the same length). */
+/* Draft, not exact: 548 of 572 bytes with the canonical TBS flags.
+ * 2026-10-03: fresh baseline score 2375 (59 register-only, 8 operand,
+ * 10 reordered, 1 inserted, 12 deleted). The earlier 572-byte result in
+ * this header is not reproduced by the current source and toolchain.
+ * Trial: separate receive/send cursor scopes emit the identical 548-byte
+ * object and score; retained to make the two transfer stages explicit.
+ * Remaining: the peer packet stays in r7 instead of ip, cursor addresses
+ * are reloaded, and branch/store topology also differs. Cursor scoping
+ * alone does not resolve the mismatch; this experiment is closed.
+ */
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
 
-/* Moves one 20-byte block of a bulk transfer per frame through the link
-   packets: block B receives into the destination pointer when the peer's
-   sequence matches ours, block A sends from the source pointer and rewinds
-   when the peer reports a gap. */
-
+/* VBlank receives first, then sends, using one shared sequence and reply
+   byte. Each block carries 20 bytes; the high sequence bit requests a
+   resend, and a final-block exchange releases the active cursors. */
 
 extern volatile u16 gLinkStatus;
 
@@ -20,11 +21,10 @@ void SerialRuntime_StepBlockTransfer(void)
 {
     struct SerialTransferState *peer;
     struct SerialTransferState *own;
-    volatile s32 *slot;
-    s32 dest;
-    s32 src;
     u32 gap;
     u32 id;
+    /* FAKEMATCH: the halfword record retains the measured pooled-one
+       construction; it is not protocol state. */
     struct { u16 v; } one;
 
     one.v = 1;
@@ -34,82 +34,90 @@ void SerialRuntime_StepBlockTransfer(void)
     if ((gLinkStatus & 3) != 3)
         return;
 
-    slot = &SERIAL_ACTIVE_B;
-    dest = *slot;
-    if (dest != 0) {
-        if (own->flags == 1 && (u8)(peer->peer_flags - 1) <= 1) {
-            if (peer->active == (gSerialBlockSequence & 0x7f)) {
-                own->active = 0;
-                switch (peer->peer_flags) {
-                case 1:
-                    Dma_Set(peer->reserved, (void *)dest, 0x84000005, (volatile u32 *)0x040000d4);
-                    *slot += 20;
-                    SERIAL_VALUE_B += 20;
-                    own->status = (own->status + 1) | 0x80;
-                    break;
-                case 2:
-                    Dma_Set(peer->reserved, (void *)dest, 0x84000005, (volatile u32 *)0x040000d4);
-                    SERIAL_VALUE_B += 20;
-                    own->flags = 2;
-                    own->status = 0;
-                    own->active = one.v;
-                    break;
-                }
-                gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
-            } else if (gSerialBlockSequence & 0x80) {
-                if (own->active & 0x80) {
-                    own->active = one.v;
-                } else if (own->active == 1) {
+    /* flags: 1 requests blocks; 2 acknowledges the final block. */
+    {
+        volatile s32 *receive = &gSerialReceiveDest;
+        s32 dest = *receive;
+
+        if (dest != 0) {
+            if (own->flags == 1 && (u8)(peer->peer_flags - 1) <= 1) {
+                if (peer->active == (gSerialBlockSequence & 0x7f)) {
                     own->active = 0;
-                    gSerialBlockSequence &= 0x7f;
+                    switch (peer->peer_flags) {
+                    case 1:
+                        Dma_Set(peer->reserved, (void *)dest, 0x84000005, (volatile u32 *)0x040000d4);
+                        *receive += 20;
+                        gSerialReceivedSize += 20;
+                        own->status = (own->status + 1) | 0x80;
+                        break;
+                    case 2:
+                        Dma_Set(peer->reserved, (void *)dest, 0x84000005, (volatile u32 *)0x040000d4);
+                        gSerialReceivedSize += 20;
+                        own->flags = 2;
+                        own->status = 0;
+                        own->active = one.v;
+                        break;
+                    }
+                    gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+                } else if (gSerialBlockSequence & 0x80) {
+                    if (own->active & 0x80) {
+                        own->active = one.v;
+                    } else if (own->active == 1) {
+                        own->active = 0;
+                        gSerialBlockSequence &= 0x7f;
+                    }
+                } else {
+                    own->active = gSerialBlockSequence | 0x80;
+                    gSerialBlockSequence |= 0x80;
                 }
             } else {
-                own->active = gSerialBlockSequence | 0x80;
-                gSerialBlockSequence |= 0x80;
+                own->active = 0;
             }
-        } else {
-            own->active = 0;
         }
     }
 
-    slot = &SERIAL_ACTIVE_A;
-    src = *slot;
-    if (src != 0) {
-        if (peer->flags == 1) {
-            if (peer->active & 0x80) {
-                gap = (gSerialBlockSequence - peer->active) & 0x7f;
-                *slot = src - gap * 20;
-                SERIAL_VALUE_A += gap * 20;
-                gSerialBlockSequence -= gap;
-                gSerialBlockSequence &= 0x7f;
+    /* peer_flags: 1 carries more data; 2 carries the final block. */
+    {
+        volatile s32 *send = &gSerialSendSource;
+        s32 src = *send;
+
+        if (src != 0) {
+            if (peer->flags == 1) {
+                if (peer->active & 0x80) {
+                    gap = (gSerialBlockSequence - peer->active) & 0x7f;
+                    *send = src - gap * 20;
+                    gSerialSendSize += gap * 20;
+                    gSerialBlockSequence -= gap;
+                    gSerialBlockSequence &= 0x7f;
+                }
+                if (gSerialSendSize != 0) {
+                    Dma_Set((void *)*send, own->reserved, 0x84000005, (volatile u32 *)0x040000d4);
+                    gSerialSendSize += (u16)-20;
+                    if (gSerialSendSize != 0)
+                        own->peer_flags = 1;
+                    else
+                        own->peer_flags = 2;
+                    own->active = gSerialBlockSequence & 0x7f;
+                    *send += 20;
+                    gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+                }
             }
-            if (SERIAL_VALUE_A != 0) {
-                Dma_Set((void *)*slot, own->reserved, 0x84000005, (volatile u32 *)0x040000d4);
-                SERIAL_VALUE_A += (u16)-20;
-                if (SERIAL_VALUE_A != 0)
-                    own->peer_flags = 1;
-                else
-                    own->peer_flags = 2;
-                own->active = gSerialBlockSequence & 0x7f;
-                *slot += 20;
-                gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+            if (own->peer_flags == 2 && peer->flags == 2) {
+                gSerialSendSource = 0;
+                own->peer_flags = 0;
+                own->active = 1;
             }
-        }
-        if (own->peer_flags == 2 && peer->flags == 2) {
-            SERIAL_ACTIVE_A = 0;
-            own->peer_flags = 0;
-            own->active = 1;
         }
     }
 
     if (own->flags == 2) {
         if (peer->peer_flags != 2) {
-            SERIAL_ACTIVE_B = 0;
+            gSerialReceiveDest = 0;
             own->flags = 0;
         }
     } else {
         own->flags = 0;
-        if (SERIAL_ACTIVE_B != 0)
+        if (gSerialReceiveDest != 0)
             own->flags = 1;
     }
 }

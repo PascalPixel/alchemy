@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
-extern u8 gSerialExchangeActive[];
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {

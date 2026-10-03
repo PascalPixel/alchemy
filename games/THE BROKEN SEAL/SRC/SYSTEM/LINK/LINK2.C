@@ -7,6 +7,7 @@
 #include "FIXED_MATH.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
+#include "KEYSTATE.H"
 
 void Camera_ConfigureSceneFar(s32 offset);
 void Link_DrawShiftedTilePair(s32 destination);
@@ -58,7 +59,6 @@ void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWork_Finalize(struct Work *work, s32 release);
 extern u8 gGameState[];
-extern volatile s32 gKeyState;
 extern char MsgNoTimeToRun;
 
 void UpdateLinkSessionCountdown(void)
@@ -210,9 +210,10 @@ active:
         UiText_DecodeMessage((s32)&MsgNoTimeToRun, buffer, TEXT_COUNT);
 #endif
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
+        /* VBlank updates the pressed keys while this loop waits. */
         do {
             WaitFrames(1);
-        } while ((gKeyState & (KEY_A | KEY_B)) == 0 &&
+        } while ((*(volatile u32 *)&gKeyState & (KEY_A | KEY_B)) == 0 &&
                  *(s32 *)((u8 *)gLinkCountdownWork + 0x4C) != 0);
         UiWork_Finalize(work, 1);
     }

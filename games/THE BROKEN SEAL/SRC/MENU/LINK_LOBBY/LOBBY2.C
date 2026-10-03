@@ -18,7 +18,6 @@ extern u8 MsgLobbyLinkDisconnected[];
 
 extern u8 MsgEnemyLabel[];
 extern u8 gLinkStatus[];
-s32 SerialRuntime_BeginTransferB(void);
 s32 SerialRuntime_GetActiveTransfers(void);
 u8 *Owner_GetState(s32 owner);
 void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
@@ -167,7 +166,7 @@ next:
     }
     rec = Owner_GetState(slot + 128);
     tries = 0;
-    if ((ret = SerialRuntime_BeginTransferB()) == -1) {
+    if ((ret = SerialRuntime_BeginTransferB(rec)) == -1) {
         goto failed;
     }
     goto test1;
@@ -198,9 +197,8 @@ second:
     Runtime_BumpFree(heap);
     size = 0x140;
     heap = (s32)Runtime_BumpAllocateAlternatePool((s32)size);
-    Trade_GetOfferState(1);
     tries = 0;
-    if ((ret = SerialRuntime_BeginTransferB()) != -1) {
+    if ((ret = SerialRuntime_BeginTransferB(Trade_GetOfferState(1))) != -1) {
         goto test2;
     }
 failed:

@@ -1,11 +1,7 @@
 #include "SERIAL_RUNTIME.H"
 #include "DMA.H"
 
-void Runtime_SetIrqHandler(s32 irq, s32 vcount, InterruptHandler handler);
-void SerialRuntime_HandleTransferInterrupt(void);
 void BattleLink_ResetTransferState(void);
-
-extern volatile u16 gSerialExchangeActive;
 
 /* Starts the serial runtime: installs the serial and timer interrupt
  * handlers, resets the SIO registers into multiplayer mode, clears the
@@ -54,7 +50,8 @@ void SerialRuntime_Initialize(void)
     REG_IME = 0;
     REG_IE |= 0x80;
     REG_IME = 1;
-    gSerialExchangeActive = 1;
+    /* VBlank checks this flag while interrupts are enabled. */
+    *(volatile u16 *)&gSerialExchangeActive = 1;
     gLinkExchangeState = 0;
     gSerialSendSource = 0;
     gSerialSendSize = 0;

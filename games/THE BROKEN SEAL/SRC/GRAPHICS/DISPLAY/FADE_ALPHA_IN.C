@@ -1,6 +1,7 @@
+#include "SYSTEM.H"
 #include "TYPES.H"
 
-s32 WaitFrames(s32);
+
 
 void Graphics_FadeAlphaIn(void)
 {

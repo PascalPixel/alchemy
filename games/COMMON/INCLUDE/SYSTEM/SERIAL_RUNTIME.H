@@ -5,10 +5,7 @@
 #include "LAYOUT_GUARD.H"
 #include "SYSTEM.H"
 #include "IO_REG.H"
-
-#define SERIAL_RUNTIME_TU
-
-typedef void (*InterruptHandler)(void);
+#include "IRQ.H"
 
 struct DmaRegisters {
     u32 source;
@@ -79,14 +76,19 @@ struct SerialTransferState {
     DMA3->control = (control_); \
 } while (0)
 
-void Func_0800307c(s32 index, s32 priority, InterruptHandler handler);
 s32 SerialRuntime_PollStatus(void);
-void Func_080060e8(void *payload);
-u8 Func_0800615c(void *payload);
-void Func_08006240(void);
-void Func_0800651c(void);
+s32 SerialRuntime_ExchangePayloads(void *send, void *receive);
+void SerialRuntime_PrepareSendPacket(void *payload);
+u8 SerialRuntime_CollectReceivedPayloads(void *payload);
+void SerialRuntime_StepBlockTransfer(void);
+s32 SerialRuntime_BeginTransferA(void *source, s32 size);
+s32 SerialRuntime_BeginTransferB(void *destination);
+void SerialRuntime_HandleTransferInterrupt(void);
+u32 SerialRuntime_WaitForStatusMask(s32 mask);
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
+/* Enables the per-VBlank payload exchange. */
+extern u16 gSerialExchangeActive;
 extern volatile s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern volatile s32 gSerialReceiveDest;

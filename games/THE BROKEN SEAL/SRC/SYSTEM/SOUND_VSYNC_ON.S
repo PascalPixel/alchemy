@@ -5,9 +5,9 @@
 @ credit: library — TBS/TLA common BIOS SoundBias wrapper
 .syntax unified
 	.thumb
-	.global Func_08006870
+	.global Bios_SoundBiasOn
 	.thumb_func
-Func_08006870:
+Bios_SoundBiasOn:
 	movs	r0, #1
 	svc	25
 	bx	lr

@@ -20,7 +20,6 @@ extern u8 gResetRequested;
 extern u32 gCartridgeResetMarker;
 extern u32 gFrameCount;
 extern u32 gFrameWaitCount;
-extern u16 gSerialExchangeActive;
 
 void AudioEngine_SuspendDirectSoundFar(void);
 

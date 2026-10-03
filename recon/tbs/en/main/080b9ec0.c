@@ -14,11 +14,21 @@
  * Stores (20), branches including calls (91), and calls (31) are unchanged.
  * Typed owners retain signed target/count accesses, integer range_index,
  * overlapping child parameters, same-side kept units and the zero result.
- * Stopped after this one natural baseline: no device or matching-C credit.
+ * T0 stopped after one natural baseline without a device or matching-C credit.
+ * T1, same date: ordinary gWorkSlot reads at the existing BATTLE and
+ * BATTLE_BACKGROUND slots retain 970 bytes, frame 128, work sp+16 and
+ * plan r10. Full normalized comparison differs at 888 native-span bytes,
+ * plus 14 extra bytes. The 17 pool words and 34 relocations now equal the
+ * native counts, but instructions increase to 417/406; stores, branches
+ * and calls remain 20/91/31, with all call-target multiplicities correct.
+ * The compiler loads the whole bank and adds 176 for slot 44, rather than
+ * retaining the native slot-9 base. Stopped after this one whole-owner form;
+ * no interior anchor, device, matching-C credit or further search.
  */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "BATTLE_WORK.H"
+#include "HEAP_STATE.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MOTION_OBJECT.H"
@@ -26,7 +36,6 @@
 #include "SYSTEM.H"
 #include "CALLBACK_SCHEDULER.H"
 
-extern struct BattlePresentationTransition *gTransitionWork;
 void BattleEvent_Playback(void);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
@@ -51,17 +60,20 @@ s32 BattlePresentation_RunUnitTransition(
     s32 index;
     u32 kept_count;
     struct MotionObject *object;
+    struct BattleSession *battle;
 
     BattlePres_BuildTargetList(plan, &work);
     primary_unit = plan->actor_id;
     opposing_unit = plan->target_ids[0];
 
     if (plan->presentation_flags & 0x8000) {
-        struct BattlePresentationTransition *transition = gTransitionWork;
+        struct BattlePresentationTransition *transition =
+            gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
         transition->target_yaw = primary_unit <= 7 ? 0x2000 : 0x00005000;
         transition->frames = 60;
     } else {
-        struct BattlePresentationTransition *transition = gTransitionWork;
+        struct BattlePresentationTransition *transition =
+            gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
         u32 target = primary_unit <= 7 ? 0x00002000 : 0xffffe000;
         if (transition->target_yaw != target) {
             transition->target_yaw = target;
@@ -69,7 +81,8 @@ s32 BattlePresentation_RunUnitTransition(
     }
 
     BattlePres_SetActorModes(0, 0);
-    UiWindow_DrawPartyStatusContentsFar((gBattleWork->party_status_mode) & ~1);
+    battle = gWorkSlot[HEAP_SLOT_BATTLE];
+    UiWindow_DrawPartyStatusContentsFar(battle->party_status_mode & ~1);
     object = GetBattleObjectSlot(primary_unit)->object;
     REG_BLDCNT = 0x3f40;
     visible_count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, visible_units);

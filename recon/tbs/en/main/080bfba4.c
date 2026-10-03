@@ -1,10 +1,26 @@
-/* 2026-10-03 typed-owner attempt; current result supersedes score 120 below.
+/* T2: canonical OWNERVAL.H HP API, one compile, body unchanged.
+ * Native EN and produced complete extents are both 1044 bytes. The full
+ * 40-byte literal pool matches after relocation; the local frame remains
+ * 32 bytes, with 32 bytes of saved registers, in both native and produced C.
+ * All 65 relocations resolve (58 calls, 7 literal addresses), and all 58
+ * call targets and their order match our EN ROM. No compilation blocker.
+ *
+ * The assembly differs from T1 only by removing the three HP-result
+ * lsl r0,#16 narrowings. Against native code, 25 bytes still differ, first
+ * at offset 0xcd: 13 register-only instructions and two reordered
+ * instructions (one also changes a register), with no added or deleted
+ * instructions. The recovering-Djinn scans, call setup and void epilogue
+ * retain their previously measured differences. No body follow-up.
+ * This is still an unlinked, uncredited near miss; no edition claim.
+ * Earlier attempts and their separate measurements remain below.
+ */
+/* 2026-10-03 earlier typed-owner attempt; this superseded score 120 below.
  * Native EN [080bfba4,080bffb8): 1044 bytes including its literal pools.
- * Retained draft: 1052 bytes, native 32-byte frame preserved, score 490
+ * Earlier draft: 1052 bytes, native 32-byte frame preserved, score 490
  * (13 register-only, 2 reordered, 3 inserted). All call and pool symbols
  * resolve against the current linked EN build; complete extent is not exact.
  *
- * Three inserted lsl r0,#16 instructions narrow the truthful s16 HP result
+ * Three inserted lsl r0,#16 instructions narrow the then-declared s16 HP result
  * before its zero tests. Natural void agrees with the sole PRESENT13 caller
  * and changes the final pop/bx from r1 to r0; no meaningful result exists.
  * The recovering-Djinn scans still choose r1 where native chooses r4/r3,
@@ -14,7 +30,7 @@
  * with BattleUnit.element_modifier (s8), BattleSession.events.pending_cue
  * (s32) and BattleObjectSlot. DjinnRecoveryEntry.turns remains signed: -1
  * standby, -2 spent by summoning, then its assigned recovery countdown.
- * Callee contracts now match their current producers: HP adjustment s16,
+ * Callee contracts then matched the producer declarations: HP adjustment s16,
  * Djinn deactivation u32, element effect void, trade state void*. Only
  * the Djinn table lookup and the real DispatchObject child-value boundary
  * cast pointers. Shared headers supply the getter and event-runtime APIs.
@@ -49,6 +65,7 @@
  * for each element's count with the void return scored 130. All discarded.
  * The declaration's return type still needs to agree with the callers. */
 #include "TYPES.H"
+#include "OWNERVAL.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_MSG.H"
 #include "BATTLE_PARTY.H"
@@ -65,7 +82,6 @@
 #define MSG_EXHAUSTED ((s32)&MsgGoesDown + 6)
 
 void *Trade_GetOfferStateFar(s32 side);
-s16 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
 u32 Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 void Object_SetMode(void *object, s32 animation);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 flags);

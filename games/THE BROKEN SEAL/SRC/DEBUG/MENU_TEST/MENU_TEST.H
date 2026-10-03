@@ -4,6 +4,7 @@
 
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+#include "OWNERVAL.H"
 #include "GAME_STATE.H"
 
 extern s16 Data_02000240[];
@@ -40,7 +41,6 @@ void Party_AdvanceOwnerCountToTarget();
 s32 Inventory_AddItem();
 s32 Djinn_AddToOwner();
 s32 Djinn_Activate();
-s32 Owner_AdjustFirstValue();
 s32 Owner_AdjustSecondValue();
 s32 Party_RemoveActiveOwner();
 s32 Party_AddActiveOwner();

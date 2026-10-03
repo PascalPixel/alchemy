@@ -1574,26 +1574,20 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             ColossoLogRollingStage_ResetAndRunSceneTask();
             Engine_CameraSetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
                 register s32 cx asm("r0") = 0x2680000 >> 18;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
                 register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
                 register s32 cz asm("r2") = 0xb80000 >> 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cm asm("r3");
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
-                cm = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
+                register s32 cm asm("r3") = 1;
+                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz), "+r"(cm));
                 cz <<= 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx), "+r"(cy) : "r"(cz), "r"(cm));
                 cy = -cy;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                asm("" : "+r"(cx) : "r"(cy), "r"(cz), "r"(cm));
-                Engine_CameraMoveTo(cx << 18, cy, cz, cm);
+                cx <<= 18;
+                Engine_CameraMoveTo(cx, cy, cz, cm);
             }
             Engine_CameraWaitForMove();
             Engine_EventWait(30);

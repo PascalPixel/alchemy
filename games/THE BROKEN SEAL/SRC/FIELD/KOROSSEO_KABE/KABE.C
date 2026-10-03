@@ -1160,7 +1160,25 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoFansJustCallWall);
         Engine_CameraSetSpeed(196608, 24576);
-        Call4(Engine_CameraMoveTo, 35127296, -1, 15728640, 1);
+        {
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cx asm("r0") = 35127296 >> 18;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cz asm("r2") = 15728640;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cm = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cm), "r"(cz));
+            cy = -cy;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx) : "r"(cy), "r"(cz), "r"(cm));
+            Call4(Engine_CameraMoveTo, cx << 18, cy, cz, cm);
+        }
         Engine_CameraWaitForMove();
         Engine_EventWait(45);
         Call2(Engine_CameraSetSpeed, 65536, 8192);
@@ -1303,7 +1321,25 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
 
         Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledBoard);
         Engine_CameraSetSpeed(0x20000, 0x4000);
-        Call4((void (*)())Engine_CameraMoveTo, 0x1480000, -1, 0x1080000, 1);
+        {
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cx asm("r0") = 0x1480000 >> 17;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cz asm("r2") = 0x1080000;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            register s32 cm asm("r3");
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cm = 1;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cm), "r"(cz));
+            cy = -cy;
+            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
+            asm("" : "+r"(cx) : "r"(cy), "r"(cz), "r"(cm));
+            Call4((void (*)())Engine_CameraMoveTo, cx << 17, cy, cz, cm);
+        }
         Engine_CameraWaitForMove();
         Engine_EventWait(30);
         Call2((void (*)())Engine_CameraSetSpeed, 0x18000, 0x3000);

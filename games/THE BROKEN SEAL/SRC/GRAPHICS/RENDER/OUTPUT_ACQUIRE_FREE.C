@@ -1,65 +1,54 @@
 #include "TYPES.H"
-#include "SCENE.H"
-#include "GLOBAL_CELLS.H"
-#include "TBS_EDITION.H"
-#include "RUNTIME_INTERFACES.H"
-extern u8 Data_03001e8c[];
+#include "WINDOW.H"
 
-/* ui/render/output_list/acquire_free.c */
-void *RenderOutput_AcquireFree(void)
+/* Detach and return the head of the free list. A pointer-typed sentinel
+   store adds a reload in the 52-byte body; retain its scalar word store. */
+struct RenderOutput *RenderOutput_AcquireFree(void)
 {
-  void **p;
-  void *state;
-  /* Detach and return the head of the free list. */
-  state = *((void **)((u32)&Data_03001e8c));
-  p = *((void ***)(((u8 *)state) + RENDER_FREE_HEAD_OFS));
-  if (p != ((void *) 0))
-  {
-    if ((*p) == ((void *) 0))
-    {
-      *((s32 *)(((u8 *)state) + RENDER_FREE_TAIL_OFS)) = (s32)(state + RENDER_FREE_HEAD_OFS);
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    struct RenderOutput *entry = work->free_head;
+
+    if (entry != NULL) {
+        if (entry->next == NULL)
+            *(s32 *)&work->free_tail = (s32)&work->free_head;
+        work->free_head = entry->next;
+        entry->next = NULL;
     }
-    *((void ***)(((u8 *)state) + RENDER_FREE_HEAD_OFS)) = *p;
-    *p = (void *) 0;
-  }
-  return p;
+    return entry;
 }
 
-/* ui/render/output_list/release_free.c */
-extern struct State_080173ac *gWindowWork;
-
-void RenderOutput_ReleaseFree(u32 arg0)
+/* Only the records in this work block belong to its free list. */
+void RenderOutput_ReleaseFree(struct RenderOutput *entry)
 {
-    u8 *base = (u8 *)gWindowWork;
-    /* 管理領域内の要素だけを空きリストへ戻す。 */
-    if (arg0 >= (u32)(base + RENDER_CHANNEL_OFS + 3 * 0x28) && arg0 < (u32)(base + RENDER_FREE_HEAD_OFS)) {
-        u32 old = *(u32 *)(base + RENDER_FREE_TAIL_OFS);
-        *(u32 *)(base + RENDER_FREE_TAIL_OFS) = arg0;
-        *(u32 *)old = arg0;
-        *(u32 *)arg0 = 0;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+
+    if ((u32)entry >= (u32)work->outputs
+        && (u32)entry < (u32)&work->free_head) {
+        struct RenderOutput *tail = work->free_tail;
+
+        work->free_tail = entry;
+        tail->next = entry;
+        entry->next = NULL;
     }
 }
-
-/* ui/runtime/init/init_free_list.c */
 
 void UiWork_InitFreeList(void)
 {
     s32 count;
-    u8 *base;
-    u8 *item;
-    u8 *next;
+    struct UiRenderWork *work;
+    struct RenderOutput *entry;
+    struct RenderOutput *next;
 
-    base = (u8 *)gWindowWork;
-    /* 0x1cバイト単位の空きリストを初期化する。 */
-    item = base + RENDER_CHANNEL_OFS + 3 * 0x28;
-    *(u8 **)(base + RENDER_FREE_HEAD_OFS) = item;
+    work = (struct UiRenderWork *)gWindowWork[0];
+    entry = work->outputs;
+    work->free_head = entry;
     count = 0x3e;
     do {
-        next = item + 0x1c;
+        next = entry + 1;
         count--;
-        *(u8 **)item = next;
-        item = next;
+        entry->next = next;
+        entry = next;
     } while (count >= 0);
-    *(s32 *)next = 0;
-    *(u8 **)(base + RENDER_FREE_TAIL_OFS) = next;
+    next->next = NULL;
+    work->free_tail = next;
 }

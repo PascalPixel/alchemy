@@ -1,55 +1,8 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
-
-/* One of the three queued text renders in the glyph work area. */
-struct TextRender {
-    void *entries;
-    s16 x;
-    s16 y;
-    u16 colours[4];
-    s16 unknown_10;
-    s16 window;
-    s16 unknown_14;
-    s16 unknown_16;
-    s16 unknown_18;
-    s16 unknown_1a;
-    s16 unknown_1c;
-    s16 start_x;
-    s16 unknown_20;
-    s16 unknown_22;
-    s16 flags;
-    s16 unknown_26;
-};
-
-extern u8 *gWindowWork;
-
-extern u8 Data_03001e8c[];
-
-struct UiChannelWork {
-    u8 padding00[0x14];
-    u16 state;
-};
-
-struct UiChannelSlot {
-    struct UiChannelWork *work;
-    u16 field04;
-    u16 field06;
-    u16 values[4];
-    u16 field10;
-    u16 field12;
-    u16 field14;
-    u16 field16;
-    u16 field18;
-    u16 field1a;
-    u16 field1c;
-    u16 field1e;
-    u16 field20;
-    u16 field22;
-    u16 field24;
-    u16 field26;
-};
 
 void UiWork_ResetChannelTransition(void *);
 s32 Ui_ClearVramBlock(void);
@@ -58,27 +11,27 @@ s32 Ui_ClearVramBlock(void);
 /* Claims the first of the window work's three text render slots for a
    built entry list, placing it at x, y (whole pixels) in window with the
    given colours (or colour 0) and flags. Returns the slot, or NULL. */
-struct TextRender *UiText_QueueRenderEntries(void *entries, s32 window, s32 x, s32 y, u16 *colours, s32 flags)
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, u16 *colours, s32 flags)
 {
-    struct TextRender *render = (struct TextRender *)(gWindowWork + RENDER_CHANNEL_OFS);
-    struct TextRender *found = NULL;
+    struct UiChannelSlot *render = (struct UiChannelSlot *)(gWindowWork[0] + RENDER_CHANNEL_OFS);
+    struct UiChannelSlot *found = NULL;
     u32 i;
 
     for (i = 0; i != 3; i++, render++) {
-        if (render->entries == NULL) {
+        if (render->work == NULL) {
             found = render;
             break;
         }
     }
     if (found != NULL) {
-        found->entries = entries;
+        found->work = window;
         found->start_x = x << 8;
         found->x = x << 8;
         found->y = y << 8;
-        found->window = window;
+        found->entry = entry;
         found->unknown_16 = 15;
         found->unknown_1a = 10;
-        found->unknown_14 = 0;
+        found->countdown = 0;
         found->unknown_18 = 0;
         found->unknown_20 = 0;
         found->flags = flags;
@@ -94,7 +47,7 @@ struct TextRender *UiText_QueueRenderEntries(void *entries, s32 window, s32 x, s
     return found;
 }
 
-struct UiChannelSlot *UiWork_ActivateChannel(struct UiChannelWork *work, s32 value, s32 preserve)
+struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *work, s32 value, s32 preserve)
 {
     struct UiChannelSlot *slot;
     struct UiChannelSlot *selected;
@@ -103,7 +56,7 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiChannelWork *work, s32 val
     u16 zero;
     u32 index;
 
-    slot = (struct UiChannelSlot *)(gWindowWork + RENDER_CHANNEL_OFS);
+    slot = (struct UiChannelSlot *)(gWindowWork[0] + RENDER_CHANNEL_OFS);
     selected = 0;
     for (index = 0; index != 3; slot++, index++) {
         if (slot->work == 0 || slot->work->state != 0) {
@@ -114,36 +67,36 @@ struct UiChannelSlot *UiWork_ActivateChannel(struct UiChannelWork *work, s32 val
 
     if (selected != 0) {
         if (selected->work == 0) {
-            selected->field06 = 0xA00;
+            selected->y = 0xA00;
             val04 = 0x300;
             selected->work = work;
-            goto reset_field04;
+            goto reset_x;
         }
         if (preserve == 0) {
-            if (selected->field06 == 0) {
-                selected->field06 = 0xA00;
-            } else if ((u32)selected->field06 < 0xD00) {
-                selected->field06 += 0xD00;
+            if (selected->y == 0) {
+                selected->y = 0xA00;
+            } else if ((u32)selected->y < 0xD00) {
+                selected->y += 0xD00;
             } else {
                 UiWork_ResetChannelTransition(selected);
             }
             val04 = 0x300;
-reset_field04:
-            selected->field04 = val04;
+reset_x:
+            selected->x = val04;
         }
 
         zero = 0;
-        selected->field1e = 0x300;
+        selected->start_x = 0x300;
         selected->work->state = zero;
-        selected->field16 = 15;
-        selected->field1a = 10;
-        selected->field12 = value;
-        selected->field14 = zero;
-        selected->field18 = zero;
-        selected->field10 = zero;
-        selected->field20 = zero;
+        selected->unknown_16 = 15;
+        selected->unknown_1a = 10;
+        selected->entry = value;
+        selected->countdown = zero;
+        selected->unknown_18 = zero;
+        selected->unknown_10 = zero;
+        selected->unknown_20 = zero;
         index = 0;
-        destination = selected->values;
+        destination = selected->colours;
         do {
             index++;
             *destination++ = zero;
@@ -169,7 +122,7 @@ s32 Ui_FillVramBlockPattern(void)
 void UiWork_ResetFreeChannel(void)
 {
     struct UiChannelSlot *slot =
-        (struct UiChannelSlot *)(gWindowWork + RENDER_CHANNEL_OFS);
+        (struct UiChannelSlot *)(gWindowWork[0] + RENDER_CHANNEL_OFS);
     struct UiChannelSlot *sel = 0;
     s32 i;
 
@@ -182,38 +135,28 @@ void UiWork_ResetFreeChannel(void)
     if (sel != 0) {
         if (sel->work != 0) {
             Ui_ClearVramBlock();
-            sel->field06 = 0;
+            sel->y = 0;
         }
-        sel->field04 = 0;
-        sel->field14 = 0;
-        sel->field16 = 0xF;
-        sel->field18 = 0;
-        sel->field1a = 0xA;
+        sel->x = 0;
+        sel->countdown = 0;
+        sel->unknown_16 = 0xF;
+        sel->unknown_18 = 0;
+        sel->unknown_1a = 0xA;
     }
 }
 
-void UiWork_CopyParamsToRenderWork(void *work)
+void UiWork_CopyParamsToRenderWork(struct UiChannelSlot *channel)
 {
-    u32 p2;
-    s32 p1;
-    s32 z1;
-    u32 p0;
-    u32 z0;
-    void *render;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
 
-    render = *(void **)((u32)&Data_03001e8c);
-    p0 = (s32)(FIELD_AT_OFFSET(work, u16 *, 0x16)); FIELD_AT_OFFSET(render, u16 *, RENDER_PARAM_OFS) = (u16)p0;
-    p1 = (s32)(FIELD_AT_OFFSET(work, u16 *, 0x18)); (s32)z0 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD_OFS) = (u16)p1;
-    p2 = (FIELD_AT_OFFSET(work, u16 *, 0x1A)); (s32)z1 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD2_OFS) = (u16)p2;
+    work->colour = channel->unknown_16;
+    work->outline = channel->unknown_18;
+    work->line_spacing = channel->unknown_1a;
 }
 
 void UiWork_ResetChannelTransition(void *work)
 {
-  int mode;
-  int val;
-  u8 *p;
-  p = ((u8 *)work) + 0x1C;
-  val = 2;
-  mode = val;
-  *((s16 *)p) = mode;
+    struct UiChannelSlot *channel = work;
+
+    channel->transition = 2;
 }

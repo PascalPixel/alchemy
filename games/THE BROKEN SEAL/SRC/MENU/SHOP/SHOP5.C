@@ -89,7 +89,7 @@ s32 Shop_SelRepair(s32 unit_id)
 
     for (;;) {
         price_window = UiWindow_CreateFar(0, 5, 30, 3, 2);
-        shop->cursor.anchor->one5 = 18;
+        shop->cursor.anchor->active = 18;
         shop->mode = 12;
         redraw = 1;
 

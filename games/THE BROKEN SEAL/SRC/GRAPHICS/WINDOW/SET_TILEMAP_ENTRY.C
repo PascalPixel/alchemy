@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-#include "MENU_LIST.H"
+#include "WINDOW.H"
 
 enum {
     TILEMAP_ENTRY_PLAIN,

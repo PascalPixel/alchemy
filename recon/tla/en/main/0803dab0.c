@@ -1,12 +1,6 @@
+#include "GLYPH.H"
 #include "RESOURCE.H"
 
-typedef struct {
-    u8 input[0x400];
-    u8 tiles[0x200];
-    s16 width;
-    s16 height;
-    u8 *encoded;
-} GlyphTransfer;
 
 GlyphTransfer *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);

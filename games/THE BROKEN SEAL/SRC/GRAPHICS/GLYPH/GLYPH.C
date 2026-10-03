@@ -1,3 +1,4 @@
+#include "GLYPH.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -32,13 +33,6 @@ struct State_0801a4c0 {
 extern struct State_0801a4c0 *gGlyphWork;
 extern u32 UiIcon_MiscIconPointers[];
 
-typedef struct {
-    u8 input[0x400];
-    u8 tiles[0x200];
-    s16 width;
-    s16 height;
-    u8 *encoded;
-} GlyphTransfer;
 
 void Runtime_ReleaseHeapBlock(s32 kind);
 extern const u8 Tile_Decompress4bpp[];

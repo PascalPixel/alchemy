@@ -1,10 +1,10 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "IWRAM_CALL.H"
-extern u8 Data_03001e8c[];
 
 /* The sliding panel's tile pixels in VRAM: thirty rows of thirty-two words,
  * of which the last twenty-four are the panel. */
@@ -33,28 +33,26 @@ void UiWork_ShiftPanelRowsLeft(s32 step)
     }
 }
 
-struct Work;
-
-void UiWork_Finalize(struct Work *, s32);
 s32 UiWork_StepChannelScript(void *);
-void UiWork_AdvanceChannelTransition(void *);
+void UiWork_AdvanceChannelTransition(struct UiChannelSlot *);
 
 void UiWork_ProcessRenderChannels(void)
 {
-    u8 *channel = *(u8 **)((u32)&Data_03001e8c) + RENDER_CHANNEL_OFS;
+    struct UiChannelSlot *channel =
+        (struct UiChannelSlot *)(gWindowWork[0] + RENDER_CHANNEL_OFS);
     s32 channel_no = 0;
     s32 one = 1;
 
     do {
-        u8 *current = *(u8 **)channel;
+        struct UiWindow *current = channel->work;
 
-        if (current != 0 && *(s32 *)(current + 0x18) == 0) {
-            u16 flags = *(u16 *)(current + 0x16);
+        if (current != 0 && *(s32 *)&current->frame == 0) {
+            u16 flags = current->flags;
 
             if (flags == 0) {
-                *(u8 **)channel = (u8 *)0;
+                channel->work = NULL;
             } else {
-                s32 pending = *(u16 *)(current + 0x12);
+                s32 pending = current->unknown_12;
                 s32 kind;
 
                 if (pending != 0) {
@@ -63,24 +61,24 @@ void UiWork_ProcessRenderChannels(void)
                     kind = UiWork_StepChannelScript(channel);
                     switch (kind) {
                     case 8:
-                        *(u16 *)(*(u8 **)channel + 0x14) = one;
+                        channel->work->state = one;
                         break;
                     case 9:
                     {
-                        u8 *entity = *(u8 **)channel;
+                        struct UiWindow *entity = channel->work;
 
                         UiWork_Finalize(
-                            (struct Work *)entity,
-                            (u16)(*(u16 *)(entity + 0x16) & 2)
+                            entity,
+                            (u16)(entity->flags & 2)
                         );
-                        *(u16 *)(channel + 0x04) = pending;
-                        *(u16 *)(channel + 0x06) = pending;
-                        *(u16 *)(channel + 0x12) = pending;
-                        *(u16 *)(channel + 0x14) = pending;
-                        *(u16 *)(channel + 0x16) = pending;
-                        *(u16 *)(channel + 0x18) = pending;
-                        *(u16 *)(channel + 0x1a) = pending;
-                        *(u16 *)(*(u8 **)channel + 0x14) = one;
+                        channel->x = pending;
+                        channel->y = pending;
+                        channel->entry = pending;
+                        channel->countdown = pending;
+                        channel->unknown_16 = pending;
+                        channel->unknown_18 = pending;
+                        channel->unknown_1a = pending;
+                        channel->work->state = one;
                         break;
                     }
                     }
@@ -88,6 +86,6 @@ void UiWork_ProcessRenderChannels(void)
             }
         }
         channel_no++;
-        channel += 0x28;
+        channel++;
     } while (channel_no != 3);
 }

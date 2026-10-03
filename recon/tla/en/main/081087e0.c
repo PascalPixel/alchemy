@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 
@@ -6,7 +7,6 @@ s32 __divsi3(s32, s32);
 s32 __modsi3(s32, s32);
 void Shop_CopyGlyphs(s32 digit, u8 *buf, s32 pos);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
-u8 *RenderOutput_CreateFar(s32 no, u32 flags, s32 window, s32 x, s32 y);
 
 /* Builds a sprite showing a price of up to five digits, least significant
    digit first, over the blank price tiles. */
@@ -41,7 +41,7 @@ u8 *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
         VramBlock_LoadCached(slot, 0x100, buf);
-        sprite = RenderOutput_CreateFar(slot, 0x80008000, window, x, y);
+        sprite = (u8 *)RenderOutput_CreateFar(slot, 0x80008000, (struct RenderInput *)window, x, y);
     }
     Runtime_ReleaseHeapBlock(14);
     return sprite;

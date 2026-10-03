@@ -21,15 +21,6 @@ struct WorkSlot {
 
 
 
-struct RenderChannel {
-    struct UiWindow *work;
-    u16 field_04;
-    u16 field_06;
-    u16 values[4];
-    u16 field_10;
-    u16 field_12;
-    u16 countdown;
-};
 
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
@@ -116,7 +107,7 @@ directTest:
  * tile outside the window and counts down; when the count reaches zero it
  * ends the transition, erases the outer border and redraws the window's own
  * border. */
-void UiWork_AdvanceChannelTransition(struct RenderChannel *channel)
+void UiWork_AdvanceChannelTransition(struct UiChannelSlot *channel)
 {
     struct UiWindow *work = channel->work;
     s32 transition = work->unknown_12;

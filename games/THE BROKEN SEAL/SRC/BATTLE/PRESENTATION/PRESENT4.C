@@ -127,6 +127,9 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     }
 }
 
+/* A named-array rewrite changed register allocation and reduced this
+   extent from 200 to 196 bytes in all six editions. Keep the byte-offset
+   traversal while the source form is unresolved. */
 void BattleParty_CollectUnitList(void)
 {
     u16 buf[14];

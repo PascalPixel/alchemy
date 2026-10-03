@@ -9,22 +9,9 @@
 extern u8 Data_03001e8c[];
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-/* The window work's message state. Its leading records hold words: typed
-   as words, a store to the message cursor may alias the spilled x, so the
-   spill keeps its place ahead of the cursor store. */
-struct MessageWindowWork {
-    s32 records[RENDER_ENTRY_TBL_OFS / 4];
-    u16 entries[(RENDER_RESULT_OFS - RENDER_ENTRY_TBL_OFS) / 2];
-    u16 cursor;
-    u16 scroll;
-    u16 unknown_12f8;
-    u8 busy;
-    u8 pending;
-};
-
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
-s32 UiText_QueueRenderEntries(struct RenderInput *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 struct Work;
 s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 s32 Object_GetScreenPositionFar(s32 object, s32 *out);
@@ -64,13 +51,13 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 pack
     s32 flags;
     u16 *out;
     struct UiWindow *window;
-    struct MessageWindowWork *work;
+    struct UiRenderWork *work;
 
-    work = (struct MessageWindowWork *)gWindowWork[0];
-    work->cursor = (packed << 4) >> 20;
+    work = (struct UiRenderWork *)gWindowWork[0];
+    work->result[0] = (packed << 4) >> 20;
     /* FAKEMATCH: retain the null window as the scroll and layout zero. */
     window = NULL;
-    work->scroll = (u32)window;
+    work->result[1] = (u32)window;
     packed &= 0xffff;
     flags = 0;
     entry = UiText_BuildRenderEntries(message, 1);
@@ -90,12 +77,12 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 pack
     window = UiWindow_Create(x, y, width, height, flags);
     if (window == NULL)
         return NULL;
-    if (UiText_QueueRenderEntries((struct RenderInput *)window, entry, 0, 0, out, 0) == 0) {
+    if (UiText_QueueRenderEntries(window, entry, 0, 0, out, 0) == 0) {
         UiWork_Finalize(window, 1);
         return NULL;
     }
-    work->busy = 0;
-    work->pending = 0;
+    *((u8 *)work + RENDER_BUSY_OFS + 1) = 0;
+    *((u8 *)work + RENDER_BUSY_OFS + 2) = 0;
     return (struct RenderInput *)window;
 }
 

@@ -15,10 +15,10 @@ void UiText_RenderGlyphTileAtWorkOffset(
     u32 cell;
 
     if (buffer == NULL) {
-        u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
+        u16 *counter = &((struct UiRenderWork *)base)->count;
 
         index = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-        buffer = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
+        buffer = ((struct UiRenderWork *)base)->entries;
         *(u16 *)(base + index) = 0;
         *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     }

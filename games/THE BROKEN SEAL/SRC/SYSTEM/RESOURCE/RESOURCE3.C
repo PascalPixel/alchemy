@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
 #include "METADATA_LOOKUP.H"
 #include "DMA.H"
@@ -14,20 +15,6 @@ struct LookupEntry {
 };
 
 /* animation/initialize_objects.c */
-struct AnimationObject {
-    s16 id;
-    u8 padding02[2];
-    u8 draw_kind;
-    u8 padding05[2];
-    u8 frame_codec;
-    s32 frames;
-    s32 animation;
-    u32 current;
-    u8 state;
-    u8 padding15;
-    u8 marker;
-};
-
 struct AnimationMetadata {
     u8 width;
     u8 height;
@@ -43,81 +30,10 @@ struct AnimationMetadata {
     s32 animation;
 };
 
-struct AnimationSetupState {
-    u8 padding00[24];
-    u32 scale;
-    u8 padding1c[4];
-    u8 width;
-    u8 height;
-    s8 adjust_x;
-    s8 adjust_y;
-    u8 padding24[3];
-    u8 count;
-    struct AnimationObject *objects[4];
-};
-
 struct AnimationMetadata *Resource_GetMetadataRecordFar(s32);
 s32 Animation_LookupValueByKey(s32);
 
-struct MetadataSlotState {
-    u8 unknown_00[24];
-    s32 shifted;
-    u8 unknown_1c[4];
-    u8 first;
-    u8 second;
-    u8 third;
-    u8 fourth;
-    u8 unknown_24[3];
-    u8 count;
-    s32 slots[4];
-};
-
-struct MetadataRecord {
-    u8 first;
-    u8 second;
-    u16 value;
-    u8 unknown_04[2];
-    u8 third;
-    u8 fourth;
-};
-
 void ResourceMetadata_ClearRecord(void *);
-
-struct AnimationMetadata2 {
-    u8 width;
-    u8 height;
-    u16 scale;
-    u8 draw_kind;
-    u8 animation_count;
-    s8 adjust_x;
-    s8 adjust_y;
-    u8 frame_codec;
-    u8 padding0b;
-    s32 frames;
-    s32 animation;
-};
-
-struct AnimationObject2 {
-    s16 id;
-    s16 frame_index;
-    u8 draw_kind;
-    u8 padding05[3];
-    s32 padding08;
-    s32 animation_table;
-    s32 current_animation;
-    u8 playback_state;
-    u8 reset_timer;
-};
-
-struct AnimationSetupState2 {
-    u8 padding00[34];
-    u8 adjust_x;
-    u8 adjust_y;
-    u8 selected_animation;
-    u8 padding37[2];
-    u8 count;
-    struct AnimationObject2 *entries[4];
-};
 
 extern u8 Func_0800a418[];
 
@@ -131,40 +47,10 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void PaletteDma_LoadBlock(void);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
-struct AnimationMetadata3 {
-    u8 width;
-    u8 height;
-    u16 scale;
-    u8 draw_kind;
-    u8 animation_count;
-    s8 adjust_x;
-    s8 adjust_y;
-    u8 reserved_08[2];
-    u8 frame_codec;
-    u8 reserved_0b;
-    s32 frames;
-    s32 animation;
-};
-
-struct AnimationObject3 {
-    s16 id;
-    u8 reserved_02[2];
-    u8 draw_kind;
-    u8 field_05;
-    u8 reserved_06;
-    u8 frame_codec;
-    s32 frames;
-    s32 animation;
-    u32 current;
-    u8 state;
-    u8 reserved_15;
-    u8 marker;
-};
-
-extern struct AnimationObject3 *gAnimationObjects[];
+extern struct AnimationEntry *gAnimationObjects[];
 s32 Animation_LookupValueByKey(s32 key);
 
-struct AnimationObject3 *AnimationObject_Allocate(s32 id);
+struct AnimationEntry *AnimationObject_Allocate(s32 id);
 
 /* One loadable number and the resource that holds its script. */
 struct ResourceSlotNumber {
@@ -281,13 +167,15 @@ loop_1:
     goto loop_1;
 }
 
-s32 Animation_InitializeObjects(struct AnimationSetupState *state)
+/* Pointer assignments reordered the 168/68/134-byte initializers.
+   Keep scalar address words at the metadata boundary. */
+s32 Animation_InitializeObjects(struct AnimationObject *state)
 {
     s32 index;
 
     for (index = 0; index < state->count; index++) {
-        struct AnimationObject *object = state->objects[index];
-        struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->id);
+        struct AnimationEntry *object = state->entries[index];
+        struct AnimationMetadata *metadata = Resource_GetMetadataRecordFar(object->anim_id);
         s32 frames;
         s32 animation;
 
@@ -298,121 +186,118 @@ s32 Animation_InitializeObjects(struct AnimationSetupState *state)
             state->width = metadata->width;
             state->height = metadata->height;
             state->scale = metadata->scale << 8;
-            state->adjust_y = metadata->adjust_y;
-            state->adjust_x = metadata->adjust_x;
+            state->offset_y = metadata->adjust_y;
+            state->offset_x = metadata->adjust_x;
         }
 
         frames = metadata->frames;
         if (frames == 0)
-            frames = Animation_LookupValueByKey(object->id);
+            frames = Animation_LookupValueByKey(object->anim_id);
 
-        object->draw_kind = metadata->draw_kind;
+        object->kind = metadata->draw_kind;
         animation = metadata->animation;
-        object->frames = frames;
-        object->animation = animation;
-        object->frame_codec = metadata->frame_codec;
-        object->marker = 0xff;
-        object->current = 0;
-        object->state = 0;
+        *(s32 *)&object->frames = frames;
+        *(s32 *)&object->field_0c = animation;
+        object->mode = metadata->frame_codec;
+        object->frame = 0xff;
+        object->script = 0;
+        object->pos = 0;
     }
 
     return 0;
 }
 
 /* animation/init_work_from_metadata.c */
-void Animation_InitWorkFromMetadata(void *work)
+void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
 {
     s32 value;
     s32 z;
-    void *info;
+    struct AnimationMetadata *info;
 
     if (work != NULL) {
-        info = Resource_GetMetadataRecordFar(FIELD_AT_OFFSET(work, s16, 0));
-        if (FIELD_AT_OFFSET(info, u8, 0) != 0) {
-            value = FIELD_AT_OFFSET(info, s32, 0x0c);
-            if (value == 0) {
-                value = Animation_LookupValueByKey(FIELD_AT_OFFSET(work, s16, 0));
-            }
-            FIELD_AT_OFFSET(work, u8, 4) = FIELD_AT_OFFSET(info, u8, 4);
-            FIELD_AT_OFFSET(work, s32, 0x0c) = FIELD_AT_OFFSET(info, s32, 0x10);
-            FIELD_AT_OFFSET(work, s32, 8) = value;
-            FIELD_AT_OFFSET(work, u8, 7) = FIELD_AT_OFFSET(info, u8, 0x0a);
+        info = Resource_GetMetadataRecordFar(work->anim_id);
+        if (info->width != 0) {
+            value = info->frames;
+            if (value == 0)
+                value = Animation_LookupValueByKey(work->anim_id);
+            work->kind = info->draw_kind;
+            *(s32 *)&work->field_0c = info->animation;
+            *(s32 *)&work->frames = value;
+            work->mode = info->frame_codec;
             z = 0;
-            FIELD_AT_OFFSET(work, u8, 0x16) = 0xff;
-            FIELD_AT_OFFSET(work, s32, 0x10) = z;
-            FIELD_AT_OFFSET(work, u8, 0x14) = z;
+            work->frame = 0xff;
+            work->script = (u8 *)z;
+            work->pos = z;
         }
     }
 }
 
-s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
+s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id)
 {
-    s32 value = state->slots[0];
+    s32 value = (s32)state->entries[0];
     s32 index = 0;
-    s32 *slot;
-    struct MetadataRecord *metadata;
+    struct AnimationEntry **slot;
+    struct AnimationMetadata *metadata;
 
     if (value != 0) {
-        slot = &state->slots[0];
+        slot = &state->entries[0];
         do {
             index++;
             if (index > 3)
                 break;
             slot++;
-            value = *slot;
+            value = (s32)*slot;
         } while (value != 0);
     }
     if (index == 4)
         return -1;
-    value = AnimationObject_Allocate(id);
+    value = (s32)AnimationObject_Allocate(id);
     if (value == 0)
         return 0;
-    state->slots[index] = value;
+    state->entries[index] = (struct AnimationEntry *)value;
     metadata = Resource_GetMetadataRecordFar(id);
     if (state->count == 0) {
-        state->first = metadata->first;
-        state->second = metadata->second;
-        state->shifted = metadata->value << 8;
-        state->fourth = metadata->fourth;
-        state->third = metadata->third;
+        state->width = metadata->width;
+        state->height = metadata->height;
+        state->scale = metadata->scale << 8;
+        state->offset_y = metadata->adjust_y;
+        state->offset_x = metadata->adjust_x;
     }
     if (index == state->count)
         state->count = index + 1;
     return value;
 }
 
-void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle)
+void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
 {
-    s32 *remaining_slot;
-    s32 *slot_cursor;
+    struct AnimationEntry **remaining_slot;
+    struct AnimationEntry **slot_cursor;
     s32 slot_value;
     s32 later_slot_count;
     u32 slot_index;
     u32 later_index;
-    u32 slot_offset;
 
     if (state != NULL && handle != 0) {
         ResourceMetadata_ClearRecord((void *)handle);
         slot_index = 0;
-        if (handle != state->slots[0]) {
-            slot_cursor = state->slots;
+        if (handle != (s32)state->entries[0]) {
+            slot_cursor = state->entries;
         next_slot:
             slot_index++;
             if (slot_index <= 3U) {
                 slot_cursor++;
-                if (handle != *slot_cursor)
+                if (handle != (s32)*slot_cursor)
                     goto next_slot;
             }
         }
         if (slot_index != 4) {
-            slot_offset = slot_index * 4 + 0x28;
-            *(s32 *)((u8 *)state + slot_offset) = 0;
+            state->entries[slot_index] = 0;
             later_index = slot_index + 1;
             later_slot_count = 0;
             if (later_index <= 3U) {
-                remaining_slot = (s32 *)(later_index * 4 + (u32)state + 0x28);
+                remaining_slot = (struct AnimationEntry **)(later_index * sizeof *remaining_slot + (u32)state + 0x28);
                 do {
-                    slot_value = *remaining_slot++;
+                    slot_value = (s32)*remaining_slot++;
                     if (slot_value != 0)
                         later_slot_count++;
                     later_index++;
@@ -424,25 +309,23 @@ void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle)
     }
 }
 
-void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)
+void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
 {
-    void **p;
-    void *t;
-    s32 off;
-    void *v;
+    struct AnimationEntry **p;
+    struct AnimationEntry *t;
+    struct AnimationEntry *v;
     s32 cnt;
     u32 i;
 
-    if (rec != NULL && no <= 3) {
-        off = no * 4 + 0x28;
-        v = *(void **)(rec + off);
+    if (group != NULL && no <= 3) {
+        v = group->entries[no];
         if (v != NULL) {
             ResourceMetadata_ClearRecord(v);
-            *(void **)(rec + off) = NULL;
+            group->entries[no] = NULL;
             i = no + 1;
             cnt = 0;
             if (i <= 3) {
-                p = (void **)(i * 4 + (u32)rec + 0x28);
+                p = (struct AnimationEntry **)(i * sizeof *p + (u32)group + 0x28);
                 do {
                     t = *p++;
                     if (t != NULL)
@@ -451,34 +334,34 @@ void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)
                 } while (i <= 3);
             }
             if (cnt == 0)
-                *(s8 *)(rec + 0x27) = (s8)no;
+                group->count = (s8)no;
         }
     }
 }
 
-void Animation_SetWorkEntry(void *work, s32 no)
+void Animation_SetWorkEntry(struct AnimationEntry *work, s32 no)
 {
     s32 hi;
-    void *info;
+    struct AnimationMetadata *info;
     s32 value;
 
     hi = 0x80 & no;
-    if (FIELD_AT_OFFSET(work, s32, 0x0c) != 0) {
-        info = Resource_GetMetadataRecordFar((s32)FIELD_AT_OFFSET(work, s16, 0));
-        if (no < (s32)FIELD_AT_OFFSET(info, u8, 5)) {
-            value = *(s32 *)((u8 *)FIELD_AT_OFFSET(work, s32, 0x0c) + (no * 4));
-            FIELD_AT_OFFSET(work, u8, 4) = (u8)FIELD_AT_OFFSET(info, u8, 4);
-            FIELD_AT_OFFSET(work, s32, 0x10) = value;
-            FIELD_AT_OFFSET(work, s8, 0x15) = 0x10;
+    if (work->field_0c != 0) {
+        info = Resource_GetMetadataRecordFar(work->anim_id);
+        if (no < (s32)info->animation_count) {
+            value = ((s32 *)work->field_0c)[no];
+            work->kind = info->draw_kind;
+            work->script = (u8 *)value;
+            work->step = 0x10;
             if (hi == 0) {
-                FIELD_AT_OFFSET(work, s8, 0x14) = hi;
-                FIELD_AT_OFFSET(work, s16, 2) = (s16)hi;
+                work->pos = hi;
+                work->timer = (s16)hi;
             }
         }
     }
 }
 
-s32 AnimationObjects_SelectAnimation(struct AnimationSetupState2 *state, s32 flags)
+s32 AnimationObjects_SelectAnimation(struct AnimationObject *state, s32 flags)
 {
     s32 high_bit;
     s32 index;
@@ -486,35 +369,35 @@ s32 AnimationObjects_SelectAnimation(struct AnimationSetupState2 *state, s32 fla
     high_bit = flags & 0x80;
     flags &= 0x7f;
 
-    if (state->selected_animation != flags) {
+    if (state->last_no != flags) {
         index = 0;
         goto test_entry;
 entry_loop:
         {
-            struct AnimationObject2 *entry = state->entries[index];
-            struct AnimationMetadata2 *metadata;
+            struct AnimationEntry *entry = state->entries[index];
+            struct AnimationMetadata *metadata;
             s32 selected_animation;
 
             if (entry == 0)
                 goto next_entry;
-            if (entry->animation_table == 0)
+            if (entry->field_0c == 0)
                 goto next_entry;
 
-            metadata = Resource_GetMetadataRecordFar(entry->id);
+            metadata = Resource_GetMetadataRecordFar(entry->anim_id);
             if (flags >= metadata->animation_count)
                 goto next_entry;
 
-            selected_animation = ((s32 *)entry->animation_table)[flags];
-            entry->draw_kind = metadata->draw_kind;
-            entry->current_animation = selected_animation;
-            entry->reset_timer = 0x10;
+            selected_animation = ((s32 *)entry->field_0c)[flags];
+            entry->kind = metadata->draw_kind;
+            entry->script = (u8 *)selected_animation;
+            entry->step = 0x10;
             if (high_bit == 0) {
-                entry->playback_state = 0;
-                entry->frame_index = 0;
+                entry->pos = 0;
+                entry->timer = 0;
             }
             if (index == 0) {
-                state->adjust_y = metadata->adjust_y;
-                state->adjust_x = metadata->adjust_x;
+                state->offset_y = metadata->adjust_y;
+                state->offset_x = metadata->adjust_x;
             }
             goto next_entry;
         }
@@ -523,43 +406,41 @@ next_entry:
 test_entry:
         if (index < state->count)
             goto entry_loop;
-        state->selected_animation = (u8)flags;
+        state->last_no = (u8)flags;
     }
     return 0;
 }
 
-s32 AnimationObjects_SetHalfword02OnActive(u8 *grp, s32 val)
+s32 AnimationObjects_SetHalfword02OnActive(struct AnimationObject *group, s32 val)
 {
-    u8 n = grp[0x27];
-    void **p;
+    u8 n = group->count;
+    struct AnimationEntry **p;
     s32 cnt;
 
     if (n != 0) {
-        /* 有効な登録項目だけへ下位16bitを4bit左へずらして設定する。 */
         val = (s32)((u32)val << 4);
-        p = (void **)(grp + 0x28);
+        p = group->entries;
         cnt = n;
         do {
-            u8 *obj = *p++;
-            if (obj != 0 && *(s32 *)(obj + 0xc) != 0)
-                *(s16 *)(obj + 2) = val;
+            struct AnimationEntry *entry = *p++;
+            if (entry != 0 && entry->field_0c != 0)
+                entry->timer = val;
             cnt--;
         } while (cnt != 0);
     }
     return 0;
 }
 
-void AnimationObjects_SetField15OnActive(u8 *grp, s32 val)
+void AnimationObjects_SetField15OnActive(struct AnimationObject *group, s32 val)
 {
-    u8 n = grp[0x27];
+    u8 n = group->count;
     if (n != 0) {
-        /* 登録順を保ったまま有効な項目へ値を配る。 */
-        void **p = (void **)(grp + 0x28);
+        struct AnimationEntry **p = group->entries;
         s32 cnt = n;
         do {
-            u8 *obj = *p++;
-            if (obj != 0 && *(s32 *)(obj + 0xc) != 0)
-                obj[0x15] = val;
+            struct AnimationEntry *entry = *p++;
+            if (entry != 0 && entry->field_0c != 0)
+                entry->step = val;
             cnt--;
         } while (cnt != 0);
     }
@@ -600,16 +481,16 @@ void ObjectSystem_Configure(s32 mode)
  * by id when the metadata gives none, its animation table and first entry,
  * draw kind and frame codec. Returns the object, or NULL when the metadata
  * has zero width or no object is free. */
-struct AnimationObject3 *AnimationObject_Allocate(s32 id)
+struct AnimationEntry *AnimationObject_Allocate(s32 id)
 {
-    struct AnimationMetadata3 *metadata;
-    struct AnimationObject3 *entry;
-    struct AnimationObject3 *found;
-    struct AnimationObject3 *object;
+    struct AnimationMetadata *metadata;
+    struct AnimationEntry *entry;
+    struct AnimationEntry *found;
+    struct AnimationEntry *object;
     s32 i;
     s32 frames;
     s32 animation;
-    /* FAKEMATCH: the zero stored into state and field_05 is a halfword field of
+    /* FAKEMATCH: the zero stored into pos and param is a halfword field of
        a struct, so GCC takes it from the literal pool ahead of the frames
        load and keeps it in r8, as the ROM does; a plain zero local loads
        it after the frames. */
@@ -622,7 +503,7 @@ struct AnimationObject3 *AnimationObject_Allocate(s32 id)
 
     if (metadata->width != 0) {
         for (i = 0; i <= 63; i++, entry++) {
-            if (entry->draw_kind == 0) {
+            if (entry->kind == 0) {
                 found = entry;
                 break;
             }
@@ -631,18 +512,18 @@ struct AnimationObject3 *AnimationObject_Allocate(s32 id)
             zero.v = 0;
             frames = metadata->frames;
             object = found;
-            object->id = (s16)id;
+            object->anim_id = (s16)id;
             if (frames == 0)
                 frames = Animation_LookupValueByKey(id);
             animation = metadata->animation;
-            object->animation = animation;
-            object->frames = frames;
-            object->frame_codec = metadata->frame_codec;
-            object->marker = 0xff;
-            object->current = *(u32 *)animation;
-            object->state = zero.v;
-            object->draw_kind = metadata->draw_kind;
-            object->field_05 = zero.v;
+            *(s32 *)&object->field_0c = animation;
+            *(s32 *)&object->frames = frames;
+            object->mode = metadata->frame_codec;
+            object->frame = 0xff;
+            *(u32 *)&object->script = *(u32 *)animation;
+            object->pos = zero.v;
+            object->kind = metadata->draw_kind;
+            object->param = zero.v;
         }
     }
     return object;

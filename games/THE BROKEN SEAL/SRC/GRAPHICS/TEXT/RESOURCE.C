@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
+#include "MENU_LIST.H"
 
 void UiTextResource_NoOpCallback(void)
 {
@@ -30,59 +31,34 @@ void UiTextResource_NoOpCallback4(void)
 {
 }
 
-struct TextResourceSetup {
-    u8 filler0[5];
-    u8 field_50 : 2;
-    u8 field_52 : 2;
-    u8 field_54 : 1;
-    u8 field_55 : 1;
-    u8 field_56 : 2;
-    u8 filler6;
-    u8 field_70 : 1;
-    u8 field_71 : 5;
-    u8 field_76 : 2;
-    u16 field_80 : 10;
-    u16 field_8a : 2;
-    u16 field_8c : 4;
-};
-
 s32 VramBlock_LoadCached(s32, s32, const void *);
 extern const u8 Menu_CursorObjectTiles[];
 
-void UiTextResource_Initialize(struct TextResourceSetup *object, s32 *slot)
+void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)
 {
     const void *data = Menu_CursorObjectTiles;
     s32 value = Resource_FindFreeEntry();
 
     /* ビットフィールドは生成時の設定順を保持する。 */
     *slot = value;
-    object->field_80 = VramBlock_LoadCached(value, 0x80, data);
-    object->field_52 = 0;
-    object->field_54 = 0;
-    object->field_55 = 1;
-    object->field_50 = 0;
-    object->field_71 = 0;
-    object->field_76 = 0;
-    object->field_56 = 2;
-    object->field_8a = 0;
+    object->oam.f.tile = VramBlock_LoadCached(value, 0x80, data);
+    object->oam.f.mode = 0;
+    object->oam.f.mosaic = 0;
+    object->oam.f.colors = 1;
+    object->oam.f.affine = 0;
+    object->oam.f.affine_index = 0;
+    object->oam.f.size = 0;
+    object->oam.f.shape = 2;
+    object->oam.f.priority = 0;
 }
 
-struct TextResourcePosition {
-    u8 padding[4];
-    s8 kind;
-    u8 padding2;
-    u16 index : 9;
-    u16 rest : 7;
-};
-void Runtime_PushSlotEntry(s32 *arg0, s32 arg1);
-void UiTextResource_SetPosition(struct TextResourcePosition *obj, s32 arg1, s32 arg2)
+void UiTextResource_SetPosition(struct MenuSprite *obj, s32 x, s32 y)
 {
-    obj->index = arg1;
-    obj->kind = arg2;
+    obj->oam.f.x = x;
+    obj->oam.f.y = y;
     Runtime_PushSlotEntry((s32 *)obj, 0xFC);
 }
 
-s32 Resource_ResetEntry(s32);
 
 /* 受け取った値を呼出し先へ渡す。 */
 void UiTextResource_Release(s32 value)

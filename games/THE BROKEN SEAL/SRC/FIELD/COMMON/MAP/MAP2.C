@@ -43,8 +43,11 @@ void MapAnimation_PresentFrame(void)
    decodes this frame's animation page into the buffer. */
 void MapAnimation_Start(void)
 {
-    struct MapFrameWork *pages = (struct MapFrameWork *)gMapAnimationPages;
-    struct PerspectiveWork *work = gMapWork[0];
+    /* FAKEMATCH: retain the existing adjacent slot-cell walk. Independent
+       gMapWork loads in 1a5404f7 added four bytes in all six editions. */
+    u8 **pointers = &gMapAnimationPages;
+    struct MapFrameWork *pages = (struct MapFrameWork *)*pointers++;
+    struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers;
     s32 one = 1;
 
     work->animation_active = one;

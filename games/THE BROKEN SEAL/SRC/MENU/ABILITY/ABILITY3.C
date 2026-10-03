@@ -60,11 +60,12 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     u32 first_entry;
     u32 visible_count;
     u8 row;
-    const u16 *entries;
+    s32 cursor;
     struct BattleUnit *owner;
     struct BattleAction *ability;
     struct PsynergyMenuState *menu = gMenuWork;
 
+    /* FAKEMATCH: retain the original byte-offset list cursor; the direct u16 pointer spills the menu base and changes this page by eight allocated bytes. */
     (void)unused;
 
     RenderOutput_RedrawSavedRectFar(window);
@@ -96,21 +97,22 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
     row = 0;
     if (visible_count > row) {
-        entries = &menu->psynergies[first_entry];
+        cursor = first_entry * sizeof(menu->psynergies[0]) +
+                 ((u8 *)menu->psynergies - (u8 *)menu);
         do {
             owner = Owner_GetStateFar(menu->owner_ids[0]);
-            ability = BattleAction_Get(0x3fff & *entries);
+            ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
             if (ability->pp_cost > owner->pp) {
                 UiWork_SetParamNibbleFar(2);
-            } else if (PsynergyMenu_IsActionRestricted(0x3fff & *entries) != 0) {
+            } else if (PsynergyMenu_IsActionRestricted(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
                 UiWork_SetParamNibbleFar(4);
             } else {
                 UiWork_SetParamNibbleFar(15);
             }
 
             UiText_DrawCharacterAtOffsetFar(
-                (0x3fff & *entries) + (s32)&MsgAbilityName,
+                (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&MsgAbilityName,
 #if EDITION_INTERNATIONAL
                 window, 16, row * 16 + 8);
 #else
@@ -120,7 +122,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             UiWork_SetParamNibbleFar(15);
 
             row++;
-            entries++;
+            cursor += sizeof(menu->psynergies[0]);
         } while (visible_count > row);
     }
 

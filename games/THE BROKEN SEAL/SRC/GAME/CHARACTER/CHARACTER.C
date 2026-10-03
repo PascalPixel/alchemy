@@ -18,6 +18,18 @@ s32 Game_ResetForNewGameFar(s32);
 extern struct BattleUnit *gBattleOwnerStates;
 extern const u8 Data_08080ec8[];
 
+/* The existing byte-only multiplier prefix is used only at the stat store
+   boundary below; ClassDefinition remains the full table-row owner. */
+struct ClassRecord {
+    u8 unknown_00[8];
+    u8 hp;
+    u8 pp;
+    u8 attack;
+    u8 defense;
+    u8 agility;
+    u8 luck;
+};
+
 struct StatWork {
     s32 hp;                     /* 0x00 */
     s32 pp;                     /* 0x04 */
@@ -295,7 +307,10 @@ void Owner_RecalculateStats(s32 owner)
         }
 
         {
-            struct ClassDefinition *class = (struct ClassDefinition *)Owner_GetRecordStride84(st->class_index);
+            /* FAKEMATCH: the full ClassDefinition changes five multiplier-load
+               and stat-store orders in the same 2584-byte native module.
+               Keep the existing byte-only prefix at this alias boundary. */
+            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_index);
 
             work->hp = work->hp * class->hp / 10;
             work->pp = work->pp * class->pp / 10;

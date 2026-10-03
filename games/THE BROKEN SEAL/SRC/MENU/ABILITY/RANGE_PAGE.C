@@ -168,8 +168,9 @@ s32 PsynergyMenu_DrawListPage(
     u32 first;
     u32 rows;
     u8 row;
-    const u16 *entries;
+    s32 ofs;
 
+    /* FAKEMATCH: retain the original byte-offset list cursor; direct u16 pointer traversal changes the native page by four allocated bytes. */
     (void)unused;
 
     owner = Owner_GetStateFar(menu->owner_ids[0]);
@@ -189,15 +190,16 @@ s32 PsynergyMenu_DrawListPage(
 
     row = 0;
     if (rows > row) {
-        entries = &menu->psynergies[first];
+        ofs = (s32)(first * sizeof(menu->psynergies[0])) +
+              ((u8 *)menu->psynergies - (u8 *)menu);
         do {
             struct BattleAction *act;
             s32 msg;
             s32 y;
             s32 range;
             act = Ability_GetData(
-                ACT_ID_MASK & *entries);
-            msg = (*entries & ACT_ID_MASK) +
+                ACT_ID_MASK & *(u16 *)(ofs + (s32)menu));
+            msg = (*(u16 *)(ofs + (s32)menu) & ACT_ID_MASK) +
                 (s32)&MsgAbilityName;
             y = row * 16 + LIST_FIRST_ROW * 8;
 
@@ -213,7 +215,7 @@ s32 PsynergyMenu_DrawListPage(
             PsynergyMenu_DrawRange(window, 25, row * 2 + LIST_FIRST_ROW, range, 0);
 
             row++;
-            entries++;
+            ofs += sizeof(menu->psynergies[0]);
         } while (rows > row);
     }
 

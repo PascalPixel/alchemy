@@ -5,7 +5,6 @@
 #include "RAM_BUFFER.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MAP_SCROLL.H"
-#include "HEAP_STATE.H"
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
@@ -14,6 +13,7 @@ static __inline__ void FillWords(void *dst, s32 size, s32 value)
 }
 
 /* Heap slot 44 holds the background view, slot 10 its scanline pages. */
+extern void *Data_03001e50[];
 
 extern u8 gDisp[];
 
@@ -44,17 +44,16 @@ void BattlePresentation_BuildTilemap(s32 *destination)
 /* While the presentation mode is 2, restart the H-blank DMA that feeds
    the BG2 control register from the current scroll record, and copy
    that record's affine parameters. */
+/* The HeapState rewrite retained 84 bytes but moved the initial cache
+   address and loads in all six editions. Keep the existing cache view. */
 void BattlePres_UpdateHBlankScroll(void)
 {
     struct BattleAffineHdma *records;
     u16 *record;
     s32 control;
 
-    union HeapState *heap = (union HeapState *)gWorkSlot;
-    void **cache = &heap->slots[44];
-
-    if (((struct BattleBackgroundView *)cache[0])->mode == 2) {
-        records = cache[10 - 44];
+    if (((struct BattleBackgroundView *)*(void **)((u8 *)Data_03001e50 + 44 * sizeof(void *)))->mode == 2) {
+        records = *(struct BattleAffineHdma **)&Data_03001e50[10];
         record = records->lines[records->page];
         control = record[0];
         /* FAKEMATCH: the do-while keeps the BG2CNT address load after the

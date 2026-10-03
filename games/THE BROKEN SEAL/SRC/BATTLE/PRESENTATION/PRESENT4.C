@@ -127,10 +127,13 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
     }
 }
 
+/* A named-array rewrite changed register allocation and reduced this
+   extent from 200 to 196 bytes in all six editions. Keep the byte-offset
+   traversal while the source form is unresolved. */
 void BattleParty_CollectUnitList(void)
 {
     u16 buf[14];
-    struct BattleSession *battle;
+    u8 *state;
     s32 count;
     s32 i;
     s32 offset;
@@ -139,34 +142,34 @@ void BattleParty_CollectUnitList(void)
     s32 kind;
     u16 *out;
 
-    battle = gBattleWork;
+    state = (u8 *)gBattleWork;
     count = BattleParty_PrepareActiveOwners(buf);
     for (i = 0; i < count; i++) {
-        battle->party_units[i] = buf[i];
+        *(u16 *)(state + 88 + i * 2) = buf[i];
     }
-    offset = count;
-    battle->party_units[offset] = 0xff;
+    offset = count * 2 + 88;
+    *(u16 *)(state + offset) = 0xFF;
 
     count = BattleParty_ListPresentEnemies(buf);
-    kind = battle->unknown_042;
+    kind = ((struct BattleSession *)state)->unknown_042;
     if (kind >= 0) {
         if (kind <= 1) {
             for (i = 0; i < count; i++) {
-                out = (u16 *)battle->enemy_units;
-                out[i] = buf[i];
+                out = (u16 *)(state + 2);
+                out[50 + i] = buf[i];
             }
             goto done;
         }
     }
     for (i = 0; i < count; i++) {
-        index = BattleParty_CenterOrderOffsets[i] + count / 2;
-        out = (u16 *)battle->enemy_units;
-        out[index] = buf[i];
+        index = (BattleParty_CenterOrderOffsets[i] + count / 2) * 2 + 100;
+        out = (u16 *)(state + 2);
+        *(u16 *)((u8 *)out + index) = buf[i];
     }
 done:
-    out = (u16 *)battle->enemy_units;
-    last = count;
-    out[last] = 0xff;
+    out = (u16 *)(state + 2);
+    last = count * 2 + 100;
+    *(u16 *)((u8 *)out + last) = 0xFF;
 }
 
 /* Copies the eight-word tile pattern one row down in VRAM, then clears the

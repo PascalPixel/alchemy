@@ -5,8 +5,7 @@
 
 struct RenderOutput *RenderOutput_AcquireFree(void);
 void Resource_ResetEntry(u32);
-struct RenderOutputList;
-void RenderOutput_AppendToList(struct RenderOutputList *, struct RenderOutput *);
+s32 RenderOutput_AppendToList(void *, void *);
 
 struct TableEntry {
     u16 unused;
@@ -20,6 +19,8 @@ struct RenderOutput *RenderOutput_Create(
     s32 arg3,
     s32 arg4)
 {
+    /* FAKEMATCH: the ignored scalar declaration of the true void list helper
+       keeps one mov after the field stores; a void declaration moves it before. */
     s32 x;
     struct RenderOutput *output;
     s32 y;
@@ -44,7 +45,7 @@ struct RenderOutput *RenderOutput_Create(
     output->index = (s8)arg0;
     output->kind = 1;
     output->active = 1;
-    RenderOutput_AppendToList((struct RenderOutputList *)arg2, output);
+    RenderOutput_AppendToList(arg2, output);
     return output;
 }
 

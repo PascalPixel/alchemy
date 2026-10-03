@@ -177,6 +177,7 @@ s32 Menu_RunWorkspaceOptions(void)
     s32 result;
     u16 *preset;
     s32 n;
+    struct RenderOutput *frame;
 
     redraw = 1;
     page = 0;
@@ -199,8 +200,9 @@ s32 Menu_RunWorkspaceOptions(void)
                 work->option[4] = 0;
 
             for (i = 0; i <= 2; i++) {
-                work->frame[0][i]->sentinel = 0xfb;
-                UiIcon_PrepareObjectFar(work->frame[0][i]);
+                frame = work->frame[0][i];
+                frame->sentinel = 0xfb;
+                UiIcon_PrepareObjectFar(frame);
                 index = (u8)work->frame[0][i]->index;
                 dim = 0;
                 if (i != work->option[2])
@@ -208,8 +210,9 @@ s32 Menu_RunWorkspaceOptions(void)
                 RenderResource_LoadFrame(Data_080367c9[i], index, dim);
             }
             for (i = 0; i <= 1; i++) {
-                work->frame[1][i]->sentinel = 0xfb;
-                UiIcon_PrepareObjectFar(work->frame[1][i]);
+                frame = work->frame[1][i];
+                frame->sentinel = 0xfb;
+                UiIcon_PrepareObjectFar(frame);
                 index = (u8)work->frame[1][i]->index;
                 dim = 0;
                 if (i != work->option[3])
@@ -217,8 +220,9 @@ s32 Menu_RunWorkspaceOptions(void)
                 RenderResource_LoadFrame(Data_080367cc[i], index, dim);
             }
             for (i = 0; i <= 1; i++) {
-                work->frame[2][i]->sentinel = 0xfb;
-                UiIcon_PrepareObjectFar(work->frame[2][i]);
+                frame = work->frame[2][i];
+                frame->sentinel = 0xfb;
+                UiIcon_PrepareObjectFar(frame);
                 index = (u8)work->frame[2][i]->index;
                 dim = 0;
                 if (i != work->option[4])

@@ -187,7 +187,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     cursor_anchor = RenderOutput_CreateFar(
         shop->cursor_icon,
         0x40000000,
-        list_window,
+        (struct RenderInput *)list_window,
         0,
         0);
     cursor_anchor->active = 1;

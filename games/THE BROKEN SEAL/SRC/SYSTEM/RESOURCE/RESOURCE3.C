@@ -167,6 +167,8 @@ loop_1:
     goto loop_1;
 }
 
+/* Pointer assignments reordered the 168/68/134-byte initializers.
+   Keep scalar address words at the metadata boundary. */
 s32 Animation_InitializeObjects(struct AnimationObject *state)
 {
     s32 index;
@@ -194,8 +196,8 @@ s32 Animation_InitializeObjects(struct AnimationObject *state)
 
         object->kind = metadata->draw_kind;
         animation = metadata->animation;
-        object->frames = (void **)frames;
-        object->field_0c = (void *)animation;
+        *(s32 *)&object->frames = frames;
+        *(s32 *)&object->field_0c = animation;
         object->mode = metadata->frame_codec;
         object->frame = 0xff;
         object->script = 0;
@@ -219,8 +221,8 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
             if (value == 0)
                 value = Animation_LookupValueByKey(work->anim_id);
             work->kind = info->draw_kind;
-            work->field_0c = (void *)info->animation;
-            work->frames = (void **)value;
+            *(s32 *)&work->field_0c = info->animation;
+            *(s32 *)&work->frames = value;
             work->mode = info->frame_codec;
             z = 0;
             work->frame = 0xff;
@@ -293,7 +295,7 @@ void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
             later_index = slot_index + 1;
             later_slot_count = 0;
             if (later_index <= 3U) {
-                remaining_slot = &state->entries[later_index];
+                remaining_slot = (struct AnimationEntry **)(later_index * sizeof *remaining_slot + (u32)state + 0x28);
                 do {
                     slot_value = (s32)*remaining_slot++;
                     if (slot_value != 0)
@@ -323,7 +325,7 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
             i = no + 1;
             cnt = 0;
             if (i <= 3) {
-                p = &group->entries[i];
+                p = (struct AnimationEntry **)(i * sizeof *p + (u32)group + 0x28);
                 do {
                     t = *p++;
                     if (t != NULL)
@@ -488,7 +490,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
     s32 i;
     s32 frames;
     s32 animation;
-    /* FAKEMATCH: the zero stored into state and field_05 is a halfword field of
+    /* FAKEMATCH: the zero stored into pos and param is a halfword field of
        a struct, so GCC takes it from the literal pool ahead of the frames
        load and keeps it in r8, as the ROM does; a plain zero local loads
        it after the frames. */
@@ -514,11 +516,11 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
             if (frames == 0)
                 frames = Animation_LookupValueByKey(id);
             animation = metadata->animation;
-            object->field_0c = (void *)animation;
-            object->frames = frames;
+            *(s32 *)&object->field_0c = animation;
+            *(s32 *)&object->frames = frames;
             object->mode = metadata->frame_codec;
             object->frame = 0xff;
-            object->script = *(u8 **)animation;
+            *(u32 *)&object->script = *(u32 *)animation;
             object->pos = zero.v;
             object->kind = metadata->draw_kind;
             object->param = zero.v;

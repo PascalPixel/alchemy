@@ -162,31 +162,53 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 }
 
 /* Removed members are skipped; the end marker means no matching slot. */
+/* Combining the two named-array scans reduced the complete extent from
+   92 to 68 bytes in all six editions. Keep the separate byte-offset scans. */
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
     s32 index;
     s32 tag;
-    s16 *units;
-    s16 unit;
-    struct BattleSession *battle;
+    s32 offset;
+    char *base;
+    s16 item;
 
-    battle = gBattleWork;
+    base = (char *)gBattleWork;
     if (value <= 7) {
-        tag = 0x100;
-        units = battle->party_units;
-    } else {
-        tag = 0x180;
-        units = battle->enemy_units;
-    }
-    index = 0;
-    for (;;) {
-        unit = units[index];
-        if (unit == 0xff)
+        tag = 0x80;
+        index = 0;
+        tag <<= 1;
+        offset = 0x58;
+first:
+        item = *(s16 *)(offset + (u32)base);
+        if (item == 0xff)
             return -1;
-        if (unit != 0xfe && unit == value)
+        if (item == 0xfe)
+            goto next_first;
+        if (item == value)
             return index | tag;
+next_first:
+        offset += 2;
         index++;
+        goto first;
     }
+
+    tag = 0xc0;
+    index = 0;
+    base += 2;
+    tag <<= 1;
+    offset = 0x64;
+second:
+    item = *(s16 *)(offset + (u32)base);
+    if (item == 0xff)
+        return -1;
+    if (item == 0xfe)
+        goto next_second;
+    if (item == value)
+        return index | tag;
+next_second:
+    offset += 2;
+    index++;
+    goto second;
 }
 
 /* battle/presentation/cam/shoulder_alt.c */

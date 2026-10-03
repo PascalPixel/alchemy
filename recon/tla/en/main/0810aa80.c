@@ -1,3 +1,4 @@
+#include "RENDER_INPUT.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 MsgSanctumWelcome[];

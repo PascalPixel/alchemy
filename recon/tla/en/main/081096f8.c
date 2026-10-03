@@ -1,3 +1,4 @@
+#include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 

@@ -17,10 +17,44 @@
  * selector and 245 BuildPlan byte differences at each function's boundary.
  * There is no claim of executable equivalence for this draft.
  *
- * 2026-10-03 source-owner cleanup: the true u16 RollWeaponUnleashFar
- * declaration adds two halfword-narrowing instructions (four bytes) to
- * BuildPlan in all six fresh diagnostic objects. This remaining difference
- * is retained as a draft; the scalar producer declaration is not restored.
+ * 2026-10-03 source-owner cleanup first used a u16 RollWeaponUnleashFar
+ * result, adding two halfword-narrowing instructions (four bytes) to
+ * BuildPlan in all six diagnostic objects. The producer's u16 field load
+ * alone did not establish its public return width; the caller below does.
+ *
+ * T4: the actual caller consumes the complete r0 value without narrowing.
+ * RollWeaponUnleash, its shared near/far declarations and this caller now
+ * agree on an s32 action result. The producer still returns 1 or the
+ * zero-extended weapon action field. BuildPlan score 271 -> 71: only the
+ * original fourteen frame/static-chain operand differences remain in all
+ * six editions. The complete 492-byte selector remains exact in all six;
+ * the 3728-byte parent and the coherent family remain uncredited.
+ * The existing DjinnRecovery records replace the duplicate Placement view,
+ * including the signed -2 spent state, without changing instructions.
+ *
+ * New ordinary forms, rejected:
+ * - Returning the four real counts from an inline aggregate helper: score
+ *   671, frame 44; the extra temporary requires a count copy.
+ * - Owning the actual SummonDefinition by value: score 1300, frame 48 and
+ *   native frame offsets, but the required record copy adds instructions.
+ * - Moving actor/battle initialization after the nested definition: 121,
+ *   exchanging the actor/plan pointer spills. Moving only battle: 71.
+ * - Local aliases of both incoming arguments: 706, frame still 40.
+ * - Counts before the captured declarations: parent 71, selector 180;
+ *   it shifts all five captures by four bytes. Counts after the nested
+ *   definition, before the statements: parent 71, original layout.
+ * - Explicit selector result and summon/count argument temporaries: 71.
+ * None is retained. The native frame has no accesses to its two
+ * words at sp+16/sp+20; no unread storage is added to fill them.
+ * Current/native frame layout: call argument at 0; list spill at 4;
+ * plan-address spill at 8; actor-address spill at 12; counts at 16/24;
+ * actor at 20/28; command at 24/32; battle at 28/36; target at 32/40;
+ * plan at 36/44; static-chain base at 40/48. All five capture offsets
+ * relative to the chain base already match the exact nested selector.
+ * The selector's singleton paths leave the Ability_GetData pointer in r0;
+ * ranged success leaves the address of the captured plan variable there.
+ * This supports the existing fall-through reconstruction, not an invented
+ * address-valued success return. The undefined success contract remains.
  *
  * Eight ordinary forms after deletion, EN selector/main sizes and differences:
  * remove array:      492/3728, 0/14 (retained)
@@ -43,6 +77,7 @@
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_SUMMON.H"
+#include "BATTLE_PARTY.H"
 #include "BATTLE_CALC.H"
 #include "BATTLE_MSG.H"
 #include "MOTION_OBJECT.H"
@@ -59,7 +94,6 @@ void UiText_ShowMessageAndWaitCoreFar(s32 message);
 void UiWork_ClearValueNameTablesFar(void);
 s32 GameFlag_IsSet(s32 flag);
 u32 BattleEv_Push(u32 opcode, u32 operand);
-u16 RollWeaponUnleashFar(struct BattleUnit *unit);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 void BattleEv_SetRuntimeField8(void);
 struct ItemDefinition *Item_Get(s32 item);
@@ -77,26 +111,7 @@ void Object_SetMode(struct MotionObject *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
 void BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 flag);
 s32 BattlePlacement_CountValidEntries(u32 unit_id, u8 *counts);
-/* The standby Djinn of one side, as BattlePlacement_CountValidEntries reads
-   them: a state of -1 is ready, 254 is spent by a summon. */
-struct PlacementEntry {
-    u8 element;
-    u8 unknown_01;
-    u8 object_id;
-    s8 state;
-};
-
-struct PlacementList {
-    struct PlacementEntry entries[64];
-    s32 count;
-};
-
-struct PlacementTable {
-    u8 padding[8];
-    struct PlacementList list;
-};
-
-struct PlacementTable *Trade_GetOfferStateFar(s32 side);
+struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 u32 BattleParty_IsUnitListed(u32 unit_id);
 s32 Item_GetEquippedElementFar(s32 unit_id);
 u32 Battle_GetEntryField2LowBits(u32 class_id);
@@ -489,7 +504,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
     case 6:
         {
             const struct SummonDefinition *summon;
-            struct PlacementList *list;
+            struct DjinnRecoveryList *list;
             s32 side;
             u8 counts[4];
             s32 i;
@@ -515,10 +530,10 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *command, struct BattlePla
             UiText_DrawQuantity(action, 4);
             UiText_ShowMessageAndWaitCoreFar((s32)&MsgActorSummons);
             for (i = 0; i != list->count; i++) {
-                struct PlacementEntry *entry = &list->entries[i];
+                struct DjinnRecoveryEntry *entry = &list->entries[i];
 
-                if (entry->state == -1 && BattleParty_IsUnitListed(entry->object_id) && counts[entry->element] != 0) {
-                    entry->state = 254;
+                if (entry->turns == -1 && BattleParty_IsUnitListed(entry->unit_id) && counts[entry->element] != 0) {
+                    entry->turns = -2;
                     counts[entry->element]--;
                 }
             }

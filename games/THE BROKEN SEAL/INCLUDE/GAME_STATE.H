@@ -60,7 +60,13 @@ struct GameState {
     u8 unknown_200[5];
     /* The two values the palette glow is restored from. */
     u8 palette_glow[2];
-    u8 unknown_207[8];
+    u8 unknown_207[3];
+    /* Whether dialogue uses the character speech sound. */
+    u8 speech;
+    u8 unknown_20b;
+    /* The options menu's message speed; the Djinn tutorial fixes it to one. */
+    u8 message_speed;
+    u8 unknown_20d[2];
     u8 unknown_20f;
     u16 unknown_210;
     u16 unknown_212;
@@ -129,6 +135,8 @@ LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
 LAYOUT_OFFSET_GUARD(GameState_MovementMode, struct GameState, movement_mode, 0x1f2);
 LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0x1f4);
 LAYOUT_OFFSET_GUARD(GameState_ActiveOwners, struct GameState, active_owners, 0x1f8);
+LAYOUT_OFFSET_GUARD(GameState_Speech, struct GameState, speech, 0x20a);
+LAYOUT_OFFSET_GUARD(GameState_MessageSpeed, struct GameState, message_speed, 0x20c);
 LAYOUT_OFFSET_GUARD(GameState_Keys210, struct GameState, unknown_210, 0x210);
 LAYOUT_OFFSET_GUARD(GameState_FirstShortcutKeys, struct GameState, first_shortcut_keys, 0x218);
 LAYOUT_OFFSET_GUARD(GameState_SecondShortcutKeys, struct GameState, second_shortcut_keys, 0x21a);

@@ -321,11 +321,11 @@ BattleCommand_SelectAutomatic:
 .L_080bd67c:
 	.4byte .L_080bd4a0
 .L_080bd680:
-	.4byte HpDmgFalloff + 0x18
+	.4byte BattleCommand_SelectionWeights
 .L_080bd684:
-	.4byte HpDmgFalloff + 0x20
+	.4byte BattleCommand_SelectionWeights + 8
 .L_080bd688:
-	.4byte HpDmgFalloff + 0x28
+	.4byte BattleCommand_SelectionWeights + 16
 .L_080bd68c:
 	.4byte 0x000001ff
 .L_080bd690:

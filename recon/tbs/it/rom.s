@@ -1099,7 +1099,10 @@ PpHealFalloff:
 	.incbin "baserom.gba", 0x000c2b68, 0x00000018
 	.global HpDmgFalloff
 HpDmgFalloff:
-	.incbin "baserom.gba", 0x000c2b80, 0x00000030
+	.incbin "baserom.gba", 0x000c2b80, 0x00000018
+	.global BattleCommand_SelectionWeights
+BattleCommand_SelectionWeights:
+	.incbin "baserom.gba", 0x000c2b98, 0x00000018
 	.global Battle_ActionStatus
 Battle_ActionStatus:
 	.incbin "baserom.gba", 0x000c2bb0, 0x00000208
@@ -1160,6 +1163,12 @@ RomBytes_080c73f8:
 	.global Summon_EntryTable
 Summon_EntryTable:
 	.incbin "baserom.gba", 0x000c7438, 0x00001bc8
+	.section .rom.000cb1a4, "ax"
+	.global BattleFx_RunFlippingBurst
+	.type BattleFx_RunFlippingBurst, %function
+	.thumb_func
+BattleFx_RunFlippingBurst:
+	.incbin "baserom.gba", 0x000cb1a4, 0x00000348
 	.section .rom.000cb7f8, "ax"
 	.global Unnamed_080cb7f8
 	.type Unnamed_080cb7f8, %function

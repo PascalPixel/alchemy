@@ -1,5 +1,9 @@
-/* Current near miss (2026-10-03): score 475, 2 register-only, 2 branch/operand
- * and 7 reordered instructions; no inserted or deleted instructions.
+/* 2026-10-03 ordinary fixed-slot loop trials: bounded ten-point loop 3745; derived signed countdown 475; derived unsigned countdown 695. */
+/* 2026-10-03 ordinary idle-tail trials: natural continuation 695; natural remaining count 800; plain countdown 875. */
+/* Current near miss (2026-10-03): score 475.
+ * Removed the empty countdown constraint: it restored instruction presence
+ * rather than only register choice or order. The ordinary trailing loop
+ * remains uncredited; the former score475 was not adoption-ready.
  * Uses the shared AnimationObject/AnimationEntry model and the actual
  * Vector_AddPolarOffset(s32, s32, s32 *) interface with explicit u16 calls.
  * Only empty register/scheduling constraints remain. No code is credited.
@@ -186,8 +190,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             (u16)(angle = (s16)(angle + 0x4000));
             i++;
         }
-        for (i = 5; i >= 0; i--)
-            asm("" : "+r"(i)); /* FAKEMATCH: retains the native six-iteration idle countdown. */
+        for (i = 9 - i; i >= 0; i--);
         break;
     }
 }

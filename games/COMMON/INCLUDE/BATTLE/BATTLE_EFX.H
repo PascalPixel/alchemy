@@ -4,6 +4,9 @@
 #include "TYPES.H"
 
 struct BattleEffectArgument;
+void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mode);
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect);
+void BattleFx_InitializeMode1(struct BattleEffectArgument *effect);
 void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 mode);
 void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect);
 

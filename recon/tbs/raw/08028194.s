@@ -429,7 +429,7 @@ AffineEffect_UpdateFrame:
 .L_080284ac:
 	.4byte 0x0000ffff
 .L_080284b0:
-	.4byte ResourceTableEntries
+	.4byte gVramBlockCache
 .L_080284b4:
 	.4byte 0x000001ff
 .L_080284b8:

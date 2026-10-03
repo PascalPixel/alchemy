@@ -54,8 +54,6 @@ Data_03001b00:
 	.global gKeysRepeat
 gKeysRepeat:
 	.space 0x0000000c
-	.global ResourceTableEntries
-ResourceTableEntries:
 	.global gVramBlockCache
 gVramBlockCache:
 	.space 0x00000180

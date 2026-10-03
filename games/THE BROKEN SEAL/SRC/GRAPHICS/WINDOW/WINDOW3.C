@@ -4,10 +4,6 @@
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
 
-s32 UiText_MeasureStringVariant(s32 start, s32 *width, s32 *count, s32 mode);
-s32 UiText_BuildRenderEntries(s32, s32);
-
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
 
 /* The European editions never widen a window for the render mode. */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
@@ -16,7 +12,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
 #define FIT_FIXED_LIMIT 1
 #endif
 
-void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
+void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, u16 *spacing, u32 flags)
 {
 #if !defined(FIT_FIXED_LIMIT)
     u8 *base;
@@ -38,9 +34,9 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
 
     if (!(flags & 2)) {
         if (flags & 1)
-            UiText_MeasureStringVariant(no, (s32 *)pw, (s32 *)ph, mode);
+            UiText_MeasureStringVariant(no, pw, ph, spacing);
         else
-            UiText_MeasureEntryDimensions(no, (s32 *)pw, (s32 *)ph, mode);
+            UiText_MeasureEntryDimensions(no, pw, ph, spacing);
     }
 
     if (*pw == 0 && *ph == 0)
@@ -89,7 +85,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
 
 void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 {
-    UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), x, y, 0);
+    UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), (u32 *)x, (u32 *)y, 0);
 }
 
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)

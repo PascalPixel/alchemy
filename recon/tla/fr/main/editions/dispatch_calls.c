@@ -1,3 +1,6 @@
+/* 2026-10-03: removed the unused unary ApplyChildValuesToRecord declaration.
+   The complete edition object is unchanged; the older metadata-argument
+   draft limitation below remains outside this correction. */
 /* Draft: this dispatcher predates the typed metadata argument and the
  * repaired raw callee ownership. Two wrongly named call targets differed
  * when recorded; the owner correction now resolves them. The old omitted
@@ -53,7 +56,6 @@ void Animation_ApplyChildValue(struct DispatchChild *, s32);
 s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *);
 void ObjectDispatch_Initialize(struct DispatchObject *, u32);
-s32 Animation_ApplyChildValuesToRecord(struct DispatchChild *);
 s32 WaitFrames(s32);
 
 extern const s32 ObjectDispatch_Table4[];

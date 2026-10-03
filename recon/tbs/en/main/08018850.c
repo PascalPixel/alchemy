@@ -1,3 +1,14 @@
+/* Current draft (2026-10-03), not exact: EN score 1310, 55 differing rows
+   (29 register, 14 operand, 9 reordered, 3 inserted). EN object .text is
+   518 bytes against the 512-byte listing; no linked extent is proved.
+   Uses WINDOW.H's UiRenderWork and GLYPH.H's FontGlyph. The nullable fourth
+   argument is a u16 spacing output. Height is not limited to four lines.
+   Own-ROM edition branches preserve Japanese character spacing, trailing
+   width adjustments and spacing caps; control 1 clears outline only in
+   ES/FR/IT, and render mode widens only JA/EN.
+   All six branches compile. Object .text/native extent, in JA/EN/DE/ES/FR/IT
+   order: 564/572, 518/512, 494/492, 502/504, 502/504, 502/504.
+   Non-English byte matching remains unproved. Earlier trials follow. */
 /* Draft, not exact (2026-09-25): 504 of 512 bytes, 164 differing halfwords.
    Split from its listing (which also held UiText_MeasureStringVariant and
    UiText_DrawGlyph) and written from it; the entry walk, the control-code
@@ -13,33 +24,17 @@
    stored after the width, and a word temporary shared by the widest-line
    test and the tile rounding (35 without it). The count reads must stay
    *(counts + i): counts[i] scores 1917. */
-#include "TYPES.H"
-
-struct GlyphInfo {
-    u16 width;
-    u8 unknown_02[30];
-};
-
-struct TextWork {
-    u8 unknown_000[0xea4];
-    u8 framed;
-    u8 unknown_ea5[7];
-    u16 style;
-    u8 unknown_eae[2];
-    u16 entries[0x200];
-};
-
-extern u8 *gWindowWork;
-extern struct GlyphInfo UiText_Glyphs[];
+#include "WINDOW.H"
+#include "GLYPH.H"
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
-/* Measures the queued message starting at entry pos: the widest line and
-   the total height (15 per line, up to four lines), and optionally the
-   per-glyph spacing (8.8) that would justify each line to the window. */
+/* Measures the widest queued line and total height, adding 15 for every line.
+   Only the four spacing slots saturate. Optional 8.8 spacing is between words
+   internationally and between characters in Japanese. */
 void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16 *spacing)
 {
-    struct TextWork *work;
+    struct UiRenderWork *work;
     u32 lines;
     u32 width;
     u32 height;
@@ -54,36 +49,75 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
     u16 counts[4];
     u32 tmp;
     u32 tmp2;
+#if !EDITION_INTERNATIONAL
+    s32 trailing;
+#endif
 
-    work = (struct TextWork *)gWindowWork;
+    work = (struct UiRenderWork *)gWindowWork[0];
     height = 15;
     count = 0;
     width = 0;
     lines = 0;
     line_width = 0;
+#if !EDITION_INTERNATIONAL
+    trailing = 0;
+#endif
     for (;;) {
         c = work->entries[pos];
-        pos = (pos + 1) & 0x1ff;
+        pos = (pos + 1) & RENDER_ENTRY_MASK;
         if (c > 31) {
+#if EDITION_INTERNATIONAL
             if (c == 32) {
                 line_width += 5;
                 count++;
             } else {
                 glyph = UiText_Glyphs[c - 32].width;
-                style = work->style;
+                style = work->outline;
                 if (style == 1 || style == 5)
                     glyph++;
                 line_width += glyph;
             }
+#else
+            if (c != 0xde && c != 0xdf) {
+                if (c == 32) {
+                    line_width += 7;
+                } else {
+                    if (c == 0xa5)
+                        trailing = -1;
+                    else if (c == 0x21)
+                        trailing = -3;
+                    else if (c == 0xa1 || c == 0xa4)
+                        trailing = -6;
+                    else
+                        trailing = 0;
+                    glyph = 10;
+                    if (c <= 0xff)
+                        glyph = UiText_Glyphs[c - 32].width;
+                    style = work->outline;
+                    if (style == 1 || style == 5)
+                        glyph++;
+                    line_width += glyph;
+                }
+            }
+            count++;
+#endif
             continue;
         }
         switch (c) {
-        case 0:
         case 1:
+#if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+            work->outline = 0;
+#endif
+        case 0:
             goto done;
         case 3:
+#if EDITION_INTERNATIONAL
+            count++;
+#else
+            line_width += trailing;
+#endif
             widths[lines] = line_width;
-            counts[lines] = ++count;
+            counts[lines] = count;
             if (width < line_width)
                 width = line_width;
             if (lines < 3)
@@ -94,27 +128,35 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
             break;
         case 14:
         case 28:
-            pos = (pos + 1) & 0x1ff;
+            pos = (pos + 1) & RENDER_ENTRY_MASK;
         case 8:
         case 10:
         case 15:
         case 17:
-            pos = (pos + 1) & 0x1ff;
+            pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
         case 9:
-            work->style = work->entries[pos];
-            pos = (pos + 1) & 0x1ff;
+            work->outline = work->entries[pos];
+            pos = (pos + 1) & RENDER_ENTRY_MASK;
             break;
         }
     }
 done:
+#if !EDITION_INTERNATIONAL
+    line_width += trailing;
+#endif
     widths[lines] = line_width;
     if (width < (tmp = line_width))
         width = line_width;
-    if (work->framed)
+#if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN)
+    if (work->mode)
         width = width + 2;
+#endif
     *out_width = width;
-    counts[lines] = ++count;
+#if EDITION_INTERNATIONAL
+    count++;
+#endif
+    counts[lines] = count;
     tmp = (width + 19) >> 3;
     tmp2 = (tmp << 3) - 16;
     *out_height = height;
@@ -129,8 +171,15 @@ done:
                 if (gap < 0)
                     gap = 0;
                 gap = __divsi3(gap << 8, *(counts + i) - 1);
+#if EDITION_INTERNATIONAL
                 if ((u32)gap > 0xc00)
                     gap = 0x200;
+#else
+                if ((u32)gap > 0x800)
+                    gap = 0;
+                if (gap > 0x100)
+                    gap = 0x100;
+#endif
                 *spacing = gap;
             }
             spacing++;

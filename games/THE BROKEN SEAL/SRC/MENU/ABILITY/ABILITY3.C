@@ -34,10 +34,10 @@ extern volatile u32 gKeysRepeat;
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 s32 GameFlag_TestFar(s32 message);
-void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
-void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
+void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
@@ -65,6 +65,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     struct BattleAction *ability;
     struct PsynergyMenuState *menu = gMenuWork;
 
+    /* FAKEMATCH: retain the original byte-offset list cursor; the direct u16 pointer spills the menu base and changes this page by eight allocated bytes. */
     (void)unused;
 
     RenderOutput_RedrawSavedRectFar(window);
@@ -96,7 +97,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
     row = 0;
     if (visible_count > row) {
-        cursor = first_entry * 2 + 0x1c8;
+        cursor = first_entry * sizeof(menu->psynergies[0]) +
+                 ((u8 *)menu->psynergies - (u8 *)menu);
         do {
             owner = Owner_GetStateFar(menu->owner_ids[0]);
             ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
@@ -120,7 +122,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             UiWork_SetParamNibbleFar(15);
 
             row++;
-            cursor += 2;
+            cursor += sizeof(menu->psynergies[0]);
         } while (visible_count > row);
     }
 
@@ -346,8 +348,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                 }
                 menu->row_positions[tab] = 26;
                 Menu_DrawOwnerStatusPanel(menu->status_window, menu->owner_table[tab], 0, 0);
-                PsynergyMenu_CallIconRoutineWithValue(
-                    menu, menu->owner_table[tab]);
+                PsynergyMenu_CallIconRoutineWithValue((s32)menu, menu->owner_table[tab]);
                 break;
             }
 
@@ -408,12 +409,12 @@ s32 PsynergyMenu_RunList(s32 pane)
 
 s32 PsynergyMenu_IsActionRestricted(s32 no)
 {
-    u8 *action = (u8 *)BattleAction_Get((u32)(no << 18) >> 18);
+    struct BattleAction *action = BattleAction_Get((u32)(no << 18) >> 18);
     u32 flags;
 
-    if (action[12] != 0)
+    if (action->type_0c != 0)
         goto restricted;
-    flags = action[1] & 0xc0;
+    flags = action->target_flags & 0xc0;
     no = 1;
     if (flags != 0xc0)
         goto done;

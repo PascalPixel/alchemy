@@ -9,6 +9,6 @@ void UiWindow_InitializeWork(s32 unused)
     work->pane_index[0] = -1;
     work->pane_count[0] = 1;
     work->pane_count[1] = 1;
-    work->unknown_110[2] = 1;
-    work->unknown_110[3] = 1;
+    work->column_count = 1;
+    work->row_count = 1;
 }

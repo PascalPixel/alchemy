@@ -20,7 +20,7 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void)
         member_index = 0;
         do {
             if (Item_CanOwnerEquip(menu->owner_ids[member_index],
-                                   menu->selected_items[0] & 0x1FF) != 0) {
+                                   menu->selected_items[0] & ITEM_ID_MASK) != 0) {
                 struct AnimationObject *indicator = menu->owner_objects[member_index];
                 AnimationObjects_SelectAnimationFar(indicator, 3);
             } else {
@@ -101,7 +101,7 @@ s32 ItemMenu_Count(s32 owner_id)
     slots = Owner_GetStateFar(owner_id)->inventory;
     remaining = 0xE;
     do {
-        item_id = 0x1FF & *slots;
+        item_id = ITEM_ID_MASK & *slots;
         slots += 1;
         if (item_id != 0) {
             count += 1;

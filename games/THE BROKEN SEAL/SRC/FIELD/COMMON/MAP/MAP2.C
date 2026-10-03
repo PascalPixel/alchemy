@@ -7,7 +7,8 @@
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
 #include "SYSTEM.H"
-#include "MAP_RENDER_WORK.H"
+#include "MAP_SCROLL.H"
+#include "MAPFRAME.H"
 
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
@@ -17,7 +18,6 @@ void MapAnimation_Update(void);
 void MapAnimation_PresentFrame(void);
 
 void WaitFrames(s32 frames);
-void Resource_RunCopiedDecoder(void *source, void *destination);
 
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 s32 Resource_DecodeType01(const void *source, void *destination);
@@ -43,20 +43,20 @@ void MapAnimation_PresentFrame(void)
    decodes this frame's animation page into the buffer. */
 void MapAnimation_Start(void)
 {
-    /* FAKEMATCH: the map work pointer, gMapWork, is read as the word after
-       the pages through one base; the reference loads one address for both. */
+    /* FAKEMATCH: retain the existing adjacent slot-cell walk. Independent
+       gMapWork loads in 1a5404f7 added four bytes in all six editions. */
     u8 **pointers = &gMapAnimationPages;
-    u8 *pages = *pointers++;
-    struct MapRenderWork *work = *(struct MapRenderWork **)pointers;
+    struct MapFrameWork *pages = (struct MapFrameWork *)*pointers++;
+    struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers;
     s32 one = 1;
 
-    work->active = one;
+    work->animation_active = one;
     Scheduler_EnableCallbacks((u32)(MapAnimation_Update));
     Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, 0x84000800, (volatile u32 *)0x040000d4);
     WaitFrames(1);
-    Resource_RunCopiedDecoder(pages + (*(u32 *)&gFrameCount & one) * 0x1400 + 0xc80, (void *)gMapCellBuffer);
-    work->first = 200;
-    work->second = 255;
+    Resource_RunCopiedDecoder((s32)pages->pages[*(u32 *)&gFrameCount & one], (s32)gMapCellBuffer);
+    work->window_top = 200;
+    work->window_bottom = 255;
     *(u32 *)Data_03001cfc = (u32)MapAnimation_PresentFrame;
 }
 
@@ -77,14 +77,14 @@ void Map_ShowBg1FromBuffer(void)
    leaves only the map animation running. */
 void Map_LoadAreaGraphics(void)
 {
-    u8 *state;
+    struct PerspectiveWork *state;
     u32 *resources;
     u8 *buffer;
     s16 value;
 
     state = gMapWork[0];
     buffer = (u8 *)gMapCellBuffer;
-    resources = *(u32 **)(state + 0x11c);
+    resources = state->resources;
     value = BG_PALETTE[0];
     Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
@@ -94,8 +94,8 @@ void Map_LoadAreaGraphics(void)
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
-    ((struct MapRenderWork *)state)->first = 0;
-    ((struct MapRenderWork *)state)->second = 159;
+    state->window_top = 0;
+    state->window_bottom = 159;
     WaitFrames(1);
     Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
     /* FAKEMATCH: the byte flag is written from the halfword local cleared
@@ -103,7 +103,7 @@ void Map_LoadAreaGraphics(void)
        from a short-range halfword pool placed before the epilogue. */
     value = 0;
     Map_UpdateCurrentTileBlock();
-    state[252] = value;
+    state->animation_active = value;
     Scheduler_DisableCallbacks((u32)(MapAnimation_Update));
     WaitFrames(1);
 }
@@ -111,12 +111,12 @@ void Map_LoadAreaGraphics(void)
 /* map/shared/load_default_cells_and_update_block.c */
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
-    struct MapRenderWork *work = gMapWork[0];
+    struct PerspectiveWork *work = gMapWork[0];
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
-    work->first = 0;
-    work->second = 0x9f;
+    work->window_top = 0;
+    work->window_bottom = 0x9f;
     WaitFrames(1U);
-    Resource_DecodeType01((s32)Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), (u32)gMapCellBuffer);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
     Map_UpdateCurrentTileBlock();
     Scheduler_DisableCallbacks((u32)MapAnimation_Update);
     WaitFrames(1U);

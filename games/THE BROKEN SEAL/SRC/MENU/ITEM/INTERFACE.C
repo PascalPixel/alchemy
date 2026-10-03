@@ -32,10 +32,10 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
         menu->info_window =
             (struct UiWindow *)UiWindow_CreateFar(0, 17, 30, 3, style);
         menu->item_window = NULL;
-        menu->unknown_110[0] = zero;
-        menu->unknown_110[1] = zero;
-        menu->unknown_110[2] = 8;
-        menu->unknown_110[3] = style;
+        menu->selected_column = zero;
+        menu->selected_row = zero;
+        menu->column_count = 8;
+        menu->row_count = style;
     }
 }
 
@@ -111,7 +111,8 @@ void ItemMenu_HidePageIcons(void)
 }
 #endif
 
-void UiWindow_CloseIfOpen(void *, s32);
+/* The pointer-cell closer ignores the extra legacy caller word. */
+void UiWindow_CloseIfOpen();
 void Menu_ReleaseEntryObjects(void);
 
 void ItemMenu_Close(void)

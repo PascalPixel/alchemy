@@ -1,5 +1,4 @@
 #include "INVENTORY.H"
-s32 Inventory_AddItem(s32 owner, s32 item);
 
 void Inventory_AddAndEquip(s32 owner, s32 target)
 {
@@ -14,5 +13,5 @@ void Inventory_AddAndEquip(s32 owner, s32 target)
         if (*entry++ == target)
             Inventory_Equip(owner, index);
         index++;
-    } while (index <= 14);
+    } while (index < INVENTORY_SLOTS);
 }

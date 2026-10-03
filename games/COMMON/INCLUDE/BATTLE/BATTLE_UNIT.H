@@ -8,7 +8,8 @@
 
 enum {
     BATTLE_ACTION_SIZE = 0x10,
-    BATTLE_UNIT_SIZE = 0x14c
+    BATTLE_UNIT_SIZE = 0x14c,
+    OWNER_ACTION_ID_MASK = 0x3fff
 };
 
 struct OwnerActionSlot {

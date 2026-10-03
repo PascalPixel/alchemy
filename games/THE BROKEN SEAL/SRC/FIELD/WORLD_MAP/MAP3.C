@@ -6,6 +6,8 @@
 #include "SCENE_IDS.H"
 #include "FIELD_EFFECT.H"
 #include "IO_REG.H"
+#include "IO_WRITE_QUEUE.H"
+#include "EVENT_RUNTIME.H"
 
 extern u8 MsgWorldMapSukuretaHowLongWillIsland[];
 extern u8 gPresentGuide9[];
@@ -26,43 +28,8 @@ s32 __umodsi3(u32 value, s32 divisor);
 extern u32 gFrameCount;
 extern s32 gActorEightPuffScript[];
 
-struct Sprite371 {
-    u8 pad[9];
-    u8 lo : 2;
-    u8 layer : 2;
-    u8 hi : 4;
-};
-
-struct Flags35 {
-    u8 pad[35];
-    u8 flags;
-};
-
-struct Flags38 {
-    u8 pad[38];
-    u8 flags;
-};
-
-struct Flags85 {
-    u8 pad[85];
-    u8 flags;
-};
-
 void Event_SetPairWork1c0(s32 scene, s32 entrance);
 
-struct DisplayTransfer {
-    const void *source;
-    void *destination;
-    u32 control;
-};
-
-struct DisplayTransferQueue {
-    u16 count;
-    u16 unknown_02;
-    struct DisplayTransfer entries[32];
-};
-
-extern struct DisplayTransferQueue gIoWriteQueue;
 u16 gWorldMapBlend;
 extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
@@ -104,9 +71,7 @@ void FieldScene_RunLateSequence(void);
    title scene's entrance 10. */
 void FieldScene_RunActorPresentationSequence(void)
 {
-    u8 *state = (u8 *)&gGameState;
-
-    PaletteGlow_Update(state[0x205], state[0x206]);
+    PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
     Engine_EventBegin();
     BattleFx_ScheduleRatioTransition(0x10000, 0x12c);
     Camera_MoveTo(-1, -1, -1, 0);
@@ -117,7 +82,7 @@ void FieldScene_RunActorPresentationSequence(void)
     BattleFx_ScheduleRatioTransition(0x18000, 16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplyTarget(0x10003, 1);
-    *(s32 *)((u8 *)gEventWork + 0x1c8) = 16;
+    gEventWork->transition_frames = 16;
     Engine_EventOpenScreen();
     Event_WaitForDisplayField358Clear();
     Battle_SetObjectFlag5bWhenMode3();
@@ -226,7 +191,7 @@ void StoryScene_StartTransition(void)
     ColorBuffer_ApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(2);
-    *(s32 *)(*(u8 **)&gEventWork + 456) = 1;
+    gEventWork->transition_frames = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -378,35 +343,35 @@ s32 StoryReward_LookupBySelection(u32 selection)
 /* Every sixteenth frame, drop a puff beside actor 8 at a random offset. */
 void WorldMap_SpawnActorEightPuff(void)
 {
-    u8 *leader;
-    u8 *obj;
-    struct Sprite371 *spr;
+    struct FieldActor *leader;
+    struct FieldActor *obj;
+    struct FieldSprite *spr;
     u32 value;
 
     if ((*(s32 *)&gFrameCount & 15) != 0)
         return;
-    leader = (u8 *)Object_GetById(8);
-    obj = (u8 *)Engine_ObjectCreate(222, *(s32 *)(leader + 8) + -0x200000, *(s32 *)(leader + 12), *(s32 *)(leader + 16) + -0x100000);
+    leader = Object_GetById(8);
+    obj = (struct FieldActor *)Engine_ObjectCreate(222, leader->x.fixed - 0x200000, leader->y.fixed, leader->z.fixed - 0x100000);
     if (obj == 0)
         return;
-    *(s32 *)(obj + 24) = 0x8000;
-    *(s32 *)(obj + 28) = 0x8000;
-    spr = *(struct Sprite371 **)(obj + 80);
+    obj->scale_x = 0x8000;
+    obj->scale_y = 0x8000;
+    spr = obj->sprite;
     if ((u16)((u32)Engine_RandomNext() * 2 >> 16)) {
         s32 back = (((u32)Engine_RandomNext() * 48) >> 16) << 16;
 
-        *(s32 *)(obj + 8) -= back >> 1;
-        *(s32 *)(obj + 16) -= back;
+        obj->x.fixed -= back >> 1;
+        obj->z.fixed -= back;
     } else {
         value = (((u32)Engine_RandomNext() << 5) >> 16) << 16;
-        *(s32 *)(obj + 8) += value;
+        obj->x.fixed += value;
         value = (s32)value >> 1;
-        *(s32 *)(obj + 16) += value;
+        obj->z.fixed += value;
     }
-    ((struct Flags38 *)spr)->flags = 0;
-    spr->layer = ((struct Sprite371 *)*(u8 **)(leader + 80))->layer;
-    ((struct Flags35 *)obj)->flags |= 2;
-    ((struct Flags85 *)obj)->flags = leader[85];
+    spr->flags = 0;
+    spr->priority = leader->sprite->priority;
+    obj->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    obj->motion_flags = leader->motion_flags;
     ObjectGroup_SetChildValue(obj, 9);
     Object_SetMode(obj, 2);
     Engine_ObjectSetScript(obj, (s32)gActorEightPuffScript);
@@ -451,18 +416,18 @@ void FieldScene_RunScene371_0200357c(void)
 void StoryScene_UpdateSelectedActorProgress(void)
 {
 
-    struct StorySelectionActor *actor;
-    struct StoryProgressWork *scene;
+    struct FieldActor *actor;
+    struct EventWork *scene;
     s32 progress;
 
-    actor = Actor_Get(gGameState.selected_actor);
-    scene = (struct StoryProgressWork *)gEventWork;
-    actor->presentation = (u16)(*(volatile s32 *)&gFrameCount << 12);
+    actor = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    scene = gEventWork;
+    actor->facing = (u16)(*(volatile s32 *)&gFrameCount << 12);
 
     progress = GameFlag_GetByte(0x2f8);
     if (progress != 0) {
         if (progress == 1) {
-            scene->state_one_marker = 99;
+            scene->raised_trigger = 99;
         } else if (GameFlag_IsSet(0x106) == 0) {
             progress -= 1;
         }
@@ -474,35 +439,33 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 {
     s32 rec2;
     struct FieldActor *actor;
-    s32 record;
-    u8 *p6;
-    u8 *base;
+    struct FieldActor *record;
+    s32 id;
 
-    base = (u8 *)&gGameState;
-    p6 = *(s32 *)(base + 500);
-    actor = (struct FieldActor *)Object_GetById((s32)p6);
+    id = gGameState.selected_actor;
+    actor = Object_GetById(id);
     rec2 = GameFlag_IsSet(0x2f0);
     if (rec2 == 0) {
         Engine_EventBegin();
-        Actor_SetAttachedEffect((s32)p6, 0x101);
-        Engine_ActorSetAnimation((s32)p6, 9);
+        Actor_SetAttachedEffect(id, 0x101);
+        Engine_ActorSetAnimation(id, 9);
         record = Object_GetById(a0);
         if (record != 0) {
-            Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
         }
-        Engine_ActorWaitForMove((s32)p6);
+        Engine_ActorWaitForMove(id);
         Audio_PlayCue(244);
         Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
         actor->motion_flags = rec2;
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
-        Engine_ActorWaitForMove((s32)p6);
+        Engine_ActorWaitForMove(id);
         actor->velocity_y = rec2;
         actor->motion_flags = 4;
-        *(u8 *)(base + 498) = 2;
+        gGameState.movement_mode = 2;
         GameFlag_Set(0x2f0);
         GameFlag_SetByte(0x2f8, 180);
         Engine_EventEnd();
-        *(u16 *)((u8 *)gEventWork + 0x17c) = rec2;
+        ((struct EventRuntime *)gEventWork)->value_17c = rec2;
     }
 }
 
@@ -519,21 +482,19 @@ void StoryScene_ActivateSharedState(void)
 /* Publish the actor-98 scene state and restore its selected actor. */
 void StoryScene_CompleteActor98(void)
 {
-    u8 *state;
-    u8 *selected_actor;
+    struct FieldActor *selected_actor;
 
-    if (((struct StoryCompletionWork *)gEventWork)->scene_value == 99) {
-        ((struct StoryCompletionWork *)gEventWork)->scene_value = 0;
+    if (gEventWork->raised_trigger == 99) {
+        gEventWork->raised_trigger = 0;
     }
     GameFlag_Clear(0x2f0);
     GameFlag_Set(0x2f1);
     GameFlag_SetByte(0x2f8, 0);
     BattleFx_SetWeightedResult(98, 5);
-    state = (u8 *)&gGameState;
-    state[0x22b] = 3;
+    gGameState.battle_start = 3;
     BattleFx_SetWeightedResult(98, 7);
-    selected_actor = Actor_Get(*(s32 *)(state + 500));
-    selected_actor[85] = 2;
+    selected_actor = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    selected_actor->motion_flags = 2;
 }
 
 /* The selected actor and actor 54 rise out of sight together; the map closes
@@ -581,14 +542,14 @@ void SceneEffect_RestoreBlendRegisters(void)
 void FieldScene_RunLateSequence(void)
 {
 
-    s32 record;
+    struct FieldActor *record;
     s32 sx;
     s32 sy;
     u32 mode;
 
-    record = Actor_Get(gGameState.selected_actor);
-    sx = *(s16 *)(record + 10);
-    sy = *(s16 *)(record + 18);
+    record = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    sx = record->x.part.pixel;
+    sy = record->z.part.pixel;
     if ((u32)(*(volatile s32 *)&gFrameCount) % 3 == 0) {
         mode = (u32)(Random_Next() << 2) >> 16;
         switch (mode) {
@@ -616,7 +577,7 @@ void FieldScene_RunLateSequence(void)
  * Reconstructed from our own ROM and the existing world-map queue model. */
 void Scene_RunScene371SequenceA(s32 palette)
 {
-    struct DisplayTransferQueue *q;
+    struct IoWriteQueue *q;
     volatile u16 *ime;
     u8 *buffer = (u8 *)Runtime_BumpAllocateAlternatePool(0x4000);
 
@@ -753,9 +714,9 @@ void Effect_AnimateVerticalPositive(struct StoryVerticalEffectActor *effect)
     effect->z = anchor_actor->z + (0x10000 - vertical_amplitude) * 5 + 0x80000;
 }
 
-void Effect_AnimateVerticalNegative(struct StoryVerticalEffectActor_02004004 *effect)
+void Effect_AnimateVerticalNegative(struct StoryVerticalEffectActor *effect)
 {
-    struct StoryVerticalEffectActor_02004004 *anchor_actor;
+    struct StoryVerticalEffectActor *anchor_actor;
     s32 animation_frame;
     s32 vertical_amplitude;
 

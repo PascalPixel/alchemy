@@ -2,28 +2,17 @@
    output ratios (input << 14 over its limit, clamped to 0..0x4000, and at
    least 1 while the input is nonzero). The first-input sibling is
    Owner_UpdateRatioPair in RATIOS.C. */
-#include "TYPES.H"
-
-struct OwnerRatioPairState {
-    u8 padding0[20];
-    s16 outputX;
-    s16 outputY;
-    u8 padding1[28];
-    s16 limitX;
-    s16 limitY;
-    s16 inputX;
-    s16 inputY;
-};
+#include "BATTLE_UNIT.H"
 
 
 void Owner_UpdateSecondInputAndRatios(
-    struct OwnerRatioPairState *state, s32 input)
+    struct BattleUnit *state, s32 input)
 {
     s32 clamped;
     s32 value;
 
-    if (input > state->limitY) {
-        clamped = state->limitY;
+    if (input > state->max_pp) {
+        clamped = state->max_pp;
     } else {
         clamped = 0;
         if (input >= 0) {
@@ -33,11 +22,11 @@ void Owner_UpdateSecondInputAndRatios(
     /* FAKEMATCH: a one-pass loop around the store orders it before the
        ratio inputs are read, as in the ROM. */
     do {
-        state->inputY = clamped;
+        state->pp = clamped;
     } while (0);
-    value = state->inputX;
+    value = state->hp;
     value <<= 14;
-    value = value / state->limitX;
+    value = value / state->max_hp;
 
     {
         s32 output = 0x4000;
@@ -48,9 +37,9 @@ void Owner_UpdateSecondInputAndRatios(
                 output = value;
             }
         }
-        state->outputX = output;
-        if ((output << 16) == 0 && state->inputX != 0) {
-            state->outputX = 1;
+        state->hp_gauge = output;
+        if ((output << 16) == 0 && state->hp != 0) {
+            state->hp_gauge = 1;
         }
     }
 
@@ -58,8 +47,8 @@ void Owner_UpdateSecondInputAndRatios(
         s32 numerator;
         s32 divisor;
 
-        numerator = state->inputY;
-        divisor = state->limitY;
+        numerator = state->pp;
+        divisor = state->max_pp;
         value = (numerator << 14) / divisor;
     }
     {
@@ -71,9 +60,9 @@ void Owner_UpdateSecondInputAndRatios(
                 output = value;
             }
         }
-        state->outputY = output;
-        if ((output << 16) == 0 && state->inputY != 0) {
-            state->outputY = 1;
+        state->pp_gauge = output;
+        if ((output << 16) == 0 && state->pp != 0) {
+            state->pp_gauge = 1;
         }
     }
 }

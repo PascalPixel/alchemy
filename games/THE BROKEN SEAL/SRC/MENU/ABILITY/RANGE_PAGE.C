@@ -1,3 +1,4 @@
+#include "BATTLE_RUNTIME.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
@@ -147,10 +148,7 @@ extern u8 MsgClassName;
 extern u8 Menu_LvString;
 
 
-#define PSY_LIST_OFS 0x1c8
 #define ACT_ID_MASK 0x3fff
-#define OWNER_LEVEL_OFS 15
-#define OWNER_CLASS_MSG_OFS 0x129
 
 
 void Menu_SetPageIcons(s32 page_size, s32 first, s32 window, s32 x, s32 y);
@@ -160,19 +158,19 @@ void UiText_DrawStringAtOffsetFar(u8 *, void *, s32, s32);
 void UiText_DrawStringInWindowFar(u8 *, s32, s32, s32);
 void UiText_DrawNumberAtOffsetFar(s32, s32, s32, s32, s32);
 void PsynergyMenu_DrawRange(s32, s32, s32, s32, s32);
-u8 *Owner_GetStateFar(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
 
 s32 PsynergyMenu_DrawListPage(
     s32 window, s32 unused, const struct MenuResult *res)
 {
     struct PsynergyMenuState *menu = gMenuWork;
-    u8 *owner;
+    struct BattleUnit *owner;
     u32 first;
     u32 rows;
     u8 row;
     s32 ofs;
 
+    /* FAKEMATCH: retain the original byte-offset list cursor; direct u16 pointer traversal changes the native page by four allocated bytes. */
     (void)unused;
 
     owner = Owner_GetStateFar(menu->owner_ids[0]);
@@ -192,7 +190,8 @@ s32 PsynergyMenu_DrawListPage(
 
     row = 0;
     if (rows > row) {
-        ofs = (s32)(first * 2) + PSY_LIST_OFS;
+        ofs = (s32)(first * sizeof(menu->psynergies[0])) +
+              ((u8 *)menu->psynergies - (u8 *)menu);
         do {
             struct BattleAction *act;
             s32 msg;
@@ -216,7 +215,7 @@ s32 PsynergyMenu_DrawListPage(
             PsynergyMenu_DrawRange(window, 25, row * 2 + LIST_FIRST_ROW, range, 0);
 
             row++;
-            ofs += 2;
+            ofs += sizeof(menu->psynergies[0]);
         } while (rows > row);
     }
 
@@ -224,16 +223,16 @@ s32 PsynergyMenu_DrawListPage(
         UiText_DrawAt((s32)&MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
     }
 
-    UiText_DrawStringAtOffsetFar(owner, (void *)window, 40, 0);
+    UiText_DrawStringAtOffsetFar(owner->name, (void *)window, 40, 0);
     UiText_DrawAt(
-        owner[OWNER_CLASS_MSG_OFS] + (s32)&MsgClassName, window, 0, 32);
+        owner->class_index + (s32)&MsgClassName, window, 0, 32);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
     /* The Spanish and French level label is drawn at a pixel offset. */
     UiText_DrawStringAtOffsetFar(&Menu_LvString, (void *)window, 0, 48);
 #else
     UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);
 #endif
-    UiText_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFS], 2, window, 24, 48);
+    UiText_DrawNumberInWindowFar(owner->level, 2, window, 24, 48);
 
     return 1;
 }

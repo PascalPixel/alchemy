@@ -99,7 +99,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 
     if (mode == 1)
         style = 0x100;
-    switch (Item_Get(item & 0x1ff)->type) {
+    switch (Item_Get(item & ITEM_ID_MASK)->type) {
     case 0:
         Menu_DrawOwnerStatusPanel((s32)menu->status_window, target, slot, style);
         break;
@@ -179,8 +179,8 @@ s32 Inventory_RemoveFirstUnflagged(s32 owner)
             result = 1;
             break;
         }
-        if ((state->inventory[i] & 0x200) == 0) {
-            s32 quantity = state->inventory[i] >> 11;
+        if ((state->inventory[i] & INVENTORY_EQUIPPED) == 0) {
+            s32 quantity = state->inventory[i] >> INVENTORY_QUANTITY_SHIFT;
             s32 count = quantity + 1;
             s32 cnt;
 

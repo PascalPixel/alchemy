@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "M7_INTERFACES.H"
+
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 #include "PSYNERGY_MENU.H"
 
 void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns);
@@ -11,12 +13,12 @@ void PsynergyMenu_RefreshOwnerEntriesDefault(void)
 
 void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
 {
-    struct Object080a1c **slot;
-    struct Object080a1c **scan;
+    struct RenderOutput **slot;
+    struct RenderOutput **scan;
     s32 index;
 
     index = 0;
-    slot = (struct Object080a1c **)gMenuWork->entry_icons;
+    slot = gMenuWork->entry_icons;
     scan = slot;
     do {
         if (*scan++ != NULL) {
@@ -27,10 +29,10 @@ void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
     } while (index <= 0x1F);
 }
 
-void PsynergyMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
+void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
     s32 origin_x, s32 origin_y,
     s32 columns) {
-    struct Object080a1c *object;
+    struct RenderOutput *object;
 
     if (index > 0x1F) {
         index = 0;

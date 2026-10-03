@@ -41,7 +41,7 @@ void ItemMenu_DrawItemHead(void)
         16,
         0);
     UiText_DrawCharacterAtOffsetFar(
-        (menu->selected_items[0] & 0x1FF) +
+        (menu->selected_items[0] & ITEM_ID_MASK) +
             (s32)&MsgItemName,
         (void *)menu->message_window,
         16,
@@ -59,7 +59,7 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
     s32 changed;
 
     win = UiWindow_CreateFar(13, 3, 17, 10, 2);
-    slot = a0 & 0x1ff;
+    slot = a0 & ITEM_ID_MASK;
     Item_Get(slot);
     UiText_DrawAt(slot + (s32)((u8 *)&MsgItemName), win, 24, 0);
     text = (s32)MsgConfirmDrop;

@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
-#include "MAP_RENDER_WORK.H"
+#include "MAP_SCROLL.H"
 #include "MAP.H"
 #include "RAM_BUFFER.H"
 
@@ -15,11 +15,11 @@ void MapAnimation_Update(void);
    channel, 0xfeXX jumps to command XX (0xfeff stops it for this frame), and
    any other command copies COUNT characters from character OP to character
    DST and waits TIMER frames. Characters past VRAM's range come from EWRAM.
-   Every channel access is spelled (state->anim + i)->field: the repeated
-   address arithmetic keeps loop.c's first pass over its threshold, so the
-   0xffff sentinel is hoisted only in the rerun, as in the game. */
+ */
 void MapAnimation_Update(void)
 {
+    /* FAKEMATCH: retain indexed channel expressions. The local channel
+       pointer in 1a5404f7 swapped ip/lr and the sentinel/VRAM pool order. */
     struct MapState *state = gMapWork[0];
     u32 i;
 
@@ -127,12 +127,12 @@ void MapAnimation_StartChannels(const u16 *script)
 
 void Map_EnableUpdateCallback(void)
 {
-    if (((struct MapRenderWork *)gMapWork[0])->active == 0)
+    if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
         Scheduler_EnableCallbacks((u32)MapAnimation_Update);
 }
 
 void Map_DisableUpdateCallback(void)
 {
-    if (((struct MapRenderWork *)gMapWork[0])->active == 0)
+    if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
         Scheduler_DisableCallbacks((u32)MapAnimation_Update);
 }

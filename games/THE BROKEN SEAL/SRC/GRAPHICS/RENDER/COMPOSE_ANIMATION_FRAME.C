@@ -12,12 +12,6 @@ extern u8 gWorkSlot[];
    first layer's facing entry asks for a flip. */
 
 /* Running byte total plus the two outline colours. */
-struct ComposeContext {
-    u16 used;       /* 0x00 */
-    u8 field_02[4];
-    u8 edge;        /* 0x06 */
-    u8 fill;        /* 0x07 */
-};
 
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
@@ -49,7 +43,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 {
     s32 changed;
     u32 size;
-    struct ComposeContext *ctx;
+    struct ObjectSystemWork *ctx;
     DrawFn draw;
     s32 held;
     struct AnimationEntry *e;
@@ -68,7 +62,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
     s32 tile;
 
     changed = 0;
-    ctx = *(struct ComposeContext **)gMenuCtrlWork;
+    ctx = *(struct ObjectSystemWork **)gMenuCtrlWork;
     held = 1;
     draw = *(DrawFn *)&gMenuCtrlWork[184];
     if (draw == 0) {

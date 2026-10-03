@@ -148,6 +148,8 @@ extern struct BattleSession *gBattleWork;
 /* Reset hands on the value left in r0; callers retain its integer return. */
 u32 BattleEventRuntime_Reset(void);
 s32 BattleEventRuntime_WaitForReady(void);
+void BattleEventRuntime_BeginPhase(s32 cue);
+s32 BattleEventRuntime_SchedulePhase(s32 frames);
 
 void Sys_SetMode(s32 mode);
 

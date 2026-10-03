@@ -4,8 +4,9 @@
 #include "BATTLE_RANDOM.H"
 #include "FIXED_MATH.H"
 
-s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
+s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effect_id)
 {
+    const u8 *state = (const u8 *)target;
     u8 *entries;
     const u8 *field;
     s32 entry_index;

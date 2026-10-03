@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "MAP.H"
@@ -18,7 +19,6 @@ void MapAnimation_PresentFrame(void);
 void WaitFrames(s32 frames);
 void Resource_RunCopiedDecoder(void *source, void *destination);
 
-u32 Resource_GetTableEntry(u32 index);
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);

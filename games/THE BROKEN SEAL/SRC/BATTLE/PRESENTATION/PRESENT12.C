@@ -9,14 +9,14 @@
 #include "SYSTEM.H"
 #include "ANIMSPR.H"
 
-void Object_SetMode(void *actor, s32 mode);
+void Object_SetMode(struct MotionObject *actor, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
 
-s32 AnimationObjects_SelectAnimationFar(void *, s32);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 s32 Map_RenderAnimatedTileFramesForObjectFar(void *);
 s32 ActivateBattleObjectSlot(s32);
 
@@ -96,13 +96,13 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
   }
 }
 
-s32 BattleTarget_ReplaceDefeated(const u8 *action)
+s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
     s16 living_units[14];
     s32 target_id;
     s32 living_count;
 
-    target_id = ((const struct BattleCommandRequest *)action)->target;
+    target_id = action->target;
     if (Owner_GetStateFar(target_id)->hp != 0) {
         return target_id;
     }

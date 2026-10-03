@@ -9,13 +9,13 @@
 #include "SYSTEM.H"
 #include "OWNER_STATE.H"
 
-s32 BattleTarget_ReplaceDefeated(const u8 *action)
+s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
     s16 living_units[14];
     s32 target_id;
     s32 living_count;
 
-    target_id = ((const s16 *)action)[5];
+    target_id = action->target;
     if (((struct BattleUnit *)Owner_GetState(target_id))->hp != 0) {
         return target_id;
     }

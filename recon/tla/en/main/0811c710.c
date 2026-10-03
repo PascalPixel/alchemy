@@ -20,7 +20,7 @@ struct TransitionContext {
 
 void Object_SetMode(struct MotionObject *object, s32 mode);
 
-s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
+s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *action)
 {
     u16 visible_units[14];
     struct TransitionContext context;
@@ -33,11 +33,11 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     u32 index;
 
     living_count = 0;
-    actor_id = action[0];
+    actor_id = action->unit_id;
     if (BattleObject_IsValidId(actor_id) < 0) {
         return -1;
     }
-    target_id = action[5];
+    target_id = action->target;
     if (BattleObject_IsValidId(target_id) < 0) {
         return -1;
     }
@@ -45,7 +45,7 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     {
         struct BattlePresentationTransition *transition =
             *(struct BattlePresentationTransition **)gTransitionWork;
-        transition->target_yaw = action[0] > 4 ? 0x5000 : 0x2000;
+        transition->target_yaw = action->unit_id > 4 ? 0x5000 : 0x2000;
         transition->frames = 60;
     }
     WaitFrames(10);
@@ -96,7 +96,7 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
     visible_units[living_count] = 0xff;
     BattleActor_SpawnObjectsForList(visible_units, 0);
 
-    context.kind = action[4];
+    context.kind = action->parameter;
     context.actor = actor_id;
     for (index = 0; index != living_count; index++) {
         context.actors[index] = visible_units[index];

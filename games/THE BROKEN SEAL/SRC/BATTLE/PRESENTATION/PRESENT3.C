@@ -37,7 +37,6 @@ struct StreakPoint {
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode);
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void *Resource_GetTableEntry(s32 id);
 void BattlePresentation_DrawStreaks(void);
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"

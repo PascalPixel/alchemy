@@ -1,9 +1,9 @@
+#include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "SCENE.H"
-s32 BattleFx_IsReviveFar(void *);
 
 /* battle/classify_entry_kind.c */
-s32 Battle_ClassifyEntryKind(const u8 *entry)
+s32 Battle_ClassifyEntryKind(const struct BattleAction *entry)
 {
     s32 b3;
     s32 kind;
@@ -12,14 +12,15 @@ s32 Battle_ClassifyEntryKind(const u8 *entry)
     u8 k;
 
     ret = 0;
-    low = entry[1] & 0xF;
+    low = entry->target_flags & 0xF;
     if (low == 1) {
         ret = 1;
     }
     if (low == 0xB) {
         ret = 2;
     }
-    b3 = ((const s8 *)entry)[3]; kind = (s32)(b3);
+    b3 = (s8)entry->effect;
+    kind = b3;
     k = kind;
     if (k == 3) {
         ret = 3;
@@ -30,7 +31,7 @@ s32 Battle_ClassifyEntryKind(const u8 *entry)
     if (k == 0x40) {
         ret = 6;
     }
-    if (BattleFx_IsReviveFar(entry[3]) != 0) {
+    if (BattleFx_IsReviveFar(entry->effect) != 0) {
         ret = 5;
     }
     return ret;

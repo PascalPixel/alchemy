@@ -11,7 +11,7 @@ void UiWork_ClearValueNameTablesFar(void);
 extern u8 Data_03001ae8[];
 s32 BattlePres_ShowMessageWhenField38Positive(s16 *);
 s32 BattlePres_RunUnitAction(s16 *);
-s32 BattlePresentation_RunPairedUnitTransition(s16 *);
+s32 BattlePresentation_RunPairedUnitTransition(struct BattleActionRecord *);
 void BattleMotion_SetupEscapeObject(s32);
 
 s32 BattlePres_RunAction(s16 *action)
@@ -26,7 +26,7 @@ s32 BattlePres_RunAction(s16 *action)
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
 
-    action[5] = BattleTarget_ReplaceDefeated((u8 *)action);
+    action[5] = BattleTarget_ReplaceDefeated((const struct BattleActionRecord *)action);
     transition = gTransitionWork;
     if (action[0] > 4)
         battle_mode = -0x2000;
@@ -39,7 +39,7 @@ s32 BattlePres_RunAction(s16 *action)
     switch (action[3]) {
     case 99:
         UiText_ShowMessageAndWaitCoreFar((s32)&MsgPartyFlees);
-        if (BattleEscape_PlayRun(action)!= 0)
+        if (BattleEscape_PlayRun((struct BattleActionRecord *)action)!= 0)
             return 1;
         break;
     case 3:
@@ -59,7 +59,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     }
     case 1:
-        BattlePresentation_RunPairedUnitTransition(action);
+        BattlePresentation_RunPairedUnitTransition((struct BattleActionRecord *)action);
         break;
     }
 

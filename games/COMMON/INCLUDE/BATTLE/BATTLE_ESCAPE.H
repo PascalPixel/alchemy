@@ -1,9 +1,11 @@
 #ifndef ALCHEMY_BATTLE_ESCAPE_H
 #define ALCHEMY_BATTLE_ESCAPE_H
 
+#include "BATTLE_SESSION.H"
+
 #include "TYPES.H"
 
 s32 BattleEscape_CheckSuccess(void);
-s32 BattleEscape_PlayRun(s16 *action);
+s32 BattleEscape_PlayRun(struct BattleActionRecord *action);
 
 #endif

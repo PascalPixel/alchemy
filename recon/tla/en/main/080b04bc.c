@@ -6,7 +6,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-u16 RollWeaponUnleash(void *owner)
+u16 RollWeaponUnleash(struct BattleUnit *owner)
 {
     struct ItemDefinition *item;
     s32 rate;
@@ -22,7 +22,7 @@ u16 RollWeaponUnleash(void *owner)
         return 1;
     }
     rate = __divsi3(
-        (Equipment_GetUnleashRateBonus((s32)owner) +
+        (Equipment_GetUnleashRateBonus(owner) +
          (FIELD_AT_OFFSET(item, u8, 0xB) * 5)) << 0x10,
         100);
     if (rate > (s32)(BattleRandom16() & 0xFFFF)) {

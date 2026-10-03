@@ -1,3 +1,4 @@
+#include "BATTLE_CALC.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "ITEM.H"
@@ -45,33 +46,26 @@ s32 Owner_ScaleAdjustedAmount(s32 amount, s32 reduction, s32 adjustment, s32 sel
 }
 
 /* owner/scale_value_by_curve.c */
-s32 Owner_ScaleValueByCurve(s32 value, s32 no, s32 multiplier)
+s32 Owner_ScaleValueByCurve(s32 value, s32 selector, s32 multiplier)
 {
     s32 result;
-    s32 shifted;
-    s32 zero;
 
-    result = (s32)((u32)Curve_LookupScaledValue(no, 0) *
-        (u32)value *(u32)multiplier);
-    zero = 0;
-    do {
-        if (result < zero) {
-            result = (s32)((u32)result + 0xFFFF);
-        }
-        shifted = result >> 0x10;
-        return shifted;
-    } while (zero);
+    result = (s32)((u32)Curve_LookupScaledValue(selector, 0) *
+        (u32)value * (u32)multiplier);
+    if (result < 0)
+        result = (s32)((u32)result + 0xffff);
+    return result >> 16;
 }
 
 /* owner/scale_value_by_offset_curve.c */
-s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 no, s32 multiplier)
+s32 Owner_ScaleValueByOffsetCurve(s32 value, s32 selector, s32 multiplier)
 {
     s32 result;
     u32 product;
 
     product = (u32)Curve_LookupScaledValue(
-        (s32)((u32)no * 2 - 0xC8), 0) * (u32)value;
-    product = (u32)multiplier *product;
+        (s32)((u32)selector * 2 - 0xC8), 0) * (u32)value;
+    product = (u32)multiplier * product;
     result = (s32)product;
     if (result < 0) {
         result = (s32)((u32)result + 0xFFFF);
@@ -100,8 +94,10 @@ s32 Item_GetEquippedElement(void)
 }
 
 /* item/get_unleash_rate_bonus.c */
-s32 Equipment_GetUnleashRateBonus(s32 owner)
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner)
 {
+    /* FAKEMATCH: retain the existing inventory offset and byte-effect cursors;
+       direct array cursors remove the four-byte call spill and reorder operands. */
     s32 sum;
     s32 offset;
     s32 index;
@@ -111,22 +107,24 @@ s32 Equipment_GetUnleashRateBonus(s32 owner)
     u16 v;
 
     sum = 0;
-    offset = 216;
+    offset = (u32)&((struct BattleUnit *)0)->inventory;
     mask = 0x200;
     index = 15;
     while (--index >= 0) {
-        v = *(u16 *)((u8 *)offset + owner);
+        v = *(u16 *)((u8 *)offset + (u32)owner);
         if (v & mask) {
             data = (u8 *)Item_GetDirect(
-                *(u16 *)((u8 *)offset + owner)) + 24;
+                *(u16 *)((u8 *)offset + (u32)owner)) + (u32)&((struct ItemDefinition *)0)->effects;
             j = 4;
             while (--j >= 0) {
-                if (data[0] == 23) { sum += (s8)data[1]; }
-                data += 4;
+                if (((struct ItemEffect *)data)->kind == 23)
+                    sum += ((struct ItemEffect *)data)->amount;
+                data += sizeof(struct ItemEffect);
             }
         }
-        offset += 2;
+        offset += sizeof(owner->inventory[0]);
     }
-    if (sum < 0) sum = 0;
+    if (sum < 0)
+        sum = 0;
     return sum;
 }

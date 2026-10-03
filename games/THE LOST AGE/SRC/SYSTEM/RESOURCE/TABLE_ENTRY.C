@@ -1,8 +1,9 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 
-extern u32 Resource_DirectoryTable[];
+extern void *Resource_DirectoryTable[];
 
-u32 Resource_GetTableEntry(u32 index)
+void *Resource_GetTableEntry(s32 index)
 {
     return Resource_DirectoryTable[index];
 }

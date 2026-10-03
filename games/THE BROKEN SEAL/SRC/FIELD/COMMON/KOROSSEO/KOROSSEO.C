@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_MEM.H"
 /* Colosso: decode the portrait sheet into a scratch block, copy portrait
@@ -21,8 +22,7 @@ extern s16 Korosseo_PortraitSlot;
 extern u8 Korosseo_PortraitPaletteOffsets[];
 void Runtime_BumpFree(u8 *block);
 s32 Resource_FindFreeEntry(void);
-s32 Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(s32 entry, u8 *destination);
+u32 Resource_DecodeType01(const void *source, void *destination);
 void VramBlock_LoadCached(s32 slot, s32 size, s32 source);
 
 static __inline__ void Dma_Wait(volatile u32 *dma)

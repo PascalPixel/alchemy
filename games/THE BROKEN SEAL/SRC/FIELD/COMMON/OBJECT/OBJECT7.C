@@ -20,6 +20,8 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 
     if (object == 0)
         return -1;
+    /* FAKEMATCH: separate named coordinate bases grow 136 to 140 bytes;
+       retain the existing adjacent coordinate-word read through the real owner. */
     camera = &((struct MapScrollWork *)gMapWork[0])->view_x;
     camera_x = camera[0] & 0xffff0000;
     camera_z = camera[1] & 0xffff0000;

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -19,7 +20,6 @@ extern u8 *gBattleWork;
 extern u8 CounterReveal_PanelX[];
 extern u8 CounterReveal_PanelY[];
 s32 BattleFx_BeginTiledCanvas(s32 mode);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 s32 BattleFx_EndCanvasLayer(void);
 void **GetBattleObjectSlotFar(s32 member_id);

@@ -6,7 +6,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "INVENTORY.H"
 
-
 s32 Summon_IsEntryFlagged(s32 class_id);
 s32 Summon_GetEntryValue(s32 class_id);
 s32 Summon_GetEntryFlag1Field(s32 class_id);
@@ -111,22 +110,15 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
-    u8 *base;
-    s32 offset;
+    struct BattleSession *work = gBattleWork;
     s32 index;
-    s16 item;
 
-    base = (u8 *)gBattleWork;
-    index = 0;
-    do {
-        offset = index * 2 + 4;
-        item = *(s16 *)(offset + (u32)base);
-        if (item == value) {
+    for (index = 0; index <= 5; index++) {
+        if (work->sprite_slots[index] == value) {
             ResourceSlot_LoadFar(index, 0, 0, 0);
-            *(s16 *)(offset + (u32)base) = 0;
+            work->sprite_slots[index] = 0;
         }
-        index++;
-    } while (index <= 5);
+    }
 }
 
 s32 Resource_FindFreeSlot(s32 key)

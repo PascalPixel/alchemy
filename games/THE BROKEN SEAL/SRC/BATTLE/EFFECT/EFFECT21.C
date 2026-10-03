@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
@@ -42,7 +43,6 @@ extern u16 ParticleStreams_CellOffsets[];
 void BattleFx_BeginCanvasLayer(s32 mode);
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
 struct B5Context *GetBattleObjectSlotFar(s32 id);
-void *Resource_GetTableEntry(s32 resource);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);

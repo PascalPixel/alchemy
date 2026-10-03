@@ -16,28 +16,28 @@ void Dma_StopAllThenRunHook(void)
     _call_via_r0(*(u32 *)0x030000c4);
 }
 
-void BattleEventRuntime_BeginPhase(s32 parameter)
+void BattleEventRuntime_BeginPhase(s32 cue)
 {
     struct BattleSession *runtime;
 
     runtime = gBattleWork;
-    if (runtime->events.phase == 0) {
-        runtime->events.phase = 1;
-        if (parameter != 0) {
-            runtime->events.pending_cue = parameter;
+    if (runtime->events.phase == BATTLE_PLAYBACK_IDLE) {
+        runtime->events.phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
+        if (cue != 0) {
+            runtime->events.pending_cue = cue;
         }
     }
 }
 
-s32 BattleEventRuntime_SchedulePhase(s32 parameter)
+s32 BattleEventRuntime_SchedulePhase(s32 frames)
 {
     struct BattleSession *runtime;
 
     runtime = gBattleWork;
     runtime->events.queue.count = 0;
     runtime->events.event_index = 0;
-    runtime->events.timer = parameter;
-    runtime->events.phase = 2;
+    runtime->events.timer = frames;
+    runtime->events.phase = BATTLE_PLAYBACK_DISPATCH;
     runtime->plan.target_count = 0;
-    return Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xC80);
+    return Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
 }

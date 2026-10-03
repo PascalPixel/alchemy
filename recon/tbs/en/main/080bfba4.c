@@ -59,7 +59,7 @@ void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 flags);
 void Audio_PlayCue(s32 cue);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 u32 BattleEv_DispatchQueued(void);
-void BattleEventRuntime_SchedulePhase(s32 phase);
+s32 BattleEventRuntime_SchedulePhase(s32 frames);
 u32 BattleEventRuntime_Reset(void);
 s32 BattleEventRuntime_WaitForReady(void);
 s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);

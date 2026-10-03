@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -19,7 +20,6 @@ typedef s32 (*WordCopy)(void *, const void *, s32);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);

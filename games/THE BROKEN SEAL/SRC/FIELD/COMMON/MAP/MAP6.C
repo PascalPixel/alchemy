@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
 #include "BATTLE_PRESENTATION.H"
@@ -23,7 +24,6 @@ extern void *gWorkSlot[];
 void Blend_SetDarkenTarget0(s32);
 s32 Runtime_AllocateHeapBlock(s32, s32);
 void *Runtime_AllocateBlock(s32, s32);
-void *Resource_GetTableEntry(s32);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void MapAnimation_StartChannels(void *);
 void Camera_StoreSceneParameters(u32, u32, u32);

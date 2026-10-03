@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -19,7 +20,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void BattleFx_EndCanvasLayer(void);
-void *Resource_GetTableEntry(s32 id);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,

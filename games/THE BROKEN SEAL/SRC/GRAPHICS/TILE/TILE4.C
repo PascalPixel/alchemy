@@ -18,11 +18,13 @@ extern struct Vec2 Battle_FormationPlacementScale;
 void Ui_SetGridColumnByte5(s32 slot, s32 value)
 {
     struct AnimationObject *object = gSpriteObjects;
-    s32 column = slot & 3;
+    /* FAKEMATCH: typed entries[column] moves the offset addition after
+       the counter setup; retain the existing precomputed byte lane. */
+    s32 offset = (slot & 3) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
     s32 count = 9;
 
     do {
-        struct AnimationEntry *entry = object->entries[column];
+        struct AnimationEntry *entry = *(struct AnimationEntry **)((u8 *)object + offset);
 
         count--;
         entry->param = value;
@@ -33,11 +35,13 @@ void Ui_SetGridColumnByte5(s32 slot, s32 value)
 void Ui_SetGridColumnByte6(s32 slot, s32 value)
 {
     struct AnimationObject *object = gSpriteObjects;
-    s32 column = slot & 3;
+    /* FAKEMATCH: typed entries[column] moves the offset addition after
+       the counter setup; retain the existing precomputed byte lane. */
+    s32 offset = (slot & 3) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
     s32 count = 9;
 
     do {
-        struct AnimationEntry *entry = object->entries[column];
+        struct AnimationEntry *entry = *(struct AnimationEntry **)((u8 *)object + offset);
 
         count--;
         entry->priority = value;
@@ -49,17 +53,19 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 {
     s32 index;
     s32 count;
-    s32 column;
+    s32 offset;
     struct AnimationMetadata *metadata;
     struct AnimationEntry *entry;
     struct AnimationObject *object;
 
     object = gSpriteObjects;
     count = 0;
-    column = 3 & slot;
+    /* FAKEMATCH: typed indexing moves the slot offset addition into
+       the loop; the native loop uses this existing precomputed lane. */
+    offset = (3 & slot) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
     index = 0;
     do {
-        entry = object->entries[column];
+        entry = *(struct AnimationEntry **)((u8 *)object + offset);
         if (entry->field_0c != 0) {
             metadata = Resource_GetMetadataRecordFar(entry->anim_id);
             if (value < metadata->animation_count) {
@@ -82,14 +88,16 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {
     struct AnimationObject *object = gSpriteObjects;
-    s32 column;
+    s32 offset;
     s32 count;
 
     Resource_GetMetadataRecordFar(no);
-    column = slot & 3;
+    /* FAKEMATCH: typed indexing reverses the offset/counter move order;
+       keep the existing byte lane over the actual entries array. */
+    offset = (slot & 3) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
     count = 9;
     do {
-        struct AnimationEntry *entry = object->entries[column];
+        struct AnimationEntry *entry = *(struct AnimationEntry **)((u8 *)object + offset);
 
         count--;
         entry->anim_id = no;
@@ -111,8 +119,12 @@ void Battle_PlaceActorsByFormationKind(void)
     u32 i;
 
     scale = Battle_FormationPlacementScale;
-    /* The monitor's 160-byte position block occupies heap slot9. */
-    table = ((union HeapState *)gWorkSlot)->slots[9];
+    /* FAKEMATCH: naming heap slot9 independently adds a second RAM-base
+       load and eight native bytes. The monitor stores this 160-byte block
+       in slot9; gSpriteObjects is the slot4 cell in the same heap bank.
+       Preserve the existing relative pointer-cell load without a false
+       record spanning the intervening allocations. */
+    table = *(u8 **)((u8 *)&gSpriteObjects + (9 - 4) * sizeof(((union HeapState *)0)->slots[0]));
 
     switch (kind) {
     case 3:

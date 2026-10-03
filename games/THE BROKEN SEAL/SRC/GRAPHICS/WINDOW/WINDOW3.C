@@ -109,7 +109,7 @@ s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height
 
 s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)
 {
-    u16 *base;
+    struct UiRenderWork *work;
     s32 idx;
 
     work = (struct UiRenderWork *)gWindowWork[0];

@@ -182,26 +182,40 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
 
 void GraphicsPalette_DecrementSelectionWrap(struct WorkspaceWork *work)
 {
-    u16 page = work->page;
+    /* FAKEMATCH: retain the existing page wire conversions; a direct u16
+       decrement in f4f9d28 changes the 36-byte body to 40 in all editions. */
+    u16 *page;
+    s32 value;
+    u16 current;
+    s32 next;
 
-    if (page == 0)
-        page = 2;
+    page = &work->page;
+    value = *page;
+    current = value;
+    next = current;
+    if (next == 0)
+        next = 2;
     else
-        page--;
-    work->page = page;
+        next = value + 0xffff;
+    *page = next;
 }
 
 void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work)
 {
-    u16 page = work->page + 1;
+    /* FAKEMATCH: the existing packed-halfword comparison avoids the new
+       zero-extension; the direct comparison in f4f9d28 changes 36 to 32 bytes. */
+    u32 count = 1 + work->page;
 
-    work->page = page;
-    if (page > 2)
+    work->page = count;
+    if ((count << 16) > 0x20000)
         work->page = 0;
 }
 
 void GraphicsPalette_DecrementSelectedCounter(s32 work)
 {
+    /* FAKEMATCH: retain the existing byte-lane address calculation. Direct
+       field addresses in f4f9d28 fold the offsets into pools and remove
+       address adds; the source offsets still come from the actual fields. */
     u8 *p;
     u16 sel;
     s32 off;
@@ -213,10 +227,12 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
         p = (u8 *)&gGameState + off;
         break;
     case 1:
-        p = &gGameState.palette_glow[0];
+        off = (u32)&((struct GameState *)0)->palette_glow[0];
+        p = (u8 *)&gGameState + off;
         break;
     case 2:
-        p = &gGameState.palette_glow[1];
+        off = (u32)&((struct GameState *)0)->palette_glow[1];
+        p = (u8 *)&gGameState + off;
         break;
     default:
         return;
@@ -228,6 +244,9 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
 
 void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
 {
+    /* FAKEMATCH: retain the existing byte-lane address calculation. Direct
+       field addresses in f4f9d28 fold the offsets into pools and remove
+       address adds; the source offsets still come from the actual fields. */
     u8 *sp;
     u16 sel;
     s32 off;
@@ -242,13 +261,15 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
         }
         return;
     case 1:
-        sp = &gGameState.palette_glow[0];
+        off = (u32)&((struct GameState *)0)->palette_glow[0];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 23) {
             break;
         }
         return;
     case 2:
-        sp = &gGameState.palette_glow[1];
+        off = (u32)&((struct GameState *)0)->palette_glow[1];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 14) {
             break;
         }

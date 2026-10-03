@@ -6,7 +6,9 @@
  * actual native owners. The old whole module468/native472 differs130 bytes;
  * its trailing release difference2 was solely the shifted BL displacement.
  * The resource constructor now uses the shared56-byte AnimationObject and
- * actual two-argument registration API; the prior score above needs refresh.
+ * actual two-argument registration API. Fresh 2026-10-03 EN alchemy drafts
+ * score: 200, two differing instructions. All six current complete objects
+ * equal their fresh before objects, so the existing near miss stays unchanged.
  * This attempt is uncredited. The leading ClearRecord40 remains C, Creator
  * stays raw356, and the complete shared Release+metadata owner is separate.
  */
@@ -14,12 +16,12 @@
 #include "METADATA_LOOKUP.H"
 #include "ANIMSPR.H"
 #include "VRAM_BLOCK.H"
-#include "RESOURCE.H"
 
 extern struct AnimationObject *gSpriteObjects;
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
+s32 Resource_FindFreeEntry(void);
 
 /* Take the first free object of the 64, give it a resource entry and its
    tiles, and fill its OAM words for the metadata's width and height. */

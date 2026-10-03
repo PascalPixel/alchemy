@@ -26,13 +26,14 @@ struct CompetitorState {
         struct IoWriteQueue *queue = &gIoWriteQueue; \
         u32 saved = REG_IME; \
         s32 count; \
-        REG_IME = 0; \
+        REG_IME = (u16)(u32)&REG_IME; \
         count = queue->count; \
         if (count < 32) { \
+            u32 *entry = queue->entries[count]; \
             queue->count = count + 1; \
-            queue->entries[count][0] = (value); \
-            queue->entries[count][1] = (address); \
-            queue->entries[count][2] = (delay); \
+            *entry++ = (value); \
+            *entry++ = (address); \
+            *entry = (delay); \
         } \
         REG_IME = saved; \
     } while (0)
@@ -66,8 +67,12 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     Engine_ActorSetSpriteFlags(actor, 3);
     Object_SetMode(actor, 0);
     Object_SetMode(actor, 1);
-    Engine_ActorSetPosition(id, x << 16, z << 16);
+    z <<= 16;
+    x <<= 16;
+    Engine_ActorSetPosition(id, x, z);
     Engine_ActorFaceActor(0, 0x4000, 0);
+    /* FAKEMATCH: retain the existing queue cursor and IME address-word
+       disable/restore; direct indexed writes add 40 bytes and split the pool. */
     QUEUE_IO_WRITE(0x4000050, 0xf00, 0x20000);
     sprite->part[0].object_mode = 1;
     sprite->part[1].object_mode = 1;
@@ -98,6 +103,7 @@ void Korosseo_RestoreCompetitor(s32 id)
 {
     struct CompetitorState *state;
     struct FieldActor *actor;
+    u8 *stage;
 
     state = *(struct CompetitorState **)gMenuCtrlWork;
     actor = Object_GetById(id);
@@ -109,8 +115,11 @@ void Korosseo_RestoreCompetitor(s32 id)
         Engine_ActorSetAnimation(id, 3);
         Engine_EventWait(30);
     }
-    state->stage = 0;
-    state->mode = 15;
+    /* FAKEMATCH: retain the existing ordered stage/mode byte walk;
+       direct field stores move mode before stage at the same 190-byte extent. */
+    stage = &state->stage;
+    *stage = 0;
+    *--stage = 15;
     actor->x.fixed = Korosseo_CompetitorStartX;
     actor->z.fixed = Korosseo_CompetitorStartZ;
     actor->facing = Korosseo_CompetitorStartAngle;

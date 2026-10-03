@@ -55,7 +55,36 @@ void FieldScene_RunFlagBranchedLayoutSteps(void);
 void OverlayObject_AdvancePositionByDelta(union FieldObject *object);
 
 /* The overlay's three effect scripts, at the start of its read-only data. */
-extern const s32 *const gEffectScripts[];
+extern const s32 *const gEffectScripts[3];
+
+struct CaveEffectScripts {
+    const s32 *script[3];
+};
+
+/* This cave's local spawner consumes only the six-word options prefix. */
+struct CaveDustOptions {
+    s32 priority;
+    s32 palette;
+    s32 start_scale_x;
+    s32 start_scale_y;
+    s32 target_scale_x;
+    s32 target_scale_y;
+};
+
+LAYOUT_SIZE_GUARD(CaveEffectScripts_Size, struct CaveEffectScripts, 12);
+LAYOUT_SIZE_GUARD(CaveDustOptions_Size, struct CaveDustOptions, 24);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_Priority, struct CaveDustOptions, priority,
+    (u32)&((struct EffectOptions *)0)->priority);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_Palette, struct CaveDustOptions, palette,
+    (u32)&((struct EffectOptions *)0)->palette);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_StartX, struct CaveDustOptions, start_scale_x,
+    (u32)&((struct EffectOptions *)0)->start_scale_x);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_StartY, struct CaveDustOptions, start_scale_y,
+    (u32)&((struct EffectOptions *)0)->start_scale_y);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetX, struct CaveDustOptions, target_scale_x,
+    (u32)&((struct EffectOptions *)0)->target_scale_x);
+LAYOUT_OFFSET_GUARD(CaveDustOptions_TargetY, struct CaveDustOptions, target_scale_y,
+    (u32)&((struct EffectOptions *)0)->target_scale_y);
 
 extern u32 gFrameCount;
 void Engine_AudioPlayCue();
@@ -67,12 +96,7 @@ struct FadeWork {
     u8 active;
 };
 
-/*
- * Imports. Each alias names the call word its site encodes, not a runtime
- * address. Only those used for their return value are typed, and the
- * declarations are old-style because one name is reached with different
- * argument counts.
- */
+/* The cave's page-effect hooks. */
 void SceneState_ApplyValues8And2And1(void)
 {
     BattleFx_RunPageEffectForSlot(8, 2, 1);
@@ -1159,7 +1183,9 @@ void FieldScene_RunScene39aSequenceA(void)
 void ImiruFuchin_ApplyEntrySetup(void)
 {
     struct FieldActor *actor;
-    struct TrackingWork *work;
+    /* FAKEMATCH: retain the existing zero/address-word lifetime; separate
+       locals swap the zero and game-state registers and add a heap-cell add. */
+    s32 value;
 
     ImiruFuchin_ApplyRoomLayout();
     if (gGameState.scene == (s32)&SceneId_ImiruFuchin4) {
@@ -1172,9 +1198,10 @@ void ImiruFuchin_ApplyEntrySetup(void)
         }
     } else if (gGameState.scene == (s32)&SceneId_ImiruFuchin7) {
         actor = Actor_Get(8);
-        ImiruFuchin_TrackLeader = 0;
-        actor->motion_flags = 0;
-        actor->y.fixed = 0;
+        value = 0;
+        ImiruFuchin_TrackLeader = value;
+        actor->motion_flags = value;
+        actor->y.fixed = value;
         Engine_ActorSetSpritePriority(8, 1);
         Actor_SetChildValue(8, 15);
         switch (gGameState.entrance) {
@@ -1186,8 +1213,8 @@ void ImiruFuchin_ApplyEntrySetup(void)
         case 5:
             BattleFx_StartFadeOverlay(0);
             ImiruFuchin_TrackLeader = 1;
-            work = gWorkSlot[36];
-            work->actor = NULL;
+            value = *(s32 *)(gWorkSlot + 36);
+            ((struct TrackingWork *)value)->actor = NULL;
             break;
         }
         if (gGameState.entrance <= 6) {
@@ -1343,13 +1370,16 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     struct FieldEffect *obj;
     struct FieldSprite *spr;
     const s32 *script;
+    /* FAKEMATCH: retain the existing three-script copy and 12-byte frame;
+       direct table reads remove 16 bytes and cache the scale script early. */
+    struct CaveEffectScripts scripts = *(const struct CaveEffectScripts *)gEffectScripts;
 
     obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
     if (obj == 0)
         return;
     spr = obj->sprite;
     Object_SetMode((struct FieldActor *)obj, (flags + 1) & EFFECT_SCRIPT_MASK);
-    Engine_ObjectSetScript((struct FieldActor *)obj, gEffectScripts[flags & EFFECT_SCRIPT_MASK]);
+    Engine_ObjectSetScript((struct FieldActor *)obj, scripts.script[flags & EFFECT_SCRIPT_MASK]);
     obj->motion_flags = 0;
     spr->flags = 0;
     obj->update = OverlayObject_AdvancePositionByDelta;
@@ -1372,7 +1402,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
         obj->scale_y = extra->start_scale_y;
     }
     if (flags & EFFECT_SCALE_TO_TARGET) {
-        script = gEffectScripts[flags & EFFECT_SCRIPT_MASK];
+        script = scripts.script[flags & EFFECT_SCRIPT_MASK];
         if (flags & EFFECT_USE_START_SCALE) {
             obj->scale_rate_x = (extra->target_scale_x - obj->scale_x) / script[3];
             obj->scale_rate_y = (extra->target_scale_y - obj->scale_y) / script[3];
@@ -1386,12 +1416,15 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
 /* Every fourth frame, blow a puff of dust across the cave mouth. */
 void ImiruFuchin_BlowCaveMouthDust(void)
 {
-    struct EffectOptions params;
+    struct CaveDustOptions params;
     s32 phase;
     s32 dx;
     s32 dy;
+    /* FAKEMATCH: retain the existing two frame reads; ordinary reads
+       merge the phase and cue tests at the same callback boundary. */
+    volatile u32 *frame = (volatile u32 *)&gFrameCount;
 
-    phase = gFrameCount & 3;
+    phase = *frame & 3;
     if (phase != 0)
         return;
     params.palette = 10;
@@ -1399,11 +1432,12 @@ void ImiruFuchin_BlowCaveMouthDust(void)
     params.start_scale_y = 0x8000;
     params.target_scale_x = 0x1cccc;
     params.target_scale_y = 0x1cccc;
-    if ((gFrameCount & 7) == 0)
+    if ((*frame & 7) == 0)
         Engine_AudioPlayCue(136);
     dx = -0x10000 - ((((u32)Engine_RandomNext() << 1) >> 16) << 16);
     dy = -(s32)((((u32)Engine_RandomNext() * 3) >> 16) * 0x3333);
-    Effect_Spawn(0x1340000, 0x400000, 0xde0000, dx, dy, phase, 0xd0001, &params);
+    Effect_Spawn(0x1340000, 0x400000, 0xde0000, dx, dy, phase, 0xd0001,
+        (const struct EffectOptions *)&params);
 }
 
 /*
@@ -1412,7 +1446,7 @@ void ImiruFuchin_BlowCaveMouthDust(void)
  */
 void FieldScene_RunFourPassCallbackSequence(void)
 {
-    s32 pass;
+    u32 pass;
 
     Audio_PlayCue(19);
     Audio_PlayCue(182);
@@ -1531,7 +1565,7 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 
     timer = (s16)actor->unknown_64;
     if (timer != 0) {
-        actor->unknown_64--;
+        (*(s16 *)&actor->unknown_64)--;
         return;
     }
     actor->unknown_5a = 0;
@@ -1552,6 +1586,13 @@ void SceneActor_TurnTowardTableAngle(union FieldObject *object)
 }
 /* Follow held directions through walkable cell centres, probing the
  * marker and height before each step. */
+static inline void SceneActor_AdvanceProbe(s32 radius, s32 heading, struct FieldPosition *probe)
+{
+    /* FAKEMATCH: retain the existing inline probe boundary; the direct
+       second call uses a register move instead of the native stack add. */
+    Vector_AddPolarOffset(radius, heading, probe);
+}
+
 void SceneActor_StepSubjectAlongHeading(void)
 {
 
@@ -1631,7 +1672,8 @@ continue_probe:
         }
 
 advance_probe:
-        Vector_AddPolarOffset(0x100000, heading, &probe);
+        /* FAKEMATCH: retain the measured second probe call's stack-address order. */
+        SceneActor_AdvanceProbe(0x100000, heading, &probe);
         marker = GetMapCellCollision(subject->unknown_22, probe.x, probe.z);
         if (marker != 255) {
             goto continue_probe;

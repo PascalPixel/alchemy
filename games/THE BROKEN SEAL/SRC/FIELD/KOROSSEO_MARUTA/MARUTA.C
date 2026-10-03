@@ -1481,7 +1481,8 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Event_ShowMessage(scene, 0);
-    Korosseo_FadeInCompetitor(0, 280, 200);
+    /* FAKEMATCH: direct void call moves r0 before r1/r2; preserve native argument order. */
+    Call3(Korosseo_FadeInCompetitor, 0, 280, 200);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
     /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, 280, 152);
@@ -1544,7 +1545,8 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             ColossoLogRollingStage_StartSceneTask();
             Engine_EventWait(60);
             Engine_EventShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x1f8, 200);
+            /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+            Call3(Korosseo_FadeInCompetitor, 0, 0x1f8, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             ColossoLogRollingStage_WaitForSceneTask();

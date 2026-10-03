@@ -1058,7 +1058,8 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             Camera_MoveTo(0x1480000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x118, 200);
+            /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+            Call3(Korosseo_FadeInCompetitor, 0, 0x118, 200);
             Actor_SetSpeed(0, 0x10000, 0x8000);
             Actor_WalkToAndWait(0, 0x168, 200);
             Engine_EventWait(30);
@@ -1230,7 +1231,8 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             SceneState_SetMode66AndPassOpeningSequence();
             Engine_EventWait(60);
             Event_ShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x2e0, 200);
+            /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+            Call3(Korosseo_FadeInCompetitor, 0, 0x2e0, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
@@ -1276,7 +1278,8 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
         Engine_EventWait(15);
-        Korosseo_FadeInCompetitor(0, 984, 200);
+        /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+        Call3(Korosseo_FadeInCompetitor, 0, 984, 200);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
         Event_ShowMessage(scene, 0);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);

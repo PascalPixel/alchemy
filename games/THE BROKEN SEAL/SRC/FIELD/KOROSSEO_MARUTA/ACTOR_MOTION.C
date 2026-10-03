@@ -38,7 +38,8 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Engine_EventWait(30);
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x330, 200);
+            /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+            Call3(Korosseo_FadeInCompetitor, 0, 0x330, 200);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -137,7 +138,8 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Engine_EventWait(30);
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x3d8, 184);
+            /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+            Call3(Korosseo_FadeInCompetitor, 0, 0x3d8, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);

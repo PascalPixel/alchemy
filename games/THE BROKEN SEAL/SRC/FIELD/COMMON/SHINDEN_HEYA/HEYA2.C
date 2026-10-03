@@ -405,7 +405,9 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         /* FAKEMATCH: retain the existing halfword aggregate zero across
            initialization; scalar zero moves the two sprite clears from r5
            to r3 and changes the following attribute-mask instruction. */
-        struct { u16 value; } zero = { 0 };
+        struct { u16 value; } zero;
+
+        zero.value = 0;
 
         if (obj != 0) {
             ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);

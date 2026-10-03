@@ -2,6 +2,7 @@
 #define ALCHEMY_CHARACTER_H
 
 #include "TYPES.H"
+#include "OWNERVAL.H"
 #include "LAYOUT_GUARD.H"
 
 struct BattleUnit;
@@ -108,7 +109,6 @@ s32 OwnerAction_Add(s32 owner, s32 action);
 void Owner_RecalculateRatios(s32 owner);
 void Owner_UpdateRatioPair(struct BattleUnit *owner, s32 hp);
 void Owner_UpdateSecondInputAndRatios(struct BattleUnit *owner, s32 pp);
-s16 Owner_AdjustFirstValue(s32 owner, s32 hp);
 s16 Owner_AdjustSecondValue(s32 owner, s32 pp);
 
 #endif

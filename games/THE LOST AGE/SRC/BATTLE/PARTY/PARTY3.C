@@ -1,11 +1,11 @@
 #include "TYPES.H"
+#include "OWNERVAL.H"
 #include "BATTLE_UNIT.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
 
 s32 Party_CountActiveOwnersFar(void);
-void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);

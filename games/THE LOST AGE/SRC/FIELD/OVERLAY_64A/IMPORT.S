@@ -62,9 +62,9 @@ Func_02002220:
 	.thumb_func
 Func_02002228:
 	overlay_veneer Func_08000370
-	.global Party_Check
+	.global SerialRuntime_BeginTransferB
 	.thumb_func
-Party_Check:
+SerialRuntime_BeginTransferB:
 	overlay_veneer Party_CheckFar
 	.global Owner_GetState
 	.thumb_func

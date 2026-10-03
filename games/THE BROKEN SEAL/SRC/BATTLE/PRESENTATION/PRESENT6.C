@@ -164,20 +164,22 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 /* Removed members are skipped; the end marker means no matching slot. */
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
+    /* FAKEMATCH: indexing the two arrays introduces index shifts and moves the
+       session load. Keep the existing separate byte walks over its members. */
     s32 index;
     s32 tag;
     s32 offset;
-    s16 *units;
+    char *base;
     s16 item;
 
+    base = (char *)gBattleWork;
     if (value <= 7) {
         tag = 0x80;
         index = 0;
         tag <<= 1;
-        units = gBattleWork->party_units;
-        offset = 0;
+        offset = (u32)&((struct BattleSession *)0)->party_units;
 first:
-        item = units[offset];
+        item = *(s16 *)(offset + (u32)base);
         if (item == 0xff)
             return -1;
         if (item == 0xfe)
@@ -185,18 +187,18 @@ first:
         if (item == value)
             return index | tag;
 next_first:
-        offset++;
+        offset += sizeof(s16);
         index++;
         goto first;
     }
 
     tag = 0xc0;
     index = 0;
-    units = gBattleWork->enemy_units;
+    base += sizeof(s16);
     tag <<= 1;
-    offset = 0;
+    offset = (u32)&((struct BattleSession *)0)->enemy_units - sizeof(s16);
 second:
-    item = units[offset];
+    item = *(s16 *)(offset + (u32)base);
     if (item == 0xff)
         return -1;
     if (item == 0xfe)
@@ -204,7 +206,7 @@ second:
     if (item == value)
         return index | tag;
 next_second:
-    offset++;
+    offset += sizeof(s16);
     index++;
     goto second;
 }
@@ -212,8 +214,11 @@ next_second:
 /* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-    struct BattleCamera *cam = gCameraWork;
-    struct BattlePresentationTransition *trans = gTransitionWork;
+    /* FAKEMATCH: separate cell loads change the literal pool and register
+       order. The existing walk reaches slot 44 from camera slot 12. */
+    void **slot = (void **)&gCameraWork;
+    struct BattleCamera *cam = slot[0];
+    struct BattlePresentationTransition *trans = slot[44 - 12];
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {

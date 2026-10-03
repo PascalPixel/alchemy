@@ -70,8 +70,10 @@ void Scene_RunActorExchange(void);
 s32 EventScript_PrepareActorRenderFlags(struct FieldActor *actor)
 {
     actor->priority_flags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    actor->sprite->priority = 3;
-    actor->sprite->second_priority = 3;
+    /* FAKEMATCH: typed priority stores cache the sprite and shorten this
+       callback from 34 to 32 bytes; retain the two packed byte accesses. */
+    ((u8 *)actor->sprite)[9] |= 0xc;
+    ((u8 *)actor->sprite)[21] |= 0xc;
     return 0;
 }
 

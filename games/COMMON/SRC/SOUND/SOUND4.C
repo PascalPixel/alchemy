@@ -16,10 +16,15 @@ void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask_arg, s3
     track = player->tracks;
     bit = 1;
     if (count > 0) {
+        /* FAKEMATCH: retain the original separate zero-test value; using
+           the stored value shrinks this routine from 116 to 108 bytes and
+           replaces the native high-register saves with a stack spill. */
+        s32 check = value;
+
         do {
             if ((mask & bit) && (track->flags & SOUND_TRACK_ACTIVE)) {
                 track->mod_depth = value;
-                if (value == 0)
+                if (check == 0)
                     MusicTrack_ClearModulation(track);
             }
             count--;
@@ -46,10 +51,15 @@ void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selected, u32 value
         mask = 1;
 
         if (count > 0) {
+            /* FAKEMATCH: retain the original byte zero-test copy; using
+               stored_value shrinks this routine from 116 to 108 bytes and
+               replaces the native high-register saves with a stack spill. */
+            u8 test_value = stored_value;
+
             do {
                 if ((selected_bits & mask) != 0 && (track->flags & SOUND_TRACK_ACTIVE) != 0) {
                     track->lfo_speed = stored_value;
-                    if (stored_value == 0) {
+                    if (test_value == 0) {
                         MusicTrack_ClearModulation(track);
                     }
                 }

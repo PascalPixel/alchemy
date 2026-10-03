@@ -61,7 +61,9 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
         ((struct ObjectRuntime *)obj)->terrain_height = actor->terrain_height;
         anim = obj->sprite;
         Engine_ObjectSetScript(obj, Makyuri_PillarScript);
-        ((struct MakyuriObject *)obj)->owner = actor;
+        /* FAKEMATCH: the typed tail store moves past motion_flags and y in
+           the 394-byte body; retain its existing address-word alias lane. */
+        *(s32 *)((u8 *)obj + (u32)&((struct MakyuriObject *)0)->owner) = (s32)actor;
         obj->motion_flags = 4;
         obj->y.fixed += -0x8000;
         if (anim != 0) {

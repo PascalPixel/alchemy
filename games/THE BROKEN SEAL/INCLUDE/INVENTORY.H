@@ -9,7 +9,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot);
 s32 Inventory_Count(s32 owner);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_CountFreeSlots(void);
-s32 Inventory_Add(s32 owner, s32 item);
+s32 Inventory_AddItem(s32 owner, s32 item);
 s32 PartyInventory_Add(s32 item);
 s32 Inventory_Find(s32 owner, s32 item);
 s32 PartyInventory_FindOwner(s32 item_id);

@@ -1,6 +1,7 @@
 #include "INVENTORY.H"
 #include "BATTLE_RUNTIME.H"
 #include "ITEM.H"
+#include "CHARACTER.H"
 #include "SCENE.H"
 
 void Owner_RefreshClassActions(s32 owner);
@@ -10,16 +11,16 @@ void Event_ClearInvalidPackedValuesFar(s32);
 extern u8 gItemCounters[128];
 extern u8 Item_ArtifactSlotTable[];
 
-extern const u8 BattleAction_DefinitionTable[];
+extern struct BattleAction BattleAction_DefinitionTable[];
 
 s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {
     s32 item_id;
 
     owner = ((struct BattleUnit *)Owner_GetState(owner))->inventory[slot];
-    item_id = 0x1ff;
+    item_id = ITEM_ID_MASK;
     item_id &= owner;
-    owner = (u32)owner >> 11;
+    owner = (u32)owner >> INVENTORY_QUANTITY_SHIFT;
     owner++;
     if (item_id == 0) {
         owner = 0;
@@ -90,26 +91,26 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id)
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 slot;
 
-    if ((item->flags & 0x10) != 0) {
+    if ((item->flags & ITEM_STACKABLE) != 0) {
         slot = 0;
-        if (((inv->inventory[slot] ^ item_id) & 0x1ff) != 0) {
+        if (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0) {
             do {
                 slot++;
-                if (slot > 14)
+                if (slot >= INVENTORY_SLOTS)
                     break;
-            } while (((inv->inventory[slot] ^ item_id) & 0x1ff) != 0);
+            } while (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0);
         }
-        if (slot != 15) {
+        if (slot != INVENTORY_SLOTS) {
             s32 entry = inv->inventory[slot];
-            u32 count = ((u32)entry >> 11) + 1;
+            u32 count = ((u32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
             if (count > 29)
                 return -1;
             {
-                s32 value = 0x7ff;
+                s32 value = INVENTORY_ENTRY_MASK;
 
                 value &= entry;
-                value |= count << 11;
+                value |= count << INVENTORY_QUANTITY_SHIFT;
                 inv->inventory[slot] = value;
             }
             return slot;
@@ -123,7 +124,7 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id)
             return slot;
         }
         slot++;
-    } while (slot <= 14);
+    } while (slot < INVENTORY_SLOTS);
     return -1;
 }
 
@@ -156,11 +157,11 @@ s32 Inventory_Find(s32 owner, s32 item_id)
     u16 *entry = inv->inventory;
 
     do {
-        if (((*entry++) & 0x1ff) == item_id) {
+        if (((*entry++) & ITEM_ID_MASK) == item_id) {
             return slot;
         }
         slot++;
-    } while (slot <= 14);
+    } while (slot < INVENTORY_SLOTS);
     return -1;
 }
 
@@ -200,7 +201,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
 
     if (Item_CanOwnerEquipDirect(owner, item_id) == 0)
         return -1;
-    mask = 0x200;
+    mask = INVENTORY_EQUIPPED;
     if (item_id & mask)
         return 0;
 
@@ -224,13 +225,13 @@ s32 Inventory_Equip(s32 owner, s32 slot)
 
         if (other != 15) {
             item = Item_GetDirect(inv->inventory[other]);
-            if (item->flags & 2)
+            if (item->flags & ITEM_CANNOT_UNEQUIP)
                 return -2;
             inv->inventory[other] &= 0xfdff;
         }
     }
 
-    inv->inventory[slot] |= 0x200;
+    inv->inventory[slot] |= INVENTORY_EQUIPPED;
     Owner_RefreshClassActions(owner);
     Owner_RecalculateStats(owner);
     return 0;
@@ -242,8 +243,8 @@ s32 Inventory_FindEquipped(s32 owner, s32 type)
     s32 index;
     struct ItemDefinition *item;
 
-    for (index = 0; index <= 14; index++) {
-        if (base->inventory[index] & 0x200) {
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+        if (base->inventory[index] & INVENTORY_EQUIPPED) {
             item = Item_GetDirect(
                 base->inventory[index]);
             if (item->type == type) break;
@@ -260,8 +261,8 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(
     s32 slot;
     struct ItemDefinition *item;
 
-    for (slot = 0; slot <= 14; slot++) {
-        if (inv->inventory[slot] & 0x200) {
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+        if (inv->inventory[slot] & INVENTORY_EQUIPPED) {
             item = Item_GetDirect(inv->inventory[slot]);
             if (item->type == type) {
                 return item;
@@ -275,13 +276,13 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *inv, s32 type)
 {
     s32 slot;
 
-    for (slot = 0; slot <= 14; slot++) {
-        if (inv->inventory[slot] & 0x200) {
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+        if (inv->inventory[slot] & INVENTORY_EQUIPPED) {
             struct ItemDefinition *item =
                 Item_GetDirect(inv->inventory[slot]);
 
             if (item->type == type) {
-                return inv->inventory[slot] & 0x1ff;
+                return inv->inventory[slot] & ITEM_ID_MASK;
             }
         }
     }
@@ -299,8 +300,8 @@ s32 Inventory_Remove(s32 owner, s32 slot)
     s32 result = -1;
 
     if (item != 0) {
-        if (item & 0xf800) {
-            inv->inventory[slot] = item - 0x800;
+        if (item & INVENTORY_QUANTITY_MASK) {
+            inv->inventory[slot] = item - INVENTORY_QUANTITY_STEP;
             result = 1;
         } else {
             s16 *list;
@@ -338,17 +339,17 @@ s32 Inventory_Discard(s32 owner, s32 slot)
 s32 Inventory_CheckDiscard(s32 owner, s32 slot)
 {
     struct BattleUnit *inv = Owner_GetState(owner);
-    s32 item_id = inv->inventory[slot] & 0x1ff;
+    s32 item_id = inv->inventory[slot] & ITEM_ID_MASK;
     struct ItemDefinition *item = Item_GetDirect(item_id);
 
     if (item_id == 0) {
         return -1;
     }
-    if ((item->flags & 8) != 0) {
+    if ((item->flags & ITEM_INDISPENSABLE) != 0) {
         return -4;
     }
-    if ((inv->inventory[slot] & 0x200) != 0 &&
-        (item->flags & 2) != 0) {
+    if ((inv->inventory[slot] & INVENTORY_EQUIPPED) != 0 &&
+        (item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
         return -3;
     }
     return 0;
@@ -380,7 +381,7 @@ s32 Inventory_Break(s32 owner, s32 slot)
     if (inv->inventory[slot] == 0) {
         return -1;
     }
-    inv->inventory[slot] |= 0x400;
+    inv->inventory[slot] |= INVENTORY_BROKEN;
     return 0;
 }
 
@@ -390,7 +391,7 @@ s32 Inventory_Repair(s32 owner, s32 slot)
     if (inv->inventory[slot] == 0) {
         return -1;
     }
-    inv->inventory[slot] &= ~0x400;
+    inv->inventory[slot] &= ~INVENTORY_BROKEN;
     return 0;
 }
 
@@ -426,7 +427,7 @@ s32 ItemCounter_Adjust(s32 index, s32 delta)
 
 s32 Item_AdjustCounter(s32 item_id, s32 delta)
 {
-    s32 item_id_mask = 0x1ff;
+    s32 item_id_mask = ITEM_ID_MASK;
     u8 counter;
     s32 result = 0;
 
@@ -441,21 +442,21 @@ s32 Inventory_CountItem(s32 owner, s32 item_id)
 {
     struct BattleUnit *base = Owner_GetState(owner);
     s32 count = 0;
-    s32 target = item_id & 0x1ff;
+    s32 target = item_id & ITEM_ID_MASK;
     s32 index = 0;
 
     do {
-        if ((base->inventory[index] & 0x1FF) == target) {
+        if ((base->inventory[index] & ITEM_ID_MASK) == target) {
             struct ItemDefinition *item = Item_GetDirect(target);
 
-            if (item->flags & 0x10) {
-                count = (base->inventory[index] >> 11) + 1;
+            if (item->flags & ITEM_STACKABLE) {
+                count = (base->inventory[index] >> INVENTORY_QUANTITY_SHIFT) + 1;
                 break;
             }
             count++;
         }
         index++;
-    } while (index <= 14);
+    } while (index < INVENTORY_SLOTS);
     return count;
 }
 
@@ -484,7 +485,7 @@ struct BattleAction *BattleAction_GetDirect(s32 action_id) {
     if (entry_index >= 0x208U) {
         entry_index = 0;
     }
-    return (struct BattleAction *)(BattleAction_DefinitionTable + entry_index * 0x10);
+    return &BattleAction_DefinitionTable[entry_index];
 }
 
 /* inventory/has_equipment_value.c */

@@ -1,3 +1,4 @@
+#include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -37,7 +38,6 @@ extern char MsgInStock;
 extern char MsgTradeForWhat;
 extern char MsgNoneInStock;
 
-void UiWindow_SetBounds(struct WindowBounds *window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_DrawDividerLineFar(s32 window, s32 unused, s32 x, s32 y, s32 width);
@@ -57,7 +57,7 @@ void Audio_PlayCue(s32 cue);
    preview for that member; A returns the member and B -1. */
 s32 ItemMenu_SelectTarget(s32 mode)
 {
-    /* The existing unsigned coordinate/OAM prefix retains the native chained
+    /* FAKEMATCH: the existing unsigned coordinate/OAM prefix retains the native chained
        halfword stores: the canonical coordinate view measured 816 bytes
        against 824, losing the unsigned-halfword mask. */
     struct InventoryMenuState *menu;
@@ -77,7 +77,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
     pending = 1;
     result = 0;
     shown = 0;
-    UiWindow_SetBounds((struct WindowBounds *)window, 13, 5, 17, 12);
+    UiWindow_SetBounds((struct RenderInput *)window, 13, 5, 17, 12);
     RenderOutput_RedrawSavedRectFar((s32)menu->item_window);
     Owner_GetStateFar(menu->owner_ids[menu->pane_index[0]]);
     Scheduler_AddOrUpdateCallback((s32)EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
@@ -94,7 +94,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
                 UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
                 UiWindow_ClearInteriorTilesFar(window, 0, 72, 120, 80);
                 if (selection != menu->pane_index[0]) {
-                    quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_items[0] & 0x1ff);
+                    quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_items[0] & ITEM_ID_MASK);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
                     /* Here a full bag asks what to trade instead of saying
@@ -125,7 +125,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
                 ItemMenu_DrawEquipPreview(menu->pane_owner[0], menu->selected_slots[0], 0, menu->owner_ids[selection]);
             }
             if (mode == 0) {
-                if (ItemMenu_IsSpecial(menu->selected_items[0] & 0x1ff))
+                if (ItemMenu_IsSpecial(menu->selected_items[0] & ITEM_ID_MASK))
                     Menu_DrawOwnerStatusPanel((s32)menu->status_window, menu->owner_ids[selection], menu->selected_slots[0], 8);
                 else
                     Menu_DrawOwnerStatusPanel((s32)menu->status_window, menu->owner_ids[selection], menu->selected_slots[0], 0);
@@ -136,9 +136,9 @@ s32 ItemMenu_SelectTarget(s32 mode)
                     RenderOutput_ClearListFar((s32)menu->info_window);
 #endif
 #if EDITION_INTERNATIONAL
-                    UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & 0x1ff) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & ITEM_ID_MASK) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #else
-                    UiText_DrawMessageAt((menu->selected_items[0] & 0x1ff) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
+                    UiText_DrawMessageAt((menu->selected_items[0] & ITEM_ID_MASK) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #endif
                     shown = 1;
                 } else {

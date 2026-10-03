@@ -1,9 +1,11 @@
 #include "M7_INTERFACES.H"
 
-void PsynergyMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
+void UiIcon_PrepareObject(struct RenderOutput *icon);
+
+void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
     s32 origin_x, s32 origin_y,
     s32 columns) {
-    struct Object080a1c *object;
+    struct RenderOutput *object;
 
     if (index > 0x1F) {
         index = 0;

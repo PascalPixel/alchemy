@@ -1,21 +1,17 @@
-#include "TYPES.H"
+#include "OWNER_STATE.H"
+#include "PARTY_STATE.H"
 
-struct State_080792fc {
-    u8 padding[15];
-    u8 count;
-};
-
-void *Owner_GetState(s32);
-s32 Owner_LevelUp();
+struct LevelUpResult;
+struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
 void Owner_RecalculateStats(s32);
 
 void Party_AdvanceOwnerCountToTarget(s32 owner, s32 target)
 {
     u8 buf[16];
-    s32 count = ((struct State_080792fc *)Owner_GetState(owner))->count;
+    s32 count = ((struct BattleUnit *)Owner_GetState(owner))->level;
 
     while (count < target) {
-        Owner_LevelUp(owner, buf);
+        Owner_LevelUp(owner, (struct LevelUpResult *)buf);
         count++;
     }
     Owner_RecalculateStats(owner);

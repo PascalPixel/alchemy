@@ -13,16 +13,12 @@
 #include "FIELD_EVENT.H"
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
+#include "ANIMSPR.H"
+#include "HEAP_STATE.H"
 
 void Map_UpdateWorldMapMarkers(void);
 extern u8 gMapCellBuffer[];
 
-struct MenuControl {
-    u8 padding00[4];
-    u16 suspended;
-};
-
-extern u8 gWorkSlot[];
 extern u8 MsgNotOnMap[];
 extern u32 gKeysRepeat;
 void *Runtime_AllocateBlock(s32 slot, s32 size);
@@ -38,7 +34,6 @@ void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 void Map_LoadAreaGraphicsFar(void);
 
 extern u32 gKeysHeld;
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Battle_InitializeRenderObject(void);
 void BattleFx_ScheduleRatioTransition(s32, s32);
 
@@ -50,9 +45,9 @@ void Map_ShowWorldMap(void)
      * The queued blend restore is QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C)
      * written out inline with its one-pass loop around the IME read and its
      * count stored through an explicit u16 pointer. */
-    struct MapState *map = *(struct MapState **)(gWorkSlot + 8 * 4);
+    struct MapState *map = gMapWork[0];
     struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
-    struct MenuControl *menu = *(struct MenuControl **)(gWorkSlot + 6 * 4);
+    struct ObjectSystemWork *menu = ((union HeapState *)gWorkSlot)->slots[6];
     s32 resource = (s32)&ResourceId_WorldMapPicture;
     struct MapAnimation *layer;
     u8 saved_flags[16];

@@ -5,6 +5,43 @@
 
 struct BattleUnit;
 
+/* The upper five bits of an inventory word store its count minus one. */
+enum InventoryEncoding {
+    ITEM_ID_MASK = 0x1ff,
+    INVENTORY_EQUIPPED = 0x200,
+    INVENTORY_BROKEN = 0x400,
+    INVENTORY_ENTRY_MASK = 0x7ff,
+    INVENTORY_QUANTITY_SHIFT = 11,
+    INVENTORY_QUANTITY_STEP = 0x800,
+    INVENTORY_QUANTITY_MASK = 0xf800,
+    INVENTORY_SLOTS = 15
+};
+
+enum ItemFlags {
+    ITEM_CURSED = 1,
+    ITEM_CANNOT_UNEQUIP = 2,
+    ITEM_INDISPENSABLE = 8,
+    ITEM_STACKABLE = 0x10
+};
+
+enum ItemEffectKind {
+    ITEM_EFFECT_NONE,
+    ITEM_EFFECT_ADD_HP,
+    ITEM_EFFECT_ADD_HP_REGEN,
+    ITEM_EFFECT_ADD_PP,
+    ITEM_EFFECT_ADD_PP_REGEN,
+    ITEM_EFFECT_ADD_AGILITY,
+    ITEM_EFFECT_ADD_LUCK,
+    ITEM_EFFECT_SCALE_HP,
+    ITEM_EFFECT_SCALE_HP_REGEN,
+    ITEM_EFFECT_SCALE_PP,
+    ITEM_EFFECT_SCALE_PP_REGEN,
+    ITEM_EFFECT_SCALE_ATTACK,
+    ITEM_EFFECT_SCALE_DEFENSE,
+    ITEM_EFFECT_SCALE_AGILITY,
+    ITEM_EFFECT_SCALE_LUCK
+};
+
 struct ItemEffect {
     u8 kind;                        /* 0x00 */
     s8 amount;                      /* 0x01 */

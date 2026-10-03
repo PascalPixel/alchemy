@@ -38,21 +38,6 @@ struct MenuCursorSprite {
     struct MenuCursorAttributes attributes;
 };
 
-struct MenuCursorWindow {
-    u8 reserved_00[12];
-    u16 x;
-    u16 y;
-};
-
-struct MenuCursorWork {
-    u8 reserved_00[16];
-    struct MenuCursorWindow *window;
-    struct MenuCursorSprite *cursor;
-    u8 reserved_18[0x20a];
-    /* Set to place the cursor at once: the next slide is skipped. */
-    u16 skip_slide;
-};
-
 void WaitFrames(s32 frames);
 
 extern u8 UiMenu_CursorBobX[];
@@ -193,15 +178,17 @@ void Menu_UpdateEntryObjectTransforms(void)
  * the frame counter. */
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
 {
-    /* FAKEMATCH: keep the existing unsigned-position/OAM cursor view shared by menu modes; direct RenderOutput member access removes the native halfword narrowing and changes load/store order. */
-    struct MenuCursorWork *work = (struct MenuCursorWork *)gMenuWork;
+    /* FAKEMATCH: keep the existing unsigned-position/OAM sprite view; direct RenderOutput member access removes the native halfword narrowing and changes load/store order. */
+    struct PsynergyMenuState *work = gMenuWork;
+    struct RenderInput *window = (struct RenderInput *)work->auxiliary_window;
+    struct MenuCursorSprite *cursor = (struct MenuCursorSprite *)work->pane_icon[0];
 
-    work->cursor->attributes.x = work->cursor->x =
+    cursor->attributes.x = cursor->x =
         UiMenu_CursorBobX[(gFrameCount >> 1) & 7] + x_offset
-        + work->window->x * 8 + 8;
-    work->cursor->attributes.y = work->cursor->y =
+        + window->x * 8 + 8;
+    cursor->attributes.y = cursor->y =
         UiMenu_CursorBobY[(gFrameCount >> 1) & 7] + y_offset
-        + work->window->y * 8 + 8;
+        + window->y * 8 + 8;
 }
 
 /* Slides the menu cursor to the given pixel offset in two steps, a frame
@@ -209,8 +196,8 @@ void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
  * axis. A set skip flag is cleared instead and the cursor stays. */
 void UiMenu_SlideCursor(s32 x, s32 y)
 {
-    /* FAKEMATCH: keep the existing unsigned cursor/OAM view; canonical signed RenderOutput coordinates and packed-word casts change native scheduling. The skip flag is the original halfword at 0x222. */
-    struct MenuCursorWork *work = (struct MenuCursorWork *)gMenuWork;
+    /* FAKEMATCH: keep the existing unsigned cursor/OAM sprite view; canonical signed RenderOutput coordinates and packed-word casts change native scheduling. The skip flag is the original halfword at 0x222. */
+    struct PsynergyMenuState *work = gMenuWork;
     struct MenuCursorSprite *cursor;
     s32 steps;
     s32 start_x;
@@ -225,7 +212,7 @@ void UiMenu_SlideCursor(s32 x, s32 y)
         work->skip_slide = 0;
         return;
     }
-    cursor = work->cursor;
+    cursor = (struct MenuCursorSprite *)work->pane_icon[0];
     {
         s32 sprite_x = cursor->attributes.x + 64;
         s32 sprite_y = cursor->attributes.y + 64;

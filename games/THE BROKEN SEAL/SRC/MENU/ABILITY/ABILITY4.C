@@ -40,7 +40,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *)
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-void PsynergyMenu_CallIconRoutineWithValue(void *menu, s32 owner);
+void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)
@@ -144,7 +144,7 @@ s32 PsynergyMenu_SelectAction(void)
                 menu->selected_owner = menu->owner_table[tab];
                 menu->owner_ids[0] = menu->owner_table[tab];
                 menu->tab_index[0] = tab;
-                PsynergyMenu_CallIconRoutineWithValue(menu, menu->owner_table[tab]);
+                PsynergyMenu_CallIconRoutineWithValue((s32)menu, menu->owner_table[tab]);
                 break;
             }
         }

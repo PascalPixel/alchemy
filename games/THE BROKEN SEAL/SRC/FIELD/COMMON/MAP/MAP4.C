@@ -21,55 +21,55 @@ extern TerrainHeightFn Map_TerrainHeightFunctions[16];
 s32 Func_08011f54(s32 layer, s32 x, s32 y)
 {
     struct MapState *work = gMapWork[0];
-    u8 *cells;
+    struct MapCell *cells;
     u8 *attributes;
 
     x >>= 16;
     y >>= 16;
-    cells = Ram_MapCellBuffer;
+    cells = (struct MapCell *)Ram_MapCellBuffer;
     if (work != NULL) {
-        cells = (u8 *)work->layers[layer & 3].cells;
+        cells = work->layers[layer & 3].cells;
     }
-    cells += (x / 16 + (y / 16 << 7)) * 4;
-    attributes = Ram_MapCollision + cells[3] * 4;
+    cells += x / 16 + (y / 16 << 7);
+    attributes = Ram_MapCollision + cells->attribute_b * 4;
     return Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, y & 15);
 }
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 {
     struct MapState *state = gMapWork[0];
-    u8 *map;
+    struct MapCell *map;
     s32 col;
     s32 row;
     u32 attr;
 
     x >>= 16;
     y >>= 16;
-    map = (u8 *)gMapCellBuffer;
+    map = (struct MapCell *)gMapCellBuffer;
     if (state != 0) {
-        map = (u8 *)state->layers[index & 3].cells;
+        map = state->layers[index & 3].cells;
     }
     col = x / 16;
     row = y / 16;
-    map += (col + (row << 7)) * 4;
-    attr = map[3];
+    map += col + (row << 7);
+    attr = map->attribute_b;
     return *(Ram_MapCollision + attr * 4) & 15;
 }
 
 u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 {
     struct MapState *state;
-    s32 cell_address;
+    struct MapCell *cells;
 
     state = gMapWork[0];
     x >>= 20;
     y >>= 20;
-    cell_address = (u32)gMapCellBuffer;
+    cells = (struct MapCell *)gMapCellBuffer;
     if (state != NULL) {
-        cell_address = (s32)state->layers[layer & 3].cells;
+        cells = state->layers[layer & 3].cells;
     }
-    cell_address += (x + (y << 7)) * sizeof(struct MapCell);
-    return ((struct MapCell *)cell_address)->collision_code;
+    cells += x + (y << 7);
+    return cells->collision_code;
 }
 
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
@@ -94,9 +94,9 @@ s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
     s32 tile_x = x / 16;
     s32 tile_y = y / 16;
-    u8 *cell = (u8 *)gMapCellBuffer + (tile_x + tile_y * 128) * 4;
+    struct MapCell *cell = (struct MapCell *)gMapCellBuffer + tile_x + tile_y * 128;
 
-    return cell[1] >> 6;
+    return ((u8 *)&cell->metatile_and_flags)[1] >> 6;
 }
 
 /*
@@ -110,7 +110,7 @@ s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position)
     struct MapState *state;
     s32 x;
     s32 z;
-    u8 *cell;
+    struct MapCell *cell;
     u8 *attributes;
     s32 height;
     s32 delta;
@@ -122,13 +122,13 @@ s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position)
     if (state == NULL)
         return 0;
     if (object->terrain_id <= 2)
-        cell = (u8 *)state->layers[object->terrain_id].cells;
+        cell = state->layers[object->terrain_id].cells;
     else
-        cell = Ram_MapCellBuffer;
-    cell += (x / 16 + (z / 16 << 7)) * 4;
-    if (cell[2] == 0xff)
+        cell = (struct MapCell *)Ram_MapCellBuffer;
+    cell += x / 16 + (z / 16 << 7);
+    if (cell->collision_code == 0xff)
         return 2;
-    attributes = Ram_MapCollision + cell[3] * 4;
+    attributes = Ram_MapCollision + cell->attribute_b * 4;
     height = Map_TerrainHeightFunctions[*attributes++ & 15](attributes, x & 15, z & 15);
     delta = height - object->terrain_height;
     if (delta > 0x80000)

@@ -8,6 +8,7 @@
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 #include "MAP_SCROLL.H"
+#include "MAPFRAME.H"
 #include "HEAP_STATE.H"
 
 extern u8 WorldMap_TerrainBehaviorTable[];
@@ -21,13 +22,6 @@ extern u8 gDecodeBuffer[];
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
 
-struct ScanlineRow {
-    s32 x;
-    s32 y;
-    s32 zero1;
-    s32 zero2;
-    s32 unknown;
-};
 
 
 typedef void (*TransformFn)(const s32 *source, s32 *destination);
@@ -47,18 +41,18 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position)
     s32 tile_x;
     s32 tile_y;
     struct MapState *work;
-    u8 *cell;
+    struct MapCell *cell;
 
     x = position->x / 65536;
     y = (position->y - *(s32 *)((u8 *)position + 4)) / 65536;
     work = gMapWork[0];
     if (work == NULL)
         return 0;
-    cell = (u8 *)work->layers[2].cells;
+    cell = work->layers[2].cells;
     tile_x = x / 16;
     tile_y = y / 16;
-    cell += (tile_x + tile_y * 128) * 4;
-    return (cell[2] != 0xff) - 1;
+    cell += tile_x + tile_y * 128;
+    return (cell->collision_code != 0xff) - 1;
 }
 
 s32 GetWorldMapCollision(struct WorldPosition *position)
@@ -206,7 +200,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
 /* Fill the world map's 160 scanline rows from the camera's view of the
    ground plane at POSITION: a line that meets the plane gets a scale and a
    signed ground distance, any other line zeros. */
-void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct ScanlineRow *row)
+void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct MapScanline *row)
 {
     s32 ground[3];
     s32 viewed[3];
@@ -240,7 +234,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct ScanlineRow *r
         scale = Iwram_RatioMulQ14(difference, horizon);
         if (scale < 0) {
             diagonal = Iwram_MulQ16(-scale, 0x8000);
-            row->x = Iwram_RatioMulQ14(gProjection.focal, diagonal);
+            row->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
             diagonal = Iwram_MulQ16(scale, distance);
             horizontal = (view[2] - scale) >> 4;
             vertical = (diagonal - view[1]) >> 4;
@@ -249,13 +243,13 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct ScanlineRow *r
             y = Iwram_Sqrt(x + y) << 12;
             if (vertical < 0)
                 y = -y;
-            row->y = Iwram_MulQ16(y, 0x8000);
+            row->depth = Iwram_MulQ16(y, 0x8000);
         } else {
-            row->x = 0;
-            row->y = 0;
+            row->scale = 0;
+            row->depth = 0;
         }
-        row->zero1 = 0;
-        row->zero2 = 0;
+        row->offset_x = 0;
+        row->offset_y = 0;
         row++;
     }
 }

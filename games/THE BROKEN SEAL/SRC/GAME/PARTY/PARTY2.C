@@ -5,10 +5,10 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "FIXED_MATH.H"
+#include "CHARACTER.H"
 
 /* party/set_flag32_and_refresh_members.c */
 void Owner_RefreshDerivedData(s32 arg0);
-s32 Owner_RecalculateStats(s32);
 s32 GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
@@ -87,7 +87,7 @@ void Party_ApplyStatePreset(void)
         }
 
         for (slot = 0; slot <= 14; slot++) {
-            if ((unit->inventory[slot] & 0x1ff) == 15) {
+            if ((unit->inventory[slot] & ITEM_ID_MASK) == 15) {
                 unit->inventory[slot] = 16;
                 Inventory_Equip(id, slot);
                 break;

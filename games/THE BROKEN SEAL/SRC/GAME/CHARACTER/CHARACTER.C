@@ -18,33 +18,23 @@ s32 Game_ResetForNewGameFar(s32);
 extern struct BattleUnit *gBattleOwnerStates;
 extern const u8 Data_08080ec8[];
 
-struct ClassRecord {
-    u8 unknown_00[8];
-    u8 hp;                      /* 0x08 */
-    u8 pp;                      /* 0x09 */
-    u8 attack;                  /* 0x0a */
-    u8 defense;                 /* 0x0b */
-    u8 agility;                 /* 0x0c */
-    u8 luck;                    /* 0x0d */
-};
-
 struct StatWork {
     s32 hp;                     /* 0x00 */
     s32 pp;                     /* 0x04 */
     s32 attack;                 /* 0x08 */
     s32 defense;                /* 0x0c */
     s32 agility;                /* 0x10 */
-    s32 unused_14;
+    s32 unknown_14;
     s32 luck;                   /* 0x18 */
     s32 turns;                  /* 0x1c */
     s32 hp_regen;                /* 0x20 */
     s32 pp_regen;                /* 0x24 */
     s32 element[4][2];          /* 0x28 */
     s32 kind;                   /* 0x48 */
-    s32 unused_4c[2];
+    s32 unknown_4c[2];
     s32 amount;                 /* 0x54 */
     struct ItemDefinition *item; /* 0x58 */
-    s32 unused_5c;
+    s32 unknown_5c;
 };
 
 void Runtime_BumpFree(void *buffer);
@@ -103,7 +93,7 @@ void *Owner_GetState(u32 owner)
     if (owner < 8)
         {
         register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
-        offset = 332;
+        offset = sizeof(struct BattleUnit);
         offset *= owner;
         r = (u8 *)states + offset;
         return r;
@@ -112,7 +102,7 @@ void *Owner_GetState(u32 owner)
         {
         register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
         u8 *t;
-        offset = 332;
+        offset = sizeof(struct BattleUnit);
         offset *= owner;
         t = (u8 *)gBattleOwnerStates + offset;
         r = t - 0xa600;
@@ -129,7 +119,7 @@ const u8 *Owner_GetRecord(s32 selector)
     if (record_index > 0xF9U) {
         record_index = 0;
     }
-    return Data_08080ec8 + record_index * 0x54;
+    return (const u8 *)&((const struct EnemyDefinition *)Data_08080ec8)[record_index];
 }
 
 void Runtime_CopyBytesDirectional(u8 *first, u8 *second, s32 count, s32 direction)
@@ -208,10 +198,10 @@ void Owner_RecalculateStats(s32 owner)
 
     if (st->class_index) {
         for (i = 0; i < 15; i++) {
-            if (!(st->inventory[i] & 0x200))
+            if (!(st->inventory[i] & INVENTORY_EQUIPPED))
                 continue;
             work->item = Item_GetDirect(st->inventory[i]);
-            if (work->item->flags & 1)
+            if (work->item->flags & ITEM_CURSED)
                 st->restraint |= 3;
             /* FAKEMATCH: a do-while barrier keeps the defense load after the
                item bonus load, as the ROM schedules it */
@@ -225,24 +215,24 @@ void Owner_RecalculateStats(s32 owner)
                 work->kind = kind;
                 work->amount = amount;
                 switch (work->kind) {
-                case 0:
+                case ITEM_EFFECT_NONE:
                     break;
-                case 1:
+                case ITEM_EFFECT_ADD_HP:
                     work->hp += work->amount;
                     break;
-                case 2:
+                case ITEM_EFFECT_ADD_HP_REGEN:
                     work->hp_regen += work->amount;
                     break;
-                case 3:
+                case ITEM_EFFECT_ADD_PP:
                     work->pp += work->amount;
                     break;
-                case 4:
+                case ITEM_EFFECT_ADD_PP_REGEN:
                     work->pp_regen += work->amount;
                     break;
-                case 5:
+                case ITEM_EFFECT_ADD_AGILITY:
                     work->agility += work->amount;
                     break;
-                case 6:
+                case ITEM_EFFECT_ADD_LUCK:
                     work->luck += work->amount;
                     break;
                 case 15:
@@ -305,7 +295,7 @@ void Owner_RecalculateStats(s32 owner)
         }
 
         {
-            struct ClassRecord *class = (struct ClassRecord *)Owner_GetRecordStride84(st->class_index);
+            struct ClassDefinition *class = (struct ClassDefinition *)Owner_GetRecordStride84(st->class_index);
 
             work->hp = work->hp * class->hp / 10;
             work->pp = work->pp * class->pp / 10;
@@ -316,14 +306,14 @@ void Owner_RecalculateStats(s32 owner)
         }
 
         for (i = 0; i < 15; i++) {
-            if (!(st->inventory[i] & 0x200))
+            if (!(st->inventory[i] & INVENTORY_EQUIPPED))
                 continue;
             work->item = Item_GetDirect(st->inventory[i]);
             for (j = 0; j < 4; j++) {
                 kind = work->item->effects[j].kind;
                 amount = work->item->effects[j].amount;
                 work->kind = kind;
-                kind -= 7; /* rate effects 7..14 scale a statistic in tenths */
+                kind -= ITEM_EFFECT_SCALE_HP; /* rate effects 7..14 scale a statistic in tenths */
                 work->amount = amount;
                 switch (kind) {
                 case 0:
@@ -491,16 +481,16 @@ void GameFlag_RefreshLureCap(void)
 
         owner = Owner_GetState(gGameState.active_owners[n]);
         for (i = 0; i < 15; i++) {
-            if (owner->inventory[i] & 0x200) {
-                u8 *record;
+            if (owner->inventory[i] & INVENTORY_EQUIPPED) {
+                struct ItemEffect *effect;
                 s32 j;
 
-                record = (u8 *)Item_GetDirect(owner->inventory[i]) + 24;
+                effect = Item_GetDirect(owner->inventory[i])->effects;
                 for (j = 0; j < 4; j++) {
                     u8 kind;
 
-                    kind = *record;
-                    record += 4;
+                    kind = effect->kind;
+                    effect++;
                     if (kind == 27) {
                         GameFlag_SetBit(0x167);
                     }

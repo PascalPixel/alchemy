@@ -1,6 +1,7 @@
 #include "OWNER_STATE.H"
 #include "TYPES.H"
 #include "BATTLE_UNIT.H"
+#include "CHARACTER.H"
 
 void Owner_RecalculateRatios(s32);
 

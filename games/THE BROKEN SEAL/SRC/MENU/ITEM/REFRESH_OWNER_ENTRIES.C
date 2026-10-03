@@ -3,9 +3,9 @@
 
 void ItemMenu_RefreshEntry(s32 layout)
 {
-    struct Object080a1c **slot;
-    struct Object080a1c **scan;
-    struct Object080a1c *object;
+    struct RenderOutput **slot;
+    struct RenderOutput **scan;
+    struct RenderOutput *object;
     s32 index;
     s32 origin_y;
     struct InventoryMenuState *menu;
@@ -15,7 +15,7 @@ void ItemMenu_RefreshEntry(s32 layout)
     if (layout != 1) {
         origin_y = 0x28;
     }
-    slot = (struct Object080a1c **)menu->entry_icons;
+    slot = menu->entry_icons;
     index = 0;
     scan = slot;
     do {

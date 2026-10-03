@@ -6,7 +6,7 @@
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
 
-#define SCENE_PHASE (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
+#define SCENE_PHASE (gEventWork->start_transition)
 #define ACTOR 8
 
 typedef struct {
@@ -28,35 +28,10 @@ struct StoryDialogueWork {
     u16 story_result;
 };
 
-/*
- * Complete selected-actor presentation/progress synchronizer.  It derives the
- * actor presentation from the shared phase word, applies the state-one scene
- * marker, conditionally backs higher progress down, then publishes the result.
- */
-struct StorySelection {
-    u8 reserved000[500];
-    s32 actor_id;
-};
-
-struct StorySelectionActor {
-    u8 reserved00[6];
-    u16 presentation;
-};
-
-struct StoryProgressWork {
-    u8 reserved000[386];
-    u16 state_one_marker;
-};
-
 /* Complete prologue-less shared-state activation leaf through its pool. */
 struct StorySharedState {
     u8 reserved00[52];
     u8 active;
-};
-
-struct StoryCompletionWork {
-    u8 reserved000[386];
-    s16 scene_value;
 };
 
 /*
@@ -79,27 +54,6 @@ struct StoryVerticalEffectActor {
     u16 frame;                      /* 0x64 */
     u8 filler66[2];
     struct StoryVerticalEffectActor *anchor;  /* 0x68 */
-};
-
-/*
- * The mirror of the rise: the same counter at +0x64 and anchor at +0x68,
- * with the second amplitude store negated, the depth offset subtracted
- * rather than added, and a fixed depth bias of 0x100000.  Its magnitude
- * callee, like the one above, is identified only by use -- one angle in, one
- * 16.16 magnitude out.
- */
-struct StoryVerticalEffectActor_02004004 {
-    u8 filler00[8];
-    s32 x;                          /* 0x08 */
-    s32 y;                          /* 0x0c, only ever advanced by 0x10000 */
-    s32 z;                          /* 0x10 */
-    u8 filler14[4];
-    s32 amplitude_x;                /* 0x18 */
-    s32 amplitude_y;                /* 0x1c */
-    u8 filler20[0x44];
-    u16 frame;                      /* 0x64 */
-    u8 filler66[2];
-    struct StoryVerticalEffectActor_02004004 *anchor;  /* 0x68 */
 };
 
 /* The world map's scene tables, labelled where the overlay's data lies. */

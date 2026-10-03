@@ -5,7 +5,7 @@
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
 #include "IWRAM_CALL.H"
-#include "MAP_RENDER_WORK.H"
+#include "MAP_SCROLL.H"
 #include "RAM_BUFFER.H"
 #include "GAME_STATE.H"
 #include "FIELD_SPRITE.H"
@@ -69,7 +69,7 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
     s32 collision_kind;
     s32 square;
     s32 rate;
-    struct MapRenderWork *work;
+    struct PerspectiveWork *work;
     s32 step;
     struct FieldSprite *sprite;
     struct ObjectRuntime *effect;
@@ -222,14 +222,14 @@ update_object:
 movement_done:
     work = gMapWork[0];
     rate = Data_0801328c[(gKeysHeld >> 4) & 15];
-    step = (s16)(rate - work->rotation) / 8;
+    step = (s16)(rate - work->yaw) / 8;
     if (step > 0x200)
         step = 0x200;
     if (step < -0x200)
         step = -0x200;
     if (step > -16 && step < 16)
-        step = rate - work->rotation;
-    work->rotation += step;
+        step = rate - work->yaw;
+    work->yaw += step;
 
     if (object->animation_kind == 1) {
         sprite = object->animation;

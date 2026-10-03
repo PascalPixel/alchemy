@@ -31,7 +31,10 @@ struct InventoryMenuState {
     struct RenderOutput *category_icons[8];
     u8 unknown_0e8[0x24];
     struct UiWindow *message_window;
-    u8 unknown_110[4];
+    u8 selected_column;
+    u8 selected_row;
+    u8 column_count;
+    u8 row_count;
     struct AnimationObject *owner_objects[8];
     s16 owner_x[8];
     s16 owner_y[8];
@@ -68,7 +71,10 @@ LAYOUT_OFFSET_GUARD(InventoryMenuState_GridCursor, struct InventoryMenuState, gr
 LAYOUT_OFFSET_GUARD(InventoryMenuState_EntryIcons, struct InventoryMenuState, entry_icons, 0x48);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_CategoryIcons, struct InventoryMenuState, category_icons, 0xc8);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_MessageWindow, struct InventoryMenuState, message_window, 0x10c);
-LAYOUT_OFFSET_GUARD(InventoryMenuState_Unknown110, struct InventoryMenuState, unknown_110, 0x110);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedColumn, struct InventoryMenuState, selected_column, 0x110);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedRow, struct InventoryMenuState, selected_row, 0x111);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_ColumnCount, struct InventoryMenuState, column_count, 0x112);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_RowCount, struct InventoryMenuState, row_count, 0x113);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerObjects, struct InventoryMenuState, owner_objects, 0x114);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerX, struct InventoryMenuState, owner_x, 0x134);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_OwnerY, struct InventoryMenuState, owner_y, 0x144);

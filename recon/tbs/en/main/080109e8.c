@@ -1,3 +1,7 @@
+/* 2026-10-03: the tile-animation declaration now comes from its actual
+   const-u16 script API in MAP.H. Fresh baseline compiled all six editions;
+   the grouped owner-cleanup comparison is pending. Prior score notes below
+   describe the measured source before this declaration-only closure. */
 #include "FIXED_POINT_POSITION.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MAP_SCROLL.H"
@@ -42,7 +46,6 @@ s32 Runtime_AllocateHeapBlock(s32, s32);
 void *Runtime_AllocateBlock(s32, s32);
 void *Resource_GetTableEntry(s32);
 s32 Resource_DecodeType01(const void *source, void *destination);
-void MapAnimation_StartChannels(void *);
 void Camera_StoreSceneParameters(u32, u32, u32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
@@ -108,7 +111,7 @@ s32 Map_InitializePerspectiveScene(void)
     work->unknown_010 = 0;
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), (void *)0x0202d000);
-    MapAnimation_StartChannels((void *)0x0202d000);
+    MapAnimation_StartChannels((const u16 *)0x0202d000);
     Io_Set16(0x3f9e, (u16 *)0x04000050);
     Io_Set16(0x1010, (u16 *)0x04000052);
     *(u16 *)0x04000054 = 0;

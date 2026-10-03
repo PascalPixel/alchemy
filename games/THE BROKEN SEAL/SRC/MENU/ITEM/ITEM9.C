@@ -16,7 +16,6 @@ extern volatile u32 gKeyState;
 void Menu_UpdateEntryObjectTransforms(void);
 void Palette_CopyObjectBankToBackground14(void);
 s32 GameFlag_TestFar(s32);
-void ItemMenu_DrawItemDetails(s32, s32);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiWork_FinalizeFar(s32, s32);
 void Palette_LightenBankHighlight(s32);

@@ -1,9 +1,9 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "RENDER_INPUT.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-extern u8 *gWindowWork;
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 extern u8 Data_03001e8c[];
@@ -13,7 +13,7 @@ extern u8 Data_03001e8c[];
    swaps the tile under it for the matching junction piece. */
 void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u32 y2)
 {
-    u8 *base = gWindowWork;
+    u8 *base = gWindowWork[0];
     u16 *cursor;
     u32 pos;
     u32 tile;
@@ -178,5 +178,5 @@ void UiWork_SetParamNibble(s32 param)
 
 void UiWork_SetRenderWord(u16 value)
 {
-    *(u16 *)(*(u8 **)((u32)&Data_03001e8c) + RENDER_WORD_OFS) = value;
+    *(u16 *)(gWindowWork[0] + RENDER_WORD_OFS) = value;
 }

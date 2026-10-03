@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FX_SCENE.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -44,19 +45,7 @@ struct BattleEffect03Link {
     u8 marker;
 };
 
-struct BattleEffect03State {
-    s32 reserved_00;
-    s32 x;
-    s32 y;
-    s32 z;
-    struct BattleEffect03Object *target;
-    u8 reserved_14[12];
-    s8 long_delay;
-    u8 reserved_21[3];
-    void (*finish_callback)(void);
-};
-
-extern struct BattleEffect03State *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 void BattleFx_UpdateShrinkingOrbitObject(void);
 void BattleFx_RunSparkEmitter(void);
 
@@ -74,8 +63,8 @@ void BattleFx_PrepareBufferInterpolation(void);
 
 void RunBattleEffect03(void)
 {
-    struct BattleEffect03State *state = gEffectWork;
-    struct BattleEffect03Object *target = state->target;
+    struct BattleFxScene *state = gEffectWork;
+    struct BattleEffect03Object *target = state->main_object;
     struct BattleEffect03Object *object;
     struct BattleEffect03Link *last;
     u8 link_marker;
@@ -131,7 +120,7 @@ void RunBattleEffect03(void)
     if (object != 0) {
         target->callback = BattleFx_RunSparkEmitter;
         target->angle = 0;
-        if (state->long_delay != 0)
+        if (state->enabled != 0)
             WaitFrames(128);
         else
             WaitFrames(192);

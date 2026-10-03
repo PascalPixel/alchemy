@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
@@ -10,7 +11,6 @@ extern const s16 SideObject_ActorKindIdMap[];
 
 #define FIELD_AT_OFFSET(base, type, ofs)     (*(type *)((u8 *)(base) + (ofs)))
 extern s32 Localization_LookupEntryId();
-extern s32 UiWindow_Create();
 extern s32 CreateSideObject();
 
 #if EDITION_INTERNATIONAL
@@ -22,7 +22,7 @@ extern s32 CreateSideObject();
 /* 連続する2要素へ0x3e7を設定する。 */
 void UiWork_SetTwoEntriesTo999(void)
 {
-    s16 *work = (s16 *)*(void **)((u32)&Data_03001e8c);
+    s16 *work = (s16 *)gWindowWork[0];
     s32 no = WORK_NO;
 
     do {
@@ -77,17 +77,17 @@ s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y)
     s32 ofs;
     void *work;
 
-    work = *(void **)((u32)&Data_03001e8c);
+    work = gWindowWork[0];
     if (Localization_LookupEntryId(arg0) == -1) {
         return 0;
     }
     minus_four = -4;
     ofs = minus_four;
-    if (FIELD_AT_OFFSET(work, u8, RENDER_MODE_OFS) != 0) {
-        win = UiWindow_Create(x, y, 6, 5, 2);
+    if (((struct UiRenderWork *)work)->mode != 0) {
+        win = (s32)UiWindow_Create(x, y, 6, 5, 2);
         ofs = 0;
     } else {
-        win = UiWindow_Create(x, y, 5, 5, 2);
+        win = (s32)UiWindow_Create(x, y, 5, 5, 2);
     }
     if (win != 0) {
         CreateSideObject(arg0, arg1, -1, win, ofs, minus_four);

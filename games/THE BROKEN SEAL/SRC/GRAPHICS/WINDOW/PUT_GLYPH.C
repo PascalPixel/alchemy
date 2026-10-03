@@ -1,22 +1,15 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "TBS_EDITION.H"
 
 /* The glyph renderer. The Japanese one also joins a kana voicing mark to the
    kana before it, and draws its sprites two pixels lower. */
 
-extern u8 *gWindowWork;
 
 void *RenderOutput_AcquireFree(void);
 s32 Resource_FindFreeEntry(void);
 void RenderOutput_AppendToList(void *, s8 *);
 
-struct UiWindow {
-    u8 padding0[8];
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-};
 
 struct SpriteAttr {
     u8 unk0[4];
@@ -49,7 +42,7 @@ struct WindowTilemap {
    modes write tiles up to 0xff into the window tilemap. */
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
-    struct RenderOutput *out = (struct RenderOutput *)gWindowWork;
+    struct RenderOutput *out = (struct RenderOutput *)gWindowWork[0];
     u8 *base = (u8 *)out;
     s32 idx;
     u16 *slot;
@@ -100,7 +93,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
     /* FAKEMATCH: the game keeps the work block in r12 for the tile store and a copy in r8 for the rest; as one plain variable it lives in r8 alone. */
-    register u8 *work asm("r12") = gWindowWork;
+    register u8 *work asm("r12") = gWindowWork[0];
     u8 *base = work;
     struct RenderOutput *out;
     s32 idx;

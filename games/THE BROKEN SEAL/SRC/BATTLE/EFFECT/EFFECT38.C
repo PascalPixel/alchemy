@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "GAME_STATE.H"
+#include "FX_SCENE.H"
 #include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -15,10 +17,6 @@ s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 void BattleEffect_SpawnBurstParticleField(void);
 
 /* battle/effects/scene_transition/reset.c */
-typedef struct {
-    u8  reserved00[0x34];
-    s8 field34;
-} SceneTransitionContext;
 
 typedef struct {
     u8  reserved000[0xcb8];
@@ -39,8 +37,7 @@ void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
 void BattleFx_StartBufferInterpolation(s32 battle_value);
 void Audio_PlayCue(s32 no);
 void FieldEffect_WatchLeaderDistance(void);
-extern SceneTransitionContext *gEffectWork;
-extern s32 gGameState[];
+extern struct BattleFxScene *gEffectWork;
 
 /* battle/effects/burst_particles/run_main_object.c */
 void Object_SetMode(s32, s32);
@@ -92,14 +89,6 @@ struct BurstParticleObject {
     u8 mode;
 };
 
-struct BurstParticleState {
-    s32 variant;
-    s32 x;
-    s32 y;
-    s32 z;
-    struct BurstParticleObject *target;
-};
-
 extern u8 BattleFx_CommonParticleScript[];
 void BattleEffect_InitializeSharedScene(void);
 void Animation_ApplyChildValuesFar(struct BurstParticleObject *, s32);
@@ -107,15 +96,6 @@ u32 Random16(void);
 void Object_SetPosition(struct BurstParticleObject *, s32, s32, s32);
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
-
-struct BattleEffectScene {
-    u8 reserved_00[4];
-    s32 x;
-    s32 y;
-    s32 z;
-    void *main_object;
-    void *child;
-};
 
 struct EffectChild {
     u8 reserved_00[12];
@@ -136,8 +116,8 @@ void UpdateRisingParticleBurst(void *effect);
 
 void ResetSceneTransitionEffect(void)
 {
-    SceneTransitionContext **cell = &gEffectWork;
-    SceneTransitionContext *ctx = *cell;
+    struct BattleFxScene **cell = &gEffectWork;
+    struct BattleFxScene *ctx = *cell;
     SceneTransitionScene *scene = *(SceneTransitionScene **)((u8 *)cell - 0x64);
     SceneTransitionState *state = *(SceneTransitionState **)((u8 *)cell - 0x74);
     s16 zero;
@@ -162,9 +142,9 @@ void ResetSceneTransitionEffect(void)
 
         resource = BattleFx_FindMatchingEvent(0x40000005, 8, &size);
         if (resource != NULL)
-            BattleFx_RunEventAction(resource, gGameState[125], size);
+            BattleFx_RunEventAction(resource, gGameState.selected_actor, size);
 
-        if (ctx->field34 == 0) {
+        if (ctx->child_option == 0) {
             scene->transition_phase = 0;
             scene->transition_status = 1;
             scene->transition_mode = 1;
@@ -239,13 +219,13 @@ void BattleFx_RunBurstParticles(void)
  */
 void BattleEffect_SpawnBurstParticleField(void)
 {
-    struct BurstParticleState *state;
+    struct BattleFxScene *state;
     struct BurstParticleObject *target;
     s32 position[3];
     s32 remaining;
 
     state = gEffectWork;
-    target = state->target;
+    target = state->main_object;
     BattleEffect_InitializeSharedScene();
 
     for (remaining = 0; remaining < 24; remaining++) {
@@ -254,11 +234,11 @@ void BattleEffect_SpawnBurstParticleField(void)
         struct BurstParticleVisual *child;
         s32 random_distance;
 
-        if (state->variant == 0x4000) {
+        if (state->angle == 0x4000) {
             position[0] = target->x;
             position[1] = target->y + 0xa0000;
             position[2] = target->z;
-        } else if (state->variant == 0xc000) {
+        } else if (state->angle == 0xc000) {
             position[0] = target->x;
             position[1] = target->y + 0x180000;
             position[2] = target->z;
@@ -266,7 +246,7 @@ void BattleEffect_SpawnBurstParticleField(void)
             position[0] = target->x;
             position[1] = target->y + 0xa0000;
             position[2] = target->z;
-            Vector_AddPolarOffset(0xa0000, state->variant, position);
+            Vector_AddPolarOffset(0xa0000, state->angle, position);
         }
 
         object = Object_Spawn(
@@ -293,8 +273,8 @@ void BattleEffect_SpawnBurstParticleField(void)
             position[0] = state->x;
             position[1] = state->y;
             position[2] = state->z;
-            if (state->variant == 0xc000)
-                Vector_AddPolarOffset(0xe0000, state->variant, position);
+            if (state->angle == 0xc000)
+                Vector_AddPolarOffset(0xe0000, state->angle, position);
             random_distance = Random16() * 6 + 0x40000;
             Vector_AddPolarOffset(random_distance, Random16(), position);
             Object_SetPosition(
@@ -312,7 +292,7 @@ void BattleEffect_SpawnBurstParticleField(void)
  * 0x200000 before finishing both bursts. */
 void BattleEffect_RunTargetedItemBreak(void)
 {
-    struct BattleEffectScene *scene;
+    struct BattleFxScene *scene;
     void *main_object;
     void *child;
     void *anchors[2];

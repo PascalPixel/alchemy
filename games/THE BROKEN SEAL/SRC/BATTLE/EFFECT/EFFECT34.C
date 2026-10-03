@@ -2,10 +2,11 @@
 #include "OBJDISP.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
+#include "FX_SCENE.H"
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
 
-extern u8 Data_03001f30[];
+extern struct BattleFxScene *gEffectWork;
 struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
 void Object_Destroy(struct ObjectRuntime *);
 void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);
@@ -29,7 +30,7 @@ struct ArcObject {
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001f30);
+    struct BattleFxScene *scene = gEffectWork;
     struct ObjectRuntime *object;
     u8 *child;
     u8 flag;
@@ -40,7 +41,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
             Object_Destroy(object);
             return NULL;
         }
-        object->terrain_height = *(s32 *)(*(u8 **)(base + 16) + 20);
+        object->terrain_height = ((struct ObjectRuntime *)scene->main_object)->terrain_height;
         flag = 4;
         object->flags = flag;
         object->unknown_23 = flag;

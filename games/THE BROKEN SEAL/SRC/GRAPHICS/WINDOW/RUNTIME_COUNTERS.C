@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
@@ -20,11 +21,9 @@ struct UiCounterWork {
     u16 result;
 };
 
-extern void *gWindowWork;
 void UiWork_ProcessAll(void);
 
 s32 VramBlock_LoadCached(s32, s32, s32);
-void UiWork_Finalize(struct Work *, s32);
 
 s32 UiWork_IsIdle(void *arg0)
 {
@@ -33,8 +32,8 @@ s32 UiWork_IsIdle(void *arg0)
     if (arg0 == NULL)
         return 1;
 #endif
-    if (*(u16 *)((u8 *)arg0 + 0x16) == 0) {
-        if (*(s16 *)((u8 *)arg0 + 0x1a) == 0)
+    if (((struct UiWindow *)arg0)->flags == 0) {
+        if (((struct UiWindow *)arg0)->duration == 0)
             return 1;
     }
     return 0;
@@ -42,7 +41,7 @@ s32 UiWork_IsIdle(void *arg0)
 
 void UiWork_ResetCounters(void)
 {
-    struct UiCounterWork *state = gWindowWork;
+    struct UiCounterWork *state = (struct UiCounterWork *)gWindowWork[0];
 
     state->fifteen = 15;
     state->ten = 10;
@@ -53,7 +52,7 @@ void UiWork_ResetCounters(void)
 
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 {
-    struct UiCounterWork *state = gWindowWork;
+    struct UiCounterWork *state = (struct UiCounterWork *)gWindowWork[0];
     s32 size;
 
     state->result = VramBlock_LoadCached(95, 128 << 6, 0);
@@ -69,7 +68,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 {
-    struct UiCounterWork *state = gWindowWork;
+    struct UiCounterWork *state = (struct UiCounterWork *)gWindowWork[0];
     s32 size;
 
     if (initialize != 0)
@@ -86,10 +85,10 @@ void UiWork_InitCountersAndScheduleRefresh(s32 initialize)
 
 void UiWork_FinalizeSharedSlot(void)
 {
-    struct Work **slot;
-    struct Work *work;
+    struct UiWindow **slot;
+    struct UiWindow *work;
 
-    slot = *(struct Work ***)((u32)&Data_03001ee4);
+    slot = *(struct UiWindow ***)((u32)&Data_03001ee4);
     work = *slot;
     if (work != 0) {
         UiWork_Finalize(work, 1);

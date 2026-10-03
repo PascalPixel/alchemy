@@ -4,26 +4,13 @@
  * angles.
  */
 #include "TYPES.H"
+#include "MOTION_OBJECT.H"
+#include "FX_SCENE.H"
 #include "OBJDISP.H"
 #include "SYSTEM.H"
 #include "SCENE.H"
 #include "SOUND_IDS.H"
 #include "FIXED_MATH.H"
-
-struct BattleEffectScene {
-    u8 reserved_00[4];
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct ScatterShard {
-    u8 reserved_00[0x30];
-    s32 speed;                      /* 0x30 */
-    s32 lift;                       /* 0x34 */
-    u8 reserved_38[0x55 - 0x38];
-    u8 flag;                        /* 0x55 */
-};
 
 struct ScatterPosition {
     s32 x;
@@ -31,20 +18,20 @@ struct ScatterPosition {
     s32 z;
 };
 
-extern struct BattleEffectScene *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
-struct ScatterShard *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+struct MotionObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 extern const u8 BattleFx_FragmentScript[];
 void Object_Destroy(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
-static __inline__ struct ScatterShard *SpawnShard(
-    struct BattleEffectScene *scene, struct ScatterPosition *position)
+static __inline__ struct MotionObject *SpawnShard(
+    struct BattleFxScene *scene, struct ScatterPosition *position)
 {
     /* FAKEMATCH: the inline interface preserves the separate shard cursor. */
     position->x = scene->x;
@@ -59,8 +46,8 @@ void Object_SetMode(void *, s32);
 
 void RunBattleEffect07(void)
 {
-    struct BattleEffectScene *scene;
-    struct ScatterShard *obj;
+    struct BattleFxScene *scene;
+    struct MotionObject *obj;
     void *anchors[2];
     struct ScatterPosition position;
     void **walk;
@@ -92,9 +79,9 @@ void RunBattleEffect07(void)
         obj = SpawnShard(scene, &position);
         if (obj != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_FragmentScript);
-            obj->speed = Random16() + 0x20000;
-            obj->lift = 0x20000;
-            obj->flag = 0;
+            obj->speed_limit = Random16() + 0x20000;
+            obj->acceleration = 0x20000;
+            obj->motion_flags = 0;
             magnitude = Random16() * 24 + 0x80000;
             Motion_SetTargetPositionFromMagnitudeAngle(obj, magnitude, Random16());
         }

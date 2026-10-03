@@ -10,7 +10,7 @@
 s32 UiMenu_CreateCursor(void *menu);
 void PsynergyMenu_InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
 
-void ItemMenu_Init(void)
+void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
 {
     struct InventoryMenuState *menu = gMenuWork;
     s32 index;

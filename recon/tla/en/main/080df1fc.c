@@ -1,3 +1,8 @@
+/* 2026-10-03: live child-value ABI closure uses OBJECT_DISPATCH.H and
+   explicit DispatchObject views for ApplyChildValuesFar and the adjacent
+   child setter. The complete EN object is unchanged. Fresh diagnostic
+   score remains 2813/101; Data_0300122c is unresolved, so this is still a
+   draft with symbol-name comparison, not new byte or linkage proof. */
 /* LOCAL DRAFT: BattleFx_SteerLiftedTarget, native complete extent 1272.
  * Truthful ordinary source compiles all six to identical 1256-byte objects;
  * EN diagnostic score2793, sixteen bytes short. Native unread-handle stores
@@ -10,11 +15,11 @@
  * JA/DE/FR lack six source symbols, ES/IT eight; none is filled numerically.
  * EN resolves every source name and all nine pool values, but is not exact.
  * The earlier shared API proposal is not installed by preserving this
- * draft. BattleFx_GetCycledTableWord and Animation_ApplyChildValuesFar
- * still require API reconciliation before this uncredited attempt can be
- * adopted. Existing three TBS body tags remain explicit.
+ * draft. BattleFx_GetCycledTableWord still requires API reconciliation
+ * before this uncredited attempt can be adopted. Existing three TBS body tags remain explicit.
  */
 #include "TYPES.H"
+#include "OBJECT_DISPATCH.H"
 #include "INPUT.H"
 #include "OBJDISP.H"
 #include "RAM_BUFFER.H"
@@ -81,7 +86,6 @@ void Object_CommitPosition(struct FxObject *object);
 void ObjectGroup_ApplyRandomChildValues(void);
 void Func_080df174(void);
 void Audio_PlayCue(s32 cue);
-void ObjectDispatch_SetSingleChildField26Far(struct FxObject *object, s32 value);
 void Object_SetMode(struct FxObject *object, s32 mode);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FxPosition *position);
 s32 Func_08020298(struct FxObject *object, struct FxPosition *position);
@@ -160,7 +164,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     Scheduler_AddOrUpdateCallback((s32)Func_080df174, 0x480);
     Audio_PlayCue(130);
     target->flag = 4;
-    ObjectDispatch_SetSingleChildField26Far(target, 0);
+    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)target, 0);
     if (anchors[0] != NULL && anchors[1] != NULL) {
         while (target->y - target->ground <= 0x180000) {
             object->y += 0x6000;
@@ -274,7 +278,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     Audio_PlayCue(131);
     Object_Destroy(anchors[0]);
     Object_Destroy(anchors[1]);
-    Animation_ApplyChildValuesFar(target, work->palette);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)target, work->palette);
     ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->script));
     {
         /* FAKEMATCH: one zero, set before these stores, clears the mode
@@ -288,7 +292,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         target->mode = zero;
         source->callback = (void *)zero;
     }
-    Animation_ApplyChildValuesFar(source, 0);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)source, 0);
     if ((s8)work->falls != 0) {
         for (i = 0; i < 90 && target->velocity_y >= 0; i++)
             WaitFrames(1);

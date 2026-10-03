@@ -1,3 +1,17 @@
+/* 2026-10-03 child-call ownership correction: the native call at 080d83fe
+   reads the slot's first-word child pointer and passes value 11 to
+   Animation_ApplyChildValuesToRecordFar. Removed the stale unresolved
+   ObjectGroup_SetChildValueUnlessFifteenFar declaration and use the
+   maintained DispatchChild/u32 contract. EN score improves 1731/42 to
+   1711/41 solely by resolving that target name. All six candidate .text
+   sections remain identical at 728 bytes, and instruction/relocation
+   comparisons differ only in that target name; whole objects differ in
+   symbol metadata. Other unresolved names and matching gaps remain. */
+/* Earlier 2026-10-03 trial: ApplyChildValuesFar now uses OBJECT_DISPATCH.H's maintained
+   void(DispatchObject *, u32) declaration and an explicit object view.
+   Its imported SYSTEM.H also replaces the competing local Random16 return
+   declaration. The complete EN object and score 1731/42 are unchanged;
+   the same unresolved effect/slot/object names and globals remain. */
 /*
  * Canonical draft API context; no match or adoption is claimed.
  * API context measured 2026-10-02 with ordinary target flags:
@@ -7,6 +21,7 @@
  * every original matching-body and trial annotation is retained.
  */
 #include "TYPES.H"
+#include "OBJECT_DISPATCH.H"
 #include "OBJDISP.H"
 
 extern u8 gEffectWork[];
@@ -61,12 +76,9 @@ void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
 void EffectSlot_SetCallback(void *slot, void *callback);
 void EffectSlot_SetObjectMode(void *slot, s32 mode);
-void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
-s32 Random16(void);
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 __udivsi3(s32 numerator, s32 denominator);
 struct CaptureObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct CaptureObject *object, s32 magnitude, s32 angle);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
@@ -122,7 +134,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         EffectSlot_Initialize(slot, 284, position[0], position[2]);
         EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
         EffectSlot_SetObjectMode(slot, 7);
-        ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
+        Animation_ApplyChildValuesToRecordFar(*(struct DispatchChild **)slot, 11);
         *(s32 *)(slot + 40) = 0x8000;
         *(s32 *)(slot + 44) = Random16() + 0x18000;
         remaining--;
@@ -164,7 +176,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
             djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
             djinni->mode = 0;
             Object_SetMode(djinni, 7);
-            Animation_ApplyChildValuesFar(djinni, 11);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
         }
     }
 
@@ -186,7 +198,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         djinni->base_y = djinni->y;
         djinni->speed = Random16() + 0x16666;
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
-        Animation_ApplyChildValuesFar(djinni, 11);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)djinni, 11);
         djinni->lifetime = 8;
         ObjectDispatch_InitializeFar((struct DispatchObject *)djinni, (u32)BattleFx_CommonParticleScript);
     }

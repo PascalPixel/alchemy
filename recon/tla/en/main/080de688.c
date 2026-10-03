@@ -1,4 +1,10 @@
+/* 2026-10-03: ApplyChildValuesFar now uses OBJECT_DISPATCH.H's maintained
+   void(DispatchObject *, u32) declaration and explicit object views.
+   Still cannot compile: orbiting-particle views, gEffectWork and callbacks
+   are missing. Prior layout/declaration blockers remain; no new byte
+   comparison is possible. */
 #include "TYPES.H"
+#include "OBJECT_DISPATCH.H"
 #include "SCENE.H"
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
@@ -9,7 +15,6 @@ s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
-void Animation_ApplyChildValuesFar(struct OrbitingParticle *particle, s32 battle_mode);
 
 void BattleFx_RunOrbitingParticles(void)
 {
@@ -46,7 +51,7 @@ void BattleFx_RunOrbitingParticles(void)
             particle->rotation = Random16();
             particle->lifetime = 60;
             particle->orbit_angle = Random16();
-            Animation_ApplyChildValuesFar(particle, 9);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)particle, 9);
 
             p->x = scene->origin.x;
             p->y = scene->origin.y;
@@ -71,9 +76,9 @@ void BattleFx_RunOrbitingParticles(void)
 
         entry_count = 15;
         do {
-            Animation_ApplyChildValuesFar(main_particle, 7);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)main_particle, 7);
             WaitFrames(1);
-            Animation_ApplyChildValuesFar(main_particle, 0);
+            Animation_ApplyChildValuesFar((struct DispatchObject *)main_particle, 0);
             WaitFrames(4);
             entry_count--;
         } while (entry_count >= 0);

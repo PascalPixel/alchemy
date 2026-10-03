@@ -277,8 +277,8 @@ UiText_MeasureEntryDimensions:
 	.thumb_func
 UiText_MeasureStringVariant:
 	.incbin "baserom.gba", 0x0001895c, 0x00000264
-	.global Func_08018cac
-Func_08018cac:
+	.global UiText_DrawGlyph
+UiText_DrawGlyph:
 	.incbin "baserom.gba", 0x00018bc0, 0x00000250
 	.section .rom.000190e0, "ax"
 	.global UiWork_AnimateSpriteSlots

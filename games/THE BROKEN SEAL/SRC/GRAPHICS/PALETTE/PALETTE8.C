@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
@@ -8,22 +9,10 @@
 
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
-extern u8 gProjection[];
+
 
 /* camera/scene/set_angle_parameters.c */
-struct CameraWork {
-    s32 result;
-    s32 param1;
-    s32 param2;
-};
 
-struct Projection {
-    s32 focal;
-    s32 near;
-    s32 far;
-    s32 center_x;
-    s32 center_y;
-};
 
 extern const u8 Resource_DecodeHalfwordLz[];
 
@@ -59,7 +48,6 @@ extern u8 ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
 extern u8 ColorBuffer_BackupAndHalveNonzeroCodeSize[];
 
 /* graphics/prepare_transfer_in_iwram_work.c */
-/* graphics/prepare_transfer_in_iwram_work.c */
 void Graphics_PrepareTransferInIwramWork(s32 src, s32 dst)
 {
     Graphics_PrepareTransfer((void *)src, (void *)dst, gTransform);
@@ -87,19 +75,19 @@ void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
         first,
         Trig_Cos(half)* 0x50
     );
-    ((struct CameraWork *)((u32)&gProjection))->param1 = param1;
-    ((struct CameraWork *)((u32)&gProjection))->result = result;
-    ((struct CameraWork *)((u32)&gProjection))->param2 = param2;
+    gProjection.near = param1;
+    gProjection.focal = result;
+    gProjection.far = param2;
 }
 
 /* camera/scene/store_parameters.c */
 void Camera_StoreSceneParameters(u32 value0, u32 value1, u32 value2)
 {
-    u32 *work = (u32 *)((u32)&gProjection);
+    struct Projection *work = &gProjection;
 
-    work[0] = value0;
-    work[1] = value1;
-    work[2] = value2;
+    work->focal = value0;
+    work->near = value1;
+    work->far = value2;
 }
 
 /* Transforms point through the IWRAM matrix routine and projects it to

@@ -1,9 +1,10 @@
+#include "PROJECT.H"
 #include "DMA.H"
 
 extern u8 gBattleWork[];
 
 extern u16 gBgScroll[];
-extern s32 gProjection[];
+
 
 
 void WaitFrames(s32 frames);
@@ -30,5 +31,5 @@ void BattleEffect_SetupBlendedDisplay(void)
     *(u16 *)0x04000052 = 0x100e;
     *(u16 *)0x04000050 = 0x3f46;
     *(u16 *)0x04000000 = 0x7741;
-    gProjection[4] = 120;
+    gProjection.center_y = 120;
 }

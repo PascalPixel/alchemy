@@ -6,27 +6,7 @@
 #include "DMA.H"
 #include "GAME_STATE.H"
 #include "SCROLL.H"
-
-union EffectMotionSlot {
-    u32 word;
-    struct {
-        u8 unknown0[2];
-        u8 active;
-        u8 part_count;
-    } bytes;
-};
-
-struct EffectAnimationContext {
-    u8 unknown_00[0x24];
-    union EffectMotionSlot control;
-    u8 unknown_28[4];
-    struct EffectKindObject *effect;
-};
-
-struct EffectKindObject {
-    u8 unknown0[5];
-    u8 kind;
-};
+#include "ANIMSPR.H"
 
 /* Object table: 192 pointers at gEventWork + 0x14 (see ObjectTable_Get). */
 void *ResourceMetadata_RegisterFar(void *, s32);
@@ -99,8 +79,8 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     u32 zero;
     u8 kind;
     struct ObjectRuntime *object;
-    struct EffectAnimationContext *context;
-    struct EffectKindObject *effect;
+    struct AnimationObject *context;
+    struct AnimationEntry *effect;
 
     object = ObjectTable_Get(gGameState.selected_actor);
     context = object->animation;
@@ -108,8 +88,8 @@ void ObjectEffect_PrepareContextEffect(s32 value)
     zero = 0;
     kind = 15;
 
-    context->control.bytes.active = zero;
-    effect->kind = kind;
+    context->flags = zero;
+    effect->param = kind;
     object->x = (object->x & 0xFFF00000) + 0x80000;
     object->z = (object->z & 0xFFF00000) + 0x100000;
     object->velocity_x = zero;
@@ -137,21 +117,21 @@ void ObjectEffect_EndContextEffect(s32 arg0)
     s32 zero;
     s32 mask;
     struct ObjectRuntime *obj = ObjectTable_Get(gGameState.selected_actor);
-    struct EffectAnimationContext *ctx = obj->animation;
-    struct EffectKindObject *eff = ResourceMetadata_RegisterFar(ctx, 27);
+    struct AnimationObject *ctx = obj->animation;
+    struct AnimationEntry *eff = ResourceMetadata_RegisterFar(ctx, 27);
 
     zero = 0;
     mask = 0xfff00000;
-    ctx->control.bytes.active = zero;
-    eff->kind = 15;
+    ctx->flags = zero;
+    eff->param = 15;
     obj->x = (obj->x & mask) + 0x80000;
     obj->z &= mask;
     Object_SetMode(obj, arg0);
     WaitFrames(30);
-    ctx->control.bytes.part_count = 1;
-    ResourceMetadata_ClearRecordFar(ctx->effect);
-    ctx->effect = (void *)zero;
-    ctx->control.bytes.active = 1;
+    ctx->count = 1;
+    ResourceMetadata_ClearRecordFar(ctx->entries[1]);
+    ctx->entries[1] = (void *)zero;
+    ctx->flags = 1;
     obj->acceleration = 0x10000;
     obj->speed_limit = 0x10000;
     Object_SetPosition(obj,

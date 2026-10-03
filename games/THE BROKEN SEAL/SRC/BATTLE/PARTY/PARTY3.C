@@ -5,6 +5,8 @@
 #include "PARTY_STATE.H"
 #include "SOUND_IDS.H"
 #include "FIXED_MATH.H"
+#include "EVENT_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
 
 s32 Party_CountActiveOwnersFar();
 void Owner_AdjustFirstValueFar(s32 owner, s32 amount);
@@ -27,7 +29,7 @@ void BattleParty_ApplyDrain(s32 amount)
 
     if (target_count > 0) {
         u8 *base = (u8 *)&gGameState;
-        s32 offset = 252 << 1;
+        s32 offset = (u32)&((struct GameState *)0)->active_owners;
         u8 *target_id = base + offset;
         s32 remaining = target_count;
 
@@ -84,7 +86,7 @@ s32 BattleParty_ApplyStatusDamage(void)
     s32 count = Party_CountActiveOwnersFar();
 
     if (result < count) {
-        s32 offset = 252;
+        s32 offset = (u32)&((struct GameState *)0)->active_owners / 2;
         u8 *entry;
         s32 remaining;
 
@@ -133,11 +135,11 @@ s32 BattleParty_ApplyStatusDamage(void)
 
 void Battle_SetObjectFlag5bWhenMode3(void)
 {
-    void *work;
+    struct EventRuntime *work;
     void *blk;
 
     work = Runtime_AllocateBlock(0x1B, 0xCCC);
-    if (FIELD_AT_OFFSET(work, s16 *, 0x19E) == 3) {
+    if (work->mode_19e == 3) {
         blk = Runtime_AllocateBlock(0x1F, 0x540);
         if ((blk != NULL) && (FIELD_AT_OFFSET(blk, s8 *, 0x53D) != 0)) {
             FIELD_AT_OFFSET(blk, s8 *, 0x53A) = 0;
@@ -145,7 +147,7 @@ void Battle_SetObjectFlag5bWhenMode3(void)
             FIELD_AT_OFFSET(blk, s8 *, 0x53C) = 1;
             FIELD_AT_OFFSET(blk, s8 *, 0x53D) = 0;
         }
-        FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x1E0), s8 *, 0x5B) = 1;
+        ((struct ObjectRuntime *)FIELD_AT_OFFSET(work, void **, 0x1E0))->movement_state = 1;
         Map_ResumeAnimationFar();
     }
 }

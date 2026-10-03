@@ -9,10 +9,12 @@
 #include "BATTLE_WORK.H"
 #include "MOTION_OBJECT.H"
 #include "CHARACTER.H"
+#include "ANIMSPR.H"
 
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 
+/* The native scan reads the session through its original halfword view. */
 struct SlotArray { s16 items[64]; };
 
 /* Takes a defeated unit out of the party or enemy list, leaving the removed
@@ -62,8 +64,8 @@ void BattleMotion_InitializeActorRecords(s32 id)
 {
     void *items[4];
     struct BattleUnit *state;
-    u8 *item;
-    u8 *child;
+    struct AnimationObject *item;
+    struct AnimationEntry *child;
     s32 index;
 
     state = Owner_GetStateFar(id);
@@ -79,10 +81,10 @@ void BattleMotion_InitializeActorRecords(s32 id)
     if (state->status_12a == 1) {
         index = 0;
         while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
-            child = *(u8 **)(item + 40);
+            child = item->entries[0];
             items[index] = item;
-            child[5] = 6;
-            child[22] = 0xff;
+            child->param = 6;
+            child->frame = 0xff;
             index++;
         }
         WaitFrames(4);
@@ -94,6 +96,8 @@ void BattleMotion_InitializeActorRecords(s32 id)
 
 s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 {
+    /* The named party/enemy arrays changed this scan's instruction order
+       and extent; retain its existing halfword view. */
     u16 positions[6];
     struct SlotArray *order;
     s16 *entry;
@@ -111,7 +115,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
     if (require_living_unit != 0) {
         for (;;) {
             index = 0;
-            slot = 44;
+            slot = (u32)&((struct BattleSession *)0)->party_units / sizeof(s16);
             if (order->items[slot] != 255) {
                 entry = order->items;
                 do {
@@ -130,8 +134,8 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
         }
     } else {
         index = 0;
-        slot = 50;
-        tail = 50;
+        slot = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
+        tail = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
         offset = tail * 2;
         entry = (s16 *)(order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255) {

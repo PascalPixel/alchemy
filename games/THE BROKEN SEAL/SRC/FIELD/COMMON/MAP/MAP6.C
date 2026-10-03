@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -59,7 +60,7 @@ extern char ResourceId_DefaultMapAnimation;
 extern char ResourceId_DefaultMetatileAttributes;
 void Transform_UpdateVertices(void);
 extern u8 Transform_UpdateVerticesSize;
-extern u32 gProjection[];
+
 extern u32 Data_03001f60;
 extern u32 Data_03001af4;
 extern u32 gFrameCount;
@@ -282,8 +283,8 @@ s32 Map_InitializePerspectiveScene(void)
     camera->unknown_18 = 0;
     camera->unknown_1c = 0;
     *turn = 0;
-    gProjection[3] = 120;
-    gProjection[4] = 96;
+    gProjection.center_x = 120;
+    gProjection.center_y = 96;
     Camera_StoreSceneParameters(far_plane, far_plane >> 1, far_plane << 1);
     position[0] = 0;
     position[1] = 0;

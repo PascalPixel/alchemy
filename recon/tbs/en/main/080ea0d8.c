@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 /* NONMATCHING: 5756 bytes, candidate 5728, 2604 differing halfwords,
  * 1472 halfword edits (2026-09-25). Battle effect mode 9: receding sprites,
  * sparks, concentric ellipses and palette ramps. The verified canvas-layer
@@ -58,11 +59,7 @@ struct Cells03001ad0 {
 };
 extern struct Cells03001ad0 gBgScroll;
 
-struct Cells03001ce0 {
-    s32 unk00[4];
-    s32 unk10;
-};
-extern struct Cells03001ce0 gProjection;
+
 
 extern u8 Value_0000003b;
 extern u8 Value_0000003e;
@@ -235,7 +232,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     BattleEffect_WipeCanvas(0, 0);
     BattleFx_SelectLivingTargets((s32)work->effect);
     BattleFx_SpawnObjects(16, 0x17e, 1);
-    gProjection.unk10 = 240;
+    gProjection.center_y = 240;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&Value_0000003b, 0);
     ctrl[4] = 1;

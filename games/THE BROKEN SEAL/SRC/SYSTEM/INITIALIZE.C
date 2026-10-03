@@ -1,9 +1,10 @@
 #include "DMA.H"
 #include "IO_REG.H"
+#include "IO_WRITE_QUEUE.H"
+#include "CALLBACK_SCHEDULER.H"
 
 void System_VBlankHandler(void);
 
-extern s32 gIoWriteQueue;
 extern u8 Data_03001ac4;
 extern u8 gDebugMode;
 extern u8 Data_03001f58;
@@ -14,7 +15,7 @@ extern u8 Data_03001ca0;
 
 void Resource_LoadWorkHeader(void);
 void Runtime_InstallIwramAndIrqs(void);
-void Runtime_SetIrqHandler(s32, s32, void (*)(void));
+void Runtime_SetIrqHandler(u32, s32, void (*)(void));
 void WaitFrames(s32 frames);
 void Resource_InitializeTable(void);
 void Bg0_ClearTilemap(void);
@@ -50,7 +51,8 @@ void System_Initialize(void)
     Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, (volatile u32 *)0x040000d4);
     Runtime_InitializeHeap();
     Runtime_InstallIwramAndIrqs();
-    gIoWriteQueue = 0;
+    /* Startup clears the count and its adjacent padding in one word. */
+    *(u32 *)&gIoWriteQueue.count = 0;
     Data_03001ac4 = 0;
     gDebugMode = 0;
     Data_03001f58 = 0;

@@ -21,6 +21,8 @@ s32 ResourceTable_CountFreeBlocks(void)
     return free_count;
 }
 
+/* The explicit byte access preserves the existing packed resource flags.
+   Member access moves the flag read before the VRAM-block store. */
 void *Object_ReplaceResourceEntry(void *src, void *alt)
 {
     void *ret;

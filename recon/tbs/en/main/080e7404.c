@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 /* Draft, complete main:080e7404 [080e7404,080e823c) with its two nested
    functions main:080e7338 and main:080e73a0, 3844 bytes together, written
    fresh from the listings in plain C.
@@ -26,10 +27,6 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
-struct Projection {
-    s32 unknown_00[4];
-    s32 depth;
-};
 
 /* The battle presentation block in heap slot 44. */
 struct BattlePresentationWork {
@@ -57,7 +54,7 @@ struct Scale {
 extern void *gBattleFxWork[];
 extern void *gTransitionWork[];
 extern DrawRectangle gWorkSlot[];
-extern struct Projection gProjection;
+
 extern struct BattleCamera *gCameraWork;
 extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
@@ -230,7 +227,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
     }
     Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
-    gProjection.depth = 240;
+    gProjection.center_y = 240;
     BattleFx_SelectLivingTargets(work->effect);
     work->bg2x = 0;
     work->bg2y = 0;

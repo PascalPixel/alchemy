@@ -6,21 +6,6 @@
 
 /* The battle effect work, seen through its shadows of the window, blend and
    BG2 reference registers, which are copied to the hardware once a frame. */
-struct DisplayWork {
-    u8 unknown_0000[0x77bc];
-    u16 win0h;
-    u16 win0v;
-    u16 win1h;
-    u16 win1v;
-    u16 winin;
-    u16 winout;
-    u16 dispcnt;
-    u16 bldcnt;
-    u16 bldalpha;
-    u16 padding;
-    s32 bg2x;
-    s32 bg2y;
-};
 
 #define REG_WIN0H (*(u16 *)0x04000040)
 #define REG_WIN1H (*(u16 *)0x04000042)
@@ -33,7 +18,7 @@ struct DisplayWork {
 #define REG_BLDALPHA (*(u16 *)0x04000052)
 #define REG_BG2X (*(s32 *)0x04000028)
 #define REG_BG2Y (*(s32 *)0x0400002c)
-extern struct DisplayWork *gBattleFxWork;
+extern struct BattleEffectWork *gBattleFxWork;
 
 /* graphics/palette/step_fade_transfer.c */
 struct FadeGlobals {
@@ -59,7 +44,7 @@ u32 _call_via_r3(s32, s32, u32, s32);
 /* graphics/registers/Display_ApplyWindowBlend.c */
 void Graphics_ApplyWindowBlendRegisters(void)
 {
-    struct DisplayWork *work = gBattleFxWork;
+    struct BattleEffectWork *work = gBattleFxWork;
 
     REG_WIN0H = work->win0h;
     REG_WIN0V = work->win0v;
@@ -75,7 +60,7 @@ void Graphics_ApplyWindowBlendRegisters(void)
 /* graphics/registers/Display_ApplyBg2Reference.c */
 void Display_ApplyBg2Reference(void)
 {
-    struct DisplayWork *work = gBattleFxWork;
+    struct BattleEffectWork *work = gBattleFxWork;
 
     REG_BG2X = work->bg2x;
     REG_BG2Y = work->bg2y;
@@ -111,18 +96,16 @@ void Runtime_ApplyValueToWork7818(u32 arg2)
 /* object/group/tick_member_timers.c */
 void ObjectGroup_TickMemberTimers(void)
 {
-    u8 *base;
+    struct BattleEffectWork *work;
     s32 i;
-    s32 index;
 
-    base = gBattleFxWork;
+    work = gBattleFxWork;
     i = 0;
     do {
-        if (base[0x7818 + i] != 0) {
-            if ((base[0x7818 + i] = base[0x7818 + i] - 1) == 0) {
-                index = i * 2 + 36;
+        if (work->actor_timers[i] != 0) {
+            if ((work->actor_timers[i] = work->actor_timers[i] - 1) == 0) {
                 ObjectGroup_UpdateMembers(
-                    *(s16 *)(*(u8 **)(base + 0x7828) + index),
+                    work->effect->actors[i],
                     0, -1, -1, 0);
             }
         }

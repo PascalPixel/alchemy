@@ -1,21 +1,12 @@
 #include "TYPES.H"
+#include "BATTLE_STATUS_ICON.H"
 #include "IWRAM_CALL.H"
 #include "MOTION_OBJECT.H"
-
-struct ResourceObject {
-    u8 padding0[0x18];
-    s32 scale;
-    u8 padding1c[4];
-    u8 kind;
-    u8 padding21[5];
-    u8 layer;
-    u8 padding27;
-    struct SpriteEntry *sprite;
-};
+#include "ANIMSPR.H"
 
 struct PairedObjectList {
     u8 padding0[8];
-    struct ResourceObject *objects[1];
+    struct AnimationObject *objects[1];
 };
 
 struct PairedObjectTable {
@@ -29,10 +20,9 @@ extern u8 *gMenuCtrlWork;
 s32 BattlePlacement_ContainsId(s16 *list, s32 id);
 void WaitFrames(s32 frames);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 id);
-void BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *slot);
-struct ResourceObject *GetBattleEffectObject(s32 resource);
+struct AnimationObject *GetBattleEffectObject(s32 resource);
 u8 *Resource_GetMetadataRecordFar(s32 resource);
-struct SpriteEntry *ResourceMetadata_RegisterFar(struct ResourceObject *object, s32 resource);
+struct SpriteEntry *ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
 void Animation_SetWorkEntryFar(struct SpriteEntry *entry, s32 index);
 void BattlePres_SetActorModeAndAction(s32 id);
 
@@ -44,9 +34,9 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
     s32 id;
     struct BattleObjectSlot *slot;
     struct MotionObject *object;
-    struct ResourceObject *res;
+    struct AnimationObject *res;
     struct SpriteEntry *entry;
-    struct ResourceObject **objects;
+    struct AnimationObject **objects;
     u8 *table;
     s32 resource;
     s32 object_id;
@@ -87,20 +77,20 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
                 *objects = res;
                 objects = &((struct PairedObjectList *)table)->objects[1];
             }
-            res->layer = 0;
+            res->flags = 0;
             res = GetBattleEffectObject(resource + 0x2001);
             if (res != 0) {
                 res->scale = Iwram_MulQ16(res->scale, slot->scale);
                 *objects = res;
             }
-            res->layer = 0;
+            res->flags = 0;
         } else {
             res = GetBattleEffectObject(slot->resource);
             if (res != 0) {
                 object->record_storage_kind = 1;
                 object->records = res;
                 res->scale = Iwram_MulQ16(res->scale, slot->scale);
-                entry = res->sprite;
+                entry = (struct SpriteEntry *)res->entries[0];
                 entry->priority = 1;
                 entry->palette = slot->palette;
                 if ((resource = slot->overlay) != 0) {
@@ -114,12 +104,12 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
                     entry->priority = 3;
                 }
                 if ((resource = slot->effect) != 0) {
-                    if (res->kind == 32)
+                    if (res->width == 32)
                         resource = 0x1ff;
                     entry = ResourceMetadata_RegisterFar(res, resource);
                     slot->effect_entry = entry;
                     entry->priority = 0;
-                    res->layer = 0;
+                    res->flags = 0;
                 }
             }
         }

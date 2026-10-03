@@ -1,3 +1,4 @@
+#include "DISPTRAN.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -5,14 +6,6 @@
 
 /* The battle-effect display transition state: the per-scanline window
    tables fill the block and the control fields follow them. */
-struct DisplayTransitionState {
-    u8 lines[0x528];
-    s16 mode;
-    s16 timer;
-    u8 unknown_52c[8];
-    s16 mask;
-    s16 active;
-};
 
 void *Runtime_AllocateBlock(s32 kind, s32 size);
 void DisplayTransition_UpdateScanlineTable(void);
@@ -29,7 +22,7 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode)
     zero = 0;
     Dma_Set((const void *)&zero, state, 0x85000150, (volatile u32 *)0x040000d4);
     state->mode = mode;
-    state->timer = 0;
+    state->value = 0;
     state->mask = 0x3f3f;
     state->active = 1;
     Scheduler_AddOrUpdateCallback((s32)DisplayTransition_UpdateScanlineTable, 0xc80);

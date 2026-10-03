@@ -15,10 +15,10 @@
 /* FAKEMATCH: volatile on plain RAM keeps every re-read of the input cells */
 extern volatile s32 Data_03001b00; /* key repeat delay */
 extern volatile u32 gKeysRepeat; /* keys repeating this frame */
-extern volatile u32 Data_03001ae8; /* keys held */
+extern volatile u32 gKeysHeld; /* keys held */
 extern volatile u32 Data_03001afc; /* repeated keys, one direction only */
 extern volatile u32 Data_03001d04; /* axis last chosen */
-extern volatile u32 Data_03001c94; /* keys newly pressed */
+extern volatile u32 gKeyState; /* keys newly pressed */
 extern volatile u32 Data_03001cf4; /* keys held last update */
 
 /* Repeats held keys after a delay and reduces diagonal input to one axis,
@@ -33,7 +33,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
     volatile u32 *repeat;
 
     if (delay <= 0) {
-        gKeysRepeat = Data_03001ae8;
+        gKeysRepeat = gKeysHeld;
         keys = gKeysRepeat;
         if (delay == 0)
             Data_03001b00 = KEY_REPEAT_NEXT;
@@ -88,6 +88,6 @@ void Input_UpdateKeyRepeatAndDirection(void)
         Data_03001afc = keys;
     }
 
-    Data_03001c94 = (Data_03001ae8 ^ Data_03001cf4) & Data_03001ae8;
-    Data_03001cf4 = Data_03001ae8;
+    gKeyState = (gKeysHeld ^ Data_03001cf4) & gKeysHeld;
+    Data_03001cf4 = gKeysHeld;
 }

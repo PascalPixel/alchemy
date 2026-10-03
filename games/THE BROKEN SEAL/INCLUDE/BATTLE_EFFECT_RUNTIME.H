@@ -3,6 +3,7 @@
 
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
 
 struct BattleAnimationState {
     u8 unknown_00[0x28];
@@ -63,15 +64,25 @@ struct BattleWork {
     u8 enabled_20a;
 };
 
+/* BattleEffect_InitializeBuffers allocates and clears this palette blend. */
 struct BattleEffectBuffers {
-    s16 primary_value;
-    u8 unknown_002[0x37e];
-    u8 buffer_380[0xa80];
-    u8 buffer_e00[0xa80];
-    u8 buffer_1880[0x1181];
-    u8 mode_2a01;
-    u8 unknown_2a02;
+    u16 palette[0x1c0];
+    u16 current[0x540];
+    u16 target[0x540];
+    u16 delta[0x540];
+    u16 packed[2][0x1c0];
+    u8 page;
+    s8 duration;
+    s8 step;
+    u8 padding_2a03;
 };
+
+LAYOUT_SIZE_GUARD(BattleEffectBuffers_Size, struct BattleEffectBuffers, 0x2a04);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Current, struct BattleEffectBuffers, current, 0x380);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Target, struct BattleEffectBuffers, target, 0xe00);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Delta, struct BattleEffectBuffers, delta, 0x1880);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Packed, struct BattleEffectBuffers, packed, 0x2300);
+LAYOUT_OFFSET_GUARD(BattleEffectBuffers_Page, struct BattleEffectBuffers, page, 0x2a00);
 
 struct BattleEffectEntry {
     u16 id;

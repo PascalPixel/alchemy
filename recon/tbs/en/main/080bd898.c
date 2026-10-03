@@ -14,6 +14,7 @@
  * address, run-once blocks around each statement group.
  * alchemy drafts cannot parse a nested function; compare by compiling and diffing. */
 #include "TYPES.H"
+#include "BATTLE_STATUS_ICON.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "VRAM_BLOCK.H"
@@ -62,7 +63,6 @@ void BattleEnemy_RecordDefeat(s32 unit_id, s32 flags);
 void BattleActor_ResetRuntimeFields(s32 unit_id);
 void Object_InitializeMode(void *record, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-void BattleUnit_BuildStatusFlags(s32 unit_id, struct BattleObjectSlot *slot);
 s32 BattleMotion_GetSlotField14(s32 unit_id);
 void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
 void BattlePres_SetActorModeAndAction(s32 unit_id);

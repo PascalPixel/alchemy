@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "MAP.H"
 #include "RAM_BUFFER.H"
 #include "TYPES.H"
@@ -31,13 +32,6 @@ extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 gDecodeBuffer[];
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
-struct Projection {
-    s32 focal;
-    s32 near;
-    s32 far;
-    s32 center_x;
-    s32 center_y;
-};
 
 struct ScanlineRow {
     s32 x;
@@ -47,7 +41,7 @@ struct ScanlineRow {
     s32 unknown;
 };
 
-extern struct Projection gProjection;
+
 typedef void (*TransformFn)(const s32 *source, s32 *destination);
 
 /* The routine is the last argument, so its address is loaded before the

@@ -1,46 +1,34 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
-
-struct MotionRecordChild {
-    u8 unknown_00[5];
-    u8 value;
-    u8 unknown_06[16];
-    u8 flags;
-};
-
-struct MotionRecordNode {
-    u8 unknown_00[39];
-    u8 child_count;
-    struct MotionRecordChild *children[1];
-};
+#include "ANIMSPR.H"
 
 /*
  * Walks every motion record of an object: the first child of each record
- * takes the value, the others are cleared, and every child's flags are
- * filled. The result is unused by every caller.
+ * takes the value, the others are cleared, and every child's frame
+ * is reset to the selected-frame sentinel. The result is unused by every caller.
  */
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 {
     s32 index = 0;
     s32 child_index;
     s32 count;
-    struct MotionRecordNode *record;
-    struct MotionRecordChild *child;
-    struct MotionRecordChild **children;
+    struct AnimationObject *record;
+    struct AnimationEntry *child;
+    struct AnimationEntry **children;
     u8 mask = 0xff;
     u8 flags;
 
     while ((record = GetMotionRecord(object, index)) != NULL) {
-        children = &record->children[1];
-        child = record->children[0];
-        flags = child->flags;
-        child->flags = flags | mask;
-        count = record->child_count;
-        child->value = value;
+        children = &record->entries[1];
+        child = record->entries[0];
+        flags = child->frame;
+        child->frame = flags | mask;
+        count = record->count;
+        child->param = value;
         for (child_index = 1; child_index < count; child_index++) {
             child = *children++;
-            child->value = 0;
-            child->flags |= 0xff;
+            child->param = 0;
+            child->frame |= 0xff;
         }
         index++;
     }

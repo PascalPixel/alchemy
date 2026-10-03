@@ -4,8 +4,9 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 #include "OBJECT_RUNTIME.H"
-#include "MAP.H"
 #include "FIELD_SCENE.H"
+
+struct MapCell;
 
 /* One row emitted by FIELD/SCENES.S. */
 struct SceneRecord {

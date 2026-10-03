@@ -71,7 +71,7 @@ struct Obj_02002608 {
 };
 
 extern u8 KorimaMura_Object26Script[];
-u16 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 void BattleEffect_CleanupSceneObjects(void);
 void Object_RefreshSelectorById();
@@ -297,7 +297,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     s32 scene = gGameState.scene;
 
     if (scene == (s32)&SceneId_KorimaMura1) {
-        if (GameFlag_IsSet(0x845) == 0) {
+        if (Engine_GameFlagIsSet(0x845) == 0) {
             SceneData_InitRecordTable(gKorimaMuraPlacements1);
         }
         return gKorimaMuraPlacements1;
@@ -320,7 +320,7 @@ void FieldScene_RunActor16MessageBranch(void)
         Engine_SanctumOpen(16);
     } else {
         Engine_EventSetMessage((s32)MsgKorimaToldHolyTrees);
-        Event_AskYesNo(16, 0);
+        Engine_EventAskYesNo(16, 0);
     }
     Engine_EventEnd();
 }
@@ -517,24 +517,24 @@ s32 Scene_Initialize(void)
     Engine_ActorEnableActionCallback(25, tbl);
     Engine_ActorEnableActionCallback(26, tbl);
 
-    if (GameFlag_IsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(0x845) == 0) {
         for (actor = 8; actor <= 16; actor++) {
             Engine_ActorSetSpriteFlags(Object_GetById(actor), 0);
         }
-        Map_CopyCellAttributes(13, 9, 1, 1, 13, 8);
-        Map_CopyCellAttributes(13, 9, 1, 1, 15, 8);
+        Engine_MapCopyCellAttributes(13, 9, 1, 1, 13, 8);
+        Engine_MapCopyCellAttributes(13, 9, 1, 1, 15, 8);
         x = 14;
         y = 9;
-        Map_CopyCellAttributes(13, 9, 1, 1, x, y);
+        Engine_MapCopyCellAttributes(13, 9, 1, 1, x, y);
     }
 
-    if (GameFlag_IsSet(0x843) == 0) {
+    if (Engine_GameFlagIsSet(0x843) == 0) {
         if (gGameState.entrance == 1) {
             FieldScene_RunExtendedActorSequence();
         }
     }
 
-    if (GameFlag_IsSet(0x843) != 0) {
+    if (Engine_GameFlagIsSet(0x843) != 0) {
         Engine_ActorDestroy(ACTOR_GERALD);
         Engine_ActorDestroy(ACTOR_IVAN);
         Engine_ActorDestroy(ACTOR_MIA);
@@ -1511,13 +1511,13 @@ void FieldScene_RunExtendedActorSequence(void)
 
 void FieldScene_RunPairedStepA(s32 arg0, s32 arg1)
 {
-    Event_ShowMessage(arg0, 0);
+    Engine_EventShowMessage(arg0, 0);
     Engine_EventWait(arg1);
 }
 
 void FieldScene_RunPairedStepB(s32 arg0, s32 arg1, s32 arg2)
 {
-    Actor_FaceDirection(arg0, arg1, 0);
+    Engine_ActorFaceDirection(arg0, arg1, 0);
     Engine_EventWait(arg2);
 }
 
@@ -1547,7 +1547,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
         return;
     }
     if (KorimaMura_EffectActive != 0) {
-        Audio_PlayCue(200);
+        Engine_AudioPlayCue(200);
     }
     p = Engine_ObjectCreate(26, c1, 0, c2);
     if (p == 0) {
@@ -1568,7 +1568,7 @@ void SceneEffect_SpawnObject26EveryEightFrames(void)
     p->f55 = f;
     Object_SetMode(p, 2);
     Engine_ObjectSetPosition(p, c3, 0, c4);
-    Object_SetScript(p, KorimaMura_Object26Script);
+    Engine_ObjectSetScript(p, KorimaMura_Object26Script);
 }
 
 s32 SceneEffect_SetModeByFrameBit1(s32 arg0)

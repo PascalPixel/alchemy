@@ -37,7 +37,7 @@ struct Slot {
 };
 
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
-s32 ArcTan2();
+s32 ArcTan2(s32, s32);
 void ObjectDispatch_ApplyValueToChildren();
 
 s32 *Engine_GetTriggerActor(s32 slot);
@@ -98,7 +98,7 @@ void SceneActor_BranchOnSlotZeroAtTile38(void);
 /* Repaints the lifted block's cell at a column and raises actor 8 to it. */
 static __inline__ void LiftBlock(s32 column, u8 lowered)
 {
-    { s32 fifth = column; s32 last = 42; Map_CopyCellAttributes(61, 36, 1, 1, fifth, last); }
+    { s32 fifth = column; s32 last = 42; Engine_MapCopyCellAttributes(61, 36, 1, 1, fifth, last); }
     ((u8 *)Object_GetById(8))[85] = lowered;
     *(s32 *)((u8 *)Object_GetById(8) + 12) = 0x200000;
 }
@@ -378,7 +378,7 @@ void FieldScene_CopyActorPosition(void)
     struct EventWork *work;
 
     work = gEventWork;
-    if (GameFlag_IsSet(0x9ca) != 0) {
+    if (Engine_GameFlagIsSet(0x9ca) != 0) {
         if (Data_02000240[293] != 15) {
             idx = work->touched_trigger;
             dst = (s32)Object_GetById(15);
@@ -391,7 +391,7 @@ void FieldScene_CopyActorPosition(void)
             tbl = (s32)TakaraAshiba_ActorFifteenWalkTargets;
             idx <<= 3;
             idx4 = idx + 4;
-            Actor_WalkTo(15, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
+            Engine_ActorWalkTo(15, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
         }
     }
 }
@@ -509,13 +509,13 @@ void SceneState_SetSelectorFlagWhenFacingC000(s32 selector)
         return;
     }
     flag = selector + 2496;
-    if (GameFlag_IsSet(flag)!= 0) {
+    if (Engine_GameFlagIsSet(flag)!= 0) {
         return;
     }
     if (PartyInventory_FindOwnerFar(244) == -1) {
         return;
     }
-    GameFlag_Set(flag);
+    Engine_GameFlagSet(flag);
     TakaraAshiba_OpenPassage(0x100 | selector);
     PartyInventory_RemoveFar(244);
 }
@@ -578,9 +578,9 @@ void SceneState_ApplyRectAndPlaceSlot12(void)
     s32 x = 0x1980000;
     s32 z = 0x3080000;
 
-    Map_CopyCells(25, 45, 1, 2, a, b);
-    if (GameFlag_IsSet(0xeeb) == 0)
-        Actor_SetPosition(slot, x, z);
+    Engine_MapCopyCells(25, 45, 1, 2, a, b);
+    if (Engine_GameFlagIsSet(0xeeb) == 0)
+        Engine_ActorSetPosition(slot, x, z);
     Engine_EventWait(1);
 }
 
@@ -596,8 +596,8 @@ void FieldScene_RunStep8ValueEe7(void)
     Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-    Actor_SetPosition(8, 0, 0);
-    GameFlag_Set(0xEE7);
+    Engine_ActorSetPosition(8, 0, 0);
+    Engine_GameFlagSet(0xEE7);
 }
 
 void FieldScene_RunStep9ValueEe8(void)
@@ -605,8 +605,8 @@ void FieldScene_RunStep9ValueEe8(void)
     Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-    Actor_SetPosition(9, 0, 0);
-    GameFlag_Set(0xEE8);
+    Engine_ActorSetPosition(9, 0, 0);
+    Engine_GameFlagSet(0xEE8);
 }
 
 void FieldScene_RunStep10ValueEe9(void)
@@ -614,8 +614,8 @@ void FieldScene_RunStep10ValueEe9(void)
     Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-    Actor_SetPosition(0xA, 0, 0);
-    GameFlag_Set(0xEE9);
+    Engine_ActorSetPosition(0xA, 0, 0);
+    Engine_GameFlagSet(0xEE9);
 }
 
 void FieldScene_RunStep11ValueEea(void)
@@ -623,8 +623,8 @@ void FieldScene_RunStep11ValueEea(void)
     Engine_ItemShowFound(ITEM_BLUE_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_BLUE_KEY, 0);
-    Actor_SetPosition(0xB, 0, 0);
-    GameFlag_Set(0xEEA);
+    Engine_ActorSetPosition(0xB, 0, 0);
+    Engine_GameFlagSet(0xEEA);
 }
 
 void FieldScene_RunStep12ValueEeb(void)
@@ -632,8 +632,8 @@ void FieldScene_RunStep12ValueEeb(void)
     Engine_ItemShowFound(ITEM_RED_KEY, 3);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_PartyGiveItem(ITEM_RED_KEY, 0);
-    Actor_SetPosition(0xC, 0, 0);
-    GameFlag_Set(0xEEB);
+    Engine_ActorSetPosition(0xC, 0, 0);
+    Engine_GameFlagSet(0xEEB);
 }
 
 /* Once the leader stands in cells x 21-23, z 10-11 while not cloaked (and the
@@ -749,14 +749,14 @@ void SceneActor_TrackOriginColumnForSlot(s32 no)
     if (Data_02000240[293] == slot) return;
     if (col == TakaraAshiba_SlotColumns[no]) return;
 
-    Actor_SetSpeed(slot, 0x48000, 0x24000);
-    Audio_PlayCue(188);
-    Actor_SetDestination(slot, (col << 4) + 8, 360);
+    Engine_ActorSetSpeed(slot, 0x48000, 0x24000);
+    Engine_AudioPlayCue(188);
+    Engine_ActorSetDestination(slot, (col << 4) + 8, 360);
 
     TakaraAshiba_SlotColumns[no] = col;
 
     if (row <= 22) {
-        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
+        Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
     }
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
@@ -950,18 +950,18 @@ void FieldScene_DispatchBySlotZeroFacing(void)
     u16 facing = *(u16 *)((u8 *)slot + 6);
 
     if (facing == 0xc000) {
-        if (GameFlag_IsSet(0x206) != 0) {
-            { s32 fifth = 45; s32 last = 43; Map_CopyCellAttributes(46, 43, 1, 1, fifth, last); }
+        if (Engine_GameFlagIsSet(0x206) != 0) {
+            { s32 fifth = 45; s32 last = 43; Engine_MapCopyCellAttributes(46, 43, 1, 1, fifth, last); }
         }
-        GameFlag_Clear(0x207);
+        Engine_GameFlagClear(0x207);
         battle_owner_69();
     } else if (facing == 0x4000) {
         FieldEffect_UpdateGridPlacement();
     } else if (facing == 0) {
-        if (GameFlag_IsSet(0x206) != 0) {
-            { s32 fifth = 45; s32 last = 43; Map_CopyCellAttributes(58, 36, 1, 1, fifth, last); }
+        if (Engine_GameFlagIsSet(0x206) != 0) {
+            { s32 fifth = 45; s32 last = 43; Engine_MapCopyCellAttributes(58, 36, 1, 1, fifth, last); }
         }
-        GameFlag_Set(0x207);
+        Engine_GameFlagSet(0x207);
         Engine_LeaderCheckAhead();
     } else if (facing == 0x8000) {
         if (slot[3] == 0) {          /* +12 */
@@ -981,7 +981,7 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
     s32 fifth = 40;
     s32 sixth = 55;
 
-    Map_CopyCellAttributes(40, 54, 1, 1, fifth, sixth);
+    Engine_MapCopyCellAttributes(40, 54, 1, 1, fifth, sixth);
     if (slot != 0) {
         u8 *other = (u8 *)Object_GetById(13) + 85;
         u8 *flags = slot + 35;
@@ -989,7 +989,7 @@ void SceneActor_MarkSlot13AndSetFlag200(void)
         *other = 0;
         *flags = 2;
     }
-    GameFlag_Set(512);
+    Engine_GameFlagSet(512);
 }
 
 /*
@@ -1016,10 +1016,10 @@ void SceneState_BranchOnActorZeroFacing(void)
 
 void SceneState_ApplyFourRectsAndSetActor8Byte85(void)
 {
-    Map_CopyCellAttributes(57, 42, 1, 1, 40, 42);
-    Map_CopyCellAttributes(57, 42, 1, 1, 41, 42);
-    Map_CopyCellAttributes(58, 42, 1, 1, 42, 42);
-    Map_CopyCellAttributes(62, 37, 3, 1, 37, 42);
+    Engine_MapCopyCellAttributes(57, 42, 1, 1, 40, 42);
+    Engine_MapCopyCellAttributes(57, 42, 1, 1, 41, 42);
+    Engine_MapCopyCellAttributes(58, 42, 1, 1, 42, 42);
+    Engine_MapCopyCellAttributes(62, 37, 3, 1, 37, 42);
 
     ((u8 *)Object_GetById(8))[85] = 1;
 }
@@ -1029,7 +1029,7 @@ void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
     s32 extent = 42;
     u8 *entry;
 
-    Map_CopyCellAttributes(58, 41, 1, 1, extent, extent);
+    Engine_MapCopyCellAttributes(58, 41, 1, 1, extent, extent);
     entry = (u8 *)Object_GetById(8) + 35;
     *entry = 2;
 }
@@ -1040,7 +1040,7 @@ void SceneState_ApplyRectAndSetActor8Byte35(void)
     s32 h = 42;
     u8 *p;
 
-    Map_CopyCellAttributes(44, 42, 1, 1, w, h);
+    Engine_MapCopyCellAttributes(44, 42, 1, 1, w, h);
     p = (u8 *)Object_GetById(8) + 35;
     *p = 2;
 }
@@ -1051,7 +1051,7 @@ void SceneState_ApplyRectAndSetSlotEightByte35(void)
     s32 height = 42;
     u8 *entry;
 
-    Map_CopyCellAttributes(39, 42, 1, 1, width, height);
+    Engine_MapCopyCellAttributes(39, 42, 1, 1, width, height);
     entry = (u8 *)Object_GetById(8) + 35;
     *entry = 2;
 }
@@ -1174,8 +1174,8 @@ void SceneState_ApplyTwoRectsAtRow56(void)
 {
     s32 base = 55;
 
-    Map_CopyCellAttributes(38, 56, 1, 1, 38, base);
-    Map_CopyCellAttributes(42, 56, 1, 1, 42, base);
+    Engine_MapCopyCellAttributes(38, 56, 1, 1, 38, base);
+    Engine_MapCopyCellAttributes(42, 56, 1, 1, 42, base);
 }
 
 void SceneState_ApplyRectAndClearSlotTenByte85(void)
@@ -1184,7 +1184,7 @@ void SceneState_ApplyRectAndClearSlotTenByte85(void)
     s32 height = 55;
     u8 *entry;
 
-    Map_CopyCellAttributes(40, 54, 1, 1, width, height);
+    Engine_MapCopyCellAttributes(40, 54, 1, 1, width, height);
     entry = (u8 *)Object_GetById(10) + 85;
     *entry = 0;
 }
@@ -1195,7 +1195,7 @@ void SceneState_ApplyRectAndClearActor10Byte85(void)
     s32 h = 55;
     u8 *p;
 
-    Map_CopyCellAttributes(40, 54, 1, 1, w, h);
+    Engine_MapCopyCellAttributes(40, 54, 1, 1, w, h);
     p = (u8 *)Object_GetById(10) + 85;
     *p = 0;
 }
@@ -1258,10 +1258,10 @@ void SceneState_ApplyFourRectsAt48_55(void)
 {
     s32 base = 55;
 
-    Map_CopyCellAttributes(48, 55, 1, 1, 49, base);
-    Map_CopyCellAttributes(48, 55, 1, 1, 50, base);
-    Map_CopyCellAttributes(48, 55, 1, 1, 51, base);
-    Map_CopyCellAttributes(48, 55, 1, 1, 52, base);
+    Engine_MapCopyCellAttributes(48, 55, 1, 1, 49, base);
+    Engine_MapCopyCellAttributes(48, 55, 1, 1, 50, base);
+    Engine_MapCopyCellAttributes(48, 55, 1, 1, 51, base);
+    Engine_MapCopyCellAttributes(48, 55, 1, 1, 52, base);
 }
 
 /*
@@ -1280,10 +1280,10 @@ void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void)
 
     slot = Engine_GetTriggerActor(11);
     tile = slot[2] / 0x100000;
-    Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
+    Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
     slot = Engine_GetTriggerActor(12);
     tile = slot[2] / 0x100000;
-    Map_CopyCellAttributes(53, 55, 1, 1, tile, 55);
+    Engine_MapCopyCellAttributes(53, 55, 1, 1, tile, 55);
 }
 
 void FieldScene_RunSingleStep(void)
@@ -1324,7 +1324,7 @@ void SceneActor_PassActorNinePositionWithId107(void)
 {
     struct Frame *frame = Engine_GetTriggerActor(9);
 
-    MapObject_SetPosition(107, frame->f08, frame->f10 + 0x10000);
+    Engine_MapObjectSetPosition(107, frame->f08, frame->f10 + 0x10000);
 }
 
 /*

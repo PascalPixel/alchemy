@@ -1,12 +1,13 @@
 #include "EDITION.H"
-/* The link lobby: its scene tables and the serial query with interrupts held. */
+/* The link lobby: its scene tables and serial initialization with IME saved and restored. */
 #include "LOBBY.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "FIELD_EVENT.H"
 #include "SERIAL_RUNTIME.H"
 #include "IWRAM_CALL.H"
 
-extern u8 gLinkStatus[];
+extern u16 gLinkStatus;
 extern const s32 LinkLobby_SlotValues[];
 extern const u8 LinkLobby_SlotColumns[];
 
@@ -57,6 +58,8 @@ struct LobbyPanel {
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
+void SerialRuntime_RemoveIrqHandlers(void);
+void SerialRuntime_Initialize(void);
 
 /* Frames the peers have been waited for; it follows the overlay's image. */
 s32 gLinkLobbyWaitFrames;
@@ -71,17 +74,21 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u32 State_RunQueryWithInterruptMasterSaved(void)
+s32 LinkLobby_InitializeSerial(void)
 {
-    volatile u16 *ime = (volatile u16 *)0x04000208;
-    u32 saved = *ime;
-    u32 ret;
+    volatile u16 *ime;
+    u32 saved;
 
+    /* FAKEMATCH: this discard-only s32 boundary defines no result for callers.
+       The complete 28-byte void attempt changes only the return-address
+       scratch register from r1 to r0; both callers discard the result. */
+
+    ime = &REG_IME;
+    saved = *ime;
     *ime = (u16)(u32)ime;
     SerialRuntime_RemoveIrqHandlers();
-    ret = SerialRuntime_Initialize();
+    SerialRuntime_Initialize();
     *ime = saved;
-    return ret;
 }
 
 u8 *LinkLobby_GetExits(void) { return gLinkLobbyExits; }
@@ -101,7 +108,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot)
 {
     s32 id = -1;
 
-    if ((*(u16 *)gLinkStatus & 3) == 3) {
+    if ((gLinkStatus & 3) == 3) {
         id = (u32)(REG_SIOCNT << 26) >> 30;
         Engine_GameFlagSet(0x303);
     } else {

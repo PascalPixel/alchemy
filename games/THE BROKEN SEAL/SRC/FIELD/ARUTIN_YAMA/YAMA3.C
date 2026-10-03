@@ -422,28 +422,28 @@ void FieldScene_RunScene3a4_02002934(void)
     s32 record;
     s16 flag;
 
-    rec7 = GameFlag_IsSet(0x909);
+    rec7 = Engine_GameFlagIsSet(0x909);
     if (rec7 != 0) {
-        Actor_SetPosition(8, 0, 0);
+        Engine_ActorSetPosition(8, 0, 0);
         Engine_ActorSetPosition(9, 0, 0);
     } else {
-        record = Actor_Get(8);
+        record = Object_GetById(8);
         Engine_ActorSetSpriteFlags(record, 0);
         Engine_ActorSetSpritePriority(9, 3);
-        record = Actor_Get(9);
+        record = Object_GetById(9);
         Engine_ActorSetSpriteFlags(record, 0);
         *(u8 *)((u8 *)Object_GetById(9) + 89) = rec7;
     }
     flag = gGameState.entrance;
     if (flag == 1 || flag == 98) {
-        if (GameFlag_IsSet(0x109) == 0) {
+        if (Engine_GameFlagIsSet(0x109) == 0) {
             rec7 = Object_GetById(ACTOR_PARTY_LEADER);
             Engine_EventBegin();
             *(s32 *)(rec7 + 12) = 0x100000;
             Engine_EventEnd();
         }
     } else if (flag == 99) {
-        if (GameFlag_IsSet(0x109) == 0) {
+        if (Engine_GameFlagIsSet(0x109) == 0) {
             RunEventScript01();
         }
     }
@@ -590,17 +590,17 @@ void FieldScene_RunScene3a4SequenceG(void)
         if ((s32)rec7 != 0) {
             if ((u32)(*(volatile s32 *)base6_3001e40) % 9 == 0) {
                 {
-                    s32 v2 = Random_Next();
+                    s32 v2 = Engine_RandomNext();
                     if (((u32)(v2 << 1) >> 16) != 0) {
-                        Audio_PlayCue(145);
+                        Engine_AudioPlayCue(145);
                     } else {
-                        Audio_PlayCue(144);
+                        Engine_AudioPlayCue(144);
                     }
                 }
             }
             rec7[85] = 0;
             {
-                s32 v3 = Random_Next();
+                s32 v3 = Engine_RandomNext();
                 s32 tmp2824 = (((u32)(v3 << 15) >> 16) + 0x4ccc);
                 *(s32 *)(rec7 + 72) = 0x6666;
                 *(s32 *)((s32)rec7 + 28) = tmp2824;
@@ -615,7 +615,7 @@ void FieldScene_RunScene3a4SequenceG(void)
                 p80[9] = (mask9 & p80[9]) | 4;
             }
             Object_SetMode((s32)rec7, 1);
-            Object_SetScript((s32)rec7, ArutinYama_SparkScript);
+            Engine_ObjectSetScript((s32)rec7, ArutinYama_SparkScript);
             value = Engine_RandomNext();
             *(s32 *)(rec7 + 36) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
             *(s32 *)(rec7 + 40) = 0x80000;
@@ -643,14 +643,14 @@ void FieldScene_RunActorTenFourStepSequence(void)
     Engine_PsynergyBegin(24, 1);
     Engine_PsynergySetTarget(10, 9);
     Engine_PsynergyRaiseHands();
-    Actor_SetChildValue(10, 2);
+    Engine_ActorSetChildValue(10, 2);
     Engine_PsynergyPlayEffect(1);
-    Actor_SetChildValue(10, 2);
+    Engine_ActorSetChildValue(10, 2);
     Engine_PsynergyLowerHands();
-    Actor_SetChildValue(10, 2);
+    Engine_ActorSetChildValue(10, 2);
     BattleEffect_CleanupSceneObjects();
-    Audio_PlayCue(288);
-    Actor_SetChildValue(10, 2);
+    Engine_AudioPlayCue(288);
+    Engine_ActorSetChildValue(10, 2);
 }
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
@@ -692,9 +692,9 @@ void FieldScene_RunScene3a4SequenceF(void)
     s32 record;
 
     Engine_EventBegin();
-    Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(8, 0x1480000, 0x1a80000);
-    GameFlag_Set(0x323);
+    Engine_ActorSetPosition(9, 0, 0);
+    Engine_ActorSetPosition(8, 0x1480000, 0x1a80000);
+    Engine_GameFlagSet(0x323);
     FieldScene_RunScene3a4SequenceB();
     Engine_MapRedraw();
     Engine_TaskWait(1);
@@ -714,9 +714,9 @@ void FieldScene_RunScene3a4SequenceE(void)
     s32 record;
 
     Engine_EventBegin();
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(8, 0x1e80000, 0x8a0000);
-    GameFlag_Set(0x325);
+    Engine_ActorSetPosition(10, 0, 0);
+    Engine_ActorSetPosition(8, 0x1e80000, 0x8a0000);
+    Engine_GameFlagSet(0x325);
     FieldScene_RunScene3a4SequenceA();
     Engine_MapRedraw();
     Engine_TaskWait(1);
@@ -747,7 +747,7 @@ void SceneAudio_PlayCue183EverySixtyTicks(void)
 {
     ArutinYama_CueTicks = ArutinYama_CueTicks + 1;
     if (ArutinYama_CueTicks == 60) {
-        Audio_PlayCue(183);
+        Engine_AudioPlayCue(183);
         ArutinYama_CueTicks = 0;
     }
 }
@@ -792,9 +792,9 @@ void SceneActor_SetActor8ModeByCounterBit(void)
     extern u32 Data_03001e40;
 
     if (((Data_03001e40 >> 1) & 1) != 0) {
-        Actor_SetChildValue(8, 7);
+        Engine_ActorSetChildValue(8, 7);
     } else {
-        Actor_SetChildValue(8, 6);
+        Engine_ActorSetChildValue(8, 6);
     }
 }
 
@@ -960,7 +960,7 @@ void SceneActor_ClearCollisionFlagAndPlaceMarker(s32 no)
 {
     u8 *record;
 
-    record = Actor_Get(no);
+    record = Object_GetById(no);
     record[89] &= 0xfe;
 
     SetMapCellCollision(0, *(s32 *)(record + 8), *(s32 *)(record + 16), 255);
@@ -1107,7 +1107,7 @@ void SceneState_SetRecordWord102AndPlayCue288(u16 *record)
 
         *record = value;
     }
-    Audio_PlayCue(288);
+    Engine_AudioPlayCue(288);
 }
 
 /* Rolls the object a step along its heading, sized by how far it sits

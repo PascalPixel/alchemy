@@ -348,15 +348,15 @@ void FieldScene_RunScene3a5_02000c6c(s32 a0)
         value = Engine_RandomNext();
         v6 = (u32)((value << 1) + value) >> 16;
         v5 = v6 + 0x303;
-        record = GameFlag_IsSet(v5);
+        record = Engine_GameFlagIsSet(v5);
         if (record == 0) {
-            GameFlag_Set(v5);
+            Engine_GameFlagSet(v5);
             break;
         }
     }
     Engine_EventBegin();
     Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + MsgShianJiinIDoNotThinkMasterHama);
-    Event_ShowMessage((v6 + 1), 0);
+    Engine_EventShowMessage((v6 + 1), 0);
     Engine_EventEnd();
 }
 

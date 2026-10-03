@@ -7,7 +7,7 @@ void KorosseoKabe_MarkSceneProgress(void)
     s32 v = gGameState.selected_actor;
 
     if (v != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == v
-        && GameFlag_IsSet(321) != 0) {
+        && Engine_GameFlagIsSet(321) != 0) {
         u16 *p = (u16 *)(state + 386);
         s32 t = 99;
 
@@ -49,7 +49,7 @@ void KorosseoKabe_SelectNearestActor(void)
         }
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
-    Event_ShowMessage(best, 0);
+    Engine_EventShowMessage(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;
     *(s32 *)(state + 456) = 15;
@@ -66,7 +66,7 @@ void KorosseoKabe_SelectNearestActor(void)
     n++;
     if (n > 3) {
         Engine_EventRequestExit(10);
-        GameFlag_Set(282);
+        Engine_GameFlagSet(282);
     } else {
         Korosseo_SelectSoloCompetitor(n);
         Engine_EventOpenScreen();

@@ -55,7 +55,7 @@ void HiddenPuddle_Freeze(void)
 {
     struct FieldActor *puddle;
 
-    puddle = Actor_Get(ACTOR_HIDDEN_PUDDLE);
+    puddle = Object_GetById(ACTOR_HIDDEN_PUDDLE);
     if (puddle != NULL) {
         Engine_ActorSetSpriteFlags(puddle, 0);
     }
@@ -120,7 +120,7 @@ void GatePuddle_Freeze(void)
 
 void NorthPuddle_Freeze(void)
 {
-    GameFlag_Set(FLAG_CAVE_NORTH_PILLAR);
+    Engine_GameFlagSet(FLAG_CAVE_NORTH_PILLAR);
 }
 
 void Gate_Lower(void)
@@ -619,14 +619,14 @@ void WagonChoice_Run(void)
 
     wagon = (s32)MsgRunpaLetsTakeWagon;
     Engine_EventSetMessage(wagon + WAGON_BUNZA_LEADS_THE_WAY);
-    Event_ShowMessage(ACTOR_BUNZA, 0);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_EventShowMessage(ACTOR_BUNZA, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventSetMessage(wagon + WAGON_GERALD_ASKS_TO_RIDE);
-    Event_OpenMessage(ACTOR_GERALD, 0);
-    Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
+    Engine_ActorFaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_HAMMET, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_BUNZA, ACTOR_PARTY_LEADER, 0);
 
 ask_to_ride:
     if (Leader_AnswersYes()) {
@@ -664,9 +664,9 @@ check_nothing_left:
             }
             confusion = (s32)MsgRunpaTotallyConfusedChanged;
             Engine_EventSetMessage(confusion + CONFUSION_IVAN_IS_CONFUSED);
-            Event_ShowMessage(ACTOR_IVAN, 0);
+            Engine_EventShowMessage(ACTOR_IVAN, 0);
             Engine_EventSetMessage(confusion + CONFUSION_GERALD_ASKS_AGAIN);
-            Event_OpenMessage(ACTOR_GERALD, 0);
+            Engine_EventOpenMessage(ACTOR_GERALD, 0);
             goto ask_to_ride;
 ride:
             Party_RidesWagon();
@@ -687,14 +687,14 @@ u8 Leader_AnswersYes(void)
 u8 Gerald_AsksIfNotRiding(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldAsksIfNotRiding);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 u8 Gerald_AsksAboutUnfinishedBusiness(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutUnfinishedBusiness);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -706,21 +706,21 @@ u8 Party_ConfirmsStaying(void)
 u8 Bunza_AsksAboutUnfinishedBusiness(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaBunzaAsksAboutUnfinishedBusiness);
-    Event_OpenMessage(ACTOR_BUNZA, 0);
+    Engine_EventOpenMessage(ACTOR_BUNZA, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 u8 Gerald_ChecksNothingLeftToDo(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldChecksNothingLeft);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return TRUE;
 }
 
 u8 Mia_AsksIfRidingAfterAll(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaMiaAsksIfRidingAfter);
-    Event_OpenMessage(ACTOR_MIA, 0);
+    Engine_EventOpenMessage(ACTOR_MIA, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -748,7 +748,7 @@ u8 Bunza_CannotWait(void)
 u8 Gerald_AsksAboutThingsToDo(void)
 {
     Engine_EventSetMessage((s32)MsgRunpaGeraldAsksAboutThingsTo);
-    Event_OpenMessage(ACTOR_GERALD, 0);
+    Engine_EventOpenMessage(ACTOR_GERALD, 0);
     return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
@@ -966,24 +966,24 @@ s32 Scene_Initialize(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (gGameState.scene == (s32)&SceneId_RunpaDou) {
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_HIDDEN_PUDDLE), 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_SOUTH_PUDDLE), 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_GATE_PUDDLE), 0);
-        Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_NORTH_PUDDLE), 0);
-        Actor_Get(ACTOR_NORTH_PUDDLE)->scale_y = 0xf333;
-        if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) != 0) {
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_HIDDEN_PUDDLE), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SOUTH_PUDDLE), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_GATE_PUDDLE), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_NORTH_PUDDLE), 0);
+        Object_GetById(ACTOR_NORTH_PUDDLE)->scale_y = 0xf333;
+        if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_LOWERED) != 0) {
             Gate_Lower();
         }
-        if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_RAISED) != 0) {
             Gate_Raise();
         }
-        if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_PROPPED) != 0) {
             Gate_DrawPropped();
         }
-        if (GameFlag_IsSet(FLAG_CAVE_NORTH_PILLAR) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_NORTH_PILLAR) != 0) {
             Engine_ActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIM_FROZEN);
         }
-        if (GameFlag_IsSet(FLAG_CAVE_SOUTH_PILLAR) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_CAVE_SOUTH_PILLAR) != 0) {
             Engine_ActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIM_FROZEN);
         }
     }

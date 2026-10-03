@@ -18,7 +18,8 @@ u8 *LinkLobby_GetEntrances(void);
 
 s32 SceneData_ReturnZero(void);
 
-u32 State_RunQueryWithInterruptMasterSaved(void);
+/* Discard-only boundary: no result is defined for callers. */
+s32 LinkLobby_InitializeSerial(void);
 
 u8 *LinkLobby_GetExits(void);
 

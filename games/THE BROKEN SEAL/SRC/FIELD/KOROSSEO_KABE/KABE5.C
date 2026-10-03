@@ -62,7 +62,7 @@ void SceneState_InitControlRecordAndStartTask(s32 resource)
     struct StageControl *m = (struct StageControl *)gSceneState;
 
     Resource_DecodeType01((const u8 *)Resource_GetTableEntry(resource), state + 240);
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(0x109) == 0) {
         m->status = 1;
         m->f2 = 1;
         m->f4 = *(u16 *)(state + 224);

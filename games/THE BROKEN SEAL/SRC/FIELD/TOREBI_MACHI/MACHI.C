@@ -170,7 +170,7 @@ void FieldScene_RunScene3b5_02000224(void)
     record = Object_GetById(8);
     Engine_ActorSetSpriteFlags((s32)record, 0);
     Call4(SetMapCellCollision, 0, 0x2200000, 0x1200000, 253);
-    GameFlag_Set(0x200);
+    Engine_GameFlagSet(0x200);
 }
 
 void ConfigureAndPlaceActorOneHundredTwo(void)
@@ -360,7 +360,7 @@ void FieldScene_RunScene3b5_020005dc(void)
 
     Engine_EventBegin();
     if (Value1(Engine_GameFlagIsSet, 0x8bf) == 0) {
-        GameFlag_Set(0x8bf);
+        Engine_GameFlagSet(0x8bf);
         Engine_EventSetMessage((s32)MsgTorebiLeftovers);
         Engine_EventShowMessage(19, 0);
         Engine_ItemShowFound(233, 3);
@@ -442,13 +442,13 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
     *(s32 *)(record + 108) = handler;
     record = Object_GetById(14);
     *(s32 *)(record + 108) = (s32)SceneActor_CopyPlayerModeToActor;
-    if (GameFlag_IsSet(0x8c1) != 0) {
+    if (Engine_GameFlagIsSet(0x8c1) != 0) {
         Call3(Engine_ActorSetPosition, 28, 0x13c0000, 0x1480000);
     }
     if (Engine_GameFlagIsSet(0x201) != 0) {
         FieldScene_ResetActor9AndDrawTiles();
     }
-    if (GameFlag_IsSet(0x200) != 0) {
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         FieldScene_RunScene3b5_02000224();
         Engine_ActorSetAnimation(8, 4);
     }

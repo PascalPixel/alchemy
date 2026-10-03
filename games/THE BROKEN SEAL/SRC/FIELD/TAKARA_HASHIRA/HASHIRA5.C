@@ -49,7 +49,7 @@ void FieldScene_RunScene3b3SequenceA(void)
 {
     s32 record;
 
-    record = GameFlag_IsSet(0x200);
+    record = Engine_GameFlagIsSet(0x200);
     if (record == 0) {
         TakaraHashira_CopyCellBlock(10, 19, 16, 5, record, 10, 31);
         TakaraHashira_CopyCellBlock(10, 51, 16, 5, 1, 10, 31);
@@ -63,18 +63,18 @@ void FieldScene_RunScene3b3SequenceA(void)
     Engine_TaskAddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
     WaitFrames(1);
     Runtime_SetIrqHandler(1, 0, TakaraHashira_JitterBackgroundScroll);
-    Audio_PlayCue(231);
+    Engine_AudioPlayCue(231);
     TakaraHashira_ShakeChance = 0;
     do {
         WaitFrames(1);
     } while (++TakaraHashira_ShakeChance <= 100);
-    Audio_PlayCue(0x121);
-    if (GameFlag_IsSet(0x200) == 0) {
-        Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
-        Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
+    Engine_AudioPlayCue(0x121);
+    if (Engine_GameFlagIsSet(0x200) == 0) {
+        Engine_MapCopyCellsTo(0, 32, 32, 0, 32, 32);
+        Engine_MapCopyCellsTo(32, 32, 64, 0, 32, 32);
     } else {
-        Map_CopyCellsTo(0, 64, 32, 0, 32, 32);
-        Map_CopyCellsTo(32, 64, 64, 0, 32, 32);
+        Engine_MapCopyCellsTo(0, 64, 32, 0, 32, 32);
+        Engine_MapCopyCellsTo(32, 64, 64, 0, 32, 32);
     }
     WaitFrames(1);
     Runtime_SetIrqHandler(1, 0, 0);

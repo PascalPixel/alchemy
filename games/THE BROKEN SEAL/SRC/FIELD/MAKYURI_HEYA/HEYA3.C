@@ -54,22 +54,22 @@ void FieldScene_RunActorElevenAtTile5And13(void)
     s32 y;
     u8 *p;
 
-    x = FIELD_AT_OFFSET(Actor_Get(11), s32, 8) / 0x100000;
-    y = FIELD_AT_OFFSET(Actor_Get(11), s32, 16) / 0x100000;
+    x = FIELD_AT_OFFSET(Object_GetById(11), s32, 8) / 0x100000;
+    y = FIELD_AT_OFFSET(Object_GetById(11), s32, 16) / 0x100000;
     Engine_EventBegin();
     if (x == 5 && y == 13) {
-        FIELD_AT_OFFSET(Actor_Get(11), s32, 12) += 0xfffe0000;
-        p = Actor_Get(11);
-        FIELD_AT_OFFSET(p, s32, 0x3c) = FIELD_AT_OFFSET(Actor_Get(11), s32, 12);
-        Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
+        FIELD_AT_OFFSET(Object_GetById(11), s32, 12) += 0xfffe0000;
+        p = Object_GetById(11);
+        FIELD_AT_OFFSET(p, s32, 0x3c) = FIELD_AT_OFFSET(Object_GetById(11), s32, 12);
+        Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
         Audio_PlayCue(0xd9);
-        Map_AnimateCells(MakyuriHeya_GateCells, 9, 7);
+        Engine_MapAnimateCells(MakyuriHeya_GateCells, 9, 7);
         {
             s32 s0 = 9;
             s32 s1 = 10;
-            Map_CopyCellAttributes(9, 5, 1, 1, s0, s1);
+            Map_CopyCellAttributeRect(9, 5, 1, 1, s0, s1);
         }
-        GameFlag_Set(0x874);
+        Engine_GameFlagSet(0x874);
     }
     Engine_EventEnd();
 }
@@ -90,7 +90,7 @@ void MakyuriHeya_TriggerSmallFloorSwitch(void)
             Object_GetById(0)->y.fixed += -0x20000;
             actor = Object_GetById(0);
             FIELD_AT_OFFSET(actor, s32, 0x3c) = Object_GetById(0)->y.fixed;
-            Map_CopyCellsTo(5, 2, 5, 11, 1, 1);
+            Engine_MapCopyCellsTo(5, 2, 5, 11, 1, 1);
             Audio_PlayCue(217);
             Engine_MapAnimateCells((s32)MakyuriHeya_GateCells, 9, 7);
             Engine_EventEnd();
@@ -250,7 +250,7 @@ void MakyuriHeya_RunSequenceF(void)
     s32 shown;
     s32 arr[10];
 
-    Map_CopyCellsTo(78, 58, 110, 36, 1, 1);
+    Engine_MapCopyCellsTo(78, 58, 110, 36, 1, 1);
     rec = arr;
     rec[1] = 5;
     rec[2] = 0x8000;
@@ -270,7 +270,7 @@ void MakyuriHeya_RunSequenceF(void)
             inner = inner + 1;
             base = base + -0x20000;
         } while ((u32)inner <= 7);
-        Map_CopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
+        Engine_MapCopyCellsTo(111, 35, (109 - outer), 36, 1, 1);
         outer = outer + 1;
     } while ((u32)outer <= 2);
     Engine_TaskRemoveCallback((s32)MakyuriHeya_SprayAtFountain);
@@ -356,13 +356,13 @@ void SceneState_RunWhenActor8AtTile10x23(void)
     if (x == 10 && y == 23) {
         s32 *p;
         Object_GetById(8)->y.fixed += 0xfffe0000;
-        p = (s32 *)Actor_Get(8);
+        p = (s32 *)Object_GetById(8);
         p[15] = Object_GetById(8)->y.fixed;
-        Map_CopyCellsTo(6, 29, 10, 23, 1, 1);
+        Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
         Audio_PlayCue(0xd9);
-        Map_AnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
-        Map_CopyCellAttributes(10, 16, 1, 1, x, 19);
-        GameFlag_Set(0x878);
+        Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
+        Map_CopyCellAttributeRect(10, 16, 1, 1, x, 19);
+        Engine_GameFlagSet(0x878);
     }
     Engine_EventEnd();
 }

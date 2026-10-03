@@ -757,25 +757,25 @@ void SceneState_UpdateRandomTimerLevel(void)
     if (gEmberLevel != 0) {
         gEmberLevel--;
     } else {
-        gEmberLevel = (u32)(Random_Next() << 2) >> 16;
+        gEmberLevel = (u32)(Engine_RandomNext() << 2) >> 16;
     }
     v = gEmberLevel;
     switch (v) {
     case 3:
         gEmberMask = v;
-        gEmberLevelTimer = ((u32)(Random_Next() * 20) >> 16) + 40;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 20) >> 16) + 40;
         break;
     case 2:
         gEmberMask = 15;
-        gEmberLevelTimer = ((u32)(Random_Next() * 40) >> 16) + 80;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 40) >> 16) + 80;
         break;
     case 1:
         gEmberMask = 63;
-        gEmberLevelTimer = ((u32)(Random_Next() * 80) >> 16) + 160;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 80) >> 16) + 160;
         break;
     default:
         gEmberMask = 127;
-        gEmberLevelTimer = ((u32)(Random_Next() * 160) >> 16) + 320;
+        gEmberLevelTimer = ((u32)(Engine_RandomNext() * 160) >> 16) + 320;
         break;
     }
 }
@@ -1424,7 +1424,7 @@ void SceneActor_MoveTo232_125AndFace4000(s32 no)
     Ent_02002820 *rec;
 
     rec = (Ent_02002820 *)Object_GetById(no);
-    Actor_SetPosition(no, 0xe80000, 0x7d0000);
+    Engine_ActorSetPosition(no, 0xe80000, 0x7d0000);
     rec->unk6 = 0x4000;
     Engine_ActorSetSpritePriority(no, 3);
 }
@@ -1435,17 +1435,17 @@ void SceneState_ApplyRectsByCondition(s32 a)
         s32 x;
         s32 y;
         x = 1;
-        Map_CopyCellsTo(8, 47, 64, 7, x, x);
+        Engine_MapCopyCellsTo(8, 47, 64, 7, x, x);
         y = 2;
-        Map_CopyCellsTo(7, 48, 63, 8, y, x);
-        Map_CopyCellsTo(7, 49, 63, 9, y, x);
+        Engine_MapCopyCellsTo(7, 48, 63, 8, y, x);
+        Engine_MapCopyCellsTo(7, 49, 63, 9, y, x);
     } else {
         s32 x;
         x = 1;
-        Map_CopyCellsTo(56, 0, 64, 7, x, x);
-        Map_CopyCellsTo(56, 0, 63, 8, x, x);
-        Map_CopyCellsTo(56, 0, 63, 9, 2, x);
-        Map_CopyCellsTo(58, 25, 64, 8, x, x);
+        Engine_MapCopyCellsTo(56, 0, 64, 7, x, x);
+        Engine_MapCopyCellsTo(56, 0, 63, 8, x, x);
+        Engine_MapCopyCellsTo(56, 0, 63, 9, 2, x);
+        Engine_MapCopyCellsTo(58, 25, 64, 8, x, x);
     }
     Engine_MapRedraw();
 }
@@ -1455,13 +1455,13 @@ void SceneState_ApplyRectPairByFlag(s32 a)
     if (a != 0) {
         s32 n;
         n = 2;
-        Map_CopyCellsTo(9, 45, 65, 5, n, n);
-        Map_CopyCellsTo(11, 46, 67, 6, 1, n);
+        Engine_MapCopyCellsTo(9, 45, 65, 5, n, n);
+        Engine_MapCopyCellsTo(11, 46, 67, 6, 1, n);
     } else {
         s32 n;
         n = 2;
-        Map_CopyCellsTo(89, 2, 65, 5, n, n);
-        Map_CopyCellsTo(102, 32, 67, 6, 1, n);
+        Engine_MapCopyCellsTo(89, 2, 65, 5, n, n);
+        Engine_MapCopyCellsTo(102, 32, 67, 6, 1, n);
     }
     Engine_MapRedraw();
 }
@@ -1469,7 +1469,7 @@ void SceneState_ApplyRectPairByFlag(s32 a)
 void FieldScene_RunRandomHalfBranch(void)
 {
     if ((gFrameCount & 1) == 0) {
-        if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
+        if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
             SceneState_ApplyRectsByCondition(1);
         } else {
             SceneState_ApplyRectsByCondition(0);
@@ -1480,7 +1480,7 @@ void FieldScene_RunRandomHalfBranch(void)
 void FieldScene_RunLateRandomHalfBranch(void)
 {
     if ((gFrameCount & 1) == 0) {
-        if ((u32)Math_RemainderUnsigned(Random_Next(), 100) > 50) {
+        if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
             SceneState_ApplyRectPairByFlag(1);
         } else {
             SceneState_ApplyRectPairByFlag(0);
@@ -1606,8 +1606,8 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
     p = (Ent_02002c1c *)((s32 (*)())Engine_EventGetViewCenter)(a);
     b = b << 16;
     a = a << 16;
-    Camera_MoveTo(a, -1, b, 1);
-    ColorBuffer_ApplyTarget(0, 0);
+    Engine_CameraMoveTo(a, -1, b, 1);
+    Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(20);
     Engine_TaskWait(40);
     p->unk10 = b;
@@ -1619,7 +1619,7 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
     Engine_TaskWait(5);
     Engine_MapRedraw();
     Engine_TaskWait(5);
-    ColorBuffer_ApplyTarget(0x10000, 0);
+    Engine_ColorBufferApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(20);
     Engine_TaskWait(30);
 }
@@ -1633,28 +1633,28 @@ void SceneState_ConfigureEightCornerRegions(void)
     s32 v;
 
     x = 0;
-    Map_CopyCellAttributes(14, 8, 1, 1, 10, x);
-    Map_CopyCellAttributes(14, 28, 1, 1, 11, x);
-    Map_CopyCellAttributes(44, 8, 1, 1, 12, x);
-    Map_CopyCellAttributes(44, 28, 1, 1, 13, x);
+    Engine_MapCopyCellAttributes(14, 8, 1, 1, 10, x);
+    Engine_MapCopyCellAttributes(14, 28, 1, 1, 11, x);
+    Engine_MapCopyCellAttributes(44, 8, 1, 1, 12, x);
+    Engine_MapCopyCellAttributes(44, 28, 1, 1, 13, x);
     z = 14;
     y = 8;
-    Map_CopyCellAttributes(13, 8, 1, 1, z, y);
+    Engine_MapCopyCellAttributes(13, 8, 1, 1, z, y);
     w = 28;
-    Map_CopyCellAttributes(13, 28, 1, 1, z, w);
+    Engine_MapCopyCellAttributes(13, 28, 1, 1, z, w);
     v = 44;
-    Map_CopyCellAttributes(43, 8, 1, 1, v, y);
-    Map_CopyCellAttributes(43, 28, 1, 1, v, w);
+    Engine_MapCopyCellAttributes(43, 8, 1, 1, v, y);
+    Engine_MapCopyCellAttributes(43, 28, 1, 1, v, w);
 }
 
 void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
 {
     if (a == 1) {
-        Audio_PlayCue(0x134);
-        ColorBuffer_ApplyTarget(0x203a52, 1);
+        Engine_AudioPlayCue(0x134);
+        Engine_ColorBufferApplyTarget(0x203a52, 1);
     } else {
-        Audio_PlayCue(0x121);
-        ColorBuffer_ApplyTarget(0x10000, 1);
+        Engine_AudioPlayCue(0x121);
+        Engine_ColorBufferApplyTarget(0x10000, 1);
     }
     Engine_ColorBufferInterpolate(b);
     if (c != 0) {

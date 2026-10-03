@@ -76,16 +76,16 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 {
     s32 id = gGameState.scene;
     if (id == (s32)&SceneId_ArutinMura1) {
-        if (GameFlag_IsSet(0x909)) {
+        if (Engine_GameFlagIsSet(0x909)) {
             gArutinMuraPlacements1[142] = 0;
             gArutinMuraPlacements1[166] = 0;
         }
         return (const struct ScenePlacement *)gArutinMuraPlacements1;
     }
     if (id == (s32)&SceneId_ArutinMura2) {
-        if (GameFlag_IsSet(0x8fd))
+        if (Engine_GameFlagIsSet(0x8fd))
             gArutinMuraPlacements2[46] = 1;
-        if (GameFlag_IsSet(0x8fe) || GameFlag_IsSet(0x907))
+        if (Engine_GameFlagIsSet(0x8fe) || Engine_GameFlagIsSet(0x907))
             gArutinMuraPlacements2[94] = 1;
         FieldScene_PrepareActors(gArutinMuraPlacements2);
         return (const struct ScenePlacement *)gArutinMuraPlacements2;
@@ -114,14 +114,14 @@ void FieldScene_RunActorEightPromptDialogue(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinYourFirstTimeVisitAltin);
     /* r1 is set before r0; the argument order is unchanged. */
-    Event_OpenMessage(8, 0);
+    Engine_EventOpenMessage(8, 0);
 
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
     } else {
         work = (u8 *)gEventWork;
         *(u16 *)(work + 472) = (u16)(*(u16 *)(work + 472) + 1);
-        Event_AskYesNo(8, 0);
+        Engine_EventAskYesNo(8, 0);
     }
 
     Engine_EventEnd();
@@ -131,7 +131,7 @@ void SceneDialogue_ShowLine1918(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinDidSeeWaterGushingOut);
-    Event_AskYesNo(9, 0);
+    Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
 
@@ -182,7 +182,7 @@ void SceneDialogue_RunActor17Message1924(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinTrueFoundAncientRuinsIn);
-    Event_AskYesNo(17, 0);
+    Engine_EventAskYesNo(17, 0);
     Engine_EventEnd();
 }
 
@@ -191,7 +191,7 @@ void SceneDialogue_RunActor9Message1932(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinGirlFromXianWasAsking);
-    Event_AskYesNo(9, 0);
+    Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
 
@@ -202,7 +202,7 @@ void SceneDialogue_RunActor10Message18d9(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinTryingFindYourWayWest);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -211,7 +211,7 @@ void SceneDialogue_RunActor14Message18e1(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinDefeatedThoseMonstersDidnt);
-    Event_AskYesNo(14, 0);
+    Engine_EventAskYesNo(14, 0);
     Engine_EventEnd();
 }
 
@@ -220,7 +220,7 @@ void SceneDialogue_RunActor21Message194a(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinThereFewBeastsInMine);
-    Event_AskYesNo(21, 0);
+    Engine_EventAskYesNo(21, 0);
     Engine_EventEnd();
 }
 
@@ -239,11 +239,11 @@ void FieldScene_RunActorFifteenFlagBranch(void)
     void Engine_EventSetMessage();
     void Engine_ShopOpen();
 
-    if (GameFlag_IsSet(0x242) == 0) {
+    if (Engine_GameFlagIsSet(0x242) == 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgArutinDoWantWeapons);
         /* r1 is set before r0 here; the argument order is unchanged. */
-        Event_AskYesNo(15, 0);
+        Engine_EventAskYesNo(15, 0);
         Engine_EventEnd();
         return;
     }
@@ -255,10 +255,10 @@ void FieldScene_RunActorFifteenFlagBranch(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinThankGoodnessWaterHasReceded);
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinYoullHaveFindPassageIn);
     }
-    Event_ShowMessage(15, 0);
+    Engine_EventShowMessage(15, 0);
     Engine_EventEnd();
 }
 
@@ -268,10 +268,10 @@ void FieldScene_RunActorTwentyFlagBranch(void)
     void Engine_EventEnd(void);
     void Engine_EventSetMessage(s32);
 
-    if (GameFlag_IsSet(0x241) == 0) {
+    if (Engine_GameFlagIsSet(0x241) == 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgArutinMyStoreSubmergedWantSell);
-        Event_ShowMessage(20, 0);
+        Engine_EventShowMessage(20, 0);
         Engine_EventEnd();
         return;
     }
@@ -283,19 +283,19 @@ void FieldScene_RunActorTwentyFlagBranch(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinItsGreatCanSellArmor);
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinHowAboutArentImpressedBy);
     }
-    Event_ShowMessage(17, 0);
+    Engine_EventShowMessage(17, 0);
     Engine_EventEnd();
 }
 
 void FieldScene_RunActorTwentyOneFlagBranch(void)
 {
-    if (GameFlag_IsSet(0x240) == 0) {
+    if (Engine_GameFlagIsSet(0x240) == 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgArutinWillDoIfMyMerchandise);
-        Event_ShowMessage(21, 0);
+        Engine_EventShowMessage(21, 0);
         Engine_EventEnd();
         return;
     }
@@ -307,10 +307,10 @@ void FieldScene_RunActorTwentyOneFlagBranch(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgArutinNoneMyGoodsWereDamaged);
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinGirlFromXianBoughtLot);
     }
-    Event_ShowMessage(16, 0);
+    Engine_EventShowMessage(16, 0);
     Engine_EventEnd();
 }
 
@@ -327,12 +327,12 @@ void FieldScene_RunFacingGatedDialogue18(void)
 
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x909) != 0) {
+    if (Engine_GameFlagIsSet(0x909) != 0) {
         Engine_EventSetMessage((s32)MsgArutinThereSmallTempleWestAltin);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     } else {
         Engine_EventSetMessage((s32)MsgArutinWeGotLittleDampBut);
-        Event_AskYesNo(18, 0);
+        Engine_EventAskYesNo(18, 0);
     }
 
     Engine_EventEnd();
@@ -475,9 +475,9 @@ void SceneState_SetFlag906ByActorNineteenX(void)
     struct Actor *p = (struct Actor *)Object_GetById(19);
 
     if ((p->f08 >> 20) == 22) {
-        GameFlag_Set(0x906);
+        Engine_GameFlagSet(0x906);
     } else {
-        GameFlag_Clear(0x906);
+        Engine_GameFlagClear(0x906);
     }
 }
 
@@ -490,16 +490,16 @@ s32 Scene_Initialize(void)
 {
     s16 scene;
 
-    if (GameFlag_IsSet(0x8fd) != 0) {
-        GameFlag_Set(0x240);
+    if (Engine_GameFlagIsSet(0x8fd) != 0) {
+        Engine_GameFlagSet(0x240);
     }
 
-    if (GameFlag_IsSet(0x8fe) != 0 || GameFlag_IsSet(0x907) != 0) {
-        GameFlag_Set(0x241);
+    if (Engine_GameFlagIsSet(0x8fe) != 0 || Engine_GameFlagIsSet(0x907) != 0) {
+        Engine_GameFlagSet(0x241);
     }
 
-    if (GameFlag_IsSet(0x8fe) != 0 && GameFlag_IsSet(0x907) != 0) {
-        GameFlag_Set(0x242);
+    if (Engine_GameFlagIsSet(0x8fe) != 0 && Engine_GameFlagIsSet(0x907) != 0) {
+        Engine_GameFlagSet(0x242);
     }
 
     scene = gGameState.scene;

@@ -34,7 +34,7 @@ struct PacketHalf {
 
 extern u8 MsgLobbyOpponentArrived[];
 extern u8 MsgLobbyPleaseSpeakWhen[];
-u32 State_RunQueryWithInterruptMasterSaved(void);
+s32 LinkLobby_InitializeSerial(void);
 
 s32 LinkLobby_ExchangePartyRecords(void)
 {
@@ -233,7 +233,7 @@ s32 LinkLobby_RunBattleApplication(void)
     }
     if (LinkLobby_PeerSlotMatches(0) == 0) {
         LinkLobby_WriteSlotValue(5);
-        State_RunQueryWithInterruptMasterSaved();
+        LinkLobby_InitializeSerial();
         if (!Value1(Engine_GameFlagIsSet, 0x173)) {
             Engine_EventSetMessage(msg + 5);
             Engine_EventOpenMessage(8, 0);

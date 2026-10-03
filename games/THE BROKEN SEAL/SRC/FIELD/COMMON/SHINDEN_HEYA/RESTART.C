@@ -61,16 +61,16 @@ s32 ShindenHeya_ChooseRestartOption(void)
     s32 text;
     s32 choice;
 
-    Actor_SetPosition(8, 0, 0);
-    Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(1, 0, 0);
-    Actor_SetPosition(11, 0, 0);
-    Actor_SetPosition(12, 0, 0);
-    Actor_SetPosition(0, 0, 0);
-    ColorBuffer_ApplyTarget(0x10000, 2);
-    ColorBuffer_Interpolate(1);
-    Event_Wait(1);
+    Engine_ActorSetPosition(8, 0, 0);
+    Engine_ActorSetPosition(9, 0, 0);
+    Engine_ActorSetPosition(10, 0, 0);
+    Engine_ActorSetPosition(1, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
+    Engine_ActorSetPosition(0, 0, 0);
+    Engine_ColorBufferApplyTarget(0x10000, 2);
+    Engine_ColorBufferInterpolate(1);
+    Engine_EventWait(1);
     window = UiWindow_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
     text = (s32)MsgShindenGreatHealer;
     UiText_DrawResource(text, window, 16, 0);
@@ -90,7 +90,7 @@ s32 ShindenHeya_ChooseRestartOption(void)
         }
         x = ShindenHeya_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
         TextCursor_SetPosition(&cursor, x, (choice << 4) + 60);
-        Event_Wait(1);
+        Engine_EventWait(1);
     }
     UiTextResource_Release(slot);
     UiWork_Finalize(window, 1);

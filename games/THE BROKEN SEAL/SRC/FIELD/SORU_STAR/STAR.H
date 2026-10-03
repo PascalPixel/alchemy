@@ -72,7 +72,7 @@ extern void PartyInventory_Add(s32 arg0);                        /* 0x02004390 -
 extern void PartyInventory_Add(s32 arg0);                        /* 0x02004396 -> 08077030 */
 extern void PartyInventory_Add(s32 arg0);                        /* 0x0200439c -> 08077030 */
 
-u16 CalculateAngleFromCoordinateDelta(s32, s32);
+s32 CalculateAngleFromCoordinateDelta(s32, s32);
 void Scene_UnmaskGarcia(void);
 void Scene_BagJupiterStar(void);
 void UiWork_PushValueSlotFar();
@@ -83,7 +83,7 @@ void PartyInventory_Discard();
 void Object_SetMoveTarget();
 void SoruStar_RiseActorFourteenSparks();
 void UiText_ShowCenteredMessage();
-s32 Owner_GetState();
+void *Owner_GetState(u32 owner);
 void Engine_EventWaitForScreen();
 void Engine_CameraWaitForMove();
 void Engine_ActorSetSpeed();

@@ -109,7 +109,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     s16 scene = gGameState.scene;
 
     if (scene == (s32)&SceneId_KaragoruDou1) {
-        if (GameFlag_IsSet(0x96f) != 0) {
+        if (Engine_GameFlagIsSet(0x96f) != 0) {
             return gKaragoruDouPlacements1Flag96f;
         }
         return gKaragoruDouPlacements1;
@@ -129,7 +129,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     s16 scene = gGameState.scene;
 
     if (scene == (s32)&SceneId_KaragoruDou1) {
-        if (GameFlag_IsSet(0x96f) != 0) {
+        if (Engine_GameFlagIsSet(0x96f) != 0) {
             return gKaragoruDouEvents1Flag96f;
         }
         return gKaragoruDouEvents1;
@@ -195,24 +195,24 @@ void FieldScene_RunScene3beSequenceB(void)
 void ActorPresentation_RunActorElevenRecoveryScene(void)
 {
     Engine_EventBegin();
-    Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_ActorFaceActor(11, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(10);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
     Engine_EventSetMessage((s32)MsgKaragoruIveBeenWaitingForRobin);
-    Event_ShowMessage(11, 0);
+    Engine_EventShowMessage(11, 0);
     Engine_ActorSetAnimation(11, 2);
     {
-        s16 *position = Actor_Get(ACTOR_PARTY_LEADER);
+        s16 *position = Object_GetById(ACTOR_PARTY_LEADER);
 
         if (position != 0)
-            Actor_SetDestination(11, position[5], position[9]);
+            Engine_ActorSetDestination(11, position[5], position[9]);
     }
     Engine_ActorWaitForMove(11);
-    Actor_SetPosition(11, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
     Engine_EventWait(20);
-    GameFlag_Set(2464);
+    Engine_GameFlagSet(2464);
     Engine_EventEnd();
 }
 
@@ -222,27 +222,27 @@ void KaragoruDou_AskToCross(void)
 
     base = (s32)MsgKaragoruDoYouWishCrossInto;
     Engine_EventSetMessage(base);
-    Event_OpenMessage(8, 0);
+    Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        if (GameFlag_IsSet(0x950) != 0) {
-            if (GameFlag_IsSet(0x96f) == 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
+            if (Engine_GameFlagIsSet(0x96f) == 0) {
                 Engine_EventSetMessage((base + 8));
             }
         }
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
     } else {
         bump_step(1);
-        Event_ShowMessage(8, 0);
+        Engine_EventShowMessage(8, 0);
     }
 }
 
 void ActorPresentation_SelectActorNineScript(void)
 {
-    if (GameFlag_IsSet(2384) != 0 && GameFlag_IsSet(2415) == 0)
+    if (Engine_GameFlagIsSet(2384) != 0 && Engine_GameFlagIsSet(2415) == 0)
         Engine_EventSetMessage((s32)MsgKaragoruWeMissedColossoBecauseWe);
     else
         Engine_EventSetMessage((s32)MsgKaragoruWarriorsHaveBeenFightingWhile);
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
 }
 
 void FieldScene_RunScene3be_02001080(void)
@@ -274,10 +274,10 @@ void StagedActorPairScene_RunStep(void)
 
 void ActorPresentation_RunActorEightThresholdScene(void)
 {
-    Actor_Get(8);
+    Object_GetById(8);
     Engine_EventBegin();
     {
-        s32 *actor = Actor_Get(8);
+        s32 *actor = Object_GetById(8);
 
         if ((actor[2] >> 20) <= 30) {
             StagedActorPairScene_RunSpinningLeap(8);
@@ -285,9 +285,9 @@ void ActorPresentation_RunActorEightThresholdScene(void)
                 s32 x = 27;
                 s32 y = 19;
 
-                Map_CopyCellAttributes(29, 19, 1, 1, x, y);
+                Engine_MapCopyCellAttributes(29, 19, 1, 1, x, y);
             }
-            GameFlag_Set(2466);
+            Engine_GameFlagSet(2466);
         }
     }
     Engine_EventEnd();
@@ -394,7 +394,7 @@ void StagedActorPairScene_NoopSceneCallback(void){}
 
 void StagedActorPairScene_RunActorTwelveCommand(void)
 {
-    Actor_SetPosition(12, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
 }
 
 /* The cave's scene start. Entering the first scene sets flag 0x144 and

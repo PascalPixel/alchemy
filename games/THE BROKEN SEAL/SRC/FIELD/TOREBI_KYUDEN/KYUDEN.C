@@ -112,10 +112,10 @@ const struct ScenePlacement *Scene_GetPlacements(void)
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
         return gTorebiKyudenPlacements2;
     }
-    if (GameFlag_IsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(0x950) != 0) {
         return gTorebiKyudenPlacementsAfterColosso;
     }
-    if (GameFlag_IsSet(0x962) != 0) {
+    if (Engine_GameFlagIsSet(0x962) != 0) {
         return gTorebiKyudenPlacementsColosso;
     }
     return gTorebiKyudenPlacementsOther;
@@ -129,13 +129,13 @@ void FieldScene_RunBranchedSteps1FF1(s32 a)
 {
     s32 k = (s32)MsgTorebiRunBabisSoldiers;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0)
-        Event_SetMessage(k + 1);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+        Engine_EventSetMessage(k + 1);
     else
-        Event_SetMessage(k + 2);
-    Event_ShowMessage(a, 0);
+        Engine_EventSetMessage(k + 2);
+    Engine_EventShowMessage(a, 0);
 }
 
 void RunOpeningAuxiliarySequence(s32 a)
@@ -237,18 +237,18 @@ void FieldScene_RunBranchedSteps2006(s32 a)
 {
     s32 k = (s32)MsgTorebiPlanningEnterColosso;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Actor_ShowEmote(a, 0x102, 0x28);
-        Event_SetMessage(k + 1);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventWait(10);
+        Engine_ActorShowEmote(a, 0x102, 0x28);
+        Engine_EventSetMessage(k + 1);
     } else {
-        Event_Wait(10);
-        Actor_ShowEmote(a, 0x105, 0x28);
-        Event_SetMessage(k + 2);
+        Engine_EventWait(10);
+        Engine_ActorShowEmote(a, 0x105, 0x28);
+        Engine_EventSetMessage(k + 2);
     }
-    Event_ShowMessage(a, 0);
+    Engine_EventShowMessage(a, 0);
 }
 
 void RunMiddleAuxiliarySequence(s32 a)
@@ -319,59 +319,59 @@ void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
     s32 k = (s32)MsgTorebiMeetBabi;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0)
-        Event_SetMessage(k + 1);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+        Engine_EventSetMessage(k + 1);
     else
-        Event_SetMessage(k + 2);
-    Event_ShowMessage(a, 0);
+        Engine_EventSetMessage(k + 2);
+    Engine_EventShowMessage(a, 0);
 }
 
 void SceneDialogue_RunChoiceSequence22ab(s32 no)
 {
     s32 msg = (s32)MsgTorebiEasternShoresKaragol;
 
-    Event_SetMessage(msg);
-    Event_OpenMessage(no, 0);
-    if (Event_ChooseYesNo(0, 0) == 0)
-        Event_SetMessage(msg + 1);
+    Engine_EventSetMessage(msg);
+    Engine_EventOpenMessage(no, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0)
+        Engine_EventSetMessage(msg + 1);
     else
-        Event_SetMessage(msg + 2);
-    Event_ShowMessage(no, 0);
+        Engine_EventSetMessage(msg + 2);
+    Engine_EventShowMessage(no, 0);
 }
 
 void SceneDialogue_RunChoiceSequence2352(void)
 {
     s32 msg;
 
-    Event_Begin();
+    Engine_EventBegin();
     Battle_ResetEffectCounter();
     msg = (s32)MsgTorebiFoundCloakBall;
-    Event_SetMessage(msg);
-    Event_ShowMessage(-1, 0);
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(14, 2);
-    Event_Wait(30);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 14, 30);
-    Event_OpenMessage(14, 0);
-    if (Event_ChooseYesNo(0, 0) != 0) {
-        Event_SetMessage(msg + 2);
-        Event_ShowMessage(14, 0);
+    Engine_EventSetMessage(msg);
+    Engine_EventShowMessage(-1, 0);
+    Engine_EventWait(10);
+    Engine_ActorRunRepeatedMotion(14, 2);
+    Engine_EventWait(30);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 14, 30);
+    Engine_EventOpenMessage(14, 0);
+    if (Engine_EventChooseYesNo(0, 0) != 0) {
+        Engine_EventSetMessage(msg + 2);
+        Engine_EventShowMessage(14, 0);
     } else {
-        Event_Wait(20);
-        Event_SetMessage(msg + 3);
-        Event_ShowMessage(14, 0);
-        Event_Wait(10);
-        Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-        Event_Wait(30);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-        Event_Wait(30);
-        Actor_SetPosition(16, 0, 0);
-        Item_ShowFound(ITEM_CLOAK_BALL, 3);
-        Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-        Party_GiveItem(ITEM_CLOAK_BALL, 0);
-        GameFlag_Set(0xf31);
+        Engine_EventWait(20);
+        Engine_EventSetMessage(msg + 3);
+        Engine_EventShowMessage(14, 0);
+        Engine_EventWait(10);
+        Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+        Engine_EventWait(30);
+        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+        Engine_EventWait(30);
+        Engine_ActorSetPosition(16, 0, 0);
+        Engine_ItemShowFound(ITEM_CLOAK_BALL, 3);
+        Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+        Engine_PartyGiveItem(ITEM_CLOAK_BALL, 0);
+        Engine_GameFlagSet(0xf31);
     }
 }
 
@@ -2242,23 +2242,23 @@ void SceneDialogue_AskIfLeavingPalace(s32 a)
 {
     s32 k = (s32)MsgTorebiWarriorsWhoStayed;
 
-    Event_SetMessage(k);
-    Event_OpenMessage(a, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(k + 1);
-        Event_ShowMessage(a, 0);
+    Engine_EventSetMessage(k);
+    Engine_EventOpenMessage(a, 0);
+    if (Engine_EventChooseYesNo(0, 0) == 0) {
+        Engine_EventSetMessage(k + 1);
+        Engine_EventShowMessage(a, 0);
     } else {
-        Event_SetMessage(k + 2);
-        Event_ShowMessage(a, 0);
+        Engine_EventSetMessage(k + 2);
+        Engine_EventShowMessage(a, 0);
     }
 }
 
 void FieldScene_RunStepWithValue29e0(void)
 {
-    Event_Begin();
-    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
-    Message_ShowCentered((s32)MsgTorebiItsFilledWithFreshClean, 1);
-    Event_End();
+    Engine_EventBegin();
+    Engine_MessageShowCentered((s32)MsgFieldPeeredWell, 1);
+    Engine_MessageShowCentered((s32)MsgTorebiItsFilledWithFreshClean, 1);
+    Engine_EventEnd();
 }
 
 /* What the palace answers: in each scene, one table while Colosso is under
@@ -2266,18 +2266,18 @@ void FieldScene_RunStepWithValue29e0(void)
 const struct SceneEvent *Scene_GetEvents(void)
 {
     if (gGameState.scene == (s32)&SceneId_TorebiKyuden2) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return gTorebiKyudenEvents2AfterColosso;
         }
-        if (GameFlag_IsSet(0x962) != 0) {
+        if (Engine_GameFlagIsSet(0x962) != 0) {
             return gTorebiKyudenEvents2Colosso;
         }
         return gTorebiKyudenEvents2;
     }
-    if (GameFlag_IsSet(0x950) != 0) {
+    if (Engine_GameFlagIsSet(0x950) != 0) {
         return gTorebiKyudenEventsAfterColosso;
     }
-    if (GameFlag_IsSet(0x962) != 0) {
+    if (Engine_GameFlagIsSet(0x962) != 0) {
         return gTorebiKyudenEventsColosso;
     }
     return gTorebiKyudenEventsOther;

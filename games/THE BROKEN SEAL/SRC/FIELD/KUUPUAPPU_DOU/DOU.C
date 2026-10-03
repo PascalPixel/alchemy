@@ -251,7 +251,7 @@ void KuupuappuDou_PushBlockAhead(void)
 /* Deliberate no-op callback. */
 void SceneState_ApplyFlag300(void)
 {
-    GameFlag_Set(0x300);
+    Engine_GameFlagSet(0x300);
 }
 
 void SceneState_SetFlag953(void)
@@ -281,7 +281,7 @@ const struct SceneEvent *Scene_GetEvents(void)
 /* Deliberate no-op callback. */
 s32 IsActor9AtTile15x54(void)
 {
-    s32 *actor = Actor_Get(9);
+    s32 *actor = Object_GetById(9);
     s32 z = actor[4];
     s32 x;
     s32 z_tile;
@@ -325,10 +325,10 @@ void SceneState_ApplyThreeRects(void)
         s32 fifth = 80;
         s32 sixth = 50;
 
-        Map_CopyCells(87, 50, 2, 4, fifth, sixth);
+        Engine_MapCopyCells(87, 50, 2, 4, fifth, sixth);
     }
-    Map_CopyCells(23, 52, 1, 2, strip, 52);
-    Map_CopyCellAttributes(16, 52, 1, 1, strip, 53);
+    Engine_MapCopyCells(23, 52, 1, 2, strip, 52);
+    Engine_MapCopyCellAttributes(16, 52, 1, 1, strip, 53);
 }
 
 void FieldScene_RunScene3a7SequenceA(void)
@@ -355,15 +355,15 @@ void SceneState_ApplyThreeRectsRows9And10(void)
         s32 p5 = 80;
         s32 p6 = 9;
 
-        Map_CopyCells(90, 9, 2, 3, p5, p6);
+        Engine_MapCopyCells(90, 9, 2, 3, p5, p6);
     }
-    Map_CopyCells(27, 10, 1, 2, strip, 10);
-    Map_CopyCellAttributes(17, 10, 1, 1, strip, 11);
+    Engine_MapCopyCells(27, 10, 1, 2, strip, 10);
+    Engine_MapCopyCellAttributes(17, 10, 1, 1, strip, 11);
 }
 
 s32 SceneActor_IsActor10AtTile16x12(void)
 {
-    s32 *p = Actor_Get(10);
+    s32 *p = Object_GetById(10);
     s32 z = p[4];
     s32 x;
     s32 cz;
@@ -423,14 +423,14 @@ void FieldScene_RunGuardedStep9AA(void)
 
 void SceneState_ApplyRectAndMarkActor16(void)
 {
-    u8 *rec = Actor_Get(16);
+    u8 *rec = Object_GetById(16);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 fifth = 23;
     s32 sixth = 32;
 
-    Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
+    Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (rec != 0) {
         /* The rec is reloaded with the same selector before this store. */
@@ -438,19 +438,19 @@ void SceneState_ApplyRectAndMarkActor16(void)
         rec[35] = 1;
     }
 
-    GameFlag_Set(0x200);
+    Engine_GameFlagSet(0x200);
 }
 
 void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 {
-    u8 *rec = Actor_Get(17);
+    u8 *rec = Object_GetById(17);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 p5 = 23;
     s32 p6 = 34;
 
-    Map_CopyCellAttributes(26, 30, 1, 1, p5, p6);
+    Engine_MapCopyCellAttributes(26, 30, 1, 1, p5, p6);
 
     if (rec != 0) {
         /* The record is reloaded with the same selector before this store. */
@@ -458,19 +458,19 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
         rec[35] = 1;
     }
 
-    GameFlag_Set(0x201);
+    Engine_GameFlagSet(0x201);
 }
 
 void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 {
-    u8 *record = Actor_Get(18);
+    u8 *record = Object_GetById(18);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 a = 24;
     s32 b = 34;
 
-    Map_CopyCellAttributes(26, 30, 1, 1, a, b);
+    Engine_MapCopyCellAttributes(26, 30, 1, 1, a, b);
 
     if (record != 0) {
         /* The record is reloaded with the same selector before this store. */
@@ -478,19 +478,19 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
         record[35] = 1;
     }
 
-    GameFlag_Set(0x202);
+    Engine_GameFlagSet(0x202);
 }
 
 void SceneState_ApplyRectAndSetupActor19(void)
 {
-    u8 *p = Actor_Get(19);
+    u8 *p = Object_GetById(19);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 a5 = 26;
     s32 a6 = 32;
 
-    Map_CopyCellAttributes(26, 30, 1, 1, a5, a6);
+    Engine_MapCopyCellAttributes(26, 30, 1, 1, a5, a6);
 
     if (p != 0) {
         Engine_ActorSetSpriteFlags(p, 0);
@@ -499,19 +499,19 @@ void SceneState_ApplyRectAndSetupActor19(void)
         p[35] = 1;
     }
 
-    GameFlag_Set(0x203);
+    Engine_GameFlagSet(0x203);
 }
 
 void SceneActor_SetupSlotTwenty(void)
 {
-    u8 *rec = Actor_Get(20);
+    u8 *rec = Object_GetById(20);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 fifth = 26;
     s32 sixth = 34;
 
-    Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
+    Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (rec != 0) {
         Engine_ActorSetSpriteFlags(rec, 0);
@@ -520,19 +520,19 @@ void SceneActor_SetupSlotTwenty(void)
         rec[35] = 1;
     }
 
-    GameFlag_Set(0x204);
+    Engine_GameFlagSet(0x204);
 }
 
 void SceneActor_MarkSlot21AndSetFlag205(void)
 {
-    u8 *record = Actor_Get(21);
+    u8 *record = Object_GetById(21);
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
     s32 fifth = 28;
     s32 sixth = 33;
 
-    Map_CopyCellAttributes(26, 30, 1, 1, fifth, sixth);
+    Engine_MapCopyCellAttributes(26, 30, 1, 1, fifth, sixth);
 
     if (record != 0) {
         Engine_ActorSetSpriteFlags(record, 0);
@@ -541,12 +541,12 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
         record[35] = 1;
     }
 
-    GameFlag_Set(0x205);
+    Engine_GameFlagSet(0x205);
 }
 
 void SceneState_DispatchByActorZeroDepth(void)
 {
-    struct Actor *p = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor *p = Object_GetById(ACTOR_PARTY_LEADER);
 
     if (p->f0c >= 0x100000) {
         KuupuappuDou_RaiseActorPriorities();
@@ -577,7 +577,7 @@ void SceneState_SetEntries16To21Byte35(void)
     s32 remaining = 5;
 
     do {
-        u8 *entry = Actor_Get(index);
+        u8 *entry = Object_GetById(index);
 
         remaining--;
         entry[35] = flag;
@@ -756,19 +756,19 @@ void FieldScene_RunScene3a7SequenceD(void)
     s32 record;
     s32 *selected;
 
-    rec7 = (u8 *)Actor_Get(10);
+    rec7 = (u8 *)Object_GetById(10);
     if (rec7[91] == 0) {
         if ((++KuupuappuDou_TickCounter & 63) == 0) {
             selected = &KuupuappuDou_TickValue;
-            record = Random_Next();
+            record = Engine_RandomNext();
             record = Math_RemainderUnsigned(record, 6);
             *selected = record;
-            rec7 = Actor_Get((record + 10));
+            rec7 = Object_GetById((record + 10));
             *(s32 *)(rec7 + 72) = 0xa3d;
         }
         for (i = 0; i <= 5; i++) {
-            rec7 = Actor_Get((i + 10));
-            record = GameFlag_IsSet((i + 0x200));
+            rec7 = Object_GetById((i + 10));
+            record = Engine_GameFlagIsSet((i + 0x200));
             if (record != 0) {
                 if (*(s32 *)(rec7 + 40) <= 0) {
                     if (*(s32 *)(rec7 + 12) > 0x20ffff) {
@@ -778,7 +778,7 @@ void FieldScene_RunScene3a7SequenceD(void)
                 *(s32 *)(rec7 + 12) = 0xff0000;
                 *(s32 *)(rec7 + 72) = 0;
                 *(s32 *)(rec7 + 40) = 0;
-                Audio_PlayCue(106);
+                Engine_AudioPlayCue(106);
             } else {
                 if (*(s32 *)(rec7 + 40) <= 0) {
                     if (*(s32 *)(rec7 + 12) > 0xffff) {
@@ -788,7 +788,7 @@ void FieldScene_RunScene3a7SequenceD(void)
                 *(s32 *)(rec7 + 72) = record;
                 *(s32 *)(rec7 + 40) = record;
                 *(s32 *)(rec7 + 12) = 0xff0000;
-                Audio_PlayCue(106);
+                Engine_AudioPlayCue(106);
             }
         }
     }
@@ -846,8 +846,8 @@ void SceneActor_InitSlots10To15AndStartTask(void)
     do {
         s32 *record;
 
-        Engine_ActorSetSpriteFlags(Actor_Get(selector), 0);
-        record = Actor_Get(selector);
+        Engine_ActorSetSpriteFlags(Object_GetById(selector), 0);
+        record = Object_GetById(selector);
         record[17] = 0x1999;
         record[18] = 0;
         remaining--;
@@ -870,8 +870,8 @@ void SceneActor_SetupActors11To14AndInstallTask(void)
     do {
         s32 *rec;
 
-        Engine_ActorSetSpriteFlags(Actor_Get(no), 0);
-        rec = Actor_Get(no);
+        Engine_ActorSetSpriteFlags(Object_GetById(no), 0);
+        rec = Object_GetById(no);
         rec[17] = 0x1999;
         rec[18] = 0;
         rec[3] = 0x00ff0000;

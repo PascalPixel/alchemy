@@ -300,7 +300,7 @@ s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
     u32 next_timer;
 
     if (effect->action_timer == 0) {
-        action = (u32)(Random_Next() * 8) >> 0x10;
+        action = (u32)(Engine_RandomNext() * 8) >> 0x10;
         switch (action) {
         case 0:
             Object_SetMode(effect, 3);
@@ -310,10 +310,10 @@ s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
             break;
         case 3:
         case 4:
-            effect->unknown_06 += (u32)(Random_Next() << 0xF) >> 0x10;
+            effect->unknown_06 += (u32)(Engine_RandomNext() << 0xF) >> 0x10;
             break;
         }
-        next_timer = (u32)(Random_Next() * 0x50) >> 0x10;
+        next_timer = (u32)(Engine_RandomNext() * 0x50) >> 0x10;
         effect->action_timer = (s16)next_timer;
         if (next_timer != 0) {
             goto decrement_timer;
@@ -332,8 +332,8 @@ s32 OverlayObject_AdvanceXWhenCounterExpires(struct Object *obj)
     s32 amount;
 
     if (loaded == 0) {
-        obj->x += (u32)(Random_Next() << 15) >> 16;
-        amount = (u32)(Random_Next() * 80) >> 16;
+        obj->x += (u32)(Engine_RandomNext() << 15) >> 16;
+        amount = (u32)(Engine_RandomNext() * 80) >> 16;
         obj->cnt = amount;
         if (amount == 0) {
             goto done;
@@ -412,8 +412,8 @@ void FieldScene_RunStepWithValue29df(void)
 void FieldScene_RunStepWithValueFd6(void)
 {
     Engine_EventBegin();
-    Actor_SetPosition(12, 0, 0);
-    GameFlag_Set(0xfd6);
+    Engine_ActorSetPosition(12, 0, 0);
+    Engine_GameFlagSet(0xfd6);
     Engine_ItemShowFound(ITEM_NUT, 3);
     Engine_PartyGiveItem(ITEM_NUT, 0);
     Engine_EventEnd();
@@ -449,7 +449,7 @@ void SceneDialogue_RunActorNineteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiCameKalayBecauseDidntLike);
-    Event_AskYesNo(19, 0);
+    Engine_EventAskYesNo(19, 0);
     Engine_EventEnd();
 }
 
@@ -461,22 +461,22 @@ void FieldScene_RunSlotZeroFacingSequence(void)
     u32 v;
     u16 *q;
 
-    o = Actor_Get(ACTOR_PARTY_LEADER);
+    o = Object_GetById(ACTOR_PARTY_LEADER);
     v = (o->f06 + 0xfffff000) << 16;
     if (v > 0x60000000) {
         Engine_EventBegin();
         Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
         Engine_EventWait(10);
         Engine_EventSetMessage((s32)MsgKareiDoWantGoCaveUp);
-        Event_OpenMessage(8, 0);
+        Engine_EventOpenMessage(8, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             Engine_ActorSetAnimationAndWait(8, 4);
-            Event_ShowMessage(8, 0);
+            Engine_EventShowMessage(8, 0);
         } else {
             q = (u16 *)(Data_03001ebc + 472);
             *q = *q + 1;
             Engine_ActorSetAnimationAndWait(8, 3);
-            Event_ShowMessage(8, 0);
+            Engine_EventShowMessage(8, 0);
         }
         Engine_EventEnd();
     }
@@ -486,7 +486,7 @@ void SceneDialogue_RunActorTenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKareiLayanaWasVeryHardOn);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -495,14 +495,14 @@ void SceneState_BranchOnSlotZeroFacing(void)
     struct Obj *o;
     u32 v;
 
-    o = Actor_Get(ACTOR_PARTY_LEADER);
+    o = Object_GetById(ACTOR_PARTY_LEADER);
     v = (o->f06 - 0x2000) << 16;
     if (v > 0x80000000) {
         Engine_ShopOpen(22, 22);
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgKareiLordHammetSellsHisBest);
-        Event_ShowMessage(22, 0);
+        Engine_EventShowMessage(22, 0);
         Engine_EventEnd();
     }
 }
@@ -512,14 +512,14 @@ void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
     struct Obj *o;
     u32 v;
 
-    o = Actor_Get(ACTOR_PARTY_LEADER);
+    o = Object_GetById(ACTOR_PARTY_LEADER);
     v = (o->f06 - 0x6001) << 16;
     if (v <= 0x7ffe0000) {
         Engine_ShopOpen(23, 23);
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgKareiDidFindNeededInWeapon);
-        Event_AskYesNo(23, 0);
+        Engine_EventAskYesNo(23, 0);
         Engine_EventEnd();
     }
 }
@@ -529,14 +529,14 @@ void FieldScene_RunActorTwentyFourAngleDialogue(void)
     struct Obj *o;
     u32 v;
 
-    o = Actor_Get(ACTOR_PARTY_LEADER);
+    o = Object_GetById(ACTOR_PARTY_LEADER);
     v = (o->f06 - 0x2000) << 16;
     if (v > 0xC0000000) {
         Engine_ShopOpen(24, 24);
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgKareiLadyLayanaSharedInLord);
-        Event_ShowMessage(24, 0);
+        Engine_EventShowMessage(24, 0);
         Engine_EventEnd();
     }
 }
@@ -1167,8 +1167,8 @@ void SceneDialogue_RunActor181Line916(void)
 {
     Scheduler_RemoveCallback((u32)((s32)((u8 *)SceneEffect_UpdateLobeOrbitEffect26)));
     Engine_TaskWait(1);
-    Actor_SetPosition(26, 0, 0);
-    GameFlag_Set(0x916);
+    Engine_ActorSetPosition(26, 0, 0);
+    Engine_GameFlagSet(0x916);
     Engine_ItemShowFound(ITEM_NUT, 3);
     Engine_PartyGiveItem(ITEM_NUT, 0);
 }
@@ -1245,17 +1245,17 @@ void KareiMachi_SetupEntryActors(void)
 
 void SceneState_CheckFlags941And940(void)
 {
-    if (GameFlag_IsSet(0x941) != 0) {
-        GameFlag_Set(0x321);
-        GameFlag_Set(0x913);
-        GameFlag_Set(0x912);
-        GameFlag_Set(0x915);
+    if (Engine_GameFlagIsSet(0x941) != 0) {
+        Engine_GameFlagSet(0x321);
+        Engine_GameFlagSet(0x913);
+        Engine_GameFlagSet(0x912);
+        Engine_GameFlagSet(0x915);
     }
-    if (GameFlag_IsSet(0x940) != 0) {
-        GameFlag_Set(0x321);
+    if (Engine_GameFlagIsSet(0x940) != 0) {
+        Engine_GameFlagSet(0x321);
     }
     if (gGameState.entrance != 0) {
-        if (GameFlag_IsSet(0x912) == 0) {
+        if (Engine_GameFlagIsSet(0x912) == 0) {
             FieldScene_RunTwoActorCutsceneSequence();
         }
     }
@@ -1265,11 +1265,11 @@ void SceneState_ApplyFlagGatedActorEightSetup(void)
 {
     struct Obj *o;
 
-    if (GameFlag_IsSet(0xfd6) == 0) {
+    if (Engine_GameFlagIsSet(0xfd6) == 0) {
         InitializeOrbitingRenderEffect(12);
     }
-    if (GameFlag_IsSet(0x915) != 0) {
-        o = Actor_Get(8);
+    if (Engine_GameFlagIsSet(0x915) != 0) {
+        o = Object_GetById(8);
         o->f06 = 0;
     }
     if (gGameState.entrance == 10) {
@@ -1280,11 +1280,11 @@ void SceneState_ApplyFlagGatedActorEightSetup(void)
 void SceneState_SetWork448AndRunFlag915Step(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if (GameFlag_IsSet(0x915) != 0) {
+    if (Engine_GameFlagIsSet(0x915) != 0) {
         s32 k = 2;
-        Map_CopyCellsTo(58, 5, 58, 8, k, 3);
-        { s32 a = 8, b = 10; Map_CopyCellAttributes(8, 11, 2, 1, a, b); }
-        Map_CopyCellsTo(8, 12, 8, 11, k, 1);
+        Engine_MapCopyCellsTo(58, 5, 58, 8, k, 3);
+        { s32 a = 8, b = 10; Engine_MapCopyCellAttributes(8, 11, 2, 1, a, b); }
+        Engine_MapCopyCellsTo(8, 12, 8, 11, k, 1);
         Engine_MapRedraw();
         Engine_TaskWait(1);
     }
@@ -1465,11 +1465,11 @@ void SceneEffect_SetSlotVariantAndDescriptor(s32 a)
     struct Obj_02000040 *p;
     u32 t;
 
-    p = Actor_Get(a);
+    p = Object_GetById(a);
     p->f64 = a;
-    t = Random_Next();
+    t = Engine_RandomNext();
     p->f66 = (t * 5) >> 12;
-    Object_SetScript(p, (s32)KareiMachi_Script01);
+    Engine_ObjectSetScript(p, (s32)KareiMachi_Script01);
 }
 
 /* Kalay: clear the step counter, speed actors 20 and 21 up and schedule the
@@ -2091,7 +2091,7 @@ void FieldScene_RunLateSequence(void)
             Object_SetMode(record, 8);
             k = 0x3333;
             Engine_TaskWait(15);
-            Audio_PlayCue(185);
+            Engine_AudioPlayCue(185);
             *(s32 *)(rec + 48) = k;
             *(s32 *)(rec + 52) = k;
             Object_SetPosition(rec, dst[0], dst[1], dst[2]);
@@ -2349,7 +2349,7 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
 
 void SceneEffect_UpdateLobeOrbitEffect26(void)
 {
-    Effect_0200390c *effect = Actor_Get(26);
+    Effect_0200390c *effect = Object_GetById(26);
     RenderData *render = effect->render;
     s32 offset = Engine_MathSin(effect->angle) * 2;
     s32 first;
@@ -2360,25 +2360,25 @@ void SceneEffect_UpdateLobeOrbitEffect26(void)
     effect->x = effect->base_x + Engine_MathCos(effect->angle) * 2;
     effect->y = effect->base_y + offset;
     render->rotation = Engine_MathCos(effect->angle + 0x8000) >> 3;
-    first = Random_Next();
+    first = Engine_RandomNext();
     effect->angle +=
         ((u32)(first << 9) >> 16)
-        + ((u32)(Random_Next() << 9) >> 16)
+        + ((u32)(Engine_RandomNext() << 9) >> 16)
         + 0x400;
 }
 
 void FieldScene_DrawTilesAndRaiseActor11(void)
 {
-    Effect *effect = Actor_Get(11);
+    Effect *effect = Object_GetById(11);
 
-    Map_CopyCellAttributes(0, 0, 1, 1, 9, 14);
-    Map_CopyCellAttributes(0, 0, 1, 1, 9, 45);
+    Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 14);
+    Engine_MapCopyCellAttributes(0, 0, 1, 1, 9, 45);
     if (effect != 0) {
         Engine_ActorSetSpriteFlags(effect, 0);
         effect->y -= 0x200000;
         effect->state23 = 2;
     }
-    GameFlag_Set(0x201);
+    Engine_GameFlagSet(0x201);
 }
 
 s32 SceneEffect_UpdateOrbitingEffect(Effect_0200390c *effect)
@@ -2393,10 +2393,10 @@ s32 SceneEffect_UpdateOrbitingEffect(Effect_0200390c *effect)
     effect->x = effect->base_x + Engine_MathCos(effect->angle) * 2;
     effect->y = effect->base_y + ofs;
     render->rotation = Engine_MathCos(effect->angle + 0x8000) / 8;
-    first = Random_Next();
+    first = Engine_RandomNext();
     effect->angle +=
         ((u32)(first << 9) >> 16)
-        + ((u32)(Random_Next() << 9) >> 16)
+        + ((u32)(Engine_RandomNext() << 9) >> 16)
         + 0x400;
     return 0;
 }

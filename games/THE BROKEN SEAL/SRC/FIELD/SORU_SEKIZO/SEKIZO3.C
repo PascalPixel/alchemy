@@ -155,6 +155,6 @@ void Scene_ShineRightBeam(void)
 /* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
-    Event_ShowMessage(speaker, 0);
+    Engine_EventShowMessage(speaker, 0);
     Engine_EventWait(frames);
 }

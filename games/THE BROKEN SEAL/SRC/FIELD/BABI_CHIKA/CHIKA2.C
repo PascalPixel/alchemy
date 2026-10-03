@@ -115,7 +115,7 @@ void SceneState_RunRect73x38Step(void)
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
-    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     point[0] = actor->f08 + 0xFFE00000;
     point[1] = actor->f0c;
@@ -143,7 +143,7 @@ void FieldScene_RunStepWith6(void)
 void SceneActor_PassPointTwoRightOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     pos[0] = actor->f08 + 0x200000;
     pos[1] = actor->f0c;
@@ -156,8 +156,8 @@ void SceneActor_PassPointTwoRightOfActorZero(void)
 void SceneState_ApplyTwoRectsAndRunThree(void)
 {
     Engine_EventBegin();
-    Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
-    Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
+    Map_CopyCellAttributeRect(89, 49, 3, 2, 25, 49);
+    Map_CopyCellAttributeRect(89, 51, 8, 5, 25, 51);
     StagedActor_AdvancePair();
     FieldScene_RunScene3c4_02002480();
     Engine_EventEnd();
@@ -166,7 +166,7 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
 /* Scene tables, layouts and supplemental sequences. */
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
-    struct Actor02001424 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor02001424 *actor = Object_GetById(ACTOR_PARTY_LEADER);
     s32 target[3];
 
     target[0] = actor->x;
@@ -191,13 +191,13 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
     u8 *flags;
     u8 value;
 
-    GameFlag_Set(0x200);
-    if (GameFlag_IsSet(0x201) != 0) {
+    Engine_GameFlagSet(0x200);
+    if (Engine_GameFlagIsSet(0x201) != 0) {
         ((u8* (*)())Object_GetById)(14)[98] = 0;
         ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
     } else {
         ((u8* (*)())Object_GetById)(14)[98] = 1;
-        flags = Actor_Get(14);
+        flags = Object_GetById(14);
         flags += 89;
         value = 8;
         value |= *flags;
@@ -210,13 +210,13 @@ void SceneActor_SetActor14Field98ByFlag200(void)
     u8 *p;
     u8 val;
 
-    GameFlag_Set(0x201);
-    if (GameFlag_IsSet(0x200) != 0) {
+    Engine_GameFlagSet(0x201);
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         ((u8* (*)())Object_GetById)(14)[98] = 0;
         ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
     } else {
         ((u8* (*)())Object_GetById)(14)[98] = 1;
-        p = Actor_Get(14);
+        p = Object_GetById(14);
         p += 89;
         val = 8;
         val |= *p;
@@ -226,12 +226,12 @@ void SceneActor_SetActor14Field98ByFlag200(void)
 
 void SceneState_ApplyFlag970(void)
 {
-    GameFlag_Set(0x970);
+    Engine_GameFlagSet(0x970);
 }
 
 void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
-    struct Actor_02001510 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02001510 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     if ((actor->f08 >> 20) != 32 || (actor->f10 >> 20) != 50) {
         SceneActor_ApplyPointLeftOfActorZero();
@@ -240,7 +240,7 @@ void SceneState_RunUnlessActorZeroAtTile32x50(void)
 
 void SceneState_RunUnlessActorZeroAt30_52(void)
 {
-    struct Actor_02000cc0 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000cc0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     if ((actor->f08 >> 20) != 30 || (actor->f10 >> 20) != 52) {
         SceneActor_PassActorZeroOffsetPoint();
@@ -318,11 +318,11 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
     u8 *flags;
 
     Object_SetModeById(20, 1);
-    Actor_SetChildValue(20, 0);
+    Engine_ActorSetChildValue(20, 0);
     Object_SetModeById(20, 2);
     flags = ((u8* (*)())Object_GetById)(20) + 35;
     *flags &= 0xFD;
-    GameFlag_Set(0x200);
+    Engine_GameFlagSet(0x200);
 }
 
 void FieldScene_RunSupplementalSequenceOne(void)
@@ -403,7 +403,7 @@ void FieldScene_SetActor19TableB3B8(void)
 
 void SceneState_SetValue202ThenCall(void)
 {
-    GameFlag_Set(0x202);
+    Engine_GameFlagSet(0x202);
     FieldScene_RunSupplementalSequenceOne();
 }
 
@@ -412,18 +412,18 @@ void SceneActor_ConfigureSlot21AndSetFlag201(void)
     u8 *flags;
 
     Object_SetModeById(21, 1);
-    Actor_SetChildValue(21, 0);
+    Engine_ActorSetChildValue(21, 0);
     Object_SetModeById(21, 2);
     flags = ((u8* (*)())Object_GetById)(21) + 35;
     *flags &= 0xFD;
-    GameFlag_Set(0x201);
+    Engine_GameFlagSet(0x201);
 }
 
 void SceneDialogue_RunFlag982Or983Dialogue(void)
 {
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
-    if (GameFlag_IsSet(0x982) != 0 || GameFlag_IsSet(0x983) != 0) {
+    if (Engine_GameFlagIsSet(0x982) != 0 || Engine_GameFlagIsSet(0x983) != 0) {
         Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksAfterAnswer, 1);
     } else {
         Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksRobinSoulYe, 1);
@@ -456,8 +456,8 @@ void SceneActor_InstallSlotNineHandler(void)
     u8 *owner;
 
     Engine_ActorEnableActionCallback(8, (s32)BabiChika_FlickerScript);
-    GameFlag_Set(0x203);
-    owner = Actor_Get(9);
+    Engine_GameFlagSet(0x203);
+    owner = Object_GetById(9);
     *(s32 *)(owner + 108) = (s32)SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
@@ -480,7 +480,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
     Engine_EventBegin();
     Engine_ActorSetSpritePriority(9, 1);
     Object_SetModeById(9, 1);
-    Actor_SetChildValue(9, 0);
+    Engine_ActorSetChildValue(9, 0);
     Object_SetModeById(9, 2);
 
     {
@@ -488,16 +488,16 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
         *flag &= (u8)0xfd;
     }
 
-    GameFlag_Set(0x204);
+    Engine_GameFlagSet(0x204);
 
     col = ((Slot_02001a10* (*)())Object_GetById)(9)->col;
     row = ((Slot_02001a10* (*)())Object_GetById)(9)->row >> 20;
-    Map_CopyCellAttributes(26, 8, 1, 1, col >> 20, row);
+    Map_CopyCellAttributeRect(26, 8, 1, 1, col >> 20, row);
 
-    desc = Actor_Get(9);
+    desc = Object_GetById(9);
     *(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
 
-    desc = Actor_Get(8);
+    desc = Object_GetById(8);
     *(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
 
     ((u8* (*)())Engine_EventEnd)(desc);
@@ -506,7 +506,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
 {
     s16 *id = (s16 *)(owner + 100);
-    struct Actor *actor = Actor_Get(*id);
+    struct Actor *actor = Object_GetById(*id);
 
     *(s32 *)(owner + 12) = actor->f0c + 0x100000;
     return 0;
@@ -574,18 +574,18 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
         if (best > ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000) continue;
 
         best = ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000;
-        *(u16 *)((u8 *)Actor_Get(subject) + 100) = (u16)slot;
+        *(u16 *)((u8 *)Object_GetById(subject) + 100) = (u16)slot;
     }
 
-    Actor_SetSpeed(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
+    ObjectMotion_SetSpeedParameters(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
 
     /*
      * Three separate lookups of the same record, in this order. The locals
      * fix the sequence, which argument evaluation order would not.
      */
     {
-        Slot_02001c2c *target = Actor_Get(subject);
-        Slot_02001c2c *from = Actor_Get(subject);
+        Slot_02001c2c *target = Object_GetById(subject);
+        Slot_02001c2c *from = Object_GetById(subject);
         s32 z = ((Slot_02001c2c* (*)())Object_GetById)(subject)->z;
 
         Object_SetPosition(target, from->x, best, z);
@@ -681,15 +681,15 @@ void SceneState_SetSlot17And18Selectors(void)
     Engine_EventBegin();
 
     if ((((Slot_02001f70* (*)())Object_GetById)(17)->w8 >> 20) == 45) {
-        GameFlag_Set(0x974);
+        Engine_GameFlagSet(0x974);
     } else {
-        GameFlag_Clear(0x974);
+        Engine_GameFlagClear(0x974);
     }
 
     if ((((Slot_02001f70* (*)())Object_GetById)(18)->w8 >> 20) == 46) {
-        GameFlag_Set(0x975);
+        Engine_GameFlagSet(0x975);
     } else {
-        GameFlag_Clear(0x975);
+        Engine_GameFlagClear(0x975);
     }
 
     BabiChika_MarkActorCells();
@@ -849,7 +849,7 @@ void FieldScene_RunLayoutAt83By45(void)
         s32 width = 19;
         s32 height = 45;
 
-        Map_CopyCellAttributes(83, 45, 11, 8, width, height);
+        Map_CopyCellAttributeRect(83, 45, 11, 8, width, height);
     }
     StagedActor_AdvancePair();
     FieldScene_RunScene3c4SequenceA();
@@ -887,20 +887,20 @@ void FieldScene_PlaceAndPinSlots8And9(void)
 
     {
         s32 p5 = 9, p6 = 38;
-        Map_CopyCellAttributes(73, 38, 5, 5, p5, p6);
+        Map_CopyCellAttributeRect(73, 38, 5, 5, p5, p6);
     }
     SceneState_SwapSlotPairByRank(9, 8);
 
     {
         s32 col = ((Slot_020023a0* (*)())Object_GetById)(8)->column >> 20;
         row = ((Slot_020023a0* (*)())Object_GetById)(8)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col, row);
     }
 
     {
         s32 col = ((Slot_020023a0* (*)())Object_GetById)(9)->column >> 20;
         row = ((Slot_020023a0* (*)())Object_GetById)(9)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col, row);
     }
 }
 
@@ -910,20 +910,20 @@ void FieldScene_PlaceAndPinSlots10And11(void)
 
     {
         s32 k5 = 29, k6 = 30;
-        Map_CopyCellAttributes(93, 30, 6, 5, k5, k6);
+        Map_CopyCellAttributeRect(93, 30, 6, 5, k5, k6);
     }
     SceneState_SwapSlotPairByRank(11, 10);
 
     {
         s32 col20 = ((Slot_02002410* (*)())Object_GetById)(10)->column >> 20;
         row = ((Slot_02002410* (*)())Object_GetById)(10)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col20, row);
     }
 
     {
         s32 col20 = ((Slot_02002410* (*)())Object_GetById)(11)->column >> 20;
         row = ((Slot_02002410* (*)())Object_GetById)(11)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col20, row);
     }
 }
 

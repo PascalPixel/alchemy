@@ -1,6 +1,7 @@
 /* Object angle and the scene tables. */
 #include "STAR.H"
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -75,7 +76,7 @@ s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
         s32 angle_delta;
         u16 angle;
         object->unknown_5a = object->unknown_5a & 0xFE;
-        angle_delta = CalculateAngleFromCoordinateDelta(
+        angle_delta = (u16)CalculateAngleFromCoordinateDelta(
             linked_object->coordinate_10 - object->coordinate_10,
             linked_object->coordinate_08 - object->coordinate_08);
         angle = object->angle;
@@ -326,7 +327,7 @@ void Scene_HandOverStars(void)
     Scene_OfferGuarantee();
     Scene_UnmaskGarcia();
     Scene_AlexTakesStars();
-    GameFlag_Set(FLAG_STARS_GIVEN_TO_ALEX);
+    Engine_GameFlagSet(FLAG_STARS_GIVEN_TO_ALEX);
     Engine_EventEnd();
     SoruStar_LineUpFollowers();
 }
@@ -735,7 +736,7 @@ void Scene_UnmaskGarcia(void)
 {
     u8 *obj;
     s32 other;
-    s32 tbl;
+    u16 *tbl;
     s32 left;
     s32 cnt;
     s32 mes_a;
@@ -832,11 +833,11 @@ void Scene_UnmaskGarcia(void)
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4);
     Engine_EventWait(20);
     cnt = 0;
-    tbl = Owner_GetState(1) + 216;
+    tbl = ((struct BattleUnit *)Owner_GetState(1))->inventory;
     left = 14;
     do {
-        u32 id = *(u16 *)(tbl)& 0x1ff;
-        tbl += 2;
+        u32 id = *tbl & 0x1ff;
+        tbl++;
         if (id == 220 || id == 221 || id == 223)
             cnt++;
         left--;

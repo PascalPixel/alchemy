@@ -293,11 +293,11 @@ s32 SceneState_ApplyLevelFromFlags(void)
 {
     s32 ret = 0;
 
-    if (GameFlag_IsSet(0x92b) != 0) {
+    if (Engine_GameFlagIsSet(0x92b) != 0) {
         ret = 3;
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         ret = 2;
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         ret = 1;
     }
 
@@ -307,141 +307,141 @@ s32 SceneState_ApplyLevelFromFlags(void)
 void SceneDialogue_ShowLine1ECETo1ED0(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92c)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
-    else if (GameFlag_IsSet(0x935)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    if (Engine_GameFlagIsSet(0x92c)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (Engine_GameFlagIsSet(0x935)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
     else Engine_EventSetMessage((s32)MsgFuneShipStartingListIfWe);
-    Event_ShowMessage(0x12, 0); Engine_EventEnd();
+    Engine_EventShowMessage(0x12, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor19TwoFlagLineA(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92d)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
-    else if (GameFlag_IsSet(0x936)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    if (Engine_GameFlagIsSet(0x92d)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (Engine_GameFlagIsSet(0x936)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
     else Engine_EventSetMessage((s32)MsgFuneShipStartingListIfWe);
-    Event_ShowMessage(0x13, 0); Engine_EventEnd();
+    Engine_EventShowMessage(0x13, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor20TwoFlagLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92e)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
-    else if (GameFlag_IsSet(0x937)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    if (Engine_GameFlagIsSet(0x92e)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (Engine_GameFlagIsSet(0x937)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
     else Engine_EventSetMessage((s32)MsgFuneShipStartingListIfWe);
-    Event_ShowMessage(0x14, 0); Engine_EventEnd();
+    Engine_EventShowMessage(0x14, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine1ED1Or1ED2(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92f)) Engine_EventSetMessage((s32)MsgFuneHowManyMonstersOutThere);
+    if (Engine_GameFlagIsSet(0x92f)) Engine_EventSetMessage((s32)MsgFuneHowManyMonstersOutThere);
     else Engine_EventSetMessage((s32)MsgFuneAnotherMonsterIsntFirstClass);
-    Event_ShowMessage(21, 0); Engine_EventEnd();
+    Engine_EventShowMessage(21, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor22TwoFlagLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x930)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
-    else if (GameFlag_IsSet(0x939)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    if (Engine_GameFlagIsSet(0x930)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (Engine_GameFlagIsSet(0x939)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
     else Engine_EventSetMessage((s32)MsgFuneShipStartingListIfWe);
-    Event_ShowMessage(22, 0); Engine_EventEnd();
+    Engine_EventShowMessage(22, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor23BranchedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x931)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
-    else if (GameFlag_IsSet(0x93a)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    if (Engine_GameFlagIsSet(0x931)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (Engine_GameFlagIsSet(0x93a)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
     else Engine_EventSetMessage((s32)MsgFuneShipStartingListIfWe);
-    Event_ShowMessage(23, 0); Engine_EventEnd();
+    Engine_EventShowMessage(23, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor24BranchedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x932)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
-    else if (GameFlag_IsSet(0x93b)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    if (Engine_GameFlagIsSet(0x932)) Engine_EventSetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (Engine_GameFlagIsSet(0x93b)) Engine_EventSetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
     else Engine_EventSetMessage((s32)MsgFuneShipStartingListIfWe);
-    Event_ShowMessage(24, 0); Engine_EventEnd();
+    Engine_EventShowMessage(24, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor25FlaggedLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x933)) Engine_EventSetMessage((s32)MsgFuneHowManyMonstersOutThere);
+    if (Engine_GameFlagIsSet(0x933)) Engine_EventSetMessage((s32)MsgFuneHowManyMonstersOutThere);
     else Engine_EventSetMessage((s32)MsgFuneAnotherMonsterIsntFirstClass);
-    Event_ShowMessage(25, 0); Engine_EventEnd();
+    Engine_EventShowMessage(25, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor18TwoFlagLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92c)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
-    else if (GameFlag_IsSet(0x935)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    if (Engine_GameFlagIsSet(0x92c)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (Engine_GameFlagIsSet(0x935)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
     else Engine_EventSetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
-    Event_ShowMessage(18, 0); Engine_EventEnd();
+    Engine_EventShowMessage(18, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor19TwoFlagLineB(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92d)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
-    else if (GameFlag_IsSet(0x936)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    if (Engine_GameFlagIsSet(0x92d)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (Engine_GameFlagIsSet(0x936)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
     else Engine_EventSetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
-    Event_ShowMessage(19, 0); Engine_EventEnd();
+    Engine_EventShowMessage(19, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92e)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
-    else if (GameFlag_IsSet(0x937)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    if (Engine_GameFlagIsSet(0x92e)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (Engine_GameFlagIsSet(0x937)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
     else Engine_EventSetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
-    Event_ShowMessage(20, 0); Engine_EventEnd();
+    Engine_EventShowMessage(20, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor21FlaggedLine(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x92f)) Engine_EventSetMessage((s32)MsgFuneHadIdeaThereWereMany);
+    if (Engine_GameFlagIsSet(0x92f)) Engine_EventSetMessage((s32)MsgFuneHadIdeaThereWereMany);
     else Engine_EventSetMessage((s32)MsgFuneWereSurroundedByMonstersStill);
-    Event_ShowMessage(21, 0); Engine_EventEnd();
+    Engine_EventShowMessage(21, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor22BranchedDialogue(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x930)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
-    else if (GameFlag_IsSet(0x939)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    if (Engine_GameFlagIsSet(0x930)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (Engine_GameFlagIsSet(0x939)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
     else Engine_EventSetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
-    Event_ShowMessage(22, 0); Engine_EventEnd();
+    Engine_EventShowMessage(22, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x931)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
-    else if (GameFlag_IsSet(0x93a)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    if (Engine_GameFlagIsSet(0x931)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (Engine_GameFlagIsSet(0x93a)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
     else Engine_EventSetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
-    Event_ShowMessage(23, 0); Engine_EventEnd();
+    Engine_EventShowMessage(23, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x932)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
-    else if (GameFlag_IsSet(0x93b)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    if (Engine_GameFlagIsSet(0x932)) Engine_EventSetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (Engine_GameFlagIsSet(0x93b)) Engine_EventSetMessage((s32)MsgFuneIfThoseMonstersComeBack);
     else Engine_EventSetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
-    Event_ShowMessage(24, 0); Engine_EventEnd();
+    Engine_EventShowMessage(24, 0); Engine_EventEnd();
 }
 
 void SceneDialogue_ShowLine1EDEOr1EDF(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x933)) Engine_EventSetMessage((s32)MsgFuneHadIdeaThereWereMany);
+    if (Engine_GameFlagIsSet(0x933)) Engine_EventSetMessage((s32)MsgFuneHadIdeaThereWereMany);
     else Engine_EventSetMessage((s32)MsgFuneWereSurroundedByMonstersStill);
-    Event_ShowMessage(25, 0); Engine_EventEnd();
+    Engine_EventShowMessage(25, 0); Engine_EventEnd();
 }
 
 void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
@@ -451,18 +451,18 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
 
     Engine_EventBegin();
     Engine_EventSetMessage(a1);
-    Event_OpenMessage(a0, 0);
+    Engine_EventOpenMessage(a0, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         FieldScene_RunStepThen10(a0);
         Engine_ActorSetAnimation(a0, 2);
         record = (s32)Object_GetByIdFar(0);
         if (record != 0) {
-            Actor_SetDestination(a0, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Engine_ActorSetDestination(a0, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove(a0);
-        Actor_SetPosition(a0, 0, 0);
-        GameFlag_Set(0x300);
-        GameFlag_Set(a2);
+        Engine_ActorSetPosition(a0, 0, 0);
+        Engine_GameFlagSet(0x300);
+        Engine_GameFlagSet(a2);
     } else {
         bump_step(1);
         FieldScene_RunStepThen10(a0);
@@ -476,28 +476,28 @@ void FieldScene_RunScene3b1SequenceC(void)
 
     leader = (struct FieldActor *)Object_GetByIdFar(0);
     if ((u16)(leader->facing - 0x2000) > 0xc000) {
-        if (GameFlag_IsSet(0x928) != 0 && GameFlag_IsSet(0x93e) == 0) {
+        if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
             Engine_SanctumOpen(17);
         } else {
             Engine_SanctumOpen(15);
         }
     } else {
         Engine_EventBegin();
-        if (GameFlag_IsSet(0x93e) != 0) {
+        if (Engine_GameFlagIsSet(0x93e) != 0) {
             Engine_EventSetMessage((s32)MsgFuneGoodShipHasArrivedSafely);
-        } else if (GameFlag_IsSet(0x8a0) != 0) {
+        } else if (Engine_GameFlagIsSet(0x8a0) != 0) {
             Engine_EventSetMessage((s32)MsgFuneHateArguing);
-        } else if (GameFlag_IsSet(0x928) != 0) {
+        } else if (Engine_GameFlagIsSet(0x928) != 0) {
             Engine_EventSetMessage((s32)MsgFuneShipsCrewReadyAnything);
-        } else if (GameFlag_IsSet(0x925) != 0) {
+        } else if (Engine_GameFlagIsSet(0x925) != 0) {
             Engine_EventSetMessage((s32)MsgFuneShipsCrewReadyForAnything);
         } else {
             Engine_EventSetMessage((s32)MsgFuneImSpreadingGoodwillWhereverTravel);
         }
-        if (GameFlag_IsSet(0x928) != 0 && GameFlag_IsSet(0x93e) == 0) {
-            Event_ShowMessage(17, 0);
+        if (Engine_GameFlagIsSet(0x928) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
+            Engine_EventShowMessage(17, 0);
         } else {
-            Event_ShowMessage(15, 0);
+            Engine_EventShowMessage(15, 0);
         }
         Engine_EventEnd();
     }
@@ -573,12 +573,12 @@ void FieldScene_RunScene3b1SequenceD(void)
  */
 void FieldScene_RunFlagGatedThreeActorSetup(void)
 {
-    if (GameFlag_IsSet(0x922) == 0)
+    if (Engine_GameFlagIsSet(0x922) == 0)
         return;
 
     Engine_EventBegin();
     Battle_ResetEffectCounterFar();
-    Camera_SetSpeed(0x19999, 0x3333);
+    Engine_CameraSetSpeed(0x19999, 0x3333);
     ConfigureSceneMotionFlags(0xe0 << 17, -1, 0x027e0000, 0x10000028u);
     Engine_EventSetMessage((s32)MsgFuneWonderCouldHaveHappened);
 
@@ -591,7 +591,7 @@ void FieldScene_RunFlagGatedThreeActorSetup(void)
     FieldScene_CallPairWith10(9, 0x5000);
     FieldScene_RunStepThen10(9);
 
-    Actor_FaceDirection(8, 0, 20);
+    Engine_ActorFaceDirection(8, 0, 20);
     FieldScene_RunStepThen10(8);
     FieldScene_CallPairWith10(9, 0x8000);
     FieldScene_RunStepThen10(9);
@@ -600,7 +600,7 @@ void FieldScene_RunFlagGatedThreeActorSetup(void)
     FieldScene_CallPairWith10(10, 0xb000);
     FieldScene_RunStepThen10(8);
 
-    GameFlag_Set(0x920);
+    Engine_GameFlagSet(0x920);
     Engine_EventEnd();
 }
 
@@ -1429,17 +1429,17 @@ void FuneHeya_ApplyFlaggedLayout(void)
 
 void SceneState_RunFlagGatedSetupCascade(void)
 {
-    if (GameFlag_IsSet(0x93e) != 0) {
-        Actor_SetPosition(8, 0, 0);
-        Actor_SetPosition(9, 0, 0);
-        Actor_SetPosition(10, 0, 0);
-        Actor_SetPosition(11, 0, 0);
-        Actor_SetPosition(12, 0, 0);
+    if (Engine_GameFlagIsSet(0x93e) != 0) {
+        Engine_ActorSetPosition(8, 0, 0);
+        Engine_ActorSetPosition(9, 0, 0);
+        Engine_ActorSetPosition(10, 0, 0);
+        Engine_ActorSetPosition(11, 0, 0);
+        Engine_ActorSetPosition(12, 0, 0);
         FieldScene_RunSceneStep(14, 0, 0);
         return;
     }
 
-    if (GameFlag_IsSet(0x8a0) != 0) {
+    if (Engine_GameFlagIsSet(0x8a0) != 0) {
         OverlayObject_SetPositionAndHeading(8, 0x98, 0x1bc, 0x3000);
         Engine_ActorEnableActionCallback(8, FuneHeya_ActionScriptF);
         OverlayObject_SetPositionAndHeading(10, 0xb8, 0x1e0, 0xb000);
@@ -1453,22 +1453,22 @@ void SceneState_RunFlagGatedSetupCascade(void)
     }
 
     {
-        s32 t = GameFlag_IsSet(0x928);
+        s32 t = Engine_GameFlagIsSet(0x928);
         if (t != 0) {
             SceneState_ApplyActor8FourFlags(t);
             return;
         }
     }
 
-    if (GameFlag_IsSet(0x925) != 0) {
+    if (Engine_GameFlagIsSet(0x925) != 0) {
         FieldScene_RunSceneStep(18, 0, 0);
         return;
     }
 
-    if (GameFlag_IsSet(0x911) != 0 &&
-        GameFlag_IsSet(0x922) != 0) {
+    if (Engine_GameFlagIsSet(0x911) != 0 &&
+        Engine_GameFlagIsSet(0x922) != 0) {
         FieldScene_RunSceneStep(14, 0, 0);
-        Actor_SetPosition(12, 0, 0);
+        Engine_ActorSetPosition(12, 0, 0);
     }
 }
 
@@ -1810,16 +1810,16 @@ void FieldScene_RunFlagBranchedSetupCascade(void)
     Engine_EventBegin();
     Engine_ActorSetAnimation(9, 5);
     FieldScene_RunSceneStep(24, 1, 0);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
     FieldScene_RunSceneStep(17, 0, 0);
     FieldScene_InstallFlaggedActors10To17(0);
     FieldScene_RunSceneStep(8, 1, 20);
-    Camera_SetSpeed(0x6666, 0xccc);
-    Camera_MoveTo(0x1b80000, -1, 0xb00000, 1);
+    Engine_CameraSetSpeed(0x6666, 0xccc);
+    Engine_CameraMoveTo(0x1b80000, -1, 0xb00000, 1);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(9, 7);
     Engine_EventWait(30);
-    Audio_PlayCue(0xbc);
+    Engine_AudioPlayCue(0xbc);
     Engine_EventWait(30);
     FieldScene_InstallFlaggedActors10To17(16);
     Engine_EventWait(0x50);
@@ -1827,26 +1827,26 @@ void FieldScene_RunFlagBranchedSetupCascade(void)
     Engine_EventWait(0x3c);
     Engine_ActorSetAnimation(9, 7);
     Engine_EventWait(30);
-    Audio_PlayCue(0xbc);
+    Engine_AudioPlayCue(0xbc);
     Engine_EventWait(30);
     FieldScene_InstallFlaggedActors10To17(16);
     Engine_EventWait(0x50);
     FieldScene_InstallFlaggedActors10To17(0);
     Engine_EventWait(0x5a);
-    Audio_PlayCue(0xbc);
+    Engine_AudioPlayCue(0xbc);
     Engine_EventWait(30);
 
     *(u32 *)(Data_03001ebc + (224 << 1)) = (224 << 1) + 67;
 
     FieldScene_RunSceneStep(9, 0, 0);
 
-    if (GameFlag_IsSet(0x92b) != 0) {
+    if (Engine_GameFlagIsSet(0x92b) != 0) {
         Engine_EventRequestExit(20);
-    } else if (GameFlag_IsSet(0x92a) != 0) {
+    } else if (Engine_GameFlagIsSet(0x92a) != 0) {
         Engine_EventRequestExit(18);
-    } else if (GameFlag_IsSet(0x929) != 0) {
+    } else if (Engine_GameFlagIsSet(0x929) != 0) {
         Engine_EventRequestExit(17);
-    } else if (GameFlag_IsSet(0x928) != 0) {
+    } else if (Engine_GameFlagIsSet(0x928) != 0) {
         Engine_EventRequestExit(16);
     } else {
         Engine_EventRequestExit(13);
@@ -1901,9 +1901,9 @@ void FieldScene_RunScene3b1_02004198(void)
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
     Engine_ActorEnableActionCallback(38, base5_200e8e4);
-    Actor_SetChildValue(36, 3);
-    Actor_SetChildValue(37, 3);
-    Actor_SetChildValue(38, 3);
+    Engine_ActorSetChildValue(36, 3);
+    Engine_ActorSetChildValue(37, 3);
+    Engine_ActorSetChildValue(38, 3);
     FieldScene_RunPositionTransferPresentation();
     Engine_EventEnd();
 }
@@ -1915,7 +1915,7 @@ void FieldScene_RunActors24And25Setup(void)
     FieldScene_RunSceneStep(25, 0, 0);
     FieldScene_RunSceneStep(19, 11, 12);
     FieldScene_RunFormationAndEffectPresentation();
-    GameFlag_Set(0x928);
+    Engine_GameFlagSet(0x928);
     Engine_EventEnd();
 }
 
@@ -2066,40 +2066,40 @@ struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
 
 void FieldScene_InstallFlaggedActors10To17(u8 *src)
 {
-    if (GameFlag_IsSet(0x928) != 0) {
+    if (Engine_GameFlagIsSet(0x928) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(0, 0);
-        Actor_SetPosition(obj, 0xcd << 17, 0xac << 16);
+        Engine_ActorSetPosition(obj, 0xcd << 17, 0xac << 16);
         FieldScene_RunSceneStep(7, obj, src);
-        Actor_SetPosition(10, 0, 0);
+        Engine_ActorSetPosition(10, 0, 0);
     } else {
         FieldScene_RunSceneStep(5, 10, src);
     }
 
-    if (GameFlag_IsSet(0x929) != 0) {
+    if (Engine_GameFlagIsSet(0x929) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(1, 0);
-        Actor_SetPosition(obj, 0xeb << 17, 0xac << 16);
+        Engine_ActorSetPosition(obj, 0xeb << 17, 0xac << 16);
         *(u32 *)(Object_GetByIdFar(obj) + 24) = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
-        Actor_SetPosition(11, 0, 0);
+        Engine_ActorSetPosition(11, 0, 0);
     } else {
         FieldScene_RunSceneStep(6, 11, src);
     }
 
-    if (GameFlag_IsSet(0x92a) != 0) {
+    if (Engine_GameFlagIsSet(0x92a) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(2, 0);
-        Actor_SetPosition(obj, 0xcd << 17, 0xcc << 16);
+        Engine_ActorSetPosition(obj, 0xcd << 17, 0xcc << 16);
         FieldScene_RunSceneStep(7, obj, src);
-        Actor_SetPosition(12, 0, 0);
+        Engine_ActorSetPosition(12, 0, 0);
     } else {
         FieldScene_RunSceneStep(5, 12, src);
     }
 
-    if (GameFlag_IsSet(0x92b) != 0) {
+    if (Engine_GameFlagIsSet(0x92b) != 0) {
         u8 *obj = (u8 *)FuneHeya_FindFirstSetFlag(3, 0);
-        Actor_SetPosition(obj, 0xeb << 17, 0xcc << 16);
+        Engine_ActorSetPosition(obj, 0xeb << 17, 0xcc << 16);
         *(u32 *)(Object_GetByIdFar(obj) + 24) = 0xffff0000;
         FieldScene_RunSceneStep(7, obj, src);
-        Actor_SetPosition(13, 0, 0);
+        Engine_ActorSetPosition(13, 0, 0);
     } else {
         FieldScene_RunSceneStep(6, 13, src);
     }
@@ -2169,13 +2169,13 @@ void FuneHeya_PoseSceneActor(s32 id)
  */
 void FieldScene_RunStepThen10(s32 a)
 {
-    Event_ShowMessage(a, 0);
+    Engine_EventShowMessage(a, 0);
     Engine_EventWait(10);
 }
 
 void FieldScene_CallPairWith10(s32 a, u16 b)
 {
-    Actor_FaceDirection(a, b, 10);
+    Engine_ActorFaceDirection(a, b, 10);
 }
 
 void OverlayObject_SetPositionAndHeading(void *a, s32 b, s32 c, s32 d)
@@ -2188,7 +2188,7 @@ void ConfigureSceneMotionFlags(s32 x, s32 y, s32 z, u32 flags)
 {
     u32 selected;
 
-    Camera_MoveTo(x, y, z, ~flags & 1);
+    Engine_CameraMoveTo(x, y, z, ~flags & 1);
     selected = flags & 0x1111;
     if ((flags & 0x10000000) != 0)
         Engine_CameraWaitForMove();
@@ -2536,8 +2536,8 @@ void SceneActor_RunFirstMatchingSlot(s32 a0, s32 a1)
     unsigned int i = 0;
 
     do {
-        if (GameFlag_IsSet(a1)!= 0) {
-            Actor_SetPosition(a0, 0, 0);
+        if (Engine_GameFlagIsSet(a1)!= 0) {
+            Engine_ActorSetPosition(a0, 0, 0);
             break;
         }
         i++;
@@ -2758,9 +2758,9 @@ void FieldScene_RunActors24And25SetupWithValue929(void)
     FieldScene_RunSceneStep(25, 0, 0);
     FuneHeya_PlaceFoundActors(0);
     FieldScene_RunSceneStep(19, handle, 12);
-    Actor_SetPosition(11, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
     FieldScene_RunFormationAndEffectPresentation();
-    GameFlag_Set(0x929);
+    Engine_GameFlagSet(0x929);
     Engine_EventEnd();
 }
 
@@ -2789,8 +2789,8 @@ void FieldScene_RunScene3b1_020056dc(void)
     base5_200e8e4 = (s32)((u8 *)FuneHeya_EntryActionScript);
     Engine_ActorEnableActionCallback(36, base5_200e8e4);
     Engine_ActorEnableActionCallback(37, base5_200e8e4);
-    Actor_SetChildValue(36, 3);
-    Actor_SetChildValue(37, 3);
+    Engine_ActorSetChildValue(36, 3);
+    Engine_ActorSetChildValue(37, 3);
     FieldScene_RunPositionTransferPresentation();
     Engine_EventEnd();
 }
@@ -2805,10 +2805,10 @@ void FieldScene_RunActors24And25SetupWithValue92a(void)
     FieldScene_RunSceneStep(25, 0, 0);
     FuneHeya_PlaceFoundActors(0);
     FieldScene_RunSceneStep(19, handle, other);
-    Actor_SetPosition(11, 0, 0);
-    Actor_SetPosition(12, 0, 0);
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_ActorSetPosition(12, 0, 0);
     FieldScene_RunFormationAndEffectPresentation();
-    GameFlag_Set(0x92a);
+    Engine_GameFlagSet(0x92a);
     Engine_EventEnd();
 }
 
@@ -3209,8 +3209,8 @@ void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *p = a + i;
-        if (GameFlag_IsSet(p)!= 0) {
-            GameFlag_Clear(p);
+        if (Engine_GameFlagIsSet(p)!= 0) {
+            Engine_GameFlagClear(p);
             break;
         }
         cnt_a++;
@@ -3218,13 +3218,13 @@ void SceneState_ScanTwoArraysAndCrossNotify(u8 *a, u8 *b)
 
     for (i = 0; i <= 8; i++) {
         u8 *p = b + i;
-        if (GameFlag_IsSet(p)!= 0) {
-            GameFlag_Clear(p);
+        if (Engine_GameFlagIsSet(p)!= 0) {
+            Engine_GameFlagClear(p);
             break;
         }
         cnt_b++;
     }
 
-    GameFlag_Set(b + cnt_a);
-    GameFlag_Set(a + cnt_b);
+    Engine_GameFlagSet(b + cnt_a);
+    Engine_GameFlagSet(a + cnt_b);
 }

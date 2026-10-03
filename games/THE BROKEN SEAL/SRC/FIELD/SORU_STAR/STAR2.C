@@ -138,17 +138,17 @@ void Scene_BagMarsStar(void)
 void Sukureta_Talk(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
+    if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
         Engine_EventSetMessage((s32)MsgSoruSukuretaIAmResponsible);
-        Event_ShowMessage(ACTOR_SUKURETA, 0);
+        Engine_EventShowMessage(ACTOR_SUKURETA, 0);
     } else {
-        if (GameFlag_IsSet(FLAG_FIRST_STAR_BAGGED) == 0)
+        if (Engine_GameFlagIsSet(FLAG_FIRST_STAR_BAGGED) == 0)
             Engine_EventSetMessage((s32)MsgSoruSukuretaBringTheStarsHere);
         else
             Engine_EventSetMessage((s32)MsgSoruSukuretaFetchTheOthers);
         Engine_ActorFaceEachOther(ACTOR_SUKURETA, ACTOR_PARTY_LEADER, 0);
         Engine_EventWait(10);
-        Event_ShowMessage(ACTOR_SUKURETA, 0);
+        Engine_EventShowMessage(ACTOR_SUKURETA, 0);
     }
     Engine_EventEnd();
 }
@@ -157,17 +157,17 @@ void Sukureta_Talk(void)
 void Jasmine_Talk(void)
 {
     Engine_EventBegin();
-    if (GameFlag_IsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
+    if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
         Engine_EventSetMessage((s32)MsgSoruJasmineMyBrotherIsAlive);
-        Event_ShowMessage(ACTOR_JASMINE, 0);
+        Engine_EventShowMessage(ACTOR_JASMINE, 0);
     } else {
-        if (GameFlag_IsSet(FLAG_FIRST_STAR_BAGGED) == 0)
+        if (Engine_GameFlagIsSet(FLAG_FIRST_STAR_BAGGED) == 0)
             Engine_EventSetMessage((s32)MsgSoruJasmineBeCareful);
         else
             Engine_EventSetMessage((s32)MsgSoruJasmineSukuretaIsGiddy);
         Engine_ActorFaceEachOther(ACTOR_JASMINE, ACTOR_PARTY_LEADER, 0);
         Engine_EventWait(10);
-        Event_ShowMessage(ACTOR_JASMINE, 0);
+        Engine_EventShowMessage(ACTOR_JASMINE, 0);
     }
     Engine_EventEnd();
 }
@@ -177,7 +177,7 @@ void Saturos_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgSoruSaturosBringTheFinalStar);
-    Event_ShowMessage(ACTOR_SATUROS, 0);
+    Engine_EventShowMessage(ACTOR_SATUROS, 0);
     Engine_EventEnd();
 }
 
@@ -186,7 +186,7 @@ void Menardi_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgSoruMenardiBringTheFinalGem);
-    Event_ShowMessage(ACTOR_MENARDI, 0);
+    Engine_EventShowMessage(ACTOR_MENARDI, 0);
     Engine_EventEnd();
 }
 
@@ -195,7 +195,7 @@ void Garcia_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgSoruGarciaSilence);
-    Event_ShowMessage(ACTOR_GARCIA, 0);
+    Engine_EventShowMessage(ACTOR_GARCIA, 0);
     Engine_EventEnd();
 }
 
@@ -204,7 +204,7 @@ void Alex_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgSoruAlexOnlyOneLeft);
-    Event_ShowMessage(ACTOR_ALEX, 0);
+    Engine_EventShowMessage(ACTOR_ALEX, 0);
     Engine_EventEnd();
 }
 
@@ -964,7 +964,7 @@ s32 SoruStar_ApplyEntryState(void)
 /* Shows the next line of dialogue, then holds the scene for a moment. */
 void Event_SayThenWait(s32 speaker, s32 frames)
 {
-    Event_ShowMessage(speaker, 0);
+    Engine_EventShowMessage(speaker, 0);
     Engine_EventWait(frames);
 }
 
@@ -1037,7 +1037,7 @@ void Scene_GiveMythrilBags(void)
     s32 second;
     s32 cnt;
 
-    Audio_PlayCue(0x53);
+    Engine_AudioPlayCue(0x53);
     Engine_ItemShowFound(ITEM_MYTHRIL_BAG, 3);
     Engine_MessageShowCentered((s32)MsgSoruGotFourMythrilBags, 1);
     do {

@@ -119,10 +119,10 @@ u8 *SceneData_GetActorTable(void)
  * 0x834. */
 u8 *SceneData_SelectEffectTable(void)
 {
-    if (GameFlag_IsSet(0x87A) != 0) {
+    if (Engine_GameFlagIsSet(0x87A) != 0) {
         return Placement_Effects87a;
     }
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return Placement_Effects834;
     }
     return Placement_Effects;
@@ -459,11 +459,11 @@ void Scene_LeaveForMtAleph(void)
 
 void FieldScene_SetupWithDescriptorA0ACWhenFlag242Clear(void)
 {
-    if (GameFlag_IsSet(0x242) == 0) {
-        Audio_PlayCue(0x9E);
-        Map_AnimateCells(Sukureta_GateCells, 0x2B, 8);
+    if (Engine_GameFlagIsSet(0x242) == 0) {
+        Engine_AudioPlayCue(0x9E);
+        Engine_MapAnimateCells(Sukureta_GateCells, 0x2B, 8);
     }
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 0xE5, 0xD9);
+    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0xE5, 0xD9);
     Engine_EventRequestExit(3);
 }
 
@@ -944,9 +944,9 @@ void SceneState_SetWorkAndFlag87d(void)
     *(u32 *)(work + 448) = 512;
     *(u32 *)(work + 456) = 64;
 
-    GameFlag_Set(0x87D);
+    Engine_GameFlagSet(0x87D);
     BattleFx_SetWeightedResult(12, 0);
-    GameFlag_Set(0x900);   /* 144 << 4 */
+    Engine_GameFlagSet(0x900);   /* 144 << 4 */
     Engine_EventEnd();
 }
 
@@ -960,9 +960,9 @@ void SceneState_SetWorkAndFlag87e(void)
     *(u32 *)(work + 448) = 512;
     *(u32 *)(work + 456) = 64;
 
-    GameFlag_Set(0x87E);
+    Engine_GameFlagSet(0x87E);
     BattleFx_SetWeightedResult(12, 1);
-    GameFlag_Set(0x900);   /* 144 << 4 */
+    Engine_GameFlagSet(0x900);   /* 144 << 4 */
     Engine_EventEnd();
 }
 
@@ -970,6 +970,6 @@ void SceneDialogue_RunActorSixteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaMemoriesOfThisCottage);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }

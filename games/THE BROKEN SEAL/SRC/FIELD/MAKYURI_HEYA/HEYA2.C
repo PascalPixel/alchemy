@@ -13,7 +13,7 @@ void MakyuriHeya_ExitWhenChannelsOpen(void);
 
 void SceneActor_RunActorZeroHandledMotion(s32 a)
 {
-    u8 *v = Actor_Get(0);
+    u8 *v = Object_GetById(0);
     Engine_EventBegin();
     Audio_PlayCue(0xe4);
     FIELD_AT_OFFSET(v, s32, 0x6c) = (s32)MakyuriHeya_TrailSparks;
@@ -21,8 +21,8 @@ void SceneActor_RunActorZeroHandledMotion(s32 a)
     Object_SetModeById(0, 2);
     ObjectMotion_OffsetPositionAndResetMotion(0, 0, -6);
     ObjectMotion_CommitCurrentPositionAndActivate(0);
-    Actor_SetChildValue(0, 15);
-    Engine_ActorSetSpriteFlags(Actor_Get(0), 0);
+    Engine_ActorSetChildValue(0, 15);
+    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
     FIELD_AT_OFFSET(v, s32, 0x6c) = 0;
     Battle_WaitMode0(30);
     Engine_EventCloseScreen();

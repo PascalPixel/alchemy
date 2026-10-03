@@ -108,7 +108,7 @@ void SceneState_ConfigureRegion1_0_21x14(void)
     s32 w = 21;
     s32 h = 14;
 
-    Map_CopyCellAttributes(1, 0, 1, 1, w, h);
+    Engine_MapCopyCellAttributes(1, 0, 1, 1, w, h);
 }
 
 void SceneState_ConfigureRegion0_0_21x14(void)
@@ -116,7 +116,7 @@ void SceneState_ConfigureRegion0_0_21x14(void)
     s32 w = 21;
     s32 h = 14;
 
-    Map_CopyCellAttributes(0, 0, 1, 1, w, h);
+    Engine_MapCopyCellAttributes(0, 0, 1, 1, w, h);
 }
 
 void SceneState_ApplyTwoRects(void)
@@ -125,13 +125,13 @@ void SceneState_ApplyTwoRects(void)
         s32 a5 = 1;
         s32 a6 = 3;
 
-        Map_CopyCellsTo(111, 37, 97, 21, a5, a6);
+        Engine_MapCopyCellsTo(111, 37, 97, 21, a5, a6);
     }
     {
         s32 a5 = 32;
         s32 a6 = 24;
 
-        Map_CopyCellAttributes(46, 38, 3, 2, a5, a6);
+        Engine_MapCopyCellAttributes(46, 38, 3, 2, a5, a6);
     }
 }
 
@@ -141,21 +141,21 @@ void FieldScene_RunTwoLayoutSteps(void)
         s32 fifth = 1;
         s32 sixth = 3;
 
-        Map_CopyCellsTo(95, 21, 97, 21, fifth, sixth);
+        Engine_MapCopyCellsTo(95, 21, 97, 21, fifth, sixth);
     }
     {
         s32 fifth = 32;
         s32 sixth = 25;
 
-        Map_CopyCellAttributes(46, 38, 3, 1, fifth, sixth);
+        Engine_MapCopyCellAttributes(46, 38, 3, 1, fifth, sixth);
     }
 }
 
 void FieldScene_RunActor9Flag882Scene(void)
 {
     Engine_EventBegin();
-    Actor_SetPosition(9, 0, 0);
-    GameFlag_Set(0x882);
+    Engine_ActorSetPosition(9, 0, 0);
+    Engine_GameFlagSet(0x882);
     Engine_EventEnd();
 }
 
@@ -178,9 +178,9 @@ void FieldScene_RunActorFifteenScene(void)
     void Audio_PlayCue(s32);
 
     Engine_EventBegin();
-    Actor_SetChildValue(0xF, 0);
+    Engine_ActorSetChildValue(0xF, 0);
     Engine_EventWait(0x28);
-    Audio_PlayCue(0xD2);
+    Engine_AudioPlayCue(0xD2);
     Engine_ActorSetAnimationAndWait(0xF, 6);
     Engine_EventEnd();
 }
@@ -191,9 +191,9 @@ void FieldScene_RunActorSixteenScene(void)
     void Audio_PlayCue(s32);
 
     Engine_EventBegin();
-    Actor_SetChildValue(0x10, 0);
+    Engine_ActorSetChildValue(0x10, 0);
     Engine_EventWait(0x28);
-    Audio_PlayCue(0xD2);
+    Engine_AudioPlayCue(0xD2);
     Engine_ActorSetAnimationAndWait(0x10, 6);
     Engine_EventEnd();
 }
@@ -203,9 +203,9 @@ void FieldScene_RunActor17Steps28AndD2(void)
     void Engine_EventEnd(void);
 
     Engine_EventBegin();
-    Actor_SetChildValue(0x11, 0);
+    Engine_ActorSetChildValue(0x11, 0);
     Engine_EventWait(0x28);
-    Audio_PlayCue(0xD2);
+    Engine_AudioPlayCue(0xD2);
     Engine_ActorSetAnimationAndWait(0x11, 6);
     Engine_EventEnd();
 }
@@ -276,8 +276,8 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
     s32 width = 8;
     s32 height = 13;
 
-    Map_CopyCellAttributes(31, 0, 1, 1, width, height);
-    GameFlag_Set(0x305);
+    Engine_MapCopyCellAttributes(31, 0, 1, 1, width, height);
+    Engine_GameFlagSet(0x305);
 }
 
 void SceneState_SetGlobalByte17(void)
@@ -309,11 +309,11 @@ s32 Scene_Initialize(void)
  * one tile ahead of the leader. */
 void RunGuardedSceneSetup(void)
 {
-    if (GameFlag_IsSet(0x305) != 0) {
+    if (Engine_GameFlagIsSet(0x305) != 0) {
         s32 width = 8;
         s32 height = 13;
 
-        Map_CopyCellAttributes(31, 0, 1, 1, width, height);
+        Engine_MapCopyCellAttributes(31, 0, 1, 1, width, height);
         Engine_ActorSetAnimation(8, 0);
     }
 }
@@ -327,10 +327,10 @@ void SceneState_SetRuntimeWord448To516(void)
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorSetAnimation(10, 2);
 
-    if (GameFlag_IsSet(0x882) != 0) {
-        Actor_SetPosition(9, 0, 0);
+    if (Engine_GameFlagIsSet(0x882) != 0) {
+        Engine_ActorSetPosition(9, 0, 0);
     } else {
-        Engine_ActorSetSpriteFlags(Actor_Get(9), 0);
+        Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
     }
 }
 
@@ -448,7 +448,7 @@ void StagedActor_PushActorAhead(void)
     s32 tz;
     s32 pos[3];
 
-    player = Actor_Get(ACTOR_PARTY_LEADER);
+    player = Object_GetById(ACTOR_PARTY_LEADER);
     heading = *(u16 *)(player + 6) >> 12;
 
     tx = (*(s16 *)(player + 10)
@@ -476,7 +476,7 @@ void StagedActor_PushActorAhead(void)
 
     Object_SetMode(player, 8);
     Engine_TaskWait(15);
-    Audio_PlayCue(185);
+    Engine_AudioPlayCue(185);
 
     *(s32 *)(target + 48) = 0x3333;
     *(s32 *)(target + 52) = 0x3333;

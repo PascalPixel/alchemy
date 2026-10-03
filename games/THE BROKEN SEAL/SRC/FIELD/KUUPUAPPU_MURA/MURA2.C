@@ -95,17 +95,17 @@ extern const s32 KuupuappuMura_DriftScriptB[];
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
 
-    struct SceneActor_0200113c *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct SceneActor_0200113c *actor = Object_GetById(ACTOR_PARTY_LEADER);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
-    Audio_PlayCue(158);
-    Map_AnimateCells(KuupuappuMura_Scene12Cells, 35, 9);
+    Engine_AudioPlayCue(158);
+    Engine_MapAnimateCells(KuupuappuMura_Scene12Cells, 35, 9);
     {
         s32 cell = 4;
         s32 row = 10;
 
-        Map_CopyCellAttributes(33, 20, 1, 3, cell, row);
+        Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
     }
     actor->state_23 &= ~1;
     flags = presentation->flags;
@@ -121,10 +121,10 @@ void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int f
     void Engine_TaskWait(int);
     void Actor_SetPosition(int, int, int);
 
-    u8 *record = Actor_Get(actor); int frames;
-    Actor_SetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
+    u8 *record = Object_GetById(actor); int frames;
+    Engine_ActorSetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
     *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Engine_ActorSetSpriteFlags(record, 0);
-    Actor_MoveToAndWait(actor, x, z); Actor_SetPosition(actor, x << 16, z << 16);
+    Engine_ActorMoveToAndWait(actor, x, z); Engine_ActorSetPosition(actor, x << 16, z << 16);
     for (frames = 60; frames != 0; --frames) { Engine_TaskWait(1); if (*(s16 *)(record + 42) == 0) break; }
     Engine_ActorSetSpriteFlags(record, 1); *(s32 *)(record + 72) = 0x10000;
 }
@@ -351,7 +351,7 @@ s32 SceneActor_CheckFacingAndRange(struct SceneActor *actor, struct SceneActor *
  */
 void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {
-    Event_ShowMessage(actor, 0);
+    Engine_EventShowMessage(actor, 0);
     Engine_EventWait(delay);
 }
 
@@ -422,7 +422,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
         x += base_x;
         base_y = leader->motion.y;
         z += base_z;
-        leaf = (union DriftingObject *)Object_Create(0xac, x, base_y, z);
+        leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, base_y, z);
     }
     if (leaf == NULL)
         return;

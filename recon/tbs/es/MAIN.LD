@@ -80,6 +80,7 @@
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.000065bc)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_TEST.o"(.text)
+    "*/recon/tbs/es/rom.o"(.rom.000067fc)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/CPU_SET.o"(.text .rodata .data .padding)
     "*/recon/tbs/es/rom.o"(.rom.000068ce)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SOUND_VSYNC_ON.o"(.text .rodata .data .padding)

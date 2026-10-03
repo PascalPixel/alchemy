@@ -1,3 +1,11 @@
+/* 2026-10-03: fresh complete candidate is 216/228 bytes including its pool;
+ * score 1660 (26 register-only, 8 operand, 9 reordered, 1 inserted, 7 deleted).
+ * Register lifetimes, initial snapshot store order and packet-table reloads
+ * differ. The unused high snapshot word remains unexplained.
+ * One typed SerialPacket trial used its payload/checksum fields and a separate
+ * checksum cursor: 228/228 bytes, score 2750 (22 register-only, 10 operand,
+ * 10 reordered, 9 inserted, 9 deleted). Retaining the packet pointer saves
+ * another register; the better 216-byte source is retained. No adoption. */
 /* 2026-09-29: eight minutes of permutation found 1640; the cleaned natural
  * form kept here scores 1660 (26 register-only, 8 operand, 9 reordered, 1
  * inserted, 7 deleted), from 2385 (alchemy permute --function
@@ -8,9 +16,8 @@
 /* Not-yet-C, complete 228-byte receive collector and pool.
  * Dma_Set recovers the stmia block; mask update follows that transfer.
  * Walking the checksum pointer and reloading the packet from pp for its
- * inversion avoids retaining another saved register. An s32 inline IME
- * setter selects movs 1 rather than a short-range halfword pool.
- * Candidate 224 bytes, equal topology, 59 aligned halfword edits. Remaining
+ * inversion avoids retaining another saved register.
+ * Prior candidate: 224 bytes, equal topology, 59 aligned halfword edits. Remaining
  * table-base reuse, register lifetimes and first pool differ. Three structural
  * hypotheses stopped, no adoption or byte credit.
  * 2026-09-27: reusing PREPARE_SEND_PACKET.C's volatile runtime pointer for
@@ -24,6 +31,8 @@
 
 static __inline__ void Serial_SetIme(s32 value)
 {
+    /* FAKEMATCH: the s32 inline setter selects movs 1 for IME enable
+       rather than a short-range halfword pool. */
     REG_IME = value;
 }
 

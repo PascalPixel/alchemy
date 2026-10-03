@@ -1,4 +1,11 @@
+/* 2026-10-03: complete candidate is 346/348 bytes including its pools;
+ * score 440 (8 operand, 3 reordered, 1 deleted). DMA.H supplies the real
+ * transfer macro: the prior accidental external Dma_Set call scored 1960.
+ * Seven physical names remain unresolved (eight operand differences), three
+ * instruction placements differ, and the final two-byte padding is absent.
+ * Correct DMA semantics retained; no production adoption. */
 #include "SERIAL_RUNTIME.H"
+#include "DMA.H"
 
 void BattleLink_ResetTransferState(void);
 

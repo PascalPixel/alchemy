@@ -38,14 +38,18 @@ struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id) {
 void ResetMotionRecordGroup(void *owner)
 {
     s32 remaining;
+    u8 *script;
     struct AnimationEntry **items;
 
     if (owner != NULL) {
+        /* FAKEMATCH: the inherited cached null precedes the entries address;
+           a direct NULL store moves its load after the loop setup. */
+        script = NULL;
         items = ((struct AnimationObject *)owner)->entries;
         for (remaining = 3; remaining >= 0; remaining--) {
             struct AnimationEntry *item = *items++;
             if (item != NULL) {
-                item->script = NULL;
+                item->script = script;
             }
         }
     }
@@ -88,8 +92,10 @@ s32 ActivateBattleObjectSlot(s32 object_id)
   return 0;
 }
 
-void BattleMotion_DestroyAllSlotObjects(void)
+void *BattleMotion_DestroyAllSlotObjects(void)
 {
+    /* FAKEMATCH: retain the existing ignored-result boundary. No caller
+       consumes a pointer; void changes the return-address pop from r1 to r0. */
     s32 no;
     s32 i;
     struct BattleObjectSlot *slot;

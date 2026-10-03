@@ -125,7 +125,7 @@ void MusicCommand_SetPitch(s16 pitch)
        2026-10-02: replacing this temporary and one-pass block with a direct
        call moves pitch sign extension before the player address load. */
   int player_address;
-  player_address = (u32)gMusicPlayerBgm;
+  player_address = (u32)&gMusicPlayerBgm;
   /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
   do
   {
@@ -142,7 +142,7 @@ void Audio_SetWorkPairB(u16 primary, u16 secondary)
 
 void MusicCommand_SetVolume(s16 volume)
 {
-    MusicPlayer_SetVolume((u32)gMusicPlayerBgm, 0xFF, (u16)volume);
+    MusicPlayer_SetVolume(&gMusicPlayerBgm, 0xFF, (u16)volume);
     gMusicVolumeTarget = volume;
     gMusicVolume = volume;
 }

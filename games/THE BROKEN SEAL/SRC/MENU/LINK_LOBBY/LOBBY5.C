@@ -1,11 +1,12 @@
 #include "TYPES.H"
-#include "SAVE_STATE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "LOBBY.H"
 #include "CALL.H"
 #include "SCENE_IDS.H"
 #include "SERIAL_RUNTIME.H"
+
+s32 SaveState_ProcessSelectedSlot(void);
 
 extern u8 MsgLobbyChooseParameters[];
 extern u8 MsgLobbyNoParameterAsk[];

@@ -13,6 +13,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "MOTION_OBJECT.H"
+#include "ANIMSPR.H"
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
@@ -90,6 +91,10 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
     struct MotionObject *object;
     struct AnimationObject *info;
     s32 scale;
+    /* FAKEMATCH: retain the inherited unused vector. Its ordinary removal in
+       8f4c57e6 deletes both SP adjustments and changes the camera-load order
+       in all six editions; no used vector lifetime has been established. */
+    s32 unused[3];
 
     camera = gCameraWork;
     object = GetBattleObjectSlotFar(unit)->object;
@@ -113,12 +118,16 @@ void ObjectGroup_ProbeKeysWhenField24High(void)
 void BattleFx_DispatchByIdRange(s32 *arg0)
 {
     s32 kind;
+    s32 value;
 
-    Runtime_AllocateBlock(41, 0x60e);
+    value = 0x60e;
+    Runtime_AllocateBlock(41, value);
     Runtime_AllocateHeapBlock(39, 0x782c);
     Runtime_AllocateHeapBlock(40, 0x4000);
-    kind = *arg0;
-    if ((u32)(kind - 100) <= 35) {
+    value = *arg0;
+    kind = value;
+    value = kind - 100;
+    if ((u32)value <= 35) {
         BattleFx_RunCastingImpact(arg0);
     } else if (kind > 199) {
         BattlePres_RunRingAndSparkScene((struct BattleEffectArgument *)arg0);

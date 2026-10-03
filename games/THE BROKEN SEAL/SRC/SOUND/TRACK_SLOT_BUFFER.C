@@ -2,54 +2,85 @@
 
 void AudioTrack_ResetSlotBuckets(void)
 {
-    struct AudioSlotNode *node;
-    struct AudioSlotNode **bucket;
+    /* FAKEMATCH: retain the original signed word stores at the node back-link
+       and slot lanes. Direct node fields change register allocation at the
+       same 60-byte TBS extent and shorten the TLA body from 60 to 56. */
     s32 index;
+    s32 limit;
+    s32 zero;
+    u8 *record;
+    s32 *slot;
 
-    node = Data_02004c00->nodes;
+    limit = 0x3FF;
     index = 0;
+    zero = 0;
+    record = (u8 *)&Data_02004c00->nodes[0].back;
     do {
-        node->slot = index;
+        *(s32 *)(record + sizeof(struct AudioSlotNode *)) = index;
         index++;
-        node->back = NULL;
-        node++;
-    } while (index <= 0x3ff);
-    bucket = Data_02004c00->bucket;
-    for (index = 0xff; index >= 0; index--)
-        *bucket++ = NULL;
+        *(s32 *)record = zero;
+        record += sizeof(struct AudioSlotNode);
+    } while (index <= limit);
+    slot = (s32 *)Data_02004c00->bucket;
+    {
+        s32 zero2 = 0;
+        for (index = 0xFF; index >= 0; index--) {
+            *slot++ = zero2;
+        }
+    }
 }
 
-void AudioTrack_InsertSlotNode(s32 slot)
+void AudioTrack_InsertSlotNode(s32 index)
 {
-    struct AudioTrackSlotWork *work;
-    struct AudioSlotNode *node;
-    struct AudioSlotNode **bucket;
-    struct AudioSlotNode *next;
+    /* FAKEMATCH: retain the existing address-word link stores and reloads.
+       A direct typed-node insertion shrinks 68 to 60 bytes and changes
+       the back-link store order. All offsets derive from the real owners. */
+    s32 base;
+    s32 node_off;
+    s32 tbl_off;
+    s32 bucket;
+    s32 bucket_off;
+    s32 link_off;
+    void **node;
+    void *next;
 
-    work = Data_02004c00;
-    node = &work->nodes[slot];
-    bucket = &work->bucket[work->bucket_by_slot[slot]];
-    node->back = bucket;
-    node->prev = *bucket;
-    *bucket = node;
-    next = node->prev;
-    if (next != NULL)
-        next->back = &node->prev;
+    base = (s32)Data_02004c00;
+    node_off = index * sizeof(struct AudioSlotNode);
+    tbl_off = index * sizeof(s32) + (u32)&((struct AudioTrackSlotWork *)0)->bucket_by_slot;
+    bucket = *(s32 *)(base + tbl_off) * 4;
+    link_off = node_off + (u32)&((struct AudioSlotNode *)0)->back;
+    *(s32 *)(base + link_off) = base + bucket + (u32)&((struct AudioTrackSlotWork *)0)->bucket;
+    bucket_off = bucket + (u32)&((struct AudioTrackSlotWork *)0)->bucket;
+    *(s32 *)(base + node_off) = *(s32 *)(base + bucket_off);
+    node = (void **)(base + node_off);
+    *(void **)(base + bucket_off) = node;
+    next = *node;
+    if (next != 0)
+        ((struct AudioSlotNode *)next)->back = (struct AudioSlotNode **)node;
 }
 
 void AudioTrack_RemoveSlotNode(s32 slot)
 {
-    struct AudioSlotNode *node;
-    struct AudioSlotNode **link;
-    struct AudioSlotNode *next;
+    /* FAKEMATCH: retain the existing signed address-word back-link reads
+       and reload. Direct node pointers shorten TBS 44 to 40 and TLA 40
+       to 36 bytes; these views add no record or storage. */
+    s32 next_node;
+    s32 track_table;
+    s32 slot_offset;
+    s32 next_link_offset;
+    void *previous_node;
 
-    node = &Data_02004c00->nodes[slot];
-    link = node->back;
-    if (link != NULL) {
-        next = node->prev;
-        if (next != NULL)
-            next->back = link;
-        *link = node->prev;
+    track_table = (s32)Data_02004c00;
+    slot_offset = slot * sizeof(struct AudioSlotNode);
+    next_link_offset = slot_offset + (u32)&((struct AudioSlotNode *)0)->back;
+    next_node = *(s32 *)(track_table + next_link_offset);
+    if (next_node != 0) {
+        previous_node = *(void **)(track_table + slot_offset);
+        if (previous_node != 0) {
+            *(s32 *)&((struct AudioSlotNode *)previous_node)->back = next_node;
+        }
+        **(s32 **)(track_table + next_link_offset) =
+            *(s32 *)(track_table + slot_offset);
     }
 }
 
@@ -108,20 +139,33 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
-    struct AudioTrackSlotWork *work;
-    u8 *source;
-    u32 index;
+    /* FAKEMATCH: retain the existing unsigned word views and byte cursor
+       at the output lanes. Typed direct accesses shrink 72 to 68 bytes
+       and reverse the two lane-base registers. */
+    u32 cnt_off = (u32)&((struct AudioTrackSlotWork *)0)->out_cnt;
+    u8 **base_p = (u8 **)&Data_02004c00;
+    u8 *base = *base_p;
+    u32 index = 0;
+    u32 *cnt_p = (u32 *)(base + cnt_off);
+    u32 saved_off = cnt_off;
+    u32 count = *cnt_p;
 
-    work = Data_02004c00;
-    index = 0;
-    if ((u32)work->out_cnt != 0) {
-        source = work->out_buf;
+    if (count != 0) {
+        u32 displacement = (u32)&((struct AudioTrackSlotWork *)0)->out_total;
+        u32 *offset = (u32 *)(base + displacement);
+        u32 *cnt_p2;
+        u8 *source;
+        displacement -= (u32)&((struct AudioTrackSlotWork *)0)->out_total
+            - (u32)&((struct AudioTrackSlotWork *)0)->out_buf;
+        cnt_p = (u32 *)displacement;
+        cnt_p2 = (u32 *)(base + saved_off);
+        source = base + (u32)cnt_p;
         do {
-            destination[(u32)work->out_total] = *source;
-            work->out_total++;
-            index++;
-            source++;
-        } while (index != (u32)work->out_cnt);
+            destination[*offset] = *source;
+            (*offset)++;
+            index = index + 1;
+            source = source + 1;
+        } while (index != *cnt_p2);
     }
 }
 

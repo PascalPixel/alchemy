@@ -32,7 +32,7 @@ extern char MsgSaveFailed;
 
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
-    UiWork_Finalize((struct UiWindow *)*(s32 *)gWindowWork[1], 1);
+    UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
     Runtime_ReleaseHeapBlock(0x10);
 }
 
@@ -63,7 +63,7 @@ void UiWindow_SetTileAttributeBitRect(
         y <<= 6;
         x = y + (x << 1);
         do {
-            u16 *cell = (u16 *)((u8 *)work->tilemap + x);
+            u16 *cell = (u16 *)((u32)x + (u32)work->tilemap);
             s32 remaining = width;
             while (remaining != 0) {
                 u32 value = *cell;
@@ -154,6 +154,9 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 
 s32 SaveState_ScanRecordFlags(void)
 {
+    /* FAKEMATCH: retain the existing signed byte cursor from the summary
+       party tail. Direct flag fields fold a different pool base at the
+       same 156-byte extent; offsets below come from the real record. */
     s32 err;
     s32 cnt;
     s32 ret;
@@ -163,18 +166,18 @@ s32 SaveState_ScanRecordFlags(void)
     ret = -9;
     if (err == 0) {
         s32 i;
-        struct SaveSummary *summary;
+        s8 *flags;
 
         ret = SaveState_LoadSummaryRecords();
-        summary = gSaveWorkspace->summary;
+        flags = (s8 *)&gSaveWorkspace->summary[0].party[4];
         gTitleSendOptionEnabled = 0;
         gTitleExtraOptionEnabled = 0;
         for (i = 0; i < 3; i++) {
-            if ((s8)summary[i].send_flag != 0) {
+            if (flags[i * sizeof(struct SaveSummary) + ((u32)&((struct SaveSummary *)0)->send_flag - (u32)&((struct SaveSummary *)0)->party[4])] != 0) {
                 gTitleSendOptionEnabled = 1;
                 cnt++;
             }
-            if ((s8)summary[i].flag_count != 0) {
+            if (flags[i * sizeof(struct SaveSummary) + ((u32)&((struct SaveSummary *)0)->flag_count - (u32)&((struct SaveSummary *)0)->party[4])] != 0) {
                 gTitleExtraOptionEnabled = 1;
             }
         }

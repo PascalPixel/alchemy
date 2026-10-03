@@ -83,7 +83,9 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = gWorkSlot[12];
+    /* FAKEMATCH: the existing word-cell read keeps the cache base separate
+       from the later blitter pointer reads; a pointer read coalesces them. */
+    camera = (struct BattleCamera *)*(s32 *)(gWorkSlot + 12);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     if (work->effect->unknown_001c == 1)
@@ -224,7 +226,9 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = gWorkSlot[12];
+    /* FAKEMATCH: the existing word-cell read keeps the cache base separate
+       from the later blitter pointer reads; a pointer read coalesces them. */
+    camera = (struct BattleCamera *)*(s32 *)(gWorkSlot + 12);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000020 = 0x100;

@@ -59,6 +59,9 @@ enum BattleEventOpcode {
     BATTLE_EVENT_SOUND = 14
 };
 
+/* The result has no contract and must be discarded. */
+s32 BattleActor_DestroyTemporaryObject(s32 unit_id);
+
 u32 BattleEv_Push(u32 opcode, u32 operand);
 u32 BattleEv_DispatchQueued(void);
 

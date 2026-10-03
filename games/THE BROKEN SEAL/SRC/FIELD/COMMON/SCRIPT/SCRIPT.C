@@ -14,7 +14,7 @@
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
 s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position);
-u16 ArcTan2(s32 y, s32 x);
+s32 ArcTan2(s32 y, s32 x);
 
 /*
  * Script command: wander to a random point. The three arguments are the
@@ -188,7 +188,7 @@ roam:
     goto done;
 home:
     tries = 0;
-    angle = ArcTan2(dz, dx) + 0x8000;
+    angle = (u16)ArcTan2(dz, dx) + 0x8000;
 back:
     tries++;
     if (tries > 7)

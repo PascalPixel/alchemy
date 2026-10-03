@@ -138,7 +138,7 @@ extern const u16 KuupuappuMuraSai_Scene10Cells[];
 extern const u16 KuupuappuMuraSai_Scene12Cells[];
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
-u32 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 s32 PartyInventory_FindOwner(s32 item);
 void ActorPresentation_MoveActorToPositionAndWait();
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);

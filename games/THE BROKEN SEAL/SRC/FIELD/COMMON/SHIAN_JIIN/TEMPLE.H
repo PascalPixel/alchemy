@@ -48,7 +48,7 @@ struct Descriptor_020041ec {
 
 extern u8 ShianJiin_XianMessages[];
 
-s16 ArcTan2Far(s32, s32);
+s32 ArcTan2Far(s32, s32);
 void Engine_ScheduleCallbackFar();
 void Scheduler_RemoveCallbackFar();
 void FieldScene_SpawnRandomizedParticle();

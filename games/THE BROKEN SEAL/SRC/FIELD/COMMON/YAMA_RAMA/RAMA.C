@@ -4,7 +4,7 @@
 #include "SCENE_IDS.H"
 #include "CALL.H"
 
-s16 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 
 extern const struct SceneEntrance YamaRama_TempleEntrances[];
 extern const struct SceneEntrance YamaRama_Entrances[];

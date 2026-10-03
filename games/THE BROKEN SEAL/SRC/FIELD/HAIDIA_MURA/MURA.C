@@ -93,7 +93,7 @@ struct Flags85 {
 extern u8 MsgHaidiaRepairCaption[];
 
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
-u16 ArcTan2(s32 z, s32 x);
+s32 ArcTan2(s32 z, s32 x);
 
 extern u8 MsgHaidiaDoorWontOpen[];
 

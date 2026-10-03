@@ -62,7 +62,7 @@ void Effect_Spawn();
 
 void AnimationObjects_SelectAnimation();
 void BattleFx_PlayQueuedSound();
-u16 ArcTan2(s32 deltaZ, s32 deltaX);
+s32 ArcTan2(s32 deltaZ, s32 deltaX);
 void Makyuri_TickSpawnTimer(void);
 void Makyuri_RunActorMove(void);
 void SceneState_ClearCurrentRecordAndReleaseTarget(void);

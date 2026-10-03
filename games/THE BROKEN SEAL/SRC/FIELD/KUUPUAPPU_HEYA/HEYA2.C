@@ -22,7 +22,7 @@ void SceneActor_SetPairZeroAndValue();
 void Audio_PlayCueFromEventWork();
 void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
-s32 ArcTan2();
+s32 ArcTan2(s32, s32);
 void FieldScene_RunSplitTripleSteps();
 void SceneState_SetWord1c0To209AndRun();
 void SceneEffect_ApplyPairWithValue141();

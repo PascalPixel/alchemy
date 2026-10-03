@@ -37,7 +37,7 @@ struct Slot {
 };
 
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
-s32 ArcTan2();
+s32 ArcTan2(s32, s32);
 void ObjectDispatch_ApplyValueToChildren();
 
 s32 *Engine_GetTriggerActor(s32 slot);

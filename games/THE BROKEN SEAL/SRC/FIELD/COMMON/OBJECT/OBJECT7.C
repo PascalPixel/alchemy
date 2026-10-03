@@ -3,8 +3,8 @@
 #include "OBJECT_RUNTIME.H"
 #include "MAP_SCROLL.H"
 #include "ANIMSPR.H"
+#include "METADATA_LOOKUP.H"
 
-s8 *Resource_GetMetadataRecordFar(s16 resource_id);
 
 /* Writes the object's position relative to the camera in whole units, x
    then z less height; sprite-mode objects are raised by their metadata
@@ -28,7 +28,7 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
     *position++ = x / 0x10000;
     *position = z / 0x10000;
     if ((object->animation_kind & 15) == 1)
-        *position -= Resource_GetMetadataRecordFar(((struct AnimationObject *)object->animation)->entries[0]->anim_id)[8];
+        *position -= (s8)Resource_GetMetadataRecordFar(((struct AnimationObject *)object->animation)->entries[0]->anim_id)->box_x;
     return 0;
 }
 

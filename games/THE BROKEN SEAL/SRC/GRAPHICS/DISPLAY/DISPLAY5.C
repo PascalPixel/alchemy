@@ -2,7 +2,9 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_WORK.H"
 #include "B5_CONTEXT.H"
+#include "IWRAM_CALL.H"
 
 /* The battle effect work, seen through its shadows of the window, blend and
    BG2 reference registers, which are copied to the hardware once a frame. */
@@ -20,28 +22,10 @@
 #define REG_BG2Y (*(s32 *)0x0400002c)
 extern struct BattleEffectWork *gBattleFxWork;
 
-/* graphics/palette/step_fade_transfer.c */
-struct FadeGlobals {
-    void *target;
-    u8 unknown[116];
-    struct BattleEffectWork *work;
-};
-
-extern struct FadeGlobals gBattleWork;
 void Graphics_ScaleRgb555ClampedFar(void *, void *, s32, s32);
 #define FADE_BG_PALETTE ((void *)0x050000c0) /* BG palettes 6 to 9 */
 #define FADE_STEP 1092 /* one sixtieth of full brightness */
 
-extern u8 IwramClearWords[];
-
-/*
- * _call_via_r3 names a bx rN veneer slot, so this is an indirect call
- * through the register loaded just before it -- the relocated routine at
- * 0x03000164. Its argument count is not established.
- */
-u32 _call_via_r3(s32, s32, u32, s32);
-
-/* graphics/registers/Display_ApplyWindowBlend.c */
 void Graphics_ApplyWindowBlendRegisters(void)
 {
     struct BattleEffectWork *work = gBattleFxWork;
@@ -57,7 +41,6 @@ void Graphics_ApplyWindowBlendRegisters(void)
     REG_BLDALPHA = work->bldalpha;
 }
 
-/* graphics/registers/Display_ApplyBg2Reference.c */
 void Display_ApplyBg2Reference(void)
 {
     struct BattleEffectWork *work = gBattleFxWork;
@@ -68,32 +51,23 @@ void Display_ApplyBg2Reference(void)
 
 void Palette_StepFadeTransfer(void)
 {
-    struct BattleEffectWork *work = gBattleWork.work;
-    void *target = gBattleWork.target;
+    struct BattleEffectWork *work = gBattleFxWork;
+    struct BattleSession *battle = gBattleWork;
 
     if (work->fade_frames > 0) {
         s32 step = ++work->fade_step;
 
-        Graphics_ScaleRgb555ClampedFar((u8 *)target + 0x544, FADE_BG_PALETTE,
+        Graphics_ScaleRgb555ClampedFar(battle->palette, FADE_BG_PALETTE,
             0x10000 - step * FADE_STEP, 128);
         work->fade_frames--;
     }
 }
 
-/*
- * val reaches the call before it is assigned, so the argument carries
- * whatever the register already holds; the trailing store keeps its place.
- */
-void Runtime_ApplyValueToWork7818(u32 arg2)
+void Runtime_ApplyValueToWork7818(void)
 {
-  unsigned long val;
-  s32 base;
-  base = *((s32 *)((u32)&gBattleFxWork));
-  _call_via_r3(base + 0x7818, 8, val, (u32)IwramClearWords);
-  val = arg2;
+    Iwram_ClearWords(gBattleFxWork->actor_timers, sizeof(gBattleFxWork->actor_timers));
 }
 
-/* object/group/tick_member_timers.c */
 void ObjectGroup_TickMemberTimers(void)
 {
     struct BattleEffectWork *work;

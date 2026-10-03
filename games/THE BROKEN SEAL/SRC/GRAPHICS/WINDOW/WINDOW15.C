@@ -85,13 +85,13 @@ void UiWindow_BuildLayoutBounds(s32 flags)
 {
     void **slot = (void **)((u32)&Data_03001e90);
     struct UiWindowBounds *state = *slot;
-    u8 *base = *(u8 **)(slot - 1);
+    struct UiRenderWork *work = slot[-1];
     s32 height = 4;
     s32 n;
     s32 right;
     s32 left;
 
-    if (((struct UiRenderWork *)base)->menu_state != 0) {
+    if (work->menu_state != 0) {
         n = BattleParty_PrepareActiveOwnersFar(0);
         height = 3;
     } else {
@@ -123,7 +123,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     s8 *busy;
 
     window = Runtime_AllocateBlock(0x10, 0x10);
-    busy = (s8 *)((u8 *)gWindowWork[0] + RENDER_MENU_BUSY_OFS);
+    busy = (s8 *)&((struct UiRenderWork *)gWindowWork[0])->menu_busy;
     zero = 0;
     *busy = 1;
     UiWindow_BuildLayoutBounds(flags);
@@ -171,7 +171,7 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
         }
         i++;
     }
-    if (base[RENDER_MENU_STATE_OFS]) {
+    if (((struct UiRenderWork *)base)->menu_state) {
         dest = (u16 *)base + (window->y + window->height - 1) * 32 + window->x;
         col = 1;
         *dest++ = 0xf080;
@@ -203,7 +203,7 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
     u32 pixels;
     u32 result;
 
-    if (base[RENDER_MENU_STATE_OFS] == 0) {
+    if (((struct UiRenderWork *)base)->menu_state == 0) {
         Dma_Set((const void *)Runtime_GetLowTableAddress(), (void *)&BG_PLTT_COLOR(14, 0),
             0x80000010, REG_DMA3);
         BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);

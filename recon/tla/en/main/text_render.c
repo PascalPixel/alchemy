@@ -25,7 +25,7 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
 void UiText_DrawCharacterAtOffset(
     s32 character,
-    struct TextRenderWork *position,
+    struct RenderInput *position,
     u32 offset_x,
     u32 offset_y)
 {
@@ -84,7 +84,7 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
 
 void UiText_DrawStringAtOffset(
     u8 *text,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y)
 {
@@ -155,7 +155,7 @@ void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 void UiText_DrawNumberAtOffset(
     s32 arg0,
     s32 arg1,
-    struct TextRenderWork *arg2,
+    struct RenderInput *arg2,
     s32 arg3,
     s32 arg4)
 {
@@ -175,7 +175,7 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 
 void UiText_DrawPrefixedNumberAtOffset(
     s32 value,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y,
     s32 variant)

@@ -4,40 +4,11 @@
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "DJINN_MENU.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 
-
-struct ChooserMenu {
-    u8 reserved_000[0x10];
-    s32 owner_window;
-    u8 reserved_014[0x1c];
-    s32 option_window;
-    u8 reserved_034[0xd8];
-    s32 message_window;
-};
-
-struct ChooserTextWork {
-    u8 reserved_000[RENDER_MENU_BUSY_OFS];
-    u8 menu_busy;
-    u8 reserved_ea7[RENDER_COUNTER_OFS - RENDER_MENU_BUSY_OFS - 1];
-    u16 resource;
-    u8 reserved_12b8[RENDER_RESULT_OFS + 4 - RENDER_COUNTER_OFS - 2];
-    u8 text_busy;
-};
-
-
-struct ChooserMessage {
-    struct ChooserMessage *next;
-    u8 reserved_04[16];
-    u16 flags;
-    u16 reserved_16;
-    u16 timer;
-    u16 count;
-};
-
-extern struct ChooserMenu *gMenuWork;
+extern struct DjinnMenuWork *gMenuWork;
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeyState;
 extern char MsgDjinnInfoPrompt;
@@ -124,34 +95,31 @@ s32 DjinnMenu_ShowHelp(void)
 {
     s32 win_b;
     s32 win_a;
-    struct ChooserMenu *menu;
-    struct ChooserTextWork *work;
+    struct DjinnMenuWork *menu;
+    struct UiRenderWork *work;
     s32 result;
     s32 previous;
     s32 selection;
     s32 list;
-    struct ChooserMessage **slot;
+    struct UiChannelSlot *channel;
     s32 message;
     s32 cnt;
     s32 list_message;
-    void **slot_cells;
 
-    /* The text work sits forty cells below the menu work. */
-    slot_cells = (void **)&gMenuWork;
-    menu = slot_cells[0];
-    work = slot_cells[-40];
+    menu = gMenuWork;
+    work = (struct UiRenderWork *)gWindowWork[0];
     result = 0;
     previous = 0;
     selection = 0;
-    RenderOutput_ClearListFar(menu->option_window);
+    RenderOutput_ClearListFar(menu->list_window);
     WaitFrames(1);
-    UiWindow_Clear(menu->message_window);
+    UiWindow_Clear(menu->help_window);
     message = (s32)&MsgDjinnInfoPrompt;
-    UiText_DrawCharacterAtOffsetFar(message, menu->message_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar(message, menu->help_window, 0, 0);
     message++;
-    UiText_DrawCharacterAtOffsetFar(message, menu->message_window, 0, 16);
+    UiText_DrawCharacterAtOffsetFar(message, menu->help_window, 0, 16);
     UiWindow_SetRectPalette(1, 1, 11, 3, 6);
-    UiWindow_ApplyRectAtObjectOrigin((void *)menu->option_window, 0, 0, 28, 10, 6);
+    UiWindow_ApplyRectAtObjectOrigin((void *)menu->list_window, 0, 0, 28, 10, 6);
     list = UiWindow_CreateFar(0, 9, 8, 10, 6);
     win_b = UiWindow_CreateFar(8, 12, 22, 7, 2);
     win_a = UiWindow_CreateFar(8, 9, 22, 3, 2);
@@ -165,7 +133,7 @@ s32 DjinnMenu_ShowHelp(void)
     do {
         UiWindow_Clear(win_a);
         UiText_DrawMessageAt(selection + (s32)&MsgDjinnInfoTopic, win_a, 0, 0);
-        slot = (struct ChooserMessage **)UiText_OpenEntryMessageFar(win_b, selection + (s32)&MsgDjinnInfoText);
+        channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(win_b, selection + (s32)&MsgDjinnInfoText);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
         Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
         previous = selection;
@@ -201,19 +169,20 @@ s32 DjinnMenu_ShowHelp(void)
                 }
             }
         }
-        if (work->resource != 99) {
-            Resource_ResetEntry(work->resource);
-            work->resource = 99;
+        if (work->glyph_resource != 99) {
+            Resource_ResetEntry(work->glyph_resource);
+            work->glyph_resource = 99;
         }
-        ((struct ChooserTextWork *)gWindowWork[0])->text_busy = 0;
+        ((struct UiRenderWork *)gWindowWork[0])->unknown_after_result = 0;
         UiWindow_Clear(win_b);
         {
-            struct ChooserMessage *entry = *slot;
-            entry->timer = 0;
-            entry->count = 0;
-            entry->flags = 0;
+            struct UiWindow *window = channel->work;
+
+            window->frame = 0;
+            window->duration = 0;
+            window->state = 0;
         }
-        *slot = 0;
+        channel->work = NULL;
     } while (result == 0);
     ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;
     RenderOutput_ClearListFar(win_a);
@@ -224,9 +193,9 @@ s32 DjinnMenu_ShowHelp(void)
     UiWork_FinalizeFar(win_b, 1);
     UiWindow_MarkVisibleTileAttributesFar();
     if (result == -2) {
-        UiWindow_Clear(menu->message_window);
-        UiWindow_Clear(menu->option_window);
-        UiWindow_Clear(menu->owner_window);
+        UiWindow_Clear(menu->help_window);
+        UiWindow_Clear(menu->list_window);
+        UiWindow_Clear(*(s32 *)(menu->unknown_000 + 0x10));
         ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
     }
     Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);

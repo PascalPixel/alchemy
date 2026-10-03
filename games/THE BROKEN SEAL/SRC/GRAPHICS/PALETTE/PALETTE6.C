@@ -10,8 +10,8 @@ extern u8 IwramClearWords[];
  * 0x03000164. Its argument count is not established.
  */
 void _call_via_r3(u32, s32, s32, u32);
-extern u8 Graphics_UploadVramBlock;
-extern u8 BattleFx_UpdateStarField;
+u32 Graphics_UploadVramBlock(void);
+s32 BattleFx_UpdateStarField(void);
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused0, s32 unused1, s32 mode)
 {

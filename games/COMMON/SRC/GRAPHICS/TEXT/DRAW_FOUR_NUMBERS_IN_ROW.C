@@ -6,7 +6,7 @@ struct NumberRow {
     s8 values[4];
 };
 
-void UiText_DrawFourNumbersInRow(struct TextRenderWork *work, struct NumberRow *row)
+void UiText_DrawFourNumbersInRow(struct RenderInput *work, struct NumberRow *row)
 {
     s32 i;
 

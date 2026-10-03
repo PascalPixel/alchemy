@@ -5,23 +5,13 @@
 
 s32 UiWork_IsComplete(void)
 {
-    s32 result;
-    s32 channel_index;
     struct UiChannelSlot *channel;
-    struct UiWindow *work;
+    s32 i;
 
     channel = ((struct UiRenderWork *)gWindowWork[0])->channels;
-    channel_index = 0;
-next_channel:
-    work = channel->work;
-    if ((work == NULL) || (result = 0, (work->state != 0))) {
-        channel_index += 1;
-        channel++;
-        if (channel_index == 3) {
-            result = 1;
-        } else {
-            goto next_channel;
-        }
+    for (i = 0; i < 3; i++, channel++) {
+        if (channel->work != NULL && channel->work->state == 0)
+            return 0;
     }
-    return result;
+    return 1;
 }

@@ -41,14 +41,14 @@ extern u8 gDebugItemCapacityLabel[];
 extern u8 gDebugItemFullLabel[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
-struct TextRenderWork *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Engine_DebugRedrawWindow(struct TextRenderWork *window);
-void Engine_DebugClearWindow(struct TextRenderWork *window);
-void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
+struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Engine_DebugRedrawWindow(struct RenderInput *window);
+void Engine_DebugClearWindow(struct RenderInput *window);
+void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 
 extern u8 MsgDebugGotTreasure[];
 

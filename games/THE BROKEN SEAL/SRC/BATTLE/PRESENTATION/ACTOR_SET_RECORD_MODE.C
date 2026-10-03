@@ -1,14 +1,14 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "MOTION_OBJECT.H"
-#include "PROJSPR.H"
+#include "ANIMSPR.H"
 
 void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
 {
     struct BattleObjectSlot *slot = GetBattleObjectSlot(actor_id);
     struct MotionObject *object;
-    struct ProjectedSprite *record;
-    struct ProjectedSprite **records;
+    struct AnimationObject *record;
+    struct AnimationObject **records;
     s32 i;
 
     if (slot == 0)
@@ -26,7 +26,7 @@ void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
     }
     case 2:
     {
-        records = (struct ProjectedSprite **)object->records;
+        records = (struct AnimationObject **)object->records;
         i = 0;
         do {
             record = *records++;

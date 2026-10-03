@@ -303,7 +303,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
 
             slots[53](buf, obj->width, obj->height, vram);
         }
-        obj->tile = tile;
+        obj->part[0].tile = tile;
         obj->dirty = 0;
         ctx->used += size;
         Runtime_BumpFree(buf);

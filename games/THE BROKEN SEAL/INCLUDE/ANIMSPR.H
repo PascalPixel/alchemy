@@ -21,14 +21,31 @@ struct AnimationEntry {
     u8 frame_base;  /* 0x17 */
 };
 
-struct AnimationObject {
-    u8 field_00[8];
-    u16 tile : 10;  /* 0x08 the VRAM tile index */
+/* Each linked OAM part carries the three hardware attributes. */
+struct AnimationSpritePart {
+    u8 unknown_00[4];
+    u16 y : 8;
+    u16 affine : 2;
+    u16 object_mode : 2;
+    u16 mosaic : 1;
+    u16 full_color : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 size : 2;
+    u16 tile : 10;
     u16 attr : 6;
-    u8 field_0a[14];
+    u8 unknown_0a[2];
+};
+
+/* ResourceObject_Create initializes both parts in the 64-object pool;
+   projection and composition operate on this same 56-byte object. */
+struct AnimationObject {
+    struct AnimationSpritePart part[2];
     s32 scale;      /* 0x18 */
     u8 slot;        /* 0x1c */
-    u8 field_1d[3];
+    u8 display_flags; /* 0x1d hide and fixed-scale flags */
+    u16 rotation;    /* 0x1e */
     u8 width;       /* 0x20 */
     u8 height;      /* 0x21 */
     s8 offset_x;
@@ -41,6 +58,10 @@ struct AnimationObject {
 };
 
 LAYOUT_SIZE_GUARD(AnimationEntry_Size, struct AnimationEntry, 0x18);
+LAYOUT_SIZE_GUARD(AnimationSpritePart_Size, struct AnimationSpritePart, 0x0c);
+LAYOUT_OFFSET_GUARD(AnimationObject_Scale, struct AnimationObject, scale, 0x18);
+LAYOUT_OFFSET_GUARD(AnimationObject_Rotation, struct AnimationObject, rotation, 0x1e);
+LAYOUT_OFFSET_GUARD(AnimationObject_Width, struct AnimationObject, width, 0x20);
 LAYOUT_SIZE_GUARD(AnimationObject_Size, struct AnimationObject, 0x38);
 LAYOUT_OFFSET_GUARD(AnimationObject_Entries, struct AnimationObject, entries, 0x28);
 

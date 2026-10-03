@@ -4,8 +4,8 @@
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
+#include "HEAP_STATE.H"
 
-extern u8 gWorkSlot[];
 
 #define QUEUE_PALETTE(source, destination) {                                \
         u32 saved;                                                          \
@@ -19,7 +19,7 @@ extern u8 gWorkSlot[];
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 *entry = q->entries[count];                 \
+            u32 *entry = q->entries[count];                                  \
             *(u16 *)&q->count = count + 1;                                  \
             *entry++ = (u32)(source);                                       \
             *entry++ = (destination);                                       \
@@ -28,24 +28,24 @@ extern u8 gWorkSlot[];
         *ime = saved;                                                       \
     }
 
-void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n)
+void Graphics_InterpolatePaletteBuffers(s16 *source, s16 *target, s16 *step, s32 frames)
 {
     s32 index;
     s32 first;
     s32 second;
     s32 (*divide)(s32, s32);
 
-    if (n > 0) {
+    if (frames > 0) {
         divide = Iwram_SignedDivide;
         index = 0x5FF;
         do {
-            first = *a;
-            second = *b;
-            *dst = divide(second - first, n);
+            first = *source;
+            second = *target;
+            *step = divide(second - first, frames);
             index--;
-            a++;
-            b++;
-            dst++;
+            source++;
+            target++;
+            step++;
         } while (index >= 0);
     }
 }
@@ -55,7 +55,7 @@ void TitlePalette_UpdateFade(void)
 {
     /* FAKEMATCH: retain the existing one-pass IME scopes, halfword queue
        count stores, front-bank block and packing-loop pointer lifetime. */
-    struct TitlePaletteWork *work = *(struct TitlePaletteWork **)(gWorkSlot + 32 * 4);
+    struct TitlePaletteWork *work = ((union HeapState *)gWorkSlot)->slots[32];
     u16 *delta = work->delta;
     u16 *current;
     u16 *packed;

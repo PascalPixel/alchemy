@@ -1,19 +1,5 @@
 #include "TYPES.H"
-
-struct AnimationMetadata {
-    u8 width;
-    u8 height;
-    u16 scale;
-    u8 draw_kind;
-    u8 animation_count;
-    s8 adjust_x;
-    s8 adjust_y;
-    u8 reserved_08[2];
-    u8 frame_codec;
-    u8 reserved_0b;
-    s32 frames;
-    s32 animation;
-};
+#include "METADATA_LOOKUP.H"
 
 struct AnimationObject {
     s16 id;
@@ -32,7 +18,6 @@ struct AnimationObject {
 
 extern struct AnimationObject *gAnimationObjects[];
 
-struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 s32 Animation_LookupValueByKey(s32 key);
 
 

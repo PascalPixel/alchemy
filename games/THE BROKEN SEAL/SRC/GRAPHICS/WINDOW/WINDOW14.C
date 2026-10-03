@@ -85,7 +85,8 @@ s32 NameEntry_CountLetters(const u8 *name)
 /* ui/window/window_copy_tilemap_region.c */
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
 {
-    s16 *mirror = (s16 *)gWindowWork[0];
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    s16 *mirror = (s16 *)work->tilemap;
     s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *input = buffer;
     u32 cell;
@@ -172,17 +173,16 @@ void Resource_CopyFixedBlockA(s32 arg0)
 /* ui/text/misc/set_render_string.c */
 s32 UiText_SetRenderString(const u8 *str)
 {
-    u8 *base;
+    struct UiRenderWork *work;
     u16 *dst;
     s32 count;
-    s32 offset;
     s32 count_out;
     s32 width_out;
 
-    base = gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     count = 0;
     if (*str != 0) {
-        dst = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
+        dst = work->entries;
         do {
             *dst = *str;
             str++;
@@ -190,8 +190,7 @@ s32 UiText_SetRenderString(const u8 *str)
             count++;
         } while (*str != 0);
     }
-    offset = RENDER_ENTRY_TBL_OFS + count * 2;
-    *(u16 *)(base + offset) = 0;
+    work->entries[count] = 0;
     UiText_MeasureEntryDimensions(0, &count_out, &width_out, 0);
     return count_out;
 }

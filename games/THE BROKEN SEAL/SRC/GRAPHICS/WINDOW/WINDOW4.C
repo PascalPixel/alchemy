@@ -13,41 +13,18 @@ extern u8 RomBytes_0802e108[];
 
 /* ui/render/drain_pending.c */
 
-
-struct WorkSlot {
-    struct UiWindow *work;
-    u8 padding04[0x24];
-};
-
-
-
-
 void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 
-extern u8 Data_03001e8c[];
-
-struct UiNamedValueWork {
-    u8 filler0[RENDER_VALUE_TBL_OFS];
-    u32 values[8];
-    u16 flags[8];
-};
-
-extern u8 Data_03001ae8[];
-extern u8 Data_03001c94[];
-extern u8 gKeysPressedLatch[];
+extern s32 gKeysHeld;
+extern s32 gKeyState;
+extern s32 gKeysPressedLatch;
 s32 AudioCommand_GetStateByteFar();
-
-
-struct FinalizeWorkSlot {
-    struct UiWindow *work;
-    u8 padding04[0x24];
-};
 
 void UiWork_DrainPending(void)
 {
-    u8 *state;
-    struct WorkSlot *slot;
+    struct UiRenderWork *state;
+    struct UiChannelSlot *slot;
     struct UiWindow *direct;
     u32 done;
     struct UiWindow *work;
@@ -55,9 +32,9 @@ void UiWork_DrainPending(void)
     s32 index;
     u16 flag;
 
-    state = gWindowWork[0];
-    slot = (struct WorkSlot *)(state + RENDER_CHANNEL_OFS);
-    direct = (struct UiWindow *)(state + 0x500);
+    state = (struct UiRenderWork *)gWindowWork[0];
+    slot = state->channels;
+    direct = state->windows;
     index = 0;
     do {
         work = slot->work;
@@ -69,7 +46,7 @@ void UiWork_DrainPending(void)
 
 poll:
     done = 1;
-    slot = (struct WorkSlot *)(state + RENDER_CHANNEL_OFS);
+    slot = state->channels;
     index = 0;
     do {
         poll_work = slot->work;
@@ -132,140 +109,99 @@ void UiWork_AdvanceChannelTransition(struct UiChannelSlot *channel)
 void UiWork_ClearValueNameTables(void)
 {
     s32 no;
-    struct UiNamedValueWork *work;
+    struct UiRenderWork *work;
 
-    work = (struct UiNamedValueWork *)gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     no = 0;
 
     /* 対応する値と識別子は同じ順序で消去する。 */
     do {
         work->values[no] = 0;
-        work->flags[no] = 0;
+        work->names[no] = 0;
         no++;
     } while (no != 8);
 }
 
 void UiWork_PushValueSlot(u32 value, u32 flag)
 {
-    struct UiNamedValueWork *work = (struct UiNamedValueWork *)gWindowWork[0];
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     u32 no = 0;
     u32 limit = 8;
 
     do {
-        if (work->flags[no] == 0) {
+        if (work->names[no] == 0) {
             work->values[no] = value;
-            work->flags[no] = flag;
+            work->names[no] = flag;
             break;
         }
         no++;
     } while (no != limit);
 }
 
-u32 UiRender_LookupNamedValue(u32 value, u32 clear)
+u32 UiRender_LookupNamedValue(u32 name, u32 clear)
 {
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     u32 index;
-    u32 name_offset;
-    u32 value_offset;
-    u8 *base;
-    u16 name;
-    u32 result;
-    u32 zero;
+    u32 value = 0;
 
-    base = gWindowWork[0];
-    result = 0;
-    index = 0;
-    zero = index;
-    value_offset = RENDER_VALUE_TBL_OFS;
-    name_offset = RENDER_NAME_TBL_OFS;
-    name = *(u16 *)(name_offset + (u32)base);
-    if (name == value) {
-        result = *(u32 *)(value_offset + (u32)base);
-        if (clear != 0) {
-            *(u32 *)(value_offset + (u32)base) = zero;
-            *(u16 *)(name_offset + (u32)base) = zero;
-        }
-    } else {
-loop:
-        index++;
-        value_offset += 4;
-        name_offset += 2;
-        if (index <= 7) {
-            if (*(u16 *)(name_offset + (u32)base) == value) {
-                result = *(u32 *)(value_offset + (u32)base);
-                if (clear != 0) {
-                    *(u32 *)(value_offset + (u32)base) = zero;
-                    *(u16 *)(name_offset + (u32)base) = zero;
-                }
-            } else {
-                goto loop;
+    for (index = 0; index < 8; index++) {
+        if (work->names[index] == name) {
+            value = work->values[index];
+            if (clear != 0) {
+                work->values[index] = 0;
+                work->names[index] = 0;
             }
+            break;
         }
     }
-    return result;
+    return value;
 }
 
-s32 UiWork_CheckCancelByInput(void *obj)
+s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel)
 {
-  int zero;
-  s32 flag;
-  flag = 0;
-  if (((*((u8 *)(((u8 *)(*((void **)((u32)&Data_03001e8c)))) + RENDER_BUSY_OFS))) != 0) && (AudioCommand_GetStateByteFar() == 0))
-  {
-    flag = 1;
-  }
-  zero = 0;
-  if ((*((s32 *)((u32)&Data_03001ae8))) & 0x303)
-  {
-    flag = 1;
-  }
-  if (flag != zero)
-  {
-    *((s16 *)(((u8 *)obj) + 0x14)) = zero;
-    return 1;
-  }
-  return zero;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    s32 cancel = 0;
+    s32 zero = 0;
+
+    if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+        cancel = 1;
+    if (gKeysHeld & 0x303)
+        cancel = 1;
+    if (cancel != zero) {
+        channel->countdown = zero;
+        return 1;
+    }
+    return zero;
 }
 
-s32 UiWork_CheckCancelByModeInput(void *obj)
+s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *channel)
 {
-  void *p;
-  s32 tmp;
-  unsigned char zero;
-  s32 key;
-  s32 flag;
-  void *work;
-  p = *((void **)((u32)&Data_03001e8c));
-  work = p;
-  flag = 0;
-  if (((*((u8 *)(((u8 *)work) + RENDER_BUSY_OFS))) != 0) && (AudioCommand_GetStateByteFar() == 0))
-  {
-    flag = 1;
-  }
-  key = (tmp = *((s32 *)((u32)&Data_03001c94)));
-  zero = 0;
-  if ((*((u8 *)(work + RENDER_MODE_OFS))) != zero)
-  {
-    key = *((s32 *)((u32)&gKeysPressedLatch));
-  }
-  if (0x303 & key)
-  {
-    flag = 1;
-  }
-  if (flag != 0)
-  {
-    *((s16 *)(((u8 *)obj) + 0x14)) = zero;
-    return 1;
-  }
-  return 0;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    s32 key;
+    s32 cancel = 0;
+    u8 zero = 0;
+
+    if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
+        cancel = 1;
+    key = gKeyState;
+    if (work->mode != zero)
+        key = gKeysPressedLatch;
+    if (key & 0x303)
+        cancel = 1;
+    if (cancel != 0) {
+        channel->countdown = zero;
+        return 1;
+    }
+    return 0;
 }
 
 void UiWork_FinalizePendingCore(void)
 {
     s32 slot_index;
-    struct FinalizeWorkSlot *slot;
+    struct UiChannelSlot *slot;
     struct UiWindow *work;
 
-    slot = (struct FinalizeWorkSlot *)(gWindowWork[0] + RENDER_CHANNEL_OFS);
+    slot = ((struct UiRenderWork *)gWindowWork[0])->channels;
     slot_index = 0;
     do {
         work = slot->work;

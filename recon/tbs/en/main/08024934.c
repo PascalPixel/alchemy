@@ -160,7 +160,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
             Ui_FillVramBlockPattern();
             summon = SummonDefinition_Get(ordered[page + row]);
             UiText_CopyMessageString(summon->name_message_id + (s32)&MsgAbilityDescription, text, 52);
-            UiText_RenderWideStringAtOffset(text, (struct TextWindow *)description, 0, 4);
+            UiText_RenderWideStringAtOffset(text, (struct UiWindow *)description, 0, 4);
             mask = 0;
             drawn_row = row;
             {
@@ -206,7 +206,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby)
                         if (!affordable)
                             UiWork_SetParamNibble(2);
                         UiText_DrawCharacterAtOffset(SummonDefinition_Get(id)->name_message_id + (s32)&MsgAbilityName,
-                            (struct TextRenderWork *)window, 16, index * 16);
+                            (struct RenderInput *)window, 16, index * 16);
                         required = summon->djinn_required;
                         col = 13;
                         for (element = 0; element <= 3; element++) {

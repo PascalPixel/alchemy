@@ -8,7 +8,7 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_PRESENTATION.H"
 
-s32 BattleMotion_ReleaseObjectSlotByValue();
+s32 BattleMotion_ReleaseObjectSlotByValue(s32 value);
 s32 Object_Destroy(s32);
 
 void Render_ResetTransformState(void);
@@ -86,7 +86,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
 s32 ActivateBattleObjectSlot(s32 object_id)
 {
   struct BattleObjectSlot *slot;
-  BattleMotion_ReleaseObjectSlotByValue();
+  BattleMotion_ReleaseObjectSlotByValue(object_id);
   slot = GetBattleObjectSlot(object_id);
   slot->active = 1;
   return 0;

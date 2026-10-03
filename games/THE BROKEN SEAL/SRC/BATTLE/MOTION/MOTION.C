@@ -1,6 +1,7 @@
 #include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "MOTION_OBJECT.H"
@@ -110,7 +111,7 @@ void BattleMotion_InterpolatePosition(struct BattleObjectSlot *start_slot,
     end_z = end->z;
     start_z = start->z;
     z_step = progress * (end_z - start_z) / 100;
-    *(s16 *)0x04000050 = 0;
+    REG_BLDCNT = 0;
     start->acceleration = 0x20000;
     start->speed_limit = 0x80000;
     start->velocity_y = 0x40000;
@@ -234,6 +235,9 @@ void BattleMotion_ApproachTarget(
     object->acceleration = dist;
     object->speed_limit = dist;
     object->snap_to_target = 1;
+    /* Unresolved source: a single store, equal if/else arms, and a selected
+       local each reduce this 208-byte function to 192 bytes. The existing
+       conditional and following store remain pending reconstruction. */
     if (object->motion_flags & 4)
         object->velocity_y = initial_velocity_y;
     object->velocity_y = initial_velocity_y;

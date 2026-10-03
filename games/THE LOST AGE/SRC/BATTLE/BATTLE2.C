@@ -1,26 +1,22 @@
 #include "TYPES.H"
 #include "BATTLE_PARTY.H"
+#include "BATTLE_UNIT.H"
 #include "OWNER_STATE.H"
 
 void Owner_RecalculateStatsFar(u16 id);
 
-struct ActorState_080b90ac {
-    u8 padding_000[0x12b];
-    u8 field_12b;
-};
-
-void BattleUnit_ClearField12bForGroup(void)
+void BattleUnit_ResetGuardLevels(void)
 {
     u16 ids[14];
     s32 count;
     s32 index;
 
-    count = BattleParty_ListActorIds(3, (u16 *)ids);
+    count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)ids);
     for (index = 0; index < count; index++) {
-        struct ActorState_080b90ac *actor;
+        struct BattleUnit *actor;
 
-        actor = (struct ActorState_080b90ac *)Owner_GetState(ids[index]);
-        actor->field_12b = 0;
+        actor = Owner_GetState(ids[index]);
+        actor->guard_level = 0;
         Owner_RecalculateStatsFar(ids[index]);
     }
 }

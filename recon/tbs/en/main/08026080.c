@@ -1,14 +1,34 @@
-/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
+/* 2026-10-04 H11: EN score 16188 -> 13137; retained score13137 in all
+ * six TBS plans (465 register, 47 stack, 51 operand, 71 reordered,
+ * 33 inserted, 19 deleted).
+ * The native 324-byte frame now follows from consumed state; no reserve
+ * or added instructions fill it. Both fixed-register bindings are removed.
+ * Two bounded corrected-permuter searches: seeds61..64, 55s, 5132 candidates
+ * gave13267; condition/window focus seeds101..104, 55s, 5672 gave13137.
+ * Reviewed complete candidates, preserving both volatile input reads,
+ * short-circuit guards, every live write and all loop exit paths.
+ * All added register keywords and two unnecessary temporaries were removed
+ * without loss. Shared SelectionSprite and EffectPosition replace duplicate
+ * sprite/position records with the same score; MenuSprite's halfword-field
+ * view scored13837 and is not retained.
+ * Isolated unit-declaration movement scored21123; delaying selection until
+ * first use scored20983. Neither alone explains the retained improvement.
+ * The three remaining consumed temporaries carry local measured tags.
+ * This is still a large near miss, unlinked and uncredited in every edition.
+ *
+ * 2026-10-03 ordinary owner/API attempt: consume the shared affine input
  * and canonical resource/allocator contracts. Earlier measurements are
- * prior checkpoints; fresh complete-object comparison is pending. */
+ * prior checkpoints; H11 above is the fresh retained measurement. */
 #include "AFFINE.H"
+#include "SELECT.H"
+#include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
-/* Draft, not exact: retained EN score16188 (413 register-only,58 stack-only,
+/* Earlier H9 checkpoint: EN score16188 (413 register-only,58 stack-only,
  * 97 operand,74 reordered,45 inserted,29 deleted); frame320 vs native324.
  * Every symbol resolves. Complete native extent3584 includes all pools.
  * Ordinary routed compilation emits3612 bytes including pools.
- * Retained devices bind only the live window and selected combatant.
+ * Its devices bound only the live window and selected combatant.
  * No frame storage, masks, compiler options or output bytes were added;
  * no adoption or edition credit is claimed.
  * 2026-10-02 continuation:
@@ -102,23 +122,6 @@
  */
 
 
-/* Object list entry chained by Runtime_PushSlotEntry; ordinary GBA OAM. */
-struct DisplayEntry {
-    struct DisplayEntry *next;   /* 0x00 written by Runtime_PushSlotEntry */
-    u8 y;                        /* 0x04 */
-    u8 object_mode : 2;          /* 0x05 */
-    u8 gfx_mode : 2;
-    u8 mosaic : 1;
-    u8 color_mode : 1;
-    u8 shape : 2;
-    u16 x : 9;                   /* 0x06 */
-    u16 matrix : 5;
-    u16 size : 2;
-    u16 tile : 10;               /* 0x08 */
-    u16 priority : 2;
-    u16 palette : 4;
-    u16 pad_0a;                  /* 0x0a */
-};
 
 /* One tracked cursor position; index 0 is the cursor, 1..5 the side marks. */
 struct CursorSlot {
@@ -128,11 +131,6 @@ struct CursorSlot {
     s8 index;                    /* 0x03 signed step this slot follows */
 };
 
-struct ScreenPos {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 /* Same shape as games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/BUILD_MATRIX.C. */
 /* Views whose callee declarations have no shared owner yet. */
@@ -147,28 +145,25 @@ void Ui_ClearVramBlock(void);
 s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
 {
     u16 ids[8];
-    struct DisplayEntry entries[6];
+    struct SelectionSprite entries[6];
     struct CursorSlot tbl[6];
-    struct ScreenPos markPos;
+    struct EffectPosition markPos;
     u16 selIds[14];
     u8 selSlot[8];
-    struct ScreenPos pos;
+    struct EffectPosition pos;
     u16 name[15];
-    struct ScreenPos namePos;
-    struct ScreenPos targetPos;
+    struct EffectPosition namePos;
+    struct EffectPosition targetPos;
     struct AffineTransform efx;
-
-    struct BattleSession *runtime;
     struct BattleUnit *unit;
+    struct BattleSession *runtime;
     struct CursorSlot *slot;
-    struct DisplayEntry *entry;
-    struct DisplayEntry *head;
-    /* FAKEMATCH: Live sel in r10; scope trials failed, score18857 ->16188. */
-    register s32 sel asm("r10");
+    struct SelectionSprite *entry;
+    struct SelectionSprite *head;
+    s32 sel;
     s32 slotId;
     struct UiWindow *window;
-    /* FAKEMATCH: Live infoWin in r9; walks failed, score21123 ->18857. */
-    register struct UiWindow *infoWin asm("r9");
+    struct UiWindow *infoWin;
     s32 matrix;
     s32 cursor;
     s32 cnt;
@@ -183,9 +178,9 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     s32 j;
     s32 nx;
     s32 ny;
+    s32 pressed;
     s32 y;
     s32 width;
-    s32 pressed;
     s32 repeat;
     s32 result;
     u8 *pd;
@@ -195,21 +190,22 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     u8 *pc;
 
     runtime = gBattleWork;
-    cnt = 0;
     redraw = 0xFFFF;
+    cnt = 0;
     slotId = Resource_LoadIntoFreeSlot(256);
     infoWin = 0;
-    sel = preferred;
     if (spread == 0)
         spread = 1;
     if (mode == 2 || mode == 4)
         gLinkCountdownWork->slide_offset = -2;
     else
         gLinkCountdownWork->slide_offset = 16;
-
-    for (i = 5; i >= 0; i--)
+    i = 5;
+    while (i >= 0) {
         tbl[i].flags = 0;
-
+        i--;
+    }
+    sel = preferred;
     cursor = -1;
     if (mode == 2) {
         i = 0;
@@ -229,7 +225,11 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
         i = 0;
         if (runtime->enemy_units[0] != 0xFF) {
             do {
-                ids[cnt] = runtime->enemy_units[i];
+                /* FAKEMATCH: keep the consumed enemy-id load separate;
+                   folding it raised the H11 score13267 to14358. */
+                s16 enemy;
+                enemy = runtime->enemy_units[i];
+                ids[cnt] = enemy;
                 cnt++;
                 i++;
                 if (i > 5)
@@ -239,7 +239,6 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     }
     ids[cnt] = 0xFF;
     total = cnt;
-
     if (mode == 2) {
         if (spread != 0xFF && kind != 0) {
             found = 0;
@@ -253,7 +252,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
                         found = 1;
                     break;
                 case 4:
-                    if ((*(u32 *)&unit->delusion & 0xFF0000FF) != 0)
+                    if (*(u32 *)&unit->delusion & 0xFF0000FF)
                         found = 1;
                     else if ((*(u32 *)&unit->sleep & 0xFFFF) != 0)
                         found = 1;
@@ -292,70 +291,61 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
         if (i != cnt)
             cursor = i;
     }
-
     if (cursor < 0)
         cursor = (cnt - 1) / 2;
-
-    for (;;) {
+    while (1) {
         if (ids[cursor] == 0xFE)
             goto step_back;
-        if (GameFlag_TestFar(0x16C) && mode == 1 &&
-            Owner_GetStateFar(ids[cursor])->hp == 0)
+        if (GameFlag_TestFar(0x16C) && mode == 1 && Owner_GetStateFar(ids[cursor])->hp == 0)
             goto step_back;
         break;
-step_back:
+    step_back:
         cursor = cursor + cnt - 1;
         cursor %= cnt;
     }
-
     if (mode != 2) {
         BattleMotion_ProjectConditionalPositionFar(sel, (s32 *)&markPos);
         tbl[0].flags = 8;
         tbl[0].x = (u8)markPos.x;
         tbl[0].y = 0x80;
     }
-
     window = UiWindow_Create(0, 12, 30, 4, 74);
     head = entries;
-
-    for (;;) {
+    while (1) {
         pending = 0;
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
         ((s32 *)head)[1] = 0x40002000;
         ((s32 *)head)[2] = pending;
-        head->tile = Resource_GetBuffer(
-            slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Menu_AnimatedCursorTiles);
-        i = Trig_Sin(gFrameCount << 12);
-        if (i < 0)
-            i += 0x7FFF;
+        head->tile = Resource_GetBuffer(slotId, (((gFrameCount >> 2) & 31) << 8) + (s32)Menu_AnimatedCursorTiles);
+        if ((i = Trig_Sin(gFrameCount << 12)) < 0)
+            i = i + 0x7FFF;
         pos.y += i >> 15;
         y = pos.y;
         if (tbl[0].flags & 1) {
             nx = (pos.x + tbl[0].x) / 2;
             ny = (y + tbl[0].y) / 2;
-            if (((pos.x - nx) < 0 ? -(pos.x - nx) : (pos.x - nx)) <= 7)
+            if ((pos.x - nx < 0 ? -(pos.x - nx) : pos.x - nx) <= 7)
                 pending = 1;
             pos.x = nx;
-            pos.y = ny;
             tbl[0].x = (u8)nx;
             tbl[0].y = (u8)ny;
+            pos.y = ny;
         } else if ((u8)tbl[0].flags <= 3) {
             nx = pos.x;
-            pos.y = y;
             tbl[0].x = (u8)nx;
+            pos.y = y;
             tbl[0].y = (u8)y;
             tbl[0].flags = 1;
         } else {
             pos.x = tbl[0].x;
             pos.y = tbl[0].y;
             tbl[0].flags = (u8)(tbl[0].flags - 4);
-            if ((u8)tbl[0].flags <= 3)
+            if (tbl[0].flags <= 3)
                 tbl[0].flags = 1;
         }
         head->x = pos.x - 8;
         head->y = (u8)(pos.y - 16);
         Runtime_PushSlotEntry((s32 *)head, 240);
-
         if (spread == 0xFF) {
             efx.scale_x = 256;
             efx.scale_y = 256;
@@ -365,60 +355,63 @@ step_back:
         }
         efx.angle = 0;
         matrix = AffineMatrix_BuildForEffect(&efx);
-
         if ((redraw & 1) == 0)
             goto frame_end;
-
         cnt = 0;
         for (i = 0; i < 6; i++)
             tbl[i].flags &= (u8)~2;
-
-        for (i = 0; (u32)i < spread; i++) {
-            j = cursor + i;
-            if (j < total && ids[j] != 0xFE) {
-                selIds[cnt] = ids[j];
-                tbl[i].flags |= 2;
-                if (tbl[i].index != i) {
-                    tbl[i].flags &= (u8)~1;
-                    tbl[i].index = (s8)i;
+        i = 0;
+        if ((u32)i < spread) {
+            do {
+                j = cursor + i;
+                if (j < total && ids[j] != 0xFE) {
+                    selIds[cnt] = ids[j];
+                    tbl[i].flags |= 2;
+                    if (tbl[i].index != i) {
+                        tbl[i].flags &= (u8)~1;
+                        tbl[i].index = (s8)i;
+                    }
+                    selSlot[cnt] = (u8)i;
+                    cnt++;
                 }
-                selSlot[cnt] = (u8)i;
-                cnt++;
-            }
-            if (i != 0 && (j = cursor - i) >= 0 && ids[j] != 0xFE) {
-                selIds[cnt] = ids[j];
-                slot = &tbl[6 - i];
-                slot->flags |= 2;
-                if (slot->index != -i) {
-                    slot->flags &= (u8)~1;
-                    slot->index = (s8)-i;
+                if (i != 0 && (j = cursor - i) >= 0 && ids[j] != 0xFE) {
+                    /* FAKEMATCH: schedule this consumed side-marker index
+                       before the slot writes; folding it raised13267 to19019. */
+                    u8 mark;
+                    selIds[cnt] = ids[j];
+                    mark = (u8)(6 - i);
+                    slot = &tbl[6 - i];
+                    selSlot[cnt] = mark;
+                    slot->flags |= 2;
+                    if (slot->index != -i) {
+                        slot->flags &= (u8)~1;
+                        slot->index = (s8)-i;
+                    }
+                    cnt++;
                 }
-                selSlot[cnt] = (u8)(6 - i);
-                cnt++;
-            }
+                i++;
+            } while ((u32)i < spread);
         }
-
         for (i = 0; i < 6; i++) {
             if ((tbl[i].flags & 2) == 0)
                 tbl[i].index = 6;
         }
-
         selIds[cnt] = 0xFF;
         BattlePres_SetActorModesFar(selIds, 1);
-
         if (ids[cursor] > 7)
             goto draw_name;
         if (spread == 0xFF)
             goto frame_tail;
         if (kind == 0)
             goto frame_tail;
-
         unit = Owner_GetStateFar(ids[cursor]);
         BattleMotion_ProjectConditionalPositionFar(ids[cursor], (s32 *)&pos);
         if (infoWin != 0)
             UiWork_Finalize(infoWin, 1);
-
         switch (kind) {
+            /* FAKEMATCH: share the consumed coordinate temporary between
+               these cases; ordinary direct expressions score13267, this13137. */
+            s32 anchor;
         case 7:
             column = pos.x / 8 - 4;
             if (pos.x / 8 + 4 > 29)
@@ -439,7 +432,8 @@ step_back:
             UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 2:
-            column = pos.x / 8 - 7;
+            anchor = pos.x;
+            column = anchor / 8 - 7;
             if (pos.x / 8 + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
@@ -484,7 +478,8 @@ step_back:
             rows = 9 - count;
             if (rows <= 3)
                 rows = 4;
-            column = pos.x / 8 - 7;
+            anchor = pos.x / 8;
+            column = anchor - 7;
             if (pos.x / 8 + 9 > 29)
                 column = 14;
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
@@ -503,7 +498,7 @@ step_back:
             }
             if (*pp != 0) {
                 UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
-                count++;
+                ++count;
             }
             if (*pc != 0) {
                 UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
@@ -563,7 +558,7 @@ step_back:
                 count++;
             }
             if (unit->evil_spirit != 0) {
-                UiText_DrawCharacterAtOffset(0x8AA, (struct RenderInput *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8AA, (struct RenderInput *)infoWin, 0, 8 * count);
                 count++;
             }
             if (count == 0)
@@ -573,14 +568,12 @@ step_back:
             break;
         }
         goto frame_tail;
-
-no_condition:
+    no_condition:
         UiWork_SetParamNibble(2);
         UiText_DrawCharacterAtOffset(0x8A3, (struct RenderInput *)infoWin, 0, 0);
         UiWork_SetParamNibble(15);
         goto frame_tail;
-
-draw_name:
+    draw_name:
         if (spread == 0xFF)
             goto frame_tail;
         unit = Owner_GetStateFar(ids[cursor]);
@@ -594,7 +587,7 @@ draw_name:
         } else {
             for (i = 0; i <= 13; i++) {
                 name[i] = j = unit->name[i];
-                if (j == 0)
+                if (!j)
                     break;
             }
             name[i] = 0;
@@ -607,17 +600,16 @@ draw_name:
         if (namePos.x < 0)
             namePos.x = 0;
         Ui_ClearVramBlock();
-        UiText_RenderWideStringAtOffset(name, (struct UiWindow *)window, namePos.x, 4);
-
-frame_tail:
+        UiText_RenderWideStringAtOffset(name, window, namePos.x, 4);
+    frame_tail:
         redraw &= ~1;
-frame_end:
+    frame_end:
         if (pending != 0) {
             entry = head + 1;
             for (i = 1; i < cnt; i++, entry++) {
                 slot = &tbl[selSlot[i]];
                 BattleMotion_ProjectConditionalPositionFar(selIds[i], (s32 *)&targetPos);
-                targetPos.y += Trig_Sin(gFrameCount << 12) / 32768;
+                targetPos.y = targetPos.y + Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;
                 if (slot->flags & 1) {
                     targetPos.x = (targetPos.x + slot->x) / 2;
@@ -631,21 +623,20 @@ frame_end:
                     slot->x = targetPos.x;
                     slot->y = targetPos.y;
                 }
-                entry->gfx_mode = 1;
+                entry->mode = 1;
                 entry->x = targetPos.x - 8;
                 entry->y = targetPos.y - 12;
                 if (spread == 0xFF)
-                    entry->object_mode = 0;
+                    entry->affine = 0;
                 else
-                    entry->object_mode = 1;
-                entry->matrix = matrix;
+                    entry->affine = 1;
+                entry->param = matrix;
                 Runtime_PushSlotEntry((s32 *)entry, 240);
             }
         }
-
         pressed = gKeyState;
         repeat = gKeysRepeat;
-        if (gLinkCountdownWork->auto_enabled != 0) {
+        if (gLinkCountdownWork->auto_enabled) {
             pressed = 0;
             repeat = 0;
             if (gLinkCountdownWork->auto_delay == 0) {
@@ -687,7 +678,7 @@ frame_end:
             if (repeat & 0x60) {
                 AudioCommand_PlayFar(111);
                 do {
-                    cursor = cursor + total - 1;
+                    cursor = total + cursor - 1;
                     cursor %= total;
                 } while (ids[cursor] == 0xFE);
                 redraw |= 1;
@@ -702,7 +693,6 @@ frame_end:
         if (redraw == 0)
             break;
     }
-
     WaitFrames(1);
     Resource_ResetEntry(slotId);
     if (infoWin != 0)

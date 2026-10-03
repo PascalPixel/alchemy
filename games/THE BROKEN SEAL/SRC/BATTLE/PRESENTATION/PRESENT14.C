@@ -32,8 +32,8 @@ void BattleEv_RunWait(s32 action, s32 flag)
             register s32 actor asm("r7") = action;
             /* FAKEMATCH: bind only the used native r6 AND operand after ordinary forms failed. */
             register s32 mask asm("r6") = 0x0fff;
-            /* FAKEMATCH: early-clobber keeps the real action distinct in the native single AND. */
-            asm("and %0, %0, %1" : "+&r"(mask) : "r"(actor) : "cc");
+            /* FAKEMATCH: read-only r7 overlaps the live window; expose the actual actor's input/output. */
+            asm("and %0, %0, %1" : "+&r"(mask), "+r"(actor) : : "cc");
             masked_action = mask;
         }
 

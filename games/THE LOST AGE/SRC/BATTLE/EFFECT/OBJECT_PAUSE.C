@@ -1,5 +1,6 @@
 #include "FIXED_MATH.H"
 #include "OBJECT_LOOKUP.H"
+#include "OBJECT_DISPATCH.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "PARTY_STATE.H"
@@ -7,14 +8,13 @@
 extern s8 BattleFx_RandomChildValues[];
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-void Animation_ApplyChildValuesFar(void *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
 void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
 {
     s8 *table = BattleFx_RandomChildValues;
     s32 index = Random16();
-    Animation_ApplyChildValuesFar((void *)arg0, table[(u32)(index * 8) >> 16]);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, table[(u32)(index * 8) >> 16]);
 }
 
 /* Pauses an object: keeps its callback and its animation byte in the party

@@ -257,7 +257,7 @@ Func_02000270:
 .L_020082ac:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_020082cc
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -304,7 +304,7 @@ Func_020002d0:
 .L_0200830c:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_0200832c
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -351,7 +351,7 @@ Func_02000330:
 .L_0200836c:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_0200838c
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -394,7 +394,7 @@ Func_02000390:
 	bne .L_02008430
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_020083e8
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -442,7 +442,7 @@ Func_02000390:
 .L_02008438:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_02008494
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -511,7 +511,7 @@ Func_02000498:
 .L_020084d0:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_020084f0
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -558,7 +558,7 @@ Func_020004f4:
 .L_02008530:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_02008550
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -605,7 +605,7 @@ Func_02000554:
 .L_02008590:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_020085b0
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -652,7 +652,7 @@ Func_020005b4:
 .L_020085f0:
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_02008610
 	bl Engine_EventSetMessage
 	adds r0, r5, #0
@@ -671,7 +671,7 @@ Func_02000614:
 	push {r5, lr}
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_02008668
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -709,7 +709,7 @@ Func_0200066c:
 	push {r5, lr}
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r5, .L_020086c0
 	adds r0, r5, #0
 	bl Engine_EventSetMessage
@@ -747,7 +747,7 @@ Func_020006c4:
 	push {lr}
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r0, .L_02008700
 	bl Engine_EventSetMessage
 	movs r1, #0
@@ -813,7 +813,7 @@ Func_02000730:
 	ldr r7, [r0, #12]
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	adds r0, r5, #0
 	bl Func_02000d14
 	cmp r0, #0
@@ -1240,7 +1240,7 @@ Func_02000a50:
 	ldr r6, [r1, #32]
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r0, #13
 	bl Object_GetById
 	movs r1, #0

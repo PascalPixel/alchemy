@@ -2,11 +2,14 @@
 /*
  * Draft: Owner_RecalculateStats from the ☀️ source does not yet match ⚓️;
  * the ⚓️ body is about a quarter different (other stat offsets and a
- * shorter body). Links as recon/tla/raw/080ad3f8.s.
+ * shorter body). Links as recon/tla/raw/080ad3f8.s. Canonical owner and
+ * Djinn getter declarations retain score 6335 (125 differing instructions).
+ * Runtime_BumpFree is unresolved: this is a symbol-name comparison only.
  */
 #include "TYPES.H"
 #include "ITEM.H"
 #include "GAME_FLAGS.H"
+#include "OWNER_STATE.H"
 
 /* One party member's stored state: base statistics, derived statistics
    and what the recalculation reads from equipment, Djinn and class. */
@@ -104,9 +107,7 @@ struct StatWork {
     s32 unused_5c;
 };
 
-struct OwnerStats *Owner_GetState(s32 owner);
 struct ClassRecord *Owner_GetRecordStride84(s32 class_id);
-struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 s32 __divsi3(s32 numerator, s32 denominator);
 
 /* Distance between a stored value and one recomputed from its ratio. */
@@ -251,7 +252,8 @@ void Owner_RecalculateStats(s32 owner)
 
             for (i = 0; i < 20; i++) {
                 if (bits & (1 << i)) {
-                    struct DjinnDefinition *djinn = Djinn_GetDefinition(el, i);
+                    const struct DjinnDefinition *djinn =
+                        (const struct DjinnDefinition *)Djinn_GetDefinition(el, i);
 
                     work->hp += djinn->hp;
                     work->pp += djinn->pp;

@@ -1,8 +1,8 @@
 #include "TYPES.H"
+#include "TEXT_RENDER_RUNTIME.H"
 #include "TBS_EDITION.H"
 #include "MENU_LIST.H"
 
-s32 UiText_RenderStringTiles(u16 *, s32, s32, s32);
 
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,

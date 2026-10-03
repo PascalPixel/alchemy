@@ -1,13 +1,7 @@
 #include "RESOURCE.H"
 #include "TYPES.H"
 
-struct ResourceTableEntry {
-    u16 value;
-    u16 flags;
-};
-
-extern struct ResourceTableEntry ResourceTableEntries[];
-
+#include "VRAM_TAB.H"
 
 /* Marks one of the 96 resource entries in use, releasing its slot
    references first when it held a load state above 16. */

@@ -1,3 +1,9 @@
+/* Trial 2026-10-03: use the canonical signed owner parameter while keeping
+ * native unsigned range checks. Complete object unchanged; EN score 700,
+ * 7 differing rows. gGameState/gBattleOwnerStates remain unresolved, so
+ * those references are compared by symbol name only.
+ */
+#include "OWNER_STATE.H"
 /* Characters: return the state record for a party owner (0-7) or a battle owner (0x80-0x85), or NULL. */
 #include "TYPES.H"
 
@@ -13,14 +19,14 @@ struct GameStateOwners {
 extern struct GameStateOwners gGameState;
 extern struct OwnerState *gBattleOwnerStates;
 
-void *Owner_GetState(u32 owner)
+void *Owner_GetState(s32 owner)
 {
     struct OwnerState *states;
     register u32 offset asm("r3"); /* FAKEMATCH: the scaled index in r3 */
 
     asm volatile("mov r3, lr" ::: "r3"); /* FAKEMATCH: the entry copy of lr */
     states = gGameState.owners;
-    if (owner < 8)
+    if ((u32)owner < 8)
         {
         register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
         offset = 332;
@@ -28,7 +34,7 @@ void *Owner_GetState(u32 owner)
         r = (u8 *)states + offset;
         return r;
         }
-    if (owner - 0x80 < 6 && gBattleOwnerStates != NULL)
+    if ((u32)owner - 0x80 < 6 && gBattleOwnerStates != NULL)
         {
         register u8 *r asm("r0"); /* FAKEMATCH: the result in r0 */
         u8 *t;

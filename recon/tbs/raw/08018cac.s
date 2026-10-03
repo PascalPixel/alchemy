@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_08018cac
-Func_08018cac:
 	.global UiText_DrawGlyph
 	.thumb_func
 UiText_DrawGlyph:

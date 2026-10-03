@@ -1,3 +1,7 @@
+/* Trial 2026-10-03: use OWNER_STATE.H for the getter contract.
+ * Complete object unchanged; fresh EN score 60, 1 differing row.
+ */
+#include "OWNER_STATE.H"
 /* Near miss: score 60. ⚓️ loads the level byte (ldrb r1, [r0, #15]) before
    forming the experience address; this draft after, also after 45 s more of
    permuting. */
@@ -14,7 +18,6 @@ struct Owner_080792c4 {
     u32 value_124;
 };
 
-void *Owner_GetState(s32 owner_no);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);
 s32 Owner_LevelUp();
 

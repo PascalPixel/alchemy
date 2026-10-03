@@ -1,3 +1,7 @@
+/* 2026-10-03: removed the unused competing ApplyChildValuesFar declaration.
+   Still cannot compile: gEffectWork, OrbitingParticleState and
+   OrbitingParticleChild lack their required declarations/views. The prior
+   blockers remain; no new byte comparison is possible. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "OBJECT_EFX.H"
@@ -9,7 +13,6 @@ s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
-void Animation_ApplyChildValuesFar(struct OrbitingParticle *particle, s32 battle_mode);
 
 void BattleFx_StartOrbitingParticles(void)
 {

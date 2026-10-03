@@ -249,7 +249,14 @@ AffineMatrix_BuildForEffect:
 	.type Func_080140d8, %function
 	.thumb_func
 Func_080140d8:
-	.incbin "baserom.gba", 0x00014104, 0x00000148
+	.incbin "baserom.gba", 0x00014104, 0x0000009c
+	.global ResourceTable_AllocateBlocks
+	.type ResourceTable_AllocateBlocks, %function
+	.thumb_func
+ResourceTable_AllocateBlocks:
+	.incbin "baserom.gba", 0x000141a0, 0x00000080
+	.size ResourceTable_AllocateBlocks, . - ResourceTable_AllocateBlocks
+	.incbin "baserom.gba", 0x00014220, 0x0000002c
 	.section .rom.0001424c, "ax"
 	.global Func_08014220
 	.type Func_08014220, %function
@@ -288,12 +295,8 @@ Resource_FindFreeEntry:
 	.incbin "baserom.gba", 0x000143d8, 0x00000034
 	.section .rom.00014422, "ax"
 	.incbin "baserom.gba", 0x00014422, 0x00000002
-	.section .rom.00014424, "ax"
-	.global Resource_GetBuffer
-	.type Resource_GetBuffer, %function
-	.thumb_func
-Resource_GetBuffer:
-	.incbin "baserom.gba", 0x00014424, 0x000000c8
+	.section .rom.00014438, "ax"
+	.incbin "baserom.gba", 0x00014438, 0x000000b4
 	.section .rom.00014748, "ax"
 	.global Scheduler_SetCallbackMask
 	.type Scheduler_SetCallbackMask, %function
@@ -1250,9 +1253,8 @@ Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x0002f2dc, 0x00008d24
 	.section .rom.000385e0, "ax"
 	.incbin "baserom.gba", 0x000385e0, 0x00000534
-	.section .rom.00038eb0, "ax"
-	.incbin "baserom.gba", 0x00038eb0, 0x00000090
 	.section .rom.00038f40, "ax"
+	.balign 4
 	.global UiWork_InitializeWithResourceCounters
 	.type UiWork_InitializeWithResourceCounters, %function
 	.thumb_func
@@ -1278,12 +1280,6 @@ UiWindow_Create:
 	.incbin "baserom.gba", 0x00039260, 0x00000114
 	.section .rom.0003939a, "ax"
 	.incbin "baserom.gba", 0x0003939a, 0x00000002
-	.section .rom.0003939c, "ax"
-	.global UiWork_Finalize
-	.type UiWork_Finalize, %function
-	.thumb_func
-UiWork_Finalize:
-	.incbin "baserom.gba", 0x0003939c, 0x00000060
 	.section .rom.00039416, "ax"
 	.incbin "baserom.gba", 0x00039416, 0x00000002
 	.section .rom.00039418, "ax"
@@ -1321,13 +1317,8 @@ Ui_ClearVramBlock:
 	.thumb_func
 Func_0803a084:
 	.incbin "baserom.gba", 0x0003a068, 0x00000334
-	.section .rom.0003a39c, "ax"
-	.global UiWork_IsComplete
-	.type UiWork_IsComplete, %function
-	.thumb_func
-UiWork_IsComplete:
-	.incbin "baserom.gba", 0x0003a39c, 0x0000002c
 	.section .rom.0003a3c8, "ax"
+	.balign 4
 	.global UiWork_IsIdle
 	.type UiWork_IsIdle, %function
 	.thumb_func
@@ -1453,12 +1444,9 @@ UiText_DecodeMessage:
 	.thumb_func
 Func_0803cca8:
 	.incbin "baserom.gba", 0x0003cd00, 0x00000028
-	.section .rom.0003cd28, "ax"
-	.global Func_0803ccd0
-	.type Func_0803ccd0, %function
-	.thumb_func
-Func_0803ccd0:
-	.incbin "baserom.gba", 0x0003cd28, 0x0000014c
+	.section .rom.0003cd60, "ax"
+	.balign 4
+	.incbin "baserom.gba", 0x0003cd60, 0x00000114
 	.section .rom.0003ce74, "ax"
 	.global Func_0803ce1c
 	.type Func_0803ce1c, %function
@@ -1701,7 +1689,14 @@ Func_0803f9c0:
 	.type Func_080400e8, %function
 	.thumb_func
 Func_080400e8:
-	.incbin "baserom.gba", 0x00040140, 0x00001a8c
+	.incbin "baserom.gba", 0x00040140, 0x000015e4
+	.global UiText_RenderStringTiles
+	.type UiText_RenderStringTiles, %function
+	.thumb_func
+UiText_RenderStringTiles:
+	.incbin "baserom.gba", 0x00041724, 0x000003fc
+	.size UiText_RenderStringTiles, .-UiText_RenderStringTiles
+	.incbin "baserom.gba", 0x00041b20, 0x000000ac
 	.section .rom.00041bcc, "ax"
 	.global Func_08041b68
 	.type Func_08041b68, %function

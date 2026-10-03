@@ -1,19 +1,10 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "WINDOW.H"
+#include "GLYPH.H"
 #include "TBS_EDITION.H"
 
-struct UiWindow;
-
-struct GlyphInfo {
-    u16 width;
-    u8 unknown_02[30];
-};
-
-extern struct GlyphInfo UiText_Glyphs[];
-
 void UiWork_ResetCounters(void);
-s32 Func_08018cac(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
 
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y)
 {
@@ -115,7 +106,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, 
                 text++;
             }
 #endif
-            x += Func_08018cac(window, c, x, y, 0);
+            x += UiText_DrawGlyph(window, c, x, y, 0);
         }
     }
 }

@@ -1,11 +1,10 @@
 #include "RENDER_INPUT.H"
+#include "WINDOW.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "VRAM_BLOCK.H"
 #include "RESOURCE.H"
 
-struct RenderOutput *RenderOutput_AcquireFree(void);
-s32 RenderOutput_AppendToList(struct RenderOutputList *, struct RenderOutput *);
 
 struct RenderOutput *RenderOutput_Create(
     s32 slot,
@@ -14,8 +13,11 @@ struct RenderOutput *RenderOutput_Create(
     s32 offset_x,
     s32 offset_y)
 {
-    /* FAKEMATCH: the ignored scalar declaration of the true void list helper
-       keeps one mov after the field stores; a void declaration moves it before. */
+    /* FAKEMATCH: the list helper is void; its existing ignored scalar-return
+       view keeps one mov after the stores. Direct cast, named window output
+       and local list forms reorder that mov in all six editions. Empty
+       pointer/register barriers also change earlier arithmetic scheduling.
+       Keep this view only at the call; the maintained declaration is truthful. */
     s32 x;
     struct RenderOutput *output;
     s32 y;
@@ -40,7 +42,8 @@ struct RenderOutput *RenderOutput_Create(
     output->index = (s8)slot;
     output->kind = 1;
     output->active = 1;
-    RenderOutput_AppendToList((struct RenderOutputList *)input, output);
+    ((s32 (*)(struct RenderOutputList *, struct RenderOutput *))
+        RenderOutput_AppendToList)((struct RenderOutputList *)input, output);
     return output;
 }
 

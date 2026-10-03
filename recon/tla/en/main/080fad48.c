@@ -1,3 +1,7 @@
+/* Trial 2026-10-03: use OWNER_STATE.H for the getter contract.
+ * Complete object unchanged; fresh EN score 575, 22 differing rows.
+ */
+#include "OWNER_STATE.H"
 /*
  * Draft: Inventory_CountStackedItem does not yet match; the reference keeps
  * the slot cursor in r0 and the count in r5, and copies the value and the
@@ -6,7 +10,6 @@
  */
 #include "TYPES.H"
 
-void *Owner_GetState(s32 owner);
 
 /* Counts one party member's units of an item, a stacked slot counting its
    quantity field (bits 11-15) plus one. */

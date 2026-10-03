@@ -15,7 +15,7 @@ void DeriMura_TalkBeenBefore(void)
 
     if (Engine_GameFlagIsSet(0x843) == 0) {
         Engine_EventBegin();
-        Engine_EventPrepareSpeakers(0);
+        Engine_EventResolvePendingActions(0);
         msg = (s32)MsgDeriBeenBefore;
         Engine_EventSetMessage(msg);
         Engine_EventOpenMessage(8, 0);
@@ -40,7 +40,7 @@ void DeriMura_TalkIndraMoved(void)
     s32 msg;
 
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     msg = (s32)MsgDeriIndraMoved;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(9, 0);
@@ -60,7 +60,7 @@ void DeriMura_TalkBoat(void)
     s32 msg;
 
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     msg = (s32)MsgDeriWantBoat;
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(9, 0);

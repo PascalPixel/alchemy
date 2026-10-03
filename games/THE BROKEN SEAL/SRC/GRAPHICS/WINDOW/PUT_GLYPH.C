@@ -7,8 +7,6 @@
    kana before it, and draws its sprites two pixels lower. */
 
 
-struct RenderOutput *RenderOutput_AcquireFree(void);
-void RenderOutput_AppendToList(struct RenderOutputList *, struct RenderOutput *);
 
 
 struct SpriteAttr {

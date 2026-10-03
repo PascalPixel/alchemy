@@ -1,11 +1,11 @@
+#include "OWNER_STATE.H"
 #include "TYPES.H"
 
-u8 *Owner_GetState(s32);
 s32 Shop_CanServe(s32 selection, s32 variant);
 
 s32 Shop_ServicePrice(s32 entry_no, s32 kind)
 {
-    u8 value = Owner_GetState(entry_no)[0xF];
+    u8 value = ((u8 *)Owner_GetState(entry_no))[0xF];
     s32 result = 0;
 
     if (kind == 0) {

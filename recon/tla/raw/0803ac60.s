@@ -59,7 +59,7 @@ Func_0803ac60:
 .L_0803acc8:
 	adds r1, #8
 	ands r3, r7
-	bl Func_080416cc
+	bl UiText_RenderStringTiles
 .L_0803acd0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

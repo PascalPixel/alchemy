@@ -306,9 +306,9 @@ Func_02001c9c:
 	overlay_veneer Func_080c84c0
 	.endif
 	.endif
-	.global Engine_EventPrepareSpeakers
+	.global Engine_EventResolvePendingActions
 	.thumb_func
-Engine_EventPrepareSpeakers:
+Engine_EventResolvePendingActions:
 	.ifdef TLA_EDITION_ES
 	overlay_veneer BattleEffect_ResolvePendingActionsFar
 	.else

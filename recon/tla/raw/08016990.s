@@ -48,7 +48,7 @@ Func_08016990:
 .L_080169e0:
 	.4byte Data_02003a70
 .L_080169e4:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_080169e8:
 	ldrb r3, [r6, #2]
 	cmp r3, #1
@@ -307,10 +307,10 @@ Func_08016990:
 .L_08016bc4:
 	.4byte Data_020054c4
 .L_08016bc8:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_08016bcc:
-	.4byte Data_020038d0
+	.4byte gSerialSendSource
 .L_08016bd0:
-	.4byte Data_020036d4
+	.4byte gSerialSendSize
 .L_08016bd4:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest

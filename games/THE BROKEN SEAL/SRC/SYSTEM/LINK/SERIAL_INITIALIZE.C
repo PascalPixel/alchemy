@@ -1,8 +1,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "DMA.H"
 
-void BattleLink_ResetTransferState(void);
-
 /* Starts the serial runtime: installs the serial and timer interrupt
  * handlers, resets the SIO registers into multiplayer mode, clears the
  * runtime record and lays out its send, incoming, ready and pending buffers,

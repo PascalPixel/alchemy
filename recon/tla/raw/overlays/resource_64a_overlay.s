@@ -1667,7 +1667,7 @@ Func_02000b24:
 .L_02008d7c:
 	.4byte Data_02012f94 + 0x6c
 .L_02008d80:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_02008d84:
 	.4byte 0x00001186
 .L_02008d88:
@@ -1675,7 +1675,7 @@ Func_02000b24:
 .L_02008d8c:
 	.4byte gLinkStatus
 .L_02008d90:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_02008d94:
 	.4byte 0x000927bf
 .L_02008d98:

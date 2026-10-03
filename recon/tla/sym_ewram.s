@@ -91,8 +91,8 @@ gSchedulerTaskTable:
 	.global Data_020036d0
 Data_020036d0:
 	.space 0x00000004
-	.global Data_020036d4
-Data_020036d4:
+	.global gSerialSendSize
+gSerialSendSize:
 	.space 0x00000004
 	.global Data_020036d8
 Data_020036d8:
@@ -109,8 +109,8 @@ Data_02003870:
 	.global Data_02003874
 Data_02003874:
 	.space 0x0000005c
-	.global Data_020038d0
-Data_020038d0:
+	.global gSerialSendSource
+gSerialSendSource:
 	.space 0x00000010
 	.global gIoWriteQueue
 gIoWriteQueue:
@@ -130,8 +130,8 @@ gModelTransformWork:
 	.global Data_02005350
 Data_02005350:
 	.space 0x00000004
-	.global Data_02005354
-Data_02005354:
+	.global gSerialReceivedSize
+gSerialReceivedSize:
 	.space 0x0000000c
 	.global gSerialRuntime
 gSerialRuntime:
@@ -139,8 +139,8 @@ gSerialRuntime:
 	.global Data_02005364
 Data_02005364:
 	.space 0x0000015c
-	.global Data_020054c0
-Data_020054c0:
+	.global gLinkExchangeState
+gLinkExchangeState:
 	.space 0x00000004
 	.global Data_020054c4
 Data_020054c4:
@@ -151,8 +151,8 @@ Data_020054c8:
 	.global gObjAffineMatrices
 gObjAffineMatrices:
 	.space 0x00000100
-	.global Data_020055d0
-Data_020055d0:
+	.global gSerialReceiveDest
+gSerialReceiveDest:
 	.space 0x00000230
 	.global gMusicRestoreDelay
 gMusicRestoreDelay:

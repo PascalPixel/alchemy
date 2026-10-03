@@ -34,12 +34,12 @@ SerialRuntime_BeginTransferB:
 .L_08016888:
 	.4byte 0x00000000
 .L_0801688c:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_08016890:
 	.4byte Data_02003a70
 .L_08016894:
 	.4byte 0x04000208
 .L_08016898:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_0801689c:
 	.4byte Data_020054c4

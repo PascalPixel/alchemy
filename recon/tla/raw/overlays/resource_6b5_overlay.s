@@ -627,7 +627,7 @@ Func_0200039c:
 .L_0200852c:
 	.4byte gLinkStatus
 .L_02008530:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_02008534:
 	.4byte 0x00000c58
 	.section .text.x02008538,"ax",%progbits
@@ -1034,19 +1034,19 @@ Func_020007b8:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008848:
-	.4byte Data_020054c0
+	.4byte gLinkExchangeState
 .L_0200884c:
 	.4byte Data_02003a70
 .L_02008850:
 	.4byte 0x04000208
 .L_02008854:
-	.4byte Data_020038d0
+	.4byte gSerialSendSource
 .L_02008858:
-	.4byte Data_020036d4
+	.4byte gSerialSendSize
 .L_0200885c:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_02008860:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 	.section .text.x02008864,"ax",%progbits
 	.global Func_02000864
 	.thumb_func

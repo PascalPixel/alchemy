@@ -29,7 +29,6 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 {
     struct PsynergyMenuState *menu;
     s32 combined;
-    s32 off;
     s32 row;
 
     menu = gMenuWork;
@@ -46,9 +45,8 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
         WaitFrames(1);
 
         combined = state->selected_index;
-        off = combined * 2 + 456;
-        if (*(u16 *)((char *)menu + off) != 0) {
-            s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&MsgAbilityDescription;
+        if (menu->psynergies[combined] != 0) {
+            s32 masked = (menu->psynergies[combined] & 0x1ff) + (s32)&MsgAbilityDescription;
 #if EDITION_INTERNATIONAL
             UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->info_window, 0, 0);
 #else

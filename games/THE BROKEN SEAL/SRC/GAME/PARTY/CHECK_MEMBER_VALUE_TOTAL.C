@@ -22,8 +22,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
 
     count = Party_CountActiveOwnersFar(id);
     if (sum < count) {
-        offset = 252;
-        offset <<= 1;
+        offset = (u8 *)&gGameState.active_owners - (u8 *)&gGameState;
         p = (u8 *)&gGameState + offset;
         cnt = count;
         do {
@@ -54,9 +53,9 @@ extern u8 MsgGaveItemToMember;
 
 s32 PartyInventory_AddFar(s32 item);
 struct ItemDefinition *Item_Get(s32 item);
-void *Owner_GetStateFar(s32 owner);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 Shop_GetSelectionState(s32 owner, s32 slot);
-void Inventory_DiscardFar(s32 owner, s32 slot);
+s32 Inventory_DiscardFar(s32 owner, s32 slot);
 s32 Item_AdjustCounterFar(s32 item, s32 delta);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_ShowPositionedMessageAndWaitFar(void *message, s32 position);
@@ -96,7 +95,7 @@ s32 PartyInventory_GiveItem(s32 item)
         UiText_ShowPositionedMessageAndWaitFar(&MsgWhatWillYouDrop, 1);
         result = Shop_PickUnitItemFar(&member, &slot);
         if (result == -1) {
-            if (Item_Get(item)->flags & 8) {
+            if (Item_Get(item)->flags & ITEM_INDISPENSABLE) {
                 UiWork_PushValueSlotFar(item, 2);
                 UiText_ShowPositionedMessageAndWaitFar(&MsgWhatWillYouDrop + 4, 1);
                 goto retry;

@@ -1,12 +1,13 @@
 #include "M7_INTERFACES.H"
 
 /* ui/window/set_bounds.c */
-void UiWindow_SetBounds(struct WindowBounds *bounds, s32 right, s32 bottom,
-    s32 left, s32 top) {
-    if (bounds != NULL) {
-        bounds->left = left;
-        bounds->right = right;
-        bounds->top = top;
-        bounds->bottom = bottom;
+void UiWindow_SetBounds(struct RenderInput *window, s32 x, s32 y,
+    s32 width, s32 height)
+{
+    if (window != NULL) {
+        window->width = width;
+        window->x = x;
+        window->height = height;
+        window->y = y;
     }
 }

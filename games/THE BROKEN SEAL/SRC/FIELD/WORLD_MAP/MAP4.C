@@ -1,5 +1,6 @@
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
+#include "MAPFRAME.H"
 #include "BATTLE_PRESENTATION.H"
 #include "PROJECT.H"
 #include "TYPES.H"
@@ -33,7 +34,6 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Graphics_PrepareTransferInIwramWork(u8 *source, s32 *destination);
-void WorldMap_BuildScanlineTable(s32 value, s32 *position, u8 *map);
 
 void Map_RenderPaletteMappedRow(u32 value)
 {
@@ -84,13 +84,12 @@ void Map_RenderPaletteMappedColumn(u32 value)
    rebuild the camera transform and hand the frame to the renderer. */
 void WorldMap_UpdateView(void)
 {
-    void **slot = (void **)&gCameraWork;
-    struct BattleCamera *cam = slot[0];
-    u8 *map = slot[-5];
-    struct PerspectiveWork *view = slot[-4];
+    struct BattleCamera *cam = gCameraWork;
+    struct MapFrameWork *map = (struct MapFrameWork *)gMapAnimationPages;
+    struct PerspectiveWork *view = gMapWork[0];
     s32 *pos = cam->pos;
     s32 *target = view->origin;
-    u8 *buffer = map + 0xc80;
+    struct MapAffinePair (*buffer)[160] = map->pages;
     s32 distance = view->far_plane;
     s32 height = view->distance;
     struct FixedPointPosition local;
@@ -159,11 +158,11 @@ void WorldMap_UpdateView(void)
         s32 c = Trig_Cos(view->pitch);
         s32 s = Trig_Sin(view->pitch);
 
-        WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(c, s), pos, map);
+        WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(c, s), pos, map->scanlines);
         Data_03001f60 = 0;
         Data_03001af4 = view->pitch;
     }
-    ((s32 (*)(u8 *, s32 *, u8 *, u8 *))Data_03001e50[46])(cam, pos, map, buffer + (Data_03001e40 & 1) * 0x1400);
+    ((s32 (*)(void *, s32 *, void *, void *))Data_03001e50[46])(cam, pos, map->scanlines, buffer[Data_03001e40 & 1]);
 }
 
 /* The world map's window on its tiles: the camera position and a 16 by 16

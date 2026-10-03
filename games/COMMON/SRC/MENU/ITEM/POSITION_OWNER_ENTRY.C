@@ -1,9 +1,11 @@
 #include "M7_INTERFACES.H"
 
-void ItemMenu_PosOwner(struct Object080a1c **slot, s32 index,
+void UiIcon_PrepareObject(struct RenderOutput *icon);
+
+void ItemMenu_PosOwner(struct RenderOutput **slot, s32 index,
     s32 origin_x, s32 origin_y, s32 columns)
 {
-    struct Object080a1c *object;
+    struct RenderOutput *object;
 
     if (index > 15)
         index = 0;

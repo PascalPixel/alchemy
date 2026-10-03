@@ -1,7 +1,7 @@
 #include "INVENTORY.H"
 
-/* Inventory: remove the first stack without the 0x200 flag from an owner's
-   bag, one removal per unit it holds.  Returns 1 when the last removal
+/* Removes the first unequipped stack, one removal per unit it holds.
+   Returns 1 when the last removal
    reports 2 or when the bag ends before such a stack, 0 otherwise. */
 
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
@@ -12,13 +12,13 @@ s32 Inventory_RemoveFirstUnflagged(s32 owner)
     s32 result = 0;
     s32 i;
 
-    for (i = 0; i < 15; i++) {
+    for (i = 0; i < INVENTORY_SLOTS; i++) {
         if (state->inventory[i] == 0) {
             result = 1;
             break;
         }
-        if ((state->inventory[i] & 0x200) == 0) {
-            s32 quantity = state->inventory[i] >> 11;
+        if ((state->inventory[i] & INVENTORY_EQUIPPED) == 0) {
+            s32 quantity = state->inventory[i] >> INVENTORY_QUANTITY_SHIFT;
             s32 count = quantity + 1;
             s32 cnt;
 

@@ -1,3 +1,4 @@
+#include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -37,10 +38,10 @@ extern volatile u32 gKeysRepeat;
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 struct BattleAction *BattleAction_Get(s32 action);
 s32 GameFlag_TestFar(s32 message);
-void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
-void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
+void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 #define KEY_A 1
@@ -51,9 +52,6 @@ void Audio_PlayCue(s32 cue);
 extern u32 gFrameCount;
 extern u8 MsgChangeCharacterHelp;
 
-/* Takes a fourth argument; this caller passes the owner there as well. */
-s32 Item_CanOwnerEquip(s32 owner, s32 item);
-#define ITEM_ID_MASK 0x1ff
 #define LIST_PAGE_SIZE 5
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
 
@@ -122,7 +120,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state)
 
     combined = state->selected_index;
     if (menu->items[combined] != 0) {
-        s32 masked = (menu->items[combined] & 0x1ff) + (s32)&MsgItemPlainName;
+        s32 masked = (menu->items[combined] & ITEM_ID_MASK) + (s32)&MsgItemPlainName;
 #if EDITION_INTERNATIONAL
         UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->info_window, 0, 0);
 #else
@@ -185,7 +183,7 @@ s32 ItemMenu_DrawNamePage(
         item_id = &menu->items[first_entry];
         do {
             UiText_DrawCharacterAtOffsetFar(
-                (item_id[0] & 0x1ff) + (s32)&MsgItemName,
+                (item_id[0] & ITEM_ID_MASK) + (s32)&MsgItemName,
                 (s32)menu->item_window,
                 ENTRY_X,
                 row * 16 + 8

@@ -1,5 +1,6 @@
 #include "TYPES.H"
-#include "OWNER_STATE.H"
+#include "INVENTORY.H"
+#include "CHARACTER.H"
 #include "GAME_STATE.H"
 
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774

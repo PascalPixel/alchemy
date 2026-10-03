@@ -1,8 +1,7 @@
-#include "TYPES.H"
+#include "BATTLE_RUNTIME.H"
 #include "PARTY_STATE.H"
 
-struct BattleUnit *Owner_GetStateFar(s32 owner);
-void Party_RemoveActiveOwnerFar(s32 owner);
+s32 Party_RemoveActiveOwnerFar(s32 owner);
 void Event_ClearInvalidPackedValues(void);
 s32 Party_CountActiveOwnersFar(void);
 

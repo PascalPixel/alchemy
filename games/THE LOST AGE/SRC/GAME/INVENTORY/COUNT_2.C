@@ -2,24 +2,22 @@
 
 s32 Inventory_CountItem(s32 owner, s32 item_id)
 {
-    u8 *base = Owner_GetState(owner);
+    struct OwnerInventoryState *base = Owner_GetState(owner);
     s32 count = 0;
-    s32 target = item_id & 0x1ff;
+    s32 target = item_id & ITEM_ID_MASK;
     s32 index = 0;
-    s32 offset = 216;
 
     do {
-        if ((*(u16 *)((u8 *)offset + (s32)base) & 0x1FF) == target) {
+        if ((base->inventory[index] & ITEM_ID_MASK) == target) {
             struct ItemDefinition *item = Item_GetDirect(target);
 
-            if (item->flags & 0x10) {
-                count = (*(u16 *)((u8 *)offset + (s32)base) >> 11) + 1;
+            if (item->flags & ITEM_STACKABLE) {
+                count = (base->inventory[index] >> INVENTORY_QUANTITY_SHIFT) + 1;
                 break;
             }
             count++;
         }
         index++;
-        offset += 2;
-    } while (index <= 14);
+    } while (index < INVENTORY_SLOTS);
     return count;
 }

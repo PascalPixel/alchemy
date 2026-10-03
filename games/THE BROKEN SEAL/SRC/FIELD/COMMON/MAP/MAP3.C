@@ -2,7 +2,7 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
-#include "MAP_RENDER_WORK.H"
+#include "MAP_SCROLL.H"
 #include "MAP.H"
 #include "RAM_BUFFER.H"
 
@@ -15,39 +15,38 @@ void MapAnimation_Update(void);
    channel, 0xfeXX jumps to command XX (0xfeff stops it for this frame), and
    any other command copies COUNT characters from character OP to character
    DST and waits TIMER frames. Characters past VRAM's range come from EWRAM.
-   Every channel access is spelled (state->anim + i)->field: the repeated
-   address arithmetic keeps loop.c's first pass over its threshold, so the
-   0xffff sentinel is hoisted only in the rerun, as in the game. */
+ */
 void MapAnimation_Update(void)
 {
     struct MapState *state = gMapWork[0];
     u32 i;
 
     for (i = 0; i <= 15; i++) {
+        struct MapAnimation *anim = &state->anim[i];
         const u16 *script;
         u32 op;
         u32 count;
         u32 dst;
 
-        if ((state->anim + i)->start == NULL || (state->anim + i)->paused != 0)
+        if (anim->start == NULL || anim->paused != 0)
             continue;
     next:
-        if ((state->anim + i)->timer == 0) {
-            script = (state->anim + i)->cursor;
+        if (anim->timer == 0) {
+            script = anim->cursor;
             op = *script++;
             if (op == 0xffff) {
-                (state->anim + i)->cursor = (state->anim + i)->start;
+                anim->cursor = anim->start;
                 goto next;
             }
             if ((op & 0xff00) == 0xfe00) {
                 if ((op & 0xff) == 0xff)
                     continue;
-                (state->anim + i)->cursor = (state->anim + i)->start + (op & 0xff) * 2;
+                anim->cursor = anim->start + (op & 0xff) * 2;
                 goto next;
             }
             count = *script++;
             dst = script[0];
-            (state->anim + i)->timer = script[1];
+            anim->timer = script[1];
             if (state->wide_tiles == 0) {
                 if (op >= 0x600)
                     Dma_Set(Ram_DecodeBuffer + op * 32, (void *)(dst * 32 + 0x06004000), (count * 8) | 0x84000000, (volatile u32 *)0x040000d4);
@@ -59,10 +58,10 @@ void MapAnimation_Update(void)
                 else
                     Dma_Set((void *)(op * 64 + 0x06008000), (void *)(dst * 64 + 0x06008000), (count * 16) | 0x84000000, (volatile u32 *)0x040000d4);
             }
-            (state->anim + i)->cursor += 4;
+            anim->cursor += 4;
             goto next;
         } else {
-            (state->anim + i)->timer--;
+            anim->timer--;
         }
     }
 }
@@ -127,12 +126,12 @@ void MapAnimation_StartChannels(const u16 *script)
 
 void Map_EnableUpdateCallback(void)
 {
-    if (((struct MapRenderWork *)gMapWork[0])->active == 0)
+    if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
         Scheduler_EnableCallbacks((u32)MapAnimation_Update);
 }
 
 void Map_DisableUpdateCallback(void)
 {
-    if (((struct MapRenderWork *)gMapWork[0])->active == 0)
+    if (((struct MapScrollWork *)gMapWork[0])->animation_active == 0)
         Scheduler_DisableCallbacks((u32)MapAnimation_Update);
 }

@@ -1,19 +1,9 @@
 #include "TYPES.H"
-#include "OBJECT_LOOKUP.H"
+#include "OBJECT_RUNTIME.H"
+#include "ANIMSPR.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "UI.H"
-
-struct Child_08091c44 {
-    u8 padding[36];
-    u8 value;
-};
-
-struct Object_08091c44 {
-    u8 padding[80];
-    struct Child_08091c44 *child;
-    u8 active;
-};
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
 void Object_SetModeById(s32, s32);
@@ -52,11 +42,11 @@ void Inventory_ReservedNoOp(void)
 
 void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
 {
-    struct Object_08091c44 *obj = ObjectTable_Get(object_id);
+    struct ObjectRuntime *obj = ObjectTable_Get(object_id);
 
-    if (obj != 0 && obj->active == 1) {
+    if (obj != 0 && obj->animation_kind == 1) {
         s32 cnt = 0;
-        u8 *p = &obj->child->value;
+        u8 *p = &((struct AnimationObject *)obj->animation)->last_no;
 
         while (cnt <= 89) {
             WaitFrames(1);

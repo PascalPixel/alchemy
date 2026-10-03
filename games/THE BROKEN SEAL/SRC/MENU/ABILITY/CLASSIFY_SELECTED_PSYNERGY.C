@@ -1,3 +1,4 @@
+#include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "SYSTEM.H"
@@ -31,61 +32,36 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
     return ret;
 }
 
-/* psynergy_menu/select_party_slot.c */
-struct Rec5 { u8 pad[5]; unsigned int flag : 8; };
-struct Cur { unsigned short mark : 8; };
-
-extern struct PsynergyMenuState *gMenuWork;
-void *Owner_GetStateFar(s32);
-s32 UiMenu_SlideCursor(s32, s32);
-void UiIcon_PrepareObject(void *cursor);
+/* Select the current party tab and build that owner's Psynergy icons. */
+void UiMenu_SlideCursor(s32 x, s32 y);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 {
-    void *menu = gMenuWork;
-    s32 offset = party_slot + 28;
-    s32 cursor_offset = party_slot * 4 + 20;
-    void *icon;
-    u8 byte_val;
-    s32 owner_index;
-    s32 combined_offset;
-    s32 obj_off;
-    s32 obj_id;
-    void *obj_ptr;
-    void *p456;
-    u8 *p2;
-    s32 badge;
+    struct PsynergyMenuState *menu = gMenuWork;
+    struct RenderOutput *icon;
+    struct BattleUnit *owner;
+    s32 tab;
     s32 result;
-    s32 cursor_offset2;
 
     result = 0;
-    icon = *(void **)(menu + cursor_offset);
-    *(u8 *)(icon + 5) = 1;
-    *(u16 *)(icon + 12) = result;
-    ((struct Rec5 *)(*(u8 **)(menu + 540)))->flag = 13;
-    p2 = (u8 *)menu + 2;
-    owner_index = *(s8 *)(menu + offset);
-    byte_val = ((struct Cur *)(menu + 537))->mark;
-    p2[offset] = byte_val;
-
-    if (owner_index == -1) {
-        *(u8 *)(menu + offset) = 0;
-        combined_offset = 0;
+    icon = menu->pane_icon[party_slot];
+    icon->active = 1;
+    icon->unknown_0c = result;
+    menu->cursor_icon->active = 13;
+    tab = menu->tab_index[party_slot];
+    menu->tab_counts[party_slot] = menu->owner_count;
+    if (tab == -1) {
+        menu->tab_index[party_slot] = 0;
+        tab = 0;
     } else {
-        combined_offset = owner_index * 2;
-        UiMenu_SlideCursor(owner_index * 24 - 10, 16);
+        UiMenu_SlideCursor(tab * 24 - 10, 16);
     }
-
-    obj_off = combined_offset + 520;
-    obj_id = *(u16 *)(menu + obj_off);
-    obj_ptr = Owner_GetStateFar(obj_id);
-    p456 = menu + 456;
-    badge = (u8)PsynergyMenu_CollectActions(obj_ptr, p456, 2);
-    *(u8 *)(menu + 536) = (u8)badge;
-    result = PsynergyMenu_SetupActionIcons(menu + 520, p456);
-
-    cursor_offset2 = party_slot * 4 + 20;
-    icon = *(void **)(menu + cursor_offset2);
+    owner = Owner_GetStateFar(menu->owner_table[tab]);
+    menu->psynergy_count = (u8)PsynergyMenu_CollectActions(
+        owner, menu->psynergies, 2);
+    result = PsynergyMenu_SetupActionIcons(menu->owner_table, menu->psynergies);
+    icon = menu->pane_icon[party_slot];
     UiIcon_PrepareObject(icon);
     WaitFrames(1);
     return result;

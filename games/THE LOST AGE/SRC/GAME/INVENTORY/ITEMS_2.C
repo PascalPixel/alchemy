@@ -8,28 +8,28 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id)
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 slot;
 
-    if ((item->flags & 0x10) != 0) {
+    if ((item->flags & ITEM_STACKABLE) != 0) {
         slot = 0;
-        if (((inv->inventory[slot] ^ item_id) & 0x1ff) != 0) {
+        if (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0) {
             do {
                 slot++;
-                if (slot > 14)
+                if (slot >= INVENTORY_SLOTS)
                     break;
-            } while (((inv->inventory[slot] ^ item_id) & 0x1ff) != 0);
+            } while (((inv->inventory[slot] ^ item_id) & ITEM_ID_MASK) != 0);
         }
-        if (slot != 15) {
+        if (slot != INVENTORY_SLOTS) {
             s32 entry = inv->inventory[slot];
-            u32 count = ((u32)entry >> 11) + 1;
+            u32 count = ((u32)entry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
             if (count > 29)
                 return -1;
             {
                 /* FAKEMATCH: the mask gets its own temporary before the
                    and; the one-expression store allocates other registers. */
-                s32 value = 0x7ff;
+                s32 value = INVENTORY_ENTRY_MASK;
 
                 value &= entry;
-                value |= count << 11;
+                value |= count << INVENTORY_QUANTITY_SHIFT;
                 inv->inventory[slot] = value;
             }
             return slot;
@@ -43,7 +43,7 @@ s32 Inventory_AddItem(s32 owner_id, s32 item_id)
             return slot;
         }
         slot++;
-    } while (slot <= 14);
+    } while (slot < INVENTORY_SLOTS);
     return -1;
 }
 

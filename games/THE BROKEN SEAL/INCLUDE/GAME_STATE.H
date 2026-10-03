@@ -62,7 +62,13 @@ struct GameState {
     u8 palette_glow[2];
     u8 unknown_207[8];
     u8 unknown_20f;
-    u8 unknown_210[0xc];
+    u16 unknown_210;
+    u16 unknown_212;
+    u16 unknown_214;
+    u16 unknown_216;
+    /* The keys that invoke each stored Psynergy shortcut. */
+    u16 first_shortcut_keys;
+    u16 second_shortcut_keys;
     /* Keys that make the leader dash on the world map. */
     u16 dash_keys;
     /* The cue a scene the party returns to plays, -1 for the scene's own. */
@@ -123,6 +129,9 @@ LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
 LAYOUT_OFFSET_GUARD(GameState_MovementMode, struct GameState, movement_mode, 0x1f2);
 LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0x1f4);
 LAYOUT_OFFSET_GUARD(GameState_ActiveOwners, struct GameState, active_owners, 0x1f8);
+LAYOUT_OFFSET_GUARD(GameState_Keys210, struct GameState, unknown_210, 0x210);
+LAYOUT_OFFSET_GUARD(GameState_FirstShortcutKeys, struct GameState, first_shortcut_keys, 0x218);
+LAYOUT_OFFSET_GUARD(GameState_SecondShortcutKeys, struct GameState, second_shortcut_keys, 0x21a);
 LAYOUT_OFFSET_GUARD(GameState_FirstShortcut, struct GameState, first_shortcut, 0x220);
 LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState, retreat_entrance, 0x242);
 LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);

@@ -7,6 +7,12 @@
  * sparks, concentric ellipses and palette ramps. The verified canvas-layer
  * queue shape reduces the baseline by 53 edits.
  * WALL: Second-phase callback spills and palette-loop source structure.
+ * 2026-10-03 shared resource/canvas contracts: all six diagnostic builds
+ * retain 5728 bytes including pools. Against the fresh current-source
+ * baseline, the true scalar-result rectangle blitters reorder argument
+ * setup at nine calls (28 halfwords); symbols and relocations stay exact.
+ * The opaque resource casts add no difference. Earlier ROM scores below
+ * remain prior checkpoints; this owner pass has not been ROM-scored.
  * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 5,617
  * candidates; the best scored 31834 against 34547 (698 register-only, 39
  * stack-only, 131 operand, 204 reordered, 53 inserted, 75 deleted) after

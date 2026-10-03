@@ -1,6 +1,9 @@
-/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
- * and canonical resource/allocator contracts. Earlier measurements are
- * prior checkpoints; fresh complete-object comparison is pending. */
+/* 2026-10-03 owner/API cleanup: shared affine input and canonical
+ * resource/allocator/scheduler contracts. Fresh all-six complete objects
+ * retain the current 2216-byte draft extent. The truthful s32 scheduler
+ * result changes two argument-setup instructions' order from the former
+ * void caller declaration. This uncredited residual is retained; no false
+ * void API or instruction-steering device is introduced to hide it. */
 #include "AFFINE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"

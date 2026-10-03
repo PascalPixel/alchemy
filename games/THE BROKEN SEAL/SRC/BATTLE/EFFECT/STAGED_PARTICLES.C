@@ -87,7 +87,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     s32 row;
     s32 column;
 
-    cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_BACKGROUND];
+    cache = (void **)&gTransitionWork;
     presentation = cache[0];
     canvas = cache[-4];
     work = cache[-5];

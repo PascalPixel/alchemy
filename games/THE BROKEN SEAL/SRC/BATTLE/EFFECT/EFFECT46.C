@@ -89,6 +89,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
    skips to the end. */
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing address-word blitter cells retain the base-plus-slot loads; pointer indexing folds the offsets into literals and changes instruction order. */
     /* FAKEMATCH: the existing packed byte9 field keeps its mask across object creation; the ordinary byte mask shortened this scene by eight bytes and reordered stores. */
     s32 position[4];
     DrawRectangle draw[2];
@@ -128,9 +129,9 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
         }
     }
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-    draw[0] = *(DrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
+    draw[0] = *(DrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-    draw[1] = *(DrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+    draw[1] = *(DrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
     *(volatile u16 *)0x04000048 = 0x2737;
     *(volatile u16 *)0x04000040 = 0xf0;
     *(volatile u16 *)0x04000046 = 0x1088;
@@ -582,6 +583,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
    react; its group is refreshed on frames 6 and 14. */
 void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing address-word blitter cells retain the base-plus-slot loads; pointer indexing folds the offsets into literals and changes instruction order. */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -648,7 +650,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
             else
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
-            routine[0] = *(BattleEffectDrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
+            routine[0] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
             if (work->effect->side == 0)
                 routine[0](canvas, (u8 *)work + (frame - 6) * 0xd80, position.x / 2 - 24, position.y - 24, 48, 72);
             else
@@ -660,7 +662,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
             s32 strip;
 
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-            routine[0] = *(BattleEffectDrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
+            routine[0] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
             if (step > 2)
                 step = 2;
             if (work->effect->variant == 0)

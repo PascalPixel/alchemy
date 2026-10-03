@@ -196,10 +196,11 @@ void Palette_StepTowardResource(s32 resource_id)
    major axis is walked from its lower end. */
 void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
 {
+    /* FAKEMATCH: the existing casted cell read retains the canvas-cell literal; direct typed indexing changes it to a base literal and offset load. */
     s32 dx = x1 - x0;
     s32 dy = y1 - y0;
     s32 frac = 0x80;
-    u8 *canvas = (u8 *)gBattleFxWork[1];
+    u8 *canvas = ((u8 **)gBattleFxWork)[1];
     s32 step;
     s32 i;
     s32 x;

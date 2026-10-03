@@ -7,7 +7,6 @@
 #include "BATTLE_WORK.H"
 #include "BATTLE_PARTY.H"
 #include "SERIAL_RUNTIME.H"
-void SerialRuntime_WaitForTransferB(void);
 void Party_Apply(s32, u16 *);
 void Party_Do(void *);
 

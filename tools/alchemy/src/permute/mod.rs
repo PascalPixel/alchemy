@@ -539,9 +539,9 @@ impl Problem {
         text
     }
 
-    /// The best candidate without the rewrites that only rode along: every
-    /// changed region of its text that can go back to the draft's spelling
-    /// without raising the score does, and the rest is parsed again.
+    /// Discard all rewrites when the complete original spelling is no worse.
+    /// Text regions are not independent semantic changes: reverting only the
+    /// insertion half of a moved statement can delete a live assignment.
     pub fn minimized(&self, base: &Found, best: &Found, directory: &Path) -> Found {
         if best.kinds.is_empty() {
             return best.clone();
@@ -555,7 +555,7 @@ impl Problem {
             source.push_str(&self.draft[self.span.1..]);
             source
         };
-        let (text, kept, regions) = minimize(&before, &after, &mut |text: &str| {
+        let (_text, kept, regions) = minimize(&before, &after, &mut |text: &str| {
             self.evaluate(&splice(text), directory)
                 .ok()
                 .map(|score| score.total)
@@ -563,26 +563,8 @@ impl Problem {
         if kept == regions {
             return best.clone();
         }
-        let source = splice(&text);
-        let Ok(located) = locate(&source, Some(&self.name), &self.unit.typedef_names()) else {
-            return best.clone();
-        };
-        let Ok(score) = self.evaluate(&self.source(&located.function), directory) else {
-            return best.clone();
-        };
-        if score.total > best.score.total {
-            return best.clone();
-        }
-        println!("minimized: kept {kept} of {regions} changed regions");
-        let env = self.env(&located.function);
-        Found {
-            unnatural: unnatural(&located.function, &env),
-            function: located.function,
-            score,
-            kinds: best.kinds.clone(),
-            job: best.job,
-            iteration: best.iteration,
-        }
+        println!("minimized: restored the complete original spelling");
+        base.clone()
     }
 
     pub fn evaluate(&self, text: &str, directory: &Path) -> Result<Score, String> {
@@ -865,10 +847,10 @@ fn regions(old: &[&str], new: &[&str]) -> Vec<(usize, usize, usize, usize)> {
     out
 }
 
-/// Put each changed region of `after` back to its spelling in `before`
-/// while `score` (lower is better; `None` when the text does not compile)
-/// does not rise, over two passes. Returns the text, the regions kept and
-/// the regions there were.
+/// Roll back only the complete candidate, never individual text regions.
+/// The complete inputs come from guarded AST rewrites. An arbitrary mixture
+/// has not passed those guards, even when it compiles and gets a better
+/// native score. Region counts describe only the whole rollback.
 fn minimize(
     before: &str,
     after: &str,
@@ -876,49 +858,13 @@ fn minimize(
 ) -> (String, usize, usize) {
     let old: Vec<&str> = before.lines().collect();
     let new: Vec<&str> = after.lines().collect();
-    let parts = regions(&old, &new);
-    let build = |keep: &[bool]| {
-        let mut lines: Vec<&str> = Vec::new();
-        let mut at = 0;
-        for (part, &(start, end, from, to)) in parts.iter().enumerate() {
-            lines.extend_from_slice(&old[at..start]);
-            if keep[part] {
-                lines.extend_from_slice(&new[from..to]);
-            } else {
-                lines.extend_from_slice(&old[start..end]);
-            }
-            at = end;
-        }
-        lines.extend_from_slice(&old[at..]);
-        let mut text = lines.join("\n");
-        text.push('\n');
-        text
-    };
-    let mut keep = vec![true; parts.len()];
-    let Some(mut total) = score(&build(&keep)) else {
-        return (after.to_string(), parts.len(), parts.len());
-    };
-    for _ in 0..2 {
-        let mut dropped = false;
-        for part in 0..parts.len() {
-            if !keep[part] {
-                continue;
-            }
-            keep[part] = false;
-            match score(&build(&keep)) {
-                Some(next) if next <= total => {
-                    total = next;
-                    dropped = true;
-                }
-                _ => keep[part] = true,
-            }
-        }
-        if !dropped {
-            break;
+    let count = regions(&old, &new).len();
+    if let Some(current) = score(after) {
+        if score(before).is_some_and(|original| original <= current) {
+            return (before.to_string(), 0, count);
         }
     }
-    let kept = keep.iter().filter(|keep| **keep).count();
-    (build(&keep), kept, parts.len())
+    (after.to_string(), count, count)
 }
 
 /// A line diff of two function texts, `-` for the draft and `+` for the
@@ -1173,8 +1119,30 @@ mod tests {
     }
 
     #[test]
-    fn minimizing_reverts_regions_the_score_does_not_need() {
-        // Only the B matters; D rode along, and reverting E breaks the build.
+    fn minimizing_never_splits_moved_assignments() {
+        // The Djinn tutorial keeps both key masks live after the switch.
+        // Moving one write is safe, but its insertion and deletion are not
+        // independent edits. A native score cannot prove a write is dead.
+        let before = "switch (step) {\ncase 13:\ntimer = 0;\nstep++;\nrepeat = 2;\npressed = 2;\nbreak;\ncase 21:\ntimer = 0;\nrepeat = 32;\npressed = 32;\nstep = 22;\nbreak;\n}\nUse(pressed);\nUse(repeat);\n";
+        let after = "switch (step) {\ncase 13:\npressed = 2;\ntimer = 0;\nstep++;\nrepeat = 2;\nbreak;\ncase 21:\nrepeat = 32;\ntimer = 0;\npressed = 32;\nstep = 22;\nbreak;\n}\nUse(pressed);\nUse(repeat);\n";
+        let mut scores = Vec::new();
+        let (text, _, _) = minimize(before, after, &mut |text| {
+            scores.push(text.to_string());
+            // Deliberately reward exactly the corrupt output observed in
+            // the monitor run: omitting either live assignment.
+            Some(
+                (text.matches("pressed = 2;").count() + text.matches("repeat = 32;").count())
+                    as u64,
+            )
+        });
+        assert_eq!(text.matches("pressed = 2;").count(), 1, "{text}");
+        assert_eq!(text.matches("repeat = 32;").count(), 1, "{text}");
+        assert!(scores.iter().all(|text| text == before || text == after));
+    }
+
+    #[test]
+    fn minimizing_keeps_or_reverts_the_complete_candidate() {
+        // An invalid original cannot justify a partial rollback.
         let mut score = |text: &str| -> Option<u64> {
             if !text.contains("E") {
                 return None;
@@ -1183,8 +1151,12 @@ mod tests {
         };
         let (text, kept, regions) =
             minimize("a\nb\nc\nd\nx\ne\n", "a\nB\nc\nD\nx\nE\n", &mut score);
-        assert_eq!(text, "a\nB\nc\nd\nx\nE\n");
-        assert_eq!((kept, regions), (2, 3));
+        assert_eq!(text, "a\nB\nc\nD\nx\nE\n");
+        assert_eq!((kept, regions), (3, 3));
+
+        let (text, kept, regions) = minimize("a\nb\nc\n", "a\nB\nc\n", &mut |_| Some(0));
+        assert_eq!(text, "a\nb\nc\n");
+        assert_eq!((kept, regions), (0, 1));
     }
 
     #[test]

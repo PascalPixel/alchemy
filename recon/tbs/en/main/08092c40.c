@@ -9,7 +9,10 @@
    Other editions were not newly proved by that English trial.
    Canonical-owner/pointer ordinary trial: 836 bytes under all six defines;
    EN weighted diagnostic 1030 (31 rows) against the native 836 bytes, with
-   no unresolved calls. Current 64-slot window/event bank trial: unmeasured. */
+   no unresolved calls. Measured 64-slot window/event bank trial: 828 bytes
+   against native 836; weighted diagnostic 455 (15 rows: 11 register-only,
+   4 deleted), with no unresolved calls. The deleted mode reload and stack
+   load, and flags/side-handle register differences remain. No exact match. */
 #include "EDITION.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"

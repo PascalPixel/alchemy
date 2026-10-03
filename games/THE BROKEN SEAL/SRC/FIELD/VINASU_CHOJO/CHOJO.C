@@ -3,6 +3,7 @@
 #include "CHOJO.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"
+#include "VRAM_BLOCK.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
@@ -96,12 +97,6 @@ LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *Data_03001f30;
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
-extern struct WorldMapVramBlock ResourceTableEntries[];
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
@@ -1344,7 +1339,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
                  * leaves a dead QImode zero that takes r3 from the +85
                  * address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
-                sprite->tile = (ResourceTableEntries[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;

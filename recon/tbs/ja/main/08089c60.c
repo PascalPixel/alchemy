@@ -1,18 +1,22 @@
 /* DRAFT: Japanese UiText_OpenMessageAtObject at 08089c60 (780 bytes
    including pools); the five international editions remain drafts.
-   2026-10-02: use RENDER_MODE_OFS for the Japanese work byte (0xf34).
+   2026-10-02 trial used RENDER_MODE_OFS for the Japanese work byte (0xf34).
    Prior trial with named call targets: the plain source
-   scores 560 (7 register-only, 2 reordered, 2 inserted, 2 deleted).
-   The retained tagged r1 top copy scores 340 (3 register-only, 2 reordered,
+   scored 560 (7 register-only, 2 reordered, 2 inserted, 2 deleted).
+   The prior tagged r1 top copy scored 340 (3 register-only, 2 reordered,
    1 inserted, 1 deleted): it loads top directly into r1 then reloads r2,
    where the ROM loads r2 and copies r1. Two dimension arguments and the
    final -1 are prepared in another order. Pinning the initial top to r2
    scored 625; exposing top before the copy scored 445. No exact match.
-   Ordinary canonical-owner/pointer attempt: not yet measured; the redundant
-   identical side-window branch is removed instead of forcing a mode reload. */
+   Canonical-owner/pointer ordinary trial: 776 bytes for JA and 836 under
+   international defines; JA weighted diagnostic 2366 (83 rows) against the
+   native 780 bytes, with no unresolved calls. The identical side-window
+   branch was removed instead of forcing a mode reload. Current 64-slot
+   window/event bank trial: unmeasured. */
 #include "EDITION.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
+#include "HEAP_STATE.H"
 #include "OBJECT_RUNTIME.H"
 #include "WINDOW.H"
 #include "TYPES.H"
@@ -32,6 +36,7 @@ s32 UiWork_IsCompleteFar(void);
 /* Low twelve bits name the actor; high bits place its message and portrait. */
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {
+    void **slots;
     struct UiRenderWork *win;
     struct EventRuntime *work;
     s32 speaker;
@@ -56,8 +61,9 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     /* FAKEMATCH: the tail clamp retains the loaded top in r1; CSE otherwise shares top - 5 through ip. */
     register s32 base asm("r1");
 
-    win = (struct UiRenderWork *)gWindowWork[0];
-    work = gWork;
+    slots = &gWorkSlot[HEAP_SLOT_WINDOW];
+    win = slots[0];
+    work = slots[HEAP_SLOT_EVENT - HEAP_SLOT_WINDOW];
     handle = 0;
     side = 0;
     speaker = ObjectTable_ReadActiveValue(arg);

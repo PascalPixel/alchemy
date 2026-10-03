@@ -475,6 +475,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
+    /* FAKEMATCH: separate immediate clears select r2 instead of the
+       native r5 zero value before the glyph allocation. */
+    s32 clear;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -483,11 +486,12 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetPosition(18, 0x1e00000, 0xca0000);
     Engine_TaskWait(1);
     Engine_CameraFollowActor(18, 1);
+    clear = 0;
     actor = (struct FieldActor *)Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
-    actor->motion_flags = 0;
+    actor->motion_flags = clear;
     sprite = actor->sprite;
     actor->y.fixed = 0x50000;
-    sprite->part_count = 0;
+    sprite->part_count = clear;
     sprite->full_color = 0;
     sprite->palette = 0;
     glyph = Engine_HeapAllocate(17, sizeof(*glyph));

@@ -7,10 +7,13 @@
    removes that reload and exchanges flags fp/r9 and side-handle r9/fp.
    Two existing measuring/subtract steering devices remain tagged below.
    Other editions were not newly proved by that English trial.
-   Ordinary canonical-owner/pointer attempt: not yet measured. */
+   Canonical-owner/pointer ordinary trial: 836 bytes under all six defines;
+   EN weighted diagnostic 1030 (31 rows) against the native 836 bytes, with
+   no unresolved calls. Current 64-slot window/event bank trial: unmeasured. */
 #include "EDITION.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
+#include "HEAP_STATE.H"
 #include "OBJECT_RUNTIME.H"
 #include "WINDOW.H"
 #include "TYPES.H"
@@ -30,6 +33,7 @@ s32 UiWork_IsCompleteFar(void);
 /* Low twelve bits name the actor; high bits place its message and portrait. */
 struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {
+    void **slots;
     struct UiRenderWork *win;
     struct EventRuntime *work;
     s32 speaker;
@@ -52,8 +56,9 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
     s32 column;
     s32 none;
 
-    win = (struct UiRenderWork *)gWindowWork[0];
-    work = gWork;
+    slots = &gWorkSlot[HEAP_SLOT_WINDOW];
+    win = slots[0];
+    work = slots[HEAP_SLOT_EVENT - HEAP_SLOT_WINDOW];
     handle = 0;
     side = 0;
     speaker = ObjectTable_ReadActiveValue(arg);

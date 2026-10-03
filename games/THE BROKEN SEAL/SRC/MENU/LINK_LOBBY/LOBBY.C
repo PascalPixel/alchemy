@@ -1,7 +1,8 @@
 #include "EDITION.H"
-/* The link lobby: its scene tables and the serial query with interrupts held. */
+/* The link lobby: its scene tables and serial initialization with IME saved and restored. */
 #include "LOBBY.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "FIELD_EVENT.H"
 #include "SERIAL_RUNTIME.H"
 #include "IWRAM_CALL.H"
@@ -75,9 +76,11 @@ s32 SceneData_ReturnZero(void)
 
 void LinkLobby_InitializeSerial(void)
 {
-    volatile u16 *ime = (volatile u16 *)0x04000208;
-    u32 saved = *ime;
+    volatile u16 *ime;
+    u16 saved;
 
+    ime = &REG_IME;
+    saved = *ime;
     *ime = (u16)(u32)ime;
     SerialRuntime_RemoveIrqHandlers();
     SerialRuntime_Initialize();

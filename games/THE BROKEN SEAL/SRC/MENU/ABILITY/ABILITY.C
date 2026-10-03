@@ -13,7 +13,7 @@ extern volatile u32 gKeysRepeat;
 
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
-struct PsynergyMenuIcon *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, s32 window, s32 x, s32 y);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
 void UiText_DrawWorkValueWithLabel(s32 window);
@@ -29,12 +29,15 @@ void Audio_PlayCue(s32 cue);
 /* Select the owner whose Psynergy is shown, or assign an L/R shortcut. */
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 {
+    /* FAKEMATCH: retain the existing low-byte CollectActions caller contract.
+       Its true s32 return with explicit u8 narrowing changes the native
+       adds r5,r0,#0 copy to mov r5,r0 before the same narrowing. */
     struct PsynergyMenuState *menu;
     s32 selection;
     s32 count;
     s32 pending;
     s32 result;
-    struct OwnerInventoryState *owner;
+    struct BattleUnit *owner;
     s32 window;
     s32 shown;
     s32 i;
@@ -53,8 +56,8 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
     if (UiWindow_UpdateOrCreate(&menu->psynergy_window, 13, 3, 17, 10, 2))
         Menu_SpawnIconEntries(menu, menu->psynergy_window);
     if (UiWindow_UpdateOrCreate(&menu->shortcut_window, 13, 13, 17, 4, 2)) {
-        menu->cursor_icon = RenderOutput_CreateFromResourceFar(2, 0, menu->shortcut_window, 0, result);
-        menu->cursor_icon->state = 13;
+        menu->cursor_icon = RenderOutput_CreateFromResourceFar(2, 0, (struct RenderInput *)menu->shortcut_window, 0, result);
+        menu->cursor_icon->active = 13;
     }
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
@@ -97,7 +100,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
             else
                 menu->mode = 2;
             actions = Runtime_BumpAllocate(64);
-            found = PsynergyMenu_CollectActions((struct OwnerActionState *)owner, actions, 1);
+            found = (u8)PsynergyMenu_CollectActions((struct BattleUnit *)owner, actions, 1);
             Runtime_BumpFree(actions);
             action_count = (s8)found;
             if (action_count == 0) {
@@ -154,35 +157,6 @@ struct PsynergyTargetMarker {
     struct PsynergyTargetAttributes attributes;
 };
 
-struct PsynergyTargetWindow {
-    u8 reserved_00[12];
-    u16 x;
-    u16 y;
-};
-
-struct PsynergyTargetMenu {
-    u8 reserved_000[8];
-    s32 selected_owner;
-    u8 reserved_00c[4];
-    struct PsynergyTargetWindow *window;
-    u8 reserved_014[4];
-    struct PsynergyTargetMarker *marker;
-    s8 owner_selection;
-    s8 selection;
-    u8 reserved_01e[6];
-    s32 status_window;
-    u8 reserved_028[4];
-    s32 info_window;
-    u8 reserved_030[0x148];
-    u16 selected_action;
-    u8 reserved_17a[0x8e];
-    u16 owner_ids[8];
-    u8 action_count;
-    u8 party_count;
-    u8 action_owner;
-    u8 target_owner;
-};
-
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern char MsgAbilityDescription;
@@ -194,17 +168,17 @@ void GameFlag_ClearBitFar(s32 flag);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
-void UiIcon_PrepareObject(struct PsynergyTargetMarker *marker);
+void UiIcon_PrepareObject(struct RenderOutput *marker);
 void Audio_PlayCue(s32 cue);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
 {
     u16 *psynergies;
     struct PsynergyMenuState *menu;
-    struct OwnerActionState *owner;
+    struct BattleUnit *owner;
 
     menu = gMenuWork;
-    owner = (struct OwnerActionState *)Owner_GetStateFar(owner_id);
+    owner = (struct BattleUnit *)Owner_GetStateFar(owner_id);
     psynergies = menu->psynergies;
     menu->psynergy_count =
         PsynergyMenu_CollectActions(owner, psynergies, 2);
@@ -234,7 +208,10 @@ void PsynergyMenu_NoOp(void)
  * the item-target selector's halfword position and nine-bit OAM x field. */
 s32 PsynergyMenu_SelectTarget(s32 mode)
 {
-    struct PsynergyTargetMenu *menu;
+    /* FAKEMATCH: retain the existing unsigned marker/OAM view. Direct
+       RenderOutput member/word casts remove the native halfword narrowing
+       before the nine-bit OAM assignment. */
+    struct PsynergyMenuState *menu;
     s32 selection;
     s32 count;
     s32 pending;
@@ -242,39 +219,39 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
     s32 shown;
     struct PsynergyTargetMarker *marker;
 
-    menu = ((struct PsynergyTargetMenu *)gMenuWork);
-    selection = menu->selection;
-    count = menu->party_count;
+    menu = ((struct PsynergyMenuState *)gMenuWork);
+    selection = menu->tab_index[1];
+    count = menu->owner_count;
     pending = 1;
     result = 0;
     shown = 0;
-    Owner_GetStateFar(menu->owner_ids[menu->owner_selection]);
+    Owner_GetStateFar(menu->owner_table[menu->tab_index[0]]);
     UiMenu_SlideCursor(selection * 24 - 10, 16);
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
             pending = 0;
             selection = (selection + count) % count;
-            Owner_GetStateFar(menu->owner_ids[selection]);
-            marker = menu->marker;
+            Owner_GetStateFar(menu->owner_table[selection]);
+            marker = (struct PsynergyTargetMarker *)menu->pane_icon[1];
             marker->attributes.x = marker->x =
-                ((menu->window->x + selection * 3) << 3) - 2;
+                ((((struct RenderInput *)menu->auxiliary_window)->x + selection * 3) << 3) - 2;
             if (mode == 0) {
                 Menu_DrawOwnerStatusPanel(menu->status_window,
-                                          menu->owner_ids[selection], 0, 0);
+                                          menu->owner_table[selection], 0, 0);
                 PsynergyMenu_CallIconRoutineWithValue(
-                    (s32)menu, menu->owner_ids[selection]);
+                    (s32)menu, menu->owner_table[selection]);
                 if (!GameFlag_TestFar(0x151) && !shown) {
 /* The Japanese edition clears the info window and draws the description
    as a message; the others redraw the saved window and draw it in place. */
 #if EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
                     UiText_DrawCharacterAtOffsetFar(
-                        (menu->selected_action & 0x3fff) + (s32)&MsgAbilityDescription,
-                        menu->info_window, 0, 0);
+                        (menu->pane_action[0] & 0x3fff) + (s32)&MsgAbilityDescription,
+                        (s32)menu->info_window, 0, 0);
 #else
                     RenderOutput_ClearListFar((s32)menu->info_window);
                     UiText_DrawMessageAt(
-                        (menu->selected_action & 0x3fff) + (s32)&MsgAbilityDescription,
+                        (menu->pane_action[0] & 0x3fff) + (s32)&MsgAbilityDescription,
                         menu->info_window, 0, 0);
 #endif
                     shown = 1;
@@ -287,7 +264,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
         WaitFrames(1);
         if (gKeyState & 1) {
             Audio_PlayCue(112);
-            result = menu->owner_ids[selection];
+            result = menu->owner_table[selection];
             break;
         }
         if (gKeyState & 2) {
@@ -306,14 +283,14 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
             pending = 1;
         }
     }
-    marker = menu->marker;
-    menu->selection = selection;
-    UiIcon_PrepareObject(marker);
+    marker = (struct PsynergyTargetMarker *)menu->pane_icon[1];
+    menu->tab_index[1] = selection;
+    UiIcon_PrepareObject((struct RenderOutput *)marker);
     marker->state = 13;
     WaitFrames(1);
-    menu->selection = selection;
-    menu->selected_owner = menu->owner_ids[selection];
-    menu->target_owner = menu->owner_ids[selection];
+    menu->tab_index[1] = selection;
+    menu->selected_owner = menu->owner_table[selection];
+    menu->owner_ids[1] = menu->owner_table[selection];
     return result;
 }
 

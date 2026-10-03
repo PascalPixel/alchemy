@@ -4,8 +4,8 @@ s32 Djinn_AddToOwnerFar(s32, s32, s32);
 
 s32 GameFlag_SetBitFar(s32);
 
-void Djinn_SetFoundFlagAndAdd(s32 arg0, s32 arg1, s32 arg2)
+void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index)
 {
-    GameFlag_SetBitFar((arg1 * 0x14) + arg2 + 0x30);
-    Djinn_AddToOwnerFar(arg0, arg1, arg2);
+    GameFlag_SetBitFar((element * 0x14) + index + 0x30);
+    Djinn_AddToOwnerFar(owner, element, index);
 }

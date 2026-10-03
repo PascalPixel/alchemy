@@ -7,7 +7,7 @@
 #include "ITEM.H"
 
 extern u8 MsgItemName;
-extern void UiIcon_PrepareObject(void *icon);
+extern void UiIcon_PrepareObject(struct RenderOutput *icon);
 extern void UiText_DrawStringAtOffsetFar(u8 *text, void *window, s32 x, s32 y);
 extern void UiText_DrawCharacterAtOffsetFar(s32, void *, s32, s32);
 
@@ -30,8 +30,8 @@ void ItemMenu_DrawItemHead(void)
     struct InventoryMenuState *menu = gMenuWork;
 
     Resource_LoadByModeIntoSlotFar(
-        2, menu->selected_items[0], menu->selected_item_icon->render_target, 0);
-    menu->selected_item_icon->state = 1;
+        2, menu->selected_items[0], (u8)menu->selected_item_icon->index, 0);
+    menu->selected_item_icon->active = 1;
     menu->selected_item_icon->x = 112;
     menu->selected_item_icon->y = 8;
     UiIcon_PrepareObject(menu->selected_item_icon);

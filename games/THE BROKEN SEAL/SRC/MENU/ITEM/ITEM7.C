@@ -41,7 +41,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 {
     s32 remaining;
     u16 *entries;
-    struct InventoryMenuIcon **icons;
+    struct RenderOutput **icons;
     s32 item_id;
 
     icons = gMenuWork->entry_icons;
@@ -52,10 +52,10 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
         if (item_id != 0) {
             if (style == 0) {
                 Resource_LoadByModeIntoSlotFar(
-                    2, item_id, (*icons)->render_target, 0);
+                    2, item_id, (u8)(*icons)->index, 0);
             } else {
                 Resource_LoadByModeIntoSlotFar(
-                    7, item_id, (*icons)->render_target, 0);
+                    7, item_id, (u8)(*icons)->index, 0);
             }
         }
         icons++;

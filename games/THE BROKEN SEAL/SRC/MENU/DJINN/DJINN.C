@@ -237,7 +237,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
         for (i = 0; i < 4; i++) {
             UiWindow_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5, 0);
             UiWindow_SetTilemapEntryFar(window,
-                ((struct OwnerDjinnState *)state)->active_counts[i] + 0xf030,
+                state->djinn_active_counts[i] + 0xf030,
                 column + i * 2 + 1, y + 5, 0);
         }
 #if EDITION_INTERNATIONAL
@@ -297,8 +297,8 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
 
         rows = 6 - (mode != 3);
         first = rows * (page - 1);
-        count = OwnerAction_DiffSlots(((struct OwnerActionState *)saved)->action_slots,
-            ((struct OwnerActionState *)state)->action_slots, actions, &gained, &lost);
+        count = OwnerAction_DiffSlots(saved->action_slots,
+            state->action_slots, actions, &gained, &lost);
         line = 0;
         for (row = 0; first < count && row < rows; row++, first++) {
             UiIcon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,

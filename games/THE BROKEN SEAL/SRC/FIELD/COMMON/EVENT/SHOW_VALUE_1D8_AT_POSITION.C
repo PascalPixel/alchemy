@@ -3,15 +3,14 @@
 #include "SYSTEM.H"
 
 extern struct EventRuntime *gEventWork;
-extern s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern s32 UiWork_IsIdleFar(s32);
+s32 UiText_OpenMessageWindowFar(s32, s32, s32, s32);
+s32 UiWork_IsIdleFar(s32);
 
 void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
-    s32 x0 = x;
     struct EventRuntime *state = gEventWork;
     s32 py = y;
-    s32 px = x0;
+    s32 px = x;
     s32 min_x = 8;
     s32 min_y = 20;
     s32 ret;
@@ -21,7 +20,7 @@ void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
     else
         py -= 32;
 
-    if (x0 < min_x)
+    if (x < min_x)
         px = min_x;
     if (px > 312)
         px = 312;

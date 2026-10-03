@@ -23,7 +23,6 @@ extern u8 MsgCannotRepairKind[];
 extern u8 MsgNotDamaged[];
 extern u8 MsgCursedWontComeOff[];
 extern u8 MsgNotEnoughMoney[];
-struct ItemDefinition *Item_Get(s32 item);
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiMessage_ShowAndRestoreState(s32 message);

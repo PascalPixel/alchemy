@@ -1,63 +1,12 @@
+#include "SELECT.H"
 #include "TYPES.H"
 
 /* The sprite attributes a selection record keeps for its icon. */
-struct SelectionSprite {
-    u8 unk_00[5];
-    u8 unk_05_lo : 2;
-    u8 blend_mode : 2;
-    u8 mosaic : 1;
-    u8 full_color : 1;
-    u8 shape : 2;
-    u8 unk_06;
-    u8 unk_07_lo : 6;
-    u8 size : 2;
-    u16 tile : 10;
-    u16 priority : 2;
-    u16 palette : 4;
-};
-
 /* One icon of the selection screen: an entry of the list being chosen from,
    or an earlier choice kept on the path above it. MENU2.C describes the same
    52-byte record for the code that scrolls the list. */
-struct SelectionNode {
-    struct SelectionNode *prev;
-    struct SelectionNode *next;
-    u16 base;
-    u16 kind;
-    u16 slot;
-    u16 tile;
-    s16 y;
-    u16 z;
-    s16 speed;
-    u16 speed_z;
-    s16 target_y;
-    u16 target_z;
-    u16 home_y;
-    u16 home_z;
-    u16 unk_20;
-    u16 scale;
-    u8 unk_24[2];
-    u16 scale_target;
-    struct SelectionSprite sprite;
-};
-
 /* The selection screen's work block. It holds its sixteen records itself:
    the two arrows, the list, the path, and one more. */
-struct SelectionScreen {
-    struct SelectionNode records[16];
-    u8 unk_340[8];
-    struct SelectionNode *nodes;
-    struct SelectionNode *path;
-    u8 unk_350[0x4a];
-    u16 unk_39a;
-    u16 top;
-    u16 cursor;
-    u8 unk_3a0[2];
-    u16 status;
-    u16 path_top[5];
-    u16 path_cursor[5];
-};
-
 void WaitFrames(s32 frames);
 void Menu_SendNodeCountList(struct SelectionScreen *screen);
 void Menu_ReloadNodeResource(struct SelectionScreen *screen, u32 index);
@@ -77,9 +26,9 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
     u32 index;
     struct SelectionSprite *sprite;
 
-    index = screen->top + screen->cursor;
+    index = screen->top + screen->cursor_index;
     Menu_SendNodeCountList(screen);
-    Menu_ReloadNodeResource(screen, screen->cursor);
+    Menu_ReloadNodeResource(screen, screen->cursor_index);
     screen->status = 33;
     WaitFrames(1);
     screen->records[0].kind = 0;
@@ -87,66 +36,66 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen)
     screen->records[14].kind = 0;
     screen->records[14].scale = 0;
     Resource_ResetPendingTransfer();
-    node = screen->nodes;
-    while (node != NULL && screen->cursor != cnt) {
+    node = screen->head;
+    while (node != NULL && screen->cursor_index != cnt) {
         node = node->next;
         cnt++;
     }
+    node->home_x = node->x;
     node->home_y = node->y;
-    node->home_z = node->z;
-    for (other = screen->nodes; other != NULL; other = other->next) {
+    for (other = screen->head; other != NULL; other = other->next) {
         if (other != node) {
-            other->target_y = node->y;
-            other->speed = (node->y - other->y) >> 1;
+            other->target_x = node->x;
+            other->dx = (node->x - other->x) >> 1;
         }
     }
     WaitFrames(2);
-    for (other = screen->nodes; other != NULL; other = other->next) {
+    for (other = screen->head; other != NULL; other = other->next) {
         if (other != node) {
             Resource_ResetEntry(other->slot);
             other->kind = 0;
         }
     }
-    screen->nodes = node;
+    screen->head = node;
     node->prev = NULL;
     node->next = NULL;
-    node->target_y = 4;
+    node->target_x = 4;
     for (other = screen->path, cnt = 0; other != NULL; other = other->next) {
-        node->target_y += 16;
+        node->target_x += 16;
         cnt++;
     }
     screen->path_top[cnt] = screen->top;
-    screen->path_cursor[cnt] = screen->cursor;
-    node->speed = (node->target_y - node->y) >> 1;
-    screen->unk_39a = 0;
-    screen->cursor |= 0x80;
+    screen->path_cursor[cnt] = screen->cursor_index;
+    node->dx = (node->target_x - node->x) >> 1;
+    screen->unknown_39a = 0;
+    screen->cursor_index |= 0x80;
     WaitFrames(2);
     other = Resource_FindFreeTransferEntry(1);
     other->kind = node->kind;
-    other->unk_20 = node->unk_20;
+    other->message = node->message;
     other->base = node->base;
     other->slot = node->slot;
     other->tile = node->tile;
+    other->x = node->x;
     other->y = node->y;
-    other->z = node->z;
+    other->target_x = other->x;
     other->target_y = other->y;
-    other->target_z = other->z;
+    other->home_x = node->home_x;
     other->home_y = node->home_y;
-    other->home_z = node->home_z;
-    other->speed = 0;
-    other->speed_z = 0;
+    other->dx = 0;
+    other->dy = 0;
     other->scale = 0x100;
-    other->scale_target = 0x100;
+    other->scale_end = 0x100;
     sprite = &other->sprite;
-    sprite->blend_mode = 0;
-    sprite->full_color = 0;
+    sprite->mode = 0;
+    sprite->colors = 0;
     sprite->mosaic = 0;
     sprite->size = 1;
     sprite->shape = 0;
     sprite->palette = 0;
     sprite->tile = other->tile;
     node->kind = 0;
-    screen->nodes = NULL;
+    screen->head = NULL;
     if (screen->path != NULL) {
         node = screen->path;
         while (node->next != NULL)

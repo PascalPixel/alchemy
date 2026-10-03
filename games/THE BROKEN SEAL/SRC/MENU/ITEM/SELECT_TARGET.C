@@ -49,7 +49,7 @@ void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void UiMenu_PositionCursor(s32 x, s32 y);
-void UiIcon_PrepareObject(struct TargetMarker *icon);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 void Audio_PlayCue(s32 cue);
 
 /* Choose the party member an item is used on (mode 0) or given to (mode 1):
@@ -57,6 +57,9 @@ void Audio_PlayCue(s32 cue);
    preview for that member; A returns the member and B -1. */
 s32 ItemMenu_SelectTarget(s32 mode)
 {
+    /* The existing unsigned coordinate/OAM prefix retains the native chained
+       halfword stores: the canonical coordinate view measured 816 bytes
+       against 824, losing the unsigned-halfword mask. */
     struct InventoryMenuState *menu;
     s32 window;
     s32 count;
@@ -172,7 +175,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
     }
     marker = (struct TargetMarker *)menu->pane_icons[1];
     menu->pane_index[1] = selection;
-    UiIcon_PrepareObject(marker);
+    UiIcon_PrepareObject((struct RenderOutput *)marker);
     marker->state = 13;
     EquipmentMenu_StartCompatibilityIndicators();
     WaitFrames(1);

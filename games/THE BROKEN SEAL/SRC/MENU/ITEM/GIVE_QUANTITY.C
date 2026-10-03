@@ -125,7 +125,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
     RenderOutput_RedrawSavedRectFar((struct UiWindow *)window);
     RenderOutput_ClearListFar((void *)window);
     Runtime_ReleaseHeapBlock(14);
-    menu->selected_item_icon->state = 13;
+    menu->selected_item_icon->active = 13;
     if (GameFlag_IsSet(0x150))
         quantity = -1;
     return quantity;

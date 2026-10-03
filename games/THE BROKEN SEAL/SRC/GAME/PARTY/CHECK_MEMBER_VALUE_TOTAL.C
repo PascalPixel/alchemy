@@ -1,8 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "ITEM_IDS.H"
+#include "GAME_STATE.H"
+#include "EVENT_RUNTIME.H"
+#include "ITEM.H"
 
-extern s32 gGameState[];
 extern u8 MsgCannotCarryMore;
 
 extern void UiWork_PushValueSlotFar(s32, s32);
@@ -10,6 +12,7 @@ extern void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
 s32 Party_CheckMemberValueTotal(s32 id)
 {
+    /* FAKEMATCH: retain the existing integer-address party cursor; direct active-owner indexing changes this module from 612 to 604 native bytes. */
     s32 count;
     s32 value;
     s32 offset = 0;
@@ -21,7 +24,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
     if (sum < count) {
         offset = 252;
         offset <<= 1;
-        p = (u8 *)gGameState + offset;
+        p = (u8 *)&gGameState + offset;
         cnt = count;
         do {
             value = Inventory_CountItemFar(*p, id);
@@ -41,18 +44,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
     return 0;
 }
 
-struct ItemData {
-    u8 unknown_00[3];
-    u8 flags;
-};
-
-struct EventWork {
-    u8 unknown_000[472];
-    s16 message_position;
-};
-
-extern struct EventWork *gEventWork;
-extern s32 gGameState[];
+extern struct EventRuntime *gEventWork;
 extern u8 MsgKorosseoRobinGotItem;
 /* The German Black Orb has a line of its own, which names it. */
 extern u8 MsgGotBlackOrb;
@@ -61,7 +53,7 @@ extern u8 MsgWhatWillYouDrop;
 extern u8 MsgGaveItemToMember;
 
 s32 PartyInventory_AddFar(s32 item);
-struct ItemData *Item_Get(s32 item);
+struct ItemDefinition *Item_Get(s32 item);
 void *Owner_GetStateFar(s32 owner);
 s32 Shop_GetSelectionState(s32 owner, s32 slot);
 void Inventory_DiscardFar(s32 owner, s32 slot);
@@ -75,7 +67,7 @@ void Audio_PlayCue(s32 cue);
 
 s32 PartyInventory_GiveItem(s32 item)
 {
-    struct EventWork *work;
+    struct EventRuntime *work;
     s32 saved;
     s32 owner;
     s32 result;
@@ -85,7 +77,7 @@ s32 PartyInventory_GiveItem(s32 item)
     s32 slot;
 
     work = gEventWork;
-    saved = work->message_position;
+    saved = work->message;
     owner = PartyInventory_AddFar(item);
     if (owner == -1) {
 #if defined(TBS_EDITION_DE)
@@ -118,7 +110,7 @@ s32 PartyInventory_GiveItem(s32 item)
             Item_AdjustCounterFar(item, 1);
             UiWork_PushValueSlotFar(item, 2);
             UiText_ShowPositionedMessageAndWaitFar(&MsgWhatWillYouDrop + 2, 1);
-            work->message_position = saved;
+            work->message = saved;
             return owner;
         } else {
             Owner_GetStateFar(member);
@@ -142,7 +134,7 @@ s32 PartyInventory_GiveItem(s32 item)
                 Inventory_DiscardFar(member, slot);
             owner = PartyInventory_AddFar(item);
             Audio_PlayCue(83);
-            if (owner == gGameState[125]) {
+            if (owner == gGameState.selected_actor) {
 #if defined(TBS_EDITION_DE)
                 if (item == ITEM_BLACK_ORB)
                     UiText_ShowPositionedMessageAndWaitFar(&MsgGotBlackOrb, 3);
@@ -159,7 +151,7 @@ s32 PartyInventory_GiveItem(s32 item)
                 UiWork_PushValueSlotFar(owner, 1);
                 UiText_ShowPositionedMessageAndWaitFar(&MsgGaveItemToMember, 3);
             }
-            work->message_position = saved;
+            work->message = saved;
             return owner;
         }
     } else {
@@ -175,7 +167,7 @@ s32 PartyInventory_GiveItem(s32 item)
         UiWork_PushValueSlotFar(item, 2);
         UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem, 3);
 #endif
-        if (owner != gGameState[125]) {
+        if (owner != gGameState.selected_actor) {
             UiWork_PushValueSlotFar(item, 2);
             UiWork_PushValueSlotFar(owner, 1);
 #if defined(TBS_EDITION_DE)
@@ -187,7 +179,7 @@ s32 PartyInventory_GiveItem(s32 item)
             UiText_ShowPositionedMessageAndWaitFar(&MsgKorosseoRobinGotItem + 1, 3);
 #endif
         }
-        work->message_position = saved;
+        work->message = saved;
     }
     return owner;
 }

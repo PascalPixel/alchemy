@@ -48,7 +48,8 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 s32 CharacterSelector_MoveEntry(s32 cursor, s32 forward);
 void Menu_ReleaseEntryObjects(void);
-s32 PsynergyMenu_InitializeEntryObjects(s32, s32, s32, s32, s32);
+/* Preserve this caller's extra word at the four-word portrait entry. */
+void PsynergyMenu_InitializeEntryObjects();
 void DjinnMenu_ShowCurrentList(void);
 
 struct PsynergyOwnerMenu {
@@ -75,7 +76,8 @@ struct PsynergyOwnerMenu {
 extern u8 MsgChooseCharacter;
 void *Owner_GetStateFar(s32 owner);
 void RenderOutput_RedrawSavedRectFar(s32 window);
-s32 PsynergyMenu_CollectActions(void *owner, void *entries, s32 mode);
+struct BattleUnit;
+s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *entries, s32 mode);
 void PsynergyMenu_DrawPsynergyIcons(void *entries);
 void Menu_PlaceEntryObjectsInGrid(s32 x, s32 y, s32 columns);
 void Menu_HideEmptyEntryIcons(void *entries);
@@ -313,7 +315,7 @@ s32 PsynergyMenu_SelectOwner(void)
             for (i = 0; i < MENU_ROW_COUNT; i++)
                 menu->row_positions[i] = 30;
             menu->row_positions[selection] = 26;
-            menu->entry_count = PsynergyMenu_CollectActions(Owner_GetStateFar(menu->character_ids[selection]), menu->entries, 0);
+            menu->entry_count = PsynergyMenu_CollectActions(Owner_GetStateFar(menu->character_ids[selection]), (u16 *)menu->entries, 0);
             PsynergyMenu_DrawPsynergyIcons(menu->entries);
             Menu_PlaceEntryObjectsInGrid(96, 96, 8);
             Menu_HideEmptyEntryIcons(menu->entries);

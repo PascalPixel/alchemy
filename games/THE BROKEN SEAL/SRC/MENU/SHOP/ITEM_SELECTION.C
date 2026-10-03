@@ -13,7 +13,8 @@ extern u8 MsgCannotRemoveIt[];
 
 
 void UiWork_FinalizeFar(s32 window, s32 style);
-void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
+/* Four-word void helper; this caller keeps its legacy extra word. */
+void PsynergyMenu_InitializeEntryObjectsFar();
 void Menu_ReleaseEntryObjectsFar(void);
 void Shop_InitializeCursorWork(void);
 void Inn_Cleanup(void);

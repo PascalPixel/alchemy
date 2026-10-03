@@ -10,7 +10,8 @@ extern volatile u32 gKeysRepeat;
 extern char MsgArrangeItemsHelp;
 
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-struct InventoryMenuIcon *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, s32 window, s32 x, s32 y);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(
+    s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 #if !EDITION_INTERNATIONAL
 /* The key names the Japanese help lines follow: "L+A:" and "R:". */
@@ -51,8 +52,8 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
     if (UiWindow_UpdateOrCreate((s32 *)&menu->item_window, 13, 3, 17, 10, 2))
         Menu_SpawnIconEntries(menu, (s32)menu->item_window);
     if (UiWindow_UpdateOrCreate((s32 *)&menu->help_window, 13, 13, 17, 4, 2)) {
-        menu->selected_item_icon = RenderOutput_CreateFromResourceFar(2, 0, (s32)menu->help_window, 0, result);
-        menu->selected_item_icon->state = 13;
+        menu->selected_item_icon = RenderOutput_CreateFromResourceFar(2, 0, (struct RenderInput *)menu->help_window, 0, result);
+        menu->selected_item_icon->active = 13;
     }
 #if EDITION_INTERNATIONAL
     UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp, (s32)menu->help_window, 0, 0);
@@ -64,7 +65,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *owner_ids, u16 *items)
     UiText_DrawStringInWindowFar(ItemMenu_EquipmentKeyString, (s32)menu->help_window, 16, 8);
     UiText_DrawCharacterAtOffsetFar((s32)&MsgArrangeItemsHelp + 1, (s32)menu->help_window, 32, 8);
 #endif
-    menu->pane_icons[0]->state = pending;
+    menu->pane_icons[0]->active = pending;
     while (!GameFlag_TestFar(0x150)) {
         selection = (selection + count) % count;
         UiMenu_PositionCursor(selection * 24 - 10, 16);

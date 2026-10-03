@@ -4,7 +4,7 @@
 
 void RenderOutput_ClearListFar(void *window);
 void UiMenu_SlideCursor(s32 x, s32 y);
-void UiIcon_PrepareObject(void *icon);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 ItemMenu_PrepOwner(s32 pane)
 {

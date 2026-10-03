@@ -1,3 +1,4 @@
+#include "RESMENU.H"
 /* 2026-09-29: eight minutes of permutation reached 4740 from 6970 through
  * 64 rewrites; not kept, since the owner is far from exact and its scale
  * table, Data_080366f8, has no label in the build yet. */
@@ -11,24 +12,6 @@
    against the listing. Tried: a volatile count pointer, work->count
    directly, a do-while and a goto loop. */
 #include "TYPES.H"
-
-struct AffineEffectSprite {
-    u32 link;
-    u32 attr01;
-    u32 attr2;
-    s16 x;
-    s16 y;
-    u16 unknown_10;
-    u16 icon;
-};
-
-struct AffineEffectWork {
-    struct AffineEffectSprite sprites[7];
-    s16 selected;
-    s16 count;
-    u8 unknown_90[4];
-    s16 mode;
-};
 
 struct AffineEffectScale {
     unsigned x : 16;
@@ -52,7 +35,6 @@ struct IconSlot {
     u16 offset;
 };
 
-extern struct AffineEffectWork *gMenuSelectWork;
 extern u32 gFrameCount;
 extern u16 Data_080366f8[];
 extern struct IconSlot gVramBlockCache[];
@@ -63,8 +45,8 @@ void Runtime_PushSlotEntry(void *entry, s32 slot);
 
 void AffineEffect_UpdateFrame(void)
 {
-    struct AffineEffectWork *work;
-    struct AffineEffectSprite *sprite;
+    struct ResourceMenuWork *work;
+    struct ResourceMenuEntry *sprite;
     struct AffineEffectScale effect;
     struct WindowBuffer *window;
     s16 *count;
@@ -83,7 +65,7 @@ void AffineEffect_UpdateFrame(void)
 
     work = gMenuSelectWork;
     scale = Data_080366f8[(gFrameCount * 2) & 31];
-    sprite = work->sprites;
+    sprite = work->entries;
     scale = (scale - 256) / 4 + 304;
     effect.x = scale;
     effect.y = scale;
@@ -97,7 +79,7 @@ void AffineEffect_UpdateFrame(void)
         x = sprite->x;
         if (x == 0)
             continue;
-        if (i == work->selected) {
+        if (i == work->selection) {
             s32 left = x + scale * 7 / 512 - 20;
 
             if (sprite->y != 0)
@@ -107,27 +89,27 @@ void AffineEffect_UpdateFrame(void)
             attr = &sprite->link;
             *attr++ = 0;
             *attr++ = (matrix << 25) | y | (left << 16) | 0x80002300;
-            *attr = gVramBlockCache[sprite->icon].offset >> 5;
+            *attr = gVramBlockCache[sprite->slot].offset >> 5;
             slot = 246;
         } else {
             attr = &sprite->link;
             *attr++ = 0;
             *attr++ = sprite->y | (x << 16) | 0x80002000;
-            *attr = gVramBlockCache[sprite->icon].offset >> 5;
+            *attr = gVramBlockCache[sprite->slot].offset >> 5;
             slot = 245;
         }
         Runtime_PushSlotEntry(sprite, slot);
     }
-    if (work->mode == 0) {
+    if (work->row == 0) {
         buffers = Data_03001ecc;
         if (buffers == 0 || *count == 0)
             return;
         window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
-        selected = &work->selected;
-        x = work->sprites[*selected].x;
+        selected = &work->selection;
+        x = work->entries[*selected].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + x + span + 23;
-        y = work->sprites[*selected].y + 24;
+        y = work->entries[*selected].y + 24;
         end = y + (scale * 32 - 7937) / 512 + 1;
         line = &window->lines[24].span;
         i = 24;
@@ -139,7 +121,7 @@ void AffineEffect_UpdateFrame(void)
                 line += 2;
             } while (i < end);
         }
-        edge = work->sprites[0].x;
+        edge = work->entries[0].x;
         if (*selected == 0)
             edge -= (scale * 12 - 2817) / 256;
         edge <<= 8;
@@ -154,11 +136,11 @@ void AffineEffect_UpdateFrame(void)
         if (buffers == 0 || *count == 0)
             return;
         window = (struct WindowBuffer *)(buffers + buffers[0x539] * 644);
-        selected = &work->selected;
-        x = work->sprites[*selected].x;
+        selected = &work->selection;
+        x = work->entries[*selected].x;
         span = (scale * 12 - 2817) / 256;
         edge = ((x - span) << 8) + x + span + 23;
-        i = work->sprites[*selected].y - (scale * 32 - 7937) / 512 - 1;
+        i = work->entries[*selected].y - (scale * 32 - 7937) / 512 - 1;
         line = &window->lines[i].span;
         if (i <= 135) {
             mask = 255;
@@ -168,7 +150,7 @@ void AffineEffect_UpdateFrame(void)
                 line += 2;
             } while (i <= 135);
         }
-        edge = work->sprites[0].x;
+        edge = work->entries[0].x;
         if (*selected == 0)
             edge -= (scale * 12 - 2817) / 256;
         edge <<= 8;

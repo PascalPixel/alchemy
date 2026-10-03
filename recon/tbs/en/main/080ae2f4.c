@@ -103,7 +103,7 @@ extern u8 Data_000000c8[];
 void Runtime_BumpFree(void *block);
 s16 *Runtime_BumpAllocateAlternatePool(s32 bytes);
 void Runtime_SetMainState19(void);
-struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *first,
     struct OwnerActionSlot *second, u16 *out, s32 *first_count, s32 *second_count);
 s32 UiWindow_UpdateOrCreate(struct RenderInput **window,
@@ -147,7 +147,7 @@ s32 Unnamed_080ae2f4(void)
     s32 result;
     u16 *buf;
     void *owner_buf;
-    struct OwnerActionState *owner;
+    struct BattleUnit *owner;
     struct MenuActionWork *work;
     struct RenderInput *window;
     struct MenuRenderWork *render;
@@ -187,7 +187,7 @@ s32 Unnamed_080ae2f4(void)
     Menu_SetPair(page, 1);
     buf = (u16 *)Runtime_BumpAllocateAlternatePool(96);
     owner_buf = Runtime_BumpAllocateAlternatePool(0x14c);
-    owner = (struct OwnerActionState *)Owner_GetStateFar(work->owner);
+    owner = (struct BattleUnit *)Owner_GetStateFar(work->owner);
     Menu_SetPair(page, OwnerAction_DiffSlots(owner->action_slots,
         owner->action_slots, buf, &first_count, &second_count));
     Runtime_BumpFree(owner_buf);

@@ -7,27 +7,15 @@
 #include "SYSTEM.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
+#include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
 
 extern u8 WorldMap_TerrainBehaviorTable[];
 
 
-struct Work_08012330 {
-    s32 unknown_00;
-    s32 value_04;
-    s32 value_08;
-    s32 value_0c;
-};
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 extern const u8 TileMap_DrawRows[];
 
-struct RuntimeCells {
-    u8 unknown_000[196];
-    void (*decode)(s32, s32, void *, void *);
-};
-
-extern struct RuntimeCells gWorkSlot;
 extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 gDecodeBuffer[];
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
@@ -156,28 +144,28 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
 
 void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
 {
-    struct Work_08012330 *work;
+    struct MapScrollWork *work;
 
     work = gMapWork[0];
     if (value0 >= 0) {
-        work->value_04 = value0;
+        work->shake_x = value0;
     }
     if (value1 >= 0) {
-        work->value_08 = value1;
+        work->shake_y = value1;
     }
     if (value2 >= 0) {
-        work->value_0c = value2;
+        work->shake_decay = value2;
     }
 }
 
 void Map_WaitWorkValuesBelow256(void)
 {
-    s32 *work;
+    struct MapScrollWork *work;
     s32 cnt;
 
     work = gMapWork[0];
     cnt = 0;
-    if (work[1] > 255 || work[2] > 255) {
+    if (work->shake_x > 255 || work->shake_y > 255) {
         goto body;
 body:
         WaitFrames(1);
@@ -185,15 +173,15 @@ body:
         if (cnt >= 300) {
             goto done;
         }
-        if (work[1] > 255) {
+        if (work->shake_x > 255) {
             goto body;
         }
-        if (work[2] > 255) {
+        if (work->shake_y > 255) {
             goto body;
         }
     }
 done:
-    work[3] = 0;
+    work->shake_decay = 0;
 }
 
 /* Copies the ARM decoder TileMap_DrawRows to a heap block and runs the
@@ -209,7 +197,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
     do { size = (u32)TileMap_DrawRowsCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((const void *)TileMap_DrawRows, code, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
-    do { gWorkSlot.decode(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
+    do { ((void (*)(s32, s32, void *, void *))((union HeapState *)gWorkSlot)->slots[49])(a, b, gBgTileBuffer + 0x4000, base + 0x1000); } while (0);
     Runtime_ReleaseHeapBlock(49);
 }
 

@@ -1,25 +1,16 @@
+#include "RESMENU.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 
-struct ResourceMenuWork {
-    u8 unknown_00[124];
-    s32 lower_window;
-    s32 upper_window;
-    u8 unknown_84[18];
-    u16 selection;
-};
-extern struct ResourceMenuWork *Data_03001f38;
 extern u8 MsgTransferMethod[];
 extern u8 MsgPasswordSelection[];
 void *AffineEffect_InitializeWork(void);
 void Menu_AppendResourceEntry(s32);
 void Menu_CenterResourceEntries(s32, s32, s32);
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
-void UiText_DrawResource(s32, s32, s32, s32);
+void UiText_DrawResource(s32, struct UiWindow *, s32, s32);
 s32 Menu_RunResourceSelectionLoop(s32);
-void RenderOutput_PrepareForRedraw(s32);
-void UiWork_Finalize(s32, s32);
+void RenderOutput_PrepareForRedraw(struct UiWindow *);
 void WaitFrames(s32);
 void Menu_EndResourceSelection(void);
 void Menu_DrawModeLabel(void);
@@ -28,13 +19,13 @@ void Menu_DrawModeIndicator(void);
 s32 Menu_SelectResourceLayout(s32 mode)
 {
     struct ResourceMenuWork *work;
-    s32 window;
+    struct UiWindow *window;
     s32 msg;
-    s32 *upper;
+    struct UiWindow **upper;
     s32 result;
 
     AffineEffect_InitializeWork();
-    work = Data_03001f38;
+    work = gMenuSelectWork;
     if (mode == 0) {
         Menu_AppendResourceEntry(44);
         Menu_AppendResourceEntry(45);
@@ -59,7 +50,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
 #endif
     if (mode != 0) {
         Scheduler_AddOrUpdateCallback((s32)(Menu_DrawModeLabel), 0xc76);
-        work->selection = 0xffff;
+        work->previous_mode = 0xffff;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_IT)
         window = UiWindow_Create(7, 0, 17, 4, 2);
 #elif defined(TBS_EDITION_ES)
@@ -94,7 +85,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
 #endif
     } else {
         Scheduler_AddOrUpdateCallback((s32)(Menu_DrawModeIndicator), 0xc76);
-        work->selection = 0xffff;
+        work->previous_mode = 0xffff;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE)
         window = UiWindow_Create(6, 0, 18, 4, 2);
 #elif defined(TBS_EDITION_ES)

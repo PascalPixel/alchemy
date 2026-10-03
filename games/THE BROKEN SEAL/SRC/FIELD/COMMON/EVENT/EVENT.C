@@ -4,20 +4,14 @@
 #include "FIELD_SCENE.H"
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
+#include "FIELDRUN.H"
 
 void ObjectTable_ResetForObject(struct ScenePlacement *table);
 void Event_NoOpHook(void);
 void Event_SpawnObjectTable(struct ScenePlacement *table, s32 slot);
 s32 ObjectTable_FindLastActiveId(void);
 
-/* The event work as this setter sees it: one word at +0x10 that scripts
-   store through the far-call table. */
-struct EventWordWork {
-    u8 unknown_00[0x10];
-    s32 word_10;
-};
-
-extern struct EventWordWork *gEventWork;
+extern struct EventRuntime *gEventWork;
 
 s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32 Owner_GetStateFar(void);
@@ -53,7 +47,7 @@ void Event_CallWithLastActiveObjectId(struct ScenePlacement *table)
 
 void Event_SetWorkWord10(s32 value)
 {
-    gEventWork->word_10 = value;
+    ((struct FieldStepWork *)gEventWork)->events = (const struct SceneEvent *)value;
 }
 
 void Event_PrepareObjectAndApplyValue(s32 event_id, s32 value)

@@ -3,20 +3,21 @@
 #include "UI.H"
 
 s32 UiMenu_CreateCursor(void *menu);
-s32 PsynergyMenu_InitializeEntryObjects(s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *UiIcon_CreateWithResourceVariant(s32, s32, s32);
+/* The four-word portrait initializer retains this caller's extra word. */
+void PsynergyMenu_InitializeEntryObjects();
+s32 UiIcon_CreateWithResourceVariant(struct RenderInput *, s32, s32);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *RenderOutput_CreateFromResourceFar(s32, s32, s32, s32, s32);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(s32, s32, struct RenderInput *, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
 {
     s32 window;
     struct PsynergyMenuState *menu;
-    struct PsynergyMenuIcon *cursor;
+    struct RenderOutput *cursor;
     s32 index;
     s32 x;
     s32 y;
-    struct PsynergyMenuIcon **output;
+    struct RenderOutput **output;
 
     menu = gMenuWork;
     window = UiMenu_CreateCursor(menu);
@@ -29,8 +30,9 @@ void PsynergyMenu_CreateEntryGrid(void)
     menu->column_count = 8;
     menu->row_count = 2;
 
-    cursor = UiIcon_CreateWithResourceVariant(window, 0, 4);
-    cursor->state = 13;
+    cursor = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
+        (struct RenderInput *)window, 0, 4);
+    cursor->active = 13;
     menu->entry_grid_cursor = cursor;
     SideObject_CreateFar(0, 0, 0, window, 0, 0);
 
@@ -39,7 +41,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[0];
     x = 96;
     do {
-        *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResourceFar(4, index, (struct RenderInput *)window, x, y);
         index++;
         x += 16;
     } while (index <= 7);
@@ -49,7 +51,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[8];
     x = 96;
     do {
-        *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResourceFar(4, index, (struct RenderInput *)window, x, y);
         index++;
         x += 16;
     } while (index <= 15);
@@ -74,7 +76,7 @@ void Resource_LoadByModeIntoSlotFar(s32 style, u16 action, u8 target, s32 flags)
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
 {
     s32 remaining;
-    struct PsynergyMenuIcon **icons;
+    struct RenderOutput **icons;
     u16 *p;
     s32 psynergy_id;
 
@@ -86,7 +88,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
         psynergy_id = *p++;
         if (psynergy_id != 0) {
             Resource_LoadByModeIntoSlotFar(
-                4, psynergy_id, (*icons)->render_target, 0);
+                4, psynergy_id, (u8)(*icons)->index, 0);
         }
         icons++;
         remaining--;

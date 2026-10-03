@@ -6,7 +6,6 @@ extern u8 MsgItemName[];
 extern u8 MsgShopCannotEquip[];
 extern u8 MsgShopStatLabel[];
 
-struct ItemDefinition *Item_Get(s32 item);
 void RenderOutput_PrepareForRedrawFar(s32 window);
 void UiText_DrawResourceFar(s32 message, s32 window, s32 x, s32 y);
 s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);

@@ -1,33 +1,32 @@
+#include "RESMENU.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "SAVE_STATE.H"
 extern u8 gTitleExtraOptionEnabled[];
 
-struct MenuModeLabelState;
-extern struct MenuModeLabelState *gMenuSelectWork;
 extern u8 MsgPasswordLevel[];
 
-s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
-void Menu_LayoutResourceEntries(s32 x, s32 y, s32 w, s32 h)
+void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 {
-    u8 *state;
+    struct ResourceMenuWork *work;
     s32 i;
+    u8 *entries;
 
-    state = (u8 *)gMenuSelectWork;
-
-    *(u16 *)(state + 144) = (u16)((u32)w + 2);
-    *(u16 *)(state + 146) = (u16)h;
-    *(u16 *)(state + 148) = (u16)y;
-
-    for (i = 0; i < *(s16 *)(state + 142); i++) {
-        *(u16 *)(state + i * 20 + 14) = (u16)((u32)y << 3);
-        *(u16 *)(state + i * 20 + 12) = (u16)((u32)x << 3);
+    work = gMenuSelectWork;
+    work->width = width + 2;
+    work->resource_base = resource_base;
+    work->row = y;
+    /* FAKEMATCH: the original byte span keeps each sprite base at +0.
+       Struct coordinate stores hoist +12 into the loop base and add four
+       bytes in all six editions (2026-10-03 attempt aadcc37dd). */
+    entries = (u8 *)work;
+    for (i = 0; i < work->count; i++) {
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = (u32)y << 3;
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = (u32)x << 3;
         x = (s32)((u32)x + 3);
     }
-
-    *(s32 *)(state + 120) =
-        UiWindow_Create(x, y, *(s16 *)(state + 144), 3, 2);
+    work->window = UiWindow_Create(x, y, work->width, 3, 2);
 }
 
 #include "TBS_EDITION.H"
@@ -165,15 +164,6 @@ s32 Menu_SelectSaveSlotAction(void)
     return ret;
 }
 
-struct MenuModeLabelState {
-    u8 unknown_000[124];
-    void *window;
-    u8 unknown_080[12];
-    s16 mode;
-    u8 unknown_08e[8];
-    s16 previous_mode;
-};
-
 extern void UiWindow_ClearInteriorTiles(void *, s32, s32, s32, s32);
 extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
@@ -188,27 +178,27 @@ extern void UiText_DrawCharacterAtOffset(s32, void *, s32, s32);
 
 void Menu_DrawModeLabel(void)
 {
-    struct MenuModeLabelState *state = gMenuSelectWork;
+    struct ResourceMenuWork *state = gMenuSelectWork;
 
-    if (state->previous_mode != state->mode) {
-        state->previous_mode = state->mode;
-        UiWindow_ClearInteriorTiles(state->window, 8, 40, MODE_LABEL_RIGHT, 80);
+    if (state->previous_mode != state->selection) {
+        state->previous_mode = state->selection;
+        UiWindow_ClearInteriorTiles(state->lower_window, 8, 40, MODE_LABEL_RIGHT, 80);
 
-        if (state->mode != 1) {
-            if (state->mode > 1)
+        if (state->selection != 1) {
+            if (state->selection > 1)
                 goto mode_other;
-            if (state->mode != 0)
+            if (state->selection != 0)
                 goto mode_other;
 
             {
                 s32 text = (s32)MsgPasswordLevel;
 
-                UiText_DrawCharacterAtOffset(text, state->window, MODE_LABEL_X, 40);
-                UiText_DrawCharacterAtOffset(text + 1, state->window, MODE_LABEL_X, 48);
-                UiText_DrawCharacterAtOffset(text + 2, state->window, MODE_LABEL_X, 56);
-                UiText_DrawCharacterAtOffset(text + 3, state->window, MODE_LABEL_X, 64);
+                UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
+                UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
+                UiText_DrawCharacterAtOffset(text + 2, state->lower_window, MODE_LABEL_X, 56);
+                UiText_DrawCharacterAtOffset(text + 3, state->lower_window, MODE_LABEL_X, 64);
                 text += 4;
-                UiText_DrawCharacterAtOffset(text, state->window, MODE_LABEL_X, 72);
+                UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 72);
                 goto done;
             }
         }
@@ -216,10 +206,10 @@ void Menu_DrawModeLabel(void)
         {
             s32 text = (s32)MsgPasswordLevel;
 
-            UiText_DrawCharacterAtOffset(text, state->window, MODE_LABEL_X, 40);
-            UiText_DrawCharacterAtOffset(text + 1, state->window, MODE_LABEL_X, 48);
+            UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 40);
+            UiText_DrawCharacterAtOffset(text + 1, state->lower_window, MODE_LABEL_X, 48);
             text += 2;
-            UiText_DrawCharacterAtOffset(text, state->window, MODE_LABEL_X, 56);
+            UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 56);
             goto done;
         }
 
@@ -227,8 +217,8 @@ mode_other:
         {
             s32 text = (s32)MsgPasswordLevel;
 
-            UiText_DrawCharacterAtOffset(text++, state->window, MODE_LABEL_X, 40);
-            UiText_DrawCharacterAtOffset(text, state->window, MODE_LABEL_X, 48);
+            UiText_DrawCharacterAtOffset(text++, state->lower_window, MODE_LABEL_X, 40);
+            UiText_DrawCharacterAtOffset(text, state->lower_window, MODE_LABEL_X, 48);
         }
 done:
 ;
@@ -255,61 +245,61 @@ void RenderOutput_ClearList(void *);
    only when it follows the password help. */
 void Menu_DrawModeIndicator(void)
 {
-    struct MenuModeLabelState *state = gMenuSelectWork;
+    struct ResourceMenuWork *state = gMenuSelectWork;
 
-    if (state->previous_mode != state->mode) {
-        if (state->mode == 0) {
-            RenderOutput_ClearList(state->window);
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp, (s32)state->window, 16, 4);
-            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1, (s32)state->window, 16, 16);
+    if (state->previous_mode != state->selection) {
+        if (state->selection == 0) {
+            RenderOutput_ClearList(state->lower_window);
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp, (s32)state->lower_window, 16, 4);
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1, (s32)state->lower_window, 16, 16);
         } else if (state->previous_mode == 0) {
-            RenderOutput_ClearList(state->window);
-            UiText_DrawResource((s32)&MsgCableTransferHelp, (s32)state->window, 0, 4);
-            UiText_DrawResource((s32)&MsgCableTransferHelp + 1, (s32)state->window, 0, 16);
-            UiText_DrawResource((s32)&MsgCableTransferHelp + 2, (s32)state->window, 0, 28);
+            RenderOutput_ClearList(state->lower_window);
+            UiText_DrawResource((s32)&MsgCableTransferHelp, (s32)state->lower_window, 0, 4);
+            UiText_DrawResource((s32)&MsgCableTransferHelp + 1, (s32)state->lower_window, 0, 16);
+            UiText_DrawResource((s32)&MsgCableTransferHelp + 2, (s32)state->lower_window, 0, 28);
         }
-        state->previous_mode = state->mode;
+        state->previous_mode = state->selection;
     }
 }
 #else
 void Menu_DrawModeIndicator(void)
 {
-    u8 *state = (u8 *)gMenuSelectWork;
-    s16 *shown = (s16 *)(state + 150);
-    s16 *current = (s16 *)(state + 140);
+    struct ResourceMenuWork *state = gMenuSelectWork;
+    s16 *shown = &state->previous_mode;
+    s16 *current = &state->selection;
 
     /* 値が変わった時だけ表示を更新する。 */
     if (*shown != *current) {
         *shown = (u16)*current;
-        RenderOutput_PrepareForRedraw(*(void **)(state + 124));
+        RenderOutput_PrepareForRedraw(state->lower_window);
         /* The German help sits in whole character cells, a row apart. */
         if (*current == 0) {
 #if defined(TBS_EDITION_DE)
             UiText_DrawCharacterAtOffset((s32)&MsgPasswordTransferHelp,
-                *(void **)(state + 124), 32, 8);
+                state->lower_window, 32, 8);
             UiText_DrawCharacterAtOffset((s32)&MsgPasswordTransferHelp + 1,
-                *(void **)(state + 124), 32, 24);
+                state->lower_window, 32, 24);
 #else
             UiText_DrawResource((s32)&MsgPasswordTransferHelp,
-                *(void **)(state + 124), PASSWORD_HELP_X, 4);
+                state->lower_window, PASSWORD_HELP_X, 4);
             UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1,
-                *(void **)(state + 124), PASSWORD_HELP_X, 16);
+                state->lower_window, PASSWORD_HELP_X, 16);
 #endif
         } else {
 #if defined(TBS_EDITION_DE)
             UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp,
-                *(void **)(state + 124), 0, 0);
+                state->lower_window, 0, 0);
             UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp + 1,
-                *(void **)(state + 124), 0, 16);
+                state->lower_window, 0, 16);
             UiText_DrawCharacterAtOffset((s32)&MsgCableTransferHelp + 2,
-                *(void **)(state + 124), 0, 32);
+                state->lower_window, 0, 32);
 #else
             UiText_DrawResource((s32)&MsgCableTransferHelp,
-                *(void **)(state + 124), 0, 4);
+                state->lower_window, 0, 4);
             UiText_DrawResource((s32)&MsgCableTransferHelp + 1,
-                *(void **)(state + 124), 0, 16);
+                state->lower_window, 0, 16);
             UiText_DrawResource((s32)&MsgCableTransferHelp + 2,
-                *(void **)(state + 124), 0, 28);
+                state->lower_window, 0, 28);
 #endif
         }
     }

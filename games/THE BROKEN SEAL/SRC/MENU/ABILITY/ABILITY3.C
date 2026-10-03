@@ -24,18 +24,19 @@ extern u8 MsgChangeCharacterHelp[];
 extern u8 MsgPsynergyPp[];
 
 s32 GameFlag_IsSet(s32 message);
-void Object_InitializeMode(s32 object, s32 mode);
+struct AnimationObject;
+s32 Object_InitializeMode(struct AnimationObject *object, s32 mode);
 struct BattleAction *Ability_GetData(s32 action);
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 s32 GameFlag_TestFar(s32 message);
 void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void UiIcon_PrepareObject(struct PsynergyMenuIcon *icon);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
@@ -69,7 +70,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     RenderOutput_RedrawSavedRectFar(window);
     UiWindow_DrawDividerLineFar(window, 0, 11, 16, 11);
 
-    if (2 & *(u16 *)((u8 *)menu + 0x220)) {
+    if (2 & menu->flags) {
         UiText_DrawCharacterAtOffsetFar((s32)MsgShortcutHelp, window, 0, 88);
     } else {
         UiText_DrawCharacterAtOffsetFar((s32)MsgChangeCharacterHelp, window, HELP_TEXT_X, 88);
@@ -158,7 +159,7 @@ s32 PsynergyMenu_RunList(s32 pane)
 {
     struct PsynergyMenuState *menu;
     struct BattleAction *ability;
-    struct PsynergyMenuIcon *icon;
+    struct RenderOutput *icon;
     s32 window;
     s32 changed;
     s32 nav;
@@ -178,7 +179,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     result = 0;
     prev = 0;
     prompt = 0;
-    menu->pane_icon[pane]->state = 13;
+    menu->pane_icon[pane]->active = 13;
     UiWindow_UpdateOrCreate(&menu->list_window, 13, 3, 17, 14, 2);
     window = menu->list_window;
     done = 0;
@@ -196,7 +197,7 @@ s32 PsynergyMenu_RunList(s32 pane)
         PsynergyMenu_BuildPageResult(&state, pane);
         redraw = 1;
         changed = 1;
-        menu->pane_icon[pane]->state = 1;
+        menu->pane_icon[pane]->active = 1;
 
         while (GameFlag_IsSet(0x150) == 0) {
 #if EDITION_INTERNATIONAL
@@ -219,10 +220,10 @@ s32 PsynergyMenu_RunList(s32 pane)
                 PsynergyMenu_DrawDetailPage(window, work, &state);
                 menu->pane_action[pane] =
                     menu->psynergies[state.selected_index];
-                menu->cursor_icon->state = 13;
+                menu->cursor_icon->active = 13;
                 if (menu->psynergies[state.selected_index] != 0) {
                     icon = menu->entry_icons[state.selected_index];
-                    icon->state = 9;
+                    icon->active = 9;
                     icon->unknown_0c = 0;
                     icon->sentinel = 250;
                 }

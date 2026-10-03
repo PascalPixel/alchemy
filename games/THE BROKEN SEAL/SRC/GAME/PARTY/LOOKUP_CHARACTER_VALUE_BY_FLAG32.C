@@ -1,25 +1,25 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+#include "WINDOW.H"
 
-struct MessageWindow;
 
-extern u8 *gWindowWork;
 extern s16 Data_080371fe[];
 extern u8 MsgVenusDjinnJoined[];
 
-struct MessageWindow *UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWindow_DrawDividerLine(struct MessageWindow *, s32, s32, s32, s32);
+struct UiWindow *UiWindow_Create(s32, s32, s32, s32, s32);
+void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
-s32 UiText_QueueRenderEntries(struct MessageWindow *, s32, s32, s32, s32);
+/* These joining messages retain their five-word channel transport. */
+struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void Runtime_PushSlotEntry(s32 *, s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
-void UiWork_Finalize(struct MessageWindow *, s32);
+void UiWork_Finalize(struct UiWindow *, s32);
 void Resource_ResetEntry(s32);
 
 extern volatile u32 gKeyState;
@@ -28,9 +28,9 @@ extern volatile u32 gKeyState;
    its joining line, then wait for the jingle or a key. */
 void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
 {
-    u8 *work = gWindowWork;
+    struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
     s32 name;
-    struct MessageWindow *window;
+    struct UiWindow *window;
     s32 sprite[3];
     s32 *entry;
     s32 palette, handle;
@@ -49,7 +49,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
 
-        work[RENDER_DIRTY_OFS] = 1;
+        work->dirty = 1;
 
         id = Localization_LookupEntryId(name);
         UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
@@ -60,8 +60,8 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
         *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
         *p = palette | 0xe000;
 
-        *(u16 *)(work + RENDER_RESULT_OFS) = zero;
-        *(u16 *)(work + RENDER_RESULT_OFS + 2) = zero;
+        work->result[0] = zero;
+        work->result[1] = zero;
 
         UiWork_PushValueSlot(pc, 1);
         UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
@@ -105,8 +105,8 @@ void AudioCommand_PlayFar(s32);
    glyph and the joining line, then wait for the jingle or a key. */
 void Party_ShowJoinedMessage(s32 member)
 {
-    u8 *work = gWindowWork;
-    struct MessageWindow *window = NULL;
+    struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
+    struct UiWindow *window = NULL;
     s32 sprite[3];
     s32 *entry = sprite;
     s32 palette, handle;
@@ -115,7 +115,7 @@ void Party_ShowJoinedMessage(s32 member)
     window = UiWindow_Create(2, 1, 26, 5, 0);
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 4, 0, 4, 4);
-        work[RENDER_DIRTY_OFS] = 1;
+        work->dirty = 1;
         UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(member)),
             0, &handle, &palette, 14, 0);
         p = entry;
@@ -123,8 +123,8 @@ void Party_ShowJoinedMessage(s32 member)
         /* the portrait sits half a tile into the window, 12 lines down */
         *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
         *p = palette | 0xe000;
-        *(u16 *)(work + RENDER_RESULT_OFS) = 0;
-        *(u16 *)(work + RENDER_RESULT_OFS + 2) = 0;
+        work->result[0] = 0;
+        work->result[1] = 0;
         UiWork_PushValueSlot(member, 1);
         UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)MsgJoinedParty), 36, 2, 0);
         AudioCommand_PlayFar(81);

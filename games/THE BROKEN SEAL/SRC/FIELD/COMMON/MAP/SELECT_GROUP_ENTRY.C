@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "BATTLE_TYPES.H"
 #include "GAME_STATE.H"
+#include "FIELDRUN.H"
 
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 s32 GameFlag_TestFar(s32 flag_id);
@@ -19,20 +20,12 @@ void GameFlag_SetBitFar(s32 flag_id);
  * that a flag id follows in the next word.
  */
 
-typedef u32 *(*TableProvider_0808a5f8)(void);
-
-struct Services_0808a5f8 {
-    u8 padding000[0x14];
-    TableProvider_0808a5f8 table_provider;
-};
-
-extern struct Services_0808a5f8 gOverlayArea;
 
 void MapGroupTable_SelectEntry(s32 kind)
 {
     s16 cur;
-    u32 *p;
-    u32 *start;
+    const u32 *p;
+    const u32 *start;
     u32 word;
     s32 id;
     s32 result;
@@ -42,7 +35,7 @@ void MapGroupTable_SelectEntry(s32 kind)
     s32 flag;
 
     cur = gGameState.scene;
-    p = gOverlayArea.table_provider();
+    p = gOverlayArea.exits();
     result = 999;
     sub = 0;
     if (kind == 999)

@@ -4,10 +4,12 @@ extern struct ShopRuntime *gMenuWork;
 
 void UiWindow_Clear(s32 window);
 struct RenderOutput *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
-struct RenderOutput *Shop_CreatePriceSprite(s16 value, s32 window, s32 x, s32 y);
+struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y);
 
 void Shop_DrawStock(s32 window, s32 selected)
 {
+    /* The typed stock pointer measured the same 296 bytes but changed the
+       address registers. Keep the existing word transport at this boundary. */
     struct ShopRuntime *shop;
     s16 *item_ids;
     s16 *item_id;

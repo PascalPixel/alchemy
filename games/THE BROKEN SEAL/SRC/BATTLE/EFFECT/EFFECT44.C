@@ -128,8 +128,8 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
     s32 y;
     s32 pos;
 
-    canvas = *(u8 **)(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS * sizeof(void *));
-    work = *(struct BattleEffectWork **)(gWorkSlot +
+    canvas = *(u8 **)((u8 *)gWorkSlot + HEAP_SLOT_BATTLE_CANVAS * sizeof(void *));
+    work = *(struct BattleEffectWork **)((u8 *)gWorkSlot +
         HEAP_SLOT_BATTLE_EFFECT * sizeof(void *));
     for (x = 0; x != 128; x++)
         delay[x] = Random16() & 0x3f;

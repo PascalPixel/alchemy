@@ -36,14 +36,14 @@ void BattleFx_FetchRectangleBlitters(s32 alternate,
     BattleEffectDrawRectangle *output)
 {
     /* FAKEMATCH: merging the two genuine loading paths shortened this
-       helper from112 to76 bytes and changed its registers. */
+       helper from 112 to 76 bytes and changed its registers. */
     if (alternate == 0) {
         u8 *state;
         u32 value;
 
         BattleEffect_LoadWork(alternate = HEAP_SLOT_BLITTER, 7, 7,
             GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
-        state = gWorkSlot;
+        state = (u8 *)gWorkSlot;
         value = *(u32 *)(state + HEAP_SLOT_BLITTER * sizeof(void *));
         alternate = HEAP_SLOT_BLITTER_ALTERNATE;
         output[0] = (BattleEffectDrawRectangle)value;
@@ -57,7 +57,7 @@ void BattleFx_FetchRectangleBlitters(s32 alternate,
 
         BattleEffect_LoadWork(alternate = HEAP_SLOT_BLITTER, 7, 7,
             GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
-        state = gWorkSlot;
+        state = (u8 *)gWorkSlot;
         value = *(u32 *)(state + HEAP_SLOT_BLITTER * sizeof(void *));
         alternate = HEAP_SLOT_BLITTER_ALTERNATE;
         output[0] = (BattleEffectDrawRectangle)value;
@@ -140,7 +140,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
     }
 
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-    state = gWorkSlot;
+    state = (u8 *)gWorkSlot;
     draw_a = *(DrawRectangle *)(state + 184);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
     work->transfer_mode = 2;

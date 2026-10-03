@@ -43,7 +43,7 @@ void BattleFx_RunOrbitingSparks(void)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     BattleFx_BeginCanvasLayer(1);
     *(volatile u16 *)0x04000020 = 0x100;
     *(volatile u16 *)0x04000052 = 0x1010;

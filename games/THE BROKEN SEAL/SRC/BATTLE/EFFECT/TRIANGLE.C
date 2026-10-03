@@ -76,7 +76,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
     graphics = heap_cache[2];
     /* FAKEMATCH: the existing word-cell read keeps the cache base separate
        from the later blitter pointer reads; a pointer read coalesces them. */
-    camera = (struct BattleCamera *)*(s32 *)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    camera = (struct BattleCamera *)*(s32 *)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     if (work->effect->unknown_001c == 1)
@@ -121,7 +121,7 @@ void BattleFx_RunSpinningTriangle(struct BattleEffectArgument *effect)
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
         draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-        draw[1] = *(DrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+        draw[1] = *(DrawRectangle *)((u8 *)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
         if (frame > 16 && (frame & 15) == 0)
             work->transfer_value += 0x01010101;
         for (member = 0; member != 1; member++) {
@@ -219,7 +219,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
     graphics = heap_cache[2];
     /* FAKEMATCH: the existing word-cell read keeps the cache base separate
        from the later blitter pointer reads; a pointer read coalesces them. */
-    camera = (struct BattleCamera *)*(s32 *)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    camera = (struct BattleCamera *)*(s32 *)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000020 = 0x100;
@@ -247,7 +247,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect)
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
         draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
-        draw[1] = *(DrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+        draw[1] = *(DrawRectangle *)((u8 *)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
         if (frame > 16 && (frame & 15) == 0)
             work->transfer_value += 0x01010101;
         for (member = 0; member != 1; member++) {

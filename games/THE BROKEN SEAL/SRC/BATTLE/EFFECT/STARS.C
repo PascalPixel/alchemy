@@ -87,7 +87,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     caster = GetBattleObjectSlotFar(effect->actor)->object;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
@@ -120,7 +120,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     trails = (struct EffectStep *)gMapCellBuffer;
     for (frame = 0; frame != 60; frame++) {
         if (frame <= 47) {
-            struct BattleCamera *view = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+            struct BattleCamera *view = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
             s32 speed;
 
             if (frame <= 39)
@@ -250,7 +250,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);

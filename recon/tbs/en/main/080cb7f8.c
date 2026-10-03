@@ -1,3 +1,20 @@
+/* 2026-10-03 T4: independent coordinate-storage and lifetime pass, best 9.
+ * The retained T3 source is unchanged. Rejected trials:
+ * - One record holding point, projected position and ground: 1110; frame
+ *   grows from 76 to 80 bytes and adds a shared base-address live range.
+ * - A record holding only point and projected position: 259; the same
+ *   ground/camera pointer spill exchange remains.
+ * - A one-element ground array, all coordinates scoped around the frame
+ *   loop, projected coordinates scoped in the fleck branch, and ground
+ *   scoped inside the frame loop: all 9, with identical pointer slots.
+ * - Frame < 56 instead of != 56: 229; changes loop termination code.
+ * - Separate upper/lower callbacks: 1154 and a 72-byte frame. Reversing
+ *   the used callback-pair fields: 13, adding four callback stack changes.
+ * - A do/while block around transfer setup: 129, adding two scheduling
+ *   differences. An inline helper containing the same setup: 9.
+ * No new device or storage was retained. Further work needs a distinct
+ * source model; coordinate grouping alone does not solve the spill order.
+ */
 /* 2026-10-03 T3: score 89 -> 9. All instruction/register differences are
  * resolved; nine stack operands still exchange the ground-position pointer
  * at sp+8 and camera-position pointer at sp+12. No inserted/deleted

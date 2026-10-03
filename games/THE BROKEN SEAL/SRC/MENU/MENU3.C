@@ -20,7 +20,8 @@ extern const u8 Resource_FixedBlockBTiles[];
 extern u8 MsgWorkspaceSaveQuest, MsgWorkspaceChangeSettings, MsgWorkspaceRoughMenu;
 
 void ShopCursor_AdvanceFar(void *);
-void Ui_ApplyTableScaleToObject(struct Object *object);
+/* The callee edits the frame through its packed sprite-attribute view. */
+void Ui_ApplyTableScaleToObject(void *object);
 s32 GameFlag_IsSet(s32 flag);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
@@ -33,14 +34,12 @@ void Menu_RunSelectedWorkspaceEntry(void);
 
 void Menu_RunSelectedWorkspaceEntry(void)
 {
-    u8 *base = (u8 *)gSelectionWork;
+    struct WorkspaceWork *work = gSelectionWork;
     u32 index;
 
-    ShopCursor_AdvanceFar(base + 0x5a4);
-    index = *(u16 *)(base + 0x574);
-    index *= 4;
-    index += 0x610;
-    Ui_ApplyTableScaleToObject(*(void **)(base + index));
+    ShopCursor_AdvanceFar(&work->cursor);
+    index = work->page;
+    Ui_ApplyTableScaleToObject(work->icon[index]);
 }
 
 void Menu_InitializeSelectedWorkspace(void)

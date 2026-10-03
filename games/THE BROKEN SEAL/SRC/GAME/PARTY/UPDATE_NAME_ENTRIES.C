@@ -26,7 +26,7 @@ s32 SerialRuntime_BeginTransferA(void *data, s32 size);
 void SerialRuntime_WaitForTransferA(void);
 
 void WaitFrames(s32);
-u8 *Runtime_GetObject(s32);
+struct BattleUnit *Runtime_GetObject(s32);
 void *Trade_GetOfferStateFar(s32);
 
 extern char MsgEnemyLabel;
@@ -35,7 +35,7 @@ s32 UpdateNameEntries(void)
 {
     u16 name_text[24];
     void *buffer;
-    u8 *name_entry;
+    struct BattleUnit *name_entry;
     s32 named_count;
     s32 index;
     s32 len;
@@ -50,7 +50,7 @@ s32 UpdateNameEntries(void)
             break;
         }
         SerialRuntime_WaitForTransferB();
-        if (name_entry[298] != 0) {
+        if (name_entry->status_12a != 0) {
             named_count += 1;
         }
         WaitFrames(2);
@@ -70,12 +70,12 @@ s32 UpdateNameEntries(void)
 #endif
         len = i;
         for (i = 14; i >= len; i--) {
-            name_entry[i] = name_entry[i - len];
+            name_entry->name[i] = name_entry->name[i - len];
         }
         for (i = 0; i < len; i++) {
-            name_entry[i] = (u8)name_text[i];
+            name_entry->name[i] = (u8)name_text[i];
         }
-        name_entry[14] = 0;
+        name_entry->name[14] = 0;
         index += 1;
     }
     Party_Do(buffer);

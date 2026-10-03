@@ -1,13 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
-
-struct SceneRecord {
-    s16 resource_id;
-    s8 group;
-    s8 variant;
-    u16 map_index;
-    u16 reserved;
-};
+#include "FIELDRUN.H"
 
 struct FieldProgress {
     u8 unknown_000[0x1c0];
@@ -28,18 +21,12 @@ struct FieldProgress {
 };
 
 extern struct FieldProgress Data_02000240;
-extern struct SceneRecord Field_SceneTable[];
+
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_RefreshLureCapFar(void);
 #define SCENE_RECORD(id) (&Field_SceneTable[id])
 
-struct Party {
-    u8 unk00[0x1f0];
-    s16 cue;
-};
-
-extern struct Party gGameState;
 extern void Audio_PlayCue(s16 arg0);
 
 /* Entering a scene: unless the scene keeps its state, clears the scene
@@ -48,6 +35,9 @@ extern void Audio_PlayCue(s16 arg0);
    records the group and variant and sets the group's visited flag. */
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
 {
+    /* FAKEMATCH: retain the existing scalar prefix and scene-row expression.
+       The GameState composition in aadcc37dd changed offset reuse; ordinary
+       signed stores and inline prefix casts still grew 336 to 340 bytes. */
     s32 group = SCENE_RECORD(Data_02000240.scene)->group;
     s32 flag;
 
@@ -84,7 +74,16 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
     GameFlag_RefreshLureCapFar();
 }
 
+struct Party {
+    u8 unknown_000[0x1f0];
+    s16 cue;
+};
+
+extern struct Party gGameState;
+
 void Audio_PlayCueFromEventWork(void)
 {
+    /* FAKEMATCH: retain the existing cue prefix. Reading the GameState byte
+       bank as s16 folded its address into the pool and shrank 28 to 20 bytes. */
     Audio_PlayCue(gGameState.cue);
 }

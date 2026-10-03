@@ -11,7 +11,7 @@ struct AbilityListEntry {
     u16 ability;
 };
 
-struct OwnerActionState *Runtime_GetObject(s32 object_id);
+struct BattleUnit *Runtime_GetObject(s32 object_id);
 void *Ability_GetData(s32 resource_id);
 
 struct ShortcutState {
@@ -35,7 +35,7 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
         s32 remaining = object_count;
 
         do {
-            struct OwnerActionState *object;
+            struct BattleUnit *object;
             struct OwnerActionSlot *resource;
             u32 id;
             s32 index;
@@ -46,7 +46,7 @@ s32 Object_CollectResources(struct AbilityListEntry *output)
             object_id++;
             object = Runtime_GetObject(id);
             index = 0;
-            resource_offset = sizeof(object->unknown_000);
+            resource_offset = (u8 *)object->action_slots - (u8 *)object;
             resource_id =
                 *(u16 *)((u8 *)object + resource_offset)
                 & ACTION_ID_MASK;

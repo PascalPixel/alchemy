@@ -7,47 +7,22 @@
 #include "IWRAM_CALL.H"
 #include "MAP_RENDER_WORK.H"
 #include "RAM_BUFFER.H"
-
-struct Vec {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-/* The part of the saved game that holds the dash key setting. */
-struct PlayerState {
-    u8 unknown_000[0x21c];
-    u16 dash_keys;
-};
+#include "GAME_STATE.H"
+#include "FIELD_SPRITE.H"
+#include "FIELDRUN.H"
 
 struct KeyMoveEventWork {
     u8 unknown_000[0x19c];
     u16 blocked_steps;
 };
 
-/* The sprite a world-map object draws: its OAM attribute words. */
-struct WorldSprite {
-    u8 unknown_00[4];
-    u16 y : 8;
-    u16 affine : 2;
-    u16 blend_mode : 2;
-    u16 mosaic : 1;
-    u16 full_color : 1;
-    u16 shape : 2;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 flip_x : 1;
-    u16 flip_y : 1;
-    u16 tile : 10;
-    u16 priority : 2;
-    u16 palette : 4;
-    u8 unknown_0a[0x1c];
-    u8 flags;
-    u8 unknown_27[5];
+/* World-map sprites add a shadow pointer beyond the shared OAM record. */
+struct WorldMapSprite {
+    struct FieldSprite sprite;
+    u8 unknown_28[4];
     u8 *shadow;
 };
 
-extern struct PlayerState gGameState;
 extern struct KeyMoveEventWork *gEventWork;
 extern volatile u32 gKeysHeld;
 extern u32 gKeysRepeat;
@@ -55,7 +30,7 @@ extern u8 gDebugMode;
 extern const s16 Data_08013254[16];
 extern const s32 Data_0801328c[16];
 extern const u8 Data_08013274[];
-void Vector_AddPolarOffset(s32 radius, s32 angle, struct Vec *position);
+void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
 s32 Func_08011f54(u32 layer, s32 x, s32 z);
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 void ObjectDispatch_ApplyArgumentToChildren(struct ObjectRuntime *object, s32 value);
@@ -80,8 +55,8 @@ extern u8 Runtime_ByteRemapTable[];
  */
 s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
 {
-    struct Vec position;
-    struct Vec test_position;
+    struct FieldPosition position;
+    struct FieldPosition test_position;
     s16 angle_offsets[28]; /* the ROM frame keeps 28 slots; 8 are used */
     s32 collision;
     s32 angle;
@@ -95,9 +70,9 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
     s32 rate;
     struct MapRenderWork *work;
     s32 step;
-    struct WorldSprite *sprite;
+    struct FieldSprite *sprite;
     struct ObjectRuntime *effect;
-    struct WorldSprite *animation;
+    struct FieldSprite *animation;
 
     mode = 2;
     collision = 0;
@@ -239,7 +214,7 @@ update_object:
                        + Iwram_MulQ16(object->velocity_z, object->velocity_z));
     object->velocity_x = collision;
     object->velocity_z = collision;
-    Vector_AddPolarOffset(square, (u16)angle, (struct Vec *)&object->velocity_x);
+    Vector_AddPolarOffset(square, (u16)angle, (struct FieldPosition *)&object->velocity_x);
     if (object->action != 0)
         object->action--;
 
@@ -259,10 +234,10 @@ movement_done:
         sprite = object->animation;
         collision_kind = GetWorldMapCollision((struct WorldPosition *)&object->x);
         if (collision_kind == 9) {
-            sprite->shadow[6] = 1;
+            ((struct WorldMapSprite *)sprite)->shadow[6] = 1;
             sprite->flags = 0;
         } else {
-            sprite->shadow[6] = 9;
+            ((struct WorldMapSprite *)sprite)->shadow[6] = 9;
             sprite->flags = 1;
         }
         if (collision_kind == 6 && object->action == 0 && collision == 0) {
@@ -322,7 +297,7 @@ s32 Field_CheckConfiguredKeysAndCount(void *work)
  */
 s32 Object_MoveByKeys(struct ObjectRuntime *object)
 {
-    struct Vec pos;
+    struct FieldPosition pos;
     u8 unused[68];
     struct MapCell *from;
     struct MapCell *to;

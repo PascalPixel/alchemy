@@ -44,7 +44,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
 
     menu = gMenuWork;
     unit = Owner_GetStateFar(owner);
-    menu->cursor->state = 1;
+    menu->cursor->active = 1;
     flags &= 0x100;
     if (flags == 0) {
         UiWindow_ClearInteriorTilesFar(window, 0, 0, 128, 40);

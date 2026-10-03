@@ -5,8 +5,9 @@
 #define ACTION_ID_MASK 0x3FFF
 
 /* PsynergyMenu_CollectActions per games/THE BROKEN SEAL/INCLUDE/PSYNERGY_MENU.H. */
-s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s32 mode)
+s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode)
 {
+    /* FAKEMATCH: retain the existing scalar action-slot cursor in mode 1; an indexed slot loop keeps the 274-byte extent but changes native operand order. */
     s32 n;
     u16 *out;
     s32 outerCount;
@@ -24,7 +25,7 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *owner, u16 *actions, s3
     count = 0;
 
     if (mode == 1) {
-        for (i = 0, off = 88, out = actions; i <= 31; i++, off += 4) {
+        for (i = 0, off = (u8 *)owner->action_slots - (u8 *)owner, out = actions; i <= 31; i++, off += 4) {
             if (*(u16 *)(off + (s32)owner) != 0) {
                 if (BattleAction_Get(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)->type_0c != 0) {
                     *out = *(u16 *)((s32)owner + off);

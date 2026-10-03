@@ -1,20 +1,7 @@
 #include "TYPES.H"
 #include "PARTY_STATE.H"
 
-struct OwnerVitals {
-    u8 unknown_000[20];
-    s16 hp_ratio;
-    s16 pp_ratio;
-    u8 unknown_018[28];
-    s16 max_hp;
-    s16 max_pp;
-    s16 hp;
-    s16 pp;
-    u8 unknown_03c[0x131 - 60];
-    u8 status;
-};
-
-struct OwnerVitals *Owner_GetStateFar(s32 owner);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
 void Party_RemoveActiveOwnerFar(s32 owner);
 void Event_ClearInvalidPackedValues(void);
 s32 Party_CountActiveOwnersFar(void);
@@ -36,7 +23,7 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max)
    is left standing, the current owner gets 1 HP. */
 void Party_RemoveOwnerRestored(s32 owner)
 {
-    struct OwnerVitals *vitals;
+    struct BattleUnit *vitals;
     s32 i;
     s32 count;
     s32 standing;
@@ -49,13 +36,13 @@ void Party_RemoveOwnerRestored(s32 owner)
         vitals->hp = vitals->max_hp;
         vitals->pp = vitals->max_pp;
     } while (0);
-    vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
-    if (vitals->hp_ratio == 0 && vitals->hp != 0)
-        vitals->hp_ratio = 1;
-    vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
-    if (vitals->pp_ratio == 0 && vitals->pp != 0)
-        vitals->pp_ratio = 1;
-    vitals->status = 0;
+    vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
+    if (vitals->hp_gauge == 0 && vitals->hp != 0)
+        vitals->hp_gauge = 1;
+    vitals->pp_gauge = Vitals_Ratio(vitals->pp, vitals->max_pp);
+    if (vitals->pp_gauge == 0 && vitals->pp != 0)
+        vitals->pp_gauge = 1;
+    vitals->poison = 0;
     standing = 0;
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
@@ -66,11 +53,11 @@ void Party_RemoveOwnerRestored(s32 owner)
     if (standing == 0) {
         vitals = Owner_GetStateFar(gGameState.selected_actor);
         vitals->hp = 1;
-        vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
-        if (vitals->hp_ratio == 0 && vitals->hp != 0)
-            vitals->hp_ratio = 1;
-        vitals->pp_ratio = Vitals_Ratio(vitals->pp, vitals->max_pp);
-        if (vitals->pp_ratio == 0 && vitals->pp != 0)
-            vitals->pp_ratio = 1;
+        vitals->hp_gauge = Vitals_Ratio(vitals->hp, vitals->max_hp);
+        if (vitals->hp_gauge == 0 && vitals->hp != 0)
+            vitals->hp_gauge = 1;
+        vitals->pp_gauge = Vitals_Ratio(vitals->pp, vitals->max_pp);
+        if (vitals->pp_gauge == 0 && vitals->pp != 0)
+            vitals->pp_gauge = 1;
     }
 }

@@ -22,6 +22,9 @@ extern s32 Shop_SelectQuantity(s32, s32, s32);
    number already owned above them when the chosen item is in the bag. */
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
+    /* Keep the existing inventory byte-index walk from the owner base.
+       The direct array loop measured 196 bytes against native 204 and
+       changed the two-register slot addresses. */
     u8 *unit;
     s32 x;
     s32 y;
@@ -39,8 +42,6 @@ void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
     if (window != 0) {
         UiWindow_Clear(window);
         slot = Item_FindSlot(unit_id, item_id);
-        /* 参照は枠位置を「バイト差」として先に組み、状態先頭を基底に残す。
-           足し込む順を変えると二レジスタ番地形が崩れる。 */
         if (slot != -1) {
             off = slot * 2 + 216;
             UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);

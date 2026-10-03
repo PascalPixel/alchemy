@@ -16,7 +16,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 {
     s32 item_id;
 
-    owner = ((struct OwnerInventoryState *)Owner_GetState(owner))->inventory[slot];
+    owner = ((struct BattleUnit *)Owner_GetState(owner))->inventory[slot];
     item_id = 0x1ff;
     item_id &= owner;
     owner = (u32)owner >> 11;
@@ -29,7 +29,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot)
 
 s32 Inventory_Count(s32 owner)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct BattleUnit *inv = Owner_GetState(owner);
     s32 count = 0;
 
     if (inv->inventory[count] != 0) {
@@ -86,7 +86,7 @@ s32 PartyInventory_CountFreeSlots(void)
    そうでなければ空き枠へ入れる。戻り値は枠番号、失敗は -1。 */
 s32 Inventory_AddItem(s32 owner_id, s32 item_id)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner_id);
+    struct BattleUnit *inv = Owner_GetState(owner_id);
     struct ItemDefinition *item = Item_GetDirect(item_id);
     s32 slot;
 
@@ -151,7 +151,7 @@ s32 PartyInventory_Add(s32 item_id)
 
 s32 Inventory_Find(s32 owner, s32 item_id)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct BattleUnit *inv = Owner_GetState(owner);
     s32 slot = 0;
     u16 *entry = inv->inventory;
 
@@ -190,7 +190,8 @@ s32 PartyInventory_FindOwner(s32 item_id)
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    /* FAKEMATCH: the existing scalar inventory cursor and volatile reread preserve the native register and load order; ordinary indexed slots change this module from 1856 to 1864 bytes. */
+    struct BattleUnit *inv = Owner_GetState(owner);
     unsigned int mask;
     unsigned int item_id = inv->inventory[slot];
     struct ItemDefinition *item;
@@ -206,7 +207,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
     item = Item_GetDirect(item_id);
     type = item->type;
     if (type != 6) {
-        for (other = 0, item_id = 0xd8;
+        for (other = 0, item_id = (u8 *)inv->inventory - (u8 *)inv;
              other <= 14;
              item_id += 2, other++) {
             unsigned int m = mask;
@@ -237,25 +238,23 @@ s32 Inventory_Equip(s32 owner, s32 slot)
 
 s32 Inventory_FindEquipped(s32 owner, s32 type)
 {
-    u8 *base = Owner_GetState(owner);
+    struct BattleUnit *base = Owner_GetState(owner);
     s32 index;
-    s32 offset;
     struct ItemDefinition *item;
 
-    for (index = 0, offset = 216; index <= 14; index++) {
-        if (*(u16 *)((u8 *)offset + (s32)base) & 0x200) {
+    for (index = 0; index <= 14; index++) {
+        if (base->inventory[index] & 0x200) {
             item = Item_GetDirect(
-                *(u16 *)((u8 *)offset + (s32)base));
+                base->inventory[index]);
             if (item->type == type) break;
         }
-        offset += 2;
     }
     if (index == 15) index = -1;
     return index;
 }
 
 struct ItemDefinition *Inventory_GetEquippedDefinition(
-    struct OwnerInventoryState *inv,
+    struct BattleUnit *inv,
     s32 type)
 {
     s32 slot;
@@ -272,7 +271,7 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(
     return 0;
 }
 
-s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type)
+s32 Inventory_GetEquippedItem(struct BattleUnit *inv, s32 type)
 {
     s32 slot;
 
@@ -295,7 +294,7 @@ s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type)
    halfwords. Returns 1 or 2 for those cases, -1 for an empty slot. */
 s32 Inventory_Remove(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct BattleUnit *inv = Owner_GetState(owner);
     u16 item = inv->inventory[slot];
     s32 result = -1;
 
@@ -327,7 +326,7 @@ s32 Inventory_Remove(s32 owner, s32 slot)
 s32 Inventory_Discard(s32 owner, s32 slot)
 {
     s32 item =
-        ((struct OwnerInventoryState *)Owner_GetState(owner))->inventory[slot];
+        ((struct BattleUnit *)Owner_GetState(owner))->inventory[slot];
     s32 removed_slot = Inventory_Remove(owner, slot);
 
     if (removed_slot != -1) {
@@ -338,7 +337,7 @@ s32 Inventory_Discard(s32 owner, s32 slot)
 
 s32 Inventory_CheckDiscard(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct BattleUnit *inv = Owner_GetState(owner);
     s32 item_id = inv->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_GetDirect(item_id);
 
@@ -377,7 +376,7 @@ s32 PartyInventory_Discard(s32 item_id)
 
 s32 Inventory_Break(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct BattleUnit *inv = Owner_GetState(owner);
     if (inv->inventory[slot] == 0) {
         return -1;
     }
@@ -387,7 +386,7 @@ s32 Inventory_Break(s32 owner, s32 slot)
 
 s32 Inventory_Repair(s32 owner, s32 slot)
 {
-    struct OwnerInventoryState *inv = Owner_GetState(owner);
+    struct BattleUnit *inv = Owner_GetState(owner);
     if (inv->inventory[slot] == 0) {
         return -1;
     }
@@ -440,24 +439,22 @@ s32 Item_AdjustCounter(s32 item_id, s32 delta)
 
 s32 Inventory_CountItem(s32 owner, s32 item_id)
 {
-    u8 *base = Owner_GetState(owner);
+    struct BattleUnit *base = Owner_GetState(owner);
     s32 count = 0;
     s32 target = item_id & 0x1ff;
     s32 index = 0;
-    s32 offset = 216;
 
     do {
-        if ((*(u16 *)((u8 *)offset + (s32)base) & 0x1FF) == target) {
+        if ((base->inventory[index] & 0x1FF) == target) {
             struct ItemDefinition *item = Item_GetDirect(target);
 
             if (item->flags & 0x10) {
-                count = (*(u16 *)((u8 *)offset + (s32)base) >> 11) + 1;
+                count = (base->inventory[index] >> 11) + 1;
                 break;
             }
             count++;
         }
         index++;
-        offset += 2;
     } while (index <= 14);
     return count;
 }
@@ -493,16 +490,17 @@ struct BattleAction *BattleAction_GetDirect(s32 action_id) {
 /* inventory/has_equipment_value.c */
 s32 Equipment_HasValue(s32 owner, s32 value)
 {
-    u8 *entry = Owner_GetState(owner);
+    struct BattleUnit *unit = Owner_GetState(owner);
+    struct OwnerActionSlot *entry;
     s32 mask = 0x3fff;
     s32 index = 0;
 
-    entry += 88;
+    entry = unit->action_slots;
     do {
-        s32 current = *(u16 *)entry;
+        s32 current = entry->encoded_action;
 
         current &= mask;
-        entry += 4;
+        entry++;
         if (current == value) {
             return 1;
         }

@@ -7,6 +7,7 @@
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
 #include "LAYOUT_GUARD.H"
+#include "A9_MOTION.H"
 
 extern u8 MsgEquipSlotLabels;
 extern void ItemMenu_PosCategory(void);
@@ -15,8 +16,7 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 extern u8 MsgItemName;
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items);
 void ItemMenu_PosCategory(void);
-void UiIcon_PrepareObject(void *icon);
-void Menu_PlaceEntryObjectInGrid(struct InventoryMenuIcon *, s32, s32, s32, s32);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 s32 Menu_ReservedStatusOne(void)
 {
@@ -83,8 +83,8 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)
 void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
 {
     s32 i;
-    struct InventoryMenuIcon *obj;
-    struct InventoryMenuIcon **tbl;
+    struct RenderOutput *obj;
+    struct RenderOutput **tbl;
 
     i = 0;
     tbl =
@@ -98,7 +98,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
     } while (i <= 0x1F);
 }
 
-void Menu_PlaceEntryObjectInGrid(struct InventoryMenuIcon *obj, s32 index,
+void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
     s32 origin_x, s32 origin_y, s32 phase) {
     s32 no;
 
@@ -120,7 +120,7 @@ void Menu_PlaceEntryObjectInGrid(struct InventoryMenuIcon *obj, s32 index,
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
 {
     struct InventoryMenuState *state;
-    struct InventoryMenuIcon *icon;
+    struct RenderOutput *icon;
     s32 i;
 
     state = gMenuWork;

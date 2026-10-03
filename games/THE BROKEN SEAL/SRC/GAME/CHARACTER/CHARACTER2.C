@@ -31,7 +31,7 @@ u32 Random16(void);
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
-    struct OwnerActionState *state = (struct OwnerActionState *)Owner_GetState(state_index);
+    struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(state_index);
     s32 key = value & 0x3fff;
     s32 found = -1;
     s32 index;

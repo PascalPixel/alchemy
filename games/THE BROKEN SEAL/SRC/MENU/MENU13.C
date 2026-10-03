@@ -1,3 +1,4 @@
+#include "SELECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
@@ -6,31 +7,13 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-struct SelectionNode_0801c188 {
-    u8 padding_00[8];
-    u16 no;
-    u16 type;
-};
-
-struct TransferState_0801c188 {
-    u8 padding_00[8];
-    u16 no;
-    u16 active;
-    u16 handle;
-    u16 transfer_id;
-    u8 padding_10[18];
-    s16 x;
-    s16 y;
-    s16 width;
-};
-
 struct ResourceBuffer_0801c188 {
     u8 payload[0x604];
     void *resource;
 };
 
-extern u8 *gResQueueWork;
-struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
+extern struct SelectionScreen *gResQueueWork;
+struct SelectionNode *NodeChain_GetNodeAtCount(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
 u16 VramBlock_LoadCached(s32 handle, s32 size, void *buffer);
@@ -54,49 +37,48 @@ void UiWindow_CreateWithLayoutBounds(s32);
 
 void Menu_LoadSelectedResource(void)
 {
-    u8 *state = gResQueueWork;
-    struct SelectionNode_0801c188 *selection = NodeChain_GetNodeAtCount(state);
-    struct TransferState_0801c188 *transfer;
+    struct SelectionScreen *state = gResQueueWork;
+    struct SelectionNode *selection = NodeChain_GetNodeAtCount(state);
+    struct SelectionNode *transfer;
     struct ResourceBuffer_0801c188 *buffer;
     u8 *tbl;
     void *resource;
     s32 no;
 
-    if (selection->type != 1 && selection->type != 6)
+    if (selection->kind != 1 && selection->kind != 6)
         return;
 
     buffer = Runtime_AllocateHeapBlock(17, 0x608);
-    transfer = (struct TransferState_0801c188 *)(state + 0x30C);
-    no = selection->no;
+    transfer = &state->records[15];
+    no = selection->base;
     tbl = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
     {
         void **destination = &buffer->resource;
         resource = tbl
-            + *(u16 *)(tbl + selection->no * 2);
+            + *(u16 *)(tbl + selection->base * 2);
         *destination = resource;
     }
     Resource_DecodeByteLz(resource, buffer);
 
-    if (transfer->active == 0)
-        transfer->handle = Resource_FindFreeEntry();
-    transfer->transfer_id =
-        VramBlock_LoadCached(transfer->handle, 0x400, buffer);
-    transfer->active = 1;
-    transfer->no = no;
-    transfer->x = 40;
-    transfer->y = 40;
-    transfer->width = 240;
+    if (transfer->kind == 0)
+        transfer->slot = Resource_FindFreeEntry();
+    transfer->tile =
+        VramBlock_LoadCached(transfer->slot, 0x400, buffer);
+    transfer->kind = 1;
+    transfer->base = no;
+    transfer->scale = 40;
+    transfer->scale_step = 40;
+    transfer->scale_end = 240;
     Runtime_ReleaseHeapBlock(17);
 }
 
 void Resource_ResetPendingTransfer(void)
 {
-    u32 offset = 0x30c;
-    u8 *work = *(u8 **)((u32)&Data_03001e98) + offset;
+    struct SelectionNode *transfer = &gResQueueWork->records[15];
 
-    if (*(u16 *)(work + 0x0a) != 0) {
-        Resource_ResetEntry(*(u16 *)(work + 0x0c));
-        *(u16 *)(work + 0x0a) = offset = 0;
+    if (transfer->kind != 0) {
+        Resource_ResetEntry(transfer->slot);
+        transfer->kind = 0;
     }
 }
 

@@ -6,6 +6,7 @@
 #include "RESOURCE_IDS.H"
 #include "RAM_BUFFER.H"
 #include "SYSTEM.H"
+#include "MAP_RENDER_WORK.H"
 
 extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
@@ -13,14 +14,6 @@ extern u8 Data_03001cfc[];
 extern u8 gDecodeBuffer[];
 void MapAnimation_Update(void);
 void MapAnimation_PresentFrame(void);
-
-struct MapAnimationWork {
-    u8 unknown_000[0xfc];
-    u8 active;
-    u8 unknown_0fd[3];
-    u16 timer;
-    u16 limit;
-};
 
 void WaitFrames(s32 frames);
 void Resource_RunCopiedDecoder(void *source, void *destination);
@@ -31,18 +24,6 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
 void Map_ShowBg1FromBuffer(void);
 #define BG_PALETTE ((s16 *)0x05000000)
-
-struct MapWindow {
-    u8 unk_000[0x100];
-    u16 top;
-    u16 bottom;
-};
-
-struct MapInitWork {
-    u8 unknown_000[0x100];
-    s16 first;
-    s16 second;
-};
 
 /* Display hook installed by MapAnimation_Start: selects the animation
    layout for BG1 and copies the decoded frame into character VRAM. */
@@ -66,7 +47,7 @@ void MapAnimation_Start(void)
        the pages through one base; the reference loads one address for both. */
     u8 **pointers = &gMapAnimationPages;
     u8 *pages = *pointers++;
-    struct MapAnimationWork *work = *(struct MapAnimationWork **)pointers;
+    struct MapRenderWork *work = *(struct MapRenderWork **)pointers;
     s32 one = 1;
 
     work->active = one;
@@ -74,8 +55,8 @@ void MapAnimation_Start(void)
     Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, 0x84000800, (volatile u32 *)0x040000d4);
     WaitFrames(1);
     Resource_RunCopiedDecoder(pages + (*(u32 *)&gFrameCount & one) * 0x1400 + 0xc80, (void *)gMapCellBuffer);
-    work->timer = 200;
-    work->limit = 255;
+    work->first = 200;
+    work->second = 255;
     *(u32 *)Data_03001cfc = (u32)MapAnimation_PresentFrame;
 }
 
@@ -113,8 +94,8 @@ void Map_LoadAreaGraphics(void)
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
-    ((struct MapWindow *)state)->top = 0;
-    ((struct MapWindow *)state)->bottom = 159;
+    ((struct MapRenderWork *)state)->first = 0;
+    ((struct MapRenderWork *)state)->second = 159;
     WaitFrames(1);
     Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
     /* FAKEMATCH: the byte flag is written from the halfword local cleared
@@ -130,7 +111,7 @@ void Map_LoadAreaGraphics(void)
 /* map/shared/load_default_cells_and_update_block.c */
 void Map_LoadDefaultCellsAndUpdateBlock(void)
 {
-    struct MapInitWork *work = gMapWork[0];
+    struct MapRenderWork *work = gMapWork[0];
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
     work->first = 0;
     work->second = 0x9f;

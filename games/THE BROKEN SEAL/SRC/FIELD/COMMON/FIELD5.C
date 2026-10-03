@@ -4,115 +4,18 @@
 #include "EVENT_RUNTIME.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
+#include "GAME_STATE.H"
+#include "FIELDRUN.H"
 
-struct MapFocusObject {
-    u8 padding00[6];
-    u16 kind;
-    s32 x;
-    s32 unknown_0c;
-    s32 y;
-};
-
-struct MapFocusPosition {
-    s32 x;
-    s32 unknown_04;
-    s32 y;
-};
-
-void Vector_AddPolarOffset(s32, u32, struct MapFocusPosition *);
-extern struct EventPairWork1d6 gGameState;
+void Vector_AddPolarOffset(s32, u32, struct FieldPosition *);
 extern struct EventRuntime *gEventWork;
 
-struct MapRegion {
-    s16 min_x;
-    s16 min_y;
-    s16 min_z;
-    s16 max_x;
-    s16 max_y;
-    s16 max_z;
-    s16 condition;
-    s16 value;
-};
-
-typedef struct MapRegion *(*MapRegionProvider)(void);
-
-struct MapRegionServices {
-    u8 padding000[0x2c];
-    MapRegionProvider region_provider;
-};
-
-extern struct MapRegionServices gOverlayArea;
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
 void Battle_InitializeRenderObject(void);
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 extern u8 gMapCellBuffer[];
-
-struct StepTile {
-    u8 unknown_0[2];
-    u8 event;                       /* 0x02 */
-    u8 unknown_3;
-};
-
-struct StepLayer {
-    struct StepTile *tiles;         /* 0x00 */
-    u8 unknown_04[0x2c];
-};
-
-struct StepMapWork {
-    u8 unknown_000[0x130];
-    struct StepLayer layers[3];     /* 0x130 */
-};
-
-struct StepActor {
-    u8 unknown_00[8];
-    u8 motion[0x20];                /* 0x08 */
-    s32 unknown_28;                 /* 0x28 */
-    u8 unknown_2c[4];
-    s32 speed;                      /* 0x30 */
-    u8 unknown_34[4];
-    s32 unknown_38;                 /* 0x38 */
-};
-
-struct StepWork {
-    u8 unknown_000[0x14];
-    struct StepActor *actors[1];    /* 0x014 */
-    u8 unknown_018[0x16c - 0x18];
-    s16 step_event;                 /* 0x16c */
-    s16 warp_event;                 /* 0x16e */
-    u8 unknown_170[0xc];
-    u16 unknown_17c;                /* 0x17c */
-    s16 unknown_17e;                /* 0x17e */
-    u8 unknown_180[2];
-    u16 unknown_182;                /* 0x182 */
-    s16 fallen_count;               /* 0x184 */
-    s16 standing_count;             /* 0x186 */
-    u16 fallen[11];                 /* 0x188 */
-    s16 mode;                       /* 0x19e */
-    u8 encounter_full[4];           /* 0x1a0 */
-    u8 unknown_1a4[0xc];
-    s32 encounter_rate;             /* 0x1b0 */
-    s32 encounter_steps;            /* 0x1b4 */
-    struct StepTile *tile;          /* 0x1b8 */
-    struct StepTile *previous_tile; /* 0x1bc */
-};
-
-struct StepState {
-    u8 unknown_000[0x1f2];
-    u8 unknown_1f2;                 /* 0x1f2 */
-    u8 unknown_1f3;
-    s32 selected_actor;             /* 0x1f4 */
-    u8 party[0x34];                 /* 0x1f8 */
-    s16 unknown_22c;                /* 0x22c */
-    s16 unknown_22e;                /* 0x22e */
-    s16 unknown_230;                /* 0x230 */
-    s16 unknown_232;                /* 0x232 */
-    u8 unknown_234[0xa];
-    s16 unknown_23e;                /* 0x23e */
-    u8 unknown_240[4];
-    s32 unknown_244;                /* 0x244 */
-};
 
 struct StepOwner {
     u8 unknown_000[0x38];
@@ -135,9 +38,8 @@ enum StepTileEvent {
 #define STEP_NO_TARGET ((s32)0x80000000)
 #define STEP_FLAG_DOUBLE_SPEED 0x167
 #define STEP_CUE_EFFECT 139
-extern struct StepState Data_02000240;
 s32 Party_CountActiveOwnersFar(void);
-struct StepOwner *Owner_GetStateFar(s32 owner);
+struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 GameFlag_TestFar(s32 flag);
 void UpdateMapRegionAtPosition(s32 x, s32 y, s32 z);
 s32 BattleFx_ApplyLookupResult(void *motion, s32 speed);
@@ -185,9 +87,9 @@ u8 GetFocusedObjectCollision(void)
 {
     u32 runtime_slot_address;
     struct EventRuntime *runtime;
-    struct MapFocusObject *object;
+    struct ObjectRuntime *object;
     struct MapState *map;
-    struct MapFocusPosition position;
+    struct FieldPosition position;
     u8 *tile;
     u32 offset;
     s32 x;
@@ -195,8 +97,8 @@ u8 GetFocusedObjectCollision(void)
 
     runtime_slot_address = (u32)&gEventWork;
     runtime = gEventWork;
-    offset = (gGameState.object_id * 4) + 0x14;
-    object = *(struct MapFocusObject **)((u8 *)runtime + offset);
+    offset = ((u32)gGameState.selected_actor * 4) + 0x14;
+    object = *(struct ObjectRuntime **)((u8 *)runtime + offset);
 
     map = *(struct MapState **)(runtime_slot_address - 76);
 
@@ -204,9 +106,9 @@ u8 GetFocusedObjectCollision(void)
         return 0;
 
     position.x = object->x;
-    position.unknown_04 = object->unknown_0c;
     position.y = object->y;
-    Vector_AddPolarOffset(0x100000, object->kind, &position);
+    position.z = object->z;
+    Vector_AddPolarOffset(0x100000, object->angle, &position);
 
     if (runtime->mode_19e == 3) {
         u32 tile_x;
@@ -217,7 +119,7 @@ u8 GetFocusedObjectCollision(void)
             x += 0x1fffff;
         tile_x = (x >> 21) & 31;
 
-        y = position.y;
+        y = position.z;
         if (y < 0)
             y += 0x1fffff;
         tile_y = (y >> 21) & 31;
@@ -232,7 +134,7 @@ u8 GetFocusedObjectCollision(void)
         {
             u32 tile_x = x >> 20;
 
-            y = position.y;
+            y = position.z;
             if (y < 0)
                 y += 0xfffff;
 
@@ -258,12 +160,12 @@ void UpdateMapRegionAtPosition(s32 position_x, s32 position_y, s32 position_z)
     s32 max_z;
     s16 max_x;
     s16 min_x;
-    struct MapRegion *region;
+    const struct SceneRegion *region;
 
     x = position_x;
     y = position_y;
     z = position_z;
-    region = gOverlayArea.region_provider();
+    region = gOverlayArea.regions();
     if (region != 0 &&
         (runtime = gEventWork, min_x = region->min_x, min_x != -1)) {
 loop:
@@ -304,14 +206,18 @@ loop:
  */
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
-    struct StepWork *work = Data_03001ebc;
+    /* FAKEMATCH: retain the existing StepOwner read/byte-store prefix. The
+       full BattleUnit view moved the party-byte load before its index shift.
+       Signed lvalue/array views reduced frame 44 to 40; a second used base
+       grew it to 48. Scalar s16 interpretations keep the actual frame. */
+    struct FieldStepWork *work = (struct FieldStepWork *)Data_03001ebc;
     /* FAKEMATCH: the map work cell is reached as gEventWork[-19]; the ROM loads
        0x03001ebc once and subtracts 76 to reach 0x03001e70. */
-    struct StepMapWork *map = ((struct StepMapWork **)&Data_03001ebc)[-19];
-    s32 selected = Data_02000240.selected_actor;
-    struct StepActor *actor = work->actors[selected];
+    struct MapState *map = ((struct MapState **)&Data_03001ebc)[-19];
+    s32 selected = gGameState.selected_actor;
+    struct ObjectRuntime *actor = work->actors[selected];
     s16 hp[8];
-    struct StepTile *tile;
+    struct MapCell *tile;
     struct StepOwner *owner;
     u32 count;
     s32 fell;
@@ -329,18 +235,18 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++)
-        hp[i] = Owner_GetStateFar(Data_02000240.party[i])->hp;
+        hp[i] = Owner_GetStateFar(gGameState.active_owners[i])->hp;
 
     if (work->mode == STEP_MODE_WORLD_MAP) {
-        tile = &((struct StepTile *)Ram_MapBlocks)[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
+        tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
     } else {
         if ((u32)layer <= 2)
-            tile = map->layers[layer].tiles;
+            tile = map->layers[layer].cells;
         else
-            tile = (struct StepTile *)gMapCellBuffer;
+            tile = (struct MapCell *)gMapCellBuffer;
         tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
     }
-    event = tile->event;
+    event = tile->collision_code;
     work->previous_tile = work->tile;
     work->tile = tile;
     if (event != 0)
@@ -350,13 +256,13 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     if (event >= STEP_WARP_FIRST && event <= STEP_WARP_LAST)
         work->warp_event = event;
 
-    if (Data_02000240.unknown_1f2 == 0 && actor != NULL && actor->unknown_38 != STEP_NO_TARGET) {
-        speed = actor->speed;
+    if (gGameState.movement_mode == 0 && actor != NULL && actor->target_x != STEP_NO_TARGET) {
+        speed = actor->speed_limit;
         if (GameFlag_TestFar(STEP_FLAG_DOUBLE_SPEED))
             speed <<= 1;
         if (work->mode == STEP_MODE_WORLD_MAP) {
             full = 1;
-            work->unknown_17c = BattleFx_ApplyLookupResult(actor->motion, speed);
+            work->unknown_17c = BattleFx_ApplyLookupResult(&actor->x, speed);
         } else if (event == STEP_TERRAIN_FIRST || event == STEP_TERRAIN_LAST) {
             full = work->encounter_full[event - (STEP_TERRAIN_FIRST - 1)];
             work->unknown_17c = EffectRuntime_LookupByTableEntry(event - (STEP_TERRAIN_FIRST - 1), speed);
@@ -364,7 +270,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             full = work->encounter_full[0];
             work->unknown_17c = EffectRuntime_LookupByTableEntry(0, speed);
         }
-        steps = Iwram_MulQ16(work->encounter_rate, actor->speed);
+        steps = Iwram_MulQ16(work->encounter_rate, actor->speed_limit);
         if (!full)
             steps /= 2;
         sum = work->encounter_steps + steps;
@@ -378,32 +284,32 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             Event_ClearInvalidPackedValues();
             fell = BattleParty_ApplyStatusDamage();
         }
-        if (Data_02000240.unknown_22e == 0 && event == STEP_EVENT_HAZARD) {
-            if (work->previous_tile->event == STEP_EVENT_HAZARD)
-                Data_02000240.unknown_232 += actor->speed / 0x10000;
+        if (((s16)gGameState.unknown_22e) == 0 && event == STEP_EVENT_HAZARD) {
+            if (work->previous_tile->collision_code == STEP_EVENT_HAZARD)
+                gGameState.unknown_232 += actor->speed_limit / 0x10000;
             else
-                Data_02000240.unknown_232 = Data_02000240.unknown_22c / 2;
+                gGameState.unknown_232 = ((s16)gGameState.unknown_22c) / 2;
         }
-        if (Data_02000240.unknown_244 != 0 && Data_02000240.unknown_23e != 2) {
-            Data_02000240.unknown_244 -= actor->speed;
-            if (Data_02000240.unknown_244 <= 0) {
-                Data_02000240.unknown_244 = 1;
+        if (gGameState.unknown_244 != 0 && gGameState.unknown_23e != 2) {
+            gGameState.unknown_244 -= actor->speed_limit;
+            if (gGameState.unknown_244 <= 0) {
+                gGameState.unknown_244 = 1;
                 if (work->unknown_17e == 0)
                     work->unknown_17e = 0x2096;
             }
         }
     }
 
-    if (Data_02000240.unknown_22e == 1) {
-        Data_02000240.unknown_232++;
-        if (Data_02000240.unknown_232 == Data_02000240.unknown_22c / 2)
+    if (((s16)gGameState.unknown_22e) == 1) {
+        gGameState.unknown_232++;
+        if (gGameState.unknown_232 == ((s16)gGameState.unknown_22c) / 2)
             BattleFx_ConfigureLinkedObject(selected, 0x101);
-        if (Data_02000240.unknown_232 == Data_02000240.unknown_22c)
+        if (gGameState.unknown_232 == ((s16)gGameState.unknown_22c))
             BattleFx_ConfigureLinkedObject(selected, 0x100);
     }
-    if (Data_02000240.unknown_232 >= Data_02000240.unknown_22c) {
-        n = Data_02000240.unknown_230;
-        Data_02000240.unknown_232 = 0;
+    if (gGameState.unknown_232 >= ((s16)gGameState.unknown_22c)) {
+        n = ((s16)gGameState.unknown_230);
+        gGameState.unknown_232 = 0;
         BattleParty_ApplyHealthDelta(-(n & 255), n & 0x100);
         fell++;
     }
@@ -411,14 +317,14 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     if (fell) {
         work->fallen_count = 0;
         work->standing_count = 0;
-        actor->unknown_28 = 0x40000;
+        actor->velocity_y = 0x40000;
         BattleFx_ConfigureLinkedObject(selected, 0x102);
         for (i = 0; i < count; i++) {
-            owner = Owner_GetStateFar(Data_02000240.party[i]);
+            owner = (struct StepOwner *)Owner_GetStateFar(gGameState.active_owners[i]);
             if (owner->hp > 0) {
                 work->standing_count++;
             } else if (hp[i] != 0) {
-                work->fallen[work->fallen_count++] = Data_02000240.party[i];
+                work->fallen[work->fallen_count++] = gGameState.active_owners[i];
                 work->unknown_182 = 0xffff;
                 owner->unknown_131 = 0;
             }

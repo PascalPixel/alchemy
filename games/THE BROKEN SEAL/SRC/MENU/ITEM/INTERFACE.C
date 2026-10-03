@@ -8,7 +8,10 @@
 #include "UI.H"
 
 s32 UiMenu_CreateCursor(void *menu);
-void PsynergyMenu_InitializeEntryObjects(s32 source, s32 x, s32 y, s32 spacing, s32 style);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(
+    s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
+/* The four-word void helper keeps the caller's extra legacy word. */
+void PsynergyMenu_InitializeEntryObjects();
 
 void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
 {
@@ -37,13 +40,13 @@ void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns)
 
 void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
 {
-    struct InventoryMenuIcon **output0;
+    struct RenderOutput **output0;
     s32 index0;
     s32 fifth0;
-    struct InventoryMenuIcon **output1;
+    struct RenderOutput **output1;
     s32 index1;
     s32 fifth1;
-    struct InventoryMenuIcon **output2;
+    struct RenderOutput **output2;
     s32 index2;
     s32 fifth2;
 
@@ -51,7 +54,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
     fifth0 = 0xA8;
     output0 = &state->entry_icons[0];
     do {
-        *output0++ = (struct InventoryMenuIcon *)RenderOutput_CreateFromResourceFar(2, index0, arg1, 0xF8, fifth0);
+        *output0++ = RenderOutput_CreateFromResourceFar(2, index0, (struct RenderInput *)arg1, 0xF8, fifth0);
         index0++;
     } while (index0 <= 7);
 
@@ -59,7 +62,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
     fifth1 = 0xA8;
     output1 = &state->entry_icons[8];
     do {
-        *output1++ = (struct InventoryMenuIcon *)RenderOutput_CreateFromResourceFar(2, index1, arg1, 0x100, fifth1);
+        *output1++ = RenderOutput_CreateFromResourceFar(2, index1, (struct RenderInput *)arg1, 0x100, fifth1);
         index1++;
     } while (index1 <= 15);
 
@@ -67,7 +70,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
     fifth2 = 0xA8;
     output2 = &state->entry_icons[16];
     do {
-        *output2++ = (struct InventoryMenuIcon *)RenderOutput_CreateFromResourceFar(2, index2, arg1, 0x100, fifth2);
+        *output2++ = RenderOutput_CreateFromResourceFar(2, index2, (struct RenderInput *)arg1, 0x100, fifth2);
         index2++;
     } while (index2 <= 31);
 }
@@ -75,13 +78,13 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state, s32 arg1)
 void ItemMenu_HideAllIcons(void)
 {
     s32 hidden_state = 13;
-    struct InventoryMenuIcon **icons = gMenuWork->entry_icons;
+    struct RenderOutput **icons = gMenuWork->entry_icons;
     s32 slot;
 
     for (slot = 31; slot >= 0; slot--) {
-        struct InventoryMenuIcon *icon = *icons++;
+        struct RenderOutput *icon = *icons++;
         if (icon != 0) {
-            icon->state = hidden_state;
+            icon->active = hidden_state;
         }
     }
 }
@@ -94,13 +97,13 @@ void ItemMenu_HidePageIcons(void)
     struct InventoryMenuState *menu = gMenuWork;
     s32 slot = 0;
     s32 hidden_state = 13;
-    struct InventoryMenuIcon **icon_slot = menu->entry_icons;
+    struct RenderOutput **icon_slot = menu->entry_icons;
 
     do {
-        struct InventoryMenuIcon *icon = *icon_slot++;
+        struct RenderOutput *icon = *icon_slot++;
 
         if (icon != 0 && slot % 5 == 0) {
-            icon->state = hidden_state;
+            icon->active = hidden_state;
         }
         slot++;
     } while (slot <= 31);
@@ -113,14 +116,14 @@ void Menu_ReleaseEntryObjects(void);
 void ItemMenu_Close(void)
 {
     struct InventoryMenuState *menu;
-    struct InventoryMenuIcon *cursor;
+    struct RenderOutput *cursor;
 
     menu = gMenuWork;
     Menu_ReleaseEntryObjects();
     ItemMenu_HideAllIcons();
     WaitFrames(1);
     cursor = menu->cursor;
-    cursor->state = 0xD;
+    cursor->active = 0xD;
     UiWindow_CloseIfOpen(&menu->main_window, 1);
     UiWindow_CloseIfOpen(&menu->item_window, 1);
     UiWindow_CloseIfOpen(&menu->message_window, 1);

@@ -164,7 +164,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
         shop->warrior_shop = 1;
     if (row == 18)
         shop->warrior_shop = 1;
-    shop->keeper_resource = *((struct ShopKeeperAnimation *)Object_GetByIdFar(keeper_id)->animation)->resource;
+    shop->keeper_resource = (u16)((struct AnimationObject *)Object_GetByIdFar(keeper_id)->animation)->entries[0]->anim_id;
     window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
     if (window == 0)
         window = UiWindow_CreateFar(-5, 0, 5, 5, 2);

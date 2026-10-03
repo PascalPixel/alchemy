@@ -92,7 +92,7 @@ s32 Item_GetEquippedElement(void)
         return Owner_GetDefaultElement(owner);
     }
     item = Inventory_GetEquippedDefinition(
-        (struct OwnerInventoryState *)owner, 1);
+        (struct BattleUnit *)owner, 1);
     if (item != NULL) {
         return item->element;
     }

@@ -7,7 +7,7 @@
 extern struct DjinnMenuWork *gMenuWork;
 #include "TBS_EDITION.H"
 
-extern u8 *gWindowWork;
+extern struct UiWork *gWindowWork;
 extern volatile u32 gKeyState;
 extern u8 MsgReturnHelp[];
 extern u8 MsgCurrentDjinn[];
@@ -34,8 +34,8 @@ s32 DjinnMenu_ShowCurrentList(void)
     Audio_PlayCue(112);
     RenderOutput_RedrawSavedRectFar(menu->help_window);
     UiText_DrawCharacterAtOffsetFar((s32)MsgReturnHelp, menu->help_window, 0, 16);
-    menu->cursor->state = 13;
-    menu->second_cursor->state = 13;
+    menu->cursor->active = 13;
+    menu->second_cursor->active = 13;
     WaitFrames(1);
     window = menu->window;
     {
@@ -63,7 +63,7 @@ s32 DjinnMenu_ShowCurrentList(void)
             }
         }
     }
-    gWindowWork[RENDER_DIRTY_OFS] = 1;
+    gWindowWork->dirty = 1;
     for (;;) {
         if (GameFlag_TestFar(0x150))
             break;
@@ -81,8 +81,8 @@ s32 DjinnMenu_ShowCurrentList(void)
             menu->slot_y[i] = 128;
         }
     }
-    menu->cursor->state = 1;
-    menu->second_cursor->state = 1;
+    menu->cursor->active = 1;
+    menu->second_cursor->active = 1;
     Audio_PlayCue(113);
     /* FAKEMATCH: the caller ignores the result, but the reference retains
        a value-returning epilogue after this void audio call. */

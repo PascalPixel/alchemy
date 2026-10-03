@@ -22,7 +22,7 @@ void InventorySnapshot_Restore(void)
         owner = 0;
         do {
             u16 *inventory =
-                ((struct OwnerInventoryState *)Owner_GetState(owner))->inventory;
+                ((struct BattleUnit *)Owner_GetState(owner))->inventory;
             s32 remaining = 14;
 
             do {

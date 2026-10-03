@@ -1,12 +1,16 @@
+#include "SELECT.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 *gResQueueWork;
+extern struct SelectionScreen *gResQueueWork;
 
 /* resource/transfer/find_free_entry.c */
-s32 Resource_FindFreeTransferEntry(s32 kind)
+struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
 {
+    /* FAKEMATCH: retain the existing two scalar scans and their separate
+       running addresses. A shared typed for-loop produces 56 rather than
+       88 bytes in all six editions (2026-10-03 attempt aadcc37dd). */
     s32 state;
     s32 off;
     s32 i;
@@ -23,7 +27,7 @@ s32 Resource_FindFreeTransferEntry(s32 kind)
         off = 0;
 loop_2:
         if (*p == 0) {
-            return state + off + 0x1D4;
+            return (struct SelectionNode *)(state + off + 0x1d4);
         }
         i = i + 1;
         p += 0x1A;
@@ -40,7 +44,7 @@ loop_7:
     v = *q;
     q += 0x1A;
     if (v == 0) {
-        return ret;
+        return (struct SelectionNode *)ret;
     }
     ret += 0x34;
     j += 1;

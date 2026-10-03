@@ -711,7 +711,11 @@ next_task:
             if (TASK_STATE_HIGH(task) == key) {
                 KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
 
-                callback();
+                /* FAKEMATCH: three ordinary void-call shapes select r3
+                   and _call_via_r3. The inherited C89 ignored-result cast
+                   keeps native r0/_call_via_r0 at the same 56-byte extent.
+                   Callback owners remain void; no result is consumed. */
+                ((s32 (*)(void))callback)();
             }
             goto next_task;
         }

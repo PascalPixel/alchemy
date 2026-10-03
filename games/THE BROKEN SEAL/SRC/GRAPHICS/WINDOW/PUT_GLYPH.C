@@ -20,6 +20,37 @@ struct SpriteAttr {
     u32 unk8;
 };
 
+/* Glyph mode interprets the renderer's embedded words as OAM attributes.
+   This is a wire view of the existing output, not another allocation owner. */
+struct GlyphSpriteOutput {
+    s32 link_word;
+    u8 kind;
+    u8 active;
+    s16 x;
+    s16 y;
+    u8 unknown_0a[4];
+    s8 index;
+    u8 sentinel;
+    struct SpriteAttr attr;
+};
+
+LAYOUT_SIZE_GUARD(GlyphSpriteOutput_Size, struct GlyphSpriteOutput,
+    sizeof(struct RenderOutput));
+LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_X, struct GlyphSpriteOutput, x,
+    (u32)&((struct RenderOutput *)0)->x);
+LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Y, struct GlyphSpriteOutput, y,
+    (u32)&((struct RenderOutput *)0)->y);
+LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Active, struct GlyphSpriteOutput, active,
+    (u32)&((struct RenderOutput *)0)->active);
+LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Index, struct GlyphSpriteOutput, index,
+    (u32)&((struct RenderOutput *)0)->index);
+LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Attr, struct GlyphSpriteOutput, attr,
+    (u32)&((struct RenderOutput *)0)->unknown_10);
+LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Oam, struct GlyphSpriteOutput, attr.y,
+    (u32)&((struct RenderOutput *)0)->packed);
+LAYOUT_OFFSET_GUARD(GlyphSpriteOutput_Table, struct GlyphSpriteOutput, attr.unk8,
+    (u32)&((struct RenderOutput *)0)->table);
+
 #if EDITION_INTERNATIONAL
 
 /* Places a glyph: mode 1 queues it as a sprite at the window cell, other
@@ -28,7 +59,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
     void *work = gWindowWork[0];
     u8 *base = work;
-    struct RenderOutput *out;
+    struct GlyphSpriteOutput *out;
     s32 idx;
     u16 *slot;
     struct SpriteAttr *attr;
@@ -45,9 +76,10 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         if (work == NULL)
             return;
         out = work;
-        idx = (out - ((struct UiRenderWork *)base)->outputs) * 4;
+        idx = ((struct RenderOutput *)out -
+            ((struct UiRenderWork *)base)->outputs) * 4;
         out->active = 2;
-        attr = (struct SpriteAttr *)out->unknown_10;
+        attr = &out->attr;
         slot = &((struct UiRenderWork *)base)->glyph_resource;
         if (*slot == 99)
             *slot = Resource_FindFreeEntry();
@@ -56,20 +88,19 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (win->x + (column + *(volatile u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 - 1;
-        /* FAKEMATCH: retain the existing integer-address halfword stores
-           at the canonical member offsets. Member assignments and same-type
-           field casts reorder the packed OAM x store and logical x store
-           in all six editions at the same native extent. */
-        *(s16 *)((u32)out + (u32)&((struct RenderOutput *)0)->x) = attr->x;
-        *(s16 *)((u32)out + (u32)&((struct RenderOutput *)0)->y) = attr->y;
-        /* FAKEMATCH: retain the existing scalar link-word clear and
-           unsigned active-byte read at their canonical member addresses.
-           Pointer/signed member access changes the glyph store schedule. */
-        *(s32 *)&out->next = 0;
+        /* FAKEMATCH: retain the existing embedded OAM glyph-mode view.
+           The canonical byte-span view and scalar field/address casts
+           reorder the packed and logical position stores in all six
+           editions, at the same 328-byte JA / 260-byte localized extent.
+           The original scalar link clear and unsigned active byte remain
+           in this wire view; allocation and list ownership are canonical. */
+        out->x = attr->x;
+        out->y = attr->y;
+        out->link_word = 0;
         out->index = idx;
-        if ((u8)out->active == 0)
+        if (out->active == 0)
             out->active = mode;
-        RenderOutput_AppendToList(&win->output, out);
+        RenderOutput_AppendToList(&win->output, (struct RenderOutput *)out);
     } else if (tile <= 0xff) {
         x++;
         y++;
@@ -88,7 +119,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     /* FAKEMATCH: the game keeps the work block in r12 for the tile store and a copy in r8 for the rest; as one plain variable it lives in r8 alone. */
     register u8 *work asm("r12") = gWindowWork[0];
     u8 *base = work;
-    struct RenderOutput *out;
+    struct GlyphSpriteOutput *out;
     s32 idx;
     u16 *slot;
     struct SpriteAttr *attr;
@@ -102,12 +133,13 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     if (mode == 1) {
         s32 column;
         u16 left;
-        out = RenderOutput_AcquireFree();
+        out = (struct GlyphSpriteOutput *)RenderOutput_AcquireFree();
         if (out == NULL)
             return;
-        idx = (out - ((struct UiRenderWork *)base)->outputs) * 4;
+        idx = ((struct RenderOutput *)out -
+            ((struct UiRenderWork *)base)->outputs) * 4;
         out->active = 2;
-        attr = (struct SpriteAttr *)out->unknown_10;
+        attr = &out->attr;
         slot = &((struct UiRenderWork *)base)->glyph_resource;
         if (*slot == 99)
             *slot = Resource_FindFreeEntry();
@@ -117,20 +149,19 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (left + (column + *(volatile u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 + 1;
-        /* FAKEMATCH: retain the existing integer-address halfword stores
-           at the canonical member offsets. Member assignments and same-type
-           field casts reorder the packed OAM x store and logical x store
-           in all six editions at the same native extent. */
-        *(s16 *)((u32)out + (u32)&((struct RenderOutput *)0)->x) = attr->x;
-        *(s16 *)((u32)out + (u32)&((struct RenderOutput *)0)->y) = attr->y;
-        /* FAKEMATCH: retain the existing scalar link-word clear and
-           unsigned active-byte read at their canonical member addresses.
-           Pointer/signed member access changes the glyph store schedule. */
-        *(s32 *)&out->next = 0;
+        /* FAKEMATCH: retain the existing embedded OAM glyph-mode view.
+           The canonical byte-span view and scalar field/address casts
+           reorder the packed and logical position stores in all six
+           editions, at the same 328-byte JA / 260-byte localized extent.
+           The original scalar link clear and unsigned active byte remain
+           in this wire view; allocation and list ownership are canonical. */
+        out->x = attr->x;
+        out->y = attr->y;
+        out->link_word = 0;
         out->index = idx;
-        if ((u8)out->active == 0)
+        if (out->active == 0)
             out->active = mode;
-        RenderOutput_AppendToList(&win->output, out);
+        RenderOutput_AppendToList(&win->output, (struct RenderOutput *)out);
     } else if (tile <= 0xff) {
         /* The voicing marks 0xde and 0xdf go into the cell before them,
            joined to the kana tile 0x0e or 0x11 already there. */

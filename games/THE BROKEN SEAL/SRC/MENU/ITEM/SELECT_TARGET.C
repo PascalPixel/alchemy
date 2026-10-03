@@ -3,6 +3,11 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "TBS_EDITION.H"
+#include "INVENTORY_MENU.H"
+#include "WINDOW.H"
+#include "M7_INTERFACES.H"
+#include "BATTLE_RUNTIME.H"
+#include "EQUIPMENT_MENU.H"
 
 struct TargetMarkerAttributes {
     u16 y : 8;
@@ -25,40 +30,6 @@ struct TargetMarker {
     struct TargetMarkerAttributes attributes;
 };
 
-struct TargetWindow {
-    u8 reserved_00[12];
-    u16 x;
-    u16 y;
-};
-
-/* The item menu work block at 0x03001F2C, as the target selector sees it. */
-struct ItemTargetMenu {
-    u8 reserved_000[8];
-    s32 selected_owner;               /* 0x008 */
-    u8 reserved_00c[4];
-    struct TargetWindow *window;      /* 0x010 */
-    u8 reserved_014[4];
-    struct TargetMarker *marker;      /* 0x018 */
-    s8 item_selection;                /* 0x01c */
-    s8 selection;                     /* 0x01d */
-    u8 reserved_01e[2];
-    s32 item_window;                  /* 0x020 */
-    s32 status_window;                /* 0x024 */
-    u8 reserved_028[4];
-    s32 info_window;                  /* 0x02c */
-    u8 reserved_030[0x144];
-    u16 selected_slot;                /* 0x174 */
-    u8 reserved_176[2];
-    u16 selected_item;                /* 0x178 */
-    u8 reserved_17a[0x8e];
-    u16 owner_ids[8];                 /* 0x208 */
-    u8 item_count;                    /* 0x218 */
-    u8 party_count;                   /* 0x219 */
-    u8 item_owner;                    /* 0x21a */
-    u8 target_owner;                  /* 0x21b */
-};
-
-extern struct ItemTargetMenu *gMenuWork;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern char MsgItemPlainName;
@@ -66,22 +37,14 @@ extern char MsgInStock;
 extern char MsgTradeForWhat;
 extern char MsgNoneInStock;
 
-void UiWindow_SetBounds(s32 window, s32 x, s32 y, s32 width, s32 height);
+void UiWindow_SetBounds(struct WindowBounds *window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
-void *Owner_GetStateFar(s32 owner);
-void EquipmentMenu_UpdateCompatibilityIndicators(void);
-void EquipmentMenu_StartCompatibilityIndicators(void);
-void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void UiWindow_DrawDividerLineFar(s32 window, s32 unused, s32 x, s32 y, s32 width);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
-s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
-s32 ItemMenu_Count(s32 owner);
-void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target);
-s32 ItemMenu_IsSpecial(s32 item);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
@@ -92,9 +55,9 @@ void Audio_PlayCue(s32 cue);
 /* Choose the party member an item is used on (mode 0) or given to (mode 1):
    left and right step through the party, showing the stock or the equipment
    preview for that member; A returns the member and B -1. */
-s8 ItemMenu_SelectTarget(s32 mode)
+s32 ItemMenu_SelectTarget(s32 mode)
 {
-    struct ItemTargetMenu *menu;
+    struct InventoryMenuState *menu;
     s32 window;
     s32 count;
     s32 selection;
@@ -105,30 +68,30 @@ s8 ItemMenu_SelectTarget(s32 mode)
     struct TargetMarker *marker;
 
     menu = gMenuWork;
-    window = menu->item_window;
-    selection = menu->selection;
+    window = (s32)menu->item_window;
+    selection = menu->pane_index[1];
     count = menu->party_count;
     pending = 1;
     result = 0;
     shown = 0;
-    UiWindow_SetBounds(window, 13, 5, 17, 12);
-    RenderOutput_RedrawSavedRectFar(menu->item_window);
-    Owner_GetStateFar(menu->owner_ids[menu->item_selection]);
+    UiWindow_SetBounds((struct WindowBounds *)window, 13, 5, 17, 12);
+    RenderOutput_RedrawSavedRectFar((s32)menu->item_window);
+    Owner_GetStateFar(menu->owner_ids[menu->pane_index[0]]);
     Scheduler_AddOrUpdateCallback((s32)EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
             pending = 0;
             selection = (selection + count) % count;
-            window = menu->item_window;
+            window = (s32)menu->item_window;
             Owner_GetStateFar(menu->owner_ids[selection]);
-            marker = menu->marker;
-            marker->attributes.x = marker->x = ((menu->window->x + selection * 3) << 3) - 2;
+            marker = (struct TargetMarker *)menu->pane_icons[1];
+            marker->attributes.x = marker->x = ((menu->main_window->x + selection * 3) << 3) - 2;
             if (mode == 1) {
                 ItemMenu_RefreshOwner(menu->owner_ids[selection], 1);
                 UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
                 UiWindow_ClearInteriorTilesFar(window, 0, 72, 120, 80);
-                if (selection != menu->item_selection) {
-                    quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_item & 0x1ff);
+                if (selection != menu->pane_index[0]) {
+                    quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_items[0] & 0x1ff);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
                     /* Here a full bag asks what to trade instead of saying
@@ -156,23 +119,23 @@ s8 ItemMenu_SelectTarget(s32 mode)
 #endif
 #endif
                 }
-                ItemMenu_DrawEquipPreview(menu->item_owner, menu->selected_slot, 0, menu->owner_ids[selection]);
+                ItemMenu_DrawEquipPreview(menu->pane_owner[0], menu->selected_slots[0], 0, menu->owner_ids[selection]);
             }
             if (mode == 0) {
-                if (ItemMenu_IsSpecial(menu->selected_item & 0x1ff))
-                    Menu_DrawOwnerStatusPanel(menu->status_window, menu->owner_ids[selection], menu->selected_slot, 8);
+                if (ItemMenu_IsSpecial(menu->selected_items[0] & 0x1ff))
+                    Menu_DrawOwnerStatusPanel((s32)menu->status_window, menu->owner_ids[selection], menu->selected_slots[0], 8);
                 else
-                    Menu_DrawOwnerStatusPanel(menu->status_window, menu->owner_ids[selection], menu->selected_slot, 0);
+                    Menu_DrawOwnerStatusPanel((s32)menu->status_window, menu->owner_ids[selection], menu->selected_slots[0], 0);
                 if (!GameFlag_TestFar(0x151) && !shown) {
 #if EDITION_INTERNATIONAL
-                    RenderOutput_RedrawSavedRectFar(menu->info_window);
+                    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
 #else
-                    RenderOutput_ClearListFar(menu->info_window);
+                    RenderOutput_ClearListFar((s32)menu->info_window);
 #endif
 #if EDITION_INTERNATIONAL
-                    UiText_DrawCharacterAtOffsetFar((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
+                    UiText_DrawCharacterAtOffsetFar((menu->selected_items[0] & 0x1ff) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #else
-                    UiText_DrawMessageAt((menu->selected_item & 0x1ff) + (s32)&MsgItemPlainName, menu->info_window, 0, 0);
+                    UiText_DrawMessageAt((menu->selected_items[0] & 0x1ff) + (s32)&MsgItemPlainName, (s32)menu->info_window, 0, 0);
 #endif
                     shown = 1;
                 } else {
@@ -183,7 +146,7 @@ s8 ItemMenu_SelectTarget(s32 mode)
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         WaitFrames(1);
         if (gKeyState & 1) {
-            if (mode == 1 && selection == menu->item_selection) {
+            if (mode == 1 && selection == menu->pane_index[0]) {
                 Audio_PlayCue(114);
                 continue;
             }
@@ -207,14 +170,14 @@ s8 ItemMenu_SelectTarget(s32 mode)
             selection++;
         }
     }
-    marker = menu->marker;
-    menu->selection = selection;
+    marker = (struct TargetMarker *)menu->pane_icons[1];
+    menu->pane_index[1] = selection;
     UiIcon_PrepareObject(marker);
     marker->state = 13;
     EquipmentMenu_StartCompatibilityIndicators();
     WaitFrames(1);
-    menu->selection = selection;
+    menu->pane_index[1] = selection;
     menu->selected_owner = menu->owner_ids[selection];
-    menu->target_owner = menu->owner_ids[selection];
-    return result;
+    menu->pane_owner[1] = menu->owner_ids[selection];
+    return (s8)result;
 }

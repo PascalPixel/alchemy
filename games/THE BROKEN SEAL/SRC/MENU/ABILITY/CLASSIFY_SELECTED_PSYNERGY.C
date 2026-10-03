@@ -1,28 +1,28 @@
 #include "TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "SYSTEM.H"
-extern u8 Data_03001f2c[];
+#include "BATTLE_UNIT.H"
 
 /* menu/psynergy_menu/classify_selected_psynergy.c */
-u8 *BattleAction_Get(s32 action);
+struct BattleAction *BattleAction_Get(s32 action);
 s32 BattleFx_HasMatchingEvent5Far(u8 effect);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 {
-    u8 *psynergy;
+    struct BattleAction *psynergy;
     s32 diff;
     s32 ret;
 
     psynergy = BattleAction_Get(
         (s32)(0x3fff &
-              (*(struct PsynergyMenuState **)((u32)&Data_03001f2c))
-                  ->selected_psynergy));
-    if (BattleFx_HasMatchingEvent5Far(psynergy[0x0c]) != 0) {
+              gMenuWork
+                  ->pane_action[0]));
+    if (BattleFx_HasMatchingEvent5Far(psynergy->type_0c) != 0) {
         return 0;
     }
     ret = 2;
-    if (psynergy[8] != 0xff) {
-        u8 kind = psynergy[0];
+    if (psynergy->range != 0xff) {
+        u8 kind = psynergy->target_mode;
         diff = kind ^ 2;
         ret = (0 - diff) | diff;
         ret = (s32)((u32)ret >> 0x1f);
@@ -38,7 +38,6 @@ struct Cur { unsigned short mark : 8; };
 extern struct PsynergyMenuState *gMenuWork;
 void *Owner_GetStateFar(s32);
 s32 UiMenu_SlideCursor(s32, s32);
-s32 PsynergyMenu_SetupActionIcons(void *, void *);
 void UiIcon_PrepareObject(void *cursor);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)

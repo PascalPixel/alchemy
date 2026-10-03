@@ -2,6 +2,7 @@
 #if EDITION_INTERNATIONAL
 /* These localization routines have no counterpart in Japanese TBS. */
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
@@ -22,12 +23,12 @@ void Scheduler_ScheduleCallbackA(void)
 
 void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height)
 {
-    u16 *map = *(u16 **)((u32)&Data_03001e8c);
+    u16 *map = (u16 *)gWindowWork[0];
     s32 sum;
 
-    sum = x + *(u16 *)(window + 12);
+    sum = x + ((struct UiWindow *)window)->x;
     x = sum + 1;
-    sum = y + *(u16 *)(window + 14);
+    sum = y + ((struct UiWindow *)window)->y;
     y = sum + 1;
 
     if (x < 0) {
@@ -60,7 +61,7 @@ void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height)
             height--;
             offset += 64;
         } while (height != 0);
-        ((u8 *)map)[RENDER_DIRTY_OFS] = 1;
+        ((struct UiRenderWork *)map)->dirty = 1;
     }
 }
 

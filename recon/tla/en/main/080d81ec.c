@@ -1,8 +1,8 @@
 /* Near miss: score 460: one shift and four reordered instructions in the
    spread's setup. ⚓️ reads the current owner from gPartyState and the
-   effect slot from the shared EFFECT_0809B11C.H. */
+   effect slot from the shared EFFECT_SLOT.H. */
 #include "TYPES.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);

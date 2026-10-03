@@ -57,6 +57,11 @@ extern u8 MsgItemPlainName[];
  * H3: 832/832 bytes, 275 differing halfwords, 67 aligned edits. The explicit
  * pointer keeps split address construction, but in r2, and the index/row
  * zeros still share r1. An alignment halfword precedes the switch table.
+ * 2026-10-03 caller closure: the pane-array owner had left stale scalar
+ * names, so this current draft did not compile in any TBS edition. Restore
+ * pane zero and make the existing integer window transport explicit. All six
+ * compile; the English draft score is 385, with 29 differing instructions.
+ * It remains a draft; no unchanged native baseline was available.
  * STOP: corrected model and two variants exhausted. Preserve the new address
  * fact; do not extend this into initialization-order/register permutations.
  */
@@ -97,16 +102,16 @@ s32 Func_080a414c(void)
 
         ItemMenu_HideAllIcons();
         RenderOutput_RedrawSavedRectFar(FIELD(menu, s32 *, 0x34));
-        message_window = menu->message_window;
+        message_window = (s32)menu->message_window;
         ItemMenu_SetMsgWin7();
         RenderOutput_RedrawSavedRectFar(message_window);
         UiWindow_DrawDividerLineFar(message_window, 0, 3, 0x10, 3);
         ItemMenu_DrawItemHead();
         ItemMenu_DrawCmd(command_states, message_window);
-        RenderOutput_RedrawSavedRectFar(menu->info_window);
+        RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
         UiText_DrawCharacterAtOffsetFar(
-            (menu->selected_item & 0x1ff) + (s32)MsgItemPlainName,
-            menu->info_window,
+            (menu->selected_items[0] & 0x1ff) + (s32)MsgItemPlainName,
+            (s32)menu->info_window,
             0,
             0);
     }
@@ -156,17 +161,17 @@ s32 Func_080a414c(void)
             EquipmentMenu_StartCompatibilityIndicators();
             if (index > 2) {
                 FIELD(menu, s8 *, 0x25c) = 1;
-                ItemMenu_DrawEquipPreview(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
+                ItemMenu_DrawEquipPreview(menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
                 if (index == 3) {
                     Scheduler_AddOrUpdateCallback(
                         (s32)&EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
                 }
             } else if (index != 0) {
                 FIELD(menu, s8 *, 0x25c) = 0;
-                ItemMenu_DrawEquipPreview(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
+                ItemMenu_DrawEquipPreview(menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
             } else {
                 Menu_DrawOwnerStatusPanel(
-                    FIELD(menu, s32 *, 0x24), menu->item_owner, 0, 0);
+                    FIELD(menu, s32 *, 0x24), menu->pane_owner[0], 0, 0);
             }
         }
 

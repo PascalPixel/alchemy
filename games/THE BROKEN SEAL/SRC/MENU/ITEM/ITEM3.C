@@ -1,13 +1,14 @@
 #include "EDITION.H"
+#include "BATTLE_RUNTIME.H"
 #include "INVENTORY_MENU.H"
 /* Item menu: ask whether to drop the item and return the chosen row (1 when cancelled). */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "ITEM.H"
 
 extern u8 MsgItemName;
 extern void UiIcon_PrepareObject(void *icon);
-extern s32 Owner_GetStateFar(s32);
-extern void UiText_DrawStringAtOffsetFar(s32, void *, s32, s32);
+extern void UiText_DrawStringAtOffsetFar(u8 *text, void *window, s32 x, s32 y);
 extern void UiText_DrawCharacterAtOffsetFar(s32, void *, s32, s32);
 
 extern volatile s32 gKeysRepeat;
@@ -19,7 +20,6 @@ void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
 void UiText_DrawAt(s32, s32, s32, s32);
-void Item_Get(s32);
 s32 GameFlag_IsSet(s32);
 void UiMenu_PositionCursor(s32, s32);
 void UiMenu_SlideCursor(s32, s32);
@@ -36,7 +36,7 @@ void ItemMenu_DrawItemHead(void)
     menu->selected_item_icon->y = 8;
     UiIcon_PrepareObject(menu->selected_item_icon);
     UiText_DrawStringAtOffsetFar(
-        Owner_GetStateFar(menu->pane_owner[0]),
+        Owner_GetStateFar(menu->pane_owner[0])->name,
         (void *)menu->message_window,
         16,
         0);
@@ -127,7 +127,6 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 }
 
 extern u8 MsgEquipThisItem[];
-void ItemMenu_DrawEquipPreview(s32 owner, s32 item, s32 mode, s32 target);
 void *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
 s32 Inventory_EquipFar(s32 owner, s32 item);
@@ -147,13 +146,13 @@ static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32
 /* Item menu: equip the item on its target for a preview, ask whether to
    keep it, and put the target's saved state back unless the answer is yes.
    Returns the chosen row, 1 when declined, cancelled or not equippable. */
-s32 Unnamed_080a5388(void)
+s32 Unnamed_080a5388(s32 unused)
 {
     s32 sel = 0;
     s32 changed = 1;
     struct InventoryMenuState *menu = gMenuWork;
-    void *state = (void *)Owner_GetStateFar(menu->pane_owner[1]);
-    void *saved;
+    struct BattleUnit *state = Owner_GetStateFar(menu->pane_owner[1]);
+    struct BattleUnit *saved;
     s32 win;
     s32 item;
     s32 owner;
@@ -161,8 +160,8 @@ s32 Unnamed_080a5388(void)
     item = menu->selected_slots[1];
     owner = menu->pane_owner[1];
     ItemMenu_DrawEquipPreview(owner, item, 0, owner);
-    saved = Runtime_BumpAllocate(0x14c);
-    CopyWords((WordCopyFn)Iwram_CopyWords, saved, state, 0x14c);
+    saved = Runtime_BumpAllocate(BATTLE_UNIT_SIZE);
+    CopyWords((WordCopyFn)Iwram_CopyWords, saved, state, BATTLE_UNIT_SIZE);
     win = (s32)menu->message_window;
     if ((u32)(Inventory_EquipFar(menu->pane_owner[1], menu->selected_slots[1]) + 2) <= 1) {
         sel = 1;
@@ -224,7 +223,7 @@ s32 Unnamed_080a5388(void)
     if (GameFlag_IsSet(0x150))
         sel = 1;
     if (sel == 1)
-        CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, 0x14c);
+        CopyWords((WordCopyFn)Iwram_CopyWords, state, saved, BATTLE_UNIT_SIZE);
     Runtime_BumpFree(saved);
     Owner_RecalculateStatsFar(menu->pane_owner[1]);
     Owner_RefreshClassActionsFar(menu->pane_owner[1]);

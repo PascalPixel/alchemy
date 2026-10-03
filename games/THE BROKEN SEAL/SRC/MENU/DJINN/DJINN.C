@@ -10,11 +10,11 @@
 #include "UI.H"
 #include "DJINN_MENU.H"
 
+extern struct DjinnMenuWork *gMenuWork;
+
 /* A set Djinni's entry carries bit 15, spelled as the signed halfword flag. */
 #define DJINN_ENTRY_SET (-0x8000)
 
-extern u8 Data_03001f2c[];
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     s32 give, s32 take, s32 mode, s32 page, s32 side);
 
@@ -53,7 +53,7 @@ s8 OwnerAction_DiffSlots(void *before, void *after, u16 *out, s32 *gained, s32 *
  */
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
 {
-    struct OwnerDjinnState *state = Owner_GetStateFar(owner);
+    struct BattleUnit *state = Owner_GetStateFar(owner);
     s32 count = 0;
     s32 row;
     s32 bit;
@@ -62,20 +62,20 @@ s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element)
     if (element == -1) {
         for (row = 0; row < 4; row++) {
             for (bit = 0; bit < 20; bit++) {
-                if (state->active[row] & (1 << bit)) {
+                if (state->djinn_active[row] & (1 << bit)) {
                     entry = (row << 5) | bit | DJINN_ENTRY_SET;
                     entry |= owner << 8;
                     out[count++] = entry;
-                } else if (state->available[row] & (1 << bit)) {
+                } else if (state->djinn_available[row] & (1 << bit)) {
                     out[count++] = (row << 5) | bit | (owner << 8);
                 }
             }
         }
     } else {
         for (bit = 0; bit < 20; bit++) {
-            if (state->active[element] & (1 << bit))
+            if (state->djinn_active[element] & (1 << bit))
                 out[count++] = (element << 5) | bit | DJINN_ENTRY_SET;
-            else if (state->available[element] & (1 << bit))
+            else if (state->djinn_available[element] & (1 << bit))
                 out[count++] = (element << 5) | bit;
         }
     }
@@ -93,7 +93,7 @@ s32 Menu_RunPairedEntryAction(s32 mode, s32 param)
     s32 sp14;
     struct DjinnMenuWork *menu;
 
-    menu = *(struct DjinnMenuWork **)((u32)&Data_03001f2c);
+    menu = gMenuWork;
     if (mode == 0) {
         sp14 = mode;
         DjinnMenu_DrawStatPreview(menu->second_window, 0, 0, menu->pair_owner[1], 1, mode, 2, param, 1);
@@ -144,7 +144,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 owner,
     struct DjinnMenuWork *menu;
 
     state = Owner_GetStateFar(owner);
-    menu = *(struct DjinnMenuWork **)((u32)&Data_03001f2c);
+    menu = gMenuWork;
     give_element = menu->pair_element[give];
     give_index = menu->pair_index[give];
     give_set = (u16)(menu->pair_entries[give] & 0x8000);

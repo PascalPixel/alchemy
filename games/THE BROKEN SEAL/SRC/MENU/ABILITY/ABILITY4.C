@@ -11,40 +11,6 @@
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
 
-struct MenuEntryIcon {
-    u8 unknown_00[5];
-    u8 state;
-    u8 unknown_06[9];
-    u8 field_0f;
-};
-
-struct PsynergyStatusMenu {
-    u8 unknown_000[8];
-    s32 owner;
-    u8 unknown_00c[8];
-    struct MenuEntryIcon *cursor;
-    u8 unknown_018[4];
-    s8 tab;
-    u8 unknown_01d[7];
-    s32 window;
-    u8 unknown_028[4];
-    s32 info_window;
-    u8 unknown_030[0x18];
-    struct MenuEntryIcon *entry_icons[32];
-    u8 unknown_0c8[0x44];
-    s32 icon_window;
-    u8 unknown_110[0xb8];
-    u16 psynergies[32];
-    u16 owners[8];
-    u8 count;
-    u8 owner_count;
-    u8 owner_id;
-    u8 unknown_21b[0x21];
-    s16 slot_y[4];
-    u8 unknown_244[0x1c];
-    s8 selected_index[8];
-};
-
 struct OwnerActionState;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
@@ -54,7 +20,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 s32 UiWindow_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
 void Menu_UpdateEntryObjectTransforms(void);
-void Menu_SpawnIconEntries(struct PsynergyStatusMenu *, s32);
+void Menu_SpawnIconEntries(struct PsynergyMenuState *, s32);
 s32 GameFlag_TestFar(s32 flag);
 void ItemMenu_PosCategory(void);
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 window, s32 owner);
@@ -67,7 +33,7 @@ void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)
 {
-    struct PsynergyStatusMenu *menu;
+    struct PsynergyMenuState *menu;
     s32 result;
     s32 done;
     s32 redraw;
@@ -77,38 +43,38 @@ s32 PsynergyMenu_SelectAction(void)
     s32 i;
     struct MenuResult state;
 
-    menu = ((struct PsynergyStatusMenu *)gMenuWork);
+    menu = ((struct PsynergyMenuState *)gMenuWork);
     result = 0;
     done = 0;
     Menu_BuildPatternTiles();
-    RenderOutput_RedrawSavedRectFar(menu->icon_window);
-    UiWindow_UpdateOrCreate(&menu->info_window, 0, 0, 30, 5, 2);
+    RenderOutput_RedrawSavedRectFar(menu->message_window);
+    UiWindow_UpdateOrCreate((s32 *)&menu->info_window, 0, 0, 30, 5, 2);
     for (i = 3; i >= 0; i--)
         menu->slot_y[i] = -16;
     {
         s32 priority = 245;
-        struct MenuEntryIcon **icons = menu->entry_icons;
+        struct PsynergyMenuIcon **icons = menu->entry_icons;
 
         for (i = 31; i >= 0; i--) {
-            struct MenuEntryIcon *icon = *icons++;
+            struct PsynergyMenuIcon *icon = *icons++;
 
             if (icon != 0)
-                icon->field_0f = priority;
+                icon->sentinel = priority;
         }
     }
     Scheduler_RemoveCallback((u32)(Menu_UpdateEntryObjectTransforms));
-    Menu_SpawnIconEntries(menu, menu->icon_window);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->window, SWITCH_HELP_X, -24);
-    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 2, menu->window, 0, -24);
+    Menu_SpawnIconEntries(menu, menu->message_window);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->status_window, SWITCH_HELP_X, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 2, menu->status_window, 0, -24);
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         ItemMenu_PosCategory();
-        RenderOutput_RedrawSavedRectFar(menu->window);
-        menu->count = (s32)PsynergyMenu_CollectActions(
-            (struct OwnerActionState *)Owner_GetStateFar(menu->owner_id), menu->psynergies, 0);
+        RenderOutput_RedrawSavedRectFar(menu->status_window);
+        menu->psynergy_count = (s32)PsynergyMenu_CollectActions(
+            (struct OwnerActionState *)Owner_GetStateFar(menu->owner_ids[0]), menu->psynergies, 0);
         WaitFrames(1);
         Menu_BuildPageResult(&state, 0);
-        PsynergyMenu_DrawPreparedPsynergyIcons(menu->window, menu->owner_id);
+        PsynergyMenu_DrawPreparedPsynergyIcons(menu->status_window, menu->owner_ids[0]);
         redraw = 1;
         first = 1;
 
@@ -117,14 +83,14 @@ s32 PsynergyMenu_SelectAction(void)
                 redraw = 0;
                 if (first != 0) {
                     first = 0;
-                    PsynergyMenu_DrawListPage(menu->window, 0, &state);
+                    PsynergyMenu_DrawListPage(menu->status_window, 0, &state);
                 }
-                PsynergyMenu_DrawRangePage(menu->window, 0, &state);
+                PsynergyMenu_DrawRangePage(menu->status_window, 0, &state);
                 WaitFrames(1);
             }
             WaitFrames(1);
             nav = Menu_HandlePageInput(0, state.entry_count, PAGE_ROWS, &state.row, &state.page);
-            menu->cursor->state = 1;
+            menu->pane_icon[0]->state = 1;
 #if EDITION_INTERNATIONAL
             UiMenu_PositionCursor(55, state.row * 16 + 60);
 #else
@@ -153,26 +119,26 @@ s32 PsynergyMenu_SelectAction(void)
             }
             if ((gKeysRepeat & 0x100) || (gKeysRepeat & 0x200)) {
                 Audio_PlayCue(111);
-                tab = menu->tab;
-                menu->selected_index[menu->owners[tab]] = state.selected_index;
+                tab = menu->tab_index[0];
+                menu->selected_index_by_owner[menu->owner_table[tab]] = state.selected_index;
                 if (gKeysRepeat & 0x100)
                     tab++;
                 else
                     tab--;
                 tab = (tab + menu->owner_count) % menu->owner_count;
-                menu->owner = menu->owners[tab];
-                menu->owner_id = menu->owners[tab];
-                menu->tab = tab;
-                PsynergyMenu_CallIconRoutineWithValue(menu, menu->owners[tab]);
+                menu->selected_owner = menu->owner_table[tab];
+                menu->owner_ids[0] = menu->owner_table[tab];
+                menu->tab_index[0] = tab;
+                PsynergyMenu_CallIconRoutineWithValue(menu, menu->owner_table[tab]);
                 break;
             }
         }
     }
-    RenderOutput_ClearListFar(menu->info_window);
-    RenderOutput_RedrawSavedRectFar(menu->info_window);
+    RenderOutput_ClearListFar((s32)menu->info_window);
+    RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
     ItemMenu_HideAllIcons();
-    RenderOutput_ClearListFar(menu->icon_window);
-    RenderOutput_RedrawSavedRectFar(menu->window);
+    RenderOutput_ClearListFar(menu->message_window);
+    RenderOutput_RedrawSavedRectFar(menu->status_window);
     return result;
 }
 

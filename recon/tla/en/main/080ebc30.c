@@ -3,7 +3,7 @@
    reloads it after the store. A u16 copy or u16 pointer changes the code
    more. */
 #include "TYPES.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 
 /* battle/effects/runtime/update_slot.c */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);

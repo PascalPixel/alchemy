@@ -1,8 +1,8 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
 
-extern u8 *gWindowWork;
 
 /* Value-returning here: the reference loads r0 last of the four arguments,
    as it does when the call itself sets r0. */
@@ -27,7 +27,7 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     right >>= 3;
     bottom >>= 3;
     x = left >> 3;
-    work = gWindowWork;
+    work = gWindowWork[0];
     y = top >> 3;
     x += window->x;
     y += window->y;
@@ -44,5 +44,5 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
             *tiles++ = 0xf020;
         tiles += 32 - width;
     }
-    work[RENDER_DIRTY_OFS] = 1;
+    ((struct UiRenderWork *)work)->dirty = 1;
 }

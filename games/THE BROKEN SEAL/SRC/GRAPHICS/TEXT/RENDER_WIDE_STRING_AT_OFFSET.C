@@ -1,11 +1,9 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "TBS_EDITION.H"
 
-struct TextWindow {
-    u8 unknown_00[22];
-    u16 flags;
-};
+struct TextWindow;
 
 struct GlyphInfo {
     u16 width;
@@ -23,7 +21,6 @@ struct TextWork {
     u16 count;
 };
 
-extern u8 *gWindowWork;
 extern struct GlyphInfo UiText_Glyphs[];
 
 void UiWork_ResetCounters(void);
@@ -37,7 +34,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
     u32 next;
     s16 start;
 
-    base = gWindowWork;
+    base = gWindowWork[0];
     work = (struct TextWork *)base;
     c = 0;
     start = x;
@@ -93,7 +90,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
             }
         } else {
 #if EDITION_INTERNATIONAL
-            if ((window->flags & 8) == 0) {
+            if ((((struct UiWindow *)window)->flags & 8) == 0) {
                 next = *text;
 #if defined(TBS_EDITION_ES)
                 /* Spanish pairs narrower glyphs in colour 1. */

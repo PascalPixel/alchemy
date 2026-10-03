@@ -9,6 +9,7 @@
 #include "TBS_EDITION.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
+#include "HEAP_STATE.H"
 
 /* The tile in character block 1 that holds the window frame. */
 #define FRAME_TILE 150
@@ -46,7 +47,6 @@ extern u8 MsgDjinnName[];
 #define ACTION_MASK 0x3fff
 #define FLAG_FIRST 0x8000
 #define FLAG_SECOND 0x4000
-extern u8 Data_03001f2c[];
 s16 Djinn_ListOwnerEntries(void *, s32, s32);
 void DjinnMenu_DrawElementList(struct DjinnListTable *tbl);
 
@@ -190,7 +190,7 @@ s32 Menu_ComputeEntryValues(void *tbl)
     s16 v;
     s32 cnt;
 
-    state = *(void **)((u32)&Data_03001f2c);
+    state = *(struct DjinnMenuWork **)gMenuWork;
     i = 0;
     if (i < FIELD_AT_OFFSET(state, u8, 0x219)) {
         dst = (s8 *)tbl + 0xA0;
@@ -227,7 +227,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
     u16 *list;
 
     menu = *(struct DjinnMenuWork **)gMenuWork;
-    ui = *(struct UiWork **)(gMenuWork - 160);
+    ui = *(struct UiWork **)(gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *));
     ui->menu_busy = 1;
     i = 0;
     if (menu->owner_count != 0) {
@@ -268,6 +268,6 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
         }
     }
     UiWindow_DrawDividerLineFar(menu->list_window, 0, 10, 28, 10);
-    (*(struct UiWork **)(gMenuWork - 160))->dirty = 1;
+    (*(struct UiWork **)(gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *)))->dirty = 1;
     ui->menu_busy = 0;
 }

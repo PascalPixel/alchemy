@@ -1,5 +1,5 @@
 #include "INVENTORY_MENU.H"
-#include "OWNER_STATE.H"
+#include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
 
 void RenderOutput_ClearListFar(void *window);

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
@@ -7,7 +8,6 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 
-extern u8 *Data_03001e8c;
 
 struct ChooserMenu {
     u8 reserved_000[0x10];
@@ -27,10 +27,6 @@ struct ChooserTextWork {
     u8 text_busy;
 };
 
-struct ChooserWindow {
-    u8 reserved_00[14];
-    u16 row;
-};
 
 struct ChooserMessage {
     struct ChooserMessage *next;
@@ -42,7 +38,6 @@ struct ChooserMessage {
 };
 
 extern struct ChooserMenu *gMenuWork;
-extern struct ChooserTextWork *gWindowWork;
 extern volatile u32 gKeysRepeat;
 extern volatile u32 gKeyState;
 extern char MsgDjinnInfoPrompt;
@@ -64,7 +59,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 
 s32 Menu_DrawAtWindowOffset(void *win, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5)
 {
-    UiWindow_SetPaletteBitRectFar(FIELD_AT_OFFSET(win, u16 *, 0xC) + arg1 + 1, FIELD_AT_OFFSET(win, u16 *, 0xE) + arg2 + 1, arg3, arg4, arg5);
+    UiWindow_SetPaletteBitRectFar(((struct UiWindow *)win)->x + arg1 + 1, ((struct UiWindow *)win)->y + arg2 + 1, arg3, arg4, arg5);
 }
 
 /* Set palette `palette` on every tile of a clipped rectangle of the 32x32
@@ -77,7 +72,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
     u32 tile;
     u32 masked;
 
-    base = Data_03001e8c;
+    base = gWindowWork[0];
     palette <<= 12;
     if (x < 0) {
         width += x;
@@ -103,7 +98,7 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
                 }
                 p++;
             }
-            base[RENDER_DIRTY_OFS] |= 2 << ((u32)y >> 2);
+            ((struct UiRenderWork *)base)->dirty |= 2 << ((u32)y >> 2);
             /* FAKEMATCH: a do-while(0) around the row count decrement keeps the
                reference register order */
             do {
@@ -116,9 +111,8 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette)
 
 void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width, s32 height, s32 palette)
 {
-  int ofs;
-  ofs = 0xC;
-  UiWindow_SetRectPalette(((*((u16 *)(((u8 *)obj) + ofs))) + x) + 1, ((*((u16 *)(((u8 *)obj) + 0xE))) + y) + 1, width, height, palette);
+    UiWindow_SetRectPalette(((struct UiWindow *)obj)->x + x + 1,
+        ((struct UiWindow *)obj)->y + y + 1, width, height, palette);
 }
 
 /* The other editions keep their code here in their scaffolds for now. */
@@ -176,7 +170,7 @@ s32 DjinnMenu_ShowHelp(void)
         Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
         previous = selection;
         for (;;) {
-            UiMenu_PositionCursor(-12, (((struct ChooserWindow *)list)->row + selection) * 8 + 8);
+            UiMenu_PositionCursor(-12, (((struct UiWindow *)list)->y + selection) * 8 + 8);
             WaitFrames(1);
             if (gKeysRepeat & 0x90) {
                 selection++;
@@ -211,7 +205,7 @@ s32 DjinnMenu_ShowHelp(void)
             Resource_ResetEntry(work->resource);
             work->resource = 99;
         }
-        gWindowWork->text_busy = 0;
+        ((struct ChooserTextWork *)gWindowWork[0])->text_busy = 0;
         UiWindow_Clear(win_b);
         {
             struct ChooserMessage *entry = *slot;
@@ -221,7 +215,7 @@ s32 DjinnMenu_ShowHelp(void)
         }
         *slot = 0;
     } while (result == 0);
-    gWindowWork->menu_busy = 1;
+    ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;
     RenderOutput_ClearListFar(win_a);
     RenderOutput_ClearListFar(win_b);
     WaitFrames(1);
@@ -233,7 +227,7 @@ s32 DjinnMenu_ShowHelp(void)
         UiWindow_Clear(menu->message_window);
         UiWindow_Clear(menu->option_window);
         UiWindow_Clear(menu->owner_window);
-        gWindowWork->menu_busy = 0;
+        ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 0;
     }
     Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
     return result;

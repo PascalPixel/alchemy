@@ -28,50 +28,6 @@ void PsynergyMenu_DrawRange(
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 
-struct MenuEntryIcon {
-    u8 unknown_00[5];
-    u8 state;                    /* 0x05 */
-    u8 unknown_06[6];
-    u16 field_0c;                /* 0x0c */
-    u8 unknown_0e;
-    u8 field_0f;                 /* 0x0f */
-};
-
-struct PsynergyListWork {
-    u8 unknown_000[8];
-    s32 field_008;                            /* 0x008 */
-    u8 unknown_00c[8];
-    struct MenuEntryIcon *pane_icon[2];       /* 0x014 */
-    s8 tab_index[2];                          /* 0x01c */
-    u8 unknown_01e[6];
-    s32 field_024;                            /* 0x024 */
-    u8 unknown_028[4];
-    void *info_window;                        /* 0x02c */
-    u8 unknown_030[4];
-    s32 list_window;                          /* 0x034 */
-    u8 unknown_038[0x0c];
-    struct MenuEntryIcon *entry_grid_cursor;  /* 0x044 */
-    struct MenuEntryIcon *entry_icons[32];    /* 0x048 */
-    u8 unknown_0c8[0x4c];
-    s32 tab_objects[4];                       /* 0x114 */
-    u8 unknown_124[0x20];
-    u16 tab_colors[4];                        /* 0x144 */
-    u8 unknown_14c[0x28];
-    u16 pane_row[2];                          /* 0x174 */
-    u16 pane_action[2];                       /* 0x178 */
-    u8 unknown_17c[0x4c];
-    u16 psynergies[32];                       /* 0x1c8 */
-    u16 owner_table[8];                       /* 0x208 */
-    u8 psynergy_count;                        /* 0x218 */
-    u8 owner_count;                           /* 0x219 */
-    u8 owner_ids[2];                          /* 0x21a */
-    struct MenuEntryIcon *cursor_icon;        /* 0x21c */
-    u16 flags;                                /* 0x220 */
-    u8 unknown_222[0x3e];
-    s8 selected_index_by_owner[8];            /* 0x260 */
-    u8 mode;                                  /* 0x268 */
-};
-
 extern u8 MsgAbilityDescription;
 extern u8 MsgUsableInBattle;
 extern u8 MsgUsableInField;
@@ -96,12 +52,12 @@ void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
    pointer, which keeps its load independent of the page-state store. */
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 {
-    struct PsynergyListWork *menu;
+    struct PsynergyMenuState *menu;
     struct BattleAction *ability;
     s32 row;
     s32 base;
 
-    menu = (struct PsynergyListWork *)gMenuWork;
+    menu = (struct PsynergyMenuState *)gMenuWork;
     state->selected_index = state->page * PAGE_ROWS + state->row;
 #if defined(TBS_EDITION_EN) || defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);

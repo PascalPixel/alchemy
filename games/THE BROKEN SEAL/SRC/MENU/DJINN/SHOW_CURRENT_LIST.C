@@ -2,30 +2,11 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "DJINN_MENU.H"
+
+extern struct DjinnMenuWork *gMenuWork;
 #include "TBS_EDITION.H"
 
-struct DjinnListCursor {
-    u8 unknown_00[5];
-    u8 state;
-};
-
-struct DjinnListMenu {
-    u8 unknown_000[0x14];
-    struct DjinnListCursor *cursor;
-    u8 unknown_018[0x0c];
-    s32 window;
-    u8 unknown_028[0xe4];
-    s32 help_window;
-    u8 unknown_110[0x34];
-    u16 frames[8];
-    u8 unknown_154[0x28];
-    struct DjinnListCursor *second_cursor;
-    u8 unknown_180[0xb4];
-    u16 slot_x[4];
-    u16 slot_y[4];
-};
-
-extern struct DjinnListMenu *gMenuWork;
 extern u8 *gWindowWork;
 extern volatile u32 gKeyState;
 extern u8 MsgReturnHelp[];
@@ -43,7 +24,7 @@ s32 GameFlag_TestFar(s32 flag);
 
 s32 DjinnMenu_ShowCurrentList(void)
 {
-    struct DjinnListMenu *menu;
+    struct DjinnMenuWork *menu;
     s32 window;
     s32 row;
     s32 col;

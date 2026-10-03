@@ -93,7 +93,7 @@ Func_0802de8c:
 .L_0802df3c:
 	.4byte gDecodeFillByte
 .L_0802df40:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_0802df44:
 	strh r3, [r2]
 	ldr r3, .L_0802df84

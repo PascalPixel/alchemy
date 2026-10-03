@@ -35,7 +35,7 @@ Func_0200005c:
 .L_02008098:
 	.4byte 0x0000000f
 .L_0200809c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020080a0:
 	.4byte Data_02003dbc
 .L_020080a4:
@@ -2350,7 +2350,7 @@ Func_020011f4:
 .L_02009226:
 	pop {r5, pc}
 .L_02009228:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200922c,"ax",%progbits
 	.global Func_0200122c
 	.thumb_func
@@ -2386,7 +2386,7 @@ Func_0200122c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02009268:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200926c:
 	.4byte Data_02003db8
 .L_02009270:
@@ -2502,7 +2502,7 @@ Func_0200130c:
 .L_02009340:
 	.4byte 0x0000000c
 .L_02009344:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009348:
 	.4byte Data_02003fc0
 .L_0200934c:
@@ -2598,7 +2598,7 @@ Func_02001364:
 .L_020093f4:
 	.4byte gPartyState
 .L_020093f8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020093fc:
 	.4byte 0xffff0000
 	.section .text.x02009400,"ax",%progbits
@@ -3327,7 +3327,7 @@ Func_0200199c:
 .L_020099ce:
 	pop {r5, pc}
 .L_020099d0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x020099d4,"ax",%progbits
 	.global Func_020019d4
 	.thumb_func
@@ -3358,7 +3358,7 @@ Func_020019d4:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02009a08:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02009a0c,"ax",%progbits
 	.global Func_02001a0c
 	.thumb_func
@@ -3381,7 +3381,7 @@ Func_02001a0c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009a30:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02009a34,"ax",%progbits
 	.global Func_02001a34
 	.thumb_func
@@ -3813,7 +3813,7 @@ Func_02001be0:
 .L_02009d4a:
 	pop {r5, r6, r7, pc}
 .L_02009d4c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009d50:
 	.4byte Data_02003fc4
 .L_02009d54:

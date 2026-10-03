@@ -670,7 +670,7 @@ Func_08049154:
 .L_08049668:
 	.4byte Data_080597f8
 .L_0804966c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08049670:
 	lsrs r0, r0, #2
 	ands r3, r1
@@ -1100,6 +1100,6 @@ Func_08049154:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080499ac:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080499b0:
 	.4byte gInput

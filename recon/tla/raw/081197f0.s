@@ -593,7 +593,7 @@ Func_081197f0:
 .L_08119cc8:
 	.4byte gPartyState
 .L_08119ccc:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_08119cd0:
 	.4byte Func_0811b9fc
 .L_08119cd4:

@@ -306,7 +306,7 @@ Func_080db0b0:
 .L_080db31c:
 	.4byte 0x00000000
 .L_080db320:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080db324:
 	.4byte .L_080db1e8
 .L_080db328:

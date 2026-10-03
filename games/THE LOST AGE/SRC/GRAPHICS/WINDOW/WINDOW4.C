@@ -1,8 +1,8 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 #include "TLA_EDITION.H"
 
-void WaitFrames(s32);
 void UiWork_Finalize(void *work, s32 release);
 
 struct PendingWork {

@@ -77,7 +77,7 @@
         "*/recon/tla/raw/080133c4.o"(.text)
         "*/recon/tla/raw/08013438.o"(.text)
         "*/recon/tla/raw/080134b0.o"(.text)
-        "*/recon/tla/raw/08013560.o"(.text)
+        "*/games/THE LOST AGE/SRC/SYSTEM/SYSTEM.o"(.text)
         "*/recon/tla/raw/080138a8.o"(.text)
         "*/recon/tla/raw/080138b4.o"(.text)
         "*/recon/tla/raw/0801399c.o"(.text)

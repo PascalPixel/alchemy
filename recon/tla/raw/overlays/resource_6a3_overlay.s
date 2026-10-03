@@ -130,7 +130,7 @@ Func_020000c4:
 .L_02008148:
 	.4byte 0x00000000
 .L_0200814c:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_02008150:
 	.4byte 0x000001c0
 .L_02008154:
@@ -398,7 +398,7 @@ Func_020000c4:
 .L_0200838c:
 	.4byte Data_03001120
 .L_02008390:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_02008394:
 	bl Func_0200475c
 	add sp, #12
@@ -1207,7 +1207,7 @@ Func_02000a78:
 	movs r0, #1
 	pop {r5, r6, pc}
 .L_02008ac8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008acc:
 	.4byte 0xfffff800
 	.section .text.x02008ad0,"ax",%progbits
@@ -5359,7 +5359,7 @@ Func_0200309c:
 .L_0200b1ac:
 	.4byte 0x0003ffff
 .L_0200b1b0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200b1b4:
 	bl Motion_CamBounds
 	bl Func_020048fc
@@ -5896,7 +5896,7 @@ Func_0200354c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b5e8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200b5ec,"ax",%progbits
 	.global Func_020035ec
 	.thumb_func

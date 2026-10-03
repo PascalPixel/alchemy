@@ -1294,7 +1294,7 @@ Func_02000a98:
 .L_02008af0:
 	.4byte Data_020056e0
 .L_02008af4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008af8,"ax",%progbits
 	.global Func_02000af8
 	.thumb_func

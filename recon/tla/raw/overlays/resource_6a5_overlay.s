@@ -322,7 +322,7 @@ Func_02000198:
 .L_02008378:
 	.4byte 0x00203210
 .L_0200837c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008380:
 	movs r0, #36
 	bl ObjectMotion_EnableActionAndResetMotion
@@ -509,7 +509,7 @@ Func_020004c8:
 	lsls r2, r2, #8
 	b .L_0200851a
 .L_0200850c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008510:
 	bl Random16Far
 	adds r2, r0, #0
@@ -668,7 +668,7 @@ Func_020005b8:
 .L_02008656:
 	pop {r5, r6, pc}
 .L_02008658:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200865c,"ax",%progbits
 	.global Func_0200065c
 	.thumb_func
@@ -7127,7 +7127,7 @@ Func_020040f4:
 .L_0200c204:
 	.4byte 0x0003ffff
 .L_0200c208:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200c20c:
 	bl Motion_CamBounds
 	bl Func_0200592c
@@ -7664,7 +7664,7 @@ Func_020045a4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200c640:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200c644,"ax",%progbits
 	.global Func_02004644
 	.thumb_func

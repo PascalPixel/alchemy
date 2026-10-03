@@ -98,7 +98,7 @@ Game_ResetForNewGame:
 	bl GameFlag_ClearBit
 	b .L_080c9a28
 .L_080c9a00:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080c9a04:
 	.4byte Field_SceneTable
 .L_080c9a08:
@@ -168,7 +168,7 @@ Game_ResetForNewGame:
 .L_080c9a90:
 	.4byte gPartyState
 .L_080c9a94:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_080c9a98:
 	bl Func_08014368
 	mov r1, r8

@@ -377,7 +377,7 @@ Func_080ec4d4:
 .L_080ec7a0:
 	.4byte Data_080f1100
 .L_080ec7a4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080ec7a8:
 	.4byte Data_0202a644
 .L_080ec7ac:
@@ -665,7 +665,7 @@ Func_080ec4d4:
 	mov r8, r3
 	b .L_080ec9e8
 .L_080ec9d4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080ec9d8:
 	.4byte gInput
 .L_080ec9dc:
@@ -727,7 +727,7 @@ Func_080ec4d4:
 .L_080eca48:
 	.4byte Data_0202a000
 .L_080eca4c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080eca50:
 	.4byte 0xfffffc00
 .L_080eca54:

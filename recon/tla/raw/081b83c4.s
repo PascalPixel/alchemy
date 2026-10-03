@@ -284,7 +284,7 @@ Func_081b83c4:
 .L_081b8610:
 	.4byte 0x0000000c
 .L_081b8614:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081b8618:
 	.4byte 0x06003000
 .L_081b861c:

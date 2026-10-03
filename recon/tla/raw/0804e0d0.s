@@ -65,4 +65,4 @@ Func_0804e0d0:
 .L_0804e144:
 	.4byte 0x00001160
 .L_0804e148:
-	.4byte Data_030011d0
+	.4byte gSleepRequested

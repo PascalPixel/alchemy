@@ -366,7 +366,7 @@ Func_020002f8:
 .L_0200834a:
 	pop {pc}
 .L_0200834c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008350:
 	.4byte 0x05000172
 .L_02008354:

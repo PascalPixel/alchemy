@@ -6623,7 +6623,7 @@ Func_020037a4:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200b808:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200b80c,"ax",%progbits
 	.global Func_0200380c
 	.thumb_func

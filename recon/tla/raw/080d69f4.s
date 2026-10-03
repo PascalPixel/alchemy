@@ -183,7 +183,7 @@ Func_080d69f4:
 .L_080d6b54:
 	.4byte 0xfffffe00
 .L_080d6b58:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080d6b5c:
 	strb r1, [r5, #5]
 	adds r0, r5, #0

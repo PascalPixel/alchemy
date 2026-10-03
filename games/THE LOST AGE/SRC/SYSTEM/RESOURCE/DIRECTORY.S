@@ -13,7 +13,7 @@
 	.balign 4
 	.global Resource_DirectoryTable
 Resource_DirectoryTable:
-	resource , Resource_Data000
+	resource , Cartridge_Restart
 	resource , Resource_DirectoryTable
 	resource , Resource_Data002
 	resource , Resource_FarCall003

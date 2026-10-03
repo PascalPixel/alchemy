@@ -424,7 +424,7 @@ Func_0802a124:
 .L_0802a464:
 	.4byte Data_0802ec5c
 .L_0802a468:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_0802a46c:
 	.4byte 0xffffeaab
 .L_0802a470:

@@ -1393,7 +1393,7 @@ Func_02000a80:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008ae8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008aec:
 	.4byte 0x02c20000
 .L_02008af0:

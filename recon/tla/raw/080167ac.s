@@ -20,7 +20,7 @@ SerialRuntime_RemoveIrqHandlers:
 .L_080167cc:
 	.4byte 0x00000000
 .L_080167d0:
-	.4byte Data_030011b8
+	.4byte gSerialExchangeActive
 .L_080167d4:
 	pop {pc}
 	.2byte 0x0000

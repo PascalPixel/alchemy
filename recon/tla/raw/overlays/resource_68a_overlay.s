@@ -779,7 +779,7 @@ Func_02000630:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020086ac:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020086b0:
 	.4byte 0x05000100
 .L_020086b4:

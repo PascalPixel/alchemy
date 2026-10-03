@@ -505,7 +505,7 @@ Func_08028aac:
 .L_08028e94:
 	.4byte Data_0802ec5c
 .L_08028e98:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08028e9c:
 	.4byte 0xfffff000
 .L_08028ea0:
@@ -811,7 +811,7 @@ Func_08028aac:
 .L_080290e0:
 	.4byte Data_0802ec94
 .L_080290e4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080290e8:
 	.4byte gPartyState
 .L_080290ec:

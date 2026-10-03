@@ -50,7 +50,7 @@ Func_080f8a44:
 .L_080f8a9c:
 	.4byte 0x000001ff
 .L_080f8aa0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080f8aa4:
 	.4byte Data_081059dc
 .L_080f8aa8:

@@ -2835,7 +2835,7 @@ Func_020014e4:
 .L_02009594:
 	.4byte gPartyState
 .L_02009598:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200959c:
 	.4byte Func_02001464
 .L_020095a0:
@@ -8050,7 +8050,7 @@ Func_02003f68:
 .L_0200c174:
 	.4byte 0xffff0000
 .L_0200c178:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200c17c:
 	.4byte 0x40002000
 .L_0200c180:
@@ -10476,7 +10476,7 @@ Func_020051a0:
 .L_0200d518:
 	.4byte 0x80008000
 .L_0200d51c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200d520:
 	.4byte gPartyState
 .L_0200d524:

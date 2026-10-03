@@ -331,7 +331,7 @@ Func_02000278:
 .L_02008314:
 	.4byte Data_020006dc
 .L_02008318:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200831c,"ax",%progbits
 	.global Func_0200031c
 	.thumb_func

@@ -461,7 +461,7 @@ Func_02000394:
 .L_020083e8:
 	.4byte 0x0000001f
 .L_020083ec:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020083f0:
 	cmp r4, #0
 	bge .L_020083f6

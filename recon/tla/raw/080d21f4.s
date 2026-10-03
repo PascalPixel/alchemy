@@ -40,6 +40,6 @@ Func_080d21f4:
 	pop {pc}
 	.2byte 0x0000
 .L_080d2238:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080d223c:
 	.4byte gInput

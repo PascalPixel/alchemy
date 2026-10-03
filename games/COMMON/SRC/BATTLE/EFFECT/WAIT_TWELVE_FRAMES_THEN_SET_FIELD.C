@@ -1,6 +1,6 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 
-s32 WaitFrames(s32);
 /* Shared effects default to ☀️'s Japanese motion entry. ⚓️'s Japanese
    version uses a different dispatch entry; its international versions use
    the shared call again. */

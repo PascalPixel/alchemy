@@ -472,7 +472,7 @@ Func_080dd054:
 .L_080dd42c:
 	.4byte 0xfff00000
 .L_080dd430:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080dd434:
 	.4byte Data_080f0ee4
 .L_080dd438:

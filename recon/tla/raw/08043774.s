@@ -71,8 +71,8 @@ Func_08043774:
 .L_080437fc:
 	.4byte gPartyState
 .L_08043800:
-	.4byte Data_0300117c
+	.4byte gFrameWaitCount
 .L_08043804:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_08043808:
-	.4byte Data_03001218
+	.4byte gIdleFrameCount

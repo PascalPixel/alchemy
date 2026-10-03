@@ -2997,7 +2997,7 @@ Func_0200145c:
 .L_020098b8:
 	.4byte 0x000013e5
 .L_020098bc:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_020098c0:
 	.4byte Func_02000134
 .L_020098c4:

@@ -13,13 +13,38 @@ struct AnimationEntry {
     u8 priority;    /* 0x06 draw order, 0..3 */
     u8 mode;        /* 0x07 1 = copy, 3 = decode, else draw */
     void **frames;  /* 0x08 */
-    void *field_0c;
+    u8 **scripts;   /* 0x0c decoded script-address table */
     u8 *script;     /* 0x10 */
     u8 pos;         /* 0x14 script cursor */
     u8 step;        /* 0x15 timer decrement */
     u8 frame;       /* 0x16 selected frame, 255 = none */
     u8 frame_base;  /* 0x17 */
 };
+
+/* Slot 6 is allocated and cleared as one 92-byte object-system block.
+   The compositor counts uploaded bytes and uses the two outline colours;
+   menus suspend drawing through the halfword at 4. The constructor clears
+   these fields and installs colours 15/0. */
+struct ResourceSlot {
+    s32 tag;
+    void *buffer;
+};
+
+struct ObjectSystemWork {
+    u16 used;
+    u8 unknown_02[2];
+    u16 suspended;
+    u8 edge;
+    u8 fill;
+    u8 unknown_08[0x10];
+    s32 count;
+    struct ResourceSlot slots[8];
+};
+
+LAYOUT_OFFSET_GUARD(ObjectSystemWork_Suspended, struct ObjectSystemWork, suspended, 4);
+LAYOUT_OFFSET_GUARD(ObjectSystemWork_Count, struct ObjectSystemWork, count, 0x18);
+LAYOUT_OFFSET_GUARD(ObjectSystemWork_Slots, struct ObjectSystemWork, slots, 0x1c);
+LAYOUT_SIZE_GUARD(ObjectSystemWork_Size, struct ObjectSystemWork, 0x5c);
 
 /* Each linked OAM part carries the three hardware attributes. */
 struct AnimationSpritePart {

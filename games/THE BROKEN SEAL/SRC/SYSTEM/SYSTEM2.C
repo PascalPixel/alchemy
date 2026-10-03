@@ -1,3 +1,4 @@
+#include "MAP_SCROLL.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
@@ -18,7 +19,6 @@ extern u8 Data_03001e44;
 extern u8 gOamCopyEnabled;
 
 /* OAM buffer pending */
-extern u8 gBgScroll[];
 extern void (*Data_03001cfc)(void);
 
 /* one-shot VBlank hook */

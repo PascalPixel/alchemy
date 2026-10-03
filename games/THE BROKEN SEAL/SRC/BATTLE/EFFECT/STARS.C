@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
@@ -41,7 +42,6 @@ extern u8 SpinningStars_Radii[];
 extern u8 gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);

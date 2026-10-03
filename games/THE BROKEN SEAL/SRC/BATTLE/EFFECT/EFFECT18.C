@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TRANSFORM.H"
 #include "DMA.H"
 #include "BATTLE_PRESENTATION.H"
@@ -24,7 +25,6 @@ typedef s32 (*CopyWords)(void *, const void *, s32);
 extern u8 gWorkSlot[];
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
-void *Resource_GetTableEntry(s32);
 void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);

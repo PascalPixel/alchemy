@@ -12,7 +12,7 @@
 s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
-    s32 *camera;
+    struct MapScrollWork *camera;
     s32 camera_x;
     s32 camera_z;
     s32 x;
@@ -20,9 +20,9 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
 
     if (object == 0)
         return -1;
-    camera = &((struct MapScrollWork *)gMapWork[0])->view_x;
-    camera_x = camera[0] & 0xffff0000;
-    camera_z = camera[1] & 0xffff0000;
+    camera = gMapWork[0];
+    camera_x = camera->view_x & 0xffff0000;
+    camera_z = camera->view_y & 0xffff0000;
     x = object->x - camera_x;
     z = object->z - camera_z - object->y;
     *position++ = x / 0x10000;

@@ -5,6 +5,14 @@
 
 enum { BATTLE_EVENT_CAPACITY = 64 };
 
+/* The queue driver checks for another event, dispatches it, then becomes ready. */
+enum BattlePlaybackPhase {
+    BATTLE_PLAYBACK_IDLE = 0,
+    BATTLE_PLAYBACK_RESOLVE_TARGET = 1,
+    BATTLE_PLAYBACK_DISPATCH = 2,
+    BATTLE_PLAYBACK_READY = 4
+};
+
 struct BattleEventQueue {
     u8 opcodes[BATTLE_EVENT_CAPACITY]; /* 0x000 */
     u32 operands[BATTLE_EVENT_CAPACITY]; /* 0x040 */

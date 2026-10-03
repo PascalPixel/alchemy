@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
 #include "TYPES.H"
@@ -5,15 +6,13 @@
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 
-u32 Resource_GetTableEntry(u32 index);
-
 struct ResourceWork {
     u32 header[3];
     u32 cursor;
 };
 
 extern struct ResourceWork Data_03007804;
-extern u32 Resource_DirectoryTable[];
+extern void *Resource_DirectoryTable[];
 extern const u8 Func_08002d5c[];
 s32 Resource_DecodeType01(const void *source, void *destination);
 
@@ -36,7 +35,7 @@ void RuntimeDispatch_NoOpHook(void)
 {
 }
 
-u32 Resource_GetTableEntry(u32 index)
+void *Resource_GetTableEntry(s32 index)
 {
     return Resource_DirectoryTable[index];
 }

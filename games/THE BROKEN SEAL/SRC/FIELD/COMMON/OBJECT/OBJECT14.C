@@ -9,6 +9,7 @@
 #include "OBJDISP.H"
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "SCRIPT_MOTION.H"
+#include "FIELDOBJ.H"
 
 s32 FixedSqrt(s32 value);
 
@@ -26,7 +27,7 @@ s32 GameFlag_SetBitFar(s32);
 void GameFlag_ClearBitFar(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
 s32 Audio_PlayCue(s32);
-s32 Object_IsTargetUnset(void *);
+s32 Object_IsTargetUnset(struct ObjectRuntime *);
 extern const s32 Script_MainScript[];
 s32 Runtime_CheckRadiusOverlap(s32 *a, s32 arg1, s32 *b, s32 arg3);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *, s32, s32, s32);
@@ -111,9 +112,6 @@ void Object_RunUpdateAllFromHeap(void)
     routine();
     Sys_Free(routine);
 }
-
-/* Moves every active object by its velocity each frame: position, then
-   gravity and the bounce off the ground, through the IWRAM Q16 multiply. */
 
 /* Moves each of the fourteen entries of the object table toward its target,
    applies gravity with bounce, notices when an axis target was passed and
@@ -263,10 +261,10 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
     if ((u32)interpreter->delay > 0x3B) {
         interpreter->delay = 0;
-        goto block_3;
+        interpreter->cursor = (u16)interpreter->cursor + 1;
+        return 1;
     }
-    if (Object_IsTargetUnset(interpreter)!= 0) {
-block_3:
+    if (Object_IsTargetUnset((struct ObjectRuntime *)interpreter) != 0) {
         interpreter->cursor = (u16)interpreter->cursor + 1;
         return 1;
     }
@@ -279,7 +277,7 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter)
     ScriptCommand callback =
         (ScriptCommand)interpreter->script[initial + 1];
 
-    if (callback(interpreter)!= 0)
+    if (callback(interpreter) != 0)
         return 0;
     if (interpreter->cursor == initial)
         interpreter->cursor = (u16)interpreter->cursor + 2;
@@ -455,59 +453,44 @@ s32 Script_PlayAudioCue(struct ScriptInterpreter *interpreter)
     return 1;
 }
 
+/* The public script-entry boundary shares the real runtime-object pool. */
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
 {
-    s32 tmp;
     s32 index;
     u8 *flags;
-    struct ScriptObjectEntry *entry;
+    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
 
-    entry = *(struct ScriptObjectEntry **)((u32)&gObjectSlots);
-    index = 0;
-    flags = &entry->flags_59;
-loop_1:
-    if (entry->data != NULL && (1 & *flags) && entry != object) {
-        tmp = index;
-        if (Runtime_CheckRadiusOverlap(entry->values_08, entry->value_20 - 2,
-                          values, object->value_20 - 2) >= 0) {
-            return -1;
+    flags = &entry->unknown_59;
+    for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
+        if (entry->script != NULL && (1 & *flags)
+            && entry != (struct ObjectRuntime *)object) {
+            if (Runtime_CheckRadiusOverlap(&entry->x,
+                    ((struct FieldActor *)entry)->radius - 2,
+                    values, ((struct FieldActor *)object)->radius - 2) >= 0)
+                return -1;
         }
     }
-    index += 1;
-    flags += 0x70;
-    entry++;
-    if (index > 0x3F) {
-        return 0;
-    }
-    goto loop_1;
+    return 0;
 }
 
 struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
     struct ScriptObjectEntry *object, s32 *values)
 {
-    s32 tmp;
     s32 index;
     u8 *flags;
-    struct ScriptObjectEntry *entry;
+    struct ObjectRuntime *entry = (struct ObjectRuntime *)gObjectSlots;
 
-    entry = *(struct ScriptObjectEntry **)((u32)&gObjectSlots);
-    index = 0;
-    flags = &entry->flags_59;
-loop_1:
-    if (entry->data != NULL && (1 & *flags) && entry != object) {
-        tmp = index;
-        if (Runtime_CheckRadiusOverlap(entry->values_08, entry->value_20 - 2,
-                          values, object->value_20 - 2) >= 0) {
-            return entry;
+    flags = &entry->unknown_59;
+    for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
+        if (entry->script != NULL && (1 & *flags)
+            && entry != (struct ObjectRuntime *)object) {
+            if (Runtime_CheckRadiusOverlap(&entry->x,
+                    ((struct FieldActor *)entry)->radius - 2,
+                    values, ((struct FieldActor *)object)->radius - 2) >= 0)
+                return (struct ScriptObjectEntry *)entry;
         }
     }
-    index += 1;
-    flags += 0x70;
-    entry++;
-    if (index > 0x3F) {
-        return NULL;
-    }
-    goto loop_1;
+    return NULL;
 }
 
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)

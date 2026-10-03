@@ -1,3 +1,4 @@
+#include "CHARACTER_MENU.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
 #include "LAYOUT_GUARD.H"
@@ -116,11 +117,11 @@ s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled)
         if (enabled[index] != 0) {
             s32 kind;
             switch (index) {
-            case 0: kind = 16; break;
-            case 1: kind = 1; break;
-            case 2: kind = 2; break;
-            case 3: kind = 15; break;
-            case 4: kind = 7; break;
+            case CHARACTER_DOWN: kind = 16; break;
+            case CHARACTER_POISON: kind = 1; break;
+            case CHARACTER_VENOM: kind = 2; break;
+            case CHARACTER_CURSE: kind = 15; break;
+            case CHARACTER_HAUNT: kind = 7; break;
             default: kind = 0; break;
             }
             Resource_LoadByModeIntoSlotFar(8, kind, (u8)state->category_icons[index]->index, 0);

@@ -1,3 +1,5 @@
+#include "CHARACTER_MENU.H"
+#include "BATTLE_UNIT.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_RUNTIME.H"
@@ -6,12 +8,7 @@ extern u8 gNumberTextBuffer[];
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void Text_FormatSignedDecimalToWork(s32 out);
 
-struct DjinnSlot {
-    u16 id;
-    u16 state;
-};
-
-s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
+void UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {
     s16 *dst;
     s32 n;
@@ -31,7 +28,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 
 /* Lists the djinn that differ between two 32-slot grids: first those only in
    the new grid (flagged 0x8000), then those only in the old one (0x4000). */
-s32 DjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid, struct DjinnSlot *newGrid, u16 *out, s32 *gained, s32 *lost)
+s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid, const struct OwnerActionSlot *newGrid, u16 *out, s32 *gained, s32 *lost)
 {
     s32 i;
     s32 j;
@@ -42,12 +39,12 @@ s32 DjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid, struct DjinnSlot *newG
     added = 0;
     removed = 0;
     count = 0;
-    for (i = 0; i < 32 && newGrid[i].id != 0; i++) {
-        if (BattleAction_Get(newGrid[i].id)->target_flags & 0x80) {
-            out[count] = newGrid[i].id & 0x3fff;
+    for (i = 0; i < 32 && newGrid[i].encoded_action != 0; i++) {
+        if (BattleAction_Get(newGrid[i].encoded_action)->target_flags & 0x80) {
+            out[count] = newGrid[i].encoded_action & 0x3fff;
             count++;
             for (j = 0; j < 32; j++) {
-                if (((newGrid[i].id ^ oldGrid[j].id) & 0x3fff) == 0)
+                if (((newGrid[i].encoded_action ^ oldGrid[j].encoded_action) & 0x3fff) == 0)
                     break;
             }
             if (j == 32) {
@@ -56,15 +53,15 @@ s32 DjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid, struct DjinnSlot *newG
             }
         }
     }
-    for (i = 0; i < 32 && oldGrid[i].id != 0; i++) {
-        if (BattleAction_Get(oldGrid[i].id)->target_flags & 0x80) {
+    for (i = 0; i < 32 && oldGrid[i].encoded_action != 0; i++) {
+        if (BattleAction_Get(oldGrid[i].encoded_action)->target_flags & 0x80) {
             for (j = 0; j < 32; j++) {
-                if (((oldGrid[i].id ^ newGrid[j].id) & 0x3fff) == 0)
+                if (((oldGrid[i].encoded_action ^ newGrid[j].encoded_action) & 0x3fff) == 0)
                     break;
             }
             if (j == 32) {
                 removed++;
-                out[count] = (oldGrid[i].id & 0x3fff) | 0x4000;
+                out[count] = (oldGrid[i].encoded_action & 0x3fff) | 0x4000;
                 count++;
             }
         }

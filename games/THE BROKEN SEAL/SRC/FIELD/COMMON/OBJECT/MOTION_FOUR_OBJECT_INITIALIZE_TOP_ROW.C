@@ -3,6 +3,7 @@
 #include "SCENE.H"
 #include "FOUR_OBJECT_MOTION.H"
 #include "FIELD_SPRITE.H"
+#include "ANIMSPR.H"
 void ResourceObject_ReleaseFar(void *);
 s32 Object_ApplyProjectedPlacementFar(u32 object, u32 *request, u32 *motion, u32 limit);
 extern struct FourObjectMotionState *gMenuWork;
@@ -13,7 +14,7 @@ extern u8 RomBytes_080ad40d[];
 extern s32 RomBytes_080af304[];
 
 void *ResourceObject_CreateFar(s32);
-void AnimationObjects_SelectAnimationFar(void *, s32);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 void FourObjectMotion_UpdateAllPositions(void);
 void FourObjectMotion_UpdateBottomRow(void);
@@ -24,7 +25,7 @@ void FourObjectMotion_InitializeTopRow(void)
     s32 index;
 
     for (index = 0; index < 4; index++) {
-        void *object = state->objects[index];
+        struct AnimationObject *object = state->objects[index];
 
         if (object != NULL) {
             ResourceObject_ReleaseFar(object);
@@ -33,7 +34,7 @@ void FourObjectMotion_InitializeTopRow(void)
     }
 
     for (index = 0; index < 4; index++) {
-        void *object = ResourceObject_CreateFar(RomBytes_080af304[index]);
+        struct AnimationObject *object = ResourceObject_CreateFar(RomBytes_080af304[index]);
 
         if (object != NULL) {
             AnimationObjects_SelectAnimationFar(object, 2);
@@ -53,7 +54,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
     s32 index = 0;
 
     do {
-        void *object = state->objects[index];
+        struct AnimationObject *object = state->objects[index];
 
         if (object != 0) {
             ResourceObject_ReleaseFar(object);
@@ -61,7 +62,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
         }
         index++;
     } while (index < 4);
-    Scheduler_RemoveCallback((u32)((s32)&FourObjectMotion_UpdateAllPositions));
+    Scheduler_RemoveCallback((u32)FourObjectMotion_UpdateAllPositions);
 }
 
 /* object/motion/four_object/FourObjectMotion_UpdateAllPositions.c */

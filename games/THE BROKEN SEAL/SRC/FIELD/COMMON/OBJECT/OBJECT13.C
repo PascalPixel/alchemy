@@ -17,23 +17,10 @@ void Script_WaitForEventTimeout(s32 arg0)
 
 s32 Object_IsTargetUnset(struct ObjectRuntime *object)
 {
-    s32 first;
-    s32 second;
-
-    if (object->flags == 0) {
-        second = object->target_x;
-        if (second == 0x80000000) {
-            first = object->target_y;
-            goto block_4;
-        }
-        goto block_6;
-    }
-    first = object->target_x;
-    second = 0x80000000;
-block_4:
-    if ((first != second) || (object->target_z != first)) {
-block_6:
-        return 0;
-    }
-    return 1;
+    if (object->flags == 0)
+        return object->target_x == (s32)0x80000000
+            && object->target_y == (s32)0x80000000
+            && object->target_z == (s32)0x80000000;
+    return object->target_x == (s32)0x80000000
+        && object->target_z == object->target_x;
 }

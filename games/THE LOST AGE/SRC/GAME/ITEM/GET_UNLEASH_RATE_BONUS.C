@@ -1,33 +1,30 @@
-#include "INVENTORY.H"
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
+#include "ITEM.H"
 
-s32 Equipment_GetUnleashRateBonus(s32 owner)
+s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner)
 {
-    s32 sum;
-    s32 offset;
-    s32 index;
-    u8 *data;
+    s32 sum = 0;
+    u16 *slot = owner->inventory;
+    s32 index = 15;
     s32 j;
-    s32 mask;
-    u16 v;
+    struct ItemEffect *effect;
+    u16 value;
 
-    sum = 0;
-    offset = 216;
-    mask = 0x200;
-    index = 15;
     while (--index >= 0) {
-        v = *(u16 *)((u8 *)offset + owner);
-        if (v & mask) {
-            data = (u8 *)Item_GetDirect(
-                *(u16 *)((u8 *)offset + owner)) + 24;
+        value = *slot;
+        if (value & 0x200) {
+            effect = Item_GetDirect(*slot)->effects;
             j = 4;
             while (--j >= 0) {
-                if (data[0] == 23) { sum += (s8)data[1]; }
-                data += 4;
+                if (effect->kind == 23)
+                    sum += effect->amount;
+                effect++;
             }
         }
-        offset += 2;
+        slot++;
     }
-    if (sum < 0) sum = 0;
+    if (sum < 0)
+        sum = 0;
     return sum;
 }

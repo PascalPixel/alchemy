@@ -1,10 +1,10 @@
+#include "VRAM_BLOCK.H"
 #include "SELECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 
 extern void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-extern s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
 extern void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);
 
@@ -74,7 +74,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
         Ui_BuildPatternToSlot(value, 0, result);
         break;
     case 9:
-        RenderResource_LoadTableEntry(value, 0, (void *)result);
+        RenderResource_LoadTableEntry(value, 0, result);
         break;
     }
 

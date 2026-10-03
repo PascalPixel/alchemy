@@ -7,16 +7,11 @@
 #include "OBJECT_RUNTIME.H"
 #include "SCRIPT_OBJECT_ENTRY.H"
 #include "IWRAM_CALL.H"
-
-struct WanderPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
+#include "FIELDRUN.H"
 
 u32 Random16(void);
-void Vector_AddPolarOffset(s32 radius, s32 angle, struct WanderPosition *position);
-s32 Func_080120dc(struct ScriptObjectRuntime *object, struct WanderPosition *position);
+void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
+s32 Func_080120dc(struct ObjectRuntime *object, struct FieldPosition *position);
 u16 ArcTan2(s32 y, s32 x);
 
 /*
@@ -29,8 +24,8 @@ u16 ArcTan2(s32 y, s32 x);
  */
 s32 Object_Wander(struct ScriptObjectRuntime *object)
 {
-    struct WanderPosition pos;
-    struct WanderPosition probe;
+    struct FieldPosition pos;
+    struct FieldPosition probe;
     s32 base;
     const s32 *args;
     s32 range;
@@ -58,7 +53,7 @@ retry:
         Vector_AddPolarOffset(radius, heading, &pos);
         if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
             goto retry;
-        if (Func_080120dc(object, &pos) != 0)
+        if (Func_080120dc((struct ObjectRuntime *)object, &pos) != 0)
             goto retry;
         radius += 0x80000;
         probe.x = object->x;
@@ -69,13 +64,13 @@ retry:
         probe.y = object->y;
         probe.z = object->z;
         Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-        if (Func_080120dc(object, &probe) != 0)
+        if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
             goto retry;
         probe.x = object->x;
         probe.y = object->y;
         probe.z = object->z;
         Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-        if (Func_080120dc(object, &probe) != 0)
+        if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
             goto retry;
         /* FAKEMATCH: the block that runs once ends the first CSE pass's
          * path after the two loads, so the move target reuses them only in
@@ -111,8 +106,8 @@ found:
  */
 s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
 {
-    struct WanderPosition pos;
-    struct WanderPosition probe;
+    struct FieldPosition pos;
+    struct FieldPosition probe;
     s32 base;
     const s32 *args;
     s32 range;
@@ -151,38 +146,38 @@ roam:
     pos.y = object->y;
     pos.z = object->z;
     Vector_AddPolarOffset(radius, heading, &pos);
-    if (Func_080120dc(object, &pos) != 0)
+    if (Func_080120dc((struct ObjectRuntime *)object, &pos) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     radius += 0x80000;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading, &probe);
-    if (Func_080120dc(object, &probe) != 0)
+    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-    if (Func_080120dc(object, &probe) != 0)
+    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-    if (Func_080120dc(object, &probe) != 0)
+    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading + 0x4000, &probe);
-    if (Func_080120dc(object, &probe) != 0)
+    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading - 0x4000, &probe);
-    if (Func_080120dc(object, &probe) != 0)
+    if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
         goto roam;
     dx = pos.x / 0x10000 - object->home_x;
     dz = pos.z / 0x10000 - object->home_z;
@@ -210,7 +205,7 @@ back:
     pos.y = object->y;
     pos.z = object->z;
     Vector_AddPolarOffset(radius, heading, &pos);
-    if (Func_080120dc(object, &pos) != 0)
+    if (Func_080120dc((struct ObjectRuntime *)object, &pos) != 0)
         goto back;
     object->flags_59 &= ~2;
     Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);

@@ -44,7 +44,8 @@ struct SceneEntries {
 /* Field-mode step work. Its 66 actor slots cover the eight party ids and
    the 58 placements; battle and menu lifetimes keep their own views. */
 struct FieldStepWork {
-    u8 unknown_000[0x10];
+    /* Four registered placement streams precede the event stream at +0x10. */
+    const struct ScenePlacement *tables[4];
     const struct SceneEvent *events;
     struct ObjectRuntime *actors[66];
     u8 unknown_11c[0x50];
@@ -76,6 +77,7 @@ LAYOUT_SIZE_GUARD(SceneEntries_Size, struct SceneEntries, 48);
 LAYOUT_OFFSET_GUARD(SceneEntries_Exits, struct SceneEntries, exits, 0x14);
 LAYOUT_OFFSET_GUARD(SceneEntries_Regions, struct SceneEntries, regions, 0x2c);
 LAYOUT_SIZE_GUARD(FieldStepWork_Size, struct FieldStepWork, 0x1c0);
+LAYOUT_OFFSET_GUARD(FieldStepWork_Events, struct FieldStepWork, events, 0x10);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Actors, struct FieldStepWork, actors, 0x14);
 LAYOUT_OFFSET_GUARD(FieldStepWork_StepEvent, struct FieldStepWork, step_event, 0x16c);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Mode, struct FieldStepWork, mode, 0x19e);

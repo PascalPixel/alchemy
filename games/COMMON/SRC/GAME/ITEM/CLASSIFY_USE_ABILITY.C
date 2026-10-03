@@ -1,33 +1,29 @@
+#include "BATTLE_RUNTIME.H"
+#include "ITEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 s32 Item_CanOwnerEquip(s32, s32);
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-void *Item_Get(s32);
-
-void *BattleAction_Get(s32);
-
-s32 Item_ClassifyUseAbility(s32 arg0, s32 arg1)
+s32 Item_ClassifyUseAbility(s32 owner, s32 item)
 {
     s32 ret;
-    void *p;
+    struct ItemDefinition *definition;
 
-    if (arg1 == 0) {
+    if (item == 0) {
         return 1;
     }
-    p = Item_Get(arg1);
+    definition = Item_Get(item);
     ret = 1;
-    if (FIELD_AT_OFFSET(p, u8, 0xC) == 3) {
+    if (definition->use_type == 3) {
         return ret;
     }
-    if (FIELD_AT_OFFSET(p, u16, 0x28) == 0) {
+    if (definition->action_id == 0) {
         return ret;
     }
-    if ((FIELD_AT_OFFSET(p, u8, 2) != 0) && (Item_CanOwnerEquip(arg0, arg1) == 0)) {
+    if ((definition->type != 0) && (Item_CanOwnerEquip(owner, item) == 0)) {
         return ret;
     }
-    if ((0x80 & FIELD_AT_OFFSET(BattleAction_Get((s32)FIELD_AT_OFFSET(p, u16, 0x28)), u8, 1)) == 0) {
+    if ((0x80 & BattleAction_Get(definition->action_id)->target_flags) == 0) {
         return 2;
     }
     return 0;

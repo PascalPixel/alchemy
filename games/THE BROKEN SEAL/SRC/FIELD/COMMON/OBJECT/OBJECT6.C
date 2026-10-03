@@ -1,8 +1,10 @@
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
-#include "FIELD_EVENT.H"
+#include "FIELDOBJ.H"
 
 void Object_ResetMotion(struct ObjectRuntime *);
+void Object_SetMode(struct ObjectRuntime *, s32);
+void *Object_GetById(u32);
 void Battle_WaitMode0(s32);
 extern const u8 ObjectMotion_StepAngleScript[];
 
@@ -51,7 +53,7 @@ void Object_ResetTargetAndSetMode1(u32 object_id)
         object->target_y = 0x80000000;
         object->target_z = 0x80000000;
         Object_ResetMotion(object);
-        Object_SetMode((struct FieldActor *)object, 1);
+        Object_SetMode(object, 1);
     }
 }
 

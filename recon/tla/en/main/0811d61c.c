@@ -1,12 +1,5 @@
+#include "BATTLE_SESSION.H"
 #include "TYPES.H"
-
-struct BattleActionRecord {
-    s16 unit_id;
-    u8 reserved_02[2];
-    u16 value;
-    s16 kind;
-    u8 reserved_08[8];
-};
 
 struct BattleTransitionWork {
     s32 angle;
@@ -59,7 +52,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 
         for (n = 0; n < 20; n++) {
             queued[n].unit_id = 0xff;
-            queued[n].value = 0x8000;
+            queued[n].priority = 0x8000;
         }
     }
 
@@ -74,7 +67,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
         count = BattlePres_BuildUnitEntries(actions);
         if (count < 0)
             goto finish;
-        if (count != 0 && actions[0].kind == 99 && BattleEscape_CheckSuccess() == 0)
+        if (count != 0 && actions[0].command == 99 && BattleEscape_CheckSuccess() == 0)
             *mode = 2;
     } else {
         count = 0;
@@ -101,9 +94,9 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
 
         i = count;
         do {
-            if (action->kind == 3 || action->kind == 7) {
+            if (action->command == 3 || action->command == 7) {
                 character = Owner_GetStateFar(action->unit_id);
-                character->presentation_side = action->kind == 3 ? 1 : 2;
+                character->presentation_side = action->command == 3 ? 1 : 2;
             }
             action++;
             i--;

@@ -195,8 +195,8 @@ s32 BattlePres_BuildUnitEntries(
                 struct BattleActionRecord *entry =
                     &entries[entry_count];
                 entry->unit_id = unit_ids[unit_index];
-                entry->value = unit->agility;
-                entry->kind = 8;
+                entry->priority = unit->agility;
+                entry->command = 8;
                 entry->parameter = 0;
                 entry->target = 0x180;
                 entry_count++;

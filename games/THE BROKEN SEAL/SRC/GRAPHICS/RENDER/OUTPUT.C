@@ -103,7 +103,6 @@ struct RenderOutput *RenderOutput_CreateWithTransform(
     return result;
 }
 
-s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
 struct RenderOutput *RenderOutput_CreateFromTable(
     s32 table_entry,
     struct RenderInput *input,
@@ -116,7 +115,7 @@ struct RenderOutput *RenderOutput_CreateFromTable(
     slot = Resource_FindFreeEntry();
     output = NULL;
     if (slot != 0x60) {
-        RenderResource_LoadTableEntry(table_entry, 0, (void *)slot);
+        RenderResource_LoadTableEntry(table_entry, 0, slot);
         output = RenderOutput_Create(slot, 0x40000000, input, x, y);
     }
     return output;

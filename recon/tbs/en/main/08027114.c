@@ -152,7 +152,7 @@ s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);
-s32 Battle_ClassifyEntryKind(const u8 *entry);
+s32 Battle_ClassifyEntryKind(const struct BattleAction *entry);
 s32 UiText_ShowLocalizedMessageAndWait(void);
 s32 UiText_DrawLocalizedResource80d(void);
 struct UiWindowWork *UiText_ShowMessageAndWaitComplete(s32 id, s32 x, s32 y);
@@ -544,7 +544,7 @@ psynergy_menu:
                 }
                 ent->sub = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind(ability);
+                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
                 res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
@@ -630,7 +630,7 @@ item_menu:
                                              win, 24, 0);
                 ent->sub = (u16)cost;
                 Audio_PlayCue(112);
-                res = Battle_ClassifyEntryKind(ability);
+                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
                 res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
                 state->entryActive[1] = 0;
                 Resource_ResetEntry(handle);
@@ -680,7 +680,7 @@ summon_menu:
                     ent->sub = (u16)cost;
                     WaitFrames(1);
                     Audio_PlayCue(112);
-                    res = Battle_ClassifyEntryKind(ability);
+                    res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
                     res = BattleTarget_RunSelection(actorId, ability[0], cost, res);
                     if (state->hintCount != 0) {
                         hint = UiText_ShowMessageAndWaitComplete(3150, 15, 8);
@@ -776,7 +776,7 @@ djinn_menu:
                 } else {
                     Audio_PlayCue(114);
                 }
-                res = Battle_ClassifyEntryKind(ability);
+                res = Battle_ClassifyEntryKind((const struct BattleAction *)ability);
                 res = BattleTarget_RunSelection(actorId, ability[0], ability[8], res);
                 ent->sub = ability[8];
                 state->entryActive[1] = 0;

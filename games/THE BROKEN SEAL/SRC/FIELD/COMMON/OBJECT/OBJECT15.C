@@ -3,11 +3,12 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "INVENTORY_MENU.H"
+#include "ANIMSPR.H"
 
 extern s32 FourObjectMotion_ResourceIds[];
 void ResourceObject_ReleaseFar(void *);
 void *ResourceObject_CreateFar(s32);
-void AnimationObjects_SelectAnimationFar(void *, s32);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 void FourObjectMotion_UpdateBottomRow(void);
 
 void FourObjectMotion_InitializeBottomRow(void)
@@ -16,7 +17,7 @@ void FourObjectMotion_InitializeBottomRow(void)
     s32 index;
 
     for (index = 0; index < 4; index++) {
-        void *object = state->objects[index];
+        struct AnimationObject *object = state->objects[index];
 
         if (object != NULL) {
             ResourceObject_ReleaseFar(object);
@@ -24,7 +25,7 @@ void FourObjectMotion_InitializeBottomRow(void)
         }
     }
     for (index = 0; index < 4; index++) {
-        void *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[index]);
+        struct AnimationObject *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[index]);
 
         if (object != NULL)
             AnimationObjects_SelectAnimationFar(object, 2);
@@ -62,7 +63,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
         state->objects[index] = NULL;
     }
     {
-        void *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[kind]);
+        struct AnimationObject *object = ResourceObject_CreateFar(FourObjectMotion_ResourceIds[kind]);
 
         if (object != NULL)
             AnimationObjects_SelectAnimationFar(object, value);
@@ -77,7 +78,7 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
     s32 index = 0;
 
     do {
-        void *object = state->objects[index];
+        struct AnimationObject *object = state->objects[index];
 
         if (object != NULL) {
             ResourceObject_ReleaseFar(object);

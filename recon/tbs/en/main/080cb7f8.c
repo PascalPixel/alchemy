@@ -1,3 +1,33 @@
+/* 2026-10-03 T3: score 89 -> 9. All instruction/register differences are
+ * resolved; nine stack operands still exchange the ground-position pointer
+ * at sp+8 and camera-position pointer at sp+12. No inserted/deleted
+ * instructions. Still an uncredited draft; no edition/build claim.
+ *
+ * A read-only empty work operand before transfer setup changes the work
+ * allocation from r11 to r9 and the picture quotient from r9 to r11.
+ * This is one measured register-priority device, after the ordinary
+ * structural search recorded below failed. It adds no instructions.
+ *
+ * Bounded trials, rejected unless noted:
+ * - Work read-only/read-write boundaries at seven existing statements:
+ *   best 9 (read-only before transfer setup retained); other scores
+ *   69, 119, 229, 2026. No final result uses a read-write boundary.
+ * - Explicit camera/ground pointer locals at six setup positions:
+ *   best 38; camera-only 72..708; ground-only 38..968; camera plus
+ *   reversed position declarations 73..729. No pointer local retained.
+ * - Read-only uses of either position address at six boundaries:
+ *   ground 1325..2196; camera 129..458. No extra address use retained.
+ * - Read/write or read-only memory operands at four boundaries:
+ *   ground 1325..2237; camera 364..1324. No memory operand retained.
+ * - All 28 scalar/declaration pairs: 9..25. Then all 5040 orders of
+ *   work, canvas, sheet, camera, palette, frame, i (draw stays in its
+ *   original slot): 480 at 9; 480 at 15; 120 at 16; 960 at 18;
+ *   360 at 19; 960 at 21; 600 at 22; 1080 at 25. Original order retained.
+ * - A used two-pointer record, both field/assignment orders and three
+ *   declaration positions: 185 or 190. No record retained.
+ * The general permuter rejects inline assembly, so no search was run
+ * through it on the retained source. Stop this allocation axis here.
+ */
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 /* Draft, same instructions, two swaps left: the ROM keeps the work block in
@@ -93,6 +123,8 @@ void Unnamed_080cb7f8(struct BattleEffectArgument *effect)
         gFlecks[i].z = (Random16() & 0x1ff) + i * 2;
         gFlecks[i].variant = -i;
     }
+    /* FAKEMATCH: read-only work use exchanges r11/r9, fixing 16 register differences. */
+    __asm__ ("" : : "r" (work));
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

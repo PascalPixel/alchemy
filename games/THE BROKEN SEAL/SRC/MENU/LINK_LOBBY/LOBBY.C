@@ -129,7 +129,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot)
 /* Copies a slot's value into its column of the words the transfer sends. */
 void LinkLobby_WriteSlotValue(s32 slot)
 {
-    s32 *dst = (s32 *)gSerialTransfer.reserved;
+    s32 *dst = (s32 *)gSerialTransfer.payload;
     s32 *src = &LinkLobby_SlotValues[slot];
     dst[LinkLobby_SlotColumns[slot]] = *src;
 }

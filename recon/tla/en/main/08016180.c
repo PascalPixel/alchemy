@@ -1,8 +1,11 @@
 /* 2026-10-03: complete candidate is 346/348 bytes including its pools;
  * fresh score 280 (3 reordered, 1 deleted), with all names now resolved.
- * Stack allocation, the fill-source address and a zero load are reordered;
- * the final two-byte alignment is absent. Including DMA.H fixed an
- * accidental external Dma_Set call (1960); before name closure this body
+ * Stack allocation, the fill-source address and a zero load are reordered.
+ * The raw extent also includes two post-return zero bytes. After adopting
+ * the enable wrapper, the next owner is normal 4-aligned SIO_TIME.o; a fresh
+ * scratch link supplies those two bytes and preserves its start at +348.
+ * Three instruction reorderings still prevent adoption. Including DMA.H
+ * fixed an accidental external Dma_Set call (1960); before name closure this body
  * scored 440 with seven unresolved names. Trials: initialize ime_reg before
  * reading the saved IME through it, 625 at 346 bytes; assign the fill pointer
  * while writing zero and reuse it for DMA, 280 at 346 bytes. The fill trial

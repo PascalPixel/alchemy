@@ -1,6 +1,7 @@
-/*
- * Draft: SerialRuntime_WaitForStatusMask does not yet match; 2 halfwords differ from ☀️'s C, first at +0x2e (data).
- * Links as recon/tla/raw/080167d8.s.
+/* Immutable refresh against the current English ELF: complete candidate and
+ * reference are 52 bytes including both pool words. Score 0: exact.
+ * Reference: recon/tla/raw/080167d8.s. The local volatile gLinkStatus
+ * declaration remains pending its cross-owner shared declaration closure.
  */
 #include "SERIAL_RUNTIME.H"
 

@@ -69,7 +69,7 @@ struct SerialTransferState {
     u8 flags;
     u8 peer_flags;
     /* The block transfer's 20-byte body follows its four control bytes. */
-    u8 reserved[20];
+    u8 payload[20];
 };
 
 LAYOUT_SIZE_GUARD(SerialTransferState_Size, struct SerialTransferState, 24);
@@ -77,7 +77,7 @@ LAYOUT_OFFSET_GUARD(SerialTransferState_Active, struct SerialTransferState, acti
 LAYOUT_OFFSET_GUARD(SerialTransferState_Status, struct SerialTransferState, status, 1);
 LAYOUT_OFFSET_GUARD(SerialTransferState_Flags, struct SerialTransferState, flags, 2);
 LAYOUT_OFFSET_GUARD(SerialTransferState_PeerFlags, struct SerialTransferState, peer_flags, 3);
-LAYOUT_OFFSET_GUARD(SerialTransferState_Body, struct SerialTransferState, reserved, 4);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Payload, struct SerialTransferState, payload, 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
@@ -109,6 +109,7 @@ void SerialRuntime_WaitForTransfers(void);
 s32 SerialRuntime_GetActiveTransfers(void);
 void BattleLink_ResetTransferState(void);
 void SerialRuntime_HandleTransferInterrupt(void);
+void SerialRuntime_RemoveIrqHandlers(void);
 u32 SerialRuntime_WaitForStatusMask(s32 mask);
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;

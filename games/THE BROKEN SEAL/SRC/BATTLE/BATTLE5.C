@@ -13,9 +13,6 @@
 #include "BATTLE_WORK.H"
 #include "CHARACTER.H"
 
-typedef void (*InterruptHandler)(void);
-void Runtime_SetIrqHandler(u32, s32, InterruptHandler);
-
 extern struct BattleFormationRecord BattleFormation_Records[];
 
 struct EnemyDefinition *Owner_GetRecordFar(s32 id);
@@ -56,68 +53,6 @@ LAYOUT_SIZE_GUARD(BattleBaseStats_Size, struct BattleBaseStats, 36);
 LAYOUT_OFFSET_GUARD(BattleBaseStats_Elements, struct BattleBaseStats, elements, 0x14);
 
 void Owner_RecalculateStatsFar(s32 owner);
-
-void Runtime_RemoveIrqHandlerSlot2(void)
-{
-    Runtime_SetIrqHandler(2, 0, 0);
-}
-
-s32 Party_ComputeEligibleMemberAverage(s32 record_id)
-{
-    /* FAKEMATCH: the existing unused volatile scratch reserves the 28-byte
-       stack frame in this 200-byte function. */
-    volatile u8 scratch[28];
-    struct BattleFormationRecord *record;
-    s32 member_index;
-    s32 level_sum;
-    s32 eligible_count;
-
-    eligible_count = 0;
-    level_sum = 0;
-    record = &BattleFormation_Records[record_id];
-    (void)scratch;
-
-    member_index = 0;
-    if (record->minimum_counts[0] == 0) {
-        u8 *present;
-
-        present = record->minimum_counts;
-        do {
-            member_index++;
-            if ((u32)member_index > 4)
-                break;
-            present++;
-        } while (*present == 0);
-    }
-    if (member_index == 5)
-        return -1;
-
-    member_index = 0;
-    do {
-        if (record->maximum_counts[member_index] != 0) {
-            struct EnemyDefinition *object;
-            s32 member;
-
-            member = record->member_ids[member_index];
-            object = Owner_GetRecordFar(member + 8);
-            if (object != 0) {
-                if (object->level <= 3 ||
-                    GameFlag_IsSet(372) != 0 ||
-                    GameFlag_IsSet(member + 1544) != 0) {
-                    level_sum += object->level;
-                    eligible_count++;
-                } else {
-                    return -2;
-                }
-            }
-        }
-        member_index++;
-    } while ((u32)member_index <= 4);
-
-    if (eligible_count == 0)
-        return -3;
-    return level_sum / eligible_count;
-}
 
 /* battle/formation/select_level_matched_candidate.c */
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)

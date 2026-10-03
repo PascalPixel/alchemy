@@ -1,6 +1,34 @@
+/* 2026-10-04 paired zero-stage narrowing: paired zero after clobber1245; paired zero plus memory order1170; paired zero input only1245. */
+/* 2026-10-04 paired store-order narrowing: paired volatile x store 120; paired consumed x memory and angle 190; paired volatile x memory and angle 190; paired x stage before shift 120. */
+/* 2026-10-04 paired remaining-order trials: paired cursor binding 120; paired first-store split barriers 225; paired first-store memory input 180. */
+/* 2026-10-04 second-call binding trials: second pointer binding without barrier 350; second both argument bindings 350; second split pointer binding 350; second point before y store 120. */
+/* 2026-10-04 first-call angle alone without barrier295; both bindings
+ * without barrier235 retained. Native500B extent and all behavior unchanged. */
+/* 2026-10-04 first-call simplification trials: first arguments ordinary locals 9365; first angle binding with then-existing barrier235; first point binding only 8690; first arguments input constraint only 4430; first arguments bindings without barrier 235. */
+/* 2026-10-04 paired first-store trials: paired x-angle coupled lifetimes 615; paired x-angle clobber r3 615; paired x-angle then memory store 615; paired x-angle then value dependency 615. */
+/* 2026-10-04 paired live-register trials: simpler first call clobber 355; shared high-register y 285; shared y staged in r3 455; first store low-register exclusion 485; first store named x staging 235. */
+/* 2026-10-04 paired register/scheduling trials: paired second y register 1525; paired second pointer scheduling 410; paired first argument scheduling 235; paired first store memory ordering 355. */
+/* 2026-10-04 ordinary shared-point trials: paired explicit xyz origin 3397; paired first second pointers 6860; paired array point call 295; paired cursor point call 3775; paired split pointer increment 875; paired consumed zero temporary 545. */
+/* 2026-10-04 shared point contract: AnimationPosition in ANIMSPR.H is the
+ * actual 16-byte monitor record. The rendering consumer uses word four as
+ * ground height; this routine writes only x/y/z. Score remains 295. */
+/* 2026-10-03 paired coordinate/truncation trials: paired x store between angle shifts 295; paired shared angle/store ordering constraint 365. */
+/* 2026-10-03 measured paired-store scheduling: paired x-store r3 ordering barrier 355; paired x-store r3 clobber 355. */
+/* 2026-10-03 ordinary paired-origin trials: paired in-place fixed-point origin 2130; paired named fixed-point coordinates 305; paired explicit origin and radius 2485. */
+/* 2026-10-03 ordinary paired-point trials: paired coordinates after truncation 295; paired cursor initialized before angle bias 295; consumed second-point pointer 410; paired for-loop lifetimes 355; typed two-point cursor 295. */
+/* 2026-10-03 ordinary coordinate-store trials: x store before truncation 295; three coordinate stores before truncation 295; x store before existing angle barrier 295. */
 /* 2026-10-03 ordinary fixed-slot loop trials: bounded ten-point loop 3745; derived signed countdown 475; derived unsigned countdown 695. */
 /* 2026-10-03 ordinary idle-tail trials: natural continuation 695; natural remaining count 800; plain countdown 875. */
-/* Current near miss (2026-10-03): score 475.
+/* Current near miss (2026-10-04): 500 bytes, score 120 in all six TBS plans.
+ * Ordinary x stores before angle truncation remove the three regular-ring
+ * scheduling differences. Only paired-point register/order differences remain
+ * (2 reordered only); no instruction is inserted or deleted.
+ * Further ordinary pointer/origin forms and narrow scheduling trials above
+ * did not improve the paired case. Two consumed first-call argument
+ * bindings remove one further reorder. Staging the consumed second point
+ * before its y/z stores fixes its scratch register and call ordering. No new
+ * assembly barriers remain. Only pair-cursor setup and first x-store order
+ * still differ; the original ground word is never touched.
  * Removed the empty countdown constraint: it restored instruction presence
  * rather than only register choice or order. The ordinary trailing loop
  * remains uncredited; the former score475 was not adoption-ready.
@@ -44,13 +72,6 @@
 #include "IO_REG.H"
 #include "ANIMSPR.H"
 
-struct ProbePoint {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 unknown_0c;
-};
-
 extern struct AnimationObject *gSpriteObjects;
 extern volatile u32 gKeysHeld;
 extern s32 gFrameTick;
@@ -59,7 +80,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *point);
 
 /* Lays out icon-monitor points around a position. The first sprite layer
    selects the ring shape; holding B turns it with the frame counter. */
-void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
+void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
 {
     /* FAKEMATCH: prior ordinary and permuted shapes kept the angle in r6; constrain the measured angle register while preserving all truncations. */
     s32 angle;
@@ -72,7 +93,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
         angle = (s16)(gFrameTick << 8);
     {
         register s32 a asm("r5") = angle; /* FAKEMATCH: native register assignment; ordinary source scored 7745. */
-        register struct ProbePoint *p asm("r7") = out; /* FAKEMATCH: native register assignment; ordinary source scored 7745. */
+        register struct AnimationPosition *p asm("r7") = out; /* FAKEMATCH: native register assignment; ordinary source scored 7745. */
         asm("" : "+r"(a), "+r"(p)); /* FAKEMATCH: native register lifetime and shift scheduling. */
         angle = a;
         out = p;
@@ -89,8 +110,8 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             px = x << 16;
             zero = 0;
             asm("" : "+r"(angle) : "r"(zero)); /* FAKEMATCH: native register lifetime and shift scheduling. */
-            angle = (u32)angle >> 16;
             out->x = px;
+            angle = (u32)angle >> 16;
             out->y = zero;
             out->z = z << 16;
             }
@@ -113,8 +134,8 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             px = x << 16;
             zero = 0;
             asm("" : "+r"(angle) : "r"(zero)); /* FAKEMATCH: native register lifetime and shift scheduling. */
-            angle = (u32)angle >> 16;
             out->x = px;
+            angle = (u32)angle >> 16;
             out->y = zero;
             out->z = z << 16;
             }
@@ -135,8 +156,8 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             px = x << 16;
             zero = 0;
             asm("" : "+r"(angle) : "r"(zero)); /* FAKEMATCH: native register lifetime and shift scheduling. */
-            angle = (u32)angle >> 16;
             out[0].x = px;
+            angle = (u32)angle >> 16;
             out->y = zero;
             out[0].z = z << 16;
             }
@@ -146,7 +167,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
         }
         break;
     case 20: {
-        struct ProbePoint *pair;
+        struct AnimationPosition *pair;
         tmp2 = (u16)angle;
         angle = (s16)(tmp2 + 0x4000);
         i = 0;
@@ -158,12 +179,19 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             angle <<= 16;
             asm("" : "+r"(angle)); /* FAKEMATCH: native register lifetime and shift scheduling. */
             angle = (u32)angle >> 16;
-            Vector_AddPolarOffset(0x280000, (u16)angle, &out[0].x);
+            {
+                register s32 a asm("r1") = (u16)angle; /* FAKEMATCH: consumed first-call angle, ordinary295 ->235 with its point argument. */
+                register s32 *point asm("r2") = &out[0].x; /* FAKEMATCH: consumed first-call point, ordinary295 ->235 with its angle. */
+                Vector_AddPolarOffset(0x280000, a, point);
+            }
             pair[1].x = x << 16;
             asm volatile("" : : : "r2", "memory"); /* FAKEMATCH: orders the paired x store before the remaining coordinates. */
-            pair[1].y = 0;
-            pair[1].z = z << 16;
-            Vector_AddPolarOffset(0x280000, (u16)angle, &out[1].x);
+            {
+                register s32 *point asm("r2") = &out[1].x; /* FAKEMATCH: stage the consumed second point before y/z stores; register/order-only235 ->120. */
+                pair[1].y = 0;
+                pair[1].z = z << 16;
+                Vector_AddPolarOffset(0x280000, (u16)angle, point);
+            }
             pair += 2;
             out += 2;
             angle = (s16)(angle + (u32)0x8000);

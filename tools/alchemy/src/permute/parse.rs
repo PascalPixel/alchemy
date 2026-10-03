@@ -1180,6 +1180,28 @@ mod tests {
     }
 
     #[test]
+    fn declarators_preserve_qualifiers_and_register_bindings() {
+        let body = parse_body(
+            "register unsigned long cell __asm__(\"r5\") = 0;\n\
+             register int *cursor asm(\"r9\");\n\
+             int * const pointer = 0;\n\
+             int (* const handler)(int) = 0;\n\
+             int values[3];",
+            &[],
+        )
+        .unwrap();
+        let function = Function {
+            name: "F".into(),
+            header: "void F(void)".into(),
+            params: Vec::new(),
+            body,
+        };
+        let printed = function.print();
+        let again = locate(&printed, None, &BTreeSet::new()).unwrap();
+        assert_eq!(again.function.body, function.body, "{printed}");
+    }
+
+    #[test]
     fn switch_labels_and_loops_round_trip() {
         let body = parse_body(
             "switch (x & 3) { case 0: y = 1; break; default: y = 2; }\ndo { x--; } while (x);\ndone:\nreturn;",

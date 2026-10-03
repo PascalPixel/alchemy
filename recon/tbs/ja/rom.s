@@ -1193,6 +1193,12 @@ BattleFx_RunSevenMode:
 	.thumb_func
 Unnamed_080d1714:
 	.incbin "baserom.gba", 0x000c8714, 0x00000d38
+	.section .rom.000d3454, "ax"
+	.global BattleFx_RunOrbitingSparks
+	.type BattleFx_RunOrbitingSparks, %function
+	.thumb_func
+BattleFx_RunOrbitingSparks:
+	.incbin "baserom.gba", 0x000d3454, 0x00000268
 	.section .rom.000d5a6e, "ax"
 	.incbin "baserom.gba", 0x000d5a6e, 0x00000002
 	.section .rom.000d5a70, "ax"
@@ -3301,3 +3307,19 @@ ObjectSystem_UpdateCameraFixed:
 ResourceObject_Create:
 	.incbin "baserom.gba", 0x0000bc70, 0x00000164
 	.size ResourceObject_Create, .-ResourceObject_Create
+	.section .rom.000af45c, "ax"
+	.balign 4
+	.global BattleMotion_ProjectScaledPosition
+	.type BattleMotion_ProjectScaledPosition, %function
+	.thumb_func
+BattleMotion_ProjectScaledPosition:
+	.incbin "baserom.gba", 0x000af45c, 0x00000064
+	.size BattleMotion_ProjectScaledPosition, .-BattleMotion_ProjectScaledPosition
+	.section .rom.000b8a34, "ax"
+	.balign 4
+	.global Party_ComputeEligibleMemberAverage
+	.type Party_ComputeEligibleMemberAverage, %function
+	.thumb_func
+Party_ComputeEligibleMemberAverage:
+	.incbin "baserom.gba", 0x000b8a34, 0x000000c8
+	.size Party_ComputeEligibleMemberAverage, .-Party_ComputeEligibleMemberAverage

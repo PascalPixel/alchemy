@@ -997,14 +997,17 @@ pub(crate) fn measure(
         } else {
             map.path.with_extension("elf")
         };
-        let Ok(nm) = std::process::Command::new("arm-none-eabi-nm")
-            .arg(elf)
+        let nm = std::process::Command::new("arm-none-eabi-nm")
+            .arg(&elf)
             .output()
-        else {
-            continue;
-        };
+            .map_err(|error| format!("cannot inspect symbols in {}: {error}", elf.display()))?;
         if !nm.status.success() {
-            continue;
+            return Err(format!(
+                "cannot inspect symbols in {}: arm-none-eabi-nm {}: {}",
+                elf.display(),
+                nm.status,
+                String::from_utf8_lossy(&nm.stderr).trim()
+            ));
         }
         let listed = String::from_utf8_lossy(&nm.stdout);
         if map.image == MAIN_IMAGE {
@@ -1169,9 +1172,13 @@ Linker script and memory map
 ";
 
     fn fixture_object(path: &Path, function: &str, size: i64) {
+        fixture_assembly(path, &format!(".syntax unified\n.thumb\n.text\n.global {function}\n.type {function},%function\n.thumb_func\n{function}:\n bx lr\n .space {}\n", size - 2));
+    }
+
+    fn fixture_assembly(path: &Path, assembly: &str) {
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         let source = path.with_extension("s");
-        std::fs::write(&source, format!(".syntax unified\n.thumb\n.text\n.global {function}\n.type {function},%function\n.thumb_func\n{function}:\n bx lr\n .space {}\n", size - 2)).unwrap();
+        std::fs::write(&source, assembly).unwrap();
         let assembler = crate::compiler::routing::binutils_prefix().join("bin/arm-none-eabi-as");
         let output = std::process::Command::new(assembler)
             .args(["-mcpu=arm7tdmi", "-meabi=gnu"])
@@ -2216,6 +2223,8 @@ void After(void) { }
         std::fs::write(output.join("tla-en.map"), &main).unwrap();
         std::fs::write(output.join("overlays/resource_001.map"), &overlay).unwrap();
         std::fs::write(output.join("overlays/resource_001.lz"), b"stream").unwrap();
+        fixture_object(&output.join("tla-en.elf"), "Entry", 2);
+        fixture_object(&output.join("overlays/resource_001.elf"), "Entry", 2);
         // A map an older build left beside an overlay no stream reads.
         std::fs::write(output.join("overlays/resource_002.map"), &overlay).unwrap();
         std::fs::write(output.join("tla-en.gba"), b"another image").unwrap();
@@ -2256,6 +2265,7 @@ void After(void) { }
             maintained_source(root, stem)
         });
         std::fs::write(output.join(format!("{id}.map")), main).unwrap();
+        fixture_object(&output.join(format!("{id}.elf")), "Entry", 2);
         for (overlay, map) in overlays {
             let path = output.join(format!("overlays/resource_{overlay}"));
             let map = own(map);
@@ -2264,6 +2274,7 @@ void After(void) { }
             });
             std::fs::write(path.with_extension("map"), map).unwrap();
             std::fs::write(path.with_extension("lz"), b"stream").unwrap();
+            fixture_object(&path.with_extension("elf"), "Entry", 2);
         }
         let image = format!("linked image of {id}");
         std::fs::write(output.join(format!("{id}.gba")), &image).unwrap();
@@ -2272,6 +2283,94 @@ void After(void) { }
             .map(|byte| format!("{byte:02x}"))
             .collect::<String>();
         format!("{digest}  out/{id}/{id}.gba\n")
+    }
+
+    fn symbol_inspection_fixture() -> tempfile::TempDir {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        std::fs::create_dir_all(root.join("games/G/SRC")).unwrap();
+        for source in ["A", "B"] {
+            std::fs::write(root.join(format!("games/G/SRC/{source}.S")), ".text\n").unwrap();
+        }
+        std::fs::create_dir_all(root.join("recon/tla")).unwrap();
+        std::fs::write(
+            root.join("recon/tla/overlays.s"),
+            ".section .overlays,\"a\"\n.incbin \"overlays/resource_001.lz\"\n",
+        )
+        .unwrap();
+        let main = "Linker script and memory map\n \
+            .text 0x08000000 0x10 OUT/obj/games/G/SRC/A.o\n \
+            .overlays 0x08000010 0x20 OUT/obj/recon/tla/overlays.o\n";
+        let overlay = "Linker script and memory map\n \
+            .text 0x02000000 0x10 OUT/obj/games/G/SRC/B.o\n";
+        let digest = write_build(root, "tla-en", main, &[("001", overlay)]);
+        std::fs::write(root.join("rom.sha1"), digest).unwrap();
+        directory
+    }
+
+    fn assert_symbol_inspection_failure(elf: &str, contents: Option<&[u8]>) {
+        let directory = symbol_inspection_fixture();
+        let root = directory.path();
+        let path = root.join(elf);
+        if let Some(contents) = contents {
+            std::fs::write(&path, contents).unwrap();
+        } else {
+            std::fs::remove_file(&path).unwrap();
+        }
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        let error = measure(root, target).unwrap_err();
+        assert!(error.contains("cannot inspect symbols"), "{error}");
+        assert!(error.contains(elf), "{error}");
+    }
+
+    #[test]
+    fn symbol_inspection_rejects_missing_main_elf() {
+        assert_symbol_inspection_failure("out/tla-en/tla-en.elf", None);
+    }
+
+    #[test]
+    fn symbol_inspection_rejects_corrupt_main_elf() {
+        assert_symbol_inspection_failure("out/tla-en/tla-en.elf", Some(b"not an ELF"));
+    }
+
+    #[test]
+    fn symbol_inspection_rejects_missing_overlay_elf() {
+        assert_symbol_inspection_failure("out/tla-en/overlays/resource_001.elf", None);
+    }
+
+    #[test]
+    fn symbol_inspection_rejects_corrupt_overlay_elf() {
+        assert_symbol_inspection_failure(
+            "out/tla-en/overlays/resource_001.elf",
+            Some(b"not an ELF"),
+        );
+    }
+
+    #[test]
+    fn symbol_inspection_deducts_padding_in_main_and_overlay() {
+        let directory = symbol_inspection_fixture();
+        let root = directory.path();
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        assert_eq!(measure(root, target).unwrap().unwrap().done.game_asm, 0x20);
+        for (elf, address, size) in [
+            ("out/tla-en/tla-en.elf", 0x0800_0000, 8),
+            ("out/tla-en/overlays/resource_001.elf", 0x0200_0000, 4),
+        ] {
+            fixture_assembly(
+                &root.join(elf),
+                &format!(
+                    ".global AlchemyUncredited_Padding\n\
+                     .global AlchemyUncreditedEnd_Padding\n\
+                     .set AlchemyUncredited_Padding, {address}\n\
+                     .set AlchemyUncreditedEnd_Padding, {}\n",
+                    address + size
+                ),
+            );
+        }
+        let measured = measure(root, target).unwrap().unwrap();
+        assert_eq!(measured.done.game_asm, 0x14);
+        assert_eq!(measured.uncredited, 12);
+        assert_eq!(measured.stray, 0);
     }
 
     #[test]

@@ -33,23 +33,10 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 id)
     }
 }
 
-s32 BattleMotion_ProjectScaledPosition(s32 id, s32 *projected)
-{
-    struct MotionObject *object = GetBattleObjectSlot(id)->object;
-    struct AnimationObject *record = GetMotionRecord(object, 0);
-    s32 position[3]; /* FAKEMATCH: unused; it only reserves the 12-byte frame the reference allocates. */
-    s32 scaled;
-    s32 factor;
-
-    Camera_ApplyTransformByFlag();
-    scaled = Render_ProjectPoint(&object->x, projected);
-    factor = Iwram_MulQ16(scaled, record->scale);
-    scaled = Iwram_MulQ16(factor, (s32)Battle_GetObjectTableValue(id) >> 16);
-    projected[1] -= scaled;
-    return 0;
-}
-
-s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
+/* The trailing projection helpers stay in this module after the uncredited
+   scaled-position extent, placed between these two sections by the linker. */
+s32 __attribute__((section(".text.motion_projection")))
+BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
 {
     struct MotionObject *object = GetBattleObjectSlot(id)->object;
     struct AnimationObject *record = GetMotionRecord(object, 0);
@@ -67,7 +54,8 @@ s32 BattleMotion_ProjectConditionalPosition(s32 id, s32 *projected)
     return 0;
 }
 
-u32 Battle_GetObjectTableValue(s32 id)
+u32 __attribute__((section(".text.motion_projection")))
+Battle_GetObjectTableValue(s32 id)
 {
     u32 value;
     u8 no;

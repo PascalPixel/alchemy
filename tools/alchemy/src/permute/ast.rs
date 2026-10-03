@@ -530,9 +530,10 @@ pub fn print_decl(decl: &Decl) -> String {
         .items
         .iter()
         .map(|item| {
-            let mut text = join_tokens(&item.before);
-            text.push_str(&item.name);
-            text.push_str(&join_tokens(&item.after));
+            let mut tokens = item.before.clone();
+            tokens.push(item.name.clone());
+            tokens.extend(item.after.iter().cloned());
+            let mut text = join_tokens(&tokens);
             if let Some(init) = &item.init {
                 text.push_str(" = ");
                 text.push_str(&print_init(init));

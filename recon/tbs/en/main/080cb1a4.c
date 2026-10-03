@@ -45,6 +45,14 @@
  * both transfer fields, then cache the blitter. All scheduling now agrees;
  * only the seven stack/frame operands differ from the complete raw extent.
  *
+ * T15-T17 consumed draw/cell-size descriptor: mutable 885; const whole
+ * object 911; const stride member 911. The stride controls actual source
+ * cell offsets, but the aggregate adds metadata loads/stores absent natively.
+ * T18-T23 consumed render binding (draw/canvas/work), field orders
+ * 012:7673; 021:7673; 102:7688; 120:7688; 201:7623; 210:7623.
+ * Those groupings add real loads/spills and do not recover the frame.
+ * Retain the simpler scalar body; no new steering device was introduced.
+ *
  * Audit conclusion: no producer/consumer evidence establishes a genuine
  * shared two-slot object. The maintained unused word changes frame storage,
  * exceeding S2 instruction-order/register-choice steering. This scalar

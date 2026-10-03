@@ -1,3 +1,6 @@
+/* 2026-10-04 shared point contract: the monitor owns ten AnimationPosition
+ * records, consumed at 16-byte intervals by TILE4.C. The one-word native
+ * clear remains unchanged; typing the allocation preserves score 6238. */
 #include "RUNTIME_MEM.H"
 /* main:08012518 - interactive icon/metadata monitor loop.
  *
@@ -107,7 +110,6 @@ void ObjectSystem_Initialize(s32);
 s32 ResourceSlot_Load(u32, u32 *, s32, u32);
 s32 ResourceMetadata_Register(struct AnimationObject *, s32);
 s32 Ui_FindNextNumberWithMetadata(s32, s32);
-void Map_BuildProbeRing(s32, s32, void *);
 void Ui_SetGridColumnByte5(s32, s32);
 void Ui_SetGridColumnByte6(s32, s32);
 void Ui_FillGridColumnFromMetadata(s32, s32);
@@ -119,7 +121,7 @@ void Ui_RunIconMonitor(void)
     struct IconColumn ent[4];
     volatile u32 *keys;
     volatile u32 *trig;
-    void *work;
+    struct AnimationPosition *work;
     struct AnimationMetadata *metadata;
     struct AnimationObject *h;
     struct AnimationObject *tbl;
@@ -142,7 +144,7 @@ void Ui_RunIconMonitor(void)
     mode = 1;
     flag = 1;
     slot = 0;
-    work = Runtime_AllocateBlock(9, 160);
+    work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
     gDecodeFillByte = 3;
 
     zero = 0;
@@ -166,7 +168,7 @@ void Ui_RunIconMonitor(void)
 restart:
     Runtime_InitializeHeap();
     Scheduler_ResetTaskTable();
-    work = Runtime_AllocateBlock(9, 160);
+    work = Runtime_AllocateBlock(9, 10 * sizeof(*work));
     Resource_InitializeTable();
     ObjectSystem_Initialize(2);
     ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, ent[0].no, 0);

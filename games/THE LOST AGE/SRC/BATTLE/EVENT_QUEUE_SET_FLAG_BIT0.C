@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_RUNTIME.H"
+#include "BATTLE_SESSION.H"
 #include "OWNER_STATE.H"
 
 s32 Object_Destroy(s32);

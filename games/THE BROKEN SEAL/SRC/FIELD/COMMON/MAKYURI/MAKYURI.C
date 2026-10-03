@@ -64,7 +64,10 @@ void Makyuri_RunActorMove(void)
     u8 zero;
     union FieldCoordinate pos[3];
 
-    state = *(struct PushState **)gWorkSlot[35];
+    /* FAKEMATCH: direct slot-35 access adds a base load and a pool word
+       (832 to 836 bytes); retain the existing relative pointer-cell load. */
+    state = **(struct PushState ***)((u8 *)&gEventWork
+        + (35 - HEAP_SLOT_EVENT) * sizeof(gWorkSlot[0]));
     work = (struct FieldStepWork *)gEventWork;
     actor = (struct FieldActor *)work->actors[gGameState.selected_actor];
     flags = &actor->motion_flags;
@@ -166,8 +169,16 @@ void Makyuri_TickSpawnTimer(void)
     struct SceneTimer *timer;
     struct FieldActor *point;
 
-    timer = *(struct SceneTimer **)gWorkSlot[35];
-    point = (struct FieldActor *)((struct FieldStepWork *)gWorkSlot[27])->actors[gGameState.selected_actor];
+    /* FAKEMATCH: direct bank indices change the 72-byte timer to 76 bytes;
+       retain the existing slot-35 address and derive the slot-27 cell from it. */
+    {
+        struct SceneTimer ***scene = (struct SceneTimer ***)((u8 *)&gEventWork
+            + (35 - HEAP_SLOT_EVENT) * sizeof(gWorkSlot[0]));
+
+        timer = **scene;
+        point = (struct FieldActor *)(*(struct FieldStepWork **)((u8 *)scene
+            - (35 - HEAP_SLOT_EVENT) * sizeof(gWorkSlot[0])))->actors[gGameState.selected_actor];
+    }
     if (timer->count != 0) {
         timer->count--;
     } else {

@@ -1943,7 +1943,14 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
             *(u16 *)(rec8 + 102) = p8;
             *(s32 *)((s32)rec8 + 108) = (s32)SceneEffect_StepEllipseOrbit;
             { u16 v = 0; p5[38] = v; }
-            { u8 m = ((struct FieldActor *)rec)->sprite->priority; *(s32 *)((s32)rec8 + 104) = rec; ((struct FieldSprite *)p5)->priority = m; } /* FAKEMATCH: the mode is read into a temporary so the owner store schedules first */
+            /* FAKEMATCH: the typed priority member moves the anchor store
+               before the merge in this 130-byte body; keep its packed byte lane. */
+            {
+                u8 priority = ((u8 *)((struct FieldActor *)rec)->sprite)[9] & 0xc;
+
+                *(s32 *)((s32)rec8 + 104) = rec;
+                p5[9] = (p5[9] & 0xf3) | priority;
+            }
         }
     }
 }

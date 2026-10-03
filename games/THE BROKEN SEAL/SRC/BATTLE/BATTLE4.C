@@ -85,7 +85,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
             child = item->entries[0];
             items[index] = item;
             child->param = 6;
-            child->frame = BATTLE_UNIT_LIST_END;
+            child->frame = 0xff;
             index++;
         }
         WaitFrames(4);

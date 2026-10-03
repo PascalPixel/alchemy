@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "IO_REG.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
@@ -114,7 +115,6 @@ done:
 }
 
 #include "TYPES.H"
-#include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_CALC.H"
 #include "SYSTEM.H"

@@ -113,11 +113,12 @@ update:
     }
 
     if (effect_id >= 0 && changed != 0) {
+        /* FAKEMATCH: storing the handle before the failure test preserves the
+           existing store order; testing first adds an unconditional branch. */
         entry_handle = ResourceMetadata_RegisterFar(context, effect_id);
+        record->animation_entry = (struct SpriteEntry *)entry_handle;
         if (entry_handle == -1)
             record->animation_entry = 0;
-        else
-            record->animation_entry = (struct SpriteEntry *)entry_handle;
         effect = (struct AnimationEntry *)record->animation_entry;
         if (effect != 0) {
             effect->priority = 3;

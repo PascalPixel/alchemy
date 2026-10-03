@@ -9,7 +9,7 @@ extern u8 gLinkStatus[];
 /* The five-stage link handshake that opens a linked battle turn. Each side
    posts a two-letter tag in its own record ("ex" and "TU", then "rn", then
    "EXEC", "tu" and "RN") and waits until the peer's record echoes it. A
-   frame without a complete transfer counts as a missed_frames; 25 misses in a row,
+   frame without a complete transfer counts as a miss; 25 misses in a row,
    or a peer that has already moved on to a different tag, fail with -1. */
 #define LINK_REC (u32)gLinkPeerSignatures
 #define LINK_STAT (*(u16 *)gLinkStatus)

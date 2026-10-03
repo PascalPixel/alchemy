@@ -104,8 +104,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
-    struct BattleCamera *cam = gCameraWork;
-    struct BattlePresentationTransition *trans = gTransitionWork;
+    /* FAKEMATCH: separate cell loads change the literal pool and register
+       order. The existing walk reaches slot 44 from camera slot 12. */
+    void **slot = (void **)&gCameraWork;
+    struct BattleCamera *cam = slot[0];
+    struct BattlePresentationTransition *trans = slot[44 - 12];
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {

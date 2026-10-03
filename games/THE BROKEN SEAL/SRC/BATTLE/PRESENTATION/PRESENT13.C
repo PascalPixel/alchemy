@@ -47,6 +47,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     struct BattlePresentationTransition *view;
     struct BattleSession *battle;
     struct BattleCamera *camera;
+    void **cache;
     struct BattleUnit *unit;
     u16 actor[2];
     u16 ids[14];
@@ -63,12 +64,15 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
         return -1;
     if (unit->class_index == 0)
         BattleCommand_SelectAutomatic(request, 1);
-    view = gTransitionWork;
+    /* FAKEMATCH: separate cell loads change the pool and instruction order.
+       The existing walk starts at transition slot 44 in the real heap bank. */
+    cache = (void **)&gTransitionWork;
+    view = cache[0];
     view->frames = 60;
-    battle = gBattleWork;
+    battle = cache[9 - 44];
     view->flag = 0;
     battle->brightness = 0x10000;
-    camera = gCameraWork;
+    camera = cache[12 - 44];
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
     Camera_StoreSceneParameters(0x01fe0000, DivQ16(0x01fe0000, 0xc000), 0x7fff0000);
@@ -172,8 +176,12 @@ s32 BattlePres_BuildTargetList(
 
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 {
-    struct BattlePresentationTransition *presentation = gTransitionWork;
-    struct BattleSession *scene = gBattleWork;
+    /* FAKEMATCH: separate cell loads change register and literal ordering.
+       Keep the existing slot-44 to slot-9 pointer-cell walk. */
+    u8 *presentation_addr = (u8 *)&gTransitionWork;
+    void **cache = (void **)presentation_addr;
+    struct BattlePresentationTransition *presentation = cache[0];
+    struct BattleSession *scene = cache[9 - 44];
     s32 completed = 0;
     s32 party_mode;
 

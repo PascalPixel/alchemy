@@ -978,7 +978,8 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             Engine_CameraMoveTo(0x4c80000, -1, 0xb80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
-            Korosseo_FadeInCompetitor(0, 0x4f8, 168);
+            /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+            Call3(Korosseo_FadeInCompetitor, 0, 0x4f8, 168);
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
             ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x508, 184);
             ((s32 (*)())SceneActor_PlaceWithScale14000)(0, 0x508, 216);
@@ -1137,7 +1138,8 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Call4(Engine_CameraMoveTo, 35127296, -1, 12582912, 1);
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(scene, 0);
-        Korosseo_FadeInCompetitor(0, 632, 264);
+        /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+        Call3(Korosseo_FadeInCompetitor, 0, 632, 264);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
         Call3(Engine_ActorWalkToAndWait, 0, 616, 264);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -1245,7 +1247,8 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         Engine_CameraMoveTo(0x1380000, -1, 0xb00000, 1);
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(speaker, 0);
-        Korosseo_FadeInCompetitor(0, x, z);
+        /* FAKEMATCH: direct void call moves r0 before r2; preserve native argument order. */
+        Call3(Korosseo_FadeInCompetitor, 0, x, z);
         Call3((void (*)())Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
         ((s32 (*)(s32, s32, s32))SceneActor_PlaceWithScale14000)(0, x, 216);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0x8000, 10);

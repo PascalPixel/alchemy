@@ -215,6 +215,9 @@ void FieldScene_RunPaletteRampSequence(void)
     }
     Engine_AudioPlayCue(202);
     Engine_TaskWait(10);
+    /* FAKEMATCH: retain the existing alpha-port reload before ramp-down;
+       carrying the earlier port value omits its native ldr r5. */
+    alpha_port = &REG_BLDALPHA;
     for (i1 = 0; i1 < 16; i1++) {
         /* FAKEMATCH: retain ramp-down word r3; ordinary C changes its operand registers. */
         register u32 value asm("r3") = 0x100f - i1;
@@ -623,8 +626,9 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
                move the sprite load. Both cells belong to this effect. */
             motion = &child->object.effect.motion_flags;
             *motion = 0;
-            *(u16 *)(motion + ((u32)&((struct FieldEffect *)0)->spin
-                - (u32)&((struct FieldEffect *)0)->motion_flags)) = 0;
+            motion += (u32)&((struct FieldEffect *)0)->spin
+                - (u32)&((struct FieldEffect *)0)->motion_flags;
+            *(s16 *)motion = 0;
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = (struct FieldSprite *)part;

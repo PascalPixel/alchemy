@@ -10,6 +10,8 @@
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 
+extern u8 gBattleFxWork[];
+
 
 /* The earth wall's three cells: where each starts in the decoded sheet, and
    its width and height in pixels. */
@@ -33,14 +35,37 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
 void BattleFx_FetchRectangleBlitters(s32 alternate,
     BattleEffectDrawRectangle *output)
 {
-    union HeapState *heap = (union HeapState *)gWorkSlot;
-    s32 flags = alternate == 0 ? GOUSEI_CLIP_X | GOUSEI_CLIP_Y :
-        GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X;
+    /* FAKEMATCH: merging the two genuine loading paths shortened this
+       helper from112 to76 bytes and changed its registers. */
+    if (alternate == 0) {
+        u8 *state;
+        u32 value;
 
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
-    output[0] = (BattleEffectDrawRectangle)heap->slots[HEAP_SLOT_BLITTER];
-    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags, GOUSEI_KASAN);
-    output[1] = (BattleEffectDrawRectangle)heap->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+        BattleEffect_LoadWork(alternate = HEAP_SLOT_BLITTER, 7, 7,
+            GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_HIKAKU);
+        state = gWorkSlot;
+        value = *(u32 *)(state + HEAP_SLOT_BLITTER * sizeof(void *));
+        alternate = HEAP_SLOT_BLITTER_ALTERNATE;
+        output[0] = (BattleEffectDrawRectangle)value;
+        BattleEffect_LoadWork(alternate, 7, 7,
+            GOUSEI_CLIP_X | GOUSEI_CLIP_Y, GOUSEI_KASAN);
+        output[1] = (BattleEffectDrawRectangle)*(u32 *)(state +=
+            HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+    } else {
+        u8 *state;
+        u32 value;
+
+        BattleEffect_LoadWork(alternate = HEAP_SLOT_BLITTER, 7, 7,
+            GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_HIKAKU);
+        state = gWorkSlot;
+        value = *(u32 *)(state + HEAP_SLOT_BLITTER * sizeof(void *));
+        alternate = HEAP_SLOT_BLITTER_ALTERNATE;
+        output[0] = (BattleEffectDrawRectangle)value;
+        BattleEffect_LoadWork(alternate, 7, 7,
+            GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X, GOUSEI_KASAN);
+        output[1] = (BattleEffectDrawRectangle)*(u32 *)(state +=
+            HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
+    }
 }
 
 void BattleFx_RunFortyEightFrameMode1(struct BattleEffectArgument *arg0)
@@ -86,7 +111,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
     s32 frame;
     s32 cell;
 
-    cursor = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    cursor = (void **)gBattleFxWork;
     work = *cursor++;
     canvas = *cursor;
     work->effect = effect;

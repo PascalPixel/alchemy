@@ -4,7 +4,7 @@
 #include "RENDER_INPUT.H"
 
 
-void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
+s32 UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 /* Blanks the tiles inside a window's frame over a rectangle given in pixels
    from the window's corner, rounded out to whole tiles, releases the glyph
@@ -35,6 +35,9 @@ void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     top = y + 1;
     width = right - x;
     height = bottom - y;
+    /* FAKEMATCH: retain the existing ignored scalar call declaration; the
+       actual helper is void. Its void declaration loads r0 before r1/r2
+       instead of after them, at the same 150-byte extent in all editions. */
     UiWindow_ClearTileAttributesInRect(left, top, width, height);
     tiles = work->tilemap + top * 32 + left;
     for (row = 0; row < height; row++) {

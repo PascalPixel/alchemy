@@ -17,6 +17,8 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 
+extern u8 gBattleFxWork[];
+
 extern u16 ParticleStreams_CellOffsets[];
 extern u16 BattleFx_GlintCellOffsets[];
 extern u8 BattleFx_GlintCellWidths[];
@@ -131,6 +133,7 @@ void BattleFx_RunTwelveModeMode11(struct BattleEffectArgument *effect)
    holds in a variable and has no register for. */
 void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition ground;
     struct EffectPosition target_position;
     struct EffectPosition alternate;
@@ -151,12 +154,13 @@ void BattleFx_RunTwelveMode(struct BattleEffectArgument *effect, s32 mode)
     s32 wisp_sheet = 0x3200;
     DrawRectangle *lower = &gBlitters[47];
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
     sheet = heap_cache[2];
-    camera = gCameraWork;
+    camera = *(struct BattleCamera **)((u8 *)heap_cache -
+        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
     work->effect = effect;
     if (mode == 8)
         BattleFx_BeginCanvasLayer(0);

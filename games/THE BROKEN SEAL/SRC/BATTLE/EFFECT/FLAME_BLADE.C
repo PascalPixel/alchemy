@@ -11,6 +11,8 @@
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 
+extern void *gBattleFxWork[];
+
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -54,7 +56,7 @@ void BattleFx_RunFlameBlade(struct BattleEffectArgument *effect)
 
     /* The first two heap slots are read through a walking pointer; the
        base itself serves the sheet. */
-    heap = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap = (void **)gBattleFxWork;
     p = heap;
     work = *p++;
     canvas = *p;

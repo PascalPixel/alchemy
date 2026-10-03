@@ -6,6 +6,8 @@
 #include "IWRAM_CALL.H"
 #include "RESOURCE.H"
 
+extern u8 *gBattleFxWork[2];
+
 extern struct GameState gGameState;
 extern u8 Data_03001cb4[];
 
@@ -88,9 +90,9 @@ void BattlePres_ProcessPendingTileTransfer(void)
     struct BattleEffectWork *work;
     u8 *buffer;
 
-    work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    work = *(void **)gBattleFxWork;
     if (work->transfer_pending == 1) {
-        buffer = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
+        buffer = gBattleFxWork[1];
         switch (work->transfer_mode) {
         case 1:
             Dma_Set(buffer, (void *)0x06003500, 0x84002000, (volatile u32 *)0x040000d4);
@@ -197,7 +199,7 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
     s32 dx = x1 - x0;
     s32 dy = y1 - y0;
     s32 frac = 0x80;
-    u8 *canvas = (u8 *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
+    u8 *canvas = (u8 *)gBattleFxWork[1];
     s32 step;
     s32 i;
     s32 x;

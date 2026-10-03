@@ -15,6 +15,8 @@
 #include "MOTION_OBJECT.H"
 #include "RAM_BUFFER.H"
 
+extern u8 gBattleFxWork[];
+
 
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
@@ -56,7 +58,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     struct EffectPosition view;
     DrawRectangle callbacks[2];
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

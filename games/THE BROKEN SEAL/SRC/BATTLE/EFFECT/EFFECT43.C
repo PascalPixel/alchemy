@@ -49,7 +49,6 @@ void AnimationObjects_SelectAnimationFar(void *, s32);
 void *Func_08009030(s32 kind);
 u32 Random16(void);
 
-void ResourceObject_ReleaseFar(void *);
 
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
 
@@ -283,7 +282,7 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
 {
     volatile u32 zero;
     if (slot->object)
-        ResourceObject_ReleaseFar(slot->object);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
     zero = 0;
     Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), (volatile u32 *)0x040000d4);
 }

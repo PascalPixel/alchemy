@@ -24,7 +24,7 @@ s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
 /* Take the first free object of the 64, give it a resource entry and its
    tiles, and fill its OAM words for the metadata's width and height. */
-struct AnimationObject *ResourceObject_Create(s32 id)
+struct ResourceObject *ResourceObject_Create(s32 id)
 {
     struct AnimationMetadata *metadata;
     struct AnimationObject *entry;
@@ -78,5 +78,5 @@ struct AnimationObject *ResourceObject_Create(s32 id)
     *word++ = 0x6000;
     *word = (gVramBlockCache[93].offset >> 5) | 0x800;
     ResourceMetadata_Register(entry, id);
-    return found;
+    return (struct ResourceObject *)found;
 }

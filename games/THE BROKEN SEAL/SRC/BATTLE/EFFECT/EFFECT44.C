@@ -13,6 +13,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
+extern u8 gBattleFxWork[];
+
 u32 Random16(void);
 
 
@@ -118,6 +120,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
    passes. */
 void BattleEffect_WipeCanvas(s32 mode, s32 value)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct BattleEffectWork *work;
     u8 *canvas;
     u8 delay[128];
@@ -125,8 +128,9 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
     s32 y;
     s32 pos;
 
-    canvas = (u8 *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
-    work = (struct BattleEffectWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    canvas = *(u8 **)(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS * sizeof(void *));
+    work = *(struct BattleEffectWork **)(gWorkSlot +
+        HEAP_SLOT_BATTLE_EFFECT * sizeof(void *));
     for (x = 0; x != 128; x++)
         delay[x] = Random16() & 0x3f;
 
@@ -179,7 +183,7 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
    count the frames since the last flush. */
 void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
-    void **heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    void **heap_cache = (void **)gBattleFxWork;
     struct BattleEffectWork *work = heap_cache[0];
     void *source;
     s32 *counter;
@@ -229,7 +233,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
     void *source;
     s32 transfer_mode;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     work = heap_cache[0];
     source = Ram_MapCellBuffer;
     if (work->transfer_pending != 1)

@@ -13,6 +13,8 @@
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 
+extern void *gBattleFxWork[];
+
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -96,7 +98,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    cursor = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
+    cursor = &gBattleFxWork[1];
     canvas = cursor[0];
     work = cursor[-1];
     sheet = cursor[1];

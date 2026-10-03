@@ -34,7 +34,6 @@ struct SceneCameraTransfer {
     s32 third;
 };
 
-
 extern struct SceneCameraRuntime gCameraWork;
 
 s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);

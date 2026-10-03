@@ -4,8 +4,8 @@
 
 /*
  * Walks every motion record of an object: the first child of each record
- * takes the value, the others are cleared, and every child's frame are
- * filled. The result is unused by every caller.
+ * takes the value, the others are cleared, and every child's frame
+ * is reset to the selected-frame sentinel. The result is unused by every caller.
  */
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value)
 {

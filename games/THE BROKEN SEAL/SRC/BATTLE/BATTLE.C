@@ -43,9 +43,9 @@ s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObjectSlot *output)
 
 /*
  * The reference preserves r0 in its epilogue (pop {r1}; bx r1), matching GCC's
- * scalar-return convention. No path establishes a meaningful battle_result, and the
+ * scalar-return convention. No path establishes a meaningful result, and the
  * sole caller discards it; C99 6.9.1p12 only makes this fallthrough undefined
- * when the caller uses the battle_value.
+ * when the caller uses the value.
  */
 s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
 {

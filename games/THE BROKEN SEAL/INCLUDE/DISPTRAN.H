@@ -19,7 +19,7 @@ struct DisplayTransitionFrame {
 
 /* The transition's fields in the map work, including the IRQ's latched lines. */
 struct DisplayTransitionWindow {
-    u8 unknown_000[0x14];
+    u32 unknown_000[5];
     u16 dispcnt;
     u8 unknown_016[0xea];
     u16 first_line;

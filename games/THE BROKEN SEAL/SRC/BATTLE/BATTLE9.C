@@ -5,13 +5,9 @@
 #include "TBS_EDITION.H"
 #include "WINDOW.H"
 #include "GAME_STATE.H"
+#include "EVENT_RUNTIME.H"
 
-struct Runtime_080931ec {
-    u8 unknown_000[0x1d8];
-    s16 effect_count;
-};
-
-extern struct Runtime_080931ec *gEventWork;
+extern struct EventRuntime *gEventWork;
 extern volatile u32 gKeyState;
 s32 ObjectTable_ReadActiveValue(s32);
 s32 BattleFx_GetResourceId(u32);
@@ -23,7 +19,6 @@ void UiWork_FinalizePendingCoreFar(void);
 
 s32 BattleFx_GetResourceId(u32 id);
 
-
 s32 ObjectTable_ReadActiveValue(s32 key);
 extern u8 Ui_RenderResultValues[];
 
@@ -32,19 +27,19 @@ void Battle_ShowPairedUnitWorkAndWait(
     s32 first_extra, s32 second, s32 second_x, s32 second_y,
     s32 second_arg, s32 second_extra)
 {
-    struct Runtime_080931ec *rt = gEventWork;
+    struct EventRuntime *rt = gEventWork;
     s32 id0 = ObjectTable_ReadActiveValue(first);
     s32 id1 = ObjectTable_ReadActiveValue(second);
     s32 h0;
     s32 h1;
 
     h0 = UiText_OpenMessageWindowFar(
-        rt->effect_count++, first_x, first_y,
+        rt->message++, first_x, first_y,
         BattleFx_GetResourceId(id0) << 16);
     UiWindow_CreateWithSideObjectFar(id0, 0, first_arg, first_extra);
 
     h1 = UiText_OpenMessageWindowFar(
-        rt->effect_count++, second_x, second_y,
+        rt->message++, second_x, second_y,
         BattleFx_GetResourceId(id1) << 16);
     UiWindow_CreateWithSideObjectFar(id1, 0, second_arg, second_extra);
 
@@ -76,12 +71,12 @@ void Ui_SetRenderResultFromObject(s32 arg0)
     s32 ret;
 
     if (arg0 == (s32)0x80000000) {
-        state->result[0] = (value = 0);
-        state->result[1] = value;
+        *(s16 *)&state->result[0] = (value = 0);
+        *(s16 *)&state->result[1] = value;
     } else {
         ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
         value = Ui_RenderResultValues[gGameState.unknown_207[5]];
-        state->result[0] = ret;
-        state->result[1] = value;
+        *(s16 *)&state->result[0] = ret;
+        *(s16 *)&state->result[1] = value;
     }
 }

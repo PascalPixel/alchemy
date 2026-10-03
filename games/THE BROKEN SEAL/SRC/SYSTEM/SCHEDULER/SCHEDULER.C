@@ -105,9 +105,12 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     return index;
 }
 
+/* The direct named-bank index measured 32 bytes versus the native 36.
+   Keep the existing integer-address transport for this word-linked list. */
 void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
 {
     s32 *previous_head;
+    s32 slot_offset;
     s32 clamped_slot;
 
     clamped_slot = slot;
@@ -117,8 +120,9 @@ void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
     if (clamped_slot < 0) {
         clamped_slot = 0;
     }
-    previous_head = Data_03001400[clamped_slot];
-    Data_03001400[clamped_slot] = slot_entry;
+    slot_offset = clamped_slot * 4;
+    previous_head = *(s32 **)((u8 *)slot_offset + (u32)Data_03001400);
+    *(s32 **)((u8 *)slot_offset + (u32)Data_03001400) = slot_entry;
     *slot_entry = (s32)previous_head;
 }
 
@@ -329,17 +333,33 @@ void Resource_InitializeTable(void)
     }
 }
 
-/* An unused cache entry has no assigned VRAM byte offset. */
+/* An unused cache entry has no assigned VRAM byte offset. The structured
+   scan measured 36 bytes versus the native 52; retain its leading-entry test. */
 s32 Resource_FindFreeEntry(void)
 {
-    struct VramBlockCacheEntry *entry = gVramBlockCache;
+    s32 free_slot;
     s32 slot;
+    struct VramBlockCacheEntry *table;
+    s32 first;
+    struct VramBlockCacheEntry *entry;
 
-    for (slot = 0; slot < VRAM_CACHE_ENTRY_COUNT; slot++, entry++) {
+    entry = gVramBlockCache;
+    free_slot = VRAM_CACHE_ENTRY_COUNT;
+    first = 0;
+    slot = first;
+    table = gVramBlockCache;
+    if (table->offset == VRAM_CACHE_OFFSET_FREE)
+        return first;
+next_entry:
+    slot++;
+    entry++;
+    if (slot < VRAM_CACHE_ENTRY_COUNT) {
         if (entry->offset == VRAM_CACHE_OFFSET_FREE)
-            return slot;
+            free_slot = slot;
+        else
+            goto next_entry;
     }
-    return VRAM_CACHE_ENTRY_COUNT;
+    return free_slot;
 }
 
 s32 Resource_LoadIntoFreeSlot(s32 arg0)

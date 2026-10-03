@@ -13,7 +13,7 @@
 #include "CHARACTER.H"
 
 typedef void (*InterruptHandler)(void);
-void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
+void Runtime_SetIrqHandler(u32, s32, InterruptHandler);
 
 extern struct BattleFormationRecord BattleFormation_Records[];
 
@@ -52,6 +52,13 @@ struct OwnerStats {
     struct OwnerElementStats elements[4];
 };
 
+/* Level gains copy the owner's 36-byte base-stat prefix. */
+struct OwnerState {
+    u8 unknown_00[15];
+    u8 level;
+    struct OwnerStats stats;
+};
+
 void Owner_RecalculateStatsFar(s32 owner);
 void Runtime_BumpFree(void *block);
 
@@ -67,6 +74,8 @@ void Runtime_RemoveIrqHandlerSlot2(void)
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 {
+    /* FAKEMATCH: the existing unused volatile scratch reserves the 28-byte
+       stack frame in this 200-byte function. */
     volatile u8 scratch[28];
     struct BattleFormationRecord *record;
     s32 member_index;
@@ -207,16 +216,18 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
    Declared s32 without a return statement, as the ROM keeps r0 live. */
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
+    /* Direct BattleUnit fields changed the native store order. This
+       existing prefix view keeps the base-stat copy's alias boundary. */
     struct OwnerStats *base;
-    struct BattleUnit *state;
+    struct OwnerState *state;
     struct OwnerStats *stats;
     s32 value;
     s32 floor;
     s32 i;
 
     base = (struct OwnerStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
-    state = Owner_GetStateFar(owner);
-    stats = (struct OwnerStats *)&state->base_hp;
+    state = (struct OwnerState *)Owner_GetStateFar(owner);
+    stats = &state->stats;
     Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
 
     value = stats->max_hp;
@@ -228,53 +239,53 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
         value = 9999;
     stats->max_hp = value;
 
-    value = state->base_pp;
+    value = state->stats.max_pp;
     value += levels * 15 / 10;
     floor = base->max_pp * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    state->base_pp = value;
+    state->stats.max_pp = value;
 
     floor = levels * 123 / 10;
-    value = state->base_attack;
+    value = state->stats.attack;
     value += floor;
     floor = base->attack * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->base_attack = value;
+    state->stats.attack = value;
 
     floor = levels * 33 / 10;
-    value = state->base_defense;
+    value = state->stats.defense;
     value += floor;
     floor = base->defense * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->base_defense = value;
+    state->stats.defense = value;
 
     floor = levels * 51 / 10;
-    value = state->base_agility;
+    value = state->stats.agility;
     value += floor;
     floor = base->agility * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->base_agility = value;
+    state->stats.agility = value;
 
     for (i = 0; i < 4; i++) {
-        value = state->base_elements[i].power + levels * 15;
+        value = state->stats.elements[i].power + levels * 15;
         floor = base->elements[i].power * 7 / 10;
         if (value < floor)
             value = floor;
         if (value > 200)
             value = 200;
-        state->base_elements[i].power = value;
+        state->stats.elements[i].power = value;
     }
 
     state->level += levels;

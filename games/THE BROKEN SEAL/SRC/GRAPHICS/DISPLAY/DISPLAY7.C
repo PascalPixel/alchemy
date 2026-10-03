@@ -29,11 +29,6 @@ void DisplayTransition_UpdateScanline(void);
 
 extern volatile u32 gFrameCount;
 
-/* The display work the transitions reach through the map work pointer: the
-   display control value the frame's register write is made from, and the
-   two lines the scanline split is drawn between. */
-
-
 /* QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C) written out: the display
    control write for the next frame, its value read only once a queue entry
    is free. */
@@ -76,7 +71,8 @@ void DisplayTransition_Start(s32 mode, s32 frames)
        QUEUE_DISPLAY_CONTROL keep the saved IME move before disabling IME
        and the final queue/IME loads in native order. The ordinary block
        and member store keep 708 bytes but change 24 instruction bytes in EN;
-       both spellings store the count as a halfword. */
+       both spellings store the count as a halfword. The word prefix of
+       the map-work view preserves its existing load/address ordering. */
     kind = (mode >> 8) & 0xff;
     work = Ram_MapWork;
     display = *(struct DisplayTransitionWindow **)work;

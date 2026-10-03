@@ -106,7 +106,7 @@ s32 BattleUnit_TickCounter139(s32 value)
 {
     struct BattleUnit *state = Owner_GetStateFar();
     if ((u8)state->confusion != 0) {
-        state->confusion--;
+        (*(u8 *)&state->confusion)--;
         if (state->confusion == 0)
             return 1;
         if (BattleUnit_RollCounterEarlyEnd(value, (u8)state->confusion, 60) != 0) {

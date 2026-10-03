@@ -21,6 +21,8 @@ s32 ResourceTable_CountFreeBlocks(void)
     return free_count;
 }
 
+/* The explicit byte access preserves the existing packed resource flags.
+   Member access moves the flag read before the VRAM-block store. */
 void *Object_ReplaceResourceEntry(void *src, void *alt)
 {
     void *ret;
@@ -30,11 +32,11 @@ void *Object_ReplaceResourceEntry(void *src, void *alt)
     ret = NULL;
     if (obj != NULL) {
         if (alt == NULL) {
-            obj->unknown_1d |= 1;
+            *((u8 *)obj + 0x1d) = (u8)(*((u8 *)obj + 0x1d) | 1);
         } else {
             Resource_ResetEntry(obj->vram_block);
             obj->vram_block = (u8)((struct FieldSprite *)alt)->vram_block;
-            obj->unknown_1d |= 1;
+            *((u8 *)obj + 0x1d) = (u8)(*((u8 *)obj + 0x1d) | 1);
             obj = alt;
         }
         ret = obj;

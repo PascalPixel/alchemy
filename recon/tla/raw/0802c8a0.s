@@ -108,7 +108,7 @@ Func_0802c8a0:
 .L_0802c978:
 	.4byte 0x84000800
 .L_0802c97c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0802c980:
 	.4byte gMapCellBuffer
 .L_0802c984:

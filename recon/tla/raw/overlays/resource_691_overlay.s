@@ -1694,7 +1694,7 @@ Func_02000c40:
 	mov r10, r6
 	pop {r5, r6, r7, pc}
 .L_02008d30:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008d34:
 	.4byte Data_02003d74
 .L_02008d38:
@@ -1763,7 +1763,7 @@ Func_02000d40:
 	add sp, #56
 	pop {r5, r6, r7, pc}
 .L_02008db8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008dbc:
 	.4byte Data_02003d50
 	.section .text.x02008dc0,"ax",%progbits
@@ -2052,7 +2052,7 @@ Func_02000fcc:
 	pop {pc}
 	.2byte 0x0000
 .L_02008ff0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008ff4,"ax",%progbits
 	.global Func_02000ff4
 	.thumb_func
@@ -2609,7 +2609,7 @@ Func_020011e4:
 .L_02009430:
 	.4byte Func_02000d40
 .L_02009434:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009438:
 	.4byte Func_020011b8
 .L_0200943c:
@@ -2997,7 +2997,7 @@ Func_020015e4:
 .L_0200971c:
 	.4byte 0xfef00000
 .L_02009720:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009724:
 	.4byte Func_020011b8
 .L_02009728:
@@ -3320,7 +3320,7 @@ Func_02001738:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_020099b0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020099b4:
 	.4byte Func_020011b8
 .L_020099b8:
@@ -3870,7 +3870,7 @@ Func_02001c00:
 .L_02009e00:
 	.4byte 0x00013333
 .L_02009e04:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02009e08,"ax",%progbits
 	.global Func_02001e08
 	.thumb_func
@@ -4246,7 +4246,7 @@ Func_020020d0:
 	pop {pc}
 	.2byte 0x0000
 .L_0200a0f4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200a0f8,"ax",%progbits
 	.global Func_020020f8
 	.thumb_func

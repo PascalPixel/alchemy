@@ -525,7 +525,7 @@ Func_08122d10:
 .L_0812312c:
 	.4byte 0x000001ff
 .L_08123130:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08123134:
 	.4byte Data_0812996c
 .L_08123138:
@@ -951,13 +951,13 @@ Func_08122d10:
 	b .L_08123494
 	.2byte 0x0000
 .L_08123478:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0812347c:
 	.4byte gInput
 .L_08123480:
 	.4byte gFrameTick
 .L_08123484:
-	.4byte Data_030011d8
+	.4byte gLagFramesShown
 .L_08123488:
 	.4byte 0xfffffc00
 .L_0812348c:

@@ -113,4 +113,4 @@ Func_080e0cec:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080e0dd0:
-	.4byte Data_0300122c
+	.4byte gFrameCount

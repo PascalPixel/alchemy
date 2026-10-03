@@ -50,7 +50,7 @@ Func_081a7518:
 .L_081a757c:
 	.4byte 0x00001440
 .L_081a7580:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081a7584:
 	.4byte 0x00000020
 .L_081a7588:

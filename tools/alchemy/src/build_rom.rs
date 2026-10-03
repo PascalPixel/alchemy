@@ -355,6 +355,8 @@ struct EntryHeader {
     region: &'static str,
     /// Digits, after `0x`, that no definition but an entry may spell.
     refused: &'static str,
+    /// Whether named offsets between linked places are admitted.
+    offsets: bool,
 }
 
 /// ROM code calls the resident IWRAM routines through fixed entry addresses,
@@ -366,6 +368,7 @@ const IWRAM_CALLS: EntryHeader = EntryHeader {
     prefix: "Iwram_",
     region: "0?3[0-9a-fA-F]{6}",
     refused: "0?3[0-9a-fA-F]{6}",
+    offsets: true,
 };
 
 /// Camelot's code also reached fixed RAM buffers through constant addresses,
@@ -376,13 +379,26 @@ const RAM_BUFFERS: EntryHeader = EntryHeader {
     prefix: "Ram_",
     region: "0?[23][0-9a-fA-F]{6}",
     refused: "0?[0-9a-fA-F]{7}",
+    offsets: true,
 };
 
-/// Every entry of the game's IWRAM_CALL.H and RAM_BUFFER.H must agree with
-/// where the linker put the names beside it.
+/// The hardware cartridge entry is the sole ROM address admitted as a
+/// constant. It must name the ARM entry actually linked at the cartridge base.
+const CARTRIDGE_BOOT: EntryHeader = EntryHeader {
+    path: "INCLUDE/CARTBOOT.H",
+    prefix: "Cart_",
+    region: "0?8000000",
+    refused: "0?[0-9a-fA-F]{7}",
+    offsets: false,
+};
+
+/// Every entry of the game's fixed-address headers must agree with where
+/// the linker put the names beside it.
 fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), String> {
+    use object::{Object, ObjectSymbol};
+
     let mut headers = Vec::new();
-    for kind in [&IWRAM_CALLS, &RAM_BUFFERS] {
+    for kind in [&IWRAM_CALLS, &RAM_BUFFERS, &CARTRIDGE_BOOT] {
         let header = Path::new(target.game_dir()).join(kind.path);
         let Ok(text) = fs::read_to_string(root.join(&header)) else {
             continue;
@@ -390,7 +406,21 @@ fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), 
         let entries = entry_list(kind, &text, &[target.edition_define])
             .map_err(|error| format!("{}: {error}", header.display()))?;
         if !entries.is_empty() {
-            headers.push((header, entries));
+            if kind.path == CARTRIDGE_BOOT.path {
+                // nm clears Thumb function bits; a cartridge restart must
+                // retain the raw ELF value to verify its ARM-state target.
+                let bytes = fs::read(elf).map_err(|error| format!("{}: {error}", elf.display()))?;
+                let file = object::File::parse(bytes.as_slice())
+                    .map_err(|error| format!("{}: {error}", elf.display()))?;
+                entries_agree(&entries, |name| {
+                    file.symbols()
+                        .find(|symbol| symbol.is_definition() && symbol.name() == Ok(name))
+                        .and_then(|symbol| u32::try_from(symbol.address()).ok())
+                })
+                .map_err(|error| format!("{}: {error}", header.display()))?;
+            } else {
+                headers.push((header, entries));
+            }
         }
     }
     if headers.is_empty() {
@@ -519,6 +549,9 @@ fn entry_list(
                         value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
                     }
                 } else if let Some(capture) = offset.captures(line) {
+                    if !kind.offsets {
+                        return Err(format!("offset entries are not admitted: {line}"));
+                    }
                     CheckedEntry {
                         name: capture[2].to_owned(),
                         from: Some(capture[3].to_owned()),
@@ -1791,6 +1824,103 @@ mod tests {
             "#define Ram_Table ((u8 *)0x0809e8a0) /* Table */\n",
         ] {
             assert!(entry_list(&RAM_BUFFERS, unnamed, &[]).is_err(), "{unnamed}");
+        }
+    }
+
+    #[test]
+    fn cartridge_boot_admits_only_the_named_hardware_entry() {
+        let header = "#define Cart_Start ((u32)0x08000000) /* Start */\n";
+        assert_eq!(
+            entry_list(&CARTRIDGE_BOOT, header, &[]).unwrap(),
+            [entry("Start", None, 0x0800_0000)]
+        );
+        for refused in [
+            "#define Cart_Start ((u32)0x08000000)\n",
+            "#define START ((u32)0x08000000) /* Start */\n",
+            "#define Cart_Start ((u32)0x08000001) /* Start */\n",
+            "#define Cart_Start ((u32)0x08000004) /* Start */\n",
+            "#define Cart_Routine ((u32)0x08013560) /* WaitFrames */\n",
+            "#define Cart_Buffer ((u8 *)0x03000000) /* Buffer */\n",
+            "#define Cart_StartOffset 0x0 /* Start - Start */\n",
+            "#define Cart_RoutineOffset 0x13560 /* WaitFrames - Start */\n",
+            "#define Cart_StartOffset 0x0\n",
+            "#define Cart_Start ((u32)0x08000000) /* Start */\n\
+             #define EXTRA_ROM_ADDRESS 0x08000004\n",
+            "#if defined(TLA_EDITION_JA)\n\
+             #define Cart_Routine ((u32)0x08013560) /* WaitFrames */\n\
+             #endif\n",
+        ] {
+            assert!(
+                entry_list(&CARTRIDGE_BOOT, refused, &["TLA_EDITION_EN"]).is_err(),
+                "{refused}"
+            );
+        }
+    }
+
+    #[test]
+    fn cartridge_boot_must_link_at_the_arm_entry() {
+        let entries = entry_list(
+            &CARTRIDGE_BOOT,
+            "#define Cart_Start ((u32)0x08000000) /* Start */\n",
+            &[],
+        )
+        .unwrap();
+        assert_eq!(entries_agree(&entries, |_| Some(0x0800_0000)), Ok(()));
+        for misplaced in [0x0800_0001, 0x0800_0004, 0x0801_3560] {
+            assert!(entries_agree(&entries, |_| Some(misplaced)).is_err());
+        }
+        assert_eq!(
+            entries_agree(&entries, |_| None),
+            Err("Start is not linked".into())
+        );
+    }
+
+    #[test]
+    fn cartridge_boot_checks_the_elf_thumb_bit() {
+        prefer_installed_binutils();
+        let dir = tempfile::tempdir().unwrap();
+        let root = dir.path();
+        let target = decomp_target(Some("tla-en")).unwrap();
+        let header = root.join(target.game_dir()).join(CARTRIDGE_BOOT.path);
+        fs::create_dir_all(header.parent().unwrap()).unwrap();
+        fs::write(header, "#define Cart_Start ((u32)0x08000000) /* Start */\n").unwrap();
+        let script = root.join("entry.ld");
+        fs::write(&script, "SECTIONS { .text 0x08000000 : { *(.text) } }").unwrap();
+        for (name, mode) in [("arm", ".arm"), ("thumb", ".thumb\n.thumb_func")] {
+            let source = root.join(format!("{name}.s"));
+            let object = source.with_extension("o");
+            let elf = source.with_extension("elf");
+            fs::write(
+                &source,
+                format!(".text\n.global Start\n{mode}\nStart:\n bx lr\n"),
+            )
+            .unwrap();
+            command(
+                &assembly_command(&source.to_string_lossy(), &object.to_string_lossy()),
+                root,
+            )
+            .unwrap();
+            command(
+                &[
+                    "arm-none-eabi-ld",
+                    "-T",
+                    &script.to_string_lossy(),
+                    "-o",
+                    &elf.to_string_lossy(),
+                    &object.to_string_lossy(),
+                ],
+                root,
+            )
+            .unwrap();
+            let checked = checked_entries(root, target, &elf);
+            if name == "arm" {
+                assert_eq!(checked, Ok(()));
+            } else {
+                assert!(
+                    checked.unwrap_err().contains("linked as 0x8000001"),
+                    "a Thumb function at the cartridge base cannot restart in ARM state"
+                );
+            }
         }
     }
 

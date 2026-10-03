@@ -49,7 +49,7 @@ Func_02000068:
 .L_02008086:
 	pop {pc}
 .L_02008088:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200808c,"ax",%progbits
 	.global Func_0200008c
 	.thumb_func
@@ -5397,7 +5397,7 @@ Func_0200326c:
 	lsls r2, r2, #8
 	b .L_0200b2ba
 .L_0200b2ac:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200b2b0:
 	bl Random16Far
 	adds r2, r0, #0
@@ -5639,7 +5639,7 @@ Func_02003370:
 .L_0200b4dc:
 	.4byte 0x00203210
 .L_0200b4e0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200b4e4:
 	.4byte Func_02003370
 .L_0200b4e8:
@@ -5727,7 +5727,7 @@ Func_02003370:
 .L_0200b598:
 	.4byte 0x00000000
 .L_0200b59c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200b5a0:
 	.4byte 0xfff80000
 .L_0200b5a4:

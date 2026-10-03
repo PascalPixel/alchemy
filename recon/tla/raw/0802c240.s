@@ -333,4 +333,4 @@ Func_0802c240:
 .L_0802c4d0:
 	.4byte Data_03001244
 .L_0802c4d4:
-	.4byte Data_0300122c
+	.4byte gFrameCount

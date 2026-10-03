@@ -1151,7 +1151,7 @@ Func_020008ac:
 .L_02008924:
 	.4byte IwramMulQ16
 .L_02008928:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200892c,"ax",%progbits
 	.global Func_0200092c
 	.thumb_func
@@ -1178,7 +1178,7 @@ Func_0200092c:
 	pop {pc}
 	.2byte 0x0000
 .L_02008958:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200895c,"ax",%progbits
 	.global Func_0200095c
 	.thumb_func
@@ -1605,7 +1605,7 @@ Func_0200095c:
 .L_02008cd4:
 	.4byte 0xffff0000
 .L_02008cd8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008cdc:
 	.4byte Data_02003d1c
 .L_02008ce0:
@@ -1852,7 +1852,7 @@ Func_0200095c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_02008ee0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008ee4:
 	.4byte Data_02004674
 .L_02008ee8:
@@ -1945,7 +1945,7 @@ Func_02000ef4:
 .L_02008f8c:
 	.4byte Data_020046a0
 .L_02008f90:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008f94:
 	.4byte IwramMulQ16
 .L_02008f98:
@@ -2336,7 +2336,7 @@ Func_02001010:
 .L_020092c0:
 	.4byte Func_0200092c
 .L_020092c4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020092c8:
 	.4byte Data_02003d1c
 .L_020092cc:
@@ -3034,7 +3034,7 @@ Func_02001560:
 .L_0200989c:
 	.4byte 0x000bffff
 .L_020098a0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020098a4:
 	.4byte gInput
 .L_020098a8:
@@ -4197,7 +4197,7 @@ Func_02001f7c:
 .L_0200a1e4:
 	.4byte Func_0200092c
 .L_0200a1e8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200a1ec:
 	.4byte Data_02003d1c
 .L_0200a1f0:
@@ -4555,7 +4555,7 @@ Func_020024b0:
 .L_0200a4f8:
 	.4byte Data_02004694
 .L_0200a4fc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200a500:
 	.4byte Data_020046a0
 .L_0200a504:
@@ -4616,7 +4616,7 @@ Func_020024b0:
 	subs r3, #12
 	pop {r5, r6, r7, pc}
 .L_0200a570:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200a574:
 	.4byte Data_020046a0
 .L_0200a578:
@@ -4674,7 +4674,7 @@ Func_0200257c:
 .L_0200a5dc:
 	.4byte Data_020046a0
 .L_0200a5e0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200a5e4:
 	.4byte IwramMulQ16
 .L_0200a5e8:
@@ -4780,7 +4780,7 @@ Func_0200257c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_0200a6a8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200a6ac:
 	.4byte Data_02004696 + 0x1
 .L_0200a6b0:
@@ -5105,7 +5105,7 @@ Func_020026b8:
 .L_0200a970:
 	.4byte Func_0200092c
 .L_0200a974:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200a978:
 	.4byte Data_02003d1c
 .L_0200a97c:

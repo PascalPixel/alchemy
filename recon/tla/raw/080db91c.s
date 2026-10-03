@@ -48,4 +48,4 @@ ObjectGroup_ApplyRandomChildValues:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080db970:
-	.4byte Data_0300122c
+	.4byte gFrameCount

@@ -622,7 +622,7 @@ Func_0804a134:
 .L_0804a618:
 	.4byte 0x000001ff
 .L_0804a61c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804a620:
 	.4byte Data_080597f8
 .L_0804a624:

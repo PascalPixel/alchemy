@@ -1230,7 +1230,7 @@ Func_080cb91c:
 .L_080cc304:
 	.4byte 0x00003fff
 .L_080cc308:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080cc30c:
 	.4byte gInput
 .L_080cc310:
@@ -1387,7 +1387,7 @@ Func_080cb91c:
 .L_080cc450:
 	.4byte 0x00000001
 .L_080cc454:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080cc458:
 	.4byte gInput
 .L_080cc45c:
@@ -1505,4 +1505,4 @@ Func_080cb91c:
 .L_080cc544:
 	.4byte Data_020004ac
 .L_080cc548:
-	.4byte Data_03001238
+	.4byte gDebugMode

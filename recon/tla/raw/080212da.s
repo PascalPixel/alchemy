@@ -246,7 +246,7 @@ Data_0802146c:
 	.reloc 1b, R_ARM_ABS32_NOI, WaitFramesFar
 	.4byte Data_03001244
 	.4byte Data_030011ec
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.4byte 0xe5973008
 	.4byte 0xe59d1004
 	.4byte 0xe0813003

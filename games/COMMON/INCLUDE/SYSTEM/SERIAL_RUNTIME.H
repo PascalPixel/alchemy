@@ -2,7 +2,8 @@
 #define GUARD_SERIAL_RUNTIME_H
 
 #include "TYPES.H"
-#include "GLOBAL_CELLS.H"
+#include "LAYOUT_GUARD.H"
+#include "SYSTEM.H"
 #include "IO_REG.H"
 
 #define SERIAL_RUNTIME_TU
@@ -49,6 +50,12 @@ struct SerialRuntime {
     u8 storage[0x100];
 };
 
+LAYOUT_SIZE_GUARD(SerialRuntime_Size, struct SerialRuntime, 0x160);
+LAYOUT_OFFSET_GUARD(SerialRuntime_Mode, struct SerialRuntime, mode, 0);
+LAYOUT_OFFSET_GUARD(SerialRuntime_TransferEnabled, struct SerialRuntime, transfer_enabled, 8);
+LAYOUT_OFFSET_GUARD(SerialRuntime_SendIndex, struct SerialRuntime, send_index, 0x14);
+LAYOUT_OFFSET_GUARD(SerialRuntime_Storage, struct SerialRuntime, storage, 0x60);
+
 struct SerialTransferState {
     u8 active;
     u8 status;
@@ -73,7 +80,7 @@ struct SerialTransferState {
 } while (0)
 
 void Func_0800307c(s32 index, s32 priority, InterruptHandler handler);
-void WaitFrames(s32 frames);
+s32 SerialRuntime_PollStatus(void);
 void Func_080060e8(void *payload);
 u8 Func_0800615c(void *payload);
 void Func_08006240(void);

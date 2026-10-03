@@ -813,11 +813,11 @@ Func_02000328:
 .L_020086b4:
 	.4byte 0x00000000
 .L_020086b8:
-	.4byte Data_03001180
+	.4byte gSleepDisabled
 .L_020086bc:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_020086c0:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_020086c4:
 	.4byte 0x0000000b
 .L_020086c8:
@@ -1253,7 +1253,7 @@ Func_02000328:
 .L_02008a48:
 	.4byte 0x00000005
 .L_02008a4c:
-	.4byte Data_03001180
+	.4byte gSleepDisabled
 .L_02008a50:
 	.4byte 0x00000138
 .L_02008a54:

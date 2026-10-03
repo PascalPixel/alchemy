@@ -191,7 +191,7 @@ Func_080e9940:
 .L_080e9ab0:
 	.4byte 0x050003c0
 .L_080e9ab4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080e9ab8:
 	.4byte 0xfffffc00
 .L_080e9abc:

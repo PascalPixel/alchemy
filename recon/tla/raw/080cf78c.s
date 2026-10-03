@@ -1050,7 +1050,7 @@ Func_080cf78c:
 .L_080cffdc:
 	.4byte 0xffff0000
 .L_080cffe0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080cffe4:
 	.4byte IwramFillWords + 0x74
 .L_080cffe8:

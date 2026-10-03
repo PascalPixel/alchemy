@@ -2366,7 +2366,7 @@ Func_02001288:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_020092fc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009300:
 	.4byte Data_02002a54
 	.section .text.x02009304,"ax",%progbits
@@ -2781,7 +2781,7 @@ Func_02001618:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02009664:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02009668:
 	.4byte Data_02002a60
 	.section .text.x0200966c,"ax",%progbits
@@ -2856,7 +2856,7 @@ Func_02001684:
 .L_020096ee:
 	pop {r5, pc}
 .L_020096f0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020096f4:
 	.4byte 0xffc00000
 .L_020096f8:
@@ -2916,7 +2916,7 @@ Func_020016fc:
 .L_02009766:
 	pop {r5, pc}
 .L_02009768:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200976c:
 	.4byte 0xffc00000
 .L_02009770:

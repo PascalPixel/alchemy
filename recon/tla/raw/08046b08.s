@@ -1200,7 +1200,7 @@ Func_08046b08:
 .L_0804743c:
 	.4byte 0xfffffc00
 .L_08047440:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08047444:
 	.4byte 0xfffffe00
 .L_08047448:

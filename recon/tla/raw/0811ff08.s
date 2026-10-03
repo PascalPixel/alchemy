@@ -99,7 +99,7 @@ BattlePresentation_WaitForAdvance:
 .L_0811ffc8:
 	.4byte 0xfffffe00
 .L_0811ffcc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0811ffd0:
 	.4byte Data_0812996c
 .L_0811ffd4:

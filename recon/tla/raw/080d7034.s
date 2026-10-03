@@ -168,7 +168,7 @@ Func_080d7034:
 .L_080d7174:
 	.4byte 0x00000001
 .L_080d7178:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080d717c:
 	ldr r2, [sp, #20]
 	cmp r2, #3

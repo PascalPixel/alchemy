@@ -450,7 +450,7 @@ Func_080279b0:
 .L_08027d20:
 	.4byte Data_0802ec5c
 .L_08027d24:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08027d28:
 	.4byte 0xffffeaab
 .L_08027d2c:

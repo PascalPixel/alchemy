@@ -1222,7 +1222,7 @@ Func_0200094c:
 .L_020089b0:
 	.4byte gPartyState
 .L_020089b4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020089b8:
 	.4byte Data_0200128c
 	.section .text.x020089bc,"ax",%progbits

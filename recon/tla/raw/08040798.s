@@ -244,7 +244,7 @@ Func_08040798:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08040980:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08040984:
 	.4byte Data_0805ea8f
 .L_08040988:

@@ -75,7 +75,7 @@
     "*/recon/tla/de/rom.o"(.rom.00013338)
     "*/recon/tla/de/rom.o"(.rom.00013398)
     "*/recon/tla/de/rom.o"(.rom.00013464)
-    "*/recon/tla/de/rom.o"(.rom.0001358c)
+    "*/games/THE LOST AGE/SRC/SYSTEM/SYSTEM.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000138d4)
     "*/recon/tla/de/rom.o"(.rom.00013b5c)
     "*/recon/tla/de/rom.o"(.rom.00013b94)

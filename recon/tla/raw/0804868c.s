@@ -705,7 +705,7 @@ Func_0804868c:
 .L_08048c08:
 	.4byte gInput
 .L_08048c0c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08048c10:
 	mov r1, r9
 	ldrh r2, [r1, #8]
@@ -1140,7 +1140,7 @@ Func_0804868c:
 .L_08048f54:
 	.4byte 0x00000cf8
 .L_08048f58:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08048f5c:
 	ldr r0, [sp, #52]
 	movs r1, #5
@@ -1223,7 +1223,7 @@ Func_0804868c:
 .L_08048ff8:
 	.4byte Data_080597f8
 .L_08048ffc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08049000:
 	lsrs r0, r0, #2
 	ands r3, r1
@@ -1377,7 +1377,7 @@ Func_0804868c:
 .L_08049134:
 	.4byte Data_0805f89b
 .L_08049138:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804913c:
 	.4byte Data_0805f7b8
 .L_08049140:

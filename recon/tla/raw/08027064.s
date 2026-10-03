@@ -391,7 +391,7 @@ Func_08027064:
 .L_0802736c:
 	.4byte 0xfff00000
 .L_08027370:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08027374:
 	.4byte 0xfffff000
 .L_08027378:

@@ -537,7 +537,7 @@ Func_02000378:
 .L_02008410:
 	.4byte Data_02006350
 .L_02008414:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008418:
 	.4byte IwramMulQ16
 .L_0200841c:
@@ -601,7 +601,7 @@ Func_02000458:
 	pop {pc}
 	.2byte 0x0000
 .L_02008484:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008488,"ax",%progbits
 	.global Func_02000488
 	.thumb_func
@@ -666,7 +666,7 @@ Func_02000488:
 .L_02008500:
 	.4byte IwramMulQ16
 .L_02008504:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008508,"ax",%progbits
 	.global Func_02000508
 	.thumb_func
@@ -1060,7 +1060,7 @@ Func_0200057c:
 .L_02008834:
 	.4byte Func_02000458
 .L_02008838:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200883c:
 	.4byte Data_02004ae0
 .L_02008840:
@@ -7903,7 +7903,7 @@ Func_02004394:
 .L_0200c3c2:
 	pop {pc}
 .L_0200c3c4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200c3c8,"ax",%progbits
 	.global Func_020043c8
 	.thumb_func

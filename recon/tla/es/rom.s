@@ -1,8 +1,8 @@
 @ tla-es's scaffold: the base-ROM ranges its MAIN.LD places between the
 @ lines it links from source, with a label where the source names a place.
 	.section .rom.00000000, "ax"
-	.global Resource_Data000
-Resource_Data000:
+	.global Cartridge_Restart
+Cartridge_Restart:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .rom.00000630, "ax"
 	.global SoundDriver_EnterFrameUpdate
@@ -114,12 +114,6 @@ Func_08013438:
 	.thumb_func
 System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134dc, 0x000000b0
-	.section .rom.0001358c, "ax"
-	.global WaitFrames
-	.type WaitFrames, %function
-	.thumb_func
-WaitFrames:
-	.incbin "baserom.gba", 0x0001358c, 0x00000348
 	.section .rom.000138d4, "ax"
 	.global Runtime_SetMainState19
 	.type Runtime_SetMainState19, %function
@@ -5852,10 +5846,10 @@ Func_081c0fc8:
 Func_081c0fd0:
 	.incbin "baserom.gba", 0x001c0fd0, 0x0000000c
 	.section .rom.001c1000, "ax"
-	.global Func_081c1000
-	.type Func_081c1000, %function
+	.global AudioEngine_SuspendDirectSoundWrapper
+	.type AudioEngine_SuspendDirectSoundWrapper, %function
 	.thumb_func
-Func_081c1000:
+AudioEngine_SuspendDirectSoundWrapper:
 	.incbin "baserom.gba", 0x001c1000, 0x00000014
 	.section .rom.001c1014, "ax"
 	.global Func_081c1014

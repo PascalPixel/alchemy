@@ -28,13 +28,20 @@ struct DjinnMenuBackdrop {
     struct DjinnListTable list;
     u8 tiles[0x2000];
     u16 palette[64];
+    /* Frame counter and phase for the interactive Djinn tutorial. */
+    s32 tutorial_timer;
+    s32 tutorial_step;
 };
 
 /* The Djinn screen's view of the menu work cell. */
 struct DjinnMenuWork {
-    u8 unknown_000[0x14];
+    u8 unknown_000[0x10];
+    s32 status_window;
     struct RenderOutput *cursor;
-    u8 unknown_018[0x0c];
+    u8 unknown_018[4];
+    /* First selection and the recipient selected for a give/trade. */
+    s8 selected_column[2];
+    u8 unknown_01e[6];
     s32 window;
     u8 unknown_028[0x08];
     s32 list_window;
@@ -43,7 +50,8 @@ struct DjinnMenuWork {
     s32 help_window;
     u8 unknown_110[0x34];
     u16 frames[8];
-    u8 unknown_154[0x24];
+    u8 unknown_154[0x20];
+    u16 selection[2]; /* column + row * DJINN_LIST_ROWS */
     u16 pair_entries[2];
     struct RenderOutput *second_cursor;
     u8 unknown_180[0x04];
@@ -61,5 +69,11 @@ struct DjinnMenuWork {
     u8 pair_element[2];
     u8 pair_owner[2];
 };
+
+LAYOUT_OFFSET_GUARD(DjinnMenuWork_StatusWindow, struct DjinnMenuWork, status_window, 0x10);
+LAYOUT_OFFSET_GUARD(DjinnMenuWork_SelectedColumn, struct DjinnMenuWork, selected_column, 0x1c);
+LAYOUT_OFFSET_GUARD(DjinnMenuWork_Selection, struct DjinnMenuWork, selection, 0x174);
+LAYOUT_OFFSET_GUARD(DjinnMenuBackdrop_TutorialTimer, struct DjinnMenuBackdrop, tutorial_timer, 0x2128);
+LAYOUT_OFFSET_GUARD(DjinnMenuBackdrop_TutorialStep, struct DjinnMenuBackdrop, tutorial_step, 0x212c);
 
 #endif

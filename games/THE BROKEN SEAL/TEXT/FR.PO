@@ -11571,7 +11571,7 @@ msgctxt "message"
 msgid "02890"
 msgstr "Choisir Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "02891"
 msgstr "{button_icon:6}:Lier tous"
 
@@ -12659,7 +12659,7 @@ msgctxt "message"
 msgid "03162"
 msgstr "La Psynergie est un{line_break}pouvoir psychique.{line_break}Les gens qui en sont{page_break}dotés sont les{line_break}Mystiques. La Psynergie{line_break}change avec la classe{page_break}et avec le niveau.{line_break}Essayez de changer de{line_break}classe pour gagner de{page_break}nouvelles Psynergies."
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialGive"
 msgid "03163"
 msgstr "Pour donner votre{line_break}Djinn, déplacez-le{line_break}comme cela.{end_wait}"
 

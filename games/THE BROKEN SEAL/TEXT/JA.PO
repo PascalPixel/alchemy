@@ -13459,7 +13459,7 @@ msgctxt "message"
 msgid "03362"
 msgstr "ジンをえらんでください"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "03363"
 msgstr "SEL:すべてセット"
 
@@ -14123,7 +14123,7 @@ msgctxt "message"
 msgid "03528"
 msgstr "エナジーは せいしんパワーです{line_break}そして エナジーをもっている{line_break}者たちをエナジストとよびます{page_break}エナジーは クラスがかわったり{line_break}せいちょうで へんかします{line_break}いろいろ使ってみて下さい。"
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialGive"
 msgid "03529"
 msgstr "もしも ジンをほかの人に{line_break}わたしたいなら こうして{line_break}いどうして下さい。{end_wait}"
 

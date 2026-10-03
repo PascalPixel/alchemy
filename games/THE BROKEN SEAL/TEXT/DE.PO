@@ -11571,7 +11571,7 @@ msgctxt "message"
 msgid "02890"
 msgstr "Wähle einen Dschinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "02891"
 msgstr "{button_icon:6}:Alle verbünden"
 
@@ -12659,7 +12659,7 @@ msgctxt "message"
 msgid "03162"
 msgstr "Psynergy ist eine{line_break}Macht des Geistes. {line_break}Menschen, die sie an-{page_break}wenden können, werden{line_break}Adepten genannt. Die{line_break}Psynergy kann sich{page_break}durch die Änderung der{line_break}Klasse oder bei einem{line_break}Levelanstieg verändern. {page_break}Versuche, deine Klasse{line_break}zu ändern, um neue{line_break}Psynergien zu gewinnen."
 
-msgctxt "message"
+msgctxt "MsgDjinnTutorialGive"
 msgid "03163"
 msgstr "Um deinen Dschinn{line_break}jemand anderem zu{line_break}geben, bewege ihn so:{end_wait}"
 

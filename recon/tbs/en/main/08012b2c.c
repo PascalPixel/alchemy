@@ -1,6 +1,16 @@
+/* 2026-10-03 paired coordinate/truncation trials: paired x store between angle shifts 295; paired shared angle/store ordering constraint 365. */
+/* 2026-10-03 measured paired-store scheduling: paired x-store r3 ordering barrier 355; paired x-store r3 clobber 355. */
+/* 2026-10-03 ordinary paired-origin trials: paired in-place fixed-point origin 2130; paired named fixed-point coordinates 305; paired explicit origin and radius 2485. */
+/* 2026-10-03 ordinary paired-point trials: paired coordinates after truncation 295; paired cursor initialized before angle bias 295; consumed second-point pointer 410; paired for-loop lifetimes 355; typed two-point cursor 295. */
+/* 2026-10-03 ordinary coordinate-store trials: x store before truncation 295; three coordinate stores before truncation 295; x store before existing angle barrier 295. */
 /* 2026-10-03 ordinary fixed-slot loop trials: bounded ten-point loop 3745; derived signed countdown 475; derived unsigned countdown 695. */
 /* 2026-10-03 ordinary idle-tail trials: natural continuation 695; natural remaining count 800; plain countdown 875. */
-/* Current near miss (2026-10-03): score 475.
+/* Current near miss (2026-10-03): 500 bytes, score 295.
+ * Ordinary x stores before angle truncation remove the three regular-ring
+ * scheduling differences. Only paired-point register/order differences remain
+ * (2 register-only, 2 operand, 4 reordered); no instruction is inserted or deleted.
+ * Further ordinary pointer/origin forms and narrow scheduling trials above
+ * did not improve the paired case. No new workaround was retained.
  * Removed the empty countdown constraint: it restored instruction presence
  * rather than only register choice or order. The ordinary trailing loop
  * remains uncredited; the former score475 was not adoption-ready.
@@ -89,8 +99,8 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             px = x << 16;
             zero = 0;
             asm("" : "+r"(angle) : "r"(zero)); /* FAKEMATCH: native register lifetime and shift scheduling. */
-            angle = (u32)angle >> 16;
             out->x = px;
+            angle = (u32)angle >> 16;
             out->y = zero;
             out->z = z << 16;
             }
@@ -113,8 +123,8 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             px = x << 16;
             zero = 0;
             asm("" : "+r"(angle) : "r"(zero)); /* FAKEMATCH: native register lifetime and shift scheduling. */
-            angle = (u32)angle >> 16;
             out->x = px;
+            angle = (u32)angle >> 16;
             out->y = zero;
             out->z = z << 16;
             }
@@ -135,8 +145,8 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
             px = x << 16;
             zero = 0;
             asm("" : "+r"(angle) : "r"(zero)); /* FAKEMATCH: native register lifetime and shift scheduling. */
-            angle = (u32)angle >> 16;
             out[0].x = px;
+            angle = (u32)angle >> 16;
             out->y = zero;
             out[0].z = z << 16;
             }

@@ -543,31 +543,31 @@ s32 Scene_Initialize(void)
         return 0;
     }
     if (scene == (s32)&SceneId_TakaraShima5) {
-        if (Engine_GameFlagIsSet(0xef7) == 0) {
-            Engine_MapCopyCellAttributes(0, 3, 1, 1, 13, 40);
-            Engine_MapCopyCellAttributes(0, 2, 1, 1, 15, 40);
-            Engine_MapObjectSetPosition(101, 0xd80000, 0x2880000);
+        if (GameFlag_IsSet(0xef7) == 0) {
+            Map_CopyCellAttributes(0, 3, 1, 1, 13, 40);
+            Map_CopyCellAttributes(0, 2, 1, 1, 15, 40);
+            MapObject_SetPosition(101, 0xd80000, 0x2880000);
         }
         if (gGameState.scene == scene) {
             if (gGameState.entrance != 5) {
-                if (Engine_GameFlagIsSet(0x8d1) == 0) {
+                if (GameFlag_IsSet(0x8d1) == 0) {
                     return 0;
                 }
             }
-            Engine_GameFlagSet(0x8d1);
-            Engine_MapCopyCellAttributes(0, 1, 1, 1, 13, 30);
-            Engine_MapObjectSetPosition(100, 0xd80000, 0x1e80000);
+            GameFlag_Set(0x8d1);
+            Map_CopyCellAttributes(0, 1, 1, 1, 13, 30);
+            MapObject_SetPosition(100, 0xd80000, 0x1e80000);
             return 0;
         }
     }
     current = gGameState.scene;
     if (current == (s32)&SceneId_TakaraShima1) {
         FieldScene_RunScene3b2_0200167c();
-        *(s32 *)((u8 *)Object_GetById(8) + 56) = 0x810000;
+        *(s32 *)((u8 *)Actor_Get(8) + 56) = 0x810000;
         FieldScene_RedrawActorFootprint(9);
         FieldScene_RedrawActorFootprint(10);
-        if (Engine_GameFlagIsSet(0x240) != 0) {
-            actor = Object_GetById(11);
+        if (GameFlag_IsSet(0x240) != 0) {
+            actor = Actor_Get(11);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
                 Object_SetMode(actor, 4);
@@ -575,8 +575,8 @@ s32 Scene_Initialize(void)
             }
             Call4(SetMapCellCollision, 0, 0x1300000, 0x1700000, 253);
         }
-        if (Engine_GameFlagIsSet(0x241) != 0) {
-            actor = Object_GetById(12);
+        if (GameFlag_IsSet(0x241) != 0) {
+            actor = Actor_Get(12);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
                 Object_SetMode(actor, 4);
@@ -584,8 +584,8 @@ s32 Scene_Initialize(void)
             }
             Call4(SetMapCellCollision, 0, 0x500000, 0x1700000, 253);
         }
-        if (Engine_GameFlagIsSet(0x242) != 0) {
-            actor = Object_GetById(13);
+        if (GameFlag_IsSet(0x242) != 0) {
+            actor = Actor_Get(13);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
                 Object_SetMode(actor, 4);
@@ -593,8 +593,8 @@ s32 Scene_Initialize(void)
             }
             Call4(SetMapCellCollision, 0, 0x600000, 0x1500000, 253);
         }
-        if (Engine_GameFlagIsSet(0x243) != 0) {
-            actor = Object_GetById(14);
+        if (GameFlag_IsSet(0x243) != 0) {
+            actor = Actor_Get(14);
             if (actor != 0) {
                 ((u8 *)actor)[89] = 0;
                 Object_SetMode(actor, 4);
@@ -603,7 +603,7 @@ s32 Scene_Initialize(void)
             Call4(SetMapCellCollision, 0, 0x900000, 0x1400000, 253);
             Call4(SetMapCellCollision, 0, 0x2f00000, 0x1400000, 253);
         }
-        if (Engine_GameFlagIsSet(0xfd7) != 0) {
+        if (GameFlag_IsSet(0xfd7) != 0) {
             return 0;
         }
         InitializeSwayingSceneObject(8);
@@ -611,9 +611,9 @@ s32 Scene_Initialize(void)
     }
     first = (s32)&SceneId_TakaraShima6;
     if (current == first) {
-        if (Engine_GameFlagIsSet(0xef4) == 0) {
-            Engine_MapCopyCellAttributes(0, 0, 1, 1, 37, 10);
-            Engine_MapObjectSetPosition(100, 0x2580000, 0xa80000);
+        if (GameFlag_IsSet(0xef4) == 0) {
+            Map_CopyCellAttributes(0, 0, 1, 1, 37, 10);
+            MapObject_SetPosition(100, 0x2580000, 0xa80000);
         }
     }
     current = gGameState.scene;
@@ -635,12 +635,12 @@ void FieldScene_RunScene3b2SequenceA(void)
     u8 *rec8;
     s32 record;
 
-    rec8 = Object_GetById(8);
-    rec7 = Engine_GameFlagIsSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8d2 - (s32)&SceneId_TakaraShima6)));
+    rec8 = Actor_Get(8);
+    rec7 = GameFlag_IsSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8d2 - (s32)&SceneId_TakaraShima6)));
     if (rec7 != 0) {
-        Engine_ActorSetPosition(8, 0x28a0000, 0xa80000);
+        Actor_SetPosition(8, 0x28a0000, 0xa80000);
         *(volatile s32 *)((s32)rec8 + 12) = -0x200000;
-        record = Object_GetById(8);
+        record = Actor_Get(8);
         Engine_ActorSetSpriteFlags(record, 0);
         Engine_ActorSetSpritePriority(8, 3);
         rec8[85] = 0;
@@ -649,7 +649,7 @@ void FieldScene_RunScene3b2SequenceA(void)
 
             rec8[35] = (u8)(value | 2);
         }
-        Engine_MapCopyCellAttributes(42, 10, 1, 1, 40, 10);
+        Map_CopyCellAttributes(42, 10, 1, 1, 40, 10);
     } else {
         *(u8 *)((s32)Object_GetByIdFar(8) + 85) = rec7;
     }
@@ -818,13 +818,13 @@ void FieldScene_RunScene3b2_02001494(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Engine_GameFlagSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8c8 - (s32)&SceneId_TakaraShima6)));
+    GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8c8 - (s32)&SceneId_TakaraShima6)));
     Engine_EventWait(30);
-    Engine_MapAnimateCells(((const u16 *)TakaraShima_EntranceCells), 44, 7);
-    Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
+    Map_AnimateCells(((const u16 *)TakaraShima_EntranceCells), 44, 7);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
     Engine_EventRequestExit(3);
     Engine_EventEnd();
 }
@@ -917,29 +917,29 @@ void FieldScene_RunScene3b2_0200167c(void)
 {
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x8c4) != 0) {
-        Engine_MapCopyCellAttributes(0, 0, 1, 1, 8, 21);
-        Engine_ActorSetPosition(15, 0x3c80000, 0x3c80000);
+    if (GameFlag_IsSet(0x8c4) != 0) {
+        Map_CopyCellAttributes(0, 0, 1, 1, 8, 21);
+        Actor_SetPosition(15, 0x3c80000, 0x3c80000);
     } else {
-        record = Object_GetById(15);
+        record = Actor_Get(15);
         *(s32 *)(record + 28) = 0x19999;
     }
-    if (Engine_GameFlagIsSet(0x8c5) != 0) {
-        Engine_ActorSetPosition(16, 0x3c80000, 0x3c80000);
+    if (GameFlag_IsSet(0x8c5) != 0) {
+        Actor_SetPosition(16, 0x3c80000, 0x3c80000);
     } else {
-        record = Object_GetById(16);
+        record = Actor_Get(16);
         *(s32 *)(record + 28) = 0x19999;
     }
-    if (Engine_GameFlagIsSet(0x8c6) != 0) {
-        Engine_ActorSetPosition(17, 0x3c80000, 0x3c80000);
+    if (GameFlag_IsSet(0x8c6) != 0) {
+        Actor_SetPosition(17, 0x3c80000, 0x3c80000);
     } else {
-        record = Object_GetById(17);
+        record = Actor_Get(17);
         *(s32 *)(record + 28) = 0x19999;
     }
-    if (Engine_GameFlagIsSet(0x8c7) != 0) {
-        Engine_ActorSetPosition(18, 0x3c80000, 0x3c80000);
+    if (GameFlag_IsSet(0x8c7) != 0) {
+        Actor_SetPosition(18, 0x3c80000, 0x3c80000);
     } else {
-        record = Object_GetById(18);
+        record = Actor_Get(18);
         *(s32 *)(record + 28) = 0x19999;
     }
 }

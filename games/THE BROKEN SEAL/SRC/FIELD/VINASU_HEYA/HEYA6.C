@@ -310,16 +310,16 @@ void VinasuHeya_ResolveFloatingBlock(void)
     for (i = 0; i < 4; i++) {
         block = Object_GetById(i + 10);
         x = block->x.fixed >> 20;
-        if (x == 13 && (z = block->z.fixed >> 20) == 7 && !Engine_GameFlagIsSet(0x200 + i)) {
+        if (x == 13 && (z = block->z.fixed >> 20) == 7 && !GameFlag_IsSet(0x200 + i)) {
             OverlayObject_WaitUntilIdle(block);
-            Engine_GameFlagSet(0x200 + i);
+            GameFlag_Set(0x200 + i);
             block->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             block->collision_flags = 0;
             block->motion_flags = 0;
             Engine_MapCopyCellAttributes(4, 19, 1, 1, x, z);
             break;
         }
-        if (block->sprite->priority == 3 && !Engine_GameFlagIsSet(0x200 + i)) {
+        if (block->sprite->priority == 3 && !GameFlag_IsSet(0x200 + i)) {
             /* FAKEMATCH: the zero is taken before the priority call, in the search counter, so it is held in r5 across the call */
             j = 0;
             Engine_ActorSetSpritePriority(i + 10, 1);
@@ -332,14 +332,14 @@ void VinasuHeya_ResolveFloatingBlock(void)
             Engine_ActorSetPosition(i + 10, 0, 0);
             Engine_ObjectDispatchRelease(first);
             Engine_ObjectDispatchRelease(second);
-            Engine_GameFlagSet(0x200 + i);
+            GameFlag_Set(0x200 + i);
             break;
         }
-        if (block->z.fixed >> 20 == 19 && !Engine_GameFlagIsSet(0x200 + i)) {
+        if (block->z.fixed >> 20 == 19 && !GameFlag_IsSet(0x200 + i)) {
             FloatingBlock_Settle(block, 0);
             slot = i;
             for (j = 0; j < i; j++) {
-                if (!Engine_GameFlagIsSet(0x200 + j)) {
+                if (!GameFlag_IsSet(0x200 + j)) {
                     other = Object_GetById(j + 10);
                     Actor_CopyPosition(&work, block);
                     Actor_CopyPosition(block, other);
@@ -366,7 +366,7 @@ void VinasuHeya_ResolveFloatingBlock(void)
                 (void (*)(union FieldObject *))SceneActor_SetHeightAboveLinkedRecord;
             VinasuHeya_LowerFloatingBlocks(40);
             Object_GetById(slot + 10)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-            Engine_GameFlagSet(slot + 0x200);
+            GameFlag_Set(slot + 0x200);
             break;
         }
     }

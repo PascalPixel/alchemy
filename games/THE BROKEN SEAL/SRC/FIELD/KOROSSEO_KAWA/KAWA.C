@@ -375,11 +375,11 @@ void FieldScene_RunScene3ba_02000270(void)
     s32 record;
     s32 none;
 
-    Engine_GameFlagSet(0x301);
+    GameFlag_Set(0x301);
     rec7 = Object_GetById(13);
     Engine_EventBegin();
-    Engine_CameraSetSpeed(0x20000, 0x4000);
-    Engine_CameraMoveTo(0x2580000, -1, 0xc80000, 1);
+    Camera_SetSpeed(0x20000, 0x4000);
+    Camera_MoveTo(0x2580000, -1, 0xc80000, 1);
     Object_SetMode((s32)rec7, 3);
     Engine_CameraWaitForMove();
     none = 0;
@@ -394,7 +394,7 @@ void FieldScene_RunScene3ba_02000270(void)
     Object_SetMoveTarget((s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
     Script_WaitForEventTimeout((s32)rec7);
     Engine_EventWait(45);
-    Engine_MapCopyCellAttributes(43, 12, 1, 1, 41, 12);
+    Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     Engine_EventEnd();
 }
 
@@ -508,53 +508,53 @@ void KorosseoKawa_RaisePipes(void)
     leader_id = gGameState.selected_actor;
     leader = Object_GetById(leader_id);
     actor = Object_GetById(12);
-    Engine_GameFlagSet(0x302);
+    GameFlag_Set(0x302);
     Engine_EventBegin();
     Engine_ActorSetAnimation(leader_id, 8);
     Engine_EventWait(6);
     actor->speed = 0x8000;
     actor->acceleration = 0x3333;
-    Engine_AudioPlayCue(239);
+    Audio_PlayCue(239);
     Object_SetMode(actor, 2);
     Object_SetMoveTarget(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(leader_id, 2);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 480), actor);
-    Engine_ActorSetSpeed(leader_id, 0x4ccc, 0x3333);
+    Actor_SetSpeed(leader_id, 0x4ccc, 0x3333);
     Object_SetMoveTarget(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
     Engine_ActorWaitForMove(leader_id);
     Engine_ActorSetAnimation(leader_id, 1);
     Script_WaitForEventTimeout(actor);
     Object_SetMode(actor, 1);
-    Engine_AudioPlayCue(288);
-    Engine_AudioPlayCue(213);
+    Audio_PlayCue(288);
+    Audio_PlayCue(213);
     Engine_EventWait(15);
     Engine_EventEnd();
-    Engine_MapCopyCellAttributes(37, 7, 1, 4, 34, 7);
-    Engine_MapCopyCellAttributes(36, 7, 1, 4, 37, 7);
-    none = Engine_GameFlagIsSet(0x301);
+    Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
+    Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
+    none = GameFlag_IsSet(0x301);
     if (none != 0) {
         Engine_EventBegin();
-        Engine_CameraSetSpeed(0x20000, 0x4000);
-        Engine_CameraMoveTo(0x2280000, -1, 0xc80000, 1);
+        Camera_SetSpeed(0x20000, 0x4000);
+        Camera_MoveTo(0x2280000, -1, 0xc80000, 1);
         Engine_CameraWaitForMove();
-        Engine_MapCopyCells(96, 29, 1, 3, 34, 38);
+        Map_CopyCells(96, 29, 1, 3, 34, 38);
         Engine_EventWait(3);
-        Engine_MapCopyCells(97, 29, 1, 3, 34, 38);
+        Map_CopyCells(97, 29, 1, 3, 34, 38);
         Engine_EventWait(3);
-        Engine_MapCopyCells(98, 29, 1, 3, 34, 38);
+        Map_CopyCells(98, 29, 1, 3, 34, 38);
         Engine_EventWait(3);
-        Engine_MapCopyCells(99, 29, 1, 3, 34, 38);
+        Map_CopyCells(99, 29, 1, 3, 34, 38);
         Engine_EventWait(3);
-        Engine_MapCopyCells(100, 29, 1, 3, 34, 38);
+        Map_CopyCells(100, 29, 1, 3, 34, 38);
         Engine_EventWait(15);
         Engine_EventEnd();
         return;
     }
-    Engine_GameFlagSet(0x301);
+    GameFlag_Set(0x301);
     Engine_EventBegin();
-    Engine_CameraSetSpeed(0x20000, 0x4000);
-    Engine_CameraMoveTo(0x2580000, -1, 0xc80000, 1);
+    Camera_SetSpeed(0x20000, 0x4000);
+    Camera_MoveTo(0x2580000, -1, 0xc80000, 1);
     Engine_CameraWaitForMove();
     actor = Object_GetById(13);
     actor->motion_flags = none;
@@ -562,15 +562,15 @@ void KorosseoKawa_RaisePipes(void)
     actor->speed = 0xcccc;
     Object_SetMoveTarget(actor, actor->x.fixed, 0x80000, actor->z.fixed);
     Object_SetMode(actor, 3);
-    Engine_MapCopyCells(96, 29, 1, 3, 34, 38);
+    Map_CopyCells(96, 29, 1, 3, 34, 38);
     Engine_EventWait(3);
-    Engine_MapCopyCells(97, 29, 1, 3, 34, 38);
+    Map_CopyCells(97, 29, 1, 3, 34, 38);
     Engine_EventWait(3);
-    Engine_MapCopyCells(98, 29, 1, 3, 34, 38);
+    Map_CopyCells(98, 29, 1, 3, 34, 38);
     Engine_EventWait(3);
-    Engine_MapCopyCells(99, 29, 1, 3, 34, 38);
+    Map_CopyCells(99, 29, 1, 3, 34, 38);
     Engine_EventWait(3);
-    Engine_MapCopyCells(100, 29, 1, 3, 34, 38);
+    Map_CopyCells(100, 29, 1, 3, 34, 38);
     actor = Object_GetById(14);
     actor->motion_flags = none;
     actor->acceleration = 0x6666;
@@ -579,7 +579,7 @@ void KorosseoKawa_RaisePipes(void)
     Script_WaitForEventTimeout(actor);
     Engine_EventWait(15);
     Engine_EventEnd();
-    Engine_MapCopyCellAttributes(43, 12, 1, 1, 41, 12);
+    Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
@@ -638,20 +638,20 @@ void KorosseoKawa_RunStageStart(void)
         Object_RefreshSelectorById(8);
         n = n - 1;
     } while (n >= 0);
-    Engine_ActorSetSpeed(8, 0x10000, 0x8000);
-    Engine_ActorWalkTo(8, 0x528, 192);
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x508, 192);
+    Actor_SetSpeed(8, 0x10000, 0x8000);
+    Actor_WalkTo(8, 0x528, 192);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x508, 192);
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorFaceEachOther(0, 8, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(8, 3);
     Engine_ActorSetAnimationAndWait(0, 3);
     Engine_EventWait(20);
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
-    Engine_ActorSetSpeed(8, 0x20000, 0x10000);
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 0x510, 192);
-    Engine_ActorWalkToAndWait(8, 0x520, 192);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+    Actor_SetSpeed(8, 0x20000, 0x10000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 0x510, 192);
+    Actor_WalkToAndWait(8, 0x520, 192);
     Engine_ActorSetAnimation(0, 16);
     Engine_ActorSetAnimation(8, 9);
     Engine_EventWait(10);
@@ -666,7 +666,7 @@ void KorosseoKawa_RunStageStart(void)
     } while (0);
     Party_SetFields1ceAnd1d0((s32)&SceneId_KorosseoKawa, 4);
     Event_SetPair1d4((s32)&SceneId_KorosseoKawa, 5);
-    Engine_GameFlagSet(0x11a);
+    GameFlag_Set(0x11a);
 }
 
 
@@ -724,10 +724,10 @@ void FieldScene_RunScene3ba_02000974(s32 a0)
     Engine_ActorDestroy(25);
     Owner_RefreshActiveRatios(1);
     Engine_EventBegin();
-    Engine_ActorSetPosition(8, 0x5280000, 0xc00000);
-    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0x5080000, 0xc00000);
-    Engine_ActorFaceActor(8, 0x4000, 0);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Actor_SetPosition(8, 0x5280000, 0xc00000);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5080000, 0xc00000);
+    Actor_FaceActor(8, 0x4000, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
     if (a0 < 0) {
         Engine_ActorSetAnimation(8, 10);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 35);
@@ -736,7 +736,7 @@ void FieldScene_RunScene3ba_02000974(s32 a0)
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 28);
     }
     Engine_TaskWait(1);
-    Engine_CameraMoveTo(0x5180000, 0, 0x800000, 0);
+    Camera_MoveTo(0x5180000, 0, 0x800000, 0);
     FieldScene_RunLateSequence(a0);
     Engine_EventEnd();
 }
@@ -774,13 +774,13 @@ s32 KorosseoKawa_ApplyEntryState(void)
     s32 col;
 
     gEventWork->start_transition = 0;
-    Engine_GameFlagSet(0x144);
+    GameFlag_Set(0x144);
     actor = Object_GetById(9);
     hit = Map_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
     if (actor->y.fixed == 0 && hit == 0) {
         actor->priority_flags = 2;
         actor->motion_flags = hit;
-        Engine_MapCopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+        Map_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
     }
     x = GameFlag_GetByteFar(0x310);
     if (x == 0) {
@@ -790,7 +790,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     actor->x.fixed = (x << 20) + 0x80000;
     actor->motion_flags = 0;
     actor->priority_flags = 2;
-    Engine_MapCopyCellAttributes(14, 13, 1, 1, x, 12);
+    Map_CopyCellAttributes(14, 13, 1, 1, x, 12);
     ((s32 (*)(void ( *)(void), s32))Scheduler_AddOrUpdateCallback)(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
     actor = Object_GetById(15);
     actor->unknown_22 = 1;
@@ -800,26 +800,26 @@ s32 KorosseoKawa_ApplyEntryState(void)
         Engine_ActorSetSpriteFlags(actor, 0);
         actor->collision_flags = zero;
         actor->priority_flags = 3;
-        Engine_MapCopyCellAttributes(47, 24, 1, 1, 47, 12);
+        Map_CopyCellAttributes(47, 24, 1, 1, 47, 12);
     }
     actor = Object_GetById(17);
     col = actor->z.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Engine_MapCopyCellAttributes(64, 24, 3, 1, 64, col);
+    Map_CopyCellAttributes(64, 24, 3, 1, 64, col);
     actor = Object_GetById(18);
     col = actor->x.fixed >> 20;
     actor->motion_flags = zero;
     actor->priority_flags = 2;
-    Engine_MapCopyCellAttributes(63, 25, 1, 3, col, 9);
+    Map_CopyCellAttributes(63, 25, 1, 3, col, 9);
     if (Engine_GameFlagIsSet(0x302)) {
-        Engine_MapCopyCellAttributes(37, 7, 1, 4, 34, 7);
-        Engine_MapCopyCellAttributes(36, 7, 1, 4, 37, 7);
-        Engine_MapCopyCells(100, 29, 1, 3, 34, 38);
+        Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
+        Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
+        Map_CopyCells(100, 29, 1, 3, 34, 38);
     }
     actor = Object_GetById(13);
     if (Engine_GameFlagIsSet(0x301)) {
-        Engine_MapCopyCellAttributes(43, 12, 1, 1, 41, 12);
+        Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
         actor->motion_flags = zero;
         actor->acceleration = 0x6666;
         actor->speed = 0xcccc;
@@ -920,39 +920,39 @@ void FieldScene_RunCommandSequence(s32 a0)
     x = actor->x.part.pixel;
     z = actor->z.part.pixel;
     Engine_EventBegin();
-    Engine_ActorSetSpeed(a0, 0x10000, 0x8000);
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Engine_ActorSetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
-    Engine_ActorSetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
-    Engine_ActorSetSpeed(ACTOR_MIA, 0x10000, 0x8000);
+    Actor_SetSpeed(a0, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     Engine_ActorSetPosition(0, x << 16, (z << 16) - 0x300000);
-    Engine_ActorSetPosition(ACTOR_GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
-    Engine_ActorSetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
-    Engine_ActorSetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);
-    Engine_ActorSetPosition(a0, x << 16, (z << 16) - 0x500000);
+    Actor_SetPosition(ACTOR_GERALD, (x << 16) - 0x100000, (z << 16) - 0x280000);
+    Actor_SetPosition(ACTOR_IVAN, (x << 16) + 0x100000, (z << 16) - 0x280000);
+    Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - 0x200000);
+    Actor_SetPosition(a0, x << 16, (z << 16) - 0x500000);
     actor = (struct FieldActor *)Object_GetById(0);
     actor->facing = 0xc000;
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventSetMessage((s32)MsgKorosseoSiteFirstFinalsBattle);
-    Engine_EventShowMessage(a0, 0);
-    Engine_ActorShowEmote(ACTOR_MIA, 0x101, 60);
-    Engine_EventShowMessage(ACTOR_MIA, 0);
+    Event_ShowMessage(a0, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Engine_ActorStartRepeatedMotion(a0, 3);
-    Engine_EventShowMessage(a0, 0);
-    Engine_ActorShowEmote(ACTOR_IVAN, 0x101, 60);
-    Engine_EventShowMessage(ACTOR_IVAN, 0);
-    Engine_ActorFaceActor(a0, ACTOR_IVAN, 0);
+    Event_ShowMessage(a0, 0);
+    Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
+    Event_ShowMessage(ACTOR_IVAN, 0);
+    Actor_FaceActor(a0, ACTOR_IVAN, 0);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(a0, 3);
-    Engine_EventShowMessage(a0, 0);
-    Engine_ActorShowEmote(ACTOR_GERALD, 0x101, 60);
-    Engine_EventShowMessage(ACTOR_GERALD, 0);
-    Engine_ActorShowEmote(ACTOR_MIA, 0x101, 60);
-    Engine_EventShowMessage(ACTOR_MIA, 0);
-    Engine_ActorShowEmote(a0, 0x102, 60);
-    if (Engine_EventAskYesNo(a0, 0) == 0) {
+    Event_ShowMessage(a0, 0);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
+    Event_ShowMessage(ACTOR_GERALD, 0);
+    Actor_ShowEmote(ACTOR_MIA, 0x101, 60);
+    Event_ShowMessage(ACTOR_MIA, 0);
+    Actor_ShowEmote(a0, 0x102, 60);
+    if (Event_AskYesNo(a0, 0) == 0) {
         do {
             Engine_EventSetMessage((s32)MsgKorosseoWarriorsEnterFinalsWithoutAny);
             Engine_ActorSetAnimation(ACTOR_IVAN, 3);
@@ -963,49 +963,49 @@ void FieldScene_RunCommandSequence(s32 a0)
             Engine_EventWait(1);
             Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Engine_ActorSetAnimationAndWait(a0, 3);
-            Engine_EventShowMessage(a0, 0);
-            Engine_ActorFaceDirection(a0, 0xa000, 0);
+            Event_ShowMessage(a0, 0);
+            Actor_FaceDirection(a0, 0xa000, 0);
             Engine_EventWait(20);
-            Engine_EventShowMessage(a0, 0);
-            Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x1380000, -1, 0x680000, 1);
+            Event_ShowMessage(a0, 0);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x1380000, -1, 0x680000, 1);
             Engine_CameraWaitForMove();
-            Engine_EventShowMessage(a0, 0);
-            Engine_CameraSetSpeed(0x18000, 0x3000);
-            Engine_CameraMoveTo(0x3080000, -1, 0x680000, 1);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
+            Camera_SetSpeed(0x18000, 0x3000);
+            Camera_MoveTo(0x3080000, -1, 0x680000, 1);
+            Event_ShowMessage(a0, 0);
             Engine_CameraWaitForMove();
-            Engine_EventShowMessage(a0, 0);
-            Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x4d80000, -1, 0xa80000, 1);
+            Event_ShowMessage(a0, 0);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x4d80000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
-            Engine_ActorFaceActor(a0, 0x6000, 0);
-            Engine_EventShowMessage(a0, 0);
-            Engine_CameraMoveTo(0x5180000, -1, 0xa80000, 1);
+            Actor_FaceActor(a0, 0x6000, 0);
+            Event_ShowMessage(a0, 0);
+            Camera_MoveTo(0x5180000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
-            Engine_ActorFaceActor(a0, ACTOR_PARTY_LEADER, 0);
-            Engine_EventShowMessage(a0, 0);
-            Engine_EventShowMessage(a0, 0);
-            Engine_EventShowMessage(a0, 0);
+            Actor_FaceActor(a0, ACTOR_PARTY_LEADER, 0);
+            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
             Engine_ActorRunRepeatedMotion(a0, 2);
-        } while (Engine_EventAskYesNo(a0, 0) != 0);
+        } while (Event_AskYesNo(a0, 0) != 0);
         Engine_ActorRunRepeatedMotion(a0, 2);
         Engine_EventSetMessage((s32)MsgKorosseoAskAttendantsForExplanationsStages);
-        Engine_EventShowMessage(a0, 0);
+        Event_ShowMessage(a0, 0);
     }
     Engine_EventSetMessage((s32)MsgKorosseoRobinYoureContestantInFinals);
     Engine_ActorRunRepeatedMotion(a0, 2);
-    Engine_EventShowMessage(a0, 0);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0, 0);
-    Engine_ActorFaceDirection(ACTOR_IVAN, 0x8000, 0);
+    Event_ShowMessage(a0, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Engine_EventShowMessage(ACTOR_GERALD, 0);
+    Event_ShowMessage(ACTOR_GERALD, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_IVAN, 2);
-    Engine_EventShowMessage(ACTOR_IVAN, 0);
+    Event_ShowMessage(ACTOR_IVAN, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_MIA, 3);
-    Engine_EventShowMessage(ACTOR_MIA, 0);
+    Event_ShowMessage(ACTOR_MIA, 0);
     Engine_ActorSetAnimation(ACTOR_MIA, 3);
     Engine_EventWait(1);
     Engine_ActorSetAnimation(ACTOR_GERALD, 3);
@@ -1017,25 +1017,25 @@ void FieldScene_RunCommandSequence(s32 a0)
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
-        Engine_ActorSetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(ACTOR_GERALD, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_IVAN, 2);
     actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
-        Engine_ActorSetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(ACTOR_IVAN, actor->x.part.pixel, actor->z.part.pixel);
     }
     Engine_ActorSetAnimation(ACTOR_MIA, 2);
     actor = (struct FieldActor *)Object_GetById(0);
     if (actor != 0) {
-        Engine_ActorSetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
+        Actor_SetDestination(ACTOR_MIA, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Engine_ActorWalkToAndWait(a0, x - 16, z - 64);
-    Engine_ActorSetPosition(ACTOR_GERALD, 0, 0);
-    Engine_ActorSetPosition(ACTOR_IVAN, 0, 0);
-    Engine_ActorSetPosition(ACTOR_MIA, 0, 0);
-    Engine_ActorWalkToAndWait(a0, x - 16, z - 16);
-    Engine_ActorWalkToAndWait(a0, x, z);
-    Engine_ActorFaceDirection(a0, 0xc000, 10);
+    Actor_WalkToAndWait(a0, x - 16, z - 64);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Actor_SetPosition(ACTOR_IVAN, 0, 0);
+    Actor_SetPosition(ACTOR_MIA, 0, 0);
+    Actor_WalkToAndWait(a0, x - 16, z - 16);
+    Actor_WalkToAndWait(a0, x, z);
+    Actor_FaceDirection(a0, 0xc000, 10);
     Engine_EventEnd();
 }
 
@@ -1054,31 +1054,31 @@ void KorosseoKawa_RunStageIntro(s32 a0)
         if (rec != 0) {
         } else {
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
-            Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x1480000, -1, 0xa80000, 1);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x1480000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x118, 200);
-            Engine_ActorSetSpeed(0, 0x10000, 0x8000);
-            Engine_ActorWalkToAndWait(0, 0x168, 200);
+            Actor_SetSpeed(0, 0x10000, 0x8000);
+            Actor_WalkToAndWait(0, 0x168, 200);
             Engine_EventWait(30);
-            Engine_ActorShowEmote(0, 0x102, 60);
+            Actor_ShowEmote(0, 0x102, 60);
             Engine_EventShowMessage(a0, 0);
-            Engine_ActorWalkToAndWait(0, 0x138, 200);
+            Actor_WalkToAndWait(0, 0x138, 200);
             Engine_EventWait(30);
-            Engine_ActorFaceDirection(0, 0xc000, 10);
-            Engine_ActorShowEmote(0, 0x106, 60);
-            Engine_ActorSetSpeed(0, 0x18000, 0xc000);
+            Actor_FaceDirection(0, 0xc000, 10);
+            Actor_ShowEmote(0, 0x106, 60);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
             OverlayObject_PlaceWithScale14000(0, 0x128, 184);
             OverlayObject_PlaceWithScale14000(0, 0x128, 152);
             OverlayObject_PlaceWithScale14000(0, 0x138, 152);
-            Engine_ActorFaceDirection(0, 0x4000, 15);
+            Actor_FaceDirection(0, 0x4000, 15);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
             StagedActor_PushActorAhead();
             OverlayObject_ResetMotionFields(0);
-            Engine_ActorSetSpeed(0, 0x18000, 0xc000);
-            Engine_ActorWalkToAndWait(0, 0x130, 184);
+            Actor_SetSpeed(0, 0x18000, 0xc000);
+            Actor_WalkToAndWait(0, 0x130, 184);
             Engine_ActorWalkToAndWait(0, 0x128, 192);
             Engine_ActorWalkToAndWait(0, 0x128, 200);
             Engine_ActorFaceDirection(0, 0, 15);
@@ -1090,7 +1090,7 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             Engine_EventShowMessage(a0, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(0, 0);
-            Engine_ActorSetPosition(9, 0x1380000, 0xa80000);
+            Actor_SetPosition(9, 0x1380000, 0xa80000);
             SceneState_SendIdBySceneId(a0, 1);
             goto L_020013c2;
         }
@@ -1223,29 +1223,29 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
         if (rec8 == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoTheyCallBrokenBridge);
             SceneState_ResetCounterAndStartTask();
-            Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x3480000, -1, 0xd80000, 1);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x3480000, -1, 0xd80000, 1);
             Engine_CameraWaitForMove();
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             SceneState_SetMode66AndPassOpeningSequence();
             Engine_EventWait(60);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x2e0, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
             SceneState_WaitUntilWordC41cIs22();
-            Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x330, 200);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x330, 200);
             Engine_EventWait(30);
-            Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
-            Engine_EventShowMessage(a0, 0);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+            Event_ShowMessage(a0, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
             SceneState_SendIdBySceneId(a0, 3);
         } else {
             if (rec8 == 1) {
                 Engine_EventSetMessage((s32)MsgKorosseoOperatorBridgeWillAlsoCheer);
-                Engine_EventShowMessage(a0, 0);
+                Event_ShowMessage(a0, 0);
             }
         }
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
@@ -1267,43 +1267,43 @@ void Scene_RunSceneFourCoordinator(s32 scene)
     path = SceneDialogue_RunFlagGatedPromptInteraction(scene, 4);
     if (path == 0) {
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
-        Engine_CameraSetSpeed(196608, 24576);
-        Engine_CameraMoveTo(71303168, -1, 11010048, 1);
+        Camera_SetSpeed(196608, 24576);
+        Camera_MoveTo(71303168, -1, 11010048, 1);
         Engine_CameraWaitForMove();
-        Engine_EventShowMessage(scene, 0);
+        Event_ShowMessage(scene, 0);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(SceneState_StoreParamsAndInitTable, 120, 72, 0);
-        Engine_EventShowMessage(scene, 0);
+        Event_ShowMessage(scene, 0);
         SceneState_ReleaseTableAndResetC6a6();
         Engine_EventWait(15);
         Korosseo_FadeInCompetitor(0, 984, 200);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 10);
-        Engine_EventShowMessage(scene, 0);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
-        Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 262, 60);
-        Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 10);
+        Event_ShowMessage(scene, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 262, 60);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
         OverlayObject_PlaceWithScale14000(0, 1000, 192);
         OverlayObject_PlaceWithScale14000(0, 1000, 176);
         OverlayObject_PlaceWithScale14000(0, 1016, 168);
         Engine_EventWait(15);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(StagedActor_PlacePairAtOffsetAndRun, 18, 160, 0);
-        Engine_CameraMoveTo(71303168, -1, 11010048, 1);
+        Camera_MoveTo(71303168, -1, 11010048, 1);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
         Engine_EventWait(10);
-        Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
-        Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
         Engine_EventWait(10);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 32768, 30);
-        Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Engine_EventShowMessage(scene, 0);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 32768, 30);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
+        Event_ShowMessage(scene, 0);
         Korosseo_RestoreCompetitor(0);
         Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
-        Engine_ActorSetPosition(18, 66584576, 11010048);
+        Actor_SetPosition(18, 66584576, 11010048);
         SceneState_SendIdBySceneId(scene, 4);
     } else if (path == 1) {
         Engine_EventSetMessage((s32)MsgKorosseoLogsKeyClearingStage);
-        Engine_EventShowMessage(scene, 0);
+        Event_ShowMessage(scene, 0);
     }
     /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
     Value3(FieldScene_RunMiddleSequence, path, scene, 4);

@@ -2,6 +2,10 @@
  * The complete opening owner compiles with approved TBS flags but retains
  * the attached-effect 0x100 call after animation one. Spanish, French and
  * Italian omit that call, shortening the complete owner by eight bytes.
+ * Current true-void FadeInCompetitor declaration preserves the 416-byte
+ * complete compiled extent, but swaps the r0/r2 argument setup at that call
+ * relative to the previous scalar declaration. This uncredited draft retains
+ * the truthful API; no result is invented to fit the scheduling.
  */
 /* The four-step actor motion, actor placement and the opening sequence. */
 #include "../../../../../../games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING.H"

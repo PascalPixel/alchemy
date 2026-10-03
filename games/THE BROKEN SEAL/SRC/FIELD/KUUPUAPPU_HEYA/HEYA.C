@@ -556,7 +556,7 @@ void FieldScene_RunScene383_02000428(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuIvanHasGreatPowersWouldnt);
     SceneDialogue_PromptAndCountSkip(15);
-    Engine_ActorFaceDirection(15, 0x8000, 0);
+    Actor_FaceDirection(15, 0x8000, 0);
     Engine_EventEnd();
 }
 

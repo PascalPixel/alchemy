@@ -467,8 +467,8 @@ void FieldScene_RunEarlySequence(void)
     s32 v;
 
     p5 = gMapWork[0];
-    Engine_AudioPlayCue(230);
-    Engine_WorkSetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Audio_PlayCue(230);
+    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     rec = p5 + 356;
     for (i = 0; i <= 23; i++) {
@@ -477,9 +477,9 @@ void FieldScene_RunEarlySequence(void)
         if (i == 8) {
             record = Object_GetById(8);
             *(s32 *)(record + 24) = 0x1999;
-            record = Object_GetById(8);
+            record = Actor_Get(8);
             *(s32 *)(record + 28) = 0x1999;
-            Engine_ActorSetPosition(8, 0x980000, 0xd80000);
+            Actor_SetPosition(8, 0x980000, 0xd80000);
             Engine_ActorEnableActionCallback(8, ArutinYama_EarlyActorScript);
         }
     }
@@ -492,11 +492,11 @@ void FieldScene_RunEarlySequence(void)
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+    Audio_PlayCue(0x121);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(30);
-    Engine_MapCopyCellAttributes(0, 0, 1, 2, 3, 14);
-    Engine_GameFlagSet(0x8fd);
+    Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
+    GameFlag_Set(0x8fd);
 }
 
 void FieldScene_RunScene3a4SequenceH(void)
@@ -509,9 +509,9 @@ void FieldScene_RunScene3a4SequenceH(void)
     s32 v;
 
     p5 = gMapWork[0];
-    Engine_MapCopyCells(93, 41, 16, 4, 77, 28);
-    Engine_AudioPlayCue(230);
-    Engine_WorkSetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Map_CopyCells(93, 41, 16, 4, 77, 28);
+    Audio_PlayCue(230);
+    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     rec = p5 + 356;
     for (i = 23; i >= 0; i--) {
@@ -527,11 +527,11 @@ void FieldScene_RunScene3a4SequenceH(void)
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+    Audio_PlayCue(0x121);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(30);
-    Engine_MapCopyCells(77, 41, 16, 4, 77, 28);
-    Engine_GameFlagSet(0x8fe);
+    Map_CopyCells(77, 41, 16, 4, 77, 28);
+    GameFlag_Set(0x8fe);
 }
 
 void FieldScene_RunScene3a4SequenceI(void)
@@ -544,11 +544,11 @@ void FieldScene_RunScene3a4SequenceI(void)
     s32 v;
 
     p8 = gMapWork[0];
-    Engine_MapCopyCellsTo(113, 31, 103, 17, 1, 1);
-    Engine_MapCopyCellsTo(111, 32, 104, 18, 3, 2);
-    Engine_MapCopyCellsTo(64, 32, 103, 18, 1, 2);
-    Engine_AudioPlayCue(230);
-    Engine_WorkSetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Map_CopyCellsTo(113, 31, 103, 17, 1, 1);
+    Map_CopyCellsTo(111, 32, 104, 18, 3, 2);
+    Map_CopyCellsTo(64, 32, 103, 18, 1, 2);
+    Audio_PlayCue(230);
+    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(10);
     rec = p8 + 356;
     for (i = 23; i >= 0; i--) {
@@ -564,11 +564,11 @@ void FieldScene_RunScene3a4SequenceI(void)
     } while ((u32)(v << 16) <= 0x640000);
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
-    Engine_AudioPlayCue(0x121);
-    Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+    Audio_PlayCue(0x121);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(30);
-    Engine_MapCopyCellsTo(103, 14, 103, 17, 4, 3);
-    Engine_GameFlagSet(0x907);
+    Map_CopyCellsTo(103, 14, 103, 17, 4, 3);
+    GameFlag_Set(0x907);
 }
 
 void FieldScene_RunScene3a4SequenceB(void)
@@ -578,14 +578,14 @@ void FieldScene_RunScene3a4SequenceB(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x323) != 0) {
-        Engine_MapCopyCellAttributes(2, 0, 1, 1, 24, 80);
-        Engine_MapCopyCellsTo(2, 1, 24, 11, 1, 2);
-        Engine_GameFlagClear(0x323);
+    if (GameFlag_IsSet(0x323) != 0) {
+        Map_CopyCellAttributes(2, 0, 1, 1, 24, 80);
+        Map_CopyCellsTo(2, 1, 24, 11, 1, 2);
+        GameFlag_Clear(0x323);
     } else {
-        Engine_MapCopyCellAttributes(0, 0, 1, 1, 24, 80);
-        Engine_MapCopyCellsTo(0, 1, 24, 11, 1, 2);
-        Engine_GameFlagSet(0x323);
+        Map_CopyCellAttributes(0, 0, 1, 1, 24, 80);
+        Map_CopyCellsTo(0, 1, 24, 11, 1, 2);
+        GameFlag_Set(0x323);
     }
 }
 
@@ -607,14 +607,14 @@ void FieldScene_RunScene3a4SequenceA(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x325) != 0) {
-        Engine_MapCopyCellAttributes(12, 72, 1, 1, 11, 73);
-        Engine_MapCopyCellsTo(48, 32, 11, 4, 1, 2);
-        Engine_GameFlagClear(0x325);
+    if (GameFlag_IsSet(0x325) != 0) {
+        Map_CopyCellAttributes(12, 72, 1, 1, 11, 73);
+        Map_CopyCellsTo(48, 32, 11, 4, 1, 2);
+        GameFlag_Clear(0x325);
     } else {
-        Engine_MapCopyCellAttributes(10, 72, 1, 1, 11, 73);
-        Engine_MapCopyCellsTo(49, 32, 11, 4, 1, 2);
-        Engine_GameFlagSet(0x325);
+        Map_CopyCellAttributes(10, 72, 1, 1, 11, 73);
+        Map_CopyCellsTo(49, 32, 11, 4, 1, 2);
+        GameFlag_Set(0x325);
     }
 }
 
@@ -640,15 +640,15 @@ void FieldScene_RunScene3a4SequenceC(void)
 
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
-    Engine_AudioPlayCue(125);
-    if (Engine_GameFlagIsSet(0x326) != 0) {
-        Engine_MapCopyCellAttributes(15, 93, 1, 1, 16, 92);
-        Engine_MapCopyCellsTo(47, 29, 16, 28, 1, 2);
-        Engine_GameFlagClear(0x326);
+    Audio_PlayCue(125);
+    if (GameFlag_IsSet(0x326) != 0) {
+        Map_CopyCellAttributes(15, 93, 1, 1, 16, 92);
+        Map_CopyCellsTo(47, 29, 16, 28, 1, 2);
+        GameFlag_Clear(0x326);
     } else {
-        Engine_MapCopyCellAttributes(17, 93, 1, 1, 16, 92);
-        Engine_MapCopyCellsTo(46, 29, 16, 28, 1, 2);
-        Engine_GameFlagSet(0x326);
+        Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);
+        Map_CopyCellsTo(46, 29, 16, 28, 1, 2);
+        GameFlag_Set(0x326);
     }
     Engine_TaskWait(20);
     BattleFx_PlayQueuedSound();
@@ -664,15 +664,15 @@ void FieldScene_RunScene3a4SequenceD(void)
 
     Engine_EventBegin();
     Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
-    Engine_AudioPlayCue(125);
-    if (Engine_GameFlagIsSet(0x327) != 0) {
-        Engine_MapCopyCellAttributes(28, 82, 1, 1, 29, 81);
-        Engine_MapCopyCellsTo(47, 28, 29, 17, 1, 2);
-        Engine_GameFlagClear(0x327);
+    Audio_PlayCue(125);
+    if (GameFlag_IsSet(0x327) != 0) {
+        Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);
+        Map_CopyCellsTo(47, 28, 29, 17, 1, 2);
+        GameFlag_Clear(0x327);
     } else {
-        Engine_MapCopyCellAttributes(30, 82, 1, 1, 29, 81);
-        Engine_MapCopyCellsTo(46, 28, 29, 17, 1, 2);
-        Engine_GameFlagSet(0x327);
+        Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
+        Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
+        GameFlag_Set(0x327);
     }
     Engine_TaskWait(20);
     BattleFx_PlayQueuedSound();
@@ -701,14 +701,14 @@ void FieldScene_RunScene3a4_02000c9c(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_MapCopyCellAttributes(24, 27, 2, 1, 24, 26);
-    Engine_AudioPlayCue(185);
-    Engine_ActorSetSpeed(10, 0x3333, 0x1999);
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
+    Map_CopyCellAttributes(24, 27, 2, 1, 24, 26);
+    Audio_PlayCue(185);
+    Actor_SetSpeed(10, 0x3333, 0x1999);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
     *(u8 *)((u8 *)Object_GetById(10) + 90) &= 254;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
-    Engine_ActorSetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
-    Engine_ActorSetDestination(10, 0x198, 0x1a8);
+    Actor_SetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
+    Actor_SetDestination(10, 0x198, 0x1a8);
     Engine_ActorWaitForMove(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     SceneActor_UpdateSlot10ByTileX();

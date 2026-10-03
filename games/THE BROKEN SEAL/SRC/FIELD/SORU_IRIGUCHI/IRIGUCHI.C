@@ -151,18 +151,18 @@ void FieldScene_RunScene37fSequenceA(void)
     Engine_EventBegin();
     v5 = 3;
     v6 = 2;
-    Engine_AudioPlayCue(181);
-    Engine_MapCopyCellsTo(16, 28, 21, 3, v5, v6);
+    Audio_PlayCue(181);
+    Map_CopyCellsTo(16, 28, 21, 3, v5, v6);
     Engine_TaskWait(10);
-    Engine_MapCopyCellsTo(16, 30, 21, 3, v5, v6);
+    Map_CopyCellsTo(16, 30, 21, 3, v5, v6);
     Engine_TaskWait(10);
-    Engine_MapCopyCellsTo(16, 32, 21, 3, v5, v6);
+    Map_CopyCellsTo(16, 32, 21, 3, v5, v6);
     Engine_TaskWait(10);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
     Engine_EventWait(10);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -195,42 +195,42 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 v5;
     s32 v6;
 
-    if (Engine_GameFlagIsSet(0xf01) == 0) {
+    if (GameFlag_IsSet(0xf01) == 0) {
     } else {
-        if (Engine_GameFlagIsSet(0x81a) != 0) {
+        if (GameFlag_IsSet(0x81a) != 0) {
         } else {
             Engine_EventBegin();
             Battle_ResetEffectCounter();
             v5 = 1;
-            Engine_AudioPlayCue(182);
-            Engine_MapCopyCellsTo(0, 70, 30, 42, v5, v5);
+            Audio_PlayCue(182);
+            Map_CopyCellsTo(0, 70, 30, 42, v5, v5);
             Engine_MapRedraw();
             Engine_EventWait(40);
             id = (s32)MsgSoruSetSmallGem;
             Engine_MessageShowCentered(id, 1);
             Engine_EventWait(20);
             v6 = 3;
-            Engine_AudioPlayCue(183);
-            Engine_MapCopyCellsTo(0, 29, 3, 1, v6, 2);
-            Engine_MapCopyCellAttributes(0, 29, 3, 2, v6, v5);
-            Engine_MapCopyCellsTo(1, 109, 4, 81, v5, v5);
+            Audio_PlayCue(183);
+            Map_CopyCellsTo(0, 29, 3, 1, v6, 2);
+            Map_CopyCellAttributes(0, 29, 3, 2, v6, v5);
+            Map_CopyCellsTo(1, 109, 4, 81, v5, v5);
             Engine_MapRedraw();
-            Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
             Engine_EventWait(20);
-            Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-            Engine_WorkSetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+            Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
             Engine_EventWait(20);
-            Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 40);
-            Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
-            Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 20);
-            Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 40);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 20);
+            Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
             Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 20);
             Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 40);
-            Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_EventWait(40);
             Engine_MessageShowCentered(id + 1, 1);
-            Engine_GameFlagSet(0x143);
-            Engine_GameFlagSet(0x81a);
+            GameFlag_Set(0x143);
+            GameFlag_Set(0x81a);
             Engine_EventEnd();
         }
     }
@@ -272,7 +272,7 @@ void SoruIriguchi_SetSmallGem(void)
 {
     s32 message;
 
-    if (Engine_GameFlagIsSet(3842) != 0 && Engine_GameFlagIsSet(GATE_ID) == 0) {
+    if (GameFlag_IsSet(3842) != 0 && GameFlag_IsSet(GATE_ID) == 0) {
         Engine_EventBegin();
         Battle_ResetEffectCounter();
         Engine_AudioPlayCue(182);
@@ -283,25 +283,25 @@ void SoruIriguchi_SetSmallGem(void)
         Engine_MessageShowCentered(message, 1);
         Engine_EventWait(20);
         Engine_AudioPlayCue(183);
-        Engine_MapCopyCellsTo(122, 20, 120, 30, 1, 2);
-        Engine_MapCopyCellAttributes(122, 20, 1, 2, 120, 30);
+        Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
+        Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
         Engine_MapRedraw();
         Call3(Engine_WorkSetValuesIfNonNegative, 65536, 65536, 65536);
         Engine_EventWait(20);
-        Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 256, 0);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 256, 0);
         Call3(Engine_WorkSetValuesIfNonNegative, 131072, 131072, 65536);
         Engine_EventWait(20);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 16384, 40);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 32768, 20);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 20);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 16384, 10);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 40);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 32768, 20);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 20);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 10);
         Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 20);
         Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 40);
         Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 58982);
         Engine_EventWait(40);
         Engine_MessageShowCentered(message + 1, 1);
-        Engine_GameFlagSet(0x143);
-        Engine_GameFlagSet(GATE_ID);
+        GameFlag_Set(0x143);
+        GameFlag_Set(GATE_ID);
         Engine_EventEnd();
     }
 }
@@ -550,25 +550,25 @@ s32 Scene_Initialize(void)
 
 void SoruIriguchi_ApplyEntryState(void)
 {
-    Engine_GameFlagSet(0x144);
+    GameFlag_Set(0x144);
     *(s32 *)((*(u8 *volatile *)&gWork + 0x1c0)) = 0x100;
-    if (Engine_GameFlagIsSet(0x814) != 0) {
+    if (GameFlag_IsSet(0x814) != 0) {
         s32 *timer = &SoruIriguchi_CueTimer;
         s32 zero = 0;
         *timer = zero;
         Call2(Engine_TaskAddCallback, (s32)Scene_UpdateCueTimer, 0xc80);
     }
-    if (Engine_GameFlagIsSet(0x879) != 0) {
-        Engine_MapCopyCellAttributes(5, 6, 1, 1, 6, 6);
-        Engine_MapCopyCellAttributes(5, 6, 1, 1, 7, 6);
-        Engine_MapCopyCellAttributes(5, 6, 1, 1, 8, 6);
-        Engine_MapCopyCellAttributes(0, 1, 3, 1, 6, 5);
+    if (GameFlag_IsSet(0x879) != 0) {
+        Map_CopyCellAttributes(5, 6, 1, 1, 6, 6);
+        Map_CopyCellAttributes(5, 6, 1, 1, 7, 6);
+        Map_CopyCellAttributes(5, 6, 1, 1, 8, 6);
+        Map_CopyCellAttributes(0, 1, 3, 1, 6, 5);
     }
-    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Engine_ActorSetPosition(8, 0x780000, 0xe80000);
-        Engine_MapCopyCellAttributes(2, 10, 1, 1, 6, 14);
-        Engine_MapCopyCellAttributes(2, 10, 1, 1, 7, 14);
-        Engine_MapCopyCellAttributes(2, 10, 1, 1, 8, 14);
+    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+        Actor_SetPosition(8, 0x780000, 0xe80000);
+        Map_CopyCellAttributes(2, 10, 1, 1, 6, 14);
+        Map_CopyCellAttributes(2, 10, 1, 1, 7, 14);
+        Map_CopyCellAttributes(2, 10, 1, 1, 8, 14);
     }
 }
 
@@ -611,7 +611,7 @@ void FieldScene_RunSceneEntryHook(void)
     case 8:
         gGameState.retreat_scene = (s32)&SceneId_SoruIriguchi1;
         gGameState.retreat_entrance = 8;
-        if (Engine_GameFlagIsSet(0x802) == 0)
+        if (GameFlag_IsSet(0x802) == 0)
             Scene_EnterSolSanctum();
         break;
 
@@ -633,8 +633,8 @@ void FieldScene_RunSceneEntryHook(void)
             Scene_SukuretaSuspectsHiddenPassage();
         if (Engine_GameFlagIsSet(0x303) != 0)
             Call3(Engine_ActorSetPosition, 9, 0x5d80000, 0x880000);
-        else if (Engine_GameFlagIsSet(0x302) != 0)
-            Engine_ActorSetPosition(9, 0x5f80000, 0x880000);
+        else if (GameFlag_IsSet(0x302) != 0)
+            Actor_SetPosition(9, 0x5f80000, 0x880000);
         if (Engine_GameFlagIsSet(0x301) != 0)
             Call3(Engine_ActorSetPosition, 10, 0x7180000, 0x880000);
         else if (Engine_GameFlagIsSet(0x300) != 0)
@@ -654,9 +654,9 @@ void FieldScene_RunSceneEntryHook(void)
             Scene_RunTransitionCue();
         Scene_RunActorFormation(1);
         Engine_GameFlagSet(0x234);
-        if (Engine_GameFlagIsSet(0x821) != 0) {
+        if (GameFlag_IsSet(0x821) != 0) {
             Engine_MapCopyCellsTo(0, 71, 100, 71, 1, 1);
-            Engine_MapCopyCellsTo(122, 20, 120, 30, 1, 2);
+            Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
             Call6(Engine_MapCopyCellAttributes, 122, 20, 1, 2, 120, 30);
             Engine_MapRedraw();
         }
@@ -674,74 +674,74 @@ void Scene_EnterSolSanctum(void)
     Engine_EventOpenScreen();
     Engine_ActorSetAnimation(0, 0);
     Engine_EventWait(4);
-    Engine_CameraMoveTo(-1, -1, -1, 0);
-    Engine_CameraSetSpeed(0x9999, 0x1333);
-    Engine_CameraMoveTo(0x4c80000, -1, 0x880000, 1);
+    Camera_MoveTo(-1, -1, -1, 0);
+    Camera_SetSpeed(0x9999, 0x1333);
+    Camera_MoveTo(0x4c80000, -1, 0x880000, 1);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(ACTOR_JASMINE, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_JASMINE, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
-    Engine_ActorSetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
-    Engine_ActorSetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
-    Engine_ActorSetDestinationOffset(ACTOR_GERALD, -16, 0);
-    Engine_ActorSetDestinationOffset(ACTOR_JASMINE, 16, 0);
-    Engine_ActorSetDestinationOffset(ACTOR_SUKURETA, 0, -32);
+    Actor_SetDestinationOffset(ACTOR_GERALD, -16, 0);
+    Actor_SetDestinationOffset(ACTOR_JASMINE, 16, 0);
+    Actor_SetDestinationOffset(ACTOR_SUKURETA, 0, -32);
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Engine_ActorSetAnimation(ACTOR_GERALD, 0);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 0);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0xc000, 0);
-    Engine_ActorFaceDirection(ACTOR_JASMINE, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0xc000, 0);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
     Engine_EventWait(20);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x3000, 40);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x5000, 40);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x3000, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
     Engine_ActorJump(ACTOR_SUKURETA, 4, 20);
     Engine_EventSetMessage((s32)MsgSoruSukuretaFirstTimeAtSol);
-    Engine_EventAskYesNo(0x4008, 0);
+    Event_AskYesNo(0x4008, 0);
     Engine_EventWait(20);
-    Engine_CameraMoveTo(0x4c80000, -1, 0x940000, 1);
+    Camera_MoveTo(0x4c80000, -1, 0x940000, 1);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_JASMINE, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(ACTOR_GERALD);
-    Engine_ActorSetPosition(ACTOR_GERALD, 0, 0);
-    Engine_ActorSetPosition(ACTOR_JASMINE, 0, 0);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
     Engine_ActorWaitForMove(ACTOR_SUKURETA);
-    Engine_ActorSetPosition(ACTOR_SUKURETA, 0, 0);
+    Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_ENTERED);
+    GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     Engine_EventEnd();
 }
 
@@ -765,35 +765,35 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     if (record != 0)
         Engine_ActorSetPosition(1, RECORD_A32(record), RECORD_B32(record));
 
-    Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
-    Engine_ActorSetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
-    Engine_ActorSetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_GERALD, 0x9999, 0x4ccc);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 2);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
-    Engine_ActorSetDestinationOffset(ACTOR_GERALD, -16, 0);
-    Engine_ActorSetDestinationOffset(ACTOR_JASMINE, 16, 0);
+    Actor_SetDestinationOffset(ACTOR_GERALD, -16, 0);
+    Actor_SetDestinationOffset(ACTOR_JASMINE, 16, 0);
     Call3(Engine_ActorSetDestinationOffset, 8, 0, -16);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_ActorSetAnimation(ACTOR_GERALD, 0);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 0);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Engine_ActorFaceDirection(ACTOR_JASMINE, 0xa000, 0);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0xc000, 30);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0x8000, 0);
-    Engine_ActorFaceDirection(ACTOR_JASMINE, 0, 0);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x8000, 30);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0x4000, 0);
-    Engine_ActorFaceDirection(ACTOR_JASMINE, 0x8000, 0);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x4000, 30);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Engine_ActorFaceDirection(ACTOR_JASMINE, 0xa000, 0);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0xc000, 40);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 30);
+    Actor_FaceDirection(ACTOR_GERALD, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x8000, 30);
+    Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 30);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
@@ -801,9 +801,9 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
     Engine_EventWait(6);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x8000, 20);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0, 20);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0xc000, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
@@ -811,104 +811,104 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
 
-    Engine_CameraSetSpeed(0x20000, 0x4000);
-    Engine_CameraMoveTo(0x06310000, -1, 0x00960000, 1);
+    Camera_SetSpeed(0x20000, 0x4000);
+    Camera_MoveTo(0x06310000, -1, 0x00960000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(10);
-    Engine_CameraSetSpeed(0x13333, 0x2666);
-    Engine_CameraMoveTo(0x06550000, -1, 0x00640000, 1);
+    Camera_SetSpeed(0x13333, 0x2666);
+    Camera_MoveTo(0x06550000, -1, 0x00640000, 1);
     Engine_CameraWaitForMove();
-    Engine_CameraMoveTo(0x06b60000, -1, 0x00640000, 1);
+    Camera_MoveTo(0x06b60000, -1, 0x00640000, 1);
     Engine_CameraWaitForMove();
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     Call4(Engine_CameraMoveTo, 0x06d80000, -1, 0x00960000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
-    Engine_CameraSetSpeed(0x26666, 0x4ccc);
-    Engine_CameraMoveTo(0x06840000, -1, 0x01000000, 1);
+    Camera_SetSpeed(0x26666, 0x4ccc);
+    Camera_MoveTo(0x06840000, -1, 0x01000000, 1);
     Engine_CameraWaitForMove();
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(10);
 
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0xe000, 0);
-    Engine_ActorFaceDirection(ACTOR_JASMINE, 0xa000, 10);
-    Engine_ActorShowEmote(ACTOR_GERALD, 0x101, 20);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 10);
+    Actor_ShowEmote(ACTOR_GERALD, 0x101, 20);
     Engine_EventSetMessage((s32)MsgSoruWrongSukureta);
-    Engine_EventShowMessageAndWait(ACTOR_GERALD, 0, 10);
-    Engine_ActorShowEmote(ACTOR_SUKURETA, 0x102, 60);
+    Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
+    Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
     Engine_ActorStartRepeatedMotion(ACTOR_SUKURETA, 2);
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorStartRepeatedMotion(ACTOR_GERALD, 2);
     Engine_ActorStartRepeatedMotion(ACTOR_JASMINE, 2);
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-    Engine_ActorSetAttachedEffect(ACTOR_GERALD, 0x102);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+    Actor_SetAttachedEffect(ACTOR_GERALD, 0x102);
     Call2(Engine_ActorSetAttachedEffect, 5, 0x102);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
-    Engine_EventShowMessage(ACTOR_SUKURETA, 0);
+    Event_ShowMessage(ACTOR_SUKURETA, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Engine_ActorFaceEachOther(0, 5, 0);
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorRunRepeatedMotion(5, 1);
     Engine_EventWait(10);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Engine_ActorFaceDirection(ACTOR_JASMINE, 0xa000, 20);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
-    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x3000, 10);
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0xc000, 20);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 20);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventWait(10);
-    Engine_ActorSetAttachedEffect(ACTOR_SUKURETA, 0x102);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x8000, 20);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0, 20);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0xc000, 60);
+    Actor_SetAttachedEffect(ACTOR_SUKURETA, 0x102);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x8000, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 60);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(10);
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x4000, 20);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 20);
     Engine_ActorJump(ACTOR_SUKURETA, 2, 20);
 
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0, 20);
-    Engine_EventOpenMessage(ACTOR_GERALD, 0);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 40);
+    Actor_FaceDirection(ACTOR_GERALD, 0, 20);
+    Event_OpenMessage(ACTOR_GERALD, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventSetMessage((s32)MsgSoruDangerousSplitStay);
         Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
         Engine_EventShowMessageAndWait(1, 0, 10);
     } else {
         Engine_EventSetMessage((s32)MsgSoruCantSeriouslyWant);
-        Engine_ActorFaceDirection(ACTOR_JASMINE, 0x8000, 20);
-        Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 10);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-        Engine_ActorFaceDirection(ACTOR_GERALD, 0xe000, 0);
-        Engine_ActorFaceDirection(ACTOR_JASMINE, 0xa000, 60);
-        Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 20);
+        Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+        Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 60);
+        Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
         Engine_ActorRunRepeatedMotion(1, 1);
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(1, 3);
         Engine_EventWait(10);
-        Engine_ActorFaceDirection(ACTOR_GERALD, 0, 0);
-        Engine_ActorFaceDirection(ACTOR_JASMINE, 0x8000, 30);
+        Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+        Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 30);
         Engine_ActorRunRepeatedMotion(1, 1);
         Engine_EventWait(10);
         Engine_EventShowMessageAndWait(1, 0, 10);
     }
 
-    Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x9999, 0x4ccc);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
     Engine_ActorSetDestinationOffset(8, 0, 48);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
     Engine_EventWait(6);
-    Engine_ActorFaceDirection(ACTOR_GERALD, 0xe000, 0);
+    Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Engine_ActorFaceDirection(5, 0xa000, 0);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
@@ -932,13 +932,13 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
         Engine_ActorSetDestination(8, RECORD_A16(record), RECORD_B16(record));
 
     Engine_ActorWaitForMove(8);
-    Engine_ActorSetPosition(ACTOR_GERALD, 0, 0);
-    Engine_ActorSetPosition(ACTOR_JASMINE, 0, 0);
-    Engine_ActorSetPosition(ACTOR_SUKURETA, 0, 0);
+    Actor_SetPosition(ACTOR_GERALD, 0, 0);
+    Actor_SetPosition(ACTOR_JASMINE, 0, 0);
+    Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 1);
     Engine_ActorSetAnimation(ACTOR_GERALD, 1);
     Engine_ActorSetAnimation(5, 1);
-    Engine_GameFlagSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
+    GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
     Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
     Engine_EventEnd();
 }
@@ -955,44 +955,44 @@ void Scene_RunTransitionCue(void)
     Engine_EventWait(20);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(8, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(8, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Engine_ActorSetSpeed(8, 0x10000, 0x8000);
+    Actor_SetSpeed(8, 0x10000, 0x8000);
     Engine_ActorSetAnimation(8, 2);
-    Engine_ActorSetDestinationOffset(8, 24, -10);
+    Actor_SetDestinationOffset(8, 24, -10);
     Engine_ActorWaitForMove(8);
     Engine_ActorSetAnimation(8, 1);
     Engine_EventWait(6);
-    Engine_ActorFaceDirection(8, 0xb000, 0);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 40);
-    Engine_CameraSetSpeed(0x26666, 0x4ccc);
-    Engine_CameraMoveTo(0x6880000, -1, 0x20c0000, 1);
+    Actor_FaceDirection(8, 0xb000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 40);
+    Camera_SetSpeed(0x26666, 0x4ccc);
+    Camera_MoveTo(0x6880000, -1, 0x20c0000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Engine_CameraSetSpeed(0x19999, 0x3333);
-    Engine_CameraMoveTo(0x7580000, -1, 0x20c0000, 1);
+    Camera_SetSpeed(0x19999, 0x3333);
+    Camera_MoveTo(0x7580000, -1, 0x20c0000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Engine_CameraSetSpeed(0x33333, 0x6666);
-    Engine_CameraMoveTo(0x6e90000, -1, 0x2240000, 1);
+    Camera_SetSpeed(0x33333, 0x6666);
+    Camera_MoveTo(0x6e90000, -1, 0x2240000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(8, 2);
-    Engine_ActorFaceDirection(8, 0, 30);
+    Actor_FaceDirection(8, 0, 30);
     Engine_EventSetMessage((s32)MsgSoruMoreStatuesOutOfReach);
-    Engine_EventShowMessageAndWait(0x4008, 0, 10);
-    Engine_ActorShowEmote(8, 0x100, 40);
+    Event_ShowMessageAndWait(0x4008, 0, 10);
+    Actor_ShowEmote(8, 0x100, 40);
     Engine_ActorRunRepeatedMotion(8, 1);
-    Engine_ActorFaceDirection(8, 0x5000, 20);
-    Engine_EventShowMessageAndWait(0x4008, 0, 10);
+    Actor_FaceDirection(8, 0x5000, 20);
+    Event_ShowMessageAndWait(0x4008, 0, 10);
     Engine_ActorSetAnimation(8, 2);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Actor_SetDestination(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Engine_ActorWaitForMove(8);
-    Engine_ActorSetPosition(8, 0, 0);
-    Engine_GameFlagSet(0x825);
+    Actor_SetPosition(8, 0, 0);
+    GameFlag_Set(0x825);
     Engine_EventEnd();
 }
 
@@ -1002,97 +1002,97 @@ void Scene_RunActorFormation(s32 a0)
     s32 record;
 
     Engine_MapCopyCellAttributes(122, 20, 1, 1, 100, 32);
-    Engine_MapCopyCellAttributes(122, 20, 1, 1, 104, 32);
-    Engine_MapCopyCellAttributes(122, 20, 1, 1, 108, 32);
-    Engine_MapCopyCellAttributes(122, 20, 1, 1, 112, 32);
-    Engine_MapCopyCellAttributes(122, 20, 1, 1, 116, 32);
-    Engine_MapCopyCellAttributes(122, 20, 1, 1, 120, 32);
-    if (Engine_GameFlagIsSet(0x311) != 0) {
-        Engine_MapCopyCellAttributes(121, 20, 1, 1, 100, 32);
+    Map_CopyCellAttributes(122, 20, 1, 1, 104, 32);
+    Map_CopyCellAttributes(122, 20, 1, 1, 108, 32);
+    Map_CopyCellAttributes(122, 20, 1, 1, 112, 32);
+    Map_CopyCellAttributes(122, 20, 1, 1, 116, 32);
+    Map_CopyCellAttributes(122, 20, 1, 1, 120, 32);
+    if (GameFlag_IsSet(0x311) != 0) {
+        Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
         if (a0 == 0) {
             goto L_02001890;
         }
-        Engine_ActorSetPosition(9, 0x6380000, 0x2080000);
+        Actor_SetPosition(9, 0x6380000, 0x2080000);
     } else {
-        if (Engine_GameFlagIsSet(0x310) != 0) {
-            Engine_MapCopyCellAttributes(121, 20, 1, 1, 100, 32);
+        if (GameFlag_IsSet(0x310) != 0) {
+            Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
             if (a0 != 0) {
-                Engine_ActorSetPosition(9, 0x6580000, 0x2080000);
+                Actor_SetPosition(9, 0x6580000, 0x2080000);
             }
         }
     }
     L_02001890:;
-    if (Engine_GameFlagIsSet(0x313) != 0) {
-        Engine_MapCopyCellAttributes(121, 20, 1, 1, 104, 32);
+    if (GameFlag_IsSet(0x313) != 0) {
+        Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
         if (a0 == 0) {
             goto L_020018f2;
         }
-        Engine_ActorSetPosition(10, 0x6780000, 0x2080000);
+        Actor_SetPosition(10, 0x6780000, 0x2080000);
     } else {
-        if (Engine_GameFlagIsSet(0x312) != 0) {
-            Engine_MapCopyCellAttributes(121, 20, 1, 1, 104, 32);
+        if (GameFlag_IsSet(0x312) != 0) {
+            Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
             if (a0 != 0) {
-                Engine_ActorSetPosition(10, 0x6980000, 0x2080000);
+                Actor_SetPosition(10, 0x6980000, 0x2080000);
             }
         }
     }
     L_020018f2:;
-    if (Engine_GameFlagIsSet(0x315) != 0) {
-        Engine_MapCopyCellAttributes(121, 20, 1, 1, 108, 32);
+    if (GameFlag_IsSet(0x315) != 0) {
+        Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
         if (a0 == 0) {
             goto L_02001956;
         }
-        Engine_ActorSetPosition(11, 0x6b80000, 0x2080000);
+        Actor_SetPosition(11, 0x6b80000, 0x2080000);
     } else {
-        if (Engine_GameFlagIsSet(0x314) != 0) {
-            Engine_MapCopyCellAttributes(121, 20, 1, 1, 108, 32);
+        if (GameFlag_IsSet(0x314) != 0) {
+            Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
             if (a0 != 0) {
-                Engine_ActorSetPosition(11, 0x6d80000, 0x2080000);
+                Actor_SetPosition(11, 0x6d80000, 0x2080000);
             }
         }
     }
     L_02001956:;
-    if (Engine_GameFlagIsSet(0x317) != 0) {
-        Engine_MapCopyCellAttributes(121, 20, 1, 1, 112, 32);
+    if (GameFlag_IsSet(0x317) != 0) {
+        Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
         if (a0 == 0) {
             goto L_020019b8;
         }
-        Engine_ActorSetPosition(12, 0x6f80000, 0x2080000);
+        Actor_SetPosition(12, 0x6f80000, 0x2080000);
     } else {
-        if (Engine_GameFlagIsSet(0x316) != 0) {
-            Engine_MapCopyCellAttributes(121, 20, 1, 1, 112, 32);
+        if (GameFlag_IsSet(0x316) != 0) {
+            Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
             if (a0 != 0) {
-                Engine_ActorSetPosition(12, 0x7180000, 0x2080000);
+                Actor_SetPosition(12, 0x7180000, 0x2080000);
             }
         }
     }
     L_020019b8:;
-    if (Engine_GameFlagIsSet(0x319) != 0) {
-        Engine_MapCopyCellAttributes(121, 20, 1, 1, 116, 32);
+    if (GameFlag_IsSet(0x319) != 0) {
+        Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
         if (a0 == 0) {
             goto L_02001a1c;
         }
-        Engine_ActorSetPosition(13, 0x7380000, 0x2080000);
+        Actor_SetPosition(13, 0x7380000, 0x2080000);
     } else {
-        if (Engine_GameFlagIsSet(0x318) != 0) {
-            Engine_MapCopyCellAttributes(121, 20, 1, 1, 116, 32);
+        if (GameFlag_IsSet(0x318) != 0) {
+            Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
             if (a0 != 0) {
-                Engine_ActorSetPosition(13, 0x7580000, 0x2080000);
+                Actor_SetPosition(13, 0x7580000, 0x2080000);
             }
         }
     }
     L_02001a1c:;
-    if (Engine_GameFlagIsSet(0x31b) != 0) {
-        Engine_MapCopyCellAttributes(121, 20, 1, 1, 120, 32);
+    if (GameFlag_IsSet(0x31b) != 0) {
+        Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
         if (a0 == 0) {
             goto L_02001a7e;
         }
-        Engine_ActorSetPosition(14, 0x7780000, 0x2080000);
+        Actor_SetPosition(14, 0x7780000, 0x2080000);
     } else {
-        if (Engine_GameFlagIsSet(0x31a) != 0) {
-            Engine_MapCopyCellAttributes(121, 20, 1, 1, 120, 32);
+        if (GameFlag_IsSet(0x31a) != 0) {
+            Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
             if (a0 != 0) {
-                Engine_ActorSetPosition(14, 0x7980000, 0x2080000);
+                Actor_SetPosition(14, 0x7980000, 0x2080000);
             }
         }
     }
@@ -1121,12 +1121,12 @@ void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
         if (v3 != 40) {
             goto L_02001b14;
         }
-        Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     } else {
         value = Engine_RandomNext();
         if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-            Engine_AudioPlayCue(138);
-            Engine_WorkSetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
+            Audio_PlayCue(138);
+            Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
             *timer = 80;
         }
     }

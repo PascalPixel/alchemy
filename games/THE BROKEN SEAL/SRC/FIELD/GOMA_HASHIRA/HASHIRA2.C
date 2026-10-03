@@ -146,13 +146,13 @@ void FieldScene_RunPillarSequence(void)
         Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, zero, n, (s32)((u32)(v3 << 1) >> 16), zero);
         Battle_WaitMode0(20);
         Audio_PlayCue(154);
-        Engine_WorkSetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-        Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+        Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_MapRenderWaitForValues();
         Engine_ActorSetPosition(9, 0, 0);
         Engine_ActorSetPosition(11, 0, 0);
         Engine_GameFlagSet(0x300);
-        Map_CopyCellAttributeRect(21, 45, 4, 2, 21, 11);
+        Map_CopyCellAttributes(21, 45, 4, 2, 21, 11);
     }
     Engine_EventEnd();
 }

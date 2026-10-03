@@ -121,33 +121,33 @@ void FieldScene_RunScene37aSequenceA(void)
     s32 record;
 
     if (CheckAllStatueLights()!= 0) {
-        record = Engine_GameFlagIsSet(0x201);
+        record = GameFlag_IsSet(0x201);
         if (record != 0) {
             goto L_020000f0;
         }
         Engine_EventBegin();
-        Engine_ColorBufferApplyTarget(0x2051cc, 1);
+        ColorBuffer_ApplyTarget(0x2051cc, 1);
         Engine_ColorBufferInterpolate(20);
-        Engine_GameFlagSet(0x201);
-        Engine_GameFlagClear(0x200);
-        Engine_GameFlagClear(0x202);
-        if (Engine_GameFlagIsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+        GameFlag_Set(0x201);
+        GameFlag_Clear(0x200);
+        GameFlag_Clear(0x202);
+        if (GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
             Scene_EnterInnerSanctum();
         }
         if (CheckAllStatueLights()!= 0) {
-            if (Engine_GameFlagIsSet(0x811) == 0) {
+            if (GameFlag_IsSet(0x811) == 0) {
                 FieldScene_RunActorPositionTransition();
             }
         }
         Engine_EventEnd();
     } else {
-        if (Engine_GameFlagIsSet(0x200) == 0) {
+        if (GameFlag_IsSet(0x200) == 0) {
             Engine_EventBegin();
-            Engine_ColorBufferApplyTarget(0x10000, 1);
+            ColorBuffer_ApplyTarget(0x10000, 1);
             Engine_ColorBufferInterpolate(20);
-            Engine_GameFlagSet(0x200);
-            Engine_GameFlagClear(0x201);
-            Engine_GameFlagClear(0x202);
+            GameFlag_Set(0x200);
+            GameFlag_Clear(0x201);
+            GameFlag_Clear(0x202);
             Engine_EventEnd();
         }
     }
@@ -159,13 +159,13 @@ void FieldScene_RunScene37aSequenceB(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x200) == 0) {
+    if (GameFlag_IsSet(0x200) == 0) {
         Engine_EventBegin();
-        Engine_ColorBufferApplyTarget(0x10000, 1);
+        ColorBuffer_ApplyTarget(0x10000, 1);
         Engine_ColorBufferInterpolate(20);
-        Engine_GameFlagSet(0x200);
-        Engine_GameFlagClear(0x201);
-        Engine_GameFlagClear(0x202);
+        GameFlag_Set(0x200);
+        GameFlag_Clear(0x201);
+        GameFlag_Clear(0x202);
         Engine_EventEnd();
     }
 }
@@ -176,26 +176,26 @@ void FieldScene_RunScene37aSequenceC(void)
     s32 record;
 
     if (CheckAllStatueLights()!= 0) {
-        record = Engine_GameFlagIsSet(0x200);
+        record = GameFlag_IsSet(0x200);
         if (record != 0) {
             goto L_020001d6;
         }
         Engine_EventBegin();
-        Engine_ColorBufferApplyTarget(0x10000, 1);
+        ColorBuffer_ApplyTarget(0x10000, 1);
         Engine_ColorBufferInterpolate(20);
-        Engine_GameFlagSet(0x200);
-        Engine_GameFlagClear(0x201);
-        Engine_GameFlagClear(0x202);
+        GameFlag_Set(0x200);
+        GameFlag_Clear(0x201);
+        GameFlag_Clear(0x202);
         Engine_EventEnd();
     } else {
-        if (Engine_GameFlagIsSet(0x201) == 0) {
+        if (GameFlag_IsSet(0x201) == 0) {
             Engine_EventBegin();
-            Engine_ColorBufferApplyTarget(0x2051cc, 1);
+            ColorBuffer_ApplyTarget(0x2051cc, 1);
             Engine_ColorBufferInterpolate(20);
-            Engine_GameFlagSet(0x201);
-            Engine_GameFlagClear(0x200);
-            Engine_GameFlagClear(0x202);
-            if (Engine_GameFlagIsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+            GameFlag_Set(0x201);
+            GameFlag_Clear(0x200);
+            GameFlag_Clear(0x202);
+            if (GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
                 Scene_EnterInnerSanctum();
             }
             Engine_EventEnd();
@@ -209,12 +209,12 @@ void FieldScene_RunScene37aSequenceD(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x202) == 0) {
-        Engine_ColorBufferApplyTarget(0x202db1, 1);
+    if (GameFlag_IsSet(0x202) == 0) {
+        ColorBuffer_ApplyTarget(0x202db1, 1);
         Engine_ColorBufferInterpolate(20);
-        Engine_GameFlagSet(0x202);
-        Engine_GameFlagClear(0x200);
-        Engine_GameFlagClear(0x201);
+        GameFlag_Set(0x202);
+        GameFlag_Clear(0x200);
+        GameFlag_Clear(0x201);
     }
 }
 
@@ -490,61 +490,61 @@ void Scene_EnterInnerSanctum(void)
     s32 request;
 
     Engine_EventSetMessage((s32)MsgSoruWhRoom);
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e8, 176);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     record = Object_GetById(0);
     if (record != 0) {
-        Engine_ActorSetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_SUKURETA, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 1);
-    Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
-    Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x1d8, 168);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0, 60);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 1);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1d8, 168);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 60);
     Engine_ActorJump(ACTOR_SUKURETA, 4, 40);
     SetSolShindenActorStep(16, 6);
-    Engine_CameraSetSpeed(0x26666, 0x4ccc);
-    Engine_CameraMoveTo(0x23f0000, -1, 0xb50000, 1);
+    Camera_SetSpeed(0x26666, 0x4ccc);
+    Camera_MoveTo(0x23f0000, -1, 0xb50000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(120);
     SetSolShindenActorStep(0x1010, 80);
-    Engine_CameraMoveTo(0x1ec0000, -1, 0xa80000, 1);
+    Camera_MoveTo(0x1ec0000, -1, 0xa80000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x3000, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
     SetSolShindenActorStep(0x4010, 6);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0, 60);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 60);
     Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x3000, 10);
-    Engine_EventOpenMessage(0x4010, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+    Event_OpenMessage(0x4010, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventSetMessage((s32)MsgSoruLunaSolRooms);
     } else {
         Engine_EventSetMessage((s32)MsgSoruRoomLunaOne);
     }
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     SetSolShindenActorStep(0x4010, 10);
     request = (s32)MsgSoruMeanLookFarther;
     Engine_EventSetMessage(request);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0, 40);
-    Engine_ActorShowEmote(ACTOR_SUKURETA, 0x105, 40);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0, 40);
+    Actor_ShowEmote(ACTOR_SUKURETA, 0x105, 40);
     Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x3000, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
     Engine_ActorSetAnimation(ACTOR_SUKURETA, 4);
-    Engine_EventOpenMessage(0x4010, 0);
+    Event_OpenMessage(0x4010, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventSetMessage((request + 1));
-        Engine_GameFlagSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA);
+        GameFlag_Set(FLAG_ROBIN_SEARCHING_FOR_SUKURETA);
     } else {
         Engine_EventSetMessage((request + 2));
     }
     SetSolShindenActorStep(0x4010, 4);
     Engine_CameraFollowActor(ACTOR_SUKURETA, 1);
-    Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x1e6, 131);
-    Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x240, 120);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0xc000, 2);
-    Engine_CameraSetSpeed(0x40000, 0x8000);
-    Engine_GameFlagSet(FLAG_INNER_SANCTUM_ENTERED);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x1e6, 131);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 120);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 2);
+    Camera_SetSpeed(0x40000, 0x8000);
+    GameFlag_Set(FLAG_INNER_SANCTUM_ENTERED);
 }
 
 void UpdateStatueTrapActor(void)
@@ -554,97 +554,97 @@ void UpdateStatueTrapActor(void)
     EntB *target_position;
 
     scene_actor = Object_GetById(16);
-    if (Engine_GameFlagIsSet(0x809) == 0) {
+    if (GameFlag_IsSet(0x809) == 0) {
         return;
     }
-    if (Engine_GameFlagIsSet(0x814) != 0) {
+    if (GameFlag_IsSet(0x814) != 0) {
         FieldScene_RunScene37aSequenceB();
         return;
     }
-    if (Engine_GameFlagIsSet(0x819) != 0) {
+    if (GameFlag_IsSet(0x819) != 0) {
         return;
     }
     Engine_EventBegin();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_EventSetMessage((s32)MsgSoruWayLeadsOutSanctum);
-    if (Engine_GameFlagIsSet(0x810) != 0 || Engine_GameFlagIsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+    if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         target_actor = Object_GetById(0);
         if (target_actor != 0) {
-            Engine_ActorSetPosition(ACTOR_SUKURETA, target_actor->unk8, target_actor->unk10);
+            Actor_SetPosition(ACTOR_SUKURETA, target_actor->unk8, target_actor->unk10);
         }
         Engine_EventWait(4);
-        Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
-    } else if (Engine_GameFlagIsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
-        Engine_ActorSetPosition(ACTOR_SUKURETA, 0x1880000, 0xa80000);
+        Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+    } else if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
+        Actor_SetPosition(ACTOR_SUKURETA, 0x1880000, 0xa80000);
         Engine_EventWait(4);
-        Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x20000, 0x10000);
+        Actor_SetSpeed(ACTOR_SUKURETA, 0x20000, 0x10000);
     }
-    if (Engine_GameFlagIsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
-        Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
+    if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
+        Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
     } else {
         /* FAKEMATCH: the reference tests the entered flag here and drops
          * the result; no use of it is recovered. */
-        Engine_GameFlagIsSet(FLAG_INNER_SANCTUM_ENTERED);
+        GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
     }
-    Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x4000, 10);
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    if (Engine_GameFlagIsSet(0x810) != 0 || Engine_GameFlagIsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+    if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
         target_position = Object_GetById(0);
         if (target_position != 0) {
-            Engine_ActorSetDestination(ACTOR_SUKURETA, target_position->unkA, target_position->unk12);
+            Actor_SetDestination(ACTOR_SUKURETA, target_position->unkA, target_position->unk12);
         }
         Engine_ActorWaitForMove(ACTOR_SUKURETA);
-        Engine_ActorSetPosition(ACTOR_SUKURETA, 0, 0);
-        Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x120, 0xe8);
+        Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x120, 0xe8);
     } else {
-        Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x120, 0xf8);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x120, 0xf8);
     }
     Engine_EventEnd();
 }
 
 void UpdateStatueLight1(void)
 {
-    if ((Engine_RandomNext() & 3) != 0) {
+    if ((Random_Next() & 3) != 0) {
         switch (SoruNichigetsu_Light1Timer) {
         case 0:
-            Engine_AudioPlayCue(0xbb);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x21, 1, 5);
+            Audio_PlayCue(0xbb);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x21, 1, 5);
             break;
         case 1:
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x21, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x22, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x21, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x22, 1, 5);
             break;
         case 2:
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x22, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x23, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x22, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x23, 1, 5);
             break;
         case 3:
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x23, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x23, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 5);
             break;
         case 4:
             SoruNichigetsu_FlashState = 2;
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 30, 0x25, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x24, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 30, 0x25, 1, 5);
             break;
         case 0x50:
-            Engine_MapCopyCellsTo(0x2e, 0x31, 30, 0x21, 1, 10);
+            Map_CopyCellsTo(0x2e, 0x31, 30, 0x21, 1, 10);
             break;
         }
         SoruNichigetsu_Light1Timer++;
-        if (SoruNichigetsu_Light1Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 90) {
+        if (SoruNichigetsu_Light1Timer > ((u32)(Random_Next() * 40) >> 16) + 90) {
             SoruNichigetsu_Light1Timer = 0;
         }
     }
     if (SoruNichigetsu_FlashState != 0) {
         if (SoruNichigetsu_FlashState == 2) {
-            Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
         } else if (SoruNichigetsu_FlashState == 1) {
-            Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
         }
         SoruNichigetsu_FlashState--;
     }
@@ -652,35 +652,35 @@ void UpdateStatueLight1(void)
 
 void UpdateStatueLight2(void)
 {
-    if ((Engine_RandomNext() & 3) != 0) {
+    if ((Random_Next() & 3) != 0) {
         switch (SoruNichigetsu_Light2Timer) {
         case 0:
-            Engine_AudioPlayCue(0xbb);
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x21, 1, 5);
+            Audio_PlayCue(0xbb);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x21, 1, 5);
             break;
         case 1:
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x21, 1, 1);
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x22, 1, 5);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x21, 1, 1);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x22, 1, 5);
             break;
         case 2:
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x22, 1, 1);
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x23, 1, 5);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x22, 1, 1);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x23, 1, 5);
             break;
         case 3:
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x23, 1, 1);
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 5);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x23, 1, 1);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 5);
             break;
         case 4:
             SoruNichigetsu_FlashState = 2;
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 1);
-            Engine_MapCopyCellsTo(0x2f, 0x3b, 42, 0x25, 1, 5);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x24, 1, 1);
+            Map_CopyCellsTo(0x2f, 0x3b, 42, 0x25, 1, 5);
             break;
         case 0x5a:
-            Engine_MapCopyCellsTo(0x2f, 0x31, 42, 0x21, 1, 10);
+            Map_CopyCellsTo(0x2f, 0x31, 42, 0x21, 1, 10);
             break;
         }
         SoruNichigetsu_Light2Timer++;
-        if (SoruNichigetsu_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100) {
+        if (SoruNichigetsu_Light2Timer > ((u32)(Random_Next() * 40) >> 16) + 100) {
             SoruNichigetsu_Light2Timer = 0;
         }
     }
@@ -688,35 +688,35 @@ void UpdateStatueLight2(void)
 
 void UpdateStatueLight3(void)
 {
-    if ((Engine_RandomNext() & 3) != 0) {
+    if ((Random_Next() & 3) != 0) {
         switch (SoruNichigetsu_Light3Timer) {
         case 0:
-            Engine_AudioPlayCue(0xbb);
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x24, 1, 5);
+            Audio_PlayCue(0xbb);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x24, 1, 5);
             break;
         case 1:
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x24, 1, 1);
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x25, 1, 5);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x24, 1, 1);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x25, 1, 5);
             break;
         case 2:
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x25, 1, 1);
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x26, 1, 5);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x25, 1, 1);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x26, 1, 5);
             break;
         case 3:
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x26, 1, 1);
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 5);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x26, 1, 1);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 5);
             break;
         case 4:
             SoruNichigetsu_FlashState = 2;
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 1);
-            Engine_MapCopyCellsTo(0x30, 0x3b, 31, 0x28, 1, 5);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x27, 1, 1);
+            Map_CopyCellsTo(0x30, 0x3b, 31, 0x28, 1, 5);
             break;
         case 0x5f:
-            Engine_MapCopyCellsTo(0x30, 0x31, 31, 0x24, 1, 10);
+            Map_CopyCellsTo(0x30, 0x31, 31, 0x24, 1, 10);
             break;
         }
         SoruNichigetsu_Light3Timer++;
-        if (SoruNichigetsu_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105) {
+        if (SoruNichigetsu_Light3Timer > ((u32)(Random_Next() * 40) >> 16) + 105) {
             SoruNichigetsu_Light3Timer = 0;
         }
     }
@@ -724,35 +724,35 @@ void UpdateStatueLight3(void)
 
 void UpdateStatueLight4(void)
 {
-    if ((Engine_RandomNext() & 3) != 0) {
+    if ((Random_Next() & 3) != 0) {
         switch (SoruNichigetsu_Light4Timer) {
         case 0:
-            Engine_AudioPlayCue(0xbb);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x24, 1, 5);
+            Audio_PlayCue(0xbb);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x24, 1, 5);
             break;
         case 1:
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x24, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x25, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x24, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x25, 1, 5);
             break;
         case 2:
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x25, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x26, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x25, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x26, 1, 5);
             break;
         case 3:
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x26, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x26, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 5);
             break;
         case 4:
             SoruNichigetsu_FlashState = 2;
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 1);
-            Engine_MapCopyCellsTo(0x2e, 0x3b, 41, 0x28, 1, 5);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x27, 1, 1);
+            Map_CopyCellsTo(0x2e, 0x3b, 41, 0x28, 1, 5);
             break;
         case 0x55:
-            Engine_MapCopyCellsTo(0x2e, 0x31, 41, 0x24, 1, 10);
+            Map_CopyCellsTo(0x2e, 0x31, 41, 0x24, 1, 10);
             break;
         }
         SoruNichigetsu_Light4Timer++;
-        if (SoruNichigetsu_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95) {
+        if (SoruNichigetsu_Light4Timer > ((u32)(Random_Next() * 40) >> 16) + 95) {
             SoruNichigetsu_Light4Timer = 0;
         }
     }
@@ -763,28 +763,28 @@ void FieldScene_PrepareStatueTransition(void)
     u32 i;
     s32 record;
 
-    Engine_CameraMoveTo(-1, -1, -1, 0);
-    Engine_MapCopyCellsTo(30, 43, 32, 40, 8, 3);
-    Engine_MapCopyCellsTo(30, 43, 33, 39, 8, 1);
-    Engine_MapCopyCellsTo(30, 43, 36, 38, 3, 3);
-    Engine_MapCopyCellsTo(14, 41, 32, 41, 8, 4);
-    Engine_CameraMoveTo(0x23e0000, -1, 0x9e0000, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
+    Map_CopyCellsTo(30, 43, 32, 40, 8, 3);
+    Map_CopyCellsTo(30, 43, 33, 39, 8, 1);
+    Map_CopyCellsTo(30, 43, 36, 38, 3, 3);
+    Map_CopyCellsTo(14, 41, 32, 41, 8, 4);
+    Camera_MoveTo(0x23e0000, -1, 0x9e0000, 0);
     Engine_MapRedraw();
-    Engine_ActorSetPosition(ACTOR_SUKURETA, 0x23e0000, 0x780000);
-    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_SetPosition(ACTOR_SUKURETA, 0x23e0000, 0x780000);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Engine_TaskWait(1);
-    Engine_ColorBufferApplyTarget(0x2051cc, 1);
+    ColorBuffer_ApplyTarget(0x2051cc, 1);
     Engine_ColorBufferInterpolate(20);
-    Engine_GameFlagSet(0x201);
-    Engine_GameFlagClear(0x200);
-    Engine_GameFlagClear(0x202);
+    GameFlag_Set(0x201);
+    GameFlag_Clear(0x200);
+    GameFlag_Clear(0x202);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gEventWork->transition_frames = 32;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
-    Engine_AudioPlayCue(171);
-    Engine_ColorBufferApplyTarget(0x10005, 1);
+    Audio_PlayCue(171);
+    ColorBuffer_ApplyTarget(0x10005, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_EventWait(32);
     Engine_ColorBufferApplyTarget(0x2051cc, 1);
@@ -802,39 +802,39 @@ void Scene_SpringStatueTrap(void)
     Engine_EventBegin();
     FieldScene_PrepareStatueTransition();
     Engine_EventSetMessage((s32)MsgSoruWhatsHappeningAtTheTrap);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x4000, 20);
-    Engine_ActorShowEmote(ACTOR_SUKURETA, 256, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 20);
+    Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
     Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
-    Engine_CameraMoveTo(37617664, -1, 11403264, 1);
+    Camera_MoveTo(37617664, -1, 11403264, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     SetSolShindenActorStep(32784, 20);
     for (outer_pair = 0; outer_pair != 4; outer_pair++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(12);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(12);
     }
     for (second_pair = 0; second_pair != 6; second_pair++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(8);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(8);
     }
     for (middle_pair = 0; middle_pair != 8; middle_pair++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(6);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(6);
     }
     for (fourth_pair = 0; fourth_pair != 10; fourth_pair++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(4);
         Engine_AudioPlayCue(246);
@@ -842,23 +842,23 @@ void Scene_SpringStatueTrap(void)
         Engine_EventWait(4);
     }
     for (inner_pair = 0; inner_pair != 12; inner_pair++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(2);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(2);
     }
     SetStatueLightGroup1();
     Engine_EventWait(6);
     SetSolShindenActorStep(32784, 6);
-    Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x20000, 0x10000);
-    Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 576, 280);
+    Actor_SetSpeed(ACTOR_SUKURETA, 0x20000, 0x10000);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 576, 280);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gEventWork->transition_frames = 32;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
-    Engine_GameFlagSet(FLAG_STATUE_TRAP_SPRUNG);
+    GameFlag_Set(FLAG_STATUE_TRAP_SPRUNG);
     Engine_EventRequestExit(3);
 }
 
@@ -872,18 +872,18 @@ void FieldScene_RunClosingSequence(void)
     SoruNichigetsu_Light3Timer = 0;
     SoruNichigetsu_Light4Timer = 0;
     Engine_EventSetMessage((s32)MsgSoruWhatsHappening);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 16384, 20);
-    Engine_ActorShowEmote(ACTOR_SUKURETA, 256, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
+    Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
     Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
-    Engine_CameraMoveTo(37617664, -1, 11403264, 1);
+    Camera_MoveTo(37617664, -1, 11403264, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     SetSolShindenActorStep(32784, 20);
     for (i = 0; i != 4; i++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(12);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(12);
     }
@@ -898,42 +898,42 @@ void FieldScene_RunClosingSequence(void)
     Value2(Engine_TaskAddCallback, (s32)UpdateStatueLight3, 3200);
     Engine_TaskAddCallback((s32)UpdateStatueLight4, 3200);
     for (i = 0; i != 6; i++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(5);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(5);
     }
     for (i = 0; i != 8; i++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(4);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(4);
     }
     for (i = 0; i != 10; i++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(3);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(3);
     }
     for (i = 0; i != 12; i++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup1();
         Engine_EventWait(2);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup3();
         Engine_EventWait(2);
     }
-    Engine_MapCopyCellsTo(45, 30, 34, 10, 4, 2);
+    Map_CopyCellsTo(45, 30, 34, 10, 4, 2);
     Engine_ActorJump(ACTOR_SUKURETA, 6, 40);
     SetSolShindenActorStep(32784, 6);
-    Engine_ActorSetSpeed(ACTOR_SUKURETA, 131072, 65536);
-    Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 576, 280);
+    Actor_SetSpeed(ACTOR_SUKURETA, 131072, 65536);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 576, 280);
     Engine_TaskRemoveCallback((s32)UpdateStatueLight1);
     Engine_TaskRemoveCallback((s32)UpdateStatueLight2);
     Engine_TaskRemoveCallback((s32)UpdateStatueLight3);
@@ -955,80 +955,80 @@ void FieldScene_RunFlaggedSequence(void)
     s32 i10;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(2059) != 0 && Engine_GameFlagIsSet(2086) != 0) {
-        Engine_GameFlagClear(2086);
-        Engine_MapCopyCellsTo(45, 28, 34, 10, 2, 1);
-    } else if (Engine_GameFlagIsSet(2059) != 0 && Engine_GameFlagIsSet(2086) == 0) {
-        Engine_GameFlagSet(2086);
+    if (GameFlag_IsSet(2059) != 0 && GameFlag_IsSet(2086) != 0) {
+        GameFlag_Clear(2086);
+        Map_CopyCellsTo(45, 28, 34, 10, 2, 1);
+    } else if (GameFlag_IsSet(2059) != 0 && GameFlag_IsSet(2086) == 0) {
+        GameFlag_Set(2086);
     }
-    if (Engine_GameFlagIsSet(2060) != 0 && Engine_GameFlagIsSet(2087) != 0) {
-        Engine_GameFlagClear(2087);
-        Engine_MapCopyCellsTo(47, 28, 36, 10, 2, 1);
-    } else if (Engine_GameFlagIsSet(2060) != 0 && Engine_GameFlagIsSet(2087) == 0) {
-        Engine_GameFlagSet(2087);
+    if (GameFlag_IsSet(2060) != 0 && GameFlag_IsSet(2087) != 0) {
+        GameFlag_Clear(2087);
+        Map_CopyCellsTo(47, 28, 36, 10, 2, 1);
+    } else if (GameFlag_IsSet(2060) != 0 && GameFlag_IsSet(2087) == 0) {
+        GameFlag_Set(2087);
     }
-    if (Engine_GameFlagIsSet(2061) != 0 && Engine_GameFlagIsSet(2088) != 0) {
-        Engine_GameFlagClear(2088);
-        Engine_MapCopyCellsTo(45, 29, 34, 11, 2, 1);
-    } else if (Engine_GameFlagIsSet(2061) != 0 && Engine_GameFlagIsSet(2088) == 0) {
-        Engine_GameFlagSet(2088);
+    if (GameFlag_IsSet(2061) != 0 && GameFlag_IsSet(2088) != 0) {
+        GameFlag_Clear(2088);
+        Map_CopyCellsTo(45, 29, 34, 11, 2, 1);
+    } else if (GameFlag_IsSet(2061) != 0 && GameFlag_IsSet(2088) == 0) {
+        GameFlag_Set(2088);
     }
-    if (Engine_GameFlagIsSet(2062) != 0 && Engine_GameFlagIsSet(2089) != 0) {
-        Engine_GameFlagClear(2089);
-        Engine_MapCopyCellsTo(47, 29, 36, 11, 2, 1);
-    } else if (Engine_GameFlagIsSet(2062) != 0 && Engine_GameFlagIsSet(2089) == 0) {
-        Engine_GameFlagSet(2089);
+    if (GameFlag_IsSet(2062) != 0 && GameFlag_IsSet(2089) != 0) {
+        GameFlag_Clear(2089);
+        Map_CopyCellsTo(47, 29, 36, 11, 2, 1);
+    } else if (GameFlag_IsSet(2062) != 0 && GameFlag_IsSet(2089) == 0) {
+        GameFlag_Set(2089);
     }
     FieldScene_PrepareStatueTransition();
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 16384, 20);
+    Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
     Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
-    Engine_CameraMoveTo(37617664, -1, 11403264, 1);
+    Camera_MoveTo(37617664, -1, 11403264, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     for (i6 = 0; i6 != 4; i6++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(12);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(12);
     }
     for (i7 = 0; i7 != 6; i7++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(8);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(8);
     }
     for (i8 = 0; i8 != 8; i8++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(6);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(6);
     }
     for (i9 = 0; i9 != 10; i9++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(4);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(4);
     }
     for (i10 = 0; i10 != 12; i10++) {
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup2();
         Engine_EventWait(2);
-        Engine_AudioPlayCue(246);
+        Audio_PlayCue(246);
         SetStatueLightGroup4();
         Engine_EventWait(2);
     }
-    Engine_AudioPlayCue(246);
+    Audio_PlayCue(246);
     SetStatueLightGroup2();
     Engine_EventWait(6);
-    if (Engine_GameFlagIsSet(2082) == 0) {
+    if (GameFlag_IsSet(2082) == 0) {
         base = 32784;
         Engine_EventSetMessage((s32)MsgSoruYouFoundIt);
         SetSolShindenActorStep(base, 6);
@@ -1047,21 +1047,21 @@ void Scene_ChangeLunaPictureToSol(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(FLAG_LUNA_PICTURE_CHANGED_TO_SOL) != 0) {
+    if (GameFlag_IsSet(FLAG_LUNA_PICTURE_CHANGED_TO_SOL) != 0) {
     } else {
         if (CheckAllStatueLights() == 0) {
         } else {
             Engine_EventBegin();
-            Engine_ActorSetPosition(ACTOR_SUKURETA, 0x2410000, 0x930000);
-            Engine_ActorFaceDirection(ACTOR_SUKURETA, 0x4000, 1);
-            Engine_CameraMoveTo(0x23e0000, -1, 0xb80000, 1);
+            Actor_SetPosition(ACTOR_SUKURETA, 0x2410000, 0x930000);
+            Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 1);
+            Camera_MoveTo(0x23e0000, -1, 0xb80000, 1);
             Engine_EventSetMessage((s32)MsgSoruThePictureOfLunaChanged);
-            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x240, 232);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x240, 232);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
             Engine_CameraWaitForMove();
             Engine_EventWait(10);
-            Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
-            Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x240, 152);
+            Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 152);
             Engine_EventWait(6);
             Engine_ActorJump(ACTOR_SUKURETA, 6, 30);
             SetSolShindenActorStep(16, 6);
@@ -1069,30 +1069,30 @@ void Scene_ChangeLunaPictureToSol(void)
             Engine_EventWait(2);
             Engine_ActorSetAnimationAndWait(ACTOR_SUKURETA, 4);
             SetSolShindenActorStep(16, 6);
-            Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
             Engine_EventWait(40);
             Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
             Engine_EventWait(30);
             SetSolShindenActorStep(16, 6);
             Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-            Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x240, 184);
+            Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 184);
             Engine_EventWait(6);
             Engine_ActorRunRepeatedMotion(ACTOR_SUKURETA, 2);
             Engine_EventWait(40);
             SetSolShindenActorStep(0x4010, 6);
-            Engine_ActorWalkToAndWait(ACTOR_SUKURETA, 0x240, 208);
+            Actor_WalkToAndWait(ACTOR_SUKURETA, 0x240, 208);
             Engine_EventWait(40);
             Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
             Engine_EventWait(6);
-            Engine_ActorSetSpeed(ACTOR_SUKURETA, 0x8000, 0x4000);
+            Actor_SetSpeed(ACTOR_SUKURETA, 0x8000, 0x4000);
             Engine_ActorSetAnimation(ACTOR_SUKURETA, 2);
             record = Object_GetById(0);
             if (record != 0) {
-                Engine_ActorSetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                Actor_SetDestination(ACTOR_SUKURETA, *(s16 *)(record + 10), *(s16 *)(record + 18));
             }
             Engine_ActorWaitForMove(ACTOR_SUKURETA);
-            Engine_ActorSetPosition(ACTOR_SUKURETA, 0, 0);
-            Engine_GameFlagSet(FLAG_LUNA_PICTURE_CHANGED_TO_SOL);
+            Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
+            GameFlag_Set(FLAG_LUNA_PICTURE_CHANGED_TO_SOL);
             Engine_EventEnd();
         }
     }
@@ -1148,8 +1148,8 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 30);
         Call3(Engine_ActorSetPosition, 16, 0x1200000, 0x780000);
         Call3(Engine_ActorSetSpeed, 16, 0x10000, 0x8000);
-        Engine_ActorWalkToAndWait(16, 0x114, 136);
-        Engine_ActorWalkTo(16, 0x108, 136);
+        Actor_WalkToAndWait(16, 0x114, 136);
+        Actor_WalkTo(16, 0x108, 136);
         Call3(Engine_ActorWalkToAndWait, 0, 0x138, 136);
         Engine_ActorSetAnimation(0, 1);
         Engine_ActorSetAnimation(16, 1);
@@ -1159,9 +1159,9 @@ void FieldScene_RunSanctumRiseAndShrink(void)
             Engine_AudioPlayCue(220);
         }
         Engine_EventWait(40);
-        if (Engine_GameFlagIsSet(0x819) != 0) {
+        if (GameFlag_IsSet(0x819) != 0) {
         } else {
-            Engine_MapCopyCellsTo(36, 62, 17, 36, 2, 3);
+            Map_CopyCellsTo(36, 62, 17, 36, 2, 3);
             Engine_MapCopyCellsTo(44, 59, 17, 38, 2, 1);
             Engine_EventWait(10);
             Engine_MapCopyCellsTo(38, 62, 17, 36, 2, 3);
@@ -1180,7 +1180,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
             Engine_MapCopyCellsTo(0, 32, 17, 41, 2, 1);
             Engine_MapCopyCellsTo(44, 59, 17, 42, 2, 1);
             Engine_EventWait(10);
-            Engine_MapCopyCellsTo(0, 32, 17, 42, 2, 3);
+            Map_CopyCellsTo(0, 32, 17, 42, 2, 3);
             Engine_EventWait(80);
             Map_ClearLayerEntryFlag(9);
             Map_ClearLayerEntryFlag(10);
@@ -1199,7 +1199,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Engine_EventShowMessage(base5_8010, 0);
         Engine_ActorSetAnimation(0, 3);
         Engine_EventWait(60);
-        actor = Object_GetById(ACTOR_PARTY_LEADER);
+        actor = Actor_Get(ACTOR_PARTY_LEADER);
         Engine_CameraSetSpeed(0x9999, 0x1333);
         Engine_CameraMoveTo(0x11f0000, -1, 0x720000, 1);
         Engine_ActorWalkToAndWait(0, 0x120, 120);
@@ -1551,12 +1551,12 @@ void Sukureta_Talk(void)
     s32 record;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0) {
+    if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0) {
         Engine_EventSetMessage((s32)MsgSoruSukuretaLetMeKnowWhat);
     } else {
         Engine_EventSetMessage((s32)MsgSoruSukuretaJustWaitOverThere);
     }
-    Engine_EventShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-    Engine_ActorFaceDirection(ACTOR_SUKURETA, 0xc000, 10);
+    Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 10);
     Engine_EventEnd();
 }

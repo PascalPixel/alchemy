@@ -176,15 +176,15 @@ s32 LinkLobby_PollPeerReady(void)
             work->raised_trigger = 1;
         }
     }
-    if ((Engine_GameFlagIsSet(0x201) || Engine_GameFlagIsSet(0x202)) && !Engine_GameFlagIsSet(0x173)
+    if ((GameFlag_IsSet(0x201) || GameFlag_IsSet(0x202)) && !GameFlag_IsSet(0x173)
         && !LinkLobby_PeerSlotMatches(0) && gLinkLobbyWaitFrames > 24) {
         work->raised_trigger = 2;
-        Engine_GameFlagSet(0x205);
-        Engine_GameFlagClear(0x201);
-        Engine_GameFlagClear(0x202);
+        GameFlag_Set(0x205);
+        GameFlag_Clear(0x201);
+        GameFlag_Clear(0x202);
         LinkLobby_WriteSlotValue(4);
     }
-    if (Engine_GameFlagIsSet(0x205)) {
+    if (GameFlag_IsSet(0x205)) {
         work->raised_trigger = 2;
     }
     return result;

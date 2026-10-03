@@ -83,16 +83,16 @@ s32 FuneKanpan_UpdateHoverGullA(struct FieldActor *obj)
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
                 && obj->target_z == obj->target_y) {
                 GULL(obj)->step++;
-                Engine_AudioPlayCue(146);
+                Audio_PlayCue(146);
                 if (GULL(obj)->right_side != 0)
-                    Engine_ActorFaceDirection(21, 0xd000, 0);
+                    Actor_FaceDirection(21, 0xd000, 0);
                 else
-                    Engine_ActorFaceDirection(21, 0xb000, 0);
+                    Actor_FaceDirection(21, 0xb000, 0);
                 if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-                    Object_GetById(21)->velocity_y = 0x20000;
+                    Actor_Get(21)->velocity_y = 0x20000;
                 } else {
-                    Engine_ActorShowEmote(21, 0x103, 0);
-                    Object_GetById(21)->velocity_y = 0x60000;
+                    Actor_ShowEmote(21, 0x103, 0);
+                    Actor_Get(21)->velocity_y = 0x60000;
                 }
             }
             break;
@@ -169,16 +169,16 @@ s32 FuneKanpan_UpdateHoverGullB(struct FieldActor *obj)
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x
                 && obj->target_z == obj->target_y) {
                 GULL(obj)->step++;
-                Engine_AudioPlayCue(146);
+                Audio_PlayCue(146);
                 if (GULL(obj)->right_side != 0)
-                    Engine_ActorFaceDirection(22, 0xd000, 0);
+                    Actor_FaceDirection(22, 0xd000, 0);
                 else
-                    Engine_ActorFaceDirection(22, 0xb000, 0);
+                    Actor_FaceDirection(22, 0xb000, 0);
                 if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-                    Object_GetById(22)->velocity_y = 0x20000;
+                    Actor_Get(22)->velocity_y = 0x20000;
                 } else {
-                    Engine_ActorShowEmote(22, 0x103, 0);
-                    Object_GetById(22)->velocity_y = 0x60000;
+                    Actor_ShowEmote(22, 0x103, 0);
+                    Actor_Get(22)->velocity_y = 0x60000;
                 }
             }
             break;

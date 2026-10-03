@@ -529,24 +529,24 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 shown;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x925) != 0) {
+    if (GameFlag_IsSet(0x925) != 0) {
         Engine_EventSetMessage((s32)MsgFuneNowWeHaveProtectShip);
-        Engine_EventShowMessage(21, 0);
+        Event_ShowMessage(21, 0);
     } else {
-        if (Engine_GameFlagIsSet(0x922) != 0) {
+        if (GameFlag_IsSet(0x922) != 0) {
             Engine_ActorRunRepeatedMotion(21, 2);
             Engine_EventSetMessage((s32)MsgFuneSomebodyStopThem);
-            Engine_EventShowMessage(21, 0);
+            Event_ShowMessage(21, 0);
             rec7 = (s32)Object_GetById(21);
-            record = Engine_RandomNext();
+            record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             *(u16 *)(rec7 + 100) = shown;
             Engine_ActorEnableActionCallback(21, (u32)FuneKanpan_RandomActorActions);
         } else {
-            Engine_ActorShowEmote(21, 0x103, 0);
+            Actor_ShowEmote(21, 0x103, 0);
             Engine_ActorStartRepeatedMotion(21, 3);
             Engine_EventSetMessage((s32)MsgFuneToldWereLeavingSoonSet);
-            Engine_EventShowMessage(21, 0);
+            Event_ShowMessage(21, 0);
         }
     }
     Engine_EventEnd();
@@ -559,24 +559,24 @@ void FieldScene_RunScene3afSequenceA(void)
     s32 shown;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x925) != 0) {
+    if (GameFlag_IsSet(0x925) != 0) {
         Engine_EventSetMessage((s32)MsgFuneHaveMakeThemPromiseHelp);
-        Engine_EventShowMessage(24, 0);
+        Event_ShowMessage(24, 0);
     } else {
-        if (Engine_GameFlagIsSet(0x922) != 0) {
+        if (GameFlag_IsSet(0x922) != 0) {
             Engine_ActorRunRepeatedMotion(24, 2);
             Engine_EventSetMessage((s32)MsgFuneTheyCantPlanningMutiny);
-            Engine_EventShowMessage(24, 0);
+            Event_ShowMessage(24, 0);
             rec7 = (s32)Object_GetById(24);
-            record = Engine_RandomNext();
+            record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             *(u16 *)(rec7 + 100) = shown;
             Engine_ActorEnableActionCallback(24, (u32)FuneKanpan_RandomActorActions);
         } else {
-            Engine_ActorShowEmote(24, 0x103, 0);
+            Actor_ShowEmote(24, 0x103, 0);
             Engine_ActorStartRepeatedMotion(24, 3);
             Engine_EventSetMessage((s32)MsgFuneIfWeDontLeaveSoon);
-            Engine_EventShowMessage(24, 0);
+            Event_ShowMessage(24, 0);
         }
     }
     Engine_EventEnd();
@@ -595,10 +595,10 @@ void FieldScene_RunScene3af_02000bb8(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x271) == 0) {
-        Engine_AudioPlayCue(158);
-        Engine_MapCopyCellsTo(30, 94, 13, 94, 1, 3);
-        Engine_GameFlagSet(0x271);
+    if (GameFlag_IsSet(0x271) == 0) {
+        Audio_PlayCue(158);
+        Map_CopyCellsTo(30, 94, 13, 94, 1, 3);
+        GameFlag_Set(0x271);
     }
 }
 
@@ -607,10 +607,10 @@ void FieldScene_RunScene3af_02000bf0(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x272) == 0) {
-        Engine_AudioPlayCue(158);
-        Engine_MapCopyCellsTo(30, 108, 13, 108, 1, 2);
-        Engine_GameFlagSet(0x272);
+    if (GameFlag_IsSet(0x272) == 0) {
+        Audio_PlayCue(158);
+        Map_CopyCellsTo(30, 108, 13, 108, 1, 2);
+        GameFlag_Set(0x272);
     }
 }
 
@@ -665,22 +665,22 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
 {
     u8 *record;
 
-    if (Engine_GameFlagIsSet(0x911) != 0) {
+    if (GameFlag_IsSet(0x911) != 0) {
         Engine_EventBegin();
         Battle_ResetEffectCounter();
-        Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 20, 10);
-        Engine_CameraSetSpeed(0x19999, 0x3333);
-        Engine_CameraMoveTo(0xbe0000, -1, 0x2c40000, 1);
+        Actor_FaceActor(ACTOR_PARTY_LEADER, 20, 10);
+        Camera_SetSpeed(0x19999, 0x3333);
+        Camera_MoveTo(0xbe0000, -1, 0x2c40000, 1);
         Engine_CameraWaitForMove();
         Engine_EventWait(40);
         Engine_ActorRunRepeatedMotion(22, 1);
         Engine_EventSetMessage((s32)MsgFuneWonderCouldHaveHappened);
         FieldScene_RunStepThen10(0x4016);
-        Engine_ActorShowEmote(20, 0x102, 60);
+        Actor_ShowEmote(20, 0x102, 60);
         Engine_ActorStartRepeatedMotion(20, 2);
         FieldScene_RunStepThen10(20);
         Engine_ActorRunRepeatedMotion(22, 1);
-        Engine_ActorFaceDirection(22, 0x5000, 0);
+        Actor_FaceDirection(22, 0x5000, 0);
         FieldScene_RunStepThen10(0x4016);
         Engine_ActorRunRepeatedMotion(20, 1);
         FieldScene_CallPairWith10(20, 0xb000);
@@ -688,13 +688,13 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         FieldScene_CallPairWith10(23, 0x3000);
         Engine_ActorSetAnimation(23, 3);
         FieldScene_RunStepThen10(0x4017);
-        Engine_ActorShowEmote(22, 0x101, 40);
-        Engine_ActorFaceDirection(22, 0x8000, 20);
+        Actor_ShowEmote(22, 0x101, 40);
+        Actor_FaceDirection(22, 0x8000, 20);
         FieldScene_RunStepThen10(0x4016);
         FieldScene_CallPairWith10(23, 0);
         Engine_ActorSetAnimationAndWait(23, 4);
         FieldScene_RunStepThen10(0x4017);
-        Engine_ActorShowEmote(20, 0x100, 40);
+        Actor_ShowEmote(20, 0x100, 40);
         Engine_ActorStartRepeatedMotion(20, 2);
         FieldScene_RunStepThen10(20);
         Engine_ActorSetAnimationAndWait(22, 3);
@@ -703,56 +703,56 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Engine_ActorSetAnimation(23, 3);
         Engine_ActorSetAnimationAndWait(20, 3);
         Engine_EventWait(60);
-        Engine_ActorShowEmote(22, 0x106, 40);
+        Actor_ShowEmote(22, 0x106, 40);
         FieldScene_CallPairWith10(22, 0x5000);
         Engine_EventSetMessage((s32)MsgFuneTheresNothingWeCanDo);
         Engine_ActorStartRepeatedMotion(22, 1);
         FieldScene_RunStepThen10(0x4016);
-        Engine_ActorShowEmote(20, 0x101, 40);
+        Actor_ShowEmote(20, 0x101, 40);
         Engine_ActorStartRepeatedMotion(20, 2);
         FieldScene_RunStepThen10(20);
-        Engine_ActorShowEmote(22, 0x108, 20);
-        Engine_EventShowMessageAndWait(0x4016, 0, 20);
-        Engine_ActorShowEmote(23, 0x102, 60);
+        Actor_ShowEmote(22, 0x108, 20);
+        Event_ShowMessageAndWait(0x4016, 0, 20);
+        Actor_ShowEmote(23, 0x102, 60);
         FieldScene_RunStepThen10(0x4017);
         FieldScene_CallPairWith10(22, 0x8000);
         Engine_ActorSetAnimationAndWait(22, 3);
-        Engine_EventShowMessageAndWait(0x4016, 0, 20);
-        Engine_ActorShowEmote(20, 0x102, 40);
+        Event_ShowMessageAndWait(0x4016, 0, 20);
+        Actor_ShowEmote(20, 0x102, 40);
         Engine_ActorStartRepeatedMotion(20, 2);
         FieldScene_RunStepThen10(20);
         FieldScene_CallPairWith10(22, 0x5000);
         Engine_ActorSetAnimation(22, 4);
         FieldScene_RunStepThen10(22);
-        Engine_ActorFaceDirection(20, 0xb000, 0);
-        Engine_ActorFaceDirection(23, 0x3000, 40);
-        Engine_ActorFaceDirection(23, 0, 0);
-        Engine_ActorFaceDirection(20, 0xd000, 20);
+        Actor_FaceDirection(20, 0xb000, 0);
+        Actor_FaceDirection(23, 0x3000, 40);
+        Actor_FaceDirection(23, 0, 0);
+        Actor_FaceDirection(20, 0xd000, 20);
         Engine_ActorRunRepeatedMotion(22, 2);
         Engine_EventWait(20);
         FieldScene_RunStepThen10(0x4016);
-        Engine_ActorSetAttachedEffect(23, 0x102);
-        Engine_ActorSetAttachedEffect(20, 0x102);
+        Actor_SetAttachedEffect(23, 0x102);
+        Actor_SetAttachedEffect(20, 0x102);
         Engine_EventWait(40);
         Engine_ActorSetAnimationAndWait(22, 3);
         FieldScene_RunStepThen10(0x4016);
-        Engine_CameraSetSpeed(0xcccc, 0x1999);
-        Engine_CameraMoveTo(0xb60000, -1, 0x2f80000, 1);
-        Engine_ActorSetSpeed(23, 0xcccc, 0x6666);
+        Camera_SetSpeed(0xcccc, 0x1999);
+        Camera_MoveTo(0xb60000, -1, 0x2f80000, 1);
+        Actor_SetSpeed(23, 0xcccc, 0x6666);
         ((s32 (*)())Engine_ActorEnableActionCallback)(23, (s32)FuneKanpan_PresentationActionsA);
-        Engine_ActorSetSpeed(22, 0xcccc, 0x6666);
+        Actor_SetSpeed(22, 0xcccc, 0x6666);
         ((s32 (*)())Engine_ActorEnableActionCallback)(22, (s32)FuneKanpan_PresentationActionsB);
-        Engine_ActorSetSpeed(20, 0xcccc, 0x6666);
-        Engine_ActorWalkToAndWait(20, 182, 0x2f8);
+        Actor_SetSpeed(20, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(20, 182, 0x2f8);
         Engine_ActorStartRepeatedMotion(20, 2);
-        Engine_ActorShowEmote(20, 0x100, 60);
+        Actor_ShowEmote(20, 0x100, 60);
         FieldScene_CallPairWith10(20, 0xd000);
-        Engine_EventShowMessageAndWait(20, 0, 20);
+        Event_ShowMessageAndWait(20, 0, 20);
         Engine_ActorSetAnimationAndWait(20, 3);
         Engine_ActorJump(20, 4, 0);
-        Engine_ActorFaceDirection(20, 0x3000, 40);
-        Engine_CameraSetSpeed(0x10000, 0x2000);
-        Engine_CameraMoveTo(0xd80000, -1, 0x3160000, 1);
+        Actor_FaceDirection(20, 0x3000, 40);
+        Camera_SetSpeed(0x10000, 0x2000);
+        Camera_MoveTo(0xd80000, -1, 0x3160000, 1);
         {
             /* Set the low bit of the flag byte at +35 of actor 20's record. */
             u8 *record = (u8 *)Object_GetById(20);
@@ -764,22 +764,22 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
             bits |= record[35];
             record[35] = bits;
         }
-        Engine_ActorSetSpeed(20, 0x13333, 0x9999);
-        Engine_ActorWalkToAndWait(20, 182, 0x30e);
-        Engine_ActorWalkToAndWait(20, 192, 0x328);
-        Engine_ActorWalkToAndWait(20, 216, 0x328);
+        Actor_SetSpeed(20, 0x13333, 0x9999);
+        Actor_WalkToAndWait(20, 182, 0x30e);
+        Actor_WalkToAndWait(20, 192, 0x328);
+        Actor_WalkToAndWait(20, 216, 0x328);
         FieldScene_CallPairWith10(20, 0xd000);
         Engine_ActorRunRepeatedMotion(20, 2);
         FieldScene_RunScene3af_02000bf0();
-        Engine_ActorWalkToAndWait(20, 216, 0x31e);
-        Engine_ActorSetPosition(20, 0, 0);
+        Actor_WalkToAndWait(20, 216, 0x31e);
+        Actor_SetPosition(20, 0, 0);
         /* Set the fixed-point word at +24 of actor 20's record to 1.0. */
         record = (u8 *)Object_GetById(20);
         *(s32 *)(record + 24) = 0x10000;
         /* Set the fixed-point word at +28 of actor 20's record to 1.0. */
         record = (u8 *)Object_GetById(20);
         *(s32 *)(record + 28) = 0x10000;
-        Engine_GameFlagSet(0x920);
+        GameFlag_Set(0x920);
         Engine_EventEnd();
     }
 }
@@ -788,14 +788,14 @@ void FieldScene_RunScene3af_020010a0(void)
 {
     u8 bits;
 
-    if (Engine_GameFlagIsSet(0x911) != 0) {
-        if (Engine_GameFlagIsSet(0x922) == 0) {
+    if (GameFlag_IsSet(0x911) != 0) {
+        if (GameFlag_IsSet(0x922) == 0) {
             Engine_EventBegin();
             Battle_ResetEffectCounter();
             FieldScene_RunScene3af_020012f0();
-            Engine_ActorSetSpeed(20, 0x6666, 0x3333);
+            Actor_SetSpeed(20, 0x6666, 0x3333);
             *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
-            Engine_ActorWalkToAndWait(20, 232, 0x330);
+            Actor_WalkToAndWait(20, 232, 0x330);
             Engine_EventWait(1);
             bits = 1;
             {
@@ -807,9 +807,9 @@ void FieldScene_RunScene3af_020010a0(void)
             Engine_EventWait(20);
             Engine_ActorStartRepeatedMotion(20, 2);
             FieldScene_RunStepThen10(20);
-            Engine_ActorSetSpeed(20, 0x13333, 0x9999);
+            Actor_SetSpeed(20, 0x13333, 0x9999);
             *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
-            Engine_ActorWalkToAndWait(20, 244, 0x324);
+            Actor_WalkToAndWait(20, 244, 0x324);
             Engine_EventWait(1);
             {
                 struct FieldActor *record = Object_GetById(20);
@@ -818,12 +818,12 @@ void FieldScene_RunScene3af_020010a0(void)
                 record->unknown_5a = bits;
             }
             Engine_EventWait(20);
-            Engine_ActorSetSpeed(20, 0x33333, 0x19999);
-            Engine_ActorWalkToAndWait(20, 248, 0x30a);
-            Engine_ActorWalkToAndWait(20, 248, 0x2bc);
-            Engine_ActorSetPosition(20, 0xf60000, 0x2000000);
-            Engine_ActorFaceDirection(20, 0, 0);
-            Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
+            Actor_SetSpeed(20, 0x33333, 0x19999);
+            Actor_WalkToAndWait(20, 248, 0x30a);
+            Actor_WalkToAndWait(20, 248, 0x2bc);
+            Actor_SetPosition(20, 0xf60000, 0x2000000);
+            Actor_FaceDirection(20, 0, 0);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
             Engine_EventEnd();
         }
     }
@@ -833,14 +833,14 @@ void FieldScene_RunScene3af_020011c8(void)
 {
     u8 bits;
 
-    if (Engine_GameFlagIsSet(0x911) != 0) {
-        if (Engine_GameFlagIsSet(0x922) == 0) {
+    if (GameFlag_IsSet(0x911) != 0) {
+        if (GameFlag_IsSet(0x922) == 0) {
             Engine_EventBegin();
             Battle_ResetEffectCounter();
             FieldScene_RunScene3af_020012f0();
-            Engine_ActorSetSpeed(20, 0x6666, 0x3333);
+            Actor_SetSpeed(20, 0x6666, 0x3333);
             *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
-            Engine_ActorWalkToAndWait(20, 202, 0x330);
+            Actor_WalkToAndWait(20, 202, 0x330);
             Engine_EventWait(1);
             bits = 1;
             {
@@ -852,9 +852,9 @@ void FieldScene_RunScene3af_020011c8(void)
             Engine_EventWait(20);
             Engine_ActorStartRepeatedMotion(20, 2);
             FieldScene_RunStepThen10(20);
-            Engine_ActorSetSpeed(20, 0x13333, 0x9999);
+            Actor_SetSpeed(20, 0x13333, 0x9999);
             *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
-            Engine_ActorWalkToAndWait(20, 192, 0x324);
+            Actor_WalkToAndWait(20, 192, 0x324);
             Engine_EventWait(1);
             {
                 struct FieldActor *record = Object_GetById(20);
@@ -863,12 +863,12 @@ void FieldScene_RunScene3af_020011c8(void)
                 record->unknown_5a = bits;
             }
             Engine_EventWait(20);
-            Engine_ActorSetSpeed(20, 0x33333, 0x19999);
-            Engine_ActorWalkToAndWait(20, 180, 0x30a);
-            Engine_ActorWalkToAndWait(20, 180, 0x2bc);
-            Engine_ActorSetPosition(20, 0xf60000, 0x2000000);
-            Engine_ActorFaceDirection(20, 0, 0);
-            Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
+            Actor_SetSpeed(20, 0x33333, 0x19999);
+            Actor_WalkToAndWait(20, 180, 0x30a);
+            Actor_WalkToAndWait(20, 180, 0x2bc);
+            Actor_SetPosition(20, 0xf60000, 0x2000000);
+            Actor_FaceDirection(20, 0, 0);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
             Engine_EventEnd();
         }
     }
@@ -879,26 +879,26 @@ void FieldScene_RunScene3af_020012f0(void)
     u32 i;
     s32 record;
 
-    Engine_CameraSetSpeed(0x19999, 0x3333);
-    Engine_CameraMoveTo(0xd80000, -1, 0x3380000, 1);
+    Camera_SetSpeed(0x19999, 0x3333);
+    Camera_MoveTo(0xd80000, -1, 0x3380000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
     FieldScene_RunScene3af_02000bf0();
-    Engine_MapCopyCellsTo(30, 108, 13, 108, 1, 2);
+    Map_CopyCellsTo(30, 108, 13, 108, 1, 2);
     Engine_EventWait(10);
-    Engine_ActorSetPosition(20, 0xd80000, 0x3200000);
-    Engine_ActorSetSpeed(20, 0x13333, 0x9999);
-    Engine_ActorWalkToAndWait(20, 216, 0x32e);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 20, 10);
+    Actor_SetPosition(20, 0xd80000, 0x3200000);
+    Actor_SetSpeed(20, 0x13333, 0x9999);
+    Actor_WalkToAndWait(20, 216, 0x32e);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 20, 10);
     Engine_ActorSetAnimationAndWait(20, 4);
     Engine_ActorStartRepeatedMotion(20, 2);
-    Engine_ActorShowEmote(20, 0x100, 20);
-    Engine_ActorFaceActor(20, ACTOR_PARTY_LEADER, 20);
+    Actor_ShowEmote(20, 0x100, 20);
+    Actor_FaceActor(20, ACTOR_PARTY_LEADER, 20);
     Engine_ActorStartRepeatedMotion(20, 2);
     Engine_EventSetMessage((s32)MsgFuneDidntDoAnything);
-    Engine_EventShowMessageAndWait(20, 0, 20);
+    Event_ShowMessageAndWait(20, 0, 20);
     Engine_ActorShowEmote(20, 0x102, 0);
-    Engine_GameFlagSet(0x923);
+    GameFlag_Set(0x923);
 }
 
 /* Restart the deck: reseed the two wave angles, stop layer 5's scroll and
@@ -1117,9 +1117,9 @@ void FieldScene_RunScene3af_0200185c(void)
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Engine_ActorSetPosition(20, 0, 0);
-    Engine_ActorSetPosition(23, 0xee0000, 0x2720000);
-    Engine_ActorSetPosition(22, 0xcc0000, 0x2090000);
+    Actor_SetPosition(20, 0, 0);
+    Actor_SetPosition(23, 0xee0000, 0x2720000);
+    Actor_SetPosition(22, 0xcc0000, 0x2090000);
     record = (u8 *)Object_GetById(22);
     *(s32 *)(record + 12) = 0x100000;
     bits = 128;
@@ -1129,7 +1129,7 @@ void FieldScene_RunScene3af_0200185c(void)
 
         record[89] = value | bits;
     }
-    Engine_ActorSetSpeed(22, 0x9999, 0x4ccc);
+    Actor_SetSpeed(22, 0x9999, 0x4ccc);
     Engine_ActorEnableActionCallback(22, FuneKanpan_LeadActionsA);
     {
         u8 *record = (u8 *)Object_GetById(21);
@@ -1137,9 +1137,9 @@ void FieldScene_RunScene3af_0200185c(void)
         bits |= record[89];
         record[89] = bits;
     }
-    Engine_ActorSetSpeed(21, 0xcccc, 0x6666);
+    Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);
-    if (Engine_GameFlagIsSet(0x109) != 0) {
+    if (GameFlag_IsSet(0x109) != 0) {
         FieldScene_RunScene3af_02004218();
     }
     Engine_EventEnd();
@@ -1152,9 +1152,9 @@ void FieldScene_RunScene3af_02001920(void)
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Engine_ActorSetPosition(20, 0, 0);
-    Engine_ActorSetPosition(23, 0xee0000, 0x2720000);
-    Engine_ActorSetPosition(22, 0x10c0000, 0x2a60000);
+    Actor_SetPosition(20, 0, 0);
+    Actor_SetPosition(23, 0xee0000, 0x2720000);
+    Actor_SetPosition(22, 0x10c0000, 0x2a60000);
     record = (u8 *)Object_GetById(22);
     {
         s32 shown = 0;
@@ -1169,9 +1169,9 @@ void FieldScene_RunScene3af_02001920(void)
         bits |= record[89];
         record[89] = bits;
     }
-    Engine_ActorSetSpeed(21, 0xcccc, 0x6666);
+    Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);
-    if (Engine_GameFlagIsSet(0x109) != 0) {
+    if (GameFlag_IsSet(0x109) != 0) {
         FieldScene_RunScene3af_02004218();
     }
     Engine_EventEnd();
@@ -1227,30 +1227,30 @@ void FieldScene_RunScene3af_02001a98(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
-    Engine_ActorSetPosition(20, 0, 0);
-    Engine_ActorSetPosition(22, 0, 0);
-    Engine_ActorSetPosition(24, 0, 0);
-    Engine_ActorSetPosition(25, 0, 0);
-    Engine_ActorSetPosition(26, 0, 0);
-    Engine_ActorSetPosition(27, 0, 0);
-    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Engine_ActorSetPosition(23, 0, 0);
+    Actor_SetPosition(20, 0, 0);
+    Actor_SetPosition(22, 0, 0);
+    Actor_SetPosition(24, 0, 0);
+    Actor_SetPosition(25, 0, 0);
+    Actor_SetPosition(26, 0, 0);
+    Actor_SetPosition(27, 0, 0);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_SetPosition(23, 0, 0);
     record = (s32)Object_GetById(23);
     {
         s32 shown = 0x3000;
 
         *(u16 *)(record + 6) = shown;
     }
-    Engine_ActorSetPosition(21, 0xe80000, 0x28a0000);
+    Actor_SetPosition(21, 0xe80000, 0x28a0000);
     record = (s32)Object_GetById(21);
     {
         s32 shown = 0xb000;
 
         *(u16 *)(record + 6) = shown;
     }
-    Engine_CameraMoveTo(0xe80000, -1, 0x27c0000, 0);
+    Camera_MoveTo(0xe80000, -1, 0x27c0000, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     FieldScene_RunScene3af_02001c14(23, 21);
@@ -1263,8 +1263,8 @@ void FieldScene_RunScene3af_02001b58(void)
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x27c0000);
-    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x27c0000);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     record = (s32)Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_TaskWait(1);
@@ -1274,16 +1274,16 @@ void FieldScene_RunScene3af_02001b58(void)
     Engine_ActorStop(22);
     Engine_ActorStop(21);
     Engine_TaskWait(1);
-    Engine_ActorSetPosition(22, 0, 0);
-    Engine_ActorSetPosition(21, 0, 0);
-    Engine_ActorSetPosition(20, 0, 0);
+    Actor_SetPosition(22, 0, 0);
+    Actor_SetPosition(21, 0, 0);
+    Actor_SetPosition(20, 0, 0);
     record = (s32)Object_GetById(20);
     {
         s32 shown = 0x3000;
 
         *(u16 *)(record + 6) = shown;
     }
-    Engine_ActorSetPosition(23, 0xe80000, 0x28a0000);
+    Actor_SetPosition(23, 0xe80000, 0x28a0000);
     record = (s32)Object_GetById(23);
     {
         s32 shown = 0xb000;
@@ -1301,20 +1301,20 @@ void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
     FieldScene_RunScene3af_02000bb8();
-    Engine_ActorSetPosition(a0, 0xd80000, 0x24c0000);
-    Engine_ActorSetSpeed(a0, 0xcccc, 0x6666);
-    Engine_ActorWalkToAndWait(a0, 216, 0x258);
-    Engine_ActorWalkToAndWait(a0, 218, 0x25c);
-    Engine_ActorWalkToAndWait(a0, 234, 0x25c);
-    Engine_ActorWalkToAndWait(a0, 236, 0x26a);
-    Engine_ActorFaceDirection(a0, 0x5000, 20);
+    Actor_SetPosition(a0, 0xd80000, 0x24c0000);
+    Actor_SetSpeed(a0, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(a0, 216, 0x258);
+    Actor_WalkToAndWait(a0, 218, 0x25c);
+    Actor_WalkToAndWait(a0, 234, 0x25c);
+    Actor_WalkToAndWait(a0, 236, 0x26a);
+    Actor_FaceDirection(a0, 0x5000, 20);
     Engine_ActorSetAnimationAndWait(a0, 3);
     Engine_EventWait(20);
     FieldScene_CallPairWith10(a1, 0x5000);
     Engine_ActorJump(a1, 4, 40);
     Engine_ActorStartRepeatedMotion(a1, 2);
     Engine_EventSetMessage((s32)MsgFunePreparationsReady);
-    Engine_EventShowMessageAndWait(a1, 0, 20);
+    Event_ShowMessageAndWait(a1, 0, 20);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -1846,9 +1846,9 @@ void FieldScene_ConfigureLeadActors(void)
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Engine_ActorSetPosition(20, 0xb60000, 0x26a0000);
-    Engine_ActorSetPosition(23, 0xee0000, 0x2720000);
-    Engine_ActorSetPosition(22, 0x10c0000, 0x2a60000);
+    Actor_SetPosition(20, 0xb60000, 0x26a0000);
+    Actor_SetPosition(23, 0xee0000, 0x2720000);
+    Actor_SetPosition(22, 0x10c0000, 0x2a60000);
     record = Object_GetById(22);
     {
         /* Clear the facing value. */
@@ -1865,14 +1865,14 @@ void FieldScene_ConfigureLeadActors(void)
         bits |= record->collision_flags;
         record->collision_flags = bits;
     }
-    Engine_ActorSetSpeed(21, 0xcccc, 0x6666);
+    Actor_SetSpeed(21, 0xcccc, 0x6666);
     Engine_ActorEnableActionCallback(21, FuneKanpan_LeadActionsB);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
-    Engine_ActorSetSpeed(20, 0x19999, 0xcccc);
-    Engine_ActorWalkToAndWait(20, 182, 0x224);
+    Actor_SetSpeed(20, 0x19999, 0xcccc);
+    Actor_WalkToAndWait(20, 182, 0x224);
     FieldScene_CallPairWith10(20, 0);
     FieldScene_CallPairWith10(0, 0x8000);
     Engine_ActorRunRepeatedMotion(20, 1);
@@ -1880,23 +1880,23 @@ void FieldScene_ConfigureLeadActors(void)
     FieldScene_RunStepThen10(20);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_EventWait(40);
-    Engine_ActorFaceDirection(20, 0x5000, 20);
-    Engine_ActorShowEmote(20, 0x105, 60);
-    Engine_EventShowMessageAndWait(20, 0, 40);
+    Actor_FaceDirection(20, 0x5000, 20);
+    Actor_ShowEmote(20, 0x105, 60);
+    Event_ShowMessageAndWait(20, 0, 40);
     FieldScene_CallPairWith10(20, 0);
     FieldScene_RunStepThen10(20);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(20, 3);
-    Engine_ActorWalkToAndWait(20, 182, 0x258);
-    Engine_ActorWalkToAndWait(20, 216, 0x258);
+    Actor_WalkToAndWait(20, 182, 0x258);
+    Actor_WalkToAndWait(20, 216, 0x258);
     FieldScene_CallPairWith10(20, 0xc000);
     FieldScene_RunScene3af_02000bb8();
     Engine_EventWait(10);
-    Engine_ActorWalkToAndWait(20, 216, 0x244);
-    Engine_ActorSetPosition(20, 0, 0);
+    Actor_WalkToAndWait(20, 216, 0x244);
+    Actor_SetPosition(20, 0, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    Engine_GameFlagSet(0x92b);
-    Engine_GameFlagClear(0x302);
+    GameFlag_Set(0x92b);
+    GameFlag_Clear(0x302);
     Engine_EventEnd();
 }
 
@@ -1912,12 +1912,12 @@ void FieldScene_ConfigureThreeActors(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     record = (s32)Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     Event_CallWithLastActiveObjectId((u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Engine_ActorSetPosition(20, 0xc40000, 0x1f60000);
+    Actor_SetPosition(20, 0xc40000, 0x1f60000);
     record = (s32)Object_GetById(20);
     {
         /* Set the visibility/active flag at +6. */
@@ -1925,7 +1925,7 @@ void FieldScene_ConfigureThreeActors(void)
 
         *(volatile u16 *)(record + 6) = shown;
     }
-    Engine_ActorSetPosition(22, 0xb80000, 0x20c0000);
+    Actor_SetPosition(22, 0xb80000, 0x20c0000);
     record = (s32)Object_GetById(22);
     {
         /* Set the visibility/active flag at +6. */
@@ -1934,7 +1934,7 @@ void FieldScene_ConfigureThreeActors(void)
         *(volatile u16 *)(record + 6) = shown;
     }
     Engine_ActorSetSpritePriority(21, 1);
-    Engine_ActorSetPosition(21, 0xb80000, 0x2780000);
+    Actor_SetPosition(21, 0xb80000, 0x2780000);
     record = (s32)Object_GetById(21);
     {
         /* Set the visibility/active flag at +6. */
@@ -1951,8 +1951,8 @@ void FieldScene_ConfigureThreeActors(void)
     Engine_EventSetMessage((s32)MsgFuneCanSeeLand);
     FieldScene_RunStepThen10(22);
     Engine_ActorSetAnimationAndWait(20, 3);
-    Engine_ActorSetSpeed(21, 0x30000, 0x18000);
-    Engine_ActorWalkToAndWait(21, 180, 0x222);
+    Actor_SetSpeed(21, 0x30000, 0x18000);
+    Actor_WalkToAndWait(21, 180, 0x222);
     Engine_ActorFaceDirection(21, 0xb000, 40);
     Engine_ActorRunRepeatedMotion(21, 1);
     FieldScene_RunStepThen10(21);

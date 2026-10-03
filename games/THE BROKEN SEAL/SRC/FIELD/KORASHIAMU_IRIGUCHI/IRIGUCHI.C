@@ -190,29 +190,29 @@ void FieldScene_RunScene3b9_0200039c(void)
     s32 record;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x962) != 0) {
-        if (Engine_GameFlagIsSet(0x3c0) != 0) {
+    if (GameFlag_IsSet(0x962) != 0) {
+        if (GameFlag_IsSet(0x3c0) != 0) {
             Engine_EventSetMessage((s32)MsgKorashiamuLookImSorryButWe);
         } else {
             Engine_EventSetMessage((s32)MsgKorashiamuWantTryOutLuckyGuess);
-            Engine_EventOpenMessage(16, 0);
+            Event_OpenMessage(16, 0);
             if (Engine_EventChooseYesNo(0, 0) == 0) {
                 bump_step(1);
-                Engine_ActorShowEmote(16, 0x100, 40);
-                Engine_EventOpenMessage(16, 0);
+                Actor_ShowEmote(16, 0x100, 40);
+                Event_OpenMessage(16, 0);
                 if (Engine_EventChooseYesNo(0, 0) == 0) {
                     bump_step(1);
                 }
                 Engine_EventWait(40);
-                Engine_EventShowMessage(16, 0);
-                Engine_GameFlagSet(0x3c0);
+                Event_ShowMessage(16, 0);
+                GameFlag_Set(0x3c0);
                 goto L_02000448;
             }
         }
-        Engine_EventShowMessage(16, 0);
+        Event_ShowMessage(16, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKorashiamuDoKnowLuckyGuess);
-        Engine_EventAskYesNo(16, 0);
+        Event_AskYesNo(16, 0);
     }
     L_02000448:;
     Engine_EventEnd();
@@ -254,12 +254,12 @@ void FieldScene_RunScene3b9_020004c8(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_ActorSetAttachedEffect(14, 0x102);
+    Actor_SetAttachedEffect(14, 0x102);
     Engine_ActorRunRepeatedMotion(14, 2);
     Engine_EventSetMessage((s32)MsgKorashiamuWaahDontFrightenMe);
     FieldScene_CallPairWith10(14);
-    Engine_ActorShowEmote(14, 0x102, 40);
-    Engine_EventShowMessage(14, 0);
+    Actor_ShowEmote(14, 0x102, 40);
+    Event_ShowMessage(14, 0);
     Engine_EventEnd();
 }
 
@@ -285,8 +285,8 @@ void FieldScene_RunScene3b9_0200055c(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(16, 2);
     Engine_EventSetMessage((s32)MsgKorashiamuDekkaMustWinFinalsDekka);
-    Engine_EventShowMessageAndWait(16, 0, 20);
-    if (Engine_GameFlagIsSet(0x3c1) != 0) {
+    Event_ShowMessageAndWait(16, 0, 20);
+    if (GameFlag_IsSet(0x3c1) != 0) {
         Engine_EventWait(20);
     } else {
         SceneState_ForwardMaskedHalfwordWith10(17, 0);
@@ -295,10 +295,10 @@ void FieldScene_RunScene3b9_0200055c(void)
         Engine_ActorFaceEachOther(17, ACTOR_PARTY_LEADER, 20);
         Engine_ActorSetAnimation(17, 4);
         FieldScene_CallPairWith10(17);
-        Engine_ActorShowEmote(17, 0x105, 40);
+        Actor_ShowEmote(17, 0x105, 40);
         FieldScene_CallPairWith10(17);
         SceneState_ForwardMaskedHalfwordWith10(17, 0x5000);
-        Engine_GameFlagSet(0x3c1);
+        GameFlag_Set(0x3c1);
     }
     Engine_EventEnd();
 }
@@ -327,9 +327,9 @@ void FieldScene_RunScene3b9_02000648(void)
     Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
     Engine_EventSetMessage((s32)MsgKorashiamuImBufordSeventhSeed);
     FieldScene_CallPairWith10(18);
-    Engine_ActorFaceDirection(18, 0xd000, 20);
-    Engine_ActorFaceDirection(18, 0xb000, 20);
-    Engine_ActorFaceDirection(18, 0x8000, 40);
+    Actor_FaceDirection(18, 0xd000, 20);
+    Actor_FaceDirection(18, 0xb000, 20);
+    Actor_FaceDirection(18, 0x8000, 40);
     Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 20);
     FieldScene_CallPairWith10(18);
     Engine_ActorSetAnimationAndWait(18, 3);

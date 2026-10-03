@@ -308,7 +308,7 @@ void SceneDialogue_ShowLine1CB0ForActor13(void)
  * lines only until flag 0x300 is set. It sets flag 0x307. */
 void SceneDialogue_RunActorFourteenFlagDialogue(void)
 {
-    struct SceneActor *actor = Object_GetById(14);
+    struct SceneActor *actor = Actor_Get(14);
     u16 facing = actor->facing;
     s32 text;
 
@@ -318,19 +318,19 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
     Engine_EventSetMessage(text);
     Engine_ActorSetAnimation(14, 0);
     Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 2);
-    if (Engine_GameFlagIsSet(0x300) == 0) {
-        Engine_ActorShowEmote(14, 256, 60);
-        Engine_EventShowMessageAndWait(14, 0, 10);
-        Engine_EventShowMessageAndWait(14, 0, 10);
-        Engine_GameFlagSet(0x300);
+    if (GameFlag_IsSet(0x300) == 0) {
+        Actor_ShowEmote(14, 256, 60);
+        Event_ShowMessageAndWait(14, 0, 10);
+        Event_ShowMessageAndWait(14, 0, 10);
+        GameFlag_Set(0x300);
     }
     Engine_EventSetMessage(text + 2);
-    Engine_EventShowMessageAndWait(14, 0, 10);
+    Event_ShowMessageAndWait(14, 0, 10);
     actor->facing = facing;
     Engine_TaskWait(1);
     Engine_EventEnd();
     actor->state_flags = 1;
-    Engine_GameFlagSet(0x307);
+    GameFlag_Set(0x307);
 }
 
 /*
@@ -415,17 +415,17 @@ void ActorPresentation_RunActor13AcceptanceDialogue(void)
  * about feeling brave. */
 void KuupuappuMuraSai_RunActor14Talk(void)
 {
-    ((struct SceneActor *)Object_GetById(14))->state_flags |= 2;
+    ((struct SceneActor *)Actor_Get(14))->state_flags |= 2;
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x307) != 0) {
+    if (GameFlag_IsSet(0x307) != 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuWatchingGuysMakes);
         ActorPresentation_RunActorModeOneThenZero(14);
     } else {
         SceneDialogue_RunActorFourteenFlagDialogue();
-        Engine_GameFlagSet(0x307);
+        GameFlag_Set(0x307);
     }
     Engine_EventEnd();
-    ((struct SceneActor *)Object_GetById(14))->state_flags = 1;
+    ((struct SceneActor *)Actor_Get(14))->state_flags = 1;
 }
 
 /*
@@ -456,30 +456,30 @@ void FieldScene_RunScene385SequenceA(void)
     s32 record;
     s32 v5;
 
-    rec7 = Engine_GameFlagIsSet(0x308);
+    rec7 = GameFlag_IsSet(0x308);
     if (rec7 == 0) {
         Engine_EventBegin();
-        *((u8 *)Object_GetById(16) + 91) = 1;
+        *((u8 *)Actor_Get(16) + 91) = 1;
         Engine_ActorSetAnimation(16, 1);
         Engine_ActorRunRepeatedMotion(16, 1);
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgKuupuappuGuysCheckJail);
         Engine_ActorFaceEachOther(16, 0, 2);
-        Engine_EventOpenMessage(16, 0);
+        Event_OpenMessage(16, 0);
         if (Engine_EventChooseYesNo(0, 0) != 0) {
             bump_step(1);
         }
-        Engine_EventShowMessage(16, 0);
-        *((u8 *)Object_GetById(16) + 91) = rec7;
+        Event_ShowMessage(16, 0);
+        *((u8 *)Actor_Get(16) + 91) = rec7;
         Engine_ActorEnableActionCallback(16, 2);
         Engine_EventEnd();
-        Engine_GameFlagSet(0x308);
+        GameFlag_Set(0x308);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuNotLikeEasy);
-        *((u8 *)Object_GetById(16) + 91) = 1;
+        *((u8 *)Actor_Get(16) + 91) = 1;
         ActorPresentation_RunActorModeOneThenZero(16);
         v5 = 0;
-        *((u8 *)Object_GetById(16) + 91) = v5;
+        *((u8 *)Actor_Get(16) + 91) = v5;
     }
 }
 
@@ -499,19 +499,19 @@ void FieldScene_RunActor21SequenceOnce(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_AudioPlayCue(100);
+    Audio_PlayCue(100);
     Engine_EventWait(40);
-    if (Engine_GameFlagIsSet(0x867) == 0) {
-        Engine_ActorSetAttachedEffect(21, 0x102);
+    if (GameFlag_IsSet(0x867) == 0) {
+        Actor_SetAttachedEffect(21, 0x102);
         Engine_ActorJump(21, 4, 0);
         Engine_EventWait(12);
         Engine_ActorJump(21, 4, 0);
         Engine_EventWait(20);
         ActorPresentation_MoveActorToPositionAndWait(21, 0x188, 104, 0x70000);
         Engine_EventWait(20);
-        Engine_ActorWalkToAndWait(21, 0x198, 104);
-        Engine_ActorWalkToAndWait(21, 0x198, 120);
-        Engine_GameFlagSet(0x867);
+        Actor_WalkToAndWait(21, 0x198, 104);
+        Actor_WalkToAndWait(21, 0x198, 120);
+        GameFlag_Set(0x867);
     }
     Engine_EventEnd();
 }
@@ -520,8 +520,8 @@ void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay)
 {
     s32 zero = 0;
 
-    Engine_ActorSetSpeed(zero, 0x8000, 0x4000);
-    Engine_ActorWalkTo(zero, x, y);
+    Actor_SetSpeed(zero, 0x8000, 0x4000);
+    Actor_WalkTo(zero, x, y);
     gEventWork->transition_frames = 16;
     Engine_EventRequestExit(delay);
 }

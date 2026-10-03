@@ -401,25 +401,32 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     u32 i;
 
     obj = ((struct FieldActor *(*)())Engine_ObjectCreate)(22);
-    if (obj != 0) {
-        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
-        spr = obj->sprite;
-        spr->flags = 0;
-        spr->part_count = 0;
-        spr->full_color = 0;
-        spr->palette = 0;
-        obj->velocity_y = 0x20000;
-        ((struct FieldEffect *)obj)->velocity_y = 0x4000;
-        buf = Runtime_AllocateHeapBlock(17, 0x608);
-        Ui_PrepareTransferForItem(item);
-        VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
-        Runtime_ReleaseHeapBlock(17);
-        for (i = 0; i < 60; i++) {
-            if ((u32)(obj->velocity_y + 255) <= 0x1fe)
-                obj->motion_flags = 0;
-            WaitFrames(1);
+    {
+        /* FAKEMATCH: retain the existing halfword aggregate zero across
+           initialization; scalar zero moves the two sprite clears from r5
+           to r3 and changes the following attribute-mask instruction. */
+        struct { u16 value; } zero = { 0 };
+
+        if (obj != 0) {
+            ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
+            spr = obj->sprite;
+            spr->flags = zero.value;
+            spr->part_count = zero.value;
+            spr->full_color = 0;
+            spr->palette = 0;
+            obj->velocity_y = 0x20000;
+            ((struct FieldEffect *)obj)->velocity_y = 0x4000;
+            buf = Runtime_AllocateHeapBlock(17, 0x608);
+            Ui_PrepareTransferForItem(item);
+            VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
+            Runtime_ReleaseHeapBlock(17);
+            for (i = 0; i < 60; i++) {
+                if ((u32)(obj->velocity_y + 255) <= 0x1fe)
+                    obj->motion_flags = 0;
+                WaitFrames(1);
+            }
+            ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
         }
-        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
     }
 }
 

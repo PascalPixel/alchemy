@@ -337,31 +337,31 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     u8 *guard;
     u8 *sub;
 
-    entry = Object_GetById(ACTOR_PARTY_LEADER);
-    guard = Engine_GameFlagIsSet(0x109);
+    entry = Actor_Get(ACTOR_PARTY_LEADER);
+    guard = GameFlag_IsSet(0x109);
     if (guard == 0) {
         Engine_EventBegin();
-        Engine_CameraMoveTo(-1, -1, -1, 0);
+        Camera_MoveTo(-1, -1, -1, 0);
         /* Stage byte at +85 of the entry record. */
         entry[85] = guard;
         /* Position, from the entry's own s16 coordinates at +10/+18
          * (converted to 16.16 fixed point; the y term is offset by -16.0). */
-        Engine_ActorSetPosition(ACTOR_PARTY_LEADER, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
-        Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
-        sub = Object_GetById(ACTOR_PARTY_LEADER);
+        Actor_SetPosition(ACTOR_PARTY_LEADER, (*(s16 *)(entry + 10) << 16), ((*(s16 *)(entry + 18) << 16) + -0x100000));
+        Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
+        sub = Actor_Get(ACTOR_PARTY_LEADER);
         Engine_ActorSetSpriteFlags(sub, 0);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
-        Engine_AudioPlayCue(228);
+        Audio_PlayCue(228);
         /* Override field at +108 of the entry record; holds an EWRAM
          * address while the effect sequence below runs. */
         *(s32 *)(entry + 108) = (s32)SceneEffect_SpawnTwoRandomizedParticles;
-        Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
-        Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
-        Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 0);
-        sub = Object_GetById(ACTOR_PARTY_LEADER);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
+        Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
+        Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
+        sub = Actor_Get(ACTOR_PARTY_LEADER);
         Engine_ActorSetSpriteFlags(sub, 1);
-        Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
+        Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
         entry[85] = 3;
         /* Restore the +108 override field to the original (unset) value. */
         *(s32 *)(entry + 108) = guard;
@@ -480,9 +480,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
     u32 i;
     struct EffectOptions options;
 
-    actor = Object_GetById(ACTOR_PARTY_LEADER);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
-    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     actor->y.fixed = 0x820000;
@@ -492,7 +492,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Engine_AudioPlayCue(204);
+    Audio_PlayCue(204);
     actor->motion_flags = 3;
     Engine_EventWait(24);
     options.palette = 7;
@@ -511,13 +511,13 @@ void FieldScene_RunSupplementalSequenceOne(void)
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0], velocity[1],
                       velocity[2], 0x1090001, &options);
     }
-    Engine_AudioPlayCue(188);
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Audio_PlayCue(188);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
-    Engine_WorkSetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
-    Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+    Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
+    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
     BattleFx_PlayQueuedSound();
     *(s32 *)((u8 *)actor + 72) = 0x10000;
     *(s32 *)((u8 *)actor + 68) = 0x4000;
@@ -866,28 +866,28 @@ void FieldScene_RunLeaderSurpriseApproach(void)
     struct FieldActor *actor;
     s32 z;
 
-    actor = Object_GetById(ACTOR_PARTY_LEADER);
+    actor = Actor_Get(ACTOR_PARTY_LEADER);
     Engine_EventBegin();
     Engine_ActorEnableActionCallback(ACTOR_PARTY_LEADER, gVinasuLeaderApproachScript);
     Engine_ActorStartAction(0);
-    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 6);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
     actor->velocity_y = 0x40000;
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x40000, 0x20000);
     if (actor->z.fixed >> 20 <= 54) {
-        Object_GetById(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
+        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
         z = 210;
     } else {
-        Object_GetById(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
+        Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= 254;
         z = 238;
     }
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, actor->x.part.pixel, z << 2);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, actor->x.part.pixel, z << 2);
     Engine_EventWait(1);
-    SetFlagBits(&Object_GetById(ACTOR_PARTY_LEADER)->unknown_5a, 1);
+    SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a, 1);
     Engine_EventWait(20);
     actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEveryEightFramesB;
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
-    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 0);
+    Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
     actor->update = 0;
     Engine_EventEnd();
@@ -904,63 +904,63 @@ void FieldScene_RunStatueDialogueSequence(void)
     Engine_EventBegin();
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_MessageShowCentered((s32)MsgVinasuStatueSpeaksRobinSoulYe, 1);
-    Engine_ColorBufferApplySource(0x10000, 0);
-    Engine_ColorBufferApplyTarget(0x10005, 0);
+    ColorBuffer_ApplySource(0x10000, 0);
+    ColorBuffer_ApplyTarget(0x10005, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(100);
-    Engine_AudioPlayCue(142);
+    Audio_PlayCue(142);
     Engine_EventWait(30);
-    Engine_ColorBufferApplyTarget(0x7fff, 0);
+    ColorBuffer_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_EventWait(70);
-    if (Engine_GameFlagIsSet(0x982) == 0) {
-        if (Engine_GameFlagIsSet(0x983) == 0) {
+    if (GameFlag_IsSet(0x982) == 0) {
+        if (GameFlag_IsSet(0x983) == 0) {
             if ((gFrameCount & 1) != 0) {
-                Engine_GameFlagSet(0x982);
+                GameFlag_Set(0x982);
             } else {
-                Engine_GameFlagSet(0x983);
+                GameFlag_Set(0x983);
             }
         }
     }
-    if (Engine_GameFlagIsSet(0x982) == 0) {
-        Engine_GameFlagSet(0x982);
-        Engine_GameFlagClear(0x983);
-        Engine_MapCopyCellsTo(103, 27, 89, 27, 7, 8);
-        Engine_MapCopyCellsTo(41, 90, 27, 92, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 29, 93, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 27, 94, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 27, 96, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 29, 97, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 25, 91, 3, 2);
-        Engine_MapCopyCellsTo(41, 92, 25, 93, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 25, 95, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 25, 97, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 27, 96, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 29, 97, 3, 2);
+    if (GameFlag_IsSet(0x982) == 0) {
+        GameFlag_Set(0x982);
+        GameFlag_Clear(0x983);
+        Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
+        Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
+        Map_CopyCellsTo(41, 90, 29, 93, 3, 2);
+        Map_CopyCellsTo(41, 90, 27, 94, 3, 2);
+        Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
+        Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
+        Map_CopyCellsTo(41, 96, 25, 91, 3, 2);
+        Map_CopyCellsTo(41, 92, 25, 93, 3, 2);
+        Map_CopyCellsTo(41, 96, 25, 95, 3, 2);
+        Map_CopyCellsTo(41, 96, 25, 97, 3, 2);
+        Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
+        Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
     } else {
-        Engine_GameFlagSet(0x983);
-        Engine_GameFlagClear(0x982);
-        Engine_MapCopyCellsTo(111, 27, 89, 27, 7, 8);
-        Engine_MapCopyCellsTo(41, 90, 25, 91, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 25, 93, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 25, 95, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 25, 97, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 27, 96, 3, 2);
-        Engine_MapCopyCellsTo(41, 90, 29, 97, 3, 2);
-        Engine_MapCopyCellsTo(41, 94, 27, 92, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 29, 93, 3, 2);
-        Engine_MapCopyCellsTo(41, 94, 27, 94, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 27, 96, 3, 2);
-        Engine_MapCopyCellsTo(41, 96, 29, 97, 3, 2);
+        GameFlag_Set(0x983);
+        GameFlag_Clear(0x982);
+        Map_CopyCellsTo(111, 27, 89, 27, 7, 8);
+        Map_CopyCellsTo(41, 90, 25, 91, 3, 2);
+        Map_CopyCellsTo(41, 90, 25, 93, 3, 2);
+        Map_CopyCellsTo(41, 90, 25, 95, 3, 2);
+        Map_CopyCellsTo(41, 90, 25, 97, 3, 2);
+        Map_CopyCellsTo(41, 90, 27, 96, 3, 2);
+        Map_CopyCellsTo(41, 90, 29, 97, 3, 2);
+        Map_CopyCellsTo(41, 94, 27, 92, 3, 2);
+        Map_CopyCellsTo(41, 96, 29, 93, 3, 2);
+        Map_CopyCellsTo(41, 94, 27, 94, 3, 2);
+        Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
+        Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
     }
-    Engine_ColorBufferApplyTarget(0x10000, 0);
+    ColorBuffer_ApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(20);
     Engine_EventWait(40);
-    Engine_CameraSetSpeed(0x8000, 0x1000);
-    Engine_CameraMoveTo(0x1c80000, -1, 0x21e0000, 1);
+    Camera_SetSpeed(0x8000, 0x1000);
+    Camera_MoveTo(0x1c80000, -1, 0x21e0000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(50);
-    Engine_CameraMoveTo(0x1c80000, -1, 0x1a70000, 1);
+    Camera_MoveTo(0x1c80000, -1, 0x1a70000, 1);
     Engine_CameraWaitForMove();
     Engine_EventEnd();
     work->field_cb6 = 0;
@@ -1064,18 +1064,18 @@ void VinasuHeya_UpdateFloorSwitch(void)
     s32 z = leader->z.part.pixel;
 
     if ((u32)(x - 676) > 7 || z < 788 || z >= 796) {
-        Engine_MapCopyCellsTo(53, 50, 42, 49, 1, 1);
-        Engine_MapCopyCellsTo(55, 117, 41, 117, 3, 5);
-        Engine_GameFlagClear(0x201);
+        Map_CopyCellsTo(53, 50, 42, 49, 1, 1);
+        Map_CopyCellsTo(55, 117, 41, 117, 3, 5);
+        GameFlag_Clear(0x201);
         leader->motion_flags |= 1;
         *(s32 *)leader->unknown_14 = 0;
         leader->y.fixed = 0;
-    } else if (!Engine_GameFlagIsSet(0x201)) {
+    } else if (!GameFlag_IsSet(0x201)) {
         Engine_EventBegin();
         Engine_EventWait(5);
-        Engine_MapCopyCellsTo(52, 50, 42, 49, 1, 1);
-        Engine_MapCopyCellsTo(52, 117, 41, 117, 3, 5);
-        Engine_GameFlagSet(0x201);
+        Map_CopyCellsTo(52, 50, 42, 49, 1, 1);
+        Map_CopyCellsTo(52, 117, 41, 117, 3, 5);
+        GameFlag_Set(0x201);
         Engine_AudioPlayCue(161);
         leader->motion_flags &= ~1;
         *(s32 *)leader->unknown_14 = -0x20000;
@@ -1101,14 +1101,14 @@ void FieldScene_SetupActorTenCamera(void)
     }
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgVinasuThoughtIdExploreAfterDoor);
-    Engine_ActorFaceActor(10, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
-    Engine_EventShowMessageAndWait(10, 0, 20);
-    Engine_ActorFaceDirection(10, 57344, 0);
-    Engine_CameraSetSpeed(65536, 8192);
-    Engine_CameraMoveTo(29360128, -1, 28311552, 1);
+    Event_ShowMessageAndWait(10, 0, 20);
+    Actor_FaceDirection(10, 57344, 0);
+    Camera_SetSpeed(65536, 8192);
+    Camera_MoveTo(29360128, -1, 28311552, 1);
     Engine_CameraWaitForMove();
-    Engine_EventShowMessage(10, 0);
+    Event_ShowMessage(10, 0);
     Engine_EventEnd();
 }
 
@@ -1167,7 +1167,7 @@ void Scene_RunActorLeapSequence(void)
     /* FAKEMATCH: the existing map adapter keeps destination setup and
        zero/state scheduling; the direct Engine call changes nine instruction
        bytes in this complete localized leap. */
-    Engine_MapCopyCellAttributes(33, 35, 7, 1, 33, 34);
+    Map_CopyCellAttributes(33, 35, 7, 1, 33, 34);
     *state = 3;
 #else
     Engine_MapCopyCellAttributes(34, 35, 5, 1, 34, 34);

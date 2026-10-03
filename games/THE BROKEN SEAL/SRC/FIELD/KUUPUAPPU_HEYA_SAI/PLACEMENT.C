@@ -128,19 +128,19 @@ void FieldScene_RunActor16Sequence(void)
     Engine_EventSetMessage((s32)MsgKuupuappuRobinYouveComeBackVault);
     Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     Engine_ActorSetAnimation(16, 1);
-    Engine_EventShowMessageAndWait(16, 0, 20);
+    Event_ShowMessageAndWait(16, 0, 20);
     Engine_ActorSetAnimationAndWait(16, 4);
     Engine_EventWait(20);
-    Engine_EventShowMessageAndWait(16, 0, 20);
-    Engine_ActorShowEmote(16, 0x102, 60);
-    Engine_EventShowMessageAndWait(16, 0, 30);
-    Engine_EventOpenMessage(16, 0);
+    Event_ShowMessageAndWait(16, 0, 20);
+    Actor_ShowEmote(16, 0x102, 60);
+    Event_ShowMessageAndWait(16, 0, 30);
+    Event_OpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         bump_step(1);
     }
-    Engine_EventShowMessageAndWait(16, 0, 20);
-    Engine_GameFlagSet(0x300);
-    Engine_GameFlagSet(0x868);
+    Event_ShowMessageAndWait(16, 0, 20);
+    GameFlag_Set(0x300);
+    GameFlag_Set(0x868);
     Engine_EventEnd();
 }
 
@@ -173,16 +173,16 @@ void FieldScene_RunActor18FlaggedSequence(void)
 
     Engine_EventBegin();
     Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
-    if (Engine_GameFlagIsSet(0x85b) == 0) {
+    if (GameFlag_IsSet(0x85b) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuHaveLotLeftoverBonesFrom);
-        Engine_EventOpenMessage(18, 0);
+        Event_OpenMessage(18, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuWantMoreBones);
-        Engine_EventOpenMessage(18, 0);
+        Event_OpenMessage(18, 0);
     }
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
-        Engine_EventShowMessage(18, 0);
+        Event_ShowMessage(18, 0);
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(18, 2);
         Engine_EventWait(20);
@@ -190,21 +190,21 @@ void FieldScene_RunActor18FlaggedSequence(void)
             Engine_ActorSetAnimationAndWait(18, 4);
             Engine_EventWait(20);
             Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-            Engine_EventShowMessage(18, 0);
+            Event_ShowMessage(18, 0);
             goto L_020002d4;
         }
         Engine_ItemShowFound(ITEM_BONE, 3);
         Engine_PartyGiveItem(ITEM_BONE, 0);
-        Engine_GameFlagSet(0x85b);
+        GameFlag_Set(0x85b);
     } else {
         bump_step(1);
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(18, 3);
         Engine_EventWait(20);
-        Engine_EventShowMessage(18, 0);
+        Event_ShowMessage(18, 0);
     }
     L_020002d4:;
-    Engine_ActorFaceDirection(18, 0x4000, 0);
+    Actor_FaceDirection(18, 0x4000, 0);
     Engine_EventEnd();
 }
 

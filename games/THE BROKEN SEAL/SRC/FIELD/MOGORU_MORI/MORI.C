@@ -154,14 +154,14 @@ void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
 
     rec7 = (s32)Object_GetById(a0);
     Engine_ActorSetSpritePriority(a0, 1);
-    ObjectMotion_SetSpeedParameters(a0, 0x30000, 0x18000);
+    Actor_SetSpeed(a0, 0x30000, 0x18000);
     Audio_PlayCue(152);
     *(s32 *)(rec7 + 40) = a3;
     *(s32 *)(rec7 + 72) = 0x8000;
     *(s32 *)(rec7 + 68) = 0;
     Engine_ActorSetSpriteFlags(rec7, 0);
-    Engine_ActorMoveToAndWait(a0, a1, a2);
-    Engine_ActorSetPosition(a0, a1 << 16, a2 << 16);
+    Actor_MoveToAndWait(a0, a1, a2);
+    Actor_SetPosition(a0, a1 << 16, a2 << 16);
     Engine_ActorSetSpriteFlags(rec7, 1);
     *(s32 *)(rec7 + 72) = 0x10000;
 }
@@ -672,12 +672,12 @@ void FieldScene_RunScene39f_02001818(void)
     FieldScene_RunScene39f_02000d90(14, 0x1a8, 0x1e0, 0x79999);
     Battle_WaitMode0(2);
     MogoruMori_SpawnPuffRing(14);
-    Engine_ActorSetChildValue(14, 15);
-    record = Object_GetById(14);
+    Actor_SetChildValue(14, 15);
+    record = Actor_Get(14);
     Engine_ActorSetSpriteFlags(record, 0);
     Battle_WaitMode0(30);
-    Engine_GameFlagSet(0x305);
-    Engine_ActorSetPosition(17, 0x1a80000, 0x1e00000);
+    GameFlag_Set(0x305);
+    Actor_SetPosition(17, 0x1a80000, 0x1e00000);
     Engine_EventEnd();
 }
 
@@ -753,20 +753,20 @@ void MogoruMori_RunProbedLandingScene(void)
             goto eleven;
         goto other;
     nine:
-        Map_CopyCellAttributeRect(38, 68, 1, 4, probe.position_x >> 20, 68);
+        Map_CopyCellAttributes(38, 68, 1, 4, probe.position_x >> 20, 68);
         if (probe.position_x >> 20 == 42) {
-            Map_CopyCellAttributeRect(26, 20, 2, 4, probe.position_x >> 20, 23);
+            Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 23);
             Engine_ActorSetSpritePriority(9, 1);
             landed = 1;
-            Engine_GameFlagSet(0x312);
+            GameFlag_Set(0x312);
         }
         goto join;
     eleven:
         if (probe.position_x >> 20 == 40) {
-            Map_CopyCellAttributeRect(26, 20, 2, 4, probe.position_x >> 20, 32);
+            Map_CopyCellAttributes(26, 20, 2, 4, probe.position_x >> 20, 32);
             Engine_ActorSetSpritePriority(11, 1);
             landed = 1;
-            Engine_GameFlagSet(0x313);
+            GameFlag_Set(0x313);
         }
     join:
         if (landed == 0) {
@@ -778,11 +778,11 @@ void MogoruMori_RunProbedLandingScene(void)
         Battle_WaitMode0(30);
         Object_SetModeById(probe.actor_slot, 8);
         Audio_PlayCue(240);
-        Object_GetById(probe.actor_slot)->priority_flags = 2;
+        Actor_Get(probe.actor_slot)->priority_flags = 2;
         goto end;
     other:
         if (probe.actor_slot == 8)
-            Map_CopyCellAttributeRect(42, 49, 1, 4, probe.position_x >> 20, 49);
+            Map_CopyCellAttributes(42, 49, 1, 4, probe.position_x >> 20, 49);
     }
 end:
     Engine_EventEnd();
@@ -1045,15 +1045,15 @@ void FieldScene_RunScene39f_02002004(void)
 
     Engine_EventBegin();
     FieldScene_RunSixCallSetupSequence(18, 1);
-    Engine_CameraMoveTo(0x2e80000, -1, 0x1f80000, 1);
+    Camera_MoveTo(0x2e80000, -1, 0x1f80000, 1);
     FieldScene_RunScene39f_02000d90(18, 0x2e8, 0x1f8, 0x90000);
     MogoruMori_SpawnPuffRing(18);
-    Engine_ActorSetChildValue(18, 15);
-    record = Object_GetById(18);
+    Actor_SetChildValue(18, 15);
+    record = Actor_Get(18);
     Engine_ActorSetSpriteFlags(record, 0);
     Battle_WaitMode0(30);
-    Engine_GameFlagSet(0x30a);
-    Engine_ActorSetPosition(22, 0x2e80000, 0x1f80000);
+    GameFlag_Set(0x30a);
+    Actor_SetPosition(22, 0x2e80000, 0x1f80000);
     Engine_EventEnd();
 }
 
@@ -1112,28 +1112,28 @@ void FieldScene_RunScene39f_020021b0(void)
 
     rec7 = Object_GetById(18);
     Engine_EventBegin();
-    Engine_ActorSetPosition(18, 0x880000, 0x1680000);
+    Actor_SetPosition(18, 0x880000, 0x1680000);
     FieldScene_RunSixCallSetupSequence(18, 1);
     FieldScene_RunScene39f_02000d90(18, 136, 0x198, 0x80000);
     Battle_WaitMode0(10);
     Effect_Spawn(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + 0x40000), 0, 0, 0, 1, 0);
-    Engine_ActorFaceDirection(18, 0xc000, 40);
-    Engine_ActorSetAttachedEffect(18, 0x102);
+    Actor_FaceDirection(18, 0xc000, 40);
+    Actor_SetAttachedEffect(18, 0x102);
     Engine_ActorRunRepeatedMotion(18, 2);
     Engine_CameraFollowActor(18, 1);
     FieldScene_RunScene39f_02000d90(18, 136, 0x1b8, 0x60000);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(10);
     FieldScene_RunScene39f_02000d90(18, 136, 0x1d8, 0x30000);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
     FieldScene_RunScene39f_02000d90(18, 136, 0x1f8, 0x30000);
-    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 18, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, 18, 0);
     Battle_WaitMode0(6);
     Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorSetPosition(18, 0, 0);
+    Actor_SetPosition(18, 0, 0);
     Battle_WaitMode0(60);
-    Engine_GameFlagSet(0x89d);
+    GameFlag_Set(0x89d);
     Engine_EventEnd();
 }
 

@@ -119,15 +119,15 @@ void FieldScene_RunActor17MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Engine_ShopOpen(8, 17);
     } else {
-        if (Engine_GameFlagIsSet(0x845) == 0) {
+        if (GameFlag_IsSet(0x845) == 0) {
             Engine_EventSetMessage((s32)MsgBiribinoHaveEverHeardOcean);
-            Engine_ActorFaceActor(17, ACTOR_PARTY_LEADER, 0);
+            Actor_FaceActor(17, ACTOR_PARTY_LEADER, 0);
             Engine_EventWait(10);
-            Engine_EventAskYesNo(17, 0);
-            Engine_ActorFaceDirection(17, 0x3000, 10);
+            Event_AskYesNo(17, 0);
+            Actor_FaceDirection(17, 0x3000, 10);
         } else {
             Engine_EventSetMessage((s32)MsgBiribinoForSomeReasonOceanFills);
-            Engine_EventShowMessage(17, 0);
+            Event_ShowMessage(17, 0);
         }
     }
     Engine_EventEnd();
@@ -137,9 +137,9 @@ void FieldScene_ConfigureActor21Scene(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoImReallyWorriedAboutKolima);
-    Engine_ActorFaceActor(21, ACTOR_PARTY_LEADER, 0);
-    Engine_EventShowMessage(21, 0);
-    Engine_ActorFaceDirection(21, 0xc000, 10);
+    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
+    Event_ShowMessage(21, 0);
+    Actor_FaceDirection(21, 0xc000, 10);
     Engine_EventEnd();
 }
 
@@ -150,15 +150,15 @@ void FieldScene_RunActor24Sequence(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoGrrr);
-    Engine_EventShowMessageAndWait(24, 0, 20);
-    Engine_ActorFaceActor(24, ACTOR_PARTY_LEADER, 0);
+    Event_ShowMessageAndWait(24, 0, 20);
+    Actor_FaceActor(24, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
-    Engine_EventOpenMessage(24, 0);
+    Event_OpenMessage(24, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         bump_step(1);
     }
-    Engine_EventShowMessage(24, 0);
-    Engine_ActorFaceDirection(24, 0x4000, 10);
+    Event_ShowMessage(24, 0);
+    Actor_FaceDirection(24, 0x4000, 10);
     Engine_EventEnd();
 }
 
@@ -171,14 +171,14 @@ void FieldScene_RunActor27Sequence(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoDoBelieveTreeSpiritCan);
-    Engine_ActorFaceActor(27, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(27, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
-    Engine_EventOpenMessage(27, 0);
+    Event_OpenMessage(27, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         bump_step(1);
     }
-    Engine_EventShowMessage(27, 0);
-    Engine_ActorFaceDirection(27, 0x4000, 10);
+    Event_ShowMessage(27, 0);
+    Actor_FaceDirection(27, 0x4000, 10);
     Engine_EventEnd();
 }
 
@@ -228,22 +228,22 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
     s32 record;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x300) == 0) {
+    if (GameFlag_IsSet(0x300) == 0) {
         Engine_EventSetMessage((s32)MsgBiribinoTwoSpecialsOneDinnerOne);
-        Engine_EventShowMessage(21, 0);
-        Engine_ActorFaceDirection(21, 0x8000, 20);
-        Engine_EventShowMessage(21, 0);
+        Event_ShowMessage(21, 0);
+        Actor_FaceDirection(21, 0x8000, 20);
+        Event_ShowMessage(21, 0);
         Engine_ActorStartRepeatedMotion(22, 2);
-        Engine_ActorSetAttachedEffect(22, 0x102);
+        Actor_SetAttachedEffect(22, 0x102);
         Engine_EventWait(60);
-        Engine_EventShowMessage(22, 0);
+        Event_ShowMessage(22, 0);
         Engine_EventWait(10);
-        Engine_GameFlagSet(0x300);
+        GameFlag_Set(0x300);
     }
-    Engine_ActorFaceActor(21, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
     Engine_EventSetMessage((s32)MsgBiribinoIfWantMealSpeakWaitress);
-    Engine_EventShowMessage(21, 0);
-    Engine_ActorFaceDirection(21, 0xc000, 10);
+    Event_ShowMessage(21, 0);
+    Actor_FaceDirection(21, 0xc000, 10);
     Engine_EventEnd();
 }
 
@@ -265,10 +265,10 @@ void FieldScene_ConfigureActor23Scene(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoLetsSeeServeThemWater);
-    Engine_EventShowMessage(23, 0);
-    Engine_ActorFaceActor(23, ACTOR_PARTY_LEADER, 0);
-    Engine_EventShowMessage(23, 0);
-    Engine_ActorFaceDirection(23, 0xc000, 10);
+    Event_ShowMessage(23, 0);
+    Actor_FaceActor(23, ACTOR_PARTY_LEADER, 0);
+    Event_ShowMessage(23, 0);
+    Actor_FaceDirection(23, 0xc000, 10);
     Engine_EventEnd();
 }
 

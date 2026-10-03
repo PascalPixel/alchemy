@@ -32,24 +32,24 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
         result = ColossoLogRollingStage_RunStateInteraction(a0, 4);
         if (result == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledFreeClimb);
-            Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x3580000, -1, 0xa80000, 1);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x3580000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
-            Engine_EventShowMessage(a0, 0);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x330, 200);
-            Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-            Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+            Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x348, 200);
             /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
             Value3(Engine_ActorFaceDirection, 0, 0xc000, 20);
             battle_owner_69();
-            Engine_CameraMoveTo(-1, -1, -1, 0);
-            Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+            Camera_MoveTo(-1, -1, -1, 0);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
             actor = Object_GetById(0);
             y = *(s32 *)(actor + 12);
             x = *(s32 *)(actor + 8);
-            Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 10);
             raised_y = 0x60000 + y;
             Object_SetPosition(actor, x, raised_y, *(s32 *)(actor + 16));
@@ -65,13 +65,13 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Object_SetPosition(actor, x + 0x300000, y + 0x360000, *(s32 *)(actor + 16));
             Object_CommitPosition(actor);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 12);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Korosseo_RestoreCompetitor(0);
             Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
             ColossoLogRollingStage_InitializeStateInteraction(a0, 4);
         } else if (result == 1) {
             Engine_EventSetMessage((s32)MsgKorosseoClearStageMustAbleChange);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
         }
         FieldScene_RunMiddleSequence(result, a0, 4);
         Engine_EventEnd();
@@ -131,26 +131,26 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         if (rec2 != 0) {
         } else {
             Engine_EventSetMessage((s32)MsgKorosseoCalledMovingSidewalkStage);
-            Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x4380000, -1, 0xa80000, 1);
+            Camera_SetSpeed(0x30000, 0x6000);
+            Camera_MoveTo(0x4380000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
-            Engine_EventShowMessage(a0, 0);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Korosseo_FadeInCompetitor(0, 0x3d8, 184);
-            Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionAndActivateActor(0, 0x3e0, 184);
-            Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
+            Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x4ccc, 0x2666);
             ColossoLogRollingStage_PositionActor(0, 0x460, 184);
             Engine_EventWait(120);
-            Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
             Engine_EventWait(120);
             ColossoLogRollingStage_ResetActorMotion(0);
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
 #if !defined(TBS_EDITION_ES) && !defined(TBS_EDITION_FR) && !defined(TBS_EDITION_IT)
-            Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+            Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
 #endif
-            Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
             rec7 = Object_GetById(0);
             for (i = 119; i >= 0; i--) {
                 if (*(s32 *)(rec7 + 8) > 0x3e00000) {
@@ -158,9 +158,9 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
                 }
                 Engine_TaskWait(1);
             }
-            Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x103, 60);
+            Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x103, 60);
             ColossoLogRollingStage_PositionActor(0, 0x460, 184);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             ColossoLogRollingStage_ResetActorMotion(0);
             {
                 u8 *flag = (u8 *)&gGameState;
@@ -174,7 +174,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         }
         if (rec2 == 1) {
             Engine_EventSetMessage((s32)MsgKorosseoInStageMustTryOutpace);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
         }
         L_02002494:;
         FieldScene_RunMiddleSequence(rec2, a0, 5);

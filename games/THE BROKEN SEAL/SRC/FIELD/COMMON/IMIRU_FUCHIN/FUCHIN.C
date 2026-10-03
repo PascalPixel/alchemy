@@ -11,6 +11,7 @@ extern u8 MsgFuchinEyelessDragon[];
 extern u8 MsgFuchinDragonRedEyes[];
 #include "FIELD_EFFECT.H"
 #include "SCENE.H"
+#include "FIELDRUN.H"
 
 extern const struct SceneEntrance gImiruFuchinEntrances1[];
 extern const struct SceneEntrance gImiruFuchinEntrances2[];

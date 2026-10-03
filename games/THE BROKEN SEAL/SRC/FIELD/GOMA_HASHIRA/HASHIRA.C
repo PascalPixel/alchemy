@@ -56,7 +56,7 @@ struct Sprite389 {
  */
 void ConfigureActorThirteenSceneParameters(void)
 {
-    Engine_ActorShowEmote(13, 256, 0);
+    Actor_ShowEmote(13, 256, 0);
     Engine_ActorJump(13, 2, 0);
     BattleFx_SetPhaseRequest(12, 40);
 }

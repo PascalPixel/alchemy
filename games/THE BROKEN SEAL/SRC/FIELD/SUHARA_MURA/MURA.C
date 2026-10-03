@@ -94,9 +94,9 @@ void SuharaMura_AnimateCells0(void)
     u16 x = SuharaMura_CellAnimationOrigins[no * 2];
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(SuharaMura_CellSteps0, x, y);
-    Engine_ActorWalkBy(0, 0, -16);
+    Audio_PlayCue(158);
+    Map_AnimateCells(SuharaMura_CellSteps0, x, y);
+    Actor_WalkBy(0, 0, -16);
     *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
     Engine_EventRequestExit(no);
 }
@@ -108,9 +108,9 @@ void SuharaMura_AnimateCells1(void)
     u16 x = SuharaMura_CellAnimationOrigins[no * 2];
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells(SuharaMura_CellSteps1, x, y);
-    Engine_ActorWalkBy(0, 0, -16);
+    Audio_PlayCue(158);
+    Map_AnimateCells(SuharaMura_CellSteps1, x, y);
+    Actor_WalkBy(0, 0, -16);
     *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
     Engine_EventRequestExit(no);
 }

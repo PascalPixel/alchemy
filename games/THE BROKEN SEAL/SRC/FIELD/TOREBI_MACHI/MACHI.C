@@ -478,11 +478,11 @@ void FieldScene_RunScene3b5SequenceA(void)
 
     Engine_EventBegin();
     Call3(Engine_ActorWalkToAndWait, 0, 0x130, 0x138);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorFaceDirection(28, 0x4000, 0);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgTorebiWantTestLuck);
-    Engine_EventOpenMessage(28, 0);
+    Event_OpenMessage(28, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         bump_step(1);
         Engine_EventShowMessage(28, 0);
@@ -529,7 +529,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorWalkTo(29, 72, 248);
     Engine_ActorWalkTo(30, 56, 248);
     Call3(Engine_ActorWalkToAndWait, 0, 64, 0x108);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorWaitForMove(29);
     Engine_ActorSetAnimation(29, 1);
     Engine_ActorSetAnimation(30, 1);
@@ -537,12 +537,12 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorFaceActor(29, 0, 0);
     Engine_ActorFaceActor(30, 0, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAttachedEffect(29, 0x102);
+    Actor_SetAttachedEffect(29, 0x102);
     Call2(Engine_ActorSetAttachedEffect, 30, 0x102);
     Engine_ActorStartRepeatedMotion(29, 2);
     Engine_ActorRunRepeatedMotion(30, 2);
     Engine_EventWait(20);
-    Engine_EventOpenMessage(29, 0);
+    Event_OpenMessage(29, 0);
     Engine_EventWait(25);
     UiWindow_CreateWithSideObject(52, 0, 12, 7);
     UiText_OpenMessageWindow((base + 3), 11, 12, 2);
@@ -568,9 +568,9 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventWait(20);
         Call3(Engine_ActorSetSpeed, 29, 0x1cccc, 0xe666);
         Call3(Engine_ActorSetSpeed, 30, 0x1cccc, 0xe666);
-        Engine_ActorWalkTo(29, 232, 248);
+        Actor_WalkTo(29, 232, 248);
         Engine_EventWait(2);
-        Engine_ActorWalkTo(30, 232, 248);
+        Actor_WalkTo(30, 232, 248);
         Engine_ActorWaitForMove(29);
         Engine_ActorWalkTo(29, 248, 248);
         Engine_ActorWalkToAndWait(30, 248, 248);

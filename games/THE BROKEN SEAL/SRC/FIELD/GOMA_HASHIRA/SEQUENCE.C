@@ -61,21 +61,21 @@ void FieldScene_RunActor13Departure(void)
 {
     Engine_TaskRemoveCallback((s32)GomaHashira_DriveActor13Idle);
     Engine_EventBegin();
-    Engine_ActorShowEmote(13, 0x100, 30);
+    Actor_ShowEmote(13, 0x100, 30);
     Engine_ActorRunRepeatedMotion(13, 2);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Engine_EventSetMessage((s32)MsgGomaGotWowThatsPrettyImpressive);
-    Engine_EventShowMessage(13, 0);
+    Event_ShowMessage(13, 0);
     Engine_ActorSetAnimationAndWait(13, 3);
     Battle_WaitMode0(30);
     *(u8 *)((u8 *)Object_GetById(10) + 35) &= 253;
     Goma_SetSpeed(13, 0x20000, 0x10000);
-    Engine_ActorWalkToAndWait(13, 0x258, 216);
-    Engine_ActorWalkToAndWait(13, 0x258, 248);
-    Engine_ActorWalkToAndWait(13, 0x238, 0x128);
-    Engine_ActorSetPosition(13, 0, 0);
+    Actor_WalkToAndWait(13, 0x258, 216);
+    Actor_WalkToAndWait(13, 0x258, 248);
+    Actor_WalkToAndWait(13, 0x238, 0x128);
+    Actor_SetPosition(13, 0, 0);
     SetFlagBits((u8 *)Object_GetById(10) + 35, 2);
-    Engine_GameFlagSet(0x869);
+    GameFlag_Set(0x869);
     Engine_EventEnd();
 }
 
@@ -88,18 +88,18 @@ s32 FieldScene_SetupPillarsOnEntry(void)
     *(s32 *)((s32)work + 0x1c0) = 0x204;
     *(s32 *)((s32)work + 0x1c8) = 24;
     SetFlagBits((u8 *)Object_GetById(9) + 89, 16);
-    if (Engine_GameFlagIsSet(0x302) != 0) {
-        Engine_ActorSetPosition(8, 0x1580000, 0x680000);
+    if (GameFlag_IsSet(0x302) != 0) {
+        Actor_SetPosition(8, 0x1580000, 0x680000);
         Goma_CopyCellAttributes(24, 40, 6, 3, 18, 6);
     } else {
         Goma_CopyCellAttributes(18, 40, 6, 3, 18, 6);
     }
-    if (Engine_GameFlagIsSet(0x300) != 0) {
-        Engine_ActorSetPosition(9, 0, 0);
+    if (GameFlag_IsSet(0x300) != 0) {
+        Actor_SetPosition(9, 0, 0);
         Goma_CopyCellAttributes(21, 45, 4, 2, 21, 11);
     }
-    if (Engine_GameFlagIsSet(0x301) != 0) {
-        Engine_ActorSetPosition(10, 0x2680000, 0xe80000);
+    if (GameFlag_IsSet(0x301) != 0) {
+        Actor_SetPosition(10, 0x2680000, 0xe80000);
         if ((u32)(((u16)Data_02000240[225] - 2) << 16) > 0x10000) {
             goto L_0200131c;
         }
@@ -118,10 +118,10 @@ L_0200131c:
     if (Data_02000240[225] == 99) {
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
-        Engine_ActorSetPosition(9, 0x1800000, 0xc00000);
+        Actor_SetPosition(9, 0x1800000, 0xc00000);
         Battle_WaitMode0(60);
         *(u8 *)((u8 *)Object_GetById(9) + 34) = 2;
-        Engine_ActorMoveToAndWait(9, 0x198, 192);
+        Actor_MoveToAndWait(9, 0x198, 192);
         Battle_WaitMode0(60);
         FieldScene_RunPillarSequence();
     }

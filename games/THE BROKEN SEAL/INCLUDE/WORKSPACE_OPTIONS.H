@@ -18,7 +18,8 @@ union MenuCursor {
 struct WorkspaceWork {
     u8 unknown_000[0x574];
     u16 page;
-    u8 unknown_576[8];
+    u16 tint[3];
+    u16 cursor_frame;
     u16 preset;
     u8 unknown_580[0x14];
     s8 option[5];

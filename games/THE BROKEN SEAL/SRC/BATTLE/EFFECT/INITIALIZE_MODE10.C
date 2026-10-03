@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "IWRAM_CALL.H"
@@ -554,11 +555,7 @@ struct Cells03001ad0 {
 };
 extern struct Cells03001ad0 gBgScroll;
 
-struct Cells03001ce0 {
-    s32 unk00[4];
-    s32 unk10;
-};
-extern struct Cells03001ce0 gProjection;
+
 
 
 typedef struct Scale {
@@ -652,7 +649,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     blit46 = (DrawRectangle)cache[46 - 40];
     BattleEffect_LoadWork(47, 7, 7, 3, 1);
     blit47 = (DrawRectangle)cache[47 - 40];
-    gProjection.unk10 = 240;
+    gProjection.center_y = 240;
     BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);

@@ -1,27 +1,14 @@
-/*
- * Call a work entry through the runtime's indirect-call slot.
- */
 #include "TYPES.H"
-#include "SCENE.H"
+#include "CALLBACK_SCHEDULER.H"
+
 extern u8 Sound_CommandTable[];
-s32 _call_via_r2(s32, s32, s32);
 
-/*
- * _call_via_r2 names a `bx rN` slot: the call is an indirect call through
- * the register that slot selects, not a call to a function at that
- * address. The declaration stands in for the typed slot.
- */
-
-/*
- * The callee word is read from 0x02004000 and carried into the call as the
- * third argument -- that load is the callee load, not dead code. What the
- * word points at depends on the caller and is not established here.
- */
+/* This RAM cell holds the current two-argument entry. The arguments are
+   transported unchanged; their interpretation belongs to that entry. */
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)
 {
-  int base;
-  int fn;
-  base = (fn = (u32)Sound_CommandTable);
-  fn = *((s32 *)base);
-  _call_via_r2(arg0, arg1, fn);
+    void (*entry)(s32, s32);
+
+    entry = (void (*)(s32, s32))*(u32 *)Sound_CommandTable;
+    entry(arg0, arg1);
 }

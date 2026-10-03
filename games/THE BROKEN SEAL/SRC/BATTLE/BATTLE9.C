@@ -3,6 +3,8 @@
 #include "UI.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+#include "WINDOW.H"
+#include "GAME_STATE.H"
 
 struct Runtime_080931ec {
     u8 unknown_000[0x1d8];
@@ -21,17 +23,9 @@ void UiWork_FinalizePendingCoreFar(void);
 
 s32 BattleFx_GetResourceId(u32 id);
 
-struct State08093304 {
-    u8 padding[RENDER_RESULT_OFS];
-    s16 ret;
-    s16 value;
-};
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 s32 ObjectTable_ReadActiveValue(s32 key);
-extern u8 gGameState[];
 extern u8 Ui_RenderResultValues[];
-extern struct State08093304 *gWindowWork;
 
 void Battle_ShowPairedUnitWorkAndWait(
     s32 first, s32 first_x, s32 first_y, s32 first_arg,
@@ -77,17 +71,17 @@ void Battle_ShowPairedUnitWorkAndWait(
 
 void Ui_SetRenderResultFromObject(s32 arg0)
 {
-    struct State08093304 *state = gWindowWork;
+    struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
     u8 value;
     s32 ret;
 
     if (arg0 == (s32)0x80000000) {
-        FIELD(state, s16, RENDER_RESULT_OFS) = (value = 0);
-        FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
+        state->result[0] = (value = 0);
+        state->result[1] = value;
     } else {
         ret = BattleFx_GetResourceId(ObjectTable_ReadActiveValue(arg0));
-        value = Ui_RenderResultValues[gGameState[0x20C]];
-        FIELD(state, s16, RENDER_RESULT_OFS) = ret;
-        FIELD(state, s16, RENDER_RESULT_OFS + 2) = value;
+        value = Ui_RenderResultValues[gGameState.unknown_207[5]];
+        state->result[0] = ret;
+        state->result[1] = value;
     }
 }

@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"
 #include "MAP_SCROLL.H"
+#include "ANIMSPR.H"
 
 s8 *Resource_GetMetadataRecordFar(s16 resource_id);
 
@@ -27,7 +28,7 @@ s32 Object_GetScreenPosition(s32 object_id, s32 *position)
     *position++ = x / 0x10000;
     *position = z / 0x10000;
     if ((object->animation_kind & 15) == 1)
-        *position -= Resource_GetMetadataRecordFar(*(s16 *)((u8 **)object->animation)[10])[8];
+        *position -= Resource_GetMetadataRecordFar(((struct AnimationObject *)object->animation)->entries[0]->anim_id)[8];
     return 0;
 }
 

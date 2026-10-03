@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -48,12 +49,8 @@ struct Cells03001ad0 {
 
 extern struct Cells03001ad0 gBgScroll;
 
-struct Cells03001ce0 {
-    s32 unk00[4];
-    s32 unk10;
-};
 
-extern struct Cells03001ce0 gProjection;
+
 
 typedef struct Scale {
     s32 x;
@@ -152,7 +149,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     *(u16 *)0x04000040 = 0xf0f0;
     BattleFx_SelectLivingTargets((s32)work->effect);
     BattleFx_SpawnObjects(8, 0x17a, 1);
-    gProjection.unk10 = 240;
+    gProjection.center_y = 240;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);

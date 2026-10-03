@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_STATUS_ICON.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EVENT.H"
 #include "BATTLE_WORK.H"
@@ -56,7 +57,6 @@ void BattleEnemy_RecordDefeat(u32, u32);
 void BattleActor_ResetRuntimeFields(u32);
 void BattleMotion_InitializeActorRecords(u32);
 void UiWindow_DrawPartyStatusContentsFar(u32);
-void BattleUnit_BuildStatusFlags(u32, u32);
 void BattlePres_SetActorModeAndAction(u32);
 
 u32 BattleEv_DispatchQueued(void)
@@ -103,7 +103,7 @@ u32 BattleEv_DispatchQueued(void)
         }
         case 10: UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode); break;
         case 11:
-            BattleUnit_BuildStatusFlags(queue->operands[i], (u32)GetBattleObjectSlot(queue->operands[i]));
+            BattleUnit_BuildStatusFlags(queue->operands[i], GetBattleObjectSlot(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);
             break;
         }

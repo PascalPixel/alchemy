@@ -1,3 +1,5 @@
+#include "GAME_STATE.H"
+#include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
@@ -17,7 +19,6 @@ struct MenuWorkspace {
 };
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-extern u8 gGameState[];
 u16 Palette_ScaleTintChannels(u8 *work, s32 scale_r, s32 scale_g, s32 scale_b);
 
 extern const u8 PaletteGlow_WaveTable[];
@@ -57,8 +58,8 @@ void Menu_ResetWorkspaceSelection(struct MenuWorkspace *work)
 void GraphicsPalette_SetTintChannelsFromCounters(void *work)
 {
     s16 phase; s32 bias; s32 c2, c0, c1;
-    phase = (gGameState[0x205] + 0xC) % 0x18 * 4;
-    bias = gGameState[0x206] - 7;
+    phase = (gGameState.palette_glow[0] + 0xC) % 0x18 * 4;
+    bias = gGameState.palette_glow[1] - 7;
     c0 = PaletteGlow_WaveTable[(s16)(phase % 0x60)];
     c1 = PaletteGlow_WaveTable[(phase + 0x20) % 0x60];
     c2 = PaletteGlow_WaveTable[(phase + 0x40) % 0x60];
@@ -178,7 +179,7 @@ void GraphicsPalette_DecrementSelectionWrap(void *base)
     u16 t;
     s32 cur;
 
-    base = (u8 *)base + 0x574;
+    base = &((struct WorkspaceWork *)base)->page;
     v = *(u16 *)base;
     t = v;
     cur = t;
@@ -195,12 +196,12 @@ void Menu_AdvanceWorkspaceIndexModulo3(void *arg0)
 {
   unsigned int zero;
   unsigned long cnt;
-  cnt = 1 + (*((u16 *)(0x574 + ((u8 *)arg0))));
+  cnt = 1 + ((struct WorkspaceWork *)arg0)->page;
   zero = 0U;
-  *((u16 *)(((u8 *)arg0) + 0x574)) = cnt;
+  ((struct WorkspaceWork *)arg0)->page = cnt;
   if (((u32)(cnt << 0x10)) >= (((unsigned long) 0x20000U) + 1))
   {
-    *((u16 *)(((u8 *)arg0) + 0x574)) = zero;
+    ((struct WorkspaceWork *)arg0)->page = zero;
   }
 }
 
@@ -210,19 +211,19 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
     u16 sel;
     s32 off;
 
-    sel = *(u16 *)((u8 *)work + 0x574);
+    sel = ((struct WorkspaceWork *)work)->page;
     switch (sel) {
     case 0:
         off = 0x20C;
-        p = &gGameState[off];
+        p = (u8 *)&gGameState + off;
         break;
     case 1:
         off = 0x205;
-        p = &gGameState[off];
+        p = (u8 *)&gGameState + off;
         break;
     case 2:
         off = 0x206;
-        p = &gGameState[off];
+        p = (u8 *)&gGameState + off;
         break;
     default:
         return;
@@ -238,25 +239,25 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
     u16 sel;
     s32 off;
 
-    sel = *(u16 *)((u8 *)arg0 + 0x574);
+    sel = ((struct WorkspaceWork *)arg0)->page;
     switch (sel) {
     case 0:
         off = 0x20C;
-        sp = &gGameState[off];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 1) {
             break;
         }
         return;
     case 1:
         off = 0x205;
-        sp = &gGameState[off];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 23) {
             break;
         }
         return;
     case 2:
         off = 0x206;
-        sp = &gGameState[off];
+        sp = (u8 *)&gGameState + off;
         if (*sp <= 14) {
             break;
         }

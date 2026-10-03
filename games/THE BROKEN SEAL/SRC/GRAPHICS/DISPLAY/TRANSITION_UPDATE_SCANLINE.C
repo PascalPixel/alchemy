@@ -7,54 +7,53 @@
 #include "IO_REG.H"
 #include "DISPTRAN.H"
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 void DisplayTransition_UpdateScanline(void)
 {
     u32 line;
-    u8 *state;
+    struct DisplayTransitionWindow *state;
     u16 value;
 
     line = *(volatile u16 *)0x04000006;
     state = gMapWork[0];
 
 again:
-    switch (FIELD(state, u16, 0x108)) {
+    switch (state->irq_phase) {
     case 3:
-        if (line >= FIELD(state, u16, 0x104)) {
+        if (line >= state->irq_first_line) {
             value = *(volatile u16 *)0x04000000;
             *(volatile u16 *)0x04000000 = (value & 0xFFF8) | 2;
             value = 9;
-            FIELD(state, u16, 0x108) = value;
+            state->irq_phase = value;
         }
         break;
     case 2:
-        if (line >= FIELD(state, u16, 0x106)) {
+        if (line >= state->irq_second_line) {
             value = *(volatile u16 *)0x04000000;
             *(volatile u16 *)0x04000000 = value & 0xFFF8;
             value = 9;
-            FIELD(state, u16, 0x108) = value;
+            state->irq_phase = value;
         }
         break;
     case 1:
-        if (line >= FIELD(state, u16, 0x104)) {
+        if (line >= state->irq_first_line) {
             value = *(volatile u16 *)0x04000000;
             *(volatile u16 *)0x04000000 = (value & 0xFFF8) | 2;
-            FIELD(state, u16, 0x108)++;
+            state->irq_phase++;
             goto again;
         }
-        if (line >= FIELD(state, u16, 0x106)) {
+        if (line >= state->irq_second_line) {
             value = *(volatile u16 *)0x04000000;
             *(volatile u16 *)0x04000000 = value & 0xFFF8;
             value = 3;
-            FIELD(state, u16, 0x108) = value;
+            state->irq_phase = value;
             goto again;
         }
         break;
     case 0:
         if (line <= 158) {
             value = 1;
-            FIELD(state, u16, 0x108) = value;
+            state->irq_phase = value;
             goto again;
         }
         break;

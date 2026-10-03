@@ -18,14 +18,9 @@
 #include "SYSTEM.H"
 #include "MAP_SCROLL.H"
 #include "SCRIPT.H"
-
-extern u8 ResourceTableEntries[];
-
-/* map/shared/Map_RenderAnimatedTileFrame.c */
-struct MapBase {
-    u16 unused;
-    u16 offset;
-};
+#include "ANIMSPR.H"
+#include "FIELD_SPRITE.H"
+#include "VRAM_BLOCK.H"
 
 extern u8 Map_TileDissolveOrder[];
 
@@ -96,17 +91,8 @@ struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimation(void *, s32);
 void AnimationObjects_SetField15OnActive(void *, s32);
-struct AnimationSetupState;
-s32 Animation_InitializeObjects(struct AnimationSetupState *);
-struct MetadataSlotState;
-s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
-
-struct ChildStateFlags {
-    u8 padding[5];
-    u8 unk_0 : 2;
-    u8 field_2 : 2;
-    u8 unk_4 : 4;
-};
+s32 Animation_InitializeObjects(struct AnimationObject *);
+s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
 struct ChildDisplayFlags {
     u8 padding[29];
@@ -128,9 +114,11 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     u32 index_mask;
     u8 offset_mask;
 
+    struct AnimationObject *sprite = (struct AnimationObject *)object;
+
     destination = (u16 *)(0x06010000
-        + ((struct MapBase *)((u32)&ResourceTableEntries))[object[0x1C]].offset);
-    count = (object[0x20] * object[0x21]) / 64;
+        + gVramBlockCache[sprite->slot].offset);
+    count = (sprite->width * sprite->height) / 64;
     row = 0;
 
     if (row < (u32)count) {
@@ -500,19 +488,19 @@ void ObjectDispatch_ApplyPairToChildren(struct DispatchObject *object, s32 arg1,
 void ObjectDispatch_SetChildField1e(struct DispatchObject *object, u32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1)
-        *(s16 *)((u8 *)object->target.child + 0x1e) = value;
+        ((struct FieldSprite *)object->target.child)->rotation = value;
 }
 
 void Animation_SetIndexAndInitObjects(void *raw_object, s32 no)
 {
     struct DispatchObject *object = raw_object;
-    void *child;
+    struct AnimationObject *child;
 
     if (object != NULL && (object->kind & 0xf) == 1) {
         child = object->target.child;
         if (no >= 0) {
-            **(s16 **)((u8 *)child + 0x28) = (s16)no;
-            Animation_InitializeObjects((struct AnimationSetupState *)child);
+            child->entries[0]->anim_id = no;
+            Animation_InitializeObjects(child);
         }
     }
 }
@@ -520,9 +508,9 @@ void Animation_SetIndexAndInitObjects(void *raw_object, s32 no)
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value)
 {
     if (object != 0 && (object->kind & 0xf) == 1) {
-        void *child = object->target.child;
+        struct AnimationObject *child = object->target.child;
         if (value >= 0)
-            ResourceMetadata_Register((struct MetadataSlotState *)child, value);
+            ResourceMetadata_Register(child, value);
     }
 }
 
@@ -589,15 +577,15 @@ void ObjectDispatch_SetSingleChildField26(struct DispatchObject *object, u32 val
 {
     if (object != NULL) {
         if ((object->kind & 0xf) == 1)
-            ((u8 *)object->target.child)[0x26] = value;
+            ((struct AnimationObject *)object->target.child)->flags = value;
     }
 }
 
 void Animation_SetStateField5Bits2To3(struct DispatchObject *obj, u32 v)
 {
     if (obj != 0 && obj->kind == 1) {
-        struct ChildStateFlags *state = (struct ChildStateFlags *)obj->target.child;
-        state->field_2 = v;
+        struct FieldSprite *sprite = obj->target.child;
+        sprite->blend_mode = v;
     }
 }
 

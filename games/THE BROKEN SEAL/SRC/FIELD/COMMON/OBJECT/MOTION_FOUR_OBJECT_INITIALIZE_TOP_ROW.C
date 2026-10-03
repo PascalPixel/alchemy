@@ -2,9 +2,10 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
 #include "FOUR_OBJECT_MOTION.H"
+#include "FIELD_SPRITE.H"
 void ResourceObject_ReleaseFar(void *);
 s32 Object_ApplyProjectedPlacementFar(u32 object, u32 *request, u32 *motion, u32 limit);
-extern struct FourObjectMotionState *Data_03001f2c;
+extern struct FourObjectMotionState *gMenuWork;
 
 extern u8 RomBytes_080ad40d[];
 
@@ -19,7 +20,7 @@ void FourObjectMotion_UpdateBottomRow(void);
 
 void FourObjectMotion_InitializeTopRow(void)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gMenuWork;
     s32 index;
 
     for (index = 0; index < 4; index++) {
@@ -48,7 +49,7 @@ void FourObjectMotion_InitializeTopRow(void)
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gMenuWork;
     s32 index = 0;
 
     do {
@@ -67,11 +68,9 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
 #define FIXED_ONE 0x10000u
 #define VERTICAL_ORIGIN 0x01e20000u
 
-struct ObjectFlags_080ad35c { s8 flags; };
-
 void FourObjectMotion_UpdateAllPositions(void)
 {
-    struct FourObjectMotionState *state = Data_03001f2c;
+    struct FourObjectMotionState *state = gMenuWork;
     s32 index;
     u32 motion[2];
     u32 request[4];
@@ -83,7 +82,7 @@ void FourObjectMotion_UpdateAllPositions(void)
         if (object != 0) {
             u32 vertical = VERTICAL_ORIGIN -
                 ((u32)(s32)state->vertical_origins[index] << 16);
-            ((struct ObjectFlags_080ad35c *)(object + 9))->flags &= -13;
+            ((struct FieldSprite *)object)->priority = 0;
             motion[0] = FIXED_ONE;
             motion[1] = FIXED_ONE;
             request[0] = (u32)(s32)state->positions_x[index] << 16;

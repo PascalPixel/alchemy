@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
@@ -39,16 +40,9 @@ struct SceneCameraTransfer {
     s32 third;
 };
 
-struct SceneCameraObject {
-    u32 field00;
-    u32 field04;
-    u32 field08;
-    u32 field0c;
-    s32 anchor;
-};
 
 extern struct SceneCameraRuntime gCameraWork;
-extern struct SceneCameraObject gProjection;
+
 
 
 s32 Runtime_BlankDisplayAndRun(void)
@@ -73,8 +67,8 @@ void Camera_ResetSceneDefaults(void)
     state->field14 = 0;
     state->field36 = 0;
     state->field1c = 0;
-    gProjection.field0c = 0;
-    gProjection.anchor = 0;
+    gProjection.center_x = 0;
+    gProjection.center_y = 0;
     state->field18 = 0;
 
     Render_ResetTransformState();

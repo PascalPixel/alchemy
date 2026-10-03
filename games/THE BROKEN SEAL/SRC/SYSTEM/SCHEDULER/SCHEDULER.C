@@ -26,27 +26,18 @@ union AffineMatrix {
 extern u8 gObjAffineCount;
 extern union AffineMatrix gObjAffineMatrices[];
 
-extern u8 Data_03001400[];
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
+/* Each of the 256 render priorities owns a linked-list head. */
+extern s32 *Data_03001400[256];
 extern const u8 Render_BuildOamList[];
 typedef void (*LoadedRoutine)(void *argument);
 
 /* Linker-resolved absolute size of the routine copied into the heap. */
 extern u8 LoadedRuntime_Size[];
 
-extern u8 ResourceBlockOwners[512];
-extern u8 ResourceBlockOwners[];
-
-struct ResourceTableEntry {
-    u16 value;
-    u16 flags;
-};
-
-extern struct ResourceTableEntry ResourceTableEntries[];
-
 typedef s32 (*KeyCallbackFn)(void);
 
-extern u8 Data_03001cb4[];
+/* The linear-congruential generator updates one unsigned word. */
+extern u32 Data_03001cb4;
 extern const u16 Math_ArcTanTable[];
 
 extern const u8 System_BasicColorPalette[];
@@ -117,7 +108,6 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
 void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
 {
     s32 *previous_head;
-    s32 slot_offset;
     s32 clamped_slot;
 
     clamped_slot = slot;
@@ -127,10 +117,9 @@ void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
     if (clamped_slot < 0) {
         clamped_slot = 0;
     }
-    slot_offset = clamped_slot * 4;
-    previous_head = FIELD_AT_OFFSET(slot_offset, s32 **, ((u32)&Data_03001400));
-    FIELD_AT_OFFSET(slot_offset, s32 **, ((u32)&Data_03001400)) = slot_entry;
-    *slot_entry = previous_head;
+    previous_head = Data_03001400[clamped_slot];
+    Data_03001400[clamped_slot] = slot_entry;
+    *slot_entry = (s32)previous_head;
 }
 
 void Runtime_CopyAndCallRoutine(void *argument)
@@ -165,23 +154,23 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
     u32 end;
     u32 i;
 
-    blocks = size >> 6;
-    if (id > 95) {
+    blocks = size / VRAM_BLOCK_BYTES;
+    if (id >= VRAM_CACHE_ENTRY_COUNT) {
         return -1;
     }
     pos = 0;
     for (;;) {
         result = -1;
-        if (pos >= 512) {
+        if (pos >= VRAM_BLOCK_COUNT) {
             goto done;
         }
-        if (ResourceBlockOwners[pos] != 0xff) {
+        if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE) {
             goto occupied;
         }
         result = pos;
         end = blocks + result;
         while (pos < end) {
-            if (ResourceBlockOwners[pos] != 0xff) {
+            if (ResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE) {
                 goto occupied;
             }
             pos++;
@@ -191,10 +180,10 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
         }
         goto found;
 occupied:
-        pos += gVramBlockCache[ResourceBlockOwners[pos]].size >> 6;
+        pos += (u32)gVramBlockCache[ResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
     }
 found:
-    result <<= 6;
+    result *= VRAM_BLOCK_BYTES;
 done:
     return result;
 }
@@ -204,7 +193,7 @@ s32 ResourceTable_GetLongestFreeBlockRun(void)
     s32 run = 0;
     u8 *marker = ResourceBlockOwners;
     s32 longest = 0;
-    s32 remaining = 0x200;
+    s32 remaining = VRAM_BLOCK_COUNT;
 
     do {
         if (*marker++ != 0xff) {
@@ -226,11 +215,11 @@ s32 Resource_ClearSlotReferences(s32 resource_id)
     u8 *marker;
     u8 empty_marker;
 
-    if ((u32)resource_id > 0x5f)
+    if ((u32)resource_id >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
     marker = ResourceBlockOwners;
-    empty_marker = 0xff;
-    remaining = 0x200;
+    empty_marker = VRAM_BLOCK_OWNER_FREE;
+    remaining = VRAM_BLOCK_COUNT;
     do {
         if (*marker == resource_id) {
             *marker = empty_marker;
@@ -246,30 +235,30 @@ s32 Resource_ClearSlotReferences(s32 resource_id)
 
 s32 Resource_ResetEntry(u32 resource_index)
 {
-    struct ResourceTableEntry *entry = &ResourceTableEntries[resource_index];
+    struct VramBlockCacheEntry *entry = &gVramBlockCache[resource_index];
 
-    if (resource_index > 95)
+    if (resource_index >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
-    if (entry->flags != 0xffff) {
+    if (entry->offset != VRAM_CACHE_OFFSET_FREE) {
         Resource_ClearSlotReferences(resource_index);
-        entry->flags |= 0xffff;
-        entry->value = 0;
+        entry->offset |= VRAM_CACHE_OFFSET_FREE;
+        entry->size = 0;
     }
     return 0;
 }
 
 s32 Resource_ActivateEntry(u32 resource_index)
 {
-    u16 *entry = (u16 *)&ResourceTableEntries[resource_index];
+    struct VramBlockCacheEntry *entry = &gVramBlockCache[resource_index];
 
-    if (resource_index > 95)
+    if (resource_index >= VRAM_CACHE_ENTRY_COUNT)
         return -1;
-    if (*entry > 16) {
+    if (entry->size > 16) {
         s32 value;
 
         Resource_ClearSlotReferences(resource_index);
         value = 1;
-        *entry = value;
+        entry->size = value;
     }
     return 0;
 }
@@ -281,7 +270,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
     void *destination;
 
     entry = &gVramBlockCache[slot];
-    if (slot > 95)
+    if (slot >= VRAM_CACHE_ENTRY_COUNT)
         return 0;
     if (size > 0x2000)
         return 0;
@@ -317,10 +306,10 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
 /* resource/initialize.c */
 void Resource_InitializeTable(void)
 {
-    u32 limit = 0x1ff;
+    u32 limit = VRAM_BLOCK_COUNT - 1;
     u8 *occupancy_markers = ResourceBlockOwners;
     u32 count = 0;
-    u32 empty_marker = 0xff;
+    u32 empty_marker = VRAM_BLOCK_OWNER_FREE;
 
     do {
         *occupancy_markers++ = empty_marker;
@@ -328,50 +317,29 @@ void Resource_InitializeTable(void)
     } while (count <= limit);
 
     {
-        struct ResourceTableEntry *resource_entry = ResourceTableEntries;
+        struct VramBlockCacheEntry *resource_entry = gVramBlockCache;
 
         count = 0;
         do {
-            resource_entry->flags |= 0xffff;
-            resource_entry->value = 0;
+            resource_entry->offset |= VRAM_CACHE_OFFSET_FREE;
+            resource_entry->size = 0;
             resource_entry++;
             count++;
-        } while (count <= 95);
+        } while (count < VRAM_CACHE_ENTRY_COUNT);
     }
 }
 
-/* resource/table/Resource_FindFreeEntry.c */
+/* An unused cache entry has no assigned VRAM byte offset. */
 s32 Resource_FindFreeEntry(void)
 {
-  s32 free_slot;
-  s32 slot_index;
-  void *table_base;
-  int first_slot;
-  void *entry_cursor;
-  entry_cursor = (void *)((u32)&ResourceTableEntries);
-  free_slot = 0x60;
-  first_slot = 0;
-  slot_index = first_slot;
-  table_base = (void *)((u32)&ResourceTableEntries);
-  if ((*((u16 *)(((u8 *)table_base) + 2))) == 0xFFFF)
-  {
-    return first_slot;
-  }
-  loop_2:
-  slot_index += 1;
+    struct VramBlockCacheEntry *entry = gVramBlockCache;
+    s32 slot;
 
-  entry_cursor += 4;
-  if (slot_index <= 0x5F)
-  {
-    if ((*((u16 *)(((u8 *)entry_cursor) - -2))) == 0xFFFF)
-    {
-      free_slot = slot_index;
-    } else
-    {
-      goto loop_2;
+    for (slot = 0; slot < VRAM_CACHE_ENTRY_COUNT; slot++, entry++) {
+        if (entry->offset == VRAM_CACHE_OFFSET_FREE)
+            return slot;
     }
-  }
-  return free_slot;
+    return VRAM_CACHE_ENTRY_COUNT;
 }
 
 s32 Resource_LoadIntoFreeSlot(s32 arg0)
@@ -385,7 +353,7 @@ s32 Resource_LoadIntoFreeSlot(s32 arg0)
 
 s32 Resource_GetBuffer(s32 index, s32 value)
 {
-    return VramBlock_LoadCached(index, ResourceTableEntries[index].value, value);
+    return VramBlock_LoadCached(index, gVramBlockCache[index].size, (const void *)value);
 }
 
 /*
@@ -399,7 +367,7 @@ void Scheduler_ResetTaskTable(void)
 
     gSchedulerTaskCount = 0;
     gSchedulerStatus = 0;
-    remaining = 19;
+    remaining = SCHEDULER_TBS_TASK_COUNT - 1;
     do {
         task->callback = 0;
         task->state = 0xffff;
@@ -423,7 +391,7 @@ void Scheduler_SortTasks(void)
     struct SchedulerTask saved;
     struct SchedulerTask *base = gSchedulerTaskTable;
     struct SchedulerTask *task;
-    s32 pass = 19;
+    s32 pass = SCHEDULER_TBS_TASK_COUNT - 1;
     s32 remaining;
     goto sort_pass;
 next_pass:
@@ -469,7 +437,7 @@ s32 Scheduler_FindCallback(u32 callback)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if (task->callback == callback) {
                     result = i;
                     break;
@@ -508,7 +476,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
             find_existing:
                 i++;
                 task++;
-                if (i <= 19) {
+                if (i < SCHEDULER_TBS_TASK_COUNT) {
                     if (task->callback == callback) {
                         task->state = order;
                         index = i;
@@ -529,7 +497,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
                 find_empty:
                     i++;
                     task++;
-                    if (i <= 19) {
+                    if (i < SCHEDULER_TBS_TASK_COUNT) {
                         if (task->callback == 0) {
                             task->callback = callback;
                             task->state = order;
@@ -570,7 +538,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if (task->callback == callback) {
                     task->callback = 0;
                     task->state = 0x7fff;
@@ -602,7 +570,7 @@ s32 Scheduler_EnableCallbacks(u32 callback)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if (callback != 0) {
                     if (task->callback != callback)
                         continue;
@@ -634,7 +602,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
                     TASK_STATE_HIGH(task) |= 1;
                     result = i;
@@ -664,7 +632,7 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if (task->callback == callback) {
                     task->mask = mask;
                     result = i;
@@ -695,7 +663,7 @@ s32 Scheduler_DisableCallbacks(u32 callback)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if (callback == 0 || task->callback == callback) {
                     TASK_STATE_HIGH(task)&= (u8)~1;
                     result = i;
@@ -725,7 +693,7 @@ s32 Scheduler_DisableOverlayCallbacks(void)
             *ime = (u16)(u32)ime;
         }
         do {
-            for (i = 0; i <= 19; i++, task++) {
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
                 if ((task->callback >> 24) == 2) {
                     TASK_STATE_HIGH(task)&= (u8)~1;
                     result = i;
@@ -737,31 +705,32 @@ s32 Scheduler_DisableOverlayCallbacks(void)
     return result;
 }
 
-/* The scheduler's retained globals (defined in the scheduler unit). */
-void Runtime_InvokeCallbacksByKey(s32 arg0)
+/* Run tasks whose high state byte selects this callback key. */
+void Runtime_InvokeCallbacksByKey(s32 key)
 {
-    s32 key = arg0;
-    u8 *p = ((u8 *)gSchedulerTaskTable);
-    s32 i;
-    key = key >> 8;
+    struct SchedulerTask *task = gSchedulerTaskTable;
+    s32 remaining;
+
+    key >>= 8;
     if (gSchedulerTaskCount == 1) {
-        i = 0x15;
-        p -= 8;
-loop:
-        i -= 1;
-        if (i != 0) {
-            p += 8;
-            if (p[5] == key) (*(KeyCallbackFn *)p)();
-            goto loop;
+        remaining = SCHEDULER_TBS_TASK_COUNT + 1;
+        task--;
+next_task:
+        remaining--;
+        if (remaining != 0) {
+            task++;
+            if (TASK_STATE_HIGH(task) == key)
+                ((KeyCallbackFn)task->callback)();
+            goto next_task;
         }
     }
 }
 
 u32 Random16(void)
 {
-    u32 value = *(u32 *)((u32)&Data_03001cb4) * 0x41c64e6d + 0x3039;
+    u32 value = Data_03001cb4 * 0x41c64e6d + 0x3039;
 
-    *(u32 *)((u32)&Data_03001cb4) = value;
+    Data_03001cb4 = value;
     return (value << 8) >> 16;
 }
 

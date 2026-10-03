@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_STATUS_ICON.H"
 #include "SCENE.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
@@ -9,7 +10,6 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_WORK.H"
 #include "MENU_LIST.H"
-s32 BattleUnit_BuildStatusFlags(s32, s32);
 
 void Owner_RecalculateStatsFar(s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32);
@@ -56,7 +56,7 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     state->battle_end_state = 0;
 
     Owner_RecalculateStatsFar(actor);
-    return BattleUnit_BuildStatusFlags(actor, (s32)GetBattleObjectSlot(actor));
+    return BattleUnit_BuildStatusFlags(actor, GetBattleObjectSlot(actor));
 }
 
 /* The arrow sprite queued each frame: the list link, then the three OAM

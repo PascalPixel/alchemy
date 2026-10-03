@@ -1,5 +1,6 @@
 #include "B5_CONTEXT.H"
 #include "TYPES.H"
+#include "ANIMSPR.H"
 
 void *GetMotionRecordFar(void *, s32);
 s32 BattleMotion_GetSlotField14Far(s32);
@@ -13,11 +14,11 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                                s32 state_slot, s32 state_value)
 {
     struct B5Context *set;
-    void *group;
+    struct AnimationObject *group;
     u8 *state;
     s32 group_index;
 
-    set = GetBattleObjectSlotFar(set_id);
+    set = (struct B5Context *)GetBattleObjectSlotFar(set_id);
     state = (u8 *)gBattleFxWork;
     group_index = 0;
 
@@ -32,24 +33,24 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
                 s32 object_index;
 
                 object_index = 0;
-                if (*(u8 *)((u8 *)group + 0x27) != 0) {
-                    void **objects;
+                if (group->count != 0) {
+                    struct AnimationEntry **objects;
 
-                    objects = (void **)((u8 *)group + 0x28);
+                    objects = group->entries;
                     do {
-                        void *object;
+                        struct AnimationEntry *object;
 
                         object = *objects++;
                         if (object != NULL && object != set->excluded_24
                             && object != set->excluded_20) {
                             if (object_value == 0)
-                                *(u8 *)((u8 *)object + 5) = BattleMotion_GetSlotField14Far(set_id);
+                                object->param = BattleMotion_GetSlotField14Far(set_id);
                             else
-                                *(u8 *)((u8 *)object + 5) = object_value;
-                            *(u8 *)((u8 *)object + 0x16) = 0xff;
+                                object->param = object_value;
+                            object->frame = 0xff;
                         }
                         object_index++;
-                    } while (object_index != *(u8 *)((u8 *)group + 0x27));
+                    } while (object_index != group->count);
                 }
             }
             if (group_value != -1)

@@ -2,25 +2,17 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
+#include "INVENTORY_MENU.H"
 
-extern struct FourObjectMotionState *gMenuWork;
 extern s32 FourObjectMotion_ResourceIds[];
 void ResourceObject_ReleaseFar(void *);
 void *ResourceObject_CreateFar(s32);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void FourObjectMotion_UpdateBottomRow(void);
 
-/* The menu's item objects and the number currently in use. */
-struct MenuItemObjects {
-    u8 unknown_000[276];
-    void *items[64];
-    u8 unknown_214[5];
-    u8 count;
-};
-
 void FourObjectMotion_InitializeBottomRow(void)
 {
-    struct FourObjectMotionState *state = gMenuWork;
+    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
     s32 index;
 
     for (index = 0; index < 4; index++) {
@@ -46,7 +38,7 @@ void FourObjectMotion_InitializeBottomRow(void)
 
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
 {
-    struct FourObjectMotionState *state = gMenuWork;
+    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
 
     if (state->objects[index] != NULL) {
         state->positions_x[index] = x;
@@ -58,12 +50,12 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative)
 
 void FourObjectMotion_SetSlotPhase(s32 index, s32 phase)
 {
-    gMenuWork->phases[index] = phase;
+    ((struct FourObjectMotionState *)gMenuWork)->phases[index] = phase;
 }
 
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 {
-    struct FourObjectMotionState *state = gMenuWork;
+    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
 
     if (state->objects[index] != NULL) {
         ResourceObject_ReleaseFar(state->objects[index]);
@@ -81,7 +73,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
 
 void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
 {
-    struct FourObjectMotionState *state = gMenuWork;
+    struct FourObjectMotionState *state = (struct FourObjectMotionState *)gMenuWork;
     s32 index = 0;
 
     do {
@@ -98,10 +90,10 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
 
 void Menu_EnableAllItemObjects(void)
 {
-    struct MenuItemObjects *state = gMenuWork;
+    struct InventoryMenuState *state = gMenuWork;
     s32 index;
 
-    for (index = 0; index < state->count; ++index) {
-        AnimationObjects_SelectAnimationFar(state->items[index], 1);
+    for (index = 0; index < state->party_count; ++index) {
+        AnimationObjects_SelectAnimationFar(state->owner_objects[index], 1);
     }
 }

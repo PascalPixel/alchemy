@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_PRESENTATION.H"
@@ -15,7 +16,7 @@ static __inline__ s32 DivQ16(s32 divisor, s32 value)
 }
 
 extern u8 gCameraWork[];
-extern u8 gProjection[];
+
 void Camera_StoreSceneParameters(s32, u32, s32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
@@ -97,7 +98,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     s32 mode;
     struct BattleCamera *scene = *(struct BattleCamera **)gCameraWork;
     s32 *pos = scene->pos;
-    s32 *hud = (s32 *)gProjection;
+    s32 *hud = (s32 *)&gProjection;
     s32 scale = (mode << 16) / 100;
     s32 render_bounds[3];
     s32 measured_bounds[3];

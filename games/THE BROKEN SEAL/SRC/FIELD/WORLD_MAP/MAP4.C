@@ -1,3 +1,4 @@
+#include "PROJECT.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
 #include "GLOBAL_CELLS.H"
@@ -43,13 +44,8 @@ struct WorldTransfer {
     s32 third;
 };
 
-struct WorldScreen {
-    u8 unk_00[12];
-    s32 center_x;
-    s32 center_y;
-};
 
-extern struct WorldScreen gProjection;
+
 extern u32 Data_03001af4;
 extern u32 Data_03001f60;
 extern u32 Data_03001e40;

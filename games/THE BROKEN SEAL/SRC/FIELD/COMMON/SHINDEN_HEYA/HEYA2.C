@@ -399,36 +399,33 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     struct FieldSprite *spr;
     u8 *buf;
     u32 i;
+    s32 zero;
+    s32 z;
+    u8 *flag;
 
     obj = ((struct FieldActor *(*)())Engine_ObjectCreate)(22);
-    {
-        /* FAKEMATCH: retain the existing halfword aggregate zero across
-           initialization; scalar zero moves the two sprite clears from r5
-           to r3 and changes the following attribute-mask instruction. */
-        struct { u16 value; } zero;
-
-        zero.value = 0;
-
-        if (obj != 0) {
-            ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
-            spr = obj->sprite;
-            spr->flags = zero.value;
-            spr->part_count = zero.value;
-            spr->full_color = 0;
-            spr->palette = 0;
-            obj->velocity_y = 0x20000;
-            ((struct FieldEffect *)obj)->velocity_y = 0x4000;
-            buf = Runtime_AllocateHeapBlock(17, 0x608);
-            Ui_PrepareTransferForItem(item);
-            VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
-            Runtime_ReleaseHeapBlock(17);
-            for (i = 0; i < 60; i++) {
-                if ((u32)(obj->velocity_y + 255) <= 0x1fe)
-                    obj->motion_flags = 0;
-                WaitFrames(1);
-            }
-            ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
+    zero = 0;
+    if (obj != 0) {
+        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
+        spr = obj->sprite;
+        spr->flags = zero;
+        spr->part_count = zero;
+        spr->full_color = 0;
+        spr->palette = 0;
+        obj->velocity_y = 0x20000;
+        ((struct FieldEffect *)obj)->velocity_y = 0x4000;
+        buf = Runtime_AllocateHeapBlock(17, 0x608);
+        Ui_PrepareTransferForItem(item);
+        VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
+        Runtime_ReleaseHeapBlock(17);
+        /* FAKEMATCH: retain the existing flag-address/counter-zero order;
+           the ordinary loop puts the initial sprite zero in r3 instead of r5. */
+        for (i = 0, flag = &obj->motion_flags, z = 0; i < 60; i++) {
+            if ((u32)(obj->velocity_y + 255) <= 0x1fe)
+                *flag = z;
+            WaitFrames(1);
         }
+        ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
     }
 }
 

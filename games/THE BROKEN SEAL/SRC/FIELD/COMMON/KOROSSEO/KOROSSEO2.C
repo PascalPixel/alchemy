@@ -23,19 +23,27 @@ struct CompetitorState {
 
 #define QUEUE_IO_WRITE(address, value, delay) \
     do { \
+        /* FAKEMATCH: retain the measured one-pass pointer/read lifetime; direct IME access loads a separate 520 constant. */ \
+        volatile u16 *ime; \
         struct IoWriteQueue *queue = &gIoWriteQueue; \
-        u32 saved = REG_IME; \
+        u32 saved; \
         s32 count; \
-        REG_IME = (u16)(u32)&REG_IME; \
+        do { \
+            /* FAKEMATCH: retain the existing IME pointer/read initialization boundary. */ \
+            ime = &REG_IME; \
+            saved = *ime; \
+        } while (0); \
+        *ime = (u16)(u32)ime; \
         count = queue->count; \
         if (count < 32) { \
-            u32 *entry = queue->entries[count]; \
+            u32 *entry = (u32 *)((u8 *)queue + count * sizeof(queue->entries[0]) \
+                + (u32)&((struct IoWriteQueue *)0)->entries); \
             queue->count = count + 1; \
             *entry++ = (value); \
             *entry++ = (address); \
             *entry = (delay); \
         } \
-        REG_IME = saved; \
+        *ime = saved; \
     } while (0)
 
 void Engine_ActorSetAnimation();
@@ -67,9 +75,7 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     Engine_ActorSetSpriteFlags(actor, 3);
     Object_SetMode(actor, 0);
     Object_SetMode(actor, 1);
-    z <<= 16;
-    x <<= 16;
-    Engine_ActorSetPosition(id, x, z);
+    Engine_ActorSetPosition(id, x << 16, z << 16);
     Engine_ActorFaceActor(0, 0x4000, 0);
     /* FAKEMATCH: retain the existing queue cursor and IME address-word
        disable/restore; direct indexed writes add 40 bytes and split the pool. */
@@ -103,7 +109,10 @@ void Korosseo_RestoreCompetitor(s32 id)
 {
     struct CompetitorState *state;
     struct FieldActor *actor;
-    u8 *stage;
+    s32 zero;
+    /* FAKEMATCH: retain the existing halfword zero carrier for the layer
+       byte; direct zero changes the earlier stage and later word registers. */
+    struct { u16 value; } layer;
 
     state = *(struct CompetitorState **)gMenuCtrlWork;
     actor = Object_GetById(id);
@@ -115,22 +124,21 @@ void Korosseo_RestoreCompetitor(s32 id)
         Engine_ActorSetAnimation(id, 3);
         Engine_EventWait(30);
     }
-    /* FAKEMATCH: retain the existing ordered stage/mode byte walk;
-       direct field stores move mode before stage at the same 190-byte extent. */
-    stage = &state->stage;
-    *stage = 0;
-    *--stage = 15;
+    zero = 0;
+    state->stage = zero;
+    state->mode = 15;
     actor->x.fixed = Korosseo_CompetitorStartX;
     actor->z.fixed = Korosseo_CompetitorStartZ;
     actor->facing = Korosseo_CompetitorStartAngle;
     actor->target_x = ACTOR_NO_TARGET;
     actor->target_z = ACTOR_NO_TARGET;
-    actor->velocity_x = 0;
-    actor->velocity_z = 0;
+    actor->velocity_x = zero;
+    actor->velocity_z = zero;
+    layer.value = 0;
     actor->motion_flags = 3;
-    actor->unknown_22 = 0;
-    actor->y.fixed = 0;
-    ((struct ObjectRuntime *)actor)->terrain_height = 0;
+    actor->unknown_22 = layer.value;
+    actor->y.fixed = zero;
+    ((struct ObjectRuntime *)actor)->terrain_height = zero;
     Engine_ActorSetSpriteFlags(actor, 1);
     Object_SetMode(actor, 0);
     Object_SetMode(actor, 1);

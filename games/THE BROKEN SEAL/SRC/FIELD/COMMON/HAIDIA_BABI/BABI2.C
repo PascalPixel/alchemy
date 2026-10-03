@@ -215,13 +215,13 @@ void FieldScene_RunPaletteRampSequence(void)
     }
     Engine_AudioPlayCue(202);
     Engine_TaskWait(10);
-    /* FAKEMATCH: retain the existing alpha-port reload before ramp-down;
-       carrying the earlier port value omits its native ldr r5. */
-    alpha_port = &REG_BLDALPHA;
     for (i1 = 0; i1 < 16; i1++) {
         /* FAKEMATCH: retain ramp-down word r3; ordinary C changes its operand registers. */
         register u32 value asm("r3") = 0x100f - i1;
 
+        /* FAKEMATCH: retain the existing port reload after the ramp-base
+           lifetime begins; placing it before the loop swaps the two loads. */
+        alpha_port = &REG_BLDALPHA;
         /* FAKEMATCH: retain word arithmetic; direct halfword folding splits the pool (+16 bytes). */
         __asm__("" : "+r"(value));
         *alpha_port = value;
@@ -610,7 +610,6 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
     struct AnimationObject *part;
     struct FieldSprite *sprite;
     struct PairWork *work = gEffectWork;
-    u8 *motion;
     s32 i;
 
     for (i = 0; i < 2; ++i) {
@@ -621,14 +620,8 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
         if (child != NULL) {
             child->words[5] = parent->words[5];
             part = (struct AnimationObject *)child->object.actor.sprite;
-            /* FAKEMATCH: retain the existing ordered byte/halfword cell
-               transport; separate union member stores add four bytes and
-               move the sprite load. Both cells belong to this effect. */
-            motion = &child->object.effect.motion_flags;
-            *motion = 0;
-            motion += (u32)&((struct FieldEffect *)0)->spin
-                - (u32)&((struct FieldEffect *)0)->motion_flags;
-            *(s16 *)motion = 0;
+            child->object.actor.motion_flags = 0;
+            child->object.effect.spin = 0;
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = (struct FieldSprite *)part;
@@ -636,7 +629,10 @@ void HaidiaBabi_SpawnEffectPair(union FieldObject *object)
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
-                part->display_flags |= 1;
+                /* FAKEMATCH: retain the existing byte view of this lane;
+                   the field store leaves a dead byte zero and moves the
+                   earlier motion/spin zero and address registers. */
+                *(u8 *)&part->display_flags |= 1;
                 sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;

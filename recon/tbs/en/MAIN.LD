@@ -673,6 +673,8 @@
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/APPLY_PAIR_MIDPOINT.o"(.text)
         "*/recon/tbs/raw/080b8416.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/MOTION3.o"(.text)
+        "*/recon/tbs/raw/080b845c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/MOTION3.o"(.text.motion_projection)
         "*/recon/tbs/raw/080b8572.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT16.o"(.text)
         "*/recon/tbs/raw/080b8c1c.o"(.text .rodata .data .padding)

@@ -1,3 +1,7 @@
+/* 2026-10-03: RAM_BUFFER normalization preserves score2055. Four ordinary
+ * rewrite jobs (seed103,32618 candidates) find no improvement. A tagged
+ * cell scheduling barrier instead scores2871/frame32 and is rejected;
+ * retained source is the ordinary helper below, without that barrier. */
 /* 2026-10-02 bounded structural wave: restored the stable score-2055
  * body after three failed trials. Current output is the complete 304-byte
  * extent with a 36-byte frame and its first 84 bytes exact. Width is r11,
@@ -53,6 +57,7 @@
  * Moving the visibility loop into another helper gave 292/84, not retained.
  * Stop this helper axis; inspect loop-invariant decisions before new trials. */
 #include "MAP_SCROLL.H"
+#include "RAM_BUFFER.H"
 struct TilePos { s32 x, y; };
 
 static __inline__ void CopyCell(u32 cell, u32 offset)
@@ -61,11 +66,11 @@ static __inline__ void CopyCell(u32 cell, u32 offset)
     u32 *dest;
     u32 index = cell * 2;
 
-    tiles = (u32 *)0x02020000;
+    tiles = (u32 *)Ram_MapBlocks;
     dest = (u32 *)(0x06002800 + offset);
     tiles += index;
     *dest = *tiles;
-    tiles = (u32 *)0x02020004;
+    tiles = (u32 *)(Ram_MapBlocks + 4);
     tiles += index;
     dest = (u32 *)(0x06002840 + offset);
     *dest = *tiles;
@@ -74,8 +79,8 @@ static __inline__ void CopyCell(u32 cell, u32 offset)
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
     s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
-    u32 *src = (u32 *)0x02010000 + ((u32)src_y * 128 + src_x);
-    u32 *dst = (u32 *)0x02010000 + (dst_y * 128 + dst_x);
+    u32 *src = (u32 *)Ram_MapCellBuffer + ((u32)src_y * 128 + src_x);
+    u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
     struct TilePos tile[3];
     register struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
     struct TilePos *pos = tile;

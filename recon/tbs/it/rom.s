@@ -3313,3 +3313,11 @@ ObjectSystem_UpdateCameraFixed:
 ResourceObject_Create:
 	.incbin "baserom.gba", 0x0000bc70, 0x00000164
 	.size ResourceObject_Create, .-ResourceObject_Create
+	.section .rom.000b8474, "ax"
+	.balign 4
+	.global BattleMotion_ProjectScaledPosition
+	.type BattleMotion_ProjectScaledPosition, %function
+	.thumb_func
+BattleMotion_ProjectScaledPosition:
+	.incbin "baserom.gba", 0x000b8474, 0x00000064
+	.size BattleMotion_ProjectScaledPosition, .-BattleMotion_ProjectScaledPosition

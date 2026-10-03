@@ -600,6 +600,8 @@
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/MOTION.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/APPLY_PAIR_MIDPOINT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/MOTION3.o"(.text)
+    "*/recon/tbs/it/rom.o"(.rom.000b8474)
+    "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/MOTION3.o"(.text.motion_projection)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT16.o"(.text)
     "*/recon/tbs/it/rom.o"(.rom.000b8c34)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PRESENT12.o"(.text)

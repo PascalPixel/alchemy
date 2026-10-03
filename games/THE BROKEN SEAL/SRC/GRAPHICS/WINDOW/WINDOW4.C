@@ -161,10 +161,11 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     s32 cancel = 0;
-    s32 zero = 0;
+    s32 zero;
 
     if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
         cancel = 1;
+    zero = 0;
     if (gKeysHeld & 0x303)
         cancel = 1;
     if (cancel != zero) {
@@ -179,11 +180,12 @@ s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *channel)
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     s32 key;
     s32 cancel = 0;
-    u8 zero = 0;
+    u8 zero;
 
     if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
         cancel = 1;
     key = gKeyState;
+    zero = 0;
     if (work->mode != zero)
         key = gKeysPressedLatch;
     if (key & 0x303)

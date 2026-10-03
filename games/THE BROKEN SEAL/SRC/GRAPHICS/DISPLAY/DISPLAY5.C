@@ -5,6 +5,7 @@
 #include "BATTLE_WORK.H"
 #include "B5_CONTEXT.H"
 #include "IWRAM_CALL.H"
+#include "HEAP_STATE.H"
 
 /* The battle effect work, seen through its shadows of the window, blend and
    BG2 reference registers, which are copied to the hardware once a frame. */
@@ -51,8 +52,12 @@ void Display_ApplyBg2Reference(void)
 
 void Palette_StepFadeTransfer(void)
 {
-    struct BattleEffectWork *work = gBattleFxWork;
-    struct BattleSession *battle = gBattleWork;
+    /* FAKEMATCH: keep the existing relative pointer-cell bank transport.
+       Named globals in f4f9d28 and subsequent full HeapState indexing add
+       address instructions. These are slots 9 and 39 of the real heap owner. */
+    void **slots = (void **)(gWorkSlot + 9 * sizeof(void *));
+    struct BattleEffectWork *work = slots[39 - 9];
+    struct BattleSession *battle = slots[0];
 
     if (work->fade_frames > 0) {
         s32 step = ++work->fade_step;
@@ -65,6 +70,7 @@ void Palette_StepFadeTransfer(void)
 
 void Runtime_ApplyValueToWork7818(void)
 {
+    /* IWRAM_CALL.H owns the actual two-argument resident entry. */
     Iwram_ClearWords(gBattleFxWork->actor_timers, sizeof(gBattleFxWork->actor_timers));
 }
 

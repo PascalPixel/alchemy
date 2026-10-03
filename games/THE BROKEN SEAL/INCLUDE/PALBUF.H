@@ -27,7 +27,6 @@ LAYOUT_OFFSET_GUARD(TitlePaletteWork_Page, struct TitlePaletteWork, page, 0x3000
 void TitlePalette_InitializeBuffers(void);
 void TitlePalette_UpdateFade(void);
 void Graphics_TransformLargePalette(s32 index, s32 transform);
-void Graphics_TransformSmallPalette(s32 index, s32 transform);
 void Graphics_SetPaletteTransformValue(s32 value);
 void Graphics_UpdatePaletteInterpolation(s32 frames);
 void Graphics_InterpolatePaletteBuffers(

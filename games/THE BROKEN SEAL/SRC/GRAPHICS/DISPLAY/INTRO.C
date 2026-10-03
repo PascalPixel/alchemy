@@ -198,6 +198,7 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Bg0_ClearTilemap(void);
 void Resource_InitializeTable(void);
 void Func_080f2028(void);
+s32 Graphics_TransformSmallPalette(s32 index, s32 transform);
 void Blend_SetBrightenTarget16(s32 frames);
 void Blend_SetBrightenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
@@ -237,6 +238,10 @@ s32 Title_ShowIntro(s32 prompt)
     Data_03001f58 = result;
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
+    /* FAKEMATCH: retain the pre-existing ignored scalar-return call boundary.
+       The actual callee is void; its corrected declaration in f4f9d28 swaps
+       the two argument moves in five editions. Used-zero and block forms
+       still swap them, with no extent difference. */
     Graphics_TransformSmallPalette(2, 0);
     {
         volatile u16 *ime;

@@ -269,7 +269,9 @@ void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
             later_index = slot_index + 1;
             later_slot_count = 0;
             if (later_index <= 3U) {
-                remaining_slot = &state->entries[later_index];
+                /* FAKEMATCH: typed indexing reverses the native ADD operands;
+                   retain the existing index-first address-word calculation. */
+                remaining_slot = (struct AnimationEntry **)(later_index * sizeof *remaining_slot + (u32)state + (u32)&((struct AnimationObject *)0)->entries);
                 do {
                     slot_value = (s32)*remaining_slot++;
                     if (slot_value != 0)
@@ -299,7 +301,9 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
             i = no + 1;
             cnt = 0;
             if (i <= 3) {
-                p = &group->entries[i];
+                /* FAKEMATCH: typed indexing reverses the native ADD operands;
+                   retain the existing index-first address-word calculation. */
+                p = (struct AnimationEntry **)(i * sizeof *p + (u32)group + (u32)&((struct AnimationObject *)0)->entries);
                 do {
                     t = *p++;
                     if (t != NULL)

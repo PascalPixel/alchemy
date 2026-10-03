@@ -3,8 +3,6 @@
 
 #include "RENDER_INPUT.H"
 
-struct UiWindow;
-
 void UiText_DrawCharacterAtOffset(
     s32 character,
     struct RenderInput *work,

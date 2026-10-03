@@ -24,7 +24,7 @@ struct RenderState {
 };
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *sprite, s16 mode);
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *sprite, u16 mode);
 s32 AffineMatrix_BuildForEffect(struct ProjectedEffect *source);
 void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 Resource_ActivateEntry(u32 resource_index);

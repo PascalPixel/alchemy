@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
+#include "HEAP_STATE.H"
 
 void UiWindow_SetPaletteBitRectFar(s32, s32, s32, s32, s32);
 
@@ -96,6 +97,7 @@ s32 DjinnMenu_ShowHelp(void)
     s32 win_b;
     s32 win_a;
     struct DjinnMenuWork *menu;
+    void **slot_cells;
     struct UiRenderWork *work;
     s32 result;
     s32 previous;
@@ -106,8 +108,11 @@ s32 DjinnMenu_ShowHelp(void)
     s32 cnt;
     s32 list_message;
 
-    menu = gMenuWork;
-    work = (struct UiRenderWork *)gWindowWork[0];
+    /* FAKEMATCH: retain the existing menu/render heap-cell slice. Separate
+       named-cell loads add 4 bytes and change the native pool order. */
+    slot_cells = (void **)&gMenuWork;
+    menu = slot_cells[0];
+    work = slot_cells[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU];
     result = 0;
     previous = 0;
     selection = 0;

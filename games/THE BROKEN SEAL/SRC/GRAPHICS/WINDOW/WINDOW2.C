@@ -4,9 +4,14 @@
 #include "DMA.H"
 #include "WINDOW.H"
 
-void UiWindow_UpdateInterpolatedGeometry(struct UiWindow * window, s32 save_position);
+void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWork_DrawByAttributes(struct UiWindow * window);
+void UiWork_DrawByAttributes(struct UiWindow *window);
+
+/* The opaque interpolation boundary reads the window as scalar halfwords. */
+#define WINDOW_HALF(window, type, field) \
+    (*(type *)((u8 *)(window) + (u32)&(((struct UiWindow *)0)->field)))
+
 struct UiWindowInterpolationScratch {
     s32 scaled_part;
     s32 scaled_duration;
@@ -71,8 +76,11 @@ loop:
         goto loop;
 }
 
-void UiWindow_UpdateInterpolatedGeometry(struct UiWindow * window, s32 save_position)
+void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
 {
+    /* FAKEMATCH: the existing opaque halfword window view keeps geometry
+       reads ahead of scratch stores; direct typed fields change their
+       measured native scheduling at the same 192-byte extent. */
     struct UiWindowInterpolationScratch scratch;
     s32 frame;
     s32 duration;
@@ -82,34 +90,34 @@ void UiWindow_UpdateInterpolatedGeometry(struct UiWindow * window, s32 save_posi
     s32 width;
     s32 height;
 
-    frame = (s16)window->frame;
-    duration = window->duration;
+    frame = WINDOW_HALF(window, s16, frame);
+    duration = WINDOW_HALF(window, s16, duration);
     remaining = duration - frame;
     scratch.scaled_part =
-        (s32)((u32)(frame * window->width) << 16);
+        (s32)((u32)(frame *WINDOW_HALF(window, u16, width)) << 16);
     scratch.scaled_duration = (s32)((u32)duration << 17);
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
-    x = (scratch.result >> 16) + window->x;
+    x = (scratch.result >> 16) + WINDOW_HALF(window, u16, x);
 
     scratch.scaled_part =
-        (s32)(((u32)remaining * window->width) << 16);
+        (s32)(((u32)remaining *WINDOW_HALF(window, u16, width)) << 16);
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     width = scratch.result >> 15;
 
     scratch.scaled_part =
-        (s32)((u32)(frame * window->height) << 16);
-    scratch.scaled_duration = (s32)((u32)window->duration << 17);
+        (s32)((u32)(frame *WINDOW_HALF(window, u16, height)) << 16);
+    scratch.scaled_duration = (s32)((u32)WINDOW_HALF(window, s16, duration) << 17);
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
-    y = (scratch.result >> 16) + window->y;
+    y = (scratch.result >> 16) + WINDOW_HALF(window, u16, y);
 
     scratch.scaled_part =
-        (s32)(((u32)remaining * window->height) << 16);
+        (s32)(((u32)remaining *WINDOW_HALF(window, u16, height)) << 16);
     scratch.result =
         Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
@@ -117,10 +125,10 @@ void UiWindow_UpdateInterpolatedGeometry(struct UiWindow * window, s32 save_posi
 
     UiWindow_DrawFrame(x, y, width, height);
     if (save_position != 0) {
-        window->previous_x = x;
-        window->previous_y = y;
-        window->previous_width = width;
-        window->previous_height = height;
+        WINDOW_HALF(window, u16, previous_x) = x;
+        WINDOW_HALF(window, u16, previous_y) = y;
+        WINDOW_HALF(window, u16, previous_width) = width;
+        WINDOW_HALF(window, u16, previous_height) = height;
     }
 }
 

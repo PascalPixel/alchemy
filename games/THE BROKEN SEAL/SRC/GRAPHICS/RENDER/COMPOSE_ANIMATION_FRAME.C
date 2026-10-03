@@ -45,7 +45,7 @@ u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Animation_SetWorkEntry(void *work, s32 no);
 
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, s16 dir)
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)
 {
     s32 changed;
     u32 size;

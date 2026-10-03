@@ -174,7 +174,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
-            menu->pane_icons[0]->state = ITEM_STEP_ITEM;
+            menu->pane_icons[0]->state = 1;
             ItemMenu_DrawMsg(0, (s32)&MsgWhichItem);
             sel = ItemMenu_RunList(0);
             state = ITEM_STEP_OWNER;
@@ -680,7 +680,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             RenderOutput_RedrawSavedRectFar((s32)menu->status_window);
             ItemMenu_DrawEquipPreview(
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
-            menu->pane_icons[0]->state = ITEM_STEP_ITEM;
+            menu->pane_icons[0]->state = 1;
             state = ITEM_STEP_COMMAND;
             break;
 

@@ -15,12 +15,10 @@ void Event_SetValue1d8(s16 value)
 s32 ObjectTable_ReadActiveValue(s32 key)
 {
     s32 result = -1;
-    void *state = gEventWork;
-    /* FAKEMATCH: byte and unsized pointer-cell forms keep 56 bytes but fold
-       the prefix into the load; retain the index-first address-word transport. */
-    struct ObjectRuntime *entry = *(struct ObjectRuntime **)
-        (((u32)key & 0x0fff) * sizeof(void *) + (u32)state
-            + (u32)&((struct FieldStepWork *)0)->actors);
+    struct ObjectSlotTable *state = (struct ObjectSlotTable *)gEventWork;
+    /* FAKEMATCH: byte/scalar cells keep 56 bytes but fold the prefix into
+       the load; retain the existing record-array access without a capacity. */
+    struct ObjectRuntime *entry = state->slots[(u32)key & 0x0fff];
 
     if (entry != 0 && entry->animation_kind == 1)
         result = ((struct AnimationObject *)entry->animation)->entries[0]->anim_id;

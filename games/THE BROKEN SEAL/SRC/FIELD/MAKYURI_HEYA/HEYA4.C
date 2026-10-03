@@ -1089,7 +1089,7 @@ void MakyuriHeya_OpenThreeStepStair(void)
 void SceneEffect_SpawnParticleEveryFourthFrame(void)
 {
     s32 buf[10];
-    s32 *p = Actor_Get(0);
+    s32 *p = Object_GetById(0);
     s32 m = gFrameCount & 3;
 
     if (m == 0) {

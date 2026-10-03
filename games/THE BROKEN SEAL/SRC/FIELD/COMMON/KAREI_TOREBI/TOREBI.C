@@ -492,7 +492,7 @@ s32 Scene_Initialize(void)
     s32 record;
 
     if (gGameState.entrance == 90) {
-        GameFlag_Set(0x950);
+        Engine_GameFlagSet(0x950);
     }
     if (gGameState.scene == (s32)&SceneId_KareiTorebi1) {
         FieldScene_RunScene3ae_020008cc();

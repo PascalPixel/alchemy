@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SCENE.H"
 
 extern u8 *gEventWork;
 
@@ -101,45 +102,44 @@ void Scene_ResolveInteractionResult(void)
     gGameState[248] = result;
 }
 
-struct BattleResourceCondition {
+struct SceneAreaNameRule {
     s16 id;
-    s16 condition : 15;
-    u16 use_effect_id : 1;
-    void *resource;
+    s16 entrance : 15;
+    u16 use_scene_id : 1;
+    s32 area_name_index;
 };
 
-extern const struct BattleResourceCondition BattleFx_ConditionResources[];
+extern const struct SceneAreaNameRule Scene_AreaNameRules[];
 
 s32 BattleFx_GetResourceGroup(s32 effect_id);
 
-/* Finds the resource for an effect and condition in the rule list: a rule
-   matches the effect id itself when its flag bit is set, otherwise the
-   effect's resource group, and its condition must be -1 or equal. The
-   group routine returns s8 in its own file, but this caller takes the
-   result unextended, as from an s32 prototype. */
-void *BattleFx_FindConditionResource(s32 effect_id, s32 condition)
+/* Selects an area-name index by scene or scene group and entrance. A rule
+   with entrance -1 matches every entrance. The group routine returns s8 in
+   its own file, but this caller takes the result unextended, as from an
+   s32 prototype. */
+s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance)
 {
-    const struct BattleResourceCondition *entry = BattleFx_ConditionResources;
-    void *resource = 0;
-    s32 group = BattleFx_GetResourceGroup(effect_id);
+    const struct SceneAreaNameRule *entry = Scene_AreaNameRules;
+    s32 area_name_index = 0;
+    s32 group = BattleFx_GetResourceGroup(scene);
 
     while (entry->id != -1) {
-        if (entry->use_effect_id) {
-            if (entry->id == effect_id) {
-                if (entry->condition == -1 || entry->condition == condition) {
-                    resource = entry->resource;
+        if (entry->use_scene_id) {
+            if (entry->id == scene) {
+                if (entry->entrance == -1 || entry->entrance == entrance) {
+                    area_name_index = entry->area_name_index;
                     break;
                 }
             }
         } else {
             if (entry->id == group) {
-                if (entry->condition == -1 || entry->condition == condition) {
-                    resource = entry->resource;
+                if (entry->entrance == -1 || entry->entrance == entrance) {
+                    area_name_index = entry->area_name_index;
                     break;
                 }
             }
         }
         entry++;
     }
-    return resource;
+    return area_name_index;
 }

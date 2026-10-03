@@ -1,147 +1,126 @@
-/* Not exact: 1595 on the permuter scorer (was 2590), written the way the
-   exact fallback transition in FALLBACK.C is: step counts declared in the
-   loop bodies, the scale through a helper, the two waits counting up for
-   the loop pass to reverse, and the mode cleared through a byte local,
-   which pools its zero as the reference does. Remaining: every reload here
-   takes r2 or r3 where the reference cycles r1, r2 and r0, so the origin
-   and target pointers are copied from fp and r9 at each store instead of
-   staying in the low register that built them. The reference's spill
-   registers are r1 and r2 only, and it forms each address after the first
-   load; a source whose busiest reload leaves r3 free should fix the rest. */
+/*
+ * RunBattleEffect13 — unmatched draft; complete native extent is 588 bytes.
+ * The earlier scorer improved 2590 to 1595 using loop-local step limits,
+ * an inline scale helper, upward wait counters and a byte-zero temporary.
+ * Its remaining differences were reload registers and origin/target pointer
+ * copies. That scheduling search is closed. This ordinary owner/contract
+ * baseline removes the helper, loop-local limits and zero temporary; the
+ * upward wait loops remain ordinary bounded loops. No device is retained.
+ * The native reset call supplies both X and Z as -0x90000, with the child's
+ * current Y between them; the earlier three-argument declaration missed Z.
+ * T0: one natural typed compile emitted 608 against native 588 bytes,
+ * including six identical resolved pool words in the same order. Native
+ * normalization reproduces all 588 own-ROM bytes. The candidate differs at
+ * 553 positions in that span, first +0x0e, and has 20 extra bytes; this is
+ * a positional comparison, not an aligned score. All 30 relocations resolve
+ * (29 calls, one scene pointer); physical call targets and order agree.
+ * Local frame 44 versus 40, saved area 32 both, total stack 76 versus 72;
+ * origin/target/spawn move to sp+20/+8/+32 from native +16/+4/+28.
+ * A used origin-pointer spill and scale accumulators replace native pointer
+ * lifetimes and per-step constant multiplication. Instructions 261/253,
+ * loads 43/41, stores 29/28, branches 10 both; natural padding 4/0 bytes.
+ * No follow-up form, new device or adoption; reload/scheduling search stays
+ * closed and the draft remains uncredited.
+ */
 #include "TYPES.H"
+#include "FX_SCENE.H"
+#include "MOTION_OBJECT.H"
+#include "FIXED_POINT_POSITION.H"
+#include "OBJECT_RUNTIME.H"
+#include "OBJDISP.H"
+#include "SYSTEM.H"
 
-struct EffectVector { s32 x, y, z; };
+extern struct BattleFxScene *gEffectWork;
 
-struct MotionObject {
-    u8 unknown_00[6];
-    u16 angle;
-    struct EffectVector pos;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[16];
-    s32 speed;
-    u8 unknown_34[0x21];
-    u8 mode;
-};
-
-struct MotionScene {
-    s32 angle;
-    struct EffectVector pos;
-    struct MotionObject *main_object;
-    struct MotionObject *secondary_object;
-    u8 unknown_18[8];
-    s8 offset_target;
-};
-
-extern struct MotionScene *gEffectWork;
-
-void WaitFrames(s32);
-void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
-void Object_SetMode(void *, s32);
-void Object_Destroy(void *);
-void Object_SetPositionAndResetMotionFar(void *, s32, s32);
-void Animation_ApplyChildValuesFar(void *, s32);
-void *Object_Spawn(s32, s32, s32, s32);
+void Vector_AddPolarOffset(s32, s32, s32 *);
+void Object_SetMode(struct ObjectRuntime *, s32);
+void ObjectDispatch_ReleaseFar(struct DispatchObject *);
+void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *, s32, s32, s32);
+void Animation_ApplyChildValuesFar(struct DispatchObject *, u32);
+struct ObjectRuntime *Object_Spawn(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
-void Audio_PlayCue(s32);
-
-static __inline__ s32 Interpolate(s32 to, s32 from, s32 step)
-{
-    return from + (to - from) * step / 10;
-}
+void AudioCommand_PlayFar(s32);
 
 void RunBattleEffect13(void)
 {
-    struct MotionScene *scene = gEffectWork;
-    struct MotionObject *secondary = scene->secondary_object;
+    struct BattleFxScene *scene = gEffectWork;
+    struct ObjectRuntime *secondary = scene->child;
     struct MotionObject *main_object = scene->main_object;
     struct MotionObject *object;
-    struct EffectVector spawn;
-    struct EffectVector origin;
-    struct EffectVector target;
+    struct FixedPointPosition spawn;
+    struct FixedPointPosition origin;
+    struct FixedPointPosition target;
     s32 step;
     s32 index;
-    u8 zero;
 
-    origin.x = main_object->pos.x;
-    origin.y = main_object->pos.y + 0x100000;
-    origin.z = main_object->pos.z;
-    if (scene->offset_target) {
-        target.x = main_object->pos.x;
-        target.y = main_object->pos.y + 0x200000;
-        target.z = main_object->pos.z;
-        Vector_AddPolarOffset(0x200000, scene->angle, &target);
+    origin.x = main_object->x;
+    origin.y = main_object->y + 0x100000;
+    origin.z = main_object->z;
+    if (scene->enabled) {
+        target.x = main_object->x;
+        target.y = main_object->y + 0x200000;
+        target.z = main_object->z;
+        Vector_AddPolarOffset(0x200000, scene->angle, &target.x);
     } else {
-        target.x = scene->pos.x;
-        target.y = scene->pos.y + 0x200000;
-        target.z = scene->pos.z;
+        target.x = scene->x;
+        target.y = scene->y + 0x200000;
+        target.z = scene->z;
     }
-    spawn.x = scene->pos.x;
-    spawn.y = scene->pos.y + 0x200000;
-    spawn.z = scene->pos.z;
-    object = Object_Spawn(0xd7, spawn.x, spawn.y, spawn.z);
+    spawn.x = scene->x;
+    spawn.y = scene->y + 0x200000;
+    spawn.z = scene->z;
+    object = (struct MotionObject *)Object_Spawn(0xd7, spawn.x, spawn.y, spawn.z);
     if (object == 0)
         return;
     BattleEffect_InitializeSharedScene();
-    Audio_PlayCue(0x8a);
+    AudioCommand_PlayFar(0x8a);
     object->angle = main_object->angle;
-    object->speed = 0x14ccc;
-    zero = 0;
-    object->mode = zero;
-    Object_SetMode(object, 5);
-    Animation_ApplyChildValuesFar(object, 1);
-    step = 0;
-    for (;;) {
-        s32 steps = 11;
+    object->speed_limit = 0x14ccc;
+    object->motion_flags = 0;
+    Object_SetMode((struct ObjectRuntime *)object, 5);
+    Animation_ApplyChildValuesFar((struct DispatchObject *)object, 1);
+    for (step = 0; step < 11; step++) {
         s32 scale;
 
-        object->pos.x = origin.x + (target.x - origin.x) * step / 10;
-        object->pos.y = origin.y + (target.y - origin.y) * step / 10;
-        object->pos.z = origin.z + (target.z - origin.z) * step / 10;
-        scale = Interpolate(0x10000, 0x4000, step);
+        object->x = origin.x + (target.x - origin.x) * step / 10;
+        object->y = origin.y + (target.y - origin.y) * step / 10;
+        object->z = origin.z + (target.z - origin.z) * step / 10;
+        scale = 0x4000 + (0x10000 - 0x4000) * step / 10;
         object->scale_x = scale;
         object->scale_y = scale;
         WaitFrames(1);
-        step++;
-        if (step >= steps)
-            break;
     }
     WaitFrames(10);
-    Object_SetMode(object, 6);
+    Object_SetMode((struct ObjectRuntime *)object, 6);
     WaitFrames(15);
     for (index = 0; index < 10; index++) {
-        object->pos.y -= 0x20000;
+        object->y -= 0x20000;
         WaitFrames(1);
     }
-    Object_SetMode(object, 5);
-    Audio_PlayCue(0x84);
+    Object_SetMode((struct ObjectRuntime *)object, 5);
+    AudioCommand_PlayFar(0x84);
     if (secondary != 0)
-        Object_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->pos.y);
+        Object_SetPositionAndResetMotionFar(secondary, -0x90000, secondary->y,
+            -0x90000);
     WaitFrames(20);
     for (index = 0; index < 13; index++) {
-        object->pos.y += 0x18000;
+        object->y += 0x18000;
         WaitFrames(1);
     }
     WaitFrames(10);
-    Audio_PlayCue(0x72);
-    step = 0;
-    for (;;) {
-        s32 steps = 11;
+    AudioCommand_PlayFar(0x72);
+    for (step = 0; step < 11; step++) {
         s32 scale;
 
-        object->pos.x = target.x + (origin.x - target.x) * step / 10;
-        object->pos.y = target.y + (origin.y - target.y) * step / 10;
-        object->pos.z = target.z + (origin.z - target.z) * step / 10;
-        scale = Interpolate(0x4000, 0x10000, step);
+        object->x = target.x + (origin.x - target.x) * step / 10;
+        object->y = target.y + (origin.y - target.y) * step / 10;
+        object->z = target.z + (origin.z - target.z) * step / 10;
+        scale = 0x10000 + (0x4000 - 0x10000) * step / 10;
         object->scale_x = scale;
         object->scale_y = scale;
         WaitFrames(1);
-        step++;
-        if (step >= steps)
-            break;
     }
-    Object_Destroy(object);
+    ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
     BattleFx_PrepareBufferInterpolation();
 }

@@ -3,6 +3,9 @@
 
 #include "TYPES.H"
 
+s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
+s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 struct Ent {

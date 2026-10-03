@@ -34,7 +34,7 @@ struct PacketHalf {
 
 extern u8 MsgLobbyOpponentArrived[];
 extern u8 MsgLobbyPleaseSpeakWhen[];
-void LinkLobby_InitializeSerial(void);
+s32 LinkLobby_InitializeSerial(void);
 
 s32 LinkLobby_ExchangePartyRecords(void)
 {

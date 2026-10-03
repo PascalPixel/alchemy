@@ -12,88 +12,8 @@
 #include "CHARACTER.H"
 #include "ANIMSPR.H"
 
-s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
-void Map_RenderAllAnimatedTileFramesFar(void **, s32);
-
 /* The native scan reads the session through its original halfword view. */
 struct SlotArray { s16 items[64]; };
-
-/* Takes a defeated unit out of the party or enemy list, leaving the removed
- * mark in its place, and cancels the actions queued for it. */
-void BattleActor_RemoveFromLists(s32 actor)
-{
-    struct BattleSession *work;
-    s32 i;
-    u32 j;
-    s32 unit;
-
-    work = gBattleWork;
-    Owner_GetStateFar(actor)->status_12a = BATTLE_UNIT_ABSENT;
-    for (i = 0; ; i++) {
-        if (work->party_units[i] == actor) {
-            work->party_units[i] = BATTLE_UNIT_REMOVED;
-            goto removed;
-        }
-        if (work->party_units[i] == BATTLE_UNIT_LIST_END)
-            break;
-    }
-    /* FAKEMATCH: the enemy scan is a goto loop inside a block that runs once,
-     * which keeps the loop pass off it. Written as a for like the party scan
-     * it compiles to a pointer walk with the 0xfe held in a register. */
-    do {
-        j = 0;
-again:
-        unit = work->enemy_units[j];
-        if (unit == actor) {
-            work->enemy_units[j] = BATTLE_UNIT_REMOVED;
-            goto removed;
-        }
-        j++;
-        if (unit == BATTLE_UNIT_LIST_END)
-            return;
-        goto again;
-    } while (0);
-removed:
-    Summon_ReleaseCharge(actor);
-    for (j = 0; j < 20; j++) {
-        if (work->actions[j].unit_id == actor)
-            work->actions[j].unit_id = BATTLE_UNIT_LIST_END;
-    }
-}
-
-void BattleMotion_InitializeActorRecords(s32 id)
-{
-    void *items[4];
-    struct BattleUnit *state;
-    struct AnimationObject *item;
-    struct AnimationEntry *child;
-    s32 index;
-
-    state = Owner_GetStateFar(id);
-    index = 0;
-    while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
-        if (state->status_12a != BATTLE_UNIT_ENEMY)
-            AnimationObjects_SelectAnimationFar(item, 4);
-        else
-            AnimationObjects_SelectAnimationFar(item, 5);
-        index++;
-    }
-
-    if (state->status_12a == BATTLE_UNIT_ENEMY) {
-        index = 0;
-        while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
-            child = item->entries[0];
-            items[index] = item;
-            child->param = 6;
-            child->frame = 0xff;
-            index++;
-        }
-        WaitFrames(4);
-        BattleActor_RemoveFromLists(id);
-        Map_RenderAllAnimatedTileFramesFar(items, index);
-        ActivateBattleObjectSlot(id);
-    }
-}
 
 s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 {

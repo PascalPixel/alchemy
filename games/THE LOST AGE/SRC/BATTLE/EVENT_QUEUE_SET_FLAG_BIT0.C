@@ -7,7 +7,7 @@ s32 Object_Destroy(s32);
 void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-void BattleActor_RemoveFromLists(s32);
+s32 BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {

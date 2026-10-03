@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811bddc
+	.global Camera_InitDefaultTransform
 	.thumb_func
-Func_0811bddc:
+Camera_InitDefaultTransform:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18

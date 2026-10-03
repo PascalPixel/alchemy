@@ -6,9 +6,9 @@
    placement entries whose timers expire into Djinn activation. */
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 owner);
-void Owner_RecalculateStatsFar(u8 id);
-void Djinn_ActivateFar(u8 id, u8 x, u8 y);
-void Trade_RemoveOfferFar(u8 id, u8 x, u8 y);
+void Owner_RecalculateStatsFar(s32 unit_id);
+s32 Djinn_ActivateFar(s32 unit_id, s32 element, s32 index);
+s32 Trade_RemoveOfferFar(s32 unit_id, s32 element, s32 index);
 
 s32 BattleUnit_TickCounter13f(s32 id)
 {
@@ -82,12 +82,12 @@ s32 BattlePlacement_UpdateTimedEntries(void)
 
 s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void)
 {
-    s32 cnt;
+    s32 turns;
 
-    cnt = 0x13;
+    turns = 19;
     do {
-        cnt -= 1;
+        turns--;
         BattlePlacement_UpdateTimedEntries();
-    } while (cnt >= 0);
+    } while (turns >= 0);
     return 0;
 }

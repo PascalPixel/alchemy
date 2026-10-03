@@ -2,6 +2,7 @@
 #include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "LAYOUT_GUARD.H"
 #include "GLOBAL_CELLS.H"
@@ -43,11 +44,6 @@ void UiIcon_PrepareObject(struct RenderOutput *icon);
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-#define KEY_A 1
-#define KEY_B 2
-#define KEY_SELECT 4
-#define KEY_R 0x100
-#define KEY_L 0x200
 extern u32 gFrameCount;
 extern u8 MsgChangeCharacterHelp;
 

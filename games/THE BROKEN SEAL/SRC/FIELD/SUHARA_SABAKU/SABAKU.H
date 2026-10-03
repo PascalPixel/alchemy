@@ -43,19 +43,7 @@ void BattleFx_EmitRandomParticle();
 
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
-void SetEffectRecordMode(struct EffectWork *work, s32 mode);
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
 
 void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 

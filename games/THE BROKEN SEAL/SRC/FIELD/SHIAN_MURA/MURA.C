@@ -1,25 +1,21 @@
+#include "FIELDOBJ.H"
 #include "SHIAN.H"
 
-void SetEffectRecordMode(struct EffectWork *work, s32 mode)
+void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 {
-    work->record->mode = mode;
+    work->sprite->priority = mode;
 }
 
 void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Object_Create(kind, x, y, z);
+    struct FieldActor *effect = Object_Create(kind, x, y, z);
 
     if (effect != NULL) {
-        u8 *sprite = *(u8 **)(effect + 0x50);
-        s32 flags;
-        s32 mask = 13;
+        struct FieldSprite *sprite = effect->sprite;
 
-        flags = sprite[9];
-        mask = -mask;
-        mask &= flags;
-        sprite[9] = mask;
-        effect[0x55] = 0;
-        effect[0x59] = 8;
+        sprite->priority = 0;
+        effect->motion_flags = 0;
+        effect->collision_flags = 8;
         Engine_ActorSetSpriteFlags(effect, 0);
         ObjectGroup_SetChildValue(effect, 14);
         Engine_ObjectSetBlendMode(effect, 1);
@@ -30,23 +26,17 @@ void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 
 void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Object_Create(kind, x, y, z);
+    struct FieldActor *effect = Object_Create(kind, x, y, z);
 
     if (effect != NULL) {
-        u8 *sprite = *(u8 **)(effect + 0x50);
-        s32 flags;
-        s32 mask = 13;
+        struct FieldSprite *sprite = effect->sprite;
 
-        flags = sprite[9];
-        mask = -mask;
-        mask &= flags;
-        mask |= 4;
-        sprite[9] = mask;
-        effect[0x55] = 0;
-        effect[0x59] = 8;
+        sprite->priority = 1;
+        effect->motion_flags = 0;
+        effect->collision_flags = 8;
         Engine_ActorSetSpriteFlags(effect, 0);
         ObjectGroup_SetChildValue(effect, 15);
-        effect[0x23] = (effect[0x23] & 0xfe) | 2;
+        effect->priority_flags = (effect->priority_flags & 0xfe) | 2;
         return effect;
     }
     return NULL;

@@ -4,6 +4,7 @@
    out. SELECT cycles the mixer preset and fades the second player. A clip in
    the mixer restarts the twenty-frame indicator timer. Never returns. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
 #include "AUDIO_ENGINE.H"
@@ -11,21 +12,12 @@
 extern volatile u32 gKeysRepeat;
 extern s32 gSoundClipFlag;
 extern s32 Data_03007804;
-s32 Sound_LoadPresetParameters(s32 preset);
 void AudioCommand_Play(s32 id);
 
 void Audio_Initialize(void);
 extern u8 RomBytes_02003000;
 extern u8 RomBytes_02003004;
-extern u16 gMusicVolume;
-extern u16 gMusicPitchStep;
-extern u16 gMusicVolumeStep;
 extern u8 Data_02003014;
-extern u16 gMusicPitchTarget;
-extern u16 gMusicVolumeTarget;
-extern u16 gMusicPitch;
-extern u8 gAudioSecondaryState;
-extern u8 Audio_CommandMask;
 void Audio_StopAllPlayers(void);
 void Audio_ResumeAllPlayers(void);
 
@@ -55,33 +47,33 @@ void AudioTest_RunParameterController(void)
             timer = 20;
         }
 
-        if (gKeysRepeat & 4) {
+        if (gKeysRepeat & KEY_SELECT) {
             preset = (preset + 1) % 5;
             Sound_LoadPresetParameters(preset);
         }
-        if (gKeysRepeat & 0x100)
+        if (gKeysRepeat & KEY_R)
             cues[row] += 10;
-        if (gKeysRepeat & 0x200)
+        if (gKeysRepeat & KEY_L)
             cues[row] -= 10;
-        if (gKeysRepeat & 0x10)
+        if (gKeysRepeat & KEY_RIGHT)
             cues[row] += 1;
-        if (gKeysRepeat & 0x20)
+        if (gKeysRepeat & KEY_LEFT)
             cues[row] -= 1;
-        if (gKeysRepeat & 0x40) {
+        if (gKeysRepeat & KEY_UP) {
             if (row > 0)
                 row--;
         }
-        if (gKeysRepeat & 0x80) {
+        if (gKeysRepeat & KEY_DOWN) {
             if (row <= 1)
                 row++;
         }
-        if (gKeysRepeat & 1)
+        if (gKeysRepeat & KEY_A)
             AudioCommand_Play(cues[row]);
-        if (gKeysRepeat & 2)
+        if (gKeysRepeat & KEY_B)
             AudioCommand_Play(19);
-        if (gKeysRepeat & 8)
+        if (gKeysRepeat & KEY_START)
             AudioCommand_Play(17);
-        if (gKeysRepeat & 4)
+        if (gKeysRepeat & KEY_SELECT)
             AudioCommand_Play(0x121);
 
         WaitFrames(1);
@@ -170,9 +162,9 @@ void AudioCommand_ResumeAllPlayers(void)
 
 void AudioCommand_UpdateToggleMask(u32 command)
 {
-    u32 toggle = command & 0x80;
+    u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
-    command &= 0x7f;
+    command &= AUDIO_COMMAND_MASK;
     if (toggle != 0)
         Audio_CommandMask ^= command;
     else

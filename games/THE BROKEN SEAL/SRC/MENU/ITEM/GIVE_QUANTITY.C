@@ -3,6 +3,7 @@
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "DMA.H"
 #include "INVENTORY_MENU.H"
 #include "RENDER_INPUT.H"
@@ -97,22 +98,22 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                 if (single == 0)
                     UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[1])->name, window, 80, 16);
             }
-            if (gKeyState & 1) {
+            if (gKeyState & KEY_A) {
                 AudioCommand_PlayFar(112);
                 break;
             }
-            if (gKeyState & 2) {
+            if (gKeyState & KEY_B) {
                 quantity = -1;
                 AudioCommand_PlayFar(113);
                 break;
             }
             UiMenu_PositionCursor(GIVE_CURSOR_X, 40);
-            if (gKeysRepeat & 32) {
+            if (gKeysRepeat & KEY_LEFT) {
                 quantity--;
                 changed = 1;
                 AudioCommand_PlayFar(111);
             }
-            if (gKeysRepeat & 16) {
+            if (gKeysRepeat & KEY_RIGHT) {
                 quantity++;
                 changed = 1;
                 AudioCommand_PlayFar(111);

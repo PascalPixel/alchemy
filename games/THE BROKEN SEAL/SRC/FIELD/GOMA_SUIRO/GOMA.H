@@ -10,18 +10,6 @@
 
 #include "CONFIGURED_EFFECT_SPAWN.H"
 
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
 typedef struct {
     u8 pad_to_angle[30];
     u16 angle;

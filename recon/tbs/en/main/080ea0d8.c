@@ -22,6 +22,7 @@
  * function this size; its rewrites stay out of the draft.
  */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_WORK.H"
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -292,7 +293,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     *(u16 *)0x0400000c = 0x784;
 
     slots = (DrawRectangle *)gWorkSlot;
-    for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & 3)); frame++) {
+    for (frame = 0; frame != 160 && (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B))); frame++) {
         if (frame == 143) {
             ((WordFill)0x03000168)(canvas, 0x4000, 0x2a2a2a2a);
             Audio_PlayCue(145);
@@ -537,7 +538,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             BattleEventRuntime_BeginPhaseFar(145);
         }
 
-        if (gKeysRepeat & 3) {
+        if (gKeysRepeat & (KEY_A | KEY_B)) {
             if (frame >= 5 && frame < 150) {
                 frame = 150;
                 QUEUE_IO_WRITE(0x04000020, 0x80, 0x20000);

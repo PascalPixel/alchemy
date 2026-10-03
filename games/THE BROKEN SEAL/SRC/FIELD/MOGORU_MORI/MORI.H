@@ -20,13 +20,6 @@ enum {
     ITEM_NUT = 181
 };
 
-struct Owner {
-    u8 unk0[9];
-    u8 unk9_0 : 2;
-    u8 mode : 2;
-    u8 unk9_4 : 4;
-};
-
 typedef struct OrbitingSceneObjectSprite {
     u8 padding_00[5];
     u8 flags_05_low : 5;

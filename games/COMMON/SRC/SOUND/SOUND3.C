@@ -1,5 +1,4 @@
 #include "AUDIO_ENGINE.H"
-#include "TYPES.H"
 
 void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player, u16 scale)
 {
@@ -25,9 +24,9 @@ void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume)
     bit = 1;
     while (i > 0) {
         if (mask & bit) {
-            if (track->flags & 0x80) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
                 track->volume_scale = volume >> 2;
-                track->flags |= 3;
+                track->flags |= SOUND_TRACK_UPDATE_VOLUME;
             }
         }
         i--;
@@ -51,10 +50,10 @@ void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch)
     bit = 1;
     while (i > 0) {
         if (mask & bit) {
-            if (track->flags & 0x80) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
                 track->key_offset_b = pitch >> 8;
                 track->fine = pitch;
-                track->flags |= 12;
+                track->flags |= SOUND_TRACK_UPDATE_PITCH;
             }
         }
         i--;
@@ -78,9 +77,9 @@ void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan)
     bit = 1;
     while (i > 0) {
         if (mask & bit) {
-            if (track->flags & 0x80) {
+            if (track->flags & SOUND_TRACK_ACTIVE) {
                 track->pan_offset = pan;
-                track->flags |= 3;
+                track->flags |= SOUND_TRACK_UPDATE_VOLUME;
             }
         }
         i--;
@@ -95,7 +94,7 @@ void MusicTrack_ClearModulation(struct SoundTrack *track)
     track->lfo_phase = 0;
     track->mod_amount = 0;
     if (track->mod_target == 0)
-        track->flags |= 12;
+        track->flags |= SOUND_TRACK_UPDATE_PITCH;
     else
-        track->flags |= 3;
+        track->flags |= SOUND_TRACK_UPDATE_VOLUME;
 }

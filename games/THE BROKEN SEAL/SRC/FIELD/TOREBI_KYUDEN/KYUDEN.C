@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "FIELD_SERVICE.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
@@ -1145,7 +1146,7 @@ void FieldScene_RunBranchingActorSequence(void)
     Actor_FaceDirection(3, 0x2000, 0);
     Actor_FaceDirection(2, 0xe000, 0);
     Event_Wait(30);
-    while ((gKeysHeld & 240) == 0) {
+    while ((gKeysHeld & KEYS_DPAD) == 0) {
         Task_Wait(1);
     }
     Actor_Jump(0, 6, 0);

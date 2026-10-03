@@ -1,5 +1,6 @@
 /* Show the acquired Djinn of each element, then restore the party selector. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "UI.H"
 #include "DJINN_MENU.H"
@@ -68,7 +69,7 @@ s32 DjinnMenu_ShowCurrentList(void)
         if (GameFlag_TestFar(0x150))
             break;
         WaitFrames(1);
-        if (gKeyState & 7)
+        if (gKeyState & (KEY_A | KEY_B | KEY_SELECT))
             break;
     }
     RenderOutput_RedrawSavedRectFar(menu->window);

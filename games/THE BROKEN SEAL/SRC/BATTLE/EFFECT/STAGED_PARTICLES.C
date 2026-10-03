@@ -5,6 +5,7 @@
 #include "PROJECT.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
 #include "BATTLE_EFX.H"
@@ -152,7 +153,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     work->transfer_mode = 2;
     work->transfer_value = 50;
     *(volatile u16 *)0x0400000c = 0x784;
-    for (frame = 0; frame != 220 && !(gKeysRepeat & 3); frame++) {
+    for (frame = 0; frame != 220 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++) {
         if (frame <= 209) {
             if (frame == 0) {
                 path_x = (path[0] << 8) + (u8)path[1];

@@ -1,6 +1,7 @@
 #include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "TBS_EDITION.H"
@@ -148,7 +149,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
         }
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         WaitFrames(1);
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             if (mode == 1 && selection == menu->pane_index[0]) {
                 Audio_PlayCue(114);
                 continue;
@@ -157,17 +158,17 @@ s32 ItemMenu_SelectTarget(s32 mode)
             result = menu->owner_ids[selection];
             break;
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             result = 255;
             break;
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             Audio_PlayCue(111);
             selection--;
             pending = 1;
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             Audio_PlayCue(111);
             pending = 1;
             selection++;

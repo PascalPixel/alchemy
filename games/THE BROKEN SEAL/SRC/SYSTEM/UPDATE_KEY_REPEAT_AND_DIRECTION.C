@@ -1,13 +1,7 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 
-#define KEY_RIGHT 0x10
-#define KEY_LEFT  0x20
-#define KEY_UP    0x40
-#define KEY_DOWN  0x80
-#define KEYS_HORIZONTAL (KEY_RIGHT | KEY_LEFT)
-#define KEYS_VERTICAL   (KEY_UP | KEY_DOWN)
-#define KEYS_DPAD       (KEYS_HORIZONTAL | KEYS_VERTICAL)
 
 #define KEY_REPEAT_FIRST 19
 #define KEY_REPEAT_NEXT  6

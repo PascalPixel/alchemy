@@ -98,7 +98,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
 
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action)
 {
-    s16 living_units[14];
+    u16 living_units[14];
     s32 target_id;
     s32 living_count;
 

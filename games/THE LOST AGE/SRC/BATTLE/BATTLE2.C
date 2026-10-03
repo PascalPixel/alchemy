@@ -1,8 +1,8 @@
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "OWNER_STATE.H"
 
 void Owner_RecalculateStatsFar(u16 id);
-s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 
 struct ActorState_080b90ac {
     u8 padding_000[0x12b];
@@ -15,7 +15,7 @@ void BattleUnit_ClearField12bForGroup(void)
     s32 count;
     s32 index;
 
-    count = BattleParty_ListActorIds(3, ids);
+    count = BattleParty_ListActorIds(3, (u16 *)ids);
     for (index = 0; index < count; index++) {
         struct ActorState_080b90ac *actor;
 

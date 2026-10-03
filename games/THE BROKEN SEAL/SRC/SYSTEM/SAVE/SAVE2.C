@@ -1,5 +1,6 @@
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "SAVE_STATE.H"
@@ -182,7 +183,7 @@ s32 SaveState_ScanRecordFlags(void)
             }
         }
 
-        if ((gKeysHeld & 0x120) != 0x120) {
+        if ((gKeysHeld & (KEY_R | KEY_LEFT)) != (KEY_R | KEY_LEFT)) {
             gTitleSendOptionEnabled = 0;
         }
     }

@@ -1,5 +1,6 @@
 /* Item menu: ask whether to drop the item and return the chosen row (1 when cancelled). */
 #include "TYPES.H"
+#include "IO_REG.H"
 
 extern volatile s32 gKeysRepeat;
 extern volatile s32 gKeyState;
@@ -54,11 +55,11 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
             changed = 0;
             sel = __modsi3(sel + 2, 2);
         }}
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             Audio_PlayCue(112);
             break;
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             sel = 1;
             break;

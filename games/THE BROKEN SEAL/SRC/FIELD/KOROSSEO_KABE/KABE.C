@@ -1,6 +1,7 @@
 #include "RUNTIME_MEM.H"
 #include "TASK.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "CALL.H"
 #include "FIELD_EVENT.H"
@@ -342,10 +343,10 @@ void KorosseoKabe_PushAlignedWall(void)
         return;
     }
     if (x > 51) {
-        if (gKeysHeld & 0x20) {
+        if (gKeysHeld & KEY_LEFT) {
             push = -64;
         }
-    } else if (gKeysHeld & 0x10) {
+    } else if (gKeysHeld & KEY_RIGHT) {
         push = 64;
     }
     if (push != 0) {

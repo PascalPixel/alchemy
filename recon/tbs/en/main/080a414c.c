@@ -6,6 +6,7 @@
  * passes the owner twice.
  */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY_MENU.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -180,7 +181,7 @@ s32 Func_080a414c(void)
         UiMenu_PositionCursor(x, y);
         WaitFrames(1);
 
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             if (command_states[index] == -1) {
                 Audio_PlayCue(114);
             } else {
@@ -208,26 +209,26 @@ s32 Func_080a414c(void)
             }
         }
 
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(113);
             index = -1;
             FIELD(menu, s8 *, 0x25d) = (s8)index;
             break;
         }
 
-        if ((gKeysRepeat & 0x40) != 0) {
+        if ((gKeysRepeat & KEY_UP) != 0) {
             row -= 1;
             need_redraw = 1;
             Audio_PlayCue(111);
-        } else if ((gKeysRepeat & 0x80) != 0) {
+        } else if ((gKeysRepeat & KEY_DOWN) != 0) {
             row += 1;
             need_redraw = 1;
             Audio_PlayCue(111);
-        } else if ((gKeysRepeat & 0x10) != 0) {
+        } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
             col += 1;
             need_redraw = 1;
             Audio_PlayCue(111);
-        } else if ((gKeysRepeat & 0x20) != 0) {
+        } else if ((gKeysRepeat & KEY_LEFT) != 0) {
             col -= 1;
             need_redraw = 1;
             Audio_PlayCue(111);

@@ -1,5 +1,6 @@
 #include "RESOURCE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
@@ -84,7 +85,7 @@ row:
         Blend_SetDarkenTarget0(1);
         Blend_WaitForTransition();
         for (y = 0; y < 120; y++) {
-            if (gKeyState & 9) {
+            if (gKeyState & (KEY_A | KEY_START)) {
                 result = -1;
                 break;
             }
@@ -93,7 +94,7 @@ row:
         return result;
     }
     for (y = 0; y < 60; y++) {
-        if (gKeyState & 9) {
+        if (gKeyState & (KEY_A | KEY_START)) {
             result = -1;
             break;
         }
@@ -106,7 +107,7 @@ row:
     Blend_WaitForTransition();
     if (result == 0) {
         for (y = 0; y < 180; y++) {
-            if (gKeyState & 9) {
+            if (gKeyState & (KEY_A | KEY_START)) {
                 result = -1;
                 break;
             }

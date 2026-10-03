@@ -1,6 +1,7 @@
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RESOURCE.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -162,7 +163,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect, s32 m
     }
 
     for (frame = 0; frame != 208; frame++) {
-        if ((gKeysRepeat & 3) && frame > 48 && frame <= 159) {
+        if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
             if (mode == 0) {
                 Object_InitializeMode(work->objects[0], 8);
                 Object_InitializeMode(work->objects[1], 9);
@@ -475,7 +476,7 @@ void BattleEffect_RunEmberColumns(struct BattleEffectArgument *effect)
         BattleFx_SpawnObjects(12, 380, 2);
 
         for (frame = 0; frame != 124; frame++) {
-            if ((gKeysRepeat & 3) && frame > 32 && frame <= 97)
+            if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 32 && frame <= 97)
                 frame = 98;
             if (frame == 120)
                 BattleEventRuntime_BeginPhaseFar(134);

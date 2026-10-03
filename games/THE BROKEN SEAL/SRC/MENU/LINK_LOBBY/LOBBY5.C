@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "LOBBY.H"
@@ -31,7 +32,7 @@ extern u8 MsgLobbyWonWithoutWell[];
 extern u8 MsgLobbyWonToldCountOn[];
 s32 LinkLobby_PartyContains(s32 actor);
 void SerialRuntime_RemoveIrqHandlers(void);
-void Sound_LoadPresetParameters(s32 preset);
+s32 Sound_LoadPresetParameters(s32 preset);
 s32 Event_SetPairWork1c0(s32 scene, s32 entrance);
 extern u8 MsgLobbyBattleArenaOld[];
 extern u8 MsgLobbyChangeOrderParty[];
@@ -59,7 +60,7 @@ u32 State_RunQueryWithInterruptMasterSaved(void);
 s32 LinkLobby_DrawThreeDigitValue(s32 value);
 s32 LinkLobby_SaveBattleResults(void);
 s32 LinkLobby_SaveMonsterBattleResults(void);
-void Sound_LoadPresetParameters(s32 value);
+s32 Sound_LoadPresetParameters(s32 value);
 void LinkLobby_WriteSlotValue(s32 mode);
 void Map_SetLayerEntryFlag(s32 value);
 s32 LinkLobby_PartyContains(s32 index);
@@ -94,19 +95,19 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
             UiText_DrawNumber(choice, 3, window, 0, 0);
             shown = choice;
         }
-        if (*(volatile u32 *)gKeysRepeat & 32) {
+        if (*(volatile u32 *)gKeysRepeat & KEY_LEFT) {
             choice--;
         }
-        if (*(volatile u32 *)gKeysRepeat & 16) {
+        if (*(volatile u32 *)gKeysRepeat & KEY_RIGHT) {
             choice++;
         }
         if (choice < 0) {
             choice = 0;
         }
-        if (*(volatile u32 *)gKeyState & 1) {
+        if (*(volatile u32 *)gKeyState & KEY_A) {
             break;
         }
-        if (*(volatile u32 *)gKeyState & 2) {
+        if (*(volatile u32 *)gKeyState & KEY_B) {
             choice = -1;
             break;
         }

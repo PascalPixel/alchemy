@@ -58,7 +58,6 @@ void Object_SetMode(void *object, s32 animation);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 flags);
 void Audio_PlayCue(s32 cue);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
-u32 BattleEv_DispatchQueued(void);
 s32 BattleEventRuntime_SchedulePhase(s32 frames);
 u32 BattleEventRuntime_Reset(void);
 s32 BattleEventRuntime_WaitForReady(void);

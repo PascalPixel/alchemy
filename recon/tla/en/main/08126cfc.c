@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 
@@ -6,7 +7,6 @@ void Graphics_AdvancePaletteCycle(void);
 void Scheduler_RemoveCallback(u32);
 void BattlePres_ClearAllActorRecordModes(void);
 void QueueIoWriteDelay2(u32, u32);
-u32 BattleParty_ListActorIds(s32, s16 *);
 void BattlePres_SetActorRecordMode(s32, s32);
 s32 Scheduler_AddOrUpdateCallback(u32, s32);
 
@@ -41,7 +41,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             blend_y[-1] = sixteen;
         } while (0);
 
-        count = BattleParty_ListActorIds(3, active_actors);
+        count = BattleParty_ListActorIds(3, (u16 *)active_actors);
         for (i = 0; i < count; i++)
             BattlePres_SetActorRecordMode(active_actors[i], mode & 1);
 

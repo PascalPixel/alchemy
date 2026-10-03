@@ -65,6 +65,24 @@
 #define DMA_ENABLE32 0x80000000
 
 #define OAM ((void *)0x07000000)
+/* Button bits in KEYINPUT and the held, pressed and repeat-key cells. */
+enum KeyMask {
+    KEY_A = 0x001,
+    KEY_B = 0x002,
+    KEY_SELECT = 0x004,
+    KEY_START = 0x008,
+    KEY_RIGHT = 0x010,
+    KEY_LEFT = 0x020,
+    KEY_UP = 0x040,
+    KEY_DOWN = 0x080,
+    KEY_R = 0x100,
+    KEY_L = 0x200,
+    KEYS_HORIZONTAL = KEY_RIGHT | KEY_LEFT,
+    KEYS_VERTICAL = KEY_UP | KEY_DOWN,
+    KEYS_DPAD = KEYS_HORIZONTAL | KEYS_VERTICAL,
+    KEYS_SHOULDERS = KEY_R | KEY_L
+};
+
 #define KEYS_MASK 0x3ff
 
 #define REG_IE (*(volatile u16 *)0x04000200)

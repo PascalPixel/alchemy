@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "BATTLE_PARTY.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -33,41 +34,32 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id);
 extern u16 RomBytes_080c73f8[];
 s32 GameFlag_GetByteFar(s32 id);
 
-struct OwnerElementStats {
-    s16 power;
-    s16 resist;
+struct BattleBaseStats {
+    s16 base_hp;
+    s16 base_pp;
+    s16 hp_gauge;
+    s16 pp_gauge;
+    u16 base_attack;
+    u16 base_defense;
+    u16 base_agility;
+    u8 base_luck;
+    u8 action_count;
+    u8 hp_regen;
+    u8 pp_regen;
+    u8 unknown_12[2];
+    struct BattleElementStats elements[4];
 };
 
-struct OwnerStats {
-    s16 max_hp;
-    s16 max_pp;
-    s16 hp;
-    s16 pp;
-    u16 attack;
-    u16 defense;
-    u16 agility;
-    u8 luck;
-    u8 unknown_0f[5];
-    struct OwnerElementStats elements[4];
-};
-
-/* Level gains copy the owner's 36-byte base-stat prefix. */
-struct OwnerState {
-    u8 unknown_00[15];
-    u8 level;
-    struct OwnerStats stats;
-};
+/* The copied base-stat range is exactly BattleUnit.base_hp through
+   base_elements. It is a snapshot, not a separate owner allocation. */
+LAYOUT_SIZE_GUARD(BattleBaseStats_Size, struct BattleBaseStats, 36);
+LAYOUT_OFFSET_GUARD(BattleBaseStats_Elements, struct BattleBaseStats, elements, 0x14);
 
 void Owner_RecalculateStatsFar(s32 owner);
 
 void Runtime_RemoveIrqHandlerSlot2(void)
 {
-  int no;
-  unsigned long long handler;
-  handler = 2;
-  no = handler;
-  handler = 0;
-  Runtime_SetIrqHandler(no, 0, (InterruptHandler)handler);
+    Runtime_SetIrqHandler(2, 0, 0);
 }
 
 s32 Party_ComputeEligibleMemberAverage(s32 record_id)
@@ -214,76 +206,72 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
    Declared s32 without a return statement, as the ROM keeps r0 live. */
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
 {
-    /* Direct BattleUnit fields changed the native store order. This
-       existing prefix view keeps the base-stat copy's alias boundary. */
-    struct OwnerStats *base;
-    struct OwnerState *state;
-    struct OwnerStats *stats;
+    struct BattleBaseStats *base;
+    struct BattleUnit *state;
     s32 value;
     s32 floor;
     s32 i;
 
-    base = (struct OwnerStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
-    state = (struct OwnerState *)Owner_GetStateFar(owner);
-    stats = &state->stats;
-    Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
+    base = (struct BattleBaseStats *)Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
+    state = Owner_GetStateFar(owner);
+    Iwram_CopyWords(base, &state->base_hp, sizeof(struct BattleBaseStats));
 
-    value = stats->max_hp;
+    value = state->base_hp;
     value += levels * 97 / 10;
-    floor = base->max_hp * 7 / 10;
+    floor = base->base_hp * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    stats->max_hp = value;
+    state->base_hp = value;
 
-    value = state->stats.max_pp;
+    value = state->base_pp;
     value += levels * 15 / 10;
-    floor = base->max_pp * 7 / 10;
+    floor = base->base_pp * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 9999)
         value = 9999;
-    state->stats.max_pp = value;
+    state->base_pp = value;
 
     floor = levels * 123 / 10;
-    value = state->stats.attack;
+    value = state->base_attack;
     value += floor;
-    floor = base->attack * 7 / 10;
+    floor = base->base_attack * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.attack = value;
+    state->base_attack = value;
 
     floor = levels * 33 / 10;
-    value = state->stats.defense;
+    value = state->base_defense;
     value += floor;
-    floor = base->defense * 7 / 10;
+    floor = base->base_defense * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.defense = value;
+    state->base_defense = value;
 
     floor = levels * 51 / 10;
-    value = state->stats.agility;
+    value = state->base_agility;
     value += floor;
-    floor = base->agility * 7 / 10;
+    floor = base->base_agility * 7 / 10;
     if (value < floor)
         value = floor;
     if (value > 999)
         value = 999;
-    state->stats.agility = value;
+    state->base_agility = value;
 
     for (i = 0; i < 4; i++) {
-        value = state->stats.elements[i].power + levels * 15;
+        value = state->base_elements[i].power + levels * 15;
         floor = base->elements[i].power * 7 / 10;
         if (value < floor)
             value = floor;
         if (value > 200)
             value = 200;
-        state->stats.elements[i].power = value;
+        state->base_elements[i].power = value;
     }
 
     state->level += levels;

@@ -44,9 +44,15 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
     }
 
     if (found < 0) {
+        /* FAKEMATCH: typed indexing advances a running offset and swaps
+           the halfword operands, shortening the existing free-slot loop
+           by four native bytes. Retain its scalar member-address walk. */
         for (index = 0; index <= 30; index++) {
-            if (state->action_slots[index].encoded_action == 0) {
-                state->action_slots[index].encoded_action = key;
+            s32 offset = index * (s32)sizeof(state->action_slots[0]) +
+                (s32)&((struct BattleUnit *)0)->action_slots;
+
+            if (*(u16 *)((u8 *)state + offset) == 0) {
+                *(u16 *)((u8 *)state + offset) = key;
                 found = index;
                 break;
             }

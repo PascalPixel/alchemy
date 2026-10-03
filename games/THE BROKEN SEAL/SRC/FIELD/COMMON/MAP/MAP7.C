@@ -45,9 +45,12 @@ void Map_ShowWorldMap(void)
      * The queued blend restore is QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C)
      * written out inline with its one-pass loop around the IME read and its
      * count stored through an explicit u16 pointer. */
-    struct MapState *map = gMapWork[0];
+    /* FAKEMATCH: retain the existing slot 8/6 word-cell reads. Splitting
+       the map cell onto gMapWork in 1a5404f7 added four bytes and changed
+       the saved layer pointer's spill, while both records stayed typed. */
+    struct MapState *map = *(struct MapState **)(gWorkSlot + 8 * sizeof(void *));
     struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
-    struct ObjectSystemWork *menu = ((union HeapState *)gWorkSlot)->slots[6];
+    struct ObjectSystemWork *menu = *(struct ObjectSystemWork **)(gWorkSlot + 6 * sizeof(void *));
     s32 resource = (s32)&ResourceId_WorldMapPicture;
     struct MapAnimation *layer;
     u8 saved_flags[16];

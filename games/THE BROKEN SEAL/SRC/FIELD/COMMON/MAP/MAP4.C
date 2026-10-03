@@ -94,7 +94,8 @@ s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
     s32 tile_x = x / 16;
     s32 tile_y = y / 16;
-    struct MapCell *cell = (struct MapCell *)gMapCellBuffer + tile_x + tile_y * 128;
+    /* Keep the complete cell index together before advancing the table. */
+    struct MapCell *cell = (struct MapCell *)gMapCellBuffer + (tile_x + tile_y * 128);
 
     return ((u8 *)&cell->metatile_and_flags)[1] >> 6;
 }

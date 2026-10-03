@@ -132,12 +132,16 @@ s32 FieldEffect_UpdateGridPlacement(void)
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (TILE_CELLS[index].collision_code == TILE_CELLS_TARGET[index].collision_code) {
-            struct FieldPosition position;
+            /* FAKEMATCH: retain the existing six-word probe buffer.
+               The real 12-byte position in 1a5404f7 changed only the
+               native SP adjustments from 24 to 12; only x/y/z are read. */
+            s32 vector[6];
+            struct FieldPosition *position = (struct FieldPosition *)vector;
 
-            position.x = object->x;
-            position.y = object->y + (s32)0xfff00000;
-            position.z = object->z;
-            result = CheckMapPositionCellOccupiedFar((const s32 *)&position);
+            position->x = object->x;
+            position->y = object->y + (s32)0xfff00000;
+            position->z = object->z;
+            result = CheckMapPositionCellOccupiedFar((const s32 *)position);
             if (result != 0)
                 goto failure;
 
@@ -200,12 +204,16 @@ s32 battle_owner_69(void)
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
         if (TILE_CELLS[index].collision_code == TILE_CELLS_ABOVE[index].collision_code) {
-            struct FieldPosition position;
+            /* FAKEMATCH: retain the existing six-word probe buffer.
+               The real 12-byte position in 1a5404f7 changed only the
+               native SP adjustments from 24 to 12; only x/y/z are read. */
+            s32 vector[6];
+            struct FieldPosition *position = (struct FieldPosition *)vector;
 
-            position.x = object->x;
-            position.y = object->y;
-            position.z = object->z;
-            result = CheckMapPositionCellOccupiedFar((const s32 *)&position);
+            position->x = object->x;
+            position->y = object->y;
+            position->z = object->z;
+            result = CheckMapPositionCellOccupiedFar((const s32 *)position);
             if (result != 0)
                 goto failure;
 

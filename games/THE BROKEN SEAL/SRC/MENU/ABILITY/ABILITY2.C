@@ -115,7 +115,7 @@ void Menu_ReleaseEntryObjects(void)
     void **p;
     s32 i;
 
-    count = (u16)Party_ListActiveOwnersFar(buf);
+    count = (u16)Party_ListActiveOwnersFar((s16 *)buf);
     if (count != 0) {
         p = (void **)base->tab_objects;
         i = count;
@@ -238,10 +238,10 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     do {
         px += dx;
         cursor->attributes.x = cursor->x =
-            (px >> 4) + (work->window->x << 3) - 56;
+            (px >> 4) + (((struct RenderInput *)work->auxiliary_window)->x << 3) - 56;
         py += dy;
         cursor->attributes.y = cursor->y =
-            (py >> 4) + (work->window->y << 3) - 56;
+            (py >> 4) + (((struct RenderInput *)work->auxiliary_window)->y << 3) - 56;
         steps--;
         if (steps != 0)
             WaitFrames(1);

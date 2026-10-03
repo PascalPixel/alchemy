@@ -661,6 +661,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/PALETTE6.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000c3dae)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/ACT_RUN_ZERO.o"(.text)
+    "*/recon/tbs/de/rom.o"(.rom.000c404c)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE5.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/FORMATION_SELECT_RANDOM_AVAILABLE_MEMBER.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000c4614)

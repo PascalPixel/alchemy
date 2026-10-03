@@ -3315,3 +3315,11 @@ ResourceObject_Create:
 BattleMotion_ProjectScaledPosition:
 	.incbin "baserom.gba", 0x000af45c, 0x00000064
 	.size BattleMotion_ProjectScaledPosition, .-BattleMotion_ProjectScaledPosition
+	.section .rom.000b8a34, "ax"
+	.balign 4
+	.global Party_ComputeEligibleMemberAverage
+	.type Party_ComputeEligibleMemberAverage, %function
+	.thumb_func
+Party_ComputeEligibleMemberAverage:
+	.incbin "baserom.gba", 0x000b8a34, 0x000000c8
+	.size Party_ComputeEligibleMemberAverage, .-Party_ComputeEligibleMemberAverage

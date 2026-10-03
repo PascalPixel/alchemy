@@ -1,0 +1,187 @@
+/* 2026-10-04: current canonical draft, score770 (41 register, 4 operand,
+ * 6 scheduling, 1 inserted instruction); complete304B/frame36. Width stays
+ * in fp; source/destination cursors at sp8/sp4; row stride stays in r8.
+ * Remaining: row r7 instead of r6 with an extra initial copy, hoisted cell
+ * scaling, and low-register/drawing-base scheduling. No C credit claimed.
+ * The adjacent index-copy structure, adapted to signed dimensions and a
+ * whole-cell store before masking for drawing, improves2055 to1120.
+ * Seed105/two jobs/6707 candidates reaches770; seed805/8766 makes no gain.
+ * Removed unused tmp9 and ineffectual register on address-taken tile array;
+ * same770. Source review preserves all three layers, complete cell values,
+ * both tile-word stores, signed clipping and128-width row advances.
+ *
+ * At1120: mutate height/dst_y1799; separate row endpoint1639.
+ * At770: cache end in height1378; new end local1403; separate y init770.
+ * Live register pins after ordinary failures: y/r6=1639, i/r5=1260,
+ * y+i=2224, x/r1=2495, y+x=3988, y+i+x=2819; none retained.
+ * In-place cell*=2 and cell<<=1 each775 (28 register,4 operand,7 scheduling,
+ * 1 inserted); byte offsets in both tile-word loads1615. Seed1805/two jobs/
+ * 8490 candidates improves in-place form to770 (32 register,3 operand,
+ * 7 scheduling,1 inserted); tie leaves simpler prior body retained.
+ * Older headers below preserve earlier attempts, superseded by this model.
+ */
+/* 2026-10-02 bounded structural wave: restored the stable score-2055
+ * body after three failed trials. Current output is the complete 304-byte
+ * extent with a 36-byte frame and its first 84 bytes exact. Width is r11,
+ * src/dst are sp+8/sp+4; older allocation warnings below are historical.
+ * Remaining: row moves r6 to r7, row shift/cell scale/0x800 are hoisted,
+ * and row stride is rebuilt at row end instead of retained in r8.
+ * Trial 1: end_y = dst_y + height, then mutate dst_y, helper unchanged:
+ * 2715 (37 register, 5 stack, 8 operand, 12 reordered, 7 inserted,
+ * 9 deleted); frame40, end_y in r11, width spills and prefix regresses.
+ * Trial 2: height += dst_y, then mutate dst_y, helper unchanged:
+ * 2875 (36 register, 5 stack, 8 operand, 13 reordered, 7 inserted,
+ * 10 deleted); same frame40 and row limit r11. Parameter axis closed.
+ * Trial 3: original row loop; shared n for row sum, cell*8 and 0x800;
+ * byte-pointer drawing and explicit visibility do loop:
+ * 2191 (44 register, 6 stack, 6 operand, 15 reordered, 3 inserted,
+ * 6 deleted). Cell scaling and 0x800 stay inside their reference blocks,
+ * but frame32/prefix/spills regress and row still moves to r7.
+ * All three trials rejected; no unused storage or instructions added.
+ * The next blocker is retaining the reference row/stride lifetimes while
+ * suppressing those drawing invariants without altering the frame. */
+/* 2026-10-01 (wave 1, slice 1): what the reference's loops say, for the
+   next attempt (this body still scores best, 2055). (1) Nothing is hoisted
+   out of the three-layer loop: the cell's << 3 stays in the drawing block
+   because its result goes into a variable that is also set outside the
+   block (the one that held ((y & 15) << 5) + (x & 15), r3), and loop.c
+   does not move such a set past a conditional branch. Spelling that reuse
+   (n = cell * 8 in the block) keeps the shift there. (2) For the same
+   reason only y & 15 and the 15 leave the x loop: the << 5 is assigned to
+   that variable too (n = (y & 15) << 5; n += x & 15;). (3) The 0x800 step
+   and the block's four bases are built beside their adds, as twice-set
+   pointers or a ++ on a 0x800-byte type give. (4) The layer loop keeps its
+   test at the bottom only while its break lies more than 30 RTL insns
+   from the loop's start (stmt.c's exit-test scan); shorter spellings of
+   the block get rotated around the break. (5) y is the dst_y parameter
+   itself (r6) and its limit a stack slot. Plain C with (1)-(3) reaches the
+   reference's block and frame but not yet (4) and (5) together.
+   2026-09-29 alchemy permute: score 2602 to 2055 on the permuter's scorer
+   (0 is exact); remaining 28 register-only, 11 operand, 17 reordered, 3
+   inserted, 3 deleted. Kept rewrites: 7x reorder independent statements,
+   4x reorder local declarations, 3x add a same-width cast, 3x change loop
+   form, 2x swap commutative operands, 2x drop a same-width cast, 1x
+   introduce a temporary, 1x remove a temporary, 1x move an assignment into
+   or out of a condition, 1x toggle register. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
+/* Not-yet-C: complete 304-byte owner. Width/height are arguments three/four;
+ * destination x/y are five/six. Copies complete cells, then draws low 12 bits.
+ * Reusing the neighbouring renderer's scoped CopyCell recovers the 36-byte
+ * frame: 288/304 bytes, 137 halfwords / 69 aligned edits (baseline 296/90).
+ * Remaining: width spills instead of fp, dst stays in r7 instead of sp+4,
+ * row shift/cell index/0x800 are hoisted outside the reference's blocks.
+ * Moving the visibility loop into another helper gave 292/84, not retained.
+ * Stop this helper axis; inspect loop-invariant decisions before new trials. */
+#include "MAP_SCROLL.H"
+#include "RAM_BUFFER.H"
+struct TilePos { s32 x, y; };
+
+void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
+    s32 width, s32 height, s32 dst_x, s32 dst_y)
+{
+    /* FAKEMATCH: after ordinary helper/lifetime forms remained at2055,
+       temporary sharing, casts and statement order reduce allocation/
+       scheduling differences to770 without new state or side effects. */
+    u32 *src = (u32 *)Ram_MapCellBuffer + (src_y * 128 + src_x);
+    u32 *dst = (u32 *)Ram_MapCellBuffer + (dst_y * 128 + dst_x);
+    struct MapLayerScroll *layer = ((struct MapScrollWork *)gMapWork[0])->layers;
+    s32 i;
+    struct TilePos tile[3];
+    struct TilePos *pos = tile;
+    s32 y;
+    register s32 x;
+
+    i = 2;
+    while (i >= 0) {
+        s32 tmp5;
+        tmp5 = layer->x >> 20;
+        pos->x = tmp5;
+        tmp5 = (*layer).y;
+        pos->y = tmp5 >> 20;
+        pos++;
+        layer++;
+        i--;
+    }
+    if ((y = dst_y) < dst_y + height) {
+        do {
+            x = dst_x;
+            while (x < dst_x + width) {
+                u32 cell = *src++;
+                u32 offset;
+                u32 *dest;
+                u32 tmp3;
+                u32 n;
+                register u32 *tiles;
+                u32 tmp6;
+                u32 tmp12;
+                u32 tmp13;
+                u32 tmp11;
+                u32 tmp15;
+                dst[0] = cell;
+                cell &= 0xfff;
+                tmp12 = x & 15;
+                tmp6 = tmp12;
+                tmp15 = y & 15;
+                tmp3 = tmp15;
+                tmp13 = tmp3 << 5;
+                pos = tile;
+                dst++;
+                tmp12 = tmp13;
+                n = tmp12;
+                n += tmp6;
+                tmp13 = (s32)(n * 4);
+                tmp11 = tmp13;
+                i = 0;
+                tmp6 = tmp11;
+                offset = tmp6;
+                while (i < 3) {
+                    if (pos->x <= x && 16 + pos->x > x && pos->y <= (s32)y && pos->y + 12 > (s32)y) {
+                        u32 *tmp;
+                        u32 tmp2;
+                        u32 tmp4;
+                        u32 *tmp7;
+                        u32 tmp10;
+                        u32 tmp14;
+                        s32 tmp8;
+                        u32 tmp16;
+                        tmp = (u32 *)Ram_MapBlocks;
+                        n = cell * 2;
+                        tiles = tmp;
+                        tmp2 = 0x06002800 + offset;
+                        tmp = (u32 *)tmp2;
+                        dest = tmp;
+                        tmp8 = n;
+                        tiles = tiles + tmp8;
+                        tmp16 = *tiles;
+                        tmp14 = tmp16;
+                        tmp10 = tmp14;
+                        *dest = tmp10;
+                        tmp7 = (u32 *)(Ram_MapBlocks + 4);
+                        tiles = tmp7;
+                        tmp14 = 0x06002840 + offset;
+                        tiles += n;
+                        tmp16 = *tiles;
+                        tmp10 = tmp16;
+                        tmp4 = tmp10;
+                        tmp2 = tmp4;
+                        tmp4 = tmp14;
+                        tmp7 = (u32 *)tmp4;
+                        dest = tmp7;
+                        (s32)(*dest = tmp2);
+                        break;
+                    }
+                    n = 0x800;
+                    offset += n;
+                    pos++;
+                    i += 1;
+                }
+                x++;
+            }
+            src += 128 - width;
+            dst = 128 - width + dst;
+            y++;
+        } while (y < (s32)dst_y + height);
+    }
+}

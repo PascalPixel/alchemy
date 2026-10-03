@@ -3,6 +3,7 @@
  * player steers it, drop it where it fits, and break into twenty shards.
  */
 #include "TYPES.H"
+#include "FX_SCENE.H"
 #include "OBJDISP.H"
 
 struct FxPosition {
@@ -37,23 +38,7 @@ struct FxObject {
     void *callback;             /* 0x6c */
 };
 
-struct EffectWork {
-    u8 unknown_00[4];
-    s32 x;
-    s32 y;
-    s32 z;
-    struct FxObject *source;    /* 0x10 */
-    struct FxObject *target;    /* 0x14 */
-    u8 unknown_18[0x1c];
-    u8 falls;                   /* 0x34 */
-    u8 unknown_35[3];
-    void *callback;             /* 0x38 */
-    const u8 *script;           /* 0x3c */
-    u8 unknown_40[4];
-    u8 palette;                 /* 0x44 */
-};
-
-extern struct EffectWork *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_SourceHoldScript[];
 extern const u8 BattleFx_FragmentScript[];
 extern volatile u32 gKeysHeld;
@@ -102,7 +87,7 @@ static __inline__ s32 Object_ProbeRaised(struct FxObject *object, struct FxPosit
    its own script back, falling if the effect says so. */
 void BattleFx_SteerLiftedTarget(s32 target_id)
 {
-    struct EffectWork *work;
+    struct BattleFxScene *work;
     struct FxObject *source;
     struct FxObject *target;
     struct FxObject *shards[20];
@@ -116,8 +101,8 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     struct FxPosition *p;
 
     work = gEffectWork;
-    source = work->source;
-    target = work->target;
+    source = work->main_object;
+    target = work->child;
     if (target == NULL)
         return;
     BattleEffect_InitializeSharedScene();
@@ -271,14 +256,14 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     AudioCommand_PlayFar(131);
     ObjectDispatch_ReleaseFar(anchors[0]);
     ObjectDispatch_ReleaseFar(anchors[1]);
-    Animation_ApplyChildValuesFar(target, work->palette);
-    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->script));
+    Animation_ApplyChildValuesFar(target, work->saved_palette);
+    ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->saved_script));
     {
         /* FAKEMATCH: one zero, set before these stores, clears the mode
            byte and the source's callback from the same register. */
         s32 zero = 0;
 
-        target->callback = work->callback;
+        target->callback = work->saved_callback;
         target->flag = 3;
         target->velocity_y = 0xa0000;
         target->gravity = 0x3333;
@@ -286,7 +271,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
         source->callback = (void *)zero;
     }
     Animation_ApplyChildValuesFar(source, 0);
-    if ((s8)work->falls != 0) {
+    if ((s8)work->child_option != 0) {
         for (i = 0; i < 90 && target->velocity_y >= 0; i++)
             WaitFrames(1);
         WaitFrames(1);

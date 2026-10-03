@@ -1,14 +1,13 @@
 #include "PSYNERGY_MENU.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
-extern u8 Data_03001f2c[];
 
 s32 Owner_GetStateFar(s32);
 
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index)
 {
     s32 owner_state;
-    u8 *base = *(u8 **)((u32)&Data_03001f2c);
+    u8 *base = (u8 *)gMenuWork;
     s32 offset = index + 0x218;
     u8 *owners = base + 2;
     s32 entry_count;

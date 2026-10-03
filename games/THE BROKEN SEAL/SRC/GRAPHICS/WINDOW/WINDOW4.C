@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -11,39 +12,17 @@ extern u8 RomBytes_0802de88[];
 extern u8 RomBytes_0802e108[];
 
 /* ui/render/drain_pending.c */
-extern void UiWork_Finalize(struct Work *work, s32 release);
-extern u8 *gWindowWork;
 
-struct PendingWork {
-    u8 padding00[0x16];
-    u16 flag;
-    s32 value;
-};
 
 struct WorkSlot {
-    struct PendingWork *work;
+    struct UiWindow *work;
     u8 padding04[0x24];
 };
 
-struct DirectWork {
-    u8 padding00[0x16];
-    u16 flag;
-    s32 value;
-    u8 padding1c[8];
-};
 
-struct ChannelWork {
-    u8 reserved_00[8];
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-    u16 reserved_10;
-    u16 transition;
-};
 
 struct RenderChannel {
-    struct ChannelWork *work;
+    struct UiWindow *work;
     u16 field_04;
     u16 field_06;
     u16 values[4];
@@ -68,15 +47,9 @@ extern u8 Data_03001c94[];
 extern u8 gKeysPressedLatch[];
 s32 AudioCommand_GetStateByteFar();
 
-struct Work {
-    u8 padding00[0x14];
-    u16 state;
-    u16 flags;
-    s32 pending_value;
-};
 
 struct FinalizeWorkSlot {
-    struct Work *work;
+    struct UiWindow *work;
     u8 padding04[0x24];
 };
 
@@ -84,20 +57,20 @@ void UiWork_DrainPending(void)
 {
     u8 *state;
     struct WorkSlot *slot;
-    struct DirectWork *direct;
+    struct UiWindow *direct;
     u32 done;
-    struct PendingWork *work;
-    struct PendingWork *poll_work;
+    struct UiWindow *work;
+    struct UiWindow *poll_work;
     s32 index;
     u16 flag;
 
-    state = gWindowWork;
+    state = gWindowWork[0];
     slot = (struct WorkSlot *)(state + RENDER_CHANNEL_OFS);
-    direct = (struct DirectWork *)(state + 0x500);
+    direct = (struct UiWindow *)(state + 0x500);
     index = 0;
     do {
         work = slot->work;
-        if (work != 0 && work->flag != 0)
+        if (work != 0 && work->flags != 0)
             UiWork_Finalize(work, 0);
         index++;
         slot++;
@@ -110,10 +83,10 @@ poll:
     do {
         poll_work = slot->work;
         if (poll_work != 0) {
-            if (poll_work->value == 0) {
-                flag = poll_work->flag;
+            if ((*(s32 *)&poll_work->frame) == 0) {
+                flag = poll_work->flags;
                 if (flag == 0)
-                    slot->work = (struct PendingWork *)(u32)flag;
+                    slot->work = (struct UiWindow *)(u32)flag;
                 else
                     done = 0;
             } else {
@@ -130,7 +103,7 @@ poll:
     }
     goto directTest;
 directLoop:
-    if (direct->flag != 0)
+    if (direct->flags != 0)
         UiWork_Finalize(direct, 0);
     direct++;
     index++;
@@ -145,8 +118,8 @@ directTest:
  * border. */
 void UiWork_AdvanceChannelTransition(struct RenderChannel *channel)
 {
-    struct ChannelWork *work = channel->work;
-    s32 transition = work->transition;
+    struct UiWindow *work = channel->work;
+    s32 transition = work->unknown_12;
     s32 x = work->x;
     s32 y = work->y;
     s32 width = work->width;
@@ -160,7 +133,7 @@ void UiWork_AdvanceChannelTransition(struct RenderChannel *channel)
     if (channel->countdown != 0)
         return;
 
-    channel->work->transition = 0;
+    channel->work->unknown_12 = 0;
     UiWindow_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
     UiWindow_DrawFrame(x, y, width, height);
 }
@@ -170,7 +143,7 @@ void UiWork_ClearValueNameTables(void)
     s32 no;
     struct UiNamedValueWork *work;
 
-    work = (struct UiNamedValueWork *)gWindowWork;
+    work = (struct UiNamedValueWork *)gWindowWork[0];
     no = 0;
 
     /* 対応する値と識別子は同じ順序で消去する。 */
@@ -183,7 +156,7 @@ void UiWork_ClearValueNameTables(void)
 
 void UiWork_PushValueSlot(u32 value, u32 flag)
 {
-    struct UiNamedValueWork *work = (struct UiNamedValueWork *)gWindowWork;
+    struct UiNamedValueWork *work = (struct UiNamedValueWork *)gWindowWork[0];
     u32 no = 0;
     u32 limit = 8;
 
@@ -207,7 +180,7 @@ u32 UiRender_LookupNamedValue(u32 value, u32 clear)
     u32 result;
     u32 zero;
 
-    base = *(u8 **)((u32)&Data_03001e8c);
+    base = gWindowWork[0];
     result = 0;
     index = 0;
     zero = index;
@@ -299,13 +272,13 @@ void UiWork_FinalizePendingCore(void)
 {
     s32 slot_index;
     struct FinalizeWorkSlot *slot;
-    struct Work *work;
+    struct UiWindow *work;
 
-    slot = (struct FinalizeWorkSlot *)(*(u8 **)((u32)&Data_03001e8c) + RENDER_CHANNEL_OFS);
+    slot = (struct FinalizeWorkSlot *)(gWindowWork[0] + RENDER_CHANNEL_OFS);
     slot_index = 0;
     do {
         work = slot->work;
-        if (work != NULL && work->pending_value == 0
+        if (work != NULL && (*(s32 *)&work->frame) == 0
             && work->flags != 0
             && work->state != 0) {
             UiWork_Finalize(work,

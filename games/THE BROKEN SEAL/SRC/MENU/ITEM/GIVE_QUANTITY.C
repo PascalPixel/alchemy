@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "INVENTORY_MENU.H"
@@ -34,8 +35,7 @@ void UiMenu_PositionCursor(s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
 void UiNumber_DrawAt(s32 value, s32 digits, s32 window, s32 x, s32 y);
-void *Owner_GetStateFar(s32 owner);
-void UiText_DrawStringAtOffsetFar(void *text, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(u8 *text, s32 window, s32 x, s32 y);
 void AudioCommand_PlayFar(s32 cue);
 void WaitFrames(s32 frames);
 s32 GameFlag_IsSet(s32 flag);
@@ -96,9 +96,9 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
                     UiText_DrawCharacterAtOffsetFar((s32)&MsgItemCounter, window, 96, 24);
                 }
 #endif
-                UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[0]), window, 16, 16);
+                UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[0])->name, window, 16, 16);
                 if (single == 0)
-                    UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[1]), window, 80, 16);
+                    UiText_DrawStringAtOffsetFar(Owner_GetStateFar(menu->pane_owner[1])->name, window, 80, 16);
             }
             if (gKeyState & 1) {
                 AudioCommand_PlayFar(112);

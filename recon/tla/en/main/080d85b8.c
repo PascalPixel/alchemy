@@ -1,8 +1,8 @@
 /* Near miss: score 240: four reordered instructions around the particle's
    start offsets. ⚓️ reads the current owner from gPartyState and the effect
-   slot from the shared EFFECT_0809B11C.H. */
+   slot from the shared EFFECT_SLOT.H. */
 #include "FIXED_MATH.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 #include "SYSTEM.H"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 

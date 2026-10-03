@@ -1,8 +1,8 @@
 #include "EDITION.H"
+#include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
 #include "SYSTEM.H"
-#include "OWNER_STATE.H"
 
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysHeld;
@@ -19,12 +19,8 @@ extern u8 ItemMenu_EquipmentKeyString[];
 void UiText_DrawStringInWindowFar(const u8 *text, s32 window, s32 x, s32 y);
 #endif
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
-void ItemMenu_OpenCategory(s32 owner);
-void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);
 s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
-s32 ItemMenu_Count(s32 owner);
 s32 GameFlag_TestFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 

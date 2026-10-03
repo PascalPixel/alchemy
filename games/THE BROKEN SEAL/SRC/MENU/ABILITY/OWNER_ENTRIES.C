@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "M7_INTERFACES.H"
-#include "GLOBAL_CELLS.H"
-extern u8 Data_03001f2c[];
+#include "PSYNERGY_MENU.H"
 
 void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns);
 
@@ -17,7 +16,7 @@ void PsynergyMenu_RefreshOwnerEntries(s32 origin_x, s32 origin_y, s32 columns)
     s32 index;
 
     index = 0;
-    slot = (struct Object080a1c **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
+    slot = (struct Object080a1c **)gMenuWork->entry_icons;
     scan = slot;
     do {
         if (*scan++ != NULL) {

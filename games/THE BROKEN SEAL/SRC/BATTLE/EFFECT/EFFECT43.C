@@ -1,6 +1,7 @@
 #include "TYPES.H"
+#include "FX_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 #include "DMA.H"
@@ -32,14 +33,7 @@ struct ArcEffectObject {
     void *callback;
 };
 
-struct ArcEffectScene {
-    u8 unknown_000[16];
-    struct ArcEffectObject *object;
-    u8 unknown_014[0x706];
-    s16 tile_slot;
-};
-
-extern struct ArcEffectScene *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 extern s32 gGameState[];
 extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
@@ -62,17 +56,6 @@ struct EffectSprite {
     s32 scale;
 };
 
-struct EffectObject {
-    struct EffectSprite *sprite;
-    s32 x;
-    s32 y;
-    u8 unknown_0c[28];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_30[23];
-    u8 flags;
-};
-
 void Object_ApplyProjectedPlacementFar(struct EffectSprite *sprite, s32 *position, s32 *scale, s32 mode);
 u16 ArcTan2(s32 x, s32 y);
 s32 FixedSqrt(s32 value);
@@ -84,14 +67,14 @@ u32 Random16(void);
 
 void ResourceObject_ReleaseFar(void *);
 
-void BattleFx_DrawScaledObject(struct EffectObject *object);
+void BattleFx_DrawScaledObject(struct EffectSlot *object);
 
 /* Battle effect 16, the paired arc: load the spark tiles, start the arc
    spawner, pulse the caster's glow twenty times, then run the state
    callback and restore the caster. */
 void RunBattleEffect16(void)
 {
-    struct ArcEffectScene *scene;
+    struct BattleFxScene *scene;
     struct ArcEffectObject *object;
     struct ArcPulseGroup *group;
     struct ArcPulseEntry *entry;
@@ -101,13 +84,13 @@ void RunBattleEffect16(void)
     s32 index;
 
     scene = gEffectWork;
-    object = scene->object;
+    object = scene->main_object;
     group = object->records;
     entry = group->entry;
     angle = object->angle;
     slot = Resource_FindFreeEntry();
     {
-        s16 *tile_slot = &scene->tile_slot;
+        s16 *tile_slot = &scene->arc_tile_slot;
         s32 zero = 0;
 
         *tile_slot = slot;
@@ -145,7 +128,7 @@ void RunBattleEffect16(void)
     else
         ObjectDispatch_SetSingleChildField26Far(object, 1);
     Animation_ApplyChildValuesFar(object, 0);
-    Resource_ResetEntry(scene->tile_slot);
+    Resource_ResetEntry(scene->arc_tile_slot);
     UiText_DrawMessage((s32)&MsgMonstersAttackLess, 1);
 }
 
@@ -169,24 +152,24 @@ void EffectSlot_Update(struct EffectSlot *effect)
 /* Draws an effect object at its position, scaled by its own and its
    sprite's factors, when it lies near the screen; flag 4 mirrors it about
    the floor line. */
-void BattleFx_DrawScaledObject(struct EffectObject *object)
+void BattleFx_DrawScaledObject(struct EffectSlot *object)
 {
     struct EffectSprite *sprite;
     s32 offset;
     s32 scale[2];
     s32 position[4];
 
-    sprite = object->sprite;
+    sprite = object->object;
     offset = 0;
     if (object->flags & 4)
-        offset = 0x1fc0000 - object->y;
+        offset = 0x1fc0000 - object->z;
     scale[0] = Iwram_MulQ16(object->scale_x, sprite->scale);
     scale[1] = Iwram_MulQ16(object->scale_y, sprite->scale);
     position[0] = object->x;
     position[1] = offset;
-    position[2] = object->y + offset;
+    position[2] = object->z + offset;
     position[3] = 0;
-    if (object->x > -0x200000 && object->x < 0x1100000 && object->y > -0x200000 && object->y < 0xe00000)
+    if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 && object->z < 0xe00000)
         Object_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 

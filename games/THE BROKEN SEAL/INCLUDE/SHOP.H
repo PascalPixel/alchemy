@@ -5,7 +5,7 @@
 #include "ITEM.H"
 #include "LAYOUT_GUARD.H"
 #include "RENDER_INPUT.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 
 /* The animation work reached through a keeper's ObjectRuntime.animation.
    Its resource table starts with the id shown beside the shop's messages. */

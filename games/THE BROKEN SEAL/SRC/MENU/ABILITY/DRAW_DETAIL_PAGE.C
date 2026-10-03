@@ -2,8 +2,8 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "PSYNERGY_MENU.H"
 
-extern void *gMenuWork;
 extern u8 MsgAbilityDescription;
 
 s32 GameFlag_TestFar(s32 flag);
@@ -25,34 +25,34 @@ s32 Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 /* The Psynergy counterpart of ItemMenu_DrawItemDetailPage: while flag
    0x151 is clear it names the selected entry, otherwise it clears flag
    0x2ff, then redraws the five row highlights. */
-s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
+s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *state)
 {
-    void *menu;
+    struct PsynergyMenuState *menu;
     s32 combined;
     s32 off;
     s32 row;
 
     menu = gMenuWork;
-    combined = *(s32 *)(state + 8) * 5;
-    combined += *(s32 *)(state + 16);
-    *(s32 *)(state + 24) = combined;
+    combined = state->page * 5;
+    combined += state->row;
+    state->selected_index = combined;
 
     if (GameFlag_TestFar(0x151) == 0) {
 #if EDITION_INTERNATIONAL
-        RenderOutput_RedrawSavedRectFar(*(s32 *)(menu + 44));
+        RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
 #else
-        RenderOutput_ClearListFar(*(s32 *)(menu + 44));
+        RenderOutput_ClearListFar((s32)menu->info_window);
 #endif
         WaitFrames(1);
 
-        combined = *(s32 *)(state + 24);
+        combined = state->selected_index;
         off = combined * 2 + 456;
         if (*(u16 *)((char *)menu + off) != 0) {
             s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&MsgAbilityDescription;
 #if EDITION_INTERNATIONAL
-            UiText_DrawCharacterAtOffsetFar(masked, *(s32 *)(menu + 44), 0, 0);
+            UiText_DrawCharacterAtOffsetFar(masked, (s32)menu->info_window, 0, 0);
 #else
-            UiText_DrawMessageAt(masked, *(s32 *)(menu + 44), 0, 0);
+            UiText_DrawMessageAt(masked, (s32)menu->info_window, 0, 0);
 #endif
         }
     } else {
@@ -61,10 +61,10 @@ s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
 
     row = 0;
     do {
-        if (row == *(s32 *)(state + 16)) {
-            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), DETAIL_ROW_X, row * 2 + 1, DETAIL_ROW_WIDTH, 1, 14);
+        if (row == state->row) {
+            Render_SetTilemapFlagRect(menu->psynergy_window, DETAIL_ROW_X, row * 2 + 1, DETAIL_ROW_WIDTH, 1, 14);
         } else {
-            Render_SetTilemapFlagRect(*(s32 *)(menu + 32), DETAIL_ROW_X, row * 2 + 1, DETAIL_ROW_WIDTH, 1, 15);
+            Render_SetTilemapFlagRect(menu->psynergy_window, DETAIL_ROW_X, row * 2 + 1, DETAIL_ROW_WIDTH, 1, 15);
         }
         row++;
     } while (row <= 4);

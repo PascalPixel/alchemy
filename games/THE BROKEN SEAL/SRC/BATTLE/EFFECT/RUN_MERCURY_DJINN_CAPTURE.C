@@ -1,9 +1,11 @@
 #include "TYPES.H"
+#include "FX_SCENE.H"
+#include "GAME_STATE.H"
 
-extern u8 gEffectWork[];
+extern struct BattleFxScene *gEffectWork;
 
 void BattleFx_HalveDistanceToTarget(void);
-void BattleFx_UpdateRandomTargetParticle(void);
+void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *);
 
 /* The Mercury Djinni capture: the Djinni bounces three times, splits into
    eight linked copies of itself, rises out of view, and a ring of slot
@@ -42,8 +44,6 @@ struct CaptureResource {
     u8 id;
 };
 
-extern s32 gGameState[];
-
 struct CaptureObject *Object_GetById(s32 id);
 void BattleFx_InitializeSlots(void);
 void Unnamed_080b0840Far(s32 value);
@@ -61,8 +61,7 @@ void Resource_ResetEntry(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);
-void EffectSlot_SetCallback(void *slot, void *callback);
-void EffectSlot_SetObjectMode(void *slot, s32 mode);
+
 void ObjectGroup_SetChildValueUnlessFifteenFar(s32 object, s32 value);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
@@ -93,7 +92,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)gEffectWork;
+    effect_slots = gEffectWork;
     Unnamed_080b0840Far(0x204084);
     WaitFrames(30);
     djinni->visible = 0;
@@ -148,9 +147,9 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     if (resource_id != 96)
         Resource_ResetEntry(resource_id);
     WaitFrames(10);
-    ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
     WaitFrames(20);
-    Object_SetMode(Object_GetById(gGameState[125]), 28);
+    Object_SetMode(Object_GetById(gGameState.selected_actor), 28);
     WaitFrames(20);
 
     position.x = djinni->x;
@@ -162,8 +161,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 240, position.x, position.z);
-        EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRandomTargetParticle);
-        EffectSlot_SetObjectMode(slot, 7);
+        EffectSlot_SetCallback((struct EffectSlot *)slot, BattleFx_UpdateRandomTargetParticle);
+        EffectSlot_SetObjectMode((struct EffectSlot *)slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 9);
         remaining--;
         WaitFrames(1);

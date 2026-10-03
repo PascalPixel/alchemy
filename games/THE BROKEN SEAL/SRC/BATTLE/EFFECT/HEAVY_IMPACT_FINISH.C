@@ -1,12 +1,13 @@
 #include "TYPES.H"
+#include "FX_SCENE.H"
+#include "GAME_STATE.H"
 #include "FIXED_MATH.H"
 
-extern u8 gEffectWork[];
+extern struct BattleFxScene *gEffectWork;
 
 void BattleFx_AdvanceSpinAngle(void);
-void BattleFx_RunAngledApproachPhases(void);
+void BattleFx_RunAngledApproachPhases(struct EffectSlot *);
 
-extern s32 gGameState[];
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();
 int ObjectMotion_Launch();
@@ -36,7 +37,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             return;
         }
         BattleFx_InitializeSlots();
-        base = (*((s32 *)gEffectWork));
+        base = (s32)gEffectWork;
         Unnamed_080b0840Far(0x20118C);
         Audio_PlayCue(0xAD);
         Motion_SetVarCbAndRefresh(id, 1);
@@ -67,7 +68,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         do
         {
             EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
-            EffectSlot_SetCallback(work, (s32)BattleFx_RunAngledApproachPhases);
+            EffectSlot_SetCallback(work, BattleFx_RunAngledApproachPhases);
             /* This boundary keeps the work pointer ahead of the constant. */
             /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
             do
@@ -87,9 +88,9 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     }
     while (0);
     WaitFrames(0x3C);
-    ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(gGameState.selected_actor, 0x4000, 0);
     WaitFrames(0x14);
-    Object_SetMode(Object_GetById(gGameState[125]), 0x1C);
+    Object_SetMode(Object_GetById(gGameState.selected_actor), 0x1C);
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);

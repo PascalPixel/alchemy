@@ -4,6 +4,7 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "TEXT_RENDER_RUNTIME.H"
+#include "WINDOW.H"
 #include "LAYOUT_GUARD.H"
 
 /* What the paged list screens share: the battle ability, item and summon
@@ -11,38 +12,6 @@
    window, draws one page of rows, queues one sprite per row and a blinking
    cursor, and keeps its page and row in the shared menu cell so that the list
    reopens where it was left. A page holds PAGE_ROWS rows (TBS_EDITION.H). */
-
-/* One window record, as UiWindow_Create returns it; positions and sizes are
-   in tiles. */
-struct UiWindow {
-    s32 unknown_00;
-    s32 unknown_04;
-    u16 width;                  /* 0x08 */
-    u16 height;                 /* 0x0a */
-    u16 x;                      /* 0x0c */
-    u16 y;                      /* 0x0e */
-    u16 unknown_10;
-    u16 unknown_12;
-    u16 state;                  /* 0x14 */
-    u16 flags;                  /* 0x16 */
-    u16 frame;                  /* 0x18 */
-    s16 duration;               /* 0x1a */
-    u16 previous_x;             /* 0x1c */
-    u16 previous_y;             /* 0x1e */
-    u16 previous_width;         /* 0x20 */
-    u16 previous_height;        /* 0x22 */
-};
-
-/* The flag bytes of the window and text work behind gWindowWork[0]. The
-   Japanese work is 0x90 bytes longer before them (TBS_EDITION.H). */
-struct UiRenderWork {
-    u8 unknown_000[RENDER_DIRTY_OFS];
-    u8 dirty;                   /* rows of tiles to upload, one bit per four */
-    u8 mode;
-    u8 menu_state;
-    u8 menu_busy;               /* holds the upload while a page is redrawn */
-    u8 level;                   /* text colour of the next string */
-};
 
 /* A queued sprite: the list link Runtime_PushSlotEntry fills, then the three
    hardware attributes as two words or as fields. */
@@ -108,7 +77,6 @@ LAYOUT_OFFSET_GUARD(MenuCell_Active, struct MenuCell, active, 0x4c);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoEnabled, struct MenuCell, auto_enabled, 0xd8);
 LAYOUT_OFFSET_GUARD(MenuCell_AutoDelay, struct MenuCell, auto_delay, 0xdc);
 
-extern u8 *gWindowWork[];
 extern struct MenuCell *gLinkCountdownWork;
 extern volatile s32 gKeyState;
 extern volatile s32 gKeysRepeat;
@@ -122,8 +90,6 @@ void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 void Resource_ResetEntry(s32 handle);
 s32 Resource_LoadIntoFreeSlot(s32 kind);
 s32 Resource_GetBuffer(s32 handle, s32 source);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWork_Finalize(struct UiWindow *window, s32 release);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 s32 UiText_CopyMessageString(s32 message, u16 *buffer, u32 count);
 void UiText_RenderWideStringAtOffset(

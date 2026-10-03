@@ -1,8 +1,10 @@
 /* Battle effect: spawn the pair of scaled objects that follow the linked
    object in mirrored arcs, one for each scaled-arc update callback. */
 #include "TYPES.H"
+#include "GAME_STATE.H"
+#include "FX_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "SCENE_IDS.H"
@@ -69,14 +71,7 @@ struct ResourceTableEntry {
     u16 last:1;
 };
 
-struct ArcScene {
-    u8 pad00[16];
-    struct ArcObject *source;
-    u8 pad14[70 - 20];
-    u16 resource;
-};
-
-extern struct ArcScene *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 extern struct ResourceTableEntry ResourceTableEntries[];
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
@@ -87,28 +82,6 @@ void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj);
 extern volatile s32 gFrameCount;
 s32 __umodsi3(s32, s32);
 void Animation_ApplyChildValuesFar(s32, s32);
-
-extern u8 Data_03001f30[];
-
-struct ActionEffectWork {
-    u8 padding00[0x1c];
-    u16 action;
-    s16 animation;
-    u8 enabled;
-    u8 mode;
-    u8 visible;
-    u8 active;
-    u8 padding24[0x21];
-    u8 lit;
-    u16 tile_slot;
-    u16 unknown_48;
-    u16 free_blocks;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 padding58[0x6c4];
-    u8 slots_enabled;
-};
 
 struct EffectOrigin {
     u8 padding00[4];
@@ -124,23 +97,11 @@ struct BattleSceneState {
     s8 running;
 };
 
-struct GameStateActors {
-    u8 padding000[0x1da];
-    s16 scene;
-    u8 padding1dc[0x18];
-    s32 object_id;
-};
-
-struct BattleActionData {
-    u8 padding00[12];
-    u8 animation;
-};
-
 extern u8 gWorkSlot[];
-extern struct GameStateActors gGameState;
+
 extern const u8 Data_0809c410[];
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-struct BattleActionData *BattleAction_Get(s32 action);
+struct BattleAction *BattleAction_Get(s32 action);
 s32 ResourceTable_CountFreeBlocks(void);
 void BattleFx_SetupObjectPair(s32 first, s32 second);
 s32 Resource_FindFreeEntry(void);
@@ -150,17 +111,12 @@ void BattleFx_UpdateAllEffectSlots(void);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Vector_AddPolarOffset(s32, s32, void *);
 
-struct EffectObjectWork {
-    u8 unknown_00[0x10];
-    u8 *object;
-};
-
 void BattleFx_SpawnScaledArcObjects(struct ArcObject *link);
 
 void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
 {
-    struct ArcScene *scene = gEffectWork;
-    struct ArcObject *source = scene->source;
+    struct BattleFxScene *scene = gEffectWork;
+    struct ArcObject *source = scene->main_object;
     struct ArcObject *objects[2];
     struct ArcObject *object;
     struct ArcSprite *sprite;
@@ -182,7 +138,7 @@ void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
         AnimationObjects_SelectAnimationFar(sprite, 0);
         sprite->frame = 0;
         Resource_ResetEntry(sprite->resource);
-        sprite->resource = scene->resource;
+        sprite->resource = scene->tile_slot;
         sprite->active = 1;
         sprite->tile = ResourceTableEntries[sprite->resource].tile;
         sprite->color = 0;
@@ -226,7 +182,7 @@ void BattleFx_UpdateAllEffectSlots(void)
     s32 p;
     s32 cnt;
 
-    p = *(s32 *)((u32)&Data_03001f30) + 0x58;
+    p = (s32)gEffectWork + 0x58;
     cnt = 0x17;
     do {
         cnt -= 1;
@@ -243,7 +199,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
 {
     struct BattleSceneState *scene = *(struct BattleSceneState **)(gWorkSlot + 27 * 4);
     struct EffectOrigin *origin = *(struct EffectOrigin **)(gWorkSlot + 8 * 4);
-    struct ActionEffectWork *work;
+    struct BattleFxScene *work;
     s32 running;
 
     running = scene->running;
@@ -254,10 +210,10 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
         fill = running;
         Dma_Set((const void *)&fill, work, 0x850001c8, (volatile u32 *)0x040000d4);
     } else {
-        work = *(struct ActionEffectWork **)(gWorkSlot + 56 * 4);
+        work = *(struct BattleFxScene **)(gWorkSlot + 56 * 4);
     }
     work->action = action;
-    work->animation = BattleAction_Get(action)->animation;
+    work->animation = BattleAction_Get(action)->type_0c;
     running = scene->running;
     if (running != 0)
         return;
@@ -266,15 +222,15 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     work->visible = 1;
     work->enabled = 1;
     work->active = 1;
-    work->slots_enabled = 1;
-    work->x = origin->x;
-    work->y = origin->y;
-    work->z = origin->z;
-    if (gGameState.scene == (s32)&SceneId_MakyuriIriguchi)
+    work->message_mode = 1;
+    work->saved_x = origin->x;
+    work->saved_y = origin->y;
+    work->saved_z = origin->z;
+    if ((s16)gGameState.map == (s32)&SceneId_MakyuriIriguchi)
         work->lit = 1;
-    if (gGameState.scene == (s32)&SceneId_MakyuriHeya2)
+    if ((s16)gGameState.map == (s32)&SceneId_MakyuriHeya2)
         work->lit = 1;
-    BattleFx_SetupObjectPair(gGameState.object_id, -1);
+    BattleFx_SetupObjectPair(gGameState.selected_actor, -1);
     if (work->animation != 8)
         scene->unknown_cc0 = running;
     work->tile_slot = Resource_FindFreeEntry();
@@ -285,7 +241,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
 {
     void *first_object; void *second_object; s32 facing_quadrant; void *state;
-    state = *(void **)((u32)&Data_03001f30);
+    state = gEffectWork;
     FIELD_AT_OFFSET(state, s16, 0x18) = first_object_id;
     first_object = ObjectTable_Get((s16)first_object_id);
     FIELD_AT_OFFSET(state, s16, 0x1A) = second_object_id;
@@ -314,8 +270,8 @@ void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
 
 void EffectRuntime_StopCurrentObject(void)
 {
-    struct EffectObjectWork *work = *(void **)((u32)&Data_03001f30);
-    u8 *object = work->object;
+    struct BattleFxScene *work = gEffectWork;
+    u8 *object = work->main_object;
 
     *(s32 *)(object + 0x6c) = 0;
     Animation_ApplyChildValuesFar(object, 0);

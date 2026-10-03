@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "SCRIPT_MOTION.H"
+#include "FX_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "SCENE.H"
@@ -7,28 +9,10 @@
 #include "GLOBAL_CELLS.H"
 
 extern u8 gObjectSlots[];
-extern u8 gEffectWork[];
+extern struct BattleFxScene *gEffectWork;
 void BattleFx_UpdateScaledArcObjectB(void);
 void BattleFx_UpdateScaledArcObjectA(void);
 void BattleFx_UpdateAllEffectSlots(void);
-
-struct BattleEffectSceneObject {
-    u8 reserved_00[0x45];
-    s8 active;
-    u8 reserved_46[2];
-};
-
-struct BattleEffectScene {
-    u8 reserved_000[0x1e];
-    s16 scene_mode;
-    u8 reserved_020[0x26];
-    s16 audio_handle;
-    u8 reserved_048[4];
-    s32 x;
-    s32 y;
-    s32 z;
-    struct BattleEffectSceneObject objects[24];
-};
 
 struct BattleEffectRuntime {
     u8 reserved_000[0xcc0];
@@ -45,13 +29,8 @@ struct BattleEffectPosition {
     s32 z;
 };
 
-struct BattleObjectSlot {
-    u8 reserved_00[0x6c];
-    void (*update)(void);
-};
-
-#define BATTLE_OBJECT_SLOTS (*(struct BattleObjectSlot **)gObjectSlots)
-void BattleFx_ClearOwnedSlot(struct BattleEffectSceneObject *object);
+#define BATTLE_OBJECT_SLOTS (*(struct ScriptMotionObject **)gObjectSlots)
+void BattleFx_ClearOwnedSlot(struct EffectSlot *object);
 void Resource_ResetEntry(s32 handle);
 void BattleFx_PlayQueuedSound(void);
 
@@ -99,19 +78,19 @@ void Ui_FillBank15PaletteGrey(void);
 /* Drain effect objects, restore the scene position, and release effect data. */
 void BattleEffect_CleanupSceneObjects(void)
 {
-    struct BattleEffectScene **scene_cell;
-    struct BattleEffectScene *scene;
+    struct BattleFxScene **scene_cell;
+    struct BattleFxScene *scene;
     struct BattleEffectRuntime *runtime;
     struct BattleEffectPosition *position;
-    struct BattleEffectSceneObject *scene_object;
+    struct EffectSlot *scene_object;
     s32 remaining;
 
-    scene_cell = (struct BattleEffectScene **)gEffectWork;
+    scene_cell = &gEffectWork;
     scene = *scene_cell;
     runtime = *(struct BattleEffectRuntime **)((u8 *)scene_cell - 116);
     position = *(struct BattleEffectPosition **)((u8 *)scene_cell - 192);
     for (remaining = 0; remaining < 24; remaining++) {
-        scene_object = &scene->objects[remaining];
+        scene_object = &scene->slots[remaining];
         if (scene_object->active != 0)
             BattleFx_ClearOwnedSlot(scene_object);
     }
@@ -125,12 +104,12 @@ void BattleEffect_CleanupSceneObjects(void)
         s32 active;
 
         do {
-            struct BattleObjectSlot *slot = BATTLE_OBJECT_SLOTS;
+            struct ScriptMotionObject *slot = BATTLE_OBJECT_SLOTS;
 
             active = 0;
             remaining = 0;
             while (remaining <= 63) {
-                void (*update)(void) = slot->update;
+                void (*update)(void) = (void (*)(void))slot->hook;
 
                 if (update == first_active_update ||
                     update == second_active_update) {
@@ -149,11 +128,11 @@ void BattleEffect_CleanupSceneObjects(void)
 
         runtime->teardown_state = 0;
         Scheduler_RemoveCallback((s32)BattleFx_UpdateAllEffectSlots);
-        Resource_ResetEntry(scene->audio_handle);
-        position->x = scene->x;
-        position->y = scene->y;
-        position->z = scene->z;
-        if (scene->scene_mode != 8)
+        Resource_ResetEntry((s16)scene->tile_slot);
+        position->x = scene->saved_x;
+        position->y = scene->saved_y;
+        position->z = scene->saved_z;
+        if (scene->animation != 8)
             runtime->restore_requested = 1;
         BattleFx_PlayQueuedSound();
         Runtime_ReleaseHeapBlock(0x38);

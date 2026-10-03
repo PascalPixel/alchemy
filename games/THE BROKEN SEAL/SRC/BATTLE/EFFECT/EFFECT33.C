@@ -1,8 +1,9 @@
 #include "TYPES.H"
+#include "FX_SCENE.H"
 #include "OBJDISP.H"
 #include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 #include "SYSTEM.H"
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -38,7 +39,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *positi
 void Camera_WorldToScreen(struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 
-extern u8 gEffectWork[];
+extern struct BattleFxScene *gEffectWork;
 void Motion_SetVarCbAndRefresh(s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(s32, s32);
 
@@ -58,13 +59,13 @@ struct PhasedRadialSequenceObject {
 
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
-struct Triple08095fcc {
+struct OrbitPosition {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct Object08095fcc {
+struct DescendingOrbitObject {
     u8 unknown_00[8];
     s32 x;
     s32 y;
@@ -74,15 +75,15 @@ struct Object08095fcc {
     s16 angle;
 };
 
-struct Output_08096048 {
+struct SpreadPosition {
     s32 x;
     s32 y;
     s32 z;
 };
 
-struct PositionSource_08096048 {
+struct SpreadSource {
     u8 padding00[8];
-    struct Output_08096048 position;
+    struct SpreadPosition position;
 };
 
 void Audio_PlayCue(s32);
@@ -135,13 +136,13 @@ struct EffectPositionSource {
     struct EffectVector position;
 };
 
-struct Object_08096574 {
+struct LinkedCaptureObject {
     u8 padding000[8];
     s32 x;
     s32 y;
     s32 z;
     u8 padding014[84];
-    struct Object_08096574 *target;
+    struct LinkedCaptureObject *target;
 };
 
 void BattleFx_SetObjectAlternatingWords(u8 *object);
@@ -149,7 +150,7 @@ void BattleFx_AdvanceObjectField6WithRamp(void *obj);
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj);
-void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg);
+void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg);
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect);
 
 /* Object updates of the phased radial particle sequence. */
@@ -292,7 +293,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)gEffectWork;
+    effect_slots = gEffectWork;
     Unnamed_080b0840Far(0x201090);
     WaitFrames(30);
     ObjectMotion_ArmCallback(arg, 0x4000, 0);
@@ -397,15 +398,15 @@ void BattleFx_ShrinkObjectAndDestroyFast(void *obj)
     }
 }
 
-void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
+void BattleFx_UpdateDescendingOrbitObject(struct DescendingOrbitObject *arg)
 {
-    struct Triple08095fcc local;
-    struct Object08095fcc *other;
+    struct OrbitPosition local;
+    struct DescendingOrbitObject *other;
     s32 raw;
     s16 value;
     s32 y;
 
-    other = (struct Object08095fcc *)Object_GetById(gGameState.selected_actor);
+    other = (struct DescendingOrbitObject *)Object_GetById(gGameState.selected_actor);
     raw = arg->timer - 1;
     arg->timer = raw;
     value = arg->timer;
@@ -424,12 +425,12 @@ void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
 
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
 {
-    struct Output_08096048 position;
-    struct PositionSource_08096048 *source;
+    struct SpreadPosition position;
+    struct SpreadSource *source;
     s32 state;
     u32 random;
 
-    source = (struct PositionSource_08096048 *)
+    source = (struct SpreadSource *)
         Object_GetById(gGameState.selected_actor);
     state = effect->state;
 
@@ -491,7 +492,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)gEffectWork;
+    effect_slots = gEffectWork;
     Unnamed_080b0840Far(0x201204);
     WaitFrames(30);
     djinni->visible = 0;
@@ -657,9 +658,9 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
     }
 }
 
-void BattleFx_HalveDistanceToTarget(struct Object_08096574 *object)
+void BattleFx_HalveDistanceToTarget(struct LinkedCaptureObject *object)
 {
-    struct Object_08096574 *target = object->target;
+    struct LinkedCaptureObject *target = object->target;
 
     object->x += (target->x - object->x) / 2;
     object->y += (target->y - object->y) / 2;

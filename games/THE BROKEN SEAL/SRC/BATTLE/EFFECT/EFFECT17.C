@@ -3,6 +3,7 @@
    unless the scene suppresses it, sixteen particles circle it while the
    secondary object shrinks away. */
 #include "TYPES.H"
+#include "FX_SCENE.H"
 #include "FIXED_MATH.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -26,18 +27,7 @@ struct EffectParticle {
     void (*callback)(void);
 };
 
-struct EffectScene {
-    s32 variant;
-    s32 x;
-    s32 y;
-    s32 z;
-    struct EffectParticle *main_object;
-    struct EffectParticle *secondary_object;
-    u8 reserved_18[8];
-    s8 flags;
-};
-
-extern struct EffectScene *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 void *Object_Spawn(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void Object_SetMode(void *, s32);
@@ -54,44 +44,14 @@ extern u8 Data_03001f30[];
 s32 BattleEffect_RunFallbackObjectTransition();
 
 /* battle/effects/radial_camera/update.c */
-struct EffectPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
-struct EffectCamera {
-    s32 filler_00;
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct RadialCameraEffect {
-    u8 filler_00[0xC];
-    s32 x;
-    s32 z;
-    s32 source_x;
-    s32 source_z;
-    s32 filler_1c;
-    s32 velocity;
-    s32 acceleration;
-    u8 filler_28[0xA];
-    u16 field_32;
-    u8 filler_34[0xC];
-    s8 state;
-    u8 filler_41;
-    u8 flag;
-};
-
-extern void Camera_WorldToScreen(struct EffectPosition *);
-extern s32 BattleFx_HasReachedTarget(struct RadialCameraEffect *);
+extern void Camera_WorldToScreen(struct EffectVector *);
 
 void RunBattleEffect14(void)
 {
-    struct EffectScene *scene = gEffectWork;
+    struct BattleFxScene *scene = gEffectWork;
     struct EffectParticle *main_object = scene->main_object;
-    struct EffectParticle *secondary_object = scene->secondary_object;
+    struct EffectParticle *secondary_object = scene->child;
     struct EffectVector particle_position;
     struct EffectVector origin;
     struct EffectVector target;
@@ -128,7 +88,7 @@ void RunBattleEffect14(void)
     object->scale_y = 0x14ccc;
     Audio_PlayCue(0xa3);
     WaitFrames(20);
-    if (scene->flags == 0) {
+    if (scene->enabled == 0) {
         if (secondary_object != 0)
             secondary_object->callback = BattleFx_ShrinkObjectScaleUntilHalf;
         step = 0;
@@ -163,10 +123,10 @@ void RunBattleEffect14(void)
 }
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-void BattleFx_UpdateRadialCamera(struct RadialCameraEffect *effect)
+void BattleFx_UpdateRadialCamera(struct EffectSlot *effect)
 {
-    struct EffectCamera *camera;
-    struct EffectPosition position;
+    struct BattleFxScene *camera;
+    struct EffectVector position;
     s8 *state_pointer;
     s16 angle;
     s32 state;
@@ -176,15 +136,15 @@ void BattleFx_UpdateRadialCamera(struct RadialCameraEffect *effect)
 top:
     state = *state_pointer;
     if (state == 0) {
-        position.x = effect->source_x;
-        position.z = effect->source_z;
+        position.x = effect->origin_x;
+        position.z = effect->origin_z;
         angle = Random16();
         Vector_AddPolarOffset(Random16() * 30 + 0x280000, (u16)angle, &position);
-        effect->x = position.x;
-        effect->z = position.z;
+        effect->target_x = position.x;
+        effect->target_z = position.z;
         effect->acceleration = 0x40000;
-        effect->velocity = 0x40000;
-        effect->flag = state;
+        effect->max_speed = 0x40000;
+        effect->flag42 = state;
         goto advance;
     } else if (state == 1) {
         if (BattleFx_HasReachedTarget(effect)!= 0)
@@ -197,10 +157,10 @@ top:
         position.z = camera->z;
         Camera_WorldToScreen(&position);
         Vector_AddPolarOffset(0x40000, Random16(), &position);
-        effect->x = position.x;
-        effect->z = position.z;
-        effect->field_32 = 0x1000;
-        effect->flag = 1;
+        effect->target_x = position.x;
+        effect->target_z = position.z;
+        effect->max_turn_step = 0x1000;
+        effect->flag42 = 1;
 advance:
         *state_pointer = (u8)*state_pointer + 1;
         return;

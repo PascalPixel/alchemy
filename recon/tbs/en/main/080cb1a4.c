@@ -1,8 +1,11 @@
-/* DRAFT: Independent S2 audit of the credited RunFlippingBurst body.
- * Kept ordinary form: one saved blitter, no unread reservation. Complete
+/* DRAFT: Independent S2 audit of the former RunFlippingBurst adoption.
+ * Kept ordinary form: one saved blitter, no unread reservation; T10 setup.
+ * Remaining score 45: five stack operands and two projection offsets. Complete
  * compiled extent remains 840 bytes, including its 44-byte literal pool.
- * Current source compares exactly in all six TBS editions, but its draw[2]
- * reserves one unused word solely to reproduce an 84-byte local frame.
+ * The previous source compared exactly in all six TBS editions, but draw[2]
+ * reserved one unused word solely to reproduce an 84-byte local frame.
+ * All six editions now leave this complete 840-byte extent uncredited.
+ * The existing neighbouring BladeRain source stays in FLIPPING_BURST.C.
  *
  * Own EN ROM at 080cb1a4: draw is stored at sp+48, canvas at sp+56,
  * screen at sp+60 (three words), and record at sp+72 (three words).
@@ -18,7 +21,9 @@
  * its pair does not prove this function owns a second one.
  *
  * T0: compare the unchanged two-slot body with current verified compiler
- * assembly: score 1 (layout-only scoring distinction, no instruction diff).
+ * assembly: score 1: raw assembler filled its pool alignment with a NOP,
+ * where the owned ROM has two zero alignment bytes. The restored raw
+ * listing uses explicit zero alignment; no executable instruction changed.
  * T1: scalar draw, declaration unchanged: score 245 (5 stack-only,
  * 6 operand, 2 reordered). Local frame shrinks 84 -> 80, canvas moves
  * 56 -> 52, screen 60 -> 56, record 72 -> 68; blitter stays at 48.
@@ -26,13 +31,24 @@
  * T2: one-element array is identical to the scalar trial, score 245.
  * T3: scalar declaration after screen is score 255 (15 stack-only,
  * 6 operand, 2 reordered); restore the simpler T1 declaration order.
- * Scored against the currently linked module assembly, independently
- * checked against the own-ROM instructions; this is not an adoption.
+ * T0-T14 were scored against the verified module assembly, independently
+ * checked against the own-ROM instructions. The retained draft now uses
+ * the full raw listing restored alongside it; this is not an adoption.
+ *
+ * T4 canvas/blitter cache: 327; T5 actor/target lift pair: 315;
+ * T6 input/output projection record: 1108; T7 destination x/z: 253.
+ * All aggregates contained only consumed fields and kept an 80-byte frame.
+ * T8 projection locals scoped to frame loop: 245.
+ * T9 movement locals scoped to initialization: 253.
+ * T10-T14 setup ordering (mode, blitter, transfer value):
+ * 021:45; 102:205; 120:670; 201:455; 210:550. Retain T10: configure
+ * both transfer fields, then cache the blitter. All scheduling now agrees;
+ * only the seven stack/frame operands differ from the complete raw extent.
  *
  * Audit conclusion: no producer/consumer evidence establishes a genuine
  * shared two-slot object. The maintained unused word changes frame storage,
- * exceeding S2 instruction-order/register-choice steering. Keep this scalar
- * draft pending a natural exact source model; do not substitute a padded
+ * exceeding S2 instruction-order/register-choice steering. This scalar
+ * draft awaits a natural exact source model; do not substitute a padded
  * struct, volatile spill or instruction that recreates the reservation.
  */
 #include "CANVAS.H"
@@ -96,8 +112,8 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     work->transfer_mode = 2;
-    draw = heap_cache[7];
     work->transfer_value = 75;
+    draw = heap_cache[7];
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     first = GetBattleObjectSlotFar(work->effect->actor);
     second = GetBattleObjectSlotFar(work->effect->actors[0]);

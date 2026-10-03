@@ -93,17 +93,26 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 }
 
 /* Each priority has a head; an entry contributes only its first-word link. */
-void Runtime_PushSlotEntry(void *entry, s32 priority)
+void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 {
-    void *previous;
+    /* FAKEMATCH: the ordinary named-bank index reduces this
+       complete native list push from 36 to 32 bytes. Retain its existing
+       word-cell address transport; every entry contributes only its link. */
+    void *previous_head;
+    s32 slot_offset;
+    s32 clamped_slot;
 
-    if (priority > 255)
-        priority = 255;
-    if (priority < 0)
-        priority = 0;
-    previous = Data_03001400[priority];
-    Data_03001400[priority] = entry;
-    *(void **)entry = previous;
+    clamped_slot = slot;
+    if (clamped_slot > 0xFF) {
+        clamped_slot = 0xFF;
+    }
+    if (clamped_slot < 0) {
+        clamped_slot = 0;
+    }
+    slot_offset = clamped_slot * sizeof(void *);
+    previous_head = *(void **)((u8 *)slot_offset + (u32)Data_03001400);
+    *(void **)((u8 *)slot_offset + (u32)Data_03001400) = slot_entry;
+    *(s32 *)slot_entry = (s32)previous_head;
 }
 
 void Runtime_CopyAndCallRoutine(void *argument)
@@ -313,14 +322,32 @@ void Resource_InitializeTable(void)
 /* An unused cache entry has no assigned VRAM byte offset. */
 s32 Resource_FindFreeEntry(void)
 {
-    struct VramBlockCacheEntry *entry = gVramBlockCache;
+    /* FAKEMATCH: the ordinary for scan reduces this complete
+       native search from 52 to 36 bytes. Retain the existing first-entry
+       test and subsequent scan over the actual cache records. */
+    s32 free_slot;
     s32 slot;
+    struct VramBlockCacheEntry *table;
+    s32 first;
+    struct VramBlockCacheEntry *entry;
 
-    for (slot = 0; slot < VRAM_CACHE_ENTRY_COUNT; slot++, entry++) {
+    entry = gVramBlockCache;
+    free_slot = VRAM_CACHE_ENTRY_COUNT;
+    first = 0;
+    slot = first;
+    table = gVramBlockCache;
+    if (table->offset == VRAM_CACHE_OFFSET_FREE)
+        return first;
+next_entry:
+    slot++;
+    entry++;
+    if (slot < VRAM_CACHE_ENTRY_COUNT) {
         if (entry->offset == VRAM_CACHE_OFFSET_FREE)
-            return slot;
+            free_slot = slot;
+        else
+            goto next_entry;
     }
-    return VRAM_CACHE_ENTRY_COUNT;
+    return free_slot;
 }
 
 s32 Resource_LoadIntoFreeSlot(s32 size)
@@ -369,21 +396,37 @@ void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count)
 
 void Scheduler_SortTasks(void)
 {
+    /* FAKEMATCH: the ordinary nested for loops reduce this
+       complete native sort from 84 to 80 bytes. Retain its existing
+       leading test and reused swap cursor over the actual task records. */
     struct SchedulerTask saved;
+    struct SchedulerTask *base = gSchedulerTaskTable;
     struct SchedulerTask *task;
-    s32 pass;
-    s32 i;
-
-    for (pass = SCHEDULER_TBS_TASK_COUNT - 1; pass > 1; pass--) {
-        task = gSchedulerTaskTable;
-        for (i = 0; i < pass; i++, task++) {
-            if ((s16)task[1].state > (s16)task->state) {
-                memcpy(&saved, task, sizeof(saved));
-                memcpy(task, task + 1, sizeof(saved));
-                memcpy(task + 1, &saved, sizeof(saved));
-            }
-        }
+    s32 pass = SCHEDULER_TBS_TASK_COUNT - 1;
+    s32 remaining;
+    goto sort_pass;
+next_pass:
+    base = gSchedulerTaskTable;
+sort_pass:
+    task = base;
+    if (pass <= 0)
+        goto finish_pass;
+    remaining = pass;
+next_task:
+    if ((s16)task[1].state > (s16)task->state) {
+        memcpy(&saved, task, sizeof(saved));
+        base = task;
+        task++;
+        memcpy(base, task, sizeof(saved));
+        memcpy(task, &saved, sizeof(saved));
+    } else {
+        task++;
     }
+    if (--remaining != 0)
+        goto next_task;
+finish_pass:
+    if (--pass > 1)
+        goto next_pass;
 }
 
 s32 Scheduler_FindCallback(u32 callback)

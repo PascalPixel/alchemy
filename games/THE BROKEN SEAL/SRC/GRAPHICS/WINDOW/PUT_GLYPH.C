@@ -26,7 +26,8 @@ struct SpriteAttr {
    modes write tiles up to 0xff into the window tilemap. */
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
-    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    void *work = gWindowWork[0];
+    u8 *base = work;
     struct RenderOutput *out;
     s32 idx;
     u16 *slot;
@@ -40,13 +41,14 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         return;
     if (mode == 1) {
         s32 column;
-        out = RenderOutput_AcquireFree();
-        if (out == NULL)
+        work = RenderOutput_AcquireFree();
+        if (work == NULL)
             return;
-        idx = (out - work->outputs) * 4;
+        out = work;
+        idx = (out - ((struct UiRenderWork *)base)->outputs) * 4;
         out->active = 2;
         attr = (struct SpriteAttr *)out->unknown_10;
-        slot = &work->glyph_resource;
+        slot = &((struct UiRenderWork *)base)->glyph_resource;
         if (*slot == 99)
             *slot = Resource_FindFreeEntry();
         column = 0xfffe;
@@ -56,9 +58,12 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->y = row * 8 - 1;
         out->x = attr->x;
         out->y = attr->y;
-        out->next = NULL;
+        /* FAKEMATCH: retain the existing scalar link-word clear and
+           unsigned active-byte read at their canonical member addresses.
+           Pointer/signed member access changes the glyph store schedule. */
+        *(s32 *)&out->next = 0;
         out->index = idx;
-        if (out->active == 0)
+        if ((u8)out->active == 0)
             out->active = mode;
         RenderOutput_AppendToList(&win->output, out);
     } else if (tile <= 0xff) {
@@ -66,7 +71,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         y++;
         pos = (win->y + y) * 32 + (win->x + x);
         if (pos < 640)
-            work->tilemap[pos] = tile | 0xf000;
+            ((struct UiRenderWork *)work)->tilemap[pos] = tile | 0xf000;
     }
 }
 
@@ -110,9 +115,12 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->y = row * 8 + 1;
         out->x = attr->x;
         out->y = attr->y;
-        out->next = NULL;
+        /* FAKEMATCH: retain the existing scalar link-word clear and
+           unsigned active-byte read at their canonical member addresses.
+           Pointer/signed member access changes the glyph store schedule. */
+        *(s32 *)&out->next = 0;
         out->index = idx;
-        if (out->active == 0)
+        if ((u8)out->active == 0)
             out->active = mode;
         RenderOutput_AppendToList(&win->output, out);
     } else if (tile <= 0xff) {

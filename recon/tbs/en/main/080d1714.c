@@ -175,7 +175,6 @@ void BattleBackground_LoadFar(s32, s32, s32);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Object_ApplyProjectedPlacementFar(s32 handle, struct Placement *place, struct ScalePair *scale,
     s32 mode);
-void ResourceObject_ReleaseFar(s32 handle);
 void BattleEffect_SetupBlendedDisplay(void);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 count);
@@ -745,7 +744,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
 
     index = 0;
     do {
-        ResourceObject_ReleaseFar(runtime->objects[index]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)runtime->objects[index]);
         index++;
     } while (index != 9);
 

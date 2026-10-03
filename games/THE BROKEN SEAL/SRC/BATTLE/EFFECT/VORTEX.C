@@ -48,6 +48,7 @@ s32 Battle_GetObjectTableValueFar(s32 id);
  */
 void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition pos;
     void **heap_cache;
     void **cursor;
@@ -111,7 +112,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     AudioCommand_PlayFar(164);
 
     for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++) {
-        camera = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
+        camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
         if (frame >= 17 && frame < 64)
             WORK_FIELD(work, 0x77ac) = 0x180;
         else

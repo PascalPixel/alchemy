@@ -50,7 +50,6 @@ struct GroundParticleWork {
 LAYOUT_SIZE_GUARD(GroundParticle_Size, struct GroundParticle, 0x20);
 LAYOUT_SIZE_GUARD(GroundParticleWork_Size, struct GroundParticleWork, 0x410);
 
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 void Resource_DecodeByteLz(const void *source, void *destination);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
@@ -202,5 +201,5 @@ void Unnamed_08094ac8(void)
         *++blend = value;
         *++blend = 0;
     } while (0);
-    Scheduler_AddOrUpdateCallback(Unnamed_08094820, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Unnamed_08094820, 0xc80);
 }

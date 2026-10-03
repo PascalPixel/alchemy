@@ -43,7 +43,6 @@ void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
 void BattleFx_PlaceFormationObjects(s32, s32, s32);
 void BattleEffect_RunImpactBurst(s32, s32, s32);
-void ResourceObject_ReleaseFar(void *);
 
 extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;
@@ -559,7 +558,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     BattleEffect_RunImpactBurst(0, cam_x, cam_y);
     }
     for (i = 0; i != 9; i++) {
-        ResourceObject_ReleaseFar(work->objects[i]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
     BattleFx_EndCanvasLayer();
 }

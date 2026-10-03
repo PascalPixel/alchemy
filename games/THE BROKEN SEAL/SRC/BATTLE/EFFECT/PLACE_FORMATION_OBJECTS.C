@@ -13,6 +13,8 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
+extern u8 gBattleFxWork[];
+
 
 struct Scale { s32 x; s32 y; };
 struct Placement { s32 x; s32 y; s32 z; s32 w; };
@@ -33,7 +35,7 @@ void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, stru
    3x3 grid, or the twelve- and eight-object layouts from the offset tables. */
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
-    struct BattleEffectWork *work = (struct BattleEffectWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    struct BattleEffectWork *work = (struct BattleEffectWork *)*(void **)gBattleFxWork;
     struct Scale normal = Data_080edab8;
     struct Scale small = Data_080edac0;
     struct Placement pos;
@@ -103,7 +105,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y)
     s32 frame;
     s32 i;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

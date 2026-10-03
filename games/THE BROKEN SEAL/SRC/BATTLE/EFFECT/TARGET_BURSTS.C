@@ -13,6 +13,8 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
 
+extern u8 gBattleFxWork[];
+
 
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
@@ -21,6 +23,7 @@ void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
    drawn through the first blitter of the pair. */
 void BattleFx_RunOrbitingSparks(void)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -36,11 +39,11 @@ void BattleFx_RunOrbitingSparks(void)
     s32 x_offset;
     s32 i;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
+    camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     BattleFx_BeginCanvasLayer(1);
     *(volatile u16 *)0x04000020 = 0x100;
     *(volatile u16 *)0x04000052 = 0x1010;
@@ -144,7 +147,7 @@ void BattleFx_RunTargetBursts(void *object)
     struct EffectPosition screen;
     s32 record[3];
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

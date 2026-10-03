@@ -57,6 +57,7 @@ void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
  */
 void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition pos;
     struct EffectPosition base;
     struct Vector3 scale;
@@ -86,7 +87,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
+    camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     caster = GetBattleObjectSlotFar(effect->actor)->object;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
@@ -119,7 +120,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     trails = (struct EffectStep *)gMapCellBuffer;
     for (frame = 0; frame != 60; frame++) {
         if (frame <= 47) {
-            struct BattleCamera *view = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
+            struct BattleCamera *view = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
             s32 speed;
 
             if (frame <= 39)
@@ -224,6 +225,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
  */
 void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -248,7 +250,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
+    camera = *(struct BattleCamera **)(gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);

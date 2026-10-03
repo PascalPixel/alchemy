@@ -17,6 +17,8 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 
+extern u8 gBattleFxWork[];
+
 
 /* Which crescent picture each of a mote's eight steps shows. */
 extern u8 MemberBeam_MotePictures[];
@@ -80,7 +82,7 @@ void BattleFx_RunMemberBeam(struct BattleEffectArgument *effect, s32 mode)
     s32 i;
     s32 k;
 
-    cursor = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    cursor = (void **)gBattleFxWork;
     work = *cursor++;
     canvas = *cursor;
     work->effect = effect;

@@ -190,8 +190,11 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
    that is not empty, the bar colour 14 and its shadow 1 become 8 and 13
    where filled and 2 and 12 where empty. Outside the menu it first loads
    the bar palette. */
-void UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
+s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
+    /* FAKEMATCH: retain the existing C89 integer/no-return convention; all
+       callers ignore the result. A void definition changes only the return
+       address pop from r1 to r0 at the same native function extent. */
     s32 i;
     struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
     s32 filled = value;

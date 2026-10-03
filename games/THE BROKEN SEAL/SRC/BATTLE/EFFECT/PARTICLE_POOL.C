@@ -17,6 +17,8 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 
+extern u8 gBattleFxWork[];
+
 extern u16 ParticleStreams_CellOffsets[];
 
 /* The motes live at the start of the map cell buffer. */
@@ -54,6 +56,7 @@ struct BlitterPair {
    swaying on its own sine; the targets react one after another. */
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     s32 point[3];
     struct EffectPosition position;
     void **heap_cache;
@@ -69,11 +72,12 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     s32 frame;
     s32 i;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = gCameraWork;
+    camera = *(struct BattleCamera **)((u8 *)heap_cache -
+        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
     sheet = heap_cache[2];
     work->effect = effect;
     if (mode == 0)

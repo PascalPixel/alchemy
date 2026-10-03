@@ -15,6 +15,8 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE_IDS.H"
 
+extern u8 gBattleFxWork[];
+
 extern u16 ParticleStreams_CellOffsets[];
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor);
@@ -59,6 +61,7 @@ void BattleFx_RunParticleFieldVariant3(s32 effect)
 /* Draw the target's two panels, then a 64-particle burst and expanding rings. */
 void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 variant)
 {
+    /* FAKEMATCH: the existing function-pointer cell reads preserve the two blitter loads and stores; ordinary void-pointer slot reads reorder those independent instructions. */
     void **cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -80,11 +83,12 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
     u8 *cells;
 
     cells = Ram_MapCellBuffer;
-    cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    cache = (void **)&gBattleFxWork;
     cursor = cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = gCameraWork;
+    camera = *(struct BattleCamera **)((u8 *)cache -
+        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
     source = cache[2];
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
@@ -95,8 +99,8 @@ void BattleFx_RunParticleFieldVariant(struct BattleEffectArgument *object, s32 v
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
     }
-    rectangle[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
-    rectangle[1] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+    rectangle[0] = ((BattleEffectDrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER];
+    rectangle[1] = ((BattleEffectDrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
     Graphics_PackTileRows(work, cells, 40, 288);

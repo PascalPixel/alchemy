@@ -17,6 +17,8 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
+extern struct BattleBackgroundView *gTransitionWork;
+
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
 

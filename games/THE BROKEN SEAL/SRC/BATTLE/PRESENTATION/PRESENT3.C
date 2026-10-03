@@ -41,6 +41,8 @@ void BattlePresentation_DrawStreaks(void);
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 
+extern u8 gBattleFxWork[];
+
 extern u16 BattleFx6_FlareCells[];
 /* The four corner sparks: where each sits and how it is flipped. */
 extern s8 CornerSparks_X[];
@@ -186,7 +188,7 @@ void BattleFx_RunGatheringBurst(struct BattleEffectArgument *effect)
  */
 void BattlePresentation_DrawStreaks(void)
 {
-    struct BattleEffectWork *work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    struct BattleEffectWork *work = *(void **)gBattleFxWork;
     s32 frame;
     s32 i;
     struct Streak *streak;

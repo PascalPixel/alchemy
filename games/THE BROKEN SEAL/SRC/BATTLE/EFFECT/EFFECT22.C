@@ -12,6 +12,8 @@
 #include "EFFECT_STEP.H"
 #include "B5_CONTEXT.H"
 
+extern u8 gBattleFxWork[];
+
 extern u8 gMapCellBuffer[];
 extern BattleEffectDrawRectangle Data_03001e50[];
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
@@ -54,7 +56,7 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     BattleEffectDrawRectangle draw[2];
     s32 frame;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     work = *heap_cache++;
     canvas = *heap_cache;
     work->effect = effect;
@@ -140,7 +142,7 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     s32 cell;
     s32 size;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

@@ -5,6 +5,18 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
+
+/* The first OAM part's existing byte attribute view; not an allocation owner. */
+struct AnimationAttribute {
+    u8 unknown_00[9];
+    u8 low : 2;
+    u8 variant : 2;
+    u8 high : 4;
+};
+
+
+extern struct BattleEffectWork *gBattleFxWork;
+
 /* battle/effects/common/spawn_objects.c */
 
 struct AnimationObject *GetBattleEffectObject(s32);
@@ -12,7 +24,8 @@ s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
 {
-    struct BattleEffectWork *work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    /* FAKEMATCH: the existing packed byte9 store keeps the signed mask live across calls; the ordinary byte mask shortened the object loop by eight bytes. */
+    struct BattleEffectWork *work = gBattleFxWork;
     s32 entry_index = 0;
 
 
@@ -26,9 +39,8 @@ void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
         if (object != 0) {
             object->flags = 0;
             AnimationObjects_SelectAnimationFar(object, entry_index);
-            /* The variant is in the low two attribute bits, written as a byte. */
-            ((u8 *)&((struct AnimationObject *)work->objects[entry_index])->part[0])[9] =
-                (((u8 *)&((struct AnimationObject *)work->objects[entry_index])->part[0])[9] & ~12) | ((variant & 3) << 2);
+            /* The two-bit variant is written in byte 9. */
+            ((struct AnimationAttribute *)work->objects[entry_index])->variant = variant;
         }
         entry_index++;
     } while (entry_index != entry_count);

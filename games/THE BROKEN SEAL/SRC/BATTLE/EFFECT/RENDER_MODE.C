@@ -17,6 +17,8 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
+extern u8 gBattleFxWork[];
+
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 
 void BattleFx_ArmBg2AffineHBlankDma(void);
@@ -111,7 +113,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     s32 *row;
     s32 i;
 
-    cursor = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    cursor = (void **)gBattleFxWork;
     work = *cursor++;
     canvas = *cursor;
     count = 16;

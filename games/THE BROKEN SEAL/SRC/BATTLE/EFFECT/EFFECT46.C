@@ -16,6 +16,18 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 
+
+/* The first OAM part's existing byte attribute view; not an allocation owner. */
+struct AnimationAttribute {
+    u8 unknown_00[9];
+    u8 low : 2;
+    u8 variant : 2;
+    u8 high : 4;
+};
+
+
+extern void *gBattleFxWork[];
+
 /* A battle object as its slot holds it: the world position follows two
    words this effect does not read. */
 
@@ -77,6 +89,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
    skips to the end. */
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing packed byte9 field keeps its mask across object creation; the ordinary byte mask shortened this scene by eight bytes and reordered stores. */
     s32 position[4];
     DrawRectangle draw[2];
     struct Scale scale;
@@ -90,7 +103,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     s32 i;
     s32 k;
 
-    cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
+    cache = &gBattleFxWork[1];
     canvas = cache[0];
     work = cache[-1];
     sheet = cache[1];
@@ -111,14 +124,13 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
         if (object != 0) {
             object->flags = 0;
             AnimationObjects_SelectAnimationFar(object, i % 3);
-            ((u8 *)&((struct AnimationObject *)work->objects[9 + i])->part[0])[9] =
-                (((u8 *)&((struct AnimationObject *)work->objects[9 + i])->part[0])[9] & ~12) | 4;
+            ((struct AnimationAttribute *)work->objects[9 + i])->variant = 1;
         }
     }
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-    draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    draw[0] = *(DrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
-    draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+    draw[1] = *(DrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
     *(volatile u16 *)0x04000048 = 0x2737;
     *(volatile u16 *)0x04000040 = 0xf0;
     *(volatile u16 *)0x04000046 = 0x1088;
@@ -340,7 +352,7 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     s32 i;
     s32 j;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -588,7 +600,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     s32 size;
     u8 *burst;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -636,7 +648,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
             else
                 BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
-            routine[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+            routine[0] = *(BattleEffectDrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
             if (work->effect->side == 0)
                 routine[0](canvas, (u8 *)work + (frame - 6) * 0xd80, position.x / 2 - 24, position.y - 24, 48, 72);
             else
@@ -648,7 +660,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
             s32 strip;
 
             BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-            routine[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+            routine[0] = *(BattleEffectDrawRectangle *)(gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
             if (step > 2)
                 step = 2;
             if (work->effect->variant == 0)

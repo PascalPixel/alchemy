@@ -8,10 +8,11 @@ void RenderOutput_ClearList(void *work)
     struct RenderOutput *node;
     struct RenderOutput *next;
 
+    next = NULL;
     if (list != NULL) {
         node = list->head;
         list->tail_link = &list->head;
-        list->head = NULL;
+        list->head = next;
         while (node != NULL) {
             next = node->next;
             RenderOutput_Release(node);

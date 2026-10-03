@@ -75,7 +75,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
     s32 flag;
     volatile u32 cleared;
 
-    *Runtime_AllocateBlock(35, 4) = st;
+    *(struct MakyuriLights **)Runtime_AllocateBlock(35, sizeof(st)) = st;
     flag = Engine_GameFlagIsSet(0x109);
     if (flag == 0) {
         cleared = flag;

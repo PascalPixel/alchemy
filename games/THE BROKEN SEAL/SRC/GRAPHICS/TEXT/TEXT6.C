@@ -82,17 +82,25 @@ s32 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y)
   return icon;
 }
 
+/* The object's packed OAM halfwords, separate from its logical position. */
+struct UiIconAttributes {
+    u8 y;
+    u8 flags;
+    u16 x : 9;
+    u16 other_x : 7;
+};
+
 void UiIcon_PrepareObject(struct RenderOutput *object)
 {
+    /* FAKEMATCH: keep the existing 9-bit OAM assignment and signed byte
+       masks. An ordinary unsigned halfword/mask rewrite grows this function
+       by 12 bytes in all six editions and changes its two literal masks. */
     if (object != NULL) {
-        u8 *attributes = (u8 *)&object->packed;
-        u16 *position = (u16 *)(attributes + 2);
-
         object->active = 1;
-        *position = (*position & 0xfe00) | ((u16)object->x & 0x1ff);
-        attributes[0] = (u16)object->y;
-        attributes[3] &= 0xc1;
-        attributes[1] &= 0xfc;
+        ((struct UiIconAttributes *)&object->packed)->x = (u16)object->x;
+        *(s8 *)&object->packed = (u16)object->y;
+        *((s8 *)&object->packed + 3) = -0x3f & *((s8 *)&object->packed + 3);
+        *((s8 *)&object->packed + 1) = -4 & *((s8 *)&object->packed + 1);
     }
 }
 

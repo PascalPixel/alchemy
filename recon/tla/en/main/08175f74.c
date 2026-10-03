@@ -237,7 +237,6 @@ void Render_ApplyProjectedPlacementFar(struct SpriteObject *, s32 *, s32 *, s32)
 s32 Func_08002096(s32);
 s32 Func_08002090(s32);
 s32 __divsi3(s32, s32);
-void ResourceObject_ReleaseFar(struct SpriteObject *);
 struct Model *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_080151e4(s32, s32, s32);
@@ -652,7 +651,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         }
         if (frame >= 132 && frame < 860) {
             if (frame == 132) {
-                ResourceObject_ReleaseFar(work->objects[0]);
+                ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009b);
                 CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
                 source += 0x180;
@@ -1237,14 +1236,14 @@ void Func_08175f74(struct BattleEffectArgument *arg)
 
     Func_081c0010(162);
     if (frame < 132) {
-        ResourceObject_ReleaseFar(work->objects[0]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
     } else {
         for (i = 0; i != 14; i++) {
-            ResourceObject_ReleaseFar(work->objects[i]);
+            ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
         }
     }
     for (i = 0; i != 48; i++) {
-        ResourceObject_ReleaseFar(SPRITES[i]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)SPRITES[i]);
     }
     Func_0801314c(188);
     Func_0801314c(104);

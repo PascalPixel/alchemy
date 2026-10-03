@@ -109,8 +109,6 @@ extern void UiText_DrawCharacterAtOffset(s32 kind, struct UiWindowWork *work,
                                          s32 x, s32 y);
 extern struct UiWindowWork *UiText_ShowMessageAndWaitComplete(s32 message,
                                                            s32 x, s32 y);
-extern void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
-extern void Scheduler_RemoveCallback(void (*callback)(void));
 extern void Runtime_SetIrqHandler(u32 irq, s32 line, void (*handler)(void));
 extern void Graphics_SetBg1Priority3(void);
 extern void Graphics_ClearBg1ControlBit2(void);
@@ -192,7 +190,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
             work->entries[cnt].pos_x = (cnt - work->count) * 24 + 171;
         work->entries[cnt].pos_y = 136;
     }
-    Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)Graphics_SetBg1Priority3, 0x480);
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
@@ -368,7 +366,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     }
     render->dirty = 1;
     WaitFrames(1);
-    Scheduler_RemoveCallback(Graphics_SetBg1Priority3);
+    Scheduler_RemoveCallback((u32)Graphics_SetBg1Priority3);
     Runtime_SetIrqHandler(2, 0, 0);
     {
         struct IoWriteQueue *queue = &gIoWriteQueue;

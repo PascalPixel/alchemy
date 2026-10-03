@@ -15,6 +15,8 @@
 #include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
+extern u8 gBattleFxWork[];
+
 
 void WaitFrames(s32);
 
@@ -70,7 +72,7 @@ void SceneTransform_ApplyRoll(s32 angle);
    area to the BG2 affine reference point. */
 void BattleFx_ArmBg2AffineHBlankDma(void)
 {
-    struct BattleEffectWork *work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    struct BattleEffectWork *work = *(void **)gBattleFxWork;
     volatile u16 *channel = (volatile u16 *)0x040000b0;
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
@@ -140,7 +142,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     s32 width;
     s32 height;
 
-    cache = (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
+    cache = (u32 *)(void **)((u8 *)&gBattleFxWork + sizeof(void *));
     dst = (void *)cache[40 - 40];
     work = (struct BattleEffectWork *)cache[39 - 40];
     aux = (u8 *)cache[41 - 40];
@@ -380,7 +382,7 @@ void BattleFx_RunSwirlingStars(void *object)
     s32 i;
     s32 frame;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

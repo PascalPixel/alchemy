@@ -11,6 +11,8 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 
+extern u8 gBattleFxWork[];
+
 typedef void (*Callback)(s32 *);
 void BattleEffect_RunCirclingFallingScene(s32 *);
 void BattleEffect_RunEmberColumns(s32 *);
@@ -95,7 +97,7 @@ void BattleFx_DispatchMode(s32 *state)
 
     /* FAKEMATCH: retain the existing scalar address of the effect-pointer
        cell; the direct typed store moves the mode read ahead of its address. */
-    destination = (s32)&((struct BattleEffectWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT])->effect;
+    destination = (s32)&((struct BattleEffectWork *)*(void **)gBattleFxWork)->effect;
     index = state[0];
     *(struct BattleEffectArgument **)destination = (struct BattleEffectArgument *)state;
     if (index == 0)

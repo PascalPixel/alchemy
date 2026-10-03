@@ -18,14 +18,12 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_WORK.H"
-typedef void (*DrawRectangle)(void *, const void *, s32, s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
 
 void WaitFrames(s32);
-s32 BattleEffect_LoadWork(s32, s32, s32, s32, s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
 void BattlePres_ConfigureEffectDisplay(void);
@@ -39,8 +37,6 @@ void SceneTransform_ApplyYaw(s32);
 void Graphics_PrepareTransferInIwramWork(void *, void *);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
-void *ResourceObject_CreateFar(s32);
-void ResourceObject_ReleaseFar(void *);
 void BattleEffect_SetupBlendedDisplay(void);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
@@ -227,7 +223,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     work->transfer_mode = 0;
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     BattleEffect_WipeCanvas(0, 0);
-    BattleFx_SelectLivingTargets((s32)work->effect);
+    BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(16, 0x17e, 1);
     gProjection.center_y = 240;
     WaitFrames(1);
@@ -304,7 +300,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             Graphics_PrepareTransferInIwramWork(iwram, (u8 *)iwram + 12);
             for (i4 = 0; i4 != 128; i4++) {
                 EffectStep_AdvanceWithGravity3D(&SPARKS[i4], 60, -0x400);
-                EffectPosition_ApplyBaseAndYOffset((s32)&SPARKS[i4], (struct EffectPosition *)scene);
+                EffectPosition_ApplyBaseAndYOffset(&SPARKS[i4], (struct EffectPosition *)scene);
                 scene[0] >>= 1;
                 scene[1] -= 120;
                 if (scene[2] < 100) {
@@ -349,7 +345,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 if (DUST[i5].x < 0) {
                     DUST[i5].x = 0;
                 }
-                EffectPosition_ApplyBaseAndYOffset((s32)anchor, (struct EffectPosition *)scene);
+                EffectPosition_ApplyBaseAndYOffset((struct EffectStep *)anchor, (struct EffectPosition *)scene);
                 if (scene[2] < -60) {
                     scene[2] = -60;
                 }
@@ -465,11 +461,11 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     ((WordFill)0x03000168)(canvas, 0x4000, 0);
 
     for (i11 = 0; i11 != 16; i11++) {
-        ResourceObject_ReleaseFar(work->objects[i11]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i11]);
     }
 
     for (i12 = 0; i12 != 16; i12++) {
-        u8 *obj = ResourceObject_CreateFar(0x186);
+        u8 *obj = (u8 *)ResourceObject_CreateFar(0x186);
         work->objects[i12] = obj;
         if (obj != 0) {
             obj[38] = 0;
@@ -897,7 +893,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
     }
 
     for (i25 = 0; i25 != 16; i25++) {
-        ResourceObject_ReleaseFar(work->objects[i25]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i25]);
     }
 
     Scheduler_RemoveCallback(0x080CD261);

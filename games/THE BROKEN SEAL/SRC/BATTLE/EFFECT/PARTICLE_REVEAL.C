@@ -17,6 +17,8 @@
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
 
+extern u8 gBattleFxWork[];
+
 
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -56,7 +58,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     s32 j;
     s32 angle;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -172,7 +174,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     s32 angle_mask;
     s32 speed_mask;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -378,7 +380,7 @@ void BattleFx_RunParticleReveal(void *object)
     s32 frame;
     s32 clamp;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -519,6 +521,7 @@ extern u8 RockToss_ChipY[];
    leaves, a rock is pulled towards the target and lands on it. */
 void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -534,11 +537,12 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     s32 screen_y;
     s32 j;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = gCameraWork;
+    camera = *(struct BattleCamera **)((u8 *)heap_cache -
+        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screen_x, &screen_y);

@@ -22,6 +22,8 @@
 #include "BATTLE_PRESENTATION.H"
 #include "RAM_BUFFER.H"
 
+extern struct BattleEffectWork *gBattleFxWork;
+
 void WaitFrames(s32 frames);
 
 extern u8 gMapCellBuffer[];
@@ -68,7 +70,7 @@ void BattlePres_ConfigureEffectDisplay(void)
 
 void BattleFx_AdvanceScrollOnInterval(void)
 {
-    struct BattleEffectWork *work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    struct BattleEffectWork *work = gBattleFxWork;
     u32 *counter = (u32 *)&work->scroll_timer;
 
     (*counter)++;
@@ -84,7 +86,7 @@ void Camera_AdvanceBg2Reference(void)
     s32 count;
     struct BattleEffectWork *work;
 
-    work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    work = gBattleFxWork;
     count = work->scroll_timer + 1;
     work->scroll_timer = count;
     if (count == work->scroll_interval) {
@@ -139,7 +141,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     s32 i;
     s32 k;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)&gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -329,7 +331,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     s32 i;
     s32 k;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    heap_cache = (void **)&gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

@@ -26,10 +26,16 @@ void BattleEv_RunWait(s32 action, s32 flag)
 
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
-    /* FAKEMATCH: ordinary forms swap native r7 action/r6 mask at the same 188-byte extent. */
-    asm("" : "+r"(action) : : "r6");
     if (action <= 7) {
-        masked_action = action & 0x0fff;
+        {
+            /* FAKEMATCH: ordinary forms swap the native r7 action/r6 mask in 188 bytes. */
+            register s32 actor asm("r7") = action;
+            /* FAKEMATCH: bind only the used native r6 AND operand after ordinary forms failed. */
+            register s32 mask asm("r6") = 0x0fff;
+            /* FAKEMATCH: early-clobber keeps the real action distinct in the native single AND. */
+            asm("and %0, %0, %1" : "+&r"(mask) : "r"(actor) : "cc");
+            masked_action = mask;
+        }
 
         if (BattleAction_FindDescriptor(masked_action) == 0) {
             message_id = masked_action;

@@ -11,7 +11,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
     struct FieldActor *obj;
     struct FieldSprite *rec;
 
-    obj = Object_Create(kind, x, y, z);
+    obj = Engine_ObjectCreate(kind, x, y, z);
     if (obj != NULL) {
         rec = obj->sprite;
         rec->priority = 0;
@@ -30,7 +30,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
  * object's draw bits select the second layer. */
 void *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind)
 {
-    struct FieldActor *effect = Object_Create(kind, x, y, z);
+    struct FieldActor *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         struct FieldSprite *sprite = effect->sprite;

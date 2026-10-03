@@ -263,7 +263,7 @@ const struct SceneEvent *Scene_GetEvents(void)
     if (gGameState.entrance == ROOM_SUHARA_GATE_HOUSE) {
         return gSuharaGateHouseEvents;
     }
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         return gInteriorReopenedEvents;
     }
     return gInteriorSealedEvents;
@@ -273,20 +273,20 @@ void Innkeeper_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
-        if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
             Engine_InnOpen(INN_LUNPA, ACTOR_INNKEEPER);
             return;
         }
     }
     Engine_EventBegin();
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersRoom);
-        Event_AskYesNo(ACTOR_INNKEEPER, 0);
+        Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaInnkeeperOffersOwnHome);
-        Event_AskYesNo(ACTOR_INNKEEPER, 0);
+        Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
     }
     Engine_EventEnd();
 }
@@ -295,8 +295,8 @@ void Chef_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRunpaChefOffersStory);
-    Event_AskYesNo(ACTOR_CHEF, 0);
-    GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
+    Engine_EventAskYesNo(ACTOR_CHEF, 0);
+    Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
     Engine_EventEnd();
 }
 
@@ -304,8 +304,8 @@ void Chef_ReadMind(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRunpaChefThinksOfPrisoner);
-    Event_ShowMessage(ACTOR_CHEF, 0);
-    GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
+    Engine_EventShowMessage(ACTOR_CHEF, 0);
+    Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
     Engine_EventEnd();
 }
 
@@ -313,7 +313,7 @@ void InnClerk_Talk(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
-    Event_AskYesNo(ACTOR_INN_CLERK, 0);
+    Engine_EventAskYesNo(ACTOR_INN_CLERK, 0);
     Engine_EventEnd();
 }
 
@@ -321,33 +321,33 @@ void TemplePriest_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
         Engine_SanctumOpen(ACTOR_TEMPLE_PRIEST);
-    } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaTemplePriestReopened);
-        Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
+        Engine_EventShowMessage(ACTOR_TEMPLE_PRIEST, 0);
         Engine_EventEnd();
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaTemplePriestSealed);
-        Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
+        Engine_EventShowMessage(ACTOR_TEMPLE_PRIEST, 0);
         Engine_EventEnd();
     }
 }
 
 void ItemMerchant_ReadMind(void)
 {
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaIsntWeaponsVendors);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealedThoughts);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     }
 }
@@ -356,30 +356,30 @@ void ItemMerchant_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
         Engine_ShopOpen(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
-    } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaItemMerchantReopened);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     } else {
         Engine_EventBegin();
         Engine_EventSetMessage((s32)MsgRunpaItemMerchantSealed);
-        Event_ShowMessage(ACTOR_ITEM_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
         Engine_EventEnd();
     }
 }
 
 void WeaponMerchant_ReadMind(void)
 {
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopenedThoughts);
-        Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealedThoughts);
-        Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     }
 }
 
@@ -388,31 +388,31 @@ void WeaponMerchant_Talk(void)
     struct FieldActor *leader;
     s32 facing;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     facing = leader->facing;
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         if (FACING_IS_NORTH(facing)) {
             Engine_ShopOpen(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
         } else {
             Engine_EventBegin();
             Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantReopened);
-            Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+            Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
             Engine_EventEnd();
         }
     } else {
         Engine_EventSetMessage((s32)MsgRunpaWeaponMerchantSealed);
-        Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
     }
 }
 
 void ArmorMerchant_ReadMind(void)
 {
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopenedThoughts);
-        Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealedThoughts);
-        Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     }
 }
 
@@ -421,20 +421,20 @@ void ArmorMerchant_Talk(void)
     struct FieldActor *leader;
     s32 facing;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     facing = leader->facing;
-    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         if (FACING_IS_NORTH(facing)) {
             Engine_ShopOpen(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
         } else {
             Engine_EventBegin();
             Engine_EventSetMessage((s32)MsgRunpaArmorMerchantReopened);
-            Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+            Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
             Engine_EventEnd();
         }
     } else {
         Engine_EventSetMessage((s32)MsgRunpaArmorMerchantSealed);
-        Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+        Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
     }
 }
 
@@ -448,13 +448,13 @@ s32 Scene_Initialize(void)
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     entrance = gGameState.entrance;
     if (entrance == ROOM_SUHARA_GATE_HOUSE) {
-        GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+        Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
         gGameState.saved_scene = (s32)&SceneId_RunpaSuhara;
         gGameState.saved_entrance = entrance;
     }
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_ARMOR_COUNTER), 0);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_ITEM_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_COUNTER), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_COUNTER), 0);
     return 0;
 }
 
@@ -462,11 +462,11 @@ void TravelingPriest_Talk(void)
 {
     struct FieldActor *leader;
 
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (FACING_IS_NORTH(leader->facing)) {
         Engine_SanctumOpen(ACTOR_TEMPLE_PRIEST);
     } else {
         Engine_EventSetMessage((s32)MsgRunpaTravelingPriest);
-        Event_ShowMessage(ACTOR_TRAVELING_PRIEST, 0);
+        Engine_EventShowMessage(ACTOR_TRAVELING_PRIEST, 0);
     }
 }

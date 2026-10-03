@@ -49,14 +49,14 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
     void Actor_SetSpeed(s32, s32, s32);
 
-    Actor_SetSpeed(actor, x, y);
+    Engine_ActorSetSpeed(actor, x, y);
 }
 
 static __inline__ void SetOffset(s32 actor, s32 offset, s32 zero)
 {
     void Actor_FaceDirection(s32, s32, s32);
 
-    Actor_WalkByAndWait(actor, offset, zero);
+    Engine_ActorWalkByAndWait(actor, offset, zero);
 }
 
 enum {
@@ -108,7 +108,7 @@ u8 *SceneData_GetMessageTable(void)
 
 s32 SceneData_SelectTableByFlag9a7(void)
 {
-    if (GameFlag_IsSet(0x9A7) != 0) {
+    if (Engine_GameFlagIsSet(0x9A7) != 0) {
         return (s32)Placement_Actors9a7;
     }
     return (s32)Placement_Actors;
@@ -136,26 +136,26 @@ void RariberoMachi_AskLeaving(s32 obj)
 {
     s32 msg = (s32)MsgRariberoLeavingLalivero;
     Engine_EventSetMessage(msg);
-    Event_OpenMessage(obj, 0);
+    Engine_EventOpenMessage(obj, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(msg + 1);
     } else {
         Engine_EventSetMessage(msg + 2);
     }
-    Event_ShowMessage(obj, 0);
+    Engine_EventShowMessage(obj, 0);
 }
 
 void SceneActor_SetupActor18Event(void)
 {
     void Actor_FaceDirection(s32, s32, s32);
 
-    GameFlag_Set(2491);
+    Engine_GameFlagSet(2491);
     Engine_EventSetMessage((s32)MsgRariberoWasToldLetInIf);
-    Event_ShowMessage(18, 0);
+    Engine_EventShowMessage(18, 0);
     PlaceActor(18, 65536, 32768);
     SetOffset(18, -16, 0);
-    Actor_FaceDirection(18, 0, 0);
+    Engine_ActorFaceDirection(18, 0, 0);
     Engine_EventWait(10);
 }
 
@@ -166,7 +166,7 @@ void Scene_RunTableTransition(void)
     s32 y = RariberoMachi_DoorCells[no][1];
 
     ((u8 *)Object_GetById(0))[85] = 2;
-    Audio_PlayCue(158);
+    Engine_AudioPlayCue(158);
     if (no == 6) {
         Call3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
         Call3(Engine_ActorWalkBy, 0, 0, -16);
@@ -735,7 +735,7 @@ void FieldScene_RunSequenceB(void)
 
 s32 SceneData_SelectSecondaryTableByFlag9a7(void)
 {
-    if (GameFlag_IsSet(0x9A7) != 0) {
+    if (Engine_GameFlagIsSet(0x9A7) != 0) {
         return (s32)Placement_Effects9a7;
     }
     return (s32)Placement_Effects;

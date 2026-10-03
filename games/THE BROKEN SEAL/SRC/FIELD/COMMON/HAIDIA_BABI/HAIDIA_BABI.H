@@ -37,8 +37,8 @@ extern s32 gHaidiaBabiEvents[];
 void SceneState_SetWork448To521AndRun(s32 exit);
 void ActorPresentation_SetTwoSceneCells(void);
 void FieldScene_RunSupplementalSequenceOne();
-void SceneEffect_UpdateAnchoredRiseFrame();
-void OverlayObject_UpdateArcFromAnchor();
+void SceneEffect_UpdateAnchoredRiseFrame(union FieldObject *object);
+void OverlayObject_UpdateArcFromAnchor(union FieldObject *object);
 
 /* Moves the next dialogue line on by amount messages. */
 static __inline__ void bump_step(s32 amount)

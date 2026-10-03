@@ -62,38 +62,38 @@ s32 SceneData_SelectTable89c8Or8890(void)
 
 void SceneDialogue_RunActor14FlaggedDialogue(void)
 {
-    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
+    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Engine_EventBegin();
     if (value >= 0xa001 && value <= 0xdfff) {
         Engine_ShopOpen(16, 14);
     } else {
-        if (GameFlag_IsSet(0x895) == 0) {
+        if (Engine_GameFlagIsSet(0x895) == 0) {
             Engine_EventSetMessage((s32)MsgShianXianHasMartialArtsBut);
         } else {
             Engine_EventSetMessage((s32)MsgShianHsusInjuryTaughtGoodLesson);
         }
-        Event_ShowMessage(14, 0);
+        Engine_EventShowMessage(14, 0);
     }
     Engine_EventEnd();
 }
 
 void SceneDialogue_RunActor15FlaggedDialogue(void)
 {
-    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
+    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Engine_EventBegin();
     if (value >= 0xa001 && value <= 0xdfff) {
         Engine_ShopOpen(17, 15);
     } else {
-        if (GameFlag_IsSet(0x895) == 0) {
+        if (Engine_GameFlagIsSet(0x895) == 0) {
             Engine_EventSetMessage((s32)MsgShianMartialArtistsCantUseHeavy);
         } else {
             Engine_EventSetMessage((s32)MsgShianKungFuMakesQuickDoes);
         }
-        Event_ShowMessage(15, 0);
+        Engine_EventShowMessage(15, 0);
     }
     Engine_EventEnd();
 }
@@ -103,18 +103,18 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
     void Event_ShowMessage();
     void Engine_EventSetMessage(s32);
 
-    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
+    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Engine_EventBegin();
     if (value >= 0xa001 && value <= 0xdfff) {
         Engine_ShopOpen(18, 16);
-    } else if (GameFlag_IsSet(0x895) == 0) {
+    } else if (Engine_GameFlagIsSet(0x895) == 0) {
         Engine_EventSetMessage((s32)MsgShianXiansSpecialArmorNotSuited);
-        Event_ShowMessage(16, 0);
+        Engine_EventShowMessage(16, 0);
     } else {
         Engine_EventSetMessage((s32)MsgShianDoPlanCrossDesertWarrior);
-        Event_AskYesNo(16, 0);
+        Engine_EventAskYesNo(16, 0);
     }
     Engine_EventEnd();
 }
@@ -123,19 +123,19 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
 {
     s32 GameFlag_IsSet(s32);
 
-    u16 *state = Actor_Get(ACTOR_PARTY_LEADER);
+    u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
     u32 value = state[3];
 
     Engine_EventBegin();
     if (value < 0x2000 || value > 0xe000) {
         Engine_InnOpen(5, 17);
     } else {
-        if (GameFlag_IsSet(0x895) == 0) {
+        if (Engine_GameFlagIsSet(0x895) == 0) {
             Engine_EventSetMessage((s32)MsgShianWarriorsShouldLearnAboutTowns);
         } else {
             Engine_EventSetMessage((s32)MsgShianWeHaveFewCustomersThese);
         }
-        Event_ShowMessage(17, 0);
+        Engine_EventShowMessage(17, 0);
     }
     Engine_EventEnd();
 }
@@ -146,7 +146,7 @@ void SceneDialogue_RunActor10Dialogue(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianSomethingWrongOnSilkRoad);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -156,7 +156,7 @@ void SceneDialogue_RunActor12Dialogue(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianDidMonstersInAltinSpit);
-    Event_AskYesNo(12, 0);
+    Engine_EventAskYesNo(12, 0);
     Engine_EventEnd();
 }
 
@@ -170,12 +170,12 @@ void SceneDialogue_RunActor9MotionDialogue(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianWarriorWelcome);
-    Event_ShowMessageAndWait(9, 0, 20);
-    Actor_FaceActor(9, 10, 0);
+    Engine_EventShowMessageAndWait(9, 0, 20);
+    Engine_ActorFaceActor(9, 10, 0);
     Engine_EventWait(60);
-    Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     Engine_EventEnd();
 }
 

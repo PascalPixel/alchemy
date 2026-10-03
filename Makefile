@@ -59,13 +59,11 @@ bootstrap:
 	$(MAKE) $(LIBGCC)
 
 # In a new worktree, before its first build: link the main checkout's ROMs
-# and installed tools, and clone its tool and game builds copy-on-write so
-# the first build is incremental.
-MAIN_CHECKOUT = $(abspath $(shell git rev-parse --path-format=absolute --git-common-dir)/..)
+# and installed tools, and clone existing tool and edition builds copy-on-write.
+# Private reports, verification and recovery output stay in the main checkout.
+MAIN_CHECKOUT = $(shell git rev-parse --path-format=absolute --git-common-dir)/..
 worktree:
-	ln -sfn "$(MAIN_CHECKOUT)/roms" roms
-	mkdir -p tools/out && for d in binutils compiler-runtime compilers; do ln -sfn "$(MAIN_CHECKOUT)/tools/out/$$d" tools/out/$$d; done
-	cp -c -R "$(MAIN_CHECKOUT)/tools/out/cargo-target" tools/out/ && cp -c -R "$(MAIN_CHECKOUT)/out" .
+	bun "$(TOOLS)/alchemy/worktree.ts" "$(MAIN_CHECKOUT)"
 
 toolchain-check:
 	$(ALCHEMY) bootstrap --check

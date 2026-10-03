@@ -18,7 +18,7 @@ static __inline__ void bump_step(void)
     work->message = (u16)(work->message + 1);
 }
 
-s16 CalculateFacingAngle(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
 struct FieldActor *GetActorState(s32 actor_id);
@@ -335,7 +335,7 @@ void FieldScene_RunActorNineFlagDialogueA(void)
 {
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x855) != 0) {
+    if (Engine_GameFlagIsSet(0x855) != 0) {
         Engine_EventSetMessage((s32)MsgShindenWhenStrayFromYourWorldly);
     } else {
         Engine_EventSetMessage((s32)MsgShindenHealerMustWorriedAboutNever);
@@ -348,7 +348,7 @@ void FieldScene_RunActorNineFlagDialogueA(void)
     Engine_ActorSetAnimation(9, 1);
     Engine_ActorFaceEachOther(9, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(2);
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     Engine_EventEnd();
 }
 
@@ -358,7 +358,7 @@ void FieldScene_RunActorNineFlagDialogueB(void)
 
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x855) == 0) {
+    if (Engine_GameFlagIsSet(0x855) == 0) {
         Engine_EventSetMessage((s32)MsgShindenWonderIfEverSeeOur);
     } else {
         Engine_EventSetMessage((s32)MsgShindenChildHasAwakenedOurTeachings);
@@ -371,7 +371,7 @@ void FieldScene_RunActorNineFlagDialogueB(void)
     Engine_ActorStop(9);
     Engine_ActorSetAnimation(9, 1);
     Engine_EventWait(2);
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
     Engine_ActorEnableActionCallback(9, 2);
     Engine_EventEnd();
 }
@@ -380,48 +380,48 @@ void FieldScene_RunSupplementalSequenceOne(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShindenAreYouSure);
-    Event_OpenMessage(8, 0);
+    Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorSetAnimationAndWait(8, 3);
         Engine_EventWait(20);
     } else {
         Engine_EventWait(20);
-        Event_OpenMessage(8, 0);
+        Engine_EventOpenMessage(8, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             Engine_EventWait(20);
-            Event_OpenMessage(8, 0);
+            Engine_EventOpenMessage(8, 0);
             if (Engine_EventChooseYesNo(0, 0) == 0) {
                 Engine_EventWait(20);
                 if (((struct FacingObject *)Object_GetById(8))->facing >= 0xa000 && ((struct FacingObject *)Object_GetById(8))->facing <= 0xe000) {
                     Call3(Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
-                    Actor_FaceDirection(8, 0, 0);
+                    Engine_ActorFaceDirection(8, 0, 0);
                     Engine_EventWait(10);
                     ((struct FacingObject *)Object_GetById(8))->facing_flags &= ~1;
-                    Actor_WalkToAndWait(8, 152, 120);
+                    Engine_ActorWalkToAndWait(8, 152, 120);
                     Engine_EventWait(1);
                     ((struct FacingObject *)Object_GetById(8))->facing_flags |= 1;
                     Engine_EventWait(20);
                     Engine_ActorSetAnimationAndWait(8, 3);
                     Engine_EventWait(20);
-                    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 120);
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
+                    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 168, 120);
+                    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 192, 168);
                     Engine_EventWait(20);
-                    Actor_WalkToAndWait(8, 168, 120);
+                    Engine_ActorWalkToAndWait(8, 168, 120);
                     Engine_ActorFaceDirection(8, 0x3000, 0);
                     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
                 } else {
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
+                    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 192, 168);
                     Engine_EventWait(20);
                     Engine_ActorFaceDirection(8, 0x3000, 0);
                     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
                 }
                 FieldScene_RunActorUpdateSequence();
-                ColorBuffer_ApplyTarget(0, 0);
+                Engine_ColorBufferApplyTarget(0, 0);
                 Engine_ColorBufferInterpolate(120);
                 Engine_EventWait(120);
-                Audio_PlayCue(86);
+                Engine_AudioPlayCue(86);
                 AudioCommand_WaitForCompletion();
-                GameFlag_Set(0x9f0);
+                Engine_GameFlagSet(0x9f0);
                 Engine_EventRequestExit(30);
             }
         }
@@ -442,9 +442,9 @@ void FieldScene_RunScene378SequenceB(void)
     Engine_TaskWait(1);
 #endif
     Engine_EventSetMessage((s32)MsgShindenRobinYourNewFriendsAdepts);
-    Event_OpenMessage(9, 0);
+    Engine_EventOpenMessage(9, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Event_ShowMessage(9, 0);
+        Engine_EventShowMessage(9, 0);
     } else {
         bump_step();
 #if EDITION_INTERNATIONAL
@@ -452,7 +452,7 @@ void FieldScene_RunScene378SequenceB(void)
 #else
         Call11(Engine_EventShowTwoMessagesAndWait, 1, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
 #endif
-        Event_ShowMessage(9, 0);
+        Engine_EventShowMessage(9, 0);
     }
     Engine_EventEnd();
 }
@@ -461,16 +461,16 @@ void FieldScene_RunActorTenCountStep(void)
 {
 
     Engine_EventBegin();
-    Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(10, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgShindenDoFeelAnyChangeIn);
-    Event_OpenMessage(10, 0);
+    Engine_EventOpenMessage(10, 0);
 
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         (gEventWork->message)++;
     }
 
-    Event_ShowMessage(10, 0);
+    Engine_EventShowMessage(10, 0);
     Engine_EventEnd();
 }
 
@@ -593,17 +593,17 @@ s32 ShindenHeya_ApplyEntryState(void)
 void FieldScene_RunActorEightResetSequence(void)
 {
     Engine_EventBegin();
-    Camera_SetSpeed(0x10000, 0x2000);
+    Engine_CameraSetSpeed(0x10000, 0x2000);
     Engine_CameraMoveToActor(1, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(20);
-    Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(8, 4);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgShindenOnceStepOutsideVillageCannot);
-    Event_ShowMessage(8, 0);
-    GameFlag_Set(0x200);
+    Engine_EventShowMessage(8, 0);
+    Engine_GameFlagSet(0x200);
     Engine_EventEnd();
 }
 
@@ -1790,7 +1790,7 @@ void SceneState_ResetObject14Word108(void)
 {
     u8 *state = (u8 *)Object_GetById(14);
     *(s32 *)(state + 108) = 0;
-    Actor_SetPosition(14, 0, 0);
+    Engine_ActorSetPosition(14, 0, 0);
 }
 
 void ShindenHeya_FollowLeaderOffset(u8 *obj)

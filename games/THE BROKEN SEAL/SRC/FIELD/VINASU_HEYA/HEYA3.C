@@ -59,8 +59,8 @@ void FieldScene_DrawTilesWhenCheckClear(void)
 
     Engine_EventBegin();
     if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
-        { s32 k5 = 5, k6 = 48; Map_CopyCellAttributes(69, 48, 4, 2, k5, k6); }
-        { s32 j5 = 9, j6 = 37; Map_CopyCellAttributes(73, 37, 9, 13, j5, j6); }
+        { s32 k5 = 5, k6 = 48; Engine_MapCopyCellAttributes(69, 48, 4, 2, k5, k6); }
+        { s32 j5 = 9, j6 = 37; Engine_MapCopyCellAttributes(73, 37, 9, 13, j5, j6); }
         RunStagedActorTransition();
     }
     Engine_EventEnd();
@@ -113,7 +113,7 @@ void SceneActor_ClearActorModeAndSetState5(s32 no)
     u8 *p;
     s32 mask;
 
-    p = Actor_Get(no);
+    p = Object_GetById(no);
     p[0x55] = 0;
     mask = 252;
     mask &= p[0x59];
@@ -134,7 +134,7 @@ void SceneState_ApplyStepToSlots15To18(void)
 
     i = 15;
     do {
-        Actor_Get(i);
+        Object_GetById(i);
         i++;
     } while (i <= 18);
 }

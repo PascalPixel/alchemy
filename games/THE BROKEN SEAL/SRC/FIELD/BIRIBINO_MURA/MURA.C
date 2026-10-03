@@ -195,7 +195,7 @@ void SceneDialogue_RunActorTwelveDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoDidSeeTreeAtEntrance);
-    Event_AskYesNo(12, 0);
+    Engine_EventAskYesNo(12, 0);
     Engine_EventEnd();
 }
 
@@ -203,7 +203,7 @@ void SceneDialogue_RunActorFourteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoHaveTriedHeadingSoutheastFrom);
-    Event_AskYesNo(14, 0);
+    Engine_EventAskYesNo(14, 0);
     Engine_EventEnd();
 }
 
@@ -211,7 +211,7 @@ void SceneDialogue_ShowLine16BF(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoWasTurnedIntoTreeFor);
-    Event_AskYesNo(21, 0);
+    Engine_EventAskYesNo(21, 0);
     Engine_EventEnd();
 }
 
@@ -219,7 +219,7 @@ void SceneDialogue_RunActorSixteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoCurseWasBrokenThanksEfforts);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
@@ -227,7 +227,7 @@ void SceneDialogue_ShowLine16CC(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoHaveEverBeenVillageImil);
-    Event_AskYesNo(18, 0);
+    Engine_EventAskYesNo(18, 0);
     Engine_EventEnd();
 }
 
@@ -649,7 +649,7 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
      * 16 takes the fixed-point coordinate to pixels, the further 4 take it
      * to the 16-pixel tile grid.
      */
-    actor = Actor_Get(8);
+    actor = Object_GetById(8);
     tx = *(s32 *)(actor + 0x08) >> 20;
     tz = *(s32 *)(actor + 0x10) >> 20;
 
@@ -661,14 +661,14 @@ void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
     for (i = 0; i < 20; i += 2) {
         s32 x = (s32)Mura_RepaintCells[i];
         s32 z = (s32)Mura_RepaintCells[i + 1];
-        Map_CopyCellAttributes(1, 0, 1, 1, x, z);
+        Engine_MapCopyCellAttributes(1, 0, 1, 1, x, z);
     }
 
     /*
      * The same repaint with 0 rather than 1 in the first argument.  What
      * that selector chooses is not established.
      */
-    Map_CopyCellAttributes(0, 0, 1, 1, tx, tz);
+    Engine_MapCopyCellAttributes(0, 0, 1, 1, tx, tz);
 }
 
 void FieldScene_RunScene38b_02000d10(void)
@@ -683,12 +683,12 @@ void FieldScene_RunScene38b_02000d10(void)
     FieldScene_DrawTilesByActor8Row();
     record = ReadU16Elem((u16 *)&gGameState, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
-        if (GameFlag_IsSet(0x109) == 0) {
+        if (Engine_GameFlagIsSet(0x109) == 0) {
             rec7 = Object_GetById(ACTOR_PARTY_LEADER);
             Engine_EventBegin();
             arg0 = *(s32 *)(rec7 + 8);
             *(s32 *)(rec7 + 12) = 0x100000;
-            Camera_MoveTo(arg0, 0x100000, *(s32 *)(rec7 + 16), 0);
+            Engine_CameraMoveTo(arg0, 0x100000, *(s32 *)(rec7 + 16), 0);
             Engine_MapRedraw();
             Engine_EventEnd();
             Engine_TaskWait(1);
@@ -803,7 +803,7 @@ void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor)
         return;
 
     sprite = effect->sprite;
-    Object_SetScript(effect, Mura_SpawnScript);
+    Engine_ObjectSetScript(effect, Mura_SpawnScript);
     effect->motion_flags = 0;
     effect->unknown_22 = 1;
     effect->priority_flags = 2;

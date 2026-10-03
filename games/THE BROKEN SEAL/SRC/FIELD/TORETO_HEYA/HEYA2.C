@@ -528,24 +528,24 @@ void FieldScene_RunFourActorEncounter(void)
 
 void SceneState_ApplyRectsByFlag844(s32 flag)
 {
-    if (flag != 0 && GameFlag_IsSet(0x109) == 0)
+    if (flag != 0 && Engine_GameFlagIsSet(0x109) == 0)
         FieldScene_RunFourActorEncounter();
 
     Engine_TaskWait(1);
-    if (GameFlag_IsSet(0x844) != 0) {
+    if (Engine_GameFlagIsSet(0x844) != 0) {
         s32 w1 = 10;
-        Map_CopyCells(121, 34, 3, 1, 93, w1);
+        Engine_MapCopyCells(121, 34, 3, 1, 93, w1);
         {
             s32 w2 = 30;
-            Map_CopyCells(46, 38, 1, 1, w2, 43);
-            Map_CopyCellAttributes(0, 0, 1, 2, w2, 9);
+            Engine_MapCopyCells(46, 38, 1, 1, w2, 43);
+            Engine_MapCopyCellAttributes(0, 0, 1, 2, w2, 9);
         }
-        Map_CopyCellAttributes(26, 3, 1, 2, w1, 8);
-        Map_CopyCells(26, 35, 1, 4, w1, 40);
+        Engine_MapCopyCellAttributes(26, 3, 1, 2, w1, 8);
+        Engine_MapCopyCells(26, 35, 1, 4, w1, 40);
     } else {
         s32 w1 = 10;
         s32 w2 = 8;
-        Map_CopyCellAttributes(11, 8, 1, 2, w1, w2);
+        Engine_MapCopyCellAttributes(11, 8, 1, 2, w1, w2);
     }
 }
 

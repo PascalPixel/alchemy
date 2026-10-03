@@ -11,7 +11,7 @@ void OverlayObject_SetRecordField1(struct FieldActor *actor, u32 value)
 /* Create a scene object with sprite priority zero. */
 void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 {
-    struct FieldActor *ret = Object_Create(kind, x, y, z);
+    struct FieldActor *ret = Engine_ObjectCreate(kind, x, y, z);
 
     if (ret != NULL) {
         struct FieldSprite *obj = ret->sprite;

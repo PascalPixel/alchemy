@@ -89,7 +89,7 @@ s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
 
     if (actor->vertical_motion_direction != 0) {
         descending_y = (actor->y
-            - ((u32)(Random_Next() << 0xF) >> 0x10)) + 0xFFFF8000;
+            - ((u32)(Engine_RandomNext() << 0xF) >> 0x10)) + 0xFFFF8000;
         actor->y = descending_y;
         if (descending_y < 0) {
             vertical_motion_direction = 0;
@@ -97,7 +97,7 @@ s32 UpdateStagedActorVerticalPosition(struct StagedActor *actor)
         }
     } else {
         ascending_y = actor->y
-            + ((u32)(Random_Next() << 0xF) >> 0x10) + 0x8000;
+            + ((u32)(Engine_RandomNext() << 0xF) >> 0x10) + 0x8000;
         actor->y = ascending_y;
         if (ascending_y > 0x80000) {
             vertical_motion_direction = 1;

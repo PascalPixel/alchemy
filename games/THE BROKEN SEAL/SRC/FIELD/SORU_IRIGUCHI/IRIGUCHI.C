@@ -175,11 +175,11 @@ void SceneDialogue_RunFlag81aMessageBranch(void)
 
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x81a) != 0) {
+    if (Engine_GameFlagIsSet(0x81a) != 0) {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
     } else {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
-        if (GameFlag_IsSet(0xf01) != 0) {
+        if (Engine_GameFlagIsSet(0xf01) != 0) {
             u16 *p = (u16 *)(gWork + 370);
             u16 val = 1;
             *p = val;
@@ -243,9 +243,9 @@ void FieldScene_RunFlag821Dialogue(void)
 
     Engine_EventBegin();
 
-    if (GameFlag_IsSet(0x821) != 0) {
+    if (Engine_GameFlagIsSet(0x821) != 0) {
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefBothEyes, 1);
-    } else if (GameFlag_IsSet(0xf02) != 0) {
+    } else if (Engine_GameFlagIsSet(0xf02) != 0) {
         work = gWork;
         Engine_MessageShowCentered((s32)MsgSoruMinotaurReliefOneEye, 1);
         {

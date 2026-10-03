@@ -42,7 +42,7 @@ void SceneActor_WaitActorDescent(u8 *obj)
 /* Point an object toward actor zero using their fixed-point X/Z delta. */
 s32 SceneActor_FaceActorZero(u8 *obj)
 {
-    u8 *target = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *target = Object_GetById(ACTOR_PARTY_LEADER);
     s32 dz = *(s32 *)(target + 16) - *(s32 *)(obj + 16);
     s32 dx = *(s32 *)(target + 8) - *(s32 *)(obj + 8);
 
@@ -98,13 +98,13 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 
 void FieldScene_ConfigureRegionAtRow15(void)
 {
-    Map_CopyCells(16, 15, 1, 1, 15, 15);
+    Engine_MapCopyCells(16, 15, 1, 1, 15, 15);
 }
 
 /* Configure the matching 16x15 scene rectangle at row 17. */
 void FieldScene_ConfigureRegionAtRow17(void)
 {
-    Map_CopyCells(16, 17, 1, 1, 15, 15);
+    Engine_MapCopyCells(16, 17, 1, 1, 15, 15);
 }
 
 /* When the pillar (actor 9) stands in column 23, steps the leader aside and
@@ -132,7 +132,7 @@ void HaidiaDou_SinkPillarColumn23(void)
         o->start_scale_x = 0x9999;
         o->start_scale_y = 0x9999;
         o->palette = 7;
-        Audio_PlayCue(216);
+        Engine_AudioPlayCue(216);
         for (i = 0; i < 68; i++) {
             s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1700000;
             s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2700000;
@@ -175,7 +175,7 @@ void HaidiaDou_SinkPillarColumn27(void)
         o->start_scale_x = 0x9999;
         o->start_scale_y = 0x9999;
         o->palette = 7;
-        Audio_PlayCue(216);
+        Engine_AudioPlayCue(216);
         for (i = 0; i < 68; i++) {
             s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1b00000;
             s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2900000;
@@ -230,7 +230,7 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
         Engine_EventBegin();
         Object_SetMode((s32)rec, 6);
         WaitFrames(6);
-        Audio_PlayCue(152);
+        Engine_AudioPlayCue(152);
         Object_SetMode((s32)rec, 7);
         *(s32 *)(rec + 48) = 0x30000;
         *(s32 *)(rec + 52) = 0x20000;
@@ -316,7 +316,7 @@ void FieldScene_RunScene3a6SequenceC(void)
     struct EventWork *p5;
 
     p5 = gEventWork;
-    if (GameFlag_IsSet(0x302) != 0) {
+    if (Engine_GameFlagIsSet(0x302) != 0) {
         off24a = 0x24a;
         if (*(s16 *)((s32)&gGameState + off24a) != 8) {
             idx = p5->touched_trigger;
@@ -330,7 +330,7 @@ void FieldScene_RunScene3a6SequenceC(void)
             tbl = (s32)HaidiaDou_WalkTargets;
             idx <<= 3;
             idx4 = idx + 4;
-            Actor_WalkTo(8, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
+            Engine_ActorWalkTo(8, *(s32 *)(tbl + idx), *(s32 *)(tbl + idx4));
         }
     }
 }

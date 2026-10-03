@@ -27,7 +27,7 @@ void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
 u8 *OverlayObject_SpawnConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *result;
-    u8 *object = Object_Create(kind, x, y, z);
+    u8 *object = Engine_ObjectCreate(kind, x, y, z);
 
     if (object != 0) {
         u8 *owner = *(u8 **)(object + 80);
@@ -54,7 +54,7 @@ u8 *OverlayObject_SpawnConfiguredObject(s32 x, s32 y, s32 z, s32 kind)
 u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
 {
     u8 *result;
-    u8 *object = Object_Create(kind, x, y, z);
+    u8 *object = Engine_ObjectCreate(kind, x, y, z);
 
     if (object != 0) {
         u8 *owner = *(u8 **)(object + 80);

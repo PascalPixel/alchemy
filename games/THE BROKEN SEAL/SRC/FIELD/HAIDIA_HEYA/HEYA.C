@@ -74,7 +74,7 @@ int SceneData_ReturnZero(void)
 
 void *SceneData_SelectTable9568ByFlag(void)
 {
-    if (GameFlag_IsSet(0x834) != 0)
+    if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateExits;
     return gValeHouseExits;
 }
@@ -83,9 +83,9 @@ void *SceneData_SelectFlaggedTable(void)
 {
     void *tbl;
 
-    if (GameFlag_IsSet(0x87a)) {
+    if (Engine_GameFlagIsSet(0x87a)) {
         tbl = gValeHouseReturnPlacements;
-    } else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE)) {
+    } else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE)) {
         tbl = gValeHousePlacementsAfterLeaving;
     } else {
         tbl = gValeHousePlacements;
@@ -96,11 +96,11 @@ void *SceneData_SelectFlaggedTable(void)
 
 void *SceneData_SelectTable9c00ByFlags(void)
 {
-    if (GameFlag_IsSet(0x834) != 0)
+    if (Engine_GameFlagIsSet(0x834) != 0)
         return gValeHouseLateEvents;
-    if (GameFlag_IsSet(0x87a) != 0)
+    if (Engine_GameFlagIsSet(0x87a) != 0)
         return gValeHouseReturnEvents;
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
         return gValeHouseEventsAfterLeaving;
     return gValeHouseEvents;
 }
@@ -111,7 +111,7 @@ void Villager_AskWhySukuretaCame(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaSukuretaCameToStudyMt);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
-    Event_AskYesNo(15, 0);
+    Engine_EventAskYesNo(15, 0);
     Engine_EventEnd();
 }
 
@@ -121,7 +121,7 @@ void Villager_PlanToScareVisitors(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaLetsScareSukuretasVisitors);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
-    Event_AskYesNo(19, 0);
+    Engine_EventAskYesNo(19, 0);
     Engine_EventEnd();
 }
 
@@ -152,7 +152,7 @@ void Villager_AskAboutStrangePowers(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaTheCulpritsHadStrangePowers);
-    Event_AskYesNo(16, 0);
+    Engine_EventAskYesNo(16, 0);
     Engine_EventEnd();
 }
 
@@ -161,7 +161,7 @@ void Villager_AskAboutDora(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaDidYouHearAboutDora);
-    Event_AskYesNo(10, 0);
+    Engine_EventAskYesNo(10, 0);
     Engine_EventEnd();
 }
 
@@ -170,15 +170,15 @@ void HaidiaHeya_TalkHopeDidntGetSick(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaHopeDidntGet);
-    Event_ShowMessage(0x800b, 0);
+    Engine_EventShowMessage(0x800b, 0);
     Engine_EventEnd();
 }
 
 void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 {
-    if (GameFlag_IsSet(0x834) != 0)
+    if (Engine_GameFlagIsSet(0x834) != 0)
         BattleFx_SetBlock30ValuesMaxZero();
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     gEventWork->transition_frames = 16;
     Engine_EventCloseScreen();
@@ -235,22 +235,22 @@ s32 Scene_RunSupplementalSequenceOne(void)
     u8 **scene = (u8 **)&gWork;
 
     *(s32 *)(scene[0] + 0x1c0) = 0x209;
-    if (GameFlag_IsSet(0x834) != 0) {
-        Actor_SetPosition(8, 0, 0);
-        Actor_SetPosition(9, 0, 0);
-        Actor_SetPosition(10, 0, 0);
-        Actor_SetPosition(11, 0, 0);
-        Actor_SetPosition(12, 0, 0);
-        Actor_SetPosition(13, 0, 0);
-        Actor_SetPosition(14, 0, 0);
-        Actor_SetPosition(15, 0, 0);
+    if (Engine_GameFlagIsSet(0x834) != 0) {
+        Engine_ActorSetPosition(8, 0, 0);
+        Engine_ActorSetPosition(9, 0, 0);
+        Engine_ActorSetPosition(10, 0, 0);
+        Engine_ActorSetPosition(11, 0, 0);
+        Engine_ActorSetPosition(12, 0, 0);
+        Engine_ActorSetPosition(13, 0, 0);
+        Engine_ActorSetPosition(14, 0, 0);
+        Engine_ActorSetPosition(15, 0, 0);
         Engine_ActorSetPosition(16, 0, 0);
-        Actor_SetPosition(17, 0, 0);
-        Actor_SetPosition(18, 0, 0);
-        Actor_SetPosition(19, 0, 0);
-        Actor_SetPosition(20, 0, 0);
-        Actor_SetPosition(21, 0, 0);
-        Actor_SetPosition(22, 0, 0);
+        Engine_ActorSetPosition(17, 0, 0);
+        Engine_ActorSetPosition(18, 0, 0);
+        Engine_ActorSetPosition(19, 0, 0);
+        Engine_ActorSetPosition(20, 0, 0);
+        Engine_ActorSetPosition(21, 0, 0);
+        Engine_ActorSetPosition(22, 0, 0);
         BattleFx_StartTwelveFrameBlend();
         ((struct FieldBlendWork *)scene[3])->loud = 1;
         BattleFx_SetBlock30Values12Zero();
@@ -259,18 +259,18 @@ s32 Scene_RunSupplementalSequenceOne(void)
         Engine_EventWaitForScreen();
         BattleFx_SetBlock30Values128One();
     }
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         if (gGameState.entrance == 6) {
-            if (GameFlag_IsSet(0x81d) == 0) {
+            if (Engine_GameFlagIsSet(0x81d) == 0) {
                 FieldScene_RunLongPresentationSequence();
             }
         }
-        Actor_Get(10)->collision_flags |= 0x80;
+        Object_GetById(10)->collision_flags |= 0x80;
     }
     if (gGameState.entrance == 2) {
-        if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-            Actor_SetPosition(13, 0x1c60000, 0x960000);
-            record = Actor_Get(13);
+        if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+            Engine_ActorSetPosition(13, 0x1c60000, 0x960000);
+            record = Object_GetById(13);
             Engine_ActorSetSpriteFlags((s32)record, 0);
             Engine_ActorSetAnimation(13, 5);
             Map_ClearLayerEntryFlag(4);
@@ -285,7 +285,7 @@ void FieldScene_RunByActorDirectionAndFlags(void)
     u8 *p;
     u32 dir;
 
-    p = Actor_Get(ACTOR_PARTY_LEADER);
+    p = Object_GetById(ACTOR_PARTY_LEADER);
     dir = *(u16 *)(p + 6);
     dir += 0xffff5fff;
 
@@ -295,16 +295,16 @@ void FieldScene_RunByActorDirectionAndFlags(void)
     }
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(0x87a) != 0) {
         Engine_EventSetMessage((s32)MsgHaidiaYouCameBack);
-        Event_AskYesNo(21, 0);
+        Engine_EventAskYesNo(21, 0);
     } else {
-        if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
             Engine_EventSetMessage((s32)MsgHaidiaValeFeelsEmpty);
         } else {
             Engine_EventSetMessage((s32)MsgHaidiaGoodWeaponsDrawOutStrength);
         }
-        Event_ShowMessage(21, 0);
+        Engine_EventShowMessage(21, 0);
     }
     Engine_EventEnd();
 }
@@ -313,21 +313,21 @@ void FieldScene_RunScene376_0200055c(void)
 {
     struct FieldActor *actor;
 
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     if ((u32)(actor->facing - 0xa001) <= 0x3ffe) {
         Engine_ShopOpen(2, 22);
     } else {
         Engine_EventBegin();
-        if (GameFlag_IsSet(0x87a) != 0) {
+        if (Engine_GameFlagIsSet(0x87a) != 0) {
             Engine_EventSetMessage((s32)MsgHaidiaTheRumorWasTrue);
         } else {
-            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+            if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
                 Engine_EventSetMessage((s32)MsgHaidiaImNotSadJustGo);
             } else {
                 Engine_EventSetMessage((s32)MsgHaidiaGoodArmorDrawsOutStrength);
             }
         }
-        Event_ShowMessage(22, 0);
+        Engine_EventShowMessage(22, 0);
         Engine_EventEnd();
     }
 }
@@ -336,22 +336,22 @@ void FieldScene_RunScene376_020005d4(void)
 {
     struct FieldActor *actor;
 
-    actor = Actor_Get(ACTOR_PARTY_LEADER);
+    actor = Object_GetById(ACTOR_PARTY_LEADER);
     if ((u32)(actor->facing - 0xa001) <= 0x3ffe) {
         Engine_ShopOpen(3, 20);
     } else {
-        if (GameFlag_IsSet(0x87a) != 0) {
+        if (Engine_GameFlagIsSet(0x87a) != 0) {
             Engine_EventBegin();
             Engine_EventSetMessage((s32)MsgHaidiaWhenDidYouComeBack);
-            Event_ShowMessage(20, 0);
+            Engine_EventShowMessage(20, 0);
             Engine_EventEnd();
         } else {
-            if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+            if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
                 Scene_GiveFarewellHerb();
             } else {
                 Engine_EventBegin();
                 Engine_EventSetMessage((s32)MsgHaidiaAWiseManFleesWhen);
-                Event_ShowMessage(20, 0);
+                Engine_EventShowMessage(20, 0);
                 Engine_EventEnd();
             }
         }
@@ -665,13 +665,13 @@ void Scene_UpdateTimedActor(void)
     default:
         return;
     }
-    actor = Actor_Get(no);
+    actor = Object_GetById(no);
     if (actor == NULL) {
         return;
     }
-    other = Actor_Get(8);
+    other = Object_GetById(8);
     if (other != NULL) {
-        Actor_SetPosition(no, other[2], other[4]);
+        Engine_ActorSetPosition(no, other[2], other[4]);
     }
     actor->words[6] = 0x6666;
     actor->words[7] = 0x6666;

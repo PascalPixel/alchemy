@@ -148,7 +148,7 @@ void Inventory_EquipFar(s32 member, s32 slot);
  */
 void FieldScene_RequestAndWaitFrames(s32 selector, s32 frames)
 {
-    Event_ShowMessage(selector, 0);
+    Engine_EventShowMessage(selector, 0);
     Engine_EventWait(frames);
 }
 
@@ -202,11 +202,11 @@ void FieldScene_RunScene387SequenceC(void)
     tile_x = actor->x.fixed / 0x100000;
     if (tile_x == 23) {
         Engine_EventWait(10);
-        Actor_Get(10)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
-        Actor_Get(10)->motion_flags = 0;
-        Engine_ActorSetSpriteFlags(Actor_Get(10), 0);
-        Map_CopyCellAttributes(54, 17, 1, 1, tile_x, 17);
-        GameFlag_Set(0x863);
+        Object_GetById(10)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        Object_GetById(10)->motion_flags = 0;
+        Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
+        Engine_MapCopyCellAttributes(54, 17, 1, 1, tile_x, 17);
+        Engine_GameFlagSet(0x863);
     }
 }
 
@@ -245,7 +245,7 @@ void Resource387_NoOpCallbackB(void)
 void FieldScene_RunStepWithValue866(void)
 {
     Engine_EventBegin();
-    GameFlag_Set(0x866);
+    Engine_GameFlagSet(0x866);
     Engine_EventEnd();
 }
 
@@ -522,12 +522,12 @@ void Overlay387_ConfigureActorEightAtDepth(void)
     depth = ((struct OverlayActorPosition *)Object_GetById(8))->depth_fixed >> 20;
     if (depth == 11) {
         GomaIriguchi_RunSpinningLeap(8);
-        state = Actor_Get(8);
+        state = Object_GetById(8);
         state->flags |= 2;
         span = 12;
-        Map_CopyCellAttributes(39, 12, 3, 1, 8, span);
-        Map_CopyCellAttributes(43, 11, 3, 1, span, depth);
-        GameFlag_Set(2144);
+        Engine_MapCopyCellAttributes(39, 12, 3, 1, 8, span);
+        Engine_MapCopyCellAttributes(43, 11, 3, 1, span, depth);
+        Engine_GameFlagSet(2144);
     }
     Engine_EventEnd();
 }

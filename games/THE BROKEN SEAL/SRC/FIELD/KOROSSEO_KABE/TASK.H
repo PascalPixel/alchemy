@@ -169,7 +169,7 @@ void Korosseo_FinishSoloRound();
 s32 KorosseoKabe_RunStateInteraction();
 void KorosseoKabe_ShowFollowUpPrompt();
 void Korosseo_LoadPortrait();
-s32 Korosseo_FadeInCompetitor();
+void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 void Korosseo_RestoreCompetitor();
 void Korosseo_UpdatePathRival(void);
 void Korosseo_UpdateModeTask(void);
@@ -246,12 +246,12 @@ s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 #endif

@@ -8,7 +8,7 @@ void SetEffectRecordMode(struct FieldActor *work, s32 mode)
 
 void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 {
-    struct FieldActor *effect = Object_Create(kind, x, y, z);
+    struct FieldActor *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         struct FieldSprite *sprite = effect->sprite;
@@ -26,7 +26,7 @@ void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
 
 void *SceneEffect_SpawnSecondary(s32 x, s32 y, s32 z, s32 kind)
 {
-    struct FieldActor *effect = Object_Create(kind, x, y, z);
+    struct FieldActor *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         struct FieldSprite *sprite = effect->sprite;

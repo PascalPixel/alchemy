@@ -23,7 +23,7 @@ static __inline__ void bump_step(void)
     work->message = (u16)(work->message + 1);
 }
 
-s16 CalculateFacingAngle(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
 struct FieldActor *GetActorState(s32 actor_id);
@@ -72,13 +72,7 @@ extern const s32 ShindenHeya_SparkEndScript[];
 
 s32 Engine_RandomNext();
 s32 Math_RemainderUnsigned();
-void ShindenHeya_UpdateRisingSpark();
-
-/* A zero kept in a one-halfword struct, so it is a HImode value the compiler
- * holds in a high register and reloads from the pool. */
-struct Half {
-    u16 v;
-};
+void ShindenHeya_UpdateRisingSpark(union FieldObject *object);
 
 extern s16 Data_02000240[];
 extern u8 MsgShindenAmStartingFeelOnlyBeginning[];
@@ -185,16 +179,16 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(15);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Engine_ActorStartRepeatedMotion(0, 1); /* object 0, variant 1 */
-    ((struct FacingObject *(*)())Object_GetById)(0)->facing_flags &= ~1;
+    ((struct FacingObject *)Object_GetById(0))->facing_flags &= ~1;
     Actor_WalkTo(ACTOR_PARTY_LEADER, 184, 168);
-    ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags &= ~1;
+    ((struct FacingObject *)Object_GetById(1))->facing_flags &= ~1;
     Engine_ActorWalkToAndWait(1, 200, 168);
     Engine_EventWait(1);
-    ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags |= 1;
+    ((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    ((struct FacingObject *(*)())Object_GetById)(0)->facing_flags |= 1;
-    ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags |= 1;
+    ((struct FacingObject *)Object_GetById(0))->facing_flags |= 1;
+    ((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
     Engine_ActorJump(ACTOR_GERALD, 2, 0);
     Engine_EventWait(15);
     Actor_FaceActor(ACTOR_GERALD, 8, 0);
@@ -236,7 +230,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(15);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2); /* main:0808a138 */
     Engine_EventWait(10);
-    ((s32 (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
+    /* This scene supplies position words beyond the icon's named item argument. */
+    ((void (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
@@ -273,10 +268,13 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(10);
+    /* The engine ignores the facing callback's integer result. */
     Object_GetById(8)->unknown_64 = 1;
-    *(s32 *)((u8 *)Object_GetById(8) + 108) = (s32)UpdateFacingFromResolvedObject;
+    Object_GetById(8)->update =
+        (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
     Object_GetById(12)->unknown_64 = 1;
-    *(s32 *)((u8 *)Object_GetById(12) + 108) = (s32)UpdateFacingFromResolvedObject;
+    Object_GetById(12)->update =
+        (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
     Engine_ActorWalkToAndWait(1, 196, 180);
     Actor_WalkToAndWait(ACTOR_GERALD, 184, 184);
     Actor_WalkToAndWait(ACTOR_GERALD, 180, 180);
@@ -291,8 +289,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(10);
     Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
     Engine_EventWait(15);
-    *(s32 *)((u8 *)Object_GetById(12) + 108) = 0;
-    *(s32 *)((u8 *)Object_GetById(8) + 108) = 0;
+    Object_GetById(12)->update = NULL;
+    Object_GetById(8)->update = NULL;
     Engine_ActorStartRepeatedMotion(8, 2);
     Engine_ActorShowEmote(8, 0x100, 0);
     Engine_EventWait(60); /* main:0808a080 */
@@ -403,11 +401,11 @@ void ShindenHeya_RaiseItemIcon(s32 item)
 {
     struct FieldActor *obj;
     struct FieldSprite *spr;
-    s32 buf;
+    u8 *buf;
+    u32 i;
     s32 zero;
     s32 z;
     u8 *flag;
-    u32 i;
 
     obj = ((struct FieldActor *(*)())Engine_ObjectCreate)(22);
     zero = 0;
@@ -420,13 +418,13 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         spr->palette = 0;
         obj->velocity_y = 0x20000;
         ((struct FieldEffect *)obj)->velocity_y = 0x4000;
-        buf = (s32)Runtime_AllocateHeapBlock(17, 0x608);
+        buf = Runtime_AllocateHeapBlock(17, 0x608);
         Ui_PrepareTransferForItem(item);
         VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);
-        /* FAKEMATCH: the stored zero is a variable set after the flag
-         * address, so it copies the counter's zero after that address. */
-        for (i = 0, flag = &obj->motion_flags, z = 0; i <= 59; i++) {
+        /* FAKEMATCH: retain the existing flag-address/counter-zero order;
+           the ordinary loop puts the initial sprite zero in r3 instead of r5. */
+        for (i = 0, flag = &obj->motion_flags, z = 0; i < 60; i++) {
             if ((u32)(obj->velocity_y + 255) <= 0x1fe)
                 *flag = z;
             WaitFrames(1);
@@ -441,8 +439,9 @@ void ShindenHeya_RaiseItemIcon(s32 item)
  * its timer runs out and its script deletes it. The spark's speed and
  * timer are the halfwords its spawner sets at 0x64 and 0x66.
  */
-void ShindenHeya_UpdateRisingSpark(struct FieldActor *spark)
+void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
 {
+    struct FieldActor *spark = &object->actor;
     s32 scale;
     s32 timer;
 
@@ -479,7 +478,6 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     struct FieldSprite *spr;
     s32 x;
     s32 r;
-    struct Half zero;
 
     actor = Object_GetById(id);
     if (actor == 0)
@@ -494,11 +492,9 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     spr = obj->sprite;
     obj->motion_flags = 0;
     obj->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
-    /* FAKEMATCH: the spark frame zero held in a halfword struct. */
-    zero.v = 0;
     obj->unknown_66 = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
-    obj->update = (void (*)(union FieldObject *))ShindenHeya_UpdateRisingSpark;
-    spr->flags = zero.v;
+    obj->update = ShindenHeya_UpdateRisingSpark;
+    spr->flags = 0;
     spr->priority = actor->sprite->priority;
 }
 
@@ -583,12 +579,12 @@ void ShindenHeya_SpawnActorSpark(s32 id)
 void SceneState_ApplyTwoRects(void)
 {
     {
-        s32 a5 = 3, a6 = 2;
-        Map_CopyCellsTo(0, 64, 11, 68, a5, a6);
+        s32 width = 3, height = 2;
+        Map_CopyCellsTo(0, 64, 11, 68, width, height);
     }
     {
-        s32 a5 = 11, a6 = 8;
-        Map_CopyCellAttributes(11, 10, 3, 2, a5, a6);
+        s32 x = 11, y = 8;
+        Map_CopyCellAttributes(11, 10, 3, 2, x, y);
     }
     Engine_TaskWait(1);
 }
@@ -623,7 +619,6 @@ void FieldScene_RunActorEightFacingDialogue(void)
 
 void FieldScene_DispatchBySceneId(void)
 {
-    s16 *tbl;
     s32 no;
 
     if (IsActorFacingInward() != 0) {
@@ -633,8 +628,7 @@ void FieldScene_DispatchBySceneId(void)
 
     Engine_EventBegin();
 
-    tbl = Data_02000240;
-    no = tbl[225];
+    no = gGameState.entrance;
 
     switch (no) {
     case 10:

@@ -9,7 +9,7 @@ void ActorPresentation_ApplyTableA5ecToActorNine(void)
     extern s32 ImiruMura_TurnScript[];
 
     Engine_ActorEnableActionCallback(9, (s32)ImiruMura_TurnScript);
-    Event_ShowMessage(9, 0);
+    Engine_EventShowMessage(9, 0);
 }
 
 void SceneState_StoreTable96adToWork(void)
@@ -133,12 +133,12 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
         if ((u32)((y >> 19) - 36) > 9 || (u32)(cx - 22) > 9)
             goto rest;
     }
-    r = GameFlag_IsSet(g);
+    r = Engine_GameFlagIsSet(g);
     if (r != 0)
         return;
     ((State *)gMapWork[0])->unk17 = r;
     ((void (*)(s32))Engine_GameFlagSet)(g);
-    GameFlag_Clear(h);
+    Engine_GameFlagClear(h);
     return;
 
 rest:
@@ -146,16 +146,16 @@ rest:
         st = gMapWork[0];
         st->unk17 = 0;
         ((void (*)(s32))Engine_GameFlagSet)(g);
-        GameFlag_Clear(h);
+        Engine_GameFlagClear(h);
         return;
     }
-    r = GameFlag_IsSet(h);
+    r = Engine_GameFlagIsSet(h);
     if (r != 0)
         return;
     st = gMapWork[0];
     st->unk17 = 1;
     ((void (*)(s32))Engine_GameFlagSet)(h);
-    GameFlag_Clear(g);
+    Engine_GameFlagClear(g);
     return;
 }
 
@@ -173,15 +173,15 @@ void SceneState_UpdateActor11WithFlag203(void)
     b = actor->z.fixed >> 20;
     if (b != 7)
         return;
-    GameFlag_Set(0x203);
+    Engine_GameFlagSet(0x203);
     Engine_ActorSetSpritePriority(11, 3);
 #else
-    GameFlag_Set(0x203);
+    Engine_GameFlagSet(0x203);
     Engine_ActorSetSpritePriority(11, 3);
     a = 15;
     b = 7;
 #endif
-    Map_CopyCellAttributes(15, 6, 1, 1, a, b);
+    Engine_MapCopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
 void SceneActor_SetActorZeroFacingC000AndRun(void)
@@ -191,7 +191,7 @@ void SceneActor_SetActorZeroFacingC000AndRun(void)
     Engine_EventBegin();
     work = ((struct SceneService_02001990 *)Object_GetById(0));
     work->value06 = 0xc000;
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(8);

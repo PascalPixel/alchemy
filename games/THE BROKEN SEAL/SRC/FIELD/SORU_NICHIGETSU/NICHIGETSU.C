@@ -230,94 +230,94 @@ void SetStatueLightGroup1(void)
     if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 28, 0x22, 10, a, b);
+        Engine_MapCopyCellsTo(0x2d, 28, 0x22, 10, a, b);
     }
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_2) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_2) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 28, 0x24, 10, a, b);
+        Engine_MapCopyCellsTo(0x2f, 28, 0x24, 10, a, b);
     }
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_3) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_3) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 29, 0x22, 11, a, b);
+        Engine_MapCopyCellsTo(0x2d, 29, 0x22, 11, a, b);
     }
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_4) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_4) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 29, 0x24, 11, a, b);
+        Engine_MapCopyCellsTo(0x2f, 29, 0x24, 11, a, b);
     }
 }
 
 void SetStatueLightGroup2(void)
 {
-    if (GameFlag_IsSet(0x826) != 0) {
+    if (Engine_GameFlagIsSet(0x826) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 28, 0x22, 10, a, b);
+        Engine_MapCopyCellsTo(0x2d, 28, 0x22, 10, a, b);
     }
-    if (GameFlag_IsSet(0x827) != 0) {
+    if (Engine_GameFlagIsSet(0x827) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 28, 0x24, 10, a, b);
+        Engine_MapCopyCellsTo(0x2f, 28, 0x24, 10, a, b);
     }
-    if (GameFlag_IsSet(0x828) != 0) {
+    if (Engine_GameFlagIsSet(0x828) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 29, 0x22, 11, a, b);
+        Engine_MapCopyCellsTo(0x2d, 29, 0x22, 11, a, b);
     }
-    if (GameFlag_IsSet(0x829) != 0) {
+    if (Engine_GameFlagIsSet(0x829) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 29, 0x24, 11, a, b);
+        Engine_MapCopyCellsTo(0x2f, 29, 0x24, 11, a, b);
     }
 }
 
 void SetStatueLightGroup3(void)
 {
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_1) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 30, 0x22, 10, a, b);
+        Engine_MapCopyCellsTo(0x2d, 30, 0x22, 10, a, b);
     }
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_2) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_2) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 30, 0x24, 10, a, b);
+        Engine_MapCopyCellsTo(0x2f, 30, 0x24, 10, a, b);
     }
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_3) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_3) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 31, 0x22, 11, a, b);
+        Engine_MapCopyCellsTo(0x2d, 31, 0x22, 11, a, b);
     }
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_4) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_4) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 31, 0x24, 11, a, b);
+        Engine_MapCopyCellsTo(0x2f, 31, 0x24, 11, a, b);
     }
 }
 
 void SetStatueLightGroup4(void)
 {
-    if (GameFlag_IsSet(0x826) != 0) {
+    if (Engine_GameFlagIsSet(0x826) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 30, 0x22, 10, a, b);
+        Engine_MapCopyCellsTo(0x2d, 30, 0x22, 10, a, b);
     }
-    if (GameFlag_IsSet(0x827) != 0) {
+    if (Engine_GameFlagIsSet(0x827) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 30, 0x24, 10, a, b);
+        Engine_MapCopyCellsTo(0x2f, 30, 0x24, 10, a, b);
     }
-    if (GameFlag_IsSet(0x828) != 0) {
+    if (Engine_GameFlagIsSet(0x828) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2d, 31, 0x22, 11, a, b);
+        Engine_MapCopyCellsTo(0x2d, 31, 0x22, 11, a, b);
     }
-    if (GameFlag_IsSet(0x829) != 0) {
+    if (Engine_GameFlagIsSet(0x829) != 0) {
         s32 a = 2;
         s32 b = 1;
-        Map_CopyCellsTo(0x2f, 31, 0x24, 11, a, b);
+        Engine_MapCopyCellsTo(0x2f, 31, 0x24, 11, a, b);
     }
 }
 
@@ -364,7 +364,7 @@ void FieldScene_RunScene37aSequenceF(void)
         Call3(Engine_ActorFaceDirection, 1, 0xd000, 0);
         Call3(Engine_ActorFaceDirection, 5, 0xb000, 30);
         Engine_CameraSetSpeed(0x9999, 0x1333);
-        Camera_MoveTo(0x1200000, -1, 0xd50000, 1);
+        Engine_CameraMoveTo(0x1200000, -1, 0xd50000, 1);
         Call3(Engine_ActorSetSpeed, 16, 0x6666, 0x3333);
         Engine_ActorWalkToAndWait(16, 0x120, 176);
         Engine_EventWait(40);
@@ -459,21 +459,21 @@ void FieldScene_RunScene37aSequenceF(void)
         Engine_ActorSetAnimation(16, 2);
         rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
-            Actor_SetDestination(ACTOR_SUKURETA, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
+            Engine_ActorSetDestination(ACTOR_SUKURETA, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(16);
         Engine_ActorSetPosition(16, 0, 0);
         Engine_ActorSetAnimation(1, 2);
         rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
-            Actor_SetDestination(ACTOR_GERALD, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
+            Engine_ActorSetDestination(ACTOR_GERALD, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(1);
         Engine_ActorSetPosition(1, 0, 0);
         Engine_ActorSetAnimation(5, 2);
         rec = (u8 *)Object_GetById(0);
         if (rec != 0) {
-            Actor_SetDestination(ACTOR_JASMINE, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
+            Engine_ActorSetDestination(ACTOR_JASMINE, FIELD(rec, s16 *, 10), FIELD(rec, s16 *, 18));
         }
         Engine_ActorWaitForMove(5);
         Engine_ActorSetPosition(5, 0, 0);
@@ -1429,13 +1429,13 @@ s32 CheckAllStatueLights(void)
 {
     s32 all_set = 1;
 
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_1) == 0)
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_1) == 0)
         all_set = 0;
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_2) == 0)
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_2) == 0)
         all_set = 0;
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_3) == 0)
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_3) == 0)
         all_set = 0;
-    if (GameFlag_IsSet(FLAG_STATUE_LIGHT_4) == 0)
+    if (Engine_GameFlagIsSet(FLAG_STATUE_LIGHT_4) == 0)
         all_set = 0;
 
     return all_set;
@@ -1443,7 +1443,7 @@ s32 CheckAllStatueLights(void)
 
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames)
 {
-    Event_ShowMessage(actor_step, 0);
+    Engine_EventShowMessage(actor_step, 0);
     Engine_EventWait(wait_frames);
 }
 

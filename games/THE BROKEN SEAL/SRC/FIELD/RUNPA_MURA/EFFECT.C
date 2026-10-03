@@ -24,7 +24,7 @@ struct FieldEffect *Effect_CreateTranslucent(s32 x, s32 y, s32 z, s32 type)
 {
     struct FieldEffect *effect;
 
-    effect = (struct FieldEffect *)Object_Create(type, x, y, z);
+    effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
     if (effect != NULL) {
         effect->sprite->priority = 0;
         effect->motion_flags = 0;
@@ -41,7 +41,7 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
 {
     struct FieldEffect *effect;
 
-    effect = (struct FieldEffect *)Object_Create(type, x, y, z);
+    effect = (struct FieldEffect *)Engine_ObjectCreate(type, x, y, z);
     if (effect != NULL) {
         effect->sprite->priority = 1;
         effect->motion_flags = 0;

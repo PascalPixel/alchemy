@@ -253,13 +253,13 @@ s32 SceneActor_OscillateHeightBetweenLimits(struct FieldActor *actor)
     s32 tmp;
 
     if (*flag != 0) {
-        val = actor->y.fixed - (((u32)(Random_Next() << 15)) >> 16) - 0x8000;
+        val = actor->y.fixed - (((u32)(Engine_RandomNext() << 15)) >> 16) - 0x8000;
         actor->y.fixed = val;
         if (val >= 0x40000)
             goto done;
         tmp = 0;
     } else {
-        val = actor->y.fixed + (((u32)(Random_Next() << 15)) >> 16) + 0x8000;
+        val = actor->y.fixed + (((u32)(Engine_RandomNext() << 15)) >> 16) + 0x8000;
         actor->y.fixed = val;
         if (val <= 0xC0000)
             goto done;
@@ -272,7 +272,7 @@ done:
 
 s32 SceneActor_SetFacingFromSample(struct FieldActor *actor)
 {
-    u32 v = ((u32)(Random_Next() << 5)) >> 16;
+    u32 v = ((u32)(Engine_RandomNext() << 5)) >> 16;
 
     if (v == 6) {
         s32 t = 0xD0;
@@ -428,7 +428,7 @@ s32 FuneKanpan_UpdateFlyByForActor22(struct FieldActor *obj)
 
 s32 SceneActor_SetWord28RandomlyOneIn40(struct FieldActor *actor)
 {
-    if ((((u32)(Random_Next() * 40)) >> 16) == 0)
+    if ((((u32)(Engine_RandomNext() * 40)) >> 16) == 0)
         actor->velocity_y = 0x40000;
     return 1;
 }
@@ -513,11 +513,11 @@ u8 *FuneKanpan_GetPlacements(void)
 /* What the deck answers. */
 u8 *FuneKanpan_GetEvents(void)
 {
-    if (GameFlag_IsSet(0x93e))
+    if (Engine_GameFlagIsSet(0x93e))
         return gFuneKanpanEventsFlag93e;
-    if (GameFlag_IsSet(0x8A0))
+    if (Engine_GameFlagIsSet(0x8A0))
         return gFuneKanpanEventsFlag8a0;
-    if (GameFlag_IsSet(0x928))
+    if (Engine_GameFlagIsSet(0x928))
         return gFuneKanpanEventsFlag928;
     return gFuneKanpanEvents;
 }
@@ -586,7 +586,7 @@ void SceneDialogue_RunActor21Line(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgFuneHeadedColosso);
-    Event_AskYesNo(21, 0);
+    Engine_EventAskYesNo(21, 0);
     Engine_EventEnd();
 }
 
@@ -1083,30 +1083,30 @@ void SceneActor_PlaceActors20To27(void)
     s32 m = 0xA0;
 
     m <<= 7;
-    Actor_SetPosition(21, 0x1060000, 0x2C20000);
+    Engine_ActorSetPosition(21, 0x1060000, 0x2C20000);
     *(u16 *)((u8 *)Object_GetById(21) + 6) = m;
-    Actor_SetPosition(24, 0xA40000, 0x2880000);
+    Engine_ActorSetPosition(24, 0xA40000, 0x2880000);
     {
         s32 z = 0;
         *(u16 *)((u8 *)Object_GetById(24) + 6) = z;
     }
     Engine_ActorSetSpritePriority(24, 1);
-    Actor_SetPosition(25, 0xC60000, 0x2990000);
+    Engine_ActorSetPosition(25, 0xC60000, 0x2990000);
     {
         s32 x = 0x80;
         *(u16 *)((u8 *)Object_GetById(25) + 6) = x << 8;
     }
     Engine_ActorSetSpritePriority(25, 1);
-    Actor_SetPosition(26, 0xBC0000, 0x2A60000);
+    Engine_ActorSetPosition(26, 0xBC0000, 0x2A60000);
     {
         s32 x = 0xB0;
         *(u16 *)((u8 *)Object_GetById(26) + 6) = x << 8;
     }
-    Actor_SetPosition(27, 0xBA0000, 0x27B0000);
+    Engine_ActorSetPosition(27, 0xBA0000, 0x27B0000);
     *(u16 *)((u8 *)Object_GetById(27) + 6) = m;
-    Actor_SetPosition(22, 0, 0);
-    Actor_SetPosition(23, 0, 0);
-    Actor_SetPosition(20, 0, 0);
+    Engine_ActorSetPosition(22, 0, 0);
+    Engine_ActorSetPosition(23, 0, 0);
+    Engine_ActorSetPosition(20, 0, 0);
 }
 
 void FieldScene_RunScene3af_0200185c(void)
@@ -1328,7 +1328,7 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
     Engine_EventBegin();
     Event_CallWithLastActiveObjectId((s32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
     Engine_ActorSetSpriteFlags((s32)Object_GetById(0), 0);
     Data_03001ebc[0x70] = 0x202;
     Engine_EventOpenScreen();
@@ -1336,11 +1336,11 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(20, 1);
     Engine_EventSetMessage((s32)MsgFuneAyeCaptainSeaMonsters);
-    Event_ShowMessageAndWait(20, 0, 10);
+    Engine_EventShowMessageAndWait(20, 0, 10);
     FieldScene_CallPairWith10(22, 0x5000);
     Engine_ActorJump(22, 4, 20);
     Engine_ActorStartRepeatedMotion(22, 2);
-    Event_ShowMessageAndWait(0x6016, 0, 20);
+    Engine_EventShowMessageAndWait(0x6016, 0, 20);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(11);
@@ -2199,7 +2199,7 @@ s32 SceneState_FindFirstSetFlagOfGroup(u32 sel)
         break;
     }
     for (i = 0; i < 9; i++) {
-        if (GameFlag_IsSet(v)!= 0) return id;
+        if (Engine_GameFlagIsSet(v)!= 0) return id;
         v++;
         id++;
     }

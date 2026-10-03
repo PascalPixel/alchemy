@@ -59,11 +59,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -83,7 +78,6 @@ extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 void Korosseo_LoadPortrait(s32);
 s32 AudioCommand_GetStateByte(void);
 void Audio_PlayCueFromEventWork(void);
@@ -95,12 +89,12 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -182,43 +176,43 @@ void FieldScene_RunTwoArmSequence(s32 a)
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Engine_EventWait(30);
-        Audio_PlayCue(89);
+        Engine_AudioPlayCue(89);
         Korosseo_LoadPortrait(0);
         SceneData_SelectBlockAndResetCounters(1, 0);
         Engine_EventWait(120);
         Engine_EventEnd();
     } else {
-        Audio_PlayCue(247);
+        Engine_AudioPlayCue(247);
         Engine_EventBegin();
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         KorosseoKawa_RoundSpans[15] = a * 60;
         Engine_EventWait(30);
-        Audio_PlayCue(a + 90);
+        Engine_AudioPlayCue(a + 90);
         Korosseo_LoadPortrait(a);
         SceneData_SelectBlockAndResetCounters(1, 0);
         Engine_EventWait(120);
         while (AudioCommand_GetStateByte() != 0) {
             Engine_TaskWait(1);
         }
-        Audio_PlayCue(0x121);
+        Engine_AudioPlayCue(0x121);
         Korosseo_LoadPortrait(5);
         SceneData_SelectBlockAndResetCounters(2, 0);
-        Audio_PlayCue(236);
+        Engine_AudioPlayCue(236);
         Engine_EventWait(60);
         SceneData_SelectBlockAndResetCounters(2, 1);
-        Audio_PlayCue(236);
+        Engine_AudioPlayCue(236);
         Engine_EventWait(60);
         Korosseo_LoadPortrait(6);
         SceneData_SelectBlockAndResetCounters(2, 0);
-        Audio_PlayCue(236);
+        Engine_AudioPlayCue(236);
         Engine_EventWait(60);
         Korosseo_LoadPortrait(7);
         SceneData_SelectBlockAndResetCounters(4, 0);
-        Audio_PlayCue(237);
+        Engine_AudioPlayCue(237);
         Audio_PlayCueFromEventWork();
         Engine_EventEnd();
-        GameFlag_Set(0x123);
+        Engine_GameFlagSet(0x123);
     }
 }
 
@@ -228,14 +222,14 @@ void FieldScene_RunLateSequence(s32 a0)
 
     s32 kind;
 
-    Audio_PlayCue(247);
+    Engine_AudioPlayCue(247);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     KorosseoKawa_SpanA.span = a0 * 60;
     KorosseoKawa_SpanB.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
         Engine_EventWait(30);
-        Audio_PlayCue(86);
+        Engine_AudioPlayCue(86);
         Korosseo_LoadPortrait(8);
         /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(SceneData_SelectBlockAndResetCounters, 3, 1);
@@ -243,20 +237,20 @@ void FieldScene_RunLateSequence(s32 a0)
         kind = 0;
     } else {
         Engine_EventWait(30);
-        Audio_PlayCue(a0 + 90);
+        Engine_AudioPlayCue(a0 + 90);
         Korosseo_LoadPortrait(4);
         /* FAKEMATCH: the void result is discarded; Call2 changes argument allocation. */
         Value2(SceneData_SelectBlockAndResetCounters, 3, 0);
         Engine_EventWait(a0 * 60 + 60);
         kind = 8;
     }
-    Actor_ShowEmote(kind, 0x105, 0);
+    Engine_ActorShowEmote(kind, 0x105, 0);
     while (AudioCommand_GetStateByte()!= 0) {
         Engine_TaskWait(1);
     }
-    Audio_PlayCue(19);
+    Engine_AudioPlayCue(19);
     Engine_EventWait(30);
-    Audio_PlayCue(0x121);
+    Engine_AudioPlayCue(0x121);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
 }

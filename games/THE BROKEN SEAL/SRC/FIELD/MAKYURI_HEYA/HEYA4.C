@@ -96,9 +96,9 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
     s32 buf[10];
     u32 i, j;
 
-    Map_CopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
-    Map_CopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
-    Map_CopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
+    Engine_MapCopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
+    Engine_MapCopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
+    Engine_MapCopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
     Audio_PlayCue(0x121);
     buf[1] = 5;
     buf[2] = 0x8000;
@@ -123,11 +123,11 @@ void SceneEffect_SpawnParticleRowsByMode(s32 mode)
             }
         }
         if (mode == 0)
-            Map_CopyCellsTo(0x70, 0x3a, 0x71, j + 43, 1, 1);
+            Engine_MapCopyCellsTo(0x70, 0x3a, 0x71, j + 43, 1, 1);
         else if (mode == 1)
-            Map_CopyCellsTo(0x70, 0x3a, j + 113, 0x2e, mode, mode);
+            Engine_MapCopyCellsTo(0x70, 0x3a, j + 113, 0x2e, mode, mode);
         else
-            Map_CopyCellsTo(0x70, 0x3a, 115 - j, 0x2c, 1, 1);
+            Engine_MapCopyCellsTo(0x70, 0x3a, 115 - j, 0x2c, 1, 1);
     }
 }
 
@@ -163,8 +163,8 @@ s32 MakyuriHeya_StartPillarPush(void)
 
 void SceneActor_UseActorNinePositionWithYOffset(void)
 {
-    s32 *p = Actor_Get(9);
-    u32 v = Random_Next();
+    s32 *p = Object_GetById(9);
+    u32 v = Engine_RandomNext();
 
     s32 b = p[3] + (((v << 2) >> 16) << 16);
     s32 c = p[4];
@@ -203,18 +203,18 @@ void MakyuriHeya_RunColumnProbeScene(void)
     case 10:
         SceneActor_MoveAndRedraw(probe);
         if (probe.word[4] >> 20 == 38)
-            GameFlag_Set(0x318);
+            Engine_GameFlagSet(0x318);
         else
-            GameFlag_Clear(0x318);
+            Engine_GameFlagClear(0x318);
         break;
     case 11:
-        start = ((s32 *)Actor_Get(11))[2] >> 20;
+        start = ((s32 *)Object_GetById(11))[2] >> 20;
         SceneActor_MoveAndRedraw(probe);
         column = probe.word[2] >> 20;
         if (column == 47) {
-            GameFlag_Set(0x319);
-            GameFlag_Clear(0x31a);
-            GameFlag_Clear(0x31b);
+            Engine_GameFlagSet(0x319);
+            Engine_GameFlagClear(0x31a);
+            Engine_GameFlagClear(0x31b);
             MakyuriHeya_StartPillarPush();
             if (start == 54)
                 SceneEffect_SpawnParticleRowsByMode(0);
@@ -223,9 +223,9 @@ void MakyuriHeya_RunColumnProbeScene(void)
             MakyuriHeya_OpenStoneDoor(2);
             goto wait;
         } else if (column == 48) {
-            GameFlag_Set(0x31a);
-            GameFlag_Clear(0x31b);
-            GameFlag_Clear(0x319);
+            Engine_GameFlagSet(0x31a);
+            Engine_GameFlagClear(0x31b);
+            Engine_GameFlagClear(0x319);
             if (MakyuriHeya_StartPillarPush() != 0) {
                 s32 x;
 
@@ -236,13 +236,13 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 Engine_ActorStartAction(9);
                 OverlayObject_PrepareSpawnedObject(x, 0, 0x3120000, 223);
                 OverlayObject_PrepareSpawnedObject(x, 0, 0x3320000, 223);
-                Actor_SetDestination(9, 0x348, 0x2e8);
+                Engine_ActorSetDestination(9, 0x348, 0x2e8);
                 Battle_WaitMode0(5);
                 Audio_PlayCue(189);
                 ObjectMotion_CommitCurrentPositionAndActivate(9);
                 Battle_WaitMode0(40);
-                GameFlag_Set(0x877);
-                ColorBuffer_ApplySource(0x10000, 0);
+                Engine_GameFlagSet(0x877);
+                Engine_ColorBufferApplySource(0x10000, 0);
                 *(s32 *)&(*(struct GameState **)&gEventWork)->scene = 0x100;
                 Engine_EventCloseScreen();
                 Engine_EventWaitForScreen();
@@ -254,17 +254,17 @@ void MakyuriHeya_RunColumnProbeScene(void)
             MakyuriHeya_OpenStoneDoor(1);
             goto wait;
         } else if (column == 53) {
-            GameFlag_Set(0x31b);
-            GameFlag_Clear(0x319);
-            GameFlag_Clear(0x31a);
+            Engine_GameFlagSet(0x31b);
+            Engine_GameFlagClear(0x319);
+            Engine_GameFlagClear(0x31a);
             MakyuriHeya_StartPillarPush();
             SceneEffect_SpawnParticleRowsByMode(0);
         wait:
             Battle_WaitMode0(60);
         } else {
-            GameFlag_Clear(0x319);
-            GameFlag_Clear(0x31a);
-            GameFlag_Clear(0x31b);
+            Engine_GameFlagClear(0x319);
+            Engine_GameFlagClear(0x31a);
+            Engine_GameFlagClear(0x31b);
             MakyuriHeya_StartPillarPush();
             if (start == 47)
                 SceneEffect_SpawnParticleRowsByMode(2);
@@ -331,12 +331,12 @@ void SceneState_ApplyRectWhenActor20AtColumn28(void)
     Engine_EventBegin();
     col = Object_GetById(20)->x.fixed / 0x100000;
     if (col == 28) {
-        GameFlag_Set(840);
+        Engine_GameFlagSet(840);
         {
             s32 a = 31;
             s32 b = 20;
 
-            Map_CopyCellAttributes(29, 20, 1, 1, a, b);
+            Map_CopyCellAttributeRect(29, 20, 1, 1, a, b);
         }
     }
     Engine_EventEnd();
@@ -424,7 +424,7 @@ void SceneDialogue_RunActor3TimedLine(void)
     Engine_ActorSetAnimationAndWait(3, 4);
     Battle_WaitMode0(20);
     Engine_EventSetMessage(MsgImiruStatueBlocksEntrance);
-    Event_ShowMessageAndWait(3, 0, 20);
+    Engine_EventShowMessageAndWait(3, 0, 20);
     Engine_EventEnd();
 }
 
@@ -943,7 +943,7 @@ void FieldScene_RunFlag881Dialogue(void)
 
     Engine_EventBegin();
     Object_SetModeById(0, 1);
-    if (GameFlag_IsSet(0x881) == 0)
+    if (Engine_GameFlagIsSet(0x881) == 0)
         Engine_MessageShowCentered(MsgMakyuriHeyaFountainSeemsDry, 1);
     else
         Engine_MessageShowCentered(MsgMakyuriHeyaFountainFlowsWithWater, 1);
@@ -965,7 +965,7 @@ void FieldScene_RunActor184Sequence(void)
     UiWork_PushValueSlot(PartyInventory_FindOwner(0xb8), 1);
     UiWork_PushValueSlot(0xb8, 2);
     Engine_MessageShowCentered(MsgMakyuriHeyaRobinGot, 1);
-    GameFlag_Set(512);
+    Engine_GameFlagSet(512);
     Engine_EventEnd();
 }
 
@@ -1034,7 +1034,7 @@ void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
     s32 buf[10];
     u32 i, j;
 
-    Map_CopyCellsTo(0x4a, 0x3a, 0x46, 0x22, 1, 1);
+    Engine_MapCopyCellsTo(0x4a, 0x3a, 0x46, 0x22, 1, 1);
     buf[1] = 7;
     buf[2] = 0x8000;
     buf[3] = 0x8000;
@@ -1049,8 +1049,8 @@ void SceneEffect_SpawnParticleRowsAndDrawTiles(void)
                 Battle_WaitMode0(1);
             }
         }
-        Map_CopyCellsTo(0x4a, 0x3b, 0x46, 34 - j, 1, 1);
-        Map_CopyCellsTo(0x4a, 0x3a, 0x46, 33 - j, 1, 1);
+        Engine_MapCopyCellsTo(0x4a, 0x3b, 0x46, 34 - j, 1, 1);
+        Engine_MapCopyCellsTo(0x4a, 0x3a, 0x46, 33 - j, 1, 1);
     }
 }
 

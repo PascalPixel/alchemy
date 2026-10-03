@@ -105,7 +105,7 @@ s32 SceneData_SelectTableEntryByFlagGroup(u32 sel)
         break;
     }
     for (i = 0; i < 9; i++) {
-        if (GameFlag_IsSet(base + i) != 0) return FuneKanpan_FlagGroupEntries[i];
+        if (Engine_GameFlagIsSet(base + i) != 0) return FuneKanpan_FlagGroupEntries[i];
     }
     return 0;
 }
@@ -269,33 +269,33 @@ void SceneState_InitActorSlots8To19(void)
 
 void SceneState_ApplyFiveRectsAtColumn78(void)
 {
-    Map_CopyCellsTo(78, 39, 78, 40, 5, 1);
-    Map_CopyCellsTo(78, 39, 78, 41, 5, 1);
-    Map_CopyCellsTo(78, 39, 79, 42, 4, 1);
-    Map_CopyCellsTo(78, 39, 82, 43, 1, 1);
+    Engine_MapCopyCellsTo(78, 39, 78, 40, 5, 1);
+    Engine_MapCopyCellsTo(78, 39, 78, 41, 5, 1);
+    Engine_MapCopyCellsTo(78, 39, 79, 42, 4, 1);
+    Engine_MapCopyCellsTo(78, 39, 82, 43, 1, 1);
     {
         s32 x = 17;
         s32 y = 40;
 
-        Map_CopyCellAttributes(17, 38, 5, 2, x, y);
+        Engine_MapCopyCellAttributes(17, 38, 5, 2, x, y);
     }
 }
 
 void DialogueLayout_ConfigureTwoRegions(void)
 {
-    Map_CopyCellsTo(66, 61, 64, 40, 5, 4);
-    Map_CopyCellAttributes(0, 0, 5, 4, 5, 39);
+    Engine_MapCopyCellsTo(66, 61, 64, 40, 5, 4);
+    Engine_MapCopyCellAttributes(0, 0, 5, 4, 5, 39);
 }
 
 void FieldScene_RunStepThen10(s32 a)
 {
-    Event_ShowMessage(a, 0);
+    Engine_EventShowMessage(a, 0);
     Engine_EventWait(10);
 }
 
 void FieldScene_CallPairWith10(s32 a, s32 b)
 {
-    Actor_FaceDirection(a, b, 10);
+    Engine_ActorFaceDirection(a, b, 10);
 }
 
 /* The ship reaches Tolbi: the crew gathers on deck, the captain announces

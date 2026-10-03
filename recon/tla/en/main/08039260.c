@@ -10,11 +10,15 @@
  *   and no-argument ResetCounters: score 420, 9 rows; retained.
  * - Branch-local u16 flags read before duration, then flags/frame stores:
  *   score 1005, 16 rows; rejected.
+ * - Branch-local u32 flags read before duration, then flags/frame stores:
+ *   score 420, the same 9 remaining rows; simpler retained form kept.
  *
  * Remaining: the no-argument call changes x/width/height register lifetimes
- * and adds one move; the immediate-draw branch still stores flags before
- * duration. ResetCounters does not read incoming r0, so passing x solely
- * to recover its lifetime would be a measured matching device, not an API.
+ * and adds one move. Both forms store duration before flags; the native
+ * immediate-draw branch stores duration before the flags OR, while generated
+ * code computes the OR and prepares zero before storing duration.
+ * ResetCounters does not read incoming r0, so passing x solely to recover
+ * its lifetime would be a measured matching device, not an API.
  * No FAKEMATCH device is used; this is not an adoption.
  */
 #include "WINDOW.H"

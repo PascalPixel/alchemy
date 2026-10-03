@@ -14,7 +14,7 @@ enum { UI_TEXT_ENTRY_COUNT = 512 };
 enum { UI_TEXT_ENTRY_COUNT = 256 };
 #endif
 
-/* The known tilemap, windows, text channels, output queues and entry ring.
+/* The known tilemap, windows, text channels, output queues, entry ring and named values.
    Other fields and the remainder of the resident work are not described. */
 struct UiRenderWork {
     u8 unknown_before_tilemap[8];
@@ -27,6 +27,9 @@ struct UiRenderWork {
     u16 entries[UI_TEXT_ENTRY_COUNT];
     u16 unknown_before_count;
     u16 count;
+    u8 unknown_before_values[8];
+    u32 values[8];
+    u16 names[8];
 };
 
 LAYOUT_OFFSET_GUARD(UiRenderWork_Tilemap, struct UiRenderWork, tilemap, 8);
@@ -39,8 +42,12 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_FreeTail, struct UiRenderWork, free_outputs.tai
 LAYOUT_OFFSET_GUARD(UiRenderWork_Entries, struct UiRenderWork, entries, 0xf40);
 #if EDITION_INTERNATIONAL
 LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, 0x1342);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Values, struct UiRenderWork, values, 0x134c);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Names, struct UiRenderWork, names, 0x136c);
 #else
 LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, 0x1142);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Values, struct UiRenderWork, values, 0x114c);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Names, struct UiRenderWork, names, 0x116c);
 #endif
 
 void UiWork_InitFreeList(void);

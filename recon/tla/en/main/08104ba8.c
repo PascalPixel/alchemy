@@ -11,8 +11,8 @@ s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s
     struct RenderOutput *object;
     u32 resource;
     register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
-    register struct RenderInput *w asm("r4") = window; /* FAKEMATCH: keeps x in r4 */
-    register s32 xx asm("r6") = x; /* FAKEMATCH: keeps y in r6 */
+    register struct RenderInput *w asm("r4") = window; /* FAKEMATCH: keeps the window in r4 */
+    register s32 xx asm("r6") = x; /* FAKEMATCH: keeps x in r6 */
     u8 *data = gMenuWork;
 
     if (v == 0) {

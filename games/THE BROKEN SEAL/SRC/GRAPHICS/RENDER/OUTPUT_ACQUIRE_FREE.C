@@ -1,7 +1,8 @@
 #include "TYPES.H"
 #include "WINDOW.H"
 
-/* Detach and return the head of the free list. */
+/* Detach and return the head of the free list. A pointer-typed sentinel
+   store adds a reload in the 52-byte body; retain its scalar word store. */
 struct RenderOutput *RenderOutput_AcquireFree(void)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
@@ -9,7 +10,7 @@ struct RenderOutput *RenderOutput_AcquireFree(void)
 
     if (entry != NULL) {
         if (entry->next == NULL)
-            work->free_tail = (struct RenderOutput *)&work->free_head;
+            *(s32 *)&work->free_tail = (s32)&work->free_head;
         work->free_head = entry->next;
         entry->next = NULL;
     }

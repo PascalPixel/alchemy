@@ -39,11 +39,11 @@ void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutpu
 void RenderOutput_Release(struct RenderOutput *entry)
 {
     RenderOutput_ReleaseFree(entry);
-    if (entry->kind != 0) {
+    if ((u8)entry->kind != 0) {
         Resource_ResetEntry((u8)entry->index);
-        if (entry->kind == 2) {
+        if ((u8)entry->kind == 2) {
             u8 *dst = (u8 *)(*(s32 *)((u32)&Data_03001e8c));
-            s32 idx = ((u32)(entry->table.half.low >> 8) >> 4) * 2 + RENDER_PALETTE_TBL_OFS;
+            s32 idx = ((u32)((u8 *)&entry->table)[1] >> 4) * 2 + RENDER_PALETTE_TBL_OFS;
             *(u16 *)(dst + idx) = 0x3E7;
         }
     }

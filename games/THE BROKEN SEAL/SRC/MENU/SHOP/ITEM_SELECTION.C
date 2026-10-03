@@ -41,7 +41,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     cursor_anchor = RenderOutput_CreateFar(
         shop->cursor_icon,
         0x40000000,
-        list_window,
+        (struct RenderInput *)list_window,
         0,
         result);
     cursor_anchor->active = 4;

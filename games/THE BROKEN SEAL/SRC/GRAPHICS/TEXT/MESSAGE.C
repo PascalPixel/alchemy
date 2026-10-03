@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "WINDOW.H"
-extern u8 Data_03001e8c[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -10,6 +9,13 @@ struct MessageControl {
     struct UiWindow *window;
     struct UiChannelSlot *channel;
     s32 preserve;
+};
+
+/* Retain the existing volatile pointer-table reads of heap slots 15 and 37. */
+struct UiTextMessageWorkGlobals {
+    struct UiRenderWork *state;
+    u8 padding4[0x54];
+    struct MessageControl *control;
 };
 
 s32 UiText_BuildRenderEntries(s32, s32);
@@ -27,8 +33,8 @@ void UiText_PrepareMessageWork(s32 argument)
     struct UiRenderWork *state;
     struct MessageControl *control;
 
-    state = *(struct UiRenderWork *volatile *)&gWindowWork[0];
-    control = *(struct MessageControl *volatile *)&gWindowWork[22];
+    state = ((volatile struct UiTextMessageWorkGlobals *)gWindowWork)->state;
+    control = ((volatile struct UiTextMessageWorkGlobals *)gWindowWork)->control;
     result = 0;
     state->menu_state = 2;
     index = UiText_BuildRenderEntries(argument, 1);
@@ -83,14 +89,12 @@ check:
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 
-s32 Func_08018038(s32 value, s32 mode);
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 
-/* Clears the message cursor pair, then opens message `no` for the entry
-   `argument` selects when that entry's slot is live. */
-s32 UiText_OpenEntryMessage(s32 no, s32 argument)
+/* Clear the result pair, then queue the selected entry in this window. */
+s32 UiText_OpenEntryMessage(s32 window, s32 argument)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
+    u8 *base = gWindowWork[0];
     s32 entry;
     s32 entry_offset;
     s32 result = 0;
@@ -99,14 +103,14 @@ s32 UiText_OpenEntryMessage(s32 no, s32 argument)
 
     *(u16 *)(base + RENDER_RESULT_OFS) = 0;
     *(u16 *)(base + RENDER_RESULT_OFS + 2) = 0;
-    entry = Func_08018038(argument, 1);
+    entry = UiText_BuildRenderEntries(argument, 1);
     entry_offset = entry * 2;
     entry_offset += RENDER_ENTRY_TBL_OFS;
     if (*(u16 *)(base + entry_offset) == 0)
         return 0;
-    if (no == 0)
+    if (window == 0)
         return 0;
-    result = (s32)UiText_QueueRenderEntries((struct UiWindow *)no, entry, 0, 0, 0, 1);
+    result = (s32)UiText_QueueRenderEntries((struct UiWindow *)window, entry, 0, 0, 0, 1);
     if (result == 0)
         return 0;
     return result;

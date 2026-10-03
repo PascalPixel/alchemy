@@ -7,6 +7,18 @@
 #include "GLOBAL_CELLS.H"
 
 
+/* Byte lanes used by the bobbing sprite pair. */
+struct UiBobPairOutput {
+    struct UiBobPairOutput *next;
+    u8 unknown_04[4];
+    u8 source;
+    u8 unknown_09[11];
+    u8 destination;
+};
+
+LAYOUT_OFFSET_GUARD(UiBobPairOutput_Source, struct UiBobPairOutput, source, 8);
+LAYOUT_OFFSET_GUARD(UiBobPairOutput_Destination, struct UiBobPairOutput, destination, 0x14);
+
 /* Frame counter advanced by the vertical-blank interrupt. */
 extern volatile u32 gFrameTick;
 extern const u8 Ui_PairBobOffsets[];
@@ -79,15 +91,15 @@ void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 s32 GameFlag_TestFar(s32);
 
-void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj)
+void Ui_ApplyTableOffsetToPair(struct UiBobPairOutput *obj)
 {
     s32 value;
 
-    value = *(u8 *)&obj->y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
-    *(u8 *)&obj->packed = value;
+    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    obj->destination = value;
     obj = obj->next;
-    value = *(u8 *)&obj->y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
-    *(u8 *)&obj->packed = value;
+    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    obj->destination = value;
 }
 
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)

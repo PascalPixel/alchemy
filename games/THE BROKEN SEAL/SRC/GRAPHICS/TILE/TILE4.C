@@ -111,7 +111,7 @@ void Battle_PlaceActorsByFormationKind(void)
     struct AnimationObject *actor = gSpriteObjects;
     u32 kind = actor->entries[0]->kind;
     struct Vec2 scale;
-    u8 *table;
+    struct AnimationPosition *table;
     u16 angle;
     u16 step;
     u16 odd = 0;
@@ -124,7 +124,7 @@ void Battle_PlaceActorsByFormationKind(void)
        in slot9; gSpriteObjects is the slot4 cell in the same heap bank.
        Preserve the existing relative pointer-cell load without a false
        record spanning the intervening allocations. */
-    table = *(u8 **)((u8 *)&gSpriteObjects + (9 - 4) * sizeof(((union HeapState *)0)->slots[0]));
+    table = *(struct AnimationPosition **)((u8 *)&gSpriteObjects + (9 - 4) * sizeof(((union HeapState *)0)->slots[0]));
 
     switch (kind) {
     case 3:
@@ -160,7 +160,7 @@ void Battle_PlaceActorsByFormationKind(void)
     }
 
     for (i = 0; i < count; i++) {
-        Render_ApplyProjectedPlacement(actor, (s32 *)(table + i * 16), (s32 *)&scale, angle);
+        Render_ApplyProjectedPlacement(actor, &table[i].x, (s32 *)&scale, angle);
         actor++;
         angle += step;
         if (i & 1)

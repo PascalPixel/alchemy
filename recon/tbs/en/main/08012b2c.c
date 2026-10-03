@@ -1,3 +1,6 @@
+/* 2026-10-04 shared point contract: AnimationPosition in ANIMSPR.H is the
+ * actual 16-byte monitor record. The rendering consumer uses word four as
+ * ground height; this routine writes only x/y/z. Score remains 295. */
 /* 2026-10-03 paired coordinate/truncation trials: paired x store between angle shifts 295; paired shared angle/store ordering constraint 365. */
 /* 2026-10-03 measured paired-store scheduling: paired x-store r3 ordering barrier 355; paired x-store r3 clobber 355. */
 /* 2026-10-03 ordinary paired-origin trials: paired in-place fixed-point origin 2130; paired named fixed-point coordinates 305; paired explicit origin and radius 2485. */
@@ -54,13 +57,6 @@
 #include "IO_REG.H"
 #include "ANIMSPR.H"
 
-struct ProbePoint {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 unknown_0c;
-};
-
 extern struct AnimationObject *gSpriteObjects;
 extern volatile u32 gKeysHeld;
 extern s32 gFrameTick;
@@ -69,7 +65,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *point);
 
 /* Lays out icon-monitor points around a position. The first sprite layer
    selects the ring shape; holding B turns it with the frame counter. */
-void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
+void Map_BuildProbeRing(s32 x, s32 z, struct AnimationPosition *out)
 {
     /* FAKEMATCH: prior ordinary and permuted shapes kept the angle in r6; constrain the measured angle register while preserving all truncations. */
     s32 angle;
@@ -82,7 +78,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
         angle = (s16)(gFrameTick << 8);
     {
         register s32 a asm("r5") = angle; /* FAKEMATCH: native register assignment; ordinary source scored 7745. */
-        register struct ProbePoint *p asm("r7") = out; /* FAKEMATCH: native register assignment; ordinary source scored 7745. */
+        register struct AnimationPosition *p asm("r7") = out; /* FAKEMATCH: native register assignment; ordinary source scored 7745. */
         asm("" : "+r"(a), "+r"(p)); /* FAKEMATCH: native register lifetime and shift scheduling. */
         angle = a;
         out = p;
@@ -156,7 +152,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
         }
         break;
     case 20: {
-        struct ProbePoint *pair;
+        struct AnimationPosition *pair;
         tmp2 = (u16)angle;
         angle = (s16)(tmp2 + 0x4000);
         i = 0;

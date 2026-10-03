@@ -7,6 +7,7 @@
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_MSG.H"
 #include "SYSTEM.H"
+#include "ANIMSPR.H"
 
 void Object_SetMode(void *actor, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
@@ -14,18 +15,6 @@ void UiWork_ClearValueNameTablesFar(void);
 void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattleMotion_SetMode5AndActivateSlot(s32 unit_id);
-
-struct ActorData_080b8ec4 {
-  u8 padding_00[5];
-  s8 field_05;
-  u8 padding_06[0x10];
-  s8 field_16;
-};
-
-struct Actor_080b8ec4 {
-  u8 padding_00[0x28];
-  struct ActorData_080b8ec4 *field_28;
-};
 
 s32 AnimationObjects_SelectAnimationFar(void *, s32);
 s32 Map_RenderAnimatedTileFramesForObjectFar(void *);
@@ -90,20 +79,20 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     Object_SetMode(slot->object, 1);
 }
 
-void BattleMotion_SetMode5AndActivateSlot(s32 arg0)
+void BattleMotion_SetMode5AndActivateSlot(s32 unit_id)
 {
-  struct ActorData_080b8ec4 *actor_data;
-  struct Actor_080b8ec4 *object;
-  if (Owner_GetStateFar(arg0)->hp <= 0)
+  struct AnimationEntry *actor_data;
+  struct AnimationObject *object;
+  if (Owner_GetStateFar(unit_id)->hp <= 0)
   {
-    object = GetBattleObjectSlot(arg0)->object->records;
+    object = GetBattleObjectSlot(unit_id)->object->records;
     AnimationObjects_SelectAnimationFar(object, 5);
-    actor_data = object->field_28;
-    actor_data->field_05 = 6;
-    actor_data->field_16 = 0xFF;
+    actor_data = object->entries[0];
+    actor_data->param = 6;
+    actor_data->frame = 0xFF;
     WaitFrames(4);
     Map_RenderAnimatedTileFramesForObjectFar(object);
-    ActivateBattleObjectSlot(arg0);
+    ActivateBattleObjectSlot(unit_id);
   }
 }
 

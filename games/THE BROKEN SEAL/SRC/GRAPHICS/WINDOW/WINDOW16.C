@@ -6,13 +6,6 @@
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 
-struct Object_080216b4 {
-    struct Object_080216b4 *next;
-    u8 filler4[4];
-    u8 source;
-    u8 filler9[11];
-    u8 destination;
-};
 
 /* Frame counter advanced by the vertical-blank interrupt. */
 extern volatile u32 gFrameTick;
@@ -32,14 +25,14 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
 
 /* ui/apply_table_scale_to_object.c */
-struct Effect {
+struct UiScaleEffect {
     unsigned x : 16;
     unsigned y : 16;
     unsigned z : 16;
     unsigned unk : 16;
 };
 
-struct Object {
+struct UiScaleSprite {
     u8 filler0[6];
     u16 src_6;
     u8 src_8;
@@ -56,7 +49,7 @@ struct Object {
 
 extern u32 gFrameTick;
 extern s32 Ui_ObjectPulseScales[];
-s32 AffineMatrix_BuildForEffect(struct Effect *efx);
+s32 AffineMatrix_BuildForEffect(struct UiScaleEffect *efx);
 
 /* menu/core/build_localized_pattern_tiles.c */
 struct TileMask {
@@ -86,15 +79,15 @@ void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 s32 UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 s32 GameFlag_TestFar(s32);
 
-void Ui_ApplyTableOffsetToPair(struct Object_080216b4 *obj)
+void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj)
 {
     s32 value;
 
-    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
-    obj->destination = value;
+    value = *(u8 *)&obj->y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    *(u8 *)&obj->packed = value;
     obj = obj->next;
-    value = obj->source + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
-    obj->destination = value;
+    value = *(u8 *)&obj->y + Ui_PairBobOffsets[(gFrameTick >> 2) & 7];
+    *(u8 *)&obj->packed = value;
 }
 
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
@@ -133,10 +126,10 @@ void *RenderResource_CreateFrame(
     return entity;
 }
 
-void Ui_ApplyTableScaleToObject(struct Object *obj)
+void Ui_ApplyTableScaleToObject(struct UiScaleSprite *obj)
 {
     s32 v = Ui_ObjectPulseScales[(gFrameTick >> 1) & 7];
-    struct Effect efx;
+    struct UiScaleEffect efx;
 
     if (v < 0)
         v += 255;

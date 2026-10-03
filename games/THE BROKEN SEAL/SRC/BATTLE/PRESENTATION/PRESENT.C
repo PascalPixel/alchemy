@@ -5,6 +5,7 @@
 #include "RAM_BUFFER.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
 
 static __inline__ void FillWords(void *dst, s32 size, s32 value)
 {
@@ -12,9 +13,7 @@ static __inline__ void FillWords(void *dst, s32 size, s32 value)
     Iwram_FillWords(dst, size, value);
 }
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block. Kind 44
-   is the presentation state, kind 10 its scroll records. */
-extern void *Data_03001e50[];
+/* Heap slot 44 holds the background view, slot 10 its scanline pages. */
 
 extern u8 gDisp[];
 
@@ -51,8 +50,11 @@ void BattlePres_UpdateHBlankScroll(void)
     u16 *record;
     s32 control;
 
-    if (((struct BattleBackgroundView *)*(void **)((u8 *)Data_03001e50 + 44 * sizeof(void *)))->mode == 2) {
-        records = *(struct BattleAffineHdma **)&Data_03001e50[10];
+    union HeapState *heap = (union HeapState *)gWorkSlot;
+    void **cache = &heap->slots[44];
+
+    if (((struct BattleBackgroundView *)cache[0])->mode == 2) {
+        records = cache[10 - 44];
         record = records->lines[records->page];
         control = record[0];
         /* FAKEMATCH: the do-while keeps the BG2CNT address load after the
@@ -72,91 +74,76 @@ void BattlePresentation_UploadTileVariant(void)
         Dma_Set(BattlePres_TileVariants + (variant >> 2) * 32, (void *)0x06005000, 0x84000008, (volatile u32 *)0x040000d4);
 }
 
-/* Main-image symbols: every pool word inside the ROM or the work RAM. */
+/* Raise the curtain, turn the camera and reduce the transition zoom. */
 void BattlePres_AdvanceTransitionTimer(void)
 {
-  s32 v;
-  struct BattleCamera *disp;
-  u32 *timer;
-  struct BgScroll *pos;
-  u32 t;
-  u32 next;
-  timer = *((u32 **)Ram_Disp);
-  t = *timer;
-  disp = *((struct BattleCamera **)Ram_CameraWork);
-  v = 0x34 - t;
-  if (v > 0x20)
-  {
-    if (1)
-    {
-      v = 0x20;
+    s32 scroll;
+    struct BattleCamera *camera;
+    u32 *timer;
+    struct BgScroll *offset;
+    u32 frame;
+    u32 next;
+
+    timer = *(u32 **)Ram_Disp;
+    frame = *timer;
+    camera = *(struct BattleCamera **)Ram_CameraWork;
+    scroll = 0x34 - frame;
+    if (scroll > 0x20)
+        scroll = 0x20;
+    offset = (struct BgScroll *)Ram_BgScroll;
+    if (scroll < 0)
+        scroll = 0;
+    offset->y = (s16)scroll;
+    if (frame <= 0x50U)
+        camera->yaw = (s16)(45 * frame * 8 + 0xaf80);
+    next = (*timer = *timer + 1);
+    if (next <= 0x50U) {
+        BattlePres_SetupTransitionScene(0, 0, 0, 0xb4 - next);
+        return;
     }
-  }
-  pos = (struct BgScroll *)Ram_BgScroll;
-  if (v < 0)
-  {
-    if (v || t)
-    {
-      v = 0;
-    } else
-    {
-      v = 0;
-    }
-  }
-  pos->y = (s16)v;
-  if (t <= 0x50U)
-  {
-    disp->yaw = (s16)(((45 * t) * 8) + 0xAF80);
-  }
-  next = (*timer = (*timer) + 1);
-  if (next <= 0x50U)
-  {
-    BattlePres_SetupTransitionScene(0, 0, 0, 0xB4 - next);
-    return;
-  }
-  BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
+    BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
 }
 
 /* battle/presentation/trans/draw_rows.c */
 void BattlePres_DrawTransitionRows(void)
 {
     u32 i;
-    s32 rec;
-    s32 q;
+    s32 frame;
+    s32 aligned;
     s32 tile;
     u32 row;
-    u16 *p;
+    u16 *tiles;
 
-    rec = *(s32 *)(*(s32 *)gDisp);
-    if ((u32)rec <= 79) {
-        tile = (7 & rec) + 0xf081;
-        if (rec >= 0) {
-            q = rec;
+    frame = **(s32 **)gDisp;
+    if ((u32)frame <= 79) {
+        tile = (7 & frame) + 0xf081;
+        if (frame >= 0) {
+            aligned = frame;
         } else {
-            q = rec + 7;
+            aligned = frame + 7;
         }
-        row = 13 - (q >> 3);
+        row = 13 - (aligned >> 3);
         i = 0;
-        p = (u16 *)((row << 6) + 0x06006000);
+        tiles = (u16 *)((row << 6) + 0x06006000);
         do {
             i++;
-            *p = tile;
-            p++;
+            *tiles = tile;
+            tiles++;
         } while (i != 32);
 
         tile = tile | 0x800;
-        q = rec;
-        if (rec < 0) {
-            q = q + 7;
+        aligned = frame;
+        if (frame < 0) {
+            aligned = aligned + 7;
         }
-        row = (q >> 3) + 13;
+        row = (aligned >> 3) + 13;
         if (row <= 20) {
             i = 0;
-            p = (u16 *)((row << 6) + 0x06006000);
+            tiles = (u16 *)((row << 6) + 0x06006000);
             do {
                 i++;
-                *p = tile;
-                p++;
+                *tiles = tile;
+                tiles++;
             } while (i != 32);
         }
     }

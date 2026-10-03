@@ -7,12 +7,6 @@ extern u8 MsgSanctumFarewell[];
 s32 Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-struct ShopCursorAnchor *RenderOutput_CreateFar(
-    u32 resource,
-    u32 flags,
-    s32 window,
-    s32 x,
-    s32 y);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowResolvedAndWait(s32 message);
 void Shop_InitializeCursorWork(void);
@@ -50,10 +44,10 @@ s32 Shop_ConfirmAct(s32 unit_id)
         SideObject_CreateFar(2, 0, 0, list_window, -4, -4);
     }
 
-    cursor_anchor = RenderOutput_CreateFar(
+    cursor_anchor = (struct ShopCursorAnchor *)RenderOutput_CreateFar(
         *(u16 *)((u8 *)shop + 0x390),
         0x40000000,
-        list_window,
+        (struct RenderInput *)list_window,
         0,
         0);
     cursor_anchor->kind = 1;

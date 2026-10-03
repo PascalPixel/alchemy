@@ -1,25 +1,20 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+#include "WINDOW.H"
 extern u8 Data_03001e8c[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-struct Work;
-struct Slot;
-
-struct UiTextMessageWorkGlobals {
-    void *state;
-    u8 padding4[0x54];
-    void *control;
+/* The battle message workspace allocated as twelve bytes in heap slot 37. */
+struct MessageControl {
+    struct UiWindow *window;
+    struct UiChannelSlot *channel;
+    s32 preserve;
 };
 
-extern volatile struct UiTextMessageWorkGlobals gWindowWork;
-
 s32 UiText_BuildRenderEntries(s32, s32);
-struct Work *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_MapTextCanvasTiles(s32, s32, s32, s32, s32);
-struct Slot *UiWork_ActivateChannel(struct Work *, s32, s32);
-void UiWork_Finalize(struct Work *, s32);
+struct UiChannelSlot *UiWork_ActivateChannel(struct UiWindow *, s32, s32);
 
 void UiText_PrepareMessageWork(s32 argument)
 {
@@ -27,40 +22,40 @@ void UiText_PrepareMessageWork(s32 argument)
     s32 result;
     s32 one;
     s32 active_offset;
-    struct Work *existing;
-    struct Work *work;
-    void *state;
-    void *control;
+    struct UiWindow *existing;
+    struct UiWindow *work;
+    struct UiRenderWork *state;
+    struct MessageControl *control;
 
-    state = gWindowWork.state;
-    control = gWindowWork.control;
+    state = *(struct UiRenderWork *volatile *)&gWindowWork[0];
+    control = *(struct MessageControl *volatile *)&gWindowWork[22];
     result = 0;
-    FIELD(state, s8, RENDER_MENU_STATE_OFS) = 2;
+    state->menu_state = 2;
     index = UiText_BuildRenderEntries(argument, 1);
     one = 1;
-    FIELD(state, s8, RENDER_MENU_STATE_OFS) = one;
+    state->menu_state = one;
     active_offset = RENDER_ENTRY_TBL_OFS + index * 2;
 
     if (FIELD(state, u16, active_offset) != 0) {
-        existing = FIELD(control, struct Work *, 0);
+        existing = control->window;
         if (existing != NULL) {
             goto use_existing;
         }
         {
             work = UiWindow_Create(0, 15, 30, 6, 10);
             existing = work;
-            FIELD(control, struct Work *, 0) = existing;
+            control->window = existing;
             UiWindow_MapTextCanvasTiles(0, 15, 30, 6, one);
-            FIELD(control, s32, 8) = result;
+            control->preserve = result;
             goto have_work;
         }
 use_existing:
         work = existing;
 have_work:
         if (work != NULL) {
-            result = (s32)UiWork_ActivateChannel(work, index, FIELD(control, s32, 8));
-            FIELD(control, s32, 4) = result;
-            FIELD(control, s32, 8) = 0;
+            result = (s32)UiWork_ActivateChannel(work, index, control->preserve);
+            control->channel = (struct UiChannelSlot *)result;
+            control->preserve = 0;
             if (result == 0) {
                 UiWork_Finalize(work, one);
             }
@@ -89,7 +84,7 @@ check:
 #include "TYPES.H"
 
 s32 Func_08018038(s32 value, s32 mode);
-s32 UiText_QueueRenderEntries(s32 no, s32 entry, s32, s32, s32, s32);
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
 
 /* Clears the message cursor pair, then opens message `no` for the entry
    `argument` selects when that entry's slot is live. */
@@ -111,7 +106,7 @@ s32 UiText_OpenEntryMessage(s32 no, s32 argument)
         return 0;
     if (no == 0)
         return 0;
-    result = UiText_QueueRenderEntries(no, entry, 0, 0, 0, 1);
+    result = (s32)UiText_QueueRenderEntries((struct UiWindow *)no, entry, 0, 0, 0, 1);
     if (result == 0)
         return 0;
     return result;

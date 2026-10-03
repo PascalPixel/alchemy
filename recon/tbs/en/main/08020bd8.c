@@ -175,7 +175,7 @@ remove_character:
         if(column==18) {
             if(row==5) {
                 if(length==0) {
-                    caret.output->one5 = 13;
+                    caret.output->active = 13;
                     RenderOutput_PrepareForRedraw(label);
                     UiText_DrawPaddedLabel(label,saved);
                     WaitFrames(10);

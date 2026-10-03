@@ -2,6 +2,7 @@
 #define ALCHEMY_RENDER_INPUT_H
 
 #include "TYPES.H"
+#include "LAYOUT_GUARD.H"
 
 struct RenderInput {
     u8 unknown_00[8];
@@ -40,12 +41,13 @@ union RenderTableValue {
 };
 
 struct RenderOutput {
-    s32 zero;
-    s8 one4;
-    s8 one5;
+    struct RenderOutput *next;
+    s8 kind;
+    s8 active;
     s16 x;
     s16 y;
-    u8 unknown_0a[4];
+    u16 unknown_0a;
+    u16 unknown_0c;
     s8 index;
     u8 sentinel;
     u8 unknown_10[4];
@@ -59,6 +61,11 @@ struct RenderOutput *RenderOutput_Create(
     struct RenderInput *input,
     s32 offset_x,
     s32 offset_y);
+
+struct RenderOutput *RenderOutput_CreateFar(
+    s32 resource, s32 flags, struct RenderInput *window, s32 x, s32 y);
+
+LAYOUT_OFFSET_GUARD(RenderOutput_Unknown0c, struct RenderOutput, unknown_0c, 0x0c);
 
 #define RENDER_OUTPUT_OFFSET(field) \
     ((u32)&(((struct RenderOutput *)0)->field))

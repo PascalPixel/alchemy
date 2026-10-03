@@ -9,20 +9,11 @@ struct ArrowResources {
 
 extern struct ArrowResources *gMenuWork;
 
-struct MarkerObject {
-    u8 pad00[4];
-    u8 state;
-    u8 active;
-    u8 pad06[6];
-    u16 timer;
-};
 
-struct MarkerObject *RenderOutput_CreateFar(s32 resource, s32 flags,
-    struct RenderInput *window, s32 x, s32 y);
 
 s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
-    struct MarkerObject *object;
+    struct RenderOutput *object;
     u32 resource;
     register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
     register struct RenderInput *w asm("r4") = window; /* FAKEMATCH: keeps the window in r4 */
@@ -36,8 +27,8 @@ s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 v
     object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
     if (object == 0)
         return -1;
-    object->state = 0;
-    object->timer = 0;
+    object->kind = 0;
+    object->unknown_0c = 0;
     object->active = 1;
     return 1;
 }

@@ -37,12 +37,12 @@ struct RenderOutput *RenderOutput_Create(
     output->table.value =
         ((struct TableEntry *)Ram_VramBlockCache)[arg0].value >> 5;
     output->sentinel = 0xff;
-    output->zero = 0;
+    output->next = 0;
     output->x = x;
     output->y = (s16)y;
     output->index = (s8)arg0;
-    output->one4 = 1;
-    output->one5 = 1;
+    output->kind = 1;
+    output->active = 1;
     RenderOutput_AppendToList(arg2, output);
     return output;
 }

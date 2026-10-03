@@ -1,14 +1,9 @@
 #include "DMA.H"
 #include "SYSTEM.H"
+#include "HEAP_STATE.H"
 
 extern const u8 Tile_Decompress4bpp[];
 
-struct RuntimeCells {
-    u8 unknown_000[196];
-    void (*run)(s32, u8 *);
-};
-
-extern struct RuntimeCells gWorkSlot;
 extern u8 Tile_Decompress4bppCodeSize[];
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
@@ -24,6 +19,7 @@ void Ui_RunCopiedRoutine(u8 *work)
     do { size = (u32)Tile_Decompress4bppCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((const void *)Tile_Decompress4bpp, code, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
-    gWorkSlot.run(*(s32 *)(work + 0x604), work);
+    ((void (*)(s32, u8 *))((union HeapState *)gWorkSlot)->slots[49])(
+        *(s32 *)(work + 0x604), work);
     Runtime_ReleaseHeapBlock(49);
 }

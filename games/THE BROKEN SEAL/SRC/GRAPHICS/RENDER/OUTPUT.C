@@ -3,9 +3,10 @@
 #include "RAM_BUFFER.H"
 #include "RESOURCE.H"
 
-void *RenderOutput_AcquireFree(void);
+struct RenderOutput *RenderOutput_AcquireFree(void);
 void Resource_ResetEntry(u32);
-s32 RenderOutput_AppendToList(void *, void *);
+struct RenderOutputList;
+void RenderOutput_AppendToList(struct RenderOutputList *, struct RenderOutput *);
 
 struct TableEntry {
     u16 unused;
@@ -37,18 +38,18 @@ struct RenderOutput *RenderOutput_Create(
     output->table.value =
         ((struct TableEntry *)Ram_VramBlockCache)[arg0].value >> 5;
     output->sentinel = 0xff;
-    output->zero = 0;
+    output->next = 0;
     output->x = x;
     output->y = (s16)y;
     output->index = (s8)arg0;
-    output->one4 = 1;
-    output->one5 = 1;
-    RenderOutput_AppendToList(arg2, output);
+    output->kind = 1;
+    output->active = 1;
+    RenderOutput_AppendToList((struct RenderOutputList *)arg2, output);
     return output;
 }
 
 s32 Resource_LoadByMode(s32 mode, s32 value);
-void *RenderOutput_CreateFromResource(
+struct RenderOutput *RenderOutput_CreateFromResource(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,
@@ -65,7 +66,7 @@ void *RenderOutput_CreateFromResource(
 }
 
 s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-void *RenderOutput_CreateLoaded(
+struct RenderOutput *RenderOutput_CreateLoaded(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,
@@ -73,7 +74,7 @@ void *RenderOutput_CreateLoaded(
     s32 arg4)
 {
     s32 no;
-    void *result;
+    struct RenderOutput *result;
 
     no = Resource_FindFreeEntry();
     result = NULL;
@@ -85,7 +86,7 @@ void *RenderOutput_CreateLoaded(
 }
 
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
-void *RenderOutput_CreateWithTransform(
+struct RenderOutput *RenderOutput_CreateWithTransform(
     s32 arg0,
     struct RenderInput *arg1,
     s32 arg2,
@@ -93,7 +94,7 @@ void *RenderOutput_CreateWithTransform(
 {
     s32 count;
     s32 unused;
-    u8 *result;
+    struct RenderOutput *result;
 
     count = Resource_FindFreeEntry();
     if (count == 0x60) {
@@ -101,19 +102,19 @@ void *RenderOutput_CreateWithTransform(
     }
     Ui_BuildPairedPatternsToSlot(arg0, 1, &count, &unused, 1);
     result = RenderOutput_Create(count, 0x40000000, arg1, arg2, arg3);
-    result[15] = 251;
+    result->sentinel = 251;
     return result;
 }
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
-void *RenderOutput_CreateFromTable(
+struct RenderOutput *RenderOutput_CreateFromTable(
     s32 table_entry,
     struct RenderInput *input,
     s32 x,
     s32 y)
 {
     s32 slot;
-    void *output;
+    struct RenderOutput *output;
 
     slot = Resource_FindFreeEntry();
     output = NULL;

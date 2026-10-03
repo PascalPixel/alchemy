@@ -41,7 +41,6 @@ s32 EventTable_CopyRowHeader(s32 row, s16 *items);
 void Shop_InitializeCursorWork(void);
 struct ObjectRuntime *Object_GetByIdFar(s32 id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
-struct RenderOutput *RenderOutput_CreateFar(u32 resource, u32 flags, s32 window, s32 x, s32 y);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowAndWait(s32 message);
 s32 Func_08015380(s32 choice);
@@ -169,9 +168,9 @@ s32 Shop_Run(s32 row, s32 keeper_id)
     window = UiWindow_CreateWithSideObjectFar(shop->keeper_resource, 0, 0, 0);
     if (window == 0)
         window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
-    anchor = RenderOutput_CreateFar(shop->cursor_icon, 0x40000000, window, 0, 0);
-    anchor->one5 = 1;
-    anchor->one4 = 0;
+    anchor = RenderOutput_CreateFar(shop->cursor_icon, 0x40000000, (struct RenderInput *)window, 0, 0);
+    anchor->active = 1;
+    anchor->kind = 0;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = anchor;
     UiMessage_ShowAndWait((s32)MsgWeaponShopWelcome);

@@ -8,19 +8,11 @@
 #include "BATTLE_MSG.H"
 #include "BATTLE_PRESENTATION.H"
 #include "MOTION_OBJECT.H"
+#include "ANIMSPR.H"
 s32 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 id);
 void BattleEv_DispatchQueued(void);
-
-struct MotionRecordValue {
-    s16 battle_value;
-};
-
-struct MotionRecord {
-    u8 reserved_00[40];
-    struct MotionRecordValue *child;
-};
 
 extern s32 *gTransitionWork;
 
@@ -45,7 +37,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 {
     struct BattlePresentationWork work;
     struct MotionObject *object;
-    struct MotionRecord *record;
+    struct AnimationObject *animation;
     struct BattleUnit *unit;
     s16 position[3];
     s32 scripted;
@@ -91,9 +83,9 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
     scripted = plan->target_modifiers[0];
     direct = plan->target_adjustments[0] == 0;
 
-    record = GetMotionRecord(
+    animation = GetMotionRecord(
         GetBattleObjectSlot(plan->actor_id)->object, 0);
-    divisor = ResourceMetadata_SumCommandLengthsFar(record->child->battle_value, 2, 1);
+    divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
     BattleMotion_ApproachTarget(
         work.actor,
         work.actors[0],
@@ -185,7 +177,7 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     struct BattlePresentationWork work;
     struct BattlePlan *saved_input;
     struct MotionObject *object;
-    struct MotionRecord *record;
+    struct AnimationObject *animation;
     s32 *facing;
     s32 angle;
     s32 adjusted;
@@ -221,9 +213,9 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     Owner_GetStateFar(saved_input->target_ids[0]);
 
     scripted = flags & 2;
-    record = GetMotionRecord(
+    animation = GetMotionRecord(
         GetBattleObjectSlot(saved_input->actor_id)->object, 0);
-    divisor = ResourceMetadata_SumCommandLengthsFar(record->child->battle_value, 2, 1);
+    divisor = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->anim_id, 2, 1);
     BattleMotion_ApproachTarget(
         work.actor,
         saved_input->target_ids[0],

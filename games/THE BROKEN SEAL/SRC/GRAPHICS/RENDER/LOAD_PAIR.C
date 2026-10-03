@@ -1,27 +1,25 @@
 #include "TYPES.H"
+#include "WINDOW.H"
+#include "SYSTEM.H"
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
 #include "TBS_EDITION.H"
 
-struct MessageWindow;
-
-extern u8 *gWindowWork;
 extern u8 MsgPairJoinedParty[];
 
-struct MessageWindow *UiWindow_Create(s32, s32, s32, s32, s32);
-void UiWindow_DrawDividerLine(struct MessageWindow *, s32, s32, s32, s32);
+void UiWindow_DrawDividerLine(struct UiWindow *, s32, s32, s32, s32);
 s32 Party_LookupCharacterValueByFlag32(s32);
 s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
-s32 UiText_QueueRenderEntries(struct MessageWindow *, s32, s32, s32, s32);
+/* This native caller passes five words; keep its legacy call boundary. */
+struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void Runtime_PushSlotEntry(s32 *, s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
-void UiWork_Finalize(struct MessageWindow *, s32);
 void Resource_ResetEntry(s32);
 
 extern volatile u32 gKeyState;
@@ -30,8 +28,8 @@ extern volatile u32 gKeyState;
    glyphs and the joined line, then wait for the jingle or a key. */
 void Party_ShowPairJoinedMessage(s32 first, s32 second)
 {
-    u8 *work = gWindowWork;
-    struct MessageWindow *window;
+    u8 *work = gWindowWork[0];
+    struct UiWindow *window;
     s32 sprite2[3];
     s32 sprite1[3];
     s32 *entry1;
@@ -49,7 +47,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
     if (window != NULL) {
         UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
 
-        work[RENDER_DIRTY_OFS] = 1;
+        ((struct UiRenderWork *)work)->dirty = 1;
 
         UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(first)), 0, &handle1, &palette, 14, zero);
         p = entry1;
@@ -64,8 +62,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
         *p++ = 0x802c000c;
         *p = palette | 0xf000;
 
-        *(u16 *)(work + RENDER_RESULT_OFS) = zero;
-        *(u16 *)(work + RENDER_RESULT_OFS + 2) = zero;
+        ((struct UiRenderWork *)work)->result[0] = zero;
+        ((struct UiRenderWork *)work)->result[1] = zero;
 
         UiWork_PushValueSlot(first, 1);
         UiWork_PushValueSlot(second, 1);

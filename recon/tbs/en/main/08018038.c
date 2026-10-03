@@ -1,3 +1,4 @@
+#include "TEXT_READER.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "GLOBAL_CELLS.H"
@@ -70,8 +71,7 @@ extern u8 gWindowWork[];
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Runtime_ReleaseHeapBlock(s32 kind);
-s32 _call_via_r9(s32 *st);
-void UiText_LookupMessage(s32 *st, s32 script);
+s32 _call_via_r9(struct TextReader *st);
 u8 *Text_FormatNumber(u8 *buf, s32 input, s32 width);
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
                   s32 *suffix);
@@ -107,7 +107,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
     u8 *num;
     u8 *src;
     u16 *dst;
-    s32 st[3];
+    struct TextReader st;
     u8 numbuf[16];
     u16 name[24];
 
@@ -133,11 +133,11 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 DMA_ENABLE | (TEXT_WORK_SIZE >> 2),
                 (volatile u32 *)DMA3_REGS);
 
-        UiText_LookupMessage(st, script);
+        UiText_LookupMessage(&st, script);
 
         do {
             prev = ch;
-            ch = (u32)_call_via_r9(st);
+            ch = (u32)_call_via_r9(&st);
             if (ch > 255)
                 ch = 64;
 
@@ -146,7 +146,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 if (ch < 32) {
                     switch (ch) {
                     case 19:
-                        _call_via_r9(st);
+                        _call_via_r9(&st);
                         UiRender_LookupNamedValue(3, clear);
                         break;
                     case 0:
@@ -158,7 +158,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         UiRender_LookupNamedValue(5, clear);
                         break;
                     case 20:
-                        _call_via_r9(st);
+                        _call_via_r9(&st);
                         UiRender_LookupNamedValue(2, clear);
                         break;
                     case 21:
@@ -169,16 +169,16 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 8:
                     case 9:
-                        _call_via_r9(st);
+                        _call_via_r9(&st);
                         break;
                     case 17:
-                        _call_via_r9(st);
+                        _call_via_r9(&st);
                         break;
                     case 18:
-                        _call_via_r9(st);
+                        _call_via_r9(&st);
                         break;
                     case 29:
-                        _call_via_r9(st);
+                        _call_via_r9(&st);
                         break;
                     case 1:
                         running = 0;
@@ -242,7 +242,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 29:
                         entry[pos] = (u16)ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
-                        entry[pos] = (u16)(_call_via_r9(st) + 0xFFFF);
+                        entry[pos] = (u16)(_call_via_r9(&st) + 0xFFFF);
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 22:
@@ -262,7 +262,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         }
                         break;
                     case 19:
-                        no = _call_via_r9(st) - 1;
+                        no = _call_via_r9(&st) - 1;
                         UiText_DecodeMessage(
                             UiRender_LookupNamedValue(3, clear) + 0x741,
                             name, 24);
@@ -270,7 +270,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 20:
-                        no = _call_via_r9(st) - 1;
+                        no = _call_via_r9(&st) - 1;
                         UiText_DecodeMessage(
                             (UiRender_LookupNamedValue(2, clear) &
                              RENDER_ENTRY_MASK) + 0x182,
@@ -317,7 +317,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 18:
-                        no = _call_via_r9(st) - 1;
+                        no = _call_via_r9(&st) - 1;
                         src = Runtime_GetObject(
                             UiRender_LookupNamedValue(1, clear));
                         dst = name;
@@ -332,7 +332,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 17:
-                        no = _call_via_r9(st) - 1;
+                        no = _call_via_r9(&st) - 1;
                         src = Runtime_GetObject(no);
                         dst = name;
                         no = 0;
@@ -346,7 +346,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 26:
-                        no = (_call_via_r9(st) - 1) * 2;
+                        no = (_call_via_r9(&st) - 1) * 2;
                         entry[pos] = (u16)(no + 128);
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = (u16)(no + 129);

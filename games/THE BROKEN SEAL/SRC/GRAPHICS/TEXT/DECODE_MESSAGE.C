@@ -1,13 +1,13 @@
+#include "TEXT_READER.H"
+#include "HEAP_STATE.H"
 #include "DMA.H"
 
 extern const u8 Func_08015430[];
 
-extern void *Data_03001e50[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
 void *Runtime_AllocateHeapBlock(s32 slot, u32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void UiText_LookupMessage(void *reader, s32 message);
 
 /* The European decoder also passes code 29's one argument through, and
    biases each argument by a plain constant. */
@@ -18,15 +18,15 @@ void UiText_LookupMessage(void *reader, s32 message);
 
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
 {
-    u32 reader[3];
+    struct TextReader reader;
     void *original;
-    s32 (*decode)(void *);
+    s32 (*decode)(struct TextReader *);
     u32 value;
 #if !defined(DECODE_EUROPEAN)
     u16 delta;
 #endif
 
-    original = Data_03001e50[50];
+    original = ((union HeapState *)&gWorkSlot)->slots[50];
     if (original == NULL) {
         u32 size;
         void *code;
@@ -36,12 +36,12 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
         Dma_Set((const void *)Func_08015430, code,
             0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     }
-    decode = (s32 (*)(void *))Data_03001e50[50];
-    UiText_LookupMessage(reader, message);
+    decode = (s32 (*)(struct TextReader *))((union HeapState *)&gWorkSlot)->slots[50];
+    UiText_LookupMessage(&reader, message);
 #if !defined(DECODE_EUROPEAN)
     delta = 0xffff;
 #endif
-    while ((value = decode(reader)) != 0) {
+    while ((value = decode(&reader)) != 0) {
         switch (value) {
         case 14:
             capacity -= 3;
@@ -49,12 +49,12 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
                 goto done;
             *text++ = value;
 #if defined(DECODE_EUROPEAN)
-            value = decode(reader) + 0xffff;
+            value = decode(&reader) + 0xffff;
             *text++ = value;
-            value = decode(reader) + 0xffff;
+            value = decode(&reader) + 0xffff;
 #else
-            *text++ = decode(reader) + delta;
-            value = decode(reader) + delta;
+            *text++ = decode(&reader) + delta;
+            value = decode(&reader) + delta;
 #endif
             break;
         case 8:
@@ -70,7 +70,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
             if (capacity <= 0)
                 goto done;
             *text++ = value;
-            value = decode(reader) + 0xffff;
+            value = decode(&reader) + 0xffff;
             break;
         default:
             capacity--;

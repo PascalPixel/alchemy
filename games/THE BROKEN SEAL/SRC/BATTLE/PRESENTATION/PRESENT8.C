@@ -37,13 +37,13 @@ s32 BattleMotion_GetSlotField14(s32 id)
     return GetBattleObjectSlot(id)->palette;
 }
 
-s32 Summon_ClassValid(s32 arg0)
+s32 Summon_ClassValid(s32 summon)
 {
     struct BattleSession *ptr;
     s32 retval;
     s32 i;
 
-    retval = Summon_IsEntryFlagged(arg0);
+    retval = Summon_IsEntryFlagged(summon);
     ptr = gBattleWork;
     for (i = 0; i <= 5; i++) {
         if (ptr->sprite_slots[i] != 0)

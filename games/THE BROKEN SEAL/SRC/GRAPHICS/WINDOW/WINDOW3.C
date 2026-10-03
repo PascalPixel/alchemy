@@ -2,7 +2,7 @@
 #include "RUNTIME_INTERFACES.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
-#include "MENU_LIST.H"
+#include "WINDOW.H"
 
 s32 UiText_MeasureStringVariant(s32 start, s32 *width, s32 *count, s32 mode);
 s32 UiText_BuildRenderEntries(s32, s32);
@@ -50,7 +50,7 @@ void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, 
         *pw = (*pw + 19) >> 3;
         *ph = (*ph + 15) >> 3;
 #if !defined(FIT_FIXED_LIMIT)
-        if (base[RENDER_MODE_OFS] != 0) {
+        if (((struct UiRenderWork *)base)->mode != 0) {
             *pw += 2;
             limit = 29;
         }

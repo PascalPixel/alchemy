@@ -10,17 +10,6 @@ struct GlyphInfo {
     u8 unknown_02[30];
 };
 
-struct TextWork {
-    u8 unknown_000[RENDER_WORD2_OFS];
-    u16 color_a;
-    u16 unknown_eaa;
-    u16 color_b;
-    u16 color_c;
-    u16 entries[RENDER_ENTRY_MASK + 1];
-    u16 unknown_12b0;
-    u16 count;
-};
-
 extern struct GlyphInfo UiText_Glyphs[];
 
 void UiWork_ResetCounters(void);
@@ -29,13 +18,13 @@ s32 Func_08018cac(struct TextWindow *window, u32 c, s32 x, s32 y, s32 flags);
 void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x, s32 y)
 {
     u8 *base;
-    struct TextWork *work;
+    struct UiRenderWork *work;
     u32 c;
     u32 next;
     s16 start;
 
     base = gWindowWork[0];
-    work = (struct TextWork *)base;
+    work = (struct UiRenderWork *)base;
     c = 0;
     start = x;
     if (text == NULL) {
@@ -56,15 +45,15 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
         if (c <= 30) {
             switch (c) {
             case 8:
-                work->color_c = *text;
+                work->colour = *text;
                 text++;
                 break;
             case 9:
-                work->color_b = *text;
+                work->outline = *text;
                 text++;
                 break;
             case 10:
-                work->color_a = *text;
+                work->line_spacing = *text;
                 text++;
                 break;
             case 7:
@@ -97,7 +86,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
                 if (c > 32 && next > 32) {
                     s16 width = UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width;
 
-                    if (work->color_b == 1) {
+                    if (work->outline == 1) {
                         if ((u16)width <= 14) {
                             c |= next << 8;
                             text++;

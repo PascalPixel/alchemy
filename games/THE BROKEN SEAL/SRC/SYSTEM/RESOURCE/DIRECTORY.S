@@ -32,8 +32,8 @@ Resource_DirectoryTable:
 	resource , FarCall_BlankLoadTable
 	resource , FarCall_SoundTable
 	resource , FarCall_SoundTable
-	resource , FarCall_ResourceTable
-	resource , FarCall_ResourceTable
+	resource ResourceFarCalls, FarCall_ResourceTable
+	resource ResourceFarCallsAlternate, FarCall_ResourceTable
 	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
 	resource IntroGraphicsA, Title_IntroGraphicsA

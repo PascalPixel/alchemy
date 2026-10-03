@@ -795,7 +795,7 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     u8 saved;
     s32 target[3];
 
-    record = Actor_Get(ACTOR_PARTY_LEADER);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     mode = record + 85;
     saved = *mode;
 
@@ -893,7 +893,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         record[85] = 0;
         *(s32 *)(record + 20) = -0x20000;
         *(s32 *)(record + 12) = -0x20000;
-        GameFlag_Set(0x214);
+        Engine_GameFlagSet(0x214);
         StagedActor_FillGridAttributeRectangle(2, 43, 23, 1, 1, 255);
     }
     Engine_EventEnd();

@@ -129,7 +129,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 
     /* Record arrival on map 90, then publish the initial scene phase/timer. */
     if (gGameState.entrance == 90) {
-        GameFlag_Set(0x96f);
+        Engine_GameFlagSet(0x96f);
     }
 
     work = *(u8 **)&gEventWork;
@@ -137,7 +137,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
     *(s32 *)(work + 456) = 24;
 
     /* The dressing sequence and cue are unlocked by the shared event flag. */
-    if (GameFlag_IsSet(0x201) != 0) {
+    if (Engine_GameFlagIsSet(0x201) != 0) {
         FieldScene_RunLayoutStepThenSet201();
         Engine_ActorSetAnimation(16, 4);
     }

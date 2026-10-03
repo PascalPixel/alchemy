@@ -314,12 +314,12 @@ struct ScenePlacement *StoryScene_SelectPlacementTable(void)
 
     switch (scene_id) {
     case 49:
-        if (GameFlag_IsSet(0x94f) == 0 && GameFlag_IsSet(0x941) != 0) {
+        if (Engine_GameFlagIsSet(0x94f) == 0 && Engine_GameFlagIsSet(0x941) != 0) {
             return gWorldMapPlacements49;
         }
         break;
     case 64:
-        if (GameFlag_IsSet(0x85a) == 0) {
+        if (Engine_GameFlagIsSet(0x85a) == 0) {
             return gWorldMapPlacements64;
         }
         break;
@@ -344,7 +344,7 @@ struct ScenePlacement *StoryScene_SelectPlacementTable(void)
         break;
     }
 
-    GameFlag_Set(0x235);
+    Engine_GameFlagSet(0x235);
     return gWorldMapPlacements;
 }
 

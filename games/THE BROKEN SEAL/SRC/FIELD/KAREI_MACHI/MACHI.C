@@ -206,6 +206,7 @@ void Audio_PlayCueFromEventWork();
 
 extern u8 *gActorEffectWork;
 
+void InitializeOrbitingRenderEffect(s32 id);
 void KareiMachi_SetupEntryActors(void);
 void SceneState_CheckFlags941And940(void);
 void SceneState_ApplyFlagGatedActorEightSetup(void);
@@ -1178,7 +1179,7 @@ s32 Scene_Initialize(void)
 {
     s32 v;
 
-    GameFlag_Set(0x87a);
+    Engine_GameFlagSet(0x87a);
     v = gGameState.scene;
     if (v == (s32)&SceneId_KareiMachi1) {
         KareiMachi_SetupEntryActors();
@@ -2400,14 +2401,14 @@ s32 SceneEffect_UpdateOrbitingEffect(Effect_0200390c *effect)
     return 0;
 }
 
-void InitializeOrbitingRenderEffect(void)
+void InitializeOrbitingRenderEffect(s32 id)
 {
     OrbitingSceneObject *actor;
     OrbitingSceneObjectSprite *sprite;
     u8 *transfer;
     s32 zero;
 
-    actor = GetOrbitingSceneObject();
+    actor = (OrbitingSceneObject *)Object_GetById(id);
     sprite = actor->sprite;
     sprite->flags_09_mode = 1;
     sprite->flags_05_bit_5 = 0;
@@ -2419,13 +2420,13 @@ void InitializeOrbitingRenderEffect(void)
     actor->active = zero;
     actor->mode = zero;
 
-    if (GameFlag_IsSet(0x109) == 0)
+    if (Engine_GameFlagIsSet(0x109) == 0)
         actor->y += 0x200000;
 
     actor->flags_23 &= 0xfe;
     actor->visible = 1;
 
-    transfer = AllocateEffectTransfer(17, 0x608);
+    transfer = Engine_HeapAllocate(17, 0x608);
     Engine_ItemLoadIcon(ITEM_NUT);
     transfer += 0x400;
     Engine_VramLoad(sprite->palette, 128, transfer);

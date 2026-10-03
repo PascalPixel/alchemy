@@ -2,6 +2,7 @@
 #define TLA_OBJECT_DISPATCH_H
 
 #include "TYPES.H"
+#include "SYSTEM.H"
 
 struct DispatchChild {
     u8 unknown_00[5];
@@ -50,7 +51,6 @@ s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *, s32);
 void ObjectDispatch_Initialize(struct DispatchObject *, u32);
 s32 Animation_ApplyChildValuesToRecord(struct DispatchChild *);
-s32 WaitFrames(s32);
 
 extern const s32 ObjectDispatch_Table4[];
 extern const s32 ObjectDispatch_Table6[];

@@ -64,8 +64,8 @@ Func_080ed2a4:
 	movs r3, #6
 	str r6, [sp, #24]
 	str r3, [r2]
-	bl Func_080d2a64
-	bl Func_080d2a8c
+	bl EventRuntime_FinishScreen
+	bl EventRuntime_WaitDelay
 	ldr r1, [sp, #20]
 	mov r0, sp
 	adds r1, #24
@@ -124,8 +124,8 @@ Func_080ed2a4:
 	adds r2, r6, r1
 	movs r3, #0
 	str r3, [r2]
-	bl Func_080d2a64
-	bl Func_080d2a8c
+	bl EventRuntime_FinishScreen
+	bl EventRuntime_WaitDelay
 	bl Scheduler_ResetTaskTable
 	bl UiWork_InitializeWithResourceCountersFar
 	ldr r2, [sp, #12]
@@ -602,8 +602,8 @@ Func_080ed2a4:
 	adds r4, #114
 	adds r3, r2, r4
 	strb r5, [r3]
-	bl Func_080d2a3c
-	bl Func_080d2a8c
+	bl EventRuntime_StartScreen
+	bl EventRuntime_WaitDelay
 	ldr r6, [sp, #16]
 	ldr r2, [sp, #24]
 	movs r1, #218

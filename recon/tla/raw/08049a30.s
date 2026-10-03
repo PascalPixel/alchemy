@@ -560,7 +560,7 @@ Func_08049a30:
 .L_08049e98:
 	.4byte 0xfffffe00
 .L_08049e9c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08049ea0:
 	.4byte Data_080597f8
 .L_08049ea4:

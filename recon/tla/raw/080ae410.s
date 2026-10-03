@@ -245,4 +245,4 @@ Func_080ae410:
 .L_080ae5f4:
 	.4byte IwramCopyWords
 .L_080ae5f8:
-	.4byte Data_0300117c
+	.4byte gFrameWaitCount

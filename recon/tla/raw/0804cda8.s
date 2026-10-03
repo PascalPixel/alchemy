@@ -420,7 +420,7 @@ Func_0804cda8:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_0804d0b0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804d0b4:
 	.4byte Data_0805e9c4
 .L_0804d0b8:

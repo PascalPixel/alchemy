@@ -85,6 +85,6 @@ Func_081a60c0:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_081a614c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_081a6150:
 	.4byte Data_03001120

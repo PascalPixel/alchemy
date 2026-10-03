@@ -18,7 +18,7 @@ Func_080ce458:
 	adds r6, r2, #0
 	ldr r5, [r3, #16]
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldrh r0, [r0, #6]
 	movs r3, #1

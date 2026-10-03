@@ -4,7 +4,7 @@
 s32 Scheduler_EnableCallbacks(u32 callback);
 void Object_EffectSpawnCallback(void);
 
-void Battle_UpdateModeFromShoulderButtons(void)
+void EventRuntime_UpdateWaitMode(void)
 {
     struct BattleRuntime *runtime = Data_03001ebc;
 

@@ -426,7 +426,7 @@ Func_080457d0:
 .L_08045b00:
 	.4byte Func_08045780
 .L_08045b04:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08045b08:
 	.4byte Data_0805e9c4
 .L_08045b0c:

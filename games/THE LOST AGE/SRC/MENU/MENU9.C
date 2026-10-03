@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "INPUT.H"
+#include "FRAME.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
@@ -7,13 +9,6 @@
    cancel marker's tiles every fourth frame and waits for the window's
    pending transfers. */
 
-struct InputState {
-    u32 held;
-    u32 pressed;
-};
-
-extern struct InputState gInput;
-extern u32 Data_0300122c;
 extern u8 Data_08105948[];
 
 typedef s32 (*CopyFn)(void *, const void *, s32);
@@ -50,7 +45,7 @@ void Menu_CancelSoundTick(void)
     struct InputState *input;
     u32 mask;
 
-    frame = Data_0300122c;
+    frame = gFrameCount;
     if ((frame & 3) == 0) {
         if (frame & 4)
             CopyWords(Data_08105948, Iwram_CopyWords, (void *)0x06002540, 32);

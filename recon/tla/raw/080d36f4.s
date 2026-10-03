@@ -44,6 +44,6 @@ ObjectGroup_ApplyIndexedChildValue:
 .L_080d373a:
 	pop {r5, r6, pc}
 .L_080d373c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080d3740:
 	.4byte Data_080f088c

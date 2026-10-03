@@ -410,7 +410,7 @@ Func_08039864:
 .L_08039bac:
 	.4byte Data_080aa0e2
 .L_08039bb0:
-	.4byte Data_030011d8
+	.4byte gLagFramesShown
 .L_08039bb4:
 	.4byte .L_08039910
 .L_08039bb8:

@@ -398,7 +398,7 @@ Func_080df1fc:
 .L_080df548:
 	.4byte gInput
 .L_080df54c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080df550:
 	movs r0, #1
 	bl WaitFrames

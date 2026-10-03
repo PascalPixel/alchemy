@@ -1001,7 +1001,7 @@ Func_020007d8:
 .L_020087f6:
 	pop {pc}
 .L_020087f8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x020087fc,"ax",%progbits
 	.global Func_020007fc
 	.thumb_func
@@ -1878,7 +1878,7 @@ Func_02000e90:
 .L_02008ec8:
 	.4byte Data_02002ce6
 .L_02008ecc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008ed0,"ax",%progbits
 	.global Func_02000ed0
 	.thumb_func

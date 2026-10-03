@@ -1,4 +1,6 @@
+#include "EVENTWRK.H"
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "OBJECT_RUNTIME.H"
 #include "PARTY_STATE.H"
 
@@ -7,7 +9,6 @@ void GameFlag_ClearBit(s32 flag);
 void ObjectEffect_EndContextEffect(s32 effect);
 void Motion_CamBounds(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Object_AttachWorkTargetToObject(s32 object_id, s32 mode);
-s32 WaitFrames(s32 frames);
 
 /* Answers the first raised context-effect flag: 0x120 ends effect 24,
    0x121 ends effect 23, and 0x122 drops the current party member from
@@ -44,7 +45,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 Audio_PlayCue(159);
                 object->y = object->terrain_height;
                 Object_SetMode(object, 22);
-                Battle_WaitMode0(15);
+                EventRuntime_Wait(15);
                 Object_AttachWorkTargetToObject(id, 1);
                 result = 3;
             }

@@ -918,7 +918,7 @@ Func_02000738:
 	bge .L_0200874a
 	pop {pc}
 .L_02008760:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008764:
 	.4byte Data_02001ae0
 	.section .text.x02008768,"ax",%progbits
@@ -1955,7 +1955,7 @@ Func_02000dac:
 .L_02008fb8:
 	.4byte 0xffff0000
 .L_02008fbc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008fc0:
 	.4byte 0x40002000
 .L_02008fc4:

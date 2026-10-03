@@ -218,7 +218,7 @@ Func_080e87c4:
 .L_080e8988:
 	.4byte Data_03001120
 .L_080e898c:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_080e8990:
 	.4byte 0x000001ea
 .L_080e8994:

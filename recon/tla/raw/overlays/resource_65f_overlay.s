@@ -410,7 +410,7 @@ Func_020002a4:
 .L_02008384:
 	.4byte Data_02006340
 .L_02008388:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200838c:
 	.4byte 0xa2600001
 	.section .text.x02008390,"ax",%progbits

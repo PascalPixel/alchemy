@@ -1,7 +1,7 @@
 #include "EDITION.H"
+#include "SYSTEM.H"
 #include "TYPES.H"
 
-s32 WaitFrames(s32);
 #if !EDITION_INTERNATIONAL
 void Func_08118068(s32, s16, s32, s32);
 #else

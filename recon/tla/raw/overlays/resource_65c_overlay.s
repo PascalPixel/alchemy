@@ -136,7 +136,7 @@ Func_020000fc:
 	pop {pc}
 	.2byte 0x0000
 .L_02008160:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008164:
 	.4byte Data_020001b0
 .L_02008168:

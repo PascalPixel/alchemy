@@ -40,7 +40,7 @@ Func_0804537c:
 	mov r8, r3
 	pop {r5, r6, r7, pc}
 .L_080453c4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080453c8:
 	.4byte 0x06000400
 .L_080453cc:

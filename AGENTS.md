@@ -84,9 +84,10 @@ or functions is exactly this cheating.
 - **O2** Every name is defined where its bytes are, as a C definition or a
   label, and layout is the linker scripts' object order. No equate, alias,
   `#define` or table gives a name an address, except Camelot's own fixed
-  addresses: resident IWRAM routines called through fixed entries, and RAM
-  buffers its code addressed as constants, each listed once in a game header
-  and checked against where the linker placed it. One name per place; never a
+  addresses: resident IWRAM routines called through fixed entries, RAM
+  buffers its code addressed as constants, and the hardware cartridge restart
+  entry, each listed once in a game header and checked against where the
+  linker placed it. One name per place; never a
   name that spells its own value. _Check: publication, fixed-address check._
 - **O3** Scene and resource ids come only from their tables and are used whole.
   Overlay code never branches straight into the main image.

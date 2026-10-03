@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "MOTION_OBJECT.H"
 #include "OWNER_STATE.H"
 #include "BATTLE_WORK.H"
@@ -7,7 +8,6 @@ void Object_SetMode(void *, s32);
 void BattleLayout_HighlightPartyPanelsFar(u16 *);
 void BattleMotion_SetRecordChildValues(void *, s32);
 s32 BattleMotion_GetSlotField14(s32);
-void WaitFrames(s32);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)

@@ -20,6 +20,6 @@ Func_080dcf2c:
 	pop {pc}
 	.2byte 0x0000
 .L_080dcf4c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080dcf50:
 	.4byte Data_080f0e9c

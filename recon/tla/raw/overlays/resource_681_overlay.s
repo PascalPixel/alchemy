@@ -2569,7 +2569,7 @@ Func_0200142c:
 .L_020094c8:
 	.4byte IwramMulQ16
 .L_020094cc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x020094d0,"ax",%progbits
 	.global Func_020014d0
 	.thumb_func
@@ -2704,7 +2704,7 @@ Func_02001548:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_020095cc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x020095d0,"ax",%progbits
 	.global Func_020015d0
 	.thumb_func

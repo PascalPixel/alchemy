@@ -47,7 +47,7 @@ Func_080d50f8:
 	movs r2, #8
 	add r2, r8
 	mov r9, r2
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	adds r3, r7, #0
 	adds r3, #84
 	ldrb r3, [r3]
@@ -317,7 +317,7 @@ Func_080d50f8:
 	str r2, [sp, #8]
 	bl ObjectDispatch_SetSingleChildField26Far
 	movs r0, #6
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	movs r5, #0
 	mov r3, r11
 	strb r5, [r3]
@@ -337,11 +337,11 @@ Func_080d50f8:
 .L_080d5394:
 	.4byte 0x00000001
 .L_080d5398:
-	bl Func_080d2350
+	bl EventRuntime_End
 	movs r0, #0
 	b .L_080d53a8
 .L_080d53a0:
-	bl Func_080d2350
+	bl EventRuntime_End
 	movs r0, #1
 	negs r0, r0
 .L_080d53a8:

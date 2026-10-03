@@ -115,7 +115,7 @@ Func_020000f4:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_02008140:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008144:
 	.4byte 0x0500019c
 .L_02008148:

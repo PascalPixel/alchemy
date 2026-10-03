@@ -264,11 +264,11 @@ Func_080addf0:
 .L_080ae008:
 	.4byte 0xffffffff
 .L_080ae00c:
-	.4byte Data_0300117c
+	.4byte gFrameWaitCount
 .L_080ae010:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_080ae014:
-	.4byte Data_03001218
+	.4byte gIdleFrameCount
 .L_080ae018:
 	.4byte Data_020036d0
 .L_080ae01c:

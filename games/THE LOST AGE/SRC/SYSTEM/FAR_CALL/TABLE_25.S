@@ -8,15 +8,15 @@
 	.global Event_SetPairWork1c0Far
 	.thumb_func
 Event_SetPairWork1c0Far:
-	overlay_veneer Func_080d2aa4
+	overlay_veneer EventRuntime_SetDestination
 	.global Func_080c8270
 	.thumb_func
 Func_080c8270:
-	overlay_veneer Func_080d2ad0
+	overlay_veneer EventRuntime_SetSavedDestination
 	.global Func_080c8278
 	.thumb_func
 Func_080c8278:
-	overlay_veneer Func_080d2afc
+	overlay_veneer EventRuntime_SetCountdown
 	.global Func_080c8280
 	.thumb_func
 Func_080c8280:

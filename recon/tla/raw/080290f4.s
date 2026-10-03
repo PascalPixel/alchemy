@@ -263,7 +263,7 @@ Func_080290f4:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 .L_080292e4:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080292e8:
 	.4byte gInput
 .L_080292ec:

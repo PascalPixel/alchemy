@@ -29,7 +29,23 @@ Func_02000c9c:
 	.global Func_02000ca4
 	.thumb_func
 Func_02000ca4:
+	.ifdef TLA_EDITION_DE
+	overlay_veneer MapLayer_SetField22Far
+	.else
+	.ifdef TLA_EDITION_ES
+	overlay_veneer MapLayer_SetField22Far
+	.else
+	.ifdef TLA_EDITION_FR
+	overlay_veneer MapLayer_SetField22Far
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer MapLayer_SetField22Far
+	.else
 	overlay_veneer Func_080201a0
+	.endif
+	.endif
+	.endif
+	.endif
 	.global Func_02000cac
 	.thumb_func
 Func_02000cac:
@@ -169,19 +185,51 @@ Func_02000d94:
 	.global Func_02000d9c
 	.thumb_func
 Func_02000d9c:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c82d0
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c82d0
+	.else
 	overlay_veneer Func_080c82e0
+	.endif
+	.endif
 	.global Func_02000da4
 	.thumb_func
 Func_02000da4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c83c8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c83c8
+	.else
 	overlay_veneer Func_080c83d8
+	.endif
+	.endif
 	.global Func_02000dac
 	.thumb_func
 Func_02000dac:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c8470
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c8470
+	.else
 	overlay_veneer Func_080c8480
+	.endif
+	.endif
 	.global Engine_EventPrepareSpeakers
 	.thumb_func
 Engine_EventPrepareSpeakers:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer BattleEffect_ResolvePendingActionsFar
+	.else
 	overlay_veneer Func_080c84e0
+	.endif
+	.endif
 	.global Func_02000dbc
 	.thumb_func
 Func_02000dbc:
@@ -197,11 +245,27 @@ Func_02000dbc:
 	.global Func_02000dc4
 	.thumb_func
 Func_02000dc4:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86e8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86e8
+	.else
 	overlay_veneer Func_080c86f8
+	.endif
+	.endif
 	.global Func_02000dcc
 	.thumb_func
 Func_02000dcc:
+	.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080c86f8
+	.else
+	.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080c86f8
+	.else
 	overlay_veneer Func_080c8708
+	.endif
+	.endif
 	.global Func_02000dd4
 	.thumb_func
 Func_02000dd4:

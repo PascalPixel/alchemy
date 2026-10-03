@@ -45,7 +45,7 @@ Func_080fabe0:
 .L_080fac30:
 	.4byte 0x000001ff
 .L_080fac34:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080fac38:
 	lsls r3, r5, #2
 	adds r3, #248

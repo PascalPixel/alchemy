@@ -1,10 +1,5 @@
 #include "OBJECT_RUNTIME.H"
 
-struct BattleAnimationState {
-    u8 unknown_00[0x28];
-    s16 *value_28;
-};
-
 struct BattleRenderObject {
     u8 unknown_00[0x50];
     struct BattleAnimationState *animation;

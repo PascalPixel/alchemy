@@ -293,11 +293,7 @@ Func_02004c08:
 	.global Func_02004c10
 	.thumb_func
 Func_02004c10:
-	.ifdef TLA_EDITION_DE
-	overlay_veneer Func_080ad2f8
-	.else
 	overlay_veneer Func_080ad318
-	.endif
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:

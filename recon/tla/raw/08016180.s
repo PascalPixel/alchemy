@@ -165,7 +165,7 @@ Func_08016180:
 .L_080162bc:
 	.4byte 0x04000200
 .L_080162c0:
-	.4byte Data_030011b8
+	.4byte gSerialExchangeActive
 .L_080162c4:
 	.4byte Data_020054c0
 .L_080162c8:

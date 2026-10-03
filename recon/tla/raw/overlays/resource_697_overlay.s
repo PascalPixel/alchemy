@@ -496,7 +496,7 @@ Func_02000330:
 .L_02008410:
 	.4byte gPartyState
 .L_02008414:
-	.4byte 0x000029c6
+	.4byte MsgTrialRoadGiveUpPrompt
 	.section .text.x02008418,"ax",%progbits
 	.global Func_02000418
 	.thumb_func
@@ -684,7 +684,7 @@ Func_020004f4:
 .L_020085ac:
 	.4byte Data_020023c4 + 0x88
 .L_020085b0:
-	.4byte 0x000029c5
+	.4byte MsgTrialRoadStoredItem
 	.section .text.x020085b4,"ax",%progbits
 	.global Func_020005b4
 	.thumb_func
@@ -739,9 +739,9 @@ Func_020005b4:
 	pop {pc}
 	.2byte 0x0000
 .L_0200861c:
-	.4byte 0x000029c4
+	.4byte MsgTrialRoadChestBlocked
 .L_02008620:
-	.4byte 0x000029c3
+	.4byte MsgTrialRoadPlaceItemPrompt
 .L_02008624:
 	.4byte gPartyState
 	.global Data_02000628
@@ -2835,7 +2835,7 @@ Func_020014e4:
 .L_02009594:
 	.4byte gPartyState
 .L_02009598:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200959c:
 	.4byte Func_02001464
 .L_020095a0:
@@ -6360,7 +6360,7 @@ Func_02002dec:
 .L_0200b220:
 	.4byte 0xfff00000
 .L_0200b224:
-	.4byte 0x000029cd
+	.4byte MsgTrialRoadSwiftChallenge
 .L_0200b228:
 	.4byte 0x0001b333
 	.section .text.x0200b22c,"ax",%progbits
@@ -6618,7 +6618,7 @@ Func_0200322c:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200b4ac:
-	.4byte 0x000029ca
+	.4byte MsgTrialRoadSlowArrival
 .L_0200b4b0:
 	.4byte 0x0001b333
 	.section .text.x0200b4b4,"ax",%progbits
@@ -6930,7 +6930,7 @@ Func_020034b4:
 	mov r10, r5
 	pop {r5, r6, pc}
 .L_0200b7c4:
-	.4byte 0x000029d1
+	.4byte MsgTrialRoadHeroesProven
 	.section .text.x0200b7c8,"ax",%progbits
 	.global Func_020037c8
 	.thumb_func
@@ -7054,7 +7054,7 @@ Func_020037c8:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b8fc:
-	.4byte 0x000029d0
+	.4byte MsgTrialRoadLeaveVillage
 	.section .text.x0200b900,"ax",%progbits
 	.global Func_02003900
 	.thumb_func
@@ -7478,7 +7478,7 @@ Func_02003900:
 .L_0200bd0c:
 	.4byte Data_02005be8
 .L_0200bd10:
-	.4byte 0x0000299a
+	.4byte MsgTrialRoadTrapInstructions
 .L_0200bd14:
 	.4byte Data_02005d28
 .L_0200bd18:
@@ -8050,7 +8050,7 @@ Func_02003f68:
 .L_0200c174:
 	.4byte 0xffff0000
 .L_0200c178:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200c17c:
 	.4byte 0x40002000
 .L_0200c180:
@@ -10476,7 +10476,7 @@ Func_020051a0:
 .L_0200d518:
 	.4byte 0x80008000
 .L_0200d51c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200d520:
 	.4byte gPartyState
 .L_0200d524:

@@ -419,7 +419,7 @@ Func_02000364:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_02008394:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x02008398,"ax",%progbits
 	.global Func_02000398
 	.thumb_func
@@ -2108,7 +2108,7 @@ Func_02000fc0:
 .L_0200911a:
 	pop {r5, pc}
 .L_0200911c:
-	.4byte 0x00001f48
+	.4byte MsgGabombaAcceptOffering
 .L_02009120:
 	.4byte gPartyState
 	.section .text.x02009124,"ax",%progbits
@@ -4981,7 +4981,7 @@ Func_0200253c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200a7a8:
-	.4byte 0x00001f25
+	.4byte MsgGabombaFocusEnergies
 .L_0200a7ac:
 	.4byte gPartyState
 .L_0200a7b0:
@@ -5459,7 +5459,7 @@ Func_02002a64:
 .L_0200ac1c:
 	.4byte gPartyState
 .L_0200ac20:
-	.4byte 0x00001f2e
+	.4byte MsgGabombaUnderstandsChannel
 .L_0200ac24:
 	ldr r3, [r5, #108]
 	movs r2, #226
@@ -6209,7 +6209,7 @@ Func_02002f70:
 .L_0200b330:
 	.4byte Data_02005d24
 .L_0200b334:
-	.4byte 0x00001f74
+	.4byte MsgGabombaSawEnergyFlow
 	.section .text.x0200b338,"ax",%progbits
 	.global Func_02003338
 	.thumb_func
@@ -6250,7 +6250,7 @@ Func_02003338:
 .L_0200b390:
 	.4byte gPartyState
 .L_0200b394:
-	.4byte 0x00001fe0
+	.4byte MsgGabombaChannelTiming
 	.section .text.x0200b398,"ax",%progbits
 	.global Func_02003398
 	.thumb_func

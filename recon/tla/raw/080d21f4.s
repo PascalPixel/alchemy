@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d21f4
+	.global EventRuntime_UpdateWaitMode
 	.thumb_func
-Func_080d21f4:
+EventRuntime_UpdateWaitMode:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -40,6 +40,6 @@ Func_080d21f4:
 	pop {pc}
 	.2byte 0x0000
 .L_080d2238:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080d223c:
 	.4byte gInput

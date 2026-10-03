@@ -14,7 +14,7 @@ Func_080db0b0:
 	movs r0, #0
 	sub sp, #20
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	mov r8, r0
 	adds r0, r5, #0
@@ -306,7 +306,7 @@ Func_080db0b0:
 .L_080db31c:
 	.4byte 0x00000000
 .L_080db320:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080db324:
 	.4byte .L_080db1e8
 .L_080db328:

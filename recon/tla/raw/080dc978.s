@@ -80,7 +80,7 @@ Func_080dc978:
 .L_080dca14:
 	.4byte 0x00000000
 .L_080dca18:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080dca1c:
 	movs r3, #0
 	ldrsb r3, [r5, r3]

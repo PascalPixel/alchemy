@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081c1000
+	.global AudioEngine_SuspendDirectSoundWrapper
 	.thumb_func
-Func_081c1000:
+AudioEngine_SuspendDirectSoundWrapper:
 	push {lr}
 	bl AudioEngine_SuspendDirectSound
 	pop {pc}

@@ -30,4 +30,4 @@ Func_080e13b0:
 .L_080e13e2:
 	pop {r5, pc}
 .L_080e13e4:
-	.4byte Data_0300122c
+	.4byte gFrameCount

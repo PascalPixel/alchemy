@@ -1,4 +1,5 @@
 #include "RESOURCE.H"
+#include "SYSTEM.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
@@ -90,7 +91,6 @@ struct ResourceNode {
 };
 
 void Resource_ScheduleOwnerReset(void);
-void WaitFrames(s32);
 void Resource_ResetPendingTransfer(void);
 
 /* ☀️'s, reaching the menu work through its heap slot, whose block ⚓️

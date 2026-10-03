@@ -25,7 +25,7 @@ Func_080e2774:
 	lsls r5, r5, #18
 	asrs r6, r2, #16
 	ldr r7, [r5, #108]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	ldr r3, [r5, #32]
 	movs r2, #132

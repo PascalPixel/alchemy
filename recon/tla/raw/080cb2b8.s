@@ -21,7 +21,7 @@ Func_080cb2b8:
 	mov r8, r1
 	mov r9, r0
 	str r3, [sp, #20]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	str r0, [sp, #16]
 	bl Func_080cb8e8
 	movs r1, #0

@@ -17,7 +17,7 @@ Func_080ea14c:
 	sub sp, #64
 	bl Runtime_AllocateHeapBlock
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	str r0, [sp, #48]
 	bl ObjectTable_Get
 	str r0, [sp, #44]
@@ -220,7 +220,7 @@ Func_080ea14c:
 	ldr r0, [sp, #40]
 	bl Object_SetMode
 	movs r0, #60
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	ldr r2, [sp, #40]
 	movs r3, #0
 	adds r2, #100
@@ -231,7 +231,7 @@ Func_080ea14c:
 	str r3, [r1, #108]
 	bl Audio_PlayCue
 	movs r0, #80
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	ldr r1, .L_080ea38c
 	ldr r0, [sp, #40]
 	bl ObjectDispatch_InitializeFar
@@ -261,7 +261,7 @@ Func_080ea14c:
 .L_080ea374:
 	.4byte 0x00000000
 .L_080ea378:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080ea37c:
 	.4byte Data_080f3954
 .L_080ea380:
@@ -789,7 +789,7 @@ Func_080ea14c:
 	str r3, [r2, #24]
 	str r3, [r2, #28]
 	movs r0, #10
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	ldr r0, .L_080ea7bc
 	bl Scheduler_RemoveCallback
 	bl BattleFx_PrepareBufferInterpolation

@@ -22,4 +22,4 @@ Func_080de550:
 	movs r0, #0
 	pop {pc}
 .L_080de574:
-	.4byte Data_0300122c
+	.4byte gFrameCount

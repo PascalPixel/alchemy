@@ -28,8 +28,8 @@ Data_03001138:
 	.global gBlendStartLevel
 gBlendStartLevel:
 	.space 0x00000004
-	.global Data_03001140
-Data_03001140:
+	.global gCpuLoadTimer
+gCpuLoadTimer:
 	.space 0x00000004
 	.global Data_03001144
 Data_03001144:
@@ -43,14 +43,14 @@ gDecodeFillByte:
 	.global gBlendDuration
 gBlendDuration:
 	.space 0x00000004
-	.global Data_0300117c
-Data_0300117c:
+	.global gFrameWaitCount
+gFrameWaitCount:
 	.space 0x00000004
-	.global Data_03001180
-Data_03001180:
+	.global gSleepDisabled
+gSleepDisabled:
 	.space 0x00000004
-	.global Data_03001184
-Data_03001184:
+	.global gCpuLoadPeak
+gCpuLoadPeak:
 	.space 0x0000000c
 	.global gOamBucketMasks
 gOamBucketMasks:
@@ -58,14 +58,14 @@ gOamBucketMasks:
 	.global gBlendTargetLevel
 gBlendTargetLevel:
 	.space 0x00000008
-	.global Data_030011b8
-Data_030011b8:
+	.global gSerialExchangeActive
+gSerialExchangeActive:
 	.space 0x00000004
 	.global gRandomState
 gRandomState:
 	.space 0x00000004
-	.global Data_030011c0
-Data_030011c0:
+	.global gResetRequested
+gResetRequested:
 	.space 0x00000004
 	.global Data_030011c4
 Data_030011c4:
@@ -73,14 +73,14 @@ Data_030011c4:
 	.global gTransformStackDepth
 gTransformStackDepth:
 	.space 0x00000004
-	.global Data_030011d0
-Data_030011d0:
+	.global gSleepRequested
+gSleepRequested:
 	.space 0x00000004
-	.global Data_030011d4
-Data_030011d4:
+	.global gLagFrameCount
+gLagFrameCount:
 	.space 0x00000004
-	.global Data_030011d8
-Data_030011d8:
+	.global gLagFramesShown
+gLagFramesShown:
 	.space 0x00000004
 	.global gBlendBrighten
 gBlendBrighten:
@@ -103,17 +103,17 @@ Data_030011f8:
 	.global gObjAffineCount
 gObjAffineCount:
 	.space 0x00000004
-	.global Data_03001200
-Data_03001200:
+	.global gAutoSleepEnabled
+gAutoSleepEnabled:
 	.space 0x0000000c
-	.global Data_0300120c
-Data_0300120c:
+	.global gRenderOamEnabled
+gRenderOamEnabled:
 	.space 0x00000008
-	.global Data_03001214
-Data_03001214:
+	.global gDebugPaused
+gDebugPaused:
 	.space 0x00000004
-	.global Data_03001218
-Data_03001218:
+	.global gIdleFrameCount
+gIdleFrameCount:
 	.space 0x00000004
 	.global Data_0300121c
 Data_0300121c:
@@ -124,17 +124,17 @@ gTransformStackTop:
 	.global gSchedulerTaskCount
 gSchedulerTaskCount:
 	.space 0x00000004
-	.global Data_0300122c
-Data_0300122c:
+	.global gFrameCount
+gFrameCount:
 	.space 0x00000004
-	.global Data_03001230
-Data_03001230:
+	.global gFrameRenderPending
+gFrameRenderPending:
 	.space 0x00000008
-	.global Data_03001238
-Data_03001238:
+	.global gDebugMode
+gDebugMode:
 	.space 0x00000004
-	.global Data_0300123c
-Data_0300123c:
+	.global gCpuLoadDisplayEnabled
+gCpuLoadDisplayEnabled:
 	.space 0x00000008
 	.global Data_03001244
 Data_03001244:

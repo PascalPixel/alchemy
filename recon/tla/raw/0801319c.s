@@ -86,9 +86,9 @@ Func_0801319c:
 .L_08013250:
 	.4byte Data_03001110
 .L_08013254:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08013258:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_0801325c:
 	.4byte Func_0801399c
 .L_08013260:
@@ -96,9 +96,9 @@ Func_0801319c:
 .L_08013264:
 	.4byte 0x04000132
 .L_08013268:
-	.4byte Data_03007800
+	.4byte gCartridgeResetMarker
 .L_0801326c:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_08013270:
 	strb r3, [r2]
 	ldr r2, .L_08013298
@@ -121,7 +121,7 @@ Func_0801319c:
 .L_08013298:
 	.4byte gOamUsage
 .L_0801329c:
-	.4byte Data_03001180
+	.4byte gSleepDisabled
 .L_080132a0:
 	pop {r5, pc}
 	.2byte 0x0000

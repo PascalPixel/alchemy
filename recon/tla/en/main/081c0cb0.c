@@ -46,6 +46,15 @@
  * retain placeholder function names, so ordinary drafts reports this
  * semantic-name proposal as unlisted; complete private links are separate.
  *
+ * One saved shared-owner source form was freshly compiled in all twelve
+ * editions on2026-10-02. The complete TBS358-byte command remains exact
+ * (7 calls,16 symbolic words each). TLA preset4 + command382 still emits
+ * 386/native388 and differs16 bytes including the missing zero2 tail,
+ * with10 calls and16 symbolic words each. Five editions also lack the
+ * proposed physical preset label. The namespace mapping is judgment-only;
+ * no shared owner, name, padding, linker row or C credit was adopted.
+ * This single form did not improve the retained canonical near miss.
+ *
  * SongEntry, PlayerSlot and SoundPlayer are the current shared typed owners.
  * The busy capture is released to an ordinary local before every later call.
  */

@@ -489,7 +489,7 @@ Func_0804bc08:
 .L_0804bfcc:
 	.4byte gPartyState
 .L_0804bfd0:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_0804bfd4:
 	.4byte gInput
 .L_0804bfd8:

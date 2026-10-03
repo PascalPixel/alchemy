@@ -17,9 +17,9 @@ Func_080e74d8:
 	sub sp, #24
 	bl Runtime_AllocateHeapBlock
 	str r0, [sp, #20]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	adds r7, r0, #0
 	movs r0, #20

@@ -1,14 +1,15 @@
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
 #include "SCENE.H"
+#include "SYSTEM.H"
 void BattlePres_SetActorModes(u16 *, s32);
 void BattlePresentation_WaitForAdvance(void);
 s32 Battle_ResolveTargetAction(void *, s32);
 
-s32 WaitFrames(s32);
-
 s32 BattlePres_RunActorEntries(void *tbl)
 {
+    /* FAKEMATCH: a void owner makes the interworking epilogue pop into r0;
+       this result type keeps the native pop into r1. Callers discard it. */
     s32 i;
     s8 n;
 
@@ -26,5 +27,5 @@ s32 BattlePres_RunActorEntries(void *tbl)
             } while (i < (s32)FIELD_AT_OFFSET(tbl, s8 *, 1));
         }
     }
-    return WaitFrames(1);
+    WaitFrames(1);
 }

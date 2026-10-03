@@ -402,7 +402,7 @@ WorldMap_UpdateBobbingMarker:
 .L_0200833a:
 	pop {r5, r6, pc}
 .L_0200833c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008340:
 	.4byte 0x27880000
 .L_02008344:
@@ -4570,7 +4570,7 @@ Func_020028cc:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200a994:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200a998:
 	.4byte 0xffe00000
 .L_0200a99c:
@@ -5753,7 +5753,7 @@ Func_0200343c:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200b488:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200b48c:
 	.4byte Data_02004f70
 	.section .text.x0200b490,"ax",%progbits
@@ -6660,7 +6660,7 @@ Func_02003b38:
 .L_0200bb6a:
 	pop {r5, pc}
 .L_0200bb6c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200bb70,"ax",%progbits
 	.global Func_02003b70
 	.thumb_func
@@ -6696,7 +6696,7 @@ Func_02003b70:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0200bbac:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200bbb0:
 	.4byte Data_02006be4
 .L_0200bbb4:
@@ -6812,7 +6812,7 @@ Func_02003c50:
 .L_0200bc84:
 	.4byte 0x0000000c
 .L_0200bc88:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200bc8c:
 	.4byte Data_02006e08
 .L_0200bc90:
@@ -6908,7 +6908,7 @@ Func_02003ca8:
 .L_0200bd38:
 	.4byte gPartyState
 .L_0200bd3c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200bd40:
 	.4byte 0xffff0000
 	.section .text.x0200bd44,"ax",%progbits
@@ -7898,7 +7898,7 @@ Func_02004500:
 .L_0200c532:
 	pop {r5, pc}
 .L_0200c534:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200c538,"ax",%progbits
 	.global Func_02004538
 	.thumb_func
@@ -7929,7 +7929,7 @@ Func_02004538:
 	pop {r5, r6, pc}
 	.2byte 0x0000
 .L_0200c56c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200c570,"ax",%progbits
 	.global Func_02004570
 	.thumb_func
@@ -7952,7 +7952,7 @@ Func_02004570:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_0200c594:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x0200c598,"ax",%progbits
 	.global Func_02004598
 	.thumb_func
@@ -8386,7 +8386,7 @@ Func_02004744:
 .L_0200c8ae:
 	pop {r5, r6, r7, pc}
 .L_0200c8b0:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0200c8b4:
 	.4byte Data_02006e0c
 .L_0200c8b8:

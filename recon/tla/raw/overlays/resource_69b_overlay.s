@@ -1557,7 +1557,7 @@ Func_02000b7c:
 .L_02008c8c:
 	.4byte 0x0003ffff
 .L_02008c90:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008c94:
 	bl Motion_CamBounds
 	bl Func_020022b4
@@ -2094,7 +2094,7 @@ Func_0200102c:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_020090c8:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 	.section .text.x020090cc,"ax",%progbits
 	.global Func_020010cc
 	.thumb_func

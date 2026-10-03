@@ -36,9 +36,6 @@ Engine_MathCos:
 	.global Engine_HeapAllocate
 	.thumb_func
 Engine_HeapAllocate:
-	.global AllocateEffectTransfer
-	.thumb_func
-AllocateEffectTransfer:
 	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Engine_HeapRelease
 	.thumb_func
@@ -147,9 +144,6 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global GetOrbitingSceneObject
-	.thumb_func
-GetOrbitingSceneObject:
 	.global Object_GetByIdFar
 	.thumb_func
 Object_GetByIdFar:

@@ -192,14 +192,14 @@ void SceneState_SetRuntimeWord448To513(void)
     SceneState_ForwardMaskedHalfwordWith10(17, 160 << 7);
     Engine_EventSetMessage((s32)MsgKorashiamuHaveMakeThroughCountlessMatches);
 
-    if (GameFlag_IsSet(0x8a4) != 0) {
+    if (Engine_GameFlagIsSet(0x8a4) != 0) {
         *(u16 *)((u8 *)gEventWork + 472) =
             (u16)(*(u16 *)((u8 *)gEventWork + 472) + 1);
     }
 
     FieldScene_CallPairWith10(17);
     SceneState_ForwardMaskedHalfwordWith10(17, 192 << 6);
-    GameFlag_Set(0x8a3);
+    Engine_GameFlagSet(0x8a3);
 
     Engine_EventEnd();
 }

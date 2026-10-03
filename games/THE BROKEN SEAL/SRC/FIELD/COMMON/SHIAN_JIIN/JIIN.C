@@ -864,8 +864,8 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Engine_EventWait(1);
     rec = ((u8 *)Value1(Object_GetById, 16));
     {
-        /*
-         * A result temporary, not the compound or-assign the matching
+        /* FAKEMATCH: the result temporary selects the measured ORR destination.
+         * It replaces the compound or-assign the matching
          * &= 0xfe case above uses. The reference writes the result into
          * the mask register rather than the loaded value, and the
          * two-address ORR only does that when the merged result is its

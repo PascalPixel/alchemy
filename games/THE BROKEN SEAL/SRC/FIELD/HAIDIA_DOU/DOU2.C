@@ -81,8 +81,8 @@ void SceneActor_PositionPair(s32 a0, s32 a1, s32 a2)
     s32 x;
     s32 y;
 
-    p = Actor_Get(gGameState.selected_actor);
-    q = Actor_Get(a0);
+    p = Object_GetById(gGameState.selected_actor);
+    q = Object_GetById(a0);
     Engine_EventBegin();
     {
         x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;

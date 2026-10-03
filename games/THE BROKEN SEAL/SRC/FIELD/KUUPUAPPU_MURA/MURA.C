@@ -169,15 +169,15 @@ s32 SceneActor_UpdateProximityToLeader(u8 *self)
      * expression: the conditional form folds to arithmetic on the flag.
      */
     if ((*flags & 1) != 0) {
-        partner = Actor_Get(15);
+        partner = Object_GetById(15);
     } else {
-        partner = Actor_Get(14);
+        partner = Object_GetById(14);
     }
     if (SceneActor_CheckFacingAndRange(self, partner, 32, 0) != 0) {
         return 0;
     }
 
-    player = Actor_Get(ACTOR_PARTY_LEADER);
+    player = Object_GetById(ACTOR_PARTY_LEADER);
 
     /*
      * Widen the range when the scene counter at workspace + 376 is already

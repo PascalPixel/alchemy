@@ -1105,7 +1105,10 @@ PpHealFalloff:
 	.incbin "baserom.gba", 0x000c5168, 0x00000018
 	.global HpDmgFalloff
 HpDmgFalloff:
-	.incbin "baserom.gba", 0x000c5180, 0x00000030
+	.incbin "baserom.gba", 0x000c5180, 0x00000018
+	.global BattleCommand_SelectionWeights
+BattleCommand_SelectionWeights:
+	.incbin "baserom.gba", 0x000c5198, 0x00000018
 	.global Battle_ActionStatus
 Battle_ActionStatus:
 	.incbin "baserom.gba", 0x000c51b0, 0x00000208

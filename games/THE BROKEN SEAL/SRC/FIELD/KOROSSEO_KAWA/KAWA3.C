@@ -59,11 +59,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -83,7 +78,6 @@ extern u8 HexDigits[];
 typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 void Korosseo_LoadPortrait(s32);
 s32 AudioCommand_GetStateByte(void);
 void Audio_PlayCueFromEventWork(void);

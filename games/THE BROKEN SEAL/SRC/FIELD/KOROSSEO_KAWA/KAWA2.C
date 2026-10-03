@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
@@ -22,11 +23,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -46,7 +42,6 @@ typedef void(*SceneTask)(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
 void GameFlag_SetByte(s32, s32);
-Rec *Owner_GetState(s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
@@ -359,12 +354,12 @@ L_main:
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)
 {
-    Rec *t = Owner_GetState(a);
+    struct BattleUnit *t = Owner_GetState(a);
     s32 i;
 
     Inventory_AddItem(a, b);
     for (i = 0; i <= 14; i++) {
-        if (t->fd8[i] == b) {
+        if (t->inventory[i] == b) {
             Inventory_EquipFar(a, i);
         }
     }

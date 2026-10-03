@@ -44,11 +44,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -80,7 +75,6 @@ void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction(s32 a, s32 b);
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base);
 void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);

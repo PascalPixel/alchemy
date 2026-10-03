@@ -42,11 +42,6 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-typedef struct Rec {
-    u8 pad00[216];
-    u16 fd8[15];
-} Rec;
-
 /* The two mode records the entry point seeds; the halfword at +26 holds the
  * per-mode span in sixtieths. */
 struct ModeRecord {
@@ -72,7 +67,6 @@ void Korosseo_DrawGauge(void);
 s32 Resource_GetTableEntryFar(void);
 PartyInteractionRecord *GetPartyInteractionRecord(void);
 s32 GetPartyMemberCount(void);
-Rec *Owner_GetState(s32);
 
 void Vector_AddPolarOffset();
 

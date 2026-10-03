@@ -33,7 +33,7 @@ Func_080bd850:
 	pop {r0}
 	bx r0
 .L_080bd88c:
-	.4byte ResourceTableEntries
+	.4byte gVramBlockCache
 .L_080bd890:
 	.4byte 0x06010000
 .L_080bd894:

@@ -88,12 +88,12 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -110,7 +110,7 @@ void SceneState_SetStateHalfword386To99WhenMatched(void)
     s32 sel = gGameState.selected_actor;
 
     if (sel != 0 && ((s32)(s16)*(u16 *)(state + 382) >> 10) == sel
-        && GameFlag_IsSet(321) != 0) {
+        && Engine_GameFlagIsSet(321) != 0) {
         u16 *p = (u16 *)(state + 386);
         s32 val = 99;
 
@@ -154,7 +154,7 @@ void FieldScene_RunNearestActor165Scene(void)
         }
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
-    Event_ShowMessage(best, 0);
+    Engine_EventShowMessage(best, 0);
     q = (s32 *)(state + 448);
     *q = 512;
     *(s32 *)(state + 456) = 15;
@@ -171,7 +171,7 @@ void FieldScene_RunNearestActor165Scene(void)
     n++;
     if (n > 3) {
         Engine_EventRequestExit(10);
-        GameFlag_Set(282);
+        Engine_GameFlagSet(282);
     } else {
         Korosseo_SelectSoloCompetitor(n);
         Engine_EventOpenScreen();

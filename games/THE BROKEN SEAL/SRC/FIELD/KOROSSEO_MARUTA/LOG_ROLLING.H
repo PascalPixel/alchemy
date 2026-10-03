@@ -216,12 +216,12 @@ s32 GetPartyMemberCount(void);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* The two mode records the entry point seeds; the halfword at +26 holds the

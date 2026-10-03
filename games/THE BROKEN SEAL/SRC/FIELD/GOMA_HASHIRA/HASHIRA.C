@@ -56,7 +56,7 @@ struct Sprite389 {
  */
 void ConfigureActorThirteenSceneParameters(void)
 {
-    Actor_ShowEmote(13, 256, 0);
+    Engine_ActorShowEmote(13, 256, 0);
     Engine_ActorJump(13, 2, 0);
     BattleFx_SetPhaseRequest(12, 40);
 }
@@ -162,12 +162,12 @@ void ConfigureSceneForActorEightColumn(void)
         a4 = 18;
         a5 = 6;
         Map_CopyCellAttributeRect(18, 40, 6, 3, a4, a5);
-        GameFlag_Clear(0x302);
+        Engine_GameFlagClear(0x302);
     } else {
         a4 = 18;
         a5 = 6;
         Map_CopyCellAttributeRect(24, 40, 6, 3, a4, a5);
-        GameFlag_Set(0x302);
+        Engine_GameFlagSet(0x302);
     }
     Engine_EventEnd();
 }
@@ -199,7 +199,7 @@ void FieldScene_RunPrimarySequence(void)
         na = na - ua;
         na = na << 3;
         na = na + ta;
-        v3a = Random_Next();
+        v3a = Engine_RandomNext();
         na = -na;
         Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, na, (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
@@ -219,7 +219,7 @@ void FieldScene_RunPrimarySequence(void)
             nb = nb - ub;
             nb = nb << 3;
             nb = nb + tb;
-            v3b = Random_Next();
+            v3b = Engine_RandomNext();
             nb = -nb;
             Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, nb, (s32)((u32)(v3b << 1) >> 16), flags);
         }

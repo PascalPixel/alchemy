@@ -59,7 +59,7 @@ s32 SceneData_ReturnZero(void)
 
 s32 HaidiaBabi_SelectExits(void)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return (s32)gHaidiaBabiExits2;
     }
     return (s32)gHaidiaBabiExits;
@@ -72,9 +72,9 @@ s32 HaidiaBabi_SelectPlacements(void)
 
     if (*(s16 *)(b + 0x1c2) == 19)
         return (s32)gHaidiaBabiPlacements4;
-    if (GameFlag_IsSet(0x87a) != 0)
+    if (Engine_GameFlagIsSet(0x87a) != 0)
         tbl = gHaidiaBabiPlacements3;
-    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
+    else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
         tbl = gHaidiaBabiPlacements2;
     else
         tbl = gHaidiaBabiPlacements;
@@ -88,33 +88,33 @@ void HaidiaBabi_AskAboutKraden(s32 object)
     s32 msg = (s32)MsgHaidiaFolksSeemKnow;
 
     Engine_EventSetMessage(msg);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(msg + 1);
     } else {
         Engine_EventSetMessage(msg + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
 /* The events hook, the villagers' scenes and the house's exits. */
 s32 HaidiaBabi_SelectEvents(void)
 {
     if (gGameState.entrance == 19) {
-        if (GameFlag_IsSet(0x950) != 0) {
+        if (Engine_GameFlagIsSet(0x950) != 0) {
             return (s32)gHaidiaBabiEvents6;
         }
         return (s32)gHaidiaBabiEvents5;
     }
 
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         return (s32)gHaidiaBabiEvents4;
     }
-    if (GameFlag_IsSet(0x87A) != 0) {
+    if (Engine_GameFlagIsSet(0x87A) != 0) {
         return (s32)gHaidiaBabiEvents3;
     }
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         return (s32)gHaidiaBabiEvents2;
     }
     return (s32)gHaidiaBabiEvents;
@@ -130,19 +130,19 @@ void HaidiaBabi_RunHeyBoyScene(void)
     Engine_EventWait(30);
     Engine_EventSetMessage((s32)MsgHaidiaHeyBoy);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
-    Event_ShowMessageAndWait(16, 0, 6);
-    Actor_ShowEmote(16, 0x102, 0);
+    Engine_EventShowMessageAndWait(16, 0, 6);
+    Engine_ActorShowEmote(16, 0x102, 0);
     Engine_ActorStartRepeatedMotion(16, 1);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(16, 4);
     Engine_EventWait(20);
-    Event_OpenMessage(16, 0);
+    Engine_EventOpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
         bump_step(1);
     }
     Engine_ActorStartRepeatedMotion(16, 1);
     Engine_EventWait(20);
-    Event_ShowMessageAndWait(16, 0, 4);
+    Engine_EventShowMessageAndWait(16, 0, 4);
     Engine_EventEnd();
 }
 
@@ -151,22 +151,22 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     void *work;
 
     Engine_EventBegin();
-    Actor_FaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
+    Engine_ActorFaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
     Engine_EventSetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
-    Event_OpenMessage(0xE, 0);
+    Engine_EventOpenMessage(0xE, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-        Event_ShowMessage(0xE, 0);
+        Engine_EventShowMessage(0xE, 0);
     } else {
         work = *(void **)&gEventWork;
         FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16)(FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
-        Event_AskYesNo(0xE, 0);
+        Engine_EventAskYesNo(0xE, 0);
     }
     Engine_EventEnd();
 }
 
 void SceneState_SetWork448To521AndRun(s32 object)
 {
-    if (GameFlag_IsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
     }
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -177,67 +177,67 @@ void SceneState_SetWork448To521AndRun(s32 object)
 
 void SceneState_SetValue123Mode1(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(1);
 }
 
 void FieldScene_RunStep7BThen2(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(2);
 }
 
 void SceneState_SetValue123Mode3(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(3);
 }
 
 void FieldScene_RunStep7BThen4(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(4);
 }
 
 void FieldScene_RunStep80Then5(void)
 {
-    Audio_PlayCue(0x80);
+    Engine_AudioPlayCue(0x80);
     SceneState_SetWork448To521AndRun(5);
 }
 
 void FieldScene_RunStep7BThen6(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(6);
 }
 
 void FieldScene_RunStep80Then7(void)
 {
-    Audio_PlayCue(0x80);
+    Engine_AudioPlayCue(0x80);
     SceneState_SetWork448To521AndRun(7);
 }
 
 void SceneState_SetValue129Mode8(void)
 {
-    Audio_PlayCue(0x81);
+    Engine_AudioPlayCue(0x81);
     SceneState_SetWork448To521AndRun(8);
 }
 
 void SceneState_SetValue129Mode9(void)
 {
-    Audio_PlayCue(0x81);
+    Engine_AudioPlayCue(0x81);
     SceneState_SetWork448To521AndRun(9);
 }
 
 void FieldScene_RunStep7BThen10(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(10);
 }
 
 void SceneState_ApplyValues123And11(void)
 {
-    Audio_PlayCue(0x7B);
+    Engine_AudioPlayCue(0x7B);
     SceneState_SetWork448To521AndRun(11);
 }
 
@@ -416,7 +416,7 @@ void FieldScene_RunComplexActorSequence(void)
     base = (s32)MsgHaidiaWake;
     UiText_ShowCenteredMessage(base, 1, 0);
     Engine_EventWait(40);
-    MapRender_SetValues(65536, 65536, 65536);
+    Engine_MapRenderSetValues(65536, 65536, 65536);
     Ui_SetRenderResultFromObject(8);
     UiText_ShowCenteredMessage(base + 1, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
@@ -441,37 +441,37 @@ void FieldScene_RunComplexActorSequence(void)
     BattleFx_SetBlock30Values128One();
     Engine_ActorSetAnimationAndWait(8, 4);
     Engine_EventSetMessage(base + 2);
-    Event_ShowMessageAndWait(36872, 0, 60);
+    Engine_EventShowMessageAndWait(36872, 0, 60);
     Engine_ActorRunRepeatedMotion(0, 2);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventWait(40);
-    Event_ShowMessageAndWait(36872, 0, 20);
+    Engine_EventShowMessageAndWait(36872, 0, 20);
     Engine_ActorRunRepeatedMotion(0, 2);
     Map_SetLayerEntryFlag(7);
     Engine_EventWait(20);
     Map_ClearLayerEntryFlag(8);
-    Actor_SetSpeed(0, 65536, 32768);
+    Engine_ActorSetSpeed(0, 65536, 32768);
     Engine_ActorSetAnimation(0, 19);
-    Actor_MoveToAndWait(0, 557, 679);
+    Engine_ActorMoveToAndWait(0, 557, 679);
     Map_SetLayerEntryFlag(8);
     Map_ClearLayerEntryFlag(9);
-    Actor_MoveToAndWait(0, 555, 680);
+    Engine_ActorMoveToAndWait(0, 555, 680);
     Engine_EventWait(30);
-    Actor_FaceDirection(8, 53248, 0);
+    Engine_ActorFaceDirection(8, 53248, 0);
     Engine_ActorSetSpriteFlags(Object_GetById(0), 1);
     Engine_ActorJump(0, 4, 0);
-    Actor_WalkToAndWait(0, 543, 674);
+    Engine_ActorWalkToAndWait(0, 543, 674);
     Engine_ActorSetSpritePriority(0, 3);
-    Actor_FaceDirection(0, 16384, 40);
+    Engine_ActorFaceDirection(0, 16384, 40);
     Engine_ActorSetAnimationAndWait(8, 4);
     Engine_EventWait(20);
-    Event_ShowMessage(36872, 0);
+    Engine_EventShowMessage(36872, 0);
     FieldScene_RunSixStepSequence17e4();
     Engine_ActorStartRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(36872, 0, 20);
+    Engine_EventShowMessageAndWait(36872, 0, 20);
     Object_GetById(8)->unknown_5a &= 0xfe;
-    Actor_WalkToAndWait(8, 542, 680);
+    Engine_ActorWalkToAndWait(8, 542, 680);
     Engine_EventWait(1);
     Object_GetById(8)->unknown_5a |= 0x1;
     Engine_EventWait(10);
@@ -484,12 +484,12 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_ActorSetChildValue(0, 0);
     Engine_EventWait(20);
     Object_GetById(8)->unknown_5a &= 0xfe;
-    Actor_WalkToAndWait(8, 534, 688);
+    Engine_ActorWalkToAndWait(8, 534, 688);
     Engine_EventWait(1);
     Object_GetById(8)->unknown_5a |= 0x1;
     Engine_EventWait(20);
-    Actor_SetSpeed(8, 98304, 49152);
-    Actor_SetSpeed(0, 98304, 49152);
+    Engine_ActorSetSpeed(8, 98304, 49152);
+    Engine_ActorSetSpeed(0, 98304, 49152);
     Engine_CameraFollowActor(8, 1);
     p89 = Object_GetById(0);
     p89->priority_flags |= 0x1;
@@ -497,17 +497,17 @@ void FieldScene_RunComplexActorSequence(void)
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(0, gHaidiaBabiSharedAction);
     Object_RefreshSelectorById(8);
-    Actor_WalkToAndWait(8, 419, 661);
-    Actor_WalkToAndWait(8, 408, 661);
+    Engine_ActorWalkToAndWait(8, 419, 661);
+    Engine_ActorWalkToAndWait(8, 408, 661);
     Engine_ActorSetAnimation(8, 1);
     Engine_ActorSetAnimation(0, 1);
-    Actor_FaceDirection(8, 16384, 10);
-    Event_OpenMessage(32776, 0);
+    Engine_ActorFaceDirection(8, 16384, 10);
+    Engine_EventOpenMessage(32776, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         (*control)->message++;
     }
     Engine_EventWait(20);
-    Event_ShowMessageAndWait(32776, 0, 20);
+    Engine_EventShowMessageAndWait(32776, 0, 20);
     Engine_ActorSetAnimation(0, 3);
     Engine_ActorSetAnimationAndWait(8, 3);
     Engine_EventWait(20);

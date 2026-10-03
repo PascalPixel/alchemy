@@ -21,13 +21,13 @@ s32 SceneDialogue_PickTopicVariantId(s32 topic)
 
     /* Topic 5 means "any": reduce a 16-bit random to 0..4. */
     if (topic == 5) {
-        topic = (s32)((unsigned int)(Random_Next() * 5) >> 16);
+        topic = (s32)((unsigned int)(Engine_RandomNext() * 5) >> 16);
     }
 
     cursor = gCell[308 + topic];
 
     /* `lsls #1 / lsrs #16` - a 0/1 coin flip from the same random source. */
-    variant = (cursor + (s32)((unsigned int)(Random_Next() * 2) >> 16) + 4) % 3;
+    variant = (cursor + (s32)((unsigned int)(Engine_RandomNext() * 2) >> 16) + 4) % 3;
 
     gCell[308 + topic] = (s8)variant;
 

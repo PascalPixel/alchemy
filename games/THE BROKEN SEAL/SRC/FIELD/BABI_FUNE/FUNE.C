@@ -239,14 +239,14 @@ void BabiFune_UpdateWaves(void)
     if (BabiFune_DriftActive != 0 && (gFrameCount & 1) != 0) {
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
-        x += Random_Next() * 240;
+        x += Engine_RandomNext() * 240;
         pos = &place;
         pos->x = x;
         pos->y = 0;
-        z += Random_Next() * 160;
+        z += Engine_RandomNext() * 160;
         z += 0x1e0000;
         pos->z = z;
-        actor = Object_Create(0x1f7, pos->x, pos->y, pos->z);
+        actor = Engine_ObjectCreate(0x1f7, pos->x, pos->y, pos->z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->unknown_64 = 60;

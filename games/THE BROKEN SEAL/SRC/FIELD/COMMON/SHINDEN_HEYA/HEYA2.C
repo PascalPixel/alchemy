@@ -72,13 +72,7 @@ extern const s32 ShindenHeya_SparkEndScript[];
 
 s32 Engine_RandomNext();
 s32 Math_RemainderUnsigned();
-void ShindenHeya_UpdateRisingSpark();
-
-/* A zero kept in a one-halfword struct, so it is a HImode value the compiler
- * holds in a high register and reloads from the pool. */
-struct Half {
-    u16 v;
-};
+void ShindenHeya_UpdateRisingSpark(union FieldObject *object);
 
 extern s16 Data_02000240[];
 extern u8 MsgShindenAmStartingFeelOnlyBeginning[];
@@ -403,32 +397,26 @@ void ShindenHeya_RaiseItemIcon(s32 item)
 {
     struct FieldActor *obj;
     struct FieldSprite *spr;
-    s32 buf;
-    s32 zero;
-    s32 z;
-    u8 *flag;
+    u8 *buf;
     u32 i;
 
     obj = ((struct FieldActor *(*)())Engine_ObjectCreate)(22);
-    zero = 0;
     if (obj != 0) {
         ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
         spr = obj->sprite;
-        spr->flags = zero;
-        spr->part_count = zero;
+        spr->flags = 0;
+        spr->part_count = 0;
         spr->full_color = 0;
         spr->palette = 0;
         obj->velocity_y = 0x20000;
         ((struct FieldEffect *)obj)->velocity_y = 0x4000;
-        buf = (s32)Runtime_AllocateHeapBlock(17, 0x608);
+        buf = Runtime_AllocateHeapBlock(17, 0x608);
         Ui_PrepareTransferForItem(item);
         VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);
-        /* FAKEMATCH: the stored zero is a variable set after the flag
-         * address, so it copies the counter's zero after that address. */
-        for (i = 0, flag = &obj->motion_flags, z = 0; i <= 59; i++) {
+        for (i = 0; i < 60; i++) {
             if ((u32)(obj->velocity_y + 255) <= 0x1fe)
-                *flag = z;
+                obj->motion_flags = 0;
             WaitFrames(1);
         }
         ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconEndScript);
@@ -441,8 +429,9 @@ void ShindenHeya_RaiseItemIcon(s32 item)
  * its timer runs out and its script deletes it. The spark's speed and
  * timer are the halfwords its spawner sets at 0x64 and 0x66.
  */
-void ShindenHeya_UpdateRisingSpark(struct FieldActor *spark)
+void ShindenHeya_UpdateRisingSpark(union FieldObject *object)
 {
+    struct FieldActor *spark = &object->actor;
     s32 scale;
     s32 timer;
 
@@ -479,7 +468,6 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     struct FieldSprite *spr;
     s32 x;
     s32 r;
-    struct Half zero;
 
     actor = Object_GetById(id);
     if (actor == 0)
@@ -494,11 +482,9 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     spr = obj->sprite;
     obj->motion_flags = 0;
     obj->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
-    /* FAKEMATCH: the spark frame zero held in a halfword struct. */
-    zero.v = 0;
     obj->unknown_66 = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
-    obj->update = (void (*)(union FieldObject *))ShindenHeya_UpdateRisingSpark;
-    spr->flags = zero.v;
+    obj->update = ShindenHeya_UpdateRisingSpark;
+    spr->flags = 0;
     spr->priority = actor->sprite->priority;
 }
 

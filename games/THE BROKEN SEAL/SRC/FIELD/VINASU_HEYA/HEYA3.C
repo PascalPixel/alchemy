@@ -59,8 +59,8 @@ void FieldScene_DrawTilesWhenCheckClear(void)
 
     Engine_EventBegin();
     if (SceneActor_TryMoveActorZeroTwoTilesAhead() == 0) {
-        { s32 k5 = 5, k6 = 48; Map_CopyCellAttributes(69, 48, 4, 2, k5, k6); }
-        { s32 j5 = 9, j6 = 37; Map_CopyCellAttributes(73, 37, 9, 13, j5, j6); }
+        { s32 k5 = 5, k6 = 48; Engine_MapCopyCellAttributes(69, 48, 4, 2, k5, k6); }
+        { s32 j5 = 9, j6 = 37; Engine_MapCopyCellAttributes(73, 37, 9, 13, j5, j6); }
         RunStagedActorTransition();
     }
     Engine_EventEnd();
@@ -72,9 +72,9 @@ void FieldScene_DrawTilesWhenCheckClear(void)
 void FieldScene_RunApproachAndSpawnEffect(void)
 {
     Engine_EventBegin();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
     (void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
     BattleFx_RunRisingObjectSequence(0, 6, 0);
     Engine_EventWait(60);
@@ -113,7 +113,7 @@ void SceneActor_ClearActorModeAndSetState5(s32 no)
     u8 *p;
     s32 mask;
 
-    p = Actor_Get(no);
+    p = Object_GetById(no);
     p[0x55] = 0;
     mask = 252;
     mask &= p[0x59];
@@ -134,7 +134,7 @@ void SceneState_ApplyStepToSlots15To18(void)
 
     i = 15;
     do {
-        Actor_Get(i);
+        Object_GetById(i);
         i++;
     } while (i <= 18);
 }

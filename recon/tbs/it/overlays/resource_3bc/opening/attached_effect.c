@@ -17,7 +17,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 {
     extern void Korosseo_FinishSoloRound();
     extern s32 FieldScene_RunMiddleSequence();
-    extern s32 Korosseo_FadeInCompetitor();
+    extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
     extern void Korosseo_RestoreCompetitor();
 
     s32 i;

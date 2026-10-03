@@ -81,12 +81,12 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -217,7 +217,7 @@ void SceneState_InitControlWhenFlag109Clear(s32 resource)
     struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
     Resource_DecodeType01(Resource_GetTableEntry(resource), work + 240);
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(0x109) == 0) {
         recorder->mode = 1;
         recorder->mirror = 1;
         recorder->actor = *(u16 *)(work + 224);

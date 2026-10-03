@@ -14,7 +14,7 @@ void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
     struct FieldActor *overlay_object;
     struct FieldSprite *object_record;
 
-    overlay_object = Object_Create(fourth, first, second, third);
+    overlay_object = Engine_ObjectCreate(fourth, first, second, third);
     if (overlay_object != NULL) {
         object_record = overlay_object->sprite;
         object_record->priority = 0;
@@ -30,7 +30,7 @@ void *NewEffectObject(s32 first, s32 second, s32 third, s32 fourth)
 
 void *NewFlippedEffectObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    struct FieldActor *result = Object_Create(arg3, arg0, arg1, arg2);
+    struct FieldActor *result = Engine_ObjectCreate(arg3, arg0, arg1, arg2);
 
     if (result != NULL) {
         struct FieldSprite *object = result->sprite;

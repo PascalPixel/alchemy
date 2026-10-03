@@ -153,13 +153,13 @@ void FieldScene_RunFlags8B2And8B3Steps(void)
     s32 record;
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x8b2) == 0) {
-        if (GameFlag_IsSet(0x8b3) == 0) {
-            GameFlag_Set(0x8b3);
-            GameFlag_Set(0x8b2);
+    if (Engine_GameFlagIsSet(0x8b2) == 0) {
+        if (Engine_GameFlagIsSet(0x8b3) == 0) {
+            Engine_GameFlagSet(0x8b3);
+            Engine_GameFlagSet(0x8b2);
         }
     }
-    Audio_PlayCue(123);
+    Engine_AudioPlayCue(123);
     Engine_EventRequestExit(3);
     Engine_EventEnd();
 }
@@ -348,15 +348,15 @@ void FieldScene_RunScene3a5_02000c6c(s32 a0)
         value = Engine_RandomNext();
         v6 = (u32)((value << 1) + value) >> 16;
         v5 = v6 + 0x303;
-        record = GameFlag_IsSet(v5);
+        record = Engine_GameFlagIsSet(v5);
         if (record == 0) {
-            GameFlag_Set(v5);
+            Engine_GameFlagSet(v5);
             break;
         }
     }
     Engine_EventBegin();
     Engine_EventSetMessage((s32)((s32)(((s32)p8 << 1) + p8) + v6) + MsgShianJiinIDoNotThinkMasterHama);
-    Event_ShowMessage((v6 + 1), 0);
+    Engine_EventShowMessage((v6 + 1), 0);
     Engine_EventEnd();
 }
 
@@ -369,36 +369,36 @@ void RamakanSabaku_RaiseQuarterTriggers(void)
     u8 *state = (u8 *)&gGameState;
     s32 percent = *(s16 *)(state + 0x232) * 100 / *(s16 *)(state + 0x22c);
 
-    if (GameFlag_IsSet(0x201) != 0)
+    if (Engine_GameFlagIsSet(0x201) != 0)
         return;
-    if (GameFlag_IsSet(0x302) != 0 && percent <= 74) {
-        GameFlag_Clear(0x302);
-        GameFlag_Clear(0x303);
-        GameFlag_Clear(0x304);
-        GameFlag_Clear(0x305);
+    if (Engine_GameFlagIsSet(0x302) != 0 && percent <= 74) {
+        Engine_GameFlagClear(0x302);
+        Engine_GameFlagClear(0x303);
+        Engine_GameFlagClear(0x304);
+        Engine_GameFlagClear(0x305);
     }
-    if (GameFlag_IsSet(0x301) != 0 && percent <= 49) {
-        GameFlag_Clear(0x301);
-        GameFlag_Clear(0x303);
-        GameFlag_Clear(0x304);
-        GameFlag_Clear(0x305);
+    if (Engine_GameFlagIsSet(0x301) != 0 && percent <= 49) {
+        Engine_GameFlagClear(0x301);
+        Engine_GameFlagClear(0x303);
+        Engine_GameFlagClear(0x304);
+        Engine_GameFlagClear(0x305);
     }
-    if (GameFlag_IsSet(0x300) != 0 && percent <= 24) {
-        GameFlag_Clear(0x300);
-        GameFlag_Clear(0x303);
-        GameFlag_Clear(0x304);
-        GameFlag_Clear(0x305);
+    if (Engine_GameFlagIsSet(0x300) != 0 && percent <= 24) {
+        Engine_GameFlagClear(0x300);
+        Engine_GameFlagClear(0x303);
+        Engine_GameFlagClear(0x304);
+        Engine_GameFlagClear(0x305);
     }
-    if (GameFlag_IsSet(0x300) == 0 && percent > 24) {
-        GameFlag_Set(0x300);
+    if (Engine_GameFlagIsSet(0x300) == 0 && percent > 24) {
+        Engine_GameFlagSet(0x300);
         work->raised_trigger = 1;
     }
-    if (GameFlag_IsSet(0x301) == 0 && percent > 49) {
-        GameFlag_Set(0x301);
+    if (Engine_GameFlagIsSet(0x301) == 0 && percent > 49) {
+        Engine_GameFlagSet(0x301);
         work->raised_trigger = 2;
     }
-    if (GameFlag_IsSet(0x302) == 0 && percent > 74) {
-        GameFlag_Set(0x302);
+    if (Engine_GameFlagIsSet(0x302) == 0 && percent > 74) {
+        Engine_GameFlagSet(0x302);
         work->raised_trigger = 3;
     }
 }
@@ -451,7 +451,7 @@ void RamakanSabaku_SweepBack(void)
     work = gWork;
     frames = 60;
     best = 0xf00000;
-    GameFlag_Set(0x200);
+    Engine_GameFlagSet(0x200);
     SceneState_SetHalfwordB030(1);
     if (gGameState.scene == (s32)&SceneId_RamakanSabaku1) {
         count = 3;
@@ -468,7 +468,7 @@ void RamakanSabaku_SweepBack(void)
     if (count != 0) {
         offset = 0;
         do {
-            distance = RamakanSabaku_CalculatePlanarDistance(&Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
+            distance = RamakanSabaku_CalculatePlanarDistance(&Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, (s32 *)point);
             if (distance <= best) {
                 best = distance;
                 nearest = left - count;
@@ -478,20 +478,20 @@ void RamakanSabaku_SweepBack(void)
         } while (--count != 0);
     }
     nearest <<= 1;
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     {
-        struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
+        struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
         const struct SafePoint *spot = (const struct SafePoint *)&points[nearest];
 
-        FieldObject_SetPosition(actor, spot->x, 0, spot->z);
+        Engine_ObjectSetPosition(actor, spot->x, 0, spot->z);
     }
-    Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
-    Audio_PlayCue(152);
-    leader = Actor_Get(ACTOR_PARTY_LEADER);
-    OverlayObject_WaitUntilField12BelowLimit((u8 *)leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
-    Audio_PlayCue(241);
+    Object_GetById(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
+    Engine_AudioPlayCue(152);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    OverlayObject_WaitUntilField12BelowLimit((u8 *)leader, Object_GetById(ACTOR_PARTY_LEADER)->y.fixed);
+    Engine_AudioPlayCue(241);
     {
-        struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
+        struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
         options.type = 214;
         options.start_scale_x = 0x8000;
@@ -501,8 +501,8 @@ void RamakanSabaku_SweepBack(void)
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &options);
     }
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x104, 0);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 18);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x104, 0);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 18);
     hold = (u16 *)(work + 0xcba);
     progress = &gGameState.unknown_232;
     zero = 0;
@@ -520,10 +520,10 @@ void RamakanSabaku_SweepBack(void)
                 frames = 1;
             }
         }
-        Task_Wait(1);
+        Engine_TaskWait(1);
     } while (frames != 0);
     {
-        struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
+        struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
         s32 scale;
 
         puff.type = 214;
@@ -536,11 +536,11 @@ void RamakanSabaku_SweepBack(void)
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, frames, frames,
                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, &puff);
     }
-    Audio_PlayCue(0x120);
-    Audio_PlayCue(152);
-    Actor_Get(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Event_Wait(10);
+    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(152);
+    Object_GetById(ACTOR_PARTY_LEADER)->velocity_y = 0x60000;
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+    Engine_EventWait(10);
     *(u16 *)(work + 0xcba) = frames;
     SceneState_SetHalfwordB030(0);
 }

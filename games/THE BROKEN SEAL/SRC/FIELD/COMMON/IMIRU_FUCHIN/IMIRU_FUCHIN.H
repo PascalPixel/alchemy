@@ -31,7 +31,7 @@ extern s32 gImiruFuchinDragonsEye[];
 extern s32 gImiruFuchinExits[];
 
 void ImiruFuchin_BlowCaveMouthDust(void);
-void SceneActor_TurnTowardTableAngle(s32 z);
+void SceneActor_TurnTowardTableAngle(union FieldObject *object);
 
 /* The main-image services the cave calls through its import veneers. The
  * declarations are old-style because one name is reached with different
@@ -72,14 +72,4 @@ void ImiruFuchin_HopBy(s32 dx, s32 dz);
  * Imports named by the address their call site computes, not by a runtime
  * address.  Declarations are old-style because arity varies between sites.
  */
-static __inline__ void AdvanceProbe(s32 heading, s32 *probe)
-{
-    /*
-     * FAKEMATCH: keep this call behind an inline boundary: it is what makes sp+8 be
-     * rematerialized for argument 2 before the split 0x100000 constant is
-     * completed.
-     */
-    Vector_AddPolarOffset((s32)0x100000, heading, probe);
-}
-
 #endif

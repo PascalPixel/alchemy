@@ -3,11 +3,11 @@
 
 void VinasuChojo_FlashScreen(void)
 {
-    Audio_PlayCue(187);
-    ColorBuffer_ApplyTarget(0x7fff, 1);
+    Engine_AudioPlayCue(187);
+    Engine_ColorBufferApplyTarget(0x7fff, 1);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(4);
-    ColorBuffer_ApplyTarget(0x40250d, 1);
+    Engine_ColorBufferApplyTarget(0x40250d, 1);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(1);
 }
@@ -43,7 +43,7 @@ enum {
  */
 void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
 {
-    struct FieldActor *center = Actor_Get(ORBIT_CENTER_ACTOR);
+    struct FieldActor *center = Object_GetById(ORBIT_CENTER_ACTOR);
     u16 angle = effect->orbit.angle;
 
     effect->orbit.x = center->x.fixed + Engine_MathCos(angle) * (effect->orbit.radius + 3);
@@ -63,7 +63,7 @@ void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
  */
 void SceneEffect_UpdateCounterDrivenOrbit(u8 *actor)
 {
-    u8 *anchor = Actor_Get(23);
+    u8 *anchor = Object_GetById(23);
     u16 *pangle = (u16 *)(actor + 100);
     s32 angle = *pangle;
     s32 cosine;
@@ -105,32 +105,32 @@ void SceneEffect_SpawnParticlesAboveActor(void)
     struct FieldSprite *sprite;
     s32 angle;
 
-    if (GameFlag_IsSet(0x236) == 0 && Math_RemainderUnsigned(gFrameCount, 3) != 0) {
+    if (Engine_GameFlagIsSet(0x236) == 0 && Math_RemainderUnsigned(gFrameCount, 3) != 0) {
         return;
     }
-    center = Actor_Get(ORBIT_CENTER_ACTOR);
-    if (GameFlag_IsSet(0x236) != 0) {
-        effect = (union OrbitEffect *)Object_Create(
+    center = Object_GetById(ORBIT_CENTER_ACTOR);
+    if (Engine_GameFlagIsSet(0x236) != 0) {
+        effect = (union OrbitEffect *)Engine_ObjectCreate(
             284, center->x.fixed,
-            (s32)((u32)(Random_Next() << 8) >> 16 << 16) + center->y.fixed - 0x1c0000,
+            (s32)((u32)(Engine_RandomNext() << 8) >> 16 << 16) + center->y.fixed - 0x1c0000,
             center->z.fixed);
     } else {
-        effect = (union OrbitEffect *)Object_Create(
+        effect = (union OrbitEffect *)Engine_ObjectCreate(
             284, center->x.fixed,
-            (s32)((u32)(Random_Next() << 6) >> 16 << 16) + center->y.fixed - 0x1c0000,
+            (s32)((u32)(Engine_RandomNext() << 6) >> 16 << 16) + center->y.fixed - 0x1c0000,
             center->z.fixed);
     }
     if (effect != 0) {
         sprite = ((struct FieldEffect *)effect)->sprite;
-        Object_SetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);
+        Engine_ObjectSetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);
         ObjectGroup_SetChildValue((struct FieldActor *)effect, 1);
         ((struct FieldEffect *)effect)->motion_flags = 0;
-        angle = Random_Next() & 0xffff000;
+        angle = Engine_RandomNext() & 0xffff000;
         effect->orbit.angle = angle;
         effect->orbit.unknown_66 = 0;
         ((struct FieldEffect *)effect)->update =
             (void (*)(union FieldObject *))SceneEffect_UpdateOrbitAroundActor;
-        effect->orbit.radius = Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
+        effect->orbit.radius = Engine_MathSin((u32)(Engine_RandomNext() * 0xffff) >> 20) * 24 >> 16;
         sprite->flags = 0;
         sprite->priority = 1;
     }

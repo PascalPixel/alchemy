@@ -42,11 +42,8 @@ s32 Object_Wander(struct ScriptObjectRuntime *object)
     base = *args++;
     range = *args++;
     limit = *args / 0x10000;
-    tries = 0;
     limit = limit * limit;
-retry:
-    tries++;
-    if (tries <= 7) {
+    for (tries = 0; tries < 7; tries++) {
         pos.x = object->x;
         pos.y = object->y;
         pos.z = object->z;
@@ -54,9 +51,9 @@ retry:
         heading = object->script_value + (Random16() >> 2) - (Random16() >> 2);
         Vector_AddPolarOffset(radius, heading, &pos);
         if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, (s32 *)&pos) != 0)
-            goto retry;
+            continue;
         if (Func_080120dc((struct ObjectRuntime *)object, &pos) != 0)
-            goto retry;
+            continue;
         radius += 0x80000;
         probe.x = object->x;
         probe.y = object->y;
@@ -67,33 +64,24 @@ retry:
         probe.z = object->z;
         Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
         if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
-            goto retry;
+            continue;
         probe.x = object->x;
         probe.y = object->y;
         probe.z = object->z;
         Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
         if (Func_080120dc((struct ObjectRuntime *)object, &probe) != 0)
-            goto retry;
-        /* FAKEMATCH: the block that runs once ends the first CSE pass's
-         * path after the two loads, so the move target reuses them only in
-         * the pass after the loop pass: the loads land in the division's
-         * registers and are copied for the call, where plain C loads them
-         * into the call's registers and divides copies. */
-        do {
-            dx = pos.x / 0x10000 - object->home_x;
-            dz = pos.z / 0x10000 - object->home_z;
-        } while (0);
+            continue;
+        dx = pos.x / 0x10000 - object->home_x;
+        dz = pos.z / 0x10000 - object->home_z;
         if (dx * dx + dz * dz > limit)
-            goto retry;
-        goto found;
+            continue;
+        Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
+        object->script_cursor += 4;
+        return 1;
     }
     object->script_value += 0x8000;
     object->turned_back = 1;
     return 0;
-found:
-    Object_SetMoveTarget((struct ObjectRuntime *)object, pos.x, pos.y, pos.z);
-    object->script_cursor += 4;
-    return 1;
 }
 
 /*

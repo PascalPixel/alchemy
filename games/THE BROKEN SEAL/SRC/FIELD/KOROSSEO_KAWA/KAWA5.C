@@ -78,12 +78,12 @@ void SceneState_StoreParamsAndInitTable(s32 a, s32 b, s32 c);
 
 static inline void InitializeActorZero(void)
 {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
 }
 
 static inline void InitializeSelectedActor(s32 actorId)
 {
-    Actor_SetSpeed(actorId, 0x10000, 0x8000);
+    Engine_ActorSetSpeed(actorId, 0x10000, 0x8000);
 }
 
 /* Selects a later line in the current dialogue. */
@@ -231,7 +231,7 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
     if (a->velocity_y >= -255 && a->velocity_y <= 255) {
         a->motion_flags = 0;
     }
-    n = Random_Next();
+    n = Engine_RandomNext();
     if (n * 100 >> 16 <= 9) {
         struct FieldActor *o;
         s32 u;
@@ -240,8 +240,8 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
         t[0] = a->x.fixed;
         t[1] = a->y.fixed;
         t[2] = a->z.fixed;
-        u = Random_Next();
-        w = Random_Next();
+        u = Engine_RandomNext();
+        w = Engine_RandomNext();
         Vector_AddPolarOffset(u << 4, w, t);
         {
             s32 x = t[0];
@@ -253,7 +253,7 @@ void SceneEffect_SpawnKind285AtRandomChance(struct FieldActor *a)
         if (o != 0) {
             o->motion_flags = 0;
             Engine_ActorSetSpriteFlags(o, 0);
-            Object_SetScript(o, (s32)KorosseoKawa_ScriptA);
+            Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptA);
             Object_SetMode(o, 1);
             Object_SetMode(o, 0);
         }
@@ -266,8 +266,8 @@ s32 SceneActor_PlaceLinkedActorAbove(struct FieldActor *a)
 
     Object_SetMoveTarget(o, a->x.fixed, a->y.fixed + 0x240000, a->z.fixed);
     o->motion_flags = 0;
-    Object_SetScript(o, (s32)KorosseoKawa_ScriptB);
-    Audio_PlayCue(83);
+    Engine_ObjectSetScript(o, (s32)KorosseoKawa_ScriptB);
+    Engine_AudioPlayCue(83);
     a->unknown_64 = 0;
     return 0;
 }
@@ -285,7 +285,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     u16 *cuep;
     s16 *waitp;
 
-    flag = GameFlag_IsSet(0x211);
+    flag = Engine_GameFlagIsSet(0x211);
 
     shared = Data_02000240;
     rec = Object_GetById(*(s32 *)(shared + 500));
@@ -310,8 +310,8 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     rec->speed = 0x10000;
 
     Object_SetMoveTarget(rec, x, 0, z);
-    GameFlag_Set(0x211);
-    Object_SetScript(rec, (s32)KorosseoKawa_ApproachScript);
+    Engine_GameFlagSet(0x211);
+    Engine_ObjectSetScript(rec, (s32)KorosseoKawa_ApproachScript);
 
     while (*waitp != 0) {
         Engine_TaskWait(1);

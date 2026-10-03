@@ -16,7 +16,7 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
     slotValue = *(s32 *)&table[250];
     if (slotValue != 0) {
         if ((s16)*(u16 *)(state + 382) >> 10 == slotValue) {
-            if (GameFlag_IsSet(0x141) != 0) {
+            if (Engine_GameFlagIsSet(0x141) != 0) {
                 field = (u16 *)(state + 386);
                 value = 99;
                 *field = value;
@@ -81,7 +81,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
         }
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
-    Event_ShowMessage(best_slot, 0);
+    Engine_EventShowMessage(best_slot, 0);
     frame = (s32 *)(state + 448);
     *frame = 0x200;
     *(s32 *)(state + 456) = 15;
@@ -95,7 +95,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     active_slot = active_slot + 1;
     if (active_slot > 3) {
         Engine_EventRequestExit(10);
-        GameFlag_Set(282);
+        Engine_GameFlagSet(282);
     } else {
         Korosseo_SelectSoloCompetitor(active_slot);
         Engine_EventOpenScreen();

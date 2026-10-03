@@ -95,17 +95,17 @@ extern const s32 KuupuappuMura_DriftScriptB[];
 void ActorPresentation_SetupActorZeroForSceneTwelveAt72_160(void)
 {
 
-    struct SceneActor_0200113c *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct SceneActor_0200113c *actor = Object_GetById(ACTOR_PARTY_LEADER);
     struct Presentation *presentation = actor->presentation;
     u8 flags;
 
-    Audio_PlayCue(158);
-    Map_AnimateCells(KuupuappuMura_Scene12Cells, 35, 9);
+    Engine_AudioPlayCue(158);
+    Engine_MapAnimateCells(KuupuappuMura_Scene12Cells, 35, 9);
     {
         s32 cell = 4;
         s32 row = 10;
 
-        Map_CopyCellAttributes(33, 20, 1, 3, cell, row);
+        Engine_MapCopyCellAttributes(33, 20, 1, 3, cell, row);
     }
     actor->state_23 &= ~1;
     flags = presentation->flags;
@@ -121,10 +121,10 @@ void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int f
     void Engine_TaskWait(int);
     void Actor_SetPosition(int, int, int);
 
-    u8 *record = Actor_Get(actor); int frames;
-    Actor_SetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
+    u8 *record = Object_GetById(actor); int frames;
+    Engine_ActorSetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;
     *(s32 *)(record + 68) = 0; *(s32 *)(record + 40) = field40; Engine_ActorSetSpriteFlags(record, 0);
-    Actor_MoveToAndWait(actor, x, z); Actor_SetPosition(actor, x << 16, z << 16);
+    Engine_ActorMoveToAndWait(actor, x, z); Engine_ActorSetPosition(actor, x << 16, z << 16);
     for (frames = 60; frames != 0; --frames) { Engine_TaskWait(1); if (*(s16 *)(record + 42) == 0) break; }
     Engine_ActorSetSpriteFlags(record, 1); *(s32 *)(record + 72) = 0x10000;
 }
@@ -137,19 +137,19 @@ void FieldScene_RunActor23SequenceOnceByFlag867(void)
     s32 record;
 
     Engine_EventBegin();
-    Audio_PlayCue(100);
+    Engine_AudioPlayCue(100);
     Engine_EventWait(40);
-    if (GameFlag_IsSet(0x867) == 0) {
-        Actor_SetAttachedEffect(23, 0x102);
+    if (Engine_GameFlagIsSet(0x867) == 0) {
+        Engine_ActorSetAttachedEffect(23, 0x102);
         Engine_ActorJump(23, 4, 0);
         Engine_EventWait(12);
         Engine_ActorJump(23, 4, 0);
         Engine_EventWait(20);
         ActorPresentation_MoveActorToPositionAndWait(23, 0x188, 104, 0x70000);
         Engine_EventWait(20);
-        Actor_WalkToAndWait(23, 0x198, 104);
-        Actor_WalkToAndWait(23, 0x198, 120);
-        GameFlag_Set(0x867);
+        Engine_ActorWalkToAndWait(23, 0x198, 104);
+        Engine_ActorWalkToAndWait(23, 0x198, 120);
+        Engine_GameFlagSet(0x867);
     }
     Engine_EventEnd();
 }
@@ -163,20 +163,20 @@ void FieldScene_RunActor19MotionSequence(void)
     Engine_EventBegin();
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(19, 2);
-    Actor_SetSpeed(19, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(19, 216, 0x198);
+    Engine_ActorSetSpeed(19, 0xcccc, 0x6666);
+    Engine_ActorWalkToAndWait(19, 216, 0x198);
     Engine_EventWait(10);
-    Actor_FaceDirection(19, 0x4000, 20);
+    Engine_ActorFaceDirection(19, 0x4000, 20);
     Engine_ActorJump(19, 6, 0);
     Engine_EventWait(30);
     Engine_ActorJump(19, 6, 0);
     Engine_EventWait(30);
     Engine_ActorJump(19, 6, 0);
     Engine_EventWait(30);
-    Actor_WalkToAndWait(19, 216, 0x188);
+    Engine_ActorWalkToAndWait(19, 216, 0x188);
     Engine_EventWait(10);
-    Actor_FaceDirection(19, 0x4000, 20);
-    GameFlag_Set(0x858);
+    Engine_ActorFaceDirection(19, 0x4000, 20);
+    Engine_GameFlagSet(0x858);
     Engine_EventEnd();
 }
 
@@ -351,7 +351,7 @@ s32 SceneActor_CheckFacingAndRange(struct SceneActor *actor, struct SceneActor *
  */
 void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
 {
-    Event_ShowMessage(actor, 0);
+    Engine_EventShowMessage(actor, 0);
     Engine_EventWait(delay);
 }
 
@@ -422,7 +422,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
         x += base_x;
         base_y = leader->motion.y;
         z += base_z;
-        leaf = (union DriftingObject *)Object_Create(0xac, x, base_y, z);
+        leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, base_y, z);
     }
     if (leaf == NULL)
         return;

@@ -12,7 +12,7 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void)
     }
 
     rec[0] = 0;
-    GameFlag_Clear(0x161);
+    Engine_GameFlagClear(0x161);
 
     target = (s32 *)rec[5];
     if (target != 0) {

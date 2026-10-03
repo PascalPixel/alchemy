@@ -61,7 +61,7 @@ void ColossoLogRollingStage_InitializeSceneControl(s32 resource)
     SceneControl *control = (SceneControl *)gSceneState;
 
     Resource_DecodeType01(Resource_GetTableEntry(resource), work + 240);
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(0x109) == 0) {
         control->enabled = 1;
         control->active = 1;
         control->scene_variant = *(u16 *)(work + 224);

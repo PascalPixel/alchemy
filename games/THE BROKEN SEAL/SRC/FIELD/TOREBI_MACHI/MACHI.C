@@ -170,7 +170,7 @@ void FieldScene_RunScene3b5_02000224(void)
     record = Object_GetById(8);
     Engine_ActorSetSpriteFlags((s32)record, 0);
     Call4(SetMapCellCollision, 0, 0x2200000, 0x1200000, 253);
-    GameFlag_Set(0x200);
+    Engine_GameFlagSet(0x200);
 }
 
 void ConfigureAndPlaceActorOneHundredTwo(void)
@@ -360,7 +360,7 @@ void FieldScene_RunScene3b5_020005dc(void)
 
     Engine_EventBegin();
     if (Value1(Engine_GameFlagIsSet, 0x8bf) == 0) {
-        GameFlag_Set(0x8bf);
+        Engine_GameFlagSet(0x8bf);
         Engine_EventSetMessage((s32)MsgTorebiLeftovers);
         Engine_EventShowMessage(19, 0);
         Engine_ItemShowFound(233, 3);
@@ -442,13 +442,13 @@ s32 TorebiMachi_ApplyEntryState(s32 a0)
     *(s32 *)(record + 108) = handler;
     record = Object_GetById(14);
     *(s32 *)(record + 108) = (s32)SceneActor_CopyPlayerModeToActor;
-    if (GameFlag_IsSet(0x8c1) != 0) {
+    if (Engine_GameFlagIsSet(0x8c1) != 0) {
         Call3(Engine_ActorSetPosition, 28, 0x13c0000, 0x1480000);
     }
     if (Engine_GameFlagIsSet(0x201) != 0) {
         FieldScene_ResetActor9AndDrawTiles();
     }
-    if (GameFlag_IsSet(0x200) != 0) {
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         FieldScene_RunScene3b5_02000224();
         Engine_ActorSetAnimation(8, 4);
     }
@@ -478,11 +478,11 @@ void FieldScene_RunScene3b5SequenceA(void)
 
     Engine_EventBegin();
     Call3(Engine_ActorWalkToAndWait, 0, 0x130, 0x138);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorFaceDirection(28, 0x4000, 0);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgTorebiWantTestLuck);
-    Event_OpenMessage(28, 0);
+    Engine_EventOpenMessage(28, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         bump_step(1);
         Engine_EventShowMessage(28, 0);
@@ -529,7 +529,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorWalkTo(29, 72, 248);
     Engine_ActorWalkTo(30, 56, 248);
     Call3(Engine_ActorWalkToAndWait, 0, 64, 0x108);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Engine_ActorWaitForMove(29);
     Engine_ActorSetAnimation(29, 1);
     Engine_ActorSetAnimation(30, 1);
@@ -537,12 +537,12 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorFaceActor(29, 0, 0);
     Engine_ActorFaceActor(30, 0, 0);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(29, 0x102);
+    Engine_ActorSetAttachedEffect(29, 0x102);
     Call2(Engine_ActorSetAttachedEffect, 30, 0x102);
     Engine_ActorStartRepeatedMotion(29, 2);
     Engine_ActorRunRepeatedMotion(30, 2);
     Engine_EventWait(20);
-    Event_OpenMessage(29, 0);
+    Engine_EventOpenMessage(29, 0);
     Engine_EventWait(25);
     UiWindow_CreateWithSideObject(52, 0, 12, 7);
     UiText_OpenMessageWindow((base + 3), 11, 12, 2);
@@ -568,9 +568,9 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventWait(20);
         Call3(Engine_ActorSetSpeed, 29, 0x1cccc, 0xe666);
         Call3(Engine_ActorSetSpeed, 30, 0x1cccc, 0xe666);
-        Actor_WalkTo(29, 232, 248);
+        Engine_ActorWalkTo(29, 232, 248);
         Engine_EventWait(2);
-        Actor_WalkTo(30, 232, 248);
+        Engine_ActorWalkTo(30, 232, 248);
         Engine_ActorWaitForMove(29);
         Engine_ActorWalkTo(29, 248, 248);
         Engine_ActorWalkToAndWait(30, 248, 248);

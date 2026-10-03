@@ -52,13 +52,13 @@ void SceneState_CheckPositionWindow(void)
     s32 v1;
     s32 v0;
 
-    v0 = ((struct Resource386FirstView *)Actor_Get(0))->sample_08;
-    v1 = (s32)((struct Resource386SecondView *)Actor_Get(0))->sample_10 >> 0x14;
+    v0 = ((struct Resource386FirstView *)Object_GetById(0))->sample_08;
+    v1 = (s32)((struct Resource386SecondView *)Object_GetById(0))->sample_10 >> 0x14;
     if (((u32)((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A)) {
-        GameFlag_Set(0x250);
+        Engine_GameFlagSet(0x250);
         return;
     }
-    GameFlag_Clear(0x250);
+    Engine_GameFlagClear(0x250);
 }
 
 /*
@@ -94,7 +94,7 @@ void SceneActor_RunActorStep(s32 arg0)
 {
     Engine_EventBegin();
     Engine_ActorSetAnimation(arg0, 1);
-    Event_ShowMessage(arg0, 0);
+    Engine_EventShowMessage(arg0, 0);
     Engine_EventEnd();
 }
 
@@ -128,19 +128,19 @@ void FieldScene_RunActor16Sequence(void)
     Engine_EventSetMessage((s32)MsgKuupuappuRobinYouveComeBackVault);
     Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     Engine_ActorSetAnimation(16, 1);
-    Event_ShowMessageAndWait(16, 0, 20);
+    Engine_EventShowMessageAndWait(16, 0, 20);
     Engine_ActorSetAnimationAndWait(16, 4);
     Engine_EventWait(20);
-    Event_ShowMessageAndWait(16, 0, 20);
-    Actor_ShowEmote(16, 0x102, 60);
-    Event_ShowMessageAndWait(16, 0, 30);
-    Event_OpenMessage(16, 0);
+    Engine_EventShowMessageAndWait(16, 0, 20);
+    Engine_ActorShowEmote(16, 0x102, 60);
+    Engine_EventShowMessageAndWait(16, 0, 30);
+    Engine_EventOpenMessage(16, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         bump_step(1);
     }
-    Event_ShowMessageAndWait(16, 0, 20);
-    GameFlag_Set(0x300);
-    GameFlag_Set(0x868);
+    Engine_EventShowMessageAndWait(16, 0, 20);
+    Engine_GameFlagSet(0x300);
+    Engine_GameFlagSet(0x868);
     Engine_EventEnd();
 }
 
@@ -173,16 +173,16 @@ void FieldScene_RunActor18FlaggedSequence(void)
 
     Engine_EventBegin();
     Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 0);
-    if (GameFlag_IsSet(0x85b) == 0) {
+    if (Engine_GameFlagIsSet(0x85b) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuHaveLotLeftoverBonesFrom);
-        Event_OpenMessage(18, 0);
+        Engine_EventOpenMessage(18, 0);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuWantMoreBones);
-        Event_OpenMessage(18, 0);
+        Engine_EventOpenMessage(18, 0);
     }
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(20);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
         Engine_EventWait(20);
         Engine_ActorRunRepeatedMotion(18, 2);
         Engine_EventWait(20);
@@ -190,21 +190,21 @@ void FieldScene_RunActor18FlaggedSequence(void)
             Engine_ActorSetAnimationAndWait(18, 4);
             Engine_EventWait(20);
             Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-            Event_ShowMessage(18, 0);
+            Engine_EventShowMessage(18, 0);
             goto L_020002d4;
         }
         Engine_ItemShowFound(ITEM_BONE, 3);
         Engine_PartyGiveItem(ITEM_BONE, 0);
-        GameFlag_Set(0x85b);
+        Engine_GameFlagSet(0x85b);
     } else {
         bump_step(1);
         Engine_EventWait(20);
         Engine_ActorSetAnimationAndWait(18, 3);
         Engine_EventWait(20);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     }
     L_020002d4:;
-    Actor_FaceDirection(18, 0x4000, 0);
+    Engine_ActorFaceDirection(18, 0x4000, 0);
     Engine_EventEnd();
 }
 
@@ -216,10 +216,10 @@ void SceneActor_RunActor16StepWithFlag91(void)
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(16, 1);
     Engine_EventEnd();
-    slot = (u8 *)Actor_Get(16) + 91;
+    slot = (u8 *)Object_GetById(16) + 91;
     *slot = 1;
     FieldScene_RunActor16Sequence();
-    slot = (u8 *)Actor_Get(16) + 91;
+    slot = (u8 *)Object_GetById(16) + 91;
     *slot = clear;
     Engine_ActorEnableActionCallback(16, 2);
 }
@@ -235,7 +235,7 @@ void FieldScene_RunActor18ConditionalCue(void)
         Engine_ActorSetAnimationAndWait(18, 4);
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgKuupuappuWowHaveManyThingsArent);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
     } else {
         Engine_ItemShowFound(ITEM_BONE, 3);
         Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -250,14 +250,14 @@ void FieldScene_RunActor19StepByPlace(void)
 
     u32 place;
 
-    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
+    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Engine_ShopOpen(4, 19);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuTheresRiverFireOnOther);
-        Event_ShowMessage(19, 0);
+        Engine_EventShowMessage(19, 0);
     }
 
     Engine_EventEnd();
@@ -267,14 +267,14 @@ void FieldScene_RunActor20StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
+    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Engine_ShopOpen(5, 20);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuTheySayVolcanoOnMt);
-        Event_ShowMessage(20, 0);
+        Engine_EventShowMessage(20, 0);
     }
 
     Engine_EventEnd();
@@ -284,14 +284,14 @@ void FieldScene_RunActor21StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
+    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Engine_ShopOpen(6, 21);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuWeHaventBeenGettingMany);
-        Event_ShowMessage(21, 0);
+        Engine_EventShowMessage(21, 0);
     }
 
     Engine_EventEnd();
@@ -301,14 +301,14 @@ void FieldScene_RunActor22StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
+    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
         Engine_InnOpen(1, 22);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuMmmmNothingDoNothingDo);
-        Event_ShowMessage(22, 0);
+        Engine_EventShowMessage(22, 0);
     }
 
     Engine_EventEnd();
@@ -319,12 +319,12 @@ void SceneDialogue_RunActor18FlaggedLine(void)
     s32 GameFlag_IsSet(s32);
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x85B) == 0) {
+    if (Engine_GameFlagIsSet(0x85B) == 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuGeeAlwaysGetHungryWhen);
     } else {
         Engine_EventSetMessage((s32)MsgKuupuappuHeReallyLikesBonesWonder);
     }
-    Event_ShowMessage(18, 0);
+    Engine_EventShowMessage(18, 0);
     Engine_EventEnd();
 }
 
@@ -357,11 +357,11 @@ s32 FieldScene_InitSceneStateByStep(void)
          * The fifth and sixth arguments go on the stack. The two locals
          * are what put them there, so they must stay locals.
          */
-        Map_CopyCellsTo(0, 120, 8, 67, fifth, sixth);
+        Engine_MapCopyCellsTo(0, 120, 8, 67, fifth, sixth);
         zero = 0;
-        ((u8 *)Actor_Get(8))[0x55] = zero;
-        *(s32 *)((u8 *)Actor_Get(8) + 12) = zero;
-        *(s32 *)((u8 *)Actor_Get(8) + 20) = zero;
+        ((u8 *)Object_GetById(8))[0x55] = zero;
+        *(s32 *)((u8 *)Object_GetById(8) + 12) = zero;
+        *(s32 *)((u8 *)Object_GetById(8) + 20) = zero;
     } else if (scene == 7 || scene == 11) {
         /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
         OverlayObject_InitObject22(0xe7, 0x02380000, 0x00100000, 0x02a00000);
@@ -383,7 +383,7 @@ void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
     s32 m;
 
     z = 0;
-    o = (u8 *)Object_Create(22, fixed_x, fixed_y, fixed_z);
+    o = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
     if (o != 0) {
         q = *(u8 **)(o + 0x50);
         p = q + 38;

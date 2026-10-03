@@ -22,49 +22,49 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     s32 s;
     u16 step;
 
-    actor = Actor_Get(10);
+    actor = Object_GetById(10);
     sprite = actor->sprite;
     x = actor->x.fixed;
     y = actor->y.fixed;
-    Event_Begin();
-    Audio_PlayCue(141);
-    Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
-    Event_Wait(10);
-    Audio_PlayCue(0x121);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Event_Wait(20);
+    Engine_EventBegin();
+    Engine_AudioPlayCue(141);
+    Engine_WorkSetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
+    Engine_EventWait(10);
+    Engine_AudioPlayCue(0x121);
+    Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+    Engine_EventWait(20);
 
     /* FAKEMATCH: each phase leaves by goto; a break lets GCC 2.96 roll the phase's update and test below its wait. */
     step = 0;
     for (;;) {
         step += 8;
         sprite->rotation += step;
-        c = Math_Cos(sprite->rotation + 0x4000);
+        c = Engine_MathCos(sprite->rotation + 0x4000);
         actor->x.fixed = (c << 4) + x;
         if (sprite->rotation > 0x8fff) {
             goto risen;
         }
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
 risen:
     step = 0;
     for (;;) {
         step += 8;
         sprite->rotation -= step;
-        c = Math_Cos(sprite->rotation + 0x4000);
+        c = Engine_MathCos(sprite->rotation + 0x4000);
         actor->x.fixed = (c << 4) + x;
         if (sprite->rotation <= 0x7000) {
             goto fallen;
         }
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
 fallen:
     step = 8;
     for (;;) {
         step += step >> 3;
         sprite->rotation += step;
-        c = Math_Cos(sprite->rotation + 0x4000);
-        s = Math_Sin(sprite->rotation + 0x8000);
+        c = Engine_MathCos(sprite->rotation + 0x4000);
+        s = Engine_MathSin(sprite->rotation + 0x8000);
         actor->x.fixed = (c << 4) + x;
         if (sprite->rotation > 0x8000) {
             actor->y.fixed = y - (s << 3);
@@ -72,16 +72,16 @@ fallen:
         if (sprite->rotation + step > 0xbfff) {
             goto settled;
         }
-        Task_Wait(1);
+        Engine_TaskWait(1);
     }
 settled:
-    Task_Wait(1);
+    Engine_TaskWait(1);
     sprite->rotation = 0xc000;
-    Audio_PlayCue(183);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
-    Event_Wait(20);
-    Audio_PlayCue(0x121);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Engine_AudioPlayCue(183);
+    Engine_WorkSetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+    Engine_EventWait(20);
+    Engine_AudioPlayCue(0x121);
+    Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
     FieldScene_RunSharedSetPiece(5);
-    Event_End();
+    Engine_EventEnd();
 }

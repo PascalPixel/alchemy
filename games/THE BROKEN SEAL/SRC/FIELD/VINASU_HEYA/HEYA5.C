@@ -52,14 +52,14 @@ void VinasuHeya_ShiftBridge(void)
     leader->y.fixed = 0;
     if (x >= 308 && x <= 315 && z >= 532 && z < 540) {
         leader->y.fixed = -0x20000;
-        if (!GameFlag_IsSet(0x300)) {
+        if (!Engine_GameFlagIsSet(0x300)) {
             Engine_EventBegin();
             Engine_AudioPlayCue(161);
-            GameFlag_Set(0x300);
+            Engine_GameFlagSet(0x300);
             Engine_MapCopyCellsTo(26, 33, 19, 33, 1, 1);
             Engine_EventWait(30);
             Engine_AudioPlayCue(239);
-            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
             Engine_EventWait(20);
             dust_x = 0x1200000;
             x = 29;
@@ -79,10 +79,10 @@ void VinasuHeya_ShiftBridge(void)
                     countdown = 40;
                     if (i <= 240) {
                         x -= 4;
-                        Map_CopyCellsTo(x, 50, 15, 32, 3, 4);
+                        Engine_MapCopyCellsTo(x, 50, 15, 32, 3, 4);
                     } else {
                         x += 4;
-                        Map_CopyCellsTo(x, 45, 9, 32, 3, 4);
+                        Engine_MapCopyCellsTo(x, 45, 9, 32, 3, 4);
                     }
                 }
                 Engine_TaskWait(1);
@@ -93,7 +93,7 @@ void VinasuHeya_ShiftBridge(void)
             Engine_MapCopyCellAttributes(12, 32, 3, 1, 15, 32);
             Engine_AudioPlayCue(288);
             Engine_AudioPlayCue(188);
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+            Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_MapRenderWaitForValues();
             gEventWork->start_transition = 0x202;
             Engine_EventRequestExit(11);

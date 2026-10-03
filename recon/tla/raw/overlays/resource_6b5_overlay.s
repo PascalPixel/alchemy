@@ -1036,7 +1036,7 @@ Func_020007b8:
 .L_02008848:
 	.4byte gLinkExchangeState
 .L_0200884c:
-	.4byte Data_02003a70
+	.4byte gSerialTransfer
 .L_02008850:
 	.4byte 0x04000208
 .L_02008854:

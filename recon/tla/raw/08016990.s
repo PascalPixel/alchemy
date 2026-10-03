@@ -46,7 +46,7 @@ Func_08016990:
 .L_080169dc:
 	.4byte gLinkStatus
 .L_080169e0:
-	.4byte Data_02003a70
+	.4byte gSerialTransfer
 .L_080169e4:
 	.4byte gSerialReceiveDest
 .L_080169e8:
@@ -305,7 +305,7 @@ Func_08016990:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_08016bc4:
-	.4byte Data_020054c4
+	.4byte gSerialBlockSequence
 .L_08016bc8:
 	.4byte gSerialReceivedSize
 .L_08016bcc:

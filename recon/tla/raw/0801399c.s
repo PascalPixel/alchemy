@@ -107,7 +107,7 @@ Func_0801399c:
 .L_08013a68:
 	.4byte gSerialExchangeActive
 .L_08013a6c:
-	.4byte Data_02003a70
+	.4byte gSerialTransfer
 .L_08013a70:
 	.4byte Data_02003870
 .L_08013a74:

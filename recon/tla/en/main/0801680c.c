@@ -1,3 +1,13 @@
+/*
+ * SerialRuntime_BeginTransferA: start a byte-counted send from its source.
+ * Reference and complete candidate object: 72 bytes, literal pool included.
+ * Immutable refresh after physical-name closure: score 120, two reordered
+ * instructions. The transfer argument move follows the busy-cursor read;
+ * the source-cursor store follows the size/sequence stores.
+ * Refreshed against the rebuilt English ELF: every physical name resolves;
+ * no unresolved-symbol comparisons remain.
+ * Existing body and its measured FAKEMATCH devices are unchanged.
+ */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 

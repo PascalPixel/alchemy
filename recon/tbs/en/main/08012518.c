@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* main:08012518 - interactive icon/metadata monitor loop.
  *
  * The routine never returns: it sets up a small four column editor over the
@@ -74,11 +75,9 @@ struct IconColumn {
     s8 b6;   /* wraps 0..15; pushed through Ui_SetGridColumnByte5 */
 };
 
-void *Runtime_AllocateBlock(s32, s32);
 void Resource_InitializeTable(void);
 void Scheduler_ResetTaskTable(void);
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
-void Runtime_InitializeHeap(void);
 void Blend_SetDarkenTarget0(s32);
 void WaitFrames(s32);
 void RuntimeDispatch_ReturnZero(s32, void *);

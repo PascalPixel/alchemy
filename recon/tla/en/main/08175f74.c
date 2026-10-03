@@ -1,3 +1,13 @@
+/* NONMATCHING: shared resource contracts, 2026-10-03.
+ * All six diagnostic builds retain 9988 bytes of code/pools and 32 bytes
+ * of constants. The true decoder byte-count result changes argument
+ * setup at three calls (six halfwords) against the fresh current-source
+ * baseline; every other section, symbol and relocation stays exact.
+ * Opaque resource casts add no difference. This is a baseline comparison,
+ * with no new ROM score or adoption claim.
+ */
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
 struct Particle {
@@ -225,8 +235,6 @@ void Func_08014c4c(void);
 void Func_08118040(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void Func_08144aac(s32, DrawRectangleFn *);
-u16 *Resource_GetTableEntry(s32);
-void Resource_DecodeType01(const void *, void *);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -237,8 +245,6 @@ void Render_ApplyProjectedPlacementFar(struct SpriteObject *, s32 *, s32 *, s32)
 s32 Func_08002096(s32);
 s32 Func_08002090(s32);
 s32 __divsi3(s32, s32);
-void ResourceObject_ReleaseFar(struct SpriteObject *);
-void *Runtime_BumpAllocateAlternatePool(s32);
 struct Model *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_080151e4(s32, s32, s32);
@@ -653,7 +659,7 @@ void Func_08175f74(struct BattleEffectArgument *arg)
         }
         if (frame >= 132 && frame < 860) {
             if (frame == 132) {
-                ResourceObject_ReleaseFar(work->objects[0]);
+                ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
                 source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009b);
                 CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
                 source += 0x180;
@@ -1238,14 +1244,14 @@ void Func_08175f74(struct BattleEffectArgument *arg)
 
     Func_081c0010(162);
     if (frame < 132) {
-        ResourceObject_ReleaseFar(work->objects[0]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
     } else {
         for (i = 0; i != 14; i++) {
-            ResourceObject_ReleaseFar(work->objects[i]);
+            ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
         }
     }
     for (i = 0; i != 48; i++) {
-        ResourceObject_ReleaseFar(SPRITES[i]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)SPRITES[i]);
     }
     Func_0801314c(188);
     Func_0801314c(104);

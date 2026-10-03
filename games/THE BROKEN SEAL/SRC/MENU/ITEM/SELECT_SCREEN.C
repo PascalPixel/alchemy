@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -34,8 +35,6 @@ static __inline__ s32 FillWords(FillFn fill, void *dst, s32 size, u32 value)
 }
 #endif
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-s32 Runtime_AllocateHeapBlock(s32 id, s32 size);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32);
@@ -51,9 +50,7 @@ void Menu_EnsureCancelSound(void);
 void RenderOutput_ClearListFar(s32);
 void ItemMenu_Close(void);
 void Menu_ResetTwoResourceEntries(void);
-void Runtime_ReleaseHeapBlock(s32);
 void UiWindow_MarkVisibleTileAttributesFar(void);
-void Runtime_BumpFree(void *);
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void);
 void UiWindow_EraseBorderRectFar(s32, s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(void);

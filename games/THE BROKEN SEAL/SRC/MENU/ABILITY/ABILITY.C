@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "FAR_RUNTIME.H"
 #include "OWNER_STATE.H"
@@ -22,8 +23,6 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 void GameFlag_ClearBitFar(s32 flag);
 s32 GameFlag_TestFar(s32 flag);
 void UiMenu_PositionCursor(s32 x, s32 y);
-void *Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *buffer);
 void Audio_PlayCue(s32 cue);
 
 /* Select the owner whose Psynergy is shown, or assign an L/R shortcut. */

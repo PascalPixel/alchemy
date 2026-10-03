@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
@@ -16,11 +18,9 @@ s32 UiText_BuildRenderEntriesMode1(s32);
 /* These joining messages retain their five-word channel transport. */
 struct UiChannelSlot *UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
-void Runtime_PushSlotEntry(s32 *, s32);
 void WaitFrames(s32);
 s32 Audio_Check(void);
 void UiWork_Finalize(struct UiWindow *, s32);
-void Resource_ResetEntry(s32);
 
 extern volatile u32 gKeyState;
 

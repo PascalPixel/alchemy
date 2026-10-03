@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GROUP_DEPARTURE.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -50,7 +51,6 @@ struct WorldMapVramBlock {
 
 extern struct WorldMapVramBlock gVramBlockCache[];
 s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
-void Resource_ResetEntry(s32 block);
 void OverlayObject_UpdateArcFromParent(union FieldObject *object);
 void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
 

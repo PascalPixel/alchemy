@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TEXT_READER.H"
 
 extern const u8 Func_08015430[];
@@ -5,8 +6,6 @@ extern const u8 Func_08015430[];
 extern void *Data_03001e50[];
 extern u8 Text_DecodeSymbolCodeSize[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, u32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
 {

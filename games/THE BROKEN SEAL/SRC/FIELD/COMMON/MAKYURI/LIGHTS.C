@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
 
@@ -54,7 +55,6 @@ struct MakyuriCell {
 extern s32 gGameState[];
 extern u8 Makyuri_PillarScript[];
 extern u8 Makyuri_RampScript[];
-struct MakyuriLights **Runtime_AllocateBlock(s32 slot, s32 size);
 s32 Engine_GameFlagIsSet(s32 flag);
 struct MakyuriActor *ObjectTable_Get(s32 id);
 struct MakyuriObject *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
@@ -75,7 +75,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
     s32 flag;
     volatile u32 cleared;
 
-    *Runtime_AllocateBlock(35, 4) = st;
+    *(struct MakyuriLights **)Runtime_AllocateBlock(35, sizeof(st)) = st;
     flag = Engine_GameFlagIsSet(0x109);
     if (flag == 0) {
         cleared = flag;

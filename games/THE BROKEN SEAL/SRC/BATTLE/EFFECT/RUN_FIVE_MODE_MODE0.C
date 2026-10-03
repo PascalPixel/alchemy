@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"
@@ -16,9 +18,6 @@
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);

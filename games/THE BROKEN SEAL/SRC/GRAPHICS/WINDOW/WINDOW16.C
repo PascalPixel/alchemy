@@ -1,6 +1,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
+#include "VRAM_BLOCK.H"
+#include "GLYPH.H"
+#include "AFFINE.H"
+#include "UIWINDOW.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE_IDS.H"
 #include "IWRAM_CALL.H"
@@ -25,25 +30,15 @@ extern const u8 Ui_PairBobOffsets[];
 
 void Runtime_RemapBytesByTableFar(void *, s32);
 u32 Resource_DecodeByteLz(const void *, void *);
-void Runtime_ReleaseHeapBlock(s32);
 
 /* graphics/resource/RenderResource_LoadFrame.c */
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void VramBlock_LoadCached(s32, s32, void *);
 
 /* graphics/resource/RenderResource_CreateFrame.c */
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 
-void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
+void UiWindow_SetTilemapEntry(struct UiWindow *, s32, s32, s32, u32);
 
 /* ui/apply_table_scale_to_object.c */
-struct UiScaleEffect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned z : 16;
-    unsigned unk : 16;
-};
-
 struct UiScaleSprite {
     u8 filler0[6];
     u16 src_6;
@@ -59,9 +54,7 @@ struct UiScaleSprite {
     u16 rest_22 : 2;
 };
 
-extern u32 gFrameTick;
 extern s32 Ui_ObjectPulseScales[];
-s32 AffineMatrix_BuildForEffect(struct UiScaleEffect *efx);
 
 /* menu/core/build_localized_pattern_tiles.c */
 struct TileMask {
@@ -84,7 +77,6 @@ extern u8 gRomShiftedTilePair[];
 /* graphics/tile/expand_vram_tiles_by_color_table.c */
 extern u16 Graphics_ExpandNibbleTable[];
 
-s32 Resource_GetBuffer(s32 index, s32 value);
 void Ui_PrepareTransferFromTableEntry(u32 index);
 s32 ItemIcon_Compose(s32, s32);
 void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
@@ -117,7 +109,7 @@ void RenderResource_LoadFrame(s32 index, s32 value, s32 flag)
     }
 }
 
-void *RenderResource_CreateFrame(
+struct RenderOutput *RenderResource_CreateFrame(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,
@@ -141,16 +133,16 @@ void *RenderResource_CreateFrame(
 void Ui_ApplyTableScaleToObject(struct UiScaleSprite *obj)
 {
     s32 v = Ui_ObjectPulseScales[(gFrameTick >> 1) & 7];
-    struct UiScaleEffect efx;
+    struct AffineTransform efx;
 
     if (v < 0)
         v += 255;
     v >>= 8;
 
     if (obj != 0) {
-        efx.x = v;
-        efx.y = v;
-        efx.z = 0;
+        efx.scale_x = v;
+        efx.scale_y = v;
+        efx.angle = 0;
         obj->affine_22 = AffineMatrix_BuildForEffect(&efx);
         obj->mode_21 = 3;
         obj->pos_22 = obj->src_6 + 0xfff0;
@@ -193,12 +185,15 @@ s32 Menu_BuildLocalizedPatternTiles(void)
 /* ui/window/draw_three_tile_column.c */
 int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
+    /* FAKEMATCH: retain the existing C89 integer/no-return convention; all
+       callers ignore the result. A void definition changes only the return
+       address pop from r1 to r0 at the same native function extent. */
     s32 tile_offset = arg3 * 2;
     s32 tile = tile_offset + 0xF315;
 
-    UiWindow_SetTilemapEntry(arg0, 0x400 | tile, arg1, arg2, 0);
-    UiWindow_SetTilemapEntry(arg0, tile_offset + 0xF314, arg1 + 1, arg2, 0);
-    UiWindow_SetTilemapEntry(arg0, tile, arg1 + 2, arg2, 0);
+    UiWindow_SetTilemapEntry((struct UiWindow *)arg0, 0x400 | tile, arg1, arg2, 0);
+    UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tile_offset + 0xF314, arg1 + 1, arg2, 0);
+    UiWindow_SetTilemapEntry((struct UiWindow *)arg0, tile, arg1 + 2, arg2, 0);
 }
 
 /* graphics/tile/merge_shifted_tile_rows.c */
@@ -308,11 +303,11 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
 {
     s32 result;
-    u8 *work;
+    GlyphTransfer *work;
 
-    work = Runtime_AllocateBlock(0x11, 0x608);
+    work = Runtime_AllocateBlock(17, sizeof(*work));
     Ui_PrepareTransferFromTableEntry(resource);
-    result = Resource_GetBuffer(index, (s32)(work + 0x400));
+    result = Resource_GetBuffer(index, (s32)work->tiles);
     Runtime_ReleaseHeapBlock(0x11);
     return result;
 }
@@ -320,11 +315,11 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index)
 s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
 {
     s32 result;
-    u8 *work;
+    GlyphTransfer *work;
 
-    work = Runtime_AllocateBlock(0x11, 0x608);
+    work = Runtime_AllocateBlock(17, sizeof(*work));
     ItemIcon_Compose(resource, 0x1a);
-    result = Resource_GetBuffer(index, (s32)(work + 0x400));
+    result = Resource_GetBuffer(index, (s32)work->tiles);
     Runtime_ReleaseHeapBlock(0x11);
     return result;
 }
@@ -334,12 +329,12 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
     s32 out;
     s32 cur;
     s32 ret;
-    u8 *work;
+    GlyphTransfer *work;
 
-    work = Runtime_AllocateBlock(0x11, 0x608);
+    work = Runtime_AllocateBlock(17, sizeof(*work));
     cur = index;
     Ability_LoadGlyph(resource, 0, &cur, &out, 1);
-    ret = Resource_GetBuffer(index, (s32)(work + 0x400));
+    ret = Resource_GetBuffer(index, (s32)work->tiles);
     Runtime_ReleaseHeapBlock(0x11);
     return ret;
 }

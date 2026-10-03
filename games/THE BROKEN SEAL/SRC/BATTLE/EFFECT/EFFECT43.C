@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GAME_STATE.H"
 #include "ANIMSPR.H"
 #include "TYPES.H"
@@ -27,9 +28,6 @@ struct ArcEffectObject {
 extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
-s32 Resource_ResetEntry(s32);
-s32 VramBlock_LoadCached(u32, u32, const void *);
-s32 Resource_FindFreeEntry(void);
 void ObjectDispatch_SetSingleChildField26Far(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
 void UiText_DrawMessage(s32, s32);
@@ -51,7 +49,6 @@ void AnimationObjects_SelectAnimationFar(void *, s32);
 void *Func_08009030(s32 kind);
 u32 Random16(void);
 
-void ResourceObject_ReleaseFar(void *);
 
 void BattleFx_DrawScaledObject(struct EffectSlot *object);
 
@@ -285,7 +282,7 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
 {
     volatile u32 zero;
     if (slot->object)
-        ResourceObject_ReleaseFar(slot->object);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
     zero = 0;
     Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), (volatile u32 *)0x040000d4);
 }

@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "BATTLE_STATUS_ICON.H"
 /*
  * Draft: BattleEvent_Playback does not yet match; its raw assembly links in its place.
@@ -83,8 +85,6 @@ typedef char BattlePlaybackRuntime_State[
 
 void QueueIoWriteDelay10(s32 reg, s32 value);
 void QueueIoWriteDelay6(s32 reg, s32 value);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
-s32 Resource_GetBuffer(s32 index, s32 table);
 void AnimationObjects_SelectAnimationFar(void *record, s32 animation);
 void Object_SetMode(void *object, s32 animation);
 void render_animated_tile_frameFar(void *record, s32 frame);

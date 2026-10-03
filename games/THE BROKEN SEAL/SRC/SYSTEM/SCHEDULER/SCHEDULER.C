@@ -1,3 +1,5 @@
+#include "AFFINE.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "IWRAM_CALL.H"
@@ -11,30 +13,16 @@
 #include "IO_REG.H"
 #include "LOW_RUNTIME.H"
 
-struct Effect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
-
-union AffineMatrix {
-    s16 coefficients[4];
-    u32 rows[2];
-};
-
-extern u8 gObjAffineCount;
-extern union AffineMatrix gObjAffineMatrices[];
 
 /* Each of the 256 render priorities owns a linked-list head. */
-extern s32 *Data_03001400[256];
+extern void *Data_03001400[256];
 extern const u8 Render_BuildOamList[];
 typedef void (*LoadedRoutine)(void *argument);
 
 /* Linker-resolved absolute size of the routine copied into the heap. */
 extern u8 LoadedRuntime_Size[];
 
-typedef s32 (*KeyCallbackFn)(void);
+typedef void (*KeyCallbackFn)(void);
 
 /* The linear-congruential generator updates one unsigned word. */
 extern u32 Data_03001cb4;
@@ -53,9 +41,8 @@ extern u8 Text_PowersOfTen[];
 /* graphics/fill_word_stream_with_f000.c */
 extern u16 *gDebugTextCursor;
 
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
-s32 AffineMatrix_BuildForEffect(struct Effect *source)
+s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 {
     union AffineMatrix *matrix;
     s16 *coefficient;
@@ -65,8 +52,8 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     u8 index;
 
     index = gObjAffineCount;
-    x_scale = (s16)source->x;
-    y_scale = (s16)source->y;
+    x_scale = (s16)source->scale_x;
+    y_scale = (s16)source->scale_y;
     angle = source->angle;
     if (index > 31)
         return 0;
@@ -105,11 +92,13 @@ s32 AffineMatrix_BuildForEffect(struct Effect *source)
     return index;
 }
 
-/* The direct named-bank index measured 32 bytes versus the native 36.
-   Keep the existing integer-address transport for this word-linked list. */
-void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
+/* Each priority has a head; an entry contributes only its first-word link. */
+void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 {
-    s32 *previous_head;
+    /* FAKEMATCH: the ordinary named-bank index reduces this
+       complete native list push from 36 to 32 bytes. Retain its existing
+       word-cell address transport; every entry contributes only its link. */
+    void *previous_head;
     s32 slot_offset;
     s32 clamped_slot;
 
@@ -120,10 +109,10 @@ void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
     if (clamped_slot < 0) {
         clamped_slot = 0;
     }
-    slot_offset = clamped_slot * 4;
-    previous_head = *(s32 **)((u8 *)slot_offset + (u32)Data_03001400);
-    *(s32 **)((u8 *)slot_offset + (u32)Data_03001400) = slot_entry;
-    *slot_entry = (s32)previous_head;
+    slot_offset = clamped_slot * sizeof(void *);
+    previous_head = *(void **)((u8 *)slot_offset + (u32)Data_03001400);
+    *(void **)((u8 *)slot_offset + (u32)Data_03001400) = slot_entry;
+    *(s32 *)slot_entry = (s32)previous_head;
 }
 
 void Runtime_CopyAndCallRoutine(void *argument)
@@ -305,9 +294,6 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
     return 0;
 }
 
-/* resource/table/initialize.c */
-/* resource/load_into_free_slot.c */
-/* resource/initialize.c */
 void Resource_InitializeTable(void)
 {
     u32 limit = VRAM_BLOCK_COUNT - 1;
@@ -333,10 +319,12 @@ void Resource_InitializeTable(void)
     }
 }
 
-/* An unused cache entry has no assigned VRAM byte offset. The structured
-   scan measured 36 bytes versus the native 52; retain its leading-entry test. */
+/* An unused cache entry has no assigned VRAM byte offset. */
 s32 Resource_FindFreeEntry(void)
 {
+    /* FAKEMATCH: the ordinary for scan reduces this complete
+       native search from 52 to 36 bytes. Retain the existing first-entry
+       test and subsequent scan over the actual cache records. */
     s32 free_slot;
     s32 slot;
     struct VramBlockCacheEntry *table;
@@ -362,18 +350,18 @@ next_entry:
     return free_slot;
 }
 
-s32 Resource_LoadIntoFreeSlot(s32 arg0)
+s32 Resource_LoadIntoFreeSlot(s32 size)
 {
     s32 slot;
 
     slot = Resource_FindFreeEntry();
-    VramBlock_LoadCached(slot, arg0, 0);
+    VramBlock_LoadCached(slot, size, 0);
     return slot;
 }
 
-s32 Resource_GetBuffer(s32 index, s32 value)
+s32 Resource_GetBuffer(s32 index, s32 source)
 {
-    return VramBlock_LoadCached(index, gVramBlockCache[index].size, (const void *)value);
+    return VramBlock_LoadCached(index, gVramBlockCache[index].size, (const void *)source);
 }
 
 /*
@@ -408,6 +396,9 @@ void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byte_count)
 
 void Scheduler_SortTasks(void)
 {
+    /* FAKEMATCH: the ordinary nested for loops reduce this
+       complete native sort from 84 to 80 bytes. Retain its existing
+       leading test and reused swap cursor over the actual task records. */
     struct SchedulerTask saved;
     struct SchedulerTask *base = gSchedulerTaskTable;
     struct SchedulerTask *task;
@@ -488,44 +479,22 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
             *ime = (u16)(u32)ime;
         }
         do {
-            i = 0;
-            if (task->callback == callback) {
-                task->state = order;
-                index = 0;
-            } else {
-            find_existing:
-                i++;
-                task++;
-                if (i < SCHEDULER_TBS_TASK_COUNT) {
-                    if (task->callback == callback) {
-                        task->state = order;
-                        index = i;
-                    } else {
-                        goto find_existing;
-                    }
+            for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+                if (task->callback == (u32)callback) {
+                    task->state = order;
+                    index = i;
+                    break;
                 }
             }
             task = gSchedulerTaskTable;
             if (index == -1) {
-                i = 0;
-                if (task->callback == 0) {
-                    task->callback = callback;
-                    task->state = order;
-                    task->mask = 0;
-                    index = 0;
-                } else {
-                find_empty:
-                    i++;
-                    task++;
-                    if (i < SCHEDULER_TBS_TASK_COUNT) {
-                        if (task->callback == 0) {
-                            task->callback = callback;
-                            task->state = order;
-                            task->mask = 0;
-                            index = i;
-                        } else {
-                            goto find_empty;
-                        }
+                for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+                    if (task->callback == 0) {
+                        task->callback = callback;
+                        task->state = order;
+                        task->mask = 0;
+                        index = i;
+                        break;
                     }
                 }
             }
@@ -739,8 +708,15 @@ next_task:
         remaining--;
         if (remaining != 0) {
             task++;
-            if (TASK_STATE_HIGH(task) == key)
-                ((KeyCallbackFn)task->callback)();
+            if (TASK_STATE_HIGH(task) == key) {
+                KeyCallbackFn callback = *(KeyCallbackFn *)&task->callback;
+
+                /* FAKEMATCH: three ordinary void-call shapes select r3
+                   and _call_via_r3. The inherited C89 ignored-result cast
+                   keeps native r0/_call_via_r0 at the same 56-byte extent.
+                   Callback owners remain void; no result is consumed. */
+                ((s32 (*)(void))callback)();
+            }
             goto next_task;
         }
     }

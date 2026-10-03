@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 /* Draft, not exact: current EN score14696, all external symbols resolve.
  * Native3320/candidate3352 bytes including pools; frames352/344.
  * Every retained aggregate and bound pointer has real uses.
@@ -93,7 +95,6 @@ s32 Ui_LoadEntryForKind(s32 owner, s32 handle);
 s32 Owner_GetResistanceValueFar(s32 owner, s32 index);
 s32 Owner_GetLevelThresholdFar(s32 owner, s32 level);
 s32 Party_SumDjinnCountsFar(s32 request);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 owner);
 
 /* Modal owner status screen. Cursor rows choose stats, equipment or conditions;
  * the active menu cell or cancellation closes the screen after releasing slots. */

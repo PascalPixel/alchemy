@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "STAGED_MOTION.H"

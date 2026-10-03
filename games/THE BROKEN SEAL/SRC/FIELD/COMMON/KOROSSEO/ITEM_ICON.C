@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 
 struct KorosseoSprite {
@@ -18,10 +20,8 @@ struct KorosseoSprite {
 };
 
 u8 *Object_GetByIdFar(s32 id);
-s32 Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
+void *Runtime_AllocateHeapBlockFar(s32 slot, s32 size);
 void ItemIcon_LoadTilesFar(s32 item);
-s32 VramBlock_LoadCached(s32 slot, s32 size, s32 source);
 void ResourceMetadata_ClearRecordFar(void *record);
 
 /* Colosso: when object id is in state 1, borrow heap block 17, clear its
@@ -43,7 +43,7 @@ void Korosseo_ShowItemIcon(s32 id, s32 item)
         one = obj[84];
         if (one == 1) {
             spr = *(struct KorosseoSprite **)(obj + 80);
-            base = Runtime_AllocateHeapBlockFar(17, 0x608);
+            base = (s32)Runtime_AllocateHeapBlockFar(17, 0x608);
             none = 0;
             base += 0x400;
             zero = none;

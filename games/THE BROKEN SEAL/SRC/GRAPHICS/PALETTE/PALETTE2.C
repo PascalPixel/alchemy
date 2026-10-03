@@ -56,8 +56,8 @@ void TitlePalette_UpdateFade(void)
     /* FAKEMATCH: retain the existing one-pass IME scopes, halfword queue
        count stores, front-bank block and packing-loop pointer lifetime.
        The existing byte-slot read also avoids the extra add#128 emitted
-       for the typed heap array in f4f9d28, in all six editions. */
-    struct TitlePaletteWork *work = *(struct TitlePaletteWork **)(gWorkSlot + 32 * sizeof(void *));
+       for the typed heap array in all six editions. */
+    struct TitlePaletteWork *work = *(struct TitlePaletteWork **)((u8 *)gWorkSlot + 32 * sizeof(void *));
     u16 *delta = work->delta;
     u16 *current;
     u16 *packed;

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
@@ -34,7 +35,6 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
    BIT_COMMANDS.S, as the linker script measures it. */
 extern u8 BitDecoder_Size[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 void Graphics_BuildSequentialTileTable(void *destination);
 void BattlePresentation_BuildTilemap(void *destination);

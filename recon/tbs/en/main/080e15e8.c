@@ -1,3 +1,6 @@
+#include "CANVAS.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "PROJECT.H"
 /* Draft, 664 rows off, most of them from one cause: the frame is 4 bytes
    short. The ROM spills count itself (sp+100, between size and sc) as a copy
@@ -20,7 +23,6 @@
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_AdvanceScrollOnInterval(void);
 void AudioCommand_PlayFar(s32);
-void BattleFx_BeginCanvasLayer(s32);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
@@ -33,8 +35,6 @@ void SceneTransform_ApplyRoll(s32);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyScale(s32 *);
 void BattleEffect_SetupBlendedDisplay(void);
-void BattleFx_SelectLivingTargets(void *);
-void BattleFx_SpawnObjects(s32, s32, s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *, s32, s32);
@@ -43,8 +43,6 @@ void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
 void BattleFx_PlaceFormationObjects(s32, s32, s32);
 void BattleEffect_RunImpactBurst(s32, s32, s32);
-void ResourceObject_ReleaseFar(void *);
-void BattleFx_EndCanvasLayer(void);
 
 extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;
@@ -560,7 +558,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     BattleEffect_RunImpactBurst(0, cam_x, cam_y);
     }
     for (i = 0; i != 9; i++) {
-        ResourceObject_ReleaseFar(work->objects[i]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     }
     BattleFx_EndCanvasLayer();
 }

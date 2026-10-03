@@ -1,9 +1,8 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "WINDOW.H"
 
-void Resource_DecodeType01(s32 value, s32 saved);
-void Runtime_BumpFree(void *saved);
 
 /* Fills a 16 by 8 block of window tiles, numbered row by row in palette 15, into VRAM and its shadow copy. */
 void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)

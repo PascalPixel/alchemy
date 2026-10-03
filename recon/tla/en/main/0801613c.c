@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /*
  * Draft: SaveState_ReleaseWorkspace does not yet match; it does not compile against ⚓️'s headers yet.
  * Links as recon/tla/raw/08016054.s.
@@ -41,7 +42,6 @@ typedef u16 (*Callback_08005904)(u16);
 
 typedef void (*InterruptHandler)(void);
 
-u32 Runtime_ReleaseHeapBlock(s32);
 void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
 
 u32 SaveState_ReleaseWorkspace(void)

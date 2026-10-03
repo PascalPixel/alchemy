@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -11,7 +12,6 @@ void WaitFrames(s32);
 
 /* object/attach_work_target_to_object.c */
 /* object/attach_work_target_to_object.c */
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 void Motion_CamBounds(s32 requested_x, s32 requested_y, s32 requested_z, s32 use_setter)
 {

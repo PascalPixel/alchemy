@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -7,7 +8,6 @@
 #include "RUNTIME_INTERFACES.H"
 #include "WINDOW.H"
 
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 

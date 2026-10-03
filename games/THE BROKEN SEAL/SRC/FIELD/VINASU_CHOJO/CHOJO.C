@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Object motion, scene tables and the actors' setup. */
 #include "CHOJO.H"
 #include "IWRAM_CALL.H"
@@ -101,7 +102,6 @@ struct WorldMapVramBlock {
 };
 
 extern struct WorldMapVramBlock ResourceTableEntries[];
-void Resource_ResetEntry(s32 block);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */

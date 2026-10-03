@@ -1,3 +1,4 @@
+#include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 #include "SCENE.H"
@@ -73,7 +74,6 @@ extern u8 BattlePres_AdvanceArrowTiles[];
 extern volatile u32 gFrameCount;
 extern volatile u32 gKeysHeld;
 void Audio_PlayCue(s32 cue);
-void Resource_ResetEntry(s32 id);
 
 /* Draw the bobbing advance arrow beside the battle message until a button
    is pressed (after 16 frames, a held button also counts). */

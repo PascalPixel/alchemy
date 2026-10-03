@@ -1,3 +1,6 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "STATUE_HALL.H"
 #include "TYPES.H"
@@ -740,7 +743,7 @@ void Scene_RunGuardSequenceC(void)
     s32 buf;
 
     p = (s32 *)SoruSekizo_SpriteRows;
-    buf = Runtime_AllocateBlock(14, 0x400);
+    buf = (s32)Runtime_AllocateBlock(14, 0x400);
     Resource_DecodeByteLz((s32)SoruSekizo_SpriteRowsGfx, buf);
     value = Engine_VramLoad(Resource_FindFreeEntry(), 128, buf);
     for (i = 0; i < 9; i++) {

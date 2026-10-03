@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "PROBE.H"
 
 void OverlayObject_ReleasePublishedAttachmentB(void)

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "SELECT.H"
 #include "NODE_CHAIN.H"
 #include "TYPES.H"
@@ -416,7 +417,6 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen)
 }
 
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
-void Resource_ResetEntry(s32 id);
 
 /* Scrolls the visible list one row. A new entry grows in at the far end
    while every entry slides 16 lines, two a frame, and the entry that

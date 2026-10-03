@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* 2026-09-29: five minutes of permutation reached 5996 from 8560 through
  * 118 rewrites; not kept, since the owner is far from exact (the allocation
  * residual below). */
@@ -129,7 +130,6 @@ void UiWindow_FitOnScreen(
 void UiWork_CopyParamsToRenderWork(void *channel);
 s32 UiWork_CheckCancelByInput(void *channel);
 s32 UiWork_CheckCancelByModeInput(void *channel);
-void Resource_ResetEntry(s32 cue);
 void Audio_PlayCue(s32 cue);
 s32 UiText_DrawGlyph(void *work, s32 code, s32 x, s32 y, s32 mode);
 

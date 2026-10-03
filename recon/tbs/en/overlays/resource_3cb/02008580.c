@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* Draft of LinkLobby_SendPartyRecords, resource_3cb at 0x02008580, for
  * MENU/LINK_LOBBY (beside RECEIVE_PARTY.C). Linking it needs the import
  * veneer to SerialRuntime_BeginTransferAFar labelled
@@ -15,8 +16,6 @@
 #include "LOBBY.H"
 extern u8 gLinkStatus[];
 
-s32 Runtime_BumpAllocateAlternatePool(u32 size);
-void Runtime_BumpFree(s32 heap);
 s32 SerialRuntime_BeginTransferA(s32 data, s32 size);
 s32 SerialRuntime_GetActiveTransfers(void);
 u8 *Owner_GetState(s32 owner);
@@ -63,7 +62,7 @@ s32 LinkLobby_SendPartyRecords(void)
     s8 owner;
 
     size = 0x154;
-    heap = Runtime_BumpAllocateAlternatePool(size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     result = 0;
     count = SceneData_CopyUpToThreeEntries(members);
     for (i = 7; i >= 0; i--)
@@ -113,7 +112,7 @@ next:
     }
     Runtime_BumpFree(heap);
     size = 0x140;
-    heap = Runtime_BumpAllocateAlternatePool(size);
+    heap = (s32)Runtime_BumpAllocateAlternatePool(size);
     Iwram_CopyWords((void *)heap, Trade_GetOfferState(0), size);
     offer = (struct Offer *)heap;
     tries = 0;

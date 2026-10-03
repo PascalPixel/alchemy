@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Complete debug icon browser [08029554, 0802977c), 552 bytes with pool.
  * The adjacent entry-glyph browser now has its own listing at 0802977c.
  * ROM labels distinguish ITEM, ENERGY and STATUS pages.
@@ -39,7 +40,6 @@ void UiText_DrawStringInWindow(const u8 *, struct RenderInput *, s32, s32);
 void UiText_DrawNumberInWindow(s32, s32, struct RenderInput *, s32, s32);
 void UiIcon_BuildItemIconTiles(u32, s32, s32 *, s32 *, s32);
 void UiIcon_BuildAbilityIconTiles(u32, s32, s32 *, s32 *, s32);
-s32 Resource_FindFreeEntry(void);
 s32 Ui_BuildPatternToSlot(s32, s32, s32);
 
 s32 DebugMenu_BrowseIcons(void)

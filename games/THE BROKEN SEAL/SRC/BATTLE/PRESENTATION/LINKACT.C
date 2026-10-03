@@ -9,7 +9,6 @@ extern s32 Data_03001cb4;
 extern volatile u16 gLinkStatus;
 extern volatile u16 gSerialReceivedSize;
 
-void Runtime_BumpFree(void *block);
 s32 SerialRuntime_BeginTransferA(void *data, s32 size);
 s32 SerialRuntime_BeginTransferB(void *data);
 s32 SerialRuntime_GetActiveTransfers(void);

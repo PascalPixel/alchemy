@@ -1,3 +1,7 @@
+#include "CANVAS.H"
+#include "MOTION_OBJECT.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "PROJECT.H"
 #include "B5_CONTEXT.H"
 #include "BATTLE_TYPES.H"
@@ -148,9 +152,6 @@ extern u8 Data_080ee177[];
 extern u8 Data_080ee17a[];
 extern u16 Data_080ee17e[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-u8 *Resource_GetTableEntry(s32 resource_id);
-void Resource_DecodeType01(const void *source, void *destination);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 interval);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -172,16 +173,11 @@ void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, s32, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
-void BattleFx_SelectLivingTargets(struct EffectArgument *argument);
-void BattleFx_SpawnObjects(s32, s32, s32);
 void Object_ApplyProjectedPlacementFar(s32 handle, struct Placement *place, struct ScalePair *scale,
     s32 mode);
-void ResourceObject_ReleaseFar(s32 handle);
 void BattleEffect_SetupBlendedDisplay(void);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 count);
-void Runtime_ReleaseHeapBlock(s32 block);
-void BattleFx_EndCanvasLayer(void);
 
 void Unnamed_080d1714(struct EffectArgument *argument)
 {
@@ -198,7 +194,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
     s32 drift_y;
     s32 drift_x;
     struct EffectObject *object;
-    struct B5Context *context;
+    struct BattleObjectSlot *context;
     struct Particle *point;
     struct Particle *spark;
     u8 *tbl;
@@ -748,7 +744,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
 
     index = 0;
     do {
-        ResourceObject_ReleaseFar(runtime->objects[index]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)runtime->objects[index]);
         index++;
     } while (index != 9);
 

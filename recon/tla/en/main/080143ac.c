@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /*
  * Draft: Resource_FindFreeEntry does not yet match; ☀️'s C leaves two load
  * swaps (ldrh of the entry state before lsls of 0xffff).

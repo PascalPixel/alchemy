@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "ANIMSPR.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
@@ -12,15 +16,21 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 
-extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
+/* The first OAM part's existing byte attribute view; not an allocation owner. */
+struct AnimationAttribute {
+    u8 unknown_00[9];
+    u8 low : 2;
+    u8 variant : 2;
+    u8 high : 4;
+};
+
+
+extern u8 gBattleFxWork[];
+
+
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -43,6 +53,7 @@ extern u16 ParticleStreams_CellOffsets[];
    motes fall, bounce and shrink until their life in variant runs out. */
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition actor_position;
     struct EffectPosition target_position;
     struct EffectPosition position;
@@ -69,7 +80,8 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     work = *cursor++;
     canvas = *cursor;
     sheet = heap_cache[2];
-    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    camera = *(struct BattleCamera **)((u8 *)heap_cache -
+        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     *(volatile u16 *)0x04000052 = 0x1010;
@@ -132,14 +144,14 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
         EffectPosition_ApplyStepAndYOffset(work->effect->actor, &actor_position);
         actor_position.x /= 2;
         if (work->effect->side == 0) {
-            BattleEffect_LoadWork(46, 7, 7, 3, 2);
-            BattleEffect_LoadWork(47, 7, 7, 11, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
         } else {
-            BattleEffect_LoadWork(46, 7, 7, 7, 2);
-            BattleEffect_LoadWork(47, 7, 7, 15, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
         }
-        draw[0] = gWorkSlot[46];
-        draw[1] = gWorkSlot[47];
+        draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+        draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != bursts; i++) {
             s32 start = i * BurstScene_Records[variant * 7 + 4];
 
@@ -183,14 +195,14 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                 draw[0](canvas, (u8 *)work + ((frame - start - 2) / 2) * 960 + 0x5100,
                     target_position.x / 2 - 10, target_position.y - 24, 20, 48);
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
-        BattleEffect_LoadWork(46, 7, 7, 3, 3);
-        BattleEffect_LoadWork(47, 7, 7, 3, 2);
-        draw[0] = gWorkSlot[46];
-        draw[1] = gWorkSlot[47];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+        draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+        draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         for (i = 0; i != 512; i++) {
             struct EffectStep *mote = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
@@ -209,8 +221,8 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
                 mote->variant--;
             }
         }
-        Runtime_ReleaseHeapBlock(47);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
@@ -222,23 +234,15 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 
 /* A rock of the rising wall: two bits of its tenth byte pick its draw
    variant. */
-struct WallRock {
-    u8 reserved_00[9];
-    u8 flags09_0 : 2;
-    u8 variant : 2;
-    u8 flags09_4 : 4;
-    u8 reserved_0a[28];
-    u8 enabled;
-};
 
 struct WallScale {
     s32 x;
     s32 y;
 };
 
-struct WallRock *GetBattleEffectObject(s32 kind);
-void Object_InitializeMode(struct WallRock *object, s32 animation);
-void Object_ApplyProjectedPlacementFar(struct WallRock *object, s32 *position,
+struct AnimationObject *GetBattleEffectObject(s32 kind);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);
+void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, s32 *position,
     struct WallScale *scale, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
@@ -270,6 +274,7 @@ extern const struct WallScale RisingWall_UnitScale;
    cell is its own variable: each is what the code's register use shows. */
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing packed byte9 field keeps its mask across object creation; the ordinary byte mask shortened the wall scene by four bytes and reordered stores. */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -360,19 +365,19 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
     }
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     for (i = 0; i != 11; i++) {
-        struct WallRock *object = GetBattleEffectObject(390);
+        struct AnimationObject *object = GetBattleEffectObject(390);
 
         work->objects[i] = object;
         if (object != 0) {
-            object->enabled = 0;
-            Object_InitializeMode(object, i / 4);
-            ((struct WallRock *)work->objects[i])->variant = 1;
+            object->flags = 0;
+            AnimationObjects_SelectAnimationFar(object, i / 4);
+            ((struct AnimationAttribute *)work->objects[i])->variant = 1;
         }
     }
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = gWorkSlot[46];
-    BattleEffect_LoadWork(47, 7, 7, 7, 2);
-    draw[1] = gWorkSlot[47];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+    draw[1] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     *(volatile u16 *)0x04000050 = 0x3f46;
     *(volatile u16 *)0x04000052 = 0x1010;
     work->transfer_mode = 2;
@@ -543,8 +548,8 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     for (i = 0; i != 11; i++)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     BattleFx_EndCanvasLayer();

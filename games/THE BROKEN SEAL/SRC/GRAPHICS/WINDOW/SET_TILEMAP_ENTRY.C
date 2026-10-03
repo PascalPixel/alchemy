@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "WINDOW.H"
+#include "AFFINE.H"
 
 enum {
     TILEMAP_ENTRY_PLAIN,
@@ -17,7 +18,7 @@ enum {
 void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 value, s32 x, s32 y, u32 mode)
 {
-    u16 *map = (u16 *)gWindowWork[0];
+    u16 *map = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
     s32 palette;
     s32 index;
 
@@ -66,12 +67,6 @@ void UiWindow_SetTilemapEntry(
     }
 }
 
-struct ScaleEffect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
 struct OutputSprite {
     u32 link;
     u8 y;
@@ -83,63 +78,55 @@ struct OutputSprite {
     u16 other_x : 2;
     u16 tile;
 };
-struct AnimatedOutput {
-    u8 unknown_00[5];
-    u8 mode;
-    u16 x;
-    u16 y;
-    u16 unknown_0a;
-    u16 frame;
-    u8 unknown_0e[2];
-    struct OutputSprite sprite;
-};
 extern u16 Data_080366f8[];
-s32 AffineMatrix_BuildForEffect(struct ScaleEffect *);
 
 /* Steps the output's scale animation through the scale table (modes 9 and
    10 loop, 11 and 12 play eight steps once, 10 and 12 at half size) and
    sets the sprite's affine mode: none at 1.0 (256), double-size and moved
    8 pixels up and left when larger, plain affine when smaller. */
-void RenderOutput_UpdateScaleAnimation(struct AnimatedOutput *output)
+void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output)
 {
     s32 scale = 256;
-    struct OutputSprite *sprite = &output->sprite;
-    struct ScaleEffect effect;
+    struct OutputSprite *sprite = (struct OutputSprite *)output->unknown_10;
+    struct AffineTransform effect;
 
-    switch (output->mode) {
+    switch ((u8)output->active) {
     case 9:
-        scale = Data_080366f8[output->frame++ & 31];
+        scale = Data_080366f8[output->unknown_0c++ & 31];
         break;
     case 10:
-        scale = Data_080366f8[output->frame++ & 31] >> 1;
+        scale = Data_080366f8[output->unknown_0c++ & 31] >> 1;
         break;
     case 11:
-        if (output->frame <= 7)
-            scale = Data_080366f8[output->frame++ * 2 + 16];
+        if (output->unknown_0c <= 7)
+            scale = Data_080366f8[output->unknown_0c++ * 2 + 16];
         break;
     case 12:
-        if (output->frame <= 7)
-            scale = Data_080366f8[output->frame++ * 2 + 16] >> 1;
+        if (output->unknown_0c <= 7)
+            scale = Data_080366f8[output->unknown_0c++ * 2 + 16] >> 1;
         break;
     }
     if (scale == 256) {
         sprite->affine_index = 0;
         sprite->affine = 0;
-        sprite->x = output->x;
-        sprite->y = output->y;
+        sprite->x = (u16)output->x;
+        sprite->y = (u16)output->y;
     } else {
-        effect.x = scale;
-        effect.y = scale;
+        effect.scale_x = scale;
+        effect.scale_y = scale;
         effect.angle = 0;
         sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
         if (scale > 256) {
             sprite->affine = 3;
-            sprite->x = output->x - 8;
-            sprite->y = output->y - 8;
+            /* FAKEMATCH: preserve the original unsigned halfword read at
+               the logical x cell. Casting the signed member value swaps the
+               x load and -8 pool load at the same 460-byte module extent. */
+            sprite->x = *(u16 *)&output->x - 8;
+            sprite->y = (u16)output->y - 8;
         } else {
             sprite->affine = 1;
-            sprite->x = output->x;
-            sprite->y = output->y;
+            sprite->x = (u16)output->x;
+            sprite->y = (u16)output->y;
         }
     }
 }

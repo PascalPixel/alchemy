@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "BATTLE_TYPES.H"
@@ -15,16 +17,12 @@ extern const u8 Resource_FixedBlockBTiles[];
 extern u8 MsgPanelHpMaxLabel[], MsgPanelStatusLabel[], MsgPsynergyNeedMorePp[];
 extern u8 MsgAbilityName[], MsgCharacterName[], MsgAbilityDescription[];
 
-void *Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *block);
 s32 OwnerAction_AddFar(s32 owner, s32 action);
 s32 Object_CollectResources(struct ShortcutListEntry *output);
 void Menu_FindShortcutEntries(u32 *first_index, u32 *second_index,
                               const struct ShortcutListEntry *entries);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                     s32 style);
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window,
                                   s32 x, s32 y);
 void UiText_DrawNumberAtOffset(s32 value, s32 digits,

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "IWRAM_CALL.H"
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
@@ -14,9 +15,7 @@ typedef struct {
 
 extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
 
-extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 
-extern s32 VramBlock_LoadCached(s32 index, s32 size, u8 *destination);
 
 extern s32 UiIcon_FramePointerTable[];
 extern s32 UiIcon_ItemIconPointers[];

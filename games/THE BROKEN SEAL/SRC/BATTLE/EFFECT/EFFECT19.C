@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_EFX.H"
@@ -66,7 +68,6 @@ extern u8 Data_080eeb61[];
 extern s8 Data_080eeb79[];
 extern u8 Data_080eeb80[];
 extern u16 Data_080eeb88[];
-void BattleFx_BeginCanvasLayer(s32 mode);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -74,7 +75,6 @@ void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
-s32 BattleFx_EndCanvasLayer(void);
 
 typedef struct Column {
     s32 x;
@@ -83,7 +83,6 @@ typedef struct Column {
 
 extern u8 gWorkSlot[];
 extern s8 RisingColumns_ColumnOffsets[];
-void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void Audio_PlayCue(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
@@ -92,7 +91,6 @@ void Camera_ApplyShake(s32, s32);
 
 void WaitFrames(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
-void Runtime_ReleaseHeapBlock(s32);
 extern u8 BattleFxPillar_Kinds[];
 extern s8 BattleFxPillar_X[];
 extern u8 BattleFxPillar_Counts[];

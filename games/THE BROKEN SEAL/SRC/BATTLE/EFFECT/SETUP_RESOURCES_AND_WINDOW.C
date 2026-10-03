@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "DMA.H"
@@ -33,10 +34,7 @@ struct FxObject {
 extern struct FxWindowWork gMapCellBuffer;
 extern struct BattleWork gGameState;
 
-void Runtime_BumpFree(void *block);
 struct FxObject *Object_GetById(s32 id);
-u16 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 s32 GameFlag_TestFar(s32 flag);
 u16 Func_080153b8(void);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);

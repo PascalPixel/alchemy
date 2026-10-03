@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /*
  * Draft: Palette_StepTowardResource does not yet match; 3 halfwords differ from ☀️'s C, first at +0x26 (ldr r7, [pc, #16]).
  * Links as recon/tla/raw/081b203c.s.

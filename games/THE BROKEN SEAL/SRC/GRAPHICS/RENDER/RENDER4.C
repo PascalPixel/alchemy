@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLYPH.H"
 #include "BATTLE_UNIT.H"
@@ -11,10 +12,7 @@ extern u8 UiIcon_PsynergyIconPointersEnd[];
 extern u8 UiIcon_PsynergyIconPointers[];
 
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-extern s32 Runtime_ReleaseHeapBlock(s32);
 extern u8 *UiIcon_FramePointerTable[];
 extern u8 *UiIcon_OverlayPointerTable[];
 

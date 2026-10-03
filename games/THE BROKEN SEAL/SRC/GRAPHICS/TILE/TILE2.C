@@ -8,7 +8,6 @@ extern u8 gMapCellBuffer[];
 
 extern const u8 Func_0800a37c[];
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
-void Runtime_BumpFree(void *allocation);
 extern u8 Tile_ConvertMapCodeSize[];
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)

@@ -5,7 +5,6 @@
 
 extern void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
-extern void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);
 
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
@@ -28,13 +27,13 @@ s32 Resource_LoadByMode(s32 mode, s32 value)
         break;
     case 2:
         result = Resource_FindFreeEntry();
-        if (result == 0x60)
+        if (result == VRAM_CACHE_ENTRY_COUNT)
             return -1;
         UiIcon_CopyResourceToSlot(value, 0x1a, result);
         break;
     case 9:
         result = Resource_FindFreeEntry();
-        if (result == 0x60)
+        if (result == VRAM_CACHE_ENTRY_COUNT)
             return -1;
         RenderResource_LoadTableEntry(value, 0, result);
         break;
@@ -52,7 +51,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
 
     if (result == -1) {
         result = Resource_FindFreeEntry();
-        if (result == 0x60)
+        if (result == VRAM_CACHE_ENTRY_COUNT)
             return original;
     }
 

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* Canonical uncredited draft: ObjectSystem_UpdateCamera.
    2026-10-02: approved ordinary TBS compiler/options in all six editions.
    Native and generated complete function extents are 592 bytes, including
@@ -126,9 +128,6 @@ struct CameraSync {
 
 extern u8 Render_DecodeFrame[];
 extern u8 Render_DecodeFrameCodeSize[];
-u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-s32 Resource_ActivateEntry(u32 resource_index);
 void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale, u16 angle);
 
 void ObjectSystem_UpdateCamera(void)

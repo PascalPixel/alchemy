@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -9,8 +12,8 @@
 #include "BATTLE_TYPES.H"
 
 extern u8 gBattleFxWork[];
+
 typedef void (*Callback)(s32 *);
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void BattleEffect_RunCirclingFallingScene(s32 *);
 void BattleEffect_RunEmberColumns(s32 *);
 void BattleFx_RunObjectRow(s32 *);
@@ -31,9 +34,9 @@ void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 
 void BattleFx_InitializeMode(s32 *arg0)
 {
-    Runtime_AllocateHeapBlock(41, 0x302);
-    Runtime_AllocateHeapBlock(39, sizeof(struct BattleEffectWork));
-    Runtime_AllocateHeapBlock(40, 0x4000);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
     if (*arg0 == 0) {
         BattleFx_InitializeDefaultMode(arg0);
@@ -78,9 +81,9 @@ void BattleFx_InitializeMode(s32 *arg0)
         }
     }
 
-    Runtime_ReleaseHeapBlock(40);
-    Runtime_ReleaseHeapBlock(39);
-    Runtime_ReleaseHeapBlock(41);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
 }
 
 void BattleFx_DispatchMode(s32 *state)
@@ -88,13 +91,13 @@ void BattleFx_DispatchMode(s32 *state)
     s32 index;
     s32 destination;
 
-    Runtime_AllocateHeapBlock(41, 0x302);
-    Runtime_AllocateHeapBlock(39, sizeof(struct BattleEffectWork));
-    Runtime_AllocateHeapBlock(40, 0x4000);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
+    Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
     /* FAKEMATCH: retain the existing scalar address of the effect-pointer
        cell; the direct typed store moves the mode read ahead of its address. */
-    destination = (s32)&(*(struct BattleEffectWork **)gBattleFxWork)->effect;
+    destination = (s32)&((struct BattleEffectWork *)*(void **)gBattleFxWork)->effect;
     index = state[0];
     *(struct BattleEffectArgument **)destination = (struct BattleEffectArgument *)state;
     if (index == 0)
@@ -102,9 +105,9 @@ void BattleFx_DispatchMode(s32 *state)
     else
         BattleFx_ModeHandlers[index - 1](state);
 
-    Runtime_ReleaseHeapBlock(40);
-    Runtime_ReleaseHeapBlock(39);
-    Runtime_ReleaseHeapBlock(41);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
 }
 
 /* Builds the per-line WIN0H table for lines 8-135 (the edge at the start of

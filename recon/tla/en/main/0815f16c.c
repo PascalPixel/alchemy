@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
 /*
@@ -215,7 +216,6 @@ void Func_08013560(s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
 void Scheduler_RemoveCallback(void *);
 s32 Random16(void);
-void *Runtime_BumpAllocateAlternatePool(s32);
 void Func_08014de4(void);
 void SceneTransform_ApplyPitch(s32);
 void Func_08015068(s32);

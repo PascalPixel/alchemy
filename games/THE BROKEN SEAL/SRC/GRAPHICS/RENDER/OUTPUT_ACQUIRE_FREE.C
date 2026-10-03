@@ -1,17 +1,16 @@
 #include "TYPES.H"
 #include "WINDOW.H"
 
-/* Detach and return the head of the free list. A pointer-typed sentinel
-   store adds a reload in the 52-byte body; retain its scalar word store. */
+/* Detach the first free output; an empty tail names the head link. */
 struct RenderOutput *RenderOutput_AcquireFree(void)
 {
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
-    struct RenderOutput *entry = work->free_head;
+    struct RenderOutput *entry = work->free_outputs.head;
 
     if (entry != NULL) {
         if (entry->next == NULL)
-            *(s32 *)&work->free_tail = (s32)&work->free_head;
-        work->free_head = entry->next;
+            work->free_outputs.tail_link = &work->free_outputs.head;
+        work->free_outputs.head = entry->next;
         entry->next = NULL;
     }
     return entry;
@@ -23,11 +22,11 @@ void RenderOutput_ReleaseFree(struct RenderOutput *entry)
     struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
 
     if ((u32)entry >= (u32)work->outputs
-        && (u32)entry < (u32)&work->free_head) {
-        struct RenderOutput *tail = work->free_tail;
+        && (u32)entry < (u32)&work->free_outputs.head) {
+        struct RenderOutput **tail = work->free_outputs.tail_link;
 
-        work->free_tail = entry;
-        tail->next = entry;
+        work->free_outputs.tail_link = &entry->next;
+        *tail = entry;
         entry->next = NULL;
     }
 }
@@ -41,8 +40,8 @@ void UiWork_InitFreeList(void)
 
     work = (struct UiRenderWork *)gWindowWork[0];
     entry = work->outputs;
-    work->free_head = entry;
-    count = 0x3e;
+    work->free_outputs.head = entry;
+    count = UI_OUTPUT_COUNT - 2;
     do {
         next = entry + 1;
         count--;
@@ -50,5 +49,5 @@ void UiWork_InitFreeList(void)
         entry = next;
     } while (count >= 0);
     next->next = NULL;
-    work->free_tail = next;
+    work->free_outputs.tail_link = &next->next;
 }

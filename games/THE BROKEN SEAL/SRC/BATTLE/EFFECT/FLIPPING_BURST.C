@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -11,12 +13,9 @@
 
 extern u8 gBattleFxWork[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-struct B5Context *GetBattleObjectSlotFar(s32 member_id);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void Camera_ApplyShake(s32 x, s32 y);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -40,8 +39,8 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     /* FAKEMATCH: a blitter pair of which only draw[0] is used; the unused
        second slot is the spare word in the reference frame. */
     DrawRectangleFn draw[2]; /* FAKEMATCH: unused second slot, see above */
-    struct B5Context *first;
-    struct B5Context *second;
+    struct BattleObjectSlot *first;
+    struct BattleObjectSlot *second;
     struct MotionObject *object;
     struct MotionObject *target;
     s32 x;

@@ -1,3 +1,6 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "SELECT.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -6,8 +9,6 @@
 extern u32 gFrameTick;
 extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
-extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
-extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 extern struct SelectionScreen *gResQueueWork;
 extern u8 MsgItemNotHeld[];
@@ -16,12 +17,10 @@ struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *);
 void UiText_DrawCharacterAtOffset(s32, struct UiWindow *, s32, s32);
 void RenderOutput_PrepareForRedraw(struct UiWindow *);
 
-void Runtime_ReleaseHeapBlock(u32 value);
 
 struct Work;
 void Resource_ScheduleOwnerReset(void);
 void WaitFrames(s32);
-s32 Resource_ResetEntry(u32 index);
 void Resource_ResetPendingTransfer(void);
 
 void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index);
@@ -169,7 +168,6 @@ void Menu_SetupSelectionBothSides(void)
     Menu_SetupSelectionSide(state, 1);
 }
 
-extern s32 Resource_FindFreeEntry(void);
 
 void Menu_SetupSelectionSide(struct SelectionScreen *state, s32 index)
 {

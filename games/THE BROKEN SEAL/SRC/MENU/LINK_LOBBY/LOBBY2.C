@@ -18,7 +18,6 @@ extern u8 MsgLobbyLinkDisconnected[];
 
 extern u8 MsgEnemyLabel[];
 extern u8 gLinkStatus[];
-void Runtime_BumpFree(s32 heap);
 s32 SerialRuntime_BeginTransferB(void);
 s32 SerialRuntime_GetActiveTransfers(void);
 u8 *Owner_GetState(s32 owner);

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 /* Field: show the world map. The map layers are hidden and the map picture
    is decoded over BG1 until A or B is pressed, then the field comes back. */
@@ -21,12 +22,10 @@ extern u8 gMapCellBuffer[];
 
 extern u8 MsgNotOnMap[];
 extern u32 gKeysRepeat;
-void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Event_ClearStatus1c6(void);
 void Event_SetStatus1c6(void);
 void Event_WaitValue1c8Frames(void);
 void WaitFrames(s32 frames);
-s32 Resource_DecodeType01(const void *source, void *destination);
 void BattleFx_SetupResourcesAndWindow(void);
 void BattleFx_CleanupResourcesAndWindow(void);
 s32 GameFlag_TestFar(s32 flag);
@@ -46,11 +45,11 @@ void Map_ShowWorldMap(void)
      * written out inline with its one-pass loop around the IME read and its
      * count stored through an explicit u16 pointer. */
     /* FAKEMATCH: retain the existing slot 8/6 word-cell reads. Splitting
-       the map cell onto gMapWork in 1a5404f7 added four bytes and changed
+       the map cell onto gMapWork added four bytes and changed
        the saved layer pointer's spill, while both records stayed typed. */
-    struct MapState *map = *(struct MapState **)(gWorkSlot + 8 * sizeof(void *));
+    struct MapState *map = *(struct MapState **)((u8 *)gWorkSlot + 8 * sizeof(void *));
     struct EventWork *field = Runtime_AllocateBlock(27, 0xccc);
-    struct ObjectSystemWork *menu = *(struct ObjectSystemWork **)(gWorkSlot + 6 * sizeof(void *));
+    struct ObjectSystemWork *menu = *(struct ObjectSystemWork **)((u8 *)gWorkSlot + 6 * sizeof(void *));
     s32 resource = (s32)&ResourceId_WorldMapPicture;
     struct MapAnimation *layer;
     u8 saved_flags[16];

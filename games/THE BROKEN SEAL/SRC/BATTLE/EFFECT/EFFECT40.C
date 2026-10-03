@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
 #include "SCRIPT_MOTION.H"
@@ -25,7 +26,6 @@ struct BurstPosition { s32 x, y, z; };
 
 
 void WaitFrames(s32 frames);
-void Resource_ResetEntry(s32 slot);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BurstPosition *pos);
 void Object_SetMode(struct FieldActor *object, s32 mode);
 extern const u8 BattleFx_BurstParticleObjectScript[];

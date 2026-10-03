@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EFFECT_STEP.H"
 #include "IWRAM_CALL.H"
 #include "TYPES.H"
@@ -21,7 +22,6 @@ s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
 void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 unit);
 void *GetMotionRecordFar(void *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
@@ -31,7 +31,6 @@ s32 Render_ProjectPoint(s32 *point, s32 *screen);
 extern struct BattleEffectWork *gBattleFxWork;
 extern u8 gKeysHeld[];
 
-s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
 void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect);
 void *BattleFx_RunCastingImpact(s32 *);

@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 /* The casting and impact sequence shared by most battle effects. The acting
  * unit gathers particles for 32 frames, then the effect chosen by kind is
  * launched at the first affected unit: per-kind images are loaded into the map
@@ -32,13 +34,8 @@ void Object_SetMode(void *object, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *object, s32 value);
 u32 Battle_GetObjectTableValueFar(s32 actor_id);
 void BattleMotion_ApplyVariantMotionFar(s32 actor_id, s32 motion);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 actor_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_BeginTiledCanvas(u32 display_control);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, RectangleBlit *output);
 s32 BattleFx_RunSparkGroups(void *effect, s32 mode);
 void BattleFx_RenderMode5(void *effect);
 void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s32 state_slot,

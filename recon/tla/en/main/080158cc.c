@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 
 extern const u8 Resource_DecodeHalfwordLz[];

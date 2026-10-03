@@ -16,7 +16,6 @@ void Blend_SetDarkenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
-s32 Resource_DecodeType01(const void *source, void *destination);
 
 /* Title: show the splash picture, fade it in and wait for A or START (or
    time out), then fade it out. Mode 0 only waits for two seconds after the

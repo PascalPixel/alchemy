@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
@@ -91,8 +92,6 @@ typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
  */
 #define PLOT_AT(off) (*(u8 *)(WORK_PIXELS + (off)) = 2)
 
-void *Runtime_AllocateHeapBlock(s32 id, s32 size);
-void Runtime_ReleaseHeapBlock(s32 id);
 void WaitFrames(s32 arg0);
 s32 Scheduler_AddOrUpdateCallback(s32 entry, s32 arg1);
 void Scheduler_RemoveCallback(s32 entry);

@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
@@ -14,10 +17,7 @@
 
 extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
+
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Graphics_RestoreTransferWork(void);
@@ -25,7 +25,6 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
     s32 slot, s32 delay);
@@ -248,7 +247,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

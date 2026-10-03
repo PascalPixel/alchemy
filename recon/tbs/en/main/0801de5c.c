@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 
 /*
@@ -16,8 +18,6 @@
 typedef void (*ClearFn)(void *, s32);
 typedef void (*FillFn)(void *, s32, u32);
 
-void *Runtime_BumpAllocate(s32 size);
-void *Resource_GetTableEntry(s32 resource_id);
 extern u8 Value_00000013;
 
 s32 UiText_RenderStringTiles(

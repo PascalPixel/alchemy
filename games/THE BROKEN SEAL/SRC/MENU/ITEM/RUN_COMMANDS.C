@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -45,8 +46,6 @@ extern char MsgCannotHoldMore;
 extern char MsgItemUseResult;
 
 void WaitFrames(s32 frames);
-void *Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *buffer);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void RenderOutput_RedrawSavedRectFar(s32 window);

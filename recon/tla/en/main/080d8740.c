@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 
 extern u8 gEffectWork[];
@@ -57,7 +58,6 @@ void Object_SetMode(struct CaptureObject *object, s32 mode);
 void ObjectDispatch_SetSingleChildField26Far(struct CaptureObject *object, s32 value);
 struct CaptureResource *Object_ReplaceResourceEntry(struct CaptureSprite *sprite, struct CaptureResource *resource);
 void Func_080090d0(struct CaptureObject *object);
-void Resource_ResetEntry(s32 id);
 void ObjectMotion_ArmCallback(s32 id, s32 value, s32 flags);
 void Camera_WorldToScreen(s32 *position);
 void EffectSlot_Initialize(void *slot, s32 kind, s32 x, s32 y);

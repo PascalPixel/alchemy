@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* DRAFT of Func_0808c4f8, the field mode's entry and outer loop: sets up the
    scene, then alternates between walking (one Field_ProcessStep a frame)
    and serving the requests the field work block's slots post, until one
@@ -95,8 +96,6 @@ struct MenuCtrl {
 #define STATE_ENTRANCE (*(s16 *)&gGameState.entrance)
 #define STATE_238 (*(s32 *)&gGameState.unknown_238)
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 void WaitFrames(s32 frames);
 void Scheduler_ResetTaskTable(void);
 void ObjectSystem_InitializeFar(s32 mode);

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "MAP_SCROLL.H"
 #include "EVENT_RUNTIME.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
@@ -34,7 +36,6 @@ struct BattleEffectPosition {
 
 #define BATTLE_OBJECT_SLOTS (*(struct ScriptMotionObject **)gObjectSlots)
 void BattleFx_ClearOwnedSlot(struct EffectSlot *object);
-void Resource_ResetEntry(s32 handle);
 void BattleFx_PlayQueuedSound(void);
 
 void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
@@ -64,7 +65,6 @@ s32 Render_ProjectPoint(struct EffectVector *position, struct EffectVector *resu
 
 extern u8 gFrameCount[];
 void BattleFx_UpdateWaveScene(void);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
 void BattleEffect_InitializeSharedScene(void);
 s32 __umodsi3(s32, s32);
 void BattleFx_AdvanceHueCycle(void);

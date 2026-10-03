@@ -1,9 +1,8 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "METADATA_LOOKUP.H"
 
-extern u8 Character_DescriptorTable[];
+extern struct AnimationMetadata Character_DescriptorTable[];
 
-u8 *Resource_GetMetadataRecord(u32 arg0)
+struct AnimationMetadata *Resource_GetMetadataRecord(u32 number)
 {
-    return &Character_DescriptorTable[(arg0 & 0xfff) * 20];
+    return &Character_DescriptorTable[number & 0xfff];
 }

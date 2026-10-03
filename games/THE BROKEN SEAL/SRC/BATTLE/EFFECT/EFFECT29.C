@@ -1,5 +1,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
+#include "METADATA_LOOKUP.H"
 #include "OBJDISP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -30,7 +31,6 @@ struct Work_080936a0 {
 
 s32 WaitFrames(s32 frames);
 s16 *BattleAction_FindDescriptor(s16 action);
-void *Resource_GetMetadataRecordFar(s16 id);
 
 struct BattleEffectVisual {
     u8 unknown_00[9];
@@ -166,7 +166,7 @@ s32 BattleFx_CopyLinkedObjectPosition(void *obj)
         FIELD_AT_OFFSET(obj, s8 *, 0x55) = 0;
         FIELD_AT_OFFSET(obj, s32 *, 8) = FIELD_AT_OFFSET(link, s32 *, 8);
         FIELD_AT_OFFSET(obj, s32 *, 0xc) = FIELD_AT_OFFSET(link, s32 *, 0xc)
-            + (FIELD_AT_OFFSET(Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(FIELD_AT_OFFSET(obj, s16 *, 0x66))), s8 *, 8) << 16)
+            + ((s8)Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(FIELD_AT_OFFSET(obj, s16 *, 0x66)))->box_x << 16)
             + 0x80000;
         FIELD_AT_OFFSET(obj, s32 *, 0x14) = FIELD_AT_OFFSET(link, s32 *, 0x14);
         FIELD_AT_OFFSET(obj, s32 *, 0x10) = FIELD_AT_OFFSET(link, s32 *, 0x10);

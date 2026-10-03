@@ -6,7 +6,7 @@
    y store goes through sprite->part rather than part[0], which schedules the
    half-height load before the screen y load as the ROM does. */
 #include "TYPES.H"
-#include "PROJSPR.H"
+#include "ANIMSPR.H"
 #include "IWRAM_CALL.H"
 
 extern u8 gMenuCtrlWork[];
@@ -24,14 +24,14 @@ struct RenderState {
 };
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
-s32 Sprite_ComposeAnimationFrame(struct ProjectedSprite *sprite, u16 mode);
+s32 Sprite_ComposeAnimationFrame(struct AnimationObject *sprite, s16 mode);
 s32 AffineMatrix_BuildForEffect(struct ProjectedEffect *source);
 void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 Resource_ActivateEntry(u32 resource_index);
 
 /* Places a sprite and its optional shadow from a four-word screen position
    (x, shadow height, depth, ground) and a two-word scale. */
-void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s32 *scale, s32 mode)
+void Render_ApplyProjectedPlacement(struct AnimationObject *sprite, s32 *pos, s32 *scale, s32 mode)
 {
     s32 matrix;
     u32 half_width = sprite->width >> 1;
@@ -56,7 +56,7 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     s32 x;
     s32 y;
     s32 depth;
-    struct ProjectedSpritePart *part;
+    struct AnimationSpritePart *part;
 
     flip = Sprite_ComposeAnimationFrame(sprite, mode);
     if (flip == 0 && scale_x == 0x10000 && scale_y == scale_x && sprite->rotation == 0) {
@@ -86,7 +86,7 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
         depth = 2;
     }
     y = ((pz - pw) >> 16) - size_half;
-    if (sprite->shadow_flags & 1) {
+    if (sprite->flags & 1) {
         if (y < 160) {
             part = &sprite->part[1];
             part->affine = affine;
@@ -109,7 +109,7 @@ void Render_ApplyProjectedPlacement(struct ProjectedSprite *sprite, s32 *pos, s3
     }
 }
 
-void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
+void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point, s32 *scale, s32 mode, s32 depth)
 {
     s32 flip;
     u32 half_height;
@@ -141,7 +141,7 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
         goto hide;
     if (screen[1] > 208)
         goto hide;
-    if (sprite->flags & 2)
+    if (sprite->display_flags & 2)
         z = sprite->scale;
     else
         z = Iwram_MulQ16(z, sprite->scale);
@@ -193,8 +193,8 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     } else {
         Runtime_PushSlotEntry(sprite, depth);
     }
-    if (sprite->shadow_flags & 1) {
-        struct ProjectedSpritePart *shadow;
+    if (sprite->flags & 1) {
+        struct AnimationSpritePart *shadow;
 
         ground[0] = point[0];
         ground[1] = 0;
@@ -212,8 +212,8 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     }
     return;
 hide:
-    if (!(sprite->flags & 1)) {
-        Resource_ActivateEntry(sprite->vram_block);
-        sprite->hidden = 1;
+    if (!(sprite->display_flags & 1)) {
+        Resource_ActivateEntry(sprite->slot);
+        sprite->dirty = 1;
     }
 }

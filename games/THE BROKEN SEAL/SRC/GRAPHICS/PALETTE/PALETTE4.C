@@ -7,14 +7,11 @@
 
 void *Runtime_AllocateBlock(s32, u32);
 void Unnamed_080f3078(u32, void *, void *, s32);
-void TitlePalette_UpdateFade(void);
 
 s32 Runtime_ReleaseHeapBlock(s32);
 
-/* runtime/memory/schedule_callback_and_release_block_32_a.c */
 
 extern struct TitlePaletteWork *Data_03001ed0;
-void Graphics_InterpolatePaletteBuffers(s16 *, s16 *, s16 *, s32);
 
 
 void TitlePalette_InitializeBuffers(void)

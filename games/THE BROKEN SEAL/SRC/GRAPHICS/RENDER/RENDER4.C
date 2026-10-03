@@ -12,8 +12,8 @@ extern u8 UiIcon_PsynergyIconPointers[];
 
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void UiGlyph_DecodeWithHeapRoutines(void *glyph, s32 outlined);
-extern s32 VramBlock_LoadCached(s32, s32, u8 *);
+void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
+s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 extern s32 Runtime_ReleaseHeapBlock(s32);
 extern u8 *UiIcon_FramePointerTable[];
 extern u8 *UiIcon_OverlayPointerTable[];
@@ -36,7 +36,7 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
 {
     GlyphTransfer *work;
 
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
+    work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
     work->encoded = UiIcon_FramePointerTable[no1];
     work->width = 2;
     work->height = 2;

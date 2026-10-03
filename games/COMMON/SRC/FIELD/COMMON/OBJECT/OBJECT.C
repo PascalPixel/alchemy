@@ -1,6 +1,7 @@
 #include "EDITION.H"
 #include "OBJDISP.H"
 #include "RESOURCE.H"
+#include "METADATA_LOOKUP.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJECT_DISPATCH.H"
 #include "IO_REG.H"
@@ -75,11 +76,6 @@ struct FieldObject {
     s16 tile_z;
 };
 
-struct AnimationMetadata {
-    u8 unknown_00[9];
-    u8 radius;
-};
-
 struct ObjectSpriteList {
     u8 unknown_00[24];
     s32 count;
@@ -87,7 +83,6 @@ struct ObjectSpriteList {
 
 extern struct ObjectSpriteList *gMenuCtrlWork;
 extern const u32 ObjectDispatch_DefaultScript[];
-struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimation(void *, s32);
 void AnimationObjects_SetField15OnActive(void *, s32);
@@ -349,7 +344,7 @@ struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
             if (sprite != NULL) {
                 object->animation_kind = 1;
                 object->animation = sprite;
-                object->radius = Resource_GetMetadataRecordFar(id)->radius >> 1;
+                object->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
             } else {
                 object->animation_kind = 0;
             }
@@ -365,7 +360,7 @@ struct FieldObject *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
                 /* FAKEMATCH: stored as a plain halfword, outside the object
                    record's alias set, so the entry copy schedules above it
                    as in the reference. */
-                *(u16 *)&object->radius = Resource_GetMetadataRecordFar(id)->radius >> 1;
+                *(u16 *)&object->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
                 *entry++ = (u32)sprite;
             }
             sprite = ResourceObject_Create(id + 1);

@@ -48,28 +48,20 @@ void ResourceObject_Release(struct ResourceObjectWork *work)
 #include "METADATA_LOOKUP.H"
 #include "TYPES.H"
 #include "SCENE.H"
-void *Resource_GetMetadataRecordFar(s32 no);
-
-struct EventInfo {
-    u8 pad0[5];
-    u8 count;
-    u8 pad1[10];
-    u8 **table;
-};
 
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
 {
-    struct EventInfo *info;
+    struct AnimationMetadata *info;
     u8 *p;
     u8 op;
     u8 val;
     s32 sum = 0;
 
     info = Resource_GetMetadataRecordFar(id);
-    if (no >= info->count) {
+    if (no >= info->animation_count) {
         return 0;
     }
-    p = info->table[no];
+    p = ((u8 **)info->animation)[no];
     for (;;) {
         op = p[0];
         val = p[1];

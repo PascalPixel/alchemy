@@ -9,11 +9,7 @@
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
 
-extern u8 Data_03001ecc[];
-
-
-void DisplayTransition_FillTilemapAndSolidTile(s32);
-void DisplayTransition_UpdateFrame(void);
+extern struct DisplayTransitionState *Data_03001ecc;
 
 s32 GameFlag_IsSet(s32 flag);
 typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
@@ -33,7 +29,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 *destination = q->entries[count];           \
+            u32 *destination = q->entries[count];                            \
             *(u16 *)&q->count = count + 1;                                  \
             *destination++ = (value);                                       \
             *destination++ = (address);                                     \
@@ -44,7 +40,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
 
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
-    u8 *work = *(u8 **)Data_03001ecc;
+    struct DisplayTransitionState *work = Data_03001ecc;
     volatile u32 fill = 0xf000f000;
     Dma_Set(&fill, (void *)0x06002000, 0x85000140, (volatile u32 *)0x040000d4);
     if (color != -1) {
@@ -52,9 +48,9 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color)
         s32 cnt;
         u32 *tile;
         for (cnt = 7; cnt >= 0; --cnt) pattern = (pattern << 4) | color;
-        tile = (u32 *)(work + 1288);
+        tile = work->solid_tile;
         for (cnt = 7; cnt >= 0; --cnt) *tile++ = pattern;
-        Dma_Set(work + 1288, (void *)0x06000000, 0x84000008, (volatile u32 *)0x040000d4);
+        Dma_Set(work->solid_tile, (void *)0x06000000, 0x84000008, (volatile u32 *)0x040000d4);
     }
 }
 
@@ -63,9 +59,9 @@ void DisplayTransition_InitializeState(s32 value)
     struct DisplayTransitionState *state;
     volatile u32 zero;
 
-    state = Runtime_AllocateBlock(0x1f, 0x540);
+    state = Runtime_AllocateBlock(0x1f, sizeof(*state));
     zero = 0;
-    Dma_Set(&zero, state, 0x85000150, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, state, 0x85000000 | (sizeof(*state) / 4), (volatile u32 *)0x040000d4);
     DisplayTransition_FillTilemapAndSolidTile(0);
     state->mode = value;
     state->value = 0;
@@ -73,24 +69,24 @@ void DisplayTransition_InitializeState(s32 value)
     WaitFrames(0x78);
 }
 
-void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3)
+void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step, s32 frames)
 {
     s32 index;
     s32 first;
     s32 second;
     s32 (*divide)(s32, s32);
 
-    if (arg3 > 0) {
+    if (frames > 0) {
         divide = Iwram_SignedDivide;
         index = 0x53F;
         do {
-            first = *arg0;
-            second = *arg1;
-            *arg2 = divide(second - first, arg3);
+            first = *source;
+            second = *target;
+            *step = divide(second - first, frames);
             index--;
-            arg0++;
-            arg1++;
-            arg2++;
+            source++;
+            target++;
+            step++;
         } while (index >= 0);
     }
 }

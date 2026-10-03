@@ -427,7 +427,7 @@ step_back:
                 column = 22;
             infoWin = UiWindow_Create(column, 8, 9, 3, 6);
             UiWork_SetParamNibble(2);
-            UiText_DrawCharacterAtOffset(0x8AC, (struct TextRenderWork *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8AC, (struct RenderInput *)infoWin, 0, 0);
             UiWork_SetParamNibble(15);
             goto frame_tail;
         case 1:
@@ -435,9 +435,9 @@ step_back:
             if (pos.x / 8 + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-            UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct TextRenderWork *)infoWin, 0, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)infoWin, 0, 0);
             UiText_DrawNumberInWindow(unit->hp, 4, (s32)infoWin, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct TextRenderWork *)infoWin, 48, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_hp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 2:
@@ -445,9 +445,9 @@ step_back:
             if (pos.x / 8 + 6 > 29)
                 column = 17;
             infoWin = UiWindow_Create(column, 8, 13, 3, 6);
-            UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct TextRenderWork *)infoWin, 0, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)infoWin, 0, 0);
             UiText_DrawNumberInWindow(unit->pp, 4, (s32)infoWin, 16, 0);
-            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct TextRenderWork *)infoWin, 48, 0);
+            UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_pp, 4, (s32)infoWin, 56, 0);
             goto frame_tail;
         case 5:
@@ -457,7 +457,7 @@ step_back:
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->hp != 0)
                 goto no_condition;
-            UiText_DrawCharacterAtOffset(0x8AB, (struct TextRenderWork *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8AB, (struct RenderInput *)infoWin, 0, 0);
             goto frame_tail;
         case 3:
             column = pos.x / 8 - 7;
@@ -466,7 +466,7 @@ step_back:
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
             if (unit->poison == 0)
                 goto no_condition;
-            UiText_DrawCharacterAtOffset(0x8A4, (struct TextRenderWork *)infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
             /* 0x080267f6: b sub_08026b8c. */
             goto frame_tail;
         case 4:
@@ -492,23 +492,23 @@ step_back:
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
             if (*pd != 0) {
-                UiText_DrawCharacterAtOffset(0x8A5, (struct TextRenderWork *)infoWin, 0, 0);
+                UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
             if (*ps != 0) {
-                UiText_DrawCharacterAtOffset(0x8A6, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (*pl != 0) {
-                UiText_DrawCharacterAtOffset(0x8A7, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (*pp != 0) {
-                UiText_DrawCharacterAtOffset(0x8A8, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (*pc != 0) {
-                UiText_DrawCharacterAtOffset(0x8A9, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (count == 0)
@@ -541,31 +541,31 @@ step_back:
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
             if (unit->poison != 0) {
-                UiText_DrawCharacterAtOffset(0x8A4, (struct TextRenderWork *)infoWin, 0, 0);
+                UiText_DrawCharacterAtOffset(0x8A4, (struct RenderInput *)infoWin, 0, 0);
                 count = 1;
             }
             if (unit->delusion != 0) {
-                UiText_DrawCharacterAtOffset(0x8A5, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A5, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->stun != 0) {
-                UiText_DrawCharacterAtOffset(0x8A6, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A6, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->sleep != 0) {
-                UiText_DrawCharacterAtOffset(0x8A7, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A7, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->psy_seal != 0) {
-                UiText_DrawCharacterAtOffset(0x8A8, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A8, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->death_count != 0) {
-                UiText_DrawCharacterAtOffset(0x8A9, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A9, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (unit->evil_spirit != 0) {
-                UiText_DrawCharacterAtOffset(0x8AA, (struct TextRenderWork *)infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8AA, (struct RenderInput *)infoWin, 0, count * 8);
                 count++;
             }
             if (count == 0)
@@ -578,7 +578,7 @@ step_back:
 
 no_condition:
         UiWork_SetParamNibble(2);
-        UiText_DrawCharacterAtOffset(0x8A3, (struct TextRenderWork *)infoWin, 0, 0);
+        UiText_DrawCharacterAtOffset(0x8A3, (struct RenderInput *)infoWin, 0, 0);
         UiWork_SetParamNibble(15);
         goto frame_tail;
 
@@ -609,7 +609,7 @@ draw_name:
         if (namePos.x < 0)
             namePos.x = 0;
         Ui_ClearVramBlock();
-        UiText_RenderWideStringAtOffset(name, (struct TextWindow *)window, namePos.x, 4);
+        UiText_RenderWideStringAtOffset(name, (struct UiWindow *)window, namePos.x, 4);
 
 frame_tail:
         redraw &= ~1;

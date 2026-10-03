@@ -3,6 +3,7 @@
 #include "IWRAM_CALL.H"
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
+#include "METADATA_LOOKUP.H"
 
 struct PairedObjectList {
     u8 padding0[8];
@@ -21,7 +22,6 @@ s32 BattlePlacement_ContainsId(s16 *list, s32 id);
 void WaitFrames(s32 frames);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 id);
 struct AnimationObject *GetBattleEffectObject(s32 resource);
-u8 *Resource_GetMetadataRecordFar(s32 resource);
 struct SpriteEntry *ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
 void Animation_SetWorkEntryFar(struct SpriteEntry *entry, s32 index);
 void BattlePres_SetActorModeAndAction(s32 id);
@@ -73,7 +73,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
             res = GetBattleEffectObject(resource);
             if (res != 0) {
                 res->scale = Iwram_MulQ16(res->scale, slot->scale);
-                object->height = Resource_GetMetadataRecordFar(resource)[9] >> 1;
+                object->height = Resource_GetMetadataRecordFar(resource)->box_y >> 1;
                 *objects = res;
                 objects = &((struct PairedObjectList *)table)->objects[1];
             }

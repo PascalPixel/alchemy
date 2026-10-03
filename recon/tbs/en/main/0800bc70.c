@@ -5,46 +5,29 @@
  * bytes in all six TBS editions. Full calls and symbolic pools retain their
  * actual native owners. The old whole module468/native472 differs130 bytes;
  * its trailing release difference2 was solely the shifted BL displacement.
- * The true MetadataSlotState two-argument API is expressed by an opaque
- * declaration and a data-pointer cast; this does not model its private view.
+ * The resource constructor now uses the shared56-byte AnimationObject and
+ * actual two-argument registration API; the prior score above needs refresh.
  * This attempt is uncredited. The leading ClearRecord40 remains C, Creator
  * stays raw356, and the complete shared Release+metadata owner is separate.
  */
 #include "TYPES.H"
+#include "METADATA_LOOKUP.H"
+#include "ANIMSPR.H"
 #include "VRAM_BLOCK.H"
 #include "RESOURCE.H"
 
-struct ObjectMetadata {
-    u8 width;
-    u8 height;
-};
+extern struct AnimationObject *gSpriteObjects;
 
-struct ResourceObject {
-    u32 oam[6];
-    s32 scale;
-    u8 resource;
-    u8 flags;
-    u16 frame;
-    u8 active;
-    u8 unknown_21[5];
-    u8 visible;
-    u8 unknown_27[17];
-};
-
-extern struct ResourceObject *gSpriteObjects[];
-
-struct ObjectMetadata *Resource_GetMetadataRecordFar(s32 id);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-struct MetadataSlotState;
-s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
+s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
 /* Take the first free object of the 64, give it a resource entry and its
    tiles, and fill its OAM words for the metadata's width and height. */
-struct ResourceObject *ResourceObject_Create(s32 id)
+struct AnimationObject *ResourceObject_Create(s32 id)
 {
-    struct ObjectMetadata *metadata;
-    struct ResourceObject *entry;
-    struct ResourceObject *found;
+    struct AnimationMetadata *metadata;
+    struct AnimationObject *entry;
+    struct AnimationObject *found;
     u32 *word;
     s32 resource;
     s32 tile;
@@ -54,11 +37,11 @@ struct ResourceObject *ResourceObject_Create(s32 id)
     found = NULL;
     metadata = Resource_GetMetadataRecordFar(id);
     resource = Resource_FindFreeEntry();
-    entry = gSpriteObjects[0];
+    entry = gSpriteObjects;
     if (metadata->width == 0)
         return NULL;
     for (i = 0; i <= 63; i++, entry++) {
-        if (entry->active == 0) {
+        if (entry->width == 0) {
             found = entry;
             break;
         }
@@ -70,9 +53,9 @@ struct ResourceObject *ResourceObject_Create(s32 id)
     tile = VramBlock_LoadCached(resource, 0, 0);
     if (tile == 0)
         return NULL;
-    found->resource = resource;
-    found->frame = 0;
-    found->visible = 1;
+    found->slot = resource;
+    found->rotation = 0;
+    found->flags = 1;
     switch ((u32)((metadata->width << 8) + metadata->height)) {
     case 0x0808: shape = 0; break;
     case 0x0810: shape = 0x8000; break;
@@ -86,13 +69,13 @@ struct ResourceObject *ResourceObject_Create(s32 id)
     case 0x4040: shape = 0xc0000000; break;
     default: shape = 0; break;
     }
-    word = found->oam;
+    word = (u32 *)found->part;
     *word++ = 0;
     *word++ = shape | 0x2000;
     *word++ = tile | 0x800;
     *word++ = 0;
     *word++ = 0x6000;
     *word = (gVramBlockCache[93].offset >> 5) | 0x800;
-    ResourceMetadata_Register((struct MetadataSlotState *)entry, id);
+    ResourceMetadata_Register(entry, id);
     return found;
 }

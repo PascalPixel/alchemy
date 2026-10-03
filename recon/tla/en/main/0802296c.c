@@ -2,31 +2,27 @@
 #include "METADATA_LOOKUP.H"
 extern u8 gMenuCtrlWork[];
 
-/* animation/lookup_value_by_key.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-struct LookupEntry {
-    s32 key;
-    s32 value;
-};
+s32 Animation_LookupValueByKey(s32 key);
 
 void Animation_InitWorkFromMetadata(void *work)
 {
     s32 value;
     s32 z;
-    void *info;
+    struct AnimationMetadata *info;
 
     if (work != NULL) {
         info = Resource_GetMetadataRecordFar(FIELD_AT_OFFSET(work, s16, 0));
-        if (FIELD_AT_OFFSET(info, u8, 0) != 0) {
-            value = FIELD_AT_OFFSET(info, s32, 0x0c);
+        if (info->width != 0) {
+            value = info->frames;
             if (value == 0) {
                 value = Animation_LookupValueByKey(FIELD_AT_OFFSET(work, s16, 0));
             }
-            FIELD_AT_OFFSET(work, u8, 4) = FIELD_AT_OFFSET(info, u8, 4);
-            FIELD_AT_OFFSET(work, s32, 0x0c) = FIELD_AT_OFFSET(info, s32, 0x10);
+            FIELD_AT_OFFSET(work, u8, 4) = info->draw_kind;
+            FIELD_AT_OFFSET(work, s32, 0x0c) = info->animation;
             FIELD_AT_OFFSET(work, s32, 8) = value;
-            FIELD_AT_OFFSET(work, u8, 7) = FIELD_AT_OFFSET(info, u8, 0x0a);
+            FIELD_AT_OFFSET(work, u8, 7) = info->frame_codec;
             z = 0;
             FIELD_AT_OFFSET(work, u8, 0x16) = 0xff;
             FIELD_AT_OFFSET(work, s32, 0x10) = z;

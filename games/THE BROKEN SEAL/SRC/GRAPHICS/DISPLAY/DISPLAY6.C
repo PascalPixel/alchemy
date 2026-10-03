@@ -3,10 +3,20 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
+#include "LAYOUT_GUARD.H"
+
+/* The scrolling credits keep 128 hardware OAM entries, two words each. */
+struct DisplayScrollObject {
+    u32 attr01;
+    u32 attr2;
+};
+
+LAYOUT_SIZE_GUARD(DisplayScrollObject_Size, struct DisplayScrollObject, 8);
 
 extern u16 Data_02004c00;
 extern s16 Flash_Handler0;
-extern u32 *gFlashNumRemainingBytes;
+/* Flash and audio reuse these scratch cells in their own modes. */
+extern struct DisplayScrollObject *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
 extern s16 Flash_Layout;
@@ -32,19 +42,17 @@ void DisplayScroll_UpdateObjects(void)
     u32 frame = Data_02004c00;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-    u32 *entry = gFlashNumRemainingBytes + 48;
+    struct DisplayScrollObject *entry = gFlashNumRemainingBytes + 24;
     s32 row;
 
     for (row = 0; row <= 15; row++) {
         s32 col;
 
         for (col = 0; col < 6; col++) {
-            u32 *q = entry;
-
-            *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
-            *q = tile;
+            entry->attr01 = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
+            entry->attr2 = tile;
             tile += 4;
-            entry += 2;
+            entry++;
             if (tile == 0x300)
                 tile = 0;
         }
@@ -80,54 +88,45 @@ void DisplayScroll_RenderEnteringLine(void)
 void DisplayScroll_InitObjectTable(void)
 {
     volatile u32 fill;
-    u32 *entry;
+    struct DisplayScrollObject *entry;
     u32 i;
     u32 j;
 
-    *(void **)((u8 *)&gFlashNumRemainingBytes) = Runtime_BumpAllocateAlternatePool(0x400);
+    gFlashNumRemainingBytes = Runtime_BumpAllocateAlternatePool(128 * sizeof(*entry));
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
     fill = 0x11111111;
     Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040, (volatile u32 *)0x040000d4);
 
-    entry = *(u32 **)((u8 *)&gFlashNumRemainingBytes);
+    entry = gFlashNumRemainingBytes;
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = (i << 21) | 0x80004000;
-        *q = 0x300;
-        entry += 2;
+        entry->attr01 = (i << 21) | 0x80004000;
+        entry->attr2 = 0x300;
+        entry++;
     }
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = (i << 21) | 0x80004088;
-        *q = 0x300;
-        entry += 2;
+        entry->attr01 = (i << 21) | 0x80004088;
+        entry->attr2 = 0x300;
+        entry++;
     }
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = (i << 21) | 0x40004098;
-        *q = 0x300;
-        entry += 2;
+        entry->attr01 = (i << 21) | 0x40004098;
+        entry->attr2 = 0x300;
+        entry++;
     }
     for (i = 0; i < 16; i++) {
         for (j = 0; j < 6; j++) {
-            u32 *q = entry;
             u32 tile = (i * 3) * 8 + j * 4;
 
-            *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | 0x40004000;
-            *q = tile;
-            entry += 2;
+            entry->attr01 = (i * 8 + 16) | ((j * 32 + 24) << 16) | 0x40004000;
+            entry->attr2 = tile;
+            entry++;
         }
     }
     for (i = 0; i < 8; i++) {
-        u32 *q = entry;
-
-        *q++ = 0x00c000c0;
-        *q = 0x300;
-        entry += 2;
+        entry->attr01 = 0x00c000c0;
+        entry->attr2 = 0x300;
+        entry++;
     }
     Data_02004c00 = 0;
     Flash_Layout = 0;

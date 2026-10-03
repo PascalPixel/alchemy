@@ -6,7 +6,6 @@
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
-extern u8 Data_03001e8c[];
 
 /* Draws a horizontal or vertical divider inside a window, joining it to
    any frame or divider tiles it crosses: each end and each middle cell
@@ -169,14 +168,14 @@ void UiWindow_DrawDividerLine(struct RenderInput *win, u32 x1, u32 y1, u32 x2, u
 
 void UiWork_SetParamNibble(s32 param)
 {
-  s16 val;
-  void *work;
-  work = *((void **)((u32)&Data_03001e8c));
-  val = (s16)(param & 0xF);
-  *((s16 *)(work + RENDER_PARAM_OFS)) = val;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+
+    work->colour = param & 15;
 }
 
 void UiWork_SetRenderWord(u16 value)
 {
-    *(u16 *)(gWindowWork[0] + RENDER_WORD_OFS) = value;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+
+    work->outline = value;
 }

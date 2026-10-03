@@ -94,14 +94,12 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y)
 
 s32 UiText_GetResourceDimensions(s32 no, s32 *x, s32 *y, u32 *width, u32 *height)
 {
-    u16 *base;
+    struct UiRenderWork *work;
     s32 temp;
-    s32 offset;
 
-    base = (u16 *)gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     temp = UiText_BuildRenderEntries(no, 0);
-    offset = temp * 2 + RENDER_ENTRY_TBL_OFS;
-    if (*(u16 *)((u8 *)base + offset) == 0)
+    if (work->entries[temp] == 0)
     {
         return 0;
     }
@@ -113,12 +111,10 @@ s32 UiText_GetResourceDimensionsAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *hei
 {
     u16 *base;
     s32 idx;
-    s32 ofs;
 
-    base = (u16 *)gWindowWork[0];
+    work = (struct UiRenderWork *)gWindowWork[0];
     idx = UiText_BuildRenderEntries(no, 0);
-    ofs = idx * 2 + RENDER_ENTRY_TBL_OFS;
-    if (*(u16 *)((u8 *)base + ofs) == 0)
+    if (work->entries[idx] == 0)
     {
         return 0;
     }

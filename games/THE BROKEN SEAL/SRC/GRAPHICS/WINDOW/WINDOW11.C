@@ -6,7 +6,7 @@
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 extern u8 Data_03001e9c[];
-s32 UiWork_IsIdle(void *arg0);
+s32 UiWork_IsIdle(struct UiWindow *window);
 s32 Resource_ResetEntry(u32 index);
 
 /* The two resource groups and closing window in heap slot 19. */

@@ -39,7 +39,7 @@ void UiWork_AdvanceChannelTransition(struct UiChannelSlot *);
 void UiWork_ProcessRenderChannels(void)
 {
     struct UiChannelSlot *channel =
-        (struct UiChannelSlot *)(gWindowWork[0] + RENDER_CHANNEL_OFS);
+        ((struct UiRenderWork *)gWindowWork[0])->channels;
     s32 channel_no = 0;
     s32 one = 1;
 
@@ -75,9 +75,9 @@ void UiWork_ProcessRenderChannels(void)
                         channel->y = pending;
                         channel->entry = pending;
                         channel->countdown = pending;
-                        channel->unknown_16 = pending;
-                        channel->unknown_18 = pending;
-                        channel->unknown_1a = pending;
+                        channel->colour = pending;
+                        channel->outline = pending;
+                        channel->line_spacing = pending;
                         channel->work->state = one;
                         break;
                     }

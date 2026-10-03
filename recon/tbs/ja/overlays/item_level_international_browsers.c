@@ -29,20 +29,20 @@ extern u8 gItemLevelItemPrompt[];
 extern u8 gItemLevelItemHelp[];
 extern u8 gItemLevelItemFull[];
 extern volatile u32 gKeysRepeat;
-void UiWork_Finalize(struct TextRenderWork *window, s32 mode);
-void RenderOutput_RedrawSavedRect(struct TextRenderWork *window);
-void Engine_DebugClearWindow(struct TextRenderWork *window);
-void UiText_DrawStringInWindow(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffset(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
+void UiWork_Finalize(struct RenderInput *window, s32 mode);
+void RenderOutput_RedrawSavedRect(struct RenderInput *window);
+void Engine_DebugClearWindow(struct RenderInput *window);
+void UiText_DrawStringInWindow(u8 *text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 #define ITEM_COUNT 270
 extern u8 MsgAbilityName[];
 extern u8 MsgAbilityDescription[];
 u8 *Engine_DebugGetAbility(s32 ability);
 extern u8 gItemLevelPsyPrompt[];
 extern u8 gItemLevelPsyHelp[];
-void UiText_DrawResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
+void UiText_DrawResource(s32 text, struct RenderInput *window, s32 x, s32 y);
 #define ABILITY_COUNT 270
 
 u8 *ItemLevel_GetEntrances(void)
@@ -179,8 +179,8 @@ void FieldScene_RunCountAdjustPanel(void)
  * numbers with no item icon. */
 void ItemLevel_SelectItem(void)
 {
-    struct TextRenderWork *window;
-    struct TextRenderWork *details;
+    struct RenderInput *window;
+    struct RenderInput *details;
     s32 item;
     s32 redraw;
     s32 index;
@@ -300,8 +300,8 @@ done:
  * as the item browser it was copied from does open one. */
 void ItemLevel_SelectAbility(void)
 {
-    struct TextRenderWork *window;
-    struct TextRenderWork *details;
+    struct RenderInput *window;
+    struct RenderInput *details;
     s32 ability;
     s32 redraw;
     s32 index;

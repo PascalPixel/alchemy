@@ -1,13 +1,11 @@
 #include "TYPES.H"
 #include "DMA.H"
-
-/* Same fourteen handler pointers written by Runtime_SetIrqHandler. */
-extern void (*Data_030000e0[14])(void);
+#include "IRQ.H"
+#include "FRAME.H"
 
 /* IWRAM start, where the runtime (SYSTEM/RUNTIME.S) is copied and the
    interrupt vector points. */
 extern u8 IwramIrqMain[];
-extern void *Data_03007ffc;
 
 /* The resident runtime bank's ROM image (MAIN.LD), and the ROM table of
    the fourteen interrupt handlers its dispatch table starts with. */

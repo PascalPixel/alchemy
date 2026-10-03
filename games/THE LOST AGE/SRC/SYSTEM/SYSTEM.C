@@ -81,7 +81,7 @@ void WaitFrames(s32 frames)
                 }
             }
             {
-                /* FAKEMATCH: plain source starts the soft-reset comparison constant before loading held buttons; the short capture puts that load first. */
+                /* FAKEMATCH: plain source starts the sleep-button comparison constant before loading held buttons; the short capture puts that load first. */
                 u32 held;
                 held = gInput.held;
                 /* FAKEMATCH: leave held unchanged while preserving its measured comparison-materialization order. */

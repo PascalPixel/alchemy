@@ -6,7 +6,7 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_PARTY.H"
-s32 SerialRuntime_BeginTransferB(void);
+#include "SERIAL_RUNTIME.H"
 void SerialRuntime_WaitForTransferB(void);
 void Party_Apply(s32, u16 *);
 void Party_Do(void *);
@@ -21,7 +21,6 @@ void Party_Do(void *);
 #endif
 
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
-s32 SerialRuntime_BeginTransferA(void *data, s32 size);
 void SerialRuntime_WaitForTransferA(void);
 
 void WaitFrames(s32);
@@ -51,7 +50,7 @@ s32 UpdateNameEntries(void)
     index = 0;
     while (index <= 2) {
         name_entry = Runtime_GetObject(index + 128);
-        if (SerialRuntime_BeginTransferB() == -1) {
+        if (SerialRuntime_BeginTransferB(name_entry) == -1) {
             break;
         }
         SerialRuntime_WaitForTransferB();
@@ -85,8 +84,7 @@ s32 UpdateNameEntries(void)
     }
     Party_Do(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
-    Trade_GetOfferStateFar(1);
-    if (SerialRuntime_BeginTransferB() != -1) {
+    if (SerialRuntime_BeginTransferB(Trade_GetOfferStateFar(1)) != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);
     }

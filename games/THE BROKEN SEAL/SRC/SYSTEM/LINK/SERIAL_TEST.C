@@ -1,22 +1,20 @@
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
+#include "KEYSTATE.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
 extern u8 gMapCellBuffer[];
 
-extern u8 gKeysHeld[];
-
 void Audio_PlayCue(s32 cue);
 void SerialRuntime_Initialize(void);
-void SerialRuntime_WaitForStatusMask(s32 mask);
-void SerialRuntime_BeginTransferA(const void *source, s32 size);
-void SerialRuntime_BeginTransferB(void *destination);
-
-#define KEYS_HELD (*(volatile u32 *)gKeysHeld)
 
 void RuntimeWait_BusyLoopTick(void)
 {
 }
 
+/* The diagnostic ROM windows still need O2 ownership. A physical
+   Rom_Start reference was tested on 2026-10-03: the owner stayed 204 bytes,
+   but mov/lsl became an ldr and a new pool word. No existing ROM label
+   denotes the second window; neither address is a restart entry here. */
 void SerialTest_Run(void)
 {
     u16 *tile;
@@ -40,13 +38,14 @@ void SerialTest_Run(void)
     Bios_CpuSet((const void *)&zero, (void *)gMapCellBuffer, 0x05000100);
     SerialRuntime_WaitForStatusMask(3);
 restart:
-    SerialRuntime_BeginTransferB((void *)gMapCellBuffer);
+    SerialRuntime_BeginTransferB(gMapCellBuffer);
     for (;;) {
-        if (KEYS_HELD & 1)
-            SerialRuntime_BeginTransferA((const void *)0x08000000, 0x280);
-        if (KEYS_HELD & 2)
-            SerialRuntime_BeginTransferA((const void *)0x08001000, 0x280);
-        if (KEYS_HELD & 8) {
+        /* VBlank refreshes the held keys between these button samples. */
+        if ((*(volatile u32 *)&gKeysHeld) & 1)
+            SerialRuntime_BeginTransferA((void *)0x08000000, 0x280);
+        if ((*(volatile u32 *)&gKeysHeld) & 2)
+            SerialRuntime_BeginTransferA((void *)0x08001000, 0x280);
+        if ((*(volatile u32 *)&gKeysHeld) & 8) {
             tick = 9999;
             do {
                 tick--;

@@ -4,9 +4,7 @@
  */
 #include "SERIAL_RUNTIME.H"
 
-extern u8 gSerialExchangeActive[];
 
-void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
 
 void SerialRuntime_RemoveIrqHandlers(void)
 {

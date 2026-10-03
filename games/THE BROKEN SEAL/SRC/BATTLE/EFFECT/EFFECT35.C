@@ -1,4 +1,5 @@
 #include "RESOURCE.H"
+#include "VRAM_BLOCK.H"
 #include "RUNTIME_MEM.H"
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
@@ -76,15 +77,7 @@ struct ArcObject {
     void (*update)(struct FieldActor *);
 };
 
-struct ResourceTableEntry {
-    u16 value;
-    u16 unknown:5;
-    u16 tile:10;
-    u16 last:1;
-};
-
 extern struct BattleFxScene *gEffectWork;
-extern struct ResourceTableEntry ResourceTableEntries[];
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *sprite, s32 animation);
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
@@ -151,7 +144,7 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked)
         Resource_ResetEntry(sprite->slot);
         sprite->slot = scene->tile_slot;
         sprite->active = 1;
-        sprite->tile = ResourceTableEntries[sprite->slot].tile;
+        sprite->tile = (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
         sprite->color = 0;
         sprite->shape = 1;
         sprite->size = 2;

@@ -1,4 +1,5 @@
 #include "RESOURCE.H"
+#include "VRAM_BLOCK.H"
 /* Battle effect: spawn the two particles that fall in arcs either side of
    the source object, one for each of the descending-arc update callbacks. */
 #include "TYPES.H"
@@ -145,13 +146,7 @@ struct ArcObject {
     void *callback;
 };
 
-struct ResourceSlot {
-    u16 id;
-    u16 address;
-};
-
 extern u8 *gEffectWork;
-extern struct ResourceSlot ResourceTableEntries[];
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
@@ -186,7 +181,7 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
         Resource_ResetEntry(sprite->resource);
         sprite->resource = *(u16 *)(work + 0x71a);
         sprite->active = 1;
-        sprite->attr.half.tile = ResourceTableEntries[sprite->resource].address >> 5;
+        sprite->attr.half.tile = gVramBlockCache[sprite->resource].offset >> 5;
         sprite->flags05_5 = 0;
         sprite->layer = 1;
         sprite->size = 2;

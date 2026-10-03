@@ -1,87 +1,92 @@
-/* 2026-09-30 Mercury: addresses now spelled by name (gTransitionWork,
-   gBattleWork, REG_BLDCNT/REG_BLDALPHA, BattleEvent_Playback) and plain
-   integer constants instead of Value_ symbols: 960 of 956 bytes, 380
-   differing listing lines. The ROM anchors on gBattleWork (pool) and reaches
-   gTransitionWork as base + 140, keeps selection in r9 and a 124-byte frame
-   (this spelling: sl, 128). */
-/* Draft, not exact (2026-09-24): candidate=956 reference=956 differing_halfwords=437. Constants the reference loads from
-   the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+/* Draft: complete native extent [080b9ec0,080ba27c), 956 bytes.
+ * Earlier untyped attempts: 2026-09-24 retained 956 bytes with 437 differing
+ * halfwords using Value_ symbols for pool constants; those symbols and the
+ * scheduling-only wrappers are not retained. The 2026-09-30 named-cell,
+ * integer-constant form was 960 bytes with 380 differing listing lines:
+ * native frame 124/plan r9 versus draft frame 128/plan sl. Native reaches
+ * the transition cell 140 bytes beyond the battle cell.
+ * 2026-10-03 typed baseline: 970/956 bytes, frame 128/124, work at
+ * sp+16/sp+12 and plan in r10/r9. Relocation-normalized full comparison
+ * differs at 883 of the native 956 bytes, with 14 extra bytes; this is not
+ * an aligned instruction score. All relocation symbols resolve, and all
+ * 31 call targets and multiplicities agree. Explicit transition-cell loads
+ * add one data relocation and pool word (18/17); instructions are 415/406.
+ * Stores (20), branches including calls (91), and calls (31) are unchanged.
+ * Typed owners retain signed target/count accesses, integer range_index,
+ * overlapping child parameters, same-side kept units and the zero result.
+ * Stopped after this one natural baseline: no device or matching-C credit.
+ */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "BATTLE_WORK.H"
-extern u8 gTransitionWork[];
+#include "BATTLE_PARTY.H"
+#include "BATTLE_PRESENTATION.H"
+#include "MOTION_OBJECT.H"
+#include "ANIMSPR.H"
+#include "SYSTEM.H"
+#include "CALLBACK_SCHEDULER.H"
+
+extern struct BattlePresentationTransition *gTransitionWork;
 void BattleEvent_Playback(void);
+void BattlePres_SetActorModes(u16 *actors, s32 mode);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
+void Object_SetMode(void *object, s32 mode);
+void AudioCommand_PlayFar(s32 cue);
+void BattleFx_PlayUnitElementEffect(s32 unit, s32 kind, s32 mode, s32 variant);
+void BattlePres_RunWithZeroArguments(void);
+void BattleActor_SpawnObjectsForList(s16 *actors, s32 mode);
+void BattleFx_DispatchByIdRangeFar(s32 *work);
+void BattleFx_DispatchModeFar(s32 *work);
 
-struct BattlePresentationSelection {
-    u8 primary_unit;
-    s8 unit_count;
-    u8 units[0x4e];
-    void *presentation_data;
-    u8 unknown_54[4];
-    u32 flags;
-    s32 message_mode;
-};
-
-struct BattlePresentationUnitInfo {
-    u8 unknown_00[0x27];
-    u8 ability_count;
-    void *abilities[1];
-};
-
-#define FIELD8(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define FIELD16(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
-#define FIELD32(base, offset) (*(u32 *)((u8 *)(base) + (offset)))
-
-void BattlePresentation_RunUnitTransition(
-    struct BattlePresentationSelection *selection,
+s32 BattlePresentation_RunUnitTransition(
+    struct BattlePlan *plan,
     s32 mode)
 {
     u16 visible_units[14];
-    u8 context[0x54];
+    struct BattlePresentationWork work;
     u32 primary_unit;
     u32 opposing_unit;
     u32 visible_count;
     u32 refreshed_count;
-    u32 index;
+    s32 index;
     u32 kept_count;
-    u32 primary_record;
+    struct MotionObject *object;
 
-    BattlePres_BuildTargetList(selection, context);
-    primary_unit = selection->primary_unit;
-    opposing_unit = selection->units[0];
+    BattlePres_BuildTargetList(plan, &work);
+    primary_unit = plan->actor_id;
+    opposing_unit = plan->target_ids[0];
 
-    if (selection->flags & 0x8000) {
-        u32 *transition = *(u32 **)gTransitionWork;
-        transition[0] = primary_unit <= 7 ? 0x2000 : 0x00005000;
-        transition[1] = 60;
+    if (plan->presentation_flags & 0x8000) {
+        struct BattlePresentationTransition *transition = gTransitionWork;
+        transition->target_yaw = primary_unit <= 7 ? 0x2000 : 0x00005000;
+        transition->frames = 60;
     } else {
-        u32 *transition = *(u32 **)gTransitionWork;
+        struct BattlePresentationTransition *transition = gTransitionWork;
         u32 target = primary_unit <= 7 ? 0x00002000 : 0xffffe000;
-        if (transition[0] != target) {
-            transition[0] = target;
+        if (transition->target_yaw != target) {
+            transition->target_yaw = target;
         }
     }
 
     BattlePres_SetActorModes(0, 0);
-    UiWindow_DrawPartyStatusContentsFar((FIELD8((void *)gBattleWork, 0x41)) & ~1);
-    primary_record = *(u32 *)GetBattleObjectSlot(primary_unit);
+    UiWindow_DrawPartyStatusContentsFar((gBattleWork->party_status_mode) & ~1);
+    object = GetBattleObjectSlot(primary_unit)->object;
     REG_BLDCNT = 0x3f40;
-    visible_count = BattleParty_ListActorIds(3, visible_units);
+    visible_count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, visible_units);
 
     for (index = 0; index < visible_count; index++) {
         u16 unit = visible_units[index];
-        if (unit != 0xfe) {
+        if (unit != BATTLE_UNIT_REMOVED) {
             if (unit == primary_unit) {
-                Object_SetMode(primary_record, 3);
+                Object_SetMode(object, 3);
             } else if ((opposing_unit <= 7) != (unit <= 7)) {
                 BattlePres_SetActorRecordMode(unit, 1);
             }
         }
     }
 
-    Audio_PlayCue(0x9a);
-    BattleFx_PlayUnitElementEffect(FIELD32(context, 8), selection->presentation_data, 0, 0);
+    AudioCommand_PlayFar(0x9a);
+    BattleFx_PlayUnitElementEffect(work.actor, plan->range_index, 0, 0);
     if (mode & 1) {
         BattlePres_SetActorRecordMode(primary_unit, 1);
     }
@@ -91,8 +96,8 @@ void BattlePresentation_RunUnitTransition(
         WaitFrames(1);
     }
 
-    if (selection->message_mode != 0) {
-        if (selection->message_mode == 1) {
+    if (plan->failure != 0) {
+        if (plan->failure == 1) {
             BattleEv_Push(0, primary_unit);
             BattleEv_Push(4, 0x856);
         } else {
@@ -108,57 +113,62 @@ void BattlePresentation_RunUnitTransition(
                 if (!(mode & 1)) {
                     visible_units[kept_count++] = primary_unit;
                 }
-            } else if ((opposing_unit > 7) != (unit > 7)) {
+            } else if ((opposing_unit > 7) == (unit > 7)) {
                 visible_units[kept_count++] = unit;
             }
         }
-        visible_units[kept_count] = 0xff;
-        BattleActor_SpawnObjectsForList(visible_units, 0);
+        visible_units[kept_count] = BATTLE_UNIT_LIST_END;
+        BattleActor_SpawnObjectsForList((s16 *)visible_units, 0);
 
-        for (index = 0; index < selection->unit_count; index++) {
-            visible_units[index] = selection->units[index];
+        for (index = 0; index < plan->target_count; index++) {
+            visible_units[index] = plan->target_ids[index];
         }
-        visible_units[index] = 0xff;
+        visible_units[index] = BATTLE_UNIT_LIST_END;
 
-        for (index = 0; index < FIELD32(context, 0x14); index++) {
-            struct BattlePresentationUnitInfo *info;
-            u32 ability;
-            u32 ability_count;
-            u32 unit = FIELD16(context, 0x24 + index * 2);
-            info = GetMotionRecord(*(u32 *)GetBattleObjectSlot(unit), 0);
-            ability_count = info->ability_count - 1;
-            for (ability = 0; ability < ability_count; ability++) {
-                FIELD8(context, 0x34 + index * 4 + ability) =
-                    FIELD8(info->abilities[ability], 5);
+        {
+            /* The effect uses the tail of the actor storage for four child
+               parameters per target, beginning at work + 0x34. */
+            u8 *params = (u8 *)&work.actors[8];
+
+            for (index = 0; index < work.count; index++) {
+                struct AnimationObject *animation;
+                u32 child;
+                u32 child_count;
+                s32 unit = work.actors[index];
+
+                animation = GetMotionRecord(GetBattleObjectSlot(unit)->object, 0);
+                child_count = animation->count - 1;
+                for (child = 0; child < child_count; child++)
+                    params[index * 4 + child] = animation->entries[child]->param;
             }
         }
 
-        if (selection->flags & 0x8000) {
-            FIELD32(context, 4) = opposing_unit > 7 ? 0 : 1;
+        if (plan->presentation_flags & 0x8000) {
+            work.side = opposing_unit > 7 ? 0 : 1;
         } else {
-            FIELD32(context, 4) = selection->units[0] <= 7 ? 1 : 0;
+            work.side = plan->target_ids[0] <= 7 ? 1 : 0;
         }
-        if (selection->flags & 0x20000) {
-            FIELD32(context, 4) ^= 1;
+        if (plan->presentation_flags & 0x20000) {
+            work.side ^= 1;
         }
 
-        Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
-        if (selection->flags & 0x8000) {
-            BattleFx_InitializeModeFar(context);
-        } else if (selection->flags & 0x4000) {
-            BattleFx_DispatchByIdRangeFar(context);
+        Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
+        if (plan->presentation_flags & 0x8000) {
+            BattleFx_InitializeModeFar((s32 *)&work);
+        } else if (plan->presentation_flags & 0x4000) {
+            BattleFx_DispatchByIdRangeFar((s32 *)&work);
         } else {
-            BattleFx_DispatchModeFar(context);
+            BattleFx_DispatchModeFar((s32 *)&work);
         }
         BattleEventRuntime_WaitForReady();
     }
 
     BattleActor_CommitPlacement();
-    refreshed_count = BattleParty_ListActorIds(3, visible_units);
+    refreshed_count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, visible_units);
     REG_BLDCNT = 0x00003f40;
     for (index = 0; index < refreshed_count; index++) {
         u16 unit = visible_units[index];
-        if (unit != 0xfe && unit != primary_unit &&
+        if (unit != BATTLE_UNIT_REMOVED && unit != primary_unit &&
             ((opposing_unit <= 7) != (unit <= 7))) {
             BattlePres_SetActorRecordMode(unit, 1);
         }
@@ -172,4 +182,5 @@ void BattlePresentation_RunUnitTransition(
     }
     BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
     WaitFrames(1);
+    return 0;
 }

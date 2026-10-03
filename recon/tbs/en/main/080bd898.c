@@ -1,19 +1,38 @@
+/* DRAFT: BattleEvent_Playback and its nested tile clearer, covering the
+ * native 1948-byte bank: 72-byte clearer and 1876-byte playback, including
+ * the jump table, literal pools and alignment. No production adoption.
+ * Earlier combined attempt reported 1948 bytes and 62/830 instructions
+ * different: advance-arrow scratch registers/order, record redraw operand
+ * order and the ACTOR_RESOLVE store schedule. Statement/declaration order,
+ * direct display reads, five tile-address forms and one-pass blocks did not
+ * improve it. Its unread reserved[12] frame padding is removed.
+ * The old redraw temporary kept 0xff outside the loop and prevented OR
+ * elimination; that changes instruction presence, so the device is removed.
+ * Consolidated the overlapping 080bd850.c attempt here: it used private
+ * playback/display/record views, phase-local arrays with call_workspace[12],
+ * pointer-cursor loops and a direct fixed-entry tile clear. It had no recorded
+ * complete-bank measurement; its duplicate body is removed.
+ * T0: canonical animation/cache owners, direct frame reset, no dummy storage.
+ * Complete EN output is 1940 bytes: clearer 72, playback 1868, versus
+ * native 72 + 1876. Local frames are 4/32 bytes versus native 4/44;
+ * saved-register space remains 8/32 bytes. The unused helper argument stays.
+ * The full 72-byte clearer and 15-entry jump table match. All three main
+ * literal groups retain their values; the final group moves eight bytes.
+ * All 88 relocations resolve for comparison: 59 external calls preserve
+ * target/order and the nested call reaches the clearer at the bank start.
+ * Full-bank comparison has 401 differing bytes including the absent
+ * eight-byte tail; the first difference is the frame reserve at bank +0x5a.
+ * Main score 2292: 61 register, 2 stack, 6 operand, 14 reordered,
+ * 3 inserted and 7 deleted. One operand is only an unresolved scorer
+ * nested compiler name; full-bank relocation proves that target correct.
+ * Remaining changes include arrow setup/store ordering, register allocation,
+ * the smaller frame/static-chain offset and removal of the redraw read/OR.
+ * T0 already uses signed interpretation at the unsigned Summon sentinel.
+ * T0a: completed the remaining local producer declarations; the complete
+ * emitted ELF is identical to T0. No width/lifetime defect justified a body
+ * follow-up. No edition credit.
+ */
 #include "CALLBACK_SCHEDULER.H"
-/* DRAFT: BattleEvent_Playback with its nested tile clearer (listings 080bd898
- * and 080bd850). Same size as the ROM, 62 of 830 instructions differ:
- * 1. the advance-arrow preamble picks other scratch registers (the address of
- *    gFrameCount lives in r4 across the block here, in the ROM it is reloaded),
- *    which also reorders the entry address and the zeroing of x;
- * 2. `redraw` forces the 0xff out of the record loop as the ROM has it; written
- *    as a constant the loop pass leaves it in (22 instructions, lifetime 1) and
- *    combine folds the OR away. The OR then takes its operands the other way;
- * 3. the actor store in the ACTOR_RESOLVE case is scheduled one instruction early.
- * The reload registers go round-robin through the whole function, so 1 may only
- * be the trace of one reload more or fewer somewhere before it; 3 is the one
- * earlier place where the code differs. Tried without effect: statement and
- * declaration order, the display work read directly, five spellings of the tile
- * address, run-once blocks around each statement group.
- * alchemy drafts cannot parse a nested function; compare by compiling and diffing. */
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 #include "SYSTEM.H"
@@ -23,6 +42,7 @@
 #include "BATTLE_EVENT.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
+#include "ANIMSPR.H"
 #include "MOTION_OBJECT.H"
 #include "FIXED_MATH.H"
 #include "IO_WRITE_QUEUE.H"
@@ -30,63 +50,45 @@
 #include "UI.H"
 #include "MENU_LIST.H"
 
-struct BattleMotionPart {
-    u8 unknown_00[5];
-    s8 frame;
-    u8 unknown_06[0x10];
-    u8 flags;
-};
-
-struct BattleMotionRecord {
-    u8 unknown_00[0x1c];
-    u8 block;
-    u8 unknown_1d[3];
-    u8 width;
-    u8 height;
-    u8 unknown_22[6];
-    struct BattleMotionPart *part;
-};
-
 extern volatile u32 gFrameCount;
 extern volatile s32 gFrameTick;
 extern volatile s32 gKeysPressedLatch;
 extern u8 BattlePres_AdvanceArrowTiles[];
 
-void Battle_ResolveTargetAction(struct BattlePlan *plan, s32 target);
+s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 target);
 void AudioCommand_PlayFar(s32 cue);
-void Battle_SetRuntimeFlagBit0(struct BattleEventState *state, s32 value);
-void UiText_DrawQuantity(s32 value, s32 slot);
+void Battle_SetRuntimeFlagBit0(struct BattleEventState *state, u32 value);
+void UiText_DrawQuantity(u32 value, u32 slot);
 void UiText_PrepareMessageWorkFar(s32 message);
 void UiWork_ClearValueNameTablesFar(void);
-void Object_SetMode(struct MotionObject *object, s32 mode);
-void BattleEnemy_RecordDefeat(s32 unit_id, s32 flags);
-void BattleActor_ResetRuntimeFields(s32 unit_id);
-void Object_InitializeMode(void *record, s32 mode);
+void Object_SetMode(void *object, s32 mode);
+s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 flags);
+s32 BattleActor_ResetRuntimeFields(s32 unit_id);
+s32 Object_InitializeMode(struct AnimationObject *record, s32 mode);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 s32 BattleMotion_GetSlotField14(s32 unit_id);
-void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
-void BattlePres_SetActorModeAndAction(s32 unit_id);
+s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value);
+s32 BattlePres_SetActorModeAndAction(s32 unit_id);
 void QueueIoWriteDelay6(u32 address, u32 value);
-void BattleLayout_HighlightPartyPanelsFar(u16 *selection);
-s32 Summon_GetEntryByte3Kind(s32 class_id);
+s32 BattleLayout_HighlightPartyPanelsFar(u16 *selection);
+u32 Summon_GetEntryByte3Kind(s32 class_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
-void render_animated_tile_frameFar(void *record, s32 frame);
+void render_animated_tile_frameFar(u8 *record, u32 frame);
 s32 __modsi3(s32, s32);
 
 /* Plays the queued battle events one frame at a time: the callback the event
  * runtime schedules while its phase is not 0 or 4. */
 void BattleEvent_Playback(void)
 {
-    u8 reserved[12]; /* the frame keeps twelve bytes nothing reads */
     u16 selection[2];
-    void *records[4];
+    struct AnimationObject *records[4];
     struct BattleSession *work = gBattleWork;
     struct BattleEventState *state = &work->events;
 
     /* Blanks the tiles a motion record's sprite occupies. */
-    void BattleEvent_ClearRecordTiles(struct BattleMotionRecord *record, s32 value)
+    void BattleEvent_ClearRecordTiles(struct AnimationObject *record, s32 value)
     {
-        Iwram_ClearWords((void *)(0x06010000 + gVramBlockCache[record->block].offset),
+        Iwram_ClearWords((void *)(0x06010000 + gVramBlockCache[record->slot].offset),
             record->width * record->height);
     }
 
@@ -167,7 +169,7 @@ void BattleEvent_Playback(void)
                     case BATTLE_EVENT_ACTOR_RESOLVE:
                         {
                             struct BattleUnit *unit;
-                            void *record;
+                            struct AnimationObject *record;
                             s32 n;
 
                             state->actor_id = state->queue.operands[i];
@@ -275,7 +277,7 @@ void BattleEvent_Playback(void)
                 s32 frame = 6;
 
                 if (state->timer == 0 && state->flags != 0) {
-                    s32 kind = Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = (s32)Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
 
                     if (kind >= 0) {
                         kind--;
@@ -288,7 +290,7 @@ void BattleEvent_Playback(void)
                 if (state->timer > 0x41d)
                     state->timer = 0;
                 if (state->timer == 0) {
-                    s32 kind = Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
+                    s32 kind = (s32)Summon_GetEntryByte3Kind(Owner_GetStateFar(state->actor_id)->class_id);
 
                     if (kind >= 0)
                         AudioCommand_PlayFar(kind + 146);
@@ -296,16 +298,13 @@ void BattleEvent_Playback(void)
                 if (state->timer >= 0x400)
                     frame = (state->timer - 0x400) / 8 % 5 + 1;
                 if (frame == 6 || (state->timer & 7) == 0) {
-                    struct BattleMotionRecord *record;
-                    /* FAKEMATCH: the variable takes the 0xff out of the loop, where
-                     * the ROM has it; as a constant it stays in and the OR folds away. */
-                    s32 redraw = 0xff;
+                    struct AnimationObject *record;
                     s32 n;
 
                     for (n = 0; (record = GetMotionRecord(GetBattleObjectSlot(state->actor_id)->object, n)) != 0; n++) {
                         records[n] = record;
-                        record->part->frame = frame;
-                        record->part->flags |= redraw;
+                        record->entries[0]->param = frame;
+                        record->entries[0]->frame = 0xff;
                     }
                 }
                 state->timer++;
@@ -318,7 +317,7 @@ void BattleEvent_Playback(void)
             }
             if (state->timer > 4) {
                 struct BattleObjectSlot *slot;
-                void *record;
+                struct AnimationObject *record;
                 s32 count;
                 s32 frame;
                 s32 base;
@@ -343,10 +342,10 @@ void BattleEvent_Playback(void)
                     s32 k;
 
                 for (k = 0; k < count; k++) {
-                    render_animated_tile_frameFar(records[k], frame);
-                    render_animated_tile_frameFar(records[k], base - 19);
-                    render_animated_tile_frameFar(records[k], base - 18);
-                    render_animated_tile_frameFar(records[k], base - 17);
+                    render_animated_tile_frameFar((u8 *)records[k], frame);
+                    render_animated_tile_frameFar((u8 *)records[k], base - 19);
+                    render_animated_tile_frameFar((u8 *)records[k], base - 18);
+                    render_animated_tile_frameFar((u8 *)records[k], base - 17);
                 }
                 }
                 state->timer++;

@@ -653,7 +653,7 @@
         "*/recon/tla/raw/0803cba8.o"(.text)
         "*/recon/tla/raw/0803cbf8.o"(.text)
         "*/recon/tla/raw/0803cca8.o"(.text)
-        "*/recon/tla/raw/0803ccd0.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
         "*/recon/tla/raw/0803cd08.o"(.text)
         "*/recon/tla/raw/0803cd5c.o"(.text)
         "*/recon/tla/raw/0803cdb4.o"(.text)

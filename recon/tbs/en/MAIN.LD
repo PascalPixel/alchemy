@@ -239,7 +239,7 @@
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/COPY_MESSAGE_STRING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_MESSAGE.o"(.text)
         "*/games/COMMON/SRC/SYSTEM/MEMORY/CLEAR_WORD_IF_SET.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/TEXT2.o"(.text)
         "*/recon/tbs/raw/08019bfc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW5.o"(.text)

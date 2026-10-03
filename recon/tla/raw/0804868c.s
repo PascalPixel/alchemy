@@ -320,7 +320,7 @@ Func_0804868c:
 	beq .L_0804893c
 	lsrs r0, r0, #17
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	movs r3, #240
 	lsls r3, r3, #4
 	ands r3, r5
@@ -829,7 +829,7 @@ Func_0804868c:
 	bl Func_0803cca8
 	lsrs r0, r5, #17
 	movs r1, #5
-	bl Func_0803ccd0
+	bl UiWork_PushValueSlot
 	movs r2, #52
 	ldr r1, [sp, #8]
 	ldr r0, .L_08048f54

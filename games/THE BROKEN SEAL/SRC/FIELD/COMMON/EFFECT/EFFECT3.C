@@ -13,6 +13,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "MOTION_OBJECT.H"
+#include "ANIMSPR.H"
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
@@ -20,16 +21,15 @@ s32 Render_ProjectPoint(s32 *, s32 *);
 void BattleMotion_ProjectScaledPositionFar(s32, struct EffectPosition *);
 void BattleMotion_ProjectPositionFar(s32, struct EffectPosition *);
 
-extern u8 *gCameraWork;
-s32 **GetBattleObjectSlotFar(s32 unit);
-u8 *GetMotionRecordFar(s32 *object, s32 mode);
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32 unit);
+void *GetMotionRecordFar(void *object, s32 mode);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 
-extern u8 gBattleFxWork[];
-extern u8 Data_03001ae8[];
+extern struct BattleEffectWork *gBattleFxWork;
+extern u8 gKeysHeld[];
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect);
@@ -67,7 +67,7 @@ s32 EffectPosition_ApplyBaseAndYOffset(s32 *point, struct EffectPosition *positi
 
 void EffectPosition_ApplyAnimationAndYOffset(s32 id, struct EffectPosition *position)
 {
-    BattleUnit_ProjectToScreen(id, position);
+    BattleUnit_ProjectToScreen(id, &position->x);
     position->y = (s32)((u32)position->y - 0x10);
 }
 
@@ -87,57 +87,56 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *
    scaled height. */
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen)
 {
-    u8 *camera;
-    s32 *object;
-    u8 *info;
+    struct BattleCamera *camera;
+    struct MotionObject *object;
+    struct AnimationObject *info;
     s32 scale;
-    /* FAKEMATCH: an unused vector reproduces the reference's 12-byte frame. */
+    /* FAKEMATCH: retain the inherited unused vector. Its ordinary removal in
+       8f4c57e6 deletes both SP adjustments and changes the camera-load order
+       in all six editions; no used vector lifetime has been established. */
     s32 unused[3];
 
     camera = gCameraWork;
-    object = *GetBattleObjectSlotFar(unit);
+    object = GetBattleObjectSlotFar(unit)->object;
     info = GetMotionRecordFar(object, 0);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(camera, camera + 12);
-    scale = Iwram_MulQ16(Render_ProjectPoint(object + 2, screen), *(s32 *)(info + 24));
+    Graphics_PrepareTransferInIwramWork((u8 *)camera, (u8 *)camera->pos);
+    scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
     screen[1] -= Iwram_MulQ16(scale, Battle_GetObjectTableValueFar(unit) >> 17);
     return 0;
 }
 
 void ObjectGroup_ProbeKeysWhenField24High(void)
 {
-    u8 *state = *(u8 **)((u32)&gBattleFxWork);
-    u8 *object = *(u8 **)(state + 0x7828);
+    struct BattleEffectWork *work = gBattleFxWork;
+    struct BattleEffectArgument *effect = work->effect;
 
-    if (*(s16 *)(object + 0x24) > 0x7f)
-        (void)*(volatile s32 *)((u32)&Data_03001ae8);
+    if (effect->actors[0] > 0x7f)
+        (void)*(volatile s32 *)&gKeysHeld;
 }
 
 void BattleFx_DispatchByIdRange(s32 *arg0)
 {
-  s32 no;
-  s32 tmp;
-  tmp = (tmp = 0x60E);
-  Runtime_AllocateBlock(0x29, tmp);
-  Runtime_AllocateHeapBlock(0x27, 0x782C);
-  Runtime_AllocateHeapBlock(0x28, 0x4000);
-  tmp = *arg0;
-  no = tmp;
-  tmp = no - 0x64;
-  if (((u32)tmp) <= 0x23U)
-  {
-    BattleFx_RunCastingImpact(arg0);
-  } else
-    if (no > 0xC7)
-  {
-    BattlePres_RunRingAndSparkScene((struct BattleEffectArgument *)arg0);
-  } else
-  {
-    BattlePres_RunBeamSequence((struct BattleEffectArgument *)arg0);
-  }
-  Runtime_ReleaseHeapBlock(0x28);
-  Runtime_ReleaseHeapBlock(0x27);
-  Runtime_ReleaseHeapBlock(0x29);
+    s32 kind;
+    s32 value;
+
+    value = 0x60e;
+    Runtime_AllocateBlock(41, value);
+    Runtime_AllocateHeapBlock(39, 0x782c);
+    Runtime_AllocateHeapBlock(40, 0x4000);
+    value = *arg0;
+    kind = value;
+    value = kind - 100;
+    if ((u32)value <= 35) {
+        BattleFx_RunCastingImpact(arg0);
+    } else if (kind > 199) {
+        BattlePres_RunRingAndSparkScene((struct BattleEffectArgument *)arg0);
+    } else {
+        BattlePres_RunBeamSequence((struct BattleEffectArgument *)arg0);
+    }
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
+    Runtime_ReleaseHeapBlock(41);
 }
 
 extern DrawRectangle gWorkSlot[];
@@ -188,7 +187,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = (void **)&gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -262,7 +261,7 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
     gBgScroll[1].x = shake;
     gBgScroll[1].y = 80;
     WaitFrames(1);
-    target = (struct MotionObject *)*GetBattleObjectSlotFar(work->effect->actors[0]);
+    target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     half = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
     for (i = 0; i != 64; i++) {
         struct EffectStep *spark = &work->particles[i];
@@ -293,19 +292,19 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
         if (kind == 4) {
             if (frame <= 11) {
                 if (work->effect->side == 0)
-                    draw[1](canvas, (u8 *)work + (5 - frame / 2) * 0x300,
+                    draw[1](canvas, work->sheet + (5 - frame / 2) * 0x300,
                         pos.x + shake - 48, pos.y - 8, 48, 16);
                 else
-                    draw[1](canvas, (u8 *)work + (5 - frame / 2) * 0x300,
+                    draw[1](canvas, work->sheet + (5 - frame / 2) * 0x300,
                         pos.x + shake, pos.y - 8, 48, 16);
             }
         } else if ((u32)kind <= 2 || kind == 5) {
             if (frame <= 11) {
                 if (work->effect->side == 0)
-                    draw[1](canvas, (u8 *)work + frame / 2 * 0xd80,
+                    draw[1](canvas, work->sheet + frame / 2 * 0xd80,
                         pos.x + shake - 48, pos.y - 40, 48, 72);
                 else
-                    draw[1](canvas, (u8 *)work + frame / 2 * 0xd80,
+                    draw[1](canvas, work->sheet + frame / 2 * 0xd80,
                         pos.x + shake, pos.y - 40, 48, 72);
             }
         } else {
@@ -313,12 +312,12 @@ void BattlePres_RunBeamSequence(struct BattleEffectArgument *effect)
                 s32 cell = frame / 3;
 
                 if (work->effect->side == 0)
-                    draw[1](canvas, (u8 *)work + BeamSequence_CellSheetOffsets[cell],
+                    draw[1](canvas, work->sheet + BeamSequence_CellSheetOffsets[cell],
                         pos.x + BeamSequence_CellReaches[cell] + shake - 58,
                         pos.y - BeamSequence_CellHeights[cell] / 2,
                         BeamSequence_CellWidths[cell], BeamSequence_CellHeights[cell]);
                 else
-                    draw[1](canvas, (u8 *)work + BeamSequence_CellSheetOffsets[cell],
+                    draw[1](canvas, work->sheet + BeamSequence_CellSheetOffsets[cell],
                         pos.x - BeamSequence_CellReaches[cell] + shake - BeamSequence_CellWidths[cell] + 58,
                         pos.y - BeamSequence_CellHeights[cell] / 2,
                         BeamSequence_CellWidths[cell], BeamSequence_CellHeights[cell]);
@@ -393,7 +392,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = (void **)&gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -435,7 +434,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     if (big == 1) {
-        object = (struct MotionObject *)*GetBattleObjectSlotFar(work->effect->actor);
+        object = GetBattleObjectSlotFar(work->effect->actor)->object;
         for (i = 0; i != 64; i++) {
             struct EffectStep *mote = &work->particles[i];
 
@@ -520,7 +519,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
     anchor.x += shake;
     gBgScroll[1].y = 80;
     gBgScroll[1].x = shake;
-    target = (struct MotionObject *)*GetBattleObjectSlotFar(work->effect->actors[0]);
+    target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     half = Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
     for (i = 0; i != 64; i++) {
         struct EffectStep *spark = &work->particles[i];
@@ -546,7 +545,7 @@ void BattlePres_RunRingAndSparkScene(struct BattleEffectArgument *effect)
         if (frame <= 1)
             draw[0](canvas, work, 0, 0, 120, 120);
         else if (frame <= 3)
-            draw[0](canvas, (u8 *)work + 0x3840, 0, 0, 120, 120);
+            draw[0](canvas, work->sheet + 0x3840, 0, 0, 120, 120);
         else if (frame <= 5)
             draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
         else if (frame <= 7)

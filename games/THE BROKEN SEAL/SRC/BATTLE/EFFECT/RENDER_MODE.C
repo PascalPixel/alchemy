@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -15,7 +16,6 @@
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 extern u8 gBattleFxWork[];
-extern s32 gCameraWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
@@ -178,7 +178,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
     Audio_PlayCue(142);
 
     for (frame = 0; frame != total; frame++) {
-        s32 facing = gCameraWork[0];
+        struct BattleCamera *camera = gCameraWork;
 
         if (mode == 7) {
             if (frame == total - 46)
@@ -228,7 +228,7 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
             draw[1] = (DrawRectangle)gWorkSlot[47];
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             point[0] = object->x;
             point[1] = 160 << 13;
             point[2] = object->z;

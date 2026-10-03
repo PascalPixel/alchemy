@@ -1,26 +1,12 @@
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
+#include "WINDOW.H"
 
 void Resource_DecodeType01(s32 value, s32 saved);
-void Runtime_BumpFree(s32 saved);
-extern u8 *gWindowWork;
-
-struct TileWindow {
-    u8 unknown_00[8];
-    u16 width;
-    u8 unknown_0a[2];
-    u16 x;
-    u16 y;
-};
-
-struct SaveMenuTileBlock {
-    u8 padding_00[12];
-    u16 x;
-    u16 y;
-};
+void Runtime_BumpFree(void *saved);
 
 /* Fills a 16 by 8 block of window tiles, numbered row by row in palette 15, into VRAM and its shadow copy. */
-void SaveMenu_FillTileGrid(struct TileWindow *window, s32 value)
+void SaveMenu_FillTileGrid(struct RenderInput *window, s32 value)
 {
     u16 *shadow;
     u16 *vram;
@@ -29,7 +15,7 @@ void SaveMenu_FillTileGrid(struct TileWindow *window, s32 value)
     s32 col;
     s32 offset;
 
-    shadow = (u16 *)gWindowWork;
+    shadow = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
     saved = (s32)Runtime_BumpAllocateAlternatePool(0x300);
     Resource_DecodeType01(value, saved);
     offset = (window->y * 32 + window->x) * 2;
@@ -45,19 +31,19 @@ void SaveMenu_FillTileGrid(struct TileWindow *window, s32 value)
         vram += 16;
         shadow += 16;
     }
-    Runtime_BumpFree(saved);
+    Runtime_BumpFree((void *)saved);
 }
 
-void SaveMenu_FillTileBlock(const struct SaveMenuTileBlock *block)
+void SaveMenu_FillTileBlock(const struct RenderInput *window)
 {
-    s16 *mirror = (s16 *)gWindowWork;
+    s16 *mirror = (s16 *)((struct UiRenderWork *)gWindowWork[0])->tilemap;
     s16 *buffer = (s16 *)Runtime_BumpAllocateAlternatePool(0x300);
     s16 *vram;
     s32 cell;
     s32 row;
     s32 base;
 
-    cell = block->y * 32 + block->x;
+    cell = window->y * 32 + window->x;
     vram = (s16 *)0x06002000 + cell;
     mirror += cell;
     row = 0;

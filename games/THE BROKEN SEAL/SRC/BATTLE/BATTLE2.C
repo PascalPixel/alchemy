@@ -1,3 +1,4 @@
+#include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "SCENE.H"
@@ -21,20 +22,6 @@ void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
-
-struct SceneCameraRuntime {
-    struct BattleCamera *state;
-    u8 filler04[124];
-    struct BattlePresentationTransition *secondary;
-};
-
-struct SceneCameraTransfer {
-    s32 first;
-    s32 second;
-    s32 third;
-};
-
-extern struct SceneCameraRuntime gCameraWork;
 
 s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
 void Runtime_BumpFree(void *ptr);
@@ -88,9 +75,10 @@ void Palette_UpdatePulseBrightness(void)
 
 void Camera_ConfigureScene(s32 pos)
 {
-    struct BattleCamera *state = gCameraWork.state;
-    struct BattlePresentationTransition *secondary = gCameraWork.secondary;
-    struct SceneCameraTransfer local;
+    void **slots = (void **)&gCameraWork;
+    struct BattleCamera *state = slots[0];
+    struct BattlePresentationTransition *secondary = slots[32];
+    struct FixedPointPosition local;
     u32 result;
 
     state->pos[1] = 160 << 11;
@@ -108,9 +96,9 @@ void Camera_ConfigureScene(s32 pos)
     SceneTransform_ApplyYaw((s16)state->yaw);
     SceneTransform_ApplyPitch((s16)state->pitch);
 
-    local.first = 0;
-    local.second = 0;
-    local.third = state->distance;
+    local.x = 0;
+    local.y = 0;
+    local.z = state->distance;
     Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
     result = Iwram_RatioMulQ14(0x03c90000, 192 << 8);

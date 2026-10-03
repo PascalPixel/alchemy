@@ -1,49 +1,35 @@
-#include "B5_CONTEXT.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "MOTION_OBJECT.H"
 #include "FIXED_MATH.H"
 
-void Object_ResetMotion(void *);
-void Object_SetPosition(void *, s32, s32, s32);
-void Object_SetMode(void *, s32);
+struct BattleObjectSlot *GetBattleObjectSlotFar(s32 object_id);
+void Object_ResetMotion(struct MotionObject *);
+void Object_SetPosition(struct MotionObject *, s32, s32, s32);
+void Object_SetMode(struct MotionObject *, s32);
 
-struct RisingObjectState {
-    u8 padding_00[0x28];
-    s32 field_28;
-    u8 padding_2c[4];
-    s32 field_30;
-    s32 field_34;
-    u8 padding_38[0xc];
-    s32 field_44;
-    s32 field_48;
-    u8 padding_4c[0xc];
-    u8 field_58;
-    u8 padding_59;
-    u8 field_5a;
-};
 
 void BattleFx_InitializeRisingObject(s32 arg0)
 {
-    struct B5Context *context = GetBattleObjectSlotFar(arg0);
-    struct RisingObjectState *object = context->object;
+    struct BattleObjectSlot *context = GetBattleObjectSlotFar(arg0);
+    struct MotionObject *object = context->object;
 
-    object->field_34 = 0x20000;
-    object->field_30 = 0x80000;
-    object->field_28 = 0x40000;
-    object->field_48 = 0xAB85;
-    object->field_44 = 0;
-    object->field_5a = 0;
-    object->field_58 = 1;
+    object->acceleration = 0x20000;
+    object->speed_limit = 0x80000;
+    object->velocity_y = 0x40000;
+    object->vertical_motion_strength = 0xAB85;
+    object->vertical_motion_phase = 0;
+    object->auto_face_motion = 0;
+    object->snap_to_target = 1;
     Object_ResetMotion(object);
-    Object_SetPosition(object, context->word_0c, 0, context->word_10);
+    Object_SetPosition(object, context->anchor_x, 0, context->anchor_z);
     Object_SetMode(object, 1);
 }
 
 void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor)
 {
-    struct B5Context *first_context = GetBattleObjectSlotFar(first);
-    struct B5Context *second_context = GetBattleObjectSlotFar(second);
+    struct BattleObjectSlot *first_context = GetBattleObjectSlotFar(first);
+    struct BattleObjectSlot *second_context = GetBattleObjectSlotFar(second);
     struct MotionObject *object = first_context->object;
     struct MotionObject *target = second_context->object;
     s32 scale = 80;

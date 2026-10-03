@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -12,7 +13,6 @@
 #include "RAM_BUFFER.H"
 
 extern u8 gBattleFxWork[];
-extern s32 gCameraWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -97,13 +97,13 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     delta[1] = (target[1] - position[1]) / 40;
     delta[2] = (target[2] - position[2]) / 40;
     for (frame = 0; frame != 98; frame++) {
-        s32 facing = gCameraWork[0];
+        struct BattleCamera *camera = gCameraWork;
         if (frame == 8)
             Audio_PlayCue(212);
         if (frame == 80)
             Audio_PlayCue(142);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame >= 30 && frame < 70) {
             position[0] += delta[0];
             position[1] += delta[1];
@@ -176,9 +176,9 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
     }
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
     for (frame = 0; frame != work->effect->count * 8 + 72; frame++) {
-        s32 facing = gCameraWork[0];
+        struct BattleCamera *camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame >= work->effect->count * 8 + 40)
             target[1] += 0x40000;
         point[0] = target[0];
@@ -191,7 +191,7 @@ void BattleFx_RunSparkTravel(struct BattleEffectArgument *effect)
             struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             s32 start = member * 8;
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             position[0] = object->x;
             position[1] = 160 << 14;
             position[2] = object->z;

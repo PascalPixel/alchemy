@@ -9,30 +9,12 @@
  * illness and leaves the bed; the scene ends by setting flags 0x81e and 0x203. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
+#include "FXBLEND.H"
 
 extern u8 MsgHaidiaDoraHurryBoulder[];
 void DisplayBlend_EnableRunScript();
 void Object_RefreshSelectorById(s32 actor);
 void Object_SetActionCallbackAndRefreshById(s32 actor, const void *script);
-
-struct RampWork {
-    u8 unknown_00[0x1c0];
-    s32 blend_config;
-    u8 unknown_1c4[4];
-    s32 blend_frames;
-};
-
-/* The event work pointer and the IWRAM work pointers that follow it. */
-struct RampRoots {
-    struct RampWork *scene;
-    u8 unknown_04[8];
-    struct RampStatus *work;
-};
-
-struct RampStatus {
-    u8 unknown_00[0x1f84];
-    u16 enabled;
-};
 
 extern const s32 gHaidiaBabiRampActor8Action[];
 extern const s32 gHaidiaBabiRampLeaderAction[];
@@ -198,9 +180,9 @@ void FieldScene_RunPaletteRampSequence(void)
     sprite->priority = 1;
     Engine_ActorEnableActionCallback(10, (s32)gHaidiaBabiRampActor10Action);
     {
-        struct RampWork *scene = ((struct RampRoots *)&gEventWork)->scene;
+        struct EventWork *scene = gEventWork;
 
-        scene->blend_config = 513;
+        scene->start_transition = 513;
     }
     Engine_MapCopyCellsTo(83, 15, 83, 19, 5, 4);
     Engine_MapCopyCellsTo(90, 16, 90, 20, 5, 4);
@@ -220,7 +202,7 @@ void FieldScene_RunPaletteRampSequence(void)
         SetBlendAlpha(value);
     } while (0);
     BattleFx_StartTwelveFrameBlend();
-    ((struct RampRoots *)&gEventWork)->work->enabled = 1;
+    (*(struct FieldBlendWork **)((u8 *)&gEventWork + 12))->loud = 1;
     BattleFx_SetBlock30Values12Zero();
     Engine_TaskWait(30);
     Engine_CameraFollowActor(8, 1);
@@ -306,10 +288,10 @@ ramp:
     Engine_ActorEnableActionCallback(8, (s32)gHaidiaBabiRampFinalAction);
     Object_SetActionCallbackAndRefreshById(0, (s32)gHaidiaBabiRampFinalAction);
     {
-        struct RampWork *scene = ((struct RampRoots *)&gEventWork)->scene;
+        struct EventWork *scene = gEventWork;
 
-        scene->blend_config = 256;
-        scene->blend_frames = 32;
+        scene->start_transition = 256;
+        scene->transition_frames = 32;
     }
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

@@ -1,3 +1,4 @@
+#include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
@@ -12,14 +13,6 @@ void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 
-struct CameraPosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-extern struct BattleCamera *gCameraWork;
-
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);
@@ -33,7 +26,7 @@ extern s32 BattleMotion_VariantDistancePercent[];
 void Camera_InitDefaultTransform(void)
 {
     struct BattleCamera *state = gCameraWork;
-    struct CameraPosition transfer;
+    struct FixedPointPosition transfer;
 
     state->yaw = 192 << 6;
     state->pitch = 254 << 8;

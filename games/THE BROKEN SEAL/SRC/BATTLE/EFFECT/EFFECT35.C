@@ -1,3 +1,6 @@
+#include "ANIMSPR.H"
+#include "OBJECT_RUNTIME.H"
+#include "FIELDOBJ.H"
 /* Battle effect: spawn the pair of scaled objects that follow the linked
    object in mirrored arcs, one for each scaled-arc update callback. */
 #include "TYPES.H"
@@ -11,9 +14,14 @@
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 
+
+
+
+/* The existing packed arc-constructor view is kept only at its measured
+   alias boundary; other callbacks consume the shared object owners. */
 struct ArcChild {
     u8 pad00[22];
-    u8 phase;
+    u8 frame;
 };
 
 struct ArcSprite {
@@ -34,11 +42,11 @@ struct ArcSprite {
     u16 priority:2;
     u16 palette:4;
     u8 pad0a[18];
-    u8 resource;
+    u8 slot;
     u8 active:1;
-    u8 flags:7;
+    u8 display_flags:7;
     u8 pad1e[8];
-    u8 frame;
+    u8 flags;
     u8 pad27;
     struct ArcChild *child;
 };
@@ -48,20 +56,20 @@ struct ArcObject {
     s32 x;
     s32 y;
     s32 z;
-    s32 w;
-    s32 scale_y;
+    s32 terrain_height;
     s32 scale_x;
+    s32 scale_y;
     u8 pad20[0x23 - 0x20];
-    u8 layer;
+    u8 priority_flags;
     u8 pad24[0x50 - 0x24];
     struct ArcSprite *sprite;
     u8 pad54[1];
-    u8 state;
+    u8 motion_flags;
     u8 pad56[0x64 - 0x56];
-    u16 step;
+    u16 counter;
     u8 pad66[2];
-    struct ArcObject *link;
-    void (*update)(struct ArcObject *);
+    struct ArcObject *linked_object;
+    void (*update)(struct FieldActor *);
 };
 
 struct ResourceTableEntry {
@@ -73,13 +81,13 @@ struct ResourceTableEntry {
 
 extern struct BattleFxScene *gEffectWork;
 extern struct ResourceTableEntry ResourceTableEntries[];
-struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
+struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *sprite, s32 animation);
 void Resource_ResetEntry(u32 index);
-void BattleFx_UpdateScaledArcObjectA(struct ArcObject *obj);
-void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj);
+void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
+void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
 
-extern volatile s32 gFrameCount;
+extern u32 gFrameCount;
 s32 __umodsi3(s32, s32);
 void Animation_ApplyChildValuesFar(s32, s32);
 
@@ -111,68 +119,76 @@ void BattleFx_UpdateAllEffectSlots(void);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Vector_AddPolarOffset(s32, s32, void *);
 
-void BattleFx_SpawnScaledArcObjects(struct ArcObject *link);
+void BattleFx_SpawnScaledArcObjects(struct FieldActor *link);
 
-void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
+void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked)
 {
+    /* FAKEMATCH: the existing scalar-coordinate and packed OAM constructor
+       view preserves the native alias ordering and 312-byte extent; the
+       shared coordinate/part views change register allocation and add four bytes. */
+    struct ArcObject *link = (struct ArcObject *)linked;
     struct BattleFxScene *scene = gEffectWork;
-    struct ArcObject *source = scene->main_object;
+    struct ArcObject *source = (struct ArcObject *)scene->main_object;
     struct ArcObject *objects[2];
     struct ArcObject *object;
     struct ArcSprite *sprite;
     s32 i;
 
     for (i = 0; i <= 1; i++) {
-        object = Object_CreateFar(26, link->x, link->y, link->z);
+        object = (struct ArcObject *)Object_CreateFar(26, link->x, link->y, link->z);
         objects[i] = object;
         if (object == 0)
             continue;
-        object->w = link->w;
+        object->terrain_height = link->terrain_height;
         sprite = object->sprite;
-        object->state = 0;
-        object->step = 0;
-        object->link = link;
-        object->scale_y = object->scale_x = 0x1999;
+        object->motion_flags = 0;
+        object->counter = 0;
+        object->linked_object = link;
+        object->scale_x = object->scale_y = 0x1999;
         if (sprite == 0)
             continue;
-        AnimationObjects_SelectAnimationFar(sprite, 0);
-        sprite->frame = 0;
-        Resource_ResetEntry(sprite->resource);
-        sprite->resource = scene->tile_slot;
+        AnimationObjects_SelectAnimationFar((struct AnimationObject *)sprite, 0);
+        sprite->flags = 0;
+        Resource_ResetEntry(sprite->slot);
+        sprite->slot = scene->tile_slot;
         sprite->active = 1;
-        sprite->tile = ResourceTableEntries[sprite->resource].tile;
+        sprite->tile = ResourceTableEntries[sprite->slot].tile;
         sprite->color = 0;
         sprite->shape = 1;
         sprite->size = 2;
-        sprite->child->phase = 0;
+        sprite->child->frame = 0;
     }
     objects[0]->update = BattleFx_UpdateScaledArcObjectB;
     objects[0]->sprite->priority = 0;
     objects[1]->update = BattleFx_UpdateScaledArcObjectA;
     objects[1]->sprite->priority = source->sprite->priority;
-    objects[1]->layer = 2;
+    objects[1]->priority_flags = 2;
 }
 
 void BattleFx_FlickerObjectAndTick(s32 arg0)
 {
-    if ((gFrameCount & 2) != 0) {
+    /* FAKEMATCH: the existing volatile frame-counter reads are retained;
+       ordinary reads merge across this callback and change native scheduling. */
+    if (((*(volatile s32 *)&gFrameCount) & 2) != 0) {
         Animation_ApplyChildValuesFar(arg0, 7);
     } else {
         Animation_ApplyChildValuesFar(arg0, 0);
     }
-    if ((gFrameCount & 15) == 0) {
+    if (((*(volatile s32 *)&gFrameCount) & 15) == 0) {
         BattleFx_SpawnScaledArcObjects(arg0);
     }
 }
 
 void BattleFx_CycleObjectValueByCounter(s32 arg0)
 {
-    if ((gFrameCount & 1) != 0) {
-        s32 value = __umodsi3((s32)((unsigned int)gFrameCount >> 1), 6);
+    /* FAKEMATCH: the existing volatile frame-counter reads are retained;
+       ordinary reads merge across this callback and change native scheduling. */
+    if (((*(volatile s32 *)&gFrameCount) & 1) != 0) {
+        s32 value = __umodsi3((s32)((unsigned int)(*(volatile s32 *)&gFrameCount) >> 1), 6);
 
         Animation_ApplyChildValuesFar(arg0, value);
     }
-    if ((gFrameCount & 15) == 0) {
+    if (((*(volatile s32 *)&gFrameCount) & 15) == 0) {
         BattleFx_SpawnScaledArcObjects(arg0);
     }
 }
@@ -182,12 +198,12 @@ void BattleFx_UpdateAllEffectSlots(void)
     s32 p;
     s32 cnt;
 
-    p = (s32)gEffectWork + 0x58;
+    p = (s32)gEffectWork->slots;
     cnt = 0x17;
     do {
         cnt -= 1;
         EffectSlot_Update((struct EffectSlot *)p);
-        p += 0x48;
+        p += sizeof(struct EffectSlot);
     } while (cnt >= 0);
 }
 
@@ -206,9 +222,9 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     if (running == 0) {
         volatile u32 fill;
 
-        work = Runtime_AllocateHeapBlock(56, 0x720);
+        work = Runtime_AllocateHeapBlock(56, sizeof *work);
         fill = running;
-        Dma_Set((const void *)&fill, work, 0x850001c8, (volatile u32 *)0x040000d4);
+        Dma_Set((const void *)&fill, work, 0x85000000 | (sizeof *work / 4), (volatile u32 *)0x040000d4);
     } else {
         work = *(struct BattleFxScene **)(gWorkSlot + 56 * 4);
     }

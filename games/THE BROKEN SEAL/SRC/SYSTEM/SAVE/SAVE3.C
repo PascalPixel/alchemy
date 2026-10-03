@@ -2,6 +2,7 @@
    current save stamp, reporting a missing backup chip or a failed read or
    write as a negative code. */
 #include "TYPES.H"
+#include "SAVE_STATE.H"
 #include "IWRAM_CALL.H"
 #include "RUNTIME_MEM.H"
 #include "SCENE.H"
@@ -16,21 +17,12 @@ extern u8 gSaveBuffer[];
 extern u8 gSaveStamp[];
 extern u8 MsgNoBackupMemory;
 extern u8 MsgSaveFailed;
-s32 SaveState_InitializeWorkspace(void);
-u32 SaveState_ReadRecordPayload(s32 slot, void *buffer);
-s32 SaveState_WriteRecord(s32 slot, void *buffer);
-void SaveState_ReleaseWorkspace(void);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 
 s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
 s32 SaveMenu_SelectSlot(s16, s32);
 s32 Menu_RunConfirmSelection(s32, s32, s32, s32);
-s32 SaveState_ProcessSelectedSlot(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
-void SaveState_LoadSummaryRecords(void);
-u32 SaveState_ReadRecordPayload(s32, void *);
-u32 SaveState_FindFreeSummarySlot(void);
-u32 SaveState_DeleteRecord(s32);
 
 /* save/state/confirm_and_process_selected_slot.c */
 extern u8 MsgOverwriteConfirm;

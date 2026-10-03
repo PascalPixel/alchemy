@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
@@ -16,7 +17,6 @@
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
 extern u8 gBattleFxWork[];
-extern s32 gCameraWork[];
 extern volatile u32 gKeysRepeat;
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -153,7 +153,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     height = -0x400000;
     speed = 0;
     for (frame = 0; frame != 366; frame++) {
-        s32 facing = gCameraWork[0];
+        struct BattleCamera *camera = gCameraWork;
 
         if ((gKeysRepeat & 3) != 0 && frame > 190 && frame <= 285) {
             Iwram_ClearWords(canvas, 0x4000);
@@ -162,7 +162,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         if (frame == 224)
             work->transfer_mode = 0;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame == 31) {
             work->shake_frames = 8;
             AudioCommand_PlayFar(157);
@@ -1035,7 +1035,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
     void *canvas;
     DrawRectangle draw;
     void *sheet;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 point[3];
     struct EffectPosition screen;
     s32 member;
@@ -1047,7 +1047,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     sheet = heap_cache[2];
-    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + 12 * 4);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -1060,7 +1060,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
         ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
 
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+    Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
 
     for (member = 0; member != work->effect->count; member++) {
         void *object;

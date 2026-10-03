@@ -1,3 +1,6 @@
+#include "IO_REG.H"
+#include "FIXED_POINT_POSITION.H"
+#include "BATTLE_PRESENTATION.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -6,48 +9,15 @@
 s32 LuckyDice_Run();
 s32 Audio_PlayCue(s32);
 
-/* The interrupt master-enable word (IME) before and after the blanked frame. */
-#define REG_IME (*(volatile u16 *)0x04000000)
-
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
 void Camera_StoreSceneParameters(u32, u32, u32);
 
-struct SceneCameraState {
-    u8 filler0[12];
-    s32 field0c;
-    s32 field10;
-    s32 field14;
-    s32 field18;
-    s32 field1c;
-    s32 field20;
-    u8 filler24[16];
-    s16 field34;
-    s16 field36;
-};
-
-struct SceneCameraRuntime {
-    struct SceneCameraState *state;
-    u8 filler04[124];
-    void *secondary;
-};
-
-struct SceneCameraTransfer {
-    s32 first;
-    s32 second;
-    s32 third;
-};
-
-
-extern struct SceneCameraRuntime gCameraWork;
-
-
-
 s32 Runtime_BlankDisplayAndRun(void)
 {
-    REG_IME = 0x40;
+    REG_DISPCNT = 0x40;
     Audio_PlayCue(9);
     LuckyDice_Run();
     return 0;
@@ -55,30 +25,30 @@ s32 Runtime_BlankDisplayAndRun(void)
 
 void Camera_ResetSceneDefaults(void)
 {
-    struct SceneCameraState *state = gCameraWork.state;
-    struct SceneCameraTransfer local;
+    struct BattleCamera *state = gCameraWork;
+    struct FixedPointPosition local;
     u32 result;
     u32 param1;
 
-    state->field34 = 152 << 8;
-    state->field20 = 255 << 17;
-    state->field0c = 0;
-    state->field10 = 0;
-    state->field14 = 0;
-    state->field36 = 0;
-    state->field1c = 0;
+    state->pitch = 152 << 8;
+    state->distance = 255 << 17;
+    state->pos[0] = 0;
+    state->pos[1] = 0;
+    state->pos[2] = 0;
+    state->yaw = 0;
+    state->follow_pos = 0;
     gProjection.center_x = 0;
     gProjection.center_y = 0;
-    state->field18 = 0;
+    state->unknown_18 = 0;
 
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(&state->field0c);
-    SceneTransform_ApplyYaw(state->field36);
-    SceneTransform_ApplyPitch(state->field34);
+    SceneTransform_ApplyPosition(&state->pos[0]);
+    SceneTransform_ApplyYaw((s16)state->yaw);
+    SceneTransform_ApplyPitch((s16)state->pitch);
 
-    local.first = 0;
-    local.second = 0;
-    local.third = state->field20;
+    local.x = 0;
+    local.y = 0;
+    local.z = state->distance;
     Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
     param1 = 250;

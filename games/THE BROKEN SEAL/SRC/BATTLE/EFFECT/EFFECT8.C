@@ -1,3 +1,4 @@
+#include "BATTLE_EFFECT_WORK.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "GLOBAL_CELLS.H"
@@ -9,7 +10,7 @@
 
 extern u8 gBattleFxWork[];
 typedef void (*Callback)(s32 *);
-s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void BattleEffect_RunCirclingFallingScene(s32 *);
 void BattleEffect_RunEmberColumns(s32 *);
 void BattleFx_RunObjectRow(s32 *);
@@ -27,15 +28,11 @@ extern u8 gMapCellBuffer[];
 
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 
-struct BattleEffectTargetArgument {
-    u8 reserved_00[36];
-    s16 unit_id;
-};
 
 void BattleFx_InitializeMode(s32 *arg0)
 {
     Runtime_AllocateHeapBlock(41, 0x302);
-    Runtime_AllocateHeapBlock(39, 0x782c);
+    Runtime_AllocateHeapBlock(39, sizeof(struct BattleEffectWork));
     Runtime_AllocateHeapBlock(40, 0x4000);
 
     if (*arg0 == 0) {
@@ -89,15 +86,17 @@ void BattleFx_InitializeMode(s32 *arg0)
 void BattleFx_DispatchMode(s32 *state)
 {
     s32 index;
-    s32 **destination;
+    s32 destination;
 
     Runtime_AllocateHeapBlock(41, 0x302);
-    Runtime_AllocateHeapBlock(39, 0x782c);
+    Runtime_AllocateHeapBlock(39, sizeof(struct BattleEffectWork));
     Runtime_AllocateHeapBlock(40, 0x4000);
 
-    destination = (s32 **)(*(s32 *)((u32)&gBattleFxWork) + 0x7828);
+    /* FAKEMATCH: retain the existing scalar address of the effect-pointer
+       cell; the direct typed store moves the mode read ahead of its address. */
+    destination = (s32)&(*(struct BattleEffectWork **)gBattleFxWork)->effect;
     index = state[0];
-    *destination = state;
+    *(struct BattleEffectArgument **)destination = (struct BattleEffectArgument *)state;
     if (index == 0)
         state[6] = 0;
     else
@@ -143,14 +142,14 @@ void BattleFx_BuildWindowEdgeTable(void)
     }
 }
 
-void BattleFx_SelectLivingTargets(struct BattleEffectTargetArgument *argument)
+void BattleFx_SelectLivingTargets(struct BattleEffectArgument *argument)
 {
     s16 targets[14];
     s32 count;
     s32 i;
 
     count = 0;
-    if (argument->unit_id > 127) {
+    if (argument->actors[0] > 127) {
         for (i = 0; i != 6; i++) {
             s32 unit = i + 128;
 

@@ -4,9 +4,6 @@
 typedef void (*InterruptHandler)(void);
 extern InterruptHandler Data_030000e0[];
 
-s32 SaveState_ReadSlotAndCheckChecksum(s32 index);
-s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count);
-
 /* Allocates the save workspace, waits for the flash chip to identify itself
    (eight tries, a frame apart; returns 1 if it never does), then reads all
    sixteen slots: a slot with the signature, a record id below sixteen and a

@@ -20,7 +20,6 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *actions);
 void BattleQueue_SortByPriority(struct BattleActionRecord *actions, s32 count);
 void Camera_InitDefaultTransform(void);
 
-extern u8 gCameraWork[];
 extern u8 gKeysHeld[];
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
@@ -214,7 +213,7 @@ next_second:
 /* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-    void **slot = (void **)gCameraWork;
+    void **slot = (void **)&gCameraWork;
     struct BattleCamera *cam = slot[0];
     struct BattlePresentationTransition *trans = slot[32];
     volatile u32 *keys = (volatile u32 *)gKeysHeld;

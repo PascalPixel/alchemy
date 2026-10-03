@@ -3,7 +3,6 @@
 #include "SCENE.H"
 #include "BATTLE_PRESENTATION.H"
 
-extern u8 gCameraWork[];
 extern u8 gProjection[];
 
 void Camera_StoreSceneParameters(s32, u32, s32);
@@ -20,7 +19,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 {
     s32 span = 0x01fe0000;
     s32 mode;
-    struct BattleCamera *scene = *(struct BattleCamera **)gCameraWork;
+    struct BattleCamera *scene = gCameraWork;
     s32 *pos = scene->pos;
     s32 *hud = (s32 *)gProjection;
     s32 scale = __divsi3(mode << 16, 100);

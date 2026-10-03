@@ -2,26 +2,15 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "SYSTEM.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "MAP_SCROLL.H"
+#include "FXBLEND.H"
 
 s32 GameFlag_TestFar(s32);
 void Audio_PlayCue(s32);
 void BattleFx_ApplyColorToTargetBuffer(void *buffer, s32 mode);
 
-struct FlashTarget {
-    u8 unknown_0000[0x1880];
-    u8 palette[0x1181];
-    u8 step;
-    u8 phase;
-};
-
-struct FlashWork {
-    u8 buffers[0x1f80];
-    s16 timer;
-    s16 enabled;
-    s16 loud;
-};
-
-extern u8 *Data_03001ec8[];
+extern void *Data_03001ec8[];
 
 /* One ground particle: its sprite entry, its place on the map in 16.16
    fixed point and the frames it has left. */
@@ -55,11 +44,8 @@ struct GroundParticleWork {
     s32 unknown_408[2];
 };
 
-struct FieldView {
-    s32 *leader;
-    u8 unknown_04[0xe4 - 4];
-    s32 camera[2];
-};
+LAYOUT_SIZE_GUARD(GroundParticle_Size, struct GroundParticle, 0x20);
+LAYOUT_SIZE_GUARD(GroundParticleWork_Size, struct GroundParticleWork, 0x410);
 
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
@@ -78,9 +64,9 @@ extern s16 FieldFx_GroundParticleFrames[];
    around the leader. Flag 0x166 holds every particle on its frame. */
 void Unnamed_08094820(void)
 {
-    struct FieldView *view = gMapWork[0];
+    struct MapScrollWork *view = gMapWork[0];
     struct GroundParticleWork *work = gMapWork[21];
-    s32 *camera = view->camera;
+    s32 *camera = &view->view_x;
     s32 camera_x = camera[0];
     s32 camera_z = camera[1];
     struct GroundParticle *particle = work->particles;
@@ -109,7 +95,7 @@ void Unnamed_08094820(void)
             Runtime_PushSlotEntry(particle, 240);
         }
         if (particle->timer == 0) {
-            s32 *leader = view->leader;
+            s32 *leader = view->origin;
 
             x = leader[0] + (Random16() << 8) - 0x800000;
             y = leader[2] + (Random16() << 8) - 0x800000;
@@ -125,8 +111,8 @@ void Unnamed_08094820(void)
    plays the thunder cue, then flashes the target buffer for two steps. */
 void BattleFx_UpdateStormFlash(void)
 {
-    struct FlashWork *work = (struct FlashWork *)Data_03001ec8[0];
-    struct FlashTarget *target = (struct FlashTarget *)Data_03001ec8[2];
+    struct FieldBlendWork *work = Data_03001ec8[0];
+    struct BattleEffectBuffers *target = Data_03001ec8[2];
     s16 *timer = &work->timer;
 
     if (*timer < 0)
@@ -147,16 +133,16 @@ void BattleFx_UpdateStormFlash(void)
     case 5:
     case 10:
         BattleFx_ApplyColorToTargetBuffer(work, 1);
-        Dma_Set(work->buffers + 0x1500, target->palette, 0x840002a0, (volatile u32 *)0x040000d4);
-        target->step = 12;
-        target->phase = 0;
+        Dma_Set(work->delta, target->delta, 0x840002a0, (volatile u32 *)0x040000d4);
+        target->duration = 12;
+        target->step = 0;
         break;
     case 1:
     case 6:
     case 11:
-        BattleFx_ApplyColorToTargetBuffer(work->buffers + 0xa80, 1);
-        target->step = 1;
-        target->phase = 0;
+        BattleFx_ApplyColorToTargetBuffer(work->to, 1);
+        target->duration = 1;
+        target->step = 0;
         break;
     }
 }
@@ -180,7 +166,7 @@ void Unnamed_08094ac8(void)
        the blend writes are a block that runs once, which keeps the callback's
        arguments behind them. */
     work = Runtime_AllocateBlock(29, sizeof(struct GroundParticleWork));
-    leader = ((struct FieldView *)gMapWork[0])->leader;
+    leader = ((struct MapScrollWork *)gMapWork[0])->origin;
     BattleFx_SetQueuedSoundAndPlay(170);
     words = 0;
     particle = work->particles;

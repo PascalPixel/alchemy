@@ -30,54 +30,12 @@ extern volatile u32 gKeysHeld;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
-struct MenuEntryIcon {
-    u8 unknown_00[5];
-    u8 state;                    /* 0x05 */
-    u8 unknown_06[6];
-    u16 field_0c;                /* 0x0c */
-    u8 unknown_0e;
-    u8 field_0f;                 /* 0x0f */
-};
-
-struct PsynergyListWork {
-    u8 unknown_000[8];
-    s32 field_008;                            /* 0x008 */
-    u8 unknown_00c[8];
-    struct MenuEntryIcon *pane_icon[2];       /* 0x014 */
-    s8 tab_index[2];                          /* 0x01c */
-    u8 unknown_01e[6];
-    s32 field_024;                            /* 0x024 */
-    u8 unknown_028[0x0c];
-    s32 list_window;                          /* 0x034 */
-    u8 unknown_038[0x0c];
-    struct MenuEntryIcon *entry_grid_cursor;  /* 0x044 */
-    struct MenuEntryIcon *entry_icons[32];    /* 0x048 */
-    u8 unknown_0c8[0x4c];
-    s32 tab_objects[4];                       /* 0x114 */
-    u8 unknown_124[0x20];
-    u16 tab_colors[4];                        /* 0x144 */
-    u8 unknown_14c[0x28];
-    u16 pane_row[2];                          /* 0x174 */
-    u16 pane_action[2];                       /* 0x178 */
-    u8 unknown_17c[0x4c];
-    u16 psynergies[32];                       /* 0x1c8 */
-    u16 owner_table[8];                       /* 0x208 */
-    u8 psynergy_count;                        /* 0x218 */
-    u8 owner_count;                           /* 0x219 */
-    u8 owner_ids[2];                          /* 0x21a */
-    struct MenuEntryIcon *cursor_icon;        /* 0x21c */
-    u16 flags;                                /* 0x220 */
-    u8 unknown_222[0x3e];
-    s8 selected_index_by_owner[8];            /* 0x260 */
-    u8 mode;                                  /* 0x268 */
-};
-
 void AnimationObjects_SelectAnimationFar(s32 object, s32 mode);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 s32 GameFlag_TestFar(s32 message);
 void UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
-void UiIcon_PrepareObject(struct MenuEntryIcon *icon);
+void UiIcon_PrepareObject(struct PsynergyMenuIcon *icon);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
@@ -183,24 +141,9 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
  *   Select     hold to show the shortcut prompt; Select + L / R assigns the
  *              highlighted action to shortcut slot 0 / 1
  *
- * gMenuWork is the polymorphic menu-runtime cell (compare item_menu.h
- * and psynergy_menu.h).  Field names shared with PsynergyMenuState keep that
- * header's spellings (entry_grid_cursor 0x044, entry_icons 0x048, psynergies
- * 0x1c8, psynergy_count 0x218, owner_ids 0x21a, selected_index_by_owner
- * 0x260).  A local view is used instead of that header for two reasons: this
- * owner touches ranges the header does not describe (a per-pane icon table at
- * 0x014, per-pane tab indices at 0x01c, the owner tab objects at 0x114, the
- * tab colour words at 0x144, the per-pane selection pair at 0x174/0x178 and
- * the encoded owner table at 0x208), and it reads 0x21c as a word pointer and
- * 0x220 as a u16 flags word, both of which fall inside that header's
- * owner_ids[8].  080a5cc0.c witnesses the same 0x21c/0x220 split and uses a
- * local view for the same reason; resolving owner_ids[8] belongs to the
- * shared header, not to this owner.
- *
- * Uncertain: the element counts of pane_icon/tab_index/pane_row/pane_action
- * are inferred from the 0x14/0x1c and 0x174/0x178 spacing (two panes); only
- * pane 0 is witnessed at a call site.  The role of field_008, field_024 and
- * the 20-byte buffer handed to PsynergyMenu_DrawDetailPage is unresolved.
+ * The shared Psynergy menu record holds both panes, the owner tabs and
+ * the remembered selection for each party member. The detail-page scratch
+ * buffer remains private to this caller.
  *
  * PsynergyMenu_DrawDetailPage returns a value its caller discards: its epilogue returns
  * through r1, and the call sets r0 last.
@@ -213,9 +156,9 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
  */
 s32 PsynergyMenu_RunList(s32 pane)
 {
-    struct PsynergyListWork *menu;
+    struct PsynergyMenuState *menu;
     struct BattleAction *ability;
-    struct MenuEntryIcon *icon;
+    struct PsynergyMenuIcon *icon;
     s32 window;
     s32 changed;
     s32 nav;
@@ -231,7 +174,7 @@ s32 PsynergyMenu_RunList(s32 pane)
     s32 work[5];
     struct MenuResult state;
 
-    menu = ((struct PsynergyListWork *)gMenuWork);
+    menu = ((struct PsynergyMenuState *)gMenuWork);
     result = 0;
     prev = 0;
     prompt = 0;
@@ -280,8 +223,8 @@ s32 PsynergyMenu_RunList(s32 pane)
                 if (menu->psynergies[state.selected_index] != 0) {
                     icon = menu->entry_icons[state.selected_index];
                     icon->state = 9;
-                    icon->field_0c = 0;
-                    icon->field_0f = 250;
+                    icon->unknown_0c = 0;
+                    icon->sentinel = 250;
                 }
                 for (i = 0; i < menu->owner_count; i++) {
                     Object_InitializeMode(menu->tab_objects[i], 1);
@@ -390,7 +333,7 @@ s32 PsynergyMenu_RunList(s32 pane)
                         tab = tab - 1;
                     }
                     tab = (tab + menu->owner_count) % menu->owner_count;
-                    menu->field_008 = menu->owner_table[tab];
+                    menu->selected_owner = menu->owner_table[tab];
                     menu->owner_ids[0] = menu->owner_table[tab];
                     menu->psynergy_count = PsynergyMenu_CollectActions(
                         Owner_GetStateFar(menu->owner_ids[0]),
@@ -398,10 +341,10 @@ s32 PsynergyMenu_RunList(s32 pane)
                 } while (menu->psynergy_count == 0);
                 menu->tab_index[pane] = tab;
                 for (i = 0; i < 4; i++) {
-                    menu->tab_colors[i] = 30;
+                    menu->row_positions[i] = 30;
                 }
-                menu->tab_colors[tab] = 26;
-                Menu_DrawOwnerStatusPanel(menu->field_024, menu->owner_table[tab], 0, 0);
+                menu->row_positions[tab] = 26;
+                Menu_DrawOwnerStatusPanel(menu->status_window, menu->owner_table[tab], 0, 0);
                 PsynergyMenu_CallIconRoutineWithValue(
                     menu, menu->owner_table[tab]);
                 break;

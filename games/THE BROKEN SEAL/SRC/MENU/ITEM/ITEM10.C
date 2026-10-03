@@ -1,4 +1,5 @@
 #include "EDITION.H"
+#include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -18,7 +19,6 @@ extern u8 MsgSwitchCharacterHelp;
 #define KEY_B 2
 #define KEY_R 0x100
 #define KEY_L 0x200
-struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 GameFlag_TestFar(s32 flag);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void ItemMenu_PosCategory(void);
@@ -26,14 +26,11 @@ void Menu_UpdateEntryObjectTransforms(void);
 s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
-void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode);
-void ItemMenu_DrawIcons(u16 *items, s32 style);
 s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state);
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
-void ItemMenu_HideAllIcons(void);
 
 /* The status screen's item page: browse the current character's items, switch
    characters with L and R, and return 1 for A or -1 for B. */

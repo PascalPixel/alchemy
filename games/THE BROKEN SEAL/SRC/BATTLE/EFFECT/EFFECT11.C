@@ -14,16 +14,6 @@ extern s16 BattleFx_TargetRangeByMode[];
 
 u16 ArcTan2(s32 deltaZ, s32 deltaX);
 
-struct BattleTargetObject {
-    u8 reserved_00[6];
-    u16 facing;
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 reserved_14[69];
-    u8 flags;
-};
-
 s32 BattleFx_MapKeyThroughTable(s32 battleMode);
 
 s32 BattleFx_StartRandomParticleEmitter(s32, s32);
@@ -128,8 +118,8 @@ done:
 
 s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 {
-    struct BattleTargetObject *source;
-    struct BattleTargetObject *candidate;
+    struct ObjectRuntime *source;
+    struct ObjectRuntime *candidate;
     s32 bestId;
     s32 bestDistance;
     s32 sourceFacing;
@@ -144,17 +134,17 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 
     bestId = -1;
     bestDistance = BattleFx_MapKeyThroughTable(battleMode);
-    source = (struct BattleTargetObject *)ObjectTable_Get(sourceId);
+    source = (struct ObjectRuntime *)ObjectTable_Get(sourceId);
     if (source == 0)
         return bestId;
 
-    sourceFacing = (source->facing + 0x2000) & 0xc000;
+    sourceFacing = (source->angle + 0x2000) & 0xc000;
     for (candidateId = 0; candidateId <= 66; candidateId++) {
         if (candidateId == sourceId)
             continue;
 
-        candidate = (struct BattleTargetObject *)ObjectTable_Get(candidateId);
-        if (candidate == 0 || (candidate->flags & 8) != 0)
+        candidate = (struct ObjectRuntime *)ObjectTable_Get(candidateId);
+        if (candidate == 0 || (candidate->unknown_59 & 8) != 0)
             continue;
 
         verticalRange = 0x80000;
@@ -186,7 +176,7 @@ s32 BattleEffect_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
         cellZ = deltaZ >> 16;
 
         distance = Iwram_Sqrt(deltaX * deltaX + cellZ * cellZ);
-        if ((candidate->flags & 0x10) != 0)
+        if ((candidate->unknown_59 & 0x10) != 0)
             distance = distance * 2 / 3;
         if (distance >= bestDistance)
             continue;

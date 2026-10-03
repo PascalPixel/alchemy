@@ -1,7 +1,6 @@
 #include "PSYNERGY_MENU.H"
 #include "GLOBAL_CELLS.H"
 #include "UI.H"
-extern u8 Data_03001f2c[];
 
 s32 UiMenu_CreateCursor(void *menu);
 s32 PsynergyMenu_InitializeEntryObjects(s32, s32, s32, s32, s32);
@@ -19,7 +18,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     s32 y;
     struct PsynergyMenuIcon **output;
 
-    menu = *(struct PsynergyMenuState **)((u32)&Data_03001f2c);
+    menu = gMenuWork;
     window = UiMenu_CreateCursor(menu);
     PsynergyMenu_InitializeEntryObjects(window, 2, 2, 8, 0);
 
@@ -63,7 +62,7 @@ void PsynergyMenu_CloseWindows(void)
 {
     struct PsynergyMenuState *menu;
 
-    menu = *(struct PsynergyMenuState **)((u32)&Data_03001f2c);
+    menu = gMenuWork;
     Menu_ReleaseEntryObjects();
     UiWork_FinalizeFar(menu->auxiliary_window, 1);
     UiWork_FinalizeFar(menu->psynergy_window, 1);
@@ -80,7 +79,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
     s32 psynergy_id;
 
     icons =
-        (*(struct PsynergyMenuState **)((u32)&Data_03001f2c))->entry_icons;
+        gMenuWork->entry_icons;
     p = psynergies;
     remaining = 31;
     do {

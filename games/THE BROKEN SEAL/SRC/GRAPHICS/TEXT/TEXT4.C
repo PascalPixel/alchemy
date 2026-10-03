@@ -1,8 +1,10 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
 #include "SYSTEM.H"
+#include "GAME_STATE.H"
 
 extern u8 Data_03001e8c[];
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -20,18 +22,14 @@ struct MessageWindowWork {
     u8 pending;
 };
 
-extern struct MessageWindowWork *gWindowWork;
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags);
-struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 UiText_QueueRenderEntries(struct RenderInput *window, s32 entry, s32 x, s32 y, const u16 *colours, s32 flags);
-void UiWork_Finalize(struct RenderInput *window, s32 release);
 struct Work;
 s32 UiText_GetResourceDimensions(s32 no, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 s32 Object_GetScreenPositionFar(s32 object, s32 *out);
 s32 UiWork_IsComplete(void);
-s32 UiWork_IsIdle(struct Work *work);
-extern s32 gGameState[];
+s32 UiWork_IsIdle(void *work);
 struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 packed);
 
 void UiWork_ProcessRenderChannels(void);
@@ -42,7 +40,7 @@ void UiWork_SetBusyFlags(s32 flags)
 {
     void *work;
 
-    work = *(void **)((u32)&Data_03001e8c);
+    work = gWindowWork[0];
     if (work != NULL) {
         if (flags & 1) {
             FIELD_AT_OFFSET(work, s8 *, RENDER_BUSY_OFS + 1) = 1;
@@ -65,10 +63,10 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 pack
     u16 bounds[4];
     s32 flags;
     u16 *out;
-    struct RenderInput *window;
+    struct UiWindow *window;
     struct MessageWindowWork *work;
 
-    work = gWindowWork;
+    work = (struct MessageWindowWork *)gWindowWork[0];
     work->cursor = (packed << 4) >> 20;
     /* FAKEMATCH: retain the null window as the scroll and layout zero. */
     window = NULL;
@@ -92,13 +90,13 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 pack
     window = UiWindow_Create(x, y, width, height, flags);
     if (window == NULL)
         return NULL;
-    if (UiText_QueueRenderEntries(window, entry, 0, 0, out, 0) == 0) {
+    if (UiText_QueueRenderEntries((struct RenderInput *)window, entry, 0, 0, out, 0) == 0) {
         UiWork_Finalize(window, 1);
         return NULL;
     }
     work->busy = 0;
     work->pending = 0;
-    return window;
+    return (struct RenderInput *)window;
 }
 
 /* Shows message no in a window centred across the screen and waits until it
@@ -111,14 +109,14 @@ struct RenderInput *UiText_OpenMessageWindow(s32 message, s32 x, s32 y, u32 pack
  * result words and waiting three frames. */
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
+    u8 *base = gWindowWork[0];
     s32 release;
     s32 pos[2] = {0, 0};
     s32 height;
     s32 width;
     s32 y;
     s32 x;
-    struct Work *work = NULL;
+    struct UiWindow *work = NULL;
     s32 zero;
 
     y = x = 0;
@@ -146,7 +144,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
     {
         s32 dy;
 
-        Object_GetScreenPositionFar(gGameState[125], pos);
+        Object_GetScreenPositionFar(gGameState.selected_actor, pos);
         dy = pos[1] >> 3;
         if (dy > 9)
         {
@@ -158,7 +156,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
         }
     }
 
-    work = (struct Work *)UiText_OpenMessageWindow(no, x, y, release);
+    work = (struct UiWindow *)UiText_OpenMessageWindow(no, x, y, release);
 
     if (work != NULL)
     {
@@ -169,7 +167,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 
         if (flags & 0x20)
         {
-            *(u8 *)(*(u8 **)((u32)&Data_03001e8c) + RENDER_MENU_BUSY_OFS) = 1;
+            ((struct UiRenderWork *)gWindowWork[0])->menu_busy = 1;
         }
 
         if (!(flags & 4))

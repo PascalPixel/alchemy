@@ -64,6 +64,8 @@ struct InventoryMenuState {
     u8 unknown_25e[2];
     s8 selected_index_by_owner[8];
     u8 mode;
+    u8 unknown_269[0x129];
+    s16 resource_slots[2];
 };
 
 LAYOUT_OFFSET_GUARD(InventoryMenuIcon_State, struct InventoryMenuIcon, state, 5);
@@ -97,10 +99,20 @@ LAYOUT_OFFSET_GUARD(InventoryMenuState_MessageOffset, struct InventoryMenuState,
 LAYOUT_OFFSET_GUARD(InventoryMenuState_EquipPreview, struct InventoryMenuState, equip_preview, 0x25c);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_SelectedIndex, struct InventoryMenuState, selected_index_by_owner, 0x260);
 LAYOUT_OFFSET_GUARD(InventoryMenuState_Mode, struct InventoryMenuState, mode, 0x268);
-LAYOUT_SIZE_GUARD(InventoryMenuState_Size, struct InventoryMenuState, 0x26c);
+LAYOUT_OFFSET_GUARD(InventoryMenuState_ResourceSlots, struct InventoryMenuState, resource_slots, 0x392);
+LAYOUT_SIZE_GUARD(InventoryMenuState_Size, struct InventoryMenuState, 0x398);
 
 extern struct InventoryMenuState *gMenuWork;
 extern char MsgItemMenuEmpty;
+
+enum ItemMenuCommand {
+    ITEM_COMMAND_USE,
+    ITEM_COMMAND_EQUIP,
+    ITEM_COMMAND_INSPECT,
+    ITEM_COMMAND_GIVE,
+    ITEM_COMMAND_REMOVE,
+    ITEM_COMMAND_DROP
+};
 
 s32 ItemMenu_IsSpecial(s32 item);
 void ItemMenu_OpenCategory(s32 owner);
@@ -120,12 +132,12 @@ s32 ItemMenu_Use(void);
 void ItemMenu_HideAllIcons(void);
 void ItemMenu_HidePageIcons(void);
 void ItemMenu_Close(void);
-void ItemMenu_Init(void);
+void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns);
 s32 ItemMenu_PrepOwner(s32 party_slot);
 s32 ItemMenu_CmdCursorX(s32 column, s32 row);
 s32 ItemMenu_CmdCursorY(s32 column, s32 row);
 void ItemMenu_BuildCmd(s8 *command_states);
-void ItemMenu_DrawCmd(void *command_states, s32 window);
+void ItemMenu_DrawCmd(const s8 *command_states, s32 window);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_OpenDetail(s32 item_index);
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
@@ -136,11 +148,23 @@ void ItemMenu_SetMsgWin6(void);
 void ItemMenu_SetMsgWin7(void);
 void ItemMenu_SetMsgWin3(void);
 void ItemMenu_DrawItemHead(void);
+s32 ItemMenu_RunCommands(s32 *owner, s32 *target, s32 *item);
+s32 ItemMenu_SelectTarget(s32 mode);
+void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target);
+s32 Item_ClassifyUseMode(s32 owner, s32 item);
+s32 Menu_SelectQuantity(s32 item);
+void ItemMenu_DrawItemDetails(s32 window, s32 item);
+s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single);
+s32 ItemMenu_ConfirmDrop(s32 item);
+s32 Unnamed_080a5388(s32 unused);
+s32 ItemMenu_RunList(s32 pane);
+s32 ItemMenu_SelectItem(void);
+void Resource_LoadPairedBlocks(void);
 s32 Item_Use(s32 slot, s32 owner, s32 target);
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index);
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state);
 s32 InventoryMenu_ItemNamePageReturnTrue(void);
 void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
-void Resource_LoadByModeIntoSlotFar(s32 style, u16 item, u8 target, s32 flags);
+s32 Resource_LoadByModeIntoSlotFar(s32 style, s32 item, s32 target, s32 flags);
 
 #endif

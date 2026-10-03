@@ -1,5 +1,5 @@
 #include "INVENTORY_MENU.H"
-#include "OWNER_STATE.H"
+#include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
 #include "ITEM.H"
 #include "IWRAM_CALL.H"
@@ -87,14 +87,14 @@ void InventoryMenu_NoOp(void)
 }
 
 /* Temporarily equip the selected item on the target, draw its status, then
-   restore the complete 0x14c-byte owner record. */
+   restore the complete BATTLE_UNIT_SIZE-byte owner record. */
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
 {
     struct InventoryMenuState *menu = gMenuWork;
     register s32 style asm("sl") = 0; /* FAKEMATCH: the ROM allocates owner (r8) before style (sl); style's 19 references over 246 insns outrank owner's 4 over 28 */
     struct BattleUnit *state = Owner_GetStateFar(owner);
     s32 item = state->inventory[slot];
-    void *saved;
+    struct BattleUnit *saved;
     s32 equipped;
 
     if (mode == 1)
@@ -118,7 +118,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
             s32 size;
 
             state = Owner_GetStateFar(target);
-            size = 0x14c;
+            size = BATTLE_UNIT_SIZE;
             saved = Runtime_BumpAllocate(size);
             Iwram_CopyWords(saved, state, size);
             equipped = Inventory_RemoveFirstUnflagged(target);
@@ -146,7 +146,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
             s32 size;
 
             state = Owner_GetStateFar(target);
-            size = 0x14c;
+            size = BATTLE_UNIT_SIZE;
             saved = Runtime_BumpAllocate(size);
             Iwram_CopyWords(saved, state, size);
             equipped = Inventory_RemoveFirstUnflagged(target);

@@ -6,6 +6,7 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
 #include "RAM_BUFFER.H"
 
 extern u8 Data_03001ac4[];
@@ -19,22 +20,6 @@ extern const u8 System_BasicColorPalette[];
 
 /* The window frame colours of background bank 15. */
 extern const u16 Ui_WindowPalette[];
-extern u8 gWorkSlot[];
-
-/* The first two slots are heap cursors; the others cache allocated blocks. */
-union HeapState {
-    struct {
-        void *next_ewram;
-        void *next_iwram;
-        void *blocks[62];
-    } heap;
-    void *slots[64];
-};
-
-LAYOUT_SIZE_GUARD(HeapState_Size, union HeapState, 0x100);
-LAYOUT_OFFSET_GUARD(HeapState_Iwram, union HeapState, heap.next_iwram, 4);
-LAYOUT_OFFSET_GUARD(HeapState_Blocks, union HeapState, heap.blocks, 8);
-
 extern u8 Data_03007800[];
 
 void Runtime_WriteDebugTextTiles(const u8 *src)

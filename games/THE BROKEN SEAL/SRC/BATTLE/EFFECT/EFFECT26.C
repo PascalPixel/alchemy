@@ -1,5 +1,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 #include "MAP_SCROLL.H"
 
 /* One entry of a scene's region table, which ends at id -1. */
@@ -16,25 +17,8 @@ struct SceneRegionEntry {
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 
-struct FieldObject {
-    u8 reserved_00[8];
-    s32 x;
-    u8 reserved_0c[4];
-    s32 z;
-    u8 reserved_14[0x3c];
-    u8 *sprite;
-    u8 removed;
-};
-
-struct ObjectTableWork {
-    u8 reserved_000[0x34];
-    struct FieldObject *objects[58];
-    u8 reserved_11c[0xc4];
-    struct FieldObject *anchor;
-};
-
-extern struct ObjectTableWork *gEventWork;
-void Object_Destroy(struct FieldObject *object);
+extern struct EventWork *gEventWork;
+void Object_Destroy(struct FieldActor *object);
 
 struct EffectSprite {
     u8 unknown_00[29];
@@ -98,49 +82,49 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry)
  * removed, bit 0 of its sprite's byte 29 is cleared, and its slot emptied. */
 void BattleEffect_ClearOutOfBoundsObjects(void)
 {
-    struct ObjectTableWork *work = gEventWork;
-    struct FieldObject *anchor;
+    struct EventWork *work = gEventWork;
+    struct FieldActor *anchor;
     s32 x;
     s32 z;
     s32 left;
     s32 right;
     s32 top;
     s32 bottom;
-    struct FieldObject **slot;
+    struct FieldActor **slot;
     s32 mask;
     s32 i;
 
-    anchor = work->anchor;
-    x = anchor->x;
+    anchor = work->view_center;
+    x = anchor->x.fixed;
     left = x - 0xa00000;
     right = x + 0xa00000;
-    z = anchor->z;
+    z = anchor->z.fixed;
     top = z - 0xc80000;
     bottom = z + 0x640000;
-    slot = work->objects;
+    slot = work->placed_actors;
     mask = ~1;
 
     for (i = 57; i >= 0; i--) {
-        struct FieldObject *object = *slot;
+        struct FieldActor *object = *slot;
 
         if (object != NULL) {
-            s32 object_x = object->x;
-            s32 object_z = object->z;
+            s32 object_x = object->x.fixed;
+            s32 object_z = object->z.fixed;
 
             if (object_x != 0 || object_z != 0) {
                 if (object_x < left || object_x > right ||
                     object_z < top || object_z > bottom) {
                     u8 *sprite;
-                    u8 *removed = &object->removed;
+                    u8 *removed = &object->active;
                     u32 flags;
 
                     *removed = 1;
-                    sprite = object->sprite;
+                    sprite = (u8 *)object->sprite;
                     flags = sprite[29];
                     sprite[29] = flags & mask;
                     Object_Destroy(object);
                     sprite = NULL;
-                    *slot = (struct FieldObject *)sprite;
+                    *slot = (struct FieldActor *)sprite;
                 }
             }
         }

@@ -9,24 +9,15 @@
 #include "INVENTORY_MENU.H"
 #include "TBS_EDITION.H"
 #include "BATTLE_TYPES.H"
+#include "BATTLE_RUNTIME.H"
 #include "MENU_RESULT.H"
 
-struct MenuResourceWork {
-    u8 padding[0x392];
-    s16 cache_slots[2];
-};
-
-LAYOUT_OFFSET_GUARD(
-    MenuResourceWork_CacheSlots, struct MenuResourceWork, cache_slots, 0x392);
-LAYOUT_SIZE_GUARD(MenuResourceWork_Size, struct MenuResourceWork, 0x398);
 extern u8 Data_080aebcc[];
 extern u8 Data_080aeb4c[];
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached(s32, s32, const u8 *);
 
 /* menu/item_menu/page_result.c */
-s32 Owner_GetStateFar(s32);
-s32 ItemMenu_Count(s32 owner);
 
 extern u8 MsgItemPlainName;
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
@@ -60,26 +51,22 @@ void Audio_PlayCue(s32 cue);
 #define KEY_L 0x200
 extern u32 gFrameCount;
 extern u8 MsgChangeCharacterHelp;
-void ItemMenu_DrawIcons(u16 *items, s32 style);
 
 /* Takes a fourth argument; this caller passes the owner there as well. */
-s32 ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 arg3);
-s32 ItemMenu_PageResult(struct MenuResult *result, s32 pane);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 #define ITEM_ID_MASK 0x1ff
 #define LIST_PAGE_SIZE 5
-s32 ItemMenu_DrawNamePage( s32 window, s32 unused, const struct MenuResult *state);
 s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1, struct MenuResult *state);
 
 void Resource_LoadPairedBlocks(void)
 {
-    struct MenuResourceWork *state = (struct MenuResourceWork *)gMenuWork;
+    struct InventoryMenuState *state = gMenuWork;
     s32 value = Resource_FindFreeEntry();
 
-    state->cache_slots[0] = value;
+    state->resource_slots[0] = value;
     VramBlock_LoadCached(value, 128, Data_080aebcc);
     value = Resource_FindFreeEntry();
-    state->cache_slots[1] = value;
+    state->resource_slots[1] = value;
     VramBlock_LoadCached(value, 128, Data_080aeb4c);
 }
 
@@ -94,7 +81,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
     s32 value;
 
     limit = ItemMenu_Count(menu->pane_owner[index]);
-    encoded = Owner_GetStateFar(menu->pane_owner[index]);
+    encoded = (s32)Owner_GetStateFar(menu->pane_owner[index]);
     value = menu->selected_index_by_owner[menu->pane_owner[index]];
     if ((s32)(value + 1) > limit) {
         value = limit - 1;
@@ -257,7 +244,7 @@ s32 ItemMenu_RunList(s32 pane)
     done = 0;
 
     while (done == 0 && GameFlag_IsSet(0x150) == 0) {
-        owner = (struct BattleUnit *)Owner_GetStateFar(menu->pane_owner[pane]);
+        owner = Owner_GetStateFar(menu->pane_owner[pane]);
         menu->item_count = (u8)ItemMenu_Collect(owner, menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->selected_item_icon->state = 13;
@@ -355,7 +342,7 @@ s32 ItemMenu_RunList(s32 pane)
                         menu->pane_owner[pane] = menu->owner_ids[tab];
                         menu->pane_index[pane] = tab;
                         menu->item_count = (u8)ItemMenu_Collect(
-                            (struct BattleUnit *)Owner_GetStateFar(menu->pane_owner[pane]), menu->items, 0);
+                            Owner_GetStateFar(menu->pane_owner[pane]), menu->items, 0);
                     } while (menu->item_count == 0);
                     for (i = 0; i <= 3; i++) {
                         menu->owner_y[i] = 30;

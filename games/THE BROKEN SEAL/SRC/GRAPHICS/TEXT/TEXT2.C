@@ -2,7 +2,7 @@
 #include "TBS_EDITION.H"
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
-#include "MENU_LIST.H"
+#include "WINDOW.H"
 
 struct CenteredTextWork {
     u8 unknown_000[RENDER_ENTRY_TBL_OFS];

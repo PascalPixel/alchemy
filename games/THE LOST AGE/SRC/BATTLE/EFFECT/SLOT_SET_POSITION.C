@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 
 void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z)
 {

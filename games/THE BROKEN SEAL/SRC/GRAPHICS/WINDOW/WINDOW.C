@@ -3,7 +3,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
-#include "MENU_LIST.H"
+#include "WINDOW.H"
 
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width);
@@ -13,6 +13,7 @@ typedef s32 (*UiFillFn)(void *dst, s32 size, u32 value);
 void UiWork_ResetCounters();
 
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
+void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *work);
 void RenderOutput_Release(void *node);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
@@ -25,8 +26,8 @@ void UiWork_UploadDirtyBlocks(void)
     u32 flags;
     u8 *src;
     u8 *dst;
-    if (!work[RENDER_MENU_BUSY_OFS]) {
-        flags = work[RENDER_DIRTY_OFS];
+    if (!((struct UiRenderWork *)work)->menu_busy) {
+        flags = ((struct UiRenderWork *)work)->dirty;
         if (flags) {
             dst = (u8 *)0x06002000;
             src = work;
@@ -39,7 +40,7 @@ void UiWork_UploadDirtyBlocks(void)
                 src += 256;
                 dst += 256;
             } while (flags);
-            work[RENDER_DIRTY_OFS] = flags;
+            ((struct UiRenderWork *)work)->dirty = flags;
         }
     }
 }
@@ -51,6 +52,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
     s32 tile;
     u32 bottom;
     u32 row;
+    u8 *mode;
 
     tile = 240;
     bottom = y + height;
@@ -70,10 +72,11 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 
     row = 0;
     if (row < height) {
+        mode = &((struct UiRenderWork *)base)->menu_state;
         do {
             u32 column;
 
-            if (base[RENDER_MENU_STATE_OFS] != 0) {
+            if (*mode != 0) {
                 if ((u32)(y + row) > 16)
                     tile = 0xF07F;
                 else
@@ -90,7 +93,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
             cursor += 32 - width;
         } while (row < height);
     }
-    base[RENDER_DIRTY_OFS] = 1;
+    ((struct UiRenderWork *)base)->dirty = 1;
 }
 
 void UiWork_DrawByAttributes(struct UiWindow *window)

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
 u32 BattleFx_HasReachedTarget(struct EffectSlot *);

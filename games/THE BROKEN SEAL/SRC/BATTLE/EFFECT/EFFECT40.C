@@ -4,8 +4,10 @@
  * resource entry until their scripts finish.
  */
 #include "TYPES.H"
+#include "GAME_STATE.H"
+#include "FX_SCENE.H"
 #include "OBJDISP.H"
-#include "EFFECT_0809B11C.H"
+#include "EFFECT_SLOT.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -40,26 +42,12 @@ struct BurstObject {
     u8 mode;
 };
 
-struct BurstScene {
-    s32 angle;
-    struct BurstPosition pos;
-    struct BurstObject *main_object;
-    struct BurstObject *child;
-    u8 unknown_18[8];
-    s8 use_main_object_origin;
-    u8 unknown_21[19];
-    s8 enlarge_child;
-    s8 preserve_child_motion;
-    u8 unknown_36[34];
-    struct EffectSlot slots[12];
-};
-
 void WaitFrames(s32 frames);
 void Resource_ResetEntry(s32 slot);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct BurstPosition *pos);
 void Object_SetMode(struct BurstObject *object, s32 mode);
 extern const u8 BattleFx_BurstParticleObjectScript[];
-extern struct BurstScene *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 void Object_SetPosition(struct BurstObject *object, s32 x, s32 y, s32 z);
 s32 Object_CheckMovementCollision(struct BurstObject *object, struct BurstPosition *pos);
 void Animation_ApplyChildValuesFar(struct BurstObject *object, s32 value);
@@ -106,15 +94,6 @@ struct OrbitingParticleChild {
     u8 flags;
 };
 
-struct OrbitingParticleState {
-    u8 reserved_00[20];
-    struct OrbitingParticleChild *child;
-    u8 reserved_18[8];
-    u8 active;
-    u8 reserved_21[20];
-    s8 battle_mode;
-};
-
 void BattleFx_RunOrbitingParticles(void);
 
 /* battle/effects/orbiting_particles/run.c */
@@ -134,23 +113,6 @@ struct OrbitingParticle {
     void (*update)(struct OrbitingParticle *);
 };
 
-struct OrbitingParticleScene {
-    u8 reserved_00[0x04];
-    struct OrbitingParticleVector origin;
-    u8 reserved_10[0x04];
-    struct OrbitingParticle *main_particle;
-    u8 reserved_18[0x08];
-    s8 skip_main_animation;
-    u8 reserved_21[0x13];
-    s8 skip_main_finish;
-};
-
-struct OrbitingParticleGlobals {
-    u8 reserved_000[0x1f4];
-    s32 resource_mode;
-};
-
-extern struct OrbitingParticleGlobals gGameState;
 void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle);
 void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle);
 void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle);
@@ -206,7 +168,7 @@ void RunBattleEffect04(void)
     struct BurstObject *object;
     struct BurstObject *copy;
     struct BurstObject *target;
-    struct BurstScene *scene;
+    struct BattleFxScene *scene;
     struct EffectSlot *slot;
     struct BurstResource *resource;
     s32 event;
@@ -279,16 +241,16 @@ void RunBattleEffect04(void)
         }
     }
     resource_id = resource->id;
-    if (scene->use_main_object_origin != 0) {
+    if (scene->enabled != 0) {
         target = scene->main_object;
         pos.x = target->pos.x;
         pos.y = target->pos.y + 0x100000;
         pos.z = target->pos.z;
         Vector_AddPolarOffset(0x380000, scene->angle, &pos);
     } else {
-        pos.x = scene->pos.x;
-        pos.y = scene->pos.y + 0x100000;
-        pos.z = scene->pos.z;
+        pos.x = scene->x;
+        pos.y = scene->y + 0x100000;
+        pos.z = scene->z;
     }
     Object_SetPosition(object, pos.x, pos.y, pos.z);
     ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)(BattleFx_BurstParticleObjectScript + 0x10));
@@ -308,8 +270,8 @@ wait_script:
         if (index <= 59 && object->script != NULL)
             goto wait_script;
     }
-    if (child != NULL && scene->preserve_child_motion == 0) {
-        if (scene->enlarge_child != 0)
+    if (child != NULL && scene->child_mode == 0) {
+        if (scene->child_option != 0)
             child->velocity_z = 0x80000;
         pos.x = child->pos.x;
         pos.y = child->pos.y;
@@ -416,12 +378,12 @@ void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle)
 
 void BattleFx_StartOrbitingParticles(void)
 {
-    struct OrbitingParticleState *state = gEffectWork;
+    struct BattleFxScene *state = gEffectWork;
     struct OrbitingParticleChild *child = state->child;
 
     if (child != 0) {
-        if (state->battle_mode != 0) {
-            state->active = 1;
+        if (state->child_mode != 0) {
+            state->enabled = 1;
         }
         child->flags |= 2;
         BattleFx_RunOrbitingParticles();
@@ -433,14 +395,14 @@ void BattleFx_RunOrbitingParticles(void)
     s32 resource_size;
     struct OrbitingParticleVector position;
     struct OrbitingParticleVector *p;
-    struct OrbitingParticleScene *scene;
+    struct BattleFxScene *scene;
     struct OrbitingParticle *main_particle;
     struct OrbitingParticle *particle;
     void *resource;
     s32 entry_count;
 
     scene = gEffectWork;
-    main_particle = scene->main_particle;
+    main_particle = scene->child;
     BattleEffect_InitializeSharedScene();
     Audio_PlayCue(0x73);
 
@@ -465,9 +427,9 @@ void BattleFx_RunOrbitingParticles(void)
             particle->orbit_angle = Random16();
             Animation_ApplyChildValuesFar(particle, 9);
 
-            p->x = scene->origin.x;
-            p->y = scene->origin.y;
-            p->z = scene->origin.z;
+            p->x = scene->x;
+            p->y = scene->y;
+            p->z = scene->z;
             magnitude = (Random16() << 2) + 0x20000;
             Vector_AddPolarOffset(magnitude, Random16(), p);
             particle->orbit_center.x = p->x;
@@ -483,7 +445,7 @@ void BattleFx_RunOrbitingParticles(void)
     Audio_PlayCue(0x73);
     WaitFrames(50);
 
-    if (main_particle != NULL && scene->skip_main_animation == 0) {
+    if (main_particle != NULL && scene->enabled == 0) {
         Audio_PlayCue(0xd4);
 
         entry_count = 15;
@@ -495,7 +457,7 @@ void BattleFx_RunOrbitingParticles(void)
             entry_count--;
         } while (entry_count >= 0);
 
-        if (scene->skip_main_finish == 0) {
+        if (scene->child_option == 0) {
             Audio_PlayCue(0xdc);
             Object_SetMode(main_particle, 2);
         }
@@ -505,7 +467,7 @@ void BattleFx_RunOrbitingParticles(void)
         if (resource != NULL) {
             BattleFx_RunEventAction(
                 resource,
-                gGameState.resource_mode,
+                gGameState.selected_actor,
                 resource_size);
         }
         WaitFrames(20);

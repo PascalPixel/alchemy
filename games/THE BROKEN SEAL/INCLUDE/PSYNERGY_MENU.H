@@ -8,7 +8,7 @@ struct OwnerActionState;
 
 /*
  * The menu-runtime cell is polymorphic.  This view belongs to the
- * Psynergy menu; keep it separate from ItemMenuState even where the two
+ * Psynergy menu; keep it separate from InventoryMenuState even where the two
  * modes deliberately share field offsets.
  */
 struct PsynergyMenuIcon {
@@ -16,40 +16,54 @@ struct PsynergyMenuIcon {
     u8 state;                       /* 0x05 */
     u16 x;                          /* 0x06 */
     u16 y;                          /* 0x08 */
-    u8 unknown_0a[4];
+    u8 unknown_0a[2];
+    u16 unknown_0c;                 /* 0x0c */
     u8 render_target;               /* 0x0e */
+    u8 sentinel;                    /* 0x0f */
 };
 
 struct PsynergyMenuState {
-    u8 unknown_000[0x10];
+    u8 unknown_000[8];
+    s32 selected_owner;             /* 0x008 */
+    u8 unknown_00c[4];
     s32 auxiliary_window;           /* 0x010 */
-    u8 unknown_014[0x0c];
+    struct PsynergyMenuIcon *pane_icon[2]; /* 0x014 */
+    s8 tab_index[2];                /* 0x01c */
+    u8 tab_counts[2];               /* 0x01e */
     s32 psynergy_window;            /* 0x020 */
-    u8 unknown_024[0x20];
+    s32 status_window;              /* 0x024 */
+    s32 shortcut_window;            /* 0x028 */
+    void *info_window;              /* 0x02c */
+    u8 unknown_030[4];
+    s32 list_window;                /* 0x034 */
+    u8 unknown_038[0x0c];
     struct PsynergyMenuIcon *entry_grid_cursor; /* 0x044 */
-    struct PsynergyMenuIcon *entry_icons[32];   /* 0x048 */
+    struct PsynergyMenuIcon *entry_icons[32]; /* 0x048 */
     u8 unknown_0c8[0x44];
     s32 message_window;             /* 0x10c */
     u8 selected_column;             /* 0x110 */
     u8 selected_row;                /* 0x111 */
     u8 column_count;                /* 0x112 */
     u8 row_count;                   /* 0x113 */
-    u8 unknown_114[0x64];
-    u16 selected_psynergy;          /* 0x178 */
-    u8 unknown_17a[0x4e];
+    s32 tab_objects[8];             /* 0x114 */
+    u16 tab_x[8];                   /* 0x134 */
+    u16 row_positions[8];           /* 0x144 */
+    u8 unknown_154[0x20];
+    u16 pane_row[2];                /* 0x174 */
+    u16 pane_action[2];             /* 0x178 */
+    u8 unknown_17c[0x4c];
     u16 psynergies[32];             /* 0x1c8 */
-    u8 unknown_208[0x10];
+    u16 owner_table[8];             /* 0x208 */
     u8 psynergy_count;              /* 0x218 */
-    u8 unknown_219;
-    u8 owner_ids[8];                /* 0x21a */
-    u8 unknown_222[0x3e];
-    s8 selected_index_by_owner[8];  /* 0x260 */
-};
-
-/* The shared cell is likewise mode-owned while the Psynergy menu is active. */
-struct PsynergyMenuGlobalState {
-    u8 unknown_000[0x220];
-    u16 psynergy_shortcuts[2];      /* 0x220 */
+    u8 owner_count;                 /* 0x219 */
+    u8 owner_ids[2];                /* 0x21a */
+    struct PsynergyMenuIcon *cursor_icon; /* 0x21c */
+    u16 flags;                     /* 0x220 */
+    u8 unknown_222[0x1a];
+    s16 slot_y[4];                 /* 0x23c */
+    u8 unknown_244[0x1c];
+    s8 selected_index_by_owner[8]; /* 0x260 */
+    u8 mode;                      /* 0x268 */
 };
 
 LAYOUT_OFFSET_GUARD(
@@ -110,7 +124,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     PsynergyMenuState_SelectedPsynergy,
     struct PsynergyMenuState,
-    selected_psynergy,
+    pane_action[0],
     0x178);
 LAYOUT_OFFSET_GUARD(
     PsynergyMenuState_Psynergies,
@@ -132,19 +146,14 @@ LAYOUT_OFFSET_GUARD(
     struct PsynergyMenuState,
     selected_index_by_owner,
     0x260);
-LAYOUT_OFFSET_GUARD(
-    PsynergyMenuGlobalState_PsynergyShortcuts,
-    struct PsynergyMenuGlobalState,
-    psynergy_shortcuts,
-    0x220);
 
 extern struct PsynergyMenuState *gMenuWork;
-extern struct PsynergyMenuGlobalState Data_02000240;
 extern char MsgPsynergyMenuEmpty;
 
 /* Shared icon-grid helper used by both inventory and Psynergy menu modes. */
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
+s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner);
 s32 PsynergyMenu_ReturnTrue(void);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);

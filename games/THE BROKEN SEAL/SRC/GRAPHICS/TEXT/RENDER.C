@@ -1,10 +1,10 @@
 #include "TEXT_RENDER_RUNTIME.H"
+#include "WINDOW.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 extern u8 Data_03001e8c[];
 
-extern u8 *gWindowWork;
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
 u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
@@ -14,7 +14,7 @@ s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase)
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
+    u8 *base = gWindowWork[0];
     u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
     s32 offset;
     s32 zero = 0;
@@ -42,7 +42,7 @@ void UiText_DrawCharacterAtOffset(
     u8 *base;
     u16 *counter;
 
-    base = gWindowWork;
+    base = gWindowWork[0];
     counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
     zero = 0;
     *counter = zero;
@@ -103,7 +103,7 @@ void UiText_DrawStringAtOffset(
     s32 phase;
 
     buffer = Runtime_BumpAllocateAlternatePool(0x200);
-    base = gWindowWork;
+    base = gWindowWork[0];
     output = buffer;
     if (*text != 0) {
         do {
@@ -196,7 +196,7 @@ void UiText_DrawPrefixedNumberAtOffset(
     s32 dst;
     s32 phase;
 
-    base = gWindowWork;
+    base = gWindowWork[0];
     text = UiText_FormatNumber(formatted, value, 4);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)

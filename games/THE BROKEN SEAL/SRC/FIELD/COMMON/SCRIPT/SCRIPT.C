@@ -8,6 +8,8 @@
 #include "SCRIPT_OBJECT_ENTRY.H"
 #include "IWRAM_CALL.H"
 #include "FIELDRUN.H"
+#include "EVENT_RUNTIME.H"
+#include "GAME_STATE.H"
 
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct FieldPosition *position);
@@ -218,15 +220,13 @@ typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
 extern OperandFunc Script_OperandHandlerTable[];
 
 /* field/store_assigned_key_value.c */
-extern u8 *gWork;
 s32 GameFlag_TestFar(s32);
 
-static __inline__ void StoreHalfword(u8 *address, s32 value)
+static __inline__ void StoreHalfword(s16 *address, s32 value)
 {
-    *(s16 *)address = value;
+    *address = value;
 }
 
-extern u16 gGameState[];
 extern volatile u32 gKeyState;
 
 void Script_SetOrCompareAddress(struct ScriptOperands *state, s32 operation, s32 value)
@@ -908,11 +908,11 @@ void Script_SetOrCompareByte63(struct ScriptOperands *work, s32 operation, s32 v
 s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
-    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
-    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+    const s32 *entry = (const s32 *)work->script_address + index + 1;
+    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
-        callback(work, 0, *(s32 *)(entry + 4));
+        callback(work, 0, entry[1]);
     work->cursor += 3;
     return 1;
 }
@@ -920,11 +920,11 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
-    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
-    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+    const s32 *entry = (const s32 *)work->script_address + index + 1;
+    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
-        callback(work, 1, *(s32 *)(entry + 4));
+        callback(work, 1, entry[1]);
     work->cursor += 3;
     return 1;
 }
@@ -932,11 +932,11 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
-    u8 *entry = (u8 *)(work->script_address + index * 4 + 4);
-    OperandFunc callback = Script_OperandHandlerTable[*(s32 *)entry];
+    const s32 *entry = (const s32 *)work->script_address + index + 1;
+    OperandFunc callback = Script_OperandHandlerTable[entry[0]];
 
     if (callback != 0)
-        callback(work, 2, *(s32 *)(entry + 4));
+        callback(work, 2, entry[1]);
     work->cursor += 3;
     return 1;
 }
@@ -944,16 +944,14 @@ s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 void ObjectDispatch_SetField6c(void *arg0, s32 arg1)
 {
     if (arg0 != NULL) {
-        *(s32 *)((u8 *)arg0 + 0x6C) = arg1;
+        *(s32 *)((struct ObjectRuntime *)arg0)->unknown_6c = arg1;
     }
 }
 
 /* The Japanese edition tests the held keys where the others read the key state. */
 #if EDITION_INTERNATIONAL
 
-extern u8 Data_03001c94[];
-
-#define ASSIGNED_KEYS Data_03001c94
+#define ASSIGNED_KEYS gKeyState
 #else
 
 extern u8 gKeysHeld[];
@@ -965,23 +963,23 @@ u32 Field_StoreAssignedKeyValue(u32 value)
 {
     u32 no = value >> 14;
     u32 ret = 0x3FFF & value;
-    u8 *state = gWork;
+    struct FieldStepWork *state = (struct FieldStepWork *)gWork;
 
     if (GameFlag_TestFar(0x107) != 0) {
-        StoreHalfword(state + 0x182, 0xFA);
-    } else if (*(s16 *)(state + 0x19E) == 3) {
+        StoreHalfword((s16 *)&state->unknown_182, 0xFA);
+    } else if (state->mode == 3) {
         if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x100) {
-            StoreHalfword(state + 0x182, 0xFC88);
+            StoreHalfword((s16 *)&state->unknown_182, 0xFC88);
         } else if (*(volatile u32 *)((u32)&ASSIGNED_KEYS) & 0x200) {
-            StoreHalfword(state + 0x182, 0xFC87);
+            StoreHalfword((s16 *)&state->unknown_182, 0xFC87);
         }
     } else {
         switch (no) {
         case 0:
-            StoreHalfword(state + 0x17E, ret);
+            StoreHalfword(&state->unknown_17e, ret);
             break;
         case 1:
-            StoreHalfword(state + 0x180, ret);
+            StoreHalfword((s16 *)state->unknown_180, ret);
             break;
         }
     }
@@ -995,32 +993,32 @@ u32 Field_StoreAssignedKeyValue(u32 value)
    キー状態は割り込みで更新されるため、判定ごとに読み直す。 */
 s32 Field_CheckConfiguredKeys(void)
 {
-    u8 *work = gWork;
+    struct EventRuntime *work = gWork;
     s32 ret = 0;
 
     if (work == NULL) {
         return 0;
     }
 
-    if (gKeyState & gGameState[266]) {
-        s16 *q = (s16 *)(work + 185 * 2);
+    if (gKeyState & gGameState.unknown_214) {
+        s16 *q = (s16 *)work->unknown_172;
         s32 v = 1;
         *q = v;
         ret = 1;
-    } else if (gKeyState & gGameState[264]) {
-        s16 *q = (s16 *)(work + 186 * 2);
+    } else if (gKeyState & gGameState.unknown_210) {
+        s16 *q = (s16 *)(work->unknown_172 + 2);
         s32 v = 1;
         *q = v;
         ret = 1;
-    } else if (gKeyState & gGameState[267]) {
-        s16 *q = (s16 *)(work + 187 * 2);
+    } else if (gKeyState & gGameState.unknown_216) {
+        s16 *q = (s16 *)(work->unknown_172 + 4);
         s32 v = 1;
         *q = v;
         ret = 1;
-    } else if (gKeyState & gGameState[268]) {
-        ret = Field_StoreAssignedKeyValue(gGameState[272]);
-    } else if (gKeyState & gGameState[269]) {
-        ret = Field_StoreAssignedKeyValue(gGameState[273]);
+    } else if (gKeyState & gGameState.first_shortcut_keys) {
+        ret = Field_StoreAssignedKeyValue(gGameState.first_shortcut);
+    } else if (gKeyState & gGameState.second_shortcut_keys) {
+        ret = Field_StoreAssignedKeyValue(gGameState.second_shortcut);
     }
 
     return ret;

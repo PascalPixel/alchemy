@@ -1,6 +1,8 @@
 #include "RESOURCE.H"
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
+#include "MAPFRAME.H"
+#include "HEAP_STATE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "PROJECT.H"
 #include "GLOBAL_CELLS.H"
@@ -20,12 +22,10 @@ extern u8 Transform_UpdateVerticesSize;
 extern u32 Data_03001f60;
 extern u32 Data_03001af4;
 extern u32 gFrameCount;
-extern void *gWorkSlot[];
 void Blend_SetDarkenTarget0(s32);
 s32 Runtime_AllocateHeapBlock(s32, s32);
 void *Runtime_AllocateBlock(s32, s32);
 s32 Resource_DecodeType01(const void *source, void *destination);
-void MapAnimation_StartChannels(void *);
 void Camera_StoreSceneParameters(u32, u32, u32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
@@ -34,7 +34,6 @@ void SceneTransform_ApplyPitch(s32);
 void Graphics_PrepareTransferInIwramWork(s32, s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
-void WorldMap_BuildScanlineTable(s32, s32 *, void *);
 void MapAnimation_ApplyAffineFrame(void);
 void WorldMap_UpdateView(void);
 
@@ -70,14 +69,6 @@ struct WorldCell {
 #define BG_PALETTE ((s16 *)0x05000000)
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
-struct WorldMapState {
-    u8 unk_000[0x11c];
-    u32 *resources;
-    u8 unk_120[0x2c];
-    u16 animated_a[3];
-    u8 unk_152[0x1a];
-    u16 animated_b[3];
-};
 
 void Runtime_ReleaseHeapBlock(s32 slot);
 
@@ -151,8 +142,8 @@ s32 Map_InitializePerspectiveScene(void)
 {
     struct PerspectiveWork *work;
     struct BattleCamera *camera;
-    void *tiles;
-    u8 *lines;
+    struct MapFrameWork *tiles;
+    struct MapAffinePair (*lines)[160];
     s32 *position;
     s32 *distance;
     u16 *yaw;
@@ -178,7 +169,7 @@ s32 Map_InitializePerspectiveScene(void)
     work->unknown_010 = 0;
     work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), Ram_MapCollision + 0x1000);
-    MapAnimation_StartChannels(Ram_MapCollision + 0x1000);
+    MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
     Io_Set16(0x3f9e, (u16 *)0x04000050);
     Io_Set16(0x1010, (u16 *)0x04000052);
     *(u16 *)0x04000054 = 0;
@@ -209,9 +200,9 @@ s32 Map_InitializePerspectiveScene(void)
     } while (0);
 
     camera = Runtime_AllocateBlock(12, sizeof(struct BattleCamera));
-    tiles = (void *)Runtime_AllocateHeapBlock(7, 0x3484);
+    tiles = (struct MapFrameWork *)Runtime_AllocateHeapBlock(7, sizeof(struct MapFrameWork));
     position = camera->pos;
-    lines = (u8 *)tiles + 0xc80;
+    lines = tiles->pages;
     far_plane = 0x1fe0000;
     work->far_plane = far_plane;
     distance = &work->distance;
@@ -246,11 +237,11 @@ s32 Map_InitializePerspectiveScene(void)
                 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     } while (0);
     WorldMap_BuildScanlineTable(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
-                  position, tiles);
+                  position, tiles->scanlines);
     Data_03001f60 = 0;
     Data_03001af4 = work->pitch;
-    ((PlaneFn)gWorkSlot[46])(camera, position, tiles,
-                                 lines + (gFrameCount & 1) * 0x1400);
+    ((PlaneFn)((union HeapState *)gWorkSlot)->slots[46])(camera, position, tiles->scanlines,
+                                 lines[gFrameCount & 1]);
     position[0] = 0;
     position[1] = 0;
     position[2] = 0;
@@ -322,7 +313,7 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py)
    variant also sets up its animated tiles. */
 void WorldMap_LoadGraphics(s32 x, s32 z)
 {
-    struct WorldMapState *state;
+    struct PerspectiveWork *state;
     u32 *resources;
     u8 *buffer;
     u8 *tiles;
@@ -336,7 +327,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
 
     variant = 0;
     buffer = (u8 *)Runtime_BumpAllocate(0x200);
-    state = (struct WorldMapState *)gMapWork[0];
+    state = (struct PerspectiveWork *)gMapWork[0];
     if (WORLD_CELLS[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)].kind == 21)
         variant = 1;
     resources = Data_080132cc[variant];
@@ -367,12 +358,12 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
         cursor++;
     }
     if (variant == 1) {
-        state->animated_a[0] = 0x10a;
-        state->animated_a[1] = 0x10b;
-        state->animated_a[2] = 0x10c;
-        state->animated_b[0] = 0x11a;
-        state->animated_b[1] = 0x11b;
-        state->animated_b[2] = 0x11c;
+        state->tile_ids[10] = 0x10a;
+        state->tile_ids[11] = 0x10b;
+        state->tile_ids[12] = 0x10c;
+        state->tile_ids[26] = 0x11a;
+        state->tile_ids[27] = 0x11b;
+        state->tile_ids[28] = 0x11c;
         Map_UpdateCurrentTileBlock();
     }
     Runtime_BumpFree(buffer);
@@ -384,8 +375,10 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
    display in the affine mode only while that window is on screen. */
 void MapAnimation_ApplyAffineFrame(void)
 {
+    /* FAKEMATCH: retain the existing adjacent slot-cell walk. Independent
+       gMapWork loads in 1a5404f7 added eight bytes in all six editions. */
     u8 **pointers = &gMapAnimationPages;
-    u8 *lines = *pointers++ + 0xc80;
+    struct MapAffinePair (*lines)[160] = ((struct MapFrameWork *)*pointers++)->pages;
     s32 dispcnt = (s16)(*(volatile u16 *)0x04000000 & 0xfff8);
     u32 *dst = (u32 *)0x04000020;
     struct PerspectiveWork *work = *(struct PerspectiveWork **)pointers++;
@@ -399,7 +392,7 @@ void MapAnimation_ApplyAffineFrame(void)
     channel[5] &= 0x7fff;
     (void)channel[5];
     if (lines != NULL) {
-        src = (u32 *)(lines + (gFrameCount & 1) * 0x1400);
+        src = (u32 *)lines[gFrameCount & 1];
         *dst++ = *src++;
         *dst++ = *src++;
         *dst++ = *src++;

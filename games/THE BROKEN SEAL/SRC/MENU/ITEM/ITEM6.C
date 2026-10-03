@@ -60,8 +60,8 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items)
     s32 item;
 
     for (i = 0; i < 15; i++) {
-        if (items[i] & 0x200) {
-            item = items[i] & 0x1ff;
+        if (items[i] & INVENTORY_EQUIPPED) {
+            item = items[i] & ITEM_ID_MASK;
             switch (Item_Get(item)->type) {
             case 1:
                 UiText_DrawCharacterAtOffsetFar(item + (s32)&MsgItemName, window, NAME_X, 8);
@@ -126,10 +126,10 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items)
     state = gMenuWork;
     ItemMenu_PosCategory();
     for (i = 0; i < 15; i++) {
-        if (items[i] != 0 && (items[i] & 0x200) != 0) {
+        if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
             icon = state->entry_icons[i];
             if (icon != 0) {
-                switch (Item_Get(items[i] & 0x1ff)->type) {
+                switch (Item_Get(items[i] & ITEM_ID_MASK)->type) {
                 case 1:
                     icon->x = 216;
                     icon->y = 32;

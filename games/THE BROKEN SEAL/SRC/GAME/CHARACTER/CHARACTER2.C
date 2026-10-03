@@ -4,24 +4,21 @@
 #include "TYPES.H"
 #include "INVENTORY.H"
 
-s32 Inventory_AddItem(s32 owner, s32 item);
-void *Owner_GetState(s32);
 s32 Owner_RefreshClassActions(s32 owner);
 
 extern s32 Character_StartingEquipOwnerIds[];
 extern u8 MsgCharacterName;
 void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
-void Party_AdvanceOwnerCountToTarget(s32, u8);
 void Owner_RecalculateStats(s32);
 void Owner_RefreshDerivedData(s32);
 
 extern u32 Character_LevelExpTable[];
 
 struct LevelUpWork {
-    s32 class_id;
+    s32 class_index;
     s32 level;
     struct CharacterDefinition *growth;
-    u8 unused_0c[0x20];
+    u8 unknown_0c[0x20];
 };
 
 void Runtime_BumpFree(void *buffer);
@@ -32,12 +29,12 @@ u32 Random16(void);
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {
     struct BattleUnit *state = (struct BattleUnit *)Owner_GetState(state_index);
-    s32 key = value & 0x3fff;
+    s32 key = value & OWNER_ACTION_ID_MASK;
     s32 found = -1;
     s32 index;
 
     for (index = 0; index <= 30; index++) {
-        s32 masked = state->action_slots[index].encoded_action & 0x3fff;
+        s32 masked = state->action_slots[index].encoded_action & OWNER_ACTION_ID_MASK;
 
         if ((masked ^ key) == 0) {
             state->action_slots[index].encoded_action = masked;
@@ -47,8 +44,13 @@ s32 OwnerAction_Add(s32 state_index, s32 value)
     }
 
     if (found < 0) {
+        /* FAKEMATCH: typed indexing advances a running offset and swaps
+           the halfword operands, shortening the existing free-slot loop
+           by four native bytes. Retain its scalar member-address walk. */
         for (index = 0; index <= 30; index++) {
-            s32 offset = (index * 4) + 0x58;
+            s32 offset = index * (s32)sizeof(state->action_slots[0]) +
+                (s32)&((struct BattleUnit *)0)->action_slots;
+
             if (*(u16 *)((u8 *)state + offset) == 0) {
                 *(u16 *)((u8 *)state + offset) = key;
                 found = index;
@@ -115,7 +117,7 @@ void Owner_InitRecords(void)
             state = (struct BattleUnit *)Owner_GetState(*remote);
             if (state != 0) {
                 state->class_id = (u8)*remote;
-                tmpl = (struct CharacterDefinition *)Owner_GetRecordStride180(state->class_id);
+                tmpl = Owner_GetRecordStride180(state->class_id);
 
                 for (i = 14; i >= 0; i--)
                     state->inventory[i] = 0;
@@ -169,7 +171,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res)
 
     st = (struct BattleUnit *)Owner_GetState(owner);
     work = (struct LevelUpWork *)Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
-    work->class_id = st->class_index;
+    work->class_index = st->class_index;
     level = st->level;
     work->level = level;
     res->level = level;

@@ -8,7 +8,6 @@
 #include "RESOURCE_IDS.H"
 #include "RUNTIME_MEM.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void Map_SetCameraCenter(s32 x, s32 y);
 
 /* FAKEMATCH: helper scope gives each cell its own table-pointer lifetime,
@@ -94,37 +93,6 @@ struct SceneHeader {
     s32 script;
 };
 
-struct SceneLayer {
-    s32 x;
-    s32 y;
-    s32 base_x;
-    s32 base_y;
-    s32 scroll_x;
-    s32 scroll_y;
-    s32 speed_x;
-    s32 speed_y;
-    s32 phase_x;
-    s32 phase_y;
-    u32 period_x : 16;
-    u32 period_y : 16;
-    u32 *cells;
-};
-
-struct SceneWork {
-    u8 unknown_00[0x10];
-    u8 *script;
-    u32 blend_control : 16;
-    u32 unknown_16 : 16;
-    u8 unknown_18[0xcc];
-    s32 scale_x;
-    s32 scale_y;
-    s32 origin[4];
-    u8 unknown_fc[4];
-    u8 priority[3];
-    u8 unknown_103;
-    struct SceneLayer layers[3];
-};
-
 extern struct SceneEntry Map_LayeredScenes[];
 extern u8 gMapLayerData[];
 
@@ -133,7 +101,6 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_DecodeType2(const void *source, void *destination);
 void Tilemap_DecodeStagedBuffer(void);
 void Tilemap_ConvertBuffer(void);
-void MapAnimation_StartChannels(void *channels);
 void DisplayBlend_StartScript(void *script);
 s32 GameFlag_IsSet(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
@@ -164,9 +131,9 @@ static __inline__ s32 Scene_Call2(s32 left, s32 right, void *routine)
 s32 Map_LoadLayeredScene(s32 index)
 {
     struct SceneEntry *entry;
-    struct SceneWork *work;
+    struct MapScrollWork *work;
     struct SceneHeader *header;
-    struct SceneLayer *layer;
+    struct MapLayerScroll *layer;
     struct SceneLayerSource *source;
     s32 *scale_x;
     s32 *scale_y;
@@ -179,8 +146,8 @@ s32 Map_LoadLayeredScene(s32 index)
     *(volatile u16 *)0x04000000 &= 0xc1ff;
     Blend_SetDarkenTarget0(0);
     entry = &Map_LayeredScenes[index];
-    work = Runtime_AllocateBlock(8, sizeof(struct SceneWork));
-    Iwram_ClearWords(work, sizeof(struct SceneWork));
+    work = Runtime_AllocateBlock(8, sizeof(struct MapScrollWork));
+    Iwram_ClearWords(work, sizeof(struct MapScrollWork));
     header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&ResourceId_Map001);
     src = (u8 *)header + header->tiles;
     Resource_DecodeType01(src, Ram_MapCellBuffer + 1);
@@ -195,7 +162,7 @@ s32 Map_LoadLayeredScene(s32 index)
     src = (u8 *)header->animation;
     if (src != 0) {
         Resource_DecodeType01((u8 *)header + (s32)src, Ram_MapCollision + 0x1000);
-        MapAnimation_StartChannels(Ram_MapCollision + 0x1000);
+        MapAnimation_StartChannels((const u16 *)(Ram_MapCollision + 0x1000));
     }
     src = (u8 *)header->blend;
     if (src != 0) {
@@ -203,17 +170,17 @@ s32 Map_LoadLayeredScene(s32 index)
         DisplayBlend_StartScript(Ram_MapCollision + 0x1e00);
     }
     work->script = (u8 *)header + header->script;
-    work->origin[0] = header->origin[0] << 19;
-    work->origin[1] = header->origin[1] << 19;
-    work->origin[2] = header->origin[2] << 19;
-    work->origin[3] = header->origin[3] << 19;
-    scale_x = &work->scale_x;
+    work->min_x = header->origin[0] << 19;
+    work->min_y = header->origin[1] << 19;
+    work->max_x = header->origin[2] << 19;
+    work->max_y = header->origin[3] << 19;
+    scale_x = &work->view_x;
     *scale_x = 0;
-    scale_y = &work->scale_y;
+    scale_y = &work->view_y;
     *scale_y = 0;
-    work->priority[0] = header->priority[0];
-    work->priority[1] = header->priority[1];
-    work->priority[2] = header->priority[2];
+    work->enabled[0] = header->priority[0];
+    work->enabled[1] = header->priority[1];
+    work->enabled[2] = header->priority[2];
     layer = work->layers;
     source = header->layers;
     for (i = 0; i < 3; i++) {
@@ -224,41 +191,41 @@ s32 Map_LoadLayeredScene(s32 index)
         s32 base_x;
         s32 base_y;
 
-        layer->base_x = base_x = x << 19;
-        layer->base_y = base_y = y << 19;
+        layer->offset_x = base_x = x << 19;
+        layer->offset_y = base_y = y << 19;
         layer->speed_x = source->speed_x << 12;
         layer->speed_y = source->speed_y << 12;
-        layer->period_x = source->period_x;
-        layer->period_y = source->period_y;
+        layer->mask_x = source->period_x;
+        layer->mask_y = source->period_y;
         layer->phase_x = 0;
         layer->phase_y = 0;
         scroll_x = source->scroll_x << 12;
         scroll_y = source->scroll_y << 12;
-        layer->scroll_x = scroll_x;
-        layer->scroll_y = scroll_y;
-        layer->cells = (u32 *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
+        layer->scale_x = scroll_x;
+        layer->scale_y = scroll_y;
+        layer->cells = (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
         layer->x = Scene_Call2(*scale_x, scroll_x, IwramMulQ16ReturnIp) + base_x;
         layer->y = Scene_Call2(*scale_y, scroll_y, IwramMulQ16ReturnIp) + base_y;
         source++;
         layer++;
     }
-    work->blend_control = 0x1000;
-    if (work->priority[0] != 0)
-        work->blend_control = 0x1800;
-    if (work->priority[1] != 0)
-        work->blend_control |= 0x400;
-    if (work->priority[2] != 0)
-        work->blend_control |= 0x200;
-    cnt = work->priority[0] | (header->screen[0] << 2) | 0x500;
+    work->flags = 0x1000;
+    if (work->enabled[0] != 0)
+        work->flags = 0x1800;
+    if (work->enabled[1] != 0)
+        work->flags |= 0x400;
+    if (work->enabled[2] != 0)
+        work->flags |= 0x200;
+    cnt = work->enabled[0] | (header->screen[0] << 2) | 0x500;
     *(volatile u16 *)0x0400000e = cnt;
     /* FAKEMATCH: one-pass loops hold the second and third background
        control writes in source order. */
     do {
-        cnt = work->priority[1] | (header->screen[1] << 2) | 0x600;
+        cnt = work->enabled[1] | (header->screen[1] << 2) | 0x600;
         *(volatile u16 *)0x0400000c = cnt;
     } while (0);
     do {
-        cnt = work->priority[2] | (header->screen[2] << 2) | 0x700;
+        cnt = work->enabled[2] | (header->screen[2] << 2) | 0x700;
         *(volatile u16 *)0x0400000a = cnt;
     } while (0);
     if (GameFlag_IsSet(0x170) != 0) {
@@ -296,7 +263,7 @@ void Map_ApplyWorkOriginAndSpan(void)
     s32 second;
     s32 *p;
 
-    p = *((s32 **)gMapWork[0]);
+    p = ((struct MapScrollWork *)gMapWork[0])->origin;
     first = 0;
     second = 0;
     third = 0;
@@ -309,18 +276,7 @@ void Map_ApplyWorkOriginAndSpan(void)
     Map_UpdateLayerScroll();
 }
 
-/* Exact candidate: whole owner [0800fec8, 0800ff54), 140 bytes, four own pool
-   words. Baseline 2026-09-26: 144 bytes, 64 differing halfwords, 59
-   aligned edits. No callees. Raw caller 08010000 selects this row update
-   on a vertical scroll boundary and ff54 on a horizontal boundary.
-   H1: use the adopted ff54 family's typed per-cell helper and explicit
-   outer row/base lifetimes, with paired word stores for this row owner.
-   Prediction: only r8/sl saved, base in ip, all four pools reloaded where
-   the reference owns them. Accept only exact 140 bytes plus landing gates.
-   H1 result: exact 140/140 bytes, zero differing halfwords/aligned edits,
-   topology equal; complete normalized comparison read. The same-source
-   family evidence is the adopted ff54 implementation, not another project.
-   The ff54 owner is unchanged. */
+/* Updates one visible metatile row after the camera crosses its boundary. */
 void Map_RenderMetatileRow(u32 a0, s32 a1, s32 a2)
 {
     u8 *dest = (u8 *)(0x06002800 + (a0 << 11));

@@ -1,5 +1,4 @@
 #include "M7_INTERFACES.H"
-void UiWindow_SetBounds( struct WindowBounds *, s32, s32, s32, s32);
 
 extern u8 Menu_PlusSignString;
 extern u8 Menu_MinusSignString;

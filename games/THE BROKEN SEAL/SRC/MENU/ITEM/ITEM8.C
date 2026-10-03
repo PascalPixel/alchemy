@@ -12,9 +12,6 @@ s32 BattleFx_HasTriggerFar(s32 item);
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 extern char MsgItemCommandUse;
 
-struct ItemDefinition *Item_Get(s32);
-s32 BattleFx_HasTriggerFar(s32);
-s32 Item_CanOwnerEquip(s32, s32);
 
 void ItemMenu_BuildCmd(s8 *command_states)
 {
@@ -22,7 +19,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
     struct ItemDefinition *item;
 
     menu = gMenuWork;
-    item = Item_Get(0x1ff & menu->selected_items[0]);
+    item = Item_Get(ITEM_ID_MASK & menu->selected_items[0]);
 
     if (item->type == 0) {
         command_states[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
@@ -37,12 +34,12 @@ void ItemMenu_BuildCmd(s8 *command_states)
     else
         command_states[ITEM_COMMAND_USE] = COMMAND_DISABLED;
 
-    if (menu->selected_items[0] & 0x400)
+    if (menu->selected_items[0] & INVENTORY_BROKEN)
         command_states[ITEM_COMMAND_USE] = COMMAND_DISABLED;
 
     if (Item_CanOwnerEquip(
             menu->pane_owner[0],
-            menu->selected_items[0] & 0x1ff) == 0) {
+            menu->selected_items[0] & ITEM_ID_MASK) == 0) {
         command_states[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
     }
 
@@ -50,28 +47,28 @@ void ItemMenu_BuildCmd(s8 *command_states)
     command_states[ITEM_COMMAND_DROP] = COMMAND_AVAILABLE;
     command_states[ITEM_COMMAND_INSPECT] = COMMAND_AVAILABLE;
 
-    if (menu->selected_items[0] & 0x200) {
+    if (menu->selected_items[0] & INVENTORY_EQUIPPED) {
         command_states[ITEM_COMMAND_REMOVE] = COMMAND_AVAILABLE;
         command_states[ITEM_COMMAND_EQUIP] = COMMAND_DISABLED;
     } else {
         command_states[ITEM_COMMAND_REMOVE] = COMMAND_DISABLED;
     }
 
-    if (item->flags & 2) {
+    if (item->flags & ITEM_CANNOT_UNEQUIP) {
         command_states[ITEM_COMMAND_REMOVE] = COMMAND_DISABLED;
-        if (menu->selected_items[0] & 0x200) {
+        if (menu->selected_items[0] & INVENTORY_EQUIPPED) {
             command_states[ITEM_COMMAND_GIVE] = COMMAND_DISABLED;
             command_states[ITEM_COMMAND_DROP] = COMMAND_DISABLED;
         }
     }
 
-    if (BattleFx_HasTriggerFar(menu->selected_items[0] & 0x1ff) != 0)
+    if (BattleFx_HasTriggerFar(menu->selected_items[0] & ITEM_ID_MASK) != 0)
         command_states[ITEM_COMMAND_USE] = COMMAND_AVAILABLE;
 
     if (menu->party_count <= 1)
         command_states[ITEM_COMMAND_GIVE] = COMMAND_DISABLED;
 
-    if (item->flags & 8)
+    if (item->flags & ITEM_INDISPENSABLE)
         command_states[ITEM_COMMAND_DROP] = COMMAND_DISABLED;
 }
 
@@ -129,7 +126,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     struct ItemDefinition *def;
     s32 result = -1;
 
-    masked &= 0x1ff;
+    masked &= ITEM_ID_MASK;
     def = Item_Get(masked);
 
     if (BattleFx_HasTriggerFar(masked)!= 0) {

@@ -1,27 +1,13 @@
 #ifndef ALCHEMY_M7_INTERFACES_H
 #define ALCHEMY_M7_INTERFACES_H
 
-#include "TYPES.H"
-
-struct WindowBounds {
-    u8 padding_00[8];
-    u16 left;
-    u16 top;
-    u16 right;
-    u16 bottom;
-};
-
-struct Object080a1c {
-    u8 padding_00[6];
-    s16 x;
-    s16 y;
-};
+#include "RENDER_INPUT.H"
 
 void PsynergyMenu_PositionOwnerEntry(
-    struct Object080a1c **, s32, s32, s32, s32);
+    struct RenderOutput **icons, s32 index, s32 x, s32 y, s32 columns);
 void ItemMenu_PosOwner(
-    struct Object080a1c **, s32, s32, s32, s32);
-void WindowBounds_Set(
-    struct WindowBounds *, s32, s32, s32, s32);
+    struct RenderOutput **icons, s32 index, s32 x, s32 y, s32 columns);
+void UiWindow_SetBounds(
+    struct RenderInput *window, s32 x, s32 y, s32 width, s32 height);
 
 #endif

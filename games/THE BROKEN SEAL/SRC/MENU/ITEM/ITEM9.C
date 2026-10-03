@@ -145,7 +145,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
 
     row = 0;
     consumable = 0;
-    def = Item_Get(item & 0x1ff);
+    def = Item_Get(item & ITEM_ID_MASK);
     if (def->type != 0) {
         found = 0;
         /* FAKEMATCH: the two bonus fields are tested as one masked word. */
@@ -247,7 +247,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         }
         row++;
     }
-    if (def->flags & 1) {
+    if (def->flags & ITEM_CURSED) {
         UiText_DrawCharacterAtOffsetFar((s32)MsgItemCursed, window, 0, row * 8);
         row++;
     }
@@ -271,7 +271,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         case 2: {
             s32 m;
 
-            if (item & 0x400) {
+            if (item & INVENTORY_BROKEN) {
                 m = (s32)MsgBrokenNotice;
                 UiText_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
                 row++;
@@ -290,13 +290,13 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
         }
         }
     }
-    if (def->flags & 16) {
+    if (def->flags & ITEM_STACKABLE) {
         if (row != 0)
             row++;
         i = (s32)MsgNumberHeading;
         UiText_DrawCharacterAtOffsetFar(i, window, 16, row * 8);
         row++;
-        amount = (item & 0xf800) / 2048;
+        amount = (item & INVENTORY_QUANTITY_MASK) / INVENTORY_QUANTITY_STEP;
 #if EDITION_INTERNATIONAL
         UiWork_PushValueSlotFar(amount + 1, 5);
         UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
@@ -314,7 +314,7 @@ void ItemMenu_DrawItemDetails(s32 window, s32 item)
             found = 1;
         }
         if (!found) {
-            if (def->flags & 8) {
+            if (def->flags & ITEM_INDISPENSABLE) {
                 UiText_DrawCharacterAtOffsetFar((s32)MsgImportantItem, window, 0, 0);
                 found = 1;
             }

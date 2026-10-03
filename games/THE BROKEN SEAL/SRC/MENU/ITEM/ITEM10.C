@@ -42,7 +42,7 @@ s32 Shop_DrawItemPage(s32 window, s32 unused, struct MenuResult *state);
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
-void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
+void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 owner);
 
 /* The status screen's item page: browse the current character's items, switch
    characters with L and R, and return 1 for A or -1 for B. */
@@ -158,7 +158,7 @@ s32 ItemMenu_SelectItem(void)
                 menu->selected_owner = menu->owner_ids[tab];
                 menu->pane_owner[0] = menu->owner_ids[tab];
                 menu->pane_index[0] = tab;
-                PsynergyMenu_CallIconRoutineWithValue(menu, menu->owner_ids[tab]);
+                PsynergyMenu_CallIconRoutineWithValue((s32)menu, menu->owner_ids[tab]);
                 break;
             }
         }

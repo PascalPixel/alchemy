@@ -23,17 +23,14 @@ extern const struct SummonDefinition Summon_DefinitionTable[];
 extern s32 Data_08088db8[];
 extern struct PresetValues Enemy_ElementPresetTable[];
 
-void *Owner_GetState(s32);
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 *output);
 
-struct DigitOffsets {
-    u16 first;
-    u16 second;
+struct ElementLevelBonus {
+    u16 power;
+    u16 resist;
 };
 
-extern const struct DigitOffsets Element_PowerResistByLevel[16];
-void *Owner_GetState(s32 owner);
-const u8 *Owner_GetRecord(s32 record);
+extern const struct ElementLevelBonus Element_PowerResistByLevel[16];
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4]);
 
 s32 GameFlag_Test(s32 flag);
@@ -92,7 +89,7 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     ClearWords(Iwram_ClearWords, unit, BATTLE_UNIT_SIZE);
     if (index > 164)
         index = 0;
-    enemy = (const struct EnemyDefinition *)(Data_08080ec8 + index * 84);
+    enemy = &((const struct EnemyDefinition *)Data_08080ec8)[index];
     unit->level = enemy->level;
     unit->base_hp = enemy->hp;
     unit->hp = enemy->hp;
@@ -321,7 +318,8 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
             *cursor++ = Enemy_ElementPresetTable[index].digits[i] * 10;
     } else {
         cursor = output;
-        source += 36;
+        source += (u8 *)&((struct BattleUnit *)0)->djinn_active_counts -
+                  (u8 *)&((struct BattleUnit *)0)->djinn_available;
         for (i = 3; i >= 0; i--) {
             u32 value = *source;
             source++;
@@ -405,9 +403,9 @@ copied:
         if (tens < 0)
             tens = 0;
 
-        destination[i][0] = Element_PowerResistByLevel[tens].first + ones;
+        destination[i][0] = Element_PowerResistByLevel[tens].power + ones;
         destination[i][1] =
-            ((volatile const struct DigitOffsets *)Element_PowerResistByLevel)[tens].second + ones;
+            ((volatile const struct ElementLevelBonus *)Element_PowerResistByLevel)[tens].resist + ones;
         i++;
     } while (i < 4);
     return result;
@@ -476,7 +474,7 @@ s32 Owner_DetermineClass(s32 character, const u8 *djinn)
 
 struct ClassDefinition *Owner_GetRecordStride84(s32 arg0)
 {
-    return (struct ClassDefinition *)(((const u8 *)Class_DefinitionTable) + arg0 * 0x54);
+    return &Class_DefinitionTable[arg0];
 }
 
 void Owner_RefreshDerivedData(s32 owner_no)

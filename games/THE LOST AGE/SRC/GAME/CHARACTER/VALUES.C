@@ -1,21 +1,12 @@
-#include "TYPES.H"
+#include "OWNER_STATE.H"
 
-struct OwnerValueState {
-    u8 unknown[0x34];
-    s16 first_max;
-    s16 second_max;
-    s16 first;
-    s16 second;
-};
-
-void *Owner_GetState(s32);
 void Owner_RecalculateRatios(s32);
 
 s16 Owner_AdjustFirstValue(s32 owner, s32 delta)
 {
-    struct OwnerValueState *state = Owner_GetState(owner);
-    s32 cur = state->first;
-    s32 max = state->first_max;
+    struct BattleUnit *state = Owner_GetState(owner);
+    s32 cur = state->hp;
+    s32 max = state->max_hp;
     s32 value = cur + delta;
     s32 result;
 
@@ -26,7 +17,7 @@ s16 Owner_AdjustFirstValue(s32 owner, s32 delta)
         if (value >= 0)
             result = value;
     }
-    state->first = result;
+    state->hp = result;
     Owner_RecalculateRatios(owner);
-    return state->first;
+    return state->hp;
 }

@@ -140,6 +140,7 @@ extern char MsgPsynergyMenuEmpty;
 /* Shared icon-grid helper used by both inventory and Psynergy menu modes. */
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
+s32 PsynergyMenu_SelectPartySlot(s32 party_slot);
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner);
 s32 PsynergyMenu_ReturnTrue(void);

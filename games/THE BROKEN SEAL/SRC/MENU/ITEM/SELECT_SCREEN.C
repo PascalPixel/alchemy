@@ -1,15 +1,11 @@
+#include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY_MENU.H"
 #include "WINDOW.H"
 #include "HEAP_STATE.H"
-
-struct MenuObjectControl {
-    u16 unknown_00;
-    u16 unknown_02;
-    s16 suspended;
-};
+#include "ANIMSPR.H"
 
 /* Where the accepted selection is published. */
 struct AssetSelectionResult {
@@ -39,7 +35,7 @@ static __inline__ s32 FillWords(FillFn fill, void *dst, s32 size, u32 value)
 #endif
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-void *Runtime_AllocateHeapBlock(s32 id, s32 size);
+s32 Runtime_AllocateHeapBlock(s32 id, s32 size);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32);
@@ -85,9 +81,9 @@ s32 RunAssetSelectionScreen(void)
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
 #endif
-    screen = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+    screen = (struct InventoryMenuState *)Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
     cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_MENU_CONTROL];
-    ((struct MenuObjectControl *)cache[0])->suspended = 1;
+    ((struct ObjectSystemWork *)cache[0])->suspended = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
@@ -110,7 +106,7 @@ s32 RunAssetSelectionScreen(void)
     if (result == 1) {
         struct AssetSelectionResult *selection = cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
 
-        selection->unknown_180 = (category << 10) | (index & 0x1ff);
+        selection->unknown_180 = (category << 10) | (index & ITEM_ID_MASK);
         selection->unknown_19a = screen->selected_slots[0];
     }
     RenderOutput_ClearListFar((s32)screen->status_window);
@@ -119,8 +115,8 @@ s32 RunAssetSelectionScreen(void)
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Menu_ResetTwoResourceEntries();
-    Runtime_ReleaseHeapBlock(0x37);
-    ((struct MenuObjectControl *)cache[0])->suspended = 0;
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
+    ((struct ObjectSystemWork *)cache[0])->suspended = 0;
 #if EDITION_INTERNATIONAL
     UiWindow_MarkVisibleTileAttributesFar();
     UiWork_SetAltFlagAndClearTableFar(0);

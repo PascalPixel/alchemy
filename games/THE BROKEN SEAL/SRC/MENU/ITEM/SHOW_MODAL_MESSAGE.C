@@ -1,19 +1,20 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "INVENTORY_MENU.H"
+#include "M7_INTERFACES.H"
 #include "SYSTEM.H"
 
 extern volatile u32 gKeyState;
 
 void Func_08015108(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWindow_SetBounds(s32 window, s32 x, s32 y, s32 width, s32 height);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Func_08015078(s32 message, s32 window, s32 x, s32 y);
 void GameFlag_SetBitFar(s32 flag);
-void UiWindow_CloseIfOpen(s32 *window, s32 mode);
+/* The pointer-cell closer ignores the extra legacy caller word. */
+void UiWindow_CloseIfOpen();
 
 /* Show a message in the item menu: in the menu message window when y is -1,
    otherwise in a window sized to the message at (x, y). Unless x is -1, wait
@@ -31,7 +32,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
     if (y != -1) {
         Func_08015108(message, &left, &top, &width, &height);
         if (UiWindow_UpdateOrCreate((s32 *)&menu->modal_window, x, y, width, height, 0x102) == 0)
-            UiWindow_SetBounds((s32)menu->modal_window, x, y, width, height);
+            UiWindow_SetBounds((struct RenderInput *)menu->modal_window, x, y, width, height);
         window = (s32)menu->modal_window;
     } else {
         window = (s32)menu->info_window;

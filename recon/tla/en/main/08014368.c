@@ -1,16 +1,16 @@
+/* 2026-10-03 resource-record ownership closure: use COMMON VRAM_TAB.H's
+   two-halfword size/state and byte-offset record. Native VramBlock_LoadCached
+   writes the requested byte size at +0 and VRAM byte offset at +2; initialize
+   and reset retain their existing zero/0xffff state policies. Current EN
+   score 520/6; ResourceBlockOwners remains unresolved. This is a draft, with no new byte credit. */
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 
 /* resource/initialize.c */
 /* resource/table/initialize.c */
-struct ResourceTableEntry {
-    u16 value;
-    u16 flags;
-};
-
+#include "VRAM_TAB.H"
 extern u8 ResourceBlockOwners[];
-extern struct ResourceTableEntry ResourceTableEntries[];
 
 void Resource_InitializeTable(void)
 {
@@ -25,12 +25,12 @@ void Resource_InitializeTable(void)
     } while (count <= limit);
 
     {
-        struct ResourceTableEntry *resource_entry = ResourceTableEntries;
+        struct VramBlockCacheEntry *resource_entry = ResourceTableEntries;
 
         count = 0;
         do {
-            resource_entry->flags |= 0xffff;
-            resource_entry->value = 0;
+            resource_entry->offset |= 0xffff;
+            resource_entry->size = 0;
             resource_entry++;
             count++;
         } while (count <= 95);

@@ -4,7 +4,8 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "LAYOUT_GUARD.H"
-#include "UIWINDOW.H"
+#include "UIFLOW.H"
+#include "OUTPUT.H"
 
 enum { UI_OUTPUT_COUNT = 64 };
 
@@ -101,14 +102,11 @@ LAYOUT_OFFSET_GUARD(UiChannelSlot_Flags, struct UiChannelSlot, flags, 0x24);
 
 extern u8 *gWindowWork[];
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWork_Finalize(struct UiWindow *window, s32 release);
 
 void UiText_MeasureEntryDimensions(s32 start, u32 *width, u32 *height, u16 *spacing);
 void UiText_MeasureStringVariant(s32 start, u32 *width, u32 *height, u16 *spacing);
 void UiWindow_FitOnScreen(s32 entry, s32 *x, s32 *y, u32 *width, u32 *height, u16 *spacing, u32 flags);
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y, s32 mode);
-struct RenderOutput *RenderOutput_AcquireFree(void);
-void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node);
 #if EDITION_INTERNATIONAL
 s32 UiText_RenderGlyphPair(s32 code, u32 *tiles);
 #else

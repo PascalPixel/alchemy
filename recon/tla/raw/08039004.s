@@ -38,7 +38,7 @@ UiWork_Initialize:
 	adds r0, #8
 	mov lr, r3
 	.2byte 0xf800
-	bl Func_08038f08
+	bl UiWork_InitFreeList
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, .L_080390b4

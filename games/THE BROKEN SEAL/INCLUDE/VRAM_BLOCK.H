@@ -3,7 +3,7 @@
 
 #include "TYPES.H"
 #include "RESOURCE.H"
-#include "LAYOUT_GUARD.H"
+#include "VRAM_TAB.H"
 
 enum VramBlockLimits {
     VRAM_CACHE_ENTRY_COUNT = 96,
@@ -12,14 +12,6 @@ enum VramBlockLimits {
     VRAM_BLOCK_OWNER_FREE = 0xff,
     VRAM_CACHE_OFFSET_FREE = 0xffff
 };
-
-struct VramBlockCacheEntry {
-    u16 size;
-    u16 offset;
-};
-
-LAYOUT_SIZE_GUARD(VramBlockCacheEntry_Size, struct VramBlockCacheEntry, 4);
-LAYOUT_OFFSET_GUARD(VramBlockCacheEntry_Offset, struct VramBlockCacheEntry, offset, 2);
 
 extern struct VramBlockCacheEntry gVramBlockCache[];
 extern u8 ResourceBlockOwners[VRAM_BLOCK_COUNT];

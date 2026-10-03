@@ -99,7 +99,6 @@ s32 ActivateBattleObjectSlot(s32 actor_id);
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
 void BattleActor_RemoveFromLists(s32 actor_id);
 void BattleActor_ResetRuntimeFields(s32 actor_id);
-void BattleActor_DestroyTemporaryObject(s32 actor_id);
 void Battle_SetRuntimeFlagBit0(struct BattlePlaybackState *state, s32 value);
 void BattleEnemy_RecordDefeat(s32 actor_id, s32 mode);
 s32 Summon_GetEntryByte3Kind(s32 class_id);

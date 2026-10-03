@@ -58,7 +58,6 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *state, s32 value);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_PrepareMessageWorkFar(s32 message);
 void UiWork_ClearValueNameTablesFar(void);
-void BattleActor_DestroyTemporaryObject(s32 unit_id);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void BattleEnemy_RecordDefeat(s32 unit_id, s32 flags);
 void BattleActor_ResetRuntimeFields(s32 unit_id);

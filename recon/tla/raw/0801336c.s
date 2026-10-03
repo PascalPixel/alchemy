@@ -41,6 +41,7 @@ Resource_LoadCode:
 	.4byte 0x00000080
 .L_080133bc:
 	.4byte Resource_PatchThumbBranchCode
-	.global Data_080133c0
-Data_080133c0:
+	.global Runtime_IgnoreInterrupt
+	.thumb_func
+Runtime_IgnoreInterrupt:
 	.4byte 0x00004770

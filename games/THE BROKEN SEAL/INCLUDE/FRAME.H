@@ -30,8 +30,4 @@ extern u32 gLoadedStateWord; /* Play-time frame counter, saved and restored. */
 extern u32 gSavedStackSize;
 extern u8 gSavedStack[];
 
-/* IRQ dispatch table and BIOS vector installed with the resident runtime. */
-extern void (*Data_030000e0[14])(void);
-extern void *Data_03007ffc;
-
 #endif

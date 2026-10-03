@@ -51,6 +51,9 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
         u32 ie;
 
         ime = *ime_reg;
+        /* FAKEMATCH: the address value leaves IME bit 0 clear and keeps
+           the measured address-register store. A plain zero store adds
+           a literal load and splits the pool (124 to 136 bytes). */
         *ime_reg = (u32)ime_reg;
         /* FAKEMATCH: an empty do-while keeps the IE address load after the
            IME write */
@@ -76,9 +79,9 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
             REG_DISPSTAT = stat;
         }
         if (handler != 0)
-            Data_030000e0[irq] = handler;
+            gIrqHandlers[irq] = handler;
         else
-            Data_030000e0[irq] = RuntimeDispatch_ReservedNoOp03008;
+            gIrqHandlers[irq] = Runtime_IgnoreInterrupt;
         REG_IME = ime;
     }
 }

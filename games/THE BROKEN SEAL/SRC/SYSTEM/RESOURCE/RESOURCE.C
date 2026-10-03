@@ -2,6 +2,7 @@
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
 #include "TYPES.H"
+#include "IRQ.H"
 #include "SCENE.H"
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
@@ -105,6 +106,6 @@ void Resource_LoadCode(u32 index, void *destination)
     Sys_Free(routine);
 }
 
-void RuntimeDispatch_ReservedNoOp03008(void)
+void Runtime_IgnoreInterrupt(void)
 {
 }

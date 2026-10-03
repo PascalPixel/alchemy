@@ -1,16 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "IRQ.H"
-#include "FRAME.H"
-
-/* IWRAM start, where the runtime (SYSTEM/RUNTIME.S) is copied and the
-   interrupt vector points. */
-extern u8 IwramIrqMain[];
-
-/* The resident runtime bank's ROM image (MAIN.LD), and the ROM table of
-   the fourteen interrupt handlers its dispatch table starts with. */
-extern const u8 IwramRuntime_Rom[];
-extern void (*const Runtime_IrqHandlers[])(void);
+#include "IO_REG.H"
 
 /* Copies the IWRAM runtime and its IRQ dispatch table into place with
    interrupts off, points the interrupt vector at it, then enables the
@@ -23,7 +14,7 @@ void Runtime_InstallIwramAndIrqs(void)
     s32 value;
     s32 one;
 
-    ime = (volatile u16 *)0x04000208;
+    ime = &REG_IME;
     zero = 0;
     /* FAKEMATCH: the do-while keeps the REG_IME store ahead of the IWRAM
        address load. */
@@ -31,12 +22,12 @@ void Runtime_InstallIwramAndIrqs(void)
         *ime = zero;
     } while (0);
     iwram = IwramIrqMain;
-    Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)IwramRuntime_Rom, iwram, 0x84000500, REG_DMA3);
     Data_03007ffc = iwram;
-    Dma_Set((const void *)Runtime_IrqHandlers, (void *)Data_030000e0, 0x8400000e, (volatile u32 *)0x040000d4);
-    *(volatile u16 *)0x04000004 = zero;
+    Dma_Set((const void *)Runtime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e, REG_DMA3);
+    REG_DISPSTAT = zero;
     value = 0xc3ff;
-    *(volatile u16 *)0x04000132 = value;
+    REG_KEYCNT = value;
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     /* The European editions also take the Game Pak interrupt. */
@@ -44,7 +35,7 @@ void Runtime_InstallIwramAndIrqs(void)
 #else
     value = 0x1001;
 #endif
-    *(volatile u16 *)0x04000200 = value;
+    REG_IE = value;
     one = 1;
     *ime = one;
 }

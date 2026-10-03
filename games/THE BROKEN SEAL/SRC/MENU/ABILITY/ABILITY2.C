@@ -178,17 +178,17 @@ void Menu_UpdateEntryObjectTransforms(void)
  * the frame counter. */
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
 {
-    /* FAKEMATCH: keep the existing unsigned-position/OAM sprite view; direct RenderOutput member access removes the native halfword narrowing and changes load/store order. */
+    /* FAKEMATCH: keep the existing unsigned-position/OAM sprite view and original member-read lifetimes; caching the window and cursor before the frame-counter reads changes load/register order at the same 126-byte native extent. */
     struct PsynergyMenuState *work = gMenuWork;
-    struct RenderInput *window = (struct RenderInput *)work->auxiliary_window;
-    struct MenuCursorSprite *cursor = (struct MenuCursorSprite *)work->pane_icon[0];
 
-    cursor->attributes.x = cursor->x =
+    ((struct MenuCursorSprite *)work->pane_icon[0])->attributes.x =
+        ((struct MenuCursorSprite *)work->pane_icon[0])->x =
         UiMenu_CursorBobX[(gFrameCount >> 1) & 7] + x_offset
-        + window->x * 8 + 8;
-    cursor->attributes.y = cursor->y =
+        + ((struct RenderInput *)work->auxiliary_window)->x * 8 + 8;
+    ((struct MenuCursorSprite *)work->pane_icon[0])->attributes.y =
+        ((struct MenuCursorSprite *)work->pane_icon[0])->y =
         UiMenu_CursorBobY[(gFrameCount >> 1) & 7] + y_offset
-        + window->y * 8 + 8;
+        + ((struct RenderInput *)work->auxiliary_window)->y * 8 + 8;
 }
 
 /* Slides the menu cursor to the given pixel offset in two steps, a frame

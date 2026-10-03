@@ -1,17 +1,8 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+#include "WINDOW.H"
 
-struct TextWork {
-    u8 unknown_000[RENDER_DIRTY_OFS];
-    u8 dirty;
-    u8 unknown_ea4[0xc];
-    u16 entries[RENDER_ENTRY_MASK + 1];
-    u16 unknown_12b0;
-    u16 count;
-};
-
-extern u8 *gWindowWork;
 
 /* Draws a wide string one glyph tile per column; 3 starts a new row, the
    other control codes skip their operands. */
@@ -20,11 +11,11 @@ s32 UiWindow_PutGlyph(void *window, u32 c, s32 x, s32 y, s32 flags);
 
 void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
 {
-    struct TextWork *work;
+    struct UiRenderWork *work;
     u16 c;
     s16 start;
 
-    work = (struct TextWork *)gWindowWork;
+    work = (struct UiRenderWork *)gWindowWork[0];
     start = x;
     if (text == NULL) {
         text = (s16 *)work->entries;

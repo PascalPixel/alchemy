@@ -104,9 +104,9 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     s32 i;
 
     shop = ((struct ShopRuntime *)gMenuWork);
-    saved_kind = shop->cursor.anchor->one5;
+    saved_kind = shop->cursor.anchor->active;
     shop->burst_member = 0xff;
-    shop->cursor.anchor->one5 = 13;
+    shop->cursor.anchor->active = 13;
     Audio_PlayCue(Data_080b4ab2[shop->party_action]);
     Shop_RestoreSceneTiles(0x00202108);
     Func_08009280((s32)shop->party_member_icons[member], 0);
@@ -183,7 +183,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     Func_08009280((s32)shop->party_member_icons[member], 16);
     Shop_InitEffect();
     WaitFrames(30);
-    shop->cursor.anchor->one5 = saved_kind;
+    shop->cursor.anchor->active = saved_kind;
 }
 
 #if EDITION_INTERNATIONAL

@@ -29,7 +29,6 @@ void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
-struct RenderOutput *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -66,8 +65,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single)
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
         VramBlock_LoadCached(slot, 256, 0);
-        RenderOutput_CreateFar(slot, 0x40004000, window, 48, 32);
-        object = RenderOutput_CreateFar(slot, 0x40004000, window, 80, 32);
+        RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 48, 32);
+        object = RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 80, 32);
         object->table.bits.index += 4;
         UiMenu_SlideCursor(GIVE_CURSOR_X, 40);
         while (!GameFlag_IsSet(0x150)) {

@@ -173,7 +173,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
             *ime = (u16)ime;
             used = q->count;
             if (used <= 31) {
-                u32 *destination = (u32 *)((u8 *)q + used * 12 + 4);
+                u32 *destination = q->entries[used];
                 /* FAKEMATCH: the count is stored through a u16 pointer, as in the IO write queue, which places the store after the entry address. */
                 *(u16 *)&q->count = used + 1;
                 *destination++ = 0x6041;
@@ -315,7 +315,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
             *ime = (u16)ime;
             count = q->count;
             if (count <= 31) {
-                u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
+                u32 *destination = q->entries[count];
                 *(u16 *)&q->count = count + 1;
                 *destination++ = 0x1f83;
                 *destination++ = 0x0400000a;

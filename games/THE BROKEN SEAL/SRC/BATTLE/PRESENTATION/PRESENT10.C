@@ -13,10 +13,10 @@ extern struct BattleBackgroundView *gTransitionWork;
 
 void BattlePresentation_InitializeWorkAndResetState(void)
 {
-    void *work;
+    struct BattleAffineHdma *work;
     struct BattleBackgroundView *state;
     volatile u32 zero;
-    work = Runtime_AllocateBlock(10, 0x2a0);
+    work = Runtime_AllocateBlock(10, sizeof *work);
     state = gTransitionWork;
     zero = 0;
     Dma_Set(&zero, work, 0x850000a8, (volatile u32 *)0x040000d4);
@@ -25,7 +25,7 @@ void BattlePresentation_InitializeWorkAndResetState(void)
 
 void Runtime_ReleaseHeapBlock10(void)
 {
-    Runtime_ReleaseHeapBlock(0xA);
+    Runtime_ReleaseHeapBlock(10);
 }
 
 typedef void (*BitDecoder)(const u8 *source, void *destination);

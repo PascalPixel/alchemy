@@ -20,7 +20,7 @@ struct SpriteAttr {
     u32 unk8;
 };
 
-struct RenderOutput {
+struct GlyphSpriteOutput {
     s32 zero;
     u8 one4;
     u8 one5;
@@ -42,7 +42,7 @@ struct WindowTilemap {
    modes write tiles up to 0xff into the window tilemap. */
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
-    struct RenderOutput *out = (struct RenderOutput *)gWindowWork[0];
+    struct GlyphSpriteOutput *out = (struct GlyphSpriteOutput *)gWindowWork[0];
     u8 *base = (u8 *)out;
     s32 idx;
     u16 *slot;
@@ -59,7 +59,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         out = RenderOutput_AcquireFree();
         if (out == NULL)
             return;
-        idx = (out - (struct RenderOutput *)(base + 0x698)) * 4;
+        idx = (out - (struct GlyphSpriteOutput *)(base + 0x698)) * 4;
         out->one5 = 2;
         attr = &out->attr;
         slot = (u16 *)(base + 0x12b6);
@@ -95,7 +95,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
     /* FAKEMATCH: the game keeps the work block in r12 for the tile store and a copy in r8 for the rest; as one plain variable it lives in r8 alone. */
     register u8 *work asm("r12") = gWindowWork[0];
     u8 *base = work;
-    struct RenderOutput *out;
+    struct GlyphSpriteOutput *out;
     s32 idx;
     u16 *slot;
     struct SpriteAttr *attr;
@@ -112,7 +112,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         out = RenderOutput_AcquireFree();
         if (out == NULL)
             return;
-        idx = (out - (struct RenderOutput *)(base + RENDER_OUTPUT_TBL_OFS)) * 4;
+        idx = (out - (struct GlyphSpriteOutput *)(base + RENDER_OUTPUT_TBL_OFS)) * 4;
         out->one5 = 2;
         attr = &out->attr;
         slot = (u16 *)(base + RENDER_COUNTER_OFS);

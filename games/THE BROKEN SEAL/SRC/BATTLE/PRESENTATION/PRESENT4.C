@@ -130,7 +130,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
 void BattleParty_CollectUnitList(void)
 {
     u16 buf[14];
-    u8 *state;
+    struct BattleSession *battle;
     s32 count;
     s32 i;
     s32 offset;
@@ -139,34 +139,34 @@ void BattleParty_CollectUnitList(void)
     s32 kind;
     u16 *out;
 
-    state = (u8 *)gBattleWork;
+    battle = gBattleWork;
     count = BattleParty_PrepareActiveOwners(buf);
     for (i = 0; i < count; i++) {
-        *(u16 *)(state + 88 + i * 2) = buf[i];
+        battle->party_units[i] = buf[i];
     }
-    offset = count * 2 + 88;
-    *(u16 *)(state + offset) = 0xFF;
+    offset = count;
+    battle->party_units[offset] = 0xff;
 
     count = BattleParty_ListPresentEnemies(buf);
-    kind = ((struct BattleSession *)state)->unknown_042;
+    kind = battle->unknown_042;
     if (kind >= 0) {
         if (kind <= 1) {
             for (i = 0; i < count; i++) {
-                out = (u16 *)(state + 2);
-                out[50 + i] = buf[i];
+                out = (u16 *)battle->enemy_units;
+                out[i] = buf[i];
             }
             goto done;
         }
     }
     for (i = 0; i < count; i++) {
-        index = (BattleParty_CenterOrderOffsets[i] + count / 2) * 2 + 100;
-        out = (u16 *)(state + 2);
-        *(u16 *)((u8 *)out + index) = buf[i];
+        index = BattleParty_CenterOrderOffsets[i] + count / 2;
+        out = (u16 *)battle->enemy_units;
+        out[index] = buf[i];
     }
 done:
-    out = (u16 *)(state + 2);
-    last = count * 2 + 100;
-    *(u16 *)((u8 *)out + last) = 0xFF;
+    out = (u16 *)battle->enemy_units;
+    last = count;
+    out[last] = 0xff;
 }
 
 /* Copies the eight-word tile pattern one row down in VRAM, then clears the

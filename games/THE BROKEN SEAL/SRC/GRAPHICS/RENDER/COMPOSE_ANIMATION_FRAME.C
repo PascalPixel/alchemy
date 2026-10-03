@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
@@ -9,40 +10,6 @@ extern u8 gWorkSlot[];
    for the facing direction and, when a frame changed, draws the layers in
    priority order, outlines the result and uploads it. Returns whether the
    first layer's facing entry asks for a flip. */
-
-/* One scripted layer of the composite object. */
-struct AnimationEntry {
-    s16 anim_id;    /* 0x00 */
-    u16 timer;      /* 0x02 compared as s16, updated as u16 */
-    u8 kind;        /* 0x04 direction-table selector */
-    u8 param;       /* 0x05 draw parameter */
-    u8 priority;    /* 0x06 draw order, 0..3 */
-    u8 mode;        /* 0x07 1 = copy, 3 = decode, else draw */
-    void **frames;  /* 0x08 */
-    void *field_0c;
-    u8 *script;     /* 0x10 */
-    u8 pos;         /* 0x14 script cursor */
-    u8 step;        /* 0x15 timer decrement */
-    u8 frame;       /* 0x16 selected frame, 255 = none */
-    u8 frame_base;  /* 0x17 */
-};
-
-struct AnimationObject {
-    u8 field_00[8];
-    u16 tile : 10;  /* 0x08 the VRAM tile index */
-    u16 attr : 6;
-    u8 field_0a[18];
-    u8 slot;        /* 0x1c */
-    u8 field_1d[3];
-    u8 width;       /* 0x20 */
-    u8 height;      /* 0x21 */
-    u8 field_22[2];
-    u8 last_no;     /* 0x24 */
-    u8 dirty;       /* 0x25 */
-    u8 flags;       /* 0x26 bit 1 requests the outline pass */
-    u8 count;       /* 0x27 */
-    struct AnimationEntry *entries[4]; /* 0x28 */
-};
 
 /* Running byte total plus the two outline colours. */
 struct ComposeContext {

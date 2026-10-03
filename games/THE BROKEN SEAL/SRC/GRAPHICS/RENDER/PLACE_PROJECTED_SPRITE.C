@@ -6,35 +6,10 @@
    y store goes through sprite->part rather than part[0], which schedules the
    half-height load before the screen y load as the ROM does. */
 #include "TYPES.H"
+#include "PROJSPR.H"
 #include "IWRAM_CALL.H"
 
 extern u8 gMenuCtrlWork[];
-
-struct ProjectedSpritePart {
-    u8 unknown_00[4];
-    u16 y : 8;
-    u16 affine : 2;
-    u16 unknown_5 : 6;
-    u16 x : 9;
-    u16 affine_index : 5;
-    u16 unknown_7 : 2;
-    u8 unknown_08[4];
-};
-
-struct ProjectedSprite {
-    struct ProjectedSpritePart part[2];
-    s32 scale;
-    u8 vram_block;
-    u8 flags;
-    u16 rotation;
-    u8 width;
-    u8 height;
-    s8 offset_x;
-    s8 offset_y;
-    u8 unknown_24;
-    u8 hidden;
-    u8 shadow_flags;
-};
 
 struct ProjectedEffect {
     unsigned x : 16;

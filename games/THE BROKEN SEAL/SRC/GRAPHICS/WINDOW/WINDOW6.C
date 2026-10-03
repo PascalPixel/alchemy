@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
 #include "FIELD_EVENT.H"
@@ -25,13 +26,19 @@ u32 Menu_WaitForSelectionInput(u32);
 void Resource_ResetOwnerEntries(void);
 s32 BattleFx_FindConditionResourceFar(s16 scene, s16 entrance);
 s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *height);
-s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 void UiTimedNotice_Tick(void);
-extern u8 Data_03001ebc[];
-void UiWork_Finalize(struct Work *work, s32 release);
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 PartyInventory_RemoveFar(s32);
+
+/* The field notice's mode-specific tail of the event allocation. */
+struct TimedNoticeWork {
+    u8 unknown_000[0x230];
+    struct UiWindow *window;
+    u16 countdown;
+};
+
+LAYOUT_OFFSET_GUARD(TimedNoticeWork_Window, struct TimedNoticeWork, window, 0x230);
+LAYOUT_OFFSET_GUARD(TimedNoticeWork_Countdown, struct TimedNoticeWork, countdown, 0x234);
 
 void Ui_ClearWorkStateAndWaitFrame(void)
 {
@@ -62,17 +69,17 @@ u32 Menu_RunSelectionForValue(u32 value)
    and its countdown live in the event work at +0x230 and +0x234. */
 void UiTimedNotice_Create(void)
 {
-    u8 *work;
+    struct TimedNoticeWork *work;
     s32 height;
     s32 width;
     s32 y;
     s32 x;
     s32 resource;
-    s32 window;
+    struct UiWindow *window;
     u16 *timer;
     s32 frames;
 
-    work = (u8 *)gEventWork;
+    work = (struct TimedNoticeWork *)gEventWork;
     x = 8;
     y = 8;
     resource = BattleFx_FindConditionResourceFar(gGameState.scene, gGameState.entrance) + RENDER_RESOURCE_BASE;
@@ -80,9 +87,9 @@ void UiTimedNotice_Create(void)
     x = (30 - width) >> 1;
     y = (10 - height) >> 1;
     window = UiWindow_Create(x, y, width, height, 2);
-    *(s32 *)(work + 0x230) = window;
-    UiText_DrawResource(resource, window, 0, 0);
-    timer = (u16 *)(work + 0x234);
+    work->window = window;
+    UiText_DrawResource(resource, (s32)window, 0, 0);
+    timer = &work->countdown;
     frames = 90; /* FAKEMATCH: a word temporary keeps 90 out of the HImode pool. */
     *timer = frames;
     Scheduler_AddOrUpdateCallback((s32)(UiTimedNotice_Tick), 0xc80);
@@ -90,30 +97,26 @@ void UiTimedNotice_Create(void)
 
 void UiTimedNotice_Tick(void)
 {
-  void *work;
-  s32 *slot;
-  u16 cnt;
-  void *state;
-  int zero;
-  state = *((void **)((u32)&Data_03001ebc));
-  work = state;
-  *((u16 *)(((u8 *)work) + 0x234)) = (cnt = (*((u16 *)(((u8 *)work) + 0x234))) + 0xFFFF);
-  zero = 0;
-  if ((cnt << 0x10) == zero)
-  {
-    UiWork_Finalize(*(slot = (s32 *)(((u8 *)work) + 0x230)), 2);
-    Scheduler_RemoveCallback((u32)((s32)UiTimedNotice_Tick));
-  }
+    struct TimedNoticeWork *work;
+    u16 count;
+
+    work = (struct TimedNoticeWork *)gEventWork;
+    count = work->countdown - 1;
+    work->countdown = count;
+    if (count == 0) {
+        UiWork_Finalize(work->window, 2);
+        Scheduler_RemoveCallback((u32)UiTimedNotice_Tick);
+    }
 }
 
 void UiTimedNotice_CloseIfActive(void)
 {
-    void *work;
+    struct UiWindow *window;
 
-    work = FIELD_AT_OFFSET(*(void **)((u32)&Data_03001ebc), void **, 0x230);
-    if ((work != NULL) && (FIELD_AT_OFFSET(work, u16 *, 0x16) != 0)) {
-        UiWork_Finalize(work, 2);
-        Scheduler_RemoveCallback((u32)((s32)UiTimedNotice_Tick));
+    window = ((struct TimedNoticeWork *)gEventWork)->window;
+    if (window != NULL && window->flags != 0) {
+        UiWork_Finalize(window, 2);
+        Scheduler_RemoveCallback((u32)UiTimedNotice_Tick);
     }
 }
 
@@ -132,10 +135,10 @@ s32 Item_ReturnTrue(void)
 
 void Party_AdjustByte205ByDirection(s32 arg0)
 {
-    u8 value = gGameState.unknown_200[0x205 - 0x200];
+    u8 value = gGameState.palette_glow[0];
     if (arg0 & 0x20)
         value += 0xff;
     else
         value += 1;
-    gGameState.unknown_200[0x205 - 0x200] = value;
+    gGameState.palette_glow[0] = value;
 }

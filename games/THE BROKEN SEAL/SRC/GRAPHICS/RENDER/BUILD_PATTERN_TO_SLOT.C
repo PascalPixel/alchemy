@@ -1,18 +1,16 @@
 #include "TYPES.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
 s32 Runtime_ReleaseHeapBlock(s32);
-s32 VramBlock_LoadCached(s32, s32, s32);
-s32 Runtime_AllocateHeapBlock(s32 no, s32 arg1);
+s32 VramBlock_LoadCached(s32, s32, const void *);
+void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Ui_PrepareTransferFromTableEntry(u32 index);
 
-s32 Ui_BuildPatternToSlot(s32 no, s32 arg1, s32 slot)
+s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 slot)
 {
-    s32 work;
+    u8 *work;
 
     work = Runtime_AllocateHeapBlock(0x11, 0x608);
-    Ui_PrepareTransferFromTableEntry(no);
+    Ui_PrepareTransferFromTableEntry(icon);
     VramBlock_LoadCached(slot, 0x80, work + 0x400);
     Runtime_ReleaseHeapBlock(0x11);
     return 1;

@@ -189,7 +189,7 @@ s32 Shop_PickUnit(void)
     Shop_DrawMoney();
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
-    shop->cursor.anchor->one5 = 4;
+    shop->cursor.anchor->active = 4;
     shop->mode = 12;
     PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, 0);
 
@@ -217,7 +217,7 @@ s32 Shop_PickUnit(void)
                     Shop_SelSell(unit_id);
                 else
                     Shop_SelRepair(unit_id);
-                shop->cursor.anchor->one5 = 4;
+                shop->cursor.anchor->active = 4;
                 shop->mode = 12;
                 redraw = 1;
             }
@@ -277,7 +277,7 @@ s32 Shop_SelSell(s32 unit_id)
 
     for (;;) {
         price_window = UiWindow_CreateFar(0, 5, 30, 3, 2);
-        shop->cursor.anchor->one5 = 18;
+        shop->cursor.anchor->active = 18;
         shop->mode = 12;
         redraw = 1;
 
@@ -432,7 +432,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
         UiMessage_ShowAndWait((s32)&MsgHowManyToSell);
         saved_x = shop->cursor.target_x;
         saved_y = shop->cursor.target_y;
-        shop->cursor.anchor->one5 = 4;
+        shop->cursor.anchor->active = 4;
         shop->mode = 0xc;
         Shop_PlaceCursor(NULL, EFFECT_X, 0x30);
         result = Shop_SelectQuantity(0, selection, effect);

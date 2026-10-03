@@ -16,17 +16,6 @@ s32 SerialRuntime_GetActiveTransfers(void);
 void SerialRuntime_RemoveIrqHandlers(void);
 void BattleLink_ResetTransferState(void);
 
-/* One queued action as the two sides of a linked battle exchange it. */
-struct BattleLinkedAction {
-    s16 unit_id;
-    u16 source_id;
-    u16 flags;
-    u16 unknown_06;
-    u16 unknown_08;
-    u16 kind;
-    u8 unknown_0c[4];
-};
-
 /* The header sent ahead of the actions: how many follow, a random check
  * value both sides must agree on, and the seed the battle continues from. */
 struct BattleLinkedActionState {
@@ -42,7 +31,7 @@ struct BattleLinkedActionState {
  * `actions` and renamed to this side's unit ids. The side that leads sends
  * first and gives the seed; the other receives first and checks it. Returns
  * the number of actions received, or -1 once the link fails. */
-s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s32 count)
+s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions, s32 count)
 {
     struct BattleSession *battle = gBattleWork;
     s32 result = 0;
@@ -143,16 +132,16 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
     }
 
     for (index = 0; index < count; index++) {
-        struct BattleLinkedAction *action = &actions[index];
+        struct BattleActionRecord *action = &actions[index];
 
-        action->source_id = battle->owner_slots[action->unit_id];
+        *(u16 *)action->unknown_02 = battle->owner_slots[action->unit_id];
         /* The side is read through a byte pointer each pass, as the
          * reference reads it. */
         if (*(u8 *)&battle->link_side == 0) {
-            if (action->flags & 1)
-                action->flags++;
+            if (action->value & 1)
+                action->value++;
         } else {
-            action->flags |= 1;
+            action->value |= 1;
         }
     }
 
@@ -192,10 +181,10 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleLinkedAction *actions, s
         }
 
         for (index = 0; index < result; index++) {
-            struct BattleLinkedAction *action = &actions[count + index];
+            struct BattleActionRecord *action = &actions[count + index];
 
-            action->unit_id = action->source_id;
-            action->kind ^= 0x80;
+            action->unit_id = *(u16 *)action->unknown_02;
+            action->target = (u16)action->target ^ 0x80;
         }
 
         Runtime_BumpFree(state);

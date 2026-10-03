@@ -3,7 +3,6 @@
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
-extern u8 Data_03001e8c[];
 
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
@@ -15,7 +14,7 @@ s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase)
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *base = gWindowWork[0];
-    u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
+    u16 *counter = &((struct UiRenderWork *)base)->count;
     s32 offset;
     s32 zero = 0;
 
@@ -24,8 +23,8 @@ void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
     *(u16 *)(base + offset) = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
-    /* 0xeb0から始まる列を次の処理へ渡す。 */
-    UiText_RenderWideStringAtOffset(base + RENDER_ENTRY_TBL_OFS, arg1, arg2, arg3);
+    /* Pass the built entries to the text canvas. */
+    UiText_RenderWideStringAtOffset(((struct UiRenderWork *)base)->entries, arg1, arg2, arg3);
 }
 
 void UiText_DrawCharacterAtOffset(
@@ -43,7 +42,7 @@ void UiText_DrawCharacterAtOffset(
     u16 *counter;
 
     base = gWindowWork[0];
-    counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
+    counter = &((struct UiRenderWork *)base)->count;
     zero = 0;
     *counter = zero;
     UiText_BuildRenderEntries(character, 1);
@@ -57,7 +56,7 @@ void UiText_DrawCharacterAtOffset(
     if (cell < 0x280U) {
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
-        text = (u16 *)(base + RENDER_ENTRY_TBL_OFS);
+        text = ((struct UiRenderWork *)base)->entries;
         UiText_RenderStringTiles(
             text,
             (s32)(base + byte_offset),

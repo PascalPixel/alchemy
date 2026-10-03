@@ -1,16 +1,10 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
-
-/* The UI work block's counter limit. A member store keeps the halfword
-   constant an immediate; a cast store sends it to the literal pool. */
-struct UiWorkCounter {
-    u8 unk_0000[RENDER_COUNTER_OFS];
-    u16 limit;
-};
 
 extern u8 *Runtime_AllocateBlock(s32, u32);
 extern void UiWork_InitFreeList(void);
@@ -49,9 +43,9 @@ void UiWork_InitializeWithResourceCounters(void)
        routines rather than DMA. */
     Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
-    work[RENDER_DIRTY_OFS] = 1;
-    ((struct UiWorkCounter *)work)->limit = 99;
-    work[RENDER_LEVEL_OFS] = 15;
+    ((struct UiRenderWork *)work)->dirty = 1;
+    ((struct UiRenderWork *)work)->glyph_resource = 99;
+    ((struct UiRenderWork *)work)->level = 15;
 #if EDITION_INTERNATIONAL
     fill = 0xf000f000;
     Dma_Set((const void *)&fill, work, 0x85000140, (volatile u32 *)0x040000d4);
@@ -92,13 +86,13 @@ void UiWork_Initialize(s32 kind)
        routines rather than DMA. */
     Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
-    work[RENDER_DIRTY_OFS] = 1;
+    ((struct UiRenderWork *)work)->dirty = 1;
     /* FAKEMATCH: the 99 goes through an s32 local and a u16 pointer so it is a movs, not a halfword pool constant */
-    half = (u16 *)(work + RENDER_COUNTER_OFS);
+    half = &((struct UiRenderWork *)work)->glyph_resource;
     value = 99;
     *half = value;
-    work[RENDER_MENU_STATE_OFS] = 1;
-    work[RENDER_LEVEL_OFS] = 15;
+    ((struct UiRenderWork *)work)->menu_state = 1;
+    ((struct UiRenderWork *)work)->level = 15;
 #if EDITION_INTERNATIONAL
     fill = 0xf000f000;
     Dma_Set(&fill, work, 0x85000140, (volatile u32 *)0x040000d4);
@@ -115,6 +109,6 @@ void UiWork_Initialize(s32 kind)
         u8 mode = 4;
 
         for (i = 2; i >= 0; i--)
-            work[i + RENDER_TILE_ATTR_OFS] = mode;
+            ((struct UiRenderWork *)work)->tile_attributes[i] = mode;
     }
 }

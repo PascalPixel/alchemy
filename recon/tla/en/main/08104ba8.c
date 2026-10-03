@@ -1,39 +1,32 @@
 /* Status screens: create one of two icon variants, shifting its tile index by the variant. */
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 
 extern u8 *gMenuWork;
 
-struct MarkerObject {
-    u8 pad00[4];
-    u8 state;
-    u8 active;
-    u8 pad06[6];
-    u16 timer;
-};
 
-struct MarkerObject *RenderOutput_CreateFar(u32 resource, u32 flags, s32 x, s32 y, s32 tile);
 
-s32 UiIcon_DrawVariantWithTileOffset(s32 x, s32 y, s32 tile, s32 variant)
+s32 UiIcon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
-    struct MarkerObject *object;
+    struct RenderOutput *object;
     u32 resource;
     register s32 v asm("r5") = variant; /* FAKEMATCH: keeps the variant in r5 */
-    register s32 xx asm("r4") = x; /* FAKEMATCH: keeps x in r4 */
-    register s32 yy asm("r6") = y; /* FAKEMATCH: keeps y in r6 */
+    register struct RenderInput *w asm("r4") = window; /* FAKEMATCH: keeps x in r4 */
+    register s32 xx asm("r6") = x; /* FAKEMATCH: keeps y in r6 */
     u8 *data = gMenuWork;
 
     if (v == 0) {
         resource = *(u16 *)(data + 0x392);
-        tile -= 3;
+        y -= 3;
     } else {
         resource = *(u16 *)(data + 0x394);
-        tile -= 4;
+        y -= 4;
     }
-    object = RenderOutput_CreateFar(resource, 0x40000000, xx, yy, tile);
+    object = RenderOutput_CreateFar(resource, 0x40000000, w, xx, y);
     if (object == 0)
         return -1;
-    object->state = 0;
-    object->timer = 0;
+    object->kind = 0;
+    object->unknown_0c = 0;
     object->active = 1;
     return 1;
 }

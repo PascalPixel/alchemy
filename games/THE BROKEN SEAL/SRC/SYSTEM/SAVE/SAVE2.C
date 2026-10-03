@@ -1,5 +1,6 @@
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "SCENE.H"
 #include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -21,7 +22,6 @@ extern u32 gLoadedStateWord;
 extern u8 gOptionMirror;
 extern u32 GameFlagBytes[];
 u32 Runtime_GetBuildStampTimeFar(s32);
-u16 BattleFx_FindConditionResourceFar(s32 map, s32 entrance);
 u8 Party_SumDjinnCountsFar(s32 element);
 void Party_ListActiveOwnersFar(u16 *owners);
 s32 GameFlag_TestFar(s32 flag);
@@ -223,7 +223,7 @@ u32 SaveState_BuildSummaryHeader(void)
         *destination++ = *source++;
     summary->level = owner->level;
     summary->play_time = gGameState.play_time;
-    summary->area = BattleFx_FindConditionResourceFar(gGameState.scene, gGameState.entrance);
+    summary->area = Scene_GetAreaNameIndexFar(gGameState.scene, gGameState.entrance);
     summary->class_id = owner->class_index;
     summary->coins = gGameState.coins;
     summary->djinn[0] = Party_SumDjinnCountsFar(0);

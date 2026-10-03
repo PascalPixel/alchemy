@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
+#include "OBJECT_DISPATCH.H"
 
 extern u8 gEffectWork[];
 
@@ -10,6 +11,7 @@ extern s32 gGameState[];
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();
 int ObjectMotion_Launch();
+void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *child, u32 value);
 
 void BattleFx_FinishHeavyImpact(s32 arg)
 {
@@ -74,7 +76,9 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             EffectSlot_SetObjectMode(work, 7);
             }
             while (0);
-            ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)(head = (((s8 *)work) + 0))), ((u32)(Random16() * 7)) >> 0x10);
+            Animation_ApplyChildValuesToRecordFar(
+                (struct DispatchChild *)*((void **)(head = (((s8 *)work) + 0))),
+                ((u32)(Random16() * 7)) >> 0x10);
             value = (__udivsi3(Random16(), 3) + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;
             (*((s32 *)(((s8 *)work) + 0x28))) = value;

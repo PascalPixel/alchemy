@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* 2026-10-03: the four unit modifier bytes now use element_modifier.
  * This draft still cannot compile because seven old battle/runtime headers
  * it includes are missing. Native comparison awaits their migration; the

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "PROJECT.H"
 #include "MAP.H"
 #include "RAM_BUFFER.H"
@@ -19,7 +20,6 @@ extern const u8 TileMap_DrawRows[];
 
 extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 gDecodeBuffer[];
-void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
 
 

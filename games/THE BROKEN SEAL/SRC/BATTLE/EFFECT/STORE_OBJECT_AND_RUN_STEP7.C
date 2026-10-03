@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -16,11 +18,8 @@
 
 extern u8 gBattleFxWork[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangleFn *output);
 void BattleFx_ArmBg2AffineHBlankDma(void);
-void BattleFx_EndCanvasLayer(void);
 
 /*
  * Battle effect: a rippling disc. A 128 x 128 map of distances from a point
@@ -177,8 +176,6 @@ void BattleFx_RunRipplingDisc(struct BattleEffectArgument *effect)
 
 extern u8 gBattleFxWork[];
 
-void BattleFx_BeginCanvasLayer();
-void BattleFx_EndCanvasLayer();
 void BattleFx_PrepareCanvasEffect();
 
 void ObjectGroup_StoreObjectAndRunStep7(s32 a0, s32 a1, s32 a2)
@@ -206,7 +203,6 @@ extern u16 FireSwirl_CellSourceOffsets[];
 extern s8 FireSwirl_CellBiasX[];
 extern s8 FireSwirl_CellBiasY[];
 
-struct MotionObject **GetBattleObjectSlotFar(s32 id);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct MotionObject *object, s32 mode);
@@ -263,8 +259,8 @@ void BattleFx_RunFireSwirlCharge(struct BattleEffectArgument *effect)
     sparks = (struct EffectStep *)gMapCellBuffer;
 
     {
-        struct MotionObject *object = *GetBattleObjectSlotFar(work->effect->actor);
-        struct MotionObject *target = *GetBattleObjectSlotFar(work->effect->actors[0]);
+        struct MotionObject *object = GetBattleObjectSlotFar(work->effect->actor)->object;
+        struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
         s32 diff_x = target->x - object->x;
         s32 start_x = object->x;
         s32 delta_x = diff_x * 80 / 100;

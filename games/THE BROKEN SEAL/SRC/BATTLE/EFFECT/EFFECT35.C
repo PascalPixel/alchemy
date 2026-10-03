@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
 #include "FIELDOBJ.H"
@@ -83,7 +85,6 @@ extern struct BattleFxScene *gEffectWork;
 extern struct ResourceTableEntry ResourceTableEntries[];
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *sprite, s32 animation);
-void Resource_ResetEntry(u32 index);
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
 void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
 
@@ -108,12 +109,9 @@ struct BattleSceneState {
 extern u8 gWorkSlot[];
 
 extern const u8 Data_0809c410[];
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 struct BattleAction *BattleAction_Get(s32 action);
 s32 ResourceTable_CountFreeBlocks(void);
 void BattleFx_SetupObjectPair(s32 first, s32 second);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void BattleFx_UpdateAllEffectSlots(void);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))

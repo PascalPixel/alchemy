@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
@@ -10,10 +13,10 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
-extern u8 gWorkSlot[];
+extern u8 gBattleFxWork[];
+
 u32 Random16(void);
 
-extern u8 gBattleFxWork[];
 
 static __inline__ void CopyWords(void *destination, const void *source, s32 size)
 {
@@ -32,8 +35,6 @@ void ColorBuffer_BackupAndScaleThreeQuarters(void *source, void *destination, s3
 void ColorBuffer_BackupAndDarken(void *source, s32 amount, void *destination, s32 size);
 void ColorBuffer_BackupAndBrighten(void *source, s32 amount, void *destination, s32 size);
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -85,18 +86,18 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
             *(u16 *)0x04000052 = (frame << 1) | 0x1000;
         if (frame > 53)
             *(u16 *)0x04000052 = (0x7c - (frame << 1)) | 0x1000;
-        BattleEffect_LoadWork(46, 7, 7, 3, step);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, step);
         ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 41, size, size);
-        Runtime_ReleaseHeapBlock(46);
-        BattleEffect_LoadWork(46, 7, 7, 7, step);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, step);
         ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 64, 41, size, size);
-        Runtime_ReleaseHeapBlock(46);
-        BattleEffect_LoadWork(46, 7, 7, 11, step);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 11, step);
         ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 33, 72, size, size);
-        Runtime_ReleaseHeapBlock(46);
-        BattleEffect_LoadWork(46, 7, 7, 15, step);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 15, step);
         ((DrawRectangle)Ram_WorkSlot[46])(canvas, work, 64, 72, size, size);
-        Runtime_ReleaseHeapBlock(46);
+        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         if (frame == 32)
             BattleEventRuntime_BeginPhaseFar(143);
         for (i = 0; i != work->effect->count; i++) {
@@ -119,6 +120,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
    passes. */
 void BattleEffect_WipeCanvas(s32 mode, s32 value)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct BattleEffectWork *work;
     u8 *canvas;
     u8 delay[128];
@@ -126,8 +128,9 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
     s32 y;
     s32 pos;
 
-    canvas = *(u8 **)(gWorkSlot + 40 * 4);
-    work = *(struct BattleEffectWork **)(gWorkSlot + 39 * 4);
+    canvas = *(u8 **)((u8 *)gWorkSlot + HEAP_SLOT_BATTLE_CANVAS * sizeof(void *));
+    work = *(struct BattleEffectWork **)((u8 *)gWorkSlot +
+        HEAP_SLOT_BATTLE_EFFECT * sizeof(void *));
     for (x = 0; x != 128; x++)
         delay[x] = Random16() & 0x3f;
 

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "RESMENU.H"
 #include "DMA.H"
 #include "SYSTEM.H"
@@ -7,7 +9,6 @@
 
 void AffineEffect_UpdateFrame(void);
 
-s32 Resource_ResetEntry(u32 index);
 
 void *AffineEffect_InitializeWork(void)
 {

@@ -4,7 +4,7 @@
 
 void RenderResource_LoadFrame(s32 index, s32 value, s32 flag);
 
-void *RenderResource_CreateFrame(
+struct RenderOutput *RenderResource_CreateFrame(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,

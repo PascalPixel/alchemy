@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "PROJECT.H"
 /* Draft, complete main:080e7404 [080e7404,080e823c) with its two nested
    functions main:080e7338 and main:080e73a0, 3844 bytes together, written
@@ -66,14 +68,9 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_FlushPendingGraphicsTransfer(void);
 void BattleFx_ArmPaletteHBlankDma(void);
 void Camera_AdvanceBg2Reference(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 mode, s32 layer);
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleEffect_SetupBlendedDisplay(void);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 struct SceneObject *GetBattleEffectObject(s32 kind);
 void Object_InitializeMode(struct SceneObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);

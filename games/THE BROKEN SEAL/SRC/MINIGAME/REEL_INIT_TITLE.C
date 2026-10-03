@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
@@ -126,9 +127,7 @@ extern u16 ReelGame_SparkCellOffsets[];
 extern char MsgSlotsChangeBet;
 extern char MsgSlotsControls;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void RuntimeDispatch_NoOpHook(s32 resource);
-u32 Resource_DecodeType01(const void *source, void *destination);
 void FarCall_WindowTable(void);
 void ReelGame_InitTitle(void);
 s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags, u32 mode);
@@ -171,7 +170,7 @@ void ReelGame_Run(void)
     sheet = Runtime_AllocateHeapBlock(41, 0x60e);
     canvas = Runtime_AllocateHeapBlock(40, 0x8000);
     work = Runtime_AllocateBlock(39, sizeof(struct BattleEffectWork));
-    state = Runtime_AllocateBlock(45, sizeof(struct ReelWork));
+    state = (s32)Runtime_AllocateBlock(45, sizeof(struct ReelWork));
     tiles = Ram_MapCellBuffer;
     save = (struct ReelSave *)((u8 *)&gGameState + 12);
     RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);

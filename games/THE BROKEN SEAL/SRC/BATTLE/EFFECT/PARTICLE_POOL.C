@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RESOURCE_IDS.H"
@@ -15,16 +18,12 @@
 #include "RAM_BUFFER.H"
 
 extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
+
 extern u16 ParticleStreams_CellOffsets[];
 
 /* The motes live at the start of the map cell buffer. */
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
@@ -57,6 +56,7 @@ struct BlitterPair {
    swaying on its own sine; the targets react one after another. */
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 {
+    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     s32 point[3];
     struct EffectPosition position;
     void **heap_cache;
@@ -76,17 +76,18 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    camera = *(struct BattleCamera **)((u8 *)heap_cache -
+        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
     sheet = heap_cache[2];
     work->effect = effect;
     if (mode == 0)
         BattleFx_BeginCanvasLayer(0);
     else
         BattleFx_BeginCanvasLayer(1);
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw.upper = gWorkSlot[46];
-    BattleEffect_LoadWork(47, 7, 7, 11, 2);
-    draw.lower = gWorkSlot[47];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw.upper = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 11, 2);
+    draw.lower = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (mode == 0)
         resource = (s32)&ResourceId_OrangePaletteA;
@@ -173,7 +174,7 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     }
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

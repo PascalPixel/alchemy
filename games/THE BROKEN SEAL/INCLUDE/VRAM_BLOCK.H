@@ -2,6 +2,7 @@
 #define GUARD_VRAM_BLOCK_H
 
 #include "TYPES.H"
+#include "RESOURCE.H"
 #include "LAYOUT_GUARD.H"
 
 enum VramBlockLimits {

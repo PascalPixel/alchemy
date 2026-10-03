@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "VRAM_BLOCK.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -5,7 +6,6 @@
 #include "ITEM.H"
 #include "BATTLE_UNIT.H"
 
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 extern u8 RenderResource_PairSourceTable;
 

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "INVENTORY_MENU.H"
@@ -127,8 +128,6 @@ s32 ItemMenu_ConfirmDrop(s32 a0)
 }
 
 extern u8 MsgEquipThisItem[];
-void *Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *block);
 s32 Inventory_EquipFar(s32 owner, s32 item);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void Owner_RecalculateStatsFar(s32 owner);

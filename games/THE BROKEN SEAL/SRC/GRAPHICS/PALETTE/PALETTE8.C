@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"

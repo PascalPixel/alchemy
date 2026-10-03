@@ -1,38 +1,32 @@
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
+#include "RESOURCE.H"
+
+void RenderOutput_ReleaseFree(struct RenderOutput *entry);
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 extern u8 Data_03001e8c[];
 
-struct RenderOutputList {
-    struct RenderOutput *next;
-    struct RenderOutput *tail;
-};
-
-void RenderOutput_ReleaseFree(struct RenderOutput *entry);
-s32 Resource_ResetEntry(u32 index);
-
 void UiWork_UpdateListTail(struct RenderOutputList *list)
 {
-    struct RenderOutput *prev;
-    struct RenderOutput *node;
+    struct RenderOutput *node = list->head;
+    struct RenderOutput **tail = &list->head;
 
-    node = list->next;
-    prev = (struct RenderOutput *)list;
-    if (node != NULL) {
-        do {
-            prev = node;
-            node = prev->next;
-        } while (node != NULL);
+    while (node != NULL) {
+        tail = &node->next;
+        node = node->next;
     }
-    list->tail = prev;
+    list->tail_link = tail;
 }
 
 void RenderOutput_AppendToList(struct RenderOutputList *list, struct RenderOutput *node)
 {
+    /* FAKEMATCH: retain the existing first-word pointer store at the tail
+       cell. Assigning the typed tail-link field reverses the two stores in
+       all six editions; the tail still names the next cell, including NULL. */
     if (list != NULL) {
-        list->tail->next = node;
-        list->tail = node;
+        *list->tail_link = node;
+        *(struct RenderOutput **)&list->tail_link = node;
     }
 }
 

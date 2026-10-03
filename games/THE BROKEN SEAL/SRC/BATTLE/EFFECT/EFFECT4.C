@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -24,13 +26,9 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  */
 #define FIELD_AT_OFFSET(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
-void BattleFx_BeginCanvasLayer(s32 mode);
-u32 Resource_DecodeType01(const void *source, void *destination);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void **GetBattleObjectSlotFar(s32 member_id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
 
@@ -50,7 +48,6 @@ struct Chip {
 #define gChips ((struct Chip *)Ram_MapCellBuffer)
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);
@@ -60,7 +57,6 @@ void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-u32 Resource_DecodeType01(const void *source, void *destination);
 void Object_SetMode(struct MotionObject *object, s32 mode);
 void Object_ResetMotion(struct MotionObject *object);
 void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
@@ -105,8 +101,8 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
     for (i = 0; i != 1024; i++)
         gChips[i].life = 0;
-    actor = *GetBattleObjectSlotFar(work->effect->actor);
-    target = *GetBattleObjectSlotFar(work->effect->actors[0]);
+    actor = GetBattleObjectSlotFar(work->effect->actor)->object;
+    target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     if (actor->x > 0)
         step = -0xf0000;
     else
@@ -225,7 +221,6 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_ArmBg2AffineHBlankDma(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
@@ -234,7 +229,6 @@ void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyPitch(s32 angle);
-u32 Resource_DecodeType01(const void *source, void *destination);
 
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
@@ -312,7 +306,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
                 *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
         }
         for (k = 0; k != work->effect->count; k++) {
-            struct MotionObject *target = *GetBattleObjectSlotFar(work->effect->actors[k]);
+            struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
@@ -453,8 +447,8 @@ void BattleFx_RunMemberOrbit(void *object)
                 != work->effect->count) {
                 void *member_object;
 
-                member_object = *GetBattleObjectSlotFar(
-                    work->effect->actors[member]);
+                member_object = GetBattleObjectSlotFar(
+                    work->effect->actors[member])->object;
                 if (frame > member * 16 && frame < (member * 16) + 60) {
                     s32 spin;
 
@@ -519,7 +513,6 @@ extern u8 MemberBurst_Counts[];
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
 
 u32 Battle_GetObjectTableValueFar(s32 actor_id);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void AudioCommand_PlayFar(s32 value);
 void ObjectGroup_TickMemberTimers(void);
@@ -560,7 +553,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
     for (i = 0; i != 1024; i++)
         gMotes[i].variant = -1;
     for (k = 0; k != work->effect->count; k++) {
-        struct MotionObject *source = *GetBattleObjectSlotFar(work->effect->actor);
+        struct MotionObject *source = GetBattleObjectSlotFar(work->effect->actor)->object;
         s32 height = Battle_GetObjectTableValueFar(work->effect->actor);
 
         for (i = 0; i != 128; i++) {
@@ -597,7 +590,7 @@ void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode)
         for (i = 0; i != 160; i++)
             *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
         for (k = 0; k != work->effect->count; k++) {
-            struct MotionObject *target = *GetBattleObjectSlotFar(work->effect->actors[k]);
+            struct MotionObject *target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
             s32 half = (s32)Battle_GetObjectTableValueFar(work->effect->actors[k]) / 2;
 
             if (frame == k * 20 + 71) {

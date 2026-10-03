@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
@@ -12,8 +14,6 @@
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,

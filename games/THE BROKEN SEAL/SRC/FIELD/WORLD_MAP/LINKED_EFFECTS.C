@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "VRAM_BLOCK.H"
@@ -33,7 +34,6 @@ extern struct PairWork *gEffectWork;
 void Effect_AnimateVerticalNegative(union FieldObject *object);
 void Effect_AnimateVerticalPositive(union FieldObject *object);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
-s32 Resource_ResetEntry(u32 index);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {

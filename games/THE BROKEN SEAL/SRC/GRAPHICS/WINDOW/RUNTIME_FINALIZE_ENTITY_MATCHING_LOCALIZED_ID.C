@@ -32,7 +32,7 @@ void UiWork_FinalizeEntityMatchingLocalizedId(void)
     id = state->output_ids[index];
 
     for (i = 0; i != WINDOW_COUNT; i++, work++) {
-        entity = (struct RenderOutput *)(u32)work->unknown_00;
+        entity = work->output.head;
         if ((u8)entity->kind == 2 && (u8)entity->index == id) {
             UiWork_Finalize(work, 2);
             return;

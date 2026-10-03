@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
@@ -49,7 +50,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
 void *Runtime_GetObject(s32);
-s16 *Runtime_BumpAllocateAlternatePool(s32);
 void WaitFrames(s32);
 void Audio_PlayCue(s32);
 s32 Modulo(s32, s32);

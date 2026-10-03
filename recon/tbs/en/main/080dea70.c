@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 /* Draft. */
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -34,11 +36,8 @@ extern u16 Volley_PelletOffsets[];
 #define SLOT47 (*(DrawRectangle *)(gWorkSlot + 47 * 4))
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 mode, s32 *x, s32 *y);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 id);
 s32 Battle_GetObjectTableValueFar(s32 unit);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);

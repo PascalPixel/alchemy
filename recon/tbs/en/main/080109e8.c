@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* 2026-10-03: the tile-animation declaration now comes from its actual
    const-u16 script API in MAP.H. Fresh baseline compiled all six editions;
    the grouped owner-cleanup comparison is pending. Prior score notes below
@@ -42,10 +44,6 @@ extern u32 gFrameCount;
 extern void *gWorkSlot[];
 
 void Blend_SetDarkenTarget0(s32);
-s32 Runtime_AllocateHeapBlock(s32, s32);
-void *Runtime_AllocateBlock(s32, s32);
-void *Resource_GetTableEntry(s32);
-s32 Resource_DecodeType01(const void *source, void *destination);
 void Camera_StoreSceneParameters(u32, u32, u32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);

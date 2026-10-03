@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "BATTLE_PRESENTATION.H"
 #include "PROJECT.H"
 #include "TYPES.H"
@@ -15,21 +18,13 @@
 #include "IO_REG.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-extern void *gWorkSlot[];
 extern u8 gBattleFxWork[];
 extern volatile u32 gKeysRepeat;
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-struct BattleEffectTargetArgument;
-void BattleFx_SelectLivingTargets(struct BattleEffectTargetArgument *argument);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
 void BattleEffect_RunImpactBurst(s32 channel, s32 x, s32 y);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
 void *GetMotionRecordFar(struct MotionObject *object, s32 index);
 s32 Object_InitializeMode(void *object, s32 mode);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
@@ -110,10 +105,10 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     REG_BG2PA = 0x100;
     REG_BLDCNT = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work, 1, 1);
-    BattleEffect_LoadWork(46, 7, 7, 3, 1);
-    draw[0] = (DrawRectangle)gWorkSlot[46];
-    BattleEffect_LoadWork(47, 7, 7, 7, 1);
-    draw[1] = (DrawRectangle)gWorkSlot[47];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
+    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 1);
+    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -148,7 +143,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         thorn->velocity_y = 0;
         thorn->variant = 0;
     }
-    BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
+    BattleFx_SelectLivingTargets(work->effect);
 
     height = -0x400000;
     speed = 0;
@@ -413,14 +408,14 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
         }
 
         if (frame == 302) {
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work, 1, 0);
             Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, (u8 *)work + 0x1680, 1, 1);
-            BattleEffect_LoadWork(46, 7, 7, 3, 2);
-            draw[0] = (DrawRectangle)gWorkSlot[46];
-            BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            draw[1] = (DrawRectangle)gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+            draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
+            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
             REG_BLDCNT = 0x3f46;
             REG_BG2PA = 0x80;
             REG_BG2X = 0;
@@ -498,8 +493,8 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     }
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleEventRuntime_BeginPhaseFar(134);
     BattleEffect_RunImpactBurst(2, 0x800000, height);
     for (i = 0; i != 8; i++)
@@ -521,19 +516,17 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
 #include "RAM_BUFFER.H"
 #include "IWRAM_CALL.H"
 #include "IO_REG.H"
+
 extern u8 gMapCellBuffer[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BuildWindowEdgeTable(void);
 
 void WaitFrames(s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
-void BattleFx_BeginCanvasLayer(s32);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
-void BattleFx_SpawnObjects(s32, s32, s32);
 void Render_ResetTransformState(void);
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
@@ -542,8 +535,6 @@ void BattleEventRuntime_BeginPhaseFar(s32);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *, s32, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
-void Runtime_ReleaseHeapBlock(s32);
-s32 BattleFx_EndCanvasLayer(void);
 
 extern volatile u32 gKeysRepeat;
 
@@ -554,9 +545,6 @@ struct Cells03001ad0 {
     u16 unk06;
 };
 extern struct Cells03001ad0 gBgScroll;
-
-
-
 
 typedef struct Scale {
     s32 x;
@@ -645,12 +633,12 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     *(u16 *)0x04000040 = 0xf0f0;
     Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, aux, 0, 0);
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     blit46 = (DrawRectangle)cache[46 - 40];
-    BattleEffect_LoadWork(47, 7, 7, 3, 1);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 1);
     blit47 = (DrawRectangle)cache[47 - 40];
     gProjection.center_y = 240;
-    BattleFx_SelectLivingTargets((struct BattleEffectTargetArgument *)work->effect);
+    BattleFx_SelectLivingTargets(work->effect);
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
     BattleFx_SpawnObjects(9, 0x174, 1);
@@ -1006,8 +994,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         WaitFrames(1);
     }
 
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }
@@ -1052,7 +1040,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Iwram_CopyWords((void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     draw = (DrawRectangle)heap_cache[7];
 
     for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
@@ -1062,7 +1050,7 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
 
     for (member = 0; member != work->effect->count; member++) {
-        void *object;
+        struct MotionObject *object;
         s32 offset;
         s32 height;
         struct EffectStep *shard;
@@ -1070,9 +1058,9 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
         offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
         object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
         height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
-        point[0] = *(s32 *)((u8 *)object + 8);
+        point[0] = object->x;
         point[1] = height;
-        point[2] = *(s32 *)((u8 *)object + 16);
+        point[2] = object->z;
         EffectPosition_ApplyBaseAndYOffset(point, &screen);
         screen.x >>= 1;
         for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
@@ -1134,6 +1122,6 @@ void BattleFx_RunIceShardBursts(struct BattleEffectArgument *effect)
     }
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

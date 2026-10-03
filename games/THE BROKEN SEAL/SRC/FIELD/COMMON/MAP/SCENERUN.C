@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
@@ -20,13 +21,10 @@ enum {
 
 extern u8 gDebugMode;
 
-void Runtime_BumpFree(void *buffer);
 void Runtime_SetIrqHandler(s32 index, s32 handler, s32 context);
 void Resource_InitializeTable(void);
 void Scheduler_ResetTaskTable(void);
 void Bg0_ClearTilemap(void);
-void Runtime_InitializeHeap(void);
-void *Runtime_BumpAllocate(s32 size);
 void PaletteGlow_UpdateFar(s32 first, s32 second);
 void GameState_InitDefaultsFar(void);
 s32 GameFlag_TestFar(s32 flag);

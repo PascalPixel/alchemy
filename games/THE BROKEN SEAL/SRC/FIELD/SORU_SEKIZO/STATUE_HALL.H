@@ -1,3 +1,6 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #ifndef ALCHEMY_STATUE_HALL_H
 #define ALCHEMY_STATUE_HALL_H
@@ -52,11 +55,8 @@ extern struct SealScene gSealScene;
 extern const u8 SoruSekizo_SpriteRowsGfx[];
 
 void SoruSekizo_RunStatueDropScene(void);
-void Runtime_PushSlotEntry(struct Ent *, s32);
 void Scene_RunGuardSequenceC();
-s32 Runtime_AllocateBlock();
 void Resource_DecodeByteLz();
-s32 Resource_FindFreeEntry();
 void InitializeSceneRecordBuffer();
 void BattleFx_SetQueuedSoundAndPlay();
 void SetMapCellCollision();

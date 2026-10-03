@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -7,7 +9,6 @@
 
 extern u8 gMapCellBuffer[];
 
-extern s32 Resource_ResetEntry(u32 index);
 extern void UiWork_FinalizeFar(u32 arg0, u32 arg1);
 
 void BattleFx_CleanupResourcesAndWindow(void)
@@ -84,7 +85,6 @@ extern u8 MsgPresentLocation[];
 s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 BattleFx_FindConditionResource(s32 id, s32 kind);
 void UiWindow_Clear(s32 window);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);

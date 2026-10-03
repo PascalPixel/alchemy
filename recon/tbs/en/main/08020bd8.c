@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* 2026-09-29: five minutes of permutation reached 9291 from 10306 through
  * 70 rewrites, mostly operand swaps, casts and temporaries; not kept, since
  * the owner is far from exact. */
@@ -32,8 +33,6 @@ s32 Localization_LookupEntryId(s32);
 s32 UiWindow_CreateWithSideObject(s32,s32,s32,s32);
 void UiWindow_DrawDividerLine(struct RenderInput *,s32,s32,s32,s32);
 void UiText_DrawPaddedLabel(struct RenderInput *,u8 *);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(u32,u32,const void *);
 void ShopCursor_SetPositionImmediateFar(union MenuCursor *,s32,s32);
 s32 UiText_SetRenderString(u8 *);
 void RenderOutput_PrepareForRedraw(struct RenderInput *);

@@ -97,14 +97,12 @@ extern struct SceneEntry Map_LayeredScenes[];
 extern u8 gMapLayerData[];
 
 void Blend_SetDarkenTarget0(s32 value);
-s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_DecodeType2(const void *source, void *destination);
 void Tilemap_DecodeStagedBuffer(void);
 void Tilemap_ConvertBuffer(void);
 void DisplayBlend_StartScript(void *script);
 s32 GameFlag_IsSet(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
-void Runtime_BumpFree(void *allocation);
 void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 key);
 
 /* Iwram_Call2 (IWRAM_CALL.H) with r3 among the registers the routine may

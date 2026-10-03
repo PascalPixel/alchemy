@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
@@ -102,7 +103,6 @@ static __inline__ void AdvanceMessage(s32 amount)
 
 void StagedActor_PushActorAhead(void);
 void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
-u8 *Runtime_AllocateBlock(s32 id, s32 size);
 void Resource3ba_NoOpCallback(void);
 s32 FieldScene_RunFlag211ApproachScene();
 void SceneState_WaitUntilWord1000IsNine(void);

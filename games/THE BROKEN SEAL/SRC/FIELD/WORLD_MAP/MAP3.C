@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "STORY.H"
 #include "RUNTIME_MEM.H"
 #include "CALL.H"
@@ -35,7 +36,6 @@ extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
 extern const u8 gWorldMapPackedFrames[];
 void Sys_Free(void *buffer);
-s32 Resource_DecodeType01(const void *source, void *destination);
 void Map_ResumeAnimation(void);
 void Map_LoadAreaGraphics(void);
 void SceneEffect_RestoreBlendRegisters(void);

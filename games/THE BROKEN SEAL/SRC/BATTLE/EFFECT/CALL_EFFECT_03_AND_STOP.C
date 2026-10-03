@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
 
@@ -58,7 +59,6 @@ void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
 void Object_CommitPosition(struct BattleEffect03Object *);
 void Object_Destroy(struct BattleEffect03Object *);
-void Resource_ResetEntry(u8);
 void BattleFx_PrepareBufferInterpolation(void);
 
 void RunBattleEffect03(void)

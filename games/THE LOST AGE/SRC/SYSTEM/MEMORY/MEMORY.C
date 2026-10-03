@@ -7,7 +7,7 @@
    while it lasts and then from EWRAM below 0x02040000, and keeps it in the
    slot; ⚓️ passes the offset where ☀️ passes the slot number. Slots 0 and
    1 hold the EWRAM and IWRAM bump pointers. Returns 0 when both are full. */
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
+void *Runtime_AllocateHeapBlock(s32 kind, s32 size)
 {
     u32 *allocator_state;
     s32 kind_offset;
@@ -28,17 +28,17 @@ s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
             address = allocator_state[0];
             next_address = address + aligned_size;
             if (next_address >= 0x02040000U) {
-                return 0;
+                return NULL;
             }
             allocator_state[0] = next_address;
             *(u32 *)((u8 *)allocator_state + kind_offset) = address;
-            return (s32)address;
+            return (void *)address;
         }
         allocator_state[1] = next;
         *(u32 *)((u8 *)allocator_state + kind_offset) = cached_address;
-        return (s32)cached_address;
+        return (void *)cached_address;
     }
-    return (s32)cached_address;
+    return (void *)cached_address;
 }
 
 /* Hands out a block for a byte-offset slot once, using EWRAM first and
@@ -96,7 +96,7 @@ void Runtime_FillFreeHeapWords(u32 value)
 /* IWRAM-first bump allocation. All-six trials: separate/reused rounding
    locals differed by 17 bytes; named words by 12; two order constraints by
    4; an unconstrained bound by 11; the final tied handoff matched. */
-u32 Runtime_BumpAllocate(s32 size)
+void *Runtime_BumpAllocate(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
     u32 other;
@@ -123,20 +123,20 @@ u32 Runtime_BumpAllocate(s32 size)
         address = state[0];
         other = address + (u32)size;
         if (other >= 0x02040000U) {
-            return 0U;
+            return NULL;
         }
         state[0] = other;
         goto finish;
     }
     state[1] = next;
 finish:
-    return address;
+    return (void *)address;
 }
 
 /* EWRAM-first bump allocation. All-six trials: separate/reused rounding
    locals differed by 13 bytes; named words by 8; two order constraints
    matched the complete 52-byte owner, excluding the following raw tail. */
-s16 *Runtime_BumpAllocateAlternatePool(s32 size)
+void *Runtime_BumpAllocateAlternatePool(s32 size)
 {
     u32 *state = (u32 *)Ram_HeapSlots;
     u32 other;
@@ -164,5 +164,5 @@ s16 *Runtime_BumpAllocateAlternatePool(s32 size)
     }
     state[0] = next;
 finish:
-    return (s16 *)address;
+    return (void *)address;
 }

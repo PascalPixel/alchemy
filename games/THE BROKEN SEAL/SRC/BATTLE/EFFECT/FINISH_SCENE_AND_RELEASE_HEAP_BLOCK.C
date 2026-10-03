@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -58,7 +59,6 @@ struct WaveFxWork {
 extern struct WaveFxWork *gBattleBgFxWork;
 
 void Animation_ApplyChildPalette(struct FxObject *object, s32 palette);
-void Runtime_ReleaseHeapBlock(s32 a);
 void Ui_SetBank15PaletteAndClearRenderMode(void);
 struct FxObject *Object_GetById(s32 id);
 void BattleFx_PrepareBufferInterpolation(void);

@@ -1,44 +1,48 @@
+#include "BATTLE_EFFECT_WORK.H"
+#include "HEAP_STATE.H"
+#include "ANIMSPR.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "SCENE.H"
 
-/* battle/effects/common/spawn_objects.c */
-typedef struct {
-    u8 reserved_00[9];
-    u8 flags09_0 : 2;
+
+/* The first OAM part's existing byte attribute view; not an allocation owner. */
+struct AnimationAttribute {
+    u8 unknown_00[9];
+    u8 low : 2;
     u8 variant : 2;
-    u8 flags09_4 : 4;
-    u8 reserved_0a[28];
-    u8 enabled;
-} BattleEffectObject;
-
-extern u32 gBattleFxWork;
+    u8 high : 4;
+};
 
 
-BattleEffectObject *GetBattleEffectObject(s32);
-void AnimationObjects_SelectAnimationFar(BattleEffectObject *, s32);
+extern struct BattleEffectWork *gBattleFxWork;
+
+/* battle/effects/common/spawn_objects.c */
+
+struct AnimationObject *GetBattleEffectObject(s32);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
 {
-    u32 base = gBattleFxWork;
+    /* FAKEMATCH: the existing packed byte9 store keeps the signed mask live across calls; the ordinary byte mask shortened the object loop by eight bytes. */
+    struct BattleEffectWork *work = gBattleFxWork;
     s32 entry_index = 0;
-    u32 offset;
+
 
     if (entry_count == 0) {
         return;
     }
-    /* The object pointers start 0x77d8 bytes into the effect work. */
-    offset = 0x77d8;
     do {
-        BattleEffectObject *object = GetBattleEffectObject(kind);
+        struct AnimationObject *object = GetBattleEffectObject(kind);
 
-        *(BattleEffectObject **)(offset + base) = object;
+        work->objects[entry_index] = object;
         if (object != 0) {
-            object->enabled = 0;
+            object->flags = 0;
             AnimationObjects_SelectAnimationFar(object, entry_index);
-            (*(BattleEffectObject **)(offset + base))->variant = variant;
+            /* The two-bit variant is written in byte 9. */
+            ((struct AnimationAttribute *)work->objects[entry_index])->variant = variant;
         }
         entry_index++;
-        offset += 4;
     } while (entry_index != entry_count);
 }
 

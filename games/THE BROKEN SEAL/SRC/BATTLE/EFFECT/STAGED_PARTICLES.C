@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "BATTLE_PRESENTATION.H"
+#include "CANVAS.H"
 #include "PROJECT.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
@@ -13,31 +17,21 @@
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
 
-extern u8 gTransitionWork[];
+extern struct BattleBackgroundView *gTransitionWork;
+
 extern u8 gMapCellBuffer[];
 extern volatile u32 gKeysRepeat;
 
-
-
 /* The battle presentation block in heap slot 44. */
-struct BattlePresentationWork {
-    u8 unknown_00[16];
-    s32 scroll_enabled;
-};
 
 typedef struct Scale {
     s32 x;
     s32 y;
 } Scale;
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_AdvanceScrollOnInterval(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 mode, s32 layer);
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void BattleEffect_SetupBlendedDisplay(void);
 void Render_ResetTransformState(void);
@@ -58,7 +52,7 @@ extern u8 PuffArc_CellHeights[];
 extern const Scale StagedParticles_UnitScale;
 
 /* The nine scene objects the effect work keeps. */
-#define OBJECTS ((void **)((u8 *)work + 0x77d8))
+#define OBJECTS (work->objects)
 /* The spark trails and their saved transforms in the map cell buffer. */
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
@@ -79,7 +73,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     struct EffectPosition target;
     DrawRectangle draw[2];
     void **cache;
-    struct BattlePresentationWork *presentation;
+    struct BattleBackgroundView *presentation;
     void *canvas;
     struct BattleEffectWork *work;
     s8 *path;
@@ -93,7 +87,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     s32 row;
     s32 column;
 
-    cache = (void **)gTransitionWork;
+    cache = (void **)&gTransitionWork;
     presentation = cache[0];
     canvas = cache[-4];
     work = cache[-5];
@@ -115,8 +109,8 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
         Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     draw[0] = cache[2];
     /* FAKEMATCH: the one-pass block keeps the table address after the second read. */
     do {
@@ -125,12 +119,12 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
     gProjection.center_y = 240;
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-    *(s32 *)((u8 *)work + 0x7790) = 0;
-    *(s32 *)((u8 *)work + 0x7794) = 4;
-    *(s32 *)((u8 *)work + 0x7798) = -1;
-    *(s32 *)((u8 *)work + 0x779c) = 0;
+    work->scroll_timer = 0;
+    work->scroll_interval = 4;
+    work->scroll_step_x = -1;
+    work->scroll_step_y = 0;
     Scheduler_AddOrUpdateCallback((s32)BattleFx_AdvanceScrollOnInterval, 0x480);
-    presentation->scroll_enabled = 1;
+    presentation->busy = 1;
     BattleEffect_WipeCanvas(0, 1);
     *(volatile u16 *)0x04000000 = 0x7741;
     *(volatile u16 *)0x04000020 = 0x80;
@@ -261,7 +255,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattleFx_AdvanceScrollOnInterval);
-    presentation->scroll_enabled = 0;
+    presentation->busy = 0;
     gBgScroll[1].x = scroll_x;
     BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 9; i++)
@@ -335,7 +329,7 @@ void BattleEffect_RunStagedParticles(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

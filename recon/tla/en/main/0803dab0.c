@@ -1,11 +1,9 @@
+#include "RUNTIME_MEM.H"
 #include "GLYPH.H"
 #include "RESOURCE.H"
 
 
-GlyphTransfer *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-void Runtime_ReleaseHeapBlock(s32 kind);
 
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse)
 {

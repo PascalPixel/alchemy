@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "HEYA.H"
 #include "CALL.H"
@@ -44,7 +45,6 @@ extern s32 ToretoHeya_TintIndex;
 extern s32 ToretoHeya_TintSteps[];
 
 void Vector_AddPolarOffset();
-void Resource_ResetEntry();
 void Engine_ObjectDispatchRelease();
 
 struct Vec {

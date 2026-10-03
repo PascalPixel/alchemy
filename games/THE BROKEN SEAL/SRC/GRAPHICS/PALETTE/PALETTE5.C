@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "DISPTRAN.H"
 #include "DMA.H"

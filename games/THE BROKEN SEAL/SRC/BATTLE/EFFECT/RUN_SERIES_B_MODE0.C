@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
@@ -22,8 +24,6 @@ extern u8 gBattleFxWork[];
 #define WORK_SLOT(kind) (*(void **)((u8 *)gWorkSlot + (kind) * 4))
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 side, s32 narrow, s32 *x, s32 *y);
 void Render_ResetTransformState(void);
@@ -32,7 +32,6 @@ void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyRoll(s32 angle);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);

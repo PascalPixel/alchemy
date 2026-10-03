@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "ANIMSPR.H"
+#include "CANVAS.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -9,6 +13,8 @@
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 
+extern void *gBattleFxWork[];
+
 /* The whole-pixel half of a 16.16 coordinate. */
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -19,27 +25,9 @@
 
 /* A spawned object: two words, then a byte and its flags. The flags are set
    through a byte pointer below, the plain byte store the native code has. */
-struct FxObject {
-    s32 unknown_00[2];
-    u8 unknown_08;
-    u8 flags;
-};
 
 /* The effect's work block: the shared layout with the nine spawned objects
    named. */
-struct ObjectRowWork {
-    u8 sheet[0x7080];
-    struct EffectStep particles[64];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unknown_7788[0x20];
-    s32 shake_frames;
-    u8 unknown_77ac[0x2c];
-    struct FxObject *objects[9];
-    u8 unknown_77fc[0x28];
-    s32 transfer_pending;
-    struct BattleEffectArgument *effect;
-};
 
 /* A projected placement: a 16.16 position and two words around it. */
 struct FxPlacement {
@@ -59,8 +47,6 @@ struct FxControl {
     s32 active;
 };
 
-extern void *gBattleFxWork[];
-extern void *gWorkSlot[];
 
 extern u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
@@ -70,22 +56,17 @@ extern const u8 ObjectRow_Rows[];
 extern const struct FxPair ObjectRow_SweepPair;
 extern const struct FxPair ObjectRow_RisePair;
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 layer, s32 mode);
-void BattleFx_SpawnObjects(s32 count, s32 animation, s32 mode);
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
 void BattleBackground_LoadFar(s32 layer, s32 resource_id, s32 mode);
 void BattleEffect_SetupBlendedDisplay(void);
-void Object_ApplyProjectedPlacementFar(struct FxObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
-void ResourceObject_ReleaseFar(struct FxObject *object);
+void Object_ApplyProjectedPlacementFar(struct AnimationObject *object, struct FxPlacement *placement, struct FxPair *pair, s32 mode);
+void ResourceObject_ReleaseFar(struct AnimationObject *object);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode, s32 slot, s32 delay);
 void Camera_ApplyShake(s32 x, s32 y);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
@@ -105,7 +86,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     u8 hit_row[14];
     struct FxPlacement place2;
     void *canvas;
-    struct ObjectRowWork *work;
+    struct BattleEffectWork *work;
     DrawRectangle blit;
     u8 *sheet;
     s32 base_x;
@@ -117,7 +98,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
     s32 frame;
     s32 i;
 
-    cursor = gBattleFxWork + 1;
+    cursor = &gBattleFxWork[1];
     canvas = cursor[0];
     work = cursor[-1];
     sheet = cursor[1];
@@ -165,8 +146,8 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         i++;
     } while (i != 64);
 
-    BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    blit = gWorkSlot[46];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+    blit = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     REG16(0x0400000c) = 0x786;
 
     for (frame = 0; frame != 120; frame++) {
@@ -327,9 +308,9 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
 
     i = 0;
     do {
-        struct FxObject *object = work->objects[i];
+        struct AnimationObject *object = work->objects[i];
 
-        ((u8 *)object)[9] |= 12;
+        ((u8 *)&object->part[0])[9] |= 12;
         i++;
     } while (i != 9);
 
@@ -492,6 +473,6 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         i++;
     } while (i != 9);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

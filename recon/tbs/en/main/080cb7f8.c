@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 /* Draft, same instructions, two swaps left: the ROM keeps the work block in
    r9 and the pillar picture quotient in r11 (their allocation priorities are
    0.197 and 0.200 here, one reference apart), and it spills the camera
@@ -28,16 +30,12 @@ extern u16 BattleFx6_FlareCells[];
 #define gFlecks ((struct EffectStep *)Ram_MapCellBuffer)
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void AudioCommand_PlayFar(s32 value);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 id, struct EffectPosition *position);
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
 struct BlitterPair {
     DrawRectangle upper;

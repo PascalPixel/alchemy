@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 #include "GAME_STATE.H"
@@ -22,7 +23,6 @@ struct MapActor *BattleAction_FindDescriptor(s32 id);
 void BattleFx_RunPageEffectForSlot(s32 actor, s32 element, s32 index);
 
 extern struct BattleFxScene *gEffectWork;
-void *Runtime_AllocateHeapBlock(s32, s32);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *);
 
 struct Vec {

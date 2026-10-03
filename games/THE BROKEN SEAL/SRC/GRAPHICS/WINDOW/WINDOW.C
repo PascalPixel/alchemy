@@ -15,22 +15,22 @@ void UiWork_ResetCounters();
 void RenderOutput_PrepareForRedraw(struct UiWindow *window);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void RenderOutput_ClearList(void *work);
-void RenderOutput_Release(void *node);
+void RenderOutput_Release(struct RenderOutput *node);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void UiWork_DrawByAttributes(struct UiWindow *window);
 void UiWork_WaitUntilField1aClear(struct UiWindow *window);
 
 void UiWork_UploadDirtyBlocks(void)
 {
-    u8 *work = gWindowWork[0];
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
     u32 flags;
     u8 *src;
     u8 *dst;
-    if (!((struct UiRenderWork *)work)->menu_busy) {
-        flags = ((struct UiRenderWork *)work)->dirty;
+    if (!work->menu_busy) {
+        flags = work->dirty;
         if (flags) {
             dst = (u8 *)0x06002000;
-            src = work;
+            src = (u8 *)work->tilemap;
             if (flags & 1) flags = 63;
             flags &= 63;
             flags >>= 1;
@@ -40,15 +40,15 @@ void UiWork_UploadDirtyBlocks(void)
                 src += 256;
                 dst += 256;
             } while (flags);
-            ((struct UiRenderWork *)work)->dirty = flags;
+            work->dirty = flags;
         }
     }
 }
 
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 {
-    u8 *base = gWindowWork[0];
-    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
+    struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
+    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
     s32 tile;
     u32 bottom;
     u32 row;
@@ -72,7 +72,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
 
     row = 0;
     if (row < height) {
-        mode = &((struct UiRenderWork *)base)->menu_state;
+        mode = &canvas->menu_state;
         do {
             u32 column;
 
@@ -93,7 +93,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height)
             cursor += 32 - width;
         } while (row < height);
     }
-    ((struct UiRenderWork *)base)->dirty = 1;
+    canvas->dirty = 1;
 }
 
 void UiWork_DrawByAttributes(struct UiWindow *window)
@@ -146,7 +146,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs)
     struct UiWindow *found;
     s32 i;
 
-    slot = (struct UiWindow *)(gWindowWork[0] + 0x500);
+    slot = ((struct UiRenderWork *)gWindowWork[0])->windows;
     found = 0;
     i = 0;
     while ((slot->flags & 1) != 0 || slot->duration != 0) {
@@ -163,9 +163,9 @@ done:
         found->width = width;
         found->height = height;
         found->x = x;
-        found->unknown_00 = 0;
+        found->output.head = NULL;
         found->state = 0;
-        found->unknown_04 = (s32)slot;
+        found->output.tail_link = &slot->output.head;
         found->unknown_10 = 1;
         found->flags = 1;
         UiWork_ResetCounters(x); /* the reset ignores the x it is passed */
@@ -226,8 +226,8 @@ void UiWork_Finalize(struct UiWindow *work, s32 release)
 
     if (release != 0) {
         UiWindow_EraseBorderRect(work->x, work->y, work->width, work->height);
-        work->unknown_00 = zero;
-        work->unknown_04 = zero;
+        work->output.head = NULL;
+        work->output.tail_link = NULL;
         work->width = zero;
         work->height = zero;
         work->x = zero;
@@ -263,19 +263,19 @@ void RenderOutput_RedrawSavedRect(struct UiWindow *window)
     UiWindow_DrawFrame(window->x, window->y, window->width, window->height);
 }
 
-void RenderOutput_ClearList(void *arg0)
+void RenderOutput_ClearList(void *work)
 {
-    void *next;
-    void *node;
+    struct RenderOutputList *list = work;
+    struct RenderOutput *node;
+    struct RenderOutput *next;
 
     next = NULL;
-    /* 単方向リストを先頭から解放する。 */
-    if (arg0 != NULL) {
-        node = *(void **)arg0;
-        *(void **)((u8 *)arg0 + 4) = arg0;
-        *(void **)arg0 = next;
+    if (list != NULL) {
+        node = list->head;
+        list->tail_link = &list->head;
+        list->head = next;
         while (node != NULL) {
-            next = *(void **)node;
+            next = node->next;
             RenderOutput_Release(node);
             node = next;
         }

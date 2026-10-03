@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* Canonical uncredited draft: ObjectSystem_UpdateCameraFixed.
    2026-10-02: approved ordinary TBS compiler/options in all six editions.
    Native and generated complete function extents are 428 bytes, including
@@ -61,8 +62,6 @@ struct FixedSync {
 extern u8 Render_DecodeFrame[];
 extern u8 Render_DecodeFrameCodeSize[];
 extern const s32 Camera_FixedViewMatrix[];
-u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 s32 ArcTan2(s32 x, s32 y);
 void Render_ResetTransformState(void);
 s32 GameFlag_TestFar(s32 flag);

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
@@ -23,12 +25,8 @@ extern u8 MsgItemCounter;
 #define GIVE_ASK_Y    32
 #endif
 
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void RenderOutput_ClearListFar(void *window);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void UiMenu_SlideCursor(s32 x, s32 y);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 /* Facing, scene tables and the villagers' first lines. */
 #include "HAIDIA.H"

@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
@@ -14,20 +17,16 @@
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
 
-/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-extern void *gWorkSlot[];
 extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
+
 void BattleFx_ArmBg2AffineHBlankDma(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *position);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 member_id);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames, s32 speed);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -214,19 +213,19 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                         - (BattleFx_GlintCellWidths[frame & 3] >> 1);
                     y = base.y - ((Trig_Cos(angle) * radius) >> 16)
                         - (BattleFx_GlintCellHeights[frame & 3] >> 1);
-                    BattleEffect_LoadWork(47, 7, 7, 3 | RenderMode_GlintFlips[Random16() & 3], 2);
-                    ((DrawRectangle)gWorkSlot[47])(canvas,
+                    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3 | RenderMode_GlintFlips[Random16() & 3], 2);
+                    ((DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas,
                         (u8 *)work + BattleFx_GlintCellOffsets[frame & 3] + 0x2580,
                         x, y + 16,
                         BattleFx_GlintCellWidths[frame & 3],
                         BattleFx_GlintCellHeights[frame & 3]);
-                    Runtime_ReleaseHeapBlock(47);
+                    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                 }
             }
-            BattleEffect_LoadWork(46, 7, 7, 3, 3);
-            draw[0] = (DrawRectangle)gWorkSlot[46];
-            BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            draw[1] = (DrawRectangle)gWorkSlot[47];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+            draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+            draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             point[0] = object->x;
@@ -286,8 +285,8 @@ void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode)
                     }
                 }
             }
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
             if (frame == member * 8 + 16) {
                 s32 delay = total - frame;
 

@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -24,7 +26,6 @@ extern u16 SparkGroups_Shapes[];
 /* By a ring flash's age in threes: which cell of the sheet it shows. */
 extern u8 SparkGroups_FlashCells[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);
@@ -33,7 +34,6 @@ void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-s32 BattleFx_EndCanvasLayer(void);
 
 static __inline__ void CopyPalette(WordCopy copy, void *destination, const void *source, s32 size)
 {

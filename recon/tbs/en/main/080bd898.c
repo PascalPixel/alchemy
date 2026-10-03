@@ -1,3 +1,4 @@
+#include "CALLBACK_SCHEDULER.H"
 /* DRAFT: BattleEvent_Playback with its nested tile clearer (listings 080bd898
  * and 080bd850). Same size as the ROM, 62 of 830 instructions differ:
  * 1. the advance-arrow preamble picks other scratch registers (the address of

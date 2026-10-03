@@ -6,8 +6,8 @@
 #include "ANIMSPR.H"
 
 s32 WaitFrames(s32);
-struct SpriteEntry *ResourceMetadata_RegisterFar(void *, s32);
-s32 Animation_SetWorkEntryFar(void *, s32);
+s32 ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
+void Animation_SetWorkEntryFar(struct AnimationEntry *entry, s32 index);
 
 
 void Camera_ApplyTransformByFlag(void);
@@ -18,12 +18,14 @@ s32 Summon_IsEntryFlagged(s32);
 void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 {
     struct MotionObject *object;
-    struct SpriteEntry *effect;
+    struct AnimationEntry *effect;
+    s32 entry;
 
     object = GetBattleObjectSlot(id)->object;
     if ((object != NULL) && ((0xF & object->record_storage_kind) == 1)) {
-        effect = ResourceMetadata_RegisterFar(object->records, 0x11B);
-        if (effect != NULL) {
+        entry = ResourceMetadata_RegisterFar((struct AnimationObject *)object->records, 0x11b);
+        if (entry != 0) {
+            effect = (struct AnimationEntry *)entry;
             Animation_SetWorkEntryFar(effect, 1);
             effect->priority = 3;
         }

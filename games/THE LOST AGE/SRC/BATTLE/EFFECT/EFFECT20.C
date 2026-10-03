@@ -1,7 +1,7 @@
+#include "MOTION_OBJECT.H"
 #include "B5_CONTEXT.H"
 #include "TYPES.H"
 
-struct B5Context *GetBattleObjectSlotFar(s32);
 void Object_ResetMotion(void *);
 void Object_SetPosition(void *, s32, s32, s32);
 void Object_SetMode(void *, s32);
@@ -23,8 +23,8 @@ struct RisingObjectState {
 
 void BattleFx_InitializeRisingObject(s32 arg0)
 {
-    struct B5Context *context = GetBattleObjectSlotFar(arg0);
-    struct RisingObjectState *object = context->object;
+    struct BattleObjectSlot *context = GetBattleObjectSlotFar(arg0);
+    struct RisingObjectState *object = (struct RisingObjectState *)context->object;
 
     object->field_34 = 0x20000;
     object->field_30 = 0x80000;
@@ -34,6 +34,6 @@ void BattleFx_InitializeRisingObject(s32 arg0)
     object->field_5a = 0;
     object->field_58 = 1;
     Object_ResetMotion(object);
-    Object_SetPosition(object, context->word_0c, 0, context->word_10);
+    Object_SetPosition(object, context->anchor_x, 0, context->anchor_z);
     Object_SetMode(object, 1);
 }

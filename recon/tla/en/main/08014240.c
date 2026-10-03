@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /*
  * Draft: Resource_ClearSlotReferences does not yet match; 4 halfwords differ from ☀️'s C, first at +0x8 (ldr r2, [pc, #36]).
  * Links as recon/tla/raw/08014220.s.

@@ -9,10 +9,6 @@ void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_act
                    s32 mode, s32 centre, s32 extra, s32 third_actor,
                    s32 fourth_actor)
 {
-    extern u8 *Runtime_AllocateBlock();
-    extern void Resource_DecodeType01();
-    extern s32 Resource_FindFreeEntry();
-    extern void Runtime_BumpFree();
     extern void Korosseo_DrawGauge(void);
 
     u8 *descriptor;

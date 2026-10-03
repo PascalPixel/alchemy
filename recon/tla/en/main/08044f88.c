@@ -1,9 +1,9 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
 u32 Resource_DecodeByteLz(const void *, void *);
-void Runtime_ReleaseHeapBlock(s32);
 
 /* graphics/resource/RenderOutput_LoadPair.c */
 extern s32 RenderResource_PairSourceTable[];

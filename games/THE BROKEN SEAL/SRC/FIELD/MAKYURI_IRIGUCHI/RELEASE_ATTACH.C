@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "ENTRANCE.H"
 
 /* Release the optional published attachment; complete owner, no pool. */

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "SAVE_STATE.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -331,7 +332,6 @@ s32 SaveState_LoadSummaryRecords(void)
 
 typedef void (*InterruptHandler)(void);
 
-void Runtime_ReleaseHeapBlock(s32 slot);
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
 
 u32 SaveState_ReleaseWorkspace(void)

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
@@ -30,13 +32,7 @@ extern const u8 AnimationFacing_Kind88[];
 extern const u8 AnimationFacing_Kind4[];
 extern const u8 AnimationFacing_Kind6[];
 
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
-u32 Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *allocation);
-void Runtime_ReleaseHeapBlock(s32 id);
-u32 Resource_DecodeType01(const void *source, void *destination);
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Animation_SetWorkEntry(void *work, s32 no);
 
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir)

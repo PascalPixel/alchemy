@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -62,10 +64,7 @@ enum FacingGatedMessage {
 s32 UpdateFacingFromResolvedObject(struct FacingObject *object);
 
 void ObjectDispatch_Initialize();
-s32 Runtime_AllocateHeapBlock();
 void WaitFrames();
-void Runtime_ReleaseHeapBlock();
-s32 VramBlock_LoadCached();
 void Ui_PrepareTransferForItem();
 
 /* The motion scripts that pop the icon in and delete it a second later. */
@@ -438,7 +437,7 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         spr[9] &= 15;
         *(s32 *)(obj + 40) = 0x20000;
         *(s32 *)(obj + 72) = 0x4000;
-        buf = Runtime_AllocateHeapBlock(17, 0x608);
+        buf = (s32)Runtime_AllocateHeapBlock(17, 0x608);
         Ui_PrepareTransferForItem(item);
         VramBlock_LoadCached(spr[28], 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);

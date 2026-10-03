@@ -14,7 +14,6 @@ struct ResourceWork {
 extern struct ResourceWork Data_03007804;
 extern void *Resource_DirectoryTable[];
 extern const u8 Func_08002d5c[];
-s32 Resource_DecodeType01(const void *source, void *destination);
 
 /* The bl-pair fixer (PATCH_THUMB_BRANCH.S) is ARM code that runs from a heap
    copy of itself; the copy length is a link-time symbol. */
@@ -106,8 +105,6 @@ void Resource_LoadCode(u32 index, void *destination)
     Sys_Free(routine);
 }
 
-/* runtime/RuntimeDispatch_ReservedNoOp03008.c */
-/* runtime/dispatch/RuntimeDispatch_ReservedNoOp03008.c */
 void RuntimeDispatch_ReservedNoOp03008(void)
 {
 }

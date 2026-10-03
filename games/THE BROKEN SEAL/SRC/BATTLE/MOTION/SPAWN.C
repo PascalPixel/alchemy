@@ -22,8 +22,8 @@ s32 BattlePlacement_ContainsId(s16 *list, s32 id);
 void WaitFrames(s32 frames);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 id);
 struct AnimationObject *GetBattleEffectObject(s32 resource);
-struct SpriteEntry *ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
-void Animation_SetWorkEntryFar(struct SpriteEntry *entry, s32 index);
+s32 ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
+void Animation_SetWorkEntryFar(struct AnimationEntry *entry, s32 index);
 void BattlePres_SetActorModeAndAction(s32 id);
 
 /* Gives every unit of the list its battle objects: the sprite, or the paired
@@ -94,19 +94,19 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh)
                 entry->priority = 1;
                 entry->palette = slot->palette;
                 if ((resource = slot->overlay) != 0) {
-                    entry = ResourceMetadata_RegisterFar(res, resource);
+                    entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(res, resource);
                     entry->priority = 1;
                 }
                 if ((resource = slot->animation) != 0) {
-                    entry = ResourceMetadata_RegisterFar(res, resource);
+                    entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(res, resource);
                     slot->animation_entry = entry;
-                    Animation_SetWorkEntryFar(entry, 0);
+                    Animation_SetWorkEntryFar((struct AnimationEntry *)entry, 0);
                     entry->priority = 3;
                 }
                 if ((resource = slot->effect) != 0) {
                     if (res->width == 32)
                         resource = 0x1ff;
-                    entry = ResourceMetadata_RegisterFar(res, resource);
+                    entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(res, resource);
                     slot->effect_entry = entry;
                     entry->priority = 0;
                     res->flags = 0;

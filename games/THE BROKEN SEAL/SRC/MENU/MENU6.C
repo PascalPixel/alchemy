@@ -1,20 +1,16 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "INVENTORY_MENU.H"
 
-extern s32 Resource_FindFreeEntry(void);
-extern s32 VramBlock_LoadCached(s32, s32, u8 *);
 extern u8 Data_080aed4c[];
 extern u8 Data_080aedcc[];
 
 s32 Func_080153d0(s32, s32, s32 *, s32 *, s32);
-s32 Runtime_ReleaseHeapBlock(s32);
-s32 Resource_ResetEntry(u16);
 
 /* ui/icon/load_resource_into_slot.c */
-s32 Resource_GetBuffer(s32 index, s32 value);
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 void Resource_LoadPairedBlocksIfAvailable(void)
 {

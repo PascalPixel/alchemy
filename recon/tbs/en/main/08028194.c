@@ -1,3 +1,8 @@
+/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
+ * and canonical resource/allocator contracts. Earlier measurements are
+ * prior checkpoints; fresh complete-object comparison is pending. */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "RESMENU.H"
 /* 2026-09-29: eight minutes of permutation reached 4740 from 6970 through
  * 64 rewrites; not kept, since the owner is far from exact and its scale
@@ -12,13 +17,6 @@
    against the listing. Tried: a volatile count pointer, work->count
    directly, a do-while and a goto loop. */
 #include "TYPES.H"
-
-struct AffineEffectScale {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
 
 struct WindowLine {
     u16 left;
@@ -39,15 +37,11 @@ extern u32 gFrameCount;
 extern u16 Data_080366f8[];
 extern struct IconSlot gVramBlockCache[];
 extern u8 *Data_03001ecc;
-
-s32 AffineMatrix_BuildForEffect(struct AffineEffectScale *source);
-void Runtime_PushSlotEntry(void *entry, s32 slot);
-
 void AffineEffect_UpdateFrame(void)
 {
     struct ResourceMenuWork *work;
     struct ResourceMenuEntry *sprite;
-    struct AffineEffectScale effect;
+    struct AffineTransform effect;
     struct WindowBuffer *window;
     s16 *count;
     s16 *selected;
@@ -67,8 +61,8 @@ void AffineEffect_UpdateFrame(void)
     scale = Data_080366f8[(gFrameCount * 2) & 31];
     sprite = work->entries;
     scale = (scale - 256) / 4 + 304;
-    effect.x = scale;
-    effect.y = scale;
+    effect.scale_x = scale;
+    effect.scale_y = scale;
     effect.angle = 0;
     matrix = AffineMatrix_BuildForEffect(&effect);
     count = &work->count;

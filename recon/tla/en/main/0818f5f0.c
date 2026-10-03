@@ -6,7 +6,6 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
 s32 Object_SetMode(s32, s32);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32);
 s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 

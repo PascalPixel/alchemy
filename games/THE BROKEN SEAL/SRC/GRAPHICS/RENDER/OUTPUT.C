@@ -5,8 +5,7 @@
 #include "RESOURCE.H"
 
 struct RenderOutput *RenderOutput_AcquireFree(void);
-void Resource_ResetEntry(u32);
-s32 RenderOutput_AppendToList(void *, void *);
+s32 RenderOutput_AppendToList(struct RenderOutputList *, struct RenderOutput *);
 
 struct RenderOutput *RenderOutput_Create(
     s32 slot,
@@ -41,7 +40,7 @@ struct RenderOutput *RenderOutput_Create(
     output->index = (s8)slot;
     output->kind = 1;
     output->active = 1;
-    RenderOutput_AppendToList(input, output);
+    RenderOutput_AppendToList((struct RenderOutputList *)input, output);
     return output;
 }
 

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "GLYPH.H"
 #include "SCENE.H"
@@ -6,9 +7,7 @@
 
 extern void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 slot);
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 extern u8 *UiIcon_FramePointerTable[];
 extern u8 *UiIcon_ItemIconPointers[];

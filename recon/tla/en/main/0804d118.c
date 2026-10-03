@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 extern u8 Data_03001f38[];
@@ -5,7 +7,6 @@ extern u8 Data_03001f38[];
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Scheduler_RemoveCallback(void *);
 void UiWork_Finalize(struct Work *work, s32 release);
-s32 Resource_ResetEntry(u32 index);
 void AffineEffect_UpdateFrame(void);
 
 void Menu_EndResourceSelection(void)

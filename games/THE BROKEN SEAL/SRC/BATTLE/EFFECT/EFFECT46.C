@@ -1,3 +1,8 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "ANIMSPR.H"
+#include "MOTION_OBJECT.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -11,27 +16,26 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 
-/* A battle object as its slot holds it: the world position follows two
-   words this effect does not read. */
-struct SlotObject {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
+
+/* The first OAM part's existing byte attribute view; not an allocation owner. */
+struct AnimationAttribute {
+    u8 unknown_00[9];
+    u8 low : 2;
+    u8 variant : 2;
+    u8 high : 4;
 };
 
+
 extern void *gBattleFxWork[];
-extern void *gWorkSlot[];
+
+/* A battle object as its slot holds it: the world position follows two
+   words this effect does not read. */
+
 extern u16 ParticleStreams_CellOffsets[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_EndCanvasLayer(void);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
 void BattleFx_RunNoEffectFrames(s32 frames);
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 speed, s32 mode);
 void BattleMotion_ApplyVariantMotionFar(s32 actor, s32 variant);
-struct SlotObject **GetBattleObjectSlotFar(s32 unit);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
@@ -48,14 +52,6 @@ extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
 
 /* A scene object: two bits of its tenth byte pick its draw variant. */
-struct SceneObject {
-    u8 reserved_00[9];
-    u8 flags09_0 : 2;
-    u8 variant : 2;
-    u8 flags09_4 : 4;
-    u8 reserved_0a[28];
-    u8 enabled;
-};
 
 /* A pair of 16.16 values: a scale, or a point on the ground. */
 struct Scale {
@@ -74,12 +70,10 @@ extern const struct Scale CirclingScene_UnitScale;
 
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 mode, s32 layer);
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void BattleEffect_SetupBlendedDisplay(void);
-struct SceneObject *GetBattleEffectObject(s32 kind);
-void Object_InitializeMode(struct SceneObject *object, s32 animation);
+struct AnimationObject *GetBattleEffectObject(s32 kind);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 animation);
 void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 
@@ -95,6 +89,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
    skips to the end. */
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 {
+    /* FAKEMATCH: the existing packed byte9 field keeps its mask across object creation; the ordinary byte mask shortened this scene by eight bytes and reordered stores. */
     s32 position[4];
     DrawRectangle draw[2];
     struct Scale scale;
@@ -123,19 +118,19 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(9, 379, 2);
     for (i = 0; i != 6; i++) {
-        struct SceneObject *object = GetBattleEffectObject(390);
+        struct AnimationObject *object = GetBattleEffectObject(390);
 
         work->objects[9 + i] = object;
         if (object != 0) {
-            object->enabled = 0;
-            Object_InitializeMode(object, i % 3);
-            ((struct SceneObject *)work->objects[9 + i])->variant = 1;
+            object->flags = 0;
+            AnimationObjects_SelectAnimationFar(object, i % 3);
+            ((struct AnimationAttribute *)work->objects[9 + i])->variant = 1;
         }
     }
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = (DrawRectangle)gWorkSlot[46];
-    BattleEffect_LoadWork(47, 7, 7, 3, 3);
-    draw[1] = (DrawRectangle)gWorkSlot[47];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
+    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     *(volatile u16 *)0x04000048 = 0x2737;
     *(volatile u16 *)0x04000040 = 0xf0;
     *(volatile u16 *)0x04000046 = 0x1088;
@@ -323,8 +318,8 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     for (i = 0; i != 15; i++)
         ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
 
@@ -573,8 +568,8 @@ void BattleEffect_RunDualParticleStream(struct BattleEffectArgument *effect)
     }
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
 
@@ -593,7 +588,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     void *canvas;
     u8 *cells;
     u8 *transfer;
-    struct SlotObject *slot;
+    struct MotionObject *slot;
     struct EffectStep *shard;
     struct EffectPosition position;
     struct EffectPosition origin;
@@ -605,7 +600,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     s32 size;
     u8 *burst;
 
-    heap_cache = gBattleFxWork;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -619,7 +614,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
     BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0], 4, 0);
     WaitFrames(1);
-    slot = *GetBattleObjectSlotFar(work->effect->actors[0]);
+    slot = GetBattleObjectSlotFar(work->effect->actors[0])->object;
 
     i = 0;
     do {
@@ -650,22 +645,22 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
         EffectPosition_ApplyStepAndYOffset(work->effect->actor, &position);
         if ((u32)(frame - 6) <= 5) {
             if (work->effect->side == 0)
-                BattleEffect_LoadWork(46, 7, 7, 3, 3);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
             else
-                BattleEffect_LoadWork(46, 7, 7, 7, 3);
-            routine[0] = gWorkSlot[46];
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
+            routine[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
             if (work->effect->side == 0)
                 routine[0](canvas, (u8 *)work + (frame - 6) * 0xd80, position.x / 2 - 24, position.y - 24, 48, 72);
             else
                 routine[0](canvas, (u8 *)work + (frame - 6) * 0xd80, position.x / 2, position.y - 24, 48, 72);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
         if ((u32)(frame - 16) <= 31) {
             s32 step = (frame - 16) / 2;
             s32 strip;
 
-            BattleEffect_LoadWork(46, 7, 7, 3, 2);
-            routine[0] = gWorkSlot[46];
+            BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+            routine[0] = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
             if (step > 2)
                 step = 2;
             if (work->effect->variant == 0)
@@ -674,7 +669,7 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                 strip = 0x2580;
             routine[0](canvas, Ram_MapCellBuffer + strip + step * 0xc80, origin.x / 2 - 20, origin.y - 48, 40, 80);
             BattleFx_RunNoEffectFrames(10000);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
         if (frame == 8) {
             fill = 0x3f3f3f3f;
@@ -700,8 +695,8 @@ void BattleFx_RunFireBurstShards(struct BattleEffectArgument *effect)
                     shard->variant--;
                 }
             }
-            Runtime_ReleaseHeapBlock(47);
-            Runtime_ReleaseHeapBlock(46);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
         }
         if (frame == 8) {
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);

@@ -49,7 +49,6 @@ struct StatWork {
     s32 unknown_5c;
 };
 
-void Runtime_BumpFree(void *buffer);
 struct DjinnDefinition *Djinn_GetDefinition(s32 element, s32 djinn);
 
 /* Distance between a stored value and one recomputed from its ratio. */

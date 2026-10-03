@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 
@@ -12,10 +13,7 @@ typedef struct {
     s32 f604;
 } T;
 
-extern s32 Runtime_AllocateHeapBlock(s32 no0, s32 no1);
 extern s32 UiGlyph_DecodeWithHeapRoutines(T *, s32);
-extern s32 VramBlock_LoadCached(s32, s32, u8 *);
-extern s32 Runtime_ReleaseHeapBlock(s32);
 extern s32 UiIcon_FramePointerTable[];
 extern s32 UiIcon_OverlayPointerTable[];
 

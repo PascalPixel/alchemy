@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "EDITION.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
@@ -6,9 +7,6 @@
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *window, s32 x, s32 y);
 void UiWork_Finalize(struct RenderInput *window, s32 mode);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
-void Resource_ResetEntry(s32 slot);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 

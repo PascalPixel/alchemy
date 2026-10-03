@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "GLYPH.H"
@@ -6,9 +7,7 @@
 #include "DMA.H"
 #include "TBS_EDITION.H"
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 u32 Resource_DecodeByteLz(const void *, void *);
-s32 Resource_GetBuffer(s32 index, s32 value);
 
 /* A text window's glyph palette: the slot each font colour was given, 0xff
    while unassigned, and the number of slots used. */
@@ -17,9 +16,6 @@ struct GlyphPalette {
     s32 count;
 };
 
-u8 *Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *block);
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 typedef struct
 {

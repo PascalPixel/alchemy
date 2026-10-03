@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 extern u8 gFlashNumRemainingBytes[];
@@ -5,7 +6,6 @@ extern u8 gFlashNumRemainingBytes[];
 void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Func_080f07f0(const void *resource, s32 offset, s32 mode);
 
 extern u16 Data_02004c00;

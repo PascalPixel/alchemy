@@ -1,14 +1,12 @@
+#include "CALLBACK_SCHEDULER.H"
 /* Colosso: the marker task. While a move is running it eases the marker
  * from its start toward its end position, one step of the move's length per
  * frame; then it blinks the marker, drawn through the OAM queue for 14 of
  * every 20 frames. The same function sits in each of the three Colosso
  * trial overlays, with its variables in each overlay's own work. */
 #include "TYPES.H"
+#include "VRAM_BLOCK.H"
 
-struct VramBlock {
-    u16 pad;
-    u16 base;
-};
 
 /* The marker's start is read both as a signed coordinate and as the raw
  * halfword the position is rebuilt from. */
@@ -17,7 +15,6 @@ union MarkerCoordinate {
     u16 value;
 };
 
-extern struct VramBlock gVramBlockCache[];
 
 extern s16 Korosseo_MarkerSlot;
 extern s16 Korosseo_MarkerSteps;
@@ -32,7 +29,6 @@ extern s16 Korosseo_MarkerBlink;
 extern s16 Korosseo_MarkerPriority;
 extern s32 Korosseo_MarkerOam[3];
 
-void Runtime_PushSlotEntry(void *record, s32 priority);
 
 void Korosseo_UpdateMarker(void)
 {
@@ -50,7 +46,7 @@ void Korosseo_UpdateMarker(void)
     union MarkerCoordinate *sy;
 
     oam = Korosseo_MarkerOam;
-    tile = gVramBlockCache[Korosseo_MarkerSlot].base >> 5;
+    tile = gVramBlockCache[Korosseo_MarkerSlot].offset >> 5;
     steps = &Korosseo_MarkerSteps;
     total = *steps;
     if (total != 0) {

@@ -4,7 +4,8 @@
 #include "TYPES.H"
 #include "LAYOUT_GUARD.H"
 
-extern u8 gWorkSlot[];
+/* The constructor clears all 64 pointer words, including the two cursors. */
+extern void *gWorkSlot[64];
 
 /* The first two slots are heap cursors; the others cache allocated blocks. */
 union HeapState {
@@ -22,8 +23,16 @@ LAYOUT_OFFSET_GUARD(HeapState_Blocks, union HeapState, heap.blocks, 8);
 
 enum HeapSlot {
     HEAP_SLOT_MENU_CONTROL = 6,
+    HEAP_SLOT_BATTLE = 9,
+    HEAP_SLOT_CAMERA = 12,
     HEAP_SLOT_WINDOW = 15,
     HEAP_SLOT_EVENT = 27,
+    HEAP_SLOT_BATTLE_EFFECT = 39,
+    HEAP_SLOT_BATTLE_CANVAS = 40,
+    HEAP_SLOT_BATTLE_SHEET = 41,
+    HEAP_SLOT_BATTLE_BACKGROUND = 44,
+    HEAP_SLOT_BLITTER = 46,
+    HEAP_SLOT_BLITTER_ALTERNATE = 47,
     HEAP_SLOT_MENU = 55
 };
 

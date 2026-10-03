@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TEXT_READER.H"
 #include "TYPES.H"
 #include "DMA.H"
@@ -69,8 +70,6 @@ extern u8 gWindowWork[];
 /* alchemy inspect names this callee Runtime_ReleaseHeapBlock; the project has
    no header alias for it yet, so declare the alias beside the prototype. */
 
-s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void Runtime_ReleaseHeapBlock(s32 kind);
 s32 _call_via_r9(struct TextReader *st);
 u8 *Text_FormatNumber(u8 *buf, s32 input, s32 width);
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
@@ -128,7 +127,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
     if (script == -1) {
         start = *(u16 *)(work + RENDER_ENTRY_START_OFS);
     } else {
-        buf = Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, TEXT_WORK_SIZE);
+        buf = (s32)Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, TEXT_WORK_SIZE);
         Dma_Set((void *)TEXT_TABLE_SRC, buf,
                 DMA_ENABLE | (TEXT_WORK_SIZE >> 2),
                 (volatile u32 *)DMA3_REGS);

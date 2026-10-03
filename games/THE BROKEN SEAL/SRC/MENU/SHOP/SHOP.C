@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -31,7 +32,6 @@ extern u16 RomBytes_080b4100[];
 
 /* shop/draw/glyphs.c */
 extern u8 Shop_GlyphBytes[];
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);

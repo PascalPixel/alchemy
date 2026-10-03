@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -54,7 +55,6 @@ u8 *Owner_GetState(s32);
 void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 void Djinn_Transfer(s32, s32, s32, s32);
 u8 *Object_CreateFar(s32);
-u8 *Runtime_AllocateHeapBlock(s32, s32);
 void Object_SetModeById(s32, s32, s32);
 void ObjectMotion_WaitForAnimationChange(s32);
 s32 KuupuappuHeya_IsActorNearPoint(s32, s32, s32);

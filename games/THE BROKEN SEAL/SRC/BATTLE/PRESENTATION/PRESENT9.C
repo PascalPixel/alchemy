@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
@@ -30,8 +31,6 @@ extern u8 gWorkSlot[];
 /* Seven 4bpp tiles of the curtain's rows. */
 extern const u8 BattlePres_CurtainTiles[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, u32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 void Runtime_SetIrqHandler(s32 irq, s32 mask, void (*handler)(void));
 void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 frames);

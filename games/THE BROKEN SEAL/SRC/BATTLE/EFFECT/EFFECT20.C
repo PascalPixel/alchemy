@@ -3,7 +3,6 @@
 #include "MOTION_OBJECT.H"
 #include "FIXED_MATH.H"
 
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32 object_id);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
 void Object_SetMode(struct MotionObject *, s32);

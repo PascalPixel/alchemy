@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Haidia village: the boulder scene. The actors are placed and the
    screen fades in with a blend, the boulder warning is shown, and the
    blend alpha ramps up and back down before the actors react. */
@@ -137,7 +138,6 @@ struct WorldMapVramBlock {
 
 extern struct WorldMapVramBlock gVramBlockCache[];
 s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
-void Resource_ResetEntry(s32 block);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {

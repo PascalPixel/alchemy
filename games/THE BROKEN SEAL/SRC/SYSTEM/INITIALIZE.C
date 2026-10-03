@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
@@ -20,7 +21,6 @@ void WaitFrames(s32 frames);
 void Resource_InitializeTable(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
-void Runtime_InitializeHeap(void);
 void Game_ResetForNewGameFar(s32);
 void Audio_InitializeRuntimeDefaultsFar(void);
 

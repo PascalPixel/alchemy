@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "CHARACTER_MENU.H"
 #include "BATTLE_UNIT.H"
 #include "EDITION.H"
@@ -11,10 +12,8 @@ extern struct CharacterMenuState *gMenuWork;
 struct BattleUnit *Owner_GetStateFar(s32 owner_id);
 u32 Owner_GetLevelThresholdFar(s32 owner_id, s32 level);
 void UiWork_PushValueSlotFar(u32 quantity, s32 style);
-void *Runtime_BumpAllocate(s32 size);
 void UiText_CopyMessageStringFar(s32 message_id, void *buffer, s32 length);
 void UiText_RenderWideStringAtOffsetFar(void *buffer, struct UiWindow *destination, s32 offset, s32 terminator);
-void Runtime_BumpFree(void *buffer);
 
 /* The message id base is a link-time symbol, loaded from the literal pool. */
 extern u8 MsgProgressHelp;

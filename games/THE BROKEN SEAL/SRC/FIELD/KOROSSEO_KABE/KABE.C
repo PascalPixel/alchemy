@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TASK.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -26,7 +27,6 @@ void SceneActor_MovePairByTileOffset(s32 actor, s32 dx, s32 dz);
 extern u32 gKeysHeld;
 void Object_CommitPosition(struct FieldActor *object);
 void ObjectDispatch_InitFromTable4WithArgument(s32 handle, struct FieldActor *object);
-void *Runtime_AllocateBlock(s32 slot, s32 size);
 
 /* The log's rolling animation for each quarter of the pusher's heading. */
 extern u8 KorosseoKabe_RollLogScript[];

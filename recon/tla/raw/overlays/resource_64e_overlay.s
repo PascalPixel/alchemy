@@ -823,7 +823,7 @@ Func_020006ac:
 	adds r6, r0, #0
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	ldr r1, .L_02008784
 	adds r0, r5, #0
 	bl ObjectMotion_EnableActionAndSetCallback
@@ -974,7 +974,7 @@ Func_0200078c:
 	bne .L_02008868
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	movs r0, #5
 	bl Engine_EventWait
 	movs r3, #1
@@ -1098,7 +1098,7 @@ Func_02000a54:
 	.endif
 	bl Engine_EventBegin
 	movs r0, #0
-	bl Engine_EventPrepareSpeakers
+	bl Engine_EventResolvePendingActions
 	bl Func_02000b2c
 	bl Func_02000d30
 	bl Engine_EventEnd

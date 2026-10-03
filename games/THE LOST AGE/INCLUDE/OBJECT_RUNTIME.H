@@ -33,7 +33,8 @@ struct ObjectRuntime {
     u8 animation_kind;
     u8 flags;
     u8 motion_flags;
-    u8 unknown_57[3];
+    u8 unknown_57[2];
+    u8 unknown_59;
     u8 action_flags;
     u8 movement_state;
     u8 unknown_5c[0x04];
@@ -46,6 +47,10 @@ struct ObjectRuntime {
 
 typedef char ObjectRuntime_size[
     sizeof(struct ObjectRuntime) == 0x80 ? 1 : -1
+];
+
+typedef char ObjectRuntime_unknown_59_offset[
+    (u32)&((struct ObjectRuntime *)0)->unknown_59 == 0x59 ? 1 : -1
 ];
 
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x, s32 y, s32 z);

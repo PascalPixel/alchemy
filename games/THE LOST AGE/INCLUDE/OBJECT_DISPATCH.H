@@ -50,6 +50,7 @@ void Animation_ApplyChildValue(struct DispatchChild *, s32);
 s32 InitializeAnimationObjects(struct DispatchChild *);
 s32 ResourceMetadata_Register(struct DispatchChild *, s32);
 void ObjectDispatch_Initialize(struct DispatchObject *, u32);
+void ObjectDispatch_SetSingleChildField26Far(struct DispatchObject *, u32);
 s32 Animation_ApplyChildValuesToRecord(struct DispatchChild *);
 
 extern const s32 ObjectDispatch_Table4[];

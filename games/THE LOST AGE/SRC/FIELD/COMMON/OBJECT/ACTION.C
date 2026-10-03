@@ -1,24 +1,21 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "OBJECT_RUNTIME.H"
+#include "OBJECT_DISPATCH.H"
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-s32 ObjectDispatch_SetSingleChildField26Far(void *, s32);
 s32 __divsi3(s32, s32);
-s32 Object_SetPosition(s32, s32, s32, s32);
-s32 Object_SetMode(s32, s32);
 
-s32 Object_ResetAndClearField59(void *obj)
+s32 Object_ResetAndClearField59(struct ObjectRuntime *obj)
 {
-    ObjectDispatch_SetSingleChildField26Far(obj, 0);
-    FIELD_AT_OFFSET(obj, s8 *, 0x59) = 0;
+    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)obj, 0);
+    obj->unknown_59 = 0;
     return 0;
 }
 
 /* ⚓️ splits ☀️'s reset in two: the child field alone, and a flag bit. */
-s32 Object_ResetChildField26(void *obj)
+s32 Object_ResetChildField26(struct ObjectRuntime *obj)
 {
-    ObjectDispatch_SetSingleChildField26Far(obj, 0);
+    ObjectDispatch_SetSingleChildField26Far((struct DispatchObject *)obj, 0);
     return 0;
 }
 
@@ -33,36 +30,33 @@ s32 Object_SetField23Bit5(struct ObjectFlags23 *obj)
     return 0;
 }
 
-s32 ObjectMotion_MoveTowardTarget(s32 arg0)
+s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object)
 {
-    s32 object;
-    void *target;
+    struct ObjectRuntime *target;
     s32 deltaX;
     s32 deltaY;
     s32 cellX;
     s32 cellY;
     s32 newX;
     s32 distance;
+    s32 step;
 
-    object = arg0;
-    target = *(void **)(object + 0x68);
+    target = object->linked_object;
     if (target != 0) {
-        deltaX = *(s32 *)(target + 8) - *(s32 *)(object + 8);
+        deltaX = target->x - object->x;
         if (deltaX < 0)
             deltaX += 0xffff;
         cellX = deltaX >> 16;
-        deltaY = *(s32 *)(target + 0x10) - *(s32 *)(object + 0x10);
+        deltaY = target->z - object->z;
         if (deltaY < 0)
             deltaY += 0xffff;
         cellY = deltaY >> 16;
         distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
-        arg0 = *(s16 *)(object + 0x64);
-        if (distance >= arg0) {
-            newX = *(s32 *)(object + 8) +
-                __divsi3(cellX << 20, arg0);
-            Object_SetPosition(object, newX, *(s32 *)(object + 0x0c),
-                          *(s32 *)(object + 0x10) +
-                              __divsi3(cellY << 20, arg0));
+        step = object->action;
+        if (distance >= step) {
+            newX = object->x + __divsi3(cellX << 20, step);
+            Object_SetPosition(object, newX, object->y,
+                object->z + __divsi3(cellY << 20, step));
             Object_SetMode(object, 2);
         } else {
             Object_SetMode(object, 1);

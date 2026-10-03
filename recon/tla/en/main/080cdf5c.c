@@ -3,21 +3,13 @@
  * literal load is after the first offset immediate instead of before it.
  * Four ordinary pointer/branch spellings retained the same reorder; the
  * conditional expression scored 240. Finite 128-rewrite search did not improve.
- * The signed halfword is observed at work+0x276. The current maintained
- * PartyState now names it owner_override; this draft retains its original
- * private view and measured mismatch. The name repair adds no byte proof.
+ * The signed halfword is observed at work+0x276. On 2026-10-03 the
+ * competing private view was replaced by the maintained PARTY_STATE.H owner.
+ * Fresh EN score after this ownership correction remains 60, with one
+ * reordered instruction over the complete 36-byte owner. Earlier
+ * measurements above remain trial records.
  * Draft only; no full six-edition linked proof, steering device or credit. */
-#include "TYPES.H"
-
-struct PendingPartyState {
-    u8 unknown_000[0x214];
-    s32 current_owner;
-    u8 unknown_218[0x54];
-    s8 pending_third;
-    u8 unknown_26d[9];
-    s16 owner_override;
-};
-extern struct PendingPartyState gPartyState;
+#include "PARTY_STATE.H"
 
 s32 EventRuntime_GetControlledOwner(void)
 {

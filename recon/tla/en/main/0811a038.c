@@ -1,3 +1,7 @@
+/* Trial 2026-10-03: use OWNER_STATE.H with an explicit BattleUnit view.
+ * Complete object unchanged; fresh EN score 60, 1 differing row.
+ */
+#include "OWNER_STATE.H"
 /* Near miss: score 60. ⚓️ reads the battle work through its heap slot
    battle_work, the owners from gPartyState and calls the owner state
    directly. It schedules sub sp, #4 straight after loading the battle work;
@@ -11,7 +15,6 @@
 
 
 s32 Party_CountActiveOwnersFar(void);
-struct BattleUnit *Owner_GetState(s32 unit_id);
 
 /* Caps the active party at four owners, or three in the alternate battle mode,
  * optionally writes their identifiers with a 0xff terminator, marks each
@@ -36,7 +39,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 
         if (owners != 0)
             *owners++ = owner;
-        Owner_GetState(owner)->status_12a = 2;
+        ((struct BattleUnit *)Owner_GetState(owner))->status_12a = 2;
     }
 
     if (owners != 0)

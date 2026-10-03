@@ -24,7 +24,7 @@ void DeriMura_TalkShopkeeper(s32 keeper)
         Engine_ShopOpen(3, keeper);
     } else {
         Engine_EventBegin();
-        Engine_EventPrepareSpeakers(0);
+        Engine_EventResolvePendingActions(0);
         Engine_EventSetMessage((s32)MsgDeriTaviRikiWorry);
         Engine_EventShowMessage(keeper, 0);
         Engine_EventEnd();
@@ -40,7 +40,7 @@ void DeriMura_TalkShopkeeperRelieved(s32 keeper)
         Engine_ShopOpen(3, keeper);
     } else {
         Engine_EventBegin();
-        Engine_EventPrepareSpeakers(0);
+        Engine_EventResolvePendingActions(0);
         Engine_EventSetMessage((s32)MsgDeriTaviRikiHome);
         Engine_EventShowMessage(keeper, 0);
         Engine_EventEnd();

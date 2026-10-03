@@ -8,8 +8,10 @@ extern u8 gNumberTextBuffer[];
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 void Text_FormatSignedDecimalToWork(s32 out);
 
-void UiText_FormatNumberToHalfwords(s16 *out, s32 value)
+s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {
+    /* FAKEMATCH: no caller uses a result. The original scalar boundary keeps
+       pop {r1}; the ordinary void definition changes it to pop {r0}. */
     s16 *dst;
     s32 n;
     u8 *src;

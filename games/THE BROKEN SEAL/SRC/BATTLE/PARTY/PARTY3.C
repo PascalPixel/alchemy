@@ -29,7 +29,11 @@ void BattleParty_ApplyDrain(s32 amount)
     s32 target_count = Party_CountActiveOwnersFar();
 
     if (target_count > 0) {
-        u8 *target_id = gGameState.active_owners;
+        /* FAKEMATCH: the existing base-plus-offset cursor retains the address
+           setup and operand order; a direct array address folds into the pool. */
+        u8 *base = (u8 *)&gGameState;
+        s32 offset = (u32)&((struct GameState *)0)->active_owners;
+        u8 *target_id = base + offset;
         s32 remaining = target_count;
 
         do {
@@ -85,8 +89,14 @@ s32 BattleParty_ApplyStatusDamage(void)
     s32 count = Party_CountActiveOwnersFar();
 
     if (result < count) {
-        u8 *entry = gGameState.active_owners;
+        /* FAKEMATCH: preserve the existing member-offset cursor setup; the
+           direct array address changes the pool addend and saved registers. */
+        s32 offset = (u32)&((struct GameState *)0)->active_owners / 2;
+        u8 *entry;
         s32 remaining;
+
+        offset <<= 1;
+        entry = (u8 *)&gGameState + offset;
         remaining = count;
 
         do {

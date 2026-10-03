@@ -307,7 +307,7 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
                 Audio_PlayCue(114);
                 RenderOutput_ClearListFar((s32)work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    work->message_offset + (s32)&MsgItemUseResult,
+                    *(s16 *)((u8 *)work + 0x25a) + (s32)&MsgItemUseResult,
                     result,
                     result);
             }

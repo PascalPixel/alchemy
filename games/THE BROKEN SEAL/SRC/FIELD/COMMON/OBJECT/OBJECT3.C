@@ -134,12 +134,13 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 
 void ObjectTable_DestroyAtIndex(s32 index)
 {
-    u8 *state = (u8 *)gEventWork;
+    void *(*slots)[] = (void *(*)[])gEventWork;
     void *object = ObjectTable_Get(index);
 
     if (object != NULL) {
         Object_Destroy(object);
-        *(void **)(state + 0x14 + index * sizeof(void *)) = NULL;
+        /* The generic service indexes word cells beyond the five-word prefix. */
+        (*slots)[index + 5] = NULL;
     }
 }
 
@@ -204,7 +205,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table)
         meta->priority = 9;
     }
     ((struct MapScrollWork *)gMapWork[0])->origin = &camera->x;
-    gEventWork->view_center = (struct FieldActor *)camera;
+    ((struct EventWork *)work)->view_center = (struct FieldActor *)camera;
 }
 
 s32 ObjectTable_FindLastActiveId(void)

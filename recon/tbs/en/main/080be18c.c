@@ -17,6 +17,11 @@
  * selector and 245 BuildPlan byte differences at each function's boundary.
  * There is no claim of executable equivalence for this draft.
  *
+ * 2026-10-03 source-owner cleanup: the true u16 RollWeaponUnleashFar
+ * declaration adds two halfword-narrowing instructions (four bytes) to
+ * BuildPlan in all six fresh diagnostic objects. This remaining difference
+ * is retained as a draft; the scalar producer declaration is not restored.
+ *
  * Eight ordinary forms after deletion, EN selector/main sizes and differences:
  * remove array:      492/3728, 0/14 (retained)
  * explicit success:  496/3728, 31/245; whole shifted bank 3179 differences

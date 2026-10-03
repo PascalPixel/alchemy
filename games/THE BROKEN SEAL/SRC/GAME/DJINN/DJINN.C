@@ -163,49 +163,64 @@ s32 BattleFx_RollSuccess(
     s32 resistance_category,
     s32 effect_id,
     s32 success_scale) {
-    struct BattleUnit *state = Owner_GetState(target);
+    /* FAKEMATCH: retain the existing byte-status view and pointer setup;
+       direct adjacent members merge these native byte reads into wider loads. */
+    u8 *state = (u8 *)Owner_GetState(target);
+    struct BattleUnit *unit = (struct BattleUnit *)state;
     s32 attempts = 1;
     s32 score;
     s32 attempt;
+    s8 *poison;
+    u8 *delusion;
+    u8 *confusion;
+    u8 *charm;
+    u8 *stun;
+    u8 *sleep;
 
     if (BattleFx_IsRevive(effect_id)!= 0 &&
-        state->hp != 0) {
+        unit->hp != 0) {
         return 0;
     }
 
-    if (effect_id == 3 && state->poison == 0) {
+    if (effect_id == 3 && *(s8 *)(state + (u32)&((struct BattleUnit *)0)->poison) == 0) {
         goto fail;
     }
 
     goto action4_check;
 action4_tail:
-    if (state->stun == 0 && state->sleep == 0 &&
-        state->psy_seal == 0 && state->death_count == 0) {
+    if (state[(u32)&((struct BattleUnit *)0)->stun] == 0 && state[(u32)&((struct BattleUnit *)0)->sleep] == 0 &&
+        state[(u32)&((struct BattleUnit *)0)->psy_seal] == 0 && state[(u32)&((struct BattleUnit *)0)->death_count] == 0) {
         goto fail;
     }
     goto action4_done;
 action4_check:
     if (effect_id == 4) {
-        if (state->delusion == 0 && (u8)state->confusion == 0 && state->charm == 0) {
+        if (state[(u32)&((struct BattleUnit *)0)->delusion] == 0 && state[(u32)&((struct BattleUnit *)0)->confusion] == 0 && state[(u32)&((struct BattleUnit *)0)->charm] == 0) {
             goto action4_tail;
         }
     }
 
 action4_done:
+    poison = (s8 *)(state + (u32)&((struct BattleUnit *)0)->poison);
+    delusion = state + (u32)&((struct BattleUnit *)0)->delusion;
+    confusion = state + (u32)&((struct BattleUnit *)0)->confusion;
+    charm = state + (u32)&((struct BattleUnit *)0)->charm;
+    stun = state + (u32)&((struct BattleUnit *)0)->stun;
+    sleep = state + (u32)&((struct BattleUnit *)0)->sleep;
     if (effect_id == 0x40 &&
-        state->poison == 0 &&
-        state->delusion == 0 &&
-        (u8)state->confusion == 0 &&
-        state->charm == 0 &&
-        state->stun == 0 &&
-        state->sleep == 0 &&
-        state->psy_seal == 0 &&
-        state->death_count == 0 &&
-        state->evil_spirit == 0) {
+        *poison == 0 &&
+        *delusion == 0 &&
+        *confusion == 0 &&
+        *charm == 0 &&
+        *stun == 0 &&
+        *sleep == 0 &&
+        state[(u32)&((struct BattleUnit *)0)->psy_seal] == 0 &&
+        state[(u32)&((struct BattleUnit *)0)->death_count] == 0 &&
+        state[(u32)&((struct BattleUnit *)0)->evil_spirit] == 0) {
         return 0;
     }
 
-    if (effect_id == 0x1C && state->death_count == 1) {
+    if (effect_id == 0x1C && state[(u32)&((struct BattleUnit *)0)->death_count] == 1) {
         return 0;
     }
 
@@ -213,9 +228,9 @@ action4_done:
     if (score > 0) {
         s32 difference = Owner_GetResistanceValue(caster, resistance_category) -
             Owner_GetResistanceValue(target, resistance_category) -
-            (state->luck >> 1);
+            (unit->luck >> 1);
         score += difference * 3;
-        if (BattleTarget_IsWeakToEffect(state, effect_id) != 0) {
+        if (BattleTarget_IsWeakToEffect(unit, effect_id) != 0) {
             score += 25;
         }
     } else {

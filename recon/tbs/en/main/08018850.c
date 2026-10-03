@@ -1,6 +1,17 @@
 /* Current draft (2026-10-03), not exact: EN score 1310, 55 differing rows
    (29 register, 14 operand, 9 reordered, 3 inserted). EN object .text is
    518 bytes against the 512-byte listing; no linked extent is proved.
+   Later 2026-10-03 bounded ownership trials, each cumulative:
+   H1 reversed array declarations and stored count before width at both
+   boundaries: score 2680/90, .text 510. Scratch slots became native but
+   allocation diverged. H2 used one rounded-width accumulator and wrote
+   height before rounding: 2210/80, .text 510. H3 made both scratch reads
+   indexed: 2309/83, .text 506. It obtained one shared offset, but moved
+   the loop counter to r7, lost the sp+4 counter spill and shrank the frame
+   to 28. All three were worse; the truthful 1310/55 form is retained.
+   Its remaining differences are scratch-slot order, width/count register
+   assignment, finalization order and spacing-loop allocation. Its outline
+   store at sp+0 and 32-byte frame already agree with the native routine.
    Uses WINDOW.H's UiRenderWork and GLYPH.H's FontGlyph. The nullable fourth
    argument is a u16 spacing output. Height is not limited to four lines.
    Own-ROM edition branches preserve Japanese character spacing, trailing

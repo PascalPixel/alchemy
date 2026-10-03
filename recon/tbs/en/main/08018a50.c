@@ -1,4 +1,19 @@
-/* Current draft (2026-10-03), not exact: EN score 4195, 119 differing rows
+/* Current draft (2026-10-03), not exact: EN score 3725, 110 differing rows
+   (44 register, 30 operand, 18 reordered, 11 inserted, 7 deleted).
+   Complete EN object .text is 610 bytes against the native 604.
+   Bounded follow-up to the ownership repair below, two natural forms only:
+   H1 reversed the scratch-array declarations to give native counts at sp20
+   and widths at sp12. Score stayed 4195/119, 602 bytes.
+   H2 made the first variant's height assignment separate from later maximum
+   comparisons. Score became 3725/110; retained with H1. The glyph lookup
+   already had the native instruction shape, so it was not changed.
+   Remaining: work/max-width/line-count register lifetimes, boundary stores
+   and switch-body order, out_height spilled instead of retained, and the
+   spacing loop's extra advancing pointer. Frame size is the native 92.
+   All six retained branches compile. Object .text/native extent, in
+   JA/EN/DE/ES/FR/IT order: 698/704, 610/604, 582/576, 618/612,
+   590/584, 618/612. No exact edition, adoption or new matching device. */
+/* Earlier ownership repair (2026-10-03): EN score 4195, 119 differing rows
    (49 register, 29 operand, 19 reordered, 11 inserted, 11 deleted). EN
    object .text is 602 bytes against the 604-byte listing; no linked extent
    is proved. Uses the maintained render/font owners and unsigned width and
@@ -37,9 +52,9 @@ void UiText_MeasureStringVariant(s32 start, u32 *out_width, u32 *out_height,
 {
     u32 line_heights[16];
     struct UiRenderWork *work;
-    u16 line_widths[4];
-    u32 line_count;
     u16 glyph_counts[4];
+    u32 line_count;
+    u16 line_widths[4];
     u32 variant;
     u32 max_width;
     u32 code;
@@ -204,7 +219,9 @@ done:
         max_width += 2;
 #endif
     for (i = 0; i < variant; i++) {
-        if (i == 0 || *out_height < line_heights[i])
+        if (i == 0)
+            *out_height = line_heights[0];
+        else if (*out_height < line_heights[i])
             *out_height = line_heights[i];
     }
     *out_width = max_width;

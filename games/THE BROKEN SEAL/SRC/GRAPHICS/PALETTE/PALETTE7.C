@@ -1,8 +1,9 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "SCENE.H"
+#include "BATTLE_EFFECT_WORK.H"
 
-extern u8 gBattleFxWork[];
+extern struct BattleEffectWork *gBattleFxWork;
 
 void BattleEffect_RunParticleStreams(s32, s32);
 
@@ -35,21 +36,19 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta)
    area to palette entry 0. */
 void BattleFx_ArmPaletteHBlankDma(void)
 {
-    u8 *work = *(u8 **)gBattleFxWork;
+    struct BattleEffectWork *work = gBattleFxWork;
     volatile u16 *channel = (volatile u16 *)0x040000b0;
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];
-    Dma_Set(work + 0x1f80, (void *)0x05000000, 0xa2600001, (volatile u32 *)channel);
+    Dma_Set(work->sheet + 0x1f80, (void *)0x05000000, 0xa2600001, (volatile u32 *)channel);
 }
 
-/* battle/effects/runtime/initialize_default_mode.c */
 void BattleFx_InitializeDefaultMode(s32 arg0)
 {
     BattleEffect_RunParticleStreams(arg0, 0);
 }
 
-/* battle/effects/runtime/initialize_mode_1.c */
 void BattleFx_InitializeMode1(s32 arg0)
 {
     BattleEffect_RunParticleStreams(arg0, 1);

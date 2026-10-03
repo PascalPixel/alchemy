@@ -9,6 +9,7 @@
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_RUNTIME.H"
 #include "DMA.H"
+#include "DISPTRAN.H"
 
 struct ParticlePosition {
     s32 x;
@@ -214,13 +215,7 @@ s32 EffectRuntime_GetCurrentObject(s32 id);
 struct MapEventEntry *_call_via_r0(s32 resource);
 s32 GameFlag_TestFar(s32 flag);
 
-struct WindowHBlankWork {
-    u16 pages[2][322];
-    u8 unknown_508[0x31];
-    u8 page;
-};
-
-extern struct WindowHBlankWork *Data_03001ecc;
+extern struct DisplayTransitionState *Data_03001ecc;
 
 void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source);
 
@@ -658,7 +653,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
 
 void BattleFx_StartWindowHBlankDma(void)
 {
-    struct WindowHBlankWork *work = Data_03001ecc;
+    struct DisplayTransitionState *work = Data_03001ecc;
     u16 *source = work->pages[work->page];
     volatile u16 *channel = (volatile u16 *)0x040000b0;
     s32 value;

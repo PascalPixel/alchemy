@@ -22,12 +22,12 @@
 #include "SCENE.H"
 s32 UiText_CopyMessageString(s32,u16*,u32);
 void UiText_DecodeMessage(s32,u16*,s32);
-struct TextWindow;
-void UiText_RenderWideStringAtOffset(u16 *, struct TextWindow *, s32, s32);
+struct UiWindow;
+void UiText_RenderWideStringAtOffset(u16 *, struct UiWindow *, s32, s32);
 extern u8 MsgWaitingForOpponent[];
 struct MessageContext {
     u8 unknown_00[0x44];
-    struct TextWindow *window;
+    struct UiWindow *window;
 };
 
 struct MessageFrame {

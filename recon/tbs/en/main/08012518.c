@@ -83,7 +83,7 @@ void Blend_SetDarkenTarget0(s32);
 void WaitFrames(s32);
 void RuntimeDispatch_ReturnZero(s32, void *);
 void ObjectSystem_Initialize(s32);
-void ResourceSlot_Load(s32, void *, s32, s32);
+s32 ResourceSlot_Load(u32, u32 *, s32, u32);
 u8 *ResourceObject_Create(s32);
 s32 ResourceMetadata_Register(u8 *, s32);
 s32 Ui_FindNextNumberWithMetadata(s32, s32);
@@ -99,7 +99,7 @@ void Ui_RunIconMonitor(void)
     volatile u32 *keys;
     volatile u32 *trig;
     void *work;
-    u8 *md;
+    struct AnimationMetadata *metadata;
     u8 *h;
     u8 *tbl;
     s32 zero;
@@ -148,16 +148,16 @@ restart:
     work = Runtime_AllocateBlock(9, 160);
     Resource_InitializeTable();
     ObjectSystem_Initialize(2);
-    ResourceSlot_Load(0, (void *)0x02010000, ent[0].no, 0);
-    md = (u8 *)Resource_GetMetadataRecordFar(ent[0].no);
-    if (md[4] == 20) {
-        ResourceSlot_Load(1, (void *)0x02018000, ent[0].no + 1, 0);
+    ResourceSlot_Load(0, (u32 *)0x02010000, ent[0].no, 0);
+    metadata = Resource_GetMetadataRecordFar(ent[0].no);
+    if (metadata->draw_kind == 20) {
+        ResourceSlot_Load(1, (u32 *)0x02018000, ent[0].no + 1, 0);
     }
 
     for (i = 0; i <= 9; i++) {
-        md = (u8 *)Resource_GetMetadataRecordFar(ent[0].no);
+        metadata = Resource_GetMetadataRecordFar(ent[0].no);
         alt = 0;
-        if (md[4] == 20 && (i & 1) != 0) {
+        if (metadata->draw_kind == 20 && (i & 1) != 0) {
             alt = 1;
         }
         h = ResourceObject_Create(ent[0].no + alt + (alt << 12));

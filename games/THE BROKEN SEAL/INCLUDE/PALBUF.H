@@ -24,4 +24,13 @@ LAYOUT_OFFSET_GUARD(TitlePaletteWork_Delta, struct TitlePaletteWork, delta, 0x1c
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Packed, struct TitlePaletteWork, packed, 0x2800);
 LAYOUT_OFFSET_GUARD(TitlePaletteWork_Page, struct TitlePaletteWork, page, 0x3000);
 
+void TitlePalette_InitializeBuffers(void);
+void TitlePalette_UpdateFade(void);
+void Graphics_TransformLargePalette(s32 index, s32 transform);
+void Graphics_SetPaletteTransformValue(s32 value);
+void Graphics_UpdatePaletteInterpolation(s32 frames);
+void Graphics_InterpolatePaletteBuffers(
+    s16 *source, s16 *target, s16 *step, s32 frames);
+void Runtime_ScheduleCallbackAndReleaseBlock32A(void);
+
 #endif

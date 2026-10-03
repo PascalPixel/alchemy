@@ -41,6 +41,7 @@
  * convention; final linker gaps do not. No counting marker is introduced. */
 
 #include "OBJECT_RUNTIME.H"
+#include "METADATA_LOOKUP.H"
 #include "OBJECT_DISPATCH.H"
 #include "RAM_BUFFER.H"
 #include "IO_REG.H"
@@ -104,14 +105,7 @@ struct ObjectDraftWork {
     u8 unknown_1c[64];
 };
 
-/* LOCAL DRAFT VIEW: the observed radius byte of a resource metadata record. */
-struct ResourceObjectMetadataDraft {
-    u8 unknown_00[9];
-    u8 radius;
-};
-
 struct DispatchChild *ResourceObject_Create(s32 resource);
-struct ResourceObjectMetadataDraft *Resource_GetMetadataRecordFar(s32 resource);
 void *ObjectDispatch_FindFreeObject(void);
 
 typedef char RuntimeDraft_size[sizeof(struct ObjectRuntimeDraft)==128?1:-1];
@@ -137,7 +131,7 @@ struct ObjectRuntimeDraft *FieldObject_Create(s32 resource, s32 x, s32 y, s32 z)
             if (child !=0) {
                 object->animation_kind =1;
                 object->animation = child;
-                object->radius = Resource_GetMetadataRecordFar(resource)->radius >>1;
+                object->radius = Resource_GetMetadataRecordFar(resource)->box_y >>1;
             } else {
                 object->animation_kind =0;
             }
@@ -154,7 +148,7 @@ struct ObjectRuntimeDraft *FieldObject_Create(s32 resource, s32 x, s32 y, s32 z)
             Dma_Set(src, entry, 0x85000004, REG_DMA3);
             child = ResourceObject_Create(resource);
             if (child !=0) {
-                object->radius = Resource_GetMetadataRecordFar(resource)->radius >>1;
+                object->radius = Resource_GetMetadataRecordFar(resource)->box_y >>1;
                 *entry++ = child;
             }
             child = ResourceObject_Create(resource +1);

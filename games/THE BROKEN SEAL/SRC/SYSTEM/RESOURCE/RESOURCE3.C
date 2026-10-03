@@ -6,33 +6,6 @@
 
 extern u8 gMenuCtrlWork[];
 
-/* animation/lookup_value_by_key.c */
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-
-struct LookupEntry {
-    s32 key;
-    s32 value;
-};
-
-/* animation/initialize_objects.c */
-struct AnimationMetadata {
-    u8 width;
-    u8 height;
-    u16 scale;
-    u8 draw_kind;
-    u8 animation_count;
-    s8 adjust_x;
-    s8 adjust_y;
-    u8 padding08[2];
-    u8 frame_codec;
-    u8 padding0b;
-    s32 frames;
-    s32 animation;
-};
-
-struct AnimationMetadata *Resource_GetMetadataRecordFar(s32);
-s32 Animation_LookupValueByKey(s32);
-
 void ResourceMetadata_ClearRecord(void *);
 
 extern u8 Func_0800a418[];
@@ -63,9 +36,11 @@ struct ResourceSlot {
     void *buffer;
 };
 
+enum { RESOURCE_SLOT_COUNT = 8, ANIMATION_OBJECT_COUNT = 64 };
+
 struct ResourceSlotWork {
     u8 unknown_00[0x1c];
-    struct ResourceSlot slots[8];
+    struct ResourceSlot slots[RESOURCE_SLOT_COUNT];
 };
 
 /* Up to 256 numbers, ended by number zero. */
@@ -99,7 +74,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
     u16 entry_number;
     s32 resource;
 
-    if (slot > 7)
+    if (slot >= RESOURCE_SLOT_COUNT)
         return 0;
     work = *(struct ResourceSlotWork **)gMenuCtrlWork;
     record = &work->slots[slot];
@@ -150,18 +125,17 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant)
 s32 Animation_LookupValueByKey(s32 key)
 {
     u32 no;
-    struct LookupEntry *p;
+    struct ResourceSlot *p;
 
-    p = (struct LookupEntry *)(*(u32 *)((u32)&gMenuCtrlWork) + 0x1c);
+    p = (*(struct ResourceSlotWork **)gMenuCtrlWork)->slots;
     no = 0;
 loop_1:
-    if (p->key == key) {
-        return p->value;
+    if (p->tag == key) {
+        return (s32)p->buffer;
     }
     no++;
     p++;
-    /* 表は8要素で終わる。 */
-    if (no > 7) {
+    if (no >= RESOURCE_SLOT_COUNT) {
         return 0;
     }
     goto loop_1;
@@ -295,7 +269,9 @@ void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
             later_index = slot_index + 1;
             later_slot_count = 0;
             if (later_index <= 3U) {
-                remaining_slot = (struct AnimationEntry **)(later_index * sizeof *remaining_slot + (u32)state + 0x28);
+                /* FAKEMATCH: typed indexing reverses the native ADD operands;
+                   retain the existing index-first address-word calculation. */
+                remaining_slot = (struct AnimationEntry **)(later_index * sizeof *remaining_slot + (u32)state + (u32)&((struct AnimationObject *)0)->entries);
                 do {
                     slot_value = (s32)*remaining_slot++;
                     if (slot_value != 0)
@@ -325,7 +301,9 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
             i = no + 1;
             cnt = 0;
             if (i <= 3) {
-                p = (struct AnimationEntry **)(i * sizeof *p + (u32)group + 0x28);
+                /* FAKEMATCH: typed indexing reverses the native ADD operands;
+                   retain the existing index-first address-word calculation. */
+                p = (struct AnimationEntry **)(i * sizeof *p + (u32)group + (u32)&((struct AnimationObject *)0)->entries);
                 do {
                     t = *p++;
                     if (t != NULL)
@@ -458,17 +436,17 @@ void ObjectSystem_Configure(s32 mode)
     volatile u32 zero;
 
     if (mode == 3) {
-        objects = Runtime_AllocateBlock(4, 0xe00);
-        states = Runtime_AllocateBlock(3, 0x600);
+        objects = Runtime_AllocateBlock(4, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+        states = Runtime_AllocateBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
     } else {
-        objects = Runtime_AllocateHeapBlock(4, 0xe00);
-        states = Runtime_AllocateHeapBlock(3, 0x600);
+        objects = Runtime_AllocateHeapBlock(4, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+        states = Runtime_AllocateHeapBlock(3, ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
     }
     PaletteDma_LoadBlock();
     zero = 0;
-    Dma_Set((const void *)&zero, objects, 0x85000380, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, objects, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject) / 4), (volatile u32 *)0x040000d4);
     zero = 0;
-    Dma_Set((const void *)&zero, states, 0x85000180, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, states, 0x85000000 | (ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry) / 4), (volatile u32 *)0x040000d4);
     VramBlock_LoadCached(93, 128, Object_ShadowTiles);
     size = (u32)Tile_CopyStridedCodeSize;
     table = Runtime_AllocateHeapBlock(53, size);
@@ -502,7 +480,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
     object = NULL;
 
     if (metadata->width != 0) {
-        for (i = 0; i <= 63; i++, entry++) {
+        for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, entry++) {
             if (entry->kind == 0) {
                 found = entry;
                 break;

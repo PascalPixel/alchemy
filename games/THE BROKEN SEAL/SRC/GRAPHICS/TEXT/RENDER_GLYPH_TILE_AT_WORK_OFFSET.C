@@ -6,7 +6,7 @@ s32 UiText_RenderStringTiles(u16 *, s32, s32, s32);
 
 void UiText_RenderGlyphTileAtWorkOffset(
     u16 *buffer,
-    const struct TextRenderWork *work,
+    const struct RenderInput *work,
     s32 offset_x,
     s32 offset_y)
 {

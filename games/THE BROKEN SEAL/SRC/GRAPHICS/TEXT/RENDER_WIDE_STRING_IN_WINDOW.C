@@ -9,7 +9,7 @@
 
 s32 UiWindow_PutGlyph(void *window, u32 c, s32 x, s32 y, s32 flags);
 
-void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
+void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y)
 {
     struct UiRenderWork *work;
     u16 c;

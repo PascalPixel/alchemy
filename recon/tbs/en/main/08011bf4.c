@@ -41,32 +41,24 @@
    pointer and the buffer base swap r1/r4. */
 #include "TYPES.H"
 #include "DMA.H"
+#include "PALQUEUE.H"
 
-struct PaletteCycle {
-    void *dest;
-    s16 pos;
-    u16 timer;
-    u16 delay;
-    s16 len;
-    u16 colors[16];
-};
-
-extern u8 *gPaletteWork;
+extern struct PaletteSnapshotWork *gPaletteWork;
 
 void Func_08011bf4(void)
 {
-    u8 *work = gPaletteWork;
+    struct PaletteSnapshotWork *work = gPaletteWork;
     u8 i;
-    u16 count = *(u16 *)(work + 176) & 3;
+    u16 count = work->count & 3;
     u16 buf[16];
 
     for (i = 0; i < count; i++) {
-        struct PaletteCycle *cycle = (struct PaletteCycle *)(work + i * 44);
+        struct PaletteSnapshot *cycle = &work->entries[i];
 
         if (cycle->timer == 0) {
-            u16 start = cycle->pos;
-            u16 len = cycle->len;
-            void *dest = cycle->dest;
+            u16 start = (s16)cycle->position;
+            u16 len = (s16)cycle->count;
+            void *dest = cycle->source;
             /* FAKEMATCH: 520,000 ordinary permutations still exchange r1/r4 for the color cursor and buffer; bind the cursor to r4. */
             register u16 *src asm("r4") = cycle->colors;
             u8 j;
@@ -86,7 +78,7 @@ void Func_08011bf4(void)
             if ((pos = next >> 16) >= len)
                 next = 0;
             value = next >> 16;
-            cycle->pos = value;
+            cycle->position = value;
             cycle->timer = cycle->delay;
         } else {
             cycle->timer--;

@@ -9,7 +9,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
     s32 index;
     s32 count;
     s32 offset;
-    u8 *metadata;
+    struct AnimationMetadata *metadata;
     struct UiGridEntry *entry;
     u8 *work;
 
@@ -21,8 +21,8 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
         entry = *(struct UiGridEntry **)(work + offset);
         if (entry->table_0c != 0) {
             metadata = Resource_GetMetadataRecordFar(entry->no);
-            if (value < metadata[5]) {
-                entry->value_04 = metadata[4];
+            if (value < metadata->animation_count) {
+                entry->value_04 = metadata->draw_kind;
                 entry->value_10 = entry->table_0c[value];
                 entry->x = count * 0x10;
                 entry->value_15 = 0x10;
@@ -30,7 +30,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
                 entry->value_17 = index;
                 entry->value_16 = 0xFF;
             }
-            work[0x23] = metadata[7];
+            work[0x23] = (u8)metadata->adjust_y;
             *(s16 *)(work + 0x1e) = index;
         }
         count += 1;

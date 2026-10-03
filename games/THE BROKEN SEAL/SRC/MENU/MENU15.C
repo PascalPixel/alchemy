@@ -40,7 +40,7 @@ extern u8 Data_02000240[];
 extern u8 Data_080367d0[];
 extern u8 Data_080367d6[];
 void OptionMenu_InitializeWork(void);
-void *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
+struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
 void UiIcon_PrepareObjectFar(struct RenderOutput *);
 void RenderResource_LoadFrame(s32 frame, s32 index, s32 dim);
@@ -164,7 +164,7 @@ s32 Menu_RunWorkspaceOptions(void)
     struct WorkspaceWork *work;
     struct RenderInput *icon;
     struct RenderInput *win;
-    void *pair;
+    struct RenderOutput *pair;
     s8 *pA;
     s8 *pB;
     s32 redraw;

@@ -14,21 +14,21 @@ extern u8 gDebugItemFullLabel[];
 extern volatile u32 gDebugKeysPressed;
 extern volatile u32 gDebugKeysRepeated;
 
-struct TextRenderWork *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Engine_DebugFinalizeWindow(struct TextRenderWork *window, s32 mode);
-void Engine_DebugRedrawWindow(struct TextRenderWork *window);
-void Engine_DebugClearWindow(struct TextRenderWork *window);
-void UiText_DrawStringInWindowFar(u8 *text, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawNumberAtOffsetFar(s32 value, s32 format, struct TextRenderWork *window, s32 x, s32 y);
-void UiText_DrawCharacterAtOffset(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawTextResource(s32 text, struct TextRenderWork *window, s32 x, s32 y);
-void Engine_DebugDrawItemDetails(struct TextRenderWork *window, s32 item);
+struct RenderInput *Engine_DebugCreateWindow(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Engine_DebugFinalizeWindow(struct RenderInput *window, s32 mode);
+void Engine_DebugRedrawWindow(struct RenderInput *window);
+void Engine_DebugClearWindow(struct RenderInput *window);
+void UiText_DrawStringInWindowFar(u8 *text, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawNumberAtOffsetFar(s32 value, s32 format, struct RenderInput *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_DebugDrawTextResource(s32 text, struct RenderInput *window, s32 x, s32 y);
+void Engine_DebugDrawItemDetails(struct RenderInput *window, s32 item);
 s32 __modsi3(s32 value, s32 divisor);
 
 void DebugMenu_SelectItem(void)
 {
-    struct TextRenderWork *window;
-    struct TextRenderWork *details;
+    struct RenderInput *window;
+    struct RenderInput *details;
     s32 item;
     s32 redraw;
     s32 index;

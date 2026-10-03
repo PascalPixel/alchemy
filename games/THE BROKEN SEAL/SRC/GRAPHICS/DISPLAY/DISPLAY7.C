@@ -9,8 +9,6 @@
 #include "DISPTRAN.H"
 
 
-void *DisplayTransition_AllocateAndClearState(void);
-void DisplayTransition_FillTilemapAndSolidTile(s32 color);
 void WaitFrames(s32 frames);
 void Runtime_SetIrqHandler(s32, s32, void (*)(void));
 void Blend_SetDarkenTarget0(s32 duration);
@@ -19,12 +17,6 @@ void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_SetPrimaryBufferValue(u32 value);
 void BattleFx_StartBufferInterpolation(s32 frames);
-void DisplayTransition_UpdateScanlineTable(void);
-void BattleFx_StartWindowHBlankDma(void);
-void DisplayTransition_UpdateFrame(void);
-void DisplayTransition_Update(void);
-void DisplayTransition_UpdateFromCentre(void);
-void DisplayTransition_UpdateScanline(void);
 
 
 extern volatile u32 gFrameCount;
@@ -47,7 +39,7 @@ extern volatile u32 gFrameCount;
         *ime = (u16)ime;                                                    \
         count = q->count;                                                   \
         if (count <= 31) {                                                  \
-            u32 *destination = q->entries[count];           \
+            u32 *destination = q->entries[count];                            \
             *(u16 *)&q->count = count + 1;                                  \
             *destination++ = (value);                                       \
             *destination++ = 0x04000000;                                    \

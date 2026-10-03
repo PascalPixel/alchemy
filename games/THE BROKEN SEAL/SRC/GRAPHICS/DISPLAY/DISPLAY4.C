@@ -4,25 +4,11 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "MAP.H"
+#include "PALQUEUE.H"
 
-
-struct PaletteSnapshot {
-    u16 *source;
-    u16 unknown_04;
-    u16 unknown_06;
-    s16 value;
-    u16 count;
-    u16 colors[16];
-};
-
-struct PaletteSnapshotWork {
-    struct PaletteSnapshot entries[4];
-    u16 count;
-};
 
 extern struct PaletteSnapshotWork *gPaletteWork;
 
-void Func_08011bf4(void);
 
 /* Blend script runner: a halfword script in the map work that writes
    BLDCNT and the alpha or brightness level on a frame delay. */
@@ -59,14 +45,14 @@ again:
         value = command & 0xff;
         if (value == 0xff)
             return;
-        state->cursor = (u16 *)((u8 *)state->script + value * 4);
+        state->cursor = state->script + value * 2;
         goto again;
     }
 
     if ((command & 0xf000) == 0x3000) {
         *(volatile u16 *)0x04000050 = command;
         work->blend_control = command;
-        state->cursor = (u16 *)((u8 *)state->cursor + 2);
+        state->cursor++;
         goto again;
     }
 
@@ -75,7 +61,7 @@ again:
     else
         *(volatile u16 *)0x04000054 = command;
     state->delay = cursor[0];
-    state->cursor = (u16 *)((u8 *)state->cursor + 4);
+    state->cursor += 2;
     goto again;
 
 tick:
@@ -126,9 +112,9 @@ void Runtime_AllocateAndClearQueue(void)
     entry = queue->entries;
     for (i = 0; i != 4; i++) {
         entry->source = 0;
-        entry->unknown_04 = 0;
-        entry->unknown_06 = 0;
-        entry->value = 0;
+        entry->position = 0;
+        entry->timer = 0;
+        entry->delay = 0;
         entry->count = 0;
         for (j = 0; j != 16; j++) {
             entry->colors[j] = 0;
@@ -140,7 +126,7 @@ void Runtime_AllocateAndClearQueue(void)
 
 /* Queues up to four palette snapshots (the queue Runtime_AllocateAndClearQueue
    clears): copies count colours of palette bank:index into the next slot. */
-s32 PaletteQueue_Add(s16 bank, s16 index, s16 value, s16 count)
+s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count)
 {
     struct PaletteSnapshotWork *work;
     struct PaletteSnapshot *entry;
@@ -155,11 +141,11 @@ s32 PaletteQueue_Add(s16 bank, s16 index, s16 value, s16 count)
     entry = &work->entries[slot];
     source = (u16 *)0x05000000 + (((u16)bank << 4) + (u16)index);
     size = count;
-    entry->unknown_04 = 0;
-    entry->unknown_06 = 0;
+    entry->position = 0;
+    entry->timer = 0;
     entry->count = size;
     entry->source = source;
-    entry->value = value;
+    entry->delay = delay;
     Dma_Set(source, entry->colors, 0x80000000 | size, (volatile u32 *)0x040000d4);
     work->count++;
     return 0;

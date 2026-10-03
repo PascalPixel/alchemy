@@ -6,7 +6,8 @@
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position);
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
-void UiWork_DrawByAttributes(void *arg0);
+void UiWork_DrawByAttributes(struct UiWindow *window);
+
 /* The opaque interpolation boundary reads the window as scalar halfwords. */
 #define WINDOW_HALF(window, type, field) \
     (*(type *)((u8 *)(window) + (u32)&(((struct UiWindow *)0)->field)))
@@ -24,8 +25,8 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 
 void UiWork_ProcessDirectWork(void)
 {
-    u8 *base = gWindowWork[0];
-    struct UiWindow *work = (struct UiWindow *)(base + 0x500);
+    struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
+    struct UiWindow *work = state->windows;
     s32 index = 0;
     u8 dirty;
 
@@ -45,7 +46,7 @@ loop:
             UiWindow_UpdateInterpolatedGeometry(work, 1);
             work->frame++;
             dirty = 1;
-            ((struct UiRenderWork *)base)->dirty = dirty;
+            state->dirty = dirty;
         } else {
             UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
                                      (s16)work->previous_width,
@@ -66,7 +67,7 @@ loop:
             work->previous_y = 0;
             work->previous_width = 0;
             work->previous_height = 0;
-            ((struct UiRenderWork *)base)->dirty = 1;
+            state->dirty = 1;
         }
     }
     index++;
@@ -77,6 +78,9 @@ loop:
 
 void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
 {
+    /* FAKEMATCH: the existing opaque halfword window view keeps geometry
+       reads ahead of scratch stores; direct typed fields change their
+       measured native scheduling at the same 192-byte extent. */
     struct UiWindowInterpolationScratch scratch;
     s32 frame;
     s32 duration;

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+#include "RENDER_INPUT.H"
 #include "DMA.H"
 
 /* Runs the three-member menu used to choose a party member. */
@@ -64,7 +65,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void);
 void Menu_SpawnFourObjectsAtOrigin(void *win, s32 x, s32 y);
 void Scheduler_ScheduleCallbackAAfterFrames(void);
 void Scheduler_ScheduleCallbackA(void);
-void *RenderResource_CreatePair(s32 mode, void *win, s32 x, s32 y);
+struct RenderOutput *RenderResource_CreatePair(s32 mode, struct RenderInput *win, s32 x, s32 y);
 void Ui_ApplyTableOffsetToPair(void *pair);
 void UiWork_Finalize(void *work, s32 kind);
 void RenderOutput_RedrawSavedRect(void *win);
@@ -76,7 +77,7 @@ s32 SaveMenu_SelectSlot(s32 idx, s32 mode)
     u8 *render;
     void *work;
     void *win;
-    void *pair;
+    struct RenderOutput *pair;
     void *win1;
     void *win2;
     void *win3;

@@ -74,10 +74,14 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-void LinkLobby_InitializeSerial(void)
+s32 LinkLobby_InitializeSerial(void)
 {
     volatile u16 *ime;
-    u16 saved;
+    u32 saved;
+
+    /* FAKEMATCH: this discard-only s32 boundary defines no result for callers.
+       The complete 28-byte void attempt changes only the return-address
+       scratch register from r1 to r0; both callers discard the result. */
 
     ime = &REG_IME;
     saved = *ime;

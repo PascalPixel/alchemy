@@ -1300,11 +1300,13 @@ void ImiruFuchin_PlaceDragonsEye(void)
     struct FieldActor *actor;
     struct FieldSprite *sprite;
     GlyphTransfer *glyph;
+    /* FAKEMATCH: a direct constant loads the ID after the three coordinate shifts. */
+    register s32 id asm("r0") = 22;
     /* FAKEMATCH: separate immediate clears select r1 instead of the
        native r5 zero value at the same 128-byte extent. */
     s32 clear = 0;
 
-    actor = Engine_ObjectCreate(22, 0xf80000, 0x80000, 0x980000);
+    actor = Engine_ObjectCreate(id, 0xf80000, 0x80000, 0x980000);
     if (actor != NULL) {
         sprite = actor->sprite;
         sprite->flags = clear;

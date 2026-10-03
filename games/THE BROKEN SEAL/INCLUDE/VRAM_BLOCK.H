@@ -13,7 +13,6 @@ enum VramBlockLimits {
     VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
-extern struct VramBlockCacheEntry gVramBlockCache[];
 extern u8 ResourceBlockOwners[VRAM_BLOCK_COUNT];
 
 /* Loads a table graphic into a VRAM cache slot, not a RAM destination. */

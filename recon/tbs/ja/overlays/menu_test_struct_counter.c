@@ -1,6 +1,12 @@
 /* Draft: Japanese debug command source alternative.
  * 2026-10-01: Compiled owner 664 bytes; clear/fill register allocation or scheduling differs from the 664-byte Japanese owner.
  * This reduced attempt includes its current source declaration context.
+ * 2026-10-03: HP declaration now comes from OWNERVAL.H; body unchanged.
+ * The scorer has no listing label for CommandTable_ConfigureCommandGroups.
+ * Current compilation is blocked by the existing private
+ * UiText_DrawCharacterAtOffset declaration conflicting with
+ * TEXT_RENDER_RUNTIME.H. The earlier 664-byte trial is retained; no new
+ * byte proof or scene placement is claimed by this declaration correction.
  * Ordinary TBS compiler and options; no scene placement or credit claimed.
  */
 extern struct { int letter; } MenuTest_BenchmarkCharacter;
@@ -11,6 +17,7 @@ extern struct { int letter; } MenuTest_BenchmarkCharacter;
 
 #include "TYPES.H"
 #include "OWNER_STATE.H"
+#include "OWNERVAL.H"
 #include "GAME_STATE.H"
 
 extern s16 Data_02000240[];
@@ -46,7 +53,6 @@ void Party_AdvanceOwnerCountToTarget();
 s32 Inventory_AddItem();
 s32 Djinn_AddToOwner();
 s32 Djinn_Activate();
-s32 Owner_AdjustFirstValue();
 s32 Owner_AdjustSecondValue();
 s32 Party_RemoveActiveOwner();
 s32 Party_AddActiveOwner();

@@ -1,4 +1,10 @@
+/* Draft: 1195 score / 17 differing instructions against the EN listing.
+ * The shared cache record and TLA object name restore compilation.
+ * Dma_Set, Iwram_ClearWords and ResourceTable_AllocateBlocks are still
+ * unresolved names; helper contracts and ordinary code shape remain.
+ */
 #include "RESOURCE.H"
+#include "VRAM_TAB.H"
 #include "IWRAM_CALL.H"
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
@@ -7,7 +13,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
     s32 offset;
     void *destination;
 
-    entry = &gVramBlockCache[slot];
+    entry = &ResourceTableEntries[slot];
     if (slot > 95)
         return 0;
     if (size > 0x2000)

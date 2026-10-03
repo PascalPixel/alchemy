@@ -26,10 +26,10 @@ void BattleEv_RunWait(s32 action, s32 flag)
 
     WaitFrames(1);
     message_id = ObjectTable_ReadActiveValue(action);
+    /* FAKEMATCH: ordinary forms miss native r7 action; an r6-only clobber instead selects r5. */
+    asm("" : "+r"(action) : : "r5", "r6");
     if (action <= 7) {
-        masked_action = 0x0fff;
-        /* FAKEMATCH: ordinary C swaps native action/mask registers; constrain only the used low-register AND. */
-        asm("and %0, %0, %1" : "+&l"(masked_action) : "l"(action) : "cc");
+        masked_action = action & 0x0fff;
 
         if (BattleAction_FindDescriptor(masked_action) == 0) {
             message_id = masked_action;

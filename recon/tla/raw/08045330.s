@@ -34,7 +34,7 @@ Func_08045330:
 	bl Func_080452bc
 	pop {r5, r6, r7, pc}
 .L_0804536c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08045370:
 	.4byte Data_0805f730
 .L_08045374:

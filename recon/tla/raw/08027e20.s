@@ -316,7 +316,7 @@ Func_08027e20:
 	b .L_080281ee
 	.2byte 0x0000
 .L_0802808c:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08028090:
 	.4byte gInput
 .L_08028094:

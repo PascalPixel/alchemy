@@ -10,7 +10,7 @@ Func_080cf424:
 	push {r5, r6, r7}
 	mov r10, r1
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	movs r1, #193
 	adds r7, r0, #0

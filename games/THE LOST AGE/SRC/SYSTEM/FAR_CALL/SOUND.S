@@ -5,10 +5,10 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_081c0080
+	.global AudioEngine_SuspendDirectSoundFar
 	.thumb_func
-Func_081c0080:
-	overlay_veneer Func_081c1000
+AudioEngine_SuspendDirectSoundFar:
+	overlay_veneer AudioEngine_SuspendDirectSoundWrapper
 	.global Func_081c0088
 	.thumb_func
 Func_081c0088:

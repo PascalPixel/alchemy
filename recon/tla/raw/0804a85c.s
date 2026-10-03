@@ -491,7 +491,7 @@ Func_0804a85c:
 .L_0804abfc:
 	.4byte 0x40002000
 .L_0804ac00:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804ac04:
 	.4byte Data_0805c9c4
 .L_0804ac08:
@@ -1476,7 +1476,7 @@ Func_0804a85c:
 .L_0804b358:
 	.4byte 0x00000d03
 .L_0804b35c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804b360:
 	.4byte 0x00000c5a
 .L_0804b364:
@@ -1660,7 +1660,7 @@ Func_0804a85c:
 .L_0804b4b8:
 	.4byte 0xfffffe00
 .L_0804b4bc:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_0804b4c0:
 	movs r3, #4
 	negs r3, r3

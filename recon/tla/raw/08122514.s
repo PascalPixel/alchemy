@@ -508,7 +508,7 @@ Func_08122514:
 	movs r1, #0
 	ldrsh r0, [r7, r1]
 .L_0812292c:
-	bl Func_0811d748
+	bl Battle_FindTaggedSlotByValue
 	strh r0, [r7, #10]
 	b .L_08122946
 .L_08122934:
@@ -780,7 +780,7 @@ Func_08122514:
 .L_08122b20:
 	movs r1, #0
 	ldrsh r0, [r7, r1]
-	bl Func_0811d748
+	bl Battle_FindTaggedSlotByValue
 	strh r0, [r7, #10]
 	b .L_08122b9a
 .L_08122b2c:
@@ -835,7 +835,7 @@ Func_08122514:
 .L_08122b8c:
 	movs r3, #0
 	ldrsh r0, [r7, r3]
-	bl Func_0811d748
+	bl Battle_FindTaggedSlotByValue
 .L_08122b94:
 	strh r0, [r7, #10]
 	movs r0, #0

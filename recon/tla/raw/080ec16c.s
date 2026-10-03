@@ -8,7 +8,7 @@ Func_080ec16c:
 	push {r7}
 	adds r7, r1, #0
 	adds r5, r0, #0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #32]

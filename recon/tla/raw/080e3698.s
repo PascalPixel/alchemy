@@ -56,10 +56,10 @@ Func_080e3698:
 	mov r11, r1
 	str r2, [sp, #4]
 	str r3, [sp, #0]
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r0, #0
-	bl Func_080cded4
-	bl Func_080d2a3c
+	bl EventRuntime_ResolvePendingActions
+	bl EventRuntime_StartScreen
 	movs r1, #0
 	mov r10, r1
 	add r6, sp, #24
@@ -121,7 +121,7 @@ Func_080e3698:
 	mov r0, r8
 	bl Object_SetMode
 	movs r0, #15
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	mov r0, r8
 	bl Object_Destroy
 	add r2, sp, #16

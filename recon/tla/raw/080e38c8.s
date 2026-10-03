@@ -220,7 +220,7 @@ Func_080e38c8:
 .L_080e3a68:
 	.4byte 0xfffffc00
 .L_080e3a6c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080e3a70:
 	.4byte 0x00026666
 .L_080e3a74:

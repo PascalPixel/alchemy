@@ -88,9 +88,9 @@ Func_081a71c8:
 .L_081a7288:
 	.4byte 0x00000000
 .L_081a728c:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_081a7290:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081a7294:
 	.4byte Data_03001120
 .L_081a7298:

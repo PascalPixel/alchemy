@@ -105,7 +105,7 @@ Func_0801399c:
 .L_08013a64:
 	.4byte 0x000003ff
 .L_08013a68:
-	.4byte Data_030011b8
+	.4byte gSerialExchangeActive
 .L_08013a6c:
 	.4byte Data_02003a70
 .L_08013a70:
@@ -115,7 +115,7 @@ Func_0801399c:
 .L_08013a78:
 	.4byte gBlendDuration
 .L_08013a7c:
-	.4byte Data_03001230
+	.4byte gFrameRenderPending
 .L_08013a80:
 	.4byte gOamUsage
 .L_08013a84:
@@ -205,6 +205,6 @@ Func_0801399c:
 .L_08013b24:
 	.4byte IwramSoundRenderFrame
 .L_08013b28:
-	.4byte Data_030011d4
+	.4byte gLagFrameCount
 .L_08013b2c:
 	.4byte Data_0300121c

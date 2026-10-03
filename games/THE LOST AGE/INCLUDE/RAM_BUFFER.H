@@ -24,6 +24,7 @@
  * GCC reaches a slot from the constant base with the slot's offset in the
  * load, as it does for a field of a structure at a constant address. */
 struct BattleSession;
+struct BattlePresentationTransition;
 struct MapWork;
 
 struct HeapSlots {
@@ -51,7 +52,9 @@ struct HeapSlots {
     void *unknown_64[2];
     /* The event work, as The Broken Seal keeps it in its slot 27. */
     void *event_work;
-    void *unknown_70[23];
+    void *unknown_70[16];
+    struct BattlePresentationTransition *transition_work;
+    void *unknown_b4[6];
     /* The serial link runtime's work. */
     void *serial_work;
     void *unknown_d0[3];

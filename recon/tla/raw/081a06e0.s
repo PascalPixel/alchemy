@@ -48,15 +48,15 @@ Func_081a06e0:
 .L_081a0740:
 	.4byte 0x00000000
 .L_081a0744:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081a0748:
-	.4byte Data_0300123c
+	.4byte gCpuLoadDisplayEnabled
 .L_081a074c:
 	.4byte Data_02007500
 .L_081a0750:
 	.4byte Data_03001110
 .L_081a0754:
-	.4byte Data_03001200
+	.4byte gAutoSleepEnabled
 .L_081a0758:
 	.4byte Func_081a06b4
 .L_081a075c:
@@ -240,4 +240,4 @@ Func_081a06e0:
 .L_081a08bc:
 	.4byte Data_02007508
 .L_081a08c0:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled

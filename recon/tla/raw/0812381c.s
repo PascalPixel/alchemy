@@ -377,7 +377,7 @@ Func_0812381c:
 	bl .L_081247ea
 	.2byte 0x0000
 .L_08123be4:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_08123be8:
 	.4byte gInput
 .L_08123bec:

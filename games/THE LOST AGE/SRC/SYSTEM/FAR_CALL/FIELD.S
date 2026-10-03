@@ -12,7 +12,15 @@ Func_080c8770:
 	.global Func_080c8778
 	.thumb_func
 Func_080c8778:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cdf5c
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080cdf5c
+.else
+	overlay_veneer EventRuntime_GetControlledOwner
+.endif
+.endif
 	.global Func_080c8780
 	.thumb_func
 Func_080c8780:

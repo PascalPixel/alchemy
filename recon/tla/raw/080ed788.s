@@ -15,7 +15,7 @@ Func_080ed788:
 	asrs r3, r3, #24
 	cmp r3, #3
 	bne .L_080ed7f8
-	bl Func_080d2260
+	bl EventRuntime_PrepareCurrentObject
 	movs r0, #157
 	lsls r0, r0, #8
 	movs r1, #6

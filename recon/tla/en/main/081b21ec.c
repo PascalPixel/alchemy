@@ -1,8 +1,9 @@
 #include "RESOURCE.H"
-/*
- * Draft: Palette_StepTowardResource does not yet match; 3 halfwords differ from ☀️'s C, first at +0x26 (ldr r7, [pc, #16]).
- * Links as recon/tla/raw/081b203c.s.
- */
+/* Near miss: 204 bytes, score 160 (one reordered load, one alignment
+   halfword). The listing loads the pooled channel mask before the two
+   induction/mask seeds; this draft loads it after them. A 30-second permuter
+   search and local dependency variants found no improvement. An explicit
+   shared mask removes the required literal pool. */
 #include "DMA.H"
 
 /* Step background colours 1-63 one unit per channel towards the palette of

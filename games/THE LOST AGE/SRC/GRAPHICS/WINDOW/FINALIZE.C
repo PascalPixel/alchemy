@@ -1,6 +1,6 @@
 #include "UIWINDOW.H"
+#include "SYSTEM.H"
 
-s32 WaitFrames(s32 frames);
 
 void UiWork_WaitUntilField1aClear(void *work)
 {

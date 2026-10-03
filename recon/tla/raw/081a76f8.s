@@ -50,7 +50,7 @@ Func_081a76f8:
 .L_081a775c:
 	.4byte 0x00001440
 .L_081a7760:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081a7764:
 	.4byte 0x00000021
 .L_081a7768:
@@ -142,7 +142,7 @@ Func_081a76f8:
 .L_081a7818:
 	.4byte Data_03001120
 .L_081a781c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_081a7820:
 	movs r0, #1
 	adds r5, #1
@@ -178,7 +178,7 @@ Func_081a76f8:
 	mov r8, r3
 	pop {r5, r6, pc}
 .L_081a7860:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_081a7864:
 	.4byte 0x06004100
 .L_081a7868:

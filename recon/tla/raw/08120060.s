@@ -88,7 +88,7 @@ Func_08120060:
 .L_0812010c:
 	.4byte 0x000001ff
 .L_08120110:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_08120114:
 	ldr r3, [sp, #4]
 	movs r1, #240

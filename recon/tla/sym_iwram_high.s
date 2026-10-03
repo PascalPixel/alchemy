@@ -8,8 +8,8 @@ Data_03006fbf:
 	.global IwramSoundMixWorkspace
 IwramSoundMixWorkspace:
 	.space 0x00000840
-	.global Data_03007800
-Data_03007800:
+	.global gCartridgeResetMarker
+gCartridgeResetMarker:
 	.space 0x00000004
 	.global Data_03007804
 Data_03007804:

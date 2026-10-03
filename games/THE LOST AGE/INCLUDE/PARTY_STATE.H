@@ -14,7 +14,8 @@ struct PartyState {
     u8 unknown_13d[0xa3];
     s16 scene;
     s16 entrance;
-    u8 unknown_1e4[4];
+    u16 saved_scene;
+    u16 saved_entrance;
     /* The debug selection's remembered pair; ☀️ keeps it at 0x1c8. */
     s16 primary;
     s16 secondary;
@@ -24,7 +25,9 @@ struct PartyState {
     u16 pair_1f2[2];
     /* The halfword Event_GetSpecialValue reads; ☀️ keeps it at 0x1d6. */
     s16 special;
-    u8 unknown_1f8[0x1c];
+    u8 unknown_1f8[0x1a];
+    u8 render_mode;
+    u8 unknown_213;
     s32 current_owner;
     u8 active_owners[8];
     u8 unknown_220[0x20];
@@ -37,8 +40,12 @@ struct PartyState {
     /* What BattleEffect_PauseObject keeps of the object it pauses; ☀️ keeps
        them 0x20 earlier. */
     u8 saved_byte;
-    u8 unknown_26a[6];
+    u8 unknown_26a[2];
+    s8 pending_third;
+    u8 unknown_26d[3];
     u32 saved_callback;
+    u8 unknown_274[2];
+    s16 owner_override;
 };
 
 extern struct PartyState gPartyState;

@@ -190,7 +190,7 @@ LuckyDice_Run:
 .L_081ac2e4:
 	.4byte 0x0000000c
 .L_081ac2e8:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_081ac2ec:
 	.4byte 0x06003000
 .L_081ac2f0:

@@ -62,6 +62,6 @@ Func_080add74:
 .L_080adde4:
 	.4byte 0xfffffe20
 .L_080adde8:
-	.4byte Data_03001238
+	.4byte gDebugMode
 .L_080addec:
 	.4byte 0xffff8000

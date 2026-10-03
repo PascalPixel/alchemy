@@ -12,15 +12,15 @@ Game_ResetForNewGameFar:
 	.global Battle_WaitMode0Far
 	.thumb_func
 Battle_WaitMode0Far:
-	overlay_veneer Battle_WaitMode0
+	overlay_veneer EventRuntime_Wait
 	.global Func_080c8018
 	.thumb_func
 Func_080c8018:
-	overlay_veneer Func_080d22a8
+	overlay_veneer EventRuntime_Begin
 	.global Func_080c8020
 	.thumb_func
 Func_080c8020:
-	overlay_veneer Func_080d2350
+	overlay_veneer EventRuntime_End
 	.global Event_RunObjectHookAndWaitFar
 	.thumb_func
 Event_RunObjectHookAndWaitFar:

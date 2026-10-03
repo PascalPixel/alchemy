@@ -14,7 +14,7 @@ Func_080d1f20:
 	adds r7, r0, #0
 	movs r0, #16
 	mov r10, r0
-	bl Func_080d2a8c
+	bl EventRuntime_WaitDelay
 	movs r0, #130
 	lsls r0, r0, #5
 	bl Runtime_BumpAllocateAlternatePool

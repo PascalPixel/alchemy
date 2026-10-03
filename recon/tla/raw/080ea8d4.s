@@ -123,7 +123,7 @@ Func_080ea8d4:
 .L_080ea9ce:
 	ldr r0, [sp, #0]
 	bl Func_080eaa14
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	adds r5, r0, #0
 	adds r6, r5, #0

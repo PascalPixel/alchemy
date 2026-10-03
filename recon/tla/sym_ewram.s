@@ -76,8 +76,8 @@ Data_020023c4:
 	.global Data_02002f20
 Data_02002f20:
 	.space 0x000000e0
-	.global Data_02003000
-Data_02003000:
+	.global gSleepActive
+gSleepActive:
 	.space 0x00000010
 	.global gOamBuckets
 gOamBuckets:

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ce574
+	.global EventRuntime_ExecutePackedAction
 	.thumb_func
-Func_080ce574:
+EventRuntime_ExecutePackedAction:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -57,7 +57,7 @@ Func_080ce574:
 	mov r0, r8
 	movs r1, #0
 	bl Func_080dc410
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	adds r1, r5, #0
 	bl Func_080dc62c
 	adds r1, r7, #0

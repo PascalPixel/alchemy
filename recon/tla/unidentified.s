@@ -1,8 +1,8 @@
 @ Unidentified ROM data, read from your own ROM at build time as early pret
 @ projects read their base ROM. Each section shrinks as its data gains source.
 	.section .unidentified.08000000,"a"
-	.global Resource_Data000
-Resource_Data000:
+	.global Cartridge_Restart
+Cartridge_Restart:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
 	.section .unidentified.080178b4,"a"
 	.global Data_080178b4

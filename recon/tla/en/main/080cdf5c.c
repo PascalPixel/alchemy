@@ -3,8 +3,9 @@
  * literal load is after the first offset immediate instead of before it.
  * Four ordinary pointer/branch spellings retained the same reorder; the
  * conditional expression scored 240. Finite 128-rewrite search did not improve.
- * The signed halfword is observed at work+0x276; the storage owner remains
- * unresolved and the maintained PartyState declaration stops before it.
+ * The signed halfword is observed at work+0x276. The current maintained
+ * PartyState now names it owner_override; this draft retains its original
+ * private view and measured mismatch. The name repair adds no byte proof.
  * Draft only; no full six-edition linked proof, steering device or credit. */
 #include "TYPES.H"
 
@@ -18,7 +19,7 @@ struct PendingPartyState {
 };
 extern struct PendingPartyState gPartyState;
 
-s32 Func_080cdf5c(void)
+s32 EventRuntime_GetControlledOwner(void)
 {
     s32 actor = 8;
 

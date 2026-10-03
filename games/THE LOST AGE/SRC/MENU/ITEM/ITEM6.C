@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "RAM_BUFFER.H"
 
 extern u8 MsgEquipSlotLabels;
@@ -8,7 +9,6 @@ void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 void ItemMenu_DrawEquippedItemNames(s32 window, u8 *items);
 void ItemMenu_DrawIcons(u16 *items, s32 mode);
 void ItemMenu_ArrangeCategoryItemIcons(u8 *items);
-void WaitFrames(s32);
 
 /* ⚓️ keeps the owner's items 0x1c4 into the menu work and does not look the
    owner up first, as ☀️ does. */

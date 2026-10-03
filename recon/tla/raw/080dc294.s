@@ -126,6 +126,6 @@ BattleEffect_InitializeSharedScene:
 	pop {r5, pc}
 	.2byte 0x0000
 .L_080dc374:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080dc378:
 	.4byte Data_080f3954

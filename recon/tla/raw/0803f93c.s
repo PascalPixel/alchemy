@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f93c
+	.global UiTimedNotice_CloseIfActive
 	.thumb_func
-Func_0803f93c:
+UiTimedNotice_CloseIfActive:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

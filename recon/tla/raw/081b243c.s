@@ -193,7 +193,7 @@ Func_081b243c:
 	bl Audio_PlayCue
 	b .L_081b25c6
 .L_081b25b8:
-	.4byte Data_03001214
+	.4byte gDebugPaused
 .L_081b25bc:
 	.4byte Data_0200024c
 .L_081b25c0:

@@ -43,7 +43,7 @@ Func_080d53b8:
 	movs r1, #8
 	add r1, r8
 	mov r9, r1
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	adds r3, r7, #0
 	adds r3, #84
 	ldrb r3, [r3]
@@ -302,7 +302,7 @@ Func_080d53b8:
 	str r2, [sp, #4]
 	bl ObjectDispatch_SetSingleChildField26Far
 	movs r0, #4
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #18
@@ -326,11 +326,11 @@ Func_080d53b8:
 .L_080d564c:
 	.4byte gPartyState
 .L_080d5650:
-	bl Func_080d2350
+	bl EventRuntime_End
 	movs r0, #0
 	b .L_080d5660
 .L_080d5658:
-	bl Func_080d2350
+	bl EventRuntime_End
 	movs r0, #1
 	negs r0, r0
 .L_080d5660:

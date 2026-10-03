@@ -1441,7 +1441,7 @@ Func_02000c14:
 .L_02008c72:
 	pop {pc}
 .L_02008c74:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008c78:
 	.4byte 0x05000172
 .L_02008c7c:

@@ -8,15 +8,15 @@
 	.global Event_SetStatus1c6Far
 	.thumb_func
 Event_SetStatus1c6Far:
-	overlay_veneer Func_080d2a3c
+	overlay_veneer EventRuntime_StartScreen
 	.global Event_ClearStatus1c6Far
 	.thumb_func
 Event_ClearStatus1c6Far:
-	overlay_veneer Func_080d2a64
+	overlay_veneer EventRuntime_FinishScreen
 	.global Event_WaitValue1c8FramesFar
 	.thumb_func
 Event_WaitValue1c8FramesFar:
-	overlay_veneer Func_080d2a8c
+	overlay_veneer EventRuntime_WaitDelay
 	.global Func_080c83c0
 	.thumb_func
 Func_080c83c0:
@@ -157,13 +157,13 @@ BattleEffect_InitializeSharedSceneFar:
 	.global BattleEffect_ResolvePendingActionsFar
 	.thumb_func
 BattleEffect_ResolvePendingActionsFar:
-	overlay_veneer BattleEffect_ResolvePendingActions
+	overlay_veneer EventRuntime_ResolvePendingActions
 .else
 .ifdef TLA_EDITION_IT
 	.global BattleEffect_ResolvePendingActionsFar
 	.thumb_func
 BattleEffect_ResolvePendingActionsFar:
-	overlay_veneer BattleEffect_ResolvePendingActions
+	overlay_veneer EventRuntime_ResolvePendingActions
 .else
 	.global BattleFx_PrepareBufferInterpolationFar
 	.thumb_func

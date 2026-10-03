@@ -829,7 +829,7 @@ Func_02000318:
 .L_0200877c:
 	.4byte gPartyState
 .L_02008780:
-	.4byte Data_0300120c
+	.4byte gRenderOamEnabled
 .L_02008784:
 	.4byte 0x00000001
 	.section .rodata.x02008874,"a",%progbits

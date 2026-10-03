@@ -1264,7 +1264,7 @@ Func_02000858:
 .L_02008a78:
 	.4byte Data_02001de4
 .L_02008a7c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_02008a80:
 	.4byte Data_02001cde
 .L_02008a84:

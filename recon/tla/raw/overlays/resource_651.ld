@@ -12,7 +12,6 @@ SECTIONS
         "*/resource_651_overlay.o"(.text.x0200809c)
         "*/resource_651_overlay.o"(.text.x02008118)
         "*/resource_651_overlay.o"(.text.x02008128)
-        "*/resource_651_overlay.o"(.text.x02008154)
         "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/TALK.o"(.text)
         "*/resource_651_overlay.o"(.text.x02008288)
         "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/HIP.o"(.text)

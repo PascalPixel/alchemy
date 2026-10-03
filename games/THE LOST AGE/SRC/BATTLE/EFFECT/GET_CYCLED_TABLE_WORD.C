@@ -1,12 +1,6 @@
 #include "TYPES.H"
+#include "INPUT.H"
 
-/* The controller state the engine refreshes each frame. */
-struct InputState {
-    u32 held;
-    u32 pressed;
-};
-
-extern struct InputState gInput;
 extern u16 BattleFx_CyclePatternWords[];
 
 /* ☀️'s, reading ⚓️'s held buttons from gInput. */

@@ -5,10 +5,10 @@
 .syntax unified
 	.thumb
 	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-	.global Func_080ad2b8
+	.global GameFlag_RefreshLureCapFar
 	.thumb_func
-Func_080ad2b8:
-	overlay_veneer Func_080adbec
+GameFlag_RefreshLureCapFar:
+	overlay_veneer GameFlag_RefreshLureCap
 	.global Equipment_GetUnleashRateBonusFar
 	.thumb_func
 Equipment_GetUnleashRateBonusFar:

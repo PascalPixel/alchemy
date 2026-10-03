@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d407c
+	.global EventRuntime_ShowMessageAndWait
 	.thumb_func
-Func_080d407c:
+EventRuntime_ShowMessageAndWait:
 	push {lr}
 	bl Func_080d3fb0
 	pop {pc}

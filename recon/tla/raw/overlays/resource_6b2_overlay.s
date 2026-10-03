@@ -176,7 +176,7 @@ Func_020000f4:
 .L_020081a0:
 	.4byte gPartyState
 .L_020081a4:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_020081a8:
 	.4byte Data_02000618
 .L_020081ac:

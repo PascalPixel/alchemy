@@ -194,7 +194,7 @@ Func_080fc6bc:
 .L_080fc838:
 	.4byte 0x000010ba
 .L_080fc83c:
-	.4byte Data_0300122c
+	.4byte gFrameCount
 .L_080fc840:
 	movs r1, #172
 	lsls r3, r5, #1

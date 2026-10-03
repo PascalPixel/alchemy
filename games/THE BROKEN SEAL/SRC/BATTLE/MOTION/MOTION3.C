@@ -1,19 +1,19 @@
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "MOTION_OBJECT.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "BATTLE_RUNTIME.H"
 #include "ANIMSPR.H"
 
-s32 WaitFrames(s32);
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *object, s32 resource);
 void Animation_SetWorkEntryFar(struct AnimationEntry *entry, s32 index);
 
-
-void Camera_ApplyTransformByFlag(void);
+s32 Camera_ApplyTransformByFlag(void);
 s32 Render_ProjectPoint(const s32 *, s32 *);
 u32 Battle_GetObjectTableValue(s32);
 s32 Summon_IsEntryFlagged(s32);
+s32 Summon_GetEntryByte4(s32);
 
 void BattleMotion_SpawnSlotEffectAndWait(s32 id)
 {
@@ -73,10 +73,10 @@ u32 Battle_GetObjectTableValue(s32 id)
     u8 no;
 
     no = Owner_GetStateFar(id)->class_id;
-    value = (u32)(Summon_GetEntryByte4((s32)no) << 0x18) >> 8;
+    value = (u32)(u8)Summon_GetEntryByte4(no) << 16;
     if (value == 0) {
         no = Owner_GetStateFar(id)->class_id;
-        if (Summon_IsEntryFlagged((s32)no) != 0) {
+        if (Summon_IsEntryFlagged(no) != 0) {
             value = 0x180000;
         } else {
             value = 0x300000;

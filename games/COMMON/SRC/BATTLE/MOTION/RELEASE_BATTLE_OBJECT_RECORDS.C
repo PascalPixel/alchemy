@@ -20,8 +20,8 @@ void ReleaseBattleObjectRecords(s32 object_id)
                 ResourceObject_ReleaseFar((struct ResourceObjectWork *)record);
                 record_index += 1;
             }
-            object->record_storage_kind = (s8)record;
-            object->records = record;
+            object->record_storage_kind = 0;
+            object->records = NULL;
         }
     }
 }

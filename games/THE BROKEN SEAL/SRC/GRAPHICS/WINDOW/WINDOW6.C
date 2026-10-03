@@ -1,6 +1,7 @@
 #include "SYSTEM.H"
 #include "SELECT.H"
 #include "TYPES.H"
+#include "SCENE.H"
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
@@ -19,7 +20,6 @@ void Menu_OpenSelectionWindow(u32, u32);
 void Resource_ScheduleOwnerResetDelayed(void);
 u32 Menu_WaitForSelectionInput(u32);
 void Resource_ResetOwnerEntries(void);
-s32 BattleFx_FindConditionResourceFar(s16 scene, s16 entrance);
 s32 UiText_GetResourceDimensions(s32 resource, s32 *x, s32 *y, s32 *width, s32 *height);
 void UiText_DrawResource(s32 resource, s32 window, s32 x, s32 y);
 void UiTimedNotice_Tick(void);
@@ -77,7 +77,7 @@ void UiTimedNotice_Create(void)
     work = (struct TimedNoticeWork *)gEventWork;
     x = 8;
     y = 8;
-    resource = BattleFx_FindConditionResourceFar(gGameState.scene, gGameState.entrance) + RENDER_RESOURCE_BASE;
+    resource = Scene_GetAreaNameIndexFar(gGameState.scene, gGameState.entrance) + RENDER_RESOURCE_BASE;
     UiText_GetResourceDimensions(resource, &x, &y, &width, &height);
     x = (30 - width) >> 1;
     y = (10 - height) >> 1;

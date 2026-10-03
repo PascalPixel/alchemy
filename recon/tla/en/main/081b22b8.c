@@ -5,7 +5,13 @@
    did not fix it. Further equivalent expression, loop, carry/mask and
    local scheduling variants did not improve score 60; a focused 45 s search
    tested 12,997 candidates without improvement. All six editions share
-   this complete 388-byte extent. */
+   this complete 388-byte extent.
+   2026-10-03: fresh EN baseline is 388B/score60. One used-mask local
+   with an empty read/write register constraint produced 388B/score1975:
+   50 register-only, 4 operand, 23 reordered, 1 inserted and 1 deleted.
+   Both have 188 instructions, 4 stores, 27 branches and 3 calls; equal
+   aggregate counts do not make changed instruction presence eligible.
+   The rejected device was removed and this axis stopped. */
 #include "TYPES.H"
 
 #include "RAM_BUFFER.H"

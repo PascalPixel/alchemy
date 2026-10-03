@@ -1,23 +1,44 @@
 #include "CANVAS.H"
 #include "MOTION_OBJECT.H"
 #include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "B5_CONTEXT.H"
 /*
- * BattleFx_RunTwoResource — canonical plain draft, 2026-10-02.
- * ONE closed ordinary trial replaced the unread DrawRectangle draw[2]
- * reservation with a used scalar and four matching scalar selectors; the
- * obsolete unread-frame claim was removed. No other body/device changed.
- * All six ordinary saved trials emitted636 against native644; the whole
- * PRESENT3 owner changed2860 to2852, with prefix1632 and SpiderWeb584
- * normalized assembly unchanged. The native32-byte frame became24; the
- * callback moved from stack+12 to r9, canvas r9 to fp and position+20 to+12.
- * The pre-loop cell-offset-table ldr/mov pair and two callback reloads
- * disappeared. Complete636 versus native644 has385 positional byte
- * differences in JA/EN/IT and386 in DE/ES/FR, including8 absent bytes.
- * All21 pool values match;20 of22 call targets match, with two real r9
- * indirect stubs replacing the native r4 stubs. This is not an adoption.
- * This self-contained draft retains only its used current declarations.
- * The copier-address order device remains as previously measured. No new
- * matching form, storage, device, compiler flag or routing was introduced.
+ * BattleFx_RunTwoResource — unmatched canonical draft.
+ *
+ * Closed 2026-10-02 trial: replacing the unread DrawRectangle draw[2]
+ * reservation with a used scalar and four matching scalar selectors emitted
+ * 636B in all six editions against native 644B. The whole PRESENT3 owner
+ * changed 2860 to 2852B; its 1632B prefix and 584B SpiderWeb were unchanged.
+ * The native 32B local frame became 24B, callback sp+12 became r9, canvas r9
+ * became fp, and position sp+20 became sp+12. The pre-loop cell-offset-table
+ * ldr/mov pair and two callback reloads disappeared. Complete comparison had
+ * 385 positional byte differences in JA/EN/IT and 386 in DE/ES/FR, including
+ * 8 absent bytes. All 21 pool values matched; 20/22 physical call targets
+ * matched, with two r9 indirect stubs instead of native r4. That unread
+ * storage/selector/frame/scheduling axis remains closed.
+ *
+ * T0, 2026-10-03: one natural owner/contract baseline uses HEAP_STATE slots
+ * 39/40/46, MotionObject fields, and maintained Camera/Audio/B5 contracts.
+ * Global TBS flags and the pinned era assembler emit 640B / native 644B.
+ * The complete relocated raw 644B reproduces the EN ROM. T0 has 498 differing
+ * bytes in the shared 640B and 4 missing bytes (positional, not an instruction
+ * score). All 32 candidate / 34 native relocations resolve. All 22 physical
+ * calls retain order; 20 targets match, but both blitter calls use
+ * _call_via_sl (r10) rather than _call_via_r4. There are 21 pool words each:
+ * 20 match in order; gWorkSlot replaces the interior gBattleFxWork cell.
+ * Natural padding is 4B each. Instructions/stores are 254/20 versus 256/21;
+ * Branch instructions are 43 each, including 22 BL calls and the final BX;
+ * non-call/non-return branches are 20. Pools and alignment are excluded.
+ * Local frame is 24/32B, saved registers 32B each, total 56/64B. Position is
+ * sp+12/native sp+20, callback r10/native sp+12, canvas r11/native r9.
+ * Whole-owner slot calculations and differing instruction presence remain;
+ * this does not justify another scheduling/storage/device attempt.
+ *
+ * Native pointer lifetimes and live effect reads are preserved. The existing
+ * copier-address-order FAKEMATCH remains unchanged. No new device, layout,
+ * header, resource ID, compiler option or routing was introduced. T0 is
+ * frozen after this single compile; no adoption or other-edition claim.
  */
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
@@ -31,12 +52,10 @@
 #include "SYSTEM.H"
 #include "RESOURCE.H"
 
-extern u8 gBattleFxWork[];
-void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void BattleEventRuntime_BeginPhaseFar(s32 cue);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
-void Audio_PlayCue(s32 cue);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Camera_ApplyShake(s32 x, s32 y);
+void AudioCommand_PlayFar(s32 cue);
+void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 
 extern u8 TwoResource_CellWidths[];
@@ -47,30 +66,26 @@ extern s8 TwoResource_CellBiasY[];
 
 void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
 {
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw;
-    s32 *object;
+    struct MotionObject *object;
     struct EffectPosition position;
     s32 frames;
     s32 frame;
     s32 cell;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
+    work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+    canvas = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
     *(u16 *)0x04000020 = 0x100;
     if (work->effect->side == 1) {
-        BattleEffect_LoadWork(46, 7, 7, 3, 1);
-        draw = (DrawRectangle)heap_cache[46 - 39];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 1);
+        draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     } else {
-        BattleEffect_LoadWork(46, 7, 7, 7, 1);
-        draw = (DrawRectangle)heap_cache[46 - 39];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 1);
+        draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     }
     Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet, Ram_MapCellBuffer, 1, 0);
@@ -110,16 +125,16 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
                 BattleEventRuntime_BeginPhaseFar(0x85);
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
             } else {
-                Audio_PlayCue(0x86);
+                AudioCommand_PlayFar(0x86);
                 ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
             }
             work->shake_frames = 8;
         }
         if (mode == 1) {
             if (frame == 13) {
-                object[10] = 0xc0000;
-                object[18] = 0x7851;
-                object[17] = 0x4000;
+                object->velocity_y = 0xc0000;
+                object->vertical_motion_strength = 0x7851;
+                object->vertical_motion_phase = 0x4000;
             }
             if (frame == 65) {
                 work->shake_frames = 4;
@@ -132,6 +147,6 @@ void BattleFx_RunTwoResource(struct BattleEffectArgument *efx, s32 mode)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

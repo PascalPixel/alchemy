@@ -1,25 +1,17 @@
 #include "TYPES.H"
-
-struct Point {
-    u8 unknown0[8];
-    s32 x;
-    u8 unknown1[4];
-    s32 y;
-};
-
-struct Point **GetBattleObjectSlot(s32);
-void BattlePres_SetupTransitionScene(s32, s32, s32, s32);
+#include "MOTION_OBJECT.H"
+#include "BATTLE_PRESENTATION.H"
 
 void BattlePres_SetupTransitionAtPairMidpoint(s32 first, s32 second, s32 mode)
 {
-    struct Point *left = *GetBattleObjectSlot(first);
-    struct Point *right = *GetBattleObjectSlot(second);
+    struct MotionObject *left = GetBattleObjectSlot(first)->object;
+    struct MotionObject *right = GetBattleObjectSlot(second)->object;
     s32 left_x = left->x;
     s32 right_x = right->x;
-    s32 left_y = left->y;
-    s32 right_y = right->y;
+    s32 left_z = left->z;
+    s32 right_z = right->z;
     s32 x = (right_x + left_x) / 2;
-    s32 y = (right_y + left_y) / 2;
+    s32 z = (right_z + left_z) / 2;
 
-    BattlePres_SetupTransitionScene(x, 0, y, mode);
+    BattlePres_SetupTransitionScene(x, 0, z, mode);
 }

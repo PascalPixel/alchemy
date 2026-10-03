@@ -21,7 +21,6 @@ void BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode)
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 void Camera_StoreSceneParameters(s32, u32, s32);
-void BattlePres_RunActorEntries(struct BattlePlan *plan, s32 mode);
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
 void BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
 void Func_080ba978(struct BattlePlan *plan, s32 mode);

@@ -1,7 +1,10 @@
 #include "RESOURCE.H"
+#include "VRAM_BLOCK.H"
 #include "RUNTIME_MEM.H"
 #include "ANIMSPR.H"
 #include "OBJECT_RUNTIME.H"
+#include "SCRIPT_MOTION.H"
+#include "OBJDISP.H"
 #include "FIELDOBJ.H"
 /* Battle effect: spawn the pair of scaled objects that follow the linked
    object in mirrored arcs, one for each scaled-arc update callback. */
@@ -74,15 +77,7 @@ struct ArcObject {
     void (*update)(struct FieldActor *);
 };
 
-struct ResourceTableEntry {
-    u16 value;
-    u16 unknown:5;
-    u16 tile:10;
-    u16 last:1;
-};
-
 extern struct BattleFxScene *gEffectWork;
-extern struct ResourceTableEntry ResourceTableEntries[];
 struct FieldActor *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *sprite, s32 animation);
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
@@ -90,7 +85,7 @@ void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
 
 extern u32 gFrameCount;
 s32 __umodsi3(s32, s32);
-void Animation_ApplyChildValuesFar(s32, s32);
+void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 value);
 
 struct EffectOrigin {
     u8 padding00[4];
@@ -114,7 +109,6 @@ s32 ResourceTable_CountFreeBlocks(void);
 void BattleFx_SetupObjectPair(s32 first, s32 second);
 void BattleFx_UpdateAllEffectSlots(void);
 
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Vector_AddPolarOffset(s32, s32, void *);
 
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *link);
@@ -150,7 +144,7 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked)
         Resource_ResetEntry(sprite->slot);
         sprite->slot = scene->tile_slot;
         sprite->active = 1;
-        sprite->tile = ResourceTableEntries[sprite->slot].tile;
+        sprite->tile = (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
         sprite->color = 0;
         sprite->shape = 1;
         sprite->size = 2;
@@ -168,9 +162,9 @@ void BattleFx_FlickerObjectAndTick(s32 arg0)
     /* FAKEMATCH: the existing volatile frame-counter reads are retained;
        ordinary reads merge across this callback and change native scheduling. */
     if (((*(volatile s32 *)&gFrameCount) & 2) != 0) {
-        Animation_ApplyChildValuesFar(arg0, 7);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 7);
     } else {
-        Animation_ApplyChildValuesFar(arg0, 0);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 0);
     }
     if (((*(volatile s32 *)&gFrameCount) & 15) == 0) {
         BattleFx_SpawnScaledArcObjects(arg0);
@@ -184,7 +178,7 @@ void BattleFx_CycleObjectValueByCounter(s32 arg0)
     if (((*(volatile s32 *)&gFrameCount) & 1) != 0) {
         s32 value = __umodsi3((s32)((unsigned int)(*(volatile s32 *)&gFrameCount) >> 1), 6);
 
-        Animation_ApplyChildValuesFar(arg0, value);
+        Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, value);
     }
     if (((*(volatile s32 *)&gFrameCount) & 15) == 0) {
         BattleFx_SpawnScaledArcObjects(arg0);
@@ -254,40 +248,47 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
 
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
 {
-    void *first_object; void *second_object; s32 facing_quadrant; void *state;
+    struct ScriptMotionObject *first_object;
+    struct ScriptMotionObject *second_object;
+    s32 facing_quadrant;
+    struct BattleFxScene *state;
+
     state = gEffectWork;
-    FIELD_AT_OFFSET(state, s16, 0x18) = first_object_id;
+    state->first_object_id = first_object_id;
     first_object = ObjectTable_Get((s16)first_object_id);
-    FIELD_AT_OFFSET(state, s16, 0x1A) = second_object_id;
-    FIELD_AT_OFFSET(state, s32 *, 0x10) = (s32)first_object;
+    state->second_object_id = second_object_id;
+    state->main_object = first_object;
     second_object = ObjectTable_Get((s16)second_object_id);
-    facing_quadrant = (FIELD_AT_OFFSET(first_object, u16, 6) + 0x2000) & 0xC000;
-    FIELD_AT_OFFSET(state, s32 *, 0x14) = (s32)second_object;
-    FIELD_AT_OFFSET(state, s32 *, 0) = facing_quadrant;
-    if (second_object != 0) {
-        FIELD_AT_OFFSET(state, s32 *, 0x38) = (s32)FIELD_AT_OFFSET(second_object, s32 *, 0x6C);
-        FIELD_AT_OFFSET(state, s32 *, 0x3C) = (s32)FIELD_AT_OFFSET(second_object, s32 *, 0);
+    facing_quadrant = (first_object->facing + 0x2000) & 0xc000;
+    state->child = second_object;
+    state->angle = facing_quadrant;
+    if (second_object != NULL) {
+        state->saved_callback = (void *)second_object->hook;
+        state->saved_script = (const s32 *)second_object->script;
         {
-            u8 object_variant = (u8)FIELD_AT_OFFSET(FIELD_AT_OFFSET(FIELD_AT_OFFSET(second_object, void **, 0x50), void **, 0x28), u8, 5);
-            FIELD_AT_OFFSET(state, u8, 0x44) = object_variant;
+            struct AnimationObject *animation =
+                ((struct ObjectRuntime *)second_object)->animation;
+            u8 palette = animation->entries[0]->param;
+
+            state->saved_palette = palette;
         }
-        FIELD_AT_OFFSET(state, s32 *, 4) = (s32)FIELD_AT_OFFSET(second_object, s32 *, 8);
-        FIELD_AT_OFFSET(state, s32 *, 0xC) = (s32)FIELD_AT_OFFSET(second_object, s32 *, 0x10);
-        FIELD_AT_OFFSET(state, s32 *, 8) = (s32)FIELD_AT_OFFSET(second_object, s32 *, 0xC);
+        state->x = second_object->x;
+        state->z = second_object->z;
+        state->y = second_object->y;
         return;
     }
-    FIELD_AT_OFFSET(state, s32 *, 4) = (s32)FIELD_AT_OFFSET(first_object, s32 *, 8);
-    FIELD_AT_OFFSET(state, s32 *, 0xC) = (s32)FIELD_AT_OFFSET(first_object, s32 *, 0x10);
-    FIELD_AT_OFFSET(state, s32 *, 8) = (s32)FIELD_AT_OFFSET(first_object, s32 *, 0xC);
-    Vector_AddPolarOffset(0x100000, facing_quadrant, (u8 *)state + 4);
+    state->x = first_object->x;
+    state->z = first_object->z;
+    state->y = first_object->y;
+    Vector_AddPolarOffset(0x100000, facing_quadrant, &state->x);
 }
 
 void EffectRuntime_StopCurrentObject(void)
 {
     struct BattleFxScene *work = gEffectWork;
-    u8 *object = work->main_object;
+    struct ScriptMotionObject *object = work->main_object;
 
-    *(s32 *)(object + 0x6c) = 0;
-    Animation_ApplyChildValuesFar(object, 0);
+    object->hook = NULL;
+    Animation_ApplyChildValuesFar((struct DispatchObject *)object, 0);
     WaitFrames(1);
 }

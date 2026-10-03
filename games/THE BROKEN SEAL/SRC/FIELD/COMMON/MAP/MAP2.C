@@ -55,8 +55,8 @@ void MapAnimation_Start(void)
     Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, 0x84000800, (volatile u32 *)0x040000d4);
     WaitFrames(1);
     Resource_RunCopiedDecoder(pages + (*(u32 *)&gFrameCount & one) * 0x1400 + 0xc80, (void *)gMapCellBuffer);
-    *(u16 *)&work->first = 200;
-    *(u16 *)&work->second = 255;
+    work->first = 200;
+    work->second = 255;
     *(u32 *)Data_03001cfc = (u32)MapAnimation_PresentFrame;
 }
 
@@ -94,8 +94,8 @@ void Map_LoadAreaGraphics(void)
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
-    *(u16 *)&((struct MapRenderWork *)state)->first = 0;
-    *(u16 *)&((struct MapRenderWork *)state)->second = 159;
+    ((struct MapRenderWork *)state)->first = 0;
+    ((struct MapRenderWork *)state)->second = 159;
     WaitFrames(1);
     Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
     /* FAKEMATCH: the byte flag is written from the halfword local cleared

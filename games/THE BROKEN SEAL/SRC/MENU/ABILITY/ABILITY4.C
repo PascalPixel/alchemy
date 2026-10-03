@@ -11,6 +11,18 @@
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
 
+/* Retained menu icon byte view; the shared owner is RenderOutput. */
+struct PsynergyMenuIcon {
+    u8 unknown_00[5];
+    u8 state;
+    u16 x;
+    u16 y;
+    u8 unknown_0a[2];
+    u16 unknown_0c;
+    u8 render_target;
+    u8 sentinel;
+};
+
 struct BattleUnit;
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
@@ -33,6 +45,9 @@ void ItemMenu_HideAllIcons(void);
 
 s32 PsynergyMenu_SelectAction(void)
 {
+    /* FAKEMATCH: retain the existing unsigned icon-byte transport. The
+       direct RenderOutput field store moves ahead of the page-coordinate
+       read while keeping this module's 742-byte extent. */
     struct PsynergyMenuState *menu;
     s32 result;
     s32 done;
@@ -70,7 +85,7 @@ s32 PsynergyMenu_SelectAction(void)
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         ItemMenu_PosCategory();
         RenderOutput_RedrawSavedRectFar(menu->status_window);
-        menu->psynergy_count = (s32)PsynergyMenu_CollectActions(
+        menu->psynergy_count = (u8)PsynergyMenu_CollectActions(
             (struct BattleUnit *)Owner_GetStateFar(menu->owner_ids[0]), menu->psynergies, 0);
         WaitFrames(1);
         Menu_BuildPageResult(&state, 0);
@@ -90,7 +105,7 @@ s32 PsynergyMenu_SelectAction(void)
             }
             WaitFrames(1);
             nav = Menu_HandlePageInput(0, state.entry_count, PAGE_ROWS, &state.row, &state.page);
-            menu->pane_icon[0]->active = 1;
+            ((struct PsynergyMenuIcon *)menu->pane_icon[0])->state = 1;
 #if EDITION_INTERNATIONAL
             UiMenu_PositionCursor(55, state.row * 16 + 60);
 #else

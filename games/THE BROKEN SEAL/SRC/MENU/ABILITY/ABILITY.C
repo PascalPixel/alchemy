@@ -13,7 +13,7 @@ extern volatile u32 gKeysRepeat;
 
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Menu_SpawnIconEntries(struct PsynergyMenuState *menu, s32 window);
-struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, s32 window, s32 x, s32 y);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(s32 kind, s32 index, struct RenderInput *window, s32 x, s32 y);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
 void UiText_DrawWorkValueWithLabel(s32 window);
@@ -29,6 +29,9 @@ void Audio_PlayCue(s32 cue);
 /* Select the owner whose Psynergy is shown, or assign an L/R shortcut. */
 s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
 {
+    /* FAKEMATCH: retain the existing low-byte CollectActions caller contract.
+       Its true s32 return with explicit u8 narrowing changes the native
+       adds r5,r0,#0 copy to mov r5,r0 before the same narrowing. */
     struct PsynergyMenuState *menu;
     s32 selection;
     s32 count;
@@ -53,7 +56,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
     if (UiWindow_UpdateOrCreate(&menu->psynergy_window, 13, 3, 17, 10, 2))
         Menu_SpawnIconEntries(menu, menu->psynergy_window);
     if (UiWindow_UpdateOrCreate(&menu->shortcut_window, 13, 13, 17, 4, 2)) {
-        menu->cursor_icon = RenderOutput_CreateFromResourceFar(2, 0, menu->shortcut_window, 0, result);
+        menu->cursor_icon = RenderOutput_CreateFromResourceFar(2, 0, (struct RenderInput *)menu->shortcut_window, 0, result);
         menu->cursor_icon->active = 13;
     }
     while (!GameFlag_TestFar(0x150)) {
@@ -97,7 +100,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids, u16 *unused)
             else
                 menu->mode = 2;
             actions = Runtime_BumpAllocate(64);
-            found = PsynergyMenu_CollectActions((struct BattleUnit *)owner, actions, 1);
+            found = (u8)PsynergyMenu_CollectActions((struct BattleUnit *)owner, actions, 1);
             Runtime_BumpFree(actions);
             action_count = (s8)found;
             if (action_count == 0) {
@@ -143,6 +146,15 @@ struct PsynergyTargetAttributes {
     u16 x : 9;
     u16 matrix : 5;
     u16 size : 2;
+};
+
+struct PsynergyTargetMarker {
+    u8 reserved_00[5];
+    u8 state;
+    u16 x;
+    u16 y;
+    u8 reserved_0a[10];
+    struct PsynergyTargetAttributes attributes;
 };
 
 extern volatile u32 gKeyState;
@@ -196,13 +208,16 @@ void PsynergyMenu_NoOp(void)
  * the item-target selector's halfword position and nine-bit OAM x field. */
 s32 PsynergyMenu_SelectTarget(s32 mode)
 {
+    /* FAKEMATCH: retain the existing unsigned marker/OAM view. Direct
+       RenderOutput member/word casts remove the native halfword narrowing
+       before the nine-bit OAM assignment. */
     struct PsynergyMenuState *menu;
     s32 selection;
     s32 count;
     s32 pending;
     s32 result;
     s32 shown;
-    struct RenderOutput *marker;
+    struct PsynergyTargetMarker *marker;
 
     menu = ((struct PsynergyMenuState *)gMenuWork);
     selection = menu->tab_index[1];
@@ -210,21 +225,21 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
     pending = 1;
     result = 0;
     shown = 0;
-    Owner_GetStateFar(menu->owner_ids[menu->tab_index[0]]);
+    Owner_GetStateFar(menu->owner_table[menu->tab_index[0]]);
     UiMenu_SlideCursor(selection * 24 - 10, 16);
     while (!GameFlag_TestFar(0x150)) {
         if (pending) {
             pending = 0;
             selection = (selection + count) % count;
-            Owner_GetStateFar(menu->owner_ids[selection]);
-            marker = menu->pane_icon[1];
-            ((struct PsynergyTargetAttributes *)&marker->packed)->x = *(u16 *)&marker->x =
+            Owner_GetStateFar(menu->owner_table[selection]);
+            marker = (struct PsynergyTargetMarker *)menu->pane_icon[1];
+            marker->attributes.x = marker->x =
                 ((((struct RenderInput *)menu->auxiliary_window)->x + selection * 3) << 3) - 2;
             if (mode == 0) {
                 Menu_DrawOwnerStatusPanel(menu->status_window,
-                                          menu->owner_ids[selection], 0, 0);
+                                          menu->owner_table[selection], 0, 0);
                 PsynergyMenu_CallIconRoutineWithValue(
-                    (s32)menu, menu->owner_ids[selection]);
+                    (s32)menu, menu->owner_table[selection]);
                 if (!GameFlag_TestFar(0x151) && !shown) {
 /* The Japanese edition clears the info window and draws the description
    as a message; the others redraw the saved window and draw it in place. */
@@ -249,7 +264,7 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
         WaitFrames(1);
         if (gKeyState & 1) {
             Audio_PlayCue(112);
-            result = menu->owner_ids[selection];
+            result = menu->owner_table[selection];
             break;
         }
         if (gKeyState & 2) {
@@ -268,14 +283,14 @@ s32 PsynergyMenu_SelectTarget(s32 mode)
             pending = 1;
         }
     }
-    marker = menu->pane_icon[1];
+    marker = (struct PsynergyTargetMarker *)menu->pane_icon[1];
     menu->tab_index[1] = selection;
-    UiIcon_PrepareObject(marker);
-    marker->active = 13;
+    UiIcon_PrepareObject((struct RenderOutput *)marker);
+    marker->state = 13;
     WaitFrames(1);
     menu->tab_index[1] = selection;
-    menu->selected_owner = menu->owner_ids[selection];
-    menu->owner_ids[1] = menu->owner_ids[selection];
+    menu->selected_owner = menu->owner_table[selection];
+    menu->owner_ids[1] = menu->owner_table[selection];
     return result;
 }
 

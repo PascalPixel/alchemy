@@ -5,9 +5,9 @@
 s32 UiMenu_CreateCursor(void *menu);
 /* The four-word portrait initializer retains this caller's extra word. */
 void PsynergyMenu_InitializeEntryObjects();
-struct RenderOutput *UiIcon_CreateWithResourceVariant(s32, s32, s32);
+s32 UiIcon_CreateWithResourceVariant(struct RenderInput *, s32, s32);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
-struct RenderOutput *RenderOutput_CreateFromResourceFar(s32, s32, s32, s32, s32);
+struct RenderOutput *RenderOutput_CreateFromResourceFar(s32, s32, struct RenderInput *, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
 {
@@ -30,7 +30,8 @@ void PsynergyMenu_CreateEntryGrid(void)
     menu->column_count = 8;
     menu->row_count = 2;
 
-    cursor = UiIcon_CreateWithResourceVariant(window, 0, 4);
+    cursor = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(
+        (struct RenderInput *)window, 0, 4);
     cursor->active = 13;
     menu->entry_grid_cursor = cursor;
     SideObject_CreateFar(0, 0, 0, window, 0, 0);
@@ -40,7 +41,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[0];
     x = 96;
     do {
-        *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResourceFar(4, index, (struct RenderInput *)window, x, y);
         index++;
         x += 16;
     } while (index <= 7);
@@ -50,7 +51,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[8];
     x = 96;
     do {
-        *output++ = RenderOutput_CreateFromResourceFar(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResourceFar(4, index, (struct RenderInput *)window, x, y);
         index++;
         x += 16;
     } while (index <= 15);

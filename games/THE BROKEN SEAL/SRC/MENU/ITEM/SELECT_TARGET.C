@@ -21,6 +21,15 @@ struct TargetMarkerAttributes {
     u16 size : 2;
 };
 
+struct TargetMarker {
+    u8 reserved_00[5];
+    u8 state;
+    u16 x;
+    u16 y;
+    u8 reserved_0a[10];
+    struct TargetMarkerAttributes attributes;
+};
+
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern char MsgItemPlainName;
@@ -48,6 +57,9 @@ void Audio_PlayCue(s32 cue);
    preview for that member; A returns the member and B -1. */
 s32 ItemMenu_SelectTarget(s32 mode)
 {
+    /* The existing unsigned coordinate/OAM prefix retains the native chained
+       halfword stores: the canonical coordinate view measured 816 bytes
+       against 824, losing the unsigned-halfword mask. */
     struct InventoryMenuState *menu;
     s32 window;
     s32 count;
@@ -56,7 +68,7 @@ s32 ItemMenu_SelectTarget(s32 mode)
     u8 result;
     s32 shown;
     s32 quantity;
-    struct RenderOutput *marker;
+    struct TargetMarker *marker;
 
     menu = gMenuWork;
     window = (s32)menu->item_window;
@@ -75,8 +87,8 @@ s32 ItemMenu_SelectTarget(s32 mode)
             selection = (selection + count) % count;
             window = (s32)menu->item_window;
             Owner_GetStateFar(menu->owner_ids[selection]);
-            marker = menu->pane_icons[1];
-            ((struct TargetMarkerAttributes *)&marker->packed)->x = (u16)(marker->x = ((menu->main_window->x + selection * 3) << 3) - 2);
+            marker = (struct TargetMarker *)menu->pane_icons[1];
+            marker->attributes.x = marker->x = ((menu->main_window->x + selection * 3) << 3) - 2;
             if (mode == 1) {
                 ItemMenu_RefreshOwner(menu->owner_ids[selection], 1);
                 UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
@@ -161,10 +173,10 @@ s32 ItemMenu_SelectTarget(s32 mode)
             selection++;
         }
     }
-    marker = menu->pane_icons[1];
+    marker = (struct TargetMarker *)menu->pane_icons[1];
     menu->pane_index[1] = selection;
-    UiIcon_PrepareObject(marker);
-    marker->active = 13;
+    UiIcon_PrepareObject((struct RenderOutput *)marker);
+    marker->state = 13;
     EquipmentMenu_StartCompatibilityIndicators();
     WaitFrames(1);
     menu->pane_index[1] = selection;

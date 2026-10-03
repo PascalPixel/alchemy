@@ -8,6 +8,8 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
 void Shop_DrawStock(s32 window, s32 selected)
 {
+    /* The typed stock pointer measured the same 296 bytes but changed the
+       address registers. Keep the existing word transport at this boundary. */
     struct ShopRuntime *shop;
     s16 *item_ids;
     s16 *item_id;
@@ -45,7 +47,7 @@ void Shop_DrawStock(s32 window, s32 selected)
         }
         slot = 0;
         if ((u32)first < (u32)item_count) {
-            item_id = &item_ids[first];
+            item_id = (s16 *)((u32)(first * 2) + (u32)item_ids);
             x = 16;
             for (; (u32)slot <= 6 && (u32)first < (u32)item_count;
                  x += 32, slot++, item_id++, first++) {

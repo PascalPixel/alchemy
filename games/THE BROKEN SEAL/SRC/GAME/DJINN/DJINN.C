@@ -109,15 +109,17 @@ block_18:
 
 s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
 {
+    /* FAKEMATCH: the existing byte cursor keeps the class-index read before the class-id step; the direct-member attempt changes native operand order. */
     u8 *entries;
     const u8 *field;
     s32 entry_index;
-    const struct BattleUnit *unit = (const struct BattleUnit *)state;
+    s32 offset = (u8 *)&((const struct BattleUnit *)state)->class_index - state;
     s32 battle_value;
 
-    field = &unit->class_index;
+    field = state + offset;
     if (*field == 0) {
-        field = &unit->class_id;
+        offset--;
+        field = state + offset;
         entries = (u8 *)Owner_GetRecord(*field) + 0x48;
         entry_index = 0;
 first_loop:
@@ -132,7 +134,8 @@ first_loop:
         goto found;
     }
 
-    field = &unit->class_index;
+    offset = 0x129;
+    field = state + offset;
     entries = (u8 *)Owner_GetRecordStride84(*field) + 0x50;
     entry_index = 0;
 second_loop:
@@ -165,7 +168,7 @@ s32 BattleFx_RollSuccess(
     s32 resistance_category,
     s32 effect_id,
     s32 success_scale) {
-    struct BattleUnit *state = Owner_GetState(target);
+    u8 *state = Owner_GetState(target);
     s32 attempts = 1;
     s32 score;
     s32 attempt;
@@ -177,35 +180,35 @@ s32 BattleFx_RollSuccess(
     u8 *flag_13c;
 
     if (BattleFx_IsRevive(effect_id)!= 0 &&
-        state->hp != 0) {
+        FIELD_AT_OFFSET(state, s16 *, 0x38) != 0) {
         return 0;
     }
 
-    if (effect_id == 3 && state->poison == 0) {
+    if (effect_id == 3 && FIELD_AT_OFFSET(state, s8 *, 0x131) == 0) {
         goto fail;
     }
 
     goto action4_check;
 action4_tail:
-    if (state->stun == 0 && state->sleep == 0 &&
-        state->psy_seal == 0 && state->death_count == 0) {
+    if (state[0x13B] == 0 && state[0x13C] == 0 &&
+        state[0x13D] == 0 && state[0x141] == 0) {
         goto fail;
     }
     goto action4_done;
 action4_check:
     if (effect_id == 4) {
-        if (state->delusion == 0 && (u8)state->confusion == 0 && state->charm == 0) {
+        if (state[0x138] == 0 && state[0x139] == 0 && state[0x13A] == 0) {
             goto action4_tail;
         }
     }
 
 action4_done:
-    flag131 = &state->poison;
-    flag138 = (u8 *)&state->delusion;
-    flag139 = (u8 *)&state->confusion;
-    flag_13a = (u8 *)&state->charm;
-    flag_13b = (u8 *)&state->stun;
-    flag_13c = (u8 *)&state->sleep;
+    flag131 = (s8 *)(state + 0x131);
+    flag138 = state + 0x138;
+    flag139 = state + 0x139;
+    flag_13a = state + 0x13A;
+    flag_13b = state + 0x13B;
+    flag_13c = state + 0x13C;
     if (effect_id == 0x40 &&
         *flag131 == 0 &&
         *flag138 == 0 &&
@@ -213,13 +216,13 @@ action4_done:
         *flag_13a == 0 &&
         *flag_13b == 0 &&
         *flag_13c == 0 &&
-        state->psy_seal == 0 &&
-        state->death_count == 0 &&
-        state->evil_spirit == 0) {
+        FIELD_AT_OFFSET(state, u8 *, 0x13D) == 0 &&
+        FIELD_AT_OFFSET(state, u8 *, 0x141) == 0 &&
+        FIELD_AT_OFFSET(state, u8 *, 0x140) == 0) {
         return 0;
     }
 
-    if (effect_id == 0x1C && state->death_count == 1) {
+    if (effect_id == 0x1C && FIELD_AT_OFFSET(state, u8 *, 0x141) == 1) {
         return 0;
     }
 
@@ -227,9 +230,9 @@ action4_done:
     if (score > 0) {
         s32 difference = Owner_GetResistanceValue(caster, resistance_category) -
             Owner_GetResistanceValue(target, resistance_category) -
-            (state->luck >> 1);
+            (FIELD_AT_OFFSET(state, u8 *, 0x42) >> 1);
         score += difference * 3;
-        if (BattleTarget_IsWeakToEffect((const u8 *)state, effect_id) != 0) {
+        if (BattleTarget_IsWeakToEffect(state, effect_id) != 0) {
             score += 25;
         }
     } else {
@@ -264,6 +267,7 @@ const u16 *Djinn_GetDefinition(u32 group, u32 index)
 
 s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 {
+    /* FAKEMATCH: keep the existing condition-then-byte-cursor traversal of the Djinn counts; moving the cursor before the count test changes native scheduling. */
     void *entry = state + index * 20 + 48;
     s32 best_no = 0;
     s32 best_val = 999;
@@ -278,13 +282,13 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
     if (best_no < result) {
         s32 off = 252;
 
-        owners = gGameState.active_owners;
+        owners = (u8 *)&gGameState + off * 2;
         count = result;
         do {
-            struct BattleUnit *unit = Owner_GetState(*owners);
-            u8 *p = unit->djinn_owned_counts;
+            u8 *p = Owner_GetState(*owners);
 
-            if (unit->djinn_owned_counts[index] <= 9) {
+            if (((struct BattleUnit *)p)->djinn_owned_counts[index] <= 9 &&
+                (p += (u8 *)((struct BattleUnit *)p)->djinn_owned_counts - p, 1)) {
                 s32 value = 0;
                 s32 i = 3;
 
@@ -420,40 +424,44 @@ s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit)
 
 u32 *Trade_AddOffer(u32 kind, u32 first, u32 second)
 {
-    struct DjinnRecoveryTable *state;
-    struct DjinnRecoveryEntry *entries;
-    struct DjinnRecoveryEntry *entry;
+    /* FAKEMATCH: retain the existing byte writes and unsigned count word of the offer wire record; direct entry stores change the native count/cursor order. */
+    u8 *state;
+    u8 *entries;
+    u8 *entry;
     u32 *count_p;
     u32 count;
     u32 offset;
 
     Trade_RemoveOffer(kind, first, second);
     state = Trade_GetOfferState(kind > 7);
-    entries = state->list.entries;
-    count_p = (u32 *)&state->list.count;
+    entries = (u8 *)((struct DjinnRecoveryTable *)state)->list.entries;
+    count_p = (u32 *)&((struct DjinnRecoveryTable *)state)->list.count;
     count = *count_p;
-    offset = count;
-    entries[offset].element = first;
+    offset = count * 4;
+    entries[offset] = first;
     count++;
     entry = entries + offset;
-    entry->index = second;
-    entry->unit_id = kind;
-    entry->turns = 0xFF;
+    entry[1] = second;
+    entry[2] = kind;
+    entry[3] = 0xFF;
     *count_p = count;
     return count_p;
 }
 
 s32 Djinn_Transfer(s32 source, s32 index, s32 bit, s32 target)
 {
+    /* FAKEMATCH: the existing scalar cursor selects an available-Djinn word; direct array accesses change the native operand order. */
     struct BattleUnit *state = Owner_GetState(source);
+    s32 avail_off = index * sizeof(state->djinn_available[0])
+        + ((u8 *)state->djinn_available - (u8 *)state);
     u32 mask = 1U << bit;
     u32 present;
 
-    if ((state->djinn_available[index] & mask) != 0) {
+    if ((*(u32 *)((u8 *)state + avail_off) & mask) != 0) {
         present = Djinn_IsActive(source, index, bit);
         if (Djinn_AddToOwner(target, index, bit) == 0) {
             Djinn_Deactivate(source, index, bit);
-            state->djinn_available[index] &= ~mask;
+            *(u32 *)((u8 *)state + avail_off) &= ~mask;
             state->djinn_owned_counts[index]--;
 
             if (present != 0) {

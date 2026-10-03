@@ -10,6 +10,18 @@
 #include "UI.H"
 #include "TBS_EDITION.H"
 
+struct InventoryMenuIcon {
+    struct InventoryMenuIcon *next;
+    u8 unknown_04;
+    u8 state;
+    s16 x;
+    s16 y;
+    u8 unknown_0a[2];
+    u16 unknown_0c;
+    u8 render_target;
+    u8 sentinel;
+};
+
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
@@ -36,6 +48,9 @@ void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
    characters with L and R, and return 1 for A or -1 for B. */
 s32 ItemMenu_SelectItem(void)
 {
+    /* FAKEMATCH: the existing icon prefix keeps the row load before
+       the active-byte store. The canonical view measured the same 728 bytes
+       with that schedule reversed. */
     struct InventoryMenuState *menu;
     struct BattleUnit *owner;
     s32 result;
@@ -103,7 +118,7 @@ s32 ItemMenu_SelectItem(void)
                 }
                 ItemMenu_DrawEquipPage((s32)menu->status_window, 0, &state);
             }
-            menu->pane_icons[0]->active = 1;
+            ((struct InventoryMenuIcon *)menu->pane_icons[0])->state = 1;
             UiMenu_PositionCursor(96, state.row * 16 + 52);
             WaitFrames(1);
 

@@ -1,4 +1,10 @@
 #include "SELECT.H"
+/* 2026-10-03 owner cleanup: SELECT.H now supplies the real doubly-linked
+ * node and sprite record. This remains a draft: its object is 1372 bytes,
+ * four short of the complete 1376-byte extent, and prior ordering/register
+ * differences remain. The typed first member lets GCC keep the projection
+ * coordinates across cursor stores; the old s32 unknown prefix reloaded them.
+ */
 /* DRAFT checkpoint 2026-09-26: its complete owner now ends at 0801aeec,
  * before the separately registered MenuSelection_DrawSideMarker.
  * Explicit --size 1376: 1376/1376 bytes, 415 differing halfwords and 259

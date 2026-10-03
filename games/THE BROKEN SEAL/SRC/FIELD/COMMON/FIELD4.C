@@ -1,11 +1,31 @@
 #include "TYPES.H"
 #include "SCENE.H"
-#include "GAME_STATE.H"
 #include "FIELDRUN.H"
+
+struct FieldProgress {
+    u8 unknown_000[0x1c0];
+    s16 scene;
+    s16 entrance;
+    u8 unknown_1c4[8];
+    s16 group;
+    u8 unknown_1ce[0x50];
+    u16 unknown_21e;
+    u8 unknown_220[0x12];
+    s16 unknown_232;
+    u8 unknown_234[4];
+    s32 unknown_238;
+    u8 unknown_23c[2];
+    s16 variant;
+    u16 return_scene;
+    u16 return_entrance;
+};
+
+extern struct FieldProgress Data_02000240;
 
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_RefreshLureCapFar(void);
+#define SCENE_RECORD(id) (&Field_SceneTable[id])
 
 extern void Audio_PlayCue(s16 arg0);
 
@@ -15,24 +35,27 @@ extern void Audio_PlayCue(s16 arg0);
    records the group and variant and sets the group's visited flag. */
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
 {
-    s32 group = Field_SceneTable[gGameState.scene].group;
+    /* FAKEMATCH: retain the existing scalar prefix and scene-row expression.
+       The GameState composition in aadcc37dd changed offset reuse; ordinary
+       signed stores and inline prefix casts still grew 336 to 340 bytes. */
+    s32 group = SCENE_RECORD(Data_02000240.scene)->group;
     s32 flag;
 
     if (keep == 0) {
         for (flag = 0x200; flag <= 0x2ff; flag++)
             GameFlag_ClearBitFar(flag);
-        if (group != gGameState.scene_group) {
+        if (group != Data_02000240.group) {
             for (flag = 0x300; flag <= 0x3ff; flag++)
                 GameFlag_ClearBitFar(flag);
             GameFlag_SetBitFar(0x12f);
-            gGameState.unknown_238 = 0;
-            gGameState.unknown_232 = 0;
+            Data_02000240.unknown_238 = 0;
+            Data_02000240.unknown_232 = 0;
             GameFlag_ClearBitFar(0x110);
             GameFlag_ClearBitFar(0x111);
             GameFlag_ClearBitFar(0x112);
             GameFlag_ClearBitFar(0x113);
-            gGameState.retreat_scene = gGameState.scene;
-            gGameState.retreat_entrance = gGameState.entrance;
+            Data_02000240.return_scene = Data_02000240.scene;
+            Data_02000240.return_entrance = Data_02000240.entrance;
         }
         for (flag = 0x80; flag <= 0xdf; flag++)
             GameFlag_ClearBitFar(flag);
@@ -41,17 +64,26 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
         GameFlag_ClearBitFar(0x161);
         GameFlag_ClearBitFar(0x123);
         GameFlag_ClearBitFar(0x11c);
-        *(u16 *)&gGameState.return_cue = 0xffff;
+        Data_02000240.unknown_21e = 0xffff;
     }
-    gGameState.scene_group = group;
+    Data_02000240.group = group;
     GameFlag_SetBitFar((group & 0x7f) + 0x180);
-    gGameState.unknown_23e = Field_SceneTable[gGameState.scene].variant;
-    if (gGameState.unknown_23e == 2)
+    Data_02000240.variant = SCENE_RECORD(Data_02000240.scene)->variant;
+    if (Data_02000240.variant == 2)
         GameFlag_SetBitFar(0x123);
     GameFlag_RefreshLureCapFar();
 }
 
+struct Party {
+    u8 unknown_000[0x1f0];
+    s16 cue;
+};
+
+extern struct Party gGameState;
+
 void Audio_PlayCueFromEventWork(void)
 {
-    Audio_PlayCue(*(s16 *)gGameState.unknown_1f0);
+    /* FAKEMATCH: retain the existing cue prefix. Reading the GameState byte
+       bank as s16 folded its address into the pool and shrank 28 to 20 bytes. */
+    Audio_PlayCue(gGameState.cue);
 }

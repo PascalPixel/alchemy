@@ -88,6 +88,9 @@ void Shop_ResetEffects(void)
 
 void Shop_RunPartyMemberIconBurst(s32 member)
 {
+    /* Keep the existing EffectSlot flag-byte walks. Direct member loops
+       measured the same 448 bytes but changed the address registers and
+       the order of the loop-start instructions. */
     struct ShopRuntime *shop;
     s8 saved_kind;
     struct FixedPointPosition position;
@@ -133,10 +136,12 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     AudioCommand_WaitForStateByteClear();
     {
         u8 active_mode = 2;
-        struct EffectSlot *entry = shop->effects;
-        for (i = 23; i >= 0; i--, entry++) {
-            if (entry->active != 0)
-                entry->state = active_mode;
+        u8 *entry = (u8 *)&shop->effects[0].state;
+        for (i = 23; i >= 0; i--) {
+            if (*(s8 *)(entry + 5) != 0) {
+                *entry = active_mode;
+            }
+            entry += sizeof(struct EffectSlot);
         }
     }
 
@@ -147,10 +152,19 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     WaitFrames(20);
 
     {
-        struct EffectSlot *entry = shop->effects;
-        for (i = 23; i >= 0; i--, entry++) {
-            if (entry->active != 0)
-                BattleFx_ClearOwnedSlotFar(entry);
+        u8 *flag_entry = (u8 *)&shop->effects[0].active;
+        struct EffectSlot *entry2 =
+            shop->effects;
+        for (i = 23; i >= 0; i--) {
+            s32 flag = *flag_entry;
+
+            flag <<= 24;
+
+            flag_entry += 0x48;
+            if (flag != 0) {
+                BattleFx_ClearOwnedSlotFar(entry2);
+            }
+            entry2++;
         }
     }
 

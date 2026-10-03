@@ -8,23 +8,51 @@ extern struct SelectionScreen *gResQueueWork;
 /* resource/transfer/find_free_entry.c */
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind)
 {
-    struct SelectionScreen *screen = gResQueueWork;
-    struct SelectionNode *node;
+    /* FAKEMATCH: retain the existing two scalar scans and their separate
+       running addresses. A shared typed for-loop produces 56 rather than
+       88 bytes in all six editions (2026-10-03 attempt aadcc37dd). */
+    s32 state;
+    s32 off;
     s32 i;
-    s32 count;
+    s32 j;
+    u32 ret;
+    u16 *q;
+    u16 *p;
+    u32 v;
 
+    state = (s32)gResQueueWork;
     if (kind != 0) {
-        node = &screen->records[9];
-        count = 5;
-    } else {
-        node = &screen->records[2];
-        count = 7;
+        i = 0;
+        p = (u16 *)(state + 0x1DE);
+        off = 0;
+loop_2:
+        if (*p == 0) {
+            return (struct SelectionNode *)(state + off + 0x1d4);
+        }
+        i = i + 1;
+        p += 0x1A;
+        off = off + 0x34;
+        if (i == 5) {
+            goto block_10;
+        }
+        goto loop_2;
     }
-    for (i = 0; i < count; i++, node++) {
-        if (node->kind == 0)
-            return node;
+    j = 0;
+    ret = state + 0x68;
+    q = (u16 *)(state + 0x72);
+loop_7:
+    v = *q;
+    q += 0x1A;
+    if (v == 0) {
+        return (struct SelectionNode *)ret;
     }
-    return NULL;
+    ret += 0x34;
+    j += 1;
+    if (j == 7) {
+block_10:
+        return 0;
+    }
+    goto loop_7;
 }
 
 /* resource/Resource_ScheduleOwnerResetDelayed.c */

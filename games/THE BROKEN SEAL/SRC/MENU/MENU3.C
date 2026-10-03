@@ -20,7 +20,8 @@ extern const u8 Resource_FixedBlockBTiles[];
 extern u8 MsgWorkspaceSaveQuest, MsgWorkspaceChangeSettings, MsgWorkspaceRoughMenu;
 
 void ShopCursor_AdvanceFar(void *);
-void Ui_ApplyTableScaleToObject(struct Object *object);
+/* The callee edits the frame through its packed sprite-attribute view. */
+void Ui_ApplyTableScaleToObject(void *object);
 s32 GameFlag_IsSet(s32 flag);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);

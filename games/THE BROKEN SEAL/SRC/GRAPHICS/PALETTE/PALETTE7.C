@@ -2,10 +2,9 @@
 #include "DMA.H"
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_EFX.H"
 
 extern struct BattleEffectWork *gBattleFxWork;
-
-void BattleEffect_RunParticleStreams(s32, s32);
 
 /* Brighten background palette entries 1-63 by per-channel deltas, clamping
    each 5-bit channel at 31. */
@@ -44,12 +43,12 @@ void BattleFx_ArmPaletteHBlankDma(void)
     Dma_Set(work->sheet + 0x1f80, (void *)0x05000000, 0xa2600001, (volatile u32 *)channel);
 }
 
-void BattleFx_InitializeDefaultMode(s32 arg0)
+void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect)
 {
-    BattleEffect_RunParticleStreams(arg0, 0);
+    BattleEffect_RunParticleStreams(effect, 0);
 }
 
-void BattleFx_InitializeMode1(s32 arg0)
+void BattleFx_InitializeMode1(struct BattleEffectArgument *effect)
 {
-    BattleEffect_RunParticleStreams(arg0, 1);
+    BattleEffect_RunParticleStreams(effect, 1);
 }

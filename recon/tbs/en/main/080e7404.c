@@ -22,7 +22,15 @@
    initializes 32 work-particle coordinates, 128 flashes and 512 embers,
    then processes 64 of each. Separate used scale arrays stay in each phase.
    RESOURCE.H boundaries stay opaque; existing numeric resource operands,
-   caller declaration and edition/table-label closure remain for adoption.
+   and edition/table-label closure remain for adoption.
+   Fresh score (2026-10-03): 11615, with 226 register, 95 stack,
+   38 operand, 72 reordered, 33 inserted and 18 deleted instructions;
+   the earlier 405 is a difference count, not the current match score.
+   Caller contracts now use BattleEffectArgument through the two palette
+   wrappers and the legacy mode-dispatch boundary. Named work->sheet
+   accesses replace the equivalent base-pointer offsets. Removing fill's
+   existing volatile qualifier scored 11784 and moved the captured work
+   cell from sp+152 to sp+156; retain the existing DMA-source spelling.
    No part of this draft group receives credit. */
 #include "TYPES.H"
 #include "IO_REG.H"
@@ -72,8 +80,6 @@ void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 void Camera_ApplyShake(s32 random_mask, u32 shake_range);
-
-#define REG_DMA3 ((volatile u32 *)0x040000d4)
 
 /* The flashes and the embers of the second half live in the map cell buffer. */
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -269,7 +275,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             s32 time = work->frame;
             s32 angle = frame << 8;
             s32 heat = time / 4;
-            u16 *line = (u16 *)((u8 *)work + 0x1f80);
+            u16 *line = (u16 *)(work->sheet + 0x1f80);
             s32 size;
             s32 x;
             s32 y;
@@ -354,7 +360,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 EffectPosition_ApplyBaseAndYOffset(vector, &spot);
                 spot.x = HALF(spot, 1) + 128;
                 spot.y = HALF(spot, 3) + 60;
-                draw(Ram_MapCellBuffer, (u8 *)work + 0x1f40, spot.x - 4, spot.y - 4, 8, 8);
+                draw(Ram_MapCellBuffer, work->sheet + 0x1f40, spot.x - 4, spot.y - 4, 8, 8);
             }
             if (direction == 1)
                 x = frame / 4 - 16;
@@ -366,7 +372,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 s32 drop = point[1] + y;
 
                 if (drop <= 93)
-                    draw(Ram_MapCellBuffer, (u8 *)work + 0x1c80, point[0] + x - 12, drop - 12, 24, 24);
+                    draw(Ram_MapCellBuffer, work->sheet + 0x1c80, point[0] + x - 12, drop - 12, 24, 24);
                 else if (drop <= 95)
                     AddFlame((point[0] + x) << 16, drop << 16, 1);
             }
@@ -374,7 +380,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 struct EffectStep *mote = &work->particles[i];
 
                 if (mote->variant >= 0) {
-                    draw(Ram_MapCellBuffer, (u8 *)work + (mote->variant << 10),
+                    draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
                         HI(mote->x) - 16, HI(mote->y) - 16, 32, 32);
                     mote->x -= direction * 0x14000;
                     mote->y -= 0x50000;
@@ -476,7 +482,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 if (point.depth > 799)
                     point.depth = 799;
                 size = 9 - (point.depth - 160) / 64;
-                draw(canvas, (u8 *)work + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
+                draw(canvas, work->sheet + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
                     point.x - size / 2, point.y - size, size, size * 2);
                 EffectStep_AdvanceWithGravity3D(ember, 64, -0x2000);
                 if (ember->y <= 0x140000) {
@@ -494,7 +500,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             s32 rise = i & 7;
             u32 size = rise + 3;
 
-            draw(canvas, (u8 *)work + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
+            draw(canvas, work->sheet + ParticleStreams_CellOffsets[size - 1] + (i & 1) * 770 + 0x3200,
                 mote->x - size / 2, mote->y - size, size, size * 2);
             mote->y = mote->y - rise - 8;
             if (mote->y < -10)
@@ -509,7 +515,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
                 if ((u32)flash->variant <= 13) {
                     s32 cell = flash->variant / 2;
 
-                    draw(canvas, (u8 *)work + ParticleStreams_FlashSheetOffsets[cell],
+                    draw(canvas, work->sheet + ParticleStreams_FlashSheetOffsets[cell],
                         point.x - ParticleStreams_FlashSizes[cell] / 2,
                         point.y - ParticleStreams_FlashSizes[cell] / 2,
                         ParticleStreams_FlashSizes[cell], ParticleStreams_FlashSizes[cell]);

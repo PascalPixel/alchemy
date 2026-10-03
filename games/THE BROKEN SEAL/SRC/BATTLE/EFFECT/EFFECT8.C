@@ -23,7 +23,6 @@ void BattleFx_RenderAnimationMode0(s32 arg0);
 void Unnamed_080d1714(s32 *);
 void Unnamed_080ea0d8(s32 *);
 void BattleFx_InitializeMode10(s32 *);
-void BattleFx_InitializeDefaultMode(s32 arg0);
 void BattleFx_InitializeMode12(s32 *);
 extern Callback BattleFx_ModeHandlers[];
 
@@ -39,7 +38,7 @@ void BattleFx_InitializeMode(s32 *arg0)
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
     if (*arg0 == 0) {
-        BattleFx_InitializeDefaultMode(arg0);
+        BattleFx_InitializeDefaultMode((struct BattleEffectArgument *)arg0);
     } else {
         switch (*arg0) {
         case 1:
@@ -73,7 +72,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleFx_InitializeMode10(arg0);
             break;
         case 11:
-            BattleFx_InitializeDefaultMode(arg0);
+            BattleFx_InitializeDefaultMode((struct BattleEffectArgument *)arg0);
             break;
         case 12:
             BattleFx_InitializeMode12(arg0);

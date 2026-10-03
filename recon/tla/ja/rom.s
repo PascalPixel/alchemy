@@ -1672,10 +1672,10 @@ Func_0803f778:
 Func_0803f86c:
 	.incbin "baserom.gba", 0x0003f9a0, 0x000000d0
 	.section .rom.0003fa70, "ax"
-	.global Func_0803f93c
-	.type Func_0803f93c, %function
+	.global UiTimedNotice_CloseIfActive
+	.type UiTimedNotice_CloseIfActive, %function
 	.thumb_func
-Func_0803f93c:
+UiTimedNotice_CloseIfActive:
 	.incbin "baserom.gba", 0x0003fa70, 0x0000002c
 	.section .rom.0003fa9c, "ax"
 	.global Func_0803f968
@@ -2510,10 +2510,10 @@ PartyInventory_CountItemFar:
 	.thumb_func
 Func_080ad2b0:
 	.incbin "baserom.gba", 0x000a82b0, 0x00000008
-	.global Func_080ad2b8
-	.type Func_080ad2b8, %function
+	.global GameFlag_RefreshLureCapFar
+	.type GameFlag_RefreshLureCapFar, %function
 	.thumb_func
-Func_080ad2b8:
+GameFlag_RefreshLureCapFar:
 	.incbin "baserom.gba", 0x000a82b8, 0x00000008
 	.global Equipment_GetUnleashRateBonusFar
 	.type Equipment_GetUnleashRateBonusFar, %function
@@ -2611,10 +2611,10 @@ Trade_GetOfferState:
 	.thumb_func
 Owner_RecalculateStats:
 	.incbin "baserom.gba", 0x000a83f8, 0x000007f4
-	.global Func_080adbec
-	.type Func_080adbec, %function
+	.global GameFlag_RefreshLureCap
+	.type GameFlag_RefreshLureCap, %function
 	.thumb_func
-Func_080adbec:
+GameFlag_RefreshLureCap:
 	.incbin "baserom.gba", 0x000a8bec, 0x000000a4
 	.global Func_080adc90
 	.type Func_080adc90, %function
@@ -3517,13 +3517,24 @@ Func_080cdbf8:
 	.type Func_080cdc74, %function
 	.thumb_func
 Func_080cdc74:
-	.incbin "baserom.gba", 0x000cdc6c, 0x00000324
+	.incbin "baserom.gba", 0x000cdc6c, 0x0000021c
+	.section .rom.000cdf3c, "ax"
+	.global EventRuntime_GetControlledOwner
+	.type EventRuntime_GetControlledOwner, %function
+	.thumb_func
+EventRuntime_GetControlledOwner:
+	.incbin "baserom.gba", 0x000cdf3c, 0x00000054
 	.section .rom.000cdf90, "ax"
 	.global Event_FindFacingTrigger
 	.type Event_FindFacingTrigger, %function
 	.thumb_func
 Event_FindFacingTrigger:
-	.incbin "baserom.gba", 0x000cdf90, 0x00000ba8
+	.incbin "baserom.gba", 0x000cdf90, 0x000005c4
+	.global EventRuntime_ExecutePackedAction
+	.type EventRuntime_ExecutePackedAction, %function
+	.thumb_func
+EventRuntime_ExecutePackedAction:
+	.incbin "baserom.gba", 0x000ce554, 0x000005e4
 	.global Func_080ceb58
 	.type Func_080ceb58, %function
 	.thumb_func
@@ -3610,16 +3621,16 @@ Func_080cf424:
 Func_080d00f8:
 	.incbin "baserom.gba", 0x000d00d8, 0x000000d4
 	.section .rom.000d01ac, "ax"
-	.global Func_080d01cc
-	.type Func_080d01cc, %function
+	.global DisplayTransition_Start
+	.type DisplayTransition_Start, %function
 	.thumb_func
-Func_080d01cc:
+DisplayTransition_Start:
 	.incbin "baserom.gba", 0x000d01ac, 0x00000354
 	.section .rom.000d0500, "ax"
-	.global Func_080d0520
-	.type Func_080d0520, %function
+	.global DisplayTransition_Finish
+	.type DisplayTransition_Finish, %function
 	.thumb_func
-Func_080d0520:
+DisplayTransition_Finish:
 	.incbin "baserom.gba", 0x000d0500, 0x0000020c
 	.section .rom.000d070c, "ax"
 	.global Func_080d072c
@@ -3787,28 +3798,14 @@ Func_080d2084:
 	.type Func_080d20fc, %function
 	.thumb_func
 Func_080d20fc:
-	.incbin "baserom.gba", 0x000d20dc, 0x00000144
-	.section .rom.000d2220, "ax"
-	.global Battle_WaitMode0
-	.type Battle_WaitMode0, %function
+	.incbin "baserom.gba", 0x000d20dc, 0x000000f8
+	.global EventRuntime_UpdateWaitMode
+	.type EventRuntime_UpdateWaitMode, %function
 	.thumb_func
-Battle_WaitMode0:
-	.incbin "baserom.gba", 0x000d2220, 0x00000020
-	.global Func_080d2260
-	.type Func_080d2260, %function
-	.thumb_func
-Func_080d2260:
-	.incbin "baserom.gba", 0x000d2240, 0x00000048
-	.global Func_080d22a8
-	.type Func_080d22a8, %function
-	.thumb_func
-Func_080d22a8:
-	.incbin "baserom.gba", 0x000d2288, 0x000000a8
-	.global Func_080d2350
-	.type Func_080d2350, %function
-	.thumb_func
-Func_080d2350:
-	.incbin "baserom.gba", 0x000d2330, 0x00000048
+EventRuntime_UpdateWaitMode:
+	.incbin "baserom.gba", 0x000d21d4, 0x0000004c
+	.section .rom.000d2374, "ax"
+	.incbin "baserom.gba", 0x000d2374, 0x00000004
 	.global Event_RunObjectHookAndWait
 	.type Event_RunObjectHookAndWait, %function
 	.thumb_func
@@ -3849,37 +3846,7 @@ Func_080d295c:
 	.thumb_func
 Func_080d296c:
 	.incbin "baserom.gba", 0x000d294c, 0x000000a0
-	.section .rom.000d2a1c, "ax"
-	.global Func_080d2a3c
-	.type Func_080d2a3c, %function
-	.thumb_func
-Func_080d2a3c:
-	.incbin "baserom.gba", 0x000d2a1c, 0x00000028
-	.global Func_080d2a64
-	.type Func_080d2a64, %function
-	.thumb_func
-Func_080d2a64:
-	.incbin "baserom.gba", 0x000d2a44, 0x00000028
-	.global Func_080d2a8c
-	.type Func_080d2a8c, %function
-	.thumb_func
-Func_080d2a8c:
-	.incbin "baserom.gba", 0x000d2a6c, 0x00000018
-	.global Func_080d2aa4
-	.type Func_080d2aa4, %function
-	.thumb_func
-Func_080d2aa4:
-	.incbin "baserom.gba", 0x000d2a84, 0x0000002c
-	.global Func_080d2ad0
-	.type Func_080d2ad0, %function
-	.thumb_func
-Func_080d2ad0:
-	.incbin "baserom.gba", 0x000d2ab0, 0x0000002c
-	.global Func_080d2afc
-	.type Func_080d2afc, %function
-	.thumb_func
-Func_080d2afc:
-	.incbin "baserom.gba", 0x000d2adc, 0x00000010
+	.section .rom.000d2aec, "ax"
 	.global Func_080d2b0c
 	.type Func_080d2b0c, %function
 	.thumb_func
@@ -4038,17 +4005,7 @@ Func_080d3a10:
 	.thumb_func
 Func_080d3b28:
 	.incbin "baserom.gba", 0x000d3b08, 0x000000c0
-	.global Func_080d3be8
-	.type Func_080d3be8, %function
-	.thumb_func
-Func_080d3be8:
-	.incbin "baserom.gba", 0x000d3bc8, 0x00000010
-	.section .rom.000d3bd8, "ax"
-	.global ObjectTable_ReadActiveValue
-	.type ObjectTable_ReadActiveValue, %function
-	.thumb_func
-ObjectTable_ReadActiveValue:
-	.incbin "baserom.gba", 0x000d3bd8, 0x00000034
+	.section .rom.000d3c0c, "ax"
 	.global Func_080d3c2c
 	.type Func_080d3c2c, %function
 	.thumb_func
@@ -4069,10 +4026,10 @@ Func_080d3fb0:
 	.thumb_func
 Func_080d406c:
 	.incbin "baserom.gba", 0x000d404c, 0x00000010
-	.global Func_080d407c
-	.type Func_080d407c, %function
+	.global EventRuntime_ShowMessageAndWait
+	.type EventRuntime_ShowMessageAndWait, %function
 	.thumb_func
-Func_080d407c:
+EventRuntime_ShowMessageAndWait:
 	.incbin "baserom.gba", 0x000d405c, 0x00000008
 	.global Func_080d4084
 	.type Func_080d4084, %function

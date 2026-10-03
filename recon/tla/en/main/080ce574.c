@@ -9,7 +9,7 @@
  * identity is distinct from recursive linked-source readiness and credit. */
 #include "TYPES.H"
 
-s32 Func_080cdf5c(void);
+s32 EventRuntime_GetControlledOwner(void);
 
 struct PendingAction {
     u8 unknown_00[6];
@@ -32,7 +32,7 @@ void FieldEvent_RunTypeHandler(void);
 void Func_080dc7cc(void);
 void Func_080dc7e8(void);
 
-s32 Func_080ce574(u32 packed)
+s32 EventRuntime_ExecutePackedAction(u32 packed)
 {
     s32 action, mode, kind, selector, target;
     struct PendingEventRecord *first, *second;
@@ -49,7 +49,7 @@ s32 Func_080ce574(u32 packed)
             target = selector & 255;
     }
     Func_080dc410(action, 0);
-    Func_080dc62c(Func_080cdf5c(), target);
+    Func_080dc62c(EventRuntime_GetControlledOwner(), target);
     Func_080ceafc(first, mode, target);
     FieldEvent_RunTypeHandler();
     Func_080dc7cc();

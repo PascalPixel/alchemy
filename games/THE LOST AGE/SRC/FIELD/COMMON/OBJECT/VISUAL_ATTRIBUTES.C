@@ -1,3 +1,4 @@
+#include "EVENTWRK.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "FIELD_SPRITE.H"
@@ -25,7 +26,7 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
     if (object != NULL) {
         object->action = angle;
         ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
-        Battle_WaitMode0(wait);
+        EventRuntime_Wait(wait);
     }
 }
 

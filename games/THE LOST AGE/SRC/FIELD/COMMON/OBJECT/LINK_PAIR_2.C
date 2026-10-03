@@ -1,3 +1,4 @@
+#include "EVENTWRK.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 
@@ -10,7 +11,6 @@ struct ObjectPairPosition {
 };
 
 s32 ArcTan2(s32, s32);
-void Battle_WaitMode0(s32);
 
 void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
 {
@@ -22,6 +22,6 @@ void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
     if (first != 0 && second != 0) {
         first->angle = ArcTan2(second->z - first->z,
             second->x - first->x);
-        Battle_WaitMode0(wait);
+        EventRuntime_Wait(wait);
     }
 }

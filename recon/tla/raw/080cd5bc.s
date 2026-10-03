@@ -40,7 +40,7 @@ Func_080cd5bc:
 	cmp r1, r3
 	bge .L_080cd60c
 	adds r0, r7, #0
-	bl Func_080cdea8
+	bl EventRuntime_RunMessage
 	b .L_080cd674
 .L_080cd60c:
 	adds r0, r6, #0

@@ -139,16 +139,16 @@ Func_080ce0ac:
 	lsls r0, r0, #9
 	cmp r3, r0
 	bge .L_080ce1de
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Func_080cd91c
 	adds r5, r0, #0
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	ldr r0, [r6, #8]
-	bl Func_080d3be8
+	bl EventRuntime_SetMessage
 	adds r0, r5, #0
 	movs r1, #0
-	bl Func_080d407c
-	bl Func_080d2350
+	bl EventRuntime_ShowMessageAndWait
+	bl EventRuntime_End
 	b .L_080ce1e8
 .L_080ce1de:
 	mov r0, r11

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d2350
+	.global EventRuntime_End
 	.thumb_func
-Func_080d2350:
+EventRuntime_End:
 	push {lr}
 	ldr r0, .L_080d2388
 	bl Scheduler_RemoveCallback
@@ -27,10 +27,10 @@ Func_080d2350:
 	movs r1, #1
 	bl Object_AttachWorkTargetToObject
 .L_080d2382:
-	bl Func_080ad2b8
+	bl GameFlag_RefreshLureCapFar
 	pop {pc}
 .L_080d2388:
-	.4byte Func_080d21f4
+	.4byte EventRuntime_UpdateWaitMode
 .L_080d238c:
 	.4byte gPartyState
 	.4byte 0x00004770

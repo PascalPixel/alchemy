@@ -40,7 +40,7 @@ Func_080d5c70:
 	lsls r0, r0, #3
 	movs r1, #16
 	adds r0, #1
-	bl Func_080d0520
+	bl DisplayTransition_Finish
 	movs r3, #217
 	lsls r3, r3, #1
 	adds r2, r6, r3
@@ -83,7 +83,7 @@ Func_080d5c70:
 	lsls r0, r0, #1
 	adds r0, #255
 	movs r1, #16
-	bl Func_080d0520
+	bl DisplayTransition_Finish
 	movs r3, #217
 	lsls r3, r3, #1
 	adds r2, r6, r3

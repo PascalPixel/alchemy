@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d2ad0
+	.global EventRuntime_SetSavedDestination
 	.thumb_func
-Func_080d2ad0:
+EventRuntime_SetSavedDestination:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]

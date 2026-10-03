@@ -17,7 +17,7 @@ Func_080dacb8:
 	sub sp, #24
 	ldr r5, [r3]
 	mov r9, r0
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	movs r1, #128
 	lsls r1, r1, #1

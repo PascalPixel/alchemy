@@ -46,7 +46,7 @@ Func_080d7788:
 .L_080d77da:
 	cmp r7, #0
 	blt .L_080d783e
-	bl Func_080d22a8
+	bl EventRuntime_Begin
 	movs r3, #1
 	negs r3, r3
 	cmp r8, r3
@@ -88,7 +88,7 @@ Func_080d7788:
 	adds r3, #20
 	movs r2, #0
 	str r2, [r1, r3]
-	bl Func_080d2350
+	bl EventRuntime_End
 .L_080d783e:
 	pop {r3}
 	mov r8, r3

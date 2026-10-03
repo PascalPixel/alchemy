@@ -82,7 +82,7 @@ Func_080cae5c:
 	ands r3, r2
 	orrs r3, r1
 	strb r3, [r5]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	cmp r7, r0
 	bne .L_080caf32
 	movs r2, #192

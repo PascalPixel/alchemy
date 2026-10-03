@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d3be8
+	.global EventRuntime_SetMessage
 	.thumb_func
-Func_080d3be8:
+EventRuntime_SetMessage:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d2afc
+	.global EventRuntime_SetCountdown
 	.thumb_func
-Func_080d2afc:
+EventRuntime_SetCountdown:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #108]

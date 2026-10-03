@@ -279,12 +279,8 @@ Resource_FindFreeEntry:
 	.incbin "baserom.gba", 0x000143d8, 0x00000034
 	.section .rom.00014422, "ax"
 	.incbin "baserom.gba", 0x00014422, 0x00000002
-	.section .rom.00014424, "ax"
-	.global Resource_GetBuffer
-	.type Resource_GetBuffer, %function
-	.thumb_func
-Resource_GetBuffer:
-	.incbin "baserom.gba", 0x00014424, 0x000000c8
+	.section .rom.00014438, "ax"
+	.incbin "baserom.gba", 0x00014438, 0x000000b4
 	.section .rom.00014748, "ax"
 	.global Scheduler_SetCallbackMask
 	.type Scheduler_SetCallbackMask, %function

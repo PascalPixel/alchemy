@@ -115,7 +115,7 @@
         "*/recon/tla/raw/080143ac.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/INITIALIZE.o"(.text)
         "*/recon/tla/raw/080143f6.o"(.text)
-        "*/recon/tla/raw/080143f8.o"(.text)
+        "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESCACHE.o"(.text)
         "*/recon/tla/raw/0801440c.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.o"(.text)
         "*/recon/tla/raw/0801471c.o"(.text)

@@ -46,7 +46,7 @@ struct SceneEntries {
    This prefix declares neither the active mode nor allocation/capacity. */
 struct ObjectSlotTable {
     u8 unknown_00[0x14];
-    struct ObjectRuntime *slots[];
+    struct ObjectRuntime *slots[0];
 };
 
 /* Field-mode step work. Its 66 actor slots cover the eight party ids and

@@ -1,4 +1,21 @@
-/* 2026-10-04 H11: EN score 16188 -> 13137; retained score13137 in all
+/* 2026-10-04 H12: retained score 12967 in all six TBS compiler plans.
+ * Reapplying only the previously
+ * justified live-window r9 binding after H11 improves register allocation;
+ * stack/operand/reordering/insertion/deletion counts stay unchanged and
+ * the frame stays 324. Selection r10 alone scores 13139; both score 12989.
+ * The window binding is the only fixed register retained.
+ *
+ * Native-led ordinary representation trials, not retained:
+ * - Signed16, widened signed16 and unsigned16 sleep/psy-seal reads: 13137.
+ *   Explicit reads of both real byte fields combined by OR: 14822.
+ * - Cursor flags as an 8-bit field in byte/u32 containers: 13137; in a
+ *   u16 container: 15853. Named tracking/active/delay in a size-guarded
+ *   four-byte word/byte view: 14909. Nested containers changed the frame
+ *   and scored 22180/22806; rejected, with no padding or reserve added.
+ * These forms do not explain the native redundant masks/OR operations.
+ * No instruction is added to force them. The function stays uncredited.
+ *
+ * H11: EN score 16188 -> 13137; retained score13137 in all
  * six TBS plans (465 register, 47 stack, 51 operand, 71 reordered,
  * 33 inserted, 19 deleted).
  * The native 324-byte frame now follows from consumed state; no reserve
@@ -163,7 +180,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     s32 sel;
     s32 slotId;
     struct UiWindow *window;
-    struct UiWindow *infoWin;
+    register struct UiWindow *infoWin asm("r9"); /* FAKEMATCH: after H11/H12 ordinary shapes, live window r9 lowers 13137 to 12967 by register choice only. */
     s32 matrix;
     s32 cursor;
     s32 cnt;

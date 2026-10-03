@@ -1,3 +1,4 @@
+#include "EVENTWRK.H"
 #include "OBJECT_RUNTIME.H"
 
 void Motion_SetModeAndWaitAnimation(u32 object_id, s32 action)
@@ -25,6 +26,6 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
         } else {
             Audio_PlayCue(0x98);
         }
-        Battle_WaitMode0(event_id);
+        EventRuntime_Wait(event_id);
     }
 }

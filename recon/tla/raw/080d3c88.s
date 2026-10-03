@@ -93,7 +93,7 @@ UiText_OpenMessageAtObject:
 	cmp r6, #7
 	bgt .L_080d3d82
 	str r6, [sp, #24]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldr r1, [sp, #28]
 	movs r2, #197
@@ -112,7 +112,7 @@ UiText_OpenMessageAtObject:
 	movs r7, #1
 	b .L_080d3d7c
 .L_080d3d66:
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	add r5, sp, #52
 	adds r1, r5, #0
 .L_080d3d6e:

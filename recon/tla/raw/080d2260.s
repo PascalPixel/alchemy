@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_080d2260
+	.global EventRuntime_PrepareCurrentObject
 	.thumb_func
-Func_080d2260:
+EventRuntime_PrepareCurrentObject:
 	push {lr}
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	movs r3, #128
 	lsls r3, r3, #9

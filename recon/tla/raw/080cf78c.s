@@ -643,7 +643,7 @@ Func_080cf78c:
 	ands r5, r3
 	ands r6, r3
 	str r4, [sp, #0]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldr r3, [r0, #8]
 	ldr r4, [sp, #0]
@@ -932,7 +932,7 @@ Func_080cf78c:
 	ands r5, r3
 	ands r6, r3
 	str r4, [sp, #0]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldr r3, [r0, #8]
 	ldr r4, [sp, #0]
@@ -1064,7 +1064,7 @@ Func_080cf78c:
 	ands r5, r3
 	ands r6, r3
 	str r4, [sp, #0]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	ldr r3, [r0, #8]
 	ldr r4, [sp, #0]

@@ -8,11 +8,27 @@
 	.global Func_080c84d8
 	.thumb_func
 Func_080c84d8:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cdec8
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080cdec8
+.else
+	overlay_veneer EventRuntime_ResolveAllPendingActions
+.endif
+.endif
 	.global Func_080c84e0
 	.thumb_func
 Func_080c84e0:
+.ifdef TLA_EDITION_ES
 	overlay_veneer Func_080cded4
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080cded4
+.else
+	overlay_veneer EventRuntime_ResolvePendingActions
+.endif
+.endif
 	.global Func_080c84e8
 	.thumb_func
 Func_080c84e8:

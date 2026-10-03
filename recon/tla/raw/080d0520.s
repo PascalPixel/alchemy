@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d0520
+	.global DisplayTransition_Finish
 	.thumb_func
-Func_080d0520:
+DisplayTransition_Finish:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8

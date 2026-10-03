@@ -3,6 +3,7 @@
 
 #include "TYPES.H"
 #include "FIELD_SPRITE.H"
+#include "EVENTWRK.H"
 
 /*
  * What a field scene's scripts ask of the engine. Each entry is reached
@@ -52,22 +53,6 @@ void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags);
 void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
 void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Audio_PlayCue(s32 cue);
-
-/* The engine's event work. */
-struct EventWork {
-    u8 unknown_000[0x154];
-    /* The exit the current event leaves by. */
-    s16 exit;
-    u8 unknown_156[2];
-    /* Set to 999 when a destination is chosen. */
-    s16 countdown;
-    u8 unknown_15a[0x6a];
-    /* The current dialogue row; message and choice commands advance it. */
-    u16 message_id;
-    u8 unknown_1c6[0xaf2];
-    /* -1 when the sound test's cue pair is played. */
-    s16 cue_state;
-};
 
 /*
  * The engine entry points a scene overlay imports, named as The Broken

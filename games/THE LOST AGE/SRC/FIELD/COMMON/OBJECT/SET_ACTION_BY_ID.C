@@ -1,3 +1,4 @@
+#include "EVENTWRK.H"
 #include "OBJECT_RUNTIME.H"
 #include "OBJDISP.H"
 #include "SYSTEM.H"
@@ -6,7 +7,6 @@ void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
-void Battle_WaitMode0(s32);
 void Audio_PlayCue(s32);
 
 void Object_ResetMotion(struct ObjectRuntime *);

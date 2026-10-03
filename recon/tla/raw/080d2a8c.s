@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d2a8c
+	.global EventRuntime_WaitDelay
 	.thumb_func
-Func_080d2a8c:
+EventRuntime_WaitDelay:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080cded4
+	.global EventRuntime_ResolvePendingActions
 	.thumb_func
-Func_080cded4:
+EventRuntime_ResolvePendingActions:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -30,7 +30,7 @@ Func_080cded4:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #144
-	bl Func_080ce574
+	bl EventRuntime_ExecutePackedAction
 .L_080cdf0e:
 	movs r2, #192
 	lsls r2, r2, #4
@@ -48,7 +48,7 @@ Func_080cded4:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #155
-	bl Func_080ce574
+	bl EventRuntime_ExecutePackedAction
 .L_080cdf32:
 	ldr r3, .L_080cdf58
 	movs r2, #155
@@ -66,7 +66,7 @@ Func_080cded4:
 	movs r0, #128
 	lsls r0, r0, #6
 	adds r0, #139
-	bl Func_080ce574
+	bl EventRuntime_ExecutePackedAction
 .L_080cdf56:
 	pop {r5, r6, pc}
 .L_080cdf58:

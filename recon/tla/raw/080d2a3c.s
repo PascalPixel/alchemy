@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d2a3c
+	.global EventRuntime_StartScreen
 	.thumb_func
-Func_080d2a3c:
+EventRuntime_StartScreen:
 	push {r5, lr}
 	movs r3, #192
 	lsls r3, r3, #18
@@ -14,7 +14,7 @@ Func_080d2a3c:
 	ldr r0, [r3]
 	adds r3, r5, r2
 	ldr r1, [r3]
-	bl Func_080d01cc
+	bl DisplayTransition_Start
 	movs r3, #217
 	lsls r3, r3, #1
 	adds r2, r5, r3

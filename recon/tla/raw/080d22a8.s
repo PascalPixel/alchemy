@@ -1,14 +1,14 @@
 .syntax unified
 	.thumb
-	.global Func_080d22a8
+	.global EventRuntime_Begin
 	.thumb_func
-Func_080d22a8:
+EventRuntime_Begin:
 	push {r5, r6, lr}
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r6, [r3, #108]
-	bl Func_08038208
-	bl Func_080d2260
+	bl UiTimedNotice_CloseIfActiveFar
+	bl EventRuntime_PrepareCurrentObject
 	movs r1, #192
 	lsls r1, r1, #4
 	adds r1, #162
@@ -17,7 +17,7 @@ Func_080d22a8:
 	ldrsh r3, [r3, r2]
 	cmp r3, #0
 	beq .L_080d22cc
-	bl Func_080cdec8
+	bl EventRuntime_ResolveAllPendingActions
 .L_080d22cc:
 	movs r1, #203
 	movs r2, #192
@@ -80,6 +80,6 @@ Func_080d22a8:
 	str r5, [r3]
 	pop {r5, r6, pc}
 .L_080d2348:
-	.4byte Func_080d21f4
+	.4byte EventRuntime_UpdateWaitMode
 .L_080d234c:
 	.4byte gPartyState

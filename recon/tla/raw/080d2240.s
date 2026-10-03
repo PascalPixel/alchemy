@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Battle_WaitMode0
+	.global EventRuntime_Wait
 	.thumb_func
-Battle_WaitMode0:
+EventRuntime_Wait:
 	push {lr}
 	movs r3, #192
 	lsls r3, r3, #18

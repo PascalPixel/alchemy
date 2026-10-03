@@ -17,7 +17,7 @@ Func_080e7238:
 	sub sp, #32
 	bl Runtime_AllocateHeapBlock
 	str r0, [sp, #16]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	mov r8, r0
 	ldr r0, .L_080e74d0

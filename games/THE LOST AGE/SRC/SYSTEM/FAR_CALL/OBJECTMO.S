@@ -132,7 +132,7 @@ Func_080c8178:
 	.global Func_080c8180
 	.thumb_func
 Func_080c8180:
-	overlay_veneer Func_080d3be8
+	overlay_veneer EventRuntime_SetMessage
 	.global UiText_OpenMessageAtObjectFar
 	.thumb_func
 UiText_OpenMessageAtObjectFar:
@@ -148,7 +148,7 @@ Func_080c8198:
 	.global Func_080c81a0
 	.thumb_func
 Func_080c81a0:
-	overlay_veneer Func_080d407c
+	overlay_veneer EventRuntime_ShowMessageAndWait
 	.global Func_080c81a8
 	.thumb_func
 Func_080c81a8:

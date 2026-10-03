@@ -14,5 +14,5 @@ Func_080d4548:
 	ldr r0, [r0]
 	bl Object_CommitPosition
 	movs r0, #2
-	bl Battle_WaitMode0
+	bl EventRuntime_Wait
 	pop {pc}

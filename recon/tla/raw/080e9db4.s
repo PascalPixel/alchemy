@@ -7,7 +7,7 @@ Func_080e9db4:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r7, [r3, #92]
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl Object_GetById
 	adds r5, r0, #0
 	ldr r0, .L_080e9e84

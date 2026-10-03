@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
-	.global Func_080cdec8
+	.global EventRuntime_ResolveAllPendingActions
 	.thumb_func
-Func_080cdec8:
+EventRuntime_ResolveAllPendingActions:
 	push {lr}
 	movs r0, #0
-	bl Func_080cded4
+	bl EventRuntime_ResolvePendingActions
 	pop {pc}
 	.2byte 0x0000

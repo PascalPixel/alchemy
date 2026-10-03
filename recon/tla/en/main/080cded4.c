@@ -4,32 +4,20 @@
  * pool identity matches all six. EN resolves all three BLs exactly.
  * Other five editions lack the executor physical name in the current main
  * namespace. This is native raw identity evidence, not localized link readiness.
+ * 2026-10-03: replaced private record views with EVENTWRK/PARTY_STATE;
+ * complete 136-byte unlinked text still equals its assembled listing.
  * Field widths come from the current owner; these private views do not define
  * storage or establish the complete work-block extent. No steering device. */
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
+#include "EVENTWRK.H"
+#include "PARTY_STATE.H"
 
-struct PendingEventWork {
-    u8 unknown_000[0xca2];
-    s16 action_counter;
-    s8 pending_first;
-    u8 unknown_ca5[7];
-    s8 pending_second;
-};
-struct PendingPartyState {
-    u8 unknown_000[0x214];
-    s32 current_owner;
-    u8 unknown_218[0x54];
-    s8 pending_third;
-    u8 unknown_26d[9];
-    s16 owner_override;
-};
-extern struct PendingPartyState gPartyState;
 s32 Func_080ce574(u32 action);
 
 void Func_080cded4(s32 skip)
 {
-    struct PendingEventWork *state = Ram_HeapSlots->event_work;
+    struct EventWork *state = Ram_HeapSlots->event_work;
 
     state->action_counter = 0;
     if (state->pending_first != 0 && !(skip & 1))

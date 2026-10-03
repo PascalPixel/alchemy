@@ -4,7 +4,7 @@
 	.thumb_func
 Func_080e781c:
 	push {lr}
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	movs r3, #192
 	lsls r3, r3, #18

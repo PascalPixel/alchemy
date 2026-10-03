@@ -8,7 +8,7 @@ Func_080cf3b4:
 	adds r6, r1, #0
 	cmp r5, #0
 	beq .L_080cf41a
-	bl Func_080cdf5c
+	bl EventRuntime_GetControlledOwner
 	bl ObjectTable_Get
 	movs r3, #1
 	ands r3, r6

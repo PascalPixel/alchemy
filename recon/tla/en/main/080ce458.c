@@ -15,7 +15,7 @@ struct PendingEventList { u8 unknown_00[16]; struct PendingEventRecord *events; 
 struct PendingFacingObject { u8 unknown_00[6]; u16 facing; };
 const struct PendingAction *BattleAction_Get(s32 action);
 struct PendingFacingObject *ObjectTable_Get(u32 owner);
-s32 Func_080cdf5c(void);
+s32 EventRuntime_GetControlledOwner(void);
 s32 Func_080cb09c(void);
 s32 Func_080cb144(void);
 s32 GameFlag_IsConditionActive(s32 condition);
@@ -24,7 +24,7 @@ s32 Func_080cdac0(s32 kind, s32 owner, s32 target);
 struct PendingEventRecord *Func_080ce458(u32 filter, s32 kind, s32 selector)
 {
  struct PendingEventRecord *event = ((struct PendingEventList *)Ram_HeapSlots->event_work)->events;
- s32 facing = ObjectTable_Get(Func_080cdf5c())->facing;
+ s32 facing = ObjectTable_Get(EventRuntime_GetControlledOwner())->facing;
  s32 low = selector & 255;
  s32 high = selector & 0xff00;
 

@@ -20,8 +20,24 @@ Func_080c8390:
 	.global Func_080c8398
 	.thumb_func
 Func_080c8398:
+.ifdef TLA_EDITION_ES
+	overlay_veneer EventRuntime_StartScreen
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer EventRuntime_StartScreen
+.else
 	overlay_veneer Func_080d16f8
+.endif
+.endif
 	.global Func_080c83a0
 	.thumb_func
 Func_080c83a0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer EventRuntime_FinishScreen
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer EventRuntime_FinishScreen
+.else
 	overlay_veneer Func_080d174c
+.endif
+.endif

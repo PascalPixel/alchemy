@@ -201,7 +201,7 @@ Djinn_AddToLeastLoadedOwner:
 	.global Func_02000dc0
 	.thumb_func
 Func_02000dc0:
-	overlay_veneer Func_080ad2b8
+	overlay_veneer GameFlag_RefreshLureCapFar
 	.global Func_02000dc8
 	.thumb_func
 Func_02000dc8:

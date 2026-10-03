@@ -134,13 +134,15 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot)
 
 void ObjectTable_DestroyAtIndex(s32 index)
 {
-    void *(*slots)[] = (void *(*)[])gEventWork;
+    void *state = gEventWork;
     void *object = ObjectTable_Get(index);
 
     if (object != NULL) {
         Object_Destroy(object);
-        /* The generic service indexes word cells beyond the five-word prefix. */
-        (*slots)[index + 5] = NULL;
+        /* FAKEMATCH: byte and unsized pointer-cell forms keep 40 bytes but
+           fold the prefix into the store; retain the index-first word transport. */
+        *(void **)(index * sizeof(void *) + (u32)state
+            + (u32)&((struct FieldStepWork *)0)->actors) = NULL;
     }
 }
 

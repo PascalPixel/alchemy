@@ -5,6 +5,7 @@
 #include "IWRAM_CALL.H"
 #include "CALL.H"
 #include "FIELDRUN.H"
+#include "MAP.H"
 #include "MAP_SCROLL.H"
 extern u8 gMapCellBuffer[];
 

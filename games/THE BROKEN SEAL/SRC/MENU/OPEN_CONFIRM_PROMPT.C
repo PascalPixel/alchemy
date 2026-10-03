@@ -66,6 +66,8 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
  */
 s32 Menu_OpenConfirmPrompt(void)
 {
+    /* FAKEMATCH: retain the existing heap-bank slice based at slot 6.
+       A whole-bank base adds a pool word and changes renderer/event load scheduling. */
 #if defined(PROMPT_SAVES_TILES)
     void *saved = Runtime_BumpAllocateAlternatePool(PROMPT_TILES_SIZE);
 #endif
@@ -95,14 +97,14 @@ s32 Menu_OpenConfirmPrompt(void)
         &high, &unused, &low);
     Menu_EnsureCancelSound();
     if (result == 1) {
-        void *target = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_EVENT];
+        void *target = ((void **)&gMenuCtrlWork)[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
         u16 flags;
         BattleAction_Get(0x3fff & state->pane_action[0]);
         flags = (u16)(low | (high << 10));
         FIELD(target, u16, 0x17e) = flags;
     }
     RenderOutput_ClearListFar(state->status_window);
-    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 1;
+    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
@@ -111,14 +113,14 @@ s32 Menu_OpenConfirmPrompt(void)
     UiWindow_MarkVisibleTileAttributesFar();
     UiWork_SetAltFlagAndClearTableFar(0);
     CopyWords(Iwram_CopyWords, PROMPT_TILES, saved, PROMPT_TILES_SIZE);
-    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 0;
+    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
     Runtime_BumpFree(saved);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
 #endif
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 0;
+    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
     Event_ClearInvalidPackedValuesFar();
     return result;
 }

@@ -138,7 +138,9 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         }
         backup = Runtime_BumpAllocate(0x14c);
         Owner_Copy(backup, unit);
-        if ((s8)state->equip_preview)
+        /* FAKEMATCH: retain the original signed byte read at this field.
+           A cast of its unsigned value removes the two sign-extension instructions. */
+        if (*(s8 *)&state->equip_preview)
             unit->inventory[slot] &= 0xfdff;
         else
             Inventory_EquipFar(owner, slot);

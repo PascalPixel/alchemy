@@ -16,6 +16,10 @@
  * 300; frame-counter-address operand: 1025; rejected.
  * A bounded ordinary-source trial previously reached 610 via redundant
  * pointer temporaries; no such temporary or generated candidate retained.
+ * Final cursor-shape checks: canonical SelectionSprite cursor with its own
+ * pointer 1105; byte-sized Y/flags 240 unchanged; signed phase local 2111,
+ * corrected unsigned phase 240 unchanged; union word initialization 300;
+ * read-only cursor pointer after Y 300. All rejected, original restored.
  */
 /* 2026-10-02 bounded list-bank structural trials; original body retained.
  * EN score 631: 2 register-only, 21 stack-only, 10 reordered; no inserted

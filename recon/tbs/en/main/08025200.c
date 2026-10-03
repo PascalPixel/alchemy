@@ -11,6 +11,10 @@
  * Cursor boundary: 137 unchanged; frame-counter operand: 643; rejected.
  * Bounded ordinary-source trial reached 757 using redundant temporaries;
  * those and the generated candidate were not retained.
+ * Final cursor-shape checks: canonical SelectionSprite cursor 851;
+ * byte-sized Y/flags 137 unchanged; signed phase local 1697, corrected
+ * unsigned phase 137 unchanged; union word initialization 201; read-only
+ * cursor pointer after Y and saved-state temporary 137 unchanged. Rejected.
  */
 /* 2026-10-02 bounded list-bank structural trials; original body retained.
  * EN score 768: 28 stack-only, 4 operand, 11 reordered; no inserted or

@@ -12,6 +12,7 @@
  * narrower type and moving the work read do not turn it; 110,000 permuter
  * candidates reached 345. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RENDER_INPUT.H"
 
 
@@ -61,23 +62,23 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
 
     cancel = 2;
     while (1) {
-        if (gKeysRepeat & 0x20) {
+        if (gKeysRepeat & KEY_LEFT) {
             redraw = 1;
             index--;
         }
-        if (gKeysRepeat & 0x10) {
+        if (gKeysRepeat & KEY_RIGHT) {
             redraw = 1;
             index++;
         }
-        if (gKeysRepeat & 0x200) {
+        if (gKeysRepeat & KEY_L) {
             redraw = 1;
             index -= 10;
         }
-        if (gKeysRepeat & 0x100) {
+        if (gKeysRepeat & KEY_R) {
             redraw = 1;
             index += 10;
         }
-        if (gKeysRepeat & 1)
+        if (gKeysRepeat & KEY_A)
             break;
         if (gKeysRepeat & cancel)
             break;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "OBJDISP.H"
 #include "GAME_STATE.H"
 #include "SCENE.H"
@@ -404,7 +405,7 @@ s32 Battle_DispatchInputEvent(s32 event)
 
     switch (event) {
     case 0xFC:
-        if (state->delay > 12 && (gKeysHeld & 0x80)) {
+        if (state->delay > 12 && (gKeysHeld & KEY_DOWN)) {
             BattleFx_RunRisingObjectSequence(selected_object, 6, 0);
             state->delay = 0;
         }
@@ -418,9 +419,9 @@ s32 Battle_DispatchInputEvent(s32 event)
         break;
     case 0xFD:
         if (state->delay > 12) {
-            if (gKeysHeld & 0x80) {
+            if (gKeysHeld & KEY_DOWN) {
                 FieldEffect_UpdateGridPlacement();
-            } else if (gKeysHeld & 0x40) {
+            } else if (gKeysHeld & KEY_UP) {
                 battle_owner_69();
             }
             state->delay = 0;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "HEAP_STATE.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_COMMAND.H"
@@ -15,7 +16,7 @@ void BattlePresentation_WaitForAdvance(void);
 void BattleMotion_SetupEscapeObject(s32 unit_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
 s32 ActivateBattleObjectSlot(s32 unit_id);
-extern u8 gTransitionWork[];
+extern struct BattlePresentationTransition *gTransitionWork;
 void BattleCommand_SelectAutomatic(struct BattleActionRecord *request, s32 mode);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
@@ -29,7 +30,6 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
 void BattleActor_CommitPlacement(void);
-s32 BattleParty_ListActorIds(s32 mode, u16 *ids);
 void Actor_ResetMotionAtAnchor(s32 id);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 background, s32 level);
 
@@ -65,13 +65,15 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
         return -1;
     if (unit->class_index == 0)
         BattleCommand_SelectAutomatic(request, 1);
-    cache = (void **)gTransitionWork;
+    /* FAKEMATCH: separate cell loads change the pool and instruction order.
+       The existing walk starts at transition slot 44 in the real heap bank. */
+    cache = (void **)&gTransitionWork;
     view = cache[0];
     view->frames = 60;
-    battle = cache[9 - 44];
+    battle = cache[HEAP_SLOT_BATTLE - HEAP_SLOT_BATTLE_BACKGROUND];
     view->flag = 0;
     battle->brightness = 0x10000;
-    camera = cache[12 - 44];
+    camera = cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_BACKGROUND];
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
     Camera_StoreSceneParameters(0x01fe0000, DivQ16(0x01fe0000, 0xc000), 0x7fff0000);
@@ -126,7 +128,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     BattleMotion_DestroyAllSlotObjects();
     BattleUnit_ProcessTurnEnd(&battle->plan);
     BattleActor_CommitPlacement();
-    count = BattleParty_ListActorIds(3, ids);
+    count = BattleParty_ListActorIds(3, (u16 *)ids);
     for (i = 0; i < count; i++)
         Actor_ResetMotionAtAnchor(ids[i]);
     request->unit_id = 0xff;
@@ -175,10 +177,12 @@ s32 BattlePres_BuildTargetList(
 
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
 {
-    u8 *presentation_addr = gTransitionWork;
+    /* FAKEMATCH: separate cell loads change register and literal ordering.
+       Keep the existing slot-44 to slot-9 pointer-cell walk. */
+    u8 *presentation_addr = (u8 *)&gTransitionWork;
     void **cache = (void **)presentation_addr;
     struct BattlePresentationTransition *presentation = cache[0];
-    struct BattleSession *scene = cache[9 - 44];
+    struct BattleSession *scene = cache[HEAP_SLOT_BATTLE - HEAP_SLOT_BATTLE_BACKGROUND];
     s32 completed = 0;
     s32 party_mode;
 

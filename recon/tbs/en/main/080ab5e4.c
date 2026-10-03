@@ -27,6 +27,7 @@
  * correct.
  * WALL: Remaining menu-loop control flow and local stack ownership. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "TBS_EDITION.H"
 
 /* Packed Djinn list entry: owner, element and number, bit 15 set = Set. */
@@ -356,7 +357,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         else
             UiMenu_PositionCursor(x * 56 - 8, y * 8 + 60);
         WaitFrames(1);
-        if (!(gKeysHeld & 0x100) || (gKeysPressedLatch & 0x100)) {
+        if (!(gKeysHeld & KEY_R) || (gKeysPressedLatch & 0x100)) {
             if (groupMode)
                 redraw = 1;
             groupMode = 0;
@@ -372,7 +373,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             repeat = 0;
             switch (step) {
             case 28:
-                while (!(gKeyState & 1)) {
+                while (!(gKeyState & KEY_A)) {
                     UiMenu_PositionCursor(150, 26);
                     WaitFrames(1);
                 }
@@ -473,7 +474,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     UiMenu_SlideCursor(2, 146);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
-                    while (!(gKeyState & 1)) {
+                    while (!(gKeyState & KEY_A)) {
                         UiMenu_PositionCursor(2, 146);
                         WaitFrames(1);
                     }
@@ -483,7 +484,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_UNLEASH), 9, 9, 1);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
-                    while (!(gKeyState & 1)) {
+                    while (!(gKeyState & KEY_A)) {
                         UiMenu_PositionCursor(2, 146);
                         WaitFrames(1);
                     }
@@ -493,7 +494,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_DEMONSTRATE), 9, 9, 1);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
-                    while (!(gKeyState & 1)) {
+                    while (!(gKeyState & KEY_A)) {
                         UiMenu_PositionCursor(2, 146);
                         WaitFrames(1);
                     }

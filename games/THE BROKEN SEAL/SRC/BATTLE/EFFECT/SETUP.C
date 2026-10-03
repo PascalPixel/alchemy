@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
@@ -75,10 +76,10 @@ void Battle_UpdateModeFromShoulderButtons(void)
      * word either way round.
      */
     if (gDebugMode != 0) {
-        if (gKeyState & 0x200) {
+        if (gKeyState & KEY_L) {
             runtime->mode_1cc = 0;
         }
-        if (gKeyState & 0x100) {
+        if (gKeyState & KEY_R) {
             runtime->mode_1cc = -1;
         }
     }

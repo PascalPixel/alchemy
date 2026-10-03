@@ -3,6 +3,7 @@
  * player steers it, drop it where it fits, and break into twenty shards.
  */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "FX_SCENE.H"
 #include "OBJDISP.H"
 
@@ -158,7 +159,7 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     target->mode = 2;
     for (;;) {
         WaitFrames(1);
-        if ((gKeyState & 0x303) != 0)
+        if ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) != 0)
             break;
         angle = (u16)BattleFx_GetCycledTableWord(gKeysHeld);
         if (angle == 0xffff) {

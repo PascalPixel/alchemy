@@ -1,5 +1,6 @@
 #include "RESOURCE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "DMA.H"
@@ -80,7 +81,7 @@ row:
         Blend_SetDarkenTarget0(1);
         Blend_WaitForTransition();
         for (y = 0; y < 120; y++) {
-            if (gKeyState & 9) {
+            if (gKeyState & (KEY_A | KEY_START)) {
                 result = -1;
                 break;
             }
@@ -89,7 +90,7 @@ row:
         return result;
     }
     for (y = 0; y < 60; y++) {
-        if (gKeyState & 9) {
+        if (gKeyState & (KEY_A | KEY_START)) {
             result = -1;
             break;
         }
@@ -102,7 +103,7 @@ row:
     Blend_WaitForTransition();
     if (result == 0) {
         for (y = 0; y < 180; y++) {
-            if (gKeyState & 9) {
+            if (gKeyState & (KEY_A | KEY_START)) {
                 result = -1;
                 break;
             }
@@ -164,7 +165,7 @@ s32 Title_ShowAnimatedSplash(void)
     for (i = 0; i < 120; i++) {
         /* FAKEMATCH: the unsigned address sum retains the DMA source operand order. */
         Dma_Set((void *)((((gFrameCount >> 3) & 3) << 10) + (u32)buffer), (void *)0x06004100, 0x840000d0, (volatile u32 *)0x040000d4);
-        if (gKeyState & 9)
+        if (gKeyState & (KEY_A | KEY_START))
             break;
         WaitFrames(1);
     }

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "WINDOW.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -166,7 +167,7 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *channel)
     if (work->busy != 0 && AudioCommand_GetStateByteFar() == 0)
         cancel = 1;
     zero = 0;
-    if (gKeysHeld & 0x303)
+    if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
         cancel = 1;
     if (cancel != zero) {
         channel->countdown = zero;

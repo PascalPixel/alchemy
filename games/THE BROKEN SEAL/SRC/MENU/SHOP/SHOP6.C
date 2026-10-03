@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "UI.H"
 #include "SHOP.H"
@@ -296,7 +297,7 @@ s32 Sanctum_RunPartyService(void)
             Shop_DrawSelMsg(price_window, unit_id);
         }
 
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             WaitFrames(1);
             price = Shop_ServicePrice(unit_id, kind);
             if (Shop_CanServe(unit_id, kind) == 0) {
@@ -332,16 +333,16 @@ s32 Sanctum_RunPartyService(void)
                 continue;
             }
             break;
-        } else if ((gKeyState & 2) != 0) {
+        } else if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
             break;
         } else {
-            if ((gKeysRepeat & 0x20) != 0) {
+            if ((gKeysRepeat & KEY_LEFT) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection -= 1;
             }
-            if ((gKeysRepeat & 0x10) != 0) {
+            if ((gKeysRepeat & KEY_RIGHT) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
                 selection += 1;

@@ -1,12 +1,12 @@
 /* NONMATCHING: 6 halfwords; with the 72-entry placement list the only
    difference is the order of str r2,[sp] and movs r1,#0 in the entry loop. */
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 
 struct PlacementEntry { u8 x; u8 y; u8 id; s8 timer; };
 struct PlacementList { struct PlacementEntry entries[72]; s32 count; };
 struct PlacementTable { u8 padding[8]; struct PlacementList list; };
 
-s32 BattleParty_ListActorIds(s32, u16 *);
 struct PlacementTable *Trade_GetOfferStateFar(s32 owner);
 
 s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
@@ -24,7 +24,7 @@ s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts)
     kind = 1;
     if (arg0 > 7)
         kind = 2;
-    total = BattleParty_ListActorIds(kind, values);
+    total = BattleParty_ListActorIds(kind, (u16 *)values);
     owner = 0;
     if (arg0 > 7)
         owner = 1;

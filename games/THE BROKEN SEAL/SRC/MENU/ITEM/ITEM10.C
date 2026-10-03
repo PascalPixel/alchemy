@@ -1,6 +1,7 @@
 #include "EDITION.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY_MENU.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_TYPES.H"
@@ -27,10 +28,6 @@ extern volatile u32 gKeysRepeat;
 
 /* "{L}-{R}:Switch characters", then "{A}:Status". */
 extern u8 MsgSwitchCharacterHelp;
-#define KEY_A 1
-#define KEY_B 2
-#define KEY_R 0x100
-#define KEY_L 0x200
 s32 GameFlag_TestFar(s32 flag);
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void ItemMenu_PosCategory(void);

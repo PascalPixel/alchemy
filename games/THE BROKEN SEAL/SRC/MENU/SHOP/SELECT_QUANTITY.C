@@ -1,3 +1,4 @@
+#include "IO_REG.H"
 #include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "DMA.H"
@@ -59,22 +60,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
             sprite = RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 32, 0);
             sprite->table.bits.index += 4;
             for (;;) {
-                if (gKeyState & 1) {
+                if (gKeyState & KEY_A) {
                     Audio_PlayCue(112);
                     result = count + 1;
                     break;
                 }
-                if (gKeyState & 2) {
+                if (gKeyState & KEY_B) {
                     Audio_PlayCue(113);
                     result = -1;
                     break;
                 }
-                if (gKeysRepeat & 32) {
+                if (gKeysRepeat & KEY_LEFT) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count--;
                 }
-                if (gKeysRepeat & 16) {
+                if (gKeysRepeat & KEY_RIGHT) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count++;

@@ -1,4 +1,5 @@
 #include "RUNTIME_MEM.H"
+#include "BATTLE_PARTY.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -22,7 +23,6 @@ extern s8 Data_080c5c10[];
 void Graphics_AdvancePaletteCycle(void);
 void BattlePres_ClearAllActorRecordModes(void);
 void QueueIoWriteDelay2(u32, u32);
-u32 BattleParty_ListActorIds(s32, s16 *);
 void BattlePres_SetActorRecordMode(s32, s32);
 extern u8 *gBattleWork;
 
@@ -133,7 +133,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             blend_y[-1] = sixteen;
         } while (0);
 
-        count = BattleParty_ListActorIds(3, active_actors);
+        count = BattleParty_ListActorIds(3, (u16 *)active_actors);
         for (i = 0; i < count; i++)
             BattlePres_SetActorRecordMode(active_actors[i], mode & 1);
 

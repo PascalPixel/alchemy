@@ -4,6 +4,7 @@
    out. SELECT cycles the mixer preset and fades the second player. A clip in
    the mixer restarts the twenty-frame indicator timer. Never returns. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 
 extern volatile u32 gKeysRepeat;
@@ -36,33 +37,33 @@ void AudioTest_RunParameterController(void)
             timer = 20;
         }
 
-        if (gKeysRepeat & 4) {
+        if (gKeysRepeat & KEY_SELECT) {
             preset = (preset + 1) % 5;
             Sound_LoadPresetParameters(preset);
         }
-        if (gKeysRepeat & 0x100)
+        if (gKeysRepeat & KEY_R)
             cues[row] += 10;
-        if (gKeysRepeat & 0x200)
+        if (gKeysRepeat & KEY_L)
             cues[row] -= 10;
-        if (gKeysRepeat & 0x10)
+        if (gKeysRepeat & KEY_RIGHT)
             cues[row] += 1;
-        if (gKeysRepeat & 0x20)
+        if (gKeysRepeat & KEY_LEFT)
             cues[row] -= 1;
-        if (gKeysRepeat & 0x40) {
+        if (gKeysRepeat & KEY_UP) {
             if (row > 0)
                 row--;
         }
-        if (gKeysRepeat & 0x80) {
+        if (gKeysRepeat & KEY_DOWN) {
             if (row <= 1)
                 row++;
         }
-        if (gKeysRepeat & 1)
+        if (gKeysRepeat & KEY_A)
             AudioCommand_Play(cues[row]);
-        if (gKeysRepeat & 2)
+        if (gKeysRepeat & KEY_B)
             AudioCommand_Play(19);
-        if (gKeysRepeat & 8)
+        if (gKeysRepeat & KEY_START)
             AudioCommand_Play(17);
-        if (gKeysRepeat & 4)
+        if (gKeysRepeat & KEY_SELECT)
             AudioCommand_Play(0x121);
 
         WaitFrames(1);

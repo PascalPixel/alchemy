@@ -1,3 +1,4 @@
+#include "IO_REG.H"
 #include "RUNTIME_MEM.H"
 #include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
@@ -47,22 +48,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
             sprite = (struct UiSprite *)RenderOutput_CreateFar(slot, 0x40004000, (struct RenderInput *)window, 32, 0);
             sprite->tile += 4;
             for (;;) {
-                if (*(volatile u32 *)gKeyState & 1) {
+                if (*(volatile u32 *)gKeyState & KEY_A) {
                     Audio_PlayCue(112);
                     result = count + 1;
                     break;
                 }
-                if (*(volatile u32 *)gKeyState & 2) {
+                if (*(volatile u32 *)gKeyState & KEY_B) {
                     Audio_PlayCue(113);
                     result = -1;
                     break;
                 }
-                if (*(volatile u32 *)gKeysRepeat & 32) {
+                if (*(volatile u32 *)gKeysRepeat & KEY_LEFT) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count--;
                 }
-                if (*(volatile u32 *)gKeysRepeat & 16) {
+                if (*(volatile u32 *)gKeysRepeat & KEY_RIGHT) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count++;

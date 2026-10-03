@@ -4,6 +4,7 @@
 #include "CANVAS.H"
 #include "PROJECT.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -167,7 +168,7 @@ void BattleFx_RunObjectRow(struct BattleEffectArgument *effect)
         if (frame == 104) {
             Audio_PlayCue(154);
         }
-        if ((gKeysRepeat & 3) != 0 && frame > 16) {
+        if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
             break;
         }
 

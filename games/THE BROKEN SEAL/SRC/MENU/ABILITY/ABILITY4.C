@@ -3,6 +3,7 @@
  * A advances to Item and B returns to character selection. The row coordinates
  * are signed because this view hides the four owner slots above the screen. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
@@ -119,24 +120,24 @@ s32 PsynergyMenu_SelectAction(void)
                 redraw = 1;
             if (nav == -1)
                 redraw = 0;
-            if (gKeyState & 1) {
+            if (gKeyState & KEY_A) {
                 Audio_PlayCue(112);
                 result = 1;
                 done = 1;
                 break;
             }
-            if (gKeyState & 2) {
+            if (gKeyState & KEY_B) {
                 Audio_PlayCue(113);
                 result = -1;
                 done = 1;
                 Scheduler_AddOrUpdateCallback((s32)(Menu_UpdateEntryObjectTransforms), 0xc80);
                 break;
             }
-            if ((gKeysRepeat & 0x100) || (gKeysRepeat & 0x200)) {
+            if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
                 Audio_PlayCue(111);
                 tab = menu->tab_index[0];
                 menu->selected_index_by_owner[menu->owner_table[tab]] = state.selected_index;
-                if (gKeysRepeat & 0x100)
+                if (gKeysRepeat & KEY_R)
                     tab++;
                 else
                     tab--;

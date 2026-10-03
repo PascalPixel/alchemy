@@ -1,5 +1,6 @@
 /* The shrine's question after the party falls: restart, or the file screen. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SAVE_STATE.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
@@ -81,10 +82,10 @@ s32 ShindenHeya_ChooseRestartOption(void)
     TextCursor_Initialize(&cursor, &slot);
     TextCursor_SetPosition(&cursor, 72, 60);
     choice = 0;
-    while ((gKeyState & 1) == 0) {
+    while ((gKeyState & KEY_A) == 0) {
         s32 x;
 
-        if (gKeysRepeat & 0xc0) {
+        if (gKeysRepeat & KEYS_VERTICAL) {
             choice ^= 1;
         }
         x = ShindenHeya_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;

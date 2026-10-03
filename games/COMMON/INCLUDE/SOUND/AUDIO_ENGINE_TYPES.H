@@ -2,6 +2,7 @@
 #define ALCHEMY_AUDIO_ENGINE_TYPES_H
 
 #include "TYPES.H"
+#include "../LIB/LAYOUT_GUARD.H"
 
 /*
  * Sound driver work areas, laid out from the reads and writes of the driver
@@ -16,6 +17,7 @@
 #define SOUND_WORK (*(struct SoundWork **)0x03007FF0)
 
 struct SoundNote;
+struct CgbNote;
 struct SoundPlayer;
 struct SoundTrack;
 
@@ -34,7 +36,7 @@ struct SoundVoice {
     u8 release;                     /* 0x0b */
 };
 
-/* A note sounding on a DirectSound voice or on one of the four CGB channels. */
+/* Shared note prefix and track-chain links used by the DirectSound mixer. */
 struct SoundNote {
     u8 state;                       /* 0x00 */
     u8 kind;                        /* 0x01 */
@@ -54,6 +56,70 @@ struct SoundNote {
     struct SoundNote *prev;         /* 0x30 */
     struct SoundNote *next;         /* 0x34 */
     u8 unk38[8];
+};
+
+/* A note on one of the four CGB channels, as the channel update reads it. */
+struct CgbNote {
+    u8 state;                       /* 0x00 */
+    u8 kind;                        /* 0x01 */
+    u8 out_right;                   /* 0x02 */
+    u8 out_left;                    /* 0x03 */
+    u8 attack;                      /* 0x04 */
+    u8 decay;                       /* 0x05 */
+    u8 sustain;                     /* 0x06 */
+    u8 release;                     /* 0x07 */
+    u8 key;                         /* 0x08 */
+    u8 level;                       /* 0x09 */
+    u8 peak;                        /* 0x0a */
+    u8 counter;                     /* 0x0b */
+    u8 echo_level;                  /* 0x0c */
+    u8 echo_length;                 /* 0x0d */
+    u8 unk0e[0x0b];
+    u8 sustain_level;               /* 0x19 */
+    u8 trigger;                     /* 0x1a */
+    u8 pan_bits;                    /* 0x1b */
+    u8 channel_bits;                /* 0x1c */
+    u8 modified;                    /* 0x1d */
+    u8 length;                      /* 0x1e */
+    u8 sweep;                       /* 0x1f */
+    u32 frequency;                  /* 0x20 */
+    u32 *wave;                      /* 0x24 */
+    u32 *loaded_wave;               /* 0x28 */
+    u8 unk2c[0x14];
+};
+
+enum SoundTrackFlag {
+    SOUND_TRACK_VOLUME_DIRTY = 1,
+    SOUND_TRACK_UPDATE_VOLUME = 3,
+    SOUND_TRACK_PITCH_DIRTY = 4,
+    SOUND_TRACK_UPDATE_PITCH = 12,
+    SOUND_TRACK_RESET = 0x40,
+    SOUND_TRACK_ACTIVE = 0x80
+};
+
+enum SoundPlayerFlag {
+    SOUND_PLAYER_PAUSED = 0x80000000
+};
+
+enum SoundTrackWorkOperation {
+    SOUND_WORK_SET = 0,
+    SOUND_WORK_ADD,
+    SOUND_WORK_SUBTRACT,
+    SOUND_WORK_COPY,
+    SOUND_WORK_ADD_BYTE,
+    SOUND_WORK_SUBTRACT_BYTE,
+    SOUND_WORK_EQUAL,
+    SOUND_WORK_NOT_EQUAL,
+    SOUND_WORK_GREATER,
+    SOUND_WORK_GREATER_EQUAL,
+    SOUND_WORK_LESS_EQUAL,
+    SOUND_WORK_LESS,
+    SOUND_WORK_EQUAL_BYTE,
+    SOUND_WORK_NOT_EQUAL_BYTE,
+    SOUND_WORK_GREATER_BYTE,
+    SOUND_WORK_GREATER_EQUAL_BYTE,
+    SOUND_WORK_LESS_EQUAL_BYTE,
+    SOUND_WORK_LESS_BYTE
 };
 
 struct SoundTrack {
@@ -137,7 +203,7 @@ struct SoundWork {
     u32 frame_samples;              /* 0x010 */
     u32 output_rate;                /* 0x014 */
     u32 rate_step;                  /* 0x018 */
-    struct SoundNote *cgb_notes;    /* 0x01c */
+    struct CgbNote *cgb_notes;      /* 0x01c */
     void (*tick)(struct SoundPlayer *player);       /* 0x020 */
     struct SoundPlayer *tick_player;                /* 0x024 */
     void (*cgb_update)(void);                       /* 0x028 */
@@ -167,6 +233,25 @@ struct SongEntry {
     u16 unk06;
 };
 
+LAYOUT_SIZE_GUARD(SoundVoice_Size, struct SoundVoice, 12);
+LAYOUT_SIZE_GUARD(SoundNote_Size, struct SoundNote, 64);
+LAYOUT_SIZE_GUARD(CgbNote_Size, struct CgbNote, 64);
+LAYOUT_OFFSET_GUARD(CgbNote_Frequency, struct CgbNote, frequency, 0x20);
+LAYOUT_OFFSET_GUARD(CgbNote_Wave, struct CgbNote, wave, 0x24);
+LAYOUT_SIZE_GUARD(SoundTrack_Size, struct SoundTrack, 80);
+LAYOUT_OFFSET_GUARD(SoundTrack_Voice, struct SoundTrack, voice, 0x24);
+LAYOUT_OFFSET_GUARD(SoundTrack_Cursor, struct SoundTrack, cursor, 0x40);
+LAYOUT_SIZE_GUARD(SoundPlayer_Size, struct SoundPlayer, 64);
+LAYOUT_OFFSET_GUARD(SoundWork_CgbNotes, struct SoundWork, cgb_notes, 0x1c);
+LAYOUT_SIZE_GUARD(SoundWork_Size, struct SoundWork, 0xfb0);
+
+void CgbAudio_Initialize(struct CgbNote *notes);
+void CgbNote_UpdatePanEnvelope(struct CgbNote *note);
+void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player, struct SoundTrack *track);
+void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player, struct SoundTrack *track);
+void AudioCommand_InvokeSlot34(struct SoundNote *note);
+void AudioCommand_InvokeSlot35(void *block);
+
 /* Music-player controls use the same track records as the sequence driver. */
 void MusicPlayer_StartSong(struct SoundPlayer *player, const struct SequenceHeader *header);
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed);
@@ -181,5 +266,6 @@ void MusicTrack_ClearModulation(struct SoundTrack *track);
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];
 extern SoundCommand Sound_CommandTable[36];
+extern const SoundCommand Sound_ExtendedCommandTable[];
 
 #endif

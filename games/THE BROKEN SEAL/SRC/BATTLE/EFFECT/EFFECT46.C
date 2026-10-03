@@ -4,6 +4,7 @@
 #include "MOTION_OBJECT.H"
 #include "CANVAS.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -165,7 +166,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
     work->fade_frames = 24;
     work->fade_step = 0;
 
-    for (frame = 0; frame != 320 && !(gKeysRepeat & 3); frame++) {
+    for (frame = 0; frame != 320 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++) {
         if (frame == 94)
             AudioCommand_PlayFar(156);
         if (frame == 136)

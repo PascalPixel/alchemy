@@ -145,7 +145,7 @@ void ReelGame_RunFrame(void)
             (volatile u32 *)dma);
 
     pad = gKeysHeld;
-    held = gKeysHeld & 0xf0;
+    held = gKeysHeld & KEYS_DPAD;
     work->pressed = pad & ~work->keys;
     work->dir = held;
     if ((work->keys & 0xf0) == work->dir) {

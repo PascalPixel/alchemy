@@ -1,4 +1,6 @@
 #include "RESOURCE.H"
+#include "ANIMSPR.H"
+#include "VRAM_BLOCK.H"
 /* Haidia village: the boulder scene. The actors are placed and the
    screen fades in with a blend, the boulder warning is shown, and the
    blend alpha ramps up and back down before the actors react. */
@@ -103,16 +105,6 @@ void HaidiaBabi_SpawnEffectPair();
 /* The overlay's veneer into the resident unsigned remainder. */
 u32 __umodsi3();
 
-struct PairDetail {
-    u8 unknown_00[22];
-    u8 field_16;
-};
-
-struct PairSprite {
-    struct FieldSprite sprite;
-    struct PairDetail *detail;
-};
-
 union PairObject {
     union FieldObject object;
     s32 words[28];
@@ -127,16 +119,9 @@ struct PairWork {
     u16 vram_block;
 };
 
-LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 extern struct PairWork *gEffectWork;
 
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-
-extern struct WorldMapVramBlock gVramBlockCache[];
 s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
@@ -654,7 +639,7 @@ void HaidiaBabi_SpawnEffectPair(union PairObject *parent)
 {
     union PairObject *pair[2];
     union PairObject *child;
-    struct PairSprite *part;
+    struct AnimationObject *part;
     struct FieldSprite *sprite;
     struct PairWork *work = gEffectWork;
     s32 i;
@@ -666,12 +651,12 @@ void HaidiaBabi_SpawnEffectPair(union PairObject *parent)
         pair[i] = child;
         if (child != NULL) {
             child->words[5] = parent->words[5];
-            part = (struct PairSprite *)child->object.actor.sprite;
+            part = (struct AnimationObject *)child->object.actor.sprite;
             child->object.actor.motion_flags = 0;
             child->object.effect.spin = 0;
             child->link.parent = parent;
             if (part != NULL) {
-                sprite = &part->sprite;
+                sprite = (struct FieldSprite *)part;
                 Object_InitializeMode(sprite, 0);
                 sprite->flags = 0;
                 Resource_ResetEntry(sprite->vram_block);
@@ -684,7 +669,7 @@ void HaidiaBabi_SpawnEffectPair(union PairObject *parent)
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;
-                part->detail->field_16 = 0;
+                part->entries[0]->frame = 0;
             }
         }
     }

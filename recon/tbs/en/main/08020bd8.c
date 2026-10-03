@@ -15,6 +15,7 @@
  * Three bounded structural hypotheses stopped; do not repeat those axes.
  * FAKEMATCH: shared cursor unions preserve object-pointer store ordering. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "DMA.H"
 #include "RENDER_INPUT.H"
 #include "SHOP.H"
@@ -132,31 +133,31 @@ s32 NameEntry_EditOwnerName(s32 entry)
             frame = (frame+5)&7;
             sprite[20] = sprite[8] + ((u8 *)wave)[frame];
         }
-        if(gKeysRepeat & 64) {
+        if(gKeysRepeat & KEY_UP) {
             Audio_PlayCue(111); cursor_dirty = 1; row--;
             if(column != 18) { if(row == -1) row = 5; }
             else row = 5 - (row != 3);
         }
-        if(gKeysRepeat & 128) {
+        if(gKeysRepeat & KEY_DOWN) {
             Audio_PlayCue(111); cursor_dirty = 1; row++;
             if(column != 18) { if(row == 6) row = 0; }
             else row = 4 + (row != 6);
         }
-        if(gKeysRepeat & 32) {
+        if(gKeysRepeat & KEY_LEFT) {
             Audio_PlayCue(111); cursor_dirty = 1; column--;
             if(column == -1) { column = 18; if((u32)(row-4)>1) column = 16; }
             else if(column==5 || column==11 || column==17) column--;
         }
-        if(gKeysRepeat & 16) {
+        if(gKeysRepeat & KEY_RIGHT) {
             Audio_PlayCue(111); cursor_dirty = 1; column++;
             if(column == 19) column=0;
             else if(column==5 || column==11 || column==17) column++;
             if(column==18 && (u32)(row-4)>1) column=0;
         }
-        if(gKeyState & 8) {
+        if(gKeyState & KEY_START) {
             Audio_PlayCue(111); cursor_dirty=1; column=18; row=5;
         }
-        if(gKeysRepeat & 2) {
+        if(gKeysRepeat & KEY_B) {
             Audio_PlayCue(113);
 remove_character:
             if(length != 0) {
@@ -169,7 +170,7 @@ remove_character:
             result=-1;
             break;
         }
-        if(!(gKeysRepeat & 1)) continue;
+        if(!(gKeysRepeat & KEY_A)) continue;
         Audio_PlayCue(112);
         if(column==18) {
             if(row==5) {

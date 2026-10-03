@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "HEAP_STATE.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_MSG.H"
@@ -104,9 +105,11 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
+    /* FAKEMATCH: separate cell loads change the literal pool and register
+       order. The existing walk reaches slot 44 from camera slot 12. */
     void **slot = (void **)&gCameraWork;
     struct BattleCamera *cam = slot[0];
-    struct BattlePresentationTransition *trans = slot[32];
+    struct BattlePresentationTransition *trans = slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {

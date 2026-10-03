@@ -1,6 +1,7 @@
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
@@ -85,7 +86,7 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
         object->speed_limit = 0x8000;
         object->acceleration = 0x4000;
     }
-    if ((gKeysRepeat & 0x200) != 0)
+    if ((gKeysRepeat & KEY_L) != 0)
         object->speed_limit = 0x40000;
 
     angle = Data_08013254[(gKeysHeld >> 4) & 15];
@@ -100,7 +101,7 @@ s32 Object_MoveOnWorldMap(struct ObjectRuntime *object)
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset(0x70000, direction, &position);
-    if (gDebugMode != 0 && (gKeysHeld & 0x200) != 0)
+    if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0)
         goto update_object;
     if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
         goto choose_direction;
@@ -344,11 +345,11 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
             || from->collision_code != to->collision_code) {
             blocked = 4;
             motion = 12;
-        } else if (gKeysHeld & 0x40) {
+        } else if (gKeysHeld & KEY_UP) {
             height = Func_08011f54(object->terrain_id, pos.x, pos.z - 0x100000);
             if (height - object->y < 0x100000)
                 goto refused;
-        } else if (gKeysHeld & 0x80) {
+        } else if (gKeysHeld & KEY_DOWN) {
             height = Func_08011f54(object->terrain_id, pos.x, pos.z);
             if (height - object->y > -0x80000) {
 refused:

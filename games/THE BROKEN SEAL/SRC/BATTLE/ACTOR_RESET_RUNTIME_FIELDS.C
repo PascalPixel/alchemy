@@ -12,8 +12,6 @@
 #include "BATTLE_WORK.H"
 #include "MENU_LIST.H"
 
-void Owner_RecalculateStatsFar(s32);
-struct BattleObjectSlot *GetBattleObjectSlot(s32);
 
 s32 BattleActor_ResetRuntimeFields(s32 actor)
 {
@@ -119,7 +117,7 @@ loop:
     spr->attr1 = (attr1 & ~0x1ff) | x;
     *(u8 *)&spr->attr0 = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 + (offset->y >> 8) + 6;
     Runtime_PushSlotEntry((s32 *)spr, 240);
-    if (!(gKeysHeld & 2) && !(gKeyState & 0x303) && (frame <= 15 || !(gKeysHeld & 0x303))) {
+    if (!(gKeysHeld & KEY_B) && !(gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) && (frame <= 15 || !(gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS)))) {
         WaitFrames(1);
         frame++;
         goto loop;
@@ -183,7 +181,7 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y)
         spr->x = pos.x + ((gFrameCount & 4) >> 1) - 4;
         spr->y = pos.y - ((gFrameCount & 4) >> 2) - 8;
         Runtime_PushSlotEntry((s32 *)spr, 240);
-        if (gKeyState & 0x303)
+        if (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS))
             break;
         WaitFrames(1);
     }

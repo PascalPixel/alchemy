@@ -1,4 +1,5 @@
 #include "BATTLE_PRESENTATION.H"
+#include "BATTLE_PARTY.H"
 /* 2026-10-02 bounded register-lifetime experiment.
  * Baseline immutable score: 1175 (49 register-only, 2 operand,
  * 8 reordered, 2 inserted, 2 deleted); the older all-register summary
@@ -96,7 +97,6 @@ struct ActorSlot {
 };
 
 
-s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 struct ActorSlot *GetBattleObjectSlot(s32 object_id);
 struct IconContext *GetMotionRecord(struct ActorObject *object, s32 record_index);
 
@@ -108,7 +108,7 @@ void Func_080b7738(void)
     s32 j;
     s32 count;
 
-    BattleParty_ListActorIds(3, ids);
+    BattleParty_ListActorIds(3, (u16 *)ids);
     /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop
      * pass off it; as a for loop it becomes a pointer walk. */
     i = 0;
@@ -156,7 +156,7 @@ again:
     {
         s32 value;
 
-        count = BattleParty_ListActorIds(1, ids);
+        count = BattleParty_ListActorIds(1, (u16 *)ids);
         value = priority[0];
         for (i = 0; i < count; i++) {
             struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);
@@ -183,7 +183,7 @@ again:
     {
         s32 value;
 
-        count = BattleParty_ListActorIds(2, ids);
+        count = BattleParty_ListActorIds(2, (u16 *)ids);
         value = priority[1];
         for (i = 0; i < count; i++) {
             struct ActorSlot *slot = GetBattleObjectSlot(ids[i]);

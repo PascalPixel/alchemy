@@ -1,13 +1,4 @@
-#include "TYPES.H"
-
-struct SoundPlayer;
-
-struct SoundTrack {
-    u8 unk00[0x28];
-    u32 target;
-    u8 unk2c[0x14];
-    const u8 *cursor;
-};
+#include "AUDIO_ENGINE.H"
 
 union PackedWord {
     u32 value;
@@ -28,6 +19,6 @@ void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player, struct SoundTrack *t
     word.part.byte1 = pos[1];
     word.part.byte2 = pos[2];
     word.part.byte3 = pos[3];
-    track->target = word.value;
+    track->voice.target = (const void *)word.value;
     track->cursor = pos + 4;
 }

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 
 /*
  * A developer palette editor over the background palettes. Shows the chosen
@@ -67,39 +68,39 @@ redraw:
     }
     WaitFrames(1);
     for (;;) {
-        if (gKeysRepeat & 0x40) {
+        if (gKeysRepeat & KEY_UP) {
             channel--;
             if (channel <= 0)
                 channel = 3;
         }
-        if (gKeysRepeat & 0x80) {
+        if (gKeysRepeat & KEY_DOWN) {
             channel++;
             if (channel > 3)
                 channel = 1;
         }
-        if (gKeysRepeat & 0x20) {
+        if (gKeysRepeat & KEY_LEFT) {
             color--;
             if (color <= 0)
                 color = 15;
         }
-        if (gKeysRepeat & 0x10) {
+        if (gKeysRepeat & KEY_RIGHT) {
             color++;
             if (color > 15)
                 color = 1;
         }
-        if (gKeysRepeat & 0x200) {
+        if (gKeysRepeat & KEY_L) {
             palette--;
             if (palette < 0)
                 palette = 13;
             goto redraw;
         }
-        if (gKeysRepeat & 0x100) {
+        if (gKeysRepeat & KEY_R) {
             palette++;
             if (palette > 13)
                 palette = 0;
             goto redraw;
         }
-        if (gKeysRepeat & 1) {
+        if (gKeysRepeat & KEY_A) {
             colors = &PALETTE[palette * 16 + color];
             value = *colors;
             red = value & 31;
@@ -114,7 +115,7 @@ redraw:
             *colors = (blue << 10) | (green << 5) | red;
             goto redraw;
         }
-        if (gKeysRepeat & 2) {
+        if (gKeysRepeat & KEY_B) {
             colors = &PALETTE[palette * 16 + color];
             value = *colors;
             red = value & 31;
@@ -129,7 +130,7 @@ redraw:
             *colors = (blue << 10) | (green << 5) | red;
             goto redraw;
         }
-        if (gKeysRepeat & 8) {
+        if (gKeysRepeat & KEY_START) {
             colors = &PALETTE[palette * 16 + color];
             value = *colors;
             red = 0;
@@ -150,7 +151,7 @@ redraw:
             }
             *colors = value;
         }
-        if (gKeysRepeat & 4)
+        if (gKeysRepeat & KEY_SELECT)
             break;
         Data_03001e40;
         WaitFrames(1);

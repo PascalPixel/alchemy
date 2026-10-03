@@ -31,8 +31,9 @@ s32 BattlePres_SyncTurn(void)
     struct BattleSession *work = gBattleWork;
     u16 *peer;
     u16 *sync;
-    s32 miss = 0;
-    u16 unused[10]; /* FAKEMATCH: the reference reserves a 20-byte frame it never uses */
+    s32 missed_frames = 0;
+    /* FAKEMATCH: the existing unused array reserves the native 20-byte frame. */
+    u16 unused[10];
 
     if (work->two_sided != 0) {
         u32 side = work->link_side;
@@ -58,12 +59,12 @@ s32 BattlePres_SyncTurn(void)
         WaitFrames(1);
     check1:
         if ((LINK_STAT & 3) != 3) {
-            if (++miss > 24) {
+            if (++missed_frames > 24) {
                 goto fail;
             }
             goto wait1;
         }
-        miss = 0;
+        missed_frames = 0;
         if (sync[2] != peer[2] || sync[3] != peer[3]) {
             goto fail;
         }
@@ -78,12 +79,12 @@ s32 BattlePres_SyncTurn(void)
         WaitFrames(1);
     check2:
         if ((LINK_STAT & 3) != 3) {
-            if (++miss > 24) {
+            if (++missed_frames > 24) {
                 goto fail;
             }
             goto wait2;
         }
-        miss = 0;
+        missed_frames = 0;
         if (sync[4] != peer[4] || sync[5] != peer[5]) {
             goto fail;
         }
@@ -100,12 +101,12 @@ s32 BattlePres_SyncTurn(void)
         WaitFrames(1);
     check3:
         if ((LINK_STAT & 3) != 3) {
-            if (++miss > 24) {
+            if (++missed_frames > 24) {
                 goto fail;
             }
             goto wait3;
         }
-        miss = 0;
+        missed_frames = 0;
         if (sync[6] != peer[6] || sync[7] != peer[7]) {
             goto fail;
         }
@@ -120,12 +121,12 @@ s32 BattlePres_SyncTurn(void)
         WaitFrames(1);
     check4:
         if ((LINK_STAT & 3) != 3) {
-            if (++miss > 24) {
+            if (++missed_frames > 24) {
                 goto fail;
             }
             goto wait4;
         }
-        miss = 0;
+        missed_frames = 0;
         if (sync[0] != peer[0] || sync[1] != peer[1] || sync[2] != peer[2] || sync[3] != peer[3]) {
             goto fail;
         }
@@ -140,13 +141,13 @@ s32 BattlePres_SyncTurn(void)
         WaitFrames(1);
     check5:
         if ((LINK_STAT & 3) != 3) {
-            if (++miss <= 24) {
+            if (++missed_frames <= 24) {
                 goto wait5;
             }
         fail:
             return -1;
         }
-        miss = 0;
+        missed_frames = 0;
         if (peer[6] == 'r' && peer[7] == 'n') {
             goto wait5;
         }

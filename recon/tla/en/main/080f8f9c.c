@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "FIXED_MATH.H"
 
 /* Move a row or page using repeat keys. Returns -1 for no input, zero for
@@ -26,15 +27,15 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 per_page, s32 *cursor, s
     if (__modsi3(count, per_page) != 0)
         pages++;
     if (horizontal) {
-        next = gKeysRepeat & 16;
-        previous = gKeysRepeat & 32;
-        horizontal = gKeysRepeat & 64;
-        page_forward = gKeysRepeat & 128;
+        next = gKeysRepeat & KEY_RIGHT;
+        previous = gKeysRepeat & KEY_LEFT;
+        horizontal = gKeysRepeat & KEY_UP;
+        page_forward = gKeysRepeat & KEY_DOWN;
     } else {
-        next = gKeysRepeat & 128;
-        previous = gKeysRepeat & 64;
-        horizontal = gKeysRepeat & 32;
-        page_forward = gKeysRepeat & 16;
+        next = gKeysRepeat & KEY_DOWN;
+        previous = gKeysRepeat & KEY_UP;
+        horizontal = gKeysRepeat & KEY_LEFT;
+        page_forward = gKeysRepeat & KEY_RIGHT;
     }
     if (horizontal) {
         Audio_PlayCue(111);

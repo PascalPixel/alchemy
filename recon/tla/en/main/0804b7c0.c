@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 unsigned char Ui_FillVramBlockPattern(void);
@@ -53,7 +54,7 @@ active:
         UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
         do {
             WaitFrames(1);
-        } while ((gKeyState & 3) == 0 &&
+        } while ((gKeyState & (KEY_A | KEY_B)) == 0 &&
                  *(s32 *)((u8 *)gLinkCountdownWork + 0x4C) != 0);
         UiWork_Finalize(work, 1);
     }

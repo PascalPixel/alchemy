@@ -14,19 +14,6 @@
 
 #include "STAGED_ACTOR.H"
 
-/* The effect record an overlay object carries at +0x50. */
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
 /* A rising effect and the object it stays anchored to. */
 struct Src_39c {
     u8 pad00[8];
@@ -83,7 +70,7 @@ void MakyuriIriguchi_RaisePillar(void);
 void SceneActor_RunActorZeroHandledMotion(int page);
 
 /* Functions of the overlay's other sources. */
-void SetEffectRecordMode(struct EffectWork *work, s32 mode);
+void SetEffectRecordMode(struct FieldActor *work, s32 mode);
 void *OverlayObject_CreateConfigured(s32 first, s32 second, s32 third, s32 fourth);
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 MakyuriIriguchi_TrailSparks(s32 a0);

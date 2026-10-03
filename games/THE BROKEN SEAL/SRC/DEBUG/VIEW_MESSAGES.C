@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "BATTLE_UNIT.H"
 
 #if defined(TBS_EDITION_JA) || defined(TBS_EDITION_EN) || defined(TBS_EDITION_IT)
@@ -94,7 +95,7 @@ void DebugBattle_ViewMessages(void)
             }
             WaitFrames(10);
             for (;;) {
-                if (gKeysRepeat & 2) {
+                if (gKeysRepeat & KEY_B) {
                     if (second != 0) {
                         second = 0;
                     } else {
@@ -102,25 +103,25 @@ void DebugBattle_ViewMessages(void)
                         second = 1;
                     }
                 }
-                if (gKeysRepeat & 0x10)
+                if (gKeysRepeat & KEY_RIGHT)
                     index++;
-                if (gKeysRepeat & 0x20)
+                if (gKeysRepeat & KEY_LEFT)
                     index -= 2;
-                if (gKeysRepeat & 0x40)
+                if (gKeysRepeat & KEY_UP)
                     second = 1;
-                if (gKeysRepeat & 0x80)
+                if (gKeysRepeat & KEY_DOWN)
                     second = 0;
-                if (gKeysRepeat & 0x100)
+                if (gKeysRepeat & KEY_R)
                     index += 10;
-                if (gKeysRepeat & 0x200)
+                if (gKeysRepeat & KEY_L)
                     index -= 10;
                 if (index < 0)
                     index = 0;
                 if ((u32)index >= (u32)DEBUG_VIEW_LIMIT)
                     index = DEBUG_VIEW_LIMIT;
-                if (gKeysRepeat & 0x3f2)
+                if (gKeysRepeat & (KEY_B | KEYS_DPAD | KEYS_SHOULDERS))
                     break;
-                if (UiWork_IsCompleteFar() != 0 && (gKeysRepeat & 1))
+                if (UiWork_IsCompleteFar() != 0 && (gKeysRepeat & KEY_A))
                     break;
                 WaitFrames(1);
             }

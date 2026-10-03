@@ -17,7 +17,10 @@ struct BattleSession {
     s32 enemy_group;                /* 0x000 */
     u8 unknown_004[0x3d];
     u8 party_status_mode;           /* 0x041 */
-    u8 unknown_042[0x16];
+    u8 unknown_042[2];
+    u8 two_sided;                   /* 0x044 */
+    u8 encounter_mode;              /* 0x045 */
+    u8 unknown_046[0x12];
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
     u8 unknown_074[0x278];
@@ -39,6 +42,8 @@ LAYOUT_OFFSET_GUARD(
     struct BattleSession,
     party_status_mode,
     0x041);
+LAYOUT_OFFSET_GUARD(BattleSession_TwoSided, struct BattleSession, two_sided, 0x044);
+LAYOUT_OFFSET_GUARD(BattleSession_EncounterMode, struct BattleSession, encounter_mode, 0x045);
 LAYOUT_OFFSET_GUARD(BattleSession_PartyUnits, struct BattleSession, party_units, 0x058);
 LAYOUT_OFFSET_GUARD(BattleSession_EnemyUnits, struct BattleSession, enemy_units, 0x066);
 LAYOUT_OFFSET_GUARD(BattleSession_Actions, struct BattleSession, actions, 0x2ec);

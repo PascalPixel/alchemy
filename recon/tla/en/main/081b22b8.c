@@ -2,7 +2,10 @@
    Before the first line loop ⚓️ loads the ~0x100 mask from the pool ahead
    of building 0x100 inline (ldr r7, =0xfffffeff before movs r3, #128); this
    draft builds 0x100 first. Clearing the bit first and 90 s of permuting
-   did not fix it. */
+   did not fix it. Further equivalent expression, loop, carry/mask and
+   local scheduling variants did not improve score 60; a focused 45 s search
+   tested 12,997 candidates without improvement. All six editions share
+   this complete 388-byte extent. */
 #include "TYPES.H"
 
 #include "RAM_BUFFER.H"

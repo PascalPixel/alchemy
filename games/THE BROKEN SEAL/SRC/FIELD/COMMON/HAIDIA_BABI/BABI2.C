@@ -215,17 +215,21 @@ void FieldScene_RunPaletteRampSequence(void)
     }
     Engine_AudioPlayCue(202);
     Engine_TaskWait(10);
-    for (i1 = 0; i1 < 16; i1++) {
-        /* FAKEMATCH: retain ramp-down word r3; ordinary C changes its operand registers. */
-        register u32 value asm("r3") = 0x100f - i1;
+    {
+        /* FAKEMATCH: retain ramp-base/port/counter initialization order;
+           loading the port inside the loop moves it after the counter zero. */
+        u32 start = 0x100f;
 
-        /* FAKEMATCH: retain the existing port reload after the ramp-base
-           lifetime begins; placing it before the loop swaps the two loads. */
         alpha_port = &REG_BLDALPHA;
-        /* FAKEMATCH: retain word arithmetic; direct halfword folding splits the pool (+16 bytes). */
-        __asm__("" : "+r"(value));
-        *alpha_port = value;
-        Engine_TaskWait(1);
+        for (i1 = 0; i1 < 16; i1++) {
+            /* FAKEMATCH: retain ramp-down word r3; ordinary C changes its operand registers. */
+            register u32 value asm("r3") = start - i1;
+
+            /* FAKEMATCH: retain word arithmetic; direct halfword folding splits the pool (+16 bytes). */
+            __asm__("" : "+r"(value));
+            *alpha_port = value;
+            Engine_TaskWait(1);
+        }
     }
     Object_RefreshSelectorById(0);
     Engine_ActorSetAnimation(8, 1);

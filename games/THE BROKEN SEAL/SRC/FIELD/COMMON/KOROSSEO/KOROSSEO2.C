@@ -36,8 +36,8 @@ struct CompetitorState {
         *ime = (u16)(u32)ime; \
         count = queue->count; \
         if (count < 32) { \
-            u32 *entry = (u32 *)((u8 *)queue + count * sizeof(queue->entries[0]) \
-                + (u32)&((struct IoWriteQueue *)0)->entries); \
+            u32 *entry = (u32 *)((u8 *)queue + count * (s32)sizeof(queue->entries[0]) \
+                + (s32)&((struct IoWriteQueue *)0)->entries); \
             queue->count = count + 1; \
             *entry++ = (value); \
             *entry++ = (address); \
@@ -110,6 +110,7 @@ void Korosseo_RestoreCompetitor(s32 id)
     struct CompetitorState *state;
     struct FieldActor *actor;
     s32 zero;
+    u8 *control;
     /* FAKEMATCH: retain the existing halfword zero carrier for the layer
        byte; direct zero changes the earlier stage and later word registers. */
     struct { u16 value; } layer;
@@ -125,8 +126,11 @@ void Korosseo_RestoreCompetitor(s32 id)
         Engine_EventWait(30);
     }
     zero = 0;
-    state->stage = zero;
-    state->mode = 15;
+    /* FAKEMATCH: retain the existing byte protocol for these two cells;
+       direct field writes move stage zero after the start-position load. */
+    control = (u8 *)state;
+    control[(u32)&((struct CompetitorState *)0)->stage] = zero;
+    control[(u32)&((struct CompetitorState *)0)->mode] = 15;
     actor->x.fixed = Korosseo_CompetitorStartX;
     actor->z.fixed = Korosseo_CompetitorStartZ;
     actor->facing = Korosseo_CompetitorStartAngle;

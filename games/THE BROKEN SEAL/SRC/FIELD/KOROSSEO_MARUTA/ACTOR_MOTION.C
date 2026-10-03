@@ -33,7 +33,19 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
         if (result == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledFreeClimb);
             Camera_SetSpeed(0x30000, 0x6000);
-            Camera_MoveTo(0x3580000, -1, 0xa80000, 1);
+            {
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cx asm("r0") = 0x3580000 >> 18;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cz asm("r2") = 0xa80000 >> 16;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cm asm("r3") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                Camera_MoveTo(cx << 18, -cy, cz << 16, cm);
+            }
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
             Event_ShowMessage(a0, 0);
@@ -140,7 +152,19 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         } else {
             Engine_EventSetMessage((s32)MsgKorosseoCalledMovingSidewalkStage);
             Camera_SetSpeed(0x30000, 0x6000);
-            Camera_MoveTo(0x4380000, -1, 0xa80000, 1);
+            {
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cx asm("r0") = 0x4380000 >> 19;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cz asm("r2") = 0xa80000 >> 16;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cm asm("r3") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                Camera_MoveTo(cx << 19, -cy, cz << 16, cm);
+            }
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
             Event_ShowMessage(a0, 0);

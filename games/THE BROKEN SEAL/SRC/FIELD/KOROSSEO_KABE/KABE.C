@@ -975,7 +975,19 @@ void KorosseoKabe_RunStageIntro(s32 a0)
         if (rec == 0) {
             Engine_EventSetMessage((s32)MsgKorosseoStageDubbedMini);
             Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x4c80000, -1, 0xb80000, 1);
+            {
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cx asm("r0") = 0x4c80000 >> 19;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cz asm("r2") = 0xb80000 >> 16;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cm asm("r3") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                Engine_CameraMoveTo(cx << 19, -cy, cz << 16, cm);
+            }
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
             {
@@ -1126,6 +1138,7 @@ void FieldScene_RunSceneThreeCoordinator(s32 a0)
  * coordinator tail. */
 void FieldScene_RunLiftedActorCoordinator(s32 scene)
 {
+    s32 z;
     void *actor;
     s32 path;
 
@@ -1142,20 +1155,38 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Engine_CameraWaitForMove();
         Engine_EventWait(45);
         Call2(Engine_CameraSetSpeed, 65536, 8192);
-        Call4(Engine_CameraMoveTo, 35127296, -1, 12582912, 1);
+        {
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cx asm("r0") = 35127296 >> 18;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cz asm("r2") = 12582912 >> 16;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cm asm("r3") = 1;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+            Call4(Engine_CameraMoveTo, cx << 18, -cy, cz << 16, cm);
+        }
+        z = 132;
+        /* FAKEMATCH: retain the used coordinate component across the native wait. */
+        asm("" : "+r"(z));
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(scene, 0);
+        /* FAKEMATCH: native scales the reused coordinate after the message call. */
+        asm("" : "+r"(z));
+        z <<= 1;
         {
             /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
             register s32 fx asm("r1") = 632;
             /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-            register s32 fz asm("r2") = 264;
+            register s32 fz asm("r2") = z;
             /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
             asm("" : : "r"(fx), "r"(fz) : "r0");
             Korosseo_FadeInCompetitor(0, fx, fz);
         }
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
-        Call3(Engine_ActorWalkToAndWait, 0, 616, 264);
+        Call3(Engine_ActorWalkToAndWait, 0, 616, z);
         /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
         Value3(Engine_ActorFaceDirection, 0, 49152, 20);
         battle_owner_69();
@@ -1258,7 +1289,19 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         Call2((void (*)())Engine_CameraSetSpeed, 0x18000, 0x3000);
         x = 408;
         z = 264;
-        Engine_CameraMoveTo(0x1380000, -1, 0xb00000, 1);
+        {
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cx asm("r0") = 0x1380000 >> 17;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cy asm("r1") = 1;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cz asm("r2") = 0xb00000 >> 16;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            register s32 cm asm("r3") = 1;
+            /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+            asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+            Engine_CameraMoveTo(cx << 17, -cy, cz << 16, cm);
+        }
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(speaker, 0);
         {

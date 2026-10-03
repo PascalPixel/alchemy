@@ -35,6 +35,15 @@
  * for orders012/021/102/120. Those trials add no unread data, but worsen the
  * match and are not retained. Existing ordering/register tags stay unchanged.
  *
+ * T22-T24 consumed draw/cell-size descriptor: mutable 2581; const whole
+ * object 2528; const stride member 2528. The stride controls actual source
+ * cell offsets, but each adds metadata loads/stores absent natively.
+ * T25-T30 consumed render binding (draw/canvas/work), field orders
+ * 012:8393; 021:8393; 102:8408; 120:8408; 201:8373; 210:8373.
+ * T31 draw/canvas pair under retained setup:86 (six stack operands, one
+ * offset, one reorder); frame stays84 and canvas moves to40, not native48.
+ * Retain the simpler scalar body; no new steering device was introduced.
+ *
  * No producer/callee evidence supports the original draw[2] reservation.
  * Keep this source-local near match until the frame has an honest model;
  * do not restore padding solely to keep the previous percentage.

@@ -1461,6 +1461,7 @@ void FieldScene_RunDualArrivalSequence(s32 scene)
 /* The second competitor's arrival. */
 void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
+    s32 x;
     extern void Korosseo_FinishSoloRound();
     extern void FieldScene_RunMiddleSequence();
     extern void Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
@@ -1477,13 +1478,31 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     if (state == 0) {
     Engine_EventSetMessage((s32)MsgKorosseoSteppingStoneStage);
     Camera_SetSpeed(196608, 24576);
-    Camera_MoveTo(24641536, -1, 9961472, 1);
+    {
+        /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+        register s32 cx asm("r0") = 24641536 >> 17;
+        /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+        register s32 cy asm("r1") = 1;
+        /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+        register s32 cz asm("r2") = 9961472 >> 16;
+        /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+        register s32 cm asm("r3") = 1;
+        /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+        asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+        Camera_MoveTo(cx << 17, -cy, cz << 16, cm);
+    }
+    x = 140;
+    /* FAKEMATCH: retain the used coordinate component across the native wait. */
+    asm("" : "+r"(x));
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Event_ShowMessage(scene, 0);
+    /* FAKEMATCH: native scales the reused coordinate after the message call. */
+    asm("" : "+r"(x));
+    x <<= 1;
     {
         /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-        register s32 fx asm("r1") = 280;
+        register s32 fx asm("r1") = x;
         /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
         register s32 fz asm("r2") = 200;
         /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
@@ -1492,7 +1511,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 98304, 49152);
     /* FAKEMATCH: the void result is discarded; Call3 changes argument allocation. */
-    Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, 280, 152);
+    Value3(ColossoLogRollingStage_SpawnPositionedObject, 0, x, 152);
     ColossoLogRollingStage_SpawnPositionedObject(0, 296, 152);
     Engine_EventWait(10);
     Engine_LeaderCheckAhead();
@@ -1545,10 +1564,28 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoPlaceCalledWall);
             ColossoLogRollingStage_ResetAndRunSceneTask();
             Engine_CameraSetSpeed(0x30000, 0x6000);
-            Engine_CameraMoveTo(0x2680000, -1, 0xb80000, 1);
+            {
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cx asm("r0") = 0x2680000 >> 18;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cy asm("r1") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cz asm("r2") = 0xb80000 >> 16;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                register s32 cm asm("r3") = 1;
+                /* FAKEMATCH: native camera mode setup precedes coordinate shifts. */
+                asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : "r"(cm));
+                Engine_CameraMoveTo(cx << 18, -cy, cz << 16, cm);
+            }
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
-            Engine_EventShowMessage(a0, 0);
+            {
+                /* FAKEMATCH: native message mode in r1 precedes speaker setup in r0. */
+                register s32 mode asm("r1") = 0;
+                /* FAKEMATCH: the direct void form reverses the two argument moves. */
+                asm("" : : "r"(mode) : "r0");
+                Engine_EventShowMessage(a0, mode);
+            }
             ColossoLogRollingStage_StartSceneTask();
             Engine_EventWait(60);
             Engine_EventShowMessage(a0, 0);

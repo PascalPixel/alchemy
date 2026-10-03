@@ -641,20 +641,20 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
     Engine_EventWait(6);
     actor->speed = 0x8000;
     actor->acceleration = 0x3333;
-    Audio_PlayCue(239);
+    Engine_AudioPlayCue(239);
     Object_SetMode(actor, KorimaMagari_PushAnimations[quarter]);
     Object_SetPosition(actor, x, 0, z);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 2);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
-    Actor_SetSpeed(0, 0x4ccc, 0x3333);
-    Actor_SetDestinationOffset(0, KorimaMagari_PushStepX[quarter], KorimaMagari_PushStepZ[quarter]);
+    Engine_ActorSetSpeed(0, 0x4ccc, 0x3333);
+    Engine_ActorSetDestinationOffset(0, KorimaMagari_PushStepX[quarter], KorimaMagari_PushStepZ[quarter]);
     Engine_EventWait(24);
     Engine_ActorSetAnimation(0, 1);
     Object_CommitPosition(actor);
     Object_SetMode(actor, 1);
-    Audio_PlayCue(0x120);
-    Audio_PlayCue(213);
+    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(213);
     Engine_EventWait(15);
     Engine_EventEnd();
 }

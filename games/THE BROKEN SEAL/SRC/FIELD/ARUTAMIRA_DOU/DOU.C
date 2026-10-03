@@ -180,7 +180,7 @@ void SceneEffect_SetupBlendByFlag201(void)
         s32 c = 5;
         *slot = c;
     }
-    if (GameFlag_IsSet(0x201) != 0) {
+    if (Engine_GameFlagIsSet(0x201) != 0) {
         {
             u16 *slot = (u16 *)(state + 0x534);
             s32 c = 0x1d1d;
@@ -246,17 +246,17 @@ void SceneState_RunFlag200SetupAndPlaceActors16To20(void)
     u8 *work = (*(u8 * *)gEffectWork);
     s16 *tbl;
 
-    if (GameFlag_IsSet(0x200) != 0) {
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         SceneEffect_SetupBlendByFlag201();
         work[0x34] = 1;
     }
     tbl = (s16 *)&gGameState;
     if (tbl[0xe0] == (s32)&SceneId_ArutamiraDou6) {
-        Actor_SetChildValue(16, 6);
-        Actor_SetChildValue(17, 6);
-        Actor_SetChildValue(18, 6);
-        Actor_SetChildValue(19, 6);
-        Actor_SetChildValue(20, 6);
+        Engine_ActorSetChildValue(16, 6);
+        Engine_ActorSetChildValue(17, 6);
+        Engine_ActorSetChildValue(18, 6);
+        Engine_ActorSetChildValue(19, 6);
+        Engine_ActorSetChildValue(20, 6);
     }
 }
 
@@ -332,13 +332,13 @@ void FieldScene_RunActorElevenCellSetup(void)
     if (t == 0) {
         s32 a = 0x49;
         s32 b = 0x11;
-        Map_CopyCellAttributes(0x4c, 0x10, 1, 1, a, b);
+        Engine_MapCopyCellAttributes(0x4c, 0x10, 1, 1, a, b);
         if (p != 0) {
             s32 c = 2;
             p[0x55] = c;
             p[0x23] = t;
         }
-        GameFlag_Set(0x211);
+        Engine_GameFlagSet(0x211);
     }
 }
 
@@ -487,7 +487,7 @@ void ArutamiraDou_SpinActorWheel(void)
             if ((u16)t2 > 0x3000) {
                 s32 z2 = 0;
                 q2[5] = z2;
-                Audio_PlayCue(0x87);
+                Engine_AudioPlayCue(0x87);
             }
         }
     }

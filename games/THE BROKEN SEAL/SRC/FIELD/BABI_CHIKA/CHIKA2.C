@@ -105,7 +105,7 @@ u8 *SceneData_SelectAndApplyTableBySceneId(void)
 void SceneState_RunRect73x38Step(void)
 {
     Engine_EventBegin();
-    Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
+    Map_CopyCellAttributeRect(73, 38, 5, 5, 9, 38);
     StagedActor_AdvancePair();
     FieldScene_PlaceAndPinSlots8And9();
     Engine_EventEnd();
@@ -115,7 +115,7 @@ void SceneState_RunRect73x38Step(void)
 void SceneActor_ApplyPointLeftOfActorZero(void)
 {
     s32 point[3];
-    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     point[0] = actor->f08 + 0xFFE00000;
     point[1] = actor->f0c;
@@ -128,7 +128,7 @@ void SceneActor_ApplyPointLeftOfActorZero(void)
 void FieldScene_RunLayoutAt93By30(void)
 {
     Engine_EventBegin();
-    Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
+    Map_CopyCellAttributeRect(93, 30, 6, 5, 29, 30);
     StagedActor_AdvancePair();
     FieldScene_PlaceAndPinSlots10And11();
     Engine_EventEnd();
@@ -143,7 +143,7 @@ void FieldScene_RunStepWith6(void)
 void SceneActor_PassPointTwoRightOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     pos[0] = actor->f08 + 0x200000;
     pos[1] = actor->f0c;
@@ -156,8 +156,8 @@ void SceneActor_PassPointTwoRightOfActorZero(void)
 void SceneState_ApplyTwoRectsAndRunThree(void)
 {
     Engine_EventBegin();
-    Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
-    Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
+    Map_CopyCellAttributeRect(89, 49, 3, 2, 25, 49);
+    Map_CopyCellAttributeRect(89, 51, 8, 5, 25, 51);
     StagedActor_AdvancePair();
     FieldScene_RunScene3c4_02002480();
     Engine_EventEnd();
@@ -166,7 +166,7 @@ void SceneState_ApplyTwoRectsAndRunThree(void)
 /* Scene tables, layouts and supplemental sequences. */
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
-    struct Actor02001424 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor02001424 *actor = Object_GetById(ACTOR_PARTY_LEADER);
     s32 target[3];
 
     target[0] = actor->x;
@@ -191,13 +191,13 @@ void SceneActor_MirrorFlag201IntoSlot14(void)
     u8 *flags;
     u8 value;
 
-    GameFlag_Set(0x200);
-    if (GameFlag_IsSet(0x201) != 0) {
+    Engine_GameFlagSet(0x200);
+    if (Engine_GameFlagIsSet(0x201) != 0) {
         ((u8* (*)())Object_GetById)(14)[98] = 0;
         ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
     } else {
         ((u8* (*)())Object_GetById)(14)[98] = 1;
-        flags = Actor_Get(14);
+        flags = Object_GetById(14);
         flags += 89;
         value = 8;
         value |= *flags;
@@ -210,13 +210,13 @@ void SceneActor_SetActor14Field98ByFlag200(void)
     u8 *p;
     u8 val;
 
-    GameFlag_Set(0x201);
-    if (GameFlag_IsSet(0x200) != 0) {
+    Engine_GameFlagSet(0x201);
+    if (Engine_GameFlagIsSet(0x200) != 0) {
         ((u8* (*)())Object_GetById)(14)[98] = 0;
         ((u8* (*)())Object_GetById)(14)[89] &= (u8)0xf7;
     } else {
         ((u8* (*)())Object_GetById)(14)[98] = 1;
-        p = Actor_Get(14);
+        p = Object_GetById(14);
         p += 89;
         val = 8;
         val |= *p;
@@ -226,12 +226,12 @@ void SceneActor_SetActor14Field98ByFlag200(void)
 
 void SceneState_ApplyFlag970(void)
 {
-    GameFlag_Set(0x970);
+    Engine_GameFlagSet(0x970);
 }
 
 void SceneState_RunUnlessActorZeroAtTile32x50(void)
 {
-    struct Actor_02001510 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02001510 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     if ((actor->f08 >> 20) != 32 || (actor->f10 >> 20) != 50) {
         SceneActor_ApplyPointLeftOfActorZero();
@@ -240,7 +240,7 @@ void SceneState_RunUnlessActorZeroAtTile32x50(void)
 
 void SceneState_RunUnlessActorZeroAt30_52(void)
 {
-    struct Actor_02000cc0 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000cc0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     if ((actor->f08 >> 20) != 30 || (actor->f10 >> 20) != 52) {
         SceneActor_PassActorZeroOffsetPoint();
@@ -268,37 +268,37 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         *(s32 *)(frame + 8) = 0x9999;
         *(s32 *)(frame + 12) = 0x9999;
         *(s32 *)(frame + 4) = 7;
-        Actor_Get(18)->motion_flags = 0;
+        Object_GetById(18)->motion_flags = 0;
         Audio_PlayCue(185);
         for (i = 0; i < 16; i++) {
             WaitFrames(3);
-            Actor_Get(18)->y.fixed -= 0x10000;
+            Object_GetById(18)->y.fixed -= 0x10000;
             rec7 = Value0(Engine_RandomNext);
             rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
             value = Engine_RandomNext();
             ((void (*)())Effect_Spawn)(rec7, 0, ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0x800000), 0, 0, 0, 0x90000, frame);
         }
-        Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
+        Map_CopyCellAttributeRect(51, 8, 1, 1, 49, 8);
         Battle_WaitMode0(30);
-        Actor_Get(18)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+        Object_GetById(18)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         Object_SetModeById(18, 3);
         Engine_ObjectDispatchRelease(rec2);
-        Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        Actor_SetPosition(20, 0x2e80000, 0x880000);
+        Map_CopyCellAttributeRect(45, 4, 1, 1, 46, 8);
+        Engine_ActorSetPosition(20, 0x2e80000, 0x880000);
         v5 = 1;
         v6 = 3;
         Audio_PlayCue(188);
-        Map_CopyCellsTo(58, 8, 49, 8, v5, v6);
-        Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+        Engine_MapCopyCellsTo(58, 8, 49, 8, v5, v6);
+        Engine_WorkSetValuesIfNonNegative(0, 0x50000, 0x10000);
+        Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
         Battle_WaitMode0(20);
         Audio_PlayCue(188);
-        Map_CopyCellsTo(59, 8, 49, 8, v5, v6);
-        Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-        Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+        Engine_MapCopyCellsTo(59, 8, 49, 8, v5, v6);
+        Engine_WorkSetValuesIfNonNegative(0, 0x50000, 0x10000);
+        Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
         Engine_MapRenderWaitForValues();
         Battle_WaitMode0(10);
-        GameFlag_Set(0x971);
+        Engine_GameFlagSet(0x971);
     }
     Engine_EventEnd();
 }
@@ -318,11 +318,11 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
     u8 *flags;
 
     Object_SetModeById(20, 1);
-    Actor_SetChildValue(20, 0);
+    Engine_ActorSetChildValue(20, 0);
     Object_SetModeById(20, 2);
     flags = ((u8* (*)())Object_GetById)(20) + 35;
     *flags &= 0xFD;
-    GameFlag_Set(0x200);
+    Engine_GameFlagSet(0x200);
 }
 
 void FieldScene_RunSupplementalSequenceOne(void)
@@ -342,45 +342,45 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Engine_EventBegin();
     actor = (struct FieldActor *)Object_GetById(19);
     if ((actor->x.fixed >> 20) == 48) {
-        if (GameFlag_IsSet(0x202) != 0) {
+        if (Engine_GameFlagIsSet(0x202) != 0) {
             Battle_WaitMode0(30);
             rec2 = OverlayObject_CreateAndInitialize(0x3020000, 0, 0x1120000, 223);
             slot = slot16;
             *(s32 *)(slot + 8) = 0x9999;
             *(s32 *)(slot + 12) = 0x9999;
             *(s32 *)(slot + 4) = 7;
-            Actor_Get(19)->motion_flags = 0;
+            Object_GetById(19)->motion_flags = 0;
             Audio_PlayCue(185);
             for (i = 0; i < 16; i++) {
                 WaitFrames(3);
-                Actor_Get(19)->y.fixed -= 0x10000;
+                Object_GetById(19)->y.fixed -= 0x10000;
                 rec7 = Engine_RandomNext();
                 arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
                 value = Engine_RandomNext();
                 arg2 = ((((u32)(((value << 3) + value) << 1) >> 16) << 16) + 0xe00000);
                 ((void (*)())Effect_Spawn)(arg0, 0, arg2, 0, 0, 0, 0x90000, slot);
             }
-            Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
+            Map_CopyCellAttributeRect(51, 8, 1, 1, 45, 14);
             Battle_WaitMode0(30);
-            Actor_Get(19)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            Object_GetById(19)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             Object_SetModeById(19, 3);
             Engine_ObjectDispatchRelease(rec2);
-            Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-            Actor_SetPosition(21, 0x3080000, 0xe80000);
+            Map_CopyCellAttributeRect(45, 4, 1, 1, 48, 14);
+            Engine_ActorSetPosition(21, 0x3080000, 0xe80000);
             v5 = 1;
             v6 = 3;
             Audio_PlayCue(188);
-            Map_CopyCellsTo(58, 8, 45, 14, v5, v6);
-            Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+            Engine_MapCopyCellsTo(58, 8, 45, 14, v5, v6);
+            Engine_WorkSetValuesIfNonNegative(0, 0x50000, 0x10000);
+            Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
             Battle_WaitMode0(20);
             Audio_PlayCue(188);
-            Map_CopyCellsTo(59, 8, 45, 14, v5, v6);
-            Work_SetValuesIfNonNegative(0, 0x50000, 0x10000);
-            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+            Engine_MapCopyCellsTo(59, 8, 45, 14, v5, v6);
+            Engine_WorkSetValuesIfNonNegative(0, 0x50000, 0x10000);
+            Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_MapRenderWaitForValues();
             Battle_WaitMode0(10);
-            GameFlag_Set(0x972);
+            Engine_GameFlagSet(0x972);
         }
     }
     Engine_EventEnd();
@@ -403,7 +403,7 @@ void FieldScene_SetActor19TableB3B8(void)
 
 void SceneState_SetValue202ThenCall(void)
 {
-    GameFlag_Set(0x202);
+    Engine_GameFlagSet(0x202);
     FieldScene_RunSupplementalSequenceOne();
 }
 
@@ -412,18 +412,18 @@ void SceneActor_ConfigureSlot21AndSetFlag201(void)
     u8 *flags;
 
     Object_SetModeById(21, 1);
-    Actor_SetChildValue(21, 0);
+    Engine_ActorSetChildValue(21, 0);
     Object_SetModeById(21, 2);
     flags = ((u8* (*)())Object_GetById)(21) + 35;
     *flags &= 0xFD;
-    GameFlag_Set(0x201);
+    Engine_GameFlagSet(0x201);
 }
 
 void SceneDialogue_RunFlag982Or983Dialogue(void)
 {
     Engine_EventBegin();
     Object_SetModeById(ACTOR_PARTY_LEADER, 1);
-    if (GameFlag_IsSet(0x982) != 0 || GameFlag_IsSet(0x983) != 0) {
+    if (Engine_GameFlagIsSet(0x982) != 0 || Engine_GameFlagIsSet(0x983) != 0) {
         Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksAfterAnswer, 1);
     } else {
         Engine_MessageShowCentered(MsgBabiChikaStatueSpeaksRobinSoulYe, 1);
@@ -456,8 +456,8 @@ void SceneActor_InstallSlotNineHandler(void)
     u8 *owner;
 
     Engine_ActorEnableActionCallback(8, (s32)BabiChika_FlickerScript);
-    GameFlag_Set(0x203);
-    owner = Actor_Get(9);
+    Engine_GameFlagSet(0x203);
+    owner = Object_GetById(9);
     *(s32 *)(owner + 108) = (s32)SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
@@ -480,7 +480,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
     Engine_EventBegin();
     Engine_ActorSetSpritePriority(9, 1);
     Object_SetModeById(9, 1);
-    Actor_SetChildValue(9, 0);
+    Engine_ActorSetChildValue(9, 0);
     Object_SetModeById(9, 2);
 
     {
@@ -488,16 +488,16 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
         *flag &= (u8)0xfd;
     }
 
-    GameFlag_Set(0x204);
+    Engine_GameFlagSet(0x204);
 
     col = ((Slot_02001a10* (*)())Object_GetById)(9)->col;
     row = ((Slot_02001a10* (*)())Object_GetById)(9)->row >> 20;
-    Map_CopyCellAttributes(26, 8, 1, 1, col >> 20, row);
+    Map_CopyCellAttributeRect(26, 8, 1, 1, col >> 20, row);
 
-    desc = Actor_Get(9);
+    desc = Object_GetById(9);
     *(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
 
-    desc = Actor_Get(8);
+    desc = Object_GetById(8);
     *(Handler_02001a10 *)(desc + 108) = SceneActor_SetFlagBitByRelativeDepth;
 
     ((u8* (*)())Engine_EventEnd)(desc);
@@ -506,7 +506,7 @@ void SceneActor_SetupSlotNineAndInstallHandler(void)
 s32 OverlayObject_SetYAboveLinkedActor(u8 *owner)
 {
     s16 *id = (s16 *)(owner + 100);
-    struct Actor *actor = Actor_Get(*id);
+    struct Actor *actor = Object_GetById(*id);
 
     *(s32 *)(owner + 12) = actor->f0c + 0x100000;
     return 0;
@@ -574,18 +574,18 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
         if (best > ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000) continue;
 
         best = ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000;
-        *(u16 *)((u8 *)Actor_Get(subject) + 100) = (u16)slot;
+        *(u16 *)((u8 *)Object_GetById(subject) + 100) = (u16)slot;
     }
 
-    Actor_SetSpeed(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
+    ObjectMotion_SetSpeedParameters(subject, 0x40000, 0x20000);   /* 128 << 11, 128 << 10 */
 
     /*
      * Three separate lookups of the same record, in this order. The locals
      * fix the sequence, which argument evaluation order would not.
      */
     {
-        Slot_02001c2c *target = Actor_Get(subject);
-        Slot_02001c2c *from = Actor_Get(subject);
+        Slot_02001c2c *target = Object_GetById(subject);
+        Slot_02001c2c *from = Object_GetById(subject);
         s32 z = ((Slot_02001c2c* (*)())Object_GetById)(subject)->z;
 
         Object_SetPosition(target, from->x, best, z);
@@ -607,47 +607,47 @@ void FieldScene_RunMiddleSequence(void)
     Engine_EventBegin();
     for (i = 0; i <= 2; i++) {
         if (((struct FieldActor *)Object_GetById(i + 12))->sprite->priority == 3
-            && GameFlag_IsSet(i + 0x200) == 0) {
-            Actor_Get(i + 12);
+            && Engine_GameFlagIsSet(i + 0x200) == 0) {
+            Object_GetById(i + 12);
             SceneActor_WaitValueBelowLimit();
-            Actor_SetPosition(i + 12, 0, 0);
-            GameFlag_Set(i + 0x200);
+            Engine_ActorSetPosition(i + 12, 0, 0);
+            Engine_GameFlagSet(i + 0x200);
             break;
         }
         if ((((struct FieldActor *)Object_GetById(i + 12))->z.fixed >> 20) == 9
-            && GameFlag_IsSet(i + 0x200) == 0) {
+            && Engine_GameFlagIsSet(i + 0x200) == 0) {
             *(s32 *)((u8 *)Object_GetById(i + 12) + 20) = 0;
             ((struct FieldActor *)Object_GetById(i + 12))->velocity_y = 0;
             *(s32 *)(((s32 (*)())Object_GetById)(i + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
+            ((struct FieldActor *)Object_GetById(i + 12))->motion_flags = 0;
             *(u16 *)(((s32 (*)())Object_GetById)(i + 12) + 100) = 0;
             found = i;
             for (j = 0; j < i; j++) {
-                if (GameFlag_IsSet(0x200 + j) == 0) {
+                if (Engine_GameFlagIsSet(0x200 + j) == 0) {
                     saved.x.fixed = ((struct FieldActor *)Object_GetById(i + 12))->x.fixed;
                     saved.y.fixed = ((struct FieldActor *)Object_GetById(i + 12))->y.fixed;
                     saved.z.fixed = ((struct FieldActor *)Object_GetById(i + 12))->z.fixed;
-                    ((struct FieldActor *)Actor_Get(i + 12))->x.fixed =
+                    ((struct FieldActor *)Object_GetById(i + 12))->x.fixed =
                         ((struct FieldActor *)Object_GetById(j + 12))->x.fixed;
                     ((struct FieldActor *)Object_GetById(i + 12))->y.fixed =
                         ((struct FieldActor *)Object_GetById(j + 12))->y.fixed;
                     ((struct FieldActor *)Object_GetById(i + 12))->z.fixed =
                         ((struct FieldActor *)Object_GetById(j + 12))->z.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->x.fixed = saved.x.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->y.fixed = saved.y.fixed;
-                    ((struct FieldActor *)Actor_Get(j + 12))->z.fixed = saved.z.fixed;
+                    ((struct FieldActor *)Object_GetById(j + 12))->x.fixed = saved.x.fixed;
+                    ((struct FieldActor *)Object_GetById(j + 12))->y.fixed = saved.y.fixed;
+                    ((struct FieldActor *)Object_GetById(j + 12))->z.fixed = saved.z.fixed;
                     found = j;
                     break;
                 }
             }
             *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 20) = 0;
-            ((struct FieldActor *)Actor_Get(found + 12))->velocity_y = 0;
+            ((struct FieldActor *)Object_GetById(found + 12))->velocity_y = 0;
             *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 60) = -0x80000000;
-            ((struct FieldActor *)Actor_Get(found + 12))->motion_flags = 0;
+            ((struct FieldActor *)Object_GetById(found + 12))->motion_flags = 0;
             *(u16 *)(((s32 (*)())Object_GetById)(found + 12) + 100) = 0;
             Engine_CameraSetSpeed(0x30000, 0x6000);
             ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
-            Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
+            Engine_CameraMoveTo(0xa80000, 0x80000, 0xb80000, 1);
             Engine_CameraWaitForMove();
             SceneActor_LandOnHighestPlatform(found + 12);
             if ((((struct FieldActor *)Object_GetById(found + 12))->x.fixed >> 20) == 8) {
@@ -657,10 +657,10 @@ void FieldScene_RunMiddleSequence(void)
                 (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))--;
                 (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))++;
             }
-            ((struct FieldActor *)Actor_Get(found + 12))->update = (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
+            ((struct FieldActor *)Object_GetById(found + 12))->update = (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
             BabiChika_SettleSteps(40);
-            ((struct FieldActor *)Actor_Get(found + 12))->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
-            GameFlag_Set(0x200 + found);
+            ((struct FieldActor *)Object_GetById(found + 12))->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            Engine_GameFlagSet(0x200 + found);
             break;
         }
     }
@@ -681,15 +681,15 @@ void SceneState_SetSlot17And18Selectors(void)
     Engine_EventBegin();
 
     if ((((Slot_02001f70* (*)())Object_GetById)(17)->w8 >> 20) == 45) {
-        GameFlag_Set(0x974);
+        Engine_GameFlagSet(0x974);
     } else {
-        GameFlag_Clear(0x974);
+        Engine_GameFlagClear(0x974);
     }
 
     if ((((Slot_02001f70* (*)())Object_GetById)(18)->w8 >> 20) == 46) {
-        GameFlag_Set(0x975);
+        Engine_GameFlagSet(0x975);
     } else {
-        GameFlag_Clear(0x975);
+        Engine_GameFlagClear(0x975);
     }
 
     BabiChika_MarkActorCells();
@@ -713,12 +713,12 @@ void FieldScene_RunFourCallSequence(void)
  * value (198<<18) equals the first call's end value. */
 void FieldScene_RunLateSequenceHead(void)
 {
-    Map_CopyCellAttributes(72, 49, 1, 1, 8, 49); /* main:080091c0 */
-    Map_CopyCellAttributes(113, 43, 1, 1, 49, 43); /* main:080091c0 */
-    MapObject_SetPosition(100, 0, 0);
-    MapObject_SetPosition(101, 0, 0);
-    Actor_SetPosition(15, 8912896, 51904512); /* 136<<16, 198<<18 */
-    Actor_SetPosition(16, 51904512, 45613056); /* 198<<18, 174<<18 */
+    Map_CopyCellAttributeRect(72, 49, 1, 1, 8, 49); /* main:080091c0 */
+    Map_CopyCellAttributeRect(113, 43, 1, 1, 49, 43); /* main:080091c0 */
+    Engine_MapObjectSetPosition(100, 0, 0);
+    Engine_MapObjectSetPosition(101, 0, 0);
+    Engine_ActorSetPosition(15, 8912896, 51904512); /* 136<<16, 198<<18 */
+    Engine_ActorSetPosition(16, 51904512, 45613056); /* 198<<18, 174<<18 */
 }
 
 /* Two six-argument calls whose first and fifth arguments repeat the same id
@@ -726,12 +726,12 @@ void FieldScene_RunLateSequenceHead(void)
  * by an id with a trailing pair of values (-1, -1 or 0, 0). */
 void FieldScene_RunLateSequenceSecond(void)
 {
-    Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
-    Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
-    MapObject_SetPosition(100, -1, -1);
-    MapObject_SetPosition(101, -1, -1);
-    Actor_SetPosition(15, 0, 0);
-    Actor_SetPosition(16, 0, 0);
+    Map_CopyCellAttributeRect(8, 113, 1, 1, 8, 49);
+    Map_CopyCellAttributeRect(49, 107, 1, 1, 49, 43);
+    Engine_MapObjectSetPosition(100, -1, -1);
+    Engine_MapObjectSetPosition(101, -1, -1);
+    Engine_ActorSetPosition(15, 0, 0);
+    Engine_ActorSetPosition(16, 0, 0);
 }
 
 void FieldScene_RunScene3c4SequenceA(void)
@@ -743,37 +743,37 @@ void FieldScene_RunScene3c4SequenceA(void)
 
     v6 = 0;
     Engine_EventBegin();
-    Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
+    Map_CopyCellAttributeRect(83, 45, 11, 8, 19, 45);
     record = Object_GetById(19);
     p5 = *(s32 *)(record + 8);
     q = Object_GetById(19)->z.fixed;
     q >>= 20;
     p5 >>= 20;
-    Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
+    Map_CopyCellAttributeRect(20, 56, 1, 1, p5, q);
     record = Object_GetById(20);
     p5 = *(s32 *)(record + 8);
     q = Object_GetById(20)->z.fixed;
     q >>= 20;
     p5 >>= 20;
-    Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
+    Map_CopyCellAttributeRect(20, 56, 1, 1, p5, q);
     record = Object_GetById(21);
     p5 = *(s32 *)(record + 8);
     q = Object_GetById(21)->z.fixed;
     q >>= 20;
     p5 >>= 20;
-    Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
+    Map_CopyCellAttributeRect(20, 56, 1, 1, p5, q);
     record = Object_GetById(22);
     p5 = *(s32 *)(record + 8);
     q = Object_GetById(22)->z.fixed;
     q >>= 20;
     p5 >>= 20;
-    Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
+    Map_CopyCellAttributeRect(20, 56, 1, 1, p5, q);
     record = Object_GetById(23);
     p5 = *(s32 *)(record + 8);
     q = Object_GetById(23)->z.fixed;
     q >>= 20;
     p5 >>= 20;
-    Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
+    Map_CopyCellAttributeRect(20, 56, 1, 1, p5, q);
     record = Object_GetById(19);
     if ((*(s32 *)(record + 8) >> 20) == 25) {
         record = Object_GetById(19);
@@ -810,31 +810,31 @@ void FieldScene_RunScene3c4SequenceA(void)
         }
     }
     if (v6 == 5) {
-        if (GameFlag_IsSet(0x984) != 0) {
+        if (Engine_GameFlagIsSet(0x984) != 0) {
             Engine_EventEnd();
             goto done;
         }
         Battle_WaitMode0(20);
-        Camera_SetSpeed(0xcccc, 0x1999);
-        Camera_MoveTo(0x1d80000, -1, 0x30c0000, 1);
+        Engine_CameraSetSpeed(0xcccc, 0x1999);
+        Engine_CameraMoveTo(0x1d80000, -1, 0x30c0000, 1);
         Engine_CameraWaitForMove();
         Battle_WaitMode0(30);
-        GameFlag_Set(0x984);
+        Engine_GameFlagSet(0x984);
         Audio_PlayCue(158);
-        Map_AnimateCells(Data_0200b3ec, 32, 46);
-        Map_CopyCellAttributes(24, 60, 1, 1, 32, 47);
+        Engine_MapAnimateCells(Data_0200b3ec, 32, 46);
+        Map_CopyCellAttributeRect(24, 60, 1, 1, 32, 47);
         Battle_WaitMode0(40);
     } else {
-        if (GameFlag_IsSet(0x984) != 0) {
+        if (Engine_GameFlagIsSet(0x984) != 0) {
             Battle_WaitMode0(20);
-            Camera_SetSpeed(0xcccc, 0x1999);
-            Camera_MoveTo(0x1d80000, -1, 0x30c0000, 1);
+            Engine_CameraSetSpeed(0xcccc, 0x1999);
+            Engine_CameraMoveTo(0x1d80000, -1, 0x30c0000, 1);
             Engine_CameraWaitForMove();
             Battle_WaitMode0(30);
-            GameFlag_Clear(0x984);
+            Engine_GameFlagClear(0x984);
             Audio_PlayCue(159);
-            Map_AnimateCells(Data_0200b40c, 32, 46);
-            Map_CopyCellAttributes(31, 47, 1, 1, 32, 47);
+            Engine_MapAnimateCells(Data_0200b40c, 32, 46);
+            Map_CopyCellAttributeRect(31, 47, 1, 1, 32, 47);
             Battle_WaitMode0(40);
         }
     }
@@ -849,7 +849,7 @@ void FieldScene_RunLayoutAt83By45(void)
         s32 width = 19;
         s32 height = 45;
 
-        Map_CopyCellAttributes(83, 45, 11, 8, width, height);
+        Map_CopyCellAttributeRect(83, 45, 11, 8, width, height);
     }
     StagedActor_AdvancePair();
     FieldScene_RunScene3c4SequenceA();
@@ -887,20 +887,20 @@ void FieldScene_PlaceAndPinSlots8And9(void)
 
     {
         s32 p5 = 9, p6 = 38;
-        Map_CopyCellAttributes(73, 38, 5, 5, p5, p6);
+        Map_CopyCellAttributeRect(73, 38, 5, 5, p5, p6);
     }
     SceneState_SwapSlotPairByRank(9, 8);
 
     {
         s32 col = ((Slot_020023a0* (*)())Object_GetById)(8)->column >> 20;
         row = ((Slot_020023a0* (*)())Object_GetById)(8)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col, row);
     }
 
     {
         s32 col = ((Slot_020023a0* (*)())Object_GetById)(9)->column >> 20;
         row = ((Slot_020023a0* (*)())Object_GetById)(9)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col, row);
     }
 }
 
@@ -910,20 +910,20 @@ void FieldScene_PlaceAndPinSlots10And11(void)
 
     {
         s32 k5 = 29, k6 = 30;
-        Map_CopyCellAttributes(93, 30, 6, 5, k5, k6);
+        Map_CopyCellAttributeRect(93, 30, 6, 5, k5, k6);
     }
     SceneState_SwapSlotPairByRank(11, 10);
 
     {
         s32 col20 = ((Slot_02002410* (*)())Object_GetById)(10)->column >> 20;
         row = ((Slot_02002410* (*)())Object_GetById)(10)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col20, row);
     }
 
     {
         s32 col20 = ((Slot_02002410* (*)())Object_GetById)(11)->column >> 20;
         row = ((Slot_02002410* (*)())Object_GetById)(11)->row >> 20;
-        Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
+        Map_CopyCellAttributeRect(2, 36, 1, 1, col20, row);
     }
 }
 
@@ -932,30 +932,30 @@ void FieldScene_RunScene3c4_02002480(void)
     s32 record;
     s32 p5;
 
-    Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
-    Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
+    Map_CopyCellAttributeRect(89, 49, 3, 2, 25, 49);
+    Map_CopyCellAttributeRect(89, 51, 8, 5, 25, 51);
     *(u8 *)(((s32 (*)())Object_GetById)(14) + 34) = 1;
     record = Object_GetById(12);
     p5 = *(s32 *)(record + 8);
     record = Object_GetById(12);
     p5 = p5 >> 20;
-    Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
+    Map_CopyCellAttributeRect(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
     record = Object_GetById(13);
     p5 = *(s32 *)(record + 8);
     record = Object_GetById(13);
     p5 = p5 >> 20;
-    Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
+    Map_CopyCellAttributeRect(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
     record = Object_GetById(14);
     p5 = *(s32 *)(record + 8);
     record = Object_GetById(14);
     p5 = p5 >> 20;
-    Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
+    Map_CopyCellAttributeRect(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
 }
 
 /* Copies the cell attributes back and marks the grid cells under actors 17 and 18. */
 void BabiChika_MarkActorCells(void)
 {
-    Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
+    Map_CopyCellAttributeRect(108, 19, 4, 1, 44, 19);
     StagedActor_FillGridAttributeRectangle(0, Object_GetById(17)->x.fixed >> 20, Object_GetById(17)->z.fixed >> 20, 1, 1, 0xff);
     StagedActor_FillGridAttributeRectangle(0, Object_GetById(18)->x.fixed >> 20, Object_GetById(18)->z.fixed >> 20, 1, 1, 0xff);
 }

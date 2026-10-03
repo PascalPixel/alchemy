@@ -105,14 +105,14 @@ void Actor_UpdatePresentationFlag(void)
 /* Complete entity-19 sprite-counter adjustment. */
 void SceneEffect_AdvanceRotatingSprite(void)
 {
-    u8 *entity = Actor_Get(19);
+    u8 *entity = Object_GetById(19);
     u8 *sprite = *(u8 **)(entity + 80);
     *(u16 *)(sprite + 30) += 0x1400;
 }
 
 void SceneEffect_SpawnPeriodicEffect(void)
 {
-    u8 *entity = Actor_Get(14);
+    u8 *entity = Object_GetById(14);
 
     if ((gFrameCount & 3) == 0) {
         struct PeriodicEffectConfig config;
@@ -245,7 +245,7 @@ u8 *SceneEffect_GetSecondaryData(void)
 
 s32 SceneEffect_PrepareState(void)
 {
-    if (GameFlag_IsSet(0x895) != 0)
+    if (Engine_GameFlagIsSet(0x895) != 0)
         gShianMuraPlacements[0xbe] = 0;
     return (s32)gShianMuraPlacements;
 }
@@ -254,7 +254,7 @@ void SceneEffect_ShowActorSetupMessage(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianYoungWarriorsVeryGallantCame);
-    Event_AskYesNo(9, 0);
+    Engine_EventAskYesNo(9, 0);
     Engine_EventEnd();
 }
 
@@ -276,30 +276,30 @@ void FieldScene_RunPrimarySequence(void)
     actor = (struct FieldActor *)Object_GetById(20);
     Engine_EventBegin();
     v7 = 0;
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)((s32)record + 108) = v7;
-    if (GameFlag_IsSet(0x200) == 0) {
+    if (Engine_GameFlagIsSet(0x200) == 0) {
         record = Object_GetById(18);
         if ((*(s32 *)((s32)record + 8) >> 20) > 19) {
             goto L_020006a2;
         }
     }
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     p5 = *(u16 *)((s32)record + 6);
-    Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(18, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage((s32)MsgShianNowMustGetWaterAgain);
-    if (GameFlag_IsSet(0x200) == 0) {
+    if (Engine_GameFlagIsSet(0x200) == 0) {
         bump_step(1);
-        Event_ShowMessage(18, 0);
+        Engine_EventShowMessage(18, 0);
         *(u16 *)((u8 *)Object_GetById(18) + 100) = v7;
         record = Object_GetById(18);
         *(u16 *)((s32)record + 6) = p5;
     } else {
-        Event_ShowMessage(18, 0);
-        Actor_FaceDirection(18, 0x8000, 20);
+        Engine_EventShowMessage(18, 0);
+        Engine_ActorFaceDirection(18, 0x8000, 20);
     }
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)((s32)record + 108) = (s32)ShianMura_WatchGateTrigger;
     Engine_EventEnd();
     goto L_02000916;
@@ -310,48 +310,48 @@ void FieldScene_RunPrimarySequence(void)
         if ((*(s32 *)((s32)record + 16) >> 19) <= 29) {
             record = Object_GetById(ACTOR_PARTY_LEADER);
             if ((*(s32 *)((s32)record + 8) >> 20) != 26) {
-                Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+                Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
                 Engine_ActorFaceActor(0, 18, 0);
                 Engine_EventWait(5);
                 rec7 = Object_GetById(ACTOR_PARTY_LEADER);
-                record = Actor_Get(18);
+                record = Object_GetById(18);
                 if (*(s32 *)(rec7 + 8) < *(s32 *)((s32)record + 8)) {
                     *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
                     record = Object_GetById(18);
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
+                    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) - 8), 232);
                     v7 = 1;
                 } else {
                     *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
                     record = Object_GetById(18);
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
+                    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, (((*(s32 *)((s32)record + 8) >> 20) << 4) + 24), 232);
                 }
                 Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
             }
         }
     }
     v5 = 128;
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)((s32)record + 56) = (v5 << 24);
     record = Object_GetById(18);
     *(s32 *)((s32)record + 60) = (v5 << 24);
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)((s32)record + 64) = (v5 << 24);
     Engine_ActorEnableActionCallback(18, 1);
     Engine_ActorSetAnimation(18, 1);
     Engine_ActorRunRepeatedMotion(18, 2);
     Engine_EventWait(10);
-    Audio_PlayCue(228);
+    Engine_AudioPlayCue(228);
     actor->scale_x = 0x4ccc;
     actor->scale_y = 0x4ccc;
     record = Object_GetById(18);
     q1 = *(s32 *)((s32)record + 8);
     record = Object_GetById(18);
     t2 = *(s32 *)((s32)record + 16) >> 20;
-    Actor_SetPosition(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
+    Engine_ActorSetPosition(20, (((q1 >> 20) << 20) + 0x80000), ((t2 << 20) + 0x80000));
     record = Object_GetById(18);
     q2 = *(s32 *)((s32)record + 8);
     record = Object_GetById(18);
-    Map_CopyCellAttributes(16, 16, 1, 1, (q2 >> 20), (*(s32 *)((s32)record + 16) >> 20));
+    Engine_MapCopyCellAttributes(16, 16, 1, 1, (q2 >> 20), (*(s32 *)((s32)record + 16) >> 20));
     Engine_ActorSetSpritePriority(20, 2);
     actor->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     do {
@@ -362,14 +362,14 @@ void FieldScene_RunPrimarySequence(void)
         lo += 0x1999;
         actor->scale_x = lo;
     } while (lo <= 0xffff);
-    Actor_ShowEmote(18, 0x105, 70);
-    Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorShowEmote(18, 0x105, 70);
+    Engine_ActorFaceActor(18, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
-    Actor_ShowEmote(18, 0x103, 0);
+    Engine_ActorShowEmote(18, 0x103, 0);
     Engine_ActorStartRepeatedMotion(18, 2);
     Engine_EventWait(70);
     Engine_EventSetMessage((s32)MsgShianDoingMadeMeSpillMy);
-    Event_ShowMessageAndWait(18, 0, 20);
+    Engine_EventShowMessageAndWait(18, 0, 20);
     BattleFx_PlayQueuedSound();
     record = Object_GetById(ACTOR_PARTY_LEADER);
     if ((*(s32 *)((s32)record + 8) >> 20) == 26) {
@@ -379,30 +379,30 @@ void FieldScene_RunPrimarySequence(void)
         }
     }
     if (v7 != 0) {
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
+        Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xc000, 10);
         *(u8 *)((u8 *)Object_GetById(0) + 90) &= 254;
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
+        Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
         Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     }
-    Actor_SetSpeed(18, 0xcccc, 0x6666);
+    Engine_ActorSetSpeed(18, 0xcccc, 0x6666);
     record = Object_GetById(18);
     if ((*(s32 *)((s32)record + 16) >> 20) != 14) {
-        record = Actor_Get(18);
-        Actor_WalkToAndWait(18, *(s16 *)((s32)record + 10), 232);
+        record = Object_GetById(18);
+        Engine_ActorWalkToAndWait(18, *(s16 *)((s32)record + 10), 232);
     }
-    Actor_WalkToAndWait(18, 0x118, 232);
-    GameFlag_Set(0x200);
-    Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
+    Engine_ActorWalkToAndWait(18, 0x118, 232);
+    Engine_GameFlagSet(0x200);
+    Object_GetById(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
     Engine_EventEnd();
     L_02000916:;
 }
 
 void SceneEffect_ActivateNearbyActor(void)
 {
-    u8 *leader = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *leader = Object_GetById(ACTOR_PARTY_LEADER);
     if ((*(s32 *)(leader + 16) >> 20) <= 13)
         Engine_ActorSetSpritePriority(20, 1);
 }
@@ -421,9 +421,9 @@ void FieldScene_RunScene3a0_02000968(void)
     record = Object_GetById(20);
     x = *(s32 *)(record + 8);
     record = Object_GetById(20);
-    Map_CopyCellAttributes(3, 17, 1, 1, (x >> 20), (*(s32 *)(record + 16) >> 20));
+    Engine_MapCopyCellAttributes(3, 17, 1, 1, (x >> 20), (*(s32 *)(record + 16) >> 20));
     Engine_TaskAddCallback((s32)Actor_UpdatePresentationFlag, 0xc80);
-    GameFlag_Set(0x201);
+    Engine_GameFlagSet(0x201);
     Engine_ActorSetSpritePriority(20, 2);
     Engine_EventEnd();
 }
@@ -521,7 +521,7 @@ void SceneEffect_RunActorSceneMessage(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianWarriorsFromSchoolStrongWarriors);
-    Event_AskYesNo(17, 0);
+    Engine_EventAskYesNo(17, 0);
     Engine_EventEnd();
 }
 
@@ -568,12 +568,12 @@ void FieldScene_RunScene3a0_02000de8(s32 a0)
     s32 record;
 
     *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     if (a0 == 6) {
         Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-        Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
+        Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
     } else {
-        Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
+        Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
     }
     gEventWork->transition_frames = 16;
     Engine_EventRequestExit(a0);
@@ -596,37 +596,37 @@ void SceneEffect_DispatchStep(void)
 
     switch (scene[182]) {
     case 1:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps1, 81, 18);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps1, 81, 18);
         break;
     case 2:
-        Audio_PlayCue(158);
+        Engine_AudioPlayCue(158);
         shared0 = ShianMura_GateSteps2;
         shared1 = 83;
         goto shared;
     case 3:
-        Audio_PlayCue(158);
+        Engine_AudioPlayCue(158);
         shared0 = ShianMura_GateSteps2;
         shared1 = 86;
         goto shared;
     case 4:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps3, 84, 24);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps3, 84, 24);
         break;
     case 5:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps3, 72, 7);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps3, 72, 7);
         break;
     case 6:
-        Audio_PlayCue(188);
+        Engine_AudioPlayCue(188);
         shared0 = ShianMura_GateSteps4;
         shared1 = 69;
     shared:
-        Map_AnimateCells(shared0, shared1, 11);
+        Engine_MapAnimateCells(shared0, shared1, 11);
         break;
     case 7:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps5, 83, 7);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps5, 83, 7);
         break;
     default:
         break;
@@ -673,9 +673,9 @@ void FieldScene_RunScene3a0_02001060(void)
 
     Engine_EventBegin();
     ((void (*)())Engine_ActorEnableActionCallback)(18, 1);
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 108) = 0;
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 56) = -0x80000000;
     record = Object_GetById(18);
     *(s32 *)(record + 64) = -0x80000000;
@@ -685,20 +685,20 @@ void FieldScene_RunScene3a0_02001060(void)
     *(s32 *)(record + 44) = 0;
     record = Object_GetById(18);
     *(s32 *)(record + 48) = 0;
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 52) = 0;
-    Actor_ShowEmote(18, 0x103, 0);
+    Engine_ActorShowEmote(18, 0x103, 0);
     Engine_ActorStartRepeatedMotion(18, 2);
     Engine_EventWait(60);
-    Actor_SetSpeed(18, 0x18000, 0xc000);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
-    Actor_WalkTo(18, 0x118, 232);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 232);
+    Engine_ActorSetSpeed(18, 0x18000, 0xc000);
+    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+    Engine_ActorWalkTo(18, 0x118, 232);
+    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x128, 232);
     Engine_ActorWaitForMove(18);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x8000, 20);
+    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Engine_ActorEnableActionCallback(18, ShianMura_ActionTable);
-    record = Actor_Get(18);
+    record = Object_GetById(18);
     *(s32 *)(record + 108) = (s32)ShianMura_WatchGateTrigger;
     Engine_EventEnd();
 }

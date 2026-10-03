@@ -60,7 +60,7 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
     if (source->vertical_motion >= -255 && source->vertical_motion <= 255) {
         source->state = 0;
     }
-    random_value = Random_Next();
+    random_value = Engine_RandomNext();
     if (random_value * 100 >> 16 <= 9) {
         StageEffect *effect;
         s32 angle;
@@ -69,8 +69,8 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
         position[0] = source->x;
         position[1] = source->y;
         position[2] = source->z;
-        angle = Random_Next();
-        radius = Random_Next();
+        angle = Engine_RandomNext();
+        radius = Engine_RandomNext();
         Vector_AddPolarOffset(angle << 4, radius, position);
         {
             s32 x = position[0];
@@ -82,7 +82,7 @@ void ColossoLogRollingStage_SpawnRandomSceneEffect(StageEffect *source)
         if (effect != 0) {
             effect->state = 0;
             Engine_ActorSetSpriteFlags(effect, 0);
-            Object_SetScript(effect, (s32)gColossoRandomEffect);
+            Engine_ObjectSetScript(effect, (s32)gColossoRandomEffect);
             Object_SetMode(effect, 1);
             Object_SetMode(effect, 0);
         }
@@ -96,8 +96,8 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(StageEffect_02003d88 *source)
 
     Object_SetPosition(effect, source->x, source->y + 0x240000, source->z);
     effect->state = 0;
-    Object_SetScript(effect, (s32)gColossoLinkedEffect);
-    Audio_PlayCue(83);
+    Engine_ObjectSetScript(effect, (s32)gColossoLinkedEffect);
+    Engine_AudioPlayCue(83);
     source->linked_effect_slot = 0;
     return 0;
 }
@@ -116,7 +116,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     u16 *cue;
     s16 *wait;
 
-    flag = GameFlag_IsSet(0x211);
+    flag = Engine_GameFlagIsSet(0x211);
     actor = Object_GetById(gGameState.selected_actor);
     if (*(s32 *)(work + 232) < actor->x.fixed) {
         x = *(s32 *)(work + 232) + 0xc0000;
@@ -135,7 +135,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
     actor->acceleration = 0x4000;
     actor->speed = 0x10000;
     Object_SetPosition(actor, x, 0, z);
-    GameFlag_Set(0x211);
+    Engine_GameFlagSet(0x211);
     Engine_ObjectSetScript(actor, KorosseoMaruta_PlaceScript);
     while (*wait != 0) {
         Engine_TaskWait(1);

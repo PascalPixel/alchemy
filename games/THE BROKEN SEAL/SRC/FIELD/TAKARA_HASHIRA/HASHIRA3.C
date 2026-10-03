@@ -74,12 +74,12 @@ void FieldScene_RunScene3b3_02001fd4(void)
         TakaraHashira_UpdatePillarActors();
         {
             u8 bits = 1;
-            u8 *flags = (u8 *)Actor_Get(ACTOR_PARTY_LEADER) + 85;
+            u8 *flags = (u8 *)Object_GetById(ACTOR_PARTY_LEADER) + 85;
             u8 value = *flags;
 
             value |= bits;
             *flags = value;
-            flags = (u8 *)Actor_Get(ACTOR_PARTY_LEADER) + 35;
+            flags = (u8 *)Object_GetById(ACTOR_PARTY_LEADER) + 35;
             bits |= *flags;
             *flags = bits;
         }
@@ -114,7 +114,7 @@ void TakaraHashira_RunStagedCellScene(void)
 /* Complete scene/entity linker through return and its sole pool word. */
 void SceneState_LinkActorZeroToWork24(void)
 {
-    u8 *obj = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *obj = Object_GetById(ACTOR_PARTY_LEADER);
     *(u8 **)(PILLAR_WORK + 24) = obj;
     obj[98] = 1;
 }
@@ -126,7 +126,7 @@ void SceneState_LinkActorZeroToWork24(void)
  */
 void SceneState_ClearWord24AndObjectByte62(void)
 {
-    u8 *obj = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *obj = Object_GetById(ACTOR_PARTY_LEADER);
 
     *(s32 *)(PILLAR_WORK + 24) = 0;
     obj[0x62] = 0;
@@ -150,7 +150,7 @@ void SceneState_ClearWord24AndObjectByte62(void)
  */
 s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)
 {
-    u8 *ref = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
     if (*(s32 *)(actor + 16) > *(s32 *)(ref + 16)) {
         actor[35] = (u8)(actor[35] & 0xfd);
@@ -170,8 +170,8 @@ void TakaraHashira_RunActorAction(s32 a0)
     rec7 = Object_GetById(a0);
     Engine_EventBegin();
     rec7->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
-    Map_CopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
-    GameFlag_Set((a0 + 0x1f5));
+    Engine_MapCopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
+    Engine_GameFlagSet((a0 + 0x1f5));
     Engine_ActorEnableActionCallback(a0, (s32)TakaraHashira_ActionTable);
     Engine_EventEnd();
 }
@@ -198,17 +198,17 @@ void FieldScene_RunScene3b3_0200215c(void)
     u8 *p6;
 
     rec7 = Object_GetById(ACTOR_PARTY_LEADER);
-    record = Actor_Get(13);
+    record = Object_GetById(13);
     p6 = *(s32 *)gEffectWork;
     if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {
         if ((*(s32 *)(record + 16) >> 20) != (*(s32 *)(rec7 + 16) >> 20)) {
             goto L_02002198;
         }
-        GameFlag_Set(0x203);
+        Engine_GameFlagSet(0x203);
         p6[53] = 1;
     } else {
         L_02002198:;
-        GameFlag_Clear(0x203);
+        Engine_GameFlagClear(0x203);
     }
 }
 
@@ -248,7 +248,7 @@ void SceneEffect_SpawnRandomizedParticle(void)
     if ((*(volatile s32 *)&gFrameCount & 2) != 0)
         return;
     if ((*(volatile s32 *)&gFrameCount & 7) == 0)
-        Audio_PlayCue(136);
+        Engine_AudioPlayCue(136);
 
     d = descriptor;
     *(s32 *)(d + 4) = 10;
@@ -256,16 +256,16 @@ void SceneEffect_SpawnRandomizedParticle(void)
     *(s32 *)(d + 12) = 0x8000;
     *(s32 *)(d + 16) = 0x19999;
     *(s32 *)(d + 20) = 0x19999;
-    draw = (u32)Random_Next();
+    draw = (u32)Engine_RandomNext();
     mask = 0x0ffff000;
     mask &= draw;
     *(u16 *)(d + 32) = (u16)mask;
     *(s32 *)(d + 36) = (s32)FieldScene_RunScene3b3SequenceE;
 
-    draw = (u32)Random_Next();
+    draw = (u32)Engine_RandomNext();
     spread = -((s32)((draw * 5) >> 16) * 0x10000 + 0x60000);
     spread /= 2;
-    draw = (u32)Random_Next();
+    draw = (u32)Engine_RandomNext();
     secondary = -((s32)((draw * 5) >> 16) * 0x10000 + 0x50000);
 
     Effect_Spawn(0x01440000, 0x00300000, 0x00e40000, spread,
@@ -290,10 +290,10 @@ s32 SceneEffect_SpawnRandomEffectEveryEightFrames(u8 *actor)
     *(s32 *)(p + 8) = 0xb333;
     *(s32 *)(p + 12) = 0xb333;
 
-    x = *(s32 *)(actor + 8) + (((s32)(((u32)Random_Next() * 17) >> 16) - 8) << 16);
-    y = *(s32 *)(actor + 12) + ((s32)(((u32)Random_Next() * 17) >> 16) << 16);
-    z = *(s32 *)(actor + 16) + (((s32)(((u32)Random_Next() * 17) >> 16) - 8) << 16);
-    scale = Math_Divide((s32)(((u32)Random_Next() * 5) >> 16) * 0x10000 + 0x30000, 10);
+    x = *(s32 *)(actor + 8) + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    y = *(s32 *)(actor + 12) + ((s32)(((u32)Engine_RandomNext() * 17) >> 16) << 16);
+    z = *(s32 *)(actor + 16) + (((s32)(((u32)Engine_RandomNext() * 17) >> 16) - 8) << 16);
+    scale = Math_Divide((s32)(((u32)Engine_RandomNext() * 5) >> 16) * 0x10000 + 0x30000, 10);
 
     Effect_Spawn(x, y, z, 0, scale, (s32)phase, 0x00090001, p);
     return 0;
@@ -349,7 +349,7 @@ void TakaraHashira_RunMapShiftScene(void)
  */
 void StagedActor_PlaceAtObjectTenCell(void)
 {
-    u8 *obj = Actor_Get(10);
+    u8 *obj = Object_GetById(10);
     s32 x;
     s32 z;
 
@@ -444,10 +444,10 @@ void FieldScene_RunScene3b3_0200263c(s32 a0)
     s32 record;
 
     rec7 = (s32)Object_GetById(a0);
-    if (GameFlag_IsSet((a0 + 0x1f5)) != 0) {
+    if (Engine_GameFlagIsSet((a0 + 0x1f5)) != 0) {
         Object_SetMode(rec7, 5);
         *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
-        Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
+        Engine_MapCopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
         Engine_ActorEnableActionCallback(a0, TakaraHashira_ActionTable);
     }
 }
@@ -466,12 +466,12 @@ void OverlayObject_SetCallbackAndMode2(s32 id)
 
 void SceneActor_CheckActors8To11NearSlotZero(void)
 {
-    u8 *hero = Actor_Get(ACTOR_PARTY_LEADER);
+    u8 *hero = Object_GetById(ACTOR_PARTY_LEADER);
     u32 selector = 8;
     u8 *actor;
 
 loop:
-    actor = Actor_Get(selector);
+    actor = Object_GetById(selector);
 
     if (*(s32 *)(hero + 12) / 0x10000 != *(s32 *)(actor + 12) / 0x10000)
         goto mark_and_continue;

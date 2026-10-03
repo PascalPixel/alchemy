@@ -129,18 +129,18 @@ void BabiFune_RunDeparture(void)
 
     map = (*(struct FieldGlobals *)gMapWork).map;
 
-    Event_Begin();
+    Engine_EventBegin();
     Battle_ResetEffectCounter();
     BabiFune_Call3(ObjectMotion_SetPositionAndReset, 0, 312, 232);
     BabiFune_Call3((void (*)(s32, s32, s32))Engine_ActorFaceDirection, 0, 0xc000, 0);
-    Event_Wait(40);
-    Audio_PlayCue(140);
+    Engine_EventWait(40);
+    Engine_AudioPlayCue(140);
     for (i = 0; i <= 15; i++) {
         /* FAKEMATCH: the one-pass block keeps the colour's two shifts in source order. */
         do {
             REG_BACKDROP = (i << 11) | (i << 5);
         } while (0);
-        Event_Wait(10);
+        Engine_EventWait(10);
     }
     {
         /* FAKEMATCH: a word temporary builds the colour by a shift, not from the pool. */
@@ -154,28 +154,28 @@ void BabiFune_RunDeparture(void)
         s32 dim = 0x810;
 
         for (flash = 0; flash < 3; flash++) {
-            Audio_PlayCue(212);
+            Engine_AudioPlayCue(212);
             REG_BLDALPHA = bright;
-            Event_Wait(3);
+            Engine_EventWait(3);
             /* FAKEMATCH: the one-pass block places the counter step after the wait's argument. */
             do {
                 REG_BLDALPHA = dim;
             } while (0);
-            Event_Wait(65);
+            Engine_EventWait(65);
         }
     }
     BabiFune_ShimmerActive = 1;
     BabiFune_ShimmerPhase = 0;
     BabiFune_AddTask(BabiFune_UpdateWaves, TASK_PRIORITY_SCENE);
     BabiFune_DriftActive = 1;
-    Event_Wait(20);
-    Audio_PlayCue(163);
-    Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
-    Event_Wait(60);
+    Engine_EventWait(20);
+    Engine_AudioPlayCue(163);
+    Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+    Engine_EventWait(60);
     BabiFune_DriftActive = 1;
-    Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
-    Event_Wait(60);
-    Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
+    Engine_WorkSetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
+    Engine_EventWait(60);
+    Engine_WorkSetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     BabiFune_CountTicks = 0;
     BabiFune_AddTask(SceneState_CountDownEveryFortyTicks, TASK_PRIORITY_SCENE);
     sunk = 0;
@@ -183,7 +183,7 @@ void BabiFune_RunDeparture(void)
         map->layers[6].y += 0x3333;
         map->layers[7].y += 0x3333;
         sunk += 0x3333;
-        Task_Wait(1);
+        Engine_TaskWait(1);
     } while (sunk <= 0x59ffff);
     Engine_TaskRemoveCallback(SceneState_CountDownEveryFortyTicks);
     BabiFune_DriftActive = 0;
@@ -191,9 +191,9 @@ void BabiFune_RunDeparture(void)
     REG_BG2CNT = cnt = (REG_BG2CNT & 0xfffc) | 3;
     REG_BG1CNT = cnt = (REG_BG1CNT & 0xfffc) | 2;
     BabiFune_ShimmerActive = 0;
-    Audio_PlayCue(288);
-    Task_Wait(1);
-    Audio_PlayCue(145);
+    Engine_AudioPlayCue(288);
+    Engine_TaskWait(1);
+    Engine_AudioPlayCue(145);
     {
         /* FAKEMATCH: a word temporary in a one-pass block loads the value before the register's address. */
         s32 blend = 191;
@@ -204,22 +204,22 @@ void BabiFune_RunDeparture(void)
     }
     for (white = 0; white <= 16; white++) {
         REG_BLDY = white;
-        Event_Wait(1);
+        Engine_EventWait(1);
     }
-    Event_Wait(40);
-    Work_SetValuesIfNonNegative(-1, -1, 0xe666);
+    Engine_EventWait(40);
+    Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
     BabiFune_SwellLayerSixY = map->layers[6].y;
     BabiFune_SwellLayerSevenY = map->layers[7].y;
     BabiFune_SwellActive = 1;
     for (dark = 16; dark >= 0; dark--) {
         REG_BLDY = dark;
-        Event_Wait(8);
+        Engine_EventWait(8);
     }
     BabiFune_AddTask(BabiFune_CyclePalette, TASK_PRIORITY_SCENE);
-    Audio_PlayCue(80);
+    Engine_AudioPlayCue(80);
     AudioCommand_WaitForStateByteClear();
-    Event_Wait(20);
-    Event_End();
+    Engine_EventWait(20);
+    Engine_EventEnd();
     Scene_RunExtendedPresentationSequence();
 }
 

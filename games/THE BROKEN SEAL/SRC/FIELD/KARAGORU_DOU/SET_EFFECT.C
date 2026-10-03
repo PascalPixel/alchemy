@@ -46,7 +46,7 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 
 void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Object_Create(kind, x, y, z);
+    u8 *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);
@@ -69,7 +69,7 @@ void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 
 void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
-    u8 *effect = Object_Create(kind, x, y, z);
+    u8 *effect = Engine_ObjectCreate(kind, x, y, z);
 
     if (effect != NULL) {
         u8 *sprite = *(u8 **)(effect + 0x50);

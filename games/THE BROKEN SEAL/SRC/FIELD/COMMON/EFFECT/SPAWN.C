@@ -6,17 +6,12 @@
 extern const s32 *const gEffectScripts[];
 struct FieldActor *Object_CreateFar(s32 type, s32 x, s32 y, s32 z);
 
-static inline struct FieldActor *Effect_CreateResident(s32 type, s32 x, s32 y, s32 z)
-{
-    /* FAKEMATCH: the inline result copy preserves the resident spawn's allocation. */
-    return Object_CreateFar(type, x, y, z);
-}
-
-static inline void Effect_SetResidentScript(struct FieldActor *object, const s32 *script)
-{
-    /* FAKEMATCH: retain the inline call shape of the resident spawn's script setup. */
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)script);
-}
+/* Overlay calls use their local imports; the resident body uses the far
+   dispatcher, whose script argument is an address word. */
+#define EFFECT_LOCAL_SCRIPT(object, script) \
+    Engine_ObjectSetScript((struct FieldActor *)(object), (script))
+#define EFFECT_RESIDENT_SCRIPT(object, script) \
+    ObjectDispatch_InitializeFar((struct DispatchObject *)(object), (u32)(script))
 
 enum {
     EFFECT_DEFAULT_TYPE = 222,
@@ -31,7 +26,7 @@ enum {
 void __attribute__((section(section_name))) name( \
     s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 velocity_z, \
     u32 flags, const struct EffectOptions *options) \
-{ /* FAKEMATCH: the inline calls retain allocation in both shared spawn variants. */ \
+{ \
     struct FieldActor *party = Actor_Get(ACTOR_PARTY_LEADER); \
     struct FieldEffect *effect; \
     struct FieldSprite *sprite; \
@@ -94,5 +89,5 @@ void __attribute__((section(section_name))) name( \
         effect->update = options->update; \
 }
 
-EFFECT_SPAWN(Effect_Spawn, Object_Create, Object_SetScript, ".text.effect_spawn")
-EFFECT_SPAWN(Effect_SpawnResident, Effect_CreateResident, Effect_SetResidentScript, ".text.effect_spawn_resident")
+EFFECT_SPAWN(Effect_Spawn, Engine_ObjectCreate, EFFECT_LOCAL_SCRIPT, ".text.effect_spawn")
+EFFECT_SPAWN(Effect_SpawnResident, Object_CreateFar, EFFECT_RESIDENT_SCRIPT, ".text.effect_spawn_resident")

@@ -74,14 +74,14 @@ void FieldScene_RunActorPresentationSequence(void)
     PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
     Engine_EventBegin();
     BattleFx_ScheduleRatioTransition(0x10000, 0x12c);
-    Camera_MoveTo(-1, -1, -1, 0);
+    Engine_CameraMoveTo(-1, -1, -1, 0);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 19);
     Engine_ActorSetAnimation(8, 5);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Engine_TaskWait(1);
     BattleFx_ScheduleRatioTransition(0x18000, 16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    ColorBuffer_ApplyTarget(0x10003, 1);
+    Engine_ColorBufferApplyTarget(0x10003, 1);
     gEventWork->transition_frames = 16;
     Engine_EventOpenScreen();
     Event_WaitForDisplayField358Clear();
@@ -90,42 +90,42 @@ void FieldScene_RunActorPresentationSequence(void)
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgWorldMapSukuretaHowLongWillIsland);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 20);
     Engine_ActorRunRepeatedMotion(8, 2);
     Engine_EventWait(20);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x107, 20);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-    Actor_ShowEmote(8, 0x105, 80);
-    Event_ShowMessageAndWait(8, 0, 10);
+    Engine_EventShowMessageAndWait(8, 0, 20);
+    Engine_ActorShowEmote(ACTOR_JASMINE, 0x107, 20);
+    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Engine_ActorShowEmote(8, 0x105, 80);
+    Engine_EventShowMessageAndWait(8, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-    Actor_ShowEmote(8, 0x105, 100);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x105, 40);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
-    Event_ShowMessageAndWait(8, 0, 10);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x102, 20);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
-    Actor_SetAttachedEffect(8, 0x102);
+    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Engine_ActorShowEmote(8, 0x105, 100);
+    Engine_ActorShowEmote(ACTOR_JASMINE, 0x105, 40);
+    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Engine_EventShowMessageAndWait(8, 0, 10);
+    Engine_ActorShowEmote(ACTOR_JASMINE, 0x102, 20);
+    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+    Engine_ActorSetAttachedEffect(8, 0x102);
     Engine_EventWait(80);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x105, 80);
-    Event_ShowMessageAndWait(8, 0, 120);
+    Engine_EventShowMessageAndWait(8, 0, 20);
+    Engine_ActorShowEmote(ACTOR_JASMINE, 0x105, 80);
+    Engine_EventShowMessageAndWait(8, 0, 120);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 1);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 40);
-    Event_ShowMessageAndWait(8, 0, 20);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x105, 40);
-    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 120);
-    Actor_SetSpeed(9, 0x6666, 0x3333);
-    Actor_SetPosition(9, 0x1ddc0000, 0xd840000);
-    Actor_WalkToAndWait(9, 0x1d94, 0xd8c);
-    Actor_WalkToAndWait(9, 0x1d88, 0xda0);
+    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 40);
+    Engine_EventShowMessageAndWait(8, 0, 20);
+    Engine_ActorShowEmote(ACTOR_JASMINE, 0x105, 40);
+    Engine_EventShowMessageAndWait(ACTOR_JASMINE, 0, 120);
+    Engine_ActorSetSpeed(9, 0x6666, 0x3333);
+    Engine_ActorSetPosition(9, 0x1ddc0000, 0xd840000);
+    Engine_ActorWalkToAndWait(9, 0x1d94, 0xd8c);
+    Engine_ActorWalkToAndWait(9, 0x1d88, 0xda0);
     Engine_EventWait(20);
-    Event_ShowMessageAndWait(0x6009, 0, 20);
-    Actor_ShowEmote(8, 0x101, 0);
-    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
+    Engine_EventShowMessageAndWait(0x6009, 0, 20);
+    Engine_ActorShowEmote(8, 0x101, 0);
+    Engine_ActorShowEmote(ACTOR_JASMINE, 0x101, 60);
     Engine_ActorSetAnimationAndWait(9, 3);
-    Event_ShowMessage(0x6009, 0);
+    Engine_EventShowMessage(0x6009, 0);
     Map_LoadDefaultCellsAndUpdateBlock();
     Engine_EventWait(20);
     Engine_ActorEnableActionCallback(9, gPresentGuide9);
@@ -134,14 +134,14 @@ void FieldScene_RunActorPresentationSequence(void)
     Engine_ActorJump(8, 4, 40);
     Engine_ActorSetAnimation(ACTOR_JASMINE, 1);
     Engine_ActorJump(ACTOR_JASMINE, 4, 60);
-    Actor_FaceDirection(8, 0x3000, 0);
-    Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 40);
-    Actor_SetSpeed(8, 0x9999, 0x4ccc);
-    Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
+    Engine_ActorFaceDirection(8, 0x3000, 0);
+    Engine_ActorFaceDirection(ACTOR_JASMINE, 0xb000, 40);
+    Engine_ActorSetSpeed(8, 0x9999, 0x4ccc);
+    Engine_ActorSetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
     Engine_ActorEnableActionCallback(8, gPresentGuide8);
     Engine_EventWait(20);
-    Camera_SetSpeed(0xb333, 0x1666);
-    Camera_MoveTo(0x1e380000, -1, 0xdc80000, 1);
+    Engine_CameraSetSpeed(0xb333, 0x1666);
+    Engine_CameraMoveTo(0x1e380000, -1, 0xdc80000, 1);
     Engine_ActorEnableActionCallback(5, gPresentGuide5);
     do {
         Engine_ActorSetAnimation(10, 6);
@@ -149,34 +149,34 @@ void FieldScene_RunActorPresentationSequence(void)
         Engine_TaskWait(1);
     } while (*(s16 *)((u8 *)Object_GetById(5) + 100) == 0);
     Engine_EventWait(20);
-    Actor_FaceDirection(9, 0x8000, 20);
-    Actor_SetAttachedEffect(8, 0x102);
-    Actor_SetAttachedEffect(ACTOR_JASMINE, 0x102);
+    Engine_ActorFaceDirection(9, 0x8000, 20);
+    Engine_ActorSetAttachedEffect(8, 0x102);
+    Engine_ActorSetAttachedEffect(ACTOR_JASMINE, 0x102);
     Engine_EventWait(40);
     Battle_SetObjectFlag5bWhenMode3();
     Call11(Engine_EventShowTwoMessagesAndWait, 5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
     Engine_EventWait(20);
     Map_LoadDefaultCellsAndUpdateBlock();
-    Camera_SetSpeed(0x10000, 0x2000);
-    Camera_MoveTo(0x1e580000, -1, 0xdc80000, 1);
-    Actor_FaceDirection(9, 0x3000, 0);
-    Actor_SetSpeed(8, 0x19999, 0xcccc);
-    Actor_SetSpeed(ACTOR_JASMINE, 0x19999, 0xcccc);
-    Actor_WalkTo(8, 0x1e7c, 0xdb8);
-    Actor_WalkToAndWait(ACTOR_JASMINE, 0x1e6c, 0xdd8);
+    Engine_CameraSetSpeed(0x10000, 0x2000);
+    Engine_CameraMoveTo(0x1e580000, -1, 0xdc80000, 1);
+    Engine_ActorFaceDirection(9, 0x3000, 0);
+    Engine_ActorSetSpeed(8, 0x19999, 0xcccc);
+    Engine_ActorSetSpeed(ACTOR_JASMINE, 0x19999, 0xcccc);
+    Engine_ActorWalkTo(8, 0x1e7c, 0xdb8);
+    Engine_ActorWalkToAndWait(ACTOR_JASMINE, 0x1e6c, 0xdd8);
     Engine_ActorSetAnimation(8, 1);
     Battle_SetObjectFlag5bWhenMode3();
     Engine_EventWait(80);
     Engine_ActorRunRepeatedMotion(8, 1);
-    Event_ShowMessageAndWait(8, 0, 20);
+    Engine_EventShowMessageAndWait(8, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_JASMINE, 2);
-    Event_ShowMessageAndWait(0x1005, 0, 40);
-    Actor_FaceDirection(8, 0x8000, 20);
+    Engine_EventShowMessageAndWait(0x1005, 0, 40);
+    Engine_ActorFaceDirection(8, 0x8000, 20);
     Engine_ActorStartRepeatedMotion(8, 2);
-    Event_ShowMessageAndWait(8, 0, 60);
+    Engine_EventShowMessageAndWait(8, 0, 60);
     Map_LoadDefaultCellsAndUpdateBlock();
-    Audio_PlayCue(17);
-    ColorBuffer_ApplyTarget(0, 0);
+    Engine_AudioPlayCue(17);
+    Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_TaskWait(120);
     Event_SetPairWork1c0((s32)&SceneId_Title, 10);
@@ -186,33 +186,33 @@ void FieldScene_RunActorPresentationSequence(void)
 void StoryScene_StartTransition(void)
 {
     Engine_EventBegin();
-    Audio_PlayCue(141);
-    ColorBuffer_ApplySource(0, 0);
-    ColorBuffer_ApplyTarget(0, 0);
+    Engine_AudioPlayCue(141);
+    Engine_ColorBufferApplySource(0, 0);
+    Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(2);
     gEventWork->transition_frames = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     Engine_TaskWait(1);
-    Camera_SetSpeed(0x40000, 0x8000);
+    Engine_CameraSetSpeed(0x40000, 0x8000);
     {
         s32 transition_delay = 3200;
         void *transition_callback = (void *)StoryScene_UpdateTransitionEffect;
         Engine_TaskAddCallback(transition_callback, transition_delay);
     }
-    ColorBuffer_ApplySource(0, 0);
-    ColorBuffer_ApplyTarget(0x10004, 1);
-    ColorBuffer_ApplyTarget(0x10000, 2);
+    Engine_ColorBufferApplySource(0, 0);
+    Engine_ColorBufferApplyTarget(0x10004, 1);
+    Engine_ColorBufferApplyTarget(0x10000, 2);
     Engine_ColorBufferInterpolate(40);
     Engine_EventWait(240);
-    ColorBuffer_ApplyTarget(0, 0);
+    Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(80);
     Engine_TaskWait(90);
     Engine_EventRequestExit(109);
-    GameFlag_Set(282);
+    Engine_GameFlagSet(282);
     Engine_EventEnd();
 }
 
@@ -223,15 +223,15 @@ void StoryScene_StartTransition(void)
  */
 void StoryScene_UpdateTransitionEffect(void)
 {
-    u32 x = (u32)Random_Next() * TRANSITION_EFFECT_WIDTH >> 16;
-    u32 z = (u32)Random_Next() * TRANSITION_EFFECT_DEPTH >> 16;
+    u32 x = (u32)Engine_RandomNext() * TRANSITION_EFFECT_WIDTH >> 16;
+    u32 z = (u32)Engine_RandomNext() * TRANSITION_EFFECT_DEPTH >> 16;
     struct FieldActor *object;
 
-    object = Object_Create(TRANSITION_EFFECT_TYPE, PIXELS(x) + PIXELS(TRANSITION_EFFECT_LEFT), 0,
+    object = Engine_ObjectCreate(TRANSITION_EFFECT_TYPE, PIXELS(x) + PIXELS(TRANSITION_EFFECT_LEFT), 0,
                            PIXELS(z) + PIXELS(TRANSITION_EFFECT_TOP));
     if (object != NULL) {
         struct FieldSprite *sprite = object->sprite;
-        s32 scale = (((u32)Random_Next() << 15) >> 16) + 0x13333;
+        s32 scale = (((u32)Engine_RandomNext() << 15) >> 16) + 0x13333;
 
         sprite->flags = 0;
         sprite->priority = 2;
@@ -239,21 +239,21 @@ void StoryScene_UpdateTransitionEffect(void)
         object->scale_x = scale;
         object->scale_y = scale;
         Object_SetMode(object, 1);
-        Object_SetScript(object, gTransitionSparkScript);
+        Engine_ObjectSetScript(object, gTransitionSparkScript);
     }
     if (gFrameCount % 3 == 0) {
-        switch (((u32)Random_Next() << 2) >> 16) {
+        switch (((u32)Engine_RandomNext() << 2) >> 16) {
         case 0:
-            Camera_MoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c69), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c69), 1);
             break;
         case 1:
-            Camera_MoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c67), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c67), 1);
             break;
         case 2:
-            Camera_MoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c69), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c69), 1);
             break;
         case 3:
-            Camera_MoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c67), 1);
+            Engine_CameraMoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c67), 1);
             break;
         }
     }
@@ -268,11 +268,11 @@ void FieldScene_RunActorEightApproach(void)
     s32 actor;
 
     Engine_EventBegin();
-    Camera_MoveTo(-1, -1, -1, 0);
+    Engine_CameraMoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     Engine_ActorSetAnimation(ACTOR, 2);
-    Actor_SetPosition(ACTOR, 0x13080000, 0x3280000);
-    actor = Actor_Get(ACTOR);
+    Engine_ActorSetPosition(ACTOR, 0x13080000, 0x3280000);
+    actor = Object_GetById(ACTOR);
     {
         /* Write 0xa000 to the halfword at +6 of the actor record. */
         s32 value = 0xa000;
@@ -281,20 +281,20 @@ void FieldScene_RunActorEightApproach(void)
     }
     Engine_TaskWait(1);
     BattleFx_ScheduleRatioTransition(0x13333, 1);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Engine_CameraFollowActor(ACTOR, 1);
     Engine_TaskWait(1);
     SCENE_PHASE = 0x100;
     Engine_EventOpenScreen();
-    Actor_SetSpeed(ACTOR, 0x6666, 0x3333);
-    Actor_MoveToAndWait(ACTOR, 0x12d8, 0x2c8);
-    Actor_MoveToAndWait(ACTOR, 0x12a8, 0x268);
-    Actor_SetSpeed(ACTOR, 0x4ccc, 0x2666);
-    Actor_MoveToAndWait(ACTOR, 0x12a8, 0x1d8);
-    Actor_SetSpeed(ACTOR, 0x3333, 0x1999);
-    Actor_MoveToAndWait(ACTOR, 0x1298, 0x1c8);
-    Actor_SetSpeed(ACTOR, 0x1999, 0xccc);
-    Actor_MoveToAndWait(ACTOR, 0x1298, 0x1b8);
+    Engine_ActorSetSpeed(ACTOR, 0x6666, 0x3333);
+    Engine_ActorMoveToAndWait(ACTOR, 0x12d8, 0x2c8);
+    Engine_ActorMoveToAndWait(ACTOR, 0x12a8, 0x268);
+    Engine_ActorSetSpeed(ACTOR, 0x4ccc, 0x2666);
+    Engine_ActorMoveToAndWait(ACTOR, 0x12a8, 0x1d8);
+    Engine_ActorSetSpeed(ACTOR, 0x3333, 0x1999);
+    Engine_ActorMoveToAndWait(ACTOR, 0x1298, 0x1c8);
+    Engine_ActorSetSpeed(ACTOR, 0x1999, 0xccc);
+    Engine_ActorMoveToAndWait(ACTOR, 0x1298, 0x1b8);
     Engine_ActorSetAnimation(ACTOR, 1);
     Engine_EventWait(40);
     Engine_EventCloseScreen();
@@ -335,7 +335,7 @@ s32 StoryReward_LookupBySelection(u32 selection)
         break;
     }
     for (offset = 0; offset < 9; offset++) {
-        if (GameFlag_IsSet(flag_base + offset) != 0) return gWorldMapRewards[offset];
+        if (Engine_GameFlagIsSet(flag_base + offset) != 0) return gWorldMapRewards[offset];
     }
     return 0;
 }
@@ -390,17 +390,17 @@ void FieldScene_RunScene371_0200357c(void)
     actor->scale_y = 0x13333;
     Engine_CameraFollowActor(8, 1);
     Engine_TaskWait(1);
-    Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
-    record = Actor_Get(ACTOR_PARTY_LEADER);
+    Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+    record = Object_GetById(ACTOR_PARTY_LEADER);
     Engine_ActorSetSpriteFlags(record, 0);
-    record = Actor_Get(8);
+    record = Object_GetById(8);
     Engine_ActorSetSpriteFlags(record, 0);
-    Actor_SetSpeed(8, 0x6666, 0x3333);
+    Engine_ActorSetSpeed(8, 0x6666, 0x3333);
     actor->unknown_64 = 0;
     Engine_ActorEnableActionCallback(8, (s32)gOpeningLeaderRise);
     Engine_TaskAddCallback((s32)WorldMap_SpawnActorEightPuff, 0xc80);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    ColorBuffer_ApplyTarget(0x10003, 1);
+    Engine_ColorBufferApplyTarget(0x10003, 1);
     gEventWork->transition_frames = 32;
     Engine_EventOpenScreen();
     Engine_EventWait(120);
@@ -420,7 +420,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
     struct EventWork *scene;
     s32 progress;
 
-    actor = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
     scene = gEventWork;
     actor->facing = (u16)(*(volatile s32 *)&gFrameCount << 12);
 
@@ -428,7 +428,7 @@ void StoryScene_UpdateSelectedActorProgress(void)
     if (progress != 0) {
         if (progress == 1) {
             scene->raised_trigger = 99;
-        } else if (GameFlag_IsSet(0x106) == 0) {
+        } else if (Engine_GameFlagIsSet(0x106) == 0) {
             progress -= 1;
         }
     }
@@ -444,17 +444,17 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
 
     id = gGameState.selected_actor;
     actor = Object_GetById(id);
-    rec2 = GameFlag_IsSet(0x2f0);
+    rec2 = Engine_GameFlagIsSet(0x2f0);
     if (rec2 == 0) {
         Engine_EventBegin();
-        Actor_SetAttachedEffect(id, 0x101);
+        Engine_ActorSetAttachedEffect(id, 0x101);
         Engine_ActorSetAnimation(id, 9);
         record = Object_GetById(a0);
         if (record != 0) {
-            Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
+            Engine_ActorSetDestination(id, record->x.part.pixel, record->z.part.pixel);
         }
         Engine_ActorWaitForMove(id);
-        Audio_PlayCue(244);
+        Engine_AudioPlayCue(244);
         Engine_TaskAddCallback((s32)StoryScene_UpdateSelectedActorProgress, 0xc80);
         actor->motion_flags = rec2;
         Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + 0x200000, actor->z.fixed);
@@ -462,7 +462,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         actor->velocity_y = rec2;
         actor->motion_flags = 4;
         gGameState.movement_mode = 2;
-        GameFlag_Set(0x2f0);
+        Engine_GameFlagSet(0x2f0);
         GameFlag_SetByte(0x2f8, 180);
         Engine_EventEnd();
         ((struct EventRuntime *)gEventWork)->value_17c = rec2;
@@ -487,13 +487,13 @@ void StoryScene_CompleteActor98(void)
     if (gEventWork->raised_trigger == 99) {
         gEventWork->raised_trigger = 0;
     }
-    GameFlag_Clear(0x2f0);
-    GameFlag_Set(0x2f1);
+    Engine_GameFlagClear(0x2f0);
+    Engine_GameFlagSet(0x2f1);
     GameFlag_SetByte(0x2f8, 0);
     BattleFx_SetWeightedResult(98, 5);
     gGameState.battle_start = 3;
     BattleFx_SetWeightedResult(98, 7);
-    selected_actor = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    selected_actor = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
     selected_actor->motion_flags = 2;
 }
 
@@ -501,13 +501,13 @@ void StoryScene_CompleteActor98(void)
    and the party is sent to the world map's entrance 27. */
 void WorldMap_RaiseActors(void)
 {
-    struct FieldActor *actor = Actor_Get(gGameState.selected_actor);
-    struct FieldActor *other = Actor_Get(54);
+    struct FieldActor *actor = Object_GetById(gGameState.selected_actor);
+    struct FieldActor *other = Object_GetById(54);
     s32 frames;
 
     Engine_EventBegin();
-    Camera_MoveTo(-1, -1, -1, 0);
-    Audio_PlayCue(219);
+    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Engine_AudioPlayCue(219);
     Engine_ActorSetSpriteFlags(actor, 0);
     other->motion_flags = 0;
     actor->motion_flags = 0;
@@ -522,7 +522,7 @@ void WorldMap_RaiseActors(void)
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventEnd();
-    GameFlag_Set(0x122);
+    Engine_GameFlagSet(0x122);
     Event_SetPairWork1c0((s32)&SceneId_WorldMap, 27);
 }
 
@@ -547,23 +547,23 @@ void FieldScene_RunLateSequence(void)
     s32 sy;
     u32 mode;
 
-    record = (struct FieldActor *)Actor_Get(gGameState.selected_actor);
+    record = (struct FieldActor *)Object_GetById(gGameState.selected_actor);
     sx = record->x.part.pixel;
     sy = record->z.part.pixel;
     if ((u32)(*(volatile s32 *)&gFrameCount) % 3 == 0) {
-        mode = (u32)(Random_Next() << 2) >> 16;
+        mode = (u32)(Engine_RandomNext() << 2) >> 16;
         switch (mode) {
         case 0:
-            Camera_MoveTo((sx << 16) - 0x10000, -1, (sy << 16) + 0x10000, 1);
+            Engine_CameraMoveTo((sx << 16) - 0x10000, -1, (sy << 16) + 0x10000, 1);
             break;
         case 1:
             Engine_CameraMoveTo((sx << 16) + 0x10000, -1, (sy << 16) - 0x10000, 1);
             break;
         case 2:
-            Camera_MoveTo((sx << 16) + 0x10000, -1, (sy << 16) + 0x10000, 1);
+            Engine_CameraMoveTo((sx << 16) + 0x10000, -1, (sy << 16) + 0x10000, 1);
             break;
         case 3:
-            Camera_MoveTo((sx << 16) - 0x10000, -1, (sy << 16) - 0x10000, 1);
+            Engine_CameraMoveTo((sx << 16) - 0x10000, -1, (sy << 16) - 0x10000, 1);
             break;
         }
     }

@@ -13,7 +13,7 @@ void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 f
     struct FieldActor *obj;
     struct FieldSprite *rec;
 
-    obj = Object_Create(fourth, first, second, third);
+    obj = Engine_ObjectCreate(fourth, first, second, third);
     if (obj != NULL) {
         rec = obj->sprite;
         rec->priority = 0;

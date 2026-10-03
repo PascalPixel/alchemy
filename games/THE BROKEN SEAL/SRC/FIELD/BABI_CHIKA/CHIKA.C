@@ -35,7 +35,7 @@ s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
  */
 s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 {
-    Actor_02000cd0 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    Actor_02000cd0 *actor = Object_GetById(ACTOR_PARTY_LEADER);
     u8 saved = actor->flags;
     s32 probe[3];
 
@@ -67,9 +67,9 @@ s32 SceneActor_MoveActorZeroToTarget(const Target_02000cd0 *target)
 
     Engine_ActorSetSpriteFlags(actor, 0);
 #if EDITION_INTERNATIONAL
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, ((target->x.fixed >> 20) << 4) + 8, ((target->z.fixed >> 20) << 4) + 8);
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((target->x.fixed >> 20) << 4) + 8, ((target->z.fixed >> 20) << 4) + 8);
 #else
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel, target->z.part.pixel);
+    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, target->x.part.pixel, target->z.part.pixel);
 #endif
     Object_SetMode(actor, 6);
     Engine_ActorSetSpriteFlags(actor, 1);
@@ -86,7 +86,7 @@ refuse:
 void SceneActor_PassRaisedPointOfActorZero(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *p = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000dc8 *p = Object_GetById(ACTOR_PARTY_LEADER);
 
     pos[0] = p->f08;
     pos[1] = p->f0c;
@@ -97,7 +97,7 @@ void SceneActor_PassRaisedPointOfActorZero(void)
 void SceneActor_PassActorZeroOffsetPoint(void)
 {
     s32 pos[3];
-    struct Actor_02000dc8 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Actor_02000dc8 *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
     pos[0] = actor->f08;
     pos[1] = actor->f0c;
@@ -147,7 +147,7 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
     struct Actor_02000ec8 *ref;
     u8 *fp;
     u8 flag;
-    ref = Actor_Get(ACTOR_PARTY_LEADER);
+    ref = Object_GetById(ACTOR_PARTY_LEADER);
     fp = &actor->flatla3;
     flag = *fp | 2;
     *fp = flag;
@@ -167,8 +167,8 @@ s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_02000ec8 *actor)
 
 void SceneState_SwapSlotPairByRank(s32 first, s32 second)
 {
-    struct Slot02000f10 *a = Actor_Get(first);
-    struct Slot02000f10 *b = Actor_Get(second);
+    struct Slot02000f10 *a = Object_GetById(first);
+    struct Slot02000f10 *b = Object_GetById(second);
 
     if (a->rank <= b->rank) {
         s32 t;
@@ -205,7 +205,7 @@ s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
 /* Waits and effect motion. */
 s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
 {
-    Record *ref = Actor_Get(ACTOR_PARTY_LEADER);
+    Record *ref = Object_GetById(ACTOR_PARTY_LEADER);
 
     if (ref->w12 > (s32)0xffd00000
         && (((Record* (*)())Object_GetById)(8)->w16 >> 20) == 10) {

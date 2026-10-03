@@ -44,7 +44,7 @@ s32 MakyuriHeya_TrailSparks(struct FieldActor *actor)
     options.start_scale_x = 0xcccc;
     options.start_scale_y = 0xcccc;
     options.priority = 0;
-    velocity_y = -((((u32)Random_Next() * 8) >> 16) * 0x3333);
+    velocity_y = -((((u32)Engine_RandomNext() * 8) >> 16) * 0x3333);
     Effect_Spawn(actor->x.fixed + ((8 - (gFrameCount & 15)) << 16),
                                        actor->y.fixed + 0x1a0000, actor->z.fixed, 0, velocity_y, 0,
                                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,

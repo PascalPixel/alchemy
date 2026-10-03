@@ -98,8 +98,8 @@ void SceneActor_RunPlacementQuery(void)
 void FieldScene_SetupActor11Effect181(void)
 {
     Engine_EventBegin();
-    Actor_SetPosition(11, 0, 0);
-    GameFlag_Set(0xfd3);
+    Engine_ActorSetPosition(11, 0, 0);
+    Engine_GameFlagSet(0xfd3);
     Engine_ItemShowFound(ITEM_NUT, 3);
     Engine_PartyGiveItem(ITEM_NUT, 0);
     Engine_EventEnd();
@@ -112,13 +112,13 @@ s32 FieldScene_SetupEntryActors8To11(void)
     void SceneEffect_AdjustPaletteWindow(s32 id);
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if (GameFlag_IsSet(0xfd3) == 0) {
+    if (Engine_GameFlagIsSet(0xfd3) == 0) {
         SceneEffect_InitOrbitingParticle(11);
     }
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
     FieldScene_RedrawActorFootprint(10);
-    if (GameFlag_IsSet(0x845) == 0) {
+    if (Engine_GameFlagIsSet(0x845) == 0) {
         SceneEffect_AdjustPaletteWindow(11);
     }
     return 0;
@@ -144,7 +144,7 @@ void SceneEffect_AdjustPaletteWindow(s32 adj)
         next = phase + 0x10000;
         phase = next;
     } while (next <= 0x00df0000);
-    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); ColorBuffer_ApplyTarget(0x10000, 0);
+    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); Engine_ColorBufferApplyTarget(0x10000, 0);
 }
 
 /*

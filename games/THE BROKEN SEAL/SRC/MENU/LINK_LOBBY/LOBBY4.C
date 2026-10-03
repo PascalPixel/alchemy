@@ -152,19 +152,19 @@ s32 LinkLobby_RunConnectionSequence(void)
             Engine_EventSetMessage((s32)MsgLobbyGoodLuck);
             Engine_EventOpenMessage(8, 0);
             Engine_TaskWait(45);
-            Actor_SetSpeed(0, 0x10000, 0x8000);
+            Engine_ActorSetSpeed(0, 0x10000, 0x8000);
             Engine_ActorWalkTo(0, 216, 184);
             Engine_ActorWaitForMove(0);
             Engine_ActorWalkTo(0, 216, 168);
             Engine_ActorWaitForMove(0);
         } else {
-            Actor_SetSpeed(0, 0x10000, 0x8000);
+            Engine_ActorSetSpeed(0, 0x10000, 0x8000);
             Engine_ActorWalkTo(0, 216, 200);
             Engine_ActorWaitForMove(0);
-            Actor_SetSpeed(0, 0x1999, 0xccc);
+            Engine_ActorSetSpeed(0, 0x1999, 0xccc);
             Engine_ActorWalkTo(0, 216, 168);
             if (LinkLobby_ExchangePartyRecords() < 0) {
-                Actor_SetSpeed(0, 0x10000, 0x8000);
+                Engine_ActorSetSpeed(0, 0x10000, 0x8000);
                 Engine_ActorWalkTo(0, 216, 200);
                 Map_ClearLayerEntryFlag(5);
                 Engine_TaskWait(8);
@@ -183,7 +183,7 @@ s32 LinkLobby_RunConnectionSequence(void)
                 work->raised_trigger = 2;
                 goto done;
             }
-            Actor_SetSpeed(0, 0x8000, 0x4000);
+            Engine_ActorSetSpeed(0, 0x8000, 0x4000);
             Engine_ActorWaitForMove(0);
         }
         if (Engine_GameFlagIsSet(0x173)) {

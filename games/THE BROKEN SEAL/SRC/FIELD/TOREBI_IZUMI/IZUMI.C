@@ -77,28 +77,28 @@ void TorebiIzumi_AskForLuckyMedal(s32 object)
 {
     s32 question = (s32)MsgTorebiLuckyMedal;
     Engine_EventSetMessage(question);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(question + 1);
     } else {
         Engine_EventSetMessage(question + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
 void TorebiIzumi_AskIfFirstTime(s32 object)
 {
     s32 question = (s32)MsgTorebiYerFirstTime;
     Engine_EventSetMessage(question);
-    Event_OpenMessage(object, 0);
+    Engine_EventOpenMessage(object, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_EventWait(10);
         Engine_EventSetMessage(question + 1);
     } else {
         Engine_EventSetMessage(question + 2);
     }
-    Event_ShowMessage(object, 0);
+    Engine_EventShowMessage(object, 0);
 }
 
 /* The saved game as words: word 125 is the selected actor. */
@@ -121,7 +121,7 @@ void SceneDialogue_RunMessage0e34(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsRulesPullLever);
-    Event_OpenMessage(-1, 0);
+    Engine_EventOpenMessage(-1, 0);
     Engine_EventEnd();
 }
 
@@ -129,7 +129,7 @@ void SceneDialogue_RunMessage0e35(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiLuckyWheelsPrizesPrizesDetermined);
-    Event_OpenMessage(-1, 0);
+    Engine_EventOpenMessage(-1, 0);
     Engine_EventEnd();
 }
 
@@ -262,52 +262,52 @@ void TorebiIzumi_RevealPrize(s32 item)
     Engine_EventWait(30);
     Engine_AudioPlayCue(148);
     Engine_EventWait(100);
-    Actor_FaceDirection(0, 0xc000, 0);
+    Engine_ActorFaceDirection(0, 0xc000, 0);
     Engine_EventWait(40);
 
-    Map_CopyCellsTo(82, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 20, 70, 0, 3, 8);
     Engine_EventWait(3);
-    Map_CopyCellsTo(85, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(97, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(100, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(100, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
 
-    Map_CopyCellsTo(79, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(79, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(82, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(85, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(97, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(100, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(100, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
 
     Engine_EventWait(70);
@@ -316,46 +316,46 @@ void TorebiIzumi_RevealPrize(s32 item)
     Engine_PartyGiveItem(item, 0);
     Engine_EventWait(20);
 
-    Map_CopyCellsTo(97, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(85, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(82, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(100, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(100, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(97, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(85, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(82, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(79, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(79, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
     Engine_EventEnd();

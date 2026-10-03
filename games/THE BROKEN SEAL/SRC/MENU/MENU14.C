@@ -1,6 +1,7 @@
 #include "RUNTIME_MEM.H"
 #include "WORKSPACE_OPTIONS.H"
 #include "TYPES.H"
+#include "GAME_STATE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
@@ -11,22 +12,6 @@ void ShopCursor_MoveTowardTargetFar(void *);
 void Ui_ApplyTableScaleToObject(void *);
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void);
-
-/* The saved option bytes the option menu edits. */
-struct Options {
-    u8 unk_000[0x205];
-    u8 color;   /* 0x205 */
-    u8 brightness; /* 0x206 */
-    u8 unk_207[3];
-    u8 speech;  /* 0x20a */
-    u8 unk_20b;
-    u8 message_speed; /* 0x20c */
-    u8 unk_20d[0x1d];
-    u8 auto_sleep; /* 0x22a */
-};
-
-extern struct Options Data_02000240;
-
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {
@@ -90,15 +75,15 @@ void OptionMenu_InitializeWork(void)
     work = (struct WorkspaceWork *)Runtime_AllocateBlock(20, 0x628);
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x8500018a, (volatile u32 *)0x040000d4);
-    work->option[0] = Data_02000240.color;
+    work->option[0] = gGameState.palette_glow[0];
     work->option_count[0] = 24;
-    work->option[1] = Data_02000240.brightness;
+    work->option[1] = gGameState.palette_glow[1];
     work->option_count[1] = 15;
-    work->option[2] = Data_02000240.message_speed;
+    work->option[2] = gGameState.message_speed;
     work->option_count[2] = 3;
-    work->option[3] = Data_02000240.speech;
+    work->option[3] = gGameState.speech;
     work->option_count[3] = 2;
-    work->option[4] = Data_02000240.auto_sleep;
+    work->option[4] = gGameState.saved_options;
     work->option_count[4] = 2;
     Scheduler_AddOrUpdateCallback((s32)(GraphicsPalette_LoadSelectionResourcesAndAdvance), 0xc80);
 }

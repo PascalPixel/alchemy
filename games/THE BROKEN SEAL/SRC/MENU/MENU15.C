@@ -1,6 +1,7 @@
 #include "RESOURCE.H"
 #include "EDITION.H"
 #include "TYPES.H"
+#include "GAME_STATE.H"
 #include "DMA.H"
 #include "IO_REG.H"
 #include "RENDER_INPUT.H"
@@ -35,7 +36,6 @@ extern u8 MsgMessageSpeedSetting;
 extern u8 MsgSpeechSetting;
 extern u8 MsgAutoSleepSetting;
 extern u8 MsgOptionHelp;
-extern u8 Data_02000240[];
 extern u8 Data_080367d0[];
 extern u8 Data_080367d6[];
 void OptionMenu_InitializeWork(void);
@@ -309,14 +309,14 @@ s32 Menu_RunWorkspaceOptions(void)
     UiWork_Finalize(win, 2);
     UiWork_Finalize(icon, 2);
     if (result == 0) {
-        Data_02000240[0x205] = work->option[0];
-        Data_02000240[0x206] = work->option[1];
-        Data_02000240[0x20c] = work->option[2];
-        Data_02000240[0x20a] = work->option[3];
-        Data_02000240[0x22a] = work->option[4];
-        gOptionMirror = Data_02000240[0x22a];
+        gGameState.palette_glow[0] = work->option[0];
+        gGameState.palette_glow[1] = work->option[1];
+        gGameState.message_speed = work->option[2];
+        gGameState.speech = work->option[3];
+        gGameState.saved_options = work->option[4];
+        gOptionMirror = gGameState.saved_options;
     } else {
-        PaletteGlow_Update(Data_02000240[0x205], Data_02000240[0x206]);
+        PaletteGlow_Update(gGameState.palette_glow[0], gGameState.palette_glow[1]);
     }
     Runtime_ScheduleCallbackAndReleaseBlock20B();
     WaitFrames(1);

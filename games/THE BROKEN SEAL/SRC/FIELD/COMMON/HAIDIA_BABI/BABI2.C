@@ -1,4 +1,5 @@
 #include "RESOURCE.H"
+#include "GLYPH.H"
 #include "ANIMSPR.H"
 #include "VRAM_BLOCK.H"
 /* Haidia village: the boulder scene. The actors are placed and the
@@ -264,11 +265,10 @@ void FieldScene_RunPaletteRampSequence(void)
 /* The innkeeper's and the villagers' talk about the house. */
 void HaidiaBabi_RunInnkeeperTalk(void)
 {
-    u32 i;
-    s32 record;
+    struct FieldActor *actor;
 
-    record = (s32)Object_GetById(0);
-    if ((u32)(*(u16 *)(record + 6) + -0x2000) > 0x9000) {
+    actor = Object_GetById(0);
+    if ((u32)(actor->facing + -0x2000) > 0x9000) {
         Engine_InnOpen(0, 13);
     } else {
         Engine_EventBegin();
@@ -367,7 +367,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorSetAnimation(8, 13);
     Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+        gEventWork->message += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
@@ -379,7 +379,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventSetMessage(msg);
     Engine_EventOpenMessage(8, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
-        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+        gEventWork->message += 1;
     }
     if (Engine_GameFlagIsSet(0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
@@ -436,8 +436,7 @@ void HaidiaBabi_RunSickbedVisit(void)
  * otherwise it turns, shows MsgHaidiaUnnOhhKyle and then 0x1c7a. */
 void HaidiaBabi_RunActorEightMessageScene(void)
 {
-    s32 record;
-    s32 dream;
+    s32 message;
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x203) != 0) {
@@ -448,10 +447,10 @@ void HaidiaBabi_RunActorEightMessageScene(void)
     } else {
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(40);
-        dream = (s32)MsgHaidiaUnnOhhKyle;
-        Engine_EventSetMessage(dream);
+        message = (s32)MsgHaidiaUnnOhhKyle;
+        Engine_EventSetMessage(message);
         Engine_EventShowMessageAndWait(8, 0, 40);
-        Engine_MessageShowCentered((dream + 1), 1);
+        Engine_MessageShowCentered((message + 1), 1);
     }
     Engine_EventEnd();
 }
@@ -460,14 +459,14 @@ void HaidiaBabi_RunActorEightMessageScene(void)
 void ActorPresentation_SetTwoSceneCells(void)
 {
     {
-        s32 extent = 2;
+        s32 size = 2;
 
-        Map_CopyCellsTo(22, 85, 25, 85, extent, extent);
+        Map_CopyCellsTo(22, 85, 25, 85, size, size);
     }
     {
-        s32 extent = 25;
+        s32 destination = 25;
 
-        Map_CopyCellAttributes(25, 15, 2, 2, extent, extent);
+        Map_CopyCellAttributes(25, 15, 2, 2, destination, destination);
     }
 }
 
@@ -475,7 +474,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 {
     struct FieldActor *actor;
     struct FieldSprite *sprite;
-    s32 rec7;
+    GlyphTransfer *glyph;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
@@ -484,17 +483,16 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_SetPosition(18, 0x1e00000, 0xca0000);
     Engine_TaskWait(1);
     Engine_CameraFollowActor(18, 1);
-    rec7 = 0;
     actor = (struct FieldActor *)Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
-    actor->motion_flags = rec7;
+    actor->motion_flags = 0;
     sprite = actor->sprite;
     actor->y.fixed = 0x50000;
-    sprite->part_count = rec7;
+    sprite->part_count = 0;
     sprite->full_color = 0;
     sprite->palette = 0;
-    rec7 = Value2(Engine_HeapAllocate, 17, 0x608);
+    glyph = Engine_HeapAllocate(17, sizeof(*glyph));
     Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
-    Engine_VramLoad(sprite->vram_block, 128, rec7 + 0x400);
+    Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
     Engine_HeapRelease(17);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Engine_EventOpenScreen();

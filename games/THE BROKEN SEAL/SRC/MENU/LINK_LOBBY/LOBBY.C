@@ -6,7 +6,7 @@
 #include "SERIAL_RUNTIME.H"
 #include "IWRAM_CALL.H"
 
-extern u8 gLinkStatus[];
+extern u16 gLinkStatus;
 extern const s32 LinkLobby_SlotValues[];
 extern const u8 LinkLobby_SlotColumns[];
 
@@ -57,6 +57,8 @@ struct LobbyPanel {
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
+void SerialRuntime_RemoveIrqHandlers(void);
+void SerialRuntime_Initialize(void);
 
 /* Frames the peers have been waited for; it follows the overlay's image. */
 s32 gLinkLobbyWaitFrames;
@@ -71,17 +73,15 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-u32 State_RunQueryWithInterruptMasterSaved(void)
+void LinkLobby_InitializeSerial(void)
 {
     volatile u16 *ime = (volatile u16 *)0x04000208;
     u32 saved = *ime;
-    u32 ret;
 
     *ime = (u16)(u32)ime;
     SerialRuntime_RemoveIrqHandlers();
-    ret = SerialRuntime_Initialize();
+    SerialRuntime_Initialize();
     *ime = saved;
-    return ret;
 }
 
 u8 *LinkLobby_GetExits(void) { return gLinkLobbyExits; }
@@ -101,7 +101,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot)
 {
     s32 id = -1;
 
-    if ((*(u16 *)gLinkStatus & 3) == 3) {
+    if ((gLinkStatus & 3) == 3) {
         id = (u32)(REG_SIOCNT << 26) >> 30;
         Engine_GameFlagSet(0x303);
     } else {

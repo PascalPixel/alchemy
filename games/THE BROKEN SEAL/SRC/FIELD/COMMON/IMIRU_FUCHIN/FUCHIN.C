@@ -1,6 +1,7 @@
 /* The two page effects the cave's opening runs. */
 #include "IMIRU_FUCHIN.H"
 #include "TYPES.H"
+#include "GLYPH.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "CALL.H"
@@ -175,39 +176,39 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 }
 
 /* The cave's flag steps: each places or moves actors 8 to 11. */
-void SceneActor_PlacePairAtOffset(s32 a0, s32 a1, s32 a2)
+void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz)
 {
-    struct FieldActor *p;
-    struct FieldActor *q;
+    struct FieldActor *actor;
+    struct FieldActor *other;
     s32 x;
-    s32 y;
+    s32 z;
 
-    p = Object_GetById(gGameState.selected_actor);
-    q = Object_GetById(a0);
+    actor = Object_GetById(gGameState.selected_actor);
+    other = Object_GetById(id);
     Engine_EventBegin();
     {
-        x = ((p->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
-        y = ((p->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
+        x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
+        z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-        p->speed = 0x10000;
-        p->acceleration = 0x8000;
-        Object_SetPosition(p, x, p->y.fixed, y);
+        actor->speed = 0x10000;
+        actor->acceleration = 0x8000;
+        Object_SetPosition(actor, x, actor->y.fixed, z);
     }
-    Object_SetMode(p, 27);
+    Object_SetMode(actor, 27);
     {
-        x = ((q->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
-        y = ((q->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
+        x = ((other->x.fixed + (dx << 16)) & 0xFFF00000) + 0x80000;
+        z = ((other->z.fixed + (dz << 16)) & 0xFFF00000) + 0x80000;
 
-        q->speed = 0x10000;
-        q->acceleration = 0x8000;
-        Object_SetPosition(q, x, q->y.fixed, y);
+        other->speed = 0x10000;
+        other->acceleration = 0x8000;
+        Object_SetPosition(other, x, other->y.fixed, z);
     }
-    if (a1 < 0 || a2 < 0) {
-        Object_SetMode(q, 4);
+    if (dx < 0 || dz < 0) {
+        Object_SetMode(other, 4);
     } else {
-        Object_SetMode(q, 3);
+        Object_SetMode(other, 3);
     }
-    Object_CommitPosition(p);
+    Object_CommitPosition(actor);
     Engine_EventEnd();
 }
 
@@ -912,142 +913,142 @@ void FieldScene_RunSingleStep(void)
     SceneActor_StepSubjectAlongHeading();
 }
 
-void SceneActor_PlaceAtTileAndMark(s32 id, s32 x, s32 y)
+void SceneActor_PlaceAtTileAndMark(s32 id, s32 tile_x, s32 tile_z)
 {
-    struct FieldActor *rec = Object_GetById(id);
+    struct FieldActor *actor = Object_GetById(id);
 
-    if (rec != 0) {
+    if (actor != NULL) {
         Engine_ActorSetSpritePriority(id, 3);
-        rec->unknown_22 = 2;
-        rec->priority_flags |= 2;
-        rec->x.fixed = (x << 20) + 0x80000;
-        rec->z.fixed = (y << 20) + 0x80000;
+        actor->unknown_22 = 2;
+        actor->priority_flags |= 2;
+        actor->x.fixed = (tile_x << 20) + 0x80000;
+        actor->z.fixed = (tile_z << 20) + 0x80000;
     }
 }
 
 /* Imports; the queried ones are typed for their return value. */
 void DialogueLayout_ConfigureGroupOne(void)
 {
-    { s32 f1 = 8; s32 g1 = 29; Map_CopyCellAttributes(8, 42, 15, 5,  f1, g1); }
+    { s32 x = 8; s32 y = 29; Map_CopyCellAttributes(8, 42, 15, 5,  x, y); }
 
     if (GameFlag_IsSet((s32)0x301) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 22, 31);
-        { s32 f2 = 8; s32 g2 = 30; Map_CopyCellAttributes(9, 30, 1, 3,  f2, g2); }
+        { s32 x = 8; s32 y = 30; Map_CopyCellAttributes(9, 30, 1, 3,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(8, 8, 31);
-        { s32 f3 = 22; s32 g3 = 30; Map_CopyCellAttributes(9, 30, 1, 3,  f3, g3); }
+        { s32 x = 22; s32 y = 30; Map_CopyCellAttributes(9, 30, 1, 3,  x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x302) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 12, 29);
-        { s32 f4 = 11; s32 g4 = 33; Map_CopyCellAttributes(14, 33, 3, 1,  f4, g4); }
+        { s32 x = 11; s32 y = 33; Map_CopyCellAttributes(14, 33, 3, 1,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(9, 12, 33);
-        { s32 f5 = 11; s32 g5 = 29; Map_CopyCellAttributes(14, 29, 3, 1,  f5, g5); }
+        { s32 x = 11; s32 y = 29; Map_CopyCellAttributes(14, 29, 3, 1,  x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x303) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 18, 29);
-        { s32 f6 = 17; s32 g6 = 33; Map_CopyCellAttributes(14, 33, 3, 1,  f6, g6); }
+        { s32 x = 17; s32 y = 33; Map_CopyCellAttributes(14, 33, 3, 1,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(10, 18, 33);
-        { s32 f7 = 17; s32 g7 = 29; Map_CopyCellAttributes(14, 29, 3, 1,  f7, g7); }
+        { s32 x = 17; s32 y = 29; Map_CopyCellAttributes(14, 29, 3, 1,  x, y); }
     }
 }
 
 void DialogueLayout_ConfigureGroupTwo(void)
 {
-    { s32 f1 = 12; s32 g1 = 8; Map_CopyCellAttributes(0, 28, 10, 18,  f1, g1); }
+    { s32 x = 12; s32 y = 8; Map_CopyCellAttributes(0, 28, 10, 18,  x, y); }
 
     if (GameFlag_IsSet((s32)0x304) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 21, 20);
-        { s32 f2 = 13; s32 g2 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f2, g2); }
+        { s32 x = 13; s32 y = 19; Map_CopyCellAttributes(20, 19, 1, 3,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(8, 13, 20);
-        { s32 f3 = 21; s32 g3 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f3, g3); }
+        { s32 x = 21; s32 y = 19; Map_CopyCellAttributes(20, 19, 1, 3,  x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x305) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 12, 20);
-        { s32 f4 = 12; s32 g4 = 19; Map_CopyCellAttributes(5, 19, 1, 3,  f4, g4); }
-        { s32 f5 = 13; s32 g5 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f5, g5); }
+        { s32 x = 12; s32 y = 19; Map_CopyCellAttributes(5, 19, 1, 3,  x, y); }
+        { s32 x = 13; s32 y = 19; Map_CopyCellAttributes(20, 19, 1, 3,  x, y); }
         if (GameFlag_IsSet((s32)0x304) != 0) {
             SceneActor_PlaceAtTileAndMark(8, 21, 20);
-            { s32 f6 = 13; s32 g6 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f6, g6); }
-            { s32 f7 = 12; s32 g7 = 19; Map_CopyCellAttributes(20, 19, 1, 3,  f7, g7); }
+            { s32 x = 13; s32 y = 19; Map_CopyCellAttributes(20, 19, 1, 3,  x, y); }
+            { s32 x = 12; s32 y = 19; Map_CopyCellAttributes(20, 19, 1, 3,  x, y); }
         }
     }
 
     if (GameFlag_IsSet((s32)0x306) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 15, 21);
-        { s32 f8 = 14; s32 g8 = 17; Map_CopyCellAttributes(14, 18, 3, 1,  f8, g8); }
+        { s32 x = 14; s32 y = 17; Map_CopyCellAttributes(14, 18, 3, 1,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(9, 15, 17);
-        { s32 f9 = 14; s32 g9 = 21; Map_CopyCellAttributes(14, 18, 3, 1,  f9, g9); }
+        { s32 x = 14; s32 y = 21; Map_CopyCellAttributes(14, 18, 3, 1,  x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x307) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 19, 8);
-        { s32 f10 = 18; s32 g10 = 25; Map_CopyCellAttributes(14, 18, 3, 1,  f10, g10); }
+        { s32 x = 18; s32 y = 25; Map_CopyCellAttributes(14, 18, 3, 1,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(10, 19, 25);
-        { s32 f11 = 18; s32 g11 = 8; Map_CopyCellAttributes(14, 18, 3, 1,  f11, g11); }
+        { s32 x = 18; s32 y = 8; Map_CopyCellAttributes(14, 18, 3, 1,  x, y); }
     }
 }
 
 void DialogueLayout_ConfigureGroupThree(void)
 {
-    { s32 k5 = 12, k6 = 21; Map_CopyCellAttributes(12, 3, 9, 16, k5, k6); }
+    { s32 x = 12, y = 21; Map_CopyCellAttributes(12, 3, 9, 16, x, y); }
 
     if (GameFlag_IsSet((s32)0x308) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 14, 25);
-        { s32 k5 = 20, k6 = 24; Map_CopyCellAttributes(16, 24, 1, 3, k5, k6); }
+        { s32 x = 20, y = 24; Map_CopyCellAttributes(16, 24, 1, 3, x, y); }
     } else if (GameFlag_IsSet((s32)0x309) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 17, 25);
-        { s32 k6 = 24;
-          Map_CopyCellAttributes(18, 24, 1, 3, 20, k6);
-          Map_CopyCellAttributes(18, 24, 1, 3, 14, k6);
-          Map_CopyCellAttributes(8, 41, 1, 3, 17, k6);
+        { s32 y = 24;
+          Map_CopyCellAttributes(18, 24, 1, 3, 20, y);
+          Map_CopyCellAttributes(18, 24, 1, 3, 14, y);
+          Map_CopyCellAttributes(8, 41, 1, 3, 17, y);
         }
     } else {
         SceneActor_PlaceAtTileAndMark(8, 20, 25);
-        { s32 k5 = 14, k6 = 24; Map_CopyCellAttributes(16, 24, 1, 3, k5, k6); }
+        { s32 x = 14, y = 24; Map_CopyCellAttributes(16, 24, 1, 3, x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x30a) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 13, 35);
-        { s32 k5 = 15, k6 = 34; Map_CopyCellAttributes(14, 34, 1, 3, k5, k6); }
+        { s32 x = 15, y = 34; Map_CopyCellAttributes(14, 34, 1, 3, x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(9, 15, 35);
-        { s32 k5 = 13, k6 = 34; Map_CopyCellAttributes(14, 34, 1, 3, k5, k6); }
+        { s32 x = 13, y = 34; Map_CopyCellAttributes(14, 34, 1, 3, x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x30b) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 22);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
-          Map_CopyCellAttributes(5, 41, 3, 1, k5, 22);
+        { s32 x = 14;
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
+          Map_CopyCellAttributes(5, 41, 3, 1, x, 22);
         }
     } else if (GameFlag_IsSet((s32)0x30c) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 23);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(5, 42, 3, 1, k5, 23);
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
-          Map_CopyCellAttributes(10, 44, 3, 1, k5, 21);
+        { s32 x = 14;
+          Map_CopyCellAttributes(5, 42, 3, 1, x, 23);
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
+          Map_CopyCellAttributes(10, 44, 3, 1, x, 21);
         }
     } else if (GameFlag_IsSet((s32)0x30d) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 26);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 22);
-          Map_CopyCellAttributes(5, 43, 3, 1, k5, 26);
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
+        { s32 x = 14;
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 22);
+          Map_CopyCellAttributes(5, 43, 3, 1, x, 26);
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
         }
     } else if (GameFlag_IsSet((s32)0x30e) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 15, 27);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 22);
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 30);
-          Map_CopyCellAttributes(5, 44, 3, 1, k5, 27);
+        { s32 x = 14;
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 22);
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 30);
+          Map_CopyCellAttributes(5, 44, 3, 1, x, 27);
         }
     } else {
         SceneActor_PlaceAtTileAndMark(10, 15, 30);
@@ -1055,27 +1056,27 @@ void DialogueLayout_ConfigureGroupThree(void)
 
     if (GameFlag_IsSet((s32)0x30f) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 23);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
-          Map_CopyCellAttributes(10, 40, 3, 1, k5, 23);
+        { s32 x = 14;
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+          Map_CopyCellAttributes(10, 40, 3, 1, x, 23);
         }
     } else if (GameFlag_IsSet((s32)0x310) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 24);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
-          Map_CopyCellAttributes(10, 41, 3, 1, k5, 24);
+        { s32 x = 14;
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+          Map_CopyCellAttributes(10, 41, 3, 1, x, 24);
         }
     } else if (GameFlag_IsSet((s32)0x311) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 27);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
-          Map_CopyCellAttributes(10, 42, 3, 1, k5, 27);
+        { s32 x = 14;
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+          Map_CopyCellAttributes(10, 42, 3, 1, x, 27);
         }
     } else if (GameFlag_IsSet((s32)0x312) != 0) {
         SceneActor_PlaceAtTileAndMark(11, 15, 28);
-        { s32 k5 = 14;
-          Map_CopyCellAttributes(14, 29, 3, 1, k5, 31);
-          Map_CopyCellAttributes(10, 43, 3, 1, k5, 28);
+        { s32 x = 14;
+          Map_CopyCellAttributes(14, 29, 3, 1, x, 31);
+          Map_CopyCellAttributes(10, 43, 3, 1, x, 28);
         }
     } else {
         SceneActor_PlaceAtTileAndMark(11, 15, 31);
@@ -1098,34 +1099,34 @@ void FieldScene_RunFlagBranchedLayoutSteps(void)
      * selects exactly entries 1 and 2.
      */
     if ((u32)((u32)((u16)gGameState.entrance - 1) << 16) <= (u32)0x10000) {
-        { s32 f1 = 14; s32 g1 = 10; Map_CopyCellAttributes(22, 20, 9, 8,  f1, g1); }
+        { s32 x = 14; s32 y = 10; Map_CopyCellAttributes(22, 20, 9, 8,  x, y); }
     } else {
-        { s32 f2 = 7; s32 g2 = 45; Map_CopyCellAttributes(20, 45, 11, 4,  f2, g2); }
+        { s32 x = 7; s32 y = 45; Map_CopyCellAttributes(20, 45, 11, 4,  x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x313) != 0) {
         SceneActor_PlaceAtTileAndMark(8, 20, 17);
-        { s32 f3 = 19; s32 g3 = 10; Map_CopyCellAttributes(19, 11, 3, 1,  f3, g3); }
+        { s32 x = 19; s32 y = 10; Map_CopyCellAttributes(19, 11, 3, 1,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(8, 20, 10);
-        { s32 f4 = 19; s32 g4 = 17; Map_CopyCellAttributes(19, 11, 3, 1,  f4, g4); }
+        { s32 x = 19; s32 y = 17; Map_CopyCellAttributes(19, 11, 3, 1,  x, y); }
     }
 
     /* 0x314 is built by shifting. */
     if (GameFlag_IsSet((s32)0x314) != 0) {
         SceneActor_PlaceAtTileAndMark(9, 14, 16);
-        { s32 f5 = 22; s32 g5 = 15; Map_CopyCellAttributes(16, 15, 1, 3,  f5, g5); }
+        { s32 x = 22; s32 y = 15; Map_CopyCellAttributes(16, 15, 1, 3,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(9, 22, 16);
-        { s32 f6 = 14; s32 g6 = 15; Map_CopyCellAttributes(16, 15, 1, 3,  f6, g6); }
+        { s32 x = 14; s32 y = 15; Map_CopyCellAttributes(16, 15, 1, 3,  x, y); }
     }
 
     if (GameFlag_IsSet((s32)0x315) != 0) {
         SceneActor_PlaceAtTileAndMark(10, 17, 46);
-        { s32 f7 = 7; s32 g7 = 45; Map_CopyCellAttributes(15, 15, 1, 3,  f7, g7); }
+        { s32 x = 7; s32 y = 45; Map_CopyCellAttributes(15, 15, 1, 3,  x, y); }
     } else {
         SceneActor_PlaceAtTileAndMark(10, 7, 46);
-        { s32 f8 = 17; s32 g8 = 45; Map_CopyCellAttributes(15, 15, 1, 3,  f8, g8); }
+        { s32 x = 17; s32 y = 45; Map_CopyCellAttributes(15, 15, 1, 3,  x, y); }
     }
 }
 
@@ -1168,12 +1169,11 @@ s32 ImiruFuchin_ApplyEntryHook(void)
 /* The leader's arrival when the cave first opens. */
 void FieldScene_RunScene39aSequenceA(void)
 {
-    u32 i;
-    s32 record;
+    struct FieldActor *actor;
 
     Engine_EventBegin();
-    record = Object_GetById(8);
-    Engine_ActorSetSpriteFlags(record, 0);
+    actor = Object_GetById(8);
+    Engine_ActorSetSpriteFlags(actor, 0);
     Engine_EventOpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x1999);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 0x108, 196);
@@ -1283,14 +1283,11 @@ void SceneState_ApplyOffsetMinus32(void)
     ImiruFuchin_HopBy(-32, 0);
 }
 
-void ImiruFuchin_HopBy(s32 a0, s32 a1)
+void ImiruFuchin_HopBy(s32 dx, s32 dz)
 {
-    u32 i;
-    s32 record;
-
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x28000, 0x14000);
-    Engine_ActorSetDestinationOffset(0, a0, a1);
+    Engine_ActorSetDestinationOffset(0, dx, dz);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 7);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -1300,27 +1297,24 @@ void ImiruFuchin_HopBy(s32 a0, s32 a1)
 
 void ImiruFuchin_PlaceDragonsEye(void)
 {
+    struct FieldActor *actor;
+    struct FieldSprite *sprite;
+    GlyphTransfer *glyph;
 
-    u8 *rec;
-    s32 rec7;
-    s32 record;
-    u8 *p6;
-
-    record = 0;
-    rec = Value4(Engine_ObjectCreate, 22, 0xf80000, 0x80000, 0x980000);
-    if ((s32)rec != 0) {
-        p6 = *(u8 **)(rec + 80);
-        p6[38] = record;
-        p6[39] = record;
-        *((s8 *)p6 + 5) &= -33;
-        p6[9] &= 15;
-        rec[85] = record;
-        rec[92] = 1;
-        rec7 = Engine_HeapAllocate(17, 0x608);
+    actor = Engine_ObjectCreate(22, 0xf80000, 0x80000, 0x980000);
+    if (actor != NULL) {
+        sprite = actor->sprite;
+        sprite->flags = 0;
+        sprite->part_count = 0;
+        sprite->full_color = 0;
+        sprite->palette = 0;
+        actor->motion_flags = 0;
+        actor->unknown_5c = 1;
+        glyph = Engine_HeapAllocate(17, sizeof(*glyph));
         Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
-        Engine_VramLoad(p6[28], 128, (rec7 + 0x400));
+        Engine_VramLoad(sprite->vram_block, 128, glyph->tiles);
         Engine_HeapRelease(17);
-        *(s32 *)gImiruFuchinDragonsEye = (s32)rec;
+        gImiruFuchinDragonsEye[0] = (s32)actor;
     }
 }
 
@@ -1333,14 +1327,14 @@ void ImiruFuchin_TakeDragonsEye(void)
     /* r5 holds &gImiruFuchinDragonsEye across the calls; the word is reloaded before
      * the second test. */
     if (gImiruFuchinDragonsEye[0] != 0) {
-        Engine_RunRisingObjectSequence(gImiruFuchinDragonsEye[0], 3);
+        Engine_RunRisingObjectSequence((struct FieldActor *)gImiruFuchinDragonsEye[0], 3);
     }
 
     Engine_PartyGiveItem((s32) 0xE6, 0);
     GameFlag_Set((s32) 0xF13);
 
     if (gImiruFuchinDragonsEye[0] != 0) {
-        Engine_ObjectDispatchRelease(gImiruFuchinDragonsEye[0]);
+        Engine_ObjectDispatchRelease((struct FieldActor *)gImiruFuchinDragonsEye[0]);
     }
 
     Engine_EventEnd();
@@ -1359,7 +1353,7 @@ void OverlayObject_AdvancePositionByDelta(union FieldObject *raw)
 
 s32 OverlayObject_ApplyValue15(s32 obj)
 {
-    ObjectGroup_SetChildValue(obj, 15);
+    ObjectGroup_SetChildValue((struct FieldActor *)obj, 15);
     return 0;
 }
 

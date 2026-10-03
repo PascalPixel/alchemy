@@ -179,16 +179,16 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(15);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Engine_ActorStartRepeatedMotion(0, 1); /* object 0, variant 1 */
-    ((struct FacingObject *(*)())Object_GetById)(0)->facing_flags &= ~1;
+    ((struct FacingObject *)Object_GetById(0))->facing_flags &= ~1;
     Actor_WalkTo(ACTOR_PARTY_LEADER, 184, 168);
-    ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags &= ~1;
+    ((struct FacingObject *)Object_GetById(1))->facing_flags &= ~1;
     Engine_ActorWalkToAndWait(1, 200, 168);
     Engine_EventWait(1);
-    ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags |= 1;
+    ((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
-    ((struct FacingObject *(*)())Object_GetById)(0)->facing_flags |= 1;
-    ((struct FacingObject *(*)())Object_GetById)(1)->facing_flags |= 1;
+    ((struct FacingObject *)Object_GetById(0))->facing_flags |= 1;
+    ((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
     Engine_ActorJump(ACTOR_GERALD, 2, 0);
     Engine_EventWait(15);
     Actor_FaceActor(ACTOR_GERALD, 8, 0);
@@ -230,7 +230,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(15);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2); /* main:0808a138 */
     Engine_EventWait(10);
-    ((s32 (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
+    /* This scene supplies position words beyond the icon's named item argument. */
+    ((void (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
@@ -267,10 +268,13 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(10);
+    /* The engine ignores the facing callback's integer result. */
     Object_GetById(8)->unknown_64 = 1;
-    *(s32 *)((u8 *)Object_GetById(8) + 108) = (s32)UpdateFacingFromResolvedObject;
+    Object_GetById(8)->update =
+        (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
     Object_GetById(12)->unknown_64 = 1;
-    *(s32 *)((u8 *)Object_GetById(12) + 108) = (s32)UpdateFacingFromResolvedObject;
+    Object_GetById(12)->update =
+        (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
     Engine_ActorWalkToAndWait(1, 196, 180);
     Actor_WalkToAndWait(ACTOR_GERALD, 184, 184);
     Actor_WalkToAndWait(ACTOR_GERALD, 180, 180);
@@ -285,8 +289,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(10);
     Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
     Engine_EventWait(15);
-    *(s32 *)((u8 *)Object_GetById(12) + 108) = 0;
-    *(s32 *)((u8 *)Object_GetById(8) + 108) = 0;
+    Object_GetById(12)->update = NULL;
+    Object_GetById(8)->update = NULL;
     Engine_ActorStartRepeatedMotion(8, 2);
     Engine_ActorShowEmote(8, 0x100, 0);
     Engine_EventWait(60); /* main:0808a080 */
@@ -575,12 +579,12 @@ void ShindenHeya_SpawnActorSpark(s32 id)
 void SceneState_ApplyTwoRects(void)
 {
     {
-        s32 a5 = 3, a6 = 2;
-        Map_CopyCellsTo(0, 64, 11, 68, a5, a6);
+        s32 width = 3, height = 2;
+        Map_CopyCellsTo(0, 64, 11, 68, width, height);
     }
     {
-        s32 a5 = 11, a6 = 8;
-        Map_CopyCellAttributes(11, 10, 3, 2, a5, a6);
+        s32 x = 11, y = 8;
+        Map_CopyCellAttributes(11, 10, 3, 2, x, y);
     }
     Engine_TaskWait(1);
 }
@@ -615,7 +619,6 @@ void FieldScene_RunActorEightFacingDialogue(void)
 
 void FieldScene_DispatchBySceneId(void)
 {
-    s16 *tbl;
     s32 no;
 
     if (IsActorFacingInward() != 0) {
@@ -625,8 +628,7 @@ void FieldScene_DispatchBySceneId(void)
 
     Engine_EventBegin();
 
-    tbl = Data_02000240;
-    no = tbl[225];
+    no = gGameState.entrance;
 
     switch (no) {
     case 10:

@@ -1,3 +1,5 @@
+#include "MOTION_OBJECT.H"
+#include "FX_SCENE.H"
 #include "FIXED_MATH.H"
 #include "OBJDISP.H"
 #include "EFFECT_SLOT.H"
@@ -21,22 +23,18 @@ struct Output_08097f80 {
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, struct Output_08097f80 *);
 
-struct BattleEffectScene {
-    u8 pad00[16];
-    void *volatile main_object;
-};
 
-extern struct BattleEffectScene *gEffectWork;
+extern struct BattleFxScene *gEffectWork;
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_StartItemBreak(void *object);
-void BattleFx_SnapScaleToFull(void *object);
+void BattleFx_SnapScaleToFull(struct MotionObject *object);
 void Object_SetMode(void *object, s32 mode);
 void BattleFx_PrepareBufferInterpolation(void);
 void UpdateRisingParticleBurst(void *object);
 
 extern void *Object_Spawn(s32, s32, s32, s32);
 extern void Motion_SetTargetPositionFromMagnitudeAngle(
-    struct Object_08096bec *object, s32 magnitude, s32 angle);
+    struct ObjectRuntime *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
 extern void BattleFx_UpdateItemBreakFragment(void *);
 
@@ -103,7 +101,7 @@ next_state:
 void BattleFx_RunItemBreakSequence(void)
 {
     s32 work[3];
-    struct BattleEffectScene *scene;
+    struct BattleFxScene *scene;
     void *object;
 
     scene = gEffectWork;
@@ -135,9 +133,9 @@ void *BattleFx_StartItemBreak(void *source)
     void *parent;
     void *child;
 
-    angle = (*(u16 *)((s8 *)source + 6) + 0x2000) & 0xc000;
+    angle = (((struct MotionObject *)source)->angle + 0x2000) & 0xc000;
     parent = Object_Spawn(0xd7, *(s32 *)((s8 *)source + 8),
-                           *(s32 *)((s8 *)source + 12) + 0x100000,
+                           ((struct MotionObject *)source)->y + 0x100000,
                            *(s32 *)((s8 *)source + 16));
     if (parent == 0)
         return 0;
@@ -154,7 +152,7 @@ void *BattleFx_StartItemBreak(void *source)
     fragment_count = 7;
     do {
         child = Object_Spawn(0x11d, *(s32 *)((s8 *)source + 8),
-                              *(s32 *)((s8 *)source + 12) + 0x100000,
+                              ((struct MotionObject *)source)->y + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
@@ -170,7 +168,7 @@ void *BattleFx_StartItemBreak(void *source)
             Motion_SetTargetPositionFromMagnitudeAngle(
                 child, fragment_height,
                           ((rotation_jitter - Random16()) >> 3) +
-                          *(u16 *)((s8 *)source + 6));
+                          ((struct MotionObject *)source)->angle);
         }
         fragment_count--;
     } while (fragment_count >= 0);
@@ -178,20 +176,20 @@ void *BattleFx_StartItemBreak(void *source)
     return parent;
 }
 
-void BattleFx_SnapScaleToFull(void *obj)
+void BattleFx_SnapScaleToFull(struct MotionObject *obj)
 {
     s32 next;
     s32 scale;
 
     if (obj != NULL) {
-        scale = FIELD_AT_OFFSET(obj, s32 *, 0x18);
+        scale = obj->scale_x;
         if (scale <= 0xFFFF) {
             do {
                 next = scale + 0x1000;
                 scale = next;
             } while (next <= 0xFFFF);
-            FIELD_AT_OFFSET(obj, s32 *, 0x18) = next;
-            FIELD_AT_OFFSET(obj, s32 *, 0x1C) = next;
+            obj->scale_x = next;
+            obj->scale_y = next;
         }
         Object_CommitPosition();
     }
@@ -210,17 +208,17 @@ void UpdateRisingParticleBurst(void *source)
 
     Audio_PlayCue(154);
     for (count = 30; count >= 0; count--) {
-        *(s32 *)((s8 *)source + 12) += 0x10000;
-        *(u16 *)((s8 *)source + 6) += 0x2000;
-        *(s32 *)((s8 *)source + 24) += -0x800;
-        *(s32 *)((s8 *)source + 28) += -0x800;
+        ((struct MotionObject *)source)->y += 0x10000;
+        ((struct MotionObject *)source)->angle += 0x2000;
+        ((struct MotionObject *)source)->scale_x += -0x800;
+        ((struct MotionObject *)source)->scale_y += -0x800;
         WaitFrames(1);
     }
     count = 7;
     unit = 0x10000;
     for (; count >= 0; count--) {
         child = Object_Spawn(0x11d, *(s32 *)((s8 *)source + 8),
-                             *(s32 *)((s8 *)source + 12),
+                             ((struct MotionObject *)source)->y,
                              *(s32 *)((s8 *)source + 16));
         if (child != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);

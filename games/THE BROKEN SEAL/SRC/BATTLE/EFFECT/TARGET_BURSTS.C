@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -32,7 +33,7 @@ void BattleFx_RunOrbitingSparks(void)
     s32 frame;
     DrawRectangleFn draw[2]; /* FAKEMATCH: only draw[0] is used; the pair is the reference's frame layout */
     s32 member;
-    s32 facing;
+    struct BattleCamera *camera;
     u8 *palette;
     s32 x_offset;
     s32 i;
@@ -41,7 +42,7 @@ void BattleFx_RunOrbitingSparks(void)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    facing = *(s32 *)(gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
     BattleFx_BeginCanvasLayer(1);
     *(volatile u16 *)0x04000020 = 0x100;
     *(volatile u16 *)0x04000052 = 0x1010;
@@ -85,7 +86,7 @@ void BattleFx_RunOrbitingSparks(void)
                 register s32 *rec asm("r0");
 
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
                 rec = record;
                 rec[0] = *(s32 *)((u8 *)member_object + 8);
                 rec[1] = *(s32 *)((u8 *)member_object + 12);
@@ -115,7 +116,6 @@ void BattleFx_RunOrbitingSparks(void)
     BattleFx_EndCanvasLayer();
 }
 extern u8 gBattleFxWork[];
-extern u8 gCameraWork[];
 
 /*
  * Battle effect: a burst of six particles over each affected unit in turn.
@@ -194,15 +194,15 @@ void BattleFx_RunTargetBursts(void *object)
 
     for (frame = 0; frame != 96; frame++) {
         s32 member;
-        s32 facing;
+        struct BattleCamera *camera;
 
-        facing = *(s32 *)gCameraWork;
+        camera = gCameraWork;
         for (member = 0; member != work->effect->count; member++) {
             void *member_object;
 
             member_object = *GetBattleObjectSlotFar(work->effect->actors[member]);
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             record[0] = *(s32 *)((u8 *)member_object + 8);
             record[1] = 160 << 13;
             record[2] = *(s32 *)((u8 *)member_object + 16);

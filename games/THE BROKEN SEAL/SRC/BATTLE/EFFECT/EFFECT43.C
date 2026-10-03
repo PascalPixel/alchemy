@@ -1,3 +1,5 @@
+#include "GAME_STATE.H"
+#include "ANIMSPR.H"
 #include "TYPES.H"
 #include "FX_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -8,24 +10,13 @@
 
 extern char MsgMonstersAttackLess;
 
-struct ArcPulseEntry {
-    u8 unknown_00[5];
-    u8 mode;
-};
 
-struct ArcPulseGroup {
-    u8 unknown_00[37];
-    u8 lit;
-    u8 pulse;
-    u8 unknown_27;
-    struct ArcPulseEntry *entry;
-};
 
 struct ArcEffectObject {
     u8 unknown_00[6];
     u16 angle;
     u8 unknown_08[0x48];
-    struct ArcPulseGroup *records;
+    struct AnimationObject *records;
     u8 unknown_54[0x10];
     s16 phase;
     s16 step;
@@ -34,7 +25,6 @@ struct ArcEffectObject {
 };
 
 extern struct BattleFxScene *gEffectWork;
-extern s32 gGameState[];
 extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
 s32 Resource_ResetEntry(s32);
@@ -51,12 +41,8 @@ void BattleFx_UpdatePairedArcSpawner(void);
 /* battle/effects/runtime/update_slot.c */
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 
-struct EffectSprite {
-    u8 unknown_00[24];
-    s32 scale;
-};
 
-void Object_ApplyProjectedPlacementFar(struct EffectSprite *sprite, s32 *position, s32 *scale, s32 mode);
+void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite, s32 *position, s32 *scale, s32 mode);
 u16 ArcTan2(s32 x, s32 y);
 s32 FixedSqrt(s32 value);
 
@@ -76,8 +62,8 @@ void RunBattleEffect16(void)
 {
     struct BattleFxScene *scene;
     struct ArcEffectObject *object;
-    struct ArcPulseGroup *group;
-    struct ArcPulseEntry *entry;
+    struct AnimationObject *group;
+    struct AnimationEntry *entry;
     u32 angle;
     s32 slot;
     s32 count;
@@ -86,7 +72,7 @@ void RunBattleEffect16(void)
     scene = gEffectWork;
     object = scene->main_object;
     group = object->records;
-    entry = group->entry;
+    entry = group->entries[0];
     angle = object->angle;
     slot = Resource_FindFreeEntry();
     {
@@ -95,8 +81,8 @@ void RunBattleEffect16(void)
 
         *tile_slot = slot;
         VramBlock_LoadCached((s16)slot, 0x100, BattleFx_ArcSparkTiles);
-        gGameState[145] = 0x09600000;
-        *(u8 *)&gGameState[146] = GameFlag_TestFar(0x145);
+        gGameState.unknown_244 = 0x09600000;
+        gGameState.unknown_248[0] = GameFlag_TestFar(0x145);
         Animation_ApplyChildValuesFar(object, zero);
         object->callback = BattleFx_UpdatePairedArcSpawner;
         object->phase = zero;
@@ -107,12 +93,12 @@ void RunBattleEffect16(void)
     object->phase = 1;
     WaitFrames(10);
     for (count = 0; count < 20; count++) {
-        entry->mode = 7;
-        group->lit = 1;
+        entry->param = 7;
+        group->dirty = 1;
         WaitFrames(2);
-        group->lit = 1;
-        entry->mode = 0;
-        group->pulse = 1;
+        group->dirty = 1;
+        entry->param = 0;
+        group->flags = 1;
         WaitFrames(3);
     }
     object->callback = NULL;
@@ -123,7 +109,7 @@ void RunBattleEffect16(void)
     WaitFrames(55);
     Scheduler_RemoveCallback((u32)(BattleFx_UpdateEffect16State));
     index = 147;
-    if (*(s16 *)&gGameState[index] != 0)
+    if (*(s16 *)((u8 *)&gGameState + index * sizeof(s32)) != 0)
         ObjectDispatch_SetSingleChildField26Far(object, 2);
     else
         ObjectDispatch_SetSingleChildField26Far(object, 1);
@@ -154,7 +140,7 @@ void EffectSlot_Update(struct EffectSlot *effect)
    the floor line. */
 void BattleFx_DrawScaledObject(struct EffectSlot *object)
 {
-    struct EffectSprite *sprite;
+    struct AnimationObject *sprite;
     s32 offset;
     s32 scale[2];
     s32 position[4];
@@ -271,7 +257,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z)
     volatile u32 zero;
 
     zero = 0;
-    Dma_Set((const void *)&zero, effect, 0x85000012, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)&zero, effect, 0x85000000 | (sizeof *effect / 4), (volatile u32 *)0x040000d4);
     object = Func_08009030(kind);
     effect->object = object;
     if (object != NULL)
@@ -301,5 +287,5 @@ void BattleFx_ClearOwnedSlot(struct EffectSlot *slot)
     if (slot->object)
         ResourceObject_ReleaseFar(slot->object);
     zero = 0;
-    Dma_Set(&zero, slot, 0x85000012, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, slot, 0x85000000 | (sizeof *slot / 4), (volatile u32 *)0x040000d4);
 }

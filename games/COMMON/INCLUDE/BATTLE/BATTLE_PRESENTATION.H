@@ -13,7 +13,16 @@ struct BattleCamera {
     u8 unknown_24[16];
     u16 pitch;
     u16 yaw;
+    u8 unknown_38[20];
 };
+
+LAYOUT_SIZE_GUARD(BattleCamera_Size, struct BattleCamera, 0x4c);
+LAYOUT_OFFSET_GUARD(BattleCamera_Position, struct BattleCamera, pos, 0x0c);
+LAYOUT_OFFSET_GUARD(BattleCamera_FollowPosition, struct BattleCamera, follow_pos, 0x1c);
+LAYOUT_OFFSET_GUARD(BattleCamera_Pitch, struct BattleCamera, pitch, 0x34);
+LAYOUT_OFFSET_GUARD(BattleCamera_Yaw, struct BattleCamera, yaw, 0x36);
+
+extern struct BattleCamera *gCameraWork;
 
 struct BattlePresentationTransition {
     s32 target_yaw;

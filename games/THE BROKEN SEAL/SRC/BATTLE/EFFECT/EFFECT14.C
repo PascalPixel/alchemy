@@ -1,3 +1,5 @@
+#include "SCRIPT_MOTION.H"
+#include "MOTION_OBJECT.H"
 #include "TYPES.H"
 #include "OBJDISP.H"
 #include "FIELD_EFFECT.H"
@@ -5,12 +7,6 @@
 #include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 
-struct RingOrigin {
-    u8 pad00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 extern const u8 BattleFx_CommonParticleScript[];
 
@@ -35,7 +31,7 @@ struct OrbitEffect {
 void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-s32 Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);
+void Object_SetPositionAndResetMotionFar(void *, s32, s32, s32);
 s32 RunBattleEffect14();
 
 void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object)
@@ -52,7 +48,7 @@ void BattleFx_UpdateParticleMotionAndScale(union FieldObject *object)
     effect->sprite->rotation += effect->spin;
 }
 
-void BattleFx_SpawnRadialParticleRing(struct RingOrigin *origin)
+void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin)
 {
     struct EffectOptions options;
     s32 velocity[3];
@@ -130,16 +126,16 @@ void BattleFx_CircleAnchor(struct OrbitEffect *effect)
 }
 
 /* Battle effect 14: its object update and its entry. */
-void BattleFx_ShrinkObjectScaleUntilHalf(void *obj)
+void BattleFx_ShrinkObjectScaleUntilHalf(struct MotionObject *obj)
 {
     s32 scale;
 
-    scale = FIELD_AT_OFFSET(obj, s32 *, 0x18) - 0x80;
-    FIELD_AT_OFFSET(obj, s32 *, 0x1C) = scale;
-    FIELD_AT_OFFSET(obj, s32 *, 0x18) = scale;
+    scale = obj->scale_x - 0x80;
+    obj->scale_y = scale;
+    obj->scale_x = scale;
     if (scale < 0x8000) {
         Object_SetPositionAndResetMotionFar(obj, 0, 0, 0);
-        FIELD_AT_OFFSET(obj, s32 *, 0x6C) = 0;
+        ((struct ScriptMotionObject *)obj)->hook = 0;
     }
 }
 

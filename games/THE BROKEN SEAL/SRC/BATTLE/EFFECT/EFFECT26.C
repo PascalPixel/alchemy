@@ -1,3 +1,4 @@
+#include "ANIMSPR.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -20,29 +21,10 @@ void GameFlag_ClearBitFar(s32 flag);
 extern struct EventWork *gEventWork;
 void Object_Destroy(struct FieldActor *object);
 
-struct EffectSprite {
-    u8 unknown_00[29];
-    u8 enabled : 1;
-    u8 flags : 7;
-};
 
-struct EffectObject {
-    u8 unknown_00[80];
-    struct EffectSprite *sprite;
-    u8 hidden;
-};
 
-struct EffectRuntime {
-    u8 unknown_00[4];
-    s32 event_id;
-    s32 unknown_08;
-    s32 unknown_0c;
-    u8 unknown_10[0x34 - 0x10];
-    struct EffectObject *objects[58];
-};
 
-extern struct EffectRuntime *Data_03001ebc;
-void Func_080090d0(struct EffectObject *object);
+void Func_080090d0(struct FieldActor *object);
 s32 ObjectTable_FindLastActiveId(void);
 void Event_SpawnObjectTable(s32 event_id, s32 last_id);
 
@@ -137,24 +119,24 @@ void BattleEffect_ClearOutOfBoundsObjects(void)
    event and respawns its object table if one was set. */
 void BattleEffect_ClearAllObjects(void)
 {
-    struct EffectRuntime *runtime = Data_03001ebc;
+    struct EventWork *runtime = gEventWork;
     s32 event_id;
     s32 i;
 
     for (i = 0; i < 58; i++) {
-        struct EffectObject *object = runtime->objects[i];
+        struct FieldActor *object = runtime->placed_actors[i];
 
         if (object != 0) {
-            object->hidden = 1;
-            object->sprite->enabled = 0;
+            object->active = 1;
+            ((struct AnimationObject *)object->sprite)->display_flags &= ~1;
             Func_080090d0(object);
-            runtime->objects[i] = 0;
+            runtime->placed_actors[i] = 0;
         }
     }
-    event_id = runtime->event_id;
-    runtime->event_id = 0;
-    runtime->unknown_08 = 0;
-    runtime->unknown_0c = 0;
+    event_id = *(s32 *)&runtime->unknown_000[4];
+    *(s32 *)&runtime->unknown_000[4] = 0;
+    *(s32 *)&runtime->unknown_000[8] = 0;
+    *(s32 *)&runtime->unknown_000[12] = 0;
     if (event_id != 0)
         Event_SpawnObjectTable(event_id, ObjectTable_FindLastActiveId());
 }

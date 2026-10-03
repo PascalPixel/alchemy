@@ -4,36 +4,15 @@
    of 7..4), 80..99 play a jingle at full-silence background volume, and the
    rest start a background track, restoring its volume unless bit 12 asks
    for a silent start. */
-#include "TYPES.H"
+#include "AUDIO_ENGINE.H"
 
-struct SongEntry {
-    u8 *header;
-    u16 player;
-    u16 unknown_06;
-};
-
-struct MusicPlayerEntry {
-    u8 *info;
-    u8 *tracks;
-    u8 track_count;
-    u8 unknown_09[3];
-};
-
-extern struct SongEntry Sound_SongTable[];
-extern struct MusicPlayerEntry Sound_PlayerSlots[];
 extern u8 gMusicRestoreDelay;
 extern u16 gMusicVolume;
 extern u16 gMusicVolumeStep;
 extern u16 gMusicVolumeTarget;
-extern u16 gMusicPlayerVolumes[];
 extern u8 Data_02003014;
 extern u8 gAudioSecondaryState;
-extern u8 gMusicPlayerBgm[];
-extern u8 Data_02004360[];
 
-void MusicPlayer_FadeOut(u8 *player, s32 speed);
-void MusicPlayer_StartSong(u8 *player, u8 *header);
-void MusicPlayer_SetVolume(u8 *player, s32 mask, s32 volume);
 void Audio_PlaySound(u16 id);
 void Sound_LoadPresetParameters(s32 preset);
 
@@ -48,27 +27,27 @@ void AudioCommand_Play(s32 id)
     if (id == 17) {
         if (Data_02003014 != 0)
             return;
-        MusicPlayer_FadeOut(gMusicPlayerBgm, 7);
+        MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
         Data_02003014++;
         gAudioSecondaryState = 19;
     } else if (id == 0x121) {
         gMusicPlayerVolumes[3] = 0;
-        MusicPlayer_FadeOut(Data_02004360, 3);
+        MusicPlayer_FadeOut(&Data_02004360, 3);
     } else if (id > 99) {
-        player = Sound_SongTable[id].player;
+        player = Sound_SongTable[id].slot;
         if (player == 7) {
         next:
-            if (Sound_PlayerSlots[player].info[4] != 0) {
+            if (((u8 *)&Sound_PlayerSlots[player].player->status)[0] != 0) {
                 player--;
                 if (player > 3)
                     goto next;
                 player = 7;
             }
         }
-        MusicPlayer_StartSong(Sound_PlayerSlots[player].info, Sound_SongTable[id].header);
+        MusicPlayer_StartSong(Sound_PlayerSlots[player].player, Sound_SongTable[id].header);
         gMusicPlayerVolumes[player] = id;
     } else if (id > 79) {
-        MusicPlayer_SetVolume(gMusicPlayerBgm, 255, 0);
+        MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
         gMusicVolumeTarget = 0;
         gMusicVolume = 0;
         Audio_PlaySound(id);

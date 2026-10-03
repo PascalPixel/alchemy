@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -9,7 +10,6 @@
 #include "RESOURCE_IDS.H"
 
 extern u8 gBattleFxWork[];
-extern u8 gCameraWork[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
@@ -83,11 +83,11 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
     object->speed_limit = 0x80000;
     WaitFrames(20);
     for (frame = 0; frame != 96; frame++) {
-        s32 facing;
+        struct BattleCamera *camera;
 
-        facing = *(s32 *)gCameraWork;
+        camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame == 0) {
             target->velocity_y = 0xf0000;
             target->vertical_motion_strength = 0x91eb;
@@ -113,7 +113,7 @@ void BattleFx_RunFlippingBurst(struct BattleEffectArgument *effect)
             Object_SetPosition(object, 0, 0, object->z);
         }
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         record[0] = object->x;
         record[1] = object->y;
         record[2] = object->z;

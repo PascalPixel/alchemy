@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -13,7 +14,6 @@
 #include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
-extern s32 gCameraWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -232,7 +232,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != total; frame++) {
-        s32 facing = gCameraWork[0];
+        struct BattleCamera *camera = gCameraWork;
 
         if (frame == 40)
             BattleEventRuntime_BeginPhaseFar(0);
@@ -264,7 +264,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
             s32 start = member * 8;
 
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             point[0] = object->x;
             point[1] = 160 << 14;
             point[2] = object->z;

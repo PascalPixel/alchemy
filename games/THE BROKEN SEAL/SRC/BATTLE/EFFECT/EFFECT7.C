@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -7,7 +8,6 @@
 #include "RESOURCE_IDS.H"
 
 extern void *gBattleFxWork[];
-extern s32 gCameraWork;
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -70,9 +70,9 @@ void BattleFx_RunBouncingSheep(void *object)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(142);
     for (frame = 0; frame != 148; frame++) {
-        s32 facing;
+        struct BattleCamera *camera;
 
-        facing = gCameraWork;
+        camera = gCameraWork;
         if (frame == 80)
             BattleEventRuntime_BeginPhaseFar(0);
         for (member = 0; member != work->effect->count; member++) {
@@ -80,7 +80,7 @@ void BattleFx_RunBouncingSheep(void *object)
 
             member_object = *GetBattleObjectSlotFar(work->effect->actors[member]);
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             record[0] = *(s32 *)((u8 *)member_object + 8);
             record[1] = 160 << 14;
             record[2] = *(s32 *)((u8 *)member_object + 16);

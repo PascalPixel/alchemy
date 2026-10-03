@@ -58,7 +58,6 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
     copy(destination, source, size);
 }
 
-extern u8 gCameraWork[];
 
 /* Resource id the reference loads from its literal pool. */
 extern const u16 ParticleStreams_CellOffsets[];
@@ -412,11 +411,11 @@ void BattleFx_RunSwirlingStars(void *object)
     record[1] = 160 << 15;
     record[2] = 0;
     for (frame = 0; frame != 160; frame++) {
-        s32 facing;
+        struct BattleCamera *camera;
 
-        facing = *(s32 *)gCameraWork;
+        camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         SceneTransform_ApplyPosition(record);
         star = (struct EffectStep *)Ram_MapCellBuffer;
         for (i = 0; i != 64; i++, star++) {

@@ -8,7 +8,6 @@
 #include "BATTLE_PARTY.H"
 #include "SYSTEM.H"
 void UiWork_ClearValueNameTablesFar(void);
-extern u8 gCameraWork[];
 extern u8 Data_03001ae8[];
 s32 BattlePres_ShowMessageWhenField38Positive(s16 *);
 s32 BattlePres_RunUnitAction(s16 *);

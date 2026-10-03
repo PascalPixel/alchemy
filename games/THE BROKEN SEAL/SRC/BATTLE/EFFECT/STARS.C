@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -23,11 +24,6 @@ struct BattleObject {
     s32 unknown_48;
     u8 unknown_4c[0xe];
     u8 unknown_5a;
-};
-
-struct CameraWork {
-    u8 unknown_00[0x36];
-    u16 scroll;
 };
 
 struct Vector3 {
@@ -70,7 +66,7 @@ void Object_SetMoveTargetFar(struct BattleObject *object, s32 x, s32 y, s32 z);
 
 /*
  * Three rings leave the acting unit twelve frames apart and fly to the first
- * target in twelve steps, growing as they go, while the camera scrolls for
+ * target in twelve steps, growing as they go, while the view scrolls for
  * the first 48 frames. Each ring is ten points spun about its centre and
  * joined by sixteen dots a side; on arrival it knocks the target back.
  * `base` is read before anything writes it: the sums it feeds are stored and
@@ -89,7 +85,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     DrawRectangle draw[2];
     s32 i;
     u8 *graphics;
-    s32 facing;
+    struct BattleCamera *camera;
     struct BattleObject *caster;
     struct BattleObject *source;
     struct BattleObject *target;
@@ -107,7 +103,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    facing = *(s32 *)(gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
     caster = *GetBattleObjectSlotFar(effect->actor);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
@@ -140,7 +136,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     trails = (struct EffectStep *)gMapCellBuffer;
     for (frame = 0; frame != 60; frame++) {
         if (frame <= 47) {
-            struct CameraWork *camera = *(struct CameraWork **)(gWorkSlot + 12 * 4);
+            struct BattleCamera *view = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
             s32 speed;
 
             if (frame <= 39)
@@ -148,9 +144,9 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
             else
                 speed = 0x300 - frame * 16;
             if (work->effect->side == 0)
-                camera->scroll -= speed;
+                view->yaw -= speed;
             else
-                camera->scroll += speed;
+                view->yaw += speed;
         }
         for (i = 0; i != 3; i++) {
             start = i * 12;
@@ -160,7 +156,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
                 if (size > 10)
                     size = 10;
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
                 SceneTransform_ApplyPosition(step);
                 peak = 0;
                 for (j = 0; j != 10; j++) {
@@ -253,7 +249,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     DrawRectangle draw[2];
     s32 i;
     u8 *graphics;
-    s32 facing;
+    struct BattleCamera *camera;
     struct BattleObject *source;
     struct BattleObject *target;
     struct EffectStep *point;
@@ -269,7 +265,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    facing = *(s32 *)(gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
@@ -305,7 +301,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
             step = &work->particles[i];
             if (frame >= step->variant) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
                 EffectPosition_ApplyBaseAndYOffset((s32 *)step, &pos);
                 pos.x >>= 1;
                 if (pos.x >= -8 && pos.x <= 127) {

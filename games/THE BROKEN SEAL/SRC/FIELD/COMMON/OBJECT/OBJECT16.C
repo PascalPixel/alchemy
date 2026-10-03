@@ -7,12 +7,12 @@
 #include "FIELD_SPRITE.H"
 #include "ANIMSPR.H"
 
-struct BattleEventState {
+struct FieldCueWork {
     u8 padding[0xcc8];
     s16 queued_sound;
 };
 
-extern struct BattleEventState *gEventWork;
+extern struct FieldCueWork *gEventWork;
 void Audio_PlayCue(s32);
 
 void ObjectMotion_SetActionVariant(u32, s32);
@@ -32,6 +32,8 @@ extern const u8 ObjectMotion_VariantScripts[];
 
 void WaitFrames(s32);
 
+/* A burst uses the ordinary object allocation, but the motion-rate words
+   become particle velocities while its callback runs. */
 struct BurstParticle {
     u8 pad_00[8];
     s32 x;
@@ -46,12 +48,16 @@ struct BurstParticle {
     u8 unknown_44[12];
     struct FieldSprite *child;
     u8 pad_54;
-    u8 mode_55;
+    u8 flags;
     u8 pad_56[14];
-    u16 field_64;
+    u16 unknown_64;
     u8 pad_66[6];
     void (*callback_6c)(struct BurstParticle *);
 };
+
+LAYOUT_SIZE_GUARD(BurstParticle_Size, struct BurstParticle, 0x70);
+LAYOUT_OFFSET_GUARD(BurstParticle_Velocity, struct BurstParticle, velocity_x, 0x30);
+LAYOUT_OFFSET_GUARD(BurstParticle_Callback, struct BurstParticle, callback_6c, 0x6c);
 
 extern struct BurstParticle *Object_CreateFar(s32, s32, s32, s32);
 void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value);
@@ -213,7 +219,7 @@ void ObjectMotion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
 
     object = ObjectTable_Get(object_id);
     if (object != NULL) {
-        current_angle = *(s16 *)((u8 *)object + 0x0a);
+        current_angle = ((s16 *)&object->x)[1];
         snapped_angle = current_angle;
         if (current_angle < 0) {
             snapped_angle += 15;
@@ -493,7 +499,7 @@ void BattleFx_UpdateParticleLinearMotion(struct BurstParticle *particle)
 
 }
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
+/* Spawns a rising fragment at the source, with a random outward speed. */
 void BattleFx_SpawnBurstParticle(struct BurstParticle *source, s32 optional)
 {
     struct BurstParticle *object;
@@ -517,13 +523,13 @@ void BattleFx_SpawnBurstParticle(struct BurstParticle *source, s32 optional)
         if (optional != 0)
             ObjectGroup_SetChildValue((struct DispatchObject *)object, optional);
 
-        object->mode_55 = 0;
+        object->flags = 0;
         value = Random16() % 10 + 5;
         object->velocity_z = -0x1999 * value;
         value = Random16() % 15 - 7;
         value <<= 1;
         object->velocity_x = 0x1999 * value;
-        object->field_64 = 0;
+        object->unknown_64 = 0;
         object->callback_6c = BattleFx_UpdateParticleLinearMotion;
         child->flags = 0;
         child->priority = source->child->priority;

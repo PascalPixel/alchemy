@@ -1,6 +1,7 @@
 #include "GLOBAL_CELLS.H"
 /* The title overlay: its scene tables. */
 #include "TYPES.H"
+#include "SAVE_STATE.H"
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
@@ -24,7 +25,6 @@ void Event_SetPairWork1c0(s32 scene, s32 entrance);
 void RuntimeDispatch_NoOpHook(s32 resource);
 void Blend_SetDarkenTarget16(s32 target);
 void Blend_WaitForTransition(void);
-s32 SaveState_ScanRecordFlags(void);
 void Party_ApplyStatePreset(void);
 void Title_ShowSplashScreen(s32 mode);
 void ScrollFar_Entry00(s32 mode);
@@ -68,7 +68,6 @@ static __inline__ void RestoreInterrupts(u32 saved)
         }                                                                   \
         RestoreInterrupts(saved);                                           \
     } while (0)
-
 
 extern u16 gBgScroll[];
 

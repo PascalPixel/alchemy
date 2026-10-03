@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 /* Allocates battle work, plays the opening, and runs rounds to completion.
  * DRAFT (52 of 754 instructions differ), reworked 2026-10-02: same frame.
  * 1. At the top the ROM keeps the scene in r10, its vector in r9 and the
@@ -26,25 +27,6 @@ struct BattleTimerWork {
     s32 field_14;               /* 0x14 */
     s32 field_18;               /* 0x18 */
     s32 field_1c;               /* 0x1c */
-};
-
-struct BattleSceneVector {
-    s32 field_00;
-    s32 field_04;
-    s32 field_08;
-};
-
-struct BattleSceneWork {
-    s32 field_00;               /* 0x00 */
-    s32 field_04;               /* 0x04 */
-    s32 field_08;               /* 0x08 */
-    struct BattleSceneVector sub_0c; /* 0x0c */
-    u8 unk_18[8];               /* 0x18 */
-    s32 field_20;               /* 0x20 */
-    u8 unk_24[16];              /* 0x24 */
-    u16 field_34;               /* 0x34 */
-    u16 field_36;               /* 0x36 */
-    u8 unk_38[20];              /* 0x38 .. 0x4b */
 };
 
 /* One replayed presentation entry; halfword 0 is the acting unit id. */
@@ -174,8 +156,8 @@ void Runtime_ReleaseHeapBlock10(void);
 
 s32 Battle_RunEncounter(s32 arg)
 {
-    struct BattleSceneWork *scene;
-    struct BattleSceneVector *cam;
+    struct BattleCamera *scene;
+    s32 *cam;
     struct BattleEncounterWork *work;
     struct BattleTimerWork *timer;
     u8 *buf;
@@ -194,12 +176,12 @@ s32 Battle_RunEncounter(s32 arg)
     u8 unused[48];
     volatile u32 fill;
 
-    scene = (struct BattleSceneWork *)Runtime_AllocateBlock(12, 76);
+    scene = (struct BattleCamera *)Runtime_AllocateBlock(12, 76);
     work = (struct BattleEncounterWork *)Runtime_AllocateBlock(9, 0x82c);
     buf = (u8 *)Runtime_AllocateBlock(54, 0x7c8);
     timer = (struct BattleTimerWork *)Runtime_AllocateBlock(44, 32);
     Runtime_AllocateBlock(11, 0x280);
-    cam = &scene->sub_0c;
+    cam = scene->pos;
     /* __call_via_r3 -> the IWRAM block clear at 0x03000164. */
     Iwram_ClearWords(buf, 0x7c8);
     Scheduler_ResetTaskTable();
@@ -228,15 +210,15 @@ s32 Battle_RunEncounter(s32 arg)
     else
         UiWork_InitializeFar(0);
 
-    cam->field_04 = 0x400000;
-    cam->field_00 = 0;
-    cam->field_08 = 0;
-    scene->field_04 = 0xb40000;
-    scene->field_08 = 0x400000;
-    scene->field_00 = 0;
-    scene->field_36 = 0x2800;
-    scene->field_34 = 0x5000;
-    scene->field_20 = 0x1000000;
+    cam[1] = 0x400000;
+    cam[0] = 0;
+    cam[2] = 0;
+    ((s32 *)scene)[1] = 0xb40000;
+    ((s32 *)scene)[2] = 0x400000;
+    ((s32 *)scene)[0] = 0;
+    scene->yaw = 0x2800;
+    scene->pitch = 0x5000;
+    scene->distance = 0x1000000;
     object = BattleFormation_BuildEnemyList(work->field_00);
 
     if (GameFlag_IsSet(0x16c) != 0) {

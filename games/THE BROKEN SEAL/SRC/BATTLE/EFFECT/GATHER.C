@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -42,7 +43,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     void *canvas;
     DrawRectangle draw;
     void *sheet;
-    s32 facing;
+    struct BattleCamera *camera;
     struct EffectPosition screen;
     s32 alternate;
     s32 member;
@@ -54,7 +55,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
     work = *cursor++;
     canvas = *cursor;
     sheet = heap_cache[2];
-    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + 12 * 4);
     if (effect->variant == 0)
         alternate = 0;
     else
@@ -105,7 +106,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         if (frame == 64)
             BattleEventRuntime_BeginPhaseFar(133);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame == 40)
             ObjectGroup_UpdateMembers(work->effect->actor, 7, -1, -1, 0);
         if (frame == work->effect->count * 20 + 52)

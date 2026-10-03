@@ -1,3 +1,5 @@
+#include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
 /* Battle presentation: set up the effect display. Windows 0 and 1 cover the
    screen, blending starts from a clean slate, and the display control write
    (mode 1, BG0/BG1/BG2 and objects) is queued for the next frame; then wait
@@ -20,14 +22,8 @@
 
 void WaitFrames(s32 frames);
 
-struct Position {
-    u8 unknown[4];
-    u16 x;
-    u16 y;
-};
 
-extern u32 gBattleFxWork;
-extern struct Position gBgScroll;
+extern struct BattleEffectWork *gBattleFxWork;
 
 extern u8 gMapCellBuffer[];
 
@@ -73,31 +69,31 @@ void BattlePres_ConfigureEffectDisplay(void)
 
 void BattleFx_AdvanceScrollOnInterval(void)
 {
-    u8 *base = (u8 *)gBattleFxWork;
-    u32 *counter = (u32 *)(base + 0x7790);
+    struct BattleEffectWork *work = gBattleFxWork;
+    u32 *counter = (u32 *)&work->scroll_timer;
 
     (*counter)++;
-    if (*counter == *(u32 *)(base + 0x7794)) {
-        gBgScroll.x += *(s32 *)(base + 0x7798);
-        gBgScroll.y += *(s32 *)(base + 0x779C);
+    if (*counter == (u32)work->scroll_interval) {
+        gBgScroll[1].x += work->scroll_step_x;
+        gBgScroll[1].y += work->scroll_step_y;
         *counter = 0;
     }
 }
 
 void Camera_AdvanceBg2Reference(void)
 {
-    s32 cnt;
-    void *state;
+    s32 count;
+    struct BattleEffectWork *work;
 
-    state = *(void **)((u32)&gBattleFxWork);
-    cnt = FIELD_AT_OFFSET(state, s32 *, 0x7790) + 1;
-    FIELD_AT_OFFSET(state, s32 *, 0x7790) = cnt;
-    if (cnt == FIELD_AT_OFFSET(state, s32 *, 0x7794)) {
-        FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = (s32)FIELD_AT_OFFSET(state, s32 *, 0x77D0);
-        FIELD_AT_OFFSET((void *)0x04000028, s32 *, 4) = (s32)FIELD_AT_OFFSET(state, s32 *, 0x77D4);
-        FIELD_AT_OFFSET(state, s32 *, 0x77D0) = (s32)(FIELD_AT_OFFSET(state, s32 *, 0x77D0) + FIELD_AT_OFFSET(state, s32 *, 0x7798));
-        FIELD_AT_OFFSET(state, s32 *, 0x77D4) = (s32)(FIELD_AT_OFFSET(state, s32 *, 0x77D4) + FIELD_AT_OFFSET(state, s32 *, 0x779C));
-        FIELD_AT_OFFSET(state, s32 *, 0x7790) = 0;
+    work = gBattleFxWork;
+    count = work->scroll_timer + 1;
+    work->scroll_timer = count;
+    if (count == work->scroll_interval) {
+        REG_BG2X = work->bg2x;
+        REG_BG2Y = work->bg2y;
+        work->bg2x += work->scroll_step_x;
+        work->bg2y += work->scroll_step_y;
+        work->scroll_timer = 0;
     }
 }
 
@@ -113,12 +109,7 @@ void BattleFx_ArmWin0HBlankDma(void)
 
 /* The heap slot table; BattleEffect_LoadWork leaves its rectangle blitters
    in slots 46 and 47. */
-struct HeapSlots {
-    void *blocks[46];
-    DrawRectangle blitters[2];
-};
 
-extern struct HeapSlots gWorkSlot;
 extern u16 BattleFx_PuffCells[];
 extern u8 BattleFx_PuffSizes[];
 /* For each variant: how many shards fall and how many frames it lasts. */
@@ -193,8 +184,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
         BattleEffect_LoadWork(46, 7, 7, 6, 2);
         BattleEffect_LoadWork(47, 7, 7, 6, 3);
     }
-    draw[0] = gWorkSlot.blitters[0];
-    draw[1] = gWorkSlot.blitters[1];
+    draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[46];
+    draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[47];
 
     if (work->effect->side == 0) {
         line = (u16 *)gMapCellBuffer;

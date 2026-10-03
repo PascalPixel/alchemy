@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -61,7 +62,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
     s32 frame;
     s32 column;
     DrawRectangle draw;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 x_offset;
     struct RockWallHeights heights;
     s32 point[3];
@@ -75,7 +76,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    facing = *(s32 *)((u8 *)gWorkSlot + 12 * 4);
+    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + 12 * 4);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     REG_BG2PA = 0x100;
@@ -111,7 +112,7 @@ void BattleFx_RunRockWall(struct BattleEffectArgument *effect)
 
     for (frame = 0; frame != RockWall_Timings[work->effect->variant][TIMING_FRAMES]; frame++) {
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame == RockWall_Timings[work->effect->variant][TIMING_FRAMES] - 16)
             BattleEventRuntime_BeginPhaseFar(133);
         for (column = 0; column != 3; column++) {

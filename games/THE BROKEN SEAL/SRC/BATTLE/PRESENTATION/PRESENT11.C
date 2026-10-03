@@ -15,7 +15,6 @@ static __inline__ s32 DivQ16(s32 divisor, s32 value)
     return Iwram_RatioMulQ14(divisor, value);
 }
 
-extern u8 gCameraWork[];
 
 void Camera_StoreSceneParameters(s32, u32, s32);
 void Render_ResetTransformState(void);
@@ -96,9 +95,8 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     s32 span = 0x01fe0000;
     /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
     s32 mode;
-    struct BattleCamera *scene = *(struct BattleCamera **)gCameraWork;
+    struct BattleCamera *scene = gCameraWork;
     s32 *pos = scene->pos;
-    s32 *hud = (s32 *)&gProjection;
     s32 scale = (mode << 16) / 100;
     s32 render_bounds[3];
     s32 measured_bounds[3];
@@ -128,8 +126,8 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     render_bounds[1] = 0;
     render_bounds[2] = scene->distance;
     Iwram_TransformVector(render_bounds, (s32 *)scene);
-    hud[3] = 120;
-    hud[4] = 120;
+    gProjection.center_x = 120;
+    gProjection.center_y = 120;
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)scene, (s32)pos);
     Render_ProjectPoint(source_bounds, measured_bounds);

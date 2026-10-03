@@ -14,7 +14,6 @@
 #include "RAM_BUFFER.H"
 
 extern u8 gBattleFxWork[];
-extern u8 gCameraWork[];
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -32,7 +31,7 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 BattleFx_EndCanvasLayer(void);
+void BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunMemberBurst(struct BattleEffectArgument *effect, s32 mode);
 
@@ -115,7 +114,7 @@ void BattleFx_RunLeapingStrike(struct BattleEffectArgument *effect)
         step = 0xf0000;
 
     for (frame = 0; frame != 88; frame++) {
-        struct BattleCamera *camera = *(struct BattleCamera **)gCameraWork;
+        struct BattleCamera *camera = gCameraWork;
 
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
@@ -302,7 +301,7 @@ void BattleFx_RunClosingSkulls(struct BattleEffectArgument *effect)
     for (frame = 0; frame != work->effect->count * 32 + 96; frame++) {
         s32 *row;
 
-        camera = *(struct BattleCamera **)gCameraWork;
+        camera = gCameraWork;
         if (frame == 96)
             BattleEventRuntime_BeginPhaseFar(0);
         row = work->bg2_x;
@@ -377,7 +376,7 @@ void BattleFx_RunMemberOrbit(void *object)
 {
     void **heap_cache;
     void **cursor;
-    void *work;
+    struct BattleEffectWork *work;
     void *canvas;
     void *palette;
     s32 status;
@@ -395,7 +394,7 @@ void BattleFx_RunMemberOrbit(void *object)
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    FIELD_AT_OFFSET(work, void **, 0x7828) = object;
+    work->effect = object;
     BattleFx_BeginCanvasLayer(0);
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
     palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
@@ -408,17 +407,17 @@ void BattleFx_RunMemberOrbit(void *object)
     rectangle_slot = rectangle;
     rectangle_slot[1] = rect2;
     Scheduler_AddOrUpdateCallback((void *)BattleFx_ArmBg2AffineHBlankDma, 0x480);
-    FIELD_AT_OFFSET(work, s32 *, 0x7780) = 2;
-    FIELD_AT_OFFSET(work, s32 *, 0x7784) = 50;
+    work->transfer_mode = 2;
+    work->transfer_value = 50;
     Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
-    if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 1) {
+    if (work->effect->side == 1) {
         FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
     } else {
         y_offset = 0;
     }
     for (frame = 0;
-            frame != (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)
+            frame != (work->effect->count
                 * 16) + 48;
             frame++) {
         s32 facing;
@@ -426,9 +425,9 @@ void BattleFx_RunMemberOrbit(void *object)
         s32 i;
         s32 id_ofs;
 
-        facing = *(s32 *)gCameraWork;
-        scanline = (s32 *)((u8 *)work + 0x6980);
-        if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 0) {
+        facing = (s32)gCameraWork;
+        scanline = work->bg2_x;
+        if (work->effect->side == 0) {
             s32 angle;
             s32 ceiling;
 
@@ -448,23 +447,21 @@ void BattleFx_RunMemberOrbit(void *object)
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         member = 0;
-        if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20) != 0) {
+        if (work->effect->count != 0) {
             record_slot = record;
             id_ofs = 36;
             while (member
-                != FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20)) {
+                != work->effect->count) {
                 void *member_object;
 
                 member_object = *GetBattleObjectSlotFar(
-                    FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s16 *,
-                        id_ofs));
+                    work->effect->actors[member]);
                 if (frame > member * 16 && frame < (member * 16) + 60) {
                     s32 spin;
 
                     if (frame == (member * 16) + 32) {
                         ObjectGroup_UpdateMembers(
-                            FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
-                                s16 *, id_ofs),
+                            work->effect->actors[member],
                             0, 5, -1, 0);
                     }
                     record_slot[0] = FIELD_AT_OFFSET(member_object, s32 *, 8);
@@ -491,7 +488,7 @@ void BattleFx_RunMemberOrbit(void *object)
                 member++;
             }
         }
-        FIELD_AT_OFFSET(work, s32 *, 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);

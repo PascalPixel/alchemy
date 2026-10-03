@@ -1,16 +1,4 @@
-#include "TYPES.H"
-extern u8 Flash_Handler3[];
-
-struct AudioTrackSlotWork {
-    u8 unknown0000[0x3404];
-    s32 bucket_by_slot[0x400];
-    u8 unknown4404[0x34];
-    u32 input_cursor;
-    s32 unknown443c;
-    u32 input_limit;
-};
-
-extern struct AudioTrackSlotWork *Data_02004c00;
+#include "TRACKBUF.H"
 
 void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
 {
@@ -30,7 +18,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
             u8 value;
 
             AudioTrack_RemoveSlotNode(removal & mask);
-            state = Data_02004c00;
+            state = Flash_Handler3;
             read_offset = state->input_cursor;
             value = input[read_offset];
             next_offset = read_offset + 1;
@@ -50,7 +38,7 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
     current++;
     if (current < limit) {
         u32 mask = 0x3ff;
-        struct AudioTrackSlotWork **root = &Data_02004c00;
+        struct AudioTrackSlotWork **root = &Flash_Handler3;
         s32 empty = -1;
 
         do {

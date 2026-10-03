@@ -84,15 +84,15 @@ void Djinn_ResolvePendingEvent(s32 capture)
 
 void BattleFx_UpdateAllSlots(void)
 {
-    s32 slot;
+    struct EffectSlot *slot;
     s32 remaining_slots;
 
-    slot = (s32)gEffectWork + 0x58;
+    slot = gEffectWork->slots;
     remaining_slots = 0x17;
     do {
         remaining_slots -= 1;
-        EffectSlot_Update((struct EffectSlot *)slot);
-        slot += 0x48;
+        EffectSlot_Update(slot);
+        slot++;
     } while (remaining_slots >= 0);
 }
 
@@ -100,9 +100,9 @@ void BattleFx_InitializeSlots(void)
 {
     void *work;
     volatile u32 zero;
-    work = Runtime_AllocateHeapBlock(56, 0x720);
+    work = Runtime_AllocateHeapBlock(56, sizeof(struct BattleFxScene));
     zero = 0;
-    Dma_Set(&zero, work, 0x850001c8, (volatile u32 *)0x040000d4);
+    Dma_Set(&zero, work, 0x85000000 | (sizeof(struct BattleFxScene) / 4), (volatile u32 *)0x040000d4);
     Scheduler_AddOrUpdateCallback((s32)BattleFx_UpdateAllSlots, 3200);
 }
 
@@ -122,9 +122,9 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
     WaitFrames(1);
 }
 
-void BattleFx_AdvanceSpinAngle(void *object)
+void BattleFx_AdvanceSpinAngle(struct MotionObject *object)
 {
-    *(u16 *)((u8 *)object + 6) += 0x2000;
+    object->angle += 0x2000;
 }
 
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *actor)

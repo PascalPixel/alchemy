@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -12,7 +13,6 @@
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
-extern s32 gCameraWork[];
 extern u8 gBattleFxWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -126,11 +126,11 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != ParticleField_Counts[variant][FIELD_FRAMES]; frame++) {
-        s32 facing;
+        struct BattleCamera *camera;
 
-        facing = gCameraWork[0];
+        camera = gCameraWork;
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         if (frame == 2)
             Audio_PlayCue(144);
         if (frame == ParticleField_Counts[variant][FIELD_FRAMES] - 48)

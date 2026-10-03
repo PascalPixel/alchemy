@@ -42,7 +42,6 @@ void ObjectGroup_TickMemberTimers(void);
 void BattlePres_SetupTransitionSceneFar(s32 x, s32 depth, s32 y, s32 mode);
 void AudioCommand_PlayFar(s32 cue);
 
-extern struct BattleCamera *gCameraWork;
 extern u8 PuffArc_CellWidths[];
 extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];

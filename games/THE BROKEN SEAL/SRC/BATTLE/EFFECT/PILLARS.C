@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
@@ -14,7 +15,6 @@
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
 extern void *gWorkSlot[];
-extern s32 gCameraWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -38,12 +38,6 @@ extern s8 FirePillars_Depths[][4];
 /* The frame on which each pillar rises. */
 extern u8 FirePillars_StartFrames[];
 
-/* The camera work as this effect uses it. */
-struct PillarCamera {
-    u8 unknown_00[0x36];
-    s16 yaw;
-};
-
 /* Battle effect: up to four pillars of fire rise in a row before the
    affected units, each from its own frame, throwing sparks that bounce on
    the ground; in variant 2 the camera swings round meanwhile. */
@@ -59,7 +53,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
     struct EffectPosition screen;
     DrawRectangle draw[2];
     struct MotionObject *object;
-    struct PillarCamera *camera;
+    struct BattleCamera *camera;
     s32 i;
 
     heap_cache = &gWorkSlot[39];
@@ -106,7 +100,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != 96; frame++) {
-        camera = (struct PillarCamera *)gCameraWork[0];
+        camera = gCameraWork;
         if (work->effect->variant == 2 && frame < 64) {
             if (work->effect->side == 0)
                 camera->yaw += 192;
@@ -116,7 +110,7 @@ void BattleFx_RunFirePillars(struct BattleEffectArgument *effect)
         if (frame == 16)
             BattleEventRuntime_BeginPhaseFar(134);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera + 12);
+        Graphics_PrepareTransferInIwramWork(camera, camera->pos);
 
         if (frame < 64) {
             for (pillar = 0; pillar != FirePillars_Counts[work->effect->variant]; pillar++) {

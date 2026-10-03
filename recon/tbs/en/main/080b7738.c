@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 /* 2026-10-02 bounded register-lifetime experiment.
  * Baseline immutable score: 1175 (49 register-only, 2 operand,
  * 8 reordered, 2 inserted, 2 deleted); the older all-register summary
@@ -94,12 +95,6 @@ struct ActorSlot {
     struct IconEffect *icon_effect;
 };
 
-struct CameraWork {
-    u8 unknown_00[0x36];
-    s16 angle;
-};
-
-extern struct CameraWork *gCameraWork;
 
 s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 struct ActorSlot *GetBattleObjectSlot(s32 object_id);
@@ -151,7 +146,7 @@ again:
         if (i <= 13 && ids[i] != 0xff)
             goto again;
     }
-    if (gCameraWork->angle >= 0) {
+    if ((s16)gCameraWork->yaw >= 0) {
         priority[0] = 1;
         priority[1] = 2;
     } else {

@@ -16,7 +16,6 @@
 
 extern u8 gBattleFxWork[];
 extern DrawRectangle gWorkSlot[];
-extern struct BattleCamera *gCameraWork;
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);

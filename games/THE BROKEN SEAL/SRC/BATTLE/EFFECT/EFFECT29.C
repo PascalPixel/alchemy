@@ -1,3 +1,5 @@
+#include "ANIMSPR.H"
+#include "FIELD_EVENT.H"
 #include "GLOBAL_CELLS.H"
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
@@ -32,40 +34,15 @@ struct Work_080936a0 {
 s32 WaitFrames(s32 frames);
 s16 *BattleAction_FindDescriptor(s16 action);
 
-struct BattleEffectVisual {
-    u8 unknown_00[9];
-    u8 flags;
-    u8 unknown_0a[28];
-    u8 value_26;
-};
 
-struct BattleEffectResource {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unknown_14[60];
-    struct BattleEffectVisual *visual;
-};
 
-struct BattleEffectLinkedObject {
-    u8 unknown_00[80];
-    struct BattleEffectVisual *visual;
-    u8 value_54;
-    u8 value_55;
-    u8 unknown_56[14];
-    u16 counter;
-    u16 resource_id;
-    struct BattleEffectResource *resource;
-    void (*callback)(void);
-};
 
-struct BattleEffectLinkedObject *Object_CreateFar(
+struct FieldActor *Object_CreateFar(
     s32 kind,
     s32 x,
     s32 y,
     s32 z);
-void Object_SetMode(struct BattleEffectLinkedObject *object, s32 mode);
+void Object_SetMode(struct FieldActor *object, s32 mode);
 void Audio_PlayCue(s32 cue);
 void Battle_WaitMode0(s32 state);
 extern const u8 BattleFx_LinkedObjectScript[];
@@ -179,7 +156,7 @@ void BattleFx_SpawnLinked(
     s32 flags,
     s32 state)
 {
-    struct BattleEffectResource *resource;
+    struct FieldActor *resource;
 
     if ((flags & 0xff) == 6) {
         Audio_PlayCue(110);
@@ -187,39 +164,39 @@ void BattleFx_SpawnLinked(
 
     resource = ObjectTable_Get(resource_id);
     if (resource != 0) {
-        struct BattleEffectLinkedObject *object =
-            Object_CreateFar(21, resource->x, resource->y, resource->z);
+        struct FieldActor *object =
+            Object_CreateFar(21, resource->x.fixed, resource->y.fixed, resource->z.fixed);
 
         if (object != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)BattleFx_LinkedObjectScript);
             Object_SetMode(object, flags & 15);
-            object->value_55 = 0;
-            object->counter = 0;
-            object->resource_id = resource_id;
-            object->callback = BattleFx_CopyLinkedObjectPosition;
-            object->visual->value_26 = 0;
-            object->resource = resource;
+            object->motion_flags = 0;
+            object->unknown_64 = 0;
+            object->unknown_66 = resource_id;
+            object->update = (void (*)(union FieldObject *))BattleFx_CopyLinkedObjectPosition;
+            object->sprite->flags = 0;
+            *(struct FieldActor **)&object->unknown_68[0] = resource;
 
             if ((flags & 0x100) != 0) {
                 s32 mask = 13;
-                u8 visual_flags = object->visual->flags;
+                u8 visual_flags = ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9];
 
                 mask = -mask;
                 mask &= visual_flags;
                 mask |= 4;
-                object->visual->flags = mask;
+                ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9] = mask;
             } else {
                 s32 copied_flags = 12;
-                u8 source_flags = resource->visual->flags;
+                u8 source_flags = ((u8 *)&((struct AnimationObject *)resource->sprite)->part[0])[9];
                 u8 flags;
                 s32 clear_mask = 13;
 
                 copied_flags &= source_flags;
-                flags = object->visual->flags;
+                flags = ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9];
                 clear_mask = -clear_mask;
                 clear_mask &= flags;
                 clear_mask |= copied_flags;
-                object->visual->flags = clear_mask;
+                ((u8 *)&((struct AnimationObject *)object->sprite)->part[0])[9] = clear_mask;
             }
         }
         Battle_WaitMode0(state);

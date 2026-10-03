@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SAVE_STATE.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIELD_EVENT.H"
 #include "LOBBY.H"
@@ -46,7 +47,6 @@ extern u8 MsgLobbySavingMonsterBattle[];
 extern u8 MsgLobbyMonsterBattleResults[];
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 s32 UiWork_IsComplete(void);
-void SaveState_ProcessSelectedSlot(void);
 
 extern u8 MsgLobbyNotBadNextMonster[];
 extern u8 MsgLobbyNoteCantUse[];

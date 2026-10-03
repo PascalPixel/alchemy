@@ -1,5 +1,6 @@
 /* The shrine's question after the party falls: restart, or the file screen. */
 #include "TYPES.H"
+#include "SAVE_STATE.H"
 #include "EDITION.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SERVICE.H"
@@ -20,7 +21,6 @@ extern const s32 ShindenHeya_CursorBob[16];
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWork_Finalize(s32 window, s32 mode);
 void UiText_DrawResource(s32 message, s32 window, s32 x, s32 y);
-s32 SaveState_CountRecordsExcludingFlagged(s32 flag);
 void UiTextResource_Initialize(struct TextCursor *cursor, s32 *slot);
 void UiTextResource_SetPosition(struct TextCursor *cursor, s32 x, s32 y);
 void UiTextResource_Release(s32 slot);

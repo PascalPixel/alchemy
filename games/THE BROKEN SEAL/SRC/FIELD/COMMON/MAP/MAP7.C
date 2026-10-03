@@ -179,7 +179,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
                 oy < top || oy > bottom) {
                 object->animation_kind = 0;
             } else {
-                *(u8 *)(object + 84) = 1;
+                object->animation_kind = 1;
             }
         }
         id++;

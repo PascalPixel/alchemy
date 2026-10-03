@@ -88,10 +88,11 @@ s32 Shop_CountUnits(void)
 {
     struct ShopRuntime *shop = gMenuWork;
     s32 active = 0;
+    s32 variant = shop->party_action;
     s32 index;
 
     for (index = 0; index < shop->party_member_count; index++) {
-        if (Shop_CanServe(shop->party_member_ids[index], shop->party_action))
+        if (Shop_CanServe(shop->party_member_ids[index], variant))
             active++;
     }
     return active;

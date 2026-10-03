@@ -7,12 +7,14 @@
 /* PsynergyMenu_CollectActions per games/THE BROKEN SEAL/INCLUDE/PSYNERGY_MENU.H. */
 s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode)
 {
+    /* FAKEMATCH: retain the existing scalar action-slot cursor in mode 1; an indexed slot loop keeps the 274-byte extent but changes native operand order. */
     s32 n;
     u16 *out;
     s32 outerCount;
     s32 count;
     s32 i;
     s32 j;
+    s32 off;
 
     outerCount = (mode != 2) ? 4 : 3;
     for (n = 62; n >= 0; n -= 2) {
@@ -23,10 +25,10 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode
     count = 0;
 
     if (mode == 1) {
-        for (i = 0, out = actions; i <= 31; i++) {
-            if (owner->action_slots[i].encoded_action != 0) {
-                if (BattleAction_Get(owner->action_slots[i].encoded_action & ACTION_ID_MASK)->type_0c != 0) {
-                    *out = owner->action_slots[i].encoded_action;
+        for (i = 0, off = (u8 *)owner->action_slots - (u8 *)owner, out = actions; i <= 31; i++, off += 4) {
+            if (*(u16 *)(off + (s32)owner) != 0) {
+                if (BattleAction_Get(*(u16 *)(off + (s32)owner) & ACTION_ID_MASK)->type_0c != 0) {
+                    *out = *(u16 *)((s32)owner + off);
                     out++;
                     count++;
                 }

@@ -17,6 +17,13 @@ void Battle_InitializeRenderObject(void);
 
 extern u8 gMapCellBuffer[];
 
+struct StepOwner {
+    u8 unknown_000[0x38];
+    s16 hp;                         /* 0x038 */
+    u8 unknown_03a[0x131 - 0x3a];
+    u8 unknown_131;                 /* 0x131 */
+};
+
 enum StepTileEvent {
     STEP_EVENT_FIRST = 1,
     STEP_EVENT_LAST = 239,
@@ -199,6 +206,10 @@ loop:
  */
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
 {
+    /* FAKEMATCH: retain the existing StepOwner read/byte-store prefix. The
+       full BattleUnit view moved the party-byte load before its index shift.
+       Signed lvalue/array views reduced frame 44 to 40; a second used base
+       grew it to 48. Scalar s16 interpretations keep the actual frame. */
     struct FieldStepWork *work = (struct FieldStepWork *)Data_03001ebc;
     /* FAKEMATCH: the map work cell is reached as gEventWork[-19]; the ROM loads
        0x03001ebc once and subtracts 76 to reach 0x03001e70. */
@@ -207,7 +218,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     struct ObjectRuntime *actor = work->actors[selected];
     s16 hp[8];
     struct MapCell *tile;
-    struct BattleUnit *owner;
+    struct StepOwner *owner;
     u32 count;
     s32 fell;
     u32 i;
@@ -273,11 +284,11 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
             Event_ClearInvalidPackedValues();
             fell = BattleParty_ApplyStatusDamage();
         }
-        if ((*(s16 *)&gGameState.unknown_22e) == 0 && event == STEP_EVENT_HAZARD) {
+        if (((s16)gGameState.unknown_22e) == 0 && event == STEP_EVENT_HAZARD) {
             if (work->previous_tile->collision_code == STEP_EVENT_HAZARD)
                 gGameState.unknown_232 += actor->speed_limit / 0x10000;
             else
-                gGameState.unknown_232 = (*(s16 *)&gGameState.unknown_22c) / 2;
+                gGameState.unknown_232 = ((s16)gGameState.unknown_22c) / 2;
         }
         if (gGameState.unknown_244 != 0 && gGameState.unknown_23e != 2) {
             gGameState.unknown_244 -= actor->speed_limit;
@@ -289,15 +300,15 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         }
     }
 
-    if ((*(s16 *)&gGameState.unknown_22e) == 1) {
+    if (((s16)gGameState.unknown_22e) == 1) {
         gGameState.unknown_232++;
-        if (gGameState.unknown_232 == (*(s16 *)&gGameState.unknown_22c) / 2)
+        if (gGameState.unknown_232 == ((s16)gGameState.unknown_22c) / 2)
             BattleFx_ConfigureLinkedObject(selected, 0x101);
-        if (gGameState.unknown_232 == (*(s16 *)&gGameState.unknown_22c))
+        if (gGameState.unknown_232 == ((s16)gGameState.unknown_22c))
             BattleFx_ConfigureLinkedObject(selected, 0x100);
     }
-    if (gGameState.unknown_232 >= (*(s16 *)&gGameState.unknown_22c)) {
-        n = (*(s16 *)&gGameState.unknown_230);
+    if (gGameState.unknown_232 >= ((s16)gGameState.unknown_22c)) {
+        n = ((s16)gGameState.unknown_230);
         gGameState.unknown_232 = 0;
         BattleParty_ApplyHealthDelta(-(n & 255), n & 0x100);
         fell++;
@@ -309,13 +320,13 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         actor->velocity_y = 0x40000;
         BattleFx_ConfigureLinkedObject(selected, 0x102);
         for (i = 0; i < count; i++) {
-            owner = Owner_GetStateFar(gGameState.active_owners[i]);
+            owner = (struct StepOwner *)Owner_GetStateFar(gGameState.active_owners[i]);
             if (owner->hp > 0) {
                 work->standing_count++;
             } else if (hp[i] != 0) {
                 work->fallen[work->fallen_count++] = gGameState.active_owners[i];
                 work->unknown_182 = 0xffff;
-                owner->poison = 0;
+                owner->unknown_131 = 0;
             }
         }
     }

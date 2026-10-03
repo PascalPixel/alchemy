@@ -12,6 +12,7 @@ extern void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
 s32 Party_CheckMemberValueTotal(s32 id)
 {
+    /* FAKEMATCH: retain the existing integer-address party cursor; direct active-owner indexing changes this module from 612 to 604 native bytes. */
     s32 count;
     s32 value;
     s32 offset = 0;
@@ -23,7 +24,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
     if (sum < count) {
         offset = 252;
         offset <<= 1;
-        p = gGameState.active_owners;
+        p = (u8 *)&gGameState + offset;
         cnt = count;
         do {
             value = Inventory_CountItemFar(*p, id);

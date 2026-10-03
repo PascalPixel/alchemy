@@ -190,6 +190,7 @@ s32 PartyInventory_FindOwner(s32 item_id)
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
+    /* FAKEMATCH: the existing scalar inventory cursor and volatile reread preserve the native register and load order; ordinary indexed slots change this module from 1856 to 1864 bytes. */
     struct BattleUnit *inv = Owner_GetState(owner);
     unsigned int mask;
     unsigned int item_id = inv->inventory[slot];
@@ -206,15 +207,17 @@ s32 Inventory_Equip(s32 owner, s32 slot)
     item = Item_GetDirect(item_id);
     type = item->type;
     if (type != 6) {
-        for (other = 0; other <= 14; other++) {
+        for (other = 0, item_id = (u8 *)inv->inventory - (u8 *)inv;
+             other <= 14;
+             item_id += 2, other++) {
             unsigned int m = mask;
-            unsigned int flags = inv->inventory[other];
+            unsigned int flags = *(u16 *)(item_id + (unsigned int)inv);
 
             flags &= m;
             if (flags == 0)
                 continue;
             if (Item_GetDirect(
-                    inv->inventory[other])->type
+                    *(volatile u16 *)(item_id + (unsigned int)inv))->type
                 == type)
                 break;
         }
@@ -237,16 +240,14 @@ s32 Inventory_FindEquipped(s32 owner, s32 type)
 {
     struct BattleUnit *base = Owner_GetState(owner);
     s32 index;
-    s32 offset;
     struct ItemDefinition *item;
 
-    for (index = 0, offset = 216; index <= 14; index++) {
+    for (index = 0; index <= 14; index++) {
         if (base->inventory[index] & 0x200) {
             item = Item_GetDirect(
                 base->inventory[index]);
             if (item->type == type) break;
         }
-        offset += 2;
     }
     if (index == 15) index = -1;
     return index;
@@ -442,7 +443,6 @@ s32 Inventory_CountItem(s32 owner, s32 item_id)
     s32 count = 0;
     s32 target = item_id & 0x1ff;
     s32 index = 0;
-    s32 offset = 216;
 
     do {
         if ((base->inventory[index] & 0x1FF) == target) {
@@ -455,7 +455,6 @@ s32 Inventory_CountItem(s32 owner, s32 item_id)
             count++;
         }
         index++;
-        offset += 2;
     } while (index <= 14);
     return count;
 }

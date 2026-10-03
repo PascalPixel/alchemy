@@ -26,7 +26,6 @@ void EffectSlot_SetPositionFar(struct EffectSlot *, s32, s32);
 s32 BattleFx_HasReachedTargetFar(struct EffectSlot *);
 void BattleFx_ClearOwnedSlotFar(struct EffectSlot *);
 
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Vector_AddPolarOffset(s32, s32, s32 *);
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)

@@ -51,7 +51,8 @@ struct PsynergyMenuState {
     u8 owner_ids[2];                /* 0x21a */
     struct RenderOutput *cursor_icon; /* 0x21c */
     u16 flags;                     /* 0x220 */
-    u8 unknown_222[0x1a];
+    u16 skip_slide;                /* 0x222, skip the next cursor slide */
+    u8 unknown_224[0x18];
     s16 slot_y[4];                 /* 0x23c */
     u8 unknown_244[0x1c];
     s8 selected_index_by_owner[8]; /* 0x260 */
@@ -129,6 +130,7 @@ LAYOUT_OFFSET_GUARD(
     selected_index_by_owner,
     0x260);
 
+LAYOUT_OFFSET_GUARD(PsynergyMenuState_SkipSlide, struct PsynergyMenuState, skip_slide, 0x222);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_TabObjects, struct PsynergyMenuState, tab_objects, 0x114);
 LAYOUT_OFFSET_GUARD(PsynergyMenuState_OwnerScale, struct PsynergyMenuState, owner_scale, 0x154);
 
@@ -145,7 +147,9 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_CreateEntryGrid(void);
 void PsynergyMenu_CloseWindows(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode);
+/* The definition returns s32. These legacy menu callers consume the low
+ * byte; retaining that transport also preserves their native move form. */
+u8 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 owner_index);
 s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner);

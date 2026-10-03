@@ -66,6 +66,15 @@ struct SpriteAttr2 {
     u16 size : 2;
 };
 
+struct ShopCursorSprite3 {
+    struct RenderOutput *next;
+    u8 unknown_04[2];
+    u16 x;
+    u16 y;
+    u8 unknown_0a[0x0a];
+    struct SpriteAttr2 oam;
+};
+
 extern struct ShopRuntime *gMenuWork;
 
 /* shop/place_cursor.c */
@@ -378,22 +387,25 @@ void Shop_SetCursor(
    the sprite's OAM coordinates all take the new values. */
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
 {
+    /* Retain the existing unsigned coordinate/OAM prefix at this wire
+       boundary: direct canonical members measured 62 bytes against 74
+       and elided the chained halfword masks. */
     {
-        struct RenderOutput *sprite = cursor->anchor;
+        struct ShopCursorSprite3 *sprite = (struct ShopCursorSprite3 *)cursor->anchor;
 
         cursor->target_x = x;
         cursor->kind = 1;
         cursor->active = 0;
         cursor->x = x;
-        ((struct SpriteAttr2 *)&sprite->packed)->x = (u16)(sprite->x = x);
+        sprite->oam.x = sprite->x = x;
     }
     {
-        struct RenderOutput *sprite;
+        struct ShopCursorSprite3 *sprite;
 
         cursor->target_y = y;
         cursor->y = y;
-        sprite = cursor->anchor;
-        ((struct SpriteAttr2 *)&sprite->packed)->y = (u16)(sprite->y = y);
+        sprite = (struct ShopCursorSprite3 *)cursor->anchor;
+        sprite->oam.y = sprite->y = y;
     }
 }
 

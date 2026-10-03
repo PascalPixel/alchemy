@@ -11,14 +11,19 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resource_base)
 {
     struct ResourceMenuWork *work;
     s32 i;
+    u8 *entries;
 
     work = gMenuSelectWork;
     work->width = width + 2;
     work->resource_base = resource_base;
     work->row = y;
+    /* FAKEMATCH: the original byte span keeps each sprite base at +0.
+       Struct coordinate stores hoist +12 into the loop base and add four
+       bytes in all six editions (2026-10-03 attempt aadcc37dd). */
+    entries = (u8 *)work;
     for (i = 0; i < work->count; i++) {
-        work->entries[i].y = (u32)y << 3;
-        work->entries[i].x = (u32)x << 3;
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 14) = (u32)y << 3;
+        *(u16 *)(entries + i * sizeof(struct ResourceMenuEntry) + 12) = (u32)x << 3;
         x = (s32)((u32)x + 3);
     }
     work->window = UiWindow_Create(x, y, work->width, 3, 2);

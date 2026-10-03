@@ -97,7 +97,7 @@ s32 Func_02000a54(void)
         gPartyState.saved_entrance = 22;
 #endif
         Engine_EventBegin();
-        Engine_EventPrepareSpeakers(0);
+        Engine_EventResolvePendingActions(0);
         Func_02000b2c();
         Func_02000d30();
         Engine_EventEnd();

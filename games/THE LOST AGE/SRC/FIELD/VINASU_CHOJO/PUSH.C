@@ -12,7 +12,7 @@ void SceneState_RunActor13AtColumn42Setup(void)
 
     obj = Engine_ActorGet(10);
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     if (obj->x >> 20 == 42) {
         Engine_EventWait(30);
         Engine_AudioPlayCue(188);
@@ -35,7 +35,7 @@ extern u8 MsgVinasuChojoTrueHeart[];
 void VinasuChojo_ReadRelief(void)
 {
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
     Engine_MessageShowCentered((s32)MsgVinasuChojoReliefWords, 1);
     Engine_EventEnd();
@@ -45,7 +45,7 @@ void VinasuChojo_ReadRelief(void)
 void VinasuChojo_ReadTrueHeart(void)
 {
     Engine_EventBegin();
-    Engine_EventPrepareSpeakers(0);
+    Engine_EventResolvePendingActions(0);
     Engine_ActorSetAnimation(Engine_PartyGetLeaderActor(), 1);
     Engine_MessageShowCentered((s32)MsgVinasuChojoTrueHeart, 1);
     Engine_EventEnd();

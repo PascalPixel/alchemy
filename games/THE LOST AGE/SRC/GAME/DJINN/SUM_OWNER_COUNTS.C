@@ -5,17 +5,17 @@
    when the index is -1. */
 s32 Owner_SumDjinnCounts(s32 owner, s32 index)
 {
-    struct OwnerValueState *state;
+    struct OwnerDjinnState *state;
     s32 result;
 
     state = Owner_GetState(owner);
     if (index == -1) {
-        result = state->values[0];
-        result += state->values[1];
-        result += state->values[2];
-        result += state->values[3];
+        result = state->counts.banks.owned[0];
+        result += state->counts.banks.owned[1];
+        result += state->counts.banks.owned[2];
+        result += state->counts.banks.owned[3];
     } else {
-        result = state->values[index];
+        result = state->counts.banks.owned[index];
     }
     return result;
 }

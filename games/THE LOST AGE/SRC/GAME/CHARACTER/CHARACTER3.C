@@ -10,7 +10,7 @@ s32 Owner_GetResistanceValue(s32 owner, s32 index)
     s32 result = 0;
 
     if (index <= 3) {
-        Owner_GetDigitValues(state->class_id, (const u8 *)&((struct OwnerDjinnState *)state)->available, values);
+        Owner_GetDigitValues(state->class_id, (const u8 *)&((struct OwnerDjinnState *)state)->flags.banks.owned, values);
         result = values[index] / 10;
     }
     return result;

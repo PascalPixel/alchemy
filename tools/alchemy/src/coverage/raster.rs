@@ -1,7 +1,7 @@
 //! A small pixel canvas for the README figures: whole game pixels, flat
 //! colours, Weyard UI's stepped corners and translucent light bevels, glyphs
 //! from the tracked sheet, written as an indexed PNG at
-//! `FIGURE_SCALE` device pixels per game pixel, deflated by Zopfli, dated by
+//! `FIGURE_SCALE` device pixels per game pixel, deflated with fdeflate, dated by
 //! its tIME chunk (the only standard chunk the publication check lets a date
 //! ride in).
 use super::letters::Letters;
@@ -250,7 +250,7 @@ impl Canvas {
     }
     /// The canvas as an indexed PNG at the smallest bit depth its palette
     /// allows, a clear pixel being entry 0 made transparent by tRNS, each pixel `scale` device pixels wide, every row after the
-    /// first filtered against the one above, deflated by Zopfli, and stamped
+    /// first filtered against the one above, deflated with fdeflate, and stamped
     /// with `date` (`YYYY-MM-DD`) at midnight.
     pub(crate) fn png(&self, scale: u32, date: &str) -> Result<Vec<u8>, String> {
         let mut palette: Vec<Rgb> = Vec::new();
@@ -305,14 +305,7 @@ impl Canvas {
                 above = Some(packed.clone());
             }
         }
-        let mut idat = Vec::new();
-        zopfli::compress(
-            zopfli::Options::default(),
-            zopfli::Format::Zlib,
-            &raw[..],
-            &mut idat,
-        )
-        .map_err(|e| e.to_string())?;
+        let idat = fdeflate::compress_to_vec(&raw);
         let mut parts = date.splitn(3, '-').map(|part| part.parse::<u16>().ok());
         let (Some(Some(year)), Some(Some(month)), Some(Some(day))) =
             (parts.next(), parts.next(), parts.next())

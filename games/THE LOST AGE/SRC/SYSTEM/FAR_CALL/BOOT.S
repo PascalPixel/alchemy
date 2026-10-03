@@ -364,7 +364,7 @@ Func_08000380:
 	.global Party_CheckFar
 	.thumb_func
 Party_CheckFar:
-	overlay_veneer Party_Check
+	overlay_veneer SerialRuntime_BeginTransferB
 	.global Func_08000390
 	.thumb_func
 Func_08000390:

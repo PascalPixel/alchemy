@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Party_Check
+	.global SerialRuntime_BeginTransferB
 	.thumb_func
-Party_Check:
+SerialRuntime_BeginTransferB:
 	push {r5, r6, lr}
 	ldr r5, .L_0801688c
 	ldr r6, .L_08016890

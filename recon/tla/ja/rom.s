@@ -530,10 +530,10 @@ Func_080167d8:
 Func_0801680c:
 	.incbin "baserom.gba", 0x0001680c, 0x00000048
 	.section .rom.00016854, "ax"
-	.global Party_Check
-	.type Party_Check, %function
+	.global SerialRuntime_BeginTransferB
+	.type SerialRuntime_BeginTransferB, %function
 	.thumb_func
-Party_Check:
+SerialRuntime_BeginTransferB:
 	.incbin "baserom.gba", 0x00016854, 0x0000004c
 	.section .rom.000168a0, "ax"
 	.global Func_080168a0

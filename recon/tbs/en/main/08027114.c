@@ -1,5 +1,12 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
+/* 2026-10-03: pass the item-list count explicitly. The current raw caller
+ * moves its used count from r8 into argument r2 before ItemList_SelectEntry;
+ * that selector consumes all three arguments. The two-argument declaration
+ * and call depended on accidental r2 contents. Corrected draft scores 54312,
+ * 1293 differing instructions; the two local helper names and Item_GetData
+ * remain unresolved. No matching or edition credit is claimed.
+ */
 /* NONMATCHING: 2043 differing halfwords; 1619 halfword edits.
  * Compiles to 4176 bytes against the complete 4224-byte owner.
  * WALL: reference indirect dispatch and later block topology still differ.
@@ -180,7 +187,7 @@ void Ui_RunOwnerStatusScreen(void *block, s32 handle, s32 actor);
 s32 Battle_SelectAbility(s32 actor, s32 mode);
 s32 SummonMenu_SelectSummon(s32 a, s32 b, const u8 *standby);
 s32 BattleMenu_RunActionSelection(s32 actor, u16 *list, s32 count);
-s32 ItemList_SelectEntry(s32 actor, u16 *list);
+s32 ItemList_SelectEntry(s32 actor, u16 *list, s32 count);
 void Sys_Free(void *block);
 struct DjinnDefinition *SummonDefinition_Get(s32 id);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
@@ -599,7 +606,7 @@ item_menu:
                     } while (cur != 0);
                 }
                 state->list[cnt] = 0;
-                res = ItemList_SelectEntry(actorId, state->list);
+                res = ItemList_SelectEntry(actorId, state->list, cnt);
                 if (res == -1) {
                     goto mark_visible;
                 }

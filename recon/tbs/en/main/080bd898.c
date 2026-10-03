@@ -28,6 +28,15 @@
  * Remaining changes include arrow setup/store ordering, register allocation,
  * the smaller frame/static-chain offset and removal of the redraw read/OR.
  * T0 already uses signed interpretation at the unsigned Summon sentinel.
+ * T1, 2026-10-03: natural compound frame |= 0xff emits the same ELF as
+ * T0 (score 2292), so it does not recover the native read/OR sequence.
+ * A standalone clearer was tried in neighbouring BATTLE3.C: plain C omits
+ * ten static-chain ABI instructions (score 1005); explicit incoming r9
+ * capture and an unread volatile stack spill reproduces all 72 bytes and
+ * all twelve editions compared exactly. Review rejected that adoption:
+ * the artificial unread storage restores instruction presence, beyond S2.
+ * Helper stays naturally nested here until its real parent can be adopted.
+ * The standalone experiment is not credited; production/scaffolds restored.
  * T0a: completed the remaining local producer declarations; the complete
  * emitted ELF is identical to T0. No width/lifetime defect justified a body
  * follow-up. No edition credit.

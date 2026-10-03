@@ -1,5 +1,26 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
+/* 2026-10-03: EN score 240, four reordered instructions, no other
+ * differences. Two empty setup boundaries and a read-only render operand
+ * restore the native setup spills and both page-arrow call schedules.
+ * Remaining: first highlight stack argument, glyph read, cursor pool branch
+ * and frame-counter address load. The draft is not credited.
+ * Ordinary cell pointer: 1149; u32 sprite fields: 1781; both rejected.
+ * Setup memory operand: 1316; plain setup boundaries: 540 retained.
+ * Volatile window: 1860; highlight argument boundary: 820; rejected.
+ * Row sprite pointer before/after glyph load: 6405/1945; pointer arithmetic:
+ * 2245; rejected. Volatile glyph: 646; explicit tile mask and one-field
+ * glyph record: 540 unchanged; rejected. Glyph memory operand: 2018.
+ * Arrow helper: 561; scoped render pointer: 540; fixed pointer r2: 1105;
+ * rejected. Read-only render operand: 240, retained. Cursor boundary:
+ * 300; frame-counter-address operand: 1025; rejected.
+ * A bounded ordinary-source trial previously reached 610 via redundant
+ * pointer temporaries; no such temporary or generated candidate retained.
+ * Final cursor-shape checks: canonical SelectionSprite cursor with its own
+ * pointer 1105; byte-sized Y/flags 240 unchanged; signed phase local 2111,
+ * corrected unsigned phase 240 unchanged; union word initialization 300;
+ * read-only cursor pointer after Y 300. All rejected, original restored.
+ */
 /* 2026-10-02 bounded list-bank structural trials; original body retained.
  * EN score 631: 2 register-only, 21 stack-only, 10 reordered; no inserted
  * or deleted instructions. Native and candidate frames are 300 bytes.
@@ -34,7 +55,7 @@
  * into `actions` or -1 when the caller cancelled. Message 2279, shown for an
  * empty list, has no name in the catalogs yet.
  *
- * Remaining difference (current EN score 631: ten reordered instructions,
+ * Previous residual (EN score 631 before the 2026-10-03 trials: ten reordered instructions,
  * two register choices and one rotation of five stack slots):
  * - sched2 ties in four places: the two stores after the first window, the
  *   move of `row` into r10, the stack argument of the first highlight, and
@@ -99,7 +120,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     s32 i;
     struct MenuSprite cursor;
     struct MenuSprite *spr;
-    s16 buffer[64];
+    u16 buffer[64];
     s32 handles[PAGE_ROWS];
     struct MenuSprite sprites[PAGE_ROWS];
     s32 glyph;
@@ -111,9 +132,13 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
     unit = Owner_GetStateFar(unit_id);
     message_window = UiWindow_Create(0, 5, 30, 4, 42);
     icon_count = PAGE_ROWS;
+    /* FAKEMATCH: the native window spill precedes the row-count spill. */
+    __asm__ volatile ("");
     page = ((struct MenuCell *)gWindowWork[42])->page;
     row = ((struct MenuCell *)gWindowWork[42])->row;
     preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
+    /* FAKEMATCH: finish restoring the row before setting up the list window. */
+    __asm__ volatile ("");
     window = UiWindow_Create(9, 9, 21, PAGE_ROWS * 2 + 1, 6);
 
     for (i = 0; i < PAGE_ROWS; i++) {
@@ -188,9 +213,11 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
                     render->level = 5;
                     UiText_DrawCharacterAtOffset(
-                        entry + (s32)&MsgAbilityName, window, 16, i * 16);
+                        entry + (s32)&MsgAbilityName,
+                        (struct RenderInput *)window, 16, i * 16);
                     UiText_DrawNumberAtOffset(
-                        action->pp_cost, 2, window, 104, i * 16);
+                        action->pp_cost, 2, (struct RenderInput *)window,
+                        104, i * 16);
                     UiWork_SetParamNibble(15);
                     render->level = 15;
 
@@ -256,8 +283,10 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 window, 0xf334, window->width - (count + 4) / PAGE_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, 0xf335, window->width - 2, edge, 0);
-            render->dirty |=
-                2 << ((u32)(window->y - 1) >> 2);
+            /* An ordinary scoped pointer retained the inverse load order. */
+            /* FAKEMATCH: reload render work before its dirty-field offset. */
+            __asm__ volatile ("" : : "r" (render));
+            render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
 
         for (i = 0; i < icon_count; i++) {

@@ -1,5 +1,21 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
+/* 2026-10-03: EN score 137: 17 stack-only and two reordered instructions;
+ * no inserted/deleted instructions. Retained setup/save boundaries and the
+ * paired action selector's read-only render operand restore all register
+ * and call-argument order. Remaining: three gcse stack-address slots, the
+ * cursor's pool branch and frame-counter address load. No credit claimed.
+ * Shared menu-cell pointer: 2120; u32 sprite bitfields: 1137; rejected.
+ * Setup boundary: 608; adding an initial-state boundary: 608 unchanged,
+ * removed. State-save boundary: 508; render operand: 137, both retained.
+ * Cursor boundary: 137 unchanged; frame-counter operand: 643; rejected.
+ * Bounded ordinary-source trial reached 757 using redundant temporaries;
+ * those and the generated candidate were not retained.
+ * Final cursor-shape checks: canonical SelectionSprite cursor 851;
+ * byte-sized Y/flags 137 unchanged; signed phase local 1697, corrected
+ * unsigned phase 137 unchanged; union word initialization 201; read-only
+ * cursor pointer after Y and saved-state temporary 137 unchanged. Rejected.
+ */
 /* 2026-10-02 bounded list-bank structural trials; original body retained.
  * EN score 768: 28 stack-only, 4 operand, 11 reordered; no inserted or
  * deleted instructions. Native and candidate frames are 304 bytes.
@@ -68,7 +84,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
     s32 i;
     struct MenuSprite cursor;
     struct MenuSprite *spr;
-    s16 buffer[64];
+    u16 buffer[64];
     s32 handles[PAGE_ROWS];
     struct MenuSprite sprites[PAGE_ROWS];
 
@@ -81,6 +97,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
     page = ((struct MenuCell *)gWindowWork[42])->page;
     row = ((struct MenuCell *)gWindowWork[42])->row;
     preferred_row = ((struct MenuCell *)gWindowWork[42])->preferred_row;
+    /* FAKEMATCH: restore the saved row before preparing the window call. */
+    __asm__ volatile ("");
     window = UiWindow_Create(SHOP_LIST_X, 9, SHOP_LIST_WIDTH, PAGE_ROWS * 2 + 1, 6);
 
     for (i = 0; i < PAGE_ROWS; i++) {
@@ -146,7 +164,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                         UiWork_SetParamNibble(2);
                     }
                     UiText_DrawCharacterAtOffset(
-                        (entry & ITEM_ID_MASK) + (s32)&MsgItemName, window, 16, i * 16);
+                        (entry & ITEM_ID_MASK) + (s32)&MsgItemName,
+                        (struct RenderInput *)window, 16, i * 16);
                     UiWork_SetParamNibble(15);
                     sprites[i].oam.f.tile =
                         Resource_LoadKind26EntryToBuffer(entry, handles[i]);
@@ -200,6 +219,9 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
                 window, 0xf334, window->width - (count + 4) / PAGE_ROWS - 3, edge, 0);
             UiWindow_SetTilemapEntry(
                 window, 0xf335, window->width - 2, edge, 0);
+            /* Same correction as the paired action selector. */
+            /* FAKEMATCH: reload render work before its dirty-field offset. */
+            __asm__ volatile ("" : : "r" (render));
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
 
@@ -223,6 +245,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count)
         cell->page = page;
         cell->row = row;
         cell->preferred_row = preferred_row;
+        /* FAKEMATCH: finish saving the selection before reading input. */
+        __asm__ volatile ("");
 
         if ((gKeyState & KEY_A) != 0) {
             if (count != 0) {

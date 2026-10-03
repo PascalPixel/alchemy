@@ -13,13 +13,23 @@ struct DmaRegisters {
     u32 control;
 };
 
+/* The checksum covers the first 28 bytes of this 32-byte buffer slot.
+   The interrupt cursors can also access the final four bytes. */
 struct SerialPacket {
     u8 sequence;
-    u8 peer_pair;
+    /* Previously received channels absent from this collection. */
+    u8 missing_mask;
     u16 checksum;
     u8 payload[24];
-    u8 padding[4];
+    u8 reserved_tail[4];
 };
+
+LAYOUT_SIZE_GUARD(SerialPacket_Size, struct SerialPacket, 32);
+LAYOUT_OFFSET_GUARD(SerialPacket_Sequence, struct SerialPacket, sequence, 0);
+LAYOUT_OFFSET_GUARD(SerialPacket_MissingMask, struct SerialPacket, missing_mask, 1);
+LAYOUT_OFFSET_GUARD(SerialPacket_Checksum, struct SerialPacket, checksum, 2);
+LAYOUT_OFFSET_GUARD(SerialPacket_Payload, struct SerialPacket, payload, 4);
+LAYOUT_OFFSET_GUARD(SerialPacket_ReservedTail, struct SerialPacket, reserved_tail, 28);
 
 union SerialDataRegisters {
     u32 words[2];
@@ -58,9 +68,16 @@ struct SerialTransferState {
     u8 status;
     u8 flags;
     u8 peer_flags;
+    /* The block transfer's 20-byte body follows its four control bytes. */
     u8 reserved[20];
-    u16 value;
 };
+
+LAYOUT_SIZE_GUARD(SerialTransferState_Size, struct SerialTransferState, 24);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Active, struct SerialTransferState, active, 0);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Status, struct SerialTransferState, status, 1);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Flags, struct SerialTransferState, flags, 2);
+LAYOUT_OFFSET_GUARD(SerialTransferState_PeerFlags, struct SerialTransferState, peer_flags, 3);
+LAYOUT_OFFSET_GUARD(SerialTransferState_Body, struct SerialTransferState, reserved, 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
@@ -134,8 +151,11 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
     gSerialSendSource = zero;
     gSerialSendSize = zero;
     gSerialReceiveDest = zero;
-    state->peer_flags = zero;
-    state->flags = zero;
+    /* FAKEMATCH: after trimming the false trailer, order this byte pair
+       before the received-size store. Swapping ordinary statements still
+       reverses flags/size; a volatile flags lvalue alone reverses the pair. */
+    *(volatile u8 *)&state->peer_flags = zero;
+    *(volatile u8 *)&state->flags = zero;
     gSerialReceivedSize = zero;
     *ime = saved;
 }

@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "IRQ.H"
 #include "CARTBOOT.H"
+#include "RAM_BUFFER.H"
 #include "SERIAL_RUNTIME.H"
 #include "FRAME.H"
 #include "KEYSTATE.H"
@@ -29,7 +30,6 @@ static __inline__ void System_SoftReset(void)
     reset();
 }
 
-#define STACK_TOP 0x03007a00
 #define VBlankIntrWait()                                                       \
     {                                                                          \
         *(volatile u16 *)&Data_03001d28 &= ~1;                                 \
@@ -99,11 +99,11 @@ void WaitFrames(s32 frames)
        sleep, shoulder-combo and debug-repeat cells after their stores. */
     /* CAMELOT_ASM: reads the stack pointer */
     __asm__ volatile("mov %0, sp" : "=r"(base));
-    if ((u32)base < STACK_TOP) {
-        gSavedStackSize = STACK_TOP - (u32)base;
+    if ((u32)base < (u32)Ram_FrameWaitStackTop) {
+        gSavedStackSize = (u32)Ram_FrameWaitStackTop - (u32)base;
         Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | 0x84000000, REG_DMA3);
         /* CAMELOT_ASM: moves the stack pointer */
-        __asm__ volatile("mov sp, %0" : : "r"(STACK_TOP));
+        __asm__ volatile("mov sp, %0" : : "r"((u32)Ram_FrameWaitStackTop));
     }
     for (i = 0; i < frames; i++) {
         gSchedulerStatus = 1;

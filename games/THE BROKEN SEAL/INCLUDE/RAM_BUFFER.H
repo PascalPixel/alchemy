@@ -28,6 +28,10 @@
  * its address, which GCC turns into a test against the byte before it. */
 #define Ram_IwramHeapEnd ((u8 *)0x03007800) /* Data_03007800 */
 
+/* WaitFrames preserves the caller's stack below this boundary before moving
+ * SP here. The constant also folds its comparison against the preceding byte. */
+#define Ram_FrameWaitStackTop ((u8 *)0x03007a00) /* gFrameWaitStackTop */
+
 /* IWRAM cells beside the heap's slot words, which hold the resident work
  * blocks. GCC reaches a second constant cell by adding to the first one's
  * address. The German edition's IWRAM sits 16 bytes later. */

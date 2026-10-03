@@ -7,6 +7,9 @@ Data_03007800:
 	.space 0x00000004
 	.global Data_03007804
 Data_03007804:
-	.space 0x000007f8
+	.space 0x000001fc
+	.global gFrameWaitStackTop
+gFrameWaitStackTop:
+	.space 0x000005fc
 	.global Data_03007ffc
 Data_03007ffc:

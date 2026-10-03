@@ -33,8 +33,8 @@ static __inline__ void Bios_Stop(void)
 
 void WaitFrames(s32 frames)
 {
-    /* FAKEMATCH: volatile repeat preserves the native debug-loop rereads;
-       a plain field is cached across its two key tests. */
+    /* VBlank writes the repeated-key snapshot. Its volatile field keeps
+       both debug-loop tests reading the shared input state. */
     u32 i;
     u32 line;
     s32 j;

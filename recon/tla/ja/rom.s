@@ -510,7 +510,12 @@ Func_08016348:
 	.thumb_func
 SerialRuntime_PollStatus:
 	.incbin "baserom.gba", 0x00016430, 0x000000b8
-	.incbin "baserom.gba", 0x000164e8, 0x000002c4
+	.incbin "baserom.gba", 0x000164e8, 0x000001ac
+	.global SerialRuntime_HandleTransferInterrupt
+	.type SerialRuntime_HandleTransferInterrupt, %function
+	.thumb_func
+SerialRuntime_HandleTransferInterrupt:
+	.incbin "baserom.gba", 0x00016694, 0x00000118
 	.section .rom.000167ac, "ax"
 	.global SerialRuntime_RemoveIrqHandlers
 	.type SerialRuntime_RemoveIrqHandlers, %function
@@ -558,7 +563,12 @@ Func_080168f8:
 	.type Func_0801692c, %function
 	.thumb_func
 Func_0801692c:
-	.incbin "baserom.gba", 0x0001692c, 0x00000064
+	.incbin "baserom.gba", 0x0001692c, 0x00000024
+	.global BattleLink_ResetTransferState
+	.type BattleLink_ResetTransferState, %function
+	.thumb_func
+BattleLink_ResetTransferState:
+	.incbin "baserom.gba", 0x00016950, 0x00000040
 	.section .rom.00016990, "ax"
 	.global Func_08016990
 	.type Func_08016990, %function

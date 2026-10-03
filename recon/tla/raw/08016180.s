@@ -149,7 +149,7 @@ Func_08016180:
 	str r0, [r3]
 	ldr r3, .L_080162d4
 	strh r0, [r3]
-	bl Func_08016950
+	bl BattleLink_ResetTransferState
 	strh r7, [r5]
 	add sp, #4
 	b .L_080162d8
@@ -167,15 +167,15 @@ Func_08016180:
 .L_080162c0:
 	.4byte gSerialExchangeActive
 .L_080162c4:
-	.4byte Data_020054c0
+	.4byte gLinkExchangeState
 .L_080162c8:
-	.4byte Data_020038d0
+	.4byte gSerialSendSource
 .L_080162cc:
-	.4byte Data_020036d4
+	.4byte gSerialSendSize
 .L_080162d0:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_080162d4:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_080162d8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

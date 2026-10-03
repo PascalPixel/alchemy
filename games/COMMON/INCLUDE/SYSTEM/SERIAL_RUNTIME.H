@@ -101,6 +101,7 @@ void SerialRuntime_StepBlockTransfer(void);
 s32 SerialRuntime_BeginTransferA(void *source, s32 size);
 s32 SerialRuntime_BeginTransferB(void *destination);
 void SerialRuntime_WaitForTransferB(void);
+void BattleLink_ResetTransferState(void);
 void SerialRuntime_HandleTransferInterrupt(void);
 u32 SerialRuntime_WaitForStatusMask(s32 mask);
 extern struct SerialTransferState gSerialTransfer;

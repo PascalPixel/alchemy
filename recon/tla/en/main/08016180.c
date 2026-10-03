@@ -1,13 +1,15 @@
 /* 2026-10-03: complete candidate is 346/348 bytes including its pools;
- * score 440 (8 operand, 3 reordered, 1 deleted). DMA.H supplies the real
- * transfer macro: the prior accidental external Dma_Set call scored 1960.
- * Seven physical names remain unresolved (eight operand differences), three
- * instruction placements differ, and the final two-byte padding is absent.
+ * fresh score 280 (3 reordered, 1 deleted), with all names now resolved.
+ * Stack allocation, the fill-source address and a zero load are reordered;
+ * the final two-byte alignment is absent. Including DMA.H fixed an
+ * accidental external Dma_Set call (1960); before name closure this body
+ * scored 440 with seven unresolved names. Trials: initialize ime_reg before
+ * reading the saved IME through it, 625 at 346 bytes; assign the fill pointer
+ * while writing zero and reuse it for DMA, 280 at 346 bytes. The fill trial
+ * adds no instruction improvement, so retain the simpler original form.
  * Correct DMA semantics retained; no production adoption. */
 #include "SERIAL_RUNTIME.H"
 #include "DMA.H"
-
-void BattleLink_ResetTransferState(void);
 
 
 /* Starts the serial runtime: installs the serial and timer interrupt

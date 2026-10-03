@@ -143,6 +143,6 @@ Func_0811d2f8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0811d40c:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_0811d410:
 	.4byte gLinkStatus

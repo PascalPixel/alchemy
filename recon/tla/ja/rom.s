@@ -5029,7 +5029,12 @@ Func_08118f6c:
 	.section .rom.00119148, "ax"
 	.incbin "baserom.gba", 0x00119148, 0x00000158
 	.section .rom.001192ce, "ax"
-	.incbin "baserom.gba", 0x001192ce, 0x00000466
+	.incbin "baserom.gba", 0x001192ce, 0x00000002
+	.global BattlePres_WaitSync
+	.type BattlePres_WaitSync, %function
+	.thumb_func
+BattlePres_WaitSync:
+	.incbin "baserom.gba", 0x001192d0, 0x00000464
 	.section .rom.00119734, "ax"
 	.global Func_08119734
 	.type Func_08119734, %function
@@ -5110,6 +5115,10 @@ ActivateBattleObjectSlot:
 Func_0811bd50:
 	.incbin "baserom.gba", 0x0011bd4c, 0x00000060
 	.section .rom.0011bdd8, "ax"
+	.global Camera_InitDefaultTransform
+	.type Camera_InitDefaultTransform, %function
+	.thumb_func
+Camera_InitDefaultTransform:
 	.incbin "baserom.gba", 0x0011bdd8, 0x00000060
 	.section .rom.0011be38, "ax"
 	.global GetBattleObjectSlot
@@ -5170,9 +5179,33 @@ BattleMotion_SetMode5AndActivateSlot:
 Camera_ConfigureScene:
 	.incbin "baserom.gba", 0x0011cd78, 0x000000d4
 	.section .rom.0011ce90, "ax"
-	.incbin "baserom.gba", 0x0011ce90, 0x0000088c
-	.section .rom.0011d744, "ax"
-	.incbin "baserom.gba", 0x0011d744, 0x00000c24
+	.global BattleEscape_CheckSuccess
+	.type BattleEscape_CheckSuccess, %function
+	.thumb_func
+BattleEscape_CheckSuccess:
+	.incbin "baserom.gba", 0x0011ce90, 0x00000110
+	.global BattlePres_BuildUnitEntries
+	.type BattlePres_BuildUnitEntries, %function
+	.thumb_func
+BattlePres_BuildUnitEntries:
+	.incbin "baserom.gba", 0x0011cfa0, 0x0000002c
+	.global BattlePres_BuildOpponentEntries
+	.type BattlePres_BuildOpponentEntries, %function
+	.thumb_func
+BattlePres_BuildOpponentEntries:
+	.incbin "baserom.gba", 0x0011cfcc, 0x00000190
+	.global BattleQueue_SortByPriority
+	.type BattleQueue_SortByPriority, %function
+	.thumb_func
+BattleQueue_SortByPriority:
+	.incbin "baserom.gba", 0x0011d15c, 0x000002b4
+	.global BattlePresentation_AppendLinkedActions
+	.type BattlePresentation_AppendLinkedActions, %function
+	.thumb_func
+BattlePresentation_AppendLinkedActions:
+	.incbin "baserom.gba", 0x0011d410, 0x0000018c
+	.section .rom.0011d798, "ax"
+	.incbin "baserom.gba", 0x0011d798, 0x00000bd0
 	.section .rom.0011e3a6, "ax"
 	.incbin "baserom.gba", 0x0011e3a6, 0x00000c86
 	.section .rom.0011f02c, "ax"
@@ -5181,12 +5214,8 @@ Camera_ConfigureScene:
 	.thumb_func
 BattleMotion_SetRecordChildValues:
 	.incbin "baserom.gba", 0x0011f02c, 0x00000300
-	.section .rom.0011f3b4, "ax"
-	.global BattleActor_RemoveFromLists
-	.type BattleActor_RemoveFromLists, %function
-	.thumb_func
-BattleActor_RemoveFromLists:
-	.incbin "baserom.gba", 0x0011f3b4, 0x00000a84
+	.section .rom.0011f4d0, "ax"
+	.incbin "baserom.gba", 0x0011f4d0, 0x00000968
 	.section .rom.0011ff02, "ax"
 	.incbin "baserom.gba", 0x0011ff02, 0x00000002
 	.section .rom.0011ff04, "ax"

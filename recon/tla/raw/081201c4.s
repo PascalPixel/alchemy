@@ -154,7 +154,7 @@ BattleEv_DispatchQueued:
 	ldr r0, [r6, r5]
 	bl BattleActor_ResetRuntimeFields
 	ldr r0, [r6, r5]
-	bl Func_0811f444
+	bl BattleMotion_InitializeActorRecords
 	b .L_08120346
 .L_08120312:
 	movs r3, #192

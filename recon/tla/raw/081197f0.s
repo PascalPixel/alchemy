@@ -271,7 +271,7 @@ Func_081197f0:
 .L_08119a30:
 	movs r0, #9
 	bl Func_08038128
-	bl Func_0811bddc
+	bl Camera_InitDefaultTransform
 	bl BattleActor_CommitPlacement
 	bl Func_081263c4
 	movs r3, #206
@@ -439,7 +439,7 @@ Func_081197f0:
 	cmp r0, #0
 	bne .L_08119bb4
 	adds r0, r5, #0
-	bl Func_0811d61c
+	bl BattlePresentation_BuildActions
 	b .L_08119bba
 .L_08119ba6:
 	ldr r0, [sp, #40]
@@ -614,7 +614,7 @@ Func_081197f0:
 	add r6, r9
 	ldr r0, [r6]
 	str r4, [sp, #4]
-	bl Func_0811d748
+	bl Battle_FindTaggedSlotByValue
 	ldr r4, [sp, #4]
 	cmp r0, r7
 	beq .L_08119d40
@@ -629,7 +629,7 @@ Func_081197f0:
 	mov r5, r9
 	strh r3, [r2, r5]
 	ldr r0, [r6]
-	bl Func_0811d748
+	bl Battle_FindTaggedSlotByValue
 	ldr r4, [sp, #4]
 	movs r3, #1
 	strh r0, [r4, #10]

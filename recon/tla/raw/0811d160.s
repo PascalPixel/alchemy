@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811d160
+	.global BattleQueue_SortByPriority
 	.thumb_func
-Func_0811d160:
+BattleQueue_SortByPriority:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

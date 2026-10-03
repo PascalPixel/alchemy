@@ -1,3 +1,11 @@
+/* NONMATCHING: shared resource contracts, 2026-10-03.
+ * All six diagnostic builds retain 9988 bytes of code/pools and 32 bytes
+ * of constants. The true decoder byte-count result changes argument
+ * setup at three calls (six halfwords) against the fresh current-source
+ * baseline; every other section, symbol and relocation stays exact.
+ * Opaque resource casts add no difference. This is a baseline comparison,
+ * with no new ROM score or adoption claim.
+ */
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"

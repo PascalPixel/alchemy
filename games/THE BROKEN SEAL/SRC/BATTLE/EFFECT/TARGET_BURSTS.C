@@ -39,7 +39,7 @@ void BattleFx_RunOrbitingSparks(void)
     s32 x_offset;
     s32 i;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

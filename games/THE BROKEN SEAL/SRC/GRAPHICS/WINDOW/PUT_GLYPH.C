@@ -56,8 +56,11 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (win->x + (column + *(volatile u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 - 1;
-        out->x = attr->x;
-        out->y = attr->y;
+        /* FAKEMATCH: retain the existing scalar halfword position stores
+           at their canonical member addresses. Ordinary member assignments
+           reorder the packed OAM x store and logical x store in all editions. */
+        *(s16 *)&out->x = attr->x;
+        *(s16 *)&out->y = attr->y;
         /* FAKEMATCH: retain the existing scalar link-word clear and
            unsigned active-byte read at their canonical member addresses.
            Pointer/signed member access changes the glyph store schedule. */
@@ -113,8 +116,11 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         attr->x = (left + (column + *(volatile u16 *)&win->width)) * 8 + 4;
         row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 + 1;
-        out->x = attr->x;
-        out->y = attr->y;
+        /* FAKEMATCH: retain the existing scalar halfword position stores
+           at their canonical member addresses. Ordinary member assignments
+           reorder the packed OAM x store and logical x store in all editions. */
+        *(s16 *)&out->x = attr->x;
+        *(s16 *)&out->y = attr->y;
         /* FAKEMATCH: retain the existing scalar link-word clear and
            unsigned active-byte read at their canonical member addresses.
            Pointer/signed member access changes the glyph store schedule. */

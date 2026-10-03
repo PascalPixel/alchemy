@@ -44,6 +44,7 @@ extern u16 ParticleStreams_CellOffsets[];
 void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind, s32 side,
     s32 anchor, s32 *out_x, s32 *out_y)
 {
+    /* FAKEMATCH: the existing address-word blitter cells retain the base-plus-slot loads; pointer indexing folds the offsets into literals and changes instruction order. */
     /* FAKEMATCH: the existing function-pointer cell reads preserve the two blitter loads and stores; ordinary void-pointer slot reads reorder those independent instructions. */
     s32 base[3];
     s32 goal[3];
@@ -109,8 +110,8 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
         BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     }
-    draw[0] = ((BattleEffectDrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER];
-    draw[1] = ((BattleEffectDrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE];
+    draw[0] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER * sizeof(void *));
+    draw[1] = *(BattleEffectDrawRectangle *)((u32)gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE * sizeof(void *));
     actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 64; i++) {

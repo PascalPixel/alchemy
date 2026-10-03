@@ -708,8 +708,11 @@ next_task:
         remaining--;
         if (remaining != 0) {
             task++;
-            if (TASK_STATE_HIGH(task) == key)
-                ((KeyCallbackFn)task->callback)();
+            if (TASK_STATE_HIGH(task) == key) {
+                KeyCallbackFn callback = (KeyCallbackFn)task->callback;
+
+                callback();
+            }
             goto next_task;
         }
     }

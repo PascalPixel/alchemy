@@ -1,3 +1,6 @@
+#include "FIXED_POINT_POSITION.H"
+#include "MAP_SCROLL.H"
+#include "BATTLE_PRESENTATION.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "RAM_BUFFER.H"
@@ -13,38 +16,6 @@ static __inline__ void CopyEntry(u8 *map, u8 *destination)
     *(u16 *)destination = *colors++;
     *(u16 *)(destination + 64) = *colors;
 }
-
-extern u8 gCameraWork[];
-
-struct WorldTarget {
-    s32 x;
-    s32 z;
-    s32 y;
-};
-
-struct WorldView {
-    struct WorldTarget *target;
-    s32 shake_x;
-    s32 shake_y;
-    s32 decay;
-    u8 unk_10[0xd4];
-    s32 last_x;
-    s32 last_y;
-    u8 unk_ec[0x2c];
-    u16 pitch;
-    u16 yaw;
-    u8 unk_11c[0x22c];
-    s32 distance;
-    s32 height;
-};
-
-struct WorldTransfer {
-    s32 first;
-    s32 second;
-    s32 third;
-};
-
-
 
 extern u32 Data_03001af4;
 extern u32 Data_03001f60;
@@ -113,16 +84,16 @@ void Map_RenderPaletteMappedColumn(u32 value)
    rebuild the camera transform and hand the frame to the renderer. */
 void WorldMap_UpdateView(void)
 {
-    void **slot = (void **)((u32)&gCameraWork);
-    u8 *cam = slot[0];
+    void **slot = (void **)&gCameraWork;
+    struct BattleCamera *cam = slot[0];
     u8 *map = slot[-5];
-    struct WorldView *view = slot[-4];
-    s32 *pos = (s32 *)(cam + 12);
-    s32 *target = (s32 *)view->target;
+    struct PerspectiveWork *view = slot[-4];
+    s32 *pos = cam->pos;
+    s32 *target = view->origin;
     u8 *buffer = map + 0xc80;
-    s32 distance = view->distance;
-    s32 height = view->height;
-    struct WorldTransfer local;
+    s32 distance = view->far_plane;
+    s32 height = view->distance;
+    struct FixedPointPosition local;
 
     Map_UpdateCurrentTileBlockUntilBlocked();
     if (target != NULL) {
@@ -130,7 +101,6 @@ void WorldMap_UpdateView(void)
         s32 y;
         s32 col;
         s32 row;
-        s32 *last;
 
         y = target[2];
         x = target[0];
@@ -141,7 +111,7 @@ void WorldMap_UpdateView(void)
             r -= Random16();
             amp = view->shake_x;
             x += Iwram_MulQ16(amp, r);
-            view->shake_x = Iwram_MulQ16(amp, view->decay);
+            view->shake_x = Iwram_MulQ16(amp, view->shake_decay);
         }
         if (view->shake_y != 0) {
             s32 r = Random16();
@@ -150,24 +120,24 @@ void WorldMap_UpdateView(void)
             r -= Random16();
             amp = view->shake_y;
             y += Iwram_MulQ16(amp, r);
-            view->shake_y = Iwram_MulQ16(amp, view->decay);
+            view->shake_y = Iwram_MulQ16(amp, view->shake_decay);
         }
         col = x / 0x100000;
         row = y / 0x100000;
-        if ((view->last_x ^ x) & 0x100000) {
-            if (view->last_x < x)
+        if ((view->view_x ^ x) & 0x100000) {
+            if (view->view_x < x)
                 Map_RenderPaletteMappedColumn(col + 16);
             else
                 Map_RenderPaletteMappedColumn(col - 16);
         }
-        if ((view->last_y ^ y) & 0x100000) {
-            if (view->last_y < y)
+        if ((view->view_y ^ y) & 0x100000) {
+            if (view->view_y < y)
                 Map_RenderPaletteMappedRow(row + 12);
             else
                 Map_RenderPaletteMappedRow(row - 18);
         }
-        view->last_x = x;
-        view->last_y = y;
+        view->view_x = x;
+        view->view_y = y;
     }
     gProjection.center_x = 120;
     gProjection.center_y = 96;
@@ -179,12 +149,12 @@ void WorldMap_UpdateView(void)
     SceneTransform_ApplyPosition(pos);
     SceneTransform_ApplyYaw(view->yaw);
     SceneTransform_ApplyPitch(view->pitch);
-    local.first = 0;
-    local.second = 0;
-    local.third = height + 0x10000;
+    local.x = 0;
+    local.y = 0;
+    local.z = height + 0x10000;
     Iwram_TransformVector((s32 *)&local, (s32 *)cam);
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(cam, pos);
+    Graphics_PrepareTransferInIwramWork((u8 *)cam, pos);
     if (Data_03001af4 != view->pitch) {
         s32 c = Trig_Cos(view->pitch);
         s32 s = Trig_Sin(view->pitch);
@@ -198,18 +168,6 @@ void WorldMap_UpdateView(void)
 
 /* The world map's window on its tiles: the camera position and a 16 by 16
  * grid of tile numbers that wraps at its edges. */
-struct WorldTilePosition {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct WorldTileWindow {
-    struct WorldTilePosition *position;
-    u8 unknown_004[0x134];
-    u16 tiles[256];
-};
-
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
@@ -217,7 +175,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
  * the second layer's tiles 320 on from the first's. */
 void Map_UpdateCurrentTileBlock(void)
 {
-    struct WorldTileWindow *window = gMapWork[0];
+    struct PerspectiveWork *window = gMapWork[0];
     s32 x0 = 0;
     s32 y0 = 0;
     u32 layer;
@@ -226,8 +184,8 @@ void Map_UpdateCurrentTileBlock(void)
     s32 bias;
     s32 tile;
 
-    if (window->position != NULL) {
-        s32 *p = &window->position->x;
+    if (window->origin != NULL) {
+        s32 *p = window->origin;
 
         x0 = *p++;
         y0 = p[1];
@@ -240,7 +198,7 @@ void Map_UpdateCurrentTileBlock(void)
         for (row = 0; row < 2; row++) {
             for (col = 0; col < 2; col++) {
                 tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
-                tile = window->tiles[tile];
+                tile = window->tile_ids[tile];
                 tile += bias;
                 Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 1);
             }
@@ -253,7 +211,7 @@ void Map_UpdateCurrentTileBlock(void)
  * at the first one that had to be drawn, so a frame draws at most one. */
 void Map_UpdateCurrentTileBlockUntilBlocked(void)
 {
-    struct WorldTileWindow *window = gMapWork[0];
+    struct PerspectiveWork *window = gMapWork[0];
     s32 x0 = 0;
     s32 y0 = 0;
     u32 layer;
@@ -261,8 +219,8 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void)
     u32 col;
     s32 tile;
 
-    if (window->position != NULL) {
-        s32 *p = &window->position->x;
+    if (window->origin != NULL) {
+        s32 *p = window->origin;
 
         x0 = *p++;
         y0 = p[1];
@@ -273,7 +231,7 @@ void Map_UpdateCurrentTileBlockUntilBlocked(void)
         for (row = 0; row < 2; row++) {
             for (col = 0; col < 2; col++) {
                 tile = (((y0 + row) & 15) << 4) + ((x0 + col) & 15);
-                tile = window->tiles[tile];
+                tile = window->tile_ids[tile];
                 tile += layer * 320;
                 if (Map_WriteLayerCellTile(layer, x0 + col, y0 + row, tile, 0) != 0)
                     return;

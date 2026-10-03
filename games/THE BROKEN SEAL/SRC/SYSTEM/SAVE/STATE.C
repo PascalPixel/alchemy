@@ -4,9 +4,7 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
-extern struct SaveWorkspace *gSaveWorkspace;
-extern u8 Flash_Handler0[];
-extern u8 Data_03001f1c[];
+extern s32 Flash_Handler0;
 
 /* save/state/select_write_slot.c */
 u32 Random16(void);
@@ -48,10 +46,11 @@ u32 SaveState_SelectWriteSlot(s32 mode)
 s32 _call_via_r3(s32, s32, s32, s32);
 s32 Flash_VerifySector(u16, s32);
 
+/* The old-style u16 formal receives an int-promoted incoming word. */
 u32 SaveState_WriteWorkspaceSlot(code)
 u16 code;
 {
-    s32 *param = (s32 *)Flash_Handler0;
+    s32 *param = &Flash_Handler0;
     s32 result;
     struct SaveWorkspace *work;
     s32 value;
@@ -69,7 +68,6 @@ u16 code;
 #include "DMA.H"
 #include "FLASH.H"
 
-
 s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
 {
     struct SaveWorkspace *work;
@@ -84,15 +82,13 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
     return (u16)checksum - header.checksum;
 }
 
-
-typedef u16 (*Callback_08005904)(u16);
-extern Callback_08005904 gEraseFlashSector;
+typedef u16 (*EraseSectorProc)(u16);
+extern EraseSectorProc gEraseFlashSector;
 
 u16 SaveState_EraseSlotSector(u16 value)
 {
     return gEraseFlashSector(value);
 }
-
 
 s32 SaveState_WriteRecord(s32 record_id, void *source)
 {
@@ -143,7 +139,6 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
     return 0;
 }
 
-
 u32 SaveState_ReadRecordPayload(s32 record_id, void *destination)
 {
     struct SaveWorkspace *work;
@@ -159,10 +154,6 @@ u32 SaveState_ReadRecordPayload(s32 record_id, void *destination)
     return 0;
 }
 
-
-u32 SaveState_FindLatestSlot(s32);
-s32 SaveState_InvalidateSlot(s32);
-
 u32 SaveState_DeleteRecord(s32 record_id)
 {
     s32 index;
@@ -175,7 +166,6 @@ u32 SaveState_DeleteRecord(s32 record_id)
     deletion_result = SaveState_InvalidateSlot(index);
     return (u32)((0 - deletion_result) | deletion_result) >> 0x1F;
 }
-
 
 s32 SaveState_ChecksumWorkspace(void)
 {
@@ -202,27 +192,27 @@ s32 SaveState_ChecksumWorkspace(void)
     return sum;
 }
 
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
 u32 SaveState_FindLatestSlot(s32 record_id)
 {
+    /* FAKEMATCH: retain the existing byte and halfword cursors over the real
+       workspace arrays. Direct indexed fields change saved registers and
+       instruction order at the same complete 64/60-byte extents. */
     u16 *sequence_cursor;
     u16 sequence;
     u32 latest_sequence;
     u32 slot_index;
     u32 latest_slot;
-    void *save_state;
-    void *slot_cursor;
+    struct SaveWorkspace *save_state;
+    u8 *slot_cursor;
 
     save_state = gSaveWorkspace;
     latest_slot = 0x10;
     latest_sequence = 0;
     slot_index = 0;
-    sequence_cursor = save_state + 0x20;
-    slot_cursor = save_state;
+    sequence_cursor = save_state->sequence;
+    slot_cursor = (u8 *)save_state;
     do {
-        if ((FIELD_AT_OFFSET(slot_cursor, u8 *, 0) != 0) && (record_id == FIELD_AT_OFFSET(slot_cursor, u8 *, 0x10))) {
+        if ((slot_cursor[0] != 0) && (record_id == slot_cursor[sizeof(save_state->occupied)])) {
             sequence = *sequence_cursor;
             if (latest_sequence < (u32)sequence) {
                 latest_sequence = (u32)sequence;
@@ -235,7 +225,6 @@ u32 SaveState_FindLatestSlot(s32 record_id)
     } while (slot_index <= 0xFU);
     return latest_slot;
 }
-
 
 s32 SaveState_InvalidateSlot(s32 index)
 {
@@ -261,7 +250,6 @@ s32 SaveState_InvalidateSlot(s32 index)
     return 0;
 }
 
-
 s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
 {
     s32 difference = 0;
@@ -277,25 +265,25 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
     return difference;
 }
 
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
 u32 SaveState_GetLatestSequence(s32 record_id)
 {
+    /* FAKEMATCH: retain the existing byte and halfword cursors over the real
+       workspace arrays. Direct indexed fields change saved registers and
+       instruction order at the same complete 64/60-byte extents. */
     u16 *sequence_cursor;
     u16 sequence;
     u32 latest_sequence;
     u32 slot_index;
-    void *save_state;
-    void *slot_cursor;
+    struct SaveWorkspace *save_state;
+    u8 *slot_cursor;
 
     save_state = gSaveWorkspace;
     slot_index = 0;
     latest_sequence = 0;
-    sequence_cursor = save_state + 0x20;
-    slot_cursor = save_state;
+    sequence_cursor = save_state->sequence;
+    slot_cursor = (u8 *)save_state;
     do {
-        if ((FIELD_AT_OFFSET(slot_cursor, u8 *, 0) != 0) && (record_id == FIELD_AT_OFFSET(slot_cursor, u8 *, 0x10))) {
+        if ((slot_cursor[0] != 0) && (record_id == slot_cursor[sizeof(save_state->occupied)])) {
             sequence = *sequence_cursor;
             if (latest_sequence < (u32)sequence) {
                 latest_sequence = (u32)sequence;
@@ -308,17 +296,16 @@ u32 SaveState_GetLatestSequence(s32 record_id)
     return latest_sequence;
 }
 
-
 s32 SaveState_LoadSummaryRecords(void)
 {
     struct SaveWorkspace *work;
-    u8 *summary;
+    struct SaveSummary *summary;
     volatile u32 zero;
     u32 group;
     s32 count;
 
     work = gSaveWorkspace;
-    summary = (u8 *)work->summary;
+    summary = work->summary;
     count = 0;
     group = 0;
     do {
@@ -328,35 +315,30 @@ s32 SaveState_LoadSummaryRecords(void)
         START_DMA(&zero, summary, 0x85000010);
         index = SaveState_FindLatestSlot(group);
         if (index <= 15) {
-            ReadFlash((u16)index, 0, summary, 64);
+            ReadFlash((u16)index, 0, (u8 *)summary, sizeof(*summary));
             count++;
         }
         index = SaveState_FindLatestSlot(group + 3);
         if (index <= 15)
-            ReadFlash((u16)index, 0x110, summary + 56, 4);
+            ReadFlash((u16)index, 0x110, summary->unknown_38, sizeof(summary->unknown_38));
         else
-            *(u32 *)(summary + 56) = 0;
+            *(u32 *)summary->unknown_38 = 0;
         group++;
-        summary += 64;
+        summary++;
     } while (group <= 2);
     return count;
 }
 
-
 typedef void (*InterruptHandler)(void);
 
-u32 Runtime_ReleaseHeapBlock(s32);
-void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
+void Runtime_ReleaseHeapBlock(s32 slot);
+void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler);
+
 u32 SaveState_ReleaseWorkspace(void)
 {
-  int fn;
-  long long id;
-  long long tmp;
-  int arg;
-  unsigned int no;
-  fn = 0;
-  id = (tmp = (no = 0x33));
-  arg = 0;
-  Runtime_SetIrqHandler(5, arg, (InterruptHandler)fn);
- return Runtime_ReleaseHeapBlock(id);
+    /* FAKEMATCH: retain only the existing ignored-result definition. No
+       caller consumes a result; true void changes the return-address pop
+       from r1 to r0. The actual heap helper is void; no word is returned. */
+    Runtime_SetIrqHandler(5, 0, NULL);
+    Runtime_ReleaseHeapBlock(51);
 }

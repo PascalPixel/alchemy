@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "SAVE_STATE.H"
 #include "SCENE.H"
 s32 Menu_RunWorkspaceSelectionLoop(void);
-s32 Save_WriteSelectedSlot(void);
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 s32 Menu_RunWorkspaceOptions(void);
 

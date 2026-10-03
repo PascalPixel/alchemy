@@ -1,15 +1,9 @@
+#include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_PRESENTATION.H"
 
 extern u8 gLinkStatus[];
-extern u8 gCameraWork[];
-
-struct SceneCameraTransfer {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 struct LinkWork {
     u8 pad0[0x44];
@@ -30,11 +24,11 @@ void SceneTransform_ApplyPitch(s32);
 
 void BattlePresentation_UpdateCamera(void)
 {
-    void **slot = (void **)((u32)&gCameraWork);
+    void **slot = (void **)&gCameraWork;
     struct BattleCamera *state = slot[0];
     struct BattlePresentationTransition *transition = slot[32];
     struct LinkWork *work = slot[-3];
-    struct SceneCameraTransfer local;
+    struct FixedPointPosition local;
     s32 *pos;
     s16 delta;
     u32 id;

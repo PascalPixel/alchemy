@@ -135,7 +135,7 @@ void FieldScene_RunNearestActor165Scene(void)
     for (i = 8; i <= 66; i++) {
         struct FieldActor *o = Object_GetById(i);
 
-        if (o != 0 && o->active == 1 && *STAGED_ACTOR_PROBE_DETAILS(o)->unknown_28 == 165) {
+        if (o != 0 && o->active == 1 && ((struct AnimationObject *)o->sprite)->entries[0]->anim_id == 165) {
             s32 dx = (p->x.fixed - o->x.fixed) / 65536;
             s32 dy = (p->z.fixed - o->z.fixed) / 65536;
 

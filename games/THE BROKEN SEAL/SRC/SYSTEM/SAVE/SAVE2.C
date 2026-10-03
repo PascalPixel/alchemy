@@ -5,18 +5,13 @@
 #include "GAME_STATE.H"
 #include "BATTLE_UNIT.H"
 #include "RUNTIME_INTERFACES.H"
+#include "WINDOW.H"
 
-extern u8 Data_03001e90[];
-s32 Runtime_ReleaseHeapBlock(s32);
-void UiWork_Finalize(struct Work *work, s32 release);
-extern u8 Data_03001e8c[];
+void Runtime_ReleaseHeapBlock(s32 slot);
 
 u8 *UiText_FormatNumber(u8 *, s32, s32);
 
-extern u8 Data_03001f1c[];
 extern volatile u32 gKeysHeld;
-s32 SaveState_InitializeWorkspace(void);
-s32 SaveState_LoadSummaryRecords(void);
 extern s16 gTitleExtraOptionEnabled;
 
 extern u8 gSaveBuffer[];
@@ -30,27 +25,24 @@ u8 Party_SumDjinnCountsFar(s32 element);
 void Party_ListActiveOwnersFar(u16 *owners);
 s32 GameFlag_TestFar(s32 flag);
 
-extern u8 gSaveSlot[];
-s32 SaveState_WriteRecord(s32, void *);
+extern s16 gSaveSlot;
 void UiText_ShowPositionedMessageAndWait(s32, s32);
 extern char MsgNoBackupMemory;
 extern char MsgSaveFailed;
 
-u32 SaveState_BuildSummaryHeader(void);
-
 void UiWork_FinalizeAndReleaseBlock16(void)
 {
-    UiWork_Finalize(**(s32 **)((u32)&Data_03001e90), 1);
+    UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
     Runtime_ReleaseHeapBlock(0x10);
 }
 
 void UiWindow_SetTileAttributeBitRect(
-    const u8 *window, s32 x, s32 y, s32 width, s32 height, u32 field)
+    const struct RenderInput *window, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
 
-    x += *(u16 *)(window + 12) + 1;
-    y += *(u16 *)(window + 14) + 1;
+    x += window->x + 1;
+    y += window->y + 1;
     field &= 1;
     field <<= 12;
     if (x < 0) {
@@ -71,7 +63,7 @@ void UiWindow_SetTileAttributeBitRect(
         y <<= 6;
         x = y + (x << 1);
         do {
-            u16 *cell = (u16 *)((u32)x + (u32)base);
+            u16 *cell = (u16 *)((u32)x + (u32)work->tilemap);
             s32 remaining = width;
             while (remaining != 0) {
                 u32 value = *cell;
@@ -84,7 +76,7 @@ void UiWindow_SetTileAttributeBitRect(
             height--;
             x += 64;
         } while (height != 0);
-        base[RENDER_DIRTY_OFS] = 1;
+        work->dirty = 1;
     }
 }
 
@@ -162,6 +154,9 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 
 s32 SaveState_ScanRecordFlags(void)
 {
+    /* FAKEMATCH: retain the existing signed byte cursor from the summary
+       party tail. Direct flag fields fold a different pool base at the
+       same 156-byte extent; offsets below come from the real record. */
     s32 err;
     s32 cnt;
     s32 ret;
@@ -171,18 +166,18 @@ s32 SaveState_ScanRecordFlags(void)
     ret = -9;
     if (err == 0) {
         s32 i;
-        s8 *p;
+        s8 *flags;
 
         ret = SaveState_LoadSummaryRecords();
-        p = (s8 *)&gSaveWorkspace->summary[0].party[4];
+        flags = (s8 *)&gSaveWorkspace->summary[0].party[4];
         gTitleSendOptionEnabled = 0;
         gTitleExtraOptionEnabled = 0;
         for (i = 0; i < 3; i++) {
-            if (p[i * sizeof(struct SaveSummary) + 1] != 0) {
+            if (flags[i * sizeof(struct SaveSummary) + ((u32)&((struct SaveSummary *)0)->send_flag - (u32)&((struct SaveSummary *)0)->party[4])] != 0) {
                 gTitleSendOptionEnabled = 1;
                 cnt++;
             }
-            if (p[i * sizeof(struct SaveSummary) + 2] != 0) {
+            if (flags[i * sizeof(struct SaveSummary) + ((u32)&((struct SaveSummary *)0)->flag_count - (u32)&((struct SaveSummary *)0)->party[4])] != 0) {
                 gTitleExtraOptionEnabled = 1;
             }
         }
@@ -281,7 +276,7 @@ s16 SaveState_WriteCurrentSlotPair(void)
     s32 error;
 
     result = 0;
-    value = *(s16 *)gSaveSlot;
+    value = gSaveSlot;
     if (value != -1) {
         found = SaveState_InitializeWorkspace();
         if (found != 0) {
@@ -294,8 +289,8 @@ s16 SaveState_WriteCurrentSlotPair(void)
             void *base = &gSaveBuffer;
             s32 next;
 
-            found = SaveState_WriteRecord(*(s16 *)gSaveSlot, base);
-            next = *(s16 *)gSaveSlot;
+            found = SaveState_WriteRecord(gSaveSlot, base);
+            next = gSaveSlot;
             base = (char *)base + 0x1000;
             found |= SaveState_WriteRecord(next + 3, base);
             if (found != 0) {

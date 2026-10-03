@@ -1,3 +1,9 @@
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "HEAP_STATE.H"
+#include "ANIMSPR.H"
+#include "OBJECT_RUNTIME.H"
+#include "GAME_STATE.H"
+#include "FX_SCENE.H"
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
@@ -19,30 +25,10 @@ void BattleFx_RunEffect13Hook(s32);
 void BattleFx_FinishSceneAndReleaseHeapBlock(void);
 
 /* battle/effects/run/run_effect.c */
-struct BattleEffectRequest {
-    u8 reserved_000[0x14];
-    void *object;
-    s16 source_id;
-    s16 target_id;
-    u8 reserved_01c[2];
-    s16 battle_mode;
-    u8 running;
-};
 
-struct BattleEffectState {
-    u8 reserved_000[0xCB8];
-    s16 active;
-};
 
-struct BattleEffectGlobals {
-    u8 reserved_000[0x1F4];
-    s32 selected_object;
-    u8 reserved_1f8[0x52];
-    s16 selected_id;
-};
 
-extern struct BattleEffectRequest *gEffectWork;
-extern struct BattleEffectGlobals gGameState;
+extern struct BattleFxScene *gEffectWork;
 void BattleFx_RunItemBreakSequence(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect03(void);
@@ -81,28 +67,24 @@ extern char MsgNothingHappens;
 extern volatile s32 gFrameCount;
 
 /* object/motion/pos/Motion_SetTargetPositionFromMagnitudeAngle.c */
-struct Object_08096bec {
-    u8 padding[8];
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 void Vector_AddPolarOffset(s32, s32, s32 *);
-void Object_SetPosition(struct Object_08096bec *, s32, s32, s32);
+void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void BattleFx_Run(void)
 {
-    struct BattleEffectRequest *request;
-    struct BattleEffectState *battle;
+    /* FAKEMATCH: the existing effect-cell56 to runtime-cell27 transport shares
+       its base load; separate owner globals add a pool word and reorder loads. */
+    struct BattleFxScene *request;
+    struct BattleRuntime *battle;
     s32 battle_mode;
     s32 target_id;
     s32 obj_id;
 
     request = gEffectWork;
-    battle = *(struct BattleEffectState **)((u8 *)&gEffectWork - 0x74);
-    battle_mode = request->battle_mode;
-    target_id = request->target_id;
+    battle = *(struct BattleRuntime **)((u8 *)&gEffectWork - 29 * sizeof(void *));
+    battle_mode = request->animation;
+    target_id = request->second_object_id;
 
     switch (battle_mode) {
     case 1:
@@ -136,26 +118,26 @@ void BattleFx_Run(void)
         RunBattleEffect13();
         return;
     case 9:
-        if (gGameState.selected_id != -1) {
-            BattleFx_ResumeObject(gGameState.selected_id);
-            gGameState.selected_id = -1;
+        if (gGameState.unknown_24a != -1) {
+            BattleFx_ResumeObject(gGameState.unknown_24a);
+            gGameState.unknown_24a = -1;
         }
 
-        obj_id = BattleEffect_SelectNearbyTargetObject(gGameState.selected_object, battle_mode);
+        obj_id = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, battle_mode);
         obj_id = BattleFx_FilterObjectIdByFlags(obj_id);
         if (BattleFx_FindDescriptorWithOverride(obj_id)!= 0) {
-            BattleFx_SetupObjectPair(gGameState.selected_object, obj_id);
+            BattleFx_SetupObjectPair(gGameState.selected_actor, obj_id);
             BattleFx_MarkChildAndRunFallbackTransition(obj_id);
             BattleEffect_PauseObject(obj_id);
-            gGameState.selected_id = obj_id;
+            gGameState.unknown_24a = obj_id;
         } else {
             BattleEffect_RunFallbackObjectTransition();
         }
         return;
     case 2:
-        if (battle->active != 0)
+        if (*(s16 *)&battle->unknown_cb8[0] != 0)
             ResetSceneTransitionEffect();
-        RunSceneTransitionEffect(request->source_id, target_id);
+        RunSceneTransitionEffect(request->first_object_id, target_id);
         return;
     case 8:
         RunBattleEffect08();
@@ -175,19 +157,21 @@ void BattleFx_Run(void)
 /* battle/effects/set/dispatch_request_kind.c */
 void BattleFx_DispatchRequestKind(void)
 {
-    struct BattleEffectRequest *request = gEffectWork;
-    struct BattleEffectState *battle = *(struct BattleEffectState **)((u8 *)&gEffectWork - 0x74);
-    s32 battle_mode = request->battle_mode;
-    s32 target_id = request->target_id;
+    /* FAKEMATCH: retain the existing56-to27 cache-cell access; a direct
+       runtime owner load adds a literal and changes request-load ordering. */
+    struct BattleFxScene *request = gEffectWork;
+    struct BattleRuntime *battle = *(struct BattleRuntime **)((u8 *)&gEffectWork - 29 * sizeof(void *));
+    s32 battle_mode = request->animation;
+    s32 target_id = request->second_object_id;
 
-    request->running = 0;
+    request->enabled = 0;
     switch (battle_mode) {
     case 2:
-        if (battle->active != 0)
+        if (*(s16 *)&battle->unknown_cb8[0] != 0)
             ResetSceneTransitionEffect();
-        if (gGameState.selected_id != request->target_id)
-            *(u8 *)((u8 *)request->object + 91) = 1;
-        RunSceneTransitionEffect(request->source_id, target_id);
+        if (gGameState.unknown_24a != request->second_object_id)
+            ((struct ObjectRuntime *)request->child)->movement_state = 1;
+        RunSceneTransitionEffect(request->first_object_id, target_id);
         break;
     case 1:
         FunctionHead_08097c3c(target_id);
@@ -211,12 +195,12 @@ void BattleFx_DispatchRequestKind(void)
         BattleFx_RunBurstParticleMainObject(target_id);
         break;
     case 9:
-        if (gGameState.selected_id != -1) {
-            BattleFx_ResumeObject(gGameState.selected_id);
-            gGameState.selected_id = -1;
+        if (gGameState.unknown_24a != -1) {
+            BattleFx_ResumeObject(gGameState.unknown_24a);
+            gGameState.unknown_24a = -1;
         }
         BattleEffect_PauseObject(target_id);
-        gGameState.selected_id = target_id;
+        gGameState.unknown_24a = target_id;
         BattleFx_MarkChildAndRunFallbackTransition(target_id);
         break;
     case 3:
@@ -246,12 +230,12 @@ void BattleFx_DispatchRequestKind(void)
 /* battle/effects/misc/clear_child_value_on_mismatch.c */
 void BattleFx_ClearChildValueOnMismatch(void)
 {
-    struct BattleEffectRequest *request = gEffectWork;
+    struct BattleFxScene *request = gEffectWork;
 
-    if (request->battle_mode == 2) {
+    if (request->animation == 2) {
         BattleFx_FinishSceneAndReleaseHeapBlock();
-        if (gGameState.selected_id != request->target_id) {
-            *(u8 *)((u8 *)request->object + 91) = 0;
+        if (gGameState.unknown_24a != request->second_object_id) {
+            ((struct ObjectRuntime *)request->child)->movement_state = 0;
         }
     }
 }
@@ -317,30 +301,30 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
     volatile s32 *global;
     s32 value;
 
-    state = *(u8 *)((u8 *)owner + 84);
+    state = ((struct ObjectRuntime *)owner)->animation_kind;
     /* 有効な所有物へ共有値を6で割った余りを配る。 */
     if (state == 1) {
-        target = *(void **)((u8 *)owner + 80);
-        if (target != 0 && (*(u8 *)((u8 *)target + 29) & state) == 0) {
-            initial_count = *(u8 *)((u8 *)target + 39);
+        target = ((struct ObjectRuntime *)owner)->animation;
+        if (target != 0 && (((struct AnimationObject *)target)->display_flags & state) == 0) {
+            initial_count = ((struct AnimationObject *)target)->count;
             if (initial_count != 0) {
                 global = &gFrameCount;
-                entry = (void **)((u8 *)target + 40);
+                entry = (void **)((struct AnimationObject *)target)->entries;
                 count = initial_count;
                 do {
                     current = *entry++;
                     value = (u32)*global % 6;
                     count--;
-                    *(u8 *)((u8 *)current + 5) = value;
+                    ((struct AnimationEntry *)current)->param = value;
                 } while (count != 0);
             }
-            *(u8 *)((u8 *)target + 37) = 1;
+            ((struct AnimationObject *)target)->dirty = 1;
         }
     }
 }
 
 void Motion_SetTargetPositionFromMagnitudeAngle(
-    struct Object_08096bec *object, s32 magnitude, s32 angle)
+    struct ObjectRuntime *object, s32 magnitude, s32 angle)
 {
     s32 values[3];
 

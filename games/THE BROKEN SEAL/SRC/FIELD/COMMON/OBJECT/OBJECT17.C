@@ -9,9 +9,6 @@
 #include "FIELD_SPRITE.H"
 #include "ANIMSPR.H"
 
-/* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
-void *ObjectTable_Get(u32 object);
-
 struct LinkedEffectObject {
     u8 unknown_00[8];
     s32 x;
@@ -28,14 +25,16 @@ struct LinkedEffectObject {
     s32 (*callback)(void *);
 };
 
-struct LinkedEffectObject *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
-void Func_08009098(struct LinkedEffectObject *object, const void *configuration);
-void Func_08009080(struct LinkedEffectObject *object, s32 mode);
-void Func_080090d0(struct LinkedEffectObject *object);
+LAYOUT_SIZE_GUARD(LinkedEffectObject_Size, struct LinkedEffectObject, 0x70);
+LAYOUT_OFFSET_GUARD(LinkedEffectObject_Counter, struct LinkedEffectObject, counter, 0x64);
+LAYOUT_OFFSET_GUARD(LinkedEffectObject_Resource, struct LinkedEffectObject, resource, 0x68);
+
+void *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
+void Object_Destroy(void *object);
 s32 BattleFx_CopyLinkedObjectPosition(void *);
 extern const u8 Data_0809fd38[];
 
-extern u8 gObjectSlots[];
+extern struct ObjectRuntime *gObjectSlots;
 void ObjectDispatch_SetSingleChildField26Far(void *, s32);
 u16 ArcTan2(s32, s32);
 struct ObjectRuntime *Object_GetById(u32);
@@ -64,13 +63,13 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 
     if ((flags & 3) != 0) {
         if ((flags & 3) == 2 || object->resource == 0) {
-            child = Func_080090c8(209, object->x, object->y, object->z);
+            child = Object_CreateFar(209, object->x, object->y, object->z);
         }
     } else {
         child = object->resource;
         if (child == 0)
             return;
-        Func_080090d0(child);
+        Object_Destroy(child);
         /* FAKEMATCH: reuse the null visual value for the child link. */
         object->resource = (struct LinkedEffectObject *)visual;
         return;
@@ -82,13 +81,13 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
     mode = flags & 3;
     switch (mode) {
     case 1:
-        Func_08009080(child, 1);
+        Object_SetMode((struct ObjectRuntime *)child, 1);
         object->resource = child;
         child->counter = 1;
         break;
     case 2:
-        Func_08009080(child, 2);
-        Func_08009098(child, Data_0809fd38);
+        Object_SetMode((struct ObjectRuntime *)child, 2);
+        ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)Data_0809fd38);
         child->counter = 1;
         break;
     }
@@ -227,7 +226,6 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 {
     struct ObjectRuntime *entry;
     struct ObjectRuntime *found;
-    struct ObjectRuntime *result;
     s32 cnt;
     s32 best;
     s32 dy;
@@ -239,7 +237,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 
     found = NULL;
     best = 40;
-    entry = *(struct ObjectRuntime **)((u32)&gObjectSlots);
+    entry = gObjectSlots;
     for (cnt = 0; cnt < 64; cnt++, entry++) {
         if (entry->script == NULL)
             continue;

@@ -4,6 +4,8 @@
 #include "FIXED_POINT_POSITION.H"
 #include "IWRAM_CALL.H"
 #include "CALL.H"
+#include "FIELDRUN.H"
+#include "MAP_SCROLL.H"
 extern u8 gMapCellBuffer[];
 
 /* Linked into several field overlays; each overlay has its own copy of the
@@ -51,11 +53,12 @@ s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 
 struct StagedActor *StagedActor_FindAtTile(s32 *position, struct StagedActor *origin)
 {
-    struct StagedActor **slots = (struct StagedActor **)(gWork + 0x14);
+    struct FieldStepWork *work = (struct FieldStepWork *)gWork;
+    struct ObjectRuntime **slots = work->actors;
     u32 i;
 
     for (i = 8; i <= 65; i++) {
-        struct StagedActor *actor = slots[i];
+        struct StagedActor *actor = (struct StagedActor *)slots[i];
 
         if ((position[0] >> 20) == (actor->x.value >> 20)
             && (position[1] / 0x10000) == (actor->y / 0x10000)
@@ -137,26 +140,24 @@ void StagedActor_AdvancePair(void)
 
 s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u32 height, s32 value)
 {
-    u8 *map = gMapWork[0];
-    u8 *cells;
+    struct MapState *map = gMapWork[0];
+    struct MapCell *cells;
     u32 row;
     u32 column;
 
     if (map != 0) {
         if (layer <= 2) {
-            u32 offset = layer * 48 + 304;
-
-            cells = *(u8 **)(map + offset);
+            cells = map->layers[layer].cells;
         } else {
-            cells = (u8 *)gMapCellBuffer;
+            cells = (struct MapCell *)gMapCellBuffer;
         }
-        cells += (x + (z << 7)) * 4;
+        cells += x + (z << 7);
         for (row = 0; row < height; row++) {
-            u8 *cell = cells + (row << 9);
+            struct MapCell *cell = cells + (row << 7);
 
             for (column = 0; column < width; column++) {
-                cell[2] = (u8)value;
-                cell += 4;
+                cell->collision_code = (u8)value;
+                cell++;
             }
         }
     }
@@ -180,7 +181,7 @@ s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
     if (target != 0) {
         u32 i = 0;
         s32 kind =
-            *(STAGED_ACTOR_PROBE_DETAILS(target)->unknown_28);
+            target->animation->entries[0]->anim_id;
         s32 *kinds = StagedActor_FootprintKinds;
 
         do {
@@ -209,37 +210,37 @@ done:
 
 u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot, s32 *footprint)
 {
-    u8 *work = gWork;
-    u8 *player = Object_GetById(0);
-    u8 **list;
+    struct FieldStepWork *work = (struct FieldStepWork *)gWork;
+    struct StagedActor *player = Object_GetById(0);
+    struct ObjectRuntime **list;
     u32 i, j;
 
-    *direction = *(u16 *)(player + 6) >> 12;
-    list = (u8 **)(work + 52);
+    *direction = player->direction_and_kind >> 12;
+    list = work->actors + 8;
     for (i = 8; i <= 65; list++, i++) {
-        u8 *actor = *list;
+        struct StagedActor *actor = (struct StagedActor *)*list;
         s32 kind;
         j = 0;
-        kind = (*(s16 **)(*(u8 **)(actor + 80) + 40))[j];
+        kind = actor->animation->entries[0]->anim_id;
         for (j = 0; j < 6; j++) {
             if (kind == StagedActor_FootprintKinds[j]) {
                 s32 x, z, left, top, right, bottom;
                 *footprint = j;
-                x = ((*(s32 *)(player + 8) >> 16) + (StagedActor_DirectionSteps[*direction] >> 16)) >> 4;
-                z = ((*(s32 *)(player + 16) >> 16) + (s16)StagedActor_DirectionSteps[*direction]) >> 4;
-                left = (*(s16 *)(actor + 10) + StagedActor_FootprintBounds[j * 4 + 0]) >> 4;
-                top = (*(s16 *)(actor + 18) + StagedActor_FootprintBounds[j * 4 + 1]) >> 4;
-                right = (*(s16 *)(actor + 10) + StagedActor_FootprintBounds[j * 4 + 2]) >> 4;
-                bottom = (*(s16 *)(actor + 18) + StagedActor_FootprintBounds[j * 4 + 3]) >> 4;
+                x = ((player->x.value >> 16) + (StagedActor_DirectionSteps[*direction] >> 16)) >> 4;
+                z = ((player->z.value >> 16) + (s16)StagedActor_DirectionSteps[*direction]) >> 4;
+                left = (actor->x.parts.cell + StagedActor_FootprintBounds[j * 4 + 0]) >> 4;
+                top = (actor->z.parts.cell + StagedActor_FootprintBounds[j * 4 + 1]) >> 4;
+                right = (actor->x.parts.cell + StagedActor_FootprintBounds[j * 4 + 2]) >> 4;
+                bottom = (actor->z.parts.cell + StagedActor_FootprintBounds[j * 4 + 3]) >> 4;
                 if (left <= x && x < right && top <= z && z < bottom) {
                     if (j & 1) {
-                        if (left != (*(s32 *)(player + 8) >> 20)) {
+                        if (left != (player->x.value >> 20)) {
                             *slot = i;
-                            return actor;
+                            return (u8 *)actor;
                         }
-                    } else if (top != (*(s32 *)(player + 16) >> 20)) {
+                    } else if (top != (player->z.value >> 20)) {
                         *slot = i;
-                        return actor;
+                        return (u8 *)actor;
                     }
                 }
             }
@@ -331,17 +332,17 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 {
     /* FAKEMATCH: the integer cell read keeps the incoming probe spills
      * before the cache load; the native pointer read reorders them. */
-    u8 *workspace;
-    StagedActorRecord *actor;
-    StagedActorPosition original_position;
-    StagedActorPosition tile_position;
+    struct MapScrollWork *workspace;
+    struct StagedActor *actor;
+    struct StagedActorProbePosition original_position;
+    struct StagedActorProbePosition tile_position;
     u8 *footprint_table;
     s32 direction;
     s32 horizontal_extent;
     s32 vertical_extent;
 
-    workspace = (u8 *)*(u32 *)gMapWork;
-    direction = ((StagedActorRecord *)Object_GetById(0))->orientation >> 12;
+    workspace = (struct MapScrollWork *)*(u32 *)gMapWork;
+    direction = ((struct StagedActor *)Object_GetById(0))->direction_and_kind >> 12;
     actor = Object_GetById(probe.actor_slot);
     footprint_table = (u8 *)StagedActor_FootprintBounds;
     {
@@ -368,24 +369,24 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         horizontal_extent = (extent_a + extent_b) >> 4;
     }
 
-    actor->movement_rate = 0x8000;
-    actor->movement_step = 0x1999;
-    original_position.x = actor->x;
-    original_position.y = actor->y;
+    actor->move_rate_x = 0x8000;
+    actor->move_rate_z = 0x1999;
+    original_position.x = actor->x.value;
+    original_position.z = actor->z.value;
     {
         s32 table_offset = probe.footprint_index << 4;
         tile_position.x =
-            (actor->x +
+            (actor->x.value +
              (*(s32 *)(footprint_table + table_offset) << 16));
         table_offset += 4;
-        tile_position.y =
-            (actor->y +
+        tile_position.z =
+            (actor->z.value +
              (*(s32 *)(footprint_table + table_offset) << 16));
         tile_position.x >>= 20;
-        tile_position.y >>= 20;
+        tile_position.z >>= 20;
     }
 
-    StagedActor_FillGridAttributeRectangle(0, tile_position.x, tile_position.y, horizontal_extent,
+    StagedActor_FillGridAttributeRectangle(0, tile_position.x, tile_position.z, horizontal_extent,
                                            vertical_extent, 0);
     ObjectMotion_SetSpeedParameters(0, 0x8000, 0x1999);
     Object_SetModeById(0, 8);
@@ -398,7 +399,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         horizontal_delta >>= 17;
         {
             s32 vertical_delta =
-                probe.position_z - original_position.y;
+                probe.position_z - original_position.z;
             if (vertical_delta < 0)
                 vertical_delta += 0x1ffff;
             vertical_delta >>= 17;
@@ -406,7 +407,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
         }
     }
 
-    ((StagedActorRecord *)Object_GetById(0))->callback = (u32)StagedActor_StopBlockedMotion;
+    ((struct StagedActor *)Object_GetById(0))->movement_callback = (u32)StagedActor_StopBlockedMotion;
     Battle_WaitMode0(4);
     if ((u32)(direction - 6) <= 7)
         Object_SetMode(actor, 3);
@@ -430,15 +431,15 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 
     ObjectMotion_CommitCurrentPositionAndActivate(0);
     Object_SetModeById(0, 1);
-    ((StagedActorRecord *)Object_GetById(0))->callback = 0;
+    ((struct StagedActor *)Object_GetById(0))->movement_callback = 0;
     Object_CommitPosition(actor);
     Audio_PlayCue(288);
     Audio_PlayCue(213);
 
-    actor->x = probe.position_x;
-    actor->y = probe.position_z;
-    actor->horizontal_velocity = 0;
-    actor->vertical_velocity = 0;
+    actor->x.value = probe.position_x;
+    actor->z.value = probe.position_z;
+    actor->unknown_24 = 0;
+    actor->unknown_2c = 0;
     Object_SetMode(actor, 1);
 
     {
@@ -458,8 +459,8 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
             probe.position_x >>= 20;
             probe.position_z >>= 20;
         }
-        horizontal_origin = *(s32 *)(workspace + 316) >> 20;
-        vertical_origin = *(s32 *)(workspace + 320) >> 20;
+        horizontal_origin = workspace->layers[1].offset_x >> 20;
+        vertical_origin = workspace->layers[1].offset_y >> 20;
 
         Call6(Map_CopyCellAttributeRect, probe.position_x, probe.position_z, horizontal_extent, vertical_extent, horizontal_origin + probe.position_x, vertical_origin + probe.position_z);
         StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z,
@@ -473,19 +474,19 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
                 (original_position.x +
                  (*(s32 *)(table + table_offset) << 16));
             table_offset += 4;
-            original_position.y =
-                (original_position.y +
+            original_position.z =
+                (original_position.z +
                  (*(s32 *)(table + table_offset) << 16));
             original_position.x >>= 20;
-            original_position.y >>= 20;
+            original_position.z >>= 20;
         }
         horizontal_origin += original_position.x;
-        vertical_origin += original_position.y;
+        vertical_origin += original_position.z;
 
         Map_CopyCellAttributeRect(horizontal_origin, vertical_origin, horizontal_extent,
                                        vertical_extent, original_position.x,
-                                       original_position.y);
-        StagedActor_FillGridAttributeRectangle(2, original_position.x, original_position.y,
+                                       original_position.z);
+        StagedActor_FillGridAttributeRectangle(2, original_position.x, original_position.z,
                                                horizontal_extent, vertical_extent, 0);
     }
     BattleFx_PlayQueuedSound();
@@ -493,7 +494,7 @@ void SceneActor_MoveAndRedraw(struct StagedActorProbe probe)
 
 s32 FieldScene_RedrawActorFootprint(s32 id)
 {
-    s32 *work = (s32 *)gMapWork[0];
+    struct MapScrollWork *work = gMapWork[0];
     struct StagedActor *actor = Object_GetById(id);
     struct StagedActorProbe probe;
     u32 idx = 0;
@@ -507,7 +508,7 @@ s32 FieldScene_RedrawActorFootprint(s32 id)
     s32 dst_z;
 
     for (idx = 0; idx <= 5; idx++) {
-        if (*STAGED_ACTOR_PROBE_DETAILS(actor)->unknown_28 == StagedActor_FootprintKinds[idx]) {
+        if (actor->animation->entries[0]->anim_id == StagedActor_FootprintKinds[idx]) {
             probe.footprint_index = idx;
             break;
         }
@@ -538,8 +539,8 @@ s32 FieldScene_RedrawActorFootprint(s32 id)
     probe.position_z += StagedActor_FootprintBounds[offset + 1] << 16;
     probe.position_x >>= 20;
     probe.position_z >>= 20;
-    idx = work[0x13c / 4] >> 20;
-    dst_z = work[0x140 / 4] >> 20;
+    idx = work->layers[1].offset_x >> 20;
+    dst_z = work->layers[1].offset_y >> 20;
     Map_CopyCellAttributeRect(probe.position_x, probe.position_z, width, height, idx + probe.position_x, dst_z + probe.position_z);
     StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z, width, height, 255);
     StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z, width, height, 255);

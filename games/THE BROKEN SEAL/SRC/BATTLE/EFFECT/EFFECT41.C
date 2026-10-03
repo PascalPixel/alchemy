@@ -1,3 +1,8 @@
+#include "SCRIPT_MOTION.H"
+#include "ANIMSPR.H"
+#include "EVENT_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
+#include "FIELDOBJ.H"
 #include "OBJECT_LOOKUP.H"
 #include "OBJDISP.H"
 #include "TYPES.H"
@@ -12,50 +17,17 @@
 extern u8 gMapCellBuffer[];
 
 /* map/shared/events/CheckObjectMapTile.c */
-struct MapObject {
-    u8 padding00[8];
-    s32 x;
-    u8 padding0c[4];
-    s32 y;
-    u8 padding14[14];
-    u8 map_layer;
-};
 
-struct MapEventRuntime {
-    u8 padding000[0x17e];
-    s16 event_code;
-    u8 padding180[0x1e];
-    s16 mode;
-};
 
-extern struct MapEventRuntime *gWork;
 
 /* map/shared/events/MapEvent_RunTileTriggerSequence.c */
-struct Controller_08099738 {
-    u8 pad_00[5];
-    u8 field_05;
-};
 
-struct State_08099738 {
-    u8 pad_00[0x25];
-    u8 field_25;
-    u8 field_26;
-    u8 pad_27;
-    struct Controller_08099738 *controller;
-};
 
-struct Object_08099738 {
-    u8 pad_00[0x50];
-    struct State_08099738 *state;
-    u8 pad_54[0x18];
-    u32 field_6c;
-};
 
 void Audio_PlayCue(s32);
-void Object_SetMode(struct Object_08099738 *, s32);
+void Object_SetMode(struct ObjectRuntime *, s32);
 void CheckObjectMapTile(void);
 
-extern u8 *gEventWork;
 void *ObjectTable_Get(u32);
 void MapEvent_RunTileTriggerSequence(void);
 
@@ -67,7 +39,7 @@ typedef struct {
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Motion_SetTargetPositionFromMagnitudeAngle(
-    struct Object_08096bec *object, s32 magnitude, s32 angle);
+    struct ObjectRuntime *object, s32 magnitude, s32 angle);
 void *Object_Spawn(s32, s32, s32, s32);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 RunBattleEffect05();
@@ -77,8 +49,8 @@ void CheckObjectMapTile(void);
 void CheckObjectMapTile(void)
 {
     u32 runtime_slot_address;
-    struct MapEventRuntime *runtime;
-    struct MapObject *object;
+    struct EventRuntime *runtime;
+    struct ObjectRuntime *object;
     u8 *tile;
     s32 x;
     s32 y;
@@ -89,7 +61,7 @@ void CheckObjectMapTile(void)
     /* The map-state pointer slot is 19 words before the runtime pointer slot. */
     tile = (u8 *)*(struct MapState **)(runtime_slot_address - 76);
 
-    if (runtime->mode == 3) {
+    if (runtime->mode_19e == 3) {
         u32 tile_x;
         u32 tile_y;
 
@@ -98,7 +70,7 @@ void CheckObjectMapTile(void)
             x += 0x1fffff;
         tile_x = (x >> 21) & 31;
 
-        y = object->y;
+        y = object->z;
         if (y < 0)
             y += 0x1fffff;
         tile_y = (y >> 21) & 31;
@@ -106,9 +78,9 @@ void CheckObjectMapTile(void)
         tile = (u8 *)gMapBlocks +
             ((tile_x + (tile_y << 5)) << 2);
     } else {
-        if (object->map_layer <= 2) {
+        if (object->terrain_id <= 2) {
             tile = (u8 *)((struct MapState *)tile)
-                ->layers[object->map_layer].cells;
+                ->layers[object->terrain_id].cells;
         } else
             tile = (u8 *)gMapCellBuffer;
 
@@ -118,7 +90,7 @@ void CheckObjectMapTile(void)
         {
             u32 tile_x = x >> 20;
 
-            y = object->y;
+            y = object->z;
             if (y < 0)
                 y += 0xfffff;
 
@@ -128,46 +100,46 @@ void CheckObjectMapTile(void)
     }
 
     if (tile[2] != 0xfb)
-        runtime->event_code = 0x2092;
+        ((struct EventWork *)runtime)->psynergy_request = 0x2092;
 }
 
 void MapEvent_RunTileTriggerSequence(void)
 {
-    struct Object_08099738 *object;
-    struct State_08099738 *state;
-    struct Controller_08099738 *controller;
+    struct ObjectRuntime *object;
+    struct AnimationObject *state;
+    struct AnimationEntry *controller;
     u32 i;
 
     object = ObjectTable_Get(gGameState.selected_actor);
-    state = object->state;
-    controller = state->controller;
+    state = object->animation;
+    controller = state->entries[0];
 
     Audio_PlayCue(154);
     Scheduler_RemoveCallback(CheckObjectMapTile);
     Object_SetMode(object, 0);
-    object->field_6c = 0;
+    ((struct ScriptMotionObject *)object)->hook = 0;
 
     for (i = 0; i < 5; ++i) {
-        controller->field_05 = 7;
-        state->field_25 = 1;
-        state->field_26 = 2;
+        controller->param = 7;
+        state->dirty = 1;
+        state->flags = 2;
         WaitFrames(2);
-        state->field_25 = 1;
-        state->field_26 = 0;
+        state->dirty = 1;
+        state->flags = 0;
         WaitFrames(2);
     }
 
     for (i = 0; i < 5; ++i) {
-        controller->field_05 = 7;
-        state->field_25 = 1;
-        state->field_26 = 0;
+        controller->param = 7;
+        state->dirty = 1;
+        state->flags = 0;
         WaitFrames(2);
-        controller->field_05 = 0;
-        state->field_25 = 1;
+        controller->param = 0;
+        state->dirty = 1;
         WaitFrames(2);
     }
 
-    state->field_26 = 1;
+    state->flags = 1;
     gGameState.cloaked = 0;
 }
 
@@ -180,7 +152,7 @@ void BattleFx_ScheduleCallbackWhenValue24cSet(void)
 
 void BattleFx_RunFlashingCallbackSequence(void)
 {
-    u8 *state = gEventWork;
+    u8 *state = (u8 *)gEventWork;
     u8 *object = ObjectTable_Get(gGameState.selected_actor);
     EffectSprite *record = *(EffectSprite **)(object + 80);
     u8 *entry = *(u8 **)((u8 *)record + 40);

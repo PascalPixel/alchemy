@@ -55,7 +55,6 @@ extern void *gBattleFxWork[];
 extern void *gTransitionWork[];
 extern DrawRectangle gWorkSlot[];
 
-extern struct BattleCamera *gCameraWork;
 extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
 extern s16 ParticleStreams_OrbitPoints[][3];

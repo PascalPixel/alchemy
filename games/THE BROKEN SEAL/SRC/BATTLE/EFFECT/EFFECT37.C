@@ -1,3 +1,6 @@
+#include "WINDOW.H"
+#include "GAME_STATE.H"
+#include "OBJECT_RUNTIME.H"
 #include "DMA.H"
 #include "OBJDISP.H"
 #include "TYPES.H"
@@ -14,18 +17,11 @@ s32 Fixed_Remainder(s32 value, s32 divisor);
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 extern const u8 BattleFx_UntargetedObjectScript[];
 
-struct Target_08097a54 {
-    u8 unknown_00[0x38];
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 extern u8 Data_03001e8c[];
 void BattleFx_ArmBg0HBlankDma(void);
 extern void BattleFx_ArmBg0HBlankDma(void);
 extern s32 PaletteGlow_UpdateFar(s32, s32);
-extern u8 gGameState[];
 
 void BattleFx_ArmBg0HBlankDma(void)
 {
@@ -122,15 +118,15 @@ s32 Fixed_Remainder(s32 value, s32 divisor)
     return value - Iwram_MulQ16(quotient & 0xffff0000, divisor);
 }
 
-void BattleFx_SetCallbackWhenTargetUnset(struct Target_08097a54 *target)
+void BattleFx_SetCallbackWhenTargetUnset(struct ObjectRuntime *target)
 {
     s32 ty;
     s32 tx;
 
-    tx = target->x;
+    tx = target->target_x;
     if (tx == 0x80000000) {
-        ty = target->y;
-        if ((ty == tx) && (target->z == ty)) {
+        ty = target->target_y;
+        if ((ty == tx) && (target->target_z == ty)) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)BattleFx_UntargetedObjectScript);
         }
     }
@@ -140,7 +136,7 @@ void Ui_FillBank15PaletteGrey(void)
 {
     volatile s16 *p;
 
-    FIELD_AT_OFFSET(*(void **)((u32)&Data_03001e8c), s8, RENDER_MODE_OFS) = 1;
+    ((struct UiRenderWork *)gWindowWork[0])->mode = 1;
     p = (s16 *)0x050001E2;
     *p = 0x739C;
     p += 2;
@@ -170,12 +166,12 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
 {
     void *work;
 
-    work = *(void **)((u32)&Data_03001e8c);
+    work = gWindowWork[0];
     Scheduler_RemoveCallback((u32)((s32)BattleFx_ArmBg0HBlankDma));
     *(volatile s16 *)0x050001E2 = 0x7FFF;
     *(s16 *)0x050001E6 = 0;
     *(volatile s16 *)0x050001F6 = 0x294A;
     *(volatile s16 *)0x050001F8 = 0x5294;
-    PaletteGlow_UpdateFar(gGameState[0x205], gGameState[0x206]);
-    *((u8 *)work + RENDER_MODE_OFS) = 0;
+    PaletteGlow_UpdateFar(gGameState.palette_glow[0], gGameState.palette_glow[1]);
+    ((struct UiRenderWork *)work)->mode = 0;
 }

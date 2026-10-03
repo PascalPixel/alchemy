@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RESOURCE_IDS.H"
@@ -67,7 +68,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     struct EffectStep *point;
     struct EffectStep *seat;
     struct EffectStep *target;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 frame;
     s32 y;
     s32 i;
@@ -118,7 +119,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     AudioCommand_PlayFar(164);
 
     for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++) {
-        facing = *(s32 *)(gWorkSlot + 12 * 4);
+        camera = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
         if (frame >= 17 && frame < 64)
             WORK_FIELD(work, 0x77ac) = 0x180;
         else
@@ -126,7 +127,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
         if (frame == VortexMotes_Counts[work->effect->variant * 2 + 1] - 16)
             BattleEventRuntime_BeginPhaseFar(132);
         Render_ResetTransformState();
-        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
         for (i = 0; i != VortexMotes_Counts[work->effect->variant * 2]; i++) {
             point = &work->particles[i];
             if (frame > i * 2 && flags[i] == 0) {

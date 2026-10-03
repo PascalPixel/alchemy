@@ -1,3 +1,4 @@
+#include "FIXED_POINT_POSITION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
@@ -11,13 +12,6 @@
 #include "BATTLE_WORK.H"
 
 extern u8 gLinkStatus[];
-extern u8 gCameraWork[];
-
-struct SceneCameraTransfer {
-    s32 x;
-    s32 y;
-    s32 z;
-};
 
 #define LINK_STAT (*(u16 *)gLinkStatus)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
@@ -37,11 +31,11 @@ s32 BattleParty_PrepareActiveOwners(u16 *out);
 
 void BattlePresentation_UpdateCamera(void)
 {
-    void **slot = (void **)((u32)&gCameraWork);
+    void **slot = (void **)&gCameraWork;
     struct BattleCamera *state = slot[0];
     struct BattlePresentationTransition *transition = slot[32];
     struct BattleSession *work = slot[-3];
-    struct SceneCameraTransfer local;
+    struct FixedPointPosition local;
     s32 *pos;
     s16 delta;
     u32 id;

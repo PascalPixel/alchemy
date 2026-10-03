@@ -1,69 +1,67 @@
-#include "TYPES.H"
+#include "AUDIO_ENGINE.H"
 
-void MusicTrack_ClearModulation(void *);
-
-void MusicPlayer_SetModulationDepth(u8 *player, s32 mask_arg, s32 value_arg)
+void MusicPlayer_SetModulationDepth(struct SoundPlayer *player, s32 mask_arg, s32 value_arg)
 {
-    register s32 mask = (u16)mask_arg;
-    register s32 value = (u8)value_arg;
-    register s32 count;
-    register u8 *entry;
-    register u32 bit;
+    s32 mask = (u16)mask_arg;
+    s32 value = (u8)value_arg;
+    s32 count;
+    struct SoundTrack *track;
+    u32 bit;
 
-    if (*(u32 *)(player + 0x34) != 0x68736d53)
+    if (player->lock != SOUND_LOCK)
         return;
 
-    *(u32 *)(player + 0x34) += 1;
-    count = player[8];
-    entry = *(u8 **)(player + 0x2c);
+    player->lock += 1;
+    count = player->track_count;
+    track = player->tracks;
     bit = 1;
     if (count > 0) {
-        register s32 check = value;
+        s32 check = value;
         do {
-            if ((mask & bit) && (entry[0] & 0x80)) {
-                entry[0x17] = value;
+            if ((mask & bit) && (track->flags & 0x80)) {
+                track->mod_depth = value;
                 if (check == 0)
-                    MusicTrack_ClearModulation(entry);
+                    MusicTrack_ClearModulation(track);
             }
             count--;
-            entry += 0x50;
+            track++;
             bit <<= 1;
         } while (count > 0);
     }
-    *(u32 *)(player + 0x34) = 0x68736d53;
+    player->lock = SOUND_LOCK;
 }
 
-void MusicPlayer_SetLfoSpeed(u8 *object, u32 selected, u32 value)
+void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selected, u32 value)
 {
     u16 selected_bits = selected;
     u8 stored_value = value;
 
-    if (*(u32 *)(object + 52) == 0x68736D53) {
+    if (player->lock == SOUND_LOCK) {
         s32 count;
-        u8 *entry;
+        struct SoundTrack *track;
         u32 mask;
 
-        *(u32 *)(object + 52) = *(u32 *)(object + 52) + 1;
-        count = object[8];
-        entry = *(u8 **)(object + 44);
+        player->lock = player->lock + 1;
+        count = player->track_count;
+        track = player->tracks;
         mask = 1;
 
         if (count > 0) {
             u8 test_value = stored_value;
 
             do {
-                if ((selected_bits & mask) != 0 && (entry[0] & 0x80) != 0) {
-                    entry[25] = stored_value;
+                if ((selected_bits & mask) != 0 && (track->flags & 0x80) != 0) {
+                    track->lfo_speed = stored_value;
                     if (test_value == 0) {
-                        MusicTrack_ClearModulation(entry);
+                        MusicTrack_ClearModulation(track);
                     }
                 }
                 count--;
-                entry += 80;
+                track++;
                 mask <<= 1;
             } while (count > 0);
         }
 
-        *(u32 *)(object + 52) = 0x68736D53;
+        player->lock = SOUND_LOCK;
     }
 }

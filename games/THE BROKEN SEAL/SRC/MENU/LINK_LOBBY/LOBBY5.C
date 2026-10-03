@@ -6,6 +6,8 @@
 #include "SCENE_IDS.H"
 #include "SERIAL_RUNTIME.H"
 
+s32 SaveState_ProcessSelectedSlot(void);
+
 extern u8 MsgLobbyChooseParameters[];
 extern u8 MsgLobbyNoParameterAsk[];
 extern u8 MsgLobbySettingsMadeRest[];
@@ -46,7 +48,6 @@ extern u8 MsgLobbySavingMonsterBattle[];
 extern u8 MsgLobbyMonsterBattleResults[];
 s32 UiText_OpenMessageWindow(s32 message, s32 x, s32 y, s32 flags);
 s32 UiWork_IsComplete(void);
-void SaveState_ProcessSelectedSlot(void);
 
 extern u8 MsgLobbyNotBadNextMonster[];
 extern u8 MsgLobbyNoteCantUse[];

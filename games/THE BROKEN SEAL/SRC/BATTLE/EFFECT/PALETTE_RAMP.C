@@ -1,3 +1,4 @@
+#include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -12,7 +13,6 @@
 #include "IO_REG.H"
 
 extern u8 gBattleFxWork[];
-extern s32 gCameraWork[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -70,7 +70,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
     s32 j;
     s32 x_offset;
     DrawRectangle *draw;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 origin[3];
     struct EffectPosition screen;
     s32 point[3];
@@ -146,7 +146,7 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (frame = 0; frame != work->effect->count * 4 + 64; frame++) {
-        facing = gCameraWork[0];
+        camera = gCameraWork;
         if (frame == 72)
             BattleEventRuntime_BeginPhaseFar(0);
         for (j = 0; j != work->effect->count; j++) {
@@ -159,12 +159,12 @@ void BattleFx_RunPaletteRamp(struct BattleEffectArgument *effect, s32 mode)
             object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
             if (time > 0) {
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
                 point[0] = object->x;
                 point[1] = 160 << 13;
                 point[2] = object->z;
                 Render_ResetTransformState();
-                Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+                Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
                 SceneTransform_ApplyPosition(point);
                 origin[0] = 0;
                 origin[1] = 0;

@@ -19,6 +19,7 @@
  * Three focused trials exhausted this view hypothesis; no broad search.
  */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "BATTLE_TYPES.H"
 #include "MENU_LIST.H"
 
@@ -280,7 +281,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         nav->row = row;
         nav->preferred_row = preferred_row;
 
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             if (count != 0) {
                 result = page + row;
                 if ((Ability_GetData(actions[result])->target_flags & 0x80) != 0) {
@@ -293,21 +294,21 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 result = -1;
                 break;
             }
-        } else if (nav->active == 0 || (gKeyState & 2) != 0) {
+        } else if (nav->active == 0 || (gKeyState & KEY_B) != 0) {
             AudioCommand_PlayFar(113);
             result = -1;
             break;
         }
 
         if (count != 0) {
-            if ((gKeysRepeat & 128) != 0) {
+            if ((gKeysRepeat & KEY_DOWN) != 0) {
                 AudioCommand_PlayFar(111);
                 row++;
                 if (row == PAGE_ROWS || page + row == count) {
                     row = 0;
                 }
                 preferred_row = row;
-            } else if ((gKeysRepeat & 64) != 0) {
+            } else if ((gKeysRepeat & KEY_UP) != 0) {
                 AudioCommand_PlayFar(111);
                 row--;
                 if (row < 0) {
@@ -318,7 +319,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     }
                 }
                 preferred_row = row;
-            } else if ((gKeysRepeat & 16) != 0) {
+            } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
                 AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
                 if (page + PAGE_ROWS >= count) {
@@ -337,7 +338,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                         }
                     }
                 }
-            } else if ((gKeysRepeat & 32) != 0) {
+            } else if ((gKeysRepeat & KEY_LEFT) != 0) {
                 AudioCommand_PlayFar(111);
                 Runtime_SetMainState19();
                 if (page != 0) {

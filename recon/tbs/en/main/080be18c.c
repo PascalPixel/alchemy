@@ -36,6 +36,7 @@
  */
 
 #include "TYPES.H"
+#include "BATTLE_EVENT.H"
 #include "SYSTEM.H"
 #include "BATTLE_UNIT.H"
 #include "BATTLE_COMMAND.H"
@@ -58,7 +59,6 @@ void UiWork_ClearValueNameTablesFar(void);
 s32 GameFlag_IsSet(s32 flag);
 s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
 u32 BattleEv_Push(u32 opcode, u32 operand);
-void BattleEv_DispatchQueued(void);
 u16 RollWeaponUnleashFar(struct BattleUnit *unit);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 void BattleEv_SetRuntimeField8(void);

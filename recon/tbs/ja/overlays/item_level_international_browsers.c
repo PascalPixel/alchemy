@@ -11,6 +11,7 @@
 #include "CALL.H"
 #include "PARTY_STATE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "INVENTORY.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
@@ -219,48 +220,48 @@ void ItemLevel_SelectItem(void)
                 UiText_DrawStringInWindow(gItemLevelItemFull, window, 0, 32);
             }
         }
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             if (PartyInventory_Add(item) == -1) {
                 Engine_AudioPlayCue(113);
                 goto done;
             }
             Engine_AudioPlayCue(175);
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Engine_AudioPlayCue(113);
             goto done;
         }
-        if (gKeysRepeat & 64) {
+        if (gKeysRepeat & KEY_UP) {
             step = -1;
             item--;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 128) {
+        if (gKeysRepeat & KEY_DOWN) {
             step = 1;
             item++;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             step = 1;
             item += 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             step = -1;
             item -= 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 256) {
+        if (gKeysRepeat & KEY_R) {
             step = 1;
             item += 30;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 512) {
+        if (gKeysRepeat & KEY_L) {
             step = -1;
             item -= 30;
             redraw = 1;
@@ -334,41 +335,41 @@ void ItemLevel_SelectAbility(void)
             UiText_DrawCharacterAtOffset(index, window, 0, 24);
             UiText_DrawResource(index, window, 0, 48);
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Engine_AudioPlayCue(113);
             goto done;
         }
-        if (gKeysRepeat & 64) {
+        if (gKeysRepeat & KEY_UP) {
             step = -1;
             ability--;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 128) {
+        if (gKeysRepeat & KEY_DOWN) {
             step = 1;
             ability++;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 16) {
+        if (gKeysRepeat & KEY_RIGHT) {
             step = 1;
             ability += 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 32) {
+        if (gKeysRepeat & KEY_LEFT) {
             step = -1;
             ability -= 10;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 256) {
+        if (gKeysRepeat & KEY_R) {
             step = 1;
             ability += 30;
             redraw = 1;
             Engine_AudioPlayCue(111);
         }
-        if (gKeysRepeat & 512) {
+        if (gKeysRepeat & KEY_L) {
             step = -1;
             ability -= 30;
             redraw = 1;

@@ -1,3 +1,4 @@
+#include "IO_REG.H"
 #include "CHARACTER_MENU.H"
 #include "PSYNERGY_MENU.H"
 #include "BATTLE_UNIT.H"
@@ -88,17 +89,17 @@ s32 CharacterSelector_RunRearrange(void)
         }
         UiMenu_PositionCursor(cursor * 24 - 10, 16);
         WaitFrames(1);
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             Audio_PlayCue(0x70);
             result = 1;
             break;
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(0x71);
             result = -1;
             break;
         }
-        if (gKeysRepeat & 0x100) {
+        if (gKeysRepeat & KEY_R) {
             if (CharacterSelector_MoveEntry(cursor, 1)) {
                 Audio_PlayCue(0x70);
                 cursor++;
@@ -111,7 +112,7 @@ s32 CharacterSelector_RunRearrange(void)
                 Audio_PlayCue(0x72);
             }
             WaitFrames(1);
-        } else if (gKeysRepeat & 0x200) {
+        } else if (gKeysRepeat & KEY_L) {
             if (CharacterSelector_MoveEntry(cursor, 0)) {
                 Audio_PlayCue(0x70);
                 cursor--;
@@ -124,18 +125,18 @@ s32 CharacterSelector_RunRearrange(void)
                 Audio_PlayCue(0x72);
             }
             WaitFrames(1);
-        } else if ((gKeyState & 4) && GameFlag_TestFar(48)) {
+        } else if ((gKeyState & KEY_SELECT) && GameFlag_TestFar(48)) {
             DjinnMenu_ShowCurrentList();
             redraw = 1;
         } else {
-            if (gKeysRepeat & 0x20) {
+            if (gKeysRepeat & KEY_LEFT) {
                 Audio_PlayCue(0x6f);
                 if (count > 1) {
                     cursor--;
                     redraw = 1;
                 }
             }
-            if (gKeysRepeat & 0x10) {
+            if (gKeysRepeat & KEY_RIGHT) {
                 Audio_PlayCue(0x6f);
                 if (count > 1) {
                     redraw = 1;
@@ -185,12 +186,12 @@ s32 PsynergyMenu_SelectOwner(void)
         }
         UiMenu_PositionCursor(selection * 24 - 10, 16);
         WaitFrames(1);
-        if (gKeyState & 1) {
+        if (gKeyState & KEY_A) {
             Audio_PlayCue(112);
             result = 1;
             break;
         }
-        if (gKeyState & 2) {
+        if (gKeyState & KEY_B) {
             Audio_PlayCue(113);
             result = -1;
             break;
@@ -400,44 +401,44 @@ s32 CharacterMenu_SelectCommand(void)
             else
                 UiMenu_PositionCursor(48, selected * 8 + 80);
             WaitFrames(1);
-            if (gKeysRepeat & 0xf0)
+            if (gKeysRepeat & KEYS_DPAD)
                 CharacterMenu_DrawSelectionCursor(pane, selected, entries, 1);
-            if (gKeyState & 1) {
+            if (gKeyState & KEY_A) {
                 Audio_PlayCue(112);
                 done = 1;
                 result = 1;
                 break;
             }
-            if (gKeyState & 2) {
+            if (gKeyState & KEY_B) {
                 Audio_PlayCue(113);
                 done = 1;
                 result = -1;
                 break;
             }
-            if (gKeysRepeat & 0x40) {
+            if (gKeysRepeat & KEY_UP) {
                 Audio_PlayCue(111);
                 redraw = 1;
                 selected--;
             }
-            if (gKeysRepeat & 0x80) {
+            if (gKeysRepeat & KEY_DOWN) {
                 Audio_PlayCue(111);
                 redraw = 1;
                 selected++;
             }
-            if (gKeysRepeat & 0x10) {
+            if (gKeysRepeat & KEY_RIGHT) {
                 Audio_PlayCue(111);
                 redraw = 1;
                 pane++;
             }
-            if (gKeysRepeat & 0x20) {
+            if (gKeysRepeat & KEY_LEFT) {
                 Audio_PlayCue(111);
                 redraw = 1;
                 pane--;
             }
-            if ((gKeysRepeat & 0x100) || (gKeysRepeat & 0x200)) {
+            if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
                 Audio_PlayCue(111);
                 tab = menu->owner_index[0];
-                if (gKeysRepeat & 0x100)
+                if (gKeysRepeat & KEY_R)
                     tab++;
                 else
                     tab--;

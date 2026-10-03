@@ -7,7 +7,6 @@
 #include "BATTLE_COMMAND.H"
 
 s32 Party_CountActiveOwnersFar(void);
-struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 
 /* Caps the active party at four owners, or three in the alternate battle mode,
  * optionally writes their identifiers with a 0xff terminator, marks each
@@ -31,11 +30,11 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 
         if (owners != 0)
             *owners++ = owner;
-        Owner_GetStateFar(owner)->status_12a = 2;
+        Owner_GetStateFar(owner)->status_12a = BATTLE_UNIT_PARTY;
     }
 
     if (owners != 0)
-        *owners = 0xff;
+        *owners = BATTLE_UNIT_LIST_END;
     return count;
 }
 
@@ -64,7 +63,7 @@ s32 BattleParty_ListPresentEnemies(s16 *unit_ids)
                 output += 1;
             }
         }
-        *output = 0xFF;
+        *output = BATTLE_UNIT_LIST_END;
         battle_result = entry_count;
     }
     return battle_result;
@@ -130,7 +129,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         }
     }
     if (output != NULL) {
-        *output = 0xFF;
+        *output = BATTLE_UNIT_LIST_END;
     }
     return living_count;
 }
@@ -147,18 +146,18 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
 
     order = gBattleWork;
     count = 0;
-    if (groups & 1) {
-        for (i = 0; order->party_units[i] != 255; i++) {
-            if (order->party_units[i] != 254) {
+    if (groups & BATTLE_SIDE_PARTY) {
+        for (i = 0; order->party_units[i] != BATTLE_UNIT_LIST_END; i++) {
+            if (order->party_units[i] != BATTLE_UNIT_REMOVED) {
                 if (dst != NULL)
                     *dst++ = order->party_units[i];
                 count++;
             }
         }
     }
-    if (groups & 2) {
-        for (i = 0; order->enemy_units[i] != 255; i++) {
-            if (order->enemy_units[i] != 254) {
+    if (groups & BATTLE_SIDE_ENEMIES) {
+        for (i = 0; order->enemy_units[i] != BATTLE_UNIT_LIST_END; i++) {
+            if (order->enemy_units[i] != BATTLE_UNIT_REMOVED) {
                 if (dst != NULL)
                     *dst++ = order->enemy_units[i];
                 count++;
@@ -166,6 +165,6 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst)
         }
     }
     if (dst != NULL)
-        *dst = 255;
+        *dst = BATTLE_UNIT_LIST_END;
     return count;
 }

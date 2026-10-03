@@ -2,13 +2,14 @@
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "ANIMSPR.H"
+#include "FIELD_EFFECT.H"
 #include "FIELD_SCENE.H"
 #include "FACING_OBJECT.H"
 #include "CALL.H"
 
 void ShindenHeya_RaiseItemIcon(s32 item);
 
-extern u8 *Data_03001ebc;
 
 /* The action-callback paths that walk the leader and Gerald in circles. */
 extern const s32 ShindenHeya_LeaderCircleScript[];
@@ -17,20 +18,15 @@ void ShindenHeya_SpawnOwnerEffect();
 
 static __inline__ void bump_step(void)
 {
-    u8 *work = Data_03001ebc;
+    struct EventWork *work = gEventWork;
 
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + 1);
+    work->message = (u16)(work->message + 1);
 }
 
 s16 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
-typedef struct {
-    u8 pad_to_angle[6];
-    u16 angle;
-} ActorState;
-
-ActorState *GetActorState(s32 actor_id);
+struct FieldActor *GetActorState(s32 actor_id);
 void Object_RefreshSelectorById();
 
 
@@ -71,25 +67,12 @@ void Ui_PrepareTransferForItem();
 extern const s32 ShindenHeya_ItemIconGrowScript[];
 extern const s32 ShindenHeya_ItemIconEndScript[];
 
-/* NONMATCHING: 172 of 172 bytes, 12 halfword edits (2026-09-24). Same shape
- * as 380:02004260. Remaining: the -33 mask is folded to 0xdf (a word mask
- * variable grows the function), the sprite[28] load is scheduled late, and
- * the loop zero is not shared with the counter in r5. */
-struct Spr5 { u8 pad[5]; u8 lo:5; u8 bit5:1; u8 hi:2; };
-
 /* The motion script that deletes a spark once it has risen. */
 extern const s32 ShindenHeya_SparkEndScript[];
 
 s32 Engine_RandomNext();
 s32 Math_RemainderUnsigned();
 void ShindenHeya_UpdateRisingSpark();
-
-struct Sprite378 {
-    u8 pad[9];
-    u8 lo : 2;
-    u8 layer : 2;
-    u8 hi : 4;
-};
 
 /* A zero kept in a one-halfword struct, so it is a HImode value the compiler
  * holds in a high register and reloads from the pool. */
@@ -418,33 +401,33 @@ void FieldScene_RunPairedActorChoreography(void)
 /* Shrine room: raises an item icon object, loads the item's icon into its sprite and clears its motion flags while it rises for sixty frames. */
 void ShindenHeya_RaiseItemIcon(s32 item)
 {
-    u8 *obj;
-    u8 *spr;
+    struct FieldActor *obj;
+    struct FieldSprite *spr;
     s32 buf;
     s32 zero;
     s32 z;
     u8 *flag;
     u32 i;
 
-    obj = ((s32 (*)())Engine_ObjectCreate)(22);
+    obj = ((struct FieldActor *(*)())Engine_ObjectCreate)(22);
     zero = 0;
     if (obj != 0) {
         ObjectDispatch_Initialize((s32)obj, (s32)ShindenHeya_ItemIconGrowScript);
-        spr = *(u8 **)(obj + 80);
-        spr[38] = zero;
-        spr[39] = zero;
-        ((struct Spr5 *)spr)->bit5 = 0;
-        spr[9] &= 15;
-        *(s32 *)(obj + 40) = 0x20000;
-        *(s32 *)(obj + 72) = 0x4000;
+        spr = obj->sprite;
+        spr->flags = zero;
+        spr->part_count = zero;
+        spr->full_color = 0;
+        spr->palette = 0;
+        obj->velocity_y = 0x20000;
+        ((struct FieldEffect *)obj)->velocity_y = 0x4000;
         buf = (s32)Runtime_AllocateHeapBlock(17, 0x608);
         Ui_PrepareTransferForItem(item);
-        VramBlock_LoadCached(spr[28], 128, buf + 0x400);
+        VramBlock_LoadCached(spr->vram_block, 128, buf + 0x400);
         Runtime_ReleaseHeapBlock(17);
         /* FAKEMATCH: the stored zero is a variable set after the flag
          * address, so it copies the counter's zero after that address. */
-        for (i = 0, flag = obj + 85, z = 0; i <= 59; i++) {
-            if ((u32)(*(s32 *)(obj + 40) + 255) <= 0x1fe)
+        for (i = 0, flag = &obj->motion_flags, z = 0; i <= 59; i++) {
+            if ((u32)(obj->velocity_y + 255) <= 0x1fe)
                 *flag = z;
             WaitFrames(1);
         }
@@ -491,32 +474,32 @@ void ShindenHeya_UpdateRisingSpark(struct FieldActor *spark)
 /* Shrine room: spawns a spark effect at a random offset above an actor, with random delay and lifetime, on the actor's sprite layer. */
 void ShindenHeya_SpawnActorSpark(s32 id)
 {
-    u8 *actor;
-    u8 *obj;
-    struct Sprite378 *spr;
+    struct FieldActor *actor;
+    struct FieldActor *obj;
+    struct FieldSprite *spr;
     s32 x;
     s32 r;
     struct Half zero;
 
-    actor = (u8 *)Object_GetById(id);
+    actor = Object_GetById(id);
     if (actor == 0)
         return;
     r = Math_RemainderUnsigned(Engine_RandomNext(), 20);
-    x = *(s32 *)(actor + 8);
+    x = actor->x.fixed;
     x += r << 16;
     x += -0xa0000;
-    obj = (u8 *)Engine_ObjectCreate(0x11e, x, *(s32 *)(actor + 12) + ((Engine_RandomNext() & 15) << 16) + -0x80000, *(s32 *)(actor + 16));
+    obj = Engine_ObjectCreate(0x11e, x, actor->y.fixed + ((Engine_RandomNext() & 15) << 16) + -0x80000, actor->z.fixed);
     if (obj == 0)
         return;
-    spr = *(struct Sprite378 **)(obj + 80);
-    obj[85] = 0;
-    *(u16 *)(obj + 100) = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
+    spr = obj->sprite;
+    obj->motion_flags = 0;
+    obj->unknown_64 = Math_RemainderUnsigned(Engine_RandomNext(), 10) + 5;
     /* FAKEMATCH: the spark frame zero held in a halfword struct. */
     zero.v = 0;
-    *(u16 *)(obj + 102) = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
-    *(s32 *)(obj + 108) = (s32)ShindenHeya_UpdateRisingSpark;
-    ((u8 *)spr)[38] = zero.v;
-    spr->layer = (*(struct Sprite378 **)(actor + 80))->layer;
+    obj->unknown_66 = Math_RemainderUnsigned(Engine_RandomNext(), 60) + 30;
+    obj->update = (void (*)(union FieldObject *))ShindenHeya_UpdateRisingSpark;
+    spr->flags = zero.v;
+    spr->priority = actor->sprite->priority;
 }
 
 /* Calls use this overlay's loader veneers. The early long branch shares
@@ -612,9 +595,9 @@ void SceneState_ApplyTwoRects(void)
 
 s32 IsActorFacingInward(void)
 {
-    ActorState *actor = GetActorState(0);
+    struct FieldActor *actor = GetActorState(0);
 
-    if ((u32)((actor->angle + 0x5fff) << 16) <= 0x3ffe0000) {
+    if ((u32)((actor->facing + 0x5fff) << 16) <= 0x3ffe0000) {
         return 1;
     }
     return 0;

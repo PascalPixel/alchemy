@@ -17,13 +17,6 @@ TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksRobinSoulYe);
 TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSpeaksAfterAnswer);
 TEXT_MESSAGE_ENUM(MsgBabiChikaStatueSeemsSpeakYourSoul);
 
-struct Owner {
-    u8 unk0[9];
-    u8 unk9_0 : 2;
-    u8 mode : 2;
-    u8 unk9_4 : 4;
-};
-
 struct SceneObject {
     u8 filler00[8];
     s32 x;

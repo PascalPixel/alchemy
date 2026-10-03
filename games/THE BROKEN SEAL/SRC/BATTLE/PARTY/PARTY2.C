@@ -7,14 +7,13 @@
 #include "BATTLE_PARTY.H"
 #include "OWNER_STATE.H"
 
-s32 BattleParty_PrepareActiveOwners(u16 *owners);
 void BattleUnit_Recalculate(s32 owner);
 
-s32 Trade_CanOfferDjinnFar(s32 id, s32 x, s32 y);
-void Trade_AddOfferFar(s32 id, s32 x, s32 y);
+s32 Trade_CanOfferDjinnFar(s32 id, s32 element, s32 index);
+void Trade_AddOfferFar(s32 id, s32 element, s32 index);
 s32 GameFlag_TestFar(s32 message);
-s32 Djinn_ActivateFar(s32 id, s32 x, s32 y);
-s32 Trade_RemoveOfferFar(s32 id, s32 x, s32 y);
+s32 Djinn_ActivateFar(s32 id, s32 element, s32 index);
+s32 Trade_RemoveOfferFar(s32 id, s32 element, s32 index);
 
 struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
@@ -78,25 +77,25 @@ s32 BattlePlacement_UpdateEntries(void)
     s32 count;
     s32 i;
     s32 owner;
-    s32 x;
-    s32 y;
+    s32 element;
+    s32 index;
 
     count = BattleParty_PrepareActiveOwners(owners);
 
     for (i = 0; i < count; i++) {
         owner = owners[i];
-        for (x = 0; x <= 3; x++) {
-            for (y = 0; y <= 19; y++) {
-                if (Trade_CanOfferDjinnFar(owner, x, y) != 0) {
+        for (element = 0; element <= 3; element++) {
+            for (index = 0; index <= 19; index++) {
+                if (Trade_CanOfferDjinnFar(owner, element, index) != 0) {
                     struct DjinnRecoveryList *list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                     s32 j;
 
                     for (j = 0; j < list->count; j++) {
-                        if (x == list->entries[j].element && y == list->entries[j].index)
+                        if (element == list->entries[j].element && index == list->entries[j].index)
                             break;
                     }
                     if (j == list->count)
-                        Trade_AddOfferFar(owner, x, y);
+                        Trade_AddOfferFar(owner, element, index);
                 }
             }
         }
@@ -117,11 +116,11 @@ s32 BattlePlacement_UpdateEntries(void)
             do {
                 if (entry->turns == permanent_timer && GetBattleObjectSlot(entry->unit_id) == 0) {
                     u8 id = entry->unit_id;
-                    u8 ex = entry->element;
-                    u8 ey = entry->index;
+                    u8 element = entry->element;
+                    u8 index = entry->index;
 
-                    Djinn_ActivateFar(id, ex, ey);
-                    Trade_RemoveOfferFar(id, ex, ey);
+                    Djinn_ActivateFar(id, element, index);
+                    Trade_RemoveOfferFar(id, element, index);
                 }
                 i++;
                 entry++;

@@ -1,38 +1,31 @@
 #include "TYPES.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_SESSION.H"
 #include "OWNER_STATE.H"
 
-struct BattleEventActor {
-    u8 padding_000[0x12a];
-    u8 field_12a;
-};
-
-struct BattleEventObjectSlot {
-    s32 field_00;
-    u8 padding_004[0x24];
-    s16 field_28;
-};
-
 s32 Object_Destroy(s32);
-s32 Owner_UpdateRatioPairFar(void *, s32);
-struct BattleEventObjectSlot *GetBattleObjectSlot(s32 arg0);
+void Owner_UpdateRatioPairFar(struct BattleUnit *, s32);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 arg0);
 s32 ActivateBattleObjectSlot(s32 arg0);
-s32 BattleActor_RemoveFromLists(s32);
+void BattleActor_RemoveFromLists(s32);
 
 s32 BattleActor_DestroyTemporaryObject(s32 arg0)
 {
+    /* FAKEMATCH: the existing used word result crosses the void object-release
+       veneer; the native cleanup epilogue returns its live r0 unchanged. */
     s32 result;
-    struct BattleEventActor *creature;
-    struct BattleEventObjectSlot *runtime;
+    struct BattleUnit *creature;
+    struct BattleObjectSlot *runtime;
 
     creature = Owner_GetState(arg0);
-    if (creature->field_12a == 1) {
+    if (creature->status_12a == 1) {
         Owner_UpdateRatioPairFar(creature, 0);
         BattleActor_RemoveFromLists(arg0);
         ActivateBattleObjectSlot(arg0);
         runtime = GetBattleObjectSlot(arg0);
-        result = Object_Destroy(runtime->field_00);
-        runtime->field_00 = 0;
-        runtime->field_28 = 0;
+        result = Object_Destroy((s32)runtime->object);
+        runtime->object = 0;
+        runtime->active = 0;
         return result;
     }
     return (s32)creature;

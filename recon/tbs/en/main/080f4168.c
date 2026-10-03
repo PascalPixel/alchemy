@@ -33,6 +33,7 @@
  *    stack reference differs, so the score moves by hundreds on any change
  *    and is a poor guide until the frame is right. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "DMA.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
@@ -364,7 +365,7 @@ void LuckyDice_Run(void)
             if (counter > 0) {
                 counter--;
             }
-            if (timer > 19 && (gKeysRepeat & 1)) {
+            if (timer > 19 && (gKeysRepeat & KEY_A)) {
                 Audio_PlayCue(112);
                 if (winnings > 0) {
                     state = 3;
@@ -401,11 +402,11 @@ void LuckyDice_Run(void)
             }
             if (gKeysRepeat & 0) {
             }
-            if (gKeysHeld & 0x40) {
+            if (gKeysHeld & KEY_UP) {
                 work->die[0].y += 0x40000;
                 work->die[1].y += 0x40000;
             }
-            if (gKeysHeld & 0x80) {
+            if (gKeysHeld & KEY_DOWN) {
                 work->die[0].y += -0x40000;
                 work->die[1].y += -0x40000;
             }
@@ -425,12 +426,12 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->help_window, 1);
                 break;
             }
-            if (gKeysRepeat & 2) {
+            if (gKeysRepeat & KEY_B) {
                 Audio_PlayCue(113);
                 UiWork_FinalizeFar(sprites->help_window, 1);
                 break;
             }
-            if (gKeysRepeat & 1) {
+            if (gKeysRepeat & KEY_A) {
                 Audio_PlayCue(0x12e);
                 UiWork_FinalizeFar(sprites->help_window, 1);
                 state = 1;

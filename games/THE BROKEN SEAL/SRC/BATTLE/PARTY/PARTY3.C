@@ -10,7 +10,7 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
 
-s32 Party_CountActiveOwnersFar();
+s32 Party_CountActiveOwnersFar(void);
 s16 Owner_AdjustFirstValueFar(s32 owner, s32 amount);
 s16 Owner_AdjustSecondValueFar(s32 owner, s32 amount);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
@@ -18,9 +18,9 @@ void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-s32 Map_ResumeAnimationFar();
+s32 Map_ResumeAnimationFar(void);
 
-s32 Map_LoadAreaGraphicsFar();
+s32 Map_LoadAreaGraphicsFar(void);
 
 /* Party-wide HP changes in battle: drains, direct or percentage deltas, and
    the poison and venom damage applied at the end of a round. */

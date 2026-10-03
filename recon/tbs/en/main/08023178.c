@@ -1,3 +1,4 @@
+#include "IO_REG.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 /* Draft, not exact: current EN score14696, all external symbols resolve.
@@ -282,9 +283,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     keys = 0;
                     AudioCommand_PlayFar(0x6F);
                     cur.mode ^= 2;
-                    if ((gKeysRepeat & 1) != 0) {
+                    if ((gKeysRepeat & KEY_A) != 0) {
                         n = cur.pos[cur.mode];
-                    } else if ((gKeysRepeat & 0x20) != 0) {
+                    } else if ((gKeysRepeat & KEY_LEFT) != 0) {
                         n = cnt - 1;
                     } else {
                         n = 0;
@@ -703,7 +704,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
         if (((struct MenuCell *)gWindowWork[42])->active == 0) {
             break;
         }
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             break;
         }
 

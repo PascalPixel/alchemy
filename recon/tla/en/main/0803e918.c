@@ -1,12 +1,8 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "LAYOUT_GUARD.H"
-
-#define KEY_A 0x0001
-#define KEY_B 0x0002
-#define KEY_RIGHT 0x0010
-#define KEY_LEFT 0x0020
 
 /* A selection that cannot be moved, only confirmed or cancelled. */
 #define SELECTION_FIXED 999

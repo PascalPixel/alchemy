@@ -10,6 +10,7 @@
    (2) the reference clears the fill word from r7 with one more stack slot;
    (3) it compares the map with a pooled 1 (a halfword compare). */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "DMA.H"
 #include "GAME_STATE.H"
 #include "RAM_BUFFER.H"
@@ -408,7 +409,7 @@ s32 Func_0808c4f8(void)
                 AudioCommand_PlayFar(111);
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_SetBitFar(0x106);
-                if (gDebugMode != 0 && (gKeysHeld & 2) != 0 && (gKeysHeld & 4) != 0) {
+                if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 && (gKeysHeld & KEY_SELECT) != 0) {
                     Menu_RunSelectionWithCursorObjectFar();
                 } else if (GameFlag_IsSet(0x107) != 0) {
                     work->event = 250;
@@ -447,9 +448,9 @@ s32 Func_0808c4f8(void)
                 Battle_InitializeRenderObject();
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_SetBitFar(0x106);
-                if (gDebugMode != 0 && (gKeysHeld & 2) != 0) {
+                if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
                     Menu_RunSelectionFar();
-                } else if (gDebugMode != 0 && (gKeysHeld & 0x200) != 0) {
+                } else if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0) {
                     Debug_RunPaletteEditor();
                 } else if (GameFlag_IsSet(0x107) != 0) {
                     work->event = 250;

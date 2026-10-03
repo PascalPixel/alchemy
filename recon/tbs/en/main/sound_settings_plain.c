@@ -13,7 +13,7 @@
 
 void Sound_Mixer(void);
 void AudioEngine_Initialize(struct SoundWork *work);
-void CgbAudio_Initialize(struct SoundNote *notes);
+void CgbAudio_Initialize(struct CgbNote *notes);
 void AudioEngine_SetMode(u32 mode);
 void AudioEngine_RunMixerTick(void);
 void MusicPlayer_Initialize(struct SoundPlayer *player, struct SoundTrack *tracks, u8 count);
@@ -23,7 +23,7 @@ void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed);
 void Audio_ResumePlayer(struct SoundPlayer *player);
 void AudioCommand_InvokeSlot35(void *block);
 extern struct SoundWork Sound_Work;
-extern struct SoundNote Sound_CgbNotes[4];
+extern struct CgbNote Sound_CgbNotes[4];
 extern u8 Sound_WorkBytes[];
 extern const struct PlayerSlot Sound_PlayerSlots[];
 extern const struct SongEntry Sound_SongTable[];
@@ -81,7 +81,7 @@ void Audio_ResumeAllPlayers(void)
         Audio_ResumePlayer(Sound_PlayerSlots[i].player);
 }
 
-void CgbAudio_Initialize(struct SoundNote *notes)
+void CgbAudio_Initialize(struct CgbNote *notes)
 {
     struct SoundWork *work;
     u32 lock;

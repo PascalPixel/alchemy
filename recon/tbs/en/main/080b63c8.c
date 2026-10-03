@@ -103,7 +103,7 @@ s32 GameFlag_GetByteFar(s32 id);
 void BattleParty_AssignMemberSlots(void);
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
 void AudioCommand_PlayFar(s32 cue);
-void Sound_LoadPresetParameters(s32 value);
+s32 Sound_LoadPresetParameters(s32 value);
 void BattleParty_CollectUnitList(void);
 void BattleUnit_RefreshPlacement(void);
 void BattlePlacement_UpdateEntries(void);

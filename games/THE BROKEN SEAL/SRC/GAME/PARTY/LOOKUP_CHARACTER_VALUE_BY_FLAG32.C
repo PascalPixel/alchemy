@@ -1,6 +1,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "WINDOW.H"
@@ -75,7 +76,7 @@ void Djinn_ShowJoinedMessage(s32 pc, s32 element, s32 djinn)
         do {
             Runtime_PushSlotEntry(entry, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & 0x303) == 0);
+        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
         UiWork_Finalize(window, 2);
         WaitFrames(1);
@@ -131,7 +132,7 @@ void Party_ShowJoinedMessage(s32 member)
         do {
             Runtime_PushSlotEntry(entry, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & 0x303) == 0);
+        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
         UiWork_Finalize(window, 2);
         WaitFrames(1);
         Resource_ResetEntry(handle);

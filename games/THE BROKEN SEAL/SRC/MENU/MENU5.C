@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 
 extern const u8 Menu_HexDigitsString[];
 extern const u8 Menu_ColonString[];
@@ -55,7 +56,7 @@ s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor)
 {
     s32 *row = &cursor[1];
 
-    if (gKeysRepeat & 1) {
+    if (gKeysRepeat & KEY_A) {
         s32 flag = ((*page << 4) + *row << 4) + cursor[0];
 
         if (GameFlag_TestFar(flag))
@@ -64,35 +65,35 @@ s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor)
             GameFlag_SetBitFar(flag);
         return 1;
     }
-    if ((Data_03001c94 & 2) || (gKeysRepeat & 4))
+    if ((Data_03001c94 & 2) || (gKeysRepeat & KEY_SELECT))
         return -1;
-    if (gKeysRepeat & 0x40) {
+    if (gKeysRepeat & KEY_UP) {
         if (--*row < 0)
             *row = 15;
-    } else if (gKeysRepeat & 0x80) {
+    } else if (gKeysRepeat & KEY_DOWN) {
         if (++*row > 15)
             *row = 0;
-    } else if (gKeysRepeat & 0x20) {
+    } else if (gKeysRepeat & KEY_LEFT) {
         if (--cursor[0] < 0)
             cursor[0] = 15;
-    } else if (gKeysRepeat & 0x10) {
+    } else if (gKeysRepeat & KEY_RIGHT) {
         if (++cursor[0] > 15)
             cursor[0] = 0;
-    } else if ((gKeysRepeat & 0x200) && (gKeysRepeat & 8)) {
+    } else if ((gKeysRepeat & KEY_L) && (gKeysRepeat & KEY_START)) {
         *page -= 10;
         if (*page < 0)
             *page = 15;
         return 1;
-    } else if ((gKeysRepeat & 0x100) && (gKeysRepeat & 8)) {
+    } else if ((gKeysRepeat & KEY_R) && (gKeysRepeat & KEY_START)) {
         *page += 10;
         if (*page > 15)
             *page = 0;
         return 1;
-    } else if (gKeysRepeat & 0x200) {
+    } else if (gKeysRepeat & KEY_L) {
         if (--*page < 0)
             *page = 15;
         return 1;
-    } else if (gKeysRepeat & 0x100) {
+    } else if (gKeysRepeat & KEY_R) {
         if (++*page > 15)
             *page = 0;
         return 1;

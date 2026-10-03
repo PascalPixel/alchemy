@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EVENT.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_MOTION.H"
@@ -12,9 +13,8 @@
 s32 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
 void BattlePres_SetActorModes(u16 *actors, s32 mode);
 void BattleMotion_ResetObjectAtScaledAnchor(s32 id);
-void BattleEv_DispatchQueued(void);
 
-extern s32 *gTransitionWork;
+extern struct BattlePresentationTransition *gTransitionWork;
 
 s32 ArcTan2(s32 first, s32 second);
 
@@ -41,7 +41,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
     struct BattleUnit *unit;
     s16 position[3];
     s32 scripted;
-    s32 *facing;
+    struct BattlePresentationTransition *transition;
     s32 angle;
     s32 adjusted;
     s32 facing_angle;
@@ -54,7 +54,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
 
     /* FAKEMATCH: r0 forgets the plan, so the first read reloads it */
     asm volatile("" : : : "r0");
-    facing = gTransitionWork;
+    transition = gTransitionWork;
     object = GetBattleObjectSlot(plan->actor_id)->object;
     z = object->z;
     x = object->x;
@@ -65,11 +65,11 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
     adjusted &= 0x7fff;
     facing_angle = (adjusted - 0x2000) / 2 + 0x2000;
 
-    if (*facing == facing_angle) {
-        *facing = facing_angle;
+    if (transition->target_yaw == facing_angle) {
+        transition->target_yaw = facing_angle;
         WaitFrames(5);
     } else {
-        *facing = facing_angle;
+        transition->target_yaw = facing_angle;
         WaitFrames(10);
     }
 
@@ -126,7 +126,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
         if (scripted != 0) {
             work.kind += 200;
             phase = 1;
-            facing[5] = 1;
+            transition->flag = 1;
             position[0] = work.actor;
             position[1] = work.first_target;
             position[2] = 0xff;
@@ -162,7 +162,7 @@ s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode)
         }
         BattleEventRuntime_WaitForReady();
         if (scripted != 0) {
-            facing[5] = 0;
+            transition->flag = 0;
             BattleParty_ListAllUnitsAndSubmit();
             BattlePres_SetupTransitionScene(0, 0, 0, 100);
         }
@@ -178,7 +178,7 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     struct BattlePlan *saved_input;
     struct MotionObject *object;
     struct AnimationObject *animation;
-    s32 *facing;
+    struct BattlePresentationTransition *transition;
     s32 angle;
     s32 adjusted;
     s32 facing_angle;
@@ -187,7 +187,7 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     s32 divisor;
     s32 scripted;
 
-    facing = gTransitionWork;
+    transition = gTransitionWork;
     saved_input = input;
     object = GetBattleObjectSlot(saved_input->actor_id)->object;
     z = object->z;
@@ -199,11 +199,11 @@ s32 BattlePres_RunSimple(struct BattlePlan *input, s32 flags)
     adjusted &= 0x7fff;
     facing_angle = (adjusted - 0x2000) / 2 + 0x2000;
 
-    if (*facing == facing_angle) {
-        *facing = facing_angle;
+    if (transition->target_yaw == facing_angle) {
+        transition->target_yaw = facing_angle;
         WaitFrames(5);
     } else {
-        *facing = facing_angle;
+        transition->target_yaw = facing_angle;
         WaitFrames(20);
     }
 

@@ -3,6 +3,7 @@
 #include "PSYNERGY_MENU.H"
 #include "TBS_EDITION.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "GLOBAL_CELLS.H"
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
@@ -45,11 +46,6 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 pane);
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work, struct MenuResult *result);
 s32 PsynergyMenu_IsActionRestricted(s32 encoded_action);
 void Audio_PlayCue(s32 cue);
-#define KEY_A 1
-#define KEY_B 2
-#define KEY_SELECT 4
-#define KEY_R 0x100
-#define KEY_L 0x200
 #define ACTION_ID_MASK 0x3fff
 #define LIST_PAGE_SIZE 5
 

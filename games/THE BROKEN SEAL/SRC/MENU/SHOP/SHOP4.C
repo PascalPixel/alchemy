@@ -1,3 +1,4 @@
+#include "IO_REG.H"
 #include "EDITION.H"
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
@@ -207,7 +208,7 @@ s32 Shop_PickUnit(void)
             Shop_DrawUnitGrid(shop->item_window, unit_id);
         }
 
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             WaitFrames(1);
             if (Inventory_CountFar(unit_id) == 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
@@ -224,7 +225,7 @@ s32 Shop_PickUnit(void)
             continue;
         }
 
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             Audio_PlayCue(SOUND_MENU_CANCEL);
             Menu_ReleaseEntryObjectsFar();
             UiWork_FinalizeFar(list_window, 2);
@@ -234,12 +235,12 @@ s32 Shop_PickUnit(void)
             return 0;
         }
 
-        if ((gKeysRepeat & 0x20) != 0) {
+        if ((gKeysRepeat & KEY_LEFT) != 0) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             selection--;
             redraw = 1;
         }
-        if ((gKeysRepeat & 0x10) != 0) {
+        if ((gKeysRepeat & KEY_RIGHT) != 0) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             selection++;
             redraw = 1;
@@ -300,29 +301,29 @@ s32 Shop_SelSell(s32 unit_id)
                 Shop_DrawMsg(price_window, item_id + (s32)&MsgItemPlainName);
             }
 
-            if ((gKeyState & 1) != 0) {
+            if ((gKeyState & KEY_A) != 0) {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
                 result = 0;
                 goto done;
             }
-            if ((gKeyState & 2) != 0) {
+            if ((gKeyState & KEY_B) != 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 result = -1;
                 goto done;
             }
-            if ((gKeysRepeat & 0x20) != 0) {
+            if ((gKeysRepeat & KEY_LEFT) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
-            if ((gKeysRepeat & 0x10) != 0) {
+            if ((gKeysRepeat & KEY_RIGHT) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
                 selection = (selection + item_count) % item_count;
                 redraw = 1;
             }
-            if ((gKeysRepeat & 0x40) != 0) {
+            if ((gKeysRepeat & KEY_UP) != 0) {
                 selection -= 5;
                 if (selection < 0)
                     selection += 15;
@@ -331,7 +332,7 @@ s32 Shop_SelSell(s32 unit_id)
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
-            if ((gKeysRepeat & 0x80) != 0) {
+            if ((gKeysRepeat & KEY_DOWN) != 0) {
                 selection += 5;
                 if (selection >= item_count)
                     selection -= 15;

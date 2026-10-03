@@ -3,6 +3,7 @@
 #include "CANVAS.H"
 #include "PROJECT.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -417,7 +418,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
         work->transfer_pending = 1;
         WaitFrames(1);
-    } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & 3)));
+    } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
     gBgScroll.unk04 = scroll;
     spot[4] = 0;

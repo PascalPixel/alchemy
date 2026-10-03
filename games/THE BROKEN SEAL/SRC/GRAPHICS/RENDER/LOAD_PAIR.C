@@ -1,6 +1,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "WINDOW.H"
 #include "SYSTEM.H"
 #include "SCENE.H"
@@ -76,7 +77,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second)
             Runtime_PushSlotEntry(entry1, 250);
             Runtime_PushSlotEntry(entry2, 250);
             WaitFrames(1);
-        } while (Audio_Check() != 0 && (gKeyState & 0x303) == 0);
+        } while (Audio_Check() != 0 && (gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
         UiWork_Finalize(window, 2);
         WaitFrames(1);

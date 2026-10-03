@@ -1,17 +1,18 @@
 #include "AUDIO_ENGINE.H"
 
-/* Sets the pitch of every track of the music player. */
 void MusicCommand_SetPitch(s16 pitch)
 {
-  int player_address;
-  int channel_mask;
-  s16 pitch_value;
-  player_address = (u32)&gMusicPlayerBgm;
-  do
-  {
-    pitch_value = pitch;
-    channel_mask = 0xFF;
-    MusicPlayer_SetPitch((struct SoundPlayer *)player_address, channel_mask, pitch_value);
-  }
-  while (0);
+    s32 player;
+    s32 mask;
+    s16 value;
+
+    /* FAKEMATCH: retain the original one-pass block and local lifetimes;
+       both direct-call and local-only forms move the player literal load
+       after signed narrowing in this 24-byte wrapper. */
+    player = (u32)&gMusicPlayerBgm;
+    do {
+        value = pitch;
+        mask = 0xff;
+        MusicPlayer_SetPitch((struct SoundPlayer *)player, mask, value);
+    } while (0);
 }

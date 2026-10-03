@@ -17,6 +17,7 @@
    the counter takes r7 and the angle r8 (declaration order, u16/s32 angle
    types and indexed case-20 stores moved nothing). */
 #include "TYPES.H"
+#include "IO_REG.H"
 
 struct ProbePoint {
     s32 x;
@@ -52,7 +53,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct ProbePoint *out)
 
     angle = 0;
     tmp = gSpriteObjects->shape;
-    if ((gKeysHeld & 2) != 0)
+    if ((gKeysHeld & KEY_B) != 0)
         angle = gFrameTick << 8;
     switch ((u32)tmp->kind) {
     case 3:

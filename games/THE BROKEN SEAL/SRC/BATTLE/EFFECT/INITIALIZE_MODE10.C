@@ -150,7 +150,7 @@ void BattleEffect_RunDitherDissolveScene(struct BattleEffectArgument *effect)
     for (frame = 0; frame != 366; frame++) {
         struct BattleCamera *camera = gCameraWork;
 
-        if ((gKeysRepeat & 3) != 0 && frame > 190 && frame <= 285) {
+        if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 190 && frame <= 285) {
             Iwram_ClearWords(canvas, 0x4000);
             frame = 286;
         }
@@ -664,7 +664,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
     /* FAKEMATCH: the rock count resets inside the loop test, after the
        frame limit and before the skip keys are tested. */
-    for (frame = 0; frame != 288 && (count = 16, !(gKeysRepeat & 3) || frame <= 16); frame++) {
+    for (frame = 0; frame != 288 && (count = 16, !(gKeysRepeat & (KEY_A | KEY_B)) || frame <= 16); frame++) {
         if (frame >= 0 && frame < 16) {
             u16 *phase = (u16 *)gMapCellBuffer;
             if (frame == 1) {

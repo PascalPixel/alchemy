@@ -100,6 +100,7 @@
  * Stop: completion/cancellation nesting and page/redraw lifetimes need a
  * broader source model; do not repeat the outer-loop placement alone. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
 #include "FIELD_EVENT.H"
 extern u8 MsgNoBackupMemory[];
@@ -701,10 +702,10 @@ s32 SaveMenu_Run(void)
         page = none;
         L_02000aaa:;
         Call1(Func_02001ee2, 0x6002500);
-        if ((gKeyState & 2) != 0) {
+        if ((gKeyState & KEY_B) != 0) {
             goto L_020009a6;
         }
-        if ((gKeyState & 1) != 0) {
+        if ((gKeyState & KEY_A) != 0) {
             page = (page + 1);
             v7 = 1;
             if (page == page_count) {
@@ -712,7 +713,7 @@ s32 SaveMenu_Run(void)
             }
             Func_02001fa2(111);
         } else {
-            if ((gKeyState & 32) != 0) {
+            if ((gKeyState & KEY_LEFT) != 0) {
                 if (page_count <= 1) {
                     goto L_02000b30;
                 }
@@ -720,7 +721,7 @@ s32 SaveMenu_Run(void)
                 rec5 = Func_02001e6e(((page + page_count) - 1), page_count);
             } else {
                 L_02000b30:;
-                if ((gKeyState & 16) == 0) {
+                if ((gKeyState & KEY_RIGHT) == 0) {
                     goto L_02000b58;
                 }
                 if (page_count <= 1) {

@@ -1,11 +1,11 @@
 #include "EDITION.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "ANIMSPR.H"
+#include "FIELD_EFFECT.H"
 #include "FIELD_SCENE.H"
 #include "FACING_OBJECT.H"
 #include "CALL.H"
-
-extern u8 *Data_03001ebc;
 
 /* The one placement the second scene sequence spawns. */
 extern const s32 ShindenHeya_PlacementSequenceB[];
@@ -13,20 +13,15 @@ void ShindenHeya_SpawnOwnerEffect();
 
 static __inline__ void bump_step(void)
 {
-    u8 *work = Data_03001ebc;
+    struct EventWork *work = gEventWork;
 
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + 1);
+    work->message = (u16)(work->message + 1);
 }
 
 s16 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
-typedef struct {
-    u8 pad_to_angle[6];
-    u16 angle;
-} ActorState;
-
-ActorState *GetActorState(s32 actor_id);
+struct FieldActor *GetActorState(s32 actor_id);
 extern s16 Data_02000240[];
 void Event_CallWithLastActiveObjectId();
 void AudioCommand_WaitForCompletion();
@@ -78,9 +73,6 @@ void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
 s32 ShindenHeya_ChooseRestartOption(void);
 
 s32 ShindenHeya_MatchLeaderPriority();
-#define SCENE_REQUEST (*(u32 *)(Data_03001ebc + 0x1c0))
-#define SCENE_SETUP_WORD (*(u32 *)(Data_03001ebc + 0x1c8))
-#define SKIP_BEATS (*(u16 *)(Data_03001ebc + 0x1d8))
 void ShindenHeya_CopyActorPose();
 void FieldScene_RunPairedActorChoreography();
 void ObjectMotion_WaitForAnimationChange();
@@ -93,32 +85,6 @@ void SceneState_ResetObject14Word108(void);
 void Engine_ActorSetPosition();
 void Engine_ActorSetAnimation();
 void ShindenHeya_FollowLeaderOffset();
-
-struct Flags9 {
-    u8 pad[9];
-    u8 low : 2;
-    u8 mode : 2;
-};
-
-struct Flags5 {
-    u8 pad[5];
-    u8 flags;
-};
-
-struct Flags37 {
-    u8 pad[37];
-    u8 flags;
-};
-
-struct Flags35 {
-    u8 pad[35];
-    u8 flags;
-};
-
-struct Flags39 {
-    u8 pad[39];
-    u8 count;
-};
 
 /* Resource 378 object reset at 0x02002660(28 bytes including alignment). */
 extern 
@@ -784,8 +750,8 @@ void FieldScene_RunScriptedSceneSequence(void)
         Actor_FaceActor(0xa, ACTOR_PARTY_LEADER, 0);
         Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
         Engine_CameraWaitForMove();
-        SCENE_REQUEST = 0x100;
-        SCENE_SETUP_WORD = 0x40;
+        gEventWork->start_transition = 0x100;
+        gEventWork->transition_frames = 0x40;
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Engine_EventWait(0x78);
@@ -797,7 +763,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Engine_EventWait(1);
     Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
     Engine_CameraWaitForMove();
-    SCENE_REQUEST = 0x209;
+    gEventWork->start_transition = 0x209;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     FieldScene_RunPairedActorChoreography();
@@ -841,12 +807,12 @@ void FieldScene_RunScriptedSceneSequence(void)
         Engine_ActorSetAnimationAndWait(0xb, 3);
         Engine_EventWait(0x14);
         Event_ShowMessage(0xb, 0);
-        SKIP_BEATS++;
+        gEventWork->message++;
     } else {
         Engine_EventWait(0x14);
         Engine_ActorSetAnimationAndWait(0xb, 4);
         Engine_EventWait(0x14);
-        SKIP_BEATS++;
+        gEventWork->message++;
         Event_ShowMessage(0xb, 0);
     }
     Engine_EventWait(0x14);
@@ -862,12 +828,12 @@ void FieldScene_RunScriptedSceneSequence(void)
         Engine_ActorSetAnimationAndWait(9, 3);
         Engine_EventWait(0x14);
         Event_ShowMessage(9, 0);
-        SKIP_BEATS++;
+        gEventWork->message++;
     } else {
         Engine_EventWait(0x14);
         Engine_ActorSetAnimationAndWait(9, 4);
         Engine_EventWait(0x14);
-        SKIP_BEATS++;
+        gEventWork->message++;
         Event_ShowMessage(9, 0);
     }
     Engine_EventWait(0x14);
@@ -1714,36 +1680,34 @@ void FieldScene_RunActorUpdateSequence(void)
 void ShindenHeya_CopyActorPose(void)
 {
     u32 i;
-    s32 rec7;
-    s32 record;
-    s32 v0;
-    u8 *v2;
-    u8 *p5;
+    struct FieldActor *rec7;
+    struct FieldActor *record;
+    struct AnimationObject *p5;
 
-    record = (s32)Object_GetById(8);
+    record = Object_GetById(8);
     if (record != 0) {
-        Engine_ActorSetPosition(14, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Engine_ActorSetPosition(14, record->x.fixed, record->z.fixed);
     }
     Engine_ActorSetAnimation(14, 0);
-    rec7 = (s32)Object_GetById(14);
-    record = (s32)Object_GetById(8);
-    *(u16 *)(rec7 + 6) = *(u16 *)(record + 6);
-    record = (s32)Object_GetById(14);
-    *(s32 *)(record + 108) = (s32)ShindenHeya_FollowLeaderOffset;
-    record = (s32)Object_GetById(14);
-    p5 = *(s32 *)(record + 80);
+    rec7 = Object_GetById(14);
+    record = Object_GetById(8);
+    rec7->facing = record->facing;
+    record = Object_GetById(14);
+    record->update = (void (*)(union FieldObject *))ShindenHeya_FollowLeaderOffset;
+    record = Object_GetById(14);
+    p5 = (struct AnimationObject *)record->sprite;
     {
-        for (i = 0; i < ((struct Flags39 *)p5)->count; i++) {
-            u8 *e = ((u8 **)(p5 + 40))[i];
+        for (i = 0; i < p5->count; i++) {
+            struct AnimationEntry *e = p5->entries[i];
 
-            if (e != 0 && *(s32 *)(e + 16) != 0) {
-                ((struct Flags5 *)e)->flags = 10;
+            if (e != 0 && e->script != 0) {
+                e->param = 10;
             }
         }
     }
-    ((struct Flags37 *)p5)->flags = 1;
-    ((struct Flags35 *)((s32)Object_GetById(14)))->flags &= 254;
-    ((struct Flags9 *)p5)->mode = 2;
+    p5->dirty = 1;
+    ((struct FieldActor *)Object_GetById(14))->priority_flags &= 254;
+    ((struct FieldSprite *)p5)->priority = 2;
 }
 
 /* Calls use this overlay's loader veneers. The early long branch shares
@@ -1979,7 +1943,20 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
             *(u16 *)(rec8 + 102) = p8;
             *(s32 *)((s32)rec8 + 108) = (s32)SceneEffect_StepEllipseOrbit;
             { u16 v = 0; p5[38] = v; }
-            { u8 m = ((struct Flags9 *)(*(s32 *)(rec + 80)))->mode; *(s32 *)((s32)rec8 + 104) = rec; ((struct Flags9 *)p5)->mode = m; } /* FAKEMATCH: the mode is read into a temporary so the owner store schedules first */
+            /* FAKEMATCH: ordinary priority views move the anchor store in
+               this 130-byte body and replace native mov13/neg. Retain the
+               existing byte-bitfield and pointer-word alias boundary. */
+            {
+                struct SpritePriorityByte {
+                    u8 unknown_00[9];
+                    u8 low : 2;
+                    u8 priority : 2;
+                };
+                u8 priority = ((struct SpritePriorityByte *)(*(s32 *)(rec + 80)))->priority;
+
+                *(s32 *)((s32)rec8 + 104) = rec;
+                ((struct SpritePriorityByte *)p5)->priority = priority;
+            }
         }
     }
 }

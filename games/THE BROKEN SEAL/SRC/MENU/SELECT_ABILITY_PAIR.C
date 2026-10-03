@@ -1,6 +1,7 @@
 #include "RESOURCE.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RENDER_INPUT.H"
 #include "BATTLE_TYPES.H"
 #include "GAME_STATE.H"
@@ -129,7 +130,7 @@ void Debug_SelectAbilityPair(void)
                 UiText_DrawCharacterAtOffset(ability + (s32)MsgAbilityDescription, info, 0, 0);
             }
             WaitFrames(1);
-            if (gKeysRepeat & 0x20) {
+            if (gKeysRepeat & KEY_LEFT) {
                 AudioCommand_PlayFar(111);
                 if (row != 0)
                     second--;
@@ -137,7 +138,7 @@ void Debug_SelectAbilityPair(void)
                     first--;
                 redraw = 1;
             }
-            if (gKeysRepeat & 0x10) {
+            if (gKeysRepeat & KEY_RIGHT) {
                 AudioCommand_PlayFar(111);
                 if (row != 0)
                     second++;
@@ -145,21 +146,21 @@ void Debug_SelectAbilityPair(void)
                     first++;
                 redraw = 1;
             }
-            if (gKeysRepeat & 0x40) {
+            if (gKeysRepeat & KEY_UP) {
                 AudioCommand_PlayFar(111);
                 row--;
                 redraw = 1;
             }
-            if (gKeysRepeat & 0x80) {
+            if (gKeysRepeat & KEY_DOWN) {
                 AudioCommand_PlayFar(111);
                 row++;
                 redraw = 1;
             }
-            if (gKeyState & 1)
+            if (gKeyState & KEY_A)
                 AudioCommand_PlayFar(112);
-            else if (gKeyState & 2)
+            else if (gKeyState & KEY_B)
                 AudioCommand_PlayFar(113);
-            else if (gKeyState & 8)
+            else if (gKeyState & KEY_START)
                 AudioCommand_PlayFar(113);
             else
                 continue;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "SYSTEM.H"
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_RUNTIME.H"
@@ -27,13 +28,13 @@ void BattleActor_RemoveFromLists(s32 actor)
     s32 unit;
 
     work = gBattleWork;
-    Owner_GetStateFar(actor)->status_12a = 0;
+    Owner_GetStateFar(actor)->status_12a = BATTLE_UNIT_ABSENT;
     for (i = 0; ; i++) {
         if (work->party_units[i] == actor) {
-            work->party_units[i] = 0xfe;
+            work->party_units[i] = BATTLE_UNIT_REMOVED;
             goto removed;
         }
-        if (work->party_units[i] == 0xff)
+        if (work->party_units[i] == BATTLE_UNIT_LIST_END)
             break;
     }
     /* FAKEMATCH: the enemy scan is a goto loop inside a block that runs once,
@@ -44,11 +45,11 @@ void BattleActor_RemoveFromLists(s32 actor)
 again:
         unit = work->enemy_units[j];
         if (unit == actor) {
-            work->enemy_units[j] = 0xfe;
+            work->enemy_units[j] = BATTLE_UNIT_REMOVED;
             goto removed;
         }
         j++;
-        if (unit == 0xff)
+        if (unit == BATTLE_UNIT_LIST_END)
             return;
         goto again;
     } while (0);
@@ -56,7 +57,7 @@ removed:
     Summon_ReleaseCharge(actor);
     for (j = 0; j < 20; j++) {
         if (work->actions[j].unit_id == actor)
-            work->actions[j].unit_id = 0xff;
+            work->actions[j].unit_id = BATTLE_UNIT_LIST_END;
     }
 }
 
@@ -71,14 +72,14 @@ void BattleMotion_InitializeActorRecords(s32 id)
     state = Owner_GetStateFar(id);
     index = 0;
     while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
-        if (state->status_12a != 1)
+        if (state->status_12a != BATTLE_UNIT_ENEMY)
             AnimationObjects_SelectAnimationFar(item, 4);
         else
             AnimationObjects_SelectAnimationFar(item, 5);
         index++;
     }
 
-    if (state->status_12a == 1) {
+    if (state->status_12a == BATTLE_UNIT_ENEMY) {
         index = 0;
         while ((item = GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
             child = item->entries[0];

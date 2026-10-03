@@ -14,6 +14,7 @@
    the compiler's function size excludes. The outer function remains a
    draft, and none of this bank can yet be credited. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "RESOURCE_IDS.H"
 #include "RESOURCE.H"
 #include "BATTLE_EFX.H"
@@ -286,10 +287,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             s32 y;
 
             if (mode == 1) {
-                if ((gKeysRepeat & 3) && frame > 16)
+                if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
                     goto skipped;
             } else {
-                if ((gKeysRepeat & 3) && frame > 4)
+                if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 4)
                     goto skipped;
             }
             if (frame == 0)

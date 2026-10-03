@@ -17,6 +17,7 @@
  * "...But doesn't have enough PP!" need catalogue names, and the callback is
  * BattleEvent_Playback. */
 #include "TYPES.H"
+#include "BATTLE_EVENT.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_PRESENTATION.H"
 #include "FIXED_MATH.H"
@@ -45,7 +46,6 @@ void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 void UiWindow_DrawPartyStatusContentsFar(s32);
 void Actor_ResetMotionAtAnchor(s32);
 s32 BattlePres_BuildTargetList(void *, struct PresentationWork *);
-u32 BattleEv_DispatchQueued(void);
 u32 BattleEv_Push(u32, u32);
 s32 BattleEventRuntime_WaitForReady(void);
 void BattlePres_SetActorModes(u16 *, s32);

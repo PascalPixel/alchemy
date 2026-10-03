@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "SYSTEM.H"
 #include "UI.H"
 #include "SCENE.H"
@@ -47,7 +48,7 @@ void Battle_ShowPairedUnitWorkAndWait(
         WaitFrames(1);
 
     WaitFrames(1);
-    while ((gKeyState & 0x303) == 0)
+    while ((gKeyState & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0)
         WaitFrames(1);
 
     WaitFrames(1);

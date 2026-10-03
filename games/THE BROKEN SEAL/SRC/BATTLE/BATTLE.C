@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_PARTY.H"
 #include "BATTLE_STATUS_ICON.H"
 #include "BATTLE_RUNTIME.H"
 #include "MOTION_OBJECT.H"
@@ -54,6 +55,7 @@ s32 BattleStatusIcon_Cycle(struct BattleObjectSlot *record)
     struct AnimationObject *context;
     struct MotionObject *owner;
     s32 effect_id;
+    s32 entry_handle;
     s32 prev;
     s32 changed = 0;
 
@@ -111,9 +113,11 @@ update:
     }
 
     if (effect_id >= 0 && changed != 0) {
-        effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, effect_id);
-        record->animation_entry = (struct SpriteEntry *)effect;
-        if (effect == (struct AnimationEntry *)-1)
+        /* FAKEMATCH: storing the handle before the failure test preserves the
+           existing store order; testing first adds an unconditional branch. */
+        entry_handle = ResourceMetadata_RegisterFar(context, effect_id);
+        record->animation_entry = (struct SpriteEntry *)entry_handle;
+        if (entry_handle == -1)
             record->animation_entry = 0;
         effect = (struct AnimationEntry *)record->animation_entry;
         if (effect != 0) {
@@ -141,7 +145,7 @@ s32 BattlePres_SetActorModeAndAction(s32 id)
     value = 1;
     if (state->hp != 0) {
         if (state->sleep != 0 || state->stun != 0 || state->cannot_move != 0)
-            value = (state->status_12a != 1) * 4;
+            value = (state->status_12a != BATTLE_UNIT_ENEMY) * 4;
     } else {
         s32 changed = state->status_12a ^ value;
         value = (u32)(-changed | changed) >> 31;

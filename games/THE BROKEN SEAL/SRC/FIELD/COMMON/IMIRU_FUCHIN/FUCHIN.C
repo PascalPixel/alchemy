@@ -44,13 +44,13 @@ void FieldScene_RunScene39aSequenceA(void);
 extern s32 ImiruFuchin_TrackLeader;
 void ImiruFuchin_ApplyRoomLayout(void);
 void ImiruFuchin_PlaceDragonsEye(void);
-struct Actor_39a *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 sprite);
+struct FieldActor *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 sprite);
 void BattleFx_StartFadeOverlay(s32 mode);
 void DialogueLayout_ConfigureGroupOne(void);
 void DialogueLayout_ConfigureGroupTwo(void);
 void DialogueLayout_ConfigureGroupThree(void);
 void FieldScene_RunFlagBranchedLayoutSteps(void);
-void OverlayObject_AdvancePositionByDelta();
+void OverlayObject_AdvancePositionByDelta(union FieldObject *object);
 
 /* The overlay's three effect scripts, at the start of its read-only data. */
 extern const s32 *const gEffectScripts[];
@@ -164,8 +164,8 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 /* The cave's flag steps: each places or moves actors 8 to 11. */
 void SceneActor_PlacePairAtOffset(s32 a0, s32 a1, s32 a2)
 {
-    Obj *p;
-    Obj *q;
+    struct FieldActor *p;
+    struct FieldActor *q;
     s32 x;
     s32 y;
 
@@ -173,21 +173,21 @@ void SceneActor_PlacePairAtOffset(s32 a0, s32 a1, s32 a2)
     q = Object_GetById(a0);
     Engine_EventBegin();
     {
-        x = ((p->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-        y = ((p->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+        x = ((p->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
+        y = ((p->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
 
-        p->f30 = 0x10000;
-        p->f34 = 0x8000;
-        Object_SetPosition(p, x, p->f0c, y);
+        p->speed = 0x10000;
+        p->acceleration = 0x8000;
+        Object_SetPosition(p, x, p->y.fixed, y);
     }
     Object_SetMode(p, 27);
     {
-        x = ((q->f08 + (a1 << 16)) & 0xFFF00000) + 0x80000;
-        y = ((q->f10 + (a2 << 16)) & 0xFFF00000) + 0x80000;
+        x = ((q->x.fixed + (a1 << 16)) & 0xFFF00000) + 0x80000;
+        y = ((q->z.fixed + (a2 << 16)) & 0xFFF00000) + 0x80000;
 
-        q->f30 = 0x10000;
-        q->f34 = 0x8000;
-        Object_SetPosition(q, x, q->f0c, y);
+        q->speed = 0x10000;
+        q->acceleration = 0x8000;
+        Object_SetPosition(q, x, q->y.fixed, y);
     }
     if (a1 < 0 || a2 < 0) {
         Object_SetMode(q, 4);
@@ -836,16 +836,16 @@ void SceneActor_SetActor11Values1And2(void)
     Engine_ActorSetAnimation(11, 2);
 }
 
-struct Actor_39a *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c, s32 d)
+struct FieldActor *OverlayObject_CreateAndInitialize(s32 a, s32 b, s32 c, s32 d)
 {
-    struct Actor_39a *actor = Engine_ObjectCreate(d, a, b, c);
+    struct FieldActor *actor = Engine_ObjectCreate(d, a, b, c);
 
     if (actor != 0) {
-        actor->f80->mode = 1;
-        actor->f85 = 0;
+        actor->sprite->priority = 1;
+        actor->motion_flags = 0;
         Engine_ActorSetSpriteFlags(actor, 0);
         ObjectGroup_SetChildValue(actor, 15);
-        actor->f35 |= 2;
+        actor->priority_flags |= 2;
         return actor;
     }
     return 0;
@@ -883,11 +883,11 @@ const struct SceneEvent *Scene_GetEvents(void)
 /* The service step and the cave's dialogue layouts. */
 void SceneState_SetServiceZeroValue06(void)
 {
-    struct SceneService *work;
+    struct FieldActor *work;
 
     Engine_EventBegin();
     work = Object_GetById(0);
-    work->value06 = 0x4000;
+    work->facing = 0x4000;
     Audio_PlayCue(123);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
@@ -901,14 +901,14 @@ void FieldScene_RunSingleStep(void)
 
 void SceneActor_PlaceAtTileAndMark(s32 id, s32 x, s32 y)
 {
-    struct Rec_39a *rec = Object_GetById(id);
+    struct FieldActor *rec = Object_GetById(id);
 
     if (rec != 0) {
         Engine_ActorSetSpritePriority(id, 3);
-        rec->f34 = 2;
-        rec->f35 |= 2;
-        rec->f8 = (x << 20) + 0x80000;
-        rec->f16 = (y << 20) + 0x80000;
+        rec->unknown_22 = 2;
+        rec->priority_flags |= 2;
+        rec->x.fixed = (x << 20) + 0x80000;
+        rec->z.fixed = (y << 20) + 0x80000;
     }
 }
 
@@ -1334,13 +1334,15 @@ void ImiruFuchin_TakeDragonsEye(void)
     Engine_EventEnd();
 }
 
-void OverlayObject_AdvancePositionByDelta(struct MovingObject *object)
+void OverlayObject_AdvancePositionByDelta(union FieldObject *raw)
 {
-    object->x += object->dx;
-    object->y += object->dy;
-    object->z += object->dz;
-    object->sub_x += object->sub_dx;
-    object->sub_y += object->sub_dy;
+    struct FieldEffect *object = &raw->effect;
+
+    object->x += object->velocity_x;
+    object->y += object->velocity_y;
+    object->z += object->velocity_z;
+    object->scale_x += object->scale_rate_x;
+    object->scale_y += object->scale_rate_y;
 }
 
 s32 OverlayObject_ApplyValue15(s32 obj)
@@ -1575,7 +1577,7 @@ void ImiruFuchin_StartFadeIn(void)
 /* Turning and stepping an actor along the heading the held direction gives. */
 void SceneActor_TurnTowardTableAngle(s32 z)
 {
-    T *o;
+    struct FieldActor *o;
     s32 t;
     s32 d;
     u16 prev;
@@ -1583,15 +1585,15 @@ void SceneActor_TurnTowardTableAngle(s32 z)
 
     /* FAKEMATCH: retain the argument reused as the timer index, zero and -1
      * so the signed halfword view and its values keep their lifetime. */
-    o = (T *)z;
-    n = o->unk64;
+    o = (struct FieldActor *)z;
+    n = o->unknown_64;
     z = 0;
-    t = ((s16 *)&o->unk64)[z];
+    t = ((s16 *)&o->unknown_64)[z];
     if (t != 0) {
-        o->unk64 = n - 1;
+        o->unknown_64 = n - 1;
         return;
     }
-    o->unk5A = t;
+    o->unknown_5a = t;
     z = 1;
     d = gImiruFuchinKeyHeadings[(*(u32 *)gKeysHeld >> 4) & 0xF];
     z = -z;
@@ -1599,13 +1601,13 @@ void SceneActor_TurnTowardTableAngle(s32 z)
         Object_SetMode(o, 9);
         return;
     }
-    prev = o->unk6;
+    prev = o->facing;
     d = (s16)(d - prev);
     if (d > 0x1000)
         d = 0x1000;
     if (d < -0x1000)
         d = -0x1000;
-    o->unk6 = prev + d;
+    o->facing = prev + d;
     Object_SetMode(o, 2);
     ObjectDispatch_ApplyValueToChildren(o, 0x30);
 }
@@ -1621,7 +1623,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
 void SceneActor_StepSubjectAlongHeading(void)
 {
 
-    struct PathSubject *subject;
+    struct FieldActor *subject;
     s32 probe[3];
     s32 heading;
     s32 goal;
@@ -1648,13 +1650,12 @@ void SceneActor_StepSubjectAlongHeading(void)
         Engine_EventBegin();
 
         /* The 0x80000 bias is built by shifting, not loaded as a constant. */
-        probe[0] = (subject->x & (s32)0xfff00000) + 0x80000;
-        probe[1] = subject->y;
-        probe[2] = (subject->z & (s32)0xfff00000) + 0x80000;
+        probe[0] = (subject->x.fixed & (s32)0xfff00000) + 0x80000;
+        probe[1] = subject->y.fixed;
+        probe[2] = (subject->z.fixed & (s32)0xfff00000) + 0x80000;
         z = probe[2];
         x = probe[0];
-        subject_id = (u8 *)subject;
-        subject_id += 34;
+        subject_id = &subject->unknown_22;
         goal = GetMapCellCollision((s32)*subject_id, x, z);
         /*
          * 0x100000 is built by shifting, not loaded as a constant.  The probe
@@ -1665,18 +1666,18 @@ void SceneActor_StepSubjectAlongHeading(void)
         marker = GetMapCellCollision((s32)*subject_id, probe[0], probe[2]);
         if (marker == 255
                 || Map_GetTerrainHeight((s32)*subject_id, probe[0], probe[2])
-                    - subject->y > 0x80000) {
-            subject->heading = (u16)heading;
+                    - subject->y.fixed > 0x80000) {
+            subject->facing = (u16)heading;
             goto tail;
         }
 
         /* Rewind the probe to the position it held before 0x02004392. */
         probe[0] = x;
         probe[2] = z;
-        subject->state_048 = 0x20000;
-        subject->state_052 = 0x1999;
-        subject->state_100 = 0;
-        Object_SetPosition(subject, x, subject->y, z);
+        subject->speed = 0x20000;
+        subject->acceleration = 0x1999;
+        subject->unknown_64 = 0;
+        Object_SetPosition(subject, x, subject->y.fixed, z);
         /*
          * Same call word as the marker lookup, but a two-argument command, so
          * it keeps its own declaration.
@@ -1684,18 +1685,18 @@ void SceneActor_StepSubjectAlongHeading(void)
         Object_SetMode(subject, 2);
         ObjectDispatch_ApplyValueToChildren(subject, 48);
         Object_CommitPosition(subject);
-        subject->callback = (void *)SceneActor_TurnTowardTableAngle;
+        subject->update = (void (*)(union FieldObject *))SceneActor_TurnTowardTableAngle;
 
         goto advance_probe;
 continue_probe:
         if (Map_GetTerrainHeight((s32)*subject_id, probe[0], probe[2])
-                - subject->y > 0x80000) {
+                - subject->y.fixed > 0x80000) {
             goto finish_probe;
         }
         x = probe[0];
         z = probe[2];
-        subject->state_048 = 0x20000;
-        subject->state_052 = 0x1999;
+        subject->speed = 0x20000;
+        subject->acceleration = 0x1999;
         Object_SetPosition(subject, probe[0], probe[1], probe[2]);
         Object_CommitPosition(subject);
         if (marker != goal) {
@@ -1710,19 +1711,19 @@ advance_probe:
         }
 
 finish_probe:
-        subject->state_048 = 0x20000;
-        subject->state_052 = 0x10000;
-        Object_SetPosition(subject, x, subject->y, z);
+        subject->speed = 0x20000;
+        subject->acceleration = 0x10000;
+        Object_SetPosition(subject, x, subject->y.fixed, z);
         Object_CommitPosition(subject);
         Engine_TaskWait(2);
         /* The back edge re-reads the heading table and starts again. */
     }
 
 blocked:
-    subject->callback = NULL;
-    subject->flags_090 |= 1;
+    subject->update = NULL;
+    subject->unknown_5a |= 1;
     /* 0x4000 is built by shifting, not loaded as a constant. */
-    subject->state_052 = 0x4000;
+    subject->acceleration = 0x4000;
 
 tail:
     Engine_TaskWait(10);

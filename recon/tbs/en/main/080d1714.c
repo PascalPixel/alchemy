@@ -6,6 +6,7 @@
 #include "B5_CONTEXT.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -282,7 +283,7 @@ void Unnamed_080d1714(struct EffectArgument *argument)
 
     frame = 0;
     do {
-        if ((gKeysRepeat & 3) != 0) {
+        if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
             if (frame <= 159)
                 frame = 160;
             else if (frame <= 394)

@@ -1,5 +1,6 @@
 #include "RESOURCE.H"
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "TBS_EDITION.H"
@@ -145,25 +146,25 @@ s32 DjinnMenu_ShowHelp(void)
         for (;;) {
             UiMenu_PositionCursor(-12, (((struct UiWindow *)list)->y + selection) * 8 + 8);
             WaitFrames(1);
-            if (gKeysRepeat & 0x90) {
+            if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
                 selection++;
                 selection = Menu_GetModuloOfSum(selection, 7);
                 Audio_PlayCue(111);
                 break;
-            } else if (gKeysRepeat & 0x60) {
+            } else if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
                 selection--;
                 selection = Menu_GetModuloOfSum(selection, 7);
                 Audio_PlayCue(111);
                 break;
-            } else if (gKeyState & 8) {
+            } else if (gKeyState & KEY_START) {
                 Audio_PlayCue(113);
                 result = -2;
                 break;
-            } else if (gKeyState & 6) {
+            } else if (gKeyState & (KEY_B | KEY_SELECT)) {
                 Audio_PlayCue(113);
                 result = -1;
                 break;
-            } else if (gKeyState & 1) {
+            } else if (gKeyState & KEY_A) {
                 if (UiWork_IsCompleteFar()) {
                     selection++;
                     selection = Menu_GetModuloOfSum(selection, 7);

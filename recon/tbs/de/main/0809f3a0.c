@@ -182,7 +182,7 @@ void Map_UpdateWorldMapMarkers(void)
     best = -1;
     best_distance = WORLD_MAP_NAME_RANGE;
     blend = WorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
-    if (!GameFlag_TestFar(0x11c) && (gKeysHeld & 0x300)) {
+    if (!GameFlag_TestFar(0x11c) && (gKeysHeld & KEYS_SHOULDERS)) {
         object = ObjectTable_Get(gGameState.selected_actor);
         if (object == NULL)
             goto markers;

@@ -42,6 +42,13 @@ struct SceneEntries {
     const struct SceneRegion *(*regions)(void);
 };
 
+/* Generic object-id services address slots after five opaque words.
+   This prefix declares neither the active mode nor allocation/capacity. */
+struct ObjectSlotTable {
+    u8 unknown_00[0x14];
+    struct ObjectRuntime *slots[];
+};
+
 /* Field-mode step work. Its 66 actor slots cover the eight party ids and
    the 58 placements; battle and menu lifetimes keep their own views. */
 struct FieldStepWork {
@@ -77,6 +84,7 @@ LAYOUT_SIZE_GUARD(SceneRegion_Size, struct SceneRegion, 16);
 LAYOUT_SIZE_GUARD(SceneEntries_Size, struct SceneEntries, 48);
 LAYOUT_OFFSET_GUARD(SceneEntries_Exits, struct SceneEntries, exits, 0x14);
 LAYOUT_OFFSET_GUARD(SceneEntries_Regions, struct SceneEntries, regions, 0x2c);
+LAYOUT_OFFSET_GUARD(ObjectSlotTable_Slots, struct ObjectSlotTable, slots, 0x14);
 LAYOUT_SIZE_GUARD(FieldStepWork_Size, struct FieldStepWork, 0x1c0);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Events, struct FieldStepWork, events, 0x10);
 LAYOUT_OFFSET_GUARD(FieldStepWork_Actors, struct FieldStepWork, actors, 0x14);

@@ -496,7 +496,7 @@ Resource_DecodeByteLzInRam:
 	.type Func_08016180, %function
 	.thumb_func
 Func_08016180:
-	.incbin "baserom.gba", 0x00016180, 0x00000170
+	.incbin "baserom.gba", 0x00016180, 0x0000015c
 	.section .rom.00016346, "ax"
 	.incbin "baserom.gba", 0x00016346, 0x00000002
 	.section .rom.00016348, "ax"

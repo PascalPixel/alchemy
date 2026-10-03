@@ -1,40 +1,23 @@
-/* 2026-10-03: uses the canonical void WaitFrames declaration; body unchanged.
- * Complete candidate/reference extents are 56/52 bytes, including the pool.
- * Score 180 (4 operand, 1 inserted): three cursor loads have unresolved
- * gSerialSendSource/gSerialReceiveDest names; the entry branch target and
- * an extra cursor dereference also differ. No reshaping or adoption. */
-#include "TYPES.H"
-#include "SYSTEM.H"
-extern volatile s32 gSerialReceiveDest;
-extern volatile s32 gSerialSendSource;
+/* 2026-10-03: canonical declarations and one shared cursor check replace
+ * duplicated entry/exit tests. Complete extents: 52/52 bytes, with pools.
+ * Score 120: one branch operand and one missing cursor-address load.
+ * A structured while trial worsened the score to 1195; shared check kept
+ * the score at 120 and reduced the prior 56-byte draft to 52 bytes.
+ * Returning after 600,000 frame waits does not establish completion.
+ * Not adopted; no compiler devices. */
+#include "SERIAL_RUNTIME.H"
 
 void SerialRuntime_WaitForTransfers(void)
 {
-    u32 count;
+    u32 count = 0;
 
-    count = 0;
-    if (*(volatile s32 *)&gSerialSendSource != 0)
-    {
-        goto loop;
-    }
-    if (*(volatile s32 *)&gSerialReceiveDest != 0)
-    {
-        goto loop;
-    }
-    return;
+    goto check;
 loop:
     WaitFrames(1);
     count++;
-    if (count > 0x000927BF)
-    {
+    if (count > 0x927bf)
         return;
-    }
-    if (*(volatile s32 *)&gSerialSendSource != 0)
-    {
+check:
+    if (gSerialSendSource != 0 || gSerialReceiveDest != 0)
         goto loop;
-    }
-    if (*(volatile s32 *)&gSerialReceiveDest != 0)
-    {
-        goto loop;
-    }
 }

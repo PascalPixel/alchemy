@@ -115,8 +115,8 @@ gSerialSendSource:
 	.global gIoWriteQueue
 gIoWriteQueue:
 	.space 0x00000190
-	.global Data_02003a70
-Data_02003a70:
+	.global gSerialTransfer
+gSerialTransfer:
 	.space 0x00000004
 	.global Data_02003a74
 Data_02003a74:
@@ -142,8 +142,8 @@ Data_02005364:
 	.global gLinkExchangeState
 gLinkExchangeState:
 	.space 0x00000004
-	.global Data_020054c4
-Data_020054c4:
+	.global gSerialBlockSequence
+gSerialBlockSequence:
 	.space 0x00000004
 	.global Data_020054c8
 Data_020054c8:

@@ -24,7 +24,7 @@ BattleLink_ResetTransferState:
 	bx lr
 	.2byte 0x0000
 .L_08016978:
-	.4byte Data_02003a70
+	.4byte gSerialTransfer
 .L_0801697c:
 	.4byte 0x04000208
 .L_08016980:

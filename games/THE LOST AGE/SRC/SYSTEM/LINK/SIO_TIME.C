@@ -1,7 +1,13 @@
-#include "TYPES.H"
-#include "SCENE.H"
+#include "SERIAL_RUNTIME.H"
 
-extern struct SerialRuntime gSerialRuntime;
+/* Enables transfer timing only after the runtime has a mode. */
+void SerialRuntime_EnableTransferTimer(void)
+{
+    struct SerialRuntime *state = &gSerialRuntime;
+
+    if (state->mode != 0)
+        state->transfer_enabled = 1;
+}
 
 void SerialRuntime_DisableTransfer(void)
 {

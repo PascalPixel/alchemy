@@ -98,9 +98,15 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive);
 void SerialRuntime_PrepareSendPacket(void *payload);
 u8 SerialRuntime_CollectReceivedPayloads(void *payload);
 void SerialRuntime_StepBlockTransfer(void);
+void SerialRuntime_EnableTransferTimer(void);
+void SerialRuntime_DisableTransfer(void);
 s32 SerialRuntime_BeginTransferA(void *source, s32 size);
 s32 SerialRuntime_BeginTransferB(void *destination);
+/* A wait can time out while its transfer is still active. */
+void SerialRuntime_WaitForTransferA(void);
 void SerialRuntime_WaitForTransferB(void);
+void SerialRuntime_WaitForTransfers(void);
+s32 SerialRuntime_GetActiveTransfers(void);
 void BattleLink_ResetTransferState(void);
 void SerialRuntime_HandleTransferInterrupt(void);
 u32 SerialRuntime_WaitForStatusMask(s32 mask);
@@ -112,7 +118,7 @@ extern volatile s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern volatile s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
-/* The four peers' 24-byte payloads that each frame's exchange receives;
+/* Four reserved payload slots; the exchange collects the first two.
    gSerialTransfer holds the payload this console sends. */
 extern u8 gSerialPeerPayloads[4][24];
 /* The block transfer's seven-bit packet sequence number. */

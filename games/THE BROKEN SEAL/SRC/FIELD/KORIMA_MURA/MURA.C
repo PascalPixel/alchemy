@@ -71,7 +71,7 @@ struct Obj_02002608 {
 };
 
 extern u8 KorimaMura_Object26Script[];
-u16 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 void BattleEffect_CleanupSceneObjects(void);
 void Object_RefreshSelectorById();

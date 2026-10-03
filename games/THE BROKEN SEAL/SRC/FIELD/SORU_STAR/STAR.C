@@ -76,7 +76,7 @@ s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
         s32 angle_delta;
         u16 angle;
         object->unknown_5a = object->unknown_5a & 0xFE;
-        angle_delta = CalculateAngleFromCoordinateDelta(
+        angle_delta = (u16)CalculateAngleFromCoordinateDelta(
             linked_object->coordinate_10 - object->coordinate_10,
             linked_object->coordinate_08 - object->coordinate_08);
         angle = object->angle;

@@ -23,7 +23,7 @@ static __inline__ void bump_step(void)
     work->message = (u16)(work->message + 1);
 }
 
-s16 CalculateFacingAngle(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 struct FacingObject *ResolveFacingObject(s16);
 
 struct FieldActor *GetActorState(s32 actor_id);

@@ -36,7 +36,7 @@ extern const u8 Data_0809fd38[];
 
 extern struct ObjectRuntime *gObjectSlots;
 void ObjectDispatch_SetSingleChildField26Far(void *, s32);
-u16 ArcTan2(s32, s32);
+s32 ArcTan2(s32, s32);
 struct ObjectRuntime *Object_GetById(u32);
 extern const u8 ObjectMotion_ActionKind1Script[];
 extern const u8 ObjectMotion_ActionKind2Script[];

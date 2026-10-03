@@ -7,7 +7,7 @@
 #include "CALL.H"
 #include "VRAM_BLOCK.H"
 
-u16 Math_Atan2(s32 dy, s32 dx);
+s32 Math_Atan2(s32 dy, s32 dx);
 
 struct PathRecorder {
     s16 mode;

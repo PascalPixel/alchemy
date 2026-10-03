@@ -19,7 +19,7 @@ struct MapActor {
     s16 tracking_mode;
 };
 
-u16 ArcTan2(s32 z_delta, s32 x_delta);
+s32 ArcTan2(s32 z_delta, s32 x_delta);
 
 extern u8 MsgShianDoingMadeMeSpillMy[];
 extern u8 MsgShianNowMustGetWaterAgain[];

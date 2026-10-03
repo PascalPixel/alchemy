@@ -3,6 +3,8 @@
 
 #include "RENDER_INPUT.H"
 
+s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase);
+
 void UiText_DrawCharacterAtOffset(
     s32 character,
     struct RenderInput *work,

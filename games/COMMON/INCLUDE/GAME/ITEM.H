@@ -141,7 +141,9 @@ LAYOUT_OFFSET_GUARD(
 struct ItemDefinition *Item_Get(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
-u16 RollWeaponUnleash(struct BattleUnit *owner);
+/* The selected battle action: normal attack (1) or the weapon's unleash. */
+s32 RollWeaponUnleash(struct BattleUnit *owner);
+s32 RollWeaponUnleashFar(struct BattleUnit *owner);
 
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);

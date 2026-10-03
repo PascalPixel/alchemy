@@ -26,7 +26,7 @@ u32 Djinn_Deactivate(s32 owner, s32 index, s32 bit);
 s32 Djinn_Activate(s32 owner, s32 index, s32 bit);
 const u16 *Djinn_GetDefinition(u32 group, u32 index);
 
-u16 RollWeaponUnleash(struct BattleUnit *owner)
+s32 RollWeaponUnleash(struct BattleUnit *owner)
 {
     struct ItemDefinition *item;
     s32 rate;

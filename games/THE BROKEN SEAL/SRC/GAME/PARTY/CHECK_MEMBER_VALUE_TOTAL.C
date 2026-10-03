@@ -24,8 +24,7 @@ s32 Party_CheckMemberValueTotal(s32 id)
 
     count = Party_CountActiveOwnersFar(id);
     if (sum < count) {
-        offset = (s32)((u8 *)&gGameState.active_owners -
-                       (u8 *)&gGameState) >> 1;
+        offset = (s32)&((struct GameState *)0)->active_owners >> 1;
         offset <<= 1;
         p = (u8 *)&gGameState + offset;
         cnt = count;

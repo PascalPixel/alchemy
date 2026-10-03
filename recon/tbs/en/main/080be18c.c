@@ -56,6 +56,14 @@
  * This supports the existing fall-through reconstruction, not an invented
  * address-valued success return. The undefined success contract remains.
  *
+ * T5: a summon work record using only consumed state does not recover the
+ * native frame. Counts followed by the real summon/list pointers scores
+ * 10260; pointers followed by counts scores 10764. Both still reserve 40
+ * bytes and add field traffic/register differences. Counts together with
+ * the consumed side and loop index scores 11299, reserving 44 bytes.
+ * Every proposed field was used; none of these records is retained. The
+ * ordinary scalar form remains 71, with the nested selector still exact.
+ *
  * Eight ordinary forms after deletion, EN selector/main sizes and differences:
  * remove array:      492/3728, 0/14 (retained)
  * explicit success:  496/3728, 31/245; whole shifted bank 3179 differences

@@ -50,6 +50,14 @@ void AnimationObjects_SetField15OnActive(struct AnimationObject *, s32);
 s32 Animation_InitializeObjects(struct AnimationObject *);
 s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
 
+/* The existing packed lane of the animation child, used only by its bit setter. */
+struct ChildDisplayFlags {
+    u8 padding[29];
+    u8 unk_0 : 1;
+    u8 field_1 : 1;
+    u8 unk_2 : 6;
+};
+
 s32 BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 s32 BattleFx_StartBufferInterpolationFar(s32);
 
@@ -547,8 +555,10 @@ void Animation_SetStateField5Bits2To3(struct DispatchObject *obj, u32 v)
 void Animation_SetStateField1dBit1(struct DispatchObject *obj, u32 v)
 {
     if (obj != 0 && obj->kind == 1) {
-        struct AnimationObject *state = obj->target.child;
-        state->display_flags = (state->display_flags & ~2) | ((v & 1) << 1);
+        /* FAKEMATCH: the ordinary canonical byte mask keeps 40 bytes but
+           changes the mask/register order; retain the existing packed bit lane. */
+        struct ChildDisplayFlags *state = obj->target.child;
+        state->field_1 = v;
     }
 }
 

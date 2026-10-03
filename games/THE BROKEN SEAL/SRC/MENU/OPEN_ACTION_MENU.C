@@ -63,6 +63,8 @@ void ItemMenu_Close(void);
    saved palette and tiles and close the screen. Returns the flow result. */
 s32 ActionMenu_Open(void)
 {
+    /* FAKEMATCH: the existing field-address slice names heap slot 15 relative
+       to slot 6. A whole-bank base changes register and pool reuse on exit. */
     struct CharacterMenuState *state = (struct CharacterMenuState *)Runtime_AllocateHeapBlock(55, 0x0a70);
     void *palette = Runtime_BumpAllocateAlternatePool(64);
     void *tiles = Runtime_BumpAllocateAlternatePool(SAVED_TILE_BYTES);
@@ -121,13 +123,13 @@ s32 ActionMenu_Open(void)
     CopyWords(Iwram_CopyWords, (void *)0x06004000, tiles, SAVED_TILE_BYTES);
     Runtime_BumpFree(tiles);
     Runtime_BumpFree(palette);
-    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 1;
+    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(55);
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    ((struct UiRenderWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_WINDOW])->menu_busy = 0;
+    ((struct UiRenderWork *)((void **)&gMenuCtrlWork)[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL])->menu_busy = 0;
     return result;
 }

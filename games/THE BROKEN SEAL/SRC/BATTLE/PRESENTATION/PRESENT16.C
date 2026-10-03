@@ -186,7 +186,6 @@ s32 BattleObject_IsValidId(u32 object_id)
 }
 
 /* battle/escape/play_run.c */
-/* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 s32 BattleEscape_PlayRun(struct BattleActionRecord *action)
 {
     s16 party_members[14];

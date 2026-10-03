@@ -28,7 +28,7 @@ extern u8 MsgProgressHelp;
 
 
 void StatusMenu_ShowOwnerProgressMessage(
-    void *destination,
+    struct UiWindow *destination,
     s32 message_variant,
     s32 preserve_variant)
 {

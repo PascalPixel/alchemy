@@ -96,7 +96,7 @@ void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, const u8 *entri
 void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *window, s32 variant, s32 preserve);
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode);
 void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y, s32 width, s32 height, u32 attributes);
-void UiText_FormatNumberToHalfwords(s16 *out, s32 value);
+s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *old_slots, const struct OwnerActionSlot *new_slots, u16 *out, s32 *gained, s32 *lost);
 
 #endif

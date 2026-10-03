@@ -43,19 +43,36 @@ s32 Summon_IsEntryFlagged(s32 index)
 
 u32 Battle_GetEntryField2LowBits(u32 index)
 {
+    /* FAKEMATCH: the existing result selection retains the separate extract
+       and return moves; a direct conditional expression changes their order. */
     u32 value;
+    u32 result;
 
     if (index > 171)
         return 1;
     value = ((u32)Summon_EntryTable[index].sprite_flags << 27) >> 28;
-    return value != 0 ? value : 1;
+    if (value != 0)
+        result = value;
+    else
+        result = 1;
+    return result;
 }
 
 u32 Battle_GetEntryField2HighBits(u32 index)
 {
+    /* FAKEMATCH: retain the existing zero-result selection; the direct shift
+       drops the native compare and return move. */
+    u32 value;
+    u32 result;
+
     if (index > 171)
         return 0;
-    return Summon_EntryTable[index].sprite_flags >> 5;
+    value = Summon_EntryTable[index].sprite_flags >> 5;
+    if (value != 0)
+        result = value;
+    else
+        result = 0;
+    return result;
 }
 
 s32 Summon_IsEntrySecondaryFlagged(s32 index)
@@ -95,12 +112,15 @@ u32 Item_EncodeBankedId(u32 value)
 void Summon_ClearWorkFields(void)
 {
     struct BattleSession *work = gBattleWork;
+    struct BattleSpoils *spoils = &work->spoils;
+    u16 *items;
     s32 index;
 
     gGameState.pending_item = 0;
-    work->spoils.coins = 0;
-    work->spoils.experience = 0;
-    work->spoils.defeated = 0;
+    spoils->coins = 0;
+    spoils->experience = 0;
+    spoils->defeated = 0;
+    items = work->spoils.items;
     for (index = 3; index >= 0; index--)
-        work->spoils.items[index] = 0;
+        items[index] = 0;
 }

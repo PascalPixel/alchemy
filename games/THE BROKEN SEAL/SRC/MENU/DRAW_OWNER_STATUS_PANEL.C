@@ -138,7 +138,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         }
         backup = Runtime_BumpAllocate(0x14c);
         Owner_Copy(backup, unit);
-        if (state->equip_preview)
+        if ((s8)state->equip_preview)
             unit->inventory[slot] &= 0xfdff;
         else
             Inventory_EquipFar(owner, slot);

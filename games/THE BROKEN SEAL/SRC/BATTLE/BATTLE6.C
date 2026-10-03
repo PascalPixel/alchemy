@@ -22,7 +22,6 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32);
 void *ObjectTable_Get(u32);
 s32 BattleEffect_SelectNearbyObject(u32 object_id);
 s32 GameFlag_IsConditionActive(s32 condition);
-s32 GetFocusedObjectCollision(void);
 
 extern struct BattleRuntime *gEventWork;
 

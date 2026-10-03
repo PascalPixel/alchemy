@@ -33,7 +33,7 @@ struct ResourceSlot {
 struct ObjectSystemWork {
     u16 used;
     u8 unknown_02[2];
-    u16 suspended;
+    s16 suspended;
     u8 edge;
     u8 fill;
     u8 unknown_08[0x10];

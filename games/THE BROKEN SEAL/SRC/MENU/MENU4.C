@@ -58,7 +58,7 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
 
         if (object != 0) {
             Object_InitializeMode(object, 1);
-            object->flags = 0;
+            ((struct FieldSprite *)object)->flags = 0;
             ((struct FieldSprite *)object)->priority = 0;
         }
 
@@ -75,21 +75,26 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 {
-    struct PlacementState *state = Data_03001f2c_a;
-    s32 index = 0;
+    /* FAKEMATCH: the typed array loop exchanges the base and count registers.
+       Retain the existing word-address clear over the real object cells. */
+    u8 *base = (u8 *)Data_03001f2c_a;
+    s32 offset = (u32)&((struct PlacementState *)0)->objects / 2;
+    s32 zero;
     s32 count;
 
     Scheduler_RemoveCallback((u32)((s32)Menu_UpdateFirstObjectRowPositions));
+    zero = 0;
+    offset *= 2;
     count = 3;
     do {
-        struct AnimationObject *entry = state->objects[index];
+        void *entry = *(void **)(offset + (unsigned int)base);
 
         if (entry != 0) {
             ResourceObject_ReleaseFar(entry);
-            state->objects[index] = NULL;
+            *(s32 *)(offset + (unsigned int)base) = zero;
         }
         count--;
-        index++;
+        offset += sizeof(((struct PlacementState *)0)->objects[0]);
     } while (count >= 0);
 }
 
@@ -130,7 +135,7 @@ void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y)
 
             if (object != 0) {
                 AnimationObjects_SelectAnimationFar(object, 2);
-                object->flags = 0;
+                ((struct FieldSprite *)object)->flags = 0;
                 ((struct FieldSprite *)object)->priority = 0;
             }
 
@@ -145,21 +150,26 @@ void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y)
 
 void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
 {
-    struct FourObjectMotionState *state = gMenuWork;
-    s32 index = 0;
+    /* FAKEMATCH: the typed array loop exchanges the base and count registers.
+       Retain the existing word-address clear over the real object cells. */
+    u8 *base = (u8 *)gMenuWork;
+    s32 offset = (u32)&((struct FourObjectMotionState *)0)->objects / sizeof(void *);
+    s32 zero;
     s32 count;
 
     Scheduler_RemoveCallback((u32)((s32)Menu_UpdateSecondObjectRowPositions));
+    zero = 0;
+    offset *= sizeof(void *);
     count = 3;
     do {
-        void *entry = state->objects[index];
+        void *entry = *(void **)(offset + (unsigned int)base);
 
         if (entry != 0) {
             ResourceObject_ReleaseFar(entry);
-            state->objects[index] = NULL;
+            *(s32 *)(offset + (unsigned int)base) = zero;
         }
         count--;
-        index++;
+        offset += sizeof(((struct FourObjectMotionState *)0)->objects[0]);
     } while (count >= 0);
 }
 

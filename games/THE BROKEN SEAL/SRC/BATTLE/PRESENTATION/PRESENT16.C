@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "HEAP_STATE.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_MSG.H"
@@ -108,7 +109,7 @@ void BattlePres_AdjustCameraByShoulderKeys(void)
        order. The existing walk reaches slot 44 from camera slot 12. */
     void **slot = (void **)&gCameraWork;
     struct BattleCamera *cam = slot[0];
-    struct BattlePresentationTransition *trans = slot[44 - 12];
+    struct BattlePresentationTransition *trans = slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & 512) != 0) {

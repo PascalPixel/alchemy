@@ -3,12 +3,16 @@
 void MusicCommand_SetPitch(s16 pitch)
 {
     s32 player;
+    s32 mask;
     s16 value;
 
-    /* FAKEMATCH: retain the original player-address and pitch-value
-       lifetimes; a direct call moves the player literal load after the
-       signed narrowing in this 24-byte wrapper. */
-    player = (s32)&gMusicPlayerBgm;
-    value = pitch;
-    MusicPlayer_SetPitch((struct SoundPlayer *)player, 0xff, value);
+    /* FAKEMATCH: retain the original one-pass block and local lifetimes;
+       both direct-call and local-only forms move the player literal load
+       after signed narrowing in this 24-byte wrapper. */
+    player = (u32)&gMusicPlayerBgm;
+    do {
+        value = pitch;
+        mask = 0xff;
+        MusicPlayer_SetPitch((struct SoundPlayer *)player, mask, value);
+    } while (0);
 }

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "HEAP_STATE.H"
 #include "SCENE.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_COMMAND.H"
@@ -69,10 +70,10 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
     cache = (void **)&gTransitionWork;
     view = cache[0];
     view->frames = 60;
-    battle = cache[9 - 44];
+    battle = cache[HEAP_SLOT_BATTLE - HEAP_SLOT_BATTLE_BACKGROUND];
     view->flag = 0;
     battle->brightness = 0x10000;
-    camera = cache[12 - 44];
+    camera = cache[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_BACKGROUND];
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
     Camera_StoreSceneParameters(0x01fe0000, DivQ16(0x01fe0000, 0xc000), 0x7fff0000);
@@ -181,7 +182,7 @@ s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan)
     u8 *presentation_addr = (u8 *)&gTransitionWork;
     void **cache = (void **)presentation_addr;
     struct BattlePresentationTransition *presentation = cache[0];
-    struct BattleSession *scene = cache[9 - 44];
+    struct BattleSession *scene = cache[HEAP_SLOT_BATTLE - HEAP_SLOT_BATTLE_BACKGROUND];
     s32 completed = 0;
     s32 party_mode;
 

@@ -1943,13 +1943,19 @@ void ShindenHeya_SpawnOwnerEffect(s32 a0, s32 a1)
             *(u16 *)(rec8 + 102) = p8;
             *(s32 *)((s32)rec8 + 108) = (s32)SceneEffect_StepEllipseOrbit;
             { u16 v = 0; p5[38] = v; }
-            /* FAKEMATCH: the typed priority member moves the anchor store
-               before the merge in this 130-byte body; keep its packed byte lane. */
+            /* FAKEMATCH: ordinary priority views move the anchor store in
+               this 130-byte body and replace native mov13/neg. Retain the
+               existing byte-bitfield and pointer-word alias boundary. */
             {
-                u8 priority = ((u8 *)((struct FieldActor *)rec)->sprite)[9] & 0xc;
+                struct SpritePriorityByte {
+                    u8 unknown_00[9];
+                    u8 low : 2;
+                    u8 priority : 2;
+                };
+                u8 priority = ((struct SpritePriorityByte *)(*(s32 *)(rec + 80)))->priority;
 
                 *(s32 *)((s32)rec8 + 104) = rec;
-                p5[9] = (p5[9] & 0xf3) | priority;
+                ((struct SpritePriorityByte *)p5)->priority = priority;
             }
         }
     }

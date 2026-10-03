@@ -28,13 +28,13 @@ extern s8 Menu_WorkspaceIconFrames[];
 struct RenderInput *Menu_CreateWorkspaceWindows(void);
 void UiIcon_PrepareObjectFar(void *);
 
-void *RenderResource_CreatePair(s32, void *, s32, s32);
+struct RenderOutput *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 
 s32 Menu_RunWorkspaceSelectionLoop(void)
 {
     struct RenderInput *window;
     s32 redraw;
-    void *pair;
+    struct RenderOutput *pair;
     s32 first;
     s32 i;
     s32 j;

@@ -3,9 +3,10 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
+#include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
 
 extern const u8 SentouKouka_Tenkai[];
-extern void *Data_03001e50[];
 extern u8 SentouKouka_TenkaiCodeSize[];
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 u8 *Resource_GetTableEntry(u32 resource);
@@ -15,15 +16,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 /* The decoder returns a value this caller ignores. */
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);
 
-typedef struct {
-    u16 unused[4];
-    u16 first;
-    u16 padding;
-    u16 second;
-} State;
-
 extern u32 gFrameTick;
-extern State gBgScroll;
 
 /* Clears the background (or, when alternate, the second) character block to
    its fill pattern and the matching palette bank to zero. */
@@ -83,7 +76,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
     size = (u32)SentouKouka_TenkaiCodeSize;
     decoder = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
-    ((PackedDecoder)Data_03001e50[49])(data + 256, vram, fill);
+    ((PackedDecoder)((union HeapState *)gWorkSlot)->slots[49])(data + 256, vram, fill);
     Runtime_ReleaseHeapBlock(49);
 
     {
@@ -101,7 +94,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
         *ime = (u16)ime;
         count = q->count;
         if (count <= 31) {
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
+            u32 *destination = q->entries[count];
             *(u16 *)&q->count = count + 1;
             *destination++ = (u32)data;
             *destination++ = palette;
@@ -144,10 +137,10 @@ void DisplayScroll_BuildHblankWordTable(u32 *arg0)
 void DisplayScroll_StepPositionEveryFourFrames(void)
 {
     if ((gFrameTick & 3) == 0) {
-        State *state = &gBgScroll;
         u32 decrement = 0xffff; /* one step back in the 16-bit positions */
-        state->first += decrement;
-        state->second += decrement;
+
+        gBgScroll[2].x += decrement;
+        gBgScroll[3].x += decrement;
     }
 }
 

@@ -5,13 +5,13 @@
 extern void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 extern s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
 extern s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination);
-extern void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+extern void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 extern s32 Ui_BuildPatternToSlot(s32 arg0, s32 arg1, s32 arg2);
 
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
                    s32 *result, s32 reuseSource);
-void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile, s32 reuse);
 extern u8 MsgCommandName;
 extern u8 MsgItemName;
 extern u8 MsgAbilityName;
@@ -68,7 +68,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
         UiIcon_CopyResourceToSlot(value, 42, result);
         break;
     case 4:
-        Ability_LoadGlyph(value, option, (s32)&result, (s32)&output, 1);
+        Ability_LoadGlyph(value, option, &result, &output, 1);
         break;
     case 8:
         Ui_BuildPatternToSlot(value, 0, result);
@@ -114,7 +114,7 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s3
     case 4:
         if (reuse != 0)
             src = node->slot;
-        Ability_LoadGlyph(base, 1, (s32)&src, (s32)&tile, reuse);
+        Ability_LoadGlyph(base, 1, &src, &tile, reuse);
         node->message = base + (s32)&MsgAbilityName;
         break;
     }

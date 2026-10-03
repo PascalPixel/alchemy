@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "METADATA_LOOKUP.H"
 #include "CALLBACK_SCHEDULER.H"
 
 /* battle/effects/scene_transition/finish_and_release_heap_block.c */
@@ -67,7 +68,6 @@ void BattleFx_ApplyColorToTargetBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 mode);
 void BattleFx_AdvanceHueCycle(void);
 s16 *BattleAction_FindDescriptor(s32 id);
-s8 *Resource_GetMetadataRecordFar(s32 id);
 struct FxObject *Object_CreateFar(s32 sprite, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 void Object_SetMoveTargetFar(struct FxObject *object, s32 x, s32 y, s32 z);
@@ -103,7 +103,7 @@ void BattleFx_UpdateWaveScene(void)
     struct FxSprite *sprite;
     struct FxVector from;
     struct FxVector to;
-    s8 *meta;
+    struct AnimationMetadata *meta;
 
     if (work->delay != 0) {
         work->delay--;
@@ -129,11 +129,11 @@ void BattleFx_UpdateWaveScene(void)
         if (source != 0 && target != 0) {
             from.x = source->x;
             meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->source_id));
-            from.y = source->y + (meta[8] << 16) - 0x20000;
+            from.y = source->y + ((s8)meta->box_x << 16) - 0x20000;
             from.z = source->z;
             to.x = target->x;
             meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->target_id));
-            to.y = target->y + (meta[8] << 16) - 0x20000;
+            to.y = target->y + ((s8)meta->box_x << 16) - 0x20000;
             to.z = target->z;
             object = Object_CreateFar(0x119, to.x, to.y, to.z);
             if (object != 0) {

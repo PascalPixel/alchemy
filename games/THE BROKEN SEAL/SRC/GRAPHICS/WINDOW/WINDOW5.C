@@ -4,31 +4,25 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-extern u8 Data_03001e8c[];
 
 extern const s16 SideObject_CharacterIdMap[];
 extern const s16 SideObject_ActorKindIdMap[];
 
-#define FIELD_AT_OFFSET(base, type, ofs)     (*(type *)((u8 *)(base) + (ofs)))
 extern s32 Localization_LookupEntryId();
 extern s32 CreateSideObject();
 
-#if EDITION_INTERNATIONAL
-#define WORK_NO 0x976
-#else
-#define WORK_NO 0x8BE
-#endif
+
 
 /* 連続する2要素へ0x3e7を設定する。 */
 void UiWork_SetTwoEntriesTo999(void)
 {
-    s16 *work = (s16 *)gWindowWork[0];
-    s32 no = WORK_NO;
+    struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
+    s32 index = 0;
 
     do {
-        work[no] = 0x3e7;
-        no++;
-    } while (no != WORK_NO + 2);
+        work->resource_ids[index] = 999;
+        index++;
+    } while (index != 2);
 }
 
 /* Looks up the entry id paired with value: values below 20 search the

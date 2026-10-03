@@ -3,10 +3,20 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IWRAM_CALL.H"
+#include "LAYOUT_GUARD.H"
+
+/* The scrolling credits keep 128 hardware OAM entries, two words each. */
+struct DisplayScrollObject {
+    u32 attr01;
+    u32 attr2;
+};
+
+LAYOUT_SIZE_GUARD(DisplayScrollObject_Size, struct DisplayScrollObject, 8);
 
 extern u16 Data_02004c00;
 extern s16 Flash_Handler0;
-extern u32 *gFlashNumRemainingBytes;
+/* Flash and audio reuse these scratch cells in their own modes. */
+extern struct DisplayScrollObject *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
 extern s16 Flash_Layout;
@@ -29,10 +39,12 @@ extern const u8 DisplayScroll_Font[];
    still being drawn. */
 void DisplayScroll_UpdateObjects(void)
 {
+    /* FAKEMATCH: keep the existing two-word OAM walk over the real records;
+       named field stores in f4f9d28 reverse stores and register allocation. */
     u32 frame = Data_02004c00;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-    u32 *entry = gFlashNumRemainingBytes + 48;
+    u32 *entry = (u32 *)(gFlashNumRemainingBytes + 24);
     s32 row;
 
     for (row = 0; row <= 15; row++) {
@@ -79,12 +91,14 @@ void DisplayScroll_RenderEnteringLine(void)
    group, schedule the step and group callbacks, and load the 32 tile groups. */
 void DisplayScroll_InitObjectTable(void)
 {
+    /* FAKEMATCH: retain the existing pointer-cell and postincrement word
+       stores; direct typed stores in f4f9d28 change the 376-byte body to 368. */
     volatile u32 fill;
     u32 *entry;
     u32 i;
     u32 j;
 
-    *(void **)((u8 *)&gFlashNumRemainingBytes) = Runtime_BumpAllocateAlternatePool(0x400);
+    *(void **)((u8 *)&gFlashNumRemainingBytes) = Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
     fill = 0;
     Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800, (volatile u32 *)0x040000d4);
     fill = 0x11111111;

@@ -37,9 +37,9 @@ struct UiChannelSlot {
     u16 unknown_10;
     u16 entry;
     u16 countdown;
-    u16 unknown_16;
-    u16 unknown_18;
-    u16 unknown_1a;
+    u16 colour;
+    u16 outline;
+    u16 line_spacing;
     u16 transition;
     u16 start_x;
     u16 unknown_20;
@@ -74,9 +74,17 @@ struct UiRenderWork {
     u16 count;
     u16 unknown_after_count;
     u16 glyph_resource;
-    u8 unknown_after_glyph_resource[RENDER_RESULT_OFS - RENDER_COUNTER_OFS - 2];
+    u16 glyph_tiles;
+    u8 unknown_before_values[RENDER_VALUE_TBL_OFS - RENDER_COUNTER_OFS - 4];
+    u32 values[8];
+    u16 names[8];
+    u16 resource_ids[2];
+    u16 output_ids[2];
     u16 result[2];
-    u8 unknown_after_result[RENDER_WORK_SIZE - RENDER_RESULT_OFS - 4];
+    u8 unknown_after_result;
+    u8 busy;
+    u8 spacing_before;
+    u8 spacing_after;
 };
 
 
@@ -96,7 +104,15 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_Colour, struct UiRenderWork, colour, RENDER_PAR
 LAYOUT_OFFSET_GUARD(UiRenderWork_Entries, struct UiRenderWork, entries, RENDER_ENTRY_TBL_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Count, struct UiRenderWork, count, RENDER_ENTRY_COUNT_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphResource, struct UiRenderWork, glyph_resource, RENDER_COUNTER_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_GlyphTiles, struct UiRenderWork, glyph_tiles, RENDER_COUNTER_OFS + 2);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Values, struct UiRenderWork, values, RENDER_VALUE_TBL_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Names, struct UiRenderWork, names, RENDER_NAME_TBL_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_ResourceIds, struct UiRenderWork, resource_ids, RENDER_SLOT_ID_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_OutputIds, struct UiRenderWork, output_ids, RENDER_SLOT_VALUE_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Result, struct UiRenderWork, result, RENDER_RESULT_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_Busy, struct UiRenderWork, busy, RENDER_BUSY_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingBefore, struct UiRenderWork, spacing_before, RENDER_BUSY_OFS + 1);
+LAYOUT_OFFSET_GUARD(UiRenderWork_SpacingAfter, struct UiRenderWork, spacing_after, RENDER_BUSY_OFS + 2);
 LAYOUT_SIZE_GUARD(UiRenderWork_Size, struct UiRenderWork, RENDER_WORK_SIZE);
 LAYOUT_SIZE_GUARD(UiChannelSlot_Size, struct UiChannelSlot, 0x28);
 LAYOUT_OFFSET_GUARD(UiChannelSlot_Entry, struct UiChannelSlot, entry, 0x12);

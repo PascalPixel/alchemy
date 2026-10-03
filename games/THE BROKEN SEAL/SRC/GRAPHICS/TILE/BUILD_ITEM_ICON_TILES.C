@@ -1,64 +1,55 @@
 #include "TYPES.H"
+#include "GLYPH.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
 #include "ITEM.H"
 
-/* ui/icon/build_item_icon_tiles.c */
-typedef struct {
-    u8 pad0[0x400];
-    u8 f400;
-    u8 pad401[0x600 - 0x401];
-    s16 f600;
-    s16 f602;
-    s32 f604;
-} FontTransfer;
+extern void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 slot);
 
-extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
+void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 
-extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
-extern s32 VramBlock_LoadCached(s32 index, s32 size, u8 *destination);
-
-extern s32 UiIcon_FramePointerTable[];
-extern s32 UiIcon_ItemIconPointers[];
+extern u8 *UiIcon_FramePointerTable[];
+extern u8 *UiIcon_ItemIconPointers[];
 
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
                    s32 *dst, s32 reuse)
 {
-    FontTransfer *work;
+    GlyphTransfer *work;
     s32 slot;
 
     slot = 0;
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
+    work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
 
     if (glyph >= Ui_CountIconTableEntries())
         glyph = 0;
 
     if (with_base != 0) {
-        work->f604 = UiIcon_FramePointerTable[2];
-        work->f600 = 2;
-        work->f602 = 2;
+        work->encoded = UiIcon_FramePointerTable[2];
+        work->width = 2;
+        work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 0);
         slot = 1;
     }
 
-    work->f604 = UiIcon_ItemIconPointers[glyph];
-    work->f600 = 2;
-    work->f602 = 2;
+    work->encoded = UiIcon_ItemIconPointers[glyph];
+    work->width = 2;
+    work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, slot);
 
     if (reuse == 0)
         *src = Resource_FindFreeEntry();
 
-    *dst = VramBlock_LoadCached(*src, 0x80, &work->f400);
+    *dst = VramBlock_LoadCached(*src, 0x80, work->tiles);
     Runtime_ReleaseHeapBlock(0x11);
 }
 
-extern FontTransfer *gGlyphWork;
+extern GlyphTransfer *gGlyphWork;
 /* The marks drawn over an item's icon: broken, equipped, artifact. */
-extern s32 UiIcon_MarkPointers[];
+extern u8 *UiIcon_MarkPointers[];
 /* The count digits: the ones at 0 to 9, then the tens from 1. */
-extern s32 UiIcon_DigitPointers[];
+extern u8 *UiIcon_DigitPointers[];
 
 #define ICON_FRAME 1
 #define ICON_COUNT_ABOVE_ONE 2
@@ -76,7 +67,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
 {
     s32 overlay;
     struct ItemDefinition *item;
-    FontTransfer *work;
+    GlyphTransfer *work;
     s32 count;
 
     overlay = 0;
@@ -86,32 +77,32 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
     if (work == NULL)
         return -1;
     if (layers & ICON_FRAME) {
-        work->f604 = UiIcon_FramePointerTable[2];
-        work->f600 = 2;
-        work->f602 = 2;
+        work->encoded = UiIcon_FramePointerTable[2];
+        work->width = 2;
+        work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 0);
         overlay = 1;
     }
-    work->f604 = UiIcon_ItemIconPointers[item->icon];
-    work->f600 = 2;
-    work->f602 = 2;
+    work->encoded = UiIcon_ItemIconPointers[item->icon];
+    work->width = 2;
+    work->height = 2;
     UiGlyph_DecodeWithHeapRoutines(work, overlay);
     if ((layers & ICON_EQUIPPED) && (code & 0x400)) {
-        work->f604 = UiIcon_MarkPointers[1];
-        work->f600 = 2;
-        work->f602 = 2;
+        work->encoded = UiIcon_MarkPointers[1];
+        work->width = 2;
+        work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 1);
     }
     if ((layers & ICON_BROKEN) && (code & 0x200)) {
-        work->f604 = UiIcon_MarkPointers[0];
-        work->f600 = 2;
-        work->f602 = 2;
+        work->encoded = UiIcon_MarkPointers[0];
+        work->width = 2;
+        work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 1);
     }
     if ((layers & ICON_ARTIFACT) && (code & 0x200) && (item->flags & 1) && (item->flags & 2)) {
-        work->f604 = UiIcon_MarkPointers[2];
-        work->f600 = 2;
-        work->f602 = 2;
+        work->encoded = UiIcon_MarkPointers[2];
+        work->width = 2;
+        work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 1);
     }
     if (layers & ICON_COUNT_ABOVE_ONE) {
@@ -127,14 +118,14 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
     if (count != 0 && count <= 30) {
         s32 ones = count % 10;
 
-        work->f604 = UiIcon_DigitPointers[ones];
-        work->f600 = 2;
-        work->f602 = 2;
+        work->encoded = UiIcon_DigitPointers[ones];
+        work->width = 2;
+        work->height = 2;
         UiGlyph_DecodeWithHeapRoutines(work, 1);
         if (count / 10 != 0) {
-            work->f604 = UiIcon_DigitPointers[count / 10 + 9];
-            work->f600 = 2;
-            work->f602 = 2;
+            work->encoded = UiIcon_DigitPointers[count / 10 + 9];
+            work->width = 2;
+            work->height = 2;
             UiGlyph_DecodeWithHeapRoutines(work, 1);
         }
     }

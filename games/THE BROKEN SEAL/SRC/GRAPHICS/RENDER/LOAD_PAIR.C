@@ -88,27 +88,26 @@ u32 Resource_DecodeByteLz(const void *, void *);
 void Runtime_ReleaseHeapBlock(s32);
 
 /* graphics/resource/RenderOutput_LoadPair.c */
-extern s32 RenderResource_PairSourceTable[];
+extern const u8 *RenderResource_PairSourceTable[];
 
 void RenderResource_LoadPair(s32 group_index, s32 resource_index)
 {
     void *staging_buffer = (void *)Runtime_AllocateBlock(14, 0x400);
-    s32 resource_address = RenderResource_PairSourceTable[group_index];
+    const u8 *resource = RenderResource_PairSourceTable[group_index];
 
     if (resource_index <= 0x5F) {
-        Resource_DecodeByteLz((const void *)resource_address, staging_buffer);
+        Resource_DecodeByteLz(resource, staging_buffer);
         VramBlock_LoadCached(resource_index, 0x200, staging_buffer);
         Runtime_ReleaseHeapBlock(14);
     }
 }
 
 /* graphics/resource/RenderResource_CreatePair.c */
-void RenderResource_LoadPair(s32 arg0, s32 arg1);
-void *RenderResource_CreatePair(
-    s32 arg0,
-    struct RenderInput *arg1,
-    s32 arg2,
-    s32 arg3)
+struct RenderOutput *RenderResource_CreatePair(
+    s32 group,
+    struct RenderInput *input,
+    s32 x,
+    s32 y)
 {
     s32 index;
     struct RenderOutput *first;
@@ -118,11 +117,11 @@ void *RenderResource_CreatePair(
     if (index > 95)
         return NULL;
 
-    RenderResource_LoadPair(arg0, index);
+    RenderResource_LoadPair(group, index);
     /* Two 32x16 OBJ sprites; the right half starts eight tiles later. */
-    first = RenderOutput_Create(index, 0x80004000, arg1, arg2, arg3);
+    first = RenderOutput_Create(index, 0x80004000, input, x, y);
     first->sentinel = 0xFD;
-    second = RenderOutput_Create(index, 0x80004000, arg1, arg2 + 32, arg3);
+    second = RenderOutput_Create(index, 0x80004000, input, x + 32, y);
     second->sentinel = 0xFD;
     second->table.bits.index += 8;
     return first;

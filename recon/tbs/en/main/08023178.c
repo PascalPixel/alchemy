@@ -386,46 +386,46 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     winDesc->height, 0);
                 UiWindow_DrawDividerLine(winMain, 0, 14, 29, 14);
 
-                UiText_DrawStringAtOffset((u8 *)object->name, (struct TextRenderWork *)winMain, 0, 0);
-                UiText_DrawStringAtOffset((u8 *)OwnerStatus_LevelString, (struct TextRenderWork *)winMain, 56, 0);
+                UiText_DrawStringAtOffset((u8 *)object->name, (struct RenderInput *)winMain, 0, 0);
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_LevelString, (struct RenderInput *)winMain, 56, 0);
                 UiText_DrawNumberInWindow(object->level, 2, (s32)winMain, 72, 0);
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp, (struct TextRenderWork *)winMain, 0, 8);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp, (struct RenderInput *)winMain, 0, 8);
                 UiText_DrawNumberInWindow(
                     object->experience, 8, (s32)winMain, 40, 8);
 
-                UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct TextRenderWork *)winMain, 40, 24);
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_HpString, (struct RenderInput *)winMain, 40, 24);
                 UiText_DrawNumberInWindow(
                     object->hp, 4, (s32)winMain, 56, 24);
-                UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct TextRenderWork *)winMain, 88, 24);
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 88, 24);
                 UiText_DrawNumberInWindow(
                     object->max_hp, 4, (s32)winMain, 96, 24);
-                UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct TextRenderWork *)winMain, 40, 32);
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_PpString, (struct RenderInput *)winMain, 40, 32);
                 UiText_DrawNumberInWindow(
                     object->pp, 4, (s32)winMain, 56, 32);
-                UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct TextRenderWork *)winMain, 88, 32);
+                UiText_DrawStringAtOffset((u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 88, 32);
                 UiText_DrawNumberInWindow(
                     object->max_pp, 4, (s32)winMain, 96, 32);
 
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 10, (struct TextRenderWork *)winMain, 136, 16);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 10, (struct RenderInput *)winMain, 136, 16);
                 UiText_DrawNumberInWindow(
                     object->attack, 3, (s32)winMain, 184, 16);
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 9, (struct TextRenderWork *)winMain, 136, 24);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 9, (struct RenderInput *)winMain, 136, 24);
                 UiText_DrawNumberInWindow(
                     object->defense, 3, (s32)winMain, 184, 24);
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 8, (struct TextRenderWork *)winMain, 136, 32);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 8, (struct RenderInput *)winMain, 136, 32);
                 UiText_DrawNumberInWindow(
                     object->agility, 3, (s32)winMain, 184, 32);
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 7, (struct TextRenderWork *)winMain, 136, 40);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 7, (struct RenderInput *)winMain, 136, 40);
                 UiText_DrawNumberInWindow(object->luck, 3, (s32)winMain, 184, 40);
 
                 UiText_DrawCharacterAtOffset(
-                    (s32)&MsgClassName + object->class_index, (struct TextRenderWork *)winMain, 0, 48);
+                    (s32)&MsgClassName + object->class_index, (struct RenderInput *)winMain, 0, 48);
                 if (extended != 0) {
-                    UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 1, (struct TextRenderWork *)winMain, 0, 72);
+                    UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 1, (struct RenderInput *)winMain, 0, 72);
                 }
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 5, (struct TextRenderWork *)winMain, 0, 80);
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 4, (struct TextRenderWork *)winMain, 0, 88);
-                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 3, (struct TextRenderWork *)winMain, 0, 96);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 5, (struct RenderInput *)winMain, 0, 80);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 4, (struct RenderInput *)winMain, 0, 88);
+                UiText_DrawCharacterAtOffset((s32)&MsgOwnerStatusExp - 3, (struct RenderInput *)winMain, 0, 96);
 
                 for (i = 0; i <= 3; i++) {
                     if (extended != 0) {
@@ -439,7 +439,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                         UiText_DrawNumberInWindow(object->djinn_active_counts[i], 1,
                             (s32)winMain, 40 + i * 32, 72);
                         UiText_DrawStringAtOffset(
-                            (u8 *)OwnerStatus_SlashString, (struct TextRenderWork *)winMain, 48 + i * 32, 72);
+                            (u8 *)OwnerStatus_SlashString, (struct RenderInput *)winMain, 48 + i * 32, 72);
                         UiText_DrawNumberInWindow(object->djinn_owned_counts[i], 1,
                             (s32)winMain, 48 + i * 32 + 8, 72);
                     }
@@ -598,7 +598,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     } else {
                         code = (s32)&MsgOwnerStatusDowned;
                     }
-                    UiText_DrawCharacterAtOffset(code, (struct TextRenderWork *)winMain, 112, 0);
+                    UiText_DrawCharacterAtOffset(code, (struct RenderInput *)winMain, 112, 0);
                 }
             }
 
@@ -677,7 +677,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_CopyMessageString(cur.entry + (s32)&MsgOwnerStatusEntryHelp, text, 0x80);
             }
 
-            UiText_RenderWideStringAtOffset(text, (struct TextWindow *)winDesc, 0, 4);
+            UiText_RenderWideStringAtOffset(text, (struct UiWindow *)winDesc, 0, 4);
             Sys_Free(text);
             base->dirty = 1;
             redraw = 0;

@@ -7,29 +7,27 @@
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
 u8 *UiText_FormatNumber(u8 *output, s32 value, s32 width);
-void UiText_RenderWideStringAtOffset(void *text, s32 work, s32 x, s32 y);
-void UiText_RenderWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);
+void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
+void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x, s32 y);
 s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     u8 *base = gWindowWork[0];
     u16 *counter = &((struct UiRenderWork *)base)->count;
-    s32 offset;
     s32 zero = 0;
 
     *counter = zero;
     UiText_BuildRenderEntries(arg0, 1);
-    offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-    *(u16 *)(base + offset) = zero;
+    ((struct UiRenderWork *)base)->entries[*counter] = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     /* Pass the built entries to the text canvas. */
-    UiText_RenderWideStringAtOffset(((struct UiRenderWork *)base)->entries, arg1, arg2, arg3);
+    UiText_RenderWideStringAtOffset(((struct UiRenderWork *)base)->entries, (struct UiWindow *)arg1, arg2, arg3);
 }
 
 void UiText_DrawCharacterAtOffset(
     s32 character,
-    struct TextRenderWork *position,
+    struct RenderInput *position,
     u32 offset_x,
     u32 offset_y)
 {
@@ -47,8 +45,7 @@ void UiText_DrawCharacterAtOffset(
     *counter = zero;
     UiText_BuildRenderEntries(character, 1);
 
-    byte_offset = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-    *(u16 *)(base + byte_offset) = zero;
+    ((struct UiRenderWork *)base)->entries[*counter] = zero;
     *counter = (u16)((*counter + 1) & RENDER_ENTRY_MASK);
 
     cell = ((position->y + (offset_y >> 3) + 1) << 5)
@@ -82,13 +79,13 @@ void UiText_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3)
         } while (*input != 0);
     }
     *output = 0;
-    UiText_RenderWideStringAtOffset(buffer, arg1, arg2, arg3);
+    UiText_RenderWideStringAtOffset((u16 *)buffer, (struct UiWindow *)arg1, arg2, arg3);
     Runtime_BumpFree(buffer);
 }
 
 void UiText_DrawStringAtOffset(
     u8 *text,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y)
 {
@@ -144,7 +141,7 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y)
     *output = 0;
     x >>= 3;
     y >>= 3;
-    UiText_RenderWideStringInWindow(buffer, arg1, x, y);
+    UiText_RenderWideStringInWindow((s16 *)buffer, (struct UiWindow *)arg1, x, y);
     Runtime_BumpFree(buffer);
 }
 
@@ -159,7 +156,7 @@ void UiText_DrawNumber(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 void UiText_DrawNumberAtOffset(
     s32 arg0,
     s32 arg1,
-    struct TextRenderWork *arg2,
+    struct RenderInput *arg2,
     s32 arg3,
     s32 arg4)
 {
@@ -179,7 +176,7 @@ void UiText_DrawNumberInWindow(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4)
 
 void UiText_DrawPrefixedNumberAtOffset(
     s32 value,
-    struct TextRenderWork *work,
+    struct RenderInput *work,
     s32 offset_x,
     s32 offset_y,
     s32 variant)

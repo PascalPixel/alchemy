@@ -10,7 +10,7 @@
 s32 Summon_IsEntryFlagged(s32 class_id);
 s32 Summon_GetEntryValue(s32 class_id);
 s32 Summon_GetEntryFlag1Field(s32 class_id);
-s32 ResourceSlot_LoadFar(s32 slot, s32 buffer_addr, s32 value, s32 flag);
+s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 value, u32 variant);
 extern u16 Resource_SlotAssignments[];
 s32 Inventory_FindEquippedFar(s32, s32);
 extern u16 RomBytes_080c2a1c[];
@@ -91,7 +91,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit)
 
             /* FAKEMATCH: an empty use of sprite_value steers it into r7 as the ROM allocates it */
             asm("" : "+r"(sprite_value));
-            if (ResourceSlot_LoadFar(slot, buffer_addr, sprite_value + pass, flag) == 0)
+            if (ResourceSlot_LoadFar(slot, (u32 *)buffer_addr, sprite_value + pass, flag) == 0)
                 return 0;
         }
 

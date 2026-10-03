@@ -9,6 +9,7 @@
 #include "RESOURCE.H"
 #include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
+#include "PALBUF.H"
 
 /* One sprite of the "press start" prompt, as the slot list takes it. */
 struct IntroSprite {
@@ -197,9 +198,7 @@ void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Bg0_ClearTilemap(void);
 void Resource_InitializeTable(void);
 void Func_080f2028(void);
-void TitlePalette_InitializeBuffers(void);
-s32 Graphics_TransformSmallPalette(s32, s32);
-void Graphics_UpdatePaletteInterpolation(s32);
+s32 Graphics_TransformSmallPalette(s32 index, s32 transform);
 void Blend_SetBrightenTarget16(s32 frames);
 void Blend_SetBrightenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
@@ -239,6 +238,10 @@ s32 Title_ShowIntro(s32 prompt)
     Data_03001f58 = result;
     Title_LoadIntroBackgrounds();
     TitlePalette_InitializeBuffers();
+    /* FAKEMATCH: retain the pre-existing ignored scalar-return call boundary.
+       The actual callee is void; its corrected declaration in f4f9d28 swaps
+       the two argument moves in five editions. Used-zero and block forms
+       still swap them, with no extent difference. */
     Graphics_TransformSmallPalette(2, 0);
     {
         volatile u16 *ime;
@@ -255,7 +258,7 @@ s32 Title_ShowIntro(s32 prompt)
         *ime = (u16)ime;
         count = q->count;
         if (count <= 31) {
-            u32 *destination = (u32 *)((u8 *)q + count * 12 + 4);
+            u32 *destination = q->entries[count];
             *(u16 *)&q->count = count + 1;
             *destination++ = 0xf740;
             *destination++ = 0x04000000;

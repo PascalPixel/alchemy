@@ -60,13 +60,8 @@ again:
     }
 }
 
-/* Display transition frame callback: step the transition value towards its
- * end over the configured duration (or stop the H-blank DMA and remove the
- * callback when done), toggle the dither phase, write two palette nibbles
- * from the 64-entry dither table and queue the palette transfer. The table
- * is read inside the loop so that loop.c hoists its address on its first
- * pass and the 63 mask on its second. */
-
+/* Advance the frame interpolation, toggle the dither phase and queue its
+   palette nibbles. Stop DMA and remove the callback at the final frame. */
 extern const u8 DisplayTransition_DitherTable[];
 
 void DisplayTransition_UpdateFrame(void)
@@ -80,7 +75,7 @@ void DisplayTransition_UpdateFrame(void)
         if (state->step >= state->duration) {
             volatile u16 *dma0;
             state->duration = 0;
-            Scheduler_RemoveCallback((u32)((void *)DisplayTransition_UpdateFrame));
+            Scheduler_RemoveCallback((u32)DisplayTransition_UpdateFrame);
             dma0 = REG_DMA0;
             dma0[5] &= 0xc5ff;
             dma0[5] &= 0x7fff;

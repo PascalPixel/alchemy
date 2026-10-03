@@ -30,7 +30,7 @@ void Inventory_EquipFar(s32 owner, s32 slot);
 s32 DebugParty_LoadPreset(s32 preset)
 {
     s32 next_djinn[4];
-    struct OwnerBitState *state;
+    struct BattleUnit *state;
     s32 owner;
     s32 done;
     s32 row;
@@ -66,17 +66,17 @@ s32 DebugParty_LoadPreset(s32 preset)
 
         Party_AddActiveOwnerFar(owner);
         Func_080771f0(owner, Data_080c3f34[row].level);
-        state = (struct OwnerBitState *)Owner_GetStateFar(owner);
+        state = (struct BattleUnit *)Owner_GetStateFar(owner);
         for (i = 0; i < 4; i++) {
-            state->bit_counts[i] = 0;
-            state->bit_counts[i + 4] = 0;
-            state->bits[i] = 0;
-            state->bits[i + 4] = 0;
+            state->djinn_owned_counts[i] = 0;
+            state->djinn_active_counts[i] = 0;
+            state->djinn_available[i] = 0;
+            state->djinn_active[i] = 0;
         }
         for (i = 0; i < 32; i++)
             /* FAKEMATCH: the halfword store through a u16 cast loads its zero
                from the literal pool, as the reference does. */
-            *(u16 *)&((struct OwnerActionState *)state)->action_slots[i] = 0;
+            *(u16 *)&((struct BattleUnit *)state)->action_slots[i] = 0;
         for (i = 0; i < 2; i++) {
             if (Data_080c3f34[row].actions[i] != 0)
                 OwnerAction_AddFar(owner, Data_080c3f34[row].actions[i]);

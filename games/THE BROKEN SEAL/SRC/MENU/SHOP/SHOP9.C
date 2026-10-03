@@ -4,6 +4,7 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 #include "SHOP.H"
+#include "FIXED_POINT_POSITION.H"
 
 
 s32 Shop_CanServe(s32, s32);
@@ -11,7 +12,7 @@ s32 Shop_ServicePrice(s32 selection, s32 variant);
 s32 Shop_MsgByMode(s32 msg);
 
 /* shop/unit/hilite.c */
-void AnimationObjects_SelectAnimationFar(void *, s32);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *, s32);
 extern struct ShopRuntime *gMenuWork;
 
 /* shop/draw/sel_msg.c */
@@ -25,14 +26,8 @@ void EffectSlot_SetPositionFar(struct EffectSlot *, s32, s32);
 s32 BattleFx_HasReachedTargetFar(struct EffectSlot *);
 void BattleFx_ClearOwnedSlotFar(struct EffectSlot *);
 
-struct Position {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-void Vector_AddPolarOffset(s32, s32, struct Position *);
+void Vector_AddPolarOffset(s32, s32, s32 *);
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
@@ -62,35 +57,19 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 
 void Shop_HiliteUnit(s32 enabled, s32 selected)
 {
-    u8 *state;
-    u8 *half_base;
-    s32 *item;
+    struct ShopRuntime *shop = gMenuWork;
     s32 index;
-    s32 offset;
-    s32 variant;
-    s16 id;
+    s32 variant = shop->party_action;
 
-    state = (u8 *)gMenuWork;
-    variant = *(s8 *)(state + 0x3aa);
     if (enabled != 0) {
-        index = 0;
-        if (index < *(s8 *)(state + 0x3a7)) {
-            half_base = state + 2;
-            offset = 0x36c;
-            item = (s32 *)(state + 0x114);
-            do {
-                if (index == selected)
-                    AnimationObjects_SelectAnimationFar((void *)*item, 30);
-                else
-                    AnimationObjects_SelectAnimationFar((void *)*item, 1);
-                item[16] = 0x10000;
-                id = *(s16 *)(half_base + offset);
-                if (Shop_CanServe(id, variant) == 0)
-                    item[16] = 0xb333;
-                index++;
-                offset += 2;
-                item++;
-            } while (index < *(s8 *)(state + 0x3a7));
+        for (index = 0; index < shop->party_member_count; index++) {
+            if (index == selected)
+                AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 30);
+            else
+                AnimationObjects_SelectAnimationFar(shop->party_member_icons[index], 1);
+            shop->party_member_scale[index] = 0x10000;
+            if (!Shop_CanServe(shop->party_member_ids[index], variant))
+                shop->party_member_scale[index] = 0xb333;
         }
     }
 }
@@ -117,7 +96,7 @@ void Shop_DrawSelMsg(s32 target, s32 selection)
 
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
 {
-    struct Position position;
+    struct FixedPointPosition position;
     s8 *state_pointer;
     s32 state;
     s32 result;
@@ -127,11 +106,11 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect)
     if (state == 0) {
         position.x = effect->origin_x;
         position.z = effect->origin_z;
-        Vector_AddPolarOffset(0x280000, Random16(), &position);
+        Vector_AddPolarOffset(0x280000, Random16(), (s32 *)&position);
         EffectSlot_SetPositionFar(effect, position.x, position.z);
         position.x = effect->origin_x;
         position.z = effect->origin_z;
-        Vector_AddPolarOffset(0x40000, Random16(), &position);
+        Vector_AddPolarOffset(0x40000, Random16(), (s32 *)&position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         effect->max_speed = 0x20000;

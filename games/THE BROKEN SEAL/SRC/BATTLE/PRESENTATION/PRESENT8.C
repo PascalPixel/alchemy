@@ -20,7 +20,7 @@ extern u16 BattleUnit_WeaponAnimsClass3[];
 extern u16 BattleUnit_WeaponAnimsClass5[];
 
 struct MotionObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-s32 Inventory_GetEquippedItemFar(struct OwnerInventoryState *owner, s32 type);
+s32 Inventory_GetEquippedItemFar(struct BattleUnit *owner, s32 type);
 s32 SummonSlot_RegisterActorSprites(s32);
 s32 BattleUnit_LookupWeaponValueByClass(s32);
 s32 ArcTan2(s32, s32);
@@ -292,7 +292,7 @@ void BattlePresentation_SpawnActorObject(struct BattleObjectSlot *actor, s32 uni
     class_id = unit_record->class_id;
     actor->overlay = anim;
 
-    if (class_id <= 1 && Inventory_GetEquippedItemFar((struct OwnerInventoryState *)unit_record, 1) == 15) {
+    if (class_id <= 1 && Inventory_GetEquippedItemFar((struct BattleUnit *)unit_record, 1) == 15) {
         if (unit_record->class_id == 0) {
             sprite = 480;
             actor->resource = sprite;

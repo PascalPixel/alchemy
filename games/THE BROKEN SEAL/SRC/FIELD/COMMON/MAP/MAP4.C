@@ -18,7 +18,7 @@ extern TerrainHeightFn Map_TerrainHeightFunctions[16];
  * height bytes and the position inside the metatile. */
 s32 Func_08011f54(s32 layer, s32 x, s32 y)
 {
-    u8 *work = gMapWork[0];
+    struct MapState *work = gMapWork[0];
     u8 *cells;
     u8 *attributes;
 
@@ -26,9 +26,7 @@ s32 Func_08011f54(s32 layer, s32 x, s32 y)
     y >>= 16;
     cells = Ram_MapCellBuffer;
     if (work != NULL) {
-        s32 offset = (layer & 3) * 48 + 304;
-
-        cells = *(u8 **)(work + offset);
+        cells = (u8 *)work->layers[layer & 3].cells;
     }
     cells += (x / 16 + (y / 16 << 7)) * 4;
     attributes = Ram_MapCollision + cells[3] * 4;
@@ -37,9 +35,8 @@ s32 Func_08011f54(s32 layer, s32 x, s32 y)
 
 s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
 {
-    u8 *state = gMapWork[0];
+    struct MapState *state = gMapWork[0];
     u8 *map;
-    s32 off;
     s32 col;
     s32 row;
     u32 attr;
@@ -48,8 +45,7 @@ s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
     y >>= 16;
     map = (u8 *)gMapCellBuffer;
     if (state != 0) {
-        off = (index & 3) * 48 + 304;
-        map = *(u8 **)(state + off);
+        map = (u8 *)state->layers[index & 3].cells;
     }
     col = x / 16;
     row = y / 16;
@@ -62,15 +58,13 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 {
     struct MapState *state;
     s32 cell_address;
-    s32 layer_offset;
 
     state = gMapWork[0];
     x >>= 20;
     y >>= 20;
     cell_address = (u32)gMapCellBuffer;
     if (state != NULL) {
-        layer_offset = (layer & 3) * sizeof(struct MapLayer) + 0x130;
-        cell_address = *(s32 *)((u8 *)state + layer_offset);
+        cell_address = (s32)state->layers[layer & 3].cells;
     }
     cell_address += (x + (y << 7)) * sizeof(struct MapCell);
     return ((struct MapCell *)cell_address)->collision_code;
@@ -84,11 +78,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
     y >>= 20;
     if (state != NULL) {
         struct MapCell *cells = state->layers[layer & 3].cells;
-        u32 offset = (x + (y << 7)) * sizeof(struct MapCell);
-        u8 *cell = (u8 *)cells;
-
-        cell += offset;
-        cell[2] = collision_code;
+        cells[x + (y << 7)].collision_code = collision_code;
     }
 }
 

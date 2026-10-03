@@ -1,3 +1,4 @@
+#include "SELECT.H"
 #include "NODE_CHAIN.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -24,132 +25,27 @@
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
-/* One entry of the selection list: a 52-byte record linked into the list
-   the screen shows, sliding from y toward target_y by speed each frame. */
-struct SelectionNode {
-    struct SelectionNode *prev;
-    struct SelectionNode *next;
-    u16 base;
-    u16 kind;
-    u16 slot;
-    u8 pad_0e[2];
-    s16 y;
-    u16 z;
-    u16 speed;
-    u8 pad_16[2];
-    u16 target_y;
-    u16 target_z;
-    u8 pad_1c[6];
-    s16 scale;
-    u16 scale_step;
-    u16 scale_target;
-    u8 pad_28[12];
-};
-
-/* The screen keeps its entries in its own block: the list entries start
-   after the two arrow records and the head pointer follows the pool. */
-struct SelectionScreen {
-    u8 pad0[8];
-    u16 upScroll;
-    u16 upArrow;
-    u8 pad1[0x3c - 0xc];
-    u16 downScroll;
-    u16 downArrow;
-    u8 pad2[0x68 - 0x40];
-    struct SelectionNode pool[14];
-    u8 pad_340[8];
-    struct SelectionNode *node;
-    u8 pad3[8];
-    u16 kinds[16];
-    u16 bases[16];
-    u16 count;
-    u16 base_y;
-    u16 base_z;
-    u8 pad4[2];
-    u16 top;
-    u16 cursor;
-    u16 busy;
-    u16 status;
-};
-
-LAYOUT_OFFSET_GUARD(SelectionScreen_DownArrow, struct SelectionScreen, downArrow, 0x3e);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Pool, struct SelectionScreen, pool, 0x68);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Node, struct SelectionScreen, node, 0x348);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Kinds, struct SelectionScreen, kinds, 0x354);
-LAYOUT_OFFSET_GUARD(SelectionScreen_BaseY, struct SelectionScreen, base_y, 0x396);
-LAYOUT_OFFSET_GUARD(SelectionScreen_Status, struct SelectionScreen, status, 0x3a2);
 extern struct SelectionScreen *gResQueueWork;
 extern u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 void Audio_PlayCue(u32);
-s32 Menu_ConfirmSelection(struct SelectionScreen *screen);
+u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
 void Menu_OpenSelectionWindow(u16 type, u32 value);
 
-struct StepNode {
-    u8 unk_00[4];
-    struct StepNode *next;
-    u8 unk_08[2];
-    u16 id;
-    u8 unk_0c[4];
-    s16 y;
-    u8 unk_12[2];
-    u16 speed;
-    u8 unk_16[2];
-    s16 target_y;
-    u16 target_z;
-};
-
-struct StepMenu {
-    u8 unk_000[8];
-    u16 scroll_up;
-    u16 more_above;
-    u8 unk_00c[0x30];
-    u16 scroll_down;
-    u16 more_below;
-    u8 unk_040[0x308];
-    struct StepNode *nodes;
-    u8 unk_34c[8];
-    u16 entry_ids[16];
-    u16 entry_kinds[16];
-    u16 count;
-    u16 base_y; /* read through MENU_BASE_Y */
-    u16 base_z; /* read through MENU_BASE_Z */
-    u8 unk_39a[2];
-    u16 top;
-    u16 cursor;
-    u8 unk_3a0[2];
-    u16 status;
-};
-
-#define MENU_BASE_Y(state) (*(u16 *)((u8 *)(state) + 0x396))
-#define MENU_BASE_Z(state) (*(u16 *)((u8 *)(state) + 0x398))
+#define MENU_BASE_X(state) (*(u16 *)((u8 *)(state) + 0x396))
+#define MENU_BASE_Y(state) (*(u16 *)((u8 *)(state) + 0x398))
 void WaitFrames(s32 frames);
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward);
-void MenuSelection_SetupEntry(u32 id, u32 kind, struct StepNode *node, u32 flag);
-
-struct MenuResourceNode {
-    u8 unknown0[4];
-    struct MenuResourceNode *next;
-    u8 unknown8[2];
-    u16 type;
-    u16 value;
-    u8 unknown14[18];
-    u16 base;
-};
-
-struct MenuResourceList {
-    u8 unknown0[0x348];
-    struct MenuResourceNode *head;
-};
+void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
 
 extern u8 MsgCommandName;
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 void Menu_LoadSelectedResource(void);
 void BattlePres_SetActorModesFar(u16 *, s32);
-void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index);
-void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index);
-void Menu_StepRight(struct StepMenu *state);
-void Menu_StepLeft(struct StepMenu *state);
+void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index);
+void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index);
+void Menu_StepRight(struct SelectionScreen *state);
+void Menu_StepLeft(struct SelectionScreen *state);
 
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *state)
 {
@@ -172,7 +68,7 @@ s32 Menu_SelectionLoop(s32 mode)
     Menu_LoadSelectionNodeResource(screen, 0);
     for (;;) {
         WaitFrames(1);
-        if (screen->busy != 0) {
+        if (screen->vertical_scroll != 0) {
             continue;
         }
         if (mode != SELECTION_FIXED) {
@@ -200,7 +96,7 @@ u32 Menu_WaitForSelectionInput(u32 mode)
 
     for (;;) {
         WaitFrames(1);
-        if (screen->busy != 0) {
+        if (screen->vertical_scroll != 0) {
             continue;
         }
 
@@ -214,8 +110,8 @@ u32 Menu_WaitForSelectionInput(u32 mode)
             }
 
             if (gKeyState & KEY_A) {
-                result = screen->top + screen->cursor;
-                if (screen->node->kind == NODE_KIND_YES_NO) {
+                result = screen->top + screen->cursor_index;
+                if (screen->head->kind == NODE_KIND_YES_NO) {
                     if (result == 0)
                         Audio_PlayCue(SOUND_MENU_CONFIRM);
                     else
@@ -237,29 +133,29 @@ u32 Menu_WaitForSelectionInput(u32 mode)
 /* Moves the cursor down one row, scrolling the list at the bottom row. */
 void Menu_MoveSelectionForward(struct SelectionScreen *screen)
 {
-    u32 end = screen->top + screen->cursor + 1;
+    u32 end = screen->top + screen->cursor_index + 1;
 
     if (end == screen->count) {
         return;
     }
-    Menu_ReloadNodeResource(screen, screen->cursor);
+    Menu_ReloadNodeResource(screen, screen->cursor_index);
     screen->status = NODE_STATUS_SCROLLING;
     WaitFrames(1);
-    screen->cursor++;
-    if (screen->cursor == SELECTION_ROWS && end + 1 < screen->count) {
-        screen->cursor--;
-        screen->downScroll = ARROW_SCROLL_FRAMES;
+    screen->cursor_index++;
+    if (screen->cursor_index == SELECTION_ROWS && end + 1 < screen->count) {
+        screen->cursor_index--;
+        screen->records[1].base = ARROW_SCROLL_FRAMES;
         screen->top++;
         Menu_ScrollSelectionList(screen, TRUE);
-        if (screen->top + screen->cursor + 2 == screen->count) {
-            screen->downArrow = FALSE;
+        if (screen->top + screen->cursor_index + 2 == screen->count) {
+            screen->records[1].kind = FALSE;
         }
-        screen->upArrow = TRUE;
+        screen->records[0].kind = TRUE;
     }
     screen->status = NODE_STATUS_SHOWN;
-    Menu_LoadSelectionNodeResource(screen, screen->cursor);
+    Menu_LoadSelectionNodeResource(screen, screen->cursor_index);
     WaitFrames(1);
-    Menu_OpenSelectionWindow(screen->node->kind, 0);
+    Menu_OpenSelectionWindow(screen->head->kind, 0);
     WaitFrames(1);
 }
 
@@ -272,98 +168,98 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen)
     if (*(u32 *)&screen->top == 0) {
         return;
     }
-    Menu_ReloadNodeResource(screen, screen->cursor);
+    Menu_ReloadNodeResource(screen, screen->cursor_index);
     screen->status = NODE_STATUS_SCROLLING;
     WaitFrames(1);
-    cursor = screen->cursor;
+    cursor = screen->cursor_index;
     if (cursor == 1 && screen->top != 0) {
-        screen->upScroll = ARROW_SCROLL_FRAMES;
+        screen->records[0].base = ARROW_SCROLL_FRAMES;
         screen->top--;
         Menu_ScrollSelectionList(screen, FALSE);
         if (screen->top == 0) {
-            screen->upArrow = FALSE;
+            screen->records[0].kind = FALSE;
         }
-        screen->downArrow = cursor;
+        screen->records[1].kind = cursor;
     } else {
-        screen->cursor--;
+        screen->cursor_index--;
     }
     screen->status = NODE_STATUS_SHOWN;
-    Menu_LoadSelectionNodeResource(screen, screen->cursor);
+    Menu_LoadSelectionNodeResource(screen, screen->cursor_index);
     WaitFrames(1);
-    Menu_OpenSelectionWindow(screen->node->kind, 0);
+    Menu_OpenSelectionWindow(screen->head->kind, 0);
     WaitFrames(1);
 }
 
 /* Step the selection cursor right; at the end of a long list, slide every
    entry back to the top and restart, otherwise scroll one row when the
    cursor reaches the fourth slot. */
-void Menu_StepRight(struct StepMenu *state)
+void Menu_StepRight(struct SelectionScreen *state)
 {
     /* FAKEMATCH: the row targets are read as plain halfwords, not struct
        members, so GCC reloads them after every node store as the reference
        does. */
-    struct StepNode *node;
+    struct SelectionNode *node;
     u16 *ids;
     s32 y;
     u32 end;
 
-    Menu_ReloadNodeResource(state, state->cursor);
+    Menu_ReloadNodeResource(state, state->cursor_index);
     state->status = 33;
     WaitFrames(1);
-    state->cursor++;
+    state->cursor_index++;
     if (state->count > 5) {
-        end = state->top + state->cursor;
+        end = state->top + state->cursor_index;
         if (end == state->count) {
-            node = state->nodes;
-            state->more_above = 0;
+            node = state->head;
+            state->records[0].kind = 0;
             while (node->next != NULL) {
+                node->target_x = MENU_BASE_X(state);
                 node->target_y = MENU_BASE_Y(state);
-                node->target_z = MENU_BASE_Z(state);
-                node->speed = 0xfff4;
+                node->dx = 0xfff4;
                 node = node->next;
             }
+            node->target_x = MENU_BASE_X(state);
             node->target_y = MENU_BASE_Y(state);
-            node->target_z = MENU_BASE_Z(state);
-            node->speed = 0xfff4;
-            while (node->target_y != node->y)
+            node->dx = 0xfff4;
+            while (node->target_x != node->x)
                 WaitFrames(1);
-            node = state->nodes;
+            node = state->head;
             if (node != NULL) {
-                ids = state->entry_ids;
+                ids = state->kinds;
                 do {
                     MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
                     node = node->next;
                     ids++;
                 } while (node != NULL);
             }
-            state->cursor = 0;
+            state->cursor_index = 0;
             state->top = 0;
-            node = state->nodes;
-            y = node->y + 16;
+            node = state->head;
+            y = node->x + 16;
             node = node->next;
             while (node != NULL) {
-                node->target_y = y;
-                node->speed = 12;
+                node->target_x = y;
+                node->dx = 12;
                 node = node->next;
                 y += 16;
             }
-            state->more_below = 1;
-        } else if (state->cursor == 4 && end + 1 < state->count) {
-            state->cursor--;
-            state->scroll_down = 8;
+            state->records[1].kind = 1;
+        } else if (state->cursor_index == 4 && end + 1 < state->count) {
+            state->cursor_index--;
+            state->records[1].base = 8;
             state->top++;
-            Menu_ScrollSelectionList((struct SelectionScreen *)state, 1);
-            if (state->top + state->cursor + 2 == state->count)
-                state->more_below = 0;
-            state->more_above = 1;
+            Menu_ScrollSelectionList(state, 1);
+            if (state->top + state->cursor_index + 2 == state->count)
+                state->records[1].kind = 0;
+            state->records[0].kind = 1;
         }
-    } else if (state->cursor == state->count) {
-        state->cursor = 0;
+    } else if (state->cursor_index == state->count) {
+        state->cursor_index = 0;
     }
     state->status = 1;
-    Menu_LoadSelectionNodeResource(state, state->cursor);
+    Menu_LoadSelectionNodeResource(state, state->cursor_index);
     WaitFrames(1);
-    Menu_OpenSelectionWindow(state->nodes->id, 0);
+    Menu_OpenSelectionWindow(state->head->kind, 0);
     WaitFrames(1);
 }
 
@@ -395,82 +291,82 @@ void Menu_StepRight(struct StepMenu *state)
 
    The mirror of Menu_StepRight: step the cursor left, wrap a long list to
    its last page, or scroll one row up at the first slot. */
-void Menu_StepLeft(struct StepMenu *state)
+void Menu_StepLeft(struct SelectionScreen *state)
 {
-    struct StepNode *node;
+    struct SelectionNode *node;
     u16 *ids;
     register s32 y asm("r1"); /* FAKEMATCH: keeps the row offset in r1 */
     s32 i;
 
-    Menu_ReloadNodeResource(state, state->cursor);
+    Menu_ReloadNodeResource(state, state->cursor_index);
     state->status = 33;
     WaitFrames(1);
     if (state->count > 5) {
-        if ((state->cursor | state->top) != 0) {
-            if (state->cursor == 1 && state->top != 0) {
-                state->scroll_up = 8;
+        if ((state->cursor_index | state->top) != 0) {
+            if (state->cursor_index == 1 && state->top != 0) {
+                state->records[0].base = 8;
                 state->top--;
-                Menu_ScrollSelectionList((struct SelectionScreen *)state, 0);
+                Menu_ScrollSelectionList(state, 0);
                 if (state->top == 0)
-                    state->more_above = 0;
-                state->more_below = 1;
+                    state->records[0].kind = 0;
+                state->records[1].kind = 1;
             } else {
-                state->cursor--;
+                state->cursor_index--;
             }
         } else {
-            node = state->nodes;
+            node = state->head;
             y = 64;
             { register s32 z asm("r0") = 0; /* FAKEMATCH: the zero goes through r0 */
-            state->more_below = i = z; }
+            state->records[1].kind = i = z; }
             while (node->next != NULL) {
-                node->target_y = node->y + y;
-                node->speed = 12;
+                node->target_x = node->x + y;
+                node->dx = 12;
                 node = node->next;
                 y -= 16;
             }
-            node = state->nodes;
-            while (node->y != node->target_y)
+            node = state->head;
+            while (node->x != node->target_x)
                 WaitFrames(1);
             i = 0;
             while (i != state->count - 5)
                 i++;
-            node = state->nodes;
+            node = state->head;
             state->top = i;
-            state->cursor = 4;
+            state->cursor_index = 4;
             if (node != NULL) {
                 /* FAKEMATCH: the index is scaled and added to the base before the field offset */
-                ids = (u16 *)((i * 2 + (s32)state) + (s32)((struct StepMenu *)0)->entry_ids);
+                ids = (u16 *)((i * 2 + (s32)state) + (s32)((struct SelectionScreen *)0)->kinds);
                 do {
                     MenuSelection_SetupEntry(ids[0], ids[16], node, 1);
                     node = node->next;
                     ids++;
                 } while (node != NULL);
             }
-            node = state->nodes;
-            y = state->base_y;
+            node = state->head;
+            y = state->base_x;
             while (node->next != NULL) {
-                node->target_y = y;
-                node->speed = 0xfff4;
+                node->target_x = y;
+                node->dx = 0xfff4;
                 node = node->next;
                 y += 16;
             }
-            state->more_above = 1;
+            state->records[0].kind = 1;
         }
-    } else if (state->cursor != 0) {
-        state->cursor--;
+    } else if (state->cursor_index != 0) {
+        state->cursor_index--;
     } else {
-        state->cursor = state->count - 1;
+        state->cursor_index = state->count - 1;
     }
     state->status = 1;
-    Menu_LoadSelectionNodeResource(state, state->cursor);
+    Menu_LoadSelectionNodeResource(state, state->cursor_index);
     WaitFrames(1);
-    Menu_OpenSelectionWindow(state->nodes->id, 0);
+    Menu_OpenSelectionWindow(state->head->kind, 0);
     WaitFrames(1);
 }
 
-void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index)
+void Menu_ReloadNodeResource(struct SelectionScreen *state, u32 index)
 {
-    struct MenuResourceNode *node = state->head;
+    struct SelectionNode *node = state->head;
     u32 output;
     u32 value;
 
@@ -478,17 +374,17 @@ void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index)
         index--;
         node = node->next;
     }
-    if (node->type == 1 || node->type == 6) {
-        u32 first = node->base - (u32)&MsgCommandName;
+    if (node->kind == 1 || node->kind == 6) {
+        u32 first = (u16)node->message - (u32)&MsgCommandName;
 
-        value = node->value;
+        value = node->slot;
         Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
     }
 }
 
-void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index)
+void Menu_LoadSelectionNodeResource(struct SelectionScreen *state, u32 index)
 {
-    struct MenuResourceNode *node = state->head;
+    struct SelectionNode *node = state->head;
     u32 res;
     u32 value;
 
@@ -496,23 +392,23 @@ void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index)
         index--;
         node = node->next;
     }
-    if (node->type == 1 || node->type == 6) {
-        u32 id = node->base - (u32)&MsgCommandName;
+    if (node->kind == 1 || node->kind == 6) {
+        u32 id = (u16)node->message - (u32)&MsgCommandName;
 
-        value = node->value;
+        value = node->slot;
         Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);
         Menu_LoadSelectedResource();
     }
 }
 
-void Menu_SendNodeCountList(u8 *arg0)
+void Menu_SendNodeCountList(struct SelectionScreen *screen)
 {
     u16 data[6];
-    u8 *node = *(u8 **)(arg0 + 0x348);
+    struct SelectionNode *node = screen->head;
     s32 count = 0;
 
     while (node != 0) {
-        node = *(u8 **)(node + 4);
+        node = node->next;
         count++;
     }
     data[count] = 0xff;
@@ -543,24 +439,24 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         p = Resource_FindFreeTransferEntry(0);
         if (p == NULL)
             return;
-        MenuSelection_SetupEntry(kind, base, (struct StepNode *)p, 0);
-        y = screen->base_y;
-        p->y = y + 80;
-        z = screen->base_z;
-        p->target_y = y + 64;
-        p->z = z;
-        p->target_z = z;
+        MenuSelection_SetupEntry(kind, base, p, 0);
+        y = screen->base_x;
+        p->x = y + 80;
+        z = screen->base_y;
+        p->target_x = y + 64;
+        p->y = z;
+        p->target_y = z;
         p->scale_step = 32;
         p->scale = 32;
-        p->scale_target = 256;
-        p->speed = -2;
+        p->scale_end = 256;
+        p->dx = -2;
         last = p;
-        p = screen->node;
+        p = screen->head;
         p->scale_step = -32;
-        p->scale_target = 0;
+        p->scale_end = 0;
         for (;;) {
-            p->target_y = p->y - 16;
-            p->speed = -2;
+            p->target_x = p->x - 16;
+            p->dx = -2;
             if (p->next == NULL)
                 break;
             p = p->next;
@@ -568,11 +464,11 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         p->next = last;
         last->next = NULL;
         last->prev = p;
-        p = screen->node;
+        p = screen->head;
         do {
             WaitFrames(1);
         } while (p->scale != 0);
-        screen->node = p->next;
+        screen->head = p->next;
         Resource_ResetEntry(p->slot);
         p->kind = 0;
         p = p->next;
@@ -584,32 +480,32 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         p = Resource_FindFreeTransferEntry(0);
         if (p == NULL)
             return;
-        MenuSelection_SetupEntry(kind, base, (struct StepNode *)p, 0);
-        p->y = screen->base_y - 16;
-        p->z = screen->base_z;
-        p->target_z = p->z;
-        p->speed = 2;
+        MenuSelection_SetupEntry(kind, base, p, 0);
+        p->x = screen->base_x - 16;
+        p->y = screen->base_y;
+        p->target_y = p->y;
+        p->dx = 2;
         p->scale = 32;
         p->scale_step = 32;
-        p->target_y = p->y + 16;
-        p->scale_target = 256;
+        p->target_x = p->x + 16;
+        p->scale_end = 256;
         first = p;
-        p = screen->node;
+        p = screen->head;
         p->prev = first;
         first->next = p;
         first->prev = NULL;
-        screen->node = first;
+        screen->head = first;
         p = first;
         for (;;) {
-            p->target_y = p->y + 16;
-            p->speed = 2;
+            p->target_x = p->x + 16;
+            p->dx = 2;
             if (p->next == NULL)
                 break;
             p = p->next;
         }
-        p->scale_target = 0;
+        p->scale_end = 0;
         p->scale_step = -32;
-        p = screen->node;
+        p = screen->head;
         do {
             WaitFrames(1);
         } while (p->scale != 256);

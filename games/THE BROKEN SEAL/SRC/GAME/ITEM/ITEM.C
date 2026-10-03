@@ -6,49 +6,14 @@
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
+#include "INVENTORY_MENU.H"
+#include "ITEM.H"
 
-struct ItemOwner {
-    u8 padding_000[0x10];
-    u16 stat_10;
-    u16 stat_12;
-    u8 padding_014[4];
-    u16 stat_18;
-    u16 stat_1a;
-    u16 stat_1c;
-    u8 stat_1e;
-    u8 padding_01f[0x15];
-    s16 max_hp;                     /* 0x034 */
-    s16 max_pp;
-    s16 hp;
-    s16 pp;
-    u8 padding_03c[0x9c];
-    u16 items[15];                  /* 0x0d8 */
-    u8 padding_0f6[0x3b];
-    s8 poison;                      /* 0x131 */
-};
-
-struct ItemData {
-    u8 padding_00[0x0c];
-    u8 kind;
-    u8 padding_0d[0x1b];
-    u16 use_ability;
-};
-
-struct ItemUseWork {
-    u8 padding_000[0x1c8];
-    u16 entries[32];
-    u16 targets[8];                 /* 0x208, the party list */
-    u8 entry_count;                 /* 0x218 */
-    u8 target_count;                /* 0x219 */
-    u8 padding_21a[0x40];
-    s16 result_code;                /* 0x25a */
-};
-
-extern struct ItemUseWork *gMenuWork;
-struct ItemOwner *Owner_GetStateFar(s32);
-struct ItemData *Item_Get(s32);
-u8 Inventory_RemoveFar(s32, s32);
-u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
+extern struct InventoryMenuState *gMenuWork;
+struct BattleUnit *Owner_GetStateFar(s32);
+struct ItemDefinition *Item_Get(s32);
+s32 Inventory_RemoveFar(s32, s32);
+s32 ItemMenu_Collect(struct BattleUnit *, u16 *, s32);
 s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
 void BattleUnit_Recalculate(s32);
 struct BattleAction *BattleAction_Get(s32);
@@ -128,32 +93,32 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0);
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
-    struct ItemUseWork *work;
+    struct InventoryMenuState *work;
     s32 result;
     s32 item_id;
-    struct ItemOwner *owner;
-    struct ItemData *item;
+    struct BattleUnit *owner;
+    struct ItemDefinition *item;
 
     owner = Owner_GetStateFar(owner_id);
     work = gMenuWork;
-    item_id = 0x1ff & owner->items[slot];
+    item_id = 0x1ff & owner->inventory[slot];
     item = Item_Get(item_id);
     result = BattleEffect_ApplyToTargets(
-        0x3fff & item->use_ability,
+        0x3fff & item->action_id,
         owner_id,
         target_id,
         1);
     if (result != -1) {
-        item = Item_Get(owner->items[slot]);
-        if (item->kind == 1) {
+        item = Item_Get(owner->inventory[slot]);
+        if (item->use_type == 1) {
             Inventory_RemoveFar(owner_id, slot);
-            work->entry_count =
-                ItemMenu_Collect(owner, work->entries, 0);
+            work->item_count =
+                ItemMenu_Collect(owner, work->items, 0);
         }
-        if (item->kind == 4) {
+        if (item->use_type == 4) {
             if (item_id == 0xb8)
                 item_id = 0xb9;
-            owner->items[slot] = item_id;
+            owner->inventory[slot] = item_id;
         }
         result = 0;
     }
@@ -177,9 +142,9 @@ s32 BattleEffect_ApplyToTargets(
     s32 fixed_scale)
 {
     struct BattleAction *effect;
-    struct ItemUseWork *runtime;
-    struct ItemOwner *target;
-    struct ItemOwner *source;
+    struct InventoryMenuState *runtime;
+    struct BattleUnit *target;
+    struct BattleUnit *source;
     s32 later_target;
     s32 changed;
     u8 index;
@@ -206,9 +171,9 @@ s32 BattleEffect_ApplyToTargets(
     if (effect->range == 0xff && later_target != 0)
         result_code = 3;
 
-    for (index = 0; index < runtime->target_count; index++) {
+    for (index = 0; index < runtime->party_count; index++) {
         if (effect->range == 0xff) {
-            target_id = runtime->targets[index];
+            target_id = runtime->owner_ids[index];
             target = Owner_GetStateFar(target_id);
         }
 
@@ -220,8 +185,8 @@ s32 BattleEffect_ApplyToTargets(
                     s32 stat_offset;
 
                     source = Owner_GetStateFar(source_id);
-                    stat_offset = effect->damage_class * 4 + 0x48;
-                    scale = *(s16 *)((u8 *)source + stat_offset);
+                    stat_offset = effect->damage_class;
+                    scale = source->elements[stat_offset].power;
                 } else
                     scale = 100;
                 amount = Battle_CalcRestore(amount, scale, 0x100);
@@ -267,33 +232,33 @@ s32 BattleEffect_ApplyToTargets(
 
             switch (effect_id & 0x3fff) {
             case 0x104:
-                target->stat_10 += amount + random_adjust;
+                *(u16 *)&target->base_hp += amount + random_adjust;
                 result_code = 0x10;
                 changed = 1;
                 break;
             case 0x105:
-                target->stat_12 += amount + random_adjust;
+                *(u16 *)&target->base_pp += amount + random_adjust;
                 result_code = 0x11;
                 changed = 1;
                 break;
             case 0x108:
-                target->stat_1c += amount + random_adjust;
+                target->base_agility += amount + random_adjust;
                 result_code = 0x12;
                 changed = 1;
                 break;
             case 0x109:
-                target->stat_1e += amount;
+                target->base_luck += amount;
                 result_code = 0x13;
                 changed = 1;
                 break;
             case 0x106:
-                target->stat_18 += amount + random_adjust;
+                target->base_attack += amount + random_adjust;
                 UiWork_PushValueSlotFar(3, 5);
                 result_code = 0x14;
                 changed = 1;
                 break;
             case 0x107:
-                target->stat_1a += amount + random_adjust;
+                target->base_defense += amount + random_adjust;
                 UiWork_PushValueSlotFar(4, 5);
                 result_code = 0x15;
                 changed = 1;
@@ -423,19 +388,19 @@ s32 BattleEffect_ApplyToTargets(
     }
 
     if (changed == 0) {
-        runtime->result_code = result_code;
+        runtime->message_offset = result_code;
         return -1;
     }
 
-    for (index = 0; index < runtime->target_count; index++)
-        BattleUnit_Recalculate(runtime->targets[index]);
-    runtime->result_code = result_code;
+    for (index = 0; index < runtime->party_count; index++)
+        BattleUnit_Recalculate(runtime->owner_ids[index]);
+    runtime->message_offset = result_code;
     return 0;
 }
 
 void Item_PlayUseAnimation(u32 item)
 {
-    Ability_PlayUseAnimation(Item_Get(item)->use_ability & 0x3fff);
+    Ability_PlayUseAnimation(Item_Get(item)->action_id & 0x3fff);
 }
 
 /* menu/entry/set_first_object_row_coordinates.c */
@@ -443,10 +408,10 @@ void Ability_PlayUseAnimation(s32 action)
 {
     s32 animation_type;
     u32 target_type;
-    void *ability;
+    struct BattleAction *ability;
 
     ability = BattleAction_Get(action);
-    animation_type = 0xf & FIELD(ability, u8 *, 1);
+    animation_type = 0xf & ability->target_flags;
     switch (animation_type) {
     case 1:
         Audio_PlayCueReturnOne(0x7e);
@@ -455,7 +420,7 @@ void Ability_PlayUseAnimation(s32 action)
         Audio_PlayCueReturnOne(0x7e);
         return;
     default:
-        target_type = FIELD(ability, u8 *, 3) - 1;
+        target_type = ability->effect - 1;
         switch (target_type) {
         case 4:
             Audio_PlayCueReturnOne(0x52);

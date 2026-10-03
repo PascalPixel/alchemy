@@ -2,6 +2,7 @@
 #define ALCHEMY_DJINN_MENU_H
 
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 
 /* A packed Djinn entry: index in bits 0-4, element in bits 5-7, owner in
    bits 8-11 and, for a set Djinni, bit 15. */
@@ -29,15 +30,10 @@ struct DjinnMenuBackdrop {
     u16 palette[64];
 };
 
-struct DjinnMenuCursor {
-    u8 unknown_00[5];
-    u8 state;
-};
-
 /* The Djinn screen's view of the menu work cell. */
 struct DjinnMenuWork {
     u8 unknown_000[0x14];
-    struct DjinnMenuCursor *cursor;
+    struct RenderOutput *cursor;
     u8 unknown_018[0x0c];
     s32 window;
     u8 unknown_028[0x08];
@@ -49,7 +45,7 @@ struct DjinnMenuWork {
     u16 frames[8];
     u8 unknown_154[0x24];
     u16 pair_entries[2];
-    struct DjinnMenuCursor *second_cursor;
+    struct RenderOutput *second_cursor;
     u8 unknown_180[0x04];
     struct DjinnMenuBackdrop *backdrop;
     u8 unknown_188[0x80];

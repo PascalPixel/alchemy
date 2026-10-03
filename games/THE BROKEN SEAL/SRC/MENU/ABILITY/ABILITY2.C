@@ -1,11 +1,12 @@
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "PSYNERGY_MENU.H"
+#include "ANIMSPR.H"
+#include "FIELD_SPRITE.H"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 s32 UiWindow_UpdateOrCreate(s32 *arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 s32 UiIcon_CreateWithResourceVariant(s32 arg0, s32 arg1, s32 arg2);
 
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 /* Byte 9 of the object holds a packed pair of two-bit fields; this routine
    clears the upper one, which is what produces the ~12 mask. Spelling it as a
@@ -14,15 +15,6 @@ s32 UiIcon_CreateWithResourceVariant(s32 arg0, s32 arg1, s32 arg2);
    hand-written mask local (s8, u8 or s32, split or inline, with or without a
    copy round trip) either loses the mask copy or turns the `ldrb` into
    `movs #9 / ldrsb`. */
-struct EntryObject {
-    u8 pad00[9];
-    u8 f09_a : 2;
-    u8 f09_b : 2;
-    u8 f09_c : 4;
-    u8 pad0a[28];
-    u8 f26;
-};
-
 /* The word slot at 0x154 must be written through a union view, not a plain
    `u32 *`/`s32 *` cast and not a single-member struct: the union's alias set
    keeps the slot store ordered against the object's byte-9 read-modify-write,
@@ -35,11 +27,10 @@ union EntrySlot {
 };
 
 #define ENTRY_SLOT(base, offset) ((union EntrySlot *)((u8 *)(base) + (offset)))
-extern u8 *gMenuWork;
 s32 Party_ListActiveOwnersFar(u16 *out);
 s32 Party_RemapCharacterIdByFlagsFar(u16 value);
 void *ResourceObject_CreateFar(s32 value);
-void AnimationObjects_SelectAnimationFar(void *object, s32 value);
+s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *object, s32 value);
 void Menu_UpdateEntryObjectTransforms(void);
 
 void ResourceObject_ReleaseFar(void *);
@@ -58,88 +49,67 @@ struct MenuCursorAttributes {
     u16 size : 2;
 };
 
-struct MenuCursorSprite {
-    u8 reserved_00[6];
-    u16 x;
-    u16 y;
-    u8 reserved_0a[10];
-    struct MenuCursorAttributes attributes;
-};
-
-struct MenuCursorWindow {
-    u8 reserved_00[12];
-    u16 x;
-    u16 y;
-};
-
-struct MenuCursorWork {
-    u8 reserved_00[16];
-    struct MenuCursorWindow *window;
-    struct MenuCursorSprite *cursor;
-    u8 reserved_18[0x20a];
-    /* Set to place the cursor at once: the next slide is skipped. */
-    u16 skip_slide;
-};
-
 void WaitFrames(s32 frames);
 
 extern u8 UiMenu_CursorBobX[];
 extern u8 UiMenu_CursorBobY[];
 extern volatile u32 gFrameCount;
 
-s32 UiMenu_CreateCursor(void *work)
+s32 UiMenu_CreateCursor(void *source)
 {
+    struct PsynergyMenuState *work = source;
     s32 handle;
     s32 zero = 0;
     s32 state;
-    void *object;
+    struct RenderOutput *object;
 
-    FIELD_AT_OFFSET(work, s32 *, 0x10) = zero;
-    UiWindow_UpdateOrCreate((s32 *)((u8 *)work + 0x10), zero, zero, 13, 5, 2);
-    handle = FIELD_AT_OFFSET(work, s32 *, 0x10);
-    object = (void *)UiIcon_CreateWithResourceVariant(handle, -8, 11);
-    FIELD_AT_OFFSET(object, u8 *, 5) = 13;
-    FIELD_AT_OFFSET(work, u8 *, 0x1C) = 255;
-    FIELD_AT_OFFSET(work, u8 *, 0x1D) = zero;
-    FIELD_AT_OFFSET(work, void **, 0x14) = object;
+    work->auxiliary_window = zero;
+    UiWindow_UpdateOrCreate(&work->auxiliary_window, zero, zero, 13, 5, 2);
+    handle = work->auxiliary_window;
+    object = (struct RenderOutput *)UiIcon_CreateWithResourceVariant(handle, -8, 11);
+    object->active = 13;
+    work->tab_index[0] = 255;
+    work->tab_index[1] = zero;
+    work->pane_icon[0] = object;
     state = 254;
-    FIELD_AT_OFFSET(object, u8 *, 0x0F) = state;
+    object->sentinel = state;
     state -= 255;
-    FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x18), s8 *, 0x0F) = state;
+    work->pane_icon[1]->sentinel = state;
     return handle;
 }
 
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacing)
 {
     u16 entry_ids[14];
-    u8 *entry_state = gMenuWork;
+    struct PsynergyMenuState *entry_state = gMenuWork;
+    struct RenderInput *window = source;
     s32 entry_count = (u16)Party_ListActiveOwnersFar(entry_ids);
     s32 i;
 
-    entry_state[0x1e] = entry_count;
+    entry_state->tab_counts[0] = entry_count;
     for (i = 0; i < entry_count; i++) {
-        void *entry_object = ResourceObject_CreateFar(Party_RemapCharacterIdByFlagsFar(entry_ids[i]));
+        struct AnimationObject *entry_object = (struct AnimationObject *)ResourceObject_CreateFar(Party_RemapCharacterIdByFlagsFar(entry_ids[i]));
         if (entry_object != 0) {
             s32 entry_x;
             s32 source_x;
             s32 position_x;
 
-            FIELD(entry_state, void **, 0x114 + i * 4) = entry_object;
-            source_x = FIELD(source, u16 *, 0xc);
+            entry_state->tab_objects[i] = entry_object;
+            source_x = window->x;
             entry_x = spacing + 16;
             entry_x *= i;
             position_x = origin_x + source_x;
-            FIELD(entry_state, u16 *, 0x134 + i * 2) = position_x * 8 + entry_x;
-            FIELD(entry_state, u16 *, 0x144 + i * 2) =
-                (origin_y + FIELD(source, u16 *, 0xe)) * 8 + 16;
-            ENTRY_SLOT(entry_state, 0x154 + i * 4)->w = 0x10000;
-            ((struct EntryObject *)entry_object)->f09_b = 0;
-            FIELD(entry_object, u8 *, 38) = 0;
+            entry_state->tab_x[i] = position_x * 8 + entry_x;
+            entry_state->row_positions[i] =
+                (origin_y + window->y) * 8 + 16;
+            entry_state->owner_scale[i] = 0x10000;
+            ((struct FieldSprite *)entry_object)->priority = 0;
+            entry_object->flags = 0;
             AnimationObjects_SelectAnimationFar(entry_object, 1);
         }
     }
     for (; i < 8; i++) {
-        FIELD(entry_state, void **, 0x114 + i * 4) = 0;
+        entry_state->tab_objects[i] = 0;
     }
     {
         s32 delay_frames = 200;
@@ -151,14 +121,14 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 origin_x, s32 origin_
 void Menu_ReleaseEntryObjects(void)
 {
     u32 buf[7];
-    u8 *base = gMenuWork;
+    struct PsynergyMenuState *base = gMenuWork;
     s32 count;
     void **p;
     s32 i;
 
     count = (u16)Party_ListActiveOwnersFar(buf);
     if (count != 0) {
-        p = (void **)(base + 276);
+        p = (void **)base->tab_objects;
         i = count;
         do {
             void *entry = *p++;
@@ -173,33 +143,34 @@ void Menu_ReleaseEntryObjects(void)
 
 void Menu_UpdateEntryObjectTransforms(void)
 {
-    u8 *p;
+    struct PsynergyMenuState *work;
+    struct AnimationObject **objects;
     s32 pos[2];
     s32 trans[4];
     s32 *pp;
-    volatile s32 *tp;
+    s32 *tp;
     s16 *hp;
     s32 i;
     s32 cnt;
 
-    p = gMenuWork;
+    work = gMenuWork;
     cnt = (u16)Party_CountActiveOwnersFar();
     i = 0;
     if (i < cnt) {
         pp = pos;
         tp = trans;
-        hp = (s16 *)(p + 308);
-        p += 276;
+        hp = (s16 *)work->tab_x;
+        objects = work->tab_objects;
         do {
-            void *obj;
+            struct AnimationObject *obj;
             s32 top;
 
             top = 0x01e20000 - (hp[8] << 16);
-            obj = *(void **)p;
+            obj = *objects;
             if (obj != 0) {
-                *((s8 *)obj + 9) &= -13;
-                pos[0] = *(s32 *)(p + 64);
-                pp[1] = *(s32 *)(p + 64);
+                ((struct FieldSprite *)obj)->priority = 0;
+                pos[0] = work->owner_scale[i];
+                pp[1] = work->owner_scale[i];
                 tp[1] = top;
                 tp[0] = hp[0] << 16;
                 tp[2] = (hp[8] << 16) + top;
@@ -208,7 +179,7 @@ void Menu_UpdateEntryObjectTransforms(void)
             }
             i++;
             hp++;
-            p += 4;
+            objects++;
         } while (i < cnt);
     }
 }
@@ -218,14 +189,14 @@ void Menu_UpdateEntryObjectTransforms(void)
  * the frame counter. */
 void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
 {
-    struct MenuCursorWork *work = gMenuWork;
+    struct PsynergyMenuState *work = gMenuWork;
 
-    work->cursor->attributes.x = work->cursor->x =
+    ((struct MenuCursorAttributes *)&work->pane_icon[0]->packed)->x = *(u16 *)&work->pane_icon[0]->x =
         UiMenu_CursorBobX[(gFrameCount >> 1) & 7] + x_offset
-        + work->window->x * 8 + 8;
-    work->cursor->attributes.y = work->cursor->y =
+        + ((struct RenderInput *)work->auxiliary_window)->x * 8 + 8;
+    ((struct MenuCursorAttributes *)&work->pane_icon[0]->packed)->y = *(u16 *)&work->pane_icon[0]->y =
         UiMenu_CursorBobY[(gFrameCount >> 1) & 7] + y_offset
-        + work->window->y * 8 + 8;
+        + ((struct RenderInput *)work->auxiliary_window)->y * 8 + 8;
 }
 
 /* Slides the menu cursor to the given pixel offset in two steps, a frame
@@ -233,8 +204,8 @@ void UiMenu_PositionCursor(s32 x_offset, s32 y_offset)
  * axis. A set skip flag is cleared instead and the cursor stays. */
 void UiMenu_SlideCursor(s32 x, s32 y)
 {
-    struct MenuCursorWork *work = (struct MenuCursorWork *)gMenuWork;
-    struct MenuCursorSprite *cursor;
+    struct PsynergyMenuState *work = gMenuWork;
+    struct RenderOutput *cursor;
     s32 steps;
     s32 start_x;
     s32 start_y;
@@ -244,28 +215,28 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     s32 dy;
 
     steps = 2;
-    if (work->skip_slide != 0) {
-        work->skip_slide = 0;
+    if (work->flags != 0) {
+        work->flags = 0;
         return;
     }
-    cursor = work->cursor;
+    cursor = work->pane_icon[0];
     {
-        s32 sprite_x = cursor->attributes.x + 64;
-        s32 sprite_y = cursor->attributes.y + 64;
+        s32 sprite_x = ((struct MenuCursorAttributes *)&cursor->packed)->x + 64;
+        s32 sprite_y = ((struct MenuCursorAttributes *)&cursor->packed)->y + 64;
 
-        cursor->x = sprite_x;
-        cursor->y = sprite_y;
+        *(u16 *)&cursor->x = sprite_x;
+        *(u16 *)&cursor->y = sprite_y;
     }
     x += 64;
     y += 64;
-    if (cursor->x - 8 > 0)
+    if ((u16)cursor->x - 8 > 0)
         cursor->x -= 8;
-    py = cursor->y;
+    py = (u16)cursor->y;
     if (py - 8 > 0) {
         cursor->y -= 8;
-        py = cursor->y;
+        py = (u16)cursor->y;
     }
-    start_x = cursor->x << 4;
+    start_x = (u16)cursor->x << 4;
     dx = ((x << 4) - start_x + 1) / steps;
     start_y = py << 4;
     dy = ((y << 4) - start_y + 1) / steps;
@@ -273,11 +244,11 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     py = start_y;
     do {
         px += dx;
-        cursor->attributes.x = cursor->x =
-            (px >> 4) + (work->window->x << 3) - 56;
+        ((struct MenuCursorAttributes *)&cursor->packed)->x = *(u16 *)&cursor->x =
+            (px >> 4) + (((struct RenderInput *)work->auxiliary_window)->x << 3) - 56;
         py += dy;
-        cursor->attributes.y = cursor->y =
-            (py >> 4) + (work->window->y << 3) - 56;
+        ((struct MenuCursorAttributes *)&cursor->packed)->y = *(u16 *)&cursor->y =
+            (py >> 4) + (((struct RenderInput *)work->auxiliary_window)->y << 3) - 56;
         steps--;
         if (steps != 0)
             WaitFrames(1);

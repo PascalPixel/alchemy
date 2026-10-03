@@ -22,55 +22,32 @@ extern s32 Shop_SelectQuantity(s32, s32, s32);
    number already owned above them when the chosen item is in the bag. */
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id)
 {
-    u8 *unit;
+    struct BattleUnit *unit;
+    struct RenderOutput *icon;
     s32 x;
     s32 y;
-    s32 item_index;
+    s32 index;
     s32 slot;
-    s32 off;
-    s32 first_offset;
-    s32 item_offset;
-    s32 next_offset;
-    u8 *icon;
 
-    unit = (u8 *)Owner_GetStateFar(unit_id);
+    unit = Owner_GetStateFar(unit_id);
     x = 8;
     y = 8;
     if (window != 0) {
         UiWindow_Clear(window);
         slot = Item_FindSlot(unit_id, item_id);
-        /* 参照は枠位置を「バイト差」として先に組み、状態先頭を基底に残す。
-           足し込む順を変えると二レジスタ番地形が崩れる。 */
         if (slot != -1) {
-            off = slot * 2 + 216;
-            UiWork_PushValueSlotFar((*(u16 *)(unit + off) >> 11) + 1, 5);
+            UiWork_PushValueSlotFar((unit->inventory[slot] >> 11) + 1, 5);
             UiText_DrawCharacterAtOffsetFar((s32)&MsgYouHave, window, 0, 0);
         } else {
             UiText_DrawCharacterAtOffsetFar((s32)&MsgShopNoneInStock, window, 0, 0);
         }
-        item_index = 0;
-        first_offset = 216;
-        if (*(u16 *)(unit + first_offset) != 0) {
-            for (;;) {
-                item_offset = item_index * 2 + 216;
-                icon = (u8 *)UiIcon_Draw(*(u16 *)(unit + item_offset), 27,
-                                     window, x, y);
-                icon[15] = 252;
-                x += 16;
-                if (item_index == 4) {
-                    x = 8;
-                    y += 16;
-                }
-                if (item_index == 9) {
-                    x = 8;
-                    y += 16;
-                }
-                item_index++;
-                if (item_index > 14)
-                    break;
-                next_offset = item_index * 2 + 216;
-                if (*(u16 *)(unit + next_offset) == 0)
-                    break;
+        for (index = 0; index < 15 && unit->inventory[index] != 0; index++) {
+            icon = UiIcon_Draw(unit->inventory[index], 27, window, x, y);
+            icon->sentinel = 252;
+            x += 16;
+            if (index == 4 || index == 9) {
+                x = 8;
+                y += 16;
             }
         }
     }

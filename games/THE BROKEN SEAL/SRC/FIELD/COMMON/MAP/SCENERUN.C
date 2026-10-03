@@ -2,15 +2,7 @@
 #include "DMA.H"
 #include "GAME_STATE.H"
 #include "SCENE_IDS.H"
-
-/* One row of the scene table. */
-struct SceneRecord {
-    s16 resource_id;
-    s8 group;
-    s8 variant;
-    u16 map_index;
-    u16 reserved;
-};
+#include "FIELDRUN.H"
 
 /* Scenes past the table are not maps: a blank screen, the two table
    screens that draw over the last object palettes, and a battle. */
@@ -27,7 +19,6 @@ enum {
 #define DMA_COPY_16_WORDS 0x84000010
 
 extern u8 gDebugMode;
-extern struct SceneRecord Field_SceneTable[];
 
 void Runtime_BumpFree(void *buffer);
 void Runtime_SetIrqHandler(s32 index, s32 handler, s32 context);
@@ -89,8 +80,8 @@ static __inline__ s32 Scene_LoadTable(s32 entrance)
  */
 void Game_ResetForNewGame(s32 mode)
 {
-    struct SceneRecord *table;
-    struct SceneRecord *record;
+    const struct SceneRecord *table;
+    const struct SceneRecord *record;
     s32 entrance;
 
     table = Field_SceneTable;

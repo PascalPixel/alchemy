@@ -1,3 +1,4 @@
+#include "RESMENU.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "TYPES.H"
@@ -6,9 +7,6 @@
 
 void AffineEffect_UpdateFrame(void);
 
-extern u8 Data_03001f38[];
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
-void UiWork_Finalize(struct Work *work, s32 release);
 s32 Resource_ResetEntry(u32 index);
 
 void *AffineEffect_InitializeWork(void)
@@ -24,39 +22,25 @@ void *AffineEffect_InitializeWork(void)
 
 void Menu_EndResourceSelection(void)
 {
-    struct Work *child;
+    struct UiWindow *child;
     s32 i;
-    u16 *entry;
-    void *work;
+    struct ResourceMenuWork *work;
 
-    work = *(void **)((u32)&Data_03001f38);
+    work = gMenuSelectWork;
     Scheduler_RemoveCallback((u32)(AffineEffect_UpdateFrame));
-    child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
+    child = work->window;
     if (child != 0) {
         UiWork_Finalize(child, 2);
     }
     i = 0;
-    while (i < (s32)FIELD_AT_OFFSET(work, s16, 0x8E)) {
-        entry = (u16 *)((u8 *)work + 0x12) + i * 10;
-        Resource_ResetEntry(*entry);
+    while (i < work->count) {
+        Resource_ResetEntry(work->entries[i].slot);
         i += 1;
     }
     Runtime_ReleaseHeapBlock(0x3A);
     WaitFrames(1U);
 }
 
-struct MenuSelectionState {
-    u8 unknown_000[0x78];
-    void *window;
-    u8 unknown_07c[8];
-    u8 resource_ids[8];
-    s16 selection;
-    s16 item_count;
-    s16 width;
-    s16 resource_base;
-};
-
-extern struct MenuSelectionState *gMenuSelectWork;
 
 extern u8 MsgCommandName;
 
@@ -73,7 +57,7 @@ void Audio_PlayCue(s32);
    with the pad and returns the chosen index, or -1 when cancelled. */
 s32 Menu_RunResourceSelectionLoop(s32 initial)
 {
-    struct MenuSelectionState *work = gMenuSelectWork;
+    struct ResourceMenuWork *work = gMenuSelectWork;
     s32 resource;
 
     work->selection = initial;
@@ -102,13 +86,13 @@ redraw:
             Audio_PlayCue(111);
             work->selection--;
             if (work->selection < 0)
-                work->selection = work->item_count - 1;
+                work->selection = work->count - 1;
             goto redraw;
         }
         if ((gKeysRepeat & 16) || (gKeysRepeat & 128)) {
             Audio_PlayCue(111);
             work->selection++;
-            if (work->selection >= work->item_count)
+            if (work->selection >= work->count)
                 work->selection = 0;
             goto redraw;
         }

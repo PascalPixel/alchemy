@@ -1,7 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-extern u8 Data_03001f2c[];
+#include "DJINN_MENU.H"
+#include "BATTLE_UNIT.H"
+extern struct DjinnMenuWork *gMenuWork;
 s32 Djinn_CheckTurnBalance(s32, s32);
 void Djinn_CountTurns(u8 *);
 
@@ -12,12 +14,12 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
     s32 cnt;
     s32 i;
     s8 *p;
-    void *state;
+    struct DjinnMenuWork *state;
 
-    state = *(void **)((u32)&Data_03001f2c);
+    state = gMenuWork;
     cnt = 0;
     i = 0;
-    if (cnt < (s32)FIELD_AT_OFFSET(state, u8 *, 0x219)) {
+    if (cnt < (s32)state->owner_count) {
         p = tbl;
         do {
             *p = 0;
@@ -30,17 +32,16 @@ s32 Djinn_MarkBalancedEntries(s8 *tbl, s32 self)
             }
             i += 1;
             p += 1;
-        } while (i < (s32)FIELD_AT_OFFSET(state, u8 *, 0x219));
+        } while (i < (s32)state->owner_count);
     }
     return cnt;
 }
 
 /* djinn/check_turn_balance.c */
-extern u8 *gMenuWork;
 
 s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 {
-    u8 *work;
+    struct DjinnMenuWork *work;
     s8 counts[16];
     u8 i;
     u8 j;
@@ -52,12 +53,12 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
     counts[from] -= 1;
     counts[to] += 1;
     balanced = 1;
-    for (i = 0; i < work[0x219]; i++) {
+    for (i = 0; i < work->owner_count; i++) {
         j = i;
-        if (i < work[0x219]) {
+        if (i < work->owner_count) {
             while (1) {
                 j++;
-                if (j >= work[0x219])
+                if (j >= work->owner_count)
                     break;
                 difference = counts[i] - counts[j];
                 if (difference < -1 || difference > 1) {
@@ -71,14 +72,14 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
 }
 
 /* djinn/count_turns.c */
-u8 *Owner_GetStateFar(s32);
+struct BattleUnit *Owner_GetStateFar(s32);
 
 
 void Djinn_CountTurns(u8 *counts)
 {
-    u8 *work;
+    struct DjinnMenuWork *work;
     u16 *owner_ids;
-    u8 *owner;
+    struct BattleUnit *owner;
     u32 *row;
     s32 owner_index;
     s32 row_index;
@@ -90,16 +91,16 @@ void Djinn_CountTurns(u8 *counts)
 
     work = gMenuWork;
     owner_index = 0;
-    if (owner_index < work[0x219]) {
+    if (owner_index < work->owner_count) {
         one = 1;
-        owner_ids = (u16 *)(work + 0x208);
+        owner_ids = work->owners;
         do {
             owner = Owner_GetStateFar(*owner_ids);
             row_index = 0;
             count = 0;
-            row = (u32 *)(owner + 0xf8);
+            row = owner->djinn_available;
             do {
-                active = row[4];
+                active = owner->djinn_active[row_index];
                 bit = 0;
                 do {
                     mask = one << bit;
@@ -115,6 +116,6 @@ void Djinn_CountTurns(u8 *counts)
             counts[owner_index] = count;
             owner_index++;
             owner_ids++;
-        } while (owner_index < work[0x219]);
+        } while (owner_index < work->owner_count);
     }
 }

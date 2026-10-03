@@ -6,16 +6,7 @@
 #include "LAYOUT_GUARD.H"
 #include "RENDER_INPUT.H"
 #include "EFFECT_SLOT.H"
-
-/* The animation work reached through a keeper's ObjectRuntime.animation.
-   Its resource table starts with the id shown beside the shop's messages. */
-struct ShopKeeperAnimation {
-    u8 unknown_00[0x28];
-    const u16 *resource;
-};
-
-LAYOUT_OFFSET_GUARD(ShopKeeperAnimation_Resource,
-    struct ShopKeeperAnimation, resource, 0x28);
+#include "ANIMSPR.H"
 
 struct ShopCursor {
     struct RenderOutput *anchor;
@@ -33,7 +24,7 @@ struct ShopRuntime {
     u8 unknown_010[0x10];
     s32 item_window;                    /* 0x020 */
     u8 unknown_024[0xf0];
-    void *party_member_icons[8];        /* 0x114 */
+    struct AnimationObject *party_member_icons[8];        /* 0x114 */
     s16 party_member_x[8];              /* 0x134 */
     s16 party_member_y[8];              /* 0x144 */
     s32 party_member_scale[8];          /* 0x154 */

@@ -10,6 +10,10 @@ extern struct ShopRuntime *gMenuWork;
    the member window and keeps the result in r8), the stock-id address
    association, and the ROM's mid-function literal pool.
 
+   Current owner closure repairs the stale GameState money name to coins.
+   The previous current-source draft did not compile; no unchanged native
+   baseline is claimed for this repair.
+
    The shop's buy menu: browse the stock seven to a row, then pick the
    member who carries the chosen item (a full bag or an item they cannot
    use asks again), choose how many, and let the special-item offer follow
@@ -182,7 +186,7 @@ outer:
                     continue;
                 }
                 Inventory_RemoveFar(member, slot);
-                if ((u32)item->price > gGameState.money)
+                if ((u32)item->price > gGameState.coins)
                     goto too_expensive;
                 if (Item_IsCompatibleWithOwnerFar(member, shop->selected_item) == 0) {
                     UiWork_PushValueSlotFar(member, 1);

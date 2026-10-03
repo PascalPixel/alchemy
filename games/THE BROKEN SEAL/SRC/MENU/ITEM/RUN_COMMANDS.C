@@ -65,7 +65,7 @@ void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
 void InventoryMenu_ShowModalMessage(s32 message, s32 acknowledgement_mode, s32 window_mode);
 void UiText_DrawWorkValueWithLabel(s32 window);
 s32 Func_080a414c(void);
-void UiIcon_PrepareObject(void *icon);
+void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 enum ItemMenuStep {
     ITEM_STEP_OWNER = 0,
@@ -139,7 +139,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             menu->selected_slots[0] = 0;
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
-            menu->selected_item_icon->state = 13;
+            menu->selected_item_icon->active = 13;
             ItemMenu_DrawMsg(0, (s32)&MsgWhoseItem);
 #if EDITION_INTERNATIONAL
             RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
@@ -173,8 +173,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             ItemMenu_SetMsgWin3();
             ItemMenu_SetItemWin3();
-            menu->selected_item_icon->state = 13;
-            menu->pane_icons[0]->state = 1;
+            menu->selected_item_icon->active = 13;
+            menu->pane_icons[0]->active = 1;
             ItemMenu_DrawMsg(0, (s32)&MsgWhichItem);
             sel = ItemMenu_RunList(0);
             state = ITEM_STEP_OWNER;
@@ -219,7 +219,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 #if !EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
 #endif
-                    menu->pane_icons[0]->state = 13;
+                    menu->pane_icons[0]->active = 13;
                     menu->item_count = ItemMenu_Collect(
                         Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
                     ItemMenu_DrawIcons(menu->items, 0);
@@ -279,7 +279,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 #if !EDITION_INTERNATIONAL
                     RenderOutput_RedrawSavedRectFar((s32)menu->info_window);
 #endif
-                    menu->pane_icons[0]->state = 13;
+                    menu->pane_icons[0]->active = 13;
                     ItemMenu_TryBreak();
                     state = ITEM_STEP_ITEM;
                 }
@@ -333,9 +333,9 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             Resource_LoadByModeIntoSlotFar(
                 2,
                 (menu->selected_items[0] & 0x1ff) | (result << 11),
-                menu->selected_item_icon->render_target,
+                (u8)menu->selected_item_icon->index,
                 0);
-            menu->selected_item_icon->state = 1;
+            menu->selected_item_icon->active = 1;
             menu->selected_item_icon->x = 120;
             menu->selected_item_icon->y = 28;
             UiIcon_PrepareObject(menu->selected_item_icon);
@@ -361,8 +361,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
 #endif
                 ItemMenu_SetItemWin3();
                 ItemMenu_RefreshOwner(menu->pane_owner[0], 0);
-                menu->selected_item_icon->state = 13;
-                menu->pane_icons[0]->state = 13;
+                menu->selected_item_icon->active = 13;
+                menu->pane_icons[0]->active = 13;
                 WaitFrames(1);
                 RenderOutput_ClearListFar((s32)menu->info_window);
                 InventoryMenu_ShowModalMessage((s32)&MsgDroppedIt, MODAL_SHORT_X, 13);
@@ -372,7 +372,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 state = ITEM_STEP_COMMAND;
             }
             Owner_RecalculateStatsFar(menu->pane_owner[0]);
-            menu->selected_item_icon->state = 13;
+            menu->selected_item_icon->active = 13;
             Event_ClearInvalidPackedValuesFar();
             break;
 
@@ -453,7 +453,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 break;
             }
             ItemMenu_RefreshOwner(menu->pane_owner[1], 1);
-            menu->pane_icons[0]->state = 13;
+            menu->pane_icons[0]->active = 13;
             WaitFrames(1);
             if (aborted == 1) {
                 RenderOutput_ClearListFar((s32)menu->info_window);
@@ -635,7 +635,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             Owner_RecalculateStatsFar(menu->pane_owner[0]);
             Func_080772c0(menu->pane_owner[0]);
-            menu->pane_icons[0]->state = 13;
+            menu->pane_icons[0]->active = 13;
             menu->item_count = ItemMenu_Collect(
                 Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
@@ -659,7 +659,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 &= 0xfdff;
             Owner_RecalculateStatsFar(menu->pane_owner[0]);
             Func_080772c0(menu->pane_owner[0]);
-            menu->pane_icons[0]->state = 13;
+            menu->pane_icons[0]->active = 13;
             menu->item_count = ItemMenu_Collect(
                 Owner_GetStateFar(menu->pane_owner[0]), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
@@ -675,12 +675,12 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case ITEM_STEP_INSPECT:
-            menu->pane_icons[0]->state = 13;
+            menu->pane_icons[0]->active = 13;
             Menu_SelectQuantity(menu->selected_items[0]);
             RenderOutput_RedrawSavedRectFar((s32)menu->status_window);
             ItemMenu_DrawEquipPreview(
                 menu->pane_owner[0], menu->selected_slots[0], 0, menu->pane_owner[0]);
-            menu->pane_icons[0]->state = 1;
+            menu->pane_icons[0]->active = 1;
             state = ITEM_STEP_COMMAND;
             break;
 

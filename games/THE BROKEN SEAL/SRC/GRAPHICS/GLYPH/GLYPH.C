@@ -1,3 +1,4 @@
+#include "SELECT.H"
 #include "GLYPH.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -118,49 +119,8 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor)
 void UiGlyph_DecodeWithHeapRoutines(u8 *glyph, s32 outlined);
 
 extern u8 Data_03001e98[];
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
-struct State_0801a7c0 {
-    u8 filler0[0x354];
-    u16 first[16];
-    u16 second[16];
-    u16 cnt;
-};
-
-extern struct State_0801a7c0 *volatile gResQueueWork;
-
-struct SelectionNode {
-    struct SelectionNode *prev;
-    struct SelectionNode *next;
-    s16 base;
-    u16 kind;
-    u8 unknown_0c[4];
-    u16 x;
-    u16 y;
-    u16 unknown_14;
-    u16 unknown_16;
-    u16 draw_x;
-    u16 draw_y;
-    u8 unknown_1c[0x34 - 0x1c];
-};
-
-struct SelectionScreen {
-    u8 unknown_000[0x68];
-    struct SelectionNode nodes[7];
-    struct SelectionNode others[5];
-    u8 unknown_2d8[0x348 - 0x2d8];
-    struct SelectionNode *head;
-    u8 unknown_34c[0x354 - 0x34c];
-    u16 kinds[16];
-    u16 bases[16];
-    u16 count;
-    u16 x;
-    u16 y;
-    u16 unknown_39a;
-    u16 first;
-    u8 unknown_39e[0x3b8 - 0x39e];
-    u16 f3b8;
-};
+extern struct SelectionScreen *volatile gResQueueWork;
 
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);
@@ -335,28 +295,28 @@ void UiGlyph_ResetWorkState(void)
 
 void Resource_ClearOwnerListAndCounters(void)
 {
-    void *state;
+    struct SelectionScreen *screen;
 
-    state = *(void **)((u32)&Data_03001e98);
-    FIELD_AT_OFFSET(state, s32 *, 0x348) = 0;
-    FIELD_AT_OFFSET(state, s16 *, 0x39A) = 0;
-    if (0x80 & FIELD_AT_OFFSET(state, u16 *, 0x39E)) {
-        FIELD_AT_OFFSET(state, s16 *, 0x39C) = 0;
-        FIELD_AT_OFFSET(state, u16 *, 0x39E) = 0U;
+    screen = gResQueueWork;
+    screen->head = NULL;
+    screen->unknown_39a = 0;
+    if (screen->cursor_index & 0x80) {
+        screen->top = 0;
+        screen->cursor_index = 0;
     }
-    FIELD_AT_OFFSET(state, s16 *, 0x3A0) = 0;
-    FIELD_AT_OFFSET(state, s16 *, 0x394) = 0;
+    screen->vertical_scroll = 0;
+    screen->count = 0;
 }
 
 void Resource_PushPendingPair(u32 first, u32 second)
 {
-    struct State_0801a7c0 *state = gResQueueWork;
-    u16 cnt = state->cnt;
+    struct SelectionScreen *state = gResQueueWork;
+    u16 cnt = state->count;
 
     if (cnt != 16) {
-        state->first[cnt] = first;
-        state->second[cnt] = second;
-        state->cnt++;
+        state->kinds[cnt] = first;
+        state->bases[cnt] = second;
+        state->count++;
     }
 }
 
@@ -366,7 +326,7 @@ void MenuSelection_BuildEntries(void)
 {
     struct SelectionScreen *screen = gResQueueWork;
     u32 count = screen->count;
-    u32 index = screen->first;
+    u32 index = screen->top;
     struct SelectionNode *prev = 0;
     struct SelectionNode *node;
     s32 cnt = 0;
@@ -394,23 +354,23 @@ void MenuSelection_BuildEntries(void)
         index++;
     }
 
-    screen->x = 100 - cnt * 8;
-    screen->y = 140;
+    screen->base_x = 100 - cnt * 8;
+    screen->base_y = 140;
     for (prev = screen->head, cnt = 0; prev != 0; prev = prev->next) {
-        s32 x = screen->x + cnt;
+        s32 x = screen->base_x + cnt;
         s32 y;
 
         prev->x = x;
-        y = screen->y;
+        y = screen->base_y;
         prev->y = y;
-        prev->draw_x = x;
-        prev->draw_y = y;
-        if (prev->kind == 6 && screen->f3b8 == 0) {
+        prev->target_x = x;
+        prev->target_y = y;
+        if (prev->kind == 6 && screen->locked == 0) {
             prev->y = 6;
-            prev->draw_y = 6;
+            prev->target_y = 6;
         }
-        prev->unknown_14 = 0;
-        prev->unknown_16 = 0;
+        prev->dx = 0;
+        prev->dy = 0;
         cnt += 16;
     }
     Menu_LoadSelectedResource();

@@ -1,3 +1,4 @@
+#include "RESMENU.H"
 #include "TYPES.H"
 #include "SOUND_IDS.H"
 #include "RESOURCE.H"
@@ -5,20 +6,6 @@
 #include "SYSTEM.H"
 #include "RESOURCE_IDS.H"
 
-extern u8 Data_03001f38[];
-
-struct MenuSelectionState {
-    u8 padding000[0x78];
-    void *work;
-    u8 padding07c[8];
-    u8 resource_ids[8];
-    s16 selection;
-    s16 item_count;
-    s16 field090;
-    s16 resource_base;
-};
-
-extern struct MenuSelectionState *gMenuSelectWork;
 extern u8 Menu_SelectionStepDelays[];
 extern u8 MsgCommandName;
 void RenderOutput_PrepareForRedraw(void *work);
@@ -37,24 +24,6 @@ u32 Resource_DecodeByteLz(const void *, void *);
 void VramBlock_LoadCached(s32, s32, void *);
 void Runtime_BumpFree(void *);
 
-struct CenterEntry {
-    u8 unknown_00[12];
-    s16 x;
-    s16 y;
-    u8 unknown_10[4];
-};
-
-struct CenterMenu {
-    struct CenterEntry entries[6];
-    s32 window;                     /* 0x78 */
-    u8 unknown_7c[0x8e - 0x7c];
-    s16 count;                      /* 0x8e */
-    s16 width;
-    s16 height;
-    s16 row;
-};
-
-s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 
 s32 Menu_SelectResource(s32 start, s32 goal)
 {
@@ -67,7 +36,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     s32 step;
     s32 delay;
     const u8 *tbl;
-    struct MenuSelectionState *state;
+    struct ResourceMenuWork *state;
 
     state = gMenuSelectWork;
     step = 1;
@@ -78,14 +47,14 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     pos = start;
 
     for (;;) {
-        RenderOutput_PrepareForRedraw(state->work);
+        RenderOutput_PrepareForRedraw(state->window);
         resource_base = state->resource_base;
         if (resource_base != 0) {
             resource_id = resource_base + state->selection;
         } else {
             resource_id = state->resource_ids[state->selection] + (s32)&MsgCommandName;
         }
-        UiText_DrawCharacterAtOffset(resource_id, state->work, 0, 0);
+        UiText_DrawCharacterAtOffset(resource_id, state->window, 0, 0);
 
         cur = state->selection;
         tbl = Menu_SelectionStepDelays;
@@ -121,46 +90,43 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
 
 void Menu_AppendResourceEntry(s32 no)
 {
-    u8 *base;
-    u8 *entry;
+    struct ResourceMenuWork *work;
+    struct ResourceMenuEntry *entry;
     s16 index;
     s32 slot;
-    s32 off;
     s32 flags;
 
-    base = *(u8 **)((u32)&Data_03001f38);
-    index = *(s16 *)(base + 142);
-    if (index <= 5)
-    {
-        *(u16 *)(base + 142) = *(u16 *)(base + 142) + 1;
-        entry = base + index * 20;
+    work = gMenuSelectWork;
+    index = work->count;
+    if (index <= 5) {
+        work->count = (u16)work->count + 1;
+        entry = &work->entries[index];
         slot = Resource_FindFreeEntry();
         Menu_LoadResourceSlot(slot, no);
-        *(u16 *)(entry + 12) = index * 24 + 32;
+        entry->x = index * 24 + 32;
         flags = 136;
-        *(u16 *)(entry + 14) = flags;
-        off = index + 132;
-        *(u16 *)(entry + 18) = slot;
-        base[off] = (u8)no;
+        entry->y = flags;
+        entry->slot = slot;
+        work->resource_ids[index] = no;
     }
 }
 
 /* Lays the menu's entries out three tiles apart on the given tile row,
    centred with the window for their text, and opens that window. */
-void Menu_CenterResourceEntries(s32 row, s32 width, s32 height)
+void Menu_CenterResourceEntries(s32 row, s32 width, s32 resource_base)
 {
-    struct CenterMenu *menu = ((struct CenterMenu *)gMenuSelectWork);
+    struct ResourceMenuWork *menu = ((struct ResourceMenuWork *)gMenuSelectWork);
     s32 x;
     s32 i;
     s32 count;
 
     menu->width = width + 2;
-    menu->height = height;
+    menu->resource_base = resource_base;
     menu->row = row;
     count = menu->count;
     x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
     for (i = 0; i < menu->count; i++) {
-        struct CenterEntry *entry = &menu->entries[i];
+        struct ResourceMenuEntry *entry = &menu->entries[i];
 
         entry->x = x * 8;
         entry->y = row * 8;

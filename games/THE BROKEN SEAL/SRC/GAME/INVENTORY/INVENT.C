@@ -4,31 +4,29 @@
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "UI.H"
+#include "EVENT_RUNTIME.H"
+#include "WINDOW.H"
+#include "FIELD_SCENE.H"
 
 void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
-void Object_SetModeById(s32, s32);
+void Object_SetModeById(u32, s32);
 void Object_WaitUntilChildValueDiffers(s32, s32);
 
-struct Entry_08091c7c {
-    u8 unknown_00[10];
-    u16 value_0a;
-    u8 unknown_0c[2];
-    u16 value_0e;
-};
-
-struct Runtime_08091c7c {
-    u8 unknown_000[0x1f4];
-    s32 first_1f4;
-    struct Entry_08091c7c *second_1f8;
-    struct Entry_08091c7c *third_1fc;
+/* The field event allocation also holds the confirmation menu's parameters. */
+struct EventPromptWork {
+    struct EventRuntime event;
     u8 unknown_200[0xac2];
-    s16 value_cc2;
-    s16 value_cc4;
+    s16 resource_base;
+    s16 width;
 };
 
-extern struct Runtime_08091c7c *gWork;
+LAYOUT_SIZE_GUARD(EventPromptBase_Size, struct EventRuntime, 0x200);
+LAYOUT_OFFSET_GUARD(EventPromptWork_ResourceBase, struct EventPromptWork, resource_base, 0xcc2);
+LAYOUT_OFFSET_GUARD(EventPromptWork_Width, struct EventPromptWork, width, 0xcc4);
+
 extern volatile s32 gKeyState;
-s16 *BattleAction_FindDescriptor(s32);
+struct ActionDescriptor;
+struct ActionDescriptor *BattleAction_FindDescriptor(s32);
 s32 Inventory_RequestMode(s32, s32, s32, s32);
 void UiWork_FinalizePendingCoreFar(void);
 
@@ -58,14 +56,15 @@ void Object_WaitUntilChildValueDiffers(s32 object_id, s32 value)
     }
 }
 
-s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
+/* Places the answer menu below the dialogue when its windows leave room. */
+s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force_bottom)
 {
-    struct Runtime_08091c7c *rt = gWork;
-    s32 v = *BattleAction_FindDescriptor(rt->first_1f4);
-    struct Entry_08091c7c *ent0 = rt->second_1f8;
-    struct Entry_08091c7c *ent1 = rt->third_1fc;
-    s32 flag = 1;
-    s32 ret;
+    struct EventPromptWork *work = (struct EventPromptWork *)gWork;
+    s32 sprite = ((struct ScenePlacement *)BattleAction_FindDescriptor(work->event.speaker))->sprite;
+    struct UiWindow *window = (struct UiWindow *)work->event.message_window;
+    struct UiWindow *side = (struct UiWindow *)work->event.side_window;
+    s32 use_bottom = 1;
+    s32 answer;
 
     while (gKeyState != 0)
         WaitFrames(1);
@@ -75,33 +74,33 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
 
     WaitFrames(3);
 
-    if (force == 0) {
-        s32 sum = ent0->value_0e + ent0->value_0a;
+    if (force_bottom == 0) {
+        s32 bottom = window->y + window->height;
 
-        if (ent1 != 0) {
-            s32 sum2 = ent1->value_0e + ent1->value_0a;
-            if (sum < sum2)
-                sum = sum2;
+        if (side != 0) {
+            s32 side_bottom = side->y + side->height;
+            if (bottom < side_bottom)
+                bottom = side_bottom;
         }
 
-        if (sum > 15)
-            flag = 0;
+        if (bottom > 15)
+            use_bottom = 0;
     }
 
-    ret = Inventory_RequestMode(flag, rt->value_cc2, rt->value_cc4, 0);
-    if (ret != 0) {
-        Object_SetModeById(id, 4);
-        UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
+    answer = Inventory_RequestMode(use_bottom, work->resource_base, work->width, 0);
+    if (answer != 0) {
+        Object_SetModeById(actor, 4);
+        UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
         UiWork_FinalizePendingCoreFar();
-        Object_WaitUntilChildValueDiffers(id, 4);
+        Object_WaitUntilChildValueDiffers(actor, 4);
     } else {
-        Object_SetModeById(id, 3);
-        UiWork_FinalizeEntityMatchingLocalizedIdFar(v);
+        Object_SetModeById(actor, 3);
+        UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
         UiWork_FinalizePendingCoreFar();
-        Object_WaitUntilChildValueDiffers(id, 3);
+        Object_WaitUntilChildValueDiffers(actor, 3);
     }
 
-    return ret;
+    return answer;
 }
 
 s32 Object_CallSpawnRoutineAtOrigin(s32 value)

@@ -467,7 +467,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/GRAPHICS/RENDER/RENDER3.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003971e)
     "*/recon/tla/ja/rom.o"(.rom.0003a018)
-    "*/recon/tla/ja/rom.o"(.rom.0003a34c)
+    "*/games/COMMON/SRC/GRAPHICS/RENDER/IS_COMPLETE.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0003a378)
     "*/recon/tla/ja/rom.o"(.rom.0003a4c4)
     "*/recon/tla/ja/rom.o"(.rom.0003a4e0)

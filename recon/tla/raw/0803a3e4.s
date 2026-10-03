@@ -1,4 +1,5 @@
 .syntax unified
+	.balign 4
 	.thumb
 	.global UiWork_IsIdle
 	.thumb_func

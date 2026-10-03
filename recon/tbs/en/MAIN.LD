@@ -215,7 +215,7 @@
         "*/recon/tbs/raw/080168f4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW2.o"(.text)
         "*/recon/tbs/raw/08017362.o"(.text .rodata .data .padding)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/IS_COMPLETE.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/RENDER/IS_COMPLETE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_COUNTERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/MESSAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/TEXT4.o"(.text)

@@ -102,12 +102,23 @@ Func_080132fc:
 	.type Resource_LoadCode, %function
 	.thumb_func
 Resource_LoadCode:
-	.incbin "baserom.gba", 0x00013398, 0x000000cc
-	.section .rom.00013464, "ax"
-	.global Func_08013438
-	.type Func_08013438, %function
+	.incbin "baserom.gba", 0x00013398, 0x00000054
+	.global Runtime_IgnoreInterrupt
+	.type Runtime_IgnoreInterrupt, %function
 	.thumb_func
-Func_08013438:
+Runtime_IgnoreInterrupt:
+	.incbin "baserom.gba", 0x000133ec, 0x00000002
+	.incbin "baserom.gba", 0x000133ee, 0x00000002
+	.global Runtime_InstallIwramAndIrqs
+	.type Runtime_InstallIwramAndIrqs, %function
+	.thumb_func
+Runtime_InstallIwramAndIrqs:
+	.incbin "baserom.gba", 0x000133f0, 0x00000074
+	.section .rom.00013464, "ax"
+	.global Runtime_SetIrqHandler
+	.type Runtime_SetIrqHandler, %function
+	.thumb_func
+Runtime_SetIrqHandler:
 	.incbin "baserom.gba", 0x00013464, 0x00000078
 	.global System_WaitForFrameInterrupt
 	.type System_WaitForFrameInterrupt, %function
@@ -131,7 +142,12 @@ Input_UpdateKeyRepeatAndDirection:
 	.type Sound_LoadPresetParameters, %function
 	.thumb_func
 Sound_LoadPresetParameters:
-	.incbin "baserom.gba", 0x00013b5c, 0x00000038
+	.incbin "baserom.gba", 0x00013b5c, 0x00000010
+	.global Input_HandleKeyInterrupt
+	.type Input_HandleKeyInterrupt, %function
+	.thumb_func
+Input_HandleKeyInterrupt:
+	.incbin "baserom.gba", 0x00013b6c, 0x00000028
 	.section .rom.00013b94, "ax"
 	.global Func_08013b68
 	.type Func_08013b68, %function
@@ -480,7 +496,7 @@ Resource_DecodeByteLzInRam:
 	.type Func_08016180, %function
 	.thumb_func
 Func_08016180:
-	.incbin "baserom.gba", 0x000161ac, 0x00000170
+	.incbin "baserom.gba", 0x000161ac, 0x0000015c
 	.section .rom.00016372, "ax"
 	.incbin "baserom.gba", 0x00016372, 0x00000002
 	.section .rom.00016374, "ax"
@@ -494,7 +510,12 @@ Func_08016348:
 	.thumb_func
 SerialRuntime_PollStatus:
 	.incbin "baserom.gba", 0x0001645c, 0x000000b8
-	.incbin "baserom.gba", 0x00016514, 0x000002c4
+	.incbin "baserom.gba", 0x00016514, 0x000001ac
+	.global SerialRuntime_HandleTransferInterrupt
+	.type SerialRuntime_HandleTransferInterrupt, %function
+	.thumb_func
+SerialRuntime_HandleTransferInterrupt:
+	.incbin "baserom.gba", 0x000166c0, 0x00000118
 	.section .rom.000167d8, "ax"
 	.global SerialRuntime_RemoveIrqHandlers
 	.type SerialRuntime_RemoveIrqHandlers, %function
@@ -514,10 +535,10 @@ Func_080167d8:
 Func_0801680c:
 	.incbin "baserom.gba", 0x00016838, 0x00000048
 	.section .rom.00016880, "ax"
-	.global Party_Check
-	.type Party_Check, %function
+	.global SerialRuntime_BeginTransferB
+	.type SerialRuntime_BeginTransferB, %function
 	.thumb_func
-Party_Check:
+SerialRuntime_BeginTransferB:
 	.incbin "baserom.gba", 0x00016880, 0x0000004c
 	.section .rom.000168cc, "ax"
 	.global Func_080168a0
@@ -542,7 +563,12 @@ Func_080168f8:
 	.type Func_0801692c, %function
 	.thumb_func
 Func_0801692c:
-	.incbin "baserom.gba", 0x00016958, 0x00000064
+	.incbin "baserom.gba", 0x00016958, 0x00000024
+	.global BattleLink_ResetTransferState
+	.type BattleLink_ResetTransferState, %function
+	.thumb_func
+BattleLink_ResetTransferState:
+	.incbin "baserom.gba", 0x0001697c, 0x00000040
 	.section .rom.000169bc, "ax"
 	.global Func_08016990
 	.type Func_08016990, %function
@@ -582,7 +608,10 @@ Func_08016dd0:
 	.section .rom.00016e2e, "ax"
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
 	.section .rom.000178e0, "ax"
-	.incbin "baserom.gba", 0x000178e0, 0x00000434
+	.global Runtime_IrqHandlers
+Runtime_IrqHandlers:
+	.incbin "baserom.gba", 0x000178e0, 0x00000038
+	.incbin "baserom.gba", 0x00017918, 0x000003fc
 	.section .rom.00017d34, "ax"
 	.incbin "baserom.gba", 0x00017d34, 0x0000005c
 	.global Flash_Chips

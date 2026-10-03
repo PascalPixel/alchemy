@@ -15,7 +15,7 @@ Func_0811d2f8:
 	str r1, [r3]
 	subs r7, #4
 	ldr r0, [r7]
-	bl Party_Check
+	bl SerialRuntime_BeginTransferB
 	movs r2, #1
 	movs r5, #150
 	negs r2, r2
@@ -73,7 +73,7 @@ Func_0811d2f8:
 	ldr r0, [r2]
 	lsls r3, r3, #4
 	adds r0, r0, r3
-	bl Party_Check
+	bl SerialRuntime_BeginTransferB
 	movs r2, #1
 	negs r2, r2
 	cmp r0, r2
@@ -143,6 +143,6 @@ Func_0811d2f8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_0811d40c:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize
 .L_0811d410:
 	.4byte gLinkStatus

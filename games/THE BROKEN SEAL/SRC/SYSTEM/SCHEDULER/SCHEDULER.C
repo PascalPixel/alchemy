@@ -12,12 +12,13 @@
 #include "STRING.H"
 #include "IO_REG.H"
 #include "LOW_RUNTIME.H"
+#include "OAM.H"
 
 
 /* Each of the 256 render priorities owns a linked-list head. */
 extern void *Data_03001400[256];
-extern const u8 Render_BuildOamList[];
-typedef void (*LoadedRoutine)(void *argument);
+extern const u8 Render_BuildOamListKernel[];
+typedef void (*OamBuildRoutine)(void *work);
 
 /* Linker-resolved absolute size of the routine copied into the heap. */
 extern u8 LoadedRuntime_Size[];
@@ -115,23 +116,23 @@ void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
     *(s32 *)slot_entry = (s32)previous_head;
 }
 
-void Runtime_CopyAndCallRoutine(void *argument)
+void Render_BuildOamList(void *work)
 {
     u32 size;
-    LoadedRoutine routine;
+    OamBuildRoutine routine;
 
     /*
      * FAKEMATCH: a loop that runs once around the size load. It is a
      * scheduling barrier: without it the size literal is loaded before the
-     * argument is copied to r8.
+     * output buffer is copied to r8.
      */
     do {
         size = (u32)LoadedRuntime_Size;
     } while (0);
-    routine = (LoadedRoutine)Runtime_BumpAllocate(size);
-    Dma_Set((const void *)Render_BuildOamList, (void *)routine,
+    routine = (OamBuildRoutine)Runtime_BumpAllocate(size);
+    Dma_Set((const void *)Render_BuildOamListKernel, (void *)routine,
             (size >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
-    routine(argument);
+    routine(work);
     Sys_Free((void *)routine);
 }
 

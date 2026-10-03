@@ -14,6 +14,6 @@ Func_080d072c:
 	subs r0, r0, r3
 	bx lr
 .L_080d0740:
-	.4byte Data_030001e4
+	.4byte gIrqHandlers
 .L_080d0744:
 	.4byte Func_080d0954

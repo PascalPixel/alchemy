@@ -7,7 +7,7 @@ Func_0801613c:
 	movs r0, #5
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #204
 	bl Runtime_ReleaseHeapBlock
 	pop {pc}

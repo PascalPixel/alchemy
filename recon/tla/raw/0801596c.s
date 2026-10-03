@@ -53,7 +53,7 @@ Func_0801596c:
 .L_080159cc:
 	.4byte 0x85000c51
 .L_080159d0:
-	.4byte Data_030001e4 + 0x14
+	.4byte gIrqHandlers + 0x14
 .L_080159d4:
 	mov r1, r11
 	adds r1, #2

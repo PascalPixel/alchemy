@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080133c4
+	.global Runtime_InstallIwramAndIrqs
 	.thumb_func
-Func_080133c4:
+Runtime_InstallIwramAndIrqs:
 	push {r5, lr}
 	ldr r5, .L_08013414
 	movs r4, #0
@@ -56,8 +56,8 @@ Func_080133c4:
 .L_08013428:
 	.4byte Data_03007ffc
 .L_0801342c:
-	.4byte Data_080178b4
+	.4byte Runtime_IrqHandlers
 .L_08013430:
-	.4byte Data_030001e4
+	.4byte gIrqHandlers
 .L_08013434:
 	.4byte 0x04000132

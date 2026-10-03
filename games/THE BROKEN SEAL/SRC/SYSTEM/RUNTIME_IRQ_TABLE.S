@@ -10,8 +10,8 @@
 
 @ 起動後に常駐側から割込み先十四本を転送する表。
 IwramIrqVBlank:
-	.global Data_030000e0
-Data_030000e0:
+	.global gIrqHandlers
+gIrqHandlers:
 	.4byte 0
 IwramIrqHBlank:
 	.4byte 0

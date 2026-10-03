@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08016950
+	.global BattleLink_ResetTransferState
 	.thumb_func
-Func_08016950:
+BattleLink_ResetTransferState:
 	ldr r1, .L_08016978
 	ldr r0, .L_0801697c
 	ldrh r4, [r0]
@@ -24,14 +24,14 @@ Func_08016950:
 	bx lr
 	.2byte 0x0000
 .L_08016978:
-	.4byte Data_02003a70
+	.4byte gSerialTransfer
 .L_0801697c:
 	.4byte 0x04000208
 .L_08016980:
-	.4byte Data_020038d0
+	.4byte gSerialSendSource
 .L_08016984:
-	.4byte Data_020036d4
+	.4byte gSerialSendSize
 .L_08016988:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_0801698c:
-	.4byte Data_02005354
+	.4byte gSerialReceivedSize

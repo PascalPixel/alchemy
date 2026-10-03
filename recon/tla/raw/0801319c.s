@@ -38,7 +38,7 @@ Func_0801319c:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	bl Func_08014c6c
-	bl Func_080133c4
+	bl Runtime_InstallIwramAndIrqs
 	ldr r3, .L_0801324c
 	str r5, [r3]
 	ldr r3, .L_08013250
@@ -57,11 +57,11 @@ Func_0801319c:
 	movs r0, #0
 	ldr r2, .L_0801325c
 	movs r1, #1
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	ldr r2, .L_08013260
 	movs r0, #13
 	movs r1, #1
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r2, #192
 	ldr r3, .L_08013264
 	lsls r2, r2, #8

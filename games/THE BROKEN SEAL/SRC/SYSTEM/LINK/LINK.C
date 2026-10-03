@@ -1,9 +1,6 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
-extern volatile s32 gSerialReceiveDest;
-extern volatile s32 gSerialSendSource;
-
 void SerialRuntime_WaitForTransferA(void)
 {
     u32 count = 0;

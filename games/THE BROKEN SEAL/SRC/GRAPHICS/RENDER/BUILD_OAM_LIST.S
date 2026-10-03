@@ -9,8 +9,8 @@
 @ credit: handwritten — ARM object-attribute list builder copied to the heap
 .syntax unified
 	.arm
-	.global Render_BuildOamList
-Render_BuildOamList:
+	.global Render_BuildOamListKernel
+Render_BuildOamListKernel:
 	push	{r5, r6, r7, r8, r9, lr}
 	ldr	r2, [pc, #196]
 	mov	ip, #64
@@ -73,4 +73,4 @@ Render_BuildOamList:
 	.4byte	gObjAffineCount
 	.4byte	gObjAffineMatrices
 	.global LoadedRuntime_Size
-	.set LoadedRuntime_Size, . - Render_BuildOamList
+	.set LoadedRuntime_Size, . - Render_BuildOamListKernel

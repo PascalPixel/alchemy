@@ -16,6 +16,13 @@ SerialRuntime_CollectReceivedPayloads:
 	.thumb_func
 SerialRuntime_StepBlockTransfer:
 	.incbin "baserom.gba", 0x0000655c, 0x0000023c
+	.section .rom.0000679c, "ax"
+	.balign 4
+	.global SerialTest_Run
+	.type SerialTest_Run, %function
+	.thumb_func
+SerialTest_Run:
+	.incbin "baserom.gba", 0x0000679c, 0x000000c8
 	.section .rom.0000686e, "ax"
 	.incbin "baserom.gba", 0x0000686e, 0x00000002
 	.section .rom.00007320, "ax"

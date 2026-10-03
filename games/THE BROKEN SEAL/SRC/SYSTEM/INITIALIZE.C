@@ -3,6 +3,7 @@
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "IRQ.H"
 
 void System_VBlankHandler(void);
 
@@ -15,8 +16,6 @@ extern u8 Data_03001ca0;
 
 
 void Resource_LoadWorkHeader(void);
-void Runtime_InstallIwramAndIrqs(void);
-void Runtime_SetIrqHandler(u32, s32, void (*)(void));
 void WaitFrames(s32 frames);
 void Resource_InitializeTable(void);
 void Bg0_ClearTilemap(void);

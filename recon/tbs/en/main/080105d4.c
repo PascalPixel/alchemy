@@ -1,3 +1,20 @@
+/* 2026-10-04 follow-up: canonical body remains770.
+ * New shared index-copy structure835; separate full-cell/index835; native
+ * index/r7 binding1742. Isolated neighbor drawing block835; its layer setup,
+ * explicit signed stride, index-before-base and earlier dst advance each770.
+ * Early row initialization790; cached end in height1458; native row/r6=1609;
+ * row/r6 plus index/r7=2654. A mixed-declaration trial was invalid C89;
+ * valid separated row/cursor initialization gives3800.
+ * Reuse copied word in row scalar770, in n1745; mask through row scalar770;
+ * defer mask until visible915; share drawing-word multiplier770.
+ * Height-first bound sum770; bottom-break row loop1836; single for-loop770.
+ * Reviewed declaration-printer repair then rebuilt; seed2105/two jobs/
+ * 17958 ordinary candidates found no gain. Native width/r11 binding1900;
+ * mutating-row+width1923; early-row+width2003; row/r6+width/r11=2546.
+ * Four direct full-copy/index expressions (combined cursor advances,
+ * separate dst advance, masked destination readback, later assignment)
+ * each770. No new register binding or source body is retained.
+ */
 /* 2026-10-04: current canonical draft, score770 (41 register, 4 operand,
  * 6 scheduling, 1 inserted instruction); complete304B/frame36. Width stays
  * in fp; source/destination cursors at sp8/sp4; row stride stays in r8.

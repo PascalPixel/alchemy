@@ -218,7 +218,6 @@ s32 Menu_ComputeEntryValues(void *tbl)
 void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
 {
     struct DjinnMenuWork *menu;
-    void **cache;
     s32 i;
     s32 row;
     s32 element;
@@ -227,9 +226,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
     s32 usable;
     u16 *list;
 
-    cache = (void **)gMenuWork;
-    menu = cache[0];
-    ui = cache[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU];
+    menu = *(struct DjinnMenuWork **)gMenuWork;
+    ui = *(struct UiWork **)(gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *));
     ui->menu_busy = 1;
     i = 0;
     if (menu->owner_count != 0) {
@@ -270,6 +268,6 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
         }
     }
     UiWindow_DrawDividerLineFar(menu->list_window, 0, 10, 28, 10);
-    ((struct UiWork *)cache[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU])->dirty = 1;
+    (*(struct UiWork **)(gMenuWork + (HEAP_SLOT_WINDOW - HEAP_SLOT_MENU) * sizeof(void *)))->dirty = 1;
     ui->menu_busy = 0;
 }

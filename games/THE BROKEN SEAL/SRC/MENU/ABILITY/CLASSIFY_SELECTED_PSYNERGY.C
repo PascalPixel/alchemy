@@ -42,7 +42,9 @@ void UiIcon_PrepareObject(void *cursor);
 
 s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 {
-    struct PsynergyMenuState *menu = gMenuWork;
+    void *menu = gMenuWork;
+    s32 offset = party_slot + 28;
+    s32 cursor_offset = party_slot * 4 + 20;
     void *icon;
     u8 byte_val;
     s32 owner_index;
@@ -51,20 +53,23 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
     s32 obj_id;
     void *obj_ptr;
     void *p456;
+    u8 *p2;
     s32 badge;
     s32 result;
+    s32 cursor_offset2;
 
     result = 0;
-    icon = menu->pane_icon[party_slot];
+    icon = *(void **)(menu + cursor_offset);
     *(u8 *)(icon + 5) = 1;
     *(u16 *)(icon + 12) = result;
-    ((struct Rec5 *)menu->cursor_icon)->flag = 13;
-    owner_index = menu->tab_index[party_slot];
-    byte_val = ((struct Cur *)&menu->owner_count)->mark;
-    menu->tab_counts[party_slot] = byte_val;
+    ((struct Rec5 *)(*(u8 **)(menu + 540)))->flag = 13;
+    p2 = (u8 *)menu + 2;
+    owner_index = *(s8 *)(menu + offset);
+    byte_val = ((struct Cur *)(menu + 537))->mark;
+    p2[offset] = byte_val;
 
     if (owner_index == -1) {
-        menu->tab_index[party_slot] = 0;
+        *(u8 *)(menu + offset) = 0;
         combined_offset = 0;
     } else {
         combined_offset = owner_index * 2;
@@ -72,14 +77,15 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
     }
 
     obj_off = combined_offset + 520;
-    obj_id = *(u16 *)((u8 *)menu + obj_off);
+    obj_id = *(u16 *)(menu + obj_off);
     obj_ptr = Owner_GetStateFar(obj_id);
-    p456 = menu->psynergies;
+    p456 = menu + 456;
     badge = PsynergyMenu_CollectActions(obj_ptr, p456, 2);
-    menu->psynergy_count = (u8)badge;
-    result = PsynergyMenu_SetupActionIcons(menu->owner_table, p456);
+    *(u8 *)(menu + 536) = (u8)badge;
+    result = PsynergyMenu_SetupActionIcons(menu + 520, p456);
 
-    icon = menu->pane_icon[party_slot];
+    cursor_offset2 = party_slot * 4 + 20;
+    icon = *(void **)(menu + cursor_offset2);
     UiIcon_PrepareObject(icon);
     WaitFrames(1);
     return result;

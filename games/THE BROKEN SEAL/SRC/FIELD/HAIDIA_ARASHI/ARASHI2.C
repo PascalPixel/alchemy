@@ -72,21 +72,21 @@ void HaidiaArashi_FlashLightning(void)
     s32 record;
 
     Engine_TaskWait(20);
-    Engine_GameFlagSet(0x166);
+    GameFlag_Set(0x166);
     Map_SetLayerEntryFlag(0);
     Map_SetLayerEntryFlag(1);
     Map_SetLayerEntryFlag(2);
     Map_SetLayerEntryFlag(3);
     Map_SetLayerEntryFlag(4);
     Map_SetLayerEntryFlag(5);
-    Engine_ColorBufferApplyTarget(0x10003, 1);
-    Engine_ColorBufferApplyTarget(0x10000, 2);
+    ColorBuffer_ApplyTarget(0x10003, 1);
+    ColorBuffer_ApplyTarget(0x10000, 2);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(120);
-    Engine_ColorBufferApplyTarget(0, 0);
+    ColorBuffer_ApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
-    Engine_GameFlagClear(0x166);
+    GameFlag_Clear(0x166);
     Map_ClearLayerEntryFlag(0);
     Map_ClearLayerEntryFlag(1);
     Map_ClearLayerEntryFlag(2);
@@ -178,7 +178,7 @@ void FieldScene_RunScene372_02003e48(void)
     rec8 = Object_GetById(ACTOR_PARTY_LEADER);
     rec7 = Object_GetById(8);
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x305) != 0) {
+    if (GameFlag_IsSet(0x305) != 0) {
         Engine_ActorStop(8);
         Engine_EventWait(10);
         Engine_ActorRunRepeatedMotion(8, 2);
@@ -191,14 +191,14 @@ void FieldScene_RunScene372_02003e48(void)
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgHaidiaICantMoveGetHelp);
-        Engine_EventShowMessage(8, 0);
+        Event_ShowMessage(8, 0);
         Engine_ActorEnableActionCallback(8, (s32)HaidiaArashi_ActorEightScript);
         Engine_ActorSetAnimation(8, 6);
     } else {
         Engine_ActorStop(8);
         *(s32 *)(rec7 + 24) = 0x10000;
         *(s32 *)(rec7 + 28) = 0x10000;
-        Engine_ActorFaceDirection(8, 0x1000, 0);
+        Actor_FaceDirection(8, 0x1000, 0);
         if (*(s16 *)(rec8 + 6) >= 0) {
             Engine_ActorSetAnimation(8, 7);
         } else {
@@ -206,7 +206,7 @@ void FieldScene_RunScene372_02003e48(void)
         }
         Engine_EventWait(20);
         Engine_EventSetMessage((s32)MsgHaidiaIllGo);
-        Engine_EventShowMessageAndWait(8, 0, 20);
+        Event_ShowMessageAndWait(8, 0, 20);
         Engine_ActorSetAnimation(8, 1);
         Engine_ActorJump(8, 4, 0);
         Engine_EventWait(80);
@@ -222,10 +222,10 @@ void FieldScene_RunScene372_02003e48(void)
         Engine_EventWait(60);
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(20);
-        Engine_EventShowMessage(8, 0);
+        Event_ShowMessage(8, 0);
         Engine_ActorEnableActionCallback(8, (s32)HaidiaArashi_ActorEightScript);
         Engine_ActorSetAnimation(8, 6);
-        Engine_GameFlagSet(0x305);
+        GameFlag_Set(0x305);
     }
     Engine_EventEnd();
 }
@@ -236,34 +236,34 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     u8 *record;
 
     Engine_EventBegin();
-    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_ActorStop(ACTOR_ID);
     Scheduler_RemoveCallback((s32)OverlayObject_CopyRecordField1ToSlots22And8);
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
-    Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
-    Engine_ActorFaceDirection(ACTOR_ID, 0x3000, 20);
-    Object_GetById(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-    Engine_ActorSetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1e0, 0x570);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Actor_FaceDirection(ACTOR_ID, 0x3000, 20);
+    Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+    Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
     Engine_TaskWait(1);
     Engine_EventSetMessage((s32)MsgHaidiaRobin);
-    Engine_EventShowMessage(0x1016, 0);
-    Engine_ActorSetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
+    Event_ShowMessage(0x1016, 0);
+    Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
     Engine_TaskWait(1);
-    Engine_CameraSetSpeed(0x40000, 0x8000);
-    Engine_CameraMoveTo(0xa20000, 0, 0x5050000, 1);
+    Camera_SetSpeed(0x40000, 0x8000);
+    Camera_MoveTo(0xa20000, 0, 0x5050000, 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
-    Engine_EventShowMessageAndWait(0x1016, 0, 10);
-    Engine_ActorFaceDirection(ACTOR_ID, 0xc000, 20);
+    Event_ShowMessageAndWait(0x1016, 0, 10);
+    Actor_FaceDirection(ACTOR_ID, 0xc000, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
-    Engine_EventShowMessageAndWait(0x1016, 0, 10);
-    Engine_ActorFaceDirection(ACTOR_ID, 0x1000, 20);
+    Event_ShowMessageAndWait(0x1016, 0, 10);
+    Actor_FaceDirection(ACTOR_ID, 0x1000, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
-    Engine_ActorSetSpeed(ACTOR_ID, 0x20000, 0x10000);
-    Engine_ActorWalkToAndWait(ACTOR_ID, 165, 0x514);
-    Engine_ActorWalkToAndWait(ACTOR_ID, 195, 0x598);
-    Engine_GameFlagSet(0x842);
+    Actor_SetSpeed(ACTOR_ID, 0x20000, 0x10000);
+    Actor_WalkToAndWait(ACTOR_ID, 165, 0x514);
+    Actor_WalkToAndWait(ACTOR_ID, 195, 0x598);
+    GameFlag_Set(0x842);
 }
 
 /* Each of the 15 placement calls below takes the same 6-argument shape:
@@ -274,21 +274,21 @@ void FieldScene_BuildPlacementGrid(void)
     u32 i;
     u8 *record;
 
-    Engine_MapCopyCellsTo(16, 96, 11, 73, 6, 3); /* main:08009180 */
-    Engine_MapCopyCellsTo(16, 96, 34, 68, 14, 10); /* main:08009180 */
-    Engine_MapCopyCellsTo(16, 96, 64, 68, 7, 7); /* main:08009180 */
-    Engine_MapCopyCellsTo(9, 95, 11, 73, 6, 3); /* main:08009180 */
-    Engine_MapCopyCellsTo(40, 94, 34, 68, 14, 10); /* main:08009180 */
-    Engine_MapCopyCellsTo(54, 94, 64, 68, 8, 7); /* main:08009180 */
-    Engine_MapCopyCellsTo(72, 75, 72, 76, 1, 1); /* main:08009180 */
-    Engine_MapCopyCellsTo(72, 75, 74, 76, 1, 1); /* main:08009180 */
-    Engine_MapCopyCellAttributes(7, 75, 1, 1, 6, 75); /* main:080091c0 */
-    Engine_MapCopyCellAttributes(8, 70, 3, 1, 8, 71); /* main:080091c0 */
-    Engine_MapCopyCellAttributes(8, 70, 2, 1, 9, 72); /* main:080091c0 */
-    Engine_MapCopyCellAttributes(8, 70, 2, 1, 9, 73); /* main:080091c0 */
-    Engine_MapCopyCellAttributes(11, 66, 1, 1, 8, 73); /* main:080091c0 */
-    Engine_MapCopyCellAttributes(12, 66, 1, 4, 11, 73); /* main:080091c0 */
-    Engine_MapCopyCellAttributes(25, 0, 1, 1, 6, 74); /* main:080091c0 */
+    Map_CopyCellsTo(16, 96, 11, 73, 6, 3); /* main:08009180 */
+    Map_CopyCellsTo(16, 96, 34, 68, 14, 10); /* main:08009180 */
+    Map_CopyCellsTo(16, 96, 64, 68, 7, 7); /* main:08009180 */
+    Map_CopyCellsTo(9, 95, 11, 73, 6, 3); /* main:08009180 */
+    Map_CopyCellsTo(40, 94, 34, 68, 14, 10); /* main:08009180 */
+    Map_CopyCellsTo(54, 94, 64, 68, 8, 7); /* main:08009180 */
+    Map_CopyCellsTo(72, 75, 72, 76, 1, 1); /* main:08009180 */
+    Map_CopyCellsTo(72, 75, 74, 76, 1, 1); /* main:08009180 */
+    Map_CopyCellAttributes(7, 75, 1, 1, 6, 75); /* main:080091c0 */
+    Map_CopyCellAttributes(8, 70, 3, 1, 8, 71); /* main:080091c0 */
+    Map_CopyCellAttributes(8, 70, 2, 1, 9, 72); /* main:080091c0 */
+    Map_CopyCellAttributes(8, 70, 2, 1, 9, 73); /* main:080091c0 */
+    Map_CopyCellAttributes(11, 66, 1, 1, 8, 73); /* main:080091c0 */
+    Map_CopyCellAttributes(12, 66, 1, 4, 11, 73); /* main:080091c0 */
+    Map_CopyCellAttributes(25, 0, 1, 1, 6, 74); /* main:080091c0 */
     /* No-argument call that closes out the sequence started above. */
     Engine_MapRedraw(); /* main:08009128 */
 }

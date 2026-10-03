@@ -1,4 +1,5 @@
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 #include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 #include "TYPES.H"

@@ -371,49 +371,49 @@ void FieldScene_RunActorThreeBranchSequence(void)
     s32 record;
 
     Engine_EventBegin();
-    ObjectMotion_SetSpeedParameters(3, FX16_0_8, FX16_0_4);
-    ObjectMotion_SetSpeedParameters(0, FX16_0_8, FX16_0_4);
+    Actor_SetSpeed(3, FX16_0_8, FX16_0_4);
+    Actor_SetSpeed(0, FX16_0_8, FX16_0_4);
     Engine_EventSetMessage((s32)MsgImiruSomebodyHere);
-    Engine_EventShowMessageAndWait(3, 0, 20);
-    Engine_ActorWalkToAndWait(3, 0x348, 0x288);
-    Engine_ActorShowEmote(3, 0x100, 60);
-    Engine_ActorFaceDirection(3, FX16_0_5, 20);
+    Event_ShowMessageAndWait(3, 0, 20);
+    Actor_WalkToAndWait(3, 0x348, 0x288);
+    Actor_ShowEmote(3, 0x100, 60);
+    Actor_FaceDirection(3, FX16_0_5, 20);
     Object_SetModeById(3, 16);
     record = (s32)Object_GetById(3);
     /* Set the +24 field of actor 3's record to -1.0 in 16.16 fixed point. */
     *(s32 *)(record + 24) = -FX16_1_0;
     Battle_WaitMode0(20);
-    Engine_EventShowMessageAndWait(3, 0, 20);
+    Event_ShowMessageAndWait(3, 0, 20);
     Object_SetModeById(3, 1);
     record = (s32)Object_GetById(3);
     /* Set the +24 field of actor 3's record to 1.0 in 16.16 fixed point. */
     *(s32 *)(record + 24) = FX16_1_0;
     Battle_WaitMode0(20);
-    Engine_ActorFaceDirection(3, FX16_0_25, 20);
-    Engine_EventOpenMessage(3, 0);
+    Actor_FaceDirection(3, FX16_0_25, 20);
+    Event_OpenMessage(3, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(3, 3);
-        Engine_EventShowMessageAndWait(3, 0, 20);
+        Event_ShowMessageAndWait(3, 0, 20);
         *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
     } else {
         *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
         Battle_WaitMode0(20);
         Engine_ActorSetAnimationAndWait(3, 4);
-        Engine_EventShowMessageAndWait(3, 0, 20);
+        Event_ShowMessageAndWait(3, 0, 20);
     }
     Battle_WaitMode0(20);
-    Engine_ActorFaceDirection(3, FX16_0_75, 20);
-    Engine_CameraSetSpeed(FX16_0_8, FX16_0_1);
-    Engine_CameraMoveTo(0x3480000, -1, 0x2780000, 1);
-    Engine_ActorWalkToAndWait(3, 0x348, 0x278);
+    Actor_FaceDirection(3, FX16_0_75, 20);
+    Camera_SetSpeed(FX16_0_8, FX16_0_1);
+    Camera_MoveTo(0x3480000, -1, 0x2780000, 1);
+    Actor_WalkToAndWait(3, 0x348, 0x278);
     Engine_CameraWaitForMove();
     Battle_WaitMode0(20);
     Engine_ActorRunRepeatedMotion(3, 2);
     Battle_WaitMode0(10);
     Engine_ActorSetAnimationAndWait(3, 4);
     Battle_WaitMode0(20);
-    Engine_EventShowMessageAndWait(3, 0, 20);
+    Event_ShowMessageAndWait(3, 0, 20);
     Engine_GameFlagSet(0x870);
     Engine_EventEnd();
 }
@@ -493,7 +493,7 @@ void FieldScene_RunColumnChoreography(void)
         } else {
             Battle_WaitMode0(20);
             Engine_ActorSetAnimationAndWait(3, 4);
-            Engine_EventShowMessageAndWait(3, 0, 20);
+            Event_ShowMessageAndWait(3, 0, 20);
             *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
         }
         Engine_ActorShowEmote(0, 0x100, 60);
@@ -506,15 +506,15 @@ void FieldScene_RunColumnChoreography(void)
         Call3(Engine_ActorSetPosition, 1, 0x3680000, 0x2580000);
         Call3(Engine_ActorSetPosition, 2, 0x3680000, 0x2580000);
         Call3(Engine_ActorWalkTo, 2, 0x378, 0x278);
-        Engine_ActorWalkToAndWait(1, 0x370, 0x268);
+        Actor_WalkToAndWait(1, 0x370, 0x268);
         Call3(Engine_ActorFaceDirection, 1, 0x5000, 0);
         ObjectMotion_CommitCurrentPositionAndActivate(2);
-        Engine_ActorFaceDirection(2, 0x8000, 0);
+        Actor_FaceDirection(2, 0x8000, 0);
         Engine_ActorRunRepeatedMotion(1, 1);
         Battle_WaitMode0(20);
         Engine_EventShowMessageAndWait(1, 0, 20);
         Call3(Engine_ActorShowEmote, 3, 0x101, 60);
-        Engine_EventShowMessageAndWait(3, 0, 20);
+        Event_ShowMessageAndWait(3, 0, 20);
         Call3(Engine_ActorFaceDirection, 1, 0x3000, 0);
         Call3(Engine_ActorFaceDirection, 2, 0xb000, 20);
         Object_SetModeById(1, 3);
@@ -538,7 +538,7 @@ void FieldScene_RunColumnChoreography(void)
         Engine_EventShowMessageAndWait(3, 0, 20);
         Engine_ActorRunRepeatedMotion(1, 1);
         Battle_WaitMode0(20);
-        Engine_ActorFaceDirection(1, 0xc000, 20);
+        Actor_FaceDirection(1, 0xc000, 20);
         Engine_EventOpenMessage(1, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             Battle_WaitMode0(20);
@@ -564,8 +564,8 @@ void FieldScene_RunColumnChoreography(void)
         MakyuriHeya_CastPsynergyAtActor11();
         Battle_WaitMode0(50);
         Audio_PlayCue(131);
-        Engine_ColorBufferApplySource(0x10000, 0);
-        Engine_ColorBufferApplyTarget(0x207e9f, 0);
+        ColorBuffer_ApplySource(0x10000, 0);
+        ColorBuffer_ApplyTarget(0x207e9f, 0);
         Engine_ColorBufferInterpolate(10);
         WaitFrames(1);
         Audio_PlayCue(220);
@@ -607,7 +607,7 @@ void FieldScene_RunColumnChoreography(void)
         Object_SetModeById(2, 2);
         record = Object_GetById(0);
         if (record != 0) {
-            Engine_ActorSetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         ObjectMotion_CommitCurrentPositionAndActivate(1);
         Engine_ActorSetPosition(1, 0, 0);
@@ -816,105 +816,105 @@ void FieldScene_RunRandomEffectActorSequence(void)
     Engine_MapRenderWaitForValues();
     BattleFx_PlayQueuedSound();
     Battle_WaitMode0(30);
-    if (Engine_GameFlagIsSet(0x881) != 0) {
-        ObjectMotion_SetSpeedParameters(0, 0xcccc, 0x6666);
-        Engine_ActorWalkToAndWait(0, 0x338, 232);
-        Engine_ActorWalkToAndWait(0, 0x318, 232);
-        Engine_ActorWalkToAndWait(0, 0x318, 208);
-        ObjectMotion_SetSpeedParameters(0, 0x20000, 0x10000);
+    if (GameFlag_IsSet(0x881) != 0) {
+        Actor_SetSpeed(0, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(0, 0x338, 232);
+        Actor_WalkToAndWait(0, 0x318, 232);
+        Actor_WalkToAndWait(0, 0x318, 208);
+        Actor_SetSpeed(0, 0x20000, 0x10000);
         Engine_ActorJump(0, 4, 0);
-        Engine_ActorWalkTo(0, 0x318, 200);
+        Actor_WalkTo(0, 0x318, 200);
         Battle_WaitMode0(10);
         Object_SetModeById(0, 18);
         MakyuriHeya_SinkActorWithSparks(0);
         Battle_WaitMode0(60);
         Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
-        Engine_ColorBufferApplySource(0x10000, 0);
-        Engine_ColorBufferApplyTarget(0x10005, 0);
+        ColorBuffer_ApplySource(0x10000, 0);
+        ColorBuffer_ApplyTarget(0x10005, 0);
         Engine_ColorBufferInterpolate(120);
         Battle_WaitMode0(120);
-        Engine_ColorBufferApplyTarget(0x7fff, 0);
+        ColorBuffer_ApplyTarget(0x7fff, 0);
         Engine_ColorBufferInterpolate(60);
         Battle_WaitMode0(60);
         Engine_EventRequestExit(9);
         Engine_EventEnd();
     } else {
-        ObjectMotion_SetSpeedParameters(0, 0xcccc, 0x6666);
-        ObjectMotion_SetSpeedParameters(1, 0xcccc, 0x6666);
-        ObjectMotion_SetSpeedParameters(2, 0xcccc, 0x6666);
-        ObjectMotion_SetSpeedParameters(3, 0xcccc, 0x6666);
-        Engine_ActorWalkToAndWait(0, 0x338, 240);
-        Engine_ActorFaceDirection(0, 0xa000, 20);
-        Engine_ActorSetPosition(3, 0x3380000, 0xf00000);
-        Engine_ActorWalkToAndWait(3, 0x318, 232);
-        Engine_ActorFaceDirection(3, 0xc000, 0);
+        Actor_SetSpeed(0, 0xcccc, 0x6666);
+        Actor_SetSpeed(1, 0xcccc, 0x6666);
+        Actor_SetSpeed(2, 0xcccc, 0x6666);
+        Actor_SetSpeed(3, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(0, 0x338, 240);
+        Actor_FaceDirection(0, 0xa000, 20);
+        Actor_SetPosition(3, 0x3380000, 0xf00000);
+        Actor_WalkToAndWait(3, 0x318, 232);
+        Actor_FaceDirection(3, 0xc000, 0);
         Battle_WaitMode0(60);
-        Engine_ActorFaceDirection(3, 0x2000, 20);
+        Actor_FaceDirection(3, 0x2000, 20);
         Engine_ActorSetAnimationAndWait(3, 3);
         Battle_WaitMode0(40);
-        Engine_ActorFaceDirection(3, 0xc000, 20);
-        Engine_ActorWalkToAndWait(3, 0x318, 200);
+        Actor_FaceDirection(3, 0xc000, 20);
+        Actor_WalkToAndWait(3, 0x318, 200);
         MakyuriHeya_SinkActorWithSparks(3);
         Battle_WaitMode0(20);
         Engine_ActorRunRepeatedMotion(0, 2);
         Battle_WaitMode0(30);
-        Engine_ActorWalkToAndWait(0, 0x318, 232);
-        Engine_ActorFaceDirection(0, 0xc000, 0);
-        Engine_ActorSetPosition(1, 0x3180000, 0xe80000);
-        Engine_ActorSetPosition(2, 0x3180000, 0xe80000);
-        Engine_ActorWalkTo(1, 0x330, 224);
-        Engine_ActorWalkToAndWait(2, 0x300, 224);
+        Actor_WalkToAndWait(0, 0x318, 232);
+        Actor_FaceDirection(0, 0xc000, 0);
+        Actor_SetPosition(1, 0x3180000, 0xe80000);
+        Actor_SetPosition(2, 0x3180000, 0xe80000);
+        Actor_WalkTo(1, 0x330, 224);
+        Actor_WalkToAndWait(2, 0x300, 224);
         ObjectMotion_CommitCurrentPositionAndActivate(1);
-        Engine_ActorFaceDirection(1, 0xa000, 0);
-        Engine_ActorFaceDirection(2, 0xe000, 20);
-        Engine_ActorShowEmote(0, 0x102, 0);
-        Engine_ActorShowEmote(1, 0x102, 0);
-        Engine_ActorShowEmote(2, 0x102, 80);
-        Engine_ActorFaceDirection(1, 0x6000, 0);
-        Engine_ActorFaceDirection(2, 0x2000, 20);
+        Actor_FaceDirection(1, 0xa000, 0);
+        Actor_FaceDirection(2, 0xe000, 20);
+        Actor_ShowEmote(0, 0x102, 0);
+        Actor_ShowEmote(1, 0x102, 0);
+        Actor_ShowEmote(2, 0x102, 80);
+        Actor_FaceDirection(1, 0x6000, 0);
+        Actor_FaceDirection(2, 0x2000, 20);
         Engine_ActorRunRepeatedMotion(0, 1);
         Battle_WaitMode0(60);
-        ObjectMotion_SetSpeedParameters(0, 0x8000, 0x4000);
-        Engine_ActorWalkToAndWait(0, 0x318, 224);
-        Engine_ActorFaceDirection(1, 0x8000, 0);
-        Engine_ActorFaceDirection(2, 0, 0);
-        Engine_ActorWalkToAndWait(0, 0x318, 208);
-        Engine_ActorFaceDirection(1, 0xa000, 0);
-        Engine_ActorFaceDirection(2, 0xe000, 20);
+        Actor_SetSpeed(0, 0x8000, 0x4000);
+        Actor_WalkToAndWait(0, 0x318, 224);
+        Actor_FaceDirection(1, 0x8000, 0);
+        Actor_FaceDirection(2, 0, 0);
+        Actor_WalkToAndWait(0, 0x318, 208);
+        Actor_FaceDirection(1, 0xa000, 0);
+        Actor_FaceDirection(2, 0xe000, 20);
         Engine_ActorSetAnimationAndWait(0, 3);
         Battle_WaitMode0(20);
-        ObjectMotion_SetSpeedParameters(0, 0x20000, 0x10000);
+        Actor_SetSpeed(0, 0x20000, 0x10000);
         Engine_ActorJump(0, 4, 0);
-        Engine_ActorWalkTo(0, 0x318, 200);
+        Actor_WalkTo(0, 0x318, 200);
         Battle_WaitMode0(10);
         Object_SetModeById(0, 18);
-        Engine_ActorShowEmote(1, 0x100, 0);
-        Engine_ActorShowEmote(2, 0x100, 0);
+        Actor_ShowEmote(1, 0x100, 0);
+        Actor_ShowEmote(2, 0x100, 0);
         Engine_ActorStartRepeatedMotion(1, 2);
         Engine_ActorStartRepeatedMotion(2, 2);
         MakyuriHeya_SinkActorWithSparks(0);
         Battle_WaitMode0(60);
-        Engine_ActorShowEmote(1, 0x102, 0);
-        Engine_ActorShowEmote(2, 0x102, 80);
+        Actor_ShowEmote(1, 0x102, 0);
+        Actor_ShowEmote(2, 0x102, 80);
         Engine_ActorFaceEachOther(1, 2, 20);
         Object_SetModeById(1, 3);
         Engine_ActorSetAnimationAndWait(2, 3);
         Battle_WaitMode0(40);
-        Engine_ActorWalkToAndWait(1, 0x318, 216);
-        Engine_ActorFaceDirection(2, 0xe000, 0);
-        Engine_ActorWalkToAndWait(1, 0x318, 200);
+        Actor_WalkToAndWait(1, 0x318, 216);
+        Actor_FaceDirection(2, 0xe000, 0);
+        Actor_WalkToAndWait(1, 0x318, 200);
         Battle_WaitMode0(30);
         MakyuriHeya_SinkActorWithSparks(1);
-        Engine_ActorWalkToAndWait(2, 0x318, 216);
-        Engine_ActorWalkToAndWait(2, 0x318, 200);
+        Actor_WalkToAndWait(2, 0x318, 216);
+        Actor_WalkToAndWait(2, 0x318, 200);
         Battle_WaitMode0(30);
         MakyuriHeya_SinkActorWithSparks(2);
-        Engine_ColorBufferApplySource(0x10000, 0);
+        ColorBuffer_ApplySource(0x10000, 0);
         Engine_TaskRemoveCallback((s32)SceneEffect_RotatePaletteEntries97To103);
-        Engine_ColorBufferApplyTarget(0x10005, 0);
+        ColorBuffer_ApplyTarget(0x10005, 0);
         Engine_ColorBufferInterpolate(120);
         Battle_WaitMode0(120);
-        Engine_ColorBufferApplyTarget(0x7fff, 0);
+        ColorBuffer_ApplyTarget(0x7fff, 0);
         Engine_ColorBufferInterpolate(60);
         Battle_WaitMode0(60);
         Engine_EventEnd();
@@ -980,12 +980,12 @@ void FieldScene_RunScene39cSequenceB(void)
 {
     Engine_EventBegin();
     if (gGameState.scene == (s32)&SceneId_MakyuriHeya1) {
-        Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x1d8, 0x258);
-        Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
-        Engine_CameraMoveTo(0x1d00000, -1, 0x2900000, 1);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1d8, 0x258);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+        Camera_MoveTo(0x1d00000, -1, 0x2900000, 1);
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
         OverlayObject_PrepareSpawnedObject(Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0, 0x2be0000, 223);
-        Engine_MapCopyCellsTo(92, 46, 92, 40, 3, 2);
+        Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
         *(s32 *)&Object_GetById(ACTOR_PARTY_LEADER)->unknown_44[4] = 0x8000;
         Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
         Call3(BattleFx_RunRisingObjectSequence, ACTOR_PARTY_LEADER, 6, -1);
@@ -1003,25 +1003,25 @@ void MakyuriHeya_ArriveWithSparks(void)
     struct FieldActor *actor;
     s32 done;
 
-    actor = Object_GetById(0);
-    done = Engine_GameFlagIsSet(0x109);
+    actor = Actor_Get(0);
+    done = GameFlag_IsSet(0x109);
     if (done == 0) {
         Engine_EventBegin();
-        Engine_CameraMoveTo(-1, -1, -1, 0);
+        Camera_MoveTo(-1, -1, -1, 0);
         actor->motion_flags = 0;
         Engine_ActorSetPosition(0, actor->x.part.pixel << 16, (actor->z.part.pixel << 16) - 0x100000);
-        Engine_ActorSetChildValue(0, 15);
-        Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
+        Actor_SetChildValue(0, 15);
+        Engine_ActorSetSpriteFlags(Actor_Get(0), 0);
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Audio_PlayCue(228);
         actor->update = (void (*)(union FieldObject *))MakyuriHeya_TrailSparks;
-        ObjectMotion_SetSpeedParameters(0, 0x6666, 0x3333);
+        Actor_SetSpeed(0, 0x6666, 0x3333);
         Engine_ActorWalkByAndWait(0, 0, 8);
-        Engine_ActorSetChildValue(0, 0);
-        Engine_ActorSetSpriteFlags(Object_GetById(0), 1);
+        Actor_SetChildValue(0, 0);
+        Engine_ActorSetSpriteFlags(Actor_Get(0), 1);
         actor->sprite->priority = 1;
-        Engine_ActorWalkByAndWait(0, 0, 10);
+        Actor_WalkByAndWait(0, 0, 10);
         actor->motion_flags = 3;
         actor->update = NULL;
         BattleFx_PlayQueuedSound();
@@ -1578,7 +1578,7 @@ void MakyuriHeya_RunPartyScene(void)
     s32 event;
     u8 *actor;
 
-    position = *(s32 *)((u8 *)Object_GetById(8) + 8) / 0x100000;
+    position = *(s32 *)((u8 *)Actor_Get(8) + 8) / 0x100000;
     if (position != 48) {
         return;
     }
@@ -1587,8 +1587,8 @@ void MakyuriHeya_RunPartyScene(void)
     Engine_EventSetMessage(base);
     Battle_WaitMode0(20);
     Engine_ActorRunRepeatedMotion(3, 1);
-    Engine_ActorFaceDirection(0, 32768, 20);
-    Engine_EventShowMessageAndWait(3, 0, 20);
+    Actor_FaceDirection(0, 32768, 20);
+    Event_ShowMessageAndWait(3, 0, 20);
     Engine_ActorSetAnimationAndWait(3, 3);
     Battle_WaitMode0(20);
     Engine_ActorSetAnimationAndWait(0, 3);
@@ -1602,7 +1602,7 @@ void MakyuriHeya_RunPartyScene(void)
         Battle_WaitMode0(20);
         Engine_ActorRunRepeatedMotion(3, 2);
         Battle_WaitMode0(20);
-        Engine_EventShowMessageAndWait(3, 0, 20);
+        Event_ShowMessageAndWait(3, 0, 20);
         Engine_ActorSetAnimationAndWait(3, 4);
         Battle_WaitMode0(20);
         Engine_EventShowMessageAndWait(3, 0, 20);
@@ -1628,7 +1628,7 @@ void MakyuriHeya_RunPartyScene(void)
         }
     }
     Engine_EventSetMessage((s32)MsgMakyuriThoughtSo);
-    ObjectMotion_SetSpeedParameters(3, 52428, 26214);
+    Actor_SetSpeed(3, 52428, 26214);
     Engine_ActorWalkToAndWait(3, 728, 632);
     Battle_WaitMode0(20);
     Engine_EventShowMessageAndWait(3, 0, 20);
@@ -1638,11 +1638,11 @@ void MakyuriHeya_RunPartyScene(void)
     Engine_ActorFaceActor(3, 0, 20);
     Engine_ActorSetAnimationAndWait(3, 4);
     Battle_WaitMode0(20);
-    Engine_EventShowMessageAndWait(3, 0, 20);
-    Engine_ActorShowEmote(3, 261, 90);
+    Event_ShowMessageAndWait(3, 0, 20);
+    Actor_ShowEmote(3, 261, 90);
     Engine_ActorSetAnimationAndWait(3, 3);
     Battle_WaitMode0(20);
-    Engine_EventShowMessageAndWait(3, 0, 20);
+    Event_ShowMessageAndWait(3, 0, 20);
     Event_PrepareObjectAndApplyValue(3, 1);
     Engine_GameFlagSet(68);
     Djinn_AddToOwner(3, 1, 0);
@@ -1655,7 +1655,7 @@ void MakyuriHeya_RunPartyScene(void)
     }
     ObjectMotion_CommitCurrentPositionAndActivate(3);
     Engine_ActorSetPosition(3, 0, 0);
-    Map_CopyCellAttributeRect(110, 39, 5, 1, 46, 39);
+    Map_CopyCellAttributes(110, 39, 5, 1, 46, 39);
     Engine_GameFlagSet(2163);
     Engine_EventEnd();
 }
@@ -1672,13 +1672,13 @@ void MakyuriHeya_RideLift(void)
     speed = 0x9c28;
     layer->offset = 0x04890000;
     layer->unknown_1c = 0;
-    Object_GetById(0)->motion_flags = 0;
-    Object_GetById(0)->z.fixed += -0x890000;
-    Object_GetById(0)->target_z = Object_GetById(0)->z.fixed;
-    Object_GetById(13)->motion_flags = 0;
-    Engine_ActorSetPosition(13, 170 << 18, 220 << 17);
-    Object_GetById(13)->z.fixed += -0x890000;
-    Object_GetById(13)->target_z = Object_GetById(13)->z.fixed;
+    Actor_Get(0)->motion_flags = 0;
+    Actor_Get(0)->z.fixed += -0x890000;
+    Actor_Get(0)->target_z = Actor_Get(0)->z.fixed;
+    Actor_Get(13)->motion_flags = 0;
+    Actor_SetPosition(13, 170 << 18, 220 << 17);
+    Actor_Get(13)->z.fixed += -0x890000;
+    Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
     Engine_MapRedraw();
     WaitFrames(1);
     Engine_EventOpenScreen();
@@ -1688,10 +1688,10 @@ void MakyuriHeya_RideLift(void)
     Audio_PlayCue(223);
     for (;;) {
         layer->offset -= speed;
-        Object_GetById(0)->z.fixed += speed;
-        Object_GetById(0)->target_z = Object_GetById(0)->z.fixed;
-        Object_GetById(13)->z.fixed += speed;
-        Object_GetById(13)->target_z = Object_GetById(13)->z.fixed;
+        Actor_Get(0)->z.fixed += speed;
+        Actor_Get(0)->target_z = Actor_Get(0)->z.fixed;
+        Actor_Get(13)->z.fixed += speed;
+        Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
         if (layer->offset > 0x04000000) {
             if ((gFrameCount & 15) == 0 && speed > 0xccb)
                 speed += -0x560;
@@ -1703,32 +1703,32 @@ void MakyuriHeya_RideLift(void)
     layer->offset = 0x04000000;
     Engine_MapRedraw();
     WaitFrames(2);
-    Object_GetById(0)->motion_flags = 3;
-    Object_GetById(13)->z.fixed = 220 << 17;
-    Object_GetById(13)->target_z = Object_GetById(13)->z.fixed;
+    Actor_Get(0)->motion_flags = 3;
+    Actor_Get(13)->z.fixed = 220 << 17;
+    Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
     Battle_WaitMode0(30);
-    Engine_ActorWalkToAndWait(0, 704, 584);
-    *(s32 *)Object_GetById(0)->unknown_44 = 0;
+    Actor_WalkToAndWait(0, 704, 584);
+    *(s32 *)Actor_Get(0)->unknown_44 = 0;
     Object_SetModeById(0, 6);
     Battle_WaitMode0(6);
     Object_SetModeById(0, 7);
-    Object_GetById(0)->speed = 0x30000;
-    Object_GetById(0)->acceleration = 0x20000;
+    Actor_Get(0)->speed = 0x30000;
+    Actor_Get(0)->acceleration = 0x20000;
     Audio_PlayCue(152);
-    Object_GetById(0)->velocity_y = 0x40000;
-    Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-    Engine_ActorSetDestination(0, 736, 584);
+    Actor_Get(0)->velocity_y = 0x40000;
+    Engine_ActorSetSpriteFlags(Actor_Get(0), 0);
+    Actor_SetDestination(0, 736, 584);
     ObjectMotion_CommitCurrentPositionAndActivate(0);
-    Engine_ActorSetSpriteFlags(Object_GetById(0), 1);
-    *(s32 *)Object_GetById(0)->unknown_44 = 0x4000;
+    Engine_ActorSetSpriteFlags(Actor_Get(0), 1);
+    *(s32 *)Actor_Get(0)->unknown_44 = 0x4000;
     Object_SetModeById(0, 6);
     Battle_WaitMode0(6);
-    Engine_ActorFaceDirection(0, 0x8000, 30);
+    Actor_FaceDirection(0, 0x8000, 30);
     Audio_PlayCue(223);
     for (;;) {
         layer->offset += speed;
-        Object_GetById(13)->z.fixed -= speed;
-        Object_GetById(13)->target_z = Object_GetById(13)->z.fixed;
+        Actor_Get(13)->z.fixed -= speed;
+        Actor_Get(13)->target_z = Actor_Get(13)->z.fixed;
         if (layer->offset >= 0x04890000)
             break;
         if ((gFrameCount & 7) == 0 && speed <= 0xcccc)
@@ -1736,13 +1736,13 @@ void MakyuriHeya_RideLift(void)
         WaitFrames(1);
     }
     layer->offset = 0x04000000;
-    Engine_MapCopyCellsTo(45, 91, 40, 91, 5, 4);
-    Map_CopyCellAttributeRect(104, 34, 5, 4, 40, 34);
+    Map_CopyCellsTo(45, 91, 40, 91, 5, 4);
+    Map_CopyCellAttributes(104, 34, 5, 4, 40, 34);
     Engine_MapRedraw();
     WaitFrames(2);
-    Engine_ActorSetPosition(13, 0, 0);
+    Actor_SetPosition(13, 0, 0);
     Battle_WaitMode0(30);
-    Object_GetById(0)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
+    Actor_Get(0)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
 void MakyuriHeya_CastPsynergyAtActor11(void)
@@ -1752,7 +1752,7 @@ void MakyuriHeya_CastPsynergyAtActor11(void)
     u8 v;
 
     p5 = *(volatile s32 *)gEffectWork;
-    Engine_ActorSetPosition(11, 0x3480000, 0x2580000);
+    Actor_SetPosition(11, 0x3480000, 0x2580000);
     Engine_PsynergyBegin(93, 1);
     Engine_PsynergySetTarget(3, 11);
     addr = p5 + 0x71c;

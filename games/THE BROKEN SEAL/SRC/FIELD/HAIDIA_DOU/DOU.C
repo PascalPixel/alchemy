@@ -253,25 +253,25 @@ void FieldScene_RunScene3a6SequenceA(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x200) == 0) {
-        Engine_GameFlagSet(0x200);
+    if (GameFlag_IsSet(0x200) == 0) {
+        GameFlag_Set(0x200);
         Engine_EventBegin();
-        Engine_CameraSetSpeed(0x10000, 0x2000);
+        Camera_SetSpeed(0x10000, 0x2000);
         Engine_CameraFollowActor(8, 1);
         Engine_CameraWaitForMove();
         Battle_WaitMode0(60);
-        Engine_ActorFaceDirection(8, 0xc000, 20);
-        Engine_ActorSetAttachedEffect(8, 0x102);
+        Actor_FaceDirection(8, 0xc000, 20);
+        Actor_SetAttachedEffect(8, 0x102);
         Engine_ActorRunRepeatedMotion(8, 2);
         Battle_WaitMode0(20);
         Actor_SetMotionSpeed(8, 0x10000, 0x8000);
-        Engine_ActorWalkToAndWait(8, 0x318, 248);
-        Engine_AudioPlayCue(152);
-        record = Object_GetById(8);
+        Actor_WalkToAndWait(8, 0x318, 248);
+        Audio_PlayCue(152);
+        record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
-        Engine_ActorWalkToAndWait(8, 0x318, 0x118);
+        Actor_WalkToAndWait(8, 0x318, 0x118);
         Battle_WaitMode0(20);
-        Engine_ActorFaceDirection(8, 0xc000, 20);
+        Actor_FaceDirection(8, 0xc000, 20);
         Battle_WaitMode0(30);
         Engine_EventEnd();
     }
@@ -283,21 +283,21 @@ void FieldScene_RunScene3a6SequenceB(void)
     u32 i;
     s32 record;
 
-    if (Engine_GameFlagIsSet(0x200) != 0) {
-        if (Engine_GameFlagIsSet(0x201) == 0) {
-            Engine_GameFlagSet(0x201);
-            Engine_GameFlagSet(0x302);
+    if (GameFlag_IsSet(0x200) != 0) {
+        if (GameFlag_IsSet(0x201) == 0) {
+            GameFlag_Set(0x201);
+            GameFlag_Set(0x302);
             Engine_EventBegin();
-            Engine_ActorSetAttachedEffect(8, 0x102);
+            Actor_SetAttachedEffect(8, 0x102);
             Engine_ActorRunRepeatedMotion(8, 2);
             Battle_WaitMode0(20);
             Actor_SetMotionSpeed(8, 0x20000, 0x10000);
-            Engine_ActorWalkToAndWait(8, 0x2f8, 0x118);
-            Engine_ActorWalkToAndWait(8, 0x2f8, 0x138);
-            Engine_ActorWalkToAndWait(8, 0x318, 0x138);
+            Actor_WalkToAndWait(8, 0x2f8, 0x118);
+            Actor_WalkToAndWait(8, 0x2f8, 0x138);
+            Actor_WalkToAndWait(8, 0x318, 0x138);
             Battle_WaitMode0(10);
-            Engine_ActorFaceDirection(8, 0xc000, 20);
-            record = Object_GetById(8);
+            Actor_FaceDirection(8, 0xc000, 20);
+            record = Actor_Get(8);
             *(s32 *)(record + 108) = (s32)SceneActor_FaceActorZero;
             Engine_EventEnd();
         }

@@ -142,48 +142,48 @@ void FieldScene_RunScene3b6SequenceA(void)
     Engine_EventWait(40);
     Engine_ObjectDispatchRelease(rec7);
     Engine_EventWait(2);
-    Engine_ActorShowEmote(25, 0x100, 50);
-    Engine_ActorSetSpeed(25, 0x10000, 0x8000);
-    Engine_ActorWalkToAndWait(25, 0x258, 0x350);
-    Engine_ActorFaceDirection(25, 0xc000, 0);
+    Actor_ShowEmote(25, 0x100, 50);
+    Actor_SetSpeed(25, 0x10000, 0x8000);
+    Actor_WalkToAndWait(25, 0x258, 0x350);
+    Actor_FaceDirection(25, 0xc000, 0);
     Engine_EventWait(40);
-    Engine_EventShowMessage(25, 0);
+    Event_ShowMessage(25, 0);
     Engine_ActorRunRepeatedMotion(25, 2);
     Engine_EventWait(30);
-    Engine_ActorWalkToAndWait(25, 0x238, 0x350);
-    Engine_ActorFaceDirection(25, 0xc000, 0);
+    Actor_WalkToAndWait(25, 0x238, 0x350);
+    Actor_FaceDirection(25, 0xc000, 0);
     Engine_EventWait(30);
-    Engine_ActorShowEmote(25, 0x108, 50);
+    Actor_ShowEmote(25, 0x108, 50);
     Engine_EventWait(20);
-    Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -16);
     Engine_EventWait(20);
-    Engine_ActorFaceDirection(25, 0x3000, 0);
+    Actor_FaceDirection(25, 0x3000, 0);
     Engine_EventWait(30);
     Engine_ActorRunRepeatedMotion(25, 2);
     Engine_EventWait(20);
-    Engine_EventShowMessage(25, 0);
+    Event_ShowMessage(25, 0);
     Engine_EventWait(20);
-    Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x101, 50);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 50);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(25, 4);
     Engine_EventWait(20);
-    Engine_EventShowMessage(25, 0);
+    Event_ShowMessage(25, 0);
     Engine_EventWait(30);
-    Engine_ActorShowEmote(25, 0x102, 50);
-    Engine_EventShowMessage(25, 0);
-    Engine_ActorSetSpeed(25, 0x16666, 0xb333);
-    Engine_ActorWalkByAndWait(25, 16, 0);
-    Engine_ActorWalkByAndWait(25, 0, 32);
+    Actor_ShowEmote(25, 0x102, 50);
+    Event_ShowMessage(25, 0);
+    Actor_SetSpeed(25, 0x16666, 0xb333);
+    Actor_WalkByAndWait(25, 16, 0);
+    Actor_WalkByAndWait(25, 0, 32);
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(25, 3);
     Engine_EventWait(20);
-    Engine_EventShowMessage(25, 0);
-    Engine_ActorWalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
+    Event_ShowMessage(25, 0);
+    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     Engine_EventWait(20);
-    Engine_ActorSetSpeed(25, 0x1cccc, 0xe666);
-    Engine_ActorWalkByAndWait(25, 0, 48);
-    Engine_ActorSetPosition(25, 0, 0);
+    Actor_SetSpeed(25, 0x1cccc, 0xe666);
+    Actor_WalkByAndWait(25, 0, 48);
+    Actor_SetPosition(25, 0, 0);
     Engine_EventEnd();
 }
 
@@ -398,28 +398,28 @@ void SceneDialogue_RunExcitedLines(s32 a0)
     s32 msg;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x8bd) == 0) {
+    if (GameFlag_IsSet(0x8bd) == 0) {
         msg = (s32)MsgTorebiHeeHeeLook;
         Engine_EventSetMessage(msg);
-        Engine_EventOpenMessage(a0, 0);
+        Event_OpenMessage(a0, 0);
         if (Engine_EventChooseYesNo(0, 0) == 0) {
             Engine_EventWait(10);
             Engine_EventSetMessage(msg + 1);
         } else {
             Engine_EventSetMessage(msg + 2);
         }
-        Engine_EventShowMessage(a0, 0);
+        Event_ShowMessage(a0, 0);
     } else {
-        if (Engine_GameFlagIsSet(0x8be) == 0) {
-            Engine_GameFlagSet(0x8be);
+        if (GameFlag_IsSet(0x8be) == 0) {
+            GameFlag_Set(0x8be);
             Engine_EventSetMessage((s32)MsgTorebiHello);
-            Engine_EventShowMessage(a0, 0);
+            Event_ShowMessage(a0, 0);
             Engine_EventWait(10);
             Engine_ActorRunRepeatedMotion(a0, 2);
             Engine_EventWait(20);
         }
         Engine_EventSetMessage((s32)MsgTorebiHoHumFine);
-        Engine_EventShowMessage(a0, 0);
+        Event_ShowMessage(a0, 0);
     }
     Engine_EventEnd();
 }
@@ -446,8 +446,8 @@ void FieldScene_RunScene3b6_02000898(s32 a0)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiGrrrScamWhyWontThey);
-    Engine_ActorShowEmote(31, 0x103, 40);
-    Engine_EventShowMessage(a0, 0);
+    Actor_ShowEmote(31, 0x103, 40);
+    Event_ShowMessage(a0, 0);
     Engine_EventEnd();
 }
 

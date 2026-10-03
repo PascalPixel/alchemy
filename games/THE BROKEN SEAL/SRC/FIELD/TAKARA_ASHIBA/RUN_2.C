@@ -93,31 +93,31 @@ void FieldScene_RunScene3b4_02002188(void)
     Korosseo_ShowItemIcon(10, 244);
     Korosseo_ShowItemIcon(9, 244);
     Korosseo_ShowItemIcon(8, 244);
-    if (Engine_GameFlagIsSet(0xee7) == 0) {
-        Engine_ActorSetPosition(8, 0xe80000, 0x3680000);
+    if (GameFlag_IsSet(0xee7) == 0) {
+        Actor_SetPosition(8, 0xe80000, 0x3680000);
     }
-    if (Engine_GameFlagIsSet(0xee8) == 0) {
-        Engine_ActorSetPosition(9, 0x1280000, 0x3380000);
+    if (GameFlag_IsSet(0xee8) == 0) {
+        Actor_SetPosition(9, 0x1280000, 0x3380000);
     }
-    if (Engine_GameFlagIsSet(0xee9) == 0) {
-        Engine_ActorSetPosition(10, 0x1480000, 0x2f80000);
+    if (GameFlag_IsSet(0xee9) == 0) {
+        Actor_SetPosition(10, 0x1480000, 0x2f80000);
     }
-    if (Engine_GameFlagIsSet(0xeea) == 0) {
-        Engine_ActorSetPosition(11, 0x1680000, 0x3680000);
+    if (GameFlag_IsSet(0xeea) == 0) {
+        Actor_SetPosition(11, 0x1680000, 0x3680000);
     }
-    if (Engine_GameFlagIsSet(0x9c0) != 0) {
+    if (GameFlag_IsSet(0x9c0) != 0) {
         TakaraAshiba_OpenPassage(0);
     }
-    if (Engine_GameFlagIsSet(0x9c1) != 0) {
+    if (GameFlag_IsSet(0x9c1) != 0) {
         TakaraAshiba_OpenPassage(1);
     }
-    if (Engine_GameFlagIsSet(0x9c2) != 0) {
+    if (GameFlag_IsSet(0x9c2) != 0) {
         TakaraAshiba_OpenPassage(2);
     }
-    if (Engine_GameFlagIsSet(0x9c3) != 0) {
+    if (GameFlag_IsSet(0x9c3) != 0) {
         TakaraAshiba_OpenPassage(3);
     }
-    if (Engine_GameFlagIsSet(0x9c4) != 0) {
+    if (GameFlag_IsSet(0x9c4) != 0) {
         FieldScene_RunScene3b4_02000fdc(0);
     }
 }
@@ -159,8 +159,8 @@ void FieldScene_RunScene3b4_02002334(void)
     *(u8 *)((s32)Object_GetById(14) + 85) = 0;
     Call2(Scheduler_AddOrUpdateCallback, (s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
-    Engine_MapObjectSetPosition(107, 0, 0);
-    if (Engine_GameFlagIsSet(0xed9) != 0) {
+    MapObject_SetPosition(107, 0, 0);
+    if (GameFlag_IsSet(0xed9) != 0) {
         Engine_ActorSetAnimation(14, 2);
     }
     TakaraAshiba_DispatchByActorEightColumn();
@@ -174,24 +174,24 @@ void FieldScene_RunScene3b4_02002334(void)
     *(u8 *)((s32)Object_GetById(11) + 85) = 0;
     *(u8 *)((s32)Object_GetById(12) + 85) = 0;
     ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
-    if (Engine_GameFlagIsSet(0x200) != 0) {
+    if (GameFlag_IsSet(0x200) != 0) {
         SceneActor_MarkSlot13AndSetFlag200();
         Engine_ActorSetAnimation(13, 5);
     }
-    if (Engine_GameFlagIsSet(0x109) == 0) {
-        if (Engine_GameFlagIsSet(0x9ca) != 0) {
-            Engine_ActorSetPosition(15, 0x3580000, 0x3380000);
+    if (GameFlag_IsSet(0x109) == 0) {
+        if (GameFlag_IsSet(0x9ca) != 0) {
+            Actor_SetPosition(15, 0x3580000, 0x3380000);
             record = Engine_GetTriggerActor(15);
             *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
-        } else if (Engine_GameFlagIsSet(0x9c9) != 0) {
-            Engine_ActorSetPosition(15, 0x3780000, 0x2980000);
+        } else if (GameFlag_IsSet(0x9c9) != 0) {
+            Actor_SetPosition(15, 0x3780000, 0x2980000);
             record = Engine_GetTriggerActor(15);
             *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
             ObjectDispatch_ApplyValueToChildren(record, 16);
-        } else if (Engine_GameFlagIsSet(0x9c8) != 0) {
-            Engine_ActorSetPosition(15, 0x2480000, 0x2a80000);
+        } else if (GameFlag_IsSet(0x9c8) != 0) {
+            Actor_SetPosition(15, 0x2480000, 0x2a80000);
         } else {
-            Engine_ActorSetPosition(15, 0x2480000, 0x2980000);
+            Actor_SetPosition(15, 0x2480000, 0x2980000);
         }
     }
 }

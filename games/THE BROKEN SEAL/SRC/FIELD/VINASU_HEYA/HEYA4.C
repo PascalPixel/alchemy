@@ -56,12 +56,12 @@ void Scene_RunPairedParticleWaveSequence(void)
             repeat++;
             goto again;
         }
-        Engine_MapCopyCellsTo(48, row + 3, 54, row + 3, 3, 1);
+        Map_CopyCellsTo(48, row + 3, 54, row + 3, 3, 1);
     }
-    Engine_MapCopyCellsTo(111, 5, 117, 5, 5, 2);
-    Engine_MapCopyCellsTo(111, 10, 117, 10, 5, 2);
-    Engine_MapCopyCellsTo(111, 7, 111, 5, 5, 2);
-    Engine_MapCopyCellsTo(111, 7, 111, 10, 5, 2);
+    Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
+    Map_CopyCellsTo(111, 10, 117, 10, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 5, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 10, 5, 2);
     for (row = 0; row < 10; row++) {
         Rubble_SetScaleAndSpin(&options);
         for (i = 0; i < 4 && row < 8; i++) {
@@ -69,7 +69,7 @@ void Scene_RunPairedParticleWaveSequence(void)
                          0x300000 + row * 0x100000 + i * 0x40000, 0, 0, 0, 0x880000, &options);
         }
         Engine_TaskWait(3);
-        Engine_MapCopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
+        Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
     }
     Engine_AudioPlayCue(289);
     Engine_EventWait(60);
@@ -179,13 +179,13 @@ void Scene_RunParticleWaveSequence(void)
             if (repeat == 3)
                 Engine_TaskAddCallback(SceneState_CallWith432And32, 3200);
         }
-        Engine_MapCopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
+        Map_CopyCellsTo(53, row + 12, 26, row + 12, 3, 1);
         offset += 0x100000;
         row++;
     } while (row <= 12);
-    Engine_MapCopyCellsTo(81, 41, 89, 14, 9, 2);
+    Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
     Engine_CameraWaitForMove();
-    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_EventWait(60);
     Engine_GameFlagSet(0x306);
     Engine_EventRequestExit(19);
@@ -237,13 +237,13 @@ void Scene_RunEastParticleWaveSequence(void)
             goto again;
         }
         Engine_TaskAddCallback(FieldScene_CallWith560And44, 3200);
-        Engine_MapCopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
+        Map_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
         offset += 0x100000;
         row++;
     } while (row <= 12);
-    Engine_MapCopyCellsTo(86, 41, 97, 14, 5, 2);
+    Map_CopyCellsTo(86, 41, 97, 14, 5, 2);
     Engine_CameraWaitForMove();
-    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_EventWait(60);
     Engine_GameFlagSet(0x307);
     Engine_EventRequestExit(20);
@@ -291,7 +291,7 @@ void FieldScene_RunLeaderDropSequence(void)
     rec = Object_GetById(ACTOR_PARTY_LEADER);
     rec8 = Object_GetById(20);
     Engine_EventBegin();
-    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
     *(s32 *)(rec + 12) = 0x820000;
@@ -302,11 +302,11 @@ void FieldScene_RunLeaderDropSequence(void)
     *p8 = none;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Engine_AudioPlayCue(204);
+    Audio_PlayCue(204);
     Engine_EventWait(30);
     *p8 = 3;
     Engine_EventWait(24);
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
     *p8 &= 254;
     *(s32 *)((s32)rec8 + 12) += -0x30000;
@@ -330,16 +330,16 @@ void FieldScene_RunLeaderDropSequence(void)
     *(s32 *)(rec + 20) += 0x10000;
     *p8 = none;
     rec8[85] = none;
-    Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
+    Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
     Engine_EventWait(40);
     *(s32 *)(rec + 108) = (s32)VinasuHeya_UpdateRisingSpray;
     Engine_EventWait(60);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
     Engine_ActorSetSpritePriority(20, 1);
-    Engine_AudioPlayCue(17);
-    Engine_AudioPlayCue(0x134);
-    Engine_GameFlagSet(0x101);
+    Audio_PlayCue(17);
+    Audio_PlayCue(0x134);
+    GameFlag_Set(0x101);
     v2 = 0;
     do {
         *(s32 *)(rec + 12) += 0x10000;

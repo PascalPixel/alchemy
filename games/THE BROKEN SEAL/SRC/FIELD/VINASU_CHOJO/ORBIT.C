@@ -105,32 +105,32 @@ void SceneEffect_SpawnParticlesAboveActor(void)
     struct FieldSprite *sprite;
     s32 angle;
 
-    if (Engine_GameFlagIsSet(0x236) == 0 && Math_RemainderUnsigned(gFrameCount, 3) != 0) {
+    if (GameFlag_IsSet(0x236) == 0 && Math_RemainderUnsigned(gFrameCount, 3) != 0) {
         return;
     }
-    center = Object_GetById(ORBIT_CENTER_ACTOR);
-    if (Engine_GameFlagIsSet(0x236) != 0) {
-        effect = (union OrbitEffect *)Engine_ObjectCreate(
+    center = Actor_Get(ORBIT_CENTER_ACTOR);
+    if (GameFlag_IsSet(0x236) != 0) {
+        effect = (union OrbitEffect *)Object_Create(
             284, center->x.fixed,
-            (s32)((u32)(Engine_RandomNext() << 8) >> 16 << 16) + center->y.fixed - 0x1c0000,
+            (s32)((u32)(Random_Next() << 8) >> 16 << 16) + center->y.fixed - 0x1c0000,
             center->z.fixed);
     } else {
-        effect = (union OrbitEffect *)Engine_ObjectCreate(
+        effect = (union OrbitEffect *)Object_Create(
             284, center->x.fixed,
-            (s32)((u32)(Engine_RandomNext() << 6) >> 16 << 16) + center->y.fixed - 0x1c0000,
+            (s32)((u32)(Random_Next() << 6) >> 16 << 16) + center->y.fixed - 0x1c0000,
             center->z.fixed);
     }
     if (effect != 0) {
         sprite = ((struct FieldEffect *)effect)->sprite;
-        Engine_ObjectSetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);
+        Object_SetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);
         ObjectGroup_SetChildValue((struct FieldActor *)effect, 1);
         ((struct FieldEffect *)effect)->motion_flags = 0;
-        angle = Engine_RandomNext() & 0xffff000;
+        angle = Random_Next() & 0xffff000;
         effect->orbit.angle = angle;
         effect->orbit.unknown_66 = 0;
         ((struct FieldEffect *)effect)->update =
             (void (*)(union FieldObject *))SceneEffect_UpdateOrbitAroundActor;
-        effect->orbit.radius = Engine_MathSin((u32)(Engine_RandomNext() * 0xffff) >> 20) * 24 >> 16;
+        effect->orbit.radius = Engine_MathSin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
         sprite->flags = 0;
         sprite->priority = 1;
     }

@@ -50,7 +50,7 @@ void VinasuHeya_RetractBridge(void)
             Engine_AudioPlayCue(161);
             Engine_MapCopyCellsTo(44, 83, 44, 80, 3, 3);
             Engine_EventWait(30);
-            Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
             Engine_AudioPlayCue(239);
             Engine_EventWait(20);
             dust_x = 0x2680000;
@@ -68,7 +68,7 @@ void VinasuHeya_RetractBridge(void)
                     if (countdown == 0) {
                         countdown = 40;
                         x += 4;
-                        Engine_MapCopyCellsTo(x, 56, 36, 17, 3, 4);
+                        Map_CopyCellsTo(x, 56, 36, 17, 3, 4);
                     }
                 }
                 Engine_TaskWait(1);
@@ -77,7 +77,7 @@ void VinasuHeya_RetractBridge(void)
             layer->x = layer->x / 0x10000 << 16;
             Engine_AudioPlayCue(288);
             Engine_AudioPlayCue(188);
-            Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_MapRenderWaitForValues();
             gEventWork->start_transition = 0x202;
             Engine_EventRequestExit(18);
@@ -112,7 +112,7 @@ void VinasuHeya_ExtendBridge(void)
             Engine_MapCopyCellsTo(63, 29, 49, 20, 1, 1);
             Engine_AudioPlayCue(161);
             Engine_EventWait(30);
-            Engine_WorkSetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
+            Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
             Engine_AudioPlayCue(239);
             Engine_EventWait(20);
             dust_x = 0x2c00000;
@@ -130,7 +130,7 @@ void VinasuHeya_ExtendBridge(void)
                     if (countdown == 0) {
                         countdown = 40;
                         x -= 4;
-                        Engine_MapCopyCellsTo(x, 56, 44, 17, 3, 4);
+                        Map_CopyCellsTo(x, 56, 44, 17, 3, 4);
                     }
                 }
                 Engine_TaskWait(1);
@@ -139,7 +139,7 @@ void VinasuHeya_ExtendBridge(void)
             layer->x = layer->x / 0x10000 << 16;
             Engine_AudioPlayCue(288);
             Engine_AudioPlayCue(188);
-            Engine_WorkSetValuesIfNonNegative(-1, -1, 0xe666);
+            Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Engine_MapRenderWaitForValues();
             gEventWork->start_transition = 0x202;
             Engine_EventRequestExit(19);
@@ -195,20 +195,20 @@ void Scene_RunScene3c8SequenceA(void)
     u32 priority;
 
     effect = 0;
-    leader = Object_GetById(0);
-    Engine_EventBegin();
+    leader = Actor_Get(0);
+    Event_Begin();
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
     Battle_ResetEffectCounter();
 #endif
-    Engine_MapCopyCellAttributes(69, 48, 4, 2, 5, 48);
-    Engine_MapCopyCellAttributes(73, 37, 9, 13, 9, 37);
+    Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
+    Map_CopyCellAttributes(73, 37, 9, 13, 9, 37);
     for (id = 15; id <= 18; id++) {
         actor = Object_GetById(id);
         flags = &actor->priority_flags;
         if (*flags != 2)
-            Engine_MapCopyCellAttributes(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+            Map_CopyCellAttributes(72, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
         else
-            Engine_MapCopyCellAttributes(73, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
+            Map_CopyCellAttributes(73, 48, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
 
         slot = 8;
         for (i = 0; i < 8; i++) {
@@ -237,75 +237,75 @@ void Scene_RunScene3c8SequenceA(void)
         if ((u32)(leader->z.fixed >> 20) <= Data_02005164[slot].z) {
             effect = OverlayObject_PrepareObjectWithCommand15(actor->x.fixed, actor->y.fixed,
                                    actor->z.fixed - 0x40000, 20);
-            Engine_ActorSetSpritePriority(0, 3);
+            Actor_SetSpritePriority(0, 3);
         }
         for (i = 15; i <= 18; i++) {
             other = Object_GetById(i);
             if (id != i
                 && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
                 && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20))
-                Engine_ActorSetSpritePriority(i, 3);
+                Actor_SetSpritePriority(i, 3);
         }
-        Engine_ActorSetSpriteFlags(Object_GetById(id), 0);
+        Actor_SetSpriteFlags(Object_GetById(id), 0);
         actor->unknown_22 = 0;
         motion = &actor->motion_flags;
         *motion = 3;
         ((union FieldObject *)actor)->effect.velocity_y = 0x1999;
         ((union FieldObject *)actor)->effect.velocity_x = 0;
-        Engine_MapCopyCellAttributes(6, 44, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
+        Map_CopyCellAttributes(6, 44, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
         OverlayObject_WaitUntilIdle(actor);
-        Engine_AudioPlayCue(188);
+        Audio_PlayCue(188);
         actor->collision_flags = 0;
         *motion = 0;
         actor->y.fixed = -0x100000;
-        Engine_ActorSetSpritePriority(id, 3);
+        Actor_SetSpritePriority(id, 3);
         *flags = 2;
-        Engine_MapCopyCellAttributes(73, 48, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
-        Engine_ActorSetSpritePriority(0, priority);
+        Map_CopyCellAttributes(73, 48, 1, 1, Data_02005164[slot].x, Data_02005164[slot].z);
+        Actor_SetSpritePriority(0, priority);
         Object_GetById(0)->priority_flags |= 1;
         for (i = 15; i <= 18; i++) {
             other = Object_GetById(i);
             if (id != i
                 && (actor->x.fixed >> 20) == (other->x.fixed >> 20)
                 && (actor->z.fixed >> 20) - 1 == (other->z.fixed >> 20)) {
-                Engine_ActorSetSpritePriority(i, 1);
+                Actor_SetSpritePriority(i, 1);
                 Object_GetById(i)->priority_flags |= 1;
             }
         }
         Engine_ObjectDispatchRelease(effect);
-        if (Engine_GameFlagIsSet(0x308)) {
-            Engine_EventEnd();
+        if (GameFlag_IsSet(0x308)) {
+            Event_End();
             return;
         }
-        a = Object_GetById(15);
-        b = Object_GetById(16);
-        c = Object_GetById(17);
+        a = Actor_Get(15);
+        b = Actor_Get(16);
+        c = Actor_Get(17);
         d = Object_GetById(18);
         if ((a->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
             struct SwitchEffect *first;
             struct SwitchEffect *second;
 
-            Engine_CameraSetSpeed(0x10000, 0x2000);
+            Camera_SetSpeed(0x10000, 0x2000);
             Object_PlaceCurrentWithinCameraBounds(14, 1);
-            Engine_CameraWaitForMove();
+            Camera_WaitForMove();
             first = SceneEffect_SpawnEffect284AtCell(136, 0x308, Data_0200577c);
-            Engine_EventWait(30);
-            Engine_CameraSetSpeed(0x6666, 0xccc);
-            Engine_CameraMoveTo(0xd80000, -1, 0x2780000, 1);
+            Event_Wait(30);
+            Camera_SetSpeed(0x6666, 0xccc);
+            Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
             ObjectDispatch_WaitForValue16(first);
-            Engine_ObjectSetScript((struct FieldActor *)first, Data_020057c8);
+            Object_SetScript((struct FieldActor *)first, Data_020057c8);
             second = SceneEffect_SpawnEffect284AtCell(216, 0x2f8, Data_02005ac8);
             while (first->active != 0 || second->active != 0) {
                 if (first->finished != 0 || second->finished != 0) {
-                    Engine_EventWait(30);
-                    Engine_MapAnimateCells(Data_02005d3c, 77, 35);
-                    Engine_MapCopyCellAttributes(13, 35, 1, 1, 13, 36);
-                    Engine_GameFlagSet(0x308);
+                    Event_Wait(30);
+                    Map_AnimateCells(Data_02005d3c, 77, 35);
+                    Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
+                    GameFlag_Set(0x308);
                     break;
                 }
-                Engine_TaskWait(1);
+                Task_Wait(1);
             }
         }
     }
-    Engine_EventEnd();
+    Event_End();
 }

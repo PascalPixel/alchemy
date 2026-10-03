@@ -72,9 +72,9 @@ void FieldScene_DrawTilesWhenCheckClear(void)
 void FieldScene_RunApproachAndSpawnEffect(void)
 {
     Engine_EventBegin();
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
     (void)OverlayObject_SpawnWithMode14(0x2080000, 0, 0x3100000, 223);
     BattleFx_RunRisingObjectSequence(0, 6, 0);
     Engine_EventWait(60);

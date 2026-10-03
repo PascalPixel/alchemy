@@ -264,32 +264,32 @@ void FieldScene_RunScene382_020004a0(void)
     struct EventWork *p5;
 
     p5 = gEventWork;
-    if (Engine_GameFlagIsSet(0x855) != 0 || Engine_GameFlagIsSet(0x856) == 0) {
+    if (GameFlag_IsSet(0x855) != 0 || GameFlag_IsSet(0x856) == 0) {
         Engine_EventRequestExit(p5->touched_trigger - 19);
         return;
     }
     Engine_EventBegin();
-    record = Object_GetById(ACTOR_PARTY_LEADER);
+    record = Actor_Get(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        Engine_ActorSetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
+        Actor_SetPosition(ACTOR_IVAN, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
-    Engine_ActorSetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     if (p5->touched_trigger == 20) {
-        Engine_ActorWalkToAndWait(ACTOR_IVAN, 0x190, 0x1c0);
+        Actor_WalkToAndWait(ACTOR_IVAN, 0x190, 0x1c0);
     } else {
-        Engine_CameraSetSpeed(0xcccc, 0x1999);
-        Engine_CameraMoveTo(PIXELS(0xE0), -1, PIXELS(0xA2), 1);
-        Engine_ActorWalkToAndWait(ACTOR_IVAN, 224, 162);
+        Camera_SetSpeed(0xcccc, 0x1999);
+        Camera_MoveTo(PIXELS(0xE0), -1, PIXELS(0xA2), 1);
+        Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
         Engine_CameraWaitForMove();
     }
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Engine_EventWait(20);
     Engine_EventSetMessage((s32)MsgKuupuappuLeavingImStillWorriedAbout);
-    Engine_EventShowMessageAndWait(0x9002, 0, 20);
+    Event_ShowMessageAndWait(0x9002, 0, 20);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     if (OverlayObject_GetObject2Byte280()!= 0) {
         Engine_EventSetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
-        Engine_EventShowMessage(ACTOR_IVAN, 0);
+        Event_ShowMessage(ACTOR_IVAN, 0);
         OverlayObject_RunObject2WhenFlagged();
         Engine_TaskWait(20);
     }
@@ -323,12 +323,12 @@ void SceneDialogue_RunActor9LineAndAdvance(void)
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgKuupuappuWasntEruptionMtAlephIncredible);
     SceneActor_ApplyActorCueThenWait(9, 0, 2);
-    Engine_EventOpenMessage(9, 0);
+    Event_OpenMessage(9, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
         bump_step(1);
     }
-    Engine_EventShowMessage(9, 0);
-    Engine_ActorFaceDirection(9, 0x5000, 0);
+    Event_ShowMessage(9, 0);
+    Actor_FaceDirection(9, 0x5000, 0);
     Engine_EventEnd();
 }
 
@@ -678,8 +678,8 @@ void SceneState_Apply200ThenPlace23_23(void)
 
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
 {
-    Engine_ActorSetSpeed(0, 0x8000, 0x4000);
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, x, y);
+    Actor_SetSpeed(0, 0x8000, 0x4000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
     gEventWork->transition_frames = 16;
     Engine_EventRequestExit(continuation);
 }

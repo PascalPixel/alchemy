@@ -260,13 +260,13 @@ void BiribinoNiwa_RunGardenEvent(void)
 void FieldScene_RunScene38e_0200045c(void)
 {
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x200) == 0) {
+    if (GameFlag_IsSet(0x200) == 0) {
         FieldScene_OpenGate();
     }
-    Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-    Engine_ActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
     Engine_EventWait(16);
     Engine_EventRequestExit(2);
     Engine_EventEnd();

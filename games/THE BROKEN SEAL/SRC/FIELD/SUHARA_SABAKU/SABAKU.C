@@ -176,18 +176,18 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     p6 = *(u8 **)(base + 500);
     p10 = a0;
     rec7 = Object_GetById((s32)p6);
-    Object_GetById(p10);
-    rec2 = Engine_GameFlagIsSet(0x20f);
+    Actor_Get(p10);
+    rec2 = GameFlag_IsSet(0x20f);
     if (rec2 == 0) {
         Engine_EventBegin();
-        Engine_ActorSetAttachedEffect((s32)p6, 0x101);
+        Actor_SetAttachedEffect((s32)p6, 0x101);
         Engine_ActorSetAnimation((s32)p6, 9);
         record = Object_GetById(p10);
         if (record != 0) {
-            Engine_ActorSetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            Actor_SetDestination((s32)p6, *(s16 *)(record + 10), *(s16 *)(record + 18));
         }
         Engine_ActorWaitForMove((s32)p6);
-        Engine_AudioPlayCue(244);
+        Audio_PlayCue(244);
         Engine_TaskAddCallback((s32)SuharaSabaku_SyncSelectedActorProgress, 0xc80);
         rec7[85] = rec2;
         Engine_ObjectSetPosition((s32)rec7, *(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12) + 0x200000, *(s32 *)(rec7 + 16));
@@ -195,7 +195,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         *(s32 *)(rec7 + 40) = rec2;
         rec7[85] = 4;
         *(u8 *)(base + 498) = 2;
-        Engine_GameFlagSet(0x20f);
+        GameFlag_Set(0x20f);
         GameFlag_SetByte(0x218, p10);
         GameFlag_SetByte(0x210, 180);
         Engine_EventEnd();
@@ -342,53 +342,53 @@ void FieldScene_RunActorThirteenRestoration(void)
     u32 i;
     u8 *record;
 
-    if (Engine_GameFlagIsSet(0x9a0) == 0) {
+    if (GameFlag_IsSet(0x9a0) == 0) {
     } else {
-        if (Engine_GameFlagIsSet(0x1b7) != 0) {
+        if (GameFlag_IsSet(0x1b7) != 0) {
         } else {
-            if (Engine_GameFlagIsSet(0x9b0) == 0) {
+            if (GameFlag_IsSet(0x9b0) == 0) {
             } else {
-                Engine_GameFlagSet(0x9b5);
+                GameFlag_Set(0x9b5);
                 Engine_EventBegin();
                 Engine_EventSetMessage((s32)MsgSuharaNowhereFound);
                 /* Record layout observed here: s32 at +8, s32 at +16. */
-                record = Object_GetById(ACTOR_PARTY_LEADER);
+                record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
-                    Engine_ActorSetPosition(ACTOR_ID, *(s32 *)(record + 8), *(s32 *)(record + 16));
+                    Actor_SetPosition(ACTOR_ID, *(s32 *)(record + 8), *(s32 *)(record + 16));
                 }
-                Engine_ActorFaceActor(ACTOR_ID, 0xc000, 0);
-                Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 0x4e8);
-                Engine_ActorFaceDirection(ACTOR_ID, 0x4000, 0);
-                Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 0x1bc, 0x4d8);
-                Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x100, 40);
-                Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
+                Actor_FaceActor(ACTOR_ID, 0xc000, 0);
+                Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 0x4e8);
+                Actor_FaceDirection(ACTOR_ID, 0x4000, 0);
+                Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1bc, 0x4d8);
+                Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 40);
+                Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 30);
                 Engine_ActorSetAnimationAndWait(ACTOR_ID, 4);
-                Engine_EventShowMessage(ACTOR_ID, 0);
-                Engine_ActorShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
-                Engine_ActorShowEmote(ACTOR_ID, 0x105, 60);
-                Engine_EventShowMessage(ACTOR_ID, 0);
+                Event_ShowMessage(ACTOR_ID, 0);
+                Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 60);
+                Actor_ShowEmote(ACTOR_ID, 0x105, 60);
+                Event_ShowMessage(ACTOR_ID, 0);
                 Engine_EventWait(30);
                 Engine_ActorRunRepeatedMotion(ACTOR_ID, 2);
-                Engine_EventShowMessage(ACTOR_ID, 0);
-                Engine_ActorFaceDirection(ACTOR_ID, 0xc000, 30);
-                Engine_EventAskYesNo(ACTOR_ID, 0);
+                Event_ShowMessage(ACTOR_ID, 0);
+                Actor_FaceDirection(ACTOR_ID, 0xc000, 30);
+                Event_AskYesNo(ACTOR_ID, 0);
                 Engine_EventWait(30);
-                Engine_ActorShowEmote(ACTOR_ID, 0x106, 60);
-                Engine_EventShowMessage(ACTOR_ID, 0);
+                Actor_ShowEmote(ACTOR_ID, 0x106, 60);
+                Event_ShowMessage(ACTOR_ID, 0);
                 Engine_ActorSetAnimationAndWait(ACTOR_ID, 3);
-                Engine_EventShowMessage(ACTOR_ID, 0);
-                Engine_ActorSetSpeed(ACTOR_ID, 0xb333, 0x5999);
-                Engine_ActorWalkToAndWait(ACTOR_ID, 0x1b8, 0x4e8);
-                Engine_EventShowMessage(ACTOR_ID, 0);
+                Event_ShowMessage(ACTOR_ID, 0);
+                Actor_SetSpeed(ACTOR_ID, 0xb333, 0x5999);
+                Actor_WalkToAndWait(ACTOR_ID, 0x1b8, 0x4e8);
+                Event_ShowMessage(ACTOR_ID, 0);
                 Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
                 Engine_ActorSetAnimation(ACTOR_ID, 2);
                 /* Record layout observed here: s16 at +10, s16 at +18. */
-                record = Object_GetById(ACTOR_PARTY_LEADER);
+                record = Actor_Get(ACTOR_PARTY_LEADER);
                 if (record != 0) {
-                    Engine_ActorSetDestination(ACTOR_ID, *(s16 *)(record + 10), *(s16 *)(record + 18));
+                    Actor_SetDestination(ACTOR_ID, *(s16 *)(record + 10), *(s16 *)(record + 18));
                 }
                 Engine_ActorWaitForMove(ACTOR_ID);
-                Engine_ActorSetPosition(ACTOR_ID, 0, 0);
+                Actor_SetPosition(ACTOR_ID, 0, 0);
                 Engine_EventEnd();
             }
         }
@@ -447,9 +447,9 @@ s32 SuharaSabaku_FollowLeaderWithSparks(struct FieldActor *actor)
 /* The Suhara desert: actor 12's place and the effect state byte. */
 void PlaceActorTwelveWhenFlagClear(void)
 {
-    if (Engine_GameFlagIsSet(2487) == 0) {
-        Engine_GameFlagSet(526);
-        Engine_ActorSetPosition(12, 240 << 15, 206 << 18);
+    if (GameFlag_IsSet(2487) == 0) {
+        GameFlag_Set(526);
+        Actor_SetPosition(12, 240 << 15, 206 << 18);
         Engine_ActorEnableActionCallback(12, gSuharaSabakuActor12Action);
     }
 }
@@ -518,7 +518,7 @@ void SuharaSabaku_DropAndLeave(void)
     leader = Object_GetById(gGameState.selected_actor);
     partner = Object_GetById(other);
     Engine_EventBegin();
-    Engine_CameraMoveTo(-1, -1, -1, 0);
+    Camera_MoveTo(-1, -1, -1, 0);
     Engine_AudioPlayCue(219);
     Engine_ActorSetSpriteFlags((struct FieldActor *)gGameState.selected_actor, 0);
     partner->motion_flags = 0;
@@ -564,10 +564,10 @@ s32 FieldScene_RunOpeningAuxiliarySequence(void)
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
         Object_GetById(14)->priority_flags = 2;
         Object_GetById(14)->motion_flags = 3;
-        Engine_ActorSetPosition(14, 0, 0);
-        Engine_MapCopyCellAttributes(16, 44, 1, 1, 15, 44);
-        Engine_MapObjectSetPosition(100, 0, 0);
-        Engine_MapCopyCellAttributes(12, 71, 1, 1, 127, 127);
+        Actor_SetPosition(14, 0, 0);
+        Map_CopyCellAttributes(16, 44, 1, 1, 15, 44);
+        MapObject_SetPosition(100, 0, 0);
+        Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
         /* FAKEMATCH: the void result is discarded; Call6 changes argument allocation. */
         Value6(Engine_MapCopyCellAttributes, 11, 71, 1, 1, 12, 71);
         /* FAKEMATCH: an empty scheduling barrier after the third cell copy
@@ -590,11 +590,11 @@ s32 FieldScene_RunScene3c0SequenceA(void)
     if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
         Object_GetById(14)->priority_flags = 2;
         Object_GetById(14)->motion_flags = 0;
-        Engine_ActorSetPosition(14, 0xf80000, 0x2c80000);
-        Engine_MapCopyCellAttributes(31, 95, 1, 1, 15, 44);
-        Engine_MapObjectSetPosition(100, -1, -1);
+        Actor_SetPosition(14, 0xf80000, 0x2c80000);
+        Map_CopyCellAttributes(31, 95, 1, 1, 15, 44);
+        MapObject_SetPosition(100, -1, -1);
         BattleFx_EmitRandomParticle();
-        Engine_MapCopyCellAttributes(127, 127, 1, 1, 12, 71);
+        Map_CopyCellAttributes(127, 127, 1, 1, 12, 71);
         return Engine_TaskAddCallback(EncounterPalette_Pulse, 0xc80);
     }
 }

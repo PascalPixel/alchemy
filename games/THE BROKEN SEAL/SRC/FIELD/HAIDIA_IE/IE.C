@@ -276,12 +276,12 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     s32 v2;
 
     Engine_EventBegin();
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 82, 0x2f8);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 82, 0x2f8);
     Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 30);
     Engine_EventSetMessage((s32)MsgHaidiaIHaveSomePsynergyLeft);
     Event_SayThenWait(15, 20);
     SceneActor_SetPairZeroAndValue(15, 0xa000, 20);
-    Engine_ActorSetAttachedEffect(15, 0x102);
+    Actor_SetAttachedEffect(15, 0x102);
     Engine_EventWait(20);
     SceneState_ApplyPair140And0();
     for (i = 0; i < 40; i++) {
@@ -290,7 +290,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     }
     Value2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunStep15, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)FieldScene_RunStep20, 0xc80);
-    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     rec8 = Object_GetById(20);
     v2 = rec8[85];
     rec8[85] = 0;
@@ -303,13 +303,13 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     Scheduler_RemoveCallback((s32)FieldScene_RunStep15);
     Scheduler_RemoveCallback((s32)FieldScene_RunStep20);
     Engine_TaskWait(1);
-    Engine_AudioPlayCue(161);
-    Engine_ActorSetChildValue(15, 0);
-    Engine_ActorSetChildValue(20, 0);
+    Audio_PlayCue(161);
+    Actor_SetChildValue(15, 0);
+    Actor_SetChildValue(20, 0);
     Engine_EventWait(40);
     FieldScene_Forward4dac();
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 15, 30);
-    Engine_EventShowMessage(15, 0);
+    Event_ShowMessage(15, 0);
     Engine_EventEnd();
 }
 
@@ -335,13 +335,13 @@ void Villager_WelcomeBack(void)
     s32 record;
 
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x302) != 0) {
+    if (GameFlag_IsSet(0x302) != 0) {
         Engine_EventSetMessage((s32)MsgHaidiaThisIsVale);
     } else {
         Engine_EventSetMessage((s32)MsgHaidiaYouCameBackHome);
-        Engine_GameFlagSet(0x302);
+        GameFlag_Set(0x302);
     }
-    Engine_EventShowMessage(11, 0);
+    Event_ShowMessage(11, 0);
     Engine_EventEnd();
 }
 
@@ -386,9 +386,9 @@ void SceneState_SetWork1c0AndRun(s32 no)
  * address of Value_0200beb4 as its first argument. */
 void FieldScene_RunSupplementalSequenceOne(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells((s32)&Value_0200beb4, 44, 7);
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
+    Audio_PlayCue(158);
+    Map_AnimateCells((s32)&Value_0200beb4, 44, 7);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 0x117);
     SceneState_SetWork1c0AndRun(1);
 }
 
@@ -398,14 +398,14 @@ void FieldScene_RunSupplementalSequenceOne(void)
  * 1-argument call. */
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
-    Engine_AudioPlayCue(188);
-    Engine_MapCopyCellsTo(0, 63, 51, 8, 2, 2);
+    Audio_PlayCue(188);
+    Map_CopyCellsTo(0, 63, 51, 8, 2, 2);
     Engine_TaskWait(10);
-    Engine_MapCopyCellsTo(2, 63, 51, 8, 2, 2);
+    Map_CopyCellsTo(2, 63, 51, 8, 2, 2);
     Engine_TaskWait(10);
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
     SceneState_SetWork1c0AndRun(2);
 }
 
@@ -413,9 +413,9 @@ void FieldScene_RunSupplementalSequenceTwo(void)
  * address of Value_0200beb4 as its first argument. */
 void FieldScene_RunSupplementalSequenceThree(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells((s32)&Value_0200beb4, 43, 15); /* main:08009178 */
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
+    Audio_PlayCue(158);
+    Map_AnimateCells((s32)&Value_0200beb4, 43, 15); /* main:08009178 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 230, 0x197);
     SceneState_SetWork1c0AndRun(3);
 }
 
@@ -424,9 +424,9 @@ void FieldScene_RunSupplementalSequenceThree(void)
  * passes 0, 374, and 0x1a3, and a final single-argument call. */
 void FieldScene_RunSupplementalSequenceFour(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells((s32)&Value_0200beb4, 52, 18); /* main:08009178 */
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
+    Audio_PlayCue(158);
+    Map_AnimateCells((s32)&Value_0200beb4, 52, 18); /* main:08009178 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
     SceneState_SetWork1c0AndRun(4);
 }
 
@@ -435,9 +435,9 @@ void FieldScene_RunSupplementalSequenceFour(void)
  * single-argument calls. */
 void FieldScene_RunSupplementalSequenceFive(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells((s32)&Value_0200beb4, 41, 32); /* main:08009178 */
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
+    Audio_PlayCue(158);
+    Map_AnimateCells((s32)&Value_0200beb4, 41, 32); /* main:08009178 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x222);
     SceneState_SetWork1c0AndRun(5);
 }
 
@@ -447,9 +447,9 @@ void FieldScene_RunSupplementalSequenceFive(void)
  * call. */
 void FieldScene_RunSupplementalSequenceSix(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells((s32)&Value_0200beb4, 35, 36); /* main:08009178 */
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 102, 0x263); /* object_id 0, x 102, z 611 */
+    Audio_PlayCue(158);
+    Map_AnimateCells((s32)&Value_0200beb4, 35, 36); /* main:08009178 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 0x263); /* object_id 0, x 102, z 611 */
     SceneState_SetWork1c0AndRun(6);
 }
 
@@ -457,9 +457,9 @@ void FieldScene_RunSupplementalSequenceSix(void)
  * handful of small immediate constants to each. */
 void FieldScene_RunSupplementalSequenceSeven(void)
 {
-    Engine_AudioPlayCue(158);
-    Engine_MapAnimateCells((s32)&Value_0200beb4, 51, 39); /* main:08009178 */
-    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
+    Audio_PlayCue(158);
+    Map_AnimateCells((s32)&Value_0200beb4, 51, 39); /* main:08009178 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 358, 0x29e);
     SceneState_SetWork1c0AndRun(7);
 }
 

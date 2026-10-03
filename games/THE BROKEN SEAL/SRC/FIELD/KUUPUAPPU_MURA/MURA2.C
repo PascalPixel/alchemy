@@ -137,19 +137,19 @@ void FieldScene_RunActor23SequenceOnceByFlag867(void)
     s32 record;
 
     Engine_EventBegin();
-    Engine_AudioPlayCue(100);
+    Audio_PlayCue(100);
     Engine_EventWait(40);
-    if (Engine_GameFlagIsSet(0x867) == 0) {
-        Engine_ActorSetAttachedEffect(23, 0x102);
+    if (GameFlag_IsSet(0x867) == 0) {
+        Actor_SetAttachedEffect(23, 0x102);
         Engine_ActorJump(23, 4, 0);
         Engine_EventWait(12);
         Engine_ActorJump(23, 4, 0);
         Engine_EventWait(20);
         ActorPresentation_MoveActorToPositionAndWait(23, 0x188, 104, 0x70000);
         Engine_EventWait(20);
-        Engine_ActorWalkToAndWait(23, 0x198, 104);
-        Engine_ActorWalkToAndWait(23, 0x198, 120);
-        Engine_GameFlagSet(0x867);
+        Actor_WalkToAndWait(23, 0x198, 104);
+        Actor_WalkToAndWait(23, 0x198, 120);
+        GameFlag_Set(0x867);
     }
     Engine_EventEnd();
 }
@@ -163,20 +163,20 @@ void FieldScene_RunActor19MotionSequence(void)
     Engine_EventBegin();
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(19, 2);
-    Engine_ActorSetSpeed(19, 0xcccc, 0x6666);
-    Engine_ActorWalkToAndWait(19, 216, 0x198);
+    Actor_SetSpeed(19, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(19, 216, 0x198);
     Engine_EventWait(10);
-    Engine_ActorFaceDirection(19, 0x4000, 20);
+    Actor_FaceDirection(19, 0x4000, 20);
     Engine_ActorJump(19, 6, 0);
     Engine_EventWait(30);
     Engine_ActorJump(19, 6, 0);
     Engine_EventWait(30);
     Engine_ActorJump(19, 6, 0);
     Engine_EventWait(30);
-    Engine_ActorWalkToAndWait(19, 216, 0x188);
+    Actor_WalkToAndWait(19, 216, 0x188);
     Engine_EventWait(10);
-    Engine_ActorFaceDirection(19, 0x4000, 20);
-    Engine_GameFlagSet(0x858);
+    Actor_FaceDirection(19, 0x4000, 20);
+    GameFlag_Set(0x858);
     Engine_EventEnd();
 }
 

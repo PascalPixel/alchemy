@@ -170,8 +170,8 @@ void TakaraHashira_RunActorAction(s32 a0)
     rec7 = Object_GetById(a0);
     Engine_EventBegin();
     rec7->update = (void (*)(union FieldObject *))SceneActor_UpdateBit1ByPositionToSlotZero;
-    Engine_MapCopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
-    Engine_GameFlagSet((a0 + 0x1f5));
+    Map_CopyCellAttributes(20, 14, 1, 1, (rec7->x.fixed >> 20), (rec7->z.fixed >> 20));
+    GameFlag_Set((a0 + 0x1f5));
     Engine_ActorEnableActionCallback(a0, (s32)TakaraHashira_ActionTable);
     Engine_EventEnd();
 }
@@ -444,10 +444,10 @@ void FieldScene_RunScene3b3_0200263c(s32 a0)
     s32 record;
 
     rec7 = (s32)Object_GetById(a0);
-    if (Engine_GameFlagIsSet((a0 + 0x1f5)) != 0) {
+    if (GameFlag_IsSet((a0 + 0x1f5)) != 0) {
         Object_SetMode(rec7, 5);
         *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
-        Engine_MapCopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
+        Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
         Engine_ActorEnableActionCallback(a0, TakaraHashira_ActionTable);
     }
 }

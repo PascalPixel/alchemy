@@ -94,26 +94,26 @@ void FieldScene_RunFlaggedDisplayScene(void)
     u8 *record;
 
     Engine_EventBegin();
-    Engine_CameraSetSpeed(0x10000, 0x2000);
-    Engine_CameraMoveTo(0x1190000, -1, 0x1b00000, 1);
+    Camera_SetSpeed(0x10000, 0x2000);
+    Camera_MoveTo(0x1190000, -1, 0x1b00000, 1);
     Engine_CameraWaitForMove();
     Engine_MessageShowCentered((s32)MsgFieldFlippedSwitch, 1);
-    queried = Engine_GameFlagIsSet(QUERY_FLAG);
+    queried = GameFlag_IsSet(QUERY_FLAG);
     if (queried == 0) {
-        Engine_AudioPlayCue(232);
-        Engine_MapAnimateCells(TakaraHashira_ShiftSteps1, 84, 24);
+        Audio_PlayCue(232);
+        Map_AnimateCells(TakaraHashira_ShiftSteps1, 84, 24);
         Engine_EventWait(30);
-        Engine_AudioPlayCue(240);
+        Audio_PlayCue(240);
         Engine_ActorSetSpritePriority(REC_ID, 1);
         /* Flag byte at +85: cleared, since queried is zero here. */
         *((u8 *)Object_GetById(REC_ID) + 85) = queried;
-        record = Object_GetById(REC_ID);
+        record = Actor_Get(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
-        Engine_ActorSetPosition(REC_ID, 0x1100000, 0x1a00000);
+        Actor_SetPosition(REC_ID, 0x1100000, 0x1a00000);
         Engine_ActorSetAnimation(REC_ID, 1);
-        Engine_MapAnimateCells(TakaraHashira_ShiftSteps3, 80, 24);
-        Engine_MapAnimateCells(TakaraHashira_ShiftSteps5, 80, 28);
-        Engine_MapCopyCellsTo(65, 40, 16, 27, 2, 4);
+        Map_AnimateCells(TakaraHashira_ShiftSteps3, 80, 24);
+        Map_AnimateCells(TakaraHashira_ShiftSteps5, 80, 28);
+        Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
         FieldScene_RunScene3b3SequenceA();
         SceneActor_ApplyPlacementQueryAndTag(9);
         SceneActor_ApplyPlacementQueryAndTag(10);
@@ -122,21 +122,21 @@ void FieldScene_RunFlaggedDisplayScene(void)
         SceneActor_ApplyPlacementQueryAndTag(13);
         SceneActor_ApplyPlacementQueryAndTag(14);
         SceneActor_ApplyPlacementQueryAndTag(15);
-        Engine_MapCopyCellAttributes(24, 3, 1, 1, 24, 8);
-        Engine_GameFlagSet(QUERY_FLAG);
+        Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
+        GameFlag_Set(QUERY_FLAG);
     } else {
-        Engine_AudioPlayCue(232);
-        Engine_MapAnimateCells(TakaraHashira_ShiftSteps2, 84, 24);
+        Audio_PlayCue(232);
+        Map_AnimateCells(TakaraHashira_ShiftSteps2, 84, 24);
         Engine_EventWait(30);
-        Engine_AudioPlayCue(230);
+        Audio_PlayCue(230);
         /* Flag byte at +85: cleared unconditionally in this branch. */
         *((u8 *)Object_GetById(REC_ID) + 85) = 0;
-        record = Object_GetById(REC_ID);
+        record = Actor_Get(REC_ID);
         *(s32 *)(record + 12) = -0x200000;
-        Engine_ActorSetPosition(REC_ID, 0x1100000, 0x1b40000);
+        Actor_SetPosition(REC_ID, 0x1100000, 0x1b40000);
         Engine_ActorSetAnimation(REC_ID, 2);
-        Engine_MapCopyCellsTo(65, 45, 16, 27, 2, 4);
-        Engine_MapAnimateCells(TakaraHashira_ShiftSteps4, 80, 24);
+        Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
+        Map_AnimateCells(TakaraHashira_ShiftSteps4, 80, 24);
         FieldScene_RunScene3b3SequenceA();
         SceneActor_ApplyPlacementQuery(9);
         SceneActor_ApplyPlacementQuery(10);
@@ -145,8 +145,8 @@ void FieldScene_RunFlaggedDisplayScene(void)
         SceneActor_ApplyPlacementQuery(13);
         SceneActor_ApplyPlacementQuery(14);
         SceneActor_ApplyPlacementQuery(15);
-        Engine_MapCopyCellAttributes(24, 4, 1, 1, 24, 8);
-        Engine_GameFlagClear(QUERY_FLAG);
+        Map_CopyCellAttributes(24, 4, 1, 1, 24, 8);
+        GameFlag_Clear(QUERY_FLAG);
     }
     Engine_EventEnd();
 }

@@ -1197,11 +1197,11 @@ void ImiruFuchin_ApplyEntrySetup(void)
             OverlayObject_CreateAndInitialize(0xbc0000, 0, 0x1c40000, 223);
         }
     } else if (gGameState.scene == (s32)&SceneId_ImiruFuchin7) {
-        actor = Actor_Get(8);
         value = 0;
+        actor = Actor_Get(8);
         ImiruFuchin_TrackLeader = value;
-        actor->motion_flags = value;
-        actor->y.fixed = value;
+        *(u8 *)&actor->motion_flags = value;
+        *(s32 *)&actor->y.fixed = value;
         Engine_ActorSetSpritePriority(8, 1);
         Actor_SetChildValue(8, 15);
         switch (gGameState.entrance) {

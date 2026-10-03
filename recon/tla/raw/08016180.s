@@ -13,11 +13,11 @@ Func_08016180:
 	movs r0, #7
 	movs r1, #0
 	adds r2, r5, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #6
 	movs r1, #0
 	adds r2, r5, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	ldr r4, .L_080161c8
 	adds r3, r6, #0
 	strh r4, [r3]

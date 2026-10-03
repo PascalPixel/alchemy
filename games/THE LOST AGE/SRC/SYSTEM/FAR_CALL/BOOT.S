@@ -64,7 +64,7 @@ Func_08000128:
 	.global Func_08000130
 	.thumb_func
 Func_08000130:
-	overlay_veneer Func_08013438
+	overlay_veneer Runtime_SetIrqHandler
 	.global Func_08000138
 	.thumb_func
 Func_08000138:

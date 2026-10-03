@@ -14,6 +14,9 @@
 void AnimationObjects_SelectAnimationFar(void *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 
+/* The native scan reads the session through its original halfword view. */
+struct SlotArray { s16 items[64]; };
+
 /* Takes a defeated unit out of the party or enemy list, leaving the removed
  * mark in its place, and cancels the actions queued for it. */
 void BattleActor_RemoveFromLists(s32 actor)
@@ -93,8 +96,10 @@ void BattleMotion_InitializeActorRecords(s32 id)
 
 s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
 {
+    /* The named party/enemy arrays changed this scan's instruction order
+       and extent; retain its existing halfword view. */
     u16 positions[6];
-    struct BattleSession *order;
+    struct SlotArray *order;
     s16 *entry;
     u16 *cursor;
     s32 value;
@@ -105,14 +110,14 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
     s32 offset;
 
     count = 0;
-    order = gBattleWork;
+    order = (struct SlotArray *)gBattleWork;
 
     if (require_living_unit != 0) {
         for (;;) {
             index = 0;
-            slot = 0;
-            if (order->party_units[slot] != 255) {
-                entry = order->party_units;
+            slot = (u32)&((struct BattleSession *)0)->party_units / sizeof(s16);
+            if (order->items[slot] != 255) {
+                entry = order->items;
                 do {
                     value = entry[slot];
                     if (value != 254) {
@@ -129,10 +134,10 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
         }
     } else {
         index = 0;
-        slot = 0;
-        tail = 0;
+        slot = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
+        tail = (u32)&((struct BattleSession *)0)->enemy_units / sizeof(s16) - 1;
         offset = tail * 2;
-        entry = order->enemy_units;
+        entry = (s16 *)(order->items + 1);
         if (*(s16 *)((char *)entry + offset) != 255) {
             cursor = (u16 *)entry;
             do {

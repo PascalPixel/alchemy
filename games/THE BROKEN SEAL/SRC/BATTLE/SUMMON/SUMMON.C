@@ -14,8 +14,6 @@ struct Entry {
 
 extern struct Entry Summon_EntryTable[];
 
-
-
 /* battle/summon/clear_work_fields.c */
 
 union Word {

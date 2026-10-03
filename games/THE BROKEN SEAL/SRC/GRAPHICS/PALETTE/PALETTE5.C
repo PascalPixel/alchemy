@@ -103,12 +103,14 @@ void BattleFx_InterpolateBuffers(s16 *arg0, s16 *arg1, s16 *arg2, s32 arg3)
 void BattlePalette_UpdateBlend(void)
 {
     /* FAKEMATCH: retain the existing one-pass IME scopes and halfword
-       queue-count stores used by the other palette queue writers. */
+       queue-count stores used by the other palette queue writers.
+       Directly selecting the packed bank swaps the queue/IME registers
+       in all six editions; retain the existing byte-address boundary. */
     struct BattleEffectBuffers *work = Data_03001ed0;
     u16 *add = work->delta;
     volatile u16 *ime;
     struct IoWriteQueue *q;
-    u16 *bank;
+    u8 *base;
     s32 i;
 
     if (GameFlag_IsSet(0x152) != 0) {
@@ -143,11 +145,11 @@ void BattlePalette_UpdateBlend(void)
     }
 
     work->page ^= 1;
-    bank = work->packed[work->page];
+    base = (u8 *)work + work->page * sizeof(work->packed[0]);
     q = &gIoWriteQueue;
     {
-        u32 bg = (u32)bank;
+        u32 bg = (u32)(base + 0x2300);
         QUEUE_WRITE(bg, 0x05000000, 0x84000070);
     }
-    QUEUE_WRITE((u32)(bank + 224), 0x05000200, 0x84000070);
+    QUEUE_WRITE((u32)(base + 0x24c0), 0x05000200, 0x84000070);
 }

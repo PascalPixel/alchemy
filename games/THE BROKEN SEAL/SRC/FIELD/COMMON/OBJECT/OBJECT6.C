@@ -81,25 +81,29 @@ void ObjectMotion_SetActionVariant(s32 object_id, s32 priority)
 
 void ObjectVisual_CopyAttributes(u32 target_id, u32 source_id)
 {
-    struct FieldSprite *sprite;
+    void *p;
     u8 flags;
     u32 shape;
     u32 dst_attr;
     u32 merged;
 
-    sprite = ((struct ObjectRuntime *)Object_GetById(source_id))->animation;
-    flags = sprite->vram_block;
-    shape = *(u16 *)((u8 *)sprite + 0x8);
+    /* Keep the existing opaque sprite and packed OAM-word boundary. The
+       typed sprite attempt changes register choice and read order. */
+    p = Object_GetById(source_id);
+    p = ((struct ObjectRuntime *)p)->animation;
+    flags = ((struct FieldSprite *)p)->vram_block;
+    shape = *(u16 *)((u8 *)p + 0x8);
 
-    sprite = ((struct ObjectRuntime *)Object_GetById(target_id))->animation;
-    dst_attr = *(u16 *)((u8 *)sprite + 0x8);
-    sprite->vram_block = flags;
+    p = Object_GetById(target_id);
+    p = ((struct ObjectRuntime *)p)->animation;
+    dst_attr = *(u16 *)((u8 *)p + 0x8);
+    ((struct FieldSprite *)p)->vram_block = flags;
     shape <<= 22;
     shape >>= 22;
     merged = 0xfffffc00;
     merged &= dst_attr;
     merged |= shape;
-    *(u16 *)((u8 *)sprite + 0x8) = merged;
+    *(u16 *)((u8 *)p + 0x8) = merged;
 }
 
 void ObjectVisual_ReservedNoOp(void)

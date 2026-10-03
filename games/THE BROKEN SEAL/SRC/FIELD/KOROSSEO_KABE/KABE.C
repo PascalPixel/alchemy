@@ -1166,11 +1166,14 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             register s32 cy asm("r1") = 1;
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            register s32 cz asm("r2") = 15728640;
+            register s32 cz asm("r2") = 15728640 >> 16;
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             register s32 cm asm("r3");
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cz <<= 16;
+            /* FAKEMATCH: native X/Y components precede Z scaling and mode setup. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz) : "r3");
             cm = 1;
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             asm("" : "+r"(cx), "+r"(cy) : "r"(cm), "r"(cz));
@@ -1327,11 +1330,14 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             register s32 cy asm("r1") = 1;
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            register s32 cz asm("r2") = 0x1080000;
+            register s32 cz asm("r2") = 0x1080000 >> 17;
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             register s32 cm asm("r3");
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
+            cz <<= 17;
+            /* FAKEMATCH: native X/Y components precede Z scaling and mode setup. */
+            asm("" : "+r"(cx), "+r"(cy) : "r"(cz) : "r3");
             cm = 1;
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             asm("" : "+r"(cx), "+r"(cy) : "r"(cm), "r"(cz));

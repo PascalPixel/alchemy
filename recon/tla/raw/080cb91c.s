@@ -1391,7 +1391,7 @@ Func_080cb91c:
 .L_080cc458:
 	.4byte gInput
 .L_080cc45c:
-	.4byte Data_02003410
+	.4byte ResourceBlockOwners
 .L_080cc460:
 	ldr r0, .L_080cc540
 	movs r1, #1

@@ -24,6 +24,8 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
 s32 Resource_ActivateEntry(u32 slot);
 s32 Resource_ClearSlotReferences(s32 slot);
+/* Reserve size / 64 marker blocks and return their byte offset, or -1. */
+s32 ResourceTable_AllocateBlocks(u32 slot, u32 size);
 
 /* The format 0/1 decoder returns the number of bytes written. */
 s32 Resource_DecodeType01(const void *source, void *destination);

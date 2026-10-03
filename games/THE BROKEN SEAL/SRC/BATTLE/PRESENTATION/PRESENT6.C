@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "HEAP_STATE.H"
 #include "BATTLE_PARTY.H"
 #include "SCENE.H"
@@ -20,10 +21,10 @@ void BattlePres_AdjustCameraByShoulderKeysAlt(void)
     struct BattlePresentationTransition *trans = slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
-    if ((*keys & 512) != 0) {
+    if ((*keys & KEY_L) != 0) {
         cam->yaw += 512;
     }
-    if ((*keys & 256) != 0) {
+    if ((*keys & KEY_R) != 0) {
         cam->yaw -= 512;
     }
     if (trans->flag == 0) {

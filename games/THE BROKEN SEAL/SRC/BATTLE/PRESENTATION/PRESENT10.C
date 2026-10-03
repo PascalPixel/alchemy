@@ -9,6 +9,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_WORK.H"
 #include "BATTLE_PRESENTATION.H"
+#include "HEAP_STATE.H"
 
 extern struct BattleBackgroundView *gTransitionWork;
 
@@ -47,10 +48,15 @@ void BattlePres_UpdateHBlankScroll(void);
    tile table and the tilemap and start the H-blank scroll on first use. */
 void BattleBackground_Load(s32 mode, s32 resource, s32 level)
 {
-    void **cache = &Ram_WorkSlot[44];
-    struct BattleBackgroundView *view = cache[44 - 44];
+    /* FAKEMATCH: direct heap reads retain the base (320 bytes); named cells
+       add pooled addresses and change registers. The typed background-cell
+       anchor preserves the original 312-byte register allocation. */
+    struct BattleBackgroundView **background = (struct BattleBackgroundView **)
+        &((union HeapState *)Ram_WorkSlot)->slots[HEAP_SLOT_BATTLE_BACKGROUND];
+    struct BattleBackgroundView *view = *background;
     u8 *data = Resource_GetTableEntry(resource);
-    struct BattleSession *session = cache[9 - 44];
+    struct BattleSession *session = *(struct BattleSession **)((u8 *)background
+        + (HEAP_SLOT_BATTLE - HEAP_SLOT_BATTLE_BACKGROUND) * (s32)sizeof(void *));
     u16 *palette;
 
     /* FAKEMATCH: the one-pass block keeps the size load after the session load and the decoder call after the copy. */
@@ -70,7 +76,8 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level)
         /* FAKEMATCH: the empty statement keeps the tile offset a load of its own, ahead of the VRAM address. */
         __asm__("" : "+r"(offset));
         vram = (void *)0x06008000;
-        ((BitDecoder)cache[49 - 44])(data + offset, vram);
+        (*(BitDecoder *)((u8 *)background
+            + (49 - HEAP_SLOT_BATTLE_BACKGROUND) * (s32)sizeof(void *)))(data + offset, vram);
     }
     Runtime_ReleaseHeapBlock(49);
     palette = session->palette;

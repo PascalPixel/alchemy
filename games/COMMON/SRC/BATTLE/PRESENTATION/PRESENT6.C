@@ -2,13 +2,14 @@
 #include "EDITION.H"
 
 #include "BATTLE_WORK.H"
+#include "BATTLE_PARTY.H"
 #include "BATTLE_UNIT.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_PRESENTATION.H"
 #include "OWNER_STATE.H"
 
 extern struct BattlePresentationTransition *gTransitionWork;
-void BattleUnit_ClearField12bForGroup(void);
+void BattleUnit_ResetGuardLevels(void);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
@@ -108,12 +109,12 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions)
         u32 n;
 
         for (n = 0; n < 20; n++) {
-            queued[n].unit_id = 0xff;
+            queued[n].unit_id = BATTLE_UNIT_LIST_END;
             queued[n].priority = 0x8000;
         }
     }
 
-    BattleUnit_ClearField12bForGroup();
+    BattleUnit_ResetGuardLevels();
     Palette_CopyBanksWithBrightnessOffset(8);
 #if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
     GameFlag_SetBit(0x16b);
@@ -225,9 +226,9 @@ s32 Battle_FindTaggedSlotByValue(u32 value)
         offset = (u32)&((struct BattleSession *)0)->party_units;
 first:
         item = *(s16 *)(offset + (u32)base);
-        if (item == 0xff)
+        if (item == BATTLE_UNIT_LIST_END)
             return -1;
-        if (item == 0xfe)
+        if (item == BATTLE_UNIT_REMOVED)
             goto next_first;
         if (item == value)
             return index | tag;
@@ -244,9 +245,9 @@ next_first:
     offset = (u32)&((struct BattleSession *)0)->enemy_units - sizeof(s16);
 second:
     item = *(s16 *)(offset + (u32)base);
-    if (item == 0xff)
+    if (item == BATTLE_UNIT_LIST_END)
         return -1;
-    if (item == 0xfe)
+    if (item == BATTLE_UNIT_REMOVED)
         goto next_second;
     if (item == value)
         return index | tag;

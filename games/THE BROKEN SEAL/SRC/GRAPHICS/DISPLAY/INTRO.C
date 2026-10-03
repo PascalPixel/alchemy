@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
@@ -194,7 +195,6 @@ extern volatile u8 Data_03001f58;
 extern const u8 Title_PromptTiles[];
 extern const u8 Title_PromptBlendLevels[];
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Bg0_ClearTilemap(void);
 void Resource_InitializeTable(void);
 void Func_080f2028(void);
@@ -203,8 +203,6 @@ void Blend_SetBrightenTarget16(s32 frames);
 void Blend_SetBrightenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
 void Ui_LoadWindowGraphics(void);
-s32 VramBlock_LoadCached(s32 entry, s32 size, const void *source);
-void Runtime_PushSlotEntry(void *entry, s32 mode);
 
 /* Title intro: both pictures scroll up, the back one a line every third
    tick and the front one every second, each loading a new row of tiles

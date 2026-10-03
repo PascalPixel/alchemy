@@ -23,7 +23,6 @@ typedef char ResourceObjectWork_size[
     sizeof(struct ResourceObjectWork) == 56 ? 1 : -1
 ];
 
-s32 Resource_ResetEntry(u32 resource);
 void ResourceMetadata_ClearRecord(void *destination);
 
 void ResourceObject_Release(struct ResourceObjectWork *work)

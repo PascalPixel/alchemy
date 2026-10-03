@@ -1,15 +1,13 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "VRAM_BLOCK.H"
 
-u8 *Runtime_AllocateBlock(s32 slot, u32 size);
-u8 *Runtime_AllocateHeapBlock(s32 slot, u32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
-void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void *ObjectTable_Get(u32 object);
 void Object_EffectSpawnCallback(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-void Runtime_PushSlotEntry(void *entry, s32 value);
 
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)

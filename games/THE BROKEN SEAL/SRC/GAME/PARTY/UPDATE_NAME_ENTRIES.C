@@ -20,7 +20,6 @@ void Party_Do(void *);
 #define APPEND_NAME_SPACE 0
 #endif
 
-void Runtime_BumpFree(void *block);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 s32 SerialRuntime_BeginTransferA(void *data, s32 size);
 void SerialRuntime_WaitForTransferA(void);

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SCENE.H"
@@ -26,8 +28,6 @@ s32 GameFlag_IsSet(s32 flag);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32, s32, const void *);
 void ShopCursor_SetPositionImmediateFar(void *, s32, s32);
 void *RenderResource_CreateFrame(s32, s32, struct RenderInput *, s32, s32);
 void Menu_RunSelectedWorkspaceEntry(void);

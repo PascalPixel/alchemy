@@ -10,16 +10,14 @@ void UiText_RenderGlyphTileAtWorkOffset(
     s32 offset_x,
     s32 offset_y)
 {
-    u8 *base = gWindowWork[0];
-    s32 index;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
     u32 cell;
 
     if (buffer == NULL) {
-        u16 *counter = &((struct UiRenderWork *)base)->count;
+        u16 *counter = &canvas->count;
 
-        index = *counter * 2 + RENDER_ENTRY_TBL_OFS;
-        buffer = ((struct UiRenderWork *)base)->entries;
-        *(u16 *)(base + index) = 0;
+        buffer = canvas->entries;
+        canvas->entries[*counter] = 0;
         *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     }
 
@@ -31,7 +29,7 @@ void UiText_RenderGlyphTileAtWorkOffset(
 
         cell *= 2;
         dst = 0x06002000 + cell;
-        src = (s32)base + cell;
+        src = (s32)canvas->tilemap + cell;
 
         UiText_RenderStringTiles(
             buffer,

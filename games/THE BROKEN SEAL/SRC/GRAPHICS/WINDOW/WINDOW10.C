@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "WINDOW.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -24,7 +25,6 @@ s32 Menu_DrawAtWindowOffset(void *window, s32 x, s32 y, s32 width, s32 height, s
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 Menu_GetModuloOfSum(s32 value, s32 modulus);
 void Audio_PlayCue(s32 cue);
-s32 Resource_ResetEntry(u32 resource);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Menu_UpdateEntryObjectTransforms(void);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);

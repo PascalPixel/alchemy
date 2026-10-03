@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "FIXED_POINT_POSITION.H"
 #include "MAP_SCROLL.H"
@@ -23,9 +24,6 @@ extern u32 Data_03001f60;
 extern u32 Data_03001af4;
 extern u32 gFrameCount;
 void Blend_SetDarkenTarget0(s32);
-s32 Runtime_AllocateHeapBlock(s32, s32);
-void *Runtime_AllocateBlock(s32, s32);
-s32 Resource_DecodeType01(const void *source, void *destination);
 void Camera_StoreSceneParameters(u32, u32, u32);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
@@ -54,8 +52,6 @@ typedef s32 (*PlaneFn)(void *camera, s32 *position, void *lines, void *out);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
-u32 Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *block);
 s32 Resource_DecodeByteLz(const void *source, void *destination);
 void Map_UpdateCurrentTileBlock(void);
 extern u32 Data_080132cc[][6];
@@ -70,7 +66,6 @@ struct WorldCell {
 #define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
 
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 /* The world map's screen entries on its two layers: each of the four
  * quarters of a layer is 32 by 32 entries at this base. */

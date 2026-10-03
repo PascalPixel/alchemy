@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "DMA.H"
 #include "RAM_BUFFER.H"
 
@@ -54,7 +55,6 @@ struct MakyuriCell {
 extern s32 gGameState[];
 extern u8 Makyuri_PillarScript[];
 extern u8 Makyuri_RampScript[];
-struct MakyuriLights **Runtime_AllocateBlock(s32 slot, s32 size);
 s32 Engine_GameFlagIsSet(s32 flag);
 struct MakyuriActor *ObjectTable_Get(s32 id);
 struct MakyuriObject *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);

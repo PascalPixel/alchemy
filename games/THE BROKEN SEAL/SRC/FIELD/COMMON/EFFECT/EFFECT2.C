@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 /* Field effects: set up 32 motes on the terrain around the map position, the blend registers and their update callback. */
 #include "TYPES.H"
@@ -10,7 +11,6 @@
 #include "FXBLEND.H"
 
 void Resource_DecodeByteLz(const void *src, void *dst);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 void Unnamed_08094bbc(void);
 
@@ -82,7 +82,6 @@ extern const struct SparkleFrame Data_0809f024[];
 s32 GameFlag_TestFar(s32 flag);
 u32 Random16(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-void Runtime_PushSlotEntry(void *entry, s32 value);
 
 union DustWord {
     u32 value;
@@ -109,11 +108,7 @@ struct DustWork {
 };
 
 extern const u8 Data_080a00b8[];
-void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Resource_DecodeByteLz(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
-void Runtime_ReleaseHeapBlock(s32 slot);
 void FieldEffect_UpdateSparkles(void);
 
 LAYOUT_SIZE_GUARD(DustWork_Size, struct DustWork, 0x410);
@@ -132,7 +127,6 @@ s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mod
 void BattleFx_InterpolateBuffers(s16 *from, s16 *to, s16 *step, s32 frames);
 void BattleFx_UpdateStormFlash(void);
 
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 /* Each frame, draws the motes that are on screen, rising as they age and
    shrinking through three sizes, and sets up to eight spent ones down again

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "DMA.H"
 #include "TYPES.H"
@@ -10,8 +11,6 @@
 extern const u8 SentouKouka_Tenkai[];
 extern u8 SentouKouka_TenkaiCodeSize[];
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void Runtime_ReleaseHeapBlock(s32 slot);
 
 /* The decoder returns a value this caller ignores. */
 typedef s32 (*PackedDecoder)(u8 *source, u32 destination, u32 fill);

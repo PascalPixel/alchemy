@@ -1,10 +1,10 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "FIELD_SPRITE.H"
 
 extern u8 ResourceBlockOwners[];
 
 /* object/replace_resource_entry.c */
-s32 Resource_ResetEntry(u32 index);
 
 s32 ResourceTable_CountFreeBlocks(void)
 {

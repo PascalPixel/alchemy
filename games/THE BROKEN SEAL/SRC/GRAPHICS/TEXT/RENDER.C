@@ -13,16 +13,16 @@ s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase)
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *base = gWindowWork[0];
-    u16 *counter = &((struct UiRenderWork *)base)->count;
+    struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
+    u16 *counter = &canvas->count;
     s32 zero = 0;
 
     *counter = zero;
     UiText_BuildRenderEntries(arg0, 1);
-    ((struct UiRenderWork *)base)->entries[*counter] = zero;
+    canvas->entries[*counter] = zero;
     *counter = (*counter + 1) & RENDER_ENTRY_MASK;
     /* Pass the built entries to the text canvas. */
-    UiText_RenderWideStringAtOffset(((struct UiRenderWork *)base)->entries, (struct UiWindow *)arg1, arg2, arg3);
+    UiText_RenderWideStringAtOffset(canvas->entries, (struct UiWindow *)arg1, arg2, arg3);
 }
 
 void UiText_DrawCharacterAtOffset(
@@ -36,16 +36,16 @@ void UiText_DrawCharacterAtOffset(
     u16 *text;
     s32 zero;
     u32 cell;
-    u8 *base;
+    struct UiRenderWork *canvas;
     u16 *counter;
 
-    base = gWindowWork[0];
-    counter = &((struct UiRenderWork *)base)->count;
+    canvas = (struct UiRenderWork *)gWindowWork[0];
+    counter = &canvas->count;
     zero = 0;
     *counter = zero;
     UiText_BuildRenderEntries(character, 1);
 
-    ((struct UiRenderWork *)base)->entries[*counter] = zero;
+    canvas->entries[*counter] = zero;
     *counter = (u16)((*counter + 1) & RENDER_ENTRY_MASK);
 
     cell = ((position->y + (offset_y >> 3) + 1) << 5)
@@ -53,10 +53,10 @@ void UiText_DrawCharacterAtOffset(
     if (cell < 0x280U) {
         byte_offset = cell * 2;
         vram_address = byte_offset + 0x06002000;
-        text = ((struct UiRenderWork *)base)->entries;
+        text = canvas->entries;
         UiText_RenderStringTiles(
             text,
-            (s32)(base + byte_offset),
+            (s32)((u8 *)canvas->tilemap + byte_offset),
             vram_address,
             7 & offset_x);
     }
@@ -91,7 +91,7 @@ void UiText_DrawStringAtOffset(
 {
     s16 *buffer;
     s16 *output;
-    u8 *base;
+    struct UiRenderWork *canvas;
     u32 cell;
     s32 vram;
     s32 src;
@@ -99,7 +99,7 @@ void UiText_DrawStringAtOffset(
     s32 phase;
 
     buffer = Runtime_BumpAllocateAlternatePool(0x200);
-    base = gWindowWork[0];
+    canvas = (struct UiRenderWork *)gWindowWork[0];
     output = buffer;
     if (*text != 0) {
         do {
@@ -117,7 +117,7 @@ void UiText_DrawStringAtOffset(
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
-        src = (s32)base + cell;
+        src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
             buffer,
@@ -186,13 +186,13 @@ void UiText_DrawPrefixedNumberAtOffset(
     u8 *text;
     s32 index;
     u32 cell;
-    u8 *base;
+    struct UiRenderWork *canvas;
     s32 vram;
     s32 src;
     s32 dst;
     s32 phase;
 
-    base = gWindowWork[0];
+    canvas = (struct UiRenderWork *)gWindowWork[0];
     text = UiText_FormatNumber(formatted, value, 4);
 #if defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || \
     defined(TBS_EDITION_IT)
@@ -223,7 +223,7 @@ void UiText_DrawPrefixedNumberAtOffset(
         vram = 0x06002000;
         cell *= 2;
         dst = vram + cell;
-        src = (s32)base + cell;
+        src = (s32)canvas->tilemap + cell;
         phase = offset_x & 7;
         UiText_RenderStringTiles(
             output,

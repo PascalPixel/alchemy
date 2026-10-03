@@ -1,3 +1,6 @@
+#include "AFFINE.H"
+#include "VRAM_BLOCK.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_MEM.H"
@@ -20,10 +23,6 @@
 
 extern s16 Korosseo_PortraitSlot;
 extern u8 Korosseo_PortraitPaletteOffsets[];
-void Runtime_BumpFree(u8 *block);
-s32 Resource_FindFreeEntry(void);
-u32 Resource_DecodeType01(const void *source, void *destination);
-void VramBlock_LoadCached(s32 slot, s32 size, s32 source);
 
 static __inline__ void Dma_Wait(volatile u32 *dma)
 {
@@ -33,13 +32,9 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 
 struct Sprite { u32 words[3]; };
 
-struct SpriteTile { u16 pad, base; };
-
-struct SpriteTransform { unsigned x : 16; unsigned y : 16; unsigned angle : 16; unsigned pad : 16; };
 
 struct Half { u16 value; };
 
-extern struct SpriteTile gVramBlockCache[];
 extern s16 Korosseo_PortraitSlot, Korosseo_ModeTaskTimer, Korosseo_ModeMoveTarget, Korosseo_ModeMoveDuration;
 extern s16 Korosseo_ModeMoveStart, Korosseo_ModeMoveStep, Korosseo_ModeScaleTarget, Korosseo_ModeScaleStart;
 extern s16 Korosseo_ModeScaleDuration, Korosseo_ModeScaleStep, Korosseo_ModeBlendTarget, Korosseo_ModeBlendStart;
@@ -48,9 +43,6 @@ extern s32 Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
 extern u32 Korosseo_ModeTaskSprites[];
 extern s32 Engine_TaskRemoveCallback(void (*fn)(void));
-extern void Resource_ResetEntry(s32 slot);
-extern s32 AffineMatrix_BuildForEffect(struct SpriteTransform *work);
-extern void Runtime_PushSlotEntry(void *sprite, s32 priority);
 
 #define QueueRegister(address, value) \
 { \
@@ -94,11 +86,11 @@ void Korosseo_UpdateModeTask(void)
     /* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
     u32 *write = Korosseo_ModeTaskSprites;
     struct Sprite *sprite = (struct Sprite *)write;
-    s32 tile = gVramBlockCache[Korosseo_PortraitSlot].base >> 5;
+    s32 tile = gVramBlockCache[Korosseo_PortraitSlot].offset >> 5;
     u32 flags;
     s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
-    struct SpriteTransform work;
+    struct AffineTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
 
@@ -182,8 +174,8 @@ render:
             Korosseo_ModeMoveDuration = zero.value;
     }
     work.angle = 0;
-    work.x = scale;
-    work.y = scale;
+    work.scale_x = scale;
+    work.scale_y = scale;
     matrix = (s16)AffineMatrix_BuildForEffect(&work);
     Korosseo_ModeTaskPosition += pos;
     pos = Korosseo_ModeTaskPosition / 256;

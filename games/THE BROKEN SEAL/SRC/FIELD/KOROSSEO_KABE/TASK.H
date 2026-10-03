@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #ifndef KOROSSEO_KABE_TASK_H
 #define KOROSSEO_KABE_TASK_H
 
@@ -138,14 +139,9 @@ extern u16 Korosseo_MarkerStep;
 
 /* Import veneers, named by the main-image code each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */
-void *Runtime_AllocateBlock();
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();
-void Runtime_BumpFree();
-void Resource_ResetEntry();
-s32 Resource_FindFreeEntry();
-s32 Resource_GetTableEntry();
 void ObjectDispatch_InitFromTable6();
 void ObjectDispatch_WaitForValue16();
 s32 Object_CheckMovementCollision();

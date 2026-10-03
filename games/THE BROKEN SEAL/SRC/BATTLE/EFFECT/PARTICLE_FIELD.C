@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
@@ -13,12 +16,7 @@
 #include "IO_REG.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-extern void *gWorkSlot[];
-extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -71,7 +69,7 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
     s32 frame;
     s32 i;
 
-    cursor = (void **)gBattleFxWork;
+    cursor = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     work = *cursor++;
     canvas = *cursor;
     work->effect = effect;
@@ -119,8 +117,8 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
         mote->variant = 0;
     }
 
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = (DrawRectangle)gWorkSlot[46];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
@@ -202,6 +200,6 @@ void BattleFx_RunParticleField(struct BattleEffectArgument *effect, s32 mode)
     }
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "ITEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
@@ -15,8 +16,6 @@
 
 extern u8 Data_080aebcc[];
 extern u8 Data_080aeb4c[];
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached(s32, s32, const u8 *);
 
 /* menu/item_menu/page_result.c */
 

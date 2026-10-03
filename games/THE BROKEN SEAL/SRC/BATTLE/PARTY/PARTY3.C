@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "FIELDOBJ.H"
 #include "TYPES.H"
 #include "SCENE.H"
@@ -17,7 +18,6 @@ void BattleFx_StartBufferInterpolation(s32 frames);
 void Audio_PlayCue(s32 cue);
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 s32 Map_ResumeAnimationFar();
 
 s32 Map_LoadAreaGraphicsFar();

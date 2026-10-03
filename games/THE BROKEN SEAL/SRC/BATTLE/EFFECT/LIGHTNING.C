@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -26,7 +28,6 @@ extern u8 LightningPillar_Columns[];
 /* By variant: how many pillars strike. */
 extern u8 LightningPillar_Counts[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);
@@ -35,7 +36,6 @@ void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 variant);
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
-s32 BattleFx_EndCanvasLayer(void);
 
 /*
  * Pillars of lightning strike one column after another, eight frames apart.

@@ -1,3 +1,5 @@
+#include "RUNTIME_MEM.H"
+#include "CANVAS.H"
 #include "MAP_SCROLL.H"
 #include "HEAP_STATE.H"
 /* Battle presentation: set up the effect display. Windows 0 and 1 cover the
@@ -21,9 +23,6 @@
 #include "RAM_BUFFER.H"
 
 void WaitFrames(s32 frames);
-
-
-extern struct BattleEffectWork *gBattleFxWork;
 
 extern u8 gMapCellBuffer[];
 
@@ -69,7 +68,7 @@ void BattlePres_ConfigureEffectDisplay(void)
 
 void BattleFx_AdvanceScrollOnInterval(void)
 {
-    struct BattleEffectWork *work = gBattleFxWork;
+    struct BattleEffectWork *work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     u32 *counter = (u32 *)&work->scroll_timer;
 
     (*counter)++;
@@ -85,7 +84,7 @@ void Camera_AdvanceBg2Reference(void)
     s32 count;
     struct BattleEffectWork *work;
 
-    work = gBattleFxWork;
+    work = ((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     count = work->scroll_timer + 1;
     work->scroll_timer = count;
     if (count == work->scroll_interval) {
@@ -115,13 +114,11 @@ extern u8 BattleFx_PuffSizes[];
 /* For each variant: how many shards fall and how many frames it lasts. */
 extern u8 FallingShards_Counts[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void AudioCommand_PlayFar(s32 value);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
-void BattleFx_EndCanvasLayer(void);
 
 /*
  * Battle effect: ice shards fall in a slanted line towards the targets'
@@ -142,7 +139,7 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
     s32 i;
     s32 k;
 
-    heap_cache = (void **)&gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -178,14 +175,14 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
         work->particles[32 + i].variant = -1;
 
     if (work->effect->side == 0) {
-        BattleEffect_LoadWork(46, 7, 7, 2, 2);
-        BattleEffect_LoadWork(47, 7, 7, 2, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 2, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 2, 3);
     } else {
-        BattleEffect_LoadWork(46, 7, 7, 6, 2);
-        BattleEffect_LoadWork(47, 7, 7, 6, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 6, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 6, 3);
     }
-    draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[46];
-    draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[47];
+    draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
 
     if (work->effect->side == 0) {
         line = (u16 *)gMapCellBuffer;
@@ -289,8 +286,8 @@ void BattleEffect_RunFallingParticles(struct BattleEffectArgument *effect)
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Scheduler_RemoveCallback((u32)BattleFx_ArmWin0HBlankDma);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
     BattlePres_ConfigureEffectDisplay();
 }
@@ -332,7 +329,7 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     s32 i;
     s32 k;
 
-    heap_cache = (void **)&gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -345,9 +342,9 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
     REG_BLDCNT = 0x3f44;
     REG_WININ = 0x3337;
 
-    BattleEffect_LoadWork(46, 7, 7, 2, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 2, 2);
     draw_bolt = heap_cache[7];
-    BattleEffect_LoadWork(47, 7, 7, 2, 3);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 2, 3);
     draw_spark = heap_cache[8];
 
     for (i = 0; i != 512; i++)
@@ -471,8 +468,8 @@ void BattleEffect_RunFallingBolts(struct BattleEffectArgument *effect)
 
     Scheduler_RemoveCallback((u32)BattleFx_ArmWin0HBlankDma);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
     BattlePres_ConfigureEffectDisplay();
 }

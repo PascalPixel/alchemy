@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
@@ -42,9 +43,6 @@ struct ItemMenuWork {
 
 extern struct ItemMenuModeState gGameState;
 extern struct ItemMenuDisplayState *gMenuCtrlWork;
-struct ItemMenuWork *Runtime_AllocateHeapBlock(s32 slot, s32 size);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_BumpFree(void *buffer);
 s32 GameFlag_TestFar(s32 flag);
 void UiWindow_DrawFrameFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32 mode);

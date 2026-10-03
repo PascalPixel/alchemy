@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #ifndef ALCHEMY_PROBE_H
 #define ALCHEMY_PROBE_H
 
@@ -92,7 +93,6 @@ extern const u16 MakyuriHeya_FloorSwitchCells[];
 /* Engine imports called with the arities these scenes pass. */
 void Vector_AddPolarOffset(s32, s32, s32 *);
 void AnimationObjects_SelectAnimation(u8 *rec, s32 arg1);
-u8 **Runtime_AllocateBlock(s32 group, s32 slot);
 void BattleFx_SetPhaseRequest(s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 void BattleFx_PlayQueuedSound();

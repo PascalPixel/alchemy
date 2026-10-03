@@ -5,7 +5,6 @@
    modes 12 to 18. */
 
 s32 Object_SetMode(s32, s32);
-struct BattleObjectSlot *GetBattleObjectSlotFar(s32);
 s32 ObjectDispatch_ApplyValueToChildrenFar(s32, s32);
 s32 BattleFx_RunProjectileVolley(void *effect, s32 mode);
 

@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "PROJECT.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -11,20 +14,16 @@
 extern u8 gMapCellBuffer[];
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BuildWindowEdgeTable(void);
 void WaitFrames(s32);
 u32 Random16(void);
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 void Audio_PlayCue(s32);
-void BattleFx_BeginCanvasLayer(s32);
 void BattlePres_ConfigureEffectDisplay(void);
 void Runtime_SetIrqHandler(s32, s32, s32);
 void BattleEffect_WipeCanvas(s32, s32);
-void BattleFx_SelectLivingTargets(s32);
 void BattleBackground_LoadFar(s32, s32, s32);
-void BattleFx_SpawnObjects(s32, s32, s32);
 void Object_ApplyProjectedPlacementFar(void *, void *, void *, s32);
 void ResourceObject_ReleaseFar(void *);
 void BattleEffect_SetupBlendedDisplay(void);
@@ -35,9 +34,6 @@ void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
 void BattleFx_DrawClippedCanvasLine(s32, s32, s32, s32, s32);
-void Runtime_ReleaseHeapBlock(s32);
-s32 BattleFx_EndCanvasLayer(void);
-extern u8 gWorkSlot[];
 extern volatile u32 gKeysRepeat;
 
 struct Cells03001ad0 {
@@ -48,9 +44,6 @@ struct Cells03001ad0 {
 };
 
 extern struct Cells03001ad0 gBgScroll;
-
-
-
 
 typedef struct Scale {
     s32 x;
@@ -65,22 +58,6 @@ extern u16 BattleFx6_FlareCells[];
 extern u16 ParticleStreams_CellOffsets[];
 
 /* The effect's work block (heap slot 39). */
-struct Mode6Work {
-    u8 sheet[0x7080];
-    struct EffectStep sparks[64];
-    s32 transfer_mode;
-    s32 transfer_value;
-    u8 unknown_7788[0x20];
-    s32 shake;
-    u8 unknown_77ac[0x8];
-    s32 unknown_77b4;
-    s32 unknown_77b8;
-    u8 unknown_77bc[0x1c];
-    void *objects[8];
-    u8 unknown_77f8[0x2c];
-    s32 transfer_pending;
-    struct BattleEffectArgument *effect;
-};
 
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 #define HI(v) (((s16 *)&(v))[1])
@@ -117,7 +94,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     s32 burst;
     s32 bx;
     u32 *cache;
-    struct Mode6Work *work;
+    struct BattleEffectWork *work;
     s32 frame;
     s32 t;
     s32 i;
@@ -131,9 +108,9 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     Scale scale;
     s32 ground = 112;
 
-    cache = (u32 *)(gWorkSlot + 40 * 4);
+    cache = (u32 *)&((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_CANVAS];
     dst = (void *)cache[40 - 40];
-    work = (struct Mode6Work *)cache[39 - 40];
+    work = (struct BattleEffectWork *)cache[39 - 40];
     aux = (u8 *)cache[41 - 40];
     work->effect = efx;
     BattleFx_BeginCanvasLayer(0);
@@ -147,7 +124,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     *(u16 *)0x04000048 = 0x2137;
     BattleEffect_WipeCanvas(1, 0);
     *(u16 *)0x04000040 = 0xf0f0;
-    BattleFx_SelectLivingTargets((s32)work->effect);
+    BattleFx_SelectLivingTargets(work->effect);
     BattleFx_SpawnObjects(8, 0x17a, 1);
     gProjection.center_y = 240;
     WaitFrames(1);
@@ -169,16 +146,16 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     work->transfer_mode = 2;
     work->transfer_value = 75;
     spot[4] = 1;
-    BattleEffect_LoadWork(46, 7, 7, 3, 3);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
     blit[0] = (DrawRectangle)cache[46 - 40];
-    BattleEffect_LoadWork(47, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     blit[1] = (DrawRectangle)cache[47 - 40];
     *(u16 *)0x0400000c = 0x784;
 
     for (i = 0; i != 1024; i++) {
         PARTICLES[i].variant = -1;
     }
-    for (i = 0, q1 = work->sparks; i != 32; i++, q1++) {
+    for (i = 0, q1 = work->particles; i != 32; i++, q1++) {
         s32 a = (Random16() & 0x3fff) + 0x8000;
         s32 r = (Random16() & 127) + 255;
         q1->x = (Trig_Sin(a) * r) >> 2;
@@ -283,13 +260,13 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         }
         if (frame == 152) {
             Runtime_SetIrqHandler(2, 96, (s32)Graphics_SetBg2AffineScaleHalf);
-            work->unknown_77b4 = 24;
-            work->unknown_77b8 = 0;
+            work->fade_frames = 24;
+            work->fade_step = 0;
         }
 
         t = frame - 152;
         if (t >= 0 && t < 88) {
-            for (i = 0, q2 = work->sparks; i != 32; i++, q2++) {
+            for (i = 0, q2 = work->particles; i != 32; i++, q2++) {
                 if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
                     s32 fx = HI(q2->x) + 112;
                     s32 fy = HI(q2->y) + 62;
@@ -304,7 +281,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
 
         if (frame == 222) {
             for (i = 0; i != 64; i++) {
-                q3 = &work->sparks[i];
+                q3 = &work->particles[i];
                 q3->x = (Random16() & 15) - 8;
                 q3->y = (Random16() & 15) - 8;
                 if (q3->x < 0) {
@@ -331,12 +308,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                 s32 r = 1;
                 if (frame >= i / 2 + 222) {
                     blit[0](dst, work->sheet + cells[r - 1] + 0x4e20,
-                        work->sparks[i].x - r, work->sparks[i].y - r, r * 2, r * 2);
-                    work->sparks[i].x += work->sparks[i].velocity_x;
-                    work->sparks[i].y += work->sparks[i].velocity_y;
-                    if (work->sparks[i].y < 0) {
-                        work->sparks[i].y = work->sparks[i].velocity_y;
-                        work->sparks[i].x = work->sparks[i].z;
+                        work->particles[i].x - r, work->particles[i].y - r, r * 2, r * 2);
+                    work->particles[i].x += work->particles[i].velocity_x;
+                    work->particles[i].y += work->particles[i].velocity_y;
+                    if (work->particles[i].y < 0) {
+                        work->particles[i].y = work->particles[i].velocity_y;
+                        work->particles[i].x = work->particles[i].z;
                     }
                 }
             }
@@ -454,13 +431,13 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         PARTICLES[i].variant = 0;
     }
     for (i = 0; i != 16; i++) {
-        work->sparks[i].x = (Random16() & 31) + 32;
-        work->sparks[i].y = 0;
-        work->sparks[i].variant = 0;
+        work->particles[i].x = (Random16() & 31) + 32;
+        work->particles[i].y = 0;
+        work->particles[i].variant = 0;
     }
     for (i = 0; i != work->effect->count; i++) {
         EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], (struct EffectPosition *)seat);
-        work->sparks[i].x = seat[0] / 2;
+        work->particles[i].x = seat[0] / 2;
     }
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work, 1, 1);
     Audio_PlayCue(0x121);
@@ -473,7 +450,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             BattleEventRuntime_BeginPhaseFar(134);
         }
         for (i = 0; i != 5; i++) {
-            q4 = &work->sparks[i];
+            q4 = &work->particles[i];
             if (frame == i * 16 + 7) {
                 Audio_PlayCue(154);
             }
@@ -491,7 +468,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     burst = 0;
                     bx = q4->x;
                     if (q4->variant <= 7) {
-                        work->shake = 4;
+                        work->shake_frames = 4;
                     }
                     for (j = 0; j != 1024; j++) {
                         if (PARTICLES[j].variant == 0) {
@@ -544,7 +521,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         ResourceObject_ReleaseFar(work->objects[i]);
     }
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

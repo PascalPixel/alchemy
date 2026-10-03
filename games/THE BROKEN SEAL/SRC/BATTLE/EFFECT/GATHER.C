@@ -1,3 +1,6 @@
+#include "CANVAS.H"
+#include "MOTION_OBJECT.H"
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
@@ -16,11 +19,8 @@
 extern void *gWorkSlot[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void **GetBattleObjectSlotFar(s32 member_id);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Audio_PlayCue(s32 cue);
@@ -74,7 +74,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         s32 *object;
         s32 height;
 
-        object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+        object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
         height = Battle_GetObjectTableValueFar(work->effect->actors[member]) / 2;
         for (i = 0; i != MOTES_PER_MEMBER; i++) {
             struct EffectStep *mote =
@@ -101,7 +101,7 @@ void BattleFx_RunGatheringMotes(struct BattleEffectArgument *effect)
         s32 *target;
         s32 height;
 
-        target = *GetBattleObjectSlotFar(work->effect->actor);
+        target = GetBattleObjectSlotFar(work->effect->actor)->object;
         height = Battle_GetObjectTableValueFar(work->effect->actor) / 2;
         if (frame == 64)
             BattleEventRuntime_BeginPhaseFar(133);

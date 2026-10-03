@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 #include "SYSTEM.H"
@@ -6,7 +7,6 @@
 s32 __divsi3(s32, s32);
 s32 __modsi3(s32, s32);
 void Shop_CopyGlyphs(s32 digit, u8 *buf, s32 pos);
-s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
 
 /* Builds a sprite showing a price of up to five digits, least significant
    digit first, over the blank price tiles. */

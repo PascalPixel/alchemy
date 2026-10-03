@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* NONMATCHING: shared callee return types audited on 2026-09-26.
  * 1020 of 1056 bytes, 515 differing halfwords, 314 aligned edits.
  * Canonical declarations are retained; the remaining source model is not exact.
@@ -100,8 +101,6 @@ extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 extern u8 Data_000000c8[];
 
-void Runtime_BumpFree(void *block);
-s16 *Runtime_BumpAllocateAlternatePool(s32 bytes);
 void Runtime_SetMainState19(void);
 struct BattleUnit *Owner_GetStateFar(s32 owner);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *first,

@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
@@ -143,11 +145,6 @@ struct GaugeWork {
 extern u16 Korosseo_GaugePalette[];
 extern u8 Korosseo_GaugeGraphics[];
 
-void Runtime_BumpFree(u8 *block);
-void Resource_DecodeType01(u8 *source, u8 *destination);
-void VramBlock_LoadCached(s32 block, s32 size, u8 *source);
-s32 Resource_ActivateEntry(u32 block);
-void Runtime_PushSlotEntry(struct GaugeSprite *sprite, s32 priority);
 
 /* Draws the race gauge each frame: it slides in while flag 0x106 is clear
  * and out once it is set, loading its palette and tiles as it first shows.

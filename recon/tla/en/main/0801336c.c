@@ -1,15 +1,14 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /*
  * Draft: Resource_LoadCode does not yet match; 2 halfwords differ from ☀️'s C, first at +0x52 (data).
  * Links as recon/tla/raw/0801336c.s.
  */
 #include "DMA.H"
 
-u32 Resource_GetTableEntry(u32 index);
 
 extern const u8 Func_08002d5c[];
 
-u32 Resource_GetTableEntry(u32 index);
-s32 Resource_DecodeType01(const void *source, void *destination);
 
 /* The bl-pair fixer (PATCH_THUMB_BRANCH.S) is ARM code that runs from a heap
    copy of itself; the copy length is a link-time symbol. */

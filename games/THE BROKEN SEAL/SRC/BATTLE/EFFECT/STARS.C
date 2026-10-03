@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "MOTION_OBJECT.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TRANSFORM.H"
@@ -11,21 +15,6 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-struct BattleObject {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unknown_14[0x14];
-    s32 unknown_28;
-    u8 unknown_2c[4];
-    s32 unknown_30;
-    s32 unknown_34;
-    u8 unknown_38[0x10];
-    s32 unknown_48;
-    u8 unknown_4c[0xe];
-    u8 unknown_5a;
-};
 
 struct Vector3 {
     s32 x;
@@ -33,7 +22,6 @@ struct Vector3 {
     s32 z;
 };
 
-extern u8 gWorkSlot[];
 extern u16 ParticleStreams_CellOffsets[];
 /* A ring's outer and inner point, by vertex parity. */
 extern struct Vector3 RingBolts_Points[];
@@ -41,9 +29,6 @@ extern struct Vector3 RingBolts_Points[];
 extern u8 SpinningStars_Radii[];
 extern u8 gMapCellBuffer[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
-u32 Resource_DecodeType01(const void *source, void *destination);
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase);
 void BattleEventRuntime_BeginPhaseFar(s32 value);
 void Render_ResetTransformState(void);
@@ -57,12 +42,10 @@ void AudioCommand_PlayFar(s32 value);
 void Camera_ApplyShake(s32 random_mask, s32 shake_range);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 BattleFx_EndCanvasLayer(void);
-struct BattleObject **GetBattleObjectSlotFar(s32 id);
-void Object_SetMode(struct BattleObject *object, s32 mode);
-void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *object, s32 value);
-void Object_ResetMotion(struct BattleObject *object);
-void Object_SetMoveTargetFar(struct BattleObject *object, s32 x, s32 y, s32 z);
+void Object_SetMode(struct MotionObject *object, s32 mode);
+void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *object, s32 value);
+void Object_ResetMotion(struct MotionObject *object);
+void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
 
 /*
  * Three rings leave the acting unit twelve frames apart and fly to the first
@@ -86,9 +69,9 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     s32 i;
     u8 *graphics;
     struct BattleCamera *camera;
-    struct BattleObject *caster;
-    struct BattleObject *source;
-    struct BattleObject *target;
+    struct MotionObject *caster;
+    struct MotionObject *source;
+    struct MotionObject *target;
     struct EffectStep *point;
     struct EffectStep *step;
     s32 start;
@@ -98,27 +81,27 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     s32 k;
     struct EffectStep *trails;
 
-    heap_cache = (void **)(gWorkSlot + 39 * 4);
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
-    caster = *GetBattleObjectSlotFar(effect->actor);
+    camera = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
+    caster = GetBattleObjectSlotFar(effect->actor)->object;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
     Object_SetMode(caster, 2);
     ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     draw[0] = (DrawRectangle)heap_cache[7];
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    source = *GetBattleObjectSlotFar(work->effect->actor);
-    target = *GetBattleObjectSlotFar(work->effect->actors[0]);
+    source = GetBattleObjectSlotFar(work->effect->actor)->object;
+    target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0, point = work->particles; i != 3; i++) {
         point->x = source->x;
         point->y = source->y + 0x280000;
@@ -136,7 +119,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     trails = (struct EffectStep *)gMapCellBuffer;
     for (frame = 0; frame != 60; frame++) {
         if (frame <= 47) {
-            struct BattleCamera *view = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
+            struct BattleCamera *view = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
             s32 speed;
 
             if (frame <= 39)
@@ -201,11 +184,11 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
                 step->y += step->velocity_y;
                 step->z += step->velocity_z;
                 if (frame == start + i + 10) {
-                    target->unknown_34 = 0x20000;
-                    target->unknown_30 = 0x80000;
-                    target->unknown_28 = 0x50000;
-                    target->unknown_48 = 0xab85;
-                    target->unknown_5a = 0;
+                    target->acceleration = 0x20000;
+                    target->speed_limit = 0x80000;
+                    target->velocity_y = 0x50000;
+                    target->vertical_motion_strength = 0xab85;
+                    target->auto_face_motion = 0;
                     Object_ResetMotion(target);
                     if (target->x < 0)
                         Object_SetMoveTargetFar(target, target->x - 0x280000, 0, target->z);
@@ -228,8 +211,8 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     }
 
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
 
@@ -250,8 +233,8 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     s32 i;
     u8 *graphics;
     struct BattleCamera *camera;
-    struct BattleObject *source;
-    struct BattleObject *target;
+    struct MotionObject *source;
+    struct MotionObject *target;
     struct EffectStep *point;
     struct EffectStep *step;
     struct EffectPosition pos;
@@ -260,24 +243,24 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     s32 k;
     struct EffectStep *trails;
 
-    heap_cache = (void **)(gWorkSlot + 39 * 4);
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
     graphics = heap_cache[2];
-    camera = *(struct BattleCamera **)(gWorkSlot + 12 * 4);
+    camera = (struct BattleCamera *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_CAMERA];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     work->transfer_mode = 2;
     work->transfer_value = 50;
     draw[0] = (DrawRectangle)heap_cache[7];
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
-    source = *GetBattleObjectSlotFar(work->effect->actor);
-    target = *GetBattleObjectSlotFar(work->effect->actors[0]);
+    source = GetBattleObjectSlotFar(work->effect->actor)->object;
+    target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0, point = work->particles; i != 8; i++) {
         s32 delay = i * 8;
 
@@ -352,7 +335,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     }
 
     Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

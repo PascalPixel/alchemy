@@ -1,3 +1,5 @@
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "MAP_SCROLL.H"
 #include "BATTLE_PRESENTATION.H"
 #include "BATTLE_WORK.H"
@@ -21,7 +23,6 @@ void Runtime_ApplyValueToWork7818(void);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
 void Func_080b5028(s32, s32, s32, s32);
 void Palette_StepFadeTransfer(void);
-extern u8 gWorkSlot[];
 
 
 typedef s32 (*ClearWordsFn)(void *destination, s32 size);
@@ -32,14 +33,10 @@ static __inline__ void ClearWords(ClearWordsFn clear, void *destination, s32 siz
     clear(destination, size);
 }
 
-void BattleFx_BeginCanvasLayer(s32 bg_control);
 
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 void Func_080b5048(u16, s32);
-
-
-
 
 void QueueIoWriteDelay2(u32 first, u32 second);
 
@@ -72,9 +69,9 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
      * through an explicit u16 pointer; the queue and IME pointers are held for
      * the whole function as the ROM keeps them. */
 
-    void **cache = (void **)(gWorkSlot + 39 * 4);
+    void **cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     struct BattleEffectWork *work = cache[0];
-    struct BattleSession *battle = *(struct BattleSession **)(gWorkSlot + 9 * 4);
+    struct BattleSession *battle = (struct BattleSession *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE];
     void *canvas = cache[1];
     struct BattleBackgroundView *display = cache[5];
     volatile u16 *ime;
@@ -176,9 +173,9 @@ void BattleFx_OpenCanvasLayer(s32 bg_control)
      * through an explicit u16 pointer; the queue and IME pointers are held for
      * the whole function as the ROM keeps them. */
 
-    void **cache = (void **)(gWorkSlot + 39 * 4);
+    void **cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     struct BattleEffectWork *work = cache[0];
-    struct BattleSession *battle = *(struct BattleSession **)(gWorkSlot + 9 * 4);
+    struct BattleSession *battle = (struct BattleSession *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE];
     void *canvas = cache[1];
     struct BattleBackgroundView *display = cache[5];
     volatile u16 *ime;
@@ -313,8 +310,8 @@ void BattleFx_EndCanvasLayer(void)
      * before it. */
 
     struct BgScroll *scroll;
-    struct BattleEffectWork *work = *(struct BattleEffectWork **)(gWorkSlot + 39 * 4);
-    struct BattleSession *battle = *(struct BattleSession **)(gWorkSlot + 9 * 4);
+    struct BattleEffectWork *work = (struct BattleEffectWork *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
+    struct BattleSession *battle = (struct BattleSession *)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE];
     s32 i;
 
     Audio_PlayCue(0x121);

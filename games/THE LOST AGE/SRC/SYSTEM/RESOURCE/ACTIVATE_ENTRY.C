@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 
 struct ResourceTableEntry {
@@ -7,7 +8,6 @@ struct ResourceTableEntry {
 
 extern struct ResourceTableEntry ResourceTableEntries[];
 
-s32 Resource_ClearSlotReferences(s32 resource_id);
 
 /* Marks one of the 96 resource entries in use, releasing its slot
    references first when it held a load state above 16. */

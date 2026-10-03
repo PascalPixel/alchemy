@@ -1,3 +1,10 @@
+/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
+ * and canonical resource/allocator contracts. Earlier measurements are
+ * prior checkpoints; fresh complete-object comparison is pending. */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -56,17 +63,13 @@ struct SelectionEntry {
     s32 kind;
 };
 
-struct SelectionAffine {
-    u16 scale_x, scale_y, angle, unused;
-};
-
 struct SelectionWork {
     u8 glyphs[256];
     s32 state;
     struct SelectionEntry entries[6];
     struct UiWindowWork *window;
     s32 count;
-    struct SelectionAffine affine;
+    struct AffineTransform affine;
     s32 matrix, selection, previous;
     s32 kinds[6];
 };
@@ -97,9 +100,6 @@ extern u16 Data_080366f8[];
 extern volatile u16 RegIme;
 extern u8 Value_0000001f[];
 
-extern s32 Resource_LoadIntoFreeSlot(s32 size);
-extern void *Runtime_BumpAllocateAlternatePool(s32 size);
-extern void Runtime_BumpFree(void *work);
 extern struct UiWindowWork *UiWindow_Create(s32 x, s32 y, s32 width,
                                            s32 height, s32 style);
 extern void UiWork_Finalize(struct UiWindowWork *work, s32 release);
@@ -109,9 +109,6 @@ extern void UiText_DrawCharacterAtOffset(s32 kind, struct UiWindowWork *work,
                                          s32 x, s32 y);
 extern struct UiWindowWork *UiText_ShowMessageAndWaitComplete(s32 message,
                                                            s32 x, s32 y);
-extern s32 AffineMatrix_BuildForEffect(struct SelectionAffine *effect);
-extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
-extern void Resource_ResetEntry(s32 slot);
 extern void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
 extern void Scheduler_RemoveCallback(void (*callback)(void));
 extern void Runtime_SetIrqHandler(u32 irq, s32 line, void (*handler)(void));

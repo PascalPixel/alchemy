@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -14,12 +17,7 @@
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
 
-extern u8 gBattleFxWork[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-void BattleFx_FetchRectangleBlitters(s32 alternate, DrawRectangle *output);
-void BattleFx_EndCanvasLayer(void);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void ObjectGroup_UpdateMembers(s32 actor, s32 object_mode, s32 group_mode,
@@ -58,7 +56,7 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     s32 j;
     s32 angle;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -66,8 +64,8 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     *(volatile u16 *)0x04000052 = 0x1010;
-    BattleEffect_LoadWork(46, 7, 7, 11, 2);
-    BattleEffect_LoadWork(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 11, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
     draw[0] = heap_cache[7];
     draw[1] = heap_cache[8];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -143,8 +141,8 @@ void BattleFx_RunVenusDjinnColumns(struct BattleEffectArgument *effect)
         frame++;
     } while (frame != 96);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
 
@@ -174,7 +172,7 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
     s32 angle_mask;
     s32 speed_mask;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -301,14 +299,10 @@ void BattleFx_RunMarsDjinnPuffs(struct BattleEffectArgument *effect)
         frame++;
     } while (frame != 112);
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }
-
-extern u8 gBattleFxWork[];
-
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
@@ -361,16 +355,13 @@ extern u8 ParticleReveal_CellWidths[];
 extern u8 ParticleReveal_CellHeights[];
 extern u16 ParticleReveal_CellSourceOffsets[];
 
-void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 void EffectPosition_ApplyAlternateStepAndYOffset(s16 a, s32 *out_pair);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunParticleReveal(void *object)
 {
@@ -387,7 +378,7 @@ void BattleFx_RunParticleReveal(void *object)
     s32 frame;
     s32 clamp;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -509,9 +500,7 @@ void BattleFx_RunParticleReveal(void *object)
     BattleFx_EndCanvasLayer();
 }
 
-extern DrawRectangle gWorkSlot[];
 void BattleFx_StepPaletteToResource(s32 resource_id);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
 
@@ -545,20 +534,20 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     s32 screen_y;
     s32 j;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)heap_cache - 108);
+    camera = gCameraWork;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screen_x, &screen_y);
     *(volatile u16 *)0x04000052 = 0x1010;
     if (work->effect->side == 1)
-        BattleEffect_LoadWork(46, 7, 7, 7, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 2);
     else
-        BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = gWorkSlot[46];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
     Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, (u8 *)work + 0x65c0, 1, 1);
     work->transfer_mode = 2;
@@ -590,12 +579,12 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
             if (frame > 16)
                 y = y - frame * 2 + 32;
             if (work->effect->side == 1)
-                BattleEffect_LoadWork(47, 7, 7, 7, 3);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 3);
             else
-                BattleEffect_LoadWork(47, 7, 7, 3, 3);
+                BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 3);
             if (frame <= 3)
-                gWorkSlot[47](canvas, (u8 *)work + 0x65c0, x, y, 20, 40);
-            Runtime_ReleaseHeapBlock(47);
+                ((BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE])(canvas, (u8 *)work + 0x65c0, x, y, 20, 40);
+            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             draw[0](canvas, (u8 *)work + 0x65c0, x, y, 20, 40);
         }
         if ((frame & 1) == 0) {
@@ -634,8 +623,8 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
                         s32 chip_x;
                         s32 chip_y;
 
-                        BattleEffect_LoadWork(47, 7, 7, chip->velocity_y, 2);
-                        draw[1] = gWorkSlot[47];
+                        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, chip->velocity_y, 2);
+                        draw[1] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
                         if (chip->velocity_y & 4)
                             chip_x = x - RockToss_ChipWidths[chip->velocity_x]
                                 - RockToss_ChipX[chip->velocity_x] + 24;
@@ -649,7 +638,7 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
                         draw[1](canvas, (u8 *)work + RockToss_ChipCells[chip->velocity_x],
                             chip_x, chip_y, RockToss_ChipWidths[chip->velocity_x],
                             RockToss_ChipHeights[chip->velocity_x]);
-                        Runtime_ReleaseHeapBlock(47);
+                        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
                     }
                     rock->x += rock->velocity_x;
                     rock->y += rock->velocity_y;
@@ -680,6 +669,6 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

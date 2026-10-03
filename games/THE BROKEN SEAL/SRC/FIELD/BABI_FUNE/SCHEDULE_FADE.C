@@ -1,3 +1,5 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 #include "CALL.H"
@@ -5,8 +7,6 @@
 
 extern s16 BabiFune_FadeSlot;
 extern s16 BabiFune_FadeStep;
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadCached();
 
 struct Half {
     u16 v;
@@ -22,7 +22,6 @@ struct FadeSprite {
 
 extern struct FadeSprite BabiFune_FadeSprites[24];
 
-void Runtime_PushSlotEntry(struct FadeSprite *entry, s32 priority);
 
 /* Each frame of the Babi Fune fade: count the step down and push three
    columns of eight wide sprites, the first sliding in from the left edge

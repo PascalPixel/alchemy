@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "RENDER_INPUT.H"
@@ -45,8 +46,6 @@ extern u8 Value_00000001;
 extern u8 Value_00000002;
 extern u8 Value_00000003;
 
-void *Runtime_AllocateHeapBlock(s32 pool, s32 size);
-void Runtime_ReleaseHeapBlock(s32 pool);
 u32 Runtime_GetBuildStampTimeFar(void);
 s32 Modulo(s32 value, s32 divisor);
 void WaitFrames(s32 frames);

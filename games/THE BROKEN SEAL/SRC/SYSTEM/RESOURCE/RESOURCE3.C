@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "ANIMSPR.H"
@@ -16,10 +17,7 @@ extern u8 Tile_CopyStridedCodeSize[];
 
 /* The 16 by 8 oval, in colour 1, that objects draw beneath them. */
 extern const u8 Object_ShadowTiles[];
-void *Runtime_AllocateBlock(s32 slot, s32 size);
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void PaletteDma_LoadBlock(void);
-s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 extern struct AnimationEntry *gAnimationObjects[];
 s32 Animation_LookupValueByKey(s32 key);
@@ -39,7 +37,6 @@ extern struct ResourceSlotNumber ResourceSlot_NumberTable[];
 /* Five tables that map a script's bytes below 0xe0 for a text variant. */
 extern u8 ResourceSlot_ConversionTables[][256];
 
-u32 Resource_DecodeType01(const void *source, void *destination);
 
 /*
  * Load a number's script into a slot's buffer: find its resource, decode

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* 2026-10-01: alias-free plain-C attempt at RenderResource_LoadTableEntry.
    With the approved agscc flags, every case having the same table address
    folds the whole switch. The complete function is 24 bytes rather than
@@ -7,7 +8,6 @@
 #include "TYPES.H"
 
 extern u8 RenderResource_PairSourceTable;
-void VramBlock_LoadCached(void *, s32, void *);
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
 {

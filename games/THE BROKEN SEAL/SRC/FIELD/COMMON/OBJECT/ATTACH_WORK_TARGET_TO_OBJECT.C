@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -11,7 +12,6 @@ void Map_ApplyWorkOriginAndSpanFar(void);
 
 void WaitFrames(s32);
 
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 void Object_AttachWorkTargetToObject(s32 id, s32 flag)
 {

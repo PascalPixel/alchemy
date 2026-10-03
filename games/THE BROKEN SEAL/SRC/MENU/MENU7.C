@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "RESMENU.H"
 #include "TYPES.H"
 #include "SOUND_IDS.H"
@@ -19,10 +20,7 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs)
     return rhs - lhs;
 }
 
-u32 Runtime_BumpAllocate(s32 size);
 u32 Resource_DecodeByteLz(const void *, void *);
-void VramBlock_LoadCached(s32, s32, void *);
-void Runtime_BumpFree(void *);
 
 
 s32 Menu_SelectResource(s32 start, s32 goal)

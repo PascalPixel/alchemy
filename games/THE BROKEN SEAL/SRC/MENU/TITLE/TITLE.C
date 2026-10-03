@@ -1,3 +1,4 @@
+#include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 /* The title overlay: its scene tables. */
@@ -33,12 +34,8 @@ s32 PaletteFar_Entry00(s32 mode);
 void PaletteFar_Entry20(s32 mode);
 
 void Sys_Free(void *buffer);
-s32 Resource_FindFreeEntry(void);
-s32 Resource_DecodeType01(const void *source, void *destination);
-s32 VramBlock_LoadCached(s32 block, s32 size, const void *data);
 #define DMA3 ((volatile u32 *)0x040000d4)
 
-void Runtime_PushSlotEntry(void *entry, s32 slot);
 
 static __inline__ void RestoreInterrupts(u32 saved)
 {

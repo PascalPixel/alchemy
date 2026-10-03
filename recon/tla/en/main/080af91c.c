@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /*
  * Draft: Owner_LevelUp does not yet match; ported from its ☀️ twin. Two
  * scheduling differences remain: mov r8,r0 (band*2) and mov r3,r9 are
@@ -56,7 +57,6 @@ struct LevelUpWork {
     u8 unused_0c[0x20];
 };
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *buffer);
 struct OwnerLevelState *Owner_GetState(s32 owner);
 u32 Owner_GetLevelThreshold(s32 owner, s32 level);

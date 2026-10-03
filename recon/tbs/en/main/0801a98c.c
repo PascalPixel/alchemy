@@ -1,3 +1,9 @@
+/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
+ * and canonical resource/allocator contracts. Earlier measurements are
+ * prior checkpoints; fresh complete-object comparison is pending. */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 #include "SELECT.H"
 /* 2026-10-03 owner cleanup: SELECT.H now supplies the real doubly-linked
  * node and sprite record. This remains a draft: its object is 1372 bytes,
@@ -70,9 +76,6 @@ extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *
 extern s32 GameFlag_IsSet(s32 flag);
 extern void MenuSelection_DrawSideMarker(u8 *state, s32 index);
 extern struct SelectionNode *NodeChain_GetNodeAtCount(u8 *state);
-extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
-extern s32 AffineMatrix_BuildForEffect(u16 *efx);
-extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 
 void MenuSelection_DrawFrame(void)
 {
@@ -168,7 +171,7 @@ void MenuSelection_DrawFrame(void)
             *(u16 *)(state + 0x340) = transfer->scale;
             *(u16 *)(state + 0x342) = transfer->scale;
             *(u16 *)(state + 0x344) = 0;
-            e->param = AffineMatrix_BuildForEffect((u16 *)(state + 0x340));
+            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)(state + 0x340));
             e->affine = 3;
             e->x = e->x + 0xfff0;
             e->y = e->y + 0xf0;
@@ -200,7 +203,7 @@ void MenuSelection_DrawFrame(void)
             *(u16 *)(state + 0x340) = node->scale;
             *(u16 *)(state + 0x342) = node->scale;
             *(u16 *)(state + 0x344) = 0;
-            e->param = AffineMatrix_BuildForEffect((u16 *)(state + 0x340));
+            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)(state + 0x340));
             e->affine = 3;
             e->x = e->x + 0xfff8;
             e->y = e->y + 0xf8;

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "EDITION.H"
 #include "TBS_EDITION.H"
@@ -18,7 +19,6 @@ extern u8 Clear_ActorTable[];
 extern u8 Clear_EffectTable[];
 
 extern u16 gBgScroll[];
-void Resource_DecodeType01(const u8 *source, void *destination);
 
 static __inline__ void DecodeBackground(const u8 *res)
 {

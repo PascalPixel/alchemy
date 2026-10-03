@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Scene tables, the hostage scene and small callbacks. */
 #include "FUNKA.H"
 #include "CALL.H"
@@ -123,7 +124,6 @@ struct WorldMapVramBlock {
 };
 
 extern struct WorldMapVramBlock gVramBlockCache[];
-void Resource_ResetEntry(s32 block);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */

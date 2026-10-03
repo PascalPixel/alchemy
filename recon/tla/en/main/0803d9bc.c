@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* Near miss: score 120. ⚓️ borrows heap block 0x44 and its two glyph tables
    take names in its listings. It loads the Psynergy icon table's address
    before setting the 2 x 2 size; this draft sets the size first. */
@@ -19,10 +20,8 @@ typedef struct {
     s32 f604;
 } FontTransfer;
 
-extern FontTransfer *Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 extern void UiGlyph_DecodeWithHeapRoutines(FontTransfer *work, s32 slot);
 
-extern s32 VramBlock_LoadCached(s32 index, s32 size, u8 *destination);
 
 extern s32 UiIcon_BaseGlyphPointers[];
 extern s32 UiIcon_PsynergyIconPointers[];

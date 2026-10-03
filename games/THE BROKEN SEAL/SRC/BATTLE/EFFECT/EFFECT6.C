@@ -1,3 +1,6 @@
+#include "CANVAS.H"
+#include "MOTION_OBJECT.H"
+#include "RUNTIME_MEM.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -19,10 +22,6 @@ extern u8 *gBattleWork;
  * each blit call site, which a const spelling would let float away. */
 extern u8 CounterReveal_PanelX[];
 extern u8 CounterReveal_PanelY[];
-s32 BattleFx_BeginTiledCanvas(s32 mode);
-u32 Resource_DecodeType01(const void *source, void *destination);
-s32 BattleFx_EndCanvasLayer(void);
-void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyStepAndYOffset(s32 member_id, void *out);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Audio_PlayCue(s32 cue);
@@ -250,7 +249,7 @@ void BattleFx_RunCounterReveal(void *object)
             }
         }
         if (frame == 88) {
-            member_object = *GetBattleObjectSlotFar((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))));
+            member_object = GetBattleObjectSlotFar((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))->object;
             (*(s32 *)((u8 *)(member_object) + (0x28))) = 0x10000;
             (*(s32 *)((u8 *)(member_object) + (0x34))) = 0x20000;
             (*(s32 *)((u8 *)(member_object) + (0x30))) = 0x20000;
@@ -265,7 +264,7 @@ void BattleFx_RunCounterReveal(void *object)
                 5, -1, 0);
         }
         if (frame == 120) {
-            (*(s32 *)((u8 *)(*GetBattleObjectSlotFar((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))) + (0x48))) = 0xAB85;
+            (*(s32 *)((u8 *)(GetBattleObjectSlotFar((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))->object) + (0x48))) = 0xAB85;
         }
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
         WaitFrames(1);

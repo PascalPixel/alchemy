@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
@@ -7,9 +8,6 @@ extern const u8 Func_0800a37c[];
 
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
-void *Runtime_BumpAllocateAlternatePool(s32 size);
-void *Runtime_BumpAllocate(u32 size);
-void Runtime_BumpFree(void *allocation);
 
 extern u8 Tile_ConvertMapCodeSize[];
 

@@ -51,8 +51,8 @@ loop:
             UiWindow_EraseBorderRect((s16)work->previous_x, (s16)work->previous_y,
                                      (s16)work->previous_width,
                                      (s16)work->previous_height);
-            work->unknown_00 = 0;
-            work->unknown_04 = 0;
+            work->output.head = NULL;
+            work->output.tail_link = NULL;
             work->width = 0;
             work->height = 0;
             work->x = 0;
@@ -144,23 +144,23 @@ u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count)
 }
 
 /* Draws a window frame into the text canvas: corners, edges and a blank
-   interior. The alternate frame style (byte RENDER_MODE_OFS) uses the flipped corner
+   interior. The alternate frame style uses the flipped corner
    tiles of the second border set. */
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
 {
-    u8 *base = gWindowWork[0];
-    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
+    struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
+    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
     u32 row;
 
     if (width <= 1 || height <= 1 || width > 30 || height > 30)
         return;
     UiWindow_ClearTileAttributesInRect(x, y, width, height);
-    if (((struct UiRenderWork *)base)->mode != 0)
+    if (canvas->mode != 0)
         *cursor++ = 0xf01c;
     else
         *cursor++ = 0xf010;
     cursor = Memory_FillHalfwordsDma(cursor, 0xf011f011, width - 2);
-    if (((struct UiRenderWork *)base)->mode != 0)
+    if (canvas->mode != 0)
         *cursor++ = 0xf41c;
     else
         *cursor++ = 0xf012;
@@ -172,16 +172,16 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
         *cursor++ = 0xf017;
         cursor += 32 - width;
     }
-    if (((struct UiRenderWork *)base)->mode != 0)
+    if (canvas->mode != 0)
         *cursor++ = 0xf81c;
     else
         *cursor++ = 0xf013;
     cursor = Memory_FillHalfwordsDma(cursor, 0xf014f014, width - 2);
-    if (((struct UiRenderWork *)base)->mode != 0)
+    if (canvas->mode != 0)
         *cursor = 0xfc1c;
     else
         *cursor = 0xf015;
-    ((struct UiRenderWork *)base)->dirty = 1;
+    canvas->dirty = 1;
 }
 
 /* Fills a window's interior with the text canvas tiles, numbered down each
@@ -189,8 +189,8 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height)
    The full-width form covers the border columns too. */
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_width)
 {
-    u8 *base = gWindowWork[0];
-    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
+    struct UiRenderWork *canvas = (struct UiRenderWork *)gWindowWork[0];
+    u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
     u32 row;
     u32 col;
 
@@ -212,5 +212,5 @@ void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 full_w
             cursor += 32 - width;
         }
     }
-    ((struct UiRenderWork *)base)->dirty = 1;
+    canvas->dirty = 1;
 }

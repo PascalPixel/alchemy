@@ -26,7 +26,6 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
     return fill(dst, size, value);
 }
 
-s32 Runtime_AllocateHeapBlock(s32 slot, s32 size);
 extern struct ObjectSystemWork *gMenuCtrlWork;
 
 
@@ -38,7 +37,6 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 #define SAVED_TILE_BYTES 0x800
 #endif
 
-void Runtime_BumpFree(void *block);
 void UiWindow_DrawFrameFar(s32, s32, s32, s32);
 void UiWindow_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_InitializeWork(s32);

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
@@ -136,12 +138,9 @@ void Func_0813ba50(void);
 void Func_08179e6c(void);
 s32 Func_081963ec(s32, s32);
 void Scheduler_AddOrUpdateCallback(void *, s32);
-void Resource_ResetEntry(s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
 void Func_08118040(s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
-u32 Resource_GetTableEntry(u32);
-void Resource_DecodeType01(const void *, void *);
 Sprite *Func_0815b290(s32, s32, u32, s32);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
 void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
@@ -155,7 +154,6 @@ void Func_081c0010(s32);
 void Func_0815f0a0(s32);
 void Func_08138086(Particle *, s32, s32);
 void Func_08138058(Particle *, s32, s32);
-void *Runtime_BumpAllocateAlternatePool(s32);
 s32 *Func_081969f8(s32);
 void Func_08014de4(void);
 void Func_08015160(s32, s32, s32);

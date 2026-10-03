@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "CANVAS.H"
 #include "RESOURCE.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
@@ -6,8 +10,6 @@
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-extern u8 gBattleFxWork[];
-extern u8 gWorkSlot[];
 
 /* The earth wall's three cells: where each starts in the decoded sheet, and
    its width and height in pixels. */
@@ -17,49 +19,28 @@ extern u8 EarthWall_CellHeights[];
 
 typedef s32 (*WordCopy)(void *, const void *, s32);
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
-u32 Resource_DecodeType01(const void *source, void *destination);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
 void AudioCommand_PlayFar(s32 cue);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Runtime_ReleaseHeapBlock(s32 kind);
 void EffectPosition_ApplyAlternateStepAndYOffset(
     s32 id, struct EffectPosition *position);
 
 void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 mode);
 
-void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output)
+void BattleFx_FetchRectangleBlitters(s32 alternate,
+    BattleEffectDrawRectangle *output)
 {
-    if (alternate == 0) {
-        u8 *state;
-        u32 value;
+    union HeapState *heap = (union HeapState *)gWorkSlot;
+    s32 flags = alternate == 0 ? GOUSEI_CLIP_X | GOUSEI_CLIP_Y :
+        GOUSEI_CLIP_X | GOUSEI_CLIP_Y | GOUSEI_FLIP_X;
 
-        BattleEffect_LoadWork(alternate = 46, 7, 7, 3, 2);
-        state = gWorkSlot;
-        value = *(u32 *)(state + 184);
-        alternate = 47;
-        output[0] = value;
-        BattleEffect_LoadWork(alternate, 7, 7, 3, 3);
-        output[1] = *(u32 *)(state += 188);
-    } else {
-        u8 *state;
-        u32 value;
-
-        BattleEffect_LoadWork(alternate = 46, 7, 7, 7, 2);
-        state = gWorkSlot;
-        value = *(u32 *)(state + 184);
-        alternate = 47;
-        output[0] = value;
-        BattleEffect_LoadWork(alternate, 7, 7, 7, 3);
-        output[1] = *(u32 *)(state += 188);
-    }
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, flags, GOUSEI_HIKAKU);
+    output[0] = (BattleEffectDrawRectangle)heap->slots[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, flags, GOUSEI_KASAN);
+    output[1] = (BattleEffectDrawRectangle)heap->slots[HEAP_SLOT_BLITTER_ALTERNATE];
 }
 
 void BattleFx_RunFortyEightFrameMode1(struct BattleEffectArgument *arg0)
@@ -105,7 +86,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
     s32 frame;
     s32 cell;
 
-    cursor = (void **)gBattleFxWork;
+    cursor = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     work = *cursor++;
     canvas = *cursor;
     work->effect = effect;
@@ -133,10 +114,10 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
         *(s32 *)0x04000028 = x << 8;
     }
 
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     state = gWorkSlot;
     draw_a = *(DrawRectangle *)(state + 184);
-    BattleEffect_LoadWork(47, 7, 7, 7, 2);
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
     work->transfer_mode = 2;
     /* FAKEMATCH: reading the second blitter through the slot pointer's own
        variable keeps it in that register between the two transfer stores;
@@ -145,7 +126,7 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
     state = *(u8 **)state;
     work->transfer_value = 50;
     draw_b = (DrawRectangle)state;
-    Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     if (mode == 2) {
         work->shake_frames = 0;
@@ -196,8 +177,8 @@ void BattleFx_RunFortyEightFrameEffect(struct BattleEffectArgument *effect, s32 
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

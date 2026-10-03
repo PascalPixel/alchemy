@@ -1,3 +1,6 @@
+#include "CANVAS.H"
+#include "MOTION_OBJECT.H"
+#include "RUNTIME_MEM.H"
 #include "BATTLE_PRESENTATION.H"
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -8,12 +11,9 @@
 #include "RESOURCE_IDS.H"
 
 extern void *gBattleFxWork[];
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void **GetBattleObjectSlotFar(s32 member_id);
 void SceneTransform_ApplyPosition(s32 *position);
 void Audio_PlayCue(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
@@ -78,7 +78,7 @@ void BattleFx_RunBouncingSheep(void *object)
         for (member = 0; member != work->effect->count; member++) {
             void *member_object;
 
-            member_object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+            member_object = GetBattleObjectSlotFar(work->effect->actors[member])->object;
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             record[0] = *(s32 *)((u8 *)member_object + 8);

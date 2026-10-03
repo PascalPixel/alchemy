@@ -1,3 +1,6 @@
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* The sandstorm's frame task. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -18,9 +21,7 @@ extern struct MenuSprite RamakanSabaku_SandWork[];
 extern u8 RamakanSabaku_SandTileBuffer[];
 extern u32 gFrameCount;
 
-void *Runtime_BumpAllocate(s32 size);
 void Sys_Free(void *block);
-void Resource_ActivateEntry(s32 slot);
 s32 Engine_VramLoad(s32 slot, s32 size, const void *data);
 
 /*

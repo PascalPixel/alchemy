@@ -1,3 +1,4 @@
+#include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "MENU_LIST.H"
@@ -31,7 +32,6 @@ void UiTextResource_NoOpCallback4(void)
 {
 }
 
-s32 VramBlock_LoadCached(s32, s32, const void *);
 extern const u8 Menu_CursorObjectTiles[];
 
 void UiTextResource_Initialize(struct MenuSprite *object, s32 *slot)

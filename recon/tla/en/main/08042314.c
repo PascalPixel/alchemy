@@ -4,7 +4,6 @@
 #include "RESOURCE.H"
 
 void *RenderOutput_AcquireFree(void);
-void Resource_ResetEntry(u32);
 s32 RenderOutput_AppendToList(void *, void *);
 
 struct TableEntry {

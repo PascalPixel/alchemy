@@ -1,3 +1,7 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "MOTION_OBJECT.H"
+#include "CANVAS.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -11,15 +15,10 @@
 #include "IO_REG.H"
 
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address. */
-extern void *gWorkSlot[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Camera_ApplyPhasedDelta(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-s32 BattleFx_EndCanvasLayer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void **GetBattleObjectSlotFar(s32 member_id);
 s32 Battle_GetObjectTableValueFar(s32 member_id);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
 void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
@@ -51,10 +50,10 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
     s32 top;
     struct EffectPosition screen;
     DrawRectangle draw[2];
-    s32 *source;
+    struct MotionObject *source;
     s32 i;
 
-    heap_cache = &gWorkSlot[39];
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -67,14 +66,14 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
         BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-    BattleEffect_LoadWork(46, 7, 7, 3, 3);
-    draw[0] = (DrawRectangle)gWorkSlot[46];
-    BattleEffect_LoadWork(47, 7, 7, 3, 2);
-    draw[1] = (DrawRectangle)gWorkSlot[47];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+    draw[0] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
+    draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
     REG_BLDALPHA = 0x1010;
 
-    source = *GetBattleObjectSlotFar(work->effect->actor);
-    top = source[3] + Battle_GetObjectTableValueFar(work->effect->actor);
+    source = GetBattleObjectSlotFar(work->effect->actor)->object;
+    top = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
     for (i = 0; i != 64; i++) {
         struct EffectStep *ember = &((struct EffectStep *)Ram_MapCellBuffer)[i];
         s32 angle;
@@ -85,9 +84,9 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
         ember->velocity_x = (Trig_Sin(angle) * speed) >> 6;
         ember->velocity_y = (s32)(((Random16() & 127) - 16) << 16) >> 6;
         ember->velocity_z = (Trig_Cos(angle) * speed) >> 6;
-        ember->x = source[2];
+        ember->x = source->x;
         ember->y = top;
-        ember->z = source[4];
+        ember->z = source->z;
         ember->variant = -1;
     }
 
@@ -131,16 +130,16 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
                 ember->z += ember->velocity_z;
             }
             if (frame > start + 48 && ember->variant == -1) {
-                s32 *target;
+                struct MotionObject *target;
                 s32 vx;
                 s32 vy;
                 s32 vz;
 
-                target = *GetBattleObjectSlotFar(
-                    work->effect->actors[i % work->effect->count]);
-                vx = ember->velocity_x += (target[2] - ember->x) >> 9;
-                vy = ember->velocity_y += (target[3] - ember->y) >> 9;
-                vz = ember->velocity_z += (target[4] - ember->z) >> 9;
+                target = GetBattleObjectSlotFar(
+                    work->effect->actors[i % work->effect->count])->object;
+                vx = ember->velocity_x += (target->x - ember->x) >> 9;
+                vy = ember->velocity_y += (target->y - ember->y) >> 9;
+                vz = ember->velocity_z += (target->z - ember->z) >> 9;
                 if (frame < start + 85) {
                     ember->velocity_x = vx * 60 / 64;
                     ember->velocity_y = vy * 60 / 64;
@@ -185,7 +184,7 @@ void BattleFx_RunHomingEmbers(struct BattleEffectArgument *effect)
 
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Scheduler_RemoveCallback((u32)Camera_ApplyPhasedDelta);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleFx_EndCanvasLayer();
 }

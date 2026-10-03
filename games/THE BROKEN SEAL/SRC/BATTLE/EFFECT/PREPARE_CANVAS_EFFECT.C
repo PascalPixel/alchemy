@@ -1,3 +1,6 @@
+#include "RUNTIME_MEM.H"
+#include "HEAP_STATE.H"
+#include "CANVAS.H"
 #include "TRANSFORM.H"
 #include "TYPES.H"
 #include "RESOURCE_IDS.H"
@@ -14,13 +17,7 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 
-extern u8 gBattleFxWork[];
-extern DrawRectangle gWorkSlot[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
-void BattleFx_BeginCanvasLayer(s32 mode);
-u32 Resource_DecodeType01(const void *source, void *destination);
-struct B5Context *GetBattleObjectSlotFar(s32 id);
 void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
@@ -65,7 +62,7 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     s32 i;
     s32 size;
 
-    heap_cache = (void **)gBattleFxWork;
+    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -103,14 +100,14 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
     Resource_DecodeType01(palette + 128, work);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     if (side == 1) {
-        BattleEffect_LoadWork(46, 7, 7, 7, 3);
-        BattleEffect_LoadWork(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 7, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 7, 2);
     } else {
-        BattleEffect_LoadWork(46, 7, 7, 3, 3);
-        BattleEffect_LoadWork(47, 7, 7, 3, 2);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 3);
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 3, 2);
     }
-    draw[0] = gWorkSlot[46];
-    draw[1] = gWorkSlot[47];
+    draw[0] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER];
+    draw[1] = (BattleEffectDrawRectangle)((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BLITTER_ALTERNATE];
     actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
     for (i = 0; i != 64; i++) {
@@ -271,8 +268,8 @@ void BattleFx_PrepareCanvasEffect(struct BattleEffectArgument *effect, s32 kind,
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(47);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
     Iwram_ClearWords((void *)0x06004000, size);
     Iwram_ClearWords(canvas, size);

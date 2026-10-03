@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 #include "GAME_STATE.H"
 #include "FIELD_SCENE.H"
@@ -31,7 +32,6 @@ void ObjectDispatch_InitFromTable4WithArgumentFar(struct DispatchObject *object,
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *sprite, s32 kind);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 Party_RemapCharacterIdByFlags(s32 id);
-void Resource_ResetEntry(s32 entry);
 s32 GameFlag_TestFar(s32 flag);
 void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object, s32 value);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);

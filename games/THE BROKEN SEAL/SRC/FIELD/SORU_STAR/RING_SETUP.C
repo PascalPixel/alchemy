@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* The elemental rings of Mt. Aleph, linked into both overlays that show
  * them (380 and its twin 381). Engine_* bind at each overlay's runtime
  * import veneer; the ring tables are each overlay's own. */
@@ -47,7 +48,6 @@ extern u8 Soru_RingDrift[][3];
 extern u8 Soru_RingSwing[][3];
 extern s8 Soru_RingDirection[][3];
 
-struct SoruRingList *Runtime_AllocateBlock(s32 slot, s32 size);
 u32 Engine_RandomNext(void);
 s32 Engine_MathSin(s32 angle);
 s32 Engine_MathCos(s32 angle);

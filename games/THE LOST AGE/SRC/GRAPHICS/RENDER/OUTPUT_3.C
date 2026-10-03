@@ -2,7 +2,7 @@
 
 s32 Resource_LoadByMode(s32 mode, s32 value);
 
-void *RenderOutput_CreateFromResource(
+struct RenderOutput *RenderOutput_CreateFromResource(
     s32 arg0,
     s32 arg1,
     struct RenderInput *arg2,

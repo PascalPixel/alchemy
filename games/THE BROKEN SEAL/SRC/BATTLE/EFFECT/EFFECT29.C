@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "ANIMSPR.H"
 #include "FIELDOBJ.H"
 #include "GLOBAL_CELLS.H"
@@ -19,7 +20,6 @@ struct State_080935b0 {
 };
 
 extern u8 Data_03001af4[];
-u8 *Runtime_AllocateBlock(s32 kind, s32 size);
 s32 BattleFx_StepRatioTransition(void);
 
 struct Work_080936a0 {
@@ -101,7 +101,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     s32 handle;
     s32 result;
 
-    handle = Runtime_AllocateBlock(27, 0xccc);
+    handle = (s32)Runtime_AllocateBlock(27, 0xccc);
     if (*(s16 *)(handle + 414) != 3)
         return;
     {

@@ -1,3 +1,5 @@
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* Draft, not exact: score 27233, 1016 differing instructions of 2045 (was
  * 32534 and 1127). One whole function (Lucky Dice, reached from
  * Runtime_BlankDisplayAndRun); the two bl into its own body are the
@@ -100,12 +102,9 @@ extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
 extern char MsgLuckyDiceHelp;
 
-void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void RuntimeDispatch_NoOpHook(s32 value);
 void Camera_ResetSceneDefaults(void);
 void Scheduler_ResetTaskTable(void);
-void *Resource_GetTableEntry(s32 id);
-u32 Resource_DecodeType01(const void *source, void *destination);
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 count);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *work, void *transfer);

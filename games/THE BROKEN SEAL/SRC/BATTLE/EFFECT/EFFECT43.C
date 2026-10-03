@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "GAME_STATE.H"
 #include "ANIMSPR.H"
 #include "TYPES.H"
@@ -27,9 +28,6 @@ struct ArcEffectObject {
 extern struct BattleFxScene *gEffectWork;
 extern const u8 BattleFx_ArcSparkTiles[];
 void WaitFrames(s32);
-s32 Resource_ResetEntry(s32);
-s32 VramBlock_LoadCached(u32, u32, const void *);
-s32 Resource_FindFreeEntry(void);
 void ObjectDispatch_SetSingleChildField26Far(struct ArcEffectObject *, s32);
 void Animation_ApplyChildValuesFar(struct ArcEffectObject *, s32);
 void UiText_DrawMessage(s32, s32);

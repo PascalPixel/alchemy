@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "RAMAKAN.H"
 
 extern u8 RamakanSabaku_SandEffectTiles[];
@@ -6,8 +7,6 @@ extern u16 RamakanSabaku_SandVramSlot;
 extern u16 RamakanSabaku_SandCounter;
 extern u16 RamakanSabaku_SandPhase;
 
-s32 Resource_DecodeType01();
-s32 Resource_FindFreeEntry();
 s32 Engine_VramLoad();
 s32 Engine_TaskAddCallback();
 void RamakanSabaku_RunSandstorm(void);

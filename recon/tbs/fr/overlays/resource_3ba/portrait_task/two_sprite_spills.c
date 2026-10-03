@@ -1,3 +1,10 @@
+/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
+ * and canonical resource/allocator contracts. Earlier measurements are
+ * prior checkpoints; fresh complete-object comparison is pending. */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 /* NONMATCHING: French Colosso spill allocation, 2026-10-01.
  * The two-sprite rendering branch has the correct complete 1312-byte extent,
  * but eleven instruction bytes exchange the flags and blend spill slots.
@@ -22,12 +29,6 @@
 
 extern s16 Korosseo_PortraitSlot;
 extern u8 Korosseo_PortraitPaletteOffsets[];
-u8 *Runtime_BumpAllocateAlternatePool(s32 size);
-void Runtime_BumpFree(u8 *block);
-s32 Resource_FindFreeEntry(void);
-s32 Resource_GetTableEntry(s32 id);
-void Resource_DecodeType01(s32 entry, u8 *destination);
-void VramBlock_LoadCached(s32 slot, s32 size, s32 source);
 
 static __inline__ void Dma_Wait(volatile u32 *dma)
 {
@@ -38,8 +39,6 @@ static __inline__ void Dma_Wait(volatile u32 *dma)
 struct Sprite { u32 words[3]; };
 
 struct SpriteTile { u16 pad, base; };
-
-struct SpriteTransform { unsigned x : 16; unsigned y : 16; unsigned angle : 16; unsigned pad : 16; };
 
 /* FAKEMATCH: a halfword zero aggregate keeps the interior literal pools. */
 struct Half { u16 value; };
@@ -53,10 +52,6 @@ extern s32 Korosseo_ModeTaskPosition;
 extern s16 *Korosseo_ModeTaskScript;
 extern u32 Korosseo_ModeTaskSprites[];
 extern s32 Engine_TaskRemoveCallback(void (*fn)(void));
-extern void Resource_ResetEntry(s32 slot);
-extern s32 AffineMatrix_BuildForEffect(struct SpriteTransform *work);
-extern void Runtime_PushSlotEntry(void *sprite, s32 priority);
-
 /* FAKEMATCH: transfer the exact queue read boundary and count-store alias.
  * Each publication owns its cursor; only the hardware pointers persist. */
 #define QueueRegister(address, value) \
@@ -84,7 +79,7 @@ void Korosseo_UpdateModeTask(void)
     s32 scale, blend, pos;
     s32 matrix, i, x, y, left;
     u32 flags;
-    struct SpriteTransform work;
+    struct AffineTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
 
@@ -168,8 +163,8 @@ render:
             Korosseo_ModeMoveDuration = zero.value;
     }
     work.angle = 0;
-    work.x = scale;
-    work.y = scale;
+    work.scale_x = scale;
+    work.scale_y = scale;
     matrix = (s16)AffineMatrix_BuildForEffect(&work);
     Korosseo_ModeTaskPosition += pos;
     pos = Korosseo_ModeTaskPosition / 256;

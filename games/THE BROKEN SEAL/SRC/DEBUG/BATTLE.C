@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "GAME_STATE.H"
@@ -23,7 +24,6 @@ extern volatile u32 gKeysRepeat;
 void GameState_InitDefaultsFar(void);
 void Ui_LoadWindowGraphics(void);
 void Bg0_ClearTilemap(void);
-void Runtime_InitializeHeap(void);
 void Resource_InitializeTable(void);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);

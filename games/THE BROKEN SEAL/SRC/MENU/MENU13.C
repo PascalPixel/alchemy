@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "GLYPH.H"
 #include "SELECT.H"
 #include "TYPES.H"
@@ -10,12 +11,9 @@
 
 extern struct SelectionScreen *gResQueueWork;
 struct SelectionNode *NodeChain_GetNodeAtCount(void *state);
-s32 Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Resource_DecodeByteLz(void *source, void *destination);
-u16 VramBlock_LoadCached(s32 handle, s32 size, void *buffer);
 
 extern u8 Data_03001e98[];
-s32 Resource_ResetEntry(u32 index);
 
 void UiWindow_OpenMode1AndWaitFrame(void);
 s32 Menu_SelectTopEntry(s32);

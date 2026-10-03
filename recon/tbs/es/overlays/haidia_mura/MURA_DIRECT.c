@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* Near miss: the ES/IT sprite-priority direct call loads r0 before r1; the full resource differs in those four instruction bytes. */
 #include "STAGED_MOTION.H"
 #include "TYPES.H"

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "KORIMAKI.H"
 #include "TYPES.H"
 #include "CALL.H"

@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #ifndef GUARD_STAGED_MOTION_H
 #define GUARD_STAGED_MOTION_H
 
@@ -195,7 +196,6 @@ void Vector_AddPolarOffset(s32, s32, s32 *);
 void BattleEffect_CleanupSceneObjects(void);
 s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force);
 void InitializeStagedActorSceneOrbitingEffect(s32 id);
-u8 *Runtime_AllocateHeapBlock(s32, s32);
 void WorldMap_CreateLinkedEffects(s32);
 s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 

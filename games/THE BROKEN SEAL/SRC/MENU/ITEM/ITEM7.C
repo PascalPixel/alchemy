@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "INVENTORY_MENU.H"
 #include "BATTLE_RUNTIME.H"
 #include "TYPES.H"
@@ -10,8 +11,6 @@
 
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void *Runtime_BumpAllocate(s32 size);
-void Runtime_BumpFree(void *buffer);
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
 s32 Inventory_AddItemFar(s32 owner, s32 item);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 style);

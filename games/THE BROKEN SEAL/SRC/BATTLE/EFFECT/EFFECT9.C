@@ -1,3 +1,5 @@
+#include "CANVAS.H"
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
@@ -11,12 +13,10 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 /* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 and 46. */
 extern u8 gWorkSlot[];
-void BattleFx_BeginCanvasLayer(s32);
 void Audio_PlayCue(s32);
 void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
-s32 BattleFx_EndCanvasLayer(void);
 
 /* Six animation cells, one entry each: width, height, vertical bias, and the
    byte offset of the cell inside the kind-39 work block.  The three byte

@@ -1,3 +1,9 @@
+/* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
+ * and canonical resource/allocator contracts. Earlier measurements are
+ * prior checkpoints; fresh complete-object comparison is pending. */
+#include "AFFINE.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE.H"
 /* Draft, not exact: retained EN score16188 (413 register-only,58 stack-only,
  * 97 operand,74 reordered,45 inserted,29 deleted); frame320 vs native324.
  * Every symbol resolves. Complete native extent3584 includes all pools.
@@ -129,15 +135,7 @@ struct ScreenPos {
 };
 
 /* Same shape as games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/BUILD_MATRIX.C. */
-struct Effect {
-    unsigned x : 16;
-    unsigned y : 16;
-    unsigned angle : 16;
-    unsigned unused : 16;
-};
-
 /* Views whose callee declarations have no shared owner yet. */
-s32 AffineMatrix_BuildForEffect(struct Effect *source);
 s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *out);
 void BattlePres_SetActorModesFar(u16 *ids, s32 highlight);
 s32 UiText_GetWideStringWidth(u16 *text);
@@ -158,7 +156,7 @@ s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
     u16 name[15];
     struct ScreenPos namePos;
     struct ScreenPos targetPos;
-    struct Effect efx;
+    struct AffineTransform efx;
 
     struct BattleSession *runtime;
     struct BattleUnit *unit;
@@ -359,11 +357,11 @@ step_back:
         Runtime_PushSlotEntry((s32 *)head, 240);
 
         if (spread == 0xFF) {
-            efx.x = 256;
-            efx.y = 256;
+            efx.scale_x = 256;
+            efx.scale_y = 256;
         } else {
-            efx.x = 176;
-            efx.y = 176;
+            efx.scale_x = 176;
+            efx.scale_y = 176;
         }
         efx.angle = 0;
         matrix = AffineMatrix_BuildForEffect(&efx);

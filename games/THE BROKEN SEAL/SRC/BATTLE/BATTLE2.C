@@ -24,7 +24,6 @@ void Camera_StoreSceneParameters(u32, u32, u32);
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
 s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
-void Runtime_BumpFree(void *ptr);
 s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 
 void Owner_RecalculateStatsFar(u16 id);

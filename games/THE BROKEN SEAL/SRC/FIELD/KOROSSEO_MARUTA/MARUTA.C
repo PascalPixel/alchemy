@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* The log-rolling stage: its scene task, grid and object setup, the
  * opening, closing and final sequences, the obstacle checks and the scene
  * event. */
@@ -469,7 +470,6 @@ s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
 void FieldScene_RunEarlySequence(void)
 {
     extern void Vector_AddPolarOffset();
-    extern s32 Runtime_AllocateBlock();
     extern void Object_SetPosition();
     extern void ObjectDispatch_InitFromTable4WithArgument();
     extern void Object_CommitPosition();
@@ -550,7 +550,7 @@ moved:
     Object_SetPosition(log_actor, x, 0, z);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(selected_actor, 2);
-    record = Runtime_AllocateBlock(27, 0xccc);
+    record = (s32)Runtime_AllocateBlock(27, 0xccc);
     ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(record + 0x1e0), log_actor);
     Actor_SetSpeed(selected_actor, 0x8000, acceleration);
     Audio_PlayCue(239);

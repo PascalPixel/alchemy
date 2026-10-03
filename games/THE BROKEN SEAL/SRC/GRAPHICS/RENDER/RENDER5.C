@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "EDITION.H"
 #include "TYPES.H"
 #include "WINDOW.H"
@@ -6,7 +7,6 @@
 #include "TBS_EDITION.H"
 #include "IWRAM_CALL.H"
 
-extern u8 *Runtime_AllocateBlock(s32, u32);
 extern void UiWork_InitFreeList(void);
 extern void UiWork_SetTwoEntriesTo999(void);
 extern void UiWork_InitCountersWithResourceAndScheduleRefresh(void);

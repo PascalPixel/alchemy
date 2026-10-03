@@ -27,6 +27,9 @@ extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerTaskCount;
 extern struct SchedulerTask gSchedulerTaskTable[];
 
+/* Render entries have different tails; only their first-word link is shared. */
+void Runtime_PushSlotEntry(void *entry, s32 priority);
+
 void Runtime_InvokeCallbacksByKey(s32 key);
 void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1);
 void Scheduler_ScheduleCallbackBAfterFrames(void);

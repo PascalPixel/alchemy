@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 /* Not-yet-C: complete 200-byte nested stat-arrow owner.
  * The typed sprite initializer recovers attributes+4 then tile+8 writes,
  * and x before y, but gives 202 bytes / 19 aligned edits (89 halfwords).

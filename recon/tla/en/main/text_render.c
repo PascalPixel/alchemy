@@ -1,7 +1,7 @@
+#include "RUNTIME_MEM.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
 s32 UiText_BuildRenderEntries(s32 character, s32 count);
-s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 u8 *Text_FormatNumber(u8 *output, s32 value, s32 width);
 void UiText_DrawWideString(void *text, s32 work, s32 x, s32 y);
 void UiText_DrawWideStringInWindow(u16 *text, s32 work, s32 x, s32 y);

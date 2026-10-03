@@ -52,7 +52,6 @@ void UiWork_ClearValueNameTablesFar(void);
 void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
-void Runtime_BumpFree(void *block);
 s32 Func_080770b8(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustSixDigitCounterAFar(s32 amount);

@@ -1,3 +1,4 @@
+#include "RESOURCE.H"
 #include "TYPES.H"
 
 extern u8 ResourceBlockOwners[];

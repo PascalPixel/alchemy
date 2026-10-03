@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"

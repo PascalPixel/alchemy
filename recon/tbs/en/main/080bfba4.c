@@ -1,3 +1,4 @@
+#include "RUNTIME_MEM.H"
 /* DRAFT (score 120): 12 of 454 instructions differ, register names only. In the
  * loop that orders the recovering Djinn the ROM keeps the counter of the owner
  * and order scans in r4 and the -1 it compares the owner with in r3; here both
@@ -51,7 +52,6 @@ struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void BattleUnit_Recalculate(s32 unit_id);
 s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
 void Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
-void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *block);
 s32 __divsi3(s32 numerator, s32 denominator);
 void Object_SetMode(void *object, s32 animation);

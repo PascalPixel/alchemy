@@ -1,8 +1,9 @@
-#include "TYPES.H"
+#include "UIWINDOW.H"
 
-s32 UiWork_FinalizeFar(void *handle);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-s32 RenderOutput_RedrawSavedRectFar();
+/* This legacy call supplies one word; the result is unused. */
+void UiWork_FinalizeFar();
+struct UiWindow *UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags)
 {
@@ -14,11 +15,11 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 f
         if (0x100 & flags) {
             return 0;
         }
-        RenderOutput_RedrawSavedRectFar(current);
+        RenderOutput_RedrawSavedRectFar((struct UiWindow *)current);
         return 0;
     }
     masked = flags & 0xff;
-    *handle = UiWindow_CreateFar(first, second, third, fourth, masked);
+    *handle = (s32)UiWindow_CreateFar(first, second, third, fourth, masked);
     return 1;
 }
 

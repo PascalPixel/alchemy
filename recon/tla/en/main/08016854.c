@@ -12,8 +12,12 @@
  * 08016990, which reads and writes these same active/status control bytes.
  * This supports the local access contract without changing the shared
  * declaration or claiming recovery of the original qualifier spelling.
- * All names resolve against the rebuilt English ELF. Two bounded trials
- * are recorded here; the volatile-view trial is retained, with no devices.
+ * Scalar volatile-u8 views of the named fields: score 580, 80/76 bytes
+ * (12 register-only, 3 operand, 1 reordered, 3 inserted, 1 deleted).
+ * They avoid the aggregate pre-reads but load the status-field address
+ * and subtract one for active, changing registers and pool order; rejected.
+ * All names resolve against the rebuilt English ELF. Three bounded trials
+ * are recorded here; the aggregate volatile-view trial remains, no devices.
  */
 #include "SERIAL_RUNTIME.H"
 

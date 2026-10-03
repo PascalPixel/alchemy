@@ -6,6 +6,11 @@
  * allocation and the snapshot pointer in lr, uses SP-relative stores,
  * and reverses the indexed halfword operands. Retained the closer body
  * with its measured TLA steering tagged inside the function.
+ * Single runtime-view trial, with the snapshot device unchanged: complete
+ * 268/280 bytes, score 885 (39 register-only, 5 operand, 3 reordered,
+ * 4 deleted). One pointer stays in r4; it removes the send-index reload,
+ * two runtime-address loads, the loop-carry move and one pool word.
+ * The closer stage-view body is retained with its measured reason below.
  */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
@@ -13,6 +18,10 @@
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {
+    /* FAKEMATCH: one runtime view holds the pointer in r4 across all
+       stages and removes the send-index reload and loop-carry move:
+       268 bytes, score 885. Separate stage-view lifetimes retain the
+       reference register allocation and reloads at 280 bytes, score 120. */
     struct SerialRuntime *send_state;
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;

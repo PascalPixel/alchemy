@@ -230,7 +230,7 @@ Func_08125d74:
 	ldr r2, .L_08125fb8
 	movs r1, #32
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	strh r6, [r5, #2]
 	movs r0, #1
 	bl WaitFrames
@@ -278,7 +278,7 @@ Func_08125d74:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	b .L_081261b8
 .L_08125fb0:
 	.4byte Func_08125c94
@@ -414,7 +414,7 @@ Func_08125d74:
 	str r3, [r0]
 	movs r1, #32
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #1
 	b .L_081260e0
 .L_081260cc:
@@ -527,7 +527,7 @@ Func_08125d74:
 	movs r0, #2
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 .L_081261b8:
 	ldr r5, .L_081261f4
 	movs r6, #128
@@ -536,7 +536,7 @@ Func_08125d74:
 	movs r2, #0
 	adds r6, #10
 	movs r0, #2
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	strh r5, [r6]
 	movs r0, #1
 	bl WaitFrames

@@ -23,6 +23,6 @@ SerialRuntime_WaitForTransferB:
 .L_080168ee:
 	pop {r5, r6, pc}
 .L_080168f0:
-	.4byte Data_020055d0
+	.4byte gSerialReceiveDest
 .L_080168f4:
 	.4byte 0x000927bf

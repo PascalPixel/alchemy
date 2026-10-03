@@ -1,21 +1,17 @@
-/*
- * Draft: SerialRuntime_WaitForTransferA does not yet match; 4 halfwords differ from ☀️'s C, first at +0x4 (movs r5, #0).
- * Links as recon/tla/raw/080167d8.s.
- */
-#include "TYPES.H"
+/* 2026-10-03: physical cursor names now resolve. Complete extents are
+ * 44/44 bytes, including the pool. Score 60: count initialization moves.
+ * Returning after 600,000 frame waits does not establish completion.
+ * Not adopted. */
+#include "SERIAL_RUNTIME.H"
 
-extern volatile s32 gSerialSendSource;
-
-s32 WaitFrames(s32);
-
-void SerialRuntime_WaitForTransferA(void)
+void SerialRuntime_WaitForTransferB(void)
 {
     u32 count = 0;
 
-    if (*(volatile s32 *)&gSerialSendSource != 0) {
+    if (gSerialReceiveDest != 0) {
         do {
             WaitFrames(1);
             count++;
-        } while (count <= 0x927BF && *(volatile s32 *)&gSerialSendSource != 0);
+        } while (count <= 0x927bf && gSerialReceiveDest != 0);
     }
 }

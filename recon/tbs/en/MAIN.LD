@@ -78,6 +78,7 @@
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
         "*/recon/tbs/raw/0800655c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_TEST.o"(.text)
+        "*/recon/tbs/raw/0800679c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/CPU_SET.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0800686e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SOUND_VSYNC_ON.o"(.text .rodata .data .padding)

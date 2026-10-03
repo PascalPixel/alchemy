@@ -195,7 +195,7 @@ s32 LinkLobby_RunConnectionSequence(void)
         }
         gGameState.unknown_200[0x22b - 0x200] = 4;
         BattleFx_SetWeightedResult(1, 1);
-        tbl = (u16 *)gSerialTransfer.reserved;
+        tbl = (u16 *)gSerialTransfer.payload;
         value.value = 0x45;
         tbl[1] = 0x58;
         tbl[0] = value.value;

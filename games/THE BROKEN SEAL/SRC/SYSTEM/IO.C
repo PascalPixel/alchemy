@@ -1,22 +1,25 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+#include "FRAME.H"
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
 
-extern u8 Data_03001cb8[];
 
-void Input_InitKeyIrq(void)
+/* The keypad interrupt requests a cartridge reset while sleep is inactive. */
+void Input_HandleKeyInterrupt(void)
 {
-    u32 keyInterruptMask;
-    volatile u16 *keyControl;
-    s32 enabled;
+    u32 mask;
 
     if (gSleepActive == 0) {
-        keyInterruptMask = 0xC3FF;
-        *(keyControl = (volatile u16 *)0x04000132) = keyInterruptMask;
-        *(volatile s8 *)((u32)&Data_03001cb8) = (enabled = 1);
+        /* FAKEMATCH: a direct halfword constant loads KEYCNT before the mask
+           and swaps the literal-pool order; this word mask preserves the
+           measured value preparation. The discarded address/cast and enable
+           temporaries were unnecessary. */
+        mask = 0xc3ff;
+        REG_KEYCNT = mask;
+        gResetRequested = 1;
     }
 }
 

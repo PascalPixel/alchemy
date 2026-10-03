@@ -53,7 +53,6 @@ extern u8 IwramMulQ16ReturnIp[];
 /* The item menu reaches the copier from the bank's first routine instead,
  * its label plus the copier's offset, which GCC schedules as a symbol:
  * after the arguments. The build checks the offset against both labels. */
-extern u8 IwramIrqMain[];
 #define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords - IwramIrqMain */
 
 #endif

@@ -88,8 +88,8 @@ gSerialExchangeActive:
 	.global Data_03001cb4
 Data_03001cb4:
 	.space 0x00000004
-	.global Data_03001cb8
-Data_03001cb8:
+	.global gResetRequested
+gResetRequested:
 	.space 0x00000004
 	.global gDebugTextCursor
 gDebugTextCursor:

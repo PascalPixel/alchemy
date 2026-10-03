@@ -1,3 +1,4 @@
+#include "SYSTEM.H"
 #include "SELECT.H"
 #include "TYPES.H"
 #include "WINDOW.H"
@@ -7,7 +8,7 @@
 #include "GLOBAL_CELLS.H"
 #include "GAME_STATE.H"
 
-s32 WaitFrames(s32);
+
 s32 UiGlyph_ResetWorkState();
 void Resource_ClearOwnerListAndCounters(void);
 

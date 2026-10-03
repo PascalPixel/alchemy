@@ -2,13 +2,14 @@
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
 
-extern u8 gSerialExchangeActive[];
-
 void SerialRuntime_HandleTransferInterrupt(void)
 {
     struct SerialRuntime *send_state;
     struct SerialRuntime *receive_state;
     struct SerialRuntime *tail_state;
+    /* FAKEMATCH: a plain value snapshot delays stack allocation and the
+       snapshot pointer in lr, and reverses indexed halfword operands. The
+       volatile local and restricted view retain the measured order. */
     volatile union SerialDataRegisters serial_data;
     union SerialDataRegisters *const __restrict serial_snapshot =
         (union SerialDataRegisters *)&serial_data;
@@ -16,7 +17,6 @@ void SerialRuntime_HandleTransferInterrupt(void)
     s32 channel;
 
     sio_control = (volatile u32 *)0x04000128;
-    /* Capture volatile I/O through one stable, restricted local view. */
     *serial_snapshot =
         *(volatile union SerialDataRegisters *)REG_SIODATA32;
     send_state = &gSerialRuntime;
@@ -77,8 +77,6 @@ receive_loop:
     }
 }
 
-void Runtime_SetIrqHandler(s32, s32, InterruptHandler);
-
 void SerialRuntime_RemoveIrqHandlers(void)
 {
     s16 *work;
@@ -104,15 +102,20 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
     return (REG_SIOCNT << 0x1A) >> 0x1E;
 }
 
-s32 SerialRuntime_BeginTransferA(s32 value, s32 transfer_value)
+s32 SerialRuntime_BeginTransferA(void *source, s32 transfer_value)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
     volatile u16 *ime;
     u32 saved_interrupt_master;
     s32 busy;
+    s32 value;
     s32 transfer;
 
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps
+       the source in r0 through the busy check. A separate result is hoisted
+       into r0 and moves the source to another register. */
+    value = (s32)source;
     active = &SERIAL_ACTIVE_A;
     busy = *active;
     transfer = transfer_value;
@@ -147,14 +150,19 @@ transfer_complete:
     return value;
 }
 
-s32 SerialRuntime_BeginTransferB(s32 value)
+s32 SerialRuntime_BeginTransferB(void *destination)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
     volatile u16 *ime;
     u32 saved_interrupt_master;
     s32 busy;
+    s32 value;
 
+    /* FAKEMATCH: sharing the integer address carrier with the result keeps
+       the destination in r0 through the busy check. A separate result is
+       hoisted into r0 and makes the function save another register. */
+    value = (s32)destination;
     active = &SERIAL_ACTIVE_B;
     busy = *active;
     /* FAKEMATCH: the do/while blocks and the second active assignment are

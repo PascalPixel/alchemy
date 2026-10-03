@@ -84,6 +84,7 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000658c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_TEST.o"(.text)
+    "*/recon/tbs/de/rom.o"(.rom.000067cc)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/CPU_SET.o"(.text .rodata .data .padding)
     "*/recon/tbs/de/rom.o"(.rom.0000689e)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/SOUND_VSYNC_ON.o"(.text .rodata .data .padding)

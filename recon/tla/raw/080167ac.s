@@ -10,11 +10,11 @@ SerialRuntime_RemoveIrqHandlers:
 	strh r3, [r2]
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	movs r0, #6
 	movs r1, #0
 	movs r2, #0
-	bl Func_08013438
+	bl Runtime_SetIrqHandler
 	b .L_080167d4
 	.2byte 0x0000
 .L_080167cc:

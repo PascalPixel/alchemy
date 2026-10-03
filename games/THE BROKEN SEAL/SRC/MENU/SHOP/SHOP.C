@@ -32,7 +32,6 @@ extern u16 RomBytes_080b4100[];
 /* shop/draw/glyphs.c */
 extern u8 Shop_GlyphBytes[];
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
-struct RenderOutput *RenderOutput_CreateFar(s32 no, u32 flags, s32 window, s32 x, s32 y);
 void Shop_CopyGlyphs(s32 arg0, u8 *arg1, u32 arg2);
 extern u8 gEventWork[];
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);
@@ -136,7 +135,7 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
 
     state = gMenuWork;
     slot = &state->cursor.anchor;
-    saved = (*slot)->one5;
+    saved = (*slot)->active;
     no = message_id;
     variant = BattleFx_GetResourceIdFar(state->keeper_resource);
     mode = (s8)state->shop_type;
@@ -150,28 +149,28 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     if (flag != 0) {
         no += (s32)MsgWarriorShopWelcome - (s32)MsgWeaponShopWelcome;
     }
-    (*slot)->one5 = 0xDU;
+    (*slot)->active = 0xDU;
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(no, 5, 0, (variant << 0x10) | 0x22);
     while (UiWork_IsCompleteFar() == 0) {
         WaitFrames(1U);
     }
     WaitFrames(1U);
-    state->cursor.anchor->one5 = saved;
+    state->cursor.anchor->active = saved;
 }
 
 /* ui/message/show_choice.c */
 s32 UiMessage_ShowChoice(s32 arg0)
 {
     struct RenderOutput **slot = &gMenuWork->cursor.anchor;
-    u8 saved = (*slot)->one5;
+    u8 saved = (*slot)->active;
     UiIcon_PrepareObjectFar(*slot);
 #if defined(TBS_EDITION_DE)
     arg0 = Menu_RunConfirmSelectionAtFar(6, 5, arg0);
 #else
     arg0 = Menu_RunConfirmSelectionAtFar(7, 5, arg0);
 #endif
-    (*slot)->one5 = saved;
+    (*slot)->active = saved;
     return arg0;
 }
 
@@ -179,10 +178,10 @@ s32 UiMessage_ShowChoice(s32 arg0)
 s32 UiMessage_ShowChoiceVariant(s32 arg0)
 {
     struct RenderOutput **slot = &gMenuWork->cursor.anchor;
-    u8 saved = (*slot)->one5;
+    u8 saved = (*slot)->active;
     UiIcon_PrepareObjectFar(*slot);
     arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);
-    (*slot)->one5 = saved;
+    (*slot)->active = saved;
     return arg0;
 }
 
@@ -275,7 +274,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     slot = Resource_FindFreeEntry();
     if (slot != 96) {
         VramBlock_LoadCached(slot, 0x100, buf);
-        sprite = RenderOutput_CreateFar(slot, 0x80008000, window, x, y);
+        sprite = RenderOutput_CreateFar(slot, 0x80008000, (struct RenderInput *)window, x, y);
     }
     Runtime_ReleaseHeapBlock(14);
     return sprite;

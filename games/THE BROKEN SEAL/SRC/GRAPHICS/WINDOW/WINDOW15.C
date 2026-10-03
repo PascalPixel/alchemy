@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "WINDOW.H"
+#include "BATTLE_WORK.H"
 #include "DMA.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -15,7 +17,6 @@ s32 Runtime_GetLowTableAddress(void);
 extern const u8 Tile_BuildMetatiles[];
 extern const s8 UiWindow_PartyColumnOffsets[];
 extern u8 Tile_BuildMetatilesCodeSize[];
-extern void *Data_03001e8c;
 void *Runtime_BumpAllocate(u32 size);
 void Runtime_BumpFree(void *allocation);
 typedef void (*RamRoutine)(void *dst, void *scene);
@@ -36,14 +37,13 @@ extern s32 Party_CountActiveOwnersFar(void);
 void UiWindow_BuildLayoutBounds(s32 flags);
 void UiWindow_DrawPartyStatusContents(s32);
 void *Runtime_AllocateBlock(s32 flags, s32 arg1);
-s32 UiWindow_Create(u16, u16, u16, u16, s32);
 
 /* With no scene loaded, fills the 160-entry buffer with 0xe0e0; otherwise
    copies the metatile builder into RAM and runs it over the buffer and the
    scene record. */
 void UiWindow_FillFromScene(void *dst)
 {
-    void *scene = Data_03001e8c;
+    void *scene = gWindowWork[0];
 
     if (scene == 0) {
         volatile u16 fill = 0xe0e0;
@@ -91,7 +91,7 @@ void UiWindow_BuildLayoutBounds(s32 flags)
     s32 right;
     s32 left;
 
-    if (base[RENDER_MENU_STATE_OFS] != 0) {
+    if (((struct UiRenderWork *)base)->menu_state != 0) {
         n = BattleParty_PrepareActiveOwnersFar(0);
         height = 3;
     } else {
@@ -123,11 +123,11 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     s8 *busy;
 
     window = Runtime_AllocateBlock(0x10, 0x10);
-    busy = (s8 *)((u8 *)*(void **)((u32)&Data_03001e8c) + RENDER_MENU_BUSY_OFS);
+    busy = (s8 *)((u8 *)gWindowWork[0] + RENDER_MENU_BUSY_OFS);
     zero = 0;
     *busy = 1;
     UiWindow_BuildLayoutBounds(flags);
-    window->handle = UiWindow_Create(
+    window->handle = (s32)UiWindow_Create(
         window->left, window->top, window->right, window->height, 6);
     UiWindow_DrawPartyStatusContents(flags);
     *busy = zero;
@@ -139,7 +139,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
    In the menu the bottom edge is then redrawn as a plain border. */
 void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork[0];
     s32 first = 1;
     s32 bias = 0;
     u32 max = window->width - 1;
@@ -181,7 +181,7 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
         }
         *dest = 0xf082;
     }
-    base[RENDER_DIRTY_OFS] = 1;
+    ((struct UiRenderWork *)base)->dirty = 1;
 }
 
 /* Recolours one five-tile status bar in place: value pixels of forty are
@@ -193,7 +193,7 @@ void UiWindow_DrawColumnBorders(struct RenderInput *window, u32 flags)
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
     s32 i;
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork[0];
     s32 filled = value;
     s32 row;
     s32 col;
@@ -246,20 +246,10 @@ s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 va
 
 /* The render work bytes this window reads: whether a battle is running,
    the busy mark while the window is redrawn, and the text palette. */
-struct StatusRenderWork {
-    u8 unknown_000[RENDER_MENU_STATE_OFS];
-    u8 battle;
-    u8 busy;
-    u8 palette;
-};
 
-struct StatusParty {
-    u8 unknown_00[0x58];
-    u16 owners[4];
-};
 
 void UiWindow_EraseBorderRect(s32, s32, u32, u32);
-void RenderOutput_RedrawSavedRect(struct RenderInput *);
+void RenderOutput_RedrawSavedRect(struct UiWindow *);
 void UiWindow_DrawFrame(s32, s32, u32, u32);
 struct BattleUnit *Owner_GetStateFar(s32);
 void UiWork_SetParamNibble(s32);
@@ -280,9 +270,9 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
 {
     void **slot = (void **)Data_03001e90;
     struct UiWindowBounds *layout = slot[0];
-    struct StatusParty *party = slot[-7];
+    struct BattleSession *party = slot[-7];
     struct RenderInput *window = (struct RenderInput *)layout->handle;
-    struct StatusRenderWork *work = slot[-1];
+    struct UiRenderWork *work = slot[-1];
     s32 x = 0;
     u32 count;
     s32 y = 0;
@@ -290,11 +280,11 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
     u16 owners[5];
     u8 djinn[4];
 
-    if (work->battle != 0) {
+    if (work->menu_state != 0) {
         count = BattleParty_PrepareActiveOwnersFar(0);
         y = -1;
         for (i = 0; i < count; i++) {
-            owners[i] = party->owners[i];
+            owners[i] = (u16)party->party_units[i];
             if (owners[i] == 255)
                 break;
         }
@@ -309,15 +299,15 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         flags = layout->flags;
     if (!(flags & 1))
         flags &= ~2;
-    if (work->battle == 0 || BattlePlacement_CountValidEntriesFar(0, 0) == 0)
+    if (work->menu_state == 0 || BattlePlacement_CountValidEntriesFar(0, 0) == 0)
         flags &= ~2;
     if (flags == 9) {
         UiWindow_EraseBorderRect(layout->left, layout->top, layout->right, layout->height);
         return;
     }
-    work->busy = 1;
+    work->menu_busy = 1;
     if (layout->flags == flags) {
-        RenderOutput_RedrawSavedRect(window);
+        RenderOutput_RedrawSavedRect((struct UiWindow *)window);
         UiWindow_DrawColumnBorders(window, flags);
     } else {
         UiWindow_EraseBorderRect(layout->left, layout->top, layout->right, layout->height);
@@ -343,11 +333,11 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
             UiWork_SetParamNibble(4);
         else
             UiWork_SetParamNibble(15);
-        work->palette = 14;
-        if (work->battle != 0)
-            work->palette = 5;
+        work->level = 14;
+        if (work->menu_state != 0)
+            work->level = 5;
         UiText_DrawPrefixedNumberAtOffset(hp, window, (x + i * 6) * 8, y * 8 + 8, 0);
-        work->palette = 15;
+        work->level = 15;
         UiText_DrawStringAtOffset(unit->name, window, (x + i * 6) * 8, y * 8);
         UiWork_SetParamNibble(15);
         if (unit->max_hp != 0) {
@@ -358,9 +348,9 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
             UiWindow_DrawStatusBarTiles(window, x + i * 6 + 1, y + 2, value);
         }
         if (flags & 1) {
-            work->palette = 14;
-            if (work->battle != 0)
-                work->palette = 5;
+            work->level = 14;
+            if (work->menu_state != 0)
+                work->level = 5;
             UiText_DrawPrefixedNumberAtOffset(unit->pp, window, (x + i * 6) * 8, y * 8 + 16, 1);
             if (unit->max_pp != 0) {
                 current = unit->pp;
@@ -371,8 +361,8 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
             }
         }
     }
-    work->palette = 15;
-    if (work->battle != 0 && (flags & 2)) {
+    work->level = 15;
+    if (work->menu_state != 0 && (flags & 2)) {
         s32 row = y;
 
         if (flags & 1)
@@ -387,5 +377,5 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         UiWindow_PutGlyph(window, djinn[2] + '0', 1, row + 1);
         UiWindow_PutGlyph(window, djinn[3] + '0', 3, row + 1);
     }
-    work->busy = 0;
+    work->menu_busy = 0;
 }

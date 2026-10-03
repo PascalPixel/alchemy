@@ -3,16 +3,8 @@
 #include "IWRAM_CALL.H"
 #include "TBS_EDITION.H"
 #include "TEXT_FONT.H"
+#include "WINDOW.H"
 
-struct GlyphWork {
-    u8 unknown_000[RENDER_MODE_OFS];
-    u8 fixed_colour;
-    u8 unknown_ea5[7];
-    u16 outlined;
-    u16 colour;
-};
-
-extern struct GlyphWork *gWindowWork;
 extern u8 UiText_Glyphs[];
 extern u8 UiText_SecondGlyphs[];
 
@@ -23,7 +15,7 @@ extern u8 UiText_SecondGlyphs[];
 s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 {
     u8 buf[384];
-    struct GlyphWork *work;
+    struct UiRenderWork *work;
     const u8 *input;
     s32 length;
     s32 colour;
@@ -37,11 +29,11 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     s32 nibble;
     u32 value;
 
-    work = gWindowWork;
+    work = (struct UiRenderWork *)gWindowWork[0];
     second_index = (s32)((u32)code << 8) >> 16;
     code &= 255;
     Iwram_ClearWords(buf, 384);
-    if (work->fixed_colour != 0) {
+    if (work->mode != 0) {
         transparent = 0;
         colour = 8;
     } else {
@@ -51,7 +43,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
     input = UiText_Glyphs + ((code - 32) << 5);
     length = *(const u16 *)input;
     input += 2;
-    if (work->outlined == 1) {
+    if (work->outline == 1) {
         Iwram_ExpandBitRuns(input, buf + 49, transparent);
         Iwram_ExpandBitRuns(input, buf + 50, transparent);
         Iwram_ExpandBitRuns(input, buf + 32, colour);
@@ -65,7 +57,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         input = UiText_SecondGlyphs + ((u16)second_index << 5);
         second_width = *(const s16 *)input;
         input += 2;
-        if (work->outlined == 1) {
+        if (work->outline == 1) {
             u8 *dst = buf + length;
             Iwram_ExpandBitRuns(input, dst + 49, transparent);
             Iwram_ExpandBitRuns(input, dst + 50, transparent);
@@ -113,7 +105,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
 s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 {
     u8 buf[256];
-    struct GlyphWork *work;
+    struct UiRenderWork *work;
     const u8 *input;
     const u8 *mark;
     s32 length;
@@ -129,7 +121,7 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
 
     /* FAKEMATCH: the out input schedules its spill before the work-address load; the plain version reverses them. */
     asm ("" : : "r" (out));
-    work = gWindowWork;
+    work = (struct UiRenderWork *)gWindowWork[0];
     mark = 0;
     mark_code = UiText_MarkGlyphCodes[code >> 14];
     if (mark_code != 0)
@@ -144,14 +136,14 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out)
         length = 10;
     }
     Iwram_ClearWords(buf, 256);
-    if (work->fixed_colour != 0) {
+    if (work->mode != 0) {
         transparent = 0;
         colour = 8;
     } else {
         transparent = 1;
         colour = work->colour;
     }
-    if (work->outlined == 1) {
+    if (work->outline == 1) {
         Iwram_ExpandBitRuns(input, buf + 49, transparent);
         Iwram_ExpandBitRuns(input, buf + 50, transparent);
         if (mark != 0) {

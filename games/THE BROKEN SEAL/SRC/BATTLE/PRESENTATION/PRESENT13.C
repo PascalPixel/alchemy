@@ -14,7 +14,7 @@ void UiText_ShowMessageAndWaitCoreFar(s32 message_id);
 void BattlePresentation_WaitForAdvance(void);
 void BattleMotion_SetupEscapeObject(s32 unit_id);
 void BattleActor_RemoveFromLists(s32 unit_id);
-void ActivateBattleObjectSlot(s32 unit_id);
+s32 ActivateBattleObjectSlot(s32 unit_id);
 extern u8 gTransitionWork[];
 void BattleCommand_SelectAutomatic(struct BattleCommandRequest *request, s32 mode);
 void Render_ResetTransformState(void);

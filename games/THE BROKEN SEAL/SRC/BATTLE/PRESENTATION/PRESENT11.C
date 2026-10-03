@@ -21,7 +21,7 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(s32 *);
 void SceneTransform_ApplyYaw(s32);
 void SceneTransform_ApplyPitch(s32);
-void Graphics_PrepareTransferInIwramWork();
+void Graphics_PrepareTransferInIwramWork(s32 source, s32 destination);
 s32 Render_ProjectPoint();
 
 /* Zoom the battle floor about (cx, cy) by scale (16.16): set the BG2 affine
@@ -90,10 +90,10 @@ void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 
 /* returns a value its callers here ignore */
 
-/* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
 void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
 {
     s32 span = 0x01fe0000;
+    /* FAKEMATCH: mode intentionally remains uninitialized to preserve the match. */
     s32 mode;
     struct BattleCamera *scene = *(struct BattleCamera **)gCameraWork;
     s32 *pos = scene->pos;
@@ -130,7 +130,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     hud[3] = 120;
     hud[4] = 120;
     Render_ResetTransformState();
-    Graphics_PrepareTransferInIwramWork(scene, pos);
+    Graphics_PrepareTransferInIwramWork((s32)scene, (s32)pos);
     Render_ProjectPoint(source_bounds, measured_bounds);
 
     BattleCamera_SetRange(

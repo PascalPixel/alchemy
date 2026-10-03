@@ -31,7 +31,7 @@ void BattlePresentation_InitializeTransitionEntries(struct BattleTransitionEntry
     entries[0].sum = previous + entries[0].value;
 }
 
-s32 BattlePres_DivideBy16(s32 arg0)
+s32 BattlePres_DivideBy16(s32 value)
 {
-    return arg0 / 16;
+    return value / 16;
 }

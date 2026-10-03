@@ -24,7 +24,7 @@ extern u8 gCameraWork[];
 extern u8 gKeysHeld[];
 void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
-void Palette_CopyBanksWithBrightnessOffset(s32 arg0)
+void Palette_CopyBanksWithBrightnessOffset(s32 offset)
 {
     s32 iter;
     s32 bank;
@@ -50,9 +50,9 @@ void Palette_CopyBanksWithBrightnessOffset(s32 arg0)
             blue = (color >> 10) & mask;
             green = (color >> 5) & mask;
             red = color & mask;
-            blue += arg0;
-            green += arg0;
-            red += arg0;
+            blue += offset;
+            green += offset;
+            red += offset;
             if (blue > 31)
                 blue = 31;
             if (green > 31)
@@ -162,6 +162,8 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 }
 
 /* Removed members are skipped; the end marker means no matching slot. */
+/* Combining the two named-array scans reduced the complete extent from
+   92 to 68 bytes in all six editions. Keep the separate byte-offset scans. */
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
     s32 index;

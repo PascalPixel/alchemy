@@ -1,6 +1,7 @@
 #include "EDITION.H"
 #include "RUNTIME_MEM.H"
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "SCENE.H"
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
@@ -12,12 +13,10 @@ s32 VramBlock_LoadCached(s32, s32, s32);
 extern u8 Resource_FixedBlockBTiles[];
 
 void Runtime_BumpFree(void *buffer);
-extern u8 Data_03001e8c[];
 u32 Resource_DecodeType01(const void *source, void *destination);
 s32 UiText_MeasureEntryDimensions(s32 start, s32 *width, s32 *count, s32 mode);
 
 /* ui/window/copy_tilemap_region.c */
-extern u8 *gWindowWork;
 extern u8 RomBytes_080310a4[];
 
 /* resource/copy_fixed_block_a.c */
@@ -86,7 +85,7 @@ s32 NameEntry_CountLetters(const u8 *name)
 /* ui/window/window_copy_tilemap_region.c */
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
 {
-    s16 *mirror = (s16 *)gWindowWork;
+    s16 *mirror = (s16 *)gWindowWork[0];
     s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *input = buffer;
     u32 cell;
@@ -116,7 +115,7 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *so
 /* ui/window/set_tile_attribute_rect.c */
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
     s32 x, s32 y, s32 width, s32 height, u32 field) {
-    u8 *base = *(u8 **)((u32)&Data_03001e8c);
+    u8 *base = gWindowWork[0];
 
     x += window->x + 1;
     y += window->y + 1;
@@ -152,7 +151,7 @@ void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
             height--;
             x += 64;
         } while (height != 0);
-        base[RENDER_DIRTY_OFS] = 1;
+        ((struct UiRenderWork *)base)->dirty = 1;
     }
 }
 
@@ -180,7 +179,7 @@ s32 UiText_SetRenderString(const u8 *str)
     s32 count_out;
     s32 width_out;
 
-    base = *(u8 **)((u32)&Data_03001e8c);
+    base = gWindowWork[0];
     count = 0;
     if (*str != 0) {
         dst = (u16 *)(base + RENDER_ENTRY_TBL_OFS);

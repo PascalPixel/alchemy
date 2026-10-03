@@ -3,7 +3,6 @@
 extern struct ShopRuntime *gMenuWork;
 
 void UiWindow_Clear(s32 window);
-struct RenderOutput *RenderOutput_CreateFar(u16 no, u32 flags, s32 window, s32 x, s32 y);
 struct RenderOutput *UiIcon_Draw(s32 no, s32 kind, s32 window, s32 x, s32 y);
 struct RenderOutput *Shop_CreatePriceSprite(s16 value, s32 window, s32 x, s32 y);
 
@@ -30,19 +29,19 @@ void Shop_DrawStock(s32 window, s32 selected)
         UiWindow_Clear(window);
         if (first != 0) {
             icon = RenderOutput_CreateFar(shop->previous_page_icon, 0x40000000,
-                                 window, 216, -16);
+                                 (struct RenderInput *)window, 216, -16);
             clear = 0;
-            icon->one4 = clear;
-            icon->one5 = 17;
-            *(u16 *)&icon->unknown_0a[2] = clear;
+            icon->kind = clear;
+            icon->active = 17;
+            icon->unknown_0c = clear;
         }
         if (first + 7 < item_count) {
             icon = RenderOutput_CreateFar(shop->next_page_icon, 0x40000000,
-                                 window, 216, 24);
+                                 (struct RenderInput *)window, 216, 24);
             clear = 0;
-            icon->one4 = clear;
-            icon->one5 = 15;
-            *(u16 *)&icon->unknown_0a[2] = clear;
+            icon->kind = clear;
+            icon->active = 15;
+            icon->unknown_0c = clear;
         }
         slot = 0;
         if ((u32)first < (u32)item_count) {
@@ -56,9 +55,9 @@ void Shop_DrawStock(s32 window, s32 selected)
                     stock_item, 1, window, slot * 32, 0);
                 icon->sentinel = 252;
                 if (first == selected) {
-                    icon->one5 = 9;
+                    icon->active = 9;
                     highlight = 10;
-                    *(u16 *)&icon->unknown_0a[2] = highlight;
+                    icon->unknown_0c = highlight;
                     icon->sentinel = 253;
                 }
                 icon = Shop_CreatePriceSprite(definition->price, window, x, 0);

@@ -25,8 +25,8 @@ static __inline__ void Scope_08022a7c(struct RenderInput *win)
         struct PreviewSprite *entry;
 
         if (work) {
-            work->one5 = 1;
-            work->one4 = 1;
+            work->active = 1;
+            work->kind = 1;
             work->index = Resource_LoadIntoFreeSlot(128);
             entry = (struct PreviewSprite *)((u8 *)work + 16);
             work->sentinel = 240;

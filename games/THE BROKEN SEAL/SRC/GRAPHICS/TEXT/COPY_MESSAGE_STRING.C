@@ -1,26 +1,19 @@
 #include "TYPES.H"
-#include "TBS_EDITION.H"
+#include "WINDOW.H"
 
-struct MessageWork {
-    u8 unknown_000[RENDER_ENTRY_TBL_OFS];
-    u16 text[(RENDER_ENTRY_COUNT_OFS - RENDER_ENTRY_TBL_OFS) / 2];
-    u16 count;
-};
-
-extern struct MessageWork *Data_03001e8c;
 s32 UiText_BuildRenderEntries(s32 key, s32 mode);
 
 /* Build the message, then copy at most capacity - 1 code units and terminate. */
 s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity)
 {
-    struct MessageWork *work;
+    struct UiRenderWork *work;
     u32 count;
 
-    work = Data_03001e8c;
+    work = (struct UiRenderWork *)gWindowWork[0];
     work->count = 0;
     UiText_BuildRenderEntries(key, 1);
     for (count = 0; count < capacity - 1 &&
-        (destination[count] = work->text[count]) != 0; count++) {
+        (destination[count] = work->entries[count]) != 0; count++) {
     }
     destination[count] = 0;
     return count;

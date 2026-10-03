@@ -1,9 +1,8 @@
 #include "TYPES.H"
+#include "WINDOW.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-extern u8 Data_03001e8c[];
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void UiWork_SetAltFlagAndClearTable(s32 flag)
 {
@@ -11,21 +10,21 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
     s32 j;
     s8 *p;
     s8 *q;
-    void *work;
+    u8 *work;
 
-    work = *(void **)((u32)&Data_03001e8c);
+    work = gWindowWork[0];
     if (flag != 0) {
-        FIELD_AT_OFFSET(work, s8 *, RENDER_ALT_OFS) = 1;
+        ((struct UiRenderWork *)work)->alt = 1;
         flag = 0;
-        for (i = 0x80, p = work + RENDER_TILE_ATTR_OFS + 0x80; i <= 0xFF; i += 1) {
+        for (i = 0x80, p = (s8 *)((struct UiRenderWork *)work)->tile_attributes + 0x80; i <= 0xFF; i += 1) {
             *p = flag;
             p += 1;
         }
         return;
     }
-    FIELD_AT_OFFSET(work, s8 *, RENDER_ALT_OFS) = 0;
+    ((struct UiRenderWork *)work)->alt = 0;
     flag = 0;
-    q = work + RENDER_TILE_ATTR_OFS + 0x80;
+    q = (s8 *)((struct UiRenderWork *)work)->tile_attributes + 0x80;
     j = 0x7F;
     do {
         j -= 1;

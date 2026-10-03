@@ -62,7 +62,7 @@ struct RenderOutput *CreateSideObject(
 
         /* The top nibble of the packed table's second byte selects the slot. */
         ((u8 *)&object->table)[1] = (((u8 *)&object->table)[1] & 15) | slotBits;
-        object->one4 = 2;
+        object->kind = 2;
     }
 
     state->state_ids[side] = id;

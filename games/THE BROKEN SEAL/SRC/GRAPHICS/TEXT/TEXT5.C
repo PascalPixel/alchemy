@@ -1,11 +1,12 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
+#include "GLYPH.H"
 #include "SYSTEM.H"
 #include "RESOURCE_IDS.H"
 #include "DMA.H"
 #include "TBS_EDITION.H"
 
-s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
+void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 u32 Resource_DecodeByteLz(const void *, void *);
 s32 Resource_GetBuffer(s32 index, s32 value);
 
@@ -32,9 +33,9 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
 
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 {
-    void *buffer = Runtime_AllocateHeapBlock(0x11, 0x608);
+    GlyphTransfer *buffer = Runtime_AllocateHeapBlock(0x11, sizeof(GlyphTransfer));
     u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
-    void **slot = (void **)((u32)buffer + 0x604);
+    u8 **slot = &buffer->encoded;
     void *target = (void *)((u32)base + base[arg1]);
     s32 ret;
 
@@ -50,7 +51,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
    remain) and copies the tile to character block 1. */
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
 {
-    u8 *decoded;
+    GlyphTransfer *decoded;
     u8 *font;
     u8 *remapped;
     u8 *src;
@@ -58,12 +59,12 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph, s32 tile)
     s32 i;
     u32 index;
 
-    decoded = Runtime_AllocateHeapBlock(17, 0x608);
+    decoded = (GlyphTransfer *)Runtime_AllocateHeapBlock(17, sizeof(*decoded));
     font = Resource_GetTableEntry((u32)&ResourceId_CommandIcons);
-    *(u8 **)(decoded + 0x604) = font + ((u16 *)font)[glyph];
-    Resource_DecodeByteLz(*(u8 **)(decoded + 0x604), decoded);
+    decoded->encoded = font + ((u16 *)font)[glyph];
+    Resource_DecodeByteLz(decoded->encoded, decoded);
     remapped = Runtime_BumpAllocate(0x400);
-    src = decoded;
+    src = decoded->input;
     dst = remapped;
     for (i = 0; i < 0x400; i++) {
         index = *src++;

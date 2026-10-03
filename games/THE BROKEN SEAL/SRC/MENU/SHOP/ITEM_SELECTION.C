@@ -13,12 +13,6 @@ extern u8 MsgCannotRemoveIt[];
 
 
 void UiWork_FinalizeFar(s32 window, s32 style);
-struct RenderOutput *RenderOutput_CreateFar(
-    u32 resource,
-    u32 flags,
-    s32 window,
-    s32 x,
-    s32 y);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
 void Menu_ReleaseEntryObjectsFar(void);
 void Shop_InitializeCursorWork(void);
@@ -47,11 +41,11 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     cursor_anchor = RenderOutput_CreateFar(
         shop->cursor_icon,
         0x40000000,
-        list_window,
+        (struct RenderInput *)list_window,
         0,
         result);
-    cursor_anchor->one5 = 4;
-    cursor_anchor->one4 = result;
+    cursor_anchor->active = 4;
+    cursor_anchor->kind = result;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     shop->mode = 12;
@@ -78,7 +72,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             Audio_PlayCue(0x70);
             item_slot = Shop_SelUse(unit_id);
             if (item_slot == -1) {
-                shop->cursor.anchor->one5 = 4;
+                shop->cursor.anchor->active = 4;
                 shop->mode = 12;
                 redraw = 1;
                 continue;
@@ -166,7 +160,7 @@ s32 Shop_SelUse(s32 actor)
     win1 = UiWindow_CreateFar(16, 8, 14, 4, 2);
 #endif
     win2 = UiWindow_CreateFar(0, 5, 30, 3, 2);
-    shop->cursor.anchor->one5 = 18;
+    shop->cursor.anchor->active = 18;
     shop->mode = 12;
     selection = 0;
 

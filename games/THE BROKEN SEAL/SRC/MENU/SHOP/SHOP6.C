@@ -25,12 +25,6 @@ extern u8 MsgSanctumFarewell[];
 struct ObjectRuntime *Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
-struct RenderOutput *RenderOutput_CreateFar(
-    u32 resource,
-    u32 flags,
-    s32 window,
-    s32 x,
-    s32 y);
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void UiMessage_ShowResolvedAndWait(s32 message);
 void Shop_InitializeCursorWork(void);
@@ -151,16 +145,16 @@ void UiMessage_ShowResolvedAndRestoreState(s32 arg0)
 
     state = gMenuWork;
     slot = &state->cursor.anchor;
-    saved = (*slot)->one5;
+    saved = (*slot)->active;
     value = BattleFx_GetResourceIdFar(state->keeper_resource);
     arg0 = Shop_MsgByMode(arg0);
-    (*slot)->one5 = 13;
+    (*slot)->active = 13;
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(arg0, 5, 0, (value << 16) | 0x22);
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
     WaitFrames(1);
-    state->cursor.anchor->one5 = saved;
+    state->cursor.anchor->active = saved;
 }
 
 /* Run the shop's yes/no party-action confirmation prompt for one unit. */
@@ -193,11 +187,11 @@ s32 Shop_ConfirmAct(s32 unit_id)
     cursor_anchor = RenderOutput_CreateFar(
         shop->cursor_icon,
         0x40000000,
-        list_window,
+        (struct RenderInput *)list_window,
         0,
         0);
-    cursor_anchor->one5 = 1;
-    cursor_anchor->one4 = 0;
+    cursor_anchor->active = 1;
+    cursor_anchor->kind = 0;
     ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
     UiMessage_ShowResolvedAndWait((s32)MsgSanctumWelcome);
@@ -264,7 +258,7 @@ s32 Sanctum_RunPartyService(void)
     UiMessage_ShowResolvedAndWait((s32)MsgWhoToRevive);
 
     list_window = UiWindow_CreateFar(1, 12, 13, 3, 2);
-    shop->cursor.anchor->one5 = 4;
+    shop->cursor.anchor->active = 4;
     shop->mode = redraw;
     PsynergyMenu_InitializeEntryObjectsFar(list_window, 2, 0, 8, price_window);
 #if defined(TBS_EDITION_DE)

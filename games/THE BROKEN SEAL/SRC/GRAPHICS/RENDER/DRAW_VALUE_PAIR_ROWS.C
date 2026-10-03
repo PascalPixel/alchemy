@@ -1,5 +1,6 @@
 #include "EDITION.H"
 #include "TYPES.H"
+#include "BATTLE_UNIT.H"
 #if EDITION_INTERNATIONAL
 extern const u8 Ui_PpString[];
 extern const u8 Ui_SlashString[];
@@ -17,17 +18,17 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x, s32 y
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 layer, s32 x, s32 y);
 s32 UiWork_SetParamNibbleFar(s32 color);
 
-void Ui_DrawValuePairRows(void *obj, s32 layer)
+void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 layer)
 {
     s16 val;
 
 #if EDITION_INTERNATIONAL
     UiText_DrawStringAtOffsetFar((s32)Ui_HpString, layer, 0, 40);
     UiText_DrawStringInWindowFar((s32)Ui_SlashString, layer, 48, 40);
-    val = *(s16 *)((u8 *)obj + 52);
+    val = unit->max_hp;
     UiText_DrawNumberRightAlignedFar(val, layer, 88, 40);
-    val = *(s16 *)((u8 *)obj + 56);
-    if (val < ((s32)(u16)*(s16 *)((u8 *)obj + 52) << 16) >> 18) {
+    val = unit->hp;
+    if (val < ((s32)(u16)unit->max_hp << 16) >> 18) {
         UiWork_SetParamNibbleFar(4);
     }
     if (val == 0) {
@@ -37,18 +38,18 @@ void Ui_DrawValuePairRows(void *obj, s32 layer)
     UiWork_SetParamNibbleFar(15);
     UiText_DrawStringAtOffsetFar((s32)Ui_PpString, layer, 0, 48);
     UiText_DrawStringInWindowFar((s32)Ui_SlashString, layer, 48, 48);
-    val = *(s16 *)((u8 *)obj + 58);
+    val = unit->pp;
     UiText_DrawNumberRightAlignedFar(val, layer, 48, 48);
-    val = *(s16 *)((u8 *)obj + 54);
+    val = unit->max_pp;
     UiText_DrawNumberRightAlignedFar(val, layer, 88, 48);
 #else
     /* The Japanese rows draw four-digit fields: the current value before
        the slash, the maximum after it. */
     UiText_DrawStringInWindowFar((s32)Ui_HpRowString, layer, 0, 40);
-    val = *(s16 *)((u8 *)obj + 52);
+    val = unit->max_hp;
     UiText_DrawNumberInWindowFar(val, 4, layer, 56, 40);
-    val = *(s16 *)((u8 *)obj + 56);
-    if (val < ((s32)(u16)*(s16 *)((u8 *)obj + 52) << 16) >> 18) {
+    val = unit->hp;
+    if (val < ((s32)(u16)unit->max_hp << 16) >> 18) {
         UiWork_SetParamNibbleFar(4);
     }
     if (val == 0) {
@@ -57,9 +58,9 @@ void Ui_DrawValuePairRows(void *obj, s32 layer)
     UiText_DrawNumberAtOffsetFar(val, 4, layer, 16, 40);
     UiWork_SetParamNibbleFar(15);
     UiText_DrawStringInWindowFar((s32)Ui_EpRowString, layer, 0, 48);
-    val = *(s16 *)((u8 *)obj + 58);
+    val = unit->pp;
     UiText_DrawNumberAtOffsetFar(val, 4, layer, 16, 48);
-    val = *(s16 *)((u8 *)obj + 54);
+    val = unit->max_pp;
     UiText_DrawNumberInWindowFar(val, 4, layer, 56, 48);
 #endif
 }

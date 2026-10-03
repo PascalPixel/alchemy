@@ -1,43 +1,36 @@
 /* UiText_OpenMessageAtObject: plain international near miss for raw08092c40.
-   Native complete836 includes its16-byte pool. Current ordinary EN body828
+   Native complete836 includes its16-byte pool. Prior ordinary EN body828
    has120 complete differing positions, including eight missing bytes; calls
    and pools are symbolically linked, without address substitutions.
    Trial: the identical-call branch matched836 but was rejected under S2
    because it forced an unused four-instruction flag reload. Removing it
    removes that reload and exchanges flags fp/r9 and side-handle r9/fp.
    Two existing measuring/subtract steering devices remain tagged below.
-   Other editions are not newly proved by this English trial. */
+   Other editions were not newly proved by that English trial.
+   Ordinary canonical-owner/pointer attempt: not yet measured. */
 #include "EDITION.H"
 #include "EVENT_RUNTIME.H"
 #include "GAME_STATE.H"
+#include "OBJECT_RUNTIME.H"
+#include "WINDOW.H"
 #include "TYPES.H"
 
-extern struct EventRuntime *Data_03001ebc;
-extern struct WorkPointers gWindowWork;
-
-/* The window work's flag for a message shown without the speaker's icon. */
-struct MessageWindowWork {
-    u8 unknown_000[0xea4];
-    u8 plain;
-};
-
-u8 *ObjectTable_Get(s32 id);
-s32 Render_ProjectPoint(const s32 *point, s32 *screen);
+s32 ObjectTable_ReadActiveValue(s32 key);
+s32 Render_ProjectPoint(s32 *point, s32 *screen);
 s32 Object_GetScreenPosition(s32 id, s32 *screen);
-void UiText_GetResourceDimensionsAltFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
-void UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, s32 *width, s32 *height);
-s32 Localization_LookupEntryIdFar(s32 speaker);
+s32 UiText_GetResourceDimensionsAltFar(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
+s32 UiText_GetResourceDimensionsFar(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
+s32 Localization_LookupEntryIdFar(u32 speaker);
 void WaitFrames(s32 frames);
 s32 BattleFx_GetResourceId(s32 speaker);
-s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 style);
+struct UiWindow *UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, u32 style);
 s32 UiWindow_CreateWithSideObjectFar(s32 speaker, s32 mode, s32 x, s32 y);
 s32 UiWork_IsCompleteFar(void);
 
-s32 ObjectTable_ReadActiveValue(s32 key);
-
-s32 UiText_OpenMessageAtObject(s32 arg)
+/* Low twelve bits name the actor; high bits place its message and portrait. */
+struct UiWindow *UiText_OpenMessageAtObject(s32 arg)
 {
-    struct MessageWindowWork *win;
+    struct UiRenderWork *win;
     struct EventRuntime *work;
     s32 speaker;
     s32 extra;
@@ -48,19 +41,19 @@ s32 UiText_OpenMessageAtObject(s32 arg)
     s32 top;
     s32 left;
     s32 pos[3];
-    s32 handle;
+    struct UiWindow *handle;
     s32 side;
     s32 flags;
     s32 message;
-    u8 *object;
+    struct ObjectRuntime *object;
     s32 x;
     s32 y;
     s32 ret;
     s32 column;
     s32 none;
 
-    win = (struct MessageWindowWork *)gWindowWork.window;
-    work = gWindowWork.event;
+    win = (struct UiRenderWork *)gWindowWork[0];
+    work = gWork;
     handle = 0;
     side = 0;
     speaker = ObjectTable_ReadActiveValue(arg);
@@ -78,7 +71,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
     if (work->message_busy == 0) {
         if (object != 0) {
             if (work->mode_19e == 3) {
-                Render_ProjectPoint((s32 *)(object + 8), pos);
+                Render_ProjectPoint(&object->x, pos);
                 x = pos[0] >> 3;
                 y = pos[1] >> 3;
                 ret = 1;
@@ -95,7 +88,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             speaker = arg;
             object = ObjectTable_Get(gGameState.selected_actor);
             if (work->mode_19e == 3) {
-                Render_ProjectPoint((s32 *)(object + 8), pos);
+                Render_ProjectPoint(&object->x, pos);
                 x = pos[0] >> 3;
                 y = pos[1] >> 3;
                 ret = 1;
@@ -114,7 +107,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
         } else {
             left = 0;
             top = 0;
-            UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
             left = x - width / 2;
             if (flags & 0x4000)
                 top = y - height - 1;
@@ -123,7 +116,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             else
                 top = y + 4;
         }
-        if (win->plain != 0)
+        if (win->mode != 0)
             margin = 5;
         column = x;
         if (flags & 0x1000) {
@@ -149,7 +142,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
            holding it gives both. */
         none = -1;
         if (ret != none) {
-            UiText_GetResourceDimensionsAltFar(message, &left, &top, &width, &height);
+            UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
             message = none;
             tail = top - 5;
             if (top <= y)
@@ -166,14 +159,14 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             if (top < tail) {
                 s32 lines = height;
 
-                UiText_GetResourceDimensionsFar(none, &left, &top, &width, &height);
+                UiText_GetResourceDimensionsFar(none, &left, &top, (u32 *)&width, (u32 *)&height);
                 message = none;
                 extra = lines - height + 1;
             }
         } else if (top < y) {
             s32 lines = height;
 
-            UiText_GetResourceDimensionsFar(message, &left, &top, &width, &height);
+            UiText_GetResourceDimensionsFar(message, &left, &top, (u32 *)&width, (u32 *)&height);
             extra = lines - height + 1;
             message = ret;
         }
@@ -181,7 +174,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
             column = 0;
         else if (column + margin > 29)
             column = 29 - margin;
-        if (win->plain != 0) {
+        if (win->mode != 0) {
             WaitFrames(8);
             if (extra != 0)
                 handle = UiText_OpenMessageWindowFar(message, left, top + extra - 1, 18);
@@ -200,7 +193,7 @@ s32 UiText_OpenMessageAtObject(s32 arg)
         while (!UiWork_IsCompleteFar())
             WaitFrames(1);
     }
-    work->message_window = handle;
+    work->message_window = (s32)handle;
     work->side_window = side;
     work->message++;
     return handle;

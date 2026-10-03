@@ -18,7 +18,7 @@ u8 *LinkLobby_GetEntrances(void);
 
 s32 SceneData_ReturnZero(void);
 
-u32 State_RunQueryWithInterruptMasterSaved(void);
+void LinkLobby_InitializeSerial(void);
 
 u8 *LinkLobby_GetExits(void);
 

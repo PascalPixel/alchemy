@@ -7,9 +7,9 @@
 extern u8 gEventWork[];
 extern volatile u32 gKeysHeld;
 
-/* The wait calls it with the action still in r0, as the ROM does, so it is
-   declared without a prototype. */
-s32 UiText_OpenMessageAtObject();
+struct UiWindow;
+struct UiWindow *UiText_OpenMessageAtObject(s32 actor_and_flags);
+s32 UiWork_IsIdleFar(struct UiWindow *window);
 
 void Battle_WaitMode0(s32 mode);
 void BattleEv_RunWait(s32 action, s32 flag);
@@ -19,7 +19,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 actor, s32 force);
 void BattleEv_RunWait(s32 action, s32 flag)
 {
     struct EventRuntime *runtime = *(struct EventRuntime **)gEventWork;
-    s32 wait_token = UiText_OpenMessageAtObject();
+    struct UiWindow *window = UiText_OpenMessageAtObject(action);
     s32 message_id;
     u32 frames = 0;
 
@@ -35,7 +35,7 @@ void BattleEv_RunWait(s32 action, s32 flag)
     UiWork_FinalizeEntityMatchingLocalizedIdFar(message_id);
 
     if (runtime->message_busy == 0) {
-        while (UiWork_IsIdleFar(wait_token) == 0) {
+        while (UiWork_IsIdleFar(window) == 0) {
             WaitFrames(1);
             frames++;
             if (frames > 600 ||

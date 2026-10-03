@@ -1,18 +1,29 @@
 #include "CANVAS.H"
 #include "RUNTIME_MEM.H"
 #include "PROJECT.H"
-/* Draft, complete main:080e7404 [080e7404,080e823c) with its two nested
-   functions main:080e7338 and main:080e73a0, 3844 bytes together, written
-   fresh from the listings in plain C.
-   2026-10-02: removed the stale ResourceObject_ReleaseFar declaration in
-   favor of RESOURCE.H; the draft now compiles, scoring 9394 (405 differing
-   instructions). Signed halfword register pointers give the same score.
-   Reusing the first projection scale in the second phase scored 11343
-   (429 differing instructions), so separate phase locals were restored.
-   AddFlame and AddMote reproduce their instruction bodies; each score is
-   100 only because the listing includes two trailing alignment bytes that
-   the compiler's function size excludes. The outer function remains a
-   draft, and none of this bank can yet be credited. */
+/* Draft: complete nested group [080e7338,080e823c), 3844 native bytes.
+   Prior attempts (2026-10-02): the old model with RESOURCE.H scored 9394
+   (405 differing instructions); signed halfword register pointers did not
+   improve it. Merging the phase scale locals scored 11343 (429 differences),
+   so that lifetime axis remains closed.
+   T0 (2026-10-03): one natural typed baseline, global TBS flags and era
+   assembler. Complete .text is 3892/3844 bytes; outer 3688/3640. AddFlame
+   and AddMote bodies (102/98 bytes) and their natural two-byte alignment
+   each match, in the original order. The complete raw group, relocations
+   resolved, reproduces the owned ROM. T0 differs in 3325 shared-span bytes
+   plus 48 extra bytes; this is not an instruction-aligned score.
+   All 121 T0 relocations resolve (native 126); all 95 physical call targets
+   and their order agree. Outer T0/native: 1547/1532 instructions, 167/166
+   stores, 195/194 branches, 97/94 pool words. Local frame is 288/284 bytes,
+   captured work at sp+152/148; both helpers still read frame-top minus 136.
+   Register/scheduling, instruction-presence, pool and frame differences
+   remain. No device or further variation was attempted.
+   Lifecycle retained: first phase sets 64 particle sentinels; second phase
+   initializes 32 work-particle coordinates, 128 flashes and 512 embers,
+   then processes 64 of each. Separate used scale arrays stay in each phase.
+   RESOURCE.H boundaries stay opaque; existing numeric resource operands,
+   caller declaration and edition/table-label closure remain for adoption.
+   No part of this draft group receives credit. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "RESOURCE_IDS.H"
@@ -29,34 +40,10 @@
 #include "IWRAM_CALL.H"
 #include "RAM_BUFFER.H"
 #include "MAP_SCROLL.H"
+#include "HEAP_STATE.H"
+#include "ANIMSPR.H"
+#include "B5_CONTEXT.H"
 
-
-/* The battle presentation block in heap slot 44. */
-struct BattlePresentationWork {
-    u8 unknown_00[16];
-    s32 scroll_enabled;
-};
-
-/* A scene object: two bits of its tenth byte pick its draw variant. */
-struct SceneObject {
-    u8 reserved_00[9];
-    u8 flags09_0 : 2;
-    u8 variant : 2;
-    u8 flags09_4 : 4;
-    u8 reserved_0a[28];
-    u8 enabled;
-};
-
-struct Scale {
-    s32 x;
-    s32 y;
-};
-
-
-
-extern void *gBattleFxWork[];
-extern void *gTransitionWork[];
-extern DrawRectangle gWorkSlot[];
 
 extern volatile u32 gKeysRepeat;
 extern u16 ParticleStreams_CellOffsets[];
@@ -65,27 +52,26 @@ extern s16 ParticleStreams_DropPoints[][2];
 extern u16 ParticleStreams_FlashSheetOffsets[];
 extern u16 ParticleStreams_FlashSizes[];
 
-void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_FlushPendingGraphicsTransfer(void);
 void BattleFx_ArmPaletteHBlankDma(void);
 void Camera_AdvanceBg2Reference(void);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleEffect_WipeCanvas(s32 mode, s32 layer);
 void BattleEffect_SetupBlendedDisplay(void);
-struct SceneObject *GetBattleEffectObject(s32 kind);
-void Object_InitializeMode(struct SceneObject *object, s32 animation);
-void Object_ApplyProjectedPlacementFar(void *object, s32 *position, struct Scale *scale, s32 mode);
+struct ResourceObject *GetBattleEffectObject(s32 kind);
+s32 Object_InitializeMode(struct AnimationObject *object, s32 animation);
+void Object_ApplyProjectedPlacementFar(struct AnimationObject *object,
+    s32 position[4], s32 scale[2], s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void AudioCommand_PlayFar(s32 cue);
 void BattleEventRuntime_BeginPhaseFar(s32 phase);
-void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
+void Palette_BrightenBgEntries(s32 blue, s32 green, s32 red);
 void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPosition(const s32 *position);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Graphics_PrepareTransferInIwramWork(s32 first, s32 last);
-void Camera_ApplyShake(s32 x, s32 y);
+void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 
 #define REG_DMA3 ((volatile u32 *)0x040000d4)
 
@@ -105,7 +91,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
 {
     volatile u32 fill;
     u8 offsets[128];
-    void **cache;
     void *canvas;
     DrawRectangle draw;
     s32 direction;
@@ -151,13 +136,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     s32 vector[3];
     struct EffectPosition spot;
     struct EffectPosition point;
-    struct Scale scale;
+    s32 scale[2];
     s32 frame;
     s32 i;
 
-    cache = &gBattleFxWork[1];
-    canvas = cache[0];
-    work = cache[-1];
+    canvas = gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+    work = gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0x2000);
     *(volatile u16 *)0x04000020 = 0x100;
@@ -183,13 +167,15 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
     if (mode == 1) {
         for (i = 0; i != 2; i++) {
-            struct SceneObject *object = GetBattleEffectObject(483 + i * 0x2001);
+            struct AnimationObject *object =
+                (struct AnimationObject *)GetBattleEffectObject(483 + i * 0x2001);
 
             work->objects[i] = object;
             if (object != 0) {
-                object->enabled = 0;
+                object->flags = 0;
                 Object_InitializeMode(object, 2);
-                ((struct SceneObject *)work->objects[i])->variant = 3;
+                /* Byte 9 of the first OAM part holds the two priority bits. */
+                ((unsigned char *)&((struct AnimationObject *)work->objects[i])->part[0])[9] |= 0x0c;
             }
         }
     } else {
@@ -264,18 +250,20 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
     {
         u16 saved_x = (u16)gBgScroll[1].x;
         u16 saved_y = (u16)gBgScroll[1].y;
-        struct BattlePresentationWork *presentation = gTransitionWork[0];
+        struct BattleBackgroundView *presentation =
+            gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
 
         gBgScroll[1].x = 0;
         gBgScroll[1].y = 32;
-        BattleEffect_LoadWork(46, 8, 7, 3, 2);
-        draw = gTransitionWork[2];
+        BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 8, 7, 3, 2);
+        draw = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
         work->transfer_mode = 3;
-        work->transfer_value = (s32)(Ram_MapBlocks + 0x202);
+        /* Darken each packed pixel byte by two after the transfer. */
+        work->transfer_value = 0x02020202;
         Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmPaletteHBlankDma, 0x4fe);
         for (i = 0; i != 64; i++)
             work->particles[i].variant = -1;
-        presentation->scroll_enabled = 1;
+        presentation->busy = 1;
         work->frame = 0;
         for (frame = 0; frame != 192; frame++) {
             s32 time = work->frame;
@@ -325,19 +313,19 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             position[1] = 0xff0000;
             if (mode == 1) {
                 size = angle + 0xa000;
-                scale.x = size;
-                scale.y = size;
+                scale[0] = size;
+                scale[1] = size;
                 position[0] = (x << 16) + 0x500000;
                 position[2] = (64 - y) << 16;
-                Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
-                Object_ApplyProjectedPlacementFar(work->objects[1], position, &scale, 0);
+                Object_ApplyProjectedPlacementFar(work->objects[0], position, scale, 0);
+                Object_ApplyProjectedPlacementFar(work->objects[1], position, scale, 0);
             } else {
                 size = angle + 0x10000;
-                scale.x = size;
-                scale.y = size;
+                scale[0] = size;
+                scale[1] = size;
                 position[0] = (x << 16) + 0x600000;
                 position[2] = (96 - y) << 16;
-                Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
+                Object_ApplyProjectedPlacementFar(work->objects[0], position, scale, 0);
             }
             y = 32 - y;
             for (i = 0; i != 32; i++) {
@@ -401,22 +389,22 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         }
     skipped:
         WaitFrames(1);
-        presentation->scroll_enabled = 0;
+        presentation->busy = 0;
         Scheduler_RemoveCallback((u32)Camera_AdvanceBg2Reference);
         Scheduler_RemoveCallback((u32)BattleFx_ArmPaletteHBlankDma);
         Scheduler_RemoveCallback((u32)BattleFx_FlushPendingGraphicsTransfer);
         gBgScroll[1].x = saved_x;
         gBgScroll[1].y = saved_y;
     }
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     BattleEffect_SetupBlendedDisplay();
     *(volatile u16 *)0x04000020 = 0x80;
     *(volatile u32 *)0x04000028 = 0;
     *(volatile u32 *)0x0400002c = 0xfffff000;
     *(volatile u16 *)0x04000052 = 0x1010;
     *(volatile u16 *)0x0400000c = 0x2784;
-    BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw = gWorkSlot[46];
+    BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
+    draw = (BattleEffectDrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
     for (i = 0; i != 32; i++) {
         struct EffectStep *mote = &work->particles[i];
@@ -454,7 +442,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         s32 size = (frame << 8) + 0x1d000;
         struct BattleCamera *camera = gCameraWork;
         s32 elapsed = frame - 16;
-        struct Scale scale;
+        s32 scale[2];
         s32 x;
         s32 y;
         s32 grow;
@@ -467,8 +455,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
             AudioCommand_PlayFar(145);
         if (frame == 48) {
             if (mode == 1) {
-                ResourceObject_ReleaseFar(work->objects[0]);
-                ResourceObject_ReleaseFar(work->objects[1]);
+                ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
+                ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[1]);
                 BattleActor_CommitPlacementFar();
             }
             BattleEventRuntime_BeginPhaseFar(134);
@@ -549,18 +537,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         position[3] = 0;
         position[1] = 0xff0000;
         if (mode == 1) {
-            scale.x = size;
-            scale.y = size;
+            scale[0] = size;
+            scale[1] = size;
             position[0] = (x << 16) + 0x600000;
             position[2] = (96 - y) << 16;
-            Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
-            Object_ApplyProjectedPlacementFar(work->objects[1], position, &scale, 0);
+            Object_ApplyProjectedPlacementFar(work->objects[0], position, scale, 0);
+            Object_ApplyProjectedPlacementFar(work->objects[1], position, scale, 0);
         } else {
-            scale.x = grow;
-            scale.y = grow;
+            scale[0] = grow;
+            scale[1] = grow;
             position[0] = (x << 16) + 0x600000;
             position[2] = (96 - y) << 16;
-            Object_ApplyProjectedPlacementFar(work->objects[0], position, &scale, 0);
+            Object_ApplyProjectedPlacementFar(work->objects[0], position, scale, 0);
         }
         work->shake_frames = 1;
         Camera_ApplyShake(8, 8);
@@ -568,8 +556,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect, s32 mo
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
-    Runtime_ReleaseHeapBlock(46);
+    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     if (mode == 0)
-        ResourceObject_ReleaseFar(work->objects[0]);
+        ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
     BattleFx_EndCanvasLayer();
 }

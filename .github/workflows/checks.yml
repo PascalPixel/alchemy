@@ -1,0 +1,74 @@
+name: Public source checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tools-and-policy:
+    name: ROM-free tools and source policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_TARGET_DIR: ${{ github.workspace }}/tools/out/cargo-target
+      RUSTUP_TOOLCHAIN: 1.98.1
+    steps:
+      - name: Check out source and approved compiler sources
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          submodules: true
+          persist-credentials: false
+
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal --component rustfmt
+
+      - name: Fetch locked public Rust dependencies
+        run: cargo fetch --locked --manifest-path tools/Cargo.toml
+
+      - name: Build the source checker
+        run: cargo build --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy
+
+      - name: Build pinned binutils for synthetic ELF tests
+        run: tools/out/cargo-target/release/alchemy bootstrap --binutils
+
+      - name: Test coverage failure paths with synthetic objects
+        run: >-
+          env PATH="$PWD/tools/out/binutils/bin:$PATH"
+          cargo test --locked --offline --release --manifest-path tools/Cargo.toml
+          -p alchemy --bin alchemy -- coverage::calcrom::tests::symbol_inspection_
+
+      - name: Test asset encoders and analysis tools on synthetic inputs
+        run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p ags -p psynergy
+
+      - name: Test Alchemy commands and relocated build caches
+        run: cargo test --locked --offline --release --manifest-path tools/Cargo.toml -p alchemy --test cli --test build_script
+
+      # These suites need neither ROMs nor the installed game compilers.
+      # Compiler execution and the complete preprocessed C audit remain in make land.
+      - name: Test publication, routing, parsing and guarded rewrites
+        run: >-
+          cargo test --locked --offline --release --manifest-path tools/Cargo.toml
+          -p alchemy --bin alchemy -- --include-ignored
+          check::publication:: check::layout:: check::commit_progress::
+          compiler::routing::target_tests::only_ compiler::no_asm:: compiler::steering::
+          permute::ast:: permute::lex:: permute::parse:: permute::effects::
+          permute::types:: permute::mutate:: permute::score:: permute::tests::minimizing_
+          verify::tests::
+
+      # The publication scan checks tracked formats/content and editable asset
+      # layout. Its optional local-ROM logo comparison cannot run here.
+      # ROM equality, executable coverage and game-compiler checks stay local.
+      - name: Check public source and pinned compiler provenance
+        run: >-
+          make ALCHEMY=tools/out/cargo-target/release/alchemy
+          rustfmt-check native-format-check publication-tree-check tooling-index-check
+          language-check corpus-check standard-check compiler-source-check

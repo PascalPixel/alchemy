@@ -38,8 +38,11 @@ fn collect(tools: &Path, path: &Path, files: &mut Vec<PathBuf>) {
     }
 }
 
-fn main() {
-    let tools = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+pub(crate) fn main() {
+    // Cargo can reuse this executable from a copied worktree cache.
+    // Its runtime manifest directory names the checkout being built now.
+    let manifest = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap());
+    let tools = manifest.parent().unwrap();
     let mut files = Vec::new();
     for directory in ["alchemy/src", "psynergy/src", "ags/src"] {
         let path = tools.join(directory);

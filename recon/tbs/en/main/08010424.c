@@ -1,3 +1,16 @@
+/* 2026-10-04 independent follow-up: retained70 (two register choices
+ * and one table-base load reorder); no new binding or barrier retained.
+ * Plain first-base scalar1673; native r2 scalar/pointer bindings both70,
+ * folded back to r5. Volatile r2 form76 adds an unread frame word and is
+ * rejected. An empty read/write base barrier975 also regresses.
+ * Existing destination/r0 binding195; tiles/r2=70; both195.
+ * Reusing destination temp for first tile-word load520; both loads175;
+ * table base through that temp70; offset-first destination sum70.
+ * Focused ordinary search seed5104/two jobs/16998 candidates: no gain.
+ * Native offset/r4 binding500; row/r7=2560; layer counter/r6=650.
+ * The first drawing base must still naturally occupy r2 beside the table
+ * base in r5; no reserved storage or extra operations may force it.
+ */
 /* 2026-10-04: another31848 ordinary candidates/seed4004 retain70;
  * no better allocation/order found. Independent review confirms both
  * consumed bindings, copy semantics, frame36 and complete316B extent. */

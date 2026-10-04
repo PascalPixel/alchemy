@@ -32,7 +32,7 @@ compiler-runtime: toolchain-check compiler-source-check
 $(LIBGCC):
 	$(MAKE) compiler-runtime
 
-.PHONY: help bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
+.PHONY: help bootstrap fetch-dependencies compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-full build-rom
 .PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check untracked-check
@@ -41,7 +41,8 @@ $(LIBGCC):
 
 help:
 	@printf '%s\n' \
-	  'make bootstrap       install the approved toolchain from pinned source' \
+	  'make bootstrap       fetch locked dependencies and build the approved toolchain' \
+	  'make fetch-dependencies  download only the locked Rust dependencies' \
 	  'make compare-all     compare linked source and both private ROM compositions' \
 	  'make compare-editions  compare all twelve editions, with Japanese as the base' \
 	  'make test            Rust tests, formatting and source policy' \
@@ -54,7 +55,11 @@ help:
 	  'make similar         rank not-yet-C functions against C into out/reports/similar.tsv' \
 	  'make deps            map calls and blockers of not-yet-C code into out/reports/deps-*.tsv'
 
-bootstrap:
+# Setup may download pinned dependencies; ordinary build commands stay offline.
+fetch-dependencies:
+	$(CARGO) fetch --locked --manifest-path $(TOOLS)/Cargo.toml
+
+bootstrap: fetch-dependencies
 	$(ALCHEMY) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
 	$(MAKE) $(LIBGCC)
 

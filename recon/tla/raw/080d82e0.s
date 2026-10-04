@@ -311,7 +311,7 @@ Func_080d82e0:
 .L_080d8594:
 	movs r0, #15
 	bl WaitFrames
-	bl Func_08108060
+	bl Shop_InitEffectFar
 	bl Func_080d7ab4
 .L_080d85a2:
 	add sp, #12

@@ -240,7 +240,7 @@ Func_080d8740:
 	bge .L_080d8940
 	movs r0, #50
 	bl WaitFrames
-	bl Func_08108060
+	bl Shop_InitEffectFar
 	bl Func_080d7ab4
 .L_080d8960:
 	add sp, #52

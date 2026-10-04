@@ -3,6 +3,7 @@
 #include "RESOURCE.H"
 #include "RENDER_INPUT.H"
 #include "RUNTIME_MEM.H"
+#include "RAM_BUFFER.H"
 
 struct Record_080b06c0 {
     u8 filler0[4];
@@ -106,4 +107,45 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
     }
     Runtime_ReleaseHeapBlock(56);
     return sprite;
+}
+
+/* The scene layer refresh, reached through the far-call table, whose
+   Spanish and Italian editions hold these targets two entries earlier. */
+#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+void Func_080c8368(s32, s32);
+void Func_080c8380(s32);
+#else
+void Func_080c8378(s32, s32);
+void Func_080c8390(s32);
+#endif
+
+/* ☀️'s, over ⚓️'s event work and its block in heap slot 32: copies the
+   saved tile block at work + 0xe00 back into the scene's map and the work
+   area, then refreshes the scene layer. */
+void Shop_RestoreSceneTiles(s32 layer)
+{
+    u8 *map = Ram_HeapSlots->event_work;
+    u8 *work = Ram_HeapSlots->unknown_80[0];
+    u8 *saved = work + 0xe00;
+
+    Dma_Set(saved, map + 0x222, 0x84000150, (volatile u32 *)0x040000d4);
+    Dma_Set(saved, work + 0x380, 0x840002a0, (volatile u32 *)0x040000d4);
+#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+    Func_080c8368(layer, 1);
+    Func_080c8380(16);
+#else
+    Func_080c8378(layer, 1);
+    Func_080c8390(16);
+#endif
+}
+
+void Shop_InitEffect(void)
+{
+#if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
+    Func_080c8368((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    Func_080c8380(16);
+#else
+    Func_080c8378((s32)Ram_HeapSlots->event_work + 0x222, 1);
+    Func_080c8390(16);
+#endif
 }

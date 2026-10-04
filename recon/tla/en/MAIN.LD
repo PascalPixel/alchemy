@@ -1954,8 +1954,6 @@
         "*/recon/tla/raw/08108660.o"(.text)
         "*/recon/tla/raw/08108690.o"(.text)
         "*/games/THE LOST AGE/SRC/MENU/SHOP/SHOP.o"(.text)
-        "*/recon/tla/raw/081088d8.o"(.text)
-        "*/recon/tla/raw/08108928.o"(.text)
         "*/recon/tla/raw/08108948.o"(.text)
         "*/recon/tla/raw/081089e4.o"(.text)
         "*/recon/tla/raw/08108a88.o"(.text)

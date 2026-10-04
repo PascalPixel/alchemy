@@ -1050,8 +1050,6 @@
     "*/games/THE LOST AGE/SRC/SOUND/COMMAND_WAIT_FOR_STATE_BYTE_CLEAR.o"(.text)
     "*/recon/tla/es/rom.o"(.rom.0010c4f4)
     "*/games/THE LOST AGE/SRC/MENU/SHOP/SHOP.o"(.text)
-    "*/recon/tla/es/rom.o"(.rom.0010c8d8)
-    "*/recon/tla/es/rom.o"(.rom.0010c928)
     "*/recon/tla/es/rom.o"(.rom.0010c948)
     "*/recon/tla/es/rom.o"(.rom.0010c9e4)
     "*/recon/tla/es/rom.o"(.rom.0010ca88)

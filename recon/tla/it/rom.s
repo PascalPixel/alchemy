@@ -4868,10 +4868,10 @@ Func_08108050:
 	.thumb_func
 Shop_RestoreSceneTilesFar:
 	.incbin "baserom.gba", 0x00108058, 0x00000008
-	.global Func_08108060
-	.type Func_08108060, %function
+	.global Shop_InitEffectFar
+	.type Shop_InitEffectFar, %function
 	.thumb_func
-Func_08108060:
+Shop_InitEffectFar:
 	.incbin "baserom.gba", 0x00108060, 0x00000008
 	.global Func_08108068
 	.type Func_08108068, %function
@@ -4897,19 +4897,8 @@ Func_08108080:
 	.incbin "baserom.gba", 0x001080a8, 0x00000438
 	.section .rom.001084f4, "ax"
 	.incbin "baserom.gba", 0x001084f4, 0x00000268
-	.section .rom.001088d8, "ax"
-	.global Func_081088d8
-	.type Func_081088d8, %function
-	.thumb_func
-Func_081088d8:
-	.incbin "baserom.gba", 0x001088d8, 0x00000050
-	.section .rom.00108928, "ax"
-	.global Func_08108928
-	.type Func_08108928, %function
-	.thumb_func
-Func_08108928:
-	.incbin "baserom.gba", 0x00108928, 0x00000020
 	.section .rom.00108948, "ax"
+	.balign 4
 	.global Func_08108948
 	.type Func_08108948, %function
 	.thumb_func

@@ -472,47 +472,47 @@ void Cgb_UpdateChannels(void)
         work->cgb_tick = 14;
 
     for (channel = 1, note = work->cgb_notes; channel <= 4; channel++, note++) {
-        if (!(note->state & 0xc7))
+        if (!(note->state & CGB_NOTE_ON))
             continue;
 
         switch (channel) {
         case 1:
-            reg0 = (volatile u8 *)0x04000060;
-            reg1 = (volatile u8 *)0x04000062;
-            reg2 = (volatile u8 *)0x04000063;
-            reg3 = (volatile u8 *)0x04000064;
-            reg4 = (volatile u8 *)0x04000065;
+            reg0 = &REG_NR10;
+            reg1 = &REG_NR11;
+            reg2 = &REG_NR12;
+            reg3 = &REG_NR13;
+            reg4 = &REG_NR14;
             break;
         case 2:
-            reg0 = (volatile u8 *)0x04000061;
-            reg1 = (volatile u8 *)0x04000068;
-            reg2 = (volatile u8 *)0x04000069;
-            reg3 = (volatile u8 *)0x0400006c;
-            reg4 = (volatile u8 *)0x0400006d;
+            reg0 = &REG_NR10 + 1;
+            reg1 = &REG_NR21;
+            reg2 = &REG_NR22;
+            reg3 = &REG_NR23;
+            reg4 = &REG_NR24;
             break;
         case 3:
-            reg0 = (volatile u8 *)0x04000070;
-            reg1 = (volatile u8 *)0x04000072;
-            reg2 = (volatile u8 *)0x04000073;
-            reg3 = (volatile u8 *)0x04000074;
-            reg4 = (volatile u8 *)0x04000075;
+            reg0 = &REG_NR30;
+            reg1 = &REG_NR31;
+            reg2 = &REG_NR32;
+            reg3 = &REG_NR33;
+            reg4 = &REG_NR34;
             break;
         default:
-            reg0 = (volatile u8 *)0x04000071;
-            reg1 = (volatile u8 *)0x04000078;
-            reg2 = (volatile u8 *)0x04000079;
-            reg3 = (volatile u8 *)0x0400007c;
-            reg4 = (volatile u8 *)0x0400007d;
+            reg0 = &REG_NR30 + 1;
+            reg1 = &REG_NR41;
+            reg2 = &REG_NR42;
+            reg3 = &REG_NR43;
+            reg4 = &REG_NR44;
             break;
         }
 
         tick = work->cgb_tick;
         envelope = *reg2;
 
-        if (note->state & 0x80) {
-            if (!(note->state & 0x40)) {
-                note->state = 3;
-                note->modified = 3;
+        if (note->state & CGB_NOTE_START) {
+            if (!(note->state & CGB_NOTE_STOP)) {
+                note->state = CGB_PHASE_ATTACK;
+                note->modified = CGB_NOTE_VOLUME_DIRTY | CGB_NOTE_PITCH_DIRTY;
                 CgbNote_UpdatePanEnvelope(note);
                 switch (channel) {
                 case 1:
@@ -523,10 +523,10 @@ void Cgb_UpdateChannels(void)
                 case 3:
                     if (note->wave != note->loaded_wave) {
                         *reg0 = 0x40;
-                        ((volatile u32 *)0x04000090)[0] = note->wave[0];
-                        ((volatile u32 *)0x04000090)[1] = note->wave[1];
-                        ((volatile u32 *)0x04000090)[2] = note->wave[2];
-                        ((volatile u32 *)0x04000090)[3] = note->wave[3];
+                        REG_WAVE_RAM[0] = note->wave[0];
+                        REG_WAVE_RAM[1] = note->wave[1];
+                        REG_WAVE_RAM[2] = note->wave[2];
+                        REG_WAVE_RAM[3] = note->wave[3];
                         note->loaded_wave = note->wave;
                     }
                     *reg0 = 0;
@@ -555,7 +555,7 @@ void Cgb_UpdateChannels(void)
                 goto decay;
             }
             goto off;
-        } else if (note->state & 0x04) {
+        } else if (note->state & CGB_NOTE_ECHO) {
             note->echo_length--;
             if ((s8)(note->echo_length & byte_mask) > 0)
                 goto write;
@@ -563,11 +563,11 @@ void Cgb_UpdateChannels(void)
             CgbChannel_Mute(channel);
             note->state = 0;
             goto done;
-        } else if ((note->state & 0x40) && (note->state & 0x03)) {
-            note->state &= 0xfc;
+        } else if ((note->state & CGB_NOTE_STOP) && (note->state & CGB_NOTE_PHASE)) {
+            note->state &= ~CGB_NOTE_PHASE;
             note->counter = note->release;
             if ((s8)(note->counter & byte_mask)) {
-                note->modified |= 1;
+                note->modified |= CGB_NOTE_VOLUME_DIRTY;
                 if (channel != 3)
                     envelope = note->release;
                 goto count_down;
@@ -577,16 +577,16 @@ void Cgb_UpdateChannels(void)
         step:
             if (note->counter == 0) {
                 if (channel == 3)
-                    note->modified |= 1;
+                    note->modified |= CGB_NOTE_VOLUME_DIRTY;
                 CgbNote_UpdatePanEnvelope(note);
-                if ((note->state & 3) == 0) {
+                if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_RELEASE) {
                     note->level--;
                     if ((s8)(note->level & byte_mask) <= 0) {
                     echo:
                         note->level = ((note->peak * note->echo_level) + 0xff) >> 8;
                         if (note->level) {
-                            note->state |= 4;
-                            note->modified |= 1;
+                            note->state |= CGB_NOTE_ECHO;
+                            note->modified |= CGB_NOTE_VOLUME_DIRTY;
                             if (channel != 3)
                                 envelope = 8;
                             goto write;
@@ -594,20 +594,20 @@ void Cgb_UpdateChannels(void)
                         goto off;
                     }
                     note->counter = note->release;
-                } else if ((note->state & 3) == 1) {
+                } else if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_SUSTAIN) {
                 sustain:
                     note->level = note->sustain_level;
                     note->counter = 7;
-                } else if ((note->state & 3) == 2) {
+                } else if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_DECAY) {
                     note->level--;
                     if ((s8)(note->level & byte_mask) <= (s8)note->sustain_level) {
                     sustain_or_release:
                         if (note->sustain == 0) {
-                            note->state &= 0xfc;
+                            note->state &= ~CGB_NOTE_PHASE;
                             goto echo;
                         }
                         note->state--;
-                        note->modified |= 1;
+                        note->modified |= CGB_NOTE_VOLUME_DIRTY;
                         if (channel != 3)
                             envelope = 8;
                         goto sustain;
@@ -621,7 +621,7 @@ void Cgb_UpdateChannels(void)
                         note->counter = note->decay;
                         if ((s8)(note->counter & byte_mask) == 0)
                             goto sustain_or_release;
-                        note->modified |= 1;
+                        note->modified |= CGB_NOTE_VOLUME_DIRTY;
                         note->level = note->peak;
                         if (channel != 3)
                             envelope = note->decay;
@@ -639,9 +639,9 @@ void Cgb_UpdateChannels(void)
         }
 
     write:
-        if (note->modified & 2) {
+        if (note->modified & CGB_NOTE_PITCH_DIRTY) {
             if (channel < 4 && (note->kind & 8)) {
-                s32 bias = *(volatile u8 *)0x04000089;
+                s32 bias = REG_SOUNDBIAS_H;
 
                 if (bias < 0x40)
                     note->frequency = (note->frequency + 2) & 0x7fc;
@@ -656,8 +656,8 @@ void Cgb_UpdateChannels(void)
             *reg4 = (s8)(note->trigger & byte_mask);
         }
 
-        if (note->modified & 1) {
-            *(volatile u8 *)0x04000081 = (*(volatile u8 *)0x04000081 & ~note->channel_bits) | note->pan_bits;
+        if (note->modified & CGB_NOTE_VOLUME_DIRTY) {
+            REG_NR51 = (REG_NR51 & ~note->channel_bits) | note->pan_bits;
             if (channel == 3) {
                 *reg2 = Sound_Cgb3LevelCodes[note->level];
                 if (note->trigger & 0x80) {

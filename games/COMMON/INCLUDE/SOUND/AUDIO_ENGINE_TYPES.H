@@ -16,6 +16,31 @@
 /* The driver keeps its work area address in the BIOS sound pointer. */
 #define SOUND_WORK (*(struct SoundWork **)0x03007FF0)
 
+/* The four tone generators, a byte at a time. Each channel's sweep or
+   wave-select byte comes first; the bytes after NR10 and NR30 are unused,
+   and the driver writes them for channels 2 and 4. */
+#define REG_NR10 (*(volatile u8 *)0x04000060)
+#define REG_NR11 (*(volatile u8 *)0x04000062)
+#define REG_NR12 (*(volatile u8 *)0x04000063)
+#define REG_NR13 (*(volatile u8 *)0x04000064)
+#define REG_NR14 (*(volatile u8 *)0x04000065)
+#define REG_NR21 (*(volatile u8 *)0x04000068)
+#define REG_NR22 (*(volatile u8 *)0x04000069)
+#define REG_NR23 (*(volatile u8 *)0x0400006c)
+#define REG_NR24 (*(volatile u8 *)0x0400006d)
+#define REG_NR30 (*(volatile u8 *)0x04000070)
+#define REG_NR31 (*(volatile u8 *)0x04000072)
+#define REG_NR32 (*(volatile u8 *)0x04000073)
+#define REG_NR33 (*(volatile u8 *)0x04000074)
+#define REG_NR34 (*(volatile u8 *)0x04000075)
+#define REG_NR41 (*(volatile u8 *)0x04000078)
+#define REG_NR42 (*(volatile u8 *)0x04000079)
+#define REG_NR43 (*(volatile u8 *)0x0400007c)
+#define REG_NR44 (*(volatile u8 *)0x0400007d)
+#define REG_NR51 (*(volatile u8 *)0x04000081)
+#define REG_SOUNDBIAS_H (*(volatile u8 *)0x04000089)
+#define REG_WAVE_RAM ((volatile u32 *)0x04000090)
+
 struct SoundNote;
 struct CgbNote;
 struct SoundPlayer;
@@ -86,6 +111,30 @@ struct CgbNote {
     u32 *wave;                      /* 0x24 */
     u32 *loaded_wave;               /* 0x28 */
     u8 unk2c[0x14];
+};
+
+/* A CGB note's state: the envelope phase in its low two bits (attack 3,
+   decay 2, sustain 1, release 0), then the echo after release, and the
+   start and stop requests. */
+enum CgbNoteState {
+    CGB_NOTE_PHASE = 0x03,
+    CGB_NOTE_ECHO = 0x04,
+    CGB_NOTE_STOP = 0x40,
+    CGB_NOTE_START = 0x80,
+    CGB_NOTE_ON = CGB_NOTE_START | CGB_NOTE_STOP | CGB_NOTE_ECHO | CGB_NOTE_PHASE
+};
+
+enum CgbNotePhase {
+    CGB_PHASE_RELEASE,
+    CGB_PHASE_SUSTAIN,
+    CGB_PHASE_DECAY,
+    CGB_PHASE_ATTACK
+};
+
+/* What a CGB note's registers need rewritten this frame. */
+enum CgbNoteModified {
+    CGB_NOTE_VOLUME_DIRTY = 1,
+    CGB_NOTE_PITCH_DIRTY = 2
 };
 
 enum SoundTrackFlag {

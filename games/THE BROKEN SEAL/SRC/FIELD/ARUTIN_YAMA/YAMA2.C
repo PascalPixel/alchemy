@@ -217,13 +217,13 @@ void FieldScene_RunFallingRocksWarning(void)
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
         Engine_ActorJump(ACTOR_GERALD, 6, 0);
         Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
-        ((u8 *)Object_GetById(ACTOR_GERALD))[90] &= 254;
+        Object_GetById(ACTOR_GERALD)->unknown_5a &= 254;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 110);
         Engine_EventWait(1);
-        ((u8 *)Object_GetById(ACTOR_GERALD))[90] |= 1;
+        Object_GetById(ACTOR_GERALD)->unknown_5a |= 1;
         Audio_PlayCue(161);
         Work_SetValuesIfNonNegative(0x20000, 0x10000, 0x10000);
-        ((u8 *)Object_GetById(ACTOR_GERALD))[90] &= 254;
+        Object_GetById(ACTOR_GERALD)->unknown_5a &= 254;
         Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 120);
         Engine_EventWait(1);
         {
@@ -447,7 +447,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(40);
     Engine_ActorFaceDirection(10, 0x8000, 40);
-    *(u8 *)((s32)Object_GetById(9) + 85) = p10.v;
+    Object_GetById(9)->motion_flags = p10.v;
     Engine_MapCopyCellAttributes(3, 0, 1, 1, 17, 13);
     Engine_MapCopyCellAttributes(3, 0, 1, 1, 18, 13);
     Engine_MapCopyCellAttributes(3, 0, 1, 1, 19, 13);

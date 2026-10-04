@@ -308,7 +308,7 @@ void MakyuriHeya_SyncBlockFlags(void)
             Engine_GameFlagClear(flag + 1);
         }
     }
-    x = *(s32 *)((s32)Object_GetById(19) + 8) / 0x100000;
+    x = Object_GetById(19)->x.fixed / 0x100000;
     if (x == 57) {
         Engine_GameFlagSet(0x338);
         Engine_GameFlagClear(0x339);

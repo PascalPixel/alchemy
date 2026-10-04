@@ -149,7 +149,7 @@ void FieldScene_RunTile10x20Transition(void)
             Battle_WaitMode0(30);
             Engine_AudioPlayCue(240);
             Object_SetModeById(10, 8);
-            ((u8 *)Object_GetById(10))[35] = 2;
+            Object_GetById(10)->priority_flags = 2;
             zero = 0;
             DrawPlacement(0, 17, 2, 4, 19, 17);
             StagedActor_FillGridAttributeRectangle(2, 20, 17, 1, 4, zero);

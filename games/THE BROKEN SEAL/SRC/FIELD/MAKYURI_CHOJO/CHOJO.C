@@ -1483,7 +1483,7 @@ void FieldScene_RunScene39d_02002ddc(void)
     *(s32 *)(work + 12) = 0x3800000;
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    *(u8 *)(((s32)Object_GetById(9)) + 85) = 0;
+    Object_GetById(9)->motion_flags = 0;
     Engine_ActorSetPosition(9, PIXELS(0x68), PIXELS(0x108));
     record = ((s32)Object_GetById(9));
     *(s32 *)(record + 12) = -0x200000;

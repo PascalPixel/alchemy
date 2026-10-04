@@ -2261,7 +2261,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
-    ((u8 *)Object_GetById(5))[90] &= 0xfe;
+    Object_GetById(5)->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(ACTOR_JASMINE, 408, 843);
     Engine_EventWait(1);
     {
@@ -2584,7 +2584,7 @@ void Scene_RepairTheHouse(void)
     *(s32 *)(scene + 60) = 0x80000000;
     *(s32 *)(scene + 40) = none;
 #else
-    ((u8 *)Object_GetById(ACTOR_PARTY_LEADER))[85] = 3;
+    Object_GetById(ACTOR_PARTY_LEADER)->motion_flags = 3;
 #endif
     Engine_EventEnd();
 }
@@ -2862,11 +2862,11 @@ void FieldScene_RunScene373SequenceB(void)
         if (rec7 != 0) {
             goto L_02005a8a;
         }
-        *(u8 *)((u8 *)Object_GetById(22) + 91) = rec7;
+        Object_GetById(22)->unknown_5b = rec7;
         GameFlag_Clear(0x241);
     } else {
         if (GameFlag_IsSet(0x106) != 0) {
-            *(u8 *)((u8 *)Object_GetById(22) + 91) = 1;
+            Object_GetById(22)->unknown_5b = 1;
             GameFlag_Set(0x241);
         }
     }

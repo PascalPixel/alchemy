@@ -422,7 +422,7 @@ void FieldScene_RunScene3a4_02002934(void)
         Engine_ActorSetSpritePriority(9, 3);
         record = Object_GetById(9);
         Engine_ActorSetSpriteFlags(record, 0);
-        *(u8 *)((u8 *)Object_GetById(9) + 89) = rec7;
+        Object_GetById(9)->collision_flags = rec7;
     }
     flag = gGameState.entrance;
     if (flag == 1 || flag == 98) {
@@ -932,7 +932,7 @@ void SceneActor_SetActor12ModeByActorZeroHeight(void)
 {
     extern u32 Data_03001e40;
 
-    if (*(s32 *)((u8 *)Object_GetById(0) + 12) > 0x00300000) {
+    if (Object_GetById(0)->y.fixed > 0x00300000) {
         {
             u8 *flag = (u8 *)Object_GetById(11) + 35;
             s32 bit = 2;

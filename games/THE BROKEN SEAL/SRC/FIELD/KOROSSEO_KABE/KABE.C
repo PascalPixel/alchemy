@@ -469,7 +469,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
 {
     s32 i;
     struct FieldActor *rec8;
-    s32 rec7;
+    struct FieldActor *rec7;
     s32 xa;
     s32 xb;
     s32 xd;
@@ -481,8 +481,8 @@ void FieldScene_RunSupplementalSequenceOne(void)
     rec8 = Object_GetById(gGameState.selected_actor);
     for (i = 22; i <= 25; i++) {
         rec7 = Object_GetById(i);
-        *(u8 *)(rec7 + 91) = 0;
-        xa = *(s32 *)(rec7 + 8);
+        rec7->unknown_5b = 0;
+        xa = rec7->x.fixed;
         xb = rec8->x.fixed;
         xd = xa - xb;
         if (xd >= 0) {
@@ -495,7 +495,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
                 continue;
             }
         }
-        ya = *(s32 *)(rec7 + 16);
+        ya = rec7->z.fixed;
         yb = rec8->z.fixed;
         yd = ya - yb;
         if (yd >= 0) {
@@ -509,16 +509,16 @@ void FieldScene_RunSupplementalSequenceOne(void)
             }
         }
         if (GameFlag_IsSet(0x104) != 0) {
-            yb = *(s32 *)(rec7 + 16);
+            yb = rec7->z.fixed;
         } else {
             yb = rec8->z.fixed;
-            yd = *(s32 *)(rec7 + 44);
+            yd = rec7->velocity_z;
             yb = yb + yd;
         }
         rec8->z.fixed = yb;
     }
     if (KorosseoKabe_SpectatorTimer != 0
-        && *(s32 *)(rec7 + 56) == (s32)0x80000000) {
+        && rec7->target_x == (s32)0x80000000) {
         if (KorosseoKabe_SpectatorPhase == 0) {
             Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
         } else {

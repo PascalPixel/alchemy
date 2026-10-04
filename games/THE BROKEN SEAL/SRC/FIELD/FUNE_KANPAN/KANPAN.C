@@ -796,7 +796,7 @@ void FieldScene_RunScene3af_020010a0(void)
             Battle_ResetEffectCounter();
             FieldScene_RunScene3af_020012f0();
             Actor_SetSpeed(20, 0x6666, 0x3333);
-            *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
+            Object_GetById(20)->unknown_5a &= 254;
             Actor_WalkToAndWait(20, 232, 0x330);
             Engine_EventWait(1);
             bits = 1;
@@ -810,7 +810,7 @@ void FieldScene_RunScene3af_020010a0(void)
             Engine_ActorStartRepeatedMotion(20, 2);
             FieldScene_RunStepThen10(20);
             Actor_SetSpeed(20, 0x13333, 0x9999);
-            *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
+            Object_GetById(20)->unknown_5a &= 254;
             Actor_WalkToAndWait(20, 244, 0x324);
             Engine_EventWait(1);
             {
@@ -841,7 +841,7 @@ void FieldScene_RunScene3af_020011c8(void)
             Battle_ResetEffectCounter();
             FieldScene_RunScene3af_020012f0();
             Actor_SetSpeed(20, 0x6666, 0x3333);
-            *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
+            Object_GetById(20)->unknown_5a &= 254;
             Actor_WalkToAndWait(20, 202, 0x330);
             Engine_EventWait(1);
             bits = 1;
@@ -855,7 +855,7 @@ void FieldScene_RunScene3af_020011c8(void)
             Engine_ActorStartRepeatedMotion(20, 2);
             FieldScene_RunStepThen10(20);
             Actor_SetSpeed(20, 0x13333, 0x9999);
-            *(u8 *)((s32)Object_GetById(20) + 90) &= 254;
+            Object_GetById(20)->unknown_5a &= 254;
             Actor_WalkToAndWait(20, 192, 0x324);
             Engine_EventWait(1);
             {
@@ -1086,26 +1086,26 @@ void SceneActor_PlaceActors20To27(void)
 
     m <<= 7;
     Engine_ActorSetPosition(21, 0x1060000, 0x2C20000);
-    *(u16 *)((u8 *)Object_GetById(21) + 6) = m;
+    Object_GetById(21)->facing = m;
     Engine_ActorSetPosition(24, 0xA40000, 0x2880000);
     {
         s32 z = 0;
-        *(u16 *)((u8 *)Object_GetById(24) + 6) = z;
+        Object_GetById(24)->facing = z;
     }
     Engine_ActorSetSpritePriority(24, 1);
     Engine_ActorSetPosition(25, 0xC60000, 0x2990000);
     {
         s32 x = 0x80;
-        *(u16 *)((u8 *)Object_GetById(25) + 6) = x << 8;
+        Object_GetById(25)->facing = x << 8;
     }
     Engine_ActorSetSpritePriority(25, 1);
     Engine_ActorSetPosition(26, 0xBC0000, 0x2A60000);
     {
         s32 x = 0xB0;
-        *(u16 *)((u8 *)Object_GetById(26) + 6) = x << 8;
+        Object_GetById(26)->facing = x << 8;
     }
     Engine_ActorSetPosition(27, 0xBA0000, 0x27B0000);
-    *(u16 *)((u8 *)Object_GetById(27) + 6) = m;
+    Object_GetById(27)->facing = m;
     Engine_ActorSetPosition(22, 0, 0);
     Engine_ActorSetPosition(23, 0, 0);
     Engine_ActorSetPosition(20, 0, 0);

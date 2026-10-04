@@ -66,7 +66,7 @@ void FieldScene_RunActor16MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    dir = Object_GetById(0)->facing;
     Engine_EventBegin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -88,7 +88,7 @@ void FieldScene_RunActor18MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    dir = Object_GetById(0)->facing;
     Engine_EventBegin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -204,7 +204,7 @@ void FieldScene_RunActor19MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    dir = Object_GetById(0)->facing;
     Engine_EventBegin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {

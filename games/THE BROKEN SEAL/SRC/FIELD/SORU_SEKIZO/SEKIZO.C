@@ -643,7 +643,7 @@ s32 Scene_RunGuardSequenceB(void)
         record[35] = flags;
     }
     Engine_ActorSetSpriteFlags((s32)Object_GetById(18), 0);
-    *(u8 *)((s32)Object_GetById(18) + 35) &= 254;
+    Object_GetById(18)->priority_flags &= 254;
     Engine_ActorSetSpritePriority(18, 1);
     if ((u32)((gCell[225][0] - 3) << 16) > 0x10000) {
         Actor_SetPosition(ACTOR_JASMINE, 0, 0);
@@ -843,8 +843,8 @@ void FieldScene_RunClosingSequence(void)
 
 void SoruSekizo_CheckTileTrigger0166C(void)
 {
-    s32 x = *(s32 *)((s32)Object_GetById(0) + 8) >> 20;
-    s32 y = *(s32 *)((s32)Object_GetById(0) + 16) >> 20;
+    s32 x = Object_GetById(0)->x.fixed >> 20;
+    s32 y = Object_GetById(0)->z.fixed >> 20;
 
     if (y == 7 && (u32)(x - 13) <= 1) {
         Call4(SetMapCellCollision, 2, 0xd00000, 0x700000, 255);
@@ -853,8 +853,8 @@ void SoruSekizo_CheckTileTrigger0166C(void)
 
 void SoruSekizo_CheckTileTrigger016A4(void)
 {
-    s32 x = *(s32 *)((s32)Object_GetById(0) + 8) >> 20;
-    s32 y = *(s32 *)((s32)Object_GetById(0) + 16) >> 20;
+    s32 x = Object_GetById(0)->x.fixed >> 20;
+    s32 y = Object_GetById(0)->z.fixed >> 20;
 
     if (y == 7 && (u32)(x - 21) <= 1) {
         Call4(SetMapCellCollision, 2, 0x1600000, 0x700000, 255);
@@ -950,7 +950,7 @@ void FieldScene_RunScene37bSequenceA(void)
             Audio_PlayCue(185);
             Actor_SetSpeed(17, 0x3333, 0x1999);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-            *(u8 *)((s32)Object_GetById(17) + 90) &= 254;
+            Object_GetById(17)->unknown_5a &= 254;
             Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
             record = Object_GetById(0);
             Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel, 136);
@@ -1063,7 +1063,7 @@ void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
     Engine_AudioPlayCue(185);
     Call3(Engine_ActorSetSpeed, p9, 0x3333, 0x1999);
     Engine_ActorSetSpeed(0, 0x3333, 0x1999);
-    *(u8 *)((s32)Object_GetById(p9) + 90) &= 254;
+    Object_GetById(p9)->unknown_5a &= 254;
     Engine_ActorSetAnimation(0, 8);
     Engine_ActorSetDestination(0, ((a3 << 4) + 8), ((a4 << 4) + 8));
     p8b = ((s32)p8 << 4);

@@ -1627,7 +1627,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         {
             s32 zero = 0;
 
-            ((u8 *)Object_GetById(8))[85] = zero;
+            Object_GetById(8)->motion_flags = zero;
             Object_GetById(8)->y.fixed = zero;
             Object_GetById(8)->terrain_height = zero;
         }
@@ -1809,9 +1809,9 @@ void FieldScene_RunLateSequence(void)
     Engine_ActorSetAnimation(ACTOR_GERALD, 19);
     Engine_ActorSetAnimation(ACTOR_IVAN, 19);
     v5 = 2;
-    *(u8 *)((s32)Object_GetById(0) + 35) = v5;
-    *(u8 *)((s32)Object_GetById(1) + 35) = v5;
-    *(u8 *)((s32)Object_GetById(2) + 35) = v5;
+    Object_GetById(0)->priority_flags = v5;
+    Object_GetById(1)->priority_flags = v5;
+    Object_GetById(2)->priority_flags = v5;
     record = (s32)Object_GetById(0);
     Engine_ActorSetSpriteFlags(record, 0);
     record = (s32)Object_GetById(2);
@@ -1999,7 +1999,7 @@ void RunEventScript01(void)
     Engine_ActorSetAnimation(11, 9);
     Engine_ActorSetAnimation(12, 9);
     /* Clear the low bit of the flag byte at +35. */
-    *(u8 *)((s32)Object_GetById(12) + 35) &= 254;
+    Object_GetById(12)->priority_flags &= 254;
     /* Set flag bits 0x0c of the byte at +9. */
     actor12_record[9] |= 12;
     base5_200d17c = (s32)KuupuappuHeya_ActionTable;

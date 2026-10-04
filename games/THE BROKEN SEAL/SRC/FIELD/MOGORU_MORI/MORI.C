@@ -429,8 +429,8 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     /* Two signed halfwords of slot 0, each read after its own fetch of the
      * record. */
     FieldScene_RunScene39f_02000d90(11,
-                  *(s16 *)((u8 *)Object_GetById(0) + 10),
-                  *(s16 *)((u8 *)Object_GetById(0) + 18),
+                  Object_GetById(0)->x.part.pixel,
+                  Object_GetById(0)->z.part.pixel,
                   0x40000);                          /* 128 << 11 */
 
     Battle_WaitMode0(10);
@@ -799,9 +799,9 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
     mode = record + 85;
     saved = *mode;
 
-    target[0] = *(s32 *)((u8 *)Object_GetById(0) + 8) + (s32)0xffe00000;
-    target[1] = *(s32 *)((u8 *)Object_GetById(0) + 12);
-    target[2] = *(s32 *)((u8 *)Object_GetById(0) + 16);
+    target[0] = Object_GetById(0)->x.fixed + (s32)0xffe00000;
+    target[1] = Object_GetById(0)->y.fixed;
+    target[2] = Object_GetById(0)->z.fixed;
 
     if (SceneActor_TryRunSlotZeroMoveStep(target)!= 0) {
         /* r0 still holds the nonzero result of the test above. */

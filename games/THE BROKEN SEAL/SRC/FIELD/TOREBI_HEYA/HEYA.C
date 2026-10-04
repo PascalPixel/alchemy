@@ -120,7 +120,7 @@ void FieldScene_RunPrimarySequence(void)
     Engine_AudioPlayCue(158);
     Call3(Engine_MapAnimateCells, Data_02009dcc[n].a, Data_02009dcc[n].b, Data_02009dcc[n].c);
     Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Engine_EventRequestExit(*(s16 *)p6);
 }

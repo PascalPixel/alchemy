@@ -270,7 +270,7 @@ void Scene_RunScene39eSequenceB(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 0x1f8);
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
-        *(u8 *)(((s32)Object_GetById(8)) + 91) = 0;
+        Object_GetById(8)->unknown_5b = 0;
         Audio_PlayCue(152);
         record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
@@ -288,7 +288,7 @@ void Scene_RunScene39eSequenceB(void)
         Engine_EventWait(5);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 20);
         Audio_PlayCue(152);
-        *(u8 *)(((s32)Object_GetById(8)) + 91) = rec7;
+        Object_GetById(8)->unknown_5b = rec7;
         record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
         Engine_ActorSetAnimation(8, 1);
@@ -595,7 +595,7 @@ void ShianJiin_WalkByFacing(void)
     u32 dir;
     u32 limit;
 
-    dir = *(u16 *)((s32)Object_GetById(0) + 6);
+    dir = Object_GetById(0)->facing;
     limit = 0x3fff;
     if ((u32)((dir + -0x2000) << 16) <= 0x3fff0000) {
         Engine_ActorWalkToAndWait(15, 216, 168);
@@ -1494,7 +1494,7 @@ void FieldScene_RunScene39e_02002778(void)
     Engine_EventBegin();
     Audio_PlayCue(188);
     Map_AnimateCells((const u16 *)ShianJiin_CellStepsA, 77, 8);
-    *(u8 *)(((s32)Object_GetById(0)) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -1521,7 +1521,7 @@ void ShianJiin_AskIfCurious(void)
     Engine_ActorStartRepeatedMotion(8, 2);
     Actor_SetAttachedEffect(8, 0x102);
     Engine_EventWait(60);
-    ((u8 *)Object_GetById(8))[91] = 0;
+    Object_GetById(8)->unknown_5b = 0;
     Audio_PlayCue(152);
     record = Actor_Get(8);
     *(s32 *)(record + 40) = 0x80000;
@@ -2038,7 +2038,7 @@ void FieldScene_RunRoofEnsembleSequence(void)
     Engine_ActorSetAnimationAndWait(ACTOR_IVAN, 3);
     Engine_EventWait(20);
     /* Clear bit 0 of the flag byte at +90. */
-    ((u8 *)Object_GetById(0))[90] &= 0xfe;
+    Object_GetById(0)->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1c0, 0x200);
     Engine_EventWait(1);
     {

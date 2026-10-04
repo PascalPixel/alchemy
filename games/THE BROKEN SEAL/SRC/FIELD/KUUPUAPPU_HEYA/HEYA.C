@@ -353,7 +353,7 @@ void FieldScene_RunObjectTwentySixPositionCheck(void)
  * talks otherwise. */
 void FieldScene_RunActorNineteenAngleDialogue(void)
 {
-    s32 v = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    s32 v = Object_GetById(0)->facing;
 
     Engine_EventBegin();
     if (v >= 0xa001 && v <= 0xdfff) {

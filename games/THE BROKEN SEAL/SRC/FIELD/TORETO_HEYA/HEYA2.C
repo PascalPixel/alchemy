@@ -933,14 +933,14 @@ void ToretoHeya_RunLandingDustScene(void)
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Engine_MapRedraw();
     Engine_TaskWait(1);
-    *(s32 *)((u8 *)Object_GetById(0) + 12) = 0x820000;
-    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x8000;
-    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0;
-    ((u8 *)Object_GetById(0))[85] = 0;
+    Object_GetById(0)->y.fixed = 0x820000;
+    Object_GetById(0)->gravity = 0x8000;
+    Object_GetById(0)->bounce = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_AudioPlayCue(204);
-    ((u8 *)Object_GetById(0))[85] = 3;
+    Object_GetById(0)->motion_flags = 3;
     Engine_EventWait(24);
     leader = Object_GetById(0);
     p = &params;
@@ -966,7 +966,7 @@ void ToretoHeya_RunLandingDustScene(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_MapWaitWorkValuesBelow256();
     Engine_ActorSetAttachedEffect(0, 0x100);
-    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x10000;
-    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0x4000;
+    Object_GetById(0)->gravity = 0x10000;
+    Object_GetById(0)->bounce = 0x4000;
     Engine_EventEnd();
 }

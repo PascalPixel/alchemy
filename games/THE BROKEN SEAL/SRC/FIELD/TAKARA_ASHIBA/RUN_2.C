@@ -155,7 +155,7 @@ void TakaraAshiba_InitializeScene3(void)
 {
     s32 record;
 
-    *(u8 *)((s32)Object_GetById(14) + 85) = 0;
+    Object_GetById(14)->motion_flags = 0;
     Call2(Scheduler_AddOrUpdateCallback, (s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
     MapObject_SetPosition(107, 0, 0);
@@ -170,8 +170,8 @@ void TakaraAshiba_InitializeScene3(void)
 #if EDITION_INTERNATIONAL
     Engine_ActorSetSpritePriority(8, 3);
 #endif
-    *(u8 *)((s32)Object_GetById(11) + 85) = 0;
-    *(u8 *)((s32)Object_GetById(12) + 85) = 0;
+    Object_GetById(11)->motion_flags = 0;
+    Object_GetById(12)->motion_flags = 0;
     ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
     if (GameFlag_IsSet(0x200) != 0) {
         SceneActor_MarkSlot13AndSetFlag200();

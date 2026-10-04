@@ -382,7 +382,7 @@ void KorimaMura_AnimateSwitchOrExit(void)
         y = 12;
         break;
     case 9:
-        ((u8 *)Object_GetById(0))[85] = 0;
+        Object_GetById(0)->motion_flags = 0;
         Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
         Engine_ActorSetDestinationOffset(0, 0, 8);
         *(s32 *)(gWork + 0x1c8) = 16;
@@ -422,7 +422,7 @@ void KorimaMura_RunObjectSpreadScene(void)
     Call3(Engine_ActorFaceDirection, 8, 0x9000, 20);
     Engine_ActorRunRepeatedMotion(8, 1);
     Engine_EventWait(20);
-    *(u8 *)((s32)Object_GetById(8) + 90) &= 254;
+    Object_GetById(8)->unknown_5a &= 254;
     Call3(Engine_ActorSetSpeed, 8, 0x20000, 0x10000);
     Engine_ActorJump(8, 2, 0);
     Engine_ObjectMotionSetPositionAndCommit(8, 224, 197);

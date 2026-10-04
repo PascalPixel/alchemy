@@ -383,7 +383,7 @@ void FieldScene_RunEarlySequence(void)
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
     *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x100;
-    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     if (idx == 6) {
         Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
@@ -408,7 +408,7 @@ void FieldScene_RunScene3a3SequenceB(void)
 
     work = (u8 *)gEventWork;
     Engine_EventBegin();
-    *(u8 *)((s32)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->motion_flags = 0;
     Audio_PlayCue(123);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
     Engine_EventRequestExit(*(s16 *)(work + 0x16c));

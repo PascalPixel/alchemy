@@ -708,9 +708,9 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     zero = 0;
     Engine_EventBegin();
 
-    ((u8 *)Object_GetById(14))[35] &= 0xfd;
-    ((u8 *)Object_GetById(14))[89] &= 0xfd;
-    ((u8 *)Object_GetById(14))[85] = zero;
+    Object_GetById(14)->priority_flags &= 0xfd;
+    Object_GetById(14)->collision_flags &= 0xfd;
+    Object_GetById(14)->motion_flags = zero;
     *(void **)((void *)Object_GetById(14) + 108) = (void *)SceneActor_SetFlagBitByRankAgainstActorZero;
 
     Engine_MapCopyCellAttributes(55, 16, 1, 1, 56, 18);

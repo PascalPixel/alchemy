@@ -392,7 +392,7 @@ void SceneScript_SetupActors(void)
     Engine_AudioPlayCue(158);
     Call3(Engine_MapAnimateCells, (s32)gTorebiMachiCellSteps[index].commands, gTorebiMachiCellSteps[index].first, gTorebiMachiCellSteps[index].second);
     Call3(Engine_ActorSetSpeed, 0, 0x8000, 0x4000);
-    ((u8 *)Object_GetById(0))[85] = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetAnimation(0, 2);
     if (index != 6) {
         Call3(Engine_ActorCenterAndWalk, 0, 2, -8);

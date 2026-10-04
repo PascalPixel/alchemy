@@ -282,7 +282,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
     }
     if (Engine_GameFlagIsSet(0x860) != 0) {
         Engine_ActorSetPosition(8, 0x880000, 0xc40000);
-        *(u8 *)((s32)Object_GetById(8) + 35) |= 2;
+        Object_GetById(8)->priority_flags |= 2;
         v5 = 12;
         Engine_ActorSetAnimation(8, 2);
         Engine_MapCopyCellAttributes(39, 12, 3, 1, 8, v5);
@@ -301,7 +301,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
         Engine_ActorSetPosition(10, 0x1780000, 0x1180000);
         ((struct Flags35 *)Object_GetById(10))->flags = 2;
         v5 = 0;
-        *(u8 *)((s32)Object_GetById(10) + 85) = v5;
+        Object_GetById(10)->motion_flags = v5;
         record = (s32)Object_GetById(10);
         Engine_ActorSetSpriteFlags((s32)record, 0);
         Call6(Engine_MapCopyCellAttributes, 54, 17, 1, 1, 23, 17);

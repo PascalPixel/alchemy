@@ -434,7 +434,7 @@ void SceneState_ApplyRectAndMarkActor16(void)
 
     if (rec != 0) {
         /* The rec is reloaded with the same selector before this store. */
-        ((u8 *)Object_GetById(16))[85] = 0;
+        Object_GetById(16)->motion_flags = 0;
         rec[35] = 1;
     }
 
@@ -454,7 +454,7 @@ void SceneState_ConfigureRegion26_30AndMarkActor17(void)
 
     if (rec != 0) {
         /* The record is reloaded with the same selector before this store. */
-        ((u8 *)Object_GetById(17))[85] = 0;
+        Object_GetById(17)->motion_flags = 0;
         rec[35] = 1;
     }
 
@@ -474,7 +474,7 @@ void SceneState_ConfigureRegion26_30AndClearActor18Mode(void)
 
     if (record != 0) {
         /* The record is reloaded with the same selector before this store. */
-        ((u8 *)Object_GetById(18))[85] = 0;
+        Object_GetById(18)->motion_flags = 0;
         record[35] = 1;
     }
 
@@ -495,7 +495,7 @@ void SceneState_ApplyRectAndSetupActor19(void)
     if (p != 0) {
         Engine_ActorSetSpriteFlags(p, 0);
         /* The record is reloaded with the same selector before this store. */
-        ((u8 *)Object_GetById(19))[85] = 0;
+        Object_GetById(19)->motion_flags = 0;
         p[35] = 1;
     }
 
@@ -516,7 +516,7 @@ void SceneActor_SetupSlotTwenty(void)
     if (rec != 0) {
         Engine_ActorSetSpriteFlags(rec, 0);
         /* The rec is reloaded with the same selector before this store. */
-        ((u8 *)Object_GetById(20))[85] = 0;
+        Object_GetById(20)->motion_flags = 0;
         rec[35] = 1;
     }
 
@@ -537,7 +537,7 @@ void SceneActor_MarkSlot21AndSetFlag205(void)
     if (record != 0) {
         Engine_ActorSetSpriteFlags(record, 0);
         /* The record is reloaded with the same selector before this store. */
-        ((u8 *)Object_GetById(21))[85] = 0;
+        Object_GetById(21)->motion_flags = 0;
         record[35] = 1;
     }
 
@@ -707,7 +707,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 flag;
     s32 index;
 
-    flag = *(u8 *)((u8 *)Object_GetById(10) + 91);
+    flag = Object_GetById(10)->unknown_5b;
     if (flag == 0) {
         if (++KuupuappuDou_ScheduleTimer > 190) {
             KuupuappuDou_ScheduleTimer = 0;

@@ -100,8 +100,8 @@ void SceneActor_BranchOnSlotZeroAtTile38(void);
 static __inline__ void LiftBlock(s32 column, u8 lowered)
 {
     { s32 fifth = column; s32 last = 42; Engine_MapCopyCellAttributes(61, 36, 1, 1, fifth, last); }
-    ((u8 *)Object_GetById(8))[85] = lowered;
-    *(s32 *)((u8 *)Object_GetById(8) + 12) = 0x200000;
+    Object_GetById(8)->motion_flags = lowered;
+    Object_GetById(8)->y.fixed = 0x200000;
 }
 
 void ActorPresentation_PlaceActorFourteenOnActorNine(void);
@@ -825,12 +825,12 @@ void TakaraAshiba_RunActorElevenFollowScene(void)
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x1b333, 0xd999);
         ObjectMotion_SetSpeedParameters(11, 0x1b333, 0xd999);
         AudioCommand_Play(188);
-        v3 = *(s32 *)((s32)Object_GetById(0) + 8) / 0x100000;
-        if (v3 > *(s32 *)((s32)Object_GetById(11) + 8) / 0x100000) {
+        v3 = Object_GetById(0)->x.fixed / 0x100000;
+        if (v3 > Object_GetById(11)->x.fixed / 0x100000) {
             ObjectMotion_OffsetPositionAndResetMotion(11, 8, 0);
         }
-        v3 = *(s32 *)((s32)Object_GetById(0) + 8) / 0x100000;
-        if (v3 < *(s32 *)((s32)Object_GetById(11) + 8) / 0x100000) {
+        v3 = Object_GetById(0)->x.fixed / 0x100000;
+        if (v3 < Object_GetById(11)->x.fixed / 0x100000) {
             Call3(ObjectMotion_OffsetPositionAndResetMotion, 11, -8, 0);
         }
         ObjectMotion_CommitCurrentPositionAndActivate(11);
@@ -1022,7 +1022,7 @@ void SceneState_ApplyFourRectsAndSetActor8Byte85(void)
     Engine_MapCopyCellAttributes(58, 42, 1, 1, 42, 42);
     Engine_MapCopyCellAttributes(62, 37, 3, 1, 37, 42);
 
-    ((u8 *)Object_GetById(8))[85] = 1;
+    Object_GetById(8)->motion_flags = 1;
 }
 
 void ActorPresentation_SetSceneCell58AndMarkActorEight(void)
@@ -1070,11 +1070,11 @@ void TakaraAshiba_DispatchByActorEightColumn(void)
     u8 lowered;
 
     if (height == 0) {
-        ((u8 *)Object_GetById(8))[35] = 2;
+        Object_GetById(8)->priority_flags = 2;
     }
     SceneState_ApplyFourRectsAndSetActor8Byte85();
     lowered = 0;
-    ((u8 *)Object_GetById(8))[85] = 3;
+    Object_GetById(8)->motion_flags = 3;
     if (column == 40) {
         SceneState_ApplyRectAndSetSlotEightByte35();
     } else if (column == 42) {

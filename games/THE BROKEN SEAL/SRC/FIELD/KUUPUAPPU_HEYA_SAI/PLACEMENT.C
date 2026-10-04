@@ -250,7 +250,7 @@ void FieldScene_RunActor19StepByPlace(void)
 
     u32 place;
 
-    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    place = Object_GetById(0)->facing;
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -267,7 +267,7 @@ void FieldScene_RunActor20StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    place = Object_GetById(0)->facing;
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -284,7 +284,7 @@ void FieldScene_RunActor21StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    place = Object_GetById(0)->facing;
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -301,7 +301,7 @@ void FieldScene_RunActor22StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)((u8 *)Object_GetById(0) + 6);
+    place = Object_GetById(0)->facing;
     Engine_EventBegin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -359,9 +359,9 @@ s32 FieldScene_InitSceneStateByStep(void)
          */
         Engine_MapCopyCellsTo(0, 120, 8, 67, fifth, sixth);
         zero = 0;
-        ((u8 *)Object_GetById(8))[0x55] = zero;
-        *(s32 *)((u8 *)Object_GetById(8) + 12) = zero;
-        *(s32 *)((u8 *)Object_GetById(8) + 20) = zero;
+        Object_GetById(8)->motion_flags = zero;
+        Object_GetById(8)->y.fixed = zero;
+        Object_GetById(8)->terrain_height = zero;
     } else if (scene == 7 || scene == 11) {
         /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
         OverlayObject_InitObject22(0xe7, 0x02380000, 0x00100000, 0x02a00000);

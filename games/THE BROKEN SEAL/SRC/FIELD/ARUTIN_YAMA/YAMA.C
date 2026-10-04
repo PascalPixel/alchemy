@@ -683,14 +683,14 @@ void SceneActor_SetActor10Byte23To3(void)
 {
     extern u32 Data_03001e40;
 
-    ((u8 *)Object_GetById(10))[0x23] = 3;
+    Object_GetById(10)->priority_flags = 3;
 }
 
 void SceneActor_SetActor10Byte23To1(void)
 {
     extern u32 Data_03001e40;
 
-    ((u8 *)Object_GetById(10))[0x23] = 1;
+    Object_GetById(10)->priority_flags = 1;
 }
 
 void FieldScene_RunScene3a4_02000c9c(void)
@@ -705,7 +705,7 @@ void FieldScene_RunScene3a4_02000c9c(void)
     Audio_PlayCue(185);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-    *(u8 *)((u8 *)Object_GetById(10) + 90) &= 254;
+    Object_GetById(10)->unknown_5a &= 254;
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 0x190, 0x1a8);
     Actor_SetDestination(10, 0x198, 0x1a8);

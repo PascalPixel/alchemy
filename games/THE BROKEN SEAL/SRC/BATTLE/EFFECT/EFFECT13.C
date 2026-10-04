@@ -187,44 +187,42 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj)
 
 /* UpdateRisingParticleBurst: lift and spin the source for 31 frames, then
    burst eight item-break fragments with random speeds and headings. */
-void UpdateRisingParticleBurst(void *source)
+void UpdateRisingParticleBurst(void *object)
 {
-    s32 count;
-    s32 dist;
-    u32 vel;
-    void *child;
-    /* FAKEMATCH: holds 0x10000 in sl across the burst loop as the ROM does */
+    struct MotionObject *source = object;
+    struct MotionObject *child;
+    s32 i;
+    s32 distance;
+    u32 spread;
+    /* FAKEMATCH: holds 0x10000 in sl across the burst loop; a plain local folds to the constant. */
     register s32 unit asm("sl");
 
     Audio_PlayCue(154);
-    for (count = 30; count >= 0; count--) {
-        ((struct MotionObject *)source)->y += 0x10000;
-        ((struct MotionObject *)source)->angle += 0x2000;
-        ((struct MotionObject *)source)->scale_x += -0x800;
-        ((struct MotionObject *)source)->scale_y += -0x800;
+    for (i = 30; i >= 0; i--) {
+        source->y += 1 << 16;
+        source->angle += 0x2000;
+        source->scale_x += -0x800;
+        source->scale_y += -0x800;
         WaitFrames(1);
     }
-    count = 7;
+    i = 7;
     unit = 0x10000;
-    for (; count >= 0; count--) {
-        child = Object_Spawn(0x11d, *(s32 *)((s8 *)source + 8),
-                             ((struct MotionObject *)source)->y,
-                             *(s32 *)((s8 *)source + 16));
+    for (; i >= 0; i--) {
+        child = Object_Spawn(0x11d, source->x, source->y, source->z);
         if (child != 0) {
-            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
-            {
-                s32 speed = Random16();
+            s32 speed;
 
-                *(s32 *)((s8 *)child + 0x34) = unit;
-                *(s32 *)((s8 *)child + 0x30) = speed + unit;
-            }
-            *(s8 *)((s8 *)child + 0x55) = 2;
-            *(s32 *)((s8 *)child + 0x48) = 0xa3d;
-            vel = Random16();
-            *(s32 *)((s8 *)child + 0x28) = vel - Random16();
-            dist = Random16() * 0x18;
-            dist += 0x80000;
-            Motion_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
+            ObjectDispatch_InitializeFar((struct DispatchObject *)child, (u32)&BattleFx_FragmentScript);
+            speed = Random16();
+            child->acceleration = unit;
+            child->speed_limit = speed + unit;
+            child->motion_flags = 2;
+            child->vertical_motion_strength = 0xa3d;
+            spread = Random16();
+            child->velocity_y = spread - Random16();
+            distance = Random16() * 24;
+            distance += 8 << 16;
+            Motion_SetTargetPositionFromMagnitudeAngle(child, distance, Random16());
         }
     }
     Audio_PlayCue(131);

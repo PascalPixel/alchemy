@@ -44,11 +44,11 @@ Func_080382f8:
 	.global Func_08038300
 	.thumb_func
 Func_08038300:
-	overlay_veneer Func_08044478
+	overlay_veneer Resource_CopyFixedBlockB
 	.global Func_08038308
 	.thumb_func
 Func_08038308:
-	overlay_veneer Func_08044488
+	overlay_veneer Resource_CopyFixedBlockA
 	.global Func_08038310
 	.thumb_func
 Func_08038310:

@@ -17,10 +17,10 @@ RenderOutput_CreateFromResourceFar:
 	.thumb_func
 Func_080380d8:
 	overlay_veneer Func_08042450
-	.global Func_080380e0
+	.global Ui_LoadCharacterEntryForSlotFar
 	.thumb_func
-Func_080380e0:
-	overlay_veneer Func_08042508
+Ui_LoadCharacterEntryForSlotFar:
+	overlay_veneer Ui_LoadCharacterEntryForSlot
 	.global UiWork_SetByte5AndResetHalfwordCFar
 	.thumb_func
 UiWork_SetByte5AndResetHalfwordCFar:

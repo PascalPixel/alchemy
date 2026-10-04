@@ -17,7 +17,7 @@ Func_080409f0:
 	movs r0, #7
 	bl UiWindow_Create
 	adds r5, r0, #0
-	bl Func_08044460
+	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #128
 	movs r3, #0
 	adds r2, r5, #0

@@ -56,7 +56,7 @@ Func_08043774:
 	strh r6, [r3]
 	strh r5, [r7]
 .L_080437e2:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r6, #0
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000

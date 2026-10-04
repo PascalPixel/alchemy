@@ -76,7 +76,7 @@ Func_0804380c:
 	movs r1, #1
 	bl UiText_ShowPositionedMessageAndWait
 .L_080438a6:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r7, #0
 	pop {r3}
 	mov r8, r3

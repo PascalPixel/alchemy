@@ -14,8 +14,6 @@ void UiIcon_CreateStatChangeArrow();
 
 extern u8 UiIcon_ResourceTiles[];
 
-/* menu/psynergy_menu/call_icon_routine_with_value.c */
-void Ui_LoadCharacterEntryForSlotFar(s32 a, s32 b, s32 c);
 
 void UiText_DrawStatComparison(const struct BattleUnit *alt, const struct BattleUnit *base, s32 work)
 {
@@ -101,9 +99,4 @@ void UiIcon_PrepareObject(struct RenderOutput *object)
         ((struct UiIconAttributes *)&object->packed)->matrix = 0;
         ((struct UiIconAttributes *)&object->packed)->affine_mode = 0;
     }
-}
-
-void PsynergyMenu_CallIconRoutineWithValue(s32 arg0, s32 arg1)
-{
-    Ui_LoadCharacterEntryForSlotFar(0, arg1, 0);
 }

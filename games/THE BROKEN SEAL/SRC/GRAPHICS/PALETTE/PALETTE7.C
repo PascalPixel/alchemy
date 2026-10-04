@@ -42,13 +42,3 @@ void BattleFx_ArmPaletteHBlankDma(void)
     (void)channel[5];
     Dma_Set(work->sheet + 0x1f80, (void *)0x05000000, 0xa2600001, (volatile u32 *)channel);
 }
-
-void BattleFx_InitializeDefaultMode(struct BattleEffectArgument *effect)
-{
-    BattleEffect_RunParticleStreams(effect, 0);
-}
-
-void BattleFx_InitializeMode1(struct BattleEffectArgument *effect)
-{
-    BattleEffect_RunParticleStreams(effect, 1);
-}

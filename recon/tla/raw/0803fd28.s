@@ -84,7 +84,7 @@ Func_0803fd28:
 	movs r3, #88
 	ldr r0, .L_080400c4
 	bl UiText_DrawCharacterAtOffset
-	bl Func_08044460
+	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #0
 	str r1, [sp, #0]
 	movs r1, #128

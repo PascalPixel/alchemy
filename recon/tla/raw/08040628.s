@@ -123,7 +123,7 @@ Func_08040628:
 	adds r3, r7, #0
 	bl UiText_DrawResource
 .L_0804071c:
-	bl Func_08044460
+	bl Resource_LoadFixedBlockBIntoFreeSlot
 	movs r1, #128
 	movs r3, #0
 	lsls r1, r1, #23

@@ -75,7 +75,7 @@ Func_08043534:
 	negs r2, r2
 	mov r10, r2
 .L_080435ce:
-	bl Func_0801613c
+	bl SaveState_ReleaseWorkspace
 	adds r0, r7, #0
 	bl Sys_Free
 	mov r0, r10

@@ -294,7 +294,7 @@ Func_0810021c:
 	strb r0, [r7, #28]
 	adds r0, r7, #0
 	ldrh r1, [r7, r2]
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	movs r1, #2
 	mov r10, r1
 .L_0810047e:

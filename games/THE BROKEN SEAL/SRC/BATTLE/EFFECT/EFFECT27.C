@@ -40,11 +40,6 @@ extern struct EffectObject *ObjectTable_Get(s32 object);
 extern void *gEventWork;
 typedef s32 (*WorkEntryFn)(void);
 
-struct EffectSelectionWork {
-    u8 unk_00[0x24a];
-    s16 value;
-};
-
 /* The shared runtime descriptor lookup; distinct from the local BattleFx_FindDescriptor. */
 struct EffectDescriptor *BattleFx_FindDescriptor(s32, s32);
 
@@ -59,7 +54,18 @@ struct BattleActionObject {
     void **states;
     s16 state_index;
     u16 value;
-    u8 unused_08[82];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unused_14[0x10];
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    u8 unused_30[8];
+    s32 target_x;
+    s32 target_y;
+    s32 target_z;
+    u8 unused_44[0x16];
     u8 flags_5a;
     u8 busy_5b;
     u8 unused_5c[8];
@@ -212,7 +218,7 @@ void Runtime_CallWorkBlockEntry(void)
 s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
 {
     struct EffectDescriptor *result = BattleFx_FindDescriptor(0, arg0);
-    s32 value = ((struct EffectSelectionWork *)&gGameState)->value;
+    s32 value = gGameState.paused_object;
 
     if (value == arg0) {
         struct EffectDescriptor *next = BattleFx_FindDescriptor(7, value);
@@ -233,16 +239,14 @@ s32 BattleFx_RunDescriptorAction(s32 id)
     struct EffectDescriptor *descriptor;
     s32 special = 0;
     u32 saved_value;
-    u32 cleared_selection;
     u32 shifted_mode;
     s32 used_fallback = 0;
-    s32 selected_offset = 0x24a;
 
-    if (*(s16 *)((u8 *)&gGameState + selected_offset) == id) {
+    if (gGameState.paused_object == id) {
         special = 1;
-        descriptor = (struct EffectDescriptor *)BattleFx_FindDescriptor(7, id);
+        descriptor = BattleFx_FindDescriptor(7, id);
         if (descriptor == 0) {
-            descriptor = (struct EffectDescriptor *)BattleFx_FindDescriptor(0, id);
+            descriptor = BattleFx_FindDescriptor(0, id);
             used_fallback = 1;
             if (descriptor == 0) {
                 return -1;
@@ -260,72 +264,59 @@ s32 BattleFx_RunDescriptorAction(s32 id)
             }
         }
     } else {
-        descriptor = (struct EffectDescriptor *)BattleFx_FindDescriptor(0, id);
+        descriptor = BattleFx_FindDescriptor(0, id);
     }
 
-    if (descriptor == 0)
-        goto finish;
-    if (descriptor->result != 0)
-        goto run_descriptor;
-    goto finish;
-run_descriptor:
-    if (!special) {
-        u8 *busy = &object->busy_5b;
-        *busy = 1;
-        ObjectDispatch_ApplyValueToChildrenFar(object, 0);
-        saved_value = object->value;
-        shifted_mode = (u8)action->mode << 24;
-        if (shifted_mode <= (1 << 24) || shifted_mode == (3 << 24)) {
-            s32 object_index = 250;
-            s32 *object_slot =
-                (s32 *)((s16 *)&gGameState + object_index);
-            struct BattleActionObject *linked = Object_GetById(*object_slot);
-            *(void **)((u8 *)linked + 56) = *(void **)((u8 *)linked + 8);
-            *(void **)((u8 *)linked + 60) = *(void **)((u8 *)linked + 12);
-            *(void **)((u8 *)linked + 64) = *(void **)((u8 *)linked + 16);
-            *(s32 *)((u8 *)linked + 36) = 0;
-            *(s32 *)((u8 *)linked + 40) = 0;
-            *(s32 *)((u8 *)linked + 44) = 0;
-            Object_LinkPair(id, *object_slot, 0);
-        }
-    }
-    if (descriptor->result < 0x10000) {
-        UiWork_SetBusyFlagsFar(used_fallback);
-        Battle_Reset();
-        Event_SetValue1d8(descriptor->result);
-        BattleEv_RunWait(id, 0);
-        BattleFx_FinishAction();
-    } else {
-        typedef void (*EffectRunner)(s32);
-        Battle_InitializeRenderObject();
-        ((EffectRunner)descriptor->result)(id);
-    }
-    if (!special) {
-        if (object->states[object->state_index] == (void *)16) {
-            if (action->mode == 3) {
-                s32 object_index = 250;
-                s32 object_id =
-                    *(s32 *)((s16 *)&gGameState + object_index);
-                object->linked_object = Object_GetById(object_id);
-                object->flags_5a |= 1;
-                ObjectMotion_SetActionCallback(object, (void *)ObjectMotion_LinkedActionScript);
-            } else if (action->mode == 1) {
-                object->saved_value = saved_value;
-                ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
+    if (descriptor != 0 && descriptor->result != 0) {
+        if (!special) {
+            u8 *busy = &object->busy_5b;
+
+            *busy = 1;
+            ObjectDispatch_ApplyValueToChildrenFar(object, 0);
+            saved_value = object->value;
+            shifted_mode = (u8)action->mode << 24;
+            if (shifted_mode <= (1 << 24) || shifted_mode == (3 << 24)) {
+                struct BattleActionObject *linked = Object_GetById(gGameState.selected_actor);
+
+                linked->target_x = linked->x;
+                linked->target_y = linked->y;
+                linked->target_z = linked->z;
+                linked->velocity_x = 0;
+                linked->velocity_y = 0;
+                linked->velocity_z = 0;
+                Object_LinkPair(id, gGameState.selected_actor, 0);
             }
         }
-        object->busy_5b = 0;
-        ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+        if (descriptor->result < 0x10000) {
+            UiWork_SetBusyFlagsFar(used_fallback);
+            Battle_Reset();
+            Event_SetValue1d8(descriptor->result);
+            BattleEv_RunWait(id, 0);
+            BattleFx_FinishAction();
+        } else {
+            Battle_InitializeRenderObject();
+            ((void (*)(s32))descriptor->result)(id);
+        }
+        if (!special) {
+            if (object->states[object->state_index] == (void *)16) {
+                if (action->mode == 3) {
+                    object->linked_object = Object_GetById(gGameState.selected_actor);
+                    object->flags_5a |= 1;
+                    ObjectMotion_SetActionCallback(object, (void *)ObjectMotion_LinkedActionScript);
+                } else if (action->mode == 1) {
+                    object->saved_value = saved_value;
+                    ObjectDispatch_InitializeFar((struct DispatchObject *)object, (u32)ObjectMotion_StepAngleScript);
+                }
+            }
+            object->busy_5b = 0;
+            ObjectDispatch_ApplyValueToChildrenFar(object, 16);
+        }
+        result = 0;
     }
-    result = 0;
 finish:
     if (special) {
-        s32 finish_selected_offset = 0x24a;
-        s16 *selected =
-            (s16 *)((u8 *)&gGameState + finish_selected_offset);
-        BattleFx_ResumeObject(*selected);
-        cleared_selection = 0xffff;
-        *selected = cleared_selection;
+        BattleFx_ResumeObject(gGameState.paused_object);
+        gGameState.paused_object = -1;
     }
     return result;
 }

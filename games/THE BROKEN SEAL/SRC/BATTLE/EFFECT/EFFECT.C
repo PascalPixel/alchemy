@@ -116,9 +116,9 @@ void BattleFx_Run(void)
         RunBattleEffect13();
         return;
     case 9:
-        if (gGameState.unknown_24a != -1) {
-            BattleFx_ResumeObject(gGameState.unknown_24a);
-            gGameState.unknown_24a = -1;
+        if (gGameState.paused_object != -1) {
+            BattleFx_ResumeObject(gGameState.paused_object);
+            gGameState.paused_object = -1;
         }
 
         obj_id = BattleEffect_SelectNearbyTargetObject(gGameState.selected_actor, battle_mode);
@@ -127,7 +127,7 @@ void BattleFx_Run(void)
             BattleFx_SetupObjectPair(gGameState.selected_actor, obj_id);
             BattleFx_MarkChildAndRunFallbackTransition(obj_id);
             BattleEffect_PauseObject(obj_id);
-            gGameState.unknown_24a = obj_id;
+            gGameState.paused_object = obj_id;
         } else {
             BattleEffect_RunFallbackObjectTransition();
         }
@@ -165,7 +165,7 @@ void BattleFx_DispatchRequestKind(void)
     case 2:
         if (*(s16 *)&battle->unknown_cb8[0] != 0)
             ResetSceneTransitionEffect();
-        if (gGameState.unknown_24a != request->second_object_id)
+        if (gGameState.paused_object != request->second_object_id)
             ((struct ObjectRuntime *)request->child)->movement_state = 1;
         RunSceneTransitionEffect(request->first_object_id, target_id);
         break;
@@ -191,12 +191,12 @@ void BattleFx_DispatchRequestKind(void)
         BattleFx_RunBurstParticleMainObject(target_id);
         break;
     case 9:
-        if (gGameState.unknown_24a != -1) {
-            BattleFx_ResumeObject(gGameState.unknown_24a);
-            gGameState.unknown_24a = -1;
+        if (gGameState.paused_object != -1) {
+            BattleFx_ResumeObject(gGameState.paused_object);
+            gGameState.paused_object = -1;
         }
         BattleEffect_PauseObject(target_id);
-        gGameState.unknown_24a = target_id;
+        gGameState.paused_object = target_id;
         BattleFx_MarkChildAndRunFallbackTransition(target_id);
         break;
     case 3:
@@ -230,7 +230,7 @@ void BattleFx_ClearChildValueOnMismatch(void)
 
     if (request->animation == 2) {
         BattleFx_FinishSceneAndReleaseHeapBlock();
-        if (gGameState.unknown_24a != request->second_object_id) {
+        if (gGameState.paused_object != request->second_object_id) {
             ((struct ObjectRuntime *)request->child)->movement_state = 0;
         }
     }

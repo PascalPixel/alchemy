@@ -1,3 +1,6 @@
+/* 2026-10-04 sun finisher 4 (second wave): compiles again (the game state
+ * cell at 0x24a is now paused_object); alchemy diff scores 724 (965 listing
+ * instructions, 971 here), far from the near match described below. */
 #include "RUNTIME_MEM.H"
 /* DRAFT of Func_0808c4f8, the field mode's entry and outer loop: sets up the
    scene, then alternates between walking (one Field_ProcessStep a frame)
@@ -252,7 +255,7 @@ s32 Func_0808c4f8(void)
         gGameState.hazard_limit = 16;
         gGameState.hazard_mode = 0;
         gGameState.hazard_damage = 1;
-        gGameState.unknown_24a = -1;
+        gGameState.paused_object = -1;
         gGameState.cloaked = 0;
     }
     BattleFx_ScheduleCallbackWhenValue24cSet();

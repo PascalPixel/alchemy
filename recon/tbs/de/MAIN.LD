@@ -83,7 +83,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_POLL_AND_TRANSFER.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_POLL_STATUS.o"(.text)
     "*/games/COMMON/SRC/SYSTEM/LINK/SIO_XCHG.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.0000618c)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SIO_INTR.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/LINK.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.0000658c)

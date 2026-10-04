@@ -9,12 +9,6 @@ Rom_LanguageCode:
 	.incbin "baserom.gba", 0x000000af, 0x00000011
 	.section .rom.00002e00, "ax"
 	.incbin "baserom.gba", 0x00002e00, 0x00000020
-	.section .rom.000061bc, "ax"
-	.global SerialRuntime_CollectReceivedPayloads
-	.type SerialRuntime_CollectReceivedPayloads, %function
-	.thumb_func
-SerialRuntime_CollectReceivedPayloads:
-	.incbin "baserom.gba", 0x000061bc, 0x000000e4
 	.section .rom.000065bc, "ax"
 	.global SerialRuntime_StepBlockTransfer
 	.type SerialRuntime_StepBlockTransfer, %function

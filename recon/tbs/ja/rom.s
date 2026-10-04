@@ -4,12 +4,6 @@
 	.global Rom_Start
 Rom_Start:
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
-	.section .rom.0000615c, "ax"
-	.global SerialRuntime_CollectReceivedPayloads
-	.type SerialRuntime_CollectReceivedPayloads, %function
-	.thumb_func
-SerialRuntime_CollectReceivedPayloads:
-	.incbin "baserom.gba", 0x0000615c, 0x000000e4
 	.section .rom.0000655c, "ax"
 	.global SerialRuntime_StepBlockTransfer
 	.type SerialRuntime_StepBlockTransfer, %function

@@ -13,7 +13,7 @@
 
 extern u8 VinasuChojo_PairActionScript[];
 void VinasuChojo_ShowMessage();
-void FieldScene_RunScene3c9_02001280();
+void VinasuChojo_ShowPartyMember();
 void Engine_TaskWait();
 void Engine_MapRedraw();
 void Engine_ActorSetSpriteFlags();
@@ -450,9 +450,9 @@ void Scene_RunScriptedActorPresentation(void)
 
     companion = Object_GetById(18);
     Engine_EventBegin();
-    FieldScene_RunScene3c9_02001280(1, 0);
-    FieldScene_RunScene3c9_02001280(2, 0);
-    FieldScene_RunScene3c9_02001280(3, 0);
+    VinasuChojo_ShowPartyMember(1, 0);
+    VinasuChojo_ShowPartyMember(2, 0);
+    VinasuChojo_ShowPartyMember(3, 0);
     Engine_CameraMoveTo(-1, -1, -1, 0);
     Engine_TaskWait(1);
     companion->motion_flags = 0;
@@ -513,9 +513,9 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_ActorSetDestination(18, 580, 338);
     Object_GetById(ACTOR_PARTY_LEADER)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-    FieldScene_RunScene3c9_02001280(1, 1);
-    FieldScene_RunScene3c9_02001280(2, 1);
-    FieldScene_RunScene3c9_02001280(3, 1);
+    VinasuChojo_ShowPartyMember(1, 1);
+    VinasuChojo_ShowPartyMember(2, 1);
+    VinasuChojo_ShowPartyMember(3, 1);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 492, 164);
     Engine_ActorWalkTo(1, 514, 164);
     Actor_WalkTo(ACTOR_IVAN, 492, 140);
@@ -721,20 +721,20 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventEnd();
 }
 
-/* The first scene step. */
-void FieldScene_RunScene3c9_02001280(s32 a0, s32 a1)
+/* Shows a party member walking at the party's pace, or hides it while the
+   leader is carried up alone. */
+void VinasuChojo_ShowPartyMember(s32 actor, s32 shown)
 {
-    u32 i;
     s32 record;
 
-    if (a1 != 0) {
-        Actor_SetChildValue(a0, 0);
-        record = Actor_Get(a0);
+    if (shown != 0) {
+        Actor_SetChildValue(actor, 0);
+        record = Actor_Get(actor);
         Engine_ActorSetSpriteFlags(record, 1);
-        Actor_SetSpeed(a0, 0xcccc, 0x6666);
+        Actor_SetSpeed(actor, 0xcccc, 0x6666);
     } else {
-        Actor_SetChildValue(a0, 15);
-        record = Actor_Get(a0);
+        Actor_SetChildValue(actor, 15);
+        record = Actor_Get(actor);
         Engine_ActorSetSpriteFlags(record, 0);
     }
 }

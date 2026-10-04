@@ -10,6 +10,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
+#include "IO_REG.H"
 
 void Inventory_AddItemFar(s32 a, s32 b);
 void FieldScene_ConfigureFixedPointValues(void);
@@ -41,18 +42,6 @@ struct FieldGlobals {
 #define SPRITE_BYTES(actor) ((u8 *)(actor)->sprite)
 #define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n) ((n) == 9 ? (SPRITE_OF(actor)->priority = 1) : (SPRITE_OF(actor)->second_priority = 1))
-#define REG_BG1CNT (*(volatile u16 *)0x0400000a)
-#define REG_BG2CNT (*(volatile u16 *)0x0400000c)
-#define REG_BG3CNT (*(volatile u16 *)0x0400000e)
-#define REG_BLDCNT (*(volatile u16 *)0x04000050)
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
-
-struct DisplayScrollState {
-    u8 padding000[0xf00];
-    u8 page;
-};
-
-extern struct DisplayScrollState *gHBlankScrollWork;
 
 /* The hblank scroll work: two pages of BG3 offsets, a pair for each of the
  * 160 lines, the page the DMA reads, the wave's phase, and per axis the
@@ -67,6 +56,8 @@ struct ScrollWork {
     s32 step[2];
     s32 amplitude[2];
 };
+
+extern struct ScrollWork *gHBlankScrollWork;
 
 extern s16 gBgScroll[];
 extern const s16 BabiFune_WaveSine[256];
@@ -93,8 +84,6 @@ void BabiFune_UpdateWaves(void);
 void SceneState_CountDownEveryFortyTicks(void);
 void BabiFune_CyclePalette(void);
 
-#define REG_BACKDROP (*(volatile u16 *)0x05000000)
-#define REG_BLDY (*(volatile u16 *)0x04000054)
 
 /* The scheduler, which this overlay imports under its own name. */
 static inline void BabiFune_AddTask(void (*task)(void), s32 order)
@@ -138,7 +127,7 @@ void BabiFune_RunDeparture(void)
     for (i = 0; i <= 15; i++) {
         /* FAKEMATCH: the one-pass block keeps the colour's two shifts in source order. */
         do {
-            REG_BACKDROP = (i << 11) | (i << 5);
+            PLTT_BACKDROP = (i << 11) | (i << 5);
         } while (0);
         Event_Wait(10);
     }
@@ -146,7 +135,7 @@ void BabiFune_RunDeparture(void)
         /* FAKEMATCH: a word temporary builds the colour by a shift, not from the pool. */
         s32 color = 0x7e00;
 
-        REG_BACKDROP = color;
+        PLTT_BACKDROP = color;
     }
     {
         /* FAKEMATCH: word temporaries keep both blend values in registers across the loop. */
@@ -317,29 +306,22 @@ s32 BabiFune_SetupScene(void)
  */
 void DisplayScroll_ArmHBlankDma(void)
 {
-    volatile u32 *dma;
-    struct DisplayScrollState *state;
+    struct ScrollWork *work;
     u32 *source;
-    u16 status;
-    u32 control;
+    volatile u16 *dma0;
     volatile u32 *destination;
 
-    state = gHBlankScrollWork;
-    source = (u32 *)((u8 *)state + state->page * 0x780);
+    work = gHBlankScrollWork;
+    source = (u32 *)work->pages[work->page];
 
-    dma = (volatile u32 *)0x040000b0;
-    destination = (volatile u32 *)0x0400001c;
-    status = *(volatile u16 *)((u8 *)dma + 10);
-    control = 0xc5ff & status;
-    *(volatile u16 *)((u8 *)dma + 10) = control;
-    status = *(volatile u16 *)((u8 *)dma + 10);
-    control = 0x7fff & status;
-    *(volatile u16 *)((u8 *)dma + 10) = control;
-    (void)*(volatile u16 *)((u8 *)dma + 10);
+    dma0 = REG_DMA0;
+    destination = (volatile u32 *)&REG_BG3HOFS;
+    dma0[5] &= ~DMA_START_HBLANK_REPEAT;
+    dma0[5] &= ~DMA_ENABLE;
+    dma0[5];
 
     *destination = *source++;
-    control = 0xa6600001;
-    Dma_Set(source, destination, control, dma);
+    Dma_Set(source, destination, 0xa6600001, (volatile u32 *)dma0);
 }
 
 /* Babi Fune: fill the page the DMA is not reading with this frame's wave,
@@ -356,7 +338,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void)
     u16 y;
     s32 i;
 
-    work = ((struct ScrollWork *)gHBlankScrollWork);
+    work = gHBlankScrollWork;
     y = gBgScroll[7];
     line = work->pages[work->page ^ 1];
     step = work->step[0];

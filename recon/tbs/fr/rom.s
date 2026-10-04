@@ -91,26 +91,6 @@ Object_UpdateAllEnd:
 ResourceObject_Create:
 	.incbin "baserom.gba", 0x0000b470, 0x00000164
 	.size ResourceObject_Create, .-ResourceObject_Create
-	.section .rom.0000be2c, "ax"
-	.balign 4
-	.global ObjectSystem_UpdateCamera
-	.thumb_func
-	.type ObjectSystem_UpdateCamera, %function
-ObjectSystem_UpdateCamera:
-	.incbin "baserom.gba", 0x0000be2c, 0x00000250
-	.size ObjectSystem_UpdateCamera, .-ObjectSystem_UpdateCamera
-	.global ObjectCamera_ReturnTrue
-	.thumb_func
-	.type ObjectCamera_ReturnTrue, %function
-ObjectCamera_ReturnTrue:
-	.incbin "baserom.gba", 0x0000c07c, 0x00000004
-	.size ObjectCamera_ReturnTrue, .-ObjectCamera_ReturnTrue
-	.global ObjectSystem_UpdateCameraFixed
-	.thumb_func
-	.type ObjectSystem_UpdateCameraFixed, %function
-ObjectSystem_UpdateCameraFixed:
-	.incbin "baserom.gba", 0x0000c080, 0x000001ac
-	.size ObjectSystem_UpdateCameraFixed, .-ObjectSystem_UpdateCameraFixed
 	.section .rom.0000c2ca, "ax"
 	.incbin "baserom.gba", 0x0000c2ca, 0x00000002
 	.section .rom.0000d2f0, "ax"
@@ -982,8 +962,6 @@ BattleEvent_Playback:
 	.type BattleUnit_ProcessTurnEnd, %function
 BattleUnit_ProcessTurnEnd:
 	.incbin "baserom.gba", 0x000c3bbc, 0x00000414
-	.section .rom.000c6014, "ax"
-	.incbin "baserom.gba", 0x000c6014, 0x0000036c
 	.section .rom.000c6a22, "ax"
 	.incbin "baserom.gba", 0x000c6a22, 0x00000006
 	.global BattleParty_CenterOrderOffsets

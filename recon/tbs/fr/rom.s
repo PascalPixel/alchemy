@@ -117,12 +117,6 @@ ObjectSystem_UpdateCameraFixed:
 	.incbin "baserom.gba", 0x0000d2f0, 0x000001ec
 	.section .rom.0000e3ec, "ax"
 	.incbin "baserom.gba", 0x0000e3ec, 0x0000070c
-	.section .rom.000113f4, "ax"
-	.global Func_08011bf4
-	.type Func_08011bf4, %function
-	.thumb_func
-Func_08011bf4:
-	.incbin "baserom.gba", 0x000113f4, 0x000000ec
 	.section .rom.00011d18, "ax"
 	.global Ui_RunIconMonitor
 	.type Ui_RunIconMonitor, %function

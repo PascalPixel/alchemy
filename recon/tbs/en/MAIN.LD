@@ -179,7 +179,6 @@
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/DISPLAY4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/SCHEDULE_CALLBACK_B_AFTER_FRAMES.o"(.text)
-        "*/recon/tbs/raw/08011bf4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/LIB/CURVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/MAP5.o"(.text)

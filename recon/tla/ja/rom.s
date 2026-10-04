@@ -113,12 +113,7 @@ Runtime_SetIrqHandler:
 	.type System_WaitForFrameInterrupt, %function
 System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134b0, 0x000000b0
-	.section .rom.000138a8, "ax"
-	.global Runtime_SetMainState19
-	.thumb_func
-	.type Runtime_SetMainState19, %function
-Runtime_SetMainState19:
-	.incbin "baserom.gba", 0x000138a8, 0x0000000c
+	.section .rom.000138b4, "ax"
 	.global Input_UpdateKeyRepeatAndDirection
 	.thumb_func
 	.type Input_UpdateKeyRepeatAndDirection, %function
@@ -2550,8 +2545,6 @@ Func_080afb80:
 	.incbin "baserom.gba", 0x000aabe8, 0x000001d0
 	.section .rom.000aadd4, "ax"
 	.incbin "baserom.gba", 0x000aadd4, 0x00000044
-	.section .rom.000aaeac, "ax"
-	.incbin "baserom.gba", 0x000aaeac, 0x00000024
 	.section .rom.000aaf24, "ax"
 	.incbin "baserom.gba", 0x000aaf24, 0x00000054
 	.section .rom.000aaf90, "ax"

@@ -3843,15 +3843,8 @@ Func_080eb960:
 	.thumb_func
 EffectSlot_Update:
 	.incbin "baserom.gba", 0x000f8c30, 0x00000240
-	.section .rom.000f8ea6, "ax"
-	.incbin "baserom.gba", 0x000f8ea6, 0x00000002
-	.section .rom.000f8ea8, "ax"
-	.global Func_080ebea8
-	.type Func_080ebea8, %function
-	.thumb_func
-Func_080ebea8:
-	.incbin "baserom.gba", 0x000f8ea8, 0x0000000c
 	.section .rom.000f8eb4, "ax"
+	.align 2, 0
 	.global Func_080ebeb4
 	.type Func_080ebeb4, %function
 	.thumb_func
@@ -3863,12 +3856,8 @@ Func_080ebeb4:
 	.thumb_func
 Func_080ebec8:
 	.incbin "baserom.gba", 0x000f8ec8, 0x000000a0
-	.section .rom.000f8f68, "ax"
-	.global BattleFx_ClearOwnedSlot
-	.type BattleFx_ClearOwnedSlot, %function
-	.thumb_func
-BattleFx_ClearOwnedSlot:
-	.incbin "baserom.gba", 0x000f8f68, 0x000001e4
+	.section .rom.000f8f94, "ax"
+	.incbin "baserom.gba", 0x000f8f94, 0x000001b8
 	.section .rom.000f916c, "ax"
 	.incbin "baserom.gba", 0x000f916c, 0x00001698
 	.section .rom.000fa804, "ax"

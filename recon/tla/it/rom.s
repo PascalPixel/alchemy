@@ -4538,8 +4538,11 @@ EffectSlot_Update:
 	.thumb_func
 Func_080ca1bc:
 	.incbin "baserom.gba", 0x000ebc24, 0x00000240
-	.section .rom.000ebe9a, "ax"
-	.incbin "baserom.gba", 0x000ebe9a, 0x000002a6
+	.section .rom.000ebea8, "ax"
+	.align 2, 0
+	.incbin "baserom.gba", 0x000ebea8, 0x000000b4
+	.section .rom.000ebf88, "ax"
+	.incbin "baserom.gba", 0x000ebf88, 0x000001b8
 	.section .rom.000ec160, "ax"
 	.incbin "baserom.gba", 0x000ec160, 0x00001698
 	.section .rom.000ed7f8, "ax"

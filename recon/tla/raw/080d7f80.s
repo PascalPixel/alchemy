@@ -95,7 +95,7 @@ Func_080d7f80:
 	bl Func_080ebeb4
 	adds r0, r5, #0
 	movs r1, #7
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	ldr r0, [r5]
 	movs r1, #10
 	bl Animation_ApplyChildValuesToRecordFar

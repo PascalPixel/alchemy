@@ -74,7 +74,7 @@ Func_080ebec8:
 	strb r3, [r2]
 	adds r0, r5, #0
 	movs r1, #1
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	add sp, #4
 	pop {r3}
 	mov r8, r3

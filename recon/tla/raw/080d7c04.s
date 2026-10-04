@@ -75,7 +75,7 @@ Func_080d7c04:
 	bl Func_080ebeb4
 	adds r0, r5, #0
 	movs r1, #7
-	bl Func_080ebea8
+	bl EffectSlot_SetObjectMode
 	bl Random16
 	lsls r1, r0, #3
 	subs r1, r1, r0

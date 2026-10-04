@@ -83,3 +83,94 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message)
     routine(reader, message);
     Sys_Free(routine);
 }
+
+
+/* Per previous character: the code tree's bits, with the leaf values packed
+   as 12-bit entries just before them, and the offsets of each tree. */
+extern const void *const Text_MessageContexts[][2];
+
+/* Decodes the next character of a message, the Thumb twin of the ARM decoder
+   in DECODE_SYMBOL.S: walk the code tree chosen by the previous character,
+   reading tree bits and message bits through one-bit readers whose buffer
+   carries a sentinel 1 above the unread bits, skip a whole subtree for each
+   set message bit while counting its leaves, then fetch the leaf's 12-bit
+   value from the table packed backwards before the tree. */
+s32 UiText_DecodeSymbol(struct TextReader *reader)
+{
+    u32 code;
+    u32 hi;
+    /* FAKEMATCH: tree pinned to r1, as the native allocates it (62 instructions differ without it). */
+    register const u8 *tree asm("r1");
+    const u8 *leaves;
+    const u8 *text;
+    s32 text_bits;
+    s32 tree_bits;
+    s32 rank;
+    /* FAKEMATCH: depth pinned to r3, as the native allocates it (92 differ without it). */
+    register s32 depth asm("r3");
+    s32 bit;
+    u32 index;
+    /* FAKEMATCH: half pinned to r2, as the native allocates it (4 differ without it). */
+    register u32 half asm("r2");
+
+    code = reader->previous_code;
+    text = (const u8 *)reader->words;
+    text_bits = reader->bits;
+    tree_bits = 1;
+    hi = code >> 8;
+    code &= 0xff;
+    tree = Text_MessageContexts[hi][0];
+    tree = tree + ((const u16 *)Text_MessageContexts[hi][1])[code];
+    leaves = tree - 1;
+    rank = 0;
+    for (;;) {
+        bit = tree_bits & 1;
+        tree_bits >>= 1;
+        if (bit != 0 && tree_bits == 0) {
+            tree_bits = *tree++;
+            bit = tree_bits & 1;
+            tree_bits = (tree_bits >> 1) | 0x80;
+        }
+        if (bit != 0)
+            break;
+        bit = text_bits & 1;
+        text_bits >>= 1;
+        if (bit != 0 && text_bits == 0) {
+            text_bits = *text++;
+            bit = text_bits & 1;
+            text_bits = (text_bits >> 1) | 0x80;
+        }
+        if (bit == 0)
+            continue;
+        depth = 0;
+        do {
+            bit = tree_bits & 1;
+            tree_bits >>= 1;
+            if (bit != 0 && tree_bits == 0) {
+                tree_bits = *tree++;
+                bit = tree_bits & 1;
+                tree_bits = (tree_bits >> 1) | 0x80;
+            }
+            if (bit == 0)
+                depth++;
+            else {
+                rank++;
+                depth--;
+            }
+        } while (depth >= 0);
+    }
+    index = rank * 3;
+    if (((index * 4) & 7) == 0) {
+        code = leaves[-(index >> 1)] << 4;
+        bit = leaves[-(index >> 1) - 1];
+        code |= (u32)bit >> 4;
+    } else {
+        half = leaves[-(index >> 1)];
+        half &= 0xf;
+        code = leaves[-(index >> 1) - 1] | (half << 8);
+    }
+    reader->bits = text_bits;
+    reader->previous_code = code;
+    reader->words = (const u32 *)text;
+    return code;
+}

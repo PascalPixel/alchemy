@@ -229,7 +229,6 @@
         "*/games/COMMON/SRC/SYSTEM/MEMORY/CLEAR_WORD_IF_SET.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/WINDOW/WINDOW4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/TEXT2.o"(.text)
-        "*/recon/tbs/raw/08019bfc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/WINDOW5.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_FINALIZE_ENTITY_MATCHING_LOCALIZED_ID.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/RENDER4.o"(.text)

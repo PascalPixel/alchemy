@@ -58,6 +58,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
         }
         [flag, source] if flag == "--from" => {
             with_install_lock(|| install(Path::new(source), &bundle(), validate_installation))?;
+            ensure_binutils()?;
         }
         _ => return Err(USAGE.into()),
     }

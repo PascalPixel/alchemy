@@ -372,13 +372,13 @@ void Scene_PsynergyStoneIsGone(void)
 
 void SceneState_SetWork1c0AndRun(s32 no)
 {
-    u8 *p;
+    struct EventWork *p;
     if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
     }
-    p = (u8 *)gEventWork;
-    *(s32 *)(p + 0x1c0) = 0x100;
-    *(s32 *)(p + 0x1c8) = 16;
+    p = gEventWork;
+    p->start_transition = 0x100;
+    p->transition_frames = 16;
     Engine_EventRequestExit(no);
 }
 

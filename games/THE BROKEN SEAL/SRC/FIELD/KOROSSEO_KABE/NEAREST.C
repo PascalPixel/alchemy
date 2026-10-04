@@ -17,7 +17,7 @@ void KorosseoKabe_MarkSceneProgress(void)
 
 void KorosseoKabe_SelectNearestActor(void)
 {
-    u8 *state = (u8 *)gEventWork;
+    struct EventWork *state = gEventWork;
     s32 best = 8;
     s32 bestd = 0x100000;
     s32 n = gGameState.selected_actor;
@@ -50,9 +50,9 @@ void KorosseoKabe_SelectNearestActor(void)
     }
     Engine_EventSetMessage((s32)MsgKorosseoMatchAboutBeginPleaseTake);
     Engine_EventShowMessage(best, 0);
-    q = (s32 *)(state + 448);
+    q = (s32 *)&state->start_transition;
     *q = 512;
-    *(s32 *)(state + 456) = 15;
+    state->transition_frames = 15;
     Engine_EventWait(20);
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();

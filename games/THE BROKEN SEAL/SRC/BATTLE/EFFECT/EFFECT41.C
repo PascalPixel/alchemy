@@ -152,7 +152,7 @@ void BattleFx_ScheduleCallbackWhenValue24cSet(void)
 
 void BattleFx_RunFlashingCallbackSequence(void)
 {
-    u8 *state = (u8 *)gEventWork;
+    struct EventWork *state = gEventWork;
     u8 *object = ObjectTable_Get(gGameState.selected_actor);
     EffectSprite *record = *(EffectSprite **)(object + 80);
     u8 *entry = *(u8 **)((u8 *)record + 40);
@@ -181,9 +181,9 @@ void BattleFx_RunFlashingCallbackSequence(void)
     Scheduler_AddOrUpdateCallback((s32)callback, 0xc80);
     gGameState.cloaked = 1;
     callback();
-    if (*(s16 *)(state + 382) == 0x2092) {
+    if (state->psynergy_request == 0x2092) {
         MapEvent_RunTileTriggerSequence();
-        *(s16 *)(state + 382) = cycle;
+        state->psynergy_request = cycle;
     }
 }
 

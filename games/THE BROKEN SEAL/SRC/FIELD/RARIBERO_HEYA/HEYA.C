@@ -266,8 +266,8 @@ void FieldScene_RunThreeCallSequence(void)
 
 void SceneState_ForwardWord16cAndApply7b(void)
 {
-    u8 *work = (u8 *)gEventWork;
-    s16 *p = (s16 *)(work + 0x16C);
+    struct EventWork *work = gEventWork;
+    s16 *p = (s16 *)&work->touched_trigger;
 
     Engine_EventRequestExit(*p);
     Engine_AudioPlayCue(0x7B);

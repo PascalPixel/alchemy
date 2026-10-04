@@ -620,12 +620,12 @@ void FuneKanpan_RunDeckStateEvent(void)
 {
 
     s32 v5;
-    u8 *p6;
+    struct EventWork *p6;
 
-    p6 = *(s32 *)&gEventWork;
+    p6 = gEventWork;
     Battle_Reset();
     v5 = 0;
-    switch (*(s16 *)(((s32)p6 + 0x16c))) {
+    switch (p6->touched_trigger) {
     case 1:
         v5 = 1;
         FuneKanpan_OpenFirstDoor();
@@ -642,7 +642,7 @@ void FuneKanpan_RunDeckStateEvent(void)
     } else {
         AudioCommand_Play(123);
     }
-    Event_SetValue170(*(s16 *)(((s32)p6 + 0x16c)));
+    Event_SetValue170(p6->touched_trigger);
 }
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)

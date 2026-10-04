@@ -107,8 +107,8 @@ void SuharaHeya_AskBlownHere(s32 obj)
 
 void State_ApplyCounter16cThenCall7b(void)
 {
-    u8 *state = (u8 *)gEventWork;
-    s16 *cnt = (s16 *)(state + 0x16C);
+    struct EventWork *state = gEventWork;
+    s16 *cnt = (s16 *)&state->touched_trigger;
 
     Engine_EventRequestExit(*cnt);
     Engine_AudioPlayCue(0x7B);

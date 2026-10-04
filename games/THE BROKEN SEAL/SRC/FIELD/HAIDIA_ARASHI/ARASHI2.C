@@ -296,12 +296,12 @@ void FieldScene_BuildPlacementGrid(void)
 void SceneState_SetWords1c0And1c8AndRun(void)
 {
 
-    u8 *state;
+    struct EventWork *state;
 
     Engine_EventBegin();
-    state = (u8 *)gEventWork;
-    *(s32 *)(state + 0x1C0) = 0x200;
-    *(s32 *)(state + 0x1C8) = 64;
+    state = gEventWork;
+    state->start_transition = 0x200;
+    state->transition_frames = 64;
     Engine_GameFlagSet(0x87c);
     BattleFx_SetWeightedResult(12, 2);
     Engine_GameFlagSet(0x900);
@@ -311,12 +311,12 @@ void SceneState_SetWords1c0And1c8AndRun(void)
 void SceneState_SetWorkWordsAndFlag87f(void)
 {
 
-    u8 *state;
+    struct EventWork *state;
 
     Engine_EventBegin();
-    state = (u8 *)gEventWork;
-    *(s32 *)(state + 0x1C0) = 0x200;
-    *(s32 *)(state + 0x1C8) = 64;
+    state = gEventWork;
+    state->start_transition = 0x200;
+    state->transition_frames = 64;
     Engine_GameFlagSet(0x87f);
     BattleFx_SetWeightedResult(12, 3);
     Engine_GameFlagSet(0x900);

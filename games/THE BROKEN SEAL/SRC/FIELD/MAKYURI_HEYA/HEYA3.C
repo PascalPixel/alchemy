@@ -8,20 +8,20 @@ extern const u16 MakyuriHeya_FloorSwitchCloseCells[];
 
 void MakyuriHeya_WalkLeaderIn(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
-    work = (u8 *)gEventWork;
+    work = gEventWork;
     Engine_EventBegin();
     Engine_TaskAddCallback((s32)SceneEffect_SpawnParticleEveryFourthFrame, 0xc80);
     Actor_SetSpeed(0, 0x28000, 0x14000);
     Object_SetModeById(0, 1);
     Object_GetById(0)->unknown_5a &= 254;
     Audio_PlayCue(228);
-    if (*(s16 *)(work + 0x16c) == 2) {
+    if (work->touched_trigger == 2) {
         Actor_SetDestination(0, 232, 616);
-    } else if (*(s16 *)(work + 0x16c) == 3) {
+    } else if (work->touched_trigger == 3) {
         Actor_SetDestination(0, 360, 728);
-    } else if (*(s16 *)(work + 0x16c) == 4) {
+    } else if (work->touched_trigger == 4) {
         Actor_SetDestination(0, 248, 792);
     } else {
 #if EDITION_INTERNATIONAL

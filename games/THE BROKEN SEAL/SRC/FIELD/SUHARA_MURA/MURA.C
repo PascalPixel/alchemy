@@ -89,8 +89,8 @@ void FieldScene_RunLayoutStepThenSet201(void)
 
 void SuharaMura_AnimateCells0(void)
 {
-    u8 *work = *(u8 **)&gEventWork;
-    s32 no = *(s16 *)(work + 364);
+    struct EventWork *work = gEventWork;
+    s32 no = work->touched_trigger;
     u16 x = SuharaMura_CellAnimationOrigins[no * 2];
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
@@ -103,8 +103,8 @@ void SuharaMura_AnimateCells0(void)
 
 void SuharaMura_AnimateCells1(void)
 {
-    u8 *work = *(u8 **)&gEventWork;
-    s32 no = *(s16 *)(work + 364);
+    struct EventWork *work = gEventWork;
+    s32 no = work->touched_trigger;
     u16 x = SuharaMura_CellAnimationOrigins[no * 2];
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
@@ -125,16 +125,16 @@ s32 SceneData_SelectExtraTableByFlag96f(void)
 
 s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
     /* Record arrival on map 90, then publish the initial scene phase/timer. */
     if (gGameState.entrance == 90) {
         Engine_GameFlagSet(0x96f);
     }
 
-    work = *(u8 **)&gEventWork;
-    *(s32 *)(work + 448) = 256;
-    *(s32 *)(work + 456) = 24;
+    work = gEventWork;
+    work->start_transition = 256;
+    work->transition_frames = 24;
 
     /* The dressing sequence and cue are unlocked by the shared event flag. */
     if (Engine_GameFlagIsSet(0x201) != 0) {

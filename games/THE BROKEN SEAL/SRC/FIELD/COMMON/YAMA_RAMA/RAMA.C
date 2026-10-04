@@ -131,7 +131,7 @@ const struct ScenePlacement *Scene_GetPlacements(void)
 void SceneDialogue_RunMessage1958Step(void)
 {
 
-    u8 *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgYamaYoungWarriorsDoComeFrom);
@@ -141,8 +141,8 @@ void SceneDialogue_RunMessage1958Step(void)
         Engine_EventWait(20);
         Engine_EventShowMessage(10, 0);
     } else {
-        work = (u8 *)gEventWork;
-        *(u16 *)(work + 472) += 1;
+        work = gEventWork;
+        work->message += 1;
         Engine_EventAskYesNo(10, 0);
     }
 

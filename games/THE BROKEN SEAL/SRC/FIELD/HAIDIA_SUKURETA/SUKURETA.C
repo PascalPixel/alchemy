@@ -936,13 +936,13 @@ void HaidiaSukureta_RunActorSequence(void)
 
 void SceneState_SetWorkAndFlag87d(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
 
-    work = *(u8 **)&gEventWork;
-    *(u32 *)(work + 448) = 512;
-    *(u32 *)(work + 456) = 64;
+    work = gEventWork;
+    work->start_transition = 512;
+    work->transition_frames = 64;
 
     Engine_GameFlagSet(0x87D);
     BattleFx_SetWeightedResult(12, 0);
@@ -952,13 +952,13 @@ void SceneState_SetWorkAndFlag87d(void)
 
 void SceneState_SetWorkAndFlag87e(void)
 {
-    u8 *work;
+    struct EventWork *work;
 
     Engine_EventBegin();
 
-    work = *(u8 **)&gEventWork;
-    *(u32 *)(work + 448) = 512;
-    *(u32 *)(work + 456) = 64;
+    work = gEventWork;
+    work->start_transition = 512;
+    work->transition_frames = 64;
 
     Engine_GameFlagSet(0x87E);
     BattleFx_SetWeightedResult(12, 1);

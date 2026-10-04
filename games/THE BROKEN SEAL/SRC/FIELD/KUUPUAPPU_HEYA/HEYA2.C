@@ -2670,10 +2670,10 @@ void RunDialoguePromptScene(void)
 /* Phase/status word at 0x1c0 of the shared scene work record. */
 void SceneState_SetWord1c0To209AndRun(void)
 {
-    u8 *state;
+    struct EventWork *state;
 
-    state = *(u8 **)&gEventWork;
-    *(s32 *)(state + 0x1c0) = 0x209;
+    state = gEventWork;
+    state->start_transition = 0x209;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(1);

@@ -193,14 +193,14 @@ void SceneState_SetFlag210AndConfigureRegion40_89(void)
 void SceneState_SetWork1c0AndRunObject(u8 *o)
 {
 
-    u8 *state;
+    struct EventWork *state;
 
     if (Engine_GameFlagIsSet(0x834) != 0) {
         BattleFx_SetBlock30ValuesMaxZero();
     }
-    state = (u8 *)gEventWork;
-    *(s32 *)(state + 0x1C0) = 0x100;
-    *(s32 *)(state + 0x1C8) = 16;
+    state = gEventWork;
+    state->start_transition = 0x100;
+    state->transition_frames = 16;
     Engine_EventRequestExit(o);
 }
 

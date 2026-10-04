@@ -270,13 +270,13 @@ void FieldScene_RunScene38e_0200045c(void)
  */
 s32 Scene_Initialize(void)
 {
-    u8 *work = (u8 *)gEventWork;
+    struct EventWork *work = gEventWork;
     struct SceneEntity *ent;
     struct SceneHandle *h;
     u8 *fp;
     s32 zero;
 
-    *(s32 *)(work + 448) = 256;            /* 128 << 1 */
+    work->start_transition = 256;            /* 128 << 1 */
 
     ent = (struct SceneEntity *)Object_GetById(8);
     fp = (u8 *)ent + 35;

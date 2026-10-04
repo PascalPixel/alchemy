@@ -181,11 +181,11 @@ void Scene_RunTableTransition(void)
 
 void SceneState_SetWord1c8To16AndForward16c(void)
 {
-    u8 *work = (u8 *)gEventWork;
-    s16 *p = (s16 *)(work + 0x16C);
+    struct EventWork *work = gEventWork;
+    s16 *p = (s16 *)&work->touched_trigger;
     s32 n = *p;
 
-    *(s32 *)(work + 0x1C8) = 16;
+    work->transition_frames = 16;
     Engine_EventRequestExit(n);
 }
 

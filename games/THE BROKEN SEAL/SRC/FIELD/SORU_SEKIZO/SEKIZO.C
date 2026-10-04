@@ -281,13 +281,13 @@ void FieldScene_SetupStagedActors(void)
  * belong to this module's translation-unit declaration. */
 void FieldScene_RunStagedActorScene(void)
 {
-    u8 *work;
+    struct EventWork *work;
     struct FieldActor *record;
 
     Engine_EventBegin();
-    work = (u8 *)gEventWork;
-    *(s32 *)(work + 0x1c0) = 0x100;
-    *(s32 *)(work + 0x1c8) = 32;
+    work = gEventWork;
+    work->start_transition = 0x100;
+    work->transition_frames = 32;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
@@ -459,9 +459,9 @@ void FieldScene_RunStagedActorScene(void)
     Engine_ActorWaitForMove(1);
     Engine_ActorSetPosition(1, 0, 0);
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-    work = (u8 *)gEventWork;
-    *(s32 *)(work + 0x1c0) = 0x204;
-    *(s32 *)(work + 0x1c8) = 16;
+    work = gEventWork;
+    work->start_transition = 0x204;
+    work->transition_frames = 16;
     Engine_EventEnd();
 }
 

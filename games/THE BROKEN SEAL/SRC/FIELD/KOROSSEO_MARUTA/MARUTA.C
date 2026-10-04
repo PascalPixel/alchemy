@@ -674,13 +674,13 @@ void ColossoLogRollingStage_NoopSceneEventHook(void)
  * yes closes the screen and selects that competitor. */
 void KorosseoMaruta_RunCompetitorTalk(s32 a0)
 {
-    u8 *work;
+    struct EventWork *work;
     s32 owner;
     s32 msg;
     s32 lines;
     s32 entrance;
 
-    work = (u8 *)gEventWork;
+    work = gEventWork;
     owner = gGameState.selected_actor;
     entrance = gGameState.entrance;
     if (entrance == 2) {
@@ -695,8 +695,8 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
             s32 yes = msg + 1;
             Engine_EventSetMessage(lines + yes);
             Engine_EventShowMessage(a0, 0);
-            *(s32 *)(work + 0x1c0) = 0x200;
-            *(s32 *)(work + 0x1c8) = 15;
+            work->start_transition = 0x200;
+            work->transition_frames = 15;
             Engine_EventCloseScreen();
             Engine_EventWaitForScreen();
             Korosseo_SelectSoloCompetitor(a0);

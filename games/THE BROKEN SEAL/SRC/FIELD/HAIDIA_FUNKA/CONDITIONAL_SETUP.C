@@ -17,9 +17,9 @@ void Object_RefreshSelectorById();
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = (u8 *)gEventWork;
+    struct EventWork *work = gEventWork;
 
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+    work->message = (u16)(work->message + amount);
 }
 
 u8 *ConditionalSceneSetup_GetScriptData(void)
@@ -59,7 +59,7 @@ void RunEventScript01(void)
 {
     u32 i;
     s32 record;
-    u8 *work;
+    struct EventWork *work;
     s32 action_script;
 
     Engine_EventBegin();
@@ -79,9 +79,9 @@ void RunEventScript01(void)
     Camera_MoveTo(0x1000000, -1, 0x2640000, 0);
     Engine_CameraWaitForMove();
     Engine_MapRedraw();
-    work = (u8 *)gEventWork;
-    *(s32 *)(work + 0x1c0) = 0;
-    *(s32 *)(work + 0x1c8) = 32;
+    work = gEventWork;
+    work->start_transition = 0;
+    work->transition_frames = 32;
     Engine_EventOpenScreen();
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x1000000, -1, 0x1f40000, 1);
@@ -352,9 +352,9 @@ void RunEventScript01(void)
     BattleFx_SetBlock30Values12Zero();
     Audio_PlayCue(145);
     Engine_EventWait(30);
-    work = (u8 *)gEventWork;
-    *(s32 *)(work + 0x1c0) = 0;
-    *(s32 *)(work + 0x1c8) = 64;
+    work = gEventWork;
+    work->start_transition = 0;
+    work->transition_frames = 64;
     Engine_EventCloseScreen();
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();

@@ -240,7 +240,7 @@ void RunEventScript01(void)
 
     u32 i;
     s32 record;
-    u8 *work;
+    struct EventWork *work;
     s32 v5;
     s32 tbl;
 
@@ -251,9 +251,9 @@ void RunEventScript01(void)
     ColorBuffer_ApplyTarget(0x10002, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_TaskWait(1);
-    work = *(u8 **)&gEventWork;
-    *(s32 *)(work + 0x1c8) = 24;
-    *(s32 *)(work + 0x1c0) = 0x201;
+    work = gEventWork;
+    work->transition_frames = 24;
+    work->start_transition = 0x201;
     Actor_SetPosition(8, 0x3580000, 0x1b80000);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3580000, 0x1e60000);
     Actor_SetPosition(ACTOR_GERALD, 0x3500000, 0x1f60000);
@@ -690,9 +690,9 @@ void RunEventScript01(void)
     Engine_ActorEnableActionCallback(ACTOR_GERALD, tbl);
     Engine_ActorEnableActionCallback(2, tbl);
     Object_SetActionCallbackAndRefreshById(3, tbl);
-    work = *(u8 **)&gEventWork;
-    *(s32 *)(work + 0x1c8) = 16;
-    *(s32 *)(work + 0x1c0) = 0x209;
+    work = gEventWork;
+    work->transition_frames = 16;
+    work->start_transition = 0x209;
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x912);
     Engine_EventEnd();
@@ -724,7 +724,7 @@ void Scene_RunPartySequence(void)
 {
 
     struct FieldActor *record;
-    u8 *work;
+    struct EventWork *work;
     s32 v5;
     s32 tbl;
 
@@ -878,9 +878,9 @@ void Scene_RunPartySequence(void)
     Engine_ActorEnableActionCallback(ACTOR_GERALD, tbl);
     Engine_ActorEnableActionCallback(2, tbl);
     Object_SetActionCallbackAndRefreshById(3, tbl);
-    work = *(u8 **)&gEventWork;
-    *(s32 *)(((s32)work + 0x1c8)) = 16;
-    *(s32 *)(((s32)work + 0x1c0)) = 0x209;
+    work = gEventWork;
+    work->transition_frames = 16;
+    work->start_transition = 0x209;
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
     GameFlag_Set(0x914);
     Engine_EventEnd();

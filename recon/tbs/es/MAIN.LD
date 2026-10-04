@@ -159,7 +159,6 @@
     "*/recon/tbs/es/rom.o"(.rom.0000b470)
     "*/games/COMMON/SRC/SYSTEM/RESOURCE/RESOBJ.o"(.text)
     "*/games/COMMON/SRC/FIELD/COMMON/OBJECT/OBJECT.o"(.text)
-    "*/recon/tbs/es/rom.o"(.rom.0000be2c)
     "*/games/COMMON/SRC/FIELD/COMMON/SCRIPT/SCRIPT.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/OBJECT13.o"(.text)
     "*/recon/tbs/es/rom.o"(.rom.0000c2ca)

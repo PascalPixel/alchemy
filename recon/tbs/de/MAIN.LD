@@ -601,7 +601,6 @@ iwram :
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_SIMPLE.o"(.text)
     "*/recon/tbs/de/rom.o"(.rom.000bccc4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/SET_RECORD_CHILD_VALUES.o"(.text)
-    "*/recon/tbs/de/rom.o"(.rom.000bcf8e)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/RUN_VALUE_SEQUENCE.o"(.text)
     "*/games/COMMON/SRC/BATTLE/BATTLE4.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/BATTLE4.o"(.text)

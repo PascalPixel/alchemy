@@ -8547,11 +8547,11 @@ msgctxt "MsgNoEffect"
 msgid "02134"
 msgstr "しかし {argument_actor_name:230}は きかなかった!"
 
-msgctxt "message"
+msgctxt "MsgCastLacksPp"
 msgid "02135"
 msgstr "しかし EPがたりなかった!"
 
-msgctxt "message"
+msgctxt "MsgPsynergyBlocked"
 msgid "02136"
 msgstr "しかし エナジーをふうじられている!"
 

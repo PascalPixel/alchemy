@@ -925,13 +925,6 @@ BattlePresentation_RunUnitTransition:
 	.type Func_080ba6ac, %function
 Func_080ba6ac:
 	.incbin "baserom.gba", 0x000ba6c4, 0x0000026c
-	.section .rom.000ba98e, "ax"
-	.incbin "baserom.gba", 0x000ba98e, 0x00000002
-	.global Func_080ba978
-	.thumb_func
-	.type Func_080ba978, %function
-Func_080ba978:
-	.incbin "baserom.gba", 0x000ba990, 0x00000264
 	.section .rom.000bd868, "ax"
 	.incbin "baserom.gba", 0x000bd868, 0x00000048
 	.section .rom.000bd8b0, "ax"

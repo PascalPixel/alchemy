@@ -673,6 +673,8 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/SYSTEM/MEMORY/COPY_BYTES_DIRECTIONAL.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000a83f6)
     "*/recon/tla/ja/rom.o"(.rom.000a83f8)
+    "*/games/THE LOST AGE/SRC/GAME/PARTY/SET_LEADER_JASMINE.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.000a90ec)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/ADD_FOUND_TO_OWNER.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000a9864)
     "*/games/THE LOST AGE/SRC/GAME/CHARACTER/RATIOS.o"(.text)

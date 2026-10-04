@@ -938,7 +938,7 @@
         "*/recon/tla/raw/080add5c.o"(.text)
         "*/recon/tla/raw/080add74.o"(.text)
         "*/recon/tla/raw/080addf0.o"(.text)
-        "*/recon/tla/raw/080ae0dc.o"(.text)
+        "*/games/THE LOST AGE/SRC/GAME/PARTY/SET_LEADER_JASMINE.o"(.text)
         "*/recon/tla/raw/080ae0f0.o"(.text)
         "*/recon/tla/raw/080ae118.o"(.text)
         "*/recon/tla/raw/080ae16c.o"(.text)

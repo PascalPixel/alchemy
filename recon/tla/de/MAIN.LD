@@ -627,6 +627,8 @@
     "*/recon/tla/de/rom.o"(.rom.000bac90)
     "*/recon/tla/de/rom.o"(.rom.000bad5c)
     "*/recon/tla/de/rom.o"(.rom.000badf0)
+    "*/games/THE LOST AGE/SRC/GAME/PARTY/SET_LEADER_JASMINE.o"(.text)
+    "*/recon/tla/de/rom.o"(.rom.000bb0f0)
     "*/recon/tla/de/rom.o"(.rom.000bb5fc)
     "*/games/THE LOST AGE/SRC/GAME/DJINN/ADD_FOUND_TO_OWNER.o"(.text)
     "*/recon/tla/de/rom.o"(.rom.000bb868)

@@ -8311,7 +8311,7 @@ msgctxt "MsgItemAlreadyUsed"
 msgid "02075"
 msgstr "{argument_actor_name:1}'s item has{line_break}already been used!"
 
-msgctxt "message"
+msgctxt "MsgUsedItemBroke"
 msgid "02076"
 msgstr "Your {argument_item_name:1} broke!"
 

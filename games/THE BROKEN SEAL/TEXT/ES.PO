@@ -9299,7 +9299,7 @@ msgctxt "MsgItemAlreadyUsed"
 msgid "02322"
 msgstr "¡El objeto de {argument_actor_name:1}{line_break}ya ha sido usado!"
 
-msgctxt "message"
+msgctxt "MsgUsedItemBroke"
 msgid "02323"
 msgstr "¡{argument_item_name:2} se rompió!"
 

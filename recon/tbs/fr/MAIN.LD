@@ -593,7 +593,6 @@
     "*/recon/tbs/fr/rom.o"(.rom.000bded8)
     "*/games/COMMON/SRC/BATTLE/PRESENTATION/ACT_RUN_ENTRIES.o"(.text)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/RUN_SIMPLE.o"(.text)
-    "*/recon/tbs/fr/rom.o"(.rom.000be6c4)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/SET_RECORD_CHILD_VALUES.o"(.text)
     "*/recon/tbs/fr/rom.o"(.rom.000be98e)
     "*/games/THE BROKEN SEAL/SRC/BATTLE/MOTION/RUN_VALUE_SEQUENCE.o"(.text)

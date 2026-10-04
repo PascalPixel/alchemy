@@ -24,7 +24,7 @@ void Camera_StoreSceneParameters(s32, u32, s32);
 s32 RunBattlePresentation(struct BattlePlan *plan, s32 mode);
 void BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode);
 void Func_080ba978(struct BattlePlan *plan, s32 mode);
-void Func_080ba6ac(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);
+s32 BattlePres_RunItem(struct BattlePlan *plan, s32 mode, struct BattleActionRecord *request);
 s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattlePlan *plan);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan);
@@ -104,7 +104,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request, s32 de
             Func_080ba978(&battle->plan, 2);
             break;
         case 4:
-            Func_080ba6ac(&battle->plan, 0, request);
+            BattlePres_RunItem(&battle->plan, 0, request);
             break;
         case 7:
             if (BattlePresentation_RunEncounterOrUnitTrigger(&battle->plan) != 0)

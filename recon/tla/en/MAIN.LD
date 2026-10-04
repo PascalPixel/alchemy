@@ -2125,7 +2125,7 @@
         "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/FIND_SLOT.o"(.text)
         "*/recon/tla/raw/0811b2c4.o"(.text)
         "*/recon/tla/raw/0811b37c.o"(.text)
-        "*/recon/tla/raw/0811b4ac.o"(.text)
+        "*/games/COMMON/SRC/BATTLE/PARTY/CONTAINS_ID.o"(.text)
         "*/recon/tla/raw/0811b4d8.o"(.text)
         "*/recon/tla/raw/0811b598.o"(.text)
         "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/SET_ACTOR_MODE_AND_ACTION.o"(.text)

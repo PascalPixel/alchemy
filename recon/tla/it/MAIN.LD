@@ -1109,6 +1109,8 @@
     "*/recon/tla/it/rom.o"(.rom.0011b198)
     "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/FIND_SLOT.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0011b2dc)
+    "*/games/COMMON/SRC/BATTLE/PARTY/CONTAINS_ID.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.0011b4f0)
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/SET_ACTOR_MODE_AND_ACTION.o"(.text)
     "*/games/COMMON/SRC/BATTLE/MOTION/RELEASE_BATTLE_OBJECT_RECORDS.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.0011b772)

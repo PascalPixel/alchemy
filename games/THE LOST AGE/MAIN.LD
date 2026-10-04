@@ -1104,6 +1104,8 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.0011b17c)
     "*/games/THE LOST AGE/SRC/BATTLE/SUMMON/FIND_SLOT.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011b2c0)
+    "*/games/COMMON/SRC/BATTLE/PARTY/CONTAINS_ID.o"(.text)
+    "*/recon/tla/ja/rom.o"(.rom.0011b4d4)
     "*/games/THE LOST AGE/SRC/BATTLE/PRESENTATION/SET_ACTOR_MODE_AND_ACTION.o"(.text)
     "*/games/COMMON/SRC/BATTLE/MOTION/RELEASE_BATTLE_OBJECT_RECORDS.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.0011b756)

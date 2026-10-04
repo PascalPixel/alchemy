@@ -5010,7 +5010,9 @@ BattleMotion_GetSlotField14:
 	.section .rom.0011b17c, "ax"
 	.incbin "baserom.gba", 0x0011b17c, 0x00000114
 	.section .rom.0011b2c0, "ax"
-	.incbin "baserom.gba", 0x0011b2c0, 0x00000214
+	.incbin "baserom.gba", 0x0011b2c0, 0x000001e8
+	.section .rom.0011b4d4, "ax"
+	.balign 4
 	.global BattleUnit_BuildStatusFlags
 	.type BattleUnit_BuildStatusFlags, %function
 	.thumb_func

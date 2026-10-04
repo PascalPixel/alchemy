@@ -38,7 +38,21 @@
  * with x/y; a non-union word store or a separate x/y view (no ints) unpins
  * the word store from the window load and everything floats (14-16);
  * volatile barriers after sentinel, x, y or entry give 10-12; a "+r" copy
- * of entry before the + 16 swaps r6/r7 (38). */
+ * of entry before the + 16 swaps r6/r7 (38).
+ * 2026-10-04 sun w3 finisher 1: with -fsched-verbose the tie at the copy is
+ * x store 127 (priority 20, four dependants: block end, the word's pool load
+ * by anti dependence on r3, the word store and the tile clear) against the
+ * reload copy 326 (priority 20, two dependants); rank_for_schedule then
+ * prefers more dependants. The copy would win the luid tie only if the word
+ * and the clear did not depend on the x/y stores, i.e. were not alias set 0
+ * (both are set 0 because they are union member accesses). Every typed
+ * spelling of the word or the clear measured (u32, unsigned long, void *, a
+ * one-word struct, a struct holding a RenderOutput pointer or the two words,
+ * through casts of &entry->attributes / &entry->tile or entry) lets the word
+ * store float past the window load (14-18); only the clear typed and the word
+ * a union access keeps 2 (or 4). So the reference's word store must still
+ * conflict with the window's frame load while not depending on the x/y
+ * stores; no C spelling found gives both. */
 #include "RENDER_INPUT.H"
 #include "IWRAM_CALL.H"
 #include "EDITION.H"

@@ -1749,11 +1749,11 @@ void FuneKanpan_RunJumpScene(void)
     Engine_ActorSetAnimation(22, 5);
     actor = Object_GetById(22);
     actor->velocity_y = 0x80000;
-    *(s32 *)&actor->unknown_44[4] = 0xb333;
+    actor->gravity = 0xb333;
     actor->scale_x = 0x1a000;
     actor->scale_y = 0x1a000;
     actor->update = (void (*)(union FieldObject *))OverlayObject_DecayFields24And28;
-    *(s32 *)&actor->unknown_44[0] = 0x8000;
+    actor->bounce = 0x8000;
     Actor_SetSpeed(22, 0x60000, 0x30000);
     Engine_ObjectMotionSetPositionAndCommit(22, 182, 0x26a);
     Engine_ActorSetSpriteFlags(Object_GetById(22), 0);

@@ -89,12 +89,10 @@ void Effect_AdvanceMotion(struct MotionEffect *effect)
     sprite->angle += effect->step64;
 }
 
-/* The leader drops into the entrance from high above: raised far over the
-   floor with the words at +68 and +72 set, the motion byte at +85 lets the
-   fall play once the screen has opened. */
-
 /* The arrival by entrance 3 the scene start plays until its flag is set: the
-   leader lands in a ring of seventeen sparks and recovers. */
+   leader is raised far over the floor and, once the screen has opened, falls
+   slowly without rebounding, lands in a ring of seventeen sparks and
+   recovers. */
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     u32 i;
@@ -106,15 +104,15 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     WaitFrames(1);
-    *(s32 *)((u8 *)Object_GetById(0) + 12) = 0x820000;
-    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x8000;
-    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0;
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
+    Object_GetById(0)->y.fixed = 0x820000;
+    Object_GetById(0)->gravity = 0x8000;
+    Object_GetById(0)->bounce = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Battle_WaitMode0(30);
     Audio_PlayCue(204);
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 3;
+    Object_GetById(0)->motion_flags = 3;
     Battle_WaitMode0(24);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     options.palette = 7;
@@ -136,35 +134,35 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
-    *(s32 *)((u8 *)Object_GetById(0) + 72) = 0x10000;
-    *(s32 *)((u8 *)Object_GetById(0) + 68) = 0x4000;
+    Object_GetById(0)->gravity = 0x10000;
+    Object_GetById(0)->bounce = 0x4000;
     Engine_EventEnd();
 }
 
 /* The leader falls in, hidden, and at once leaves by the exit given. */
 void FieldScene_RunScene3c5SequenceA(s32 exit)
 {
-    u8 *leader;
+    struct FieldActor *leader;
 
     Engine_EventBegin();
     Camera_MoveTo(-1, -1, -1, 0);
     Engine_MapRedraw();
     WaitFrames(1);
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 12) = 0x820000;
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 72) = 0x4000;
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 68) = 0;
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 0;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->y.fixed = 0x820000;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->gravity = 0x4000;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->bounce = 0;
+    Object_GetById(0)->motion_flags = 0;
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Battle_WaitMode0(10);
     Audio_PlayCue(204);
-    *(u8 *)((u8 *)Object_GetById(0) + 85) = 3;
-    leader = (u8 *)Actor_Get(ACTOR_PARTY_LEADER);
-    *(s32 *)(leader + 40) = -0x50000;
+    Object_GetById(0)->motion_flags = 3;
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    leader->velocity_y = -0x50000;
     OverlayObject_WaitUntilIdle((s32 *)Actor_Get(ACTOR_PARTY_LEADER));
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     Engine_EventRequestExit(exit);

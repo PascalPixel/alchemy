@@ -146,8 +146,8 @@ void VinasuHeya_RunCellPushScene(void)
                 Engine_ActorSetSpriteFlags(actor, 0);
                 block->unknown_22 = set;
                 block->motion_flags = 3;
-                *(s32 *)&block->unknown_44[4] = 0x1999;
-                *(s32 *)&block->unknown_44[0] = set;
+                block->gravity = 0x1999;
+                block->bounce = set;
                 Engine_MapCopyCellAttributes(43, 45, 1, 1, x, z);
                 OverlayObject_WaitUntilIdle(block);
                 Engine_AudioPlayCue(188);

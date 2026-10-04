@@ -91,6 +91,13 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let ok = text.lines().filter(|l| l.ends_with(".gba: OK")).count();
         println!("{ok} of 12 editions identical");
         report_editions(root, &text);
+        // Compile and link errors, which leave no ROM to compare.
+        let mut seen = std::collections::BTreeSet::new();
+        for line in text.lines().filter(|l| !l.contains("warning") && (l.contains(": error") || l.contains("undefined reference") || l.contains("multiple definition") || l.contains("has no member") || l.contains("conflicting types") || l.contains("already defined"))) {
+            if seen.insert(line.to_string()) && seen.len() <= 12 {
+                println!("{line}");
+            }
+        }
         if ok != 12 {
             return Err("some editions differ; fix them before going on".into());
         }

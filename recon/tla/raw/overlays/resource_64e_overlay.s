@@ -4,8 +4,6 @@
 	.include "games/COMMON/INCLUDE/GAME/ED_ASM.H"
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x020080a4,"ax",%progbits
 	.global Func_020000a4
 	.thumb_func

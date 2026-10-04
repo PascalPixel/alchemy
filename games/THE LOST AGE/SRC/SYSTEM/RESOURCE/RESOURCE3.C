@@ -1,8 +1,44 @@
 #include "TYPES.H"
+#include "ANIMSPR.H"
 #include "METADATA_LOOKUP.H"
 
 void ResourceMetadata_ClearRecord(void *record);
 s32 Func_08022c98(s32 id);
+s32 Animation_LookupValueByKey(s32 key);
+
+/* ☀️'s: set a layer up from its metadata, looking its frames up among the
+   loaded slots when the metadata has none. */
+void Animation_InitWorkFromMetadata(struct AnimationEntry *work)
+{
+    s32 value;
+    s32 z;
+    s32 animation;
+    struct AnimationMetadata *info;
+
+    if (work != NULL) {
+        info = Resource_GetMetadataRecordFar(work->anim_id);
+        if (info->width != 0) {
+            value = info->frames;
+            if (value == 0)
+                value = Animation_LookupValueByKey(work->anim_id);
+            z = 0;
+            work->kind = info->draw_kind;
+            work->script = (u8 *)z;
+            /* FAKEMATCH: ⚓️ clears the script before storing the lists. */
+            asm("");
+            animation = info->animation;
+            *(s32 *)&work->frames = value;
+            *(s32 *)&work->scripts = animation;
+            /* FAKEMATCH: and the cursor straight after them. */
+            asm("");
+            work->pos = z;
+            /* FAKEMATCH: then the codec and the frame. */
+            asm("");
+            work->mode = info->frame_codec;
+            work->frame = 0xff;
+        }
+    }
+}
 
 /* ⚓️ keeps the slot count at 0x1b, where ☀️ keeps it at 0x27, and the
    size and offsets from 0x0c. */

@@ -278,7 +278,6 @@ SECTIONS
     "*/recon/tla/ja/rom.o"(.rom.000227b0)
     "*/recon/tla/ja/rom.o"(.rom.000227e0)
     "*/recon/tla/ja/rom.o"(.rom.000228e0)
-    "*/recon/tla/ja/rom.o"(.rom.0002296c)
     "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.00022acc)
     "*/recon/tla/ja/rom.o"(.rom.00022b04)

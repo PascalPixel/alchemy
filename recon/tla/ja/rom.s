@@ -641,12 +641,6 @@ Animation_LookupValueByKey:
 	.thumb_func
 InitializeAnimationObjects:
 	.incbin "baserom.gba", 0x000228e0, 0x0000008c
-	.section .rom.0002296c, "ax"
-	.global Animation_InitWorkFromMetadata
-	.type Animation_InitWorkFromMetadata, %function
-	.thumb_func
-Animation_InitWorkFromMetadata:
-	.incbin "baserom.gba", 0x0002296c, 0x00000040
 	.section .rom.00022acc, "ax"
 	.global Func_08022acc
 	.type Func_08022acc, %function

@@ -313,7 +313,6 @@
         "*/recon/tla/raw/080227e0.o"(.text)
         "*/recon/tla/raw/080228bc.o"(.text)
         "*/recon/tla/raw/080228e0.o"(.text)
-        "*/recon/tla/raw/0802296c.o"(.text)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/RESOURCE3.o"(.text)
         "*/recon/tla/raw/08022acc.o"(.text)
         "*/recon/tla/raw/08022b04.o"(.text)

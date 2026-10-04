@@ -14,7 +14,7 @@ Func_080dc3f0:
 .L_080dc400:
 	adds r0, r5, #0
 	subs r6, #1
-	bl Func_080ebc30
+	bl EffectSlot_Update
 	adds r5, #72
 	cmp r6, #0
 	bge .L_080dc400

@@ -53,3 +53,5 @@ AlchemyUncreditedEnd_080130cc:
 .L_08013144:
 	pop	{r5, r6}
 	bx	lr
+	.global Resource_PatchThumbBranchCodeSize
+	.set Resource_PatchThumbBranchCodeSize, . - Resource_PatchThumbBranchCode

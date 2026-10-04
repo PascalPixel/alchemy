@@ -1,11 +1,19 @@
-/*
- * Draft: PackedTable_AdjustMarkedOffsets does not yet match; 3 halfwords differ from ☀️'s C, first at +0x10 (mov ip, r3).
- * Links as recon/tla/raw/0801330c.s.
- */
+#include "RESOURCE.H"
 #include "DMA.H"
+#include "RUNTIME_MEM.H"
+#include "TYPES.H"
 
-/* The bl-pair fixer (PATCH_THUMB_BRANCH.S) is ARM code that runs from a heap
-   copy of itself; the copy length is a link-time symbol. */
+extern void *Resource_DirectoryTable[];
+
+/* The bl-pair fixer (PATCH_THUMB_BRANCH.S) runs from a heap copy of
+   itself; the copy length is a link-time symbol. */
+extern const u8 Resource_PatchThumbBranchCode[];
+extern u8 Resource_PatchThumbBranchCodeSize[];
+
+void *Resource_GetTableEntry(s32 index)
+{
+    return Resource_DirectoryTable[index];
+}
 
 void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
 {
@@ -18,8 +26,9 @@ void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
     if (entry_index < entry_count) {
         u32 next_marker_mask;
         u32 current_marker_mask;
-        u32 payload_mask = 0x7ff;
+        u32 payload_mask;
         next_marker_mask = 0xf800;
+        payload_mask = 0x7ff;
         current_marker_mask = 0xf000;
         entries -= 2;
         do {
@@ -52,4 +61,27 @@ void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
             entry_index++;
         } while (entry_index < entry_count);
     }
+}
+
+/* Decodes a code resource into place, then adjusts its Thumb calls for the
+   address it now runs from. */
+void Resource_LoadCode(u32 index, void *destination)
+{
+    void (*routine)(void *, s32);
+    s32 end;
+    u32 size;
+
+    end = Resource_DecodeType01((const void *)Resource_GetTableEntry(index), destination);
+    /* FAKEMATCH: the wrapper keeps the size load after the decode. */
+    do {
+        size = (u32)Resource_PatchThumbBranchCodeSize;
+    } while (0);
+    routine = (void (*)(void *, s32))Runtime_BumpAllocate(size);
+    Dma_Set(Resource_PatchThumbBranchCode, routine, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    routine(destination, end);
+    Sys_Free(routine);
+}
+
+void Runtime_IgnoreInterrupt(void)
+{
 }

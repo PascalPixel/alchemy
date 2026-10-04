@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Runtime_InstallIwramAndIrqs
 	.thumb_func
 Runtime_InstallIwramAndIrqs:

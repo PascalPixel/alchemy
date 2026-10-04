@@ -1728,10 +1728,10 @@ RenderOutput_Create:
 Func_08042450:
 	.incbin "baserom.gba", 0x00042594, 0x000000b8
 	.section .rom.0004264c, "ax"
-	.global Func_08042508
-	.type Func_08042508, %function
+	.global Ui_LoadCharacterEntryForSlot
+	.type Ui_LoadCharacterEntryForSlot, %function
 	.thumb_func
-Func_08042508:
+Ui_LoadCharacterEntryForSlot:
 	.incbin "baserom.gba", 0x0004264c, 0x00000064
 	.section .rom.000426be, "ax"
 	.incbin "baserom.gba", 0x000426be, 0x00000002
@@ -4568,7 +4568,9 @@ Object_LinkedMotionScript:
 	.type UiIcon_PrepareObject, %function
 	.thumb_func
 UiIcon_PrepareObject:
-	.incbin "baserom.gba", 0x000f8830, 0x00000390
+	.incbin "baserom.gba", 0x000f8830, 0x0000003c
+	.section .rom.000f8878, "ax"
+	.incbin "baserom.gba", 0x000f8878, 0x00000348
 	.section .rom.000f8c8e, "ax"
 	.incbin "baserom.gba", 0x000f8c8e, 0x0000022a
 	.section .rom.000f8f14, "ax"

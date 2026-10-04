@@ -84,7 +84,7 @@ Func_080feb58:
 	lsls r3, r3, #1
 	adds r3, r3, r6
 	ldrh r1, [r7, r3]
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	ldr r3, [sp, #0]
 	lsls r3, r3, #1
 	adds r3, r3, r6

@@ -642,7 +642,7 @@ Func_080fdad4:
 	bl Func_080f8170
 	ldrh r1, [r7, r5]
 	adds r0, r7, #0
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	ldr r4, [sp, #8]
 	b .L_080fe0d8
 .L_080fdfdc:

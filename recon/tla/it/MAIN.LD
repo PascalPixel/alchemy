@@ -989,6 +989,8 @@
     "*/recon/tla/it/rom.o"(.rom.000f8656)
     "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_RESOURCE_VARIANT.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000f8888)
+    "*/games/COMMON/SRC/GRAPHICS/TEXT/CALL_ICON_ROUTINE.o"(.text)
+    "*/recon/tla/it/rom.o"(.rom.000f88d0)
     "*/games/THE LOST AGE/SRC/MENU/ABILITY/OWNER_ENTRIES.o"(.text)
     "*/games/COMMON/SRC/MENU/ITEM/POSITION_OWNER_ENTRY.o"(.text)
     "*/games/THE LOST AGE/SRC/MENU/ITEM/REFRESH_ENTRY.o"(.text)

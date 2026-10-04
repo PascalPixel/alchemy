@@ -120,7 +120,7 @@ Func_080fd000:
 	lsls r3, r3, #1
 	ldrh r1, [r3, r2]
 	adds r0, r7, #0
-	bl Func_080f88c4
+	bl PsynergyMenu_CallIconRoutineWithValue
 	cmp r6, #2
 	bne .L_080fd114
 	ldr r0, [sp, #20]

@@ -1710,10 +1710,10 @@ RenderOutput_Create:
 Func_08042450:
 	.incbin "baserom.gba", 0x000424bc, 0x000000b8
 	.section .rom.00042574, "ax"
-	.global Func_08042508
-	.type Func_08042508, %function
+	.global Ui_LoadCharacterEntryForSlot
+	.type Ui_LoadCharacterEntryForSlot, %function
 	.thumb_func
-Func_08042508:
+Ui_LoadCharacterEntryForSlot:
 	.incbin "baserom.gba", 0x00042574, 0x00000064
 	.section .rom.000425e6, "ax"
 	.incbin "baserom.gba", 0x000425e6, 0x00000002
@@ -4709,7 +4709,9 @@ Menu_UpdateEntryObjectTransformsFar:
 	.type UiIcon_PrepareObject, %function
 	.thumb_func
 UiIcon_PrepareObject:
-	.incbin "baserom.gba", 0x000fe87c, 0x00000390
+	.incbin "baserom.gba", 0x000fe87c, 0x0000003c
+	.section .rom.000fe8c4, "ax"
+	.incbin "baserom.gba", 0x000fe8c4, 0x00000348
 	.section .rom.000fecda, "ax"
 	.incbin "baserom.gba", 0x000fecda, 0x0000025a
 	.section .rom.000fef90, "ax"

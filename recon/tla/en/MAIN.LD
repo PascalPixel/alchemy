@@ -1772,7 +1772,7 @@
         "*/recon/tla/raw/080f8658.o"(.text)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILE/CREATE_WITH_RESOURCE_VARIANT.o"(.text)
         "*/recon/tla/raw/080f8888.o"(.text)
-        "*/recon/tla/raw/080f88c4.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/TEXT/CALL_ICON_ROUTINE.o"(.text)
         "*/recon/tla/raw/080f88d0.o"(.text)
         "*/recon/tla/raw/080f89a4.o"(.text)
         "*/recon/tla/raw/080f8a44.o"(.text)

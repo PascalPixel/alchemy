@@ -62,6 +62,11 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         return Err(USAGE.into());
     }
     let root = root();
+    // The reconciliation commit stages games/ and recon/ whole, so it must
+    // start from a clean tree or it would sweep unrelated edits into it.
+    if !command(&["git", "status", "--porcelain", "--", "games", "recon"], root)?.trim().is_empty() {
+        return Err("games/ or recon/ has uncommitted changes; commit or stash them first".into());
+    }
     for branch in branches {
         if command(&["git", "merge-base", "--is-ancestor", branch, "HEAD"], root).is_ok() {
             println!("{branch}: already in");

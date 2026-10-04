@@ -398,7 +398,7 @@ Battle_RunEncounter:
 .L_080b671a:
 	adds r0, r6, #0
 	ldr r1, [sp, #12]
-	bl Func_080c02a4
+	bl BattlePres_RunEntryTransition
 	ldr r3, [sp, #8]
 	movs r2, #0
 	str r2, [r3, #20]

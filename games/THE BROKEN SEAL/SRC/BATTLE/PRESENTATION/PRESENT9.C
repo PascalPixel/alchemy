@@ -12,6 +12,7 @@
 #include "BATTLE_PRESENTATION.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_RUNTIME.H"
+#include "HEAP_STATE.H"
 
 /* The first two display registers. */
 struct DisplayRegisters {
@@ -28,7 +29,6 @@ struct TransitionActorList {
     u16 ids[24];
 };
 
-extern u8 gWorkSlot[];
 /* Seven 4bpp tiles of the curtain's rows. */
 extern const u8 BattlePres_CurtainTiles[];
 
@@ -55,7 +55,7 @@ void BattlePres_SetActorRecordMode(s32 id, s32 mode);
  * backdrop, spawns both sides and fades the blend in over 16 frames. Both
  * paths restore the BG and display registers.
  */
-void Func_080c02a4(s32 enemy_count, s32 kind)
+void BattlePres_RunEntryTransition(s32 enemy_count, s32 kind)
 {
     volatile u32 fill;
     struct TransitionActorList list;
@@ -74,14 +74,14 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
     u16 *ids;
     s32 n;
 
-    work = *(struct BattleBackgroundView **)(gWorkSlot + 44 * 4);
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     timer = Runtime_AllocateHeapBlock(42, 4);
     if (kind != 0x15b) {
         {
             /* The reference reaches the display control from the DMA
                channel address still in r3 after the last copy. */
             /* FAKEMATCH: the channel address is pinned to r3 so the display control can be addressed from it. */
-            register volatile u32 *dma __asm__("r3") = (volatile u32 *)0x040000d4;
+            register volatile u32 *dma __asm__("r3") = REG_DMA3;
 
             Dma_Set(BattlePres_CurtainTiles, (void *)0x06005020, 0x84000008, dma);
             Dma_Set(BattlePres_CurtainTiles + 32, (void *)0x06005040, 0x84000008, dma);
@@ -96,9 +96,9 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         work->mode = 1;
         work->busy = 0;
         fill = 0x33333333;
-        Dma_Set((void *)&fill, (void *)0x06005000, 0x85000008, (volatile u32 *)0x040000d4);
+        Dma_Set((void *)&fill, (void *)0x06005000, 0x85000008, REG_DMA3);
         fill = 0;
-        Dma_Set((void *)&fill, (void *)0x06005100, 0x85000008, (volatile u32 *)0x040000d4);
+        Dma_Set((void *)&fill, (void *)0x06005100, 0x85000008, REG_DMA3);
         REG_BG1CNT = 0xc04;
         REG_BG0CNT |= 2;
         work->mode = 2;
@@ -145,7 +145,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         Runtime_SetIrqHandler(2, 0, 0);
         }
     } else {
-        session = *(struct BattleSession **)(gWorkSlot + 9 * 4);
+        session = *(gWorkSlot + HEAP_SLOT_BATTLE);
         work->second_mode = 1;
         work->busy = 0;
         count = BattleParty_ListActorIds(3, (u16 *)party);
@@ -157,30 +157,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
             if (Owner_GetStateFar(id)->class_id != 148)
                 object->scale = 0xb333;
         }
-        {
-            volatile u16 *ime;
-            struct IoWriteQueue *q;
-            u32 saved;
-            s32 used;
-
-            q = &gIoWriteQueue;
-            /* FAKEMATCH: the one-pass block keeps the queue load first and the saved copy ahead of the IME store, as in the IO write queue. */
-            do {
-                ime = &REG_IME;
-                saved = *ime;
-            } while (0);
-            *ime = (u16)ime;
-            used = q->count;
-            if (used <= 31) {
-                u32 *destination = q->entries[used];
-                /* FAKEMATCH: the count is stored through a u16 pointer, as in the IO write queue, which places the store after the entry address. */
-                *(u16 *)&q->count = used + 1;
-                *destination++ = 0x6041;
-                *destination++ = 0x04000000;
-                *destination = 0x20000;
-            }
-            *ime = saved;
-        }
+        IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
         WaitFrames(1);
         {
         s32 start = 0;

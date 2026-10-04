@@ -601,9 +601,9 @@ void RunSceneArrivalSetup(void)
 }
 
 /*
- * The troupe's rehearsal in Karei: once flag 0x910 is set and until 0x911
- * is, the group lines up, talks the dance through and leaves; otherwise the
- * party walks straight on through the trigger they touched.
+ * The group bound for the Colosso: once flag 0x910 is set and until 0x911
+ * is, they stop in Karei, argue over who will enter and move on; otherwise
+ * the party leaves through the trigger it touched.
  */
 void FieldScene_RunStagedGroupSequence(void)
 {

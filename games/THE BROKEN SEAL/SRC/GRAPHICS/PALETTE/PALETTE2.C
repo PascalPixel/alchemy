@@ -75,7 +75,7 @@ void TitlePalette_UpdateFade(void)
         for (i = 0; i <= 0x5ff; i++)
             *current++ += *delta++;
     } else {
-        Dma_Set(work->target, work->current, 0x84000300, (volatile u32 *)0x040000d4);
+        Dma_Set(work->target, work->current, DMA_ENABLE32 | DMA_32BIT | 0x300, REG_DMA3);
         work->duration = 0;
     }
     packed = work->packed[work->page ^ 1];
@@ -130,7 +130,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
     u32 c;
     s32 g;
 
-    if (mode == 0x8000)
+    if (mode == PALETTE_TRANSFORM_FROM_SOURCE)
         mode = *src;
     if (half == 1) {
         cnt = 256;
@@ -140,14 +140,14 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         cnt = 256;
     }
 
-    if (mode < 0x8000) {
+    if (mode < PALETTE_TRANSFORM_FROM_SOURCE) {
         *dst++ = mode & 0x7c00;
         *dst++ = (mode & 0x03e0) << 5;
         *dst++ = (mode & 0x001f) << 10;
-        Dma_Set(dst - 3, dst, (((cnt - 1) * 6) >> 1) | 0x80000000, (volatile u32 *)0x040000d4);
-    } else if (mode < 0x100000) {
+        Dma_Set(dst - 3, dst, (((cnt - 1) * 6) >> 1) | DMA_ENABLE32, REG_DMA3);
+    } else if (mode < PALETTE_TRANSFORM_FLAGS) {
         switch (mode) {
-        case 0x10001:
+        case PALETTE_TRANSFORM_GREY:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = ((c << 11) & 0xf800);
@@ -159,7 +159,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 dst[i * 3 + 2] = c;
             }
             break;
-        case 0x10002:
+        case PALETTE_TRANSFORM_SEPIA:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
@@ -191,7 +191,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 *dst++ = Palette_ChannelCurveLight[r];
             }
             break;
-        case 0x10003:
+        case PALETTE_TRANSFORM_WARM:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
@@ -213,7 +213,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 dst += 3;
             }
             break;
-        case 0x10004:
+        case PALETTE_TRANSFORM_MUTED:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
@@ -245,7 +245,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 *dst++ = Palette_ChannelCurve[r];
             }
             break;
-        case 0x10005:
+        case PALETTE_TRANSFORM_PALE:
             for (i = 0; i < cnt; i++) {
                 s32 mean;
 
@@ -270,7 +270,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 dst += 3;
             }
             break;
-        case 0x10006:
+        case PALETTE_TRANSFORM_RED:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 /* FAKEMATCH: keeps b's lifetime as the native allocates it. */
@@ -290,7 +290,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 dst += 3;
             }
             break;
-        case 0x10007:
+        case PALETTE_TRANSFORM_WARM2:
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
@@ -319,7 +319,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             }
             break;
         }
-    } else if (mode & 0x200000) {
+    } else if (mode & PALETTE_TRANSFORM_TINT) {
         u32 tr;
         u32 tg;
         u32 tb;
@@ -344,7 +344,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             dst[2] = r;
             dst += 3;
         }
-    } else if (mode & 0x400000) {
+    } else if (mode & PALETTE_TRANSFORM_BLEND) {
         u32 tr;
         u32 tg;
         u32 tb;
@@ -366,7 +366,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             *dst++ = Palette_ChannelCurve[g];
             *dst++ = Palette_ChannelCurve[r];
         }
-    } else if (mode & 0x800000) {
+    } else if (mode & PALETTE_TRANSFORM_SPLIT) {
         for (i = 0; i < cnt; i++) {
             c = *src++;
             dst[i * 3 + 0] = c & 0x7c00;
@@ -376,6 +376,6 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
     } else {
         if (half == 2)
             mode += 0x600;
-        Dma_Set((const void *)mode, dst, ((cnt * 6) >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
+        Dma_Set((const void *)mode, dst, ((cnt * 6) >> 2) | DMA_ENABLE32 | DMA_32BIT, REG_DMA3);
     }
 }

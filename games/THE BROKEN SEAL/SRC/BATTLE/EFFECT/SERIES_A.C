@@ -97,7 +97,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     DrawRectangle *draw;
     s32 frame;
     s32 i;
-    void *palette;
+    u8 *palette;
     struct EffectPosition base;
     struct EffectPosition screen;
     s32 point[3];
@@ -113,7 +113,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
     shift = 0;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    if (work->effect->unknown_001c == 1) {
+    if (work->effect->with_djinni == 1) {
         s32 kind = mode == 6 ? 2 : 1;
 
         if (mode == 6 || mode == 0)
@@ -159,8 +159,8 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
         else
             palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
     }
-    palette = (u8 *)palette + 128;
-    Resource_DecodeType01(palette, (u8 *)work + 0x1000);
+    palette += 128;
+    Resource_DecodeType01(palette, work->sheet + 0x1000);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw = callbacks);
 
     if (mode == 0 || mode == 6) {
@@ -233,25 +233,25 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
 
         if (frame == 40)
             BattleEventRuntime_BeginPhaseFar(0);
-        if (work->effect->unknown_001c == 1) {
+        if (work->effect->with_djinni == 1) {
             if (narrow == 0) {
                 s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
                 s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
 
                 if (frame > 32)
                     y = y - frame * 2 + 64;
-                callbacks[0](canvas, (u8 *)work + 0x1000, x, y, 40, 40);
+                callbacks[0](canvas, work->sheet + 0x1000, x, y, 40, 40);
                 if (frame <= 3)
-                    draw[1](canvas, (u8 *)work + 0x1000, x, y, 40, 40);
+                    draw[1](canvas, work->sheet + 0x1000, x, y, 40, 40);
             } else {
                 s32 x = ((Trig_Sin(frame << 11) * 10) >> 16) + origin_x / 2 - 10;
                 s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
 
                 if (frame > 32)
                     y = y - frame * 2 + 64;
-                callbacks[0](canvas, (u8 *)work + 0x1000, x, y, 20, 40);
+                callbacks[0](canvas, work->sheet + 0x1000, x, y, 20, 40);
                 if (frame <= 3)
-                    draw[1](canvas, (u8 *)work + 0x1000, x, y, 20, 40);
+                    draw[1](canvas, work->sheet + 0x1000, x, y, 20, 40);
             }
         }
 
@@ -316,7 +316,7 @@ void BattleFx_RunSeriesA(struct BattleEffectArgument *effect, u32 mode)
                             if (mode == 0)
                                 size = (i * 4 + frame) % 9;
                             if (mode == 0 || mode == 3 || mode == 4 || mode == 5) {
-                                u8 *cell = (u8 *)work + BattleFx_PuffCells[size];
+                                u8 *cell = work->sheet + BattleFx_PuffCells[size];
                                 u32 edge = BattleFx_PuffSizes[size];
                                 u32 half = edge >> 1;
 

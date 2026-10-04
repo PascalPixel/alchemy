@@ -404,7 +404,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     if (kind == 15 || kind == 17 || kind == 24 || kind == 26) {
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
-        work->effect->unknown_001c = 0;
+        work->effect->with_djinni = 0;
         Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
         Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
@@ -431,7 +431,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     if (kind == 35) {
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
-        work->effect->unknown_001c = 0;
+        work->effect->with_djinni = 0;
         Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
         Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
@@ -1126,7 +1126,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     if (kind == 21) {
         ClearWords(BG_CHAR_BLOCK(1), 0x4000);
         ClearWords(canvas, 0x4000);
-        work->effect->unknown_001c = 0;
+        work->effect->with_djinni = 0;
         Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
         Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);

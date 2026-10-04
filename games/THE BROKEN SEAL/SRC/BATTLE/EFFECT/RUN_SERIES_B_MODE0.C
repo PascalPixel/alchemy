@@ -100,7 +100,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
     canvas = *cursor;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
-    if (work->effect->unknown_001c == 1) {
+    if (work->effect->with_djinni == 1) {
         if (mode == 3)
             BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side ^ 1, 1,
                 &origin_x, &origin_y);
@@ -190,7 +190,7 @@ void BattleFx_RunSeriesB(struct BattleEffectArgument *effect, u32 mode)
 
         if (frame == 80)
             BattleEventRuntime_BeginPhaseFar(0);
-        if (work->effect->unknown_001c == 1) {
+        if (work->effect->with_djinni == 1) {
             s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
             s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin_y - 24;
 

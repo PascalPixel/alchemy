@@ -18,7 +18,7 @@ struct UiRenderWork {
     struct RenderOutput outputs[UI_OUTPUT_COUNT];
     struct RenderOutputList free_outputs;
     u8 tile_attributes[256];
-    u8 unknown_before_flags[RENDER_ALT_OFS - RENDER_TILE_ATTR_OFS - 256];
+    u16 tile_cursor;            /* where the next free text tile is sought */
     u8 alt;                     /* alternate text-canvas tiles are in use */
     u8 dirty;                   /* rows of tiles to upload, one bit per four */
     u8 mode;
@@ -54,6 +54,7 @@ LAYOUT_OFFSET_GUARD(UiRenderWork_Outputs, struct UiRenderWork, outputs, RENDER_O
 LAYOUT_OFFSET_GUARD(UiRenderWork_FreeHead, struct UiRenderWork, free_outputs.head, RENDER_FREE_HEAD_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_FreeTail, struct UiRenderWork, free_outputs.tail_link, RENDER_FREE_TAIL_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_TileAttributes, struct UiRenderWork, tile_attributes, RENDER_TILE_ATTR_OFS);
+LAYOUT_OFFSET_GUARD(UiRenderWork_TileCursor, struct UiRenderWork, tile_cursor, RENDER_ALT_OFS - 2);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Alt, struct UiRenderWork, alt, RENDER_ALT_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_Dirty, struct UiRenderWork, dirty, RENDER_DIRTY_OFS);
 LAYOUT_OFFSET_GUARD(UiRenderWork_LineSpacing, struct UiRenderWork, line_spacing, RENDER_WORD2_OFS);

@@ -1,3 +1,9 @@
+/* 2026-10-04: current EN score 3560 (162 register-only, 6 operand,
+ * 21 reordered, 7 inserted, 6 deleted), down from the fresh 5250 baseline.
+ * A five-minute, two-worker ordinary-source search found 3710; removed an
+ * unnecessary path temporary without changing that score. Replaced raw work
+ * offsets with SELECT.H's existing SelectionScreen owner and named fields,
+ * improving to 3560. Complete matching remains unproved; no source credit. */
 /* 2026-10-03 ordinary owner/API attempt: consume the shared affine input
  * and canonical resource/allocator contracts. Earlier measurements are
  * prior checkpoints; fresh complete-object comparison is pending. */
@@ -67,7 +73,7 @@ struct EffectPosition {
 };
 
 /* 選択鎖の節点。カーソル (+0x2d8) と転送枠 (+0x30c) も同じ並びを使う。 */
-extern u8 *gResQueueWork;
+extern struct SelectionScreen *gResQueueWork;
 extern volatile u32 gFrameTick;
 extern s8 Data_08036740[];
 extern u8 Menu_AnimatedCursorTiles[];
@@ -79,21 +85,21 @@ extern struct SelectionNode *NodeChain_GetNodeAtCount(u8 *state);
 
 void MenuSelection_DrawFrame(void)
 {
-    u8 *state = gResQueueWork;
+    struct SelectionScreen *state = gResQueueWork;
     /* +0x300 はカーソル節点 (+0x2d8) 自身の表示スロットに当たる。 */
-    struct SelectionSprite *cursor_entry = (struct SelectionSprite *)(state + 0x300);
-    struct SelectionNode *cursor = (struct SelectionNode *)(state + 0x2d8);
-    struct SelectionNode *transfer = (struct SelectionNode *)(state + 0x30c);
+    struct SelectionSprite *cursor_entry = &state->records[14].sprite;
+    struct SelectionNode *cursor = &state->records[14];
+    register struct SelectionNode *transfer = &state->records[15];
     struct SelectionNode *node;
     struct SelectionSprite *e;
     s32 cnt = 0;
     s32 slot;
-    struct EffectPosition pos;
     s32 tmp;
+    struct EffectPosition pos;
     u32 y;
-
     /* 一列目: 項目の横移動と、選択中項目からのカーソル座標配布。 */
-    node = *(struct SelectionNode **)(state + 0x348);
+
+    node = state->head;
     while (node != 0) {
         e = &node->sprite;
         e->affine = 0;
@@ -102,9 +108,9 @@ void MenuSelection_DrawFrame(void)
         y = (u16)node->y;
         e->y = y;
         slot = 240;
-        if (*(u16 *)(state + 0x3a0) != 0) {
+        if (state->vertical_scroll != 0) {
             /* 画面全体の縦送りが有効な間は移動を止め、そのまま描く。 */
-            e->y = *(u16 *)(state + 0x3a0) + y;
+            e->y = state->vertical_scroll + y;
         } else if (node->x != node->target_x) {
             if (node->dx > 0) {
                 if (node->x + node->dx > node->target_x) {
@@ -116,12 +122,15 @@ void MenuSelection_DrawFrame(void)
                 if (node->x + node->dx < node->target_x) {
                     node->x = node->target_x;
                 } else {
-                    node->x = node->x + node->dx;
+                    /* FAKEMATCH: removing this consumed step temporary changes
+                       scheduling/allocation and worsens EN 3710 to 3770. */
+                    register s32 next_x;
+                    next_x = node->x + node->dx;
+                    node->x = next_x;
                 }
             }
             e->x = node->x;
-        } else if (cnt == *(u16 *)(state + 0x39e)) {
-            slot = 241;
+        } else if (cnt == state->cursor_index) {
             if (cursor->kind != 0) {
                 if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
                     cursor->target_x = pos.x;
@@ -133,10 +142,12 @@ void MenuSelection_DrawFrame(void)
                     }
                 }
             }
+            slot = 241;
         }
+        cnt++;
         if (node->scale != 0) {
             if (GameFlag_IsSet(0x103) != 0) {
-                if (*(u16 *)(state + 0x2e2) == 1) {
+                if (state->records[14].kind == 1) {
                     e->mode = 1;
                 } else {
                     e->mode = 0;
@@ -148,13 +159,10 @@ void MenuSelection_DrawFrame(void)
             Runtime_PushSlotEntry((s32 *)e, slot);
         }
         node = node->next;
-        cnt++;
     }
-
     /* 二列目: 転送枠。選択中の節点に合わせて拡大縮小しながら描く。 */
     if (transfer->kind != 0) {
-        struct SelectionNode *sel = NodeChain_GetNodeAtCount(state);
-
+        struct SelectionNode *sel = NodeChain_GetNodeAtCount((u8 *)state);
         e = &transfer->sprite;
         e->mode = 0;
         e->affine = 0;
@@ -166,12 +174,12 @@ void MenuSelection_DrawFrame(void)
         e->priority = 0;
         e->tile = transfer->tile;
         e->x = sel->x - 4;
-        e->y = sel->y + (Data_08036740[(gFrameTick >> 1) & 15] >> 1) - 4;
+        e->y = (Data_08036740[(gFrameTick >> 1) & 15] >> 1) + sel->y - 4;
         if (transfer->scale != transfer->scale_end) {
-            *(u16 *)(state + 0x340) = transfer->scale;
-            *(u16 *)(state + 0x342) = transfer->scale;
-            *(u16 *)(state + 0x344) = 0;
-            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)(state + 0x340));
+            state->matrix[0] = transfer->scale;
+            state->matrix[1] = transfer->scale;
+            state->matrix[2] = 0;
+            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             e->affine = 3;
             e->x = e->x + 0xfff0;
             e->y = e->y + 0xf0;
@@ -182,12 +190,10 @@ void MenuSelection_DrawFrame(void)
         }
         Runtime_PushSlotEntry((s32 *)e, 248);
     }
-
-    MenuSelection_DrawSideMarker(state, 0);
-    MenuSelection_DrawSideMarker(state, 1);
-
+    MenuSelection_DrawSideMarker((u8 *)state, 0);
+    MenuSelection_DrawSideMarker((u8 *)state, 1);
     /* 三列目: 縦横の移動と倍率を同時に進める節点鎖。 */
-    node = *(struct SelectionNode **)(state + 0x34c);
+    node = state->path;
     while (node != 0) {
         e = &node->sprite;
         if (node->x != node->target_x) {
@@ -200,10 +206,10 @@ void MenuSelection_DrawFrame(void)
         e->y = node->y;
         if (node->scale != node->scale_end) {
             node->scale = node->scale + node->scale_step;
-            *(u16 *)(state + 0x340) = node->scale;
-            *(u16 *)(state + 0x342) = node->scale;
-            *(u16 *)(state + 0x344) = 0;
-            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)(state + 0x340));
+            state->matrix[0] = node->scale;
+            state->matrix[1] = node->scale;
+            state->matrix[2] = 0;
+            e->param = AffineMatrix_BuildForEffect((struct AffineTransform *)state->matrix);
             e->affine = 3;
             e->x = e->x + 0xfff8;
             e->y = e->y + 0xf8;
@@ -212,7 +218,7 @@ void MenuSelection_DrawFrame(void)
             e->param = 0;
         }
         if (GameFlag_IsSet(0x103) != 0) {
-            if (*(u16 *)(state + 0x2e2) == 1) {
+            if (state->records[14].kind == 1) {
                 e->mode = 1;
             } else {
                 e->mode = 0;
@@ -224,12 +230,9 @@ void MenuSelection_DrawFrame(void)
         Runtime_PushSlotEntry((s32 *)e, 240);
         node = node->next;
     }
-
     /* 四列目: カーソル本体。目標との差を毎フレーム半分ずつ詰める。 */
     if (cursor->kind != 0) {
-        cursor_entry->tile = VramBlock_LoadCached(
-            cursor->slot, 0x100,
-            &Menu_AnimatedCursorTiles[((gFrameTick >> 2) & 15) << 8]);
+        cursor_entry->tile = VramBlock_LoadCached(cursor->slot, 0x100, &Menu_AnimatedCursorTiles[((gFrameTick >> 2) & 15) << 8]);
         if (cursor->target_x != cursor->x) {
             tmp = (cursor->target_x - cursor->x) >> 1;
             if (tmp != 0) {
@@ -239,18 +242,16 @@ void MenuSelection_DrawFrame(void)
             }
         }
         if (cursor->target_y != cursor->y) {
-            tmp = (cursor->target_y - cursor->y) >> 1;
-            if (tmp != 0) {
+            if ((tmp = (cursor->target_y - cursor->y) >> 1) != 0) {
                 cursor->y = cursor->y + tmp;
             } else {
                 cursor->y = cursor->target_y;
             }
         }
-        cursor_entry->y = Data_08036740[(gFrameTick >> 2) & 15]
-            + cursor->y - 32;
+        cursor_entry->y = cursor->y + Data_08036740[(gFrameTick >> 2) & 15] - 32;
         cursor_entry->x = cursor->x - 4;
         if (GameFlag_IsSet(0x103) != 0) {
-            if (*(u16 *)(state + 0x2e2) == 1) {
+            if (state->records[14].kind == 1) {
                 cursor_entry->mode = 1;
             } else {
                 cursor_entry->mode = 0;
@@ -258,6 +259,5 @@ void MenuSelection_DrawFrame(void)
         }
         Runtime_PushSlotEntry((s32 *)cursor_entry, 248);
     }
-
-    *(u16 *)(state + 0x3a2) += 1;
+    state->status += 1;
 }

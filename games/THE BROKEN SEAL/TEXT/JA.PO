@@ -8359,7 +8359,7 @@ msgctxt "MsgDmgP"
 msgid "02087"
 msgstr "{argument_actor_name:234} {argument_signed_number}の ダメージ!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "02088"
 msgstr "{argument_actor_name:234} しりょうのよびごえをきいた!"
 
@@ -8371,7 +8371,7 @@ msgctxt "MsgPpLossP"
 msgid "02090"
 msgstr "{argument_actor_name:234} {argument_signed_number}の EPダメージ!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "02091"
 msgstr "{argument_actor_name:234} 力つきた・・・"
 

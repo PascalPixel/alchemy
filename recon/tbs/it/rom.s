@@ -908,12 +908,6 @@ BattlePresentation_RunUnitTransition:
 	.thumb_func
 BattleEvent_Playback:
 	.incbin "baserom.gba", 0x000bd8b0, 0x00000754
-	.section .rom.000bfbbc, "ax"
-	.global BattleUnit_ProcessTurnEnd
-	.type BattleUnit_ProcessTurnEnd, %function
-	.thumb_func
-BattleUnit_ProcessTurnEnd:
-	.incbin "baserom.gba", 0x000bfbbc, 0x00000414
 	.section .rom.000c2a22, "ax"
 	.incbin "baserom.gba", 0x000c2a22, 0x00000006
 	.global BattleParty_CenterOrderOffsets

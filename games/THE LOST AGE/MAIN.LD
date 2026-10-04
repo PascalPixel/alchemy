@@ -967,7 +967,7 @@ SECTIONS
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_39.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/FAR_CALL/TABLE_40.o"(.text .rodata .data .padding)
     "*/games/THE LOST AGE/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
-    "*/recon/tla/ja/rom.o"(.rom.000f80e0)
+    "*/games/THE LOST AGE/SRC/GRAPHICS/WINDOW/INITIALIZE_WORK.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/WINDOW/LIFECYCLE.o"(.text)
     "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
     "*/recon/tla/ja/rom.o"(.rom.000f8170)

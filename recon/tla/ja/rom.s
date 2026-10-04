@@ -4478,8 +4478,6 @@ ObjectMotion_StepAngleScript:
 	.global Object_LinkedMotionScript
 Object_LinkedMotionScript:
 	.incbin "baserom.gba", 0x000f368c, 0x00004974
-	.section .rom.000f80e0, "ax"
-	.incbin "baserom.gba", 0x000f80e0, 0x0000003c
 	.section .rom.000f8170, "ax"
 	.incbin "baserom.gba", 0x000f8170, 0x00000540
 	.section .rom.000f8830, "ax"

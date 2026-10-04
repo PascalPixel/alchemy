@@ -4636,8 +4636,6 @@ Palette_CopyObjectBankToBackground14Far:
 	.thumb_func
 Menu_UpdateEntryObjectTransformsFar:
 	.incbin "baserom.gba", 0x000fe050, 0x00000020
-	.section .rom.000fe0e0, "ax"
-	.incbin "baserom.gba", 0x000fe0e0, 0x0000003c
 	.section .rom.000fe170, "ax"
 	.incbin "baserom.gba", 0x000fe170, 0x00000494
 	.section .rom.000fe64a, "ax"

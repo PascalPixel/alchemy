@@ -1,4 +1,5 @@
 #include "RAM_BUFFER.H"
+#include "DMA.H"
 extern u8 gMapCellBuffer[];
 
 /* Builds the per-line WIN0H table for lines 8-135 (the edge at the start of

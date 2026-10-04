@@ -3808,12 +3808,6 @@ Func_080d3214:
 	.thumb_func
 ObjectMotion_WaitForAnimationChange:
 	.incbin "baserom.gba", 0x000d3248, 0x00000050
-	.section .rom.000d32e0, "ax"
-	.global ObjectMotion_SetVariantCallback
-	.type ObjectMotion_SetVariantCallback, %function
-	.thumb_func
-ObjectMotion_SetVariantCallback:
-	.incbin "baserom.gba", 0x000d32e0, 0x0000002c
 	.section .rom.000d331c, "ax"
 	.incbin "baserom.gba", 0x000d331c, 0x00000124
 	.global Func_080d3460
@@ -4548,7 +4542,10 @@ Encounter_AreaEntryTable:
 	.incbin "baserom.gba", 0x000eee60, 0x00001240
 	.global BattleFx_ParticleScript
 BattleFx_ParticleScript:
-	.incbin "baserom.gba", 0x000f00a0, 0x00000cc0
+	.incbin "baserom.gba", 0x000f00a0, 0x00000544
+	.global Object_VariantMotionScripts
+Object_VariantMotionScripts:
+	.incbin "baserom.gba", 0x000f05e4, 0x0000077c
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x000f0d60, 0x00000050

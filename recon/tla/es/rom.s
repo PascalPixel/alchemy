@@ -3864,12 +3864,6 @@ Func_080d3214:
 	.thumb_func
 ObjectMotion_WaitForAnimationChange:
 	.incbin "baserom.gba", 0x000dc25c, 0x00000050
-	.section .rom.000dc2f4, "ax"
-	.global ObjectMotion_SetVariantCallback
-	.type ObjectMotion_SetVariantCallback, %function
-	.thumb_func
-ObjectMotion_SetVariantCallback:
-	.incbin "baserom.gba", 0x000dc2f4, 0x0000002c
 	.section .rom.000dc330, "ax"
 	.incbin "baserom.gba", 0x000dc330, 0x00000124
 	.section .rom.000dc454, "ax"
@@ -4650,7 +4644,10 @@ Graphics_ColorCurveB:
 	.incbin "baserom.gba", 0x000f927a, 0x00000040
 	.global Graphics_ColorCurveC
 Graphics_ColorCurveC:
-	.incbin "baserom.gba", 0x000f92ba, 0x00000b8e
+	.incbin "baserom.gba", 0x000f92ba, 0x00000412
+	.global Object_VariantMotionScripts
+Object_VariantMotionScripts:
+	.incbin "baserom.gba", 0x000f96cc, 0x0000077c
 	.global BattleFx_CommonParticleScript
 BattleFx_CommonParticleScript:
 	.incbin "baserom.gba", 0x000f9e48, 0x00000050

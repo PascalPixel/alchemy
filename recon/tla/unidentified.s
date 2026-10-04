@@ -619,8 +619,8 @@ Data_080f02c6:
 	.global Data_080f0308
 Data_080f0308:
 	.incbin "baserom.gba", 0x000f0308, 0x000003d0
-	.global Data_080f06d8
-Data_080f06d8:
+	.global Object_VariantMotionScripts
+Object_VariantMotionScripts:
 	.incbin "baserom.gba", 0x000f06d8, 0x00000184
 	.global Data_080f085c
 Data_080f085c:

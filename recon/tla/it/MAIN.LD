@@ -822,8 +822,6 @@
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/SET_ACTION_BY_ID.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000d325c)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_EVENTS.o"(.text)
-    "*/recon/tla/it/rom.o"(.rom.000d32f4)
-    "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_EVENTS_2.o"(.text)
     "*/recon/tla/it/rom.o"(.rom.000d3330)
     "*/recon/tla/it/rom.o"(.rom.000d3454)
     "*/games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/LINK_PAIR_2.o"(.text)

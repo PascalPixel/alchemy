@@ -7,8 +7,6 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL.o"(.text)
-        "*/resource_3cd_overlay.o"(.text.caption)
-        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL.o"(.text.item_level_tail)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/IMPORT.o"(.text)
         "*/resource_3cd_overlay.o"(.rodata.x020088d0)
     }

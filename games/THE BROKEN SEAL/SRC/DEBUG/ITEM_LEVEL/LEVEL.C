@@ -450,12 +450,23 @@ void ItemLevel_RunMotionTest(void)
 }
 #endif
 
-/* These trailing helpers remain in their module after the uncredited
- * international caption routine. The linker places that extent between
- * this section and the preceding source. */
+#if EDITION_INTERNATIONAL
+/* The three glyph rows of the item and level caption window. */
+void FieldScene_DrawThreeCaptionWindow(void)
+{
+    struct RenderInput *window;
+    /* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra bytes. */
+    u8 text[32];
+
+    window = (struct RenderInput *)UiWindow_Create(0, 13, 30, 6, 2);
+    UiText_DrawStringInWindow(gItemLevelGlyphsUpper, window, 0, 0);
+    UiText_DrawStringInWindow(gItemLevelGlyphsLower, window, 0, 8);
+    UiText_DrawStringInWindow(gItemLevelGlyphsMarks, window, 0, 16);
+}
+#endif
+
 /* Set the flag byte at +53 of the record the effect work pointer holds. */
-void __attribute__((section(".text.item_level_tail")))
-SceneState_SetRecordFlag53(void)
+void SceneState_SetRecordFlag53(void)
 {
     u8 *record = *(u8 **)gEffectWork;
 
@@ -467,14 +478,12 @@ SceneState_SetRecordFlag53(void)
  * the wrapper hands its callee's result back; declaring the pair void would
  * compile pop {r0} / bx r0 instead.
  */
-int __attribute__((section(".text.item_level_tail")))
-SceneState_GetFarResult100c(void)
+int SceneState_GetFarResult100c(void)
 {
     return DebugMenu_BrowseIcons();
 }
 
-int __attribute__((section(".text.item_level_tail")))
-SceneState_GetFarResult1020(void)
+int SceneState_GetFarResult1020(void)
 {
     return DebugMenu_BrowseEntryGlyphs();
 }

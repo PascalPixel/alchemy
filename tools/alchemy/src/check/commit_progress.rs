@@ -1,11 +1,11 @@
-//! Main's commit subject, derived from the current verified production builds.
+//! Main's commit subject: the count `make land` measured and staged in README.
 
 use std::path::Path;
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: check commit-progress [--write] COMMIT_MESSAGE\n\
-On main, derive both DONE percentages from verified builds; --write updates the subject.\n\
-Other branches keep their subjects and require no builds.";
+On main, the subject starts with both DONE percentages from the staged README, which\n\
+make land wrote; --write updates the subject. Other branches keep their subjects.";
 
 fn valid(message: &str, expected: &str) -> bool {
     crate::verify::valid_subject(message, expected)
@@ -37,53 +37,26 @@ fn rewrite(message: &str, expected: &str) -> Result<String, String> {
     Ok(rewritten)
 }
 
-fn self_test() -> Result<(), String> {
-    let expected = "☀️ 52.34% ⚓️ 7.89% –";
-    let bad = [
-        "missing",
-        "☀️ 52% – one game",
-        "☀️ 51% ⚓️ ?% – stale",
-        "☀️ 52% ⚓️ 7% – unmeasured",
-        "☀️ 52% ⚓️ ?% - wrong dash",
-        "☀️ 52.34% ⚓️ 7.89% –",
-    ];
-    if !valid("☀️ 52.34% ⚓️ 7.89% – Name the owner", expected)
-        || bad.into_iter().any(|message| valid(message, expected))
-        || rewrite("☀️ 51% ⚓️ ?% – Name the owner\n\nBody\n", expected)?
-            != "☀️ 52.34% ⚓️ 7.89% – Name the owner\n\nBody\n"
-    {
-        return Err("subject prefix self-test failed".into());
-    }
-    println!("self-test=ok prefix=done-percent");
-    Ok(())
-}
-
 fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
-    match arguments {
-        [flag] if flag == "--self-test" => self_test(),
-        [message] | [_, message] => {
-            let write = arguments.len() == 2 && arguments[0] == "--write";
-            if arguments.len() == 2 && !write {
-                return Err(USAGE.into());
-            }
-            if !crate::verify::is_main(root)? {
-                return Ok(());
-            }
-            let path = Path::new(message);
-            let message = std::fs::read_to_string(path).map_err(|error| error.to_string())?;
-            let expected = crate::verify::verified_subject(root)?;
-            if write {
-                let rewritten = rewrite(&message, &expected)?;
-                std::fs::write(path, rewritten).map_err(|error| error.to_string())?;
-                return Ok(());
-            }
-            if valid(&message, &expected) {
-                Ok(())
-            } else {
-                Err(format!("commit subject must start with {expected}"))
-            }
-        }
-        _ => Err(USAGE.into()),
+    let (write, message) = match arguments {
+        [message] => (false, message),
+        [flag, message] if flag == "--write" => (true, message),
+        _ => return Err(USAGE.into()),
+    };
+    if !crate::verify::is_main(root)? {
+        return Ok(());
+    }
+    let path = Path::new(message);
+    let message = std::fs::read_to_string(path).map_err(|error| error.to_string())?;
+    let expected = crate::verify::published_subject(root, "")?;
+    if write {
+        let rewritten = rewrite(&message, &expected)?;
+        return std::fs::write(path, rewritten).map_err(|error| error.to_string());
+    }
+    if valid(&message, &expected) {
+        Ok(())
+    } else {
+        Err(format!("commit subject must start with {expected}"))
     }
 }
 
@@ -92,7 +65,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
         println!("{USAGE}");
         return ExitCode::SUCCESS;
     }
-    if let Err(error) = run(&crate::compiler::routing::root(), arguments) {
+    if let Err(error) = run(crate::compiler::routing::root(), arguments) {
         eprintln!("error: {error}");
         return ExitCode::FAILURE;
     }
@@ -102,6 +75,22 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_the_measured_prefix_is_valid() {
+        let expected = "☀️ 52.34% ⚓️ 7.89% –";
+        assert!(valid("☀️ 52.34% ⚓️ 7.89% – Name the owner", expected));
+        for bad in [
+            "missing",
+            "☀️ 52% – one game",
+            "☀️ 51% ⚓️ ?% – stale",
+            "☀️ 52% ⚓️ 7% – unmeasured",
+            "☀️ 52% ⚓️ ?% - wrong dash",
+            "☀️ 52.34% ⚓️ 7.89% –",
+        ] {
+            assert!(!valid(bad, expected), "{bad}");
+        }
+    }
 
     #[test]
     fn main_replaces_stale_or_missing_prefix_and_preserves_body() {
@@ -144,24 +133,39 @@ mod tests {
     }
 
     #[test]
-    fn branch_commit_needs_no_receipts_or_progress_subject() {
+    fn main_takes_its_prefix_from_the_staged_readme() {
         let directory = tempfile::tempdir().unwrap();
-        let status = std::process::Command::new("git")
-            .args(["init", "--quiet", "--initial-branch=draft"])
-            .arg(directory.path())
-            .status()
-            .unwrap();
-        assert!(status.success());
-        let path = directory.path().join("message");
+        let root = directory.path();
+        let git = |args: &[&str]| {
+            assert!(std::process::Command::new("git")
+                .args(args)
+                .current_dir(root)
+                .status()
+                .unwrap()
+                .success())
+        };
+        git(&["init", "--quiet", "--initial-branch=draft"]);
+        let path = root.join("message");
         std::fs::write(&path, "Preserve a near miss\n").unwrap();
-        run(
-            directory.path(),
-            &["--write".into(), path.display().to_string()],
+        let arguments = ["--write".to_string(), path.display().to_string()];
+        // A branch commit keeps its subject and needs no count.
+        run(root, &arguments).unwrap();
+        assert_eq!(
+            std::fs::read_to_string(&path).unwrap(),
+            "Preserve a near miss\n"
+        );
+        git(&["symbolic-ref", "HEAD", "refs/heads/main"]);
+        assert!(run(root, &arguments).is_err());
+        std::fs::write(
+            root.join("README.md"),
+            "# Alchemy\n\n**☀️ 89.98% · ⚓️ pending**\n",
         )
         .unwrap();
+        git(&["add", "README.md"]);
+        run(root, &arguments).unwrap();
         assert_eq!(
-            std::fs::read_to_string(path).unwrap(),
-            "Preserve a near miss\n"
+            std::fs::read_to_string(&path).unwrap(),
+            "☀️ 89.98% ⚓️ pending – Preserve a near miss\n"
         );
     }
 }

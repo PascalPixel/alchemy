@@ -127,7 +127,7 @@ mod address_stable {
         CString::new(text).map_err(|_| "argument contains a NUL byte".to_string())
     }
 
-    pub fn spawn(program: &str, args: &[&str], cwd: &Path) -> Result<Output, String> {
+    pub(crate) fn spawn(program: &str, args: &[&str], cwd: &Path) -> Result<Output, String> {
         let serial = SERIAL.fetch_add(1, Ordering::Relaxed);
         let stem =
             std::env::temp_dir().join(format!("psynergy-run-{}-{serial}", std::process::id()));

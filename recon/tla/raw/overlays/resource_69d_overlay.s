@@ -2230,37 +2230,7 @@ Func_020011cc:
 	.4byte Data_02002862
 	.section .text.x0200921e,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02009220,"ax",%progbits
-	.global Func_02001220
-	.thumb_func
-Func_02001220:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x02009256,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009258,"ax",%progbits
 	.global Func_02001258
@@ -2491,7 +2461,7 @@ Func_02001258:
 .L_02009414:
 	.4byte Data_0200270c
 .L_02009418:
-	.4byte Func_02001220
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200941c:
 	.4byte 0xffff0000
 	.section .text.x02009420,"ax",%progbits
@@ -3215,53 +3185,7 @@ Func_02001888:
 	.4byte 0xffff6667
 .L_020099c4:
 	.4byte gPartyState
-	.section .text.x020099c8,"ax",%progbits
-	.global Func_020019c8
-	.thumb_func
-Func_020019c8:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	ldr r5, [r6, #68]
-	ldr r3, [r6, #8]
-	ldr r2, [r6, #72]
-	adds r3, r3, r5
-	str r3, [r6, #8]
-	ldr r3, [r6, #12]
-	ldr r7, [r6, #76]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #16]
-	adds r0, r5, #0
-	adds r3, r3, r7
-	movs r1, #18
-	str r3, [r6, #16]
-	bl __divsi3
-	subs r5, r5, r0
-	str r5, [r6, #68]
-	adds r3, r7, #0
-	cmp r7, #0
-	bge .L_020099f8
-	adds r3, #15
-.L_020099f8:
-	asrs r3, r3, #4
-	subs r3, r7, r3
-	str r3, [r6, #76]
-	ldr r2, [r6, #48]
-	ldr r3, [r6, #24]
-	ldr r1, [r6, #80]
-	adds r3, r3, r2
-	str r3, [r6, #24]
-	ldr r2, [r6, #52]
-	ldr r3, [r6, #28]
-	adds r3, r3, r2
-	str r3, [r6, #28]
-	adds r2, r6, #0
-	adds r2, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r2]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	pop {r5, r6, r7, pc}
+	.section .text.x02009a1e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009a20,"ax",%progbits
 	.global Func_02001a20
@@ -3440,7 +3364,7 @@ Func_02001a20:
 .L_02009ba4:
 	.4byte gPartyState
 .L_02009ba8:
-	.4byte Func_020019c8
+	.4byte Effect_AdvanceMotion
 .L_02009bac:
 	.4byte 0xffffa000
 .L_02009bb0:

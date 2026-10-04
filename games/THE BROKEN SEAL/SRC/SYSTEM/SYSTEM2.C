@@ -59,18 +59,18 @@ void System_VBlankHandler(void)
     Runtime_InvokeCallbacksByKey(0x480);
     keys = REG_KEYINPUT ^ KEYS_MASK;
     {
-        /* FAKEMATCH: retain the measured held-key reloads after the write;
-           the shared cell's declared type remains the same in every owner. */
-        u32 pressed = keys & ~*(volatile u32 *)&gKeysHeld;
+        u32 pressed = keys & ~gKeysHeld;
 
         gKeyState = pressed;
         gKeysPressedLatch |= pressed;
     }
+    /* FAKEMATCH: the volatile store keeps the held-key reload in the repeat
+       test after the write; the shared cell's declared type is unchanged. */
     *(volatile u32 *)&gKeysHeld = keys;
     if (keys == 0) {
         Data_03001b00 = 19;
         gKeysRepeat = keys;
-    } else if (*(volatile u32 *)&gKeysHeld & (Data_03001d0c ^ 0xffff)) {
+    } else if (gKeysHeld & (Data_03001d0c ^ 0xffff)) {
         Data_03001b00 = -1;
         gKeysRepeat = keys;
     } else if (Data_03001b00 > 0) {

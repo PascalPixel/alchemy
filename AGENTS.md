@@ -228,8 +228,6 @@ make compare-editions  # all twelve editions
 make test
 make progress          # the count, with one line per edition
 make deps              # dependency map: what unblocks the most
-make drafts            # compile and score every draft against its listing
-make similar           # ⚓️ functions and their ☀️ twins
 make verify
 make land              # on main, before committing a landing
 ```

@@ -1,17 +1,14 @@
 #include "RESOURCE.H"
-/* CANONICAL DRAFT: ResourceObject_Create; ordinary API/dead-result repair.
- * 2026-10-02: one approved ordinary form removes the no-op failure branch
- * used only to retain the native discarded -1 instruction. No new devices.
- * Native complete356 bytes; saved draft complete352 bytes and59 differing
- * bytes in all six TBS editions. Full calls and symbolic pools retain their
- * actual native owners. The old whole module468/native472 differs130 bytes;
- * its trailing release difference2 was solely the shifted BL displacement.
- * The resource constructor now uses the shared56-byte AnimationObject and
- * actual two-argument registration API. Fresh 2026-10-03 EN alchemy drafts
- * score: 200, two differing instructions. All six current complete objects
- * equal their fresh before objects, so the existing near miss stays unchanged.
- * This attempt is uncredited. The leading ClearRecord40 remains C, Creator
- * stays raw356, and the complete shared Release+metadata owner is separate.
+/* DRAFT: ResourceObject_Create, score 200 (EN). Only the dead
+ * "movs r2,#1; negs r2,r2" after the Register call is missing; TLA's twin
+ * (0x08022d40) has the same dead -1 in r3, so the source had a -1 test.
+ * 2026-10-04, measured: the -1 survives only when the test's arm empties
+ * after reload (flow2 keeps the branch, jump2 deletes it, reload's -1
+ * stays). Empty, dead-assignment, duplicate-return and goto arms vanish
+ * earlier (jump1, cse2's jump, flow1 or ce). Score 0 is "if (Register(entry,
+ * id) == -1) goto done; found->dirty = found->dirty; done:" (reload_cse
+ * drops the self-store): dead code for an instruction count, which S2 does
+ * not allow, so it is not used. The real arm is still unknown.
  */
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"

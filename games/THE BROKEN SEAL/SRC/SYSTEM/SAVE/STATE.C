@@ -195,35 +195,22 @@ s32 SaveState_ChecksumWorkspace(void)
 
 u32 SaveState_FindLatestSlot(s32 record_id)
 {
-    /* FAKEMATCH: retain the existing byte and halfword cursors over the real
-       workspace arrays. Direct indexed fields change saved registers and
-       instruction order at the same complete 64/60-byte extents. */
-    u16 *sequence_cursor;
-    u16 sequence;
+    struct SaveWorkspace *work;
     u32 latest_sequence;
-    u32 slot_index;
     u32 latest_slot;
-    struct SaveWorkspace *save_state;
-    u8 *slot_cursor;
+    u32 i;
 
-    save_state = gSaveWorkspace;
+    work = gSaveWorkspace;
     latest_slot = 0x10;
     latest_sequence = 0;
-    slot_index = 0;
-    sequence_cursor = save_state->sequence;
-    slot_cursor = (u8 *)save_state;
-    do {
-        if ((slot_cursor[0] != 0) && (record_id == slot_cursor[sizeof(save_state->occupied)])) {
-            sequence = *sequence_cursor;
-            if (latest_sequence < (u32)sequence) {
-                latest_sequence = (u32)sequence;
-                latest_slot = slot_index;
+    for (i = 0; i <= 15; i++) {
+        if (work->occupied[i] != 0 && record_id == work->record_id[i]) {
+            if (latest_sequence < work->sequence[i]) {
+                latest_sequence = work->sequence[i];
+                latest_slot = i;
             }
         }
-        slot_index += 1;
-        sequence_cursor += 1;
-        slot_cursor += 1;
-    } while (slot_index <= 0xFU);
+    }
     return latest_slot;
 }
 
@@ -268,32 +255,18 @@ s32 SaveState_CompareBytes(u8 *left, u8 *right, s32 count)
 
 u32 SaveState_GetLatestSequence(s32 record_id)
 {
-    /* FAKEMATCH: retain the existing byte and halfword cursors over the real
-       workspace arrays. Direct indexed fields change saved registers and
-       instruction order at the same complete 64/60-byte extents. */
-    u16 *sequence_cursor;
-    u16 sequence;
+    struct SaveWorkspace *work;
     u32 latest_sequence;
-    u32 slot_index;
-    struct SaveWorkspace *save_state;
-    u8 *slot_cursor;
+    u32 i;
 
-    save_state = gSaveWorkspace;
-    slot_index = 0;
+    work = gSaveWorkspace;
     latest_sequence = 0;
-    sequence_cursor = save_state->sequence;
-    slot_cursor = (u8 *)save_state;
-    do {
-        if ((slot_cursor[0] != 0) && (record_id == slot_cursor[sizeof(save_state->occupied)])) {
-            sequence = *sequence_cursor;
-            if (latest_sequence < (u32)sequence) {
-                latest_sequence = (u32)sequence;
-            }
+    for (i = 0; i <= 15; i++) {
+        if (work->occupied[i] != 0 && record_id == work->record_id[i]) {
+            if (latest_sequence < work->sequence[i])
+                latest_sequence = work->sequence[i];
         }
-        slot_index += 1;
-        sequence_cursor += 1;
-        slot_cursor += 1;
-    } while (slot_index <= 0xFU);
+    }
     return latest_sequence;
 }
 

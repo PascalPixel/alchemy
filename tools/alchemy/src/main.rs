@@ -7,29 +7,16 @@ mod build_text;
 mod check;
 mod compiler;
 mod coverage;
-mod disasm;
 mod edition;
-mod format;
 mod gate;
-mod overlay;
-mod permute;
-mod raw;
-mod recovery;
 mod targets;
 mod verify;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
-  extract OWNER         extract reference bytes for psynergy decompile\n\
-  inspect OWNER         resolve calls and symbols; --asm shows annotated instructions\n\
   build                 build compilers, maintained source, assembly and ROMs\n\
-  verify                the landing gate: every make verify gate in waves, one line each\n\
-  coverage              publish README progress and both figures from verified builds\n\
-  raw                   inspect or rebuild ROM-derived unresolved assembly\n\
-  permute DRAFT         search equivalent C for a draft function against its listing\n\
-  drafts [DRAFT...]     compile and score every draft against its listing\n\
-  check                 run repository contract checks\n\
-  format                format native game data and check uppercase filenames";
+  verify                the gates of make verify, make land and the commit hooks\n\
+  check                 run repository contract checks";
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -43,13 +30,7 @@ fn main() -> ExitCode {
         "bootstrap" => result(bootstrap::run(rest)),
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
-        "coverage" => coverage_command(rest),
-        "raw" => result(raw::run(rest)),
-        "permute" => result(permute::run(rest)),
-        "drafts" => result(permute::drafts::run(rest)),
         "check" => check::entry(rest),
-        "format" => result(format::run(rest)),
-        "extract" | "inspect" => recovery_command(command, rest),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS
@@ -59,38 +40,6 @@ fn main() -> ExitCode {
             ExitCode::from(2)
         }
     }
-}
-
-fn coverage_command(arguments: &[String]) -> ExitCode {
-    if arguments == ["--help"] || arguments == ["-h"] {
-        println!(
-            "usage: alchemy coverage\nPublishes README progress and both figures from each game's six verified builds."
-        );
-        return ExitCode::SUCCESS;
-    }
-    if !arguments.is_empty() {
-        eprintln!("usage: alchemy coverage");
-        return ExitCode::from(2);
-    }
-    coverage::entry(&["--write".to_string(), "--publication".to_string()]);
-    ExitCode::SUCCESS
-}
-
-fn recovery_command(command: &str, arguments: &[String]) -> ExitCode {
-    if arguments == ["--help"] || arguments == ["-h"] {
-        let usage = match command {
-            "extract" => "extract OWNER --out out/FILE [--span BYTES]",
-            "inspect" => "inspect OWNER [--span BYTES] [--asm]",
-            _ => return recovery::cli::entry(&["--help".to_string()]),
-        };
-        println!(
-            "usage: alchemy {usage}\nOWNER is a main-ROM address or resource-qualified address."
-        );
-        return ExitCode::SUCCESS;
-    }
-    let mut args = vec![command.to_string()];
-    args.extend_from_slice(arguments);
-    recovery::cli::entry(&args)
 }
 
 fn result(value: Result<(), String>) -> ExitCode {

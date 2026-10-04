@@ -1,3 +1,7 @@
+/* Near miss: score 160 (one reorder plus the trailing pad). After the second
+   Vector_AddPolarOffset ⚓️ copies the phase pointer (mov r2, r8) between
+   ldr r3, [r5] and its store; agscc copies it just before the phase
+   increment. ☀️'s C otherwise matches. */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 #include "SCENE.H"

@@ -200,7 +200,7 @@ void FieldScene_RunActor13Message(void)
 
 void FieldScene_RunActor19MessageBranch(void)
 {
-    s32 GameFlag_IsSet(s32);
+    s32 Engine_GameFlagIsSet(s32);
 
     u32 dir;
 
@@ -249,7 +249,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
 
 void FieldScene_ConfigureActor22Scene(void)
 {
-    void Actor_FaceActor(s32, s32, s32);
+    void Engine_ActorFaceActor(s32, s32, s32);
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoReallyThinkHeadChefHas);
@@ -274,7 +274,7 @@ void FieldScene_ConfigureActor23Scene(void)
 
 void FieldScene_RunActor27Message(void)
 {
-    void Event_ShowMessage(s32, s32);
+    void Engine_EventShowMessage(s32, s32);
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgBiribinoWasSomeMealDontJust);
@@ -284,9 +284,9 @@ void FieldScene_RunActor27Message(void)
 
 void FieldScene_RunActor10MessageBranch(void)
 {
-    s32 GameFlag_IsSet(s32);
+    s32 Engine_GameFlagIsSet(s32);
     void Engine_EventEnd(void);
-    void Event_ShowMessage(s32, s32);
+    void Engine_EventShowMessage(s32, s32);
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(3) != 0) {

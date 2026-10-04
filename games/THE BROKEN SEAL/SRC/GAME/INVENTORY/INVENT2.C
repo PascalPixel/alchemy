@@ -191,35 +191,24 @@ s32 PartyInventory_FindOwner(s32 item_id)
 
 s32 Inventory_Equip(s32 owner, s32 slot)
 {
-    /* FAKEMATCH: the existing scalar inventory cursor and volatile reread preserve the native register and load order; ordinary indexed slots change this module from 1856 to 1864 bytes. */
     struct BattleUnit *inv = Owner_GetState(owner);
-    unsigned int mask;
-    unsigned int item_id = inv->inventory[slot];
+    u32 item_id = inv->inventory[slot];
     struct ItemDefinition *item;
     u8 type;
     s32 other;
 
     if (Item_CanOwnerEquipDirect(owner, item_id) == 0)
         return -1;
-    mask = INVENTORY_EQUIPPED;
-    if (item_id & mask)
+    if (item_id & INVENTORY_EQUIPPED)
         return 0;
 
     item = Item_GetDirect(item_id);
     type = item->type;
     if (type != 6) {
-        for (other = 0, item_id = (u8 *)inv->inventory - (u8 *)inv;
-             other <= 14;
-             item_id += 2, other++) {
-            unsigned int m = mask;
-            unsigned int flags = *(u16 *)(item_id + (unsigned int)inv);
-
-            flags &= m;
-            if (flags == 0)
+        for (other = 0; other <= 14; other++) {
+            if ((inv->inventory[other] & INVENTORY_EQUIPPED) == 0)
                 continue;
-            if (Item_GetDirect(
-                    *(volatile u16 *)(item_id + (unsigned int)inv))->type
-                == type)
+            if (Item_GetDirect(inv->inventory[other])->type == type)
                 break;
         }
 

@@ -197,9 +197,10 @@ void BabiFune_UpdateWaves(void)
         swell = Iwram_MulQ16(Engine_MathSin(BabiFune_ShimmerPhase << 9), 3);
         blend = BabiFune_Count + ((swell + 8) << 8);
         {
-            /* FAKEMATCH: the game reads the halfword back into r2, over its address, and only then forms the register's address; unpinned it reads into r3, and outside a one-pass block the address is formed first. */
-            register u32 value asm("r2") = blend;
+            u32 value = blend;
 
+            /* FAKEMATCH: outside a one-pass block the register's address is
+               formed before the halfword is read back. */
             do {
                 *(volatile u16 *)0x04000052 = value;
             } while (0);

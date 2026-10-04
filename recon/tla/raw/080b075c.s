@@ -344,7 +344,7 @@ Func_080b075c:
 	movs r1, #100
 	bl __divsi3
 	adds r5, r0, #0
-	bl Func_080b039c
+	bl BattleRandomPercent
 	cmp r5, r0
 	bge .L_080b0a3a
 	adds r6, #1

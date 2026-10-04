@@ -12,7 +12,7 @@ extern u16 gLagFramesShown;
 extern u16 Data_03001d28; /* VBlank completion latch. */
 extern u32 gCpuLoadTimer;
 extern u32 gCpuLoadPeak;
-extern u32 gFrameCount;
+extern volatile u32 gFrameCount;
 extern s32 gFrameTick;
 extern void (*Data_03001cfc)(void); /* One-shot VBlank callback. */
 

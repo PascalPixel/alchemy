@@ -215,12 +215,6 @@ static inline void Psynergy_Cancel(void)
     Engine_PsynergyCancel();
 }
 
-static inline void Shop_Open(s32 shop, s32 keeper)
-{
-    /* FAKEMATCH: direct calls let GCC 2.96 share constant arguments between calls, changing instruction order. */
-    Engine_ShopOpen(shop, keeper);
-}
-
 static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
 {
     /* FAKEMATCH: direct calls let GCC 2.96 share constant arguments between calls, changing instruction order. */

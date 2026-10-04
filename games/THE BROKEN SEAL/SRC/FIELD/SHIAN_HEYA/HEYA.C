@@ -100,7 +100,7 @@ void SceneDialogue_RunActor15FlaggedDialogue(void)
 
 void SceneDialogue_RunActor16FlaggedDialogue(void)
 {
-    void Event_ShowMessage();
+    void Engine_EventShowMessage();
     void Engine_EventSetMessage(s32);
 
     u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
@@ -121,7 +121,7 @@ void SceneDialogue_RunActor16FlaggedDialogue(void)
 
 void SceneDialogue_RunActor17FlaggedDialogue(void)
 {
-    s32 GameFlag_IsSet(s32);
+    s32 Engine_GameFlagIsSet(s32);
 
     u16 *state = Object_GetById(ACTOR_PARTY_LEADER);
     u32 value = state[3];
@@ -142,7 +142,7 @@ void SceneDialogue_RunActor17FlaggedDialogue(void)
 
 void SceneDialogue_RunActor10Dialogue(void)
 {
-    s32 Event_AskYesNo(s32, s32);
+    s32 Engine_EventAskYesNo(s32, s32);
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShianSomethingWrongOnSilkRoad);

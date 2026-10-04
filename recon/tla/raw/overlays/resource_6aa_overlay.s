@@ -7576,78 +7576,9 @@ Func_02003884:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200bab0,"ax",%progbits
-	.global Func_02003ab0
-	.thumb_func
-Func_02003ab0:
-	push {r5, lr}
-	adds r5, r0, #0
-	adds r4, r1, #0
-	cmp r5, #0
-	beq .L_0200baf4
-	adds r3, r5, #0
-	adds r3, #84
-	ldrb r2, [r3]
-	movs r3, #15
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200baf4
-	ldr r1, [r5, #80]
-	movs r2, #13
-	ldrb r0, [r1, #9]
-	movs r3, #3
-	negs r2, r2
-	ands r4, r3
-	adds r3, r2, #0
-	lsls r4, r4, #2
-	ands r3, r0
-	orrs r3, r4
-	strb r3, [r1, #9]
-	adds r1, #37
-	ldrb r3, [r1]
-	ands r2, r3
-	orrs r2, r4
-	strb r2, [r1]
-	adds r1, r5, #0
-	adds r1, #35
-	ldrb r2, [r1]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-.L_0200baf4:
-	pop {r5, pc}
+	.section .text.x0200baf6,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x0200baf8,"ax",%progbits
-	.global Func_02003af8
-	.thumb_func
-Func_02003af8:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x0200bb2e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200bb30,"ax",%progbits
 	.global Func_02003b30
@@ -7738,7 +7669,7 @@ Func_02003b30:
 	ldrb r1, [r3, #9]
 	lsls r1, r1, #28
 	lsrs r1, r1, #30
-	bl Func_02003ab0
+	bl Object_SetSpritePriorityB
 	movs r2, #100
 	adds r2, r2, r6
 	mov r9, r2
@@ -7776,7 +7707,7 @@ Func_02003b30:
 	strb r2, [r1]
 	ldr r1, [r7]
 	adds r0, r6, #0
-	bl Func_02003ab0
+	bl Object_SetSpritePriorityB
 .L_0200bc30:
 	movs r2, #128
 	lsls r2, r2, #12
@@ -7878,7 +7809,7 @@ Func_02003b30:
 .L_0200bcec:
 	.4byte Data_0200686c
 .L_0200bcf0:
-	.4byte Func_02003af8
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_0200bcf4:
 	.4byte 0xffff0000
 	.section .text.x0200bcf8,"ax",%progbits
@@ -8602,53 +8533,7 @@ Func_02004160:
 	.4byte 0xffff6667
 .L_0200c29c:
 	.4byte gPartyState
-	.section .text.x0200c2a0,"ax",%progbits
-	.global Func_020042a0
-	.thumb_func
-Func_020042a0:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	ldr r5, [r6, #68]
-	ldr r3, [r6, #8]
-	ldr r2, [r6, #72]
-	adds r3, r3, r5
-	str r3, [r6, #8]
-	ldr r3, [r6, #12]
-	ldr r7, [r6, #76]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	ldr r3, [r6, #16]
-	adds r0, r5, #0
-	adds r3, r3, r7
-	movs r1, #18
-	str r3, [r6, #16]
-	bl __divsi3
-	subs r5, r5, r0
-	str r5, [r6, #68]
-	adds r3, r7, #0
-	cmp r7, #0
-	bge .L_0200c2d0
-	adds r3, #15
-.L_0200c2d0:
-	asrs r3, r3, #4
-	subs r3, r7, r3
-	str r3, [r6, #76]
-	ldr r2, [r6, #48]
-	ldr r3, [r6, #24]
-	ldr r1, [r6, #80]
-	adds r3, r3, r2
-	str r3, [r6, #24]
-	ldr r2, [r6, #52]
-	ldr r3, [r6, #28]
-	adds r3, r3, r2
-	str r3, [r6, #28]
-	adds r2, r6, #0
-	adds r2, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r2]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	pop {r5, r6, r7, pc}
+	.section .text.x0200c2f6,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200c2f8,"ax",%progbits
 	.global Func_020042f8
@@ -8827,7 +8712,7 @@ Func_020042f8:
 .L_0200c47c:
 	.4byte gPartyState
 .L_0200c480:
-	.4byte Func_020042a0
+	.4byte Effect_AdvanceMotion
 .L_0200c484:
 	.4byte 0xffffa000
 .L_0200c488:

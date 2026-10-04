@@ -344,21 +344,44 @@ fn describe(layout: TileLayout) -> String {
 
 fn run(root: &Path, report: bool) -> Result<(), String> {
     let (recipes, tilemaps) = recipes(root)?;
+    let recipes = recipes.into_iter().collect::<Vec<_>>();
+    let workers = std::thread::available_parallelism().map_or(1, |count| count.get());
+    let chunk = recipes.len().div_ceil(workers).max(1);
+    let judgements = std::thread::scope(|scope| {
+        let handles = recipes
+            .chunks(chunk)
+            .map(|part| {
+                scope.spawn(move || {
+                    part.iter()
+                        .map(|recipe| {
+                            let name = recipe
+                                .png
+                                .strip_prefix(root)
+                                .unwrap_or(&recipe.png)
+                                .display()
+                                .to_string();
+                            let Ok(png) = std::fs::read(&recipe.png) else {
+                                return Ok(None);
+                            };
+                            judge(&png, &recipe.form)
+                                .map(|judgement| {
+                                    judgement.map(|judgement| (name.clone(), judgement))
+                                })
+                                .map_err(|error| format!("{name}: {error}"))
+                        })
+                        .collect::<Vec<_>>()
+                })
+            })
+            .collect::<Vec<_>>();
+        handles
+            .into_iter()
+            .flat_map(|handle| handle.join().expect("layout worker"))
+            .collect::<Vec<_>>()
+    });
     let mut banked = Vec::new();
     let mut judged = 0;
-    for recipe in recipes {
-        let Ok(png) = std::fs::read(&recipe.png) else {
-            continue;
-        };
-        let name = recipe
-            .png
-            .strip_prefix(root)
-            .unwrap_or(&recipe.png)
-            .display()
-            .to_string();
-        let Some(judgement) =
-            judge(&png, &recipe.form).map_err(|error| format!("{name}: {error}"))?
-        else {
+    for (recipe, judgement) in recipes.iter().zip(judgements) {
+        let Some((name, judgement)) = judgement? else {
             continue;
         };
         judged += 1;

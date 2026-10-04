@@ -178,27 +178,16 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 *unused, s32 *out_action)
         switch (state) {
         case 0:
         {
-            /* FAKEMATCH: the ordinary clear swaps address/zero r3/r2 in five instructions; the address belongs in r2. */
-            register u16 *clear asm("r2") = &work->pane_row[0];
-            /* FAKEMATCH: constraining the address alone pools the zero; its full-width value belongs in r3. */
-            register s32 zero asm("r3");
             /* FAKEMATCH: CSE copies the equal call result from r0; the reference keeps the cancellation constant in r3. */
             register s32 cancelled asm("r3");
             s32 chosen;
 
-            /* FAKEMATCH: retain the clear address in r2 until the store, after the ordinary allocation swapped it with zero. */
-            asm("" : : "r"(clear));
-            zero = 0;
-            /* FAKEMATCH: the full-width r3 zero keeps the reference immediate rather than an HImode pool load. */
-            asm("" : : "r"(zero));
-            *clear = zero;
+            work->pane_row[0] = 0;
             ItemMenu_DrawMsg(0, (s32)&MsgPsynergyChooseOwner);
             chosen = PsynergyMenu_SelectPartySlot(0);
             cancelled = -1;
             if (chosen == cancelled) {
                 done = 1;
-                /* FAKEMATCH: keep the cancellation copy in r3; CSE otherwise copies the equal call result in r0. */
-                asm("" : "+r"(cancelled));
                 result = cancelled;
             }
             RenderOutput_RedrawSavedRectFar((s32)work->info_window);

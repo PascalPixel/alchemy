@@ -17,6 +17,18 @@
  * Do not restore them as timing, count results or point initialization
  * without new evidence. The older measured attempts below are retained as
  * rejected evidence, not instructions for reaching an exact match.
+ *
+ * 2026-10-04 compiler evidence on the tails' origin (scratch tests, agscc
+ * -O2, a four-point loop then a tail): an empty "for (; i < 10; i++);"
+ * gives "movs #6; subs; cmp #0; bne" and an empty loop with constant
+ * bounds is deleted outright, so neither is the source. The native default
+ * tail "movs #5; subs; cmp #0; bge" is exactly "for (i = 4; i < 10; i++)"
+ * (or i = 0..5) with a dead register body such as "out++;"; the native
+ * six/eight tails "movs #n; adds #1; cmp #9; ble" are exactly a continuing
+ * "for (; i < 10; i++)" whose dead body reads i (e.g. "x += i;" or
+ * "if (i < 4) out++;"), which stops loop.c reversing it. So each tail was a
+ * ten-slot loop whose register-only work flow deleted after loop.c ran;
+ * which work it was is still unknown.
  */
 /* 2026-10-04 paired zero-stage narrowing: paired zero after clobber1245; paired zero plus memory order1170; paired zero input only1245. */
 /* 2026-10-04 paired store-order narrowing: paired volatile x store 120; paired consumed x memory and angle 190; paired volatile x memory and angle 190; paired x stage before shift 120. */

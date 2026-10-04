@@ -91,8 +91,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
 void WaitFrames(s32 frames)
 {
     u32 i;
-    /* FAKEMATCH: keeping the saved stack pointer in sl forces measured index/count spills. */
-    register u8 *base __asm__("sl");
+    u8 *base;
     u32 line;
     s32 j;
     s16 dispcnt;

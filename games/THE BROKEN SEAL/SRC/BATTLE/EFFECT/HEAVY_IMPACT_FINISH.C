@@ -69,13 +69,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         {
             EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
             EffectSlot_SetCallback(work, BattleFx_RunAngledApproachPhases);
-            /* This boundary keeps the work pointer ahead of the constant. */
-            /* FAKEMATCH: removing this one-pass block changes instruction scheduling. */
-            do
-            {
             EffectSlot_SetObjectMode(work, 7);
-            }
-            while (0);
             ObjectGroup_SetChildValueUnlessFifteenFar(*((s32 *)work), ((u32)(Random16() * 7)) >> 0x10);
             value = ((u32)Random16() / 3 + 0x10000);
             (*((s32 *)(((s8 *)work) + 0x2C))) = value;

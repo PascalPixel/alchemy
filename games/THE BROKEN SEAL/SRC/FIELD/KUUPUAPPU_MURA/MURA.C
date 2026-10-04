@@ -389,7 +389,7 @@ void SceneDialogue_RunActor16Line(void) { Engine_EventBegin(); Engine_EventSetMe
 
 void SceneDialogue_RunActor19Line(void)
 {
-    void Event_ShowMessage(int, int);
+    void Engine_EventShowMessage(int, int);
 
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuRuffRrruff); Engine_ActorSetAnimation(19, 0);
     SceneActor_ApplyActorCueThenWait(19, 0, 2); Engine_EventShowMessage(19, 0); Engine_EventEnd();
@@ -451,7 +451,7 @@ void Villager_LookForRoofer(void)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 void SceneActor_RunActorStep(int actor)
 {
-    void Event_ShowMessage(int, int);
+    void Engine_EventShowMessage(int, int);
 
     Engine_EventBegin(); Engine_ActorSetAnimation(actor, 1); SceneActor_ApplyActorCueThenWait(actor, 0, 2);
     Engine_EventShowMessage(actor, 0); Engine_EventEnd();
@@ -459,7 +459,7 @@ void SceneActor_RunActorStep(int actor)
 
 void SceneActor_RunActorCommandWithFlag91(s32 x)
 {
-    void Event_ShowMessage(s32, s32);
+    void Engine_EventShowMessage(s32, s32);
 
     u8 *flag = (u8 *)Object_GetById(x) + 91;
     s32 zero = 0;
@@ -544,7 +544,7 @@ void ActorPresentation_RunActorSixteenSceneSetup(void)
 
 void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
 {
-    void Event_ShowMessage(int, int);
+    void Engine_EventShowMessage(int, int);
 
     u8 *workspace;
     Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuOnesWhoCapturedThieves); SceneActor_ApplyActorCueThenWait(18, 0, 2); Engine_EventOpenMessage(18, 0);
@@ -580,7 +580,7 @@ void SceneDialogue_RunActor20Line(void)
 
 void SceneDialogue_RunActor11FlaggedLine(void)
 {
-    int GameFlag_IsSet(int);
+    int Engine_GameFlagIsSet(int);
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x855) == 0) Engine_EventSetMessage((s32)MsgKuupuappuManShouldStealFromAnother); else Engine_EventSetMessage((s32)MsgKuupuappuHowPunishPrisoners);

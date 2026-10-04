@@ -319,11 +319,11 @@ gLinkStatus:
 	.global gNumberTextBuffer
 gNumberTextBuffer:
 	.space 0x00000008
-	.global Data_03001f78
-Data_03001f78:
+	.global gNumberTextHexEnd
+gNumberTextHexEnd:
 	.space 0x00000002
-	.global Data_03001f7a
-Data_03001f7a:
+	.global gNumberTextDecimalEnd
+gNumberTextDecimalEnd:
 	.space 0x00000076
 	.global gIwramHeap
 gIwramHeap:

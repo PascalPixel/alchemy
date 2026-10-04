@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0811bec8
+	.global BattleMotion_SetupEscapeObject
 	.thumb_func
-Func_0811bec8:
+BattleMotion_SetupEscapeObject:
 	push {r5, r6, lr}
 	bl GetBattleObjectSlot
 	adds r6, r0, #0

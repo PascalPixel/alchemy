@@ -44,7 +44,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *glyph, s32 outlined);
 
 extern u8 Data_03001e98[];
 
-extern struct SelectionScreen *volatile gResQueueWork;
+extern struct SelectionScreen *gResQueueWork;
 
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 void MenuSelection_SetupEntry(u32 kind, s32 base, struct SelectionNode *node, s32 reuse);

@@ -175,7 +175,7 @@ void FieldScene_RunScene398SequenceA(void)
 
 void FieldScene_RunActorFifteenScene(void)
 {
-    void Audio_PlayCue(s32);
+    void Engine_AudioPlayCue(s32);
 
     Engine_EventBegin();
     Engine_ActorSetChildValue(0xF, 0);
@@ -188,7 +188,7 @@ void FieldScene_RunActorFifteenScene(void)
 void FieldScene_RunActorSixteenScene(void)
 {
     void Engine_EventEnd(void);
-    void Audio_PlayCue(s32);
+    void Engine_AudioPlayCue(s32);
 
     Engine_EventBegin();
     Engine_ActorSetChildValue(0x10, 0);

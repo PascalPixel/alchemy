@@ -475,7 +475,7 @@ void SceneDialogue_AskRememberWarrior(s32 subject)
 /* The facing message. */
 void SceneDialogue_RunFacingMessage(s32 no)
 {
-    s32 GameFlag_IsSet(s32 flag);
+    s32 Engine_GameFlagIsSet(s32 flag);
 
     u8 *actor = Object_GetById(0);
     if ((u16)((*(u16 *)(actor + 6) + 0x2000) & ~0x3fff) == 0xc000) {

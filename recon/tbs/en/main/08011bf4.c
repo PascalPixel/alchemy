@@ -1,3 +1,17 @@
+/* 2026-10-04 (main-4): the step needs no 16.16 spelling. Plain
+   `u16 pos; pos = start + 1; if (pos >= len) pos = 0; cycle->position = pos;`
+   with plain u16 locals (no (s16) casts: GCC promotes u16 locals signed,
+   which is where the ldrsh comes from) and a u16 *dest gives the ROM's
+   whole step tail: gcse PRE carries pos << 16 across the join, so the
+   shift follows movs #0. With no device: 315 (the colour pointer and the
+   buffer base swap r1/r4: the pointer's priority, 20 refs over 36 insns,
+   outranks the buffer base copies, 5 over 10). With only the r4 binding
+   below: 135 (7 register-only, 1 deleted): left is the ROM's
+   lsls r1, r7, #16; adds r7, r1, #0 before the second loop, which here is
+   lsls r7, r7, #16 (cprop 2 folds gcse's copy of start << 16 back into
+   its source), and with r1 busy the step takes r2/r3 for the ROM's r1/r2.
+   Two 4-minute searches (13,464 and 70,356 candidates) found nothing
+   lower. The code below (90, two devices) is kept as the lower score. */
 /* 2026-10-04: fresh EN baseline 220; moving position construction after
    DMA improves to 90 (five register-only, one reordered instruction),
    complete 236/236 bytes. Two 55-second searches evaluated 21,578

@@ -77,46 +77,25 @@ struct BattleUnit *Owner_GetStateFar(s32);
 
 void Djinn_CountTurns(u8 *counts)
 {
-    /* FAKEMATCH: keep the existing four-byte row cursor across the adjacent available/active Djinn arrays; a second indexed array adds 24 native bytes. */
-    u8 *work;
-    u16 *owner_ids;
-    u8 *owner;
-    u32 *row;
+    struct DjinnMenuWork *work;
+    struct BattleUnit *unit;
     s32 owner_index;
-    s32 row_index;
+    s32 element;
     s32 bit;
-    s32 active;
     s32 count;
-    u32 mask;
-    u32 one;
 
-    work = (u8 *)gMenuWork;
-    owner_index = 0;
-    if (owner_index < work[0x219]) {
-        one = 1;
-        owner_ids = (u16 *)(work + 0x208);
-        do {
-            owner = (u8 *)Owner_GetStateFar(*owner_ids);
-            row_index = 0;
-            count = 0;
-            row = (u32 *)((struct BattleUnit *)owner)->djinn_available;
-            do {
-                active = row[4];
-                bit = 0;
-                do {
-                    mask = one << bit;
-                    if (active & mask)
-                        count++;
-                    else if (row[0] & mask)
-                        count++;
-                    bit++;
-                } while (bit <= 19);
-                row_index++;
-                row++;
-            } while (row_index <= 3);
-            counts[owner_index] = count;
-            owner_index++;
-            owner_ids++;
-        } while (owner_index < work[0x219]);
+    work = gMenuWork;
+    for (owner_index = 0; owner_index < work->owner_count; owner_index++) {
+        unit = Owner_GetStateFar(work->owners[owner_index]);
+        count = 0;
+        for (element = 0; element <= 3; element++) {
+            for (bit = 0; bit <= 19; bit++) {
+                if (unit->djinn_active[element] & (1 << bit))
+                    count++;
+                else if (unit->djinn_available[element] & (1 << bit))
+                    count++;
+            }
+        }
+        counts[owner_index] = count;
     }
 }

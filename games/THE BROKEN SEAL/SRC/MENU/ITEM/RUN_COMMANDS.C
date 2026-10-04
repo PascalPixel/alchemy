@@ -64,7 +64,6 @@ void Event_ClearInvalidPackedValuesFar(void);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
 void InventoryMenu_ShowModalMessage(s32 message, s32 acknowledgement_mode, s32 window_mode);
 void UiText_DrawWorkValueWithLabel(s32 window);
-s32 Func_080a414c(void);
 void UiIcon_PrepareObject(struct RenderOutput *icon);
 
 enum ItemMenuStep {
@@ -186,7 +185,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case ITEM_STEP_COMMAND:
-            command = Func_080a414c();
+            command = ItemMenu_ChooseCmd();
             if (command == -1) {
                 state = ITEM_STEP_ITEM;
                 menu->completion_flag = 1;

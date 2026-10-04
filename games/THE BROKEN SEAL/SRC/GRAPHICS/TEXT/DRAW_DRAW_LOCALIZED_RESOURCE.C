@@ -44,8 +44,7 @@ s32 UiText_DrawLocalizedResource80d(void)
     u16 data[64];
     struct MessageFrame *frame;
     struct MessageFrame *captured;
-    /* FAKEMATCH: The ordinary argument shape swaps size setup and frame adjustment; keep the immediate buffer argument in r1. */
-    register u16 *arg_buf asm("r1");
+    u16 *arg_buf;
     /* FAKEMATCH: Retain native r2 size setup before adjusting the captured-frame pointer. */
     register s32 arg_size asm("r2");
     u16 *buf;
@@ -55,8 +54,7 @@ s32 UiText_DrawLocalizedResource80d(void)
     register struct MessageFrame *held asm("r2");
     /* FAKEMATCH: Capture the caller-provided nested-function chain in its native r9 register before either call. */
     register struct MessageFrame *chain asm("r9");
-    /* FAKEMATCH: Read the incoming chain without an instruction so GCC retains its native r9 save. */
-    __asm__("" : "=r"(chain));
+
     held = chain;
     held_buf = data;
     /* FAKEMATCH: Retain the native chain/buffer register choices until both are handed to ordinary locals. */
@@ -69,33 +67,18 @@ s32 UiText_DrawLocalizedResource80d(void)
     arg_buf = buf;
 #if EDITION_INTERNATIONAL
     arg_size = 0x34;
-    /* FAKEMATCH: International code prepares the buffer and size before adjusting the captured frame. */
-    __asm__("" : "+r"(arg_buf), "+r"(arg_size) : "r"(captured));
     frame = captured - 1;
     /* FAKEMATCH: The international message load follows the frame adjustment; the prior shape swapped that pair. */
     __asm__("" : "+r"(frame) : : "r0");
     UiText_CopyMessageString((s32)MsgWaitingForOpponent, arg_buf, (u32)arg_size);
 #else
     {
-        /* FAKEMATCH: Japanese code loads its message before setting size 32; retain the immediate r0 message handoff. */
-        register s32 arg_msg asm("r0") = (s32)MsgWaitingForOpponent;
-        /* FAKEMATCH: The shared international order differed by six Japanese instruction bytes; hold its message before size setup. */
-        __asm__("" : "+r"(arg_buf), "+r"(arg_msg) : "r"(captured));
+        s32 message = (s32)MsgWaitingForOpponent;
+
         arg_size = 32;
-        /* FAKEMATCH: Retain native Japanese message/size-before-frame order with the immediate call arguments. */
-        __asm__("" : "+r"(arg_buf), "+r"(arg_size), "+r"(arg_msg) : "r"(captured));
         frame = captured - 1;
-        /* FAKEMATCH: Adjust the captured frame before the immediate decode call while preserving its prepared argument registers. */
-        __asm__("" : "+r"(frame) : "r"(arg_buf), "r"(arg_size), "r"(arg_msg));
-        UiText_DecodeMessage(arg_msg, arg_buf, arg_size);
+        UiText_DecodeMessage(message, arg_buf, arg_size);
     }
 #endif
-    UiText_RenderWideStringAtOffset((u16 *)buf, frame->context->window, 0, 4);
-    {
-        /* FAKEMATCH: The renderer returns void; preserve the native post-call r0 through the callback epilogue instead of using that void call as a value. */
-        register s32 result asm("r0");
-        /* FAKEMATCH: Capture r0 without an instruction to retain the native r1 return-address restore. */
-        __asm__("" : "=r"(result));
-        return result;
-    }
+    UiText_RenderWideStringAtOffset(buf, frame->context->window, 0, 4);
 }

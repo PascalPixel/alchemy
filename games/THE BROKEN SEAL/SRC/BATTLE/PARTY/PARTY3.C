@@ -27,20 +27,10 @@ s32 Map_LoadAreaGraphicsFar(void);
 void BattleParty_ApplyDrain(s32 amount)
 {
     s32 target_count = Party_CountActiveOwnersFar();
+    s32 i;
 
-    if (target_count > 0) {
-        /* FAKEMATCH: the existing base-plus-offset cursor retains the address
-           setup and operand order; a direct array address folds into the pool. */
-        u8 *base = (u8 *)&gGameState;
-        s32 offset = (u32)&((struct GameState *)0)->active_owners;
-        u8 *target_id = base + offset;
-        s32 remaining = target_count;
-
-        do {
-            Owner_AdjustSecondValueFar(*target_id++, amount);
-            remaining--;
-        } while (remaining != 0);
-    }
+    for (i = 0; i < target_count; i++)
+        Owner_AdjustSecondValueFar(gGameState.active_owners[i], amount);
 }
 
 /* Passes a health change to every active party member: amount itself, or
@@ -87,46 +77,32 @@ s32 BattleParty_ApplyStatusDamage(void)
 {
     s32 result = 0;
     s32 count = Party_CountActiveOwnersFar();
+    s32 i;
 
-    if (result < count) {
-        /* FAKEMATCH: preserve the existing member-offset cursor setup; the
-           direct array address changes the pool addend and saved registers. */
-        s32 offset = (u32)&((struct GameState *)0)->active_owners / 2;
-        u8 *entry;
-        s32 remaining;
+    for (i = 0; i < count; i++) {
+        struct BattleUnit *unit = Owner_GetStateFar(gGameState.active_owners[i]);
+        s32 amount;
 
-        offset <<= 1;
-        entry = (u8 *)&gGameState + offset;
-        remaining = count;
-
-        do {
-            struct BattleUnit *unit = Owner_GetStateFar(*entry);
-            s32 amount;
-
-            switch (unit->poison) {
-            case 1:
-                amount = -((unit->max_hp + 10) / 20);
-                if (amount == 0)
-                    amount = -1;
-                if (result <= 0)
-                    result = 1;
-                break;
-            case 2:
-                amount = -((unit->max_hp + 5) / 10);
-                if (amount == 0)
-                    amount = -1;
-                if (result <= 1)
-                    result = 2;
-                break;
-            default:
-                amount = 0;
-                break;
-            }
-
-            remaining--;
-            Owner_AdjustFirstValueFar(*entry, amount);
-            entry++;
-        } while (remaining != 0);
+        switch (unit->poison) {
+        case 1:
+            amount = -((unit->max_hp + 10) / 20);
+            if (amount == 0)
+                amount = -1;
+            if (result <= 0)
+                result = 1;
+            break;
+        case 2:
+            amount = -((unit->max_hp + 5) / 10);
+            if (amount == 0)
+                amount = -1;
+            if (result <= 1)
+                result = 2;
+            break;
+        default:
+            amount = 0;
+            break;
+        }
+        Owner_AdjustFirstValueFar(gGameState.active_owners[i], amount);
     }
 
     if (result != 0) {

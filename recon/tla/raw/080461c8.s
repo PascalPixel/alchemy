@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080461c8
+	.global BattleLayout_HighlightPartyPanels
 	.thumb_func
-Func_080461c8:
+BattleLayout_HighlightPartyPanels:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

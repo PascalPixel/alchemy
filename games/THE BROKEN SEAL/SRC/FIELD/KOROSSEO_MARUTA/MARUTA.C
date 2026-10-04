@@ -1479,14 +1479,10 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Engine_EventSetMessage((s32)MsgKorosseoSteppingStoneStage);
     Camera_SetSpeed(196608, 24576);
     {
-        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-        register s32 cx asm("r0") = 24641536 >> 17;
-        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-        register s32 cy asm("r1") = 1;
-        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-        register s32 cz asm("r2") = 9961472 >> 16;
-        /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-        register s32 cm asm("r3");
+        s32 cx = 24641536 >> 17;
+        s32 cy = 1;
+        s32 cz = 9961472 >> 16;
+        s32 cm;
         /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
         asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
         cm = 1;
@@ -1501,8 +1497,6 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
         Camera_MoveTo(cx << 17, cy, cz, cm);
     }
     x = 140;
-    /* FAKEMATCH: retain the used coordinate component across the native wait. */
-    asm("" : "+r"(x));
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Event_ShowMessage(scene, 0);
@@ -1574,12 +1568,9 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             ColossoLogRollingStage_ResetAndRunSceneTask();
             Engine_CameraSetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
-                register s32 cx asm("r0") = 0x2680000 >> 18;
-                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
-                register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
-                register s32 cz asm("r2") = 0xb80000 >> 16;
+                s32 cx = 0x2680000 >> 18;
+                s32 cy = 1;
+                s32 cz = 0xb80000 >> 16;
                 /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
                 register s32 cm asm("r3") = 1;
                 /* FAKEMATCH: retain native camera argument order without extra branch-length constraints. */
@@ -1602,8 +1593,7 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
             Engine_EventWait(60);
             Engine_EventShowMessage(a0, 0);
             {
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fx asm("r1") = 0x1f8;
+                s32 fx = 0x1f8;
                 /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
                 register s32 fz asm("r2") = 200;
                 /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */

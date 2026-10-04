@@ -521,9 +521,6 @@ extern u8 RockToss_ChipY[];
    leaves, a rock is pulled towards the target and lands on it. */
 void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     s32 i;
@@ -537,12 +534,9 @@ void BattleFx_RunVenusDjinnRockToss(struct BattleEffectArgument *effect)
     s32 screen_y;
     s32 j;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)heap_cache -
-        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     BattleFx_PrepareCanvasEffect(effect, 0, work->effect->side, 2, &screen_x, &screen_y);

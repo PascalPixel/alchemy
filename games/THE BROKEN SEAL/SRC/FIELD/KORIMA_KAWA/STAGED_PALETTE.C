@@ -47,7 +47,7 @@ static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
     /* FAKEMATCH: a direct call builds both stacked literals in r3; the reference builds palette 16 in r2 first. */
-    void Actor_SetAnimation(s32, s32); u8 *Object_GetById(s32);
+    void Engine_ActorSetAnimation(s32, s32); u8 *Object_GetById(s32);
 
     Map_CopyCellAttributeRect(left, top, width, height, tile, palette);
 }
@@ -201,26 +201,15 @@ s32 SceneState_SetRuntimeWord448To516(void)
 
 void SceneEffect_AdjustPaletteColors(s32 a)
 {
-
-    u32 x;
+    u16 i;
 
     KorimaPalette_SaveFirst();
-    x = 0;
-    do {
-        u32 idx = x >> 16;
-        if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
-            u16 *pal = (u16 *)(0x5000000 + idx * 2);
+    for (i = 0; i < 224; i++) {
+        if ((i < 17 || i > 23) && (i < 193 || i > 200)) {
+            u16 *pal = (u16 *)(0x5000000 + i * 2);
             *pal = SceneEffect_AdjustColorChannels(*pal, a);
         }
-        {
-            /* FAKEMATCH: using x directly removes the r3 result copy and changes the loop's compare register. */
-            u32 nx = x + 0x10000;
-            x = nx;
-            if (nx > 0xdf0000) {
-                break;
-            }
-        }
-    } while (1);
+    }
     KorimaPalette_Capture();
     KorimaPalette_SaveSecond();
     BattleFx_ApplyColorToTargetBuffer(0x10000, 0);

@@ -369,7 +369,7 @@ Func_080ec4d4:
 	b .L_080ec820
 	.2byte 0x0000
 .L_080ec794:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec798:
 	.4byte ResourceTableEntries
 .L_080ec79c:
@@ -669,7 +669,7 @@ Func_080ec4d4:
 .L_080ec9d8:
 	.4byte gInput
 .L_080ec9dc:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec9e0:
 	ldr r4, .L_080eca48
 	movs r3, #128
@@ -725,7 +725,7 @@ Func_080ec4d4:
 .L_080eca44:
 	.4byte 0x000001ff
 .L_080eca48:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080eca4c:
 	.4byte gFrameCount
 .L_080eca50:
@@ -874,7 +874,7 @@ Func_080ec4d4:
 .L_080ecb6c:
 	.4byte 0xfffffe00
 .L_080ecb70:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ecb74:
 	movs r2, #18
 	ldrsh r3, [r4, r2]
@@ -1208,7 +1208,7 @@ Func_080ec4d4:
 .L_080ecdf0:
 	.4byte Data_0202a656
 .L_080ecdf4:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ecdf8:
 	.4byte 0x00000e29
 .L_080ecdfc:

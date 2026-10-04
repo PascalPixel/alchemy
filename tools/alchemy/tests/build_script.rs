@@ -39,7 +39,7 @@ fn signature(root: &Path) -> String {
     );
     output
         .lines()
-        .find_map(|line| line.strip_prefix("cargo:rustc-env=ALCHEMY_BUILD_IMPLEMENTATION="))
+        .find_map(|line| line.strip_prefix("cargo:rustc-env=ALCHEMY_ENCODER="))
         .unwrap()
         .to_owned()
 }

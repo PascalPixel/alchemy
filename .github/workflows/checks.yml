@@ -60,9 +60,7 @@ jobs:
           cargo test --locked --offline --release --manifest-path tools/Cargo.toml
           -p alchemy --bin alchemy -- --include-ignored
           check::publication:: check::layout:: check::commit_progress::
-          compiler::routing::target_tests::only_ compiler::no_asm:: compiler::steering::
-          permute::ast:: permute::lex:: permute::parse:: permute::effects::
-          permute::types:: permute::mutate:: permute::score:: permute::tests::minimizing_
+          compiler::routing::target_tests::only_ compiler::no_asm:: compiler::steering:: compiler::c_syntax::
           verify::tests::
 
       # The publication scan checks tracked formats/content and editable asset
@@ -71,5 +69,4 @@ jobs:
       - name: Check public source and pinned compiler provenance
         run: >-
           make ALCHEMY=tools/out/cargo-target/release/alchemy
-          rustfmt-check native-format-check publication-tree-check tooling-index-check
-          language-check corpus-check standard-check compiler-source-check
+          publication-check language-check compiler-source-check

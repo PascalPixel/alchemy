@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08014ae0
+	.global Runtime_WriteDebugTextTiles
 	.thumb_func
-Func_08014ae0:
+Runtime_WriteDebugTextTiles:
 	push {r5, lr}
 	ldr r3, .L_08014b20
 	ldrb r3, [r3]

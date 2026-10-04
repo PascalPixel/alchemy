@@ -55,4 +55,11 @@ LAYOUT_OFFSET_GUARD(BattleFxScene_Slots, struct BattleFxScene, slots, 0x58);
 LAYOUT_OFFSET_GUARD(BattleFxScene_ArcTileSlot, struct BattleFxScene, arc_tile_slot, 0x71a);
 LAYOUT_OFFSET_GUARD(BattleFxScene_MessageMode, struct BattleFxScene, message_mode, 0x71c);
 
+/* The value a tenth of the way per step from one end to the other, as the
+   effects that glide an object over eleven frames scale it. */
+static __inline__ s32 BattleFx_Interpolate(s32 to, s32 from, s32 step)
+{
+    return from + (to - from) * step / 10;
+}
+
 #endif

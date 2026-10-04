@@ -194,7 +194,7 @@ fn decode_general_body(
         append_copy(&mut output, distance, length, prefill as u64 + maximum)?;
     }
 }
-pub fn decode_general_trace(
+pub(crate) fn decode_general_trace(
     data: &[u8],
     start: usize,
     end: usize,
@@ -214,23 +214,6 @@ pub fn decode_general(
 ) -> Result<(Vec<u8>, usize), AssetError> {
     let (output, cursor, _) = decode_general_trace(data, start, end, maximum)?;
     Ok((output, cursor))
-}
-pub fn decode_general_prefill_trace(
-    data: &[u8],
-    start: usize,
-    end: usize,
-    maximum: u64,
-    prefill: usize,
-    header: usize,
-) -> Result<(Vec<u8>, usize, Vec<GeneralToken>), AssetError> {
-    if start >= end {
-        return err("general stream is empty");
-    }
-    if header != 0 && data[start] != 0 {
-        return err("general stream is missing its kind-zero header");
-    }
-    decode_general_body(data, start, end, maximum, prefill, header)
-        .map(|(output, cursor, tokens, _)| (output, cursor, tokens))
 }
 fn put(bits: &mut Vec<u8>, value: u32, count: u32) {
     for index in 0..count {
@@ -365,18 +348,10 @@ fn encode_general_inner(
 pub fn encode_general(decoded: &[u8], tokens: &[GeneralToken]) -> Result<Vec<u8>, AssetError> {
     encode_general_inner(decoded, tokens, 0, 1)
 }
-pub fn encode_general_prefill(
-    decoded: &[u8],
-    tokens: &[GeneralToken],
-    prefill: usize,
-    header: usize,
-) -> Result<Vec<u8>, AssetError> {
-    encode_general_inner(decoded, tokens, prefill, header)
-}
 // ---------------------------------------------------------------------------
 // palette stream
 // ---------------------------------------------------------------------------
-pub fn decode_palette_trace(
+pub(crate) fn decode_palette_trace(
     data: &[u8],
     start: usize,
     end: usize,
@@ -533,22 +508,6 @@ pub fn encode_palette(decoded: &[u8], groups: &[PaletteGroup]) -> Result<Vec<u8>
     }
     Ok(encoded)
 }
-/// Stored length of the tagged resource stream at `start` (tag 0 general,
-/// 1 palette, 2 move-to-front), counting only bytes that hold stream data.
-pub fn tagged_stream_length(
-    data: &[u8],
-    start: usize,
-    end: usize,
-    maximum: u64,
-) -> Result<usize, AssetError> {
-    let stored_end = match data.get(start) {
-        Some(0) => decode_general_body(data, start, end, maximum, 0, 1)?.3,
-        Some(1) => decode_palette_trace(data, start + 1, end, maximum)?.1,
-        Some(2) => decode_mtf4_body(data, start, end, maximum)?.2,
-        _ => return err("resource stream tag is not 0, 1 or 2"),
-    };
-    Ok(stored_end - start)
-}
 // ---------------------------------------------------------------------------
 // MTF4 LZ stream (tag 2)
 // ---------------------------------------------------------------------------
@@ -626,27 +585,6 @@ fn decode_mtf4_body(
     }
 }
 
-#[test]
-fn tag_two_decodes_literals_and_overlapping_copies_with_a_strict_bound() {
-    let decoded = [0x21, 0x43, 0x65, 0x65, 0x65, 0x65, 0x65, 0x65];
-    let tokens = [
-        Mtf4LzToken::Literal { width: 4 },
-        Mtf4LzToken::Literal { width: 4 },
-        Mtf4LzToken::Literal { width: 4 },
-        Mtf4LzToken::Copy {
-            length: 5,
-            distance: 1,
-        },
-    ];
-    let mut bytes = encode_mtf4_lz(&decoded, &tokens).unwrap();
-    bytes.extend([0, 0]);
-    assert_eq!(
-        decode_mtf4_lz(&bytes, 0, bytes.len(), 8).unwrap().0,
-        decoded
-    );
-    assert!(decode_mtf4_lz(&bytes, 0, bytes.len(), 7).is_err());
-    assert!(decode_mtf4_lz(&bytes, 0, bytes.len() - 3, 8).is_err());
-}
 /// Encode `decoded` as a tag-2 stream: tag byte 2, then LSB-first bits where
 /// a literal is `1`, a two-bit width selector (`1` = 2 bits, `01` = 3 bits,
 /// `00` = 4 bits) and the low then high nibble as MTF indices, and a copy uses
@@ -716,128 +654,15 @@ pub fn encode_mtf4_lz(decoded: &[u8], tokens: &[Mtf4LzToken]) -> Result<Vec<u8>,
     packed[0] = 2;
     Ok(packed)
 }
-#[test]
-fn mtf4_lz_streams_carry_the_tag_and_move_to_front_literals() {
-    let literal = |width| Mtf4LzToken::Literal { width };
-    assert_eq!(
-        encode_mtf4_lz(&[0], &[literal(2)]).unwrap(),
-        [2, 0x83, 0x0f, 0]
-    );
-    // 0x21 moves 1 then 2 to the front; the second byte then reads them back
-    // at MTF indices 1 and 1, and the copy repeats the pair at distance 2.
-    let encoded = encode_mtf4_lz(
-        &[0x21, 0x12, 0x21, 0x12],
-        &[
-            literal(2),
-            literal(2),
-            Mtf4LzToken::Copy {
-                length: 2,
-                distance: 2,
-            },
-        ],
-    )
-    .unwrap();
-    assert_eq!(encoded, [2, 0xe7, 0xc4, 0xe0, 0x03, 0]);
-    assert!(encode_mtf4_lz(&[0x1f], &[literal(2)]).is_err());
-    assert!(encode_mtf4_lz(&[0, 0], &[literal(2)]).is_err());
-    assert!(encode_mtf4_lz(
-        &[0, 1],
-        &[
-            literal(2),
-            Mtf4LzToken::Copy {
-                length: 1,
-                distance: 1
-            }
-        ]
-    )
-    .is_err());
-}
+
 // ---------------------------------------------------------------------------
 // arena stream
 // ---------------------------------------------------------------------------
-/// Decode an arena stream at `offset`: a little-endian split halfword, the
-/// literal block, then flag groups whose copies read from the bytes that
-/// precede the literal block in `data`. A zero split stores the stream raw
-/// up to and including its zero terminator. Returns the decoded stream, the
-/// encoded length and the unused final flag bits.
-pub fn decode_arena(data: &[u8], offset: usize) -> Result<(Vec<u8>, usize, u8), AssetError> {
-    let split = usize::from(u16::from_le_bytes([
-        *data
-            .get(offset)
-            .ok_or_else(|| AssetError("arena split is truncated".into()))?,
-        *data
-            .get(offset + 1)
-            .ok_or_else(|| AssetError("arena split is truncated".into()))?,
-    ]));
-    let base = offset + 2;
-    if split == 0 {
-        let end = data[base..]
-            .iter()
-            .position(|byte| *byte == 0)
-            .ok_or_else(|| AssetError("raw arena stream has no terminator".into()))?;
-        return Ok((data[base..=base + end].to_vec(), 3 + end, 0));
-    }
-    if split < 2 || offset + split >= data.len() {
-        return err("arena split is outside the encoded data");
-    }
-    let control = offset + split;
-    let mut literal = base;
-    let mut cursor = control;
-    let mut output = Vec::new();
-    loop {
-        let flags = *data
-            .get(cursor)
-            .ok_or_else(|| AssetError("arena flag group is truncated".into()))?;
-        cursor += 1;
-        for bit in 0..8 {
-            if flags & (1 << bit) != 0 {
-                if literal >= control {
-                    return err("arena literal block is exhausted");
-                }
-                output.push(data[literal]);
-                literal += 1;
-                continue;
-            }
-            let word = u16::from_be_bytes([
-                *data
-                    .get(cursor)
-                    .ok_or_else(|| AssetError("arena copy is truncated".into()))?,
-                *data
-                    .get(cursor + 1)
-                    .ok_or_else(|| AssetError("arena copy is truncated".into()))?,
-            ]);
-            cursor += 2;
-            if word == 0 {
-                if literal != control {
-                    return err("arena literal block was not consumed exactly");
-                }
-                return Ok((output, cursor - offset, flags & !((2u16 << bit) - 1) as u8));
-            }
-            let distance = usize::from(word & 0x0fff);
-            let length = if word >> 12 == 0 {
-                let extra = *data
-                    .get(cursor)
-                    .ok_or_else(|| AssetError("arena copy length is truncated".into()))?;
-                cursor += 1;
-                usize::from(extra) + 18
-            } else {
-                usize::from(word >> 12) + 2
-            };
-            let source = base
-                .checked_sub(distance)
-                .filter(|source| distance != 0 && source + length <= data.len())
-                .ok_or_else(|| AssetError("arena copy is outside the encoded data".into()))?;
-            for index in 0..length {
-                output.push(data[source + index]);
-            }
-        }
-    }
-}
 /// Encode `decoded` as an arena stream. `tokens` of `None` stores it raw behind
 /// a zero split; otherwise the literal runs and copies are laid out from the
 /// plan and every copy is checked against `arena` (the bytes that precede this
 /// stream) followed by the stream itself.
-pub fn encode_arena(
+pub(crate) fn encode_arena(
     decoded: &[u8],
     tokens: Option<&[GeneralToken]>,
     final_flags: u8,
@@ -1044,277 +869,10 @@ fn arena_tokens(decoded: &[u8], arena: &[u8]) -> Vec<GeneralToken> {
     }
     tokens
 }
-#[test]
-fn arena_parse_cuts_copies_at_longer_tokens_and_bounds_their_reach() {
-    let copy = |length, distance| GeneralToken::Copy { length, distance };
-    // "ABC" gives way to the longer "BCDEFG" one byte later: a literal first.
-    let arena = b"..ABC..BCDEFG.".to_vec();
-    assert_eq!(
-        arena_tokens(b"ABCDEFG\0", &arena),
-        [
-            GeneralToken::Literal(1),
-            copy(6, 9),
-            GeneralToken::Literal(1)
-        ]
-    );
-    // "WXYZ" is cut after three bytes where the longer "ZABCDE" starts.
-    let arena = b"WXYZ.ZABCDE.".to_vec();
-    assert_eq!(
-        arena_tokens(b"WXYZABCDE\0", &arena),
-        [copy(3, 14), copy(6, 9), GeneralToken::Literal(1)]
-    );
-    // Equal sources: the oldest wins. A copy never reaches past the decoded
-    // offset equal to the arena length, so the repeat is literal.
-    let arena = b"abcdefgh".to_vec();
-    assert_eq!(
-        arena_tokens(b"abcdefghabcdefgh\0", &arena),
-        [copy(8, 10), GeneralToken::Literal(9)]
-    );
-    assert_eq!(
-        arena_tokens(b"abc\0", b"xabcyabcz"),
-        [copy(3, 10), GeneralToken::Literal(1)]
-    );
-}
-#[test]
-fn arena_compression_stores_raw_unless_it_saves_a_tenth_within_the_buffer() {
-    assert_eq!(
-        compress_arena(&[1, 2, 3, 4, 0], &[]).unwrap(),
-        [0, 0, 1, 2, 3, 4, 0]
-    );
-    let arena: Vec<u8> = (1..=200).collect();
-    let mut decoded: Vec<u8> = (1..=200).collect();
-    decoded.push(0);
-    let encoded = compress_arena(&decoded, &arena).unwrap();
-    let mut data = arena.clone();
-    data.extend_from_slice(&encoded);
-    assert_eq!(decode_arena(&data, arena.len()).unwrap().0, decoded);
-    assert!(encoded.len() < 20);
-    // Five payload bytes: one copy of all of them saves too little.
-    let mut small: Vec<u8> = (1..=5).collect();
-    small.push(0);
-    assert_eq!(compress_arena(&small, &arena).unwrap()[..2], [0, 0]);
-    // No input at all is a bare raw split.
-    assert_eq!(compress_arena(&[], &arena).unwrap(), [0, 0]);
-    assert!(encode_arena(&[1, 2], None, 0, &arena).is_err());
-}
-#[test]
-fn arena_streams_round_trip_and_check_their_dictionary() {
-    let arena = vec![0x55; 96];
-    let raw = encode_arena(&[1, 2, 3, 0], None, 0, &arena).unwrap();
-    assert_eq!(raw, [0, 0, 1, 2, 3, 0]);
-    assert_eq!(decode_arena(&raw, 0).unwrap(), (vec![1, 2, 3, 0], 6, 0));
-    assert!(encode_arena(&[1, 0, 2], None, 0, &arena).is_err());
-    let tokens = [
-        GeneralToken::Literal(2),
-        GeneralToken::Copy {
-            length: 4,
-            distance: 8,
-        },
-        GeneralToken::Literal(1),
-    ];
-    let decoded = [7, 8, 0x55, 0x55, 0x55, 0x55, 0];
-    let encoded = encode_arena(&decoded, Some(&tokens), 0xe0, &arena).unwrap();
-    assert_eq!(encoded, [5, 0, 7, 8, 0, 0xeb, 0x20, 0x08, 0, 0]);
-    let mut data = arena.clone();
-    data.extend_from_slice(&encoded);
-    assert_eq!(
-        decode_arena(&data, arena.len()).unwrap(),
-        (decoded.to_vec(), encoded.len(), 0xe0)
-    );
-    assert!(encode_arena(&[7, 8, 1, 2, 3, 4, 0], Some(&tokens), 0, &arena).is_err());
-    assert!(encode_arena(&decoded, Some(&tokens), 0x08, &arena).is_err());
-    assert!(encode_arena(&decoded[..6], Some(&tokens), 0, &arena).is_err());
-}
+
 // ---------------------------------------------------------------------------
 // halfword LZ: 16-flag groups over little-endian 16-bit units
 // ---------------------------------------------------------------------------
-/// `["l", n]` / `["c", length, distance]` / `["e"]` over halfword units.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum HalfwordToken {
-    Literal(u32),
-    Copy { length: u32, distance: u32 },
-    End,
-}
-/// Each group is a flag halfword (bit 15 first) followed by up to sixteen
-/// halfwords: a literal unit, a copy `(distance << 5) | (length - 2)` with
-/// `distance` 1..=2047 and `length` 2..=33, or a flagged zero terminator.
-pub fn decode_halfword(data: &[u8]) -> Result<(Vec<u8>, Vec<HalfwordToken>), AssetError> {
-    let read = |at: usize| -> Result<u16, AssetError> {
-        match data.get(at..at + 2) {
-            Some(bytes) => Ok(u16::from_le_bytes([bytes[0], bytes[1]])),
-            None => err("halfword stream ended inside a group"),
-        }
-    };
-    let mut output: Vec<u16> = Vec::new();
-    let mut tokens = Vec::new();
-    let mut cursor = 0;
-    loop {
-        let flags = read(cursor)?;
-        cursor += 2;
-        for index in 0..16 {
-            let word = read(cursor)?;
-            cursor += 2;
-            if flags & (1 << (15 - index)) == 0 {
-                output.push(word);
-                match tokens.last_mut() {
-                    Some(HalfwordToken::Literal(count)) => *count += 1,
-                    _ => tokens.push(HalfwordToken::Literal(1)),
-                }
-                continue;
-            }
-            if word == 0 {
-                tokens.push(HalfwordToken::End);
-                return Ok((
-                    output.iter().flat_map(|unit| unit.to_le_bytes()).collect(),
-                    tokens,
-                ));
-            }
-            let distance = u32::from(word >> 5);
-            let length = u32::from(word & 31) + 2;
-            if distance as usize > output.len() {
-                return err("halfword copy crossed replay prefix");
-            }
-            for _ in 0..length {
-                output.push(output[output.len() - distance as usize]);
-            }
-            tokens.push(HalfwordToken::Copy { length, distance });
-        }
-    }
-}
-pub fn encode_halfword(decoded: &[u8], tokens: &[HalfwordToken]) -> Result<Vec<u8>, AssetError> {
-    if decoded.len() % 2 != 0 {
-        return err("halfword pixels have an odd size");
-    }
-    let units: Vec<u16> = decoded
-        .chunks(2)
-        .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
-        .collect();
-    let mut operations = Vec::new();
-    for token in tokens {
-        match *token {
-            HalfwordToken::Literal(count) => {
-                if count == 0 || count as usize > units.len() {
-                    return err("halfword literal count is invalid");
-                }
-                operations.extend((0..count).map(|_| HalfwordToken::Literal(1)));
-            }
-            HalfwordToken::Copy { length, distance } => {
-                if !(2..=33).contains(&length) || !(1..=2047).contains(&distance) {
-                    return err("halfword copy differs");
-                }
-                operations.push(*token);
-            }
-            HalfwordToken::End => operations.push(HalfwordToken::End),
-        }
-    }
-    let mut encoded = Vec::new();
-    let mut replay: Vec<u16> = Vec::new();
-    let mut ended = false;
-    for group in operations.chunks(16) {
-        let mut flags = 0u16;
-        let mut words = Vec::new();
-        for (index, operation) in group.iter().enumerate() {
-            if ended {
-                return err("halfword plan has data after terminator");
-            }
-            match *operation {
-                HalfwordToken::Literal(_) => {
-                    let unit = *units
-                        .get(replay.len())
-                        .ok_or(AssetError("halfword literal crossed decoded pixels".into()))?;
-                    replay.push(unit);
-                    words.push(unit);
-                }
-                HalfwordToken::Copy { length, distance } => {
-                    flags |= 1 << (15 - index);
-                    if distance as usize > replay.len() {
-                        return err("halfword copy crossed replay prefix");
-                    }
-                    words.push(((distance << 5) | (length - 2)) as u16);
-                    for _ in 0..length {
-                        replay.push(replay[replay.len() - distance as usize]);
-                    }
-                }
-                HalfwordToken::End => {
-                    flags |= 1 << (15 - index);
-                    words.push(0);
-                    ended = true;
-                }
-            }
-        }
-        encoded.extend(flags.to_le_bytes());
-        encoded.extend(words.iter().flat_map(|word| word.to_le_bytes()));
-    }
-    if !ended || replay != units {
-        return err("halfword plan does not reconstruct decoded pixels");
-    }
-    Ok(encoded)
-}
 // ---------------------------------------------------------------------------
 // self-test
 // ---------------------------------------------------------------------------
-#[cfg(test)]
-fn synthetic_general() -> Vec<u8> {
-    let mut bits: Vec<u8> = Vec::new();
-    for value in b"AB" {
-        put(&mut bits, 1, 1);
-        put(&mut bits, u32::from(*value), 8);
-    }
-    put(&mut bits, 0, 1);
-    put(&mut bits, 0, 1);
-    put(&mut bits, 1, 1);
-    put(&mut bits, 1, 5);
-    put(&mut bits, 0, 1);
-    put(&mut bits, 0x1f, 5);
-    put(&mut bits, 0, 2);
-    put(&mut bits, 0, 7);
-    let mut packed: Vec<u8> = vec![0];
-    for chunk in bits.chunks(8) {
-        let mut value = 0u8;
-        for (index, bit) in chunk.iter().enumerate() {
-            value |= bit << index;
-        }
-        packed.push(value);
-    }
-    packed.push(0);
-    packed.push(0);
-    packed
-}
-#[test]
-fn codec_round_trips_and_truncation() -> Result<(), String> {
-    let general = synthetic_general();
-    let (output, cursor, tokens) =
-        decode_general_trace(&general, 0, general.len(), 4).map_err(|error| error.0)?;
-    if output != b"ABAB" || cursor > general.len() {
-        return Err("general decoder self-test failed".into());
-    }
-    let reencoded = encode_general(&output, &tokens).map_err(|error| error.0)?;
-    if general.len() < reencoded.len() || general[..reencoded.len()] != reencoded[..] {
-        return Err("general encoder self-test failed".into());
-    }
-    let palette: Vec<u8> = vec![0x30, 65, 66, 0x01, 0x02, 0, 0];
-    let (output, cursor, groups) =
-        decode_palette_trace(&palette, 0, palette.len(), 4).map_err(|error| error.0)?;
-    if output != b"ABAB" || cursor != palette.len() {
-        return Err("palette decoder self-test failed".into());
-    }
-    if encode_palette(&output, &groups).map_err(|error| error.0)? != palette {
-        return Err("palette encoder self-test failed".into());
-    }
-    let halfword: Vec<u8> = vec![0x00, 0x60, 0x41, 0x00, 0x20, 0x00, 0x00, 0x00];
-    let (output, tokens) = decode_halfword(&halfword).map_err(|error| error.0)?;
-    if output != b"A\0A\0A\0"
-        || encode_halfword(&output, &tokens).map_err(|error| error.0)? != halfword
-    {
-        return Err("halfword codec self-test failed".into());
-    }
-    let truncated_general = &general[..general.len() - 2];
-    if decode_general(truncated_general, 0, truncated_general.len(), 4).is_ok() {
-        return Err("truncated stream was accepted".into());
-    }
-    let truncated_palette = &palette[..palette.len() - 1];
-    if decode_palette(truncated_palette, 0, truncated_palette.len(), 4).is_ok() {
-        return Err("truncated stream was accepted".into());
-    }
-    Ok(())
-}

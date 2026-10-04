@@ -203,7 +203,7 @@ Func_080ebf94:
 	add sp, #20
 	pop {r5, r6, r7, pc}
 .L_080ec128:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec12c:
 	.4byte 0x0001ffff
 .L_080ec130:

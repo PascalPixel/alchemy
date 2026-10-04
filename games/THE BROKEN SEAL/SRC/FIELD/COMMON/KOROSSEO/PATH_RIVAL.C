@@ -4,7 +4,6 @@
 #include "RUNTIME_MEM.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
-#include "CALL.H"
 #include "VRAM_BLOCK.H"
 
 s32 Math_Atan2(s32 dy, s32 dx);
@@ -181,7 +180,7 @@ void Korosseo_DrawGauge(void)
                     (volatile u32 *)0x040000d4);
             buf = (u8 *)Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 512);
             Resource_DecodeType01(Korosseo_GaugeGraphics, buf);
-            Call3((void (*)())VramBlock_LoadCached, gauge->vram_block, 512, (s32)buf);
+            VramBlock_LoadCached(gauge->vram_block, 512, buf);
             Runtime_BumpFree(buf);
         }
     }

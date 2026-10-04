@@ -37,11 +37,11 @@ void UiText_PrepareMessageWork(s32 argument)
     struct UiRenderWork *state;
     struct BattleDisplayWork *control;
 
-    /* FAKEMATCH: retain the existing volatile field-address reads and scalar
-       result lifetime in this actual heap-slot range. Separate plain cells
-       shrink the object by 8 bytes; volatile array/word views add 4 bytes. */
-    state = ((volatile struct BattleMessageSlotRange *)gWindowWork)->render;
-    control = ((volatile struct BattleMessageSlotRange *)gWindowWork)->display;
+    /* FAKEMATCH: retain the scalar result lifetime and the goto-joined
+       window paths; an if/else with direct 0 and 1 drops the r8/r9 values.
+       The heap-slot range reads need no volatile view. */
+    state = ((struct BattleMessageSlotRange *)gWindowWork)->render;
+    control = ((struct BattleMessageSlotRange *)gWindowWork)->display;
     result = 0;
     state->menu_state = 2;
     index = UiText_BuildRenderEntries(argument, 1);

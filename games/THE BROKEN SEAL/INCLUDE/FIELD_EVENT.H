@@ -20,8 +20,8 @@ extern u8 gSceneState[];
 /* The Korosseo stage's work, which its scenes share. */
 extern u8 *gKorosseoWork;
 
-/* Counts the frames the game has drawn. */
-extern u32 gFrameCount;
+/* Counts the frames the game has drawn; each frame wait advances it. */
+extern volatile u32 gFrameCount;
 
 #include "FIELDOBJ.H"
 

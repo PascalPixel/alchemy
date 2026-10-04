@@ -1,11 +1,11 @@
 #include "PROJECT.H"
 #include "TYPES.H"
+#include "HEAP_STATE.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_PRESENTATION.H"
 #include "SCENE.H"
 
 #include "MAP_SCROLL.H"
-extern u8 gTransitionWork[];
 s32 GameFlag_TestFar(s32 flag);
 
 /* Inline, so the arguments are computed before the routine's address. */
@@ -30,11 +30,9 @@ s32 Render_ProjectPoint();
  * once the view is zoomed in. */
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale)
 {
-    /* FAKEMATCH: the work and camera pointers are addressed from the view
-     * pointer's symbol, as the reference derives them from its pool entry. */
-    struct BattleBackgroundView *view = *(struct BattleBackgroundView **)gTransitionWork;
-    struct BattleAffineHdma *work = *(struct BattleAffineHdma **)(gTransitionWork - 136);
-    struct BattleCamera *camera = *(struct BattleCamera **)(gTransitionWork - 128);
+    struct BattleBackgroundView *view = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
+    struct BattleAffineHdma *work = *(gWorkSlot + 10);
+    struct BattleCamera *camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     u16 wrap;
     s32 horizon;
     u16 *line;

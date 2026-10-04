@@ -69,6 +69,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position);
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position);
 s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position);
 u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind);
+void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY);
 
 /* The map's block table: a field map's metatiles, two words of tile entries
    each, or the world map's 32 by 32 grid of blocks. */

@@ -150,7 +150,7 @@ void FieldScene_RunActor18MessageBranch(void)
 void FieldScene_RunActor19MessageBranch(void)
 {
     void Engine_InnOpen(s32, s32);
-    void Event_ShowMessage(s32, s32);
+    void Engine_EventShowMessage(s32, s32);
 
     /*
      * The local must stay wider than the halfword field; as a u16 it is
@@ -191,7 +191,7 @@ u8 *SceneData_GetFourthTable(void)
  */
 s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
-    s32 GameFlag_IsSet();
+    s32 Engine_GameFlagIsSet();
 
     u8 *work = gWork;
     s32 id;

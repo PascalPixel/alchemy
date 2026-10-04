@@ -1,4 +1,15 @@
-/* NONMATCHING kuupuappu rejection H1 (2026-09-27): explicit negative
+/* NONMATCHING (2026-10-04): this draft is the international body only; the
+ * listing's Japanese body (8-byte frame, actor in r6, no near-point cone)
+ * needs its own C under #if !EDITION_INTERNATIONAL. Score 1630 against the
+ * English listing; the callees it names are not the overlay's veneers
+ * (the listing calls ArcTan2, Random16, ObjectDispatch_ApplyArgumentToChildren
+ * and KuupuappuHeya_StopTimer, with the work through gEventWork). Most of the
+ * remaining difference is reload's choice of scratch register (r4 here where
+ * the ROM uses r1-r3), which advances round-robin through the spill
+ * registers, so one extra or missing reload early shifts every later choice.
+ * A plain rewrite with s32 coordinates and an s16 facing (no union) scored
+ * 4767: an 8-byte frame and the leader/work/blocked high registers rotated.
+ * NONMATCHING kuupuappu rejection H1 (2026-09-27): explicit negative
  * cone exits share the distance fallback, preserving the unsigned input
  * producer instead of staging a folded delta. Prediction failed: GCC
  * restores the same blt-to-keep plus jump-to-fallback, not reference bge

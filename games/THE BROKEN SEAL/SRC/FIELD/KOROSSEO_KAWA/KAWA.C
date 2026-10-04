@@ -1050,14 +1050,10 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoCallRockChallenge);
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cx asm("r0") = 0x1480000 >> 17;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cz asm("r2") = 0xa80000 >> 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cm asm("r3");
+                s32 cx = 0x1480000 >> 17;
+                s32 cy = 1;
+                s32 cz = 0xa80000 >> 16;
+                s32 cm;
                 /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
                 cm = 1;
@@ -1074,8 +1070,7 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
             {
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fx asm("r1") = 0x118;
+                s32 fx = 0x118;
                 /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
                 register s32 fz asm("r2") = 200;
                 /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
@@ -1248,14 +1243,10 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             SceneState_ResetCounterAndStartTask();
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cx asm("r0") = 0x3480000 >> 18;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cz asm("r2") = 0xd80000 >> 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cm asm("r3");
+                s32 cx = 0x3480000 >> 18;
+                s32 cy = 1;
+                s32 cz = 0xd80000 >> 16;
+                s32 cm;
                 /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
                 cm = 1;
@@ -1281,8 +1272,7 @@ void FieldScene_RunScene3ba_020015e0(s32 a0)
             Engine_EventWait(60);
             Event_ShowMessage(a0, 0);
             {
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fx asm("r1") = 0x2e0;
+                s32 fx = 0x2e0;
                 /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
                 register s32 fz asm("r2") = 200;
                 /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
@@ -1327,14 +1317,10 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledLumberWater);
         Camera_SetSpeed(196608, 24576);
         {
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            register s32 cx asm("r0") = 71303168 >> 19;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            register s32 cy asm("r1") = 1;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            register s32 cz asm("r2") = 11010048 >> 16;
-            /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
-            register s32 cm asm("r3");
+            s32 cx = 71303168 >> 19;
+            s32 cy = 1;
+            s32 cz = 11010048 >> 16;
+            s32 cm;
             /* FAKEMATCH: measured camera mode/Z setup order differs with true void calls. */
             asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
             cm = 1;
@@ -1368,8 +1354,7 @@ void Scene_RunSceneFourCoordinator(s32 scene)
         SceneState_ReleaseTableAndResetC6a6();
         Engine_EventWait(15);
         {
-            /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-            register s32 fx asm("r1") = 984;
+            s32 fx = 984;
             /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
             register s32 fz asm("r2") = 200;
             /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */

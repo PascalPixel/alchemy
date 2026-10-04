@@ -106,9 +106,9 @@ Func_02003cc4:
 	.thumb_func
 Func_02003ccc:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_02003cd4
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02003cd4:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02003cdc
 	.thumb_func

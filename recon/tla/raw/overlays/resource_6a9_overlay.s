@@ -2,46 +2,7 @@
 	.thumb
 	.section .text.x0200807e,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008080,"ax",%progbits
-	.global Func_02000080
-	.thumb_func
-Func_02000080:
-	push {r5, r6, lr}
-	adds r4, r0, #0
-	adds r5, r1, #0
-	adds r6, r2, #0
-	adds r0, r3, #0
-	adds r2, r5, #0
-	adds r1, r4, #0
-	adds r3, r6, #0
-	bl Func_02001084
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020080ca
-	movs r1, #0
-	bl Object_SetSpritePriority
-	adds r2, r5, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	adds r2, #4
-	movs r3, #8
-	strb r3, [r2]
-	adds r0, r5, #0
-	movs r1, #0
-	bl ObjectDispatch_SetSingleChildField26
-	adds r0, r5, #0
-	movs r1, #14
-	bl Object_SetPartAttribute
-	adds r0, r5, #0
-	movs r1, #1
-	bl Animation_SetStateFlags
-	adds r0, r5, #0
-	b .L_020080cc
-.L_020080ca:
-	movs r0, #0
-.L_020080cc:
-	pop {r5, r6, pc}
+	.section .text.x020080ce,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x020080d0,"ax",%progbits
 	.global Func_020000d0
@@ -55,7 +16,7 @@ Func_020000d0:
 	adds r2, r5, #0
 	adds r1, r4, #0
 	adds r3, r6, #0
-	bl Func_02001084
+	bl Engine_ObjectCreate
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0200811e
@@ -87,37 +48,7 @@ Func_020000d0:
 .L_02008120:
 	pop {r5, r6, pc}
 	.2byte 0x0000
-	.section .text.x02008124,"ax",%progbits
-	.global Func_02000124
-	.thumb_func
-Func_02000124:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x0200815c,"ax",%progbits
 	.global Func_0200015c
@@ -165,7 +96,7 @@ Func_0200015c:
 	adds r1, r5, #0
 .L_020081ac:
 	mov r3, r8
-	bl Func_02001084
+	bl Engine_ObjectCreate
 	adds r6, r0, #0
 	cmp r6, #0
 	bne .L_020081ba
@@ -360,7 +291,7 @@ Func_0200015c:
 .L_02008330:
 	.4byte Data_02001228
 .L_02008334:
-	.4byte Func_02000124
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008338:
 	.4byte 0xffff0000
 	.section .text.x02008344,"ax",%progbits
@@ -509,24 +440,7 @@ Func_020003f0:
 	.2byte 0x0000
 .L_02008434:
 	.4byte gMapCellBuffer
-	.section .text.x02008438,"ax",%progbits
-	.global Func_02000438
-	.thumb_func
-Func_02000438:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	movs r5, #60
-.L_0200843e:
-	cmp r5, #0
-	beq .L_02008450
-	movs r0, #1
-	bl WaitFrames
-	ldr r3, [r6, #40]
-	subs r5, #1
-	cmp r3, #0
-	bne .L_0200843e
-.L_02008450:
-	pop {r5, r6, pc}
+	.section .text.x02008452,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008454,"ax",%progbits
 	.global Func_02000454
@@ -1154,14 +1068,14 @@ Func_0200087c:
 	lsls r3, r3, #1
 	movs r1, #0
 	ldr r0, [r7, #8]
-	bl Func_02000080
+	bl OverlayObject_PrepareObject
 	adds r5, r0, #0
 	movs r0, #204
 	bl Func_02001164
 	adds r0, r7, #0
-	bl Func_02000438
+	bl OverlayObject_WaitUntilIdle
 	adds r0, r7, #0
-	bl Func_02000438
+	bl OverlayObject_WaitUntilIdle
 	b .L_02008960
 	.2byte 0x0000
 .L_02008958:
@@ -1182,9 +1096,9 @@ Func_0200087c:
 	b .L_02008a1e
 .L_0200897a:
 	adds r0, r7, #0
-	bl Func_02000438
+	bl OverlayObject_WaitUntilIdle
 	adds r0, r7, #0
-	bl Func_02000438
+	bl OverlayObject_WaitUntilIdle
 	movs r0, #188
 	bl Func_02001164
 	add r4, sp, #16

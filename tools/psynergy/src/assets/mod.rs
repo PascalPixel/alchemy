@@ -1,11 +1,9 @@
 //! Byte-oriented asset codecs. Callers own file paths and game layouts.
 pub mod compression;
-pub mod huffman_archive;
 pub mod image;
 pub mod lz;
 pub mod midi;
 pub mod po;
-pub mod text;
 pub mod wav;
 
 #[derive(Debug, Clone, PartialEq, Eq)]

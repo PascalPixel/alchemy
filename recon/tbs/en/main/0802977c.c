@@ -10,7 +10,18 @@
  * ranks last), and with it the slot read is ldrh [fp, r1] there and an
  * add here. Setting the mask at the top of the loop body, a second set, a
  * narrower type and moving the work read do not turn it; 110,000 permuter
- * candidates reached 345. */
+ * candidates reached 345.
+ * 2026-10-04 mechanism: cse adds REG_EQUAL 2 to the mask's set, and
+ * local-alloc's update_equiv_regs turns it into REG_EQUIV and doubles its
+ * live length (88 -> 168 against work's 125), so global allocates work
+ * first (order 8, 10, 9, 11: count r8, total sl, work r9, mask fp). The
+ * reference's r9 mask must therefore be a register with no constant
+ * equivalence. KEY_B inline (975), an initializer (1265), for (;;) (4476),
+ * the mask in the finalize calls (cse folds it back, 485) do not.
+ * Pinning the mask to r9 (measurement only) leaves 470: the reference
+ * loads 0x12f2 into r1 and reads [copy of fp, r1]; here the offset's
+ * single-use REG_EQUIV is substituted into the address and reload adds it
+ * to fp. Both residuals vanish if constant sets carry no equivalence. */
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "RENDER_INPUT.H"

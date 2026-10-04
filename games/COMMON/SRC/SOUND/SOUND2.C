@@ -127,28 +127,28 @@ void AudioEngine_SetMode(u32 mode)
 void AudioEngine_StopAllChannels(void)
 {
     struct SoundWork *work = SOUND_WORK;
-    struct SoundNote *note;
     s32 i;
+    void *channel;
 
     if (work->lock != SOUND_LOCK)
         return;
     work->lock++;
 
     i = 12;
-    note = work->pcm_notes;
+    channel = work->pcm_notes;
     while (i > 0) {
-        note->state = 0;
+        ((struct SoundNote *)channel)->state = 0;
         i--;
-        note++;
+        channel = (void *)((s32)channel + sizeof(struct SoundNote));
     }
-    /* FAKEMATCH: keep the original shared 64-byte cursor transport;
-       separate PCM/CGB cursors change r4 to r0 in the PCM clear loop of
-       this 84-byte routine. The second loop selects the actual CGB view. */
-    note = (struct SoundNote *)work->cgb_notes;
-    if (note != NULL) {
-        for (i = 1; i <= 4; i++, note++) {
+    channel = work->cgb_notes;
+    if (channel != NULL) {
+        i = 1;
+        while (i <= 4) {
             work->cgb_mute(i);
-            ((struct CgbNote *)note)->state = 0;
+            ((struct CgbNote *)channel)->state = 0;
+            i++;
+            channel = (void *)((s32)channel + sizeof(struct CgbNote));
         }
     }
     work->lock = SOUND_LOCK;

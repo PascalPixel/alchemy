@@ -17,15 +17,6 @@
 #include "RAM_BUFFER.H"
 
 
-/* The first OAM part's existing byte attribute view; not an allocation owner. */
-struct AnimationAttribute {
-    u8 unknown_00[9];
-    u8 low : 2;
-    u8 variant : 2;
-    u8 high : 4;
-};
-
-
 extern u8 gBattleFxWork[];
 
 
@@ -53,15 +44,12 @@ extern u16 ParticleStreams_CellOffsets[];
    motes fall, bounce and shrink until their life in variant runs out. */
 void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition actor_position;
     struct EffectPosition target_position;
     struct EffectPosition position;
     s32 screen_x;
     s32 screen_y;
     DrawRectangle draw[2];
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
@@ -75,13 +63,10 @@ void BattlePres_RunBurstScene(struct BattleEffectArgument *effect, s32 variant)
     s32 i;
     s32 j;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    sheet = heap_cache[2];
-    camera = *(struct BattleCamera **)((u8 *)heap_cache -
-        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    sheet = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     *(volatile u16 *)0x04000052 = 0x1010;
@@ -274,7 +259,6 @@ extern const struct WallScale RisingWall_UnitScale;
    cell is its own variable: each is what the code's register use shows. */
 void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing packed byte9 field keeps its mask across object creation; the ordinary byte mask shortened the wall scene by four bytes and reordered stores. */
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
@@ -371,7 +355,7 @@ void BattlePres_RunRisingWall(struct BattleEffectArgument *effect)
         if (object != 0) {
             object->flags = 0;
             AnimationObjects_SelectAnimationFar(object, i / 4);
-            ((struct AnimationAttribute *)work->objects[i])->variant = 1;
+            ((struct AnimationObject *)work->objects[i])->part[0].priority = 1;
         }
     }
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);

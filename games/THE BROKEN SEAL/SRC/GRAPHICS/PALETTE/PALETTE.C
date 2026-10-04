@@ -182,32 +182,15 @@ void PaletteGlow_Update(s32 phase, s32 brightness)
 
 void GraphicsPalette_DecrementSelectionWrap(struct WorkspaceWork *work)
 {
-    /* FAKEMATCH: retain the existing page wire conversions; a direct u16
-       decrement in f4f9d28 changes the 36-byte body to 40 in all editions. */
-    u16 *page;
-    s32 value;
-    u16 current;
-    s32 next;
-
-    page = &work->page;
-    value = *page;
-    current = value;
-    next = current;
-    if (next == 0)
-        next = 2;
+    if (work->page == 0)
+        work->page = 2;
     else
-        next = value + 0xffff;
-    *page = next;
+        work->page--;
 }
 
 void Menu_AdvanceWorkspaceIndexModulo3(struct WorkspaceWork *work)
 {
-    /* FAKEMATCH: the existing packed-halfword comparison avoids the new
-       zero-extension; the direct comparison in f4f9d28 changes 36 to 32 bytes. */
-    u32 count = 1 + work->page;
-
-    work->page = count;
-    if ((count << 16) > 0x20000)
+    if (++work->page > 2)
         work->page = 0;
 }
 

@@ -30,7 +30,9 @@ struct FieldActor {
     /* Keeps the actor on the terrain height and lets it fall; cleared to
        move it freely. */
     u8 motion_flags;
-    u8 unknown_56[0x0e];
+    u8 unknown_56[3];
+    u8 collision_flags;
+    u8 unknown_5a[0x0a];
     /* Counts up while the object's update runs. */
     u16 timer;
 };

@@ -1,4 +1,12 @@
-/* DRAFT, rewritten 2026-10-02 in plain C: same instruction count, 51 lines
+/* 2026-10-04 (main-5), score 2269 unchanged: a work pointer throughout
+ * (2353), one count variable stored after the arms (2867; in i, 3037) and
+ * while forms of both unit loops (2269) did not help. Four minutes of
+ * permute reached 1400 only by moving i = 0 to the reset loop and making
+ * transition register; that keeps the 92/88 frame gap and moves i to r4.
+ * The ROM's reset loop uses a fresh work address (r5) and two spilled
+ * copies, which suggests the stage/reset tail is a separate block.
+ *
+ * DRAFT, rewritten 2026-10-02 in plain C: same instruction count, 51 lines
  * differ. Two things remain, both allocation:
  * 1. where the target is a party member the ROM holds the 1 in r8 across the
  *    list call and copies it down for the count store that both arms share;

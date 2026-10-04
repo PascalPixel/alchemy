@@ -78,9 +78,9 @@ Func_020011b4:
 	.thumb_func
 Func_020011bc:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_020011c4
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_020011c4:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Map_GetTerrainHeight
 	.thumb_func

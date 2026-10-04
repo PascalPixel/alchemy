@@ -42,7 +42,6 @@ extern u32 KorimaMagari_ShakeChance;
 extern u8 MsgFieldFlippedSwitch[];
 void State_CopyPresetA0d0WithOffsetB0(void);
 void State_UpdateScrollRegistersWithPreset(void);
-void KorimaMagari_DrawPanel();
 void Scene_RepaintBoardRecords();
 void Engine_TaskWait();
 void Engine_EventBegin();
@@ -329,13 +328,13 @@ void Scene_RunKorimaMagariSequence(void)
     Engine_TaskWait(30);
     L_02000626:;
     if (*gKorimaMagariLayout == 0) {
-        KorimaMagari_DrawPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 30);
-        KorimaMagari_DrawPanel(9, 51, 16, 5, 1, 9, 30);
-        KorimaMagari_DrawPanel(41, 51, 16, 5, 2, 9, 30);
+        Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 30);
+        Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 30);
+        Map_DrawCellPanel(41, 51, 16, 5, 2, 9, 30);
     } else {
-        KorimaMagari_DrawPanel(9, 19, 16, 5, 0, 9, 30);
-        KorimaMagari_DrawPanel(9, 83, 16, 5, 1, 9, 30);
-        KorimaMagari_DrawPanel(41, 83, 16, 5, 2, 9, 30);
+        Map_DrawCellPanel(9, 19, 16, 5, 0, 9, 30);
+        Map_DrawCellPanel(9, 83, 16, 5, 1, 9, 30);
+        Map_DrawCellPanel(41, 83, 16, 5, 2, 9, 30);
     }
 
     KorimaMagari_ShakeChance = 0;
@@ -355,13 +354,13 @@ void Scene_RunKorimaMagariSequence(void)
     } while (v3 <= 100);
     Engine_AudioPlayCue(0x121);
     if (*gKorimaMagariLayout == 0) {
-        KorimaMagari_DrawPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 19);
-        KorimaMagari_DrawPanel(9, 51, 16, 5, 1, 9, 19);
-        KorimaMagari_DrawPanel(41, 51, 16, 5, 2, 9, 19);
+        Map_DrawCellPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 19);
+        Map_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);
+        Map_DrawCellPanel(41, 51, 16, 5, 2, 9, 19);
     } else {
-        KorimaMagari_DrawPanel(9, 19, 16, 5, 0, 9, 19);
-        KorimaMagari_DrawPanel(9, 83, 16, 5, 1, 9, 19);
-        KorimaMagari_DrawPanel(41, 83, 16, 5, 2, 9, 19);
+        Map_DrawCellPanel(9, 19, 16, 5, 0, 9, 19);
+        Map_DrawCellPanel(9, 83, 16, 5, 1, 9, 19);
+        Map_DrawCellPanel(41, 83, 16, 5, 2, 9, 19);
     }
     Engine_TaskWait(1);
     Runtime_SetIrqHandler(1, 0, 0);
@@ -664,27 +663,15 @@ void Scene_PushBlockAlongRun(struct TileRun2 *runs)
    towards it. */
 void Effect_AdjustPaletteColors(s32 amount)
 {
-    u32 x;
+    u16 i;
 
     KorimaPalette_SaveFirst();
-    x = 0;
-    do {
-        u32 idx = x >> 16;
-        if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
-            u16 *pal = (u16 *)(0x5000000 + idx * 2);
+    for (i = 0; i < 224; i++) {
+        if ((i < 17 || i > 23) && (i < 193 || i > 200)) {
+            u16 *pal = (u16 *)(0x5000000 + i * 2);
             *pal = Effect_AdjustColorChannels(*pal, amount);
         }
-        /* FAKEMATCH: forced temporary; the step is kept in its own
-           register and tested before it replaces x, which the plain
-           loop condition does not do. */
-        {
-            u32 nx = x + 0x10000;
-            x = nx;
-            if (nx > 0xdf0000) {
-                break;
-            }
-        }
-    } while (1);
+    }
     KorimaPalette_Capture();
     KorimaPalette_SaveSecond();
     Engine_ColorBufferApplyTarget(0x10000, 0);

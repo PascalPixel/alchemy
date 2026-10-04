@@ -73,16 +73,14 @@ void Object_SetPosition(struct ObjectRuntime *, s32, s32, s32);
 
 void BattleFx_Run(void)
 {
-    /* FAKEMATCH: the existing effect-cell56 to runtime-cell27 transport shares
-       its base load; separate owner globals add a pool word and reorder loads. */
     struct BattleFxScene *request;
     struct BattleRuntime *battle;
     s32 battle_mode;
     s32 target_id;
     s32 obj_id;
 
-    request = gEffectWork;
-    battle = *(struct BattleRuntime **)((u8 *)&gEffectWork - 29 * sizeof(void *));
+    request = *(gWorkSlot + 56);
+    battle = *(gWorkSlot + HEAP_SLOT_EVENT);
     battle_mode = request->animation;
     target_id = request->second_object_id;
 
@@ -157,10 +155,8 @@ void BattleFx_Run(void)
 /* battle/effects/set/dispatch_request_kind.c */
 void BattleFx_DispatchRequestKind(void)
 {
-    /* FAKEMATCH: retain the existing56-to27 cache-cell access; a direct
-       runtime owner load adds a literal and changes request-load ordering. */
-    struct BattleFxScene *request = gEffectWork;
-    struct BattleRuntime *battle = *(struct BattleRuntime **)((u8 *)&gEffectWork - 29 * sizeof(void *));
+    struct BattleFxScene *request = *(gWorkSlot + 56);
+    struct BattleRuntime *battle = *(gWorkSlot + HEAP_SLOT_EVENT);
     s32 battle_mode = request->animation;
     s32 target_id = request->second_object_id;
 

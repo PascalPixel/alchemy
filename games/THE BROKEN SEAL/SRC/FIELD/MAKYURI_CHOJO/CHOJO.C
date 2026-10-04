@@ -1484,14 +1484,14 @@ void FieldScene_RunScene39d_02002ddc(void)
     Engine_MapRedraw();
     Engine_TaskWait(1);
     *(u8 *)(((s32)Object_GetById(9)) + 85) = 0;
-    Actor_SetPosition(9, PIXELS(0x68), PIXELS(0x108));
+    Engine_ActorSetPosition(9, PIXELS(0x68), PIXELS(0x108));
     record = ((s32)Object_GetById(9));
     *(s32 *)(record + 12) = -0x200000;
-    record = Actor_Get(9);
+    record = Object_GetById(9);
     *(s32 *)(record + 60) = -0x200000;
     *(u8 *)(Battle_GetWorkObject1e0Far() + 85) = 0;
-    Camera_SetSpeed(0xcccc, 0x1999);
-    Camera_MoveTo(PIXELS(0x80), -1, PIXELS(0xB8), 1);
+    Engine_CameraSetSpeed(0xcccc, 0x1999);
+    Engine_CameraMoveTo(PIXELS(0x80), -1, PIXELS(0xB8), 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(30);
     Map_CopyCellsTo(29, 74, 4, 74, 5, 4);
@@ -1501,7 +1501,7 @@ void FieldScene_RunScene39d_02002ddc(void)
     Engine_ActorSetSpritePriority(17, 1);
     Engine_ActorSetSpritePriority(18, 1);
     Engine_EventWait(20);
-    GameFlag_Set(0x251);
+    Engine_GameFlagSet(0x251);
     Engine_EventEnd();
 }
 
@@ -1743,4 +1743,88 @@ void SceneEffect_UpdateArcPosition(struct OverlayObject *object)
     object->coordinate_38 = object->coordinate_08;
     object->coordinate_40 = object->coordinate_10;
     object->angle_64 -= 0x200;
+}
+
+/* The lamp's height in the aerie's map work. */
+struct LampWork {
+    s16 unused;
+    s16 height;
+};
+
+/* A lamp spark's object record, as this overlay fills it. */
+struct LampSpark {
+    u8 unknown_00[0x30];
+    s32 swing;
+    u8 unknown_34[0x1c];
+    struct FieldSprite *sprite;
+    u8 unknown_54;
+    u8 motion_flags;
+    u8 unknown_56[0x0e];
+    u16 angle;
+    u16 turn;
+    struct FieldActor *source;
+    void (*update)();
+};
+
+/* The spark's motion script. */
+extern const s32 Data_02003c54[];
+
+/* Actor 8, the aerie's lamp, flickers between two heights and sizes while
+ * the lamp work is low, and every sixteenth frame throws a spark that swings
+ * round it. */
+void MakyuriChojo_FlickerActorEight(void)
+{
+    struct FieldActor *lamp;
+    struct LampSpark *spark;
+    struct FieldSprite *sprite;
+    struct LampWork *work;
+    s32 height;
+    s32 scale;
+    s32 tick;
+    u32 angle;
+
+    lamp = Object_GetById(8);
+    work = (struct LampWork *)((u8 *)gMapWork[0] + 0xe8);
+    height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
+    if (work->height <= 129) {
+        if (gFrameCount & 1) {
+            Engine_ActorSetPosition(8, 0x1300000, 0x900000);
+            scale = 0x10000;
+            Object_GetById(8)->scale_x = scale;
+        } else {
+            Engine_ActorSetPosition(8, 0x1300000, 0x970000);
+            scale = 0x14ccc;
+            Object_GetById(8)->scale_x = scale;
+        }
+        Object_GetById(8)->scale_y = scale;
+    } else {
+        Actor_SetPosition(8, 0x80000, 0x80000);
+    }
+    if (lamp == NULL) {
+        return;
+    }
+    tick = gFrameCount & 15;
+    if (tick != 0) {
+        return;
+    }
+    spark = (struct LampSpark *)Object_Create(0x11c, lamp->x.fixed + 0x80000,
+                                              lamp->y.fixed + height + 0x80000, lamp->z.fixed);
+    height = height / 0x60000;
+    height <<= 16;
+    if (spark == NULL) {
+        return;
+    }
+    sprite = spark->sprite;
+    Engine_ObjectSetScript((struct FieldActor *)spark, Data_02003c54);
+    ObjectGroup_SetChildValue((struct FieldActor *)spark, 3);
+    spark->motion_flags = tick;
+    angle = Engine_RandomNext() & 0x0ffff000;
+    spark->angle = angle;
+    spark->turn = tick;
+    spark->source = lamp;
+    spark->update = SceneEffect_UpdateArcPosition;
+    spark->swing = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
+    /* FAKEMATCH: the byte view keeps this store ahead of the lamp's reload; the field store lets the reload schedule first (score 210). */
+    *(u8 *)&sprite->flags = 0;
+    sprite->priority = lamp->sprite->priority;
 }

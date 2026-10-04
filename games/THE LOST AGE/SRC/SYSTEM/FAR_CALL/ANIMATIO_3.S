@@ -28,7 +28,7 @@ Func_08020288:
 	.global Func_08020290
 	.thumb_func
 Func_08020290:
-	overlay_veneer Func_080236e8
+	overlay_veneer ObjectDispatch_SetSpritePriority
 	.global Func_08020298
 	.thumb_func
 Func_08020298:

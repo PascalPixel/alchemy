@@ -74,19 +74,15 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
 
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collision_code)
 {
-    /* FAKEMATCH: retain the existing cell-byte write. The typed element
-       store in aadcc37dd reversed the add operands and selected r3, not r2. */
     struct MapState *state = gMapWork[0];
 
     x >>= 20;
     y >>= 20;
     if (state != NULL) {
         struct MapCell *cells = state->layers[layer & 3].cells;
-        u32 offset = (x + (y << 7)) * sizeof(struct MapCell);
-        u8 *cell = (u8 *)cells;
 
-        cell += offset;
-        cell[(u32)&((struct MapCell *)0)->collision_code] = collision_code;
+        cells += x + (y << 7);
+        cells->collision_code = collision_code;
     }
 }
 

@@ -76,24 +76,17 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source)
 /* Each priority has a head; an entry contributes only its first-word link. */
 void Runtime_PushSlotEntry(void *slot_entry, s32 slot)
 {
-    /* FAKEMATCH: the ordinary named-bank index reduces this
-       complete native list push from 36 to 32 bytes. Retain its existing
-       word-cell address transport; every entry contributes only its link. */
+    void **head;
     void *previous_head;
-    s32 slot_offset;
-    s32 clamped_slot;
 
-    clamped_slot = slot;
-    if (clamped_slot > 0xFF) {
-        clamped_slot = 0xFF;
-    }
-    if (clamped_slot < 0) {
-        clamped_slot = 0;
-    }
-    slot_offset = clamped_slot * sizeof(void *);
-    previous_head = *(void **)((u8 *)slot_offset + (u32)Data_03001400);
-    *(void **)((u8 *)slot_offset + (u32)Data_03001400) = slot_entry;
-    *(s32 *)slot_entry = (s32)previous_head;
+    if (slot > 0xFF)
+        slot = 0xFF;
+    if (slot < 0)
+        slot = 0;
+    head = &Data_03001400[slot];
+    previous_head = *head;
+    *head = slot_entry;
+    *(void **)slot_entry = previous_head;
 }
 
 void Render_BuildOamList(void *work)

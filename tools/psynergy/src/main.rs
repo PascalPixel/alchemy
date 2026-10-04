@@ -1,218 +1,530 @@
-mod cli;
+//! `psynergy deps`: the dependency map of linked builds, one TSV per view.
+//! Rebuilt from the builds' ELF images and maps, the recon listings and the
+//! drafts on every run; a report for people that nothing else reads.
 
-use psynergy::{assembly, decode, lift, unit};
-use std::fs::{self, OpenOptions};
-use std::io::Write;
-use std::path::PathBuf;
-use std::process::ExitCode;
+use psynergy::deps::{self, Blocker, Image, Index, Key, Symbol, Target};
+use psynergy::elf::Elf;
+use psynergy::similar::{self, Origin};
+use std::collections::{BTreeMap, BTreeSet};
+use std::fmt::Write as _;
+use std::fs;
+use std::path::{Path, PathBuf};
 
-const USAGE: &str = "usage: psynergy <command> [args]\n\
-  decompile INPUT       recover draft C from an explicit Thumb image\n\
-  disassemble INPUT     decode a bounded Thumb image\n\
-  decode-lz INPUT       decode one tagged LZ stream at --offset\n\
-  convert FORMAT        convert one explicit asset file (convert --help lists formats)\n\
-  editions --build DIR  list a function's pool words across other editions' ROMs\n\
-  similar --build DIR   rank functions of linked builds by normalised edit distance\n\
-  deps --build DIR      map calls, references, blockers and the not-yet-C frontier\n\
-  relist --image FILE  regenerate listings with every function and address labelled\n\
-No default ROM, project registry, compiler route, or adoption authority.";
-const CODE_USAGE: &str = "usage: psynergy decompile INPUT --base ADDRESS --entry ADDRESS --span BYTES [--name NAME] [--out FILE]\n\
-       psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--source] [--out FILE]\n\
---source prints assembler source for the extent (literal pools as .4byte) instead of a listing.";
-const KEYWORDS: &[&str] = &[
-    "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else",
-    "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long", "register",
-    "restrict", "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef",
-    "union", "unsigned", "void", "volatile", "while",
-];
+const USAGE: &str =
+    "usage: psynergy deps --build DIR [--build DIR]... --out-dir DIR [--root DIR]\n\
+Maps calls and references of every function in each build directory's linked\n\
+images (DIR/*.elf and DIR/overlays/*.elf with their maps), the recon listings\n\
+(ROOT/recon/GAME/raw) and drafts (ROOT/recon/GAME/LANG), for a build named\n\
+GAME-LANG. Writes deps-BUILD-VIEW.tsv into the output directory, one per view:\n\
+  functions  every function with its callers, callees and blockers\n\
+  calls      call edges (bl, far-call and overlay veneers, pointers)\n\
+  references pool words and ids of not-yet-C functions, classified\n\
+  blockers   unresolved names by not-yet-C bytes blocked\n\
+  frontier   not-yet-C functions with nothing left to name\n\
+  drafts     drafts with their score and what is left";
 
-fn number(value: &str, label: &str) -> Result<u32, String> {
-    let (radix, digits) = value.strip_prefix("0x").map_or((10, value), |v| (16, v));
-    if digits.is_empty() {
-        return Err(format!(
-            "{label} wants a decimal or 0x-prefixed hexadecimal value"
-        ));
-    }
-    u32::from_str_radix(digits, radix).map_err(|_| format!("invalid {label}: {value}"))
+struct Options {
+    builds: Vec<PathBuf>,
+    root: PathBuf,
+    out_dir: PathBuf,
 }
 
-fn valid_name(name: &str) -> bool {
-    let mut chars = name.chars();
-    chars
-        .next()
-        .is_some_and(|c| c == '_' || c.is_ascii_alphabetic())
-        && chars.all(|c| c == '_' || c.is_ascii_alphanumeric())
-        && !KEYWORDS.contains(&name)
-}
-
-fn code(command: &str, arguments: &[String]) -> Result<String, String> {
-    let input = arguments.first().ok_or_else(|| CODE_USAGE.to_string())?;
-    let mut base = None;
-    let mut entry = None;
-    let mut span = None;
-    let mut name = None;
+fn parse(arguments: &[String]) -> Result<Options, String> {
+    let mut o = Options {
+        builds: Vec::new(),
+        root: PathBuf::from("."),
+        out_dir: PathBuf::new(),
+    };
     let mut out = None;
-    let mut assembly_source = false;
-    let mut i = 1;
+    let mut i = 0;
     while i < arguments.len() {
-        let flag = &arguments[i];
-        let value = |at: usize| {
-            arguments
-                .get(at)
-                .ok_or_else(|| format!("{flag} needs a value"))
-        };
-        if flag == "--source" {
-            assembly_source = true;
-            i += 1;
-            continue;
-        }
-        match flag.as_str() {
-            "--base" => {
-                if base.is_some() {
-                    return Err("duplicate --base".to_string());
-                }
-                base = Some(number(value(i + 1)?, "--base")?);
-            }
-            "--entry" => {
-                if entry.is_some() {
-                    return Err("duplicate --entry".to_string());
-                }
-                entry = Some(number(value(i + 1)?, "--entry")?);
-            }
-            "--span" => {
-                if span.is_some() {
-                    return Err("duplicate --span".to_string());
-                }
-                span = Some(number(value(i + 1)?, "--span")?);
-            }
-            "--name" => {
-                if name.is_some() {
-                    return Err("duplicate --name".to_string());
-                }
-                name = Some(value(i + 1)?.clone());
-            }
-            "--out" => {
-                if out.is_some() {
-                    return Err("duplicate --out".to_string());
-                }
-                out = Some(PathBuf::from(value(i + 1)?));
-            }
-            other => return Err(format!("unknown flag {other}\n{CODE_USAGE}")),
+        let flag = arguments[i].as_str();
+        let value = arguments
+            .get(i + 1)
+            .ok_or_else(|| format!("{flag} needs a value\n{USAGE}"))?;
+        match flag {
+            "--build" => o.builds.push(PathBuf::from(value)),
+            "--root" => o.root = PathBuf::from(value),
+            "--out-dir" => out = Some(PathBuf::from(value)),
+            _ => return Err(format!("unknown option {flag}\n{USAGE}")),
         }
         i += 2;
     }
-    let base = base.ok_or_else(|| "--base is required".to_string())?;
-    let entry = entry.ok_or_else(|| "--entry is required".to_string())?;
-    let span = span.ok_or_else(|| "--span is required".to_string())?;
-    if base & 1 != 0 || entry & 1 != 0 {
-        return Err("--base and --entry must be halfword-aligned".to_string());
+    if o.builds.is_empty() {
+        return Err(format!("at least one --build is required\n{USAGE}"));
     }
-    if entry < base {
-        return Err("--entry must not precede --base".to_string());
-    }
-    if span == 0 || span & 1 != 0 {
-        return Err("--span must be a positive even byte count".to_string());
-    }
-    entry
-        .checked_add(span)
-        .ok_or_else(|| "--entry plus --span overflows 32-bit address space".to_string())?;
-    if command == "decompile" && assembly_source {
-        return Err("--source applies only to disassemble".into());
-    }
-    if command != "decompile" && name.is_some() {
-        return Err("--name applies only to decompile".into());
-    }
-    let name = name.unwrap_or_else(|| "Function".to_string());
-    if !valid_name(&name) {
-        return Err(format!("invalid C identifier: {name}"));
-    }
-    let image = fs::read(input).map_err(|error| format!("{input}: {error}"))?;
-    let start =
-        usize::try_from(entry - base).map_err(|_| "address range is too large".to_string())?;
-    let image_end = start
-        .checked_add(span as usize)
-        .ok_or_else(|| "address range is too large".to_string())?;
-    if image_end > image.len() {
-        return Err(format!(
-            "--entry/--span exceed input ({image_len} bytes)",
-            image_len = image.len()
-        ));
-    }
-    if assembly_source {
-        return output(assembly::thumb_source(&image, base, entry, span)?, out);
-    }
-    let instructions = decode::decode_window_at(&image, base, entry, span);
-    let source = if command == "decompile" {
-        let symbols = |_: u32, _: lift::ReferenceKind| None;
-        let (body, tables) = unit::bodies(&instructions, &symbols);
-        unit::compose(entry, &name, &body, &tables)
-    } else {
-        instructions
-            .iter()
-            .map(|ins| format!("{:08x}: {}\n", ins.addr, ins.text))
-            .collect()
-    };
-    output(source, out)
+    o.out_dir = out.ok_or_else(|| format!("--out-dir is required\n{USAGE}"))?;
+    Ok(o)
 }
 
-fn output(source: String, out: Option<PathBuf>) -> Result<String, String> {
-    match out {
-        None => Ok(source),
-        Some(path) => {
-            let mut file = OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .open(&path)
-                .map_err(|error| format!("{}: {error}", path.display()))?;
-            if let Err(error) = file.write_all(source.as_bytes()) {
-                let _ = fs::remove_file(&path);
-                return Err(format!("{}: {error}", path.display()));
-            }
-            Ok(String::new())
+fn load(root: &Path, build: &Path, name: &str) -> Result<Vec<Image>, String> {
+    let mut images = Vec::new();
+    for elf_path in images_in(build)? {
+        let data = fs::read(&elf_path).map_err(|e| format!("{}: {e}", elf_path.display()))?;
+        let elf = Elf::parse(&data).map_err(|e| format!("{}: {e}", elf_path.display()))?;
+        let map_path = elf_path.with_extension("map");
+        let map =
+            fs::read_to_string(&map_path).map_err(|e| format!("{}: {e}", map_path.display()))?;
+        let stem = elf_path
+            .file_stem()
+            .map(|s| s.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        let image = similar::Image {
+            build: name,
+            name: &stem,
+            elf: &elf,
+            map: &map,
+        };
+        let mut functions = similar::decoded(&image, &|o| classify(root, o), &|_| true);
+        functions.sort_by_key(|(f, _)| f.address);
+        functions.dedup_by_key(|(f, _)| f.address);
+        let symbols = elf
+            .symbols
+            .iter()
+            .filter(|s| {
+                s.section != 0
+                    && !s.name.is_empty()
+                    && !s.name.starts_with('$')
+                    && !s.name.starts_with('.')
+            })
+            .filter(|s| matches!(s.kind, 0..=2 | 13 | 15))
+            .map(|s| Symbol {
+                name: s.name.clone(),
+                value: s.value,
+                size: s.size,
+                absolute: s.section == 0xfff1,
+            })
+            .collect();
+        images.push(Image {
+            build: name.to_string(),
+            main: elf_path.parent() == Some(build),
+            name: stem,
+            functions,
+            symbols,
+        });
+    }
+    Ok(images)
+}
+
+/// Identifiers the listings use, by the function each label starts.
+fn listing_ids(
+    root: &Path,
+    game: &str,
+    images: &[Image],
+) -> BTreeMap<(usize, u32), BTreeSet<String>> {
+    let mut out: BTreeMap<(usize, u32), BTreeSet<String>> = BTreeMap::new();
+    let Some(main) = images.iter().position(|i| i.main) else {
+        return out;
+    };
+    let by_name: BTreeMap<&str, u32> = images[main]
+        .symbols
+        .iter()
+        .filter(|s| !s.absolute)
+        .map(|s| (s.name.as_str(), s.value & !1))
+        .collect();
+    let starts: BTreeSet<u32> = images[main]
+        .functions
+        .iter()
+        .map(|(f, _)| f.address)
+        .collect();
+    let mut files = Vec::new();
+    for dir in [
+        root.join("recon").join(game).join("raw"),
+        root.join("recon").join(game),
+    ] {
+        if let Ok(entries) = fs::read_dir(&dir) {
+            files.extend(
+                entries
+                    .flatten()
+                    .map(|e| e.path())
+                    .filter(|p| p.extension().is_some_and(|e| e == "s" || e == "S")),
+            );
         }
     }
+    files.sort();
+    for path in files {
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        let mut current = None;
+        for (label, used) in deps::listing_identifiers(&text) {
+            if let Some(&address) = by_name.get(label.as_str()) {
+                if starts.contains(&address) {
+                    current = Some(address);
+                }
+            }
+            if let Some(address) = current {
+                out.entry((main, address)).or_default().extend(used);
+            }
+        }
+    }
+    out
 }
 
-fn main() -> ExitCode {
-    let arguments: Vec<String> = std::env::args().skip(1).collect();
-    if arguments.is_empty() || arguments == ["--help"] || arguments == ["-h"] {
-        println!("{USAGE}");
-        return if arguments.is_empty() {
-            ExitCode::from(2)
-        } else {
-            ExitCode::SUCCESS
-        };
+struct Draft {
+    path: String,
+    key: Option<Key>,
+    score: Option<u32>,
+    status: &'static str,
+}
+
+fn hex8(text: &str) -> Vec<u32> {
+    text.split(|c: char| !c.is_ascii_hexdigit())
+        .filter(|w| w.len() == 8)
+        .filter_map(|w| u32::from_str_radix(w, 16).ok())
+        .collect()
+}
+
+fn drafts(root: &Path, game: &str, lang: &str, images: &[Image]) -> Vec<Draft> {
+    let base = root.join("recon").join(game).join(lang);
+    let mut files = Vec::new();
+    for dir in [base.clone(), base.join("main"), base.join("overlays")] {
+        if let Ok(entries) = fs::read_dir(&dir) {
+            files.extend(
+                entries
+                    .flatten()
+                    .map(|e| e.path())
+                    .filter(|p| p.extension().is_some_and(|e| e == "c")),
+            );
+        }
     }
-    let command = arguments[0].as_str();
-    let rest = &arguments[1..];
-    let help = rest == ["--help"] || rest == ["-h"];
-    let result = match command {
-        "decompile" | "disassemble" if help => Ok(CODE_USAGE.into()),
-        "decompile" | "disassemble" => code(command, rest),
-        "decode-lz" if help => Ok(cli::decode_lz::USAGE.into()),
-        "decode-lz" => cli::decode_lz::run(rest),
-        "convert" if help => Ok(cli::convert::USAGE.into()),
-        "convert" => cli::convert::run(rest),
-        "editions" if help => Ok(cli::editions::USAGE.into()),
-        "editions" => cli::editions::run(rest),
-        "similar" if help => Ok(cli::similar::USAGE.into()),
-        "similar" => cli::similar::run(rest),
-        "deps" if help => Ok(cli::deps::USAGE.into()),
-        "deps" => cli::deps::run(rest),
-        "relist" if help => Ok(cli::relist::USAGE.into()),
-        "relist" => cli::relist::run(rest),
-        _ => Err(format!("unknown psynergy command: {command}\n{USAGE}")),
-    };
-    match result {
-        Ok(source) => {
-            if !source.is_empty() {
-                print!("{source}");
+    files.sort();
+    let not_yet_c: BTreeMap<&str, Key> = images
+        .iter()
+        .enumerate()
+        .flat_map(|(ii, image)| {
+            image
+                .functions
+                .iter()
+                .enumerate()
+                .filter(|(_, (f, _))| f.origin == Origin::NotYetC)
+                .map(move |(fi, (f, _))| (f.name.as_str(), (ii, fi)))
+        })
+        .collect();
+    let at = |image: &str, address: u32| -> Option<Key> {
+        let ii = images.iter().position(|i| {
+            if image.is_empty() {
+                i.main
+            } else {
+                i.name == image
             }
-            ExitCode::SUCCESS
+        })?;
+        let fi = images[ii]
+            .functions
+            .iter()
+            .position(|(f, _)| f.address == address)?;
+        Some((ii, fi))
+    };
+    let mut out = Vec::new();
+    for path in files {
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        let file = path
+            .file_stem()
+            .map(|s| s.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        let overlay = file
+            .strip_prefix("resource_")
+            .and_then(|r| r.get(..3))
+            .map(|id| format!("resource_{id}"));
+        let mut key = hex8(&file)
+            .last()
+            .and_then(|&a| at(overlay.as_deref().unwrap_or(""), a));
+        if key.is_none() {
+            // Otherwise the not-yet-C function the draft defines.
+            key = text
+                .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+                .find_map(|w| {
+                    not_yet_c
+                        .get(w)
+                        .copied()
+                        .filter(|_| text.contains(&format!("{w}(")))
+                });
+        }
+        let notes = deps::comments(&text);
+        out.push(Draft {
+            path: path
+                .strip_prefix(root)
+                .unwrap_or(&path)
+                .display()
+                .to_string(),
+            key,
+            score: deps::draft_score(&notes),
+            status: deps::draft_status(&notes),
+        });
+    }
+    out
+}
+
+fn write(dir: &Path, name: &str, text: &str) -> Result<(), String> {
+    let path = dir.join(name);
+    fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))
+}
+
+fn names(index: &Index, keys: &[Key], limit: usize) -> String {
+    let mut list: Vec<&str> = keys
+        .iter()
+        .take(limit)
+        .map(|k| index.function(*k).name.as_str())
+        .collect();
+    if keys.len() > limit {
+        list.push("...");
+    }
+    list.join(",")
+}
+
+fn report(o: &Options, build: &Path, out_dir: &Path) -> Result<String, String> {
+    let name = build
+        .file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    let (game, lang) = name.split_once('-').unwrap_or((&name, "en"));
+    let images = load(&o.root, build, &name)?;
+    let ids = listing_ids(&o.root, game, &images);
+    let index = Index::build(&images, &ids);
+    let drafts = drafts(&o.root, game, lang, &images);
+    let draft_of: BTreeMap<Key, &Draft> = drafts
+        .iter()
+        .filter_map(|d| d.key.map(|k| (k, d)))
+        .collect();
+    let label = |key: Key| {
+        let f = index.function(key);
+        format!(
+            "{}\t{:08x}\t{}\t{}",
+            images[key.0].name,
+            f.address,
+            f.name,
+            f.origin.label()
+        )
+    };
+    let target = |t: &Target| match t {
+        Target::Function(k) => label(*k),
+        Target::Unnamed(a) => format!("\t{a:08x}\t\tunnamed"),
+    };
+
+    let mut callers: BTreeMap<Key, BTreeSet<Key>> = BTreeMap::new();
+    let mut callees: BTreeMap<Key, usize> = BTreeMap::new();
+    let mut calls = String::from("image\taddress\tname\torigin\tcallee_image\tcallee_address\tcallee\tcallee_origin\tkind\tvia\n");
+    for c in &index.calls {
+        *callees.entry(c.caller).or_default() += 1;
+        if let Target::Function(k) = c.callee {
+            callers.entry(k).or_default().insert(c.caller);
+        }
+        let _ = writeln!(
+            calls,
+            "{}\t{}\t{}\t{}",
+            label(c.caller),
+            target(&c.callee),
+            c.kind,
+            c.via.as_deref().unwrap_or("")
+        );
+    }
+
+    let mut functions = String::from("image\taddress\tname\torigin\tbytes\tcallers\tcallees\tblockers\tdraft\tdraft_status\tsource\n");
+    for (ii, image) in images.iter().enumerate() {
+        for (fi, (f, _)) in image.functions.iter().enumerate() {
+            let key = (ii, fi);
+            let blockers = index
+                .blockers
+                .get(&key)
+                .map_or(0, |s| s.iter().filter(|b| b.blocks()).count());
+            let draft = draft_of.get(&key);
+            let _ = writeln!(
+                functions,
+                "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+                label(key),
+                f.bytes,
+                callers.get(&key).map_or(0, |s| s.len()),
+                callees.get(&key).copied().unwrap_or(0),
+                blockers,
+                draft.map_or("", |d| d.path.as_str()),
+                draft.map_or("", |d| d.status),
+                f.source
+            );
+        }
+    }
+
+    let mut references = String::from("image\taddress\tname\torigin\tclass\treference\tvalue\n");
+    for r in &index.references {
+        if index.function(r.function).origin == Origin::NotYetC {
+            let _ = writeln!(
+                references,
+                "{}\t{}\t{}\t{:08x}",
+                label(r.function),
+                r.class.label(),
+                r.name,
+                r.value
+            );
+        }
+    }
+
+    let ranked = index.ranked_blockers();
+    let mut blockers = String::from("rank\tkind\tscope\titem\tfunctions\tbytes\tblocked\n");
+    for (rank, (b, keys, bytes)) in ranked.iter().enumerate() {
+        let rank = if b.blocks() {
+            (rank + 1).to_string()
+        } else {
+            "info".into()
+        };
+        let _ = writeln!(
+            blockers,
+            "{rank}\t{}\t{}\t{}\t{}\t{bytes}\t{}",
+            b.kind,
+            b.scope,
+            b.item,
+            keys.len(),
+            names(&index, keys, 20)
+        );
+    }
+
+    let frontier_keys = index.frontier();
+    let mut frontier = String::from(
+        "rank\timage\taddress\tname\torigin\tbytes\tnamed_not_yet_c_callees\tdraft\tdraft_status\n",
+    );
+    for (rank, key) in frontier_keys.iter().enumerate() {
+        let info: Vec<&str> = index.blockers[key]
+            .iter()
+            .map(|b: &Blocker| b.item.as_str())
+            .collect();
+        let draft = draft_of.get(key);
+        let _ = writeln!(
+            frontier,
+            "{}\t{}\t{}\t{}\t{}\t{}",
+            rank + 1,
+            label(*key),
+            index.function(*key).bytes,
+            info.join(","),
+            draft.map_or("", |d| d.path.as_str()),
+            draft.map_or("", |d| d.status)
+        );
+    }
+
+    let mut draft_rows =
+        String::from("draft\timage\taddress\tname\torigin\tbytes\tscore\tstatus\tblockers\n");
+    for d in &drafts {
+        let (function, bytes, blocking) = match d.key {
+            Some(k) => (
+                label(k),
+                index.function(k).bytes.to_string(),
+                index
+                    .blockers
+                    .get(&k)
+                    .map_or(0, |s| s.iter().filter(|b| b.blocks()).count())
+                    .to_string(),
+            ),
+            None => ("\t\t\t".into(), String::new(), String::new()),
+        };
+        let score = d.score.map(|s| s.to_string()).unwrap_or_default();
+        let _ = writeln!(
+            draft_rows,
+            "{}\t{function}\t{bytes}\t{score}\t{}\t{blocking}",
+            d.path, d.status
+        );
+    }
+
+    fs::create_dir_all(out_dir).map_err(|e| format!("{}: {e}", out_dir.display()))?;
+    write(out_dir, &format!("deps-{name}-functions.tsv"), &functions)?;
+    write(out_dir, &format!("deps-{name}-calls.tsv"), &calls)?;
+    write(out_dir, &format!("deps-{name}-references.tsv"), &references)?;
+    write(out_dir, &format!("deps-{name}-blockers.tsv"), &blockers)?;
+    write(out_dir, &format!("deps-{name}-frontier.tsv"), &frontier)?;
+    write(out_dir, &format!("deps-{name}-drafts.tsv"), &draft_rows)?;
+    let not_yet_c = index.blockers.len();
+    let blocking = ranked.iter().filter(|(b, _, _)| b.blocks()).count();
+    Ok(format!(
+        "{name}: {} functions, {} calls, {not_yet_c} not yet C, {blocking} blockers, {} on the frontier, {} drafts; {}\n",
+        images.iter().map(|i| i.functions.len()).sum::<usize>(),
+        index.calls.len(),
+        frontier_keys.len(),
+        drafts.len(),
+        out_dir.display()
+    ))
+}
+
+fn run(arguments: &[String]) -> Result<String, String> {
+    let o = parse(arguments)?;
+    let mut text = String::new();
+    for build in &o.builds {
+        text.push_str(&report(&o, build, &o.out_dir)?);
+    }
+    Ok(text)
+}
+/// The origin and reported source of an object path the linker map names.
+fn classify(root: &Path, object: &str) -> (Origin, String) {
+    let file = object.rsplit('/').next().unwrap_or(object);
+    let Some(at) = object.find("/obj/") else {
+        if file.ends_with("_overlay.o") {
+            return (Origin::NotYetC, file.to_string());
+        }
+        return (Origin::Other, file.to_string());
+    };
+    let relative = &object[at + 5..];
+    let stem = relative.strip_suffix(".o").unwrap_or(relative);
+    let existing = |extensions: &[&str]| {
+        extensions
+            .iter()
+            .map(|e| format!("{stem}{e}"))
+            .find(|p| root.join(p).is_file())
+    };
+    if relative.starts_with("games/") {
+        if let Some(path) = existing(&[".C", ".c"]) {
+            return (Origin::C, path);
+        }
+        if let Some(path) = existing(&[".S", ".s"]) {
+            return (Origin::Assembly, path);
+        }
+        return (Origin::Other, relative.to_string());
+    }
+    if relative.starts_with("recon/") && relative.contains("/raw/") {
+        let path = existing(&[".s", ".S"]).unwrap_or_else(|| relative.to_string());
+        return (Origin::NotYetC, path);
+    }
+    (Origin::Other, relative.to_string())
+}
+
+fn images_in(build: &Path) -> Result<Vec<PathBuf>, String> {
+    let mut elfs = Vec::new();
+    for dir in [build.to_path_buf(), build.join("overlays")] {
+        let Ok(entries) = fs::read_dir(&dir) else {
+            continue;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.extension().is_some_and(|e| e == "map") && path.with_extension("elf").is_file()
+            {
+                elfs.push(path.with_extension("elf"));
+            }
+        }
+    }
+    elfs.sort();
+    if elfs.is_empty() {
+        return Err(format!("{}: no linked image with a map", build.display()));
+    }
+    Ok(elfs)
+}
+
+fn main() -> std::process::ExitCode {
+    let arguments: Vec<String> = std::env::args().skip(1).collect();
+    let rest = match arguments.split_first() {
+        Some((command, rest)) if command == "deps" => rest,
+        _ => {
+            eprintln!("{USAGE}");
+            return std::process::ExitCode::from(2);
+        }
+    };
+    if rest == ["--help"] || rest == ["-h"] {
+        println!("{USAGE}");
+        return std::process::ExitCode::SUCCESS;
+    }
+    match run(rest) {
+        Ok(text) => {
+            print!("{text}");
+            std::process::ExitCode::SUCCESS
         }
         Err(error) => {
             eprintln!("{error}");
-            ExitCode::from(2)
+            std::process::ExitCode::from(2)
         }
     }
 }

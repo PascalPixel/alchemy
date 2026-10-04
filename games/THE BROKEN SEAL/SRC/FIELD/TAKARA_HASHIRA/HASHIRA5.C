@@ -12,8 +12,21 @@ extern u16 gBgScroll[];
 
 s32 TakaraHashira_SyncPriorityIfBehind(struct FieldActor *actor, struct FieldActor *other);
 
+struct MapCell {
+    u32 tile : 12;
+    u32 layer : 2;
+    u32 kind : 2;
+    u32 height : 8;
+    u32 event : 8;
+};
+
+/* A pillar's last cell position, the map cell it covered and the flag it
+   raises when it stands on another pillar. */
 struct PillarSlot {
-    u8 unknown_00[16];
+    s32 x;
+    s32 y;
+    s32 z;
+    struct MapCell cell;
     s32 flag;
 };
 
@@ -51,13 +64,13 @@ void FieldScene_RunScene3b3SequenceA(void)
 
     record = Engine_GameFlagIsSet(0x200);
     if (record == 0) {
-        TakaraHashira_CopyCellBlock(10, 19, 16, 5, record, 10, 31);
-        TakaraHashira_CopyCellBlock(10, 51, 16, 5, 1, 10, 31);
-        TakaraHashira_CopyCellBlock(42, 51, 16, 5, 2, 10, 31);
+        Map_DrawCellPanel(10, 19, 16, 5, record, 10, 31);
+        Map_DrawCellPanel(10, 51, 16, 5, 1, 10, 31);
+        Map_DrawCellPanel(42, 51, 16, 5, 2, 10, 31);
     } else {
-        TakaraHashira_CopyCellBlock(10, 19, 16, 5, 0, 10, 31);
-        TakaraHashira_CopyCellBlock(10, 83, 16, 5, 1, 10, 31);
-        TakaraHashira_CopyCellBlock(42, 83, 16, 5, 2, 10, 31);
+        Map_DrawCellPanel(10, 19, 16, 5, 0, 10, 31);
+        Map_DrawCellPanel(10, 83, 16, 5, 1, 10, 31);
+        Map_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
     }
     TakaraHashira_ShakeChance = 0;
     Engine_TaskAddCallback(CopyAndOffsetCoordinatePreset, 0xc80);
@@ -278,4 +291,111 @@ void TakaraHashira_SortPillarActors(void)
             }
         }
     }
+}
+
+/* A pillar block's object record, as the pillar update reads it. */
+struct PillarActor {
+    u8 unknown_00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_14[14];
+    u8 unknown_22;
+    u8 priority_flags;
+    s32 velocity_x;
+    s32 velocity_y;
+    u8 unknown_2c[0x29];
+    u8 motion_flags;
+};
+
+/* Where a moved pillar's position is copied to test it for collisions. */
+extern s32 TakaraHashira_ProbePosition[];
+
+s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
+void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src);
+void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, struct MapCell *dst);
+s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far);
+void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
+void StagedActor_StepDownUntilClamp(s32 id);
+void OverlayObject_WaitUntilSettledAndReset(struct FieldActor *actor);
+
+/* Each frame, for pillars 8 to 11: a pillar that moved since its slot was
+ * written restores the cells it covered, drops onto a ledge or into a pit
+ * when its move left it unsupported, takes the cells where it now stands,
+ * and raises the flag of each pillar it stands on. Last the pillars are
+ * sorted. */
+void TakaraHashira_UpdatePillarActors(void)
+{
+    u32 id;
+    struct PillarActor *actor;
+    u8 *flags;
+    u32 i;
+    u32 k;
+    struct PillarActor *other;
+    struct MapCell cell;
+
+    for (id = 8; id <= 11; id++) {
+        actor = (struct PillarActor *)Object_GetById(id);
+        actor->unknown_22 = 2;
+        i = id - 8;
+        if ((actor->x >> 20) == TakaraHashira_PillarSlots[i].x && (actor->z >> 20) == TakaraHashira_PillarSlots[i].z
+            && actor->velocity_y == 0) {
+            continue;
+        }
+        Dma_Set(&actor->x, TakaraHashira_ProbePosition, 0x84000003, DMA3);
+        Dma_Wait(DMA3);
+        if (Object_CheckMovementCollision(actor, TakaraHashira_ProbePosition) == -1) {
+            actor->motion_flags = 3;
+        }
+        flags = &actor->motion_flags;
+        TakaraHashira_SetCellAttributes(0, TakaraHashira_PillarSlots[i].x, TakaraHashira_PillarSlots[i].z,
+                                        &TakaraHashira_PillarSlots[i].cell);
+        TakaraHashira_SetCellAttributes(2, TakaraHashira_PillarSlots[i].x, TakaraHashira_PillarSlots[i].z,
+                                        &TakaraHashira_PillarSlots[i].cell);
+        if (*flags & 1) {
+            if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
+                Engine_AudioPlayCue(189);
+                /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
+                *(u8 *)&actor->priority_flags &= 254;
+                TakaraHashira_LowerActorToLedge(id, 1);
+                *(u8 *)&actor->priority_flags |= 1;
+            } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
+                SceneActor_WaitHeightBelowLimit((struct FieldActor *)actor, 0);
+                Engine_AudioPlayCue(189);
+                actor->y = 0;
+                /* FAKEMATCH: the byte view keeps these flag updates out of the record's alias set; field stores reallocate the loop (score 2573). */
+                *(u8 *)&actor->priority_flags &= 254;
+                StagedActor_StepDownUntilClamp(id);
+                actor->x = 0;
+                actor->y = 0;
+                actor->z = 0;
+                *(u8 *)&actor->priority_flags |= 1;
+            } else {
+                OverlayObject_WaitUntilSettledAndReset((struct FieldActor *)actor);
+            }
+            *flags = 0;
+        }
+        TakaraHashira_ReadMapCell(0, actor->x >> 20, actor->z >> 20, &TakaraHashira_PillarSlots[i].cell);
+        if (actor->y >= 0) {
+            TakaraHashira_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
+            TakaraHashira_SetCellAttributes(0, actor->x >> 20, actor->z >> 20, &cell);
+            cell.kind = TakaraHashira_PillarSlots[i].cell.kind;
+            TakaraHashira_SetCellAttributes(2, actor->x >> 20, actor->z >> 20, &cell);
+        }
+        TakaraHashira_PillarSlots[i].x = actor->x >> 20;
+        TakaraHashira_PillarSlots[i].y = actor->y >> 20;
+        TakaraHashira_PillarSlots[i].z = actor->z >> 20;
+        for (k = 0; k <= 3; k++) {
+            if (k == i) {
+                continue;
+            }
+            Engine_GameFlagClear(TakaraHashira_PillarSlots[k].flag);
+            other = (struct PillarActor *)Object_GetById(k + 8);
+            if ((actor->x >> 20) == (other->x >> 20) && (actor->z >> 20) == (other->z >> 20)
+                && actor->y > other->y) {
+                Engine_GameFlagSet(TakaraHashira_PillarSlots[k].flag);
+            }
+        }
+    }
+    TakaraHashira_SortPillarActors();
 }

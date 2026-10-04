@@ -253,9 +253,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
     s32 ey;
     /* FAKEMATCH: the used perpendicular axis stays in r8 through the cross product. */
     register s32 uz asm("r8");
-    /* FAKEMATCH: the used third-row x component stays in r10 through normalization. */
-    register s32 vx asm("r10");
-    s32 vy, vz;
+    s32 vx, vy, vz;
     s32 scale;
     s32 ez;
     s32 rest;

@@ -44,8 +44,6 @@ void Battle_SetRuntimeFlagBit0(struct BattleEventState *runtime, u32 operand)
     runtime->flags |= 1;
 }
 
-#define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
 void UiWork_PushValueSlotFar(u32, u32);
 void UiText_ShowMessageAndWaitCoreFar(u32);
 void BattlePresentation_WaitForAdvance(void);
@@ -91,17 +89,10 @@ u32 BattleEv_DispatchQueued(void)
             BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
             break;
         case BATTLE_EVENT_ACTOR_RESOLVE:
-        {
-            /* FAKEMATCH: the operand's byte offset is formed before the
-               flags are read, as the ROM schedules it. */
-            u32 operand_offset = (u8 *)&queue->operands[i] - (u8 *)queue;
-            u32 flags = runtime->flags;
-
-            BattleEnemy_RecordDefeat(FIELD(queue, u32, operand_offset), flags);
-            BattleActor_ResetRuntimeFields(FIELD(queue, u32, operand_offset));
-            BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
+            BattleEnemy_RecordDefeat(queue->operands[i], runtime->flags);
+            BattleActor_ResetRuntimeFields(queue->operands[i]);
+            BattleMotion_InitializeActorRecords(queue->operands[i]);
             break;
-        }
         case BATTLE_EVENT_REFRESH: UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode); break;
         case BATTLE_EVENT_ACTOR_FINISH:
             BattleUnit_BuildStatusFlags(queue->operands[i], GetBattleObjectSlot(queue->operands[i]));

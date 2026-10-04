@@ -7,7 +7,6 @@
 //! name labels the linker resolves. The binaries agsgfx, mid2ags, wav2ags
 //! and po2ags put each encoder on the command line; Alchemy's build calls
 //! the same functions.
-#![allow(dead_code)]
 pub mod asm;
 pub mod graphics;
 pub mod lz;

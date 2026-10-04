@@ -1,10 +1,5 @@
-//! Thumb-1 decoding of an overlay window into the instruction forms the
-//! lifter reasons about. Pool words are read from the window directly, so a
-//! `ldr rN, [pc, #k]` carries its constant.
-
-pub const OVERLAY_BASE: u32 = 0x0200_0000;
-/// The main image lives here; decoding rebases through `decode_window_at`.
-pub const MAIN_BASE: u32 = 0x0800_0000;
+//! Thumb-1 decoding into instruction forms. Pool words are read from the
+//! image directly, so a `ldr rN, [pc, #k]` carries its constant.
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Cond {
@@ -72,18 +67,6 @@ pub enum Width {
     Half,
     SignedHalf,
     SignedByte,
-}
-
-impl Width {
-    pub fn c_type(self) -> &'static str {
-        match self {
-            Width::Word => "s32",
-            Width::Byte => "u8",
-            Width::Half => "u16",
-            Width::SignedHalf => "s16",
-            Width::SignedByte => "s8",
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -260,7 +243,7 @@ pub struct Ins {
     pub text: String,
 }
 
-pub fn reg(n: u8) -> String {
+pub(crate) fn reg(n: u8) -> String {
     match n {
         13 => "sp".to_string(),
         14 => "lr".to_string(),
@@ -405,14 +388,14 @@ pub fn text_of(kind: &Kind) -> String {
 }
 
 /// Reads the little-endian halfword at `offset` of `bytes`.
-pub fn half_at(bytes: &[u8], offset: usize) -> Option<u16> {
+pub(crate) fn half_at(bytes: &[u8], offset: usize) -> Option<u16> {
     Some(u16::from_le_bytes([
         *bytes.get(offset)?,
         *bytes.get(offset + 1)?,
     ]))
 }
 
-pub fn word_at(bytes: &[u8], offset: usize) -> Option<u32> {
+pub(crate) fn word_at(bytes: &[u8], offset: usize) -> Option<u32> {
     Some(u32::from_le_bytes([
         *bytes.get(offset)?,
         *bytes.get(offset + 1)?,
@@ -695,208 +678,4 @@ pub fn decode_one(image: &[u8], base: u32, pc: u32) -> Option<Ins> {
         text: text_of(&kind),
         kind,
     })
-}
-
-/// Decodes the code reachable from `entry` inside `[entry, entry + span)`.
-/// `base` is the address of image byte zero. Pool words and padding are
-/// skipped; the result is address ordered.
-pub fn decode_window_at(image: &[u8], base: u32, entry: u32, span: u32) -> Vec<Ins> {
-    let end = entry + span;
-    let inside = |address: u32| address >= entry && address < end;
-    let mut queue = vec![entry];
-    let mut seen = std::collections::BTreeMap::new();
-    let mut head = 0;
-    while head < queue.len() {
-        let mut pc = queue[head];
-        head += 1;
-        while inside(pc) && !seen.contains_key(&pc) {
-            let Some(ins) = decode_one(image, base, pc) else {
-                break;
-            };
-            let size = ins.size;
-            let mut stop = false;
-            match ins.kind {
-                Kind::B { target } => {
-                    if inside(target) {
-                        queue.push(target);
-                    }
-                    stop = true;
-                }
-                Kind::Bcond { target, .. } => {
-                    if inside(target) {
-                        queue.push(target);
-                    }
-                }
-                Kind::Bx(_) | Kind::Pop { pc: true, .. } => stop = true,
-                Kind::Unknown(_) => stop = true,
-                _ => {}
-            }
-            seen.insert(pc, ins);
-            if stop {
-                break;
-            }
-            pc += size;
-        }
-    }
-    // A function that follows a return without any branch reaching it still
-    // belongs to the window: resume decoding at each `push {.., lr}` after a
-    // return so multi-function modules decode completely.
-    // Words the decoded loads read from the pool are data, never a prologue.
-    let pool: std::collections::BTreeSet<u32> = seen
-        .iter()
-        .filter(|(_, x)| matches!(x.kind, Kind::LdrPool { .. }))
-        .filter_map(|(pc, _)| {
-            let half = half_at(image, (*pc - base) as usize)?;
-            Some((*pc & !3) + 4 + u32::from(half & 0xff) * 4)
-        })
-        .flat_map(|word| [word, word + 2])
-        .collect();
-    let mut cursor = entry;
-    while cursor + 2 <= end {
-        if seen.contains_key(&cursor) {
-            cursor += seen[&cursor].size;
-            continue;
-        }
-        if pool.contains(&cursor) {
-            cursor += 2;
-            continue;
-        }
-        let offset = (cursor - base) as usize;
-        let half = half_at(image, offset).unwrap_or(0);
-        let after_return = seen
-            .range(..cursor)
-            .next_back()
-            .is_some_and(|(_, x)| matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true, .. }));
-        if half & 0xff00 == 0xb500 && after_return {
-            let extra = decode_window_at(image, base, cursor, end - cursor);
-            // Table words can look like a prologue: only a run that decodes
-            // cleanly and returns is code.
-            let clean = extra.iter().all(|x| !matches!(x.kind, Kind::Unknown(_)))
-                && extra
-                    .iter()
-                    .any(|x| matches!(x.kind, Kind::Bx(_) | Kind::Pop { pc: true, .. }));
-            if clean {
-                for ins in extra {
-                    seen.entry(ins.addr).or_insert(ins);
-                }
-                continue;
-            }
-            break;
-        }
-        cursor += 2;
-    }
-    seen.into_values().collect()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn image(halves: &[u16]) -> Vec<u8> {
-        halves.iter().flat_map(|half| half.to_le_bytes()).collect()
-    }
-
-    #[test]
-    fn literal_pools_follow_the_supplied_image_base() {
-        let bytes = image(&[0x4800, 0x4770, 0x1234, 0x5678]);
-        for base in [MAIN_BASE, OVERLAY_BASE, 0x03000000, MAIN_BASE] {
-            let rows = decode_window_at(&bytes, base, base, bytes.len() as u32);
-            assert_eq!(rows[0].addr, base);
-            assert_eq!(
-                rows[0].kind,
-                Kind::LdrPool {
-                    rd: 0,
-                    word: 0x56781234
-                }
-            );
-        }
-    }
-
-    #[test]
-    fn decodes_common_forms() {
-        let image = image(&[0xb510, 0x2001, 0x4800, 0x4700, 0x1234, 0x5678]);
-        let ins = decode_window_at(&image, OVERLAY_BASE, OVERLAY_BASE, 12);
-        let kinds: Vec<Kind> = ins.into_iter().map(|ins| ins.kind).collect();
-        assert_eq!(
-            kinds,
-            vec![
-                Kind::Push {
-                    lr: true,
-                    list: 0x10,
-                },
-                Kind::MovImm { rd: 0, imm: 1 },
-                Kind::LdrPool {
-                    rd: 0,
-                    word: 0x5678_1234
-                },
-                Kind::Bx(0),
-            ]
-        );
-    }
-
-    #[test]
-    fn renders_complete_push_and_pop_register_lists() {
-        assert_eq!(
-            text_of(&Kind::Push {
-                lr: false,
-                list: 0xe0
-            }),
-            "push {r5, r6, r7}"
-        );
-        assert_eq!(
-            text_of(&Kind::Pop {
-                pc: true,
-                list: 0x30
-            }),
-            "pop {r4, r5, pc}"
-        );
-    }
-
-    #[test]
-    fn decodes_branches_and_memory() {
-        let image = image(&[0xd001, 0xe7fd, 0xf000, 0xf802, 0x6813, 0x7053, 0x5c88]);
-        let base = OVERLAY_BASE;
-        assert_eq!(
-            decode_one(&image, base, base).unwrap().kind,
-            Kind::Bcond {
-                cond: Cond::Eq,
-                target: base + 6
-            }
-        );
-        assert_eq!(
-            decode_one(&image, base, base + 2).unwrap().kind,
-            Kind::B { target: base }
-        );
-        assert_eq!(
-            decode_one(&image, base, base + 4).unwrap().kind,
-            Kind::Bl { target: base + 12 }
-        );
-        assert_eq!(
-            decode_one(&image, base, base + 8).unwrap().kind,
-            Kind::Load {
-                width: Width::Word,
-                rd: 3,
-                rn: 2,
-                offset: Offset::Imm(0)
-            }
-        );
-        assert_eq!(
-            decode_one(&image, base, base + 10).unwrap().kind,
-            Kind::Store {
-                width: Width::Byte,
-                rd: 3,
-                rn: 2,
-                offset: Offset::Imm(1)
-            }
-        );
-        assert_eq!(
-            decode_one(&image, base, base + 12).unwrap().kind,
-            Kind::Load {
-                width: Width::Byte,
-                rd: 0,
-                rn: 1,
-                offset: Offset::Reg(2)
-            }
-        );
-    }
 }

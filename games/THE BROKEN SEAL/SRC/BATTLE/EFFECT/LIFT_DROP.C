@@ -259,18 +259,12 @@ void BattleFx_SteerLiftedTarget(s32 target_id)
     ObjectDispatch_ReleaseFar(anchors[1]);
     Animation_ApplyChildValuesFar(target, work->saved_palette);
     ObjectDispatch_InitializeFar((struct DispatchObject *)target, (u32)(work->saved_script));
-    {
-        /* FAKEMATCH: one zero, set before these stores, clears the mode
-           byte and the source's callback from the same register. */
-        s32 zero = 0;
-
-        target->callback = work->saved_callback;
-        target->flag = 3;
-        target->velocity_y = 0xa0000;
-        target->gravity = 0x3333;
-        target->mode = zero;
-        source->callback = (void *)zero;
-    }
+    target->callback = work->saved_callback;
+    target->flag = 3;
+    target->velocity_y = 0xa0000;
+    target->gravity = 0x3333;
+    target->mode = 0;
+    source->callback = 0;
     Animation_ApplyChildValuesFar(source, 0);
     if ((s8)work->child_option != 0) {
         for (i = 0; i < 90 && target->velocity_y >= 0; i++)

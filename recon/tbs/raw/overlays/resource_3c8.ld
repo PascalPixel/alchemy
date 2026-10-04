@@ -16,7 +16,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/HEYA4.o"(.text)
-        "*/resource_3c8_overlay.o"(.text.x0200cbd8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c8_overlay.o"(.rodata.x0200d040)

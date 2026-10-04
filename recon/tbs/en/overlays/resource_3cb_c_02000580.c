@@ -1,3 +1,16 @@
+/* NONMATCHING (2026-10-04): score 1815 (17 register-only, 13 reordered,
+ * 6 inserted). The callees now carry the overlay's own veneer names and the
+ * copy goes through IWRAM_CALL.H's Iwram_CopyWords, so no name differences
+ * remain. Everything up to the first send's retry failure matches. Remaining:
+ * the ROM loads that failure's -1 into r3 in a block it shares with the offer
+ * send's failure (cross-jumped, after the third poll loop), while here the
+ * -1 is r2 (the send check's constant) and the block stays separate; the pad
+ * send's own failure uses r2 in the ROM and r1 here; the offer phase copies
+ * its pointers in another order. The plain-loop draft that stood beside this
+ * one (score 3360 under the old names) noted: slot in r7 and retries in r5,
+ * the 600-frame timeout set during the clear loop, the offer items walked
+ * with a pointer beside the index and the count read through the item base,
+ * and the renumbered owner tested with lsls #24. */
 /* NONMATCHING: admitted H7 restored after rejected H8 at 784af7a33.
  * 568/560 bytes, 203 differing halfwords / 84 aligned edits. Bounded
  * copier/phase/tail probes complete; remaining topology, map reload and
@@ -80,19 +93,21 @@
  * rechecked 420/420 exact. No shared header or exact sibling edited;
  * no DONE credit. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
-u8 *Main_08000170(u32 size);
-void Main_08000178(u8 *heap);
+u8 *Runtime_BumpAllocateAlternatePool(u32 size);
+void Runtime_BumpFree(u8 *heap);
 s32 SceneData_CopyUpToThreeEntries(u16 *owners);
-u8 *Engine_OwnerGetState(s32 owner);
-s32 Main_08000380(u8 *data, u32 size);
+u8 *Owner_GetState(s32 owner);
+s32 SerialRuntime_BeginTransferA(u8 *data, u32 size);
 void Engine_TaskWait(s32 frames);
-s32 Main_080003a8(void);
-u8 *Main_08077000(s32 mode);
+s32 SerialRuntime_GetActiveTransfers(void);
+u8 *Trade_GetOfferState(s32 mode);
 
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
-#define LINK_STAT (*(volatile u16 *)0x03001f64)
+extern u8 gLinkStatus[];
+#define LINK_STAT (*(volatile u16 *)gLinkStatus)
 
 struct LinkEntry {
     u8 a;
@@ -124,7 +139,7 @@ s32 LinkLobby_SendPartyRecords(void)
     struct LinkList *list;
 
     size = 0x154;
-    heap = Main_08000170(size);
+    heap = Runtime_BumpAllocateAlternatePool(size);
     result = 0;
     count = SceneData_CopyUpToThreeEntries(owners);
     table = slots;
@@ -133,19 +148,19 @@ s32 LinkLobby_SendPartyRecords(void)
         table[i] = 0;
     }
     for (i = 0; i < count; i++) {
-        ((WordCopyFn)0x03001388)(heap, Engine_OwnerGetState(owners[i]), 0x154);
+        Iwram_CopyWords(heap, Owner_GetState(owners[i]), 0x154);
         heap[0x12a] = 2;
         table[owners[i]] = i - 128;
         /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
         do {
-            ret = Main_08000380(heap, 0x154);
+            ret = SerialRuntime_BeginTransferA(heap, 0x154);
             tries = 0;
             if (ret == -1) {
                 result = ret;
                 goto done;
             }
         } while (0);
-        while (Main_080003a8() != 0) {
+        while (SerialRuntime_GetActiveTransfers() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
                 if (++tries > 24) {
@@ -166,7 +181,7 @@ wait:
         }
     }
 test:
-    if (Main_080003a8() != 0) {
+    if (SerialRuntime_GetActiveTransfers() != 0) {
         goto wait;
     }
     Engine_TaskWait(2);
@@ -177,17 +192,17 @@ next:
         tries = 0;
         /* FAKEMATCH: keep this send/check boundary distinct from polling. */
         do {
-            if ((ret = Main_08000380(heap, 0x154)) != -1) {
+            if ((ret = SerialRuntime_BeginTransferA(heap, 0x154)) != -1) {
                 goto test;
             }
             result = ret;
             goto done;
         } while (0);
     }
-    Main_08000178(heap);
+    Runtime_BumpFree(heap);
     size = 0x140;
-    heap = Main_08000170(size);
-    ((WordCopyFn)0x03001388)(heap, Main_08077000(0), size);
+    heap = Runtime_BumpAllocateAlternatePool(size);
+    Iwram_CopyWords(heap, Trade_GetOfferState(0), size);
     {
         s32 timeout;
         s32 tries;
@@ -207,12 +222,12 @@ next:
         }
         /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
         do {
-            if ((ret = Main_08000380(heap, 0x140)) == -1) {
+            if ((ret = SerialRuntime_BeginTransferA(heap, 0x140)) == -1) {
                 result = ret;
                 goto done;
             }
         } while (0);
-        while (Main_080003a8() != 0) {
+        while (SerialRuntime_GetActiveTransfers() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
                 if (++tries > 24) {
@@ -225,6 +240,6 @@ next:
         Engine_TaskWait(2);
     }
 done:
-    Main_08000178(heap);
+    Runtime_BumpFree(heap);
     return result;
 }

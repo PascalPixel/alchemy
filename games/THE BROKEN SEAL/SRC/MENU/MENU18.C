@@ -109,20 +109,15 @@ done:
 void Palette_LightenBankHighlight(s32 bank)
 {
     u16 *palette = (u16 *)(0x05000000 + (bank << 5));
-    u32 color;
     u32 red;
     u32 green;
     u32 blue;
 
     Dma_Set((const void *)0x050001e0, palette, 0x80000010, (volatile u32 *)0x040000d4);
     Dma_Set((const void *)0x050001e0, palette, 0x84000008, (volatile u32 *)0x040000d4);
-    color = palette[4];
-    /* FAKEMATCH: the (u16) casts on an already 16-bit colour produce the
-       reference's shift pair. 2026-10-02: a u16 color local without these
-       casts changes the load to ldrsh and shifts the red mask before use. */
-    blue = (u16)color >> 10;
-    green = ((u16)color >> 5) & 31;
-    red = color & 31;
+    blue = palette[4] >> 10;
+    green = (palette[4] >> 5) & 31;
+    red = palette[4] & 31;
     blue += 9;
     if (blue > 31)
         blue = 31;

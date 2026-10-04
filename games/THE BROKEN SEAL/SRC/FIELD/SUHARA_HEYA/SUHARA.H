@@ -48,21 +48,10 @@ extern u8 gSuharaHeyaPlacements96f[];
 extern u8 gSuharaHeyaEvents[];
 extern u8 gSuharaHeyaEvents96f[];
 
-/* The imports only this room calls, each behind its inline service. */
+/* The imports only this room calls, by their own names; the launch keeps an
+ * inline because its direct call changes the room's bytes. */
 void Engine_AudioPlayCueFromEventWork(void);
-static inline void Audio_PlayCueFromEventWork(void)
-{
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
-    Engine_AudioPlayCueFromEventWork();
-}
-
 void Engine_InnCheckIn(s32 first, s32 second);
-static inline void Inn_CheckIn(s32 first, s32 second)
-{
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
-    Engine_InnCheckIn(first, second);
-}
-
 void Engine_MotionLaunchFromFocusedObject(s32 first, s32 second, s32 third, s32 fourth);
 static inline void Motion_LaunchFromFocusedObject(s32 first, s32 second, s32 third, s32 fourth)
 {
@@ -71,10 +60,4 @@ static inline void Motion_LaunchFromFocusedObject(s32 first, s32 second, s32 thi
 }
 
 void Engine_ShopConfirmAct(s32 first);
-static inline void Shop_ConfirmAct(s32 first)
-{
-    /* FAKEMATCH: scenes reach every engine service through its inline; a direct call lets GCC 2.96 share costly constant arguments between calls. */
-    Engine_ShopConfirmAct(first);
-}
-
 #endif

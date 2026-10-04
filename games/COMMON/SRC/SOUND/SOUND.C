@@ -62,8 +62,7 @@ void Audio_Initialize(void)
     /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
     u32 total;
     s32 i;
-    /* FAKEMATCH: keep the slot cursor in r5 across the library calls. */
-    register const struct PlayerSlot *slots asm("r5");
+    const struct PlayerSlot *slots;
     /* FAKEMATCH: the work-area literal loads straight into the store's r0. */
     register u8 *bytes asm("r0");
 
@@ -169,8 +168,7 @@ void Audio_StopAllPlayers(void)
     /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
     u32 total;
     s32 i;
-    /* FAKEMATCH: keep the slot cursor in r5 and the countdown in r4. */
-    register const struct PlayerSlot *slots asm("r5");
+    const struct PlayerSlot *slots;
 
     /* FAKEMATCH: retain the count's literal load, extension and zero guard. */
     asm volatile("ldr %0, .LSoundStopCount" : "=r"(total));
@@ -204,8 +202,7 @@ void Audio_ResumeAllPlayers(void)
     /* FAKEMATCH: an unknown word followed by the u16 copy retains the extension. */
     u32 total;
     s32 i;
-    /* FAKEMATCH: keep the slot cursor in r5 and the countdown in r4. */
-    register const struct PlayerSlot *slots asm("r5");
+    const struct PlayerSlot *slots;
 
     /* FAKEMATCH: retain the count's literal load, extension and zero guard. */
     asm volatile("ldr %0, .LSoundResumeCount" : "=r"(total));

@@ -19,13 +19,15 @@
 enum { BATTLE_LIST_ROWS = 5 };
 
 /* A queued sprite: the list link Runtime_PushSlotEntry fills, then the three
-   hardware attributes as two words or as fields. */
+   hardware attributes as two words or as fields. The words are unsigned
+   long, a type no int shares: the battle Psynergy list stores a tile and a
+   cursor position without waiting for its int glyph and frame counter. */
 struct MenuSprite {
     struct MenuSprite *next;
     union {
         struct {
-            u32 attr01;
-            u32 attr23;
+            unsigned long attr01;
+            unsigned long attr23;
         } word;
         struct {
             u16 y : 8;

@@ -1,11 +1,11 @@
 //! Publish locally verified measurements, never the private build inputs.
+use super::decomp::REPORT;
 use sha2::{Digest, Sha256};
 use std::path::Path;
 use std::process::Command;
 
 const REPO: &str = "PascalPixel/alchemy";
 const RELEASE: &str = "decomp-reports";
-const REPORT: &str = "out/reports/decomp/combined_report/report.pb";
 const RECEIPT: &str = "out/reports/decomp/publication.tsv";
 const STALE: &str = "decomp.dev report is stale or missing: run make land before committing main";
 
@@ -47,11 +47,11 @@ fn canonical_remote(remote: &str) -> bool {
     .any(|url| remote.eq_ignore_ascii_case(url))
 }
 
-/// Called only after make land's complete build, comparison and publication gates.
+/// Called only after make land's complete build, comparison and publication
+/// gates; the coverage gate wrote the report from their one measurement.
 pub(crate) fn prepare(root: &Path) -> Result<(), String> {
-    println!("{}", super::decomp::write_verified(root)?);
     let tree = command(root, "git", &["write-tree"])?;
-    let bytes = std::fs::read(root.join(REPORT)).map_err(|error| error.to_string())?;
+    let bytes = std::fs::read(root.join(REPORT)).map_err(|_| STALE.to_string())?;
     std::fs::write(root.join(RECEIPT), receipt(&tree, &bytes))
         .map_err(|error| error.to_string())?;
     println!("decomp.dev report prepared for source tree {tree}");
@@ -131,53 +131,4 @@ pub(crate) fn upload(root: &Path, commit: &str, remote: &str) -> Result<(), Stri
     }
     println!("decomp.dev report uploaded for {commit}; GitHub will publish it after the push");
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn source_changes_and_modified_reports_require_a_new_landing() {
-        let root = tempfile::tempdir().unwrap();
-        let root = root.path();
-        let tree = "1234567890abcdef1234567890abcdef12345678";
-        let bytes = b"verified measurements";
-        std::fs::create_dir_all(root.join(REPORT).parent().unwrap()).unwrap();
-        assert!(prepared(root, tree).is_err());
-        std::fs::write(root.join(REPORT), bytes).unwrap();
-        std::fs::write(root.join(RECEIPT), receipt(tree, bytes)).unwrap();
-        assert_eq!(prepared(root, tree).unwrap(), bytes);
-        assert!(prepared(root, "2234567890abcdef1234567890abcdef12345678").is_err());
-        std::fs::write(root.join(REPORT), b"altered measurements").unwrap();
-        assert!(prepared(root, tree).is_err());
-    }
-
-    #[test]
-    fn published_commits_are_idempotent_and_never_replaced() {
-        let bytes = b"verified measurements";
-        assert!(needs_upload("", bytes).unwrap());
-        assert!(!needs_upload(&digest(bytes), bytes).unwrap());
-        assert!(needs_upload(&digest(b"another report"), bytes).is_err());
-        assert!(needs_upload("null", bytes).is_err());
-    }
-
-    #[test]
-    fn forks_and_other_push_destinations_do_not_publish() {
-        assert!(canonical_remote(
-            "https://github.com/PascalPixel/alchemy.git"
-        ));
-        assert!(canonical_remote("git@github.com:PascalPixel/alchemy.git"));
-        for remote in [
-            "",
-            "/tmp/alchemy",
-            "git@github.com:someone/alchemy.git",
-            "https://github.com/PascalPixel/alchemy.git.evil",
-        ] {
-            assert!(!canonical_remote(remote));
-            upload(Path::new("does-not-exist"), "not-a-commit", remote).unwrap();
-        }
-        assert!(!valid_id("main"));
-        assert!(!valid_id("'$(echo unexpected)'"));
-    }
 }

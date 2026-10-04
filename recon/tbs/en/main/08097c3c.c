@@ -8,6 +8,14 @@
    that constant in r5 before the loop; here the source takes r11 and the
    constant is rebuilt at each use. The reference also reloads the cell mask
    after the first cell test and parks it in ip.
+ * 2026-10-04 (score 4219): loop.c does hoist 0x100000 here (pseudo 106,
+ * cse2 turns it into a copy of the pre-loop r5 value, as the reference's
+ * "mov r11, r5"), but global allocation ranks source (19 weighted refs
+ * over 258 insns) above it (16 over 354), so the copy spills and reload
+ * rebuilds the constant. A while-loop head with WaitFrames in the
+ * condition compiles identically; a named 0x100000 local scores 4554;
+ * seven minutes of permutation reached 3180 with the same 14 inserted
+ * constant loads, not kept.
  * API context measured 2026-10-02 with ordinary target flags:
  * all six prior successful objects retain every allocated byte and
  * normalized call/pool operand; no new match or adoption is claimed.

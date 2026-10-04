@@ -103,7 +103,7 @@ Func_080ed2a4:
 .L_080ed368:
 	.4byte 0x00000001
 .L_080ed36c:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ed370:
 	ldr r6, [sp, #16]
 	movs r1, #230
@@ -480,7 +480,7 @@ Func_080ed2a4:
 	negs r3, r3
 	strh r3, [r6]
 .L_080ed654:
-	bl Func_080ec14c
+	bl BattleFx_CleanupResourcesAndWindow
 	movs r2, #64
 	movs r3, #128
 	lsls r3, r3, #19

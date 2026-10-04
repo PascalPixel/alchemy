@@ -65,7 +65,7 @@ void Dialogue_HandleFacingBranch(s32 no)
 {
     u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
-        Inn_CheckIn(10, no);
+        Engine_InnCheckIn(10, no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
         Engine_EventSetMessage((s32)MsgSuharaBusyEverSince);
         Engine_EventShowMessage(no, 0);
@@ -79,7 +79,7 @@ void Dialogue_HandleFacingAction(s32 no)
 {
     u16 facing = (((u16 *)Object_GetById(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
-        Shop_ConfirmAct(no);
+        Engine_ShopConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
         Engine_EventSetMessage((s32)MsgSuharaWonderWhySandstorms);
         Engine_EventShowMessage(no, 0);
@@ -378,7 +378,7 @@ void Scene_RunPrimaryScript(void)
         Actor_WaitForMove(19);
         Actor_SetPosition(19, 0, 0);
         Event_Wait(10);
-        Audio_PlayCueFromEventWork();
+        Engine_AudioPlayCueFromEventWork();
         Event_End();
     }
 }

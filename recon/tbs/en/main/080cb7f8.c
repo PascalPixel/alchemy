@@ -1,3 +1,15 @@
+/* 2026-10-04 (main-5): the sp+8/sp+12 exchange is GCSE's PRE order. PRE
+ * makes the frame loop's reaching registers for &ground (plus sfp -12) and
+ * camera->pos (plus camera 12) in expression-hash bucket order, and their
+ * spill slots follow those register numbers. This source reaches GCSE with
+ * 392-393 real insns, a 197-bucket table: ground hashes to 124, camera to
+ * 160. With 396-399 insns (199 buckets) camera comes first and the whole
+ * listing matches: two extra discarded calls left only their own four
+ * instructions as differences. So the ROM's source had three or four more
+ * insns at GCSE that later passes remove. Not this: one lookup after the
+ * palette switch (193 buckets), a fleck pointer in the init loop or a named
+ * unused slot result (197). Look for the missing early insns, not orders.
+ */
 /* 2026-10-04: scoped read/write register-operand trials on initialized work,
  * camera, sheet and canvas at four existing boundaries did not improve 9.
  * Explicit consumed ground/camera pointers, both declaration/assignment

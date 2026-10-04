@@ -29,12 +29,6 @@ void Object_Destroy(struct MotionObject *);
 void BattleFx_UpdateRadialCamera(struct EffectSlot *);
 void BattleFx_PrepareBufferInterpolation(void);
 
-/* The value a tenth of the way per step from one end to the other. */
-static __inline__ s32 Fallback_Interpolate(s32 to, s32 from, s32 step)
-{
-    return from + (to - from) * step / 10;
-}
-
 void BattleEffect_RunFallbackObjectTransition(void)
 {
     struct BattleFxScene *scene = gEffectWork;
@@ -68,7 +62,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
         object->x = origin.x + (destination.x - origin.x) * step / 10;
         object->y = origin.y + (destination.y - origin.y) * step / 10;
         object->z = origin.z + (destination.z - origin.z) * step / 10;
-        scale = Fallback_Interpolate(0x10000, 0x4000, step);
+        scale = BattleFx_Interpolate(0x10000, 0x4000, step);
         object->scale_x = scale;
         object->scale_y = scale;
         WaitFrames(1);

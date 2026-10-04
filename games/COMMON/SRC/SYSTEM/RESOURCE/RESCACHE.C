@@ -194,32 +194,17 @@ void Resource_InitializeTable(void)
 /* An unused cache entry has no assigned VRAM byte offset. */
 s32 Resource_FindFreeEntry(void)
 {
-    /* FAKEMATCH: the ordinary for scan reduces this complete
-       native search from 52 to 36 bytes. Retain the existing first-entry
-       test and subsequent scan over the actual cache records. */
-    s32 free_slot;
+    s32 result = VRAM_CACHE_ENTRY_COUNT;
     s32 slot;
-    struct VramBlockCacheEntry *table;
-    s32 first;
-    struct VramBlockCacheEntry *entry;
+    struct VramBlockCacheEntry *entry = gVramBlockCache;
 
-    entry = gVramBlockCache;
-    free_slot = VRAM_CACHE_ENTRY_COUNT;
-    first = 0;
-    slot = first;
-    table = gVramBlockCache;
-    if (table->offset == VRAM_CACHE_OFFSET_FREE)
-        return first;
-next_entry:
-    slot++;
-    entry++;
-    if (slot < VRAM_CACHE_ENTRY_COUNT) {
-        if (entry->offset == VRAM_CACHE_OFFSET_FREE)
-            free_slot = slot;
-        else
-            goto next_entry;
+    for (slot = 0; slot < VRAM_CACHE_ENTRY_COUNT; slot++, entry++) {
+        if (entry->offset == VRAM_CACHE_OFFSET_FREE) {
+            result = slot;
+            break;
+        }
     }
-    return free_slot;
+    return result;
 }
 
 s32 Resource_LoadIntoFreeSlot(s32 size)

@@ -1403,7 +1403,7 @@ Func_0815f16c:
 	cmp r3, #54
 	bne .L_0815fccc
 	ldr r0, [sp, #128]
-	bl Func_0814a7f0
+	bl BattleFx_RenderMode5
 .L_0815fccc:
 	ldr r5, [sp, #124]
 	cmp r5, #56

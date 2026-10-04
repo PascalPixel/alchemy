@@ -33,6 +33,14 @@
  * first index spill, direct side-test shape and register differences remain.
  * Stopped after this one count-lifetime change, with no device or further
  * variation. T0 contracts and deferred adoption closures are unchanged.
+ * T2, 2026-10-04: score 4465 -> 3330. Each side test re-reads
+ * plan->actor_id (CSE turns the re-reads into the native register copies,
+ * adds rN, r4, #0) and the same-side result is a 0/1 local set in an
+ * if/else. Native still tests that value inside each arm (cmp/bne/b and
+ * cmp/beq) where this draft joins the arms first; plan/mode live in r7/r10
+ * natively but r8/r7 here, which adds the r9 save. Static inline
+ * IsParty/IsSameSide predicates scored 4775-5640 (they materialize all four
+ * tests); (u8)/(s8) casts on the arms fold away (4360).
  */
 #include "TYPES.H"
 #include "BATTLE_EVENT.H"
@@ -72,14 +80,19 @@ s32 Func_080ba978(struct BattlePlan *plan, s32 mode)
     } else {
         struct MotionObject *actor = GetBattleObjectSlot(plan->actor_id)->object;
         s32 angle = (u16)ArcTan2(actor->x, actor->z);
-        u32 primary = plan->actor_id;
         s32 current = angle - 0x1800;
-        if (primary > 7)
+        s32 same;
+
+        if (plan->actor_id > 7)
             current = angle + 0x1800;
         current = (s16)current;
-        current += ((primary <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
-        if (plan->target_ids[0] <= 7 ? primary <= 7 : primary > 7)
-            current = primary <= 7 ? 0x2400 : -0x2400;
+        current += ((plan->actor_id <= 7 ? 0x2000 : -0x2000) - current) * 3 / 4;
+        if (plan->target_ids[0] <= 7)
+            same = plan->actor_id <= 7;
+        else
+            same = plan->actor_id > 7;
+        if (same)
+            current = plan->actor_id <= 7 ? 0x2400 : -0x2400;
         if (transition->target_yaw != current)
             transition->target_yaw = current;
     }

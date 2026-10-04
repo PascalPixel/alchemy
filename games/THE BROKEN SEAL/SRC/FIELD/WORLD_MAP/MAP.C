@@ -1433,8 +1433,8 @@ listened:
         Message_ShowCentered(count++, 3);
         Event_SetMessage(count);
         {
-            register s32 frames asm("r2") = 20; /* FAKEMATCH: pins the frames to r2 */
-            register s32 flags asm("r1"); /* FAKEMATCH: pins the flags to r1 */
+            s32 frames = 20;
+            s32 flags;
 
             asm volatile("" : : "r"(frames)); /* FAKEMATCH: sets the jump's frames first */
             Actor_Jump(DJINNI, 2, frames);
@@ -1484,9 +1484,9 @@ listened:
         goto learn;
     Event_ShowMessage(DJINNI, 0);
     {
-        register s32 far asm("r3") = z; /* FAKEMATCH: pins z to r3 */
+        s32 far = z;
         register s32 near asm("r2") = x; /* FAKEMATCH: pins x to r2 */
-        register s32 tile_x asm("r1"); /* FAKEMATCH: pins the tile x to r1 */
+        s32 tile_x;
         register s32 tile_z asm("r2"); /* FAKEMATCH: reuses r2 for the tile z */
 
         asm volatile("" : : "r"(far), "r"(near)); /* FAKEMATCH: copies z before x */

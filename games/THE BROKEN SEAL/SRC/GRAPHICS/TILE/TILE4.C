@@ -18,35 +18,25 @@ extern struct Vec2 Battle_FormationPlacementScale;
 void Ui_SetGridColumnByte5(s32 slot, s32 value)
 {
     struct AnimationObject *object = gSpriteObjects;
-    /* FAKEMATCH: typed entries[column] moves the offset addition after
-       the counter setup; retain the existing precomputed byte lane. */
-    s32 offset = (slot & 3) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
-    s32 count = 9;
+    s32 i;
 
-    do {
-        struct AnimationEntry *entry = *(struct AnimationEntry **)((u8 *)object + offset);
-
-        count--;
-        entry->param = value;
+    slot &= 3;
+    for (i = 0; i < 10; i++) {
+        object->entries[slot]->param = value;
         object++;
-    } while (count >= 0);
+    }
 }
 
 void Ui_SetGridColumnByte6(s32 slot, s32 value)
 {
     struct AnimationObject *object = gSpriteObjects;
-    /* FAKEMATCH: typed entries[column] moves the offset addition after
-       the counter setup; retain the existing precomputed byte lane. */
-    s32 offset = (slot & 3) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
-    s32 count = 9;
+    s32 i;
 
-    do {
-        struct AnimationEntry *entry = *(struct AnimationEntry **)((u8 *)object + offset);
-
-        count--;
-        entry->priority = value;
+    slot &= 3;
+    for (i = 0; i < 10; i++) {
+        object->entries[slot]->priority = value;
         object++;
-    } while (count >= 0);
+    }
 }
 
 void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
@@ -88,22 +78,17 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
 void Ui_SetGridColumnNumber(s32 slot, s32 no)
 {
     struct AnimationObject *object = gSpriteObjects;
-    s32 offset;
-    s32 count;
+    s32 i;
 
     Resource_GetMetadataRecordFar(no);
-    /* FAKEMATCH: typed indexing reverses the offset/counter move order;
-       keep the existing byte lane over the actual entries array. */
-    offset = (slot & 3) * sizeof(void *) + (u32)&((struct AnimationObject *)0)->entries;
-    count = 9;
-    do {
-        struct AnimationEntry *entry = *(struct AnimationEntry **)((u8 *)object + offset);
+    slot &= 3;
+    for (i = 0; i < 10; i++) {
+        struct AnimationEntry *entry = object->entries[slot];
 
-        count--;
         entry->anim_id = no;
         Animation_InitWorkFromMetadata(entry);
         object++;
-    } while (count >= 0);
+    }
 }
 
 void Battle_PlaceActorsByFormationKind(void)

@@ -56,11 +56,8 @@ struct BlitterPair {
    swaying on its own sine; the targets react one after another. */
 void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     s32 point[3];
     struct EffectPosition position;
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     struct BlitterPair draw;
@@ -72,13 +69,10 @@ void BattleFx_RunParticlePool(struct BattleEffectArgument *effect, s32 mode)
     s32 frame;
     s32 i;
 
-    heap_cache = (void **)gBattleFxWork;
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    camera = *(struct BattleCamera **)((u8 *)heap_cache -
-        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_CAMERA) * sizeof(void *));
-    sheet = heap_cache[2];
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+    sheet = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
     work->effect = effect;
     if (mode == 0)
         BattleFx_BeginCanvasLayer(0);

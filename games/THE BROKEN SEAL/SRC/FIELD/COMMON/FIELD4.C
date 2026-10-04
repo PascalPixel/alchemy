@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIELDRUN.H"
+#include "GAME_STATE.H"
 
 struct FieldProgress {
     u8 unknown_000[0x1c0];
@@ -74,16 +75,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep)
     GameFlag_RefreshLureCapFar();
 }
 
-struct Party {
-    u8 unknown_000[0x1f0];
-    s16 cue;
-};
-
-extern struct Party gGameState;
-
 void Audio_PlayCueFromEventWork(void)
 {
-    /* FAKEMATCH: retain the existing cue prefix. Reading the GameState byte
-       bank as s16 folded its address into the pool and shrank 28 to 20 bytes. */
     Audio_PlayCue(gGameState.cue);
 }

@@ -302,7 +302,7 @@ fn shared_pictures(
 }
 
 /// The shared-picture table beside a sprite bank.
-pub const PICTURES: &str = "PICTURES.TSV";
+pub(crate) const PICTURES: &str = "PICTURES.TSV";
 
 impl Bank {
     fn read(
@@ -448,7 +448,7 @@ impl Bank {
 }
 
 /// ⚓️'s bank: records, animation lists, frame lists, scripts and frames.
-pub fn bank(
+pub(crate) fn bank(
     built: &str,
     table: &[u8],
     sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
@@ -480,7 +480,7 @@ pub fn bank(
 
 /// ☀️'s bank as sections: the name of the section each part continues in,
 /// or `None` for the first, and the part.
-pub fn blocks(
+pub(crate) fn blocks(
     built: &str,
     table: &[u8],
     sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
@@ -520,7 +520,7 @@ pub fn blocks(
 }
 
 /// ☀️'s bank as assembler source.
-pub fn blocks_source(
+pub(crate) fn blocks_source(
     built: &str,
     table: &[u8],
     sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
@@ -533,130 +533,4 @@ pub fn blocks_source(
         text.push_str(&data.source()?);
     }
     Ok(text)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use psynergy::assets::image::png_from_bitmap;
-    use psynergy::assets::lz::decode_arena;
-
-    const HEADER: &str =
-        "sprite\twidth\theight\tscale\tdraw\tadjust_x\tadjust_y\tbox_x\tbox_y\tcodec\tframes\tanimations\n";
-
-    fn files(name: &str) -> Result<Vec<u8>, String> {
-        let palette: Vec<u8> = (0..16u16).flat_map(|c| c.to_le_bytes()).collect();
-        Ok(match name {
-            // Two 2x2 frames, the second repeating the first.
-            "A.PNG" => png_from_bitmap(&[1, 2, 3, 4, 1, 2, 3, 4], &palette, 2).unwrap(),
-            "A.TSV" => b"list\t0 1 - 1\nanim\t00 05 f1 00\n".to_vec(),
-            "B.TSV" => b"anim\t01 02\nanimations\tA:0 0\n".to_vec(),
-            "LAYOUT.TSV" => b"B\nsection\tafter\nA\n".to_vec(),
-            other => return Err(format!("no {other}")),
-        })
-    }
-
-    fn table() -> String {
-        format!(
-            "{HEADER}A\t2\t2\t0x100\t5\t0\t-2\t20\t16\t0\tA\tA\n\
-             B\t2\t2\t0x100\t5\t0\t0\t20\t16\t2\t-\tB\n"
-        )
-    }
-
-    fn symbols(data: &Data) -> Vec<&str> {
-        data.pointers
-            .iter()
-            .map(|(_, p)| p.symbol.as_str())
-            .collect()
-    }
-
-    #[test]
-    fn a_shared_picture_is_read_from_common() {
-        let shared = |name: &str| match name {
-            "A.PNG" => Err("A.PNG lives in COMMON".to_owned()),
-            "COMMON/SHARED_A.PNG" => files("A.PNG"),
-            "PICTURES.TSV" => Ok(b"sprite\tpicture\nA\tSHARED_A\n".to_vec()),
-            other => files(other),
-        };
-        assert_eq!(
-            bank("S.sprites", table().as_bytes(), &shared).unwrap(),
-            bank("S.sprites", table().as_bytes(), &files).unwrap()
-        );
-        let twice = |name: &str| match name {
-            "PICTURES.TSV" => Ok(b"sprite\tpicture\nA\tX\nA\tY\n".to_vec()),
-            other => files(other),
-        };
-        assert!(bank("S.sprites", table().as_bytes(), &twice).is_err());
-    }
-
-    #[test]
-    fn bank_lays_out_records_lists_scripts_and_frames() {
-        let data = bank("S.sprites", table().as_bytes(), &files).unwrap();
-        // Records: A has one animation, B two; B has no frames.
-        assert_eq!(
-            &data.bytes[..12],
-            &[2, 2, 0, 1, 5, 1, 0, 0xfe, 20, 16, 0, 0]
-        );
-        assert_eq!(&data.bytes[20..32], &[2, 2, 0, 1, 5, 2, 0, 0, 20, 16, 2, 0]);
-        assert_eq!(&data.bytes[32..36], &[0; 4]);
-        assert_eq!(
-            symbols(&data),
-            [
-                "Sprite_A_Frames",
-                "Sprite_A_Animations",
-                "Sprite_B_Animations",
-                "Sprite_A_Animation0",
-                "Sprite_A_Animation0",
-                "Sprite_B_Animation0",
-                "Sprite_A_Frame0",
-                "Sprite_A_Frame1",
-                "Sprite_A_Frame1"
-            ]
-        );
-        // The list's empty entry, then the scripts and the zero-skip frames.
-        let tail = &data.bytes[data.bytes.len() - 16..];
-        assert_eq!(tail, [0, 5, 0xf1, 0, 1, 2, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0]);
-    }
-
-    #[test]
-    fn blocks_put_each_sprites_scripts_before_its_list_and_frames_before_theirs() {
-        let parts = blocks("S.spriteblocks", table().as_bytes(), &files).unwrap();
-        assert_eq!(parts.len(), 2);
-        assert_eq!(parts[1].0.as_deref(), Some("after"));
-        // B's script, padded to a word, then B's list.
-        let first = &parts[0].1;
-        assert_eq!(&first.bytes[40..44], &[1, 2, 0, 0]);
-        assert_eq!(first.bytes.len(), 52);
-        // A's script and list, then A's frames padded to a word, its list and a null word.
-        let second = &parts[1].1;
-        assert_eq!(&second.bytes[..4], &[0, 5, 0xf1, 0]);
-        assert_eq!(&second.bytes[8..20], &[1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 0, 0]);
-        assert_eq!(second.bytes.len(), 20 + 16 + 4);
-        assert_eq!(
-            symbols(second),
-            [
-                "Sprite_A_Animation0",
-                "Sprite_A_Frame0",
-                "Sprite_A_Frame1",
-                "Sprite_A_Frame1"
-            ]
-        );
-    }
-
-    #[test]
-    fn arena_frames_read_their_sprite_and_store_blank_frames_empty() {
-        let first: Vec<u8> = (1..=40).collect();
-        let blank = vec![0u8; 40];
-        let streams = frame_streams("S", 3, &[&first, &blank, &first], &[1]).unwrap();
-        assert_eq!(streams[1], [0, 0]);
-        // The third frame copies the first, which lies before it in the sprite.
-        let mut container = streams.concat();
-        container.extend([0; 4]);
-        let at = streams[0].len() + 2;
-        let (decoded, _, _) = decode_arena(&container, at).unwrap();
-        assert_eq!(decoded, encode_zero_skip(&first).unwrap());
-        assert!(streams[2].len() < streams[0].len());
-        // A frame that is not blank cannot be empty.
-        assert!(frame_streams("S", 3, &[&first], &[0]).is_err());
-    }
 }

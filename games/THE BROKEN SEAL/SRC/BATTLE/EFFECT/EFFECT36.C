@@ -4,6 +4,7 @@
 #include "EVENT_RUNTIME.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 #include "TYPES.H"
+#include "HEAP_STATE.H"
 #include "SCRIPT_MOTION.H"
 #include "FX_SCENE.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -189,10 +190,8 @@ void BattleEffect_InitializeSharedScene(void)
     struct BattleEffectBuffers *work;
     s32 no;
 
-    /* FAKEMATCH: the original runtime-cell27 to palette-cell32 transport
-       shares one cache base; separate globals add a literal and swap registers. */
-    scene = (u8 *)Data_03001ebc;
-    work = *((struct BattleEffectBuffers **)&Data_03001ebc + 5);
+    scene = *(gWorkSlot + HEAP_SLOT_EVENT);
+    work = *(gWorkSlot + 32);
     Dma_Set(&work->target[0x2a0], scene + 0x776, 0x84000150, (volatile u32 *)0x040000d4);
     if (*(s16 *)(scene + 0xcb8) == 0)
         Dma_Set(work->target, scene + 0x236, 0x84000150, (volatile u32 *)0x040000d4);

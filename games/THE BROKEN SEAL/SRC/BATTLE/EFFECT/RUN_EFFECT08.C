@@ -43,18 +43,11 @@ void Audio_PlayCue(s32);
 void FieldEffect_SpawnNearbyMarkers(void);
 void FieldEffect_WatchLeaderDistance(void);
 
-static __inline__ s32 *PartyTarget_Slot(s32 base)
-{
-    /* FAKEMATCH: keep base-plus-offset formation through an integer argument. */
-    return (s32 *)(base + 500);
-}
-
 void RunBattleEffect08(void)
 {
     struct EffectState *scene;
     struct EffectState *work;
     struct EffectTarget *target;
-    s32 *target_no;
     s32 resource;
     s32 result;
     s32 frame;
@@ -63,8 +56,7 @@ void RunBattleEffect08(void)
     ObjectDispatch_ApplyValueToKind200Children(6);
     DisplayTransition_InitializeBattleEffectState(8);
     work = Data_03001ebc.work;
-    target_no = PartyTarget_Slot((s32)&Data_02000240);
-    target = ObjectTable_Get(*target_no);
+    target = ObjectTable_Get(Data_02000240.target);
     work->x = target->x;
     work->height = target->z - target->y;
     BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
@@ -77,7 +69,7 @@ void RunBattleEffect08(void)
     WaitFrames(1);
     result = BattleFx_FindMatchingEvent(0x50000005, 8, &resource);
     if (result != 0)
-        BattleFx_RunEventAction(result, *target_no, resource);
+        BattleFx_RunEventAction(result, Data_02000240.target, resource);
     Audio_PlayCue(131);
     scene->active = 1;
     scene->center_x = work->x / 0x10000;

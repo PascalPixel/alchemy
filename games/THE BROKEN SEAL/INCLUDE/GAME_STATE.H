@@ -49,7 +49,8 @@ struct GameState {
     u16 turn;
     /* The cue a scene fading in from white plays first. */
     s16 scene_cue;
-    u8 unknown_1f0[2];
+    /* The cue Audio_PlayCueFromEventWork plays. */
+    s16 cue;
     /* How the leader moves: 1 on a ladder, 2 in the Suhara desert's sand. */
     u8 movement_mode;
     u8 unknown_1f3;

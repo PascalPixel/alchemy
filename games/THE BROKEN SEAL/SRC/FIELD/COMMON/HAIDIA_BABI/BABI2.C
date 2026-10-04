@@ -75,9 +75,6 @@ extern s32 gHaidiaBabiBagShowScript[];
 void ObjectDispatch_WaitForValue16();
 void HaidiaBabi_SpawnEffectPair(union FieldObject *object);
 
-/* The overlay's veneer into the resident unsigned remainder. */
-u32 __umodsi3();
-
 union PairObject {
     union FieldObject object;
     s32 words[28];
@@ -298,11 +295,11 @@ void HaidiaBabi_RunInnkeeperTalk(void)
 void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
     Engine_EventBegin();
-    Actor_FaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
+    Engine_ActorFaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
     Engine_EventSetMessage((s32)MsgHaidiaYouveGrownSoMuch);
-    Event_ShowMessage(0x10, 0);
-    Actor_FaceDirection(0x10, 0xB000, 0xA);
-    GameFlag_Set(0x301);
+    Engine_EventShowMessage(0x10, 0);
+    Engine_ActorFaceDirection(0x10, 0xB000, 0xA);
+    Engine_GameFlagSet(0x301);
     Engine_EventEnd();
 }
 
@@ -310,8 +307,8 @@ void SceneDialogue_RunActorThirteenDialogue(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
-    Event_ShowMessage(0xD, 0);
-    GameFlag_Set(0x81C);
+    Engine_EventShowMessage(0xD, 0);
+    Engine_GameFlagSet(0x81C);
     Engine_EventEnd();
 }
 
@@ -319,8 +316,8 @@ void SceneDialogue_RunActor16LineAndFlag81c(void)
 {
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
-    Event_ShowMessage(0x10, 0);
-    GameFlag_Set(0x81C);
+    Engine_EventShowMessage(0x10, 0);
+    Engine_GameFlagSet(0x81C);
     Engine_EventEnd();
 }
 
@@ -466,7 +463,7 @@ void ActorPresentation_SetTwoSceneCells(void)
     {
         s32 destination = 25;
 
-        Map_CopyCellAttributes(25, 15, 2, 2, destination, destination);
+        Engine_MapCopyCellAttributes(25, 15, 2, 2, destination, destination);
     }
 }
 
@@ -532,28 +529,18 @@ void SceneEffect_UpdateObjectByFrameParity(union FieldObject *object)
 
 void OverlayObject_UpdateOnFrameParity(union FieldObject *object)
 {
-    /* FAKEMATCH: retain the existing volatile frame reads; ordinary
-       reads merge the odd-frame test and palette value loads and change
-       their argument registers at the same function extent. */
-    volatile u32 *frame = (volatile u32 *)&gFrameCount;
-
-    if ((*frame & 1) != 0) {
-        Engine_ObjectSetPartPalettes(&object->actor, __umodsi3((s32)(*frame >> 1), 6));
+    if ((gFrameCount & 1) != 0) {
+        Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
     }
-    if ((*frame & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         HaidiaBabi_SpawnEffectPair(object);
     }
 }
 
 void OverlayObject_ApplyRandomSlotOnOddFrames(union FieldObject *object)
 {
-    /* FAKEMATCH: retain the existing volatile frame reads; ordinary
-       reads merge the odd-frame test and palette value loads and change
-       their argument registers at the same function extent. */
-    volatile u32 *frame = (volatile u32 *)&gFrameCount;
-
-    if ((*frame & 1) != 0) {
-        s32 slot = (*frame >> 1) % 6;
+    if ((gFrameCount & 1) != 0) {
+        s32 slot = (gFrameCount >> 1) % 6;
 
         Engine_ObjectSetPartPalettes(&object->actor, slot);
     }

@@ -14,11 +14,8 @@ void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 /* battle/presentation/cam/shoulder_alt.c */
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-    /* FAKEMATCH: separate cell loads change the literal pool and register
-       order. The existing walk reaches slot 44 from camera slot 12. */
-    void **slot = (void **)&gCameraWork;
-    struct BattleCamera *cam = slot[0];
-    struct BattlePresentationTransition *trans = slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];
+    struct BattleCamera *cam = *(gWorkSlot + HEAP_SLOT_CAMERA);
+    struct BattlePresentationTransition *trans = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     volatile u32 *keys = (volatile u32 *)gKeysHeld;
 
     if ((*keys & KEY_L) != 0) {

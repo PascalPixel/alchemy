@@ -20,16 +20,21 @@ struct DispatchChild {
     s16 *animation_index;
 };
 
+struct FieldSprite;
+
 struct DispatchObject {
     u32 value_00;
     s16 value_04;
-    u8 unknown_06[0x2a];
+    u8 unknown_06[0x1d];
+    u8 priority_flags;      /* 0x23: bit 0 keeps the sprite priority automatic */
+    u8 unknown_24[0x0c];
     s32 value_30;
     s32 value_34;
     u8 unknown_38[0x18];
     union {
         struct DispatchChild *child;
         struct DispatchChild **children;
+        struct FieldSprite *sprite;
     } target;
     u8 kind;
     u8 unknown_55[2];
@@ -55,6 +60,7 @@ void Animation_ApplyChildValuesToRecord(struct DispatchChild *, u32);
 void Animation_ApplyChildValuesToRecordFar(struct DispatchChild *, u32);
 void Animation_ApplyChildValues(struct DispatchObject *, u32);
 void Animation_ApplyChildValuesFar(struct DispatchObject *, u32);
+void ObjectDispatch_SetSpritePriority(struct DispatchObject *, s32);
 
 extern const s32 ObjectDispatch_Table4[];
 extern const s32 ObjectDispatch_Table6[];

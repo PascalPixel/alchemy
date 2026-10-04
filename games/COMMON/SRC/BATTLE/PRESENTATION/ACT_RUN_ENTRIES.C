@@ -7,25 +7,19 @@ void BattlePres_SetActorModes(u16 *, s32);
 void BattlePresentation_WaitForAdvance(void);
 s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot);
 
+/* The epilogue pops into r1, so this owner was declared with a result,
+   though it returns none; its callers discard it. */
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused)
 {
-    /* FAKEMATCH: a void owner makes the interworking epilogue pop into r0;
-       this result type keeps the native pop into r1. Callers discard it. */
     s32 i;
-    s8 n;
 
     BattlePres_SetActorModes(0, 0);
-    n = plan->target_count;
-    if (n == 0) {
+    if (plan->target_count == 0) {
         BattlePresentation_WaitForAdvance();
     } else {
-        i = 0;
-        if (i < (s32)n) {
-            do {
-                Battle_ResolveTargetAction(plan, i);
-                BattleEv_DispatchQueued();
-                i += 1;
-            } while (i < (s32)plan->target_count);
+        for (i = 0; i < plan->target_count; i++) {
+            Battle_ResolveTargetAction(plan, i);
+            BattleEv_DispatchQueued();
         }
     }
     WaitFrames(1);

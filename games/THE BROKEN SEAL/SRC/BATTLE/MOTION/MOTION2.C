@@ -37,20 +37,13 @@ struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id) {
 
 void ResetMotionRecordGroup(void *owner)
 {
-    s32 remaining;
-    u8 *script;
-    struct AnimationEntry **items;
+    struct AnimationObject *object = owner;
+    s32 i;
 
-    if (owner != NULL) {
-        /* FAKEMATCH: the inherited cached null precedes the entries address;
-           a direct NULL store moves its load after the loop setup. */
-        script = NULL;
-        items = ((struct AnimationObject *)owner)->entries;
-        for (remaining = 3; remaining >= 0; remaining--) {
-            struct AnimationEntry *item = *items++;
-            if (item != NULL) {
-                item->script = script;
-            }
+    if (object != NULL) {
+        for (i = 0; i < 4; i++) {
+            if (object->entries[i] != NULL)
+                object->entries[i]->script = NULL;
         }
     }
 }

@@ -22,18 +22,11 @@ struct EffectVector {
 
 
 
-struct EffectSprite {
-    u8 unknown_00[9];
-    s8 flags;                       /* 0x09; bits 2-3 are the draw priority */
-    u8 unknown_0a[0x0e];
-    s32 scale;                      /* 0x18 */
-};
-
 struct EffectOwner {
     u8 unknown_00[8];
     struct EffectVector position;   /* 0x08 */
     u8 unknown_14[0x3c];
-    struct EffectSprite *sprite;    /* 0x50 */
+    struct AnimationObject *sprite; /* 0x50 */
 };
 
 struct ObjectRuntime *Object_GetById(u32 actor);
@@ -193,13 +186,9 @@ void BattleFx_ShrinkObjectAndDestroySlow(void *obj)
  */
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
 {
-    /* FAKEMATCH: the existing signed sprite-byte prefix preserves the
-       priority-load and clear ordering; canonical byte aliases reorder them. */
     struct EffectOwner *owner;
     struct EffectVector position;
     s32 state;
-    u8 priority;
-    u8 flags;
 
     owner = (struct EffectOwner *)Object_GetById(gGameState.selected_actor);
     state = effect->state;
@@ -222,17 +211,15 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
         effect->flag42 = state;
         effect->state++;
 
-        priority = owner->sprite->flags & 0xc;
-        flags = ((struct EffectSprite *)effect->object)->flags & -13;
-        flags |= priority;
-        ((struct EffectSprite *)effect->object)->flags = flags;
+        ((struct AnimationObject *)effect->object)->part[0].priority =
+            owner->sprite->part[0].priority;
         effect->flags = 0;
         effect->age = 0;
         if ((gFrameTick & 1) != 0)
             Audio_PlayCue(134);
     } else if (state == 1) {
         if ((s16)effect->age == 3) {
-            ((struct EffectSprite *)effect->object)->flags &= -13;
+            ((struct AnimationObject *)effect->object)->part[0].priority = 0;
             effect->flags = 4;
         }
         if (BattleFx_HasReachedTarget(effect) == 0)
@@ -241,7 +228,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect)
         if (BattleFx_HasReachedTarget(effect) == 0) {
             effect->origin_x = effect->x;
             effect->origin_z = effect->z;
-            ((struct EffectSprite *)effect->object)->flags &= -13;
+            ((struct AnimationObject *)effect->object)->part[0].priority = 0;
             effect->flags = 4;
             effect->render = 0;
             effect->state++;

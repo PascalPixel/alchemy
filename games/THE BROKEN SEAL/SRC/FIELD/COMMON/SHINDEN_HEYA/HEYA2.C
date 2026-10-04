@@ -177,10 +177,10 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
     Engine_EventWait(15);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Engine_ActorStartRepeatedMotion(0, 1); /* object 0, variant 1 */
     ((struct FacingObject *)Object_GetById(0))->facing_flags &= ~1;
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 184, 168);
+    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
     ((struct FacingObject *)Object_GetById(1))->facing_flags &= ~1;
     Engine_ActorWalkToAndWait(1, 200, 168);
     Engine_EventWait(1);
@@ -191,12 +191,12 @@ void FieldScene_RunPairedActorChoreography(void)
     ((struct FacingObject *)Object_GetById(1))->facing_flags |= 1;
     Engine_ActorJump(ACTOR_GERALD, 2, 0);
     Engine_EventWait(15);
-    Actor_FaceActor(ACTOR_GERALD, 8, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 8, 0);
     Engine_EventWait(5); /* main:0808a080 */
     Engine_ActorJump(ACTOR_GERALD, 2, 0);
     Engine_EventWait(25);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
     Engine_EventWait(5);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(10);
@@ -204,7 +204,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(5);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
     Engine_EventWait(10);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(15);
@@ -214,25 +214,25 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_ActorSetAnimation(9, 3);
     Engine_ActorSetAnimationAndWait(10, 3); /* main:0808a110 */
     Engine_EventWait(20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
     Engine_EventWait(10); /* main:0808a138 */
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-    Actor_FaceActor(ACTOR_GERALD, 11, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 11, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Engine_EventWait(15);
     Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2); /* main:0808a138 */
     Engine_EventWait(10);
     /* This scene supplies position words beyond the icon's named item argument. */
     ((void (*)())ShindenHeya_RaiseItemIcon)(222, 0xb80000, 0x1b0000, 0xa80000);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1);
     Engine_EventWait(10);
@@ -264,7 +264,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Call3(Engine_ActorShowEmote, 0, 0x102, 0);
     Call3(Engine_ActorShowEmote, 1, 0x102, 0);
     Engine_EventWait(60);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(10);
@@ -276,12 +276,12 @@ void FieldScene_RunPairedActorChoreography(void)
     Object_GetById(12)->update =
         (void (*)(union FieldObject *))UpdateFacingFromResolvedObject;
     Engine_ActorWalkToAndWait(1, 196, 180);
-    Actor_WalkToAndWait(ACTOR_GERALD, 184, 184);
-    Actor_WalkToAndWait(ACTOR_GERALD, 180, 180);
-    Actor_WalkToAndWait(ACTOR_GERALD, 168, 168);
-    Actor_WalkToAndWait(ACTOR_GERALD, 180, 156);
-    Actor_WalkTo(ACTOR_GERALD, 200, 104);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 168);
+    Engine_ActorWalkToAndWait(ACTOR_GERALD, 184, 184);
+    Engine_ActorWalkToAndWait(ACTOR_GERALD, 180, 180);
+    Engine_ActorWalkToAndWait(ACTOR_GERALD, 168, 168);
+    Engine_ActorWalkToAndWait(ACTOR_GERALD, 180, 156);
+    Engine_ActorWalkTo(ACTOR_GERALD, 200, 104);
+    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 192, 168);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
     Engine_ActorWaitForMove(ACTOR_GERALD);
     Engine_EventWait(30);
@@ -318,9 +318,9 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(12, 3); /* main:0808a110 */
     Engine_EventWait(60);
-    Actor_WalkToAndWait(ACTOR_GERALD, 208, 168);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorWalkToAndWait(ACTOR_GERALD, 208, 168);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 4);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 4); /* main:0808a110 */
@@ -328,16 +328,16 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 1); /* main:0808a138 */
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+    Engine_ActorFaceDirection(ACTOR_GERALD, 0, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(10);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimationAndWait(12, 3); /* main:0808a110 */
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+    Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, 0, 0);
+    Engine_ActorFaceDirection(ACTOR_GERALD, 0, 0);
     Engine_EventWait(10);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Engine_ActorRunRepeatedMotion(ACTOR_GERALD, 2);
@@ -350,17 +350,17 @@ void FieldScene_RunPairedActorChoreography(void)
     Call3(Engine_ActorSetSpeed, 1, 0x18000, 0xc000);
     Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
     Engine_ActorJump(ACTOR_GERALD, 6, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-    Actor_FaceActor(ACTOR_GERALD, 8, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 9, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 8, 0);
     Engine_EventWait(1);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-    Actor_FaceActor(ACTOR_GERALD, 11, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 12, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 11, 0);
     Engine_EventWait(1);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-    Actor_FaceActor(ACTOR_GERALD, 9, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 8, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 9, 0);
     Engine_EventWait(1); /* main:0808a138 */
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
-    Actor_WalkToAndWait(ACTOR_GERALD, 208, 168);
+    Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 192, 168);
+    Engine_ActorWalkToAndWait(ACTOR_GERALD, 208, 168);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_EventWait(10);
     Call3(Engine_ActorFaceDirection, 0, 0x3000, 0);
@@ -375,8 +375,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Call3(Engine_ActorFaceDirection, 0, 0x5000, 0);
     Engine_ActorFaceDirection(1, 0xb000, 0);
     Engine_EventWait(20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
+    Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Engine_ActorFaceActor(ACTOR_GERALD, 12, 0);
     Engine_EventWait(20);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
@@ -389,7 +389,7 @@ void FieldScene_RunPairedActorChoreography(void)
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
     Engine_ActorSetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
     Engine_EventWait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
+    Engine_ActorFaceDirection(ACTOR_GERALD, 0, 0);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
     Engine_ActorSetAnimation(ACTOR_GERALD, 2);
@@ -584,7 +584,7 @@ void SceneState_ApplyTwoRects(void)
     }
     {
         s32 x = 11, y = 8;
-        Map_CopyCellAttributes(11, 10, 3, 2, x, y);
+        Engine_MapCopyCellAttributes(11, 10, 3, 2, x, y);
     }
     Engine_TaskWait(1);
 }
@@ -607,13 +607,13 @@ void FieldScene_RunActorEightFacingDialogue(void)
     }
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x87a) != 0)
+    if (Engine_GameFlagIsSet(0x87a) != 0)
         Engine_EventSetMessage((s32)MsgShindenPathSolSanctumStillClosed);
-    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
+    else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
         Engine_EventSetMessage((s32)MsgShindenMyControlOverPsynergyHas);
     else
         Engine_EventSetMessage((s32)MsgShindenWieldersPsynergyCalledAdeptsAdepts);
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }
 
@@ -633,7 +633,7 @@ void FieldScene_DispatchBySceneId(void)
     switch (no) {
     case 10:
     case 12:
-        if (GameFlag_IsSet(0x855) != 0) {
+        if (Engine_GameFlagIsSet(0x855) != 0) {
             Engine_EventSetMessage((s32)MsgShindenWasHandFateReturnedGold);
         } else {
             Engine_EventSetMessage((s32)MsgShindenWeWillHelpAnytimeAs);
@@ -652,7 +652,7 @@ void FieldScene_DispatchBySceneId(void)
         break;
     }
 
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }
 
@@ -664,11 +664,11 @@ void SceneDialogue_RunActorEightFlaggedDialogue(void)
     }
 
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x845) != 0)
+    if (Engine_GameFlagIsSet(0x845) != 0)
         Engine_EventSetMessage((s32)MsgShindenCurseMayOverButWe);
     else
         Engine_EventSetMessage((s32)MsgShindenAmStartingFeelOnlyBeginning);
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }
 
@@ -681,9 +681,9 @@ void SceneDialogue_RunActorEightFollowupDialogue(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShindenWasAfterEerieNightWhen);
-    if (GameFlag_IsSet(0x909) != 0)
+    if (Engine_GameFlagIsSet(0x909) != 0)
         Engine_EventSetMessage((s32)MsgShindenSavedAltinFromMonstersClearly);
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }
 
@@ -696,6 +696,6 @@ void SceneDialogue_RunActorEightDialogue(void)
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgShindenCameXianFromVeryDistant);
-    Event_ShowMessage(8, 0);
+    Engine_EventShowMessage(8, 0);
     Engine_EventEnd();
 }

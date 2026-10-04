@@ -16,15 +16,6 @@ SerialRuntime_CollectReceivedPayloads:
 	.thumb_func
 SerialRuntime_StepBlockTransfer:
 	.incbin "baserom.gba", 0x0000655c, 0x0000023c
-	.section .rom.0000679c, "ax"
-	.balign 4
-	.global SerialTest_Run
-	.type SerialTest_Run, %function
-	.thumb_func
-SerialTest_Run:
-	.incbin "baserom.gba", 0x0000679c, 0x000000c8
-	.section .rom.0000686e, "ax"
-	.incbin "baserom.gba", 0x0000686e, 0x00000002
 	.section .rom.00007320, "ax"
 	.global Runtime_IrqHandlers
 Runtime_IrqHandlers:
@@ -98,20 +89,12 @@ Object_UpdateAllEnd:
 	.incbin "baserom.gba", 0x0000daf0, 0x000001ec
 	.section .rom.0000ebec, "ax"
 	.incbin "baserom.gba", 0x0000ebec, 0x00000b50
-	.section .rom.000106e8, "ax"
-	.global Func_08010788
-	.type Func_08010788, %function
-	.thumb_func
-Func_08010788:
-	.incbin "baserom.gba", 0x000106e8, 0x0000013c
 	.section .rom.00011b54, "ax"
 	.global Func_08011bf4
 	.type Func_08011bf4, %function
 	.thumb_func
 Func_08011bf4:
 	.incbin "baserom.gba", 0x00011b54, 0x000000ec
-	.section .rom.00011eb2, "ax"
-	.incbin "baserom.gba", 0x00011eb2, 0x00000002
 	.section .rom.00012478, "ax"
 	.global Ui_RunIconMonitor
 	.type Ui_RunIconMonitor, %function
@@ -227,16 +210,12 @@ Tile_BuildMetatiles:
 	.incbin "baserom.gba", 0x000158dc, 0x000001f4
 	.global Tile_BuildMetatilesEnd
 Tile_BuildMetatilesEnd:
-	.section .rom.00016482, "ax"
-	.incbin "baserom.gba", 0x00016482, 0x00000002
 	.section .rom.000168a0, "ax"
 	.global UiWork_StepChannelScript
 	.type UiWork_StepChannelScript, %function
 	.thumb_func
 UiWork_StepChannelScript:
 	.incbin "baserom.gba", 0x000168a0, 0x000005dc
-	.section .rom.000177fa, "ax"
-	.incbin "baserom.gba", 0x000177fa, 0x00000002
 	.section .rom.00017da8, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function
@@ -297,7 +276,9 @@ NameEntry_EditOwnerName:
 	.section .rom.00022ae2, "ax"
 	.incbin "baserom.gba", 0x00022ae2, 0x000026fa
 	.section .rom.0002525c, "ax"
-	.incbin "baserom.gba", 0x0002525c, 0x00001c80
+	.incbin "baserom.gba", 0x0002525c, 0x0000072c
+	.section .rom.000260dc, "ax"
+	.incbin "baserom.gba", 0x000260dc, 0x00000e00
 	.section .rom.00027170, "ax"
 	.global Battle_CollectPartyCommands
 	.type Battle_CollectPartyCommands, %function
@@ -604,14 +585,6 @@ FunctionHead_08097c3c:
 	.thumb_func
 RunBattleEffect05:
 	.incbin "baserom.gba", 0x000909e4, 0x00000328
-	.section .rom.00091e56, "ax"
-	.incbin "baserom.gba", 0x00091e56, 0x00000002
-	.section .rom.00091e58, "ax"
-	.global RunBattleEffect13
-	.type RunBattleEffect13, %function
-	.thumb_func
-RunBattleEffect13:
-	.incbin "baserom.gba", 0x00091e58, 0x0000024c
 	.section .rom.00093404, "ax"
 	.global Data_0809c410
 Data_0809c410:
@@ -789,12 +762,6 @@ gEffectScripts:
 	.global WorldMap_PlaceMarkers
 WorldMap_PlaceMarkers:
 	.incbin "baserom.gba", 0x0009711c, 0x00000ee4
-	.section .rom.0009b008, "ax"
-	.global Func_080a414c
-	.type Func_080a414c, %function
-	.thumb_func
-Func_080a414c:
-	.incbin "baserom.gba", 0x0009b008, 0x00000330
 	.section .rom.000a1664, "ax"
 	.global Func_080aa768
 Func_080aa768:
@@ -976,8 +943,6 @@ Inn_PriceMultipliers:
 	.thumb_func
 Battle_RunEncounter:
 	.incbin "baserom.gba", 0x000ad3c8, 0x00000698
-	.section .rom.000ae738, "ax"
-	.incbin "baserom.gba", 0x000ae738, 0x000001ac
 	.section .rom.000afc1c, "ax"
 	.global BattlePres_RunUnitAction
 	.type BattlePres_RunUnitAction, %function
@@ -1889,13 +1854,6 @@ RisingBurst_SparkSizes:
 	.global SentouKouka_BitOperands
 SentouKouka_BitOperands:
 	.incbin "baserom.gba", 0x000e6034, 0x00000fcc
-	.section .rom.000e77f0, "ax"
-	.global DisplayScroll_DrawLine
-	.type DisplayScroll_DrawLine, %function
-	.thumb_func
-DisplayScroll_DrawLine:
-	.incbin "baserom.gba", 0x000e77f0, 0x0000026c
-	.size DisplayScroll_DrawLine, .-DisplayScroll_DrawLine
 	.section .rom.000e7a5c, "ax"
 	.global DisplayScroll_SlideResources
 DisplayScroll_SlideResources:
@@ -3242,19 +3200,6 @@ Resource_Data36D:
 	.global Resource_Data36E
 Resource_Data36E:
 	.incbin "baserom.gba", 0x007715dc, 0x00000140
-	.section .rom.000b518c, "ax"
-	.balign 4
-	.type BattleCommand_SelectTargets.0, %function
-	.thumb_func
-BattleCommand_SelectTargets.0:
-	.incbin "baserom.gba", 0x000b518c, 0x000001ec
-	.size BattleCommand_SelectTargets.0, .-BattleCommand_SelectTargets.0
-	.global BattleCommand_BuildPlan
-	.type BattleCommand_BuildPlan, %function
-	.thumb_func
-BattleCommand_BuildPlan:
-	.incbin "baserom.gba", 0x000b5378, 0x00000e90
-	.size BattleCommand_BuildPlan, .-BattleCommand_BuildPlan
 	.section .rom.0000c62c, "ax"
 	.balign 4
 	.global ObjectSystem_UpdateCamera
@@ -3310,16 +3255,6 @@ UiText_OpenEntryMessage:
 	.incbin "baserom.gba", 0x0001750c, 0x00000060
 	.size UiText_OpenEntryMessage, .-UiText_OpenEntryMessage
 
-@ Uncredited frame audit; see the English BattlePres_SyncTurn draft.
-	.section .rom.000ad148, "ax"
-	.balign 4
-	.global BattlePres_SyncTurn
-	.type BattlePres_SyncTurn, %function
-	.thumb_func
-BattlePres_SyncTurn:
-	.incbin "baserom.gba", 0x000ad148, 0x00000230
-	.size BattlePres_SyncTurn, .-BattlePres_SyncTurn
-
 @ Uncredited frame audit; see the English BattleFx_InitializeStarField draft.
 	.section .rom.000b8470, "ax"
 	.balign 4
@@ -3339,13 +3274,3 @@ BattleFx_InitializeStarField:
 BattleFx_PlayUnitElementEffect:
 	.incbin "baserom.gba", 0x000b8798, 0x0000027c
 	.size BattleFx_PlayUnitElementEffect, .-BattleFx_PlayUnitElementEffect
-
-@ Uncredited frame audit; see the English BattleFx_RunParticleField draft.
-	.section .rom.000d26e0, "ax"
-	.balign 4
-	.global BattleFx_RunParticleField
-	.type BattleFx_RunParticleField, %function
-	.thumb_func
-BattleFx_RunParticleField:
-	.incbin "baserom.gba", 0x000d26e0, 0x00000444
-	.size BattleFx_RunParticleField, .-BattleFx_RunParticleField

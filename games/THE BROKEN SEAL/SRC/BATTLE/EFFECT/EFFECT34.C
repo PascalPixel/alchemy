@@ -37,11 +37,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
     struct BattleFxScene *scene = gEffectWork;
     struct ObjectRuntime *object;
-    u8 *child;
-    u8 flag;
 
-    /* FAKEMATCH: the existing packed OAM byte clear is retained over the
-       real animation part; a bitfield clear adds six native instructions. */
     object = Object_CreateFar(kind, x, y, z);
     if (object != NULL) {
         if (object->animation_kind == 0) {
@@ -49,11 +45,9 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
             return NULL;
         }
         object->terrain_height = ((struct ObjectRuntime *)scene->main_object)->terrain_height;
-        flag = 4;
-        object->flags = flag;
-        object->unknown_23 = flag;
-        child = (u8 *)&((struct AnimationObject *)object->animation)->part[0];
-        child[9] &= ~(flag + 8);
+        object->flags = 4;
+        object->unknown_23 = 4;
+        ((struct AnimationObject *)object->animation)->part[0].priority = 0;
         ObjectDispatch_SetSingleChildField26Far(object, 0);
         Object_SetMode(object, 1);
     }

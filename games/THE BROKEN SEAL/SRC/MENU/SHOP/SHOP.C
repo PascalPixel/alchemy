@@ -50,10 +50,6 @@ struct SpriteAttr {
     unsigned size : 2;
 };
 
-struct Half {
-    u16 v;
-};
-
 struct SpriteAttr2 {
     u16 y : 8;
     u16 affine : 2;
@@ -291,9 +287,6 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     s32 step;
     s32 x;
     s32 y;
-    /* FAKEMATCH: the existing halfword zero keeps its pool load before
-       the second division, as in the native cursor tween. */
-    struct Half zero;
 
     if (cursor == NULL)
         return;
@@ -304,14 +297,13 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     step = (s8)++cursor->active;
     x = cursor->x + (cursor->target_x - (s16)cursor->x) * step / kind;
     sprite->x = x;
-    zero.v = 0;
     ((struct SpriteAttr *)&sprite->packed)->x = x;
     y = cursor->y + (cursor->target_y - (s16)cursor->y) * step / kind;
     sprite->y = y;
     ((struct SpriteAttr *)&sprite->packed)->y = y;
     if (step == kind) {
-        cursor->kind = zero.v;
-        cursor->active = zero.v;
+        cursor->kind = 0;
+        cursor->active = 0;
     }
 }
 

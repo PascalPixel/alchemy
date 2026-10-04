@@ -57,12 +57,9 @@ void Object_SetMoveTargetFar(struct MotionObject *object, s32 x, s32 y, s32 z);
  */
 void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition pos;
     struct EffectPosition base;
     struct Vector3 scale;
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
@@ -82,12 +79,10 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     s32 k;
     struct EffectStep *trails;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    graphics = heap_cache[2];
-    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    graphics = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     caster = GetBattleObjectSlotFar(effect->actor)->object;
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
@@ -98,7 +93,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     work->transfer_mode = 2;
     work->transfer_value = 75;
-    draw[0] = (DrawRectangle)heap_cache[7];
+    draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -120,7 +115,7 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
     trails = (struct EffectStep *)gMapCellBuffer;
     for (frame = 0; frame != 60; frame++) {
         if (frame <= 47) {
-            struct BattleCamera *view = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+            struct BattleCamera *view = *(gWorkSlot + HEAP_SLOT_CAMERA);
             s32 speed;
 
             if (frame <= 39)
@@ -225,9 +220,6 @@ void BattleFx_RunRingBolts(struct BattleEffectArgument *effect)
  */
 void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
@@ -245,12 +237,10 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     s32 k;
     struct EffectStep *trails;
 
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
-    graphics = heap_cache[2];
-    camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    graphics = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
+    camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
@@ -258,7 +248,7 @@ void BattleFx_RunSpinningStars(struct BattleEffectArgument *effect)
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    draw[0] = (DrawRectangle)heap_cache[7];
+    draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     source = GetBattleObjectSlotFar(work->effect->actor)->object;

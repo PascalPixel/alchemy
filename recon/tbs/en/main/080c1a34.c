@@ -1,4 +1,12 @@
-/* 2026-10-03 BATTLE5 frame audit. Demoted in every edition under S1/S2/C1.
+/* 2026-10-04 (main-5): score 260, frame only. Plain for loops with an
+ * unsigned member index and count/sum cleared before the record address
+ * now give every instruction and register of the ROM; the only difference
+ * is the ROM's unused 28-byte reserve (sub/add sp, #28), which shifts the
+ * three return branches. 28 bytes is one word per call-crossing pseudo
+ * (seven here); no ordinary source tried reproduces it without an unread
+ * local, which S2 does not admit for a frame-size difference.
+ *
+ * 2026-10-03 BATTLE5 frame audit. Demoted in every edition under S1/S2/C1.
  * Party_ComputeEligibleMemberAverage is 200 bytes, literal pool included,
  * in all six owned ROMs. Its 196-byte instruction body refers to sp only
  * when reserving/releasing 28 bytes; it never reads, writes or passes an
@@ -12,28 +20,18 @@
  * reads a flag and accepts no output buffer. Neither consumes caller-local
  * storage. The division takes the sum and count in registers.
  *
- * Retained ordinary draft: no scratch, no device, 196 bytes; score 260,
- * two deleted stack-adjustment instructions and three return branches
- * shortened by their deletion. All substantive instructions/registers
- * otherwise agree. The former unused reserve made this function exact,
- * but supplied only frame size and does not meet S2.
- *
  * Rejected meaningful source trials:
  * - One context containing the seven consumed variables (formation,
  *   member index, level sum, count, enemy definition, enemy id and count
  *   cursor): 6365, with real field loads/stores. Every field was read.
  * - The same context declared register: unchanged 6365.
  * - A two-field level-sum/count accumulator: 2102, four-byte spill frame.
- * - All seven ordinary scalars given the outer function lifetime: 260,
- *   identical to this scoped form, with no local frame.
- * No truthful consumed-state model tested explains the 28-byte reserve.
- * Keep this draft uncredited until a truthful frame model is recovered.
- * Runtime_RemoveIrqHandlerSlot2 remains C in the preceding existing
- * ACT_RUN_ZERO module; the remaining BATTLE5 functions stay together.
- * All twelve edition comparisons pass. The 200-byte function leaves C in
- * each TBS edition; moving the IRQ helper makes the preceding two-byte
- * alignment compiler-owned. Net DONE delta: -198 per edition, -1188 across
- * six; FAKEMATCH-steered C falls by 1200. No count rule changes are involved.
+ * - All seven ordinary scalars given the outer function lifetime: 260.
+ * - Signed member index: 270 (signed loop tests); record address set
+ *   before count/sum: 270 (r9/r10 initialisation order).
+ * The former unused reserve made this function exact, but supplied only
+ * frame size and does not meet S2. Keep this draft uncredited until a
+ * truthful frame model is recovered.
  */
 #include "TYPES.H"
 #include "BATTLE_FORMATION.H"
@@ -45,52 +43,34 @@ s32 GameFlag_IsSet(s32 flag);
 s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 {
     struct BattleFormationRecord *record;
-    s32 member_index;
-    s32 level_sum;
-    s32 eligible_count;
+    struct EnemyDefinition *enemy;
+    u32 i;
+    s32 id;
+    s32 sum;
+    s32 count;
 
-    eligible_count = 0;
-    level_sum = 0;
+    count = 0;
+    sum = 0;
     record = &BattleFormation_Records[record_id];
-
-    member_index = 0;
-    if (record->minimum_counts[0] == 0) {
-        u8 *present;
-
-        present = record->minimum_counts;
-        do {
-            member_index++;
-            if ((u32)member_index > 4)
-                break;
-            present++;
-        } while (*present == 0);
+    for (i = 0; i < 5; i++) {
+        if (record->minimum_counts[i] != 0)
+            break;
     }
-    if (member_index == 5)
+    if (i == 5)
         return -1;
-
-    member_index = 0;
-    do {
-        if (record->maximum_counts[member_index] != 0) {
-            struct EnemyDefinition *object;
-            s32 member;
-
-            member = record->member_ids[member_index];
-            object = Owner_GetRecordFar(member + 8);
-            if (object != 0) {
-                if (object->level <= 3 ||
-                    GameFlag_IsSet(372) != 0 ||
-                    GameFlag_IsSet(member + 1544) != 0) {
-                    level_sum += object->level;
-                    eligible_count++;
-                } else {
-                    return -2;
-                }
-            }
-        }
-        member_index++;
-    } while ((u32)member_index <= 4);
-
-    if (eligible_count == 0)
+    for (i = 0; i < 5; i++) {
+        if (record->maximum_counts[i] == 0)
+            continue;
+        id = record->member_ids[i];
+        enemy = Owner_GetRecordFar(id + 8);
+        if (enemy == 0)
+            continue;
+        if (enemy->level > 3 && !GameFlag_IsSet(372) && !GameFlag_IsSet(id + 1544))
+            return -2;
+        sum += enemy->level;
+        count++;
+    }
+    if (count == 0)
         return -3;
-    return level_sum / eligible_count;
+    return sum / count;
 }

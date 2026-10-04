@@ -596,37 +596,37 @@ void SceneEffect_DispatchStep(void)
 
     switch (scene[182]) {
     case 1:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps1, 81, 18);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps1, 81, 18);
         break;
     case 2:
-        Audio_PlayCue(158);
+        Engine_AudioPlayCue(158);
         shared0 = ShianMura_GateSteps2;
         shared1 = 83;
         goto shared;
     case 3:
-        Audio_PlayCue(158);
+        Engine_AudioPlayCue(158);
         shared0 = ShianMura_GateSteps2;
         shared1 = 86;
         goto shared;
     case 4:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps3, 84, 24);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps3, 84, 24);
         break;
     case 5:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps3, 72, 7);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps3, 72, 7);
         break;
     case 6:
-        Audio_PlayCue(188);
+        Engine_AudioPlayCue(188);
         shared0 = ShianMura_GateSteps4;
         shared1 = 69;
     shared:
-        Map_AnimateCells(shared0, shared1, 11);
+        Engine_MapAnimateCells(shared0, shared1, 11);
         break;
     case 7:
-        Audio_PlayCue(158);
-        Map_AnimateCells(ShianMura_GateSteps5, 83, 7);
+        Engine_AudioPlayCue(158);
+        Engine_MapAnimateCells(ShianMura_GateSteps5, 83, 7);
         break;
     default:
         break;

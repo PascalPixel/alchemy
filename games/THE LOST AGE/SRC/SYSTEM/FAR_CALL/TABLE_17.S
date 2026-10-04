@@ -8,7 +8,7 @@
 	.global BattleLayout_HighlightPartyPanelsFar
 	.thumb_func
 BattleLayout_HighlightPartyPanelsFar:
-	overlay_veneer Func_080461c8
+	overlay_veneer BattleLayout_HighlightPartyPanels
 	.global Func_080382a8
 	.thumb_func
 Func_080382a8:

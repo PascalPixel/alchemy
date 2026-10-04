@@ -40,17 +40,13 @@ void EffectRuntime_ReservedNoOp(void)
 void EffectRuntime_SetMode5AndPlayCue(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * sizeof(struct EffectRuntimeSlot);
-        /* FAKEMATCH: 8f4c57e6 direct slot indexing shortens this helper by
-           two bytes in all six editions; keep the existing scalar address
-           transport over the real slot record. */
-        object = ((struct EffectRuntimeSlot *)(base + offset +
-            (u32)&((struct EffectRuntime *)0)->slots))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 5);
         Audio_PlayCue(0x7d);
@@ -61,17 +57,13 @@ void EffectRuntime_SetMode5AndPlayCue(s32 id)
 void EffectRuntime_SetMode7AndLaunch(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * sizeof(struct EffectRuntimeSlot);
-        /* FAKEMATCH: 8f4c57e6 direct slot indexing shortens this helper by
-           two bytes in all six editions; keep the existing scalar address
-           transport over the real slot record. */
-        object = ((struct EffectRuntimeSlot *)(base + offset +
-            (u32)&((struct EffectRuntime *)0)->slots))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         WaitFrames(0x12);
         if (object != NULL)
             Object_SetMode(object, 7);
@@ -86,17 +78,13 @@ void EffectRuntime_SetMode7AndLaunch(s32 id)
 void EffectRuntime_SetMode4AndPlayCue(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * sizeof(struct EffectRuntimeSlot);
-        /* FAKEMATCH: 8f4c57e6 direct slot indexing shortens this helper by
-           two bytes in all six editions; keep the existing scalar address
-           transport over the real slot record. */
-        object = ((struct EffectRuntimeSlot *)(base + offset +
-            (u32)&((struct EffectRuntime *)0)->slots))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 4);
         Audio_PlayCue(0x7c);
@@ -107,17 +95,13 @@ void EffectRuntime_SetMode4AndPlayCue(s32 id)
 void EffectRuntime_SetMode2(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * sizeof(struct EffectRuntimeSlot);
-        /* FAKEMATCH: 8f4c57e6 direct slot indexing shortens this helper by
-           two bytes in all six editions; keep the existing scalar address
-           transport over the real slot record. */
-        object = ((struct EffectRuntimeSlot *)(base + offset +
-            (u32)&((struct EffectRuntime *)0)->slots))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             Object_SetMode(object, 2);
     }
@@ -126,34 +110,24 @@ void EffectRuntime_SetMode2(s32 id)
 struct ObjectRuntime *EffectRuntime_GetCurrentObject(s32 id)
 {
     s32 slot = EffectRuntime_FindSlotByObject(id);
+    struct EffectRuntimeSlot *slot_data;
 
     if (slot == -1)
         return NULL;
-    {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * sizeof(struct EffectRuntimeSlot);
-        /* FAKEMATCH: 8f4c57e6 direct slot indexing shortens this helper by
-           two bytes in all six editions; keep the existing scalar address
-           transport over the real slot record. */
-        return ((struct EffectRuntimeSlot *)(base + offset +
-            (u32)&((struct EffectRuntime *)0)->slots))->object;
-    }
+    slot_data = &gEventWork->slots[slot];
+    return slot_data->object;
 }
 
 void EffectRuntime_ClearCurrentFlags(s32 id)
 {
     s32 slot;
+    struct EffectRuntimeSlot *slot_data;
     struct ObjectRuntime *object;
 
     slot = EffectRuntime_FindSlotByObject(id);
     if (slot != -1) {
-        s32 base = (s32)gEventWork;
-        s32 offset = slot * sizeof(struct EffectRuntimeSlot);
-        /* FAKEMATCH: 8f4c57e6 direct slot indexing shortens this helper by
-           two bytes in all six editions; keep the existing scalar address
-           transport over the real slot record. */
-        object = ((struct EffectRuntimeSlot *)(base + offset +
-            (u32)&((struct EffectRuntime *)0)->slots))->object;
+        slot_data = &gEventWork->slots[slot];
+        object = slot_data->object;
         if (object != NULL)
             object->animation_kind = 0;
     }

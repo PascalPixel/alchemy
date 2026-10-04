@@ -4,25 +4,9 @@ mod commit_progress;
 mod layout;
 mod no_asm;
 mod publication;
-#[cfg(test)]
-pub(crate) use publication::figure_test_reason;
 
 const USAGE: &str =
-    "usage: alchemy check <publication|commit-progress|coverage|layout|no-asm|progress|routes> [args]";
-
-fn routes(arguments: &[String]) -> ExitCode {
-    if arguments == ["--standard"] {
-        for flag in crate::compiler::routing::cflags_for_target(
-            crate::compiler::routing::CompilerTarget::Tbs,
-        ) {
-            println!("{flag}");
-        }
-        ExitCode::SUCCESS
-    } else {
-        eprintln!("usage: alchemy check routes --standard");
-        ExitCode::from(2)
-    }
-}
+    "usage: alchemy check <publication|commit-progress|coverage|layout|no-asm|progress> [args]";
 
 pub fn entry(arguments: &[String]) -> ExitCode {
     let Some(command) = arguments.first().map(String::as_str) else {
@@ -43,7 +27,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             crate::coverage::progress::entry(rest);
             ExitCode::SUCCESS
         }
-        "routes" => routes(rest),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

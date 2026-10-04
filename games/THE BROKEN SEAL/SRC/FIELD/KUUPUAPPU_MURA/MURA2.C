@@ -119,7 +119,7 @@ void FieldScene_SetupScene13At152_264(void) { Engine_AudioPlayCue(123); SceneAct
 void ActorPresentation_MoveActorToPositionAndWait(int actor, int x, int z, int field40)
 {
     void Engine_TaskWait(int);
-    void Actor_SetPosition(int, int, int);
+    void Engine_ActorSetPosition(int, int, int);
 
     u8 *record = Object_GetById(actor); int frames;
     Engine_ActorSetSpeed(actor, 0x30000, 0x18000); *(s32 *)(record + 72) = 0x8000;

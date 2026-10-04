@@ -80,7 +80,7 @@ Func_080ece20:
 .L_080eceac:
 	.4byte 0x00000000
 .L_080eceb0:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080eceb4:
 	.4byte 0xff880000
 .L_080eceb8:

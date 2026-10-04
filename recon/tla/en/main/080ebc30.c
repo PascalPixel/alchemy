@@ -1,7 +1,8 @@
 /* Near miss: score 60. ⚓️ loads the callback delay (ldrh r2, [r5, #58])
    before storing the incremented age and decrements that copy; this draft
    reloads it after the store. A u16 copy or u16 pointer changes the code
-   more. */
+   more; so does a u16 copy loaded ahead of an asm barrier (score 955, the
+   decrement gains a zero-extension). */
 #include "TYPES.H"
 #include "EFFECT_SLOT.H"
 

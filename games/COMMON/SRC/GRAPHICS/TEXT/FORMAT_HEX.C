@@ -2,33 +2,20 @@
 
 void Text_FormatHex(u32 value, u32 count, u8 *output) {
     u8 digits[8];
-    u8 *cursor;
     u32 index;
-    u32 mask;
 
     if (count > 5)
         count = 5;
 
-    index = 0;
-    if (count != 0) {
-        mask = 15;
-        cursor = digits;
-        do {
-            u32 digit = value & mask;
-            if (digit <= 9)
-                digit += '0';
-            else
-                digit += 'A' - 10;
-            *cursor = digit;
-            /* FAKEMATCH: an empty do-while around the increment; it only
-               changes where the scheduler places it after the store. */
-            do { index++; } while (0);
-            value >>= 4;
-            cursor++;
-        } while (index != count);
+    for (index = 0; index != count; index++) {
+        u32 digit = value & 15;
+        if (digit <= 9)
+            digits[index] = digit + '0';
+        else
+            digits[index] = digit + 'A' - 10;
+        value >>= 4;
     }
 
     for (index = count - 1; (s32)index >= 0; index--)
         *output++ = digits[index];
 }
-

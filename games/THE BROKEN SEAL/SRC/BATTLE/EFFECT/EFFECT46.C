@@ -18,15 +18,6 @@
 #include "SYSTEM.H"
 
 
-/* The first OAM part's existing byte attribute view; not an allocation owner. */
-struct AnimationAttribute {
-    u8 unknown_00[9];
-    u8 low : 2;
-    u8 variant : 2;
-    u8 high : 4;
-};
-
-
 extern void *gBattleFxWork[];
 
 /* A battle object as its slot holds it: the world position follows two
@@ -90,7 +81,6 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
    skips to the end. */
 void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing packed byte9 field keeps its mask across object creation; the ordinary byte mask shortened this scene by eight bytes and reordered stores. */
     s32 position[4];
     DrawRectangle draw[2];
     struct Scale scale;
@@ -125,7 +115,7 @@ void BattleEffect_RunCirclingFallingScene(struct BattleEffectArgument *effect)
         if (object != 0) {
             object->flags = 0;
             AnimationObjects_SelectAnimationFar(object, i % 3);
-            ((struct AnimationAttribute *)work->objects[9 + i])->variant = 1;
+            ((struct AnimationObject *)work->objects[9 + i])->part[0].priority = 1;
         }
     }
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);

@@ -468,15 +468,6 @@ pub fn compiler_bundle_signature_checked() -> Result<String> {
     ensure_compiler_bundle_access()?;
     Ok(compiler_bundle_signature())
 }
-/// Identity of the tool code that decides what a build stage caches: the
-/// digest `build.rs` takes of Alchemy's build sources, every Psynergy and
-/// ags source, the member crate manifests and lockfile. Alchemy's checks,
-/// reports and other readers of build outputs do not contribute: changing
-/// those readers rebuilds nothing. Changed build producers invalidate
-/// their cached outputs; the linked overlay also keys on libgcc's bytes.
-pub fn executable_signature() -> Result<String> {
-    Ok(env!("ALCHEMY_BUILD_IMPLEMENTATION").to_string())
-}
 
 fn path_bytes(path: &Path) -> Vec<u8> {
     #[cfg(unix)]

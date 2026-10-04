@@ -13,29 +13,13 @@ extern void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
 s32 Party_CheckMemberValueTotal(s32 id)
 {
-    /* FAKEMATCH: folding the two-stage integer party cursor into a
-       member pointer changes load/register order and shortens this helper
-       from 128 to 120 native bytes. Keep the existing cursor transport. */
     s32 count;
-    s32 value;
-    s32 offset = 0;
-    s32 cnt;
-    s32 sum = offset;
-    u8 *p;
+    s32 sum = 0;
+    s32 i;
 
     count = Party_CountActiveOwnersFar(id);
-    if (sum < count) {
-        offset = (s32)&((struct GameState *)0)->active_owners >> 1;
-        offset <<= 1;
-        p = (u8 *)&gGameState + offset;
-        cnt = count;
-        do {
-            value = Inventory_CountItemFar(*p, id);
-            cnt--;
-            p++;
-            sum += value;
-        } while (cnt != 0);
-    }
+    for (i = 0; i < count; i++)
+        sum += Inventory_CountItemFar(gGameState.active_owners[i], id);
 
     if (sum >= count * 30) {
         UiWork_PushValueSlotFar(id, 2);
@@ -118,7 +102,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused)
         } else {
             Owner_GetStateFar(member);
             {
-                /* FAKEMATCH: the ROM loads the slot argument before the member. */
+                /* FAKEMATCH: the ROM loads the slot argument before the member.
+                   Only the English build, without the thirty-item check
+                   below, needs the copy; the direct call matches the rest. */
                 s32 s = slot;
 
                 count = Shop_GetSelectionState(member, s);

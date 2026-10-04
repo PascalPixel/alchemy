@@ -70,9 +70,9 @@ Func_02000c5c:
 	.thumb_func
 Func_02000c64:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_02000c6c
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02000c6c:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02000c74
 	.thumb_func

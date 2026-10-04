@@ -63,19 +63,16 @@ void QueueIoWriteDelay2(u32 first, u32 second);
 
 void BattleFx_BeginCanvasLayer(s32 bg_control)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
      * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
      * constructs, the one-pass loop around the IME read and the count stored
      * through an explicit u16 pointer; the queue and IME pointers are held for
      * the whole function as the ROM keeps them. */
 
-    void **cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-    struct BattleEffectWork *work = cache[0];
-    struct BattleSession *battle = *(struct BattleSession **)((u8 *)cache -
-        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE) * sizeof(void *));
-    void *canvas = cache[1];
-    struct BattleBackgroundView *display = cache[5];
+    struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
+    void *canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     volatile u16 *ime;
     struct IoWriteQueue *q;
     s32 row;
@@ -169,19 +166,16 @@ void BattleFx_BeginCanvasLayer(s32 bg_control)
    buffers. */
 void BattleFx_OpenCanvasLayer(s32 bg_control)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
      * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
      * constructs, the one-pass loop around the IME read and the count stored
      * through an explicit u16 pointer; the queue and IME pointers are held for
      * the whole function as the ROM keeps them. */
 
-    void **cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-    struct BattleEffectWork *work = cache[0];
-    struct BattleSession *battle = *(struct BattleSession **)((u8 *)cache -
-        (HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE) * sizeof(void *));
-    void *canvas = cache[1];
-    struct BattleBackgroundView *display = cache[5];
+    struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
+    void *canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    struct BattleBackgroundView *display = *(gWorkSlot + HEAP_SLOT_BATTLE_BACKGROUND);
     volatile u16 *ime;
     struct IoWriteQueue *q;
     s32 row;
@@ -306,7 +300,6 @@ void BattleFx_BeginTiledCanvas(s32 bg_control)
    frames. */
 void BattleFx_EndCanvasLayer(void)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     /* FAKEMATCH: each queued display-control write is QueueIoWriteDelay2
      * (SYSTEM/IO_WRITE_QUEUE.C) written out inline with that function's odd
      * constructs, the one-pass loop around the IME read and the count stored
@@ -314,25 +307,19 @@ void BattleFx_EndCanvasLayer(void)
      * after the queue pointer so the queue literal loads ahead of the store
      * before it. */
 
-    struct BgScroll *scroll;
-    struct BattleEffectWork *work = *(struct BattleEffectWork **)((u8 *)gWorkSlot +
-        HEAP_SLOT_BATTLE_EFFECT * sizeof(void *));
-    struct BattleSession *battle = *(struct BattleSession **)((u8 *)gWorkSlot +
-        HEAP_SLOT_BATTLE * sizeof(void *));
+    struct BattleEffectWork *work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    struct BattleSession *battle = *(gWorkSlot + HEAP_SLOT_BATTLE);
     s32 i;
 
     Audio_PlayCue(0x121);
-    /* FAKEMATCH: retain the original array-base scroll transport. Taking
-       BG1 as the base moves four bytes into the literal instead of the stores. */
-    scroll = gBgScroll;
-    scroll[1].x = work->saved_bg1_x;
-    scroll[1].y = work->saved_bg1_y;
+    gBgScroll[1].x = work->saved_bg1_x;
+    gBgScroll[1].y = work->saved_bg1_y;
     gProjection.center_x = 120;
     gProjection.center_y = 120;
     *(volatile u16 *)0x0400000c = 0x787;
     Iwram_ClearWords((void *)0x06004000, 0x4000);
     Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);
-    scroll[1].y = 32;
+    gBgScroll[1].y = 32;
     QUEUE_DISPLAY_CONTROL(0x7341);
     *(volatile u16 *)0x04000050 = 0;
     WaitFrames(1);

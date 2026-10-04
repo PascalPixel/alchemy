@@ -48,10 +48,7 @@ s32 Battle_GetObjectTableValueFar(s32 id);
  */
 void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct EffectPosition pos;
-    void **heap_cache;
-    void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
     DrawRectangle draw[2];
@@ -68,10 +65,8 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     s8 *flags;
 
     flags = (s8 *)gMapCellBuffer;
-    heap_cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_BATTLE_EFFECT];
-    cursor = heap_cache;
-    work = *cursor++;
-    canvas = *cursor;
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
     work->effect = effect;
     BattleFx_BeginCanvasLayer(1);
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
@@ -79,10 +74,10 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     palette += 128;
     Resource_DecodeType01(palette, work);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER, 7, 7, 3, 2);
-    draw[0] = (DrawRectangle)heap_cache[7];
+    draw[0] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER);
     BattleEffect_LoadWork(HEAP_SLOT_BLITTER_ALTERNATE, 7, 7, 15, 2);
     *(u16 *)0x04000052 = 0x0f0f;
-    draw[1] = (DrawRectangle)heap_cache[8];
+    draw[1] = (DrawRectangle)*(gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
     source = GetBattleObjectSlotFar(work->effect->actor)->object;
     y = source->y + Battle_GetObjectTableValueFar(work->effect->actor);
     for (i = 0; i != 30; i++) {
@@ -112,7 +107,7 @@ void BattleFx_RunVortexMotes(struct BattleEffectArgument *effect)
     AudioCommand_PlayFar(164);
 
     for (frame = 0; frame != VortexMotes_Counts[work->effect->variant * 2 + 1]; frame++) {
-        camera = *(struct BattleCamera **)((u8 *)gWorkSlot + HEAP_SLOT_CAMERA * sizeof(void *));
+        camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
         if (frame >= 17 && frame < 64)
             WORK_FIELD(work, 0x77ac) = 0x180;
         else

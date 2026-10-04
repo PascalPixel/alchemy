@@ -243,7 +243,7 @@ Func_0804bc08:
 .L_0804bddc:
 	add r4, sp, #108
 	mov r9, r4
-	bl Func_0804bba8
+	bl Battle_DrawPartyPanelsWithEmptyList
 	ldr r1, [sp, #36]
 	ldr r0, [r1]
 	movs r1, #0
@@ -601,7 +601,7 @@ Func_0804bc08:
 	mov r8, r4
 	bl BattlePres_SetActorModesFar
 	ldr r0, [sp, #32]
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 	movs r0, #1
 	bl WaitFrames
 	movs r1, #0
@@ -1126,7 +1126,7 @@ Func_0804bc08:
 	orrs r3, r2
 	strh r3, [r1, #6]
 	ldr r0, [sp, #32]
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 	ldr r1, [sp, #36]
 	ldr r3, [sp, #24]
 	ldr r2, [r1]
@@ -1137,7 +1137,7 @@ Func_0804bc08:
 	bl Func_08049154
 	adds r6, r0, #0
 	ldr r0, [sp, #32]
-	bl Func_080461c8
+	bl BattleLayout_HighlightPartyPanels
 	movs r4, #1
 	negs r4, r4
 	cmp r6, r4

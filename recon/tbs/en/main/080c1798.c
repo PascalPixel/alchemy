@@ -1,3 +1,10 @@
+/* 2026-10-04 lead for the slot-12 device: the pool word is the constant
+ * cell Ram_CameraWork (0x03001e80, RAM_BUFFER.H) and the session is the
+ * constant cell 0x03001e74, reached as that minus 12. An unused camera read
+ * through Ram_WorkSlot[12] before Ram_WorkSlot[9] gives every other
+ * instruction (score 402) but loads 0x03001e74 from the pool: CSE derives
+ * the session cell from the camera cell only while that register lives.
+ */
 /* 2026-10-04 W4 consumer recheck: this 636-byte dependency has four
  * unfinished callers totaling 6,340 bytes, second to ResourceObject_Create.
  * Fresh approved compilation reproduces score 2, solely the 240/200-byte

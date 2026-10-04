@@ -46,52 +46,7 @@ extern u8 RenderMode_GlintFlips[];
     ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
 #define DECAYS(mode) ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
-void BattleFx_RenderMode(struct BattleEffectArgument *effect, u32 mode);
-
-/* Mode entries of the battle render effect. */
-void BattleFx_RenderMode0Or1(struct BattleEffectArgument *effect)
-{
-    if (effect->variant == 0) {
-        BattleFx_RenderMode(effect, 0);
-        return;
-    }
-    BattleFx_RenderMode(effect, 1);
-}
-
-void BattleFx_RenderMode1(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 1);
-}
-
-void BattleFx_RenderMode2(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 2);
-}
-
-void BattleFx_RenderMode3(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 3);
-}
-
-void BattleFx_RenderMode4(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 4);
-}
-
-void BattleFx_RenderMode5(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 5);
-}
-
-void BattleFx_RenderMode7(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 7);
-}
-
-void BattleFx_RenderMode6(struct BattleEffectArgument *effect)
-{
-    BattleFx_RenderMode(effect, 6);
-}
+/* Its mode entries, BattleFx_RenderMode0Or1 to BattleFx_RenderMode6, are COMMON's RENDER_MODE.C. */
 
 /* Battle effect: a cloud of particles around each affected unit, eight
    frames apart, in one of eight modes that choose the picture, how many

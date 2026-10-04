@@ -145,8 +145,8 @@ gLinkExchangeState:
 	.global gSerialBlockSequence
 gSerialBlockSequence:
 	.space 0x00000004
-	.global Data_020054c8
-Data_020054c8:
+	.global gBattleRandomSeed
+gBattleRandomSeed:
 	.space 0x00000008
 	.global gObjAffineMatrices
 gObjAffineMatrices:
@@ -712,8 +712,8 @@ Data_02026800:
 	.global Data_02028000
 Data_02028000:
 	.space 0x00002000
-	.global Data_0202a000
-Data_0202a000:
+	.global gWorldMapWork
+gWorldMapWork:
 	.space 0x00000004
 	.global Data_0202a004
 Data_0202a004:

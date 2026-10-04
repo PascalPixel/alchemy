@@ -1,164 +1,98 @@
-/* 2026-10-01 (wave 1, slice 1): the code reads as a tree walk with one bit
-   reader used three times (bit = bits & 1; bits >>= 1; refill from the
-   cursor with 0x80 on top when a set bit empties the buffer): for (;;) {
-   read tree bit; if set, break; read text bit; if clear, continue; depth =
-   0; do { read tree bit; clear: depth++, set: rank++, depth-- } while
-   (depth >= 0); }. Written that way with a bit-reader macro, every
-   instruction has the reference's shape and the five loop values are a
-   permutation of r0-r4 (1510: 76 register-only): the reference allocates
-   depth r3, bit r2, tree cursor r1, text bits r0, tree bits r4, plain C
-   gives bit r3, tree bits r2, text bits r1, tree cursor r0, depth r4. The
-   reference also loads the text reader's 1 inside the loop where the tree
-   reader's 1 and both 0x80s are hoisted. The goto body below scores lower.
-   2026-09-29 alchemy permute: score 1205 to 1170 on the permuter's scorer
-   (0 is exact); remaining 79 register-only, 1 operand, 7 reordered, 1
-   inserted, 2 deleted. Kept rewrites: 2x swap commutative operands, 1x
-   reorder independent statements, 1x introduce a temporary. FAKEMATCH: the
-   permuter's temporaries, register hints and swapped operand orders below
-   only steer allocation and scheduling; no programmer would write them, so
-   they stay tagged until a natural spelling replaces them. */
-/* 2026-09-29 alchemy permute: score 2025 to 1205 on the permuter's scorer
-   (0 is exact); remaining 79 register-only, 1 operand, 6 reordered, 1
-   inserted, 3 deleted. Kept rewrites: 17x reorder independent statements,
-   12x swap commutative operands, 11x reorder local declarations, 5x drop a
-   same-width cast, 4x introduce a temporary, 4x add a same-width cast, 3x
-   move an assignment into or out of a condition, 2x remove a temporary, 2x
-   pointer arithmetic or indexing, 2x split or join a compound assignment,
-   2x toggle register, 2x test truth or compare with zero. FAKEMATCH: the
-   permuter's temporaries, register hints and swapped operand orders below
-   only steer allocation and scheduling; no programmer would write them, so
-   they stay tagged until a natural spelling replaces them. */
+/* DRAFT of Func_08019bfc, a byte-wise Thumb twin of the ARM symbol decoder
+   (DECODE_SYMBOL.S): walk the code tree chosen by the previous character,
+   reading tree bits and message bits through one-bit readers whose buffer
+   carries a sentinel 1 above the unread bits, skip a whole subtree for
+   each set message bit while counting its leaves, then fetch the leaf's
+   12-bit value from the table packed backwards before the tree.
+   2026-10-04: rewritten as plain structured C without steering devices;
+   for (;;) with a break at the leaf gives the reference's layout (entry
+   branch to the tree read at the bottom). Score 1065 (the old goto draft
+   with tagged temporaries scored 1170). Every loop instruction has the
+   reference's shape; left: the reference keeps the tree cursor in r1 and
+   the read bit in r2 (here exchanged, 50 register-only lines), and loads
+   the tree base and offset table as [T, hi*8] then [T, hi*8 + 4] before
+   the low byte's offset, where the struct index forms T + hi*8 first.
+   Pointer-array or 2D-array tables give that addressing but move every
+   other register (1275-1660); hi/lo temporaries do not help. */
 #include "TYPES.H"
+#include "TEXT_READER.H"
 
-/* Table at a fixed ROM address, indexed by an 8-byte stride: word 0 of each
-   row is a data pointer, word 1 is a halfword adjustment array pointer.
-   Inferred from the retained assembly's shift-by-3/register-offset ldr
-   pattern (not a compile-time struct-field offset -- both fields are
-   fetched through the same running byte offset), cross-checked against the
-   ARM twin at games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DECODE_SYMBOL.S which
-   references the same literal address and lookup shape. */
-extern const u8 Text_MessageContexts[];
-
-struct Func_08019bfcState {
-    u32 code;   /* in: context index (hi byte = table row, lo byte = column);
-                   out: decoded value, also the return value */
-    u8 *ptr;    /* persistent byte cursor for the "stream A" bit reader */
-    s32 bits;   /* persistent bit buffer for "stream A" */
+/* One code tree per previous character: the tree bits, with the leaf
+   values packed as 12-bit entries just before them, and per-character
+   offsets of each tree. */
+struct TextContext {
+    const u8 *trees;
+    const u16 *offsets;
 };
 
-s32 Func_08019bfc(struct Func_08019bfcState *state)
-{
-    u32 lo;
-    u32 hi;
-    const u8 *tableBase;
-    u32 offset;
-    const u8 *pos;
-    const u8 *anchor;
-    s32 bufB;
-    register u8 *readPtr;
-    s32 bufA;
-    s32 rank;
-    s32 bitA;
-    s32 counter;
-    s32 result;
-    s32 bitB;
-    u32 idx;
-    u32 half;
-    s32 mask;
-    s32 sentinel;
-    s32 sentinel2;
-    s32 tmp2;
-    s32 mask2;
-    s32 tmp3;
-    u8 tmp4;
+extern const struct TextContext Text_MessageContexts[];
 
-    hi = state->code >> 8;
-    offset = hi << 3;
-    lo = state->code & 0xff;
-    tableBase = *(const u8 *const *)(offset + Text_MessageContexts);
-    offset += 4;
-    pos = tableBase + (*(const u16 *const *)(Text_MessageContexts + offset))[lo];
-    mask = 1;
-    anchor = pos - 1;
-    bufA = state->bits;
-    readPtr = state->ptr;
+s32 Func_08019bfc(struct TextReader *reader)
+{
+    u32 code;
+    const struct TextContext *context;
+    const u8 *tree;
+    const u8 *leaves;
+    const u8 *text;
+    s32 text_bits;
+    s32 tree_bits;
+    s32 rank;
+    s32 depth;
+    s32 bit;
+    s32 value;
+    u32 index;
+
+    code = reader->previous_code;
+    context = &Text_MessageContexts[code >> 8];
+    tree = context->trees + context->offsets[code & 0xff];
+    text = (const u8 *)reader->words;
+    text_bits = reader->bits;
+    tree_bits = 1;
+    leaves = tree - 1;
     rank = 0;
-    bufB = 1;
-    sentinel = 0x80;
-    goto L0;
-L7:
-    bitA = mask & bufA;
-    bufA = bufA >> 1;
-    if (0 == bitA)
-        goto L0;
-    if (0 != bufA)
-        goto L1;
-    tmp4 = *readPtr;
-    readPtr++;
-    bufA = tmp4;
-    bitA = mask & bufA;
-    bufA >>= 1;
-    bufA |= sentinel;
-L1:
-    if ((u32)(0 == bitA))
-        goto L0;
-    counter = 0;
-    mask2 = 1;
-    sentinel2 = (u32)0x80;
-L6:
-    bitB = bufB & mask2;
-    tmp3 = bufB >> 1;
-    bufB = tmp3;
-    if (!bitB)
-        goto L2;
-    if (bufB)
-        goto L3;
-    bufB = *pos;
-    bitB = bufB & mask2;
-    pos++;
-    bufB >>= 1;
-    bufB |= sentinel2;
-L3:
-    if (bitB != 0)
-        goto L4;
-L2:
-    (u32)counter++;
-    goto L5;
-L4:
-    rank++;
-    counter--;
-L5:
-    if (counter >= 0)
-        goto L6;
-L0:
-    bitB = bufB & mask;
-    bufB >>= 1;
-    if (0 == bitB)
-        goto L7;
-    if (bufB != 0)
-        goto L8;
-    bufB = *pos;
-    pos++;
-    tmp2 = bufB & mask;
-    bitB = tmp2;
-    bufB >>= 1;
-    bufB |= sentinel;
-L8:
-    if (bitB == 0)
-        goto L7;
-    if ((((idx = 3 * rank) * 4) & 7) == 0) {
-        u8 tmp;
-        half = idx >> 1;
-        result = anchor[-(s32)half] << 4;
-        tmp = anchor[-(s32)half - 1];
-        result |= tmp >> 4;
-    } else {
-        half = idx >> 1;
-        result = (anchor[-half] & 0xf) << 8;
-        result |= anchor[-half - 1];
+    for (;;) {
+        bit = tree_bits & 1;
+        tree_bits >>= 1;
+        if (bit != 0 && tree_bits == 0) {
+            tree_bits = *tree++;
+            bit = tree_bits & 1;
+            tree_bits = (tree_bits >> 1) | 0x80;
+        }
+        if (bit != 0)
+            break;
+        bit = text_bits & 1;
+        text_bits >>= 1;
+        if (bit != 0 && text_bits == 0) {
+            text_bits = *text++;
+            bit = text_bits & 1;
+            text_bits = (text_bits >> 1) | 0x80;
+        }
+        if (bit == 0)
+            continue;
+        depth = 0;
+        do {
+            bit = tree_bits & 1;
+            tree_bits >>= 1;
+            if (bit != 0 && tree_bits == 0) {
+                tree_bits = *tree++;
+                bit = tree_bits & 1;
+                tree_bits = (tree_bits >> 1) | 0x80;
+            }
+            if (bit == 0)
+                depth++;
+            else {
+                rank++;
+                depth--;
+            }
+        } while (depth >= 0);
     }
-    state->bits = bufA;
-    state->code = result;
-    state->ptr = readPtr;
-    return result;
+    index = rank * 3;
+    if (((index * 4) & 7) == 0)
+        value = (leaves[-(index >> 1)] << 4) | (leaves[-(index >> 1) - 1] >> 4);
+    else
+        value = ((leaves[-(index >> 1)] & 0xf) << 8) | leaves[-(index >> 1) - 1];
+    reader->bits = text_bits;
+    reader->previous_code = value;
+    reader->words = (const u32 *)text;
+    return value;
 }

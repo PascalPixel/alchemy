@@ -294,8 +294,7 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
     struct ScriptObjectRuntime *script;
     void *sprite;
     s32 kind;
-    u32 *list;
-    u32 *entry;
+    void **entry;
     volatile u32 zero;
 
     ObjectDispatch_FindFreeObject();
@@ -317,22 +316,19 @@ struct ObjectRuntime *FieldObject_Create(s32 id, s32 x, s32 y, s32 z)
             }
             break;
         case 2:
-            entry = (list = (u32 *)gMenuCtrlWork + gMenuCtrlWork->count++) + 2;
+            entry = (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
             object->animation_kind = kind;
             zero = 0;
             object->animation = entry;
             Dma_Set(&zero, entry, 0x85000004, (volatile u32 *)0x040000d4);
             sprite = ResourceObject_Create(id);
             if (sprite != NULL) {
-                /* FAKEMATCH: stored as a plain halfword, outside the object
-                   record's alias set, so the entry copy schedules above it
-                   as in the reference. */
-                *(u16 *)&actor->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
-                *entry++ = (u32)sprite;
+                actor->radius = Resource_GetMetadataRecordFar(id)->box_y >> 1;
+                *entry++ = sprite;
             }
             sprite = ResourceObject_Create(id + 1);
             if (sprite != NULL)
-                *entry = (u32)sprite;
+                *entry = sprite;
             break;
         }
     }

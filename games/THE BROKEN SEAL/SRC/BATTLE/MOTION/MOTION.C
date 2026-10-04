@@ -175,31 +175,22 @@ void BattleMotion_ApplyVariantMotion(s32 id, s32 variant)
 {
     struct BattleObjectSlot *slot;
     struct MotionObject *object;
-    /* FAKEMATCH: Byte indexing preserves the load operand order. */
-    s32 offset;
     s32 x;
-    s32 *table;
     s32 scale;
 
     slot = GetBattleObjectSlot(id);
     object = slot->object;
     if (Owner_GetStateFar(id)->class_id != 0x94) {
-        table = BattleMotion_VariantAcceleration;
-        offset = variant * sizeof(*table);
-        object->acceleration = *(s32 *)((u8 *)table + offset);
-        table = BattleMotion_VariantSpeedLimit;
-        object->speed_limit = *(s32 *)((u8 *)table + offset);
-        if (object->y == 0 || variant > 4) {
-            table = BattleMotion_VariantVelocityY;
-            object->velocity_y = *(s32 *)((u8 *)table + offset);
-        }
+        object->acceleration = BattleMotion_VariantAcceleration[variant];
+        object->speed_limit = BattleMotion_VariantSpeedLimit[variant];
+        if (object->y == 0 || variant > 4)
+            object->velocity_y = BattleMotion_VariantVelocityY[variant];
         object->vertical_motion_strength = 0x9999;
         object->vertical_motion_phase = 0;
         object->auto_face_motion = 0;
         Object_ResetMotion(object);
         scale = slot->anchor_x;
-        table = BattleMotion_VariantDistancePercent;
-        x = (scale * *(s32 *)((u8 *)table + offset)) / 100;
+        x = (scale * BattleMotion_VariantDistancePercent[variant]) / 100;
         Object_SetPosition(object, x, 0, slot->anchor_z);
     }
     Object_SetMode(object, 5);

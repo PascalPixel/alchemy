@@ -104,15 +104,15 @@ Sys_FreeFar:
 	.global Func_08000180
 	.thumb_func
 Func_08000180:
-	overlay_veneer Func_08014ae0
+	overlay_veneer Runtime_WriteDebugTextTiles
 	.global Func_08000188
 	.thumb_func
 Func_08000188:
-	overlay_veneer Func_08014b30
+	overlay_veneer Text_DrawHexRightAligned
 	.global Func_08000190
 	.thumb_func
 Func_08000190:
-	overlay_veneer Func_08014b50
+	overlay_veneer Text_DrawSignedDecimalRightAligned
 	.global Func_08000198
 	.thumb_func
 Func_08000198:

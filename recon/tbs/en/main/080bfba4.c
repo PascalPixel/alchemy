@@ -1,3 +1,26 @@
+/* 2026-10-04 later: EN score 40 (8 register-only), 1044/1044 bytes.
+ * BattleFx_PlayUnitElementEffect declared s32, as the matched
+ * PROCESS_ROUND_END.C declares it, puts the r0 = id load last before that
+ * call, as the ROM has it (100 -> 40; without the shared temporary 120).
+ * All that is left is the scan counter below: r4 in the ROM, r1 here.
+ * The ROM's r4 means the counter conflicts with lr and r0/r1 of the third
+ * scan, so it is one variable across all three scans, allocated after the
+ * counts base; shared here it outranks the base. A 5-minute search from 40
+ * (81,353 candidates) and a register keyword on the shared counter (115)
+ * found nothing lower.
+ */
+/* 2026-10-04: EN score 100 (8 register-only, 1 reordered), 1044/1044 bytes.
+ * Declared s32 (pop {r1}, as the ROM returns; the PRESENT13 caller discards
+ * it): 190 -> 180. A shared temporary for the -1 owner sentinel and the third
+ * scan's count (permuter, 4 minutes) puts the -1 in r3 and the order copy
+ * before the count load: 100. Left: the scan counter (first scan, the
+ * reversed second-scan countdown, third scan) is r4 in the ROM, r1 here.
+ * Sharing one counter across the three scans (as the ROM's single r4 suggests)
+ * ranks it above the counts base (priority 52 refs/92 insns against 8/18),
+ * so it takes r0 and the base r4: 175-265. And the ROM loads r0 = id last
+ * for BattleFx_PlayUnitElementEffect; here first. A u8 id changes nothing.
+ * A second 5-minute search from 100 (59,689 candidates) found nothing lower.
+ */
 /* T2: canonical OWNERVAL.H HP API, one compile, body unchanged.
  * Native EN and produced complete extents are both 1044 bytes. The full
  * 40-byte literal pool matches after relocation; the local frame remains
@@ -86,13 +109,13 @@ u32 Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 void Object_SetMode(void *object, s32 animation);
 void ObjectDispatch_ApplyValueToChildrenFar(struct DispatchObject *object, s32 flags);
 void Audio_PlayCue(s32 cue);
-void BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
+s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
 
 /* End of one unit's turn. The Djinn it summoned with join its side's
    recovery order and raise their element's level; the power each element
    gains is announced. When both sides still stand, curse, poison and the
    Grim Reaper's count then take their toll. */
-void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
+s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 {
     s32 id;
     struct BattleUnit *unit;
@@ -111,21 +134,19 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             Djinn_DeactivateFar(id, list->entries[best].element, list->entries[best].index);
         }
     }
-    if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) != 0
-        && BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) != 0) {
+    if (BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, 0) != 0 && BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, 0) != 0) {
         both_sides = 1;
     }
-
     {
         s32 i;
         s32 j;
         s32 owner;
-
         list = &((struct DjinnRecoveryTable *)Trade_GetOfferStateFar((u32)id > 7))->list;
         for (i = 0; i < 4; i++) {
             counts[i] = 0;
         }
         for (;;) {
+            s32 tmp;
             owner = -1;
             for (i = 0; i < list->count; i++) {
                 if (list->entries[i].turns == -2) {
@@ -133,7 +154,9 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                     break;
                 }
             }
-            if (owner == -1) {
+            /* FAKEMATCH: one temporary for the sentinel and the third scan's count puts the -1 in r3 and the order copy before the count load (180 -> 100). */
+            tmp = -1;
+            if (owner == tmp) {
                 break;
             }
             order = -1;
@@ -146,21 +169,24 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             if (order <= 1) {
                 order = 2;
             }
-            for (j = 0; j < list->count; j++) {
-                if (list->entries[j].unit_id == owner && list->entries[j].turns == -2) {
-                    list->entries[j].turns = order;
-                    counts[list->entries[j].element]++;
-                    order++;
-                }
+            j = 0;
+            tmp = list->count;
+            if (j < tmp) {
+                do {
+                    if (list->entries[j].unit_id == owner && list->entries[j].turns == -2) {
+                        list->entries[j].turns = order;
+                        counts[list->entries[j].element]++;
+                        order++;
+                    }
+                    j++;
+                } while (j < list->count);
             }
         }
     }
-
     if (both_sides != 0) {
         struct BattleUnit *before;
         s32 most;
         s32 i;
-
         most = 0;
         before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
         Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
@@ -187,18 +213,15 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                 Audio_PlayCue(212);
                 Object_SetMode(GetBattleObjectSlot(id)->object, 3);
-                ObjectDispatch_ApplyValueToChildrenFar(
-                    (struct DispatchObject *)GetBattleObjectSlot(id)->object, 32);
+                ObjectDispatch_ApplyValueToChildrenFar((struct DispatchObject *)GetBattleObjectSlot(id)->object, 32);
                 BattleFx_PlayUnitElementEffect(id, i, 2, most - 1);
                 BattleEventRuntime_WaitForReady();
             }
         }
         Sys_Free(before);
     }
-
     if (both_sides != 0) {
         s8 *poison;
-
         BattleEventRuntime_Reset();
         if (plan->pending_amount_60 != 0) {
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
@@ -207,7 +230,6 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurseDamage);
             if (Owner_AdjustFirstValueFar(id, -plan->pending_amount_60) == 0) {
                 s32 text;
-
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
@@ -221,13 +243,11 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             }
         }
         BattleEv_DispatchQueued();
-
         BattleEventRuntime_Reset();
         poison = &unit->poison;
         if (*poison != 0) {
             s32 damage = unit->max_hp * *poison / 10;
             struct BattleSession *state = gBattleWork;
-
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, damage);
@@ -239,7 +259,6 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             }
             if (Owner_AdjustFirstValueFar(id, -damage) == 0) {
                 s32 text;
-
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
@@ -253,11 +272,9 @@ void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             }
         }
         BattleEv_DispatchQueued();
-
         BattleEventRuntime_Reset();
         if (unit->death_count != 0) {
-            if (--unit->death_count == 0
-                && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
+            if (--unit->death_count == 0 && Owner_AdjustFirstValueFar(id, 0xc0000000) == 0) {
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 BattleEv_Push(BATTLE_EVENT_TEXT, MSG_REAPER_CALLS);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);

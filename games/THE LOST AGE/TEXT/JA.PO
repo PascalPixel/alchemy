@@ -12907,7 +12907,7 @@ msgctxt "message"
 msgid "03224"
 msgstr "{protagonist_name}たちは にげ出した!"
 
-msgctxt "message"
+msgctxt "MsgCannotEscape"
 msgid "03225"
 msgstr "しかし にげられなかった!"
 

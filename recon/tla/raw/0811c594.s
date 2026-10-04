@@ -54,7 +54,7 @@ Func_0811c594:
 	ldr r0, .L_0811c64c
 	bl UiText_ShowMessageAndWaitCoreFar
 	adds r0, r7, #0
-	bl Func_0811c66c
+	bl BattleEscape_PlayRun
 	cmp r0, #0
 	beq .L_0811c640
 	movs r0, #1

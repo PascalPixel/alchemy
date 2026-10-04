@@ -12,7 +12,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
 {
     /* FAKEMATCH: the volatile accesses preserve the measured input-cell
        rereads without giving the shared declarations conflicting types. */
-    s32 delay = *(volatile s32 *)&Data_03001b00;
+    s32 delay = Data_03001b00;
     u32 keys;
     u32 axis = 0;
     u32 dirs;
@@ -20,7 +20,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
     volatile u32 *repeat;
 
     if (delay <= 0) {
-        *(volatile u32 *)&gKeysRepeat = *(volatile u32 *)&gKeysHeld;
+        gKeysRepeat = gKeysHeld;
         keys = *(volatile u32 *)&gKeysRepeat;
         if (delay == 0)
             *(volatile s32 *)&Data_03001b00 = KEY_REPEAT_NEXT;
@@ -28,7 +28,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
             *(volatile s32 *)&Data_03001b00 = KEY_REPEAT_FIRST;
     } else {
         *(volatile u32 *)&gKeysRepeat = 0;
-        keys = *(volatile u32 *)&gKeysRepeat;
+        keys = gKeysRepeat;
     }
 
     if (keys != 0) {
@@ -42,7 +42,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
         if (keys & KEY_RIGHT)
             dirs++;
 
-        repeat = (volatile u32 *)&Data_03001afc;
+        repeat = &Data_03001afc;
         *repeat = keys;
         switch (dirs) {
         default:
@@ -62,7 +62,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
             *repeat &= *(volatile u32 *)&Data_03001d04 ^ 0xffff;
             break;
         case 3:
-            if (*(volatile u32 *)&Data_03001d04 & KEYS_HORIZONTAL)
+            if (Data_03001d04 & KEYS_HORIZONTAL)
                 axis = KEYS_HORIZONTAL;
             if (*(volatile u32 *)&Data_03001d04 & KEYS_VERTICAL)
                 axis = KEYS_VERTICAL;
@@ -76,7 +76,7 @@ void Input_UpdateKeyRepeatAndDirection(void)
     }
 
     *(volatile u32 *)&gKeyState =
-        (*(volatile u32 *)&gKeysHeld ^ *(volatile u32 *)&Data_03001cf4)
+        (gKeysHeld ^ Data_03001cf4)
         & *(volatile u32 *)&gKeysHeld;
     *(volatile u32 *)&Data_03001cf4 = *(volatile u32 *)&gKeysHeld;
 }

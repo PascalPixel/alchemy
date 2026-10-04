@@ -10,7 +10,8 @@ struct FieldSprite {
     u8 priority : 2;
     u8 unknown_09_high : 4;
     u8 unknown_0a[8];
-    u16 unknown_12;
+    /* The sprite's angle, in 0x10000ths of a turn. */
+    u16 rotation;
     u8 unknown_14[6];
     u8 unknown_1a;
     u8 unknown_1b[10];

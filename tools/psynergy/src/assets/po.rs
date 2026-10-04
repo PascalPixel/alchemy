@@ -22,69 +22,6 @@ pub struct Catalog {
     pub entries: Vec<Entry>,
 }
 
-fn quoted(text: &str) -> String {
-    let mut output = String::from("\"");
-    for character in text.chars() {
-        match character {
-            '\\' => output.push_str("\\\\"),
-            '"' => output.push_str("\\\""),
-            '\n' => output.push_str("\\n"),
-            '\r' => output.push_str("\\r"),
-            '\t' => output.push_str("\\t"),
-            value => output.push(value),
-        }
-    }
-    output.push('"');
-    output
-}
-
-fn field(output: &mut String, name: &str, value: &str) {
-    if !value.contains('\n') {
-        output.push_str(name);
-        output.push(' ');
-        output.push_str(&quoted(value));
-        output.push('\n');
-        return;
-    }
-    output.push_str(name);
-    output.push_str(" \"\"\n");
-    for part in value.split_inclusive('\n') {
-        output.push_str(&quoted(part));
-        output.push('\n');
-    }
-    if !value.ends_with('\n') {
-        return;
-    }
-}
-
-pub fn write(catalog: &Catalog) -> String {
-    let mut output = String::new();
-    output.push_str("msgid \"\"\nmsgstr \"\"\n");
-    for (name, value) in &catalog.headers {
-        output.push_str(&quoted(&format!("{name}: {value}\n")));
-        output.push('\n');
-    }
-    for entry in &catalog.entries {
-        output.push('\n');
-        for comment in &entry.comments {
-            output.push_str("#. ");
-            output.push_str(comment);
-            output.push('\n');
-        }
-        if !entry.flags.is_empty() {
-            output.push_str("#, ");
-            output.push_str(&entry.flags.join(", "));
-            output.push('\n');
-        }
-        if let Some(context) = &entry.context {
-            field(&mut output, "msgctxt", context);
-        }
-        field(&mut output, "msgid", &entry.id);
-        field(&mut output, "msgstr", &entry.value);
-    }
-    output
-}
-
 fn unquote(text: &str) -> Result<String, AssetError> {
     let bytes = text.trim().as_bytes();
     if bytes.len() < 2 || bytes[0] != b'"' || bytes[bytes.len() - 1] != b'"' {
@@ -210,23 +147,4 @@ pub fn read(text: &str) -> Result<Catalog, AssetError> {
         }
     }
     Ok(catalog)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn catalogs_round_trip_multiline_text_and_null_flags() {
-        let mut catalog = Catalog::default();
-        catalog.headers.insert("Language".into(), "fr".into());
-        catalog.entries.push(Entry {
-            comments: vec!["physical key 7".into()],
-            flags: vec!["alchemy-null".into()],
-            context: Some("message".into()),
-            id: "00007".into(),
-            value: "une ligne\n\"deux\"".into(),
-        });
-        assert_eq!(read(&write(&catalog)).unwrap(), catalog);
-    }
 }

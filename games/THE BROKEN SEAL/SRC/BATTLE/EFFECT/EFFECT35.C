@@ -83,8 +83,7 @@ s32 AnimationObjects_SelectAnimationFar(struct AnimationObject *sprite, s32 anim
 void BattleFx_UpdateScaledArcObjectA(struct FieldActor *obj);
 void BattleFx_UpdateScaledArcObjectB(struct FieldActor *obj);
 
-extern u32 gFrameCount;
-s32 __umodsi3(s32, s32);
+extern volatile u32 gFrameCount;
 void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 value);
 
 struct EffectOrigin {
@@ -159,28 +158,24 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked)
 
 void BattleFx_FlickerObjectAndTick(s32 arg0)
 {
-    /* FAKEMATCH: the existing volatile frame-counter reads are retained;
-       ordinary reads merge across this callback and change native scheduling. */
-    if (((*(volatile s32 *)&gFrameCount) & 2) != 0) {
+    if ((gFrameCount & 2) != 0) {
         Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 7);
     } else {
         Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, 0);
     }
-    if (((*(volatile s32 *)&gFrameCount) & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         BattleFx_SpawnScaledArcObjects(arg0);
     }
 }
 
 void BattleFx_CycleObjectValueByCounter(s32 arg0)
 {
-    /* FAKEMATCH: the existing volatile frame-counter reads are retained;
-       ordinary reads merge across this callback and change native scheduling. */
-    if (((*(volatile s32 *)&gFrameCount) & 1) != 0) {
-        s32 value = __umodsi3((s32)((unsigned int)(*(volatile s32 *)&gFrameCount) >> 1), 6);
+    if ((gFrameCount & 1) != 0) {
+        s32 value = (gFrameCount >> 1) % 6;
 
         Animation_ApplyChildValuesFar((struct DispatchObject *)arg0, value);
     }
-    if (((*(volatile s32 *)&gFrameCount) & 15) == 0) {
+    if ((gFrameCount & 15) == 0) {
         BattleFx_SpawnScaledArcObjects(arg0);
     }
 }

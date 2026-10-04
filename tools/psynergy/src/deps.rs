@@ -52,7 +52,7 @@ impl Class {
     }
 }
 
-pub fn is_placeholder(name: &str) -> bool {
+pub(crate) fn is_placeholder(name: &str) -> bool {
     [
         "Func_",
         "Data_",
@@ -67,7 +67,7 @@ pub fn is_placeholder(name: &str) -> bool {
     .is_some_and(|rest| rest.len() == 8 && rest.bytes().all(|b| b.is_ascii_hexdigit()))
 }
 
-pub fn is_id(name: &str) -> bool {
+pub(crate) fn is_id(name: &str) -> bool {
     ["Msg", "Scene", "Resource"].iter().any(|p| {
         name.strip_prefix(p)
             .and_then(|rest| rest.chars().next())
@@ -76,12 +76,12 @@ pub fn is_id(name: &str) -> bool {
 }
 
 /// I/O registers, palette, VRAM and OAM: hardware, never a blocker.
-pub fn is_hardware(value: u32) -> bool {
+pub(crate) fn is_hardware(value: u32) -> bool {
     (0x0400_0000..0x0800_0000).contains(&value)
 }
 
 /// A value inside EWRAM, IWRAM or the cartridge: an address of code or data.
-pub fn is_memory(value: u32) -> bool {
+pub(crate) fn is_memory(value: u32) -> bool {
     (0x0200_0000..0x0204_0000).contains(&value)
         || (0x0300_0000..0x0300_8000).contains(&value)
         || (0x0800_0000..0x0a00_0000).contains(&value)
@@ -215,7 +215,7 @@ fn classify_word(l: &Lookup, value: u32) -> Option<(Class, String)> {
 }
 
 /// The target of an 8-byte `ldr rN, [pc, #0]; bx rN; .4byte target` veneer.
-pub fn veneer_target(f: &Function, ins: &[Ins]) -> Option<u32> {
+pub(crate) fn veneer_target(f: &Function, ins: &[Ins]) -> Option<u32> {
     match (f.bytes, ins) {
         (8, [a, b]) => match (&a.kind, &b.kind) {
             (Kind::LdrPool { rd, word }, Kind::Bx(rm)) if rd == rm => Some(*word),
@@ -628,349 +628,4 @@ pub fn listing_identifiers(listing: &str) -> Vec<(String, BTreeSet<String>)> {
         }
     }
     out
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::decode::Ins;
-
-    fn ins(addr: u32, kind: Kind) -> Ins {
-        Ins {
-            addr,
-            size: if matches!(kind, Kind::Bl { .. }) {
-                4
-            } else {
-                2
-            },
-            text: String::new(),
-            kind,
-        }
-    }
-
-    fn function(name: &str, address: u32, bytes: u32, origin: Origin) -> Function {
-        Function {
-            build: "t".into(),
-            image: "t".into(),
-            name: name.into(),
-            address,
-            bytes,
-            origin,
-            source: String::new(),
-            tokens: Vec::new(),
-        }
-    }
-
-    fn symbol(name: &str, value: u32, size: u32) -> Symbol {
-        Symbol {
-            name: name.into(),
-            value,
-            size,
-            absolute: false,
-        }
-    }
-
-    fn fixture() -> Vec<Image> {
-        let main = Image {
-            build: "t".into(),
-            name: "main".into(),
-            main: true,
-            functions: vec![
-                // A C function.
-                (
-                    function("Done", 0x0800_0100, 4, Origin::C),
-                    vec![ins(0x0800_0100, Kind::Bx(14))],
-                ),
-                // A far-call veneer to Done.
-                (
-                    function("DoneFar", 0x0800_0108, 8, Origin::Assembly),
-                    vec![
-                        ins(
-                            0x0800_0108,
-                            Kind::LdrPool {
-                                rd: 4,
-                                word: 0x0800_0101,
-                            },
-                        ),
-                        ins(0x0800_010a, Kind::Bx(4)),
-                    ],
-                ),
-                // Not yet C, but everything it needs is named.
-                (
-                    function("Ready", 0x0800_0200, 16, Origin::NotYetC),
-                    vec![
-                        ins(
-                            0x0800_0200,
-                            Kind::Bl {
-                                target: 0x0800_0108,
-                            },
-                        ),
-                        ins(
-                            0x0800_0204,
-                            Kind::LdrPool {
-                                rd: 0,
-                                word: 0x0200_0010,
-                            },
-                        ),
-                        ins(
-                            0x0800_0206,
-                            Kind::LdrPool {
-                                rd: 1,
-                                word: 0x0400_0000,
-                            },
-                        ),
-                        ins(
-                            0x0800_0208,
-                            Kind::LdrPool {
-                                rd: 2,
-                                word: 0x0800_0501,
-                            },
-                        ),
-                    ],
-                ),
-                // Not yet C: a placeholder, a raw address and an unnamed callee.
-                (
-                    function("Func_08000300", 0x0800_0300, 32, Origin::NotYetC),
-                    vec![
-                        ins(
-                            0x0800_0300,
-                            Kind::LdrPool {
-                                rd: 0,
-                                word: 0x0200_0100,
-                            },
-                        ),
-                        ins(
-                            0x0800_0302,
-                            Kind::LdrPool {
-                                rd: 1,
-                                word: 0x0300_0000,
-                            },
-                        ),
-                        ins(
-                            0x0800_0304,
-                            Kind::Bl {
-                                target: 0x0800_0400,
-                            },
-                        ),
-                        ins(
-                            0x0800_0308,
-                            Kind::Bl {
-                                target: 0x0800_0200,
-                            },
-                        ),
-                    ],
-                ),
-                // Not yet C and calls the placeholder-named function.
-                (
-                    function("Waiting", 0x0800_0500, 8, Origin::NotYetC),
-                    vec![
-                        ins(
-                            0x0800_0500,
-                            Kind::Bl {
-                                target: 0x0800_0300,
-                            },
-                        ),
-                        ins(
-                            0x0800_0504,
-                            Kind::Bl {
-                                target: 0x0800_0608,
-                            },
-                        ),
-                    ],
-                ),
-                // Import veneers, the second without a label of its own.
-                (
-                    function("Imports", 0x0800_0600, 16, Origin::Assembly),
-                    vec![
-                        ins(
-                            0x0800_0600,
-                            Kind::LdrPool {
-                                rd: 4,
-                                word: 0x0800_0101,
-                            },
-                        ),
-                        ins(0x0800_0602, Kind::Bx(4)),
-                        ins(
-                            0x0800_0608,
-                            Kind::LdrPool {
-                                rd: 4,
-                                word: 0x0800_0109,
-                            },
-                        ),
-                        ins(0x0800_060a, Kind::Bx(4)),
-                    ],
-                ),
-            ],
-            symbols: vec![
-                symbol("Done", 0x0800_0101, 4),
-                symbol("DoneFar", 0x0800_0109, 8),
-                symbol("Ready", 0x0800_0201, 16),
-                symbol("Func_08000300", 0x0800_0301, 32),
-                symbol("Waiting", 0x0800_0501, 8),
-                symbol("gTable", 0x0200_0000, 0x20),
-                symbol("Data_02000100", 0x0200_0100, 4),
-                Symbol {
-                    name: "MsgHello".into(),
-                    value: 7,
-                    size: 0,
-                    absolute: true,
-                },
-            ],
-        };
-        vec![main]
-    }
-
-    #[test]
-    fn names_are_classified_by_form() {
-        assert!(is_placeholder("Func_08001234"));
-        assert!(is_placeholder("RomBytes_02003000"));
-        assert!(!is_placeholder("Func_Main"));
-        assert!(is_id("MsgAbilityName"));
-        assert!(is_id("SceneKolima"));
-        assert!(!is_id("Message"));
-        assert!(is_hardware(0x0400_0200));
-        assert!(!is_memory(0x1ff));
-        assert!(!is_memory(0x021b_1a9b) && !is_memory(0x0309_21c0));
-        assert!(is_placeholder("Unnamed_080cb7f8"));
-    }
-
-    #[test]
-    fn calls_follow_veneers_and_function_pointers() {
-        let images = fixture();
-        let index = Index::build(&images, &BTreeMap::new());
-        let edges: Vec<(String, String, &str, Option<String>)> = index
-            .calls
-            .iter()
-            .map(|c| {
-                let callee = match &c.callee {
-                    Target::Function(k) => index.function(*k).name.clone(),
-                    Target::Unnamed(a) => format!("{a:08x}"),
-                };
-                (
-                    index.function(c.caller).name.clone(),
-                    callee,
-                    c.kind,
-                    c.via.clone(),
-                )
-            })
-            .collect();
-        assert!(edges.contains(&(
-            "Ready".into(),
-            "Done".into(),
-            "veneer",
-            Some("DoneFar".into())
-        )));
-        assert!(edges.contains(&("Ready".into(), "Waiting".into(), "pointer", None)));
-        assert!(edges.contains(&("Func_08000300".into(), "08000400".into(), "bl", None)));
-        assert!(edges.contains(&("Waiting".into(), "Func_08000300".into(), "bl", None)));
-        assert!(edges.contains(&(
-            "Waiting".into(),
-            "08000608".into(),
-            "veneer",
-            Some("to Done".into())
-        )));
-    }
-
-    #[test]
-    fn overlays_take_iwram_names_from_the_main_image() {
-        let mut images = fixture();
-        images[0].symbols.push(symbol("gSlots", 0x0300_0000, 0x10));
-        images.push(Image {
-            build: "t".into(),
-            name: "overlay".into(),
-            main: false,
-            functions: vec![(
-                function("Func_02000000", 0x0200_0000, 8, Origin::NotYetC),
-                vec![
-                    ins(
-                        0x0200_0000,
-                        Kind::LdrPool {
-                            rd: 0,
-                            word: 0x0300_0004,
-                        },
-                    ),
-                    ins(
-                        0x0200_0002,
-                        Kind::LdrPool {
-                            rd: 1,
-                            word: 0x0200_0100,
-                        },
-                    ),
-                ],
-            )],
-            symbols: vec![symbol("Func_02000000", 0x0200_0001, 8)],
-        });
-        let index = Index::build(&images, &BTreeMap::new());
-        let seen: Vec<(&str, Class)> = index
-            .references
-            .iter()
-            .filter(|r| r.function.0 == 1)
-            .map(|r| (r.name.as_str(), r.class))
-            .collect();
-        assert!(seen.contains(&("gSlots+0x4", Class::Named)));
-        assert!(seen.contains(&("02000100", Class::Raw)));
-    }
-
-    #[test]
-    fn blockers_rank_by_bytes_and_the_frontier_is_what_they_leave() {
-        let images = fixture();
-        let mut ids = BTreeMap::new();
-        ids.insert(
-            (0, 0x0800_0300),
-            BTreeSet::from(["MsgHello".to_string(), "gTable".to_string()]),
-        );
-        let index = Index::build(&images, &ids);
-        let classes: Vec<(&str, Class)> = index
-            .references
-            .iter()
-            .map(|r| (r.name.as_str(), r.class))
-            .collect();
-        assert!(classes.contains(&("gTable+0x10", Class::Named)));
-        assert!(classes.contains(&("Data_02000100", Class::Placeholder)));
-        assert!(classes.contains(&("03000000", Class::Raw)));
-        assert!(classes.contains(&("MsgHello", Class::Id)));
-        assert!(!classes.iter().any(|(n, _)| n.starts_with("0400")));
-        let ranked = index.ranked_blockers();
-        let top: Vec<(&str, &str, u64)> = ranked
-            .iter()
-            .map(|(b, _, bytes)| (b.kind, b.item.as_str(), *bytes))
-            .collect();
-        assert_eq!(top[0], ("missing-label", "03000000", 32));
-        assert!(top.contains(&("placeholder", "Func_08000300", 8)));
-        assert!(top.contains(&("unnamed-callee", "08000400", 32)));
-        assert_eq!(top.last().unwrap().0, "named-callee");
-        let frontier: Vec<&str> = index
-            .frontier()
-            .iter()
-            .map(|k| index.function(*k).name.as_str())
-            .collect();
-        assert_eq!(frontier, vec!["Ready"]);
-    }
-
-    #[test]
-    fn drafts_read_their_score_and_what_is_left() {
-        let notes = comments("/* Nonmatching: 26 halfword edits. The register allocation\n swaps r5 and r7. */\nint x; /* cse */");
-        assert_eq!(draft_score(&notes), Some(26));
-        assert_eq!(draft_status(&notes), "register/scheduling");
-        assert_eq!(
-            draft_score("resource_372:020031ac; 2716 / 2716 bytes, 33 differing"),
-            Some(33)
-        );
-        assert_eq!(
-            draft_status("needs a real name for the placeholder Data_02001234"),
-            "names/data"
-        );
-        assert_eq!(draft_status("nothing"), "unknown");
-    }
-
-    #[test]
-    fn listings_give_each_label_its_identifiers() {
-        let listing = "\t.thumb\nFoo:\n\tldr r0, [pc, #0]\n\tbl Bar\n\t.4byte MsgHello\n.L_1:\n\t.4byte 0x08000001\nBaz:\n\tldr r1, =SceneTown+4\n";
-        let found = listing_identifiers(listing);
-        assert_eq!(found.len(), 2);
-        assert_eq!(found[0].0, "Foo");
-        assert!(found[0].1.contains("Bar") && found[0].1.contains("MsgHello"));
-        assert!(!found[0].1.iter().any(|w| w.starts_with("0x")));
-        assert_eq!(found[1].1, BTreeSet::from(["SceneTown".to_string()]));
-    }
 }

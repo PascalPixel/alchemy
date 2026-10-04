@@ -363,7 +363,7 @@ void FieldScene_DispatchBySelector(void)
     case 69:
         Engine_ActorSetAnimation(8, 2);
         Engine_ActorSetAnimation(9, 2);
-        if (GameFlag_IsSet(0x109) != 0)
+        if (Engine_GameFlagIsSet(0x109) != 0)
             break;
         SceneState_SetRuntimeWord448To513();
         break;
@@ -384,9 +384,9 @@ void FieldScene_DispatchBySelector(void)
         FieldScene_RunScene3b9_020025f0();
         break;
     case 12:
-        GameFlag_Set(324);
+        Engine_GameFlagSet(324);
         ActorPresentation_SetActorsTwelveToEighteen();
-        if (GameFlag_IsSet(0x109) != 0)
+        if (Engine_GameFlagIsSet(0x109) != 0)
             break;
         FieldScene_RunScene3b9_020024d8();
         break;
@@ -394,7 +394,7 @@ void FieldScene_DispatchBySelector(void)
         Party_AddActiveOwner(1);
         Party_AddActiveOwner(2);
         Party_AddActiveOwner(3);
-        GameFlag_Set(0x90e);
+        Engine_GameFlagSet(0x90e);
         FieldScene_RunScene3b9_02002668();
         break;
     case 67:
@@ -407,7 +407,7 @@ void FieldScene_DispatchBySelector(void)
         Party_AddActiveOwner(1);
         Party_AddActiveOwner(2);
         Party_AddActiveOwner(3);
-        GameFlag_Set(0x90f);
+        Engine_GameFlagSet(0x90f);
         FieldScene_RunScene3b9_02002964();
         break;
     default:

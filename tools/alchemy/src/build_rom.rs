@@ -10,7 +10,7 @@ use crate::targets::{decomp_target, DecompTarget};
 use ags::lz::{compress_tagged, LzMachine};
 use psynergy::process::run as command;
 use sha2::{Digest, Sha256};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -43,6 +43,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
     }
     let root = crate::compiler::routing::root();
     let output = output.unwrap_or_else(|| PathBuf::from(target.output_dir));
+    clear_unindexed(&root.join(&output), root);
     let script = match script {
         Some(script) => script,
         None => crate::edition::script(root, target, &output)?,
@@ -56,13 +57,30 @@ pub fn run(args: &[String]) -> Result<(), String> {
         keep_going,
     )?;
     println!("objects={}", linked.objects.len());
+    println!("steps={}", linked.steps);
     println!("map={}", linked.map.display());
     println!("rom={}", linked.image.display());
     Ok(())
 }
 
+/// Without an index nothing in a build directory is reused, so whatever an
+/// older build left there goes, except make raw's private listings.
+fn clear_unindexed(output: &Path, root: &Path) {
+    if output.join(INDEX).is_file() || !output.starts_with(root.join("out")) {
+        return;
+    }
+    for entry in fs::read_dir(output).into_iter().flatten().flatten() {
+        if entry.file_name() != "raw" {
+            let path = entry.path();
+            let _ = fs::remove_dir_all(&path).or_else(|_| fs::remove_file(&path));
+        }
+    }
+}
+
 pub(crate) struct Linked {
     pub objects: Vec<PathBuf>,
+    /// How many steps ran: every other product was reused.
+    pub steps: usize,
     pub map: PathBuf,
     pub image: PathBuf,
 }
@@ -97,6 +115,26 @@ pub(crate) fn link(
     keep_going: bool,
 ) -> Result<Linked, String> {
     prefer_installed_binutils();
+    let output = root.join(output);
+    fs::create_dir_all(&output).map_err(|error| error.to_string())?;
+    let index = Index::open(&output);
+    let mut linked = link_indexed(root, target, script, &output, name, keep_going, &index);
+    if let Ok(linked) = &mut linked {
+        linked.steps = index.made.load(Ordering::Relaxed);
+    }
+    index.save()?;
+    linked
+}
+
+fn link_indexed(
+    root: &Path,
+    target: DecompTarget,
+    script: &Path,
+    output: &Path,
+    name: &str,
+    keep_going: bool,
+    index: &Index,
+) -> Result<Linked, String> {
     let text = fs::read_to_string(root.join(script))
         .map_err(|error| format!("{}: {error}", script.display()))?;
     let sources = script_objects(&text)
@@ -106,23 +144,22 @@ pub(crate) fn link(
     if sources.is_empty() {
         return Err(format!("{} lists no objects", script.display()));
     }
-    let output = root.join(output);
-    base_rom(root, target, &output)?;
-    prepare_assets(root, target, &sources, &output)?;
-    crate::build_text::build(root, target, &output)?;
+    base_rom(root, target, output)?;
+    prepare_assets(root, target, &sources, output, index)?;
+    crate::build_text::build(root, target, output)?;
     // Sources that read built overlay streams wait for the overlays, and the
     // overlays link against the main image's symbols: a first pass links the
     // main image with empty streams, which move nothing the overlays can see.
     let mut streamed = Vec::new();
     let mut direct = Vec::new();
     for source in &sources {
-        if stream_paths(root, target, source, &output)?.is_empty() {
+        if stream_paths(root, target, source, output)?.is_empty() {
             direct.push(source.clone());
         } else {
             streamed.push(source.clone());
         }
     }
-    compile_all(root, target, &direct, &output)?;
+    compile_all(root, target, &direct, output, index)?;
     let objects: Vec<PathBuf> = sources
         .iter()
         .map(|source| output.join("obj").join(source).with_extension("o"))
@@ -134,11 +171,17 @@ pub(crate) fn link(
         .collect();
     let mut symbols = None;
     if !streamed.is_empty() {
-        let pass = symbols_pass(root, script, &text, &output, name, &sources, &streamed)?;
+        let pass = symbols_pass(
+            root, script, &text, output, name, &sources, &streamed, index,
+        )?;
+        let table = command(&["arm-none-eabi-nm", &pass.to_string_lossy()], root)?;
+        let table = format!("{:x}", Sha256::digest(table.as_bytes()));
         for source in &streamed {
-            linked_objects.extend(build_overlay_streams(root, target, source, &output, &pass)?);
+            linked_objects.extend(build_overlay_streams(
+                root, target, source, output, &pass, &table, index,
+            )?);
         }
-        compile_all(root, target, &streamed, &output)?;
+        compile_all(root, target, &streamed, output, index)?;
         symbols = Some(pass);
     }
     linked_objects.sort();
@@ -155,39 +198,231 @@ pub(crate) fn link(
     if keep_going {
         arguments.push("--noinhibit-exec".into());
     }
-    let linked = command(&arguments, root);
-    if linked.is_ok() {
-        if let Some(pass) = &symbols {
-            same_addresses(root, pass, &elf)?;
+    let products = [image.clone(), elf.clone(), map.clone()];
+    let key = link_key(root, index, &arguments, &text, &objects)?;
+    if !index.fresh(&products, &key) {
+        index.forget(&image);
+        if let Err(error) = command(&arguments, root) {
+            if !keep_going || !elf.is_file() {
+                return Err(error);
+            }
+            eprintln!("{error}");
         }
-        // Every build that links game code checks its fixed addresses; a
-        // build that is still only the original ROM places none of them.
-        if links_game_code(&sources, &objects)? {
-            checked_entries(root, target, &elf)?;
+        command(
+            &[
+                "arm-none-eabi-objcopy",
+                "-O",
+                "binary",
+                &elf.to_string_lossy(),
+                &image.to_string_lossy(),
+            ],
+            root,
+        )?;
+        pad_to_cartridge(&image)?;
+        if !keep_going {
+            index.record(&products, &key, Vec::new())?;
         }
     }
-    if let Err(error) = linked {
-        if !keep_going || !elf.is_file() {
-            return Err(error);
-        }
-        eprintln!("{error}");
+    if let Some(pass) = &symbols {
+        same_addresses(root, pass, &elf)?;
     }
-    command(
-        &[
-            "arm-none-eabi-objcopy",
-            "-O",
-            "binary",
-            &elf.to_string_lossy(),
-            &image.to_string_lossy(),
-        ],
-        root,
-    )?;
-    pad_to_cartridge(&image)?;
+    // Every build that links game code checks its fixed addresses; a
+    // build that is still only the original ROM places none of them.
+    if links_game_code(&sources, &objects)? {
+        checked_entries(root, target, &elf)?;
+    }
+    // Only the assembler reads built assets: each is made again from its
+    // inputs when an object that reads it is next assembled.
+    for directory in ["GRAPHICS", "MAP", "SOUND", "COMMON"] {
+        let _ = fs::remove_dir_all(output.join(directory));
+    }
     Ok(Linked {
+        steps: 0,
         objects,
         map,
         image,
     })
+}
+
+const LIBGCC: &str = "tools/out/compiler-runtime/libgcc.a";
+
+/// A link's key: its command and script, the recorded digest of every
+/// object it reads, the toolchain and the compiler runtime.
+fn link_key(
+    root: &Path,
+    index: &Index,
+    arguments: &[String],
+    text: &str,
+    objects: &[PathBuf],
+) -> Result<String, String> {
+    let mut hasher = Sha256::new();
+    hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
+    hasher.update(portable(root, arguments.join("\0").as_bytes()));
+    hasher.update(text.as_bytes());
+    for object in objects {
+        let row = index
+            .row(object)
+            .ok_or_else(|| format!("{} was not built", object.display()))?;
+        hasher.update(row.digest.as_bytes());
+    }
+    hasher.update(fs::read(root.join(LIBGCC)).unwrap_or_default());
+    Ok(format!("{:x}", hasher.finalize()))
+}
+
+/// Key text with the checkout's own path left out, so a worktree reuses
+/// the products `make worktree` cloned from the main checkout.
+fn portable(root: &Path, text: &[u8]) -> Vec<u8> {
+    let prefix = format!("{}/", root.display());
+    let prefix = prefix.as_bytes();
+    let mut kept = Vec::with_capacity(text.len());
+    let mut at = 0;
+    while at < text.len() {
+        if text[at..].starts_with(prefix) {
+            at += prefix.len();
+        } else {
+            kept.push(text[at]);
+            at += 1;
+        }
+    }
+    kept
+}
+
+/// The build index's file in each build directory.
+const INDEX: &str = "cache.tsv";
+
+/// One index of every cached step of an edition's build, `cache.tsv` in its
+/// build directory, as pret's Makefile keeps one dependency file per object.
+/// Each row names a product from the build directory, the key of everything
+/// its step read, the digest of what it wrote and, for an asset, the files
+/// its encoder read.
+pub(crate) struct Index {
+    output: PathBuf,
+    rows: Mutex<BTreeMap<String, Row>>,
+    made: AtomicUsize,
+}
+
+#[derive(Clone)]
+struct Row {
+    key: String,
+    digest: String,
+    inputs: Vec<String>,
+}
+
+impl Index {
+    pub(crate) fn open(output: &Path) -> Index {
+        let text = fs::read_to_string(output.join(INDEX)).unwrap_or_default();
+        let rows = text
+            .lines()
+            .filter_map(|line| {
+                let mut fields = line.split('\t');
+                let product = fields.next()?.to_owned();
+                let key = fields.next()?.to_owned();
+                let digest = fields.next()?.to_owned();
+                let inputs = fields.map(str::to_owned).collect();
+                Some((
+                    product,
+                    Row {
+                        key,
+                        digest,
+                        inputs,
+                    },
+                ))
+            })
+            .collect();
+        Index {
+            output: output.to_path_buf(),
+            rows: Mutex::new(rows),
+            made: AtomicUsize::new(0),
+        }
+    }
+
+    fn name(&self, product: &Path) -> String {
+        product
+            .strip_prefix(&self.output)
+            .unwrap_or(product)
+            .to_string_lossy()
+            .into_owned()
+    }
+
+    fn row(&self, product: &Path) -> Option<Row> {
+        self.rows.lock().unwrap().get(&self.name(product)).cloned()
+    }
+
+    /// Whether `products` still hold what the step keyed `key` wrote.
+    fn fresh(&self, products: &[PathBuf], key: &str) -> bool {
+        self.row(&products[0]).is_some_and(|row| {
+            row.key == key && products_digest(products).is_ok_and(|actual| actual == row.digest)
+        })
+    }
+
+    fn record(&self, products: &[PathBuf], key: &str, inputs: Vec<String>) -> Result<(), String> {
+        let row = Row {
+            key: key.to_owned(),
+            digest: products_digest(products)?,
+            inputs,
+        };
+        self.rows
+            .lock()
+            .unwrap()
+            .insert(self.name(&products[0]), row);
+        self.made.fetch_add(1, Ordering::Relaxed);
+        Ok(())
+    }
+
+    fn forget(&self, product: &Path) {
+        self.rows.lock().unwrap().remove(&self.name(product));
+    }
+
+    pub(crate) fn save(&self) -> Result<(), String> {
+        let mut text = String::new();
+        for (product, row) in self.rows.lock().unwrap().iter() {
+            text.push_str(product);
+            for field in [&row.key, &row.digest].into_iter().chain(&row.inputs) {
+                text.push('\t');
+                text.push_str(field);
+            }
+            text.push('\n');
+        }
+        let path = self.output.join(INDEX);
+        let fresh = self.output.join(format!("{INDEX}.new"));
+        fs::write(&fresh, text).map_err(|error| format!("{}: {error}", fresh.display()))?;
+        fs::rename(&fresh, &path).map_err(|error| format!("{}: {error}", path.display()))
+    }
+}
+
+/// Run `step` over `items` on every CPU, keeping their order.
+fn parallel<T: Sync, R: Send>(
+    items: &[T],
+    step: impl Fn(&T) -> Result<R, String> + Sync,
+) -> Result<Vec<R>, String> {
+    let next = AtomicUsize::new(0);
+    let results = Mutex::new((0..items.len()).map(|_| None).collect::<Vec<_>>());
+    let errors = Mutex::new(Vec::new());
+    let workers = std::thread::available_parallelism().map_or(4, |count| count.get());
+    std::thread::scope(|scope| {
+        for _ in 0..workers.min(items.len()) {
+            scope.spawn(|| loop {
+                let index = next.fetch_add(1, Ordering::Relaxed);
+                let Some(item) = items.get(index) else {
+                    break;
+                };
+                match step(item) {
+                    Ok(result) => results.lock().unwrap()[index] = Some(result),
+                    Err(error) => errors.lock().unwrap().push(error),
+                }
+            });
+        }
+    });
+    let errors = errors.into_inner().unwrap();
+    if !errors.is_empty() {
+        return Err(errors.join("\n"));
+    }
+    Ok(results
+        .into_inner()
+        .unwrap()
+        .into_iter()
+        .map(|result| result.expect("every item ran"))
+        .collect())
 }
 
 /// Fill the image with zeros to the next power of two, the size of the ROM
@@ -263,8 +498,10 @@ fn link_command(
     arguments
 }
 
-/// The main image linked with every stream-reading object empty, for the
-/// overlays' links: every symbol before the streams keeps its address.
+/// The main image's symbols linked with every stream-reading object empty,
+/// for the overlays' links: every symbol before the streams keeps its
+/// address. Only the symbol table is kept.
+#[allow(clippy::too_many_arguments)]
 fn symbols_pass(
     root: &Path,
     script: &Path,
@@ -273,31 +510,38 @@ fn symbols_pass(
     name: &str,
     sources: &[PathBuf],
     streamed: &[PathBuf],
+    index: &Index,
 ) -> Result<PathBuf, String> {
     let pass = output.join("symbols");
-    let mut objects = Vec::with_capacity(sources.len());
-    for source in sources {
-        if streamed.contains(source) {
-            let stub = pass.join(source).with_extension("o");
-            fs::create_dir_all(stub.parent().expect("stub directory"))
-                .map_err(|error| error.to_string())?;
-            command(
-                &assembly_command("/dev/null", &stub.to_string_lossy()),
-                root,
-            )?;
-            objects.push(stub);
-        } else {
-            objects.push(output.join("obj").join(source).with_extension("o"));
-        }
-    }
-    // The stubs define nothing, so the labels of the streamed sources, such as
-    // the directory rows naming each overlay, stay unresolved here; each is a
-    // word whose size does not depend on its value, and the final link
-    // resolves them all.
+    fs::create_dir_all(&pass).map_err(|error| error.to_string())?;
+    let objects: Vec<PathBuf> = sources
+        .iter()
+        .filter(|source| !streamed.contains(source))
+        .map(|source| output.join("obj").join(source).with_extension("o"))
+        .collect();
+    // The streamed sources are left out. Their labels, such as the directory
+    // rows naming each overlay, stay unresolved here; each is a word whose
+    // size does not depend on its value, and the final link resolves them
+    // all and checks that no global moved.
     let elf = pass.join(format!("{name}.elf"));
     let mut arguments = link_command(root, script, text, &objects, &elf);
     arguments.insert(1, "--unresolved-symbols=ignore-all".to_owned());
+    let key = link_key(root, index, &arguments, text, &objects)?;
+    if index.fresh(&[elf.clone()], &key) {
+        return Ok(elf);
+    }
     command(&arguments, root)?;
+    let elf_text = elf.to_string_lossy();
+    command(
+        &[
+            "arm-none-eabi-objcopy",
+            "--extract-symbol",
+            &elf_text,
+            &elf_text,
+        ],
+        root,
+    )?;
+    index.record(&[elf.clone()], &key, Vec::new())?;
     Ok(elf)
 }
 
@@ -606,105 +850,147 @@ fn base_rom(root: &Path, target: DecompTarget, output: &Path) -> Result<(), Stri
     std::os::unix::fs::symlink(&rom, &link).map_err(|error| error.to_string())
 }
 
-/// Compile or assemble every source into `output/obj`, reusing an object only
-/// when its preprocessed input and command are unchanged.
+/// Compile or assemble every source into `output/obj`, reusing an object
+/// while the index holds it under the key of what its step reads now.
 fn compile_all(
     root: &Path,
     target: DecompTarget,
     sources: &[PathBuf],
     output: &Path,
+    index: &Index,
 ) -> Result<Vec<PathBuf>, String> {
     let objects: Vec<PathBuf> = sources
         .iter()
         .map(|source| output.join("obj").join(source).with_extension("o"))
         .collect();
-    let next = AtomicUsize::new(0);
-    let errors = Mutex::new(Vec::new());
-    let workers = std::thread::available_parallelism().map_or(4, |count| count.get());
-    std::thread::scope(|scope| {
-        for _ in 0..workers {
-            scope.spawn(|| loop {
-                let index = next.fetch_add(1, Ordering::Relaxed);
-                let Some(source) = sources.get(index) else {
-                    break;
-                };
-                if let Err(error) = compile(root, target, source, &objects[index]) {
-                    errors
-                        .lock()
-                        .unwrap()
-                        .push(format!("{}: {error}", source.display()));
-                }
-            });
+    let pairs: Vec<(&PathBuf, &PathBuf)> = sources.iter().zip(&objects).collect();
+    let plans = parallel(&pairs, |(source, object)| {
+        plan(root, target, source, object, index)
+            .map_err(|error| format!("{}: {error}", source.display()))
+    })?;
+    let stale: Vec<Plan> = plans.into_iter().flatten().collect();
+    // Assets are made only for the objects assembled now; an asset two of
+    // them read is made once.
+    let mut assets = Vec::new();
+    for plan in &stale {
+        for asset in source_assets(root, target, &plan.source)? {
+            if !assets
+                .iter()
+                .any(|known: &Asset| known.built == asset.built)
+            {
+                assets.push(asset);
+            }
         }
-    });
-    let errors = errors.into_inner().unwrap();
-    if !errors.is_empty() {
-        return Err(errors.join("\n"));
     }
+    parallel(&assets, |asset| materialize(root, output, index, asset))?;
+    parallel(&stale, |plan| {
+        run_plan(root, plan, index).map_err(|error| format!("{}: {error}", plan.source.display()))
+    })?;
     Ok(objects)
 }
 
-fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> Result<(), String> {
+/// The steps that make one object, the key of everything they read, and
+/// the intermediate files to remove once the object is made.
+struct Plan {
+    source: PathBuf,
+    object: PathBuf,
+    key: String,
+    steps: Vec<Vec<String>>,
+    /// Assembly the build writes before the steps, from a sequence MIDI.
+    assembly: Option<(PathBuf, String)>,
+    scratch: Vec<PathBuf>,
+}
+
+/// The plan for `object`, or none when the index already holds it.
+fn plan(
+    root: &Path,
+    target: DecompTarget,
+    source: &Path,
+    object: &Path,
+    index: &Index,
+) -> Result<Option<Plan>, String> {
     fs::create_dir_all(object.parent().expect("object directory"))
         .map_err(|error| error.to_string())?;
-    let stamp = object.with_extension("o.key");
     let source_text = source.to_string_lossy().into_owned();
     let object_text = object.to_string_lossy().into_owned();
     let extension = source.extension().and_then(|extension| extension.to_str());
-    if extension == Some("MID") {
-        return compile_sequence(root, source, object);
-    }
-    let c = matches!(extension, Some("C" | "c"));
-    let (key, steps) = if c {
-        let preprocessed = object.with_extension("i");
-        let steps = c_steps(target, source, object)?;
+    let mut hasher = Sha256::new();
+    hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
+    let mut assembly = None;
+    let mut scratch = Vec::new();
+    let steps = if extension == Some("MID") {
+        // A sequence MIDI converts to assembly beside its object, as pret's
+        // mid2agb does; the converted text is the key.
+        let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
+        let text = ags::sound::sequence_assembly(&midi)?;
+        let path = object.with_extension("s");
+        hasher.update(text.as_bytes());
+        let step = assembly_command(&path.to_string_lossy(), &object_text);
+        scratch.push(path.clone());
+        assembly = Some((path, text));
+        vec![step]
+    } else if matches!(extension, Some("C" | "c")) {
         // The routed compile reads its own preprocessed text, so the key is
         // that text plus every command; headers are covered by preprocessing.
+        let preprocessed = object.with_extension("i");
+        let steps = c_steps(target, source, object)?;
         let preprocess = preprocessor_only(&steps, &source_text, &preprocessed)?;
         command(&preprocess, root)?;
-        let mut hasher = Sha256::new();
-        hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
-        hasher.update(fs::read(&preprocessed).map_err(|error| error.to_string())?);
-        for step in &steps {
-            hasher.update(step.join("\0").as_bytes());
-        }
-        (format!("{:x}", hasher.finalize()), steps)
+        hasher.update(portable(
+            root,
+            &fs::read(&preprocessed).map_err(|error| error.to_string())?,
+        ));
+        scratch.extend([preprocessed, object.with_extension("s")]);
+        steps
     } else {
         let base = object
             .ancestors()
             .find(|path| path.join("baserom.gba").exists())
             .ok_or("the base ROM link is missing")?;
-        let mut hasher = assembly_inputs(root, target, source, base)?;
-        let step = target_assembly_command(target, &source_text, &object_text, base);
-        hasher.update(step.join("\0").as_bytes());
-        (format!("{:x}", hasher.finalize()), vec![step])
+        assembly_inputs(&mut hasher, root, target, source, base, index)?;
+        vec![target_assembly_command(
+            target,
+            &source_text,
+            &object_text,
+            base,
+        )]
     };
-    if compiled_cache(object, &stamp, &key) {
-        return Ok(());
-    }
-    let _ = fs::remove_file(&stamp);
     for step in &steps {
-        command(step, root)?;
+        hasher.update(portable(root, step.join("\0").as_bytes()));
     }
-    fs::write(object.with_extension("o.digest"), object_digest(object)?)
-        .map_err(|error| error.to_string())?;
-    fs::write(&stamp, key).map_err(|error| error.to_string())
+    let key = format!("{:x}", hasher.finalize());
+    if index.fresh(&[object.to_path_buf()], &key) {
+        remove_scratch(&scratch);
+        return Ok(None);
+    }
+    Ok(Some(Plan {
+        source: source.to_path_buf(),
+        object: object.to_path_buf(),
+        key,
+        steps,
+        assembly,
+        scratch,
+    }))
 }
 
-pub(crate) fn compiled_cache(object: &Path, stamp: &Path, key: &str) -> bool {
-    if fs::read_to_string(stamp).ok().as_deref() != Some(key) {
-        return false;
+fn run_plan(root: &Path, plan: &Plan, index: &Index) -> Result<(), String> {
+    index.forget(&plan.object);
+    if let Some((path, text)) = &plan.assembly {
+        fs::write(path, text).map_err(|error| error.to_string())?;
     }
-    let Some(saved) = fs::read_to_string(object.with_extension("o.digest")).ok() else {
-        return false;
-    };
-    object_digest(object).is_ok_and(|actual| actual == saved)
+    let ran = plan
+        .steps
+        .iter()
+        .try_for_each(|step| command(step, root).map(drop));
+    remove_scratch(&plan.scratch);
+    ran?;
+    index.record(&[plan.object.clone()], &plan.key, Vec::new())
 }
 
-fn object_digest(object: &Path) -> Result<String, String> {
-    fs::read(object)
-        .map(|bytes| format!("{:x}", Sha256::digest(bytes)))
-        .map_err(|error| format!("{}: {error}", object.display()))
+fn remove_scratch(paths: &[PathBuf]) {
+    for path in paths {
+        let _ = fs::remove_file(path);
+    }
 }
 
 fn c_steps(target: DecompTarget, source: &Path, object: &Path) -> Result<Vec<Vec<String>>, String> {
@@ -738,51 +1024,30 @@ fn c_import_directory(object: &Path) -> Result<&Path, String> {
         .ok_or_else(|| format!("{} is not under a build's obj directory", object.display()))
 }
 
+/// What an assembly source reads: its text and includes, the code streams
+/// it embeds and the key of every asset it reads, which stands for the
+/// asset's bytes, so an unchanged asset need not be made again.
 fn assembly_inputs(
+    hasher: &mut Sha256,
     root: &Path,
     target: DecompTarget,
     source: &Path,
     output: &Path,
-) -> Result<Sha256, String> {
+    index: &Index,
+) -> Result<(), String> {
     let directory = root.join(output);
-    let mut hasher = Sha256::new();
-    hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
     hasher.update(with_includes(&[root, &directory], &root.join(source))?);
-    // Built editable assets and code streams are actual assembler inputs.
-    let built = asset_files(root, source)
-        .into_iter()
-        .map(|built| directory.join(built));
-    for input in stream_paths(root, target, source, &directory)?
-        .into_iter()
-        .chain(built)
-    {
+    for input in stream_paths(root, target, source, &directory)? {
         hasher.update(fs::read(&input).map_err(|error| format!("{}: {error}", input.display()))?);
     }
-    Ok(hasher)
-}
-
-/// Convert a sequence MIDI to assembly beside its object and assemble it,
-/// reusing the object while the converted text and command are unchanged.
-fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), String> {
-    let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
-    let text = ags::sound::sequence_assembly(&midi)?;
-    let assembly = object.with_extension("s");
-    let step = assembly_command(&assembly.to_string_lossy(), &object.to_string_lossy());
-    let mut hasher = Sha256::new();
-    hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
-    hasher.update(text.as_bytes());
-    hasher.update(step.join("\0").as_bytes());
-    let key = format!("{:x}", hasher.finalize());
-    let stamp = object.with_extension("o.key");
-    if compiled_cache(object, &stamp, &key) {
-        return Ok(());
+    for built in asset_files(root, source) {
+        let row = index
+            .row(&directory.join(&built))
+            .ok_or_else(|| format!("{built} was not prepared"))?;
+        hasher.update(built.as_bytes());
+        hasher.update(row.key.as_bytes());
     }
-    let _ = fs::remove_file(&stamp);
-    fs::write(&assembly, text).map_err(|error| error.to_string())?;
-    command(&step, root)?;
-    fs::write(object.with_extension("o.digest"), object_digest(object)?)
-        .map_err(|error| error.to_string())?;
-    fs::write(&stamp, key).map_err(|error| error.to_string())
+    Ok(())
 }
 
 /// Editable sound and resource files this source reads, in sound/resource order.
@@ -806,79 +1071,168 @@ fn asset_files(root: &Path, source: &Path) -> Vec<String> {
     sound
 }
 
-/// Build editable assets, retaining an unchanged output. Graphics in a COMMON
-/// source belong to COMMON; sound belongs to the edition unless explicitly shared.
+/// One built asset a source reads, and where its editable input lives.
+struct Asset {
+    built: String,
+    game: PathBuf,
+    recipe: String,
+    sound: bool,
+}
+
+/// The assets `source` reads. Graphics in a COMMON source belong to COMMON;
+/// sound belongs to the edition unless explicitly shared.
+fn source_assets(root: &Path, target: DecompTarget, source: &Path) -> Result<Vec<Asset>, String> {
+    let mut assets = Vec::new();
+    for built in asset_files(root, source) {
+        let sound = built
+            .strip_prefix("COMMON/")
+            .unwrap_or(&built)
+            .starts_with("SOUND/");
+        let recipe = if sound {
+            built
+                .strip_suffix(".bin")
+                .expect("sound recipe ends in .bin")
+        } else {
+            &built
+        };
+        if recipe
+            .split('/')
+            .any(|part| part.is_empty() || part == "..")
+        {
+            let kind = if sound { "sound" } else { "resource" };
+            return Err(format!(
+                "{}: {built} is not a {kind} file path",
+                source.display()
+            ));
+        }
+        let (game, recipe) = match recipe.strip_prefix("COMMON/") {
+            Some(shared) => (Path::new("games/COMMON"), shared),
+            None if !sound && source.starts_with("games/COMMON") => {
+                (Path::new("games/COMMON"), recipe)
+            }
+            None => (Path::new(target.game_dir()), recipe),
+        };
+        assets.push(Asset {
+            game: game.to_path_buf(),
+            recipe: recipe.to_owned(),
+            built,
+            sound,
+        });
+    }
+    Ok(assets)
+}
+
+/// The primary input of an asset, from the checkout's root.
+fn asset_input(root: &Path, asset: &Asset) -> Result<PathBuf, String> {
+    if !asset.sound {
+        return Ok(asset
+            .game
+            .join("SRC")
+            .join(ags::resource::input_name(&asset.recipe)?));
+    }
+    let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
+        .iter()
+        .map(|extension| asset.game.join(format!("{}.{extension}", asset.recipe)))
+        .filter(|path| root.join(path).is_file())
+        .collect();
+    match inputs.as_slice() {
+        [input] => Ok(input.clone()),
+        _ => Err(format!(
+            "{} needs exactly one WAV or PCM4 input",
+            asset.built
+        )),
+    }
+}
+
+/// Encode an asset, and name every further file its encoder read.
+fn encode(root: &Path, asset: &Asset) -> Result<(Vec<u8>, Vec<String>), String> {
+    let input = asset_input(root, asset)?;
+    let bytes = fs::read(root.join(&input))
+        .map_err(|error| format!("{}: {}: {error}", asset.built, input.display()))?;
+    if asset.sound {
+        let encoded = ags::sound::build_sound_file(&input.to_string_lossy(), &bytes)
+            .map_err(|error| format!("{}: {error}", input.display()))?;
+        return Ok((encoded, Vec::new()));
+    }
+    let read = std::cell::RefCell::new(Vec::new());
+    let encoded = ags::resource::build_file_with(&asset.recipe, &bytes, &|name| {
+        let sibling = ags::resource::sibling_path(&input, name)?;
+        read.borrow_mut()
+            .push(sibling.to_string_lossy().into_owned());
+        let path = root.join(&sibling);
+        fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
+    })?;
+    Ok((encoded, read.into_inner()))
+}
+
+/// An asset's key: the encoder, its recipe and every input it read, or none
+/// when one of them is gone.
+fn asset_key(root: &Path, asset: &Asset, inputs: &[String]) -> Option<String> {
+    let mut hasher = Sha256::new();
+    hasher.update(env!("ALCHEMY_ENCODER").as_bytes());
+    hasher.update(asset.built.as_bytes());
+    let input = asset_input(root, asset).ok()?;
+    for path in std::iter::once(input.to_string_lossy().into_owned()).chain(inputs.iter().cloned())
+    {
+        let bytes = fs::read(root.join(&path)).ok()?;
+        hasher.update((path.len() as u64).to_le_bytes());
+        hasher.update(path.as_bytes());
+        hasher.update((bytes.len() as u64).to_le_bytes());
+        hasher.update(bytes);
+    }
+    Some(format!("{:x}", hasher.finalize()))
+}
+
+/// Key every asset the sources read. An asset whose inputs are unchanged
+/// keeps its key without being made; any other is encoded now, to learn
+/// the inputs its encoder reads.
 fn prepare_assets(
     root: &Path,
     target: DecompTarget,
     sources: &[PathBuf],
     output: &Path,
+    index: &Index,
 ) -> Result<(), String> {
+    let mut assets: Vec<Asset> = Vec::new();
     for source in sources {
-        for built in asset_files(root, source) {
-            let sound = built
-                .strip_prefix("COMMON/")
-                .unwrap_or(&built)
-                .starts_with("SOUND/");
-            let recipe = if sound {
-                built
-                    .strip_suffix(".bin")
-                    .expect("sound recipe ends in .bin")
-            } else {
-                &built
-            };
-            if recipe
-                .split('/')
-                .any(|part| part.is_empty() || part == "..")
-            {
-                let kind = if sound { "sound" } else { "resource" };
-                return Err(format!(
-                    "{}: {built} is not a {kind} file path",
-                    source.display()
-                ));
+        for asset in source_assets(root, target, source)? {
+            if !assets.iter().any(|known| known.built == asset.built) {
+                assets.push(asset);
             }
-            let (game, recipe) = match recipe.strip_prefix("COMMON/") {
-                Some(shared) => (Path::new("games/COMMON"), shared),
-                None if !sound && source.starts_with("games/COMMON") => {
-                    (Path::new("games/COMMON"), recipe)
-                }
-                None => (Path::new(target.game_dir()), recipe),
-            };
-            let encoded = if sound {
-                let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
-                    .iter()
-                    .map(|extension| game.join(format!("{recipe}.{extension}")))
-                    .filter(|path| root.join(path).is_file())
-                    .collect();
-                let [input] = inputs.as_slice() else {
-                    return Err(format!(
-                        "{}: {built} needs exactly one WAV or PCM4 input",
-                        source.display()
-                    ));
-                };
-                let bytes = fs::read(root.join(input)).map_err(|error| error.to_string())?;
-                ags::sound::build_sound_file(&input.to_string_lossy(), &bytes)
-                    .map_err(|error| format!("{}: {error}", input.display()))?
-            } else {
-                let image = game.join("SRC").join(ags::resource::input_name(recipe)?);
-                let input = fs::read(root.join(&image)).map_err(|error| {
-                    format!("{}: {}: {error}", source.display(), image.display())
-                })?;
-                ags::resource::build_file_with(recipe, &input, &|name| {
-                    let path = root.join(ags::resource::sibling_path(&image, name)?);
-                    fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
-                })?
-            };
-            let path = output.join(&built);
-            if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
-                continue;
-            }
-            fs::create_dir_all(path.parent().expect("asset file directory"))
-                .map_err(|error| error.to_string())?;
-            fs::write(&path, encoded).map_err(|error| error.to_string())?;
         }
     }
+    parallel(&assets, |asset| {
+        let path = output.join(&asset.built);
+        let known = index.row(&path).is_some_and(|row| {
+            asset_key(root, asset, &row.inputs).is_some_and(|key| key == row.key)
+        });
+        if known {
+            Ok(())
+        } else {
+            write_asset(root, output, index, asset)
+        }
+    })?;
     Ok(())
+}
+
+/// Make the asset's file when the index does not already hold it.
+fn materialize(root: &Path, output: &Path, index: &Index, asset: &Asset) -> Result<(), String> {
+    let path = output.join(&asset.built);
+    match index.row(&path) {
+        Some(row) if index.fresh(&[path], &row.key) => Ok(()),
+        _ => write_asset(root, output, index, asset),
+    }
+}
+
+fn write_asset(root: &Path, output: &Path, index: &Index, asset: &Asset) -> Result<(), String> {
+    let (encoded, inputs) = encode(root, asset)?;
+    let path = output.join(&asset.built);
+    fs::create_dir_all(path.parent().expect("asset file directory"))
+        .map_err(|error| error.to_string())?;
+    fs::write(&path, encoded).map_err(|error| error.to_string())?;
+    let key = asset_key(root, asset, &inputs)
+        .ok_or_else(|| format!("{}: an input changed while it was encoded", asset.built))?;
+    index.record(&[path], &key, inputs)
 }
 
 /// The compressor Camelot's resource packer ran on every code overlay. Each
@@ -1018,16 +1372,20 @@ fn target_assembly_command(
 
 /// Link and compress every overlay `source` reads, and return each object
 /// the overlays link with its source: their maintained objects and listings.
+#[allow(clippy::too_many_arguments)]
 fn build_overlay_streams(
     root: &Path,
     target: DecompTarget,
     source: &Path,
     output: &Path,
     symbols: &Path,
+    table: &str,
+    index: &Index,
 ) -> Result<Vec<(PathBuf, PathBuf)>, String> {
     let ids = &stream_ids(root, target, source)?;
     let listings = overlay_listings(target);
     let directory = output.join("overlays");
+    fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
     // The sources each overlay's own script links beside its listing, compiled
     // once for every overlay that shares them.
     let mut linked = Vec::with_capacity(ids.len());
@@ -1048,41 +1406,30 @@ fn build_overlay_streams(
                 sources.push(source);
             }
         }
-        linked.push((script, objects));
+        linked.push((id, script, objects));
     }
     let mut asset_sources = sources.clone();
     asset_sources.extend(
         ids.iter()
             .map(|id| listings.join(format!("resource_{id}_overlay.s"))),
     );
-    prepare_assets(root, target, &asset_sources, output)?;
-    compile_all(root, target, &sources, output)?;
-    let next = AtomicUsize::new(0);
-    let errors = Mutex::new(Vec::new());
-    let workers = std::thread::available_parallelism().map_or(4, |count| count.get());
-    std::thread::scope(|scope| {
-        for _ in 0..workers {
-            scope.spawn(|| loop {
-                let index = next.fetch_add(1, Ordering::Relaxed);
-                let Some(id) = ids.get(index) else {
-                    break;
-                };
-                let (script, objects) = &linked[index];
-                if let Err(error) = build_overlay(
-                    root, target, output, &listings, id, script, objects, symbols, &directory,
-                ) {
-                    errors
-                        .lock()
-                        .unwrap()
-                        .push(format!("resource_{id}: {error}"));
-                }
-            });
-        }
-    });
-    let errors = errors.into_inner().unwrap();
-    if !errors.is_empty() {
-        return Err(errors.join("\n"));
-    }
+    prepare_assets(root, target, &asset_sources, output, index)?;
+    compile_all(root, target, &sources, output, index)?;
+    parallel(&linked, |(id, script, objects)| {
+        let overlay = Overlay {
+            root,
+            target,
+            output,
+            listings: &listings,
+            id,
+            script,
+            objects,
+            symbols,
+            table,
+            directory: &directory,
+        };
+        build_overlay(&overlay, index).map_err(|error| format!("resource_{id}: {error}"))
+    })?;
     let mut objects: Vec<(PathBuf, PathBuf)> = sources
         .into_iter()
         .map(|source| {
@@ -1099,26 +1446,42 @@ fn build_overlay_streams(
     Ok(objects)
 }
 
-/// Link one overlay listing alone at its load address, with its own script
-/// when it places compiler-library members and the game's otherwise, and
-/// compress the image. The map stays beside it for progress.
 /// Each overlay's own script, beside its listing, places its objects.
 fn overlay_script(listings: &Path, id: &str) -> PathBuf {
     listings.join(format!("resource_{id}.ld"))
 }
 
-fn build_overlay(
-    root: &Path,
+/// One code overlay's link: its listing, script and objects, and the main
+/// image's symbols (`table` is the digest of their listing).
+struct Overlay<'a> {
+    root: &'a Path,
     target: DecompTarget,
-    output: &Path,
-    listings: &Path,
-    id: &str,
-    script: &Path,
-    objects: &[PathBuf],
-    symbols: &Path,
-    directory: &Path,
-) -> Result<(), String> {
-    fs::create_dir_all(directory).map_err(|error| error.to_string())?;
+    output: &'a Path,
+    listings: &'a Path,
+    id: &'a str,
+    script: &'a Path,
+    objects: &'a [PathBuf],
+    symbols: &'a Path,
+    table: &'a str,
+    directory: &'a Path,
+}
+
+/// Link one overlay listing alone at its load address with its own script,
+/// and compress the image. The map and the ELF with the overlay's own
+/// symbols stay beside it for progress.
+fn build_overlay(overlay: &Overlay, index: &Index) -> Result<(), String> {
+    let Overlay {
+        root,
+        target,
+        output,
+        listings,
+        id,
+        script,
+        objects,
+        symbols,
+        table,
+        directory,
+    } = *overlay;
     let listing = listings.join(format!("resource_{id}_overlay.s"));
     let path = |name: String| directory.join(name).to_string_lossy().into_owned();
     let object = path(format!("resource_{id}_overlay.o"));
@@ -1126,12 +1489,13 @@ fn build_overlay(
     let map = path(format!("resource_{id}.map"));
     let image = path(format!("resource_{id}.bin"));
     let stream = directory.join(format!("resource_{id}.lz"));
-    let stamp = stream.with_extension("lz.key");
     let own_symbols = path(format!("resource_{id}.symbols.elf"));
-    let library = PathBuf::from("tools/out/compiler-runtime/libgcc.a");
+    let names = path(format!("resource_{id}.own"));
+    let library = PathBuf::from(LIBGCC);
     let mut link: Vec<String> = [
         "arm-none-eabi-ld",
         "--no-warn-mismatch",
+        "-n",
         "-T",
         &script.to_string_lossy(),
         "-Map",
@@ -1151,36 +1515,35 @@ fn build_overlay(
     );
     link.push(library.to_string_lossy().into_owned());
     let assemble = target_assembly_command(target, &listing.to_string_lossy(), &object, output);
-    let steps = [
-        link,
-        ["arm-none-eabi-objcopy", "-O", "binary", &elf, &image]
-            .map(String::from)
-            .to_vec(),
-    ];
-    let mut hasher = overlay_inputs(root, output, &listing, script, objects, &library)?;
-    for step in std::iter::once(&assemble).chain(&steps) {
-        hasher.update(step.join("\0").as_bytes());
+    let mut hasher = Sha256::new();
+    overlay_inputs(&mut hasher, root, output, &listing, script, objects, index)?;
+    for step in [&assemble, &link] {
+        hasher.update(portable(root, step.join("\0").as_bytes()));
     }
-    hasher.update(command(&["arm-none-eabi-nm", &symbols.to_string_lossy()], root)?.as_bytes());
+    hasher.update(fs::read(root.join(&library)).map_err(|error| format!("{LIBGCC}: {error}"))?);
+    hasher.update(table.as_bytes());
     hasher.update(format!("{OVERLAY_MACHINE:?}").as_bytes());
     hasher.update(crate::compiler::bundle::toolchain_signature().as_bytes());
-    // The steps between the commands (the names an overlay hides, the
-    // packer's transform) belong to this build implementation.
-    hasher.update(env!("ALCHEMY_BUILD_IMPLEMENTATION").as_bytes());
+    // The packer belongs to the encoder; the steps between the commands (the
+    // names an overlay hides, the call transform) belong to this file.
+    hasher.update(env!("ALCHEMY_ENCODER").as_bytes());
+    hasher.update(env!("ALCHEMY_LINK_RULE").as_bytes());
     let key = format!("{:x}", hasher.finalize());
+    let products = overlay_products(directory, id);
     // The gates run on every build, on a reused link too: this one on the
     // linked image, the id gate on the listing's object.
-    if fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str())
-        && valid_overlay_products(directory, id)
-    {
+    if index.fresh(&products, &key) {
         return overlay_gate(&elf, &map);
     }
-    let _ = fs::remove_file(&stamp);
+    index.forget(&stream);
+    for asset in source_assets(root, target, &listing)? {
+        materialize(root, output, index, &asset)?;
+    }
     command(&assemble, root)?;
     // The overlay's own names (its import veneers carry the names of the main
     // functions they reach) hide the main image's: the linker sees one each.
     // An overlay reaches only its own copies of the compiler library too.
-    let mut own = String::new();
+    let mut own = BTreeSet::new();
     for path in std::iter::once(PathBuf::from(&object))
         .chain(objects.iter().cloned())
         .chain(std::iter::once(library))
@@ -1194,54 +1557,94 @@ fn build_overlay(
             ],
             root,
         )?;
-        for name in table
-            .lines()
-            .filter_map(|line| line.split_whitespace().nth(2))
-        {
-            own.push_str(name);
-            own.push('\n');
-        }
+        own.extend(
+            table
+                .lines()
+                .filter_map(|line| line.split_whitespace().nth(2))
+                .map(str::to_owned),
+        );
     }
-    let names = directory.join(format!("resource_{id}.own"));
-    fs::write(&names, own).map_err(|error| error.to_string())?;
+    let list = |names: &mut dyn Iterator<Item = &String>| {
+        names.fold(String::new(), |mut text, name| {
+            text.push_str(name);
+            text.push('\n');
+            text
+        })
+    };
+    fs::write(&names, list(&mut own.iter())).map_err(|error| error.to_string())?;
     // The link reads only the main image's symbols, so the copy keeps none of
     // its section contents and is gone once the overlay is linked.
     command(
         &[
             "arm-none-eabi-objcopy",
             "--extract-symbol",
-            &format!("--strip-symbols={}", names.display()),
+            &format!("--strip-symbols={names}"),
             &symbols.to_string_lossy(),
             &own_symbols,
         ],
         root,
     )?;
-    for step in &steps {
-        command(step, root)?;
-    }
-    fs::remove_file(&own_symbols).map_err(|error| format!("{own_symbols}: {error}"))?;
+    let linked = command(&link, root);
+    let _ = fs::remove_file(&own_symbols);
+    linked?;
+    // The kept ELF carries the overlay's own symbols only: the main image's,
+    // which the link imported as absolute values, are dropped.
+    let imported = imported_symbols(&elf, &own)?;
+    fs::write(&names, list(&mut imported.iter())).map_err(|error| error.to_string())?;
+    let stripped = command(
+        &[
+            "arm-none-eabi-objcopy",
+            &format!("--strip-symbols={names}"),
+            &elf,
+        ],
+        root,
+    );
+    let _ = fs::remove_file(&names);
+    stripped?;
     overlay_gate(&elf, &map)?;
-    let mut decoded = fs::read(&image).map_err(|error| error.to_string())?;
+    command(
+        &["arm-none-eabi-objcopy", "-O", "binary", &elf, &image],
+        root,
+    )?;
+    let decoded = fs::read(&image).map_err(|error| error.to_string());
+    let _ = fs::remove_file(&image);
+    let mut decoded = decoded?;
     store_thumb_calls(&mut decoded);
     let encoded = compress_tagged(&decoded, &OVERLAY_MACHINE)?;
     fs::write(&stream, encoded).map_err(|error| error.to_string())?;
-    fs::write(
-        stream.with_extension("lz.digest"),
-        products_digest(&overlay_products(directory, id))?,
-    )
-    .map_err(|error| error.to_string())?;
-    fs::write(&stamp, key).map_err(|error| error.to_string())
+    index.record(&products, &key, Vec::new())
 }
 
-/// Every kept product used by the build, gates or diagnostic maps belongs to
-/// one completed source link and compression. The input key stays separate.
-pub(crate) fn overlay_products(directory: &Path, id: &str) -> [PathBuf; 5] {
+/// The global absolute symbols of a linked overlay that it does not define
+/// itself: the main image's, read through `-R`.
+fn imported_symbols(elf: &str, own: &BTreeSet<String>) -> Result<BTreeSet<String>, String> {
+    use object::{Object, ObjectSymbol, SymbolSection};
+    let bytes = fs::read(elf).map_err(|error| format!("{elf}: {error}"))?;
+    let file = object::File::parse(&*bytes).map_err(|error| format!("{elf}: {error}"))?;
+    let mut absolute = BTreeSet::new();
+    let mut placed = BTreeSet::new();
+    for symbol in file.symbols() {
+        let Ok(name) = symbol.name() else { continue };
+        if symbol.section() == SymbolSection::Absolute && symbol.is_global() {
+            absolute.insert(name.to_owned());
+        } else {
+            placed.insert(name.to_owned());
+        }
+    }
+    Ok(absolute
+        .into_iter()
+        .filter(|name| !own.contains(name) && !placed.contains(name))
+        .collect())
+}
+
+/// Every kept product of one overlay's link and compression, the stream
+/// first: the index row is the stream's.
+pub(crate) fn overlay_products(directory: &Path, id: &str) -> [PathBuf; 4] {
     [
+        format!("resource_{id}.lz"),
         format!("resource_{id}_overlay.o"),
         format!("resource_{id}.elf"),
         format!("resource_{id}.map"),
-        format!("resource_{id}.bin"),
-        format!("resource_{id}.lz"),
     ]
     .map(|name| directory.join(name))
 }
@@ -1262,37 +1665,36 @@ fn products_digest(paths: &[PathBuf]) -> Result<String, String> {
     Ok(format!("{:x}", hasher.finalize()))
 }
 
-pub(crate) fn valid_overlay_products(directory: &Path, id: &str) -> bool {
-    let receipt = directory.join(format!("resource_{id}.lz.digest"));
-    let Ok(saved) = fs::read_to_string(receipt) else {
-        return false;
-    };
-    products_digest(&overlay_products(directory, id)).is_ok_and(|actual| actual == saved)
-}
-
-/// Every file that feeds an overlay's link, including the compiler runtime
-/// archive. Keeping the same archive path does not keep its linked bytes.
+/// What an overlay's link reads besides its commands: the listing and its
+/// includes, the keys of its assets, its script and the recorded digest of
+/// every object it links.
 fn overlay_inputs(
+    hasher: &mut Sha256,
     root: &Path,
     output: &Path,
     listing: &Path,
     script: &Path,
     objects: &[PathBuf],
-    library: &Path,
-) -> Result<Sha256, String> {
-    let mut hasher = Sha256::new();
+    index: &Index,
+) -> Result<(), String> {
     hasher.update(with_includes(&[root, output], &root.join(listing))?);
     for built in asset_files(root, listing) {
-        let path = output.join(&built);
-        hasher.update(fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?);
+        let row = index
+            .row(&output.join(&built))
+            .ok_or_else(|| format!("{built} was not prepared"))?;
+        hasher.update(built.as_bytes());
+        hasher.update(row.key.as_bytes());
     }
-    for path in std::iter::once(root.join(script))
-        .chain(objects.iter().map(|object| object.with_extension("o.key")))
-        .chain(std::iter::once(root.join(library)))
-    {
-        hasher.update(fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?);
+    hasher.update(
+        fs::read(root.join(script)).map_err(|error| format!("{}: {error}", script.display()))?,
+    );
+    for object in objects {
+        let row = index
+            .row(object)
+            .ok_or_else(|| format!("{} was not built", object.display()))?;
+        hasher.update(row.digest.as_bytes());
     }
-    Ok(hasher)
+    Ok(())
 }
 
 /// Overlay code never branches straight into the main image: the gate reads
@@ -1374,6 +1776,13 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
             continue;
         };
         let include = rest.trim().trim_matches('"');
+        // A built asset is keyed by its inputs instead of its bytes.
+        if ["GRAPHICS/", "MAP/", "SOUND/", "COMMON/"]
+            .iter()
+            .any(|prefix| include.starts_with(prefix))
+        {
+            continue;
+        }
         let path = directories
             .iter()
             .map(|directory| directory.join(include))
@@ -1382,805 +1791,4 @@ fn with_includes(directories: &[&Path], source: &Path) -> Result<Vec<u8>, String
         key.extend_from_slice(&with_includes(directories, &path)?);
     }
     Ok(key)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn overlay_veneers_keep_their_targets_when_preceding_data_grows() {
-        use object::{Object, ObjectSection, ObjectSymbol};
-
-        prefer_installed_binutils();
-        let root = crate::compiler::routing::root();
-        for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
-            for (leading, prefix) in [(0, 0), (2, 0), (0, 2)] {
-                let work = tempfile::tempdir().unwrap();
-                let dir = work.path();
-                fs::write(dir.join("lead.s"), format!(".text\n.space {leading}\n")).unwrap();
-                fs::write(
-                    dir.join("veneer.s"),
-                    format!(
-                        ".syntax unified\n.thumb\n.text\n.include \"{}/games/{game}/SRC/SYSTEM/OVERLAY.INC\"\n.space {prefix}\n.global Entry, End, Target\n.thumb_func\nEntry:\noverlay_veneer Target\nEnd:\n.thumb_func\nTarget:\nbx lr\n",
-                        root.display()
-                    ),
-                )
-                .unwrap();
-                for name in ["lead", "veneer"] {
-                    command(
-                        &assembly_command(
-                            &dir.join(format!("{name}.s")).to_string_lossy(),
-                            &dir.join(format!("{name}.o")).to_string_lossy(),
-                        ),
-                        root,
-                    )
-                    .unwrap();
-                }
-                fs::write(
-                    dir.join("test.ld"),
-                    "SECTIONS { .text 0x02008000 : { lead.o(.text) veneer.o(.text) } }\n",
-                )
-                .unwrap();
-                command(
-                    &[
-                        "arm-none-eabi-ld",
-                        "-T",
-                        "test.ld",
-                        "-o",
-                        "test.elf",
-                        "lead.o",
-                        "veneer.o",
-                    ],
-                    dir,
-                )
-                .unwrap();
-                let elf = fs::read(dir.join("test.elf")).unwrap();
-                let file = object::File::parse(&*elf).unwrap();
-                let section = file.section_by_name(".text").unwrap();
-                let bytes = section.data().unwrap();
-                let symbol = |name| file.symbol_by_name(name).unwrap().address() as u32 & !1;
-                let entry = symbol("Entry");
-                let offset = (entry - section.address() as u32) as usize;
-                let instruction = u16::from_le_bytes(bytes[offset..offset + 2].try_into().unwrap());
-                assert_eq!(instruction & 0xff00, 0x4c00, "Thumb literal load into r4");
-                assert_eq!(&bytes[offset + 2..offset + 4], &[0x20, 0x47], "bx r4");
-                // Thumb literal loads use a word-aligned PC, even when the
-                // function itself starts on the second half of a word.
-                let literal = ((entry + 4) & !3) + u32::from(instruction & 0xff) * 4;
-                let at = (literal - section.address() as u32) as usize;
-                let loaded = u32::from_le_bytes(bytes[at..at + 4].try_into().unwrap());
-                assert_eq!(
-                    loaded,
-                    symbol("Target") | 1,
-                    "{game}, preceding object {leading} bytes, in-section prefix {prefix} bytes"
-                );
-                if prefix == 0 {
-                    assert_eq!(symbol("End") - entry, 8, "aligned veneer stays eight bytes");
-                    assert_eq!(&bytes[offset..offset + 4], &[0x00, 0x4c, 0x20, 0x47]);
-                }
-            }
-        }
-    }
-
-    #[test]
-    fn kept_overlay_products_are_rebuilt_after_any_preserved_timestamp_overwrite() {
-        prefer_installed_binutils();
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
-        let listings = Path::new("recon/tbs/raw/overlays");
-        fs::create_dir_all(root.join(listings)).unwrap();
-        fs::write(root.join(listings).join("resource_36f_overlay.s"), ".section .text,\"ax\"\n.thumb\n.global Candidate\n.type Candidate,%function\n.thumb_func\nCandidate:\nmovs r0,#7\nbx lr\n.size Candidate,.-Candidate\n").unwrap();
-        let script = listings.join("resource_36f.ld");
-        fs::write(
-            root.join(&script),
-            "SECTIONS { .text 0x02008000 : { *(.text) } }\n",
-        )
-        .unwrap();
-        let runtime = root.join("tools/out/compiler-runtime/libgcc.a");
-        fs::create_dir_all(runtime.parent().unwrap()).unwrap();
-        fs::write(runtime, "!<arch>\n").unwrap();
-        let main = root.join("MAIN.S");
-        let object = root.join("main.o");
-        let symbols = root.join("main.elf");
-        fs::write(
-            &main,
-            ".text\n.thumb\n.global Resident\n.thumb_func\nResident:\nbx lr\n",
-        )
-        .unwrap();
-        command(
-            &assembly_command(&main.to_string_lossy(), &object.to_string_lossy()),
-            root,
-        )
-        .unwrap();
-        command(
-            &[
-                "arm-none-eabi-ld",
-                "-Ttext=0x08000000",
-                "-o",
-                &symbols.to_string_lossy(),
-                &object.to_string_lossy(),
-            ],
-            root,
-        )
-        .unwrap();
-        let output = root.join(target.output_dir);
-        let directory = output.join("overlays");
-        let replay = || {
-            build_overlay(
-                root,
-                target,
-                &output,
-                listings,
-                "36f",
-                &script,
-                &[],
-                &symbols,
-                &directory,
-            )
-            .unwrap()
-        };
-        replay();
-        let stamp = directory.join("resource_36f.lz.key");
-        let key = fs::read(&stamp).unwrap();
-        let products = overlay_products(&directory, "36f");
-        let original = products
-            .iter()
-            .map(|path| fs::read(path).unwrap())
-            .collect::<Vec<_>>();
-        assert!(valid_overlay_products(&directory, "36f"));
-        for (index, path) in products.iter().enumerate() {
-            let time = fs::metadata(path).unwrap().modified().unwrap();
-            let mut overwritten = original[index].clone();
-            overwritten[0] ^= 0xff;
-            fs::write(path, overwritten).unwrap();
-            fs::File::open(path)
-                .unwrap()
-                .set_times(fs::FileTimes::new().set_modified(time))
-                .unwrap();
-            assert_eq!(fs::read(&stamp).unwrap(), key);
-            assert!(
-                !valid_overlay_products(&directory, "36f"),
-                "{}",
-                path.display()
-            );
-            replay();
-            assert!(valid_overlay_products(&directory, "36f"));
-            for (actual, expected) in products.iter().zip(&original) {
-                assert_eq!(
-                    fs::read(actual).unwrap(),
-                    *expected,
-                    "{} after {} overwrite",
-                    actual.display(),
-                    path.display()
-                );
-            }
-            assert_eq!(fs::read(&stamp).unwrap(), key);
-        }
-        fs::remove_file(directory.join("resource_36f.lz.digest")).unwrap();
-        assert!(!valid_overlay_products(&directory, "36f"));
-        replay();
-        assert!(valid_overlay_products(&directory, "36f"));
-    }
-
-    #[test]
-    fn edition_streams_use_the_games_common_listing_root_and_active_composition() {
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let source = Path::new("recon/tbs/ja/rom.s");
-        fs::create_dir_all(root.join(source).parent().unwrap()).unwrap();
-        fs::write(root.join(source), ".section .overlays,\"a\"\n.ifdef TBS_EDITION_JA\n.incbin \"overlays/resource_36f.lz\"\n.incbin \"overlays/resource_36f.lz\"\n.else\n.incbin \"overlays/resource_370.lz\"\n.endif\n@ .incbin \"overlays/resource_dead.lz\"\n/*\n.incbin \"overlays/resource_bad.lz\"\n*/\n").unwrap();
-        let ja = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
-        let en = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
-        assert_eq!(stream_ids(root, ja, source).unwrap(), ["36f"]);
-        assert_eq!(stream_ids(root, en, source).unwrap(), ["370"]);
-        assert_eq!(overlay_listings(ja), Path::new("recon/tbs/raw/overlays"));
-        let tla = crate::targets::target_for(crate::targets::DecompTargetId::TlaDe);
-        assert_eq!(overlay_listings(tla), Path::new("recon/tla/raw/overlays"));
-        fs::write(
-            root.join(source),
-            ".macro stream\n.incbin \"overlays/resource_36f.lz\"\n.endm\n",
-        )
-        .unwrap();
-        assert!(stream_ids(root, ja, source)
-            .unwrap_err()
-            .contains("unexpanded macro"));
-        fs::write(root.join(source), ".section .resident\nResident:\n.incbin \"baserom.gba\", 0, 4\n.section .overlays\n.incbin \"overlays/resource_36f.lz\"\n").unwrap();
-        assert!(stream_ids(root, ja, source)
-            .unwrap_err()
-            .contains("dedicated .overlays"));
-    }
-
-    #[test]
-    fn raw_listing_assembles_with_its_edition_and_nested_generated_include_key() {
-        use object::{Object, ObjectSection};
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let output = root.join("out/ja");
-        fs::create_dir_all(&output).unwrap();
-        fs::write(output.join("outer.inc"), ".include \"values.inc\"\n").unwrap();
-        fs::write(output.join("values.inc"), ".set Pick, 7\n").unwrap();
-        let listing = Path::new("listing.s");
-        fs::write(root.join(listing), ".section .rodata\n.include \"outer.inc\"\n.ifdef TBS_EDITION_JA\n.byte Pick\n.else\n.byte 3\n.endif\n").unwrap();
-        let script = Path::new("overlay.ld");
-        let library = Path::new("libgcc.a");
-        fs::write(root.join(script), "SECTIONS { .text : { *(.text) } }\n").unwrap();
-        fs::write(root.join(library), "synthetic runtime content").unwrap();
-        let ja = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
-        let en = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
-        let key = |target| {
-            let mut hash = overlay_inputs(root, &output, listing, script, &[], library).unwrap();
-            hash.update(
-                target_assembly_command(target, "listing.s", "listing.o", &output).join("\0"),
-            );
-            format!("{:x}", hash.finalize())
-        };
-        let before = key(ja);
-        assert_ne!(before, key(en));
-        let assemble = |target| {
-            let object = root.join("listing.o");
-            let mut step = target_assembly_command(
-                target,
-                &root.join(listing).to_string_lossy(),
-                &object.to_string_lossy(),
-                &output,
-            );
-            step[0] = crate::compiler::routing::binutils_prefix()
-                .join("bin/arm-none-eabi-as")
-                .to_string_lossy()
-                .into_owned();
-            command(&step, root).unwrap();
-            let bytes = fs::read(&object).unwrap();
-            object::File::parse(&*bytes)
-                .unwrap()
-                .section_by_name(".rodata")
-                .unwrap()
-                .data()
-                .unwrap()
-                .to_vec()
-        };
-        assert_eq!(assemble(ja), [7]);
-        assert_eq!(assemble(en), [3]);
-        fs::write(output.join("values.inc"), ".set Pick, 9\n").unwrap();
-        assert_ne!(before, key(ja));
-        assert_eq!(assemble(ja), [9]);
-    }
-
-    #[test]
-    fn replay_compiles_current_dependencies_and_rejects_an_overwritten_cached_object() {
-        prefer_installed_binutils();
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEs);
-        let source = Path::new("OWNER.C");
-        let object = root.join("obj/OWNER.o");
-        let stamp = object.with_extension("o.key");
-        fs::write(root.join("OWN.H"), "#define VALUE 1\n").unwrap();
-        fs::write(
-            root.join(source),
-            "#include \"OWN.H\"\nint Owner(int n) { return n + VALUE; }\n",
-        )
-        .unwrap();
-        compile(root, target, source, &object).unwrap();
-        let before = fs::read(&object).unwrap();
-        fs::write(root.join("OWN.H"), "#define VALUE 2\n").unwrap();
-        compile(root, target, source, &object).unwrap();
-        let current = fs::read(&object).unwrap();
-        assert_ne!(current, before);
-        let key = fs::read_to_string(&stamp).unwrap();
-        let original_time = fs::metadata(&object).unwrap().modified().unwrap();
-        fs::write(&object, b"later experiment, current input key retained").unwrap();
-        fs::File::options()
-            .write(true)
-            .open(&object)
-            .unwrap()
-            .set_times(fs::FileTimes::new().set_modified(original_time))
-            .unwrap();
-        assert!(!compiled_cache(&object, &stamp, &key));
-        compile(root, target, source, &object).unwrap();
-        assert_eq!(fs::read(object).unwrap(), current);
-    }
-
-    #[test]
-    fn shared_asset_sources_keep_sound_and_graphics_ownership_and_path_refusals() {
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
-        let source = PathBuf::from("games/COMMON/SRC/DATA.S");
-        for directory in [
-            "games/COMMON/SRC/GRAPHICS",
-            "games/COMMON/SOUND",
-            "games/THE BROKEN SEAL/SOUND",
-        ] {
-            fs::create_dir_all(root.join(directory)).unwrap();
-        }
-        fs::write(root.join(&source), ".include \"GRAPHICS/OWN.table\"\n.incbin \"SOUND/LOCAL.bin\"\n.incbin \"COMMON/SOUND/SHARED.bin\"\n.include \"SOUND/IGNORED.bin\"\n").unwrap();
-        fs::write(
-            root.join("games/COMMON/SRC/GRAPHICS/OWN.TSV"),
-            "value:u16\n2\n",
-        )
-        .unwrap();
-        fs::write(root.join("games/COMMON/SOUND/LOCAL.PCM4"), [0x66; 16]).unwrap();
-        fs::write(root.join("games/COMMON/SOUND/SHARED.PCM4"), [0x43; 16]).unwrap();
-        fs::write(
-            root.join("games/THE BROKEN SEAL/SOUND/LOCAL.PCM4"),
-            [0x25; 16],
-        )
-        .unwrap();
-        assert_eq!(
-            asset_files(root, &source),
-            [
-                "SOUND/LOCAL.bin",
-                "COMMON/SOUND/SHARED.bin",
-                "GRAPHICS/OWN.table"
-            ]
-        );
-        let output = root.join("out/tbs-ja");
-        prepare_assets(root, target, &[source.clone()], &output).unwrap();
-        assert_eq!(
-            fs::read(output.join("SOUND/LOCAL.bin")).unwrap(),
-            [0x25; 16]
-        );
-        assert_eq!(
-            fs::read(output.join("COMMON/SOUND/SHARED.bin")).unwrap(),
-            [0x43; 16]
-        );
-        assert_eq!(fs::read(output.join("GRAPHICS/OWN.table")).unwrap(), [2, 0]);
-        for path in [
-            "SOUND//LOCAL.bin",
-            "SOUND/../LOCAL.bin",
-            "GRAPHICS/../OWN.table",
-        ] {
-            fs::write(root.join(&source), format!(".incbin \"{path}\"\n")).unwrap();
-            assert!(prepare_assets(root, target, &[source.clone()], &output)
-                .unwrap_err()
-                .contains("file path"));
-        }
-    }
-
-    #[test]
-    fn overlay_owned_editable_assets_are_prepared_and_raw_incbin_changes_key() {
-        let work = tempfile::tempdir().unwrap();
-        let root = work.path();
-        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsJa);
-        let source = PathBuf::from("games/COMMON/SRC/OVERLAY/DATA.S");
-        let listing = PathBuf::from("recon/tbs/raw/overlays/resource_36f_overlay.s");
-        for path in [&source, &listing] {
-            fs::create_dir_all(root.join(path).parent().unwrap()).unwrap();
-        }
-        fs::write(
-            root.join(&source),
-            ".incbin \"COMMON/GRAPHICS/OWN.table\"\n",
-        )
-        .unwrap();
-        fs::write(
-            root.join(&listing),
-            ".incbin \"COMMON/GRAPHICS/RAW.table\"\n",
-        )
-        .unwrap();
-        let input = root.join("games/COMMON/SRC/GRAPHICS");
-        fs::create_dir_all(&input).unwrap();
-        fs::write(input.join("OWN.TSV"), "value:u16\n2\n").unwrap();
-        fs::write(input.join("RAW.TSV"), "value:u16\n3\n").unwrap();
-        let output = root.join("out/tbs-ja");
-        prepare_assets(root, target, &[source, listing.clone()], &output).unwrap();
-        assert_eq!(
-            fs::read(output.join("COMMON/GRAPHICS/OWN.table")).unwrap(),
-            [2, 0]
-        );
-        assert_eq!(
-            fs::read(output.join("COMMON/GRAPHICS/RAW.table")).unwrap(),
-            [3, 0]
-        );
-        fs::write(root.join("overlay.ld"), "SECTIONS { .text : { *(.text) } }").unwrap();
-        fs::write(root.join("libgcc.a"), "synthetic runtime content").unwrap();
-        let key = || {
-            format!(
-                "{:x}",
-                overlay_inputs(
-                    root,
-                    &output,
-                    &listing,
-                    Path::new("overlay.ld"),
-                    &[],
-                    Path::new("libgcc.a")
-                )
-                .unwrap()
-                .finalize()
-            )
-        };
-        let before = key();
-        fs::write(input.join("RAW.TSV"), "value:u16\n4\n").unwrap();
-        prepare_assets(root, target, &[listing.clone()], &output).unwrap();
-        assert_ne!(before, key());
-    }
-
-    #[test]
-    fn overlay_cache_changes_when_the_runtime_archive_is_rebuilt_in_place() {
-        let dir = tempfile::tempdir().unwrap();
-        let root = dir.path();
-        let listing = Path::new("overlay.s");
-        let script = Path::new("overlay.ld");
-        let library = Path::new("libgcc.a");
-        let objects = [root.join("code.o")];
-        fs::write(root.join(listing), ".thumb\nbx lr\n").unwrap();
-        fs::write(root.join(script), "SECTIONS { .text : { *(.text) } }\n").unwrap();
-        fs::write(objects[0].with_extension("o.key"), "unchanged-object-key").unwrap();
-        fs::write(root.join(library), b"first runtime archive").unwrap();
-        let key = || {
-            format!(
-                "{:x}",
-                overlay_inputs(root, root, listing, script, &objects, library)
-                    .unwrap()
-                    .finalize()
-            )
-        };
-        let before = key();
-        assert_eq!(key(), before);
-        fs::write(root.join(library), b"rebuilt runtime archive").unwrap();
-        assert_ne!(key(), before);
-        fs::remove_file(root.join(library)).unwrap();
-        assert!(overlay_inputs(root, root, listing, script, &objects, library).is_err());
-    }
-
-    /// The loader's kernel, as PATCH_THUMB_BRANCH.S runs it on a block.
-    fn patch_thumb_calls(block: &mut [u8]) {
-        let half =
-            |block: &[u8], at: usize| u32::from(u16::from_le_bytes([block[at], block[at + 1]]));
-        let mut at = 2;
-        while at + 2 <= block.len() {
-            let low = half(block, at);
-            at += 2;
-            if low >> 11 != 31 {
-                continue;
-            }
-            let high = half(block, at - 4);
-            if high >> 11 != 30 {
-                continue;
-            }
-            let stored = (((low & 0x7ff) | ((high & 0x7ff) << 11)) << 1) as i64;
-            let call = (stored - (at as i64 - 2)) as u32;
-            let high = 0xf000 | ((call >> 12) & 0x7ff);
-            let low = 0xf800 | ((call >> 1) & 0x7ff);
-            block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
-            block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
-        }
-    }
-
-    #[test]
-    fn an_image_fills_the_smallest_power_of_two_cartridge_with_zeros() {
-        assert_eq!(cartridge_size(0x7f_d4bc), 0x80_0000);
-        assert_eq!(cartridge_size(0x80_0000), 0x80_0000);
-        assert_eq!(cartridge_size(0x80_0001), 0x100_0000);
-        let directory = tempfile::tempdir().unwrap();
-        let image = directory.path().join("a.gba");
-        fs::write(&image, [1u8, 2, 3]).unwrap();
-        pad_to_cartridge(&image).unwrap();
-        assert_eq!(fs::read(&image).unwrap(), [1, 2, 3, 0]);
-    }
-
-    #[test]
-    fn every_iwram_entry_names_its_routine() {
-        let header = "/* 0x03000000 is only prose here */\n\
-            #define Iwram_CopyWords ((s32 (*)(void *, const void *, s32))0x03001388) /* IwramCopyWords */\n\
-            #define Iwram_Sqrt ((s32 (*)(s32))0x030001d8) /* IwramSqrt */\n\
-            #define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords - IwramIrqMain */\n\
-            #define SCREEN_WIDTH 240\n";
-        assert_eq!(
-            entry_list(&IWRAM_CALLS, header, &[]).unwrap(),
-            [
-                entry("IwramCopyWords", None, 0x0300_1388),
-                entry("IwramSqrt", None, 0x0300_01d8),
-                entry("IwramCopyWords", Some("IwramIrqMain"), 0x1388),
-            ]
-        );
-        for unnamed in [
-            "#define Iwram_Sqrt ((s32 (*)(s32))0x030001d8)\n",
-            "#define SQRT ((s32 (*)(s32))0x030001d8) /* IwramSqrt */\n",
-            "#define WORK ((u8 *)0x03001ebc)\n",
-            "#define Iwram_CopyWordsOffset 0x1388\n",
-            "#define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords */\n",
-        ] {
-            assert!(entry_list(&IWRAM_CALLS, unnamed, &[]).is_err(), "{unnamed}");
-        }
-    }
-
-    fn entry(name: &str, from: Option<&str>, value: u32) -> CheckedEntry {
-        CheckedEntry {
-            name: name.to_owned(),
-            from: from.map(str::to_owned),
-            value,
-        }
-    }
-
-    #[test]
-    fn every_ram_buffer_names_its_linked_object() {
-        let header = "/* 0x02010000 is only prose here */\n\
-            #define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */\n\
-            #define Ram_IwramHeapEnd ((u8 *)0x03007800) /* gIwramHeapEnd */\n\
-            #define SCREEN_WIDTH 240\n";
-        assert_eq!(
-            entry_list(&RAM_BUFFERS, header, &[]).unwrap(),
-            [
-                entry("gMapCellBuffer", None, 0x0201_0000),
-                entry("gIwramHeapEnd", None, 0x0300_7800),
-            ]
-        );
-        for unnamed in [
-            "#define Ram_MapCellBuffer ((u8 *)0x02010000)\n",
-            "#define MAP_CELLS ((u8 *)0x02010000) /* gMapCellBuffer */\n",
-            "#define PARTICLES ((struct EffectStep *)0x02010000)\n",
-            "#define CELL_ADDR 0x03001F30\n",
-            "#define Ram_MapCellBufferOffset 0x82\n",
-            // A ROM address is no RAM buffer: ROM data has labels.
-            "#define Ram_Table ((u8 *)0x0809e8a0) /* Table */\n",
-        ] {
-            assert!(entry_list(&RAM_BUFFERS, unnamed, &[]).is_err(), "{unnamed}");
-        }
-    }
-
-    #[test]
-    fn cartridge_boot_admits_only_the_named_hardware_entry() {
-        let header = "#define Cart_Start ((u32)0x08000000) /* Start */\n";
-        assert_eq!(
-            entry_list(&CARTRIDGE_BOOT, header, &[]).unwrap(),
-            [entry("Start", None, 0x0800_0000)]
-        );
-        for refused in [
-            "#define Cart_Start ((u32)0x08000000)\n",
-            "#define START ((u32)0x08000000) /* Start */\n",
-            "#define Cart_Start ((u32)0x08000001) /* Start */\n",
-            "#define Cart_Start ((u32)0x08000004) /* Start */\n",
-            "#define Cart_Routine ((u32)0x08013560) /* WaitFrames */\n",
-            "#define Cart_Buffer ((u8 *)0x03000000) /* Buffer */\n",
-            "#define Cart_StartOffset 0x0 /* Start - Start */\n",
-            "#define Cart_RoutineOffset 0x13560 /* WaitFrames - Start */\n",
-            "#define Cart_StartOffset 0x0\n",
-            "#define Cart_Start ((u32)0x08000000) /* Start */\n\
-             #define EXTRA_ROM_ADDRESS 0x08000004\n",
-            "#if defined(TLA_EDITION_JA)\n\
-             #define Cart_Routine ((u32)0x08013560) /* WaitFrames */\n\
-             #endif\n",
-        ] {
-            assert!(
-                entry_list(&CARTRIDGE_BOOT, refused, &["TLA_EDITION_EN"]).is_err(),
-                "{refused}"
-            );
-        }
-    }
-
-    #[test]
-    fn cartridge_boot_must_link_at_the_arm_entry() {
-        let entries = entry_list(
-            &CARTRIDGE_BOOT,
-            "#define Cart_Start ((u32)0x08000000) /* Start */\n",
-            &[],
-        )
-        .unwrap();
-        assert_eq!(entries_agree(&entries, |_| Some(0x0800_0000)), Ok(()));
-        for misplaced in [0x0800_0001, 0x0800_0004, 0x0801_3560] {
-            assert!(entries_agree(&entries, |_| Some(misplaced)).is_err());
-        }
-        assert_eq!(
-            entries_agree(&entries, |_| None),
-            Err("Start is not linked".into())
-        );
-    }
-
-    #[test]
-    fn cartridge_boot_checks_the_elf_thumb_bit() {
-        prefer_installed_binutils();
-        let dir = tempfile::tempdir().unwrap();
-        let root = dir.path();
-        let target = decomp_target(Some("tla-en")).unwrap();
-        let header = root.join(target.game_dir()).join(CARTRIDGE_BOOT.path);
-        fs::create_dir_all(header.parent().unwrap()).unwrap();
-        fs::write(header, "#define Cart_Start ((u32)0x08000000) /* Start */\n").unwrap();
-        let script = root.join("entry.ld");
-        fs::write(&script, "SECTIONS { .text 0x08000000 : { *(.text) } }").unwrap();
-        for (name, mode) in [("arm", ".arm"), ("thumb", ".thumb\n.thumb_func")] {
-            let source = root.join(format!("{name}.s"));
-            let object = source.with_extension("o");
-            let elf = source.with_extension("elf");
-            fs::write(
-                &source,
-                format!(".text\n.global Start\n{mode}\nStart:\n bx lr\n"),
-            )
-            .unwrap();
-            command(
-                &assembly_command(&source.to_string_lossy(), &object.to_string_lossy()),
-                root,
-            )
-            .unwrap();
-            command(
-                &[
-                    "arm-none-eabi-ld",
-                    "-T",
-                    &script.to_string_lossy(),
-                    "-o",
-                    &elf.to_string_lossy(),
-                    &object.to_string_lossy(),
-                ],
-                root,
-            )
-            .unwrap();
-            let checked = checked_entries(root, target, &elf);
-            if name == "arm" {
-                assert_eq!(checked, Ok(()));
-            } else {
-                assert!(
-                    checked.unwrap_err().contains("linked as 0x8000001"),
-                    "a Thumb function at the cartridge base cannot restart in ARM state"
-                );
-            }
-        }
-    }
-
-    #[test]
-    fn an_edition_lists_the_buffers_its_layout_moves() {
-        let header = "#ifndef ALCHEMY_RAM_BUFFER_H\n\
-            #define ALCHEMY_RAM_BUFFER_H\n\
-            #define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */\n\
-            #if defined(TBS_EDITION_DE)\n\
-            #define Ram_Disp ((u8 **)0x03001f08) /* gDisp */\n\
-            #elif defined(TBS_EDITION_JA) || defined TBS_EDITION_IT\n\
-            #define Ram_Disp ((u8 **)0x03001e78) /* gDisp */\n\
-            #else\n\
-            #define Ram_Disp ((u8 **)0x03001ef8) /* gDisp */\n\
-            #endif\n\
-            #endif\n";
-        let disp = |defined: &[&str]| {
-            entry_list(&RAM_BUFFERS, header, defined)
-                .unwrap()
-                .into_iter()
-                .map(|entry| entry.value)
-                .collect::<Vec<_>>()
-        };
-        assert_eq!(disp(&["TBS_EDITION_EN"]), [0x0201_0000, 0x0300_1ef8]);
-        assert_eq!(disp(&["TBS_EDITION_DE"]), [0x0201_0000, 0x0300_1f08]);
-        assert_eq!(disp(&["TBS_EDITION_JA"]), [0x0201_0000, 0x0300_1e78]);
-        assert_eq!(disp(&["TBS_EDITION_IT"]), [0x0201_0000, 0x0300_1e78]);
-        // An unnamed address is refused even in a branch this edition skips,
-        // and conditions beyond defined tests are not guessed.
-        for refused in [
-            "#if defined(TBS_EDITION_DE)\n#define Ram_Disp ((u8 **)0x03001f08)\n#endif\n",
-            "#if TBS_EDITION_DE\n#endif\n",
-            "#if defined(TBS_EDITION_DE) && defined(TBS_EDITION_JA)\n#endif\n",
-            "#if defined(TBS_EDITION_DE)\n",
-            "#endif\n",
-        ] {
-            assert!(
-                entry_list(&RAM_BUFFERS, refused, &["TBS_EDITION_EN"]).is_err(),
-                "{refused}"
-            );
-        }
-    }
-
-    #[test]
-    fn entries_must_agree_with_the_link() {
-        let placed = |name: &str| match name {
-            "gMapCellBuffer" => Some(0x0201_0000),
-            "IwramIrqMain" => Some(0x0300_0000),
-            "IwramCopyWords" => Some(0x0300_1388),
-            _ => None,
-        };
-        let agreeing = [
-            entry("gMapCellBuffer", None, 0x0201_0000),
-            entry("IwramCopyWords", Some("IwramIrqMain"), 0x1388),
-        ];
-        assert_eq!(entries_agree(&agreeing, placed), Ok(()));
-        assert_eq!(
-            entries_agree(&[entry("gMapCellBuffer", None, 0x0201_0002)], placed),
-            Err("gMapCellBuffer is listed at 0x2010002 but linked as 0x2010000".into())
-        );
-        assert_eq!(
-            entries_agree(
-                &[entry("IwramCopyWords", Some("IwramIrqMain"), 0x1380)],
-                placed
-            ),
-            Err("IwramCopyWords - IwramIrqMain is listed as 0x1380 but linked as 0x1388".into())
-        );
-        assert_eq!(
-            entries_agree(&[entry("gMapBlocks", None, 0x0202_0000)], placed),
-            Err("gMapBlocks is not linked".into())
-        );
-    }
-
-    #[test]
-    fn stored_calls_are_what_the_loader_kernel_undoes() {
-        // bl from 0x2d4 to 0x6c in a block: the packer stores the target, less
-        // two, as the ROM's overlay 373 does (bl 0x342 read from 0x2d4).
-        let mut block = vec![0u8; 0x2d8];
-        let call = (0x6c_i64 - (0x2d4 + 4)) as u32;
-        block[0x2d4..0x2d6]
-            .copy_from_slice(&((0xf000 | ((call >> 12) & 0x7ff)) as u16).to_le_bytes());
-        block[0x2d6..0x2d8]
-            .copy_from_slice(&((0xf800 | ((call >> 1) & 0x7ff)) as u16).to_le_bytes());
-        let linked = block.clone();
-        store_thumb_calls(&mut block);
-        let stored = u32::from(u16::from_le_bytes([block[0x2d4], block[0x2d5]])) & 0x7ff;
-        let stored = (stored << 12)
-            | ((u32::from(u16::from_le_bytes([block[0x2d6], block[0x2d7]])) & 0x7ff) << 1);
-        assert_eq!(stored, 0x6a);
-        patch_thumb_calls(&mut block);
-        assert_eq!(block, linked);
-        // Every halfword pattern round-trips, pairs in data included.
-        let mut noise: Vec<u8> = (0..4096u32)
-            .flat_map(|i| (((i * 40503) >> 3) as u16 | 0xf000).to_le_bytes())
-            .collect();
-        let original = noise.clone();
-        store_thumb_calls(&mut noise);
-        patch_thumb_calls(&mut noise);
-        assert_eq!(noise, original);
-    }
-
-    #[test]
-    fn fixed_addresses_are_checked_whenever_game_code_links() {
-        prefer_installed_binutils();
-        let dir = tempfile::tempdir().unwrap();
-        let assemble = |name: &str, text: &str| {
-            let (source, object) = (
-                dir.path().join(name),
-                dir.path().join(name).with_extension("o"),
-            );
-            fs::write(&source, text).unwrap();
-            command(
-                &assembly_command(&source.to_string_lossy(), &object.to_string_lossy()),
-                dir.path(),
-            )
-            .unwrap();
-            (source, object)
-        };
-        let rom = assemble(
-            "rom.s",
-            "\t.section .rom.00000000, \"a\"\n\t.byte 1, 2, 3, 4\n",
-        );
-        let picture = assemble("PICTURE.S", "\t.section .rodata\n\t.byte 5, 6, 7, 8\n");
-        let code = assemble("CODE.S", "\t.text\n\t.thumb\n\tbx lr\n");
-        let links = |parts: &[&(PathBuf, PathBuf)]| {
-            let (sources, objects): (Vec<_>, Vec<_>) = parts.iter().map(|p| (*p).clone()).unzip();
-            links_game_code(&sources, &objects).unwrap()
-        };
-        // A build that is still only the original ROM skips the check.
-        assert!(!links(&[&rom]));
-        // Pictures and data are not code.
-        assert!(!links(&[&rom, &picture]));
-        // Any object with code, or any C source, is checked.
-        assert!(links(&[&rom, &picture, &code]));
-        assert!(
-            carries_code(Path::new("games/A/SRC/X.C"), &fs::read(&picture.1).unwrap()).unwrap()
-        );
-    }
-
-    #[test]
-    fn script_objects_keep_first_order_and_skip_archive_members() {
-        let script = r#"
-            "*/games/A/SRC/X.o"(.text)
-            "*/recon/tbs/raw/08000000.o"(.text)
-            "*/games/A/SRC/X.o"(.rodata)
-            "*libgcc.a:_call_via_rX.o"(.text)
-        "#;
-        assert_eq!(
-            script_objects(script),
-            ["games/A/SRC/X", "recon/tbs/raw/08000000"]
-        );
-    }
-}
-#[test]
-fn every_c_plan_searches_its_build_message_metadata() {
-    let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
-    for source in [
-        "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IE.C",
-        "games/COMMON/SRC/SYSTEM/SAVE/READ_FLASH_ID.C",
-    ] {
-        let object = Path::new("/tmp/build-metadata/obj")
-            .join(source)
-            .with_extension("o");
-        let plan = c_steps(target, Path::new(source), &object).unwrap();
-        assert!(
-            plan[0].iter().any(|flag| flag == "-I/tmp/build-metadata"),
-            "{plan:?}"
-        );
-    }
 }

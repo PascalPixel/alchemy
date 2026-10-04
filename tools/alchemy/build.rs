@@ -1,63 +1,34 @@
-//! The build implementation signature: one digest of the tool sources that
-//! can change what a build stage writes into its caches. Object, assembly,
-//! overlay, score and asset caches key on it instead of on the whole
-//! executable. Alchemy's build stages, every Psynergy and ags source and the
-//! workspace lockfile contribute; reports, checks and coverage do not. A
-//! change to those readers no longer
-//! recompiles every C file, as pret's Makefile rebuilds only what a
-//! changed tool produces. The byte-identical ROM comparison stays the proof;
-//! the signature decides only what may be reused.
+//! Digests of the tool sources each cached step depends on, as pret's
+//! Makefile rebuilds only what a changed tool produces:
+//! `ALCHEMY_ENCODER` is the ags crate, which encodes every asset and code
+//! overlay; `ALCHEMY_LINK_RULE` is the build's own overlay rule in
+//! build_rom.rs. Compiling, assembling and linking key on the toolchain's
+//! executables and their commands instead. The byte-identical ROM comparison
+//! stays the proof; the digests decide only what may be reused.
 use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};
 
-/// Modules that read build outputs but never produce a cached one: checks,
-/// the build's gates, coverage and progress, recovery aids, formatting and
-/// the command dispatch. Everything else, including build_rom.rs, every
-/// Psynergy and ags source and the lockfile, is part of the implementation.
-const OUTSIDE: &[&str] = &[
-    "alchemy/src/check",
-    "alchemy/src/check.rs",
-    "alchemy/src/coverage",
-    "alchemy/src/recovery",
-    "alchemy/src/format.rs",
-    "alchemy/src/gate",
-    "alchemy/src/main.rs",
-];
-
-fn collect(tools: &Path, path: &Path, files: &mut Vec<PathBuf>) {
-    let relative = path.strip_prefix(tools).unwrap().to_string_lossy();
-    if OUTSIDE.iter().any(|outside| relative == *outside) {
-        return;
-    }
+fn collect(path: &Path, files: &mut Vec<PathBuf>) {
     if path.is_dir() {
         for entry in std::fs::read_dir(path).unwrap() {
-            collect(tools, &entry.unwrap().path(), files);
+            collect(&entry.unwrap().path(), files);
         }
     } else if path.extension().is_some_and(|extension| extension == "rs") {
         files.push(path.to_path_buf());
     }
 }
 
-pub(crate) fn main() {
-    // Cargo can reuse this executable from a copied worktree cache.
-    // Its runtime manifest directory names the checkout being built now.
-    let manifest = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap());
-    let tools = manifest.parent().unwrap();
+/// One digest over `paths` (directories read recursively), named from `tools`.
+fn digest(tools: &Path, paths: &[&str]) -> String {
     let mut files = Vec::new();
-    for directory in ["alchemy/src", "psynergy/src", "ags/src"] {
-        let path = tools.join(directory);
+    for path in paths {
+        let path = tools.join(path);
         println!("cargo:rerun-if-changed={}", path.display());
-        collect(tools, &path, &mut files);
-    }
-    for manifest in [
-        "Cargo.lock",
-        "alchemy/Cargo.toml",
-        "psynergy/Cargo.toml",
-        "ags/Cargo.toml",
-    ] {
-        let path = tools.join(manifest);
-        println!("cargo:rerun-if-changed={}", path.display());
-        files.push(path);
+        if path.is_dir() {
+            collect(&path, &mut files);
+        } else {
+            files.push(path);
+        }
     }
     files.sort();
     let mut digest = Sha256::new();
@@ -69,12 +40,22 @@ pub(crate) fn main() {
             .into_owned();
         digest.update(relative.as_bytes());
         digest.update([0]);
-        digest.update(Sha256::digest(std::fs::read(&path).unwrap()));
+        digest.update(Sha256::digest(std::fs::read(&path).unwrap_or_default()));
     }
-    let hex = digest
+    digest
         .finalize()
         .iter()
         .map(|byte| format!("{byte:02x}"))
-        .collect::<String>();
-    println!("cargo:rustc-env=ALCHEMY_BUILD_IMPLEMENTATION={hex}");
+        .collect()
+}
+
+pub(crate) fn main() {
+    // Cargo can reuse this executable from a copied worktree cache.
+    // Its runtime manifest directory names the checkout being built now.
+    let manifest = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap());
+    let tools = manifest.parent().unwrap();
+    let encoder = digest(tools, &["ags/src", "ags/Cargo.toml", "Cargo.lock"]);
+    println!("cargo:rustc-env=ALCHEMY_ENCODER={encoder}");
+    let rule = digest(tools, &["alchemy/src/build_rom.rs"]);
+    println!("cargo:rustc-env=ALCHEMY_LINK_RULE={rule}");
 }

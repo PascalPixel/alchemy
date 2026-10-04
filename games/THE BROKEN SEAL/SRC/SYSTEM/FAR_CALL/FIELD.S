@@ -261,7 +261,7 @@ Map_CopyCellAttributeRectFar:
 	.global Func_080091c8
 	.thumb_func
 Func_080091c8:
-	overlay_veneer Func_08010788
+	overlay_veneer Map_CopyCellIndexRect
 	.global Map_SetWindowCellTileFar
 	.thumb_func
 Map_SetWindowCellTileFar:

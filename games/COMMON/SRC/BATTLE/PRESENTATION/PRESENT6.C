@@ -206,53 +206,28 @@ s16 Battle_GetTaggedSlotValue(s32 slot)
 /* Removed members are skipped; the end marker means no matching slot. */
 s32 Battle_FindTaggedSlotByValue(u32 value)
 {
-    /* FAKEMATCH: indexing the two arrays introduces index shifts and moves the
-       session load. Keep the existing separate byte walks over its members. */
-    s32 index;
-    s32 tag;
-    s32 offset;
-    char *base;
+#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
+    struct BattleSession *battle = Ram_HeapSlots->battle_work;
+#else
+    struct BattleSession *battle = gBattleWork;
+#endif
+    s32 i;
     s16 item;
 
-#if defined(TLA_EDITION_JA) || defined(TLA_EDITION_EN) || defined(TLA_EDITION_DE) || defined(TLA_EDITION_ES) || defined(TLA_EDITION_FR) || defined(TLA_EDITION_IT)
-    base = (char *)Ram_HeapSlots->battle_work;
-#else
-    base = (char *)gBattleWork;
-#endif
     if (value <= 7) {
-        tag = 0x80;
-        index = 0;
-        tag <<= 1;
-        offset = (u32)&((struct BattleSession *)0)->party_units;
-first:
-        item = *(s16 *)(offset + (u32)base);
+        for (i = 0; ; i++) {
+            item = battle->party_units[i];
+            if (item == BATTLE_UNIT_LIST_END)
+                return -1;
+            if (item != BATTLE_UNIT_REMOVED && item == value)
+                return i | 0x100;
+        }
+    }
+    for (i = 0; ; i++) {
+        item = battle->enemy_units[i];
         if (item == BATTLE_UNIT_LIST_END)
             return -1;
-        if (item == BATTLE_UNIT_REMOVED)
-            goto next_first;
-        if (item == value)
-            return index | tag;
-next_first:
-        offset += sizeof(s16);
-        index++;
-        goto first;
+        if (item != BATTLE_UNIT_REMOVED && item == value)
+            return i | 0x180;
     }
-
-    tag = 0xc0;
-    index = 0;
-    base += sizeof(s16);
-    tag <<= 1;
-    offset = (u32)&((struct BattleSession *)0)->enemy_units - sizeof(s16);
-second:
-    item = *(s16 *)(offset + (u32)base);
-    if (item == BATTLE_UNIT_LIST_END)
-        return -1;
-    if (item == BATTLE_UNIT_REMOVED)
-        goto next_second;
-    if (item == value)
-        return index | tag;
-next_second:
-    offset += sizeof(s16);
-    index++;
-    goto second;
 }

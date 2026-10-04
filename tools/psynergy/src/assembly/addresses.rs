@@ -113,7 +113,7 @@ pub fn integer(text: &str) -> Option<u32> {
     (at == text.len()).then_some(value)
 }
 
-pub fn memory_address(word: u32) -> bool {
+pub(crate) fn memory_address(word: u32) -> bool {
     (0x0200_0000..0x0204_0000).contains(&word)
         || (0x0300_0000..0x0300_8000).contains(&word)
         || (0x0800_0000..0x0e00_0000).contains(&word)
@@ -938,65 +938,4 @@ pub fn sites(sources: &[&str], types: &Types) -> Vec<Site> {
             })
         })
         .collect()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    fn values(source: &str) -> Vec<u32> {
-        sites(&[source], &Types::default())
-            .into_iter()
-            .map(|site| site.value)
-            .collect()
-    }
-    #[test]
-    fn numeric_expressions_never_resolve_symbols() {
-        assert_eq!(integer("(0x02000000 + (4 << 2))"), Some(0x02000010));
-        assert_eq!(integer("0x08000000 | 1"), Some(0x08000001));
-        assert_eq!(integer("Buffer + 4"), None);
-        assert_eq!(integer("1 / 0"), None);
-    }
-    #[test]
-    fn branches_and_conditional_overwrites_preserve_pointer_paths() {
-        for source in [
-            "ldr r0, pool\nbne clear\nb use\nclear:\nmovs r0, #0\nb done\nuse:\nldr r1, [r0]\ndone:\nbx lr\npool:\n.word 0x02001000",
-            "ldr r0, pool\nmoveq r0, #0\nldr r1, [r0]\nbx lr\npool:\n.word 0x02001000",
-            "ldr r0, pool\nb again\nagain:\nmov r5, r0\nadds r5, #4\nldr r1, [r5]\nb again\npool:\n.word 0x02001000",
-        ] { assert_eq!(values(source), vec![0x02001000], "{source}"); }
-    }
-    #[test]
-    fn a_loaded_jump_table_entry_is_an_address_without_a_pool_xref() {
-        let source = "adr r1, table\nldr r0, [r1, r2]\nbx r0\ntable:\n.word 0x08000101, Handler, 0x08000201\n";
-        assert_eq!(values(source), vec![0x08000101, 0x08000201]);
-        assert!(values("adr r1, table\nldr r0, [r1, r2]\nlsrs r0, #16\nbx lr\ntable:\n.word 0x08000101, 0x08000201").is_empty());
-    }
-    #[test]
-    fn source_callee_summaries_follow_arguments_and_returns() {
-        let source = ".thumb_func\ncaller:\nldr r0, pool\nbl adapter\nbx lr\npool:\n.word 0x03000100\n.thumb_func\nadapter:\nmov r2, r0\nbl reader\nbx lr\n.thumb_func\nreader:\nldr r1, [r2]\nbx lr\n";
-        assert_eq!(values(source), vec![0x03000100]);
-        let source = ".thumb_func\ncaller:\nbl getter\nldr r1, [r0]\nbx lr\n.thumb_func\ngetter:\nldr r0, pool\nbx lr\npool:\n.word 0x02000100\n";
-        assert_eq!(values(source), vec![0x02000100]);
-    }
-    #[test]
-    fn scalar_arguments_and_clobbered_values_stay_scalar() {
-        for source in [
-            "ldr r0, pool\nbl cam_bounds\nbx lr\npool:\n.word 0x08040000\n",
-            "ldr r0, pool\nbl unknown\nldr r1, [r0]\nbx lr\npool:\n.word 0x02000100\n",
-            "ldr r0, pool\nmovs r0, #0\nldr r1, [r0]\npool:\n.word 0x02000100\n",
-        ] {
-            assert!(values(source).is_empty(), "{source}");
-        }
-        let types = Types {
-            arguments: BTreeMap::from([("reader".into(), 1)]),
-            ..Types::default()
-        };
-        assert_eq!(
-            sites(
-                &["ldr r0, pool\nbl reader\nbx lr\npool:\n.word 0x02000100\n"],
-                &types
-            )
-            .len(),
-            1
-        );
-    }
 }

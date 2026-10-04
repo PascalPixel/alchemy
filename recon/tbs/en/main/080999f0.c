@@ -8,7 +8,16 @@
    pointer in r11. Remaining: the reference's reload registers rotate over
    r0 to r3 from the first statement (its zero for the step goes through
    r1); here r1 never becomes a reload register, so most of the 213
-   differing lines are r0/r1/r2 choices. */
+   differing lines are r0/r1/r2 choices.
+   2026-10-04: the falling-objects loop counts up with i < count; loop.c
+   reverses it (entry test on count, r8 counting down), as in the
+   reference: 300 -> 235, all 47 left are register-only. In each glide
+   step the reference reloads the end pointer before the start pointer
+   (x: end r0, start r1; y: end r2, start r0, skipping the live r3), so
+   its RTL loads end first; the inline loads its arguments in order,
+   start first. Swapping the parameters (end, start) gives that order
+   (525: right reload pattern, r9/r10 exchanged); a macro, const
+   parameters or from/to pointers do not help. */
 #include "TYPES.H"
 
 struct Vec3 { s32 x, y, z; };
@@ -154,7 +163,7 @@ void RunBattleEffect05(void)
         count = 10;
         if ((s8)state->high_arc == 0)
             count = 30;
-        for (i = count; i != 0; i--) {
+        for (i = 0; i < count; i++) {
             spawn.x = main->x;
             spawn.y = main->y;
             spawn.z = main->z;

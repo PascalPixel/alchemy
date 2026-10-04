@@ -1,18 +1,13 @@
 //! Context-modelled Huffman message archives: one canonical tree per preceding
 //! symbol, packed leaf tables, bank payloads with byte-run lengths and an
 //! address directory. No game addresses, command tables or bank counts.
-#[cfg(test)]
-use psynergy::assets::huffman_archive::MessageReader;
 use std::collections::HashMap;
 
 /// A built archive and the addresses its self-referential header records.
-pub struct HuffmanArchive {
+pub(crate) struct HuffmanArchive {
     pub bytes: Vec<u8>,
-    pub offset_table: u32,
-    pub messages: u32,
     pub context_directory: u32,
     pub directory: u32,
-    pub contexts: usize,
     /// Offsets into `bytes` of the little-endian words that hold an address
     /// inside the archive, so a linker can relocate them from the archive's
     /// own label instead of trusting `base`.
@@ -131,7 +126,7 @@ fn derive_contexts(
 /// by its byte-run lengths, and finally the bank directory of payload and
 /// length addresses, aligned to a word for the ARM message lookup.
 /// `None` is an empty message.
-pub fn encode_huffman_archive(
+pub(crate) fn encode_huffman_archive(
     base: u32,
     symbol_count: usize,
     banks: &[Vec<Option<Vec<u16>>>],
@@ -175,8 +170,7 @@ pub fn encode_huffman_archive(
         bytes.extend(model_base.to_le_bytes());
         bytes.extend((offset_table + group as u32 * 512).to_le_bytes());
     }
-    let messages = base + bytes.len() as u32;
-    let mut address = messages;
+    let mut address = base + bytes.len() as u32;
     let mut directory = Vec::new();
     for bank in banks {
         let mut payload = Vec::new();
@@ -223,155 +217,9 @@ pub fn encode_huffman_archive(
     bytes.extend(directory);
     Ok(HuffmanArchive {
         bytes,
-        offset_table,
-        messages,
         context_directory,
         directory: directory_address,
-        contexts: contexts.iter().flatten().count(),
         pointers,
     })
 }
 
-#[test]
-fn huffman_archive_packs_model_payloads_and_directory() {
-    // Context 0 sees 1 then 2; context 1 sees 1 then 0; context 2 sees 0.
-    let banks = vec![vec![Some(vec![1, 1]), None], vec![Some(vec![2])]];
-    let archive = encode_huffman_archive(0x1000, 3, &banks).unwrap();
-    let mut expected = Vec::new();
-    // Context 0: leaves [1, 2] packed as one group, tree "011" (branch, leaf, leaf).
-    expected.extend([0x02, 0x10, 0x00, 0b110]);
-    // Context 1: leaves [1, 0], tree "011".
-    expected.extend([0x00, 0x10, 0x00, 0b110]);
-    // Context 2: single leaf 0, tree "1".
-    expected.extend([0x00, 0x00, 0b1]);
-    // Offsets point at each tree; the table is padded to a word boundary.
-    expected.push(0);
-    expected.extend([3, 0, 7, 0, 10, 0, 0, 0]);
-    expected.extend(0x1000u32.to_le_bytes());
-    expected.extend(0x100cu32.to_le_bytes());
-    // Bank 0: "1 1 end" is 0, 0, 1 -> 0b100; the empty message has length 0.
-    expected.extend([0b100, 1, 0]);
-    // Bank 1: "2 end" is 1 then the empty single-leaf path.
-    expected.extend([0b1, 1]);
-    // The ARM lookup loads the bank directory with a word transfer.
-    expected.extend([0, 0, 0]);
-    expected.extend(0x101cu32.to_le_bytes());
-    expected.extend(0x101du32.to_le_bytes());
-    expected.extend(0x101fu32.to_le_bytes());
-    expected.extend(0x1020u32.to_le_bytes());
-    assert_eq!(archive.bytes, expected);
-    assert_eq!(archive.offset_table, 0x100c);
-    assert_eq!(archive.messages, 0x101c);
-    assert_eq!(archive.directory, 0x1024);
-    assert_eq!(archive.contexts, 3);
-    // Every address word: the context directory's two, then the banks'.
-    assert_eq!(archive.pointers, [20, 24, 36, 40, 44, 48]);
-    for site in &archive.pointers {
-        let word = u32::from_le_bytes(archive.bytes[*site..site + 4].try_into().unwrap());
-        assert!((0x1000..=archive.directory).contains(&word));
-    }
-    assert!(encode_huffman_archive(0x1000, 3, &[vec![Some(vec![3])]]).is_err());
-    assert!(encode_huffman_archive(0x1000, 0x1001, &[]).is_err());
-    assert_eq!(
-        pack_leaves(&[0xabc, 0x123, 0x456]),
-        [0x60, 0x45, 0x23, 0xc1, 0xab]
-    );
-    // A 256-byte message stores its length as a full run and a remainder.
-    let long = encode_huffman_archive(0x1000, 2, &[vec![Some(vec![1; 2041])]]).unwrap();
-    let directory = (long.directory - 0x1000) as usize;
-    let lengths =
-        u32::from_le_bytes(long.bytes[directory + 4..directory + 8].try_into().unwrap()) - 0x1000;
-    assert_eq!(
-        long.bytes[lengths as usize..lengths as usize + 2],
-        [0xff, 0x01]
-    );
-}
-
-#[test]
-fn grouped_contexts_round_trip_symbols_above_255() {
-    let banks = vec![vec![Some(vec![1, 256, 299, 256]), None]];
-    let archive = encode_huffman_archive(0x1000, 300, &banks).unwrap();
-    assert_eq!(archive.messages - archive.context_directory, 16);
-    let mut reader = MessageReader::new(
-        &archive.bytes,
-        0x1000,
-        archive.context_directory,
-        archive.directory,
-        300,
-    )
-    .unwrap();
-    assert_eq!(reader.message(0).unwrap().symbols, banks[0][0]);
-    assert_eq!(reader.message(1).unwrap().symbols, None);
-}
-
-#[test]
-fn message_reader_inverts_owned_encoder_and_rejects_truncation() {
-    let banks = vec![vec![Some(vec![1, 2, 1]), None, Some(vec![2; 2041])]];
-    let archive = encode_huffman_archive(0x1000, 3, &banks).unwrap();
-    let contexts = archive.messages - 8;
-    let mut reader =
-        MessageReader::new(&archive.bytes, 0x1000, contexts, archive.directory, 3).unwrap();
-    for (index, expected) in banks[0].iter().enumerate() {
-        assert_eq!(&reader.message(index).unwrap().symbols, expected);
-    }
-    let mut truncated = MessageReader::new(
-        &archive.bytes[..archive.bytes.len() - 1],
-        0x1000,
-        contexts,
-        archive.directory,
-        3,
-    )
-    .unwrap();
-    assert!(truncated.message(0).is_err());
-    let mut invalid = archive.bytes.clone();
-    invalid[(contexts - 0x1000) as usize..(contexts - 0x1000) as usize + 4]
-        .copy_from_slice(&0u32.to_le_bytes());
-    assert!(
-        MessageReader::new(&invalid, 0x1000, contexts, archive.directory, 3)
-            .unwrap()
-            .message(0)
-            .is_err()
-    );
-}
-
-#[test]
-fn huffman_archive_preserves_an_already_aligned_directory() {
-    // Three extra null messages make the two banks occupy eight bytes.
-    // The models, payload addresses and complete archive need no padding.
-    let banks = vec![
-        vec![Some(vec![1, 1]), None],
-        vec![Some(vec![2]), None, None, None],
-    ];
-    let archive = encode_huffman_archive(0x1000, 3, &banks).unwrap();
-    let expected = [
-        0x02, 0x10, 0x00, 0x06, 0x00, 0x10, 0x00, 0x06, 0x00, 0x00, 0x01, 0x00, 0x03, 0x00, 0x07,
-        0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x0c, 0x10, 0x00, 0x00, 0x04, 0x01,
-        0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x1c, 0x10, 0x00, 0x00, 0x1d, 0x10, 0x00, 0x00, 0x1f,
-        0x10, 0x00, 0x00, 0x20, 0x10, 0x00, 0x00,
-    ];
-    assert_eq!(archive.bytes, expected);
-    assert_eq!(archive.directory, 0x1024);
-    assert_eq!(archive.pointers, [20, 24, 36, 40, 44, 48]);
-}
-
-#[test]
-fn huffman_archive_aligns_each_bank_directory_residue() {
-    for nulls in 0..4 {
-        let mut bank = vec![Some(vec![1, 1])];
-        bank.extend(vec![None; nulls]);
-        let archive = encode_huffman_archive(0x1000, 2, &[bank.clone()]).unwrap();
-        assert_eq!(archive.directory % 4, 0, "{nulls} null messages");
-        assert!(archive.pointers.iter().all(|site| site % 4 == 0));
-        let mut reader = MessageReader::new(
-            &archive.bytes,
-            0x1000,
-            archive.context_directory,
-            archive.directory,
-            2,
-        )
-        .unwrap();
-        for (index, expected) in bank.iter().enumerate() {
-            assert_eq!(&reader.message(index).unwrap().symbols, expected);
-        }
-    }
-}

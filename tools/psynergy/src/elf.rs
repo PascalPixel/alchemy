@@ -2,7 +2,6 @@
 //! the symbol table, which is all a linked image needs to be disassembled.
 
 pub struct Section {
-    pub name: String,
     pub address: u32,
     pub bytes: Vec<u8>,
 }
@@ -53,9 +52,7 @@ impl Elf {
         let shoff = word(data, 0x20)? as usize;
         let shentsize = half(data, 0x2e)? as usize;
         let shnum = half(data, 0x30)? as usize;
-        let shstrndx = half(data, 0x32)? as usize;
         struct Header {
-            name: u32,
             kind: u32,
             flags: u32,
             address: u32,
@@ -67,7 +64,6 @@ impl Elf {
         for i in 0..shnum {
             let at = shoff + i * shentsize;
             headers.push(Header {
-                name: word(data, at)?,
                 kind: word(data, at + 4)?,
                 flags: word(data, at + 8)?,
                 address: word(data, at + 12)?,
@@ -80,16 +76,11 @@ impl Elf {
             data.get(h.offset..h.offset + h.size)
                 .ok_or_else(|| "ELF section outside the file".to_string())
         };
-        let names = match headers.get(shstrndx) {
-            Some(h) => bytes_of(h)?,
-            None => &[],
-        };
         let mut sections = Vec::new();
         let mut symbols = Vec::new();
         for h in &headers {
             if h.kind == SHT_PROGBITS && h.flags & SHF_ALLOC != 0 && h.size > 0 {
                 sections.push(Section {
-                    name: string(names, h.name as usize),
                     address: h.address,
                     bytes: bytes_of(h)?.to_vec(),
                 });
@@ -117,7 +108,7 @@ impl Elf {
     }
 
     /// The loaded section holding `address`, and the offset into it.
-    pub fn section_at(&self, address: u32) -> Option<(&Section, usize)> {
+    pub(crate) fn section_at(&self, address: u32) -> Option<(&Section, usize)> {
         self.sections.iter().find_map(|s| {
             (address >= s.address && address - s.address < s.bytes.len() as u32)
                 .then(|| (s, (address - s.address) as usize))

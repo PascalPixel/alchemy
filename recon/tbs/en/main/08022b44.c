@@ -2,6 +2,17 @@
 #include "RUNTIME_MEM.H"
 #include "BATTLE_UNIT.H"
 /*
+ * 2026-10-04: callees renamed to the build's current names (Owner_GetStateFar,
+ * Owner_RecalculateStatsFar, Runtime_BumpFree); score unchanged at 1565.
+ * Not adoptable as is: Value_00000333 is a stand-in symbol for the plain
+ * message number 0x333 (the ROM's pool holds the number) and the
+ * _call_via_r3 declaration stands in for Iwram_CopyWords. With the plain
+ * constant the score is 3480: the integer is a cheaper invariant than a
+ * symbol address and changes the allocation of the whole list loop, where
+ * the reference loads 0x333 at its use. A natural source for that late load
+ * is still to be found, and the nested DjinnMenu_DrawStatArrow
+ * (recon/tbs/raw/08022a7c.s) must match in the same object first.
+ *
  * Draft: the parent matches but its nested arrow renderer does not yet, so the
  * unit links as assembly (recon/tbs/raw/08022a7c.s and 08022b44.s).
  *
@@ -95,7 +106,6 @@ struct BattleUnitRecord {
 /* Callees the owner register already names, spelled the way types.h spells
  * its own aliases: the address symbol stays the ABI. */
 
-void Sys_Free(void *block);
 s32 _call_via_r3(void *dst, const void *src, s32 size, s32 proc);
 s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
@@ -124,9 +134,9 @@ void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
 void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 
 s32 __divsi3(s32 numerator, s32 denominator);
-struct BattleUnitRecord *Runtime_GetObject(s32 owner);
+struct BattleUnitRecord *Owner_GetStateFar(s32 owner);
 struct AbilityData *Ability_GetData(s32 code);
-void BattleUnit_Recalculate(s32 owner);
+void Owner_RecalculateStatsFar(s32 owner);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
 void UiWork_Finalize(struct RenderInput *win, s32 mode);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
@@ -181,7 +191,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
     }
 
-    unit = Runtime_GetObject(owner);
+    unit = Owner_GetStateFar(owner);
     if (win != 0)
         UiWork_Finalize(win, 1);
 
@@ -204,7 +214,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         Djinn_DeactivateFar(owner, col, row);
     else
         Djinn_ActivateFar(owner, col, row);
-    BattleUnit_Recalculate(owner);
+    Owner_RecalculateStatsFar(owner);
 
     total = DjinnMenu_ListChangedDjinn((const struct OwnerActionSlot *)snap->grid, (const struct OwnerActionSlot *)unit->grid, list, &gained, &lost);
     pages = __divsi3(total - 1, 5) + 1;
@@ -363,8 +373,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
     /* Put the record back the way it was and release the scratch blocks. */
     _call_via_r3(unit, snap, 332, VRAM_COPY_PROC);
-    Sys_Free(list);
-    Sys_Free(snap);
-    Sys_Free(buf);
+    Runtime_BumpFree(list);
+    Runtime_BumpFree(snap);
+    Runtime_BumpFree(buf);
     return win;
 }

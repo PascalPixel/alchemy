@@ -45,7 +45,7 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
-    void Actor_SetPosition(s32, s32, s32);
+    void Engine_ActorSetPosition(s32, s32, s32);
 
     Engine_ActorSetPosition(actor, x, y);
 }
@@ -374,7 +374,7 @@ void SceneDialogue_RunLine1956(void)
 
 void ConfigureAndPlaceActorFourteen(void)
 {
-    void Actor_SetPosition(s32, s32, s32);
+    void Engine_ActorSetPosition(s32, s32, s32);
 
     s32 a = 21, b = 9;
     Engine_MapCopyCellAttributes(85, 9, 1, 1, a, b);

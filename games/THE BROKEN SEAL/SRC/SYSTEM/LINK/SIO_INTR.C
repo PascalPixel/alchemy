@@ -163,15 +163,9 @@ s32 SerialRuntime_BeginTransferB(void *destination)
        the destination in r0 through the busy check. A separate result is
        hoisted into r0 and makes the function save another register. */
     value = (s32)destination;
+    state = &gSerialTransfer;
     active = &SERIAL_ACTIVE_B;
     busy = *active;
-    /* FAKEMATCH: the do/while blocks and the second active assignment are
-     * meaningless, as in SerialRuntime_BeginTransferA: they give active r5
-     * and state r6 and keep the stores in the reference order. */
-    do {
-        state = &gSerialTransfer;
-    } while (0);
-    active = &SERIAL_ACTIVE_B;
     if (busy == 0)
         goto begin_transfer;
     value = -1;
@@ -181,6 +175,8 @@ begin_transfer:
     ime = &REG_IME;
     saved_interrupt_master = *ime;
     *ime = (u16)(u32)ime; /* its own address, 0x208: bit 0 clear */
+    /* FAKEMATCH: the one-pass block keeps the IME read and write ahead of
+       the transfer stores, as in SerialRuntime_BeginTransferA. */
     do {
         state->status = 0x81;
         SERIAL_VALUE_B = 0;
@@ -192,7 +188,6 @@ begin_transfer:
          * after the sequence's address, where CSE would store busy's zero. */
         volatile u8 *sequence = &gSerialBlockSequence;
         register u16 zero asm("r0") = 0; /* FAKEMATCH: the zero in r0, see above */
-        asm("" : "+l"(zero)); /* FAKEMATCH: hides the zero from CSE, see above */
         *sequence = zero;
     }
     *ime = saved_interrupt_master;

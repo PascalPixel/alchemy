@@ -44,6 +44,14 @@
  * offset, one reorder); frame stays84 and canvas moves to40, not native48.
  * Retain the simpler scalar body; no new steering device was introduced.
  *
+ * 2026-10-04 lead: the unused word (sp+40) sits between the slots reload
+ * gives at its start (canvas, frame) and the later spills (draw downward),
+ * exactly where reload1.c's first pass calls setup_save_areas. That routine
+ * reserves a word for every call-used register (r0-r4, ip, lr here) that
+ * global alloc gave a call-crossing pseudo, and the word stays when that
+ * pseudo is spilled later. A source shape whose allocation briefly puts a
+ * call-crossing value in a call-used register would explain the frame
+ * without any unread data. alchemy permute (18,666 candidates) found none.
  * No producer/callee evidence supports the original draw[2] reservation.
  * Keep this source-local near match until the frame has an honest model;
  * do not restore padding solely to keep the previous percentage.

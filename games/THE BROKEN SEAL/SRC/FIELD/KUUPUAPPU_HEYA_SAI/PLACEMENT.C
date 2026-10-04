@@ -316,7 +316,7 @@ void FieldScene_RunActor22StepByPlace(void)
 
 void SceneDialogue_RunActor18FlaggedLine(void)
 {
-    s32 GameFlag_IsSet(s32);
+    s32 Engine_GameFlagIsSet(s32);
 
     Engine_EventBegin();
     if (Engine_GameFlagIsSet(0x85B) == 0) {
@@ -331,7 +331,7 @@ void SceneDialogue_RunActor18FlaggedLine(void)
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetEffectTable(void)
 {
-    s32 GameFlag_IsSet(s32);
+    s32 Engine_GameFlagIsSet(s32);
 
     return Placement_Effects;
 }

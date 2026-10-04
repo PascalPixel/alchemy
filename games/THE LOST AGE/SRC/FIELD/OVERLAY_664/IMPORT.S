@@ -82,9 +82,9 @@ ObjectDispatch_ApplyValueToChildren:
 	.thumb_func
 Func_02005d6c:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Func_02005d74
+	.global Engine_ObjectCreate
 	.thumb_func
-Func_02005d74:
+Engine_ObjectCreate:
 	overlay_veneer Func_080200c0
 	.global Func_02005d7c
 	.thumb_func

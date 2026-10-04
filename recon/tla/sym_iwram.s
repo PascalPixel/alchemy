@@ -148,11 +148,11 @@ gLinkStatus:
 	.global gNumberTextBuffer
 gNumberTextBuffer:
 	.space 0x00000008
-	.global Data_03001258
-Data_03001258:
+	.global gNumberTextHexEnd
+gNumberTextHexEnd:
 	.space 0x00000002
-	.global Data_0300125a
-Data_0300125a:
+	.global gNumberTextDecimalEnd
+gNumberTextDecimalEnd:
 	.space 0x000000a6
 	.global Data_03001300
 Data_03001300:

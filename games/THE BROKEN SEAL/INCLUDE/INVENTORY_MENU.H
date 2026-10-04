@@ -53,7 +53,7 @@ struct InventoryMenuState {
     s16 completion_flag;
     u8 unknown_224[0x36];
     s16 message_offset;
-    u8 equip_preview;
+    s8 equip_preview;
     u8 list_mode;
     u8 unknown_25e[2];
     s8 selected_index_by_owner[8];
@@ -130,6 +130,7 @@ s32 ItemMenu_CmdCursorX(s32 column, s32 row);
 s32 ItemMenu_CmdCursorY(s32 column, s32 row);
 void ItemMenu_BuildCmd(s8 *command_states);
 void ItemMenu_DrawCmd(const s8 *command_states, s32 window);
+s32 ItemMenu_ChooseCmd(void);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_OpenDetail(s32 item_index);
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);

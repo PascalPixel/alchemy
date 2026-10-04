@@ -219,6 +219,7 @@ pub fn runtime_library_cflags() -> Vec<String> {
         .filter(|f| f != "-mthumb-interwork" && f != "-fcall-used-r4" && !f.starts_with("-I"))
         .collect()
 }
+#[cfg(test)]
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
     base_cflags(target)
 }

@@ -17,3 +17,8 @@ Bios_SoundBiasOff:
 	movs	r0, #0
 	svc	25
 	bx	lr
+
+@ The next library object starts on a word boundary: this empty padding
+@ section aligns it, and the linker's zero halfword carries no credit.
+	.section .padding,"a",%progbits
+	.balign 4

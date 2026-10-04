@@ -652,10 +652,10 @@ void UpdateStatueLight1(void)
 
 void UpdateStatueLight2(void)
 {
-    if ((Random_Next() & 3) != 0) {
+    if ((Engine_RandomNext() & 3) != 0) {
         switch (SoruNichigetsu_Light2Timer) {
         case 0:
-            Audio_PlayCue(0xbb);
+            Engine_AudioPlayCue(0xbb);
             Map_CopyCellsTo(0x2f, 0x3b, 42, 0x21, 1, 5);
             break;
         case 1:
@@ -680,7 +680,7 @@ void UpdateStatueLight2(void)
             break;
         }
         SoruNichigetsu_Light2Timer++;
-        if (SoruNichigetsu_Light2Timer > ((u32)(Random_Next() * 40) >> 16) + 100) {
+        if (SoruNichigetsu_Light2Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 100) {
             SoruNichigetsu_Light2Timer = 0;
         }
     }
@@ -688,10 +688,10 @@ void UpdateStatueLight2(void)
 
 void UpdateStatueLight3(void)
 {
-    if ((Random_Next() & 3) != 0) {
+    if ((Engine_RandomNext() & 3) != 0) {
         switch (SoruNichigetsu_Light3Timer) {
         case 0:
-            Audio_PlayCue(0xbb);
+            Engine_AudioPlayCue(0xbb);
             Map_CopyCellsTo(0x30, 0x3b, 31, 0x24, 1, 5);
             break;
         case 1:
@@ -716,7 +716,7 @@ void UpdateStatueLight3(void)
             break;
         }
         SoruNichigetsu_Light3Timer++;
-        if (SoruNichigetsu_Light3Timer > ((u32)(Random_Next() * 40) >> 16) + 105) {
+        if (SoruNichigetsu_Light3Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 105) {
             SoruNichigetsu_Light3Timer = 0;
         }
     }
@@ -724,10 +724,10 @@ void UpdateStatueLight3(void)
 
 void UpdateStatueLight4(void)
 {
-    if ((Random_Next() & 3) != 0) {
+    if ((Engine_RandomNext() & 3) != 0) {
         switch (SoruNichigetsu_Light4Timer) {
         case 0:
-            Audio_PlayCue(0xbb);
+            Engine_AudioPlayCue(0xbb);
             Map_CopyCellsTo(0x2e, 0x3b, 41, 0x24, 1, 5);
             break;
         case 1:
@@ -752,7 +752,7 @@ void UpdateStatueLight4(void)
             break;
         }
         SoruNichigetsu_Light4Timer++;
-        if (SoruNichigetsu_Light4Timer > ((u32)(Random_Next() * 40) >> 16) + 95) {
+        if (SoruNichigetsu_Light4Timer > ((u32)(Engine_RandomNext() * 40) >> 16) + 95) {
             SoruNichigetsu_Light4Timer = 0;
         }
     }

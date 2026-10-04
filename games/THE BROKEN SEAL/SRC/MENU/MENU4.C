@@ -75,27 +75,16 @@ void ObjectPlacement_CreateGroup(struct RenderInput *origin, s32 x, s32 y,
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 {
-    /* FAKEMATCH: the typed array loop exchanges the base and count registers.
-       Retain the existing word-address clear over the real object cells. */
-    u8 *base = (u8 *)Data_03001f2c_a;
-    s32 offset = (u32)&((struct PlacementState *)0)->objects / 2;
-    s32 zero;
-    s32 count;
+    struct PlacementState *state = Data_03001f2c_a;
+    s32 i;
 
-    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateFirstObjectRowPositions));
-    zero = 0;
-    offset *= 2;
-    count = 3;
-    do {
-        void *entry = *(void **)(offset + (unsigned int)base);
-
-        if (entry != 0) {
-            ResourceObject_ReleaseFar(entry);
-            *(s32 *)(offset + (unsigned int)base) = zero;
+    Scheduler_RemoveCallback((u32)Menu_UpdateFirstObjectRowPositions);
+    for (i = 0; i < 4; i++) {
+        if (state->objects[i] != 0) {
+            ResourceObject_ReleaseFar(state->objects[i]);
+            state->objects[i] = 0;
         }
-        count--;
-        offset += sizeof(((struct PlacementState *)0)->objects[0]);
-    } while (count >= 0);
+    }
 }
 
 void Menu_UpdateFirstObjectRowPositions(void)
@@ -150,27 +139,16 @@ void Menu_SpawnFourObjectsAtOrigin(struct RenderInput *origin, s32 x, s32 y)
 
 void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
 {
-    /* FAKEMATCH: the typed array loop exchanges the base and count registers.
-       Retain the existing word-address clear over the real object cells. */
-    u8 *base = (u8 *)gMenuWork;
-    s32 offset = (u32)&((struct FourObjectMotionState *)0)->objects / sizeof(void *);
-    s32 zero;
-    s32 count;
+    struct FourObjectMotionState *state = gMenuWork;
+    s32 i;
 
-    Scheduler_RemoveCallback((u32)((s32)Menu_UpdateSecondObjectRowPositions));
-    zero = 0;
-    offset *= sizeof(void *);
-    count = 3;
-    do {
-        void *entry = *(void **)(offset + (unsigned int)base);
-
-        if (entry != 0) {
-            ResourceObject_ReleaseFar(entry);
-            *(s32 *)(offset + (unsigned int)base) = zero;
+    Scheduler_RemoveCallback((u32)Menu_UpdateSecondObjectRowPositions);
+    for (i = 0; i < 4; i++) {
+        if (state->objects[i] != 0) {
+            ResourceObject_ReleaseFar(state->objects[i]);
+            state->objects[i] = 0;
         }
-        count--;
-        offset += sizeof(((struct FourObjectMotionState *)0)->objects[0]);
-    } while (count >= 0);
+    }
 }
 
 void Menu_UpdateSecondObjectRowPositions(void)

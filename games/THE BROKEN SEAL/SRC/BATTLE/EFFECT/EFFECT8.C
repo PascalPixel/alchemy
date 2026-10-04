@@ -88,17 +88,15 @@ void BattleFx_InitializeMode(s32 *arg0)
 void BattleFx_DispatchMode(s32 *state)
 {
     s32 index;
-    s32 destination;
+    struct BattleEffectWork *work;
 
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x302);
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BattleEffectWork));
     Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x4000);
 
-    /* FAKEMATCH: retain the existing scalar address of the effect-pointer
-       cell; the direct typed store moves the mode read ahead of its address. */
-    destination = (s32)&((struct BattleEffectWork *)*(void **)gBattleFxWork)->effect;
+    work = *(struct BattleEffectWork **)gBattleFxWork;
+    work->effect = (struct BattleEffectArgument *)state;
     index = state[0];
-    *(struct BattleEffectArgument **)destination = (struct BattleEffectArgument *)state;
     if (index == 0)
         state[6] = 0;
     else

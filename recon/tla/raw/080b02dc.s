@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080b02dc
+	.global Curve_LookupScaledValue
 	.thumb_func
-Func_080b02dc:
+Curve_LookupScaledValue:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

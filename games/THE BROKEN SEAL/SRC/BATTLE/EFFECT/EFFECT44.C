@@ -120,7 +120,6 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *efx)
    passes. */
 void BattleEffect_WipeCanvas(s32 mode, s32 value)
 {
-    /* FAKEMATCH: the existing relative heap-cell transport preserves load and literal ordering; independent typed slot loads change those instructions. */
     struct BattleEffectWork *work;
     u8 *canvas;
     u8 delay[128];
@@ -128,9 +127,8 @@ void BattleEffect_WipeCanvas(s32 mode, s32 value)
     s32 y;
     s32 pos;
 
-    canvas = *(u8 **)((u8 *)gWorkSlot + HEAP_SLOT_BATTLE_CANVAS * sizeof(void *));
-    work = *(struct BattleEffectWork **)((u8 *)gWorkSlot +
-        HEAP_SLOT_BATTLE_EFFECT * sizeof(void *));
+    canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
+    work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
     for (x = 0; x != 128; x++)
         delay[x] = Random16() & 0x3f;
 

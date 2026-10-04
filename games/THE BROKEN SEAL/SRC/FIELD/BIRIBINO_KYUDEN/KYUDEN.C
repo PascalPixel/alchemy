@@ -512,7 +512,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
 void Kyuden_RunKolimaRequest(void)
 {
     s32 record;
-    register s32 pan asm("r3"); /* FAKEMATCH: inherit camera pan from the byte store. */
+    s32 pan;
 
     /* FAKEMATCH: the ROM carries the zero used for the view-center byte
        in r3 into the camera's fourth argument. Explicit zero emits another

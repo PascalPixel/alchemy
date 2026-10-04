@@ -1,14 +1,15 @@
-/* Draft, not exact: 316 of 316 bytes, score 220 (was 470), 11 register
-   names and the packing loop's test. What closed the rest: the counter of the
-   first two loops is the count of kept slots (one variable, r5), the packing
-   loop has its own counter, and it reads each slot once into a word. Left:
-   the listing tests that word as 16 bits (lsls #16, cmp) after stepping the
-   read pointer, and keeps the read pointer in r4 and the write pointer in
-   r1; here the test is on the whole register. It loads the address of the
-   active owners before stepping the save pointer and keeps it in r0. This
-   is the twin of InventorySnapshot_Restore (GAME/INVENTORY/RESTORE_SNAPSHOT.C).
-   The zero written to a slot is a pool load only because the slots are u16:
-   no symbol is needed. */
+/* Draft, not exact: 316 of 316 bytes, 3 differing instructions (score
+   220), all in the packing loop's test. The listing loads each slot with
+   ldrh into r2, tests it with lsls r3, r2, #16 and stores r2: a halfword
+   register compared as a halfword, with the step of the read pointer
+   between. Testing and storing *src (one load, CSE) here gives ldrh and a
+   plain register copy for cmp instead. u16/s16 item variables give ldrsh
+   with the lsls (combine folds the load into the compare's extension); a
+   volatile read keeps ldrh but adds an asrs. Settled: the read pointer r4,
+   write pointer r1, the shortcuts as gGameState fields, and the inventory
+   pointer reused for the active owners (which puts that address in r0
+   before the second save step). Twin of InventorySnapshot_Restore
+   (GAME/INVENTORY/RESTORE_SNAPSHOT.C). */
 #include "TYPES.H"
 #include "ITEM.H"
 #include "GAME_STATE.H"
@@ -18,11 +19,6 @@
 struct OwnerEquipment {
     u8 unknown_000[0xd8];
     u16 inventory[15];          /* 0xd8 */
-};
-
-struct ShortcutState {
-    u8 unknown_000[0x220];
-    s16 psynergy_shortcuts[2];  /* 0x220 */
 };
 
 extern u16 gInventorySnapshot[];
@@ -49,13 +45,12 @@ void Func_0807a664(void)
     s32 n;
     s16 first;
     s16 second;
-    u16 *owners;
 
     save = gInventorySnapshot;
     if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
         *save++ = INVENTORY_SNAPSHOT_SENTINEL;
-        first = ((struct ShortcutState *)&gGameState)->psynergy_shortcuts[0];
-        second = ((struct ShortcutState *)&gGameState)->psynergy_shortcuts[1];
+        first = gGameState.first_shortcut;
+        second = gGameState.second_shortcut;
         for (owner = 0; owner < 4; owner++) {
             st = Owner_GetState(owner);
             for (n = 0; n < 15; n++)
@@ -69,12 +64,11 @@ void Func_0807a664(void)
             src = inventory;
             dst = inventory;
             for (i = 0; i < 15; i++) {
-                u32 item = *src++;
-
-                if ((u16)item != 0) {
-                    *dst++ = item;
+                if (*src != 0) {
+                    *dst++ = *src;
                     n++;
                 }
+                src++;
             }
             for (; n < 15; n++)
                 inventory[n] = 0;
@@ -83,9 +77,9 @@ void Func_0807a664(void)
         }
         *save++ = first;
         *save++ = second;
-        owners = (u16 *)gGameState.active_owners;
-        save[0] = owners[0];
-        save[1] = owners[1];
+        inventory = (u16 *)gGameState.active_owners;
+        save[0] = inventory[0];
+        save[1] = inventory[1];
         Inventory_AddAndEquip(0, 16);
         GameFlag_SetBit(0x952);
     }

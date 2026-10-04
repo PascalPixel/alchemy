@@ -71,22 +71,18 @@ void MapAnimation_Update(void)
 
 void Map_ClearLayerEntryFlag(u32 no)
 {
-    /* FAKEMATCH: retain the existing byte-span halfword store. The typed
-       anim[no].paused form in aadcc37dd changed base addition/register order. */
-    u8 *base = ((void *volatile *)gMapWork)[0];
-    u8 *entry = base + no * sizeof(struct MapAnimation);
-    u32 value = 0;
-    *(u16 *)(entry + (u32)&((struct MapState *)0)->anim[0].paused) = value;
+    struct MapState *state = gMapWork[0];
+    struct MapAnimation *anim = &state->anim[no];
+
+    anim->paused = 0;
 }
 
 void Map_SetLayerEntryFlag(u32 no)
 {
-    /* FAKEMATCH: retain the existing byte-span halfword store; the typed
-       anim[no].paused form in aadcc37dd changed base addition/register order. */
-    u8 *base = ((void *volatile *)gMapWork)[0];
-    u8 *entry = base + no * sizeof(struct MapAnimation);
-    u32 value = 1;
-    *(u16 *)(entry + (u32)&((struct MapState *)0)->anim[0].paused) = value;
+    struct MapState *state = gMapWork[0];
+    struct MapAnimation *anim = &state->anim[no];
+
+    anim->paused = 1;
 }
 
 /* Clears the sixteen tile-animation channels, then reads a 0xffff-terminated

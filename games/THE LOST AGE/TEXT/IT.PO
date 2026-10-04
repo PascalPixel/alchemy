@@ -14751,7 +14751,7 @@ msgctxt "message"
 msgid "03685"
 msgstr "{protagonist_name} e gli amici fuggono!"
 
-msgctxt "message"
+msgctxt "MsgCannotEscape"
 msgid "03686"
 msgstr "Ma non possono scappare!"
 

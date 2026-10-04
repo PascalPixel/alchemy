@@ -12,65 +12,35 @@ void Tilemap_DecodeStagedBuffer(s32 size)
     u16 *source;
     s32 count;
     s32 index;
-    u32 temp;
 
     source = (u16 *)(Ram_MapCellBuffer + 2);
     destination = (u16 *)gMapBlocks;
-    temp = size - 1;
-    count = (s32)(temp + (temp >> 31)) >> 1;
+    count = (size - 1) / 2;
     if (size & 1) {
         switch (((u8 *)gMapCellBuffer)[1]) {
-        case 0: {
-            index = 0;
-            if (index < count) {
-                do {
-                    *destination = *source;
-                    index++;
-                    source++;
-                    destination++;
-                } while (index < count);
-            }
-            /* FAKEMATCH: an empty do-while fixes the case-1 source register */
-            do {
-            } while (0);
+        case 0:
+            for (index = 0; index < count; index++)
+                *destination++ = *source++;
             break;
-        }
         case 1: {
-            u32 previous;
-            u8 *left;
-            u8 *right;
-            previous = 0;
-            left = Ram_MapCellBuffer + 2;
-            index = 0;
-            right = left;
-            right += count;
-            if (index < count) {
-                do {
-                    s32 low = *right;
-                    s32 high = *left << 8;
-                    s32 value = (high | low) ^ previous;
-                    index++;
-                    *destination = value;
-                    right++;
-                    left++;
-                    destination++;
-                    previous = value;
-                } while (index < count);
+            u32 previous = 0;
+            u8 *left = Ram_MapCellBuffer + 2;
+            u8 *right = left + count;
+
+            for (index = 0; index < count; index++) {
+                u32 value = ((*left++ << 8) | *right++) ^ previous;
+                *destination++ = value;
+                previous = value;
             }
             break;
         }
         case 2: {
             s32 previous = 0;
-            if (count > 0) {
-                index = count;
-                do {
-                    s32 value = *source ^ previous;
-                    index--;
-                    *destination = value;
-                    source++;
-                    destination++;
-                    previous = value;
-                } while (index != 0);
+
+            for (index = 0; index < count; index++) {
+                s32 value = *source++ ^ previous;
+                *destination++ = value;
+                previous = value;
             }
             break;
         }

@@ -257,7 +257,7 @@ void FieldScene_RunSequenceA(void)
 
 void FieldScene_RunThreeCallSequence(void)
 {
-    void Event_ShowMessage(s32, s32);
+    void Engine_EventShowMessage(s32, s32);
 
     Engine_GameFlagSet(0x9BC);
     Engine_EventSetMessage((s32)MsgRariberoPleaseWaitForMeOutside);

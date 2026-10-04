@@ -227,51 +227,31 @@ s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id)
 
 void ResourceMetadata_Unregister(struct AnimationObject *state, s32 handle)
 {
-    struct AnimationEntry **remaining_slot;
-    struct AnimationEntry **slot_cursor;
-    s32 slot_value;
-    s32 later_slot_count;
-    u32 slot_index;
-    u32 later_index;
+    s32 count;
+    u32 slot;
+    u32 i;
 
     if (state != NULL && handle != 0) {
         ResourceMetadata_ClearRecord((void *)handle);
-        slot_index = 0;
-        if (handle != (s32)state->entries[0]) {
-            slot_cursor = state->entries;
-        next_slot:
-            slot_index++;
-            if (slot_index <= 3U) {
-                slot_cursor++;
-                if (handle != (s32)*slot_cursor)
-                    goto next_slot;
-            }
+        for (slot = 0; slot <= 3; slot++) {
+            if (handle == (s32)state->entries[slot])
+                break;
         }
-        if (slot_index != 4) {
-            state->entries[slot_index] = 0;
-            later_index = slot_index + 1;
-            later_slot_count = 0;
-            if (later_index <= 3U) {
-                /* FAKEMATCH: typed indexing reverses the native ADD operands;
-                   retain the existing index-first address-word calculation. */
-                remaining_slot = (struct AnimationEntry **)(later_index * sizeof *remaining_slot + (u32)state + (u32)&((struct AnimationObject *)0)->entries);
-                do {
-                    slot_value = (s32)*remaining_slot++;
-                    if (slot_value != 0)
-                        later_slot_count++;
-                    later_index++;
-                } while (later_index <= 3U);
+        if (slot != 4) {
+            state->entries[slot] = 0;
+            count = 0;
+            for (i = slot + 1; i <= 3; i++) {
+                if (state->entries[i] != 0)
+                    count++;
             }
-            if (later_slot_count == 0)
-                state->count = (s8)slot_index;
+            if (count == 0)
+                state->count = (s8)slot;
         }
     }
 }
 
 void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
 {
-    struct AnimationEntry **p;
-    struct AnimationEntry *t;
     struct AnimationEntry *v;
     s32 cnt;
     u32 i;
@@ -281,18 +261,10 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *group, u32 no)
         if (v != NULL) {
             ResourceMetadata_ClearRecord(v);
             group->entries[no] = NULL;
-            i = no + 1;
             cnt = 0;
-            if (i <= 3) {
-                /* FAKEMATCH: typed indexing reverses the native ADD operands;
-                   retain the existing index-first address-word calculation. */
-                p = (struct AnimationEntry **)(i * sizeof *p + (u32)group + (u32)&((struct AnimationObject *)0)->entries);
-                do {
-                    t = *p++;
-                    if (t != NULL)
-                        cnt++;
-                    i++;
-                } while (i <= 3);
+            for (i = no + 1; i <= 3; i++) {
+                if (group->entries[i] != NULL)
+                    cnt++;
             }
             if (cnt == 0)
                 group->count = (s8)no;
@@ -454,11 +426,6 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
     s32 i;
     s32 frames;
     s32 animation;
-    /* FAKEMATCH: the zero stored into pos and param is a halfword field of
-       a struct, so GCC takes it from the literal pool ahead of the frames
-       load and keeps it in r8, as the ROM does; a plain zero local loads
-       it after the frames. */
-    struct { u16 v; } zero;
 
     found = NULL;
     metadata = Resource_GetMetadataRecordFar(id);
@@ -473,7 +440,6 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
             }
         }
         if (found != NULL) {
-            zero.v = 0;
             frames = metadata->frames;
             object = found;
             object->anim_id = (s16)id;
@@ -488,9 +454,9 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id)
             object->mode = metadata->frame_codec;
             object->frame = 0xff;
             *(u32 *)&object->script = *(u32 *)animation;
-            object->pos = zero.v;
+            object->pos = 0;
             object->kind = metadata->draw_kind;
-            object->param = zero.v;
+            object->param = 0;
         }
     }
     return object;

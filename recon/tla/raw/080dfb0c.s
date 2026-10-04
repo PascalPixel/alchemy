@@ -60,6 +60,6 @@ Func_080dfb0c:
 	mov r10, r5
 	pop {r5, r6, r7, pc}
 .L_080dfb80:
-	.4byte Func_080dfab4
+	.4byte Effect_AdvanceMotion
 .L_080dfb84:
 	.4byte 0x01090001

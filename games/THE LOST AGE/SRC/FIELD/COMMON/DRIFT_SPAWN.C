@@ -19,6 +19,6 @@ void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value)
         Engine_ObjectSetScript(object, DriftScene_SpawnScript);
         object->motion_flags = 0;
         sprite->unknown_1a = 0;
-        sprite->unknown_12 = value;
+        sprite->rotation = value;
     }
 }

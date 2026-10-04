@@ -1,8 +1,9 @@
 //! Golden Sun repository scan orchestration; lexical policy lives in compiler::no_asm.
 
+#[cfg(test)]
+use crate::compiler::no_asm::self_test;
 use crate::compiler::no_asm::{
-    find_forbidden, find_named_source_tool_leaks, find_preprocessed, self_test, source_files,
-    Finding,
+    find_forbidden, find_named_source_tool_leaks, find_preprocessed, source_files, Finding,
 };
 use crate::compiler::routing::root as compiler_root;
 use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
@@ -13,7 +14,7 @@ use std::process::{Command, ExitCode};
 use std::sync::Mutex;
 
 const USAGE: &str =
-    "usage: alchemy check no-asm [--target TARGET|--self-test]\n\nScan raw and preprocessed C for instruction, register, and ABI escape hatches.";
+    "usage: alchemy check no-asm [--target TARGET]...\n\nScan raw and preprocessed C for instruction, register, and ABI escape hatches.";
 type Job = (String, Vec<String>);
 /// One preprocessing command prefix of a target and the sources it expands.
 type Group = ((String, Vec<String>), Vec<String>);
@@ -97,6 +98,24 @@ fn groups(
     Ok(groups.into_iter().collect())
 }
 
+/// The scanner's own source: a clean result stays known clean until the
+/// scanner or the lexer it reads with changes, not with every tool change.
+fn scanner() -> &'static str {
+    static DIGEST: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+    DIGEST.get_or_init(|| {
+        crate::compiler::sha256::hex(
+            [
+                include_str!("no_asm.rs"),
+                include_str!("../compiler/no_asm.rs"),
+                include_str!("../compiler/steering.rs"),
+                include_str!("../compiler/c_syntax.rs"),
+            ]
+            .concat()
+            .as_bytes(),
+        )
+    })
+}
+
 /// The identity of one source's expansion: the command, the source with
 /// every header it includes, the compiler bundle and the scanner. A source
 /// whose expansion was clean under the same identity is not expanded again,
@@ -132,8 +151,8 @@ fn clean_key(
     let identity = format!(
         "{:?}",
         (
-            "no-asm-clean-v3-message-imports",
-            crate::compiler::bundle::executable_signature().ok()?,
+            "no-asm-clean-v4-scanner-source",
+            scanner(),
             crate::compiler::bundle::compiler_bundle_signature(),
             label,
             crate::compiler::source_inputs::portable_commands(root, &[command]),
@@ -150,7 +169,7 @@ fn clean_key(
 fn jobs(
     root: &Path,
     groups: Vec<Group>,
-    cache: Option<&psynergy::cache::SqliteCache>,
+    cache: Option<&psynergy::cache::Cache>,
     imports: &BTreeMap<String, MessageImports>,
 ) -> (Vec<(Job, Vec<String>)>, usize) {
     let inputs = groups.iter().map(|(_, sources)| sources.len()).sum();
@@ -234,37 +253,16 @@ fn run(root: &Path, job: &Job) -> Result<Vec<Finding>, String> {
         ));
     }
     let comments = String::from_utf8_lossy(&output.stdout);
-    let mut raw_definitions = BTreeMap::new();
     findings.extend(
         crate::compiler::steering::forwarding_findings(&comments, &job.0)?
             .into_iter()
-            .map(|mut item| {
-                let lines = raw_definitions.entry(item.file.clone()).or_insert_with(|| {
-                    fs::read_to_string(root.join(&item.file))
-                        .ok()
-                        .and_then(|source| {
-                            let tokens = crate::permute::lex::lex(&source).ok()?;
-                            Some(
-                                crate::permute::parse::scan_definitions(&tokens)
-                                    .into_iter()
-                                    .map(|(name, _, at, _, _)| (name, tokens[at].line))
-                                    .collect::<BTreeMap<_, _>>(),
-                            )
-                        })
-                        .unwrap_or_default()
-                });
-                // Diagnostic mapping never admits a helper or suppresses a finding.
-                if let Some(line) = lines.get(&item.name) {
-                    item.line = *line;
-                }
-                Finding {
-                    file: item.file,
-                    line: item.line,
-                    token: format!(
-                        "forwarding static inline {} needs FAKEMATCH inside its body",
-                        item.name
-                    ),
-                }
+            .map(|item| Finding {
+                file: item.file,
+                line: item.line,
+                token: format!(
+                    "forwarding static inline {} needs FAKEMATCH inside its body",
+                    item.name
+                ),
             }),
     );
     Ok(findings)
@@ -274,7 +272,7 @@ fn scan_preprocessed(
     root: &Path,
     target_ids: &[DecompTargetId],
 ) -> Result<(usize, usize, Vec<Finding>), String> {
-    let cache = psynergy::cache::SqliteCache::open(&root.join("out/cache/no-asm.sqlite3")).ok();
+    let cache = psynergy::cache::Cache::open(&root.join("out/cache/no-asm.tsv")).ok();
     let imports = message_imports(root, target_ids)?;
     let (jobs, inputs) = jobs(
         root,
@@ -316,6 +314,7 @@ fn scan_preprocessed(
     Ok((inputs, jobs.len(), findings))
 }
 
+#[cfg(test)]
 fn macro_self_test() -> Result<(), String> {
     let root = compiler_root();
     let directory = tempfile::tempdir().map_err(|error| error.to_string())?;
@@ -340,21 +339,23 @@ fn macro_self_test() -> Result<(), String> {
 }
 
 pub fn entry(arguments: &[String]) -> ExitCode {
-    match arguments {
-        [arg] if arg == "-h" || arg == "--help" => success(USAGE),
-        [arg] if arg == "--self-test" => match self_test().and_then(|_| macro_self_test()) {
-            Ok(()) => success("self-test=ok"),
-            Err(error) => fail(error),
-        },
-        [option, value] if option == "--target" => {
-            let Some(id) = TARGET_IDS.iter().copied().find(|id| id.as_str() == value) else {
-                return fail(format!("unknown target: {value}"));
-            };
-            scan_repository(&[id])
-        }
-        [] => scan_repository(&TARGET_IDS),
-        _ => fail(USAGE),
+    if arguments.is_empty() {
+        return scan_repository(&TARGET_IDS);
     }
+    let mut ids = Vec::new();
+    for pair in arguments.chunks(2) {
+        let [option, value] = pair else {
+            return fail(USAGE);
+        };
+        let Some(id) = TARGET_IDS.iter().copied().find(|id| id.as_str() == value) else {
+            return fail(format!("unknown target: {value}"));
+        };
+        if option != "--target" {
+            return fail(USAGE);
+        }
+        ids.push(id);
+    }
+    scan_repository(&ids)
 }
 
 fn fail(message: impl std::fmt::Display) -> ExitCode {
@@ -362,9 +363,27 @@ fn fail(message: impl std::fmt::Display) -> ExitCode {
     ExitCode::FAILURE
 }
 
-fn success(message: &str) -> ExitCode {
-    println!("{message}");
-    ExitCode::SUCCESS
+/// One source as written: its escape hatches and unmarked forwarders.
+fn raw_findings(root: &Path, path: &Path) -> Result<Vec<Finding>, String> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    let name = path.strip_prefix(root).unwrap_or(path).to_string_lossy();
+    let mut findings = find_forbidden(&name, &text);
+    findings.extend(find_named_source_tool_leaks(&name, &text));
+    if name.starts_with("games/") {
+        findings.extend(
+            crate::compiler::steering::forwarding_findings(&text, &name)?
+                .into_iter()
+                .map(|item| Finding {
+                    file: item.file,
+                    line: item.line,
+                    token: format!(
+                        "forwarding static inline {} needs FAKEMATCH inside its body",
+                        item.name
+                    ),
+                }),
+        );
+    }
+    Ok(findings)
 }
 
 fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
@@ -379,38 +398,32 @@ fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
         Ok(_) => return fail("ordinary-C gate scanned no files"),
         Err(error) => return fail(error),
     };
-    let mut findings = Vec::new();
-    for path in &files {
-        let text = match fs::read_to_string(path) {
-            Ok(text) => text,
-            Err(error) => {
-                eprintln!("{error}");
-                return ExitCode::FAILURE;
-            }
-        };
-        let name = path.strip_prefix(root).unwrap_or(path).to_string_lossy();
-        findings.extend(find_forbidden(&name, &text));
-        findings.extend(find_named_source_tool_leaks(&name, &text));
-        if name.starts_with("games/") {
-            match crate::compiler::steering::forwarding_findings(&text, &name) {
-                Ok(items) => findings.extend(items.into_iter().map(|item| Finding {
-                    file: item.file,
-                    line: item.line,
-                    token: format!(
-                        "forwarding static inline {} needs FAKEMATCH inside its body",
-                        item.name
-                    ),
-                })),
-                Err(error) => return fail(error),
-            }
-        }
-    }
-    let (expanded, jobs, mut more) = match scan_preprocessed(root, target_ids) {
+    let workers = std::thread::available_parallelism().map_or(1, |count| count.get());
+    let chunk = files.len().div_ceil(workers).max(1);
+    let (raw, preprocessed) = std::thread::scope(|scope| {
+        let preprocessed = scope.spawn(|| scan_preprocessed(root, target_ids));
+        let raw = files
+            .chunks(chunk)
+            .map(|part| {
+                scope.spawn(move || {
+                    part.iter()
+                        .map(|path| raw_findings(root, path))
+                        .collect::<Result<Vec<_>, String>>()
+                })
+            })
+            .collect::<Vec<_>>()
+            .into_iter()
+            .map(|handle| handle.join().expect("no-asm raw worker"))
+            .collect::<Result<Vec<_>, String>>();
+        (raw, preprocessed.join().expect("no-asm preprocessing"))
+    });
+    let mut findings = match raw {
+        Ok(found) => found.into_iter().flatten().flatten().collect::<Vec<_>>(),
+        Err(error) => return fail(error),
+    };
+    let (expanded, jobs, mut more) = match preprocessed {
         Ok(result) => result,
-        Err(error) => {
-            eprintln!("error: {error}");
-            return ExitCode::FAILURE;
-        }
+        Err(error) => return fail(error),
     };
     findings.append(&mut more);
     findings.sort();

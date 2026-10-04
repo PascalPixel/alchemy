@@ -34,14 +34,10 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoPlaceNormallyCalledFreeClimb);
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cx asm("r0") = 0x3580000 >> 18;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cz asm("r2") = 0xa80000 >> 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cm asm("r3");
+                s32 cx = 0x3580000 >> 18;
+                s32 cy = 1;
+                s32 cz = 0xa80000 >> 16;
+                s32 cm;
                 /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
                 cm = 1;
@@ -60,8 +56,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
             {
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fx asm("r1") = 0x330;
+                s32 fx = 0x330;
                 /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
                 register s32 fz asm("r2") = 200;
                 /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */
@@ -162,14 +157,10 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Engine_EventSetMessage((s32)MsgKorosseoCalledMovingSidewalkStage);
             Camera_SetSpeed(0x30000, 0x6000);
             {
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cx asm("r0") = 0x4380000 >> 19;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cy asm("r1") = 1;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cz asm("r2") = 0xa80000 >> 16;
-                /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
-                register s32 cm asm("r3");
+                s32 cx = 0x4380000 >> 19;
+                s32 cy = 1;
+                s32 cz = 0xa80000 >> 16;
+                s32 cm;
                 /* FAKEMATCH: native camera arguments precede mode, then coordinate transforms. */
                 asm("" : "+r"(cx), "+r"(cy), "+r"(cz) : : "r3");
                 cm = 1;
@@ -188,8 +179,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             Event_ShowMessage(a0, 0);
             Event_ShowMessage(a0, 0);
             {
-                /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
-                register s32 fx asm("r1") = 0x3d8;
+                s32 fx = 0x3d8;
                 /* FAKEMATCH: native coordinates in r1/r2 precede r0 setup. */
                 register s32 fz asm("r2") = 184;
                 /* FAKEMATCH: direct and Call3 void forms move r0 ahead of coordinates. */

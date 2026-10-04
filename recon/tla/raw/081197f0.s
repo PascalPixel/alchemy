@@ -329,7 +329,7 @@ Func_081197f0:
 .L_08119ab8:
 	.4byte gPartyState
 .L_08119abc:
-	.4byte Data_020054c8
+	.4byte gBattleRandomSeed
 .L_08119ac0:
 	.4byte gLinkStatus
 .L_08119ac4:

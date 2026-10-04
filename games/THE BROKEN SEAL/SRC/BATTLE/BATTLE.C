@@ -4,6 +4,127 @@
 #include "BATTLE_RUNTIME.H"
 #include "MOTION_OBJECT.H"
 #include "ANIMSPR.H"
+#include "BATTLE_PRESENTATION.H"
+
+/* A battle callback: cycle the units' status icons, give each unit's
+ * effect entry priority 9 while the unit is off the ground and 0 otherwise
+ * (marking its record dirty on a change), then give the party's and the
+ * enemies' sprites hardware priorities 1 and 2, swapped when the camera
+ * yaw is negative. One object, record and list variable serve the whole
+ * function, which keeps the object in r5 and every record in r0; the
+ * priorities are read from their array inside each loop. */
+void Func_080b7738(void)
+{
+    u16 ids[14];
+    s32 priority[2];
+    s32 i;
+    s32 j;
+    s32 count;
+    struct MotionObject *object;
+    struct AnimationObject *record;
+    struct AnimationObject **list;
+
+    BattleParty_ListActorIds(BATTLE_SIDE_BOTH, ids);
+    /* FAKEMATCH: the scan is rotated by hand with a goto, which keeps the loop
+     * pass off it; as a for loop it becomes a pointer walk. */
+    i = 0;
+    if (ids[i] != BATTLE_UNIT_LIST_END) {
+again:
+        {
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+
+            if (slot != 0) {
+                object = slot->object;
+
+                BattleStatusIcon_Cycle(slot);
+                if (slot->effect_entry != 0) {
+                    record = GetMotionRecord(object, 0);
+
+                    if (record != 0) {
+                        struct SpriteEntry *effect;
+                        s32 state = 0;
+
+                        if (object->y != 0)
+                            state = 9;
+                        effect = slot->effect_entry;
+                        if (effect->priority != state) {
+                            effect->priority = state;
+                            record->dirty = 1;
+                        }
+                    }
+                }
+            }
+        }
+        i++;
+        if (i <= 13 && ids[i] != BATTLE_UNIT_LIST_END)
+            goto again;
+    }
+    if ((s16)gCameraWork->yaw >= 0) {
+        priority[0] = 1;
+        priority[1] = 2;
+    } else {
+        priority[0] = 2;
+        priority[1] = 1;
+    }
+    {
+        count = BattleParty_ListActorIds(BATTLE_SIDE_PARTY, ids);
+        for (i = 0; i < count; i++) {
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+
+            if (slot != 0) {
+                object = slot->object;
+
+                switch (object->record_storage_kind & 15) {
+                case 1:
+                {
+                    record = object->records;
+                    record->part[0].priority = priority[0];
+                    break;
+                }
+                case 2:
+                {
+                    list = (struct AnimationObject **)object->records;
+                    for (j = 0; j < 4; j++) {
+                        record = *list++;
+                        if (record != 0)
+                            record->part[0].priority = priority[0];
+                    }
+                    break;
+                }
+                }
+            }
+        }
+    }
+    {
+        count = BattleParty_ListActorIds(BATTLE_SIDE_ENEMIES, ids);
+        for (i = 0; i < count; i++) {
+            struct BattleObjectSlot *slot = GetBattleObjectSlot(ids[i]);
+
+            if (slot != 0) {
+                object = slot->object;
+
+                switch (object->record_storage_kind & 15) {
+                case 1:
+                {
+                    record = object->records;
+                    record->part[0].priority = priority[1];
+                    break;
+                }
+                case 2:
+                {
+                    list = (struct AnimationObject **)object->records;
+                    for (j = 0; j < 4; j++) {
+                        record = *list++;
+                        if (record != 0)
+                            record->part[0].priority = priority[1];
+                    }
+                    break;
+                }
+                }
+            }
+        }
+    }
+}
 
 s32 ResourceMetadata_RegisterFar(struct AnimationObject *context, s32 effect_id);
 void ResourceMetadata_UnregisterFar(struct AnimationObject *context, s32 entry_handle);

@@ -40,6 +40,15 @@
  * T0a: completed the remaining local producer declarations; the complete
  * emitted ELF is identical to T0. No width/lifetime defect justified a body
  * follow-up. No edition credit.
+ * T2, 2026-10-04: score 1900 (60 register, 3 operand, 12 reordered,
+ * 2 inserted, 6 deleted). The native 44-byte frame now follows from a real
+ * owner: the highlight's 0xff-terminated unit list is u16[8] (sp+28..43), so
+ * no stack difference remains. Taking the entry address and x = 0 first in
+ * the arrow block moves its loads toward native. Left: x = 0 sits between the
+ * display_source load and its -1 compare in native; phase 11 keeps 0xff in r8
+ * and ORs entries[0]->frame (ldrb/orr/strb) with frame in r10; reload
+ * registers for the r7+356 offsets. The permuter cannot parse the nested
+ * clearer, so these were tried by hand.
  */
 #include "CALLBACK_SCHEDULER.H"
 #include "TYPES.H"
@@ -89,7 +98,7 @@ s32 __modsi3(s32, s32);
  * runtime schedules while its phase is not 0 or 4. */
 void BattleEvent_Playback(void)
 {
-    u16 selection[2];
+    u16 selection[8]; /* 0xff-terminated unit list for the panel highlight */
     struct AnimationObject *records[4];
     struct BattleSession *work = gBattleWork;
     struct BattleEventState *state = &work->events;
@@ -235,12 +244,12 @@ void BattleEvent_Playback(void)
             s32 tiles;
             s32 x;
 
+            entry = &state->display_entry;
+            x = 0;
             tiles = (s32)BattlePres_AdvanceArrowTiles + ((gFrameCount >> 2) & 7) * 128;
             display = gBattleDisplayWork;
-            entry = &state->display_entry;
             context = display->window;
             viewport = display->offset;
-            x = 0;
             if (state->display_source == -1)
                 state->display_source = work->prompt_slot;
             UiWork_ClearValueNameTablesFar();

@@ -29,16 +29,6 @@ extern const u8 BattleFx_FragmentScript[];
 void Object_Destroy(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
-static __inline__ struct MotionObject *SpawnShard(
-    struct BattleFxScene *scene, struct ScatterPosition *position)
-{
-    /* FAKEMATCH: the inline interface preserves the separate shard cursor. */
-    position->x = scene->x;
-    position->y = scene->y + 0x100000;
-    position->z = scene->z;
-    return Object_Spawn(0x11d, position->x, position->y, position->z);
-}
-
 /* battle/effects/item_break/spawn_mode_1.c */
 void Audio_PlayCue(s32);
 void Object_SetMode(void *, s32);
@@ -75,7 +65,10 @@ void RunBattleEffect11(void)
     Object_CommitPosition(anchors[0]);
     Audio_PlayCue(134);
     for (index = 0; index < 24; index++) {
-        obj = SpawnShard(scene, &position);
+        position.x = scene->x;
+        position.y = scene->y + 0x100000;
+        position.z = scene->z;
+        obj = Object_Spawn(0x11d, position.x, position.y, position.z);
         if (obj != 0) {
             ObjectDispatch_InitializeFar((struct DispatchObject *)obj, (u32)BattleFx_FragmentScript);
             obj->speed_limit = Random16() + 0x20000;

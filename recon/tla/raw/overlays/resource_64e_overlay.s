@@ -69,37 +69,7 @@ Func_020000dc:
 	movs r0, #0
 .L_02008116:
 	pop {r5, r6, pc}
-	.section .text.x02008118,"ax",%progbits
-	.global Func_02000118
-	.thumb_func
-Func_02000118:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	ldr r1, [r0, #80]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	adds r0, #100
-	ldrh r3, [r1, #18]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #18]
-	bx lr
+	.section .text.x0200814e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008150,"ax",%progbits
 	.global Func_02000150
@@ -329,7 +299,7 @@ Func_02000150:
 .L_02008308:
 	.4byte Data_02001dcc
 .L_0200830c:
-	.4byte Func_02000118
+	.4byte BattleFx_UpdateObjectMotionScaleAndLinkedAngle
 .L_02008310:
 	.4byte 0xffff0000
 	.section .text.x02008314,"ax",%progbits

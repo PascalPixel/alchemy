@@ -274,6 +274,7 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
     Ok(files)
 }
 
+#[cfg(test)]
 pub fn self_test() -> Result<(), String> {
     let source = "register int r __asm__(\"r4\"); void f(void) { __asm__(\"nop\"); __asm__ volatile(\"\" ::: \"memory\"); }\n";
     let found = find_forbidden("fixture.c", source);

@@ -28,11 +28,6 @@ pub(crate) fn command(
     super::bundle::compiler_command_for_target(compiler, &flags)
 }
 
-#[cfg(test)]
-pub(crate) fn fresh(root: &Path, target: DecompTarget, source: &str) -> Result<String, String> {
-    Expansion::new(root, target)?.fresh(source)
-}
-
 /// One current edition's imports, shared only within a source analysis run.
 /// Every C file is still freshly preprocessed; nothing saved under out/ is read.
 pub(crate) struct Expansion<'a> {
@@ -74,77 +69,5 @@ impl<'a> Expansion<'a> {
         }
         String::from_utf8(output.stdout)
             .map_err(|error| format!("{source}: preprocessing: {error}"))
-    }
-}
-
-/// Preserve active macro definitions for source-name validation, in memory.
-#[cfg(test)]
-pub(crate) fn fresh_definitions(
-    root: &Path,
-    target: DecompTarget,
-    source: &str,
-) -> Result<String, String> {
-    Expansion::new(root, target)?.expand(source, &["-dD"])
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::targets::{target_for, DecompTargetId};
-    #[test]
-    fn approved_preprocessor_preserves_macro_tags_and_ownership() {
-        let work = tempfile::tempdir().unwrap();
-        let input = work.path().join("fixture.c");
-        std::fs::write(&input, "#define MAKE(name) void name(void) { /* FAKEMATCH: test expansion. */ }\nMAKE(First)\nvoid Plain(void) {}\n").unwrap();
-        let expanded = fresh(
-            work.path(),
-            target_for(DecompTargetId::TbsEn),
-            input.to_str().unwrap(),
-        )
-        .unwrap();
-        assert!(
-            expanded.contains("First(void) { /* FAKEMATCH:"),
-            "{expanded}"
-        );
-        assert!(expanded.contains(input.to_str().unwrap()));
-        assert!(!input.with_extension("i").exists());
-        assert!(!input.with_extension("s").exists());
-    }
-    #[test]
-    fn fresh_expansion_observes_header_edits_and_edition_selection() {
-        let work = tempfile::tempdir().unwrap();
-        let input = work.path().join("fixture.c");
-        let header = work.path().join("helper.h");
-        std::fs::write(&input, "#include \"helper.h\"\n#if defined(TBS_EDITION_EN)\nvoid English(void) { Help(1); }\n#else\nvoid Japanese(void) { Help(2); }\n#endif\n").unwrap();
-        std::fs::write(&header, "static inline int Help(int x) { return x; }\n").unwrap();
-        std::fs::write(
-            input.with_extension("i"),
-            "/* FAKEMATCH: stale output must not be read. */",
-        )
-        .unwrap();
-        let target = target_for(DecompTargetId::TbsEn);
-        let expand = |target| fresh(work.path(), target, input.to_str().unwrap()).unwrap();
-        assert!(
-            super::super::steering::analyze(&expand(target), input.to_str().unwrap())
-                .unwrap()
-                .steered
-                .is_empty()
-        );
-        std::fs::write(
-            &header,
-            "static inline int Help(int x) { /* FAKEMATCH: current source. */ return x; }\n",
-        )
-        .unwrap();
-        let changed =
-            super::super::steering::analyze(&expand(target), input.to_str().unwrap()).unwrap();
-        assert!(changed.steered.contains("English"));
-        assert!(!changed.steered.contains("Japanese"));
-        let japanese = super::super::steering::analyze(
-            &expand(target_for(DecompTargetId::TbsJa)),
-            input.to_str().unwrap(),
-        )
-        .unwrap();
-        assert!(japanese.steered.contains("Japanese"));
-        assert!(!japanese.steered.contains("English"));
     }
 }

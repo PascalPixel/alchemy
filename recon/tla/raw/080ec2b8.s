@@ -237,7 +237,7 @@ Func_080ec2b8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 .L_080ec478:
-	.4byte Data_0202a000
+	.4byte gWorldMapWork
 .L_080ec47c:
 	.4byte Data_0202a648
 .L_080ec480:

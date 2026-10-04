@@ -106,7 +106,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s8 *rm;
     s32 range;
     struct BattleUnit *target;
-    s32 n;
+    u32 n;
     s32 value;
     s32 dmg;
     s32 scale;
@@ -149,41 +149,16 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 
     /* 属性相性。テーブルを二方向に走査して符号を決める。 */
     if (range != 4) {
-        struct BattleElementStats *levels;
         s32 i;
 
         value = target->base_elements[range].resist;
-        levels = target->base_elements;
-        i = 0;
-        if (value >= levels[0].resist) {
-            struct BattleElementStats *p;
-
-            p = levels;
-            do {
-                i++;
-                p++;
-                if (i > 3)
-                    break;
-            } while (value >= p->resist);
-        }
+        for (i = 0; i < 4 && value >= target->base_elements[i].resist; i++)
+            ;
         if (i == 4)
             affinity = -1;
 
-        i = 0;
-        {
-            s32 off;
-
-            /* FAKEMATCH: a byte offset held in a temporary makes the second
-               scan reload the first level, as the ROM does. */
-            off = 2;
-            if (value <= *(s16 *)((u8 *)levels + off)) {
-                do {
-                    i++;
-                    if (i > 3)
-                        break;
-                } while (value <= target->base_elements[i].resist);
-            }
-        }
+        for (i = 0; i < 4 && value <= target->base_elements[i].resist; i++)
+            ;
         if (i == 4)
             affinity = 1;
     }
@@ -233,57 +208,23 @@ after_power:
             st = BattleFormation_SelectRandomAvailableMember(work->enemy_group);
         if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
             s32 ch;
-            s16 *slots;
-            s32 cursor;
 
             ch = Summon_TakeCharge(st, 1);
             if (ch & 0x8000)
                 Summon_ResetCharge(st);
             BattleUnit_AssignFar(rec, st, ch & 0x7fff);
-            /* FAKEMATCH: the insert walks byte offsets from 100 off a base
-               two bytes into the work, the split GCC makes of the list's
-               offset 102; indexing the list directly gives the same
-               addresses but allocates the loop differently. */
-            slots = work->enemy_units - 50;
             {
-                s32 off;
                 s32 i;
-                s32 j;
-                s32 jsave;
 
-                off = 100;
-                i = 0;
-                jsave = 0;
-                if (*(s16 *)((u8 *)slots + off) == 254) {
-                    *(s16 *)((u8 *)slots + off) = rec;
-                } else {
-                    s32 woff;
-                    s32 next;
-                    u8 *base;
-
-                    j = 0;
-                    woff = 100;
-                    for (;;) {
-                        base = (u8 *)slots;
-                        cursor = j + 100;
-                        n = *(s16 *)(cursor + (s32)base);
-                        if (n == 255) {
-                            *(s16 *)((s32)base + cursor) = rec;
-                            next = jsave + 102;
-                            *(s16 *)(base + next) = n;
-                            break;
-                        }
-                        i++;
-                        next = j + 2;
-                        j = next;
-                        if (i > 5)
-                            break;
-                        jsave = next;
-                        woff = next + 100;
-                        if (*(s16 *)(woff + (s32)base) == 254) {
-                            *(s16 *)(woff + (s32)base) = rec;
-                            break;
-                        }
+                for (i = 0; i < 6; i++) {
+                    if (work->enemy_units[i] == 254) {
+                        work->enemy_units[i] = rec;
+                        break;
+                    }
+                    if (work->enemy_units[i] == 255) {
+                        work->enemy_units[i] = rec;
+                        work->enemy_units[i + 1] = 255;
+                        break;
                     }
                 }
             }
@@ -329,31 +270,14 @@ after_power:
 
         efx = action->effect;
         if (action->effect == EFX_IMMOBILIZE) {
-            s32 hidx;
-
             hit = 0;
-            /* FAKEMATCH: the first record's offset is held in a temporary
-               and added to the work pointer, as the ROM addresses it. */
-            hidx = (u8 *)&work->actions[0].unit_id - (u8 *)work;
-            if (*(s16 *)((u8 *)work + hidx) == target_id) {
-                hit = 1;
-                goto hit_effect_done;
-            } else {
-                do {
-                    n = 0;
-                scan_next:
-                    n++;
-                    if ((u32)n <= 19) {
-                        if (work->actions[n].unit_id == target_id)
-                            hit = 1;
-                        else
-                            goto scan_next;
-                    }
-                    goto hit_effect_done;
-                } while (0);
+            for (n = 0; n < 20; n++) {
+                if (work->actions[n].unit_id == target_id) {
+                    hit = 1;
+                    break;
+                }
             }
-        }
-        if (action->effect == EFX_HALF_DEF) {
+        } else if (action->effect == EFX_HALF_DEF) {
             half = 1;
         } else if (action->effect == EFX_LETHAL) {
             crush = 1;

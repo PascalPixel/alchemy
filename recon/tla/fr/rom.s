@@ -1042,19 +1042,7 @@ Func_0802cd4c:
 	.type Func_0802cd70, %function
 	.thumb_func
 Func_0802cd70:
-	.incbin "baserom.gba", 0x0002cd70, 0x000000dc
-	.section .rom.0002ce4c, "ax"
-	.global Func_0802b700
-	.type Func_0802b700, %function
-	.thumb_func
-Func_0802b700:
-	.incbin "baserom.gba", 0x0002ce4c, 0x00000054
-	.section .rom.0002cea0, "ax"
-	.global Func_0802b63c
-	.type Func_0802b63c, %function
-	.thumb_func
-Func_0802b63c:
-	.incbin "baserom.gba", 0x0002cea0, 0x00000020
+	.incbin "baserom.gba", 0x0002cd70, 0x00000024
 	.section .rom.0002cf10, "ax"
 	.incbin "baserom.gba", 0x0002cf10, 0x0000032c
 	.section .rom.0002d2b0, "ax"
@@ -1066,22 +1054,22 @@ Func_0802b63c:
 	.section .rom.0002d400, "ax"
 	.incbin "baserom.gba", 0x0002d400, 0x0000005c
 	.section .rom.0002d45c, "ax"
-	.global Func_0802b71c
-	.type Func_0802b71c, %function
+	.global Func_0802d45c
+	.type Func_0802d45c, %function
 	.thumb_func
-Func_0802b71c:
+Func_0802d45c:
 	.incbin "baserom.gba", 0x0002d45c, 0x0000007c
 	.section .rom.0002d4d8, "ax"
-	.global Func_0802cc88
-	.type Func_0802cc88, %function
+	.global Func_0802d4d8
+	.type Func_0802d4d8, %function
 	.thumb_func
-Func_0802cc88:
+Func_0802d4d8:
 	.incbin "baserom.gba", 0x0002d4d8, 0x00000058
 	.section .rom.0002d530, "ax"
-	.global Func_0802ceb0
-	.type Func_0802ceb0, %function
+	.global Func_0802d530
+	.type Func_0802d530, %function
 	.thumb_func
-Func_0802ceb0:
+Func_0802d530:
 	.incbin "baserom.gba", 0x0002d530, 0x000000d0
 	.section .rom.0002d600, "ax"
 	.global Func_080237c8
@@ -1102,10 +1090,10 @@ Func_08022f24:
 Func_0802d658:
 	.incbin "baserom.gba", 0x0002d658, 0x00000058
 	.section .rom.0002d6b0, "ax"
-	.global Func_0802cc74
-	.type Func_0802cc74, %function
+	.global Func_0802d6b0
+	.type Func_0802d6b0, %function
 	.thumb_func
-Func_0802cc74:
+Func_0802d6b0:
 	.incbin "baserom.gba", 0x0002d6b0, 0x00000038
 	.section .rom.0002d6e8, "ax"
 	.global Func_0802d6e8

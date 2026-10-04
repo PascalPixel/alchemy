@@ -79,9 +79,11 @@ enum {
     FLAG_STAR_ROOM_COLLAPSED = 0x83f
 };
 
+/* The quake's work: once fading is set, the shake keeps its strength
+   and dies away instead of holding steady. */
 struct QuakeWork {
     u8 unknown_000[0x40c];
-    s32 unknown_40c;
+    s32 fading;
 };
 
 /* The ten arcing effects' origins, laid out after the code. */
@@ -819,9 +821,9 @@ void Scene_RunExtendedEffectPresentation(void)
     }
     Engine_TaskWait(1);
     Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
-    SceneActor_MoveTo232_125AndFace4000(ACTOR_PARTY_LEADER);
-    SceneActor_MoveTo232_125AndFace4000(ACTOR_GERALD);
-    quake->unknown_40c = 0;
+    SoruFunka_PlaceBeforeStar(ACTOR_PARTY_LEADER);
+    SoruFunka_PlaceBeforeStar(ACTOR_GERALD);
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(80);
     SceneState_ConfigureEightCornerRegions();
@@ -985,7 +987,7 @@ void Scene_RunExtendedEffectPresentation(void)
 
     Audio_PlayCue(23);
     FieldScene_RunVariantStep(1, 4, 0);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Engine_EventWait(10);
     FieldScene_RunVariantStep(0, 40, 0);
@@ -997,7 +999,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetDestination(ACTOR_GERALD, 202, 144);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
     Engine_EventWait(20);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(60);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
@@ -1069,7 +1071,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_EventWait(40);
 
     FieldScene_RunVariantStep(1, 20, 0);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -1077,7 +1079,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Audio_PlayCue(0x121);
     ColorBuffer_ApplyTarget(0x10000, 1);
     Engine_ColorBufferInterpolate(40);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_EventWait(120);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1088,7 +1090,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Engine_EventWait(20);
     FieldScene_RunVariantStep(1, 10, 0);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
@@ -1131,7 +1133,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ActorWaitForMove(ACTOR_WISE_ONE);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTHEAST + FACING_STEP, 0);
     Engine_EventWait(20);
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     ColorBuffer_ApplyTarget(0x20119e, 1);
     Engine_ColorBufferInterpolate(20);
@@ -1157,7 +1159,7 @@ void Scene_RunExtendedEffectPresentation(void)
         Engine_TaskWait(wait);
     }
     SceneState_ApplyRectsByCondition(0);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
@@ -1278,7 +1280,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Engine_EventWait(40);
 
-    quake->unknown_40c = 0;
+    quake->fading = 0;
     Work_SetValuesIfNonNegative(0x40000, 0x40000, 0x10000);
     ColorBuffer_ApplyTarget(0x20119e, 1);
     Engine_ColorBufferInterpolate(20);
@@ -1407,7 +1409,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
     Engine_TaskRemoveCallback(FieldScene_RunActor15TwoStep);
-    quake->unknown_40c = 1;
+    quake->fading = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Engine_MapRenderWaitForValues();
     FieldScene_CallHelper6620();
@@ -1419,14 +1421,14 @@ void Scene_RunExtendedEffectPresentation(void)
 
 /* Scene steps, regions and arcing effects. */
 /* The IWRAM remainder, reached through an import veneer. */
-void SceneActor_MoveTo232_125AndFace4000(s32 no)
+void SoruFunka_PlaceBeforeStar(s32 actor)
 {
-    Ent_02002820 *rec;
+    struct FieldActor *object;
 
-    rec = (Ent_02002820 *)Object_GetById(no);
-    Engine_ActorSetPosition(no, 0xe80000, 0x7d0000);
-    rec->unk6 = 0x4000;
-    Engine_ActorSetSpritePriority(no, 3);
+    object = Object_GetById(actor);
+    Engine_ActorSetPosition(actor, PIXELS(232), PIXELS(125));
+    object->facing = FACING_SOUTH;
+    Engine_ActorSetSpritePriority(actor, 3);
 }
 
 void SceneState_ApplyRectsByCondition(s32 a)
